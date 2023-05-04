@@ -1,7 +1,7 @@
 Package: gdalraster
 Type: Package
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 1.0
+Version: 1.0.0
 Date: 2023-05-04
 Description: Interface to the raster API of the 'Geospatial Data Abstraction 
 	Library' ('GDAL') supporting manual creation of uninitialized datasets, 
