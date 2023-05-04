@@ -45,11 +45,16 @@ explicit manipulation of VRT format, or prefer native GDAL-like calling.
 
 ## Installation
 
-Install the development version from [FS
-GitHub](https://code.fs.usda.gov/):
+Install from CRAN:
 
 ``` r
-devtools::install_github("Chris-Toney/gdalraster", auth_token="a valid token", host="code.fs.usda.gov/api/v3")
+install.packages("gdalraster")
+```
+
+Install the development version from GitHub:
+
+``` r
+devtools::install_github("https://github.com/USDAForestService/gdalraster")
 ```
 
 ## Example
@@ -68,8 +73,8 @@ ds <- new(GDALRaster, lcp_file, read_only=TRUE)
 ## print information about the dataset to the console
 ds$info()
 #> Driver: LCP/FARSITE v.4 Landscape File (.lcp)
-#> Files: /tmp/Rtmp8oLsZj/temp_libpath318c49f61b92/gdalraster/extdata/storm_lake.lcp
-#>        /tmp/Rtmp8oLsZj/temp_libpath318c49f61b92/gdalraster/extdata/storm_lake.prj
+#> Files: /tmp/RtmpH2mKEn/temp_libpath76356f6af7e3/gdalraster/extdata/storm_lake.lcp
+#>        /tmp/RtmpH2mKEn/temp_libpath76356f6af7e3/gdalraster/extdata/storm_lake.prj
 #> Size is 143, 107
 #> Coordinate System is:
 #> PROJCRS["NAD83 / UTM zone 12N",
