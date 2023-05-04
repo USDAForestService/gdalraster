@@ -1,0 +1,3 @@
+useDynLib(gdalraster, .registration=TRUE)
+import(methods, Rcpp)
+exportPattern("^[[:alpha:]]+")
