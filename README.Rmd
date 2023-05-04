@@ -41,10 +41,16 @@ gdalraster is a fast, lightweight and modern R interface to GDAL. It may be suit
 raster I/O or explicit manipulation of VRT format, or prefer native GDAL-like calling.
 
 ## Installation
-Install the development version from [FS GitHub](https://code.fs.usda.gov/):
+Install from CRAN:
+
+```r
+install.packages("gdalraster")
+```
+
+Install the development version from GitHub:
 
 ``` r
-devtools::install_github("Chris-Toney/gdalraster", auth_token="a valid token", host="code.fs.usda.gov/api/v3")
+devtools::install_github("https://github.com/USDAForestService/gdalraster")
 ```
 
 ## Example
