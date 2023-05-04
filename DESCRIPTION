@@ -1,10 +1,8 @@
 Package: gdalraster
 Type: Package
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 0.1
-Date: 2023-04-30
-Author: Chris Toney
-Maintainer: Chris Toney <chris.toney@usda.gov>
+Version: 1.0
+Date: 2023-05-04
 Description: Interface to the raster API of the 'Geospatial Data Abstraction 
 	Library' ('GDAL') supporting manual creation of uninitialized datasets, 
 	creation from existing raster as template, low level I/O,  
@@ -20,7 +18,11 @@ Description: Interface to the raster API of the 'Geospatial Data Abstraction
 	and modern interface to 'GDAL'. It may be suitable for applications that 
 	primarily need low-level raster I/O or explicit manipulation of VRT format,
 	or prefer native 'GDAL'-like calling.
+Author: Chris Toney
+Maintainer: Chris Toney <chris.toney@usda.gov>
+BugReports: https://github.com/USDAForestService/gdalraster/issues
 License: MIT + file LICENSE
+URL: https://github.com/USDAForestService/gdalraster
 Depends: R (>= 3.4)
 Imports: methods, Rcpp (>= 1.0.7)
 LinkingTo: Rcpp
