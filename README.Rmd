@@ -50,7 +50,7 @@ install.packages("gdalraster")
 Install the development version from GitHub:
 
 ``` r
-devtools::install_github("USDAForestService/gdalraster")
+devtools::install_github("https://github.com/USDAForestService/gdalraster")
 ```
 
 ## Example
