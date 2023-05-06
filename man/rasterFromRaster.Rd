@@ -33,7 +33,7 @@ vector of "NAME=VALUE" pairs.
 (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
 compression during creation of a GTiff file).}
 
-\item{init}{Numeric value to initialize all pixxels in the output raster.}
+\item{init}{Numeric value to initialize all pixels in the output raster.}
 
 \item{dstnodata}{Numeric nodata value for the output raster.}
 }
@@ -74,6 +74,7 @@ ds_slp$bbox()
 ds_slp$res()
 
 ## convert slope degrees in lcp_file band 2 to slope percent in slpp_file
+## bring through LCP nodata -9999 to the output nodata value
 ncols <- ds_slp$getRasterXSize()
 nrows <- ds_slp$getRasterYSize()
 for (row in 0:(nrows-1)) {
@@ -81,7 +82,8 @@ for (row in 0:(nrows-1)) {
                            xoff=0, yoff=row,
                            xsize=ncols, ysize=1,
                            out_xsize=ncols, out_ysize=1)
-    rowslpp <- tan(rowdata*pi/180) * 100;
+    rowslpp <- tan(rowdata*pi/180) * 100
+    rowslpp[rowdata==-9999] <- -32767
     dim(rowslpp) <- c(1, ncols)
     ds_slp$write(band=1, xoff=0, yoff=row, xsize=ncols, ysize=1, rowslpp)
 }

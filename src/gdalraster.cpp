@@ -53,6 +53,9 @@ std::string GDALRaster::getFilename() const {
 }
 
 void GDALRaster::open(bool read_only) {
+	if (fname == "")
+		Rcpp::stop("Filename is not set.");
+	
 	GDALClose(hDataset);
 	hDataset = NULL;
 	if (read_only)
@@ -494,8 +497,6 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 		Rcpp::RObject rasterData) {
 							
-	//TODO: add GDALRasterIOExtraArg to override the default resampling to
-	//one of BILINEAR, CUBIC, CUBICSPLINE, LANCZOS, AVERAGE or MODE.
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 		

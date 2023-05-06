@@ -184,9 +184,9 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' raster in a series of processing steps, including as a `tempfile` (the 
 #' default).
 #' 
-#' Note that VRT format has several capabilities and uses beyond  
+#' Note that the GDAL VRT format has several capabilities and uses beyond  
 #' those covered by `rasterToVRT()`. See the format description URL above for 
-#' a full discussion. `warp()` can write to VRT format for virtual 
+#' a full discussion. [warp()] can write to VRT format for virtual 
 #' reprojection.
 #' 
 #' `rasterToVRT()` assumes `srcfile` is a north-up raster.
@@ -197,7 +197,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' be interpreted as relative to the .vrt file (`TRUE`) or not relative
 #' to the .vrt file (`FALSE`, the default). If `TRUE`, the .vrt 
 #' file is assumed to be in the same directory as `srcfile` and
-#' `basename(srcfile)` is used in the .vrt file.
+#' `basename(srcfile)` is used in the .vrt file. Use `TRUE` if the .vrt file 
+#' will always be stored in the same directory with `srcfile`.
 #' @param vrtfile Output VRT filename.
 #' @param resolution A numeric vector of length two (xres, yres). The pixel
 #' size must be expressed in georeferenced units. Both must be positive values.
@@ -237,7 +238,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' Defaults to `TRUE`.
 #' @returns Returns the VRT filename invisibly.
 #' @seealso
-#' [bbox_from_wkt()], [warp()]
+#' [bbox_from_wkt()]
 #' @examples
 #' ## resample
 #'
@@ -282,6 +283,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, 
 #' 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
 #' 
+#' ## align = TRUE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
 #'                         align=TRUE)
@@ -292,6 +294,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_vrt$bbox()
 #' ds_vrt$res()
 #' 
+#' ## align = FALSE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
 #'                         align=FALSE)

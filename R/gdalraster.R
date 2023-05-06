@@ -16,6 +16,10 @@
 #' @seealso
 #' Package overview in [`help("gdalraster-package")`][gdalraster-package]
 #'
+#' [create()], [createCopy()], [rasterFromRaster()], [rasterToVRT()], 
+#' [epsg_to_wkt()],\cr
+#' [inv_geotransform()], [get_pixel_line()], [warp()]
+#'
 #' @section Usage:
 #' \preformatted{
 #' ds <- new(GDALRaster, filename, read_only)
@@ -106,8 +110,8 @@
 #'
 #' \code{$getGeoTransform()}
 #' Returns the affine transformation coefficients for transforming between
-#' pixel/line raster space and projection coordinate (x,y) space. 
-#' The return value is a numeric vector of length six.
+#' pixel/line raster space (column/row) and projection coordinate space 
+#' (geospatial x/y). The return value is a numeric vector of length six.
 #' See \url{https://gdal.org/tutorials/geotransforms_tut.html}
 #' for details of the affine transformation. \emph{With 1-based indexing 
 #' in R}, the geotransform vector contains (in map units of the raster spatial
@@ -226,7 +230,7 @@
 #' Sets the nodata value for \code{band}.
 #' \code{nodata_value} is a numeric value to be defined as the nodata marker.
 #' Depending on the format, changing the nodata value may or may not have an 
-#' effect on the pixel values of a raster that has just been created (often 
+#' effect on the pixel values of a raster that has just been created (usually  
 #' not). It is thus advised to explicitly call \code{$fillRaster()} if the 
 #' intent is to initialize the raster to the nodata value. In any case, 
 #' changing an existing nodata value, when one already exists on an initialized
@@ -282,14 +286,14 @@
 #'
 #' \code{$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)}
 #' Reads a region of raster data from \code{band}. The method takes care of
-#' pixel decimation / replication if the buffer size
+#' pixel decimation / replication if the output size
 #' (\code{out_xsize * out_ysize}) is different than the size of the region 
 #' being accessed (\code{xsize * ysize}).
 #' \code{xoff} is the pixel (column) offset to the top left corner of the
 #' region of the band to be accessed (zero to start from the left side).
 #' \code{yoff} is the line (row) offset to the top left corner of the region of
 #' the band to be accessed (zero to start from the top).
-#' \emph{Note that raster row/column offsets use 0-baseed indexing.}
+#' \emph{Note that raster column/row offsets use 0-based indexing.}
 #' \code{xsize} is the width in pixels of the region to be accessed.
 #' \code{ysize} is the height in pixels of the region to be accessed.
 #' \code{out_xsize} is the width of the output array into which the desired 
@@ -312,11 +316,11 @@
 #' region of the band to be accessed (zero to start from the left side).
 #' \code{yoff} is the line (row) offset to the top left corner of the region of
 #' the band to be accessed (zero to start from the top).
-#' \emph{Note that raster row/column offsets use 0-baseed indexing.}
+#' \emph{Note that raster column/row offsets use 0-based indexing.}
 #' \code{xsize} is the width in pixels of the region to be accessed.
-#' This will typically be the same as ncol(rasterData).
+#' This will typically be the same as `ncol(rasterData)`.
 #' \code{ysize} is the height in pixels of the region to be accessed.
-#' This will typically be the same as nrow(rasterData).
+#' This will typically be the same as `nrow(rasterData)`.
 #' \code{rasterData} is a numeric or complex array containing values to write.
 #' It is organized in left to right, top to bottom pixel order. NA in 
 #' \code{rasterData} should be replaced with a suitable nodata value prior to
@@ -338,7 +342,7 @@
 #' formats such as GTiff could result in being unable to open it afterwards. 
 #' The `GDALRaster` object is still available after calling \code{$close()}. 
 #' The dataset can be re-opened on the existing \code{filename} with 
-#' \code{$open()}, for example to re-open with a different read/write access.
+#' \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
 #'
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
