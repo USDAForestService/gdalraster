@@ -423,20 +423,19 @@ Rcpp::DataFrame _combine(
 	}
 	
 	CmbTable tbl(nrasters, var_names);
-	Rcpp::NumericMatrix rowdata(nrasters, ncols);
-	Rcpp::NumericVector cmbid(ncols);
+	Rcpp::IntegerMatrix rowdata(nrasters, ncols);
+	Rcpp::NumericVector cmbid;
 	GDALProgressFunc pfnProgress = GDALTermProgressR;
 	void* pProgressData = NULL;
 	Rcpp::Rcout << "Combining...\n";
 	for (int y = 0; y < nrows; ++y) {
 		for (std::size_t i = 0; i < nrasters; ++i)
-			rowdata.row(i) = Rcpp::as<Rcpp::NumericMatrix>(
+			rowdata.row(i) = Rcpp::as<Rcpp::IntegerVector>(
 								src_ds[i].read(
 								bands[i], 0, y, ncols, 1, ncols, 1)
 								);
 									
-		cmbid = tbl.updateFromMatrix(
-					Rcpp::as<Rcpp::IntegerMatrix>(rowdata), 1);
+		cmbid = tbl.updateFromMatrix(rowdata, 1);
 		
 		if (out_raster) {
 			cmbid.attr("dim") = Rcpp::Dimension(1, ncols);
@@ -444,7 +443,7 @@ Rcpp::DataFrame _combine(
 						Rcpp::as<Rcpp::NumericMatrix>(cmbid) );
 		}
 		pfnProgress(y / (nrows-1.0), NULL, pProgressData);
-		if (y % 250 == 0)
+		if (y % 1000 == 0)
 			Rcpp::checkUserInterrupt();
 	}
 
