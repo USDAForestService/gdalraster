@@ -1,25 +1,14 @@
 # R functions for various processing with gdalraster
 # Chris Toney <chris.toney at usda.gov>
 
-.VRT_KERNEL_TEMPLATE <- 
-"<KernelFilteredSource>
-  <SourceFilename relativeToVRT=\"%d\">%s</SourceFilename><SourceBand>%d</SourceBand>
-  <SrcRect xOff=\"%d\" yOff=\"%d\" xSize=\"%d\" ySize=\"%d\"/>
-  <DstRect xOff=\"0\" yOff=\"0\" xSize=\"%d\" ySize=\"%d\"/>
-  <Kernel normalized=\"%d\">
-    <Size>%d</Size>
-    <Coefs>%s</Coefs>
-  </Kernel>
-</KernelFilteredSource>"
+.DEFAULT_NODATA <- list('Byte'= 255, 'UInt16'= 65535, 'Int16'= -32767,
+						'UInt32'= 4294967293, 'Int32'= -2147483647, 
+						'Float32'= 3.402823466E+38, 
+						'Float64'= .Machine$double.xmax)
 
-#' Get a pixel or line offset for a north-up raster
-#' @param coord A georeferenced x or y
-#' @param origin Raster xmin or ymax
-#' @param gt_pixel_size Geotransform pixel x or y size (negative for y)
-#' @returns pixel (column) or line (row) offset for coord x or y
 #' @noRd
-.getOffset <- function(coord, origin, gt_pixel_size) {
-	(coord-origin)/gt_pixel_size
+.getDefaultNodata <- function(GDT_name) {
+	return(.DEFAULT_NODATA[[GDT_name]])
 }
 
 #' @noRd
@@ -38,6 +27,28 @@
 	}
 	return(NULL)
 }
+
+#' Get a pixel or line offset for a north-up raster
+#' @param coord A georeferenced x or y
+#' @param origin Raster xmin or ymax
+#' @param gt_pixel_size Geotransform pixel x or y size (negative for y)
+#' @returns pixel (column) or line (row) offset for coord x or y
+#' @noRd
+.getOffset <- function(coord, origin, gt_pixel_size) {
+	(coord-origin)/gt_pixel_size
+}
+
+.VRT_KERNEL_TEMPLATE <- 
+"<KernelFilteredSource>
+  <SourceFilename relativeToVRT=\"%d\">%s</SourceFilename><SourceBand>%d</SourceBand>
+  <SrcRect xOff=\"%d\" yOff=\"%d\" xSize=\"%d\" ySize=\"%d\"/>
+  <DstRect xOff=\"0\" yOff=\"0\" xSize=\"%d\" ySize=\"%d\"/>
+  <Kernel normalized=\"%d\">
+    <Size>%d</Size>
+    <Coefs>%s</Coefs>
+  </Kernel>
+</KernelFilteredSource>"
+
 
 #' Create a raster from an existing raster as template
 #' 
@@ -151,6 +162,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 	
 	return(invisible(dstfile))
 }
+
 
 #' Create a GDAL virtual raster
 #'
@@ -463,6 +475,247 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 
 	return(invisible(vrtfile))
 }
+
+
+#' Raster calculator
+#' 
+#' @description
+#' `calc()` evaluates an R expression for each pixel in a raster layer or 
+#' stack of layers. Each layer is defined by a raster filename, band number, 
+#' and variable name. Band defaults to 1 for each input raster file if not 
+#' specified.
+#' Variable names default to `LETTERS` (`A` (layer 1), `B` (layer 2), ...)
+#' if not specified.
+#' All of the input layers must have the same extent and cell size.
+#' The projection will be read from the first raster in the list 
+#' of inputs.
+#'
+#' @details
+#' Variables in `expr` are vectors of length n (rows of a raster layer). The 
+#' expresion should return a vector also of length n (an output row). 
+#' Two special variable names are available in `expr` by default: 
+#' `pixelX` and `pixelY` provide the pixel center coordinate in 
+#' projection units. If `usePixelLonLat = TRUE`, the pixel x/y coordinates 
+#' will also be inverse projected to longitude/latitude and available 
+#' for use in `expr` as `pixelLon` and `pixelLat` (in the same geographic 
+#' coordinate reference system used by the input projection, read from the 
+#' first input raster).
+#'
+#' To refer to specific bands in a multi-band file, repeat the filename in 
+#' `rasterfiles` and specify corresponding band numbers in `bands`, along with
+#' optional variable names in `var.names`, for example,
+#' \preformatted{
+#' rasterfiles = c("file.img", "file.img")
+#' bands = c(3, 4)
+#' var.names = c("b3", "b4")
+#' }
+#' @param expr An R expression as a character string (e.g., `expr = "A + B"`).
+#' @param rasterfiles Character vector of source raster filenames.
+#' @param bands Integer vector of band numbers to use for each raster layer.
+#' @param var.names Character vector of variable names to use for each raster 
+#' layer.
+#' @param dstfile Character filename for output raster (will be created).
+#' @param fmt Output raster format name (e.g., "GTiff" or "HFA"). Will attempt 
+#' to guess from the output filename if not specified.
+#' @param dtName Character name of output data type (e.g., Byte, Int16, 
+#' UInt16, Int32, UInt32, Float32).
+#' @param options Optional list of format-specific creation options in a
+#' vector of "NAME=VALUE" pairs.
+#' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+#' compression during creation of a GTiff file).
+#' @param nodata_value Numeric value to assign if `expr` returns NA.
+#' @param setRasterNodataValue Logical. `TRUE` will attempt to set the raster 
+#' format nodata value to `nodata_value`, or `FALSE` not to set a raster 
+#' nodata value.
+#' @param usePixelLonLat Logical. If `TRUE`, `pixelX` and `pixelY` will be 
+#' inverse projected to geographic coordinates and available as `pixelLon` and 
+#' `pixelLat` in `expr` (adds computation time).
+#' @returns Returns the output filename invisibly.
+#' @seealso
+#' [rasterToVRT()] for aligning rasters in a stack
+#' @examples
+#' ## Calculate Hopkins bioclimatic index (HI) as described in:
+#' ## Bechtold, 2004, West. J. Appl. For. 19(4):245-251.
+#' ## Integrates elevation, latitude and longitude into an index of the 
+#' ## phenological occurrence of springtime. Here it is relativized to 
+#' ## mean values for an eight-state region in the western US.
+#' ## Positive HI means spring is delayed by that number of days relative 
+#' ## to the reference position, while negative values indicate spring is
+#' ## advanced. The original equation used elevation units of feet, so 
+#' ## converting m to ft in `expr`.
+#' 
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' expr <- "round( 
+#'                (((ELEV_M * 3.281) - 5449) / 100) + 
+#'                ((pixelLat - 42.16) * 4) + 
+#'                ((-116.39 - pixelLon) * 1.25) 
+#'               )"
+#' 
+#' ## writes to a tempfile by default
+#' hi_file <- calc(expr, 
+#'                 rasterfiles = elev_file, 
+#'                 var.names = c("ELEV_M"), 
+#'                 dtName = "Int16",
+#'                 nodata_value = -32767, 
+#'                 setRasterNodataValue = TRUE,
+#'                 usePixelLonLat = TRUE)
+#' 
+#' ds <- new(GDALRaster, hi_file, read_only=TRUE)
+#' ## min, max, mean, sd
+#' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
+#' ds$close()
+calc <- function(expr, 
+					rasterfiles, 
+					bands = NULL, 
+					var.names = NULL,
+					dstfile = tempfile("rastcalc", fileext=".tif"),
+					fmt = NULL,
+					dtName = "Int16", 
+					options = NULL,
+					nodata_value = NULL, 
+					setRasterNodataValue = FALSE,
+					usePixelLonLat = FALSE)
+{
+	
+	calc_expr = parse(text=expr)
+
+	if ( !all(file.exists(rasterfiles)) ) {
+		message( rasterfiles[which(!file.exists(rasterfiles))] )
+		stop("File not found.", call. = FALSE)
+	}
+	
+	nrasters = length(rasterfiles)
+
+	if (!is.null(bands)) {
+		if (length(bands) != nrasters) {
+			stop("List of band numbers must be same length as raster list.",
+				call. = FALSE)
+		}
+	}
+	else {
+		bands = rep(1, nrasters)
+	}
+	
+	if (!is.null(var.names)) {
+		if (length(var.names) != nrasters) {
+			stop("List of variable names must be same length as raster list.",
+				call. = FALSE)
+		}
+	}
+	else {
+		var.names=LETTERS[1:nrasters]
+	}
+	
+	if (is.null(fmt)) {
+		fmt = .getGDALformat(dstfile)
+		if (is.null(fmt)) {
+			stop("Use fmt argument to specify a GDAL raster format code.",
+				call. = FALSE)
+		}
+	}
+	
+	if (is.null(nodata_value)) {
+		nodata_value = .getDefaultNodata(dtName)
+		if (is.null(nodata_value)) {
+			stop("Invalid output data type (dtName).", call. = FALSE)
+		}
+	}
+	
+	# use first raster as reference
+	ref = new(GDALRaster, rasterfiles[1], TRUE)
+	nrows = ref$getRasterYSize()
+	ncols = ref$getRasterXSize()
+	cellsizeX = ref$res()[1]
+	cellsizeY = ref$res()[2]
+	xmin = ref$bbox()[1]
+	ymax = ref$bbox()[4]
+	srs = ref$getProjectionRef()
+	ref$close()
+	ref = NULL
+	
+	if(nrasters > 1) {
+		for(r in rasterfiles) {
+			ds = new(GDALRaster, r, TRUE)
+			if(ds$getRasterYSize() != nrows || ds$getRasterXSize() != ncols) {
+				message(rasterfiles[r])
+				stop("All input rasters must have the same dimensions.", 
+					call. = FALSE)
+			}
+			ds$close()
+		}
+	}
+	
+	#create the output raster
+	dstnodata = NULL
+	if(setRasterNodataValue) 
+		dstnodata = nodata_value
+	gdalraster::rasterFromRaster(rasterfiles[1], dstfile, fmt, 
+									nbands=1, dtName=dtName,
+									options=options, dstnodata=dstnodata)
+	dst_ds = new(GDALRaster, dstfile, read_only=FALSE)
+	
+	# list of GDALRaster objects for each raster layer
+	gd_list <- list()
+	for (r in 1:nrasters)
+		gd_list[[r]] <- new(GDALRaster, rasterfiles[r], read_only=TRUE)
+	
+	x = seq(from = xmin + (cellsizeX/2), by = cellsizeX, length.out = ncols)
+	assign("pixelX", x)
+	
+	process_row <- function(row) {
+		y = rep( (ymax - (cellsizeY/2) - (cellsizeY*row)), ncols )
+		assign("pixelY", y)
+		
+		if(usePixelLonLat) {
+			lonlat = inv_project(cbind(x,y), srs)
+			assign("pixelLon", lonlat[,1])
+			assign("pixelLat", lonlat[,2])
+		}
+		
+		for (r in 1:nrasters) {
+			inrow = gd_list[[r]]$read(band = bands[r], 
+										xoff = 0,
+										yoff = row,
+										xsize = ncols,
+										ysize = 1,
+										out_xsize = ncols,
+										out_ysize = 1)
+			assign(var.names[r], inrow)
+		}
+		
+		outrow = eval(calc_expr)
+		if (length(outrow) != ncols) {
+			dst_ds$close()
+			for (r in 1:nrasters)
+				gd_list[[r]]$close()
+			stop("Result vector is the wrong size.", call. = FALSE)
+		}
+		outrow = ifelse(is.na(outrow), nodata_value, outrow)
+		dim(outrow) = c(1, ncols)
+		dst_ds$write(band = 1,
+						offx = 0,
+						offy = row,
+						xsize = ncols,
+						ysize = 1,
+						outrow)
+		
+		setTxtProgressBar(pb, row+1)
+		return()
+	}
+	
+	message(paste("Calculating from", nrasters, "input layer(s)..."))
+	pb <- txtProgressBar(min=0, max=nrows)
+	lapply(0:(nrows-1), process_row)
+	close(pb)
+
+	message(paste("Output written to:", dstfile))
+	dst_ds$close()
+	for (r in 1:nrasters)
+		gd_list[[r]]$close()
+		
+	invisible(dstfile)
+}
+
 
 #' Raster overlay for unique combinations
 #' 
