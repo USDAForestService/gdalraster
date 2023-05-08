@@ -20,7 +20,7 @@ void _gdal_init(DllInfo *dll) {
 }
 
 /*	ARE_REAL_EQUAL() from gdal_priv.h
-	that header otherwise not needed so copying here
+	That header is not needed otherwise so copying here
 	Copyright (c) 1998, Frank Warmerdam
 	Copyright (c) 2007-2014, Even Rouault <even dot rouault at spatialys.com>
 	License: MIT */
@@ -396,7 +396,6 @@ Rcpp::CharacterVector GDALRaster::getMetadata(int band,
 		for (int i=0; i < items; ++i) {
 			md(i) = papszMetadata[i];
 		}
-		//CSLDestroy(papszMetadata);
 		return md;
 	}
 	else {
@@ -441,56 +440,59 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 	GDALDataType eDT = GDALGetRasterDataType(hBand);
 	
 	if (GDALDataTypeIsComplex(eDT)) {
-		// complex data types
+	// complex data types
 		std::vector<std::complex<double>> buf(out_xsize * out_ysize);
 		
 		CPLErr err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
 						buf.data(), out_xsize, out_ysize, GDT_CFloat64, 0, 0);
 					
-		if (err == CE_Failure) {
+		if (err == CE_Failure)
 			Rcpp::stop("Read raster failed.");
-		}
-		else {
-			Rcpp::ComplexVector v = Rcpp::wrap(buf);
-			v.attr("dim") = Rcpp::Dimension(out_ysize, out_xsize);
-			return v;
-		}
+
+		Rcpp::ComplexVector v = Rcpp::wrap(buf);
+		v.attr("dim") = Rcpp::Dimension(out_ysize, out_xsize);
+		return v;
+
 	}
 	else {
-		// real data types
+	// real data types
 		std::vector<double> buf(out_xsize * out_ysize);
 	
 		CPLErr err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
 						buf.data(), out_xsize, out_ysize, GDT_Float64, 0, 0);
 						
-		if (err == CE_Failure) {
+		if (err == CE_Failure)
 			Rcpp::stop("Read raster failed.");
-		}
-		else {
-			if (this->hasNoDataValue(band)) {
-				double nodata_value = this->getNoDataValue(band);
-				if (GDALDataTypeIsFloating(GDALGetRasterDataType(hBand))) {
-					for (double& val : buf) {
-						if (CPLIsNan(val))
-							val = NA_REAL;
-						else if (ARE_REAL_EQUAL(val, nodata_value))
-							val = NA_REAL;
-					}
-				}
-				else {
-					std::replace(buf.begin(), buf.end(), nodata_value, NA_REAL);
-				}
-			}
-			else if (GDALDataTypeIsFloating(GDALGetRasterDataType(hBand))) {
+
+
+		if (this->hasNoDataValue(band)) {
+		// with a nodata value
+			double nodata_value = this->getNoDataValue(band);
+			if (GDALDataTypeIsFloating(GDALGetRasterDataType(hBand))) {
+			// floating point
 				for (double& val : buf) {
 					if (CPLIsNan(val))
 						val = NA_REAL;
+					else if (ARE_REAL_EQUAL(val, nodata_value))
+						val = NA_REAL;
 				}
 			}
-			Rcpp::NumericVector v = Rcpp::wrap(buf);
-			v.attr("dim") = Rcpp::Dimension(out_ysize, out_xsize);
-			return v;
+			else {
+			// integer
+				std::replace(buf.begin(), buf.end(), nodata_value, NA_REAL);
+			}
 		}
+		// without a nodata value
+		else if (GDALDataTypeIsFloating(GDALGetRasterDataType(hBand))) {
+			for (double& val : buf) {
+				if (CPLIsNan(val))
+					val = NA_REAL;
+			}
+		}
+		
+		Rcpp::NumericVector v = Rcpp::wrap(buf);
+		v.attr("dim") = Rcpp::Dimension(out_ysize, out_xsize);
+		return v;
 	}
 }
 
@@ -509,7 +511,7 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 	GDALDataType eBufType;
 	CPLErr err;
 	if (Rcpp::is<Rcpp::NumericVector>(rasterData)) {
-		// real data types
+	// real data types
 		Rcpp::NumericMatrix buf = Rcpp::as<Rcpp::NumericMatrix>(rasterData);
 		eBufType = GDT_Float64;
 		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
@@ -522,7 +524,7 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 					buf_.data(), buf_xsize, buf_ysize, eBufType, 0, 0);
 	}
 	else if (Rcpp::is<Rcpp::ComplexVector>(rasterData)) {
-		// complex data types
+	// complex data types
 		Rcpp::ComplexMatrix buf = Rcpp::as<Rcpp::ComplexMatrix>(rasterData);
 		eBufType = GDT_CFloat64;
 		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
@@ -559,7 +561,7 @@ void GDALRaster::fillRaster(int band, double value, double ivalue) {
 void GDALRaster::_setMetadataItem(int band, std::string mdi_name, 
 		std::string mdi_value, std::string domain) {
 		
-	// currently for GDALRasterBand metadata item
+	// currently only for GDALRasterBand metadata item
 	
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
