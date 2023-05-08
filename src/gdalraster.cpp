@@ -9,6 +9,7 @@ Chris Toney <chris.toney at usda.gov> */
 #include "gdal.h"
 #include "cpl_string.h"
 #include "gdal_utils.h"
+#include "gdal_alg.h"
 
 #include <errno.h>
 
@@ -169,6 +170,14 @@ int GDALRaster::getRasterCount() const {
 		Rcpp::stop("Raster dataset is not open.");
 		
 	return GDALGetRasterCount(hDataset);
+}
+
+int GDALRaster::_getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+	
+	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	return GDALChecksumImage(hBand, xoff, yoff, xsize, ysize);
 }
 
 std::string GDALRaster::getProjectionRef() const {
@@ -611,6 +620,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Return the resolution (pixel width, pixel height).")
     .const_method("getRasterCount", &GDALRaster::getRasterCount, 
     	"Return the number of raster bands on this dataset.")
+    .const_method(".getChecksum", &GDALRaster::_getChecksum, 
+    	"Compute checksum for raster region.")
     .const_method("getProjectionRef", &GDALRaster::getProjectionRef, 
     	"Return the projection definition for this dataset.")
     .method("setProjection", &GDALRaster::setProjection, 

@@ -80,6 +80,7 @@ class GDALRaster {
 	std::vector<double> bbox() const;
 	std::vector<double> res() const;
 	int getRasterCount() const;
+	int _getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
 	
 	std::string getProjectionRef() const;
 	bool setProjection(std::string projection);
