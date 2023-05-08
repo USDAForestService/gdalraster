@@ -1,4 +1,4 @@
-// Convenience functions for coordinate transformation 
+// Functions for coordinate transformation 
 // Chris Toney <chris.toney at usda.gov>
 
 #include <Rcpp.h> 
@@ -6,11 +6,9 @@
 
 #include <string>
 
-#include "cpl_conv.h"
 #include "ogr_core.h"
 #include "ogr_srs_api.h"
 #include "ogr_spatialref.h"
-
 
 //' Inverse project geospatial x/y coordinates to longitude/latitude
 //'
@@ -21,10 +19,9 @@
 //' Details).
 //'
 //' @details
-//' By default, the geographic coordinate reference system (CRS) of the 
-//' projected CRS specified by `srs` will be used. If a specific 
-//' geographic CRS is desired, then `well_known_gcs` can be 
-//' set to one of the values below:
+//' By default, the geographic coordinate system of the projection specified 
+//' by `srs` will be used. If a specific geographic coordinate system is 
+//' desired, then `well_known_gcs` can be set to one of the values below:
 //' \tabular{rl}{
 //'  `EPSG:n` \tab where `n` is the code of a geographic CRS\cr
 //'  `WGS84`  \tab same as `EPSG:4326`\cr
@@ -35,13 +32,14 @@
 //'  `CRS72`  \tab same as `WGS72`\cr
 //'  `CRS27`  \tab same as `NAD27`
 //' }
-//' *Note that the returned array will always be in longitude, latitude order 
-//' (traditional GIS order). That may not always be the case when using these 
-//' well known names in other contexts.*
+//' The returned array will always be in longitude, latitude order 
+//' (traditional GIS order) regardless of the axis order defined for the 
+//' names above.
 //'
 //' `inv_project()` is included here as a convenience function mainly for 
 //' internal use. See package `sf` for more full-featured and robust 
 //' coordinate transformation (\url{https://r-spatial.github.io/sf/}).
+//'
 //' @param pts Numeric array of geospatial x/y coordinates 
 //' @param srs Character string in OGC WKT format specifying the projected 
 //' spatial reference system for `pts`.
@@ -50,6 +48,8 @@
 //' supported values).
 //' @returns Numeric array of longitude, latitude. An error is raised if the 
 //' transformation cannot be performed.
+//' @seealso
+//' [transform_xy()]
 //' @examples
 //' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 //' ## id, x, y in NAD83 / UTM zone 12N
@@ -84,6 +84,7 @@ Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts,
 		if (err == OGRERR_FAILURE)
 			Rcpp::stop("Failed to set well known GCS.");
 	}
+	// GDAL >= 3.0:
 	poLongLat->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
 	poCT = OGRCreateCoordinateTransformation(&oSourceSRS, poLongLat);
@@ -99,12 +100,12 @@ Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts,
 	if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) )
 		Rcpp::stop("Coordinate transformation failed.");
 	
-	Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
+	Rcpp::NumericMatrix pts_out(pts_in.nrow(), 2);
 	for (R_xlen_t i=0; i < pts_in.nrow(); ++i) {
-		ret(i,0) = xbuf[i];
-		ret(i,1) = ybuf[i];
+		pts_out(i,0) = xbuf[i];
+		pts_out(i,1) = ybuf[i];
 	}
-	return ret;
+	return pts_out;
 }
 
 //' Transform geospatial x/y coordinates
@@ -121,7 +122,10 @@ Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts,
 //' spatial reference system for `pts`.
 //' @param srs_to Character string in OGC WKT format specifying the output 
 //' spatial reference system.
-//' @returns Numeric array of geospatial x/y coordinates in `srs_to`.
+//' @returns Numeric array of geospatial x/y coordinates in the `srs_to` 
+//' projection.
+//' @seealso
+//' [epsg_to_wkt()], [inv_project()]
 //' @examples
 //' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 //' ## id, x, y in NAD83 / UTM zone 12N
@@ -148,7 +152,7 @@ Rcpp::NumericMatrix transform_xy(Rcpp::NumericMatrix &pts,
 	err = oDestSRS.importFromWkt(srs_to.c_str());
 	if (err != OGRERR_NONE)
 		Rcpp::stop("Failed to import destination SRS from WKT string.");
-
+	// GDAL >= 3.0:
 	oDestSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
 	poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
