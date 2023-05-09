@@ -33,7 +33,7 @@ std::string _gdal_version() {
 //' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 //' @param options Optional list of format-specific creation options in a
 //' vector of "NAME=VALUE" pairs 
-//' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set DEFLATE 
+//' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW 
 //' compression during creation of a GTiff file).
 //' The APPEND_SUBDATASET=YES option can be 
 //' specified to avoid prior destruction of existing dataset.
@@ -110,7 +110,7 @@ bool create(std::string format, std::string dst_filename,
 //' the output format.
 //' @param options Optional list of format-specific creation options in a
 //' vector of "NAME=VALUE" pairs 
-//' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+//' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 //' compression during creation of a GTiff file).
 //' The APPEND_SUBDATASET=YES option can be 
 //' specified to avoid prior destruction of existing dataset.
@@ -121,7 +121,7 @@ bool create(std::string format, std::string dst_filename,
 //' @examples
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 //' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
-//' options <- c("COMPRESS=DEFLATE")
+//' options <- c("COMPRESS=LZW")
 //' createCopy("GTiff", tif_file, lcp_file, options=options)
 //' file.size(lcp_file)
 //' file.size(tif_file)
