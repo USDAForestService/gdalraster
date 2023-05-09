@@ -67,7 +67,7 @@
 #' (e.g., "Byte", "Int16", "UInt16", "Int32" or "Float32").
 #' @param options Optional list of format-specific creation options in a
 #' vector of "NAME=VALUE" pairs.
-#' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+#' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 #' compression during creation of a GTiff file).
 #' @param init Numeric value to initialize all pixxels in the output raster.
 #' @param dstnodata Numeric nodata value for the output raster.
@@ -83,7 +83,7 @@
 #' ds_lcp$getMetadata(band=2, domain="")
 #' 
 #' slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
-#' options = c("COMPRESS=DEFLATE")
+#' options = c("COMPRESS=LZW")
 #' rasterFromRaster(srcfile = lcp_file,
 #'                  dstfile = slpp_file,
 #'                  nbands = 1,
@@ -482,23 +482,26 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' @description
 #' `calc()` evaluates an R expression for each pixel in a raster layer or 
 #' stack of layers. Each layer is defined by a raster filename, band number, 
-#' and variable name. Band defaults to 1 for each input raster file if not 
-#' specified.
-#' Variable names default to `LETTERS` (`A` (layer 1), `B` (layer 2), ...)
-#' if not specified.
+#' and variable name to use in the R expression. If not specified, band 
+#' defaults to 1 for each input raster. 
+#' Variable names default to `LETTERS` if not specified 
+#' (`A` (layer 1), `B` (layer 2), ...).
 #' All of the input layers must have the same extent and cell size.
 #' The projection will be read from the first raster in the list 
 #' of inputs.
+#' Individual pixel coordinates are available for use as variables in 
+#' the R expession, as both x/y in the raster projected 
+#' coordinate system and inverse projected longitude/latitude.
 #'
 #' @details
-#' Variables in `expr` are vectors of length n (rows of a raster layer). The 
-#' expresion should return a vector also of length n (an output row). 
+#' The variables in `expr` are vectors of length n (rows of a raster layer). 
+#' The expresion should return a vector also of length n (an output row). 
 #' Two special variable names are available in `expr` by default: 
 #' `pixelX` and `pixelY` provide the pixel center coordinate in 
 #' projection units. If `usePixelLonLat = TRUE`, the pixel x/y coordinates 
 #' will also be inverse projected to longitude/latitude and available 
 #' for use in `expr` as `pixelLon` and `pixelLat` (in the same geographic 
-#' coordinate reference system used by the input projection, read from the 
+#' coordinate system used by the input projection, which is read from the 
 #' first input raster).
 #'
 #' To refer to specific bands in a multi-band file, repeat the filename in 
@@ -509,7 +512,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' bands = c(3, 4)
 #' var.names = c("b3", "b4")
 #' }
-#' @param expr An R expression as a character string (e.g., `expr = "A + B"`).
+#' @param expr An R expression as a character string (e.g., `"A + B"`).
 #' @param rasterfiles Character vector of source raster filenames.
 #' @param bands Integer vector of band numbers to use for each raster layer.
 #' @param var.names Character vector of variable names to use for each raster 
@@ -520,8 +523,8 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' @param dtName Character name of output data type (e.g., Byte, Int16, 
 #' UInt16, Int32, UInt32, Float32).
 #' @param options Optional list of format-specific creation options in a
-#' vector of "NAME=VALUE" pairs.
-#' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+#' vector of "NAME=VALUE" pairs
+#' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 #' compression during creation of a GTiff file).
 #' @param nodata_value Numeric value to assign if `expr` returns NA.
 #' @param setRasterNodataValue Logical. `TRUE` will attempt to set the raster 
@@ -769,7 +772,7 @@ calc <- function(expr,
 #' (e.g., "UInt16" or the default "UInt32").
 #' @param options Optional list of format-specific creation options in a
 #' vector of "NAME=VALUE" pairs.
-#' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+#' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 #' compression during creation of a GTiff file).
 #' @returns A data frame with column `cmbid` containing the combination IDs, 
 #' column `count` containing the pixel counts for each combination, 
@@ -793,7 +796,7 @@ calc <- function(expr,
 #' bands <- c(4, 5)
 #' var.names <- c("fbfm", "tree_cov")
 #' cmb_file <- paste0(tempdir(), "/", "fbfm_cov_cmbid.tif")
-#' options <- c("COMPRESS=DEFLATE")
+#' options <- c("COMPRESS=LZW")
 #' df <- combine(rasterfiles, var.names, bands, cmb_file, options = options)
 #' head(df)
 #' ds <- new(GDALRaster, cmb_file, TRUE)

@@ -1,5 +1,5 @@
-// Functions for coordinate transformation 
-// Chris Toney <chris.toney at usda.gov>
+/* Functions for coordinate transformation 
+   Chris Toney <chris.toney at usda.gov> */
 
 #include <Rcpp.h> 
 // [[Rcpp::plugins(cpp11)]]
@@ -15,7 +15,7 @@
 //' `inv_project()` transforms geospatial x/y coordinates to long/lat in 
 //' the same geographic coordinate system used by the given projected spatial 
 //' reference system. The output long/lat can optionally be set to a specific 
-//' geographic coordinate system by specifying a well known text value (see 
+//' geographic coordinate system by specifying a well known name (see 
 //' Details).
 //'
 //' @details
@@ -37,7 +37,7 @@
 //' names above.
 //'
 //' `inv_project()` is included here as a convenience function mainly for 
-//' internal use. See package `sf` for more full-featured and robust 
+//' internal use. See package `sf` for more full-featured  
 //' coordinate transformation (\url{https://r-spatial.github.io/sf/}).
 //'
 //' @param pts Numeric array of geospatial x/y coordinates 
@@ -114,7 +114,7 @@ Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts,
 //'
 //' @note
 //' `transform_xy()` is included here as a convenience function mainly for 
-//' internal use. See package `sf` for more full-featured and robust 
+//' internal use. See package `sf` for more full-featured 
 //' coordinate transformation (\url{https://r-spatial.github.io/sf/}).
 //'
 //' @param pts Numeric array of geospatial x/y coordinates 
@@ -128,9 +128,12 @@ Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts,
 //' [epsg_to_wkt()], [inv_project()]
 //' @examples
 //' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
-//' ## id, x, y in NAD83 / UTM zone 12N
 //' pts <- read.csv(pt_file)
-//' transform_xy(as.matrix(pts[,-1]), epsg_to_wkt(26912), epsg_to_wkt(5070))
+//' ## id, x, y in NAD83 / UTM zone 12N
+//' ## transform to NAD83 / CONUS Albers
+//' transform_xy( pts = as.matrix(pts[,-1]), 
+//'               srs_from = epsg_to_wkt(26912), 
+//'               srs_to = epsg_to_wkt(5070) )
 // [[Rcpp::export]]
 Rcpp::NumericMatrix transform_xy(Rcpp::NumericMatrix &pts, 
 								std::string srs_from,
