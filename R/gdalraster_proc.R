@@ -517,11 +517,12 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' @param bands Integer vector of band numbers to use for each raster layer.
 #' @param var.names Character vector of variable names to use for each raster 
 #' layer.
-#' @param dstfile Character filename for output raster (will be created).
+#' @param dstfile Character filename of output raster.
 #' @param fmt Output raster format name (e.g., "GTiff" or "HFA"). Will attempt 
 #' to guess from the output filename if not specified.
 #' @param dtName Character name of output data type (e.g., Byte, Int16, 
 #' UInt16, Int32, UInt32, Float32).
+#' @param out_band Integer band number in `dstfile` for writing output.
 #' @param options Optional list of format-specific creation options in a
 #' vector of "NAME=VALUE" pairs
 #' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
@@ -533,6 +534,12 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' @param usePixelLonLat Logical. If `TRUE`, `pixelX` and `pixelY` will be 
 #' inverse projected to geographic coordinates and available as `pixelLon` and 
 #' `pixelLat` in `expr` (adds computation time).
+#' @param write_mode Character. Name of the file write mode for output. 
+#' One of:
+#'   * `safe` - execution stops if `dstfile` already exists (no output written)
+#'   * `overwrite` - if `dstfile` exists if will be overwritten with a new file
+#'   * `update` - if `dstfile` exists, will attempt to open in update mode 
+#'   and write output to `out_band`
 #' @returns Returns the output filename invisibly.
 #' @seealso
 #' [rasterToVRT()] for aligning rasters in a stack
@@ -574,10 +581,12 @@ calc <- function(expr,
 					dstfile = tempfile("rastcalc", fileext=".tif"),
 					fmt = NULL,
 					dtName = "Int16", 
+					out_band = NULL,
 					options = NULL,
 					nodata_value = NULL, 
 					setRasterNodataValue = FALSE,
-					usePixelLonLat = FALSE)
+					usePixelLonLat = FALSE,
+					write_mode = "safe")
 {
 	
 	calc_expr = parse(text=expr)
@@ -587,6 +596,28 @@ calc <- function(expr,
 		stop("File not found.", call. = FALSE)
 	}
 	
+	if (write_mode == "safe" && file.exists(dstfile))
+		stop("The output file already exists and write_mode is 'safe'.", 
+			call. = FALSE)
+	
+	if (write_mode == "update" && is.null(out_band))
+		stop("out_band must be specified for update mode.", call. = FALSE)
+
+	if (write_mode == "update") {
+		update_mode = TRUE
+	}
+	else if (write_mode == "safe" || write_mode == "overwrite") {
+		if (!is.null(out_band))
+			if (out_band != 1)
+				stop("out_band other than 1 requires 'update' mode.",
+					call. = FALSE)
+		update_mode = FALSE
+		out_band = 1
+	}
+	else {
+		stop("Unknown write_mode.", call. = FALSE)
+	}
+
 	nrasters = length(rasterfiles)
 
 	if (!is.null(bands)) {
@@ -620,7 +651,8 @@ calc <- function(expr,
 	if (is.null(nodata_value)) {
 		nodata_value = .getDefaultNodata(dtName)
 		if (is.null(nodata_value)) {
-			stop("Invalid output data type (dtName).", call. = FALSE)
+			stop("Default nodata value unavailable for output data type.",
+				call. = FALSE)
 		}
 	}
 	
@@ -648,14 +680,25 @@ calc <- function(expr,
 		}
 	}
 	
-	#create the output raster
-	dstnodata = NULL
-	if(setRasterNodataValue) 
-		dstnodata = nodata_value
-	gdalraster::rasterFromRaster(rasterfiles[1], dstfile, fmt, 
-									nbands=1, dtName=dtName,
-									options=options, dstnodata=dstnodata)
-	dst_ds = new(GDALRaster, dstfile, read_only=FALSE)
+	if (update_mode) {
+		# write to an existing raster
+		dst_ds = new(GDALRaster, dstfile, read_only=FALSE)
+	}
+	else {
+		#create the output raster
+		dstnodata = NULL
+		if(setRasterNodataValue) 
+			dstnodata = nodata_value
+		gdalraster::rasterFromRaster(rasterfiles[1], 
+										dstfile,
+										fmt, 
+										nbands = 1, 
+										dtName = dtName,
+										options = options, 
+										dstnodata = dstnodata)
+		dst_ds = new(GDALRaster, dstfile, read_only=FALSE)
+	}
+	
 	
 	# list of GDALRaster objects for each raster layer
 	gd_list <- list()
@@ -695,13 +738,13 @@ calc <- function(expr,
 		}
 		outrow = ifelse(is.na(outrow), nodata_value, outrow)
 		dim(outrow) = c(1, ncols)
-		dst_ds$write(band = 1,
-						offx = 0,
-						offy = row,
-						xsize = ncols,
-						ysize = 1,
-						outrow)
-		
+		dst_ds$write(band = out_band,
+					offx = 0,
+					offy = row,
+					xsize = ncols,
+					ysize = 1,
+					outrow)
+					
 		setTxtProgressBar(pb, row+1)
 		return()
 	}
