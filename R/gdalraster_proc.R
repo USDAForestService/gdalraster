@@ -184,10 +184,23 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' raster in a series of processing steps, including as a `tempfile` (the 
 #' default).
 #' 
-#' Note that the GDAL VRT format has several capabilities and uses beyond  
-#' those covered by `rasterToVRT()`. See the format description URL above for 
+#' GDAL VRT format has several capabilities and uses beyond those
+#' covered by `rasterToVRT()`. See the format description URL above for 
 #' a full discussion. [warp()] can write to VRT format for virtual 
 #' reprojection.
+#'
+#' @note
+#' Pixel alignment is specified in terms of the source raster pixels (i.e., 
+#' `srcfile` for the virtual raster). The use case in mind is virtually 
+#' clipping a raster to the bounding box of a vector polygon and keeping 
+#' pixels aligned with `srcfile` (`src_align = TRUE`). `src_align` would be 
+#' set to `FALSE` if the intent is "target alignment". For example, if the 
+#' `subwindow` argument is the bounding box of another raster, then also 
+#' setting `resolution` to the pixel resolution of the target raster and 
+#' `src_align = FALSE` will result in a virtual raster pixel aligned with 
+#' the target (i.e., pixels in the virtual raster are no longer aligned with 
+#' `srcfile`). Resampling defaults to `nearest` if not specified. 
+#' Examples for both cases are given below.
 #' 
 #' `rasterToVRT()` assumes `srcfile` is a north-up raster.
 #' Requires package `xml2`.
@@ -209,16 +222,20 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' If not given, the upper left corner of the VRT will be the 
 #' same as source, and the VRT extent will be the same or larger than source 
 #' depending on `resolution`.
-#' @param align Logical.
+#' @param src_align Logical.
 #'   * `TRUE`: the upper left corner of the VRT extent will be set to the 
 #'   upper left corner of the source pixel that contains `subwindow` xmin, ymax. 
 #'   The VRT will be pixel-aligned with source if the VRT `resolution` is the 
 #'   same as the source pixel size, otherwise VRT extent will be the minimum 
-#'   rectangle that contains `subwindow` for the given pixel size.
+#'   rectangle that contains `subwindow` for the given pixel size. Use 
+#'   Usually `src_align=TRUE` when selecting a raster minimum bounding box 
+#'   for a vector polygon.
 #'   * `FALSE`: the VRT upper left corner will be exactly `subwindow` 
 #'   xmin, ymax, and the VRT extent will be the minimum rectangle that contains 
 #'   `subwindow` for the given pixel size. If `subwindow` is not given, the 
-#'   source raster extent is used in which case `align=FALSE` has no effect.
+#'   source raster extent is used in which case `src_align=FALSE` has no effect.
+#'   Use `src_align=FALSE` to pixel-align two rasters of different sizes, i.e.,
+#'   when the intent is target alignment.
 #' @param resampling The resampling method to use if xsize, ysize of the VRT is
 #' different than the size of the underlying source rectangle (in number of
 #' pixels). The values allowed are nearest, bilinear, cubic, cubicspline, 
@@ -240,7 +257,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' @seealso
 #' [bbox_from_wkt()]
 #' @examples
-#' ## resample
+#' ### resample
 #'
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #' ds <- new(GDALRaster, evt_file, TRUE)
@@ -248,8 +265,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds$bbox()
 #' ds$close()
 #' 
-#' ## using combine() with one input to get a table of pixel counts for each 
-#' ## raster value
+#' ## use combine() with one input to get a table of pixel counts for  
+#' ## the raster value
 #' vat <- combine(evt_file)
 #' print(vat[-1]) # drop the cmbid in this case
 #' sum(vat$count)
@@ -272,7 +289,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds$bbox()
 #' ds$close()
 #'
-#' ## clip
+#' ### clip
 #' 
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #' ds_evt <- new(GDALRaster, evt_file, TRUE)
@@ -283,10 +300,10 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, 
 #' 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
 #' 
-#' ## align = TRUE
+#' ## src_align = TRUE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
-#'                         align=TRUE)
+#'                         src_align=TRUE)
 #' ds_vrt <- new(GDALRaster, vrt_file, TRUE)
 #' 
 #' ## VRT is a virtual clip, pixel-aligned with the EVT raster
@@ -294,10 +311,10 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_vrt$bbox()
 #' ds_vrt$res()
 #' 
-#' ## align = FALSE
+#' ## src_align = FALSE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
-#'                         align=FALSE)
+#'                         src_align=FALSE)
 #' ds_vrt_noalign <- new(GDALRaster, vrt_file, TRUE)
 #' 
 #' ## VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
@@ -307,12 +324,70 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_vrt$close()
 #' ds_vrt_noalign$close()
 #' ds_evt$close()
+#'
+#' ### subset and pixel align two rasters
+#' 
+#' ## FARSITE landscape file for the Storm Lake area
+#' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+#' ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
+#' 
+#' ## Landsat band 5 covering the Storm Lake area
+#' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+#' ds_b5 <- new(GDALRaster, b5_file, read_only=TRUE)
+#' 
+#' ds_lcp$bbox()
+#' ds_lcp$res()
+#' 
+#' ds_b5$bbox()
+#' ds_b5$res()
+#' 
+#' ## src_align = FALSE because we need target alignment in this case:
+#' vrt_file <- rasterToVRT(b5_file,
+#'                         resolution = c(30,30),
+#'                         subwindow = ds_lcp$bbox(),
+#'                         src_align = FALSE)
+#' ds_b5vrt <- new(GDALRaster, vrt_file, TRUE)
+#' ds_b5vrt$bbox()
+#' ds_b5vrt$res()
+#' 
+#' ## read the the Landsat file pixel-aligned with the LCP file 
+#' ## summarize Landsat band 5 reflectance where FBFM = 165 
+#' ## (fuel model TU5 - high load conifer litter with shrub understory)
+#'
+#' ds_lcp$getMetadata(band=4, domain="")
+#' 
+#' ## Landsat nodata (0) will be read as NA and omitted from stats
+#' ds_b5vrt$getNoDataValue(band=1)
+#' rs <- new(RunningStats, na_rm=TRUE)
+#' 
+#' ncols <- ds_lcp$getRasterXSize()
+#' nrows <- ds_lcp$getRasterYSize()
+#' for (row in 0:(nrows-1)) {
+#'     row_fbfm <- ds_lcp$read(band=4, xoff=0, yoff=row,
+#'                             xsize=ncols, ysize=1,
+#'                             out_xsize=ncols, out_ysize=1)
+#'     row_b5 <- ds_b5vrt$read(band=1, xoff=0, yoff=row,
+#'                             xsize=ncols, ysize=1,
+#'                             out_xsize=ncols, out_ysize=1)
+#' 	rs$update(row_b5[row_fbfm == 165])
+#' }
+#' rs$get_count()
+#' rs$get_mean()
+#' rs$get_min()
+#' rs$get_max()
+#' rs$get_sum()
+#' rs$get_var()
+#' rs$get_sd()
+#' 
+#' ds_b5vrt$close()
+#' ds_lcp$close()
+#' ds_b5$close()
 #' @export
 rasterToVRT <- function(srcfile, relativeToVRT = FALSE, 
 				vrtfile = tempfile("tmprast", fileext=".vrt"), 
 				resolution = NULL, 
 				subwindow = NULL, 
-				align = TRUE, 
+				src_align = TRUE, 
 				resampling = "nearest",
 				krnl = NULL,
 				normalized = TRUE) {
@@ -374,7 +449,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 	src_yoff <- floor(.getOffset(subwindow[4], src_ymax, src_yres))
 	
 	#get vrt geotransform and size (assuming a north-up raster)
-	if (align) {
+	if (src_align) {
 		#lay out the vrt raster so it is aligned with ul corner
 		#of ul src pixel
 		vrt_xmin <- src_xmin + src_xoff * src_xres
