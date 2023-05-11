@@ -186,20 +186,19 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' 
 #' GDAL VRT format has several capabilities and uses beyond those
 #' covered by `rasterToVRT()`. See the format description URL above for 
-#' a full discussion. [warp()] can write to VRT format for virtual 
-#' reprojection.
+#' a full discussion.
 #'
 #' @note
 #' Pixel alignment is specified in terms of the source raster pixels (i.e., 
-#' `srcfile` for the virtual raster). The use case in mind is virtually 
+#' `srcfile` of the virtual raster). The use case in mind is virtually 
 #' clipping a raster to the bounding box of a vector polygon and keeping 
 #' pixels aligned with `srcfile` (`src_align = TRUE`). `src_align` would be 
-#' set to `FALSE` if the intent is "target alignment". For example, if the 
-#' `subwindow` argument is the bounding box of another raster, then also 
+#' set to `FALSE` if the intent is "target alignment". For example, if  
+#' `subwindow` is the bounding box of another raster, then also 
 #' setting `resolution` to the pixel resolution of the target raster and 
 #' `src_align = FALSE` will result in a virtual raster pixel aligned with 
 #' the target (i.e., pixels in the virtual raster are no longer aligned with 
-#' `srcfile`). Resampling defaults to `nearest` if not specified. 
+#' its `srcfile`). Resampling defaults to `nearest` if not specified. 
 #' Examples for both cases are given below.
 #' 
 #' `rasterToVRT()` assumes `srcfile` is a north-up raster.
@@ -255,7 +254,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' Defaults to `TRUE`.
 #' @returns Returns the VRT filename invisibly.
 #' @seealso
-#' [bbox_from_wkt()]
+#' [bbox_from_wkt()], [warp()] can write VRT for virtual reprojection
 #' @examples
 #' ### resample
 #'
@@ -331,33 +330,34 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
 #' 
-#' ## Landsat band 5 covering the Storm Lake area
+#' ## Landsat band 5 file covering the Storm Lake area
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 #' ds_b5 <- new(GDALRaster, b5_file, read_only=TRUE)
 #' 
-#' ds_lcp$bbox()
-#' ds_lcp$res()
+#' ds_lcp$bbox()  # 323476.1 5101872.0  327766.1 5105082.0
+#' ds_lcp$res()   # 30 30
 #' 
-#' ds_b5$bbox()
-#' ds_b5$res()
+#' ds_b5$bbox()   # 323400.9 5101806.0  327856.7 5105175.8
+#' ds_b5$res()    # 29.90471 30.08750
 #' 
 #' ## src_align = FALSE because we need target alignment in this case:
 #' vrt_file <- rasterToVRT(b5_file,
-#'                         resolution = c(30,30),
+#'                         resolution = ds_lcp$res(),
 #'                         subwindow = ds_lcp$bbox(),
 #'                         src_align = FALSE)
 #' ds_b5vrt <- new(GDALRaster, vrt_file, TRUE)
-#' ds_b5vrt$bbox()
-#' ds_b5vrt$res()
+#'
+#' ds_b5vrt$bbox() # 323476.1 5101872.0  327766.1 5105082.0
+#' ds_b5vrt$res()  # 30 30
 #' 
 #' ## read the the Landsat file pixel-aligned with the LCP file 
-#' ## summarize Landsat band 5 reflectance where FBFM = 165 
-#' ## (fuel model TU5 - high load conifer litter with shrub understory)
-#'
+#' ## summarize band 5 reflectance where FBFM = 165 
+#' ## LCP band 4 contains FBFM (a classification of fuel beds):
 #' ds_lcp$getMetadata(band=4, domain="")
 #' 
-#' ## Landsat nodata (0) will be read as NA and omitted from stats
+#' ## verify Landsat nodata (0):
 #' ds_b5vrt$getNoDataValue(band=1)
+#' ## will be read as NA and omitted from stats
 #' rs <- new(RunningStats, na_rm=TRUE)
 #' 
 #' ncols <- ds_lcp$getRasterXSize()
@@ -369,7 +369,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #'     row_b5 <- ds_b5vrt$read(band=1, xoff=0, yoff=row,
 #'                             xsize=ncols, ysize=1,
 #'                             out_xsize=ncols, out_ysize=1)
-#' 	rs$update(row_b5[row_fbfm == 165])
+#' 	   rs$update(row_b5[row_fbfm == 165])
 #' }
 #' rs$get_count()
 #' rs$get_mean()
