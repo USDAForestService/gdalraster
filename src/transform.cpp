@@ -84,8 +84,9 @@ Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts,
 		if (err == OGRERR_FAILURE)
 			Rcpp::stop("Failed to set well known GCS.");
 	}
-	// GDAL >= 3.0:
+#if GDAL_VERSION_NUM >= 3000000
 	poLongLat->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+#endif
 
 	poCT = OGRCreateCoordinateTransformation(&oSourceSRS, poLongLat);
 	if (poCT == NULL)
@@ -155,8 +156,9 @@ Rcpp::NumericMatrix transform_xy(Rcpp::NumericMatrix &pts,
 	err = oDestSRS.importFromWkt(srs_to.c_str());
 	if (err != OGRERR_NONE)
 		Rcpp::stop("Failed to import destination SRS from WKT string.");
-	// GDAL >= 3.0:
+#if GDAL_VERSION_NUM >= 3000000
 	oDestSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+#endif
 
 	poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
 	if (poCT == NULL)

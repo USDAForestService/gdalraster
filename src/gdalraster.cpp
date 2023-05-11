@@ -7,6 +7,7 @@ Chris Toney <chris.toney at usda.gov> */
 #include <limits>
 
 #include "gdal.h"
+#include "cpl_conv.h"
 #include "cpl_string.h"
 #include "gdal_utils.h"
 #include "gdal_alg.h"
@@ -18,6 +19,7 @@ Chris Toney <chris.toney at usda.gov> */
 // [[Rcpp::init]]
 void _gdal_init(DllInfo *dll) {
     GDALAllRegister();
+    CPLSetConfigOption("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "YES");
 }
 
 /*	ARE_REAL_EQUAL() from gdal_priv.h
