@@ -1,4 +1,13 @@
 {
+    "sample_landsat_data": [
+        "Landsat Collection 2 Analysis Ready Data were downloaded from USGS Earth Explorer ",
+        "(https://earthexplorer.usgs.gov/). Sample data used in package 'gdalraster' were ",
+        "reprojected to NAD83 / UTM 12N (EPSG:26912) and clipped to the following extent in ",
+        "UTM 12N coordinates (min X, min Y, max X, max Y): ",
+        "323400.9, 5101815.8,  327870.9, 5105175.8",
+        "File names for surface reflectance used in 'gdalraster' are sr_b#_20200829.tif. ",
+        "Metadata for the original source are given below."
+   ],
     "LANDSAT_ARD_METADATA_FILE": {
         "TILE_METADATA": {
             "PRODUCT_CONTENTS": {
