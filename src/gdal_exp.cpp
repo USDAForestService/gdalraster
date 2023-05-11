@@ -8,6 +8,7 @@ Chris Toney <chris.toney at usda.gov> */
 
 #include "gdal.h"
 #include "gdal_utils.h"
+#include "cpl_conv.h"
 #include "cpl_string.h"
 
 #include <errno.h>
@@ -18,6 +19,59 @@ Chris Toney <chris.toney at usda.gov> */
 // [[Rcpp::export(name = ".gdal_version")]]
 std::string _gdal_version() {
 	return GDALVersionInfo("-version");
+}
+
+//' Get GDAL configuration option
+//'
+//' `get_config_option()` gets the value of GDAL runtime configuration option.
+//' Configuration options are essentially global variables the user can set.
+//' They are used to alter the default behavior of certain raster format 
+//' drivers, and in some cases the GDAL core. For a full description and 
+//' listing of available options see 
+//' \url{https://gdal.org/user/configoptions.html}.
+//'
+//' @param key Character name of a configuration option.
+//' @returns Character. The value of a (key, value) option previously set with 
+//' `set_config_option()`. An empty string (`""`) is returned if `key` is not 
+//' found.
+//' @seealso
+//' [set_config_option()]
+//' @examples
+//' ## this option is set during initialization of gdalraster
+//' get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER")
+// [[Rcpp::export]]
+std::string get_config_option(std::string key) {
+	const char* default_ = "";
+	std::string ret(CPLGetConfigOption(key.c_str(), default_));
+	return ret;
+}
+
+//' Set GDAL configuration option
+//'
+//' `set_config_option()` sets a GDAL runtime configuration option. 
+//' Configuration options are essentially global variables the user can set.
+//' They are used to alter the default behavior of certain raster format 
+//' drivers, and in some cases the GDAL core. For a full description and 
+//' listing of available options see 
+//' \url{https://gdal.org/user/configoptions.html}.
+//'
+//' @param key Character name of a configuration option.
+//' @param value Character value to set for the option. 
+//' Setting `value = ""` (empty string) will unset a value previously set by 
+//' `set_config_option()`.
+//' @returns Nothing.
+//' @seealso
+//' [get_config_option()]
+//' @examples
+//' set_config_option("GDAL_NUM_THREADS", "2")
+//' get_config_option("GDAL_NUM_THREADS")
+// [[Rcpp::export]]
+void set_config_option(std::string key, std::string value) {
+	const char* value_ = NULL;
+	if (value != "")
+		value_ = value.c_str();
+		
+	CPLSetConfigOption(key.c_str(), value_);
 }
 
 //' Create a new uninitialized raster
@@ -33,7 +87,7 @@ std::string _gdal_version() {
 //' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 //' @param options Optional list of format-specific creation options in a
 //' vector of "NAME=VALUE" pairs 
-//' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set DEFLATE 
+//' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW 
 //' compression during creation of a GTiff file).
 //' The APPEND_SUBDATASET=YES option can be 
 //' specified to avoid prior destruction of existing dataset.
@@ -110,7 +164,7 @@ bool create(std::string format, std::string dst_filename,
 //' the output format.
 //' @param options Optional list of format-specific creation options in a
 //' vector of "NAME=VALUE" pairs 
-//' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+//' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 //' compression during creation of a GTiff file).
 //' The APPEND_SUBDATASET=YES option can be 
 //' specified to avoid prior destruction of existing dataset.
@@ -121,7 +175,7 @@ bool create(std::string format, std::string dst_filename,
 //' @examples
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 //' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
-//' options <- c("COMPRESS=DEFLATE")
+//' options <- c("COMPRESS=LZW")
 //' createCopy("GTiff", tif_file, lcp_file, options=options)
 //' file.size(lcp_file)
 //' file.size(tif_file)
