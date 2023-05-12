@@ -14,7 +14,6 @@
 #' @noRd
 .getGDALformat <- function(file) {
 # Only for guessing common output formats
-# Could use GDALIdentifyDriver to be more comprehensive
 	file <- as.character(file)
 	if (endsWith(file, ".img")) {
 		return("HFA")
@@ -482,16 +481,16 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' @description
 #' `calc()` evaluates an R expression for each pixel in a raster layer or 
 #' stack of layers. Each layer is defined by a raster filename, band number, 
-#' and variable name to use in the R expression. If not specified, band 
+#' and a variable name to use in the R expression. If not specified, band 
 #' defaults to 1 for each input raster. 
 #' Variable names default to `LETTERS` if not specified 
 #' (`A` (layer 1), `B` (layer 2), ...).
 #' All of the input layers must have the same extent and cell size.
 #' The projection will be read from the first raster in the list 
 #' of inputs.
-#' Individual pixel coordinates are available for use as variables in 
-#' the R expession, as both x/y in the raster projected 
-#' coordinate system and inverse projected longitude/latitude.
+#' Individual pixel coordinates are also available for use as variables in 
+#' the R expession, as either x/y in the raster projected coordinate system or 
+#' inverse projected longitude/latitude.
 #'
 #' @details
 #' The variables in `expr` are vectors of length n (rows of a raster layer). 
@@ -512,6 +511,11 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' bands = c(3, 4)
 #' var.names = c("b3", "b4")
 #' }
+#'
+#' Output will be written to `dstfile`. To update a file that already 
+#' exists, set `write_mode = "update"` and set `out_band` to an existing 
+#' band number in `dstfile` (new bands cannot be created in `dstfile`).
+#' 
 #' @param expr An R expression as a character string (e.g., `"A + B"`).
 #' @param rasterfiles Character vector of source raster filenames.
 #' @param bands Integer vector of band numbers to use for each raster layer.
@@ -542,27 +546,29 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #'   and write output to `out_band`
 #' @returns Returns the output filename invisibly.
 #' @seealso
-#' [rasterToVRT()] for aligning rasters in a stack
+#' [combine()], [rasterToVRT()]
 #' @examples
-#' ## Calculate Hopkins bioclimatic index (HI) as described in:
+#' ### Calculate using pixel longitude/latitude
+#'
+#' ## Hopkins bioclimatic index (HI) as described in:
 #' ## Bechtold, 2004, West. J. Appl. For. 19(4):245-251.
 #' ## Integrates elevation, latitude and longitude into an index of the 
 #' ## phenological occurrence of springtime. Here it is relativized to 
 #' ## mean values for an eight-state region in the western US.
 #' ## Positive HI means spring is delayed by that number of days relative 
 #' ## to the reference position, while negative values indicate spring is
-#' ## advanced. The original equation used elevation units of feet, so 
+#' ## advanced. The original equation had elevation units as feet, so 
 #' ## converting m to ft in `expr`.
 #' 
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' expr <- "round( 
-#'                (((ELEV_M * 3.281) - 5449) / 100) + 
-#'                ((pixelLat - 42.16) * 4) + 
-#'                ((-116.39 - pixelLon) * 1.25) 
-#'               )"
+#'
+#' ## expresion	to calculate HI
+#' expr <- "round( ((ELEV_M * 3.281 - 5449) / 100) + 
+#'                 ((pixelLat - 42.16) * 4) + 
+#'                 ((-116.39 - pixelLon) * 1.25) )"
 #' 
-#' ## writes to a tempfile by default
-#' hi_file <- calc(expr, 
+#' ## calc() writes to a tempfile by default
+#' hi_file <- calc(expr = expr, 
 #'                 rasterfiles = elev_file, 
 #'                 var.names = c("ELEV_M"), 
 #'                 dtName = "Int16",
@@ -574,6 +580,85 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' ## min, max, mean, sd
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
+#'
+#' ### Calculate normalized difference vegetation index (NDVI)
+#' 
+#' ## Landast band 4 (red) and band 5 (near infrared):
+#' b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
+#' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+#'
+#' ## check whether nodata value is set
+#' ds <- new(GDALRaster, b4_file, read_only=TRUE)
+#' ds$getNoDataValue(band=1)
+#' ds$close()
+#' ds <- new(GDALRaster, b5_file, read_only=TRUE)
+#' ds$getNoDataValue(band=1)
+#' ds$close()
+#'
+#' expr <- "ifelse( (is.na(B4) | is.na(B5)), -32767, (B5-B4)/(B5+B4) )"
+#' ndvi_file <- calc(expr = expr,
+#'                   rasterfiles = c(b4_file, b5_file),
+#'                   var.names = c("B4", "B5"),
+#'                   dtName = "Float32",
+#'                   nodata_value = -32767,
+#'                   setRasterNodataValue = TRUE)
+#' 
+#' ds <- new(GDALRaster, ndvi_file, read_only=TRUE)
+#' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
+#' ds$close()
+#'
+#' ### Recode by applying a rule set
+#' 
+#' ## Combine two raster layers and look for specific combinations. Then 
+#' ## recode to a new value based on a rule set.
+#' ##
+#' ## Based on example in:
+#' ##   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition, 
+#' ##   critique, modification, maintenance, and model calibration.
+#' ##   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture, 
+#' ##   Forest Service, Rocky Mountain Research Station. 54 p.
+#' ## Context: Refinement of national-scale fuels data to improve fire
+#' ##   simulation in localized applications.
+#' ## Issue: Areas with steep slopes (40+ degrees) were mapped as
+#' ##   GR1 (101; short, sparse dry climate grass) and 
+#' ##   GR2 (102; low load, dry climate grass) but were not carrying fire.
+#' ## Resolution: After viewing these areas in Google Earth,
+#' ##   NB9 (99; bare ground) was selected as the replacement fuel model.
+#' 
+#' ## look for combinations of slope >= 40 and FBFM 101 or 102
+#' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+#' rasterfiles <- c(lcp_file, lcp_file)
+#' var.names <- c("SLP", "FBFM")
+#' bands <- c(2, 4)
+#' df <- combine(rasterfiles, var.names, bands)
+#' df_subset <- subset(df, SLP >= 40 & FBFM %in% c(101,102))
+#' print(df_subset)       # twelve combinations meet the criteria
+#' sum(df_subset$count)   # 85 total pixels
+#' 
+#' ## recode these pixels to 99 (bare ground)
+#' ## LCP format does not support write so make a copy as GTiff
+#' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
+#' createCopy("GTiff", tif_file, lcp_file)
+#' 
+#' expr <- "ifelse( SLP >= 40 & FBFM %in% c(101,102), 99, FBFM)"
+#' calc(expr = expr,
+#'      rasterfiles = c(lcp_file, lcp_file),
+#'      bands = c(2, 4),
+#'      var.names = c("SLP", "FBFM"),
+#'      dstfile = tif_file,
+#'      out_band = 4,
+#'      write_mode = "update")
+#' 
+#' ## verify the ouput
+#' rasterfiles <- c(tif_file, tif_file)
+#' var.names <- c("SLP", "FBFM")
+#' bands <- c(2, 4)
+#' df <- combine(rasterfiles, var.names, bands)
+#' df_subset <- subset(df, SLP >= 40 & FBFM %in% c(101,102))
+#' print(df_subset)
+#' sum(df_subset$count)
+#' 
+#' ## if LCP file format is needed: createCopy(tif_file, <new_lcp_file>)
 calc <- function(expr, 
 					rasterfiles, 
 					bands = NULL, 
@@ -822,7 +907,7 @@ calc <- function(expr,
 #' and `length(rasterfiles)` columns named `var.names` containing the integer 
 #' values comprising each unique combination.
 #' @seealso
-#' class [`CmbTable`][CmbTable], [rasterToVRT()]
+#' class [`CmbTable`][CmbTable], [calc()], [rasterToVRT()]
 #' @examples
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #' evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")

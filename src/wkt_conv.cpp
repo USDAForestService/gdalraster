@@ -13,8 +13,21 @@ Chris Toney <chris.toney at usda.gov> */
 
 //' Convert EPSG spatial reference to Well Known Text (WKT)
 //'
-//' Exports the spatial reference for the specified EPSG code to WKT format.
+//' `epsg_to_wkt()` exports the spatial reference for the specified EPSG code 
+//' to WKT format.
+//'
+//' @details
 //' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
+//' The WKT version can be overridden by using the `OSR_WKT_FORMAT` 
+//' configuration option (see [set_config_option()]).
+//' Valid values are one of: `SFSQL`, `WKT1_SIMPLE`, `WKT1`, `WKT1_GDAL`, 
+//' `WKT1_ESRI`, `WKT2_2015`, `WKT2_2018`, `WKT2`, `DEFAULT`.
+//' If `SFSQL`, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
+//' EXTENSION node is returned. If `WKT1_SIMPLE`, a WKT1 string without 
+//' AXIS, AUTHORITY or EXTENSION node is returned. `WKT1` is an alias of 
+//' `WKT1_GDAL`. `WKT2` will default to the latest revision implemented 
+//' (currently `WKT2_2018`). `WKT2_2019` can be used as an alias of 
+//' `WKT2_2018` since GDAL 3.2
 //'
 //' @param epsg Integer EPSG code.
 //' @param pretty Logical. `TRUE` to return a nicely formatted WKT 1 string 
