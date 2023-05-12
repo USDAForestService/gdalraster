@@ -23,11 +23,22 @@
   to an existing raster, with options for virtual subsetting, resampling and
   kernel filtering.
   
-  \item also \code{create()}, \code{createCopy()}, \code{rasterFromRaster()},
-  \code{bbox_from_wkt()}, \code{epsg_to_wkt()}, \code{inv_geotransform()},
-  \code{get_pixel_line()}, \code{warp()}.
+  \item other creation functions: \code{create()}, \code{createCopy()}, 
+  \code{rasterFromRaster()}
+  
+  \item geotransform conversion: \code{inv_geotransform()}, 
+  \code{get_pixel_line()}
+  
+  \item reproject: \code{warp()}
+  
+  \item coordinate transformation: \code{transform_xy()}, \code{inv_project()}
+  
+  \item WKT convenience functions: \code{bbox_from_wkt()}, \code{epsg_to_wkt()}
+  
+  \item GDAL configuration: \code{gdal_version()}, \code{get_config_option()}, 
+  \code{set_config_option()}
   }
-  Additional functionality is intended to support scalable processing:
+  Additional functionality is intended to support scalable raster analysis:
   \itemize{
   \item class \code{RunningStats} calculates mean and variance in one pass.
   The min, max, sum, and count are also tracked (i.e., summary statistics on 
@@ -40,6 +51,11 @@
   assigned to each unique combination of input values. Pixel counts for each 
   unique combination are obtained, and combination IDs are optionally written
   to an output raster.
+  
+  \item \code{calc()} evaluates an R expression for each pixel in a raster 
+  layer or stack of layers. Individual pixel coordinates are available for 
+  use as variables in the R expession, as either x/y in the raster projected 
+  coordinate system or inverse projected longitude/latitude.
   }
 }
 \author{
