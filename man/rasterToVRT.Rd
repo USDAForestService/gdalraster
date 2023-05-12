@@ -131,7 +131,7 @@ vrt_file <- rasterToVRT(evt_file,
                         resolution=c(90,90),
                         resampling="mode")
 
-## .vrt is a small plain-text xml file pointing to the source raster
+## .vrt is a small xml file pointing to the source raster
 file.size(vrt_file)
 
 vat90m <- combine(vrt_file, var.names=c("evt90m"))

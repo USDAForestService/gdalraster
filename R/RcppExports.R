@@ -18,8 +18,69 @@
 #' @noRd
 NULL
 
-.gdal_version <- function() {
-    .Call(`_gdalraster__gdal_version`)
+#' Get GDAL version
+#'
+#' `gdal_version()` returns runtime version information.
+#'
+#' @returns Character vector of length four containing:
+#'   * "–version" - one line version message, e.g., “GDAL 3.6.3, released 
+#'   2023/03/12”
+#'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “30603000” for 
+#'   GDAL 3.6.3.0
+#'   * "GDAL_RELEASE_DATE" - formatted as a string, e.g., “20230312”
+#'   * "GDAL_RELEASE_NAME" - e.g., “3.6.3”
+#' @examples
+#' gdal_version()
+gdal_version <- function() {
+    .Call(`_gdalraster_gdal_version`)
+}
+
+#' Get GDAL configuration option
+#'
+#' `get_config_option()` gets the value of GDAL runtime configuration option.
+#' Configuration options are essentially global variables the user can set.
+#' They are used to alter the default behavior of certain raster format 
+#' drivers, and in some cases the GDAL core. For a full description and 
+#' listing of available options see 
+#' \url{https://gdal.org/user/configoptions.html}.
+#'
+#' @param key Character name of a configuration option.
+#' @returns Character. The value of a (key, value) option previously set with 
+#' `set_config_option()`. An empty string (`""`) is returned if `key` is not 
+#' found.
+#' @seealso
+#' [set_config_option()]
+#' @examples
+#' ## this option is set during initialization of the gdalraster package
+#' get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER")
+get_config_option <- function(key) {
+    .Call(`_gdalraster_get_config_option`, key)
+}
+
+#' Set GDAL configuration option
+#'
+#' `set_config_option()` sets a GDAL runtime configuration option. 
+#' Configuration options are essentially global variables the user can set.
+#' They are used to alter the default behavior of certain raster format 
+#' drivers, and in some cases the GDAL core. For a full description and 
+#' listing of available options see 
+#' \url{https://gdal.org/user/configoptions.html}.
+#'
+#' @param key Character name of a configuration option.
+#' @param value Character value to set for the option. 
+#' `value = ""` (empty string) will unset a value previously set by 
+#' `set_config_option()`.
+#' @returns Nothing.
+#' @seealso
+#' [get_config_option()]
+#' @examples
+#' set_config_option("GDAL_CACHEMAX", "64")
+#' get_config_option("GDAL_CACHEMAX")
+#' ## unset:
+#' set_config_option("GDAL_CACHEMAX", "")
+#' get_config_option("GDAL_CACHEMAX")
+set_config_option <- function(key, value) {
+    invisible(.Call(`_gdalraster_set_config_option`, key, value))
 }
 
 #' Create a new uninitialized raster
@@ -35,7 +96,7 @@ NULL
 #' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 #' @param options Optional list of format-specific creation options in a
 #' vector of "NAME=VALUE" pairs 
-#' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set DEFLATE 
+#' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW 
 #' compression during creation of a GTiff file).
 #' The APPEND_SUBDATASET=YES option can be 
 #' specified to avoid prior destruction of existing dataset.
@@ -75,7 +136,7 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' the output format.
 #' @param options Optional list of format-specific creation options in a
 #' vector of "NAME=VALUE" pairs 
-#' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+#' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 #' compression during creation of a GTiff file).
 #' The APPEND_SUBDATASET=YES option can be 
 #' specified to avoid prior destruction of existing dataset.
@@ -86,7 +147,7 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
-#' options <- c("COMPRESS=DEFLATE")
+#' options <- c("COMPRESS=LZW")
 #' createCopy("GTiff", tif_file, lcp_file, options=options)
 #' file.size(lcp_file)
 #' file.size(tif_file)
@@ -204,10 +265,103 @@ warp <- function(src_files, dst_filename, t_srs, arg_list = NULL) {
     .Call(`_gdalraster__combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options)
 }
 
+#' Inverse project geospatial x/y coordinates to longitude/latitude
+#'
+#' `inv_project()` transforms geospatial x/y coordinates to long/lat in 
+#' the same geographic coordinate system used by the given projected spatial 
+#' reference system. The output long/lat can optionally be set to a specific 
+#' geographic coordinate system by specifying a well known name (see 
+#' Details).
+#'
+#' @details
+#' By default, the geographic coordinate system of the projection specified 
+#' by `srs` will be used. If a specific geographic coordinate system is 
+#' desired, then `well_known_gcs` can be set to one of the values below:
+#' \tabular{rl}{
+#'  `EPSG:n` \tab where `n` is the code of a geographic CRS\cr
+#'  `WGS84`  \tab same as `EPSG:4326`\cr
+#'  `WGS72`  \tab same as `EPSG:4322`\cr
+#'  `NAD83`  \tab same as `EPSG:4269`\cr
+#'  `NAD27`  \tab same as `EPSG:4267`\cr
+#'  `CRS84`  \tab same as `WGS84`\cr
+#'  `CRS72`  \tab same as `WGS72`\cr
+#'  `CRS27`  \tab same as `NAD27`
+#' }
+#' The returned array will always be in longitude, latitude order 
+#' (traditional GIS order) regardless of the axis order defined for the 
+#' names above.
+#'
+#' `inv_project()` is included here as a convenience function mainly for 
+#' internal use. See package `sf` for more full-featured  
+#' coordinate transformation (\url{https://r-spatial.github.io/sf/}).
+#'
+#' @param pts Numeric array of geospatial x/y coordinates 
+#' @param srs Character string in OGC WKT format specifying the projected 
+#' spatial reference system for `pts`.
+#' @param well_known_gcs Optional character string containing a supported 
+#' well known name of a geographic coordinate system (see Details for 
+#' supported values).
+#' @returns Numeric array of longitude, latitude. An error is raised if the 
+#' transformation cannot be performed.
+#' @seealso
+#' [transform_xy()]
+#' @examples
+#' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
+#' ## id, x, y in NAD83 / UTM zone 12N
+#' pts <- read.csv(pt_file)
+#' inv_project(as.matrix(pts[,-1]), epsg_to_wkt(26912))
+#' inv_project(as.matrix(pts[,-1]), epsg_to_wkt(26912), "NAD27")
+inv_project <- function(pts, srs, well_known_gcs = "") {
+    .Call(`_gdalraster_inv_project`, pts, srs, well_known_gcs)
+}
+
+#' Transform geospatial x/y coordinates
+#'
+#' `transform_xy()` transforms geospatial x/y coordinates to a new projection.
+#'
+#' @note
+#' `transform_xy()` is included here as a convenience function mainly for 
+#' internal use. See package `sf` for more full-featured 
+#' coordinate transformation (\url{https://r-spatial.github.io/sf/}).
+#'
+#' @param pts Numeric array of geospatial x/y coordinates 
+#' @param srs_from Character string in OGC WKT format specifying the  
+#' spatial reference system for `pts`.
+#' @param srs_to Character string in OGC WKT format specifying the output 
+#' spatial reference system.
+#' @returns Numeric array of geospatial x/y coordinates in the `srs_to` 
+#' projection.
+#' @seealso
+#' [epsg_to_wkt()], [inv_project()]
+#' @examples
+#' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
+#' pts <- read.csv(pt_file)
+#' ## id, x, y in NAD83 / UTM zone 12N
+#' ## transform to NAD83 / CONUS Albers
+#' transform_xy( pts = as.matrix(pts[,-1]), 
+#'               srs_from = epsg_to_wkt(26912), 
+#'               srs_to = epsg_to_wkt(5070) )
+transform_xy <- function(pts, srs_from, srs_to) {
+    .Call(`_gdalraster_transform_xy`, pts, srs_from, srs_to)
+}
+
 #' Convert EPSG spatial reference to Well Known Text (WKT)
 #'
-#' Exports the spatial reference for the specified EPSG code to WKT format.
+#' `epsg_to_wkt()` exports the spatial reference for the specified EPSG code 
+#' to WKT format.
+#'
+#' @details
 #' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
+#' The WKT version can be overridden by using the `OSR_WKT_FORMAT` 
+#' configuration option (see [set_config_option()]).
+#' Valid values are one of: `SFSQL`, `WKT1_SIMPLE`, `WKT1`, `WKT1_GDAL`, 
+#' `WKT1_ESRI`, `WKT2_2015`, `WKT2_2018`, `WKT2`, `DEFAULT`.
+#' If `SFSQL`, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
+#' EXTENSION node is returned. If `WKT1_SIMPLE`, a WKT1 string without 
+#' AXIS, AUTHORITY or EXTENSION node is returned. `WKT1` is an alias of 
+#' `WKT1_GDAL`. `WKT2` will default to the latest revision implemented 
+#' (currently `WKT2_2018`). `WKT2_2019` can be used as an alias of 
+#' `WKT2_2018` since GDAL 3.2
 #'
 #' @param epsg Integer EPSG code.
 #' @param pretty Logical. `TRUE` to return a nicely formatted WKT 1 string 

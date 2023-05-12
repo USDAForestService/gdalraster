@@ -22,7 +22,7 @@ create(format, dst_filename, xsize, ysize, nbands, dataType, options = NULL)
 
 \item{options}{Optional list of format-specific creation options in a
 vector of "NAME=VALUE" pairs
-(e.g., \code{options = c("COMPRESS=DEFLATE")} to set DEFLATE
+(e.g., \code{options = c("COMPRESS=LZW")} to set LZW
 compression during creation of a GTiff file).
 The APPEND_SUBDATASET=YES option can be
 specified to avoid prior destruction of existing dataset.}

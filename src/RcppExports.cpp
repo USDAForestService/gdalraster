@@ -11,14 +11,36 @@ Rcpp::Rostream<true>&  Rcpp::Rcout = Rcpp::Rcpp_cout_get();
 Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
-// _gdal_version
-std::string _gdal_version();
-RcppExport SEXP _gdalraster__gdal_version() {
+// gdal_version
+Rcpp::CharacterVector gdal_version();
+RcppExport SEXP _gdalraster_gdal_version() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(_gdal_version());
+    rcpp_result_gen = Rcpp::wrap(gdal_version());
     return rcpp_result_gen;
+END_RCPP
+}
+// get_config_option
+std::string get_config_option(std::string key);
+RcppExport SEXP _gdalraster_get_config_option(SEXP keySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type key(keySEXP);
+    rcpp_result_gen = Rcpp::wrap(get_config_option(key));
+    return rcpp_result_gen;
+END_RCPP
+}
+// set_config_option
+void set_config_option(std::string key, std::string value);
+RcppExport SEXP _gdalraster_set_config_option(SEXP keySEXP, SEXP valueSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type key(keySEXP);
+    Rcpp::traits::input_parameter< std::string >::type value(valueSEXP);
+    set_config_option(key, value);
+    return R_NilValue;
 END_RCPP
 }
 // create
@@ -107,6 +129,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// inv_project
+Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix& pts, std::string srs, std::string well_known_gcs);
+RcppExport SEXP _gdalraster_inv_project(SEXP ptsSEXP, SEXP srsSEXP, SEXP well_known_gcsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type pts(ptsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type well_known_gcs(well_known_gcsSEXP);
+    rcpp_result_gen = Rcpp::wrap(inv_project(pts, srs, well_known_gcs));
+    return rcpp_result_gen;
+END_RCPP
+}
+// transform_xy
+Rcpp::NumericMatrix transform_xy(Rcpp::NumericMatrix& pts, std::string srs_from, std::string srs_to);
+RcppExport SEXP _gdalraster_transform_xy(SEXP ptsSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type pts(ptsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type srs_from(srs_fromSEXP);
+    Rcpp::traits::input_parameter< std::string >::type srs_to(srs_toSEXP);
+    rcpp_result_gen = Rcpp::wrap(transform_xy(pts, srs_from, srs_to));
+    return rcpp_result_gen;
+END_RCPP
+}
 // epsg_to_wkt
 std::string epsg_to_wkt(int epsg, bool pretty);
 RcppExport SEXP _gdalraster_epsg_to_wkt(SEXP epsgSEXP, SEXP prettySEXP) {
@@ -136,13 +184,17 @@ RcppExport SEXP _rcpp_module_boot_mod_GDALRaster();
 RcppExport SEXP _rcpp_module_boot_mod_running_stats();
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_gdalraster__gdal_version", (DL_FUNC) &_gdalraster__gdal_version, 0},
+    {"_gdalraster_gdal_version", (DL_FUNC) &_gdalraster_gdal_version, 0},
+    {"_gdalraster_get_config_option", (DL_FUNC) &_gdalraster_get_config_option, 1},
+    {"_gdalraster_set_config_option", (DL_FUNC) &_gdalraster_set_config_option, 2},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 5},
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
     {"_gdalraster_get_pixel_line", (DL_FUNC) &_gdalraster_get_pixel_line, 2},
     {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 4},
     {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 7},
+    {"_gdalraster_inv_project", (DL_FUNC) &_gdalraster_inv_project, 3},
+    {"_gdalraster_transform_xy", (DL_FUNC) &_gdalraster_transform_xy, 3},
     {"_gdalraster_epsg_to_wkt", (DL_FUNC) &_gdalraster_epsg_to_wkt, 2},
     {"_gdalraster_bbox_from_wkt", (DL_FUNC) &_gdalraster_bbox_from_wkt, 1},
     {"_rcpp_module_boot_mod_cmb_table", (DL_FUNC) &_rcpp_module_boot_mod_cmb_table, 0},
