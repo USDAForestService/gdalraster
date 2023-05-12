@@ -82,7 +82,6 @@ class GDALRaster {
 	std::vector<double> bbox() const;
 	std::vector<double> res() const;
 	int getRasterCount() const;
-	int _getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
 	
 	std::string getProjectionRef() const;
 	bool setProjection(std::string projection);
@@ -100,7 +99,7 @@ class GDALRaster {
 	double getScale(int band) const;
 	bool hasOffset(int band) const;
 	double getOffset(int band) const;
-
+	
 	Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
 	std::string getMetadataItem(int band,
 			std::string mdi_name, std::string domain) const;
@@ -112,6 +111,8 @@ class GDALRaster {
 			Rcpp::RObject rasterData);
 
 	void fillRaster(int band, double value, double ivalue);
+	
+	int getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
 	
 	void _setMetadataItem(int band, std::string mdi_name, 
 			std::string mdi_value, std::string domain);

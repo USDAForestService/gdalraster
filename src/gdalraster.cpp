@@ -174,14 +174,6 @@ int GDALRaster::getRasterCount() const {
 	return GDALGetRasterCount(hDataset);
 }
 
-int GDALRaster::_getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const {
-	if (!this->isOpen())
-		Rcpp::stop("Raster dataset is not open.");
-	
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
-	return GDALChecksumImage(hBand, xoff, yoff, xsize, ysize);
-}
-
 std::string GDALRaster::getProjectionRef() const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
@@ -566,6 +558,14 @@ void GDALRaster::fillRaster(int band, double value, double ivalue) {
 	}
 }
 
+int GDALRaster::getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+	
+	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	return GDALChecksumImage(hBand, xoff, yoff, xsize, ysize);
+}
+
 void GDALRaster::_setMetadataItem(int band, std::string mdi_name, 
 		std::string mdi_value, std::string domain) {
 		
@@ -622,8 +622,6 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Return the resolution (pixel width, pixel height).")
     .const_method("getRasterCount", &GDALRaster::getRasterCount, 
     	"Return the number of raster bands on this dataset.")
-    .const_method(".getChecksum", &GDALRaster::_getChecksum, 
-    	"Compute checksum for raster region.")
     .const_method("getProjectionRef", &GDALRaster::getProjectionRef, 
     	"Return the projection definition for this dataset.")
     .method("setProjection", &GDALRaster::setProjection, 
@@ -656,6 +654,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Write a region of raster data for a band.")
     .method("fillRaster", &GDALRaster::fillRaster, 
     	"Fill this band with a constant value.")
+    .const_method("getChecksum", &GDALRaster::getChecksum, 
+    	"Compute checksum for raster region.")
     .method(".setMetadataItem", &GDALRaster::_setMetadataItem, 
     	"Set metadata item name=value in domain.")
     .method("close", &GDALRaster::close, 

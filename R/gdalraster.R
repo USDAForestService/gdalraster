@@ -56,6 +56,8 @@
 #' ds$write(band, xoff, yoff, xsize, ysize, rasterData)
 #' ds$fillRaster(value, ivalue)
 #'
+#' ds$getChecksum(band, xoff, yoff, xsize, ysize)
+#'
 #' ds$close()
 #' }
 #'
@@ -331,6 +333,18 @@
 #' \code{ivalue} is the imaginary component of fill value for a raster with
 #' complex data type. Set \code{ivalue = 0} for real data types.
 #'
+#' \code{$getChecksum(band, xoff, yoff, xsize, ysize)}
+#' Returns a 16-bit integer (0-65535) checksum from a region of raster data 
+#' on `band`.
+#' Floating point data are converted to 32-bit integer so decimal portions of
+#' such raster data will not affect the checksum. Real and imaginary 
+#' components of complex bands influence the result.
+#' \code{xoff} is the pixel (column) offset of the window to read.
+#' \code{yoff} is the line (row) offset of the window to read.
+#' \emph{Note that raster row/column offsets use 0-baseed indexing.}
+#' \code{xsize} is the width in pixels of the window to read.
+#' \code{ysize} is the height in pixels of the window to read.
+#'
 #' \code{$close()}
 #' Closes the GDAL dataset (no return value). 
 #' Calling \code{$close()} results in proper cleanup, and flushing of any 
@@ -419,6 +433,13 @@
 #'
 #' ## close the dataset for proper cleanup
 #' ds_new$close()
+#'
+#' ## checksum LCP band 1
+#' ds$open(read_only=TRUE)
+#' ncols <- ds$getRasterXSize()
+#' nrows <- ds$getRasterYSize()
+#' ds$getChecksum(band=1, xoff=0, yoff=0, xsize=ncols, ysize=nrows)   # 28017
+#' ds$close()
 #'
 #' \dontrun{
 #' ## using a GDAL Virtual File System handler '/vsicurl/'
