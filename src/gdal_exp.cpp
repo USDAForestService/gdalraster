@@ -81,11 +81,11 @@ std::string get_config_option(std::string key) {
 //' @seealso
 //' [get_config_option()]
 //' @examples
-//' set_config_option("GDAL_NUM_THREADS", "2")
-//' get_config_option("GDAL_NUM_THREADS")
+//' set_config_option("GDAL_CACHEMAX", "64")
+//' get_config_option("GDAL_CACHEMAX")
 //' ## unset:
-//' set_config_option("GDAL_NUM_THREADS", "")
-//' get_config_option("GDAL_NUM_THREADS")
+//' set_config_option("GDAL_CACHEMAX", "")
+//' get_config_option("GDAL_CACHEMAX")
 // [[Rcpp::export]]
 void set_config_option(std::string key, std::string value) {
 	const char* value_ = NULL;
