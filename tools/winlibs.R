@@ -1,7 +1,7 @@
 # copied from: https://github.com/appelmar/gdalcubes/blob/master/tools/winlibs.R
 # Copyright (c) 2018-2019 Marius Appel, License: MIT
-if(getRversion() < "4.0.0") {
-  stop("Your version of R is too old. This package requires R-4.0.0 or newer on Windows.")
+if(getRversion() < "3.4.0") {
+  stop("Your version of R is too old. This package requires R-3.4.0 or newer on Windows.")
 }
 
 # For details see: https://github.com/rwinlib/gdal3

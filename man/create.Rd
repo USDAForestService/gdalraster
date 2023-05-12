@@ -15,7 +15,7 @@ create(format, dst_filename, xsize, ysize, nbands, dataType, options = NULL)
 
 \item{ysize}{Integer height of raster in pixels.}
 
-\item{nbands}{Integer nmber of bands.}
+\item{nbands}{Integer number of bands.}
 
 \item{dataType}{Character data type name .
 (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).}

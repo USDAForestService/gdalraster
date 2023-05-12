@@ -103,7 +103,7 @@ void set_config_option(std::string key, std::string value) {
 //' @param dst_filename Filename to create.
 //' @param xsize Integer width of raster in pixels.
 //' @param ysize Integer height of raster in pixels.
-//' @param nbands Integer nmber of bands.
+//' @param nbands Integer number of bands.
 //' @param dataType Character data type name .
 //' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 //' @param options Optional list of format-specific creation options in a
@@ -498,20 +498,19 @@ Rcpp::DataFrame _combine(
 	}
 	
 	CmbTable tbl(nrasters, var_names);
-	Rcpp::NumericMatrix rowdata(nrasters, ncols);
-	Rcpp::NumericVector cmbid(ncols);
+	Rcpp::IntegerMatrix rowdata(nrasters, ncols);
+	Rcpp::NumericVector cmbid;
 	GDALProgressFunc pfnProgress = GDALTermProgressR;
 	void* pProgressData = NULL;
 	Rcpp::Rcout << "Combining...\n";
 	for (int y = 0; y < nrows; ++y) {
 		for (std::size_t i = 0; i < nrasters; ++i)
-			rowdata.row(i) = Rcpp::as<Rcpp::NumericMatrix>(
+			rowdata.row(i) = Rcpp::as<Rcpp::IntegerVector>(
 								src_ds[i].read(
 								bands[i], 0, y, ncols, 1, ncols, 1)
 								);
 									
-		cmbid = tbl.updateFromMatrix(
-					Rcpp::as<Rcpp::IntegerMatrix>(rowdata), 1);
+		cmbid = tbl.updateFromMatrix(rowdata, 1);
 		
 		if (out_raster) {
 			cmbid.attr("dim") = Rcpp::Dimension(1, ncols);
@@ -519,7 +518,7 @@ Rcpp::DataFrame _combine(
 						Rcpp::as<Rcpp::NumericMatrix>(cmbid) );
 		}
 		pfnProgress(y / (nrows-1.0), NULL, pProgressData);
-		if (y % 250 == 0)
+		if (y % 1000 == 0)
 			Rcpp::checkUserInterrupt();
 	}
 

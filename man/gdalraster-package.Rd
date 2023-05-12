@@ -15,9 +15,8 @@
   GDAL related stand-alone functions:
   \itemize{
   \item class \code{GDALRaster} allows opening a raster dataset and calling 
-  methods on the \code{GDALDataset}, \code{GDALDriver} and 
-  \code{GDALRasterBand} objects in the underlying API (e.g., get/set 
-  parameters, read/write pixel data).
+  methods on the GDALDataset, GDALDriver and GDALRasterBand objects in the 
+  underlying API (get/set parameters, read/write pixel data).
   
   \item \code{rasterToVRT()} creates a virtual raster file (VRT) that points 
   to an existing raster, with options for virtual subsetting, resampling and
@@ -60,14 +59,15 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
 }
 \note{
   Sample datasets are included with the package and used in examples 
-  throughout the documentation. The sample data are from LANDFIRE, LF 2020 
-  version (\url{https://landfire.gov/}). Raster layers describing terrain, 
-  vegetation and wildland fuels were downloaded from the 
-  \href{https://www.landfire.gov/viewer/}{LANDFIRE Map Viewer}.
+  throughout the documentation. The sample data include raster layers from 
+  LANDFIRE describing terrain, vegetation and wildland fuels 
+  (LF 2020 version, \url{https://landfire.gov/}). Landsat Collection 2 Analysis
+  Ready Data were downloaded from USGS Earth Explorer 
+  (\url{https://earthexplorer.usgs.gov/}).
 
   \code{system.file()} is used in the examples to access the sample datasets. 
   This enables the code to run regardless of where R is installed. Users will 
-  normally give file names as full path or relative to the current working 
-  directory.
+  normally give file names as a regular full path or relative to the current 
+  working directory.
 }
 

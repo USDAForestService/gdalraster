@@ -54,7 +54,7 @@ combination IDs assigned to the combinations in \code{int_cmbs}.
 
 \code{$asDataFrame()}
 Returns the CmbTable as a data frame with column \code{cmbid} containing
-the unique combination IDs, column \code{count} containg the counts of
+the unique combination IDs, column \code{count} containing the counts of
 occurrences, and \code{keyLen} columns named \code{varNames} containing
 the integer values comprising each unique combination.
 }
