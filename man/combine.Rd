@@ -33,7 +33,7 @@ overwritten if it already exists).}
 
 \item{dtName}{Character. Output raster data type name. Combination IDs are
 sequential integers starting at 1. The data type for the output raster
-should be large enough to accomodate the potential number of unique
+should be large enough to accommodate the potential number of unique
 combinations of the input values
 (e.g., "UInt16" or the default "UInt32").}
 
