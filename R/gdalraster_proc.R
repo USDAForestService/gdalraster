@@ -268,7 +268,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #'                         resolution=c(90,90),
 #'                         resampling="mode")
 #' 
-#' ## .vrt is a small plain-text xml file pointing to the source raster
+#' ## .vrt is a small xml file pointing to the source raster
 #' file.size(vrt_file)
 #' 
 #' vat90m <- combine(vrt_file, var.names=c("evt90m"))
@@ -330,8 +330,6 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 	if (normalized) normalized = 1 else normalized = 0
 
 	src_ds <- new(GDALRaster, srcfile, read.only=TRUE)
-	src_nrows <- src_ds$getRasterYSize()
-	src_ncols <- src_ds$getRasterXSize()
 	src_gt <- src_ds$getGeoTransform()
 	src_xmin <- src_ds$bbox()[1]
 	src_ymin <- src_ds$bbox()[2]
@@ -449,7 +447,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 	xml2::write_xml(x, vrtfile, options=c("format", "no_declaration"))
 	
 	if (!is.null(krnl)) {
-		vrt_ds <- new(GDALRaster, vrtfile, read_only=F)
+		vrt_ds <- new(GDALRaster, vrtfile, read_only=FALSE)
 		if (relativeToVRT) srcfile <- basename(srcfile)
 		for (band in 1:src_bands) {
 			krnl_xml <- enc2utf8( sprintf(
@@ -493,8 +491,10 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' inverse projected longitude/latitude.
 #'
 #' @details
-#' The variables in `expr` are vectors of length n (rows of a raster layer). 
-#' The expresion should return a vector also of length n (an output row). 
+#' The variables in `expr` are vectors of length rasterXsize 
+#' (rows of a raster layer). 
+#' The expresion should return a vector also of length rasterXsize 
+#' (an output row). 
 #' Two special variable names are available in `expr` by default: 
 #' `pixelX` and `pixelY` provide the pixel center coordinate in 
 #' projection units. If `usePixelLonLat = TRUE`, the pixel x/y coordinates 
@@ -507,9 +507,9 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' `rasterfiles` and specify corresponding band numbers in `bands`, along with
 #' optional variable names in `var.names`, for example,
 #' \preformatted{
-#' rasterfiles = c("file.img", "file.img")
-#' bands = c(3, 4)
-#' var.names = c("b3", "b4")
+#' rasterfiles = c("multiband.tif", "multiband.tif")
+#' bands = c(4, 5)
+#' var.names = c("B4", "B5")
 #' }
 #'
 #' Output will be written to `dstfile`. To update a file that already 
@@ -548,7 +548,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' @seealso
 #' [combine()], [rasterToVRT()]
 #' @examples
-#' ### Calculate using pixel longitude/latitude
+#' ### Expression using pixel longitude/latitude
 #'
 #' ## Hopkins bioclimatic index (HI) as described in:
 #' ## Bechtold, 2004, West. J. Appl. For. 19(4):245-251.
@@ -581,21 +581,23 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
 #'
+#'
 #' ### Calculate normalized difference vegetation index (NDVI)
 #' 
 #' ## Landast band 4 (red) and band 5 (near infrared):
 #' b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 #'
-#' ## check whether nodata value is set
+#' ## is nodata value set
 #' ds <- new(GDALRaster, b4_file, read_only=TRUE)
-#' ds$getNoDataValue(band=1)
+#' ds$getNoDataValue(band=1)   # 0
 #' ds$close()
 #' ds <- new(GDALRaster, b5_file, read_only=TRUE)
-#' ds$getNoDataValue(band=1)
+#' ds$getNoDataValue(band=1)   # 0
 #' ds$close()
 #'
-#' expr <- "ifelse( (is.na(B4) | is.na(B5)), -32767, (B5-B4)/(B5+B4) )"
+#' ## 0 will be read as NA so don't need to handle zeros in expr
+#' expr <- "(B5-B4)/(B5+B4)"
 #' ndvi_file <- calc(expr = expr,
 #'                   rasterfiles = c(b4_file, b5_file),
 #'                   var.names = c("B4", "B5"),
@@ -607,18 +609,19 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
 #'
+#'
 #' ### Recode by applying a rule set
 #' 
 #' ## Combine two raster layers and look for specific combinations. Then 
-#' ## recode to a new value based on a rule set.
+#' ## recode to a new value by rule set.
 #' ##
 #' ## Based on example in:
 #' ##   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition, 
 #' ##   critique, modification, maintenance, and model calibration.
 #' ##   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture, 
 #' ##   Forest Service, Rocky Mountain Research Station. 54 p.
-#' ## Context: Refinement of national-scale fuels data to improve fire
-#' ##   simulation in localized applications.
+#' ## Context: Refine national-scale fuels data to improve fire simulation
+#' ##   results in localized applications.
 #' ## Issue: Areas with steep slopes (40+ degrees) were mapped as
 #' ##   GR1 (101; short, sparse dry climate grass) and 
 #' ##   GR2 (102; low load, dry climate grass) but were not carrying fire.
@@ -674,7 +677,7 @@ calc <- function(expr,
 					write_mode = "safe")
 {
 	
-	calc_expr = parse(text=expr)
+	calc_expr <- parse(text=expr)
 
 	if ( !all(file.exists(rasterfiles)) ) {
 		message( rasterfiles[which(!file.exists(rasterfiles))] )
@@ -696,14 +699,14 @@ calc <- function(expr,
 			if (out_band != 1)
 				stop("out_band other than 1 requires 'update' mode.",
 					call. = FALSE)
-		update_mode = FALSE
-		out_band = 1
+		update_mode <- FALSE
+		out_band <- 1
 	}
 	else {
 		stop("Unknown write_mode.", call. = FALSE)
 	}
 
-	nrasters = length(rasterfiles)
+	nrasters <- length(rasterfiles)
 
 	if (!is.null(bands)) {
 		if (length(bands) != nrasters) {
@@ -712,7 +715,7 @@ calc <- function(expr,
 		}
 	}
 	else {
-		bands = rep(1, nrasters)
+		bands <- rep(1, nrasters)
 	}
 	
 	if (!is.null(var.names)) {
@@ -722,11 +725,11 @@ calc <- function(expr,
 		}
 	}
 	else {
-		var.names=LETTERS[1:nrasters]
+		var.names <- LETTERS[1:nrasters]
 	}
 	
 	if (is.null(fmt)) {
-		fmt = .getGDALformat(dstfile)
+		fmt <- .getGDALformat(dstfile)
 		if (is.null(fmt)) {
 			stop("Use fmt argument to specify a GDAL raster format code.",
 				call. = FALSE)
@@ -734,7 +737,7 @@ calc <- function(expr,
 	}
 	
 	if (is.null(nodata_value)) {
-		nodata_value = .getDefaultNodata(dtName)
+		nodata_value <- .getDefaultNodata(dtName)
 		if (is.null(nodata_value)) {
 			stop("Default nodata value unavailable for output data type.",
 				call. = FALSE)
@@ -742,20 +745,20 @@ calc <- function(expr,
 	}
 	
 	# use first raster as reference
-	ref = new(GDALRaster, rasterfiles[1], TRUE)
-	nrows = ref$getRasterYSize()
-	ncols = ref$getRasterXSize()
-	cellsizeX = ref$res()[1]
-	cellsizeY = ref$res()[2]
-	xmin = ref$bbox()[1]
-	ymax = ref$bbox()[4]
-	srs = ref$getProjectionRef()
+	ref <- new(GDALRaster, rasterfiles[1], TRUE)
+	nrows <- ref$getRasterYSize()
+	ncols <- ref$getRasterXSize()
+	cellsizeX <- ref$res()[1]
+	cellsizeY <- ref$res()[2]
+	xmin <- ref$bbox()[1]
+	ymax <- ref$bbox()[4]
+	srs <- ref$getProjectionRef()
 	ref$close()
-	ref = NULL
+	ref <- NULL
 	
 	if(nrasters > 1) {
 		for(r in rasterfiles) {
-			ds = new(GDALRaster, r, TRUE)
+			ds <- new(GDALRaster, r, TRUE)
 			if(ds$getRasterYSize() != nrows || ds$getRasterXSize() != ncols) {
 				message(rasterfiles[r])
 				stop("All input rasters must have the same dimensions.", 
@@ -767,44 +770,44 @@ calc <- function(expr,
 	
 	if (update_mode) {
 		# write to an existing raster
-		dst_ds = new(GDALRaster, dstfile, read_only=FALSE)
+		dst_ds <- new(GDALRaster, dstfile, read_only=FALSE)
 	}
 	else {
 		#create the output raster
-		dstnodata = NULL
+		dstnodata <- NULL
 		if(setRasterNodataValue) 
-			dstnodata = nodata_value
-		gdalraster::rasterFromRaster(rasterfiles[1], 
-										dstfile,
-										fmt, 
-										nbands = 1, 
-										dtName = dtName,
-										options = options, 
-										dstnodata = dstnodata)
-		dst_ds = new(GDALRaster, dstfile, read_only=FALSE)
+			dstnodata <- nodata_value
+		rasterFromRaster(rasterfiles[1], 
+							dstfile,
+							fmt, 
+							nbands = 1, 
+							dtName = dtName,
+							options = options, 
+							dstnodata = dstnodata)
+		dst_ds <- new(GDALRaster, dstfile, read_only=FALSE)
 	}
 	
 	
 	# list of GDALRaster objects for each raster layer
-	gd_list <- list()
+	ds_list <- list()
 	for (r in 1:nrasters)
-		gd_list[[r]] <- new(GDALRaster, rasterfiles[r], read_only=TRUE)
+		ds_list[[r]] <- new(GDALRaster, rasterfiles[r], read_only=TRUE)
 	
-	x = seq(from = xmin + (cellsizeX/2), by = cellsizeX, length.out = ncols)
+	x <- seq(from = xmin + (cellsizeX/2), by = cellsizeX, length.out = ncols)
 	assign("pixelX", x)
 	
 	process_row <- function(row) {
-		y = rep( (ymax - (cellsizeY/2) - (cellsizeY*row)), ncols )
+		y <- rep( (ymax - (cellsizeY/2) - (cellsizeY*row)), ncols )
 		assign("pixelY", y)
 		
 		if(usePixelLonLat) {
-			lonlat = inv_project(cbind(x,y), srs)
+			lonlat <- inv_project(cbind(x,y), srs)
 			assign("pixelLon", lonlat[,1])
 			assign("pixelLat", lonlat[,2])
 		}
 		
 		for (r in 1:nrasters) {
-			inrow = gd_list[[r]]$read(band = bands[r], 
+			inrow <- ds_list[[r]]$read(band = bands[r], 
 										xoff = 0,
 										yoff = row,
 										xsize = ncols,
@@ -814,15 +817,15 @@ calc <- function(expr,
 			assign(var.names[r], inrow)
 		}
 		
-		outrow = eval(calc_expr)
+		outrow <- eval(calc_expr)
 		if (length(outrow) != ncols) {
 			dst_ds$close()
 			for (r in 1:nrasters)
-				gd_list[[r]]$close()
+				ds_list[[r]]$close()
 			stop("Result vector is the wrong size.", call. = FALSE)
 		}
-		outrow = ifelse(is.na(outrow), nodata_value, outrow)
-		dim(outrow) = c(1, ncols)
+		outrow <- ifelse(is.na(outrow), nodata_value, outrow)
+		dim(outrow) <- c(1, ncols)
 		dst_ds$write(band = out_band,
 					offx = 0,
 					offy = row,
@@ -842,11 +845,10 @@ calc <- function(expr,
 	message(paste("Output written to:", dstfile))
 	dst_ds$close()
 	for (r in 1:nrasters)
-		gd_list[[r]]$close()
+		ds_list[[r]]$close()
 		
 	invisible(dstfile)
 }
-
 
 #' Raster overlay for unique combinations
 #' 
