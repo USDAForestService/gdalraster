@@ -16,9 +16,27 @@ Chris Toney <chris.toney at usda.gov> */
 #include "gdalraster.h"
 #include "cmb_table.h"
 
-// [[Rcpp::export(name = ".gdal_version")]]
-std::string _gdal_version() {
-	return GDALVersionInfo("-version");
+//' Get GDAL version
+//'
+//' `gdal_version()` returns runtime version information.
+//'
+//' @returns Character vector of length four containing:
+//'   * "–version" - one line version message, e.g., “GDAL 3.6.3, released 
+//'   2023/03/12”
+//'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “30603000” for 
+//'   GDAL 3.6.3.0
+//'   * "GDAL_RELEASE_DATE" - formatted as a string, e.g., “20230312”
+//'   * "GDAL_RELEASE_NAME" - e.g., “3.6.3”
+//' @examples
+//' gdal_version()
+// [[Rcpp::export]]
+Rcpp::CharacterVector gdal_version() {
+	Rcpp::CharacterVector ret(4);
+	ret(0) = GDALVersionInfo("-version");
+	ret(1) = GDALVersionInfo("VERSION_NUM");
+	ret(2) = GDALVersionInfo("RELEASE_DATE");
+	ret(3) = GDALVersionInfo("RELEASE_NAME");
+	return ret;
 }
 
 //' Get GDAL configuration option
@@ -37,7 +55,7 @@ std::string _gdal_version() {
 //' @seealso
 //' [set_config_option()]
 //' @examples
-//' ## this option is set during initialization of gdalraster
+//' ## this option is set during initialization of the gdalraster package
 //' get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER")
 // [[Rcpp::export]]
 std::string get_config_option(std::string key) {
@@ -57,13 +75,16 @@ std::string get_config_option(std::string key) {
 //'
 //' @param key Character name of a configuration option.
 //' @param value Character value to set for the option. 
-//' Setting `value = ""` (empty string) will unset a value previously set by 
+//' `value = ""` (empty string) will unset a value previously set by 
 //' `set_config_option()`.
 //' @returns Nothing.
 //' @seealso
 //' [get_config_option()]
 //' @examples
 //' set_config_option("GDAL_NUM_THREADS", "2")
+//' get_config_option("GDAL_NUM_THREADS")
+//' ## unset:
+//' set_config_option("GDAL_NUM_THREADS", "")
 //' get_config_option("GDAL_NUM_THREADS")
 // [[Rcpp::export]]
 void set_config_option(std::string key, std::string value) {
