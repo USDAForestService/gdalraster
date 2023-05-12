@@ -56,9 +56,9 @@
 #' (e.g., "Byte", "Int16", "UInt16", "Int32" or "Float32").
 #' @param options Optional list of format-specific creation options in a
 #' vector of "NAME=VALUE" pairs.
-#' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+#' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 #' compression during creation of a GTiff file).
-#' @param init Numeric value to initialize all pixxels in the output raster.
+#' @param init Numeric value to initialize all pixels in the output raster.
 #' @param dstnodata Numeric nodata value for the output raster.
 #' @returns Returns the destination filename invisibly.
 #' @seealso
@@ -72,7 +72,7 @@
 #' ds_lcp$getMetadata(band=2, domain="")
 #' 
 #' slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
-#' options = c("COMPRESS=DEFLATE")
+#' options = c("COMPRESS=LZW")
 #' rasterFromRaster(srcfile = lcp_file,
 #'                  dstfile = slpp_file,
 #'                  nbands = 1,
@@ -91,6 +91,7 @@
 #' ds_slp$res()
 #' 
 #' ## convert slope degrees in lcp_file band 2 to slope percent in slpp_file
+#' ## bring through LCP nodata -9999 to the output nodata value
 #' ncols <- ds_slp$getRasterXSize()
 #' nrows <- ds_slp$getRasterYSize()
 #' for (row in 0:(nrows-1)) {
@@ -98,7 +99,8 @@
 #'                            xoff=0, yoff=row,
 #'                            xsize=ncols, ysize=1,
 #'                            out_xsize=ncols, out_ysize=1)
-#'     rowslpp <- tan(rowdata*pi/180) * 100;
+#'     rowslpp <- tan(rowdata*pi/180) * 100
+#'     rowslpp[rowdata==-9999] <- -32767
 #'     dim(rowslpp) <- c(1, ncols)
 #'     ds_slp$write(band=1, xoff=0, yoff=row, xsize=ncols, ysize=1, rowslpp)
 #' }
@@ -182,10 +184,22 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' raster in a series of processing steps, including as a `tempfile` (the 
 #' default).
 #' 
-#' Note that VRT format has several capabilities and uses beyond  
-#' those covered by `rasterToVRT()`. See the format description URL above for 
-#' a full discussion. `warp()` can write to VRT format for virtual 
-#' reprojection.
+#' GDAL VRT format has several capabilities and uses beyond those
+#' covered by `rasterToVRT()`. See the format description URL above for 
+#' a full discussion.
+#'
+#' @note
+#' Pixel alignment is specified in terms of the source raster pixels (i.e., 
+#' `srcfile` of the virtual raster). The use case in mind is virtually 
+#' clipping a raster to the bounding box of a vector polygon and keeping 
+#' pixels aligned with `srcfile` (`src_align = TRUE`). `src_align` would be 
+#' set to `FALSE` if the intent is "target alignment". For example, if  
+#' `subwindow` is the bounding box of another raster, then also 
+#' setting `resolution` to the pixel resolution of the target raster and 
+#' `src_align = FALSE` will result in a virtual raster pixel aligned with 
+#' the target (i.e., pixels in the virtual raster are no longer aligned with 
+#' its `srcfile`). Resampling defaults to `nearest` if not specified. 
+#' Examples for both cases are given below.
 #' 
 #' `rasterToVRT()` assumes `srcfile` is a north-up raster.
 #' Requires package `xml2`.
@@ -195,7 +209,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' be interpreted as relative to the .vrt file (`TRUE`) or not relative
 #' to the .vrt file (`FALSE`, the default). If `TRUE`, the .vrt 
 #' file is assumed to be in the same directory as `srcfile` and
-#' `basename(srcfile)` is used in the .vrt file.
+#' `basename(srcfile)` is used in the .vrt file. Use `TRUE` if the .vrt file 
+#' will always be stored in the same directory with `srcfile`.
 #' @param vrtfile Output VRT filename.
 #' @param resolution A numeric vector of length two (xres, yres). The pixel
 #' size must be expressed in georeferenced units. Both must be positive values.
@@ -206,16 +221,20 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' If not given, the upper left corner of the VRT will be the 
 #' same as source, and the VRT extent will be the same or larger than source 
 #' depending on `resolution`.
-#' @param align Logical.
+#' @param src_align Logical.
 #'   * `TRUE`: the upper left corner of the VRT extent will be set to the 
 #'   upper left corner of the source pixel that contains `subwindow` xmin, ymax. 
 #'   The VRT will be pixel-aligned with source if the VRT `resolution` is the 
 #'   same as the source pixel size, otherwise VRT extent will be the minimum 
-#'   rectangle that contains `subwindow` for the given pixel size.
+#'   rectangle that contains `subwindow` for the given pixel size. Use 
+#'   Usually `src_align=TRUE` when selecting a raster minimum bounding box 
+#'   for a vector polygon.
 #'   * `FALSE`: the VRT upper left corner will be exactly `subwindow` 
 #'   xmin, ymax, and the VRT extent will be the minimum rectangle that contains 
 #'   `subwindow` for the given pixel size. If `subwindow` is not given, the 
-#'   source raster extent is used in which case `align=FALSE` has no effect.
+#'   source raster extent is used in which case `src_align=FALSE` has no effect.
+#'   Use `src_align=FALSE` to pixel-align two rasters of different sizes, i.e.,
+#'   when the intent is target alignment.
 #' @param resampling The resampling method to use if xsize, ysize of the VRT is
 #' different than the size of the underlying source rectangle (in number of
 #' pixels). The values allowed are nearest, bilinear, cubic, cubicspline, 
@@ -235,9 +254,9 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' Defaults to `TRUE`.
 #' @returns Returns the VRT filename invisibly.
 #' @seealso
-#' [bbox_from_wkt()], [warp()]
+#' [bbox_from_wkt()], [warp()] can write VRT for virtual reprojection
 #' @examples
-#' ## resample
+#' ### resample
 #'
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #' ds <- new(GDALRaster, evt_file, TRUE)
@@ -245,8 +264,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds$bbox()
 #' ds$close()
 #' 
-#' ## using combine() with one input to get a table of pixel counts for each 
-#' ## raster value
+#' ## use combine() with one input to get a table of pixel counts for  
+#' ## the raster value
 #' vat <- combine(evt_file)
 #' print(vat[-1]) # drop the cmbid in this case
 #' sum(vat$count)
@@ -269,7 +288,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds$bbox()
 #' ds$close()
 #'
-#' ## clip
+#' ### clip
 #' 
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #' ds_evt <- new(GDALRaster, evt_file, TRUE)
@@ -280,9 +299,10 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, 
 #' 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
 #' 
+#' ## src_align = TRUE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
-#'                         align=TRUE)
+#'                         src_align=TRUE)
 #' ds_vrt <- new(GDALRaster, vrt_file, TRUE)
 #' 
 #' ## VRT is a virtual clip, pixel-aligned with the EVT raster
@@ -290,9 +310,10 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_vrt$bbox()
 #' ds_vrt$res()
 #' 
+#' ## src_align = FALSE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
-#'                         align=FALSE)
+#'                         src_align=FALSE)
 #' ds_vrt_noalign <- new(GDALRaster, vrt_file, TRUE)
 #' 
 #' ## VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
@@ -302,12 +323,71 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_vrt$close()
 #' ds_vrt_noalign$close()
 #' ds_evt$close()
+#'
+#' ### subset and pixel align two rasters
+#' 
+#' ## FARSITE landscape file for the Storm Lake area
+#' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+#' ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
+#' 
+#' ## Landsat band 5 file covering the Storm Lake area
+#' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+#' ds_b5 <- new(GDALRaster, b5_file, read_only=TRUE)
+#' 
+#' ds_lcp$bbox()  # 323476.1 5101872.0  327766.1 5105082.0
+#' ds_lcp$res()   # 30 30
+#' 
+#' ds_b5$bbox()   # 323400.9 5101806.0  327856.7 5105175.8
+#' ds_b5$res()    # 29.90471 30.08750
+#' 
+#' ## src_align = FALSE because we need target alignment in this case:
+#' vrt_file <- rasterToVRT(b5_file,
+#'                         resolution = ds_lcp$res(),
+#'                         subwindow = ds_lcp$bbox(),
+#'                         src_align = FALSE)
+#' ds_b5vrt <- new(GDALRaster, vrt_file, TRUE)
+#'
+#' ds_b5vrt$bbox() # 323476.1 5101872.0  327766.1 5105082.0
+#' ds_b5vrt$res()  # 30 30
+#' 
+#' ## read the the Landsat file pixel-aligned with the LCP file 
+#' ## summarize band 5 reflectance where FBFM = 165 
+#' ## LCP band 4 contains FBFM (a classification of fuel beds):
+#' ds_lcp$getMetadata(band=4, domain="")
+#' 
+#' ## verify Landsat nodata (0):
+#' ds_b5vrt$getNoDataValue(band=1)
+#' ## will be read as NA and omitted from stats
+#' rs <- new(RunningStats, na_rm=TRUE)
+#' 
+#' ncols <- ds_lcp$getRasterXSize()
+#' nrows <- ds_lcp$getRasterYSize()
+#' for (row in 0:(nrows-1)) {
+#'     row_fbfm <- ds_lcp$read(band=4, xoff=0, yoff=row,
+#'                             xsize=ncols, ysize=1,
+#'                             out_xsize=ncols, out_ysize=1)
+#'     row_b5 <- ds_b5vrt$read(band=1, xoff=0, yoff=row,
+#'                             xsize=ncols, ysize=1,
+#'                             out_xsize=ncols, out_ysize=1)
+#' 	   rs$update(row_b5[row_fbfm == 165])
+#' }
+#' rs$get_count()
+#' rs$get_mean()
+#' rs$get_min()
+#' rs$get_max()
+#' rs$get_sum()
+#' rs$get_var()
+#' rs$get_sd()
+#' 
+#' ds_b5vrt$close()
+#' ds_lcp$close()
+#' ds_b5$close()
 #' @export
 rasterToVRT <- function(srcfile, relativeToVRT = FALSE, 
 				vrtfile = tempfile("tmprast", fileext=".vrt"), 
 				resolution = NULL, 
 				subwindow = NULL, 
-				align = TRUE, 
+				src_align = TRUE, 
 				resampling = "nearest",
 				krnl = NULL,
 				normalized = TRUE) {
@@ -369,7 +449,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 	src_yoff <- floor(.getOffset(subwindow[4], src_ymax, src_yres))
 	
 	#get vrt geotransform and size (assuming a north-up raster)
-	if (align) {
+	if (src_align) {
 		#lay out the vrt raster so it is aligned with ul corner
 		#of ul src pixel
 		vrt_xmin <- src_xmin + src_xoff * src_xres
@@ -511,12 +591,12 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' @param fmt Character. Output raster format name (e.g., "GTiff" or "HFA").
 #' @param dtName Character. Output raster data type name. Combination IDs are 
 #' sequential integers starting at 1. The data type for the output raster 
-#' should be large enough to accomodate the potential number of unique 
+#' should be large enough to accommodate the potential number of unique 
 #' combinations of the input values 
 #' (e.g., "UInt16" or the default "UInt32").
 #' @param options Optional list of format-specific creation options in a
 #' vector of "NAME=VALUE" pairs.
-#' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+#' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 #' compression during creation of a GTiff file).
 #' @returns A data frame with column `cmbid` containing the combination IDs, 
 #' column `count` containing the pixel counts for each combination, 
@@ -540,7 +620,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' bands <- c(4, 5)
 #' var.names <- c("fbfm", "tree_cov")
 #' cmb_file <- paste0(tempdir(), "/", "fbfm_cov_cmbid.tif")
-#' options <- c("COMPRESS=DEFLATE")
+#' options <- c("COMPRESS=LZW")
 #' df <- combine(rasterfiles, var.names, bands, cmb_file, options = options)
 #' head(df)
 #' ds <- new(GDALRaster, cmb_file, TRUE)

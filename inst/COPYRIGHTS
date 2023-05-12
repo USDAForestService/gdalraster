@@ -23,12 +23,12 @@ SOFTWARE.
 ===============================================================================
 
 =====files src/progress_r.cpp gdalraster.cpp ==================================
-src/progress_r.cpp
-This file is slightly modified version of /gdal/port/cpl_progress.cpp
+src/progress_r.cpp:
+This file is slightly modified version of /gdal/port/cpl_progress.cpp.
 Copyright (c) 2013, Frank Warmerdam
 
-In file src/gdalraster.cpp
-ARE_REAL_EQUAL() was copied from gdal_priv.h
+In file src/gdalraster.cpp:
+The function ARE_REAL_EQUAL() was copied from gdal_priv.h
 Copyright (c) 1998, Frank Warmerdam
 Copyright (c) 2007-2014, Even Rouault <even dot rouault at spatialys.com>
 
@@ -92,9 +92,11 @@ Copyright (c) 2018-2019 Marius Appel
 License: MIT
 
 =====All other files ==========================================================
-All files in this package, other than those referred to above, were prepared by 
+All files in this package other than those referred to above, were prepared by 
 Chris Toney, a U.S. Government employee working on official time, and are in 
-the public domain. 
+the public domain in the United States of America. Copyright and related rights
+in the work are also waived worldwide through the CC0 1.0 Universal public 
+domain dedication.
 ===============================================================================
 
 This package is licensed under MIT + file LICENSE.

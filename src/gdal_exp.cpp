@@ -28,12 +28,12 @@ std::string _gdal_version() {
 //' @param dst_filename Filename to create.
 //' @param xsize Integer width of raster in pixels.
 //' @param ysize Integer height of raster in pixels.
-//' @param nbands Integer nmber of bands.
+//' @param nbands Integer number of bands.
 //' @param dataType Character data type name .
 //' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 //' @param options Optional list of format-specific creation options in a
 //' vector of "NAME=VALUE" pairs 
-//' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set DEFLATE 
+//' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW 
 //' compression during creation of a GTiff file).
 //' The APPEND_SUBDATASET=YES option can be 
 //' specified to avoid prior destruction of existing dataset.
@@ -110,7 +110,7 @@ bool create(std::string format, std::string dst_filename,
 //' the output format.
 //' @param options Optional list of format-specific creation options in a
 //' vector of "NAME=VALUE" pairs 
-//' (e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+//' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 //' compression during creation of a GTiff file).
 //' The APPEND_SUBDATASET=YES option can be 
 //' specified to avoid prior destruction of existing dataset.
@@ -121,7 +121,7 @@ bool create(std::string format, std::string dst_filename,
 //' @examples
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 //' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
-//' options <- c("COMPRESS=DEFLATE")
+//' options <- c("COMPRESS=LZW")
 //' createCopy("GTiff", tif_file, lcp_file, options=options)
 //' file.size(lcp_file)
 //' file.size(tif_file)
@@ -423,20 +423,19 @@ Rcpp::DataFrame _combine(
 	}
 	
 	CmbTable tbl(nrasters, var_names);
-	Rcpp::NumericMatrix rowdata(nrasters, ncols);
-	Rcpp::NumericVector cmbid(ncols);
+	Rcpp::IntegerMatrix rowdata(nrasters, ncols);
+	Rcpp::NumericVector cmbid;
 	GDALProgressFunc pfnProgress = GDALTermProgressR;
 	void* pProgressData = NULL;
 	Rcpp::Rcout << "Combining...\n";
 	for (int y = 0; y < nrows; ++y) {
 		for (std::size_t i = 0; i < nrasters; ++i)
-			rowdata.row(i) = Rcpp::as<Rcpp::NumericMatrix>(
+			rowdata.row(i) = Rcpp::as<Rcpp::IntegerVector>(
 								src_ds[i].read(
 								bands[i], 0, y, ncols, 1, ncols, 1)
 								);
 									
-		cmbid = tbl.updateFromMatrix(
-					Rcpp::as<Rcpp::IntegerMatrix>(rowdata), 1);
+		cmbid = tbl.updateFromMatrix(rowdata, 1);
 		
 		if (out_raster) {
 			cmbid.attr("dim") = Rcpp::Dimension(1, ncols);
@@ -444,7 +443,7 @@ Rcpp::DataFrame _combine(
 						Rcpp::as<Rcpp::NumericMatrix>(cmbid) );
 		}
 		pfnProgress(y / (nrows-1.0), NULL, pProgressData);
-		if (y % 250 == 0)
+		if (y % 1000 == 0)
 			Rcpp::checkUserInterrupt();
 	}
 

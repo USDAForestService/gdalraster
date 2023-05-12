@@ -23,7 +23,8 @@ rasterToVRT(
 be interpreted as relative to the .vrt file (\code{TRUE}) or not relative
 to the .vrt file (\code{FALSE}, the default). If \code{TRUE}, the .vrt
 file is assumed to be in the same directory as \code{srcfile} and
-\code{basename(srcfile)} is used in the .vrt file.}
+\code{basename(srcfile)} is used in the .vrt file. Use \code{TRUE} if the .vrt file
+will always be stored in the same directory with \code{srcfile}.}
 
 \item{vrtfile}{Output VRT filename.}
 
@@ -102,9 +103,9 @@ raster to a regular format). VRT is sometimes useful as an intermediate
 raster in a series of processing steps, including as a \code{tempfile} (the
 default).
 
-Note that VRT format has several capabilities and uses beyond
+Note that the GDAL VRT format has several capabilities and uses beyond
 those covered by \code{rasterToVRT()}. See the format description URL above for
-a full discussion. \code{warp()} can write to VRT format for virtual
+a full discussion. \code{\link[=warp]{warp()}} can write to VRT format for virtual
 reprojection.
 
 \code{rasterToVRT()} assumes \code{srcfile} is a north-up raster.
@@ -154,6 +155,7 @@ bnd = "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, 
 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
 
+## align = TRUE
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
                         align=TRUE)
@@ -164,6 +166,7 @@ bbox_from_wkt(bnd)
 ds_vrt$bbox()
 ds_vrt$res()
 
+## align = FALSE
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
                         align=FALSE)
@@ -178,5 +181,5 @@ ds_vrt_noalign$close()
 ds_evt$close()
 }
 \seealso{
-\code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=warp]{warp()}}
+\code{\link[=bbox_from_wkt]{bbox_from_wkt()}}
 }
