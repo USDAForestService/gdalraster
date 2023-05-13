@@ -71,8 +71,10 @@
 #' @param init Numeric value to initialize all pixels in the output raster.
 #' @param dstnodata Numeric nodata value for the output raster.
 #' @returns Returns the destination filename invisibly.
+#'
 #' @seealso
-#' [create()], [createCopy()], [rasterToVRT()]
+#' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()], [rasterToVRT()]
+#'
 #' @examples
 #' ## band 2 in a FARSITE landscape file has slope degrees
 #' ## verify this and convert slope degrees to slope percent in a new raster
@@ -160,7 +162,6 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 	}
 	
 	dst_ds$close()
-	
 	return(invisible(dstfile))
 }
 
@@ -264,8 +265,12 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' @param normalized Logical. Indicates whether the kernel is normalized.
 #' Defaults to `TRUE`.
 #' @returns Returns the VRT filename invisibly.
+#'
 #' @seealso
-#' [bbox_from_wkt()], [warp()] can write VRT for virtual reprojection
+#' [`GDALRaster-class`][GDALRaster], [bbox_from_wkt()]
+#'
+#' [warp()] can write VRT for virtual reprojection
+#'
 #' @examples
 #' ### resample
 #'
@@ -298,6 +303,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds$res()
 #' ds$bbox()
 #' ds$close()
+#'
 #'
 #' ### clip
 #' 
@@ -334,6 +340,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_vrt$close()
 #' ds_vrt_noalign$close()
 #' ds_evt$close()
+#'
 #'
 #' ### subset and pixel align two rasters
 #' 
@@ -411,10 +418,11 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 
 	src_ds <- new(GDALRaster, srcfile, read.only=TRUE)
 	src_gt <- src_ds$getGeoTransform()
-	src_xmin <- src_ds$bbox()[1]
-	src_ymin <- src_ds$bbox()[2]
-	src_xmax <- src_ds$bbox()[3]
-	src_ymax <- src_ds$bbox()[4]
+	src_bbox <- src_ds$bbox()
+	src_xmin <- src_bbox[1]
+	src_ymin <- src_bbox[2]
+	src_xmax <- src_bbox[3]
+	src_ymax <- src_bbox[4]
 	src_xres <- src_gt[2]
 	src_yres <- src_gt[6]
 	src_bands <- src_ds$getRasterCount()
@@ -448,11 +456,9 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 		subwindow <- c(src_xmin,src_ymin,src_xmax,src_ymax)
 	}
 	else {
-		if (subwindow[1] < src_xmin || subwindow[3] > src_xmax || 
-			subwindow[2] < src_ymin || subwindow[4] > src_ymax) {
+		if ( !.g_within(bbox_to_wkt(subwindow), bbox_to_wkt(src_bbox)) )
 			stop("Subwindow is not completely within source raster extent.",
 					call. = FALSE)
-		}
 	}
 	src_xoff <- floor(.getOffset(subwindow[1], src_xmin, src_xres))
 	src_yoff <- floor(.getOffset(subwindow[4], src_ymax, src_yres))
@@ -625,8 +631,10 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #'   * `update` - if `dstfile` exists, will attempt to open in update mode 
 #'   and write output to `out_band`
 #' @returns Returns the output filename invisibly.
+#'
 #' @seealso
-#' [combine()], [rasterToVRT()]
+#' [`GDALRaster-class`][GDALRaster], [combine()], [rasterToVRT()]
+#'
 #' @examples
 #' ### Expression using pixel longitude/latitude
 #'
@@ -988,8 +996,11 @@ calc <- function(expr,
 #' column `count` containing the pixel counts for each combination, 
 #' and `length(rasterfiles)` columns named `var.names` containing the integer 
 #' values comprising each unique combination.
+#'
 #' @seealso
-#' class [`CmbTable`][CmbTable], [calc()], [rasterToVRT()]
+#' [`CmbTable-class`][CmbTable], [`GDALRaster-class`][GDALRaster], [calc()],
+#' [rasterToVRT()]
+#'
 #' @examples
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #' evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
