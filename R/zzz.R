@@ -8,7 +8,7 @@
  }
 
 .onAttach <- function(libname, pkgname) {
-	msg = paste("GDAL version:", gdal_version()[1])
+	msg = gdal_version()[1]
 	packageStartupMessage(msg)
 }
 
