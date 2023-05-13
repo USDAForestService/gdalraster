@@ -33,8 +33,9 @@
   \item coordinate transformation: \code{transform_xy()}, \code{inv_project()}
   
   \item WKT convenience functions: \code{bbox_from_wkt()}, 
-  \code{epsg_to_wkt()}, \code{srs_to_wkt()},
-  \code{srs_is_geographic()}, \code{srs_is_projected()]
+  \code{bbox_to_polygon()},\cr
+  \code{epsg_to_wkt()}, \code{srs_to_wkt()}, \code{srs_is_geographic()}, 
+  \code{srs_is_projected()}
   
   \item GDAL configuration: \code{gdal_version()}, \code{get_config_option()}, 
   \code{set_config_option()}

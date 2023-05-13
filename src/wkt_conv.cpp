@@ -213,8 +213,11 @@ bool srs_is_projected(std::string srs) {
 //' MULTIPOLYGON).
 //'
 //' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
-//' @return Numeric vector of length four containing the minX, minY, maxX, maxY
-//' of the geometry specified by `wkt`.
+//' @return Numeric vector of length four containing the xmin, ymin, 
+//' xmax, ymax of the geometry specified by `wkt`.
+//'
+//' @seealso
+//' [bbox_to_polygon()]
 //'
 //' @examples
 //' bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2 
@@ -242,3 +245,40 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 
 	return bbox;
 }
+
+//' Convert a bounding box to a polygon in OGC WKT format.
+//'
+//' Returns a WKT polygon string for the given bounding box.
+//'
+//' @param bbox Numeric vector of length four containing xmin, ymin, 
+//' xmax, ymax.
+//' @return Character string for an OGC WKT polygon.
+//'
+//' @seealso
+//' [bbox_from_wkt()]
+//'
+//' @examples
+//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+//' ds <- new(GDALRaster, elev_file, read_only=TRUE)
+//' bbox_to_polygon(ds$bbox())
+//' ds$close()
+// [[Rcpp::export]]
+std::string bbox_to_polygon(Rcpp::NumericVector bbox) {
+	
+	OGRGeometryH linestr = OGR_G_CreateGeometry(wkbLineString);
+	OGR_G_SetPointCount(linestr, 5);
+	OGR_G_SetPoint_2D(linestr, 0, bbox(0), bbox(3));
+	OGR_G_SetPoint_2D(linestr, 1, bbox(2), bbox(3));
+	OGR_G_SetPoint_2D(linestr, 2, bbox(2), bbox(1));
+	OGR_G_SetPoint_2D(linestr, 3, bbox(0), bbox(1));
+	OGR_G_SetPoint_2D(linestr, 4, bbox(0), bbox(3));
+	
+	OGRGeometryH poly = OGR_G_ForceToPolygon(linestr);
+	char* pszWKT;
+	OGR_G_ExportToWkt(poly, &pszWKT);
+	std::string wkt(pszWKT);
+	CPLFree(pszWKT);
+	
+	return wkt;
+}
+
