@@ -1,93 +1,98 @@
-/* Get mean and variance in one pass using Welford's online algorithm
-(see https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance)
-Also tracks the min, max, sum and count.
-Chris Toney <chris.toney at usda.gov> */
+/* Implementation of class RunningStats
+   Chris Toney <chris.toney at usda.gov> */
 
-#include <Rcpp.h> 
-// [[Rcpp::plugins(cpp11)]]
+#include "running_stats.h"
 
-class RunningStats {
+RunningStats::RunningStats():
+	na_rm(true), count(0) {}
 
-	private:
-	bool na_rm;
-	unsigned long long count;
-	double mean, min, max, sum;
-	double M2;
+RunningStats::RunningStats(bool na_rm):
+	na_rm(na_rm), count(0) {}
 
-	public:
-	RunningStats() : na_rm(true), count(0) {}
-	RunningStats(bool na_rm) : na_rm(na_rm), count(0) {}
-
-	void update(const Rcpp::NumericVector& newvalues) {
-		R_xlen_t n = newvalues.size();
-		for (R_xlen_t i=0; i!=n; ++i) {
-			if (na_rm) {
-				if (Rcpp::NumericVector::is_na(newvalues[i]))
-					continue;
-			}
-			++count;
-			if (count == 1) {
-				mean = min = max = sum = newvalues[i];
-				M2 = 0;
-			}
-			else {
-				const double delta = newvalues[i] - mean;
-				mean += (delta / count);
-				const double delta2 = newvalues[i] - mean;
-				M2 += (delta * delta2);
-				if (newvalues[i] < min) min = newvalues[i];
-				if (newvalues[i] > max) max = newvalues[i];
-				sum += newvalues[i];
-			}
+void RunningStats::update(const Rcpp::NumericVector& newvalues) {
+	R_xlen_t n = newvalues.size();
+	for (R_xlen_t i=0; i!=n; ++i) {
+		if (na_rm) {
+			if (Rcpp::NumericVector::is_na(newvalues[i]))
+				continue;
+		}
+		++count;
+		if (count == 1) {
+			mean = min = max = sum = newvalues[i];
+			M2 = 0;
+		}
+		else {
+			const double delta = newvalues[i] - mean;
+			mean += (delta / count);
+			const double delta2 = newvalues[i] - mean;
+			M2 += (delta * delta2);
+			if (newvalues[i] < min) min = newvalues[i];
+			if (newvalues[i] > max) max = newvalues[i];
+			sum += newvalues[i];
 		}
 	}
-	
-	void reset() {
-		count = 0;
-	}
-	
-	unsigned long long get_count() const {
-		return count;
-	}
+}
 
-	double get_mean() const {
-		if (count > 0) return mean;
-		else return NA_REAL;
-	}
+void RunningStats::reset() {
+	count = 0;
+}
 
-	// From R help for min/max:
-	// "The minimum and maximum of a numeric empty set are ‘+Inf’ and
-	// ‘-Inf’ (in this order!) which ensures _transitivity_, e.g.,
-	// ‘min(x1, min(x2)) == min(x1, x2)’."
-	double get_min() const {
-		if (Rcpp::NumericVector::is_na(sum)) return NA_REAL;
-		if (count > 0) return min;
-		else return R_PosInf;
-	}
-	
-	double get_max() const {
-		if (Rcpp::NumericVector::is_na(sum)) return NA_REAL;
-		if (count > 0) return max;
-		else return R_NegInf;
-	}
-	
-	double get_sum() const {
-		if (count > 0) return sum;
-		else return 0;
-	}
+unsigned long long RunningStats::get_count() const {
+	return count;
+}
 
-	double get_var() const {
-		if (count < 2) return NA_REAL;
-		else return (M2 / (count-1));
-	}
+double RunningStats::get_mean() const {
+	if (count > 0)
+		return mean;
+	else
+		return NA_REAL;
+}
 
-	double get_sd() const {
-		if (count < 2) return NA_REAL;
-		else return sqrt(M2 / (count-1));
-	}
-};
+// From R help for min/max:
+// "The minimum and maximum of a numeric empty set are ‘+Inf’ and
+// ‘-Inf’ (in this order!) which ensures _transitivity_, e.g.,
+// ‘min(x1, min(x2)) == min(x1, x2)’."
+double RunningStats::get_min() const {
+	if (Rcpp::NumericVector::is_na(sum))
+		return NA_REAL;
+		
+	if (count > 0)
+		return min;
+	else
+		return R_PosInf;
+}
 
-RCPP_EXPOSED_CLASS(RunningStats)
+double RunningStats::get_max() const {
+	if (Rcpp::NumericVector::is_na(sum))
+		return NA_REAL;
+		
+	if (count > 0)
+		return max;
+	else
+		return R_NegInf;
+}
+
+double RunningStats::get_sum() const {
+	if (count > 0)
+		return sum;
+	else
+		return 0;
+}
+
+double RunningStats::get_var() const {
+	if (count < 2)
+		return NA_REAL;
+	else
+		return (M2 / (count-1));
+}
+
+double RunningStats::get_sd() const {
+	if (count < 2)
+		return NA_REAL;
+	else
+		return sqrt(M2 / (count-1));
+}
+
 RCPP_MODULE(mod_running_stats) {
 
     Rcpp::class_<RunningStats>("RunningStats")
