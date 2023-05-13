@@ -14,8 +14,8 @@ Numeric vector of length four containing the xmin, ymin,
 xmax, ymax of the geometry specified by \code{wkt}.
 }
 \description{
-Returns the bounding box of a WKT 2D geometry (e.g., LINE, POLYGON,
-MULTIPOLYGON).
+\code{bbox_from_wkt()} returns the bounding box of a WKT 2D geometry
+(e.g., LINE, POLYGON, MULTIPOLYGON).
 }
 \examples{
 bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2 
@@ -24,5 +24,5 @@ bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
 bbox_from_wkt(bnd)
 }
 \seealso{
-\code{\link[=bbox_to_polygon]{bbox_to_polygon()}}
+\code{\link[=bbox_to_wkt]{bbox_to_wkt()}}
 }

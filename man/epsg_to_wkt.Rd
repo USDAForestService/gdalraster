@@ -9,11 +9,11 @@ epsg_to_wkt(epsg, pretty = FALSE)
 \arguments{
 \item{epsg}{Integer EPSG code.}
 
-\item{pretty}{Logical. \code{TRUE} to return a nicely formatted WKT 1 string
+\item{pretty}{Logical. \code{TRUE} to return a nicely formatted WKT string
 for display to a person. \code{FALSE} for a regular WKT string (the default).}
 }
 \value{
-Character vector containing OGC WKT.
+Character string containing OGC WKT.
 }
 \description{
 \code{epsg_to_wkt()} exports the spatial reference for the specified EPSG code
@@ -35,4 +35,10 @@ AXIS, AUTHORITY or EXTENSION node is returned. \code{WKT1} is an alias of
 \examples{
 epsg_to_wkt(5070)
 writeLines(epsg_to_wkt(5070, pretty=TRUE))
+set_config_option("OSR_WKT_FORMAT", "WKT2")
+writeLines(epsg_to_wkt(5070, pretty=TRUE))
+set_config_option("OSR_WKT_FORMAT", "")
+}
+\seealso{
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}
 }

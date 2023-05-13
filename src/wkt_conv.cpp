@@ -211,15 +211,15 @@ bool srs_is_projected(std::string srs) {
 
 //' Get the bounding box of a geometry in OGC WKT format.
 //'
-//' Returns the bounding box of a WKT 2D geometry (e.g., LINE, POLYGON, 
-//' MULTIPOLYGON).
+//' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry 
+//' (e.g., LINE, POLYGON, MULTIPOLYGON).
 //'
 //' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
 //' @return Numeric vector of length four containing the xmin, ymin, 
 //' xmax, ymax of the geometry specified by `wkt`.
 //'
 //' @seealso
-//' [bbox_to_polygon()]
+//' [bbox_to_wkt()]
 //'
 //' @examples
 //' bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2 
@@ -250,7 +250,7 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 
 //' Convert a bounding box to a polygon in OGC WKT format.
 //'
-//' Returns a WKT polygon string for the given bounding box.
+//' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
 //'
 //' @param bbox Numeric vector of length four containing xmin, ymin, 
 //' xmax, ymax.
@@ -262,10 +262,10 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 //' @examples
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' ds <- new(GDALRaster, elev_file, read_only=TRUE)
-//' bbox_to_polygon(ds$bbox())
+//' bbox_to_wkt(ds$bbox())
 //' ds$close()
 // [[Rcpp::export]]
-std::string bbox_to_polygon(Rcpp::NumericVector bbox) {
+std::string bbox_to_wkt(Rcpp::NumericVector bbox) {
 	if (bbox.size() != 4)
 		Rcpp::stop("Invalid bounding box.");
 
@@ -276,6 +276,6 @@ std::string bbox_to_polygon(Rcpp::NumericVector bbox) {
 	poly_xy.row(3) = Rcpp::NumericVector::create(bbox(0), bbox(1));
 	poly_xy.row(4) = Rcpp::NumericVector::create(bbox(0), bbox(3));
 	
-	return _g_create(poly_xy, "polygon");
+	return _g_create(poly_xy, "POLYGON");
 }
 

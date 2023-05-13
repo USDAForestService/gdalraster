@@ -15,10 +15,10 @@
   GDAL related stand-alone functions:
   \itemize{
   \item class \code{GDALRaster} allows opening a raster dataset and calling 
-  methods on the GDALDataset, GDALDriver and GDALRasterBand objects in the 
-  underlying API (get/set parameters, read/write pixel data).
+  methods on the Dataset, Driver and RasterBand objects in the underlying API 
+  (get/set parameters, read/write pixel data).
   
-  \item \code{rasterToVRT()} creates a virtual raster file (VRT) that points 
+  \item \code{rasterToVRT()} creates a virtual raster file (VRT) pointing 
   to an existing raster, with options for virtual subsetting, resampling and
   kernel filtering.
   
@@ -33,9 +33,8 @@
   \item coordinate transformation: \code{transform_xy()}, \code{inv_project()}
   
   \item WKT convenience functions: \code{bbox_from_wkt()}, 
-  \code{bbox_to_polygon()},\cr
-  \code{epsg_to_wkt()}, \code{srs_to_wkt()}, \code{srs_is_geographic()}, 
-  \code{srs_is_projected()}
+  \code{bbox_to_wkt()}, \code{epsg_to_wkt()},\cr
+  \code{srs_to_wkt()}, \code{srs_is_geographic()}, \code{srs_is_projected()}
   
   \item GDAL configuration: \code{gdal_version()}, \code{get_config_option()}, 
   \code{set_config_option()}
@@ -78,11 +77,10 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
 }
 \note{
   Sample datasets are included with the package and used in examples 
-  throughout the documentation. The sample data include raster layers from 
-  LANDFIRE describing terrain, vegetation and wildland fuels 
-  (LF 2020 version, \url{https://landfire.gov/}). Landsat Collection 2 Analysis
-  Ready Data were downloaded from USGS Earth Explorer 
-  (\url{https://earthexplorer.usgs.gov/}).
+  throughout the documentation. The sample data include LANDFIRE raster layers 
+  describing terrain, vegetation and wildland fuels (LF 2020 version, 
+  \url{https://landfire.gov/}). Landsat Collection 2 Analysis Ready Data were 
+  downloaded from USGS Earth Explorer (\url{https://earthexplorer.usgs.gov/}).
 
   \code{system.file()} is used in the examples to access the sample datasets. 
   This enables the code to run regardless of where R is installed. Users will 
