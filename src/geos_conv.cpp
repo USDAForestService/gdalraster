@@ -67,18 +67,25 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 			OGR_G_SetPoint_2D(hGeom, i, xy(i, 0), xy(i, 1));
 	}
 	
-	if (geom_type == "POLYGON")
-		hGeom = OGR_G_ForceToPolygon(hGeom);
-	
-	if (!OGR_G_IsValid(hGeom))
-		Rcpp::stop("The resulting geometry is not valid.");
-		
-	char* pszWKT;
-	OGR_G_ExportToWkt(hGeom, &pszWKT);
-	std::string wkt(pszWKT);
-	CPLFree(pszWKT);
-	
-	return wkt;
+	if (geom_type == "POLYGON") {
+		OGRGeometryH hPoly = OGR_G_ForceToPolygon(hGeom);
+		if (!OGR_G_IsValid(hPoly))
+			Rcpp::stop("The resulting geometry is not valid.");
+		char* pszWKT;
+		OGR_G_ExportToWkt(hPoly, &pszWKT);
+		std::string wkt(pszWKT);
+		CPLFree(pszWKT);
+		return wkt;
+	}
+	else {
+		if (!OGR_G_IsValid(hGeom))
+			Rcpp::stop("The resulting geometry is not valid.");
+		char* pszWKT;
+		OGR_G_ExportToWkt(hGeom, &pszWKT);
+		std::string wkt(pszWKT);
+		CPLFree(pszWKT);
+		return wkt;
+	}
 }
 
 //' @noRd
@@ -168,6 +175,30 @@ bool _g_disjoint(std::string this_geom, std::string other_geom) {
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
 		
 	return OGR_G_Disjoint(hGeom_this, hGeom_other);
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_touches")]]
+bool _g_touches(std::string this_geom, std::string other_geom) {
+// Tests if this geometry and the other geometry are touching.
+// Geometry validity is not checked. In case you are unsure of the validity 
+// of the input geometries, call _g_is_valid() before, otherwise the result 
+// might be wrong.
+// This function is built on the GEOS library, check it for the definition of 
+// the geometry operation. If OGR is built without the GEOS library, this 
+// function will always fail, issuing a CPLE_NotSupported error.
+
+	OGRGeometryH hGeom_this, hGeom_other;
+	char* pszWKT_this = (char*) this_geom.c_str();
+	char* pszWKT_other = (char*) other_geom.c_str();
+	
+	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
+		Rcpp::stop("Failed to create geometry object from first WKT string.");
+		
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+		Rcpp::stop("Failed to create geometry object from second WKT string.");
+		
+	return OGR_G_Touches(hGeom_this, hGeom_other);
 }
 
 //' @noRd
