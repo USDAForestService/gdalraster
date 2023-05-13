@@ -2,8 +2,8 @@
    Called via GDAL ogr headers, requires GDAL built against GEOS.
    Chris Toney <chris.toney at usda.gov> */
 
-#ifndef geos_conv_wkt_H
-#define geos_conv_wkt_H
+#ifndef geos_conv_H
+#define geos_conv_H
 
 #include <Rcpp.h> 
 // [[Rcpp::plugins(cpp11)]]
@@ -31,6 +31,7 @@ std::string _g_difference(std::string this_geom, std::string other_geom);
 std::string _g_sym_difference(std::string this_geom, std::string other_geom);
 
 double _g_distance(std::string this_geom, std::string other_geom);
+double _g_length(std::string geom);
 double _g_area(std::string geom);
 Rcpp::NumericVector _g_centroid(std::string geom);
 
