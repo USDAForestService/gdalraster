@@ -1,14 +1,11 @@
 /* GEOS convenience functions operating on WKT geometries
    Called via GDAL ogr headers, requires GDAL built against GEOS.
    Chris Toney <chris.toney at usda.gov> */
-   
-#include <Rcpp.h> 
-// [[Rcpp::plugins(cpp11)]]
-
-#include <string>
 
 #include "cpl_conv.h"
 #include "ogrsf_frmts.h"
+
+#include "geos_conv.h"
 
 //' @noRd
 // [[Rcpp::export(name = ".has_geos")]]
@@ -27,50 +24,70 @@ bool _has_geos() {
 std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 // Create a geometry from a list of points (vertices)
 // Currently only for types: point, linestring, polygon
-// Currently only simple polygons composed of one exterior ring are supported
+// Only simple polygons composed of one (closed) exterior ring are supported
 
 	OGRGeometryH hGeom;
-	if (geom_type == "point")
-		hGeom = OGR_G_CreateGeometry(wkbPoint);
-	else if (geom_type == "linestring")
-		hGeom = OGR_G_CreateGeometry(wkbLineString);
-	else if (geom_type == "polygon")
-		hGeom = OGR_G_CreateGeometry(wkbLineString);
-	else
-		Rcpp::stop("Geometry type is not valid.");
 	
-	R_xlen_t nPts = xy.size();
+	if (geom_type == "point" || geom_type == "POINT") {
+		geom_type == "point";
+		hGeom = OGR_G_CreateGeometry(wkbPoint);
+	}
+	else if (geom_type == "linestring" || geom_type == "LINESTRING") {
+		geom_type == "linestring";
+		hGeom = OGR_G_CreateGeometry(wkbLineString);
+	}
+	else if (geom_type == "polygon" || geom_type == "POLYGON") {
+		geom_type == "polygon";
+		hGeom = OGR_G_CreateGeometry(wkbLineString);
+	}
+	else {
+		Rcpp::stop("Geometry type is not valid.");
+	}
+	
+	R_xlen_t nPts = xy.nrow();
 	
 	if (nPts == 1) {
 		if (geom_type != "point")
 			Rcpp::stop("Invalid number of points for geometry type.");
+			
 		OGR_G_SetPoint_2D(hGeom, 0, xy(0, 0), xy(0, 1));
 	}
 	else {
 		if (geom_type == "point")
-			Rcpp::stop("Point geometry can only have one xy.");
+			Rcpp::stop("Point geometry cannot have more than one xy.");
 		if (geom_type == "polygon" && nPts < 4)
-			Rcpp::stop("Polygon geometry must have at least four vertices.");
+			Rcpp::stop("Polygon geometry must have at least four points.");
+			
 		OGR_G_SetPointCount(hGeom, (int) nPts);
 		for (R_xlen_t i=0; i < nPts; ++i)
 			OGR_G_SetPoint_2D(hGeom, i, xy(i, 0), xy(i, 1));
 	}
 	
-	OGRGeometryH hGeom_out;
 	if (geom_type == "polygon")
-		hGeom_out = OGR_G_ForceToPolygon(hGeom);
-	else
-		hGeom_out = OGR_G_Clone(hGeom);
+		hGeom = OGR_G_ForceToPolygon(hGeom);
 	
 	if (!OGR_G_IsValid(hGeom))
 		Rcpp::stop("The resulting geometry is not valid.");
 		
 	char* pszWKT;
-	OGR_G_ExportToWkt(hGeom_out, &pszWKT);
+	OGR_G_ExportToWkt(hGeom, &pszWKT);
 	std::string wkt(pszWKT);
 	CPLFree(pszWKT);
 	
 	return wkt;
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_is_valid")]]
+bool _g_is_valid(std::string geom) {
+
+	OGRGeometryH hGeom;
+	char* pszWKT = (char*) geom.c_str();
+	
+	if (OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom) != OGRERR_NONE)
+		Rcpp::stop("Failed to create geometry object from WKT string.");
+		
+	return OGR_G_IsValid(hGeom);
 }
 
 
@@ -201,19 +218,6 @@ bool _g_overlaps(std::string this_geom, std::string other_geom) {
 
 
 //' @noRd
-// [[Rcpp::export(name = ".g_is_valid")]]
-bool _g_is_valid(std::string geom) {
-
-	OGRGeometryH hGeom;
-	char* pszWKT = (char*) geom.c_str();
-	
-	if (OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom) != OGRERR_NONE)
-		Rcpp::stop("Failed to create geometry object from WKT string.");
-		
-	return OGR_G_IsValid(hGeom);
-}
-
-//' @noRd
 // [[Rcpp::export(name = ".g_buffer")]]
 std::string _g_buffer(std::string geom, double dist, int quad_segs = 30) {
 //Compute buffer of geometry.
@@ -249,6 +253,7 @@ std::string _g_buffer(std::string geom, double dist, int quad_segs = 30) {
 
 
 // *** binary operations ***
+
 
 //' @noRd
 // [[Rcpp::export(name = ".g_intersection")]]

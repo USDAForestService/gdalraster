@@ -11,6 +11,8 @@
 #include "ogr_spatialref.h"
 #include "ogrsf_frmts.h"
 
+#include "geos_conv.h"
+
 //' Convert EPSG spatial reference to Well Known Text (WKT)
 //'
 //' `epsg_to_wkt()` exports the spatial reference for the specified EPSG code 
@@ -264,21 +266,16 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 //' ds$close()
 // [[Rcpp::export]]
 std::string bbox_to_polygon(Rcpp::NumericVector bbox) {
+	if (bbox.size() != 4)
+		Rcpp::stop("Invalid bounding box.");
+
+	Rcpp::NumericMatrix poly_xy(5, 2);
+	poly_xy.row(0) = Rcpp::NumericVector::create(bbox(0), bbox(3));
+	poly_xy.row(1) = Rcpp::NumericVector::create(bbox(2), bbox(3));
+	poly_xy.row(2) = Rcpp::NumericVector::create(bbox(2), bbox(1));
+	poly_xy.row(3) = Rcpp::NumericVector::create(bbox(0), bbox(1));
+	poly_xy.row(4) = Rcpp::NumericVector::create(bbox(0), bbox(3));
 	
-	OGRGeometryH linestr = OGR_G_CreateGeometry(wkbLineString);
-	OGR_G_SetPointCount(linestr, 5);
-	OGR_G_SetPoint_2D(linestr, 0, bbox(0), bbox(3));
-	OGR_G_SetPoint_2D(linestr, 1, bbox(2), bbox(3));
-	OGR_G_SetPoint_2D(linestr, 2, bbox(2), bbox(1));
-	OGR_G_SetPoint_2D(linestr, 3, bbox(0), bbox(1));
-	OGR_G_SetPoint_2D(linestr, 4, bbox(0), bbox(3));
-	
-	OGRGeometryH poly = OGR_G_ForceToPolygon(linestr);
-	char* pszWKT;
-	OGR_G_ExportToWkt(poly, &pszWKT);
-	std::string wkt(pszWKT);
-	CPLFree(pszWKT);
-	
-	return wkt;
+	return _g_create(poly_xy, "polygon");
 }
 
