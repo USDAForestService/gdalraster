@@ -1,6 +1,6 @@
 /* R interface to a subset of the GDAL C API for low level raster I/O
-see: https://gdal.org/api/raster_c_api.html)
-Chris Toney <chris.toney at usda.gov> */
+   See: https://gdal.org/api/raster_c_api.html)
+   Chris Toney <chris.toney at usda.gov> */
 
 #ifndef gdalraster_H
 #define gdalraster_H

@@ -1,4 +1,4 @@
-/* exported stand-alone functions for gdalraster
+/* Exported stand-alone functions for gdalraster
    Chris Toney <chris.toney at usda.gov> */
 
 #include <Rcpp.h> 
@@ -115,7 +115,7 @@ void set_config_option(std::string key, std::string value) {
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' @seealso
-//' [createCopy()], [rasterFromRaster()]
+//' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()]
 //' @examples
 //' new_file <- paste0(tempdir(), "/", "newdata.tif")
 //' create("GTiff", new_file, 143, 107, 1, "Int16")
@@ -192,7 +192,7 @@ bool create(std::string format, std::string dst_filename,
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' @seealso
-//' [create()], [rasterFromRaster()]
+//' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()]
 //' @examples
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 //' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
@@ -378,6 +378,10 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 //' in addition to -t_srs.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
+//'
+//' @seealso
+//' [`GDALRaster-class`][GDALRaster]
+//'
 //' @examples
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' ## reproject the elevation raster to NAD83 / CONUS Albers (EPSG:5070)

@@ -103,7 +103,7 @@ set_config_option <- function(key, value) {
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' @seealso
-#' [createCopy()], [rasterFromRaster()]
+#' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()]
 #' @examples
 #' new_file <- paste0(tempdir(), "/", "newdata.tif")
 #' create("GTiff", new_file, 143, 107, 1, "Int16")
@@ -143,7 +143,7 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' @seealso
-#' [create()], [rasterFromRaster()]
+#' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()]
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
@@ -239,6 +239,10 @@ get_pixel_line <- function(xy, gt) {
 #' in addition to -t_srs.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
+#'
+#' @seealso
+#' [`GDALRaster-class`][GDALRaster]
+#'
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' ## reproject the elevation raster to NAD83 / CONUS Albers (EPSG:5070)
@@ -260,18 +264,129 @@ warp <- function(src_files, dst_filename, t_srs, arg_list = NULL) {
     invisible(.Call(`_gdalraster_warp`, src_files, dst_filename, t_srs, arg_list))
 }
 
+#' Raster overlay for unique combinations
+#' 
+#' @description
+#' `combine()` overlays multiple rasters so that a unique ID is assigned to 
+#' each unique combination of input values. The input raster layers  
+#' typically have integer data types (floating point will be coerced to 
+#' integer by truncation), and must have the same projection, extent and cell 
+#' size. Pixel counts for each unique combination are obtained, and 
+#' combination IDs are optionally written to an output raster.
+#'
+#' Called from and documented in R/gdalraster_proc.R
 #' @noRd
 .combine <- function(src_files, var_names, bands, dst_filename = "", fmt = "", dataType = "UInt32", options = NULL) {
     .Call(`_gdalraster__combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options)
 }
 
+#' @noRd
+.has_geos <- function() {
+    .Call(`_gdalraster__has_geos`)
+}
+
+#' @noRd
+.g_create <- function(xy, geom_type) {
+    .Call(`_gdalraster__g_create`, xy, geom_type)
+}
+
+#' @noRd
+.g_is_valid <- function(geom) {
+    .Call(`_gdalraster__g_is_valid`, geom)
+}
+
+#' @noRd
+.g_intersects <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_intersects`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_equals <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_equals`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_disjoint <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_disjoint`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_touches <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_touches`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_contains <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_contains`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_within <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_within`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_crosses <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_crosses`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_overlaps <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_overlaps`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_buffer <- function(geom, dist, quad_segs = 30L) {
+    .Call(`_gdalraster__g_buffer`, geom, dist, quad_segs)
+}
+
+#' @noRd
+.g_intersection <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_intersection`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_union <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_union`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_difference <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_difference`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_sym_difference <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_sym_difference`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_distance <- function(this_geom, other_geom) {
+    .Call(`_gdalraster__g_distance`, this_geom, other_geom)
+}
+
+#' @noRd
+.g_length <- function(geom) {
+    .Call(`_gdalraster__g_length`, geom)
+}
+
+#' @noRd
+.g_area <- function(geom) {
+    .Call(`_gdalraster__g_area`, geom)
+}
+
+#' @noRd
+.g_centroid <- function(geom) {
+    .Call(`_gdalraster__g_centroid`, geom)
+}
+
 #' Inverse project geospatial x/y coordinates to longitude/latitude
 #'
-#' `inv_project()` transforms geospatial x/y coordinates to long/lat in 
-#' the same geographic coordinate system used by the given projected spatial 
-#' reference system. The output long/lat can optionally be set to a specific 
-#' geographic coordinate system by specifying a well known name (see 
-#' Details).
+#' `inv_project()` transforms geospatial x/y coordinates to 
+#' longitude/latitude in the same geographic coordinate system used by the 
+#' given projected spatial reference system. The output long/lat can 
+#' optionally be set to a specific geographic coordinate system by specifying 
+#' a well known name (see Details).
 #'
 #' @details
 #' By default, the geographic coordinate system of the projection specified 
@@ -364,25 +479,126 @@ transform_xy <- function(pts, srs_from, srs_to) {
 #' `WKT2_2018` since GDAL 3.2
 #'
 #' @param epsg Integer EPSG code.
-#' @param pretty Logical. `TRUE` to return a nicely formatted WKT 1 string 
+#' @param pretty Logical. `TRUE` to return a nicely formatted WKT string 
 #' for display to a person. `FALSE` for a regular WKT string (the default).
-#' @return Character vector containing OGC WKT.
+#' @return Character string containing OGC WKT.
+#'
+#' @seealso
+#' [srs_to_wkt()]
 #'
 #' @examples
 #' epsg_to_wkt(5070)
 #' writeLines(epsg_to_wkt(5070, pretty=TRUE))
+#' set_config_option("OSR_WKT_FORMAT", "WKT2")
+#' writeLines(epsg_to_wkt(5070, pretty=TRUE))
+#' set_config_option("OSR_WKT_FORMAT", "")
 epsg_to_wkt <- function(epsg, pretty = FALSE) {
     .Call(`_gdalraster_epsg_to_wkt`, epsg, pretty)
 }
 
+#' Convert spatial reference definition to Well Known Text (WKT)
+#'
+#' `srs_to_wkt()` converts a spatial reference system (SRS) definition 
+#' in various text formats to WKT. The function will examine the input SRS, 
+#' try to deduce the format, and then export it to WKT.
+#'
+#' @details
+#' The input SRS may take the following forms:
+#'   * `WKT` - to convert WKT versions (see below)
+#'   * `EPSG:n` - EPSG code n
+#'   * \code{AUTO:proj_id,unit_id,lon0,lat0} - WMS auto projections
+#'   * `urn:ogc:def:crs:EPSG::n` - OGC urns
+#'   * PROJ.4 definitions
+#'   * `filename` - file read for WKT, XML or PROJ.4 definition
+#'   * well known name such as `NAD27`, `NAD83`, `WGS84` or `WGS72`
+#'   * `IGNF:xxxx`, `ESRI:xxxx` - definitions from the PROJ database
+#'   * PROJJSON (PROJ >= 6.2)
+#'
+#' This function is intended to be flexible, but by its nature it is 
+#' imprecise as it must guess information about the format intended. 
+#' [epsg_to_wkt()] should be used if the input is known to be an integer 
+#' EPSG code.
+#'
+#' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
+#' The WKT version can be overridden by using the `OSR_WKT_FORMAT` 
+#' configuration option (see [set_config_option()]).
+#' Valid values are one of: `SFSQL`, `WKT1_SIMPLE`, `WKT1`, `WKT1_GDAL`, 
+#' `WKT1_ESRI`, `WKT2_2015`, `WKT2_2018`, `WKT2`, `DEFAULT`.
+#' If `SFSQL`, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
+#' EXTENSION node is returned. If `WKT1_SIMPLE`, a WKT1 string without 
+#' AXIS, AUTHORITY or EXTENSION node is returned. `WKT1` is an alias of 
+#' `WKT1_GDAL`. `WKT2` will default to the latest revision implemented 
+#' (currently `WKT2_2018`). `WKT2_2019` can be used as an alias of 
+#' `WKT2_2018` since GDAL 3.2
+#'
+#' @param srs Character string containing an SRS definition in various
+#' formats (see Details).
+#' @param pretty Logical. `TRUE` to return a nicely formatted WKT string 
+#' for display to a person. `FALSE` for a regular WKT string (the default).
+#' @return Character string containing OGC WKT.
+#'
+#' @seealso
+#' [epsg_to_wkt()]
+#'
+#' @examples
+#' srs_to_wkt("NAD83")
+#' writeLines(srs_to_wkt("NAD83", pretty=TRUE))
+#' set_config_option("OSR_WKT_FORMAT", "WKT2")
+#' writeLines(srs_to_wkt("NAD83", pretty=TRUE))
+#' set_config_option("OSR_WKT_FORMAT", "")
+srs_to_wkt <- function(srs, pretty = FALSE) {
+    .Call(`_gdalraster_srs_to_wkt`, srs, pretty)
+}
+
+#' Check if WKT definition is a geographic coordinate system
+#'
+#' `srs_is_geographic()` will attempt to import the given WKT string as a 
+#' spatial reference system (SRS), and returns `TRUE`  if the root is a 
+#' GEOGCS node.
+#'
+#' @param srs Character OGC WKT string for a spatial reference system
+#' @return Logical. `TRUE` if `srs` is geographic, otherwise `FALSE`
+#'
+#' @seealso
+#' [srs_is_projected()]
+#'
+#' @examples
+#' srs_is_geographic(epsg_to_wkt(5070))
+#' srs_is_geographic(srs_to_wkt("WGS84"))
+srs_is_geographic <- function(srs) {
+    .Call(`_gdalraster_srs_is_geographic`, srs)
+}
+
+#' Check if WKT definition is a projected coordinate system
+#'
+#' `srs_is_projected()` will attempt to import the given WKT string as a 
+#' spatial reference system (SRS), and returns `TRUE` if the SRS contains a 
+#' PROJCS node indicating a it is a projected coordinate system.
+#'
+#' @param srs Character OGC WKT string for a spatial reference system
+#' @return Logical. `TRUE` if `srs` is projected, otherwise `FALSE`
+#'
+#' @seealso
+#' [srs_is_geographic()]
+#'
+#' @examples
+#' srs_is_projected(epsg_to_wkt(5070))
+#' srs_is_projected(srs_to_wkt("WGS84"))
+srs_is_projected <- function(srs) {
+    .Call(`_gdalraster_srs_is_projected`, srs)
+}
+
 #' Get the bounding box of a geometry in OGC WKT format.
 #'
-#' Returns the bounding box of a WKT 2D geometry (e.g., LINE, POLYGON, 
-#' MULTIPOLYGON).
+#' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry 
+#' (e.g., LINE, POLYGON, MULTIPOLYGON).
 #'
 #' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
-#' @return Numeric vector of length four containing the minX, minY, maxX, maxY
-#' of the geometry specified by `wkt`.
+#' @return Numeric vector of length four containing the xmin, ymin, 
+#' xmax, ymax of the geometry specified by `wkt`.
+#'
+#' @seealso
+#' [bbox_to_wkt()]
 #'
 #' @examples
 #' bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2 
@@ -391,5 +607,25 @@ epsg_to_wkt <- function(epsg, pretty = FALSE) {
 #' bbox_from_wkt(bnd)
 bbox_from_wkt <- function(wkt) {
     .Call(`_gdalraster_bbox_from_wkt`, wkt)
+}
+
+#' Convert a bounding box to a polygon in OGC WKT format.
+#'
+#' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
+#'
+#' @param bbox Numeric vector of length four containing xmin, ymin, 
+#' xmax, ymax.
+#' @return Character string for an OGC WKT polygon.
+#'
+#' @seealso
+#' [bbox_from_wkt()]
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, elev_file, read_only=TRUE)
+#' bbox_to_wkt(ds$bbox())
+#' ds$close()
+bbox_to_wkt <- function(bbox) {
+    .Call(`_gdalraster_bbox_to_wkt`, bbox)
 }
 

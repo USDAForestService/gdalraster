@@ -104,5 +104,6 @@ ds$info()
 ds$close()
 }
 \seealso{
-class \code{\link{CmbTable}}, \code{\link[=calc]{calc()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}
+\code{\link[=CmbTable]{CmbTable-class}}, \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=calc]{calc()}},
+\code{\link[=rasterToVRT]{rasterToVRT()}}
 }

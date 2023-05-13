@@ -10,7 +10,7 @@ rasterToVRT(
   vrtfile = tempfile("tmprast", fileext = ".vrt"),
   resolution = NULL,
   subwindow = NULL,
-  align = TRUE,
+  src_align = TRUE,
   resampling = "nearest",
   krnl = NULL,
   normalized = TRUE
@@ -39,17 +39,21 @@ If not given, the upper left corner of the VRT will be the
 same as source, and the VRT extent will be the same or larger than source
 depending on \code{resolution}.}
 
-\item{align}{Logical.
+\item{src_align}{Logical.
 \itemize{
 \item \code{TRUE}: the upper left corner of the VRT extent will be set to the
 upper left corner of the source pixel that contains \code{subwindow} xmin, ymax.
 The VRT will be pixel-aligned with source if the VRT \code{resolution} is the
 same as the source pixel size, otherwise VRT extent will be the minimum
-rectangle that contains \code{subwindow} for the given pixel size.
+rectangle that contains \code{subwindow} for the given pixel size. Use
+Usually \code{src_align=TRUE} when selecting a raster minimum bounding box
+for a vector polygon.
 \item \code{FALSE}: the VRT upper left corner will be exactly \code{subwindow}
 xmin, ymax, and the VRT extent will be the minimum rectangle that contains
 \code{subwindow} for the given pixel size. If \code{subwindow} is not given, the
-source raster extent is used in which case \code{align=FALSE} has no effect.
+source raster extent is used in which case \code{src_align=FALSE} has no effect.
+Use \code{src_align=FALSE} to pixel-align two rasters of different sizes, i.e.,
+when the intent is target alignment.
 }}
 
 \item{resampling}{The resampling method to use if xsize, ysize of the VRT is
@@ -103,16 +107,28 @@ raster to a regular format). VRT is sometimes useful as an intermediate
 raster in a series of processing steps, including as a \code{tempfile} (the
 default).
 
-Note that the GDAL VRT format has several capabilities and uses beyond
-those covered by \code{rasterToVRT()}. See the format description URL above for
-a full discussion. \code{\link[=warp]{warp()}} can write to VRT format for virtual
-reprojection.
+GDAL VRT format has several capabilities and uses beyond those
+covered by \code{rasterToVRT()}. See the format description URL above for
+a full discussion.
+}
+\note{
+Pixel alignment is specified in terms of the source raster pixels (i.e.,
+\code{srcfile} of the virtual raster). The use case in mind is virtually
+clipping a raster to the bounding box of a vector polygon and keeping
+pixels aligned with \code{srcfile} (\code{src_align = TRUE}). \code{src_align} would be
+set to \code{FALSE} if the intent is "target alignment". For example, if
+\code{subwindow} is the bounding box of another raster, then also
+setting \code{resolution} to the pixel resolution of the target raster and
+\code{src_align = FALSE} will result in a virtual raster pixel aligned with
+the target (i.e., pixels in the virtual raster are no longer aligned with
+its \code{srcfile}). Resampling defaults to \code{nearest} if not specified.
+Examples for both cases are given below.
 
 \code{rasterToVRT()} assumes \code{srcfile} is a north-up raster.
 Requires package \code{xml2}.
 }
 \examples{
-## resample
+### resample
 
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 ds <- new(GDALRaster, evt_file, TRUE)
@@ -120,8 +136,8 @@ ds$res()
 ds$bbox()
 ds$close()
 
-## using combine() with one input to get a table of pixel counts for each 
-## raster value
+## use combine() with one input to get a table of pixel counts for  
+## the raster value
 vat <- combine(evt_file)
 print(vat[-1]) # drop the cmbid in this case
 sum(vat$count)
@@ -144,7 +160,8 @@ ds$res()
 ds$bbox()
 ds$close()
 
-## clip
+
+### clip
 
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 ds_evt <- new(GDALRaster, evt_file, TRUE)
@@ -155,10 +172,10 @@ bnd = "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, 
 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
 
-## align = TRUE
+## src_align = TRUE
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
-                        align=TRUE)
+                        src_align=TRUE)
 ds_vrt <- new(GDALRaster, vrt_file, TRUE)
 
 ## VRT is a virtual clip, pixel-aligned with the EVT raster
@@ -166,10 +183,10 @@ bbox_from_wkt(bnd)
 ds_vrt$bbox()
 ds_vrt$res()
 
-## align = FALSE
+## src_align = FALSE
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
-                        align=FALSE)
+                        src_align=FALSE)
 ds_vrt_noalign <- new(GDALRaster, vrt_file, TRUE)
 
 ## VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
@@ -179,7 +196,69 @@ ds_vrt_noalign$res()
 ds_vrt$close()
 ds_vrt_noalign$close()
 ds_evt$close()
+
+
+### subset and pixel align two rasters
+
+## FARSITE landscape file for the Storm Lake area
+lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
+
+## Landsat band 5 file covering the Storm Lake area
+b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+ds_b5 <- new(GDALRaster, b5_file, read_only=TRUE)
+
+ds_lcp$bbox()  # 323476.1 5101872.0  327766.1 5105082.0
+ds_lcp$res()   # 30 30
+
+ds_b5$bbox()   # 323400.9 5101806.0  327856.7 5105175.8
+ds_b5$res()    # 29.90471 30.08750
+
+## src_align = FALSE because we need target alignment in this case:
+vrt_file <- rasterToVRT(b5_file,
+                        resolution = ds_lcp$res(),
+                        subwindow = ds_lcp$bbox(),
+                        src_align = FALSE)
+ds_b5vrt <- new(GDALRaster, vrt_file, TRUE)
+
+ds_b5vrt$bbox() # 323476.1 5101872.0  327766.1 5105082.0
+ds_b5vrt$res()  # 30 30
+
+## read the the Landsat file pixel-aligned with the LCP file 
+## summarize band 5 reflectance where FBFM = 165 
+## LCP band 4 contains FBFM (a classification of fuel beds):
+ds_lcp$getMetadata(band=4, domain="")
+
+## verify Landsat nodata (0):
+ds_b5vrt$getNoDataValue(band=1)
+## will be read as NA and omitted from stats
+rs <- new(RunningStats, na_rm=TRUE)
+
+ncols <- ds_lcp$getRasterXSize()
+nrows <- ds_lcp$getRasterYSize()
+for (row in 0:(nrows-1)) {
+    row_fbfm <- ds_lcp$read(band=4, xoff=0, yoff=row,
+                            xsize=ncols, ysize=1,
+                            out_xsize=ncols, out_ysize=1)
+    row_b5 <- ds_b5vrt$read(band=1, xoff=0, yoff=row,
+                            xsize=ncols, ysize=1,
+                            out_xsize=ncols, out_ysize=1)
+	   rs$update(row_b5[row_fbfm == 165])
+}
+rs$get_count()
+rs$get_mean()
+rs$get_min()
+rs$get_max()
+rs$get_sum()
+rs$get_var()
+rs$get_sd()
+
+ds_b5vrt$close()
+ds_lcp$close()
+ds_b5$close()
 }
 \seealso{
-\code{\link[=bbox_from_wkt]{bbox_from_wkt()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=bbox_from_wkt]{bbox_from_wkt()}}
+
+\code{\link[=warp]{warp()}} can write VRT for virtual reprojection
 }

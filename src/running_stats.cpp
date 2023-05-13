@@ -1,4 +1,5 @@
 /* Implementation of class RunningStats
+   One-pass algorithm for mean and variance.
    Chris Toney <chris.toney at usda.gov> */
 
 #include "running_stats.h"

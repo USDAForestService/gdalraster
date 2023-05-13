@@ -95,5 +95,5 @@ ds_slp$close()
 ds_lcp$close()
 }
 \seealso{
-\code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}
 }

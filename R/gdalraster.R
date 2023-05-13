@@ -16,7 +16,7 @@
 #' @seealso
 #' Package overview in [`help("gdalraster-package")`][gdalraster-package]
 #'
-#' [create()], [createCopy()], [rasterFromRaster()], [rasterToVRT()]
+#' [create()], [createCopy()], [rasterFromRaster()], [rasterToVRT()], [warp()]
 #'
 #' @section Usage:
 #' \preformatted{

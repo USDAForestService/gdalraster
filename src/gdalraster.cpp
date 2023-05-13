@@ -1,5 +1,6 @@
-/* Implementation of GDALRaster class
-Chris Toney <chris.toney at usda.gov> */
+/* Implementation of class GDALRaster
+   Encapsulates a subset of GDALDataset, GDALDriver and GDALRasterBand.
+   Chris Toney <chris.toney at usda.gov> */
 
 #include <complex>
 #include <algorithm>

@@ -49,5 +49,5 @@ ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
 }
 \seealso{
-\code{\link[=create]{create()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}
 }

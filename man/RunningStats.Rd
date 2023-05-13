@@ -4,6 +4,7 @@
 \alias{RunningStats}
 \alias{Rcpp_RunningStats}
 \alias{Rcpp_RunningStats-class}
+\alias{RunningStats-class}
 \title{Class to calculate mean and variance in one pass}
 \description{
 Calculates summary statistics on a data stream.
