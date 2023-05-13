@@ -1,5 +1,5 @@
 /* exported stand-alone functions for gdalraster
-Chris Toney <chris.toney at usda.gov> */
+   Chris Toney <chris.toney at usda.gov> */
 
 #include <Rcpp.h> 
 // [[Rcpp::plugins(cpp11)]]
@@ -439,6 +439,17 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 	}
 }
 
+//' Raster overlay for unique combinations
+//' 
+//' @description
+//' `combine()` overlays multiple rasters so that a unique ID is assigned to 
+//' each unique combination of input values. The input raster layers  
+//' typically have integer data types (floating point will be coerced to 
+//' integer by truncation), and must have the same projection, extent and cell 
+//' size. Pixel counts for each unique combination are obtained, and 
+//' combination IDs are optionally written to an output raster.
+//'
+//' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".combine")]]
 Rcpp::DataFrame _combine(

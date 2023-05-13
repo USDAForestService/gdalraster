@@ -12,11 +12,11 @@
 
 //' Inverse project geospatial x/y coordinates to longitude/latitude
 //'
-//' `inv_project()` transforms geospatial x/y coordinates to long/lat in 
-//' the same geographic coordinate system used by the given projected spatial 
-//' reference system. The output long/lat can optionally be set to a specific 
-//' geographic coordinate system by specifying a well known name (see 
-//' Details).
+//' `inv_project()` transforms geospatial x/y coordinates to 
+//' longitude/latitude in the same geographic coordinate system used by the 
+//' given projected spatial reference system. The output long/lat can 
+//' optionally be set to a specific geographic coordinate system by specifying 
+//' a well known name (see Details).
 //'
 //' @details
 //' By default, the geographic coordinate system of the projection specified 

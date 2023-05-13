@@ -1,5 +1,5 @@
 /* WKT-related convenience functions
-Chris Toney <chris.toney at usda.gov> */
+   Chris Toney <chris.toney at usda.gov> */
 
 #include <Rcpp.h> 
 // [[Rcpp::plugins(cpp11)]]
@@ -30,13 +30,16 @@ Chris Toney <chris.toney at usda.gov> */
 //' `WKT2_2018` since GDAL 3.2
 //'
 //' @param epsg Integer EPSG code.
-//' @param pretty Logical. `TRUE` to return a nicely formatted WKT 1 string 
+//' @param pretty Logical. `TRUE` to return a nicely formatted WKT string 
 //' for display to a person. `FALSE` for a regular WKT string (the default).
-//' @return Character vector containing OGC WKT.
+//' @return Character string containing OGC WKT.
 //'
 //' @examples
 //' epsg_to_wkt(5070)
 //' writeLines(epsg_to_wkt(5070, pretty=TRUE))
+//' set_config_option("OSR_WKT_FORMAT", "WKT2")
+//' writeLines(epsg_to_wkt(5070, pretty=TRUE))
+//' set_config_option("OSR_WKT_FORMAT", "")
 // [[Rcpp::export]]
 std::string epsg_to_wkt(int epsg, bool pretty = false) {
 
@@ -86,8 +89,10 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 	OGRGeometryH hGeometry;
 	char* pszWKT;
 	pszWKT = (char*) wkt.c_str();
+	
 	if (OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeometry) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from WKT string.");
+		
 	OGREnvelope sBbox;
 	OGR_G_GetEnvelope(hGeometry, &sBbox);
 	Rcpp::NumericVector bbox = {
