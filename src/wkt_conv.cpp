@@ -151,6 +151,62 @@ std::string srs_to_wkt(std::string srs, bool pretty = false) {
 	return wkt;
 }
 
+//' Check if WKT definition is a geographic coordinate system
+//'
+//' `srs_is_geographic()` will attempt to import the given WKT string as a 
+//' spatial reference system (SRS), and returns `TRUE`  if the root is a 
+//' GEOGCS node.
+//'
+//' @param srs Character OGC WKT string for a spatial reference system
+//' @return Logical. `TRUE` if `srs` is geographic, otherwise `FALSE`
+//'
+//' @seealso
+//' [srs_is_projected()]
+//'
+//' @examples
+//' srs_is_geographic(epsg_to_wkt(5070))
+//' srs_is_geographic(srs_to_wkt("WGS84"))
+// [[Rcpp::export]]
+bool srs_is_geographic(std::string srs) {
+
+	OGRSpatialReferenceH hSRS = OSRNewSpatialReference(NULL);
+	char* pszWKT;
+	pszWKT = (char*) srs.c_str();
+	
+	if (OSRImportFromWkt(hSRS, &pszWKT) != OGRERR_NONE)
+		Rcpp::stop("Error importing SRS from user input.");
+	
+	return OSRIsGeographic(hSRS);
+}
+
+//' Check if WKT definition is a projected coordinate system
+//'
+//' `srs_is_projected()` will attempt to import the given WKT string as a 
+//' spatial reference system (SRS), and returns `TRUE` if the SRS contains a 
+//' PROJCS node indicating a it is a projected coordinate system.
+//'
+//' @param srs Character OGC WKT string for a spatial reference system
+//' @return Logical. `TRUE` if `srs` is projected, otherwise `FALSE`
+//'
+//' @seealso
+//' [srs_is_geographic()]
+//'
+//' @examples
+//' srs_is_projected(epsg_to_wkt(5070))
+//' srs_is_projected(srs_to_wkt("WGS84"))
+// [[Rcpp::export]]
+bool srs_is_projected(std::string srs) {
+
+	OGRSpatialReferenceH hSRS = OSRNewSpatialReference(NULL);
+	char* pszWKT;
+	pszWKT = (char*) srs.c_str();
+	
+	if (OSRImportFromWkt(hSRS, &pszWKT) != OGRERR_NONE)
+		Rcpp::stop("Error importing SRS from user input.");
+	
+	return OSRIsProjected(hSRS);
+}
+
 //' Get the bounding box of a geometry in OGC WKT format.
 //'
 //' Returns the bounding box of a WKT 2D geometry (e.g., LINE, POLYGON, 
