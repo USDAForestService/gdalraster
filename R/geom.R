@@ -1,5 +1,5 @@
 # Exported functions that use the GEOS convenience library defined in
-# src/geos_conv.h.
+# src/geos_wkt.h.
 # Chris Toney <chris.toney at usda.gov>
 
 #' Bounding box intersection / union

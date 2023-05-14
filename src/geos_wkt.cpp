@@ -1,4 +1,4 @@
-/* GEOS convenience functions operating on WKT geometries
+/* GEOS wrapper functions operating on WKT geometries
    Called via GDAL ogr headers, requires GDAL built against GEOS.
    Chris Toney <chris.toney at usda.gov> */
 

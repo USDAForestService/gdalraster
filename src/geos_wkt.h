@@ -1,4 +1,4 @@
-/* GEOS convenience functions operating on WKT geometries
+/* GEOS wrapper functions operating on WKT geometries
    Called via GDAL ogr headers, requires GDAL built against GEOS.
    For spatial predicate definitions: https://en.wikipedia.org/wiki/DE-9IM
    Chris Toney <chris.toney at usda.gov> */
