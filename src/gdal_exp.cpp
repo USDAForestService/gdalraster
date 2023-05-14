@@ -85,7 +85,6 @@ std::string get_config_option(std::string key) {
 //' get_config_option("GDAL_CACHEMAX")
 //' ## unset:
 //' set_config_option("GDAL_CACHEMAX", "")
-//' get_config_option("GDAL_CACHEMAX")
 // [[Rcpp::export]]
 void set_config_option(std::string key, std::string value) {
 	const char* value_ = NULL;
@@ -333,7 +332,9 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' @param gt Numeric vector of length six. The affine geotransform for the 
 //' raster.
 //' @returns Integer array of raster pixel/line.
+//'
 //' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [inv_geotransform()]
+//'
 //' @examples
 //' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 //' ## id, x, y in NAD83 / UTM zone 12N
@@ -342,6 +343,7 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' ds <- new(GDALRaster, raster_file, TRUE)
 //' gt <- ds$getGeoTransform()
 //' get_pixel_line(as.matrix(pts[,-1]), gt)
+//' ds$close()
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 		const std::vector<double> gt) {

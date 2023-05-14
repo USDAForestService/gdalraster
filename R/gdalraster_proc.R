@@ -1,15 +1,23 @@
 # R functions for various processing with gdalraster
 # Chris Toney <chris.toney at usda.gov>
 
-.DEFAULT_NODATA <- list('Byte'= 255, 'UInt16'= 65535, 'Int16'= -32767,
-						'UInt32'= 4294967293, 'Int32'= -2147483647, 
-						'Float32'= 3.402823466E+38, 
-						'Float64'= .Machine$double.xmax)
 
-#' @noRd
-.getDefaultNodata <- function(GDT_name) {
-	return(.DEFAULT_NODATA[[GDT_name]])
-}
+#' List of default nodata values by raster data type
+#'
+#' These values are currently used when a nodata value is needed but has not 
+#' been specified. Defined as:
+#' \preformatted{
+#'     list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
+#'          "UInt32"= 4294967293, "Int32"= -2147483647, 
+#'          "Float32"= 3.402823466E+38, 
+#'          "Float64"= .Machine$double.xmax)
+#' }
+#' @examples
+#' DEFAULT_NODATA[["UInt32"]]
+DEFAULT_NODATA <- list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
+						"UInt32"= 4294967293, "Int32"= -2147483647, 
+						"Float32"= 3.402823466E+38, 
+						"Float64"= .Machine$double.xmax)
 
 #' @noRd
 .getGDALformat <- function(file) {
@@ -37,6 +45,8 @@
 	(coord-origin)/gt_pixel_size
 }
 
+
+#' @noRd
 .VRT_KERNEL_TEMPLATE <- 
 "<KernelFilteredSource>
   <SourceFilename relativeToVRT=\"%d\">%s</SourceFilename><SourceBand>%d</SourceBand>
@@ -560,7 +570,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 }
 
 
-#' Raster calculator
+#' Raster calculation
 #' 
 #' @description
 #' `calc()` evaluates an R expression for each pixel in a raster layer or 
@@ -577,9 +587,9 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' inverse projected longitude/latitude.
 #'
 #' @details
-#' The variables in `expr` are vectors of length rasterXsize 
+#' The variables in `expr` are vectors of length raster Xsize 
 #' (rows of a raster layer). 
-#' The expresion should return a vector also of length rasterXsize 
+#' The expresion should return a vector also of length raster Xsize 
 #' (an output row). 
 #' Two special variable names are available in `expr` by default: 
 #' `pixelX` and `pixelY` provide the pixel center coordinate in 
@@ -636,7 +646,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' [`GDALRaster-class`][GDALRaster], [combine()], [rasterToVRT()]
 #'
 #' @examples
-#' ### Expression using pixel longitude/latitude
+#' ### Using pixel longitude/latitude
 #'
 #' ## Hopkins bioclimatic index (HI) as described in:
 #' ## Bechtold, 2004, West. J. Appl. For. 19(4):245-251.
@@ -698,7 +708,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' ds$close()
 #'
 #'
-#' ### Recode by applying a rule set
+#' ### Reclassify a variable by rule set
 #' 
 #' ## Combine two raster layers and look for specific combinations. Then 
 #' ## recode to a new value by rule set.
@@ -825,7 +835,7 @@ calc <- function(expr,
 	}
 	
 	if (is.null(nodata_value)) {
-		nodata_value <- .getDefaultNodata(dtName)
+		nodata_value <- DEFAULT_NODATA[[dtName]]
 		if (is.null(nodata_value)) {
 			stop("Default nodata value unavailable for output data type.",
 				call. = FALSE)
@@ -842,7 +852,6 @@ calc <- function(expr,
 	ymax <- ref$bbox()[4]
 	srs <- ref$getProjectionRef()
 	ref$close()
-	ref <- NULL
 	
 	if(nrasters > 1) {
 		for(r in rasterfiles) {
@@ -937,6 +946,7 @@ calc <- function(expr,
 		
 	invisible(dstfile)
 }
+
 
 #' Raster overlay for unique combinations
 #' 
@@ -1054,6 +1064,7 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 	ref_nrows <- ref_ds$getRasterYSize()
 	ref_ncols <- ref_ds$getRasterXSize()
 	ref_gt <- ref_ds$getGeoTransform()
+	ref_res <- ref_ds$res()
 	ref_ds$close()
 	
 	if (nrasters > 1) {
@@ -1063,7 +1074,7 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 					(ds$getRasterXSize() != ref_ncols) )
 				stop("All input rasters must have the same extent and 
 					cell size.", call. = FALSE)
-			if ( !all(ds$getGeoTransform() == ref_gt) )
+			if ( !all(ds$res() == ref_res) )
 				stop("All input rasters must have the same extent and 
 					cell size.", call. = FALSE)
 			ds$close()

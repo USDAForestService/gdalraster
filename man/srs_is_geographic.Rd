@@ -14,7 +14,7 @@ Logical. \code{TRUE} if \code{srs} is geographic, otherwise \code{FALSE}
 }
 \description{
 \code{srs_is_geographic()} will attempt to import the given WKT string as a
-spatial reference system (SRS), and returns \code{TRUE}  if the root is a
+spatial reference system, and returns \code{TRUE}  if the root is a
 GEOGCS node.
 }
 \examples{

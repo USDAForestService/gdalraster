@@ -29,7 +29,6 @@ set_config_option("GDAL_CACHEMAX", "64")
 get_config_option("GDAL_CACHEMAX")
 ## unset:
 set_config_option("GDAL_CACHEMAX", "")
-get_config_option("GDAL_CACHEMAX")
 }
 \seealso{
 \code{\link[=get_config_option]{get_config_option()}}

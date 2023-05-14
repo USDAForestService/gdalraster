@@ -329,8 +329,7 @@ This will typically be the same as \code{nrow(rasterData)}.
 \code{rasterData} is a numeric or complex array containing values to write.
 It is organized in left to right, top to bottom pixel order. NA in
 \code{rasterData} should be replaced with a suitable nodata value prior to
-writing (see \code{$getNoDataValue(band)} and
-\code{$setNoDataValue(band, nodata_value)} above).
+writing (see \code{$getNoDataValue()} and \code{$setNoDataValue()} above).
 An error is raised if the operation fails (no return value).
 
 \code{$fillRaster(band, value, ivalue)}

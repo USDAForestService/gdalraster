@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdalraster_proc.R
 \name{calc}
 \alias{calc}
-\title{Raster calculator}
+\title{Raster calculation}
 \usage{
 calc(
   expr,
@@ -82,9 +82,9 @@ the R expession, as either x/y in the raster projected coordinate system or
 inverse projected longitude/latitude.
 }
 \details{
-The variables in \code{expr} are vectors of length rasterXsize
+The variables in \code{expr} are vectors of length raster Xsize
 (rows of a raster layer).
-The expresion should return a vector also of length rasterXsize
+The expresion should return a vector also of length raster Xsize
 (an output row).
 Two special variable names are available in \code{expr} by default:
 \code{pixelX} and \code{pixelY} provide the pixel center coordinate in
@@ -108,7 +108,7 @@ exists, set \code{write_mode = "update"} and set \code{out_band} to an existing
 band number in \code{dstfile} (new bands cannot be created in \code{dstfile}).
 }
 \examples{
-### Expression using pixel longitude/latitude
+### Using pixel longitude/latitude
 
 ## Hopkins bioclimatic index (HI) as described in:
 ## Bechtold, 2004, West. J. Appl. For. 19(4):245-251.
@@ -170,7 +170,7 @@ ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
 
 
-### Recode by applying a rule set
+### Reclassify a variable by rule set
 
 ## Combine two raster layers and look for specific combinations. Then 
 ## recode to a new value by rule set.

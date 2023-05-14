@@ -78,7 +78,6 @@ get_config_option <- function(key) {
 #' get_config_option("GDAL_CACHEMAX")
 #' ## unset:
 #' set_config_option("GDAL_CACHEMAX", "")
-#' get_config_option("GDAL_CACHEMAX")
 set_config_option <- function(key, value) {
     invisible(.Call(`_gdalraster_set_config_option`, key, value))
 }
@@ -213,7 +212,9 @@ inv_geotransform <- function(gt) {
 #' @param gt Numeric vector of length six. The affine geotransform for the 
 #' raster.
 #' @returns Integer array of raster pixel/line.
+#'
 #' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [inv_geotransform()]
+#'
 #' @examples
 #' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 #' ## id, x, y in NAD83 / UTM zone 12N
@@ -222,6 +223,7 @@ inv_geotransform <- function(gt) {
 #' ds <- new(GDALRaster, raster_file, TRUE)
 #' gt <- ds$getGeoTransform()
 #' get_pixel_line(as.matrix(pts[,-1]), gt)
+#' ds$close()
 get_pixel_line <- function(xy, gt) {
     .Call(`_gdalraster_get_pixel_line`, xy, gt)
 }
@@ -462,8 +464,8 @@ transform_xy <- function(pts, srs_from, srs_to) {
 
 #' Convert EPSG spatial reference to Well Known Text (WKT)
 #'
-#' `epsg_to_wkt()` exports the spatial reference for the specified EPSG code 
-#' to WKT format.
+#' `epsg_to_wkt()` exports the spatial reference for an EPSG code to 
+#' WKT format.
 #'
 #' @details
 #' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
@@ -553,7 +555,7 @@ srs_to_wkt <- function(srs, pretty = FALSE) {
 #' Check if WKT definition is a geographic coordinate system
 #'
 #' `srs_is_geographic()` will attempt to import the given WKT string as a 
-#' spatial reference system (SRS), and returns `TRUE`  if the root is a 
+#' spatial reference system, and returns `TRUE`  if the root is a 
 #' GEOGCS node.
 #'
 #' @param srs Character OGC WKT string for a spatial reference system

@@ -16,8 +16,8 @@ for display to a person. \code{FALSE} for a regular WKT string (the default).}
 Character string containing OGC WKT.
 }
 \description{
-\code{epsg_to_wkt()} exports the spatial reference for the specified EPSG code
-to WKT format.
+\code{epsg_to_wkt()} exports the spatial reference for an EPSG code to
+WKT format.
 }
 \details{
 As of GDAL 3.0, the default format for WKT export is OGC WKT 1.

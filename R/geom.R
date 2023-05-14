@@ -28,12 +28,14 @@
 #' bbox_list <-list()
 #'
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' ds_elev <- new(GDALRaster, elev_file, read_only=TRUE)
-#' bbox_list[[1]] <- ds_elev$bbox()
+#' ds <- new(GDALRaster, elev_file, read_only=TRUE)
+#' bbox_list[[1]] <- ds$bbox()
+#' ds$close()
 #'
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-#' ds_b5 <- new(GDALRaster, b5_file, read_only=TRUE)
-#' bbox_list[[2]] <- ds_b5$bbox()
+#' ds <- new(GDALRaster, b5_file, read_only=TRUE)
+#' bbox_list[[2]] <- ds$bbox()
+#' ds$close()
 #'
 #' bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2 
 #' 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, 
