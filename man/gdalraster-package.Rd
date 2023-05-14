@@ -22,7 +22,7 @@
   to an existing raster, with options for virtual subsetting, resampling and
   kernel filtering.
   
-  \item other creation functions: \code{create()}, \code{createCopy()}, 
+  \item creation functions: \code{create()}, \code{createCopy()}, 
   \code{rasterFromRaster()}
   
   \item geotransform conversion: \code{inv_geotransform()}, 
@@ -32,9 +32,13 @@
   
   \item coordinate transformation: \code{transform_xy()}, \code{inv_project()}
   
-  \item WKT convenience functions: \code{bbox_from_wkt()}, 
-  \code{bbox_to_wkt()}, \code{epsg_to_wkt()},\cr
-  \code{srs_to_wkt()}, \code{srs_is_geographic()}, \code{srs_is_projected()}
+  \item spatial reference convenience functions: \code{epsg_to_wkt()},
+  \code{srs_to_wkt()},\cr
+  \code{srs_is_geographic()}, \code{srs_is_projected()}
+  
+  \item bounding box convenience functions: \code{bbox_from_wkt()}, 
+  \code{bbox_to_wkt()},\cr
+  \code{bbox_intersect()}, \code{bbox_union()}
   
   \item GDAL configuration: \code{gdal_version()}, \code{get_config_option()}, 
   \code{set_config_option()}
@@ -79,7 +83,7 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
   Sample datasets are included with the package and used in examples 
   throughout the documentation. The sample data include LANDFIRE raster layers 
   describing terrain, vegetation and wildland fuels (LF 2020 version, 
-  \url{https://landfire.gov/}). Landsat Collection 2 Analysis Ready Data were 
+  \url{https://landfire.gov/}). Landsat C2 Analysis Ready Data were 
   downloaded from USGS Earth Explorer (\url{https://earthexplorer.usgs.gov/}).
 
   \code{system.file()} is used in the examples to access the sample datasets. 
