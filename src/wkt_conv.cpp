@@ -11,12 +11,12 @@
 #include "ogr_spatialref.h"
 #include "ogrsf_frmts.h"
 
-#include "geos_conv.h"
+#include "geos_wkt.h"
 
 //' Convert EPSG spatial reference to Well Known Text (WKT)
 //'
-//' `epsg_to_wkt()` exports the spatial reference for the specified EPSG code 
-//' to WKT format.
+//' `epsg_to_wkt()` exports the spatial reference for an EPSG code to 
+//' WKT format.
 //'
 //' @details
 //' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
@@ -156,7 +156,7 @@ std::string srs_to_wkt(std::string srs, bool pretty = false) {
 //' Check if WKT definition is a geographic coordinate system
 //'
 //' `srs_is_geographic()` will attempt to import the given WKT string as a 
-//' spatial reference system (SRS), and returns `TRUE`  if the root is a 
+//' spatial reference system, and returns `TRUE`  if the root is a 
 //' GEOGCS node.
 //'
 //' @param srs Character OGC WKT string for a spatial reference system

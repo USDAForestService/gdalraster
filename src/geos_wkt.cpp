@@ -5,7 +5,7 @@
 #include "cpl_conv.h"
 #include "ogrsf_frmts.h"
 
-#include "geos_conv.h"
+#include "geos_wkt.h"
 
 //' @noRd
 // [[Rcpp::export(name = ".has_geos")]]
