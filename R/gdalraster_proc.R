@@ -5,19 +5,17 @@
 #' List of default nodata values by raster data type
 #'
 #' These values are currently used when a nodata value is needed but has not 
-#' been specified. Defined as:
+#' been specified:
 #' \preformatted{
 #'     list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
 #'          "UInt32"= 4294967293, "Int32"= -2147483647, 
-#'          "Float32"= 3.402823466E+38, 
-#'          "Float64"= .Machine$double.xmax)
+#'          "Float32"= -99999.0, 
+#'          "Float64"= -99999.0)
 #' }
-#' @examples
-#' DEFAULT_NODATA[["UInt32"]]
 DEFAULT_NODATA <- list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
 						"UInt32"= 4294967293, "Int32"= -2147483647, 
-						"Float32"= 3.402823466E+38, 
-						"Float64"= .Machine$double.xmax)
+						"Float32"= -99999.0, 
+						"Float64"= -99999.0)
 
 #' @noRd
 .getGDALformat <- function(file) {
@@ -188,9 +186,9 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' A VRT dataset is saved as a plain-text file with extension .vrt. This file 
 #' contains a description of the dataset in an XML format. The description 
 #' includes the source raster filename which can be a full path 
-#' (`relativeToVRT = FALSE`) or the just the filename with no path 
-#' (`relativeToVRT = TRUE`) in which case `rasterToVRT()` assumes that the 
-#' .vrt file will be in the same directory as the source file. The different 
+#' (`relativeToVRT = FALSE`) or relative path (`relativeToVRT = TRUE`). 
+#' For relative path, `rasterToVRT()` assumes that the .vrt file will be in 
+#' the same directory as the source file and uses `basename(srcfile)`. The 
 #' elements of the XML schema specify how the source data will be read, along 
 #' with algorithms potentially applied and so forth. The full specification of 
 #' the XML format for .vrt is at: 
@@ -207,8 +205,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' default).
 #' 
 #' GDAL VRT format has several capabilities and uses beyond those
-#' covered by `rasterToVRT()`. See the format description URL above for 
-#' a full discussion.
+#' covered by `rasterToVRT()`. See the format URL above for a full discussion.
 #'
 #' @note
 #' Pixel alignment is specified in terms of the source raster pixels (i.e., 
@@ -221,7 +218,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' `src_align = FALSE` will result in a virtual raster pixel aligned with 
 #' the target (i.e., pixels in the virtual raster are no longer aligned with 
 #' its `srcfile`). Resampling defaults to `nearest` if not specified. 
-#' Examples for both cases are given below.
+#' Examples for both cases of `src_align` are given below.
 #' 
 #' `rasterToVRT()` assumes `srcfile` is a north-up raster.
 #' Requires package `xml2`.
@@ -365,8 +362,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_lcp$bbox()  # 323476.1 5101872.0  327766.1 5105082.0
 #' ds_lcp$res()   # 30 30
 #' 
-#' ds_b5$bbox()   # 323400.9 5101806.0  327856.7 5105175.8
-#' ds_b5$res()    # 29.90471 30.08750
+#' ds_b5$bbox()   # 323400.9 5101815.8  327870.9 5105175.8
+#' ds_b5$res()    # 30 30
 #' 
 #' ## src_align = FALSE because we need target alignment in this case:
 #' vrt_file <- rasterToVRT(b5_file,
@@ -582,20 +579,20 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' All of the input layers must have the same extent and cell size.
 #' The projection will be read from the first raster in the list 
 #' of inputs.
-#' Individual pixel coordinates are also available for use as variables in 
-#' the R expession, as either x/y in the raster projected coordinate system or 
+#' Individual pixel coordinates are also available as variables in the 
+#' R expression, as either x/y in the raster projected coordinate system or 
 #' inverse projected longitude/latitude.
 #'
 #' @details
 #' The variables in `expr` are vectors of length raster Xsize 
 #' (rows of a raster layer). 
-#' The expresion should return a vector also of length raster Xsize 
+#' The expression should return a vector also of length raster Xsize 
 #' (an output row). 
 #' Two special variable names are available in `expr` by default: 
 #' `pixelX` and `pixelY` provide the pixel center coordinate in 
 #' projection units. If `usePixelLonLat = TRUE`, the pixel x/y coordinates 
 #' will also be inverse projected to longitude/latitude and available 
-#' for use in `expr` as `pixelLon` and `pixelLat` (in the same geographic 
+#' in `expr` as `pixelLon` and `pixelLat` (in the same geographic 
 #' coordinate system used by the input projection, which is read from the 
 #' first input raster).
 #'
@@ -660,7 +657,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' 
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #'
-#' ## expresion	to calculate HI
+#' ## expression to calculate HI
 #' expr <- "round( ((ELEV_M * 3.281 - 5449) / 100) + 
 #'                 ((pixelLat - 42.16) * 4) + 
 #'                 ((-116.39 - pixelLon) * 1.25) )"
@@ -737,7 +734,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' sum(df_subset$count)   # 85 total pixels
 #' 
 #' ## recode these pixels to 99 (bare ground)
-#' ## LCP format does not support write so make a copy as GTiff
+#' ## the LCP driver does not support in-place write so make a copy as GTiff
 #' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
 #' createCopy("GTiff", tif_file, lcp_file)
 #' 

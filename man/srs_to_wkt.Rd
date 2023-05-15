@@ -22,6 +22,8 @@ in various text formats to WKT. The function will examine the input SRS,
 try to deduce the format, and then export it to WKT.
 }
 \details{
+This is a wrapper for \code{OSRSetFromUserInput()} in the GDAL Spatial
+Reference System C API with output to WKT.
 The input SRS may take the following forms:
 \itemize{
 \item \code{WKT} - to convert WKT versions (see below)
@@ -37,8 +39,7 @@ The input SRS may take the following forms:
 
 This function is intended to be flexible, but by its nature it is
 imprecise as it must guess information about the format intended.
-\code{\link[=epsg_to_wkt]{epsg_to_wkt()}} should be used if the input is known to be an integer
-EPSG code.
+\code{\link[=epsg_to_wkt]{epsg_to_wkt()}} could be used instead for EPSG codes.
 
 As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
 The WKT version can be overridden by using the \code{OSR_WKT_FORMAT}

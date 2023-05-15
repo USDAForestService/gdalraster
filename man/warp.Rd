@@ -4,18 +4,18 @@
 \alias{warp}
 \title{Raster reprojection}
 \usage{
-warp(src_files, dst_filename, t_srs, arg_list = NULL)
+warp(src_files, dst_filename, t_srs, cl_arg = NULL)
 }
 \arguments{
 \item{src_files}{Character vector of source file(s) to be reprojected.}
 
 \item{dst_filename}{Filename of the output raster.}
 
-\item{t_srs}{Character. Target spatial reference. Usually an EPSG code
-("EPSG:#####") or a well known text (WKT) CRS definition.}
+\item{t_srs}{Character. Target spatial reference system. Usually an EPSG
+code ("EPSG:#####") or a well known text (WKT) SRS definition.}
 
-\item{arg_list}{Optional list of command-line arguments to \code{gdalwarp}
-in addition to -t_srs.}
+\item{cl_arg}{Optional character vector of command-line arguments to
+\code{gdalwarp} in addition to -t_srs.}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).
@@ -26,15 +26,17 @@ An error is raised if the operation fails.
 See \url{https://gdal.org/programs/gdalwarp.html} for details.
 }
 \examples{
-elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ## reproject the elevation raster to NAD83 / CONUS Albers (EPSG:5070)
-## command-line arguments for gdalwarp:
-## resample to 90-m resolution using average and keep pixels aligned
+elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+
+## command-line arguments for gdalwarp
+## resample to 90-m resolution using average and keep pixels aligned:
 args = c("-tr", "90", "90", "-r", "average", "-tap")
-## output to Erdas Imagine format (HFA) with compression
+## output to Erdas Imagine format (HFA), creation option for compression:
 args = c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
+
 alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
-warp(elev_file, alb83_file, t_srs="EPSG:5070", arg_list = args)
+warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
 
 ds <- new(GDALRaster, alb83_file, read_only=TRUE)
 ds$getDriverLongName()
@@ -44,5 +46,5 @@ ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=srs_to_wkt]{srs_to_wkt()}}
 }

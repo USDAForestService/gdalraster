@@ -103,7 +103,7 @@ void set_config_option(std::string key, std::string value) {
 //' @param xsize Integer width of raster in pixels.
 //' @param ysize Integer height of raster in pixels.
 //' @param nbands Integer number of bands.
-//' @param dataType Character data type name .
+//' @param dataType Character data type name.
 //' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 //' @param options Optional list of format-specific creation options in a
 //' vector of "NAME=VALUE" pairs 
@@ -281,7 +281,7 @@ Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
 //' converts the equation from being:\cr
 //' raster pixel/line (column/row) &rarr; geospatial x/y coordinate\cr
 //' to:\cr
-//' geospatial x/y coordinate &rarr; raster pixel/line
+//' geospatial x/y coordinate &rarr; raster pixel/line (column/row)
 //'
 //' @param gt Numeric vector of length six containing the geotransform to 
 //' invert.
@@ -300,12 +300,12 @@ Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
 //' ptY = 5103901.4
 //' 
 //' ## for a point x, y in the spatial reference system of elev_file
-//' ## raster pixel (column number)
+//' ## raster pixel (column number):
 //' pixel <- floor(invgt[1] +
 //'                invgt[2] * ptX +
 //'                invgt[3] * ptY)
 //' 
-//' ## raster line (row number)
+//' ## raster line (row number):
 //' line <- floor(invgt[4] +
 //'               invgt[5] * ptX +
 //'               invgt[6] * ptY)
@@ -374,26 +374,28 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 //'
 //' @param src_files Character vector of source file(s) to be reprojected.
 //' @param dst_filename Filename of the output raster.
-//' @param t_srs Character. Target spatial reference. Usually an EPSG code 
-//' ("EPSG:#####") or a well known text (WKT) CRS definition.
-//' @param arg_list Optional list of command-line arguments to \code{gdalwarp}
-//' in addition to -t_srs.
+//' @param t_srs Character. Target spatial reference system. Usually an EPSG 
+//' code ("EPSG:#####") or a well known text (WKT) SRS definition.
+//' @param cl_arg Optional character vector of command-line arguments to 
+//' \code{gdalwarp} in addition to -t_srs.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //'
 //' @seealso
-//' [`GDALRaster-class`][GDALRaster]
+//' [`GDALRaster-class`][GDALRaster], [srs_to_wkt()]
 //'
 //' @examples
-//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' ## reproject the elevation raster to NAD83 / CONUS Albers (EPSG:5070)
-//' ## command-line arguments for gdalwarp:
-//' ## resample to 90-m resolution using average and keep pixels aligned
+//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+//'
+//' ## command-line arguments for gdalwarp
+//' ## resample to 90-m resolution using average and keep pixels aligned:
 //' args = c("-tr", "90", "90", "-r", "average", "-tap")
-//' ## output to Erdas Imagine format (HFA) with compression
+//' ## output to Erdas Imagine format (HFA), creation option for compression:
 //' args = c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
+//'
 //' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
-//' warp(elev_file, alb83_file, t_srs="EPSG:5070", arg_list = args)
+//' warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
 //' 
 //' ds <- new(GDALRaster, alb83_file, read_only=TRUE)
 //' ds$getDriverLongName()
@@ -404,7 +406,7 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 // [[Rcpp::export(invisible = true)]]
 bool warp(std::vector<std::string> src_files, std::string dst_filename,
 		Rcpp::CharacterVector t_srs, 
-		Rcpp::Nullable<Rcpp::CharacterVector> arg_list = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
 
 	std::vector<GDALDatasetH> src_ds(src_files.size());
 	for (std::size_t i = 0; i < src_files.size(); ++i) {
@@ -413,16 +415,16 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 
 	std::vector<char *> argv = {(char *) ("-t_srs"), (char *) (t_srs[0]), NULL};
 	//Rcpp::Rcout << argv[0] << " " << argv[1] << " ";
-	if (arg_list.isNotNull()) {
+	if (cl_arg.isNotNull()) {
 		// cast to the underlying type
 		// https://gallery.rcpp.org/articles/optional-null-function-arguments/
-		Rcpp::CharacterVector arg_list_in(arg_list);
-		argv.resize(arg_list_in.size() + 3);
-		for (R_xlen_t i = 0; i < arg_list_in.size(); ++i) {
-			argv[i+2] = (char *) (arg_list_in[i]);
+		Rcpp::CharacterVector cl_arg_in(cl_arg);
+		argv.resize(cl_arg_in.size() + 3);
+		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+			argv[i+2] = (char *) (cl_arg_in[i]);
 			//Rcpp::Rcout << argv[i+2] << " ";
 		}
-		argv[arg_list_in.size() + 2] = NULL;
+		argv[cl_arg_in.size() + 2] = NULL;
 	}
 	GDALWarpAppOptions* psOptions = GDALWarpAppOptionsNew(argv.data(), NULL);
 	GDALWarpAppOptionsSetProgress(psOptions, GDALTermProgressR, NULL);

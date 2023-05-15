@@ -12,15 +12,12 @@ DEFAULT_NODATA
 }
 \description{
 These values are currently used when a nodata value is needed but has not
-been specified. Defined as:
+been specified:
 \preformatted{
     list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
          "UInt32"= 4294967293, "Int32"= -2147483647, 
-         "Float32"= 3.402823466E+38, 
-         "Float64"= .Machine$double.xmax)
+         "Float32"= -99999.0, 
+         "Float64"= -99999.0)
 }
-}
-\examples{
-DEFAULT_NODATA[["UInt32"]]
 }
 \keyword{datasets}

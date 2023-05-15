@@ -5,24 +5,23 @@
 #' Bounding box intersection / union
 #'
 #' @description
-#' `bbox_intersect()` returns the bounding box intersection for an input of 
-#' either raster file names or list of bounding boxes.
-#'
-#' `bbox_union()` returns the bounding box union for an input of 
-#' either raster file names or list of bounding boxes.
-#'
-#' All of the inputs must be in the same projected coordinate system.
+#' `bbox_intersect()` returns the bounding box intersection, and 
+#' `bbox_union()` returns the bounding box union, for input of 
+#' either raster file names or list of bounding boxes. All of the inputs 
+#' must be in the same projected coordinate system.
 #' 
 #' @param x Either a character vector of raster file names, or a list with 
 #' each element a bounding box numeric vector (xmin, ymin, xmax, ymax).
 #' @param as_wkt Logical. `TRUE` to return the bounding box as a polygon  
 #' in OGC WKT format, or `FALSE` to return as a numeric vector.
-#' @return Intersection or union of inputs. 
-#' Either a numeric vector of length four containing xmin, ymin, xmax, ymax 
-#' (if `as_wkt = FALSE`, the default), or a character string of OGC WKT for 
-#' the bbox as POLYGON (if `as_wkt = TRUE`).
+#' @return The intersection (`bbox_intersect()`) or union (`bbox_union()`)  
+#' of inputs. 
+#' If `as_wkt = FALSE` (the default), a numeric vector of length four 
+#' containing xmin, ymin, xmax, ymax. If `as_wkt = TRUE`, a character string 
+#' of OGC WKT for the bbox as POLYGON.
+#' 
 #' @seealso
-#' [bbox_to_wkt()], [rasterToVRT()]
+#' [bbox_from_wkt()], [bbox_to_wkt()]
 #' 
 #' @examples
 #' bbox_list <-list()

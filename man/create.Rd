@@ -17,7 +17,7 @@ create(format, dst_filename, xsize, ysize, nbands, dataType, options = NULL)
 
 \item{nbands}{Integer number of bands.}
 
-\item{dataType}{Character data type name .
+\item{dataType}{Character data type name.
 (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).}
 
 \item{options}{Optional list of format-specific creation options in a

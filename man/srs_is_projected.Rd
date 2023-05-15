@@ -15,7 +15,8 @@ Logical. \code{TRUE} if \code{srs} is projected, otherwise \code{FALSE}
 \description{
 \code{srs_is_projected()} will attempt to import the given WKT string as a
 spatial reference system (SRS), and returns \code{TRUE} if the SRS contains a
-PROJCS node indicating a it is a projected coordinate system.
+PROJCS node indicating a it is a projected coordinate system. This is a
+wrapper for \code{OSRIsProjected()} in the GDAL Spatial Reference System C API.
 }
 \examples{
 srs_is_projected(epsg_to_wkt(5070))

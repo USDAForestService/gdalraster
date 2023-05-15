@@ -15,7 +15,8 @@ Logical. \code{TRUE} if \code{srs} is geographic, otherwise \code{FALSE}
 \description{
 \code{srs_is_geographic()} will attempt to import the given WKT string as a
 spatial reference system, and returns \code{TRUE}  if the root is a
-GEOGCS node.
+GEOGCS node. This is a wrapper for \code{OSRIsGeographic()} in the GDAL Spatial
+Reference System C API.
 }
 \examples{
 srs_is_geographic(epsg_to_wkt(5070))

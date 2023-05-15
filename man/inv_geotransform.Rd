@@ -20,7 +20,7 @@ is uninvertable.
 converts the equation from being:\cr
 raster pixel/line (column/row) → geospatial x/y coordinate\cr
 to:\cr
-geospatial x/y coordinate → raster pixel/line
+geospatial x/y coordinate → raster pixel/line (column/row)
 }
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
@@ -33,12 +33,12 @@ ptX = 324181.7
 ptY = 5103901.4
 
 ## for a point x, y in the spatial reference system of elev_file
-## raster pixel (column number)
+## raster pixel (column number):
 pixel <- floor(invgt[1] +
                invgt[2] * ptX +
                invgt[3] * ptY)
 
-## raster line (row number)
+## raster line (row number):
 line <- floor(invgt[4] +
               invgt[5] * ptX +
               invgt[6] * ptY)

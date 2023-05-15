@@ -89,9 +89,9 @@ kernel filter.
 A VRT dataset is saved as a plain-text file with extension .vrt. This file
 contains a description of the dataset in an XML format. The description
 includes the source raster filename which can be a full path
-(\code{relativeToVRT = FALSE}) or the just the filename with no path
-(\code{relativeToVRT = TRUE}) in which case \code{rasterToVRT()} assumes that the
-.vrt file will be in the same directory as the source file. The different
+(\code{relativeToVRT = FALSE}) or relative path (\code{relativeToVRT = TRUE}).
+For relative path, \code{rasterToVRT()} assumes that the .vrt file will be in
+the same directory as the source file and uses \code{basename(srcfile)}. The
 elements of the XML schema specify how the source data will be read, along
 with algorithms potentially applied and so forth. The full specification of
 the XML format for .vrt is at:
@@ -108,8 +108,7 @@ raster in a series of processing steps, including as a \code{tempfile} (the
 default).
 
 GDAL VRT format has several capabilities and uses beyond those
-covered by \code{rasterToVRT()}. See the format description URL above for
-a full discussion.
+covered by \code{rasterToVRT()}. See the format URL above for a full discussion.
 }
 \note{
 Pixel alignment is specified in terms of the source raster pixels (i.e.,
@@ -122,7 +121,7 @@ setting \code{resolution} to the pixel resolution of the target raster and
 \code{src_align = FALSE} will result in a virtual raster pixel aligned with
 the target (i.e., pixels in the virtual raster are no longer aligned with
 its \code{srcfile}). Resampling defaults to \code{nearest} if not specified.
-Examples for both cases are given below.
+Examples for both cases of \code{src_align} are given below.
 
 \code{rasterToVRT()} assumes \code{srcfile} is a north-up raster.
 Requires package \code{xml2}.
@@ -211,8 +210,8 @@ ds_b5 <- new(GDALRaster, b5_file, read_only=TRUE)
 ds_lcp$bbox()  # 323476.1 5101872.0  327766.1 5105082.0
 ds_lcp$res()   # 30 30
 
-ds_b5$bbox()   # 323400.9 5101806.0  327856.7 5105175.8
-ds_b5$res()    # 29.90471 30.08750
+ds_b5$bbox()   # 323400.9 5101815.8  327870.9 5105175.8
+ds_b5$res()    # 30 30
 
 ## src_align = FALSE because we need target alignment in this case:
 vrt_file <- rasterToVRT(b5_file,

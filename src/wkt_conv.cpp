@@ -81,6 +81,8 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
 //' try to deduce the format, and then export it to WKT.
 //'
 //' @details
+//' This is a wrapper for `OSRSetFromUserInput()` in the GDAL Spatial 
+//' Reference System C API with output to WKT. 
 //' The input SRS may take the following forms:
 //'   * `WKT` - to convert WKT versions (see below)
 //'   * `EPSG:n` - EPSG code n
@@ -94,8 +96,7 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
 //'
 //' This function is intended to be flexible, but by its nature it is 
 //' imprecise as it must guess information about the format intended. 
-//' [epsg_to_wkt()] should be used if the input is known to be an integer 
-//' EPSG code.
+//' [epsg_to_wkt()] could be used instead for EPSG codes.
 //'
 //' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
 //' The WKT version can be overridden by using the `OSR_WKT_FORMAT` 
@@ -157,7 +158,8 @@ std::string srs_to_wkt(std::string srs, bool pretty = false) {
 //'
 //' `srs_is_geographic()` will attempt to import the given WKT string as a 
 //' spatial reference system, and returns `TRUE`  if the root is a 
-//' GEOGCS node.
+//' GEOGCS node. This is a wrapper for `OSRIsGeographic()` in the GDAL Spatial 
+//' Reference System C API.
 //'
 //' @param srs Character OGC WKT string for a spatial reference system
 //' @return Logical. `TRUE` if `srs` is geographic, otherwise `FALSE`
@@ -185,7 +187,8 @@ bool srs_is_geographic(std::string srs) {
 //'
 //' `srs_is_projected()` will attempt to import the given WKT string as a 
 //' spatial reference system (SRS), and returns `TRUE` if the SRS contains a 
-//' PROJCS node indicating a it is a projected coordinate system.
+//' PROJCS node indicating a it is a projected coordinate system. This is a 
+//' wrapper for `OSRIsProjected()` in the GDAL Spatial Reference System C API.
 //'
 //' @param srs Character OGC WKT string for a spatial reference system
 //' @return Logical. `TRUE` if `srs` is projected, otherwise `FALSE`

@@ -77,20 +77,20 @@ Variable names default to \code{LETTERS} if not specified
 All of the input layers must have the same extent and cell size.
 The projection will be read from the first raster in the list
 of inputs.
-Individual pixel coordinates are also available for use as variables in
-the R expession, as either x/y in the raster projected coordinate system or
+Individual pixel coordinates are also available as variables in the
+R expression, as either x/y in the raster projected coordinate system or
 inverse projected longitude/latitude.
 }
 \details{
 The variables in \code{expr} are vectors of length raster Xsize
 (rows of a raster layer).
-The expresion should return a vector also of length raster Xsize
+The expression should return a vector also of length raster Xsize
 (an output row).
 Two special variable names are available in \code{expr} by default:
 \code{pixelX} and \code{pixelY} provide the pixel center coordinate in
 projection units. If \code{usePixelLonLat = TRUE}, the pixel x/y coordinates
 will also be inverse projected to longitude/latitude and available
-for use in \code{expr} as \code{pixelLon} and \code{pixelLat} (in the same geographic
+in \code{expr} as \code{pixelLon} and \code{pixelLat} (in the same geographic
 coordinate system used by the input projection, which is read from the
 first input raster).
 
@@ -122,7 +122,7 @@ band number in \code{dstfile} (new bands cannot be created in \code{dstfile}).
 
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
-## expresion	to calculate HI
+## expression to calculate HI
 expr <- "round( ((ELEV_M * 3.281 - 5449) / 100) + 
                 ((pixelLat - 42.16) * 4) + 
                 ((-116.39 - pixelLon) * 1.25) )"
@@ -199,7 +199,7 @@ print(df_subset)       # twelve combinations meet the criteria
 sum(df_subset$count)   # 85 total pixels
 
 ## recode these pixels to 99 (bare ground)
-## LCP format does not support write so make a copy as GTiff
+## the LCP driver does not support in-place write so make a copy as GTiff
 tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
 createCopy("GTiff", tif_file, lcp_file)
 

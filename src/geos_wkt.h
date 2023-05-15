@@ -3,8 +3,8 @@
    For spatial predicate definitions: https://en.wikipedia.org/wiki/DE-9IM
    Chris Toney <chris.toney at usda.gov> */
 
-#ifndef geos_conv_H
-#define geos_conv_H
+#ifndef geos_wkt_H
+#define geos_wkt_H
 
 #include <Rcpp.h> 
 // [[Rcpp::plugins(cpp11)]]

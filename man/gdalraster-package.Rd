@@ -18,17 +18,15 @@
   methods on the Dataset, Driver and RasterBand objects in the underlying API 
   (get/set parameters, read/write pixel data).
   
-  \item \code{rasterToVRT()} creates a virtual raster file (VRT) pointing 
-  to an existing raster, with options for virtual subsetting, resampling and
-  kernel filtering.
-  
-  \item creation functions: \code{create()}, \code{createCopy()}, 
+  \item raster creation: \code{create()}, \code{createCopy()}, 
   \code{rasterFromRaster()}
+ 
+  \item virtual raster: \code{rasterToVRT()}
+  
+  \item reproject: \code{warp()}
   
   \item geotransform conversion: \code{inv_geotransform()}, 
   \code{get_pixel_line()}
-  
-  \item reproject: \code{warp()}
   
   \item coordinate transformation: \code{transform_xy()}, \code{inv_project()}
   
@@ -43,7 +41,7 @@
   \item GDAL configuration: \code{gdal_version()}, \code{get_config_option()}, 
   \code{set_config_option()}
   }
-  Additional functionality is intended to support scalable raster analysis:
+  Additional functionality includes:
   \itemize{
   \item class \code{RunningStats} calculates mean and variance in one pass.
   The min, max, sum, and count are also tracked (i.e., summary statistics on 
@@ -58,8 +56,8 @@
   to an output raster.
   
   \item \code{calc()} evaluates an R expression for each pixel in a raster 
-  layer or stack of layers. Individual pixel coordinates are available for 
-  use as variables in the R expession, as either x/y in the raster projected 
+  layer or stack of layers. Individual pixel coordinates are available  
+  as variables in the R expression, as either x/y in the raster projected 
   coordinate system or inverse projected longitude/latitude.
   }
 }
