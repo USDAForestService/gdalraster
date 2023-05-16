@@ -1,3 +1,3 @@
-# gdalraster 1.0.0
+# gdalraster 1.1.0
 
 * Initial public release.
