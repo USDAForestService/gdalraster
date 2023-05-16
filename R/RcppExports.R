@@ -451,7 +451,7 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #' @returns Numeric array of geospatial x/y coordinates in the `srs_to` 
 #' projection.
 #' @seealso
-#' [epsg_to_wkt()], [srs_to_wkt(), [inv_project()]
+#' [epsg_to_wkt()], [srs_to_wkt()], [inv_project()]
 #' @examples
 #' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 #' pts <- read.csv(pt_file)

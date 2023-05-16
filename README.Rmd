@@ -29,117 +29,24 @@ Bindings to GDAL are implemented in class `GDALRaster` along with several relate
 * low-level I/O
 * virtual raster (VRT) for virtual subsetting, resampling and kernel filtering
 * access to `gdalwarp` utility for reprojection
+* coordinate transformation
+* spatial reference convenience functions
 
-Other functionality in gdalraster supports scalable processing:
+Additional functionality includes:
 
-* class `RunningStats` calculates mean and variance in one pass, and tracks the min, max, sum, and count (i.e., summary statistics on a data stream). The memory usage of a RunningStats object is negligible, and input can be intermittent. Scales to large datasets for applications such as raster zonal statistics.
+* class `RunningStats` calculates mean and variance in one pass, and tracks the min, max, sum, and count (i.e., summary statistics on a data stream). The memory usage of a RunningStats object is negligible, and input can be intermittent. It scales to large datasets for applications such as raster zonal statistics.
 * class `CmbTable` identifies and counts unique combinations of integer values using a hash table.
 * `combine()` overlays multiple rasters so that a unique ID is assigned to each unique combination of input values. Pixel counts
 for each unique combination are obtained, and combination IDs are optionally written to an output raster.
+* `calc()` evaluates an R expression for each pixel in a raster layer or stack of layers. Individual pixel coordinates are available as variables in the R expression, as either x/y in the raster projected coordinate system or inverse projected longitude/latitude.
 
 gdalraster is a fast, lightweight and modern R interface to GDAL. It may be suitable for applications that primarily need low-level
 raster I/O or explicit manipulation of VRT format, or prefer native GDAL-like calling.
 
 ## Installation
-Install the development version from [FS GitHub](https://code.fs.usda.gov/):
+Install the development version from GitHub:
 
 ``` r
-devtools::install_github("Chris-Toney/gdalraster", auth_token="a valid token", host="code.fs.usda.gov/api/v3")
-```
-
-## Example
-```{r example}
-## basic usage of class GDALRaster
-
-library(gdalraster)
-
-## a FARSITE landscape file from https://www.landfire.gov/viewer/
-lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-
-ds <- new(GDALRaster, lcp_file, read_only=TRUE)
-
-## print information about the dataset to the console
-ds$info()
-
-## retrieve the raster format name
-ds$getDriverShortName()
-ds$getDriverLongName()
-
-## retrieve dataset parameters
-ds$getRasterXSize()
-ds$getRasterYSize()
-ds$getGeoTransform()
-ds$getProjectionRef()
-ds$bbox()
-ds$res()
-
-## retrieve the number of bands and some band-level parameters
-ds$getRasterCount()
-ds$getBlockSize(band=1)
-ds$getDataTypeName(band=1)
-ds$getNoDataValue(band=1)
-
-## LCP driver reports several dataset- and band-level metadata
-## see the format description at https://gdal.org/drivers/raster/lcp.html
-## set band=0 to retrieve dataset-level metadata
-## set domain="" (empty string) for the default metadata domain
-ds$getMetadata(band=0, domain="")
-
-## retrieve metadata for a band as a vector of name=value pairs
-ds$getMetadata(band=4, domain="")
-
-## retrieve the value of a specific metadata item
-ds$getMetadataItem(band=2, mdi_name="SLOPE_UNIT_NAME", domain="")
-
-## read one row of pixel values from band 1 (elevation)
-## raster row/column index are 0-based
-## the upper left corner is the origin
-## read the tenth row:
-ncols <- ds$getRasterXSize()
-rowdata <- ds$read(band=1, xoff=0, yoff=9, 
-                    xsize=ncols, ysize=1, 
-                    out_xsize=ncols, out_ysize=1)
-dim(rowdata)
-head(as.vector(rowdata))
-
-ds$close()
-
-## create a new raster using lcp_file as a template
-new_file <- paste0(tempdir(), "/", "storml_newdata.tif")
-rasterFromRaster(srcfile = lcp_file,
-                 dstfile = new_file,
-                 nbands = 1,
-                 dtName = "Byte",
-                 init = -9999)
-ds_new <- new(GDALRaster, new_file, read_only=FALSE)
-
-## write random values to all pixels
-set.seed(42)
-ncols <- ds_new$getRasterXSize()
-nrows <- ds_new$getRasterYSize()
-for (row in 0:(nrows-1)) {
-    rowdata <- round(runif(ncols, 0, 100))
-    dim(rowdata) <- c(1, ncols)
-    ds_new$write(band=1, xoff=0, yoff=row, xsize=ncols, ysize=1, rowdata)
-}
-
-## re-open in read-only mode when done writing
-## this will ensure flushing of any pending writes (implicit close())
-ds_new$open(read_only=TRUE)
-
-## getStatistics returns min, max, mean, sd, and sets stats in the metadata
-ds_new$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
-ds_new$getMetadataItem(band=1, "STATISTICS_MEAN", "")
-
-## close the dataset for proper cleanup
-ds_new$close()
-
-## using a GDAL Virtual File System handler '/vsicurl/'
-## see: https://gdal.org/user/virtual_file_systems.html
-web_file <- "/vsicurl/https://raw.githubusercontent.com/django/django/main/tests/gis_tests/data/rasters/raster.tif"
-
-ds_url <- new(GDALRaster, web_file, read_only=TRUE)
-ds_url$info()
-
+devtools::install_github("USDAForestService/gdalraster")
 ```
 

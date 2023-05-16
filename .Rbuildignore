@@ -1,0 +1,12 @@
+^README\.Rmd$
+^LICENSE\.md$
+^proj_conf_test$
+^proj_conf_test.cpp$
+^proj_conf_test.c$
+^errors.txt$
+TODO.txt
+config.log
+config.status
+^\.cache$
+^cran-comments\.md$
+^CRAN-SUBMISSION$

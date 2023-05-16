@@ -86,15 +86,21 @@ the source data at a different pixel resolution, or applying a virtual
 kernel filter.
 }
 \details{
+\code{rasterToVRT()} has similarities to the command-line utility \code{gdalbuildvrt}
+(\url{https://gdal.org/programs/gdalbuildvrt.html}) but is not a wrapper for
+it and does not build mosaics. \code{rasterToVRT()} is somewhat tailored for
+clipping and pixel-aligning various raster data in relation to vector
+polygon boundaries. It also supports VRT kernel filtering.
+
 A VRT dataset is saved as a plain-text file with extension .vrt. This file
 contains a description of the dataset in an XML format. The description
 includes the source raster filename which can be a full path
 (\code{relativeToVRT = FALSE}) or relative path (\code{relativeToVRT = TRUE}).
 For relative path, \code{rasterToVRT()} assumes that the .vrt file will be in
 the same directory as the source file and uses \code{basename(srcfile)}. The
-elements of the XML schema specify how the source data will be read, along
-with algorithms potentially applied and so forth. The full specification of
-the XML format for .vrt is at:
+elements of the XML schema describe how the source data will be read, along
+with algorithms potentially applied and so forth. Documentation of the XML
+format for .vrt is at:
 \url{https://gdal.org/drivers/raster/vrt.html}.
 
 Since .vrt is a small plain-text file it is fast to write and requires
@@ -104,11 +110,11 @@ slower for virtual resampling to a different pixel resolution or virtual
 kernel filtering since the operations are performed on-the-fly (but .vrt
 does not require the up front writing of a resampled or kernel-filtered
 raster to a regular format). VRT is sometimes useful as an intermediate
-raster in a series of processing steps, including as a \code{tempfile} (the
+raster in a series of processing steps, e.g., as a \code{tempfile} (the
 default).
 
 GDAL VRT format has several capabilities and uses beyond those
-covered by \code{rasterToVRT()}. See the format URL above for a full discussion.
+covered by \code{rasterToVRT()}. See the URLs above for a full discussion.
 }
 \note{
 Pixel alignment is specified in terms of the source raster pixels (i.e.,
@@ -116,9 +122,9 @@ Pixel alignment is specified in terms of the source raster pixels (i.e.,
 clipping a raster to the bounding box of a vector polygon and keeping
 pixels aligned with \code{srcfile} (\code{src_align = TRUE}). \code{src_align} would be
 set to \code{FALSE} if the intent is "target alignment". For example, if
-\code{subwindow} is the bounding box of another raster, then also
-setting \code{resolution} to the pixel resolution of the target raster and
-\code{src_align = FALSE} will result in a virtual raster pixel aligned with
+\code{subwindow} is the bounding box of another raster with a different layout,
+then also setting \code{resolution} to the pixel resolution of the target raster
+and \code{src_align = FALSE} will result in a virtual raster pixel-aligned with
 the target (i.e., pixels in the virtual raster are no longer aligned with
 its \code{srcfile}). Resampling defaults to \code{nearest} if not specified.
 Examples for both cases of \code{src_align} are given below.

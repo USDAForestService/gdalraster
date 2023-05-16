@@ -37,5 +37,5 @@ transform_xy( pts = as.matrix(pts[,-1]),
               srs_to = epsg_to_wkt(5070) )
 }
 \seealso{
-\code{\link[=epsg_to_wkt]{epsg_to_wkt()}}, [srs_to_wkt(), \code{\link[=inv_project]{inv_project()}}
+\code{\link[=epsg_to_wkt]{epsg_to_wkt()}}, \code{\link[=srs_to_wkt]{srs_to_wkt()}}, \code{\link[=inv_project]{inv_project()}}
 }
