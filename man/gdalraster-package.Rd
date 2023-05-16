@@ -15,18 +15,33 @@
   GDAL related stand-alone functions:
   \itemize{
   \item class \code{GDALRaster} allows opening a raster dataset and calling 
-  methods on the GDALDataset, GDALDriver and GDALRasterBand objects in the 
-  underlying API (get/set parameters, read/write pixel data).
+  methods on the Dataset, Driver and RasterBand objects in the underlying API 
+  (get/set parameters, read/write pixel data).
   
-  \item \code{rasterToVRT()} creates a virtual raster file (VRT) that points 
-  to an existing raster, with options for virtual subsetting, resampling and
-  kernel filtering.
+  \item raster creation: \code{create()}, \code{createCopy()}, 
+  \code{rasterFromRaster()}
+ 
+  \item virtual raster: \code{rasterToVRT()}
   
-  \item also \code{create()}, \code{createCopy()}, \code{rasterFromRaster()},
-  \code{bbox_from_wkt()}, \code{epsg_to_wkt()}, \code{inv_geotransform()},
-  \code{get_pixel_line()}, \code{warp()}.
+  \item reproject: \code{warp()}
+  
+  \item geotransform conversion: \code{inv_geotransform()}, 
+  \code{get_pixel_line()}
+  
+  \item coordinate transformation: \code{transform_xy()}, \code{inv_project()}
+  
+  \item spatial reference convenience functions: \code{epsg_to_wkt()},
+  \code{srs_to_wkt()},\cr
+  \code{srs_is_geographic()}, \code{srs_is_projected()}
+  
+  \item bounding box convenience functions: \code{bbox_from_wkt()}, 
+  \code{bbox_to_wkt()},\cr
+  \code{bbox_intersect()}, \code{bbox_union()}
+  
+  \item GDAL configuration: \code{gdal_version()}, \code{get_config_option()}, 
+  \code{set_config_option()}
   }
-  Additional functionality is intended to support scalable processing:
+  Additional functionality includes:
   \itemize{
   \item class \code{RunningStats} calculates mean and variance in one pass.
   The min, max, sum, and count are also tracked (i.e., summary statistics on 
@@ -39,6 +54,11 @@
   assigned to each unique combination of input values. Pixel counts for each 
   unique combination are obtained, and combination IDs are optionally written
   to an output raster.
+  
+  \item \code{calc()} evaluates an R expression for each pixel in a raster 
+  layer or stack of layers. Individual pixel coordinates are available  
+  as variables in the R expression, as either x/y in the raster projected 
+  coordinate system or inverse projected longitude/latitude.
   }
 }
 \author{
@@ -59,11 +79,10 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
 }
 \note{
   Sample datasets are included with the package and used in examples 
-  throughout the documentation. The sample data include raster layers from 
-  LANDFIRE describing terrain, vegetation and wildland fuels 
-  (LF 2020 version, \url{https://landfire.gov/}). Landsat Collection 2 Analysis
-  Ready Data were downloaded from USGS Earth Explorer 
-  (\url{https://earthexplorer.usgs.gov/}).
+  throughout the documentation. The sample data include LANDFIRE raster layers 
+  describing terrain, vegetation and wildland fuels (LF 2020 version, 
+  \url{https://landfire.gov/}). Landsat C2 Analysis Ready Data were 
+  downloaded from USGS Earth Explorer (\url{https://earthexplorer.usgs.gov/}).
 
   \code{system.file()} is used in the examples to access the sample datasets. 
   This enables the code to run regardless of where R is installed. Users will 

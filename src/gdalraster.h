@@ -1,6 +1,6 @@
 /* R interface to a subset of the GDAL C API for low level raster I/O
-see: https://gdal.org/api/raster_c_api.html)
-Chris Toney <chris.toney at usda.gov> */
+   See: https://gdal.org/api/raster_c_api.html)
+   Chris Toney <chris.toney at usda.gov> */
 
 #ifndef gdalraster_H
 #define gdalraster_H
@@ -22,7 +22,9 @@ typedef void *GDALDatasetH;
 typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 #endif
 
-std::string _gdal_version();
+Rcpp::CharacterVector gdal_version();
+std::string get_config_option(std::string key);
+void set_config_option(std::string key, std::string value);
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
 		double pixel, double line);
@@ -97,7 +99,7 @@ class GDALRaster {
 	double getScale(int band) const;
 	bool hasOffset(int band) const;
 	double getOffset(int band) const;
-
+	
 	Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
 	std::string getMetadataItem(int band,
 			std::string mdi_name, std::string domain) const;
@@ -109,6 +111,8 @@ class GDALRaster {
 			Rcpp::RObject rasterData);
 
 	void fillRaster(int band, double value, double ivalue);
+	
+	int getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
 	
 	void _setMetadataItem(int band, std::string mdi_name, 
 			std::string mdi_value, std::string domain);

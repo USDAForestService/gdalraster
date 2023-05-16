@@ -22,11 +22,11 @@ Description: Interface to the raster API of the 'Geospatial Data Abstraction
 	or prefer native 'GDAL'-like calling.
 License: MIT + file LICENSE
 Depends: R (>= 3.4)
-Imports: methods, Rcpp (>= 1.0.7)
+Imports: methods, tools, utils, Rcpp (>= 1.0.7)
 LinkingTo: Rcpp
 Suggests: xml2
 NeedsCompilation: yes
-SystemRequirements: GDAL (>= 2.3), PROJ (>= 7.0.1)
+SystemRequirements: GDAL (>= 2.3.0), PROJ (>= 4.8.0)
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.3

@@ -17,12 +17,12 @@ create(format, dst_filename, xsize, ysize, nbands, dataType, options = NULL)
 
 \item{nbands}{Integer number of bands.}
 
-\item{dataType}{Character data type name .
+\item{dataType}{Character data type name.
 (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).}
 
 \item{options}{Optional list of format-specific creation options in a
 vector of "NAME=VALUE" pairs
-(e.g., \code{options = c("COMPRESS=DEFLATE")} to set DEFLATE
+(e.g., \code{options = c("COMPRESS=LZW")} to set LZW
 compression during creation of a GTiff file).
 The APPEND_SUBDATASET=YES option can be
 specified to avoid prior destruction of existing dataset.}
@@ -49,5 +49,5 @@ ds$fillRaster(band = 1, -9999, 0)
 ds$close()
 }
 \seealso{
-\code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}
 }

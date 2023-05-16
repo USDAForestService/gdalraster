@@ -1,7 +1,7 @@
 #' @name RunningStats
 #'
 #' @aliases
-#' Rcpp_RunningStats Rcpp_RunningStats-class
+#' Rcpp_RunningStats Rcpp_RunningStats-class RunningStats-class
 #'
 #' @title Class to calculate mean and variance in one pass
 #'

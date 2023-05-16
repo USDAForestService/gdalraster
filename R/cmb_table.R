@@ -1,7 +1,7 @@
 #' @name CmbTable
 #'
 #' @aliases
-#' Rcpp_CmbTable Rcpp_CmbTable-class
+#' Rcpp_CmbTable Rcpp_CmbTable-class CmbTable-class
 #'
 #' @title Hash table class for counting unique combinations of integers
 #'

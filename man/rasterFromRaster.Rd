@@ -30,7 +30,7 @@ to guess from the output filename if \code{fmt} is not specified.}
 
 \item{options}{Optional list of format-specific creation options in a
 vector of "NAME=VALUE" pairs.
-(e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+(e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 compression during creation of a GTiff file).}
 
 \item{init}{Numeric value to initialize all pixels in the output raster.}
@@ -55,7 +55,7 @@ ds_lcp$info()
 ds_lcp$getMetadata(band=2, domain="")
 
 slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
-options = c("COMPRESS=DEFLATE")
+options = c("COMPRESS=LZW")
 rasterFromRaster(srcfile = lcp_file,
                  dstfile = slpp_file,
                  nbands = 1,
@@ -95,5 +95,5 @@ ds_slp$close()
 ds_lcp$close()
 }
 \seealso{
-\code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}
 }

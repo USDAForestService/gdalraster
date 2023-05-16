@@ -1,5 +1,6 @@
-/* Implementation of GDALRaster class
-Chris Toney <chris.toney at usda.gov> */
+/* Implementation of class GDALRaster
+   Encapsulates a subset of GDALDataset, GDALDriver and GDALRasterBand.
+   Chris Toney <chris.toney at usda.gov> */
 
 #include <complex>
 #include <algorithm>
@@ -7,8 +8,10 @@ Chris Toney <chris.toney at usda.gov> */
 #include <limits>
 
 #include "gdal.h"
+#include "cpl_conv.h"
 #include "cpl_string.h"
 #include "gdal_utils.h"
+#include "gdal_alg.h"
 
 #include <errno.h>
 
@@ -17,6 +20,7 @@ Chris Toney <chris.toney at usda.gov> */
 // [[Rcpp::init]]
 void _gdal_init(DllInfo *dll) {
     GDALAllRegister();
+    CPLSetConfigOption("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "YES");
 }
 
 /*	ARE_REAL_EQUAL() from gdal_priv.h
@@ -558,6 +562,14 @@ void GDALRaster::fillRaster(int band, double value, double ivalue) {
 	}
 }
 
+int GDALRaster::getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+	
+	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	return GDALChecksumImage(hBand, xoff, yoff, xsize, ysize);
+}
+
 void GDALRaster::_setMetadataItem(int band, std::string mdi_name, 
 		std::string mdi_value, std::string domain) {
 		
@@ -646,6 +658,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Write a region of raster data for a band.")
     .method("fillRaster", &GDALRaster::fillRaster, 
     	"Fill this band with a constant value.")
+    .const_method("getChecksum", &GDALRaster::getChecksum, 
+    	"Compute checksum for raster region.")
     .method(".setMetadataItem", &GDALRaster::_setMetadataItem, 
     	"Set metadata item name=value in domain.")
     .method("close", &GDALRaster::close, 

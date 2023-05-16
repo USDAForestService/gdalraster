@@ -4,6 +4,7 @@
 \alias{CmbTable}
 \alias{Rcpp_CmbTable}
 \alias{Rcpp_CmbTable-class}
+\alias{CmbTable-class}
 \title{Hash table class for counting unique combinations of integers}
 \description{
 Implements a hash table having a vector of integers as the key, and

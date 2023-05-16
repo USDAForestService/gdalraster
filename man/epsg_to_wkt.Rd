@@ -9,17 +9,36 @@ epsg_to_wkt(epsg, pretty = FALSE)
 \arguments{
 \item{epsg}{Integer EPSG code.}
 
-\item{pretty}{Logical. \code{TRUE} to return a nicely formatted WKT 1 string
+\item{pretty}{Logical. \code{TRUE} to return a nicely formatted WKT string
 for display to a person. \code{FALSE} for a regular WKT string (the default).}
 }
 \value{
-Character vector containing OGC WKT.
+Character string containing OGC WKT.
 }
 \description{
-Exports the spatial reference for the specified EPSG code to WKT format.
+\code{epsg_to_wkt()} exports the spatial reference for an EPSG code to
+WKT format.
+}
+\details{
 As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
+The WKT version can be overridden by using the \code{OSR_WKT_FORMAT}
+configuration option (see \code{\link[=set_config_option]{set_config_option()}}).
+Valid values are one of: \code{SFSQL}, \code{WKT1_SIMPLE}, \code{WKT1}, \code{WKT1_GDAL},
+\code{WKT1_ESRI}, \code{WKT2_2015}, \code{WKT2_2018}, \code{WKT2}, \code{DEFAULT}.
+If \code{SFSQL}, a WKT1 string without AXIS, TOWGS84, AUTHORITY or
+EXTENSION node is returned. If \code{WKT1_SIMPLE}, a WKT1 string without
+AXIS, AUTHORITY or EXTENSION node is returned. \code{WKT1} is an alias of
+\code{WKT1_GDAL}. \code{WKT2} will default to the latest revision implemented
+(currently \code{WKT2_2018}). \code{WKT2_2019} can be used as an alias of
+\code{WKT2_2018} since GDAL 3.2
 }
 \examples{
 epsg_to_wkt(5070)
 writeLines(epsg_to_wkt(5070, pretty=TRUE))
+set_config_option("OSR_WKT_FORMAT", "WKT2")
+writeLines(epsg_to_wkt(5070, pretty=TRUE))
+set_config_option("OSR_WKT_FORMAT", "")
+}
+\seealso{
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}
 }

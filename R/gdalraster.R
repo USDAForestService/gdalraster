@@ -16,7 +16,7 @@
 #' @seealso
 #' Package overview in [`help("gdalraster-package")`][gdalraster-package]
 #'
-#' [create()], [createCopy()], [rasterFromRaster()], [rasterToVRT()]
+#' [create()], [createCopy()], [rasterFromRaster()], [rasterToVRT()], [warp()]
 #'
 #' @section Usage:
 #' \preformatted{
@@ -57,6 +57,8 @@
 #' ds$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)
 #' ds$write(band, xoff, yoff, xsize, ysize, rasterData)
 #' ds$fillRaster(value, ivalue)
+#'
+#' ds$getChecksum(band, xoff, yoff, xsize, ysize)
 #'
 #' ds$close()
 #' }
@@ -293,7 +295,7 @@
 #' region of the band to be accessed (zero to start from the left side).
 #' \code{yoff} is the line (row) offset to the top left corner of the region of
 #' the band to be accessed (zero to start from the top).
-#' \emph{Note that raster column/row offsets use 0-based indexing.}
+#' \emph{Note that raster row/column offsets use 0-based indexing.}
 #' \code{xsize} is the width in pixels of the region to be accessed.
 #' \code{ysize} is the height in pixels of the region to be accessed.
 #' \code{out_xsize} is the width of the output array into which the desired 
@@ -316,7 +318,7 @@
 #' region of the band to be accessed (zero to start from the left side).
 #' \code{yoff} is the line (row) offset to the top left corner of the region of
 #' the band to be accessed (zero to start from the top).
-#' \emph{Note that raster column/row offsets use 0-based indexing.}
+#' \emph{Note that raster row/column offsets use 0-based indexing.}
 #' \code{xsize} is the width in pixels of the region to be accessed.
 #' This will typically be the same as `ncol(rasterData)`.
 #' \code{ysize} is the height in pixels of the region to be accessed.
@@ -324,8 +326,7 @@
 #' \code{rasterData} is a numeric or complex array containing values to write.
 #' It is organized in left to right, top to bottom pixel order. NA in 
 #' \code{rasterData} should be replaced with a suitable nodata value prior to
-#' writing (see \code{$getNoDataValue(band)} and 
-#' \code{$setNoDataValue(band, nodata_value)} above).
+#' writing (see \code{$getNoDataValue()} and \code{$setNoDataValue()} above).
 #' An error is raised if the operation fails (no return value).
 #'
 #' \code{$fillRaster(band, value, ivalue)}
@@ -334,6 +335,18 @@
 #' \code{value} is the fill value (real component).
 #' \code{ivalue} is the imaginary component of fill value for a raster with
 #' complex data type. Set \code{ivalue = 0} for real data types.
+#'
+#' \code{$getChecksum(band, xoff, yoff, xsize, ysize)}
+#' Returns a 16-bit integer (0-65535) checksum from a region of raster data 
+#' on `band`.
+#' Floating point data are converted to 32-bit integer so decimal portions of
+#' such raster data will not affect the checksum. Real and imaginary 
+#' components of complex bands influence the result.
+#' \code{xoff} is the pixel (column) offset of the window to read.
+#' \code{yoff} is the line (row) offset of the window to read.
+#' \emph{Raster row/column offsets use 0-based indexing.}
+#' \code{xsize} is the width in pixels of the window to read.
+#' \code{ysize} is the height in pixels of the window to read.
 #'
 #' \code{$close()}
 #' Closes the GDAL dataset (no return value). 
@@ -423,6 +436,13 @@
 #'
 #' ## close the dataset for proper cleanup
 #' ds_new$close()
+#'
+#' ## checksum LCP band 1
+#' ds$open(read_only=TRUE)
+#' ncols <- ds$getRasterXSize()
+#' nrows <- ds$getRasterYSize()
+#' ds$getChecksum(band=1, xoff=0, yoff=0, xsize=ncols, ysize=nrows)   # 28017
+#' ds$close()
 #'
 #' \dontrun{
 #' ## using a GDAL Virtual File System handler '/vsicurl/'

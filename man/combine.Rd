@@ -39,7 +39,7 @@ combinations of the input values
 
 \item{options}{Optional list of format-specific creation options in a
 vector of "NAME=VALUE" pairs.
-(e.g., \code{options = c("COMPRESS=DEFLATE")} to set \code{DEFLATE}
+(e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 compression during creation of a GTiff file).}
 }
 \value{
@@ -96,7 +96,7 @@ rasterfiles <- c(lcp_file, lcp_file)
 bands <- c(4, 5)
 var.names <- c("fbfm", "tree_cov")
 cmb_file <- paste0(tempdir(), "/", "fbfm_cov_cmbid.tif")
-options <- c("COMPRESS=DEFLATE")
+options <- c("COMPRESS=LZW")
 df <- combine(rasterfiles, var.names, bands, cmb_file, options = options)
 head(df)
 ds <- new(GDALRaster, cmb_file, TRUE)
@@ -104,5 +104,6 @@ ds$info()
 ds$close()
 }
 \seealso{
-class \code{\link{CmbTable}}, \code{\link[=rasterToVRT]{rasterToVRT()}}
+\code{\link[=CmbTable]{CmbTable-class}}, \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=calc]{calc()}},
+\code{\link[=rasterToVRT]{rasterToVRT()}}
 }

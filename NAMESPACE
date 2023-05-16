@@ -1,3 +1,5 @@
 useDynLib(gdalraster, .registration=TRUE)
 import(methods, Rcpp)
+importFrom("tools", "file_path_sans_ext")
+importFrom("utils", "setTxtProgressBar", "txtProgressBar")
 exportPattern("^[[:alpha:]]+")

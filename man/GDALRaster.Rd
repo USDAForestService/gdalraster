@@ -4,11 +4,12 @@
 \alias{GDALRaster}
 \alias{Rcpp_GDALRaster}
 \alias{Rcpp_GDALRaster-class}
+\alias{GDALRaster-class}
 \title{Class encapsulating a subset of the GDAL Raster C API}
 \description{
 Provides an interface for accessing a raster dataset via GDAL
-and calling methods on the underlying \code{GDALDataset}, \code{GDALDriver} and
-\code{GDALRasterBand} objects. See \url{https://gdal.org/api/index.html} for
+and calling methods on the underlying GDALDataset, GDALDriver and
+GDALRasterBand objects. See \url{https://gdal.org/api/index.html} for
 details of the GDAL API. Documentation for the wrapper functions borrows
 from the GDAL API documentation, ©1998-2023 Frank Warmerdam, Even
 Rouault, and others, \url{https://gdal.org/license.html}.
@@ -54,6 +55,8 @@ ds$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)
 ds$write(band, xoff, yoff, xsize, ysize, rasterData)
 ds$fillRaster(value, ivalue)
 
+ds$getChecksum(band, xoff, yoff, xsize, ysize)
+
 ds$close()
 }
 }
@@ -62,15 +65,18 @@ ds$close()
 
 
 \code{new(GDALRaster, filename, read_only)}
-Creates a new GDALRaster object, opening a GDAL dataset from the specified
+Creates a new \code{GDALRaster} object, opening a GDAL dataset from the specified
 \code{filename}. In some cases \code{filename} may not refer to a physical
 file, but instead contain format-specific information on how to access a
-dataset.
-\code{read_only} = TRUE to open the dataset with read-only access or FALSE
-to open with write access. Returns an object of class GDALRaster.
+dataset. GDAL raster format descriptions are available at:
+\url{https://gdal.org/drivers/raster/index.html}.
+Set \code{read_only = TRUE} to open the dataset with read-only access
+or \code{FALSE} to open with write access.
+Returns an object of class \code{GDALRaster} which has a pointer to the opened
+dataset, and the methods described below.
 
 \code{$getFilename()}
-Returns the filename associated with this GDALRaster object.
+Returns the filename associated with this \code{GDALRaster} object.
 
 \code{$open(read_only)}
 (Re-)opens the raster dataset on the existing filename. Use this method to
@@ -230,8 +236,8 @@ valid data. NA is returned if a nodata value is not defined for
 Sets the nodata value for \code{band}.
 \code{nodata_value} is a numeric value to be defined as the nodata marker.
 Depending on the format, changing the nodata value may or may not have an
-effect on the pixel values of a raster that has just been created (usually
-not). It is thus advised to explicitly call \code{$fillRaster()} if the
+effect on the pixel values of a raster that has just been created (often
+not). It is thus advised to call \code{$fillRaster()} explicitly if the
 intent is to initialize the raster to the nodata value. In any case,
 changing an existing nodata value, when one already exists on an initialized
 dataset, has no effect on the pixels whose values matched the previous
@@ -243,8 +249,7 @@ be set.
 Removes the nodata value for \code{band}.
 This affects only the definition of the nodata value for raster formats
 that support one (does not modify pixel values). No return value.
-An error is raised if the nodata value cannot be removed (or if called on
-a raster format that does not support a defined nodata value).
+An error is raised if the nodata value cannot be removed.
 
 \code{$getUnitType(band)}
 Returns the name of the unit type of the pixel values for \code{band}
@@ -268,20 +273,20 @@ Returns NA if an offset value is not defined for this \code{band}.
 \code{$getMetadata(band, domain)}
 Returns a character vector of all metadata \code{name=value} pairs that exist in
 the specified \code{domain}, or \code{""} (empty string) if there are no
-metadata items in \code{domain}. (metadata in the context of the GDAL
+metadata items in \code{domain} (metadata in the context of the GDAL
 Raster Data Model: \url{https://gdal.org/user/raster_data_model.html}).
-Set \code{band} to 0 to retrieve dataset-level metadata, or to an integer
+Set \code{band = 0} to retrieve dataset-level metadata, or to an integer
 band number to retrieve band-level metadata.
-Set \code{domain} to \code{""} (empty string) to retrieve metadata in the
+Set \code{domain = ""} (empty string) to retrieve metadata in the
 default domain.
 
 \code{$getMetadataItem(band, mdi_name, domain)}
 Returns the value of a specific metadata item named \code{mdi_name} in the
 specified \code{domain}, or \code{""} (empty string) if no matching item
 is found.
-Set \code{band} to 0 to retrieve dataset-level metadata, or to an integer
+Set \code{band = 0} to retrieve dataset-level metadata, or to an integer
 band number to retrieve band-level metadata.
-Set \code{domain} to \code{""} (empty string) to retrieve an item in the
+Set \code{domain = ""} (empty string) to retrieve an item in the
 default domain.
 
 \code{$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)}
@@ -293,7 +298,7 @@ being accessed (\code{xsize * ysize}).
 region of the band to be accessed (zero to start from the left side).
 \code{yoff} is the line (row) offset to the top left corner of the region of
 the band to be accessed (zero to start from the top).
-\emph{Note that raster column/row offsets use 0-based indexing.}
+\emph{Note that raster row/column offsets use 0-based indexing.}
 \code{xsize} is the width in pixels of the region to be accessed.
 \code{ysize} is the height in pixels of the region to be accessed.
 \code{out_xsize} is the width of the output array into which the desired
@@ -316,7 +321,7 @@ is different than the size of the region being accessed
 region of the band to be accessed (zero to start from the left side).
 \code{yoff} is the line (row) offset to the top left corner of the region of
 the band to be accessed (zero to start from the top).
-\emph{Note that raster column/row offsets use 0-based indexing.}
+\emph{Note that raster row/column offsets use 0-based indexing.}
 \code{xsize} is the width in pixels of the region to be accessed.
 This will typically be the same as \code{ncol(rasterData)}.
 \code{ysize} is the height in pixels of the region to be accessed.
@@ -324,8 +329,7 @@ This will typically be the same as \code{nrow(rasterData)}.
 \code{rasterData} is a numeric or complex array containing values to write.
 It is organized in left to right, top to bottom pixel order. NA in
 \code{rasterData} should be replaced with a suitable nodata value prior to
-writing (see \code{$getNoDataValue(band)} and
-\code{$setNoDataValue(band, nodata_value)} above).
+writing (see \code{$getNoDataValue()} and \code{$setNoDataValue()} above).
 An error is raised if the operation fails (no return value).
 
 \code{$fillRaster(band, value, ivalue)}
@@ -334,6 +338,18 @@ default value.
 \code{value} is the fill value (real component).
 \code{ivalue} is the imaginary component of fill value for a raster with
 complex data type. Set \code{ivalue = 0} for real data types.
+
+\code{$getChecksum(band, xoff, yoff, xsize, ysize)}
+Returns a 16-bit integer (0-65535) checksum from a region of raster data
+on \code{band}.
+Floating point data are converted to 32-bit integer so decimal portions of
+such raster data will not affect the checksum. Real and imaginary
+components of complex bands influence the result.
+\code{xoff} is the pixel (column) offset of the window to read.
+\code{yoff} is the line (row) offset of the window to read.
+\emph{Raster row/column offsets use 0-based indexing.}
+\code{xsize} is the width in pixels of the window to read.
+\code{ysize} is the height in pixels of the window to read.
 
 \code{$close()}
 Closes the GDAL dataset (no return value).
@@ -425,6 +441,13 @@ ds_new$getMetadataItem(band=1, "STATISTICS_MEAN", "")
 ## close the dataset for proper cleanup
 ds_new$close()
 
+## checksum LCP band 1
+ds$open(read_only=TRUE)
+ncols <- ds$getRasterXSize()
+nrows <- ds$getRasterYSize()
+ds$getChecksum(band=1, xoff=0, yoff=0, xsize=ncols, ysize=nrows)   # 28017
+ds$close()
+
 \dontrun{
 ## using a GDAL Virtual File System handler '/vsicurl/'
 ## see: https://gdal.org/user/virtual_file_systems.html
@@ -440,7 +463,5 @@ ds_url$info()
 \seealso{
 Package overview in \code{\link[=gdalraster-package]{help("gdalraster-package")}}
 
-\code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}, \code{\link[=rasterToVRT]{rasterToVRT()}},
-\code{\link[=epsg_to_wkt]{epsg_to_wkt()}},\cr
-\code{\link[=inv_geotransform]{inv_geotransform()}}, \code{\link[=get_pixel_line]{get_pixel_line()}}, \code{\link[=warp]{warp()}}
+\code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}, \code{\link[=warp]{warp()}}
 }

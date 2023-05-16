@@ -1,5 +1,5 @@
-/* exported stand-alone functions for gdalraster
-Chris Toney <chris.toney at usda.gov> */
+/* Exported stand-alone functions for gdalraster
+   Chris Toney <chris.toney at usda.gov> */
 
 #include <Rcpp.h> 
 // [[Rcpp::plugins(cpp11)]]
@@ -8,6 +8,7 @@ Chris Toney <chris.toney at usda.gov> */
 
 #include "gdal.h"
 #include "gdal_utils.h"
+#include "cpl_conv.h"
 #include "cpl_string.h"
 
 #include <errno.h>
@@ -15,9 +16,82 @@ Chris Toney <chris.toney at usda.gov> */
 #include "gdalraster.h"
 #include "cmb_table.h"
 
-// [[Rcpp::export(name = ".gdal_version")]]
-std::string _gdal_version() {
-	return GDALVersionInfo("-version");
+//' Get GDAL version
+//'
+//' `gdal_version()` returns runtime version information.
+//'
+//' @returns Character vector of length four containing:
+//'   * "–version" - one line version message, e.g., “GDAL 3.6.3, released 
+//'   2023/03/12”
+//'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “30603000” for 
+//'   GDAL 3.6.3.0
+//'   * "GDAL_RELEASE_DATE" - formatted as a string, e.g., “20230312”
+//'   * "GDAL_RELEASE_NAME" - e.g., “3.6.3”
+//' @examples
+//' gdal_version()
+// [[Rcpp::export]]
+Rcpp::CharacterVector gdal_version() {
+	Rcpp::CharacterVector ret(4);
+	ret(0) = GDALVersionInfo("-version");
+	ret(1) = GDALVersionInfo("VERSION_NUM");
+	ret(2) = GDALVersionInfo("RELEASE_DATE");
+	ret(3) = GDALVersionInfo("RELEASE_NAME");
+	return ret;
+}
+
+//' Get GDAL configuration option
+//'
+//' `get_config_option()` gets the value of GDAL runtime configuration option.
+//' Configuration options are essentially global variables the user can set.
+//' They are used to alter the default behavior of certain raster format 
+//' drivers, and in some cases the GDAL core. For a full description and 
+//' listing of available options see 
+//' \url{https://gdal.org/user/configoptions.html}.
+//'
+//' @param key Character name of a configuration option.
+//' @returns Character. The value of a (key, value) option previously set with 
+//' `set_config_option()`. An empty string (`""`) is returned if `key` is not 
+//' found.
+//' @seealso
+//' [set_config_option()]
+//' @examples
+//' ## this option is set during initialization of the gdalraster package
+//' get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER")
+// [[Rcpp::export]]
+std::string get_config_option(std::string key) {
+	const char* default_ = "";
+	std::string ret(CPLGetConfigOption(key.c_str(), default_));
+	return ret;
+}
+
+//' Set GDAL configuration option
+//'
+//' `set_config_option()` sets a GDAL runtime configuration option. 
+//' Configuration options are essentially global variables the user can set.
+//' They are used to alter the default behavior of certain raster format 
+//' drivers, and in some cases the GDAL core. For a full description and 
+//' listing of available options see 
+//' \url{https://gdal.org/user/configoptions.html}.
+//'
+//' @param key Character name of a configuration option.
+//' @param value Character value to set for the option. 
+//' `value = ""` (empty string) will unset a value previously set by 
+//' `set_config_option()`.
+//' @returns Nothing.
+//' @seealso
+//' [get_config_option()]
+//' @examples
+//' set_config_option("GDAL_CACHEMAX", "64")
+//' get_config_option("GDAL_CACHEMAX")
+//' ## unset:
+//' set_config_option("GDAL_CACHEMAX", "")
+// [[Rcpp::export]]
+void set_config_option(std::string key, std::string value) {
+	const char* value_ = NULL;
+	if (value != "")
+		value_ = value.c_str();
+		
+	CPLSetConfigOption(key.c_str(), value_);
 }
 
 //' Create a new uninitialized raster
@@ -29,7 +103,7 @@ std::string _gdal_version() {
 //' @param xsize Integer width of raster in pixels.
 //' @param ysize Integer height of raster in pixels.
 //' @param nbands Integer number of bands.
-//' @param dataType Character data type name .
+//' @param dataType Character data type name.
 //' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 //' @param options Optional list of format-specific creation options in a
 //' vector of "NAME=VALUE" pairs 
@@ -40,7 +114,7 @@ std::string _gdal_version() {
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' @seealso
-//' [createCopy()], [rasterFromRaster()]
+//' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()]
 //' @examples
 //' new_file <- paste0(tempdir(), "/", "newdata.tif")
 //' create("GTiff", new_file, 143, 107, 1, "Int16")
@@ -117,7 +191,7 @@ bool create(std::string format, std::string dst_filename,
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' @seealso
-//' [create()], [rasterFromRaster()]
+//' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()]
 //' @examples
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 //' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
@@ -207,7 +281,7 @@ Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
 //' converts the equation from being:\cr
 //' raster pixel/line (column/row) &rarr; geospatial x/y coordinate\cr
 //' to:\cr
-//' geospatial x/y coordinate &rarr; raster pixel/line
+//' geospatial x/y coordinate &rarr; raster pixel/line (column/row)
 //'
 //' @param gt Numeric vector of length six containing the geotransform to 
 //' invert.
@@ -226,12 +300,12 @@ Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
 //' ptY = 5103901.4
 //' 
 //' ## for a point x, y in the spatial reference system of elev_file
-//' ## raster pixel (column number)
+//' ## raster pixel (column number):
 //' pixel <- floor(invgt[1] +
 //'                invgt[2] * ptX +
 //'                invgt[3] * ptY)
 //' 
-//' ## raster line (row number)
+//' ## raster line (row number):
 //' line <- floor(invgt[4] +
 //'               invgt[5] * ptX +
 //'               invgt[6] * ptY)
@@ -258,7 +332,9 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' @param gt Numeric vector of length six. The affine geotransform for the 
 //' raster.
 //' @returns Integer array of raster pixel/line.
+//'
 //' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [inv_geotransform()]
+//'
 //' @examples
 //' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 //' ## id, x, y in NAD83 / UTM zone 12N
@@ -267,6 +343,7 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' ds <- new(GDALRaster, raster_file, TRUE)
 //' gt <- ds$getGeoTransform()
 //' get_pixel_line(as.matrix(pts[,-1]), gt)
+//' ds$close()
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 		const std::vector<double> gt) {
@@ -297,22 +374,28 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 //'
 //' @param src_files Character vector of source file(s) to be reprojected.
 //' @param dst_filename Filename of the output raster.
-//' @param t_srs Character. Target spatial reference. Usually an EPSG code 
-//' ("EPSG:#####") or a well known text (WKT) CRS definition.
-//' @param arg_list Optional list of command-line arguments to \code{gdalwarp}
-//' in addition to -t_srs.
+//' @param t_srs Character. Target spatial reference system. Usually an EPSG 
+//' code ("EPSG:#####") or a well known text (WKT) SRS definition.
+//' @param cl_arg Optional character vector of command-line arguments to 
+//' \code{gdalwarp} in addition to -t_srs.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
+//'
+//' @seealso
+//' [`GDALRaster-class`][GDALRaster], [srs_to_wkt()]
+//'
 //' @examples
-//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' ## reproject the elevation raster to NAD83 / CONUS Albers (EPSG:5070)
-//' ## command-line arguments for gdalwarp:
-//' ## resample to 90-m resolution using average and keep pixels aligned
+//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+//'
+//' ## command-line arguments for gdalwarp
+//' ## resample to 90-m resolution using average and keep pixels aligned:
 //' args = c("-tr", "90", "90", "-r", "average", "-tap")
-//' ## output to Erdas Imagine format (HFA) with compression
+//' ## output to Erdas Imagine format (HFA), creation option for compression:
 //' args = c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
+//'
 //' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
-//' warp(elev_file, alb83_file, t_srs="EPSG:5070", arg_list = args)
+//' warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
 //' 
 //' ds <- new(GDALRaster, alb83_file, read_only=TRUE)
 //' ds$getDriverLongName()
@@ -323,7 +406,7 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 // [[Rcpp::export(invisible = true)]]
 bool warp(std::vector<std::string> src_files, std::string dst_filename,
 		Rcpp::CharacterVector t_srs, 
-		Rcpp::Nullable<Rcpp::CharacterVector> arg_list = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
 
 	std::vector<GDALDatasetH> src_ds(src_files.size());
 	for (std::size_t i = 0; i < src_files.size(); ++i) {
@@ -332,16 +415,16 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 
 	std::vector<char *> argv = {(char *) ("-t_srs"), (char *) (t_srs[0]), NULL};
 	//Rcpp::Rcout << argv[0] << " " << argv[1] << " ";
-	if (arg_list.isNotNull()) {
+	if (cl_arg.isNotNull()) {
 		// cast to the underlying type
 		// https://gallery.rcpp.org/articles/optional-null-function-arguments/
-		Rcpp::CharacterVector arg_list_in(arg_list);
-		argv.resize(arg_list_in.size() + 3);
-		for (R_xlen_t i = 0; i < arg_list_in.size(); ++i) {
-			argv[i+2] = (char *) (arg_list_in[i]);
+		Rcpp::CharacterVector cl_arg_in(cl_arg);
+		argv.resize(cl_arg_in.size() + 3);
+		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+			argv[i+2] = (char *) (cl_arg_in[i]);
 			//Rcpp::Rcout << argv[i+2] << " ";
 		}
-		argv[arg_list_in.size() + 2] = NULL;
+		argv[cl_arg_in.size() + 2] = NULL;
 	}
 	GDALWarpAppOptions* psOptions = GDALWarpAppOptionsNew(argv.data(), NULL);
 	GDALWarpAppOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
@@ -364,6 +447,17 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 	}
 }
 
+//' Raster overlay for unique combinations
+//' 
+//' @description
+//' `combine()` overlays multiple rasters so that a unique ID is assigned to 
+//' each unique combination of input values. The input raster layers  
+//' typically have integer data types (floating point will be coerced to 
+//' integer by truncation), and must have the same projection, extent and cell 
+//' size. Pixel counts for each unique combination are obtained, and 
+//' combination IDs are optionally written to an output raster.
+//'
+//' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".combine")]]
 Rcpp::DataFrame _combine(

@@ -30,6 +30,7 @@ raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 ds <- new(GDALRaster, raster_file, TRUE)
 gt <- ds$getGeoTransform()
 get_pixel_line(as.matrix(pts[,-1]), gt)
+ds$close()
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster$getGeoTransform()}}, \code{\link[=inv_geotransform]{inv_geotransform()}}
