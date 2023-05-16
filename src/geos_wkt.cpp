@@ -27,8 +27,8 @@ bool _has_geos() {
 // [[Rcpp::export(name = ".g_create")]]
 std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 // Create a geometry from a list of points (vertices).
-// Currently only for types: POINT, LINESTRING, POLYGON.
-// Only simple polygons composed of one (closed) exterior ring are supported.
+// Currently only for POINT, LINESTRING, POLYGON.
+// Only simple polygons composed of one exterior ring are supported.
 
 	OGRGeometryH hGeom;
 	
