@@ -107,7 +107,7 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p>gdalraster is an R interface to the Raster API of the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Calling signatures resemble those of the native C, C++ and Python APIs provided by the GDAL project.</p>
-<p>Bindings to GDAL are implemented in class [<code>GDALRaster</code>][GDALRaster-class] along with several related stand-alone functions. These support:</p>
+<p>Bindings to GDAL are implemented in class <code>GDALRaster</code> along with several related stand-alone functions. These support:</p>
 <ul>
 <li>manual creation of uninitialized raster datasets</li>
 <li>creation from existing raster as template</li>
@@ -120,8 +120,8 @@
 </ul>
 <p>Additional functionality includes:</p>
 <ul>
-<li>class [<code>RunningStats</code>][RunningStats-class] calculates mean and variance in one pass, and tracks the min, max, sum, and count (i.e., summary statistics on a data stream). The memory usage of a RunningStats object is negligible, and input can be intermittent. It scales to large datasets for applications such as raster zonal statistics.</li>
-<li>class [<code>CmbTable</code>][CmbTable-class] identifies and counts unique combinations of integer values using a hash table.</li>
+<li>class <code>RunningStats</code> calculates mean and variance in one pass, and tracks the min, max, sum, and count (i.e., summary statistics on a data stream). The memory usage of a RunningStats object is negligible, and input can be intermittent. It scales to large datasets for applications such as raster zonal statistics.</li>
+<li>class <code>CmbTable</code> identifies and counts unique combinations of integer values using a hash table.</li>
 <li>
 <code><a href="reference/combine.html">combine()</a></code> overlays multiple rasters so that a unique ID is assigned to each unique combination of input values. Pixel counts for each unique combination are obtained, and combination IDs are optionally written to an output raster.</li>
 <li>
