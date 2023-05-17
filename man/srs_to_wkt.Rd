@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{srs_to_wkt}
 \alias{srs_to_wkt}
-\title{Convert spatial reference definition to Well Known Text (WKT)}
+\title{Convert spatial reference definition to OGC Well Known Text}
 \usage{
 srs_to_wkt(srs, pretty = FALSE)
 }

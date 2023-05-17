@@ -4,8 +4,8 @@
 
 #' List of default nodata values by raster data type
 #'
-#' These values are currently used when a nodata value is needed but has not 
-#' been specified:
+#' These values are currently used in `gdalraster` when a nodata value is 
+#' needed but has not been specified:
 #' \preformatted{
 #'     list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
 #'          "UInt32"= 4294967293, "Int32"= -2147483647, 

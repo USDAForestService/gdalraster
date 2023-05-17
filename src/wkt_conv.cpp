@@ -13,7 +13,7 @@
 
 #include "geos_wkt.h"
 
-//' Convert EPSG spatial reference to Well Known Text (WKT)
+//' Convert spatial reference from EPSG code to OGC Well Known Text
 //'
 //' `epsg_to_wkt()` exports the spatial reference for an EPSG code to 
 //' WKT format.
@@ -74,7 +74,7 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
 	return wkt;
 }
 
-//' Convert spatial reference definition to Well Known Text (WKT)
+//' Convert spatial reference definition to OGC Well Known Text
 //'
 //' `srs_to_wkt()` converts a spatial reference system (SRS) definition 
 //' in various text formats to WKT. The function will examine the input SRS, 
@@ -212,7 +212,7 @@ bool srs_is_projected(std::string srs) {
 	return OSRIsProjected(hSRS);
 }
 
-//' Get the bounding box of a geometry in OGC WKT format.
+//' Get the bounding box of a geometry specified in OGC WKT format.
 //'
 //' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry 
 //' (e.g., LINE, POLYGON, MULTIPOLYGON).
@@ -251,7 +251,7 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 	return bbox;
 }
 
-//' Convert a bounding box to a polygon in OGC WKT format.
+//' Convert a bounding box to POLYGON in OGC WKT format.
 //'
 //' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
 //'

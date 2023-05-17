@@ -11,8 +11,8 @@ An object of class \code{list} of length 7.
 DEFAULT_NODATA
 }
 \description{
-These values are currently used when a nodata value is needed but has not
-been specified:
+These values are currently used in \code{gdalraster} when a nodata value is
+needed but has not been specified:
 \preformatted{
     list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
          "UInt32"= 4294967293, "Int32"= -2147483647, 

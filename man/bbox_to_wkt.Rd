@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bbox_to_wkt}
 \alias{bbox_to_wkt}
-\title{Convert a bounding box to a polygon in OGC WKT format.}
+\title{Convert a bounding box to POLYGON in OGC WKT format.}
 \usage{
 bbox_to_wkt(bbox)
 }

@@ -49,3 +49,5 @@ Install the development version from GitHub:
 devtools::install_github("USDAForestService/gdalraster")
 ```
 
+## Documentation
+https://usdaforestservice.github.io/gdalraster/reference/
