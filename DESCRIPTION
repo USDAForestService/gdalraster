@@ -27,7 +27,8 @@ Maintainer: Chris Toney <chris.toney@usda.gov>
 BugReports: https://github.com/USDAForestService/gdalraster/issues
 License: MIT + file LICENSE
 Copyright: See file COPYRIGHTS for details.
-URL: https://github.com/USDAForestService/gdalraster
+URL: https://github.com/USDAForestService/gdalraster,
+    https://usdaforestservice.github.io/gdalraster/
 Depends: R (>= 3.4)
 Imports: methods, tools, utils, Rcpp (>= 1.0.7)
 LinkingTo: Rcpp
