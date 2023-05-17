@@ -1,4 +1,39 @@
 url: https://usdaforestservice.github.io/gdalraster/
 template:
   bootstrap: 5
-
+reference:
+- title: Package overview
+- contents:
+  - gdalraster-package
+- title: Classes
+- contents:
+  - GDALRaster-class
+  - CmbTable-class
+  - RunningStats-class
+- title: Functions
+- contents:
+  - bbox_from_wkt
+  - bbox_to_wkt
+  - bbox_intersect
+  - bbox_union
+  - calc
+  - combine
+  - create
+  - createCopy
+  - epsg_to_wkt
+  - gdal_version
+  - get_config_option
+  - get_pixel_line
+  - inv_geotransform
+  - inv_project
+  - rasterFromRaster
+  - rasterToVRT
+  - set_config_option
+  - srs_is_geographic
+  - srs_is_projected
+  - srs_to_wkt
+  - transform_xy
+  - warp
+- title: Lookups
+- contents:
+  - DEFAULT_NODATA
