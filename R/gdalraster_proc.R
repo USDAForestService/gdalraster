@@ -12,6 +12,7 @@
 #'          "Float32"= -99999.0, 
 #'          "Float64"= -99999.0)
 #' }
+#' @export
 DEFAULT_NODATA <- list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
 						"UInt32"= 4294967293, "Int32"= -2147483647, 
 						"Float32"= -99999.0, 
@@ -763,6 +764,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' sum(df_subset$count)
 #' 
 #' ## if LCP file format is needed: createCopy(tif_file, <new_lcp_file>)
+#' @export
 calc <- function(expr, 
 					rasterfiles, 
 					bands = NULL, 

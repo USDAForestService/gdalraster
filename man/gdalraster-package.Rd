@@ -1,8 +1,8 @@
-\name{gdalraster-package}
-\alias{gdalraster-package}
 \docType{package}
-\title{
-  Bindings to the GDAL Raster API
+\name{gdalraster-package}
+\alias{gdalraster}
+\alias{gdalraster-package}
+\title{Bindings to the GDAL Raster API
 }
 \description{
   \code{gdalraster} is an interface to the Geospatial Data Abstraction 
@@ -14,49 +14,50 @@
   Core functionality is contained in the \code{GDALRaster} class and several 
   GDAL related stand-alone functions:
   \itemize{
-  \item class \code{GDALRaster} allows opening a raster dataset and calling 
-  methods on the Dataset, Driver and RasterBand objects in the underlying API 
-  (get/set parameters, read/write pixel data).
+  \item class \code{\link{GDALRaster}} allows opening a raster dataset and 
+  calling methods on the Dataset, Driver and RasterBand objects in the 
+  underlying API (get/set parameters, read/write pixel data).
   
-  \item raster creation: \code{create()}, \code{createCopy()}, 
-  \code{rasterFromRaster()}
+  \item raster creation: \code{\link{create}}, \code{\link{createCopy}}, 
+  \code{\link{rasterFromRaster}}
  
-  \item virtual raster: \code{rasterToVRT()}
+  \item virtual raster: \code{\link{rasterToVRT}}
   
-  \item reproject: \code{warp()}
+  \item reproject: \code{\link{warp}}
   
-  \item geotransform conversion: \code{inv_geotransform()}, 
-  \code{get_pixel_line()}
+  \item geotransform conversion: \code{\link{inv_geotransform}}, 
+  \code{\link{get_pixel_line}}
   
-  \item coordinate transformation: \code{transform_xy()}, \code{inv_project()}
+  \item coordinate transformation: \code{\link{transform_xy}}, 
+  \code{\link{inv_project}}
   
-  \item spatial reference convenience functions: \code{epsg_to_wkt()},
-  \code{srs_to_wkt()},\cr
-  \code{srs_is_geographic()}, \code{srs_is_projected()}
+  \item spatial reference convenience functions: \code{\link{epsg_to_wkt}}, 
+  \code{\link{srs_to_wkt}},\cr
+  \code{\link{srs_is_geographic}}, \code{\link{srs_is_projected}}
   
-  \item bounding box convenience functions: \code{bbox_from_wkt()}, 
-  \code{bbox_to_wkt()},\cr
-  \code{bbox_intersect()}, \code{bbox_union()}
+  \item bounding box convenience functions: \code{\link{bbox_from_wkt}}, 
+  \code{\link{bbox_to_wkt}},\cr
+  \code{\link{bbox_intersect}}, \code{\link{bbox_union}}
   
-  \item GDAL configuration: \code{gdal_version()}, \code{get_config_option()}, 
-  \code{set_config_option()}
+  \item GDAL configuration: \code{\link{gdal_version}}, 
+  \code{\link{get_config_option}}, \code{\link{set_config_option}}
   }
   Additional functionality includes:
   \itemize{
-  \item class \code{RunningStats} calculates mean and variance in one pass.
-  The min, max, sum, and count are also tracked (i.e., summary statistics on 
-  a data stream).
+  \item class \code{\link{RunningStats}} calculates mean and variance in one 
+  pass. The min, max, sum, and count are also tracked (i.e., summary 
+  statistics on a data stream).
   
-  \item class \code{CmbTable} implements a hash table for counting unique 
-  combinations of integer values.
+  \item class \code{\link{CmbTable}} implements a hash table for counting 
+  unique combinations of integer values.
   
-  \item \code{combine()} overlays multiple rasters so that a unique ID is 
-  assigned to each unique combination of input values. Pixel counts for each 
-  unique combination are obtained, and combination IDs are optionally written
-  to an output raster.
+  \item \code{\link{combine}} overlays multiple rasters so that a unique ID 
+  is assigned to each unique combination of input values. Pixel counts for 
+  each unique combination are obtained, and combination IDs are optionally 
+  written to an output raster.
   
-  \item \code{calc()} evaluates an R expression for each pixel in a raster 
-  layer or stack of layers. Individual pixel coordinates are available  
+  \item \code{\link{calc}} evaluates an R expression for each pixel in a 
+  raster layer or stack of layers. Individual pixel coordinates are available 
   as variables in the R expression, as either x/y in the raster projected 
   coordinate system or inverse projected longitude/latitude.
   }

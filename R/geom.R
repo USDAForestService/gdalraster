@@ -44,6 +44,7 @@
 #' print(bbox_list)
 #' bbox_intersect(bbox_list)
 #' bbox_union(bbox_list)
+#' @export
 bbox_intersect <- function(x, as_wkt = FALSE) {
 
 	n <- length(x)
@@ -82,6 +83,7 @@ bbox_intersect <- function(x, as_wkt = FALSE) {
 
 
 #' @rdname bbox_intersect
+#' @export
 bbox_union <- function(x, as_wkt = FALSE) {
 
 	n <- length(x)
