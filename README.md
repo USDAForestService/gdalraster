@@ -14,9 +14,8 @@ Abstraction Library ([GDAL](https://gdal.org/)). Calling signatures
 resemble those of the native C, C++ and Python APIs provided by the GDAL
 project.
 
-Bindings to GDAL are implemented in class
-\[`GDALRaster`\]\[GDALRaster-class\] along with several related
-stand-alone functions. These support:
+Bindings to GDAL are implemented in class `GDALRaster` along with
+several related stand-alone functions. These support:
 
   - manual creation of uninitialized raster datasets
   - creation from existing raster as template
@@ -30,14 +29,13 @@ stand-alone functions. These support:
 
 Additional functionality includes:
 
-  - class \[`RunningStats`\]\[RunningStats-class\] calculates mean and
-    variance in one pass, and tracks the min, max, sum, and count (i.e.,
-    summary statistics on a data stream). The memory usage of a
-    RunningStats object is negligible, and input can be intermittent. It
-    scales to large datasets for applications such as raster zonal
-    statistics.
-  - class \[`CmbTable`\]\[CmbTable-class\] identifies and counts unique
-    combinations of integer values using a hash table.
+  - class `RunningStats` calculates mean and variance in one pass, and
+    tracks the min, max, sum, and count (i.e., summary statistics on a
+    data stream). The memory usage of a RunningStats object is
+    negligible, and input can be intermittent. It scales to large
+    datasets for applications such as raster zonal statistics.
+  - class `CmbTable` identifies and counts unique combinations of
+    integer values using a hash table.
   - `combine()` overlays multiple rasters so that a unique ID is
     assigned to each unique combination of input values. Pixel counts
     for each unique combination are obtained, and combination IDs are
