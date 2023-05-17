@@ -40,8 +40,7 @@ Additional functionality includes:
 for each unique combination are obtained, and combination IDs are optionally written to an output raster.
 * `calc()` evaluates an R expression for each pixel in a raster layer or stack of layers. Individual pixel coordinates are available as variables in the R expression, as either x/y in the raster projected coordinate system or inverse projected longitude/latitude.
 
-gdalraster is a fast, lightweight and modern R interface to GDAL. It may be suitable for applications that primarily need low-level
-raster I/O or explicit manipulation of VRT format, or prefer native GDAL-like calling.
+gdalraster is a fast, lightweight and modern R interface to GDAL. It may be suitable for applications that primarily need low-level raster I/O, explicit manipulation of VRT format, or prefer native 'GDAL'-like calling. The additional functionality is somewhat aimed at thematic data analysis but may have other utility.
 
 ## Installation
 Install the development version from GitHub:

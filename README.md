@@ -46,8 +46,10 @@ Additional functionality includes:
     coordinate system or inverse projected longitude/latitude.
 
 gdalraster is a fast, lightweight and modern R interface to GDAL. It may
-be suitable for applications that primarily need low-level raster I/O or
-explicit manipulation of VRT format, or prefer native GDAL-like calling.
+be suitable for applications that primarily need low-level raster I/O,
+explicit manipulation of VRT format, or prefer native ‘GDAL’-like
+calling. The additional functionality is somewhat aimed at thematic data
+analysis but may have other utility.
 
 ## Installation
 

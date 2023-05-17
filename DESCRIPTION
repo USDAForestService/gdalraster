@@ -4,10 +4,10 @@ Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
 Version: 1.1.0
 Description: Interface to the raster API of the 'Geospatial Data Abstraction 
 	Library' ('GDAL') supporting manual creation of uninitialized datasets, 
-	creation from existing raster as template, low level I/O,  
+	creation from existing raster as template, low level I/O, 
 	configuration of virtual raster (VRT), coordinate transformation, and 
-	access to 'gdalwarp' for reprojection. Convenience functions are provided 
-	for working with spatial reference systems. Calling signatures resemble 
+	access to 'gdalwarp' for reprojection. Convenience functions facilitate 
+	working with spatial reference systems. Calling signatures resemble 
 	the native C, C++ and Python APIs provided by the 'GDAL' project 
 	(<https://gdal.org>). Bindings to 'GDAL' are implemented in class 
 	'GDALRaster' along with several stand-alone functions. 
@@ -15,8 +15,8 @@ Description: Interface to the raster API of the 'Geospatial Data Abstraction
 	summary statistics on a data stream; class 'CmbTable' for counting unique 
 	combinations of integer values with a hash table; a raster overlay utility 
 	to identify and count unique combinations across multiple inputs; and a 
-	raster calculation utility to evaluate an R expression on raster layers   
-	with pixel coordinates also available as variables. 'gdalraster' is a 
+	raster calculation utility that evaluates an R expression on raster layers 
+	with pixel coordinates available as variables. 'gdalraster' is a 
 	fast, lightweight and modern interface to 'GDAL'. It may be suitable for 
 	applications that primarily need low-level raster I/O, explicit 
 	manipulation of VRT format, or prefer native 'GDAL'-like calling. The 
