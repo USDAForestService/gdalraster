@@ -9,7 +9,7 @@
 
 ## Overview
 
-gdalraster is an R interface to the Raster API of the Geospatial Data
+`gdalraster` is an R interface to the Raster API of the Geospatial Data
 Abstraction Library ([GDAL](https://gdal.org/)). Calling signatures
 resemble those of the native C, C++ and Python APIs provided by the GDAL
 project.
@@ -45,17 +45,24 @@ Additional functionality includes:
     variables in the R expression, as either x/y in the raster projected
     coordinate system or inverse projected longitude/latitude.
 
-gdalraster is a fast, lightweight and modern R interface to GDAL. It may
-be suitable for applications that primarily need low-level raster I/O,
-explicit manipulation of VRT format, or prefer native ‘GDAL’-like
+`gdalraster` is a fast, lightweight and modern R interface to GDAL. It
+may be suitable for applications that primarily need low-level raster
+I/O, explicit manipulation of VRT format, or prefer native GDAL-like
 calling. The additional functionality is somewhat aimed at thematic data
 analysis but may have other utility.
 
 ## Installation
 
-Install the development version from GitHub:
+Install the stable version from CRAN:
 
 ``` r
+install.packages("gdalraster")
+```
+
+Or, install the development version from GitHub:
+
+``` r
+## install.packages("devtools")
 devtools::install_github("USDAForestService/gdalraster")
 ```
 
