@@ -279,9 +279,9 @@ Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
 //'
 //' `inv_geotransform()` inverts a vector of geotransform coefficients. This 
 //' converts the equation from being:\cr
-//' raster pixel/line (column/row) &rarr; geospatial x/y coordinate\cr
+//' raster pixel/line (column/row) -> geospatial x/y coordinate\cr
 //' to:\cr
-//' geospatial x/y coordinate &rarr; raster pixel/line (column/row)
+//' geospatial x/y coordinate -> raster pixel/line (column/row)
 //'
 //' @param gt Numeric vector of length six containing the geotransform to 
 //' invert.
@@ -339,6 +339,7 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 //' ## id, x, y in NAD83 / UTM zone 12N
 //' pts <- read.csv(pt_file)
+//' print(pts)
 //' raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 //' ds <- new(GDALRaster, raster_file, TRUE)
 //' gt <- ds$getGeoTransform()
