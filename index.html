@@ -106,7 +106,7 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>gdalraster is an R interface to the Raster API of the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Calling signatures resemble those of the native C, C++ and Python APIs provided by the GDAL project.</p>
+<p><code>gdalraster</code> is an R interface to the Raster API of the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Calling signatures resemble those of the native C, C++ and Python APIs provided by the GDAL project.</p>
 <p>Bindings to GDAL are implemented in class <code>GDALRaster</code> along with several related stand-alone functions. These support:</p>
 <ul>
 <li>manual creation of uninitialized raster datasets</li>
@@ -127,14 +127,18 @@
 <li>
 <code><a href="reference/calc.html">calc()</a></code> evaluates an R expression for each pixel in a raster layer or stack of layers. Individual pixel coordinates are available as variables in the R expression, as either x/y in the raster projected coordinate system or inverse projected longitude/latitude.</li>
 </ul>
-<p>gdalraster is a fast, lightweight and modern R interface to GDAL. It may be suitable for applications that primarily need low-level raster I/O, explicit manipulation of VRT format, or prefer native ‘GDAL’-like calling. The additional functionality is somewhat aimed at thematic data analysis but may have other utility.</p>
+<p><code>gdalraster</code> is a fast, lightweight and modern R interface to GDAL. It may be suitable for applications that primarily need low-level raster I/O, explicit manipulation of VRT format, or prefer native GDAL-like calling. The additional functionality is somewhat aimed at thematic data analysis but may have other utility.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
-<p>Install the development version from GitHub:</p>
+<p>Install the stable version from CRAN:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span><span class="op">)</span></span></code></pre></div>
+<p>Or, install the development version from GitHub:</p>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co">## install.packages("devtools")</span></span>
+<span><span class="fu">devtools</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="documentation">Documentation<a class="anchor" aria-label="anchor" href="#documentation"></a>
