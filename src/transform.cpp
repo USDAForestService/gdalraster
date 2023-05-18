@@ -123,8 +123,9 @@ Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts,
 //' spatial reference system for `pts`.
 //' @param srs_to Character string in OGC WKT format specifying the output 
 //' spatial reference system.
-//' @returns Numeric array of geospatial x/y coordinates in the `srs_to` 
-//' projection.
+//' @returns Numeric array of geospatial x/y coordinates in the projection 
+//' specified by `srs_to`.
+//'
 //' @seealso
 //' [epsg_to_wkt()], [srs_to_wkt()], [inv_project()]
 //' @examples
