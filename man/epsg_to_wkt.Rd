@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{epsg_to_wkt}
 \alias{epsg_to_wkt}
-\title{Convert EPSG spatial reference to Well Known Text (WKT)}
+\title{Convert spatial reference from EPSG code to OGC Well Known Text}
 \usage{
 epsg_to_wkt(epsg, pretty = FALSE)
 }

@@ -10,7 +10,7 @@ reference:
   - GDALRaster-class
   - CmbTable-class
   - RunningStats-class
-- title: Functions
+- title: Stand-alone functions
 - contents:
   - bbox_from_wkt
   - bbox_to_wkt
