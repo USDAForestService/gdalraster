@@ -164,9 +164,9 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE, optio
 #'
 #' `inv_geotransform()` inverts a vector of geotransform coefficients. This 
 #' converts the equation from being:\cr
-#' raster pixel/line (column/row) &rarr; geospatial x/y coordinate\cr
+#' raster pixel/line (column/row) -> geospatial x/y coordinate\cr
 #' to:\cr
-#' geospatial x/y coordinate &rarr; raster pixel/line (column/row)
+#' geospatial x/y coordinate -> raster pixel/line (column/row)
 #'
 #' @param gt Numeric vector of length six containing the geotransform to 
 #' invert.
@@ -219,6 +219,7 @@ inv_geotransform <- function(gt) {
 #' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 #' ## id, x, y in NAD83 / UTM zone 12N
 #' pts <- read.csv(pt_file)
+#' print(pts)
 #' raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds <- new(GDALRaster, raster_file, TRUE)
 #' gt <- ds$getGeoTransform()
@@ -448,8 +449,9 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #' spatial reference system for `pts`.
 #' @param srs_to Character string in OGC WKT format specifying the output 
 #' spatial reference system.
-#' @returns Numeric array of geospatial x/y coordinates in the `srs_to` 
-#' projection.
+#' @returns Numeric array of geospatial x/y coordinates in the projection 
+#' specified by `srs_to`.
+#'
 #' @seealso
 #' [epsg_to_wkt()], [srs_to_wkt()], [inv_project()]
 #' @examples

@@ -26,6 +26,7 @@ increasing left to right, top to bottom.
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 ## id, x, y in NAD83 / UTM zone 12N
 pts <- read.csv(pt_file)
+print(pts)
 raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 ds <- new(GDALRaster, raster_file, TRUE)
 gt <- ds$getGeoTransform()

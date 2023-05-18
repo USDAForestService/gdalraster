@@ -18,9 +18,9 @@ is uninvertable.
 \description{
 \code{inv_geotransform()} inverts a vector of geotransform coefficients. This
 converts the equation from being:\cr
-raster pixel/line (column/row) → geospatial x/y coordinate\cr
+raster pixel/line (column/row) -> geospatial x/y coordinate\cr
 to:\cr
-geospatial x/y coordinate → raster pixel/line (column/row)
+geospatial x/y coordinate -> raster pixel/line (column/row)
 }
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")

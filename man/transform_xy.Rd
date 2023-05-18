@@ -16,8 +16,8 @@ spatial reference system for \code{pts}.}
 spatial reference system.}
 }
 \value{
-Numeric array of geospatial x/y coordinates in the \code{srs_to}
-projection.
+Numeric array of geospatial x/y coordinates in the projection
+specified by \code{srs_to}.
 }
 \description{
 \code{transform_xy()} transforms geospatial x/y coordinates to a new projection.
