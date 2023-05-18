@@ -33,15 +33,15 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 	OGRGeometryH hGeom;
 	
 	if (geom_type == "point" || geom_type == "POINT") {
-		geom_type == "POINT";
+		geom_type = "POINT";
 		hGeom = OGR_G_CreateGeometry(wkbPoint);
 	}
 	else if (geom_type == "linestring" || geom_type == "LINESTRING") {
-		geom_type == "LINESTRING";
+		geom_type = "LINESTRING";
 		hGeom = OGR_G_CreateGeometry(wkbLineString);
 	}
 	else if (geom_type == "polygon" || geom_type == "POLYGON") {
-		geom_type == "POLYGON";
+		geom_type = "POLYGON";
 		hGeom = OGR_G_CreateGeometry(wkbLineString);
 	}
 	else {
