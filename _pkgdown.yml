@@ -38,5 +38,5 @@ reference:
 - contents:
   - DEFAULT_NODATA
 authors:
-  before: "<strong>For GDAL see</strong>: [https://github.com/OSGeo/gdal/graphs/contributors](https://github.com/OSGeo/gdal/graphs/contributors)"
+  before: "For GDAL see: [https://github.com/OSGeo/gdal/graphs/contributors](https://github.com/OSGeo/gdal/graphs/contributors)"
   after: "<small class=\"dont-index\">See file <a href=\"https://github.com/USDAForestService/gdalraster/blob/HEAD/inst/COPYRIGHTS\" class=\"external-link\"><code>inst/COPYRIGHTS</code></a> for details.</small>"
