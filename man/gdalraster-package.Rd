@@ -62,12 +62,6 @@
   coordinate system or inverse projected longitude/latitude.
   }
 }
-\author{
-Chris Toney
-
-Maintainer: Chris Toney <chris.toney at usda.gov>
-}
-\keyword{ package }
 \seealso{
   GDAL Raster Data Model:\cr
   \url{https://gdal.org/user/raster_data_model.html}
@@ -80,8 +74,8 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
 }
 \note{
   Documentation for several wrapper functions borrows from the GDAL API 
-  documentation, &copy;1998-2023 Frank Warmerdam, Even Rouault, and others, 
-  \url{https://gdal.org/license.html}.
+  documentation, Copyright 1998-2023 Frank Warmerdam, Even Rouault, and 
+  others, \url{https://gdal.org/license.html}.
 
   Sample datasets are included with the package and used in examples 
   throughout the documentation. The sample data include LANDFIRE raster layers 
