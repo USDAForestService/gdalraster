@@ -22,8 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ===============================================================================
 
-=====files src/progress_r.cpp gdalraster.cpp ==================================
-file src/progress_r.cpp:
+=====files src/progress_r.cpp, gdalraster.cpp =================================
+File src/progress_r.cpp:
 This file is a slightly modified version of /gdal/port/cpl_progress.cpp, to 
 work in R on Windows and Linux.
 
@@ -56,7 +56,7 @@ DEALINGS IN THE SOFTWARE.
 ===============================================================================
 
 =====in file src/cmb_table.h ==================================================
-struct cmbHasher{} uses Boost "hash_combine" method for the hash:
+The struct cmbHasher{} uses Boost "hash_combine" method for the hash:
 Copyright 2005-2014 Daniel James.
 Copyright 2021, 2022 Peter Dimov.
 Distributed under the Boost Software License, Version 1.0.
@@ -87,11 +87,10 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 ===============================================================================
 
-=====files configure.ac Makevars.win winlibs.R ================================
-configure.ac
-/src/Makevars.win
-/tools/winlibs.R
-based on the files from https://github.com/appelmar/gdalcubes
+=====files configure.ac, Makevars.win, winlibs.R ==============================
+Files configure.ac, /src/Makevars.win, /tools/winlibs.R are based on the files
+from https://github.com/appelmar/gdalcubes.
+
 Copyright (c) 2018-2019 Marius Appel
 License: MIT
 

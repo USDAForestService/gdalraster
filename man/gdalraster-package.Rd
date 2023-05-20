@@ -79,6 +79,10 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
   \url{https://gdal.org/tutorials/geotransforms_tut.html}
 }
 \note{
+  Documentation for several wrapper functions borrows from the GDAL API 
+  documentation, &copy;1998-2023 Frank Warmerdam, Even Rouault, and others, 
+  \url{https://gdal.org/license.html}.
+
   Sample datasets are included with the package and used in examples 
   throughout the documentation. The sample data include LANDFIRE raster layers 
   describing terrain, vegetation and wildland fuels (LF 2020 version, 

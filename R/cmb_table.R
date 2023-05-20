@@ -13,10 +13,10 @@
 #' @param keyLen The number of integer values comprising each combination.
 #' @param varNames Character vector of names for the variables in the 
 #' combination.
-#' @returns An object of class `CmbTable`: a hash table having a vector of 
-#' `keyLen` integers as the key and the count of occurrences of each unique 
-#' integer combination as the value, along with methods to operate on the 
-#' table as  described in Details.
+#' @returns An object of class `CmbTable`. Contains a hash table having a 
+#' vector of `keyLen` integers as the key and the count of occurrences of 
+#' each unique integer combination as the value, along with methods that 
+#' operate on the table as described in Details.
 #'
 #' @section Usage:
 #' \preformatted{

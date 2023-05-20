@@ -31,9 +31,9 @@ Additional functionality includes:
 
   - class `RunningStats` calculates mean and variance in one pass, and
     tracks the min, max, sum, and count (i.e., summary statistics on a
-    data stream). The memory usage of a RunningStats object is
-    negligible, and input can be intermittent. It scales to large
-    datasets for applications such as raster zonal statistics.
+    data stream). The input data values are not stored in memory, so
+    this class can be used to compute statistics for very large data
+    streams.
   - class `CmbTable` identifies and counts unique combinations of
     integer values using a hash table.
   - `combine()` overlays multiple rasters so that a unique ID is

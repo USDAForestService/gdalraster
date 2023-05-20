@@ -13,10 +13,10 @@
 combination.}
 }
 \value{
-An object of class \code{CmbTable}: a hash table having a vector of
-\code{keyLen} integers as the key and the count of occurrences of each unique
-integer combination as the value, along with methods to operate on the
-table as  described in Details.
+An object of class \code{CmbTable}. Contains a hash table having a
+vector of \code{keyLen} integers as the key and the count of occurrences of
+each unique integer combination as the value, along with methods that
+operate on the table as described in Details.
 }
 \description{
 \code{CmbTable} implements a hash table having a vector of integers as the key,

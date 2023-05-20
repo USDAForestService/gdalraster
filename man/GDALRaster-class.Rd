@@ -25,9 +25,7 @@ Details.
 \code{GDALRaster} provides an interface for accessing a raster dataset via GDAL
 and calling methods on the underlying GDALDataset, GDALDriver and
 GDALRasterBand objects. See \url{https://gdal.org/api/index.html} for
-details of the GDAL API. Documentation for the wrapper functions borrows
-from the GDAL API documentation, ©1998-2023 Frank Warmerdam, Even
-Rouault, and others, \url{https://gdal.org/license.html}.
+details of the GDAL API.
 }
 \section{Usage}{
 
@@ -84,7 +82,8 @@ ds$close()
 Constructor. Returns an object of class \code{GDALRaster}.
 
 \code{$getFilename()}
-Returns the filename associated with this \code{GDALRaster} object.
+Returns a character string containing the filename associated with this
+\code{GDALRaster} object.
 
 \code{$open(read_only)}
 (Re-)opens the raster dataset on the existing filename. Use this method to
