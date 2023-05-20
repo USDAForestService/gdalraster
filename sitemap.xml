@@ -16,16 +16,16 @@
     <loc>https://usdaforestservice.github.io/gdalraster/news/index.html</loc>
   </url>
   <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/CmbTable.html</loc>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/CmbTable-class.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/DEFAULT_NODATA.html</loc>
   </url>
   <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/GDALRaster.html</loc>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html</loc>
   </url>
   <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/RunningStats.html</loc>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_from_wkt.html</loc>
