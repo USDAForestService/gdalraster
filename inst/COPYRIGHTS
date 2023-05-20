@@ -1,4 +1,4 @@
-=====GDAL-related documentation ===============================================
+=====GDAL and related documentation ===========================================
 The documentation for several GDAL wrapper functions borrows from the GDAL API
 documentation at: https://gdal.org/api
 Copyright 1998-2023 Frank Warmerdam, Even Rouault, and others.
@@ -23,12 +23,16 @@ SOFTWARE.
 ===============================================================================
 
 =====files src/progress_r.cpp gdalraster.cpp ==================================
-src/progress_r.cpp:
-This file is slightly modified version of /gdal/port/cpl_progress.cpp.
+file src/progress_r.cpp:
+This file is a slightly modified version of /gdal/port/cpl_progress.cpp, to 
+work in R on Windows and Linux.
+
 Copyright (c) 2013, Frank Warmerdam
 
 In file src/gdalraster.cpp:
-The function ARE_REAL_EQUAL() was copied from gdal_priv.h
+The function ARE_REAL_EQUAL() was copied from gdal_priv.h, since that header 
+was not otherwise needed.
+
 Copyright (c) 1998, Frank Warmerdam
 Copyright (c) 2007-2014, Even Rouault <even dot rouault at spatialys.com>
 
@@ -52,7 +56,7 @@ DEALINGS IN THE SOFTWARE.
 ===============================================================================
 
 =====in file src/cmb_table.h ==================================================
-struct cmbHasher{} uses Boost 'hash_combine' method for the hash:
+struct cmbHasher{} uses Boost "hash_combine" method for the hash:
 Copyright 2005-2014 Daniel James.
 Copyright 2021, 2022 Peter Dimov.
 Distributed under the Boost Software License, Version 1.0.

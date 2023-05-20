@@ -1,25 +1,34 @@
-#' @name RunningStats
+#' @name RunningStats-class
 #'
 #' @aliases
-#' Rcpp_RunningStats Rcpp_RunningStats-class RunningStats-class
+#' Rcpp_RunningStats Rcpp_RunningStats-class RunningStats
 #'
 #' @title Class to calculate mean and variance in one pass
 #'
 #' @description
-#' Calculates summary statistics on a data stream.
+#' `RunningStats` computes summary statistics on a data stream efficiently.
 #' Mean and variance are calculated with Welford's online algorithm
 #' (\url{https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance}).
-#' The min, max, sum and count are also tracked.
-#' The memory usage of a \code{RunningStats} object is negligible, and input 
-#' can be intermittent. It scales to large datasets for applications such as 
-#' raster zonal statistics.
+#' The min, max, sum and count are also tracked. The input data values are not 
+#' stored in memory, so this class can be used to compute statistics for very 
+#' large data streams.
+#'
+#' @param na_rm Logical. `TRUE` to remove `NA` from the input data or `FALSE` 
+#' to retain `NA`.
+#' @returns An object of class `RunningStats` for calculating summary 
+#' statistics on a stream of data using the methods described in Details. A 
+#' `RunningStats` object maintains the current minimum, maximum, mean, 
+#' variance, sum and count of values that have been read from the stream. It 
+#' can be updated repeatedly with new values (i.e., chunks of data 
+#' read from the input stream), but its memory footprint is negligible.
+#' 
 #'
 #' @section Usage:
 #' \preformatted{
 #' rs <- new(RunningStats, na_rm)
 #'
+#' ## Methods (see Details)
 #' rs$update(newvalues)
-#' 
 #' rs$get_count()
 #' rs$get_mean()
 #' rs$get_min()
@@ -27,47 +36,45 @@
 #' rs$get_sum()
 #' rs$get_var()
 #' rs$get_sd()
-#'
 #' rs$reset()
 #' }
 #'
 #' @section Details:
 #'
 #' \code{new(RunningStats, na_rm)}
-#' Creates a new \code{RunningStats} object. 
-#' \code{na_rm = TRUE} to remove \code{NA} from the input data or \code{FALSE} 
-#' to retain \code{NA}. 
-#' Returns an object of class \code{RunningStats}.
+#' Constructor. Returns an object of class \code{RunningStats}.
 #'
 #' \code{$update(newvalues)}
-#' Adds a numeric vector of \code{newvalues} to the data stream.
-#' No return value.
+#' Updates the `RunningStats` object with a numeric vector of `newvalues` 
+#' (i.e., a chunk of values from the data stream). No return value, called 
+#' for side effects.
 #'
 #' \code{$get_count()}
-#' Returns the count of values currently in the stream.
+#' Returns the count of values received from the data stream.
 #'
 #' \code{$get_mean()}
-#' Returns the mean of values currently in the stream.
+#' Returns the mean of values received from the data stream.
 #'
 #' \code{$get_min()}
-#' Returns the minimum value currently in the stream.
+#' Returns the minimum value received from the data stream.
 #'
 #' \code{$get_max()}
-#' Returns the maximum value currently in the stream.
+#' Returns the maximum value received from the data stream.
 #'
 #' \code{$get_sum()}
-#' Returns the sum of values currently in the stream.
+#' Returns the sum of values received from the data stream.
 #'
 #' \code{$get_var()}
-#' Returns the variance of values currently in the stream (denominator n - 1).
+#' Returns the variance of values from the data stream 
+#' (denominator n - 1).
 #'
 #' \code{$get_sd()}
-#' Returns the standard deviation of values currently in the stream
+#' Returns the standard deviation of values from the data stream
 #' (denominator n - 1).
 #'
 #' \code{$reset()}
-#' Clears the \code{RunningStats} object to its initialized state.
-#' No return value.
+#' Clears the \code{RunningStats} object to its initialized state (count = 0).
+#' No return value, called for side effects.
 #' 
 #' @examples
 #' set.seed(42)
@@ -95,7 +102,7 @@
 #' rs$get_sd()
 #' sd(chunk)
 #' 
-#' \dontrun{
+#' \donttest{
 #' ## 10^9 values read in 10,000 chunks
 #' ## should take under 2 minutes on typical PC hardware
 #' for (i in 1:1e4) {

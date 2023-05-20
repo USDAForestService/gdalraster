@@ -1,17 +1,28 @@
-#' @name GDALRaster
+#' @name GDALRaster-class
 #'
 #' @aliases
-#' Rcpp_GDALRaster Rcpp_GDALRaster-class GDALRaster-class
+#' Rcpp_GDALRaster Rcpp_GDALRaster-class GDALRaster
 #'
 #' @title Class encapsulating a subset of the GDAL Raster C API
 #'
 #' @description
-#' Provides an interface for accessing a raster dataset via GDAL
+#' `GDALRaster` provides an interface for accessing a raster dataset via GDAL 
 #' and calling methods on the underlying GDALDataset, GDALDriver and 
 #' GDALRasterBand objects. See \url{https://gdal.org/api/index.html} for
 #' details of the GDAL API. Documentation for the wrapper functions borrows
 #' from the GDAL API documentation, &copy;1998-2023 Frank Warmerdam, Even
 #' Rouault, and others, \url{https://gdal.org/license.html}.
+#'
+#' @param filename Character file name of a raster dataset to open, as 
+#' full path or relative to the current working directory. In some cases, 
+#' \code{filename} may not refer to a physical file, but instead contain 
+#' format-specific information on how to access a dataset (see GDAL raster 
+#' format descriptions: \url{https://gdal.org/drivers/raster/index.html}).
+#' @param read_only Logical. `TRUE` to open the dataset read-only, or `FALSE` 
+#' to open with write access.
+#' @returns An object of class `GDALRaster` which contains a pointer to the 
+#' opened dataset, and methods that operate on the dataset as described in 
+#' Details.
 #'
 #' @seealso
 #' Package overview in [`help("gdalraster-package")`][gdalraster-package]
@@ -22,6 +33,7 @@
 #' \preformatted{
 #' ds <- new(GDALRaster, filename, read_only)
 #'
+#' ## Methods (see Details)
 #' ds$getFilename()
 #' ds$open(read_only)
 #' ds$isOpen()
@@ -66,15 +78,7 @@
 #' @section Details:
 #'
 #' \code{new(GDALRaster, filename, read_only)}
-#' Creates a new `GDALRaster` object, opening a GDAL dataset from the specified 
-#' \code{filename}. In some cases \code{filename} may not refer to a physical
-#' file, but instead contain format-specific information on how to access a
-#' dataset. GDAL raster format descriptions are available at: 
-#' \url{https://gdal.org/drivers/raster/index.html}.
-#' Set \code{read_only = TRUE} to open the dataset with read-only access 
-#' or `FALSE` to open with write access.
-#' Returns an object of class `GDALRaster` which has a pointer to the opened 
-#' dataset, and the methods described below.
+#' Constructor. Returns an object of class `GDALRaster`.
 #'
 #' \code{$getFilename()}
 #' Returns the filename associated with this `GDALRaster` object.
@@ -85,14 +89,14 @@
 #' re-open a dataset with a different read/write access (`read_only` set to 
 #' `TRUE` or `FALSE`). The method will first close an open dataset, so it is 
 #' not required to call \code{$close()} explicitly in this case. 
-#' No return value.
+#' No return value, called for side effects.
 #'
 #' \code{$isOpen()}
 #' Returns logical indicating whether the associated raster dataset is open.
 #'
 #' \code{$info()}
 #' Prints various information about the raster dataset to the console (no 
-#' return value).
+#' return value, called for that side effect only).
 #' Equivalent to the output of the \command{gdalinfo} command-line utility
 #' (\command{gdalinfo -nomd -norat -noct filename}). Intended here as an 
 #' informational convenience function.
@@ -245,8 +249,8 @@
 #' \code{$deleteNoDataValue(band)}
 #' Removes the nodata value for \code{band}.
 #' This affects only the definition of the nodata value for raster formats
-#' that support one (does not modify pixel values). No return value. 
-#' An error is raised if the nodata value cannot be removed.
+#' that support one (does not modify pixel values). No return value, called 
+#' for side effects. An error is raised if the nodata value cannot be removed.
 #'
 #' \code{$getUnitType(band)}
 #' Returns the name of the unit type of the pixel values for \code{band} 
@@ -327,14 +331,16 @@
 #' It is organized in left to right, top to bottom pixel order. NA in 
 #' \code{rasterData} should be replaced with a suitable nodata value prior to
 #' writing (see \code{$getNoDataValue()} and \code{$setNoDataValue()} above).
-#' An error is raised if the operation fails (no return value).
+#' An error is raised if the operation fails (no return value, called for side 
+#' effects).
 #'
 #' \code{$fillRaster(band, value, ivalue)}
 #' Fills \code{band} with a constant value. Used to clear a band to a specified
 #' default value.
 #' \code{value} is the fill value (real component).
 #' \code{ivalue} is the imaginary component of fill value for a raster with
-#' complex data type. Set \code{ivalue = 0} for real data types.
+#' complex data type. Set \code{ivalue = 0} for real data types. No return 
+#' value, called for side effects.
 #'
 #' \code{$getChecksum(band, xoff, yoff, xsize, ysize)}
 #' Returns a 16-bit integer (0-65535) checksum from a region of raster data 
@@ -349,7 +355,7 @@
 #' \code{ysize} is the height in pixels of the window to read.
 #'
 #' \code{$close()}
-#' Closes the GDAL dataset (no return value). 
+#' Closes the GDAL dataset (no return value, called for side effects). 
 #' Calling \code{$close()} results in proper cleanup, and flushing of any 
 #' pending writes. Forgetting to close a dataset opened in update mode on some 
 #' formats such as GTiff could result in being unable to open it afterwards. 
@@ -444,7 +450,7 @@
 #' ds$getChecksum(band=1, xoff=0, yoff=0, xsize=ncols, ysize=nrows)   # 28017
 #' ds$close()
 #'
-#' \dontrun{
+#' \donttest{
 #' ## using a GDAL Virtual File System handler '/vsicurl/'
 #' ## see: https://gdal.org/user/virtual_file_systems.html
 #'
