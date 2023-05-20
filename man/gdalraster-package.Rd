@@ -62,6 +62,13 @@
   coordinate system or inverse projected longitude/latitude.
   }
 }
+\author{
+GDAL: \url{https://github.com/OSGeo/gdal/graphs/contributors}
+
+R interface/additional functionality: Chris Toney
+
+Maintainer: Chris Toney <chris.toney at usda.gov>
+}
 \seealso{
   GDAL Raster Data Model:\cr
   \url{https://gdal.org/user/raster_data_model.html}
@@ -74,7 +81,7 @@
 }
 \note{
   Documentation for several wrapper functions borrows from the GDAL API 
-  documentation, Copyright 1998-2023 Frank Warmerdam, Even Rouault, and 
+  documentation, Copyright 1998-2023, Frank Warmerdam, Even Rouault, and 
   others, \url{https://gdal.org/license.html}.
 
   Sample datasets are included with the package and used in examples 

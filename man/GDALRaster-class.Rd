@@ -7,10 +7,10 @@
 \alias{GDALRaster}
 \title{Class encapsulating a subset of the GDAL Raster C API}
 \arguments{
-\item{filename}{Character file name of a raster dataset to open, as
-full path or relative to the current working directory. In some cases,
-\code{filename} may not refer to a physical file, but instead contain
-format-specific information on how to access a dataset (see GDAL raster
+\item{filename}{Character string containing the file name of a raster
+dataset to open, as full path or relative to the current working directory.
+In some cases, \code{filename} may not refer to a physical file, but instead
+contain format-specific information on how to access a dataset (GDAL raster
 format descriptions: \url{https://gdal.org/drivers/raster/index.html}).}
 
 \item{read_only}{Logical. \code{TRUE} to open the dataset read-only, or \code{FALSE}

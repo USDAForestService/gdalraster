@@ -15,13 +15,14 @@
 #'
 #' @param na_rm Logical. `TRUE` to remove `NA` from the input data or `FALSE` 
 #' to retain `NA`.
-#' @returns An object of class `RunningStats` for calculating summary 
-#' statistics on a stream of data using the methods described in Details. A 
-#' `RunningStats` object maintains the current minimum, maximum, mean, 
-#' variance, sum and count of values that have been read from the stream. It 
-#' can be updated repeatedly with new values (i.e., chunks of data 
-#' read from the input stream), but its memory footprint is negligible.
-#' 
+#' @returns An object of class `RunningStats`. A `RunningStats` object 
+#' maintains the current minimum, maximum, mean, variance, sum and count of 
+#' values that have been read from the stream. It can be updated repeatedly 
+#' with new values (i.e., chunks of data read from the input stream), but its 
+#' memory footprint is negligible. Class methods for updating with new values 
+#' and retrieving the current values of summary statistics are described in 
+#' Details.
+#'
 #'
 #' @section Usage:
 #' \preformatted{
