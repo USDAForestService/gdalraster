@@ -46,9 +46,9 @@ Additional functionality includes:
     coordinate system or inverse projected longitude/latitude.
 
 `gdalraster` may be suitable for applications that primarily need
-low-level raster I/O, explicit manipulation of VRT format, or prefer
-native GDAL-like calling. The additional functionality is somewhat aimed
-at thematic data analysis but may have other utility.
+low-level raster I/O or prefer native GDAL-like calling. The additional
+functionality is somewhat aimed at thematic data analysis but may have
+other utility.
 
 ## Installation
 
@@ -58,7 +58,7 @@ Install the stable version from CRAN:
 install.packages("gdalraster")
 ```
 
-Or, install the development version from GitHub:
+or install the development version from GitHub:
 
 ``` r
 ## install.packages("devtools")

@@ -1,6 +1,9 @@
 url: https://usdaforestservice.github.io/gdalraster/
 template:
   bootstrap: 5
+home:
+  sidebar:
+    structure: [links, license, community, authors, citation]
 reference:
 - title: Package overview
 - contents:
