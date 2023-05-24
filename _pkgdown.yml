@@ -4,14 +4,17 @@ template:
 home:
   sidebar:
     structure: [links, license, community, authors, citation]
+  links:
+  - text: CRAN page
+    href: https://cran.r-project.org/web/packages/gdalraster/index.html
 reference:
 - title: Package overview
 - contents:
   - gdalraster-package
 - title: Classes
 - contents:
-  - GDALRaster-class
   - CmbTable-class
+  - GDALRaster-class
   - RunningStats-class
 - title: Stand-alone functions
 - contents:
