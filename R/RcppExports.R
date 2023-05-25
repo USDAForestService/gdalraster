@@ -621,10 +621,12 @@ bbox_from_wkt <- function(wkt) {
 #' Convert a bounding box to POLYGON in OGC WKT format.
 #'
 #' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
+#' This function requires GDAL built with the GEOS library.
 #'
 #' @param bbox Numeric vector of length four containing xmin, ymin, 
 #' xmax, ymax.
-#' @return Character string for an OGC WKT polygon.
+#' @return Character string for an OGC WKT polygon. An empty string is 
+#' returned if GDAL was built without the GEOS library.
 #'
 #' @seealso
 #' [bbox_from_wkt()]
