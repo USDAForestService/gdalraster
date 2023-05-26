@@ -410,7 +410,7 @@ rowdata <- ds$read(band=1, xoff=0, yoff=9,
                     xsize=ncols, ysize=1, 
                     out_xsize=ncols, out_ysize=1)
 dim(rowdata)
-head(as.vector(rowdata))
+head(rowdata)
 
 ds$close()
 
