@@ -5,7 +5,7 @@ Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre")),
     person("Frank", "Warmerdam", 
-            role = c("ctb", "cph"), comment = "GDAL API/documentation"),
+            role = c("ctb", "cph"), comment = "GDAL API/documentation; src/progress_r.cpp from /gdal/port/cpl_progress.cpp"),
     person("Even", "Rouault", 
             role = c("ctb", "cph"), comment = "GDAL API/documentation"),
     person("Marius", "Appel", 
