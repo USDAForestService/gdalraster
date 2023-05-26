@@ -27,6 +27,7 @@ reference:
   - gdal_version
   - get_config_option
   - get_pixel_line
+  - has_geos
   - inv_geotransform
   - inv_project
   - rasterFromRaster
