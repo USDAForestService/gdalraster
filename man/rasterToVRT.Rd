@@ -45,8 +45,8 @@ depending on \code{resolution}.}
 upper left corner of the source pixel that contains \code{subwindow} xmin, ymax.
 The VRT will be pixel-aligned with source if the VRT \code{resolution} is the
 same as the source pixel size, otherwise VRT extent will be the minimum
-rectangle that contains \code{subwindow} for the given pixel size. Use
-Usually \code{src_align=TRUE} when selecting a raster minimum bounding box
+rectangle that contains \code{subwindow} for the given pixel size.
+Often, \code{src_align=TRUE} when selecting a raster minimum bounding box
 for a vector polygon.
 \item \code{FALSE}: the VRT upper left corner will be exactly \code{subwindow}
 xmin, ymax, and the VRT extent will be the minimum rectangle that contains
@@ -142,7 +142,7 @@ ds$bbox()
 ds$close()
 
 ## use combine() with one input to get a table of pixel counts for  
-## the raster value
+## the raster values
 vat <- combine(evt_file)
 print(vat[-1]) # drop the cmbid in this case
 sum(vat$count)

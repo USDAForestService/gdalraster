@@ -19,9 +19,9 @@ in OGC WKT format, or \code{FALSE} to return as a numeric vector.}
 \value{
 The intersection (\code{bbox_intersect()}) or union (\code{bbox_union()})
 of inputs.
-If \code{as_wkt = FALSE} (the default), a numeric vector of length four
-containing xmin, ymin, xmax, ymax. If \code{as_wkt = TRUE}, a character string
-of OGC WKT for the bbox as POLYGON.
+If \code{as_wkt = FALSE}, a numeric vector of length four containing
+xmin, ymin, xmax, ymax. If \code{as_wkt = TRUE}, a character string
+containing OGC WKT for the bbox as POLYGON.
 \code{NA} is returned if GDAL was built without the GEOS library.
 }
 \description{

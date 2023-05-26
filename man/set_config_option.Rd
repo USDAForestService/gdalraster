@@ -14,7 +14,7 @@ set_config_option(key, value)
 \code{set_config_option()}.}
 }
 \value{
-Nothing.
+No return value, called for side effects.
 }
 \description{
 \code{set_config_option()} sets a GDAL runtime configuration option.

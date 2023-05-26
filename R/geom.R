@@ -17,9 +17,9 @@
 #' in OGC WKT format, or `FALSE` to return as a numeric vector.
 #' @return The intersection (`bbox_intersect()`) or union (`bbox_union()`)  
 #' of inputs. 
-#' If `as_wkt = FALSE` (the default), a numeric vector of length four 
-#' containing xmin, ymin, xmax, ymax. If `as_wkt = TRUE`, a character string 
-#' of OGC WKT for the bbox as POLYGON.
+#' If `as_wkt = FALSE`, a numeric vector of length four containing 
+#' xmin, ymin, xmax, ymax. If `as_wkt = TRUE`, a character string 
+#' containing OGC WKT for the bbox as POLYGON.
 #' `NA` is returned if GDAL was built without the GEOS library.
 #' 
 #' @seealso

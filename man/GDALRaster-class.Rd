@@ -467,6 +467,7 @@ web_file <- paste0(web_file, "data/rasters/raster.tif")
 
 ds_url <- new(GDALRaster, web_file, read_only=TRUE)
 ds_url$info()
+ds_url$close()
 }
 }
 \seealso{

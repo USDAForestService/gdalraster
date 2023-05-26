@@ -29,7 +29,7 @@ The input SRS may take the following forms:
 \item \code{WKT} - to convert WKT versions (see below)
 \item \code{EPSG:n} - EPSG code n
 \item \code{AUTO:proj_id,unit_id,lon0,lat0} - WMS auto projections
-\item \code{urn:ogc:def:crs:EPSG::n} - OGC urns
+\item \code{urn:ogc:def:crs:EPSG::n} - OGC URNs
 \item PROJ.4 definitions
 \item \code{filename} - file read for WKT, XML or PROJ.4 definition
 \item well known name such as \code{NAD27}, \code{NAD83}, \code{WGS84} or \code{WGS72}
