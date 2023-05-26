@@ -166,14 +166,31 @@ pixel values and their counts.</p>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu">combine</span><span class="op">(</span><span class="va">rasterfiles</span>, <span class="va">var.names</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Combining...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   cmbid count veg_type veg_cov veg_ht</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1  2079     1     7126     222    203</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2078     1     7055     139    106</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2074     1     7143     325    303</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2073     1     7126     222    202</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2072     1     7126     230    203</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2071     1     7126     225    204</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2083</span>
+<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/order.html" class="external-link">order</a></span><span class="op">(</span><span class="op">-</span><span class="va">df</span><span class="op">$</span><span class="va">count</span><span class="op">)</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span>, n <span class="op">=</span> <span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      cmbid count veg_type veg_cov veg_ht</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1345   115  2277     9016     100    100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1131    19  1213     9018     100    100</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1410     1   876       NA      NA     NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 873    429   397     7292      11     11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1745   116   209     9016      31     31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1181     7   142     7046     159    115</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1108     8   112     7046     159    116</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1538    26    99     7046     159    114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1724    75    78     7126     243    210</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1132   844    67     9018      31     31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 779    186    54     7046     110    108</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 823    344    53     7126     243    209</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1213   146    47     7046     159    117</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 808     42    44     7050     162    116</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 645     15    39     7046     149    114</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 923    821    37     7046     110    107</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1594   603    37     7126     243    211</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1273     2    36     7046     110    106</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1305   108    36     7126     243    208</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1447    68    36     7046     159    113</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## combine two bands from a multi-band file and write the combination IDs </span></span></span>
 <span class="r-in"><span><span class="co">## to an output raster</span></span></span>
@@ -197,7 +214,7 @@ pixel values and their counts.</p>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">cmb_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Driver: GTiff/GeoTIFF</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Files: /tmp/RtmpGSIkXX/fbfm_cov_cmbid.tif</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Files: /tmp/RtmpniwQrs/fbfm_cov_cmbid.tif</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Size is 143, 107</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Coordinate System is:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> PROJCRS["NAD83 / UTM zone 12N",</span>

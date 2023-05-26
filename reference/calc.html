@@ -179,7 +179,7 @@ and write output to <code>out_band</code></p></li>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The variables in <code>expr</code> are vectors of length raster Xsize
-(rows of a raster layer).
+(rows of the raster layers).
 The expression should return a vector also of length raster Xsize
 (an output row).
 Two special variable names are available in <code>expr</code> by default:
@@ -229,14 +229,14 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span><span class="co">## calc() writes to a tempfile by default</span></span></span>
 <span class="r-in"><span><span class="va">hi_file</span> <span class="op">&lt;-</span> <span class="fu">calc</span><span class="op">(</span>expr <span class="op">=</span> <span class="va">expr</span>, </span></span>
 <span class="r-in"><span>                rasterfiles <span class="op">=</span> <span class="va">elev_file</span>, </span></span>
-<span class="r-in"><span>                var.names <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"ELEV_M"</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>                var.names <span class="op">=</span> <span class="st">"ELEV_M"</span>, </span></span>
 <span class="r-in"><span>                dtName <span class="op">=</span> <span class="st">"Int16"</span>,</span></span>
 <span class="r-in"><span>                nodata_value <span class="op">=</span> <span class="op">-</span><span class="fl">32767</span>, </span></span>
 <span class="r-in"><span>                setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                usePixelLonLat <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 1 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpGSIkXX/rastcalc1c5b7499db9d.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpniwQrs/rastcalc1cb47937cf2f.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">hi_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## min, max, mean, sd</span></span></span>
@@ -272,7 +272,7 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span>                  setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpGSIkXX/rastcalc1c5b1c649be1.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpniwQrs/rastcalc1cb454552a16.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">ndvi_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -307,6 +307,8 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="combine.html">combine</a></span><span class="op">(</span><span class="va">rasterfiles</span>, <span class="va">var.names</span>, <span class="va">bands</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Combining...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 449</span>
 <span class="r-in"><span><span class="va">df_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">SLP</span> <span class="op">&gt;=</span> <span class="fl">40</span> <span class="op">&amp;</span> <span class="va">FBFM</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">101</span>,<span class="fl">102</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df_subset</span><span class="op">)</span>       <span class="co"># twelve combinations meet the criteria</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     cmbid count SLP FBFM</span>
@@ -341,12 +343,10 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span>     write_mode <span class="op">=</span> <span class="st">"update"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpGSIkXX/storml_lndscp.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpniwQrs/storml_lndscp.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## verify the ouput</span></span></span>
 <span class="r-in"><span><span class="va">rasterfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">tif_file</span>, <span class="va">tif_file</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">var.names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SLP"</span>, <span class="st">"FBFM"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="combine.html">combine</a></span><span class="op">(</span><span class="va">rasterfiles</span>, <span class="va">var.names</span>, <span class="va">bands</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Combining...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>

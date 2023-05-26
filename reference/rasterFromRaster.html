@@ -125,76 +125,9 @@ compression during creation of a GTiff file).</p></dd>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## band 2 in a FARSITE landscape file has slope degrees</span></span></span>
-<span class="r-in"><span><span class="co">## verify this and convert slope degrees to slope percent in a new raster</span></span></span>
+<span class="r-in"><span><span class="co">## convert slope degrees to slope percent in a new raster</span></span></span>
 <span class="r-in"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds_lcp</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">lcp_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds_lcp</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Driver: LCP/FARSITE v.4 Landscape File (.lcp)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Files: /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>        /home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.prj</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Size is 143, 107</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Coordinate System is:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> PROJCRS["NAD83 / UTM zone 12N",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     BASEGEOGCRS["NAD83",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         DATUM["North American Datum 1983",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ELLIPSOID["GRS 1980",6378137,298.257222101,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 LENGTHUNIT["metre",1]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",6269]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PRIMEM["Greenwich",0,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ANGLEUNIT["Degree",0.0174532925199433]]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     CONVERSION["UTM zone 12N",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         METHOD["Transverse Mercator",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",9807]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["Latitude of natural origin",0,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ANGLEUNIT["Degree",0.0174532925199433],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8801]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["Longitude of natural origin",-111,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ANGLEUNIT["Degree",0.0174532925199433],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8802]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["Scale factor at natural origin",0.9996,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             SCALEUNIT["unity",1],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8805]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["False easting",500000,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             LENGTHUNIT["metre",1],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8806]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["False northing",0,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             LENGTHUNIT["metre",1],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8807]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ID["EPSG",16012]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     CS[Cartesian,2],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         AXIS["easting",east,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ORDER[1],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             LENGTHUNIT["metre",1,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 ID["EPSG",9001]]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         AXIS["northing",north,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ORDER[2],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             LENGTHUNIT["metre",1,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 ID["EPSG",9001]]]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Data axis to CRS axis mapping: 1,2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Origin = (323476.071970863151364,5105081.983031376264989)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Pixel Size = (30.000000000000000,-30.000000000000000)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Corner Coordinates:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Upper Left  (  323476.072, 5105081.983) (113d16'58.40"W, 46d 4'35.44"N)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Lower Left  (  323476.072, 5101871.983) (113d16'54.12"W, 46d 2'51.51"N)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Upper Right (  327766.072, 5105081.983) (113d13'38.83"W, 46d 4'39.38"N)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Lower Right (  327766.072, 5101871.983) (113d13'34.65"W, 46d 2'55.45"N)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Center      (  325621.072, 5103476.983) (113d15'16.50"W, 46d 3'45.46"N)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Band 1 Block=143x1 Type=Int16, ColorInterp=Undefined</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Description = Elevation</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Band 2 Block=143x1 Type=Int16, ColorInterp=Undefined</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Description = Slope</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Band 3 Block=143x1 Type=Int16, ColorInterp=Undefined</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Description = Aspect</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Band 4 Block=143x1 Type=Int16, ColorInterp=Undefined</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Description = Fuel models</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Band 5 Block=143x1 Type=Int16, ColorInterp=Undefined</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Description = Canopy cover</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Band 6 Block=143x1 Type=Int16, ColorInterp=Undefined</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Description = Canopy height</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Band 7 Block=143x1 Type=Int16, ColorInterp=Undefined</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Description = Canopy base height</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Band 8 Block=143x1 Type=Int16, ColorInterp=Undefined</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   Description = Canopy bulk density</span>
 <span class="r-in"><span><span class="va">ds_lcp</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">2</span>, domain<span class="op">=</span><span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SLOPE_FILE=/netapp/sharedwebfs1/shared/landfire/public/temp_q8dTbIJ4w6Qi36Omkzk0/LCP_LF2022_FBFM40_220_CONUS/temp/merged_modified.tif"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "SLOPE_MAX=54"                                                                                                                         </span>
