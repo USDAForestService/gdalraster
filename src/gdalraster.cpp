@@ -7,7 +7,7 @@
 #include <cmath>
 #include <limits>
 
-#include "gdal.h"
+#include "gdal_priv.h"
 #include "cpl_conv.h"
 #include "cpl_string.h"
 #include "gdal_utils.h"
@@ -21,18 +21,6 @@
 void _gdal_init(DllInfo *dll) {
     GDALAllRegister();
     CPLSetConfigOption("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "YES");
-}
-
-/*	ARE_REAL_EQUAL() from gdal_priv.h
-	That header is not needed otherwise so copying here
-	Copyright (c) 1998, Frank Warmerdam
-	Copyright (c) 2007-2014, Even Rouault <even dot rouault at spatialys.com>
-	License: MIT */
-template <class T> inline bool ARE_REAL_EQUAL(T fVal1, T fVal2, int ulp = 2)
-{
-    return fVal1 == fVal2 || /* Should cover infinity */
-           std::abs(fVal1 - fVal2) < std::numeric_limits<float>::epsilon() *
-                                         std::abs(fVal1 + fVal2) * ulp;
 }
 
 GDALRaster::GDALRaster() : 
