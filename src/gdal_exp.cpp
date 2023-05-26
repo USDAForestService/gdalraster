@@ -470,6 +470,8 @@ Rcpp::DataFrame _combine(
 		std::string dataType = "UInt32",
 		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
+  std::string resample; 
+  resample = "nearest"; // placeholder
 	std::size_t nrasters = (std::size_t) src_files.size();
 	
 	std::vector<GDALRaster> src_ds;
@@ -527,7 +529,7 @@ Rcpp::DataFrame _combine(
 		for (std::size_t i = 0; i < nrasters; ++i)
 			rowdata.row(i) = Rcpp::as<Rcpp::IntegerVector>(
 								src_ds[i].read(
-								bands[i], 0, y, ncols, 1, ncols, 1)
+								bands[i], 0, y, ncols, 1, ncols, 1, resample)
 								);
 									
 		cmbid = tbl.updateFromMatrix(rowdata, 1);

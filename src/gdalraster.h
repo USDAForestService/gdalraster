@@ -105,7 +105,7 @@ class GDALRaster {
 			std::string mdi_name, std::string domain) const;
 	
 	SEXP read(int band, int xoff, int yoff, int xsize, int ysize,
-			int out_xsize, int out_ysize) const;
+			int out_xsize, int out_ysize, std::string resample) const;
 				
 	void write(int band, int xoff, int yoff, int xsize, int ysize,
 			Rcpp::RObject rasterData);

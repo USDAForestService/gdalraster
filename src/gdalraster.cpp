@@ -435,7 +435,7 @@ std::string GDALRaster::getMetadataItem(int band, std::string mdi_name,
 }
 
 SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
-		int out_xsize, int out_ysize) const {
+		int out_xsize, int out_ysize, std::string resample) const {
 	
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
@@ -443,12 +443,45 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
 	GDALDataType eDT = GDALGetRasterDataType(hBand);
 	
+	GDALRasterIOExtraArg psExtraArg;
+	INIT_RASTERIO_EXTRA_ARG(psExtraArg);
+	
+	if (EQUAL(resample.c_str(), "nearestneighbour")) {
+	  psExtraArg.eResampleAlg = GRIORA_NearestNeighbour;
+	}
+	if (EQUAL(resample.c_str(), "bilinear")) {
+	  psExtraArg.eResampleAlg = GRIORA_Bilinear;
+	}
+	if (EQUAL(resample.c_str(), "cubic")) {
+	  psExtraArg.eResampleAlg = GRIORA_Cubic;
+	}
+	if (EQUAL(resample.c_str(), "cubicspline")) {
+	  psExtraArg.eResampleAlg = GRIORA_CubicSpline;
+	}
+	if (EQUAL(resample.c_str(), "lanczos")) {
+	  psExtraArg.eResampleAlg = GRIORA_Lanczos;
+	}
+	if (EQUAL(resample.c_str(), "average")) {
+	  psExtraArg.eResampleAlg = GRIORA_Average;
+	}
+	if (EQUAL(resample.c_str(), "mode")) {
+	  psExtraArg.eResampleAlg = GRIORA_Mode;
+	}
+	if (EQUAL(resample.c_str(), "gauss")) {
+	  psExtraArg.eResampleAlg = GRIORA_Gauss;
+	}
+	if (EQUAL(resample.c_str(), "rms")) {
+	  psExtraArg.eResampleAlg = GRIORA_NearestNeighbour;
+	}
+	
+	// placeholder
+	GSpacing gs = 0;
 	if (GDALDataTypeIsComplex(eDT)) {
 	// complex data types
 		std::vector<std::complex<double>> buf(out_xsize * out_ysize);
 		
-		CPLErr err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
-						buf.data(), out_xsize, out_ysize, GDT_CFloat64, 0, 0);
+		CPLErr err = GDALRasterIOEx(hBand, GF_Read, xoff, yoff, xsize, ysize,
+						buf.data(), out_xsize, out_ysize, GDT_CFloat64, gs, gs, &psExtraArg);
 					
 		if (err == CE_Failure)
 			Rcpp::stop("Read raster failed.");
@@ -462,8 +495,8 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 	// real data types
 		std::vector<double> buf(out_xsize * out_ysize);
 	
-		CPLErr err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
-						buf.data(), out_xsize, out_ysize, GDT_Float64, 0, 0);
+		CPLErr err = GDALRasterIOEx(hBand, GF_Read, xoff, yoff, xsize, ysize,
+						buf.data(), out_xsize, out_ysize, GDT_Float64, gs, gs, &psExtraArg);
 						
 		if (err == CE_Failure)
 			Rcpp::stop("Read raster failed.");
