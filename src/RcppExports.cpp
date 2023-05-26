@@ -129,13 +129,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _has_geos
-bool _has_geos();
-RcppExport SEXP _gdalraster__has_geos() {
+// has_geos
+bool has_geos();
+RcppExport SEXP _gdalraster_has_geos() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(_has_geos());
+    rcpp_result_gen = Rcpp::wrap(has_geos());
     return rcpp_result_gen;
 END_RCPP
 }
@@ -473,7 +473,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_get_pixel_line", (DL_FUNC) &_gdalraster_get_pixel_line, 2},
     {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 4},
     {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 7},
-    {"_gdalraster__has_geos", (DL_FUNC) &_gdalraster__has_geos, 0},
+    {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},
     {"_gdalraster__g_intersects", (DL_FUNC) &_gdalraster__g_intersects, 2},

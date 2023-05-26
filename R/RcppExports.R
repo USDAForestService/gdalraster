@@ -285,9 +285,15 @@ warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL) {
     .Call(`_gdalraster__combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options)
 }
 
-#' @noRd
-.has_geos <- function() {
-    .Call(`_gdalraster__has_geos`)
+#' Is GEOS available?
+#'
+#' `has_geos()` returns a logical value indicating whether GDAL was built
+#' against the GEOS library.
+#'
+#' @return Logical. `TRUE` if GEOS is available, otherwise `FALSE`.
+#'
+has_geos <- function() {
+    .Call(`_gdalraster_has_geos`)
 }
 
 #' @noRd
@@ -621,10 +627,12 @@ bbox_from_wkt <- function(wkt) {
 #' Convert a bounding box to POLYGON in OGC WKT format.
 #'
 #' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
+#' This function requires GDAL built with the GEOS library.
 #'
 #' @param bbox Numeric vector of length four containing xmin, ymin, 
 #' xmax, ymax.
-#' @return Character string for an OGC WKT polygon.
+#' @return Character string for an OGC WKT polygon. An empty string is 
+#' returned if GDAL was built without the GEOS library.
 #'
 #' @seealso
 #' [bbox_from_wkt()]

@@ -11,7 +11,7 @@
 
 #include <string>
 
-bool _has_geos();
+bool has_geos();
 
 std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type);
 bool _g_is_valid(std::string geom);

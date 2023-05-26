@@ -9,6 +9,7 @@
 #' `bbox_union()` returns the bounding box union, for input of 
 #' either raster file names or list of bounding boxes. All of the inputs 
 #' must be in the same projected coordinate system.
+#' These functions require GDAL built with the GEOS library.
 #' 
 #' @param x Either a character vector of raster file names, or a list with 
 #' each element a bounding box numeric vector (xmin, ymin, xmax, ymax).
@@ -19,6 +20,7 @@
 #' If `as_wkt = FALSE` (the default), a numeric vector of length four 
 #' containing xmin, ymin, xmax, ymax. If `as_wkt = TRUE`, a character string 
 #' of OGC WKT for the bbox as POLYGON.
+#' `NA` is returned if GDAL was built without the GEOS library.
 #' 
 #' @seealso
 #' [bbox_from_wkt()], [bbox_to_wkt()]
@@ -46,6 +48,13 @@
 #' bbox_union(bbox_list)
 #' @export
 bbox_intersect <- function(x, as_wkt = FALSE) {
+
+	if (!has_geos()) {
+		if (as_wkt)
+			return(NA_character_)
+		else
+			return(rep(NA_real_, 4))
+	}
 
 	n <- length(x)
 	this_bbox <- ""
@@ -85,6 +94,13 @@ bbox_intersect <- function(x, as_wkt = FALSE) {
 #' @rdname bbox_intersect
 #' @export
 bbox_union <- function(x, as_wkt = FALSE) {
+
+	if (!has_geos()) {
+		if (as_wkt)
+			return(NA_character_)
+		else
+			return(rep(NA_real_, 4))
+	}
 
 	n <- length(x)
 	this_bbox <- ""

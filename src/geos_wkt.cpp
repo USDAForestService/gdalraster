@@ -7,9 +7,15 @@
 
 #include "geos_wkt.h"
 
-//' @noRd
-// [[Rcpp::export(name = ".has_geos")]]
-bool _has_geos() {
+//' Is GEOS available?
+//'
+//' `has_geos()` returns a logical value indicating whether GDAL was built
+//' against the GEOS library.
+//'
+//' @return Logical. `TRUE` if GEOS is available, otherwise `FALSE`.
+//'
+// [[Rcpp::export]]
+bool has_geos() {
 // Test if GDAL built against GEOS
 	OGRGeometryH pt = OGR_G_CreateGeometry(wkbPoint);
 	OGR_G_SetPoint_2D(pt, 0, 0, 0);

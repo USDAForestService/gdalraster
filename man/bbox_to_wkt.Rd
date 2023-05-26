@@ -11,10 +11,12 @@ bbox_to_wkt(bbox)
 xmax, ymax.}
 }
 \value{
-Character string for an OGC WKT polygon.
+Character string for an OGC WKT polygon. An empty string is
+returned if GDAL was built without the GEOS library.
 }
 \description{
 \code{bbox_to_wkt()} returns a WKT POLYGON string for the given bounding box.
+This function requires GDAL built with the GEOS library.
 }
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")

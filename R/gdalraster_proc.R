@@ -470,9 +470,11 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 		subwindow <- c(src_xmin,src_ymin,src_xmax,src_ymax)
 	}
 	else {
-		if ( !.g_within(bbox_to_wkt(subwindow), bbox_to_wkt(src_bbox)) )
-			stop("Subwindow is not completely within source raster extent.",
+		if (subwindow[1] < src_xmin || subwindow[3] > src_xmax || 
+			subwindow[2] < src_ymin || subwindow[4] > src_ymax) {
+				stop("Subwindow is not within source raster extent.",
 					call. = FALSE)
+		}
 	}
 	src_xoff <- floor(.getOffset(subwindow[1], src_xmin, src_xres))
 	src_yoff <- floor(.getOffset(subwindow[4], src_ymax, src_yres))
