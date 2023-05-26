@@ -313,20 +313,15 @@
 #' An error is raised if the read operation fails.
 #'
 #' \code{$write(band, xoff, yoff, xsize, ysize, rasterData)}
-#' Writes a region of raster data to \code{band}. The method takes care of
-#' pixel decimation / replication if the data size (\code{length(rasterData)})
-#' is different than the size of the region being accessed 
-#' (\code{xsize * ysize}).
+#' Writes a region of raster data to \code{band}.
 #' \code{xoff} is the pixel (column) offset to the top left corner of the
 #' region of the band to be accessed (zero to start from the left side).
 #' \code{yoff} is the line (row) offset to the top left corner of the region of
 #' the band to be accessed (zero to start from the top).
 #' \emph{Note that raster row/column offsets use 0-based indexing.}
-#' \code{xsize} is the width in pixels of the region to be accessed.
-#' This will typically be the same as `ncol(rasterData)`.
-#' \code{ysize} is the height in pixels of the region to be accessed.
-#' This will typically be the same as `nrow(rasterData)`.
-#' \code{rasterData} is a numeric or complex array containing values to write.
+#' \code{xsize} is the width in pixels of the region to write.
+#' \code{ysize} is the height in pixels of the region to write.
+#' \code{rasterData} is a numeric or complex vector containing values to write.
 #' It is organized in left to right, top to bottom pixel order. NA in 
 #' \code{rasterData} should be replaced with a suitable nodata value prior to
 #' writing (see \code{$getNoDataValue()} and \code{$setNoDataValue()} above).

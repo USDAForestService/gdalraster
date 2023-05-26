@@ -502,49 +502,40 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 
 void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 		Rcpp::RObject rasterData) {
-							
+
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 		
 	if (GDALGetAccess(hDataset) == GA_ReadOnly)
 		Rcpp::stop("Dataset is read-only.");
 	
-	if (!Rf_isMatrix(rasterData))
-		Rcpp::stop("Data must be an array of numeric or complex.");
-	
 	GDALDataType eBufType;
 	CPLErr err;
 	if (Rcpp::is<Rcpp::NumericVector>(rasterData)) {
 	// real data types
-		Rcpp::NumericMatrix buf = Rcpp::as<Rcpp::NumericMatrix>(rasterData);
 		eBufType = GDT_Float64;
 		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
-		int buf_xsize = buf.ncol();
-		int buf_ysize = buf.nrow();
-		// get Rcpp matrix as std::vector to access the underlying array
-		std::vector<double> buf_ = Rcpp::as<std::vector<double>>(buf);
-		
+		std::vector<double> buf_ = Rcpp::as<std::vector<double>>(rasterData);
+		if (buf_.size() != (xsize * ysize))
+			Rcpp::stop("Size of input data is not the same as region size.");
 		err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
-					buf_.data(), buf_xsize, buf_ysize, eBufType, 0, 0);
+					buf_.data(), xsize, ysize, eBufType, 0, 0);
 	}
 	else if (Rcpp::is<Rcpp::ComplexVector>(rasterData)) {
 	// complex data types
-		Rcpp::ComplexMatrix buf = Rcpp::as<Rcpp::ComplexMatrix>(rasterData);
 		eBufType = GDT_CFloat64;
 		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
-		int buf_xsize = buf.ncol();
-		int buf_ysize = buf.nrow();
-		// get Rcpp matrix as std::vector to access the underlying array
 		std::vector<std::complex<double>> buf_ = 
-			Rcpp::as<std::vector<std::complex<double>>>(buf);
-		
+			Rcpp::as<std::vector<std::complex<double>>>(rasterData);
+		if (buf_.size() != (xsize * ysize))
+			Rcpp::stop("Size of input data is not the same as region size.");
 		err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
-					buf_.data(), buf_xsize, buf_ysize, eBufType, 0, 0);
+					buf_.data(), xsize, ysize, eBufType, 0, 0);
 	}
 	else {
-		Rcpp::stop("Data must be an array of numeric or complex.");
+		Rcpp::stop("Data must be numeric or complex vector.");
 	}
-		
+
 	if (err == CE_Failure)
 		Rcpp::stop("Write to raster failed.");
 }
