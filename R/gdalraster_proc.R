@@ -927,7 +927,7 @@ calc <- function(expr,
 			stop("Result vector is the wrong size.", call. = FALSE)
 		}
 		outrow <- ifelse(is.na(outrow), nodata_value, outrow)
-		dim(outrow) <- c(1, ncols)
+		#dim(outrow) <- c(1, ncols)
 		dst_ds$write(band = out_band,
 					offx = 0,
 					offy = row,
