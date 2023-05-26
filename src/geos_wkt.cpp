@@ -14,6 +14,8 @@
 //'
 //' @return Logical. `TRUE` if GEOS is available, otherwise `FALSE`.
 //'
+//' @examples
+//' has_geos()
 // [[Rcpp::export]]
 bool has_geos() {
 // Test if GDAL built against GEOS

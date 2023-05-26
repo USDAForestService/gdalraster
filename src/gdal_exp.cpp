@@ -77,7 +77,7 @@ std::string get_config_option(std::string key) {
 //' @param value Character value to set for the option. 
 //' `value = ""` (empty string) will unset a value previously set by 
 //' `set_config_option()`.
-//' @returns Nothing.
+//' @returns No return value, called for side effects.
 //' @seealso
 //' [get_config_option()]
 //' @examples

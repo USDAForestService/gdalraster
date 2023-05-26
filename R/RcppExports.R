@@ -70,7 +70,7 @@ get_config_option <- function(key) {
 #' @param value Character value to set for the option. 
 #' `value = ""` (empty string) will unset a value previously set by 
 #' `set_config_option()`.
-#' @returns Nothing.
+#' @returns No return value, called for side effects.
 #' @seealso
 #' [get_config_option()]
 #' @examples
@@ -292,6 +292,8 @@ warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL) {
 #'
 #' @return Logical. `TRUE` if GEOS is available, otherwise `FALSE`.
 #'
+#' @examples
+#' has_geos()
 has_geos <- function() {
     .Call(`_gdalraster_has_geos`)
 }
@@ -435,6 +437,7 @@ has_geos <- function() {
 #' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 #' ## id, x, y in NAD83 / UTM zone 12N
 #' pts <- read.csv(pt_file)
+#' print(pts)
 #' inv_project(as.matrix(pts[,-1]), epsg_to_wkt(26912))
 #' inv_project(as.matrix(pts[,-1]), epsg_to_wkt(26912), "NAD27")
 inv_project <- function(pts, srs, well_known_gcs = "") {
@@ -463,6 +466,7 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #' @examples
 #' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 #' pts <- read.csv(pt_file)
+#' print(pts)
 #' ## id, x, y in NAD83 / UTM zone 12N
 #' ## transform to NAD83 / CONUS Albers
 #' transform_xy( pts = as.matrix(pts[,-1]), 
@@ -521,7 +525,7 @@ epsg_to_wkt <- function(epsg, pretty = FALSE) {
 #'   * `WKT` - to convert WKT versions (see below)
 #'   * `EPSG:n` - EPSG code n
 #'   * \code{AUTO:proj_id,unit_id,lon0,lat0} - WMS auto projections
-#'   * `urn:ogc:def:crs:EPSG::n` - OGC urns
+#'   * `urn:ogc:def:crs:EPSG::n` - OGC URNs
 #'   * PROJ.4 definitions
 #'   * `filename` - file read for WKT, XML or PROJ.4 definition
 #'   * well known name such as `NAD27`, `NAD83`, `WGS84` or `WGS72`

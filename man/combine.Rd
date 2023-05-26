@@ -87,7 +87,9 @@ evh_file <- system.file("extdata/storml_evh.tif", package="gdalraster")
 rasterfiles <- c(evt_file, evc_file, evh_file)
 var.names <- c("veg_type", "veg_cov", "veg_ht")
 df <- combine(rasterfiles, var.names)
-head(df)
+nrow(df)
+df <- df[order(-df$count),]
+head(df, n = 20)
 
 ## combine two bands from a multi-band file and write the combination IDs 
 ## to an output raster

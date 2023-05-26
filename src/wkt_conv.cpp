@@ -87,7 +87,7 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
 //'   * `WKT` - to convert WKT versions (see below)
 //'   * `EPSG:n` - EPSG code n
 //'   * \code{AUTO:proj_id,unit_id,lon0,lat0} - WMS auto projections
-//'   * `urn:ogc:def:crs:EPSG::n` - OGC urns
+//'   * `urn:ogc:def:crs:EPSG::n` - OGC URNs
 //'   * PROJ.4 definitions
 //'   * `filename` - file read for WKT, XML or PROJ.4 definition
 //'   * well known name such as `NAD27`, `NAD83`, `WGS84` or `WGS72`

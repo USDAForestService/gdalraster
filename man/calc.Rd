@@ -83,7 +83,7 @@ inverse projected longitude/latitude.
 }
 \details{
 The variables in \code{expr} are vectors of length raster Xsize
-(rows of a raster layer).
+(rows of the raster layers).
 The expression should return a vector also of length raster Xsize
 (an output row).
 Two special variable names are available in \code{expr} by default:
@@ -130,7 +130,7 @@ expr <- "round( ((ELEV_M * 3.281 - 5449) / 100) +
 ## calc() writes to a tempfile by default
 hi_file <- calc(expr = expr, 
                 rasterfiles = elev_file, 
-                var.names = c("ELEV_M"), 
+                var.names = "ELEV_M", 
                 dtName = "Int16",
                 nodata_value = -32767, 
                 setRasterNodataValue = TRUE,
@@ -194,6 +194,7 @@ rasterfiles <- c(lcp_file, lcp_file)
 var.names <- c("SLP", "FBFM")
 bands <- c(2, 4)
 df <- combine(rasterfiles, var.names, bands)
+nrow(df)
 df_subset <- subset(df, SLP >= 40 & FBFM \%in\% c(101,102))
 print(df_subset)       # twelve combinations meet the criteria
 sum(df_subset$count)   # 85 total pixels
@@ -214,8 +215,6 @@ calc(expr = expr,
 
 ## verify the ouput
 rasterfiles <- c(tif_file, tif_file)
-var.names <- c("SLP", "FBFM")
-bands <- c(2, 4)
 df <- combine(rasterfiles, var.names, bands)
 df_subset <- subset(df, SLP >= 40 & FBFM \%in\% c(101,102))
 print(df_subset)

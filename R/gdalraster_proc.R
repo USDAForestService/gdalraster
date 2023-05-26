@@ -86,10 +86,9 @@ DEFAULT_NODATA <- list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
 #'
 #' @examples
 #' ## band 2 in a FARSITE landscape file has slope degrees
-#' ## verify this and convert slope degrees to slope percent in a new raster
+#' ## convert slope degrees to slope percent in a new raster
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
-#' ds_lcp$info()
 #' ds_lcp$getMetadata(band=2, domain="")
 #' 
 #' slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
@@ -252,8 +251,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #'   upper left corner of the source pixel that contains `subwindow` xmin, ymax. 
 #'   The VRT will be pixel-aligned with source if the VRT `resolution` is the 
 #'   same as the source pixel size, otherwise VRT extent will be the minimum 
-#'   rectangle that contains `subwindow` for the given pixel size. Use 
-#'   Usually `src_align=TRUE` when selecting a raster minimum bounding box 
+#'   rectangle that contains `subwindow` for the given pixel size.  
+#'   Often, `src_align=TRUE` when selecting a raster minimum bounding box 
 #'   for a vector polygon.
 #'   * `FALSE`: the VRT upper left corner will be exactly `subwindow` 
 #'   xmin, ymax, and the VRT extent will be the minimum rectangle that contains 
@@ -295,7 +294,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds$close()
 #' 
 #' ## use combine() with one input to get a table of pixel counts for  
-#' ## the raster value
+#' ## the raster values
 #' vat <- combine(evt_file)
 #' print(vat[-1]) # drop the cmbid in this case
 #' sum(vat$count)
@@ -594,7 +593,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #'
 #' @details
 #' The variables in `expr` are vectors of length raster Xsize 
-#' (rows of a raster layer). 
+#' (rows of the raster layers). 
 #' The expression should return a vector also of length raster Xsize 
 #' (an output row). 
 #' Two special variable names are available in `expr` by default: 
@@ -674,7 +673,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' ## calc() writes to a tempfile by default
 #' hi_file <- calc(expr = expr, 
 #'                 rasterfiles = elev_file, 
-#'                 var.names = c("ELEV_M"), 
+#'                 var.names = "ELEV_M", 
 #'                 dtName = "Int16",
 #'                 nodata_value = -32767, 
 #'                 setRasterNodataValue = TRUE,
@@ -738,6 +737,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' var.names <- c("SLP", "FBFM")
 #' bands <- c(2, 4)
 #' df <- combine(rasterfiles, var.names, bands)
+#' nrow(df)
 #' df_subset <- subset(df, SLP >= 40 & FBFM %in% c(101,102))
 #' print(df_subset)       # twelve combinations meet the criteria
 #' sum(df_subset$count)   # 85 total pixels
@@ -758,8 +758,6 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' 
 #' ## verify the ouput
 #' rasterfiles <- c(tif_file, tif_file)
-#' var.names <- c("SLP", "FBFM")
-#' bands <- c(2, 4)
 #' df <- combine(rasterfiles, var.names, bands)
 #' df_subset <- subset(df, SLP >= 40 & FBFM %in% c(101,102))
 #' print(df_subset)
@@ -1025,7 +1023,9 @@ calc <- function(expr,
 #' rasterfiles <- c(evt_file, evc_file, evh_file)
 #' var.names <- c("veg_type", "veg_cov", "veg_ht")
 #' df <- combine(rasterfiles, var.names)
-#' head(df)
+#' nrow(df)
+#' df <- df[order(-df$count),]
+#' head(df, n = 20)
 #'
 #' ## combine two bands from a multi-band file and write the combination IDs 
 #' ## to an output raster

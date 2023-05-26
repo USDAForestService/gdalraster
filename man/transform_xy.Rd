@@ -30,6 +30,7 @@ coordinate transformation (\url{https://r-spatial.github.io/sf/}).
 \examples{
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 pts <- read.csv(pt_file)
+print(pts)
 ## id, x, y in NAD83 / UTM zone 12N
 ## transform to NAD83 / CONUS Albers
 transform_xy( pts = as.matrix(pts[,-1]), 

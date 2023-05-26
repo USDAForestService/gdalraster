@@ -459,6 +459,7 @@
 #'
 #' ds_url <- new(GDALRaster, web_file, read_only=TRUE)
 #' ds_url$info()
+#' ds_url$close()
 #' }
 NULL
 

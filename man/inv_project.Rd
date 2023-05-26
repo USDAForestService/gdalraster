@@ -53,6 +53,7 @@ coordinate transformation (\url{https://r-spatial.github.io/sf/}).
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 ## id, x, y in NAD83 / UTM zone 12N
 pts <- read.csv(pt_file)
+print(pts)
 inv_project(as.matrix(pts[,-1]), epsg_to_wkt(26912))
 inv_project(as.matrix(pts[,-1]), epsg_to_wkt(26912), "NAD27")
 }

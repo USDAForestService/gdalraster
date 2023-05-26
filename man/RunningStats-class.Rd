@@ -16,8 +16,7 @@ maintains the current minimum, maximum, mean, variance, sum and count of
 values that have been read from the stream. It can be updated repeatedly
 with new values (i.e., chunks of data read from the input stream), but its
 memory footprint is negligible. Class methods for updating with new values
-and retrieving the current values of summary statistics are described in
-Details.
+and retrieving current values of statistics are described in Details.
 }
 \description{
 \code{RunningStats} computes summary statistics on a data stream efficiently.

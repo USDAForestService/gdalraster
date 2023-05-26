@@ -13,3 +13,6 @@ Logical. \code{TRUE} if GEOS is available, otherwise \code{FALSE}.
 \code{has_geos()} returns a logical value indicating whether GDAL was built
 against the GEOS library.
 }
+\examples{
+has_geos()
+}
