@@ -22,19 +22,12 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ===============================================================================
 
-=====files src/progress_r.cpp, gdalraster.cpp =================================
+=====files src/progress_r.cpp =================================================
 File src/progress_r.cpp:
 This file is a slightly modified version of /gdal/port/cpl_progress.cpp, to 
 work in R on Windows and Linux.
 
 Copyright (c) 2013, Frank Warmerdam
-
-In file src/gdalraster.cpp:
-The function ARE_REAL_EQUAL() was copied from gdal_priv.h, since that header 
-was not otherwise needed.
-
-Copyright (c) 1998, Frank Warmerdam
-Copyright (c) 2007-2014, Even Rouault <even dot rouault at spatialys.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -56,7 +49,7 @@ DEALINGS IN THE SOFTWARE.
 ===============================================================================
 
 =====in file src/cmb_table.h ==================================================
-The struct cmbHasher{} uses Boost "hash_combine" method for the hash:
+The struct cmbHasher{} uses the Boost method for combining hashes:
 Copyright 2005-2014 Daniel James.
 Copyright 2021, 2022 Peter Dimov.
 Distributed under the Boost Software License, Version 1.0.
@@ -87,8 +80,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 ===============================================================================
 
-=====files configure.ac, Makevars.win, winlibs.R ==============================
-Files configure.ac, /src/Makevars.win, /tools/winlibs.R are based on the files
+=====file configure.ac ========================================================
+configure.ac based on the same file from:
 from https://github.com/appelmar/gdalcubes.
 
 Copyright (c) 2018-2019 Marius Appel
@@ -100,6 +93,11 @@ Chris Toney, a U.S. Government employee working on official time, and are in
 the public domain in the United States of America. Copyright and related rights
 in the work are also waived worldwide through the CC0 1.0 Universal public 
 domain dedication.
+
+The software is provided "as is" without warranty of any kind, either expressed
+or implied, including, but not limited to, the implied warranties of
+merchantability and fitness for a particular purpose. In no event shall the
+author be held liable for any damages arising from the use of this software.
 ===============================================================================
 
 This package is licensed under MIT + file LICENSE.
