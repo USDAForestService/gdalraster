@@ -1,19 +1,19 @@
 Package: gdalraster
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 1.1.1
+Version: 1.2.0
 Authors@R: c( 
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre")),
     person("Frank", "Warmerdam", 
-            role = "cph"),
+            role = c("ctb", "cph"), comment = "GDAL API/documentation"),
     person("Even", "Rouault", 
-            role = "cph"),
+            role = c("ctb", "cph"), comment = "GDAL API/documentation"),
     person("Marius", "Appel", 
-            role = "cph"),
+            role = c("ctb", "cph"), comment = "configure.ac based on https://github.com/appelmar/gdalcubes"),
     person("Daniel", "James", 
-            role = "cph"),
+            role = c("ctb", "cph"), comment = "Boost combine hashes method"),
     person("Peter", "Dimov", 
-            role = "cph"))
+            role = c("ctb", "cph"), comment = "Boost combine hashes method"))
 Description: Interface to the raster API of the 'Geospatial Data Abstraction
     Library' ('GDAL') supporting manual creation of uninitialized datasets,
     creation from existing raster as template, low level I/O, configuration of
@@ -34,10 +34,9 @@ Description: Interface to the raster API of the 'Geospatial Data Abstraction
     aimed at thematic data analysis but may have other utility.
 License: MIT + file LICENSE
 Copyright: See file inst/COPYRIGHTS for details.
-URL: https://github.com/USDAForestService/gdalraster,
-    https://usdaforestservice.github.io/gdalraster/
+URL: https://usdaforestservice.github.io/gdalraster/
 BugReports: https://github.com/USDAForestService/gdalraster/issues
-Depends: R (>= 3.4)
+Depends: R (>= 4.2)
 Imports: methods, tools, utils, Rcpp (>= 1.0.7)
 LinkingTo: Rcpp
 Suggests: xml2
