@@ -312,9 +312,9 @@ the band to be accessed (zero to start from the top).
 region will be read (typically the same value as xsize).
 \code{out_ysize} is the height of the output array into which the desired
 region will be read (typically the same value as ysize).
-Returns an array of pixel values (out_xsize, out_ysize).
-The returned array will be numeric or complex depending on the raster data
-type. NA will be returned in place of the nodata value if the
+Returns a numeric or complex vector containing the values that were read.
+It is organized in left to right, top to bottom pixel order.
+NA will be returned in place of the nodata value if the
 raster dataset has a nodata value defined for this band. No rescaling of the
 data is performed (see \code{$getScale()} and \code{$getOffset()} above).
 An error is raised if the read operation fails.
