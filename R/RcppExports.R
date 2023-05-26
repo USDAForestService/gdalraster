@@ -607,6 +607,27 @@ srs_is_projected <- function(srs) {
     .Call(`_gdalraster_srs_is_projected`, srs)
 }
 
+#' Do these two spatial references describe the same system?
+#'
+#' `srs_is_same()` returns `TRUE` if these two spatial references describe 
+#' the same system. This is a wrapper for `OSRIsSame()` in the GDAL Spatial 
+#' Reference System C API.
+#'
+#' @param srs1 Character OGC WKT string for a spatial reference system
+#' @param srs2 Character OGC WKT string for a spatial reference system
+#' @return Logical. `TRUE` if these two spatial references describe the same 
+#' system, otherwise `FALSE`.
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, elev_file, TRUE)
+#' srs_is_same(ds$getProjectionRef(), epsg_to_wkt(26912))
+#' srs_is_same(ds$getProjectionRef(), epsg_to_wkt(5070))
+#' ds$close()
+srs_is_same <- function(srs1, srs2) {
+    .Call(`_gdalraster_srs_is_same`, srs1, srs2)
+}
+
 #' Get the bounding box of a geometry specified in OGC WKT format.
 #'
 #' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry 

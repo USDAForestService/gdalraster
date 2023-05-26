@@ -212,6 +212,42 @@ bool srs_is_projected(std::string srs) {
 	return OSRIsProjected(hSRS);
 }
 
+//' Do these two spatial references describe the same system?
+//'
+//' `srs_is_same()` returns `TRUE` if these two spatial references describe 
+//' the same system. This is a wrapper for `OSRIsSame()` in the GDAL Spatial 
+//' Reference System C API.
+//'
+//' @param srs1 Character OGC WKT string for a spatial reference system
+//' @param srs2 Character OGC WKT string for a spatial reference system
+//' @return Logical. `TRUE` if these two spatial references describe the same 
+//' system, otherwise `FALSE`.
+//'
+//' @examples
+//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+//' ds <- new(GDALRaster, elev_file, TRUE)
+//' srs_is_same(ds$getProjectionRef(), epsg_to_wkt(26912))
+//' srs_is_same(ds$getProjectionRef(), epsg_to_wkt(5070))
+//' ds$close()
+// [[Rcpp::export]]
+bool srs_is_same(std::string srs1, std::string srs2) {
+
+	OGRSpatialReferenceH hSRS1 = OSRNewSpatialReference(NULL);
+	OGRSpatialReferenceH hSRS2 = OSRNewSpatialReference(NULL);
+
+	char* pszWKT1;
+	pszWKT1 = (char*) srs1.c_str();
+	if (OSRImportFromWkt(hSRS1, &pszWKT1) != OGRERR_NONE)
+		Rcpp::stop("Error importing SRS from user input.");
+		
+	char* pszWKT2;
+	pszWKT2 = (char*) srs2.c_str();
+	if (OSRImportFromWkt(hSRS2, &pszWKT2) != OGRERR_NONE)
+		Rcpp::stop("Error importing SRS from user input.");
+	
+	return OSRIsSame(hSRS1, hSRS2);
+}
+
 //' Get the bounding box of a geometry specified in OGC WKT format.
 //'
 //' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry 

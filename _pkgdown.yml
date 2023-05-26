@@ -35,6 +35,7 @@ reference:
   - set_config_option
   - srs_is_geographic
   - srs_is_projected
+  - srs_is_same
   - srs_to_wkt
   - transform_xy
   - warp
