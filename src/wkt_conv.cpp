@@ -274,7 +274,7 @@ std::string bbox_to_wkt(Rcpp::NumericVector bbox) {
 	if (bbox.size() != 4)
 		Rcpp::stop("Invalid bounding box.");
 		
-	if (!_has_geos()) {
+	if (!has_geos()) {
 		Rcpp::Rcout << "bbox_to_wkt() requires GEOS.\n";
 		return "";
 	}

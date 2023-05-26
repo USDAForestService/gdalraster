@@ -49,7 +49,7 @@
 #' @export
 bbox_intersect <- function(x, as_wkt = FALSE) {
 
-	if (!.has_geos()) {
+	if (!has_geos()) {
 		if (as_wkt)
 			return(NA_character_)
 		else
@@ -95,7 +95,7 @@ bbox_intersect <- function(x, as_wkt = FALSE) {
 #' @export
 bbox_union <- function(x, as_wkt = FALSE) {
 
-	if (!.has_geos()) {
+	if (!has_geos()) {
 		if (as_wkt)
 			return(NA_character_)
 		else

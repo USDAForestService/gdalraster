@@ -285,9 +285,15 @@ warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL) {
     .Call(`_gdalraster__combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options)
 }
 
-#' @noRd
-.has_geos <- function() {
-    .Call(`_gdalraster__has_geos`)
+#' Is GEOS available?
+#'
+#' `has_geos()` returns a logical value indicating whether GDAL was built
+#' against the GEOS library.
+#'
+#' @return Logical. `TRUE` if GEOS is available, otherwise `FALSE`.
+#'
+has_geos <- function() {
+    .Call(`_gdalraster_has_geos`)
 }
 
 #' @noRd

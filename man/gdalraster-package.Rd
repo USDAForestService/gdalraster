@@ -35,9 +35,10 @@
   \code{\link{srs_to_wkt}},\cr
   \code{\link{srs_is_geographic}}, \code{\link{srs_is_projected}}
   
-  \item bounding box convenience functions: \code{\link{bbox_from_wkt}}, 
+  \item geometry convenience functions: \code{\link{bbox_from_wkt}}, 
   \code{\link{bbox_to_wkt}},\cr
-  \code{\link{bbox_intersect}}, \code{\link{bbox_union}}
+  \code{\link{bbox_intersect}}, \code{\link{bbox_union}}, 
+  \code{\link{has_geos}}
   
   \item GDAL configuration: \code{\link{gdal_version}}, 
   \code{\link{get_config_option}}, \code{\link{set_config_option}}
