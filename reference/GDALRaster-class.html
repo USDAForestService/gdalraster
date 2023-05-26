@@ -308,9 +308,9 @@ the band to be accessed (zero to start from the top).
 region will be read (typically the same value as xsize).
 <code>out_ysize</code> is the height of the output array into which the desired
 region will be read (typically the same value as ysize).
-Returns an array of pixel values (out_xsize, out_ysize).
-The returned array will be numeric or complex depending on the raster data
-type. NA will be returned in place of the nodata value if the
+Returns a numeric or complex vector containing the values that were read.
+It is organized in left to right, top to bottom pixel order.
+NA will be returned in place of the nodata value if the
 raster dataset has a nodata value defined for this band. No rescaling of the
 data is performed (see <code>$getScale()</code> and <code>$getOffset()</code> above).
 An error is raised if the read operation fails.</p>
@@ -497,7 +497,7 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-in"><span>                    xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="fl">1</span>, </span></span>
 <span class="r-in"><span>                    out_xsize<span class="op">=</span><span class="va">ncols</span>, out_ysize<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 143   1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/vector.html" class="external-link">as.vector</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -9999 -9999 -9999  2456  2466  2479</span>
 <span class="r-in"><span></span></span>
