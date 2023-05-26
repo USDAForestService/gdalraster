@@ -36,7 +36,7 @@ License: MIT + file LICENSE
 Copyright: See file inst/COPYRIGHTS for details.
 URL: https://usdaforestservice.github.io/gdalraster/
 BugReports: https://github.com/USDAForestService/gdalraster/issues
-Depends: R (>= 4.2)
+Depends: R (>= 4.2.0)
 Imports: methods, tools, utils, Rcpp (>= 1.0.7)
 LinkingTo: Rcpp
 Suggests: xml2
