@@ -516,7 +516,7 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 		eBufType = GDT_Float64;
 		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
 		std::vector<double> buf_ = Rcpp::as<std::vector<double>>(rasterData);
-		if (buf_.size() != (xsize * ysize))
+		if (buf_.size() != ((std::size_t) (xsize * ysize)))
 			Rcpp::stop("Size of input data is not the same as region size.");
 		err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
 					buf_.data(), xsize, ysize, eBufType, 0, 0);
@@ -527,7 +527,7 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
 		std::vector<std::complex<double>> buf_ = 
 			Rcpp::as<std::vector<std::complex<double>>>(rasterData);
-		if (buf_.size() != (xsize * ysize))
+		if (buf_.size() != ((std::size_t) (xsize * ysize)))
 			Rcpp::stop("Size of input data is not the same as region size.");
 		err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
 					buf_.data(), xsize, ysize, eBufType, 0, 0);

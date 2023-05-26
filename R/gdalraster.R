@@ -325,8 +325,7 @@
 #' It is organized in left to right, top to bottom pixel order. NA in 
 #' \code{rasterData} should be replaced with a suitable nodata value prior to
 #' writing (see \code{$getNoDataValue()} and \code{$setNoDataValue()} above).
-#' An error is raised if the operation fails (no return value, called for side 
-#' effects).
+#' An error is raised if the operation fails (no return value).
 #'
 #' \code{$fillRaster(band, value, ivalue)}
 #' Fills \code{band} with a constant value. Used to clear a band to a specified

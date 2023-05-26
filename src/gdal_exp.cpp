@@ -527,15 +527,13 @@ Rcpp::DataFrame _combine(
 		for (std::size_t i = 0; i < nrasters; ++i)
 			rowdata.row(i) = Rcpp::as<Rcpp::IntegerVector>(
 								src_ds[i].read(
-								bands[i], 0, y, ncols, 1, ncols, 1)
-								);
+									bands[i], 0, y, ncols, 1, ncols, 1) );
 									
 		cmbid = tbl.updateFromMatrix(rowdata, 1);
 		
 		if (out_raster) {
-			cmbid.attr("dim") = Rcpp::Dimension(1, ncols);
-			dst_ds.write( 1, 0, y, ncols, 1, 
-						Rcpp::as<Rcpp::NumericMatrix>(cmbid) );
+			//cmbid.attr("dim") = Rcpp::Dimension(1, ncols);
+			dst_ds.write( 1, 0, y, ncols, 1, cmbid );
 		}
 		pfnProgress(y / (nrows-1.0), NULL, pProgressData);
 		if (y % 1000 == 0)
