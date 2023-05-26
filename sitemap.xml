@@ -91,6 +91,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_projected.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_same.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/srs_to_wkt.html</loc>
   </url>
   <url>
