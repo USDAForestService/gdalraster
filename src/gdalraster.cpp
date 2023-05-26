@@ -454,7 +454,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 			Rcpp::stop("Read raster failed.");
 
 		Rcpp::ComplexVector v = Rcpp::wrap(buf);
-		v.attr("dim") = Rcpp::Dimension(out_xsize, out_ysize);
+		//v.attr("dim") = Rcpp::Dimension(out_xsize, out_ysize);
 		return v;
 
 	}
@@ -495,7 +495,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 		}
 		
 		Rcpp::NumericVector v = Rcpp::wrap(buf);
-		v.attr("dim") = Rcpp::Dimension(out_xsize, out_ysize);
+		//v.attr("dim") = Rcpp::Dimension(out_xsize, out_ysize);
 		return v;
 	}
 }
