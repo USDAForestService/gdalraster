@@ -2,7 +2,7 @@
 # Based on configure.ac from https://github.com/appelmar/gdalcubes
 # Copyright (c) 2018-2019 Marius Appel, License: MIT
 
-AC_INIT([gdalraster],[1.1.1],[chris.toney@usda.gov])
+AC_INIT([gdalraster],[1.2.0],[chris.toney@usda.gov])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
