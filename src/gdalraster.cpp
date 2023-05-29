@@ -379,7 +379,7 @@ Rcpp::CharacterVector GDALRaster::getMetadata(int band,
 		if (domain == "")
 			papszMetadata = GDALGetMetadata(hBand, NULL);
 		else
-			papszMetadata = GDALGetMetadata(hDataset, domain.c_str());
+			papszMetadata = GDALGetMetadata(hBand, domain.c_str());
 	}
 	
 	int items = CSLCount(papszMetadata);
