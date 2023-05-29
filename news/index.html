@@ -45,12 +45,12 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.2.0" id="gdalraster-120">gdalraster 1.2.0<a class="anchor" aria-label="anchor" href="#gdalraster-120"></a></h2>
-<ul><li><p>starting at v. 1.2.0, gdalraster will require R &gt;= 4.2.0</p></li>
-<li><p>fix: check for GEOS availability in bbox geom functions</p></li>
+<h2 class="pkg-version" data-toc-text="1.2.0" id="gdalraster-120">gdalraster 1.2.0<a class="anchor" aria-label="anchor" href="#gdalraster-120"></a></h2><p class="text-muted">CRAN release: 2023-05-28</p>
+<ul><li><p>starting at v. 1.2.0, <code>gdalraster</code> will require R &gt;= 4.2.0</p></li>
+<li><p>fix: check for GEOS availability in bbox geometry functions</p></li>
 <li><p>fix: wrong array dimensions in read() (<a href="https://github.com/USDAForestService/gdalraster/issues/5" class="external-link">#5</a>). Starting at v. 1.2.0, read() will return vector instead of matrix which better matches the concept of a native GDAL-like interface (thanks to Michael Sumner).</p></li>
-<li><p>add: has_geos() exported to R</p></li>
-<li><p>add: srs_is_same() - wrapper for OSRIsSame() in the GDAL Spatial Reference System C API</p></li>
+<li><p>add: <code><a href="../reference/has_geos.html">has_geos()</a></code> exported to R</p></li>
+<li><p>add: <code><a href="../reference/srs_is_same.html">srs_is_same()</a></code> - wrapper for OSRIsSame() in the GDAL Spatial Reference System C API</p></li>
 <li><p>documentation - minor edits throughout to improve clarity</p></li>
 </ul></div>
     <div class="section level2">
