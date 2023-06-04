@@ -7,8 +7,7 @@
 
 [![CRAN
 status](https://www.r-pkg.org/badges/version/gdalraster)](https://CRAN.R-project.org/package=gdalraster)
-[![cran
-checks](https://badges.cranchecks.info/summary/gdalraster.svg)](https://cran.r-project.org/web/checks/check_results_gdalraster.html)
+[![cran checks](https://badges.cranchecks.info/worst/gdalraster.svg)](https://cran.r-project.org/web/checks/check_results_gdalraster.html)
 <!-- badges: end -->
 
 ## Overview
