@@ -80,7 +80,7 @@
 
     
     
-<p>[DRAFT 06/08/2023]</p>
+<p>[DRAFT 2023/06/09]</p>
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
@@ -141,7 +141,7 @@ performance implications of GDAL read-ahead caching:</p>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="co">## original tiled raster, reading by row</span></span>
+<span><span class="co">## original tiled raster, reading by row (across block boundaries)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">gdalraster_read</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
@@ -170,7 +170,7 @@ The resulting file is larger at 10.6 GB vs. 6.8 GB, since compression is
 not efficient for strips vs. tiles. Substituting the new file
 (<code>f2</code>) in the test above gives the following time to read all
 pixels by row:</p>
-<pre><code><span><span class="co">## striped tif, reading by row (block cache not involved)</span></span>
+<pre><code><span><span class="co">## striped tif, reading on block boundaries (cache not involved)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">gdalraster_read</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed</span></span>
@@ -202,7 +202,7 @@ block), while the tiled tif contains order of magnitude more blocks that
 are small (970268 blocks, 16384 pixels per block). This test uses the
 original LANDFIRE elevation file (<code>f</code>) to read all pixels by
 block:</p>
-<pre><code><span><span class="co">## original tiled raster, reading by block (cache not involved)</span></span>
+<pre><code><span><span class="co">## original tiled raster, reading on block boundaries (cache not involved)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">blocks</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -219,7 +219,7 @@ block:</p>
 <h2 id="summary-and-cache-memory-setting">Summary and cache memory setting<a class="anchor" aria-label="anchor" href="#summary-and-cache-memory-setting"></a>
 </h2>
 <p>GDAL block caching enables reading a large tiled raster efficiently
-by row (1.59e+10 total pixels in the test raster). Each row of the
+by row (1.59e+10 total pixels in the test dataset). Each row of the
 LANDFIRE tiled raster intersects 1222 blocks of size 128 x 128. Each
 intersected block is read from file, decoded from LZW compression, and
 placed in cache memory. Data for each successive <code>read()</code>
@@ -237,10 +237,10 @@ from cache.</p>
 <p>I/O that involves block caching with large datasets may require
 setting <code>GDAL_CACHEMAX</code> larger than the default 40 MB. If the
 LANDFIRE elevation raster were tiled at 256 x 256, then each block would
-require 65536 x 2 = 131072 bytes for 16-bit pixels. The cache size
-needed to hold all intersected blocks for a row would be approximately
-160.2 MB. Similarly, the cache size could be configured for the case of
-multiple large datasets that need to be read simultaneously for
+require 65536 x 2 = 131072 bytes for 16-bit data. The cache size needed
+to hold all intersected blocks for a row would be approximately 160.2
+MB. Similarly, the cache size could be configured for the case of
+multiple large rasters that need to be read simultaneously for
 processing.</p>
 <p>Note that cache memory is generally flushed on dataset closing. The
 behavior described above assumes that the GDAL dataset is opened once,
@@ -249,7 +249,11 @@ normally be the case when using the GDAL API via <code>gdalraster</code>
 bindings (an object of class <code><a href="../reference/GDALRaster-class.html">gdalraster::GDALRaster</a></code>
 encapsulates a <code>GDALDataset</code> object and its associated
 <code>GDALRasterBand</code> objects in the underlying API).</p>
-<p>See also:<br><a href="https://gdal.org/development/rfc/rfc26_blockcache.html" class="external-link uri">https://gdal.org/development/rfc/rfc26_blockcache.html</a><br><a href="https://gdal.org/user/configoptions.html" class="external-link uri">https://gdal.org/user/configoptions.html</a><br><a href="https://gdal.org/doxygen/classGDALRasterBlock.html" class="external-link uri">https://gdal.org/doxygen/classGDALRasterBlock.html</a></p>
+</div>
+<div class="section level2">
+<h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a>
+</h2>
+<p><a href="https://gdal.org/development/rfc/rfc26_blockcache.html" class="external-link uri">https://gdal.org/development/rfc/rfc26_blockcache.html</a><br><a href="https://gdal.org/user/configoptions.html" class="external-link uri">https://gdal.org/user/configoptions.html</a><br><a href="https://gdal.org/doxygen/classGDALRasterBlock.html" class="external-link uri">https://gdal.org/doxygen/classGDALRasterBlock.html</a></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
