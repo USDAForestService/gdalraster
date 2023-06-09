@@ -4,6 +4,8 @@
 
 * documentation: add description of the `GDAL_RASTERIO_RESAMPLING` configuration option for `GDALRaster$read()` (2023-05-29)
 
+* documentation: add web article on the GDAL block cache and `GDAL_CACHEMAX` configuration (2023-06-09)
+
 # gdalraster 1.2.0
 
 * starting at v. 1.2.0, `gdalraster` will require R >= 4.2.0
