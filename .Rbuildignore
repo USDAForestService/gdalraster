@@ -16,3 +16,4 @@ config.status
 ^\.github$
 ^vignettes/articles$
 CONTRIBUTING.md
+CODE_OF_CONDUCT.md
