@@ -3,7 +3,7 @@ template:
   bootstrap: 5
 home:
   sidebar:
-    structure: [links, license, community, authors, citation, dev]
+    structure: [links, dev, community, authors, license, citation]
 reference:
 - title: Package overview
 - contents:
