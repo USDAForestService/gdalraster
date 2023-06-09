@@ -84,9 +84,9 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p>GDAL employs memory caching during raster I/O. Caching operates on
-raster blocks and may provide considerable improvement in I/O
-performance when accessing pixel data across block boundaries. In an
+<p>GDAL implements read/write memory caching during raster I/O. Caching
+operates on raster blocks and may provide considerable improvement in
+I/O performance when accessing pixel data across block boundaries. In an
 analytical context where processing is often row-oriented, this means
 that access is relatively efficient even when rows intersect many tiles
 of a raster arranged in square blocks (as opposed to blocks arranged as
@@ -109,8 +109,8 @@ raster overviews, but the elevation raster itself is a 6.8 GB GeoTIFF
 file using LZW compression on 128 x 128 tiles. The direct download link
 for LF 2020 elevation is: <a href="https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire" class="external-link uri">https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire</a></p>
 <p>Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM)
-i5-8250U CPU @ 1.60GHz and SSD, x86_64-pc-linux-gnu (64-bit) (Ubuntu
-20.04.6), R 4.3.0, gdalraster 1.2.0, GDAL 3.3.2.</p>
+i5-8250U CPU @ 1.60GHz and SSD, Ubuntu 20.04.6, R 4.3.0, gdalraster
+1.2.0, GDAL 3.3.2.</p>
 <p>Open the elevation dataset with <a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a> and get
 parameters:</p>
 <pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
