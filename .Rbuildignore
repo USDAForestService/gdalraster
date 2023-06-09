@@ -14,3 +14,4 @@ config.status
 ^docs$
 ^pkgdown$
 ^\.github$
+^vignettes/articles$
