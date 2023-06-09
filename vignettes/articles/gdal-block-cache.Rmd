@@ -12,13 +12,13 @@ knitr::opts_chunk$set(
 [DRAFT 06/08/2023]
 
 ## Overview
-GDAL employs memory caching during raster I/O. Caching operates on raster blocks and may provide considerable improvement in I/O performance when accessing pixel data across block boundaries. In an analytical context where processing is often row-oriented, this means that access is relatively efficient even when rows intersect many tiles of a raster arranged in square blocks (as opposed to blocks arranged as rows). Consideration of the caching mechanism is helpful for scaling I/O to large datasets that need to be processed in many chunks. This article will describe the operation of the caching mechanism, and relative performance when accessing data by row or by tile in relation to different raster block arrangements. Implications for configuring cache memory size with the `GDAL_CACHEMAX` setting will be described. Focus here is on reading pixel data (in an analytical context), but similar concepts apply to writing as well.
+GDAL implements read/write memory caching during raster I/O. Caching operates on raster blocks and may provide considerable improvement in I/O performance when accessing pixel data across block boundaries. In an analytical context where processing is often row-oriented, this means that access is relatively efficient even when rows intersect many tiles of a raster arranged in square blocks (as opposed to blocks arranged as rows). Consideration of the caching mechanism is helpful for scaling I/O to large datasets that need to be processed in many chunks. This article will describe the operation of the caching mechanism, and relative performance when accessing data by row or by tile in relation to different raster block arrangements. Implications for configuring cache memory size with the `GDAL_CACHEMAX` setting will be described. Focus here is on reading pixel data (in an analytical context), but similar concepts apply to writing as well.
 
 ## Relative performance
 A test dataset contains 16-bit integer elevation values at 30-m pixel resolution for the conterminous US (LANDFIRE Program, https://www.landfire.gov/). The version is "LF 2020 [LF 2.2.0]" which is available as an 8.41 GB download. The download includes raster overviews, but the elevation raster itself is a 6.8 GB GeoTIFF file using LZW compression on 128 x 128 tiles. The direct download link for LF 2020 elevation is:
 https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&TYPE=landfire
 
-Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz and SSD, x86_64-pc-linux-gnu (64-bit) (Ubuntu 20.04.6), R 4.3.0, gdalraster 1.2.0, GDAL 3.3.2.
+Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz and SSD, Ubuntu 20.04.6, R 4.3.0, gdalraster 1.2.0, GDAL 3.3.2.
 
 Open the elevation dataset with `{gdalraster}` and get parameters:
 
