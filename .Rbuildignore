@@ -15,3 +15,4 @@ config.status
 ^pkgdown$
 ^\.github$
 ^vignettes/articles$
+CONTRIBUTING.md
