@@ -308,8 +308,12 @@
 #' Returns a numeric or complex vector containing the values that were read.
 #' It is organized in left to right, top to bottom pixel order. 
 #' NA will be returned in place of the nodata value if the 
-#' raster dataset has a nodata value defined for this band. No rescaling of the
-#' data is performed (see \code{$getScale()} and \code{$getOffset()} above).
+#' raster dataset has a nodata value defined for this band.
+#' Data are read as R `integer` type when possible for the raster data type
+#' (Byte, Int8, Int16, UInt16, Int32), otherwise as type `double` (UInt32, 
+#' Float32, Float64).
+#' No rescaling of the data is performed (see \code{$getScale()} and 
+#' \code{$getOffset()} above).
 #' An error is raised if the read operation fails.
 #'
 #' \code{$write(band, xoff, yoff, xsize, ysize, rasterData)}
