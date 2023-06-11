@@ -135,7 +135,9 @@ of 128 x 128 pixels, each row intersects 1222 raster blocks (156335 /
 128 = 1221.4, the last block is incomplete). This test reflects
 performance implications of GDAL read-ahead caching:</p>
 <pre><code><span><span class="va">gdalraster_read</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">row</span><span class="op">)</span> <span class="op">{</span></span>
-<span>  <span class="va">r</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="va">row</span>, <span class="va">ncols</span>, <span class="fl">1</span>, <span class="va">ncols</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="va">r</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, xoff<span class="op">=</span><span class="fl">0</span>, yoff<span class="op">=</span><span class="va">row</span>, </span>
+<span>              xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="fl">1</span>, </span>
+<span>              out_xsize<span class="op">=</span><span class="va">ncols</span>, out_ysize<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span>  <span class="co">## process pixels, possibly write output...</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
@@ -157,7 +159,7 @@ projection, and geotransform are all copied from the source raster:</p>
 <span><span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span>, <span class="st">"TILED=NO"</span>, <span class="st">"BLOCKYSIZE=1"</span>, <span class="st">"BIGTIFF=YES"</span><span class="op">)</span></span>
 <span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/createCopy.html">createCopy</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="va">f2</span>, <span class="va">f</span>, options<span class="op">=</span><span class="va">options</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ds2</span> <span class="op">=</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f2</span>, <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">ds2</span> <span class="op">=</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f2</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">ds2</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 156335      1</span></span>
 <span></span>
