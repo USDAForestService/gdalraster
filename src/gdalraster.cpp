@@ -9,6 +9,7 @@
 
 #include "gdal_priv.h"
 #include "cpl_conv.h"
+#include "cpl_port.h"
 #include "cpl_string.h"
 #include "gdal_utils.h"
 #include "gdal_alg.h"
@@ -431,60 +432,95 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
 	GDALDataType eDT = GDALGetRasterDataType(hBand);
 	
+	CPLErr err;
+	
 	if (GDALDataTypeIsComplex(eDT)) {
 	// complex data types
 		std::vector<std::complex<double>> buf(out_xsize * out_ysize);
 		
-		CPLErr err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
-						buf.data(), out_xsize, out_ysize, GDT_CFloat64, 0, 0);
+		err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
+				buf.data(), out_xsize, out_ysize, GDT_CFloat64, 0, 0);
 					
 		if (err == CE_Failure)
 			Rcpp::stop("Read raster failed.");
 
 		Rcpp::ComplexVector v = Rcpp::wrap(buf);
-		//v.attr("dim") = Rcpp::Dimension(out_xsize, out_ysize);
 		return v;
 
 	}
 	else {
 	// real data types
-		std::vector<double> buf(out_xsize * out_ysize);
-	
-		CPLErr err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
-						buf.data(), out_xsize, out_ysize, GDT_Float64, 0, 0);
-						
-		if (err == CE_Failure)
-			Rcpp::stop("Read raster failed.");
+		if ( ( GDALDataTypeIsInteger(eDT) && 
+				(GDALGetDataTypeSizeBits(eDT) <= 32) && 
+				GDALDataTypeIsSigned(eDT) ) ||
+				( GDALDataTypeIsInteger(eDT) && 
+				(GDALGetDataTypeSizeBits(eDT) <= 16) && 
+				!GDALDataTypeIsSigned(eDT) ) ) {
+			
+			// signed integer <= 32 bits and unsigned integer <= 16 bits
+			// use int32 buffer
+		
+			std::vector<GInt32> buf(out_xsize * out_ysize);
+		
+			err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
+					buf.data(), out_xsize, out_ysize, GDT_Int32, 0, 0);
+							
+			if (err == CE_Failure)
+				Rcpp::stop("Read raster failed.");
+			
+			if (this->hasNoDataValue(band)) {
+				GInt32 nodata_value = (GInt32) this->getNoDataValue(band);
+				std::replace(buf.begin(), buf.end(), nodata_value, NA_INTEGER);
+			}
+			
+			Rcpp::IntegerVector v = Rcpp::wrap(buf);
+			return v;
+		
+		}
+		else {
+		
+			// UInt32, Float32, Float64
+			// use double buffer
+			// (Int64, UInt64 would currently be handled here but would lose
+			//  precision when > 9,007,199,254,740,992 (2^53). Support for
+			//  Int64/UInt64 raster could potentially be added using {bit64}.)
 
+			std::vector<double> buf(out_xsize * out_ysize);
 
-		if (this->hasNoDataValue(band)) {
-		// with a nodata value
-			double nodata_value = this->getNoDataValue(band);
-			if (GDALDataTypeIsFloating(GDALGetRasterDataType(hBand))) {
-			// floating point
+			err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
+					buf.data(), out_xsize, out_ysize, GDT_Float64, 0, 0);
+							
+			if (err == CE_Failure)
+				Rcpp::stop("Read raster failed.");
+
+			if (this->hasNoDataValue(band)) {
+			// with a nodata value
+				double nodata_value = this->getNoDataValue(band);
+				if (GDALDataTypeIsFloating(eDT)) {
+				// floating point
+					for (double& val : buf) {
+						if (CPLIsNan(val))
+							val = NA_REAL;
+						else if (ARE_REAL_EQUAL(val, nodata_value))
+							val = NA_REAL;
+					}
+				}
+				else {
+				// integer
+					std::replace(buf.begin(), buf.end(), nodata_value, NA_REAL);
+				}
+			}
+			// without a nodata value
+			else if (GDALDataTypeIsFloating(eDT)) {
 				for (double& val : buf) {
 					if (CPLIsNan(val))
 						val = NA_REAL;
-					else if (ARE_REAL_EQUAL(val, nodata_value))
-						val = NA_REAL;
 				}
 			}
-			else {
-			// integer
-				std::replace(buf.begin(), buf.end(), nodata_value, NA_REAL);
-			}
+			
+			Rcpp::NumericVector v = Rcpp::wrap(buf);
+			return v;
 		}
-		// without a nodata value
-		else if (GDALDataTypeIsFloating(GDALGetRasterDataType(hBand))) {
-			for (double& val : buf) {
-				if (CPLIsNan(val))
-					val = NA_REAL;
-			}
-		}
-		
-		Rcpp::NumericVector v = Rcpp::wrap(buf);
-		//v.attr("dim") = Rcpp::Dimension(out_xsize, out_ysize);
-		return v;
 	}
 }
 
@@ -499,8 +535,12 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 	
 	GDALDataType eBufType;
 	CPLErr err;
-	if (Rcpp::is<Rcpp::NumericVector>(rasterData)) {
-	// real data types
+	
+	if (Rcpp::is<Rcpp::IntegerVector>(rasterData) || 
+			Rcpp::is<Rcpp::NumericVector>(rasterData)) {
+		
+		// real data types
+	
 		eBufType = GDT_Float64;
 		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
 		std::vector<double> buf_ = Rcpp::as<std::vector<double>>(rasterData);
@@ -510,7 +550,9 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 					buf_.data(), xsize, ysize, eBufType, 0, 0);
 	}
 	else if (Rcpp::is<Rcpp::ComplexVector>(rasterData)) {
-	// complex data types
+	
+		// complex data types
+	
 		eBufType = GDT_CFloat64;
 		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
 		std::vector<std::complex<double>> buf_ = 
