@@ -47,7 +47,9 @@ The first test reads all pixels in the raster by row. For a tile size of 128 x 1
 
 ```
 gdalraster_read = function(row) {
-  r = ds$read(1, 0, row, ncols, 1, ncols, 1)
+  r = ds$read(band=1, xoff=0, yoff=row, 
+              xsize=ncols, ysize=1, 
+              out_xsize=ncols, out_ysize=1)
   ## process pixels, possibly write output...
   return()
 }
@@ -69,7 +71,7 @@ f2 = "LC20_Elev_220_striped.tif"
 options = c("COMPRESS=LZW", "TILED=NO", "BLOCKYSIZE=1", "BIGTIFF=YES")
 gdalraster::createCopy("GTiff", f2, f, options=options)
 
-ds2 = new(GDALRaster, f2, TRUE)
+ds2 = new(GDALRaster, f2, read_only = TRUE)
 ds2$getBlockSize(band=1)
 #> [1] 156335      1
 
