@@ -52,7 +52,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.1" id="gdalraster-121-dev">gdalraster 1.2.1 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-121-dev"></a></h2>
-<ul><li><p>fix: <code>GDALRaster$getMetadata()</code>: requesting band-level metadata for a domain other than the default metadata domain was returning dataset-level metadata instead (2023-05-29)</p></li>
+<ul><li><p><code>GDALRaster::read()</code>: data are now read as R <code>integer</code> type when possible for the raster data type (<a href="https://github.com/USDAForestService/gdalraster/issues/23" class="external-link">#23</a>) (2023-06-10)</p></li>
+<li><p>fix <code>GDALRaster$getMetadata()</code>: requesting band-level metadata for a domain other than the default metadata domain was returning dataset-level metadata instead (2023-05-29)</p></li>
 <li><p>documentation: add description of the <code>GDAL_RASTERIO_RESAMPLING</code> configuration option for <code>GDALRaster$read()</code> (2023-05-29)</p></li>
 <li><p>documentation: add web article on the GDAL block cache and <code>GDAL_CACHEMAX</code> configuration (2023-06-09)</p></li>
 </ul></div>
