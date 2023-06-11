@@ -110,7 +110,7 @@ file using LZW compression on 128 x 128 tiles. The direct download link
 for LF 2020 elevation is: <a href="https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire" class="external-link uri">https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire</a></p>
 <p>Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM)
 i5-8250U CPU @ 1.60GHz and SSD, Ubuntu 20.04.6, R 4.3.0, gdalraster
-1.2.0, GDAL 3.3.2.</p>
+1.2.1 (dev), GDAL 3.3.2.</p>
 <p>Open the elevation dataset and get parameters:</p>
 <pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
 <span></span>
@@ -145,7 +145,7 @@ performance implications of GDAL read-ahead caching:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">gdalraster_read</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt; 239.450  17.130 259.174</span></span>
+<span><span class="co">#&gt; 239.546  14.152 256.908</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre>
 <p>For comparison, we will read the same data from a raster arranged
@@ -174,7 +174,7 @@ pixels by row:</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">gdalraster_read</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed</span></span>
-<span><span class="co">#&gt; 244.479   5.146 250.582</span></span></code></pre>
+<span><span class="co">#&gt; 241.329   6.061 247.892</span></span></code></pre>
 <p>A final test reads by block on the original tiled raster as
 distributed by LANDFIRE. To read by square blocks we need to calculate
 the row/column offsets and x/y sizes for each tile, including the
@@ -212,7 +212,7 @@ all pixels by tile:</p>
 <span>    <span class="op">}</span></span>
 <span>  <span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt; 249.765   6.865 262.219</span></span></code></pre>
+<span><span class="co">#&gt; 244.919   7.818 258.616</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
