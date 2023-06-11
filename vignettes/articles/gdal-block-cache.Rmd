@@ -18,7 +18,7 @@ GDAL implements read/write memory caching during raster I/O. Caching operates on
 A test dataset contains 16-bit integer elevation values at 30-m pixel resolution for the conterminous US (LANDFIRE Program, https://www.landfire.gov/). The version is "LF 2020 [LF 2.2.0]" which is available as an 8.4 GB download. The download includes raster overviews, but the elevation raster itself is a 6.8 GB GeoTIFF file using LZW compression on 128 x 128 tiles. The direct download link for LF 2020 elevation is:
 https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&TYPE=landfire
 
-Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz and SSD, Ubuntu 20.04.6, R 4.3.0, gdalraster 1.2.1 (dev), GDAL 3.3.2.
+Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz and SSD, Ubuntu 20.04.6, R 4.3.0, gdalraster 1.2.1 (dev), GDAL 3.4.3.
 
 Open the elevation dataset and get parameters:
 
@@ -33,7 +33,7 @@ nrows = ds$getRasterYSize()
 print(paste("Size is", ncols, "x",  nrows))  # 1.587394e+10 pixels
 #> [1] "Size is 156335 x 101538"
 
-ds$getMetadata(band=1, domain="IMAGE_STRUCTURE")
+ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
 #> [1] "COMPRESSION=LZW" "INTERLEAVE=BAND"
 
 ds$getBlockSize(band=1)
