@@ -326,8 +326,12 @@ region will be read (typically the same value as ysize).
 Returns a numeric or complex vector containing the values that were read.
 It is organized in left to right, top to bottom pixel order.
 NA will be returned in place of the nodata value if the
-raster dataset has a nodata value defined for this band. No rescaling of the
-data is performed (see <code>$getScale()</code> and <code>$getOffset()</code> above).
+raster dataset has a nodata value defined for this band.
+Data are read as R <code>integer</code> type when possible for the raster data type
+(Byte, Int8, Int16, UInt16, Int32), otherwise as type <code>double</code> (UInt32,
+Float32, Float64).
+No rescaling of the data is performed (see <code>$getScale()</code> and
+<code>$getOffset()</code> above).
 An error is raised if the read operation fails.</p>
 <p><code>$write(band, xoff, yoff, xsize, ysize, rasterData)</code>
 Writes a region of raster data to <code>band</code>.
