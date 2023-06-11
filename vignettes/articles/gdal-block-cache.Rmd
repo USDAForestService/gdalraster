@@ -18,7 +18,7 @@ GDAL implements read/write memory caching during raster I/O. Caching operates on
 A test dataset contains 16-bit integer elevation values at 30-m pixel resolution for the conterminous US (LANDFIRE Program, https://www.landfire.gov/). The version is "LF 2020 [LF 2.2.0]" which is available as an 8.4 GB download. The download includes raster overviews, but the elevation raster itself is a 6.8 GB GeoTIFF file using LZW compression on 128 x 128 tiles. The direct download link for LF 2020 elevation is:
 https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&TYPE=landfire
 
-Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz and SSD, Ubuntu 20.04.6, R 4.3.0, gdalraster 1.2.0, GDAL 3.3.2.
+Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz and SSD, Ubuntu 20.04.6, R 4.3.0, gdalraster 1.2.1 (dev), GDAL 3.3.2.
 
 Open the elevation dataset and get parameters:
 
@@ -57,7 +57,7 @@ gdalraster_read = function(row) {
 
 system.time( lapply(0:(nrows-1), gdalraster_read) )
 #>    user  system elapsed 
-#> 239.450  17.130 259.174
+#> 239.546  14.152 256.908
 
 ds$close()
 ```
@@ -84,7 +84,7 @@ This creates a "striped" tif with raster blocks arranged for row-level access (`
 
 system.time( lapply(0:(nrows-1), gdalraster_read) )
 #>    user  system elapsed
-#> 244.479   5.146 250.582
+#> 241.329   6.061 247.892
 ```
 
 A final test reads by block on the original tiled raster as distributed by LANDFIRE. To read by square blocks we need to calculate the row/column offsets and x/y sizes for each tile, including the incomplete tiles along the right and bottom edges. Package `{stars}` provides a helper function that we will use for this. `{stars}` represents raster data using R's 1-based indexing and column-major array order (raster rows as array columns in R). Accounting for those differences from native GDAL indexing, we get a matrix of block boundaries using:
@@ -115,7 +115,7 @@ system.time({
     }
   })
 #>    user  system elapsed 
-#> 249.765   6.865 262.219
+#> 244.919   7.818 258.616
 ```
 
 ## Summary
