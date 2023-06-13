@@ -14,7 +14,6 @@ template:
       </script>
 home:
   title: R Bindings to the GDAL Raster API • gdalraster
-  strip_header: true
   sidebar:
     structure: [dev, links, community, authors, license, citation]
 reference:
@@ -55,12 +54,6 @@ reference:
 - title: Lookups
 - contents:
   - DEFAULT_NODATA
-footer:
-  structure: 
-    left: pkgdown
-    right: [authors, legal]
-  components:
-    legal: Provided without **any warranty**.
 authors:
   before: "For GDAL see: [https://github.com/OSGeo/gdal/graphs/contributors](https://github.com/OSGeo/gdal/graphs/contributors)"
   after: "<small class=\"dont-index\">See file <a href=\"https://github.com/USDAForestService/gdalraster/blob/HEAD/inst/COPYRIGHTS\" class=\"external-link\"><code>inst/COPYRIGHTS</code></a> for details.</small>"
