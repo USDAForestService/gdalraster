@@ -13,6 +13,7 @@ template:
         gtag('config', 'G-FXCWWY5V2E');
       </script>
 home:
+  title: R Bindings to the GDAL Raster API • gdalraster
   sidebar:
     structure: [dev, links, community, authors, license, citation]
 reference:
