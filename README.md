@@ -57,17 +57,13 @@ other utility.
 
 ## Installation
 
-Install the stable version from CRAN:
-
 ``` r
+# Install the released version from CRAN
 install.packages("gdalraster")
-```
 
-or install the development version from GitHub:
-
-``` r
-## install.packages("devtools")
-devtools::install_github("USDAForestService/gdalraster")
+# Or the development version from GitHub:
+# install.packages("pak")
+pak::pak("USDAForestService/gdalraster")
 ```
 
 ## Documentation

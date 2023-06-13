@@ -22,6 +22,7 @@ knitr::opts_chunk$set(
 <!-- badges: end -->
 
 ## Overview
+
 `gdalraster` is an R interface to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Calling signatures resemble those of the native C, C++ and Python APIs provided by the GDAL project.
 
 Bindings to GDAL are implemented in class `GDALRaster` along with several related stand-alone functions. These support:
@@ -46,18 +47,16 @@ for each unique combination are obtained, and combination IDs are optionally wri
 `gdalraster` may be suitable for applications that primarily need low-level raster I/O or prefer native GDAL-like calling. The additional functionality is somewhat aimed at thematic data analysis but may have other utility.
 
 ## Installation
-Install the stable version from CRAN:
 
 ``` r
+# Install the released version from CRAN
 install.packages("gdalraster")
-```
 
-or install the development version from GitHub:
-
-``` r
-## install.packages("devtools")
-devtools::install_github("USDAForestService/gdalraster")
+# Or the development version from GitHub:
+# install.packages("pak")
+pak::pak("USDAForestService/gdalraster")
 ```
 
 ## Documentation
+
 https://usdaforestservice.github.io/gdalraster/reference/
