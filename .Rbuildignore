@@ -15,6 +15,6 @@ config.status
 ^pkgdown$
 ^\.github$
 ^vignettes/articles$
-CONTRIBUTING.md
-CODE_OF_CONDUCT.md
-SECURITY.md
+^CONTRIBUTING\.md$
+^CODE_OF_CONDUCT\.md$
+^SECURITY\.md$
