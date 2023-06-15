@@ -118,6 +118,7 @@ Details.</p>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span>, <span class="va">force</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
@@ -217,6 +218,8 @@ and block Ysize is 1. However, for tiled images block size will typically
 be the tile size. Note that the X and Y block sizes don't have to divide
 the image size evenly, meaning that right and bottom edge blocks may be
 incomplete.</p>
+<p><code>$getOverviewCount(band)</code>
+Returns the number of overview layers available for <code>band</code>.</p>
 <p><code>$getDataTypeName(band)</code>
 Returns the name of the pixel data type for <code>band</code>. The possible data
 types are:</p><table class="table table"><tr><td><code>Unknown</code></td><td>Unknown or unspecified type</td></tr><tr><td><code>Byte</code></td><td>8-bit unsigned integer</td></tr><tr><td><code>Int8</code></td><td>8-bit signed integer (GDAL &gt;= 3.7)</td></tr><tr><td><code>UInt16</code></td><td>16-bit unsigned integer</td></tr><tr><td><code>Int16</code></td><td>16-bit signed integer</td></tr><tr><td><code>UInt32</code></td><td>32-bit unsigned integer</td></tr><tr><td><code>Int32</code></td><td>32-bit signed integer</td></tr><tr><td><code>UInt64</code></td><td>64-bit unsigned integer (GDAL &gt;= 3.5)</td></tr><tr><td><code>Int64</code></td><td>64-bit signed integer (GDAL &gt;= 3.5)</td></tr><tr><td><code>Float32</code></td><td>32-bit floating point</td></tr><tr><td><code>Float64</code></td><td>64-bit floating point</td></tr><tr><td><code>CInt16</code></td><td>Complex Int16</td></tr><tr><td><code>CInt32</code></td><td>Complex Int32</td></tr><tr><td><code>CFloat32</code></td><td>Complex Float32</td></tr><tr><td><code>CFloat64</code></td><td>Complex Float64</td></tr></table><p>Some raster formats including GeoTIFF (<code>GTiff</code>) and Erdas Imagine .img
@@ -478,6 +481,8 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 143   1</span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Int16"</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
