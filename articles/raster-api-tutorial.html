@@ -83,10 +83,9 @@ gtag('config', 'G-FXCWWY5V2E'); </script>
     
     
 <p><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a> provides bindings to the Raster API of the
-Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Using the API natively allows for
-fast and scalable raster I/O from R. This vignette is an R port of the
-GDAL Raster API tutorial for C++, C and Python (<a href="https://gdal.org/tutorials/raster_api_tut.html" class="external-link uri">https://gdal.org/tutorials/raster_api_tut.html</a>, (c)
-1998-2023 <a href="https://github.com/warmerdam" class="external-link">Frank Warmerdam</a>, <a href="https://github.com/rouault" class="external-link">Even Rouault</a>, and <a href="https://github.com/OSGeo/gdal/graphs/contributors" class="external-link">others</a>, <a href="https://gdal.org/license.html" class="external-link uri">https://gdal.org/license.html</a>).</p>
+Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Using the API natively enables fast
+and scalable raster I/O from R. This vignette is an R port of the <a href="https://gdal.org/tutorials/raster_api_tut.html" class="external-link">GDAL Raster API
+tutorial</a> for C++, C and Python ((c) 1998-2023 <a href="https://github.com/warmerdam" class="external-link">Frank Warmerdam</a>, <a href="https://github.com/rouault" class="external-link">Even Rouault</a>, and <a href="https://github.com/OSGeo/gdal/graphs/contributors" class="external-link">others</a>, <a href="https://gdal.org/license.html" class="external-link uri">https://gdal.org/license.html</a>).</p>
 <div class="section level2">
 <h2 id="opening-the-file">Opening the file<a class="anchor" aria-label="anchor" href="#opening-the-file"></a>
 </h2>
@@ -120,9 +119,9 @@ metadata, a coordinate system, a georeferencing transform, size of
 raster and various other information. Class <code>GDALRaster</code>
 encapsulates a GDAL dataset object and its associated raster band
 objects.</p>
-<p>In the common case of a “north up” raster without any rotation or
-shearing, the georeferencing transform (see <a href="https://gdal.org/tutorials/geotransforms_tut.html" class="external-link">Geotransform
-Tutorial</a> takes the following form with 1-based indexing in R:</p>
+<p>In the particular but common case of a “north up” raster without any
+rotation or shearing, the georeferencing transform (see <a href="https://gdal.org/tutorials/geotransforms_tut.html" class="external-link">Geotransform
+Tutorial</a>) takes the following form with 1-based indexing in R:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getGeoTransform</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">gt</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>  <span class="co"># x-coordinate of upper-left corner of the upper-left pixel</span></span>
@@ -137,9 +136,9 @@ Tutorial</a> takes the following form with 1-based indexing in R:</p>
 <span><span class="co">#&gt; [1] 0</span></span>
 <span><span class="va">gt</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>  <span class="co"># pixel height (n-s resolution, negative value)</span></span>
 <span><span class="co">#&gt; [1] -30</span></span></code></pre></div>
-<p>In the general case, this is an affine transform.
-<code>GDALRaster</code> also provides the follow convenience methods for
-the case of a north-up raster:</p>
+<p>In the general case, this is an affine transform. Class
+<code>GDALRaster</code> also provides convenience methods for the case
+of a north-up raster:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span>  <span class="co"># xmin, ymin, xmax, ymax</span></span>
 <span><span class="co">#&gt; [1]  323476.1 5101872.0  327766.1 5105082.0</span></span>
@@ -154,7 +153,7 @@ dataset:</p>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "GeoTIFF"</span></span>
 <span></span>
-<span><span class="co"># raster size in pixels X, pixels Y, number of bands</span></span>
+<span><span class="co"># raster size in pixels, number of bands</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 143</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
@@ -238,20 +237,20 @@ top to bottom pixel order:</p>
 pixel data to write. The <code>xoff</code>, <code>yoff</code>,
 <code>xsize</code>, <code>ysize</code> arguments describe the window of
 raster data on disk to read (or write). It doesn’t have to fall on tile
-boundaries though access may be more efficient if it does (in some
-cases). Note that GDAL uses memory caching algorithms during raster I/O
-to improve performance. The operation of the caching mechanism and
+boundaries, though access may be more efficient in some cases if it
+does. Note that GDAL uses memory caching algorithms during raster I/O to
+improve performance. The operation of the caching mechanism and
 potential configuration of cache memory size should be considered when
 scaling I/O to large datasets (see <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html">GDAL
 Block Cache</a>).</p>
 <p>The <code>out_xsize</code> and <code>out_ysize</code> values describe
-the size of the input buffer (an R vector of length
-<code>out_xsize</code> x <code>out_ysize</code> that data will be read
-into). When loading data at full resolution this would be the same as
-the window size (<code>xsize</code>, <code>ysize</code>). However, to
-load a reduced resolution overview this could be set to smaller than the
-window on disk. In this case <code>read()</code> will utilize overviews
-to do the I/O more efficiently if the overviews are suitable.</p>
+the size of the buffer (an R vector of length
+<code>out_xsize * out_ysize</code> that data will be read into). When
+loading data at full resolution this would be the same as the window
+size (<code>xsize</code>, <code>ysize</code>). However, to load a
+reduced resolution overview this could be set to smaller than the window
+on disk. In this case <code>read()</code> will utilize overviews to do
+the I/O more efficiently if the overviews are suitable.</p>
 </div>
 <div class="section level2">
 <h2 id="closing-the-dataset">Closing the dataset<a class="anchor" aria-label="anchor" href="#closing-the-dataset"></a>
@@ -309,9 +308,10 @@ LZW-compressed GTiff:</p>
 <span><span class="co">#&gt; [1] "COMPRESSION=LZW"  "INTERLEAVE=PIXEL"</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">band</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span><span class="va">band</span>, <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co"># band 2 is slope degrees</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">2</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
-<span><span class="co">#&gt; [1] 2438.0000 3046.0000 2675.9713  133.0185</span></span>
+<span><span class="co">#&gt; [1]  0.00000 54.00000 22.93012 12.51330</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -352,7 +352,7 @@ and raster data is covered here:</p>
 <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a>
 </h2>
 <p><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a> provides two additional functions for
-creating raster datasets:</p>
+creating raster datasets.</p>
 <p><code><a href="../reference/rasterFromRaster.html">rasterFromRaster()</a></code> creates a new raster with spatial
 reference, extent and resolution taken from a template raster, without
 copying data. It optionally changes the format, number of bands, data
