@@ -1,0 +1,189 @@
+---
+title: "Raster API Tutorial"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Raster API Tutorial}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`{gdalraster}` provides bindings to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Using the API natively allows for fast and scalable raster I/O from R. This vignette is an R port of the GDAL Raster API tutorial for C++, C and Python (https://gdal.org/tutorials/raster_api_tut.html, (c) 1998-2023 [Frank Warmerdam](https://github.com/warmerdam), [Even Rouault](https://github.com/rouault), and [others](https://github.com/OSGeo/gdal/graphs/contributors), https://gdal.org/license.html).
+
+## Opening the file
+
+Before opening a GDAL-supported data store it is necessary to register drivers. There is a driver for each supported raster format. `{gdalraster}` automatically registers drivers when the package is loaded. A raster dataset is opened by creating a new instance of class `GDALRaster` passing the name of the file and the access desired (`read_only = TRUE`, or `read_only = FALSE` for update access).
+
+```{r}
+library(gdalraster)
+
+elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+ds <- new(GDALRaster, filename = elev_file, read_only = TRUE)
+```
+
+An error is returned if the dataset cannot be opened (and creation of the `GDALRaster` object fails). Also, note that `filename` may not actually be the name of a physical file (though it usually is). Its interpretation is driver dependent, and it might be a URL, a database connection string, a filename with additional parameters, and so forth.
+
+## Getting dataset information
+
+As described in the GDAL [Raster Data Model](https://gdal.org/user/raster_data_model.html), a GDAL dataset contains a list of raster bands, all pertaining to the same area and having the same resolution. It also has metadata, a coordinate system, a georeferencing transform, size of raster and various other information. Class `GDALRaster` encapsulates a GDAL dataset object and its associated raster band objects.
+
+In the common case of a "north up" raster without any rotation or shearing, the georeferencing transform (see [Geotransform Tutorial](https://gdal.org/tutorials/geotransforms_tut.html) takes the following form with 1-based indexing in R:
+
+```{r}
+gt <- ds$getGeoTransform()
+gt[1]  # x-coordinate of upper-left corner of the upper-left pixel
+gt[2]  # pixel width (w-e resolution)
+gt[3]  # 0 for north-up
+gt[4]  # y-coordinate of upper-left corner of the upper-left pixel
+gt[5]  # 0 for north-up
+gt[6]  # pixel height (n-s resolution, negative value)
+```
+
+In the general case, this is an affine transform. `GDALRaster` also provides the follow convenience methods for the case of a north-up raster:
+
+```{r}
+ds$bbox()  # xmin, ymin, xmax, ymax
+ds$res()   # pixel width, pixel height as positive values
+```
+
+The following code retrieves some additional information about the dataset:
+
+```{r}
+# GDAL format driver
+ds$getDriverShortName()
+ds$getDriverLongName()
+
+# raster size in pixels X, pixels Y, number of bands
+ds$getRasterXSize()
+ds$getRasterYSize()
+ds$getRasterCount()
+
+# coordinate reference system
+ds$getProjectionRef()
+
+# origin and pixel size from the geotransform
+print(paste("Origin:", gt[1], gt[4]))
+print(paste("Pixel size:", gt[2], gt[6]))
+```
+
+## Fetching a raster band
+
+At this time access to raster data via GDAL is done one band at a time. Also, metadata, block sizes, nodata values and various other information are available on a per-band basis. Class `GDALRaster` provides methods to access raster band objects from the dataset (numbered 1 through `ds$getRasterCount()`), by specifying a `band` number as the first argument:
+
+```{r}
+# block	size
+ds$getBlockSize(band=1)
+
+# data type
+ds$getDataTypeName(band=1)
+
+# nodata value
+ds$getNoDataValue(band=1)
+
+# min, max, mean, sd of pixel values in the band
+ds$getStatistics(band=1, approx_ok = FALSE, force = TRUE)
+
+# TODO: getOverviewCount()
+
+# gdalraster currently does not support access to color tables
+```
+
+## Reading raster data
+
+`GDALRaster$read()` is a wrapper for the `GDALRasterBand::RasterIO()` method in the underlying API. This method will automatically take care of data type conversion, up/down sampling and windowing. The following code will read the first row of data into a similarly sized vector. `GDALRaster$read()` will return data as R `integer` type if possible for the raster data type (`Byte`, `Int8`, `Int16`, `UInt16`, `Int32`), otherwise the returned vector will be of type `double` (`UInt32`, `Float32`, `Float64`) or `complex` (`CInt16`, `CInt32`, `CFloat32`, `CFloat64`). The input data are organized in left to right, top to bottom pixel order:
+
+```{r}
+ncols <- ds$getRasterXSize()
+rowdata <- ds$read(band=1, 
+                   xoff=0, yoff=0,
+                   xsize=ncols, ysize=1,
+                   out_xsize=ncols, out_ysize=1)
+
+length(rowdata)
+typeof(rowdata)
+head(rowdata)
+```
+
+Writing data with `GDALRaster$write()` is similar to `read()` with an additional argument specifying a vector of pixel data to write. The `xoff`, `yoff`, `xsize`, `ysize` arguments describe the window of raster data on disk to read (or write). It doesn't have to fall on tile boundaries though access may be more efficient if it does (in some cases). Note that GDAL uses memory caching algorithms during raster I/O to improve performance. The operation of the caching mechanism and potential configuration of cache memory size should be considered when scaling I/O to large datasets (see [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)).
+
+The `out_xsize` and `out_ysize` values describe the size of the input buffer (an R vector of length `out_xsize` x `out_ysize` that data will be read into). When loading data at full resolution this would be the same as the window size (`xsize`, `ysize`). However, to load a reduced resolution overview this could be set to smaller than the window on disk. In this case `read()` will utilize overviews to do the I/O more efficiently if the overviews are suitable.
+
+## Closing the dataset
+
+Calling `GDALRaster$close()` will result in proper cleanup, and flushing of any pending writes. Forgetting to call `close()` on a dataset opened in update mode in a popular format like GTiff will likely result in being unable to open it afterwards.
+
+```{r}
+# close the dataset for proper cleanup
+ds$close()
+```
+
+## Techniques for creating files
+
+New files in GDAL-supported formats may be created if the format driver supports creation. There are two general techniques for creating files, using CreateCopy() and Create(). The CreateCopy method in R involves calling `gdalraster::createCopy()`, passing in a source raster file that should be copied. The Create method involves calling `gdalraster::create()`, and then explicitly writing all the metadata and raster data with separate calls. All drivers that support creating new files support the CreateCopy method, but only a few support the Create method.
+
+To determine if a particular format supports Create or CreateCopy, consult the table of raster format drivers at https://gdal.org/drivers/raster/index.html. Note that a number of drivers are read-only and won't support Create or CreateCopy.
+
+## Using createCopy()
+
+`gdalraster::createCopy()` can be used fairly simply as most information is collected from the source file. It includes an argument for passing format specific creation options. The following code copies a multi-band raster in FARSITE v.4 LCP format (basically a raw format without support for compression or nodata value) to LZW-compressed GTiff:
+
+```{r}
+lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
+options <- c("COMPRESS=LZW")
+createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file, 
+           options=options)
+
+file.size(lcp_file)
+file.size(tif_file)
+
+ds <- new(GDALRaster, tif_file, read_only=FALSE)
+ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
+for (band in 1:ds$getRasterCount())
+    ds$setNoDataValue(band, -9999)
+ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
+ds$close()
+```
+
+## Using create()
+
+For situations in which you are not just exporting an existing file to a new file, it is generally necessary to use  `gdalraster::create()`. This function takes an options list much like `createCopy()`, but the raster size, number of bands and band type must be provided explicitly:
+
+```{r}
+new_file <- paste0(tempdir(), "/", "newdata.tif")
+create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107, nbands=1, 
+       dataType="Int16")
+```
+
+Once the dataset is successfully created, all appropriate metadata and raster data must be written to the file. What this is will vary according to usage, but a simple case with a projection, geotransform and raster data is covered here:
+
+```{r}
+ds <- new(GDALRaster, new_file, read_only=FALSE)
+
+# EPSG:26912 - NAD83 / UTM zone 12N
+ds$setProjection(epsg_to_wkt(26912))
+
+gt <- c(323476.1, 30, 0, 5105082.0, 0, -30)
+ds$setGeoTransform(gt)
+
+ds$setNoDataValue(band=1, -9999)
+ds$fillRaster(band=1, -9999, 0)
+# ...
+# close the dataset when done
+ds$close()
+```
+
+## See also
+
+`{gdalraster}` provides two additional functions for creating raster datasets:
+
+`rasterFromRaster()` creates a new raster with spatial reference, extent and resolution taken from a template raster, without copying data. It optionally changes the format, number of bands, data type and nodata value, sets driver-specific dataset creation options, and initializes to a value.
+
+`rasterToVRT()` creates a virtual raster dataset (VRT) derived from a source raster with options for virtual subsetting, virtually resampling the source data at a different pixel resolution, or applying a virtual kernel filter.
+
