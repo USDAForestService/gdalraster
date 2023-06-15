@@ -1,5 +1,7 @@
 # gdalraster 1.2.1 (dev)
 
+* `bbox_from_wkt()`: return `NA` if creation of the geometry object fails (#27) (2023-06-15)
+
 * add `GDALRaster$getOverviewCount()` (2023-06-15)
 
 * documentation: add vignette containing an R port of the GDAL Raster API tutorial (2023-06-15)

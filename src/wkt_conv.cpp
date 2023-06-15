@@ -272,8 +272,11 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 	char* pszWKT;
 	pszWKT = (char*) wkt.c_str();
 	
-	if (OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeometry) != OGRERR_NONE)
-		Rcpp::stop("Failed to create geometry object from WKT string.");
+	if (OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeometry) != OGRERR_NONE) {
+		Rcpp::Rcerr << "Failed to create geometry object from WKT string.\n";
+		Rcpp::NumericVector ret(4, NA_REAL);
+		return ret;
+	}
 		
 	OGREnvelope sBbox;
 	OGR_G_GetEnvelope(hGeometry, &sBbox);
