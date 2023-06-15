@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`{gdalraster}` provides bindings to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Using the API natively enables fast and scalable raster I/O from R. This vignette is an R port of the [GDAL Raster API tutorial](https://gdal.org/tutorials/raster_api_tut.html) for C++, C and Python ((c) 1998-2023 [Frank Warmerdam](https://github.com/warmerdam), [Even Rouault](https://github.com/rouault), and [others](https://github.com/OSGeo/gdal/graphs/contributors), https://gdal.org/license.html).
+`{gdalraster}` provides bindings to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Using the API natively enables fast and scalable raster I/O from R. This vignette is an R port of the [GDAL Raster API tutorial](https://gdal.org/tutorials/raster_api_tut.html) for C++, C and Python, (c) 1998-2023 [Frank Warmerdam](https://github.com/warmerdam), [Even Rouault](https://github.com/rouault), and [others](https://github.com/OSGeo/gdal/graphs/contributors), https://gdal.org/license.html.
 
 ## Opening the file
 
@@ -89,14 +89,15 @@ ds$getNoDataValue(band=1)
 # min, max, mean, sd of pixel values in the band
 ds$getStatistics(band=1, approx_ok = FALSE, force = TRUE)
 
-# TODO: getOverviewCount()
+# does this band have overviews? (aka "pyramids")
+ds$getOverviewCount(band=1)
 
 # gdalraster currently does not support access to color tables
 ```
 
 ## Reading raster data
 
-`GDALRaster$read()` is a wrapper for the `GDALRasterBand::RasterIO()` method in the underlying API. This method will automatically take care of data type conversion, up/down sampling and windowing. The following code will read the first row of data into a similarly sized vector. `GDALRaster$read()` will return data as R `integer` type if possible for the raster data type (`Byte`, `Int8`, `Int16`, `UInt16`, `Int32`), otherwise the returned vector will be of type `double` (`UInt32`, `Float32`, `Float64`) or `complex` (`CInt16`, `CInt32`, `CFloat32`, `CFloat64`). The input data are organized in left to right, top to bottom pixel order:
+`GDALRaster$read()` is a wrapper for the `GDALRasterBand::RasterIO()` method in the underlying API. This method will automatically take care of data type conversion, up/down sampling and windowing. The following code will read the first row of data into a similarly sized vector. `GDALRaster$read()` will return data as R `integer` type if possible for the raster data type (`Byte`, `Int8`, `Int16`, `UInt16`, `Int32`), otherwise the returned vector will be of type `double` (`UInt32`, `Float32`, `Float64`) or `complex` (`CInt16`, `CInt32`, `CFloat32`, `CFloat64`). The input data are organized in left to right, top to bottom pixel order. `NA` will be returned in place of the nodata value if the raster dataset has a nodata value defined for the band:
 
 ```{r}
 ncols <- ds$getRasterXSize()
@@ -144,10 +145,15 @@ file.size(lcp_file)
 file.size(tif_file)
 
 ds <- new(GDALRaster, tif_file, read_only=FALSE)
+
+# band=0 for dataset-level metadata:
 ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
+
+# set nodata value for all bands
 for (band in 1:ds$getRasterCount())
     ds$setNoDataValue(band, -9999)
-# band 2 is slope degrees
+
+# band 2 of an LCP file is slope degrees
 ds$getStatistics(band=2, approx_ok=FALSE, force=TRUE)
 ds$close()
 ```
@@ -182,7 +188,7 @@ ds$close()
 
 ## See also
 
-`{gdalraster}` provides two additional functions for creating raster datasets.
+`{gdalraster}` provides two additional functions for creating raster datasets:
 
 `rasterFromRaster()` creates a new raster with spatial reference, extent and resolution taken from a template raster, without copying data. It optionally changes the format, number of bands, data type and nodata value, sets driver-specific dataset creation options, and initializes to a value.
 
