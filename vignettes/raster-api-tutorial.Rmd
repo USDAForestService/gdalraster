@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-`{gdalraster}` provides bindings to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Using the API natively allows for fast and scalable raster I/O from R. This vignette is an R port of the GDAL Raster API tutorial for C++, C and Python (https://gdal.org/tutorials/raster_api_tut.html, (c) 1998-2023 [Frank Warmerdam](https://github.com/warmerdam), [Even Rouault](https://github.com/rouault), and [others](https://github.com/OSGeo/gdal/graphs/contributors), https://gdal.org/license.html).
+`{gdalraster}` provides bindings to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Using the API natively enables fast and scalable raster I/O from R. This vignette is an R port of the [GDAL Raster API tutorial](https://gdal.org/tutorials/raster_api_tut.html) for C++, C and Python ((c) 1998-2023 [Frank Warmerdam](https://github.com/warmerdam), [Even Rouault](https://github.com/rouault), and [others](https://github.com/OSGeo/gdal/graphs/contributors), https://gdal.org/license.html).
 
 ## Opening the file
 
@@ -33,7 +33,7 @@ An error is returned if the dataset cannot be opened (and creation of the `GDALR
 
 As described in the GDAL [Raster Data Model](https://gdal.org/user/raster_data_model.html), a GDAL dataset contains a list of raster bands, all pertaining to the same area and having the same resolution. It also has metadata, a coordinate system, a georeferencing transform, size of raster and various other information. Class `GDALRaster` encapsulates a GDAL dataset object and its associated raster band objects.
 
-In the common case of a "north up" raster without any rotation or shearing, the georeferencing transform (see [Geotransform Tutorial](https://gdal.org/tutorials/geotransforms_tut.html) takes the following form with 1-based indexing in R:
+In the particular but common case of a "north up" raster without any rotation or shearing, the georeferencing transform (see [Geotransform Tutorial](https://gdal.org/tutorials/geotransforms_tut.html)) takes the following form with 1-based indexing in R:
 
 ```{r}
 gt <- ds$getGeoTransform()
@@ -45,7 +45,7 @@ gt[5]  # 0 for north-up
 gt[6]  # pixel height (n-s resolution, negative value)
 ```
 
-In the general case, this is an affine transform. `GDALRaster` also provides the follow convenience methods for the case of a north-up raster:
+In the general case, this is an affine transform. Class `GDALRaster` also provides convenience methods for the case of a north-up raster:
 
 ```{r}
 ds$bbox()  # xmin, ymin, xmax, ymax
@@ -59,7 +59,7 @@ The following code retrieves some additional information about the dataset:
 ds$getDriverShortName()
 ds$getDriverLongName()
 
-# raster size in pixels X, pixels Y, number of bands
+# raster size in pixels, number of bands
 ds$getRasterXSize()
 ds$getRasterYSize()
 ds$getRasterCount()
@@ -110,9 +110,9 @@ typeof(rowdata)
 head(rowdata)
 ```
 
-Writing data with `GDALRaster$write()` is similar to `read()` with an additional argument specifying a vector of pixel data to write. The `xoff`, `yoff`, `xsize`, `ysize` arguments describe the window of raster data on disk to read (or write). It doesn't have to fall on tile boundaries though access may be more efficient if it does (in some cases). Note that GDAL uses memory caching algorithms during raster I/O to improve performance. The operation of the caching mechanism and potential configuration of cache memory size should be considered when scaling I/O to large datasets (see [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)).
+Writing data with `GDALRaster$write()` is similar to `read()` with an additional argument specifying a vector of pixel data to write. The `xoff`, `yoff`, `xsize`, `ysize` arguments describe the window of raster data on disk to read (or write). It doesn't have to fall on tile boundaries, though access may be more efficient in some cases if it does. Note that GDAL uses memory caching algorithms during raster I/O to improve performance. The operation of the caching mechanism and potential configuration of cache memory size should be considered when scaling I/O to large datasets (see [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)).
 
-The `out_xsize` and `out_ysize` values describe the size of the input buffer (an R vector of length `out_xsize` x `out_ysize` that data will be read into). When loading data at full resolution this would be the same as the window size (`xsize`, `ysize`). However, to load a reduced resolution overview this could be set to smaller than the window on disk. In this case `read()` will utilize overviews to do the I/O more efficiently if the overviews are suitable.
+The `out_xsize` and `out_ysize` values describe the size of the buffer (an R vector of length `out_xsize * out_ysize` that data will be read into). When loading data at full resolution this would be the same as the window size (`xsize`, `ysize`). However, to load a reduced resolution overview this could be set to smaller than the window on disk. In this case `read()` will utilize overviews to do the I/O more efficiently if the overviews are suitable.
 
 ## Closing the dataset
 
@@ -147,7 +147,8 @@ ds <- new(GDALRaster, tif_file, read_only=FALSE)
 ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
 for (band in 1:ds$getRasterCount())
     ds$setNoDataValue(band, -9999)
-ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
+# band 2 is slope degrees
+ds$getStatistics(band=2, approx_ok=FALSE, force=TRUE)
 ds$close()
 ```
 
@@ -181,7 +182,7 @@ ds$close()
 
 ## See also
 
-`{gdalraster}` provides two additional functions for creating raster datasets:
+`{gdalraster}` provides two additional functions for creating raster datasets.
 
 `rasterFromRaster()` creates a new raster with spatial reference, extent and resolution taken from a template raster, without copying data. It optionally changes the format, number of bands, data type and nodata value, sets driver-specific dataset creation options, and initializes to a value.
 
