@@ -85,7 +85,7 @@ gtag('config', 'G-FXCWWY5V2E'); </script>
 <p><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a> provides bindings to the Raster API of the
 Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Using the API natively enables fast
 and scalable raster I/O from R. This vignette is an R port of the <a href="https://gdal.org/tutorials/raster_api_tut.html" class="external-link">GDAL Raster API
-tutorial</a> for C++, C and Python ((c) 1998-2023 <a href="https://github.com/warmerdam" class="external-link">Frank Warmerdam</a>, <a href="https://github.com/rouault" class="external-link">Even Rouault</a>, and <a href="https://github.com/OSGeo/gdal/graphs/contributors" class="external-link">others</a>, <a href="https://gdal.org/license.html" class="external-link uri">https://gdal.org/license.html</a>).</p>
+tutorial</a> for C++, C and Python, (c) 1998-2023 <a href="https://github.com/warmerdam" class="external-link">Frank Warmerdam</a>, <a href="https://github.com/rouault" class="external-link">Even Rouault</a>, and <a href="https://github.com/OSGeo/gdal/graphs/contributors" class="external-link">others</a>, <a href="https://gdal.org/license.html" class="external-link uri">https://gdal.org/license.html</a>.</p>
 <div class="section level2">
 <h2 id="opening-the-file">Opening the file<a class="anchor" aria-label="anchor" href="#opening-the-file"></a>
 </h2>
@@ -198,7 +198,9 @@ by specifying a <code>band</code> number as the first argument:</p>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt; [1] 2438.0000 3046.0000 2675.9713  133.0185</span></span>
 <span></span>
-<span><span class="co"># TODO: getOverviewCount()</span></span>
+<span><span class="co"># does this band have overviews? (aka "pyramids")</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
 <span></span>
 <span><span class="co"># gdalraster currently does not support access to color tables</span></span></code></pre></div>
 </div>
@@ -218,7 +220,9 @@ will be of type <code>double</code> (<code>UInt32</code>,
 <code>Float32</code>, <code>Float64</code>) or <code>complex</code>
 (<code>CInt16</code>, <code>CInt32</code>, <code>CFloat32</code>,
 <code>CFloat64</code>). The input data are organized in left to right,
-top to bottom pixel order:</p>
+top to bottom pixel order. <code>NA</code> will be returned in place of
+the nodata value if the raster dataset has a nodata value defined for
+the band:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, </span>
@@ -304,11 +308,16 @@ LZW-compressed GTiff:</p>
 <span><span class="co">#&gt; [1] 108510</span></span>
 <span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tif_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># band=0 for dataset-level metadata:</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "COMPRESSION=LZW"  "INTERLEAVE=PIXEL"</span></span>
+<span></span>
+<span><span class="co"># set nodata value for all bands</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">band</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>    <span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span><span class="va">band</span>, <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
-<span><span class="co"># band 2 is slope degrees</span></span>
+<span></span>
+<span><span class="co"># band 2 of an LCP file is slope degrees</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">2</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt; [1]  0.00000 54.00000 22.93012 12.51330</span></span>
@@ -352,7 +361,7 @@ and raster data is covered here:</p>
 <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a>
 </h2>
 <p><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a> provides two additional functions for
-creating raster datasets.</p>
+creating raster datasets:</p>
 <p><code><a href="../reference/rasterFromRaster.html">rasterFromRaster()</a></code> creates a new raster with spatial
 reference, extent and resolution taken from a template raster, without
 copying data. It optionally changes the format, number of bands, data
