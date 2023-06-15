@@ -87,6 +87,7 @@ class GDALRaster {
 	bool setProjection(std::string projection);
 	
 	std::vector<int> getBlockSize(int band) const;
+	int getOverviewCount(int band) const;
 	std::string getDataTypeName(int band) const;
 	Rcpp::NumericVector getStatistics(int band,	bool approx_ok, 
 			bool force) const;

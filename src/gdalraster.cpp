@@ -213,6 +213,14 @@ std::vector<int> GDALRaster::getBlockSize(int band) const {
 	return ret;
 }
 
+int GDALRaster::getOverviewCount(int band) const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+		
+	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	return GDALGetOverviewCount(hBand);
+}
+
 std::string GDALRaster::getDataTypeName(int band) const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
@@ -653,6 +661,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Set the projection reference string for this dataset.")
     .const_method("getBlockSize", &GDALRaster::getBlockSize, 
     	"Get the natural block size of this band.")
+    .const_method("getOverviewCount", &GDALRaster::getOverviewCount, 
+    	"Return the number of overview layers available.")
     .const_method("getDataTypeName", &GDALRaster::getDataTypeName, 
     	"Get name of the data type for this band.")
     .const_method("getStatistics", &GDALRaster::getStatistics, 

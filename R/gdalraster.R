@@ -22,18 +22,6 @@
 #' opened dataset, and methods that operate on the dataset as described in 
 #' Details.
 #'
-#' @seealso
-#' Package overview in [`help("gdalraster-package")`][gdalraster-package]
-#'
-#' [create()], [createCopy()], [rasterFromRaster()], [rasterToVRT()], [warp()]
-#'
-#' As described above, the `$read()` method will perform automatic resampling 
-#' if the specified output size (`out_xsize * out_ysize`) is different than 
-#' the size of the region being read (`xsize * ysize`). In that case, the 
-#' GDAL_RASTERIO_RESAMPLING configuration option could also be defined to 
-#' override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE, 
-#' LANCZOS, AVERAGE or MODE (see [set_config_option()]).
-#'
 #' @section Usage:
 #' \preformatted{
 #' ds <- new(GDALRaster, filename, read_only)
@@ -59,6 +47,7 @@
 #'
 #' ds$getRasterCount()
 #' ds$getBlockSize(band)
+#' ds$getOverviewCount(band)
 #' ds$getDataTypeName(band)
 #' ds$getStatistics(band, approx_ok, force)
 #' ds$getNoDataValue(band)
@@ -180,6 +169,9 @@
 #' be the tile size. Note that the X and Y block sizes don't have to divide 
 #' the image size evenly, meaning that right and bottom edge blocks may be 
 #' incomplete.
+#'
+#' \code{$getOverviewCount(band)}
+#' Returns the number of overview layers available for \code{band}.
 #'
 #' \code{$getDataTypeName(band)}
 #' Returns the name of the pixel data type for \code{band}. The possible data 
@@ -367,6 +359,18 @@
 #' The dataset can be re-opened on the existing \code{filename} with 
 #' \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
 #'
+#' @seealso
+#' Package overview in [`help("gdalraster-package")`][gdalraster-package]
+#'
+#' [create()], [createCopy()], [rasterFromRaster()], [rasterToVRT()], [warp()]
+#'
+#' As described above, the `$read()` method will perform automatic resampling 
+#' if the specified output size (`out_xsize * out_ysize`) is different than 
+#' the size of the region being read (`xsize * ysize`). In that case, the 
+#' GDAL_RASTERIO_RESAMPLING configuration option could also be defined to 
+#' override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE, 
+#' LANCZOS, AVERAGE or MODE (see [set_config_option()]).
+#'
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
@@ -389,6 +393,7 @@
 #' ## retrieve the number of bands and some band-level parameters
 #' ds$getRasterCount()
 #' ds$getBlockSize(band=1)
+#' ds$getOverviewCount(band=1)
 #' ds$getDataTypeName(band=1)
 #' ds$getNoDataValue(band=1)
 #'

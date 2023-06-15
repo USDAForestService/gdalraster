@@ -53,6 +53,7 @@ ds$res()
 
 ds$getRasterCount()
 ds$getBlockSize(band)
+ds$getOverviewCount(band)
 ds$getDataTypeName(band)
 ds$getStatistics(band, approx_ok, force)
 ds$getNoDataValue(band)
@@ -176,6 +177,9 @@ and block Ysize is 1. However, for tiled images block size will typically
 be the tile size. Note that the X and Y block sizes don't have to divide
 the image size evenly, meaning that right and bottom edge blocks may be
 incomplete.
+
+\code{$getOverviewCount(band)}
+Returns the number of overview layers available for \code{band}.
 
 \code{$getDataTypeName(band)}
 Returns the name of the pixel data type for \code{band}. The possible data
@@ -390,6 +394,7 @@ ds$res()
 ## retrieve the number of bands and some band-level parameters
 ds$getRasterCount()
 ds$getBlockSize(band=1)
+ds$getOverviewCount(band=1)
 ds$getDataTypeName(band=1)
 ds$getNoDataValue(band=1)
 
