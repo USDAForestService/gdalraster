@@ -27,6 +27,13 @@
 #'
 #' [create()], [createCopy()], [rasterFromRaster()], [rasterToVRT()], [warp()]
 #'
+#' As described above, the `$read()` method will perform automatic resampling 
+#' if the specified output size (`out_xsize * out_ysize`) is different than 
+#' the size of the region being read (`xsize * ysize`). In that case, the 
+#' GDAL_RASTERIO_RESAMPLING configuration option could also be defined to 
+#' override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE, 
+#' LANCZOS, AVERAGE or MODE (see [set_config_option()]).
+#'
 #' @section Usage:
 #' \preformatted{
 #' ds <- new(GDALRaster, filename, read_only)
@@ -359,14 +366,6 @@
 #' The `GDALRaster` object is still available after calling \code{$close()}. 
 #' The dataset can be re-opened on the existing \code{filename} with 
 #' \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
-#'
-#' @note
-#' As described above, the `$read()` method will perform automatic resampling 
-#' if the specified output size (`out_xsize * out_ysize`) is different than 
-#' the size of the region being read (`xsize * ysize`). In that case, the 
-#' GDAL_RASTERIO_RESAMPLING configuration option could also be defined to 
-#' override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE, 
-#' LANCZOS, AVERAGE or MODE (see [set_config_option()]).
 #'
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")

@@ -27,14 +27,6 @@ and calling methods on the underlying GDALDataset, GDALDriver and
 GDALRasterBand objects. See \url{https://gdal.org/api/index.html} for
 details of the GDAL API.
 }
-\note{
-As described above, the \verb{$read()} method will perform automatic resampling
-if the specified output size (\code{out_xsize * out_ysize}) is different than
-the size of the region being read (\code{xsize * ysize}). In that case, the
-GDAL_RASTERIO_RESAMPLING configuration option could also be defined to
-override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE,
-LANCZOS, AVERAGE or MODE (see \code{\link[=set_config_option]{set_config_option()}}).
-}
 \section{Usage}{
 
 \preformatted{
@@ -480,4 +472,11 @@ ds_url$close()
 Package overview in \code{\link[=gdalraster-package]{help("gdalraster-package")}}
 
 \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}, \code{\link[=warp]{warp()}}
+
+As described above, the \verb{$read()} method will perform automatic resampling
+if the specified output size (\code{out_xsize * out_ysize}) is different than
+the size of the region being read (\code{xsize * ysize}). In that case, the
+GDAL_RASTERIO_RESAMPLING configuration option could also be defined to
+override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE,
+LANCZOS, AVERAGE or MODE (see \code{\link[=set_config_option]{set_config_option()}}).
 }
