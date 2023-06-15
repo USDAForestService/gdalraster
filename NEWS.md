@@ -6,7 +6,9 @@
 
 * documentation: add description of the `GDAL_RASTERIO_RESAMPLING` configuration option for `GDALRaster$read()` (2023-05-29)
 
-* documentation: add web article on the GDAL block cache and `GDAL_CACHEMAX` configuration (2023-06-09)
+* documentation: add web article on the GDAL block cache and configuration of `GDAL_CACHEMAX` (2023-06-09)
+
+* documentation: add vignette containing an R port of the GDAL Raster API tutorial (2023-06-15)
 
 # gdalraster 1.2.0
 
