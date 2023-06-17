@@ -70,7 +70,7 @@ void GDALRaster::info() const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 	
-	Rcpp::CharacterVector argv = {"-nomd", "-norat", "-noct"};
+	Rcpp::CharacterVector argv = {"-norat", "-noct"};
 	std::vector<char *> opt(argv.size() + 1);
 	for (R_xlen_t i = 0; i < argv.size(); ++i) {
 		opt[i] = (char *) (argv[i]);
