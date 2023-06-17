@@ -1,19 +1,24 @@
 url: https://usdaforestservice.github.io/gdalraster/
+
 template:
   bootstrap: 5
+
 home:
   title: R Bindings to the GDAL Raster API
   sidebar:
     structure: [dev, links, community, authors, license, citation]
+
 reference:
 - title: Package overview
 - contents:
   - gdalraster-package
+
 - title: Classes
 - contents:
   - CmbTable-class
   - GDALRaster-class
   - RunningStats-class
+
 - title: Stand-alone functions
 - contents:
   - bbox_from_wkt
@@ -41,9 +46,11 @@ reference:
   - srs_to_wkt
   - transform_xy
   - warp
+
 - title: Lookups
 - contents:
   - DEFAULT_NODATA
+
 authors:
   before: "For GDAL see: [https://github.com/OSGeo/gdal/graphs/contributors](https://github.com/OSGeo/gdal/graphs/contributors)"
   after: "<small class=\"dont-index\">See file <a href=\"https://github.com/USDAForestService/gdalraster/blob/HEAD/inst/COPYRIGHTS\" class=\"external-link\"><code>inst/COPYRIGHTS</code></a> for details.</small>"
