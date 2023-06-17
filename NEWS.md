@@ -1,5 +1,7 @@
 # gdalraster 1.2.1 (dev)
 
+* add `get_cache_used()` (2023-06-16)
+
 * `bbox_from_wkt()`: return `NA` if creation of the geometry object fails (#27) (2023-06-15)
 
 * add `GDALRaster$getOverviewCount()` (2023-06-15)

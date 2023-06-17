@@ -37,6 +37,7 @@ reference:
   - createCopy
   - epsg_to_wkt
   - gdal_version
+  - get_cache_used
   - get_config_option
   - get_pixel_line
   - has_geos

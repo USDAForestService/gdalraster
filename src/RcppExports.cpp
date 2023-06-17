@@ -98,6 +98,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// get_cache_used
+int get_cache_used();
+RcppExport SEXP _gdalraster_get_cache_used() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(get_cache_used());
+    return rcpp_result_gen;
+END_RCPP
+}
 // warp
 bool warp(std::vector<std::string> src_files, std::string dst_filename, Rcpp::CharacterVector t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 RcppExport SEXP _gdalraster_warp(SEXP src_filesSEXP, SEXP dst_filenameSEXP, SEXP t_srsSEXP, SEXP cl_argSEXP) {
@@ -483,6 +493,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 5},
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
     {"_gdalraster_get_pixel_line", (DL_FUNC) &_gdalraster_get_pixel_line, 2},
+    {"_gdalraster_get_cache_used", (DL_FUNC) &_gdalraster_get_cache_used, 0},
     {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 4},
     {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 7},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},

@@ -25,6 +25,7 @@ typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 Rcpp::CharacterVector gdal_version();
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
+int get_cache_used();
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
 		double pixel, double line);

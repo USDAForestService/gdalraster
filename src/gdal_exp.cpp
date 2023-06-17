@@ -9,6 +9,7 @@
 #include "gdal.h"
 #include "gdal_utils.h"
 #include "cpl_conv.h"
+#include "cpl_port.h"
 #include "cpl_string.h"
 
 #include <errno.h>
@@ -92,6 +93,21 @@ void set_config_option(std::string key, std::string value) {
 		value_ = value.c_str();
 		
 	CPLSetConfigOption(key.c_str(), value_);
+}
+
+//' Get the amount of memory currently in use by the GDAL block cache
+//'
+//' `get_cache_used()` returns the amount of memory in MB currently in use for
+//' GDAL block caching.
+//'
+//' @returns Integer. Amount of memory in MB.
+//'
+//' @examples
+//' get_cache_used()
+// [[Rcpp::export]]
+int get_cache_used() {
+	GIntBig nCacheUsed = GDALGetCacheUsed64();
+	return static_cast<int>(nCacheUsed / (1000 * 1000));
 }
 
 //' Create a new uninitialized raster

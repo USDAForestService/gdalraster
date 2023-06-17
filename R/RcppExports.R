@@ -229,6 +229,19 @@ get_pixel_line <- function(xy, gt) {
     .Call(`_gdalraster_get_pixel_line`, xy, gt)
 }
 
+#' Get the amount of memory currently in use by the GDAL block cache
+#'
+#' `get_cache_used()` returns the amount of memory in MB currently in use for
+#' GDAL block caching.
+#'
+#' @returns Integer. Amount of memory in MB.
+#'
+#' @examples
+#' get_cache_used()
+get_cache_used <- function() {
+    .Call(`_gdalraster_get_cache_used`)
+}
+
 #' Raster reprojection
 #'
 #' `warp()` is a wrapper for the \command{gdalwarp} command-line utility.

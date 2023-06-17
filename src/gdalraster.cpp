@@ -5,7 +5,6 @@
 #include <complex>
 #include <algorithm>
 #include <cmath>
-#include <limits>
 
 #include "gdal_priv.h"
 #include "cpl_conv.h"
