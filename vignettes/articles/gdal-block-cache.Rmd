@@ -137,40 +137,22 @@ ds = new(GDALRaster, f, read_only = TRUE)
 ncols = ds$getRasterXSize()
 nrows = ds$getRasterYSize()
 
-get_cache_used()  # amount of memory currently in use for cache (MB)
-#> [1] 0
-
-## Reading 24 rows spaced by one half the tile height
-## Every other row-level read() intersects a new set of 1222 tiles
 ## Default cache size is approximately 400 MB in this case (5% of 8 GB RAM)
-for (n in 0:23) {
-  r = ds$read(1, 0, (n * 64), ncols, 1, ncols, 1)
-  print( paste0("Row ", (i * 64), ", cache in use (MB): ", get_cache_used()) )
+rows_read = 0
+cache_use = get_cache_used()
+for (row in 0:1536) {
+  rowdata = ds$read(1, 0, row, ncols, 1, ncols, 1)
+  rows_read = c(rows_read, row+1)
+  cache_use = c(cache_use, get_cache_used())
 }
-#> [1] "Row 0, cache in use (MB): 40"
-#> [1] "Row 64, cache in use (MB): 40"
-#> [1] "Row 128, cache in use (MB): 80"
-#> [1] "Row 192, cache in use (MB): 80"
-#> [1] "Row 256, cache in use (MB): 120"
-#> [1] "Row 320, cache in use (MB): 120"
-#> [1] "Row 384, cache in use (MB): 160"
-#> [1] "Row 448, cache in use (MB): 160"
-#> [1] "Row 512, cache in use (MB): 201"
-#> [1] "Row 576, cache in use (MB): 201"
-#> [1] "Row 640, cache in use (MB): 241"
-#> [1] "Row 704, cache in use (MB): 241"
-#> [1] "Row 768, cache in use (MB): 281"
-#> [1] "Row 832, cache in use (MB): 281"
-#> [1] "Row 896, cache in use (MB): 321"
-#> [1] "Row 960, cache in use (MB): 321"
-#> [1] "Row 1024, cache in use (MB): 362"
-#> [1] "Row 1088, cache in use (MB): 362"
-#> [1] "Row 1152, cache in use (MB): 401"
-#> [1] "Row 1216, cache in use (MB): 401"
-#> [1] "Row 1280, cache in use (MB): 401"
-#> [1] "Row 1344, cache in use (MB): 401"
-#> [1] "Row 1408, cache in use (MB): 401"
-#> [1] "Row 1472, cache in use (MB): 401"
+
+plot(rows_read, cache_use, type="S", 
+     xlab="rows read", ylab="cache in use (MB)", 
+     lwd=2, xaxt="n")
+axis(1, at = seq(0, 1536, by = 128), las=2)
+```
+```{r out.width = '70%', echo = FALSE}
+knitr::include_graphics("img/cache_use.png")
 ```
 
 ## Configuring cache size
@@ -181,7 +163,7 @@ The cache size limit can be set with the `GDAL_CACHEMAX` configuration option, e
 ## in MB
 gdalraster::set_config_option("GDAL_CACHEMAX", "800")
 
-## or percent of usable physical RAM
+## or percent of physical RAM
 gdalraster::set_config_option("GDAL_CACHEMAX", "10%")
 ```
 
