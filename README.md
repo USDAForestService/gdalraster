@@ -68,8 +68,9 @@ pak::pak("USDAForestService/gdalraster")
 
 ## Documentation
 
-Online manual:  
-<https://usdaforestservice.github.io/gdalraster/reference/>
-
-Raster API tutorial:  
-<https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html>
+  - [Online
+    manual](https://usdaforestservice.github.io/gdalraster/reference/)
+  - [Raster API
+    tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
+  - [GDAL Block
+    Caching](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
