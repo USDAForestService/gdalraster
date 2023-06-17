@@ -111,8 +111,8 @@ raster overviews, but the elevation raster itself is a 6.8 GB GeoTIFF
 file using LZW compression on 128 x 128 tiles. The direct download link
 for LF 2020 elevation is: <a href="https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire" class="external-link uri">https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire</a></p>
 <p>Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM)
-i5-8250U CPU @ 1.60GHz and SSD, Ubuntu 22.04.2, R 4.3.0, gdalraster
-1.2.1 (dev), GDAL 3.6.2.</p>
+i5-8250U CPU @ 1.60GHz, 8 GB RAM and SSD, Ubuntu 22.04.2, R 4.3.0,
+gdalraster 1.2.1 (dev), GDAL 3.6.2.</p>
 <p>Open the elevation dataset and get parameters:</p>
 <pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
 <span></span>
@@ -219,45 +219,125 @@ all pixels by tile:</p>
 <span><span class="co">#&gt; 237.920   7.165 251.200</span></span></code></pre>
 </div>
 <div class="section level2">
-<h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
+<h2 id="description-of-cache-operation">Description of cache operation<a class="anchor" aria-label="anchor" href="#description-of-cache-operation"></a>
 </h2>
 <p>GDAL block caching enables reading a large tiled raster efficiently
-by row (1.59e+10 total pixels in the test dataset). Each row of the
+by row (1.59e+10 total pixels in the test dataset). The default maximum
+size of the memory cache is 5% of usable physical RAM. Each row of the
 LANDFIRE tiled raster intersects 1222 blocks of size 128 x 128. Each
 intersected block is read from file, decoded from LZW compression, and
 placed in cache memory. Data for each successive <code>read()</code>
 that intersects the same block are retrieved from cache. Caching all of
-the intersected blocks in this case requires 128 x 128 x 2 bytes = 32768
-bytes per block, 32768 x 1222 = 40042496 bytes, approximately 40 MB. All
-of the decoded block data for a row can be held in cache in this case,
-meaning that only 1 out of every 128 row-level <code>read()</code>
-involves retrieval from file and decoding of compressed blocks. The
-other 127/128 are provided from cache.</p>
+the intersected blocks requires 128 x 128 x 2 bytes = 32768 bytes per
+block, 32768 x 1222 = 40042496 bytes, approximately 40 MB. All of the
+decoded block data for a row can be held in cache in this case, meaning
+that only 1 out of every 128 row-level <code>read()</code> involves
+retrieval from file and decoding of compressed blocks. The other 127/128
+are provided from cache. Memory is recovered when a request for a new
+cache block would put cache memory use over the established limit (least
+recently used blocks are flushed from cache to accommodate adding new
+blocks).</p>
+<p>The code below uses the function
+<code><a href="../reference/get_cache_used.html">gdalraster::get_cache_used()</a></code> to demonstrate the
+behavior:</p>
+<pre><code><span><span class="co">## run in a new R session</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">f</span> <span class="op">=</span> <span class="st">"LC20_Elev_220.tif"</span></span>
+<span><span class="va">ds</span> <span class="op">=</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">ncols</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">nrows</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span>  <span class="co"># amount of memory currently in use for cache (MB)</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span></span>
+<span><span class="co">## Reading 24 rows spaced by one half the tile height</span></span>
+<span><span class="co">## Every other row-level read() intersects a new set of 1222 tiles</span></span>
+<span><span class="co">## Default cache size is approximately 400 MB in this case (5% of 8 GB RAM)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">n</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">23</span><span class="op">)</span> <span class="op">{</span></span>
+<span>  <span class="va">r</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="fl">64</span><span class="op">)</span>, <span class="va">ncols</span>, <span class="fl">1</span>, <span class="va">ncols</span>, <span class="fl">1</span><span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Row number read:"</span>, <span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="fl">64</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Cache memory in use (MB):"</span>, <span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span></span>
+<span><span class="op">}</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 0"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 40"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 64"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 40"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 128"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 80"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 192"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 80"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 256"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 120"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 320"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 120"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 384"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 160"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 448"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 160"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 512"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 201"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 576"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 201"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 640"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 241"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 704"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 241"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 768"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 281"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 832"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 281"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 896"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 321"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 960"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 321"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 1024"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 362"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 1088"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 362"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 1152"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 1216"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 1280"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 1344"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 1408"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span>
+<span><span class="co">#&gt; [1] "Row number read: 1472"</span></span>
+<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="configuring-cache-size">Configuring cache size<a class="anchor" aria-label="anchor" href="#configuring-cache-size"></a>
 </h2>
-<p>Size of the block cache can be set with the
-<code>GDAL_CACHEMAX</code> configuration option, e.g.,</p>
+<p>The cache size limit can be set with the <code>GDAL_CACHEMAX</code>
+configuration option, e.g.,</p>
 <pre><code><span><span class="co">## in MB</span></span>
-<span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_CACHEMAX"</span>, <span class="st">"500"</span><span class="op">)</span></span>
+<span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_CACHEMAX"</span>, <span class="st">"800"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## or percent of usable physical RAM</span></span>
 <span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_CACHEMAX"</span>, <span class="st">"10%"</span><span class="op">)</span></span></code></pre>
+<p>Note that the size limit of the block cache is set upon first use
+(first I/O). Setting <code>GDAL_CACHEMAX</code> after that point will
+not resize the cache. It is a per-session setting. If
+<code>GDAL_CACHEMAX</code> has not been configured upon first use of the
+cache, then the default cache size will be in effect for the current
+session.</p>
 <p>I/O that involves block caching with large datasets may require
-setting <code>GDAL_CACHEMAX</code> larger than the default 5% of usable
-physical RAM. If the LANDFIRE elevation raster were tiled at 256 x 256,
-then each block would require 65536 x 2 = 131072 bytes for 16-bit data.
-The cache size needed to hold all intersected blocks for a row would be
-approximately 160 MB. Similarly, the cache size could be configured for
-the case of multiple large rasters that need to be read simultaneously
-for processing.</p>
-<p>Note that cache memory is generally flushed on dataset closing. The
-behavior described above assumes that the GDAL dataset is opened once,
-and required I/O completed before closing the dataset. This would
-normally be the case when using the GDAL API via <code>gdalraster</code>
-bindings (an object of class <code><a href="../reference/GDALRaster-class.html">gdalraster::GDALRaster</a></code>
-encapsulates a <code>GDALDataset</code> object and its associated
+setting <code>GDAL_CACHEMAX</code> larger than the default. If the
+LANDFIRE elevation raster were tiled at 256 x 256, then each block would
+require 65536 x 2 = 131072 bytes for 16-bit data. The cache size needed
+to hold all intersected blocks for a row would be approximately 160 MB
+(and likewise, 640 MB for 512 x 512 tiles). Similarly, the cache size
+could be configured for the case of multiple large rasters that need to
+be read simultaneously for processing.</p>
+<p>Cache memory is generally flushed on dataset closing. The behavior
+described above assumes that the GDAL dataset is opened once, and
+required I/O completed before closing the dataset. This would normally
+be the case when using the GDAL API via <code>gdalraster</code> bindings
+(an object of class <code><a href="../reference/GDALRaster-class.html">gdalraster::GDALRaster</a></code> encapsulates a
+<code>GDALDataset</code> object and its associated
 <code>GDALRasterBand</code> objects in the underlying API).</p>
 <p>It is also worth noting that without the block caching mechanism, it
 is not possible to read the tiled elevation raster by row in reasonable
@@ -269,6 +349,9 @@ disabled:</p>
 <span><span class="co">## run in a new R session</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## for testing only</span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_CACHEMAX"</span>, <span class="st">"0"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">f</span> <span class="op">=</span> <span class="st">"LC20_Elev_220.tif"</span> </span>
 <span></span>
@@ -282,9 +365,6 @@ disabled:</p>
 <span>              out_xsize<span class="op">=</span><span class="va">ncols</span>, out_ysize<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span></span>
-<span><span class="co">## for testing only</span></span>
-<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_CACHEMAX"</span>, <span class="st">"0"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">gdalraster_read</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="co">#&gt; ^C</span></span>
