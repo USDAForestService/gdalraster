@@ -9,7 +9,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-[DRAFT 2023-06-16]
+[DRAFT 2023-06-17]
 
 ## Overview
 
@@ -145,32 +145,32 @@ get_cache_used()  # amount of memory currently in use for cache (MB)
 ## Default cache size is approximately 400 MB in this case (5% of 8 GB RAM)
 for (n in 0:23) {
   r = ds$read(1, 0, (n * 64), ncols, 1, ncols, 1)
-  print( paste0("Row: ", (i * 64), ", cache in use (MB): ", get_cache_used()) )
+  print( paste0("Row ", (i * 64), ", cache in use (MB): ", get_cache_used()) )
 }
-#> [1] "Row: 0, cache in use (MB): 40"
-#> [1] "Row: 64, cache in use (MB): 40"
-#> [1] "Row: 128, cache in use (MB): 80"
-#> [1] "Row: 192, cache in use (MB): 80"
-#> [1] "Row: 256, cache in use (MB): 120"
-#> [1] "Row: 320, cache in use (MB): 120"
-#> [1] "Row: 384, cache in use (MB): 160"
-#> [1] "Row: 448, cache in use (MB): 160"
-#> [1] "Row: 512, cache in use (MB): 201"
-#> [1] "Row: 576, cache in use (MB): 201"
-#> [1] "Row: 640, cache in use (MB): 241"
-#> [1] "Row: 704, cache in use (MB): 241"
-#> [1] "Row: 768, cache in use (MB): 281"
-#> [1] "Row: 832, cache in use (MB): 281"
-#> [1] "Row: 896, cache in use (MB): 321"
-#> [1] "Row: 960, cache in use (MB): 321"
-#> [1] "Row: 1024, cache in use (MB): 362"
-#> [1] "Row: 1088, cache in use (MB): 362"
-#> [1] "Row: 1152, cache in use (MB): 401"
-#> [1] "Row: 1216, cache in use (MB): 401"
-#> [1] "Row: 1280, cache in use (MB): 401"
-#> [1] "Row: 1344, cache in use (MB): 401"
-#> [1] "Row: 1408, cache in use (MB): 401"
-#> [1] "Row: 1472, cache in use (MB): 401"
+#> [1] "Row 0, cache in use (MB): 40"
+#> [1] "Row 64, cache in use (MB): 40"
+#> [1] "Row 128, cache in use (MB): 80"
+#> [1] "Row 192, cache in use (MB): 80"
+#> [1] "Row 256, cache in use (MB): 120"
+#> [1] "Row 320, cache in use (MB): 120"
+#> [1] "Row 384, cache in use (MB): 160"
+#> [1] "Row 448, cache in use (MB): 160"
+#> [1] "Row 512, cache in use (MB): 201"
+#> [1] "Row 576, cache in use (MB): 201"
+#> [1] "Row 640, cache in use (MB): 241"
+#> [1] "Row 704, cache in use (MB): 241"
+#> [1] "Row 768, cache in use (MB): 281"
+#> [1] "Row 832, cache in use (MB): 281"
+#> [1] "Row 896, cache in use (MB): 321"
+#> [1] "Row 960, cache in use (MB): 321"
+#> [1] "Row 1024, cache in use (MB): 362"
+#> [1] "Row 1088, cache in use (MB): 362"
+#> [1] "Row 1152, cache in use (MB): 401"
+#> [1] "Row 1216, cache in use (MB): 401"
+#> [1] "Row 1280, cache in use (MB): 401"
+#> [1] "Row 1344, cache in use (MB): 401"
+#> [1] "Row 1408, cache in use (MB): 401"
+#> [1] "Row 1472, cache in use (MB): 401"
 ```
 
 ## Configuring cache size
@@ -226,7 +226,7 @@ ds$close()
 
 ## See also
 
-https://gdal.org/development/rfc/rfc26_blockcache.html  
-https://gdal.org/user/configoptions.html  
-https://gdal.org/doxygen/classGDALRasterBlock.html  
-
+* [RFC 26: GDAL Block Cache Improvements](https://gdal.org/development/rfc/rfc26_blockcache.html)
+* [Configuration options for GDAL](https://gdal.org/user/configoptions.html)
+* [GDALRasterBlock Class Reference](https://gdal.org/doxygen/classGDALRasterBlock.html)
+* [gcore/gdalrasterblock.cpp](https://github.com/OSGeo/gdal/blob/97f0c0b35c7ca5f17bdd74312bee2a0afa4d2199/gcore/gdalrasterblock.cpp)
