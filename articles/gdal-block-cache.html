@@ -89,14 +89,14 @@
 operates on raster blocks and may provide considerable improvement in
 I/O performance when accessing pixel data across block boundaries. In an
 analytical context where processing is often row-oriented, this means
-that access is relatively efficient even when rows intersect many tiles
-of a raster arranged in square blocks (as opposed to blocks arranged as
-rows). Consideration of the caching mechanism is helpful for scaling I/O
-to large datasets that need to be processed in many chunks. This article
-will describe the operation of the caching mechanism, and relative
-performance when accessing data by row or by tile in relation to
-different raster block arrangements. Implications for configuring cache
-memory size with the <code>GDAL_CACHEMAX</code> setting will be
+that access is efficient even when rows intersect many tiles of a raster
+arranged in square or rectangular blocks (as opposed to blocks arranged
+as one whole row). Consideration of the caching mechanism is helpful for
+scaling I/O to large datasets that need to be processed in many chunks.
+This article will describe the operation of the caching mechanism, and
+relative performance when accessing data by row or by tile in relation
+to different raster block arrangements. Implications for configuring
+cache memory size with the <code>GDAL_CACHEMAX</code> setting will be
 described. Focus here is on reading pixel data (in an analytical
 context), but similar concepts apply to writing as well.</p>
 </div>
@@ -135,7 +135,7 @@ gdalraster 1.2.1 (dev), GDAL 3.6.2.</p>
 of 128 x 128 pixels, each row intersects 1222 raster blocks (156335 /
 128 = 1221.4, the last block is incomplete). This test reflects
 performance implications of GDAL read-ahead caching:</p>
-<pre><code><span><span class="va">gdalraster_read</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">row</span><span class="op">)</span> <span class="op">{</span></span>
+<pre><code><span><span class="va">process_row</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">row</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">r</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, xoff<span class="op">=</span><span class="fl">0</span>, yoff<span class="op">=</span><span class="va">row</span>, </span>
 <span>              xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="fl">1</span>, </span>
 <span>              out_xsize<span class="op">=</span><span class="va">ncols</span>, out_ysize<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
@@ -146,19 +146,20 @@ performance implications of GDAL read-ahead caching:</p>
 <span><span class="co">## Test 1</span></span>
 <span><span class="co">## original tiled raster, reading by row (across block boundaries)</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">gdalraster_read</span><span class="op">)</span> <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">process_row</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
 <span><span class="co">#&gt; 228.269  11.319 242.195</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre>
 <p>For comparison, we will read the same data from a raster arranged
-with blocks as whole rows (most efficient for row-level access).
+with blocks as whole rows (efficient for row-level access).
 <code><a href="../reference/createCopy.html">gdalraster::createCopy()</a></code> copies a raster dataset with
 optional changes to the format. The extent, number of bands, data type,
 projection, and geotransform are all copied from the source raster:</p>
 <pre><code><span><span class="va">f2</span> <span class="op">=</span> <span class="st">"LC20_Elev_220_striped.tif"</span></span>
 <span><span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span>, <span class="st">"TILED=NO"</span>, <span class="st">"BLOCKYSIZE=1"</span>, <span class="st">"BIGTIFF=YES"</span><span class="op">)</span></span>
-<span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/createCopy.html">createCopy</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="va">f2</span>, <span class="va">f</span>, options<span class="op">=</span><span class="va">options</span><span class="op">)</span></span>
+<span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/createCopy.html">createCopy</a></span><span class="op">(</span>format<span class="op">=</span><span class="st">"GTiff"</span>, dst_filename<span class="op">=</span><span class="va">f2</span>, src_filename<span class="op">=</span><span class="va">f</span>,</span>
+<span>                       options<span class="op">=</span><span class="va">options</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds2</span> <span class="op">=</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f2</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">ds2</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
@@ -173,9 +174,10 @@ not efficient for strips vs. tiles. Substituting the new file
 (<code>f2</code>) in the test above gives the following time to read all
 pixels by row:</p>
 <pre><code><span><span class="co">## Test 2</span></span>
-<span><span class="co">## striped tif, reading on block boundaries (cache not involved)</span></span>
+<span><span class="co">## striped tif, reading on block boundaries (rows)</span></span>
+<span><span class="co">## cache retrieval not involved</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">gdalraster_read</span><span class="op">)</span> <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">process_row</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="co">#&gt;    user  system elapsed</span></span>
 <span><span class="co">#&gt; 230.650   5.112 236.370</span></span></code></pre>
 <p>A final test reads by block on the original tiled raster as
@@ -199,14 +201,15 @@ matrix of block boundaries using:</p>
 <span><span class="co">#&gt; [1] 970268</span></span></code></pre>
 <p>In terms of expected efficiency, reading the tiled raster by block is
 similar to reading the striped raster by row (reading on block
-boundaries, block caching not involved). The difference is that the
-striped tif contains fewer but larger blocks (101538 blocks, 156335
-pixels per block), while the tiled tif contains order of magnitude more
-blocks that are smaller (970268 blocks, 16384 pixels per block). This
-test uses the original LANDFIRE elevation file (<code>f</code>) to read
-all pixels by tile:</p>
+boundaries, no retrieval from cache). The difference is that the striped
+tif contains fewer but larger blocks (101538 blocks, 156335 pixels per
+block), while the tiled tif contains order of magnitude more blocks that
+are smaller (970268 blocks, 16384 pixels per block). This test uses the
+original LANDFIRE elevation file (<code>f</code>) to read all pixels by
+tile:</p>
 <pre><code><span><span class="co">## Test 3</span></span>
-<span><span class="co">## original tiled raster, reading on block boundaries (cache not involved)</span></span>
+<span><span class="co">## original tiled raster, reading on block boundaries (tiles)</span></span>
+<span><span class="co">## cache retrieval not involved</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="op">{</span></span>
 <span>  <span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">blocks</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span>
@@ -225,7 +228,7 @@ by row (1.59e+10 total pixels in the test dataset). The default maximum
 size of the memory cache is 5% of usable physical RAM. Each row of the
 LANDFIRE tiled raster intersects 1222 blocks of size 128 x 128. Each
 intersected block is read from file, decoded from LZW compression, and
-placed in cache memory. Data for each successive <code>read()</code>
+placed in cache memory. The data for each successive <code>read()</code>
 that intersects the same block are retrieved from cache. Caching all of
 the intersected blocks requires 128 x 128 x 2 bytes = 32768 bytes per
 block, 32768 x 1222 = 40042496 bytes, approximately 40 MB. All of the
@@ -248,6 +251,7 @@ behavior:</p>
 <span><span class="va">nrows</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Default cache size is approximately 400 MB in this case (5% of 8 GB RAM)</span></span>
+<span><span class="co">## Read enough data to require cache max</span></span>
 <span><span class="va">rows_read</span> <span class="op">=</span> <span class="fl">0</span></span>
 <span><span class="va">cache_use</span> <span class="op">=</span> <span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">row</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">1536</span><span class="op">)</span> <span class="op">{</span></span>
@@ -260,7 +264,7 @@ behavior:</p>
 <span>     xlab<span class="op">=</span><span class="st">"rows read"</span>, ylab<span class="op">=</span><span class="st">"cache in use (MB)"</span>, </span>
 <span>     lwd<span class="op">=</span><span class="fl">2</span>, xaxt<span class="op">=</span><span class="st">"n"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/axis.html" class="external-link">axis</a></span><span class="op">(</span><span class="fl">1</span>, at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1536</span>, by <span class="op">=</span> <span class="fl">128</span><span class="op">)</span>, las<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre>
-<p><img src="img/cache_use.png" width="70%"></p>
+<p><img src="img/cache_use.png" width="75%"></p>
 </div>
 <div class="section level2">
 <h2 id="configuring-cache-size">Configuring cache size<a class="anchor" aria-label="anchor" href="#configuring-cache-size"></a>
@@ -285,11 +289,11 @@ require 65536 x 2 = 131072 bytes for 16-bit data. The cache size needed
 to hold all intersected blocks for a row would be approximately 160 MB
 (and likewise, 640 MB for 512 x 512 tiles). Similarly, the cache size
 could be configured for the case of multiple large rasters that need to
-be read simultaneously for processing.</p>
-<p>Cache memory is generally flushed on dataset closing. The behavior
-described above assumes that the GDAL dataset is opened once, and
-required I/O completed before closing the dataset. This would normally
-be the case when using the GDAL API via <code>gdalraster</code> bindings
+be read (or written) simultaneously for processing.</p>
+<p>The cache is flushed on dataset closing to recover memory. The
+behavior described above assumes that the GDAL dataset is opened once,
+and required I/O completed before closing the dataset. This would
+normally be the case when using the GDAL API via <code>gdalraster</code>
 (an object of class <code><a href="../reference/GDALRaster-class.html">gdalraster::GDALRaster</a></code> encapsulates a
 <code>GDALDataset</code> object and its associated
 <code>GDALRasterBand</code> objects in the underlying API).</p>
@@ -313,14 +317,14 @@ disabled:</p>
 <span><span class="va">ncols</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">nrows</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">gdalraster_read</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">row</span><span class="op">)</span> <span class="op">{</span></span>
+<span><span class="va">process_row</span> <span class="op">=</span> <span class="kw">function</span><span class="op">(</span><span class="va">row</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">r</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, xoff<span class="op">=</span><span class="fl">0</span>, yoff<span class="op">=</span><span class="va">row</span>, </span>
 <span>              xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="fl">1</span>, </span>
 <span>              out_xsize<span class="op">=</span><span class="va">ncols</span>, out_ysize<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span>  <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="op">}</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">gdalraster_read</span><span class="op">)</span> <span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>, <span class="va">process_row</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="co">#&gt; ^C</span></span>
 <span><span class="co">#&gt; Timing stopped at: 3650 42.97 3694  # killed with ctrl-c</span></span>
 <span></span>
