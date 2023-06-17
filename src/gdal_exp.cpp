@@ -95,12 +95,13 @@ void set_config_option(std::string key, std::string value) {
 	CPLSetConfigOption(key.c_str(), value_);
 }
 
-//' Get the amount of memory currently in use by the GDAL block cache
+//' Get the size of memory in use by the GDAL block cache
 //'
-//' `get_cache_used()` returns the amount of memory in MB currently in use for
-//' GDAL block caching.
+//' `get_cache_used()` returns the amount of memory currently in use for
+//' GDAL block caching. This a wrapper for `GDALGetCacheUsed64()` with return
+//' value as MB.
 //'
-//' @returns Integer. Amount of memory in MB.
+//' @returns Integer. Amount of cache memory in use in MB.
 //'
 //' @examples
 //' get_cache_used()
@@ -133,7 +134,8 @@ int get_cache_used() {
 //' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()]
 //' @examples
 //' new_file <- paste0(tempdir(), "/", "newdata.tif")
-//' create("GTiff", new_file, 143, 107, 1, "Int16")
+//' create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
+//'        nbands=1, dataType="Int16")
 //' ds <- new(GDALRaster, new_file, read_only=FALSE)
 //' ## EPSG:26912 - NAD83 / UTM zone 12N
 //' ds$setProjection(epsg_to_wkt(26912))
@@ -212,11 +214,12 @@ bool create(std::string format, std::string dst_filename,
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 //' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
 //' options <- c("COMPRESS=LZW")
-//' createCopy("GTiff", tif_file, lcp_file, options=options)
+//' createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
+//'            options=options)
 //' file.size(lcp_file)
 //' file.size(tif_file)
 //' ds <- new(GDALRaster, tif_file, read_only=FALSE)
-//' ds$getMetadata(0, "IMAGE_STRUCTURE")
+//' ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
 //' for (band in 1:ds$getRasterCount())
 //'     ds$setNoDataValue(band, -9999)
 //' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
@@ -357,7 +360,7 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' pts <- read.csv(pt_file)
 //' print(pts)
 //' raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-//' ds <- new(GDALRaster, raster_file, TRUE)
+//' ds <- new(GDALRaster, raster_file, read_only=TRUE)
 //' gt <- ds$getGeoTransform()
 //' get_pixel_line(as.matrix(pts[,-1]), gt)
 //' ds$close()
