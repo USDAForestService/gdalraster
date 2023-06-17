@@ -2,16 +2,17 @@
 % Please edit documentation in R/RcppExports.R
 \name{get_cache_used}
 \alias{get_cache_used}
-\title{Get the amount of memory currently in use by the GDAL block cache}
+\title{Get the size of memory in use by the GDAL block cache}
 \usage{
 get_cache_used()
 }
 \value{
-Integer. Amount of memory in MB.
+Integer. Amount of cache memory in use in MB.
 }
 \description{
-\code{get_cache_used()} returns the amount of memory in MB currently in use for
-GDAL block caching.
+\code{get_cache_used()} returns the amount of memory currently in use for
+GDAL block caching. This a wrapper for \code{GDALGetCacheUsed64()} with return
+value as MB.
 }
 \examples{
 get_cache_used()

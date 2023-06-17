@@ -101,7 +101,7 @@ Returns logical indicating whether the associated raster dataset is open.
 Prints various information about the raster dataset to the console (no
 return value, called for that side effect only).
 Equivalent to the output of the \command{gdalinfo} command-line utility
-(\command{gdalinfo -nomd -norat -noct filename}). Intended here as an
+(\command{gdalinfo -norat -noct filename}). Intended here as an
 informational convenience function.
 
 \code{$getDriverShortName()}

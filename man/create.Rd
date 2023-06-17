@@ -36,7 +36,8 @@ An error is raised if the operation fails.
 }
 \examples{
 new_file <- paste0(tempdir(), "/", "newdata.tif")
-create("GTiff", new_file, 143, 107, 1, "Int16")
+create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
+       nbands=1, dataType="Int16")
 ds <- new(GDALRaster, new_file, read_only=FALSE)
 ## EPSG:26912 - NAD83 / UTM zone 12N
 ds$setProjection(epsg_to_wkt(26912))
