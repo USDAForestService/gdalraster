@@ -256,57 +256,32 @@ behavior:</p>
 <span><span class="co">## Default cache size is approximately 400 MB in this case (5% of 8 GB RAM)</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">n</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="fl">23</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  <span class="va">r</span> <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">1</span>, <span class="fl">0</span>, <span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="fl">64</span><span class="op">)</span>, <span class="va">ncols</span>, <span class="fl">1</span>, <span class="va">ncols</span>, <span class="fl">1</span><span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Row number read:"</span>, <span class="op">(</span><span class="va">n</span> <span class="op">*</span> <span class="fl">64</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Cache memory in use (MB):"</span>, <span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Row: "</span>, <span class="op">(</span><span class="va">i</span> <span class="op">*</span> <span class="fl">64</span><span class="op">)</span>, <span class="st">", cache in use (MB): "</span>, <span class="fu"><a href="../reference/get_cache_used.html">get_cache_used</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">)</span></span>
 <span><span class="op">}</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 0"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 40"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 64"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 40"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 128"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 80"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 192"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 80"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 256"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 120"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 320"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 120"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 384"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 160"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 448"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 160"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 512"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 201"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 576"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 201"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 640"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 241"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 704"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 241"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 768"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 281"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 832"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 281"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 896"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 321"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 960"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 321"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 1024"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 362"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 1088"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 362"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 1152"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 1216"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 1280"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 1344"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 1408"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span>
-<span><span class="co">#&gt; [1] "Row number read: 1472"</span></span>
-<span><span class="co">#&gt; [1] "Cache memory in use (MB): 401"</span></span></code></pre>
+<span><span class="co">#&gt; [1] "Row: 0, cache in use (MB): 40"</span></span>
+<span><span class="co">#&gt; [1] "Row: 64, cache in use (MB): 40"</span></span>
+<span><span class="co">#&gt; [1] "Row: 128, cache in use (MB): 80"</span></span>
+<span><span class="co">#&gt; [1] "Row: 192, cache in use (MB): 80"</span></span>
+<span><span class="co">#&gt; [1] "Row: 256, cache in use (MB): 120"</span></span>
+<span><span class="co">#&gt; [1] "Row: 320, cache in use (MB): 120"</span></span>
+<span><span class="co">#&gt; [1] "Row: 384, cache in use (MB): 160"</span></span>
+<span><span class="co">#&gt; [1] "Row: 448, cache in use (MB): 160"</span></span>
+<span><span class="co">#&gt; [1] "Row: 512, cache in use (MB): 201"</span></span>
+<span><span class="co">#&gt; [1] "Row: 576, cache in use (MB): 201"</span></span>
+<span><span class="co">#&gt; [1] "Row: 640, cache in use (MB): 241"</span></span>
+<span><span class="co">#&gt; [1] "Row: 704, cache in use (MB): 241"</span></span>
+<span><span class="co">#&gt; [1] "Row: 768, cache in use (MB): 281"</span></span>
+<span><span class="co">#&gt; [1] "Row: 832, cache in use (MB): 281"</span></span>
+<span><span class="co">#&gt; [1] "Row: 896, cache in use (MB): 321"</span></span>
+<span><span class="co">#&gt; [1] "Row: 960, cache in use (MB): 321"</span></span>
+<span><span class="co">#&gt; [1] "Row: 1024, cache in use (MB): 362"</span></span>
+<span><span class="co">#&gt; [1] "Row: 1088, cache in use (MB): 362"</span></span>
+<span><span class="co">#&gt; [1] "Row: 1152, cache in use (MB): 401"</span></span>
+<span><span class="co">#&gt; [1] "Row: 1216, cache in use (MB): 401"</span></span>
+<span><span class="co">#&gt; [1] "Row: 1280, cache in use (MB): 401"</span></span>
+<span><span class="co">#&gt; [1] "Row: 1344, cache in use (MB): 401"</span></span>
+<span><span class="co">#&gt; [1] "Row: 1408, cache in use (MB): 401"</span></span>
+<span><span class="co">#&gt; [1] "Row: 1472, cache in use (MB): 401"</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 id="configuring-cache-size">Configuring cache size<a class="anchor" aria-label="anchor" href="#configuring-cache-size"></a>
