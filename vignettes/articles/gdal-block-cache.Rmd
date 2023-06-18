@@ -17,10 +17,10 @@ GDAL implements read/write memory caching during raster I/O. Caching operates on
 
 ## Relative performance
 
-A test dataset contains 16-bit integer elevation values at 30-m pixel resolution for the conterminous US (LANDFIRE Program, https://www.landfire.gov/). The version is "LF 2020 [LF 2.2.0]" which is available as an 8.4 GB download. The download includes raster overviews, but the elevation raster itself is a 6.8 GB GeoTIFF file using LZW compression on 128 x 128 tiles. The direct download link for LF 2020 elevation is:
+A dataset containing 16-bit integer elevation values at 30-m pixel resolution for the conterminous US was obtained from [LANDFIRE](https://www.landfire.gov/). The version is "LF 2020 [LF 2.2.0]" which is available as an 8.4 GB download. The download includes raster overviews, but the elevation raster itself is a 6.8 GB GeoTIFF file using LZW compression on 128 x 128 tiles. The direct download link for LF 2020 elevation is:  
 https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&TYPE=landfire
 
-Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz, 8 GB RAM and SSD, Ubuntu 22.04.2, R 4.3.0, gdalraster 1.2.1 (dev), GDAL 3.6.2.
+Tests were run on a laptop with Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz, 8 GB RAM and SSD, Ubuntu 22.04.2, R 4.3.0, gdalraster 1.2.1 (dev), GDAL 3.6.2.
 
 Open the elevation dataset and get parameters:
 
