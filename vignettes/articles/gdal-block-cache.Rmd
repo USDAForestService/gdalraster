@@ -73,6 +73,7 @@ f2 = "LC20_Elev_220_striped.tif"
 options = c("COMPRESS=LZW", "TILED=NO", "BLOCKYSIZE=1", "BIGTIFF=YES")
 gdalraster::createCopy(format="GTiff", dst_filename=f2, src_filename=f,
                        options=options)
+#> 0...10...20...30...40...50...60...70...80...90...100 - done.
 
 ds2 = new(GDALRaster, f2, read_only = TRUE)
 ds2$getBlockSize(band=1)
@@ -81,7 +82,7 @@ ds2$getBlockSize(band=1)
 ds2$close()
 ```
 
-This creates a "striped" tif with raster blocks arranged for row-level access (`TILED=NO` is the default creation option for the GTiff format driver, https://gdal.org/drivers/raster/gtiff.html#creation-issues). The resulting file is larger at 10.6 GB vs. 6.8 GB, since compression is not efficient for strips vs. tiles. Substituting the new file (`f2`) in the test above gives the following time to read all pixels by row:
+This creates a "striped" tif with raster blocks arranged for row-level access (`TILED=NO` is the default creation option for the [GTiff format driver](https://gdal.org/drivers/raster/gtiff.html#creation-issues)). The resulting file is larger at 10.6 GB vs. 6.8 GB, since compression is not efficient for strips vs. tiles. Substituting the new file (`f2`) in the test above gives the following time to read all pixels by row:
 
 ```
 ## Test 2
