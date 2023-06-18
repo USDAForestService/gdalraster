@@ -165,7 +165,7 @@ std::string srs_to_wkt(std::string srs, bool pretty = false) {
 //' @return Logical. `TRUE` if `srs` is geographic, otherwise `FALSE`
 //'
 //' @seealso
-//' [srs_is_projected()]
+//' [srs_is_projected()], [srs_is_same()]
 //'
 //' @examples
 //' srs_is_geographic(epsg_to_wkt(5070))
@@ -194,7 +194,7 @@ bool srs_is_geographic(std::string srs) {
 //' @return Logical. `TRUE` if `srs` is projected, otherwise `FALSE`
 //'
 //' @seealso
-//' [srs_is_geographic()]
+//' [srs_is_geographic()], [srs_is_same()]
 //'
 //' @examples
 //' srs_is_projected(epsg_to_wkt(5070))
@@ -222,6 +222,9 @@ bool srs_is_projected(std::string srs) {
 //' @param srs2 Character OGC WKT string for a spatial reference system
 //' @return Logical. `TRUE` if these two spatial references describe the same 
 //' system, otherwise `FALSE`.
+//'
+//' @seealso
+//' [srs_is_geographic()], [srs_is_projected()]
 //'
 //' @examples
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")

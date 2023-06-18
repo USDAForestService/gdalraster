@@ -27,3 +27,6 @@ srs_is_same(ds$getProjectionRef(), epsg_to_wkt(26912))
 srs_is_same(ds$getProjectionRef(), epsg_to_wkt(5070))
 ds$close()
 }
+\seealso{
+\code{\link[=srs_is_geographic]{srs_is_geographic()}}, \code{\link[=srs_is_projected]{srs_is_projected()}}
+}
