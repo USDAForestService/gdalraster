@@ -34,12 +34,12 @@ several related stand-alone functions. These support:
 
 Additional functionality includes:
 
-  - class `RunningStats` calculates mean and variance in one pass, and
+  - `RunningStats-class` calculates mean and variance in one pass, and
     tracks the min, max, sum, and count (i.e., summary statistics on a
     data stream). The input data values are not stored in memory, so
     this class can be used to compute statistics for very large data
     streams.
-  - class `CmbTable` identifies and counts unique combinations of
+  - `CmbTable-class` identifies and counts unique combinations of
     integer values using a hash table.
   - `combine()` overlays multiple rasters so that a unique ID is
     assigned to each unique combination of input values. Pixel counts
@@ -68,9 +68,9 @@ pak::pak("USDAForestService/gdalraster")
 
 ## Documentation
 
-  - [Online
+  - [Reference
     manual](https://usdaforestservice.github.io/gdalraster/reference/)
   - [Raster API
     tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
-  - [GDAL Block
-    Caching](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
+  - [GDAL block
+    caching](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
