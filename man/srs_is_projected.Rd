@@ -23,5 +23,5 @@ srs_is_projected(epsg_to_wkt(5070))
 srs_is_projected(srs_to_wkt("WGS84"))
 }
 \seealso{
-\code{\link[=srs_is_geographic]{srs_is_geographic()}}
+\code{\link[=srs_is_geographic]{srs_is_geographic()}}, \code{\link[=srs_is_same]{srs_is_same()}}
 }
