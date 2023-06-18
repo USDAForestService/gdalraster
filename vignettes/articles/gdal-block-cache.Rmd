@@ -150,9 +150,15 @@ for (row in 0:1536) {
   cache_use = c(cache_use, get_cache_used())
 }
 
+get_cache_used()
+#> [1] 401
+ds$close()
+get_cache_used()
+#> [1] 0
+
 plot(rows_read, cache_use, type="S", 
      xlab="rows read", ylab="cache in use (MB)", 
-     lwd=2, xaxt="n")
+     col="blue", lwd=2, xaxt="n")
 axis(1, at = seq(0, 1536, by = 128), las=2)
 ```
 ```{r out.width = '75%', echo = FALSE}
