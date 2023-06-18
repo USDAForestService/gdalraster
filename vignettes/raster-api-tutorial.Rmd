@@ -117,7 +117,7 @@ The `out_xsize` and `out_ysize` values describe the size of the buffer (an R vec
 
 ## Closing the dataset
 
-Calling `GDALRaster$close()` will result in proper cleanup, and flushing of any pending writes. Forgetting to call `close()` on a dataset opened in update mode in a popular format like GTiff will likely result in being unable to open it afterwards.
+Calling `GDALRaster$close()` will result in proper cleanup, and flushing of any pending writes. Forgetting to call `close` on a dataset opened in update mode in a popular format like GTiff will likely result in being unable to open it afterwards.
 
 ```{r}
 # close the dataset for proper cleanup
