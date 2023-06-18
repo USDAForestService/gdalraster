@@ -103,15 +103,15 @@ context), but similar concepts apply to writing as well.</p>
 <div class="section level2">
 <h2 id="relative-performance">Relative performance<a class="anchor" aria-label="anchor" href="#relative-performance"></a>
 </h2>
-<p>A test dataset contains 16-bit integer elevation values at 30-m pixel
-resolution for the conterminous US (LANDFIRE Program, <a href="https://www.landfire.gov/" class="external-link uri">https://www.landfire.gov/</a>). The version is “LF 2020 [LF
-2.2.0]” which is available as an 8.4 GB download. The download includes
-raster overviews, but the elevation raster itself is a 6.8 GB GeoTIFF
-file using LZW compression on 128 x 128 tiles. The direct download link
-for LF 2020 elevation is: <a href="https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire" class="external-link uri">https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire</a></p>
-<p>Tests were run on a Dell XPS 13 laptop with Intel(R) Core(TM)
-i5-8250U CPU @ 1.60GHz, 8 GB RAM and SSD, Ubuntu 22.04.2, R 4.3.0,
-gdalraster 1.2.1 (dev), GDAL 3.6.2.</p>
+<p>A dataset containing 16-bit integer elevation values at 30-m pixel
+resolution for the conterminous US was obtained from <a href="https://www.landfire.gov/" class="external-link">LANDFIRE</a>. The version is “LF 2020
+[LF 2.2.0]” which is available as an 8.4 GB download. The download
+includes raster overviews, but the elevation raster itself is a 6.8 GB
+GeoTIFF file using LZW compression on 128 x 128 tiles. The direct
+download link for LF 2020 elevation is:<br><a href="https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire" class="external-link uri">https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&amp;TYPE=landfire</a></p>
+<p>Tests were run on a laptop with Intel(R) Core(TM) i5-8250U CPU @
+1.60GHz, 8 GB RAM and SSD, Ubuntu 22.04.2, R 4.3.0, gdalraster 1.2.1
+(dev), GDAL 3.6.2.</p>
 <p>Open the elevation dataset and get parameters:</p>
 <pre><code><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
 <span></span>
