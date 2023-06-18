@@ -245,6 +245,55 @@ get_pixel_line <- function(xy, gt) {
     .Call(`_gdalraster_get_pixel_line`, xy, gt)
 }
 
+#' Fill selected pixels by interpolation from surrounding areas
+#'
+#' `fillNodata()` is a wrapper for `GDALFillNodata()` in the GDAL Algorithms
+#' API. This algorithm will interpolate values for all designated nodata 
+#' pixels (pixels having an intrinsic nodata value, or marked by zero-valued
+#' pixels in the optional raster specified in `mask_file`). For each nodata 
+#' pixel, a four direction conic search is done to find values to interpolate
+#' from (using inverse distance weighting).
+#' Once all values are interpolated, zero or more smoothing iterations
+#' (3x3 average filters on interpolated pixels) are applied to smooth out 
+#' artifacts.
+#'
+#' @note
+#' The input raster will be modified in place. It should not be open in a
+#' `GDALRaster` object while processing with `fillNodata()`.
+#'
+#' @param filename Filename of input raster in which to fill nodata pixels.
+#' @param band Integer band number to modify in place.
+#' @param mask_file Optional filename of raster to use as a validity mask
+#' (band 1 is used, zero marks nodata pixels, non-zero marks valid pixels).
+#' @param max_dist Maximum distance (in pixels) that the algorithm 
+#' will search out for values to interpolate (100 pixels by default).
+#' @param smooth_iterations The number of 3x3 average filter smoothing
+#' iterations to run after the interpolation to dampen artifacts
+#' (0 by default).
+#' @returns Logical indicating success (invisible \code{TRUE}).
+#' An error is raised if the operation fails.
+#' @examples
+#' ## fill nodata edge pixels in the elevation raster
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' 
+#' ## get count of nodata
+#' df = combine(elev_file)
+#' head(df)
+#' df[is.na(df$storml_elev),]
+#' 
+#' ## make a copy that will be modified
+#' mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+#' file.copy(elev_file,  mod_file)
+#' 
+#' fillNodata(mod_file, band=1)
+#' 
+#' df_mod = combine(mod_file)
+#' head(df_mod)
+#' df_mod[is.na(df_mod$storml_elev_fill),]
+fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_iterations = 0L) {
+    invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations))
+}
+
 #' Raster reprojection
 #'
 #' `warp()` is a wrapper for the \command{gdalwarp} command-line utility.
@@ -594,7 +643,7 @@ srs_to_wkt <- function(srs, pretty = FALSE) {
 #' @return Logical. `TRUE` if `srs` is geographic, otherwise `FALSE`
 #'
 #' @seealso
-#' [srs_is_projected()]
+#' [srs_is_projected()], [srs_is_same()]
 #'
 #' @examples
 #' srs_is_geographic(epsg_to_wkt(5070))
@@ -614,7 +663,7 @@ srs_is_geographic <- function(srs) {
 #' @return Logical. `TRUE` if `srs` is projected, otherwise `FALSE`
 #'
 #' @seealso
-#' [srs_is_geographic()]
+#' [srs_is_geographic()], [srs_is_same()]
 #'
 #' @examples
 #' srs_is_projected(epsg_to_wkt(5070))
@@ -633,6 +682,9 @@ srs_is_projected <- function(srs) {
 #' @param srs2 Character OGC WKT string for a spatial reference system
 #' @return Logical. `TRUE` if these two spatial references describe the same 
 #' system, otherwise `FALSE`.
+#'
+#' @seealso
+#' [srs_is_geographic()], [srs_is_projected()]
 #'
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")

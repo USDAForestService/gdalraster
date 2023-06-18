@@ -108,6 +108,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// fillNodata
+bool fillNodata(std::string filename, int band, std::string mask_file, double max_dist, int smooth_iterations);
+RcppExport SEXP _gdalraster_fillNodata(SEXP filenameSEXP, SEXP bandSEXP, SEXP mask_fileSEXP, SEXP max_distSEXP, SEXP smooth_iterationsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< int >::type band(bandSEXP);
+    Rcpp::traits::input_parameter< std::string >::type mask_file(mask_fileSEXP);
+    Rcpp::traits::input_parameter< double >::type max_dist(max_distSEXP);
+    Rcpp::traits::input_parameter< int >::type smooth_iterations(smooth_iterationsSEXP);
+    rcpp_result_gen = Rcpp::wrap(fillNodata(filename, band, mask_file, max_dist, smooth_iterations));
+    return rcpp_result_gen;
+END_RCPP
+}
 // warp
 bool warp(std::vector<std::string> src_files, std::string dst_filename, Rcpp::CharacterVector t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 RcppExport SEXP _gdalraster_warp(SEXP src_filesSEXP, SEXP dst_filenameSEXP, SEXP t_srsSEXP, SEXP cl_argSEXP) {
@@ -494,6 +509,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 5},
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
     {"_gdalraster_get_pixel_line", (DL_FUNC) &_gdalraster_get_pixel_line, 2},
+    {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 5},
     {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 4},
     {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 7},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},

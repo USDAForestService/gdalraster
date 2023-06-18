@@ -30,6 +30,7 @@ reference:
   - create
   - createCopy
   - epsg_to_wkt
+  - fillNodata
   - gdal_version
   - get_cache_used
   - get_config_option
