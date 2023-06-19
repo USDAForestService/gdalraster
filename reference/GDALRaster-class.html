@@ -90,6 +90,15 @@ opened dataset, and methods that operate on the dataset as described in
 Details.</p>
     </div>
     <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p>The <code>$read()</code> method will perform automatic resampling if the
+specified output size (<code>out_xsize * out_ysize</code>) is different than
+the size of the region being read (<code>xsize * ysize</code>). In that case, the
+GDAL_RASTERIO_RESAMPLING configuration option could also be defined to
+override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE,
+LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_option()</a></code>).</p>
+    </div>
+    <div class="section level2">
     <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
     
 
@@ -372,13 +381,8 @@ The dataset can be re-opened on the existing <code>filename</code> with
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Package overview in <code><a href="gdalraster-package.html">help("gdalraster-package")</a></code></p>
-<p><code><a href="create.html">create()</a></code>, <code><a href="createCopy.html">createCopy()</a></code>, <code><a href="rasterFromRaster.html">rasterFromRaster()</a></code>, <code><a href="rasterToVRT.html">rasterToVRT()</a></code>, <code><a href="warp.html">warp()</a></code></p>
-<p>As described above, the <code>$read()</code> method will perform automatic resampling
-if the specified output size (<code>out_xsize * out_ysize</code>) is different than
-the size of the region being read (<code>xsize * ysize</code>). In that case, the
-GDAL_RASTERIO_RESAMPLING configuration option could also be defined to
-override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE,
-LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_option()</a></code>).</p></div>
+<p><code><a href="create.html">create()</a></code>, <code><a href="createCopy.html">createCopy()</a></code>, <code><a href="rasterFromRaster.html">rasterFromRaster()</a></code>, <code><a href="rasterToVRT.html">rasterToVRT()</a></code></p>
+<p><code><a href="fillNodata.html">fillNodata()</a></code>, <code><a href="warp.html">warp()</a></code></p></div>
     </div>
 
     <div class="section level2">

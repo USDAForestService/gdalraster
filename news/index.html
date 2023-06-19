@@ -53,8 +53,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.2.1" id="gdalraster-121-dev">gdalraster 1.2.1 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-121-dev"></a></h2>
-<ul><li><p><code>GDALRaster$info()</code>: drop <code>-nomd</code> argument (2023-06-17)</p></li>
-<li><p>add <code><a href="../reference/get_cache_used.html">get_cache_used()</a></code> (2023-06-16)</p></li>
+<ul><li><p>add <code><a href="../reference/fillNodata.html">fillNodata()</a></code>: wrapper for <code>GDALFillNodata()</code> in the GDAL Algorithms API (2023-06-18)</p></li>
+<li><p><code>GDALRaster$info()</code>: drop <code>-nomd</code> argument from the internal call (2023-06-17)</p></li>
+<li><p>add <code><a href="../reference/get_cache_used.html">get_cache_used()</a></code>: wrapper for <code>GDALGetCacheUsed64()</code> with return value in MB (2023-06-16)</p></li>
 <li><p><code><a href="../reference/bbox_from_wkt.html">bbox_from_wkt()</a></code>: return <code>NA</code> if creation of the geometry object fails (<a href="https://github.com/USDAForestService/gdalraster/issues/27" class="external-link">#27</a>) (2023-06-15)</p></li>
 <li><p>add <code>GDALRaster$getOverviewCount()</code> (2023-06-15)</p></li>
 <li><p>documentation: add vignette containing an R port of the GDAL Raster API tutorial (2023-06-15)</p></li>

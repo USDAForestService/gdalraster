@@ -73,6 +73,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/epsg_to_wkt.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/fillNodata.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/gdal_version.html</loc>
   </url>
   <url>
