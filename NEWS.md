@@ -1,8 +1,10 @@
 # gdalraster 1.2.1 (dev)
 
-* `GDALRaster$info()`: drop `-nomd` argument (2023-06-17)
+* add `fillNodata()`: wrapper for `GDALFillNodata()` in the GDAL Algorithms API (2023-06-18)
 
-* add `get_cache_used()` (2023-06-16)
+* `GDALRaster$info()`: drop `-nomd` argument from the internal call (2023-06-17)
+
+* add `get_cache_used()`: wrapper for `GDALGetCacheUsed64()` with return value in MB (2023-06-16)
 
 * `bbox_from_wkt()`: return `NA` if creation of the geometry object fails (#27) (2023-06-15)
 

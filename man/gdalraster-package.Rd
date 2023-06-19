@@ -8,7 +8,7 @@
   \code{gdalraster} is an interface to the Geospatial Data Abstraction 
   Library (GDAL) for low level raster I/O. Calling signatures resemble those 
   of the native C, C++ and Python APIs provided by the GDAL project.
-  See \url{https://gdal.org/api/index.html} for details of the GDAL Raster API.
+  See \url{https://gdal.org/api/} for details of the GDAL Raster API.
 }
 \details{
   Core functionality is contained in the \code{GDALRaster} class and several 
@@ -25,6 +25,9 @@
   
   \item reproject: \code{\link{warp}}
   
+  \item algorithms: \code{\link{fillNodata}},
+  \code{\link[=GDALRaster]{GDALRaster$getChecksum}}
+  
   \item geotransform conversion: \code{\link{inv_geotransform}}, 
   \code{\link{get_pixel_line}}
   
@@ -33,15 +36,17 @@
   
   \item spatial reference convenience functions: \code{\link{epsg_to_wkt}}, 
   \code{\link{srs_to_wkt}},\cr
-  \code{\link{srs_is_geographic}}, \code{\link{srs_is_projected}}
+  \code{\link{srs_is_geographic}}, \code{\link{srs_is_projected}},
+  \code{\link{srs_is_same}}
   
   \item geometry convenience functions: \code{\link{bbox_from_wkt}}, 
   \code{\link{bbox_to_wkt}},\cr
   \code{\link{bbox_intersect}}, \code{\link{bbox_union}}, 
   \code{\link{has_geos}}
   
-  \item GDAL configuration: \code{\link{gdal_version}}, 
-  \code{\link{get_config_option}}, \code{\link{set_config_option}}
+  \item GDAL configuration: \code{\link{gdal_version}},
+  \code{\link{get_cache_used}}, \code{\link{get_config_option}},\cr
+  \code{\link{set_config_option}}
   }
   Additional functionality includes:
   \itemize{
@@ -82,14 +87,15 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
 }
 \note{
   Documentation for several wrapper functions borrows from the GDAL API 
-  documentation, Copyright 1998-2023, Frank Warmerdam, Even Rouault, and 
-  others, \url{https://gdal.org/license.html}.
+  documentation, (c) 1998-2023, Frank Warmerdam, Even Rouault, and 
+  others, \href{https://gdal.org/license.html}{MIT license}.
 
   Sample datasets are included with the package and used in examples 
-  throughout the documentation. The sample data include LANDFIRE raster layers 
-  describing terrain, vegetation and wildland fuels (LF 2020 version, 
-  \url{https://landfire.gov/}). Landsat C2 Analysis Ready Data were 
-  downloaded from USGS Earth Explorer (\url{https://earthexplorer.usgs.gov/}).
+  throughout the documentation. The sample data include
+  \href{https://landfire.gov/}{LANDFIRE} raster layers describing terrain,
+  vegetation and wildland fuels (LF 2020 version).
+  Landsat C2 Analysis Ready Data were downloaded from
+  \href{https://earthexplorer.usgs.gov/}{USGS Earth Explorer}.
 
   \code{system.file()} is used in the examples to access the sample datasets. 
   This enables the code to run regardless of where R is installed. Users will 

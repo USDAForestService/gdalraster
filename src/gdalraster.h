@@ -43,6 +43,9 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
 Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 		const std::vector<double> gt);	
 
+bool fillNodata(std::string filename, int band, std::string mask_file,
+		double max_dist, int smooth_iterations);
+		
 bool warp(Rcpp::CharacterVector src_files, std::string dst_filename,
 		Rcpp::CharacterVector t_srs, 
 		Rcpp::Nullable<Rcpp::CharacterVector> arg_list);
