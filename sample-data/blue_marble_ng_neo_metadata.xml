@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<metadata
+  xsi:noNamespaceSchemaLocation="http://neo.gsfc.nasa.gov/schemas/fgdc-std-001-1998.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+  <idinfo>
+    <citation>
+      <citeinfo>
+        <origin>NASA Earth Observations (comp.)</origin>
+        <pubdate>20230619</pubdate>
+        <pubtime>211421-0400</pubtime>
+        <title>Blue Marble: Next Generation</title>
+        <geoform>raster digital data</geoform>
+        <onlink>http://neo.gsfc.nasa.gov/view.php?datasetId=BlueMarbleNG</onlink>
+      </citeinfo>
+    </citation>
+    <descript>
+      <abstract><![CDATA[<p>NASA's Blue Marble: Next Generation images show Earth in true color.  The images show how the surface would look to a human in space if our world had no clouds and no atmosphere.  NASA's Terra satellite collected these images.  There is one Blue Marble image for each month of the year 2004.  These images allow us to explore changes on Earth's lands over time.  Notice how the patterns of green (trees and plants), brown (exposed land surface), and white (snow) change from winter through spring, summer, and fall.</p>]]></abstract>
+      <purpose>To make image representations of these data easily accessible.</purpose>
+    </descript>
+    <timeperd>
+      <timeinfo>
+        <mdattim>
+          <sngdate>
+            <caldate>20040101</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20040201</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20040301</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20040401</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20040501</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20040601</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20040701</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20040801</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20040901</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20041001</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20041101</caldate>
+          </sngdate>
+          <sngdate>
+            <caldate>20041201</caldate>
+          </sngdate>
+        </mdattim>
+      </timeinfo>
+      <current>ground condition</current>
+    </timeperd>
+    <status>
+      <progress>Complete</progress>
+      <update>Monthly</update>
+    </status>
+    <spdom>
+      <bounding>
+        <westbc>-180.0</westbc>
+        <eastbc>180.0</eastbc>
+        <northbc>90.0</northbc>
+        <southbc>-90.0</southbc>
+      </bounding>
+    </spdom>
+    <keywords>
+      <theme>
+        <themekt>None</themekt>
+        <themekey>Atmosphere</themekey>
+        <themekey>Ocean</themekey>
+        <themekey>Land</themekey>
+        <themekey>Life</themekey>
+        <themekey>Energy</themekey>
+      </theme>
+    </keywords>
+    <accconst>None</accconst>
+    <useconst>None</useconst>
+    <datacred>Blue Marble: Next Generation was produced by Reto StÃ¶ckli, NASA Earth Observatory (NASA Goddard Space Flight Center). When using or republishing Blue Marble: Next Generation please credit â€œNASA Earth Observatory.â€�</datacred>
+  </idinfo>
+  <spdoinfo>
+    <direct>Raster</direct>
+    <rastinfo>
+      <rasttype>Pixel</rasttype>
+    </rastinfo>
+  </spdoinfo>
+  <spref>
+    <horizsys>
+      <geograph>
+        <latres>0.1</latres>
+        <longres>0.1</longres>
+        <geogunit>Decimal degrees</geogunit>
+      </geograph>
+    </horizsys>
+  </spref>
+  <metainfo>
+    <metd>20230619</metd>
+    <metc>
+      <cntinfo>
+        <cntperp>
+          <cntper>Kevin Ward</cntper>
+          <cntorg>Science Systems and Applications, Inc. / NASA Goddard Space Flight Center</cntorg>
+        </cntperp>
+        <cntpos>NEO Architect &amp; Developer</cntpos>
+        <cntaddr>
+          <addrtype>mailing</addrtype>
+          <address>NASA GSFC, Code 613</address>
+          <city>Greenbelt</city>
+          <state>MD</state>
+          <postal>20771</postal>
+          <country>USA</country>
+        </cntaddr>
+        <cntvoice>+1 503 246 1608</cntvoice>
+        <cntemail>kevin.a.ward@nasa.gov</cntemail>
+      </cntinfo>
+    </metc>
+    <metstdn>FGDC Content Standard for Digital Geospatial Metadata</metstdn>
+    <metstdv>1998</metstdv>
+    <mettc>universal time</mettc>
+    <metac>none</metac>
+    <metuc>none</metuc>
+  </metainfo>
+</metadata>
