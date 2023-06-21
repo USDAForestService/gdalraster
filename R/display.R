@@ -1,4 +1,4 @@
-# plot raster data that has been read into a vector
+# Display raster data using base graphics
 
 #' @noRd
 .normalize <- function(x) {
@@ -8,6 +8,9 @@
 #' @noRd
 .as_raster <- function(a, normalize=TRUE, col_scale_fn=NULL, 
 				col_na=rgb(0,0,0,0), ...) {
+				
+	# Create an object of class "raster", a matrix of color values
+	# representing a bitmap image.
 
 	if ( !(dim(a)[3] %in% c(1,3)) )
 		stop("Number of bands must be 1 or 3")
@@ -19,8 +22,8 @@
         col_scale_fn <- ifelse (dim(a)[3] == 1, gray, rgb)
     
 	nas <- is.na(a)
-	has.na <- any(nas)
-	if (has.na) {
+	has_na <- any(nas)
+	if (has_na) {
 		a[nas] <- 0
 		if (dim(nas)[3] == 3)
 			nas <- nas[,,1] || nas[,,2] || nas[,,3]
@@ -42,13 +45,13 @@
 		class(r) <- "raster"
 	}
 	
-	if (has.na)
+	if (has_na)
         r[nas] <- col_na
 	
 	return(r)
 }
 
-#' Display raster data using base graphics
+#' Display raster data using base R graphics
 #'
 #' @param data
 #' @param xsize
@@ -79,8 +82,8 @@ plot_raster_data <- function(data, xsize, ysize, nbands=1,
 	if ( !(nbands %in% c(1,3)) )
 		stop("Number of bands must be 1 or 3")
 		
-	if (dev.capabilities()$rasterImage == "no") {
-		message("Device does not support rasterImage.")
+	if (grDevices::dev.capabilities()$rasterImage == "no") {
+		message("Device does not support rasterImage().")
 		invisible(FALSE)
 	}
 	
@@ -98,7 +101,7 @@ plot_raster_data <- function(data, xsize, ysize, nbands=1,
 
 	plot.new()
 	plot.window(xlim=xlim, ylim=ylim, asp=asp, xaxs=xaxs, yaxs=yaxs,...)
-	rasterImage(r, 1, nrow(r), ncol(r), 1, interpolate=interpolate)
+	graphics::rasterImage(r, 1, nrow(r), ncol(r), 1, interpolate=interpolate)
 	title(main)
 	if (axes) {
 		axis(1)
