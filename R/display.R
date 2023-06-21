@@ -9,8 +9,8 @@
 .as_raster <- function(a, normalize=TRUE, col_scale_fn=NULL, 
 				col_na=rgb(0,0,0,0), ...) {
 				
-	# Create an object of class "raster", a matrix of color values
-	# representing a bitmap image.
+	# Create an object of class "raster", a matrix of color values representing
+	# a bitmap image for input to graphics::rasterImage().
 
 	if ( !(dim(a)[3] %in% c(1,3)) )
 		stop("Number of bands must be 1 or 3")
@@ -51,30 +51,41 @@
 	return(r)
 }
 
-#' Display raster data using base R graphics
+#' Display raster data
+#'
+#' `plot_raster_data()` displays raster data using base graphics.
 #'
 #' @param data
 #' @param xsize
 #' @param ysize
 #' @param nbands
-#' @param normalize Rescale pixel values so that their range is [0,1].
-#' @param col_scale_fn An optional color scale function (default is gray or rgb)
-#' @param xlim x plot limits (default: 1 to width)
-#' @param ylim y plot limits (default: 1 to height)
-#' @param xlab x axis label
-#' @param ylab y axis label
-#' @param interpolate Should the image be plotted with antialiasing (default TRUE).
-#' @param asp Aspect ratio.
-#' @param xaxs The style of axis interval calculation to be used for the x-axis. See ?par
-#' @param yaxs The style of axis interval calculation to be used for the y-axis. See ?par
-#' @param axes Whether to draw axes (default TRUE)
-#' @param col_na Color to use for `NA` as a 7 or 9-character hexadecimal code. The default is transparent (`"#00000000"`, the return value of `rgb(0,0,0,0)`).
+#' @param normalize Logical. `TRUE` to rescale pixel values so that their
+#' range is [0,1].
+#' @param col_scale_fn An optional color scale function (default is `gray` or
+#' `rgb`).
+#' @param xlim Numeric vector of length two giving the x coordinate range in
+#' pixel/line space. The default is 0 to raster X size.
+#' @param ylim Numeric vector of length two giving the y coordinate range in
+#' pixel/line space. The default is raster Y size to 0.
+#' @param xlab Title for the x axis (see `?title`).
+#' @param ylab Title for the y axis (see `?title`).
+#' @param interpolate Logical indicating whether to apply linear interpolation
+#' to the image when drawing (default `TRUE`).
+#' @param asp Numeric. The aspect ratio y/x (see `?plot.window`).
+#' @param xaxs The style of axis interval calculation to be used for the x-axis
+#' (see `?par`).
+#' @param yaxs The style of axis interval calculation to be used for the y-axis
+#' (see `?par`).
+#' @param axes Logical. 'TRUE' to draw axes (the default).
+#' @param col_na Color to use for `NA` as a 7 or 9-character hexadecimal code.
+#' The default is transparent (`"#00000000"`, the return value of
+#' `rgb(0,0,0,0)`).
 #' @param main Main title.
 #' @param ... Other parameters to be passed to `plot.default()`.
 #' @export
 plot_raster_data <- function(data, xsize, ysize, nbands=1,
 						normalize=TRUE, col_scale_fn=NULL,
-						xlim=c(1, xsize), ylim=c(ysize, 1),
+						xlim=c(0, xsize), ylim=c(ysize, 0),
                  		xlab="x", ylab="y",
                  		interpolate=TRUE, asp=1, axes=TRUE, main="",
                  		xaxs="i", yaxs="i", col_na=rgb(0,0,0,0), ...) {
