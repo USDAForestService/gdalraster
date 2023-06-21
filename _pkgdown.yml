@@ -38,6 +38,7 @@ reference:
   - has_geos
   - inv_geotransform
   - inv_project
+  - plot_raster_data
   - rasterFromRaster
   - rasterToVRT
   - set_config_option
