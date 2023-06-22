@@ -41,6 +41,7 @@ reference:
   - plot_raster_data
   - rasterFromRaster
   - rasterToVRT
+  - read_ds
   - set_config_option
   - srs_is_geographic
   - srs_is_projected
