@@ -37,7 +37,13 @@ Copyright: See file inst/COPYRIGHTS for details.
 URL: https://usdaforestservice.github.io/gdalraster/
 BugReports: https://github.com/USDAForestService/gdalraster/issues
 Depends: R (>= 4.2.0)
-Imports: methods, tools, utils, Rcpp (>= 1.0.7)
+Imports: 
+    graphics,
+    grDevices,
+    methods,
+    Rcpp (>= 1.0.7),
+    tools,
+    utils
 LinkingTo: Rcpp
 Suggests: 
     knitr,
