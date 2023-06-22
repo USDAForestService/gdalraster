@@ -1,5 +1,7 @@
 # gdalraster 1.2.1 (dev)
 
+* add `read_ds()`: convenience wrapper for `GDALRaster$read()` (2023-06-21)
+
 * add `plot_raster_data()`: display raster data using base graphics (2023-06-21)
 
 * add `fillNodata()`: wrapper for `GDALFillNodata()` in the GDAL Algorithms API (2023-06-18)

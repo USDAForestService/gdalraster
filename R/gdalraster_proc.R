@@ -15,8 +15,8 @@
 #' @export
 DEFAULT_NODATA <- list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
 						"UInt32"= 4294967293, "Int32"= -2147483647, 
-						"Float32"= -99999.0, 
-						"Float64"= -99999.0)
+						"Float32"= -99999.0, "Float64"= -99999.0)
+
 
 #' @noRd
 .getGDALformat <- function(file) {
@@ -33,6 +33,7 @@ DEFAULT_NODATA <- list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
 	}
 	return(NULL)
 }
+
 
 #' Get a pixel or line offset for a north-up raster
 #' @param coord A georeferenced x or y
@@ -56,6 +57,78 @@ DEFAULT_NODATA <- list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
     <Coefs>%s</Coefs>
   </Kernel>
 </KernelFilteredSource>"
+
+
+#' Convenience wrapper for `GDALRaster$read()`
+#' 
+#' @description
+#' `read_ds()` will read from a raster dataset already opened with a
+#' `GDALRaster` object. By default, it will attempt to read the full raster
+#' extent from all bands at full resolution.
+#'
+#' @param ds An object of class `GDALRaster` in open state.
+#' @param bands Integer vector of band numbers to read. By default all bands
+#' will be read.
+#' @param xoff Integer. The pixel (column) offset to the top left corner of the
+#' raster region to be read (zero to start from the left side).
+#' @param yoff Integer. The line (row) offset to the top left corner of the
+#' raster region to be read (zero to start from the top).
+#' @param xsize Integer. The width in pixels of the region to be read.
+#' @param ysize Integer. The height in pixels of the region to be read.
+#' @param out_xsize Integer. The width of the output buffer into which the
+#' desired region will be read.
+#' @param out_ysize Integer. The height of the output buffer into which the
+#' desired region will be read.
+#' @returns Returns a `numeric` or `complex` vector containing the values that
+#' were read. It is organized in left to right, top to bottom pixel order,
+#' interleaved by band.
+#' `NA` will be returned in place of the nodata value if the raster dataset has
+#' a nodata value defined for the band. Data are read as R `integer` type when
+#' possible for the raster data type (Byte, Int8, Int16, UInt16, Int32),
+#' otherwise as type `double` (UInt32, Float32, Float64).
+#'
+#' @note
+#' There is small overhead in calling `read_ds()` compared with
+#' calling `GDALRaster$read()` directly. This would only matter if calling
+#' the function repeatedly to read a raster in chunks. For the case of reading
+#' a large raster in many chunks (e.g., by row), it will be more efficient
+#' performance-wise to call `GDALRaster$read()` directly.
+#'
+#' By default, this function will attempt to read the full raster into memory.
+#' It generally should not be called on large raster datasets using the default
+#' argument values. The memory size in bytes of the returned vector will be
+#' approximately (xsize * ysize * number of bands * 4) for data read as
+#' `integer`, and (xsize * ysize * number of bands * 8) for data read as
+#' `double` (plus small object overhead for the vector).
+#'
+#' @seealso
+#' [`GDALRaster$read()`][GDALRaster]
+#'
+#' @examples
+#' ## read elevation, slope, and aspect from a multiband LCP file
+#' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+#' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+#'
+#' r <- read_ds(ds, bands=c(1:3))
+#' typeof(r)
+#' length(r)
+#' object.size(r)
+#'
+#' ds$close()
+#' @export
+read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
+					xsize=ds$getRasterXSize(), ysize=ds$getRasterYSize(),
+					out_xsize=xsize, out_ysize=ysize) {
+	
+	if (is.null(bands))
+		bands <- seq_len(ds$getRasterCount())
+
+	r <- NULL
+	for (b in bands)
+		r <- c(r, ds$read(b, xoff, yoff, xsize, ysize, out_xsize, out_ysize))
+	
+	return(r)
+}
 
 
 #' Create a raster from an existing raster as template
