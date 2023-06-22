@@ -112,6 +112,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/read_ds.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/set_config_option.html</loc>
   </url>
   <url>
