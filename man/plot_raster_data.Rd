@@ -9,8 +9,9 @@ plot_raster_data(
   xsize,
   ysize,
   nbands = 1,
+  col_tbl = NULL,
   normalize = TRUE,
-  col_scale_fn = NULL,
+  col_map_fn = NULL,
   xlim = c(0, xsize),
   ylim = c(ysize, 0),
   xlab = "x",
@@ -21,7 +22,7 @@ plot_raster_data(
   main = "",
   xaxs = "i",
   yaxs = "i",
-  col_na = rgb(0, 0, 0, 0),
+  na_col = rgb(0, 0, 0, 0),
   ...
 )
 }
@@ -36,17 +37,22 @@ right, top to bottom pixel order.}
 \item{nbands}{The number of bands in \code{data}. Must be either 1 (grayscale) or
 3 (RGB). For RGB, \code{data} are interleaved by band.}
 
+\item{col_tbl}{A color table as a data frame with four columns. Column 1
+contains the integer raster values, columns 2:4 contain the intensities
+(between 0 and 1) of the red, green and blue primaries.}
+
 \item{normalize}{Logical. \code{TRUE} to rescale pixel values so that their
-range is \verb{[0,1}].}
+range is \verb{[0,1]}. Ignored if \code{col_tbl} is used.}
 
-\item{col_scale_fn}{An optional color scale function (default is \code{gray} for
-single-band data or \code{rgb} for 3-band).}
+\item{col_map_fn}{An optional color map function (default is
+\code{grDevices::gray} for single-band data or \code{grDevices::rgb} for 3-band).
+Ignored if \code{col_tbl} is used.}
 
-\item{xlim}{Numeric vector of length two giving the x coordinate range in
-pixel/line space. The default is \code{c(0, xsize)}.}
+\item{xlim}{Numeric vector of length two giving the x coordinate range. The
+default uses pixel/line space (\code{c(0, xsize)}).}
 
-\item{ylim}{Numeric vector of length two giving the y coordinate range in
-pixel/line space. The default is \code{c(ysize, 0)}.}
+\item{ylim}{Numeric vector of length two giving the y coordinate range. The
+default uses pixel/line space (\code{c(ysize, 0)}).}
 
 \item{xlab}{Title for the x axis (see \code{?title}).}
 
@@ -67,12 +73,65 @@ to the image when drawing (default \code{TRUE}).}
 \item{yaxs}{The style of axis interval calculation to be used for the y axis
 (see \code{?par}).}
 
-\item{col_na}{Color to use for \code{NA} as a 7 or 9-character hexadecimal code.
+\item{na_col}{Color to use for \code{NA} as a 7- or 9-character hexadecimal code.
 The default is transparent (\code{"#00000000"}, the return value of
 \code{rgb(0,0,0,0)}).}
 
-\item{...}{Other parameters to be passed to \code{plot.default}.}
+\item{...}{Other parameters to be passed to \code{plot.default()}.}
 }
 \description{
 \code{plot_raster_data()} displays raster data using base graphics.
+}
+\examples{
+## Elevation
+elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+ds <- new(GDALRaster, elev_file, read_only=TRUE)
+ncols <- ds$getRasterXSize()
+nrows <- ds$getRasterYSize()
+r <- read_ds(ds)
+ds$close()
+
+# grayscale
+plot_raster_data(r, xsize=ncols, ysize=nrows, main="Storm Lake elevation")
+
+# color ramp using 'terrain.colors' in base R
+col_ramp <- scales::gradient_n_pal(terrain.colors(10))
+plot_raster_data(r, xsize=ncols, ysize=nrows, col_map_fn=col_ramp,
+                 main="Storm Lake: elevation")
+
+## Landsat band combination
+b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
+b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
+band_files <- c(b6_file, b5_file, b4_file)
+
+ds <- new(GDALRaster, b4_file, read_only=TRUE)
+ncols <- ds$getRasterXSize()
+nrows <- ds$getRasterYSize()
+ds$close()
+
+r <- vector("integer")
+for (f in band_files) {
+  ds <- new(GDALRaster, f, read_only=TRUE)
+  r <- c(r, read_ds(ds))
+  ds$close()
+}
+
+plot_raster_data(r, xsize=ncols, ysize=nrows, nbands=3,
+                 main="Storm Lake: Landsat 6-5-4 (vegetative analysis)")
+
+## LANDFIRE vegetation with colors from the CSV attribute table
+evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
+evc_vat <- system.file("extdata/LF20_EVC_220.csv", package="gdalraster")
+vat <- read.csv(evc_vat)
+head(vat)
+
+ds <- new(GDALRaster, evc_file, read_only=TRUE)
+ncols <- ds$getRasterXSize()
+nrows <- ds$getRasterYSize()
+
+r <- read_ds(ds)
+ds$close()
+plot_raster_data(r, xsize=ncols, ysize=nrows, col_tbl=vat[,c(1,6:8)],
+                 main="Storm Lake: LANDFIRE canopy cover")
 }
