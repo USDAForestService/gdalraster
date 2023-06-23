@@ -183,7 +183,7 @@ plot_raster_data <- function(data, xsize, ysize, nbands=1,
 	if ( !(nbands %in% c(1,3)) )
 		stop("Number of bands must be 1 or 3")
 		
-	if (grDevices::dev.capabilities()$rasterImage == "no") {
+	if isTRUE((grDevices::dev.capabilities()$rasterImage == "no")) {
 		message("Device does not support rasterImage().")
 		return()
 	}
