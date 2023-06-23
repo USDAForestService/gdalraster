@@ -12,7 +12,9 @@
 # Create an object of class "raster", a matrix of color values representing
 # a bitmap image for input to graphics::rasterImage().
 
-	if ( !(dim(a)[3] %in% c(1,3)) )
+	nbands = dim(a)[3]
+	
+	if ( !(nbands %in% c(1,3)) )
 		stop("Number of bands must be 1 or 3")
 	
 	has_na <- logical(0)
@@ -21,7 +23,7 @@
 	
 	if (!is.null(col_tbl)) {
 		# color table mapping
-		if(!dim(a)[3] == 1)
+		if(!nbands == 1)
 			stop("A color table can only be used with single-band data.")
 			
 		if(!is.data.frame(ct <- as.data.frame(col_tbl)))
@@ -45,23 +47,25 @@
 	}
 	else {
 		# grayscale/rgb color scaling
-		if (normalize)
-			a <- .normalize(a)
+		if (normalize) {
+			for (b in 1:nbands)
+				a[,,b] <- .normalize(a[,,b])
+		}
 			
 		if (is.null(col_map_fn))
-		    col_map_fn <- ifelse(dim(a)[3]==1, grDevices::gray, grDevices::rgb)
+		    col_map_fn <- ifelse(nbands==1, grDevices::gray, grDevices::rgb)
 		
 		nas <- is.na(a)
 		has_na <- any(nas)
 		if (has_na) {
 			a[nas] <- 0
 			if (dim(nas)[3] == 3)
-				nas <- nas[,,1] || nas[,,2] || nas[,,3]
+				nas <- nas[,,1] | nas[,,2] | nas[,,3]
 			dim(nas) <- dim(nas)[1:2]
 			nas <- t(nas)
 		}
 		
-		if (dim(a)[3] == 1) {
+		if (nbands == 1) {
 			# grayscale
 			dim(a) <- dim(a)[1:2]
 			r <- col_map_fn(a)
@@ -212,6 +216,6 @@ plot_raster_data <- function(data, xsize, ysize, nbands=1,
 		graphics::axis(2)
 	}
 
-	return()
+	invisible()
 }
 
