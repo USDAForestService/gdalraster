@@ -38,7 +38,7 @@ right, top to bottom pixel order.}
 3 (RGB). For RGB, \code{data} are interleaved by band.}
 
 \item{col_tbl}{A color table as a data frame with four columns. Column 1
-contains the integer raster values, columns 2:4 contain the intensities
+contains the numeric raster values, columns 2:4 contain the intensities
 (between 0 and 1) of the red, green and blue primaries.}
 
 \item{normalize}{Logical. \code{TRUE} to rescale pixel values so that their
@@ -92,7 +92,7 @@ r <- read_ds(ds)
 ds$close()
 
 # grayscale
-plot_raster_data(r, xsize=ncols, ysize=nrows, main="Storm Lake elevation")
+plot_raster_data(r, xsize=ncols, ysize=nrows, main="Storm Lake: elevation")
 
 # color ramp using 'terrain.colors' in base R
 col_ramp <- scales::gradient_n_pal(terrain.colors(10))
@@ -105,7 +105,7 @@ b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
 band_files <- c(b6_file, b5_file, b4_file)
 
-ds <- new(GDALRaster, b4_file, read_only=TRUE)
+ds <- new(GDALRaster, b5_file, read_only=TRUE)
 ncols <- ds$getRasterXSize()
 nrows <- ds$getRasterYSize()
 ds$close()
