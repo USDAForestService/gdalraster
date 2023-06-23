@@ -5,7 +5,7 @@
 \alias{DEFAULT_NODATA}
 \title{List of default nodata values by raster data type}
 \format{
-An object of class \code{list} of length 7.
+An object of class \code{list} of length 8.
 }
 \usage{
 DEFAULT_NODATA
@@ -14,10 +14,10 @@ DEFAULT_NODATA
 These values are currently used in \code{gdalraster} when a nodata value is
 needed but has not been specified:
 \preformatted{
-    list("Byte"= 255, "UInt16"= 65535, "Int16"= -32767,
-         "UInt32"= 4294967293, "Int32"= -2147483647, 
-         "Float32"= -99999.0, 
-         "Float64"= -99999.0)
+    list("Byte" = 255, "Int8" = -128,
+         "UInt16" = 65535, "Int16" = -32767,
+         "UInt32" = 4294967293, "Int32" = -2147483647, 
+         "Float32" = -99999.0, "Float64" = -99999.0)
 }
 }
 \keyword{datasets}
