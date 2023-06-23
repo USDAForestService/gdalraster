@@ -48,6 +48,7 @@ LinkingTo: Rcpp
 Suggests: 
     knitr,
     rmarkdown,
+    scales,
     xml2
 NeedsCompilation: yes
 SystemRequirements: GDAL (>= 2.3.0, built against GEOS), PROJ (>= 4.8.0)

@@ -66,6 +66,9 @@
   raster layer or stack of layers. Individual pixel coordinates are available 
   as variables in the R expression, as either x/y in the raster projected 
   coordinate system or inverse projected longitude/latitude.
+  
+  \item \code{\link{plot_raster_data}} displays raster data using base R
+  graphics.
   }
 }
 \author{
@@ -93,8 +96,8 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
   Sample datasets are included with the package and used in examples 
   throughout the documentation. The sample data include
   \href{https://landfire.gov/}{LANDFIRE} raster layers describing terrain,
-  vegetation and wildland fuels (LF 2020 version).
-  Landsat C2 Analysis Ready Data were downloaded from
+  vegetation and wildland fuels (LF 2020 version), and
+  Landsat C2 Analysis Ready Data downloaded from
   \href{https://earthexplorer.usgs.gov/}{USGS Earth Explorer}.
 
   \code{system.file()} is used in the examples to access the sample datasets. 
