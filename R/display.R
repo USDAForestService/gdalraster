@@ -185,7 +185,7 @@ plot_raster_data <- function(data, xsize, ysize, nbands=1,
 		
 	if (grDevices::dev.capabilities()$rasterImage == "no") {
 		message("Device does not support rasterImage().")
-		invisible(FALSE)
+		return()
 	}
 	
 	if (length(data) == 0)
@@ -212,6 +212,6 @@ plot_raster_data <- function(data, xsize, ysize, nbands=1,
 		graphics::axis(2)
 	}
 
-	invisible(TRUE)
+	return()
 }
 
