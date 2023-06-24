@@ -39,9 +39,9 @@ right, top to bottom pixel order.}
 \item{nbands}{The number of bands in \code{data}. Must be either 1 (grayscale) or
 3 (RGB). For RGB, \code{data} are interleaved by band.}
 
-\item{col_tbl}{A color table as a data frame with four columns. Column 1
-contains the numeric raster values, columns 2:4 contain the intensities
-(between 0 and 1) of the red, green and blue primaries.}
+\item{col_tbl}{A color table as a matrix or data frame with four columns.
+Column 1 contains the numeric raster values, columns 2:4 contain the
+intensities (between 0 and 1) of the red, green and blue primaries.}
 
 \item{normalize}{Logical. \code{TRUE} to rescale pixel values so that their
 range is \verb{[0,1]}, normalized to the range of the pixel data by default
@@ -106,9 +106,9 @@ ds$close()
 # grayscale
 plot_raster_data(r, xsize=ncols, ysize=nrows, main="Storm Lake: elevation")
 
-# color ramp using 'terrain.colors' in base R
-col_ramp <- scales::gradient_n_pal(terrain.colors(10))
-plot_raster_data(r, xsize=ncols, ysize=nrows, col_map_fn=col_ramp,
+# color ramp
+ramp <- scales::gradient_n_pal(grDevices::terrain.colors(10))
+plot_raster_data(r, xsize=ncols, ysize=nrows, col_map_fn=ramp,
                  main="Storm Lake: elevation")
 
 ## Landsat band combination

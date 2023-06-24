@@ -40,11 +40,11 @@
 	if (!is.null(col_tbl)) {
 		# map to a color table
 		
-		if(!nbands == 1)
+		if(nbands != 1)
 			stop("A color table can only be used with single-band data.")
 			
-		if(!is.data.frame(ct <- as.data.frame(col_tbl)))
-			stop("Color table must be a data frame.")
+		if(!is.matrix(ct <- as.matrix(col_tbl)))
+			stop("Color table must be a matrix or data frame.")
 		
 		if(ncol(ct) != 4)
 			stop("Color table must have four columns.")
@@ -56,8 +56,8 @@
 			nas <- t(nas)
 		}
 		
-		ct[,5] <- rgb(ct[,2], ct[,3], ct[,4])
-		f <- function(x) { ifelse(is.na(x), NA_character_, ct[ct[,1]==x, 5]) }
+		ct <- cbind(ct, rgb(ct[,2], ct[,3], ct[,4]))
+		f <- function(x) { ct[ct[,1]==x, 5][1] }
 		r <- vapply(a, f, "#000000")
 		dim(r) <- dim(a)[2:1]
 		class(r) <- "raster"
@@ -131,9 +131,9 @@
 #' @param ysize The number of pixels along the y dimension in `data`.
 #' @param nbands The number of bands in `data`. Must be either 1 (grayscale) or
 #' 3 (RGB). For RGB, `data` are interleaved by band.
-#' @param col_tbl A color table as a data frame with four columns. Column 1 
-#' contains the numeric raster values, columns 2:4 contain the intensities
-#' (between 0 and 1) of the red, green and blue primaries.
+#' @param col_tbl A color table as a matrix or data frame with four columns.
+#' Column 1 contains the numeric raster values, columns 2:4 contain the
+#' intensities (between 0 and 1) of the red, green and blue primaries.
 #' @param normalize Logical. `TRUE` to rescale pixel values so that their
 #' range is `[0,1]`, normalized to the range of the pixel data by default
 #' (`min(data)`, `max(data)`, per band). Ignored if `col_tbl` is used.
@@ -179,9 +179,9 @@
 #' # grayscale
 #' plot_raster_data(r, xsize=ncols, ysize=nrows, main="Storm Lake: elevation")
 #'
-#' # color ramp using 'terrain.colors' in base R
-#' col_ramp <- scales::gradient_n_pal(terrain.colors(10))
-#' plot_raster_data(r, xsize=ncols, ysize=nrows, col_map_fn=col_ramp,
+#' # color ramp
+#' ramp <- scales::gradient_n_pal(grDevices::terrain.colors(10))
+#' plot_raster_data(r, xsize=ncols, ysize=nrows, col_map_fn=ramp,
 #'                  main="Storm Lake: elevation")
 #'
 #' ## Landsat band combination
