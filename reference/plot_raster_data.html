@@ -65,6 +65,8 @@
 <span>  nbands <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  col_tbl <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  normalize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  minmax_def <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  minmax_pct_cut <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  col_map_fn <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">xsize</span><span class="op">)</span>,</span>
 <span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ysize</span>, <span class="fl">0</span><span class="op">)</span>,</span>
@@ -109,7 +111,21 @@ contains the numeric raster values, columns 2:4 contain the intensities
 
 <dt>normalize</dt>
 <dd><p>Logical. <code>TRUE</code> to rescale pixel values so that their
-range is <code>[0,1]</code>. Ignored if <code>col_tbl</code> is used.</p></dd>
+range is <code>[0,1]</code>, normalized to the range of the pixel data by default
+(<code>min(data)</code>, <code>max(data)</code>, per band). Ignored if <code>col_tbl</code> is used.</p></dd>
+
+
+<dt>minmax_def</dt>
+<dd><p>Normalize to user-defined min/max values (in terms of
+the pixel data, per band). For single-band grayscale, a numeric vector of
+length two containing min, max. For 3-band RGB, a numeric vector of length
+six containing b1_min, b2_min, b3_min, b1_max, b2_max, b3_max.</p></dd>
+
+
+<dt>minmax_pct_cut</dt>
+<dd><p>Normalize to a truncated range of the pixel data using
+percentile cutoffs. A numeric vector of length two giving the percentiles
+to use (e.g., <code>c(2, 98)</code>). Applied per band. Ignored if <code>minmax_def</code> is used.</p></dd>
 
 
 <dt>col_map_fn</dt>
