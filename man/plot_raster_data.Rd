@@ -11,6 +11,8 @@ plot_raster_data(
   nbands = 1,
   col_tbl = NULL,
   normalize = TRUE,
+  minmax_def = NULL,
+  minmax_pct_cut = NULL,
   col_map_fn = NULL,
   xlim = c(0, xsize),
   ylim = c(ysize, 0),
@@ -42,7 +44,17 @@ contains the numeric raster values, columns 2:4 contain the intensities
 (between 0 and 1) of the red, green and blue primaries.}
 
 \item{normalize}{Logical. \code{TRUE} to rescale pixel values so that their
-range is \verb{[0,1]}. Ignored if \code{col_tbl} is used.}
+range is \verb{[0,1]}, normalized to the range of the pixel data by default
+(\code{min(data)}, \code{max(data)}, per band). Ignored if \code{col_tbl} is used.}
+
+\item{minmax_def}{Normalize to user-defined min/max values (in terms of
+the pixel data, per band). For single-band grayscale, a numeric vector of
+length two containing min, max. For 3-band RGB, a numeric vector of length
+six containing b1_min, b2_min, b3_min, b1_max, b2_max, b3_max.}
+
+\item{minmax_pct_cut}{Normalize to a truncated range of the pixel data using
+percentile cutoffs. A numeric vector of length two giving the percentiles
+to use (e.g., \code{c(2, 98)}). Applied per band. Ignored if \code{minmax_def} is used.}
 
 \item{col_map_fn}{An optional color map function (default is
 \code{grDevices::gray} for single-band data or \code{grDevices::rgb} for 3-band).

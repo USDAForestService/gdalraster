@@ -73,10 +73,10 @@
 			}
 			else if (!is.null(minmax_pct_cut)) {
 				for (b in 1:nbands) {
-					q <- quantile(a[,,b],
-							probs=c(minmax_pct_cut[1] / 100,
-									minmax_pct_cut[2] / 100),
-							na.rm = TRUE, names=FALSE)
+					q <- stats::quantile(a[,,b],
+								probs=c(minmax_pct_cut[1] / 100,
+										minmax_pct_cut[2] / 100),
+								na.rm = TRUE, names=FALSE)
 					a[,,b] <- .normalize(a[,,b], q)
 				}
 			}
@@ -86,7 +86,7 @@
 				}
 			}
 		}
-			
+
 		if (is.null(col_map_fn))
 		    col_map_fn <- ifelse(nbands==1, grDevices::gray, grDevices::rgb)
 		
@@ -135,7 +135,7 @@
 #' contains the numeric raster values, columns 2:4 contain the intensities
 #' (between 0 and 1) of the red, green and blue primaries.
 #' @param normalize Logical. `TRUE` to rescale pixel values so that their
-#' range is `[0,1]`. Normalized to the range of the pixel data by default
+#' range is `[0,1]`, normalized to the range of the pixel data by default
 #' (`min(data)`, `max(data)`, per band). Ignored if `col_tbl` is used.
 #' @param minmax_def Normalize to user-defined min/max values (in terms of
 #' the pixel data, per band). For single-band grayscale, a numeric vector of

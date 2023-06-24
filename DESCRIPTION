@@ -42,6 +42,7 @@ Imports:
     grDevices,
     methods,
     Rcpp (>= 1.0.7),
+    stats,
     tools,
     utils
 LinkingTo: Rcpp
