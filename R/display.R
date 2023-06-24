@@ -1,13 +1,29 @@
 # Display raster data using base graphics
 
 #' @noRd
-.normalize <- function(x) {
-	return((x - min(x,na.rm=TRUE)) / (max(x,na.rm=TRUE) - min(x,na.rm=TRUE)))
+.normalize <- function(x, minmax=NULL) {
+
+# Normalize to a range of [0,1].
+# Normalize to the range of the input data by default.
+# Optionally normalize to a user-defined range in terms of the input, squishing
+# to [0,1] output.
+
+	if (is.null(minmax)) {
+		xn = (x - min(x,na.rm=TRUE)) / (max(x,na.rm=TRUE) - min(x,na.rm=TRUE))
+	}
+	else {
+		xn = (x - minmax[1]) / (minmax[2] - minmax[1])
+		xn[xn < 0] <- 0
+		xn[xn > 1] <- 1
+	}
+	
+	return(xn)
 }
 
 #' @noRd
-.as_raster <- function(a, col_tbl=NULL, normalize=TRUE, col_map_fn=NULL, 
-				na_col=rgb(0,0,0,0), ...) {
+.as_raster <- function(a, col_tbl=NULL, normalize=TRUE,
+				minmax_def=NULL, minmax_pct_cut=NULL,
+				col_map_fn=NULL, na_col=rgb(0,0,0,0), ...) {
 				
 # Create an object of class "raster", a matrix of color values representing
 # a bitmap image for input to graphics::rasterImage().
@@ -22,7 +38,8 @@
 	r <- array()
 	
 	if (!is.null(col_tbl)) {
-		# color table mapping
+		# map to a color table
+		
 		if(!nbands == 1)
 			stop("A color table can only be used with single-band data.")
 			
@@ -41,15 +58,33 @@
 		
 		ct[,5] <- rgb(ct[,2], ct[,3], ct[,4])
 		f <- function(x) { ifelse(is.na(x), NA_character_, ct[ct[,1]==x, 5]) }
-		r <- vapply(a, f, "#FFFFFF")
+		r <- vapply(a, f, "#000000")
 		dim(r) <- dim(a)[2:1]
 		class(r) <- "raster"
 	}
 	else {
-		# grayscale/rgb color scaling
+		# gray/rgb color scaling
+		
 		if (normalize) {
-			for (b in 1:nbands)
-				a[,,b] <- .normalize(a[,,b])
+			if (!is.null(minmax_def)) {
+				for (b in 1:nbands) {
+					a[,,b] <- .normalize(a[,,b], minmax_def[c(b, b+nbands)])
+				}
+			}
+			else if (!is.null(minmax_pct_cut)) {
+				for (b in 1:nbands) {
+					q <- quantile(a[,,b],
+							probs=c(minmax_pct_cut[1] / 100,
+									minmax_pct_cut[2] / 100),
+							na.rm = TRUE, names=FALSE)
+					a[,,b] <- .normalize(a[,,b], q)
+				}
+			}
+			else {
+				for (b in 1:nbands) {
+					a[,,b] <- .normalize(a[,,b])
+				}
+			}
 		}
 			
 		if (is.null(col_map_fn))
@@ -100,7 +135,15 @@
 #' contains the numeric raster values, columns 2:4 contain the intensities
 #' (between 0 and 1) of the red, green and blue primaries.
 #' @param normalize Logical. `TRUE` to rescale pixel values so that their
-#' range is `[0,1]`. Ignored if `col_tbl` is used.
+#' range is `[0,1]`. Normalized to the range of the pixel data by default
+#' (`min(data)`, `max(data)`, per band). Ignored if `col_tbl` is used.
+#' @param minmax_def Normalize to user-defined min/max values (in terms of
+#' the pixel data, per band). For single-band grayscale, a numeric vector of
+#' length two containing min, max. For 3-band RGB, a numeric vector of length
+#' six containing b1_min, b2_min, b3_min, b1_max, b2_max, b3_max.
+#' @param minmax_pct_cut Normalize to a truncated range of the pixel data using
+#' percentile cutoffs. A numeric vector of length two giving the percentiles
+#' to use (e.g., `c(2, 98)`). Applied per band. Ignored if `minmax_def` is used.
 #' @param col_map_fn An optional color map function (default is 
 #' `grDevices::gray` for single-band data or `grDevices::rgb` for 3-band).
 #' Ignored if `col_tbl` is used.
@@ -178,7 +221,8 @@
 #'                  main="Storm Lake: LANDFIRE canopy cover")
 #' @export
 plot_raster_data <- function(data, xsize, ysize, nbands=1,
-						col_tbl=NULL, normalize=TRUE, col_map_fn=NULL,
+						col_tbl=NULL, normalize=TRUE, minmax_def=NULL,
+						minmax_pct_cut=NULL, col_map_fn=NULL,
 						xlim=c(0, xsize), ylim=c(ysize, 0),
                  		xlab="x", ylab="y",
                  		interpolate=TRUE, asp=1, axes=TRUE, main="",
@@ -202,6 +246,8 @@ plot_raster_data <- function(data, xsize, ysize, nbands=1,
 	r <- .as_raster(a,
 					col_tbl=col_tbl,
 					normalize=normalize,
+					minmax_def=minmax_def,
+					minmax_pct_cut=minmax_pct_cut,
 					col_map_fn=col_map_fn,
 					na_col=na_col)
 
