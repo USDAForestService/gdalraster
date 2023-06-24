@@ -16,12 +16,12 @@ plot_raster_data(
   col_map_fn = NULL,
   xlim = c(0, xsize),
   ylim = c(ysize, 0),
-  xlab = "x",
-  ylab = "y",
   interpolate = TRUE,
   asp = 1,
   axes = TRUE,
   main = "",
+  xlab = "x",
+  ylab = "y",
   xaxs = "i",
   yaxs = "i",
   na_col = rgb(0, 0, 0, 0),
@@ -66,10 +66,6 @@ default uses pixel/line space (\code{c(0, xsize)}).}
 \item{ylim}{Numeric vector of length two giving the y coordinate range. The
 default uses pixel/line space (\code{c(ysize, 0)}).}
 
-\item{xlab}{Title for the x axis (see \code{?title}).}
-
-\item{ylab}{Title for the y axis (see \code{?title}).}
-
 \item{interpolate}{Logical indicating whether to apply linear interpolation
 to the image when drawing (default \code{TRUE}).}
 
@@ -78,6 +74,10 @@ to the image when drawing (default \code{TRUE}).}
 \item{axes}{Logical. \code{TRUE} to draw axes (the default).}
 
 \item{main}{The main title (on top).}
+
+\item{xlab}{Title for the x axis (see \code{?title}).}
+
+\item{ylab}{Title for the y axis (see \code{?title}).}
 
 \item{xaxs}{The style of axis interval calculation to be used for the x axis
 (see \code{?par}).}

@@ -9,10 +9,10 @@
 # to [0,1] output.
 
 	if (is.null(minmax)) {
-		xn = (x - min(x,na.rm=TRUE)) / (max(x,na.rm=TRUE) - min(x,na.rm=TRUE))
+		xn <- (x - min(x,na.rm=TRUE)) / (max(x,na.rm=TRUE) - min(x,na.rm=TRUE))
 	}
 	else {
-		xn = (x - minmax[1]) / (minmax[2] - minmax[1])
+		xn <- (x - minmax[1]) / (minmax[2] - minmax[1])
 		xn[xn < 0] <- 0
 		xn[xn > 1] <- 1
 	}
@@ -28,7 +28,7 @@
 # Create an object of class "raster", a matrix of color values representing
 # a bitmap image for input to graphics::rasterImage().
 
-	nbands = dim(a)[3]
+	nbands <- dim(a)[3]
 	
 	if ( !(nbands %in% c(1,3)) )
 		stop("Number of bands must be 1 or 3")
@@ -224,9 +224,9 @@ plot_raster_data <- function(data, xsize, ysize, nbands=1,
 						col_tbl=NULL, normalize=TRUE, minmax_def=NULL,
 						minmax_pct_cut=NULL, col_map_fn=NULL,
 						xlim=c(0, xsize), ylim=c(ysize, 0),
-                 		xlab="x", ylab="y",
-                 		interpolate=TRUE, asp=1, axes=TRUE, main="",
-                 		xaxs="i", yaxs="i", na_col=rgb(0,0,0,0), ...) {
+						interpolate=TRUE, asp=1, axes=TRUE, main="",
+						xlab="x", ylab="y",
+						xaxs="i", yaxs="i", na_col=rgb(0,0,0,0), ...) {
 
 	if ( !(nbands %in% c(1,3)) )
 		stop("Number of bands must be 1 or 3")
@@ -256,7 +256,7 @@ plot_raster_data <- function(data, xsize, ysize, nbands=1,
 							xaxs=xaxs, yaxs=yaxs, ...)
 	graphics::rasterImage(r, xlim[1], ylim[1], xlim[2], ylim[2],
 							interpolate=interpolate)
-	graphics::title(main)
+	graphics::title(main=main, xlab=xlab, ylab=ylab)
 	if (axes) {
 		graphics::axis(1)
 		graphics::axis(2)
