@@ -67,7 +67,7 @@
   as variables in the R expression, as either x/y in the raster projected 
   coordinate system or inverse projected longitude/latitude.
   
-  \item \code{\link{plot_raster_data}} displays raster data using base R
+  \item \code{\link{plot_raster}} displays raster data using base R
   graphics.
   }
 }

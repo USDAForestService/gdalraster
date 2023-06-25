@@ -4,7 +4,7 @@
 .normalize <- function(x, minmax=NULL) {
 
 # Normalize to a range of [0,1].
-# Normalize to the range of the input data by default.
+# Normalize to the full range of the input data by default.
 # Optionally normalize to a user-defined range in terms of the input, squishing
 # to [0,1] output.
 
@@ -26,7 +26,8 @@
 				col_map_fn=NULL, na_col=rgb(0,0,0,0), ...) {
 				
 # Create an object of class "raster", a matrix of color values representing
-# a bitmap image for input to graphics::rasterImage().
+# a bitmap image for input to graphics::rasterImage(). Input is an array of
+# pixel values with dimensions xsize, ysize, nbands.
 
 	nbands <- dim(a)[3]
 	
@@ -43,7 +44,7 @@
 		if(nbands != 1)
 			stop("A color table can only be used with single-band data.")
 			
-		if(!is.matrix(ct <- as.matrix(col_tbl)))
+		if(!is.data.frame(ct <- as.data.frame(col_tbl)))
 			stop("Color table must be a matrix or data frame.")
 		
 		if(ncol(ct) != 4)
@@ -56,9 +57,9 @@
 			nas <- t(nas)
 		}
 		
-		ct <- cbind(ct, rgb(ct[,2], ct[,3], ct[,4]))
+		ct[,5] <- rgb(ct[,2], ct[,3], ct[,4])
 		f <- function(x) { ct[ct[,1]==x, 5][1] }
-		r <- vapply(a, f, "#000000")
+		r <- vapply(a, FUN=f, FUN.VALUE="#000000", USE.NAMES=FALSE)
 		dim(r) <- dim(a)[2:1]
 		class(r) <- "raster"
 	}
@@ -123,7 +124,7 @@
 
 #' Display raster data that has been read into a vector
 #'
-#' `plot_raster_data()` displays raster data using base graphics.
+#' `plot_raster()` displays raster data using base graphics.
 #'
 #' @param data A numeric vector of pixel data to display, arranged in left to
 #' right, top to bottom pixel order.
@@ -135,22 +136,23 @@
 #' Column 1 contains the numeric raster values, columns 2:4 contain the
 #' intensities (between 0 and 1) of the red, green and blue primaries.
 #' @param normalize Logical. `TRUE` to rescale pixel values so that their
-#' range is `[0,1]`, normalized to the range of the pixel data by default
+#' range is `[0,1]`, normalized to the full range of the pixel data by default
 #' (`min(data)`, `max(data)`, per band). Ignored if `col_tbl` is used.
 #' @param minmax_def Normalize to user-defined min/max values (in terms of
 #' the pixel data, per band). For single-band grayscale, a numeric vector of
 #' length two containing min, max. For 3-band RGB, a numeric vector of length
 #' six containing b1_min, b2_min, b3_min, b1_max, b2_max, b3_max.
 #' @param minmax_pct_cut Normalize to a truncated range of the pixel data using
-#' percentile cutoffs. A numeric vector of length two giving the percentiles
-#' to use (e.g., `c(2, 98)`). Applied per band. Ignored if `minmax_def` is used.
+#' percentile cutoffs (removes outliers). A numeric vector of length two giving
+#' the percentiles to use (e.g., `c(2, 98)`). Applied per band. Ignored if
+#' `minmax_def` is used.
 #' @param col_map_fn An optional color map function (default is 
 #' `grDevices::gray` for single-band data or `grDevices::rgb` for 3-band).
 #' Ignored if `col_tbl` is used.
 #' @param xlim Numeric vector of length two giving the x coordinate range. The
-#' default uses pixel/line space (`c(0, xsize)`).
+#' default uses pixel/line coordinates (`c(0, xsize)`).
 #' @param ylim Numeric vector of length two giving the y coordinate range. The
-#' default uses pixel/line space (`c(ysize, 0)`).
+#' default uses pixel/line coordinates (`c(ysize, 0)`).
 #' @param xlab Title for the x axis (see `?title`).
 #' @param ylab Title for the y axis (see `?title`).
 #' @param interpolate Logical indicating whether to apply linear interpolation
@@ -177,12 +179,12 @@
 #' ds$close()
 #'
 #' # grayscale
-#' plot_raster_data(r, xsize=ncols, ysize=nrows, main="Storm Lake: elevation")
+#' plot_raster(r, xsize=ncols, ysize=nrows, main="Storm Lake elevation")
 #'
 #' # color ramp
-#' ramp <- scales::gradient_n_pal(grDevices::terrain.colors(10))
-#' plot_raster_data(r, xsize=ncols, ysize=nrows, col_map_fn=ramp,
-#'                  main="Storm Lake: elevation")
+#' ramp <- scales::gradient_n_pal(terrain.colors(10))
+#' plot_raster(r, xsize=ncols, ysize=nrows, col_map_fn=ramp,
+#'             main="Storm Lake elevation")
 #'
 #' ## Landsat band combination
 #' b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
@@ -202,14 +204,15 @@
 #'   ds$close()
 #' }
 #'
-#' plot_raster_data(r, xsize=ncols, ysize=nrows, nbands=3,
-#'                  main="Storm Lake: Landsat 6-5-4 (vegetative analysis)")
+#' plot_raster(r, xsize=ncols, ysize=nrows, nbands=3,
+#'             main="Landsat 6-5-4 (vegetative analysis)")
 #'
-#' ## LANDFIRE vegetation with colors from the CSV attribute table
+#' ## LANDFIRE vegetation cover with colors from the CSV attribute table
 #' evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
 #' evc_vat <- system.file("extdata/LF20_EVC_220.csv", package="gdalraster")
 #' vat <- read.csv(evc_vat)
 #' head(vat)
+#' vat <- vat[,c(1,6:8)]
 #' 
 #' ds <- new(GDALRaster, evc_file, read_only=TRUE)
 #' ncols <- ds$getRasterXSize()
@@ -217,10 +220,10 @@
 #' 
 #' r <- read_ds(ds)
 #' ds$close()
-#' plot_raster_data(r, xsize=ncols, ysize=nrows, col_tbl=vat[,c(1,6:8)],
-#'                  main="Storm Lake: LANDFIRE canopy cover")
+#' plot_raster(r, xsize=ncols, ysize=nrows, col_tbl=vat,
+#'             main="Storm Lake LANDFIRE EVC")
 #' @export
-plot_raster_data <- function(data, xsize, ysize, nbands=1,
+plot_raster <- function(data, xsize, ysize, nbands=1,
 						col_tbl=NULL, normalize=TRUE, minmax_def=NULL,
 						minmax_pct_cut=NULL, col_map_fn=NULL,
 						xlim=c(0, xsize), ylim=c(ysize, 0),

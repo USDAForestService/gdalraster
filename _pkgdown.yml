@@ -38,7 +38,7 @@ reference:
   - has_geos
   - inv_geotransform
   - inv_project
-  - plot_raster_data
+  - plot_raster
   - rasterFromRaster
   - rasterToVRT
   - read_ds
