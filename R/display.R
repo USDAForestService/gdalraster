@@ -269,18 +269,21 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 	if (legend) {
 		if (nbands != 1) {
 			message("Legend is not supported for RGB plot.")
-			legend = FALSE
+			legend <- FALSE
 		}
 		else if (!is.null(col_tbl)) {
 			message("Legend is currently not supported for color tables.")
-			legend = FALSE
+			legend <- FALSE
 		}
-		else {
-			if (is.null(col_map_fn))
-				col_map_fn <- grDevices::gray
-			graphics::layout(matrix(1:2, ncol=2), width=c(5,1), height=c(1,1))
-			graphics::par(mar=c(5, 4, 4, 0.5) + 0.1)
-		}
+	}
+	
+	op <- NULL
+	if (legend) {
+		if (is.null(col_map_fn))
+			col_map_fn <- grDevices::gray
+		op <- par(no.readonly = TRUE)  # save original [ar for resetting...
+		graphics::layout(matrix(1:2, ncol=2), width=c(5,1), height=c(1,1))
+		graphics::par(mar=c(5, 4, 4, 0.5) + 0.1)
 	}
 	graphics::plot.new()
 	graphics::plot.window(xlim=xlim, ylim=ylim, asp=asp,
@@ -293,17 +296,32 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 		graphics::axis(2)
 	}
 	if (legend) {
-		mm <- c(min(data, na.rm=TRUE), max(data, na.rm=TRUE))
-		leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
+		mm <- NULL
+		if (!is.null(minmax_def)) {
+			mm <- minmax_def
+			leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
+		}
+		else if (!is.null(minmax_pct_cut)) {
+			mm <- stats::quantile(data,
+								probs=c(minmax_pct_cut[1] / 100,
+										minmax_pct_cut[2] / 100),
+								na.rm = TRUE, names=FALSE)
+			leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
+		}
+		else {
+			mm <- c(min(data, na.rm=TRUE), max(data, na.rm=TRUE))
+			leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
+		}
 		leg_img <- grDevices::as.raster(matrix(rev(col_map_fn(leg_data)),
 										ncol=1))
-		graphics::par(mar=c(8, 0.5, 8, 2) + 0.1)
+		graphics::par(mar=c(7, 0.5, 7, 2) + 0.1)
 		graphics::plot(c(0,2), c(0,1), type='n', axes=FALSE,
 						xlab="", ylab="", main="")
 		graphics::text(x=1.5, y=seq(0, 1, length.out=5),
 						labels=seq(mm[1], mm[2], length.out=5),
 						adj=c(0, NA), xpd=TRUE)
 		graphics::rasterImage(leg_img, 0, 0, 1, 1)
+		par(op)  # reset to original
 	}
 
 	invisible()
