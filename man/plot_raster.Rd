@@ -24,6 +24,7 @@ plot_raster(
   ylab = "y",
   xaxs = "i",
   yaxs = "i",
+  legend = NULL,
   na_col = rgb(0, 0, 0, 0),
   ...
 )
@@ -86,6 +87,11 @@ to the image when drawing (default \code{TRUE}).}
 \item{yaxs}{The style of axis interval calculation to be used for the y axis
 (see \code{?par}).}
 
+\item{legend}{Logical indicating whether to include a legend on the plot.
+By deafult, a legend will be included if plotting single-band data without
+\code{col_tbl} specified. Legend is not currently supported for color tables or
+with 3-band RGB data.}
+
 \item{na_col}{Color to use for \code{NA} as a 7- or 9-character hexadecimal code.
 The default is transparent (\code{"#00000000"}, the return value of
 \code{rgb(0,0,0,0)}).}
@@ -105,12 +111,13 @@ r <- read_ds(ds)
 ds$close()
 
 # grayscale
-plot_raster(r, xsize=ncols, ysize=nrows, main="Storm Lake elevation")
+plot_raster(r, xsize=ncols, ysize=nrows, main="Storm Lake elevation (m)")
 
 # color ramp
-ramp <- scales::gradient_n_pal(terrain.colors(10))
+elev_pal <- c("#008435","#B4E34F","#F5D157","#CF983B","#B08153","#FFFFFF")
+ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
 plot_raster(r, xsize=ncols, ysize=nrows, col_map_fn=ramp,
-            main="Storm Lake elevation")
+            main="Storm Lake elevation (m)")
 
 ## Landsat band combination
 b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
@@ -133,7 +140,7 @@ for (f in band_files) {
 plot_raster(r, xsize=ncols, ysize=nrows, nbands=3,
             main="Landsat 6-5-4 (vegetative analysis)")
 
-## LANDFIRE vegetation cover with colors from the CSV attribute table
+## LANDFIRE existing veg cover with colors from the CSV attribute table
 evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
 evc_vat <- system.file("extdata/LF20_EVC_220.csv", package="gdalraster")
 vat <- read.csv(evc_vat)
@@ -147,5 +154,5 @@ nrows <- ds$getRasterYSize()
 r <- read_ds(ds)
 ds$close()
 plot_raster(r, xsize=ncols, ysize=nrows, col_tbl=vat,
-            main="Storm Lake LANDFIRE EVC")
+            main="Storm Lake Existing Vegetation Cover")
 }
