@@ -8,5 +8,6 @@ configure.ac text eol=lf
 # Denote all files that are truly binary and should not be modified.
 *.tif binary
 *.lcp binary
+# Denote documentation files
 sample-data/*.html linguist-documentation
 inst/extdata/*.html linguist-documentation
