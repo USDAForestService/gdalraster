@@ -78,6 +78,7 @@
 <span>  ylab <span class="op">=</span> <span class="st">"y"</span>,</span>
 <span>  xaxs <span class="op">=</span> <span class="st">"i"</span>,</span>
 <span>  yaxs <span class="op">=</span> <span class="st">"i"</span>,</span>
+<span>  legend <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  na_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -180,6 +181,13 @@ to the image when drawing (default <code>TRUE</code>).</p></dd>
 (see <code><a href="https://rdrr.io/r/graphics/par.html" class="external-link">?par</a></code>).</p></dd>
 
 
+<dt>legend</dt>
+<dd><p>Logical indicating whether to include a legend on the plot.
+By deafult, a legend will be included if plotting single-band data without
+<code>col_tbl</code> specified. Legend is not currently supported for color tables or
+with 3-band RGB data.</p></dd>
+
+
 <dt>na_col</dt>
 <dd><p>Color to use for <code>NA</code> as a 7- or 9-character hexadecimal code.
 The default is transparent (<code>"#00000000"</code>, the return value of
@@ -202,13 +210,14 @@ The default is transparent (<code>"#00000000"</code>, the return value of
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># grayscale</span></span></span>
-<span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, main<span class="op">=</span><span class="st">"Storm Lake elevation"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, main<span class="op">=</span><span class="st">"Storm Lake elevation (m)"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_raster-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># color ramp</span></span></span>
-<span class="r-in"><span><span class="va">ramp</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/gradient_n_pal.html" class="external-link">gradient_n_pal</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/grDevices/palettes.html" class="external-link">terrain.colors</a></span><span class="op">(</span><span class="fl">10</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">elev_pal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#008435"</span>,<span class="st">"#B4E34F"</span>,<span class="st">"#F5D157"</span>,<span class="st">"#CF983B"</span>,<span class="st">"#B08153"</span>,<span class="st">"#FFFFFF"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ramp</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/colour_ramp.html" class="external-link">colour_ramp</a></span><span class="op">(</span><span class="va">elev_pal</span>, alpha<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, col_map_fn<span class="op">=</span><span class="va">ramp</span>,</span></span>
-<span class="r-in"><span>            main<span class="op">=</span><span class="st">"Storm Lake elevation"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>            main<span class="op">=</span><span class="st">"Storm Lake elevation (m)"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_raster-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Landsat band combination</span></span></span>
@@ -231,9 +240,8 @@ The default is transparent (<code>"#00000000"</code>, the return value of
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, nbands<span class="op">=</span><span class="fl">3</span>,</span></span>
 <span class="r-in"><span>            main<span class="op">=</span><span class="st">"Landsat 6-5-4 (vegetative analysis)"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot_raster-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## LANDFIRE vegetation cover with colors from the CSV attribute table</span></span></span>
+<span class="r-in"><span><span class="co">## LANDFIRE existing veg cover with colors from the CSV attribute table</span></span></span>
 <span class="r-in"><span><span class="va">evc_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_evc.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">evc_vat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/LF20_EVC_220.csv"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">vat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">evc_vat</span><span class="op">)</span></span></span>
@@ -261,8 +269,8 @@ The default is transparent (<code>"#00000000"</code>, the return value of
 <span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_ds.html">read_ds</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, col_tbl<span class="op">=</span><span class="va">vat</span>,</span></span>
-<span class="r-in"><span>            main<span class="op">=</span><span class="st">"Storm Lake LANDFIRE EVC"</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="plot_raster-4.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span>            main<span class="op">=</span><span class="st">"Storm Lake Existing Vegetation Cover"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="plot_raster-3.png" alt="" width="700" height="433"></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
