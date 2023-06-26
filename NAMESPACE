@@ -1,7 +1,6 @@
 useDynLib(gdalraster, .registration=TRUE)
-import(graphics, methods, Rcpp)
+import(graphics, grDevices, methods, Rcpp)
 importFrom("stats", "quantile")
 importFrom("tools", "file_path_sans_ext")
 importFrom("utils", "setTxtProgressBar", "txtProgressBar")
-importFrom("grDevices", "dev.capabilities", "gray", "rgb")
 exportPattern("^[[:alpha:]]+")

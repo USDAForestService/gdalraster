@@ -89,7 +89,7 @@
 		}
 
 		if (is.null(col_map_fn))
-		    col_map_fn <- ifelse(nbands==1, grDevices::gray, grDevices::rgb)
+			col_map_fn <- ifelse(nbands==1, grDevices::gray, grDevices::rgb)
 		
 		nas <- is.na(a)
 		has_na <- any(nas)
@@ -163,10 +163,14 @@
 #' @param yaxs The style of axis interval calculation to be used for the y axis
 #' (see `?par`).
 #' @param axes Logical. `TRUE` to draw axes (the default).
+#' @param main The main title (on top).
+#' @param legend Logical indicating whether to include a legend on the plot.
+#' By deafult, a legend will be included if plotting single-band data without
+#' `col_tbl` specified. Legend is not currently supported for color tables or
+#' with 3-band RGB data.
 #' @param na_col Color to use for `NA` as a 7- or 9-character hexadecimal code.
 #' The default is transparent (`"#00000000"`, the return value of
 #' `rgb(0,0,0,0)`).
-#' @param main The main title (on top).
 #' @param ... Other parameters to be passed to `plot.default()`.
 #'
 #' @examples
@@ -179,12 +183,13 @@
 #' ds$close()
 #'
 #' # grayscale
-#' plot_raster(r, xsize=ncols, ysize=nrows, main="Storm Lake elevation")
+#' plot_raster(r, xsize=ncols, ysize=nrows, main="Storm Lake elevation (m)")
 #'
 #' # color ramp
-#' ramp <- scales::gradient_n_pal(terrain.colors(10))
+#' elev_pal <- c("#008435","#B4E34F","#F5D157","#CF983B","#B08153","#FFFFFF")
+#' ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
 #' plot_raster(r, xsize=ncols, ysize=nrows, col_map_fn=ramp,
-#'             main="Storm Lake elevation")
+#'             main="Storm Lake elevation (m)")
 #'
 #' ## Landsat band combination
 #' b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
@@ -207,7 +212,7 @@
 #' plot_raster(r, xsize=ncols, ysize=nrows, nbands=3,
 #'             main="Landsat 6-5-4 (vegetative analysis)")
 #'
-#' ## LANDFIRE vegetation cover with colors from the CSV attribute table
+#' ## LANDFIRE existing veg cover with colors from the CSV attribute table
 #' evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
 #' evc_vat <- system.file("extdata/LF20_EVC_220.csv", package="gdalraster")
 #' vat <- read.csv(evc_vat)
@@ -221,15 +226,15 @@
 #' r <- read_ds(ds)
 #' ds$close()
 #' plot_raster(r, xsize=ncols, ysize=nrows, col_tbl=vat,
-#'             main="Storm Lake LANDFIRE EVC")
+#'             main="Storm Lake Existing Vegetation Cover")
 #' @export
 plot_raster <- function(data, xsize, ysize, nbands=1,
 						col_tbl=NULL, normalize=TRUE, minmax_def=NULL,
 						minmax_pct_cut=NULL, col_map_fn=NULL,
 						xlim=c(0, xsize), ylim=c(ysize, 0),
 						interpolate=TRUE, asp=1, axes=TRUE, main="",
-						xlab="x", ylab="y",
-						xaxs="i", yaxs="i", na_col=rgb(0,0,0,0), ...) {
+						xlab="x", ylab="y", xaxs="i", yaxs="i", 
+						legend=NULL, na_col=rgb(0,0,0,0), ...) {
 
 	if ( !(nbands %in% c(1,3)) )
 		stop("Number of bands must be 1 or 3")
@@ -245,6 +250,13 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 	if (xsize < 1 || ysize < 1)
 		stop("Invalid x/y dimensions.")
 		
+	if (is.null(legend)) {
+		if (nbands==1 && is.null(col_tbl))
+			legend = TRUE
+		else
+			legend = FALSE
+	}
+
 	a <- array(data, dim = c(xsize, ysize, nbands))
 	r <- .as_raster(a,
 					col_tbl=col_tbl,
@@ -254,6 +266,22 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 					col_map_fn=col_map_fn,
 					na_col=na_col)
 
+	if (legend) {
+		if (nbands != 1) {
+			message("Legend is not supported for RGB plot.")
+			legend = FALSE
+		}
+		else if (!is.null(col_tbl)) {
+			message("Legend is currently not supported for color tables.")
+			legend = FALSE
+		}
+		else {
+			if (is.null(col_map_fn))
+				col_map_fn <- grDevices::gray
+			graphics::layout(matrix(1:2, ncol=2), width=c(5,1), height=c(1,1))
+			graphics::par(mar=c(5, 4, 4, 0.5) + 0.1)
+		}
+	}
 	graphics::plot.new()
 	graphics::plot.window(xlim=xlim, ylim=ylim, asp=asp,
 							xaxs=xaxs, yaxs=yaxs, ...)
@@ -263,6 +291,19 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 	if (axes) {
 		graphics::axis(1)
 		graphics::axis(2)
+	}
+	if (legend) {
+		mm <- c(min(data, na.rm=TRUE), max(data, na.rm=TRUE))
+		leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
+		leg_img <- grDevices::as.raster(matrix(rev(col_map_fn(leg_data)),
+										ncol=1))
+		graphics::par(mar=c(8, 0.5, 8, 2) + 0.1)
+		graphics::plot(c(0,2), c(0,1), type='n', axes=FALSE,
+						xlab="", ylab="", main="")
+		graphics::text(x=1.5, y=seq(0, 1, length.out=5),
+						labels=seq(mm[1], mm[2], length.out=5),
+						adj=c(0, NA), xpd=TRUE)
+		graphics::rasterImage(leg_img, 0, 0, 1, 1)
 	}
 
 	invisible()
