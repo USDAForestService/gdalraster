@@ -46,7 +46,9 @@ intensities (between 0 and 1) of the red, green and blue primaries.}
 
 \item{normalize}{Logical. \code{TRUE} to rescale pixel values so that their
 range is \verb{[0,1]}, normalized to the full range of the pixel data by default
-(\code{min(data)}, \code{max(data)}, per band). Ignored if \code{col_tbl} is used.}
+(\code{min(data)}, \code{max(data)}, per band). Ignored if \code{col_tbl} is used.
+\code{normalize=FALSE} if a custom color mapping function is used that
+operates on raw pixel values (see \code{col_map_fn} below).}
 
 \item{minmax_def}{Normalize to user-defined min/max values (in terms of
 the pixel data, per band). For single-band grayscale, a numeric vector of
@@ -56,7 +58,8 @@ six containing b1_min, b2_min, b3_min, b1_max, b2_max, b3_max.}
 \item{minmax_pct_cut}{Normalize to a truncated range of the pixel data using
 percentile cutoffs (removes outliers). A numeric vector of length two giving
 the percentiles to use (e.g., \code{c(2, 98)}). Applied per band. Ignored if
-\code{minmax_def} is used.}
+\code{minmax_def} is used. Set \code{normalize=FALSE} if using a color mapping
+function that operates on raw pixel values.}
 
 \item{col_map_fn}{An optional color map function (default is
 \code{grDevices::gray} for single-band data or \code{grDevices::rgb} for 3-band).
@@ -100,6 +103,17 @@ The default is transparent (\code{"#00000000"}, the return value of
 }
 \description{
 \code{plot_raster()} displays raster data using base graphics.
+}
+\note{
+\code{plot_raster()} uses the function \code{graphics::rasterImage()} for plotting
+which is not supported on some devices (see \code{?rasterImage}).
+
+A reduced resolution overview for display can be read by setting \code{out_xsize}
+and \code{out_ysize} smaller than the raster region specified by \code{xsize}, \code{ysize}
+in calls to \code{GDALRaster$read()} or \code{read_ds()}.
+The GDAL_RASTERIO_RESAMPLING configuration option can be defined to
+override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE,
+LANCZOS, AVERAGE or MODE.
 }
 \examples{
 ## Elevation
@@ -153,6 +167,9 @@ nrows <- ds$getRasterYSize()
 
 r <- read_ds(ds)
 ds$close()
-plot_raster(r, xsize=ncols, ysize=nrows, col_tbl=vat,
+plot_raster(r, xsize=ncols, ysize=nrows, col_tbl=vat, interpolate=FALSE,
             main="Storm Lake Existing Vegetation Cover")
+}
+\seealso{
+\code{\link[=GDALRaster]{GDALRaster$read()}}, \code{\link[=read_ds]{read_ds()}}, \code{\link[=set_config_option]{set_config_option()}}
 }
