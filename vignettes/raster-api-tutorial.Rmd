@@ -117,6 +117,8 @@ The `out_xsize` and `out_ysize` values describe the size of the buffer (an R vec
 
 `read_ds()` is a convenience wrapper for `GDALRaster$read()`.
 
+`plot_raster()` can be used to display data that have been read into a vector.
+
 ## Closing the dataset
 
 Calling `GDALRaster$close()` will result in proper cleanup, and flushing of any pending writes. Forgetting to call `close` on a dataset opened in update mode in a popular format like GTiff will likely result in being unable to open it afterwards.
@@ -124,24 +126,6 @@ Calling `GDALRaster$close()` will result in proper cleanup, and flushing of any 
 ```{r}
 # close the dataset for proper cleanup
 ds$close()
-```
-
-## Display using base R graphics
-
-`plot_raster()` displays raster data that has been read into a vector. It supports single-band grayscale, 3-band RGB, and options for user-supplied color table or color mapping function. For example, a user-defined palette can be used to generate a color ramp:
-
-```{r}
-elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-ds <- new(GDALRaster, elev_file, read_only=TRUE)
-ncols <- ds$getRasterXSize()
-nrows <- ds$getRasterYSize()
-r <- read_ds(ds)
-ds$close()
-
-elev_pal <- c("#008435","#B4E34F","#F5D157","#CF983B","#B08153","#FFFFFF")
-ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
-plot_raster(r, xsize=ncols, ysize=nrows, col_map_fn=ramp,
-            main="Storm Lake elevation (m)")
 ```
 
 ## Techniques for creating files

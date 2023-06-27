@@ -121,7 +121,7 @@
 	return(r)
 }
 
-#' Display raster data that has been read into a vector
+#' Display raster data that have been read into a vector
 #'
 #' `plot_raster()` displays raster data using base graphics.
 #'
@@ -326,7 +326,7 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 		leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
 		leg_img <- grDevices::as.raster(matrix(rev(col_map_fn(leg_data)),
 										ncol=1))
-		graphics::par(mar=c(7, 0.5, 7, 2) + 0.1)
+		graphics::par(mar=c(6, 0.5, 6, 2) + 0.1)
 		graphics::plot(c(0,2), c(0,1), type="n", axes=FALSE,
 						xlab="", ylab="", main="")
 		graphics::text(x=1.5, y=seq(0, 1, length.out=5),

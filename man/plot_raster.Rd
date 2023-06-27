@@ -2,7 +2,7 @@
 % Please edit documentation in R/display.R
 \name{plot_raster}
 \alias{plot_raster}
-\title{Display raster data that has been read into a vector}
+\title{Display raster data that have been read into a vector}
 \usage{
 plot_raster(
   data,

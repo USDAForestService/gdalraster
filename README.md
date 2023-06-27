@@ -49,6 +49,7 @@ Additional functionality includes:
     or stack of layers. Individual pixel coordinates are available as
     variables in the R expression, as either x/y in the raster projected
     coordinate system or inverse projected longitude/latitude.
+  - `plot_raster()` displays raster data using base R graphics.
 
 `gdalraster` may be suitable for applications that primarily need
 low-level raster I/O or prefer native GDAL-like calling. The additional
