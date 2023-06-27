@@ -18,7 +18,7 @@ a well known name (see Details)."><!-- mathjax --><script src="https://cdnjs.clo
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.2.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -104,9 +104,6 @@ by <code>srs</code> will be used. If a specific geographic coordinate system is
 desired, then <code>well_known_gcs</code> can be set to one of the values below:</p><table class="table table"><tr><td><code>EPSG:n</code></td><td>where <code>n</code> is the code of a geographic CRS</td></tr><tr><td><code>WGS84</code></td><td>same as <code>EPSG:4326</code></td></tr><tr><td><code>WGS72</code></td><td>same as <code>EPSG:4322</code></td></tr><tr><td><code>NAD83</code></td><td>same as <code>EPSG:4269</code></td></tr><tr><td><code>NAD27</code></td><td>same as <code>EPSG:4267</code></td></tr><tr><td><code>CRS84</code></td><td>same as <code>WGS84</code></td></tr><tr><td><code>CRS72</code></td><td>same as <code>WGS72</code></td></tr><tr><td><code>CRS27</code></td><td>same as <code>NAD27</code></td></tr></table><p>The returned array will always be in longitude, latitude order
 (traditional GIS order) regardless of the axis order defined for the
 names above.</p>
-<p><code>inv_project()</code> is included here as a convenience function mainly for
-internal use. See package <code>sf</code> for more full-featured
-coordinate transformation (<a href="https://r-spatial.github.io/sf/" class="external-link">https://r-spatial.github.io/sf/</a>).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
