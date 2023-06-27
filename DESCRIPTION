@@ -34,7 +34,8 @@ Description: Interface to the raster API of the 'Geospatial Data Abstraction
     may have other utility.
 License: MIT + file LICENSE
 Copyright: See file inst/COPYRIGHTS for details.
-URL: https://usdaforestservice.github.io/gdalraster/
+URL: https://usdaforestservice.github.io/gdalraster/,
+    https://github.com/USDAForestService/gdalraster
 BugReports: https://github.com/USDAForestService/gdalraster/issues
 Depends: R (>= 4.2.0)
 Imports: 

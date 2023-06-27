@@ -322,7 +322,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' depending on `resolution`.
 #' @param src_align Logical.
 #'   * `TRUE`: the upper left corner of the VRT extent will be set to the 
-#'   upper left corner of the source pixel that contains `subwindow` xmin, ymax. 
+#'   upper left corner of the source pixel that contains `subwindow` xmin, ymax.
 #'   The VRT will be pixel-aligned with source if the VRT `resolution` is the 
 #'   same as the source pixel size, otherwise VRT extent will be the minimum 
 #'   rectangle that contains `subwindow` for the given pixel size.  
@@ -500,8 +500,8 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 	if (!requireNamespace("xml2", quietly = TRUE))
 		stop("rasterToVRT() requires package \"xml2.\"", call. = FALSE)
 
-	if (relativeToVRT) relativeToVRT = 1 else relativeToVRT = 0
-	if (normalized) normalized = 1 else normalized = 0
+	if (relativeToVRT) relativeToVRT <- 1 else relativeToVRT <- 0
+	if (normalized) normalized <- 1 else normalized <- 0
 
 	src_ds <- new(GDALRaster, srcfile, read.only=TRUE)
 	src_gt <- src_ds$getGeoTransform()
@@ -869,7 +869,7 @@ calc <- function(expr,
 		stop("out_band must be specified for update mode.", call. = FALSE)
 
 	if (write_mode == "update") {
-		update_mode = TRUE
+		update_mode <- TRUE
 	}
 	else if (write_mode == "safe" || write_mode == "overwrite") {
 		if (!is.null(out_band))

@@ -63,8 +63,7 @@ other utility.
 install.packages("gdalraster")
 
 # Or the development version from GitHub:
-# install.packages("pak")
-pak::pak("USDAForestService/gdalraster")
+remotes::install_github("USDAForestService/gdalraster")
 ```
 
 ## Documentation
