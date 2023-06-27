@@ -5,8 +5,7 @@
 
 # Normalize to a range of [0,1].
 # Normalize to the full range of the input data by default.
-# Optionally normalize to a user-defined range in terms of the input, squishing
-# to [0,1] output.
+# Optionally normalize to a user-defined range in terms of the input.
 
 	if (is.null(minmax)) {
 		xn <- (x - min(x,na.rm=TRUE)) / (max(x,na.rm=TRUE) - min(x,na.rm=TRUE))
@@ -138,6 +137,8 @@
 #' @param normalize Logical. `TRUE` to rescale pixel values so that their
 #' range is `[0,1]`, normalized to the full range of the pixel data by default
 #' (`min(data)`, `max(data)`, per band). Ignored if `col_tbl` is used.
+#' `normalize=FALSE` if a custom color mapping function is used that
+#' operates on raw pixel values (see `col_map_fn` below).
 #' @param minmax_def Normalize to user-defined min/max values (in terms of
 #' the pixel data, per band). For single-band grayscale, a numeric vector of
 #' length two containing min, max. For 3-band RGB, a numeric vector of length
@@ -145,7 +146,8 @@
 #' @param minmax_pct_cut Normalize to a truncated range of the pixel data using
 #' percentile cutoffs (removes outliers). A numeric vector of length two giving
 #' the percentiles to use (e.g., `c(2, 98)`). Applied per band. Ignored if
-#' `minmax_def` is used.
+#' `minmax_def` is used. Set `normalize=FALSE` if using a color mapping
+#' function that operates on raw pixel values.
 #' @param col_map_fn An optional color map function (default is 
 #' `grDevices::gray` for single-band data or `grDevices::rgb` for 3-band).
 #' Ignored if `col_tbl` is used.
@@ -172,6 +174,20 @@
 #' The default is transparent (`"#00000000"`, the return value of
 #' `rgb(0,0,0,0)`).
 #' @param ... Other parameters to be passed to `plot.default()`.
+#'
+#' @note
+#' `plot_raster()` uses the function `graphics::rasterImage()` for plotting
+#' which is not supported on some devices (see `?rasterImage`).
+#'
+#' A reduced resolution overview for display can be read by setting `out_xsize`
+#' and `out_ysize` smaller than the raster region specified by `xsize`, `ysize`
+#' in calls to `GDALRaster$read()` or `read_ds()`.
+#' The GDAL_RASTERIO_RESAMPLING configuration option can be defined to 
+#' override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE, 
+#' LANCZOS, AVERAGE or MODE.
+#'
+#' @seealso
+#' [`GDALRaster$read()`][GDALRaster], [read_ds()], [set_config_option()]
 #'
 #' @examples
 #' ## Elevation
@@ -225,7 +241,7 @@
 #' 
 #' r <- read_ds(ds)
 #' ds$close()
-#' plot_raster(r, xsize=ncols, ysize=nrows, col_tbl=vat,
+#' plot_raster(r, xsize=ncols, ysize=nrows, col_tbl=vat, interpolate=FALSE,
 #'             main="Storm Lake Existing Vegetation Cover")
 #' @export
 plot_raster <- function(data, xsize, ysize, nbands=1,
@@ -252,9 +268,9 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 		
 	if (is.null(legend)) {
 		if (nbands==1 && is.null(col_tbl))
-			legend = TRUE
+			legend <- TRUE
 		else
-			legend = FALSE
+			legend <- FALSE
 	}
 
 	a <- array(data, dim = c(xsize, ysize, nbands))
@@ -281,7 +297,7 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 	if (legend) {
 		if (is.null(col_map_fn))
 			col_map_fn <- grDevices::gray
-		op <- par(no.readonly = TRUE)  # save original [ar for resetting...
+		op <- graphics::par(no.readonly = TRUE)  # save original for reset
 		graphics::layout(matrix(1:2, ncol=2), width=c(5,1), height=c(1,1))
 		graphics::par(mar=c(5, 4, 4, 0.5) + 0.1)
 	}
@@ -297,31 +313,27 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 	}
 	if (legend) {
 		mm <- NULL
-		if (!is.null(minmax_def)) {
+		if (!is.null(minmax_def))
 			mm <- minmax_def
-			leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
-		}
-		else if (!is.null(minmax_pct_cut)) {
+		else if (!is.null(minmax_pct_cut))
 			mm <- stats::quantile(data,
-								probs=c(minmax_pct_cut[1] / 100,
-										minmax_pct_cut[2] / 100),
-								na.rm = TRUE, names=FALSE)
-			leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
-		}
-		else {
+									probs=c(minmax_pct_cut[1] / 100,
+											minmax_pct_cut[2] / 100),
+									na.rm = TRUE, names=FALSE)
+		else
 			mm <- c(min(data, na.rm=TRUE), max(data, na.rm=TRUE))
-			leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
-		}
+
+		leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
 		leg_img <- grDevices::as.raster(matrix(rev(col_map_fn(leg_data)),
 										ncol=1))
 		graphics::par(mar=c(7, 0.5, 7, 2) + 0.1)
-		graphics::plot(c(0,2), c(0,1), type='n', axes=FALSE,
+		graphics::plot(c(0,2), c(0,1), type="n", axes=FALSE,
 						xlab="", ylab="", main="")
 		graphics::text(x=1.5, y=seq(0, 1, length.out=5),
 						labels=seq(mm[1], mm[2], length.out=5),
 						adj=c(0, NA), xpd=TRUE)
 		graphics::rasterImage(leg_img, 0, 0, 1, 1)
-		par(op)  # reset to original
+		graphics::par(op)  # reset to original
 	}
 
 	invisible()
