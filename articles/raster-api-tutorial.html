@@ -251,6 +251,8 @@ size (<code>xsize</code>, <code>ysize</code>). However, to load a
 reduced resolution overview this could be set to smaller than the window
 on disk. In this case the read method will utilize overviews to do the
 I/O more efficiently if the overviews are suitable.</p>
+<p><code><a href="../reference/read_ds.html">read_ds()</a></code> is a convenience wrapper for
+<code>GDALRaster$read()</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="closing-the-dataset">Closing the dataset<a class="anchor" aria-label="anchor" href="#closing-the-dataset"></a>
@@ -263,6 +265,28 @@ afterwards.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># close the dataset for proper cleanup</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+</div>
+<div class="section level2">
+<h2 id="display-using-base-r-graphics">Display using base R graphics<a class="anchor" aria-label="anchor" href="#display-using-base-r-graphics"></a>
+</h2>
+<p><code><a href="../reference/plot_raster.html">plot_raster()</a></code> displays raster data that has been read
+into a vector. It supports single-band grayscale, 3-band RGB, and
+options for user-supplied color table or color mapping function. For
+example, a user-defined palette can be used to generate a color
+ramp:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">elev_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_elev.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">elev_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ds.html">read_ds</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">elev_pal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#008435"</span>,<span class="st">"#B4E34F"</span>,<span class="st">"#F5D157"</span>,<span class="st">"#CF983B"</span>,<span class="st">"#B08153"</span>,<span class="st">"#FFFFFF"</span><span class="op">)</span></span>
+<span><span class="va">ramp</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/colour_ramp.html" class="external-link">colour_ramp</a></span><span class="op">(</span><span class="va">elev_pal</span>, alpha<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, col_map_fn<span class="op">=</span><span class="va">ramp</span>,</span>
+<span>            main<span class="op">=</span><span class="st">"Storm Lake elevation (m)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="raster-api-tutorial_files/figure-html/unnamed-chunk-9-1.png" width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="techniques-for-creating-files">Techniques for creating files<a class="anchor" aria-label="anchor" href="#techniques-for-creating-files"></a>
@@ -292,7 +316,7 @@ the block size and arrangement, compression, various metadata, etc. The
 following code copies a multi-band raster in FARSITE v.4 LCP format
 (basically a raw format without support for compression or nodata
 values) to LZW-compressed GeoTiff:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_lndscp.tif"</span><span class="op">)</span></span>
 <span><span class="va">options</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span><span class="op">)</span></span>
@@ -328,7 +352,7 @@ values) to LZW-compressed GeoTiff:</p>
 dataset manually. This function takes a list of creation options like
 <code><a href="../reference/createCopy.html">createCopy()</a></code>, but the raster size, number of bands and band
 type must be provided explicitly:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"newdata.tif"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/create.html">create</a></span><span class="op">(</span>format<span class="op">=</span><span class="st">"GTiff"</span>, dst_filename<span class="op">=</span><span class="va">new_file</span>, xsize<span class="op">=</span><span class="fl">143</span>, ysize<span class="op">=</span><span class="fl">107</span>, nbands<span class="op">=</span><span class="fl">1</span>, </span>
 <span>       dataType<span class="op">=</span><span class="st">"Int16"</span><span class="op">)</span></span></code></pre></div>
@@ -336,7 +360,7 @@ type must be provided explicitly:</p>
 and raster data must be written to the file. What this is will vary
 according to usage, but a simple case with a projection, geotransform
 and raster data is covered here:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">new_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># EPSG:26912 - NAD83 / UTM zone 12N</span></span>
