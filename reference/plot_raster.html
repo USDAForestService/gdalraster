@@ -113,7 +113,9 @@ intensities (between 0 and 1) of the red, green and blue primaries.</p></dd>
 <dt>normalize</dt>
 <dd><p>Logical. <code>TRUE</code> to rescale pixel values so that their
 range is <code>[0,1]</code>, normalized to the full range of the pixel data by default
-(<code>min(data)</code>, <code>max(data)</code>, per band). Ignored if <code>col_tbl</code> is used.</p></dd>
+(<code>min(data)</code>, <code>max(data)</code>, per band). Ignored if <code>col_tbl</code> is used.
+<code>normalize=FALSE</code> if a custom color mapping function is used that
+operates on raw pixel values (see <code>col_map_fn</code> below).</p></dd>
 
 
 <dt>minmax_def</dt>
@@ -127,7 +129,8 @@ six containing b1_min, b2_min, b3_min, b1_max, b2_max, b3_max.</p></dd>
 <dd><p>Normalize to a truncated range of the pixel data using
 percentile cutoffs (removes outliers). A numeric vector of length two giving
 the percentiles to use (e.g., <code>c(2, 98)</code>). Applied per band. Ignored if
-<code>minmax_def</code> is used.</p></dd>
+<code>minmax_def</code> is used. Set <code>normalize=FALSE</code> if using a color mapping
+function that operates on raw pixel values.</p></dd>
 
 
 <dt>col_map_fn</dt>
@@ -198,6 +201,21 @@ The default is transparent (<code>"#00000000"</code>, the return value of
 <dd><p>Other parameters to be passed to <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot.default()</a></code>.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p><code>plot_raster()</code> uses the function <code><a href="https://rdrr.io/r/graphics/rasterImage.html" class="external-link">graphics::rasterImage()</a></code> for plotting
+which is not supported on some devices (see <code><a href="https://rdrr.io/r/graphics/rasterImage.html" class="external-link">?rasterImage</a></code>).</p>
+<p>A reduced resolution overview for display can be read by setting <code>out_xsize</code>
+and <code>out_ysize</code> smaller than the raster region specified by <code>xsize</code>, <code>ysize</code>
+in calls to <code>GDALRaster$read()</code> or <code><a href="read_ds.html">read_ds()</a></code>.
+The GDAL_RASTERIO_RESAMPLING configuration option can be defined to
+override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE,
+LANCZOS, AVERAGE or MODE.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="GDALRaster-class.html">GDALRaster$read()</a></code>, <code><a href="read_ds.html">read_ds()</a></code>, <code><a href="set_config_option.html">set_config_option()</a></code></p></div>
+    </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
@@ -269,7 +287,7 @@ The default is transparent (<code>"#00000000"</code>, the return value of
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="read_ds.html">read_ds</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, col_tbl<span class="op">=</span><span class="va">vat</span>,</span></span>
+<span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, col_tbl<span class="op">=</span><span class="va">vat</span>, interpolate<span class="op">=</span><span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>            main<span class="op">=</span><span class="st">"Storm Lake Existing Vegetation Cover"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_raster-4.png" alt="" width="700" height="433"></span>
 </code></pre></div>
