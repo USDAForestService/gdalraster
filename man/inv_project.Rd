@@ -44,10 +44,6 @@ desired, then \code{well_known_gcs} can be set to one of the values below:
 The returned array will always be in longitude, latitude order
 (traditional GIS order) regardless of the axis order defined for the
 names above.
-
-\code{inv_project()} is included here as a convenience function mainly for
-internal use. See package \code{sf} for more full-featured
-coordinate transformation (\url{https://r-spatial.github.io/sf/}).
 }
 \examples{
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")

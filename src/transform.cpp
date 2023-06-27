@@ -36,10 +36,6 @@
 //' (traditional GIS order) regardless of the axis order defined for the 
 //' names above.
 //'
-//' `inv_project()` is included here as a convenience function mainly for 
-//' internal use. See package `sf` for more full-featured  
-//' coordinate transformation (\url{https://r-spatial.github.io/sf/}).
-//'
 //' @param pts Numeric array of geospatial x/y coordinates 
 //' @param srs Character string in OGC WKT format specifying the projected 
 //' spatial reference system for `pts`.
@@ -113,11 +109,6 @@ Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts,
 //' Transform geospatial x/y coordinates
 //'
 //' `transform_xy()` transforms geospatial x/y coordinates to a new projection.
-//'
-//' @note
-//' `transform_xy()` is included here as a convenience function mainly for 
-//' internal use. See package `sf` for more full-featured 
-//' coordinate transformation (\url{https://r-spatial.github.io/sf/}).
 //'
 //' @param pts Numeric array of geospatial x/y coordinates 
 //' @param srs_from Character string in OGC WKT format specifying the  

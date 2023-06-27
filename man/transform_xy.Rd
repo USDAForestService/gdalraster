@@ -22,11 +22,6 @@ specified by \code{srs_to}.
 \description{
 \code{transform_xy()} transforms geospatial x/y coordinates to a new projection.
 }
-\note{
-\code{transform_xy()} is included here as a convenience function mainly for
-internal use. See package \code{sf} for more full-featured
-coordinate transformation (\url{https://r-spatial.github.io/sf/}).
-}
 \examples{
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 pts <- read.csv(pt_file)
