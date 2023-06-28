@@ -1,0 +1,109 @@
+---
+title: "Raster Display"
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+`gdalraster::plot_raster()` displays raster data that have been read into a vector.
+
+```{r setup}
+library(gdalraster)
+
+url_dir <- "/vsicurl/https://raw.githubusercontent.com/usdaforestservice/gdalraster/main/sample-data/"
+```
+
+## Single-band grayscale or color ramp
+
+```{r}
+f <- paste0(url_dir, "lf_elev_220_mt_hood_utm.tif")
+ds <- new(GDALRaster, f, read_only=TRUE)
+ncols <- ds$getRasterXSize()
+nrows <- ds$getRasterYSize()
+
+r <- read_ds(ds)
+ds$close()
+
+# gray
+plot_raster(r, xsize=ncols, ysize=nrows,
+            main="Mount Hood elevation (m)")
+
+# color ramp
+elev_pal <- c("#008435", "#B4E34F", "#F5D157", "#CF983B", "#B08153", "#FFFFFF")
+ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
+plot_raster(r, xsize=ncols, ysize=nrows, col_map_fn=ramp,
+            main="Mount Hood elevation (m)")
+
+```
+
+## RGB
+
+```{r}
+f <- paste0(url_dir, "landsat_c2ard_sr_mt_hood_jul2022_utm.tif")
+ds <- new(GDALRaster, f, read_only=TRUE)
+ncols <- ds$getRasterXSize()
+nrows <- ds$getRasterYSize()
+
+r <- read_ds(ds, bands=c(7,5,4))
+ds$close()
+
+# normalize to ranges derived from the full Landsat scene (2-98 percentiles)
+plot_raster(r, xsize=ncols, ysize=nrows, nbands=3,
+            minmax_def=c(7551,7679,7585,14842,24997,12451),
+            main="Mount Hood July 2022 Landsat 7-5-4 (SWIR)")
+
+```
+
+## Color table
+
+```{r}
+f <- paste0(url_dir, "lf_fbfm40_220_mt_hood_utm.tif")
+ds <- new(GDALRaster, f, read_only=TRUE)
+ncols <- ds$getRasterXSize()
+nrows <- ds$getRasterYSize()
+print(paste("Size is", ncols, "x",  nrows))
+
+# use CSV attribute table distributed by LANDFIRE
+fbfm_csv <- system.file("extdata/LF20_F40_220.csv", package="gdalraster")
+vat <- read.csv(fbfm_csv)
+head(vat)
+vat <- vat[,c(1,6:8)]
+
+# read at reduced resolution for display
+r <- read_ds(ds, out_xsize=507, out_ysize=400)
+ds$close()
+
+plot_raster(r, xsize=507, ysize=400, col_tbl=vat,
+            interpolate=FALSE,
+            main="LANDFIRE surface fuel class (FBFM40)")
+ 
+```
+
+## Label with geospatial coordinates
+
+```{r}
+f <- paste0(url_dir, "bl_mrbl_ng_jul2004_rgb_720x360.tif")
+
+ds <- new(GDALRaster, f, read_only=TRUE)
+ncols <- ds$getRasterXSize()
+nrows <- ds$getRasterYSize()
+nbands <- ds$getRasterCount()
+print(paste("Size is", ncols, "x",  nrows, "x", nbands))
+
+srs_is_projected(ds$getProjectionRef())
+bb <- ds$bbox()
+
+r <- read_ds(ds)
+ds$close()
+
+plot_raster(r, xsize=ncols, ysize=nrows, nbands=3,
+            xlim=c(bb[1],bb[3]), ylim=c(bb[2],bb[4]),
+            xlab="longitude", ylab="latitude",
+            main="NASA Earth Observatory Blue Marble July 2004")
+
+```
+
