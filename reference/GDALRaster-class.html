@@ -16,7 +16,7 @@ details of the GDAL API."><!-- mathjax --><script src="https://cdnjs.cloudflare.
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -124,6 +124,7 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setProjection</span><span class="op">(</span><span class="va">projection</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
@@ -211,6 +212,10 @@ Returns a numeric vector of length four containing the bounding box
 Returns a numeric vector of length two containing the resolution
 (pixel width, pixel height as positive values) assuming this is a north-up
 raster.</p>
+<p><code>$dim()</code>
+Returns an integer vector of length three containing the raster dimensions.
+Equivalent to:
+<code>c(ds$getRasterXSize(), ds$getRasterYSize(), ds$getRasterCount())</code></p>
 <p><code>$getRasterCount()</code>
 Returns the number of raster bands on this dataset. For the methods
 described below that operate on individual bands, the <code>band</code>
@@ -537,14 +542,16 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323476.1      30.0       0.0 5105082.0       0.0     -30.0</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getProjectionRef</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PROJCS[\"NAD83 / UTM zone 12N\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6269\"]],PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.0174532925199433]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-111],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH]]"</span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323476.1 5101872.0  327766.1 5105082.0</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 30 30</span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 143 107   8</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## retrieve the number of bands and some band-level parameters</span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 8</span>
+<span class="r-in"><span><span class="co">## retrieve some band-level parameters</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 143   1</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>

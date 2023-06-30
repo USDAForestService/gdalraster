@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -95,14 +95,13 @@ been read into a vector.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url_dir</span>, <span class="st">"lf_elev_220_mt_hood_utm.tif"</span><span class="op">)</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ds.html">read_ds</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># gray</span></span>
-<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>,</span>
+<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, ysize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,</span>
 <span>            main<span class="op">=</span><span class="st">"Mount Hood elevation (m)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="raster-display_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -110,7 +109,7 @@ been read into a vector.</p>
 <span><span class="co"># color ramp</span></span>
 <span><span class="va">elev_pal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#008435"</span>, <span class="st">"#B4E34F"</span>, <span class="st">"#F5D157"</span>, <span class="st">"#CF983B"</span>, <span class="st">"#B08153"</span>, <span class="st">"#FFFFFF"</span><span class="op">)</span></span>
 <span><span class="va">ramp</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/colour_ramp.html" class="external-link">colour_ramp</a></span><span class="op">(</span><span class="va">elev_pal</span>, alpha<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, col_map_fn<span class="op">=</span><span class="va">ramp</span>,</span>
+<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, ysize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, col_map_fn<span class="op">=</span><span class="va">ramp</span>,</span>
 <span>            main<span class="op">=</span><span class="st">"Mount Hood elevation (m)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="raster-display_files/figure-html/unnamed-chunk-2-2.png" width="700"></p>
 </div>
@@ -120,14 +119,13 @@ been read into a vector.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url_dir</span>, <span class="st">"landsat_c2ard_sr_mt_hood_jul2022_utm.tif"</span><span class="op">)</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ds.html">read_ds</a></span><span class="op">(</span><span class="va">ds</span>, bands<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>,<span class="fl">5</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># normalize to ranges derived from the full Landsat scene (2-98 percentiles)</span></span>
-<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, nbands<span class="op">=</span><span class="fl">3</span>,</span>
+<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, ysize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, nbands<span class="op">=</span><span class="fl">3</span>,</span>
 <span>            minmax_def<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7551</span>,<span class="fl">7679</span>,<span class="fl">7585</span>,<span class="fl">14842</span>,<span class="fl">24997</span>,<span class="fl">12451</span><span class="op">)</span>,</span>
 <span>            main<span class="op">=</span><span class="st">"Mount Hood July 2022 Landsat 7-5-4 (SWIR)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="raster-display_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
@@ -138,9 +136,8 @@ been read into a vector.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url_dir</span>, <span class="st">"lf_fbfm40_220_mt_hood_utm.tif"</span><span class="op">)</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Size is"</span>, <span class="va">ncols</span>, <span class="st">"x"</span>,  <span class="va">nrows</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Size is"</span>, <span class="va">dm</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">"x"</span>,  <span class="va">dm</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Size is 1013 x 799"</span></span>
 <span></span>
 <span><span class="co"># use CSV attribute table distributed by LANDFIRE</span></span>
@@ -172,10 +169,8 @@ been read into a vector.</p>
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url_dir</span>, <span class="st">"bl_mrbl_ng_jul2004_rgb_720x360.tif"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">nbands</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Size is"</span>, <span class="va">ncols</span>, <span class="st">"x"</span>,  <span class="va">nrows</span>, <span class="st">"x"</span>, <span class="va">nbands</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Size is"</span>, <span class="va">dm</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">"x"</span>,  <span class="va">dm</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="st">"x"</span>, <span class="va">dm</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Size is 720 x 360 x 3"</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/srs_is_projected.html">srs_is_projected</a></span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="fu">getProjectionRef</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
@@ -185,7 +180,7 @@ been read into a vector.</p>
 <span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ds.html">read_ds</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="va">nrows</span>, nbands<span class="op">=</span><span class="fl">3</span>,</span>
+<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, ysize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, nbands<span class="op">=</span><span class="fl">3</span>,</span>
 <span>            xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">bb</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">bb</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">bb</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,<span class="va">bb</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span>,</span>
 <span>            xlab<span class="op">=</span><span class="st">"longitude"</span>, ylab<span class="op">=</span><span class="st">"latitude"</span>,</span>
 <span>            main<span class="op">=</span><span class="st">"NASA Earth Observatory Blue Marble July 2004"</span><span class="op">)</span></span></code></pre></div>
