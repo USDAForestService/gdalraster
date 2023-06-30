@@ -1,3 +1,7 @@
+# gdalraster 1.3.1 (dev)
+
+* add `GDALRaster$dim()`: returns a vector of xsize, ysize, nbands (2023-06-29)
+
 # gdalraster 1.3.0
 
 * `GDALRaster::read()`: data are now read as R `integer` type when possible for the raster data type (#23)

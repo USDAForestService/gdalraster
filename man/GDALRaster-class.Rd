@@ -58,6 +58,7 @@ ds$getProjectionRef()
 ds$setProjection(projection)
 ds$bbox()
 ds$res()
+ds$dim()
 
 ds$getRasterCount()
 ds$getBlockSize(band)
@@ -167,6 +168,11 @@ Returns a numeric vector of length four containing the bounding box
 Returns a numeric vector of length two containing the resolution
 (pixel width, pixel height as positive values) assuming this is a north-up
 raster.
+
+\code{$dim()}
+Returns an integer vector of length three containing the raster dimensions.
+Equivalent to:
+\code{c(ds$getRasterXSize(), ds$getRasterYSize(), ds$getRasterCount())}
 
 \code{$getRasterCount()}
 Returns the number of raster bands on this dataset. For the methods
@@ -396,11 +402,12 @@ ds$getRasterXSize()
 ds$getRasterYSize()
 ds$getGeoTransform()
 ds$getProjectionRef()
+ds$getRasterCount()
 ds$bbox()
 ds$res()
+ds$dim()
 
-## retrieve the number of bands and some band-level parameters
-ds$getRasterCount()
+## retrieve some band-level parameters
 ds$getBlockSize(band=1)
 ds$getOverviewCount(band=1)
 ds$getDataTypeName(band=1)
