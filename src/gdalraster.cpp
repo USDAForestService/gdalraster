@@ -674,7 +674,7 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Return the bounding box (xmin, ymin, xmax, ymax).")
     .const_method("res", &GDALRaster::res, 
     	"Return the resolution (pixel width, pixel height).")
-    .const_method("dim", &GDALRaster::res, 
+    .const_method("dim", &GDALRaster::dim, 
     	"Return raster dimensions (xsize, ysize, number of bands).")
     .const_method("getBlockSize", &GDALRaster::getBlockSize, 
     	"Get the natural block size of this band.")
