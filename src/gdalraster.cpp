@@ -141,24 +141,6 @@ bool GDALRaster::setGeoTransform(std::vector<double> transform) {
 	}
 }
 
-std::vector<double> GDALRaster::bbox() const {
-	std::vector<double> gt = this->getGeoTransform();
-	double xmin = gt[0];
-	double xmax = xmin + gt[1] * this->getRasterXSize();
-	double ymax = gt[3];
-	double ymin = ymax + gt[5] * this->getRasterYSize();
-	std::vector<double> ret = {xmin, ymin, xmax, ymax};
-	return ret;
-}
-
-std::vector<double> GDALRaster::res() const {
-	std::vector<double> gt = this->getGeoTransform();
-	double pixel_width = gt[1];
-	double pixel_height = std::fabs(gt[5]);
-	std::vector<double> ret = {pixel_width, pixel_height};
-	return ret;
-}
-
 int GDALRaster::getRasterCount() const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
@@ -199,6 +181,40 @@ bool GDALRaster::setProjection(std::string projection) {
 	else {
 		return true;
 	}
+}
+
+std::vector<double> GDALRaster::bbox() const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+		
+	std::vector<double> gt = this->getGeoTransform();
+	double xmin = gt[0];
+	double xmax = xmin + gt[1] * this->getRasterXSize();
+	double ymax = gt[3];
+	double ymin = ymax + gt[5] * this->getRasterYSize();
+	std::vector<double> ret = {xmin, ymin, xmax, ymax};
+	return ret;
+}
+
+std::vector<double> GDALRaster::res() const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+		
+	std::vector<double> gt = this->getGeoTransform();
+	double pixel_width = gt[1];
+	double pixel_height = std::fabs(gt[5]);
+	std::vector<double> ret = {pixel_width, pixel_height};
+	return ret;
+}
+
+std::vector<int> GDALRaster::dim() const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+		
+	std::vector<int> ret = {this->getRasterXSize(),
+								this->getRasterYSize(),
+								this->getRasterCount()};
+	return ret;
 }
 
 std::vector<int> GDALRaster::getBlockSize(int band) const {
@@ -648,16 +664,18 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Return the affine transformation coefficients.")
     .method("setGeoTransform", &GDALRaster::setGeoTransform, 
     	"Set the affine transformation coefficients for this dataset.")
-    .const_method("bbox", &GDALRaster::bbox, 
-    	"Return the bounding box (xmin, ymin, xmax, ymax).")
-    .const_method("res", &GDALRaster::res, 
-    	"Return the resolution (pixel width, pixel height).")
     .const_method("getRasterCount", &GDALRaster::getRasterCount, 
     	"Return the number of raster bands on this dataset.")
     .const_method("getProjectionRef", &GDALRaster::getProjectionRef, 
     	"Return the projection definition for this dataset.")
     .method("setProjection", &GDALRaster::setProjection, 
     	"Set the projection reference string for this dataset.")
+    .const_method("bbox", &GDALRaster::bbox, 
+    	"Return the bounding box (xmin, ymin, xmax, ymax).")
+    .const_method("res", &GDALRaster::res, 
+    	"Return the resolution (pixel width, pixel height).")
+    .const_method("dim", &GDALRaster::res, 
+    	"Return raster dimensions (xsize, ysize, number of bands).")
     .const_method("getBlockSize", &GDALRaster::getBlockSize, 
     	"Get the natural block size of this band.")
     .const_method("getOverviewCount", &GDALRaster::getOverviewCount, 

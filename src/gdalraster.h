@@ -83,12 +83,14 @@ class GDALRaster {
 	int getRasterYSize() const;
 	std::vector<double> getGeoTransform() const;
 	bool setGeoTransform(std::vector<double> transform);
-	std::vector<double> bbox() const;
-	std::vector<double> res() const;
 	int getRasterCount() const;
 	
 	std::string getProjectionRef() const;
 	bool setProjection(std::string projection);
+	
+	std::vector<double> bbox() const;
+	std::vector<double> res() const;
+	std::vector<int> dim() const;
 	
 	std::vector<int> getBlockSize(int band) const;
 	int getOverviewCount(int band) const;
