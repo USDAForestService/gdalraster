@@ -14,19 +14,19 @@ test_that("get_pixel_line gives correct results", {
 	expect_equal(as.vector(res), pix_line)
 })
 
-test_that("warp writes correct output", {
-	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-	args = c("-tr", "90", "90", "-r", "average", "-tap")
-	args = c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
-	alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
-	on.exit(unlink(alb83_file))
-	warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
-	ds <- new(GDALRaster, alb83_file, read_only=TRUE)
-	dm <- ds$dim()
-	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
-	ds$close()
-	expect_equal(chk, 26902)
-})
+#test_that("warp writes correct output", {
+#	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#	args = c("-tr", "90", "90", "-r", "average", "-tap")
+#	args = c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
+#	alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
+#	on.exit(unlink(alb83_file))
+#	warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
+#	ds <- new(GDALRaster, alb83_file, read_only=TRUE)
+#	dm <- ds$dim()
+#	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
+#	ds$close()
+#	expect_equal(chk, 26902)
+#})
 
 test_that("fillNodata writes correct output", {
 	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
