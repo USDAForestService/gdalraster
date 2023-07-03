@@ -9,3 +9,6 @@ errors.txt
 TODO.txt
 docs
 inst/doc
+*.gcda
+*.gcno
+*.gcov

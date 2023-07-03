@@ -142,5 +142,18 @@ test_that("rasterToVRT works", {
 	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
 	ds$close()
 	expect_equal(chk, 49589)	
+	
+	## kernel filter
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	krnl <- c(0.11111, 0.11111, 0.11111,
+			  0.11111, 0.11111, 0.11111,
+			  0.11111, 0.11111, 0.11111)
+	vrt_file <- rasterToVRT(elev_file, krnl=krnl)
+	on.exit(unlink(vrt_file))
+	ds <- new(GDALRaster, vrt_file, read_only=TRUE)
+	dm <- ds$dim()
+	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
+	ds$close()
+	expect_equal(chk, 46590)
 })
 
