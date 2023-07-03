@@ -1,6 +1,10 @@
 # Tests for src/gdal_exp.cpp - Exported stand-alone functions for gdalraster
 # Some functions in gdal_exp.cpp are called by gdalraster_proc.R and
 # tested there.
+test_that("gdal_version returns vector", {
+	expect_length(gdal_version(), 4)
+})
+
 test_that("get_pixel_line gives correct results", {
 	pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 	pts <- read.csv(pt_file)
