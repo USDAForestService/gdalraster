@@ -44,6 +44,8 @@ test_that("metadata are correct", {
 	expect_equal(ds$getMetadata(band=1, domain="IMAGE_STRUCTURE"), "")
 	expect_equal(ds$getMetadataItem(band=0, mdi_name="AREA_OR_POINT",
 				domain=""), "Area")
+	expect_equal(ds$getMetadataItem(band=1, mdi_name="COMPRESSION",
+				domain="IMAGE_STRUCTURE"), "")
 	ds$close()
 })
 
@@ -79,11 +81,34 @@ test_that("floating point I/O works", {
 	create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
 			nbands=1, dataType="Float32")
 	ds <- new(GDALRaster, f, read_only=FALSE)
-	ds$setNoDataValue(band=1, -99999)
 	set.seed(42)
-	test_data <- runif(10*10)
-	ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, test_data)
+	z <- runif(10*10)
+	ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, z)
 	ds$open(read_only=TRUE)
-	expect_equal(round(read_ds(ds),5), round(test_data,5))
+	expect_equal(round(read_ds(ds),5), round(z,5))
+	ds$open(read_only=FALSE)
+	ds$setNoDataValue(band=1, -99999)
+	ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, rep(-99999, 100))
+	ds$open(read_only=TRUE)
+	expect_true(all(is.na(read_ds(ds))))
+	ds$open(read_only=FALSE)
+	ds$deleteNoDataValue(band=1)
+	ds$open(read_only=TRUE)
+	expect_equal(read_ds(ds), rep(-99999, 100))
 	ds$close()
 })
+
+test_that("complex I/O works", {
+	f <- paste0(tempdir(), "/", "testcomplex.tif")
+	on.exit(unlink(f))
+	create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
+			nbands=1, dataType="CFloat32")
+	ds <- new(GDALRaster, f, read_only=FALSE)
+	set.seed(42)
+	z <- complex(real = stats::rnorm(100), imaginary = stats::rnorm(100))
+	ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, z)
+	ds$open(read_only=TRUE)
+	expect_vector(read_ds(ds), ptype=complex(0), size=100)
+	ds$close()
+})
+
