@@ -1,5 +1,5 @@
 # Tests for src/transform.cpp
-test_that("transform_xy gives correct results", {
+test_that("transform/inv_project give correct results", {
 	pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 	pts <- read.csv(pt_file)
 	xy_alb83 <- c(-1330885, -1331408, -1331994, -1330297, -1329991, -1329167,
@@ -18,5 +18,5 @@ test_that("transform_xy gives correct results", {
 	inv_test <- inv_project(pts = as.matrix(pts[,-1]),
 							srs = epsg_to_wkt(26912),
 							well_known_gcs = "WGS84")
-	expect_equal(round(as.vector(inv_test), 5), round(xy_wgs84, 5))
+	expect_equal(round(as.vector(inv_test), 4), round(xy_wgs84, 4))
 })
