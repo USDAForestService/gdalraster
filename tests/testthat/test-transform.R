@@ -10,4 +10,13 @@ test_that("transform_xy gives correct results", {
 							srs_from = epsg_to_wkt(26912), 
 							srs_to = epsg_to_wkt(5070))
 	expect_equal(round(as.vector(xy_test)), xy_alb83)
+	
+	xy_wgs84 <- c(-113.26707, -113.27315, -113.28150, -113.25978, -113.25312,
+					-113.24600, -113.25613, -113.24613, -113.22794, -113.27334,
+					46.06118, 46.05827, 46.06076, 46.06280, 46.05276, 46.06682,
+					46.06862, 46.05405, 46.07214, 46.06607)
+	inv_test <- inv_project(pts = as.matrix(pts[,-1]),
+							srs = epsg_to_wkt(26912),
+							well_known_gcs = "WGS84")
+	expect_equal(round(as.vector(inv_test), 5), round(xy_wgs84, 5))
 })
