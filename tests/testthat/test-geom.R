@@ -1,3 +1,5 @@
+skip_if_not(has_geos())
+
 test_that("intersect/union return correct values", {
 	bbox_list <-list()
 	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
