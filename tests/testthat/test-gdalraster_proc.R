@@ -1,3 +1,12 @@
+test_that(".getGDALformat works", {
+	expect_equal(.getGDALformat("test.tif"), "GTiff")
+	expect_equal(.getGDALformat("test.TIF"), "GTiff")
+	expect_equal(.getGDALformat("test.img"), "HFA")
+	expect_equal(.getGDALformat("test.vrt"), "VRT")
+	expect_equal(.getGDALformat("test.VRT"), "VRT")
+	expect_null(.getGDALformat("test.unknown"))
+})
+
 test_that("calc writes correct results", {
 	# bioclimatic index
 	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
@@ -52,6 +61,57 @@ test_that("calc writes correct results", {
 	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
 	ds$close()
 	expect_equal(chk, 28017)
+	
+	# test errors from input validation
+	expr <- "((B5-B4)/(B5+B4))"
+	expect_error(calc(expr = expr,
+					rasterfiles = c(b4_file, paste0(b5_file, ".error")),
+					var.names = c("B4", "B5"),
+					dtName = "Float32",
+					nodata_value = -32767,
+					setRasterNodataValue = TRUE))
+
+	expect_error(calc(expr = expr,
+					rasterfiles = c(b4_file, b5_file),
+					bands = 1,
+					var.names = c("B4", "B5"),
+					dtName = "Float32",
+					nodata_value = -32767,
+					setRasterNodataValue = TRUE))	
+
+	expect_error(calc(expr = expr,
+					rasterfiles = c(b4_file, b5_file),
+					var.names = c("B4", "B5", "err"),
+					dtName = "Float32",
+					nodata_value = -32767,
+					setRasterNodataValue = TRUE))	
+
+	expect_error(calc(expr = expr,
+					rasterfiles = c(b4_file, b5_file),
+					dtName = "Float32",
+					nodata_value = -32767,
+					setRasterNodataValue = TRUE))
+
+	expect_error(calc(expr = expr,
+					rasterfiles = c(b4_file, b5_file),
+					var.names = c("B4", "B5"),
+					dstfile = "unknown_file_type.err",
+					dtName = "Float32",
+					nodata_value = -32767,
+					setRasterNodataValue = TRUE))
+
+	expect_error(calc(expr = expr,
+					rasterfiles = c(b4_file, b5_file),
+					var.names = c("B4", "B5"),
+					dtName = "Int64",
+					setRasterNodataValue = TRUE))
+
+	expect_error(calc(expr = expr,
+					rasterfiles = c(b4_file, elev_file),
+					var.names = c("B4", "B5"),
+					dtName = "Float32",
+					nodata_value = -32767,
+					setRasterNodataValue = TRUE))
 })
 
 test_that("combine writes correct output", {
@@ -62,16 +122,23 @@ test_that("combine writes correct output", {
 	cmb_file <- paste0(tempdir(), "/", "fbfm_cov_cmbid.tif")
 	on.exit(unlink(cmb_file))
 	df <- combine(rasterfiles, var.names, bands, cmb_file)
+	expect_equal(nrow(df), 29)
+	df <- NULL
 	ds <- new(GDALRaster, cmb_file, TRUE)
 	dm <- ds$dim()
 	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
 	ds$close()
 	expect_equal(chk, 43024)
+	
+	evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+	df <- combine(evt_file)
+	expect_equal(nrow(df), 24)
 })
 
 test_that("rasterFromRaster works", {
 	lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 	slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
+	on.exit(unlink(slpp_file))
 	options = c("COMPRESS=LZW")
 	rasterFromRaster(srcfile = lcp_file,
 						dstfile = slpp_file,
@@ -79,8 +146,43 @@ test_that("rasterFromRaster works", {
 						dtName = "Int16",
 						options = options,
 						init = -32767)
-	on.exit(unlink(slpp_file))
 	ds <- new(GDALRaster, slpp_file, read_only=TRUE)
+	dm <- ds$dim()
+	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
+	ds$close()
+	expect_equal(chk, 47771)
+	
+	slpp_file_img <- paste0(tempdir(), "/", "storml_slpp.img")
+	on.exit(unlink(slpp_file_img))
+	options = c("COMPRESSED=YES")
+	rasterFromRaster(srcfile = lcp_file,
+						dstfile = slpp_file_img,
+						nbands = 1,
+						dtName = "Int16",
+						options = options,
+						init = -32767)
+	ds <- new(GDALRaster, slpp_file, read_only=TRUE)
+	dm <- ds$dim()
+	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
+	ds$close()
+	expect_equal(chk, 47771)
+	
+	slpp_file_envi <- paste0(tempdir(), "/", "storml_slpp")
+	on.exit(unlink(slpp_file_envi))
+	on.exit(unlink(paste0(slpp_file_envi, ".hdr")))
+	# error on unknown file format:
+	expect_error(rasterFromRaster(srcfile = lcp_file,
+						dstfile = slpp_file_envi,
+						nbands = 1,
+						dtName = "Int16",
+						init = -32767))
+	rasterFromRaster(srcfile = lcp_file,
+						dstfile = slpp_file_envi,
+						fmt = "ENVI",
+						nbands = 1,
+						dtName = "Int16",
+						init = -32767)
+	ds <- new(GDALRaster, slpp_file_envi, read_only=TRUE)
 	dm <- ds$dim()
 	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
 	ds$close()
@@ -126,6 +228,11 @@ test_that("rasterToVRT works", {
 	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
 	ds$close()
 	expect_equal(chk, 17631)
+	
+	# subwindow outside raster extent
+	expect_error(rasterToVRT(evt_file,
+				subwindow = bbox_from_wkt(.g_buffer(bnd, 10000)),
+				src_align=TRUE))
 
 	## subset and pixel align two rasters
 	lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
@@ -155,5 +262,7 @@ test_that("rasterToVRT works", {
 	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
 	ds$close()
 	expect_equal(chk, 46590)
+	
+	expect_error(rasterToVRT(elev_file, resolution=c(90,90), krnl=krnl))
 })
 

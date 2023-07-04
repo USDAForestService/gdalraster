@@ -23,13 +23,13 @@ DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
 .getGDALformat <- function(file) {
 # Only for guessing common output formats
 	file <- as.character(file)
-	if (endsWith(file, ".img")) {
+	if (endsWith(file, ".img") || endsWith(file, ".IMG")) {
 		return("HFA")
 	}
-	if (endsWith(file, ".tif")) {
+	if (endsWith(file, ".tif") || endsWith(file, ".TIF")) {
 		return("GTiff")
 	}
-	if (endsWith(file, ".vrt")) {
+	if (endsWith(file, ".vrt") || endsWith(file, ".VRT")) {
 		return("VRT")
 	}
 	return(NULL)
@@ -936,7 +936,7 @@ calc <- function(expr,
 		for(r in rasterfiles) {
 			ds <- new(GDALRaster, r, TRUE)
 			if(ds$getRasterYSize() != nrows || ds$getRasterXSize() != ncols) {
-				message(rasterfiles[r])
+				message(r)
 				stop("All input rasters must have the same dimensions.", 
 					call. = FALSE)
 			}
