@@ -18,4 +18,10 @@ test_that("intersect/union return correct values", {
 					c(323794.2, 5102885.8, 326420.0, 5104929.4))
 	expect_equal(bbox_union(bbox_list),
 					c(323400.9, 5101815.8, 327870.9, 5105175.8))
+	expect_equal(bbox_intersect(c(elev_file, b5_file)),
+					c(323476.1, 5101872.0, 327766.1, 5105082.0))
+	expect_equal(bbox_union(c(elev_file, b5_file)),
+					c(323400.9, 5101815.8, 327870.9, 5105175.8))
+	expect_equal(bbox_from_wkt(bbox_union(c(elev_file, b5_file), as_wkt=TRUE)),
+					c(323400.9, 5101815.8, 327870.9, 5105175.8))
 })
