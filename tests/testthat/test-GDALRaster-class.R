@@ -51,16 +51,29 @@ test_that("metadata are correct", {
 
 test_that("open/close/re-open works", {
 	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-	mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
-	file.copy(elev_file,  mod_file)
+	ds <- new(GDALRaster, elev_file, read_only=TRUE)
+	dm <- ds$dim()
+	r <- read_ds(ds)
+	ds$close()
+	mod_file <- paste0(tempdir(), "/", "storml_elev_mod.tif")
 	on.exit(unlink(mod_file))
+	rasterFromRaster(srcfile = elev_file,
+					dstfile = mod_file,
+					nbands = 1,
+					dtName = "UInt32",
+					init = DEFAULT_NODATA[["UInt32"]])
 	ds <- new(GDALRaster, mod_file, read_only=TRUE)
 	expect_true(ds$isOpen())
+	expect_true(all(is.na(read_ds(ds))))
 	ds$close()
 	expect_false(ds$isOpen())
 	expect_equal(ds$getFilename(), mod_file)
 	ds$open(read_only=FALSE)
 	expect_true(ds$isOpen())
+	r[is.na(r)] <- DEFAULT_NODATA[["UInt32"]]
+	ds$write(band=1, 0, 0, dm[1], dm[2], r)
+	expect_false(all(is.na(read_ds(ds))))
+	expect_true(any(is.na(read_ds(ds))))
 	ds$close()
 })
 
