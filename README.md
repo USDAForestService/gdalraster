@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/USDAForestService/gdalraster/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/USDAForestService/gdalraster/actions/workflows/R-CMD-check.yaml)
-[![test-coverage](https://github.com/USDAForestService/gdalraster/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/USDAForestService/gdalraster/actions/workflows/test-coverage.yaml)
+[![codecov](https://codecov.io/gh/ctoney/gdalraster/branch/main/graph/badge.svg?token=MXIOPZQ2IU)](https://codecov.io/gh/ctoney/gdalraster)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/gdalraster)](https://CRAN.R-project.org/package=gdalraster)
 [![cran
