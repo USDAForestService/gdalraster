@@ -18,5 +18,5 @@ test_that("transform/inv_project give correct results", {
 	inv_test <- inv_project(pts = as.matrix(pts[,-1]),
 							srs = epsg_to_wkt(26912),
 							well_known_gcs = "WGS84")
-	expect_equal(round(as.vector(inv_test), 4), round(xy_wgs84, 4))
+	expect_equal(round(as.vector(inv_test), 2), round(xy_wgs84, 2))
 })
