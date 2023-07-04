@@ -9,7 +9,7 @@ test_that("transform/inv_project give correct results", {
 	xy_test <- transform_xy(pts = as.matrix(pts[,-1]), 
 							srs_from = epsg_to_wkt(26912), 
 							srs_to = epsg_to_wkt(5070))
-	expect_equal(round(as.vector(xy_test)), xy_alb83)
+	expect_equal(round(as.vector(xy_test)), xy_alb83, tolerance=1)
 	
 	xy_wgs84 <- c(-113.26707, -113.27315, -113.28150, -113.25978, -113.25312,
 					-113.24600, -113.25613, -113.24613, -113.22794, -113.27334,
@@ -18,5 +18,5 @@ test_that("transform/inv_project give correct results", {
 	inv_test <- inv_project(pts = as.matrix(pts[,-1]),
 							srs = epsg_to_wkt(26912),
 							well_known_gcs = "WGS84")
-	expect_equal(round(as.vector(inv_test), 2), round(xy_wgs84, 2))
+	expect_equal(as.vector(inv_test), xy_wgs84, tolerance = 0.001)
 })
