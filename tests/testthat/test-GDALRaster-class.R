@@ -27,6 +27,9 @@ test_that("band-level parameters are correct", {
 	expect_equal(ds$getOverviewCount(1), 0)
 	expect_equal(ds$getDataTypeName(1), "Int16")
 	expect_equal(ds$getNoDataValue(1), 32767)
+	expect_equal(ds$getUnitType(1), "")
+	expect_true(is.na(ds$getScale(1)))
+	expect_true(is.na(ds$getOffset(1)))
 	ds$close()
 })
 
@@ -44,3 +47,43 @@ test_that("metadata are correct", {
 	ds$close()
 })
 
+test_that("open/close/re-open works", {
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+	file.copy(elev_file,  mod_file)
+	on.exit(unlink(mod_file))
+	ds <- new(GDALRaster, mod_file, read_only=TRUE)
+	expect_true(ds$isOpen())
+	ds$close()
+	expect_false(ds$isOpen())
+	expect_equal(ds$getFilename(), mod_file)
+	ds$open(read_only=FALSE)
+	expect_true(ds$isOpen())
+	ds$close()
+})
+
+test_that("statistics are correct", {
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+	file.copy(elev_file,  mod_file)
+	on.exit(unlink(mod_file))
+	ds <- new(GDALRaster, mod_file, read_only=TRUE)
+	stats <- round(ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE))
+	expect_equal(stats, c(2438, 3046, 2676, 133))
+	ds$close()
+})
+
+test_that("floating point I/O works", {
+	f <- paste0(tempdir(), "/", "testfloat.tif")
+	on.exit(unlink(f))
+	create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
+			nbands=1, dataType="Float32")
+	ds <- new(GDALRaster, f, read_only=FALSE)
+	ds$setNoDataValue(band=1, -99999)
+	set.seed(42)
+	test_data <- runif(10*10)
+	ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, test_data)
+	ds$open(read_only=TRUE)
+	expect_equal(round(read_ds(ds),5), round(test_data,5))
+	ds$close()
+})
