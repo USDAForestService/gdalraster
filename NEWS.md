@@ -1,5 +1,7 @@
 # gdalraster 1.3.1 (dev)
 
+* add test suite and codecov reporting (2023-07-02)
+
 * add `GDALRaster$dim()`: returns a vector of xsize, ysize, nbands (2023-06-29)
 
 # gdalraster 1.3.0
