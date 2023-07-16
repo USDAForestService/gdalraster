@@ -411,6 +411,7 @@ ds$dim()
 ds$getBlockSize(band=1)
 ds$getOverviewCount(band=1)
 ds$getDataTypeName(band=1)
+# LCP format does not support an intrinsic nodata value so this returns NA:
 ds$getNoDataValue(band=1)
 
 ## LCP driver reports several dataset- and band-level metadata
@@ -433,7 +434,6 @@ ncols <- ds$getRasterXSize()
 rowdata <- ds$read(band=1, xoff=0, yoff=9, 
                     xsize=ncols, ysize=1, 
                     out_xsize=ncols, out_ysize=1)
-dim(rowdata)
 head(rowdata)
 
 ds$close()
@@ -453,7 +453,6 @@ ncols <- ds_new$getRasterXSize()
 nrows <- ds_new$getRasterYSize()
 for (row in 0:(nrows-1)) {
     rowdata <- round(runif(ncols, 0, 100))
-    dim(rowdata) <- c(1, ncols)
     ds_new$write(band=1, xoff=0, yoff=row, xsize=ncols, ysize=1, rowdata)
 }
 
@@ -467,13 +466,6 @@ ds_new$getMetadataItem(band=1, "STATISTICS_MEAN", "")
 
 ## close the dataset for proper cleanup
 ds_new$close()
-
-## checksum LCP band 1
-ds$open(read_only=TRUE)
-ncols <- ds$getRasterXSize()
-nrows <- ds$getRasterYSize()
-ds$getChecksum(band=1, xoff=0, yoff=0, xsize=ncols, ysize=nrows)   # 28017
-ds$close()
 
 \donttest{
 ## using a GDAL Virtual File System handler '/vsicurl/'

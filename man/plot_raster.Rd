@@ -104,7 +104,7 @@ to the image when drawing (default \code{TRUE}).}
 
 \item{legend}{Logical indicating whether to include a legend on the plot.
 By default, a legend will be included if plotting single-band data without
-\code{col_tbl} specified. Legend is not currently supported for color tables or
+\code{col_tbl} specified. Legend is not currently supported for color tables, or
 with 3-band RGB data.}
 
 \item{na_col}{Color to use for \code{NA} as a 7- or 9-character hexadecimal code.
@@ -148,7 +148,7 @@ ds <- new(GDALRaster, elev_file, read_only=TRUE)
 # grayscale
 plot_raster(ds, main="Storm Lake elevation (m)")
 
-# color ramp
+# color ramp from user-defined palette
 elev_pal <- c("#00A60E","#63C600","#E6E600","#E9BD3B",
               "#ECB176","#EFC2B3","#F2F2F2")
 ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
@@ -173,16 +173,18 @@ for (f in band_files) {
 plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
             main="Landsat 6-5-4 (vegetative analysis)")
 
-## LANDFIRE existing veg cover with colors from the CSV attribute table
+## LANDFIRE Existing Vegetation Cover (EVC) with color map
 evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
-evc_vat <- system.file("extdata/LF20_EVC_220.csv", package="gdalraster")
-vat <- read.csv(evc_vat)
+
+# colors from the CSV attribute table distributed by LANDFIRE
+evc_csv <- system.file("extdata/LF20_EVC_220.csv", package="gdalraster")
+vat <- read.csv(evc_csv)
 head(vat)
 vat <- vat[,c(1,6:8)]
 
 ds <- new(GDALRaster, evc_file, read_only=TRUE)
 plot_raster(ds, col_tbl=vat, interpolate=FALSE,
-            main="Storm Lake Existing Vegetation Cover")
+            main="Storm Lake LANDFIRE EVC")
 
 ds$close()
 }
