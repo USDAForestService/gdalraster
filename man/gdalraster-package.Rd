@@ -14,9 +14,9 @@
   Core functionality is contained in the \code{GDALRaster} class and several 
   GDAL related stand-alone functions:
   \itemize{
-  \item class \code{\link{GDALRaster}} allows opening a raster dataset and 
-  calling methods on the Dataset, Driver and RasterBand objects in the 
-  underlying API (get/set parameters, read/write pixel data).
+  \item \code{\link{GDALRaster}} exposes a C++ class that allows opening a
+  raster dataset and calling methods on the Dataset, Driver and RasterBand
+  objects in the underlying API (get/set parameters, read/write pixel data).
   
   \item raster creation: \code{\link{create}}, \code{\link{createCopy}}, 
   \code{\link{rasterFromRaster}}
@@ -68,7 +68,8 @@
   coordinate system or inverse projected longitude/latitude.
   
   \item \code{\link{plot_raster}} displays raster data using base R
-  graphics.
+  \code{graphics}. Supports single-band grayscale, RGB, color tables and color
+  map functions (e.g., color ramp).
   }
 }
 \author{
