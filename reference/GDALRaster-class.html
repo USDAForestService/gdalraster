@@ -645,74 +645,14 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co">## using a GDAL Virtual File System handler '/vsicurl/'</span></span></span>
 <span class="r-in"><span><span class="co">## see: https://gdal.org/user/virtual_file_systems.html</span></span></span>
+<span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="st">"/vsicurl/https://raw.githubusercontent.com/"</span></span></span>
+<span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url</span>, <span class="st">"usdaforestservice/gdalraster/main/sample-data/"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url</span>, <span class="st">"lf_elev_220_mt_hood_utm.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">web_file</span> <span class="op">&lt;-</span> <span class="st">"/vsicurl/https://raw.githubusercontent.com"</span></span></span>
-<span class="r-in"><span><span class="va">web_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">web_file</span>, <span class="st">"/django/django/main/tests/gis_tests/"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">web_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">web_file</span>, <span class="st">"data/rasters/raster.tif"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ds_url</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">web_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds_url</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Driver: GTiff/GeoTIFF</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Files: /vsicurl/https://raw.githubusercontent.com/django/django/main/tests/gis_tests/data/rasters/raster.tif</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Size is 163, 174</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Coordinate System is:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> PROJCRS["NAD83 / Florida GDL Albers",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     BASEGEOGCRS["NAD83",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         DATUM["North American Datum 1983",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ELLIPSOID["GRS 1980",6378137,298.257222101,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                 LENGTHUNIT["metre",1]]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PRIMEM["Greenwich",0,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ANGLEUNIT["degree",0.0174532925199433]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         ID["EPSG",4269]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     CONVERSION["Florida GDL Albers (meters)",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         METHOD["Albers Equal Area",</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",9822]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["Latitude of false origin",24,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ANGLEUNIT["degree",0.0174532925199433],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8821]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["Longitude of false origin",-84,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ANGLEUNIT["degree",0.0174532925199433],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8822]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["Latitude of 1st standard parallel",24,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ANGLEUNIT["degree",0.0174532925199433],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8823]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["Latitude of 2nd standard parallel",31.5,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ANGLEUNIT["degree",0.0174532925199433],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8824]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["Easting at false origin",400000,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             LENGTHUNIT["metre",1],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8826]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         PARAMETER["Northing at false origin",0,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             LENGTHUNIT["metre",1],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ID["EPSG",8827]]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     CS[Cartesian,2],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         AXIS["easting (X)",east,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ORDER[1],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             LENGTHUNIT["metre",1]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         AXIS["northing (Y)",north,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             ORDER[2],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>             LENGTHUNIT["metre",1]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     USAGE[</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         SCOPE["State-wide spatial data management."],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         AREA["United States (USA) - Florida."],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>         BBOX[24.41,-87.63,31.01,-79.97]],</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     ID["EPSG",3086]]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Data axis to CRS axis mapping: 1,2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Origin = (511700.468070655711927,435103.377123198588379)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Pixel Size = (100.000000000000000,-100.000000000000000)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Metadata:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   AREA_OR_POINT=Area</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Image Structure Metadata:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   INTERLEAVE=BAND</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Corner Coordinates:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Upper Left  (  511700.468,  435103.377) ( 82d51'46.16"W, 27d55' 1.53"N)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Lower Left  (  511700.468,  417703.377) ( 82d51'52.04"W, 27d45'37.50"N)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Upper Right (  528000.468,  435103.377) ( 82d41'48.81"W, 27d54'56.30"N)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Lower Right (  528000.468,  417703.377) ( 82d41'55.54"W, 27d45'32.28"N)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Center      (  519850.468,  426403.377) ( 82d46'50.64"W, 27d50'16.99"N)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Band 1 Block=163x50 Type=Byte, ColorInterp=Gray</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   NoData Value=15</span>
-<span class="r-in"><span><span class="va">ds_url</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">url</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, main<span class="op">=</span><span class="st">"Mount Hood elevation (m)"</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="GDALRaster-class-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

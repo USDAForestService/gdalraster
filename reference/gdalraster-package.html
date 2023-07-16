@@ -70,9 +70,9 @@
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Core functionality is contained in the <code>GDALRaster</code> class and several 
-  GDAL related stand-alone functions:</p><ul><li><p>class <code><a href="GDALRaster-class.html">GDALRaster</a></code> allows opening a raster dataset and 
-  calling methods on the Dataset, Driver and RasterBand objects in the 
-  underlying API (get/set parameters, read/write pixel data).</p></li>
+  GDAL related stand-alone functions:</p><ul><li><p><code><a href="GDALRaster-class.html">GDALRaster</a></code> exposes a C++ class that allows opening a
+  raster dataset and calling methods on the Dataset, Driver and RasterBand
+  objects in the underlying API (get/set parameters, read/write pixel data).</p></li>
 <li><p>raster creation: <code><a href="create.html">create</a></code>, <code><a href="createCopy.html">createCopy</a></code>, 
   <code><a href="rasterFromRaster.html">rasterFromRaster</a></code></p></li>
 <li><p>virtual raster: <code><a href="rasterToVRT.html">rasterToVRT</a></code></p></li>
@@ -105,7 +105,8 @@
   as variables in the R expression, as either x/y in the raster projected 
   coordinate system or inverse projected longitude/latitude.</p></li>
 <li><p><code><a href="plot_raster.html">plot_raster</a></code> displays raster data using base R
-  graphics.</p></li>
+  <code>graphics</code>. Supports single-band grayscale, RGB, color tables and color
+  map functions (e.g., color ramp).</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
