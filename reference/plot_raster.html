@@ -202,7 +202,7 @@ to the image when drawing (default <code>TRUE</code>).</p></dd>
 <dt>legend</dt>
 <dd><p>Logical indicating whether to include a legend on the plot.
 By default, a legend will be included if plotting single-band data without
-<code>col_tbl</code> specified. Legend is not currently supported for color tables or
+<code>col_tbl</code> specified. Legend is not currently supported for color tables, or
 with 3-band RGB data.</p></dd>
 
 
@@ -252,7 +252,7 @@ data).</p>
 <span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">ds</span>, main<span class="op">=</span><span class="st">"Storm Lake elevation (m)"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_raster-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># color ramp</span></span></span>
+<span class="r-in"><span><span class="co"># color ramp from user-defined palette</span></span></span>
 <span class="r-in"><span><span class="va">elev_pal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#00A60E"</span>,<span class="st">"#63C600"</span>,<span class="st">"#E6E600"</span>,<span class="st">"#E9BD3B"</span>,</span></span>
 <span class="r-in"><span>              <span class="st">"#ECB176"</span>,<span class="st">"#EFC2B3"</span>,<span class="st">"#F2F2F2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ramp</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/colour_ramp.html" class="external-link">colour_ramp</a></span><span class="op">(</span><span class="va">elev_pal</span>, alpha<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
@@ -279,10 +279,12 @@ data).</p>
 <span class="r-in"><span>            main<span class="op">=</span><span class="st">"Landsat 6-5-4 (vegetative analysis)"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_raster-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## LANDFIRE existing veg cover with colors from the CSV attribute table</span></span></span>
+<span class="r-in"><span><span class="co">## LANDFIRE Existing Vegetation Cover (EVC) with color map</span></span></span>
 <span class="r-in"><span><span class="va">evc_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_evc.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">evc_vat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/LF20_EVC_220.csv"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">vat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">evc_vat</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># colors from the CSV attribute table distributed by LANDFIRE</span></span></span>
+<span class="r-in"><span><span class="va">evc_csv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/LF20_EVC_220.csv"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">vat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">evc_csv</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">vat</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   VALUE                        CLASSNAMES   R   G   B      RED    GREEN</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 -9999                       Fill-NoData 255 255 255 1.000000 1.000000</span>
@@ -302,7 +304,7 @@ data).</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">evc_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">ds</span>, col_tbl<span class="op">=</span><span class="va">vat</span>, interpolate<span class="op">=</span><span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>            main<span class="op">=</span><span class="st">"Storm Lake Existing Vegetation Cover"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>            main<span class="op">=</span><span class="st">"Storm Lake LANDFIRE EVC"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_raster-4.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
