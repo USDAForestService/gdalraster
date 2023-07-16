@@ -2,13 +2,14 @@
 % Please edit documentation in R/display.R
 \name{plot_raster}
 \alias{plot_raster}
-\title{Display raster data that have been read into a vector}
+\title{Display raster data}
 \usage{
 plot_raster(
   data,
-  xsize,
-  ysize,
+  xsize = NULL,
+  ysize = NULL,
   nbands = 1,
+  max_pixels = 2.5e+07,
   col_tbl = NULL,
   normalize = TRUE,
   minmax_def = NULL,
@@ -30,15 +31,26 @@ plot_raster(
 )
 }
 \arguments{
-\item{data}{A numeric vector of pixel data to display, arranged in left to
-right, top to bottom pixel order.}
+\item{data}{Either a \code{GDALRaster} object from which data will be read, or
+a numeric vector of pixel values arranged in left to right, top to
+bottom order.}
 
-\item{xsize}{The number of pixels along the x dimension in \code{data}.}
+\item{xsize}{The number of pixels along the x dimension in \code{data}. If \code{data}
+is a \code{GDALRaster} object, specifies the size at which the raster will be
+read (used for argument \code{out_xsize} in \code{GDALRaster$read()}). By default,
+the entire raster will be read at full resolution.}
 
-\item{ysize}{The number of pixels along the y dimension in \code{data}.}
+\item{ysize}{The number of pixels along the y dimension in \code{data}. If \code{data}
+is a \code{GDALRaster} object, specifies the size at which the raster will be
+read (used for argument \code{out_ysize} in \code{GDALRaster$read()}). By default,
+the entire raster will be read at full resolution.}
 
 \item{nbands}{The number of bands in \code{data}. Must be either 1 (grayscale) or
 3 (RGB). For RGB, \code{data} are interleaved by band.}
+
+\item{max_pixels}{The maximum number of pixels that the function will
+use for display (per band). An error is raised if \code{(xsize * ysize)} exceeds
+this value. Setting to \code{NULL} turns off this check.}
 
 \item{col_tbl}{A color table as a matrix or data frame with four columns.
 Column 1 contains the numeric raster values, columns 2:4 contain the
@@ -47,7 +59,7 @@ intensities (between 0 and 1) of the red, green and blue primaries.}
 \item{normalize}{Logical. \code{TRUE} to rescale pixel values so that their
 range is \verb{[0,1]}, normalized to the full range of the pixel data by default
 (\code{min(data)}, \code{max(data)}, per band). Ignored if \code{col_tbl} is used.
-\code{normalize=FALSE} if a custom color mapping function is used that
+Set \code{normalize} to \code{FALSE} if a color map function is used that
 operates on raw pixel values (see \code{col_map_fn} below).}
 
 \item{minmax_def}{Normalize to user-defined min/max values (in terms of
@@ -58,12 +70,12 @@ six containing b1_min, b2_min, b3_min, b1_max, b2_max, b3_max.}
 \item{minmax_pct_cut}{Normalize to a truncated range of the pixel data using
 percentile cutoffs (removes outliers). A numeric vector of length two giving
 the percentiles to use (e.g., \code{c(2, 98)}). Applied per band. Ignored if
-\code{minmax_def} is used. Set \code{normalize=FALSE} if using a color mapping
-function that operates on raw pixel values.}
+\code{minmax_def} is used.}
 
 \item{col_map_fn}{An optional color map function (default is
 \code{grDevices::gray} for single-band data or \code{grDevices::rgb} for 3-band).
-Ignored if \code{col_tbl} is used.}
+Ignored if \code{col_tbl} is used. Set \code{normalize} to \code{FALSE} if using a color
+map function that operates on raw pixel values.}
 
 \item{xlim}{Numeric vector of length two giving the x coordinate range. The
 default uses pixel/line coordinates (\code{c(0, xsize)}).}
@@ -91,7 +103,7 @@ to the image when drawing (default \code{TRUE}).}
 (see \code{?par}).}
 
 \item{legend}{Logical indicating whether to include a legend on the plot.
-By deafult, a legend will be included if plotting single-band data without
+By default, a legend will be included if plotting single-band data without
 \code{col_tbl} specified. Legend is not currently supported for color tables or
 with 3-band RGB data.}
 
@@ -102,36 +114,47 @@ The default is transparent (\code{"#00000000"}, the return value of
 \item{...}{Other parameters to be passed to \code{plot.default()}.}
 }
 \description{
-\code{plot_raster()} displays raster data using base graphics.
+\code{plot_raster()} displays raster data using base \code{graphics}.
 }
 \note{
 \code{plot_raster()} uses the function \code{graphics::rasterImage()} for plotting
 which is not supported on some devices (see \code{?rasterImage}).
 
-A reduced resolution overview for display can be read by setting \code{out_xsize}
-and \code{out_ysize} smaller than the raster region specified by \code{xsize}, \code{ysize}
-in calls to \code{GDALRaster$read()} or \code{read_ds()}.
-The GDAL_RASTERIO_RESAMPLING configuration option can be defined to
-override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE,
-LANCZOS, AVERAGE or MODE.
+If \code{data} is an object of class \code{GDALRaster}, then \code{plot_raster()} will
+attempt to read the entire raster into memory by default (unless the number
+of pixels per band would exceed \code{max_pixels}).
+A reduced resolution overview can be read by setting \code{xsize}, \code{ysize}
+smaller than the raster size on disk.
+(If \code{data} is instead specified as a vector of pixel values, a reduced
+resolution overview would be read by setting \code{out_xsize} and \code{out_ysize}
+smaller than the raster region defined by \code{xsize}, \code{ysize} in a call to
+\code{GDALRaster$read()}).
+The GDAL_RASTERIO_RESAMPLING configuration option can be
+defined to override the default resampling to one of BILINEAR, CUBIC,
+CUBICSPLINE, LANCZOS, AVERAGE or MODE, for example:
+\preformatted{
+set_config_option("GDAL_RASTERIO_RESAMPLING", "BILINEAR")
+}
+Display may be slow for large pixel counts when applying a color table.
+Reading the raster at reduced resolution will improve performance in that
+case (use default resampling NEAREST, or possibly MODE, for thematic
+data).
 }
 \examples{
 ## Elevation
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, elev_file, read_only=TRUE)
-ncols <- ds$getRasterXSize()
-nrows <- ds$getRasterYSize()
-r <- read_ds(ds)
-ds$close()
 
 # grayscale
-plot_raster(r, xsize=ncols, ysize=nrows, main="Storm Lake elevation (m)")
+plot_raster(ds, main="Storm Lake elevation (m)")
 
 # color ramp
-elev_pal <- c("#008435","#B4E34F","#F5D157","#CF983B","#B08153","#FFFFFF")
+elev_pal <- c("#00A60E","#63C600","#E6E600","#E9BD3B",
+              "#ECB176","#EFC2B3","#F2F2F2")
 ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
-plot_raster(r, xsize=ncols, ysize=nrows, col_map_fn=ramp,
-            main="Storm Lake elevation (m)")
+plot_raster(ds, col_map_fn=ramp, main="Storm Lake elevation (m)")
+
+ds$close()
 
 ## Landsat band combination
 b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
@@ -139,19 +162,15 @@ b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
 band_files <- c(b6_file, b5_file, b4_file)
 
-ds <- new(GDALRaster, b5_file, read_only=TRUE)
-ncols <- ds$getRasterXSize()
-nrows <- ds$getRasterYSize()
-ds$close()
-
 r <- vector("integer")
 for (f in band_files) {
   ds <- new(GDALRaster, f, read_only=TRUE)
+  dm <- ds$dim()
   r <- c(r, read_ds(ds))
   ds$close()
 }
 
-plot_raster(r, xsize=ncols, ysize=nrows, nbands=3,
+plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
             main="Landsat 6-5-4 (vegetative analysis)")
 
 ## LANDFIRE existing veg cover with colors from the CSV attribute table
@@ -162,13 +181,10 @@ head(vat)
 vat <- vat[,c(1,6:8)]
 
 ds <- new(GDALRaster, evc_file, read_only=TRUE)
-ncols <- ds$getRasterXSize()
-nrows <- ds$getRasterYSize()
-
-r <- read_ds(ds)
-ds$close()
-plot_raster(r, xsize=ncols, ysize=nrows, col_tbl=vat, interpolate=FALSE,
+plot_raster(ds, col_tbl=vat, interpolate=FALSE,
             main="Storm Lake Existing Vegetation Cover")
+
+ds$close()
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster$read()}}, \code{\link[=read_ds]{read_ds()}}, \code{\link[=set_config_option]{set_config_option()}}

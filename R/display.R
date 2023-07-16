@@ -31,40 +31,32 @@
 	nbands <- dim(a)[3]
 	
 	if ( !(nbands %in% c(1,3)) )
-		stop("Number of bands must be 1 or 3")
-	
-	has_na <- logical(0)
-	nas <- array()
+		stop("Number of bands must be 1 or 3", call.=FALSE)
+
 	r <- array()
 	
 	if (!is.null(col_tbl)) {
 		# map to a color table
-		
 		if(nbands != 1)
-			stop("A color table can only be used with single-band data.")
+			stop("A color table can only be used with single-band data.",
+					call.=FALSE)
 			
 		if(!is.data.frame(ct <- as.data.frame(col_tbl)))
-			stop("Color table must be a matrix or data frame.")
+			stop("Color table must be a matrix or data frame.", call.=FALSE)
 		
 		if(ncol(ct) != 4)
-			stop("Color table must have four columns.")
-
-		nas <- is.na(a)
-		has_na <- any(nas)
-		if (has_na) {
-			dim(nas) <- dim(nas)[1:2]
-			nas <- t(nas)
-		}
+			stop("Color table must have four columns.", call.=FALSE)
 		
 		ct[,5] <- rgb(ct[,2], ct[,3], ct[,4])
 		f <- function(x) { ct[ct[,1]==x, 5][1] }
 		r <- vapply(a, FUN=f, FUN.VALUE="#000000", USE.NAMES=FALSE)
+		if (anyNA(r))
+			r[is.na(r)] <- na_col
 		dim(r) <- dim(a)[2:1]
 		class(r) <- "raster"
 	}
 	else {
 		# gray/rgb color scaling
-		
 		if (normalize) {
 			if (!is.null(minmax_def)) {
 				for (b in 1:nbands) {
@@ -90,9 +82,11 @@
 		if (is.null(col_map_fn))
 			col_map_fn <- ifelse(nbands==1, grDevices::gray, grDevices::rgb)
 		
-		nas <- is.na(a)
-		has_na <- any(nas)
-		if (has_na) {
+		has_na <- FALSE
+		nas <- array()
+		if (anyNA(a)) {
+			has_na <- TRUE
+			nas <- is.na(a)
 			a[nas] <- 0
 			if (dim(nas)[3] == 3)
 				nas <- nas[,,1] | nas[,,2] | nas[,,3]
@@ -113,31 +107,41 @@
 			dim(r) <- dim(a)[2:1]
 			class(r) <- "raster"
 		}
+		
+		if (has_na)
+        	r[nas] <- na_col
 	}
-	
-	if (has_na)
-        r[nas] <- na_col
 	
 	return(r)
 }
 
-#' Display raster data that have been read into a vector
+#' Display raster data
 #'
-#' `plot_raster()` displays raster data using base graphics.
+#' `plot_raster()` displays raster data using base `graphics`.
 #'
-#' @param data A numeric vector of pixel data to display, arranged in left to
-#' right, top to bottom pixel order.
-#' @param xsize The number of pixels along the x dimension in `data`.
-#' @param ysize The number of pixels along the y dimension in `data`.
+#' @param data Either a `GDALRaster` object from which data will be read, or
+#' a numeric vector of pixel values arranged in left to right, top to
+#' bottom order.
+#' @param xsize The number of pixels along the x dimension in `data`. If `data`
+#' is a `GDALRaster` object, specifies the size at which the raster will be
+#' read (used for argument `out_xsize` in `GDALRaster$read()`). By default,
+#' the entire raster will be read at full resolution.
+#' @param ysize The number of pixels along the y dimension in `data`. If `data`
+#' is a `GDALRaster` object, specifies the size at which the raster will be
+#' read (used for argument `out_ysize` in `GDALRaster$read()`). By default,
+#' the entire raster will be read at full resolution.
 #' @param nbands The number of bands in `data`. Must be either 1 (grayscale) or
 #' 3 (RGB). For RGB, `data` are interleaved by band.
+#' @param max_pixels The maximum number of pixels that the function will
+#' use for display (per band). An error is raised if `(xsize * ysize)` exceeds
+#' this value. Setting to `NULL` turns off this check.
 #' @param col_tbl A color table as a matrix or data frame with four columns.
 #' Column 1 contains the numeric raster values, columns 2:4 contain the
 #' intensities (between 0 and 1) of the red, green and blue primaries.
 #' @param normalize Logical. `TRUE` to rescale pixel values so that their
 #' range is `[0,1]`, normalized to the full range of the pixel data by default
 #' (`min(data)`, `max(data)`, per band). Ignored if `col_tbl` is used.
-#' `normalize=FALSE` if a custom color mapping function is used that
+#' Set `normalize` to `FALSE` if a color map function is used that
 #' operates on raw pixel values (see `col_map_fn` below).
 #' @param minmax_def Normalize to user-defined min/max values (in terms of
 #' the pixel data, per band). For single-band grayscale, a numeric vector of
@@ -146,11 +150,11 @@
 #' @param minmax_pct_cut Normalize to a truncated range of the pixel data using
 #' percentile cutoffs (removes outliers). A numeric vector of length two giving
 #' the percentiles to use (e.g., `c(2, 98)`). Applied per band. Ignored if
-#' `minmax_def` is used. Set `normalize=FALSE` if using a color mapping
-#' function that operates on raw pixel values.
+#' `minmax_def` is used.
 #' @param col_map_fn An optional color map function (default is 
 #' `grDevices::gray` for single-band data or `grDevices::rgb` for 3-band).
-#' Ignored if `col_tbl` is used.
+#' Ignored if `col_tbl` is used. Set `normalize` to `FALSE` if using a color
+#' map function that operates on raw pixel values.
 #' @param xlim Numeric vector of length two giving the x coordinate range. The
 #' default uses pixel/line coordinates (`c(0, xsize)`).
 #' @param ylim Numeric vector of length two giving the y coordinate range. The
@@ -167,7 +171,7 @@
 #' @param axes Logical. `TRUE` to draw axes (the default).
 #' @param main The main title (on top).
 #' @param legend Logical indicating whether to include a legend on the plot.
-#' By deafult, a legend will be included if plotting single-band data without
+#' By default, a legend will be included if plotting single-band data without
 #' `col_tbl` specified. Legend is not currently supported for color tables or
 #' with 3-band RGB data.
 #' @param na_col Color to use for `NA` as a 7- or 9-character hexadecimal code.
@@ -179,12 +183,25 @@
 #' `plot_raster()` uses the function `graphics::rasterImage()` for plotting
 #' which is not supported on some devices (see `?rasterImage`).
 #'
-#' A reduced resolution overview for display can be read by setting `out_xsize`
-#' and `out_ysize` smaller than the raster region specified by `xsize`, `ysize`
-#' in calls to `GDALRaster$read()` or `read_ds()`.
-#' The GDAL_RASTERIO_RESAMPLING configuration option can be defined to 
-#' override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE, 
-#' LANCZOS, AVERAGE or MODE.
+#' If `data` is an object of class `GDALRaster`, then `plot_raster()` will
+#' attempt to read the entire raster into memory by default (unless the number
+#' of pixels per band would exceed `max_pixels`).
+#' A reduced resolution overview can be read by setting `xsize`, `ysize`
+#' smaller than the raster size on disk.
+#' (If `data` is instead specified as a vector of pixel values, a reduced
+#' resolution overview would be read by setting `out_xsize` and `out_ysize`
+#' smaller than the raster region defined by `xsize`, `ysize` in a call to
+#' `GDALRaster$read()`).
+#' The GDAL_RASTERIO_RESAMPLING configuration option can be
+#' defined to override the default resampling to one of BILINEAR, CUBIC,
+#' CUBICSPLINE, LANCZOS, AVERAGE or MODE, for example:
+#' \preformatted{
+#' set_config_option("GDAL_RASTERIO_RESAMPLING", "BILINEAR")
+#' }
+#' Display may be slow for large pixel counts when applying a color table.
+#' Reading the raster at reduced resolution will improve performance in that
+#' case (use default resampling NEAREST, or possibly MODE, for thematic
+#' data).
 #'
 #' @seealso
 #' [`GDALRaster$read()`][GDALRaster], [read_ds()], [set_config_option()]
@@ -193,39 +210,33 @@
 #' ## Elevation
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' ds <- new(GDALRaster, elev_file, read_only=TRUE)
-#' ncols <- ds$getRasterXSize()
-#' nrows <- ds$getRasterYSize()
-#' r <- read_ds(ds)
-#' ds$close()
 #'
 #' # grayscale
-#' plot_raster(r, xsize=ncols, ysize=nrows, main="Storm Lake elevation (m)")
+#' plot_raster(ds, main="Storm Lake elevation (m)")
 #'
 #' # color ramp
-#' elev_pal <- c("#008435","#B4E34F","#F5D157","#CF983B","#B08153","#FFFFFF")
+#' elev_pal <- c("#00A60E","#63C600","#E6E600","#E9BD3B",
+#'               "#ECB176","#EFC2B3","#F2F2F2")
 #' ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
-#' plot_raster(r, xsize=ncols, ysize=nrows, col_map_fn=ramp,
-#'             main="Storm Lake elevation (m)")
+#' plot_raster(ds, col_map_fn=ramp, main="Storm Lake elevation (m)")
+#'
+#' ds$close()
 #'
 #' ## Landsat band combination
 #' b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 #' b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
 #' band_files <- c(b6_file, b5_file, b4_file)
-#' 
-#' ds <- new(GDALRaster, b5_file, read_only=TRUE)
-#' ncols <- ds$getRasterXSize()
-#' nrows <- ds$getRasterYSize()
-#' ds$close()
 #'
 #' r <- vector("integer")
 #' for (f in band_files) {
 #'   ds <- new(GDALRaster, f, read_only=TRUE)
+#'   dm <- ds$dim()
 #'   r <- c(r, read_ds(ds))
 #'   ds$close()
 #' }
 #'
-#' plot_raster(r, xsize=ncols, ysize=nrows, nbands=3,
+#' plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
 #'             main="Landsat 6-5-4 (vegetative analysis)")
 #'
 #' ## LANDFIRE existing veg cover with colors from the CSV attribute table
@@ -236,36 +247,56 @@
 #' vat <- vat[,c(1,6:8)]
 #' 
 #' ds <- new(GDALRaster, evc_file, read_only=TRUE)
-#' ncols <- ds$getRasterXSize()
-#' nrows <- ds$getRasterYSize()
-#' 
-#' r <- read_ds(ds)
-#' ds$close()
-#' plot_raster(r, xsize=ncols, ysize=nrows, col_tbl=vat, interpolate=FALSE,
+#' plot_raster(ds, col_tbl=vat, interpolate=FALSE,
 #'             main="Storm Lake Existing Vegetation Cover")
+#'
+#' ds$close()
 #' @export
-plot_raster <- function(data, xsize, ysize, nbands=1,
-						col_tbl=NULL, normalize=TRUE, minmax_def=NULL,
-						minmax_pct_cut=NULL, col_map_fn=NULL,
+plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
+						max_pixels=2.5e7, col_tbl=NULL, normalize=TRUE,
+						minmax_def=NULL, minmax_pct_cut=NULL, col_map_fn=NULL,
 						xlim=c(0, xsize), ylim=c(ysize, 0),
 						interpolate=TRUE, asp=1, axes=TRUE, main="",
 						xlab="x", ylab="y", xaxs="i", yaxs="i", 
 						legend=NULL, na_col=rgb(0,0,0,0), ...) {
 
-	if ( !(nbands %in% c(1,3)) )
-		stop("Number of bands must be 1 or 3")
-		
 	if (isTRUE((grDevices::dev.capabilities()$rasterImage == "no"))) {
 		message("Device does not support rasterImage().")
 		return()
 	}
 	
-	if (length(data) == 0)
-		stop("length(data) is 0.")
+	if ( !(nbands %in% c(1,3)) )
+		stop("Number of bands must be 1 or 3", call.=FALSE)
 		
-	if (xsize < 1 || ysize < 1)
-		stop("Invalid x/y dimensions.")
-		
+	if (is.null(max_pixels))
+		max_pixels = Inf
+	
+	if (is(data, "Rcpp_GDALRaster")) {
+		dm <- data$dim()
+		if (is.null(xsize))
+			xsize <- out_xsize <- dm[1]
+		else
+			out_xsize <- xsize
+		if (is.null(ysize))
+			ysize <- out_ysize <- dm[2]
+		else
+			out_ysize <- ysize
+
+		if ((out_xsize*out_ysize) > max_pixels)
+			stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
+			
+		data_in <- read_ds(data, bands=1:nbands, xoff=0, yoff=0,
+							xsize=dm[1], ysize=dm[2],
+							out_xsize=out_xsize, out_ysize=out_ysize)
+	}
+	else {
+		if (is.null(xsize) || is.null(ysize))
+			stop("xsize and ysize of data must be specified.", call.=FALSE)
+		if ((xsize*ysize) > max_pixels)
+			stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
+		data_in <- data
+	}
+
 	if (is.null(legend)) {
 		if (nbands==1 && is.null(col_tbl))
 			legend <- TRUE
@@ -273,7 +304,7 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 			legend <- FALSE
 	}
 
-	a <- array(data, dim = c(xsize, ysize, nbands))
+	a <- array(data_in, dim = c(xsize, ysize, nbands))
 	r <- .as_raster(a,
 					col_tbl=col_tbl,
 					normalize=normalize,
@@ -306,22 +337,25 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 							xaxs=xaxs, yaxs=yaxs, ...)
 	graphics::rasterImage(r, xlim[1], ylim[1], xlim[2], ylim[2],
 							interpolate=interpolate)
-	graphics::title(main=main, xlab=xlab, ylab=ylab)
 	if (axes) {
+		graphics::title(main=main, xlab=xlab, ylab=ylab)
 		graphics::axis(1)
 		graphics::axis(2)
+	}
+	else {
+		graphics::title(main=main)
 	}
 	if (legend) {
 		mm <- NULL
 		if (!is.null(minmax_def))
 			mm <- minmax_def
 		else if (!is.null(minmax_pct_cut))
-			mm <- stats::quantile(data,
+			mm <- stats::quantile(data_in,
 									probs=c(minmax_pct_cut[1] / 100,
 											minmax_pct_cut[2] / 100),
 									na.rm = TRUE, names=FALSE)
 		else
-			mm <- c(min(data, na.rm=TRUE), max(data, na.rm=TRUE))
+			mm <- c(min(data_in, na.rm=TRUE), max(data_in, na.rm=TRUE))
 
 		leg_data <- .normalize(seq(mm[1], mm[2], length.out=100))
 		leg_img <- grDevices::as.raster(matrix(rev(col_map_fn(leg_data)),
@@ -329,9 +363,15 @@ plot_raster <- function(data, xsize, ysize, nbands=1,
 		graphics::par(mar=c(6, 0.5, 6, 2) + 0.1)
 		graphics::plot(c(0,2), c(0,1), type="n", axes=FALSE,
 						xlab="", ylab="", main="")
-		graphics::text(x=1.5, y=seq(0, 1, length.out=5),
-						labels=seq(mm[1], mm[2], length.out=5),
-						adj=c(0, NA), xpd=TRUE)
+		if (is(data_in, "integer"))
+			leg_lab <- round(seq(mm[1], mm[2], length.out=5))
+		else
+			leg_lab <- seq(mm[1], mm[2], length.out=5)
+		graphics::text(x=1.5,
+						y=seq(0, 1, length.out=5),
+						labels=leg_lab,
+						adj=c(0, NA),
+						xpd=TRUE)
 		graphics::rasterImage(leg_img, 0, 0, 1, 1)
 		graphics::par(op)  # reset to original
 	}
