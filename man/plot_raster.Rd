@@ -130,15 +130,11 @@ resolution overview would be read by setting \code{out_xsize} and \code{out_ysiz
 smaller than the raster region defined by \code{xsize}, \code{ysize} in a call to
 \code{GDALRaster$read()}).
 The GDAL_RASTERIO_RESAMPLING configuration option can be
-defined to override the default resampling to one of BILINEAR, CUBIC,
-CUBICSPLINE, LANCZOS, AVERAGE or MODE, for example:
+defined to override the default resampling (NEAREST) to one of BILINEAR,
+CUBIC, CUBICSPLINE, LANCZOS, AVERAGE or MODE, for example:
 \preformatted{
 set_config_option("GDAL_RASTERIO_RESAMPLING", "BILINEAR")
 }
-Display may be slow for large pixel counts when applying a color table.
-Reading the raster at reduced resolution will improve performance in that
-case (use default resampling NEAREST, or possibly MODE, for thematic
-data).
 }
 \examples{
 ## Elevation
