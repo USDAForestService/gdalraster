@@ -230,12 +230,10 @@ resolution overview would be read by setting <code>out_xsize</code> and <code>ou
 smaller than the raster region defined by <code>xsize</code>, <code>ysize</code> in a call to
 <code>GDALRaster$read()</code>).
 The GDAL_RASTERIO_RESAMPLING configuration option can be
-defined to override the default resampling to one of BILINEAR, CUBIC,
-CUBICSPLINE, LANCZOS, AVERAGE or MODE, for example:</p><div class="sourceCode"><pre><code><span></span>
-<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_RASTERIO_RESAMPLING"</span>, <span class="st">"BILINEAR"</span><span class="op">)</span></span></code></pre></div><p>Display may be slow for large pixel counts when applying a color table.
-Reading the raster at reduced resolution will improve performance in that
-case (use default resampling NEAREST, or possibly MODE, for thematic
-data).</p>
+defined to override the default resampling (NEAREST) to one of BILINEAR,
+CUBIC, CUBICSPLINE, LANCZOS, AVERAGE or MODE, for example:</p><div class="sourceCode"><pre><code><span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_RASTERIO_RESAMPLING"</span>, <span class="st">"BILINEAR"</span><span class="op">)</span></span></code></pre></div>
+
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
