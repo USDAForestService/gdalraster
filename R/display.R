@@ -40,15 +40,14 @@
 		if(nbands != 1)
 			stop("A color table can only be used with single-band data.",
 					call.=FALSE)
-			
-		if(!is.data.frame(ct <- as.data.frame(col_tbl)))
-			stop("Color table must be a matrix or data frame.", call.=FALSE)
-		
+
+		ct <- as.data.frame(col_tbl)
 		if(ncol(ct) != 4)
 			stop("Color table must have four columns.", call.=FALSE)
-		
+
 		ct[,5] <- rgb(ct[,2], ct[,3], ct[,4])
-		f <- function(x) { ct[ct[,1]==x, 5][1] }
+		names(ct) <- c("value", "r", "g", "b", "rgb")
+		f <- function(x) { ct$rgb[match(x, ct$value)] }
 		r <- vapply(a, FUN=f, FUN.VALUE="#000000", USE.NAMES=FALSE)
 		if (anyNA(r))
 			r[is.na(r)] <- na_col
@@ -193,15 +192,11 @@
 #' smaller than the raster region defined by `xsize`, `ysize` in a call to
 #' `GDALRaster$read()`).
 #' The GDAL_RASTERIO_RESAMPLING configuration option can be
-#' defined to override the default resampling to one of BILINEAR, CUBIC,
-#' CUBICSPLINE, LANCZOS, AVERAGE or MODE, for example:
+#' defined to override the default resampling (NEAREST) to one of BILINEAR,
+#' CUBIC, CUBICSPLINE, LANCZOS, AVERAGE or MODE, for example:
 #' \preformatted{
 #' set_config_option("GDAL_RASTERIO_RESAMPLING", "BILINEAR")
 #' }
-#' Display may be slow for large pixel counts when applying a color table.
-#' Reading the raster at reduced resolution will improve performance in that
-#' case (use default resampling NEAREST, or possibly MODE, for thematic
-#' data).
 #'
 #' @seealso
 #' [`GDALRaster$read()`][GDALRaster], [read_ds()], [set_config_option()]
