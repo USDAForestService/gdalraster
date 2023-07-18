@@ -12,7 +12,4 @@ configure.ac text eol=lf
 *.html linguist-documentation
 *.xml linguist-documentation
 *.json linguist-documentation
-man/* linguist-documentation
-R/gdalraster.R linguist-documentation
-R/cmb_table.R linguist-documentation
-R/running_stats.R linguist-documentation
+*.Rd linguist-documentation
