@@ -13,3 +13,5 @@ configure.ac text eol=lf
 *.xml linguist-documentation
 *.json linguist-documentation
 *.Rd linguist-documentation
+# Generated
+R/RcppExports.R linguist-generated
