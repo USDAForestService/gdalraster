@@ -8,10 +8,13 @@ configure.ac text eol=lf
 # Denote all files that are truly binary and should not be modified.
 *.tif binary
 *.lcp binary
-# Denote documentation
+# Denote documentation for linguist stats
 *.html linguist-documentation
 *.xml linguist-documentation
 *.json linguist-documentation
 *.Rd linguist-documentation
-# Generated
-R/RcppExports.R linguist-generated
+R/gdalraster.R linguist-documentation
+R/cmb_table.R linguist-documentation
+R/running_stats.R linguist-documentation
+# Exclude from stats
+configure.ac linguist-vendored
