@@ -245,6 +245,14 @@ get_pixel_line <- function(xy, gt) {
     .Call(`_gdalraster_get_pixel_line`, xy, gt)
 }
 
+#' Apply a DEM processing
+#'
+#' Called from and documented in R/gdalraster_proc.R
+#' @noRd
+.dem_proc <- function(mode, src_filename, dst_filename, cl_arg = NULL, col_file = NULL) {
+    .Call(`_gdalraster__dem_proc`, mode, src_filename, dst_filename, cl_arg, col_file)
+}
+
 #' Fill selected pixels by interpolation from surrounding areas
 #'
 #' `fillNodata()` is a wrapper for `GDALFillNodata()` in the GDAL Algorithms

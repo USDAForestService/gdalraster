@@ -390,6 +390,57 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 	return pixel_line;
 }
 
+//' Apply a DEM processing
+//'
+//' Called from and documented in R/gdalraster_proc.R
+//' @noRd
+// [[Rcpp::export(name = ".dem_proc")]]
+bool _dem_proc(std::string mode,
+				std::string src_filename, 
+				std::string dst_filename,
+				Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+				Rcpp::Nullable<Rcpp::String> col_file = R_NilValue) {
+
+	GDALDatasetH src_ds = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
+
+	std::vector<char *> argv = {NULL};
+	if (cl_arg.isNotNull()) {
+		// cast to the underlying type
+		// https://gallery.rcpp.org/articles/optional-null-function-arguments/
+		Rcpp::CharacterVector cl_arg_in(cl_arg);
+		argv.resize(cl_arg_in.size() + 1);
+		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+			argv[i] = (char *) (cl_arg_in[i]);
+		}
+		argv[cl_arg_in.size()] = NULL;
+	}
+	
+	GDALDEMProcessingOptions* psOptions;
+	psOptions = GDALDEMProcessingOptionsNew(argv.data(), NULL);
+	GDALDEMProcessingOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	
+	GDALDatasetH hDstDS;
+	if (col_file.isNotNull()) {
+		Rcpp::String col_file_in(col_file);
+		hDstDS = GDALDEMProcessing(dst_filename.c_str(), src_ds, mode.c_str(),
+					col_file_in.get_cstring(), psOptions, NULL);
+	}
+	else {
+		hDstDS = GDALDEMProcessing(dst_filename.c_str(), src_ds, mode.c_str(),
+					NULL, psOptions, NULL);
+	}
+							
+	GDALDEMProcessingOptionsFree(psOptions);
+	GDALClose(src_ds);
+	if (hDstDS != NULL) {
+		GDALClose(hDstDS);
+		return true;
+	}
+	else {
+		Rcpp::stop("DEM processing failed.");
+	}
+}
+
 //' Fill selected pixels by interpolation from surrounding areas
 //'
 //' `fillNodata()` is a wrapper for `GDALFillNodata()` in the GDAL Algorithms

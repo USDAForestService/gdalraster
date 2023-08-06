@@ -19,6 +19,49 @@ DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
 					   "Float32" = -99999.0, "Float64" = -99999.0)
 
 
+#' List of default DEM processing options
+#'
+#' These values are used in `dem_proc()` as the default processing options:
+#' \preformatted{
+#'     list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
+#'                        "-alt", "45", "-alg", "Horn",
+#'                        "-combined", "-compute_edges"),
+#'          slope = c("-s", "1", "-alg", "Horn", "-compute_edges"),
+#'          aspect = c("-alg", "Horn", "-compute_edges"),
+#'          color_relief = character(),
+#'          TRI = c("-alg", "Riley", "-compute_edges"),
+#'          TPI = c("-compute_edges"),
+#'          roughness = c("-compute_edges"))
+#' }
+#' @seealso
+#' [dem_proc()]
+#'
+#' \url{https://gdal.org/programs/gdaldem.html}
+#' @export
+DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
+									   "-alt", "45", "-alg", "Horn",
+									   "-combined", "-compute_edges"),
+						slope = c("-s", "1", "-alg", "Horn", "-compute_edges"),
+						aspect = c("-alg", "Horn", "-compute_edges"),
+						color_relief = character(),
+						TRI = c("-alg", "Riley", "-compute_edges"),
+						TPI = c("-compute_edges"),
+						roughness = c("-compute_edges"))
+
+
+#' @noRd
+.VRT_KERNEL_TEMPLATE <- 
+"<KernelFilteredSource>
+  <SourceFilename relativeToVRT=\"%d\">%s</SourceFilename><SourceBand>%d</SourceBand>
+  <SrcRect xOff=\"%d\" yOff=\"%d\" xSize=\"%d\" ySize=\"%d\"/>
+  <DstRect xOff=\"0\" yOff=\"0\" xSize=\"%d\" ySize=\"%d\"/>
+  <Kernel normalized=\"%d\">
+    <Size>%d</Size>
+    <Coefs>%s</Coefs>
+  </Kernel>
+</KernelFilteredSource>"
+
+
 #' @noRd
 .getGDALformat <- function(file) {
 # Only for guessing common output formats
@@ -45,19 +88,6 @@ DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
 .getOffset <- function(coord, origin, gt_pixel_size) {
 	(coord-origin)/gt_pixel_size
 }
-
-
-#' @noRd
-.VRT_KERNEL_TEMPLATE <- 
-"<KernelFilteredSource>
-  <SourceFilename relativeToVRT=\"%d\">%s</SourceFilename><SourceBand>%d</SourceBand>
-  <SrcRect xOff=\"%d\" yOff=\"%d\" xSize=\"%d\" ySize=\"%d\"/>
-  <DstRect xOff=\"0\" yOff=\"0\" xSize=\"%d\" ySize=\"%d\"/>
-  <Kernel normalized=\"%d\">
-    <Size>%d</Size>
-    <Coefs>%s</Coefs>
-  </Kernel>
-</KernelFilteredSource>"
 
 
 #' Convenience wrapper for `GDALRaster$read()`
@@ -1164,4 +1194,35 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 
 	df <- .combine(rasterfiles, var.names, bands, dstfile, fmt, dtName, options)
 	return(df)
+}
+
+
+#' GDAL DEM processing
+#' 
+#' `dem_proc()` generates DEM derivatives from an input elevation raster. This
+#' function is a wrapper for the \command{gdaldem} command-line utility.
+#' See \url{https://gdal.org/programs/gdaldem.html} for details.
+#'
+#' @param mode Character. Name of the DEM processing mode to use. One of
+# `hillshade`, `slope`, `aspect`, `color-relief`, `TRI, `TPI` or `roughness`.
+#' @param srcfile Filename of the the source elevation raster.
+#' @param dstfile Filename of the output raster.
+#' @param mode_options An optional character vector of command-line options
+#' (see [DEFAULT_DEM_PROC]).
+#' @param color_text_file Filename of a text file containing lines formatted
+#' as: "elevation_value red green blue". Only used when `mode` is
+#' `color-relief`.
+#' @returns Logical indicating success (invisible \code{TRUE}).
+#' An error is raised if the operation fails.
+#' @export
+dem_proc <- function(mode,
+					srcfile,
+					dstfile, 
+					mode_options=DEFAULT_DEM_PROC[[mode]],
+					color_text_file=NULL) {
+
+	if (is.null(DEFAULT_DEM_PROC[[mode]]))
+		stop("DEM processing mode not recognized.", call.=FALSE)
+
+	invisible(.dem_proc(mode, srcfile, dstfile, mode_options, color_text_file))
 }
