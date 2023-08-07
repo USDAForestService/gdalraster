@@ -43,6 +43,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/CmbTable-class.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/DEFAULT_DEM_PROC.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/DEFAULT_NODATA.html</loc>
   </url>
   <url>
@@ -71,6 +74,9 @@
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/createCopy.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/dem_proc.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/epsg_to_wkt.html</loc>
