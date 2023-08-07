@@ -29,6 +29,7 @@ reference:
   - combine
   - create
   - createCopy
+  - dem_proc
   - epsg_to_wkt
   - fillNodata
   - gdal_version
@@ -52,6 +53,7 @@ reference:
 
 - title: Lookups
 - contents:
+  - DEFAULT_DEM_PROC
   - DEFAULT_NODATA
 
 authors:

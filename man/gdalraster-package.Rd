@@ -25,7 +25,7 @@
   
   \item reproject: \code{\link{warp}}
   
-  \item algorithms: \code{\link{fillNodata}},
+  \item algorithms: \code{\link{dem_proc}}, \code{\link{fillNodata}},
   \code{\link[=GDALRaster]{GDALRaster$getChecksum}}
   
   \item geotransform conversion: \code{\link{inv_geotransform}}, 

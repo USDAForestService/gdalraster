@@ -108,6 +108,38 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _combine
+Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files, Rcpp::CharacterVector var_names, std::vector<int> bands, std::string dst_filename, std::string fmt, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
+RcppExport SEXP _gdalraster__combine(SEXP src_filesSEXP, SEXP var_namesSEXP, SEXP bandsSEXP, SEXP dst_filenameSEXP, SEXP fmtSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_files(src_filesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type var_names(var_namesSEXP);
+    Rcpp::traits::input_parameter< std::vector<int> >::type bands(bandsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type fmt(fmtSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataType(dataTypeSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(_combine(src_files, var_names, bands, dst_filename, fmt, dataType, options));
+    return rcpp_result_gen;
+END_RCPP
+}
+// _dem_proc
+bool _dem_proc(std::string mode, std::string src_filename, std::string dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::String> col_file);
+RcppExport SEXP _gdalraster__dem_proc(SEXP modeSEXP, SEXP src_filenameSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP col_fileSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type mode(modeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::String> >::type col_file(col_fileSEXP);
+    rcpp_result_gen = Rcpp::wrap(_dem_proc(mode, src_filename, dst_filename, cl_arg, col_file));
+    return rcpp_result_gen;
+END_RCPP
+}
 // fillNodata
 bool fillNodata(std::string filename, int band, std::string mask_file, double max_dist, int smooth_iterations);
 RcppExport SEXP _gdalraster_fillNodata(SEXP filenameSEXP, SEXP bandSEXP, SEXP mask_fileSEXP, SEXP max_distSEXP, SEXP smooth_iterationsSEXP) {
@@ -134,23 +166,6 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type t_srs(t_srsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
     rcpp_result_gen = Rcpp::wrap(warp(src_files, dst_filename, t_srs, cl_arg));
-    return rcpp_result_gen;
-END_RCPP
-}
-// _combine
-Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files, Rcpp::CharacterVector var_names, std::vector<int> bands, std::string dst_filename, std::string fmt, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
-RcppExport SEXP _gdalraster__combine(SEXP src_filesSEXP, SEXP var_namesSEXP, SEXP bandsSEXP, SEXP dst_filenameSEXP, SEXP fmtSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_files(src_filesSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type var_names(var_namesSEXP);
-    Rcpp::traits::input_parameter< std::vector<int> >::type bands(bandsSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type fmt(fmtSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataType(dataTypeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(_combine(src_files, var_names, bands, dst_filename, fmt, dataType, options));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -509,9 +524,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 5},
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
     {"_gdalraster_get_pixel_line", (DL_FUNC) &_gdalraster_get_pixel_line, 2},
+    {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 7},
+    {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 5},
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 5},
     {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 4},
-    {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 7},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},

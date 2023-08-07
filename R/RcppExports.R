@@ -245,6 +245,30 @@ get_pixel_line <- function(xy, gt) {
     .Call(`_gdalraster_get_pixel_line`, xy, gt)
 }
 
+#' Raster overlay for unique combinations
+#' 
+#' @description
+#' `combine()` overlays multiple rasters so that a unique ID is assigned to 
+#' each unique combination of input values. The input raster layers  
+#' typically have integer data types (floating point will be coerced to 
+#' integer by truncation), and must have the same projection, extent and cell 
+#' size. Pixel counts for each unique combination are obtained, and 
+#' combination IDs are optionally written to an output raster.
+#'
+#' Called from and documented in R/gdalraster_proc.R
+#' @noRd
+.combine <- function(src_files, var_names, bands, dst_filename = "", fmt = "", dataType = "UInt32", options = NULL) {
+    .Call(`_gdalraster__combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options)
+}
+
+#' Wrapper for GDALDEMProcessing in the GDAL Algorithms C API
+#'
+#' Called from and documented in R/gdalraster_proc.R
+#' @noRd
+.dem_proc <- function(mode, src_filename, dst_filename, cl_arg = NULL, col_file = NULL) {
+    .Call(`_gdalraster__dem_proc`, mode, src_filename, dst_filename, cl_arg, col_file)
+}
+
 #' Fill selected pixels by interpolation from surrounding areas
 #'
 #' `fillNodata()` is a wrapper for `GDALFillNodata()` in the GDAL Algorithms
@@ -332,22 +356,6 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
 #' ds$close()
 warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL) {
     invisible(.Call(`_gdalraster_warp`, src_files, dst_filename, t_srs, cl_arg))
-}
-
-#' Raster overlay for unique combinations
-#' 
-#' @description
-#' `combine()` overlays multiple rasters so that a unique ID is assigned to 
-#' each unique combination of input values. The input raster layers  
-#' typically have integer data types (floating point will be coerced to 
-#' integer by truncation), and must have the same projection, extent and cell 
-#' size. Pixel counts for each unique combination are obtained, and 
-#' combination IDs are optionally written to an output raster.
-#'
-#' Called from and documented in R/gdalraster_proc.R
-#' @noRd
-.combine <- function(src_files, var_names, bands, dst_filename = "", fmt = "", dataType = "UInt32", options = NULL) {
-    .Call(`_gdalraster__combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options)
 }
 
 #' Is GEOS available?

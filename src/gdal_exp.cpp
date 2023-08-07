@@ -41,6 +41,7 @@ Rcpp::CharacterVector gdal_version() {
 	return ret;
 }
 
+
 //' Get GDAL configuration option
 //'
 //' `get_config_option()` gets the value of GDAL runtime configuration option.
@@ -65,6 +66,7 @@ std::string get_config_option(std::string key) {
 	std::string ret(CPLGetConfigOption(key.c_str(), default_));
 	return ret;
 }
+
 
 //' Set GDAL configuration option
 //'
@@ -96,6 +98,7 @@ void set_config_option(std::string key, std::string value) {
 	CPLSetConfigOption(key.c_str(), value_);
 }
 
+
 //' Get the size of memory in use by the GDAL block cache
 //'
 //' `get_cache_used()` returns the amount of memory currently in use for
@@ -111,6 +114,7 @@ int get_cache_used() {
 	GIntBig nCacheUsed = GDALGetCacheUsed64();
 	return static_cast<int>(nCacheUsed / (1000 * 1000));
 }
+
 
 //' Create a new uninitialized raster
 //'
@@ -187,6 +191,7 @@ bool create(std::string format, std::string dst_filename,
 		Rcpp::stop("Create raster failed.");
 	}
 }
+
 
 //' Create a copy of a raster
 //'
@@ -272,6 +277,7 @@ bool createCopy(std::string format, std::string dst_filename,
 	return ret;
 }
 
+
 //' Apply geotransform
 //'
 //' `_apply_geotransform()` applies geotransform coefficients to a raster 
@@ -296,6 +302,7 @@ Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
 	Rcpp::NumericVector geo_xy = {geo_x, geo_y};
 	return geo_xy;
 }
+
 
 //' Invert geotransform
 //'
@@ -341,6 +348,7 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 	else
 		return Rcpp::NumericVector(6, NA_REAL);
 }
+
 
 //' Raster pixel/line from geospatial x,y coordinates
 //'
@@ -390,165 +398,6 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 	return pixel_line;
 }
 
-//' Fill selected pixels by interpolation from surrounding areas
-//'
-//' `fillNodata()` is a wrapper for `GDALFillNodata()` in the GDAL Algorithms
-//' API. This algorithm will interpolate values for all designated nodata 
-//' pixels (pixels having an intrinsic nodata value, or marked by zero-valued
-//' pixels in the optional raster specified in `mask_file`). For each nodata 
-//' pixel, a four direction conic search is done to find values to interpolate
-//' from (using inverse distance weighting).
-//' Once all values are interpolated, zero or more smoothing iterations
-//' (3x3 average filters on interpolated pixels) are applied to smooth out 
-//' artifacts.
-//'
-//' @note
-//' The input raster will be modified in place. It should not be open in a
-//' `GDALRaster` object while processing with `fillNodata()`.
-//'
-//' @param filename Filename of input raster in which to fill nodata pixels.
-//' @param band Integer band number to modify in place.
-//' @param mask_file Optional filename of raster to use as a validity mask
-//' (band 1 is used, zero marks nodata pixels, non-zero marks valid pixels).
-//' @param max_dist Maximum distance (in pixels) that the algorithm 
-//' will search out for values to interpolate (100 pixels by default).
-//' @param smooth_iterations The number of 3x3 average filter smoothing
-//' iterations to run after the interpolation to dampen artifacts
-//' (0 by default).
-//' @returns Logical indicating success (invisible \code{TRUE}).
-//' An error is raised if the operation fails.
-//' @examples
-//' ## fill nodata edge pixels in the elevation raster
-//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-//' 
-//' ## get count of nodata
-//' df = combine(elev_file)
-//' head(df)
-//' df[is.na(df$storml_elev),]
-//' 
-//' ## make a copy that will be modified
-//' mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
-//' file.copy(elev_file,  mod_file)
-//' 
-//' fillNodata(mod_file, band=1)
-//' 
-//' df_mod = combine(mod_file)
-//' head(df_mod)
-//' df_mod[is.na(df_mod$storml_elev_fill),]
-// [[Rcpp::export(invisible = true)]]
-bool fillNodata(std::string filename, int band, std::string mask_file = "",
-		double max_dist = 100, int smooth_iterations = 0) {
-
-	GDALDatasetH hDS = NULL;
-	GDALRasterBandH hBand = NULL;
-	GDALDatasetH hMaskDS = NULL;
-	GDALRasterBandH hMaskBand = NULL;
-	CPLErr err;
-	
-	hDS = GDALOpenShared(filename.c_str(), GA_Update);
-	if(hDS == NULL)
-		Rcpp::stop("Open raster failed.");
-	hBand = GDALGetRasterBand(hDS, band);
-	
-	if (mask_file != "") {
-		hMaskDS = GDALOpenShared(mask_file.c_str(), GA_ReadOnly);
-		if(hMaskDS == NULL)
-			Rcpp::stop("Open raster failed.");
-		hMaskBand = GDALGetRasterBand(hMaskDS, 1);
-	}
-	
-	err = GDALFillNodata(hBand, hMaskBand, max_dist, 0, smooth_iterations,
-			NULL, GDALTermProgressR, NULL);
-	
-	if (err != CE_None)
-		Rcpp::stop("fillNodata() failed.");
-		
-	GDALClose(hDS);
-	if (hMaskDS != NULL)
-		GDALClose(hMaskDS);
-		
-	return true;
-}
-
-//' Raster reprojection
-//'
-//' `warp()` is a wrapper for the \command{gdalwarp} command-line utility.
-//' See \url{https://gdal.org/programs/gdalwarp.html} for details.
-//'
-//' @param src_files Character vector of source file(s) to be reprojected.
-//' @param dst_filename Filename of the output raster.
-//' @param t_srs Character. Target spatial reference system. Usually an EPSG 
-//' code ("EPSG:#####") or a well known text (WKT) SRS definition.
-//' @param cl_arg Optional character vector of command-line arguments to 
-//' \code{gdalwarp} in addition to -t_srs.
-//' @returns Logical indicating success (invisible \code{TRUE}).
-//' An error is raised if the operation fails.
-//'
-//' @seealso
-//' [`GDALRaster-class`][GDALRaster], [srs_to_wkt()]
-//'
-//' @examples
-//' ## reproject the elevation raster to NAD83 / CONUS Albers (EPSG:5070)
-//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-//'
-//' ## command-line arguments for gdalwarp
-//' ## resample to 90-m resolution using average and keep pixels aligned:
-//' args = c("-tr", "90", "90", "-r", "average", "-tap")
-//' ## output to Erdas Imagine format (HFA), creation option for compression:
-//' args = c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
-//'
-//' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
-//' warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
-//' 
-//' ds <- new(GDALRaster, alb83_file, read_only=TRUE)
-//' ds$getDriverLongName()
-//' ds$getProjectionRef()
-//' ds$res()
-//' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
-//' ds$close()
-// [[Rcpp::export(invisible = true)]]
-bool warp(std::vector<std::string> src_files, std::string dst_filename,
-		Rcpp::CharacterVector t_srs, 
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
-
-	std::vector<GDALDatasetH> src_ds(src_files.size());
-	for (std::size_t i = 0; i < src_files.size(); ++i) {
-		src_ds[i] = GDALOpenShared(src_files[i].c_str(), GA_ReadOnly);
-	}
-
-	std::vector<char *> argv = {(char *) ("-t_srs"), (char *) (t_srs[0]), NULL};
-	//Rcpp::Rcout << argv[0] << " " << argv[1] << " ";
-	if (cl_arg.isNotNull()) {
-		// cast to the underlying type
-		// https://gallery.rcpp.org/articles/optional-null-function-arguments/
-		Rcpp::CharacterVector cl_arg_in(cl_arg);
-		argv.resize(cl_arg_in.size() + 3);
-		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-			argv[i+2] = (char *) (cl_arg_in[i]);
-			//Rcpp::Rcout << argv[i+2] << " ";
-		}
-		argv[cl_arg_in.size() + 2] = NULL;
-	}
-	GDALWarpAppOptions* psOptions = GDALWarpAppOptionsNew(argv.data(), NULL);
-	GDALWarpAppOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
-	
-	GDALDatasetH hDstDS = GDALWarp(dst_filename.c_str(), NULL,
-							src_files.size(), src_ds.data(),
-							psOptions, NULL);
-							
-	GDALWarpAppOptionsFree(psOptions);
-	for (std::size_t i = 0; i < src_files.size(); ++i) {
-		GDALClose(src_ds[i]);
-	}
-	
-	if (hDstDS != NULL) {
-		GDALClose(hDstDS);
-		return true;
-	}
-	else {
-		Rcpp::stop("Warp raster failed.");
-	}
-}
 
 //' Raster overlay for unique combinations
 //' 
@@ -650,3 +499,220 @@ Rcpp::DataFrame _combine(
 	
 	return tbl.asDataFrame();
 }
+
+
+//' Wrapper for GDALDEMProcessing in the GDAL Algorithms C API
+//'
+//' Called from and documented in R/gdalraster_proc.R
+//' @noRd
+// [[Rcpp::export(name = ".dem_proc")]]
+bool _dem_proc(std::string mode,
+			std::string src_filename, 
+			std::string dst_filename,
+			Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+			Rcpp::Nullable<Rcpp::String> col_file = R_NilValue) {
+
+	GDALDatasetH src_ds = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
+	if (src_ds == NULL)
+		Rcpp::stop("Open source raster failed.");
+
+	std::vector<char *> argv = {NULL};
+	if (cl_arg.isNotNull()) {
+		// cast Nullable to the underlying type
+		Rcpp::CharacterVector cl_arg_in(cl_arg);
+		argv.resize(cl_arg_in.size() + 1);
+		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+			argv[i] = (char *) (cl_arg_in[i]);
+		}
+		argv[cl_arg_in.size()] = NULL;
+	}
+	
+	GDALDEMProcessingOptions* psOptions;
+	psOptions = GDALDEMProcessingOptionsNew(argv.data(), NULL);
+	GDALDEMProcessingOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	
+	GDALDatasetH hDstDS;
+	if (col_file.isNotNull()) {
+		// cast Nullable to the underlying type
+		Rcpp::String col_file_in(col_file);
+		hDstDS = GDALDEMProcessing(dst_filename.c_str(), src_ds, mode.c_str(),
+					col_file_in.get_cstring(), psOptions, NULL);
+	}
+	else {
+		hDstDS = GDALDEMProcessing(dst_filename.c_str(), src_ds, mode.c_str(),
+					NULL, psOptions, NULL);
+	}
+							
+	GDALDEMProcessingOptionsFree(psOptions);
+	GDALClose(src_ds);
+	if (hDstDS != NULL) {
+		GDALClose(hDstDS);
+		return true;
+	}
+	else {
+		Rcpp::stop("DEM processing failed.");
+	}
+}
+
+
+//' Fill selected pixels by interpolation from surrounding areas
+//'
+//' `fillNodata()` is a wrapper for `GDALFillNodata()` in the GDAL Algorithms
+//' API. This algorithm will interpolate values for all designated nodata 
+//' pixels (pixels having an intrinsic nodata value, or marked by zero-valued
+//' pixels in the optional raster specified in `mask_file`). For each nodata 
+//' pixel, a four direction conic search is done to find values to interpolate
+//' from (using inverse distance weighting).
+//' Once all values are interpolated, zero or more smoothing iterations
+//' (3x3 average filters on interpolated pixels) are applied to smooth out 
+//' artifacts.
+//'
+//' @note
+//' The input raster will be modified in place. It should not be open in a
+//' `GDALRaster` object while processing with `fillNodata()`.
+//'
+//' @param filename Filename of input raster in which to fill nodata pixels.
+//' @param band Integer band number to modify in place.
+//' @param mask_file Optional filename of raster to use as a validity mask
+//' (band 1 is used, zero marks nodata pixels, non-zero marks valid pixels).
+//' @param max_dist Maximum distance (in pixels) that the algorithm 
+//' will search out for values to interpolate (100 pixels by default).
+//' @param smooth_iterations The number of 3x3 average filter smoothing
+//' iterations to run after the interpolation to dampen artifacts
+//' (0 by default).
+//' @returns Logical indicating success (invisible \code{TRUE}).
+//' An error is raised if the operation fails.
+//' @examples
+//' ## fill nodata edge pixels in the elevation raster
+//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+//' 
+//' ## get count of nodata
+//' df = combine(elev_file)
+//' head(df)
+//' df[is.na(df$storml_elev),]
+//' 
+//' ## make a copy that will be modified
+//' mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+//' file.copy(elev_file,  mod_file)
+//' 
+//' fillNodata(mod_file, band=1)
+//' 
+//' df_mod = combine(mod_file)
+//' head(df_mod)
+//' df_mod[is.na(df_mod$storml_elev_fill),]
+// [[Rcpp::export(invisible = true)]]
+bool fillNodata(std::string filename, int band, std::string mask_file = "",
+		double max_dist = 100, int smooth_iterations = 0) {
+
+	GDALDatasetH hDS = NULL;
+	GDALRasterBandH hBand = NULL;
+	GDALDatasetH hMaskDS = NULL;
+	GDALRasterBandH hMaskBand = NULL;
+	CPLErr err;
+	
+	hDS = GDALOpenShared(filename.c_str(), GA_Update);
+	if (hDS == NULL)
+		Rcpp::stop("Open raster failed.");
+	hBand = GDALGetRasterBand(hDS, band);
+	
+	if (mask_file != "") {
+		hMaskDS = GDALOpenShared(mask_file.c_str(), GA_ReadOnly);
+		if (hMaskDS == NULL)
+			Rcpp::stop("Open raster failed.");
+		hMaskBand = GDALGetRasterBand(hMaskDS, 1);
+	}
+	
+	err = GDALFillNodata(hBand, hMaskBand, max_dist, 0, smooth_iterations,
+			NULL, GDALTermProgressR, NULL);
+	
+	if (err != CE_None)
+		Rcpp::stop("fillNodata() failed.");
+		
+	GDALClose(hDS);
+	if (hMaskDS != NULL)
+		GDALClose(hMaskDS);
+		
+	return true;
+}
+
+
+//' Raster reprojection
+//'
+//' `warp()` is a wrapper for the \command{gdalwarp} command-line utility.
+//' See \url{https://gdal.org/programs/gdalwarp.html} for details.
+//'
+//' @param src_files Character vector of source file(s) to be reprojected.
+//' @param dst_filename Filename of the output raster.
+//' @param t_srs Character. Target spatial reference system. Usually an EPSG 
+//' code ("EPSG:#####") or a well known text (WKT) SRS definition.
+//' @param cl_arg Optional character vector of command-line arguments to 
+//' \code{gdalwarp} in addition to -t_srs.
+//' @returns Logical indicating success (invisible \code{TRUE}).
+//' An error is raised if the operation fails.
+//'
+//' @seealso
+//' [`GDALRaster-class`][GDALRaster], [srs_to_wkt()]
+//'
+//' @examples
+//' ## reproject the elevation raster to NAD83 / CONUS Albers (EPSG:5070)
+//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+//'
+//' ## command-line arguments for gdalwarp
+//' ## resample to 90-m resolution using average and keep pixels aligned:
+//' args = c("-tr", "90", "90", "-r", "average", "-tap")
+//' ## output to Erdas Imagine format (HFA), creation option for compression:
+//' args = c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
+//'
+//' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
+//' warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
+//' 
+//' ds <- new(GDALRaster, alb83_file, read_only=TRUE)
+//' ds$getDriverLongName()
+//' ds$getProjectionRef()
+//' ds$res()
+//' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
+//' ds$close()
+// [[Rcpp::export(invisible = true)]]
+bool warp(std::vector<std::string> src_files, std::string dst_filename,
+		Rcpp::CharacterVector t_srs, 
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+
+	std::vector<GDALDatasetH> src_ds(src_files.size());
+	for (std::size_t i = 0; i < src_files.size(); ++i) {
+		src_ds[i] = GDALOpenShared(src_files[i].c_str(), GA_ReadOnly);
+	}
+
+	std::vector<char *> argv = {(char *) ("-t_srs"), (char *) (t_srs[0]), NULL};
+	//Rcpp::Rcout << argv[0] << " " << argv[1] << " ";
+	if (cl_arg.isNotNull()) {
+		// cast to the underlying type
+		// https://gallery.rcpp.org/articles/optional-null-function-arguments/
+		Rcpp::CharacterVector cl_arg_in(cl_arg);
+		argv.resize(cl_arg_in.size() + 3);
+		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+			argv[i+2] = (char *) (cl_arg_in[i]);
+			//Rcpp::Rcout << argv[i+2] << " ";
+		}
+		argv[cl_arg_in.size() + 2] = NULL;
+	}
+	GDALWarpAppOptions* psOptions = GDALWarpAppOptionsNew(argv.data(), NULL);
+	GDALWarpAppOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	
+	GDALDatasetH hDstDS = GDALWarp(dst_filename.c_str(), NULL,
+							src_files.size(), src_ds.data(),
+							psOptions, NULL);
+							
+	GDALWarpAppOptionsFree(psOptions);
+	for (std::size_t i = 0; i < src_files.size(); ++i) {
+		GDALClose(src_ds[i]);
+	}
+	
+	if (hDstDS != NULL) {
+		GDALClose(hDstDS);
+		return true;
+	}
+	else {
+		Rcpp::stop("Warp raster failed.");
+	}
+}
+
