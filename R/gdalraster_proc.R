@@ -36,7 +36,8 @@ DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
 #' @seealso
 #' [dem_proc()]
 #'
-#' \url{https://gdal.org/programs/gdaldem.html}
+#' \url{https://gdal.org/programs/gdaldem.html} for a description of all
+#' available command-line options for each processing mode
 #' @export
 DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 									   "-alt", "45", "-alg", "Horn",
@@ -1199,30 +1200,37 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 
 #' GDAL DEM processing
 #' 
+#' @description
 #' `dem_proc()` generates DEM derivatives from an input elevation raster. This
 #' function is a wrapper for the \command{gdaldem} command-line utility.
 #' See \url{https://gdal.org/programs/gdaldem.html} for details.
 #'
-#' @param mode Character. Name of the DEM processing mode to use. One of
-# `hillshade`, `slope`, `aspect`, `color-relief`, `TRI, `TPI` or `roughness`.
+#' @param mode Character. Name of the DEM processing mode. One of hillshade,
+#' slope, aspect, color-relief, TRI, TPI or roughness.
 #' @param srcfile Filename of the the source elevation raster.
 #' @param dstfile Filename of the output raster.
 #' @param mode_options An optional character vector of command-line options
-#' (see [DEFAULT_DEM_PROC]).
-#' @param color_text_file Filename of a text file containing lines formatted
-#' as: "elevation_value red green blue". Only used when `mode` is
-#' `color-relief`.
-#' @returns Logical indicating success (invisible \code{TRUE}).
+#' (see [DEFAULT_DEM_PROC] for default values).
+#' @param color_file Filename of a text file containing lines formatted as:
+#' "elevation_value red green blue". Only used when `mode = "color-relief"`.
+#' @returns Logical indicating success (invisible `TRUE`).
 #' An error is raised if the operation fails.
+#'
+#' @note
+#' Band 1 of the source elevation raster is read by default, but this can be
+#' changed by including a `-b` command-line argument in `mode_options`.
+#' See the \href{https://gdal.org/programs/gdaldem.html}{documentation for
+#' `gdaldem`} for a description of all available options for each processing
+#' mode.
 #' @export
 dem_proc <- function(mode,
 					srcfile,
 					dstfile, 
 					mode_options=DEFAULT_DEM_PROC[[mode]],
-					color_text_file=NULL) {
+					color_file=NULL) {
 
 	if (is.null(DEFAULT_DEM_PROC[[mode]]))
 		stop("DEM processing mode not recognized.", call.=FALSE)
 
-	invisible(.dem_proc(mode, srcfile, dstfile, mode_options, color_text_file))
+	invisible(.dem_proc(mode, srcfile, dstfile, mode_options, color_file))
 }

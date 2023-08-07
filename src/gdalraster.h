@@ -41,7 +41,21 @@ bool createCopy(std::string format, std::string dst_filename,
 Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
 
 Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
-		const std::vector<double> gt);	
+		const std::vector<double> gt);
+
+Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
+		Rcpp::CharacterVector var_names,
+		std::vector<int> bands, 
+		std::string dst_filename,
+		std::string fmt, 
+		std::string dataType,
+		Rcpp::Nullable<Rcpp::CharacterVector> options);
+
+bool _dem_proc(std::string mode,
+		std::string src_filename, 
+		std::string dst_filename,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+		Rcpp::Nullable<Rcpp::String> col_file);
 
 bool fillNodata(std::string filename, int band, std::string mask_file,
 		double max_dist, int smooth_iterations);
@@ -49,15 +63,6 @@ bool fillNodata(std::string filename, int band, std::string mask_file,
 bool warp(Rcpp::CharacterVector src_files, std::string dst_filename,
 		Rcpp::CharacterVector t_srs, 
 		Rcpp::Nullable<Rcpp::CharacterVector> arg_list);
-
-Rcpp::DataFrame _combine(
-		Rcpp::CharacterVector src_files,
-		Rcpp::CharacterVector var_names,
-		std::vector<int> bands, 
-		std::string dst_filename,
-		std::string fmt, 
-		std::string dataType,
-		Rcpp::Nullable<Rcpp::CharacterVector> options);
 
 class GDALRaster {
 
