@@ -1,5 +1,7 @@
 # gdalraster 1.3.1 (dev)
 
+* add `dem_proc()`: wrapper for the `gdaldem` command-line utility to generate DEM derivatives (2023-08-07)
+
 * `plot_raster()` now accepts a `GDALRaster` object for the `data` argument. Previously `data` could only be a vector of pixel values that had already been read in (2023-07-15)
 
 * add test suite and codecov reporting (2023-07-02)

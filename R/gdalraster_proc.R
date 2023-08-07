@@ -1222,6 +1222,11 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 #' See the \href{https://gdal.org/programs/gdaldem.html}{documentation for
 #' `gdaldem`} for a description of all available options for each processing
 #' mode.
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' slp_file <- paste0(tempdir(), "/", "storml_slp.tif")
+#' dem_proc("slope", elev_file, slp_file)
 #' @export
 dem_proc <- function(mode,
 					srcfile,

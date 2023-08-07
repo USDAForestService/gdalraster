@@ -9,22 +9,22 @@ dem_proc(
   srcfile,
   dstfile,
   mode_options = DEFAULT_DEM_PROC[[mode]],
-  color_text_file = NULL
+  color_file = NULL
 )
 }
 \arguments{
-\item{mode}{Character. Name of the DEM processing mode to use. One of}
+\item{mode}{Character. Name of the DEM processing mode. One of hillshade,
+slope, aspect, color-relief, TRI, TPI or roughness.}
 
 \item{srcfile}{Filename of the the source elevation raster.}
 
 \item{dstfile}{Filename of the output raster.}
 
 \item{mode_options}{An optional character vector of command-line options
-(see \link{DEFAULT_DEM_PROC}).}
+(see \link{DEFAULT_DEM_PROC} for default values).}
 
-\item{color_text_file}{Filename of a text file containing lines formatted
-as: "elevation_value red green blue". Only used when \code{mode} is
-\code{color-relief}.}
+\item{color_file}{Filename of a text file containing lines formatted as:
+"elevation_value red green blue". Only used when \code{mode = "color-relief"}.}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).
@@ -34,4 +34,16 @@ An error is raised if the operation fails.
 \code{dem_proc()} generates DEM derivatives from an input elevation raster. This
 function is a wrapper for the \command{gdaldem} command-line utility.
 See \url{https://gdal.org/programs/gdaldem.html} for details.
+}
+\note{
+Band 1 of the source elevation raster is read by default, but this can be
+changed by including a \code{-b} command-line argument in \code{mode_options}.
+See the \href{https://gdal.org/programs/gdaldem.html}{documentation for
+\code{gdaldem}} for a description of all available options for each processing
+mode.
+}
+\examples{
+elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+slp_file <- paste0(tempdir(), "/", "storml_slp.tif")
+dem_proc("slope", elev_file, slp_file)
 }

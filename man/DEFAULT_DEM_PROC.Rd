@@ -27,6 +27,7 @@ These values are used in \code{dem_proc()} as the default processing options:
 \seealso{
 \code{\link[=dem_proc]{dem_proc()}}
 
-\url{https://gdal.org/programs/gdaldem.html}
+\url{https://gdal.org/programs/gdaldem.html} for a description of all
+available command-line options for each processing mode
 }
 \keyword{datasets}

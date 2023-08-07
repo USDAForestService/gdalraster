@@ -29,6 +29,7 @@ reference:
   - combine
   - create
   - createCopy
+  - dem_proc
   - epsg_to_wkt
   - fillNodata
   - gdal_version
