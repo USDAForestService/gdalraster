@@ -107,10 +107,13 @@ class GDALRaster {
 	bool setNoDataValue(int band, double nodata_value);
 	void deleteNoDataValue(int band);
 	std::string getUnitType(int band) const;
+	bool setUnitType(int band, std::string unit_type);
 	bool hasScale(int band) const;
 	double getScale(int band) const;
+	bool setScale(int band, double scale);
 	bool hasOffset(int band) const;
 	double getOffset(int band) const;
+	bool setOffset(int band, double offset);
 	
 	Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
 	std::string getMetadataItem(int band,
