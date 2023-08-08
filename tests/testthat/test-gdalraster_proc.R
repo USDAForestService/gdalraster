@@ -266,3 +266,10 @@ test_that("rasterToVRT works", {
 	expect_error(rasterToVRT(elev_file, resolution=c(90,90), krnl=krnl))
 })
 
+test_that("dem_proc runs without error", {
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	hs_file <- paste0(tempdir(), "/", "storml_hillshade.tif")
+	on.exit(unlink(hs_file))
+	expect_true(dem_proc("hillshade", elev_file, hs_file))
+})
+
