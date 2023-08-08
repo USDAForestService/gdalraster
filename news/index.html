@@ -54,7 +54,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.3.1" id="gdalraster-131-dev">gdalraster 1.3.1 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-131-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/dem_proc.html">dem_proc()</a></code>: wrapper for the <code>gdaldem</code> command-line utility to generate DEM derivatives (2023-08-07)</p></li>
+<ul><li><p>add <code>GDALRaster$setUnitType()</code>, <code>GDALRaster$setScale()</code>, <code>GDALRaster$setOffset()</code> (2023-08-08)</p></li>
+<li><p>add <code><a href="../reference/dem_proc.html">dem_proc()</a></code>: wrapper for the <code>gdaldem</code> command-line utility to generate DEM derivatives (2023-08-07)</p></li>
 <li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code> now accepts a <code>GDALRaster</code> object for the <code>data</code> argument. Previously <code>data</code> could only be a vector of pixel values that had already been read in (2023-07-15)</p></li>
 <li><p>add test suite and codecov reporting (2023-07-02)</p></li>
 <li><p>add <code>GDALRaster$dim()</code>: returns a vector of xsize, ysize, nbands (2023-06-29)</p></li>

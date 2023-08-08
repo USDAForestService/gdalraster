@@ -135,8 +135,11 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span><span class="va">band</span>, <span class="va">nodata_value</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">deleteNoDataValue</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getUnitType</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setUnitType</span><span class="op">(</span><span class="va">band</span>, <span class="va">unit_type</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getScale</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setScale</span><span class="op">(</span><span class="va">band</span>, <span class="va">scale</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getOffset</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setOffset</span><span class="op">(</span><span class="va">band</span>, <span class="va">offset</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span><span class="va">band</span>, <span class="va">domain</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span><span class="va">band</span>, <span class="va">mdi_name</span>, <span class="va">domain</span><span class="op">)</span></span>
@@ -288,18 +291,33 @@ for side effects. An error is raised if the nodata value cannot be removed.</p>
 Returns the name of the unit type of the pixel values for <code>band</code>
 (e.g., "m" or "ft").
 An empty string <code>""</code> is returned if no units are available.</p>
+<p><code>$setUnitType(band, unit_type)</code>
+Sets the name of the unit type of the pixel values for <code>band</code>.
+<code>unit_type</code> should be one of "" (the default indicating it is unknown),
+"m" indicating meters, or "ft" indicating feet, though other nonstandard
+values are allowed.
+Returns logical TRUE on success or FALSE if the unit type could not
+be set.</p>
 <p><code>$getScale(band)</code>
 Returns the pixel value scale (units value = (raw value * scale) + offset)
 for <code>band</code>.
 This value (in combination with the <code>getOffset()</code> value) can be used to
 transform raw pixel values into the units returned by <code>getUnitType()</code>.
 Returns NA if a scale value is not defined for this <code>band</code>.</p>
+<p><code>$setScale(band, scale)</code>
+Sets the pixel value scale (units value = (raw value * scale) + offset)
+for <code>band</code>. Many raster formats do not implement this method.
+Returns logical TRUE on success or FALSE if the scale could not be set.</p>
 <p><code>$getOffset(band)</code>
 Returns the pixel value offset (units value = (raw value * scale) + offset)
 for <code>band</code>.
 This value (in combination with the <code>getScale()</code> value) can be used to
 transform raw pixel values into the units returned by <code>getUnitType()</code>.
 Returns NA if an offset value is not defined for this <code>band</code>.</p>
+<p><code>$setOffset(band, offset)</code>
+Sets the pixel value offset (units value = (raw value * scale) + offset)
+for <code>band</code>. Many raster formats do not implement this method.
+Returns logical TRUE on success or FALSE if the offset could not be set.</p>
 <p><code>$getMetadata(band, domain)</code>
 Returns a character vector of all metadata <code>name=value</code> pairs that exist in
 the specified <code>domain</code>, or <code>""</code> (empty string) if there are no
