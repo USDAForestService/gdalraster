@@ -4,7 +4,7 @@ Chris Toney <chris.toney at usda.gov> */
 #include "cmb_table.h"
 
 CmbTable::CmbTable(): 
-	key_len(1), cvVarNames({"v"}), last_ID(0)  {}
+	key_len(1), cvVarNames({"V1"}), last_ID(0)  {}
 
 CmbTable::CmbTable(unsigned int keyLen, Rcpp::CharacterVector varNames): 
 	key_len(keyLen), cvVarNames(varNames), last_ID(0)  {
@@ -89,6 +89,8 @@ RCPP_MODULE(mod_cmb_table) {
 
     Rcpp::class_<CmbTable>("CmbTable")
 
+    .constructor
+    	("Default constructor, combination vector of length 1.")
     .constructor<unsigned int, Rcpp::CharacterVector>
     	("Length of the combination vector, vector of variable names")
 

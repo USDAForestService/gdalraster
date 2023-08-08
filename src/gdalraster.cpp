@@ -640,6 +640,8 @@ RCPP_MODULE(mod_GDALRaster) {
 
     Rcpp::class_<GDALRaster>("GDALRaster")
 
+    .constructor
+    	("Default constructor, no dataset opened.")
     .constructor<std::string, bool>
     	("Usage: new(GDALRaster, filename, read_only=TRUE")
     
