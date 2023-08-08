@@ -69,8 +69,11 @@ ds$getNoDataValue(band)
 ds$setNoDataValue(band, nodata_value)
 ds$deleteNoDataValue(band)
 ds$getUnitType(band)
+ds$setUnitType(band, unit_type)
 ds$getScale(band)
+ds$setScale(band, scale)
 ds$getOffset(band)
+ds$setOffset(band, offset)
 
 ds$getMetadata(band, domain)
 ds$getMetadataItem(band, mdi_name, domain)
@@ -281,6 +284,14 @@ Returns the name of the unit type of the pixel values for \code{band}
 (e.g., "m" or "ft").
 An empty string \code{""} is returned if no units are available.
 
+\code{$setUnitType(band, unit_type)}
+Sets the name of the unit type of the pixel values for \code{band}.
+\code{unit_type} should be one of "" (the default indicating it is unknown),
+"m" indicating meters, or "ft" indicating feet, though other nonstandard
+values are allowed.
+Returns logical TRUE on success or FALSE if the unit type could not
+be set.
+
 \code{$getScale(band)}
 Returns the pixel value scale (units value = (raw value * scale) + offset)
 for \code{band}.
@@ -288,12 +299,22 @@ This value (in combination with the \code{getOffset()} value) can be used to
 transform raw pixel values into the units returned by \code{getUnitType()}.
 Returns NA if a scale value is not defined for this \code{band}.
 
+\code{$setScale(band, scale)}
+Sets the pixel value scale (units value = (raw value * scale) + offset)
+for \code{band}. Many raster formats do not implement this method.
+Returns logical TRUE on success or FALSE if the scale could not be set.
+
 \code{$getOffset(band)}
 Returns the pixel value offset (units value = (raw value * scale) + offset)
 for \code{band}.
 This value (in combination with the \code{getScale()} value) can be used to
 transform raw pixel values into the units returned by \code{getUnitType()}.
 Returns NA if an offset value is not defined for this \code{band}.
+
+\code{$setOffset(band, offset)}
+Sets the pixel value offset (units value = (raw value * scale) + offset)
+for \code{band}. Many raster formats do not implement this method.
+Returns logical TRUE on success or FALSE if the offset could not be set.
 
 \code{$getMetadata(band, domain)}
 Returns a character vector of all metadata \code{name=value} pairs that exist in

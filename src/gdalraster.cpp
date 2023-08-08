@@ -338,6 +338,23 @@ std::string GDALRaster::getUnitType(int band) const {
 	return GDALGetRasterUnitType(hBand);
 }
 
+bool GDALRaster::setUnitType(int band, std::string unit_type) {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+		
+	if (GDALGetAccess(hDataset) == GA_ReadOnly)
+		Rcpp::stop("Cannot set unit type (GA_ReadOnly).");
+
+	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	if (GDALSetRasterUnitType(hBand, unit_type.c_str()) == CE_Failure) {
+		Rcpp::Rcerr << "Set unit type failed.\n";
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
 bool GDALRaster::hasScale(int band) const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
@@ -359,7 +376,24 @@ double GDALRaster::getScale(int band) const {
 	else {
 		return NA_REAL;
 	}
-}	
+}
+
+bool GDALRaster::setScale(int band, double scale) {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+		
+	if (GDALGetAccess(hDataset) == GA_ReadOnly)
+		Rcpp::stop("Cannot set scale (GA_ReadOnly).");
+
+	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	if (GDALSetRasterScale(hBand, scale) == CE_Failure) {
+		Rcpp::Rcerr << "Set scale failed.\n";
+		return false;
+	}
+	else {
+		return true;
+	}
+}
 
 bool GDALRaster::hasOffset(int band) const {
 	if (!this->isOpen())
@@ -381,6 +415,23 @@ double GDALRaster::getOffset(int band) const {
 	}
 	else {
 		return NA_REAL;
+	}
+}
+
+bool GDALRaster::setOffset(int band, double offset) {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+		
+	if (GDALGetAccess(hDataset) == GA_ReadOnly)
+		Rcpp::stop("Cannot set offset (GA_ReadOnly).");
+
+	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	if (GDALSetRasterOffset(hBand, offset) == CE_Failure) {
+		Rcpp::Rcerr << "Set offset failed.\n";
+		return false;
+	}
+	else {
+		return true;
 	}
 }
 
@@ -694,10 +745,16 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Delete the nodata value for this band.")
     .const_method("getUnitType", &GDALRaster::getUnitType, 
     	"Get name of the raster value units (e.g., m or ft).")
+    .method("setUnitType", &GDALRaster::setUnitType, 
+    	"Set name of the raster value units (e.g., m or ft).")
     .const_method("getScale", &GDALRaster::getScale, 
-    	"Return the raster value scale.")
+    	"Return the raster value scaling ratio.")
+    .method("setScale", &GDALRaster::setScale, 
+    	"Set the raster value scaling ratio.")
     .const_method("getOffset", &GDALRaster::getOffset, 
     	"Return the raster value offset.")
+    .method("setOffset", &GDALRaster::setOffset, 
+    	"Set the raster value offset.")
     .const_method("getMetadata", &GDALRaster::getMetadata, 
     	"Return a list of metadata item=value for a domain.")
     .const_method("getMetadataItem", &GDALRaster::getMetadataItem, 

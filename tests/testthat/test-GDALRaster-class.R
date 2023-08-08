@@ -126,3 +126,17 @@ test_that("complex I/O works", {
 	ds$close()
 })
 
+test_that("set unit type, scale and offset works", {
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+	file.copy(elev_file,  mod_file)
+	on.exit(unlink(mod_file))
+	ds <- new(GDALRaster, mod_file, read_only=FALSE)
+	ds$setUnitType(1, "m")
+	ds$setScale(1, 1)
+	ds$setOffset(1, 0)
+	expect_equal(ds$getUnitType(1), "m")
+	expect_equal(ds$getScale(1), 1)
+	expect_equal(ds$getOffset(1), 0)
+	ds$close()
+})
