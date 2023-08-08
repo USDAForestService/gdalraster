@@ -98,6 +98,8 @@ RCPP_MODULE(mod_running_stats) {
 
     Rcpp::class_<RunningStats>("RunningStats")
 
+    .constructor
+    	("Default constructor initialized with na_rm = TRUE.")
     .constructor<bool>
     	("Initialize with na_rm = TRUE or FALSE")
 

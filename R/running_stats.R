@@ -14,7 +14,7 @@
 #' large data streams.
 #'
 #' @param na_rm Logical. `TRUE` to remove `NA` from the input data or `FALSE` 
-#' to retain `NA`.
+#' to retain `NA` (defaults to `TRUE`).
 #' @returns An object of class `RunningStats`. A `RunningStats` object 
 #' maintains the current minimum, maximum, mean, variance, sum and count of 
 #' values that have been read from the stream. It can be updated repeatedly 

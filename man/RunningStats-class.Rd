@@ -8,7 +8,7 @@
 \title{Class to calculate mean and variance in one pass}
 \arguments{
 \item{na_rm}{Logical. \code{TRUE} to remove \code{NA} from the input data or \code{FALSE}
-to retain \code{NA}.}
+to retain \code{NA} (defaults to \code{TRUE}).}
 }
 \value{
 An object of class \code{RunningStats}. A \code{RunningStats} object
