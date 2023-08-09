@@ -116,8 +116,10 @@ class GDALRaster {
 	bool setOffset(int band, double offset);
 	
 	Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
-	std::string getMetadataItem(int band,
-			std::string mdi_name, std::string domain) const;
+	std::string getMetadataItem(int band, std::string mdi_name, 
+			std::string domain) const;
+	void setMetadataItem(int band, std::string mdi_name, std::string mdi_value,
+			std::string domain);
 	
 	SEXP read(int band, int xoff, int yoff, int xsize, int ysize,
 			int out_xsize, int out_ysize) const;
@@ -128,9 +130,6 @@ class GDALRaster {
 	void fillRaster(int band, double value, double ivalue);
 	
 	int getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
-	
-	void _setMetadataItem(int band, std::string mdi_name, 
-			std::string mdi_value, std::string domain);
 	
 	void close();
 };

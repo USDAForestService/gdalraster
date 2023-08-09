@@ -497,6 +497,32 @@ std::string GDALRaster::getMetadataItem(int band, std::string mdi_name,
 	return mdi;
 }
 
+void GDALRaster::setMetadataItem(int band, std::string mdi_name, 
+		std::string mdi_value, std::string domain) {
+	
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+		
+	if (GDALGetAccess(hDataset) == GA_ReadOnly)
+		Rcpp::stop("Cannot set metadata item (GA_ReadOnly).");
+
+	const char* domain_ = NULL;
+	if (domain != "")
+		domain_ = domain.c_str();
+
+	if (band == 0) {
+		if (GDALSetMetadataItem(hDataset, mdi_name.c_str(), mdi_value.c_str(),
+								domain_) != CE_None)
+			Rcpp::stop("Set metadata item failed.");
+	}
+	else {
+		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+		if (GDALSetMetadataItem(hBand, mdi_name.c_str(), mdi_value.c_str(),
+								domain_) != CE_None)
+			Rcpp::stop("Set metadata item failed.");
+	}
+}
+
 SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 		int out_xsize, int out_ysize) const {
 	
@@ -665,23 +691,6 @@ int GDALRaster::getChecksum(int band, int xoff, int yoff, int xsize, int ysize) 
 	return GDALChecksumImage(hBand, xoff, yoff, xsize, ysize);
 }
 
-void GDALRaster::_setMetadataItem(int band, std::string mdi_name, 
-		std::string mdi_value, std::string domain) {
-		
-	// currently only for GDALRasterBand metadata item
-	
-	if (!this->isOpen())
-		Rcpp::stop("Raster dataset is not open.");
-		
-	if (GDALGetAccess(hDataset) == GA_ReadOnly)
-		Rcpp::stop("Cannot set metadata item (GA_ReadOnly).");
-		
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
-	if (GDALSetMetadataItem(hBand, mdi_name.c_str(), mdi_value.c_str(),
-							domain.c_str()) != CE_None)
-		Rcpp::stop("Set metadata item failed.");
-}
-
 void GDALRaster::close() {
 	GDALClose(hDataset);
 	hDataset = NULL;
@@ -759,6 +768,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Return a list of metadata item=value for a domain.")
     .const_method("getMetadataItem", &GDALRaster::getMetadataItem, 
     	"Return the value of a metadata item.")
+    .method("setMetadataItem", &GDALRaster::setMetadataItem, 
+    	"Set metadata item name=value in domain.")
     .const_method("read", &GDALRaster::read, 
     	"Read a region of raster data for a band.")
     .method("write", &GDALRaster::write, 
@@ -767,8 +778,6 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Fill this band with a constant value.")
     .const_method("getChecksum", &GDALRaster::getChecksum, 
     	"Compute checksum for raster region.")
-    .method(".setMetadataItem", &GDALRaster::_setMetadataItem, 
-    	"Set metadata item name=value in domain.")
     .method("close", &GDALRaster::close, 
     	"Close the GDAL dataset for proper cleanup.")
     
