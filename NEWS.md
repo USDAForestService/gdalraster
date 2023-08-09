@@ -1,6 +1,6 @@
 # gdalraster 1.3.1 (dev)
 
-* add `GDALRaster$setUnitType()`, `GDALRaster$setScale()`, `GDALRaster$setOffset()` (2023-08-08)
+* add the following set methods in class `GDALRaster`: `setMetadataItem()`, `setUnitType()`, `setScale()`, `setOffset()` (2023-08-08)
 
 * add `dem_proc()`: wrapper for the `gdaldem` command-line utility to generate DEM derivatives (2023-08-07)
 

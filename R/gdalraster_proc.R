@@ -671,7 +671,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 				sqrt(length(krnl)),
 				paste(krnl, collapse=" ")) )
 				
-			vrt_ds$.setMetadataItem(band, "source_0", krnl_xml, "vrt_sources")
+			vrt_ds$setMetadataItem(band, "source_0", krnl_xml, "vrt_sources")
 		}
 		vrt_ds$close()
 	}
