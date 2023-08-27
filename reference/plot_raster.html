@@ -81,6 +81,7 @@
 <span>  xaxs <span class="op">=</span> <span class="st">"i"</span>,</span>
 <span>  yaxs <span class="op">=</span> <span class="st">"i"</span>,</span>
 <span>  legend <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  digits <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  na_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
 <span><span class="op">)</span></span></code></pre></div>
@@ -204,6 +205,11 @@ to the image when drawing (default <code>TRUE</code>).</p></dd>
 By default, a legend will be included if plotting single-band data without
 <code>col_tbl</code> specified. Legend is not currently supported for color tables, or
 with 3-band RGB data.</p></dd>
+
+
+<dt>digits</dt>
+<dd><p>The number of digits to display after the decimal point in
+the legend labels when raster data are floating point.</p></dd>
 
 
 <dt>na_col</dt>
