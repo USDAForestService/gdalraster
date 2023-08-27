@@ -77,7 +77,8 @@ a well known name (see Details).</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>pts</dt>
-<dd><p>Numeric array of geospatial x/y coordinates</p></dd>
+<dd><p>A two-column data frame or numeric matrix containing geospatial
+x/y coordinates</p></dd>
 
 
 <dt>srs</dt>
@@ -128,7 +129,7 @@ names above.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8   8 326247.7 5102506</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9   9 327711.7 5104476</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 10 324181.7 5103901</span>
-<span class="r-in"><span><span class="fu">inv_project</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">pts</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">inv_project</span><span class="op">(</span><span class="va">pts</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]     [,2]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] -113.2671 46.06118</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -113.2732 46.05827</span>
@@ -140,7 +141,7 @@ names above.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -113.2461 46.05405</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] -113.2279 46.07214</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -113.2733 46.06607</span>
-<span class="r-in"><span><span class="fu">inv_project</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">pts</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span>, <span class="st">"NAD27"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">inv_project</span><span class="op">(</span><span class="va">pts</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span>, <span class="st">"NAD27"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>            [,1]     [,2]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] -113.2662 46.06126</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -113.2723 46.05835</span>

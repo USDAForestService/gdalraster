@@ -65,7 +65,8 @@
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>pts</dt>
-<dd><p>Numeric array of geospatial x/y coordinates</p></dd>
+<dd><p>A two-column data frame or numeric matrix containing geospatial
+x/y coordinates</p></dd>
 
 
 <dt>srs_from</dt>
@@ -108,9 +109,9 @@ specified by <code>srs_to</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 10 324181.7 5103901</span>
 <span class="r-in"><span><span class="co">## id, x, y in NAD83 / UTM zone 12N</span></span></span>
 <span class="r-in"><span><span class="co">## transform to NAD83 / CONUS Albers</span></span></span>
-<span class="r-in"><span><span class="fu">transform_xy</span><span class="op">(</span> pts <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">pts</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>              srs_from <span class="op">=</span> <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span>, </span></span>
-<span class="r-in"><span>              srs_to <span class="op">=</span> <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">5070</span><span class="op">)</span> <span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">transform_xy</span><span class="op">(</span>pts <span class="op">=</span> <span class="va">pts</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span>, </span></span>
+<span class="r-in"><span>             srs_from <span class="op">=</span> <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span>, </span></span>
+<span class="r-in"><span>             srs_to <span class="op">=</span> <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">5070</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]    [,2]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] -1330885 2684892</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -1331408 2684660</span>
