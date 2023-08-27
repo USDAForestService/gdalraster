@@ -10,6 +10,17 @@
 #include "ogr_srs_api.h"
 #include "ogr_spatialref.h"
 
+//' convert data frame to numeric matrix in Rcpp
+//' @noRd
+Rcpp::NumericMatrix _df_to_matrix(Rcpp::DataFrame df) {
+	Rcpp::NumericMatrix m(df.nrows(), df.size());
+	for (R_xlen_t i=0; i<df.size(); ++i) {
+		m.column(i) = Rcpp::NumericVector(df[i]);
+	}
+	return m;
+}
+
+
 //' Inverse project geospatial x/y coordinates to longitude/latitude
 //'
 //' `inv_project()` transforms geospatial x/y coordinates to 
@@ -36,7 +47,8 @@
 //' (traditional GIS order) regardless of the axis order defined for the 
 //' names above.
 //'
-//' @param pts Numeric array of geospatial x/y coordinates 
+//' @param pts A two-column data frame or numeric matrix containing geospatial
+//' x/y coordinates 
 //' @param srs Character string in OGC WKT format specifying the projected 
 //' spatial reference system for `pts`.
 //' @param well_known_gcs Optional character string containing a supported 
@@ -51,17 +63,27 @@
 //' ## id, x, y in NAD83 / UTM zone 12N
 //' pts <- read.csv(pt_file)
 //' print(pts)
-//' inv_project(as.matrix(pts[,-1]), epsg_to_wkt(26912))
-//' inv_project(as.matrix(pts[,-1]), epsg_to_wkt(26912), "NAD27")
+//' inv_project(pts[,-1], epsg_to_wkt(26912))
+//' inv_project(pts[,-1], epsg_to_wkt(26912), "NAD27")
 // [[Rcpp::export]]
-Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts, 
+Rcpp::NumericMatrix inv_project(Rcpp::RObject &pts, 
 								std::string srs,
 								std::string well_known_gcs = "") {
 
-	if (pts.nrow() == 0)
-		Rcpp::stop("Input array is empty.");
+	Rcpp::NumericMatrix pts_m;
+	if (Rcpp::is<Rcpp::DataFrame>(pts))
+		pts_m = _df_to_matrix(pts);
+	else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
+		if (Rf_isMatrix(pts))
+			pts_m = Rcpp::as<Rcpp::NumericMatrix>(pts);
+	}
+	else
+		Rcpp::stop("pts must be a data frame or matrix.");
+		
+	if (pts_m.nrow() == 0)
+		Rcpp::stop("Input matrix is empty.");
 
-	Rcpp::NumericMatrix pts_in = Rcpp::clone(pts);
+	Rcpp::NumericMatrix pts_in = Rcpp::clone(pts_m);
 
 	OGRSpatialReference oSourceSRS;
 	OGRSpatialReference *poLongLat;
@@ -110,7 +132,8 @@ Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts,
 //'
 //' `transform_xy()` transforms geospatial x/y coordinates to a new projection.
 //'
-//' @param pts Numeric array of geospatial x/y coordinates 
+//' @param pts A two-column data frame or numeric matrix containing geospatial
+//' x/y coordinates 
 //' @param srs_from Character string in OGC WKT format specifying the  
 //' spatial reference system for `pts`.
 //' @param srs_to Character string in OGC WKT format specifying the output 
@@ -126,18 +149,28 @@ Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix &pts,
 //' print(pts)
 //' ## id, x, y in NAD83 / UTM zone 12N
 //' ## transform to NAD83 / CONUS Albers
-//' transform_xy( pts = as.matrix(pts[,-1]), 
-//'               srs_from = epsg_to_wkt(26912), 
-//'               srs_to = epsg_to_wkt(5070) )
+//' transform_xy(pts = pts[,-1], 
+//'              srs_from = epsg_to_wkt(26912), 
+//'              srs_to = epsg_to_wkt(5070))
 // [[Rcpp::export]]
-Rcpp::NumericMatrix transform_xy(Rcpp::NumericMatrix &pts, 
+Rcpp::NumericMatrix transform_xy(Rcpp::RObject &pts, 
 								std::string srs_from,
 								std::string srs_to) {
 
-	if (pts.nrow() == 0)
-		Rcpp::stop("Input array is empty.");
+	Rcpp::NumericMatrix pts_m;
+	if (Rcpp::is<Rcpp::DataFrame>(pts))
+		pts_m = _df_to_matrix(pts);
+	else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
+		if (Rf_isMatrix(pts))
+			pts_m = Rcpp::as<Rcpp::NumericMatrix>(pts);
+	}
+	else
+		Rcpp::stop("pts must be a data frame or matrix.");
 
-	Rcpp::NumericMatrix pts_in = Rcpp::clone(pts);
+	if (pts_m.nrow() == 0)
+		Rcpp::stop("Input matrix is empty.");
+
+	Rcpp::NumericMatrix pts_in = Rcpp::clone(pts_m);
 
 	OGRSpatialReference oSourceSRS, oDestSRS;
 	OGRCoordinateTransformation *poCT;

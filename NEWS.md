@@ -1,5 +1,7 @@
 # gdalraster 1.3.1 (dev)
 
+* `transform_xy()` and `inv_project()`: `pts` can be a data frame or matrix (2023-08-27)
+
 * `plot_raster()`: make the legend narrower and add argument `digits` for formatting the legend labels when raster data are floating point (2023-08-26)
 
 * add the following set methods in class `GDALRaster`: `setMetadataItem()`, `setUnitType()`, `setScale()`, `setOffset()` (2023-08-08)
