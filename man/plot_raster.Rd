@@ -26,6 +26,7 @@ plot_raster(
   xaxs = "i",
   yaxs = "i",
   legend = NULL,
+  digits = 2,
   na_col = rgb(0, 0, 0, 0),
   ...
 )
@@ -106,6 +107,9 @@ to the image when drawing (default \code{TRUE}).}
 By default, a legend will be included if plotting single-band data without
 \code{col_tbl} specified. Legend is not currently supported for color tables, or
 with 3-band RGB data.}
+
+\item{digits}{The number of digits to display after the decimal point in
+the legend labels when raster data are floating point.}
 
 \item{na_col}{Color to use for \code{NA} as a 7- or 9-character hexadecimal code.
 The default is transparent (\code{"#00000000"}, the return value of

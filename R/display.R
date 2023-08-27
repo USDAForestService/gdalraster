@@ -173,6 +173,8 @@
 #' By default, a legend will be included if plotting single-band data without
 #' `col_tbl` specified. Legend is not currently supported for color tables, or
 #' with 3-band RGB data.
+#' @param digits The number of digits to display after the decimal point in
+#' the legend labels when raster data are floating point.
 #' @param na_col Color to use for `NA` as a 7- or 9-character hexadecimal code.
 #' The default is transparent (`"#00000000"`, the return value of
 #' `rgb(0,0,0,0)`).
@@ -255,7 +257,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 						xlim=c(0, xsize), ylim=c(ysize, 0),
 						interpolate=TRUE, asp=1, axes=TRUE, main="",
 						xlab="x", ylab="y", xaxs="i", yaxs="i", 
-						legend=NULL, na_col=rgb(0,0,0,0), ...) {
+						legend=NULL, digits=2, na_col=rgb(0,0,0,0), ...) {
 
 	if (isTRUE((grDevices::dev.capabilities()$rasterImage == "no"))) {
 		message("Device does not support rasterImage().")
@@ -326,7 +328,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 		if (is.null(col_map_fn))
 			col_map_fn <- grDevices::gray
 		op <- graphics::par(no.readonly = TRUE)  # save original for reset
-		graphics::layout(matrix(1:2, ncol=2), width=c(5,1), height=c(1,1))
+		graphics::layout(matrix(1:2, ncol=2), width=c(6,1), height=c(1,1))
 		graphics::par(mar=c(5, 4, 4, 0.5) + 0.1)
 	}
 	graphics::plot.new()
@@ -361,9 +363,10 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 		graphics::plot(c(0,2), c(0,1), type="n", axes=FALSE,
 						xlab="", ylab="", main="")
 		if (is(data_in, "integer"))
-			leg_lab <- round(seq(mm[1], mm[2], length.out=5))
+			leg_lab <- formatC(seq(mm[1], mm[2], length.out=5), format="d")
 		else
-			leg_lab <- seq(mm[1], mm[2], length.out=5)
+			leg_lab <- formatC(seq(mm[1], mm[2], length.out=5), format="f",
+								digits=digits)
 		graphics::text(x=1.5,
 						y=seq(0, 1, length.out=5),
 						labels=leg_lab,
