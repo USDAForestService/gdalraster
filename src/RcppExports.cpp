@@ -405,12 +405,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // inv_project
-Rcpp::NumericMatrix inv_project(Rcpp::NumericMatrix& pts, std::string srs, std::string well_known_gcs);
+Rcpp::NumericMatrix inv_project(Rcpp::RObject& pts, std::string srs, std::string well_known_gcs);
 RcppExport SEXP _gdalraster_inv_project(SEXP ptsSEXP, SEXP srsSEXP, SEXP well_known_gcsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type pts(ptsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject& >::type pts(ptsSEXP);
     Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
     Rcpp::traits::input_parameter< std::string >::type well_known_gcs(well_known_gcsSEXP);
     rcpp_result_gen = Rcpp::wrap(inv_project(pts, srs, well_known_gcs));
@@ -418,12 +418,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // transform_xy
-Rcpp::NumericMatrix transform_xy(Rcpp::NumericMatrix& pts, std::string srs_from, std::string srs_to);
+Rcpp::NumericMatrix transform_xy(Rcpp::RObject& pts, std::string srs_from, std::string srs_to);
 RcppExport SEXP _gdalraster_transform_xy(SEXP ptsSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericMatrix& >::type pts(ptsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::RObject& >::type pts(ptsSEXP);
     Rcpp::traits::input_parameter< std::string >::type srs_from(srs_fromSEXP);
     Rcpp::traits::input_parameter< std::string >::type srs_to(srs_toSEXP);
     rcpp_result_gen = Rcpp::wrap(transform_xy(pts, srs_from, srs_to));
