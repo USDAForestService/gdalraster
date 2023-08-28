@@ -236,6 +236,39 @@ int GDALRaster::getOverviewCount(int band) const {
 	return GDALGetOverviewCount(hBand);
 }
 
+void GDALRaster::buildOverviews(std::string resampling,
+		std::vector<int> levels, std::vector<int> bands) {
+
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+		
+	int nOvr;
+	int* panOvrList = NULL;
+	if (levels.size() == 1 && levels[0] == 0) {
+		nOvr = 0;
+	}
+	else {
+		nOvr = levels.size();
+		panOvrList = levels.data();
+	}
+	
+	int nBands;
+	int* panBandList = NULL;
+	if (bands.size() == 1 && bands[0] == 0) {
+		nBands = 0;
+	}
+	else {
+		nBands = bands.size();
+		panBandList = bands.data();
+	}
+	
+	CPLErr err = GDALBuildOverviews(hDataset, resampling.c_str(), nOvr,
+			panOvrList, nBands, panBandList, GDALTermProgressR, NULL);
+
+	if (err == CE_Failure)
+		Rcpp::stop("Build overviews failed.");
+}
+
 std::string GDALRaster::getDataTypeName(int band) const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
@@ -683,7 +716,9 @@ void GDALRaster::fillRaster(int band, double value, double ivalue) {
 	}
 }
 
-int GDALRaster::getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const {
+int GDALRaster::getChecksum(int band, int xoff, int yoff,
+		int xsize, int ysize) const {
+
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 	
@@ -742,6 +777,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Get the natural block size of this band.")
     .const_method("getOverviewCount", &GDALRaster::getOverviewCount, 
     	"Return the number of overview layers available.")
+    .method("buildOverviews", &GDALRaster::buildOverviews, 
+    	"Build raster overview(s).")
     .const_method("getDataTypeName", &GDALRaster::getDataTypeName, 
     	"Get name of the data type for this band.")
     .const_method("getStatistics", &GDALRaster::getStatistics, 

@@ -80,7 +80,7 @@ test_that("open/close/re-open works", {
 
 test_that("statistics are correct", {
 	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-	mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+	mod_file <- paste0(tempdir(), "/", "storml_elev_mod.tif")
 	file.copy(elev_file,  mod_file)
 	on.exit(unlink(mod_file))
 	ds <- new(GDALRaster, mod_file, read_only=TRUE)
@@ -128,7 +128,7 @@ test_that("complex I/O works", {
 
 test_that("set unit type, scale and offset works", {
 	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-	mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+	mod_file <- paste0(tempdir(), "/", "storml_elev_mod.tif")
 	file.copy(elev_file,  mod_file)
 	on.exit(unlink(mod_file))
 	ds <- new(GDALRaster, mod_file, read_only=FALSE)
@@ -138,5 +138,16 @@ test_that("set unit type, scale and offset works", {
 	expect_equal(ds$getUnitType(1), "m")
 	expect_equal(ds$getScale(1), 1)
 	expect_equal(ds$getOffset(1), 0)
+	ds$close()
+})
+
+test_that("build overviews runs without error", {
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	mod_file <- paste0(tempdir(), "/", "storml_elev.tif")
+	file.copy(elev_file,  mod_file)
+	on.exit(unlink(mod_file))
+	ds <- new(GDALRaster, mod_file, read_only=FALSE)
+	expect_no_error(ds$buildOverviews("BILINEAR", c(2,4,8), 0))
+	expect_no_error(ds$buildOverviews("NONE", 0, 0))
 	ds$close()
 })
