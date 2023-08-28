@@ -99,6 +99,8 @@ class GDALRaster {
 	
 	std::vector<int> getBlockSize(int band) const;
 	int getOverviewCount(int band) const;
+	void buildOverviews(std::string resampling, std::vector<int> levels,
+			std::vector<int> bands);
 	std::string getDataTypeName(int band) const;
 	Rcpp::NumericVector getStatistics(int band,	bool approx_ok, 
 			bool force) const;

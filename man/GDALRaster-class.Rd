@@ -63,6 +63,7 @@ ds$dim()
 ds$getRasterCount()
 ds$getBlockSize(band)
 ds$getOverviewCount(band)
+ds$buildOverviews(resampling, levels, bands)
 ds$getDataTypeName(band)
 ds$getStatistics(band, approx_ok, force)
 ds$getNoDataValue(band)
@@ -198,6 +199,25 @@ incomplete.
 
 \code{$getOverviewCount(band)}
 Returns the number of overview layers available for \code{band}.
+
+\code{$buildOverviews(resampling, levels, bands)}
+Build one or more raster overview images using the specified downsampling
+algorithm.
+\code{resampling} is one of "AVERAGE", "AVERAGE_MAGPHASE", "RMS",
+"BILINEAR", "CUBIC", "CUBICSPLINE", "GAUSS", "LANCZOS", "MODE", "NEAREST",
+or "NONE".
+\code{levels} is an integer vector giving the list of overview decimation
+factors to build (e.g., \code{c(2, 4, 8)}), or \code{0} to delete all overviews
+(at least for external overviews (.ovr) and GTiff internal overviews).
+\code{bands} is an integer vector giving a list of band numbers to build
+overviews for, or \code{0} to build for all bands.
+Note that for GTiff, overviews will be created internally if the dataset is
+open in update mode, while external overviews (.ovr) will be created if the
+dataset is open as read-only.
+Starting with GDAL 3.2, the GDAL_NUM_THREADS configuration option can be set
+to "ALL_CPUS" or an integer value to specify the number of threads to use
+for overview computation (see \code{\link[=set_config_option]{set_config_option()}}).
+No return value, called for side effects.
 
 \code{$getDataTypeName(band)}
 Returns the name of the pixel data type for \code{band}. The possible data
