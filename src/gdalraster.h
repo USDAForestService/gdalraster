@@ -19,6 +19,7 @@ int CPL_DLL CPL_STDCALL GDALTermProgressR(double, const char *, void *);
 // Predeclare some GDAL types until the public header is included
 #ifndef GDAL_H_INCLUDED
 typedef void *GDALDatasetH;
+typedef void *GDALRasterBandH;
 typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 #endif
 
@@ -134,6 +135,9 @@ class GDALRaster {
 	int getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
 	
 	void close();
+	
+	// methods for internal use not exposed in R
+	GDALRasterBandH _getBand(int band) const;
 };
 
 RCPP_EXPOSED_CLASS(GDALRaster)
