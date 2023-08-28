@@ -129,6 +129,7 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">buildOverviews</span><span class="op">(</span><span class="va">resampling</span>, <span class="va">levels</span>, <span class="va">bands</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span>, <span class="va">force</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
@@ -238,6 +239,24 @@ the image size evenly, meaning that right and bottom edge blocks may be
 incomplete.</p>
 <p><code>$getOverviewCount(band)</code>
 Returns the number of overview layers available for <code>band</code>.</p>
+<p><code>$buildOverviews(resampling, levels, bands)</code>
+Build one or more raster overview images using the specified downsampling
+algorithm.
+<code>resampling</code> is one of "AVERAGE", "AVERAGE_MAGPHASE", "RMS",
+"BILINEAR", "CUBIC", "CUBICSPLINE", "GAUSS", "LANCZOS", "MODE", "NEAREST",
+or "NONE".
+<code>levels</code> is an integer vector giving the list of overview decimation
+factors to build (e.g., <code>c(2, 4, 8)</code>), or <code>0</code> to delete all overviews
+(at least for external overviews (.ovr) and GTiff internal overviews).
+<code>bands</code> is an integer vector giving a list of band numbers to build
+overviews for, or <code>0</code> to build for all bands.
+Note that for GTiff, overviews will be created internally if the dataset is
+open in update mode, while external overviews (.ovr) will be created if the
+dataset is open as read-only.
+Starting with GDAL 3.2, the GDAL_NUM_THREADS configuration option can be set
+to "ALL_CPUS" or an integer value to specify the number of threads to use
+for overview computation (see <code><a href="set_config_option.html">set_config_option()</a></code>).
+No return value, called for side effects.</p>
 <p><code>$getDataTypeName(band)</code>
 Returns the name of the pixel data type for <code>band</code>. The possible data
 types are:</p><table class="table table"><tr><td><code>Unknown</code></td><td>Unknown or unspecified type</td></tr><tr><td><code>Byte</code></td><td>8-bit unsigned integer</td></tr><tr><td><code>Int8</code></td><td>8-bit signed integer (GDAL &gt;= 3.7)</td></tr><tr><td><code>UInt16</code></td><td>16-bit unsigned integer</td></tr><tr><td><code>Int16</code></td><td>16-bit signed integer</td></tr><tr><td><code>UInt32</code></td><td>32-bit unsigned integer</td></tr><tr><td><code>Int32</code></td><td>32-bit signed integer</td></tr><tr><td><code>UInt64</code></td><td>64-bit unsigned integer (GDAL &gt;= 3.5)</td></tr><tr><td><code>Int64</code></td><td>64-bit signed integer (GDAL &gt;= 3.5)</td></tr><tr><td><code>Float32</code></td><td>32-bit floating point</td></tr><tr><td><code>Float64</code></td><td>64-bit floating point</td></tr><tr><td><code>CInt16</code></td><td>Complex Int16</td></tr><tr><td><code>CInt32</code></td><td>Complex Int32</td></tr><tr><td><code>CFloat32</code></td><td>Complex Float32</td></tr><tr><td><code>CFloat64</code></td><td>Complex Float64</td></tr></table><p>Some raster formats including GeoTIFF (<code>GTiff</code>) and Erdas Imagine .img
