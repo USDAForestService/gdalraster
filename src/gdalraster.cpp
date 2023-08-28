@@ -221,7 +221,7 @@ std::vector<int> GDALRaster::getBlockSize(int band) const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 		
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);
 	int nBlockXSize, nBlockYSize;
 	GDALGetBlockSize(hBand, &nBlockXSize, &nBlockYSize);
 	std::vector<int> ret = {nBlockXSize, nBlockYSize};
@@ -232,7 +232,7 @@ int GDALRaster::getOverviewCount(int band) const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 		
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);
 	return GDALGetOverviewCount(hBand);
 }
 
@@ -273,7 +273,7 @@ std::string GDALRaster::getDataTypeName(int band) const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 		
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);
 	return GDALGetDataTypeName(GDALGetRasterDataType(hBand));
 }
 
@@ -283,7 +283,7 @@ Rcpp::NumericVector GDALRaster::getStatistics(int band,	bool approx_ok,
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 	
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);
 	double min, max, mean, sd;
 	CPLErr err;
 	
@@ -314,7 +314,7 @@ bool GDALRaster::hasNoDataValue(int band) const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 		
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	int hasNoData;
 	GDALGetRasterNoDataValue(hBand, &hasNoData);
 	return hasNoData;
@@ -325,7 +325,7 @@ double GDALRaster::getNoDataValue(int band) const {
 		Rcpp::stop("Raster dataset is not open.");
 		
 	if (this->hasNoDataValue(band)) {
-		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+		GDALRasterBandH hBand = this->_getBand(band);;
 		return GDALGetRasterNoDataValue(hBand, NULL);
 	}
 	else {
@@ -340,7 +340,7 @@ bool GDALRaster::setNoDataValue(int band, double nodata_value) {
 	if (GDALGetAccess(hDataset) == GA_ReadOnly)
 		Rcpp::stop("Cannot set nodata value (GA_ReadOnly).");
 
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	if (GDALSetRasterNoDataValue(hBand, nodata_value) == CE_Failure) {
 		Rcpp::Rcerr << "Set nodata value failed.\n";
 		return false;
@@ -357,7 +357,7 @@ void GDALRaster::deleteNoDataValue(int band) {
 	if (GDALGetAccess(hDataset) == GA_ReadOnly)
 		Rcpp::stop("Cannot delete nodata value (GA_ReadOnly).");
 
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	if (GDALDeleteRasterNoDataValue(hBand) == CE_Failure) {
 		Rcpp::stop("Delete nodata value failed.");
 	}
@@ -367,7 +367,7 @@ std::string GDALRaster::getUnitType(int band) const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 		
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	return GDALGetRasterUnitType(hBand);
 }
 
@@ -378,7 +378,7 @@ bool GDALRaster::setUnitType(int band, std::string unit_type) {
 	if (GDALGetAccess(hDataset) == GA_ReadOnly)
 		Rcpp::stop("Cannot set unit type (GA_ReadOnly).");
 
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	if (GDALSetRasterUnitType(hBand, unit_type.c_str()) == CE_Failure) {
 		Rcpp::Rcerr << "Set unit type failed.\n";
 		return false;
@@ -392,7 +392,7 @@ bool GDALRaster::hasScale(int band) const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 		
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	int hasScale;
 	GDALGetRasterScale(hBand, &hasScale);
 	return hasScale;
@@ -403,7 +403,7 @@ double GDALRaster::getScale(int band) const {
 		Rcpp::stop("Raster dataset is not open.");
 		
 	if (this->hasScale(band)) {
-		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+		GDALRasterBandH hBand = this->_getBand(band);;
 		return GDALGetRasterScale(hBand, NULL);
 	}
 	else {
@@ -418,7 +418,7 @@ bool GDALRaster::setScale(int band, double scale) {
 	if (GDALGetAccess(hDataset) == GA_ReadOnly)
 		Rcpp::stop("Cannot set scale (GA_ReadOnly).");
 
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	if (GDALSetRasterScale(hBand, scale) == CE_Failure) {
 		Rcpp::Rcerr << "Set scale failed.\n";
 		return false;
@@ -432,7 +432,7 @@ bool GDALRaster::hasOffset(int band) const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 		
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	int hasOffset;
 	GDALGetRasterOffset(hBand, &hasOffset);
 	return hasOffset;
@@ -443,7 +443,7 @@ double GDALRaster::getOffset(int band) const {
 		Rcpp::stop("Raster dataset is not open.");
 		
 	if (this->hasOffset(band)) {
-		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+		GDALRasterBandH hBand = this->_getBand(band);;
 		return GDALGetRasterOffset(hBand, NULL);
 	}
 	else {
@@ -458,7 +458,7 @@ bool GDALRaster::setOffset(int band, double offset) {
 	if (GDALGetAccess(hDataset) == GA_ReadOnly)
 		Rcpp::stop("Cannot set offset (GA_ReadOnly).");
 
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	if (GDALSetRasterOffset(hBand, offset) == CE_Failure) {
 		Rcpp::Rcerr << "Set offset failed.\n";
 		return false;
@@ -483,7 +483,7 @@ Rcpp::CharacterVector GDALRaster::getMetadata(int band,
 			papszMetadata = GDALGetMetadata(hDataset, domain.c_str());
 	}
 	else {
-		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+		GDALRasterBandH hBand = this->_getBand(band);;
 		if (domain == "")
 			papszMetadata = GDALGetMetadata(hBand, NULL);
 		else
@@ -521,7 +521,7 @@ std::string GDALRaster::getMetadataItem(int band, std::string mdi_name,
 					GDALGetMetadataItem(hDataset, mdi_name.c_str(), NULL) );
 	}
 	else {
-		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+		GDALRasterBandH hBand = this->_getBand(band);;
 		if (GDALGetMetadataItem(hBand, mdi_name.c_str(), domain_) != NULL) 
 			mdi += std::string(
 					GDALGetMetadataItem(hBand, mdi_name.c_str(), domain_) );
@@ -549,7 +549,7 @@ void GDALRaster::setMetadataItem(int band, std::string mdi_name,
 			Rcpp::stop("Set metadata item failed.");
 	}
 	else {
-		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+		GDALRasterBandH hBand = this->_getBand(band);;
 		if (GDALSetMetadataItem(hBand, mdi_name.c_str(), mdi_value.c_str(),
 								domain_) != CE_None)
 			Rcpp::stop("Set metadata item failed.");
@@ -562,7 +562,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 	
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	GDALDataType eDT = GDALGetRasterDataType(hBand);
 	
 	CPLErr err;
@@ -675,7 +675,7 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 		// real data types
 	
 		eBufType = GDT_Float64;
-		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+		GDALRasterBandH hBand = this->_getBand(band);;
 		std::vector<double> buf_ = Rcpp::as<std::vector<double>>(rasterData);
 		if (buf_.size() != ((std::size_t) (xsize * ysize)))
 			Rcpp::stop("Size of input data is not the same as region size.");
@@ -687,7 +687,7 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 		// complex data types
 	
 		eBufType = GDT_CFloat64;
-		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+		GDALRasterBandH hBand = this->_getBand(band);;
 		std::vector<std::complex<double>> buf_ = 
 			Rcpp::as<std::vector<std::complex<double>>>(rasterData);
 		if (buf_.size() != ((std::size_t) (xsize * ysize)))
@@ -710,7 +710,7 @@ void GDALRaster::fillRaster(int band, double value, double ivalue) {
 	if (GDALGetAccess(hDataset) == GA_ReadOnly)
 		Rcpp::stop("Dataset is read-only.");
 	
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	if (GDALFillRaster(hBand, value, ivalue) == CE_Failure) {
 		Rcpp::stop("Fill raster failed.");
 	}
@@ -722,13 +722,22 @@ int GDALRaster::getChecksum(int band, int xoff, int yoff,
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 	
-	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	GDALRasterBandH hBand = this->_getBand(band);;
 	return GDALChecksumImage(hBand, xoff, yoff, xsize, ysize);
 }
 
 void GDALRaster::close() {
 	GDALClose(hDataset);
 	hDataset = NULL;
+}
+
+// class methods for internal use not exposed in R
+
+GDALRasterBandH GDALRaster::_getBand(int band) const {
+	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	if (hBand == NULL)
+		Rcpp::stop("Failed to access the requested band.");
+	return hBand;
 }
 
 RCPP_MODULE(mod_GDALRaster) {
