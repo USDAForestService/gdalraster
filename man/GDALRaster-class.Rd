@@ -213,7 +213,7 @@ factors to build (e.g., \code{c(2, 4, 8)}), or \code{0} to delete all overviews
 overviews for, or \code{0} to build for all bands.
 Note that for GTiff, overviews will be created internally if the dataset is
 open in update mode, while external overviews (.ovr) will be created if the
-dataset is open as read-only.
+dataset is open read-only.
 Starting with GDAL 3.2, the GDAL_NUM_THREADS configuration option can be set
 to "ALL_CPUS" or an integer value to specify the number of threads to use
 for overview computation (see \code{\link[=set_config_option]{set_config_option()}}).

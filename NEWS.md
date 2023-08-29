@@ -1,20 +1,20 @@
-# gdalraster 1.3.1 (dev)
+# gdalraster 1.4.0
 
-* add `GDALRaster$buildOverviews()`: build raster overviews (2023-08-27)
+* add `dem_proc()`: wrapper for the `gdaldem` command-line utility to generate DEM derivatives
 
-* `transform_xy()` and `inv_project()`: `pts` can be a data frame or matrix (2023-08-27)
+* add the following set methods in class `GDALRaster`: `setMetadataItem()`, `setUnitType()`, `setScale()`, `setOffset()`
 
-* `plot_raster()`: make the legend narrower and add argument `digits` to format legend labels when raster data are floating point (2023-08-26)
+* add `GDALRaster$buildOverviews()`: build raster overviews
 
-* add the following set methods in class `GDALRaster`: `setMetadataItem()`, `setUnitType()`, `setScale()`, `setOffset()` (2023-08-08)
+* add `GDALRaster$dim()`: returns a vector of xsize, ysize, nbands
 
-* add `dem_proc()`: wrapper for the `gdaldem` command-line utility to generate DEM derivatives (2023-08-07)
+* `transform_xy()` and `inv_project()`: `pts` can be a data frame or matrix
 
-* `plot_raster()` now accepts a `GDALRaster` object for the `data` argument. Previously `data` could only be a vector of pixel values that had already been read in (2023-07-15)
+* `plot_raster()` now accepts a `GDALRaster` object for the `data` argument
 
-* add test suite and codecov reporting (2023-07-02)
+* `plot_raster()`: make the legend narrower and add argument `digits` to format legend labels when raster data are floating point
 
-* add `GDALRaster$dim()`: returns a vector of xsize, ysize, nbands (2023-06-29)
+* add test suite and code coverage report
 
 # gdalraster 1.3.0
 

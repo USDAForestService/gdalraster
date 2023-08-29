@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 1.3.1
+Version: 1.4.0
 Authors@R: c( 
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre")),
@@ -21,17 +21,17 @@ Description: Interface to the raster API of the 'Geospatial Data Abstraction
     for reprojection. Includes selected 'GDAL' algorithms and functions for
     working with spatial reference systems. Calling signatures resemble the
     native C, C++ and Python APIs provided by the 'GDAL' project
-    (<https://gdal.org>). Bindings are implemented via an exposed C++
-    class and several stand-alone functions. Additional functionality includes:
-    class 'RunningStats' for efficient summary statistics on large data
-    streams; class 'CmbTable' for counting unique combinations of integers with
-    a hash table; raster overlay to identify and count unique pixel
-    combinations across multiple inputs; raster calculate by evaluating
+    (<https://gdal.org>). Bindings are implemented via 'Rcpp' exposed class
+    along with several stand-alone functions. Additional functionality
+    includes: class 'RunningStats' for efficient summary statistics on large
+    data streams; class 'CmbTable' for counting unique combinations of integers
+    with a hash table; raster overlay to identify and count unique pixel
+    combinations across multiple input layers; raster calculation by evaluating
     any R expression on a stack of layers with pixel coordinates available as
-    variables; and display using base 'graphics'. 'gdalraster' may be suitable
-    for applications that primarily need low-level raster I/O or prefer
-    'GDAL'-like calling. Additional functionality is somewhat aimed at thematic
-    data analysis but may have other utility.
+    variables; and raster display using base 'graphics'. 'gdalraster' may be
+    suitable for applications that primarily need low-level I/O or prefer a
+    direct 'GDAL' API. The additional functionality is somewhat aimed at
+    thematic data analysis but may have other utility.
 License: MIT + file LICENSE
 Copyright: See file inst/COPYRIGHTS for details.
 URL: https://usdaforestservice.github.io/gdalraster/,
