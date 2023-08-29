@@ -16,7 +16,7 @@ details of the GDAL API."><!-- mathjax --><script src="https://cdnjs.cloudflare.
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.3.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.4.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -252,7 +252,7 @@ factors to build (e.g., <code>c(2, 4, 8)</code>), or <code>0</code> to delete al
 overviews for, or <code>0</code> to build for all bands.
 Note that for GTiff, overviews will be created internally if the dataset is
 open in update mode, while external overviews (.ovr) will be created if the
-dataset is open as read-only.
+dataset is open read-only.
 Starting with GDAL 3.2, the GDAL_NUM_THREADS configuration option can be set
 to "ALL_CPUS" or an integer value to specify the number of threads to use
 for overview computation (see <code><a href="set_config_option.html">set_config_option()</a></code>).
