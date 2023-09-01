@@ -110,6 +110,7 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getFilename</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span><span class="va">read_only</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">isOpen</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -163,8 +164,8 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <p><code>new(GDALRaster, filename, read_only)</code>
 Constructor. Returns an object of class <code>GDALRaster</code>.</p>
 <p><code>$getFilename()</code>
-Returns a character string containing the filename associated with this
-<code>GDALRaster</code> object.</p>
+Returns a character string containing the <code>filename</code> associated with this
+<code>GDALRaster</code> object (<code>filename</code> originally used to open the dataset).</p>
 <p><code>$open(read_only)</code>
 (Re-)opens the raster dataset on the existing filename. Use this method to
 open a dataset that has been closed using <code>$close()</code>. May be used to
@@ -174,6 +175,12 @@ not required to call <code>$close()</code> explicitly in this case.
 No return value, called for side effects.</p>
 <p><code>$isOpen()</code>
 Returns logical indicating whether the associated raster dataset is open.</p>
+<p><code>$getFileList()</code>
+Returns a character vector of files believed to be part of this dataset.
+If it returns an empty string (<code>""</code>) it means there is believed to be no
+local file system files associated with the dataset (e.g., a virtual file
+system). The returned filenames will normally be relative or absolute
+paths depending on the path used to originally open the dataset.</p>
 <p><code>$info()</code>
 Prints various information about the raster dataset to the console (no
 return value, called for that side effect only).
