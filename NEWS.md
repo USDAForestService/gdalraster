@@ -1,3 +1,7 @@
+# gdalraster 1.4.1 (dev)
+
+* on Windows reset environment variables on package unload (2023-08-31)
+
 # gdalraster 1.4.0
 
 * add `dem_proc()`: wrapper for the `gdaldem` command-line utility to generate DEM derivatives

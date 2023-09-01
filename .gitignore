@@ -12,3 +12,4 @@ inst/doc
 *.gcda
 *.gcno
 *.gcov
+cran-comments.md
