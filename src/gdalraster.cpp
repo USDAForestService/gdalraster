@@ -81,6 +81,29 @@ void GDALRaster::info() const {
 	GDALInfoOptionsFree(psOptions);
 }
 
+Rcpp::CharacterVector GDALRaster::getFileList() const {
+						
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+	
+	char **papszFiles;
+	papszFiles = GDALGetFileList(hDataset);
+	
+	int items = CSLCount(papszFiles);
+	if (items > 0) {
+		Rcpp::CharacterVector files(items);
+		for (int i=0; i < items; ++i) {
+			files(i) = papszFiles[i];
+		}
+		CSLDestroy(papszFiles);
+		return files;
+	}
+	else {
+		CSLDestroy(papszFiles);
+		return "";	
+	}
+}
+
 std::string GDALRaster::getDriverShortName() const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
@@ -756,6 +779,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"(Re-)open the raster dataset on the existing filename.")
     .const_method("isOpen", &GDALRaster::isOpen, 
     	"Is the raster dataset open?")
+    .const_method("getFileList", &GDALRaster::getFileList, 
+    	"Fetch files forming dataset.")
     .const_method("info", &GDALRaster::info,
     	"Print various information about the raster dataset.")
     .const_method("getDriverShortName", &GDALRaster::getDriverShortName,

@@ -7,6 +7,10 @@ test_that("info() prints output to the console", {
 })
 
 test_that("dataset parameters are correct", {
+	lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+	ds <- new(GDALRaster, lcp_file, TRUE)
+	expect_length(ds$getFileList(), 2)
+	ds$close()
 	evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 	ds <- new(GDALRaster, evt_file, TRUE)
 	expect_equal(ds$getDriverShortName(), "GTiff")

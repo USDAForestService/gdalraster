@@ -1,5 +1,7 @@
 # gdalraster 1.4.1 (dev)
 
+* add `GDALRaster$getFileList()`: returns a list of files forming the dataset (2023-09-01)
+
 * on Windows reset environment variables on package unload (2023-08-31)
 
 # gdalraster 1.4.0

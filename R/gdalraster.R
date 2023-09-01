@@ -30,6 +30,7 @@
 #' ds$getFilename()
 #' ds$open(read_only)
 #' ds$isOpen()
+#' ds$getFileList()
 #'
 #' ds$info()
 #'
@@ -81,8 +82,8 @@
 #' Constructor. Returns an object of class `GDALRaster`.
 #'
 #' \code{$getFilename()}
-#' Returns a character string containing the filename associated with this 
-#' `GDALRaster` object.
+#' Returns a character string containing the `filename` associated with this 
+#' `GDALRaster` object (`filename` originally used to open the dataset).
 #'
 #' \code{$open(read_only)}
 #' (Re-)opens the raster dataset on the existing filename. Use this method to
@@ -94,6 +95,13 @@
 #'
 #' \code{$isOpen()}
 #' Returns logical indicating whether the associated raster dataset is open.
+#'
+#' \code{$getFileList()}
+#' Returns a character vector of files believed to be part of this dataset.
+#' If it returns an empty string (`""`) it means there is believed to be no
+#' local file system files associated with the dataset (e.g., a virtual file
+#' system). The returned filenames will normally be relative or absolute
+#' paths depending on the path used to originally open the dataset.
 #'
 #' \code{$info()}
 #' Prints various information about the raster dataset to the console (no 
