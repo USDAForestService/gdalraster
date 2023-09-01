@@ -85,6 +85,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _apply_geotransform
+Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, double pixel, double line);
+RcppExport SEXP _gdalraster__apply_geotransform(SEXP gtSEXP, SEXP pixelSEXP, SEXP lineSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< double >::type pixel(pixelSEXP);
+    Rcpp::traits::input_parameter< double >::type line(lineSEXP);
+    rcpp_result_gen = Rcpp::wrap(_apply_geotransform(gt, pixel, line));
+    return rcpp_result_gen;
+END_RCPP
+}
 // inv_geotransform
 Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
 RcppExport SEXP _gdalraster_inv_geotransform(SEXP gtSEXP) {
@@ -404,6 +417,26 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _getPROJVersion
+std::vector<int> _getPROJVersion();
+RcppExport SEXP _gdalraster__getPROJVersion() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(_getPROJVersion());
+    return rcpp_result_gen;
+END_RCPP
+}
+// _getPROJSearchPaths
+Rcpp::CharacterVector _getPROJSearchPaths();
+RcppExport SEXP _gdalraster__getPROJSearchPaths() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(_getPROJSearchPaths());
+    return rcpp_result_gen;
+END_RCPP
+}
 // inv_project
 Rcpp::NumericMatrix inv_project(Rcpp::RObject& pts, std::string srs, std::string well_known_gcs);
 RcppExport SEXP _gdalraster_inv_project(SEXP ptsSEXP, SEXP srsSEXP, SEXP well_known_gcsSEXP) {
@@ -522,6 +555,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_get_cache_used", (DL_FUNC) &_gdalraster_get_cache_used, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 5},
+    {"_gdalraster__apply_geotransform", (DL_FUNC) &_gdalraster__apply_geotransform, 3},
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
     {"_gdalraster_get_pixel_line", (DL_FUNC) &_gdalraster_get_pixel_line, 2},
     {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 7},
@@ -548,6 +582,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__g_length", (DL_FUNC) &_gdalraster__g_length, 1},
     {"_gdalraster__g_area", (DL_FUNC) &_gdalraster__g_area, 1},
     {"_gdalraster__g_centroid", (DL_FUNC) &_gdalraster__g_centroid, 1},
+    {"_gdalraster__getPROJVersion", (DL_FUNC) &_gdalraster__getPROJVersion, 0},
+    {"_gdalraster__getPROJSearchPaths", (DL_FUNC) &_gdalraster__getPROJSearchPaths, 0},
     {"_gdalraster_inv_project", (DL_FUNC) &_gdalraster_inv_project, 3},
     {"_gdalraster_transform_xy", (DL_FUNC) &_gdalraster_transform_xy, 3},
     {"_gdalraster_epsg_to_wkt", (DL_FUNC) &_gdalraster_epsg_to_wkt, 2},

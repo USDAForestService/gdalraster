@@ -10,6 +10,46 @@
 #include "ogr_srs_api.h"
 #include "ogr_spatialref.h"
 
+//' get PROJ version
+//' @noRd
+// [[Rcpp::export(name = ".getPROJVersion")]]
+std::vector<int> _getPROJVersion() {
+	int major, minor, patch;
+	major = minor = patch = NA_INTEGER;
+#if GDAL_VERSION_NUM >= 3000100	
+	OSRGetPROJVersion(&major, &minor, &patch);
+#endif
+	std::vector<int> ret = {major, minor, patch};
+	return ret;
+}
+
+
+//' get search path(s) for PROJ resource files
+//' @noRd
+// [[Rcpp::export(name = ".getPROJSearchPaths")]]
+Rcpp::CharacterVector _getPROJSearchPaths() {
+#if GDAL_VERSION_NUM >= 3000300
+	char **papszPaths;
+	papszPaths = OSRGetPROJSearchPaths();
+	
+	int items = CSLCount(papszPaths);
+	if (items > 0) {
+		Rcpp::CharacterVector paths(items);
+		for (int i=0; i < items; ++i) {
+			paths(i) = papszPaths[i];
+		}
+		CSLDestroy(papszPaths);
+		return paths;
+	}
+	else {
+		CSLDestroy(papszPaths);
+		return "";	
+	}
+#endif
+	return NA_STRING;
+}
+
+
 //' convert data frame to numeric matrix in Rcpp
 //' @noRd
 Rcpp::NumericMatrix _df_to_matrix(Rcpp::DataFrame df) {

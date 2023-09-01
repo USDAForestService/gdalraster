@@ -1,4 +1,9 @@
 # Tests for src/transform.cpp
+test_that("PROJ utility functions run", {
+	expect_length(.getPROJVersion(), 3)
+	expect_no_error(.getPROJSearchPaths())
+})
+
 test_that("transform/inv_project give correct results", {
 	pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 	pts <- read.csv(pt_file)

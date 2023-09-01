@@ -293,7 +293,7 @@ bool createCopy(std::string format, std::string dst_filename,
 //' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [get_pixel_line()], 
 //' [inv_geotransform()]
 //' @noRd
-// [[Rcpp::export(name = ".apply_geotransform"]]
+// [[Rcpp::export(name = ".apply_geotransform")]]
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
 		double pixel, double line) {
 		
