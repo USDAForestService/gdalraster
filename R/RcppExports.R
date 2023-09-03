@@ -484,6 +484,24 @@ NULL
     .Call(`_gdalraster__getPROJSearchPaths`)
 }
 
+#' set search path(s) for PROJ resource files
+#' @noRd
+.setPROJSearchPaths <- function(paths) {
+    invisible(.Call(`_gdalraster__setPROJSearchPaths`, paths))
+}
+
+#' get whether PROJ networking capabilities are enabled
+#' @noRd
+.getPROJEnableNetwork <- function() {
+    .Call(`_gdalraster__getPROJEnableNetwork`)
+}
+
+#' enable or disable PROJ networking capabilities
+#' @noRd
+.setPROJEnableNetwork <- function(enabled) {
+    invisible(.Call(`_gdalraster__setPROJEnableNetwork`, enabled))
+}
+
 #' Inverse project geospatial x/y coordinates to longitude/latitude
 #'
 #' `inv_project()` transforms geospatial x/y coordinates to 
