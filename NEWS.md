@@ -1,8 +1,10 @@
 # gdalraster 1.4.1 (dev)
 
+* add PROJ utility functions: `proj_version()`, `proj_search_paths()`, `proj_networking()` (2023-09-03)
+
 * add `GDALRaster$getFileList()`: returns a list of files forming the dataset (2023-09-01)
 
-* on Windows reset environment variables on package unload (2023-08-31)
+* on Windows, reset environment variables on package unload (2023-08-31)
 
 # gdalraster 1.4.0
 
