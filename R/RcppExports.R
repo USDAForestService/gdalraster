@@ -491,6 +491,7 @@ NULL
 }
 
 #' get whether PROJ networking capabilities are enabled
+#' returns logical NA if GDAL < 3.4
 #' @noRd
 .getPROJEnableNetwork <- function() {
     .Call(`_gdalraster__getPROJEnableNetwork`)
@@ -529,7 +530,7 @@ NULL
 #' names above.
 #'
 #' @param pts A two-column data frame or numeric matrix containing geospatial
-#' x/y coordinates 
+#' x/y coordinates.
 #' @param srs Character string in OGC WKT format specifying the projected 
 #' spatial reference system for `pts`.
 #' @param well_known_gcs Optional character string containing a supported 
@@ -555,7 +556,7 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #' `transform_xy()` transforms geospatial x/y coordinates to a new projection.
 #'
 #' @param pts A two-column data frame or numeric matrix containing geospatial
-#' x/y coordinates 
+#' x/y coordinates.
 #' @param srs_from Character string in OGC WKT format specifying the  
 #' spatial reference system for `pts`.
 #' @param srs_to Character string in OGC WKT format specifying the output 

@@ -8,7 +8,7 @@ transform_xy(pts, srs_from, srs_to)
 }
 \arguments{
 \item{pts}{A two-column data frame or numeric matrix containing geospatial
-x/y coordinates}
+x/y coordinates.}
 
 \item{srs_from}{Character string in OGC WKT format specifying the
 spatial reference system for \code{pts}.}

@@ -1,7 +1,9 @@
 # Tests for src/transform.cpp
 test_that("PROJ utility functions run", {
 	expect_length(.getPROJVersion(), 3)
-	expect_no_error(.getPROJSearchPaths())
+	expect_no_error(proj_search_paths())
+	expect_no_error(proj_networking(TRUE))
+	expect_no_error(proj_networking(FALSE))
 })
 
 test_that("transform/inv_project give correct results", {

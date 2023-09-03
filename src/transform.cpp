@@ -67,6 +67,7 @@ void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
 }
 
 //' get whether PROJ networking capabilities are enabled
+//' returns logical NA if GDAL < 3.4
 //' @noRd
 // [[Rcpp::export(name = ".getPROJEnableNetwork")]]
 Rcpp::LogicalVector _getPROJEnableNetwork() {
@@ -136,7 +137,7 @@ Rcpp::NumericMatrix _df_to_matrix(Rcpp::DataFrame df) {
 //' names above.
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
-//' x/y coordinates 
+//' x/y coordinates.
 //' @param srs Character string in OGC WKT format specifying the projected 
 //' spatial reference system for `pts`.
 //' @param well_known_gcs Optional character string containing a supported 
@@ -221,7 +222,7 @@ Rcpp::NumericMatrix inv_project(Rcpp::RObject &pts,
 //' `transform_xy()` transforms geospatial x/y coordinates to a new projection.
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
-//' x/y coordinates 
+//' x/y coordinates.
 //' @param srs_from Character string in OGC WKT format specifying the  
 //' spatial reference system for `pts`.
 //' @param srs_to Character string in OGC WKT format specifying the output 
