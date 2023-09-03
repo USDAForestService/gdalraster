@@ -437,6 +437,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _setPROJSearchPaths
+void _setPROJSearchPaths(Rcpp::CharacterVector paths);
+RcppExport SEXP _gdalraster__setPROJSearchPaths(SEXP pathsSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type paths(pathsSEXP);
+    _setPROJSearchPaths(paths);
+    return R_NilValue;
+END_RCPP
+}
+// _getPROJEnableNetwork
+Rcpp::LogicalVector _getPROJEnableNetwork();
+RcppExport SEXP _gdalraster__getPROJEnableNetwork() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(_getPROJEnableNetwork());
+    return rcpp_result_gen;
+END_RCPP
+}
+// _setPROJEnableNetwork
+void _setPROJEnableNetwork(int enabled);
+RcppExport SEXP _gdalraster__setPROJEnableNetwork(SEXP enabledSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type enabled(enabledSEXP);
+    _setPROJEnableNetwork(enabled);
+    return R_NilValue;
+END_RCPP
+}
 // inv_project
 Rcpp::NumericMatrix inv_project(Rcpp::RObject& pts, std::string srs, std::string well_known_gcs);
 RcppExport SEXP _gdalraster_inv_project(SEXP ptsSEXP, SEXP srsSEXP, SEXP well_known_gcsSEXP) {
@@ -584,6 +614,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__g_centroid", (DL_FUNC) &_gdalraster__g_centroid, 1},
     {"_gdalraster__getPROJVersion", (DL_FUNC) &_gdalraster__getPROJVersion, 0},
     {"_gdalraster__getPROJSearchPaths", (DL_FUNC) &_gdalraster__getPROJSearchPaths, 0},
+    {"_gdalraster__setPROJSearchPaths", (DL_FUNC) &_gdalraster__setPROJSearchPaths, 1},
+    {"_gdalraster__getPROJEnableNetwork", (DL_FUNC) &_gdalraster__getPROJEnableNetwork, 0},
+    {"_gdalraster__setPROJEnableNetwork", (DL_FUNC) &_gdalraster__setPROJEnableNetwork, 1},
     {"_gdalraster_inv_project", (DL_FUNC) &_gdalraster_inv_project, 3},
     {"_gdalraster_transform_xy", (DL_FUNC) &_gdalraster_transform_xy, 3},
     {"_gdalraster_epsg_to_wkt", (DL_FUNC) &_gdalraster_epsg_to_wkt, 2},

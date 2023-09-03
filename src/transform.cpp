@@ -1,4 +1,4 @@
-/* Functions for coordinate transformation 
+/* Functions for coordinate transformation using PROJ via GDAL headers
    Chris Toney <chris.toney at usda.gov> */
 
 #include <Rcpp.h> 
@@ -22,7 +22,6 @@ std::vector<int> _getPROJVersion() {
 	std::vector<int> ret = {major, minor, patch};
 	return ret;
 }
-
 
 //' get search path(s) for PROJ resource files
 //' @noRd
@@ -49,6 +48,57 @@ Rcpp::CharacterVector _getPROJSearchPaths() {
 	return NA_STRING;
 }
 
+//' set search path(s) for PROJ resource files
+//' @noRd
+// [[Rcpp::export(name = ".setPROJSearchPaths")]]
+void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
+#if GDAL_VERSION_NUM >= 3000000
+	std::vector<char *> path_list = {NULL};
+	path_list.resize(paths.size() + 1);
+	for (R_xlen_t i = 0; i < paths.size(); ++i) {
+		path_list[i] = (char *) (paths[i]);
+	}
+	path_list[paths.size()] = NULL;
+	OSRSetPROJSearchPaths(path_list.data());
+#else
+	Rcpp::Rcerr << "OSRSetPROJSearchPaths requires GDAL 3.0 or later.\n";
+#endif
+	return;
+}
+
+//' get whether PROJ networking capabilities are enabled
+//' returns logical NA if GDAL < 3.4
+//' @noRd
+// [[Rcpp::export(name = ".getPROJEnableNetwork")]]
+Rcpp::LogicalVector _getPROJEnableNetwork() {
+	Rcpp::LogicalVector ret = Rcpp::LogicalVector::create(NA_LOGICAL);
+#if GDAL_VERSION_NUM >= 3040000
+	if (_getPROJVersion()[0] >= 7) {
+		ret[0] = OSRGetPROJEnableNetwork();
+		return ret;
+	}
+	else {
+		ret[0] = false;
+		return ret;
+	}
+#endif
+	return ret;
+}
+
+//' enable or disable PROJ networking capabilities
+//' @noRd
+// [[Rcpp::export(name = ".setPROJEnableNetwork")]]
+void _setPROJEnableNetwork(int enabled) {
+#if GDAL_VERSION_NUM >= 3040000
+	if (_getPROJVersion()[0] >= 7)
+		OSRSetPROJEnableNetwork(enabled);
+	else
+		Rcpp::Rcerr << "OSRSetPROJEnableNetwork requires PROJ 7 or later.\n";
+#else
+	Rcpp::Rcerr << "OSRSetPROJEnableNetwork requires GDAL 3.4 or later.\n";
+#endif
+	return;
+}
 
 //' convert data frame to numeric matrix in Rcpp
 //' @noRd
@@ -59,7 +109,6 @@ Rcpp::NumericMatrix _df_to_matrix(Rcpp::DataFrame df) {
 	}
 	return m;
 }
-
 
 //' Inverse project geospatial x/y coordinates to longitude/latitude
 //'
@@ -88,7 +137,7 @@ Rcpp::NumericMatrix _df_to_matrix(Rcpp::DataFrame df) {
 //' names above.
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
-//' x/y coordinates 
+//' x/y coordinates.
 //' @param srs Character string in OGC WKT format specifying the projected 
 //' spatial reference system for `pts`.
 //' @param well_known_gcs Optional character string containing a supported 
@@ -173,7 +222,7 @@ Rcpp::NumericMatrix inv_project(Rcpp::RObject &pts,
 //' `transform_xy()` transforms geospatial x/y coordinates to a new projection.
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
-//' x/y coordinates 
+//' x/y coordinates.
 //' @param srs_from Character string in OGC WKT format specifying the  
 //' spatial reference system for `pts`.
 //' @param srs_to Character string in OGC WKT format specifying the output 

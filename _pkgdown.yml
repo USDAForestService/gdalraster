@@ -40,6 +40,9 @@ reference:
   - inv_geotransform
   - inv_project
   - plot_raster
+  - proj_networking
+  - proj_search_paths
+  - proj_version
   - rasterFromRaster
   - rasterToVRT
   - read_ds
