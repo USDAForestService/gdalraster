@@ -5,18 +5,19 @@
 \title{Bindings to the GDAL Raster API
 }
 \description{
-  \code{gdalraster} is an interface to the Geospatial Data Abstraction 
-  Library (GDAL) for low level raster I/O. Calling signatures resemble those 
+  \code{gdalraster} is an interface to the Geospatial Data Abstraction
+  Library (GDAL) for low level raster I/O. Calling signatures resemble those
   of the native C, C++ and Python APIs provided by the GDAL project.
   See \url{https://gdal.org/api/} for details of the GDAL Raster API.
 }
 \details{
-  Core functionality is contained in the \code{GDALRaster} class and several 
+  Core functionality is contained in class \code{GDALRaster} and several
   GDAL related stand-alone functions:
   \itemize{
-  \item \code{\link{GDALRaster}} exposes a C++ class that allows opening a
-  raster dataset and calling methods on the Dataset, Driver and RasterBand
-  objects in the underlying API (get/set parameters, read/write pixel data).
+  \item \code{\link{GDALRaster-class}} is an exposed C++ class that allows
+  opening a raster dataset and calling methods on the Dataset, Driver and
+  RasterBand objects in the underlying API (get/set parameters, read/write
+  pixel data).
   
   \item raster creation: \code{\link{create}}, \code{\link{createCopy}}, 
   \code{\link{rasterFromRaster}}
@@ -47,6 +48,9 @@
   \item GDAL configuration: \code{\link{gdal_version}},
   \code{\link{get_cache_used}}, \code{\link{get_config_option}},\cr
   \code{\link{set_config_option}}
+  
+  \item PROJ configuration: \code{\link{proj_version}},
+  \code{\link{proj_search_paths}}, \code{\link{proj_networking}}
   }
   Additional functionality includes:
   \itemize{

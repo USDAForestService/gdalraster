@@ -7,7 +7,7 @@
 proj_networking(enabled = NULL)
 }
 \arguments{
-\item{enabled}{An optional logical set to \code{TRUE} to enable networking
+\item{enabled}{Optional logical scalar. Set to \code{TRUE} to enable networking
 capabilities or \code{FALSE} to disable.}
 }
 \value{
@@ -26,5 +26,6 @@ proj_networking()
 \seealso{
 \code{\link[=gdal_version]{gdal_version()}}, \code{\link[=proj_version]{proj_version()}}, \code{\link[=proj_search_paths]{proj_search_paths()}}
 
-\href{https://github.com/OSGeo/PROJ-data}{PROJ-data on GitHub}
+\href{https://github.com/OSGeo/PROJ-data}{PROJ-data on GitHub},
+\href{https://cdn.proj.org/}{PROJ Content Delivery Network}
 }

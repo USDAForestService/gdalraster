@@ -4,7 +4,7 @@
 #' Get PROJ version
 #'
 #' @description
-#' `proj_version()` returns version information for the PROJ library used by
+#' `proj_version()` returns version information for the PROJ library in use by
 #' GDAL. Requires GDAL >= 3.0.1.
 #' 
 #' @returns A list of length four containing:
@@ -12,7 +12,9 @@
 #'   * `major` - major version as integer
 #'   * `minor` - minor version as integer
 #'   * `patch` - patch version as integer
+#' 
 #' List elements will be `NA` if GDAL < 3.0.1.
+#' 
 #' @seealso
 #' [gdal_version()], [proj_search_paths()], [proj_networking()]
 #' 
@@ -36,9 +38,9 @@ proj_version <- function() {
 #'
 #' @description
 #' `proj_search_paths()` returns the search path(s) for PROJ resource files,
-#' optionally setting it first. Requires GDAL 3.0.3 or later.
+#' optionally setting them first. Requires GDAL 3.0.3 or later.
 #' 
-#' @param paths An optional character vector containing one or more directory
+#' @param paths Optional character vector containing one or more directory
 #' paths to set.
 #' @returns A character vector containing the currently used search path(s) for
 #' PROJ resource files. An empty string (`""`) is returned if no search paths
@@ -64,7 +66,7 @@ proj_search_paths <- function(paths=NULL) {
 #' optionally enabling or disabling first. Requires GDAL 3.4 or later and
 #' PROJ 7 or later.
 #' 
-#' @param enabled An optional logical set to `TRUE` to enable networking
+#' @param enabled Optional logical scalar. Set to `TRUE` to enable networking
 #' capabilities or `FALSE` to disable.
 #' @returns Logical `TRUE` if PROJ networking capabilities are enabled (as
 #' indicated by the return value of `OSRGetPROJEnableNetwork()` in the GDAL
@@ -73,7 +75,8 @@ proj_search_paths <- function(paths=NULL) {
 #' @seealso
 #' [gdal_version()], [proj_version()], [proj_search_paths()]
 #'
-#' \href{https://github.com/OSGeo/PROJ-data}{PROJ-data on GitHub}
+#' \href{https://github.com/OSGeo/PROJ-data}{PROJ-data on GitHub},
+#' \href{https://cdn.proj.org/}{PROJ Content Delivery Network}
 #' 
 #' @examples
 #' proj_networking()
