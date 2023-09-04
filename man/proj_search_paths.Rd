@@ -7,7 +7,7 @@
 proj_search_paths(paths = NULL)
 }
 \arguments{
-\item{paths}{An optional character vector containing one or more directory
+\item{paths}{Optional character vector containing one or more directory
 paths to set.}
 }
 \value{
@@ -18,7 +18,7 @@ Reference System C API. \code{NA} is returned if GDAL < 3.0.3.
 }
 \description{
 \code{proj_search_paths()} returns the search path(s) for PROJ resource files,
-optionally setting it first. Requires GDAL 3.0.3 or later.
+optionally setting them first. Requires GDAL 3.0.3 or later.
 }
 \examples{
 proj_search_paths()
