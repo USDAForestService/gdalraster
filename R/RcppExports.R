@@ -320,6 +320,59 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
     invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations))
 }
 
+#' Remove small raster polygons
+#'
+#' `sieveFilter()` is a wrapper for `GDALSieveFilter()` in the GDAL Algorithms
+#' API. It removes raster polygons smaller than a provided threshold size
+#' (in pixels) and replaces them with the pixel value of the largest neighbour
+#' polygon.
+#'
+#' @details
+#' Polygons are determined as regions of the raster where the pixels all have
+#' the same value, and that are contiguous (connected).
+#' Pixels determined to be "nodata" per the mask band will not be
+#' treated as part of a polygon regardless of their pixel values. Nodata areas
+#' will never be changed nor affect polygon sizes. Polygons smaller than the
+#' threshold with no neighbours that are as large as the threshold will not be
+#' altered. Polygons surrounded by nodata areas will therefore not be altered.
+#'
+#' The algorithm makes three passes over the input file to enumerate the
+#' polygons and collect limited information about them. Memory use is
+#' proportional to the number of polygons (roughly 24 bytes per polygon), but
+#' is not directly related to the size of the raster. So very large raster
+#' files can be processed effectively if there aren't too many polygons. But
+#' extremely noisy rasters with many one pixel polygons will end up being
+#' expensive (in memory) to process.
+#'
+#' The input dataset is read as integer data which means that floating point
+#' values are rounded to integers.
+#'
+#' @param src_filename Filename of the source raster to be processed.
+#' @param src_band Band number in the source raster to be processed.
+#' @param dst_filename Filename of the output raster. It may be the same as
+#' `src_filename` to update the source file in place.
+#' @param dst_band Band number in `dst_filename` to write output. It may be
+#' the same as `src_band` to update the source raster in place.
+#' @param size_threshold Integer. Raster polygons with sizes (in pixels)
+#' smaller than this value will be merged into their largest neighbour.
+#' @param connectedness Integer. Either `4` indicating that diagonal pixels
+#' are not considered directly adjacent for polygon membership purposes, or
+#' `8` indicating they are.
+#' @param mask_filename Optional filename of raster to use as a mask.
+#' @param mask_band Band number in `mask_filename` to use as a mask. All
+#' pixels in the mask band with a value other than zero will be considered
+#' suitable for inclusion in polygons.
+#' @param options Algorithm options as a character vector of name=value pairs.
+#' None currently supported.
+#' @returns Logical indicating success (invisible \code{TRUE}).
+#' An error is raised if the operation fails.
+#'
+#' @examples
+#'
+sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename = "", mask_band = 0L, options = NULL) {
+    invisible(.Call(`_gdalraster_sieveFilter`, src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename, mask_band, options))
+}
+
 #' Raster reprojection
 #'
 #' `warp()` is a wrapper for the \command{gdalwarp} command-line utility.

@@ -61,6 +61,12 @@ bool _dem_proc(std::string mode,
 bool fillNodata(std::string filename, int band, std::string mask_file,
 		double max_dist, int smooth_iterations);
 		
+bool sieveFilter(std::string src_filename, int src_band,
+		std::string dst_filename, int dst_band,
+		int size_threshold, int connectedness,
+		std::string mask_filename , int mask_band,
+		Rcpp::Nullable<Rcpp::CharacterVector> options);
+		
 bool warp(Rcpp::CharacterVector src_files, std::string dst_filename,
 		Rcpp::CharacterVector t_srs, 
 		Rcpp::Nullable<Rcpp::CharacterVector> arg_list);

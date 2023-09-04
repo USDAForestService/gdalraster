@@ -47,6 +47,7 @@ reference:
   - rasterToVRT
   - read_ds
   - set_config_option
+  - sieveFilter
   - srs_is_geographic
   - srs_is_projected
   - srs_is_same
