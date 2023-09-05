@@ -28,7 +28,7 @@ test_that("intersect/union return correct values", {
 
 test_that("buffer_wkt returns correct values", {
 	pt <- "POINT (0 0)"
-	bb <- bbox_from_wkt(buffer_wkt(wkt = pt, dist = 10))
+	bb <- bbox_from_wkt(g_buffer(wkt = pt, dist = 10))
 	expect_equal(bb, c(-10, -10,  10,  10))
 })
 

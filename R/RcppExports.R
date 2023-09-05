@@ -849,7 +849,7 @@ bbox_from_wkt <- function(wkt) {
 #' `NA` is returned if GDAL was built without the GEOS library.
 #'
 #' @seealso
-#' [bbox_from_wkt()], [buffer_wkt()]
+#' [bbox_from_wkt()], [g_buffer()]
 #'
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")

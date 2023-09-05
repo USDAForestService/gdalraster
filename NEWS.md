@@ -1,6 +1,6 @@
 # gdalraster 1.4.1 (dev)
 
-* add `buffer_wkt()`: compute buffer of a WKT geometry (2023-09-05)
+* add `g_buffer()`: compute buffer of a WKT geometry (2023-09-05)
 
 * `bbox_to_wkt()`: add arguments `x_ext`, `y_ext` (2023-09-05)
 

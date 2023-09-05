@@ -139,9 +139,10 @@ bbox_union <- function(x, as_wkt = FALSE) {
 
 #' Compute buffer of a WKT geometry
 #'
-#' `buffer_wkt()` builds a new geometry containing the buffer region around
+#' `g_buffer()` builds a new geometry containing the buffer region around
 #' the geometry on which it is invoked. The buffer is a polygon containing
-#' the region within the buffer distance of the original geometry.
+#' the region within the buffer distance of the original geometry. Requires
+#' GDAL built with the GEOS library.
 #'
 #' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
 #' @param dist Numeric buffer distance in units of the `wkt` geometry.
@@ -157,8 +158,8 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #'
 #' @examples
 #' pt <- "POINT (0 0)"
-#' bbox_from_wkt(buffer_wkt(wkt = pt, dist = 10))
-buffer_wkt <- function(wkt, dist, quad_segs = 30) {
+#' bbox_from_wkt(g_buffer(wkt = pt, dist = 10))
+g_buffer <- function(wkt, dist, quad_segs = 30) {
 
 	if (!has_geos())
 		return(NA_character_)

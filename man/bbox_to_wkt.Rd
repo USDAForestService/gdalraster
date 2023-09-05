@@ -33,5 +33,5 @@ bbox_to_wkt(ds$bbox())
 ds$close()
 }
 \seealso{
-\code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=buffer_wkt]{buffer_wkt()}}
+\code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=g_buffer]{g_buffer()}}
 }

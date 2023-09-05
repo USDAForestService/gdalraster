@@ -43,7 +43,7 @@
   \item geometry convenience functions: \code{\link{bbox_from_wkt}}, 
   \code{\link{bbox_to_wkt}},\cr
   \code{\link{bbox_intersect}}, \code{\link{bbox_union}}, 
-  \code{\link{buffer_wkt}}, \code{\link{has_geos}}
+  \code{\link{g_buffer}}, \code{\link{has_geos}}
   
   \item GDAL configuration: \code{\link{gdal_version}},
   \code{\link{get_cache_used}}, \code{\link{get_config_option}},\cr

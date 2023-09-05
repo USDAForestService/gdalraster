@@ -25,7 +25,6 @@ reference:
   - bbox_to_wkt
   - bbox_intersect
   - bbox_union
-  - buffer_wkt
   - calc
   - combine
   - create
@@ -37,6 +36,7 @@ reference:
   - get_cache_used
   - get_config_option
   - get_pixel_line
+  - g_buffer
   - has_geos
   - inv_geotransform
   - inv_project
