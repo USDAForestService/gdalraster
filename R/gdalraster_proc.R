@@ -1152,8 +1152,14 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 	if ( (!is.null(dstfile)) && (is.null(fmt)) ) {
 		fmt <- .getGDALformat(dstfile)
 		if (is.null(fmt)) {
-			stop("Use fmt argument to specify a GDAL raster format name.")
+			stop("Use fmt argument to specify a GDAL raster format name.",
+				call. = FALSE)
 		}
+	}
+	
+	if (!is.null(options)) {
+		if (!is.character(options))
+			stop("options argument must be character type.", call. = FALSE)
 	}
 	
 	if (is.null(dstfile))
