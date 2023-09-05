@@ -368,7 +368,31 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
 #' An error is raised if the operation fails.
 #'
 #' @examples
+#' ## remove single-pixel polygons from the vegetation type layer (EVT)
+#' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #'
+#' # create a blank raster to hold the output
+#' evt_mmu_file <- paste0(tempdir(), "/", "storml_evt_mmu2.tif")
+#' rasterFromRaster(srcfile = evt_file,
+#'                  dstfile = evt_mmu_file,
+#'                  init = 32767)
+#'
+#' # create a mask to exclude water pixels from the algorithm
+#' # recode water (7292) to 0
+#' expr <- "ifelse(EVT == 7292, 0, EVT)"
+#' mask_file <- calc(expr = expr,
+#'                   rasterfiles = evt_file,
+#'                   var.names = "EVT")
+#'
+#' # create a version of EVT with two-pixel minimum mapping unit
+#' sieveFilter(src_filename = evt_file,
+#'             src_band = 1,
+#'             dst_filename = evt_mmu_file,
+#'             dst_band = 1,
+#'             size_threshold = 2,
+#'             connectedness = 8,
+#'             mask_filename = mask_file,
+#'             mask_band = 1)
 sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename = "", mask_band = 0L, options = NULL) {
     invisible(.Call(`_gdalraster_sieveFilter`, src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename, mask_band, options))
 }

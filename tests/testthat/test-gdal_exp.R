@@ -67,3 +67,13 @@ test_that("fillNodata writes correct output", {
 	expect_equal(chk, 49103)
 })
 
+test_that("sieveFilter runs without error", {
+	evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+	evt_mmu_file <- paste0(tempdir(), "/", "storml_evt_mmu2.tif")
+	on.exit(unlink(evt_mmu_file))
+	rasterFromRaster(srcfile=evt_file, dstfile=evt_mmu_file, init=32767)
+	expr <- "ifelse(EVT == 7292, 0, EVT)"
+	mask_file <- calc(expr, rasterfiles=evt_file, var.names="EVT")
+	on.exit(unlink(mask_file))
+	expect_true(sieveFilter(evt_file, 1, evt_mmu_file, 1, 2, 8, mask_file, 1))
+})

@@ -73,3 +73,30 @@ expensive (in memory) to process.
 The input dataset is read as integer data which means that floating point
 values are rounded to integers.
 }
+\examples{
+## remove single-pixel polygons from the vegetation type layer (EVT)
+evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+
+# create a blank raster to hold the output
+evt_mmu_file <- paste0(tempdir(), "/", "storml_evt_mmu2.tif")
+rasterFromRaster(srcfile = evt_file,
+                 dstfile = evt_mmu_file,
+                 init = 32767)
+
+# create a mask to exclude water pixels from the algorithm
+# recode water (7292) to 0
+expr <- "ifelse(EVT == 7292, 0, EVT)"
+mask_file <- calc(expr = expr,
+                  rasterfiles = evt_file,
+                  var.names = "EVT")
+
+# create a version of EVT with two-pixel minimum mapping unit
+sieveFilter(src_filename = evt_file,
+            src_band = 1,
+            dst_filename = evt_mmu_file,
+            dst_band = 1,
+            size_threshold = 2,
+            connectedness = 8,
+            mask_filename = mask_file,
+            mask_band = 1)
+}
