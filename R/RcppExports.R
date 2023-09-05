@@ -845,11 +845,11 @@ bbox_from_wkt <- function(wkt) {
 #' @param y_ext Numeric scalar. Distance in `bbox` units to extend the
 #' rectangle along the y-axis (results in `ymin = bbox[2] - y_ext`,
 #' `ymax = bbox[4] + y_ext`).
-#' @return Character string for an OGC WKT polygon. An empty string is 
-#' returned if GDAL was built without the GEOS library.
+#' @return Character string for an OGC WKT polygon.
+#' `NA` is returned if GDAL was built without the GEOS library.
 #'
 #' @seealso
-#' [bbox_from_wkt()]
+#' [bbox_from_wkt()], [buffer_wkt()]
 #'
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")

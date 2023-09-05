@@ -25,3 +25,10 @@ test_that("intersect/union return correct values", {
 	expect_equal(bbox_from_wkt(bbox_union(c(elev_file, b5_file), as_wkt=TRUE)),
 					c(323400.9, 5101815.8, 327870.9, 5105175.8))
 })
+
+test_that("buffer_wkt returns correct values", {
+	pt <- "POINT (0 0)"
+	bb <- bbox_from_wkt(buffer_wkt(geom = pt, dist = 10))
+	expect_equal(bb, c(-10, -10,  10,  10))
+})
+

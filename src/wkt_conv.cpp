@@ -306,11 +306,11 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 //' @param y_ext Numeric scalar. Distance in `bbox` units to extend the
 //' rectangle along the y-axis (results in `ymin = bbox[2] - y_ext`,
 //' `ymax = bbox[4] + y_ext`).
-//' @return Character string for an OGC WKT polygon. An empty string is 
-//' returned if GDAL was built without the GEOS library.
+//' @return Character string for an OGC WKT polygon.
+//' `NA` is returned if GDAL was built without the GEOS library.
 //'
 //' @seealso
-//' [bbox_from_wkt()]
+//' [bbox_from_wkt()], [buffer_wkt()]
 //'
 //' @examples
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
@@ -318,7 +318,7 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 //' bbox_to_wkt(ds$bbox())
 //' ds$close()
 // [[Rcpp::export]]
-std::string bbox_to_wkt(Rcpp::NumericVector bbox,
+Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox,
 		double x_ext = 0, double y_ext = 0) {
 		
 	if (bbox.size() != 4)
@@ -326,7 +326,7 @@ std::string bbox_to_wkt(Rcpp::NumericVector bbox,
 		
 	if (!has_geos()) {
 		Rcpp::Rcout << "bbox_to_wkt() requires GEOS.\n";
-		return "";
+		return NA_STRING;
 	}
 	
 	Rcpp::NumericVector bbox_in = Rcpp::clone(bbox);
