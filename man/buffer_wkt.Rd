@@ -4,12 +4,12 @@
 \alias{buffer_wkt}
 \title{Compute buffer of a WKT geometry}
 \usage{
-buffer_wkt(geom, dist, quad_segs = 30)
+buffer_wkt(wkt, dist, quad_segs = 30)
 }
 \arguments{
-\item{geom}{Character. OGC WKT string for a simple feature 2D geometry.}
+\item{wkt}{Character. OGC WKT string for a simple feature 2D geometry.}
 
-\item{dist}{Numeric buffer distance in units of \code{geom}.}
+\item{dist}{Numeric buffer distance in units of the \code{wkt} geometry.}
 
 \item{quad_segs}{Integer number of segments used to define a 90 degree
 curve (quadrant of a circle). Large values result in large numbers of
@@ -27,7 +27,7 @@ the region within the buffer distance of the original geometry.
 }
 \examples{
 pt <- "POINT (0 0)"
-bbox_from_wkt(buffer_wkt(geom = pt, dist = 10))
+bbox_from_wkt(buffer_wkt(wkt = pt, dist = 10))
 }
 \seealso{
 \code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=bbox_to_wkt]{bbox_to_wkt()}}

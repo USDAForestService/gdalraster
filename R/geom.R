@@ -143,8 +143,8 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' the geometry on which it is invoked. The buffer is a polygon containing
 #' the region within the buffer distance of the original geometry.
 #'
-#' @param geom Character. OGC WKT string for a simple feature 2D geometry.
-#' @param dist Numeric buffer distance in units of `geom`.
+#' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
+#' @param dist Numeric buffer distance in units of the `wkt` geometry.
 #' @param quad_segs Integer number of segments used to define a 90 degree
 #' curve (quadrant of a circle). Large values result in large numbers of
 #' vertices in the resulting buffer geometry while small numbers reduce the 
@@ -157,14 +157,14 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #'
 #' @examples
 #' pt <- "POINT (0 0)"
-#' bbox_from_wkt(buffer_wkt(geom = pt, dist = 10))
-buffer_wkt <- function(geom, dist, quad_segs = 30) {
+#' bbox_from_wkt(buffer_wkt(wkt = pt, dist = 10))
+buffer_wkt <- function(wkt, dist, quad_segs = 30) {
 
 	if (!has_geos())
 		return(NA_character_)
 	
-	if (!is.character(geom))
-		stop("geom must be a WKT string.", call. = FALSE)
+	if (!is.character(wkt))
+		stop("wkt must be character.", call. = FALSE)
 
-	return(.g_buffer(geom, dist, quad_segs))
+	return(.g_buffer(wkt, dist, quad_segs))
 }
