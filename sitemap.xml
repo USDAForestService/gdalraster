@@ -64,9 +64,6 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_to_wkt.html</loc>
   </url>
   <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/buffer_wkt.html</loc>
-  </url>
-  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/calc.html</loc>
   </url>
   <url>
@@ -86,6 +83,9 @@
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/fillNodata.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_buffer.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/gdal_version.html</loc>
