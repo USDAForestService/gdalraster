@@ -54,12 +54,12 @@ ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
 ds_lcp$getMetadata(band=2, domain="")
 
 slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
-options = c("COMPRESS=LZW")
+opt = c("COMPRESS=LZW")
 rasterFromRaster(srcfile = lcp_file,
                  dstfile = slpp_file,
                  nbands = 1,
                  dtName = "Int16",
-                 options = options,
+                 options = opt,
                  init = -32767)
 ds_slp <- new(GDALRaster, slpp_file, read_only=FALSE)
 

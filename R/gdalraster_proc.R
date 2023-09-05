@@ -197,12 +197,12 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #' ds_lcp$getMetadata(band=2, domain="")
 #' 
 #' slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
-#' options = c("COMPRESS=LZW")
+#' opt = c("COMPRESS=LZW")
 #' rasterFromRaster(srcfile = lcp_file,
 #'                  dstfile = slpp_file,
 #'                  nbands = 1,
 #'                  dtName = "Int16",
-#'                  options = options,
+#'                  options = opt,
 #'                  init = -32767)
 #' ds_slp <- new(GDALRaster, slpp_file, read_only=FALSE)
 #' 
@@ -1139,8 +1139,8 @@ calc <- function(expr,
 #' bands <- c(4, 5)
 #' var.names <- c("fbfm", "tree_cov")
 #' cmb_file <- paste0(tempdir(), "/", "fbfm_cov_cmbid.tif")
-#' options <- c("COMPRESS=LZW")
-#' df <- combine(rasterfiles, var.names, bands, cmb_file, options = options)
+#' opt <- c("COMPRESS=LZW")
+#' df <- combine(rasterfiles, var.names, bands, cmb_file, options = opt)
 #' head(df)
 #' ds <- new(GDALRaster, cmb_file, TRUE)
 #' ds$info()

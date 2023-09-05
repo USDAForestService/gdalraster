@@ -144,9 +144,9 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
-#' options <- c("COMPRESS=LZW")
+#' opt <- c("COMPRESS=LZW")
 #' createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
-#'            options=options)
+#'            options=opt)
 #' file.size(lcp_file)
 #' file.size(tif_file)
 #' ds <- new(GDALRaster, tif_file, read_only=FALSE)
