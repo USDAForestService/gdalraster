@@ -19,8 +19,8 @@ rectangle along the y-axis (results in \code{ymin = bbox[2] - y_ext},
 \code{ymax = bbox[4] + y_ext}).}
 }
 \value{
-Character string for an OGC WKT polygon. An empty string is
-returned if GDAL was built without the GEOS library.
+Character string for an OGC WKT polygon.
+\code{NA} is returned if GDAL was built without the GEOS library.
 }
 \description{
 \code{bbox_to_wkt()} returns a WKT POLYGON string for the given bounding box.
@@ -33,5 +33,5 @@ bbox_to_wkt(ds$bbox())
 ds$close()
 }
 \seealso{
-\code{\link[=bbox_from_wkt]{bbox_from_wkt()}}
+\code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=buffer_wkt]{buffer_wkt()}}
 }

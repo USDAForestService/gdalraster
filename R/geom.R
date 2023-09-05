@@ -136,3 +136,35 @@ bbox_union <- function(x, as_wkt = FALSE) {
 		return(bbox_from_wkt(this_bbox))
 }
 
+
+#' Compute buffer of a WKT geometry
+#'
+#' `buffer_wkt()` builds a new geometry containing the buffer region around
+#' the geometry on which it is invoked. The buffer is a polygon containing
+#' the region within the buffer distance of the original geometry.
+#'
+#' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
+#' @param dist Numeric buffer distance in units of the `wkt` geometry.
+#' @param quad_segs Integer number of segments used to define a 90 degree
+#' curve (quadrant of a circle). Large values result in large numbers of
+#' vertices in the resulting buffer geometry while small numbers reduce the 
+#' accuracy of the result.
+#' @return Character string for an OGC WKT polygon.
+#' `NA` is returned if GDAL was built without the GEOS library.
+#'
+#' @seealso
+#' [bbox_from_wkt()], [bbox_to_wkt()]
+#'
+#' @examples
+#' pt <- "POINT (0 0)"
+#' bbox_from_wkt(buffer_wkt(wkt = pt, dist = 10))
+buffer_wkt <- function(wkt, dist, quad_segs = 30) {
+
+	if (!has_geos())
+		return(NA_character_)
+	
+	if (!is.character(wkt))
+		stop("wkt must be character.", call. = FALSE)
+
+	return(.g_buffer(wkt, dist, quad_segs))
+}

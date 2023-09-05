@@ -582,7 +582,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // bbox_to_wkt
-std::string bbox_to_wkt(Rcpp::NumericVector bbox, double x_ext, double y_ext);
+Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox, double x_ext, double y_ext);
 RcppExport SEXP _gdalraster_bbox_to_wkt(SEXP bboxSEXP, SEXP x_extSEXP, SEXP y_extSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
