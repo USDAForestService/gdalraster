@@ -1,5 +1,7 @@
 # gdalraster 1.4.1 (dev)
 
+* `bbox_to_wkt()`: add arguments `x_ext`, `y_ext` (2023-09-05)
+
 * add `sieveFilter()`: wrapper for `GDALSieveFilter()` in the GDAL Algorithms API (2023-09-04)
 
 * add PROJ utility functions: `proj_version()`, `proj_search_paths()`, `proj_networking()` (2023-09-03)

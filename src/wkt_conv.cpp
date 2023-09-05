@@ -300,6 +300,12 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 //'
 //' @param bbox Numeric vector of length four containing xmin, ymin, 
 //' xmax, ymax.
+//' @param x_ext Numeric scalar. Distance in `bbox` units to extend the
+//' rectangle along the x-axis (results in `xmin = bbox[1] - x_ext`,
+//' `xmax = bbox[3] + x_ext`).
+//' @param y_ext Numeric scalar. Distance in `bbox` units to extend the
+//' rectangle along the y-axis (results in `ymin = bbox[2] - y_ext`,
+//' `ymax = bbox[4] + y_ext`).
 //' @return Character string for an OGC WKT polygon. An empty string is 
 //' returned if GDAL was built without the GEOS library.
 //'
@@ -312,7 +318,9 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 //' bbox_to_wkt(ds$bbox())
 //' ds$close()
 // [[Rcpp::export]]
-std::string bbox_to_wkt(Rcpp::NumericVector bbox) {
+std::string bbox_to_wkt(Rcpp::NumericVector bbox,
+		double x_ext = 0, double y_ext = 0) {
+		
 	if (bbox.size() != 4)
 		Rcpp::stop("Invalid bounding box.");
 		
@@ -320,13 +328,19 @@ std::string bbox_to_wkt(Rcpp::NumericVector bbox) {
 		Rcpp::Rcout << "bbox_to_wkt() requires GEOS.\n";
 		return "";
 	}
+	
+	Rcpp::NumericVector bbox_in = Rcpp::clone(bbox);
+	bbox_in[0] -= x_ext;
+	bbox_in[1] -= y_ext;
+	bbox_in[2] += x_ext;
+	bbox_in[3] += y_ext;
 
 	Rcpp::NumericMatrix poly_xy(5, 2);
-	poly_xy.row(0) = Rcpp::NumericVector::create(bbox(0), bbox(3));
-	poly_xy.row(1) = Rcpp::NumericVector::create(bbox(2), bbox(3));
-	poly_xy.row(2) = Rcpp::NumericVector::create(bbox(2), bbox(1));
-	poly_xy.row(3) = Rcpp::NumericVector::create(bbox(0), bbox(1));
-	poly_xy.row(4) = Rcpp::NumericVector::create(bbox(0), bbox(3));
+	poly_xy.row(0) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(3));
+	poly_xy.row(1) = Rcpp::NumericVector::create(bbox_in(2), bbox_in(3));
+	poly_xy.row(2) = Rcpp::NumericVector::create(bbox_in(2), bbox_in(1));
+	poly_xy.row(3) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(1));
+	poly_xy.row(4) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(3));
 	
 	return _g_create(poly_xy, "POLYGON");
 }

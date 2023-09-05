@@ -4,11 +4,19 @@
 \alias{bbox_to_wkt}
 \title{Convert a bounding box to POLYGON in OGC WKT format.}
 \usage{
-bbox_to_wkt(bbox)
+bbox_to_wkt(bbox, x_ext = 0, y_ext = 0)
 }
 \arguments{
 \item{bbox}{Numeric vector of length four containing xmin, ymin,
 xmax, ymax.}
+
+\item{x_ext}{Numeric scalar. Distance in \code{bbox} units to extend the
+rectangle along the x-axis (results in \code{xmin = bbox[1] - x_ext},
+\code{xmax = bbox[3] + x_ext}).}
+
+\item{y_ext}{Numeric scalar. Distance in \code{bbox} units to extend the
+rectangle along the y-axis (results in \code{ymin = bbox[2] - y_ext},
+\code{ymax = bbox[4] + y_ext}).}
 }
 \value{
 Character string for an OGC WKT polygon. An empty string is
