@@ -158,9 +158,9 @@ with blocks as whole rows (efficient for row-level access).
 optional changes to the format. The extent, number of bands, data type,
 projection, and geotransform are all copied from the source raster:</p>
 <pre><code><span><span class="va">f2</span> <span class="op">=</span> <span class="st">"LC20_Elev_220_striped.tif"</span></span>
-<span><span class="va">options</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span>, <span class="st">"TILED=NO"</span>, <span class="st">"BLOCKYSIZE=1"</span>, <span class="st">"BIGTIFF=YES"</span><span class="op">)</span></span>
+<span><span class="va">opt</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span>, <span class="st">"TILED=NO"</span>, <span class="st">"BLOCKYSIZE=1"</span>, <span class="st">"BIGTIFF=YES"</span><span class="op">)</span></span>
 <span><span class="fu">gdalraster</span><span class="fu">::</span><span class="fu"><a href="../reference/createCopy.html">createCopy</a></span><span class="op">(</span>format<span class="op">=</span><span class="st">"GTiff"</span>, dst_filename<span class="op">=</span><span class="va">f2</span>, src_filename<span class="op">=</span><span class="va">f</span>,</span>
-<span>                       options<span class="op">=</span><span class="va">options</span><span class="op">)</span></span>
+<span>                       options<span class="op">=</span><span class="va">opt</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span></span>
 <span><span class="va">ds2</span> <span class="op">=</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f2</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
