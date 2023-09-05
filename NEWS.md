@@ -1,5 +1,7 @@
 # gdalraster 1.4.1 (dev)
 
+* add `sieveFilter()`: wrapper for `GDALSieveFilter()` in the GDAL Algorithms API (2023-09-04)
+
 * add PROJ utility functions: `proj_version()`, `proj_search_paths()`, `proj_networking()` (2023-09-03)
 
 * add `GDALRaster$getFileList()`: returns a list of files forming the dataset (2023-09-01)

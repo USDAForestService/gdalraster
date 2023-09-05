@@ -636,6 +636,146 @@ bool fillNodata(std::string filename, int band, std::string mask_file = "",
 }
 
 
+//' Remove small raster polygons
+//'
+//' `sieveFilter()` is a wrapper for `GDALSieveFilter()` in the GDAL Algorithms
+//' API. It removes raster polygons smaller than a provided threshold size
+//' (in pixels) and replaces them with the pixel value of the largest neighbour
+//' polygon.
+//'
+//' @details
+//' Polygons are determined as regions of the raster where the pixels all have
+//' the same value, and that are contiguous (connected).
+//' Pixels determined to be "nodata" per the mask band will not be
+//' treated as part of a polygon regardless of their pixel values. Nodata areas
+//' will never be changed nor affect polygon sizes. Polygons smaller than the
+//' threshold with no neighbours that are as large as the threshold will not be
+//' altered. Polygons surrounded by nodata areas will therefore not be altered.
+//'
+//' The algorithm makes three passes over the input file to enumerate the
+//' polygons and collect limited information about them. Memory use is
+//' proportional to the number of polygons (roughly 24 bytes per polygon), but
+//' is not directly related to the size of the raster. So very large raster
+//' files can be processed effectively if there aren't too many polygons. But
+//' extremely noisy rasters with many one pixel polygons will end up being
+//' expensive (in memory) to process.
+//'
+//' The input dataset is read as integer data which means that floating point
+//' values are rounded to integers.
+//'
+//' @param src_filename Filename of the source raster to be processed.
+//' @param src_band Band number in the source raster to be processed.
+//' @param dst_filename Filename of the output raster. It may be the same as
+//' `src_filename` to update the source file in place.
+//' @param dst_band Band number in `dst_filename` to write output. It may be
+//' the same as `src_band` to update the source raster in place.
+//' @param size_threshold Integer. Raster polygons with sizes (in pixels)
+//' smaller than this value will be merged into their largest neighbour.
+//' @param connectedness Integer. Either `4` indicating that diagonal pixels
+//' are not considered directly adjacent for polygon membership purposes, or
+//' `8` indicating they are.
+//' @param mask_filename Optional filename of raster to use as a mask.
+//' @param mask_band Band number in `mask_filename` to use as a mask. All
+//' pixels in the mask band with a value other than zero will be considered
+//' suitable for inclusion in polygons.
+//' @param options Algorithm options as a character vector of name=value pairs.
+//' None currently supported.
+//' @returns Logical indicating success (invisible \code{TRUE}).
+//' An error is raised if the operation fails.
+//'
+//' @examples
+//' ## remove single-pixel polygons from the vegetation type layer (EVT)
+//' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+//'
+//' # create a blank raster to hold the output
+//' evt_mmu_file <- paste0(tempdir(), "/", "storml_evt_mmu2.tif")
+//' rasterFromRaster(srcfile = evt_file,
+//'                  dstfile = evt_mmu_file,
+//'                  init = 32767)
+//'
+//' # create a mask to exclude water pixels from the algorithm
+//' # recode water (7292) to 0
+//' expr <- "ifelse(EVT == 7292, 0, EVT)"
+//' mask_file <- calc(expr = expr,
+//'                   rasterfiles = evt_file,
+//'                   var.names = "EVT")
+//'
+//' # create a version of EVT with two-pixel minimum mapping unit
+//' sieveFilter(src_filename = evt_file,
+//'             src_band = 1,
+//'             dst_filename = evt_mmu_file,
+//'             dst_band = 1,
+//'             size_threshold = 2,
+//'             connectedness = 8,
+//'             mask_filename = mask_file,
+//'             mask_band = 1)
+// [[Rcpp::export(invisible = true)]]
+bool sieveFilter(std::string src_filename, int src_band,
+		std::string dst_filename, int dst_band,
+		int size_threshold, int connectedness,
+		std::string mask_filename = "", int mask_band = 0,
+		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+
+	GDALDatasetH hSrcDS = NULL;
+	GDALRasterBandH hSrcBand = NULL;
+	GDALDatasetH hMaskDS = NULL;
+	GDALRasterBandH hMaskBand = NULL;
+	GDALDatasetH hDstDS = NULL;
+	GDALRasterBandH hDstBand = NULL;
+	bool in_place = false;
+	CPLErr err;
+	
+	if (size_threshold < 1)
+		Rcpp::stop("size_threshold must be 1 or larger.");
+		
+	if (connectedness != 4 && connectedness != 8)
+		Rcpp::stop("connectedness must be 4 or 8.");
+	
+	if (src_filename == dst_filename && src_band == dst_band)
+		in_place = true;
+	
+	if (in_place)
+		hSrcDS = GDALOpenShared(src_filename.c_str(), GA_Update);
+	else
+		hSrcDS = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
+	if (hSrcDS == NULL)
+		Rcpp::stop("Open source raster failed.");
+	hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
+	
+	if (mask_filename != "") {
+		hMaskDS = GDALOpenShared(mask_filename.c_str(), GA_ReadOnly);
+		if (hMaskDS == NULL)
+			Rcpp::stop("Open mask raster failed.");
+		hMaskBand = GDALGetRasterBand(hMaskDS, mask_band);
+	}
+	
+	if (!in_place) {
+		hDstDS = GDALOpenShared(dst_filename.c_str(), GA_Update);
+		if (hDstDS == NULL)
+			Rcpp::stop("Open destination raster failed.");
+		hDstBand = GDALGetRasterBand(hDstDS, dst_band);
+	}
+	
+	if (in_place)
+		err = GDALSieveFilter(hSrcBand, hMaskBand, hSrcBand, size_threshold,
+				connectedness, NULL, GDALTermProgressR, NULL);
+	else
+		err = GDALSieveFilter(hSrcBand, hMaskBand, hDstBand, size_threshold,
+				connectedness, NULL, GDALTermProgressR, NULL);	
+			
+	if (err != CE_None)
+		Rcpp::stop("sieveFilter() failed.");
+		
+	GDALClose(hSrcDS);
+	if (hMaskDS != NULL)
+		GDALClose(hMaskDS);
+	if (hDstDS != NULL)
+		GDALClose(hDstDS);
+		
+	return true;
+}
+
+
 //' Raster reprojection
 //'
 //' `warp()` is a wrapper for the \command{gdalwarp} command-line utility.
