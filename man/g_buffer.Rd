@@ -27,8 +27,7 @@ the region within the buffer distance of the original geometry. Requires
 GDAL built with the GEOS library.
 }
 \examples{
-pt <- "POINT (0 0)"
-bbox_from_wkt(g_buffer(wkt = pt, dist = 10))
+g_buffer(wkt = "POINT (0 0)", dist = 10)
 }
 \seealso{
 \code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=bbox_to_wkt]{bbox_to_wkt()}}
