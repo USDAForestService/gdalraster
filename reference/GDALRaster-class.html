@@ -207,8 +207,8 @@ in R</em>, the geotransform vector contains (in map units of the raster spatial
 reference system):</p><table class="table table"><tr><td>GT[1]</td><td>x-coordinate of upper-left corner of the upper-left pixel</td></tr><tr><td>GT[2]</td><td>x-component of pixel width</td></tr><tr><td>GT[3]</td><td>row rotation (zero for north-up raster)</td></tr><tr><td>GT[4]</td><td>y-coordinate of upper-left corner of the upper-left pixel</td></tr><tr><td>GT[5]</td><td>column rotation (zero for north-up raster)</td></tr><tr><td>GT[6]</td><td>y-component of pixel height (negative for north-up raster)</td></tr></table><p><code>$setGeoTransform(transform)</code>
 Sets the affine transformation coefficients on this dataset.
 <code>transform</code> is a numeric vector of length six.
-Returns logical TRUE on success or FALSE if the geotransform could not
-be set.</p>
+Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the geotransform
+could not be set.</p>
 <p><code>$getProjectionRef()</code>
 Returns the coordinate reference system of the raster as an OpenGIS WKT
 format string.
@@ -216,7 +216,8 @@ An empty string is returned when a projection definition is not available.</p>
 <p><code>$setProjection(projection)</code>
 Sets the projection reference for this dataset.
 <code>projection</code> is a string in OGC WKT format.
-Returns logical TRUE on success or FALSE if the projection could not be set.</p>
+Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the projection
+could not be set.</p>
 <p><code>$bbox()</code>
 Returns a numeric vector of length four containing the bounding box
 (xmin, ymin, xmax, ymax) assuming this is a north-up raster.</p>
@@ -266,12 +267,12 @@ for overview computation (see <code><a href="set_config_option.html">set_config_
 No return value, called for side effects.</p>
 <p><code>$getDataTypeName(band)</code>
 Returns the name of the pixel data type for <code>band</code>. The possible data
-types are:</p><table class="table table"><tr><td><code>Unknown</code></td><td>Unknown or unspecified type</td></tr><tr><td><code>Byte</code></td><td>8-bit unsigned integer</td></tr><tr><td><code>Int8</code></td><td>8-bit signed integer (GDAL &gt;= 3.7)</td></tr><tr><td><code>UInt16</code></td><td>16-bit unsigned integer</td></tr><tr><td><code>Int16</code></td><td>16-bit signed integer</td></tr><tr><td><code>UInt32</code></td><td>32-bit unsigned integer</td></tr><tr><td><code>Int32</code></td><td>32-bit signed integer</td></tr><tr><td><code>UInt64</code></td><td>64-bit unsigned integer (GDAL &gt;= 3.5)</td></tr><tr><td><code>Int64</code></td><td>64-bit signed integer (GDAL &gt;= 3.5)</td></tr><tr><td><code>Float32</code></td><td>32-bit floating point</td></tr><tr><td><code>Float64</code></td><td>64-bit floating point</td></tr><tr><td><code>CInt16</code></td><td>Complex Int16</td></tr><tr><td><code>CInt32</code></td><td>Complex Int32</td></tr><tr><td><code>CFloat32</code></td><td>Complex Float32</td></tr><tr><td><code>CFloat64</code></td><td>Complex Float64</td></tr></table><p>Some raster formats including GeoTIFF (<code>GTiff</code>) and Erdas Imagine .img
-(<code>HFA</code>) support sub-byte data types. Rasters can be created with these
-data types by specifying the <code>NBITS=n</code> creation option where n=1...7 for
+types are:</p><table class="table table"><tr><td>Unknown</td><td>Unknown or unspecified type</td></tr><tr><td>Byte</td><td>8-bit unsigned integer</td></tr><tr><td>Int8</td><td>8-bit signed integer (GDAL &gt;= 3.7)</td></tr><tr><td>UInt16</td><td>16-bit unsigned integer</td></tr><tr><td>Int16</td><td>16-bit signed integer</td></tr><tr><td>UInt32</td><td>32-bit unsigned integer</td></tr><tr><td>Int32</td><td>32-bit signed integer</td></tr><tr><td>UInt64</td><td>64-bit unsigned integer (GDAL &gt;= 3.5)</td></tr><tr><td>Int64</td><td>64-bit signed integer (GDAL &gt;= 3.5)</td></tr><tr><td>Float32</td><td>32-bit floating point</td></tr><tr><td>Float64</td><td>64-bit floating point</td></tr><tr><td>CInt16</td><td>Complex Int16</td></tr><tr><td>CInt32</td><td>Complex Int32</td></tr><tr><td>CFloat32</td><td>Complex Float32</td></tr><tr><td>CFloat64</td><td>Complex Float64</td></tr></table><p>Some raster formats including GeoTIFF ("GTiff") and Erdas Imagine .img
+("HFA") support sub-byte data types. Rasters can be created with these
+data types by specifying the <code>"NBITS=n"</code> creation option where n=1...7 for
 GTiff or n=1/2/4 for HFA. In these cases, <code>$getDataTypeName()</code> reports
-the apparent type <code>Byte</code>. GTiff also supports n=9...15 (<code>UInt16</code> type) and
-n=17...31 (<code>UInt32</code> type), and n=16 is accepted for <code>Float32</code> to generate
+the apparent type "Byte". GTiff also supports n=9...15 (UInt16 type) and
+n=17...31 (UInt32 type), and n=16 is accepted for Float32 to generate
 half-precision floating point values.</p>
 <p><code>$getStatistics(band, approx_ok, force)</code>
 Returns a numeric vector of length four containing the minimum, maximum,
@@ -290,12 +291,12 @@ This is a change in the behavior of <code>GetStatistics()</code> in the API, to 
 definitive <code>force</code>.)</p></li>
 <li><p><code>FALSE</code>: Results will only be returned if it can be done quickly (i.e.,
 without scanning the raster, typically by using pre-existing
-STATISTICS_xxx metadata items). NAs will be returned if statistics cannot
-be obtained quickly.</p></li>
+STATISTICS_xxx metadata items). <code>NA</code>s will be returned if statistics
+cannot be obtained quickly.</p></li>
 </ul><p><code>$getNoDataValue(band)</code>
 Returns the nodata value for <code>band</code> if one exists.
 This is generally a special value defined to mark pixels that are not
-valid data. NA is returned if a nodata value is not defined for
+valid data. <code>NA</code> is returned if a nodata value is not defined for
 <code>band</code>. Not all raster formats support a designated nodata value.</p>
 <p><code>$setNoDataValue(band, nodata_value)</code>
 Sets the nodata value for <code>band</code>.
@@ -307,8 +308,8 @@ intent is to initialize the raster to the nodata value. In any case,
 changing an existing nodata value, when one already exists on an initialized
 dataset, has no effect on the pixels whose values matched the previous
 nodata value.
-Returns logical TRUE on success or FALSE if the nodata value could not
-be set.</p>
+Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the nodata value
+could not be set.</p>
 <p><code>$deleteNoDataValue(band)</code>
 Removes the nodata value for <code>band</code>.
 This affects only the definition of the nodata value for raster formats
@@ -323,28 +324,30 @@ Sets the name of the unit type of the pixel values for <code>band</code>.
 <code>unit_type</code> should be one of "" (the default indicating it is unknown),
 "m" indicating meters, or "ft" indicating feet, though other nonstandard
 values are allowed.
-Returns logical TRUE on success or FALSE if the unit type could not
-be set.</p>
+Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the unit type
+could not be set.</p>
 <p><code>$getScale(band)</code>
 Returns the pixel value scale (units value = (raw value * scale) + offset)
 for <code>band</code>.
 This value (in combination with the <code>getOffset()</code> value) can be used to
 transform raw pixel values into the units returned by <code>getUnitType()</code>.
-Returns NA if a scale value is not defined for this <code>band</code>.</p>
+Returns <code>NA</code> if a scale value is not defined for this <code>band</code>.</p>
 <p><code>$setScale(band, scale)</code>
 Sets the pixel value scale (units value = (raw value * scale) + offset)
 for <code>band</code>. Many raster formats do not implement this method.
-Returns logical TRUE on success or FALSE if the scale could not be set.</p>
+Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the scale could
+not be set.</p>
 <p><code>$getOffset(band)</code>
 Returns the pixel value offset (units value = (raw value * scale) + offset)
 for <code>band</code>.
 This value (in combination with the <code>getScale()</code> value) can be used to
 transform raw pixel values into the units returned by <code>getUnitType()</code>.
-Returns NA if an offset value is not defined for this <code>band</code>.</p>
+Returns <code>NA</code> if an offset value is not defined for this <code>band</code>.</p>
 <p><code>$setOffset(band, offset)</code>
 Sets the pixel value offset (units value = (raw value * scale) + offset)
 for <code>band</code>. Many raster formats do not implement this method.
-Returns logical TRUE on success or FALSE if the offset could not be set.</p>
+Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the offset could
+not be set.</p>
 <p><code>$getMetadata(band, domain)</code>
 Returns a character vector of all metadata <code>name=value</code> pairs that exist in
 the specified <code>domain</code>, or <code>""</code> (empty string) if there are no
@@ -386,10 +389,10 @@ region will be read (typically the same value as xsize).
 region will be read (typically the same value as ysize).
 Returns a numeric or complex vector containing the values that were read.
 It is organized in left to right, top to bottom pixel order.
-NA will be returned in place of the nodata value if the
+<code>NA</code> will be returned in place of the nodata value if the
 raster dataset has a nodata value defined for this band.
-Data are read as R <code>integer</code> type when possible for the raster data type
-(Byte, Int8, Int16, UInt16, Int32), otherwise as type <code>double</code> (UInt32,
+Data are read as R integer type when possible for the raster data type
+(Byte, Int8, Int16, UInt16, Int32), otherwise as type double (UInt32,
 Float32, Float64).
 No rescaling of the data is performed (see <code>$getScale()</code> and
 <code>$getOffset()</code> above).
@@ -404,7 +407,7 @@ the band to be accessed (zero to start from the top).
 <code>xsize</code> is the width in pixels of the region to write.
 <code>ysize</code> is the height in pixels of the region to write.
 <code>rasterData</code> is a numeric or complex vector containing values to write.
-It is organized in left to right, top to bottom pixel order. NA in
+It is organized in left to right, top to bottom pixel order. <code>NA</code> in
 <code>rasterData</code> should be replaced with a suitable nodata value prior to
 writing (see <code>$getNoDataValue()</code> and <code>$setNoDataValue()</code> above).
 An error is raised if the operation fails (no return value).</p>
@@ -583,6 +586,11 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LCP"</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "FARSITE v.4 Landscape File (.lcp)"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## retrieve a list of files composing the dataset</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.lcp"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "/home/runner/work/_temp/Library/gdalraster/extdata/storm_lake.prj"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## retrieve dataset parameters</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span></span>
