@@ -7,8 +7,8 @@
 #include <cmath>
 
 #include "gdal.h"
-#include "cpl_conv.h"
 #include "cpl_port.h"
+#include "cpl_conv.h"
 #include "cpl_string.h"
 #include "gdal_alg.h"
 #include "gdal_utils.h"
