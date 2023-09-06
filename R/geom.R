@@ -157,8 +157,7 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' [bbox_from_wkt()], [bbox_to_wkt()]
 #'
 #' @examples
-#' pt <- "POINT (0 0)"
-#' bbox_from_wkt(g_buffer(wkt = pt, dist = 10))
+#' g_buffer(wkt = "POINT (0 0)", dist = 10)
 g_buffer <- function(wkt, dist, quad_segs = 30) {
 
 	if (!has_geos())
