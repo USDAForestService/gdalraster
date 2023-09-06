@@ -144,8 +144,8 @@
 #' \code{$setGeoTransform(transform)}
 #' Sets the affine transformation coefficients on this dataset.
 #' \code{transform} is a numeric vector of length six.
-#' Returns logical TRUE on success or FALSE if the geotransform could not 
-#' be set.
+#' Returns logical \code{TRUE} on success or \code{FALSE} if the geotransform
+#' could not be set.
 #'
 #' \code{$getProjectionRef()}
 #' Returns the coordinate reference system of the raster as an OpenGIS WKT
@@ -155,7 +155,8 @@
 #' \code{$setProjection(projection)}
 #' Sets the projection reference for this dataset.
 #' \code{projection} is a string in OGC WKT format.
-#' Returns logical TRUE on success or FALSE if the projection could not be set.
+#' Returns logical \code{TRUE} on success or \code{FALSE} if the projection
+#' could not be set.
 #'
 #' \code{$bbox()}
 #' Returns a numeric vector of length four containing the bounding box 
@@ -215,28 +216,28 @@
 #' Returns the name of the pixel data type for \code{band}. The possible data 
 #' types are:
 #' \tabular{rl}{
-#'  `Unknown`   \tab  Unknown or unspecified type\cr
-#'  `Byte`      \tab  8-bit unsigned integer\cr
-#'  `Int8`      \tab  8-bit signed integer (GDAL >= 3.7)\cr
-#'  `UInt16`    \tab  16-bit unsigned integer\cr
-#'  `Int16`     \tab  16-bit signed integer\cr
-#'  `UInt32`    \tab  32-bit unsigned integer\cr
-#'  `Int32`     \tab  32-bit signed integer\cr
-#'  `UInt64`    \tab  64-bit unsigned integer (GDAL >= 3.5)\cr
-#'  `Int64`     \tab  64-bit signed integer (GDAL >= 3.5)\cr
-#'  `Float32`   \tab  32-bit floating point\cr
-#'  `Float64`   \tab  64-bit floating point\cr
-#'  `CInt16`    \tab  Complex Int16\cr
-#'  `CInt32`    \tab  Complex Int32\cr
-#'  `CFloat32`  \tab  Complex Float32\cr
-#'  `CFloat64`  \tab  Complex Float64
+#'  Unknown   \tab  Unknown or unspecified type\cr
+#'  Byte      \tab  8-bit unsigned integer\cr
+#'  Int8      \tab  8-bit signed integer (GDAL >= 3.7)\cr
+#'  UInt16    \tab  16-bit unsigned integer\cr
+#'  Int16     \tab  16-bit signed integer\cr
+#'  UInt32    \tab  32-bit unsigned integer\cr
+#'  Int32     \tab  32-bit signed integer\cr
+#'  UInt64    \tab  64-bit unsigned integer (GDAL >= 3.5)\cr
+#'  Int64     \tab  64-bit signed integer (GDAL >= 3.5)\cr
+#'  Float32   \tab  32-bit floating point\cr
+#'  Float64   \tab  64-bit floating point\cr
+#'  CInt16    \tab  Complex Int16\cr
+#'  CInt32    \tab  Complex Int32\cr
+#'  CFloat32  \tab  Complex Float32\cr
+#'  CFloat64  \tab  Complex Float64
 #' }
-#' Some raster formats including GeoTIFF (`GTiff`) and Erdas Imagine .img 
-#' (`HFA`) support sub-byte data types. Rasters can be created with these 
-#' data types by specifying the `NBITS=n` creation option where n=1...7 for 
+#' Some raster formats including GeoTIFF ("GTiff") and Erdas Imagine .img 
+#' ("HFA") support sub-byte data types. Rasters can be created with these 
+#' data types by specifying the `"NBITS=n"` creation option where n=1...7 for 
 #' GTiff or n=1/2/4 for HFA. In these cases, \code{$getDataTypeName()} reports 
-#' the apparent type `Byte`. GTiff also supports n=9...15 (`UInt16` type) and 
-#' n=17...31 (`UInt32` type), and n=16 is accepted for `Float32` to generate 
+#' the apparent type "Byte". GTiff also supports n=9...15 (UInt16 type) and 
+#' n=17...31 (UInt32 type), and n=16 is accepted for Float32 to generate 
 #' half-precision floating point values.
 #'
 #' \code{$getStatistics(band, approx_ok, force)}
@@ -260,13 +261,13 @@
 #'   definitive `force`.)
 #'   * `FALSE`: Results will only be returned if it can be done quickly (i.e., 
 #'   without scanning the raster, typically by using pre-existing 
-#'   STATISTICS_xxx metadata items). NAs will be returned if statistics cannot 
-#'   be obtained quickly.
+#'   STATISTICS_xxx metadata items). \code{NA}s will be returned if statistics
+#'   cannot be obtained quickly.
 #'
 #' \code{$getNoDataValue(band)}
 #' Returns the nodata value for \code{band} if one exists.
 #' This is generally a special value defined to mark pixels that are not
-#' valid data. NA is returned if a nodata value is not defined for 
+#' valid data. \code{NA} is returned if a nodata value is not defined for 
 #' \code{band}. Not all raster formats support a designated nodata value.
 #'
 #' \code{$setNoDataValue(band, nodata_value)}
@@ -279,8 +280,8 @@
 #' changing an existing nodata value, when one already exists on an initialized
 #' dataset, has no effect on the pixels whose values matched the previous 
 #' nodata value.
-#' Returns logical TRUE on success or FALSE if the nodata value could not 
-#' be set.
+#' Returns logical \code{TRUE} on success or \code{FALSE} if the nodata value
+#' could not be set.
 #'
 #' \code{$deleteNoDataValue(band)}
 #' Removes the nodata value for \code{band}.
@@ -298,32 +299,34 @@
 #' `unit_type` should be one of "" (the default indicating it is unknown),
 #' "m" indicating meters, or "ft" indicating feet, though other nonstandard
 #' values are allowed.
-#' Returns logical TRUE on success or FALSE if the unit type could not 
-#' be set.
+#' Returns logical \code{TRUE} on success or \code{FALSE} if the unit type
+#' could not be set.
 #'
 #' \code{$getScale(band)}
 #' Returns the pixel value scale (units value = (raw value * scale) + offset) 
 #' for \code{band}.
 #' This value (in combination with the \code{getOffset()} value) can be used to 
 #' transform raw pixel values into the units returned by \code{getUnitType()}.
-#' Returns NA if a scale value is not defined for this \code{band}.
+#' Returns \code{NA} if a scale value is not defined for this \code{band}.
 #'
 #' \code{$setScale(band, scale)}
 #' Sets the pixel value scale (units value = (raw value * scale) + offset) 
 #' for \code{band}. Many raster formats do not implement this method.
-#' Returns logical TRUE on success or FALSE if the scale could not be set.
+#' Returns logical \code{TRUE} on success or \code{FALSE} if the scale could
+#' not be set.
 #'
 #' \code{$getOffset(band)}
 #' Returns the pixel value offset (units value = (raw value * scale) + offset) 
 #' for \code{band}.
 #' This value (in combination with the \code{getScale()} value) can be used to 
 #' transform raw pixel values into the units returned by \code{getUnitType()}.
-#' Returns NA if an offset value is not defined for this \code{band}.
+#' Returns \code{NA} if an offset value is not defined for this \code{band}.
 #'
 #' \code{$setOffset(band, offset)}
 #' Sets the pixel value offset (units value = (raw value * scale) + offset) 
 #' for \code{band}. Many raster formats do not implement this method.
-#' Returns logical TRUE on success or FALSE if the offset could not be set.
+#' Returns logical \code{TRUE} on success or \code{FALSE} if the offset could
+#' not be set.
 #'
 #' \code{$getMetadata(band, domain)}
 #' Returns a character vector of all metadata `name=value` pairs that exist in 
@@ -369,10 +372,10 @@
 #' region will be read (typically the same value as ysize).
 #' Returns a numeric or complex vector containing the values that were read.
 #' It is organized in left to right, top to bottom pixel order. 
-#' NA will be returned in place of the nodata value if the 
+#' \code{NA} will be returned in place of the nodata value if the 
 #' raster dataset has a nodata value defined for this band.
-#' Data are read as R `integer` type when possible for the raster data type
-#' (Byte, Int8, Int16, UInt16, Int32), otherwise as type `double` (UInt32, 
+#' Data are read as R integer type when possible for the raster data type
+#' (Byte, Int8, Int16, UInt16, Int32), otherwise as type double (UInt32, 
 #' Float32, Float64).
 #' No rescaling of the data is performed (see \code{$getScale()} and 
 #' \code{$getOffset()} above).
@@ -388,7 +391,7 @@
 #' \code{xsize} is the width in pixels of the region to write.
 #' \code{ysize} is the height in pixels of the region to write.
 #' \code{rasterData} is a numeric or complex vector containing values to write.
-#' It is organized in left to right, top to bottom pixel order. NA in 
+#' It is organized in left to right, top to bottom pixel order. \code{NA} in 
 #' \code{rasterData} should be replaced with a suitable nodata value prior to
 #' writing (see \code{$getNoDataValue()} and \code{$setNoDataValue()} above).
 #' An error is raised if the operation fails (no return value).
@@ -449,6 +452,9 @@
 #' ## retrieve the raster format name
 #' ds$getDriverShortName()
 #' ds$getDriverLongName()
+#'
+#' ## retrieve a list of files composing the dataset
+#' ds$getFileList()
 #'
 #' ## retrieve dataset parameters
 #' ds$getRasterXSize()
