@@ -571,13 +571,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // bbox_from_wkt
-Rcpp::NumericVector bbox_from_wkt(std::string wkt);
-RcppExport SEXP _gdalraster_bbox_from_wkt(SEXP wktSEXP) {
+Rcpp::NumericVector bbox_from_wkt(std::string wkt, double extend_x, double extend_y);
+RcppExport SEXP _gdalraster_bbox_from_wkt(SEXP wktSEXP, SEXP extend_xSEXP, SEXP extend_ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type wkt(wktSEXP);
-    rcpp_result_gen = Rcpp::wrap(bbox_from_wkt(wkt));
+    Rcpp::traits::input_parameter< double >::type extend_x(extend_xSEXP);
+    Rcpp::traits::input_parameter< double >::type extend_y(extend_ySEXP);
+    rcpp_result_gen = Rcpp::wrap(bbox_from_wkt(wkt, extend_x, extend_y));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -646,7 +648,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_srs_is_geographic", (DL_FUNC) &_gdalraster_srs_is_geographic, 1},
     {"_gdalraster_srs_is_projected", (DL_FUNC) &_gdalraster_srs_is_projected, 1},
     {"_gdalraster_srs_is_same", (DL_FUNC) &_gdalraster_srs_is_same, 2},
-    {"_gdalraster_bbox_from_wkt", (DL_FUNC) &_gdalraster_bbox_from_wkt, 1},
+    {"_gdalraster_bbox_from_wkt", (DL_FUNC) &_gdalraster_bbox_from_wkt, 3},
     {"_gdalraster_bbox_to_wkt", (DL_FUNC) &_gdalraster_bbox_to_wkt, 3},
     {"_rcpp_module_boot_mod_cmb_table", (DL_FUNC) &_rcpp_module_boot_mod_cmb_table, 0},
     {"_rcpp_module_boot_mod_GDALRaster", (DL_FUNC) &_rcpp_module_boot_mod_GDALRaster, 0},
