@@ -4,14 +4,23 @@
 \alias{bbox_from_wkt}
 \title{Get the bounding box of a geometry specified in OGC WKT format.}
 \usage{
-bbox_from_wkt(wkt)
+bbox_from_wkt(wkt, extend_x = 0, extend_y = 0)
 }
 \arguments{
 \item{wkt}{Character. OGC WKT string for a simple feature 2D geometry.}
+
+\item{extend_x}{Numeric scalar. Distance to extend the output bounding box
+in both directions along the x-axis
+(results in \code{xmin = bbox[1] - extend_x}, \code{xmax = bbox[3] + extend_x}).}
+
+\item{extend_y}{Numeric scalar. Distance to extend the output bounding box
+in both directions along the y-axis
+(results in \code{ymin = bbox[2] - extend_y}, \code{ymax = bbox[4] + extend_y}).}
 }
 \value{
 Numeric vector of length four containing the xmin, ymin,
-xmax, ymax of the geometry specified by \code{wkt}.
+xmax, ymax of the geometry specified by \code{wkt} (possibly extended by values
+in \code{extend_x}, \code{extend_y}).
 }
 \description{
 \code{bbox_from_wkt()} returns the bounding box of a WKT 2D geometry
@@ -21,7 +30,7 @@ xmax, ymax of the geometry specified by \code{wkt}.
 bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2 
 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, 
 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
-bbox_from_wkt(bnd)
+bbox_from_wkt(bnd, 100, 100)
 }
 \seealso{
 \code{\link[=bbox_to_wkt]{bbox_to_wkt()}}

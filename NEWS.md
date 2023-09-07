@@ -1,8 +1,8 @@
 # gdalraster 1.4.1 (dev)
 
-* add `GDALRaster$getDescription()` and `GDALRaster$setDescription()`: get/set description for raster band objects (2023-09-06)
+* `bbox_from_wkt()`, `bbox_to_wkt()`: add arguments `extend_x`, `extend_y` (2023-09-07)
 
-* `bbox_to_wkt()`: add arguments `extend_x`, `extend_y` (2023-09-06)
+* add `GDALRaster$getDescription()` and `GDALRaster$setDescription()`: get/set description for raster band objects (2023-09-06)
 
 * add `g_buffer()`: compute buffer of a WKT geometry (2023-09-05)
 
