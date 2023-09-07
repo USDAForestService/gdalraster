@@ -35,6 +35,7 @@ test_that("band-level parameters are correct", {
 	expect_equal(ds$getUnitType(1), "")
 	expect_true(is.na(ds$getScale(1)))
 	expect_true(is.na(ds$getOffset(1)))
+	expect_equal(ds$getDescription(1), "")
 	ds$close()
 })
 
@@ -75,6 +76,8 @@ test_that("open/close/re-open works", {
 	expect_equal(ds$getFilename(), mod_file)
 	ds$open(read_only=FALSE)
 	expect_true(ds$isOpen())
+	ds$setDescription(band=1, "test")
+	expect_equal(ds$getDescription(band=1), "test")
 	r[is.na(r)] <- DEFAULT_NODATA[["UInt32"]]
 	ds$write(band=1, 0, 0, dm[1], dm[2], r)
 	expect_false(all(is.na(read_ds(ds))))

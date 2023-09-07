@@ -77,6 +77,9 @@ ds$setScale(band, scale)
 ds$getOffset(band)
 ds$setOffset(band, offset)
 
+ds$getDescription(band)
+ds$setDescription(band)
+
 ds$getMetadata(band, domain)
 ds$getMetadataItem(band, mdi_name, domain)
 ds$setMetadataItem(band, mdi_name, mdi_value, domain)
@@ -348,6 +351,14 @@ for \code{band}. Many raster formats do not implement this method.
 Returns logical \code{TRUE} on success or \code{FALSE} if the offset could
 not be set.
 
+\code{$getDescription(band)}
+Returns a string containing the object description for \code{band}. An
+empty string is returned if no description is set for the band.
+
+\code{$setDescription(band, desc)}
+Sets an object description for \code{band}. \code{desc} is a character
+string to set as the description.
+
 \code{$getMetadata(band, domain)}
 Returns a character vector of all metadata \code{name=value} pairs that exist in
 the specified \code{domain}, or \code{""} (empty string) if there are no
@@ -471,6 +482,7 @@ ds$res()
 ds$dim()
 
 ## retrieve some band-level parameters
+ds$getDescription(band=1)
 ds$getBlockSize(band=1)
 ds$getOverviewCount(band=1)
 ds$getDataTypeName(band=1)
