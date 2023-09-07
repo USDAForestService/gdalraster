@@ -2,9 +2,9 @@
 
 * add `GDALRaster$getDescription()` and `GDALRaster$setDescription()`: get/set description for raster band objects (2023-09-06)
 
-* add `g_buffer()`: compute buffer of a WKT geometry (2023-09-05)
+* `bbox_to_wkt()`: add arguments `extend_x`, `extend_y` (2023-09-06)
 
-* `bbox_to_wkt()`: add arguments `x_ext`, `y_ext` (2023-09-05)
+* add `g_buffer()`: compute buffer of a WKT geometry (2023-09-05)
 
 * add `sieveFilter()`: wrapper for `GDALSieveFilter()` in the GDAL Algorithms API (2023-09-04)
 
