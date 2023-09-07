@@ -143,6 +143,9 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getOffset</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setOffset</span><span class="op">(</span><span class="va">band</span>, <span class="va">offset</span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getDescription</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setDescription</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span><span class="va">band</span>, <span class="va">domain</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span><span class="va">band</span>, <span class="va">mdi_name</span>, <span class="va">domain</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setMetadataItem</span><span class="op">(</span><span class="va">band</span>, <span class="va">mdi_name</span>, <span class="va">mdi_value</span>, <span class="va">domain</span><span class="op">)</span></span>
@@ -348,6 +351,12 @@ Sets the pixel value offset (units value = (raw value * scale) + offset)
 for <code>band</code>. Many raster formats do not implement this method.
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the offset could
 not be set.</p>
+<p><code>$getDescription(band)</code>
+Returns a string containing the object description for <code>band</code>. An
+empty string is returned if no description is set for the band.</p>
+<p><code>$setDescription(band, desc)</code>
+Sets an object description for <code>band</code>. <code>desc</code> is a character
+string to set as the description.</p>
 <p><code>$getMetadata(band, domain)</code>
 Returns a character vector of all metadata <code>name=value</code> pairs that exist in
 the specified <code>domain</code>, or <code>""</code> (empty string) if there are no
@@ -611,6 +620,8 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 143 107   8</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## retrieve some band-level parameters</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDescription</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Elevation"</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 143   1</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
