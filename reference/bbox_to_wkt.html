@@ -62,7 +62,7 @@ Requires GDAL built with the GEOS library.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">bbox_to_wkt</span><span class="op">(</span><span class="va">bbox</span>, x_ext <span class="op">=</span> <span class="fl">0</span>, y_ext <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">bbox_to_wkt</span><span class="op">(</span><span class="va">bbox</span>, extend_x <span class="op">=</span> <span class="fl">0</span>, extend_y <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -72,16 +72,16 @@ Requires GDAL built with the GEOS library.</p>
 xmax, ymax.</p></dd>
 
 
-<dt>x_ext</dt>
-<dd><p>Numeric scalar. Distance in <code>bbox</code> units to extend the
-rectangle along the x-axis (results in <code>xmin = bbox[1] - x_ext</code>,
-<code>xmax = bbox[3] + x_ext</code>).</p></dd>
+<dt>extend_x</dt>
+<dd><p>Numeric scalar. Distance in units of <code>bbox</code> to extend the
+rectangle in both directions along the x-axis
+(results in <code>xmin = bbox[1] - extend_x</code>, <code>xmax = bbox[3] + extend_x</code>).</p></dd>
 
 
-<dt>y_ext</dt>
-<dd><p>Numeric scalar. Distance in <code>bbox</code> units to extend the
-rectangle along the y-axis (results in <code>ymin = bbox[2] - y_ext</code>,
-<code>ymax = bbox[4] + y_ext</code>).</p></dd>
+<dt>extend_y</dt>
+<dd><p>Numeric scalar. Distance in units of <code>bbox</code> to extend the
+rectangle in both directions along the y-axis
+(results in <code>ymin = bbox[2] - extend_y</code>, <code>ymax = bbox[4] + extend_y</code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
