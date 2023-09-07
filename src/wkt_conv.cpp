@@ -300,12 +300,12 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 //'
 //' @param bbox Numeric vector of length four containing xmin, ymin, 
 //' xmax, ymax.
-//' @param x_ext Numeric scalar. Distance in `bbox` units to extend the
-//' rectangle along the x-axis (results in `xmin = bbox[1] - x_ext`,
-//' `xmax = bbox[3] + x_ext`).
-//' @param y_ext Numeric scalar. Distance in `bbox` units to extend the
-//' rectangle along the y-axis (results in `ymin = bbox[2] - y_ext`,
-//' `ymax = bbox[4] + y_ext`).
+//' @param extend_x Numeric scalar. Distance in units of `bbox` to extend the
+//' rectangle in both directions along the x-axis
+//' (results in `xmin = bbox[1] - extend_x`, `xmax = bbox[3] + extend_x`).
+//' @param extend_y Numeric scalar. Distance in units of `bbox` to extend the
+//' rectangle in both directions along the y-axis
+//' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
 //' @return Character string for an OGC WKT polygon.
 //' `NA` is returned if GDAL was built without the GEOS library.
 //'
@@ -319,7 +319,7 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt) {
 //' ds$close()
 // [[Rcpp::export]]
 Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox,
-		double x_ext = 0, double y_ext = 0) {
+		double extend_x = 0, double extend_y = 0) {
 		
 	if (bbox.size() != 4)
 		Rcpp::stop("Invalid bounding box.");
@@ -330,10 +330,10 @@ Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox,
 	}
 	
 	Rcpp::NumericVector bbox_in = Rcpp::clone(bbox);
-	bbox_in[0] -= x_ext;
-	bbox_in[1] -= y_ext;
-	bbox_in[2] += x_ext;
-	bbox_in[3] += y_ext;
+	bbox_in[0] -= extend_x;
+	bbox_in[1] -= extend_y;
+	bbox_in[2] += extend_x;
+	bbox_in[3] += extend_y;
 
 	Rcpp::NumericMatrix poly_xy(5, 2);
 	poly_xy.row(0) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(3));

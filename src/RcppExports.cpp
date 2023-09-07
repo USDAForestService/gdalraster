@@ -582,15 +582,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // bbox_to_wkt
-Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox, double x_ext, double y_ext);
-RcppExport SEXP _gdalraster_bbox_to_wkt(SEXP bboxSEXP, SEXP x_extSEXP, SEXP y_extSEXP) {
+Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox, double extend_x, double extend_y);
+RcppExport SEXP _gdalraster_bbox_to_wkt(SEXP bboxSEXP, SEXP extend_xSEXP, SEXP extend_ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericVector >::type bbox(bboxSEXP);
-    Rcpp::traits::input_parameter< double >::type x_ext(x_extSEXP);
-    Rcpp::traits::input_parameter< double >::type y_ext(y_extSEXP);
-    rcpp_result_gen = Rcpp::wrap(bbox_to_wkt(bbox, x_ext, y_ext));
+    Rcpp::traits::input_parameter< double >::type extend_x(extend_xSEXP);
+    Rcpp::traits::input_parameter< double >::type extend_y(extend_ySEXP);
+    rcpp_result_gen = Rcpp::wrap(bbox_to_wkt(bbox, extend_x, extend_y));
     return rcpp_result_gen;
 END_RCPP
 }
