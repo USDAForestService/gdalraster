@@ -62,7 +62,7 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">bbox_from_wkt</span><span class="op">(</span><span class="va">wkt</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">bbox_from_wkt</span><span class="op">(</span><span class="va">wkt</span>, extend_x <span class="op">=</span> <span class="fl">0</span>, extend_y <span class="op">=</span> <span class="fl">0</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -70,13 +70,26 @@
     <dl><dt>wkt</dt>
 <dd><p>Character. OGC WKT string for a simple feature 2D geometry.</p></dd>
 
+
+<dt>extend_x</dt>
+<dd><p>Numeric scalar. Distance to extend the output bounding box
+in both directions along the x-axis
+(results in <code>xmin = bbox[1] - extend_x</code>, <code>xmax = bbox[3] + extend_x</code>).</p></dd>
+
+
+<dt>extend_y</dt>
+<dd><p>Numeric scalar. Distance to extend the output bounding box
+in both directions along the y-axis
+(results in <code>ymin = bbox[2] - extend_y</code>, <code>ymax = bbox[4] + extend_y</code>).</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
 <p>Numeric vector of length four containing the xmin, ymin,
-xmax, ymax of the geometry specified by <code>wkt</code>.</p>
+xmax, ymax of the geometry specified by <code>wkt</code> (possibly extended by values
+in <code>extend_x</code>, <code>extend_y</code>).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -88,8 +101,8 @@ xmax, ymax of the geometry specified by <code>wkt</code>.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">bnd</span> <span class="op">&lt;-</span> <span class="st">"POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2 </span></span></span>
 <span class="r-in"><span><span class="st">5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, </span></span></span>
 <span class="r-in"><span><span class="st">325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"</span></span></span>
-<span class="r-in"><span><span class="fu">bbox_from_wkt</span><span class="op">(</span><span class="va">bnd</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323794.2 5102885.8  326420.0 5104929.4</span>
+<span class="r-in"><span><span class="fu">bbox_from_wkt</span><span class="op">(</span><span class="va">bnd</span>, <span class="fl">100</span>, <span class="fl">100</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323694.2 5102785.8  326520.0 5105029.4</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
