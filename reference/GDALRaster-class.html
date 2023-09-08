@@ -128,6 +128,8 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getDescription</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setDescription</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">buildOverviews</span><span class="op">(</span><span class="va">resampling</span>, <span class="va">levels</span>, <span class="va">bands</span><span class="op">)</span></span>
@@ -142,9 +144,6 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setScale</span><span class="op">(</span><span class="va">band</span>, <span class="va">scale</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getOffset</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setOffset</span><span class="op">(</span><span class="va">band</span>, <span class="va">offset</span><span class="op">)</span></span>
-<span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getDescription</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">setDescription</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span><span class="va">band</span>, <span class="va">domain</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span><span class="va">band</span>, <span class="va">mdi_name</span>, <span class="va">domain</span><span class="op">)</span></span>
@@ -236,6 +235,12 @@ Equivalent to:
 Returns the number of raster bands on this dataset. For the methods
 described below that operate on individual bands, the <code>band</code>
 argument is the integer band number (1-based).</p>
+<p><code>$getDescription(band)</code>
+Returns a string containing the description for <code>band</code>. An empty
+string is returned if no description is set for the band.</p>
+<p><code>$setDescription(band, desc)</code>
+Sets a description for <code>band</code>. <code>desc</code> is the character string
+to set.</p>
 <p><code>$getBlockSize(band)</code>
 Returns an integer vector of length two (Xsize, Ysize) containing the
 "natural" block size of <code>band</code>.
@@ -249,7 +254,7 @@ be the tile size. Note that the X and Y block sizes don't have to divide
 the image size evenly, meaning that right and bottom edge blocks may be
 incomplete.</p>
 <p><code>$getOverviewCount(band)</code>
-Returns the number of overview layers available for <code>band</code>.</p>
+Returns the number of overview layers (pyramids) available for <code>band</code>.</p>
 <p><code>$buildOverviews(resampling, levels, bands)</code>
 Build one or more raster overview images using the specified downsampling
 algorithm.
@@ -351,12 +356,6 @@ Sets the pixel value offset (units value = (raw value * scale) + offset)
 for <code>band</code>. Many raster formats do not implement this method.
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the offset could
 not be set.</p>
-<p><code>$getDescription(band)</code>
-Returns a string containing the object description for <code>band</code>. An
-empty string is returned if no description is set for the band.</p>
-<p><code>$setDescription(band, desc)</code>
-Sets an object description for <code>band</code>. <code>desc</code> is a character
-string to set as the description.</p>
 <p><code>$getMetadata(band, domain)</code>
 Returns a character vector of all metadata <code>name=value</code> pairs that exist in
 the specified <code>domain</code>, or <code>""</code> (empty string) if there are no
