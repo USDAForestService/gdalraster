@@ -62,6 +62,8 @@ ds$res()
 ds$dim()
 
 ds$getRasterCount()
+ds$getDescription(band)
+ds$setDescription(band)
 ds$getBlockSize(band)
 ds$getOverviewCount(band)
 ds$buildOverviews(resampling, levels, bands)
@@ -76,9 +78,6 @@ ds$getScale(band)
 ds$setScale(band, scale)
 ds$getOffset(band)
 ds$setOffset(band, offset)
-
-ds$getDescription(band)
-ds$setDescription(band)
 
 ds$getMetadata(band, domain)
 ds$getMetadataItem(band, mdi_name, domain)
@@ -196,6 +195,14 @@ Returns the number of raster bands on this dataset. For the methods
 described below that operate on individual bands, the \code{band}
 argument is the integer band number (1-based).
 
+\code{$getDescription(band)}
+Returns a string containing the description for \code{band}. An empty
+string is returned if no description is set for the band.
+
+\code{$setDescription(band, desc)}
+Sets a description for \code{band}. \code{desc} is the character string
+to set.
+
 \code{$getBlockSize(band)}
 Returns an integer vector of length two (Xsize, Ysize) containing the
 "natural" block size of \code{band}.
@@ -210,7 +217,7 @@ the image size evenly, meaning that right and bottom edge blocks may be
 incomplete.
 
 \code{$getOverviewCount(band)}
-Returns the number of overview layers available for \code{band}.
+Returns the number of overview layers (pyramids) available for \code{band}.
 
 \code{$buildOverviews(resampling, levels, bands)}
 Build one or more raster overview images using the specified downsampling
@@ -350,14 +357,6 @@ Sets the pixel value offset (units value = (raw value * scale) + offset)
 for \code{band}. Many raster formats do not implement this method.
 Returns logical \code{TRUE} on success or \code{FALSE} if the offset could
 not be set.
-
-\code{$getDescription(band)}
-Returns a string containing the object description for \code{band}. An
-empty string is returned if no description is set for the band.
-
-\code{$setDescription(band, desc)}
-Sets an object description for \code{band}. \code{desc} is a character
-string to set as the description.
 
 \code{$getMetadata(band, domain)}
 Returns a character vector of all metadata \code{name=value} pairs that exist in
