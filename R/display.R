@@ -20,8 +20,8 @@
 }
 
 #' @noRd
-.as_raster <- function(a, col_tbl=NULL, normalize=TRUE,
-				minmax_def=NULL, minmax_pct_cut=NULL,
+.as_raster <- function(a, col_tbl=NULL, maxColorValue=1,
+				normalize=TRUE, minmax_def=NULL, minmax_pct_cut=NULL,
 				col_map_fn=NULL, na_col=rgb(0,0,0,0), ...) {
 				
 # Create an object of class "raster", a matrix of color values representing
@@ -40,15 +40,18 @@
 		if(nbands != 1)
 			stop("A color table can only be used with single-band data.",
 					call.=FALSE)
-
+		
 		ct <- as.data.frame(col_tbl)
-		if(ncol(ct) != 4)
-			stop("Color table must have four columns.", call.=FALSE)
-
-		ct[,5] <- rgb(ct[,2], ct[,3], ct[,4])
-		names(ct) <- c("value", "r", "g", "b", "rgb")
+		if(ncol(ct) < 4 || ncol(ct) > 5)
+			stop("Color table must have four or five columns.", call.=FALSE)
+		
+		if (ncol(ct) == 4) # add alpha channel
+			ct[,5] <- rep(maxColorValue, nrow(ct))
+		ct[,6] <- rgb(ct[,2], ct[,3], ct[,4], ct[,5],
+						maxColorValue=maxColorValue)
+		names(ct) <- c("value", "r", "g", "b", "a", "rgb")
 		f <- function(x) { ct$rgb[match(x, ct$value)] }
-		r <- vapply(a, FUN=f, FUN.VALUE="#000000", USE.NAMES=FALSE)
+		r <- vapply(a, FUN=f, FUN.VALUE="#00000000", USE.NAMES=FALSE)
 		if (anyNA(r))
 			r[is.na(r)] <- na_col
 		dim(r) <- dim(a)[2:1]
@@ -134,9 +137,15 @@
 #' @param max_pixels The maximum number of pixels that the function will
 #' use for display (per band). An error is raised if `(xsize * ysize)` exceeds
 #' this value. Setting to `NULL` turns off this check.
-#' @param col_tbl A color table as a matrix or data frame with four columns.
-#' Column 1 contains the numeric raster values, columns 2:4 contain the
-#' intensities (between 0 and 1) of the red, green and blue primaries.
+#' @param col_tbl A color table as a matrix or data frame with four or five
+#' columns. Column 1 contains the numeric pixel values. Columns 2:4 contain
+#' the intensities of the red, green and blue primaries (`0:1` by default,
+#' or use integer `0:255` by setting `maxColorValue = 255`).
+#' An optional column 5 may contain alpha transparency values, `0` for fully
+#' transparent to `1` (or `maxColorValue`) for opaque (the default if column 5
+#' is missing).
+#' @param maxColorValue A number giving the maximum of the color values range
+#' in `col_tbl` (see above). The default is `1`.
 #' @param normalize Logical. `TRUE` to rescale pixel values so that their
 #' range is `[0,1]`, normalized to the full range of the pixel data by default
 #' (`min(data)`, `max(data)`, per band). Ignored if `col_tbl` is used.
@@ -252,9 +261,9 @@
 #' ds$close()
 #' @export
 plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
-						max_pixels=2.5e7, col_tbl=NULL, normalize=TRUE,
-						minmax_def=NULL, minmax_pct_cut=NULL, col_map_fn=NULL,
-						xlim=c(0, xsize), ylim=c(ysize, 0),
+						max_pixels=2.5e7, col_tbl=NULL, maxColorValue=1,
+						normalize=TRUE, minmax_def=NULL, minmax_pct_cut=NULL,
+						col_map_fn=NULL, xlim=c(0, xsize), ylim=c(ysize, 0),
 						interpolate=TRUE, asp=1, axes=TRUE, main="",
 						xlab="x", ylab="y", xaxs="i", yaxs="i", 
 						legend=NULL, digits=2, na_col=rgb(0,0,0,0), ...) {
@@ -306,6 +315,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 	a <- array(data_in, dim = c(xsize, ysize, nbands))
 	r <- .as_raster(a,
 					col_tbl=col_tbl,
+					maxColorValue=maxColorValue,
 					normalize=normalize,
 					minmax_def=minmax_def,
 					minmax_pct_cut=minmax_pct_cut,

@@ -11,6 +11,7 @@ plot_raster(
   nbands = 1,
   max_pixels = 2.5e+07,
   col_tbl = NULL,
+  maxColorValue = 1,
   normalize = TRUE,
   minmax_def = NULL,
   minmax_pct_cut = NULL,
@@ -53,9 +54,16 @@ the entire raster will be read at full resolution.}
 use for display (per band). An error is raised if \code{(xsize * ysize)} exceeds
 this value. Setting to \code{NULL} turns off this check.}
 
-\item{col_tbl}{A color table as a matrix or data frame with four columns.
-Column 1 contains the numeric raster values, columns 2:4 contain the
-intensities (between 0 and 1) of the red, green and blue primaries.}
+\item{col_tbl}{A color table as a matrix or data frame with four or five
+columns. Column 1 contains the numeric pixel values. Columns 2:4 contain
+the intensities of the red, green and blue primaries (\code{0:1} by default,
+or use integer \code{0:255} by setting \code{maxColorValue = 255}).
+An optional column 5 may contain alpha transparency values, \code{0} for fully
+transparent to \code{1} (or \code{maxColorValue}) for opaque (the default if column 5
+is missing).}
+
+\item{maxColorValue}{A number giving the maximum of the color values range
+in \code{col_tbl} (see above). The default is \code{1}.}
 
 \item{normalize}{Logical. \code{TRUE} to rescale pixel values so that their
 range is \verb{[0,1]}, normalized to the full range of the pixel data by default
