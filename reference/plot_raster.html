@@ -66,6 +66,7 @@
 <span>  nbands <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  max_pixels <span class="op">=</span> <span class="fl">2.5e+07</span>,</span>
 <span>  col_tbl <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  maxColorValue <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  normalize <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  minmax_def <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  minmax_pct_cut <span class="op">=</span> <span class="cn">NULL</span>,</span>
@@ -121,9 +122,18 @@ this value. Setting to <code>NULL</code> turns off this check.</p></dd>
 
 
 <dt>col_tbl</dt>
-<dd><p>A color table as a matrix or data frame with four columns.
-Column 1 contains the numeric raster values, columns 2:4 contain the
-intensities (between 0 and 1) of the red, green and blue primaries.</p></dd>
+<dd><p>A color table as a matrix or data frame with four or five
+columns. Column 1 contains the numeric pixel values. Columns 2:4 contain
+the intensities of the red, green and blue primaries (<code>0:1</code> by default,
+or use integer <code>0:255</code> by setting <code>maxColorValue = 255</code>).
+An optional column 5 may contain alpha transparency values, <code>0</code> for fully
+transparent to <code>1</code> (or <code>maxColorValue</code>) for opaque (the default if column 5
+is missing).</p></dd>
+
+
+<dt>maxColorValue</dt>
+<dd><p>A number giving the maximum of the color values range
+in <code>col_tbl</code> (see above). The default is <code>1</code>.</p></dd>
 
 
 <dt>normalize</dt>
