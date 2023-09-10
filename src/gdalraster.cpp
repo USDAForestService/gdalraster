@@ -771,6 +771,81 @@ void GDALRaster::fillRaster(int band, double value, double ivalue) {
 	}
 }
 
+SEXP GDALRaster::getColorTable(int band) const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	GDALColorTableH hColTbl = GDALGetRasterColorTable(hBand);
+	if (hColTbl == NULL)
+		return R_NilValue;
+
+	int nEntries = GDALGetColorEntryCount(hColTbl);
+	GDALPaletteInterp gpi = GDALGetPaletteInterpretation(hColTbl);
+	Rcpp::IntegerMatrix col_tbl(nEntries, 5);
+	Rcpp::CharacterVector col_tbl_names;
+
+	if (gpi == GPI_Gray) {
+		col_tbl_names = {"value", "gray", "c2", "c3", "c4"};
+		Rcpp::colnames(col_tbl) = col_tbl_names;
+	}
+	else if (gpi == GPI_RGB) {
+		col_tbl_names = {"value", "red", "green", "blue", "alpha"};
+		Rcpp::colnames(col_tbl) = col_tbl_names;
+	}
+	else if (gpi == GPI_CMYK) {
+		col_tbl_names = {"value", "cyan", "magenta", "yellow", "black"};
+		Rcpp::colnames(col_tbl) = col_tbl_names;
+	}
+	else if (gpi == GPI_HLS) {
+		col_tbl_names = {"value", "hue", "lightness", "saturation", "c4"};
+		Rcpp::colnames(col_tbl) = col_tbl_names;
+	}
+	else {
+		col_tbl_names = {"value", "c1", "c2", "c3", "c4"};
+		Rcpp::colnames(col_tbl) = col_tbl_names;
+	}
+
+	for (int i=0; i < nEntries; ++i) {
+		const GDALColorEntry* colEntry = GDALGetColorEntry(hColTbl, i);
+		col_tbl(i, 0) = i;
+		col_tbl(i, 1) = colEntry->c1;
+		col_tbl(i, 2) = colEntry->c2;
+		col_tbl(i, 3) = colEntry->c3;
+		col_tbl(i, 4) = colEntry->c4;
+	}
+	
+	return col_tbl;
+}
+
+std::string GDALRaster::getPaletteInterp(int band) const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	GDALColorTableH hColTbl = GDALGetRasterColorTable(hBand);
+	if (hColTbl == NULL)
+		return "";
+
+	GDALPaletteInterp gpi = GDALGetPaletteInterpretation(hColTbl);
+
+	if (gpi == GPI_Gray) {
+		return "Gray";
+	}
+	else if (gpi == GPI_RGB) {
+		return "RGB";
+	}
+	else if (gpi == GPI_CMYK) {
+		return "CMYK";
+	}
+	else if (gpi == GPI_HLS) {
+		return "HLS";
+	}
+	else {
+		return "unknown";
+	}
+}
+
 int GDALRaster::getChecksum(int band, int xoff, int yoff,
 		int xsize, int ysize) const {
 
@@ -883,6 +958,10 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Write a region of raster data for a band.")
     .method("fillRaster", &GDALRaster::fillRaster, 
     	"Fill this band with a constant value.")
+    .const_method("getColorTable", &GDALRaster::getColorTable, 
+    	"Return the color table associated with band.")
+    .const_method("getPaletteInterp", &GDALRaster::getPaletteInterp, 
+    	"Get the palette interpretation.")
     .const_method("getChecksum", &GDALRaster::getChecksum, 
     	"Compute checksum for raster region.")
     .method("close", &GDALRaster::close, 

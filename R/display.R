@@ -143,7 +143,8 @@
 #' or use integer `0:255` by setting `maxColorValue = 255`).
 #' An optional column 5 may contain alpha transparency values, `0` for fully
 #' transparent to `1` (or `maxColorValue`) for opaque (the default if column 5
-#' is missing).
+#' is missing). If `data` is a `GDALRaster` object, a built-in color table will
+#' be used automatically if one exists in the dataset.
 #' @param maxColorValue A number giving the maximum of the color values range
 #' in `col_tbl` (see above). The default is `1`.
 #' @param normalize Logical. `TRUE` to rescale pixel values so that their
@@ -296,6 +297,15 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 		data_in <- read_ds(data, bands=1:nbands, xoff=0, yoff=0,
 							xsize=dm[1], ysize=dm[2],
 							out_xsize=out_xsize, out_ysize=out_ysize)
+		
+		if (nbands==1 && is.null(col_tbl) && is.null(col_map_fn)) {
+			# check for a built-in color table
+			if (!is.null(data$getColorTable(band=1)) && 
+				data$getPaletteInterp(band=1)=="RGB") {
+					col_tbl = data$getColorTable(band=1)
+					maxColorValue = 255
+			}
+		}
 	}
 	else {
 		if (is.null(xsize) || is.null(ysize))

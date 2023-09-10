@@ -60,7 +60,8 @@ the intensities of the red, green and blue primaries (\code{0:1} by default,
 or use integer \code{0:255} by setting \code{maxColorValue = 255}).
 An optional column 5 may contain alpha transparency values, \code{0} for fully
 transparent to \code{1} (or \code{maxColorValue}) for opaque (the default if column 5
-is missing).}
+is missing). If \code{data} is a \code{GDALRaster} object, a built-in color table will
+be used automatically if one exists in the dataset.}
 
 \item{maxColorValue}{A number giving the maximum of the color values range
 in \code{col_tbl} (see above). The default is \code{1}.}

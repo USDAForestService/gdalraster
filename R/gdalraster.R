@@ -73,6 +73,9 @@
 #' ds$write(band, xoff, yoff, xsize, ysize, rasterData)
 #' ds$fillRaster(value, ivalue)
 #'
+#' ds$getColorTable(band)
+#' ds$getPaletteInterp(band)
+#'
 #' ds$getChecksum(band, xoff, yoff, xsize, ysize)
 #'
 #' ds$close()
@@ -406,13 +409,30 @@
 #' writing (see \code{$getNoDataValue()} and \code{$setNoDataValue()} above).
 #' An error is raised if the operation fails (no return value).
 #'
-#' \code{$fillRaster(band, value, ivalue)}
-#' Fills \code{band} with a constant value. Used to clear a band to a specified
-#' default value.
-#' \code{value} is the fill value (real component).
-#' \code{ivalue} is the imaginary component of fill value for a raster with
-#' complex data type. Set \code{ivalue = 0} for real data types. No return 
-#' value, called for side effects.
+#' \code{$getColorTable(band)}
+#' Returns the color table associated with \code{band}, or \code{NULL} if
+#' there is no associated color table. The color table is returned as an
+#' integer matrix with five columns. To associate a color with a raster pixel,
+#' the pixel value is used as a subscript into the color table. This means that
+#' the colors are always applied starting at zero and ascending
+#' (see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL 
+#' Color Table}).
+#' Column 1 contains the pixel values. Interpretation of columns 2:5 depends
+#' on the value of `$getPaletteInterp()` (see below). For "RGB", columns 2:5
+#' contain red, green, blue, alpha as 0-255 integer values.
+#'
+#' \code{$getPaletteInterp(band)}
+#' If \code{band} has an associated color table, this method returns a
+#' character string with the palette interpretation for columns 2:5 of the
+#' table. An empty string (\code{""}) is returned if \code{band} does not have
+#' an associated color table. The palette interpretation values and their
+#' meanings are:
+#' \tabular{rl}{
+#'  Gray \tab column 2 contains grayscale values (columns 3:5 unused)\cr
+#'  RGB  \tab columns 2:5 contain red, green, blue, alpha\cr
+#'  CMYK \tab columns 2:5 contain cyan, magenta, yellow, black\cr
+#'  HLS  \tab columns 2:4 contain hue, lightness, saturation (column 5 unused)
+#' }
 #'
 #' \code{$getChecksum(band, xoff, yoff, xsize, ysize)}
 #' Returns a 16-bit integer (0-65535) checksum from a region of raster data 

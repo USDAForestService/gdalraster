@@ -142,6 +142,9 @@ class GDALRaster {
 
 	void fillRaster(int band, double value, double ivalue);
 	
+	SEXP getColorTable(int band) const;
+	std::string getPaletteInterp(int band) const;
+	
 	int getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
 	
 	void close();
