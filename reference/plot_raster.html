@@ -128,7 +128,8 @@ the intensities of the red, green and blue primaries (<code>0:1</code> by defaul
 or use integer <code>0:255</code> by setting <code>maxColorValue = 255</code>).
 An optional column 5 may contain alpha transparency values, <code>0</code> for fully
 transparent to <code>1</code> (or <code>maxColorValue</code>) for opaque (the default if column 5
-is missing).</p></dd>
+is missing). If <code>data</code> is a <code>GDALRaster</code> object, a built-in color table will
+be used automatically if one exists in the dataset.</p></dd>
 
 
 <dt>maxColorValue</dt>

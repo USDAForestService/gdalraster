@@ -153,6 +153,10 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="va">band</span>, <span class="va">xoff</span>, <span class="va">yoff</span>, <span class="va">xsize</span>, <span class="va">ysize</span>, <span class="va">rasterData</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">fillRaster</span><span class="op">(</span><span class="va">value</span>, <span class="va">ivalue</span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getColorTable</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getPaletteInterp</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setColorTable</span><span class="op">(</span><span class="va">band</span>, <span class="va">col_tbl</span>, <span class="va">palette_interp</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getChecksum</span><span class="op">(</span><span class="va">band</span>, <span class="va">xoff</span>, <span class="va">yoff</span>, <span class="va">xsize</span>, <span class="va">ysize</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -419,13 +423,39 @@ It is organized in left to right, top to bottom pixel order. <code>NA</code> in
 <code>rasterData</code> should be replaced with a suitable nodata value prior to
 writing (see <code>$getNoDataValue()</code> and <code>$setNoDataValue()</code> above).
 An error is raised if the operation fails (no return value).</p>
-<p><code>$fillRaster(band, value, ivalue)</code>
-Fills <code>band</code> with a constant value. Used to clear a band to a specified
-default value.
-<code>value</code> is the fill value (real component).
-<code>ivalue</code> is the imaginary component of fill value for a raster with
-complex data type. Set <code>ivalue = 0</code> for real data types. No return
-value, called for side effects.</p>
+<p><code>$getColorTable(band)</code>
+Returns the color table associated with <code>band</code>, or <code>NULL</code> if
+there is no associated color table. The color table is returned as an
+integer matrix with five columns. To associate a color with a raster pixel,
+the pixel value is used as a subscript into the color table. This means that
+the colors are always applied starting at zero and ascending
+(see <a href="https://gdal.org/user/raster_data_model.html#color-table" class="external-link">GDAL
+Color Table</a>).
+Column 1 contains the pixel values. Interpretation of columns 2:5 depends
+on the value of <code>$getPaletteInterp()</code> (see below). For "RGB", columns 2:5
+contain red, green, blue, alpha as 0-255 integer values.</p>
+<p><code>$getPaletteInterp(band)</code>
+If <code>band</code> has an associated color table, this method returns a
+character string with the palette interpretation for columns 2:5 of the
+table. An empty string (<code>""</code>) is returned if <code>band</code> does not have
+an associated color table. The palette interpretation values and their
+meanings are:</p><table class="table table"><tr><td>Gray</td><td>column 2 contains grayscale values (columns 3:5 unused)</td></tr><tr><td>RGB</td><td>columns 2:5 contain red, green, blue, alpha</td></tr><tr><td>CMYK</td><td>columns 2:5 contain cyan, magenta, yellow, black</td></tr><tr><td>HLS</td><td>columns 2:4 contain hue, lightness, saturation (column 5 unused)</td></tr></table><p><code>$setColorTable(band, col_tbl, palette_interp)</code>
+Sets the raster color table for <code>band</code>
+(see <a href="https://gdal.org/user/raster_data_model.html#color-table" class="external-link">GDAL
+Color Table</a>).
+<code>col_tbl</code> is an integer matrix or data frame with either four or five
+columns (see <code>$getColorTable()</code> above). Column 1 contains the pixel
+values. Valid values are integers 0 and larger (note that GTiff format
+supports color tables only for Byte and UInt16 bands). Negative values
+will be skipped with a warning emitted. Interpretation of columns 2:5
+depends on the value of <code>$getPaletteInterp()</code> (see above). For "RGB",
+columns 2:4 contain red, green, blue as 0-255 integer values, and an
+optional column 5 contains alpha transparency values (defaults to 255
+opaque).
+<code>palette_interp</code> is one of "Gray", "RGB", "CMYK" or "HLS" (see
+<code>$getPaletteInterp()</code> above).
+Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the color table
+could not be set.</p>
 <p><code>$getChecksum(band, xoff, yoff, xsize, ysize)</code>
 Returns a 16-bit integer (0-65535) checksum from a region of raster data
 on <code>band</code>.
