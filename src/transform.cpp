@@ -1,8 +1,7 @@
 /* Functions for coordinate transformation using PROJ via GDAL headers
    Chris Toney <chris.toney at usda.gov> */
 
-#include <Rcpp.h> 
-// [[Rcpp::plugins(cpp11)]]
+#include "rcpp_util.h"
 
 #include <string>
 
@@ -98,16 +97,6 @@ void _setPROJEnableNetwork(int enabled) {
 	Rcpp::Rcerr << "OSRSetPROJEnableNetwork requires GDAL 3.4 or later.\n";
 #endif
 	return;
-}
-
-//' convert data frame to numeric matrix in Rcpp
-//' @noRd
-Rcpp::NumericMatrix _df_to_matrix(Rcpp::DataFrame df) {
-	Rcpp::NumericMatrix m(df.nrows(), df.size());
-	for (R_xlen_t i=0; i<df.size(); ++i) {
-		m.column(i) = Rcpp::NumericVector(df[i]);
-	}
-	return m;
 }
 
 //' Inverse project geospatial x/y coordinates to longitude/latitude

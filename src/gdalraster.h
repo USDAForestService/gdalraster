@@ -5,8 +5,7 @@
 #ifndef gdalraster_H
 #define gdalraster_H
 
-#include <Rcpp.h> 
-// [[Rcpp::plugins(cpp11)]]
+#include "rcpp_util.h"
 
 #include <string>
 #include <vector>
@@ -144,6 +143,8 @@ class GDALRaster {
 	
 	SEXP getColorTable(int band) const;
 	std::string getPaletteInterp(int band) const;
+	bool setColorTable(int band, Rcpp::RObject &col_tbl,
+			std::string palette_interp);
 	
 	int getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
 	
