@@ -89,6 +89,7 @@ ds$fillRaster(value, ivalue)
 
 ds$getColorTable(band)
 ds$getPaletteInterp(band)
+ds$setColorTable(band, col_tbl, palette_interp)
 
 ds$getChecksum(band, xoff, yoff, xsize, ysize)
 
@@ -453,6 +454,24 @@ RGB  \tab columns 2:5 contain red, green, blue, alpha\cr
 CMYK \tab columns 2:5 contain cyan, magenta, yellow, black\cr
 HLS  \tab columns 2:4 contain hue, lightness, saturation (column 5 unused)
 }
+
+\code{$setColorTable(band, col_tbl, palette_interp)}
+Sets the raster color table for \code{band}
+(see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL
+Color Table}).
+\code{col_tbl} is an integer matrix or data frame with either four or five
+columns (see \code{$getColorTable()} above). Column 1 contains the pixel
+values. Valid values are integers 0 and larger (note that GTiff format
+supports color tables only for Byte and UInt16 bands). Negative values
+will be skipped with a warning emitted. Interpretation of columns 2:5
+depends on the value of \verb{$getPaletteInterp()} (see above). For "RGB",
+columns 2:4 contain red, green, blue as 0-255 integer values, and an
+optional column 5 contains alpha transparency values (defaults to 255
+opaque).
+\code{palette_interp} is one of "Gray", "RGB", "CMYK" or "HLS" (see
+\code{$getPaletteInterp()} above).
+Returns logical \code{TRUE} on success or \code{FALSE} if the color table
+could not be set.
 
 \code{$getChecksum(band, xoff, yoff, xsize, ysize)}
 Returns a 16-bit integer (0-65535) checksum from a region of raster data
