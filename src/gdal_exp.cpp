@@ -1,9 +1,6 @@
 /* Exported stand-alone functions for gdalraster
    Chris Toney <chris.toney at usda.gov> */
 
-#include <Rcpp.h> 
-// [[Rcpp::plugins(cpp11)]]
-
 #include <cmath>
 
 #include "gdal.h"

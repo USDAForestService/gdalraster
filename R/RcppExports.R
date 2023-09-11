@@ -545,10 +545,6 @@ has_geos <- function() {
     .Call(`_gdalraster__g_centroid`, geom)
 }
 
-#' convert data frame to numeric matrix in Rcpp
-#' @noRd
-NULL
-
 #' get PROJ version
 #' @noRd
 .getPROJVersion <- function() {

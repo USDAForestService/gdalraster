@@ -158,3 +158,19 @@ test_that("build overviews runs without error", {
 	expect_no_error(ds$buildOverviews("NONE", 0, 0))
 	ds$close()
 })
+
+test_that("get/set color table works", {
+	f <- system.file("extdata/storml_evc.tif", package="gdalraster")
+	f2 <- paste0(tempdir(), "/", "storml_evc_ct.tif")
+	on.exit(unlink(f2))
+	calc("A", f, dstfile=f2, dtName="UInt16", nodata_value=32767,
+			setRasterNodataValue=TRUE)
+	ds <- new(GDALRaster, f2, read_only=FALSE)
+	evc_csv <- system.file("extdata/LF20_EVC_220.csv", package="gdalraster")
+	vat <- read.csv(evc_csv)
+	ct <- vat[,c(1,3:5)]
+	expect_warning(ds$setColorTable(1, ct, "RGB"))
+	evc_ct <- ds$getColorTable(1)
+	expect_equal(nrow(evc_ct), 400)
+	ds$close()
+})
