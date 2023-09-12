@@ -64,6 +64,8 @@
 #' ds$setScale(band, scale)
 #' ds$getOffset(band)
 #' ds$setOffset(band, offset)
+#' ds$getRasterColorInterp(band)
+#' ds$setRasterColorInterp(band, col_interp)
 #'
 #' ds$getMetadata(band, domain)
 #' ds$getMetadataItem(band, mdi_name, domain)
@@ -341,6 +343,33 @@
 #' for \code{band}. Many raster formats do not implement this method.
 #' Returns logical \code{TRUE} on success or \code{FALSE} if the offset could
 #' not be set.
+#'
+#' \code{$getRasterColorInterp(band)}
+#' Returns a string describing the color interpretation for \code{band}.
+#' The color interpretation values and their meanings are:
+#' \tabular{rl}{
+#'  Undefined  \tab Undefined\cr
+#'  Gray       \tab Grayscale\cr
+#'  Palette    \tab Paletted (see associated color table)\cr
+#'  Red        \tab Red band of RGBA image\cr
+#'  Green      \tab Green band of RGBA image\cr
+#'  Blue       \tab Blue band of RGBA image\cr
+#'  Alpha      \tab Alpha (0=transparent, 255=opaque)\cr
+#'  Hue        \tab Hue band of HLS image\cr
+#'  Saturation \tab Saturation band of HLS image\cr
+#'  Lightness  \tab Lightness band of HLS image\cr
+#'  Cyan       \tab Cyan band of CMYK image\cr
+#'  Magenta    \tab Magenta band of CMYK image\cr
+#'  Yellow     \tab Yellow band of CMYK image\cr
+#'  Black      \tab Black band of CMYK image\cr
+#'  YCbCr_Y    \tab Y Luminance\cr
+#'  YCbCr_Cb   \tab Cb Chroma\cr
+#'  YCbCr_Cr   \tab Cr Chroma
+#' }
+#'
+#' \code{$setRasterColorInterp(band, col_interp)}
+#' Sets the color interpretation for \code{band}. See above for the list of
+#' valid values for \code{col_interp}.
 #'
 #' \code{$getMetadata(band, domain)}
 #' Returns a character vector of all metadata `name=value` pairs that exist in 

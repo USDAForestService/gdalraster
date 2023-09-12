@@ -1,8 +1,10 @@
 # gdalraster 1.4.1 (dev)
 
-* initial support for color table get/set in class `GDALRaster` (2023-09-10)
+* add `GDALRaster$getRasterColorInterp()` and `GDALRaster$setRasterColorInterp()`: get/set color interpretation for raster bands (2023-09-11)
 
-* `plot_raster()`: `col_tbl` can have an optional alpha channel, and add argument `maxColorValue` to support RGB values as 0:1 (the default) or 0:255 for example (2023-09-09)
+* add get/set color tables in class `GDALRaster` (2023-09-10)
+
+* `plot_raster()`: `col_tbl` can have an optional alpha channel; add argument `maxColorValue` (2023-09-09)
 
 * `bbox_from_wkt()`, `bbox_to_wkt()`: add arguments `extend_x`, `extend_y` (2023-09-07)
 
