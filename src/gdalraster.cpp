@@ -512,7 +512,7 @@ void GDALRaster::setDescription(int band, std::string desc) {
 		Rcpp::stop("Raster dataset is not open.");
 
 	if (GDALGetAccess(hDataset) == GA_ReadOnly)
-		Rcpp::stop("Cannot set metadata item (GA_ReadOnly).");
+		Rcpp::stop("Cannot set description (GA_ReadOnly).");
 
 	if (band == 0) {	
 		GDALSetDescription(hDataset, desc.c_str());
@@ -521,6 +521,121 @@ void GDALRaster::setDescription(int band, std::string desc) {
 		GDALRasterBandH hBand = this->_getBand(band);
 		GDALSetDescription(hBand, desc.c_str());
 	}
+}
+
+std::string GDALRaster::getRasterColorInterp(int band) const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+
+	GDALRasterBandH hBand = this->_getBand(band);
+	GDALColorInterp gci = GDALGetRasterColorInterpretation(hBand);
+	
+	std::string col_interp = "";
+	switch (gci) {
+		case GCI_Undefined:
+			col_interp = "Undefined";
+			break;
+		case GCI_GrayIndex:
+			col_interp = "Gray";
+			break;
+		case GCI_PaletteIndex:
+			col_interp = "Palette";
+			break;
+		case GCI_RedBand:
+			col_interp = "Red";
+			break;
+		case GCI_GreenBand:
+			col_interp = "Green";
+			break;
+		case GCI_BlueBand:
+			col_interp = "Blue";
+			break;
+		case GCI_AlphaBand:
+			col_interp = "Alpha";
+			break;
+		case GCI_HueBand:
+			col_interp = "Hue";
+			break;
+		case GCI_SaturationBand:
+			col_interp = "Saturation";
+			break;
+		case GCI_LightnessBand:
+			col_interp = "Lightness";
+			break;
+		case GCI_CyanBand:
+			col_interp = "Cyan";
+			break;
+		case GCI_MagentaBand:
+			col_interp = "Magenta";
+			break;
+		case GCI_YellowBand:
+			col_interp = "Yellow";
+			break;
+		case GCI_BlackBand:
+			col_interp = "Black";
+			break;
+		case GCI_YCbCr_YBand:
+			col_interp = "YCbCr_Y";
+			break;
+		case GCI_YCbCr_CbBand:
+			col_interp = "YCbCr_Cb";
+			break;
+		case GCI_YCbCr_CrBand:
+			col_interp = "YCbCr_Cr";
+			break;
+	}
+
+	return col_interp;
+}
+
+void GDALRaster::setRasterColorInterp(int band, std::string col_interp) {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+
+	if (GDALGetAccess(hDataset) == GA_ReadOnly)
+		Rcpp::stop("Cannot set color interpretation (GA_ReadOnly).");
+
+	GDALRasterBandH hBand = this->_getBand(band);
+	GDALColorInterp gci;
+	
+	if (col_interp == "Undefined")
+		gci = GCI_Undefined;
+	else if (col_interp == "Gray")
+		gci = GCI_GrayIndex;
+	else if (col_interp == "Palette")
+		gci = GCI_PaletteIndex;
+	else if (col_interp == "Red")
+		gci = GCI_RedBand;
+	else if (col_interp == "Green")
+		gci = GCI_GreenBand;
+	else if (col_interp == "Blue")
+		gci = GCI_BlueBand;
+	else if (col_interp == "Alpha")
+		gci = GCI_AlphaBand;
+	else if (col_interp == "Hue")
+		gci = GCI_HueBand;
+	else if (col_interp == "Saturation")
+		gci = GCI_SaturationBand;
+	else if (col_interp == "Lightness")
+		gci = GCI_LightnessBand;
+	else if (col_interp == "Cyan")
+		gci = GCI_CyanBand;
+	else if (col_interp == "Magenta")
+		gci = GCI_MagentaBand;
+	else if (col_interp == "Yellow")
+		gci = GCI_YellowBand;
+	else if (col_interp == "Black")
+		gci = GCI_BlackBand;
+	else if (col_interp == "YCbCr_Y")
+		gci = GCI_YCbCr_YBand;
+	else if (col_interp == "YCbCr_Cb")
+		gci = GCI_YCbCr_CbBand;
+	else if (col_interp == "YCbCr_Cr")
+		gci = GCI_YCbCr_CrBand;
+	else
+		Rcpp::stop("Invalid col_interp.");
+
+	GDALSetRasterColorInterpretation(hBand, gci);
 }
 
 Rcpp::CharacterVector GDALRaster::getMetadata(int band, 
@@ -1018,9 +1133,13 @@ RCPP_MODULE(mod_GDALRaster) {
     .method("setOffset", &GDALRaster::setOffset, 
     	"Set the raster value offset.")
     .const_method("getDescription", &GDALRaster::getDescription, 
-    	"Return object description for a dataset or raster band.")
+    	"Return object description for a raster band.")
     .method("setDescription", &GDALRaster::setDescription, 
-    	"Set object description for a dataset or raster band.")
+    	"Set object description for a raster band.")
+    .const_method("getRasterColorInterp", &GDALRaster::getRasterColorInterp, 
+    	"How should this band be interpreted as color?")
+    .method("setRasterColorInterp", &GDALRaster::setRasterColorInterp, 
+    	"Set color interpretation of a band.")
     .const_method("getMetadata", &GDALRaster::getMetadata, 
     	"Return a list of metadata item=value for a domain.")
     .const_method("getMetadataItem", &GDALRaster::getMetadataItem, 

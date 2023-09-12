@@ -123,9 +123,10 @@ class GDALRaster {
 	bool hasOffset(int band) const;
 	double getOffset(int band) const;
 	bool setOffset(int band, double offset);
-	
 	std::string getDescription(int band) const;
 	void setDescription(int band, std::string desc);
+	std::string getRasterColorInterp(int band) const;
+	void setRasterColorInterp(int band, std::string col_interp);
 	
 	Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
 	std::string getMetadataItem(int band, std::string mdi_name, 
