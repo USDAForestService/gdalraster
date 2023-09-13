@@ -77,3 +77,14 @@ test_that("sieveFilter runs without error", {
 	on.exit(unlink(mask_file))
 	expect_true(sieveFilter(evt_file, 1, evt_mmu_file, 1, 2, 8, mask_file, 1))
 })
+
+test_that("createColorRamp works", {
+	colors <- createColorRamp(start_index = 0,
+				start_color = c(211, 211, 211),
+				end_index = 100,
+				end_color = c(0, 100, 0))
+	expect_equal(nrow(colors), 101)
+	# non-zero start_index
+	colors = createColorRamp(109, c(254, 231, 152), 127, c(254, 254, 189))
+	expect_equal(nrow(colors), 19)
+})

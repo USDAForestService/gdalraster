@@ -628,5 +628,5 @@ Package overview in \code{\link[=gdalraster-package]{help("gdalraster-package")}
 
 \code{\link[=fillNodata]{fillNodata()}}, \code{\link[=warp]{warp()}}, \code{\link[=plot_raster]{plot_raster()}}
 
-\code{read_ds()} is a convenience wrapper for \code{GDALRaster$read()}.
+\code{\link[=read_ds]{read_ds()}} is a convenience wrapper for \code{GDALRaster$read()}.
 }

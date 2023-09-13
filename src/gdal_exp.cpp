@@ -853,3 +853,156 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 	}
 }
 
+
+//' Create a color ramp
+//'
+//' `createColorRamp()` is a wrapper for `GDALCreateColorRamp()` in the GDAL
+//' API. It automatically creates a color ramp from one color entry to another.
+//' Output is an integer matrix in color table format for use with
+//' [`GDALRaster$setColorTable()`][GDALRaster].
+//'
+//' @note
+//' `createColorRamp()` could be called several times, using `rbind()` to
+//' combine multiple ramps into the same color table. Possible duplicate rows
+//' in the resulting table are not a problem when used in
+//' `GDALRaster$setColorTable()` (i.e., when `end_color` of one ramp is the
+//' same as `start_color` of the next ramp).
+//'
+//' @param start_index Integer start index (raster value).
+//' @param start_color Integer vector of length three or four.
+//' A color entry value to start the ramp (e.g., RGB values).
+//' @param end_index Integer end index (raster value).
+//' @param end_color Integer vector of length three or four.
+//' A color entry value to end the ramp (e.g., RGB values).
+//' @param palette_interp One of "Gray", "RGB" (the default), "CMYK" or "HLS"
+//' descibing interpretation of `start_color` and `end_color` values
+//' (see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL 
+//' Color Table}).
+//' @returns Intger matrix with five columns containing the color ramp from
+//' `start_index` to `end_index`, with raster index values in column 1 and
+//' color entries in columns 2:5).
+//'
+//' @seealso
+//' [`GDALRaster$getColorTable()`][GDALRaster],
+//' [`GDALRaster$getPaletteInterp()`][GDALRaster]
+//'
+//' @examples
+//' # create a color ramp for tree canopy cover percent
+//' # band 5 of an LCP file contains canopy cover
+//' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+//' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+//' ds$getDescription(band=5)
+//' ds$getMetadata(band=5, domain="")
+//' ds$close()
+//'
+//' # create a GTiff file with Byte data type for the canopy cover band
+//' # recode nodata -9999 to 255
+//' tcc_file <- calc(expr = "ifelse(CANCOV == -9999, 255, CANCOV)",
+//'                  rasterfiles = lcp_file,
+//'                  bands = 5,
+//'                  var.names = "CANCOV",
+//'                  fmt = "GTiff",
+//'                  dtName = "Byte",
+//'                  nodata_value = 255,
+//'                  setRasterNodataValue = TRUE)
+//' 
+//' ds_tcc <- new(GDALRaster, tcc_file, read_only=FALSE)
+//' 
+//' # create a color ramp from 0 to 100 and set as the color table
+//' colors <- createColorRamp(start_index = 0,
+//'                           start_color = c(211, 211, 211),
+//'                           end_index = 100,
+//'                           end_color = c(0, 100, 0))
+//' 
+//' print(colors)
+//' ds_tcc$setColorTable(band=1, col_tbl=colors, palette_interp="RGB")
+//' ds_tcc$setRasterColorInterp(band=1, col_interp="Palette")
+//' 
+//' # close and re-open the dataset in read_only mode
+//' ds_tcc$open(read_only=TRUE)
+//' 
+//' plot_raster(ds_tcc, interpolate=FALSE, main="Storm Lake Tree Canopy Cover")
+//' ds_tcc$close()
+// [[Rcpp::export]]
+Rcpp::IntegerMatrix createColorRamp(int start_index,
+		Rcpp::IntegerVector start_color,
+		int end_index,
+		Rcpp::IntegerVector end_color,
+		std::string palette_interp = "RGB") {
+		
+	if (end_index <= start_index)
+		Rcpp::stop("end_index must be greater than start_index.");
+	if (start_color.size() < 3 || start_color.size() > 4)
+		Rcpp::stop("Length of start_color must be 3 or 4.");
+	if (end_color.size() < 3 || end_color.size() > 4)
+		Rcpp::stop("Length of end_color must be 3 or 4.");
+	
+	if (start_color.size() == 3)
+		start_color.push_back(255);
+	if (end_color.size() == 3)
+		end_color.push_back(255);
+
+	GDALPaletteInterp gpi;
+	if (palette_interp ==  "Gray" || palette_interp == "gray")
+		gpi = GPI_Gray;
+	else if (palette_interp ==  "RGB")
+		gpi = GPI_RGB;
+	else if (palette_interp ==  "CMYK")
+		gpi = GPI_CMYK;
+	else if (palette_interp ==  "HLS")
+		gpi = GPI_HLS;
+	else
+		Rcpp::stop("Invalid palette_interp.");
+
+	GDALColorTableH hColTbl = GDALCreateColorTable(gpi);
+	
+	const GDALColorEntry colStart = {
+			static_cast<short>(start_color(0)),
+			static_cast<short>(start_color(1)),
+			static_cast<short>(start_color(2)),
+			static_cast<short>(start_color(3)) };
+	const GDALColorEntry colEnd = {
+			static_cast<short>(end_color(0)),
+			static_cast<short>(end_color(1)),
+			static_cast<short>(end_color(2)),
+			static_cast<short>(end_color(3)) };
+
+	GDALCreateColorRamp(hColTbl, start_index, &colStart, end_index, &colEnd);
+	
+	//int nEntries = GDALGetColorEntryCount(hColTbl);
+	int nEntries = (end_index - start_index) + 1;
+	Rcpp::IntegerMatrix col_tbl(nEntries, 5);
+	Rcpp::CharacterVector col_tbl_names;
+
+	if (gpi == GPI_Gray) {
+		col_tbl_names = {"value", "gray", "c2", "c3", "c4"};
+		Rcpp::colnames(col_tbl) = col_tbl_names;
+	}
+	else if (gpi == GPI_RGB) {
+		col_tbl_names = {"value", "red", "green", "blue", "alpha"};
+		Rcpp::colnames(col_tbl) = col_tbl_names;
+	}
+	else if (gpi == GPI_CMYK) {
+		col_tbl_names = {"value", "cyan", "magenta", "yellow", "black"};
+		Rcpp::colnames(col_tbl) = col_tbl_names;
+	}
+	else if (gpi == GPI_HLS) {
+		col_tbl_names = {"value", "hue", "lightness", "saturation", "c4"};
+		Rcpp::colnames(col_tbl) = col_tbl_names;
+	}
+
+	int idx = start_index;
+	for (int i=0; i < nEntries; ++i) {
+		const GDALColorEntry* colEntry = GDALGetColorEntry(hColTbl, idx);
+		col_tbl(i, 0) = idx;
+		col_tbl(i, 1) = colEntry->c1;
+		col_tbl(i, 2) = colEntry->c2;
+		col_tbl(i, 3) = colEntry->c3;
+		col_tbl(i, 4) = colEntry->c4;
+		++idx;
+	}
+	
+	GDALDestroyColorTable(hColTbl);
+	
+	return col_tbl;
+}

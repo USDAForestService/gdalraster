@@ -28,6 +28,7 @@ reference:
   - calc
   - combine
   - create
+  - createColorRamp
   - createCopy
   - dem_proc
   - epsg_to_wkt
