@@ -437,6 +437,79 @@ warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL) {
     invisible(.Call(`_gdalraster_warp`, src_files, dst_filename, t_srs, cl_arg))
 }
 
+#' Create a color ramp
+#'
+#' `createColorRamp()` is a wrapper for `GDALCreateColorRamp()` in the GDAL
+#' API. It automatically creates a color ramp from one color entry to another.
+#' Output is an integer matrix in color table format for use with
+#' [`GDALRaster$setColorTable()`][GDALRaster].
+#'
+#' @note
+#' `createColorRamp()` could be called several times, using `rbind()` to
+#' combine multiple ramps into the same color table. Possible duplicate rows
+#' in the resulting table are not a problem when used in
+#' `GDALRaster$setColorTable()` (i.e., when `end_color` of one ramp is the
+#' same as `start_color` of the next ramp).
+#'
+#' @param start_index Integer start index (raster value).
+#' @param start_color Integer vector of length three or four.
+#' A color entry value to start the ramp (e.g., RGB values).
+#' @param end_index Integer end index (raster value).
+#' @param end_color Integer vector of length three or four.
+#' A color entry value to end the ramp (e.g., RGB values).
+#' @param palette_interp One of "Gray", "RGB" (the default), "CMYK" or "HLS"
+#' descibing interpretation of `start_color` and `end_color` values
+#' (see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL 
+#' Color Table}).
+#' @returns Intger matrix with five columns containing the color ramp from
+#' `start_index` to `end_index`, with raster index values in column 1 and
+#' color entries in columns 2:5).
+#'
+#' @seealso
+#' [`GDALRaster$getColorTable()`][GDALRaster],
+#' [`GDALRaster$getPaletteInterp()`][GDALRaster]
+#'
+#' @examples
+#' # create a color ramp for tree canopy cover percent
+#' # band 5 of an LCP file contains canopy cover
+#' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+#' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+#' ds$getDescription(band=5)
+#' ds$getMetadata(band=5, domain="")
+#' ds$close()
+#'
+#' # create a GTiff file with Byte data type for the canopy cover band
+#' # recode nodata -9999 to 255
+#' tcc_file <- calc(expr = "ifelse(CANCOV == -9999, 255, CANCOV)",
+#'                  rasterfiles = lcp_file,
+#'                  bands = 5,
+#'                  var.names = "CANCOV",
+#'                  fmt = "GTiff",
+#'                  dtName = "Byte",
+#'                  nodata_value = 255,
+#'                  setRasterNodataValue = TRUE)
+#' 
+#' ds_tcc <- new(GDALRaster, tcc_file, read_only=FALSE)
+#' 
+#' # create a color ramp from 0 to 100 and set as the color table
+#' colors <- createColorRamp(start_index = 0,
+#'                           start_color = c(211, 211, 211),
+#'                           end_index = 100,
+#'                           end_color = c(0, 100, 0))
+#' 
+#' print(colors)
+#' ds_tcc$setColorTable(band=1, col_tbl=colors, palette_interp="RGB")
+#' ds_tcc$setRasterColorInterp(band=1, col_interp="Palette")
+#' 
+#' # close and re-open the dataset in read_only mode
+#' ds_tcc$open(read_only=TRUE)
+#' 
+#' plot_raster(ds_tcc, interpolate=FALSE, main="Storm Lake Tree Canopy Cover")
+#' ds_tcc$close()
+createColorRamp <- function(start_index, start_color, end_index, end_color, palette_interp = "RGB") {
+    .Call(`_gdalraster_createColorRamp`, start_index, start_color, end_index, end_color, palette_interp)
+}
+
 #' Is GEOS available?
 #'
 #' `has_geos()` returns a logical value indicating whether GDAL was built

@@ -1,8 +1,10 @@
 # gdalraster 1.4.1 (dev)
 
+* add `createColorRamp()`: wrapper for `GDALCreateColorRamp()` in the GDAL Raster API. Automatically creates a ramp from one color to another (2023-09-13)
+
 * add `GDALRaster$getRasterColorInterp()` and `GDALRaster$setRasterColorInterp()`: get/set color interpretation for raster bands (2023-09-11)
 
-* add get/set color tables in class `GDALRaster` (2023-09-10)
+* add support for color tables in class `GDALRaster`: `GDALRaster$getColorTable()`, `GDALRaster$getPaletteInterp()`, `GDALRaster$setColorTable()` (2023-09-10)
 
 * `plot_raster()`: `col_tbl` can have an optional alpha channel; add argument `maxColorValue` (2023-09-09)
 

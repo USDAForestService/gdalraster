@@ -518,7 +518,7 @@
 #'
 #' [fillNodata()], [warp()], [plot_raster()]
 #'
-#' `read_ds()` is a convenience wrapper for `GDALRaster$read()`.
+#' [read_ds()] is a convenience wrapper for `GDALRaster$read()`.
 #'
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")

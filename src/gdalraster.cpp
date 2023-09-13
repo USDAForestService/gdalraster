@@ -1006,7 +1006,7 @@ bool GDALRaster::setColorTable(int band, Rcpp::RObject &col_tbl,
 	int max_value = Rcpp::max(m_col_tbl.column(0));
 	GDALColorTableH hColTbl = GDALCreateColorTable(gpi);
 	// initialize all entries
-	for (int i=0; i < max_value; ++i) {
+	for (int i=0; i <= max_value; ++i) {
 		const GDALColorEntry col = {0, 0, 0, 0};
 		GDALSetColorEntry(hColTbl, i, &col);
 	}

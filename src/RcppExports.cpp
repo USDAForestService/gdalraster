@@ -201,6 +201,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// createColorRamp
+Rcpp::IntegerMatrix createColorRamp(int start_index, Rcpp::IntegerVector start_color, int end_index, Rcpp::IntegerVector end_color, std::string palette_interp);
+RcppExport SEXP _gdalraster_createColorRamp(SEXP start_indexSEXP, SEXP start_colorSEXP, SEXP end_indexSEXP, SEXP end_colorSEXP, SEXP palette_interpSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< int >::type start_index(start_indexSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type start_color(start_colorSEXP);
+    Rcpp::traits::input_parameter< int >::type end_index(end_indexSEXP);
+    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type end_color(end_colorSEXP);
+    Rcpp::traits::input_parameter< std::string >::type palette_interp(palette_interpSEXP);
+    rcpp_result_gen = Rcpp::wrap(createColorRamp(start_index, start_color, end_index, end_color, palette_interp));
+    return rcpp_result_gen;
+END_RCPP
+}
 // has_geos
 bool has_geos();
 RcppExport SEXP _gdalraster_has_geos() {
@@ -616,6 +631,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 5},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 9},
     {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 4},
+    {"_gdalraster_createColorRamp", (DL_FUNC) &_gdalraster_createColorRamp, 5},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},

@@ -172,6 +172,7 @@ test_that("get/set color table works", {
 	expect_warning(ds$setColorTable(1, ct, "RGB"))
 	evc_ct <- ds$getColorTable(1)
 	expect_equal(nrow(evc_ct), 400)
+	expect_equal(ds$getPaletteInterp(1), "RGB")
 	ds$close()
 })
 
