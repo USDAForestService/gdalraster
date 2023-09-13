@@ -69,6 +69,12 @@ bool sieveFilter(std::string src_filename, int src_band,
 bool warp(Rcpp::CharacterVector src_files, std::string dst_filename,
 		Rcpp::CharacterVector t_srs, 
 		Rcpp::Nullable<Rcpp::CharacterVector> arg_list);
+		
+Rcpp::IntegerMatrix createColorRamp(int start_index,
+		Rcpp::IntegerVector start_color,
+		int end_index,
+		Rcpp::IntegerVector end_color,
+		std::string palette_interp);
 
 class GDALRaster {
 
