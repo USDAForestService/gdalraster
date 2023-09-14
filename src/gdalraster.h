@@ -154,6 +154,8 @@ class GDALRaster {
 	bool setColorTable(int band, Rcpp::RObject &col_tbl,
 			std::string palette_interp);
 	
+	void flushCache();
+	
 	int getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
 	
 	void close();

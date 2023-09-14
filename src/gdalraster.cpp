@@ -1051,6 +1051,16 @@ bool GDALRaster::setColorTable(int band, Rcpp::RObject &col_tbl,
 		return false;
 }
 
+void GDALRaster::flushCache() {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+		
+	if (GDALGetAccess(hDataset) == GA_ReadOnly)
+		Rcpp::stop("Dataset is read-only.");
+	
+	GDALFlushCache(hDataset);
+}
+
 int GDALRaster::getChecksum(int band, int xoff, int yoff,
 		int xsize, int ysize) const {
 
@@ -1076,6 +1086,8 @@ GDALRasterBandH GDALRaster::_getBand(int band) const {
 		Rcpp::stop("Failed to access the requested band.");
 	return hBand;
 }
+
+// ********************************************************
 
 RCPP_MODULE(mod_GDALRaster) {
 
@@ -1177,6 +1189,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Get the palette interpretation.")
     .method("setColorTable", &GDALRaster::setColorTable, 
     	"Set a color table for this band.")
+    .method("flushCache", &GDALRaster::flushCache, 
+    	"Flush all write cached data to disk.")
     .const_method("getChecksum", &GDALRaster::getChecksum, 
     	"Compute checksum for raster region.")
     .method("close", &GDALRaster::close, 
