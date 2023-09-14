@@ -160,6 +160,8 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getPaletteInterp</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setColorTable</span><span class="op">(</span><span class="va">band</span>, <span class="va">col_tbl</span>, <span class="va">palette_interp</span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">flushCache</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getChecksum</span><span class="op">(</span><span class="va">band</span>, <span class="va">xoff</span>, <span class="va">yoff</span>, <span class="va">xsize</span>, <span class="va">ysize</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
@@ -468,6 +470,12 @@ opaque).
 <code>$getPaletteInterp()</code> above).
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the color table
 could not be set.</p>
+<p><code>$flushCache()</code>
+Flush all write cached data to disk. Any raster data written via GDAL calls,
+but buffered internally will be written to disk. Using this method does not
+preclude calling <code>$close()</code> to properly close the dataset and ensure that
+important data not addressed by <code>$flushCache()</code> is written in the file
+(see also <code>$open()</code> above). No return value, called for side effect.</p>
 <p><code>$getChecksum(band, xoff, yoff, xsize, ysize)</code>
 Returns a 16-bit integer (0-65535) checksum from a region of raster data
 on <code>band</code>.
