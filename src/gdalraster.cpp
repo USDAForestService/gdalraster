@@ -81,6 +81,23 @@ void GDALRaster::info() const {
 	GDALInfoOptionsFree(psOptions);
 }
 
+std::string GDALRaster::infoAsJSON() const {
+	if (!this->isOpen())
+		Rcpp::stop("Raster dataset is not open.");
+	
+	Rcpp::CharacterVector argv = {"-json", "-stats", "-hist"};
+	std::vector<char *> opt(argv.size() + 1);
+	for (R_xlen_t i = 0; i < argv.size(); ++i) {
+		opt[i] = (char *) (argv[i]);
+	}
+	opt[argv.size()] = NULL;
+	GDALInfoOptions* psOptions = GDALInfoOptionsNew(opt.data(), NULL);
+	std::string out = GDALInfo(hDataset, psOptions);
+	GDALInfoOptionsFree(psOptions);
+	out.erase(std::remove(out.begin(), out.end(), '\n'), out.cend());
+	return out;
+}
+
 Rcpp::CharacterVector GDALRaster::getFileList() const {
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
@@ -1080,6 +1097,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Fetch files forming dataset.")
     .const_method("info", &GDALRaster::info,
     	"Print various information about the raster dataset.")
+    .const_method("infoAsJSON", &GDALRaster::infoAsJSON,
+    	"Returns full output of gdalinfo as a JSON-formatted string.")
     .const_method("getDriverShortName", &GDALRaster::getDriverShortName,
     	 "Return the short name of the format driver.")
     .const_method("getDriverLongName", &GDALRaster::getDriverLongName,
