@@ -1,5 +1,7 @@
 # gdalraster 1.4.1 (dev)
 
+* add `GDALRaster$flushCache()`: flush all write cached data to disk (2023-09-14)
+
 * add `GDALRaster$infoAsJSON()`: returns output of the `gdalinfo` command-line utility as a JSON-formatted string (2023-09-14)
 
 * add `createColorRamp()`: wrapper for `GDALCreateColorRamp()` in the GDAL Raster API. Automatically creates a ramp from one color to another (2023-09-13)

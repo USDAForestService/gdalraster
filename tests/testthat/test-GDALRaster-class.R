@@ -90,6 +90,7 @@ test_that("open/close/re-open works", {
 	expect_equal(ds$getDescription(band=1), "test")
 	r[is.na(r)] <- DEFAULT_NODATA[["UInt32"]]
 	ds$write(band=1, 0, 0, dm[1], dm[2], r)
+	expect_silent(ds$flushCache())
 	expect_false(all(is.na(read_ds(ds))))
 	expect_true(any(is.na(read_ds(ds))))
 	files <- ds$getFileList()

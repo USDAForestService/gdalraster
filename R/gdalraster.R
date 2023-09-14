@@ -80,6 +80,8 @@
 #' ds$getPaletteInterp(band)
 #' ds$setColorTable(band, col_tbl, palette_interp)
 #'
+#' ds$flushCache()
+#'
 #' ds$getChecksum(band, xoff, yoff, xsize, ysize)
 #'
 #' ds$close()
@@ -487,6 +489,13 @@
 #' \code{$getPaletteInterp()} above).
 #' Returns logical \code{TRUE} on success or \code{FALSE} if the color table
 #' could not be set.
+#'
+#' \code{$flushCache()}
+#' Flush all write cached data to disk. Any raster data written via GDAL calls,
+#' but buffered internally will be written to disk. Using this method does not
+#' preclude calling `$close()` to properly close the dataset and ensure that
+#' important data not addressed by `$flushCache()` is written in the file
+#' (see also `$open()` above). No return value, called for side effect.
 #'
 #' \code{$getChecksum(band, xoff, yoff, xsize, ysize)}
 #' Returns a 16-bit integer (0-65535) checksum from a region of raster data 
