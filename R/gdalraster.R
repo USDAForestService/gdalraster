@@ -33,6 +33,7 @@
 #' ds$getFileList()
 #'
 #' ds$info()
+#' ds$infoAsJSON()
 #'
 #' ds$getDriverShortName()
 #' ds$getDriverLongName()
@@ -117,6 +118,11 @@
 #' Equivalent to the output of the \command{gdalinfo} command-line utility
 #' (\command{gdalinfo -norat -noct filename}). Intended here as an 
 #' informational convenience function.
+#'
+#' \code{$infoAsJSON()}
+#' Returns information about the raster dataset as a JSON-formatted string.
+#' Contains full output of the \command{gdalinfo} command-line utility
+#' (\command{gdalinfo -json -stats -hist filename}).
 #'
 #' \code{$getDriverShortName()}
 #' Returns the short name of the raster format driver

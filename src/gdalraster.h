@@ -93,6 +93,7 @@ class GDALRaster {
 	Rcpp::CharacterVector getFileList() const;
 	
 	void info() const;
+	std::string infoAsJSON() const;
 	
 	std::string getDriverShortName() const;
 	std::string getDriverLongName() const;
