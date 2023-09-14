@@ -113,6 +113,7 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">infoAsJSON</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span>
@@ -195,6 +196,10 @@ return value, called for that side effect only).
 Equivalent to the output of the <code class="command">gdalinfo</code> command-line utility
 (<code class="command">gdalinfo -norat -noct filename</code>). Intended here as an
 informational convenience function.</p>
+<p><code>$infoAsJSON()</code>
+Returns information about the raster dataset as a JSON-formatted string.
+Contains full output of the <code class="command">gdalinfo</code> command-line utility
+(<code class="command">gdalinfo -json -stats -hist filename</code>).</p>
 <p><code>$getDriverShortName()</code>
 Returns the short name of the raster format driver
 (e.g., "HFA").</p>
