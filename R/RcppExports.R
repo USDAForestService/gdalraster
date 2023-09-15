@@ -91,7 +91,7 @@ get_cache_used <- function() {
 #' @param dataType Character data type name.
 #' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 #' @param options Optional list of format-specific creation options in a
-#' vector of "NAME=VALUE" pairs 
+#' vector of `"NAME=VALUE"` pairs 
 #' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW 
 #' compression during creation of a GTiff file).
 #' The APPEND_SUBDATASET=YES option can be 
@@ -99,7 +99,8 @@ get_cache_used <- function() {
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()]
+#' [`GDALRaster-class`][GDALRaster], [bandCopyWholeRaster()],
+#' [createCopy()], [rasterFromRaster()]
 #' @examples
 #' new_file <- paste0(tempdir(), "/", "newdata.tif")
 #' create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
@@ -132,7 +133,7 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' or more normally FALSE indicating that the copy may adapt as needed for  
 #' the output format.
 #' @param options Optional list of format-specific creation options in a
-#' vector of "NAME=VALUE" pairs 
+#' vector of `"NAME=VALUE"` pairs 
 #' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 #' compression during creation of a GTiff file).
 #' The APPEND_SUBDATASET=YES option can be 
@@ -140,7 +141,8 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()]
+#' [`GDALRaster-class`][GDALRaster], [bandCopyWholeRaster()], [create()],
+#' [rasterFromRaster()]
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
@@ -508,6 +510,51 @@ warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL) {
 #' ds_tcc$close()
 createColorRamp <- function(start_index, start_color, end_index, end_color, palette_interp = "RGB") {
     .Call(`_gdalraster_createColorRamp`, start_index, start_color, end_index, end_color, palette_interp)
+}
+
+#' Copy a whole raster band efficiently
+#'
+#' `bandCopyWholeRaster()` copies the complete raster contents of one band to
+#' another similarly configured band. The source and destination bands must
+#' have the same xsize and ysize. The bands do not have to have the same data
+#' type. It implements efficient copying, in particular "chunking" the copy in
+#' substantial blocks. This is a wrapper for `GDALRasterBandCopyWholeRaster()`
+#' in the GDAL API.
+#'
+#' @param src_filename Filename of the source raster.
+#' @param src_band Band number in the source raster to be copied.
+#' @param dst_filename Filename of the destination raster.
+#' @param dst_band Band number in the destination raster to copy into.
+#' @param options Optional list of transfer hints in a vector of `"NAME=VALUE"`
+#' pairs. The currently supported `options` are:
+#'   * `"COMPRESSED=YES"` to force alignment on target dataset block sizes to
+#'   achieve best compression. 
+#'    * `"SKIP_HOLES=YES"` to skip chunks that contain only empty blocks.
+#'    Empty blocks are blocks that are generally not physically present in the
+#'    file, and when read through GDAL, contain only pixels whose value is the
+#'    nodata value when it is set, or whose value is 0 when the nodata value is
+#'    not set. The query is done in an efficient way without reading the actual
+#'    pixel values (if implemented by the raster format driver, otherwise will
+#'    not be skipped).
+#' @returns Logical indicating success (invisible \code{TRUE}).
+#' An error is raised if the operation fails.
+#'
+#' @seealso
+#' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
+#' [rasterFromRaster()]
+#'
+#' @examples
+#' ## copy Landsat data from a single-band file to a new multi-band image
+#' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+#' dst_file <- paste0(tempdir(), "/", "sr_multi.tif")
+#' rasterFromRaster(b5_file, dst_file, nbands=7, init=0)
+#' opt <- c("COMPRESSED=YES", "SKIP_HOLES=YES")
+#' bandCopyWholeRaster(b5_file, 1, dst_file, 5, options=opt)
+#' ds <- new(GDALRaster, dst_file, read_only=TRUE)
+#' ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
+#' ds$close()
+bandCopyWholeRaster <- function(src_filename, src_band, dst_filename, dst_band, options = NULL) {
+    invisible(.Call(`_gdalraster_bandCopyWholeRaster`, src_filename, src_band, dst_filename, dst_band, options))
 }
 
 #' Is GEOS available?

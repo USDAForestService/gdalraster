@@ -187,7 +187,8 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #' @returns Returns the destination filename invisibly.
 #'
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()], [rasterToVRT()]
+#' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
+#' [bandCopyWholeRaster()]
 #'
 #' @examples
 #' ## band 2 in a FARSITE landscape file has slope degrees

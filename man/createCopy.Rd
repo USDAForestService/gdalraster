@@ -19,7 +19,7 @@ or more normally FALSE indicating that the copy may adapt as needed for
 the output format.}
 
 \item{options}{Optional list of format-specific creation options in a
-vector of "NAME=VALUE" pairs
+vector of \code{"NAME=VALUE"} pairs
 (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 compression during creation of a GTiff file).
 The APPEND_SUBDATASET=YES option can be
@@ -50,5 +50,6 @@ ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}, \code{\link[=create]{create()}},
+\code{\link[=rasterFromRaster]{rasterFromRaster()}}
 }

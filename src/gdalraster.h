@@ -37,6 +37,10 @@ bool create(std::string format, std::string dst_filename,
 bool createCopy(std::string format, std::string dst_filename,
 		std::string src_filename, bool strict,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
+
+bool bandCopyWholeRaster(std::string src_filename, int src_band,
+		std::string dst_filename, int dst_band,
+		Rcpp::Nullable<Rcpp::CharacterVector> options);
 			
 Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
 

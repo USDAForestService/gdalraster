@@ -15,11 +15,12 @@ test_that("get/set_config_option work", {
 test_that("createCopy writes correct output", {
 	lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 	tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
-	on.exit(unlink(tif_file))
 	options <- c("COMPRESS=LZW")
 	createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
 				options=options)
 	ds <- new(GDALRaster, tif_file, read_only=FALSE)
+	files <- ds$getFileList()
+	on.exit(unlink(files))
 	md <- ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
 	expect_equal(md, c("COMPRESSION=LZW", "INTERLEAVE=PIXEL"))
 	for (band in 1:ds$getRasterCount())
@@ -88,3 +89,26 @@ test_that("createColorRamp works", {
 	colors = createColorRamp(109, c(254, 231, 152), 127, c(254, 254, 189))
 	expect_equal(nrow(colors), 19)
 })
+
+test_that("bandCopyWholeRaster writes correct output", {
+	b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+	# make a copy since getStatistics will try to write a .xml file
+	b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+	file.copy(b5_file,  b5_tmp)
+	dst_file <- paste0(tempdir(), "/", "sr_multi.tif")
+	rasterFromRaster(b5_tmp, dst_file, nbands=7, init=0)
+	opt <- c("COMPRESSED=YES", "SKIP_HOLES=YES")
+	bandCopyWholeRaster(b5_tmp, 1, dst_file, 5, options=opt)
+	ds <- new(GDALRaster, b5_tmp, read_only=TRUE)
+	files <- ds$getFileList()
+	on.exit(unlink(files))
+	src_stats <- ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
+	ds$close()
+	ds <- new(GDALRaster, dst_file, read_only=TRUE)
+	files <- ds$getFileList()
+	on.exit(unlink(files))
+	dst_stats <- ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
+	ds$close()
+	expect_equal(src_stats, dst_stats)
+})
+

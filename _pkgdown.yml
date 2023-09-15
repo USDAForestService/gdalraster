@@ -21,6 +21,7 @@ reference:
 
 - title: Stand-alone functions
 - contents:
+  - bandCopyWholeRaster
   - bbox_from_wkt
   - bbox_to_wkt
   - bbox_intersect
