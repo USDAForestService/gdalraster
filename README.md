@@ -24,7 +24,9 @@ project.
 
 Bindings to GDAL are implemented in class
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
-along with several related stand-alone functions. These support:
+along with several related [stand-alone
+functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions),
+together supporting:
 
   - manual creation of uninitialized raster datasets
   - creation from existing raster as template
@@ -35,6 +37,7 @@ along with several related stand-alone functions. These support:
   - access to `gdalwarp` utility for reprojection
   - coordinate transformation
   - spatial reference convenience functions
+  - selected GDAL algorithms
 
 Additional functionality includes:
 
