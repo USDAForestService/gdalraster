@@ -111,7 +111,7 @@
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
 <p><code>gdalraster</code> is an R interface to the Raster API of the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Calling signatures resemble those of the native C, C++ and Python APIs provided by the GDAL project.</p>
-<p>Bindings to GDAL are implemented in class <code>GDALRaster</code> along with several related stand-alone functions. These support:</p>
+<p>Bindings to GDAL are implemented in class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html"><code>GDALRaster</code></a> along with several related stand-alone functions. These support:</p>
 <ul>
 <li>manual creation of uninitialized raster datasets</li>
 <li>creation from existing raster as template</li>
@@ -124,14 +124,14 @@
 </ul>
 <p>Additional functionality includes:</p>
 <ul>
-<li>class <code>RunningStats</code> calculates mean and variance in one pass, and tracks the min, max, sum, and count (i.e., summary statistics on a data stream). The input data values are not stored in memory, so this class can be used to compute statistics for very large data streams.</li>
-<li>class <code>CmbTable</code> identifies and counts unique combinations of integer values using a hash table.</li>
+<li>class <a href="https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html"><code>RunningStats</code></a> calculates mean and variance in one pass, and tracks the min, max, sum, and count (i.e., summary statistics on a data stream). The input data values are not stored in memory, so this class can be used to compute statistics for very large data streams.</li>
+<li>class <a href="https://usdaforestservice.github.io/gdalraster/reference/CmbTable-class.html"><code>CmbTable</code></a> identifies and counts unique combinations of integer values using a hash table.</li>
 <li>
-<code><a href="reference/combine.html">combine()</a></code> overlays multiple rasters so that a unique ID is assigned to each unique combination of input values. Pixel counts for each unique combination are obtained, and combination IDs are optionally written to an output raster.</li>
+<a href="https://usdaforestservice.github.io/gdalraster/reference/combine.html"><code>combine()</code></a> overlays multiple rasters so that a unique ID is assigned to each unique combination of input values. Pixel counts for each unique combination are obtained, and combination IDs are optionally written to an output raster.</li>
 <li>
-<code><a href="reference/calc.html">calc()</a></code> evaluates an R expression for each pixel in a raster layer or stack of layers. Individual pixel coordinates are available as variables in the R expression, as either x/y in the raster projected coordinate system or inverse projected longitude/latitude.</li>
+<a href="https://usdaforestservice.github.io/gdalraster/reference/calc.html"><code>calc()</code></a> evaluates an R expression for each pixel in a raster layer or stack of layers. Individual pixel coordinates are available as variables in the R expression, as either x/y in the raster projected coordinate system or inverse projected longitude/latitude.</li>
 <li>
-<code><a href="reference/plot_raster.html">plot_raster()</a></code> displays raster data using base R graphics.</li>
+<a href="https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html"><code>plot_raster()</code></a> displays raster data using base R graphics.</li>
 </ul>
 <p><code>gdalraster</code> may be suitable for applications that primarily need low-level raster I/O or prefer a direct GDAL API. The additional functionality is somewhat aimed at thematic data analysis but may have other utility.</p>
 </div>
