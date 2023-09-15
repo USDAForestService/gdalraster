@@ -22,7 +22,7 @@ Abstraction Library ([GDAL](https://gdal.org/)). Calling signatures
 resemble those of the native C, C++ and Python APIs provided by the GDAL
 project.
 
-Bindings to GDAL are implemented in class
+Bindings to GDAL are implemented in the exposed C++ class
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
 along with several related [stand-alone
 functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions),
@@ -37,7 +37,7 @@ together supporting:
   - access to `gdalwarp` utility for reprojection
   - coordinate transformation
   - spatial reference convenience functions
-  - selected GDAL algorithms
+  - several GDAL algorithms
 
 Additional functionality includes:
 
