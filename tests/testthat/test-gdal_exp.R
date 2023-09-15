@@ -12,6 +12,10 @@ test_that("get/set_config_option work", {
 	set_config_option("GDAL_CACHEMAX", co)
 })
 
+test_that("get_cache_used returns integer", {
+	expect_type(get_cache_used(), "integer")
+})
+
 test_that("createCopy writes correct output", {
 	lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 	tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
@@ -44,6 +48,14 @@ test_that("get_pixel_line gives correct results", {
 	ds$close()
 	res <- get_pixel_line(as.matrix(pts[,-1]), gt)
 	expect_equal(as.vector(res), pix_line)
+})
+
+test_that("_apply_geotransform gives correct result", {
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	ds <- new(GDALRaster, elev_file, read_only=TRUE)
+	gt <- ds$getGeoTransform()
+	ds$close()
+	expect_equal(.apply_geotransform(gt, 1, 1), c(323506.1, 5105052.0))
 })
 
 test_that("warp runs without error", {
