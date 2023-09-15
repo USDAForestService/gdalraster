@@ -216,6 +216,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bandCopyWholeRaster
+bool bandCopyWholeRaster(std::string src_filename, int src_band, std::string dst_filename, int dst_band, Rcpp::Nullable<Rcpp::CharacterVector> options);
+RcppExport SEXP _gdalraster_bandCopyWholeRaster(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP dst_filenameSEXP, SEXP dst_bandSEXP, SEXP optionsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< int >::type src_band(src_bandSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< int >::type dst_band(dst_bandSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(bandCopyWholeRaster(src_filename, src_band, dst_filename, dst_band, options));
+    return rcpp_result_gen;
+END_RCPP
+}
 // has_geos
 bool has_geos();
 RcppExport SEXP _gdalraster_has_geos() {
@@ -632,6 +647,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 9},
     {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 4},
     {"_gdalraster_createColorRamp", (DL_FUNC) &_gdalraster_createColorRamp, 5},
+    {"_gdalraster_bandCopyWholeRaster", (DL_FUNC) &_gdalraster_bandCopyWholeRaster, 5},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},

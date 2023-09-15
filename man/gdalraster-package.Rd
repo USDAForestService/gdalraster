@@ -20,7 +20,7 @@
   pixel data).
   
   \item raster creation: \code{\link{create}}, \code{\link{createCopy}}, 
-  \code{\link{rasterFromRaster}}
+  \code{\link{rasterFromRaster}}, \code{\link{bandCopyWholeRaster}}
  
   \item virtual raster: \code{\link{rasterToVRT}}
   
