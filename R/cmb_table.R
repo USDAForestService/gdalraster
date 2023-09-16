@@ -27,6 +27,7 @@
 #' cmb$updateFromMatrix(int_cmbs, incr)
 #' cmb$updateFromMatrixByRow(int_cmbs, incr)
 #' cmb$asDataFrame()
+#' cmb$asMatrix()
 #' }
 #'
 #' @section Details:
@@ -67,10 +68,17 @@
 #' IDs assigned to the combinations.
 #'
 #' \code{$asDataFrame()}
-#' Returns the CmbTable as a data frame with column \code{cmbid} containing 
-#' the unique combination IDs, column \code{count} containing the counts of 
+#' Returns the `CmbTable` as a data frame with column \code{"cmbid"} containing 
+#' the unique combination IDs, column \code{"count"} containing the counts of 
 #' occurrences, and \code{keyLen} columns named \code{varNames} containing
 #' the integer values comprising each unique combination.
+#'
+#' \code{$asMatrix()}
+#' Returns the `CmbTable` as a matrix with column `1` (\code{"cmbid"})
+#' containing the unique combination IDs, column `2` (\code{"count"})
+#' containing the counts of occurrences, and columns `3:keyLen+2` named
+#' \code{varNames} containing the integer values comprising each unique
+#' combination.
 #'
 #' @examples
 #' m <- matrix(c(1,2,3,1,2,3,4,5,6,1,3,2,4,5,6,1,1,1), 3, 6, byrow=FALSE)

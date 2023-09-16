@@ -8,4 +8,6 @@ test_that("CmbTable works", {
 	df <- cmb$asDataFrame()
 	expect_equal(nrow(df), 5)
 	expect_equal(sum(df$count), 8)
+	expect_equal(as.matrix(df), cmb$asMatrix())
+	expect_equal(sum(cmb$asMatrix()), 62)
 })
