@@ -105,6 +105,33 @@ Rcpp::DataFrame CmbTable::asDataFrame() const {
 	return dfOut;
 }
 
+Rcpp::NumericMatrix CmbTable::asMatrix() const {
+	// Return the table as a numeric matrix.
+
+	Rcpp::NumericMatrix m_out(cmb_map.size(), key_len + 2);
+	cmbKey key;
+	cmbData cmbdat;
+
+	unsigned long this_idx = 0;
+	for(auto iter = cmb_map.begin(); iter != cmb_map.end(); ++iter) {
+		key = iter->first;
+		cmbdat = iter->second;
+		m_out(this_idx, 0) = cmbdat.ID;
+		m_out(this_idx, 1) = cmbdat.count;
+		for(std::size_t var=0; var < key_len; ++var) {
+			m_out(this_idx, var+2) = key.cmb[var];
+		}
+		++this_idx;
+	}
+	
+	Rcpp::CharacterVector cvColNames = Rcpp::clone(cvVarNames);
+	cvColNames.push_front("count");
+	cvColNames.push_front("cmbid");
+	
+	Rcpp::colnames(m_out) = cvColNames;
+	return m_out;
+}
+
 RCPP_MODULE(mod_cmb_table) {
 
     Rcpp::class_<CmbTable>("CmbTable")
@@ -121,7 +148,9 @@ RCPP_MODULE(mod_cmb_table) {
 	.method("updateFromMatrixByRow", &CmbTable::updateFromMatrixByRow, 
 		"update() on integer combinations contained in rows of a matrix")
     .const_method("asDataFrame", &CmbTable::asDataFrame, 
-    	"Returns a dataframe containing the cmb table")
+    	"Returns a dataframe containing the combinations table")
+    .const_method("asMatrix", &CmbTable::asMatrix, 
+    	"Returns a matrix containing the combinations table")
     ;
 }
 

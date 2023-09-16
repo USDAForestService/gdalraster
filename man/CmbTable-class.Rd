@@ -33,6 +33,7 @@ cmb$update(int_cmb, incr)
 cmb$updateFromMatrix(int_cmbs, incr)
 cmb$updateFromMatrixByRow(int_cmbs, incr)
 cmb$asDataFrame()
+cmb$asMatrix()
 }
 }
 
@@ -75,10 +76,17 @@ Returns a numeric vector of length \code{nrow(int_cmbs)} containing the
 IDs assigned to the combinations.
 
 \code{$asDataFrame()}
-Returns the CmbTable as a data frame with column \code{cmbid} containing
-the unique combination IDs, column \code{count} containing the counts of
+Returns the \code{CmbTable} as a data frame with column \code{"cmbid"} containing
+the unique combination IDs, column \code{"count"} containing the counts of
 occurrences, and \code{keyLen} columns named \code{varNames} containing
 the integer values comprising each unique combination.
+
+\code{$asMatrix()}
+Returns the \code{CmbTable} as a matrix with column \code{1} (\code{"cmbid"})
+containing the unique combination IDs, column \code{2} (\code{"count"})
+containing the counts of occurrences, and columns \code{3:keyLen+2} named
+\code{varNames} containing the integer values comprising each unique
+combination.
 }
 
 \examples{

@@ -65,6 +65,7 @@ class CmbTable {
 		const Rcpp::IntegerMatrix& int_cmbs, double incr);
 	
 	Rcpp::DataFrame asDataFrame() const;
+	Rcpp::NumericMatrix asMatrix() const;
 };
 
 RCPP_EXPOSED_CLASS(CmbTable)

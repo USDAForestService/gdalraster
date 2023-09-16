@@ -1,5 +1,7 @@
 # gdalraster 1.4.1 (dev)
 
+* add `CmbTable$asMatrix()`: returns the table of combinations as a numeric matrix with named columns (alternative to `$asDataFrame()`) (2023-09-15)
+
 * add `CmbTable$updateFromMatrixByRow()`: class method to update the hash table from a matrix with combinations arranged in rows (2023-09-15)
 
 * add `bandCopyWholeRaster()`: efficiently copy a whole raster band, wrapper for `GDALRasterBandCopyWholeRaster()` in the GDAL API (2023-09-14)
