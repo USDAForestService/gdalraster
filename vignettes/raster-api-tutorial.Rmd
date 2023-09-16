@@ -93,7 +93,8 @@ ds$getStatistics(band=1, approx_ok = FALSE, force = TRUE)
 # does this band have overviews? (aka "pyramids")
 ds$getOverviewCount(band=1)
 
-# gdalraster currently does not support access to color tables
+# does this band have a color table
+ds$getColorTable(band=1)
 ```
 
 ## Reading raster data
