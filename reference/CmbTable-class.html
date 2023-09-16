@@ -95,7 +95,8 @@ operate on the table as described in Details.</p>
 <span><span class="va">cmb</span><span class="op">$</span><span class="fu">update</span><span class="op">(</span><span class="va">int_cmb</span>, <span class="va">incr</span><span class="op">)</span></span>
 <span><span class="va">cmb</span><span class="op">$</span><span class="fu">updateFromMatrix</span><span class="op">(</span><span class="va">int_cmbs</span>, <span class="va">incr</span><span class="op">)</span></span>
 <span><span class="va">cmb</span><span class="op">$</span><span class="fu">updateFromMatrixByRow</span><span class="op">(</span><span class="va">int_cmbs</span>, <span class="va">incr</span><span class="op">)</span></span>
-<span><span class="va">cmb</span><span class="op">$</span><span class="fu">asDataFrame</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">cmb</span><span class="op">$</span><span class="fu">asDataFrame</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">cmb</span><span class="op">$</span><span class="fu">asMatrix</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 
     </div>
     <div class="section level2">
@@ -135,10 +136,16 @@ combinations, or inserting new combinations with count set to <code>incr</code>.
 Returns a numeric vector of length <code>nrow(int_cmbs)</code> containing the
 IDs assigned to the combinations.</p>
 <p><code>$asDataFrame()</code>
-Returns the CmbTable as a data frame with column <code>cmbid</code> containing
-the unique combination IDs, column <code>count</code> containing the counts of
+Returns the <code>CmbTable</code> as a data frame with column <code>"cmbid"</code> containing
+the unique combination IDs, column <code>"count"</code> containing the counts of
 occurrences, and <code>keyLen</code> columns named <code>varNames</code> containing
 the integer values comprising each unique combination.</p>
+<p><code>$asMatrix()</code>
+Returns the <code>CmbTable</code> as a matrix with column <code>1</code> (<code>"cmbid"</code>)
+containing the unique combination IDs, column <code>2</code> (<code>"count"</code>)
+containing the counts of occurrences, and columns <code>3:keyLen+2</code> named
+<code>varNames</code> containing the integer values comprising each unique
+combination.</p>
     </div>
 
     <div class="section level2">
