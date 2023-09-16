@@ -204,7 +204,9 @@ by specifying a <code>band</code> number as the first argument:</p>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span>
 <span></span>
-<span><span class="co"># gdalraster currently does not support access to color tables</span></span></code></pre></div>
+<span><span class="co"># does this band have a color table</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getColorTable</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="co">#&gt; NULL</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="reading-raster-data">Reading raster data<a class="anchor" aria-label="anchor" href="#reading-raster-data"></a>
