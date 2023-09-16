@@ -1,5 +1,7 @@
 # gdalraster 1.4.1 (dev)
 
+* add `CmbTable$updateFromMatrixByRow()`: class method to update the hash table from a matrix with combinations arranged in rows (2023-09-15)
+
 * add `bandCopyWholeRaster()`: efficiently copy a whole raster band, wrapper for `GDALRasterBandCopyWholeRaster()` in the GDAL API (2023-09-14)
 
 * add `GDALRaster$flushCache()`: flush all write cached data to disk (2023-09-13)
