@@ -60,6 +60,9 @@ class CmbTable {
 	
 	Rcpp::NumericVector updateFromMatrix(const Rcpp::IntegerMatrix& int_cmbs,
 		double incr);
+
+	Rcpp::NumericVector updateFromMatrixByRow(
+		const Rcpp::IntegerMatrix& int_cmbs, double incr);
 	
 	Rcpp::DataFrame asDataFrame() const;
 };
