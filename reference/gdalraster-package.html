@@ -74,42 +74,58 @@
   opening a raster dataset and calling methods on the Dataset, Driver and
   RasterBand objects in the underlying API (get/set parameters, read/write
   pixel data).</p></li>
-<li><p>raster creation: <code><a href="create.html">create</a></code>, <code><a href="createCopy.html">createCopy</a></code>, 
-  <code><a href="rasterFromRaster.html">rasterFromRaster</a></code>, <code><a href="bandCopyWholeRaster.html">bandCopyWholeRaster</a></code></p></li>
-<li><p>virtual raster: <code><a href="rasterToVRT.html">rasterToVRT</a></code></p></li>
-<li><p>reproject: <code><a href="warp.html">warp</a></code></p></li>
-<li><p>algorithms: <code><a href="dem_proc.html">dem_proc</a></code>, <code><a href="fillNodata.html">fillNodata</a></code>,
-  <code><a href="sieveFilter.html">sieveFilter</a></code>, <code><a href="GDALRaster-class.html">GDALRaster$getChecksum</a></code></p></li>
-<li><p>geotransform conversion: <code><a href="inv_geotransform.html">inv_geotransform</a></code>, 
-  <code><a href="get_pixel_line.html">get_pixel_line</a></code></p></li>
-<li><p>coordinate transformation: <code><a href="transform_xy.html">transform_xy</a></code>, 
-  <code><a href="inv_project.html">inv_project</a></code></p></li>
-<li><p>spatial reference convenience functions: <code><a href="epsg_to_wkt.html">epsg_to_wkt</a></code>, 
-  <code><a href="srs_to_wkt.html">srs_to_wkt</a></code>,<br><code><a href="srs_is_geographic.html">srs_is_geographic</a></code>, <code><a href="srs_is_projected.html">srs_is_projected</a></code>,
-  <code><a href="srs_is_same.html">srs_is_same</a></code></p></li>
-<li><p>geometry convenience functions: <code><a href="bbox_from_wkt.html">bbox_from_wkt</a></code>, 
-  <code><a href="bbox_to_wkt.html">bbox_to_wkt</a></code>,<br><code><a href="bbox_intersect.html">bbox_intersect</a></code>, <code><a href="bbox_intersect.html">bbox_union</a></code>, 
-  <code><a href="g_buffer.html">g_buffer</a></code>, <code><a href="has_geos.html">has_geos</a></code></p></li>
-<li><p>GDAL configuration: <code><a href="gdal_version.html">gdal_version</a></code>,
-  <code><a href="get_cache_used.html">get_cache_used</a></code>, <code><a href="get_config_option.html">get_config_option</a></code>,<br><code><a href="set_config_option.html">set_config_option</a></code></p></li>
-<li><p>PROJ configuration: <code><a href="proj_version.html">proj_version</a></code>,
-  <code><a href="proj_search_paths.html">proj_search_paths</a></code>, <code><a href="proj_networking.html">proj_networking</a></code></p></li>
-</ul><p>Additional functionality includes:</p><ul><li><p>class <code><a href="RunningStats-class.html">RunningStats</a></code> calculates mean and variance in one 
-  pass. The min, max, sum, and count are also tracked (i.e., summary 
+<li><p>raster creation: <code><a href="create.html">create()</a></code>,
+  <code><a href="createCopy.html">createCopy()</a></code>,
+  <code><a href="rasterFromRaster.html">rasterFromRaster()</a></code>,
+  <code><a href="bandCopyWholeRaster.html">bandCopyWholeRaster()</a></code></p></li>
+<li><p>virtual raster: <code><a href="rasterToVRT.html">rasterToVRT()</a></code></p></li>
+<li><p>reproject: <code><a href="warp.html">warp()</a></code></p></li>
+<li><p>algorithms: <code><a href="dem_proc.html">dem_proc()</a></code>,
+  <code><a href="fillNodata.html">fillNodata()</a></code>,
+  <code><a href="sieveFilter.html">sieveFilter()</a></code>,
+  <code><a href="GDALRaster-class.html">GDALRaster$getChecksum()</a></code></p></li>
+<li><p>geotransform conversion:
+  <code><a href="inv_geotransform.html">inv_geotransform()</a></code>, 
+  <code><a href="get_pixel_line.html">get_pixel_line()</a></code></p></li>
+<li><p>coordinate transformation:
+  <code><a href="transform_xy.html">transform_xy()</a></code>, 
+  <code><a href="inv_project.html">inv_project()</a></code></p></li>
+<li><p>spatial reference convenience functions:
+  <code><a href="epsg_to_wkt.html">epsg_to_wkt()</a></code>,
+  <code><a href="srs_to_wkt.html">srs_to_wkt()</a></code>,<br><code><a href="srs_is_geographic.html">srs_is_geographic()</a></code>,
+  <code><a href="srs_is_projected.html">srs_is_projected()</a></code>,
+  <code><a href="srs_is_same.html">srs_is_same()</a></code></p></li>
+<li><p>geometry convenience functions:
+  <code><a href="bbox_from_wkt.html">bbox_from_wkt()</a></code>, 
+  <code><a href="bbox_to_wkt.html">bbox_to_wkt()</a></code>,
+  <code><a href="bbox_intersect.html">bbox_intersect()</a></code>,
+  <code><a href="bbox_intersect.html">bbox_union()</a></code>, 
+  <code><a href="g_buffer.html">g_buffer()</a></code>,
+  <code><a href="has_geos.html">has_geos()</a></code></p></li>
+<li><p>GDAL configuration:
+  <code><a href="gdal_version.html">gdal_version()</a></code>,
+  <code><a href="get_cache_used.html">get_cache_used()</a></code>,
+  <code><a href="get_config_option.html">get_config_option()</a></code>,<br><code><a href="set_config_option.html">set_config_option()</a></code></p></li>
+<li><p>PROJ configuration:
+  <code><a href="proj_version.html">proj_version()</a></code>,
+  <code><a href="proj_search_paths.html">proj_search_paths()</a></code>,
+  <code><a href="proj_networking.html">proj_networking()</a></code></p></li>
+</ul><p>Additional functionality includes:</p><ul><li><p><code><a href="RunningStats-class.html">RunningStats-class</a></code> calculates mean and variance in one
+  pass. The min, max, sum, and count are also tracked (i.e., summary
   statistics on a data stream).</p></li>
-<li><p>class <code><a href="CmbTable-class.html">CmbTable</a></code> implements a hash table for counting 
+<li><p><code><a href="CmbTable-class.html">CmbTable-class</a></code> implements a hash table for counting
   unique combinations of integer values.</p></li>
-<li><p><code><a href="combine.html">combine</a></code> overlays multiple rasters so that a unique ID 
-  is assigned to each unique combination of input values. Pixel counts for 
-  each unique combination are obtained, and combination IDs are optionally 
-  written to an output raster.</p></li>
-<li><p><code><a href="calc.html">calc</a></code> evaluates an R expression for each pixel in a 
-  raster layer or stack of layers. Individual pixel coordinates are available 
-  as variables in the R expression, as either x/y in the raster projected 
+<li><p><code><a href="combine.html">combine()</a></code> overlays multiple rasters so that a
+  unique ID is assigned to each unique combination of input values. Pixel
+  counts for each unique combination are obtained, and combination IDs are
+  optionally written to an output raster.</p></li>
+<li><p><code><a href="calc.html">calc()</a></code> evaluates an R expression for each pixel in
+  a raster layer or stack of layers. Individual pixel coordinates are available
+  as variables in the R expression, as either x/y in the raster projected
   coordinate system or inverse projected longitude/latitude.</p></li>
-<li><p><code><a href="plot_raster.html">plot_raster</a></code> displays raster data using base R
-  <code>graphics</code>. Supports single-band grayscale, RGB, color tables and color
-  map functions (e.g., color ramp).</p></li>
+<li><p><code><a href="plot_raster.html">plot_raster()</a></code> displays raster data using
+  base R <code>graphics</code>. Supports single-band grayscale, RGB, color tables and
+  color map functions (e.g., color ramp).</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
