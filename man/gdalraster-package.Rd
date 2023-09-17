@@ -19,61 +19,76 @@
   RasterBand objects in the underlying API (get/set parameters, read/write
   pixel data).
   
-  \item raster creation: \code{\link{create}}, \code{\link{createCopy}}, 
-  \code{\link{rasterFromRaster}}, \code{\link{bandCopyWholeRaster}}
+  \item raster creation: \code{\link[=create]{create()}},
+  \code{\link[=createCopy]{createCopy()}},
+  \code{\link[=rasterFromRaster]{rasterFromRaster()}},
+  \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}
  
-  \item virtual raster: \code{\link{rasterToVRT}}
+  \item virtual raster: \code{\link[=rasterToVRT]{rasterToVRT()}}
   
-  \item reproject: \code{\link{warp}}
+  \item reproject: \code{\link[=warp]{warp()}}
   
-  \item algorithms: \code{\link{dem_proc}}, \code{\link{fillNodata}},
-  \code{\link{sieveFilter}}, \code{\link[=GDALRaster]{GDALRaster$getChecksum}}
+  \item algorithms: \code{\link[=dem_proc]{dem_proc()}},
+  \code{\link[=fillNodata]{fillNodata()}},
+  \code{\link[=sieveFilter]{sieveFilter()}},
+  \code{\link[=GDALRaster]{GDALRaster$getChecksum()}}
   
-  \item geotransform conversion: \code{\link{inv_geotransform}}, 
-  \code{\link{get_pixel_line}}
+  \item geotransform conversion:
+  \code{\link[=inv_geotransform]{inv_geotransform()}}, 
+  \code{\link[=get_pixel_line]{get_pixel_line()}}
   
-  \item coordinate transformation: \code{\link{transform_xy}}, 
-  \code{\link{inv_project}}
+  \item coordinate transformation:
+  \code{\link[=transform_xy]{transform_xy()}}, 
+  \code{\link[=inv_project]{inv_project()}}
   
-  \item spatial reference convenience functions: \code{\link{epsg_to_wkt}}, 
-  \code{\link{srs_to_wkt}},\cr
-  \code{\link{srs_is_geographic}}, \code{\link{srs_is_projected}},
-  \code{\link{srs_is_same}}
+  \item spatial reference convenience functions:
+  \code{\link[=epsg_to_wkt]{epsg_to_wkt()}},
+  \code{\link[=srs_to_wkt]{srs_to_wkt()}},\cr
+  \code{\link[=srs_is_geographic]{srs_is_geographic()}},
+  \code{\link[=srs_is_projected]{srs_is_projected()}},
+  \code{\link[=srs_is_same]{srs_is_same()}}
   
-  \item geometry convenience functions: \code{\link{bbox_from_wkt}}, 
-  \code{\link{bbox_to_wkt}},\cr
-  \code{\link{bbox_intersect}}, \code{\link{bbox_union}}, 
-  \code{\link{g_buffer}}, \code{\link{has_geos}}
+  \item geometry convenience functions:
+  \code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, 
+  \code{\link[=bbox_to_wkt]{bbox_to_wkt()}},
+  \code{\link[=bbox_intersect]{bbox_intersect()}},
+  \code{\link[=bbox_union]{bbox_union()}}, 
+  \code{\link[=g_buffer]{g_buffer()}},
+  \code{\link[=has_geos]{has_geos()}}
   
-  \item GDAL configuration: \code{\link{gdal_version}},
-  \code{\link{get_cache_used}}, \code{\link{get_config_option}},\cr
-  \code{\link{set_config_option}}
+  \item GDAL configuration:
+  \code{\link[=gdal_version]{gdal_version()}},
+  \code{\link[=get_cache_used]{get_cache_used()}},
+  \code{\link[=get_config_option]{get_config_option()}},\cr
+  \code{\link[=set_config_option]{set_config_option()}}
   
-  \item PROJ configuration: \code{\link{proj_version}},
-  \code{\link{proj_search_paths}}, \code{\link{proj_networking}}
+  \item PROJ configuration:
+  \code{\link[=proj_version]{proj_version()}},
+  \code{\link[=proj_search_paths]{proj_search_paths()}},
+  \code{\link[=proj_networking]{proj_networking()}}
   }
   Additional functionality includes:
   \itemize{
-  \item class \code{\link{RunningStats}} calculates mean and variance in one 
-  pass. The min, max, sum, and count are also tracked (i.e., summary 
+  \item \code{\link{RunningStats-class}} calculates mean and variance in one
+  pass. The min, max, sum, and count are also tracked (i.e., summary
   statistics on a data stream).
   
-  \item class \code{\link{CmbTable}} implements a hash table for counting 
+  \item \code{\link{CmbTable-class}} implements a hash table for counting
   unique combinations of integer values.
   
-  \item \code{\link{combine}} overlays multiple rasters so that a unique ID 
-  is assigned to each unique combination of input values. Pixel counts for 
-  each unique combination are obtained, and combination IDs are optionally 
-  written to an output raster.
+  \item \code{\link[=combine]{combine()}} overlays multiple rasters so that a
+  unique ID is assigned to each unique combination of input values. Pixel
+  counts for each unique combination are obtained, and combination IDs are
+  optionally written to an output raster.
   
-  \item \code{\link{calc}} evaluates an R expression for each pixel in a 
-  raster layer or stack of layers. Individual pixel coordinates are available 
-  as variables in the R expression, as either x/y in the raster projected 
+  \item \code{\link[=calc]{calc()}} evaluates an R expression for each pixel in
+  a raster layer or stack of layers. Individual pixel coordinates are available
+  as variables in the R expression, as either x/y in the raster projected
   coordinate system or inverse projected longitude/latitude.
   
-  \item \code{\link{plot_raster}} displays raster data using base R
-  \code{graphics}. Supports single-band grayscale, RGB, color tables and color
-  map functions (e.g., color ramp).
+  \item \code{\link[=plot_raster]{plot_raster()}} displays raster data using
+  base R \code{graphics}. Supports single-band grayscale, RGB, color tables and
+  color map functions (e.g., color ramp).
   }
 }
 \author{
