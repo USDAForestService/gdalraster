@@ -24,13 +24,13 @@ f <- paste0(base_url, "lf_elev_220_mt_hood_utm.tif")
 ds <- new(GDALRaster, f, read_only=TRUE)
 
 # gray
-plot_raster(ds, main="Mount Hood elevation (m)")
+plot_raster(ds, legend=TRUE, main="Mount Hood elevation (m)")
 
 # color ramp
 elev_pal <- c("#00A60E","#63C600","#E6E600","#E9BD3B","#ECB176","#EFC2B3","#F2F2F2")
 ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
 
-plot_raster(ds, col_map_fn=ramp, main="Mount Hood elevation (m)")
+plot_raster(ds, legend=TRUE, col_map_fn=ramp, main="Mount Hood elevation (m)")
 ds$close()
 ```
 

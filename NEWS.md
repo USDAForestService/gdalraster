@@ -1,5 +1,7 @@
 # gdalraster 1.4.1 (dev)
 
+* `plot_raster()`: a legend can now be used with a color table for continuous data. Default value of the `legend` argument has been changed to `FALSE` (2023-09-17)
+
 * add `CmbTable$asMatrix()`: returns the table of combinations as a numeric matrix with named columns (alternative to `$asDataFrame()`) (2023-09-15)
 
 * add `CmbTable$updateFromMatrixByRow()`: class method to update the hash table from a matrix with combinations arranged in rows (2023-09-15)
