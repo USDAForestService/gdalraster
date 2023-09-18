@@ -81,7 +81,7 @@
 <span>  ylab <span class="op">=</span> <span class="st">"y"</span>,</span>
 <span>  xaxs <span class="op">=</span> <span class="st">"i"</span>,</span>
 <span>  yaxs <span class="op">=</span> <span class="st">"i"</span>,</span>
-<span>  legend <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  legend <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  digits <span class="op">=</span> <span class="fl">2</span>,</span>
 <span>  na_col <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/grDevices/rgb.html" class="external-link">rgb</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span><span class="op">)</span>,</span>
 <span>  <span class="va">...</span></span>
@@ -117,8 +117,8 @@ the entire raster will be read at full resolution.</p></dd>
 
 <dt>max_pixels</dt>
 <dd><p>The maximum number of pixels that the function will
-use for display (per band). An error is raised if <code>(xsize * ysize)</code> exceeds
-this value. Setting to <code>NULL</code> turns off this check.</p></dd>
+attempt to display (per band). An error is raised if <code>(xsize * ysize)</code>
+exceeds this value. Setting to <code>NULL</code> turns off this check.</p></dd>
 
 
 <dt>col_tbl</dt>
@@ -213,9 +213,9 @@ to the image when drawing (default <code>TRUE</code>).</p></dd>
 
 <dt>legend</dt>
 <dd><p>Logical indicating whether to include a legend on the plot.
-By default, a legend will be included if plotting single-band data without
-<code>col_tbl</code> specified. Legend is not currently supported for color tables, or
-with 3-band RGB data.</p></dd>
+Currently, legends are only supported for continuous data. A color table
+will be used if one is specified or the raster has a built-in color table,
+otherwise the value for <code>col_map_fn</code> will be used.</p></dd>
 
 
 <dt>digits</dt>
@@ -264,14 +264,15 @@ CUBIC, CUBICSPLINE, LANCZOS, AVERAGE or MODE, for example:</p><div class="source
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">elev_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># grayscale</span></span></span>
-<span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">ds</span>, main<span class="op">=</span><span class="st">"Storm Lake elevation (m)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">ds</span>, legend<span class="op">=</span><span class="cn">TRUE</span>, main<span class="op">=</span><span class="st">"Storm Lake elevation (m)"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_raster-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># color ramp from user-defined palette</span></span></span>
 <span class="r-in"><span><span class="va">elev_pal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#00A60E"</span>,<span class="st">"#63C600"</span>,<span class="st">"#E6E600"</span>,<span class="st">"#E9BD3B"</span>,</span></span>
 <span class="r-in"><span>              <span class="st">"#ECB176"</span>,<span class="st">"#EFC2B3"</span>,<span class="st">"#F2F2F2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ramp</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/colour_ramp.html" class="external-link">colour_ramp</a></span><span class="op">(</span><span class="va">elev_pal</span>, alpha<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">ds</span>, col_map_fn<span class="op">=</span><span class="va">ramp</span>, main<span class="op">=</span><span class="st">"Storm Lake elevation (m)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">plot_raster</span><span class="op">(</span><span class="va">ds</span>, col_map_fn<span class="op">=</span><span class="va">ramp</span>, legend<span class="op">=</span><span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>            main<span class="op">=</span><span class="st">"Storm Lake elevation (m)"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="plot_raster-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>

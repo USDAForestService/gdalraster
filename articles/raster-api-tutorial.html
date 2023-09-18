@@ -108,6 +108,10 @@ the <code>GDALRaster</code> object fails). Also, note that
 (though it usually is). Its interpretation is driver dependent, and it
 might be a URL, a database connection string, a filename with additional
 parameters, etc.</p>
+<p><code>GDALRaster</code> is a C++ class exposed directly to R (via
+<code>RCPP_EXPOSED_CLASS</code>) that encapsulates a GDAL dataset object
+and its associated raster band objects. Methods of the class are
+accessed in R using the <code>$</code> operator.</p>
 </div>
 <div class="section level2">
 <h2 id="getting-dataset-information">Getting dataset information<a class="anchor" aria-label="anchor" href="#getting-dataset-information"></a>
@@ -116,9 +120,7 @@ parameters, etc.</p>
 Model</a>, a GDAL dataset contains a list of raster bands, all
 pertaining to the same area and having the same resolution. It also has
 metadata, a coordinate system, a georeferencing transform, size of
-raster and various other information. Class <code>GDALRaster</code>
-encapsulates a GDAL dataset object and its associated raster band
-objects.</p>
+raster and various other information.</p>
 <p>In the particular but common case of a “north up” raster without any
 rotation or shearing, the georeferencing transform (see <a href="https://gdal.org/tutorials/geotransforms_tut.html" class="external-link">Geotransform
 Tutorial</a>) takes the following form with <em>1-based indexing in
@@ -229,7 +231,7 @@ row of data into a similarly sized vector.
 <code>integer</code> type if possible for the raster data type (Byte,
 Int8, Int16, UInt16, Int32), otherwise the returned vector will be of
 type <code>double</code> (UInt32, Float32, Float64) or
-<code>complex</code> (CInt16, CInt32, CFloat32, CFloat64). The input
+<code>complex</code> (CInt16, CInt32, CFloat32, CFloat64). The returned
 data are organized in left to right, top to bottom pixel order.
 <code>NA</code> will be returned in place of the nodata value if the
 raster dataset has a nodata value defined for the band:</p>
@@ -252,19 +254,19 @@ raster dataset has a nodata value defined for the band:</p>
 <span><span class="co">#&gt; [1] 59 63 64 51 25 20</span></span></code></pre></div>
 <p>Writing data with <code>GDALRaster$write()</code> is similar to
 <code>$read()</code> with an additional argument specifying a vector of
-pixel data to write. The <code>xoff</code>, <code>yoff</code>,
-<code>xsize</code>, <code>ysize</code> arguments describe the window of
-raster data on disk to read (or write). It doesn’t have to fall on tile
-boundaries, though access may be more efficient in some cases if it
-does. Note that GDAL uses memory caching algorithms during raster I/O to
-improve performance. The operation of the caching mechanism and
-potential configuration of cache memory size might be considered when
-scaling I/O to large datasets (see <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html">GDAL
+pixel data to write (arranged in left to right, top to bottom pixel
+order). The <code>xoff</code>, <code>yoff</code>, <code>xsize</code>,
+<code>ysize</code> arguments describe the window of raster data on disk
+to read (or write). It doesn’t have to fall on tile boundaries, though
+access may be more efficient in some cases if it does. Note that GDAL
+uses memory caching algorithms during raster I/O to improve performance.
+The operation of the caching mechanism and configuration of cache memory
+size might be considered when scaling I/O to large datasets (see <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html">GDAL
 Block Cache</a>).</p>
 <p>The values for <code>out_xsize</code> and <code>out_ysize</code>
-describe the size of the buffer (an R vector of length
+describe the size of the output buffer (an R vector of length
 <code>out_xsize * out_ysize</code> that data will be read into). When
-loading data at full resolution this would be the same as the window
+reading data at full resolution this would be the same as the window
 size (<code>xsize</code>, <code>ysize</code>). However, to load a
 reduced resolution overview, <code>out_xsize</code>,
 <code>out_ysize</code> could be set to smaller than the window on disk.
@@ -276,10 +278,10 @@ region being read (<code>xsize * ysize</code>). In this case, overviews
 overviews are available at suitable resolution.</p>
 <p><code><a href="../reference/plot_raster.html">gdalraster::plot_raster()</a></code> uses base R
 <code>graphics</code> to display raster data read from an open dataset
-(with options to display a subwindow, to read at reduced resolution,
-from a specific band or from multiple bands for RGB data):</p>
+(with options to display a subwindow, to read a reduced resolution
+overview, or read from multiple bands for RGB data):</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, main<span class="op">=</span><span class="st">"Storm Lake NLCD Tree Canopy Cover"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend<span class="op">=</span><span class="cn">TRUE</span>, main<span class="op">=</span><span class="st">"Storm Lake Tree Canopy Cover (%)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="raster-api-tutorial_files/figure-html/unnamed-chunk-8-1.png" width="576"></p>
 </div>
 <div class="section level2">
