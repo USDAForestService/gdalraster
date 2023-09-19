@@ -76,8 +76,8 @@ large data streams.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>na_rm</dt>
-<dd><p>Logical. <code>TRUE</code> to remove <code>NA</code> from the input data or <code>FALSE</code>
-to retain <code>NA</code> (defaults to <code>TRUE</code>).</p></dd>
+<dd><p>Logical scalar. <code>TRUE</code> to remove <code>NA</code> from the input data or
+<code>FALSE</code> to retain <code>NA</code> (defaults to <code>TRUE</code>).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -89,7 +89,12 @@ maintains the current minimum, maximum, mean, variance, sum and count of
 values that have been read from the stream. It can be updated repeatedly
 with new values (i.e., chunks of data read from the input stream), but its
 memory footprint is negligible. Class methods for updating with new values
-and retrieving current values of statistics are described in Details.</p>
+and retrieving current values of statistics are described in Details.
+<code>RunningStats</code> is a C++ class exposed directly to R (via
+<code>RCPP_EXPOSED_CLASS</code>). Methods of the class are accessed in R using the <code>$</code></p>
+
+
+<p>operator.</p>
     </div>
     <div class="section level2">
     <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
