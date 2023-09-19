@@ -21,6 +21,9 @@
 #' with new values (i.e., chunks of data read from the input stream), but its 
 #' memory footprint is negligible. Class methods for updating with new values 
 #' and retrieving current values of statistics are described in Details.
+#' `RunningStats` is a C++ class exposed directly to R (via
+#' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed in R using the `$`
+#' operator.
 #'
 #'
 #' @section Usage:

@@ -16,7 +16,9 @@
 #' @returns An object of class `CmbTable`. Contains a hash table having a 
 #' vector of `keyLen` integers as the key and the count of occurrences of 
 #' each unique integer combination as the value, along with methods that 
-#' operate on the table as described in Details.
+#' operate on the table as described in Details. `CmbTable` is a C++ class
+#' exposed directly to R (via `RCPP_EXPOSED_CLASS`). Methods of the class are
+#' accessed in R using the `$` operator.
 #'
 #' @section Usage:
 #' \preformatted{
