@@ -2,11 +2,9 @@ test_that("plot_raster works", {
 	# grayscale
 	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 	ds <- new(GDALRaster, elev_file, read_only=TRUE)
-	dm <- ds$dim()
-	r <- read_ds(ds)
+	expect_silent(plot_raster(ds, legend=TRUE))
 	ds$close()
-	expect_silent(plot_raster(r, xsize=dm[1], ysize=dm[2]))
-	
+
 	# rgb
 	b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
 	b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
@@ -21,7 +19,10 @@ test_that("plot_raster works", {
 	  r <- c(r, read_ds(ds))
 	  ds$close()
 	}
-	expect_silent(plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3))
+	expect_silent(plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
+					minmax_def=c(7551,7679,7585,14842,24997,12451)))
+	expect_silent(plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
+					minmax_pct_cut=c(2,98)))
 	
 	# color table
 	evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
@@ -34,4 +35,10 @@ test_that("plot_raster works", {
 	ds$close()
 	expect_silent(plot_raster(r, xsize=dm[1], ysize=dm[2], col_tbl=vat,
 					interpolate=FALSE))
+
+	# built-in color table
+	tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
+	ds <- new(GDALRaster, tcc_file, read_only=TRUE)
+	expect_silent(plot_raster(ds, legend=TRUE))
+	ds$close()
 })
