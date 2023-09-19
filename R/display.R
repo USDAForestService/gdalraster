@@ -372,7 +372,8 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 			leg_data <- seq(mm[1], mm[2], length.out=256)
 			if (normalize)
 				leg_data <- .normalize(leg_data)
-			leg_data <- sort(col_map_fn(leg_data), decreasing=TRUE)
+			leg_data <- sort(leg_data, decreasing=TRUE)
+			leg_data <- col_map_fn(leg_data)
 			leg_img <- grDevices::as.raster(matrix(leg_data, ncol=1))
 		}
 		else {
