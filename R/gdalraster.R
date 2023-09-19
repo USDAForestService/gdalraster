@@ -20,7 +20,8 @@
 #' to open with write access.
 #' @returns An object of class `GDALRaster` which contains a pointer to the 
 #' opened dataset, and methods that operate on the dataset as described in 
-#' Details. `GDALRaster` is a C++ class exposed directly to R (via
+#' Details.
+#' `GDALRaster` is a C++ class exposed directly to R (via
 #' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed in R using the
 #' `$` operator.
 #'

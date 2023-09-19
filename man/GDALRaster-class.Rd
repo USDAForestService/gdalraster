@@ -19,7 +19,8 @@ to open with write access.}
 \value{
 An object of class \code{GDALRaster} which contains a pointer to the
 opened dataset, and methods that operate on the dataset as described in
-Details. \code{GDALRaster} is a C++ class exposed directly to R (via
+Details.
+\code{GDALRaster} is a C++ class exposed directly to R (via
 \code{RCPP_EXPOSED_CLASS}). Methods of the class are accessed in R using the
 \code{$} operator.
 }
