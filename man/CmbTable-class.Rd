@@ -17,6 +17,8 @@ An object of class \code{CmbTable}. Contains a hash table having a
 vector of \code{keyLen} integers as the key and the count of occurrences of
 each unique integer combination as the value, along with methods that
 operate on the table as described in Details.
+\code{CmbTable} is a C++ class exposed directly to R (via \code{RCPP_EXPOSED_CLASS}).
+Methods of the class are accessed in R using the \code{$} operator.
 }
 \description{
 \code{CmbTable} implements a hash table having a vector of integers as the key,

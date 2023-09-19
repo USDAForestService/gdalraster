@@ -20,6 +20,9 @@ to open with write access.}
 An object of class \code{GDALRaster} which contains a pointer to the
 opened dataset, and methods that operate on the dataset as described in
 Details.
+\code{GDALRaster} is a C++ class exposed directly to R (via
+\code{RCPP_EXPOSED_CLASS}). Methods of the class are accessed in R using the
+\code{$} operator.
 }
 \description{
 \code{GDALRaster} provides an interface for accessing a raster dataset via GDAL
@@ -632,7 +635,7 @@ url <- paste0(url, "usdaforestservice/gdalraster/main/sample-data/")
 url <- paste0(url, "lf_elev_220_mt_hood_utm.tif")
 
 ds <- new(GDALRaster, url, read_only=TRUE)
-plot_raster(ds, main="Mount Hood elevation (m)")
+plot_raster(ds, legend=TRUE, main="Mount Hood elevation (m)")
 ds$close()
 }
 }

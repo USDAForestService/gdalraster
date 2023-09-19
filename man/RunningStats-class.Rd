@@ -7,8 +7,8 @@
 \alias{RunningStats}
 \title{Class to calculate mean and variance in one pass}
 \arguments{
-\item{na_rm}{Logical. \code{TRUE} to remove \code{NA} from the input data or \code{FALSE}
-to retain \code{NA} (defaults to \code{TRUE}).}
+\item{na_rm}{Logical scalar. \code{TRUE} to remove \code{NA} from the input data or
+\code{FALSE} to retain \code{NA} (defaults to \code{TRUE}).}
 }
 \value{
 An object of class \code{RunningStats}. A \code{RunningStats} object
@@ -17,6 +17,9 @@ values that have been read from the stream. It can be updated repeatedly
 with new values (i.e., chunks of data read from the input stream), but its
 memory footprint is negligible. Class methods for updating with new values
 and retrieving current values of statistics are described in Details.
+\code{RunningStats} is a C++ class exposed directly to R (via
+\code{RCPP_EXPOSED_CLASS}). Methods of the class are accessed in R using the \code{$}
+operator.
 }
 \description{
 \code{RunningStats} computes summary statistics on a data stream efficiently.

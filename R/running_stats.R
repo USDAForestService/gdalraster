@@ -13,14 +13,17 @@
 #' stored in memory, so this class can be used to compute statistics for very 
 #' large data streams.
 #'
-#' @param na_rm Logical. `TRUE` to remove `NA` from the input data or `FALSE` 
-#' to retain `NA` (defaults to `TRUE`).
+#' @param na_rm Logical scalar. `TRUE` to remove `NA` from the input data or
+#' `FALSE` to retain `NA` (defaults to `TRUE`).
 #' @returns An object of class `RunningStats`. A `RunningStats` object 
 #' maintains the current minimum, maximum, mean, variance, sum and count of 
 #' values that have been read from the stream. It can be updated repeatedly 
 #' with new values (i.e., chunks of data read from the input stream), but its 
 #' memory footprint is negligible. Class methods for updating with new values 
 #' and retrieving current values of statistics are described in Details.
+#' `RunningStats` is a C++ class exposed directly to R (via
+#' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed in R using the `$`
+#' operator.
 #'
 #'
 #' @section Usage:
