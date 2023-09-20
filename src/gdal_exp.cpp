@@ -528,6 +528,8 @@ bool _dem_proc(std::string mode,
 	
 	GDALDEMProcessingOptions* psOptions;
 	psOptions = GDALDEMProcessingOptionsNew(argv.data(), NULL);
+	if (psOptions == NULL)
+		Rcpp::stop("DEM processing failed (could not create options struct).");
 	GDALDEMProcessingOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
 	GDALDatasetH hDstDS;
@@ -834,7 +836,10 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 		}
 		argv[cl_arg_in.size() + 2] = NULL;
 	}
+	
 	GDALWarpAppOptions* psOptions = GDALWarpAppOptionsNew(argv.data(), NULL);
+	if (psOptions == NULL)
+		Rcpp::stop("Warp raster failed (could not create options struct).");
 	GDALWarpAppOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
 	GDALDatasetH hDstDS = GDALWarp(dst_filename.c_str(), NULL,
