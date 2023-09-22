@@ -77,6 +77,8 @@ void GDALRaster::info() const {
 	}
 	opt[argv.size()] = NULL;
 	GDALInfoOptions* psOptions = GDALInfoOptionsNew(opt.data(), NULL);
+	if (psOptions == NULL)
+		Rcpp::stop("Creation of GDALInfoOptions failed.");
 	Rcpp::Rcout << GDALInfo(hDataset, psOptions);
 	GDALInfoOptionsFree(psOptions);
 }
@@ -92,6 +94,8 @@ std::string GDALRaster::infoAsJSON() const {
 	}
 	opt[argv.size()] = NULL;
 	GDALInfoOptions* psOptions = GDALInfoOptionsNew(opt.data(), NULL);
+	if (psOptions == NULL)
+		Rcpp::stop("Creation of GDALInfoOptions failed.");
 	std::string out = GDALInfo(hDataset, psOptions);
 	GDALInfoOptionsFree(psOptions);
 	out.erase(std::remove(out.begin(), out.end(), '\n'), out.cend());
@@ -531,13 +535,8 @@ void GDALRaster::setDescription(int band, std::string desc) {
 	if (GDALGetAccess(hDataset) == GA_ReadOnly)
 		Rcpp::stop("Cannot set description (GA_ReadOnly).");
 
-	if (band == 0) {	
-		GDALSetDescription(hDataset, desc.c_str());
-	}
-	else {
-		GDALRasterBandH hBand = this->_getBand(band);
-		GDALSetDescription(hBand, desc.c_str());
-	}
+	GDALRasterBandH hBand = this->_getBand(band);
+	GDALSetDescription(hBand, desc.c_str());
 }
 
 std::string GDALRaster::getRasterColorInterp(int band) const {
@@ -749,7 +748,9 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 	if (!this->isOpen())
 		Rcpp::stop("Raster dataset is not open.");
 	
-	GDALRasterBandH hBand = this->_getBand(band);
+	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	if (hBand == NULL)
+		Rcpp::stop("Failed to access the requested band.");
 	GDALDataType eDT = GDALGetRasterDataType(hBand);
 	
 	CPLErr err;
@@ -856,13 +857,16 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 	GDALDataType eBufType;
 	CPLErr err;
 	
+	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
+	if (hBand == NULL)
+		Rcpp::stop("Failed to access the requested band.");
+	
 	if (Rcpp::is<Rcpp::IntegerVector>(rasterData) || 
 			Rcpp::is<Rcpp::NumericVector>(rasterData)) {
 		
 		// real data types
 	
 		eBufType = GDT_Float64;
-		GDALRasterBandH hBand = this->_getBand(band);
 		std::vector<double> buf_ = Rcpp::as<std::vector<double>>(rasterData);
 		if (buf_.size() != ((std::size_t) (xsize * ysize)))
 			Rcpp::stop("Size of input data is not the same as region size.");
@@ -874,7 +878,6 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
 		// complex data types
 	
 		eBufType = GDT_CFloat64;
-		GDALRasterBandH hBand = this->_getBand(band);
 		std::vector<std::complex<double>> buf_ = 
 			Rcpp::as<std::vector<std::complex<double>>>(rasterData);
 		if (buf_.size() != ((std::size_t) (xsize * ysize)))
@@ -1081,6 +1084,8 @@ void GDALRaster::close() {
 // ********************************************************
 
 GDALRasterBandH GDALRaster::_getBand(int band) const {
+	if (band < 1 || band > this->getRasterCount())
+		Rcpp::stop("Illegal band number.");
 	GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
 	if (hBand == NULL)
 		Rcpp::stop("Failed to access the requested band.");
