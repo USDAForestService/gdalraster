@@ -38,6 +38,19 @@ GDALRaster::GDALRaster(std::string filename, bool read_only) :
 	hDataset = GDALOpenShared(fname.c_str(), eAccess);
 	if (hDataset == NULL)
 		Rcpp::stop("Open raster failed.");
+	
+	// warn for now if 64-bit integer
+	bool has_int64 = false;
+	for (int b = 1; b <= this->getRasterCount(); ++b) {
+		GDALRasterBandH hBand = GDALGetRasterBand(hDataset, b);
+		GDALDataType eDT = GDALGetRasterDataType(hBand);
+		if (GDALDataTypeIsInteger(eDT) && (GDALGetDataTypeSizeBits(eDT) == 64))
+			has_int64 = true;
+	}
+	if (has_int64) {
+		Rcpp::Rcout << "Int64/UInt64 raster data types not fully supported.\n";
+		Rcpp::warning("64-bit integer raster data will be handled as double.");
+	}
 }
 
 std::string GDALRaster::getFilename() const {
