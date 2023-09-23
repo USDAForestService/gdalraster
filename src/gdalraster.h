@@ -165,6 +165,7 @@ class GDALRaster {
 	void close();
 	
 	// methods for internal use not exposed in R
+	void _checkAccess(GDALAccess access_needed) const;
 	GDALRasterBandH _getBand(int band) const;
 };
 
