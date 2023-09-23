@@ -1,6 +1,6 @@
 # gdalraster 1.4.1 (dev)
 
-* `GDALRaster$new()`: add warning if a raster dataset has 64-bit integer data (2023-09-23) 
+* `GDALRaster$new()`: add warning on open if raster has 64-bit integer data type (handled as double for now) (2023-09-23) 
 
 * `plot_raster()`: a legend can now be used with a color table for continuous data. Default value of the `legend` argument has been changed to `FALSE` (2023-09-17)
 

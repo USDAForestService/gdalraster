@@ -49,7 +49,10 @@ GDALRaster::GDALRaster(std::string filename, bool read_only) :
 	}
 	if (has_int64) {
 		Rcpp::Rcout << "Int64/UInt64 raster data types not fully supported.\n";
-		Rcpp::warning("64-bit integer raster data will be handled as double.");
+		Rcpp::Rcout << "Loss of precision will occur for values > 2^53.\n";
+		std::string msg = 
+			"Int64/UInt64 raster data are currently handled as double.";
+		Rcpp::warning(msg);
 	}
 }
 
