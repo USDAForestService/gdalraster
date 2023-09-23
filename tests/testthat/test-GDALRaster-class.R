@@ -237,3 +237,10 @@ test_that("get/set band color interpretation works", {
 	on.exit(unlink(files))
 	ds$close()
 })
+
+test_that("Int64 data type is detected", {
+	f <- system.file("extdata/int64.tif", package="gdalraster")
+	expect_warning(ds <- new(GDALRaster, f, TRUE))
+	#expect_equal(ds$getDataTypeName(1), "Int64")
+	ds$close()
+})
