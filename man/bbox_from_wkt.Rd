@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{bbox_from_wkt}
 \alias{bbox_from_wkt}
-\title{Get the bounding box of a geometry specified in OGC WKT format.}
+\title{Get the bounding box of a geometry specified in OGC WKT format}
 \usage{
 bbox_from_wkt(wkt, extend_x = 0, extend_y = 0)
 }

@@ -8,7 +8,7 @@
 #' @returns Character vector of length four containing:
 #'   * "–version" - one line version message, e.g., “GDAL 3.6.3, released 
 #'   2023/03/12”
-#'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “30603000” for 
+#'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “3060300” for 
 #'   GDAL 3.6.3.0
 #'   * "GDAL_RELEASE_DATE" - formatted as a string, e.g., “20230312”
 #'   * "GDAL_RELEASE_NAME" - e.g., “3.6.3”
@@ -506,7 +506,8 @@ warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL) {
 #' # close and re-open the dataset in read_only mode
 #' ds_tcc$open(read_only=TRUE)
 #' 
-#' plot_raster(ds_tcc, interpolate=FALSE, main="Storm Lake Tree Canopy Cover")
+#' plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
+#'             main="Storm Lake Tree Canopy Cover (%)")
 #' ds_tcc$close()
 createColorRamp <- function(start_index, start_color, end_index, end_color, palette_interp = "RGB") {
     .Call(`_gdalraster_createColorRamp`, start_index, start_color, end_index, end_color, palette_interp)
@@ -698,28 +699,28 @@ has_geos <- function() {
 
 #' Inverse project geospatial x/y coordinates to longitude/latitude
 #'
-#' `inv_project()` transforms geospatial x/y coordinates to 
-#' longitude/latitude in the same geographic coordinate system used by the 
-#' given projected spatial reference system. The output long/lat can 
-#' optionally be set to a specific geographic coordinate system by specifying 
+#' `inv_project()` transforms geospatial x/y coordinates to
+#' longitude/latitude in the same geographic coordinate system used by the
+#' given projected spatial reference system. The output long/lat can
+#' optionally be set to a specific geographic coordinate system by specifying
 #' a well known name (see Details).
 #'
 #' @details
-#' By default, the geographic coordinate system of the projection specified 
-#' by `srs` will be used. If a specific geographic coordinate system is 
+#' By default, the geographic coordinate system of the projection specified
+#' by `srs` will be used. If a specific geographic coordinate system is
 #' desired, then `well_known_gcs` can be set to one of the values below:
 #' \tabular{rl}{
-#'  `EPSG:n` \tab where `n` is the code of a geographic CRS\cr
-#'  `WGS84`  \tab same as `EPSG:4326`\cr
-#'  `WGS72`  \tab same as `EPSG:4322`\cr
-#'  `NAD83`  \tab same as `EPSG:4269`\cr
-#'  `NAD27`  \tab same as `EPSG:4267`\cr
-#'  `CRS84`  \tab same as `WGS84`\cr
-#'  `CRS72`  \tab same as `WGS72`\cr
-#'  `CRS27`  \tab same as `NAD27`
+#'  EPSG:n \tab where n is the code of a geographic coordinate system\cr
+#'  WGS84  \tab same as EPSG:4326\cr
+#'  WGS72  \tab same as EPSG:4322\cr
+#'  NAD83  \tab same as EPSG:4269\cr
+#'  NAD27  \tab same as EPSG:4267\cr
+#'  CRS84  \tab same as WGS84\cr
+#'  CRS72  \tab same as WGS72\cr
+#'  CRS27  \tab same as NAD27
 #' }
-#' The returned array will always be in longitude, latitude order 
-#' (traditional GIS order) regardless of the axis order defined for the 
+#' The returned array will always be in longitude, latitude order
+#' (traditional GIS order) regardless of the axis order defined for the
 #' names above.
 #'
 #' @param pts A two-column data frame or numeric matrix containing geospatial
@@ -779,16 +780,16 @@ transform_xy <- function(pts, srs_from, srs_to) {
 #'
 #' @details
 #' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
-#' The WKT version can be overridden by using the `OSR_WKT_FORMAT` 
+#' The WKT version can be overridden by using the OSR_WKT_FORMAT 
 #' configuration option (see [set_config_option()]).
-#' Valid values are one of: `SFSQL`, `WKT1_SIMPLE`, `WKT1`, `WKT1_GDAL`, 
-#' `WKT1_ESRI`, `WKT2_2015`, `WKT2_2018`, `WKT2`, `DEFAULT`.
-#' If `SFSQL`, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
-#' EXTENSION node is returned. If `WKT1_SIMPLE`, a WKT1 string without 
-#' AXIS, AUTHORITY or EXTENSION node is returned. `WKT1` is an alias of 
-#' `WKT1_GDAL`. `WKT2` will default to the latest revision implemented 
-#' (currently `WKT2_2018`). `WKT2_2019` can be used as an alias of 
-#' `WKT2_2018` since GDAL 3.2
+#' Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL, 
+#' WKT1_ESRI, WKT2_2015, WKT2_2018, WKT2, DEFAULT.
+#' If SFSQL, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
+#' EXTENSION node is returned. If WKT1_SIMPLE, a WKT1 string without 
+#' AXIS, AUTHORITY or EXTENSION node is returned. WKT1 is an alias of 
+#' WKT1_GDAL. WKT2 will default to the latest revision implemented 
+#' (currently WKT2_2018). WKT2_2019 can be used as an alias of 
+#' WKT2_2018 since GDAL 3.2
 #'
 #' @param epsg Integer EPSG code.
 #' @param pretty Logical. `TRUE` to return a nicely formatted WKT string 
@@ -818,14 +819,14 @@ epsg_to_wkt <- function(epsg, pretty = FALSE) {
 #' This is a wrapper for `OSRSetFromUserInput()` in the GDAL Spatial 
 #' Reference System C API with output to WKT. 
 #' The input SRS may take the following forms:
-#'   * `WKT` - to convert WKT versions (see below)
-#'   * `EPSG:n` - EPSG code n
-#'   * \code{AUTO:proj_id,unit_id,lon0,lat0} - WMS auto projections
-#'   * `urn:ogc:def:crs:EPSG::n` - OGC URNs
+#'   * WKT - to convert WKT versions (see below)
+#'   * EPSG:n - EPSG code n
+#'   * AUTO:proj_id,unit_id,lon0,lat0 - WMS auto projections
+#'   * urn:ogc:def:crs:EPSG::n - OGC URNs
 #'   * PROJ.4 definitions
-#'   * `filename` - file read for WKT, XML or PROJ.4 definition
-#'   * well known name such as `NAD27`, `NAD83`, `WGS84` or `WGS72`
-#'   * `IGNF:xxxx`, `ESRI:xxxx` - definitions from the PROJ database
+#'   * filename - file to read for WKT, XML or PROJ.4 definition
+#'   * well known name such as NAD27, NAD83, WGS84 or WGS72
+#'   * IGNF:xxxx, ESRI:xxxx - definitions from the PROJ database
 #'   * PROJJSON (PROJ >= 6.2)
 #'
 #' This function is intended to be flexible, but by its nature it is 
@@ -833,16 +834,16 @@ epsg_to_wkt <- function(epsg, pretty = FALSE) {
 #' [epsg_to_wkt()] could be used instead for EPSG codes.
 #'
 #' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
-#' The WKT version can be overridden by using the `OSR_WKT_FORMAT` 
+#' The WKT version can be overridden by using the OSR_WKT_FORMAT 
 #' configuration option (see [set_config_option()]).
-#' Valid values are one of: `SFSQL`, `WKT1_SIMPLE`, `WKT1`, `WKT1_GDAL`, 
-#' `WKT1_ESRI`, `WKT2_2015`, `WKT2_2018`, `WKT2`, `DEFAULT`.
-#' If `SFSQL`, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
-#' EXTENSION node is returned. If `WKT1_SIMPLE`, a WKT1 string without 
-#' AXIS, AUTHORITY or EXTENSION node is returned. `WKT1` is an alias of 
-#' `WKT1_GDAL`. `WKT2` will default to the latest revision implemented 
-#' (currently `WKT2_2018`). `WKT2_2019` can be used as an alias of 
-#' `WKT2_2018` since GDAL 3.2
+#' Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL, 
+#' WKT1_ESRI, WKT2_2015, WKT2_2018, WKT2, DEFAULT.
+#' If SFSQL, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
+#' EXTENSION node is returned. If WKT1_SIMPLE, a WKT1 string without 
+#' AXIS, AUTHORITY or EXTENSION node is returned. WKT1 is an alias of 
+#' WKT1_GDAL. WKT2 will default to the latest revision implemented 
+#' (currently WKT2_2018). WKT2_2019 can be used as an alias of 
+#' WKT2_2018 since GDAL 3.2
 #'
 #' @param srs Character string containing an SRS definition in various
 #' formats (see Details).
@@ -927,7 +928,7 @@ srs_is_same <- function(srs1, srs2) {
     .Call(`_gdalraster_srs_is_same`, srs1, srs2)
 }
 
-#' Get the bounding box of a geometry specified in OGC WKT format.
+#' Get the bounding box of a geometry specified in OGC WKT format
 #'
 #' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry 
 #' (e.g., LINE, POLYGON, MULTIPOLYGON).
@@ -955,7 +956,7 @@ bbox_from_wkt <- function(wkt, extend_x = 0, extend_y = 0) {
     .Call(`_gdalraster_bbox_from_wkt`, wkt, extend_x, extend_y)
 }
 
-#' Convert a bounding box to POLYGON in OGC WKT format.
+#' Convert a bounding box to POLYGON in OGC WKT format
 #'
 #' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
 #' Requires GDAL built with the GEOS library.

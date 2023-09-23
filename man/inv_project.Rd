@@ -33,14 +33,14 @@ By default, the geographic coordinate system of the projection specified
 by \code{srs} will be used. If a specific geographic coordinate system is
 desired, then \code{well_known_gcs} can be set to one of the values below:
 \tabular{rl}{
-\code{EPSG:n} \tab where \code{n} is the code of a geographic CRS\cr
-\code{WGS84}  \tab same as \code{EPSG:4326}\cr
-\code{WGS72}  \tab same as \code{EPSG:4322}\cr
-\code{NAD83}  \tab same as \code{EPSG:4269}\cr
-\code{NAD27}  \tab same as \code{EPSG:4267}\cr
-\code{CRS84}  \tab same as \code{WGS84}\cr
-\code{CRS72}  \tab same as \code{WGS72}\cr
-\code{CRS27}  \tab same as \code{NAD27}
+EPSG:n \tab where n is the code of a geographic coordinate system\cr
+WGS84  \tab same as EPSG:4326\cr
+WGS72  \tab same as EPSG:4322\cr
+NAD83  \tab same as EPSG:4269\cr
+NAD27  \tab same as EPSG:4267\cr
+CRS84  \tab same as WGS84\cr
+CRS72  \tab same as WGS72\cr
+CRS27  \tab same as NAD27
 }
 The returned array will always be in longitude, latitude order
 (traditional GIS order) regardless of the axis order defined for the

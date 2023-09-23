@@ -6,20 +6,21 @@
 #' @title Class encapsulating a subset of the GDAL Raster C API
 #'
 #' @description
-#' `GDALRaster` provides an interface for accessing a raster dataset via GDAL 
-#' and calling methods on the underlying GDALDataset, GDALDriver and 
-#' GDALRasterBand objects. See \url{https://gdal.org/api/index.html} for
-#' details of the GDAL API.
+#' `GDALRaster` provides an interface for accessing a raster dataset via GDAL
+#' and calling methods on the underlying `GDALDataset`, `GDALDriver` and
+#' `GDALRasterBand` objects. See \url{https://gdal.org/api/index.html} for
+#' details of the GDAL Raster API.
 #'
-#' @param filename Character string containing the file name of a raster 
-#' dataset to open, as full path or relative to the current working directory. 
-#' In some cases, `filename` may not refer to a physical file, but instead 
-#' contain format-specific information on how to access a dataset (GDAL raster 
-#' format descriptions: \url{https://gdal.org/drivers/raster/index.html}).
-#' @param read_only Logical. `TRUE` to open the dataset read-only, or `FALSE` 
+#' @param filename Character string containing the file name of a raster
+#' dataset to open, as full path or relative to the current working directory.
+#' In some cases, `filename` may not refer to a physical file, but instead
+#' contain format-specific information on how to access a dataset (see GDAL
+#' raster format descriptions:
+#' \url{https://gdal.org/drivers/raster/index.html}).
+#' @param read_only Logical. `TRUE` to open the dataset read-only, or `FALSE`
 #' to open with write access.
-#' @returns An object of class `GDALRaster` which contains a pointer to the 
-#' opened dataset, and methods that operate on the dataset as described in 
+#' @returns An object of class `GDALRaster` which contains a pointer to the
+#' opened dataset, and methods that operate on the dataset as described in
 #' Details.
 #' `GDALRaster` is a C++ class exposed directly to R (via
 #' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed in R using the
@@ -96,15 +97,15 @@
 #' Constructor. Returns an object of class `GDALRaster`.
 #'
 #' \code{$getFilename()}
-#' Returns a character string containing the `filename` associated with this 
+#' Returns a character string containing the `filename` associated with this
 #' `GDALRaster` object (`filename` originally used to open the dataset).
 #'
 #' \code{$open(read_only)}
 #' (Re-)opens the raster dataset on the existing filename. Use this method to
 #' open a dataset that has been closed using \code{$close()}. May be used to
-#' re-open a dataset with a different read/write access (`read_only` set to 
-#' `TRUE` or `FALSE`). The method will first close an open dataset, so it is 
-#' not required to call \code{$close()} explicitly in this case. 
+#' re-open a dataset with a different read/write access (`read_only` set to
+#' `TRUE` or `FALSE`). The method will first close an open dataset, so it is
+#' not required to call \code{$close()} explicitly in this case.
 #' No return value, called for side effects.
 #'
 #' \code{$isOpen()}
@@ -118,10 +119,10 @@
 #' paths depending on the path used to originally open the dataset.
 #'
 #' \code{$info()}
-#' Prints various information about the raster dataset to the console (no 
+#' Prints various information about the raster dataset to the console (no
 #' return value, called for that side effect only).
 #' Equivalent to the output of the \command{gdalinfo} command-line utility
-#' (\command{gdalinfo -norat -noct filename}). Intended here as an 
+#' (\command{gdalinfo -norat -noct filename}). Intended here as an
 #' informational convenience function.
 #'
 #' \code{$infoAsJSON()}
@@ -145,10 +146,10 @@
 #'
 #' \code{$getGeoTransform()}
 #' Returns the affine transformation coefficients for transforming between
-#' pixel/line raster space (column/row) and projection coordinate space 
+#' pixel/line raster space (column/row) and projection coordinate space
 #' (geospatial x/y). The return value is a numeric vector of length six.
 #' See \url{https://gdal.org/tutorials/geotransforms_tut.html}
-#' for details of the affine transformation. \emph{With 1-based indexing 
+#' for details of the affine transformation. \emph{With 1-based indexing
 #' in R}, the geotransform vector contains (in map units of the raster spatial
 #' reference system):
 #' \tabular{rl}{
@@ -167,7 +168,7 @@
 #' could not be set.
 #'
 #' \code{$getProjectionRef()}
-#' Returns the coordinate reference system of the raster as an OpenGIS WKT
+#' Returns the coordinate reference system of the raster as an OGC WKT
 #' format string.
 #' An empty string is returned when a projection definition is not available.
 #'
@@ -178,12 +179,12 @@
 #' could not be set.
 #'
 #' \code{$bbox()}
-#' Returns a numeric vector of length four containing the bounding box 
+#' Returns a numeric vector of length four containing the bounding box
 #' (xmin, ymin, xmax, ymax) assuming this is a north-up raster.
 #'
 #' \code{$res()}
 #' Returns a numeric vector of length two containing the resolution
-#' (pixel width, pixel height as positive values) assuming this is a north-up 
+#' (pixel width, pixel height as positive values) assuming this is a north-up
 #' raster.
 #'
 #' \code{$dim()}
@@ -199,26 +200,27 @@
 #' \code{$getDescription(band)}
 #' Returns a string containing the description for \code{band}. An empty
 #' string is returned if no description is set for the band.
+#' (Setting `band = 0` will return the dataset-level description.)
 #'
 #' \code{$setDescription(band, desc)}
 #' Sets a description for \code{band}. \code{desc} is the character string
-#' to set.
+#' to set. No return value.
 #'
 #' \code{$getBlockSize(band)}
-#' Returns an integer vector of length two (Xsize, Ysize) containing the 
-#' "natural" block size of \code{band}.
-#' GDAL has a concept of the natural block 
-#' size of rasters so that applications can organize data access efficiently 
-#' for some file formats. The natural block size is the block size that is 
-#' most efficient for accessing the format. For many formats this is simply a 
-#' whole row in which case block Xsize is the same as \code{$getRasterXSize()} 
-#' and block Ysize is 1. However, for tiled images block size will typically 
-#' be the tile size. Note that the X and Y block sizes don't have to divide 
-#' the image size evenly, meaning that right and bottom edge blocks may be 
+#' Returns an integer vector of length two (xsize, ysize) containing the
+#' "natural" block size of \code{band}. GDAL has a concept of the natural block
+#' size of rasters so that applications can organize data access efficiently
+#' for some file formats. The natural block size is the block size that is
+#' most efficient for accessing the format. For many formats this is simply a
+#' whole row in which case block xsize is the same as \code{$getRasterXSize()}
+#' and block ysize is 1. However, for tiled images block size will typically
+#' be the tile size. Note that the X and Y block sizes don't have to divide
+#' the image size evenly, meaning that right and bottom edge blocks may be
 #' incomplete.
 #'
 #' \code{$getOverviewCount(band)}
-#' Returns the number of overview layers (pyramids) available for \code{band}.
+#' Returns the number of overview layers (a.k.a. pyramids) available for
+#' \code{band}.
 #'
 #' \code{$buildOverviews(resampling, levels, bands)}
 #' Build one or more raster overview images using the specified downsampling
@@ -236,11 +238,11 @@
 #' dataset is open read-only.
 #' Starting with GDAL 3.2, the GDAL_NUM_THREADS configuration option can be set
 #' to "ALL_CPUS" or an integer value to specify the number of threads to use
-#' for overview computation (see [set_config_option()]). 
+#' for overview computation (see [set_config_option()]).
 #' No return value, called for side effects.
 #'
 #' \code{$getDataTypeName(band)}
-#' Returns the name of the pixel data type for \code{band}. The possible data 
+#' Returns the name of the pixel data type for \code{band}. The possible data
 #' types are:
 #' \tabular{rl}{
 #'  Unknown   \tab  Unknown or unspecified type\cr
@@ -259,35 +261,35 @@
 #'  CFloat32  \tab  Complex Float32\cr
 #'  CFloat64  \tab  Complex Float64
 #' }
-#' Some raster formats including GeoTIFF ("GTiff") and Erdas Imagine .img 
-#' ("HFA") support sub-byte data types. Rasters can be created with these 
-#' data types by specifying the `"NBITS=n"` creation option where n=1...7 for 
-#' GTiff or n=1/2/4 for HFA. In these cases, \code{$getDataTypeName()} reports 
-#' the apparent type "Byte". GTiff also supports n=9...15 (UInt16 type) and 
-#' n=17...31 (UInt32 type), and n=16 is accepted for Float32 to generate 
+#' Some raster formats including GeoTIFF ("GTiff") and Erdas Imagine .img
+#' ("HFA") support sub-byte data types. Rasters can be created with these
+#' data types by specifying the "NBITS=n" creation option where n=1...7 for
+#' GTiff or n=1/2/4 for HFA. In these cases, \code{$getDataTypeName()} reports
+#' the apparent type `"Byte"`. GTiff also supports n=9...15 (UInt16 type) and
+#' n=17...31 (UInt32 type), and n=16 is accepted for Float32 to generate
 #' half-precision floating point values.
 #'
 #' \code{$getStatistics(band, approx_ok, force)}
-#' Returns a numeric vector of length four containing the minimum, maximum, 
-#' mean and standard deviation of pixel values in \code{band} (excluding 
-#' nodata pixels). Some raster formats will cache statistics allowing fast 
+#' Returns a numeric vector of length four containing the minimum, maximum,
+#' mean and standard deviation of pixel values in \code{band} (excluding
+#' nodata pixels). Some raster formats will cache statistics allowing fast
 #' retrieval after the first request.
 #'
 #' \code{approx_ok}:
-#'   * `TRUE`: Approximate statistics are sufficient, in which case overviews 
+#'   * `TRUE`: Approximate statistics are sufficient, in which case overviews
 #'   or a subset of raster tiles may be used in computing the statistics.
-#'   * `FALSE`: All pixels will be read and used to compute statistics (if 
+#'   * `FALSE`: All pixels will be read and used to compute statistics (if
 #'   computation is forced).
 #'
 #' \code{force}:
 #'   * `TRUE`: The raster will be scanned to compute statistics. Once computed,
-#'   statistics will generally be “set” back on the raster band if the format 
+#'   statistics will generally be “set” back on the raster band if the format
 #'   supports caching statistics.
 #'   (Note: `ComputeStatistics()` in the GDAL API is called automatically here.
 #'   This is a change in the behavior of `GetStatistics()` in the API, to a
 #'   definitive `force`.)
-#'   * `FALSE`: Results will only be returned if it can be done quickly (i.e., 
-#'   without scanning the raster, typically by using pre-existing 
+#'   * `FALSE`: Results will only be returned if it can be done quickly (i.e.,
+#'   without scanning the raster, typically by using pre-existing
 #'   STATISTICS_xxx metadata items). \code{NA}s will be returned if statistics
 #'   cannot be obtained quickly.
 #'
@@ -300,12 +302,12 @@
 #' \code{$setNoDataValue(band, nodata_value)}
 #' Sets the nodata value for \code{band}.
 #' \code{nodata_value} is a numeric value to be defined as the nodata marker.
-#' Depending on the format, changing the nodata value may or may not have an 
-#' effect on the pixel values of a raster that has just been created (often  
-#' not). It is thus advised to call \code{$fillRaster()} explicitly if the 
-#' intent is to initialize the raster to the nodata value. In any case, 
+#' Depending on the format, changing the nodata value may or may not have an
+#' effect on the pixel values of a raster that has just been created (often 
+#' not). It is thus advised to call \code{$fillRaster()} explicitly if the
+#' intent is to initialize the raster to the nodata value. In any case,
 #' changing an existing nodata value, when one already exists on an initialized
-#' dataset, has no effect on the pixels whose values matched the previous 
+#' dataset, has no effect on the pixels whose values matched the previous
 #' nodata value.
 #' Returns logical \code{TRUE} on success or \code{FALSE} if the nodata value
 #' could not be set.
@@ -313,11 +315,11 @@
 #' \code{$deleteNoDataValue(band)}
 #' Removes the nodata value for \code{band}.
 #' This affects only the definition of the nodata value for raster formats
-#' that support one (does not modify pixel values). No return value, called 
+#' that support one (does not modify pixel values). No return value, called
 #' for side effects. An error is raised if the nodata value cannot be removed.
 #'
 #' \code{$getUnitType(band)}
-#' Returns the name of the unit type of the pixel values for \code{band} 
+#' Returns the name of the unit type of the pixel values for \code{band}
 #' (e.g., "m" or "ft").
 #' An empty string \code{""} is returned if no units are available.
 #'
@@ -330,27 +332,27 @@
 #' could not be set.
 #'
 #' \code{$getScale(band)}
-#' Returns the pixel value scale (units value = (raw value * scale) + offset) 
+#' Returns the pixel value scale (units value = (raw value * scale) + offset)
 #' for \code{band}.
-#' This value (in combination with the \code{getOffset()} value) can be used to 
+#' This value (in combination with the \code{getOffset()} value) can be used to
 #' transform raw pixel values into the units returned by \code{getUnitType()}.
 #' Returns \code{NA} if a scale value is not defined for this \code{band}.
 #'
 #' \code{$setScale(band, scale)}
-#' Sets the pixel value scale (units value = (raw value * scale) + offset) 
+#' Sets the pixel value scale (units value = (raw value * scale) + offset)
 #' for \code{band}. Many raster formats do not implement this method.
 #' Returns logical \code{TRUE} on success or \code{FALSE} if the scale could
 #' not be set.
 #'
 #' \code{$getOffset(band)}
-#' Returns the pixel value offset (units value = (raw value * scale) + offset) 
+#' Returns the pixel value offset (units value = (raw value * scale) + offset)
 #' for \code{band}.
-#' This value (in combination with the \code{getScale()} value) can be used to 
+#' This value (in combination with the \code{getScale()} value) can be used to
 #' transform raw pixel values into the units returned by \code{getUnitType()}.
 #' Returns \code{NA} if an offset value is not defined for this \code{band}.
 #'
 #' \code{$setOffset(band, offset)}
-#' Sets the pixel value offset (units value = (raw value * scale) + offset) 
+#' Sets the pixel value offset (units value = (raw value * scale) + offset)
 #' for \code{band}. Many raster formats do not implement this method.
 #' Returns logical \code{TRUE} on success or \code{FALSE} if the offset could
 #' not be set.
@@ -380,38 +382,38 @@
 #'
 #' \code{$setRasterColorInterp(band, col_interp)}
 #' Sets the color interpretation for \code{band}. See above for the list of
-#' valid values for \code{col_interp}.
+#' valid values for \code{col_interp} (passed as a string).
 #'
 #' \code{$getMetadata(band, domain)}
-#' Returns a character vector of all metadata `name=value` pairs that exist in 
-#' the specified \code{domain}, or \code{""} (empty string) if there are no 
-#' metadata items in \code{domain} (metadata in the context of the GDAL 
+#' Returns a character vector of all metadata `name=value` pairs that exist in
+#' the specified \code{domain}, or \code{""} (empty string) if there are no
+#' metadata items in \code{domain} (metadata in the context of the GDAL
 #' Raster Data Model: \url{https://gdal.org/user/raster_data_model.html}).
-#' Set \code{band = 0} to retrieve dataset-level metadata, or to an integer 
+#' Set \code{band = 0} to retrieve dataset-level metadata, or to an integer
 #' band number to retrieve band-level metadata.
-#' Set \code{domain = ""} (empty string) to retrieve metadata in the 
+#' Set \code{domain = ""} (empty string) to retrieve metadata in the
 #' default domain.
 #'
 #' \code{$getMetadataItem(band, mdi_name, domain)}
-#' Returns the value of a specific metadata item named \code{mdi_name} in the 
-#' specified \code{domain}, or \code{""} (empty string) if no matching item 
+#' Returns the value of a specific metadata item named \code{mdi_name} in the
+#' specified \code{domain}, or \code{""} (empty string) if no matching item
 #' is found.
 #' Set \code{band = 0} to retrieve dataset-level metadata, or to an integer 
 #' band number to retrieve band-level metadata.
-#' Set \code{domain = ""} (empty string) to retrieve an item in the 
+#' Set \code{domain = ""} (empty string) to retrieve an item in the
 #' default domain.
 #'
 #' \code{$setMetadataItem(band, mdi_name, mdi_value, domain)}
 #' Sets the value (\code{mdi_value}) of a specific metadata item named
 #' \code{mdi_name} in the specified \code{domain}.
-#' Set \code{band = 0} to set dataset-level metadata, or to an integer 
+#' Set \code{band = 0} to set dataset-level metadata, or to an integer
 #' band number to set band-level metadata.
 #' Set \code{domain = ""} (empty string) to set an item in the default domain.
 #'
 #' \code{$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)}
 #' Reads a region of raster data from \code{band}. The method takes care of
 #' pixel decimation / replication if the output size
-#' (\code{out_xsize * out_ysize}) is different than the size of the region 
+#' (\code{out_xsize * out_ysize}) is different than the size of the region
 #' being accessed (\code{xsize * ysize}).
 #' \code{xoff} is the pixel (column) offset to the top left corner of the
 #' region of the band to be accessed (zero to start from the left side).
@@ -420,18 +422,18 @@
 #' \emph{Note that raster row/column offsets use 0-based indexing.}
 #' \code{xsize} is the width in pixels of the region to be accessed.
 #' \code{ysize} is the height in pixels of the region to be accessed.
-#' \code{out_xsize} is the width of the output array into which the desired 
+#' \code{out_xsize} is the width of the output array into which the desired
 #' region will be read (typically the same value as xsize).
-#' \code{out_ysize} is the height of the output array into which the desired 
+#' \code{out_ysize} is the height of the output array into which the desired
 #' region will be read (typically the same value as ysize).
 #' Returns a numeric or complex vector containing the values that were read.
-#' It is organized in left to right, top to bottom pixel order. 
-#' \code{NA} will be returned in place of the nodata value if the 
+#' It is organized in left to right, top to bottom pixel order.
+#' \code{NA} will be returned in place of the nodata value if the
 #' raster dataset has a nodata value defined for this band.
 #' Data are read as R integer type when possible for the raster data type
-#' (Byte, Int8, Int16, UInt16, Int32), otherwise as type double (UInt32, 
+#' (Byte, Int8, Int16, UInt16, Int32), otherwise as type double (UInt32,
 #' Float32, Float64).
-#' No rescaling of the data is performed (see \code{$getScale()} and 
+#' No rescaling of the data is performed (see \code{$getScale()} and
 #' \code{$getOffset()} above).
 #' An error is raised if the read operation fails.
 #'
@@ -513,20 +515,20 @@
 #' \code{ysize} is the height in pixels of the window to read.
 #'
 #' \code{$close()}
-#' Closes the GDAL dataset (no return value, called for side effects). 
-#' Calling \code{$close()} results in proper cleanup, and flushing of any 
-#' pending writes. Forgetting to close a dataset opened in update mode on some 
-#' formats such as GTiff could result in being unable to open it afterwards. 
-#' The `GDALRaster` object is still available after calling \code{$close()}. 
+#' Closes the GDAL dataset (no return value, called for side effects).
+#' Calling \code{$close()} results in proper cleanup, and flushing of any
+#' pending writes. Forgetting to close a dataset opened in update mode on some
+#' formats such as GTiff could result in being unable to open it afterwards.
+#' The `GDALRaster` object is still available after calling \code{$close()}.
 #' The dataset can be re-opened on the existing \code{filename} with 
 #' \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
 #'
 #' @note
-#' The `$read()` method will perform automatic resampling if the 
-#' specified output size (`out_xsize * out_ysize`) is different than 
-#' the size of the region being read (`xsize * ysize`). In that case, the 
-#' GDAL_RASTERIO_RESAMPLING configuration option could also be defined to 
-#' override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE, 
+#' The `$read()` method will perform automatic resampling if the
+#' specified output size (`out_xsize * out_ysize`) is different than
+#' the size of the region being read (`xsize * ysize`). In that case, the
+#' GDAL_RASTERIO_RESAMPLING configuration option could also be defined to
+#' override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE,
 #' LANCZOS, AVERAGE or MODE (see [set_config_option()]).
 #'
 #' @seealso
@@ -534,7 +536,7 @@
 #'
 #' [create()], [createCopy()], [rasterFromRaster()], [rasterToVRT()]
 #'
-#' [fillNodata()], [warp()], [plot_raster()]
+#' [get_pixel_line()], [plot_raster()], [warp()]
 #'
 #' [read_ds()] is a convenience wrapper for `GDALRaster$read()`.
 #'

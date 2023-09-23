@@ -26,14 +26,14 @@ This is a wrapper for \code{OSRSetFromUserInput()} in the GDAL Spatial
 Reference System C API with output to WKT.
 The input SRS may take the following forms:
 \itemize{
-\item \code{WKT} - to convert WKT versions (see below)
-\item \code{EPSG:n} - EPSG code n
-\item \code{AUTO:proj_id,unit_id,lon0,lat0} - WMS auto projections
-\item \code{urn:ogc:def:crs:EPSG::n} - OGC URNs
+\item WKT - to convert WKT versions (see below)
+\item EPSG:n - EPSG code n
+\item AUTO:proj_id,unit_id,lon0,lat0 - WMS auto projections
+\item urn:ogc:def:crs:EPSG::n - OGC URNs
 \item PROJ.4 definitions
-\item \code{filename} - file read for WKT, XML or PROJ.4 definition
-\item well known name such as \code{NAD27}, \code{NAD83}, \code{WGS84} or \code{WGS72}
-\item \code{IGNF:xxxx}, \code{ESRI:xxxx} - definitions from the PROJ database
+\item filename - file to read for WKT, XML or PROJ.4 definition
+\item well known name such as NAD27, NAD83, WGS84 or WGS72
+\item IGNF:xxxx, ESRI:xxxx - definitions from the PROJ database
 \item PROJJSON (PROJ >= 6.2)
 }
 
@@ -42,16 +42,16 @@ imprecise as it must guess information about the format intended.
 \code{\link[=epsg_to_wkt]{epsg_to_wkt()}} could be used instead for EPSG codes.
 
 As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
-The WKT version can be overridden by using the \code{OSR_WKT_FORMAT}
+The WKT version can be overridden by using the OSR_WKT_FORMAT
 configuration option (see \code{\link[=set_config_option]{set_config_option()}}).
-Valid values are one of: \code{SFSQL}, \code{WKT1_SIMPLE}, \code{WKT1}, \code{WKT1_GDAL},
-\code{WKT1_ESRI}, \code{WKT2_2015}, \code{WKT2_2018}, \code{WKT2}, \code{DEFAULT}.
-If \code{SFSQL}, a WKT1 string without AXIS, TOWGS84, AUTHORITY or
-EXTENSION node is returned. If \code{WKT1_SIMPLE}, a WKT1 string without
-AXIS, AUTHORITY or EXTENSION node is returned. \code{WKT1} is an alias of
-\code{WKT1_GDAL}. \code{WKT2} will default to the latest revision implemented
-(currently \code{WKT2_2018}). \code{WKT2_2019} can be used as an alias of
-\code{WKT2_2018} since GDAL 3.2
+Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL,
+WKT1_ESRI, WKT2_2015, WKT2_2018, WKT2, DEFAULT.
+If SFSQL, a WKT1 string without AXIS, TOWGS84, AUTHORITY or
+EXTENSION node is returned. If WKT1_SIMPLE, a WKT1 string without
+AXIS, AUTHORITY or EXTENSION node is returned. WKT1 is an alias of
+WKT1_GDAL. WKT2 will default to the latest revision implemented
+(currently WKT2_2018). WKT2_2019 can be used as an alias of
+WKT2_2018 since GDAL 3.2
 }
 \examples{
 srs_to_wkt("NAD83")

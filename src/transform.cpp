@@ -101,28 +101,28 @@ void _setPROJEnableNetwork(int enabled) {
 
 //' Inverse project geospatial x/y coordinates to longitude/latitude
 //'
-//' `inv_project()` transforms geospatial x/y coordinates to 
-//' longitude/latitude in the same geographic coordinate system used by the 
-//' given projected spatial reference system. The output long/lat can 
-//' optionally be set to a specific geographic coordinate system by specifying 
+//' `inv_project()` transforms geospatial x/y coordinates to
+//' longitude/latitude in the same geographic coordinate system used by the
+//' given projected spatial reference system. The output long/lat can
+//' optionally be set to a specific geographic coordinate system by specifying
 //' a well known name (see Details).
 //'
 //' @details
-//' By default, the geographic coordinate system of the projection specified 
-//' by `srs` will be used. If a specific geographic coordinate system is 
+//' By default, the geographic coordinate system of the projection specified
+//' by `srs` will be used. If a specific geographic coordinate system is
 //' desired, then `well_known_gcs` can be set to one of the values below:
 //' \tabular{rl}{
-//'  `EPSG:n` \tab where `n` is the code of a geographic CRS\cr
-//'  `WGS84`  \tab same as `EPSG:4326`\cr
-//'  `WGS72`  \tab same as `EPSG:4322`\cr
-//'  `NAD83`  \tab same as `EPSG:4269`\cr
-//'  `NAD27`  \tab same as `EPSG:4267`\cr
-//'  `CRS84`  \tab same as `WGS84`\cr
-//'  `CRS72`  \tab same as `WGS72`\cr
-//'  `CRS27`  \tab same as `NAD27`
+//'  EPSG:n \tab where n is the code of a geographic coordinate system\cr
+//'  WGS84  \tab same as EPSG:4326\cr
+//'  WGS72  \tab same as EPSG:4322\cr
+//'  NAD83  \tab same as EPSG:4269\cr
+//'  NAD27  \tab same as EPSG:4267\cr
+//'  CRS84  \tab same as WGS84\cr
+//'  CRS72  \tab same as WGS72\cr
+//'  CRS27  \tab same as NAD27
 //' }
-//' The returned array will always be in longitude, latitude order 
-//' (traditional GIS order) regardless of the axis order defined for the 
+//' The returned array will always be in longitude, latitude order
+//' (traditional GIS order) regardless of the axis order defined for the
 //' names above.
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial

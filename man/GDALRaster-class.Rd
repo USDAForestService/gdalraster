@@ -10,8 +10,9 @@
 \item{filename}{Character string containing the file name of a raster
 dataset to open, as full path or relative to the current working directory.
 In some cases, \code{filename} may not refer to a physical file, but instead
-contain format-specific information on how to access a dataset (GDAL raster
-format descriptions: \url{https://gdal.org/drivers/raster/index.html}).}
+contain format-specific information on how to access a dataset (see GDAL
+raster format descriptions:
+\url{https://gdal.org/drivers/raster/index.html}).}
 
 \item{read_only}{Logical. \code{TRUE} to open the dataset read-only, or \code{FALSE}
 to open with write access.}
@@ -26,9 +27,9 @@ Details.
 }
 \description{
 \code{GDALRaster} provides an interface for accessing a raster dataset via GDAL
-and calling methods on the underlying GDALDataset, GDALDriver and
-GDALRasterBand objects. See \url{https://gdal.org/api/index.html} for
-details of the GDAL API.
+and calling methods on the underlying \code{GDALDataset}, \code{GDALDriver} and
+\code{GDALRasterBand} objects. See \url{https://gdal.org/api/index.html} for
+details of the GDAL Raster API.
 }
 \note{
 The \verb{$read()} method will perform automatic resampling if the
@@ -183,7 +184,7 @@ Returns logical \code{TRUE} on success or \code{FALSE} if the geotransform
 could not be set.
 
 \code{$getProjectionRef()}
-Returns the coordinate reference system of the raster as an OpenGIS WKT
+Returns the coordinate reference system of the raster as an OGC WKT
 format string.
 An empty string is returned when a projection definition is not available.
 
@@ -215,26 +216,27 @@ argument is the integer band number (1-based).
 \code{$getDescription(band)}
 Returns a string containing the description for \code{band}. An empty
 string is returned if no description is set for the band.
+(Setting \code{band = 0} will return the dataset-level description.)
 
 \code{$setDescription(band, desc)}
 Sets a description for \code{band}. \code{desc} is the character string
-to set.
+to set. No return value.
 
 \code{$getBlockSize(band)}
-Returns an integer vector of length two (Xsize, Ysize) containing the
-"natural" block size of \code{band}.
-GDAL has a concept of the natural block
+Returns an integer vector of length two (xsize, ysize) containing the
+"natural" block size of \code{band}. GDAL has a concept of the natural block
 size of rasters so that applications can organize data access efficiently
 for some file formats. The natural block size is the block size that is
 most efficient for accessing the format. For many formats this is simply a
-whole row in which case block Xsize is the same as \code{$getRasterXSize()}
-and block Ysize is 1. However, for tiled images block size will typically
+whole row in which case block xsize is the same as \code{$getRasterXSize()}
+and block ysize is 1. However, for tiled images block size will typically
 be the tile size. Note that the X and Y block sizes don't have to divide
 the image size evenly, meaning that right and bottom edge blocks may be
 incomplete.
 
 \code{$getOverviewCount(band)}
-Returns the number of overview layers (pyramids) available for \code{band}.
+Returns the number of overview layers (a.k.a. pyramids) available for
+\code{band}.
 
 \code{$buildOverviews(resampling, levels, bands)}
 Build one or more raster overview images using the specified downsampling
@@ -277,9 +279,9 @@ CFloat64  \tab  Complex Float64
 }
 Some raster formats including GeoTIFF ("GTiff") and Erdas Imagine .img
 ("HFA") support sub-byte data types. Rasters can be created with these
-data types by specifying the \code{"NBITS=n"} creation option where n=1...7 for
+data types by specifying the "NBITS=n" creation option where n=1...7 for
 GTiff or n=1/2/4 for HFA. In these cases, \code{$getDataTypeName()} reports
-the apparent type "Byte". GTiff also supports n=9...15 (UInt16 type) and
+the apparent type \code{"Byte"}. GTiff also supports n=9...15 (UInt16 type) and
 n=17...31 (UInt32 type), and n=16 is accepted for Float32 to generate
 half-precision floating point values.
 
@@ -400,7 +402,7 @@ YCbCr_Cr   \tab Cr Chroma
 
 \code{$setRasterColorInterp(band, col_interp)}
 Sets the color interpretation for \code{band}. See above for the list of
-valid values for \code{col_interp}.
+valid values for \code{col_interp} (passed as a string).
 
 \code{$getMetadata(band, domain)}
 Returns a character vector of all metadata \code{name=value} pairs that exist in
@@ -644,7 +646,7 @@ Package overview in \code{\link[=gdalraster-package]{help("gdalraster-package")}
 
 \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}
 
-\code{\link[=fillNodata]{fillNodata()}}, \code{\link[=warp]{warp()}}, \code{\link[=plot_raster]{plot_raster()}}
+\code{\link[=get_pixel_line]{get_pixel_line()}}, \code{\link[=plot_raster]{plot_raster()}}, \code{\link[=warp]{warp()}}
 
 \code{\link[=read_ds]{read_ds()}} is a convenience wrapper for \code{GDALRaster$read()}.
 }

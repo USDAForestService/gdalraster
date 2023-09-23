@@ -20,16 +20,16 @@
 //'
 //' @details
 //' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
-//' The WKT version can be overridden by using the `OSR_WKT_FORMAT` 
+//' The WKT version can be overridden by using the OSR_WKT_FORMAT 
 //' configuration option (see [set_config_option()]).
-//' Valid values are one of: `SFSQL`, `WKT1_SIMPLE`, `WKT1`, `WKT1_GDAL`, 
-//' `WKT1_ESRI`, `WKT2_2015`, `WKT2_2018`, `WKT2`, `DEFAULT`.
-//' If `SFSQL`, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
-//' EXTENSION node is returned. If `WKT1_SIMPLE`, a WKT1 string without 
-//' AXIS, AUTHORITY or EXTENSION node is returned. `WKT1` is an alias of 
-//' `WKT1_GDAL`. `WKT2` will default to the latest revision implemented 
-//' (currently `WKT2_2018`). `WKT2_2019` can be used as an alias of 
-//' `WKT2_2018` since GDAL 3.2
+//' Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL, 
+//' WKT1_ESRI, WKT2_2015, WKT2_2018, WKT2, DEFAULT.
+//' If SFSQL, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
+//' EXTENSION node is returned. If WKT1_SIMPLE, a WKT1 string without 
+//' AXIS, AUTHORITY or EXTENSION node is returned. WKT1 is an alias of 
+//' WKT1_GDAL. WKT2 will default to the latest revision implemented 
+//' (currently WKT2_2018). WKT2_2019 can be used as an alias of 
+//' WKT2_2018 since GDAL 3.2
 //'
 //' @param epsg Integer EPSG code.
 //' @param pretty Logical. `TRUE` to return a nicely formatted WKT string 
@@ -84,14 +84,14 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
 //' This is a wrapper for `OSRSetFromUserInput()` in the GDAL Spatial 
 //' Reference System C API with output to WKT. 
 //' The input SRS may take the following forms:
-//'   * `WKT` - to convert WKT versions (see below)
-//'   * `EPSG:n` - EPSG code n
-//'   * \code{AUTO:proj_id,unit_id,lon0,lat0} - WMS auto projections
-//'   * `urn:ogc:def:crs:EPSG::n` - OGC URNs
+//'   * WKT - to convert WKT versions (see below)
+//'   * EPSG:n - EPSG code n
+//'   * AUTO:proj_id,unit_id,lon0,lat0 - WMS auto projections
+//'   * urn:ogc:def:crs:EPSG::n - OGC URNs
 //'   * PROJ.4 definitions
-//'   * `filename` - file read for WKT, XML or PROJ.4 definition
-//'   * well known name such as `NAD27`, `NAD83`, `WGS84` or `WGS72`
-//'   * `IGNF:xxxx`, `ESRI:xxxx` - definitions from the PROJ database
+//'   * filename - file to read for WKT, XML or PROJ.4 definition
+//'   * well known name such as NAD27, NAD83, WGS84 or WGS72
+//'   * IGNF:xxxx, ESRI:xxxx - definitions from the PROJ database
 //'   * PROJJSON (PROJ >= 6.2)
 //'
 //' This function is intended to be flexible, but by its nature it is 
@@ -99,16 +99,16 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
 //' [epsg_to_wkt()] could be used instead for EPSG codes.
 //'
 //' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
-//' The WKT version can be overridden by using the `OSR_WKT_FORMAT` 
+//' The WKT version can be overridden by using the OSR_WKT_FORMAT 
 //' configuration option (see [set_config_option()]).
-//' Valid values are one of: `SFSQL`, `WKT1_SIMPLE`, `WKT1`, `WKT1_GDAL`, 
-//' `WKT1_ESRI`, `WKT2_2015`, `WKT2_2018`, `WKT2`, `DEFAULT`.
-//' If `SFSQL`, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
-//' EXTENSION node is returned. If `WKT1_SIMPLE`, a WKT1 string without 
-//' AXIS, AUTHORITY or EXTENSION node is returned. `WKT1` is an alias of 
-//' `WKT1_GDAL`. `WKT2` will default to the latest revision implemented 
-//' (currently `WKT2_2018`). `WKT2_2019` can be used as an alias of 
-//' `WKT2_2018` since GDAL 3.2
+//' Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL, 
+//' WKT1_ESRI, WKT2_2015, WKT2_2018, WKT2, DEFAULT.
+//' If SFSQL, a WKT1 string without AXIS, TOWGS84, AUTHORITY or 
+//' EXTENSION node is returned. If WKT1_SIMPLE, a WKT1 string without 
+//' AXIS, AUTHORITY or EXTENSION node is returned. WKT1 is an alias of 
+//' WKT1_GDAL. WKT2 will default to the latest revision implemented 
+//' (currently WKT2_2018). WKT2_2019 can be used as an alias of 
+//' WKT2_2018 since GDAL 3.2
 //'
 //' @param srs Character string containing an SRS definition in various
 //' formats (see Details).
@@ -251,7 +251,7 @@ bool srs_is_same(std::string srs1, std::string srs2) {
 	return OSRIsSame(hSRS1, hSRS2);
 }
 
-//' Get the bounding box of a geometry specified in OGC WKT format.
+//' Get the bounding box of a geometry specified in OGC WKT format
 //'
 //' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry 
 //' (e.g., LINE, POLYGON, MULTIPOLYGON).
@@ -301,7 +301,7 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt,
 	return bbox;
 }
 
-//' Convert a bounding box to POLYGON in OGC WKT format.
+//' Convert a bounding box to POLYGON in OGC WKT format
 //'
 //' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
 //' Requires GDAL built with the GEOS library.

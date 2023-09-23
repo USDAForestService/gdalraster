@@ -12,12 +12,12 @@
 }
 \details{
   Core functionality is contained in class \code{GDALRaster} and several
-  GDAL related stand-alone functions:
+  related stand-alone functions:
   \itemize{
   \item \code{\link{GDALRaster-class}} is an exposed C++ class that allows
-  opening a raster dataset and calling methods on the Dataset, Driver and
-  RasterBand objects in the underlying API (get/set parameters, read/write
-  pixel data).
+  opening a raster dataset and calling methods on the \code{GDALDataset},
+  \code{GDALDriver} and \code{GDALRasterBand} objects in the underlying API
+  (e.g., get/set parameters, read/write pixel data).
   
   \item raster creation: \code{\link[=create]{create()}},
   \code{\link[=createCopy]{createCopy()}},
@@ -70,8 +70,8 @@
   Additional functionality includes:
   \itemize{
   \item \code{\link{RunningStats-class}} calculates mean and variance in one
-  pass. The min, max, sum, and count are also tracked (i.e., summary
-  statistics on a data stream).
+  pass. The min, max, sum, and count are also tracked (efficient summary
+  statistics on large data streams).
   
   \item \code{\link{CmbTable-class}} implements a hash table for counting
   unique combinations of integer values.
@@ -92,7 +92,8 @@
   }
 }
 \author{
-GDAL: \url{https://github.com/OSGeo/gdal/graphs/contributors}
+GDAL: Frank Warmerdam, Even Rouault and others
+(see \url{https://github.com/OSGeo/gdal/graphs/contributors})
 
 R interface/additional functionality: Chris Toney
 
@@ -109,12 +110,12 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
   \url{https://gdal.org/tutorials/geotransforms_tut.html}
 }
 \note{
-  Documentation for several wrapper functions borrows from the GDAL API 
-  documentation, (c) 1998-2023, Frank Warmerdam, Even Rouault, and 
-  others, \href{https://gdal.org/license.html}{MIT license}.
+  Documentation for \code{GDALRaster-class} and several wrapper functions
+  borrows from the GDAL API documentation, (c) 1998-2023, Frank Warmerdam,
+  Even Rouault, and others, \href{https://gdal.org/license.html}{MIT license}.
 
-  Sample datasets are included with the package and used in examples 
-  throughout the documentation. The sample data include
+  Sample datasets included with the package are used in examples throughout
+  the documentation. The sample data include
   \href{https://landfire.gov/}{LANDFIRE} raster layers describing terrain,
   vegetation and wildland fuels (LF 2020 version), and
   Landsat C2 Analysis Ready Data downloaded from
