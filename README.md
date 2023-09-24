@@ -24,9 +24,7 @@ project.
 
 Bindings to GDAL are implemented in the exposed C++ class
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
-along with several related [stand-alone
-functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions),
-together supporting:
+along with several [stand-alone functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions), supporting:
 
   - manual creation of uninitialized raster datasets
   - creation from existing raster as template

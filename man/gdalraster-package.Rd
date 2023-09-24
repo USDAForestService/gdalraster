@@ -92,7 +92,7 @@
   }
 }
 \author{
-GDAL: Frank Warmerdam, Even Rouault and others
+GDAL is by: Frank Warmerdam, Even Rouault and others\cr
 (see \url{https://github.com/OSGeo/gdal/graphs/contributors})
 
 R interface/additional functionality: Chris Toney
