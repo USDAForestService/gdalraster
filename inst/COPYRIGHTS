@@ -1,6 +1,10 @@
-=====GDAL and related documentation ===========================================
-The documentation for several GDAL wrapper functions borrows from the GDAL API
-documentation at: https://gdal.org/api
+=====GDAL API documentation ===================================================
+Much of the documentation for class 'GDALRaster' and several GDAL wrapper
+functions was copied from the GDAL API documentation at: https://gdal.org/api/.
+
+The package vignette is an R port of the GDAL Raster API Tutorial at:
+https://gdal.org/tutorials/raster_api_tut.html.
+
 Copyright 1998-2023 Frank Warmerdam, Even Rouault, and others.
 https://gdal.org/license.html
 
@@ -22,7 +26,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 ===============================================================================
 
-=====files src/progress_r.cpp =================================================
+=====file: src/progress_r.cpp =================================================
 File src/progress_r.cpp:
 This file is a slightly modified version of /gdal/port/cpl_progress.cpp, to 
 work in R on Windows and Linux.
@@ -48,7 +52,7 @@ FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 ===============================================================================
 
-=====in file src/cmb_table.h ==================================================
+=====file: src/cmb_table.h ====================================================
 The struct cmbHasher{} uses the Boost method for combining hashes:
 Copyright 2005-2014 Daniel James.
 Copyright 2021, 2022 Peter Dimov.
@@ -80,9 +84,8 @@ ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
 DEALINGS IN THE SOFTWARE.
 ===============================================================================
 
-=====file configure.ac ========================================================
-configure.ac based on the same file from:
-from https://github.com/appelmar/gdalcubes.
+=====file: configure.ac =======================================================
+configure.ac based on the same file from: https://github.com/appelmar/gdalcubes
 
 Copyright (c) 2018-2019 Marius Appel
 License: MIT
