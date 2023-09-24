@@ -165,8 +165,8 @@ Defaults to <code>TRUE</code>.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>rasterToVRT()</code> has similarities to the command-line utility <code>gdalbuildvrt</code>
 (<a href="https://gdal.org/programs/gdalbuildvrt.html" class="external-link">https://gdal.org/programs/gdalbuildvrt.html</a>) but is not a wrapper for
-it and does not build mosaics. <code>rasterToVRT()</code> is somewhat tailored for
-clipping and pixel-aligning various raster data in relation to vector
+it and does not build mosaics. <code>rasterToVRT()</code> can be used to virtually clip
+and pixel-align various raster layers with each or in relation to vector
 polygon boundaries. It also supports VRT kernel filtering.</p>
 <p>A VRT dataset is saved as a plain-text file with extension .vrt. This file
 contains a description of the dataset in an XML format. The description

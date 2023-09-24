@@ -85,16 +85,16 @@ for display to a person. <code>FALSE</code> for a regular WKT string (the defaul
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
-The WKT version can be overridden by using the <code>OSR_WKT_FORMAT</code>
+The WKT version can be overridden by using the OSR_WKT_FORMAT
 configuration option (see <code><a href="set_config_option.html">set_config_option()</a></code>).
-Valid values are one of: <code>SFSQL</code>, <code>WKT1_SIMPLE</code>, <code>WKT1</code>, <code>WKT1_GDAL</code>,
-<code>WKT1_ESRI</code>, <code>WKT2_2015</code>, <code>WKT2_2018</code>, <code>WKT2</code>, <code>DEFAULT</code>.
-If <code>SFSQL</code>, a WKT1 string without AXIS, TOWGS84, AUTHORITY or
-EXTENSION node is returned. If <code>WKT1_SIMPLE</code>, a WKT1 string without
-AXIS, AUTHORITY or EXTENSION node is returned. <code>WKT1</code> is an alias of
-<code>WKT1_GDAL</code>. <code>WKT2</code> will default to the latest revision implemented
-(currently <code>WKT2_2018</code>). <code>WKT2_2019</code> can be used as an alias of
-<code>WKT2_2018</code> since GDAL 3.2</p>
+Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL,
+WKT1_ESRI, WKT2_2015, WKT2_2018, WKT2, DEFAULT.
+If SFSQL, a WKT1 string without AXIS, TOWGS84, AUTHORITY or
+EXTENSION node is returned. If WKT1_SIMPLE, a WKT1 string without
+AXIS, AUTHORITY or EXTENSION node is returned. WKT1 is an alias of
+WKT1_GDAL. WKT2 will default to the latest revision implemented
+(currently WKT2_2018). WKT2_2019 can be used as an alias of
+WKT2_2018 since GDAL 3.2</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

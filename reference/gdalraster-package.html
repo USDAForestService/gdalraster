@@ -70,10 +70,10 @@
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>Core functionality is contained in class <code>GDALRaster</code> and several
-  GDAL related stand-alone functions:</p><ul><li><p><code><a href="GDALRaster-class.html">GDALRaster-class</a></code> is an exposed C++ class that allows
-  opening a raster dataset and calling methods on the Dataset, Driver and
-  RasterBand objects in the underlying API (get/set parameters, read/write
-  pixel data).</p></li>
+  related stand-alone functions:</p><ul><li><p><code><a href="GDALRaster-class.html">GDALRaster-class</a></code> is an exposed C++ class that allows
+  opening a raster dataset and calling methods on the <code>GDALDataset</code>,
+  <code>GDALDriver</code> and <code>GDALRasterBand</code> objects in the underlying API
+  (e.g., get/set parameters, read/write pixel data).</p></li>
 <li><p>raster creation: <code><a href="create.html">create()</a></code>,
   <code><a href="createCopy.html">createCopy()</a></code>,
   <code><a href="rasterFromRaster.html">rasterFromRaster()</a></code>,
@@ -111,8 +111,8 @@
   <code><a href="proj_search_paths.html">proj_search_paths()</a></code>,
   <code><a href="proj_networking.html">proj_networking()</a></code></p></li>
 </ul><p>Additional functionality includes:</p><ul><li><p><code><a href="RunningStats-class.html">RunningStats-class</a></code> calculates mean and variance in one
-  pass. The min, max, sum, and count are also tracked (i.e., summary
-  statistics on a data stream).</p></li>
+  pass. The min, max, sum, and count are also tracked (efficient summary
+  statistics on large data streams).</p></li>
 <li><p><code><a href="CmbTable-class.html">CmbTable-class</a></code> implements a hash table for counting
   unique combinations of integer values.</p></li>
 <li><p><code><a href="combine.html">combine()</a></code> overlays multiple rasters so that a
@@ -129,7 +129,8 @@
 </ul></div>
     <div class="section level2">
     <h2 id="author">Author<a class="anchor" aria-label="anchor" href="#author"></a></h2>
-    <p>GDAL: <a href="https://github.com/OSGeo/gdal/graphs/contributors" class="external-link">https://github.com/OSGeo/gdal/graphs/contributors</a></p>
+    <p>GDAL: Frank Warmerdam, Even Rouault and others
+(see <a href="https://github.com/OSGeo/gdal/graphs/contributors" class="external-link">https://github.com/OSGeo/gdal/graphs/contributors</a>)</p>
 <p>R interface/additional functionality: Chris Toney</p>
 <p>Maintainer: Chris Toney &lt;chris.toney at usda.gov&gt;</p>
     </div>
@@ -141,11 +142,11 @@
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>Documentation for several wrapper functions borrows from the GDAL API 
-  documentation, (c) 1998-2023, Frank Warmerdam, Even Rouault, and 
-  others, <a href="https://gdal.org/license.html" class="external-link">MIT license</a>.</p>
-<p>Sample datasets are included with the package and used in examples 
-  throughout the documentation. The sample data include
+    <p>Documentation for <code>GDALRaster-class</code> and several wrapper functions
+  borrows from the GDAL API documentation, (c) 1998-2023, Frank Warmerdam,
+  Even Rouault, and others, <a href="https://gdal.org/license.html" class="external-link">MIT license</a>.</p>
+<p>Sample datasets included with the package are used in examples throughout
+  the documentation. The sample data include
   <a href="https://landfire.gov/" class="external-link">LANDFIRE</a> raster layers describing terrain,
   vegetation and wildland fuels (LF 2020 version), and
   Landsat C2 Analysis Ready Data downloaded from

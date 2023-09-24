@@ -90,29 +90,29 @@ for display to a person. <code>FALSE</code> for a regular WKT string (the defaul
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>This is a wrapper for <code>OSRSetFromUserInput()</code> in the GDAL Spatial
 Reference System C API with output to WKT.
-The input SRS may take the following forms:</p><ul><li><p><code>WKT</code> - to convert WKT versions (see below)</p></li>
-<li><p><code>EPSG:n</code> - EPSG code n</p></li>
-<li><p><code>AUTO:proj_id,unit_id,lon0,lat0</code> - WMS auto projections</p></li>
-<li><p><code>urn:ogc:def:crs:EPSG::n</code> - OGC URNs</p></li>
+The input SRS may take the following forms:</p><ul><li><p>WKT - to convert WKT versions (see below)</p></li>
+<li><p>EPSG:n - EPSG code n</p></li>
+<li><p>AUTO:proj_id,unit_id,lon0,lat0 - WMS auto projections</p></li>
+<li><p>urn:ogc:def:crs:EPSG::n - OGC URNs</p></li>
 <li><p>PROJ.4 definitions</p></li>
-<li><p><code>filename</code> - file read for WKT, XML or PROJ.4 definition</p></li>
-<li><p>well known name such as <code>NAD27</code>, <code>NAD83</code>, <code>WGS84</code> or <code>WGS72</code></p></li>
-<li><p><code>IGNF:xxxx</code>, <code>ESRI:xxxx</code> - definitions from the PROJ database</p></li>
+<li><p>filename - file to read for WKT, XML or PROJ.4 definition</p></li>
+<li><p>well known name such as NAD27, NAD83, WGS84 or WGS72</p></li>
+<li><p>IGNF:xxxx, ESRI:xxxx - definitions from the PROJ database</p></li>
 <li><p>PROJJSON (PROJ &gt;= 6.2)</p></li>
 </ul><p>This function is intended to be flexible, but by its nature it is
 imprecise as it must guess information about the format intended.
 <code><a href="epsg_to_wkt.html">epsg_to_wkt()</a></code> could be used instead for EPSG codes.</p>
 <p>As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
-The WKT version can be overridden by using the <code>OSR_WKT_FORMAT</code>
+The WKT version can be overridden by using the OSR_WKT_FORMAT
 configuration option (see <code><a href="set_config_option.html">set_config_option()</a></code>).
-Valid values are one of: <code>SFSQL</code>, <code>WKT1_SIMPLE</code>, <code>WKT1</code>, <code>WKT1_GDAL</code>,
-<code>WKT1_ESRI</code>, <code>WKT2_2015</code>, <code>WKT2_2018</code>, <code>WKT2</code>, <code>DEFAULT</code>.
-If <code>SFSQL</code>, a WKT1 string without AXIS, TOWGS84, AUTHORITY or
-EXTENSION node is returned. If <code>WKT1_SIMPLE</code>, a WKT1 string without
-AXIS, AUTHORITY or EXTENSION node is returned. <code>WKT1</code> is an alias of
-<code>WKT1_GDAL</code>. <code>WKT2</code> will default to the latest revision implemented
-(currently <code>WKT2_2018</code>). <code>WKT2_2019</code> can be used as an alias of
-<code>WKT2_2018</code> since GDAL 3.2</p>
+Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL,
+WKT1_ESRI, WKT2_2015, WKT2_2018, WKT2, DEFAULT.
+If SFSQL, a WKT1 string without AXIS, TOWGS84, AUTHORITY or
+EXTENSION node is returned. If WKT1_SIMPLE, a WKT1 string without
+AXIS, AUTHORITY or EXTENSION node is returned. WKT1 is an alias of
+WKT1_GDAL. WKT2 will default to the latest revision implemented
+(currently WKT2_2018). WKT2_2019 can be used as an alias of
+WKT2_2018 since GDAL 3.2</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

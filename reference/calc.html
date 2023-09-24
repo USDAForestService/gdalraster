@@ -149,8 +149,8 @@ UInt16, Int32, UInt32, Float32).</p></dd>
 <dt>options</dt>
 <dd><p>Optional list of format-specific creation options in a
 vector of "NAME=VALUE" pairs
-(e.g., <code>options = c("COMPRESS=LZW")</code> to set <code>LZW</code>
-compression during creation of a GTiff file).</p></dd>
+(e.g., <code>options = c("COMPRESS=LZW")</code> to set LZW compression
+during creation of a GTiff file).</p></dd>
 
 
 <dt>nodata_value</dt>
@@ -186,9 +186,9 @@ and write output to <code>out_band</code></p></li>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>The variables in <code>expr</code> are vectors of length raster Xsize
-(rows of the raster layers).
-The expression should return a vector also of length raster Xsize
+    <p>The variables in <code>expr</code> are vectors of length raster xsize
+(row vectors of the input raster layer(s)).
+The expression should return a vector also of length raster xsize
 (an output row).
 Two special variable names are available in <code>expr</code> by default:
 <code>pixelX</code> and <code>pixelY</code> provide the pixel center coordinate in
@@ -244,7 +244,7 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span>                usePixelLonLat <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 1 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/Rtmpf45WFb/rastcalc1e4d3e9e2017.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmprNAKrZ/rastcalc1e4d4948ac72.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">hi_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## min, max, mean, sd</span></span></span>
@@ -280,7 +280,7 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span>                  setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/Rtmpf45WFb/rastcalc1e4d59c863a0.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmprNAKrZ/rastcalc1e4d14b07df6.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">ndvi_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -351,7 +351,7 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span>     write_mode <span class="op">=</span> <span class="st">"update"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/Rtmpf45WFb/storml_lndscp.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmprNAKrZ/storml_lndscp.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## verify the ouput</span></span></span>
 <span class="r-in"><span><span class="va">rasterfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">tif_file</span>, <span class="va">tif_file</span><span class="op">)</span></span></span>
