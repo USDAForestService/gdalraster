@@ -64,7 +64,7 @@ reference:
   - DEFAULT_NODATA
 
 authors:
-  before: "GDAL is by: Frank Warmerdam, Even Rouault and others (<a href=\"https://github.com/OSGeo/gdal/graphs/contributors\" class=\"external-link\">GDAL contributors</a>)"
+  before: "<strong>GDAL is by</strong>: Frank Warmerdam, Even Rouault and others (<a href=\"https://github.com/OSGeo/gdal/graphs/contributors\" class=\"external-link\">GDAL contributors</a>)"
   after: "<small class=\"dont-index\">See file <a href=\"https://github.com/USDAForestService/gdalraster/blob/HEAD/inst/COPYRIGHTS\" class=\"external-link\"><code>inst/COPYRIGHTS</code></a> for details.</small>"
   Chris Toney:
     href: "https://github.com/ctoney"
