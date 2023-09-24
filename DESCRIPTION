@@ -3,18 +3,18 @@ Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
 Version: 1.4.1
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
-            role = c("aut", "cre")),
+            role = c("aut", "cre"), comment = "R interface/additional functionality"),
     person("Frank", "Warmerdam", 
-            role = c("ctb", "cph"), comment = "GDAL API/documentation; src/progress_r.cpp from /gdal/port/cpl_progress.cpp"),
+            role = c("ctb", "cph"), comment = "GDAL documentation; src/progress_r.cpp from gdal/port/cpl_progress.cpp"),
     person("Even", "Rouault", 
-            role = c("ctb", "cph"), comment = "GDAL API/documentation"),
+            role = c("ctb", "cph"), comment = "GDAL documentation"),
     person("Marius", "Appel", 
             role = c("ctb", "cph"), comment = "configure.ac based on https://github.com/appelmar/gdalcubes"),
     person("Daniel", "James", 
-            role = c("ctb", "cph"), comment = "Boost method for combining hashes"),
+            role = c("ctb", "cph"), comment = "Boost combine hashes method in src/cmb_table.h"),
     person("Peter", "Dimov", 
-            role = c("ctb", "cph"), comment = "Boost method for combining hashes"))
-Description: Interface to the raster API of the 'Geospatial Data Abstraction
+            role = c("ctb", "cph"), comment = "Boost combine hashes method in src/cmb_table.h"))
+Description: Interface to the Raster API of the 'Geospatial Data Abstraction
     Library' ('GDAL') supporting manual creation of uninitialized datasets,
     creation from existing raster as template, low level I/O, configuration of
     virtual raster (VRT), coordinate transformation, and access to 'gdalwarp'
@@ -28,7 +28,7 @@ Description: Interface to the raster API of the 'Geospatial Data Abstraction
     streams; class 'CmbTable' for counting unique combinations of integers
     with a hash table; raster 'combine()' to identify and count unique pixel
     combinations across multiple input layers; raster 'calc()' to evaluate
-    any R expression on a stack of layers with pixel coordinates available as
+    an R expression on a stack of layers with pixel coordinates available as
     variables in the expression; and raster display using base 'graphics'.
     'gdalraster' may be suitable for applications that primarily need low-level
     I/O or prefer a direct 'GDAL' API. The additional functionality is somewhat
