@@ -38,9 +38,9 @@ combinations of the input values
 (e.g., "UInt16" or the default "UInt32").}
 
 \item{options}{Optional list of format-specific creation options in a
-vector of "NAME=VALUE" pairs.
-(e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
-compression during creation of a GTiff file).}
+vector of "NAME=VALUE" pairs
+(e.g., \code{options = c("COMPRESS=LZW")} to set LZW compression
+during creation of a GTiff file).}
 }
 \value{
 A data frame with column \code{cmbid} containing the combination IDs,

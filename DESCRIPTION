@@ -1,7 +1,7 @@
 Package: gdalraster
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
 Version: 1.4.1
-Authors@R: c( 
+Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre")),
     person("Frank", "Warmerdam", 
@@ -11,27 +11,28 @@ Authors@R: c(
     person("Marius", "Appel", 
             role = c("ctb", "cph"), comment = "configure.ac based on https://github.com/appelmar/gdalcubes"),
     person("Daniel", "James", 
-            role = c("ctb", "cph"), comment = "Boost combine hashes method"),
+            role = c("ctb", "cph"), comment = "Boost method for combining hashes"),
     person("Peter", "Dimov", 
-            role = c("ctb", "cph"), comment = "Boost combine hashes method"))
+            role = c("ctb", "cph"), comment = "Boost method for combining hashes"))
 Description: Interface to the raster API of the 'Geospatial Data Abstraction
     Library' ('GDAL') supporting manual creation of uninitialized datasets,
     creation from existing raster as template, low level I/O, configuration of
     virtual raster (VRT), coordinate transformation, and access to 'gdalwarp'
-    for reprojection. Includes selected 'GDAL' algorithms and functions for
+    for reprojection. Includes several 'GDAL' algorithms and functions for
     working with spatial reference systems. Calling signatures resemble the
     native C, C++ and Python APIs provided by the 'GDAL' project
-    (<https://gdal.org>). Bindings are implemented via 'Rcpp' exposed class
-    along with several stand-alone functions. Additional functionality
-    includes: class 'RunningStats' for efficient summary statistics on large
-    data streams; class 'CmbTable' for counting unique combinations of integers
-    with a hash table; raster overlay to identify and count unique pixel
-    combinations across multiple input layers; raster calculation by evaluating
+    (<https://gdal.org>). Bindings are implemented via exposed C++ class
+    encapsulating a 'GDALDataset' and its associated 'GDALRasterBand' objects,
+    plus several stand-alone functions. Additional functionality includes:
+    class 'RunningStats' for efficient summary statistics on large data
+    streams; class 'CmbTable' for counting unique combinations of integers
+    with a hash table; raster 'combine()' to identify and count unique pixel
+    combinations across multiple input layers; raster 'calc()' to evaluate
     any R expression on a stack of layers with pixel coordinates available as
-    variables; and raster display using base 'graphics'. 'gdalraster' may be
-    suitable for applications that primarily need low-level I/O or prefer a
-    direct 'GDAL' API. The additional functionality is somewhat aimed at
-    thematic data analysis but may have other utility.
+    variables in the expression; and raster display using base 'graphics'.
+    'gdalraster' may be suitable for applications that primarily need low-level
+    I/O or prefer a direct 'GDAL' API. The additional functionality is somewhat
+    aimed at thematic data analysis but may have other utility.
 License: MIT + file LICENSE
 Copyright: See file inst/COPYRIGHTS for details.
 URL: https://usdaforestservice.github.io/gdalraster/,

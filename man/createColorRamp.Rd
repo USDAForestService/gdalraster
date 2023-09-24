@@ -81,7 +81,8 @@ ds_tcc$setRasterColorInterp(band=1, col_interp="Palette")
 # close and re-open the dataset in read_only mode
 ds_tcc$open(read_only=TRUE)
 
-plot_raster(ds_tcc, interpolate=FALSE, main="Storm Lake Tree Canopy Cover")
+plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
+            main="Storm Lake Tree Canopy Cover (\%)")
 ds_tcc$close()
 }
 \seealso{

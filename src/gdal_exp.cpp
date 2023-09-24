@@ -22,7 +22,7 @@
 //' @returns Character vector of length four containing:
 //'   * "–version" - one line version message, e.g., “GDAL 3.6.3, released 
 //'   2023/03/12”
-//'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “30603000” for 
+//'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “3060300” for 
 //'   GDAL 3.6.3.0
 //'   * "GDAL_RELEASE_DATE" - formatted as a string, e.g., “20230312”
 //'   * "GDAL_RELEASE_NAME" - e.g., “3.6.3”
@@ -928,7 +928,8 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 //' # close and re-open the dataset in read_only mode
 //' ds_tcc$open(read_only=TRUE)
 //' 
-//' plot_raster(ds_tcc, interpolate=FALSE, main="Storm Lake Tree Canopy Cover")
+//' plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
+//'             main="Storm Lake Tree Canopy Cover (%)")
 //' ds_tcc$close()
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix createColorRamp(int start_index,

@@ -94,9 +94,12 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' Convenience wrapper for `GDALRaster$read()`
 #' 
 #' @description
-#' `read_ds()` will read from a raster dataset already opened with a
-#' `GDALRaster` object. By default, it will attempt to read the full raster
-#' extent from all bands at full resolution.
+#' `read_ds()` will read from a raster dataset that is already open in a
+#' `GDALRaster` object. By default, it attempts to read the full raster
+#' extent from all bands at full resolution. `read_ds()` is sometimes more
+#' convenient than `GDALRaster$read()`, e.g., to read specific multiple bands
+#' for display with [plot_raster()], or simply for the argument defaults to
+#' read an entire raster into memory (see Note).
 #'
 #' @param ds An object of class `GDALRaster` in open state.
 #' @param bands Integer vector of band numbers to read. By default all bands
@@ -107,10 +110,12 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' raster region to be read (zero to start from the top).
 #' @param xsize Integer. The width in pixels of the region to be read.
 #' @param ysize Integer. The height in pixels of the region to be read.
-#' @param out_xsize Integer. The width of the output buffer into which the
-#' desired region will be read.
-#' @param out_ysize Integer. The height of the output buffer into which the
-#' desired region will be read.
+#' @param out_xsize Integer. The width in pixels of the output buffer into
+#' which the desired region will be read (e.g., to read a reduced resolution
+#' overview).
+#' @param out_ysize Integer. The height in pixels of the output buffer into
+#' which the desired region will be read (e.g., to read a reduced resolution
+#' overview).
 #' @returns Returns a `numeric` or `complex` vector containing the values that
 #' were read. It is organized in left to right, top to bottom pixel order,
 #' interleaved by band.
@@ -123,8 +128,8 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' There is small overhead in calling `read_ds()` compared with
 #' calling `GDALRaster$read()` directly. This would only matter if calling
 #' the function repeatedly to read a raster in chunks. For the case of reading
-#' a large raster in many chunks (e.g., by row), it will be more efficient
-#' performance-wise to call `GDALRaster$read()` directly.
+#' a large raster in many chunks, it will be optimal performance-wise to call
+#' `GDALRaster$read()` directly.
 #'
 #' By default, this function will attempt to read the full raster into memory.
 #' It generally should not be called on large raster datasets using the default
@@ -137,11 +142,11 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' [`GDALRaster$read()`][GDALRaster]
 #'
 #' @examples
-#' ## read elevation, slope, and aspect from a multiband LCP file
+#' ## read three bands from a multi-band dataset
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
 #'
-#' r <- read_ds(ds, bands=c(1:3))
+#' r <- read_ds(ds, bands=c(6,5,4))
 #' typeof(r)
 #' length(r)
 #' object.size(r)
@@ -176,12 +181,12 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #' @param fmt Output raster format name (e.g., "GTiff" or "HFA"). Will attempt 
 #' to guess from the output filename if \code{fmt} is not specified.
 #' @param nbands Number of output bands.
-#' @param dtName Output raster data type name.
-#' (e.g., "Byte", "Int16", "UInt16", "Int32" or "Float32").
+#' @param dtName Output raster data type name. Commonly used types include
+#' `"Byte"`, `"Int16"`, `"UInt16"`, `"Int32"` and `"Float32"`.
 #' @param options Optional list of format-specific creation options in a
-#' vector of "NAME=VALUE" pairs.
-#' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
-#' compression during creation of a GTiff file).
+#' vector of "NAME=VALUE" pairs
+#' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW compression
+#' during creation of a GTiff file).
 #' @param init Numeric value to initialize all pixels in the output raster.
 #' @param dstnodata Numeric nodata value for the output raster.
 #' @returns Returns the destination filename invisibly.
@@ -283,16 +288,16 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' Create a GDAL virtual raster
 #'
 #' @description
-#' `rasterToVRT()` creates a virtual raster dataset (VRT format) derived from 
-#' a source raster with options for virtual subsetting, virtually resampling 
-#' the source data at a different pixel resolution, or applying a virtual 
+#' `rasterToVRT()` creates a virtual raster dataset (VRT format) derived from
+#' a source raster with options for virtual subsetting, virtually resampling
+#' the source data at a different pixel resolution, or applying a virtual
 #' kernel filter.
 #'
 #' @details
-#' `rasterToVRT()` has similarities to the command-line utility `gdalbuildvrt` 
-#' (\url{https://gdal.org/programs/gdalbuildvrt.html}) but is not a wrapper for 
-#' it and does not build mosaics. `rasterToVRT()` is somewhat tailored for 
-#' clipping and pixel-aligning various raster data in relation to vector 
+#' `rasterToVRT()` has similarities to the command-line utility `gdalbuildvrt`
+#' (\url{https://gdal.org/programs/gdalbuildvrt.html}) but is not a wrapper for
+#' it and does not build mosaics. `rasterToVRT()` can be used to virtually clip
+#' and pixel-align various raster layers with each or in relation to vector
 #' polygon boundaries. It also supports VRT kernel filtering.
 #'
 #' A VRT dataset is saved as a plain-text file with extension .vrt. This file 
@@ -520,7 +525,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_lcp$close()
 #' ds_b5$close()
 #' @export
-rasterToVRT <- function(srcfile, relativeToVRT = FALSE, 
+rasterToVRT <- function(srcfile,
+				relativeToVRT = FALSE, 
 				vrtfile = tempfile("tmprast", fileext=".vrt"), 
 				resolution = NULL, 
 				subwindow = NULL, 
@@ -530,7 +536,7 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 				normalized = TRUE) {
 
 	if (!requireNamespace("xml2", quietly = TRUE))
-		stop("rasterToVRT() requires package \"xml2.\"", call. = FALSE)
+		stop("rasterToVRT() requires package xml2.", call. = FALSE)
 
 	if (relativeToVRT) relativeToVRT <- 1 else relativeToVRT <- 0
 	if (normalized) normalized <- 1 else normalized <- 0
@@ -698,9 +704,9 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' inverse projected longitude/latitude.
 #'
 #' @details
-#' The variables in `expr` are vectors of length raster Xsize 
-#' (rows of the raster layers). 
-#' The expression should return a vector also of length raster Xsize 
+#' The variables in `expr` are vectors of length raster xsize 
+#' (row vectors of the input raster layer(s)).
+#' The expression should return a vector also of length raster xsize 
 #' (an output row). 
 #' Two special variable names are available in `expr` by default: 
 #' `pixelX` and `pixelY` provide the pixel center coordinate in 
@@ -736,8 +742,8 @@ rasterToVRT <- function(srcfile, relativeToVRT = FALSE,
 #' @param out_band Integer band number in `dstfile` for writing output.
 #' @param options Optional list of format-specific creation options in a
 #' vector of "NAME=VALUE" pairs
-#' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
-#' compression during creation of a GTiff file).
+#' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW compression
+#' during creation of a GTiff file).
 #' @param nodata_value Numeric value to assign if `expr` returns NA.
 #' @param setRasterNodataValue Logical. `TRUE` will attempt to set the raster 
 #' format nodata value to `nodata_value`, or `FALSE` not to set a raster 
@@ -1110,9 +1116,9 @@ calc <- function(expr,
 #' combinations of the input values 
 #' (e.g., "UInt16" or the default "UInt32").
 #' @param options Optional list of format-specific creation options in a
-#' vector of "NAME=VALUE" pairs.
-#' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
-#' compression during creation of a GTiff file).
+#' vector of "NAME=VALUE" pairs
+#' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW compression
+#' during creation of a GTiff file).
 #' @returns A data frame with column `cmbid` containing the combination IDs, 
 #' column `count` containing the pixel counts for each combination, 
 #' and `length(rasterfiles)` columns named `var.names` containing the integer 

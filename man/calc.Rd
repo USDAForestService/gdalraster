@@ -42,8 +42,8 @@ UInt16, Int32, UInt32, Float32).}
 
 \item{options}{Optional list of format-specific creation options in a
 vector of "NAME=VALUE" pairs
-(e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
-compression during creation of a GTiff file).}
+(e.g., \code{options = c("COMPRESS=LZW")} to set LZW compression
+during creation of a GTiff file).}
 
 \item{nodata_value}{Numeric value to assign if \code{expr} returns NA.}
 
@@ -82,9 +82,9 @@ R expression, as either x/y in the raster projected coordinate system or
 inverse projected longitude/latitude.
 }
 \details{
-The variables in \code{expr} are vectors of length raster Xsize
-(rows of the raster layers).
-The expression should return a vector also of length raster Xsize
+The variables in \code{expr} are vectors of length raster xsize
+(row vectors of the input raster layer(s)).
+The expression should return a vector also of length raster xsize
 (an output row).
 Two special variable names are available in \code{expr} by default:
 \code{pixelX} and \code{pixelY} provide the pixel center coordinate in

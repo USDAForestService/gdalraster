@@ -31,11 +31,13 @@ raster region to be read (zero to start from the top).}
 
 \item{ysize}{Integer. The height in pixels of the region to be read.}
 
-\item{out_xsize}{Integer. The width of the output buffer into which the
-desired region will be read.}
+\item{out_xsize}{Integer. The width in pixels of the output buffer into
+which the desired region will be read (e.g., to read a reduced resolution
+overview).}
 
-\item{out_ysize}{Integer. The height of the output buffer into which the
-desired region will be read.}
+\item{out_ysize}{Integer. The height in pixels of the output buffer into
+which the desired region will be read (e.g., to read a reduced resolution
+overview).}
 }
 \value{
 Returns a \code{numeric} or \code{complex} vector containing the values that
@@ -47,16 +49,19 @@ possible for the raster data type (Byte, Int8, Int16, UInt16, Int32),
 otherwise as type \code{double} (UInt32, Float32, Float64).
 }
 \description{
-\code{read_ds()} will read from a raster dataset already opened with a
-\code{GDALRaster} object. By default, it will attempt to read the full raster
-extent from all bands at full resolution.
+\code{read_ds()} will read from a raster dataset that is already open in a
+\code{GDALRaster} object. By default, it attempts to read the full raster
+extent from all bands at full resolution. \code{read_ds()} is sometimes more
+convenient than \code{GDALRaster$read()}, e.g., to read specific multiple bands
+for display with \code{\link[=plot_raster]{plot_raster()}}, or simply for the argument defaults to
+read an entire raster into memory (see Note).
 }
 \note{
 There is small overhead in calling \code{read_ds()} compared with
 calling \code{GDALRaster$read()} directly. This would only matter if calling
 the function repeatedly to read a raster in chunks. For the case of reading
-a large raster in many chunks (e.g., by row), it will be more efficient
-performance-wise to call \code{GDALRaster$read()} directly.
+a large raster in many chunks, it will be optimal performance-wise to call
+\code{GDALRaster$read()} directly.
 
 By default, this function will attempt to read the full raster into memory.
 It generally should not be called on large raster datasets using the default
@@ -66,11 +71,11 @@ approximately (xsize * ysize * number of bands * 4) for data read as
 \code{double} (plus small object overhead for the vector).
 }
 \examples{
-## read elevation, slope, and aspect from a multiband LCP file
+## read three bands from a multi-band dataset
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 ds <- new(GDALRaster, lcp_file, read_only=TRUE)
 
-r <- read_ds(ds, bands=c(1:3))
+r <- read_ds(ds, bands=c(6,5,4))
 typeof(r)
 length(r)
 object.size(r)

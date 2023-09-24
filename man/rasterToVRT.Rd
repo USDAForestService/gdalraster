@@ -88,8 +88,8 @@ kernel filter.
 \details{
 \code{rasterToVRT()} has similarities to the command-line utility \code{gdalbuildvrt}
 (\url{https://gdal.org/programs/gdalbuildvrt.html}) but is not a wrapper for
-it and does not build mosaics. \code{rasterToVRT()} is somewhat tailored for
-clipping and pixel-aligning various raster data in relation to vector
+it and does not build mosaics. \code{rasterToVRT()} can be used to virtually clip
+and pixel-align various raster layers with each or in relation to vector
 polygon boundaries. It also supports VRT kernel filtering.
 
 A VRT dataset is saved as a plain-text file with extension .vrt. This file

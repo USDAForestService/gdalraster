@@ -25,13 +25,13 @@ to guess from the output filename if \code{fmt} is not specified.}
 
 \item{nbands}{Number of output bands.}
 
-\item{dtName}{Output raster data type name.
-(e.g., "Byte", "Int16", "UInt16", "Int32" or "Float32").}
+\item{dtName}{Output raster data type name. Commonly used types include
+\code{"Byte"}, \code{"Int16"}, \code{"UInt16"}, \code{"Int32"} and \code{"Float32"}.}
 
 \item{options}{Optional list of format-specific creation options in a
-vector of "NAME=VALUE" pairs.
-(e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
-compression during creation of a GTiff file).}
+vector of "NAME=VALUE" pairs
+(e.g., \code{options = c("COMPRESS=LZW")} to set LZW compression
+during creation of a GTiff file).}
 
 \item{init}{Numeric value to initialize all pixels in the output raster.}
 
