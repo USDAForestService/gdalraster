@@ -335,8 +335,8 @@ could not be set.
 \code{$deleteNoDataValue(band)}
 Removes the nodata value for \code{band}.
 This affects only the definition of the nodata value for raster formats
-that support one (does not modify pixel values). No return value, called
-for side effects. An error is raised if the nodata value cannot be removed.
+that support one (does not modify pixel values). No return value.
+An error is raised if the nodata value cannot be removed.
 
 \code{$getUnitType(band)}
 Returns the name of the unit type of the pixel values for \code{band}
@@ -345,17 +345,17 @@ An empty string \code{""} is returned if no units are available.
 
 \code{$setUnitType(band, unit_type)}
 Sets the name of the unit type of the pixel values for \code{band}.
-\code{unit_type} should be one of "" (the default indicating it is unknown),
-"m" indicating meters, or "ft" indicating feet, though other nonstandard
-values are allowed.
+\code{unit_type} should be one of empty string \code{""} (the default indicating it is
+unknown), "m" indicating meters, or "ft" indicating feet, though other
+nonstandard values are allowed.
 Returns logical \code{TRUE} on success or \code{FALSE} if the unit type
 could not be set.
 
 \code{$getScale(band)}
 Returns the pixel value scale (units value = (raw value * scale) + offset)
 for \code{band}.
-This value (in combination with the \code{getOffset()} value) can be used to
-transform raw pixel values into the units returned by \code{getUnitType()}.
+This value (in combination with the \code{$getOffset()} value) can be used to
+transform raw pixel values into the units returned by \code{$getUnitType()}.
 Returns \code{NA} if a scale value is not defined for this \code{band}.
 
 \code{$setScale(band, scale)}
@@ -367,8 +367,8 @@ not be set.
 \code{$getOffset(band)}
 Returns the pixel value offset (units value = (raw value * scale) + offset)
 for \code{band}.
-This value (in combination with the \code{getScale()} value) can be used to
-transform raw pixel values into the units returned by \code{getUnitType()}.
+This value (in combination with the \code{$getScale()} value) can be used to
+transform raw pixel values into the units returned by \code{$getUnitType()}.
 Returns \code{NA} if an offset value is not defined for this \code{band}.
 
 \code{$setOffset(band, offset)}
