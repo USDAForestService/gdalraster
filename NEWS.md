@@ -1,4 +1,4 @@
-# gdalraster 1.5.0 (dev)
+# gdalraster 1.5.0
 
 ## GDALRaster-class
 
