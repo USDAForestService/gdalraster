@@ -1,6 +1,6 @@
-## gdalraster 1.5.0 (dev)
+# gdalraster 1.5.0 (dev)
 
-### [`GDALRaster-class`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
+## GDALRaster-class
 
 * add methods for color tables: `getColorTable()`, `getPaletteInterp()`, `setColorTable()`
 
@@ -16,7 +16,7 @@
 
 * `new()`: add a warning in the class constructor if the raster has an int64 data type (would be handled as double for now)
 
-### GDAL API stand-alone functions
+## GDAL API stand-alone functions
 
 * add `bandCopyWholeRaster()`: wrapper for `GDALRasterBandCopyWholeRaster()`, efficiently copy a whole raster band
 
@@ -28,17 +28,17 @@
 
 * add `g_buffer()`: compute buffer of a WKT geometry (GEOS convenience function via GDAL headers)
 
-### [`CmbTable-class`](https://usdaforestservice.github.io/gdalraster/reference/CmbTable-class.html)
+## CmbTable-class
 
 * add `updateFromMatrixByRow()`: update the hash table from a matrix having integer combinations arranged in rows
 
 * add `asMatrix()`: return the combinations table as a numeric matrix (alternative to `asDataFrame()`)
 
-### Bug fix
+## Bug fix
 
 * `warp()` caused segfault if proj.db could not be found (#96)
 
-### Other miscellaneous
+## Other miscellaneous
 
 * `plot_raster()`: default value of the `legend` argument has been changed to `FALSE`; legend can now use a color table for continuous data; add argument `maxColorValue` (e.g., to use RGB 0:255 instead of 0:1 in `col_tbl`)
 
@@ -51,7 +51,7 @@
 * update the package vignette for color tables and raster display
 
 
-## gdalraster 1.4.0
+# gdalraster 1.4.0
 
 * add `dem_proc()`: wrapper for the `gdaldem` command-line utility to generate DEM derivatives
 
@@ -70,7 +70,7 @@
 * add test suite and code coverage report
 
 
-## gdalraster 1.3.0
+# gdalraster 1.3.0
 
 * `GDALRaster::read()`: data are now read as R `integer` type when possible for the raster data type (#23)
 
@@ -97,7 +97,7 @@
 * add web article on the [GDAL block cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html) and configuration of `GDAL_CACHEMAX`
 
 
-## gdalraster 1.2.0
+# gdalraster 1.2.0
 
 * starting at v. 1.2.0, `{gdalraster}` will require R >= 4.2.0
 
@@ -112,6 +112,6 @@
 * documentation - minor edits throughout to improve clarity
 
 
-## gdalraster 1.1.1
+# gdalraster 1.1.1
 
 * Initial public release.
