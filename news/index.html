@@ -56,26 +56,28 @@
 <h2 class="pkg-version" data-toc-text="1.5.0" id="gdalraster-150-dev">gdalraster 1.5.0 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-150-dev"></a></h2>
 <div class="section level3">
 <h3 id="gdalraster-class-1-5-0">GDALRaster-class<a class="anchor" aria-label="anchor" href="#gdalraster-class-1-5-0"></a></h3>
-<ul><li><p>add methods for color tables: <code>getColorTable()</code>, <code>getPaletteInterp()</code>, <code>setColorTable()</code></p></li>
-<li><p>add <code>getRasterColorInterp()</code>, <code>setRasterColorInterp()</code>: get/set color interpretation for raster bands</p></li>
-<li><p>add <code>getDescription()</code>, <code>setDescription()</code>: get/set description for raster band objects</p></li>
-<li><p>add <code>flushCache()</code>: flush all write cached data to disk</p></li>
-<li><p>add <code>getFileList()</code>: returns a list of files forming the dataset</p></li>
-<li><p>add <code>infoAsJSON()</code>: returns output of the <code>gdalinfo</code> command-line utility as a JSON-formatted string</p></li>
-<li><p><code>new()</code>: add a warning in the class constructor if the raster has an int64 data type (would be handled as double for now)</p></li>
+<ul><li>add methods for color tables: <code>getColorTable()</code>, <code>getPaletteInterp()</code>, <code>setColorTable()</code>
+</li>
+<li>add <code>getRasterColorInterp()</code>, <code>setRasterColorInterp()</code>: get/set color interpretation for raster bands</li>
+<li>add <code>getDescription()</code>, <code>setDescription()</code>: get/set description for raster band objects</li>
+<li>add <code>flushCache()</code>: flush all write cached data to disk</li>
+<li>add <code>getFileList()</code>: returns a list of files forming the dataset</li>
+<li>add <code>infoAsJSON()</code>: returns output of the <code>gdalinfo</code> command-line utility as a JSON-formatted string</li>
+<li>
+<code>new()</code>: add a warning in the class constructor if the raster has an int64 data type (would be handled as double for now)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="gdal-api-stand-alone-functions-1-5-0">GDAL API stand-alone functions<a class="anchor" aria-label="anchor" href="#gdal-api-stand-alone-functions-1-5-0"></a></h3>
-<ul><li><p>add <code><a href="../reference/bandCopyWholeRaster.html">bandCopyWholeRaster()</a></code>: wrapper for <code>GDALRasterBandCopyWholeRaster()</code>, efficiently copy a whole raster band</p></li>
-<li><p>add <code><a href="../reference/createColorRamp.html">createColorRamp()</a></code>: wrapper for <code>GDALCreateColorRamp()</code>, automatically create a ramp from one color to another</p></li>
-<li><p>add <code><a href="../reference/sieveFilter.html">sieveFilter()</a></code>: wrapper for <code>GDALSieveFilter()</code> in the Algorithms API, remove small raster polygons</p></li>
-<li><p>add PROJ utility functions: <code><a href="../reference/proj_version.html">proj_version()</a></code>, <code><a href="../reference/proj_search_paths.html">proj_search_paths()</a></code>, <code><a href="../reference/proj_networking.html">proj_networking()</a></code> (via GDAL headers)</p></li>
-<li><p>add <code><a href="../reference/g_buffer.html">g_buffer()</a></code>: compute buffer of a WKT geometry (GEOS convenience function via GDAL headers)</p></li>
+<ul><li>add <code><a href="../reference/bandCopyWholeRaster.html">bandCopyWholeRaster()</a></code>: wrapper for <code>GDALRasterBandCopyWholeRaster()</code>, efficiently copy a whole raster band</li>
+<li>add <code><a href="../reference/createColorRamp.html">createColorRamp()</a></code>: wrapper for <code>GDALCreateColorRamp()</code>, automatically create a ramp from one color to another</li>
+<li>add <code><a href="../reference/sieveFilter.html">sieveFilter()</a></code>: wrapper for <code>GDALSieveFilter()</code> in the Algorithms API, remove small raster polygons</li>
+<li>add PROJ utility functions: <code><a href="../reference/proj_version.html">proj_version()</a></code>, <code><a href="../reference/proj_search_paths.html">proj_search_paths()</a></code>, <code><a href="../reference/proj_networking.html">proj_networking()</a></code> (via GDAL headers)</li>
+<li>add <code><a href="../reference/g_buffer.html">g_buffer()</a></code>: compute buffer of a WKT geometry (GEOS convenience function via GDAL headers)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="cmbtable-class-1-5-0">CmbTable-class<a class="anchor" aria-label="anchor" href="#cmbtable-class-1-5-0"></a></h3>
-<ul><li><p>add <code>updateFromMatrixByRow()</code>: update the hash table from a matrix having integer combinations arranged in rows</p></li>
-<li><p>add <code>asMatrix()</code>: return the combinations table as a numeric matrix (alternative to <code>asDataFrame()</code>)</p></li>
+<ul><li>add <code>updateFromMatrixByRow()</code>: update the hash table from a matrix having integer combinations arranged in rows</li>
+<li>add <code>asMatrix()</code>: return the combinations table as a numeric matrix (alternative to <code>asDataFrame()</code>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="bug-fix-1-5-0">Bug fix<a class="anchor" aria-label="anchor" href="#bug-fix-1-5-0"></a></h3>
@@ -84,11 +86,14 @@
 </ul></div>
 <div class="section level3">
 <h3 id="other-miscellaneous-1-5-0">Other miscellaneous<a class="anchor" aria-label="anchor" href="#other-miscellaneous-1-5-0"></a></h3>
-<ul><li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code>: default value of the <code>legend</code> argument has been changed to <code>FALSE</code>; legend can now use a color table for continuous data; add argument <code>maxColorValue</code> (e.g., to use RGB 0:255 instead of 0:1 in <code>col_tbl</code>)</p></li>
-<li><p><code><a href="../reference/bbox_from_wkt.html">bbox_from_wkt()</a></code>, <code><a href="../reference/bbox_to_wkt.html">bbox_to_wkt()</a></code>: add arguments <code>extend_x</code>, <code>extend_y</code></p></li>
-<li><p>on Windows, reset GDAL environment variables on package unload if they were previously set on load</p></li>
-<li><p>add inst/extdata/storml_tcc.tif: example dataset of NLCD Tree Canopy Cover</p></li>
-<li><p>update the package vignette for color tables and raster display</p></li>
+<ul><li>
+<code><a href="../reference/plot_raster.html">plot_raster()</a></code>: default value of the <code>legend</code> argument has been changed to <code>FALSE</code>; legend can now use a color table for continuous data; add argument <code>maxColorValue</code> (e.g., to use RGB 0:255 instead of 0:1 in <code>col_tbl</code>)</li>
+<li>
+<code><a href="../reference/bbox_from_wkt.html">bbox_from_wkt()</a></code>, <code><a href="../reference/bbox_to_wkt.html">bbox_to_wkt()</a></code>: add arguments <code>extend_x</code>, <code>extend_y</code>
+</li>
+<li>on Windows, reset GDAL environment variables on package unload if they were previously set on load</li>
+<li>add inst/extdata/storml_tcc.tif: example dataset of NLCD Tree Canopy Cover</li>
+<li>update the package vignette for color tables and raster display</li>
 </ul></div>
 </div>
     <div class="section level2">
