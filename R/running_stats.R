@@ -25,6 +25,17 @@
 #' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed in R using the `$`
 #' operator.
 #'
+#' @note
+#' The intended use is computing summary statistics for specific subsets or
+#' zones of a raster that could be defined in various ways and are generally
+#' not contiguous. The algorithm as implemented here incurs the cost of
+#' floating point division for each new value updated (i.e., per pixel), but is
+#' reasonably efficient for the use case. Note that GDAL internally uses an
+#' optimized version of Welford's algorithm to compute raster statistics as
+#' described in detail by Rouault, 2016
+#' (\url{https://github.com/OSGeo/gdal/blob/master/gcore/statistics.txt}).
+#' The class method `GDALRaster$getStatistics()` is a GDAL API wrapper that
+#' computes statistics for a whole raster band.
 #'
 #' @section Usage:
 #' \preformatted{
