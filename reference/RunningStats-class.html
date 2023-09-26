@@ -97,6 +97,19 @@ and retrieving current values of statistics are described in Details.
 <p>operator.</p>
     </div>
     <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p>The intended use is computing summary statistics for specific subsets or
+zones of a raster that could be defined in various ways and are generally
+not contiguous. The algorithm as implemented here incurs the cost of
+floating point division for each new value updated (i.e., per pixel), but is
+reasonably efficient for the use case. Note that GDAL internally uses an
+optimized version of Welford's algorithm to compute raster statistics as
+described in detail by Rouault, 2016
+(<a href="https://github.com/OSGeo/gdal/blob/master/gcore/statistics.txt" class="external-link">https://github.com/OSGeo/gdal/blob/master/gcore/statistics.txt</a>).
+The class method <code>GDALRaster$getStatistics()</code> is a GDAL API wrapper that
+computes statistics for a whole raster band.</p>
+    </div>
+    <div class="section level2">
     <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
     
 
