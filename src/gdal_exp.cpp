@@ -456,9 +456,10 @@ Rcpp::DataFrame _combine(
 	if (out_raster) {
 		if (create(fmt, dst_filename, ncols, nrows, 1, dataType, options)) {
 			dst_ds = GDALRaster(dst_filename, false);
-			dst_ds.setGeoTransform(gt);
+			if (!dst_ds.setGeoTransform(gt))
+				Rcpp::warning("Failed to set output geotransform.");
 			if (!dst_ds.setProjection(srs))
-				Rcpp::Rcout << "WARNING: failed to set output projection.\n";
+				Rcpp::warning("Failed to set output projection.");
 		}
 		else {
 			for (std::size_t i = 0; i < nrasters; ++i)
@@ -820,7 +821,14 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 
 	std::vector<GDALDatasetH> src_ds(src_files.size());
 	for (std::size_t i = 0; i < src_files.size(); ++i) {
-		src_ds[i] = GDALOpenShared(src_files[i].c_str(), GA_ReadOnly);
+		GDALDatasetH hDS = GDALOpenShared(src_files[i].c_str(), GA_ReadOnly);
+		if (hDS == NULL) {
+			Rcpp::Rcerr << "Error on source: " << src_files[i].c_str() << "\n";
+			Rcpp::stop("Open source raster failed.");
+		}
+		else {
+			src_ds[i] = hDS;
+		}
 	}
 
 	std::vector<char *> argv = {(char *) ("-t_srs"), (char *) (t_srs[0]), NULL};
@@ -963,6 +971,8 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 		Rcpp::stop("Invalid palette_interp.");
 
 	GDALColorTableH hColTbl = GDALCreateColorTable(gpi);
+	if (hColTbl == NULL)
+		Rcpp::stop("Could not create GDAL color table.");
 	
 	const GDALColorEntry colStart = {
 			static_cast<short>(start_color(0)),
