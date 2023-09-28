@@ -1165,7 +1165,7 @@ bool deleteDataset(std::string filename, std::string format = "") {
 			Rcpp::stop("Failed to get driver from file name.");
 	}
 	else {
-		GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
+		hDriver = GDALGetDriverByName(format.c_str());
 		if (hDriver == NULL)
 			Rcpp::stop("Failed to get driver from format name.");
 	}

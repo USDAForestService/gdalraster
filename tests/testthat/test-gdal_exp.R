@@ -135,4 +135,15 @@ test_that("deleteDataset works", {
 	expect_true(all(file.exists(files)))
 	deleteDataset(b5_tmp)
 	expect_false(any(file.exists(files)))
+	ds = NULL
+	
+	# with format argument
+	b5_tmp2 <- paste0(tempdir(), "/", "b5_tmp2.tif")
+	file.copy(b5_file,  b5_tmp2)
+	ds2 <- new(GDALRaster, b5_tmp2, read_only=TRUE)
+	ds2$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
+	files <- ds2$getFileList()
+	ds2$close()
+	deleteDataset(b5_tmp2, "GTiff")
+	expect_false(any(file.exists(files)))
 })
