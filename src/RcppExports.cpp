@@ -269,6 +269,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _getCreationOptions
+std::string _getCreationOptions(std::string format);
+RcppExport SEXP _gdalraster__getCreationOptions(SEXP formatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    rcpp_result_gen = Rcpp::wrap(_getCreationOptions(format));
+    return rcpp_result_gen;
+END_RCPP
+}
 // has_geos
 bool has_geos();
 RcppExport SEXP _gdalraster_has_geos() {
@@ -689,6 +700,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_deleteDataset", (DL_FUNC) &_gdalraster_deleteDataset, 2},
     {"_gdalraster_renameDataset", (DL_FUNC) &_gdalraster_renameDataset, 3},
     {"_gdalraster_copyDatasetFiles", (DL_FUNC) &_gdalraster_copyDatasetFiles, 3},
+    {"_gdalraster__getCreationOptions", (DL_FUNC) &_gdalraster__getCreationOptions, 1},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},

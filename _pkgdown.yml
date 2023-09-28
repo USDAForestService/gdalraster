@@ -37,6 +37,7 @@ reference:
   - epsg_to_wkt
   - fillNodata
   - gdal_version
+  - getCreationOptions
   - get_cache_used
   - get_config_option
   - get_pixel_line

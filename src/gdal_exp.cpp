@@ -133,8 +133,8 @@ int get_cache_used() {
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' @seealso
-//' [`GDALRaster-class`][GDALRaster], [bandCopyWholeRaster()],
-//' [createCopy()], [rasterFromRaster()]
+//' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()],
+//' [getCreationOptions()]
 //' @examples
 //' new_file <- paste0(tempdir(), "/", "newdata.tif")
 //' create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
@@ -213,8 +213,8 @@ bool create(std::string format, std::string dst_filename,
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' @seealso
-//' [`GDALRaster-class`][GDALRaster], [bandCopyWholeRaster()], [create()],
-//' [rasterFromRaster()]
+//' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()],
+//' [getCreationOptions()]
 //' @examples
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 //' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
@@ -1313,5 +1313,20 @@ bool copyDatasetFiles(std::string new_filename, std::string old_filename,
 	else {
 		return true;
 	}
+}
+
+
+//' Return the list of creation options of a GDAL driver as XML string
+//'
+//' Called from and documented in R/gdal_helpers.R
+//' @noRd
+// [[Rcpp::export(name = ".getCreationOptions")]]
+std::string _getCreationOptions(std::string format) {
+
+	GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
+	if (hDriver == NULL)
+		Rcpp::stop("Failed to get driver from format name.");
+
+	return GDALGetDriverCreationOptionList(hDriver);
 }
 
