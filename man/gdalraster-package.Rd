@@ -23,8 +23,9 @@
   \code{\link[=createCopy]{createCopy()}},
   \code{\link[=rasterFromRaster]{rasterFromRaster()}}
   
-  \item data management: \code{\link[=deleteDataset]{deleteDataset()}},
-  \code{\link[=renameDataset]{renameDataset()}},
+  \item data management: \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},
+  \code{\link[=deleteDataset]{deleteDataset()}},
+  \code{\link[=renameDataset]{renameDataset()}},\cr
   \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}
  
   \item virtual raster: \code{\link[=rasterToVRT]{rasterToVRT()}}

@@ -50,5 +50,6 @@ deleteDataset(b5_tmp)
 file.exists(files)
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}},
+\code{\link[=copyDatasetFiles]{copyDatasetFiles()}}, \code{\link[=renameDataset]{renameDataset()}}
 }

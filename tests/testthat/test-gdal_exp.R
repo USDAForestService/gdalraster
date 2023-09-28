@@ -167,5 +167,28 @@ test_that("renameDataset works", {
 	ds <- new(GDALRaster, b5_tmp3, read_only=TRUE)
 	expect_length(ds$getFileList(), 2)
 	ds$close()	
+
+	deleteDataset(b5_tmp3)
+})
+
+test_that("copyDatasetFiles works", {
+	lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+	ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+	num_files <- length(ds$getFileList())
+	ds$close()
+	lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
+	copyDatasetFiles(lcp_tmp, lcp_file)
+	ds_copy <- new(GDALRaster, lcp_tmp, read_only=TRUE)
+	expect_equal(length(ds_copy$getFileList()), num_files)
+	ds_copy$close()
+	deleteDataset(lcp_tmp)
+	
+	# with format argument
+	lcp_tmp2 <- paste0(tempdir(), "/", "storm_lake_copy2.lcp")
+	copyDatasetFiles(lcp_tmp2, lcp_file)
+	ds_copy2 <- new(GDALRaster, lcp_tmp2, read_only=TRUE)
+	expect_equal(length(ds_copy2$getFileList()), num_files)
+	ds_copy2$close()
+	deleteDataset(lcp_tmp2)
 })
 

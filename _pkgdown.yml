@@ -28,6 +28,7 @@ reference:
   - bbox_union
   - calc
   - combine
+  - copyDatasetFiles
   - create
   - createColorRamp
   - createCopy
