@@ -604,6 +604,53 @@ deleteDataset <- function(filename, format = "") {
     .Call(`_gdalraster_deleteDataset`, filename, format)
 }
 
+#' Rename a dataset
+#'
+#' `renameDataset()` renames a raster dataset in a format-specific way (e.g.,
+#' rename associated files as appropriate). This could include moving the
+#' dataset to a new directory or even a new filesystem.
+#' The dataset should not be open in any existing `GDALRaster` objects
+#' when `renameDataset()` is called. Wrapper for `GDALRenameDataset()` in the
+#' GDAL API.
+#'
+#' @note
+#' If `format` is set to an empty string `""` (the default) then the function
+#' will try to identify the driver from `old_filename`. This is done
+#' internally in GDAL by invoking the `Identify` method of each registered
+#' `GDALDriver` in turn. The first driver that successful identifies the file
+#' name will be returned. An error is raised if a format cannot be determined
+#' from the passed file name.
+#'
+#' @param new_filename New name for the dataset.
+#' @param old_filename Old name for the dataset (should not be open in a
+#' `GDALRaster` object).
+#' @param format Raster format short name (e.g., "GTiff"). If set to empty
+#' string `""` (the default), will attempt to guess the raster format from
+#' `old_filename`.
+#' @returns Logical `TRUE` if no error or `FALSE` on failure.
+#'
+#' @seealso
+#' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
+#' [deleteDataset()]
+#'
+#' @examples
+#' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+#' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+#' file.copy(b5_file,  b5_tmp)
+#' 
+#' ds <- new(GDALRaster, b5_tmp, read_only=TRUE)
+#' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
+#' ds$getFileList()
+#' ds$close()
+#' b5_tmp2 <- paste0(tempdir(), "/", "b5_tmp_renamed.tif")
+#' renameDataset(b5_tmp2, b5_tmp)
+#' ds <- new(GDALRaster, b5_tmp2, read_only=TRUE)
+#' ds$getFileList()
+#' ds$close()
+renameDataset <- function(new_filename, old_filename, format = "") {
+    .Call(`_gdalraster_renameDataset`, new_filename, old_filename, format)
+}
+
 #' Is GEOS available?
 #'
 #' `has_geos()` returns a logical value indicating whether GDAL was built

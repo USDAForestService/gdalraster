@@ -147,3 +147,25 @@ test_that("deleteDataset works", {
 	deleteDataset(b5_tmp2, "GTiff")
 	expect_false(any(file.exists(files)))
 })
+
+test_that("renameDataset works", {
+	b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+	b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+	file.copy(b5_file,  b5_tmp)
+	ds <- new(GDALRaster, b5_tmp, read_only=TRUE)
+	ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
+	ds$close()
+	b5_tmp2 <- paste0(tempdir(), "/", "b5_tmp_renamed.tif")
+	renameDataset(b5_tmp2, b5_tmp)
+	ds <- new(GDALRaster, b5_tmp2, read_only=TRUE)
+	expect_length(ds$getFileList(), 2)
+	ds$close()
+	
+	# with format argument
+	b5_tmp3 <- paste0(tempdir(), "/", "b5_tmp3.tif")
+	renameDataset(b5_tmp3, b5_tmp2)
+	ds <- new(GDALRaster, b5_tmp3, read_only=TRUE)
+	expect_length(ds$getFileList(), 2)
+	ds$close()	
+})
+

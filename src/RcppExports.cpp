@@ -243,6 +243,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// renameDataset
+bool renameDataset(std::string new_filename, std::string old_filename, std::string format);
+RcppExport SEXP _gdalraster_renameDataset(SEXP new_filenameSEXP, SEXP old_filenameSEXP, SEXP formatSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type new_filename(new_filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type old_filename(old_filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    rcpp_result_gen = Rcpp::wrap(renameDataset(new_filename, old_filename, format));
+    return rcpp_result_gen;
+END_RCPP
+}
 // has_geos
 bool has_geos();
 RcppExport SEXP _gdalraster_has_geos() {
@@ -661,6 +674,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_createColorRamp", (DL_FUNC) &_gdalraster_createColorRamp, 5},
     {"_gdalraster_bandCopyWholeRaster", (DL_FUNC) &_gdalraster_bandCopyWholeRaster, 5},
     {"_gdalraster_deleteDataset", (DL_FUNC) &_gdalraster_deleteDataset, 2},
+    {"_gdalraster_renameDataset", (DL_FUNC) &_gdalraster_renameDataset, 3},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},
