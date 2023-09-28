@@ -21,7 +21,10 @@
   
   \item raster creation: \code{\link[=create]{create()}},
   \code{\link[=createCopy]{createCopy()}},
-  \code{\link[=rasterFromRaster]{rasterFromRaster()}},
+  \code{\link[=rasterFromRaster]{rasterFromRaster()}}
+  
+  \item data management: \code{\link[=deleteDataset]{deleteDataset()}},
+  \code{\link[=renameDataset]{renameDataset()}},
   \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}
  
   \item virtual raster: \code{\link[=rasterToVRT]{rasterToVRT()}}

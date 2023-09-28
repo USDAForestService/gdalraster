@@ -1,3 +1,11 @@
+# gdalraster 1.5.1 (dev)
+
+* add `deleteDataset()`: delete a raster dataset in a format-specific way (2023-09-27)
+
+* add `renameDataset()`: rename a raster dataset in a format-specific way (2023-09-27)
+
+* documentation: add notes for `RunningStats-class` (2023-09-26)
+
 # gdalraster 1.5.0
 
 ## GDALRaster-class

@@ -117,7 +117,7 @@ int get_cache_used() {
 //'
 //' `create()` makes an empty raster in the specified format.
 //'
-//' @param format Raster format short name (e.g., "GTiff" or "HFA").
+//' @param format Raster format short name (e.g., "GTiff").
 //' @param dst_filename Filename to create.
 //' @param xsize Integer width of raster in pixels.
 //' @param ysize Integer height of raster in pixels.
@@ -234,9 +234,9 @@ bool createCopy(std::string format, std::string dst_filename,
 		std::string src_filename, bool strict = false,
 		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
-	GDALDriverH hDriver = GDALGetDriverByName( format.c_str() );
+	GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
 	if (hDriver == NULL)
-		Rcpp::stop("Failed to get driver for the specified format.");
+		Rcpp::stop("Failed to get driver from format name.");
 		
 	char **papszMetadata = GDALGetMetadata(hDriver, NULL);
 	if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATECOPY, FALSE))
@@ -1111,3 +1111,143 @@ bool bandCopyWholeRaster(std::string src_filename, int src_band,
 		
 	return true;
 }
+
+
+//' Delete named dataset
+//'
+//' `deleteDataset()` will attempt to delete the named dataset in a format
+//' specific fashion. Full featured drivers will delete all associated files,
+//' database objects, or whatever is appropriate. The default behavior when no
+//' format specific behavior is provided is to attempt to delete all the files
+//' that would be returned by `GDALRaster$getFileList()` on the dataset.
+//' The named dataset should not be open in any existing `GDALRaster` objects
+//' when `deleteDataset()` is called. Wrapper for `GDALDeleteDataset()` in the
+//' GDAL API.
+//'
+//' @note
+//' If `format` is set to an empty string `""` (the default) then the function
+//' will try to identify the driver from `filename`. This is done internally in
+//' GDAL by invoking the `Identify` method of each registered `GDALDriver` in
+//' turn. The first driver that successful identifies the file name will be
+//' returned. An error is raised if a format cannot be determined from the
+//' passed file name.
+//'
+//' @param filename Filename to delete (should not be open in a `GDALRaster`
+//' object).
+//' @param format Raster format short name (e.g., "GTiff"). If set to empty
+//' string `""` (the default), will attempt to guess the raster format from
+//' `filename`.
+//' @returns Logical `TRUE` if no error or `FALSE` on failure.
+//'
+//' @seealso
+//' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()]
+//'
+//' @examples
+//' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+//' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+//' file.copy(b5_file,  b5_tmp)
+//' 
+//' ds <- new(GDALRaster, b5_tmp, read_only=TRUE)
+//' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
+//' files <- ds$getFileList()
+//' print(files)
+//' ds$close()
+//' file.exists(files)
+//' deleteDataset(b5_tmp)
+//' file.exists(files)
+// [[Rcpp::export]]
+bool deleteDataset(std::string filename, std::string format = "") {
+
+	GDALDriverH hDriver;
+	if (format == "") {
+		hDriver = GDALIdentifyDriver(filename.c_str(), NULL);
+		if (hDriver == NULL)
+			Rcpp::stop("Failed to get driver from file name.");
+	}
+	else {
+		hDriver = GDALGetDriverByName(format.c_str());
+		if (hDriver == NULL)
+			Rcpp::stop("Failed to get driver from format name.");
+	}
+	
+	CPLErr err = GDALDeleteDataset(hDriver, filename.c_str());
+	if (err != CE_None) {
+		Rcpp::Rcerr << "Error from GDALDeleteDataset().\n";
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+
+//' Rename a dataset
+//'
+//' `renameDataset()` renames a raster dataset in a format-specific way (e.g.,
+//' rename associated files as appropriate). This could include moving the
+//' dataset to a new directory or even a new filesystem.
+//' The dataset should not be open in any existing `GDALRaster` objects
+//' when `renameDataset()` is called. Wrapper for `GDALRenameDataset()` in the
+//' GDAL API.
+//'
+//' @note
+//' If `format` is set to an empty string `""` (the default) then the function
+//' will try to identify the driver from `old_filename`. This is done
+//' internally in GDAL by invoking the `Identify` method of each registered
+//' `GDALDriver` in turn. The first driver that successful identifies the file
+//' name will be returned. An error is raised if a format cannot be determined
+//' from the passed file name.
+//'
+//' @param new_filename New name for the dataset.
+//' @param old_filename Old name for the dataset (should not be open in a
+//' `GDALRaster` object).
+//' @param format Raster format short name (e.g., "GTiff"). If set to empty
+//' string `""` (the default), will attempt to guess the raster format from
+//' `old_filename`.
+//' @returns Logical `TRUE` if no error or `FALSE` on failure.
+//'
+//' @seealso
+//' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
+//' [deleteDataset()]
+//'
+//' @examples
+//' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+//' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+//' file.copy(b5_file,  b5_tmp)
+//' 
+//' ds <- new(GDALRaster, b5_tmp, read_only=TRUE)
+//' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
+//' ds$getFileList()
+//' ds$close()
+//' b5_tmp2 <- paste0(tempdir(), "/", "b5_tmp_renamed.tif")
+//' renameDataset(b5_tmp2, b5_tmp)
+//' ds <- new(GDALRaster, b5_tmp2, read_only=TRUE)
+//' ds$getFileList()
+//' ds$close()
+// [[Rcpp::export]]
+bool renameDataset(std::string new_filename, std::string old_filename,
+		std::string format = "") {
+
+	GDALDriverH hDriver;
+	if (format == "") {
+		hDriver = GDALIdentifyDriver(old_filename.c_str(), NULL);
+		if (hDriver == NULL)
+			Rcpp::stop("Failed to get driver from file name.");
+	}
+	else {
+		hDriver = GDALGetDriverByName(format.c_str());
+		if (hDriver == NULL)
+			Rcpp::stop("Failed to get driver from format name.");
+	}
+	
+	CPLErr err = GDALRenameDataset(hDriver, new_filename.c_str(),
+			old_filename.c_str());
+	if (err != CE_None) {
+		Rcpp::Rcerr << "Error from GDALRenameDataset().\n";
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+

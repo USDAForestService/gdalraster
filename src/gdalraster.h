@@ -27,23 +27,22 @@ std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
 
-Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
-		double pixel, double line);
-
 bool create(std::string format, std::string dst_filename,
 		int xsize, int ysize, int nbands, std::string dataType,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
-
 bool createCopy(std::string format, std::string dst_filename,
 		std::string src_filename, bool strict,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
-
+bool deleteDataset(std::string filename, std::string format);
+bool renameDataset(std::string new_filename, std::string old_filename,
+		std::string format);
 bool bandCopyWholeRaster(std::string src_filename, int src_band,
 		std::string dst_filename, int dst_band,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
-			
-Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
 
+Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
+		double pixel, double line);
+Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
 Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 		const std::vector<double> gt);
 
