@@ -7,7 +7,7 @@
 create(format, dst_filename, xsize, ysize, nbands, dataType, options = NULL)
 }
 \arguments{
-\item{format}{Raster format short name (e.g., "GTiff" or "HFA").}
+\item{format}{Raster format short name (e.g., "GTiff").}
 
 \item{dst_filename}{Filename to create.}
 

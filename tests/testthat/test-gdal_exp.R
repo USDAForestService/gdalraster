@@ -124,3 +124,15 @@ test_that("bandCopyWholeRaster writes correct output", {
 	expect_equal(src_stats, dst_stats)
 })
 
+test_that("deleteDataset works", {
+	b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+	b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+	file.copy(b5_file,  b5_tmp)
+	ds <- new(GDALRaster, b5_tmp, read_only=TRUE)
+	ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
+	files <- ds$getFileList()
+	ds$close()
+	expect_true(all(file.exists(files)))
+	deleteDataset(b5_tmp)
+	expect_false(any(file.exists(files)))
+})
