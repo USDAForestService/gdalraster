@@ -21,7 +21,8 @@
   
   \item raster creation: \code{\link[=create]{create()}},
   \code{\link[=createCopy]{createCopy()}},
-  \code{\link[=rasterFromRaster]{rasterFromRaster()}}
+  \code{\link[=rasterFromRaster]{rasterFromRaster()}},
+  \code{\link[=getCreationOptions]{getCreationOptions()}}
   
   \item data management: \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},
   \code{\link[=deleteDataset]{deleteDataset()}},

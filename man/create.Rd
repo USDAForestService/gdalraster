@@ -50,6 +50,6 @@ ds$fillRaster(band = 1, -9999, 0)
 ds$close()
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}},
-\code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}},
+\code{\link[=getCreationOptions]{getCreationOptions()}}
 }

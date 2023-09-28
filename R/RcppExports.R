@@ -99,8 +99,8 @@ get_cache_used <- function() {
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster], [bandCopyWholeRaster()],
-#' [createCopy()], [rasterFromRaster()]
+#' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()],
+#' [getCreationOptions()]
 #' @examples
 #' new_file <- paste0(tempdir(), "/", "newdata.tif")
 #' create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
@@ -141,8 +141,8 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster], [bandCopyWholeRaster()], [create()],
-#' [rasterFromRaster()]
+#' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()],
+#' [getCreationOptions()]
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
@@ -689,6 +689,14 @@ renameDataset <- function(new_filename, old_filename, format = "") {
 #' ds_copy$close()
 copyDatasetFiles <- function(new_filename, old_filename, format = "") {
     .Call(`_gdalraster_copyDatasetFiles`, new_filename, old_filename, format)
+}
+
+#' Return the list of creation options of a GDAL driver as XML string
+#'
+#' Called from and documented in R/gdal_helpers.R
+#' @noRd
+.getCreationOptions <- function(format) {
+    .Call(`_gdalraster__getCreationOptions`, format)
 }
 
 #' Is GEOS available?

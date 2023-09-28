@@ -1,6 +1,8 @@
 # gdalraster 1.5.1 (dev)
 
-* add `copyDatasetFiles()`: copy all the files associated with a dataset (2029-09-28)
+* add `getCreationOptions()`: get the list of creation options of a raster format (2023-09-28)
+
+* add `copyDatasetFiles()`: copy all the files associated with a dataset (2023-09-28)
 
 * add `deleteDataset()`: delete a dataset in a format-specific way (2023-09-27)
 

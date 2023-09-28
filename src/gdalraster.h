@@ -33,6 +33,7 @@ bool create(std::string format, std::string dst_filename,
 bool createCopy(std::string format, std::string dst_filename,
 		std::string src_filename, bool strict,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
+std::string _getCreationOptions(std::string format);
 bool copyDatasetFiles(std::string new_filename, std::string old_filename,
 		std::string format);
 bool deleteDataset(std::string filename, std::string format);
