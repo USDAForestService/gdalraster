@@ -31,6 +31,7 @@ reference:
   - create
   - createColorRamp
   - createCopy
+  - deleteDataset
   - dem_proc
   - epsg_to_wkt
   - fillNodata
@@ -49,6 +50,7 @@ reference:
   - rasterFromRaster
   - rasterToVRT
   - read_ds
+  - renameDataset
   - set_config_option
   - sieveFilter
   - srs_is_geographic
