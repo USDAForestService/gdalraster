@@ -585,7 +585,8 @@ bandCopyWholeRaster <- function(src_filename, src_band, dst_filename, dst_band, 
 #' @returns Logical `TRUE` if no error or `FALSE` on failure.
 #'
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()]
+#' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
+#' [copyDatasetFiles()], [renameDataset()]
 #'
 #' @examples
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
@@ -606,7 +607,7 @@ deleteDataset <- function(filename, format = "") {
 
 #' Rename a dataset
 #'
-#' `renameDataset()` renames a raster dataset in a format-specific way (e.g.,
+#' `renameDataset()` renames a dataset in a format-specific way (e.g.,
 #' rename associated files as appropriate). This could include moving the
 #' dataset to a new directory or even a new filesystem.
 #' The dataset should not be open in any existing `GDALRaster` objects
@@ -631,7 +632,7 @@ deleteDataset <- function(filename, format = "") {
 #'
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
-#' [deleteDataset()]
+#' [deleteDataset()], [copyDatasetFiles()]
 #'
 #' @examples
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
@@ -649,6 +650,45 @@ deleteDataset <- function(filename, format = "") {
 #' ds$close()
 renameDataset <- function(new_filename, old_filename, format = "") {
     .Call(`_gdalraster_renameDataset`, new_filename, old_filename, format)
+}
+
+#' Copy the files of a dataset
+#'
+#' `copyDatasetFiles()` copies all the files associated with a dataset.
+#' Wrapper for `GDALCopyDatasetFiles()` in the GDAL API.
+#'
+#' @note
+#' If `format` is set to an empty string `""` (the default) then the function
+#' will try to identify the driver from `old_filename`. This is done
+#' internally in GDAL by invoking the `Identify` method of each registered
+#' `GDALDriver` in turn. The first driver that successful identifies the file
+#' name will be returned. An error is raised if a format cannot be determined
+#' from the passed file name.
+#'
+#' @param new_filename New name for the dataset (copied to).
+#' @param old_filename Old name for the dataset (copied from).
+#' @param format Raster format short name (e.g., "GTiff"). If set to empty
+#' string `""` (the default), will attempt to guess the raster format from
+#' `old_filename`.
+#' @returns Logical `TRUE` if no error or `FALSE` on failure.
+#'
+#' @seealso
+#' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
+#' [deleteDataset()], [renameDataset()]
+#'
+#' @examples
+#' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+#' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+#' ds$getFileList()
+#' ds$close()
+#' 
+#' lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
+#' copyDatasetFiles(lcp_tmp, lcp_file)
+#' ds_copy <- new(GDALRaster, lcp_tmp, read_only=TRUE)
+#' ds_copy$getFileList()
+#' ds_copy$close()
+copyDatasetFiles <- function(new_filename, old_filename, format = "") {
+    .Call(`_gdalraster_copyDatasetFiles`, new_filename, old_filename, format)
 }
 
 #' Is GEOS available?

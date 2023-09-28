@@ -1140,7 +1140,8 @@ bool bandCopyWholeRaster(std::string src_filename, int src_band,
 //' @returns Logical `TRUE` if no error or `FALSE` on failure.
 //'
 //' @seealso
-//' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()]
+//' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
+//' [copyDatasetFiles()], [renameDataset()]
 //'
 //' @examples
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
@@ -1183,7 +1184,7 @@ bool deleteDataset(std::string filename, std::string format = "") {
 
 //' Rename a dataset
 //'
-//' `renameDataset()` renames a raster dataset in a format-specific way (e.g.,
+//' `renameDataset()` renames a dataset in a format-specific way (e.g.,
 //' rename associated files as appropriate). This could include moving the
 //' dataset to a new directory or even a new filesystem.
 //' The dataset should not be open in any existing `GDALRaster` objects
@@ -1208,7 +1209,7 @@ bool deleteDataset(std::string filename, std::string format = "") {
 //'
 //' @seealso
 //' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
-//' [deleteDataset()]
+//' [deleteDataset()], [copyDatasetFiles()]
 //'
 //' @examples
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
@@ -1244,6 +1245,69 @@ bool renameDataset(std::string new_filename, std::string old_filename,
 			old_filename.c_str());
 	if (err != CE_None) {
 		Rcpp::Rcerr << "Error from GDALRenameDataset().\n";
+		return false;
+	}
+	else {
+		return true;
+	}
+}
+
+
+//' Copy the files of a dataset
+//'
+//' `copyDatasetFiles()` copies all the files associated with a dataset.
+//' Wrapper for `GDALCopyDatasetFiles()` in the GDAL API.
+//'
+//' @note
+//' If `format` is set to an empty string `""` (the default) then the function
+//' will try to identify the driver from `old_filename`. This is done
+//' internally in GDAL by invoking the `Identify` method of each registered
+//' `GDALDriver` in turn. The first driver that successful identifies the file
+//' name will be returned. An error is raised if a format cannot be determined
+//' from the passed file name.
+//'
+//' @param new_filename New name for the dataset (copied to).
+//' @param old_filename Old name for the dataset (copied from).
+//' @param format Raster format short name (e.g., "GTiff"). If set to empty
+//' string `""` (the default), will attempt to guess the raster format from
+//' `old_filename`.
+//' @returns Logical `TRUE` if no error or `FALSE` on failure.
+//'
+//' @seealso
+//' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
+//' [deleteDataset()], [renameDataset()]
+//'
+//' @examples
+//' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+//' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+//' ds$getFileList()
+//' ds$close()
+//' 
+//' lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
+//' copyDatasetFiles(lcp_tmp, lcp_file)
+//' ds_copy <- new(GDALRaster, lcp_tmp, read_only=TRUE)
+//' ds_copy$getFileList()
+//' ds_copy$close()
+// [[Rcpp::export]]
+bool copyDatasetFiles(std::string new_filename, std::string old_filename,
+		std::string format = "") {
+
+	GDALDriverH hDriver;
+	if (format == "") {
+		hDriver = GDALIdentifyDriver(old_filename.c_str(), NULL);
+		if (hDriver == NULL)
+			Rcpp::stop("Failed to get driver from file name.");
+	}
+	else {
+		hDriver = GDALGetDriverByName(format.c_str());
+		if (hDriver == NULL)
+			Rcpp::stop("Failed to get driver from format name.");
+	}
+	
+	CPLErr err = GDALCopyDatasetFiles(hDriver, new_filename.c_str(),
+			old_filename.c_str());
+	if (err != CE_None) {
+		Rcpp::Rcerr << "Error from GDALCopyDatasetFiles().\n";
 		return false;
 	}
 	else {

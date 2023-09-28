@@ -1,8 +1,10 @@
 # gdalraster 1.5.1 (dev)
 
-* add `deleteDataset()`: delete a raster dataset in a format-specific way (2023-09-27)
+* add `copyDatasetFiles()`: copy all the files associated with a dataset (2029-09-28)
 
-* add `renameDataset()`: rename a raster dataset in a format-specific way (2023-09-27)
+* add `deleteDataset()`: delete a dataset in a format-specific way (2023-09-27)
+
+* add `renameDataset()`: rename a dataset in a format-specific way (2023-09-27)
 
 * add some missing error checks in src/gdal_exp.cpp (#104) (2023-09-27) 
 

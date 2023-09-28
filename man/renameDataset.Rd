@@ -20,7 +20,7 @@ string \code{""} (the default), will attempt to guess the raster format from
 Logical \code{TRUE} if no error or \code{FALSE} on failure.
 }
 \description{
-\code{renameDataset()} renames a raster dataset in a format-specific way (e.g.,
+\code{renameDataset()} renames a dataset in a format-specific way (e.g.,
 rename associated files as appropriate). This could include moving the
 dataset to a new directory or even a new filesystem.
 The dataset should not be open in any existing \code{GDALRaster} objects
@@ -52,5 +52,5 @@ ds$close()
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}},
-\code{\link[=deleteDataset]{deleteDataset()}}
+\code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=copyDatasetFiles]{copyDatasetFiles()}}
 }
