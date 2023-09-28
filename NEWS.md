@@ -4,6 +4,8 @@
 
 * add `renameDataset()`: rename a raster dataset in a format-specific way (2023-09-27)
 
+* add some missing error checks in src/gdal_exp.cpp (2023-09-27) 
+
 * documentation: add notes for `RunningStats-class` (2023-09-26)
 
 # gdalraster 1.5.0
