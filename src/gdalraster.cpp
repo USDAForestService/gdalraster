@@ -612,27 +612,27 @@ Rcpp::CharacterVector GDALRaster::getMetadata(int band,
 						
 	this->_checkAccess(GA_ReadOnly);
 	
-	char **papszMetadata;
+	char **papszMD;
 
 	if (band == 0) {
 		if (domain == "")
-			papszMetadata = GDALGetMetadata(hDataset, NULL);
+			papszMD = GDALGetMetadata(hDataset, NULL);
 		else
-			papszMetadata = GDALGetMetadata(hDataset, domain.c_str());
+			papszMD = GDALGetMetadata(hDataset, domain.c_str());
 	}
 	else {
 		GDALRasterBandH hBand = this->_getBand(band);
 		if (domain == "")
-			papszMetadata = GDALGetMetadata(hBand, NULL);
+			papszMD = GDALGetMetadata(hBand, NULL);
 		else
-			papszMetadata = GDALGetMetadata(hBand, domain.c_str());
+			papszMD = GDALGetMetadata(hBand, domain.c_str());
 	}
 	
-	int items = CSLCount(papszMetadata);
+	int items = CSLCount(papszMD);
 	if (items > 0) {
 		Rcpp::CharacterVector md(items);
 		for (int i=0; i < items; ++i) {
-			md(i) = papszMetadata[i];
+			md(i) = papszMD[i];
 		}
 		return md;
 	}
@@ -693,21 +693,21 @@ Rcpp::CharacterVector GDALRaster::getMetadataDomainList(int band) const {
 						
 	this->_checkAccess(GA_ReadOnly);
 	
-	char **papszDomians;
+	char **papszMD;
 
 	if (band == 0) {
-		papszDomians = GDALGetMetadataDomainList(hDataset);
+		papszMD = GDALGetMetadataDomainList(hDataset);
 	}
 	else {
 		GDALRasterBandH hBand = this->_getBand(band);
-		papszDomians = GDALGetMetadataDomainList(hBand);
+		papszMD = GDALGetMetadataDomainList(hBand);
 	}
 	
-	int items = CSLCount(papszDomians);
+	int items = CSLCount(papszMD);
 	if (items > 0) {
 		Rcpp::CharacterVector md(items);
 		for (int i=0; i < items; ++i) {
-			md(i) = papszDomians[i];
+			md(i) = papszMD[i];
 		}
 		return md;
 	}
