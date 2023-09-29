@@ -36,6 +36,7 @@ reference:
   - dem_proc
   - epsg_to_wkt
   - fillNodata
+  - gdal_formats
   - gdal_version
   - getCreationOptions
   - get_cache_used

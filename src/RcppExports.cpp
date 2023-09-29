@@ -21,6 +21,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// gdal_formats
+void gdal_formats();
+RcppExport SEXP _gdalraster_gdal_formats() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    gdal_formats();
+    return R_NilValue;
+END_RCPP
+}
 // get_config_option
 std::string get_config_option(std::string key);
 RcppExport SEXP _gdalraster_get_config_option(SEXP keySEXP) {
@@ -682,6 +691,7 @@ RcppExport SEXP _rcpp_module_boot_mod_running_stats();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_gdal_version", (DL_FUNC) &_gdalraster_gdal_version, 0},
+    {"_gdalraster_gdal_formats", (DL_FUNC) &_gdalraster_gdal_formats, 0},
     {"_gdalraster_get_config_option", (DL_FUNC) &_gdalraster_get_config_option, 1},
     {"_gdalraster_set_config_option", (DL_FUNC) &_gdalraster_set_config_option, 2},
     {"_gdalraster_get_cache_used", (DL_FUNC) &_gdalraster_get_cache_used, 0},

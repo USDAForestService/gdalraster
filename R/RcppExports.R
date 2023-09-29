@@ -18,6 +18,18 @@ gdal_version <- function() {
     .Call(`_gdalraster_gdal_version`)
 }
 
+#' Report all configured GDAL drivers for raster formats
+#'
+#' `gdal_formats()` prints to the console a list of the supported raster
+#' formats.
+#'
+#' @returns No return value, called for reporting only.
+#' @examples
+#' gdal_formats()
+gdal_formats <- function() {
+    invisible(.Call(`_gdalraster_gdal_formats`))
+}
+
 #' Get GDAL configuration option
 #'
 #' `get_config_option()` gets the value of GDAL runtime configuration option.
