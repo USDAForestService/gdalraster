@@ -155,6 +155,7 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span><span class="va">band</span>, <span class="va">domain</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span><span class="va">band</span>, <span class="va">mdi_name</span>, <span class="va">domain</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setMetadataItem</span><span class="op">(</span><span class="va">band</span>, <span class="va">mdi_name</span>, <span class="va">mdi_value</span>, <span class="va">domain</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataDomainList</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">band</span>, <span class="va">xoff</span>, <span class="va">yoff</span>, <span class="va">xsize</span>, <span class="va">ysize</span>, <span class="va">out_xsize</span>, <span class="va">out_ysize</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="va">band</span>, <span class="va">xoff</span>, <span class="va">yoff</span>, <span class="va">xsize</span>, <span class="va">ysize</span>, <span class="va">rasterData</span><span class="op">)</span></span>
@@ -402,6 +403,10 @@ Sets the value (<code>mdi_value</code>) of a specific metadata item named
 Set <code>band = 0</code> to set dataset-level metadata, or to an integer
 band number to set band-level metadata.
 Set <code>domain = ""</code> (empty string) to set an item in the default domain.</p>
+<p><code>$getMetadataDomainList(band)</code>
+Returns a character vector of metadata domains or <code>""</code> (empty string).
+Set <code>band = 0</code> to retrieve dataset-level domains, or to an integer
+band number to retrieve band-level domains.</p>
 <p><code>$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)</code>
 Reads a region of raster data from <code>band</code>. The method takes care of
 pixel decimation / replication if the output size
