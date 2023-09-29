@@ -655,7 +655,7 @@ std::string GDALRaster::getMetadataItem(int band, std::string mdi_name,
 	if (band == 0) {	
 		if (GDALGetMetadataItem(hDataset, mdi_name.c_str(), domain_) != NULL)
 			mdi += std::string(
-					GDALGetMetadataItem(hDataset, mdi_name.c_str(), NULL) );
+					GDALGetMetadataItem(hDataset, mdi_name.c_str(), domain_) );
 	}
 	else {
 		GDALRasterBandH hBand = this->_getBand(band);

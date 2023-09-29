@@ -1,5 +1,7 @@
 # gdalraster 1.5.1 (dev)
 
+* fix `GDALRaster$getMetadataItem()` for domain at dataset level (#109) (2023-09-28)
+
 * add `gdal_formats()`: report the supported raster formats (2023-09-28)
 
 * add `getCreationOptions()`: get the list of creation options of a raster format (2023-09-28)
