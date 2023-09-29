@@ -689,6 +689,33 @@ void GDALRaster::setMetadataItem(int band, std::string mdi_name,
 	}
 }
 
+Rcpp::CharacterVector GDALRaster::getMetadataDomainList(int band) const {
+						
+	this->_checkAccess(GA_ReadOnly);
+	
+	char **papszDomians;
+
+	if (band == 0) {
+		papszDomians = GDALGetMetadataDomainList(hDataset);
+	}
+	else {
+		GDALRasterBandH hBand = this->_getBand(band);
+		papszDomians = GDALGetMetadataDomainList(hBand);
+	}
+	
+	int items = CSLCount(papszDomians);
+	if (items > 0) {
+		Rcpp::CharacterVector md(items);
+		for (int i=0; i < items; ++i) {
+			md(i) = papszDomians[i];
+		}
+		return md;
+	}
+	else {
+		return "";	
+	}
+}
+
 SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 		int out_xsize, int out_ysize) const {
 	
@@ -1117,6 +1144,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Return the value of a metadata item.")
     .method("setMetadataItem", &GDALRaster::setMetadataItem, 
     	"Set metadata item name=value in domain.")
+    .const_method("getMetadataDomainList", &GDALRaster::getMetadataDomainList, 
+    	"Return list of metadata domains.")
     .const_method("read", &GDALRaster::read, 
     	"Read a region of raster data for a band.")
     .method("write", &GDALRaster::write, 

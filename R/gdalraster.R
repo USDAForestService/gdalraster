@@ -75,6 +75,7 @@
 #' ds$getMetadata(band, domain)
 #' ds$getMetadataItem(band, mdi_name, domain)
 #' ds$setMetadataItem(band, mdi_name, mdi_value, domain)
+#' ds$getMetadataDomainList(band)
 #'
 #' ds$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)
 #' ds$write(band, xoff, yoff, xsize, ysize, rasterData)
@@ -409,6 +410,11 @@
 #' Set \code{band = 0} to set dataset-level metadata, or to an integer
 #' band number to set band-level metadata.
 #' Set \code{domain = ""} (empty string) to set an item in the default domain.
+#'
+#' \code{$getMetadataDomainList(band)}
+#' Returns a character vector of metadata domains or \code{""} (empty string).
+#' Set \code{band = 0} to retrieve dataset-level domains, or to an integer
+#' band number to retrieve band-level domains.
 #'
 #' \code{$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)}
 #' Reads a region of raster data from \code{band}. The method takes care of

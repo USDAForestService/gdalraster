@@ -65,6 +65,8 @@ test_that("metadata are correct", {
 				domain="IMAGE_STRUCTURE"), "BAND")
 	expect_equal(ds$getMetadataItem(band=1, mdi_name="COMPRESSION",
 				domain="IMAGE_STRUCTURE"), "")
+	expect_equal(length(ds$getMetadataDomainList(band=0)), 3)
+	expect_equal(length(ds$getMetadataDomainList(band=1)), 1)
 	ds$close()
 })
 

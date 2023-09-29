@@ -147,6 +147,7 @@ class GDALRaster {
 			std::string domain) const;
 	void setMetadataItem(int band, std::string mdi_name, std::string mdi_value,
 			std::string domain);
+	Rcpp::CharacterVector getMetadataDomainList(int band) const;
 	
 	SEXP read(int band, int xoff, int yoff, int xsize, int ysize,
 			int out_xsize, int out_ysize) const;

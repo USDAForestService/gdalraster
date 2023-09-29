@@ -1,5 +1,7 @@
 # gdalraster 1.5.1 (dev)
 
+* add `GDALRaster$getMetadataDomainList()`: get a list of metadata domains for a dataset or raster band (2023-09-28)
+
 * fix `GDALRaster$getMetadataItem()` for domain at dataset level (#109) (2023-09-28)
 
 * add `gdal_formats()`: report the supported raster formats (2023-09-28)
