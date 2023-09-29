@@ -61,6 +61,8 @@ test_that("metadata are correct", {
 	expect_equal(ds$getMetadata(band=1, domain="IMAGE_STRUCTURE"), "")
 	expect_equal(ds$getMetadataItem(band=0, mdi_name="AREA_OR_POINT",
 				domain=""), "Area")
+	expect_equal(ds$getMetadataItem(band=0, "INTERLEAVE",
+				domain="IMAGE_STRUCTURE"), "BAND")
 	expect_equal(ds$getMetadataItem(band=1, mdi_name="COMPRESSION",
 				domain="IMAGE_STRUCTURE"), "")
 	ds$close()
