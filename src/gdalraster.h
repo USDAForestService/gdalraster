@@ -23,6 +23,7 @@ typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 #endif
 
 Rcpp::CharacterVector gdal_version();
+void gdal_formats();
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();

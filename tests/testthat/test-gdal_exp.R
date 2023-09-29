@@ -5,6 +5,10 @@ test_that("gdal_version returns vector", {
 	expect_length(gdal_version(), 4)
 })
 
+test_that("gdal_formats prints output", {
+	expect_output(gdal_formats())
+})
+
 test_that("get/set_config_option work", {
 	co <- get_config_option("GDAL_CACHEMAX")
 	set_config_option("GDAL_CACHEMAX", "64")

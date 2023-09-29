@@ -39,6 +39,38 @@ Rcpp::CharacterVector gdal_version() {
 }
 
 
+//' Report all configured GDAL drivers for raster formats
+//'
+//' `gdal_formats()` prints to the console a list of the supported raster
+//' formats.
+//'
+//' @returns No return value, called for reporting only.
+//' @examples
+//' gdal_formats()
+// [[Rcpp::export]]
+void gdal_formats() {
+	Rprintf("Supported raster formats:\n");
+	for (int i=0; i < GDALGetDriverCount(); ++i) {
+		GDALDriverH hDriver = GDALGetDriver(i);
+		char **papszMD = GDALGetMetadata(hDriver, NULL);
+		const char *pszRFlag = "", *pszWFlag;
+		std::string rw_flag = "";
+		if (!CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false))
+			continue;
+		if (CPLFetchBool(papszMD, GDAL_DCAP_OPEN, false))
+			pszRFlag = "r";
+		if (CPLFetchBool(papszMD, GDAL_DCAP_CREATE, false))
+			pszWFlag = "w+";
+		else if (CPLFetchBool(papszMD, GDAL_DCAP_CREATECOPY, false))
+			pszWFlag = "w";
+		else
+			pszWFlag = "o";
+		Rprintf("  %s (%s%s): %s\n", GDALGetDriverShortName(hDriver),
+				pszRFlag, pszWFlag, GDALGetDriverLongName(hDriver));
+	}
+}
+
+
 //' Get GDAL configuration option
 //'
 //' `get_config_option()` gets the value of GDAL runtime configuration option.
