@@ -24,15 +24,18 @@ project.
 
 Bindings to GDAL are implemented in the exposed C++ class
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
-along with several [stand-alone functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions), supporting:
+along with several [stand-alone
+functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions),
+supporting:
 
   - manual creation of uninitialized raster datasets
   - creation from existing raster as template
   - read/set raster dataset parameters
   - low-level I/O
+  - copy files/move/rename/delete datasets
   - virtual raster (VRT) for virtual subsetting, resampling and kernel
     filtering
-  - access to `gdalwarp` utility for reprojection
+  - `gdalwarp` wrapper for reprojection
   - coordinate transformation
   - spatial reference convenience functions
   - several GDAL algorithms
