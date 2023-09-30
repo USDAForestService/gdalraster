@@ -32,8 +32,13 @@ getCreationOptions <- function(format, filter=NULL) {
 	if (is.null(filter))
 		filter = "_all_"
 		
-	if (filter[1] == "" || .getCreationOptions(format) == "")
-		invisible(.getCreationOptions(format))
+	if (filter[1] == "")
+		return(invisible(.getCreationOptions(format)))
+		
+	if (.getCreationOptions(format) == "") {
+		message(paste0("No creation options found for ", format, "."))
+		return(invisible(.getCreationOptions(format)))
+	}
 		
 	if (!requireNamespace("xml2", quietly = TRUE))
 		stop("getCreationOptions() requires package xml2.", call. = FALSE)
@@ -41,11 +46,11 @@ getCreationOptions <- function(format, filter=NULL) {
 	x = xml2::read_xml(.getCreationOptions(format))
 	opt_list <- xml2::xml_find_all(x, xpath = "//Option")
 	for (n in 1:length(opt_list)) {
-		if (filter[1] == "_all_" ||
-			xml2::xml_attr(opt_list[[n]], "name") %in% filter)
+		if (filter[1] == "_all_"
+			|| xml2::xml_attr(opt_list[[n]], "name") %in% filter)
 				
 			print(opt_list[[n]])
 	}
-	invisible(.getCreationOptions(format))
+	return(invisible(.getCreationOptions(format)))
 }
 
