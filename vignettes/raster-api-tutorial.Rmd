@@ -176,14 +176,12 @@ ds$getStatistics(band=2, approx_ok=FALSE, force=TRUE)
 ds$close()
 ```
 
-Information about format specific creation options can be obtained with the function `getCreationOptions()`:
+Information about format specific creation options can be obtained with the function `getCreationOptions()`. This function lists all  options for the format by default, or output can be filtered to specific options:
 
 ```{r}
-# list all creation options for a given format
-getCreationOptions("HFA")  # Erdas Imagine .img
-
-# filter to see information for specific named option(s)
 getCreationOptions("GTiff", "COMPRESS")
+
+getCreationOptions("GTiff", "SPARSE_OK")
 ```
 
 ## Using create()
