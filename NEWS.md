@@ -16,7 +16,7 @@
 
 * add some missing error checks in src/gdal_exp.cpp (#104) (2023-09-27) 
 
-* documentation: add [notes](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note) for `RunningStats-class` (2023-09-26)
+* documentation: add [notes](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note) for `RunningStats-class`; update vignette with `gdal_formats()` and `getCreationOptions()`
 
 # gdalraster 1.5.0
 
