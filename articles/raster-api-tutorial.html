@@ -93,9 +93,9 @@ tutorial</a> for C++, C and Python, (c) 1998-2023 <a href="https://github.com/wa
 register drivers. There is a driver for each supported raster format.
 <strong>gdalraster</strong> automatically registers drivers when the
 package is loaded. A raster dataset is opened by creating a new instance
-of class <code>GDALRaster</code> passing the name of the file and the
+of <code>GDALRaster-class</code> passing the name of the file and the
 access desired (<code>read_only = TRUE</code>, or
-<code>read_only = FALSE</code> to open with update access):</p>
+<code>read_only = FALSE</code> to open with write access):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, PROJ 8.2.1</span></span>
@@ -140,8 +140,8 @@ R</em>:</p>
 <span><span class="va">gt</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>  <span class="co"># pixel height (n-s resolution, negative value)</span></span>
 <span><span class="co">#&gt; [1] -30</span></span></code></pre></div>
 <p>In the general case, this is an affine transform. Class
-<code>GDALRaster</code> also provides convenience methods for the case
-of a north-up raster:</p>
+<code>GDALRaster</code> includes convenience methods for the case of a
+north-up raster:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span>  <span class="co"># xmin, ymin, xmax, ymax</span></span>
 <span><span class="co">#&gt; [1]  323476.1 5101872.0  327766.1 5105082.0</span></span>
@@ -183,7 +183,7 @@ dataset:</p>
 time. Also, metadata, block sizes, nodata values and various other
 information are available on a per-band basis. Class
 <code>GDALRaster</code> provides methods to access raster band objects
-from the dataset (numbered 1 through <code>ds$getRasterCount()</code>),
+from the dataset (numbered 1 through <code>ds$getRasterCount()</code>)
 by specifying a <code>band</code> number as the first argument:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># block size</span></span>
@@ -307,22 +307,24 @@ involves calling <code><a href="../reference/create.html">gdalraster::create()</
 writing all the metadata and raster data with separate calls. All
 drivers that support creating new files support the CreateCopy method,
 but only a few support the Create method.</p>
-<p>Consult the table of <a href="https://gdal.org/drivers/raster/index.html" class="external-link">GDAL raster format
-drivers</a> to determine if a particular driver supports Create or
-CreateCopy. Note that a number of drivers are read-only and won’t
-support either creation method.</p>
+<p>The function <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> prints a list of currently
+configured raster formats along with read/write flags (“ro” - read only,
+“rw” - read/CreateCopy, “rw+” - read/Create). The table of <a href="https://gdal.org/drivers/raster/index.html" class="external-link">GDAL raster format
+drivers</a> can also be consulted to determine if a particular driver
+supports Create or CreateCopy. Note that a number of drivers are
+read-only and won’t support either creation method.</p>
 </div>
 <div class="section level2">
 <h2 id="using-createcopy">Using createCopy()<a class="anchor" aria-label="anchor" href="#using-createcopy"></a>
 </h2>
-<p><code><a href="../reference/createCopy.html">gdalraster::createCopy()</a></code> is simple to use as most
-information is collected from the source file. It includes an argument
-for passing a list of format specific creation options. It can be used
-to copy a raster to a different format, and/or change options such as
-the block size and arrangement, compression, various metadata, etc. The
-following code copies a multi-band raster in FARSITE v.4 LCP format
-(basically a raw format without support for compression or nodata
-values) to LZW-compressed GeoTiff:</p>
+<p><code><a href="../reference/createCopy.html">createCopy()</a></code> is simple to use as most information is
+collected from the source file. It includes an argument for passing a
+list of format specific creation options. It can be used to copy a
+raster to a different format, and/or change options such as the block
+size and arrangement, compression, various metadata, etc. The following
+code copies a multi-band raster in FARSITE v.4 LCP format (basically a
+raw format without support for compression or nodata values) to
+LZW-compressed GeoTiff:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_lndscp.tif"</span><span class="op">)</span></span>
@@ -353,15 +355,56 @@ values) to LZW-compressed GeoTiff:</p>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt; [1]  0.00000 54.00000 22.93012 12.51330</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<p>Information about format specific creation options can be obtained
+with the function <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>:</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># list all creation options for a given format</span></span>
+<span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"HFA"</span><span class="op">)</span>  <span class="co"># Erdas Imagine .img</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="BLOCKSIZE" type="integer" description="tile width/height (32-2048)" default="64"&gt;</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="USE_SPILL" type="boolean" description="Force use of spill file"&gt;</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="COMPRESSED" alias="COMPRESS" type="boolean" description="compress blocks"&gt;</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="PIXELTYPE" type="string" description="By setting this to SIGNEDBYTE, a new Byte file can be forced to be written as signed byte"&gt;</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="AUX" type="boolean" description="Create an .aux file"&gt;</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="IGNOREUTM" type="boolean" description="Ignore UTM when selecting coordinate system - will use Transverse Mercator. Only used for Create() method"&gt;</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="NBITS" type="integer" description="Create file with special sub-byte data type (1/2/4)"&gt;</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="STATISTICS" type="boolean" description="Generate statistics and a histogram"&gt;</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="DEPENDENT_FILE" type="string" description="Name of dependent file (must not have absolute path)"&gt;</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="FORCETOPESTRING" type="boolean" description="Force use of ArcGIS PE String in file instead of Imagine coordinate system format"&gt;</span></span>
+<span></span>
+<span><span class="co"># filter to see information for specific named option(s)</span></span>
+<span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"COMPRESS"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="COMPRESS" type="string-select"&gt;</span></span>
+<span><span class="co">#&gt;  [1] &lt;Value&gt;NONE&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt;  [2] &lt;Value&gt;LZW&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt;  [3] &lt;Value&gt;PACKBITS&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt;  [4] &lt;Value&gt;JPEG&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt;  [5] &lt;Value&gt;CCITTRLE&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt;  [6] &lt;Value&gt;CCITTFAX3&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt;  [7] &lt;Value&gt;CCITTFAX4&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt;  [8] &lt;Value&gt;DEFLATE&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt;  [9] &lt;Value&gt;LZMA&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt; [10] &lt;Value&gt;ZSTD&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt; [11] &lt;Value&gt;WEBP&lt;/Value&gt;</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="using-create">Using create()<a class="anchor" aria-label="anchor" href="#using-create"></a>
 </h2>
-<p><code><a href="../reference/create.html">gdalraster::create()</a></code> can be used to create a new raster
-dataset manually. This function takes a list of creation options like
+<p><code><a href="../reference/create.html">create()</a></code> can be used to create a new raster dataset
+manually. This function takes a list of creation options like
 <code><a href="../reference/createCopy.html">createCopy()</a></code>, but the raster size, number of bands and band
 type must be provided explicitly:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"newdata.tif"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/create.html">create</a></span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
 <span>       dst_filename <span class="op">=</span> <span class="va">new_file</span>,</span>
@@ -373,7 +416,7 @@ type must be provided explicitly:</p>
 and raster data must be written to the file. What this includes will
 vary according to usage, but a simple case with a projection,
 geotransform and raster data is covered here:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">new_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># EPSG:26912 - NAD83 / UTM zone 12N</span></span>
@@ -409,6 +452,9 @@ derived from a source raster with options for virtual subsetting,
 virtually resampling the source data at a different pixel resolution, or
 applying a virtual kernel filter.</p></li>
 </ul>
+<p>See the <a href="https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html">package
+overview</a> for a full summary of functionality provided by the API
+bindings.</p>
 </div>
 <div class="section level2">
 <h2 id="data-sources">Data sources<a class="anchor" aria-label="anchor" href="#data-sources"></a>
