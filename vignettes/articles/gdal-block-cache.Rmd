@@ -9,15 +9,15 @@ knitr::opts_chunk$set(
 )
 ```
 
-[DRAFT 2023-06-17]
+[DRAFT 2023-10-01]
 
 ## Overview
 
-GDAL implements read/write memory caching during raster I/O. Caching operates on raster blocks and may provide considerable improvement in I/O performance when accessing pixel data across block boundaries. In an analytical context where processing is often row-oriented, this means that access is efficient even when rows intersect many tiles of a raster arranged in square or rectangular blocks (as opposed to blocks arranged as one whole row). Consideration of the caching mechanism is helpful for scaling I/O to large datasets that need to be processed in many chunks. This article will describe the operation of the caching mechanism, and relative performance when accessing data by row or by tile in relation to different raster block arrangements. Implications for configuring cache memory size with the `GDAL_CACHEMAX` setting will be described. Focus here is on reading pixel data (in an analytical context), but similar concepts apply to writing as well.
+GDAL implements read/write memory caching for raster I/O. Caching operates on raster blocks and offers potential for substantial performance improvement when accessing pixel data across block boundaries. In an analytical context where processing may be row-oriented, this means that I/O can be efficient even when rows intersect many tiles of a raster arranged in square blocks (as opposed to blocks arranged as one whole row). Consideration of the caching mechanism is helpful for scaling I/O to large datasets that need to be processed in many chunks. This article will describe the operation of the caching mechanism, and relative performance when accessing data by row or by tile in relation to different raster block arrangements. Implications for configuring cache memory size with the `GDAL_CACHEMAX` setting will be described. Focus here is on reading pixel data, but similar concepts apply to writing as well.
 
 ## Relative performance
 
-A dataset containing 16-bit integer elevation values at 30-m pixel resolution for the conterminous US was obtained from [LANDFIRE](https://www.landfire.gov/). The version is "LF 2020 [LF 2.2.0]" which is available as an 8.4 GB download. The download includes raster overviews, but the elevation raster itself is a 6.8 GB GeoTIFF file using LZW compression on 128 x 128 tiles. The direct download link for LF 2020 elevation is:  
+A dataset containing 16-bit integer elevation at 30-m pixel resolution for the conterminous US was obtained from [LANDFIRE](https://www.landfire.gov/). The version is "LF 2020 [LF 2.2.0]" which is available as an 8.4 GB download. The download includes raster overviews (as .ovr), but the elevation raster itself is a 6.8 GB GeoTIFF file using LZW compression on 128 x 128 tiles. The direct download link for LF 2020 elevation is:  
 https://landfire.gov/bulk/downloadfile.php?FNAME=US_Topo_2020-LF2020_Elev_220_CONUS.zip&TYPE=landfire
 
 Tests were run on a laptop with Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz, 8 GB RAM and SSD, Ubuntu 22.04.2, R 4.3.0, gdalraster 1.2.1 (dev), GDAL 3.6.2.
@@ -109,7 +109,7 @@ nrow(blocks)
 #> [1] 970268
 ```
 
-In terms of expected efficiency, reading the tiled raster by block is similar to reading the striped raster by row (reading on block boundaries, no retrieval from cache). The difference is that the striped tif contains fewer but larger blocks (101538 blocks, 156335 pixels per block), while the tiled tif contains order of magnitude more blocks that are smaller (970268 blocks, 16384 pixels per block). This test uses the original LANDFIRE elevation file (`f`) to read all pixels by tile:
+In terms of expected efficiency, reading the tiled raster by block is similar to reading the striped raster by row (reading on block boundaries, no retrieval from cache). The difference is that the striped tif contains fewer but larger blocks (101538 blocks, 156335 pixels per block), while the tiled tif contains order of magnitude more blocks that are each smaller (970268 blocks, 16384 pixels per block). This test reads all pixels by tile from the original LANDFIRE elevation file (`f`):
 
 ```
 ## Test 3
@@ -128,7 +128,7 @@ system.time({
 
 ## Description of cache operation
 
-GDAL block caching enables reading a large tiled raster efficiently by row (1.59e+10 total pixels in the test dataset). The default maximum size of the memory cache is 5% of usable physical RAM. Each row of the LANDFIRE tiled raster intersects 1222 blocks of size 128 x 128. Each intersected block is read from file, decoded from LZW compression, and placed in cache memory. The data for each successive `read()` that intersects the same block are retrieved from cache. Caching all of the intersected blocks requires 128 x 128 x 2 bytes = 32768 bytes per block, 32768 x 1222 = 40042496 bytes, approximately 40 MB. All of the decoded block data for a row can be held in cache in this case, meaning that only 1 out of every 128 row-level `read()` involves retrieval from file and decoding of compressed blocks. The other 127/128 are provided from cache. Memory is recovered when a request for a new cache block would put cache memory use over the established limit (least recently used blocks are flushed from cache to accommodate adding new blocks).
+GDAL block caching enables reading a large tiled raster efficiently by row (1.6e+10 total pixels in the test dataset). The default size limit of the memory cache is 5% of usable physical RAM. Each row of the LANDFIRE tiled raster intersects 1222 blocks of size 128 x 128. Each intersected block is read from file, decoded from LZW compression, and placed in cache memory. The data for each successive `read()` that intersects the same block are retrieved from cache. Caching all of the intersected blocks requires 128 x 128 x 2 bytes = 32768 bytes per block, 32768 x 1222 = 40042496 bytes, approximately 40 MB. All of the decoded block data for a row can be held in cache in this case, meaning that only 1 out of every 128 row-level `read()` involves retrieval from file and decoding of compressed blocks. The other 127/128 are provided from cache. Memory is recovered when a request for a new cache block would put cache memory use over the established limit (least recently used blocks are flushed from cache to accommodate adding new blocks).
 
 The code below uses the function `gdalraster::get_cache_used()` to demonstrate the behavior:
 
@@ -142,7 +142,7 @@ ncols = ds$getRasterXSize()
 nrows = ds$getRasterYSize()
 
 ## Default cache size is approximately 400 MB in this case (5% of 8 GB RAM)
-## Read enough data to require cache max
+## Read enough data to reach cache max
 rows_read = 0
 cache_use = get_cache_used()
 for (row in 0:1536) {
@@ -166,23 +166,25 @@ axis(1, at = seq(0, 1536, by = 128), las=2)
 knitr::include_graphics("img/cache_use.png")
 ```
 
+While the examples above focus on reading a tiled raster by row, similar considerations would apply to processing large row-oriented rasters in 2-D chunks.
+
 ## Configuring cache size
 
 The cache size limit can be set with the `GDAL_CACHEMAX` configuration option, e.g.,
 
 ```
-## in MB
-gdalraster::set_config_option("GDAL_CACHEMAX", "800")
+## set to a specific size in MB
+gdalraster::set_config_option("GDAL_CACHEMAX", "1000")
 
 ## or percent of physical RAM
-gdalraster::set_config_option("GDAL_CACHEMAX", "10%")
+gdalraster::set_config_option("GDAL_CACHEMAX", "20%")
 ```
 
 Note that the size limit of the block cache is set upon first use (first I/O). Setting `GDAL_CACHEMAX` after that point will not resize the cache. It is a per-session setting. If `GDAL_CACHEMAX` has not been configured upon first use of the cache, then the default cache size will be in effect for the current session.
 
 I/O that involves block caching with large datasets may require setting `GDAL_CACHEMAX` larger than the default. If the LANDFIRE elevation raster were tiled at 256 x 256, then each block would require 65536 x 2 = 131072 bytes for 16-bit data. The cache size needed to hold all intersected blocks for a row would be approximately 160 MB (and likewise, 640 MB for 512 x 512 tiles). Similarly, the cache size could be configured for the case of multiple large rasters that need to be read (or written) simultaneously for processing.
 
-The cache is flushed on dataset closing to recover memory. The behavior described above assumes that the GDAL dataset is opened once, and required I/O completed before closing the dataset. This would normally be the case when using the GDAL API via `gdalraster` (an object of class `gdalraster::GDALRaster` encapsulates a `GDALDataset` object and its associated `GDALRasterBand` objects in the underlying API).
+The cache is flushed upon dataset closing to recover memory. The behavior described above assumes that the GDAL dataset is opened once, and required I/O completed before closing the dataset. This would normally be the case when using the GDAL API via `gdalraster` (`GDALRaster-class` encapsulates a `GDALDataset` object and its associated `GDALRasterBand` objects in the underlying API).
 
 It is also worth noting that without the block caching mechanism, it is not possible to read the tiled elevation raster by row in reasonable time. This can be checked by repeating Test 1 above with the cache disabled:
 
@@ -221,5 +223,6 @@ ds$close()
 
 * [RFC 26: GDAL Block Cache Improvements](https://gdal.org/development/rfc/rfc26_blockcache.html)
 * [Configuration options for GDAL](https://gdal.org/user/configoptions.html)
+* [Performance optimization for GDAL Warp](https://gdal.org/tutorials/warp_tut.html#performance-optimization)
 * [GDALRasterBlock Class Reference](https://gdal.org/doxygen/classGDALRasterBlock.html)
 * [gcore/gdalrasterblock.cpp](https://github.com/OSGeo/gdal/blob/97f0c0b35c7ca5f17bdd74312bee2a0afa4d2199/gcore/gdalrasterblock.cpp)
