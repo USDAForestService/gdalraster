@@ -356,33 +356,11 @@ LZW-compressed GeoTiff:</p>
 <span><span class="co">#&gt; [1]  0.00000 54.00000 22.93012 12.51330</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Information about format specific creation options can be obtained
-with the function <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>:</p>
+with the function <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>. This function lists
+all options for the format by default, or output can be filtered to
+specific options:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># list all creation options for a given format</span></span>
-<span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"HFA"</span><span class="op">)</span>  <span class="co"># Erdas Imagine .img</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="BLOCKSIZE" type="integer" description="tile width/height (32-2048)" default="64"&gt;</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="USE_SPILL" type="boolean" description="Force use of spill file"&gt;</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="COMPRESSED" alias="COMPRESS" type="boolean" description="compress blocks"&gt;</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="PIXELTYPE" type="string" description="By setting this to SIGNEDBYTE, a new Byte file can be forced to be written as signed byte"&gt;</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="AUX" type="boolean" description="Create an .aux file"&gt;</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="IGNOREUTM" type="boolean" description="Ignore UTM when selecting coordinate system - will use Transverse Mercator. Only used for Create() method"&gt;</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="NBITS" type="integer" description="Create file with special sub-byte data type (1/2/4)"&gt;</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="STATISTICS" type="boolean" description="Generate statistics and a histogram"&gt;</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="DEPENDENT_FILE" type="string" description="Name of dependent file (must not have absolute path)"&gt;</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="FORCETOPESTRING" type="boolean" description="Force use of ArcGIS PE String in file instead of Imagine coordinate system format"&gt;</span></span>
-<span></span>
-<span><span class="co"># filter to see information for specific named option(s)</span></span>
-<span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"COMPRESS"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"COMPRESS"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; {xml_node}</span></span>
 <span><span class="co">#&gt; &lt;Option name="COMPRESS" type="string-select"&gt;</span></span>
 <span><span class="co">#&gt;  [1] &lt;Value&gt;NONE&lt;/Value&gt;</span></span>
@@ -395,7 +373,11 @@ with the function <code><a href="../reference/getCreationOptions.html">getCreati
 <span><span class="co">#&gt;  [8] &lt;Value&gt;DEFLATE&lt;/Value&gt;</span></span>
 <span><span class="co">#&gt;  [9] &lt;Value&gt;LZMA&lt;/Value&gt;</span></span>
 <span><span class="co">#&gt; [10] &lt;Value&gt;ZSTD&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt; [11] &lt;Value&gt;WEBP&lt;/Value&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; [11] &lt;Value&gt;WEBP&lt;/Value&gt;</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"SPARSE_OK"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; {xml_node}</span></span>
+<span><span class="co">#&gt; &lt;Option name="SPARSE_OK" type="boolean" description="Should empty blocks be omitted on disk?" default="FALSE"&gt;</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="using-create">Using create()<a class="anchor" aria-label="anchor" href="#using-create"></a>
