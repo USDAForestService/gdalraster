@@ -139,6 +139,7 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">buildOverviews</span><span class="op">(</span><span class="va">resampling</span>, <span class="va">levels</span>, <span class="va">bands</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMinMax</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span>, <span class="va">force</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span><span class="va">band</span>, <span class="va">nodata_value</span><span class="op">)</span></span>
@@ -301,6 +302,14 @@ GTiff or n=1/2/4 for HFA. In these cases, <code>$getDataTypeName()</code> report
 the apparent type <code>"Byte"</code>. GTiff also supports n=9...15 (UInt16 type) and
 n=17...31 (UInt32 type), and n=16 is accepted for Float32 to generate
 half-precision floating point values.</p>
+<p><code>$getMinMax(band, approx_ok)</code>
+Returns a numeric vector of length two containing the min/max values for
+<code>band</code>. If <code>approx_ok</code> is <code>TRUE</code> and the raster format knows these
+values intrinsically then those values will be returned. If that doesn't
+work, a subsample of blocks will be read to get an approximate min/max. If
+the band has a nodata value it will be excluded from the minimum and
+maximum. If <code>approx_ok</code> is <code>FALSE</code>, then all pixels will be read and
+used to compute an exact range.</p>
 <p><code>$getStatistics(band, approx_ok, force)</code>
 Returns a numeric vector of length four containing the minimum, maximum,
 mean and standard deviation of pixel values in <code>band</code> (excluding
