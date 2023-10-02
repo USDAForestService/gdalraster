@@ -145,6 +145,7 @@ class GDALRaster {
 			bool force) const;
 	std::vector<double> getHistogram(int band, double min, double max,
 			int num_buckets, bool incl_out_of_range, bool approx_ok) const;
+	Rcpp::List getDefaultHistogram(int band, bool force) const;
 	
 	Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
 	std::string getMetadataItem(int band, std::string mdi_name, 

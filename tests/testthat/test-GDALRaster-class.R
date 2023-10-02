@@ -126,6 +126,15 @@ test_that("get histogram works", {
 	expect_equal(num_pixels, 15301)
 	ds$close()
 	deleteDataset(f)
+	
+	# default histogram
+	f2 <- paste0(tempdir(), "/", "storml_tcc_test2.tif")
+	file.copy(tcc_file,  f2)
+	ds <- new(GDALRaster, f2, read_only=TRUE)
+	expect_warning(ds$getDefaultHistogram(1, FALSE))
+	expect_length(ds$getDefaultHistogram(1, TRUE), 4)
+	ds$close()
+	deleteDataset(f2)
 })
 
 test_that("floating point I/O works", {
