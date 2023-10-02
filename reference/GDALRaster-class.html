@@ -154,6 +154,7 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMinMax</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span>, <span class="va">force</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getHistogram</span><span class="op">(</span><span class="va">band</span>, <span class="va">min</span>, <span class="va">max</span>, <span class="va">num_buckets</span>, <span class="va">incl_out_of_range</span>, <span class="va">approx_ok</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultHistogram</span><span class="op">(</span><span class="va">band</span>, <span class="va">force</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span><span class="va">band</span>, <span class="va">domain</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span><span class="va">band</span>, <span class="va">mdi_name</span>, <span class="va">domain</span><span class="op">)</span></span>
@@ -403,6 +404,17 @@ be mapped into the last bucket, if <code>FALSE</code> out of range values are di
 <code>approx_ok</code> is a logical scalar: <code>TRUE</code> if an approximate histogram is
 OK (generally faster), or <code>FALSE</code> for an exactly computed histogram.
 Returns the histogram as a numeric vector of length <code>num_buckets</code>.</p>
+<p><code>$getDefaultHistogram(band, force)</code>
+Returns a default raster histogram for <code>band</code>. In the GDAL API, this
+method is overridden by derived classes (such as GDALPamRasterBand,
+VRTDataset, HFADataset...) that may be able to fetch efficiently an already
+stored histogram. <code>force</code> is a logical scalar: <code>TRUE</code> to force the
+computation of a default histogram; or if <code>FALSE</code> and no default histogram
+is available, a warning is emitted and the returned list has a 0-length
+histogram vector.
+Returns a list of length four containing named elements <code>$min</code> (lower
+bound), <code>$max</code> (upper bound), <code>$num_buckets</code> (number of buckets), and
+<code>$histogram</code> (a numeric vector of length <code>num_buckets</code>).</p>
 <p><code>$getMetadata(band, domain)</code>
 Returns a character vector of all metadata <code>name=value</code> pairs that exist in
 the specified <code>domain</code>, or <code>""</code> (empty string) if there are no
