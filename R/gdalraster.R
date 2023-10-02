@@ -59,8 +59,6 @@
 #' ds$getOverviewCount(band)
 #' ds$buildOverviews(resampling, levels, bands)
 #' ds$getDataTypeName(band)
-#' ds$getMinMax(band, approx_ok)
-#' ds$getStatistics(band, approx_ok, force)
 #' ds$getNoDataValue(band)
 #' ds$setNoDataValue(band, nodata_value)
 #' ds$deleteNoDataValue(band)
@@ -72,6 +70,10 @@
 #' ds$setOffset(band, offset)
 #' ds$getRasterColorInterp(band)
 #' ds$setRasterColorInterp(band, col_interp)
+#'
+#' ds$getMinMax(band, approx_ok)
+#' ds$getStatistics(band, approx_ok, force)
+#' ds$getHistogram(band, min, max, num_buckets, incl_out_of_range, approx_ok)
 #'
 #' ds$getMetadata(band, domain)
 #' ds$getMetadataItem(band, mdi_name, domain)
@@ -271,39 +273,6 @@
 #' n=17...31 (UInt32 type), and n=16 is accepted for Float32 to generate
 #' half-precision floating point values.
 #'
-#' \code{$getMinMax(band, approx_ok)}
-#' Returns a numeric vector of length two containing the min/max values for
-#' \code{band}. If \code{approx_ok} is `TRUE` and the raster format knows these
-#' values intrinsically then those values will be returned. If that doesn't
-#' work, a subsample of blocks will be read to get an approximate min/max. If
-#' the band has a nodata value it will be excluded from the minimum and
-#' maximum. If \code{approx_ok} is `FALSE`, then all pixels will be read and
-#' used to compute an exact range.
-#'
-#' \code{$getStatistics(band, approx_ok, force)}
-#' Returns a numeric vector of length four containing the minimum, maximum,
-#' mean and standard deviation of pixel values in \code{band} (excluding
-#' nodata pixels). Some raster formats will cache statistics allowing fast
-#' retrieval after the first request.
-#'
-#' \code{approx_ok}:
-#'   * `TRUE`: Approximate statistics are sufficient, in which case overviews
-#'   or a subset of raster tiles may be used in computing the statistics.
-#'   * `FALSE`: All pixels will be read and used to compute statistics (if
-#'   computation is forced).
-#'
-#' \code{force}:
-#'   * `TRUE`: The raster will be scanned to compute statistics. Once computed,
-#'   statistics will generally be “set” back on the raster band if the format
-#'   supports caching statistics.
-#'   (Note: `ComputeStatistics()` in the GDAL API is called automatically here.
-#'   This is a change in the behavior of `GetStatistics()` in the API, to a
-#'   definitive `force`.)
-#'   * `FALSE`: Results will only be returned if it can be done quickly (i.e.,
-#'   without scanning the raster, typically by using pre-existing
-#'   STATISTICS_xxx metadata items). \code{NA}s will be returned if statistics
-#'   cannot be obtained quickly.
-#'
 #' \code{$getNoDataValue(band)}
 #' Returns the nodata value for \code{band} if one exists.
 #' This is generally a special value defined to mark pixels that are not
@@ -394,6 +363,52 @@
 #' \code{$setRasterColorInterp(band, col_interp)}
 #' Sets the color interpretation for \code{band}. See above for the list of
 #' valid values for \code{col_interp} (passed as a string).
+#'
+#' \code{$getMinMax(band, approx_ok)}
+#' Returns a numeric vector of length two containing the min/max values for
+#' \code{band}. If \code{approx_ok} is `TRUE` and the raster format knows these
+#' values intrinsically then those values will be returned. If that doesn't
+#' work, a subsample of blocks will be read to get an approximate min/max. If
+#' the band has a nodata value it will be excluded from the minimum and
+#' maximum. If \code{approx_ok} is `FALSE`, then all pixels will be read and
+#' used to compute an exact range.
+#'
+#' \code{$getStatistics(band, approx_ok, force)}
+#' Returns a numeric vector of length four containing the minimum, maximum,
+#' mean and standard deviation of pixel values in \code{band} (excluding
+#' nodata pixels). Some raster formats will cache statistics allowing fast
+#' retrieval after the first request.
+#'
+#' \code{approx_ok}:
+#'   * `TRUE`: Approximate statistics are sufficient, in which case overviews
+#'   or a subset of raster tiles may be used in computing the statistics.
+#'   * `FALSE`: All pixels will be read and used to compute statistics (if
+#'   computation is forced).
+#'
+#' \code{force}:
+#'   * `TRUE`: The raster will be scanned to compute statistics. Once computed,
+#'   statistics will generally be “set” back on the raster band if the format
+#'   supports caching statistics.
+#'   (Note: `ComputeStatistics()` in the GDAL API is called automatically here.
+#'   This is a change in the behavior of `GetStatistics()` in the API, to a
+#'   definitive `force`.)
+#'   * `FALSE`: Results will only be returned if it can be done quickly (i.e.,
+#'   without scanning the raster, typically by using pre-existing
+#'   STATISTICS_xxx metadata items). \code{NA}s will be returned if statistics
+#'   cannot be obtained quickly.
+#'
+#' \code{$getHistogram(band, min, max, num_buckets, incl_out_of_range, 
+#'   approx_ok)}\cr
+#' Computes raster histogram for \code{band}. \code{min} is the lower bound of
+#' the histogram. \code{max} is the upper bound of the histogram.
+#' \code{num_buckets} is the number of buckets to use (bucket size is
+#' \code{(max - min) / num_buckets}).
+#' \code{incl_out_of_range} is a logical scalar: if `TRUE` values below the
+#' histogram range will be mapped into the first bucket and values above will
+#' be mapped into the last bucket, if `FALSE` out of range values are discarded.
+#' \code{approx_ok} is a logical scalar: `TRUE` if an approximate histogram is
+#' OK (generally faster), or `FALSE` for an exactly computed histogram.
+#' Returns the histogram as a numeric vector of length \code{num_buckets}.
 #'
 #' \code{$getMetadata(band, domain)}
 #' Returns a character vector of all metadata `name=value` pairs that exist in

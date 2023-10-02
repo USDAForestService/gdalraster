@@ -115,6 +115,19 @@ test_that("statistics are correct", {
 	ds$close()
 })
 
+test_that("get histogram works", {
+	tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
+	f <- paste0(tempdir(), "/", "storml_tcc_test.tif")
+	file.copy(tcc_file,  f)
+	ds <- new(GDALRaster, f, read_only=TRUE)
+	num_bins <- length(ds$getHistogram(1, -0.5, 100.5, 101, FALSE, FALSE))
+	expect_equal(num_bins, 101)
+	num_pixels <- sum(ds$getHistogram(1, -0.5, 100.5, 101, FALSE, FALSE))
+	expect_equal(num_pixels, 15301)
+	ds$close()
+	deleteDataset(f)
+})
+
 test_that("floating point I/O works", {
 	f <- paste0(tempdir(), "/", "testfloat.tif")
 	create(format="GTiff", dst_filename=f, xsize=10, ysize=10,

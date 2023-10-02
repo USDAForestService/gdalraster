@@ -1,5 +1,9 @@
 # gdalraster 1.5.1 (dev)
 
+* add `GDALRaster$getHistogram()`: compute raster histogram for a band (2023-10-01)
+
+* add `GDALRaster$getMinMax()`: compute min/max for a raster band (2023-10-01)
+
 * add `GDALRaster$getMetadataDomainList()`: get a list of metadata domains for a dataset or raster band (2023-09-28)
 
 * fix `GDALRaster$getMetadataItem()` for domain at dataset level (#109) (2023-09-28)
