@@ -123,9 +123,6 @@ class GDALRaster {
 	void buildOverviews(std::string resampling, std::vector<int> levels,
 			std::vector<int> bands);
 	std::string getDataTypeName(int band) const;
-	std::vector<double> getMinMax(int band, bool approx_ok) const;
-	Rcpp::NumericVector getStatistics(int band,	bool approx_ok, 
-			bool force) const;
 	bool hasNoDataValue(int band) const;
 	double getNoDataValue(int band) const;
 	bool setNoDataValue(int band, double nodata_value);
@@ -142,6 +139,12 @@ class GDALRaster {
 	void setDescription(int band, std::string desc);
 	std::string getRasterColorInterp(int band) const;
 	void setRasterColorInterp(int band, std::string col_interp);
+	
+	std::vector<double> getMinMax(int band, bool approx_ok) const;
+	Rcpp::NumericVector getStatistics(int band,	bool approx_ok, 
+			bool force) const;
+	std::vector<double> getHistogram(int band, double min, double max,
+			int num_buckets, bool incl_out_of_range, bool approx_ok) const;
 	
 	Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
 	std::string getMetadataItem(int band, std::string mdi_name, 

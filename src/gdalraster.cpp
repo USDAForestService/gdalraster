@@ -311,54 +311,6 @@ std::string GDALRaster::getDataTypeName(int band) const {
 	return GDALGetDataTypeName(GDALGetRasterDataType(hBand));
 }
 
-std::vector<double> GDALRaster::getMinMax(int band, bool approx_ok) const {
-	this->_checkAccess(GA_ReadOnly);
-	
-	GDALRasterBandH hBand = this->_getBand(band);
-	std::vector<double> min_max(2, NA_REAL);
-	CPLErr err = CE_None;
-#if GDAL_VERSION_NUM >= 3060000
-	err = GDALComputeRasterMinMax(hBand, approx_ok, min_max.data());
-#else
-	GDALComputeRasterMinMax(hBand, approx_ok, min_max.data());
-#endif
-	if (err != CE_None)
-		Rcpp::stop("Get min/max failed.");
-	else
-		return min_max;
-}
-
-Rcpp::NumericVector GDALRaster::getStatistics(int band,	bool approx_ok, 
-					bool force) const {
-					
-	this->_checkAccess(GA_ReadOnly);
-	
-	GDALRasterBandH hBand = this->_getBand(band);
-	double min, max, mean, sd;
-	CPLErr err;
-	
-	if (!force) {
-		err = GDALGetRasterStatistics(hBand, approx_ok, force, 
-								&min, &max, &mean, &sd);
-	}
-	else {
-		GDALProgressFunc pfnProgress = GDALTermProgressR;
-		void* pProgressData = NULL;
-		err = GDALComputeRasterStatistics(hBand, approx_ok, 
-									&min, &max, &mean, &sd, 
-									pfnProgress, pProgressData);
-	}
-	
-	if (err != CE_None) {
-		Rcpp::Rcout << "Failed to get statistics, NA returned.\n";
-		Rcpp::NumericVector stats(4, NA_REAL);
-		return stats;
-	}
-	else {
-		Rcpp::NumericVector stats = {min, max, mean, sd};
-		return stats;
-	}
-}
 
 bool GDALRaster::hasNoDataValue(int band) const {
 	this->_checkAccess(GA_ReadOnly);
@@ -622,6 +574,74 @@ void GDALRaster::setRasterColorInterp(int band, std::string col_interp) {
 		Rcpp::stop("Invalid col_interp.");
 
 	GDALSetRasterColorInterpretation(hBand, gci);
+}
+
+std::vector<double> GDALRaster::getMinMax(int band, bool approx_ok) const {
+	this->_checkAccess(GA_ReadOnly);
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	std::vector<double> min_max(2, NA_REAL);
+	CPLErr err = CE_None;
+#if GDAL_VERSION_NUM >= 3060000
+	err = GDALComputeRasterMinMax(hBand, approx_ok, min_max.data());
+#else
+	GDALComputeRasterMinMax(hBand, approx_ok, min_max.data());
+#endif
+	if (err != CE_None)
+		Rcpp::stop("Failed to get min/max.");
+	else
+		return min_max;
+}
+
+Rcpp::NumericVector GDALRaster::getStatistics(int band,	bool approx_ok, 
+					bool force) const {
+					
+	this->_checkAccess(GA_ReadOnly);
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	double min, max, mean, sd;
+	CPLErr err;
+	
+	if (!force) {
+		err = GDALGetRasterStatistics(hBand, approx_ok, force, 
+								&min, &max, &mean, &sd);
+	}
+	else {
+		GDALProgressFunc pfnProgress = GDALTermProgressR;
+		void* pProgressData = NULL;
+		err = GDALComputeRasterStatistics(hBand, approx_ok, 
+									&min, &max, &mean, &sd, 
+									pfnProgress, pProgressData);
+	}
+	
+	if (err != CE_None) {
+		Rcpp::Rcout << "Failed to get statistics, NA returned.\n";
+		Rcpp::NumericVector stats(4, NA_REAL);
+		return stats;
+	}
+	else {
+		Rcpp::NumericVector stats = {min, max, mean, sd};
+		return stats;
+	}
+}
+
+std::vector<double> GDALRaster::getHistogram(int band, double min, double max,
+		int num_buckets, bool incl_out_of_range, bool approx_ok) const {
+
+	this->_checkAccess(GA_ReadOnly);
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	std::vector<GUIntBig> hist(num_buckets);
+	CPLErr err = CE_None;
+	
+	err = GDALGetRasterHistogramEx(hBand, min, max, num_buckets, hist.data(),
+			incl_out_of_range, approx_ok, GDALTermProgressR, NULL);
+
+	if (err != CE_None)
+		Rcpp::stop("Failed to get histogram.");
+
+	std::vector<double> ret(hist.begin(), hist.end());
+	return ret;
 }
 
 Rcpp::CharacterVector GDALRaster::getMetadata(int band, 
@@ -1131,6 +1151,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Compute the min/max values for this band.")
     .const_method("getStatistics", &GDALRaster::getStatistics, 
     	"Get min, max, mean and stdev for this band.")
+    .const_method("getHistogram", &GDALRaster::getHistogram, 
+    	"Compute raster histogram for this band.")
     .const_method("getNoDataValue", &GDALRaster::getNoDataValue, 
     	"Return the nodata value for this band.")
     .method("setNoDataValue", &GDALRaster::setNoDataValue, 
