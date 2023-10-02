@@ -74,6 +74,7 @@
 #' ds$getMinMax(band, approx_ok)
 #' ds$getStatistics(band, approx_ok, force)
 #' ds$getHistogram(band, min, max, num_buckets, incl_out_of_range, approx_ok)
+#' ds$getDefaultHistogram(band, force)
 #'
 #' ds$getMetadata(band, domain)
 #' ds$getMetadataItem(band, mdi_name, domain)
@@ -410,6 +411,18 @@
 #' OK (generally faster), or `FALSE` for an exactly computed histogram.
 #' Returns the histogram as a numeric vector of length \code{num_buckets}.
 #'
+#' \code{$getDefaultHistogram(band, force)}
+#' Returns a default raster histogram for \code{band}. In the GDAL API, this
+#' method is overridden by derived classes (such as GDALPamRasterBand,
+#' VRTDataset, HFADataset...) that may be able to fetch efficiently an already
+#' stored histogram. \code{force} is a logical scalar: `TRUE` to force the
+#' computation of a default histogram; or if `FALSE` and no default histogram
+#' is available, a warning is emitted and the returned list has a 0-length
+#' histogram vector.
+#' Returns a list of length four containing named elements `$min` (lower
+#' bound), `$max` (upper bound), `$num_buckets` (number of buckets), and
+#'`$histogram` (a numeric vector of length `num_buckets`).
+#' 
 #' \code{$getMetadata(band, domain)}
 #' Returns a character vector of all metadata `name=value` pairs that exist in
 #' the specified \code{domain}, or \code{""} (empty string) if there are no

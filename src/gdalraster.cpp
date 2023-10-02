@@ -632,7 +632,7 @@ std::vector<double> GDALRaster::getHistogram(int band, double min, double max,
 	
 	GDALRasterBandH hBand = this->_getBand(band);
 	std::vector<GUIntBig> hist(num_buckets);
-	CPLErr err = CE_None;
+	CPLErr err;
 	
 	err = GDALGetRasterHistogramEx(hBand, min, max, num_buckets, hist.data(),
 			incl_out_of_range, approx_ok, GDALTermProgressR, NULL);
@@ -642,6 +642,43 @@ std::vector<double> GDALRaster::getHistogram(int band, double min, double max,
 
 	std::vector<double> ret(hist.begin(), hist.end());
 	return ret;
+}
+
+Rcpp::List GDALRaster::getDefaultHistogram(int band, bool force) const {
+
+	this->_checkAccess(GA_ReadOnly);
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	double min = NA_REAL;
+	double max = NA_REAL;
+	int num_buckets = 0;
+	GUIntBig *panHistogram = NULL;
+	CPLErr err;
+	
+	err = GDALGetDefaultHistogramEx(hBand, &min, &max, &num_buckets,
+			&panHistogram, force, GDALTermProgressR, NULL);
+
+	if (err == CE_Failure)
+		Rcpp::stop("Failed to get default histogram.");
+		
+	if (err == CE_Warning)
+		Rcpp::warning("No default histogram is available.");
+		
+	std::vector<double> hist(num_buckets, NA_REAL);
+	
+	if (err == CE_None) {
+		for (int i=0; i < num_buckets; ++i)
+			hist[i] = static_cast<double>(panHistogram[i]);
+		CPLFree(panHistogram);
+	}
+	
+	Rcpp::List list_out = Rcpp::List::create(
+			Rcpp::Named("min") = min,
+			Rcpp::Named("max") = max,
+			Rcpp::Named("num_buckets") = num_buckets,
+			Rcpp::Named("histogram") = hist);
+	
+	return list_out;
 }
 
 Rcpp::CharacterVector GDALRaster::getMetadata(int band, 
@@ -1147,12 +1184,6 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Build raster overview(s).")
     .const_method("getDataTypeName", &GDALRaster::getDataTypeName, 
     	"Get name of the data type for this band.")
-    .const_method("getMinMax", &GDALRaster::getMinMax, 
-    	"Compute the min/max values for this band.")
-    .const_method("getStatistics", &GDALRaster::getStatistics, 
-    	"Get min, max, mean and stdev for this band.")
-    .const_method("getHistogram", &GDALRaster::getHistogram, 
-    	"Compute raster histogram for this band.")
     .const_method("getNoDataValue", &GDALRaster::getNoDataValue, 
     	"Return the nodata value for this band.")
     .method("setNoDataValue", &GDALRaster::setNoDataValue, 
@@ -1179,6 +1210,14 @@ RCPP_MODULE(mod_GDALRaster) {
     	"How should this band be interpreted as color?")
     .method("setRasterColorInterp", &GDALRaster::setRasterColorInterp, 
     	"Set color interpretation of a band.")
+    .const_method("getMinMax", &GDALRaster::getMinMax, 
+    	"Compute the min/max values for this band.")
+    .const_method("getStatistics", &GDALRaster::getStatistics, 
+    	"Get min, max, mean and stdev for this band.")
+    .const_method("getHistogram", &GDALRaster::getHistogram, 
+    	"Compute raster histogram for this band.")
+    .const_method("getDefaultHistogram", &GDALRaster::getDefaultHistogram, 
+    	"Fetch default raster histogram for this band.")
     .const_method("getMetadata", &GDALRaster::getMetadata, 
     	"Return a list of metadata item=value for a domain.")
     .const_method("getMetadataItem", &GDALRaster::getMetadataItem, 

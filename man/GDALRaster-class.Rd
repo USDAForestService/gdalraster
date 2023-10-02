@@ -88,6 +88,7 @@ ds$setRasterColorInterp(band, col_interp)
 ds$getMinMax(band, approx_ok)
 ds$getStatistics(band, approx_ok, force)
 ds$getHistogram(band, min, max, num_buckets, incl_out_of_range, approx_ok)
+ds$getDefaultHistogram(band, force)
 
 ds$getMetadata(band, domain)
 ds$getMetadataItem(band, mdi_name, domain)
@@ -429,6 +430,18 @@ be mapped into the last bucket, if \code{FALSE} out of range values are discarde
 \code{approx_ok} is a logical scalar: \code{TRUE} if an approximate histogram is
 OK (generally faster), or \code{FALSE} for an exactly computed histogram.
 Returns the histogram as a numeric vector of length \code{num_buckets}.
+
+\code{$getDefaultHistogram(band, force)}
+Returns a default raster histogram for \code{band}. In the GDAL API, this
+method is overridden by derived classes (such as GDALPamRasterBand,
+VRTDataset, HFADataset...) that may be able to fetch efficiently an already
+stored histogram. \code{force} is a logical scalar: \code{TRUE} to force the
+computation of a default histogram; or if \code{FALSE} and no default histogram
+is available, a warning is emitted and the returned list has a 0-length
+histogram vector.
+Returns a list of length four containing named elements \verb{$min} (lower
+bound), \verb{$max} (upper bound), \verb{$num_buckets} (number of buckets), and
+\verb{$histogram} (a numeric vector of length \code{num_buckets}).
 
 \code{$getMetadata(band, domain)}
 Returns a character vector of all metadata \code{name=value} pairs that exist in

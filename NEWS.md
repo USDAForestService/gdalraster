@@ -1,5 +1,7 @@
 # gdalraster 1.5.1 (dev)
 
+* add `GDALRaster$getDefaultHistogram()`: fetch default raster histogram (2023-10-02)
+
 * add `GDALRaster$getHistogram()`: compute raster histogram for a band (2023-10-01)
 
 * add `GDALRaster$getMinMax()`: compute min/max for a raster band (2023-10-01)
