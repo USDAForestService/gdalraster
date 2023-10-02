@@ -73,6 +73,7 @@ ds$getBlockSize(band)
 ds$getOverviewCount(band)
 ds$buildOverviews(resampling, levels, bands)
 ds$getDataTypeName(band)
+ds$getMinMax(band, approx_ok)
 ds$getStatistics(band, approx_ok, force)
 ds$getNoDataValue(band)
 ds$setNoDataValue(band, nodata_value)
@@ -285,6 +286,15 @@ GTiff or n=1/2/4 for HFA. In these cases, \code{$getDataTypeName()} reports
 the apparent type \code{"Byte"}. GTiff also supports n=9...15 (UInt16 type) and
 n=17...31 (UInt32 type), and n=16 is accepted for Float32 to generate
 half-precision floating point values.
+
+\code{$getMinMax(band, approx_ok)}
+Returns a numeric vector of length two containing the min/max values for
+\code{band}. If \code{approx_ok} is \code{TRUE} and the raster format knows these
+values intrinsically then those values will be returned. If that doesn't
+work, a subsample of blocks will be read to get an approximate min/max. If
+the band has a nodata value it will be excluded from the minimum and
+maximum. If \code{approx_ok} is \code{FALSE}, then all pixels will be read and
+used to compute an exact range.
 
 \code{$getStatistics(band, approx_ok, force)}
 Returns a numeric vector of length four containing the minimum, maximum,
