@@ -123,6 +123,7 @@ class GDALRaster {
 	void buildOverviews(std::string resampling, std::vector<int> levels,
 			std::vector<int> bands);
 	std::string getDataTypeName(int band) const;
+	std::vector<double> getMinMax(int band, bool approx_ok) const;
 	Rcpp::NumericVector getStatistics(int band,	bool approx_ok, 
 			bool force) const;
 	bool hasNoDataValue(int band) const;

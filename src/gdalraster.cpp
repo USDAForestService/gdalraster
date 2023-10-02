@@ -311,6 +311,23 @@ std::string GDALRaster::getDataTypeName(int band) const {
 	return GDALGetDataTypeName(GDALGetRasterDataType(hBand));
 }
 
+std::vector<double> GDALRaster::getMinMax(int band, bool approx_ok) const {
+	this->_checkAccess(GA_ReadOnly);
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	std::vector<double> min_max(2, NA_REAL);
+	CPLErr err = CE_None;
+#if GDAL_VERSION_NUM >= 3060000
+	err = GDALComputeRasterMinMax(hBand, approx_ok, min_max.data());
+#else
+	GDALComputeRasterMinMax(hBand, approx_ok, min_max.data());
+#endif
+	if (err != CE_None)
+		Rcpp::stop("Get min/max failed.");
+	else
+		return min_max;
+}
+
 Rcpp::NumericVector GDALRaster::getStatistics(int band,	bool approx_ok, 
 					bool force) const {
 					
@@ -1110,6 +1127,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Build raster overview(s).")
     .const_method("getDataTypeName", &GDALRaster::getDataTypeName, 
     	"Get name of the data type for this band.")
+    .const_method("getMinMax", &GDALRaster::getMinMax, 
+    	"Compute the min/max values for this band.")
     .const_method("getStatistics", &GDALRaster::getStatistics, 
     	"Get min, max, mean and stdev for this band.")
     .const_method("getNoDataValue", &GDALRaster::getNoDataValue, 

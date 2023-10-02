@@ -107,6 +107,7 @@ test_that("statistics are correct", {
 	mod_file <- paste0(tempdir(), "/", "storml_elev_mod.tif")
 	file.copy(elev_file,  mod_file)
 	ds <- new(GDALRaster, mod_file, read_only=TRUE)
+	expect_equal(ds$getMinMax(band=1, approx_ok=FALSE), c(2438, 3046))
 	stats <- round(ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE))
 	expect_equal(stats, c(2438, 3046, 2676, 133))
 	files <- ds$getFileList()
