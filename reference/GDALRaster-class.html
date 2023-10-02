@@ -139,8 +139,6 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">buildOverviews</span><span class="op">(</span><span class="va">resampling</span>, <span class="va">levels</span>, <span class="va">bands</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMinMax</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span><span class="op">)</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span>, <span class="va">force</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span><span class="va">band</span>, <span class="va">nodata_value</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">deleteNoDataValue</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
@@ -152,6 +150,10 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setOffset</span><span class="op">(</span><span class="va">band</span>, <span class="va">offset</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterColorInterp</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setRasterColorInterp</span><span class="op">(</span><span class="va">band</span>, <span class="va">col_interp</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMinMax</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span>, <span class="va">force</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getHistogram</span><span class="op">(</span><span class="va">band</span>, <span class="va">min</span>, <span class="va">max</span>, <span class="va">num_buckets</span>, <span class="va">incl_out_of_range</span>, <span class="va">approx_ok</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span><span class="va">band</span>, <span class="va">domain</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span><span class="va">band</span>, <span class="va">mdi_name</span>, <span class="va">domain</span><span class="op">)</span></span>
@@ -302,34 +304,7 @@ GTiff or n=1/2/4 for HFA. In these cases, <code>$getDataTypeName()</code> report
 the apparent type <code>"Byte"</code>. GTiff also supports n=9...15 (UInt16 type) and
 n=17...31 (UInt32 type), and n=16 is accepted for Float32 to generate
 half-precision floating point values.</p>
-<p><code>$getMinMax(band, approx_ok)</code>
-Returns a numeric vector of length two containing the min/max values for
-<code>band</code>. If <code>approx_ok</code> is <code>TRUE</code> and the raster format knows these
-values intrinsically then those values will be returned. If that doesn't
-work, a subsample of blocks will be read to get an approximate min/max. If
-the band has a nodata value it will be excluded from the minimum and
-maximum. If <code>approx_ok</code> is <code>FALSE</code>, then all pixels will be read and
-used to compute an exact range.</p>
-<p><code>$getStatistics(band, approx_ok, force)</code>
-Returns a numeric vector of length four containing the minimum, maximum,
-mean and standard deviation of pixel values in <code>band</code> (excluding
-nodata pixels). Some raster formats will cache statistics allowing fast
-retrieval after the first request.</p>
-<p><code>approx_ok</code>:</p><ul><li><p><code>TRUE</code>: Approximate statistics are sufficient, in which case overviews
-or a subset of raster tiles may be used in computing the statistics.</p></li>
-<li><p><code>FALSE</code>: All pixels will be read and used to compute statistics (if
-computation is forced).</p></li>
-</ul><p><code>force</code>:</p><ul><li><p><code>TRUE</code>: The raster will be scanned to compute statistics. Once computed,
-statistics will generally be “set” back on the raster band if the format
-supports caching statistics.
-(Note: <code>ComputeStatistics()</code> in the GDAL API is called automatically here.
-This is a change in the behavior of <code>GetStatistics()</code> in the API, to a
-definitive <code>force</code>.)</p></li>
-<li><p><code>FALSE</code>: Results will only be returned if it can be done quickly (i.e.,
-without scanning the raster, typically by using pre-existing
-STATISTICS_xxx metadata items). <code>NA</code>s will be returned if statistics
-cannot be obtained quickly.</p></li>
-</ul><p><code>$getNoDataValue(band)</code>
+<p><code>$getNoDataValue(band)</code>
 Returns the nodata value for <code>band</code> if one exists.
 This is generally a special value defined to mark pixels that are not
 valid data. <code>NA</code> is returned if a nodata value is not defined for
@@ -389,6 +364,45 @@ Returns a string describing the color interpretation for <code>band</code>.
 The color interpretation values and their meanings are:</p><table class="table table"><tr><td>Undefined</td><td>Undefined</td></tr><tr><td>Gray</td><td>Grayscale</td></tr><tr><td>Palette</td><td>Paletted (see associated color table)</td></tr><tr><td>Red</td><td>Red band of RGBA image</td></tr><tr><td>Green</td><td>Green band of RGBA image</td></tr><tr><td>Blue</td><td>Blue band of RGBA image</td></tr><tr><td>Alpha</td><td>Alpha (0=transparent, 255=opaque)</td></tr><tr><td>Hue</td><td>Hue band of HLS image</td></tr><tr><td>Saturation</td><td>Saturation band of HLS image</td></tr><tr><td>Lightness</td><td>Lightness band of HLS image</td></tr><tr><td>Cyan</td><td>Cyan band of CMYK image</td></tr><tr><td>Magenta</td><td>Magenta band of CMYK image</td></tr><tr><td>Yellow</td><td>Yellow band of CMYK image</td></tr><tr><td>Black</td><td>Black band of CMYK image</td></tr><tr><td>YCbCr_Y</td><td>Y Luminance</td></tr><tr><td>YCbCr_Cb</td><td>Cb Chroma</td></tr><tr><td>YCbCr_Cr</td><td>Cr Chroma</td></tr></table><p><code>$setRasterColorInterp(band, col_interp)</code>
 Sets the color interpretation for <code>band</code>. See above for the list of
 valid values for <code>col_interp</code> (passed as a string).</p>
+<p><code>$getMinMax(band, approx_ok)</code>
+Returns a numeric vector of length two containing the min/max values for
+<code>band</code>. If <code>approx_ok</code> is <code>TRUE</code> and the raster format knows these
+values intrinsically then those values will be returned. If that doesn't
+work, a subsample of blocks will be read to get an approximate min/max. If
+the band has a nodata value it will be excluded from the minimum and
+maximum. If <code>approx_ok</code> is <code>FALSE</code>, then all pixels will be read and
+used to compute an exact range.</p>
+<p><code>$getStatistics(band, approx_ok, force)</code>
+Returns a numeric vector of length four containing the minimum, maximum,
+mean and standard deviation of pixel values in <code>band</code> (excluding
+nodata pixels). Some raster formats will cache statistics allowing fast
+retrieval after the first request.</p>
+<p><code>approx_ok</code>:</p><ul><li><p><code>TRUE</code>: Approximate statistics are sufficient, in which case overviews
+or a subset of raster tiles may be used in computing the statistics.</p></li>
+<li><p><code>FALSE</code>: All pixels will be read and used to compute statistics (if
+computation is forced).</p></li>
+</ul><p><code>force</code>:</p><ul><li><p><code>TRUE</code>: The raster will be scanned to compute statistics. Once computed,
+statistics will generally be “set” back on the raster band if the format
+supports caching statistics.
+(Note: <code>ComputeStatistics()</code> in the GDAL API is called automatically here.
+This is a change in the behavior of <code>GetStatistics()</code> in the API, to a
+definitive <code>force</code>.)</p></li>
+<li><p><code>FALSE</code>: Results will only be returned if it can be done quickly (i.e.,
+without scanning the raster, typically by using pre-existing
+STATISTICS_xxx metadata items). <code>NA</code>s will be returned if statistics
+cannot be obtained quickly.</p></li>
+</ul><p><code>$getHistogram(band, min, max, num_buckets, incl_out_of_range, 
+  approx_ok)</code><br>
+Computes raster histogram for <code>band</code>. <code>min</code> is the lower bound of
+the histogram. <code>max</code> is the upper bound of the histogram.
+<code>num_buckets</code> is the number of buckets to use (bucket size is
+<code>(max - min) / num_buckets</code>).
+<code>incl_out_of_range</code> is a logical scalar: if <code>TRUE</code> values below the
+histogram range will be mapped into the first bucket and values above will
+be mapped into the last bucket, if <code>FALSE</code> out of range values are discarded.
+<code>approx_ok</code> is a logical scalar: <code>TRUE</code> if an approximate histogram is
+OK (generally faster), or <code>FALSE</code> for an exactly computed histogram.
+Returns the histogram as a numeric vector of length <code>num_buckets</code>.</p>
 <p><code>$getMetadata(band, domain)</code>
 Returns a character vector of all metadata <code>name=value</code> pairs that exist in
 the specified <code>domain</code>, or <code>""</code> (empty string) if there are no
