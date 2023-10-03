@@ -681,6 +681,30 @@ Rcpp::List GDALRaster::getDefaultHistogram(int band, bool force) const {
 	return list_out;
 }
 
+bool GDALRaster::setDefaultHistogram(int band, double min, double max,
+		int num_buckets, Rcpp::NumericVector& hist) {
+		
+	this->_checkAccess(GA_Update);
+	
+	if (hist.size() != num_buckets)
+		Rcpp::stop("Length of histogram must equal the number of buckets.");
+		
+	std::vector<GUIntBig> hist_int64(num_buckets);
+	for (int i=0; i < num_buckets; ++i)
+		hist_int64[i] = static_cast<GUIntBig>(hist[i]);
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	
+	CPLErr err = GDALSetDefaultHistogramEx(hBand, min, max, num_buckets,
+					hist_int64.data());
+			
+	if (err == CE_Failure) {
+		Rcpp::stop("Failed to set default histogram.");
+	}
+
+	return true;
+}
+
 Rcpp::CharacterVector GDALRaster::getMetadata(int band, 
 						std::string domain) const {
 						
@@ -1018,7 +1042,7 @@ std::string GDALRaster::getPaletteInterp(int band) const {
 	}
 }
 
-bool GDALRaster::setColorTable(int band, Rcpp::RObject &col_tbl, 
+bool GDALRaster::setColorTable(int band, Rcpp::RObject& col_tbl, 
 		std::string palette_interp) {
 		
 	this->_checkAccess(GA_Update);
@@ -1218,6 +1242,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Compute raster histogram for this band.")
     .const_method("getDefaultHistogram", &GDALRaster::getDefaultHistogram, 
     	"Fetch default raster histogram for this band.")
+    .method("setDefaultHistogram", &GDALRaster::setDefaultHistogram, 
+    	"Set default raster histogram for this band.")
     .const_method("getMetadata", &GDALRaster::getMetadata, 
     	"Return a list of metadata item=value for a domain.")
     .const_method("getMetadataItem", &GDALRaster::getMetadataItem, 

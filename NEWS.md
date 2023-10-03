@@ -1,6 +1,8 @@
 # gdalraster 1.5.1 (dev)
 
-* add `GDALRaster$getDefaultHistogram()`: fetch default raster histogram (2023-10-02)
+* add `GDALRaster$setDefaultHistogram()`: set default histogram for a raster band (2023-10-02)
+
+* add `GDALRaster$getDefaultHistogram()`: fetch default histogram for a raster band (2023-10-02)
 
 * add `GDALRaster$getHistogram()`: compute raster histogram for a band (2023-10-01)
 

@@ -146,6 +146,8 @@ class GDALRaster {
 	std::vector<double> getHistogram(int band, double min, double max,
 			int num_buckets, bool incl_out_of_range, bool approx_ok) const;
 	Rcpp::List getDefaultHistogram(int band, bool force) const;
+	bool setDefaultHistogram(int band, double min, double max, int num_buckets,
+			Rcpp::NumericVector& hist);
 	
 	Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
 	std::string getMetadataItem(int band, std::string mdi_name, 
@@ -164,7 +166,7 @@ class GDALRaster {
 	
 	SEXP getColorTable(int band) const;
 	std::string getPaletteInterp(int band) const;
-	bool setColorTable(int band, Rcpp::RObject &col_tbl,
+	bool setColorTable(int band, Rcpp::RObject& col_tbl,
 			std::string palette_interp);
 	
 	void flushCache();

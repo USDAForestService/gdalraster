@@ -75,6 +75,7 @@
 #' ds$getStatistics(band, approx_ok, force)
 #' ds$getHistogram(band, min, max, num_buckets, incl_out_of_range, approx_ok)
 #' ds$getDefaultHistogram(band, force)
+#' ds$setDefaultHistogram(band, min, max, num_buckets, hist)
 #'
 #' ds$getMetadata(band, domain)
 #' ds$getMetadataItem(band, mdi_name, domain)
@@ -401,7 +402,7 @@
 #' \code{$getHistogram(band, min, max, num_buckets, incl_out_of_range, 
 #'   approx_ok)}\cr
 #' Computes raster histogram for \code{band}. \code{min} is the lower bound of
-#' the histogram. \code{max} is the upper bound of the histogram.
+#' the histogram, \code{max} is the upper bound.
 #' \code{num_buckets} is the number of buckets to use (bucket size is
 #' \code{(max - min) / num_buckets}).
 #' \code{incl_out_of_range} is a logical scalar: if `TRUE` values below the
@@ -423,6 +424,14 @@
 #' bound), `$max` (upper bound), `$num_buckets` (number of buckets), and
 #'`$histogram` (a numeric vector of length `num_buckets`).
 #' 
+#' \code{$setDefaultHistogram(band, min, max, num_buckets, hist)}
+#' Set default raster histogram for \code{band}.
+#' \code{min} is the lower bound of the histogram, \code{max} is the upper
+#' bound. \code{num_buckets} is the number of buckets. \code{hist} is a numeric
+#' vector of length \code{num_buckets} containing the histogram counts.
+#' Returns logical `TRUE` on success. An error is raised if the operation
+#' fails.
+#'
 #' \code{$getMetadata(band, domain)}
 #' Returns a character vector of all metadata `name=value` pairs that exist in
 #' the specified \code{domain}, or \code{""} (empty string) if there are no

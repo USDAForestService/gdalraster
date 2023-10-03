@@ -472,10 +472,10 @@ warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL) {
 #' @param end_color Integer vector of length three or four.
 #' A color entry value to end the ramp (e.g., RGB values).
 #' @param palette_interp One of "Gray", "RGB" (the default), "CMYK" or "HLS"
-#' descibing interpretation of `start_color` and `end_color` values
+#' describing interpretation of `start_color` and `end_color` values
 #' (see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL 
 #' Color Table}).
-#' @returns Intger matrix with five columns containing the color ramp from
+#' @returns Integer matrix with five columns containing the color ramp from
 #' `start_index` to `end_index`, with raster index values in column 1 and
 #' color entries in columns 2:5).
 #'
