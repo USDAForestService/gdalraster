@@ -1061,7 +1061,7 @@ calc <- function(expr,
 	for (r in 1:nrasters)
 		ds_list[[r]]$close()
 		
-	invisible(dstfile)
+	return(invisible(dstfile))
 }
 
 
@@ -1250,5 +1250,5 @@ dem_proc <- function(mode,
 	if (is.null(DEFAULT_DEM_PROC[[mode]]))
 		stop("DEM processing mode not recognized.", call.=FALSE)
 
-	invisible(.dem_proc(mode, srcfile, dstfile, mode_options, color_file))
+	return (invisible(.dem_proc(mode,srcfile,dstfile,mode_options,color_file)))
 }
