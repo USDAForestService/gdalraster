@@ -24,12 +24,12 @@ A color entry value to start the ramp (e.g., RGB values).}
 A color entry value to end the ramp (e.g., RGB values).}
 
 \item{palette_interp}{One of "Gray", "RGB" (the default), "CMYK" or "HLS"
-descibing interpretation of \code{start_color} and \code{end_color} values
+describing interpretation of \code{start_color} and \code{end_color} values
 (see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL
 Color Table}).}
 }
 \value{
-Intger matrix with five columns containing the color ramp from
+Integer matrix with five columns containing the color ramp from
 \code{start_index} to \code{end_index}, with raster index values in column 1 and
 color entries in columns 2:5).
 }
