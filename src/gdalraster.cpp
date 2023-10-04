@@ -645,7 +645,6 @@ std::vector<double> GDALRaster::getHistogram(int band, double min, double max,
 }
 
 Rcpp::List GDALRaster::getDefaultHistogram(int band, bool force) const {
-
 	this->_checkAccess(GA_ReadOnly);
 	
 	GDALRasterBandH hBand = this->_getBand(band);
@@ -1087,6 +1086,57 @@ bool GDALRaster::setColorTable(int band, Rcpp::RObject &col_tbl,
 		return false;
 }
 
+SEXP GDALRaster::getDefaultRAT(int band) const {
+	this->_checkAccess(GA_ReadOnly);
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	GDALRasterAttributeTableH hRAT = GDALGetDefaultRAT(hBand);
+	if (hRAT == NULL)
+		return R_NilValue;
+	
+	CPLErr err;
+	int nCol = GDALRATGetColumnCount(hRAT);
+	int nRow = GDALRATGetRowCount(hRAT);
+	Rcpp::DataFrame dfRAT = Rcpp::DataFrame::create();
+	
+	for (int i=0; i < nCol; ++i) {
+		std::string sColName(GDALRATGetNameOfCol(hRAT, i));
+		GDALRATFieldType gft = GDALRATGetTypeOfCol(hRAT, i);
+		if (gft == GFT_Integer) {
+			std::vector<int> int_values(nRow);
+			err = GDALRATValuesIOAsInteger(hRAT, GF_Read, i, 0, nRow,
+					int_values.data());
+			if (err == CE_Failure)
+				Rcpp::stop("Read column failed.");
+			dfRAT.push_back(Rcpp::wrap(int_values), sColName);
+		}
+		else if (gft == GFT_Real) {
+			std::vector<double> dbl_values(nRow);
+			err = GDALRATValuesIOAsDouble(hRAT, GF_Read, i, 0, nRow,
+					dbl_values.data());
+			if (err == CE_Failure)
+				Rcpp::stop("Read column failed.");
+			dfRAT.push_back(Rcpp::wrap(dbl_values), sColName);
+		}
+		else if (gft == GFT_String) {
+			std::vector<char *> char_values(nRow);
+			err = GDALRATValuesIOAsString(hRAT, GF_Read, i, 0, nRow,
+					char_values.data());
+			if (err == CE_Failure)
+				Rcpp::stop("Read column failed.");
+			std::vector<std::string> str_values(nRow);
+			for (int n=0; n < nRow; ++n)
+				str_values[n] = char_values[n];
+			dfRAT.push_back(Rcpp::wrap(str_values), sColName);
+		}
+		else {
+			Rcpp::warning("Unhandled GDAL field type.");
+		}
+	}
+
+	return dfRAT;
+}
+
 void GDALRaster::flushCache() {
 	this->_checkAccess(GA_Update);
 	
@@ -1238,6 +1288,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Get the palette interpretation.")
     .method("setColorTable", &GDALRaster::setColorTable, 
     	"Set a color table for this band.")
+    .const_method("getDefaultRAT", &GDALRaster::getDefaultRAT, 
+    	"Return default Raster Attribute Table as data frame.")
     .method("flushCache", &GDALRaster::flushCache, 
     	"Flush all write cached data to disk.")
     .const_method("getChecksum", &GDALRaster::getChecksum, 

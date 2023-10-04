@@ -1,5 +1,7 @@
 # gdalraster 1.5.1 (dev)
 
+* add `GDALRaster$getDefaultRAT()`: return Raster Attribute Table as a data frame (2023-10-04)
+
 * add `GDALRaster$getDefaultHistogram()`: fetch default raster histogram (2023-10-02)
 
 * add `GDALRaster$getHistogram()`: compute raster histogram for a band (2023-10-01)
