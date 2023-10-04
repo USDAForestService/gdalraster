@@ -103,6 +103,8 @@ ds$getColorTable(band)
 ds$getPaletteInterp(band)
 ds$setColorTable(band, col_tbl, palette_interp)
 
+ds$getDefaultRAT(band)
+
 ds$flushCache()
 
 ds$getChecksum(band, xoff, yoff, xsize, ysize)
@@ -558,6 +560,10 @@ opaque).
 \code{$getPaletteInterp()} above).
 Returns logical \code{TRUE} on success or \code{FALSE} if the color table
 could not be set.
+
+\code{$getDefaultRAT(band)}
+Returns the Raster Attribute Table for \code{band} as a data frame,
+or \code{NULL} if there is no associated Raster Attribute Table.
 
 \code{$flushCache()}
 Flush all write cached data to disk. Any raster data written via GDAL calls,
