@@ -164,10 +164,11 @@ class GDALRaster {
 	
 	SEXP getColorTable(int band) const;
 	std::string getPaletteInterp(int band) const;
-	bool setColorTable(int band, Rcpp::RObject &col_tbl,
+	bool setColorTable(int band, Rcpp::RObject& col_tbl,
 			std::string palette_interp);
 	
 	SEXP getDefaultRAT(int band) const;
+	bool setDefaultRAT(int band, Rcpp::DataFrame& df);
 	
 	void flushCache();
 	
@@ -175,9 +176,11 @@ class GDALRaster {
 	
 	void close();
 	
-	// methods for internal use not exposed in R
+	// methods for internal use not exported to R
 	void _checkAccess(GDALAccess access_needed) const;
 	GDALRasterBandH _getBand(int band) const;
+	int _getGDALFieldUsage(std::string fld_usage,
+			bool* pbValid) const;
 };
 
 RCPP_EXPOSED_CLASS(GDALRaster)

@@ -1017,7 +1017,7 @@ std::string GDALRaster::getPaletteInterp(int band) const {
 	}
 }
 
-bool GDALRaster::setColorTable(int band, Rcpp::RObject &col_tbl, 
+bool GDALRaster::setColorTable(int band, Rcpp::RObject& col_tbl, 
 		std::string palette_interp) {
 		
 	this->_checkAccess(GA_Update);
@@ -1137,6 +1137,86 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 	return dfRAT;
 }
 
+bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df) {
+	this->_checkAccess(GA_Update);
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	int nRow = df.nrows();
+	int nCol = df.size();
+	Rcpp::CharacterVector colNames = df.names();
+	CPLErr err;
+	GDALRasterAttributeTableH hRAT = GDALCreateRasterAttributeTable();
+	if (hRAT == NULL)
+		Rcpp::stop("GDALCreateRasterAttributeTable() returned null pointer.");
+	GDALRATSetRowCount(hRAT, nRow);
+	int nCol_added = 0;
+	
+	for (int i=0; i < nCol; ++i) {
+		if (Rf_isMatrix(df[i])) {
+			Rcpp::warning("Matrix column is not supported (skipping).");
+			continue;
+		}
+		if (Rf_isFactor(df[i])) {
+			Rcpp::warning("Factor column is not supported (skipping).");
+			continue;
+		}
+		if (Rcpp::is<Rcpp::IntegerVector>(df[i])) {
+			// create GFT_Integer column
+			Rcpp::IntegerVector v = df[i];
+			int gfu = 0;
+			if (v.hasAttribute("GFU")) {
+				bool gfu_valid;
+				gfu = this->_getGDALFieldUsage(v.attr("GFU"), &gfu_valid);
+				if (!gfu_valid)
+					Rcpp::warning("Invalid GFU attribute, using GFU_Generic.");
+			}
+			Rcpp::String colName(colNames[i]);
+			err = GDALRATCreateColumn(hRAT, colName.get_cstring(),
+					GFT_Integer, static_cast<GDALRATFieldUsage>(gfu));
+			if (err == CE_Failure) {
+				Rcpp::warning("Create RAT column failed (skipping).");
+				continue;
+			}
+			std::vector<int> v_cpp = Rcpp::as<std::vector<int>>(v);
+			err = GDALRATValuesIOAsInteger(hRAT, GF_Write, nCol_added, 0, nRow,
+					v_cpp.data());
+			if (err == CE_Failure) {
+				GDALDestroyRasterAttributeTable(hRAT);
+				Rcpp::stop("Write column failed. setDefaultRAT() aborted.");
+			}
+			nCol_added += 1;
+		}
+		else if (Rcpp::is<Rcpp::NumericVector>(df[i])) {
+			// double
+			
+			nCol_added += 1;
+		}
+		else if (Rcpp::is<Rcpp::CharacterVector>(df[i])) {
+			// string
+			
+			nCol_added += 1;
+		}
+		else if (Rcpp::is<Rcpp::LogicalVector>(df[i])) {
+			// coerce to int
+			
+			nCol_added += 1;
+		}
+		else {
+			// col not handled
+			
+		}
+	}
+
+	GDALSetDefaultRAT(hBand, hRAT);
+
+	GDALDestroyRasterAttributeTable(hRAT);
+	
+	if (nCol_added > 0)
+		return true;
+	else
+		return false;
+}
+
 void GDALRaster::flushCache() {
 	this->_checkAccess(GA_Update);
 	
@@ -1176,6 +1256,125 @@ GDALRasterBandH GDALRaster::_getBand(int band) const {
 	if (hBand == NULL)
 		Rcpp::stop("Failed to access the requested band.");
 	return hBand;
+}
+
+int GDALRaster::_getGDALFieldUsage(std::string fld_usage,
+		bool* pbValid) const {
+
+	GDALRATFieldUsage gfu = GFU_Generic;
+	if (pbValid != nullptr)
+		*pbValid = false;
+
+	if (fld_usage == "Generic") {
+		// General purpose field
+		gfu = GFU_Generic;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "PixelCount") {
+		// Histogram pixel count
+		gfu = GFU_PixelCount;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Name") {
+		// Class name
+		gfu = GFU_Name;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Min") {
+		// Class range minimum
+		gfu = GFU_Min;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Max") {
+		// Class range maximum
+		gfu = GFU_Max;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "MinMax") {
+		// Class value (min=max)
+		gfu = GFU_MinMax;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Red") {
+		// Red class color (0-255)
+		gfu = GFU_Red;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Green") {
+		// Green class color (0-255)
+		gfu = GFU_Green;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Blue") {
+		// Blue class color (0-255)
+		gfu = GFU_Blue;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Alpha") {
+		// Alpha (0=transparent,255=opaque)
+		gfu = GFU_Alpha;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "RedMin") {
+		// Color Range Red Minimum
+		gfu = GFU_RedMin;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "GreenMin") {
+		// Color Range Green Minimum
+		gfu = GFU_GreenMin;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "BlueMin") {
+		// Color Range Blue Minimum
+		gfu = GFU_BlueMin;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "AlphaMin") {
+		// Color Range Alpha Minimum
+		gfu = GFU_AlphaMin;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "RedMax") {
+		// Color Range Red Maximum
+		gfu = GFU_RedMax;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "GreenMax") {
+		// Color Range Green Maximum
+		gfu = GFU_GreenMax;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "BlueMax") {
+		// Color Range Blue Maximum
+		gfu = GFU_BlueMax;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "AlphaMax") {
+		// Color Range Alpha Maximum
+		gfu = GFU_AlphaMax;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+
+	return gfu;
 }
 
 // ****************************************************************************
@@ -1290,6 +1489,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Set a color table for this band.")
     .const_method("getDefaultRAT", &GDALRaster::getDefaultRAT, 
     	"Return default Raster Attribute Table as data frame.")
+    .method("setDefaultRAT", &GDALRaster::setDefaultRAT, 
+    	"Set Raster Attribute Table from data frame.")
     .method("flushCache", &GDALRaster::flushCache, 
     	"Flush all write cached data to disk.")
     .const_method("getChecksum", &GDALRaster::getChecksum, 
