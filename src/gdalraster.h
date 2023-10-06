@@ -168,7 +168,7 @@ class GDALRaster {
 			std::string palette_interp);
 	
 	SEXP getDefaultRAT(int band) const;
-	bool setDefaultRAT(int band, Rcpp::DataFrame& df);
+	bool setDefaultRAT(int band, Rcpp::DataFrame& df, std::string tbl_type);
 	
 	void flushCache();
 	
@@ -179,8 +179,6 @@ class GDALRaster {
 	// methods for internal use not exported to R
 	void _checkAccess(GDALAccess access_needed) const;
 	GDALRasterBandH _getBand(int band) const;
-	int _getGDALFieldUsage(std::string fld_usage,
-			bool* pbValid) const;
 };
 
 RCPP_EXPOSED_CLASS(GDALRaster)

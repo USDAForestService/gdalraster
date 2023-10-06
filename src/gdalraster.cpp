@@ -23,6 +23,128 @@ void _gdal_init(DllInfo *dll) {
     CPLSetConfigOption("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "YES");
 }
 
+// Internal lookup of GDALRATFieldUsage by string descriptor
+// Returns GFU_Generic if no match
+//' @noRd
+GDALRATFieldUsage _getGDALFieldUsage(std::string fld_usage, bool* pbValid) {
+
+	GDALRATFieldUsage gfu = GFU_Generic;
+	if (pbValid != nullptr)
+		*pbValid = false;
+
+	if (fld_usage == "Generic") {
+		// General purpose field
+		gfu = GFU_Generic;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "PixelCount") {
+		// Histogram pixel count
+		gfu = GFU_PixelCount;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Name") {
+		// Class name
+		gfu = GFU_Name;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Min") {
+		// Class range minimum
+		gfu = GFU_Min;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Max") {
+		// Class range maximum
+		gfu = GFU_Max;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "MinMax") {
+		// Class value (min=max)
+		gfu = GFU_MinMax;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Red") {
+		// Red class color (0-255)
+		gfu = GFU_Red;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Green") {
+		// Green class color (0-255)
+		gfu = GFU_Green;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Blue") {
+		// Blue class color (0-255)
+		gfu = GFU_Blue;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "Alpha") {
+		// Alpha (0=transparent,255=opaque)
+		gfu = GFU_Alpha;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "RedMin") {
+		// Color Range Red Minimum
+		gfu = GFU_RedMin;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "GreenMin") {
+		// Color Range Green Minimum
+		gfu = GFU_GreenMin;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "BlueMin") {
+		// Color Range Blue Minimum
+		gfu = GFU_BlueMin;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "AlphaMin") {
+		// Color Range Alpha Minimum
+		gfu = GFU_AlphaMin;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "RedMax") {
+		// Color Range Red Maximum
+		gfu = GFU_RedMax;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "GreenMax") {
+		// Color Range Green Maximum
+		gfu = GFU_GreenMax;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "BlueMax") {
+		// Color Range Blue Maximum
+		gfu = GFU_BlueMax;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+	else if (fld_usage == "AlphaMax") {
+		// Color Range Alpha Maximum
+		gfu = GFU_AlphaMax;
+		if (pbValid != nullptr)
+			*pbValid = true;
+	}
+
+	return gfu;
+}
+
+
 GDALRaster::GDALRaster() : 
 				fname(""),
 				hDataset(NULL),
@@ -1100,7 +1222,7 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 	Rcpp::DataFrame dfRAT = Rcpp::DataFrame::create();
 	
 	for (int i=0; i < nCol; ++i) {
-		std::string sColName(GDALRATGetNameOfCol(hRAT, i));
+		std::string colName(GDALRATGetNameOfCol(hRAT, i));
 		GDALRATFieldType gft = GDALRATGetTypeOfCol(hRAT, i);
 		if (gft == GFT_Integer) {
 			std::vector<int> int_values(nRow);
@@ -1108,7 +1230,7 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 					int_values.data());
 			if (err == CE_Failure)
 				Rcpp::stop("Read column failed.");
-			dfRAT.push_back(Rcpp::wrap(int_values), sColName);
+			dfRAT.push_back(Rcpp::wrap(int_values), colName);
 		}
 		else if (gft == GFT_Real) {
 			std::vector<double> dbl_values(nRow);
@@ -1116,7 +1238,7 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 					dbl_values.data());
 			if (err == CE_Failure)
 				Rcpp::stop("Read column failed.");
-			dfRAT.push_back(Rcpp::wrap(dbl_values), sColName);
+			dfRAT.push_back(Rcpp::wrap(dbl_values), colName);
 		}
 		else if (gft == GFT_String) {
 			std::vector<char *> char_values(nRow);
@@ -1127,7 +1249,7 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 			std::vector<std::string> str_values(nRow);
 			for (int n=0; n < nRow; ++n)
 				str_values[n] = char_values[n];
-			dfRAT.push_back(Rcpp::wrap(str_values), sColName);
+			dfRAT.push_back(Rcpp::wrap(str_values), colName);
 		}
 		else {
 			Rcpp::warning("Unhandled GDAL field type.");
@@ -1137,84 +1259,128 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 	return dfRAT;
 }
 
-bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df) {
+bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
+		std::string tbl_type) {
+
 	this->_checkAccess(GA_Update);
 	
 	GDALRasterBandH hBand = this->_getBand(band);
+	
+	if (tbl_type != "thematic" && tbl_type != "athematic")
+		Rcpp::stop("Table type must be 'thematic' or 'athematic'.");
+	GDALRATTableType grtt;
+	if (tbl_type == "thematic")
+		grtt = GRTT_THEMATIC;
+	else
+		grtt = GRTT_ATHEMATIC;
+	
 	int nRow = df.nrows();
 	int nCol = df.size();
+	int nCol_added = 0;
 	Rcpp::CharacterVector colNames = df.names();
 	CPLErr err;
 	GDALRasterAttributeTableH hRAT = GDALCreateRasterAttributeTable();
 	if (hRAT == NULL)
 		Rcpp::stop("GDALCreateRasterAttributeTable() returned null pointer.");
 	GDALRATSetRowCount(hRAT, nRow);
-	int nCol_added = 0;
+	err = GDALRATSetTableType(hRAT, grtt);
+	if (err == CE_Failure)
+		Rcpp::warning("Failed to set table type.");
 	
-	for (int i=0; i < nCol; ++i) {
-		if (Rf_isMatrix(df[i])) {
+	for (int col=0; col < nCol; ++col) {
+		if (Rf_isMatrix(df[col])) {
 			Rcpp::warning("Matrix column is not supported (skipping).");
 			continue;
 		}
-		if (Rf_isFactor(df[i])) {
+		if (Rf_isFactor(df[col])) {
 			Rcpp::warning("Factor column is not supported (skipping).");
 			continue;
 		}
-		if (Rcpp::is<Rcpp::IntegerVector>(df[i])) {
-			// create GFT_Integer column
-			Rcpp::IntegerVector v = df[i];
-			int gfu = 0;
+		if (Rcpp::is<Rcpp::IntegerVector>(df[col]) ||
+				Rcpp::is<Rcpp::LogicalVector>(df[col])) {
+			// add GFT_Integer column
+			Rcpp::IntegerVector v = df[col];
+			GDALRATFieldUsage gfu = GFU_Generic;
 			if (v.hasAttribute("GFU")) {
 				bool gfu_valid;
-				gfu = this->_getGDALFieldUsage(v.attr("GFU"), &gfu_valid);
+				gfu = _getGDALFieldUsage(v.attr("GFU"), &gfu_valid);
 				if (!gfu_valid)
 					Rcpp::warning("Invalid GFU attribute, using GFU_Generic.");
 			}
-			Rcpp::String colName(colNames[i]);
+			Rcpp::String colName(colNames[col]);
 			err = GDALRATCreateColumn(hRAT, colName.get_cstring(),
-					GFT_Integer, static_cast<GDALRATFieldUsage>(gfu));
+					GFT_Integer, gfu);
 			if (err == CE_Failure) {
-				Rcpp::warning("Create RAT column failed (skipping).");
+				Rcpp::warning("Create integer column failed (skipping).");
 				continue;
 			}
-			std::vector<int> v_cpp = Rcpp::as<std::vector<int>>(v);
-			err = GDALRATValuesIOAsInteger(hRAT, GF_Write, nCol_added, 0, nRow,
-					v_cpp.data());
-			if (err == CE_Failure) {
-				GDALDestroyRasterAttributeTable(hRAT);
-				Rcpp::stop("Write column failed. setDefaultRAT() aborted.");
+			for (int row=0; row < nRow; ++row) {
+				GDALRATSetValueAsInt(hRAT, row, col, v(row));
 			}
 			nCol_added += 1;
 		}
-		else if (Rcpp::is<Rcpp::NumericVector>(df[i])) {
-			// double
-			
+		else if (Rcpp::is<Rcpp::NumericVector>(df[col])) {
+			// add GFT_Real column
+			Rcpp::NumericVector v = df[col];
+			GDALRATFieldUsage gfu = GFU_Generic;
+			if (v.hasAttribute("GFU")) {
+				bool gfu_valid;
+				gfu = _getGDALFieldUsage(v.attr("GFU"), &gfu_valid);
+				if (!gfu_valid)
+					Rcpp::warning("Invalid GFU attribute, using GFU_Generic.");
+			}
+			Rcpp::String colName(colNames[col]);
+			err = GDALRATCreateColumn(hRAT, colName.get_cstring(),
+					GFT_Real, gfu);
+			if (err == CE_Failure) {
+				Rcpp::warning("Create real column failed (skipping).");
+				continue;
+			}
+			for (int row=0; row < nRow; ++row) {
+				GDALRATSetValueAsDouble(hRAT, row, col, v(row));
+			}
 			nCol_added += 1;
 		}
-		else if (Rcpp::is<Rcpp::CharacterVector>(df[i])) {
-			// string
-			
-			nCol_added += 1;
-		}
-		else if (Rcpp::is<Rcpp::LogicalVector>(df[i])) {
-			// coerce to int
-			
+		else if (Rcpp::is<Rcpp::CharacterVector>(df[col])) {
+			// add GFT_String column
+			Rcpp::CharacterVector v = df[col];
+			GDALRATFieldUsage gfu = GFU_Generic;
+			if (v.hasAttribute("GFU")) {
+				bool gfu_valid;
+				gfu = _getGDALFieldUsage(v.attr("GFU"), &gfu_valid);
+				if (!gfu_valid)
+					Rcpp::warning("Invalid GFU attribute, using GFU_Generic.");
+			}
+			Rcpp::String colName(colNames[col]);
+			err = GDALRATCreateColumn(hRAT, colName.get_cstring(),
+					GFT_String, gfu);
+			if (err == CE_Failure) {
+				Rcpp::warning("Create string column failed (skipping).");
+				continue;
+			}
+			for (int row=0; row < nRow; ++row) {
+				Rcpp::String s(v(row));
+				GDALRATSetValueAsString(hRAT, row, col, s.get_cstring());
+			}
 			nCol_added += 1;
 		}
 		else {
-			// col not handled
-			
+			Rcpp::warning("Unsupported column type (skipping).");
 		}
 	}
 
-	GDALSetDefaultRAT(hBand, hRAT);
+	if (nCol_added > 0)
+		err = GDALSetDefaultRAT(hBand, hRAT);
 
 	GDALDestroyRasterAttributeTable(hRAT);
 	
-	if (nCol_added > 0)
-		return true;
-	else
+	if (nCol_added == 0 || err == CE_Failure) {
+		Rcpp::Rcerr << "Could not set raster attribute table.\n";
 		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 void GDALRaster::flushCache() {
@@ -1256,125 +1422,6 @@ GDALRasterBandH GDALRaster::_getBand(int band) const {
 	if (hBand == NULL)
 		Rcpp::stop("Failed to access the requested band.");
 	return hBand;
-}
-
-int GDALRaster::_getGDALFieldUsage(std::string fld_usage,
-		bool* pbValid) const {
-
-	GDALRATFieldUsage gfu = GFU_Generic;
-	if (pbValid != nullptr)
-		*pbValid = false;
-
-	if (fld_usage == "Generic") {
-		// General purpose field
-		gfu = GFU_Generic;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "PixelCount") {
-		// Histogram pixel count
-		gfu = GFU_PixelCount;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Name") {
-		// Class name
-		gfu = GFU_Name;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Min") {
-		// Class range minimum
-		gfu = GFU_Min;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Max") {
-		// Class range maximum
-		gfu = GFU_Max;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "MinMax") {
-		// Class value (min=max)
-		gfu = GFU_MinMax;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Red") {
-		// Red class color (0-255)
-		gfu = GFU_Red;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Green") {
-		// Green class color (0-255)
-		gfu = GFU_Green;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Blue") {
-		// Blue class color (0-255)
-		gfu = GFU_Blue;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Alpha") {
-		// Alpha (0=transparent,255=opaque)
-		gfu = GFU_Alpha;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "RedMin") {
-		// Color Range Red Minimum
-		gfu = GFU_RedMin;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "GreenMin") {
-		// Color Range Green Minimum
-		gfu = GFU_GreenMin;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "BlueMin") {
-		// Color Range Blue Minimum
-		gfu = GFU_BlueMin;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "AlphaMin") {
-		// Color Range Alpha Minimum
-		gfu = GFU_AlphaMin;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "RedMax") {
-		// Color Range Red Maximum
-		gfu = GFU_RedMax;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "GreenMax") {
-		// Color Range Green Maximum
-		gfu = GFU_GreenMax;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "BlueMax") {
-		// Color Range Blue Maximum
-		gfu = GFU_BlueMax;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "AlphaMax") {
-		// Color Range Alpha Maximum
-		gfu = GFU_AlphaMax;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-
-	return gfu;
 }
 
 // ****************************************************************************
