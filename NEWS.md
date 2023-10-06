@@ -1,5 +1,7 @@
 # gdalraster 1.5.1 (dev)
 
+* gdalraster now requires GDAL >= 2.4.0 (2023-10-05)
+
 * add `GDALRaster$getDefaultRAT()`: return Raster Attribute Table as a data frame (2023-10-04)
 
 * add `GDALRaster$getDefaultHistogram()`: fetch default raster histogram (2023-10-02)

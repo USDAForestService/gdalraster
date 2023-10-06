@@ -94,14 +94,14 @@ else
 fi
 
 AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
-AC_MSG_CHECKING([GDAL version >= 2.3.0])
+AC_MSG_CHECKING([GDAL version >= 2.4.0])
 
 GDAL_MAJ_VER=`echo $GDAL_VERSION | cut -d "." -f1`
 GDAL_MIN_VER=`echo $GDAL_VERSION | cut -d "." -f2`
 GDAL_PATCH_VER=`echo $GDAL_VERSION | cut -d "." -f3`
-if test ${GDAL_MAJ_VER} -lt 2 && test ${GDAL_MIN_VER} lt 3; then
+if test ${GDAL_MAJ_VER} -lt 2 && test ${GDAL_MIN_VER} lt 4; then
   AC_MSG_RESULT(no)
-  AC_MSG_ERROR([gdalraster is not compatible with GDAL versions below 2.3.0])
+  AC_MSG_ERROR([gdalraster is not compatible with GDAL versions below 2.4.0])
 else
    AC_MSG_RESULT(yes)
 fi
