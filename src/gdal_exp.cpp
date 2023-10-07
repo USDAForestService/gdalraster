@@ -505,7 +505,10 @@ Rcpp::DataFrame _combine(
 	Rcpp::NumericVector cmbid;
 	GDALProgressFunc pfnProgress = GDALTermProgressR;
 	void* pProgressData = NULL;
-	Rcpp::Rcout << "Combining...\n";
+	if (nrasters == 1)
+		Rcpp::Rcout << "Scanning raster...\n";
+	else
+		Rcpp::Rcout << "Combining " << nrasters << " rasters...\n";
 	for (int y = 0; y < nrows; ++y) {
 		for (std::size_t i = 0; i < nrasters; ++i)
 			rowdata.row(i) = Rcpp::as<Rcpp::IntegerVector>(
