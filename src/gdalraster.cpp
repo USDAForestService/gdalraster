@@ -1172,9 +1172,9 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 	
 	GDALRATTableType grtt = GDALRATGetTableType(hRAT);
 	if (grtt == GRTT_ATHEMATIC)
-		df.attr("TableType") = "athematic";
+		df.attr("GDALRATTableType") = "athematic";
 	else if (grtt == GRTT_THEMATIC)
-		df.attr("TableType") = "thematic";
+		df.attr("GDALRATTableType") = "thematic";
 	
 	// check for linear binning information
 	double dfRow0Min; // lower bound (pixel value) of the first category
@@ -1187,20 +1187,10 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 	return df;
 }
 
-bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
-		std::string tbl_type) {
-
+bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df) {
 	this->_checkAccess(GA_Update);
 	
 	GDALRasterBandH hBand = this->_getBand(band);
-	
-	GDALRATTableType grtt;
-	if (tbl_type == "thematic")
-		grtt = GRTT_THEMATIC;
-	else if (tbl_type == "athematic")
-		grtt = GRTT_ATHEMATIC;
-	else
-		Rcpp::stop("Table type must be 'thematic' or 'athematic'.");
 	
 	int nRow = df.nrows();
 	int nCol = df.size();
@@ -1212,14 +1202,18 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
 	if (hRAT == NULL)
 		Rcpp::stop("GDALCreateRasterAttributeTable() returned null pointer.");
 	GDALRATSetRowCount(hRAT, nRow);
-	err = GDALRATSetTableType(hRAT, grtt);
-	if (err == CE_Failure)
-		Rcpp::warning("Failed to set table type.");
-	
-	if (df.hasAttribute("LinearBinning") &&
-			df.hasAttribute("Row0Min") &&
-			df.hasAttribute("BinSize")) {
-			
+	if (df.hasAttribute("GDALRATTableType")) {
+		std::string s = Rcpp::as<std::string>(df.attr("GDALRATTableType"));
+		if (s == "thematic")
+			err = GDALRATSetTableType(hRAT, GRTT_THEMATIC);
+		else if (s == "athematic")
+			err = GDALRATSetTableType(hRAT, GRTT_ATHEMATIC);
+		else
+			Rcpp::warning("Unrecognized table type.");
+		if (err == CE_Failure)
+			Rcpp::warning("Failed to set table type.");
+	}
+	if (df.hasAttribute("Row0Min") && df.hasAttribute("BinSize")) {
 		double dfRow0Min = Rcpp::as<double>(df.attr("Row0Min"));
 		double dfBinSize = Rcpp::as<double>(df.attr("BinSize"));
 		err = GDALRATSetLinearBinning(hRAT, dfRow0Min, dfBinSize);
@@ -1240,7 +1234,7 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
 				Rcpp::is<Rcpp::LogicalVector>(df[col])) {
 			// add GFT_Integer column
 			Rcpp::IntegerVector v = df[col];
-			GDALRATFieldUsage gfu;
+			GDALRATFieldUsage gfu = GFU_Generic;
 			if (v.hasAttribute("GFU"))
 				gfu = _getGFU(v.attr("GFU"));
 			Rcpp::String colName(colNames[col]);
@@ -1258,7 +1252,7 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
 		else if (Rcpp::is<Rcpp::NumericVector>(df[col])) {
 			// add GFT_Real column
 			Rcpp::NumericVector v = df[col];
-			GDALRATFieldUsage gfu;
+			GDALRATFieldUsage gfu = GFU_Generic;
 			if (v.hasAttribute("GFU"))
 				gfu = _getGFU(v.attr("GFU"));
 			Rcpp::String colName(colNames[col]);
@@ -1276,7 +1270,7 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
 		else if (Rcpp::is<Rcpp::CharacterVector>(df[col])) {
 			// add GFT_String column
 			Rcpp::CharacterVector v = df[col];
-			GDALRATFieldUsage gfu;
+			GDALRATFieldUsage gfu = GFU_Generic;
 			if (v.hasAttribute("GFU"))
 				gfu = _getGFU(v.attr("GFU"));
 			Rcpp::String colName(colNames[col]);

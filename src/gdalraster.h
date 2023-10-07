@@ -194,7 +194,7 @@ class GDALRaster {
 			std::string palette_interp);
 	
 	SEXP getDefaultRAT(int band) const;
-	bool setDefaultRAT(int band, Rcpp::DataFrame& df, std::string tbl_type);
+	bool setDefaultRAT(int band, Rcpp::DataFrame& df);
 	
 	void flushCache();
 	
