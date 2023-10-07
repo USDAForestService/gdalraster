@@ -714,6 +714,9 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #' @noRd
 NULL
 
+#' @noRd
+NULL
+
 #' Is GEOS available?
 #'
 #' `has_geos()` returns a logical value indicating whether GDAL was built

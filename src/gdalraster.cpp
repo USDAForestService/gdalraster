@@ -26,122 +26,29 @@ void _gdal_init(DllInfo *dll) {
 // Internal lookup of GDALRATFieldUsage by string descriptor
 // Returns GFU_Generic if no match
 //' @noRd
-GDALRATFieldUsage _getGDALFieldUsage(std::string fld_usage, bool* pbValid) {
+GDALRATFieldUsage _getGFU(std::string fld_usage) {
 
-	GDALRATFieldUsage gfu = GFU_Generic;
-	if (pbValid != nullptr)
-		*pbValid = false;
+	if (MAP_GFU.count(fld_usage) == 0) {
+		Rcpp::warning("Unrecognized GFU string, using GFU_Generic.");
+		return GFU_Generic;
+	}
+	else {
+		auto gfu = MAP_GFU.find(fld_usage);
+		return gfu->second;
+	}
+}
 
-	if (fld_usage == "Generic") {
-		// General purpose field
-		gfu = GFU_Generic;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "PixelCount") {
-		// Histogram pixel count
-		gfu = GFU_PixelCount;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Name") {
-		// Class name
-		gfu = GFU_Name;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Min") {
-		// Class range minimum
-		gfu = GFU_Min;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Max") {
-		// Class range maximum
-		gfu = GFU_Max;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "MinMax") {
-		// Class value (min=max)
-		gfu = GFU_MinMax;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Red") {
-		// Red class color (0-255)
-		gfu = GFU_Red;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Green") {
-		// Green class color (0-255)
-		gfu = GFU_Green;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Blue") {
-		// Blue class color (0-255)
-		gfu = GFU_Blue;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "Alpha") {
-		// Alpha (0=transparent,255=opaque)
-		gfu = GFU_Alpha;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "RedMin") {
-		// Color Range Red Minimum
-		gfu = GFU_RedMin;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "GreenMin") {
-		// Color Range Green Minimum
-		gfu = GFU_GreenMin;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "BlueMin") {
-		// Color Range Blue Minimum
-		gfu = GFU_BlueMin;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "AlphaMin") {
-		// Color Range Alpha Minimum
-		gfu = GFU_AlphaMin;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "RedMax") {
-		// Color Range Red Maximum
-		gfu = GFU_RedMax;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "GreenMax") {
-		// Color Range Green Maximum
-		gfu = GFU_GreenMax;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "BlueMax") {
-		// Color Range Blue Maximum
-		gfu = GFU_BlueMax;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
-	else if (fld_usage == "AlphaMax") {
-		// Color Range Alpha Maximum
-		gfu = GFU_AlphaMax;
-		if (pbValid != nullptr)
-			*pbValid = true;
-	}
+// Internal lookup of GFU string by GDALRATFieldUsage
+// Returns "Generic" if no match
+//' @noRd
+std::string _getGFU_string(GDALRATFieldUsage gfu) {
 
-	return gfu;
+	for (auto it = MAP_GFU.begin(); it != MAP_GFU.end(); ++it)
+		if (it->second == gfu)
+			return it->first;
+	
+	Rcpp::warning("Unrecognized GDALRATFieldUsage, using GFU_Generic.");
+	return "Generic";
 }
 
 
@@ -1219,18 +1126,21 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 	CPLErr err;
 	int nCol = GDALRATGetColumnCount(hRAT);
 	int nRow = GDALRATGetRowCount(hRAT);
-	Rcpp::DataFrame dfRAT = Rcpp::DataFrame::create();
+	Rcpp::DataFrame df = Rcpp::DataFrame::create();
 	
 	for (int i=0; i < nCol; ++i) {
 		std::string colName(GDALRATGetNameOfCol(hRAT, i));
 		GDALRATFieldType gft = GDALRATGetTypeOfCol(hRAT, i);
+		GDALRATFieldUsage gfu = GDALRATGetUsageOfCol(hRAT, i);
 		if (gft == GFT_Integer) {
 			std::vector<int> int_values(nRow);
 			err = GDALRATValuesIOAsInteger(hRAT, GF_Read, i, 0, nRow,
 					int_values.data());
 			if (err == CE_Failure)
 				Rcpp::stop("Read column failed.");
-			dfRAT.push_back(Rcpp::wrap(int_values), colName);
+			Rcpp::IntegerVector v = Rcpp::wrap(int_values);
+			v.attr("GFU") = _getGFU_string(gfu);
+			df.push_back(v, colName);
 		}
 		else if (gft == GFT_Real) {
 			std::vector<double> dbl_values(nRow);
@@ -1238,7 +1148,9 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 					dbl_values.data());
 			if (err == CE_Failure)
 				Rcpp::stop("Read column failed.");
-			dfRAT.push_back(Rcpp::wrap(dbl_values), colName);
+			Rcpp::NumericVector v = Rcpp::wrap(dbl_values);
+			v.attr("GFU") = _getGFU_string(gfu);
+			df.push_back(v, colName);
 		}
 		else if (gft == GFT_String) {
 			std::vector<char *> char_values(nRow);
@@ -1249,14 +1161,30 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 			std::vector<std::string> str_values(nRow);
 			for (int n=0; n < nRow; ++n)
 				str_values[n] = char_values[n];
-			dfRAT.push_back(Rcpp::wrap(str_values), colName);
+			Rcpp::CharacterVector v = Rcpp::wrap(str_values);
+			v.attr("GFU") = _getGFU_string(gfu);
+			df.push_back(v, colName);
 		}
 		else {
 			Rcpp::warning("Unhandled GDAL field type.");
 		}
 	}
+	
+	GDALRATTableType grtt = GDALRATGetTableType(hRAT);
+	if (grtt == GRTT_ATHEMATIC)
+		df.attr("TableType") = "athematic";
+	else if (grtt == GRTT_THEMATIC)
+		df.attr("TableType") = "thematic";
+	
+	// check for linear binning information
+	double dfRow0Min; // lower bound (pixel value) of the first category
+	double dfBinSize; // width of each category (in pixel value units)
+	if (GDALRATGetLinearBinning(hRAT, &dfRow0Min, &dfBinSize)) {
+		df.attr("Row0Min") = dfRow0Min;
+		df.attr("BinSize") = dfBinSize;
+	}
 
-	return dfRAT;
+	return df;
 }
 
 bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
@@ -1266,19 +1194,20 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
 	
 	GDALRasterBandH hBand = this->_getBand(band);
 	
-	if (tbl_type != "thematic" && tbl_type != "athematic")
-		Rcpp::stop("Table type must be 'thematic' or 'athematic'.");
 	GDALRATTableType grtt;
 	if (tbl_type == "thematic")
 		grtt = GRTT_THEMATIC;
-	else
+	else if (tbl_type == "athematic")
 		grtt = GRTT_ATHEMATIC;
+	else
+		Rcpp::stop("Table type must be 'thematic' or 'athematic'.");
 	
 	int nRow = df.nrows();
 	int nCol = df.size();
 	int nCol_added = 0;
 	Rcpp::CharacterVector colNames = df.names();
 	CPLErr err;
+	
 	GDALRasterAttributeTableH hRAT = GDALCreateRasterAttributeTable();
 	if (hRAT == NULL)
 		Rcpp::stop("GDALCreateRasterAttributeTable() returned null pointer.");
@@ -1286,6 +1215,17 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
 	err = GDALRATSetTableType(hRAT, grtt);
 	if (err == CE_Failure)
 		Rcpp::warning("Failed to set table type.");
+	
+	if (df.hasAttribute("LinearBinning") &&
+			df.hasAttribute("Row0Min") &&
+			df.hasAttribute("BinSize")) {
+			
+		double dfRow0Min = Rcpp::as<double>(df.attr("Row0Min"));
+		double dfBinSize = Rcpp::as<double>(df.attr("BinSize"));
+		err = GDALRATSetLinearBinning(hRAT, dfRow0Min, dfBinSize);
+		if (err == CE_Failure)
+			Rcpp::warning("Failed to set linear binning information.");
+	}
 	
 	for (int col=0; col < nCol; ++col) {
 		if (Rf_isMatrix(df[col])) {
@@ -1300,13 +1240,9 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
 				Rcpp::is<Rcpp::LogicalVector>(df[col])) {
 			// add GFT_Integer column
 			Rcpp::IntegerVector v = df[col];
-			GDALRATFieldUsage gfu = GFU_Generic;
-			if (v.hasAttribute("GFU")) {
-				bool gfu_valid;
-				gfu = _getGDALFieldUsage(v.attr("GFU"), &gfu_valid);
-				if (!gfu_valid)
-					Rcpp::warning("Invalid GFU attribute, using GFU_Generic.");
-			}
+			GDALRATFieldUsage gfu;
+			if (v.hasAttribute("GFU"))
+				gfu = _getGFU(v.attr("GFU"));
 			Rcpp::String colName(colNames[col]);
 			err = GDALRATCreateColumn(hRAT, colName.get_cstring(),
 					GFT_Integer, gfu);
@@ -1322,13 +1258,9 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
 		else if (Rcpp::is<Rcpp::NumericVector>(df[col])) {
 			// add GFT_Real column
 			Rcpp::NumericVector v = df[col];
-			GDALRATFieldUsage gfu = GFU_Generic;
-			if (v.hasAttribute("GFU")) {
-				bool gfu_valid;
-				gfu = _getGDALFieldUsage(v.attr("GFU"), &gfu_valid);
-				if (!gfu_valid)
-					Rcpp::warning("Invalid GFU attribute, using GFU_Generic.");
-			}
+			GDALRATFieldUsage gfu;
+			if (v.hasAttribute("GFU"))
+				gfu = _getGFU(v.attr("GFU"));
 			Rcpp::String colName(colNames[col]);
 			err = GDALRATCreateColumn(hRAT, colName.get_cstring(),
 					GFT_Real, gfu);
@@ -1344,13 +1276,9 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
 		else if (Rcpp::is<Rcpp::CharacterVector>(df[col])) {
 			// add GFT_String column
 			Rcpp::CharacterVector v = df[col];
-			GDALRATFieldUsage gfu = GFU_Generic;
-			if (v.hasAttribute("GFU")) {
-				bool gfu_valid;
-				gfu = _getGDALFieldUsage(v.attr("GFU"), &gfu_valid);
-				if (!gfu_valid)
-					Rcpp::warning("Invalid GFU attribute, using GFU_Generic.");
-			}
+			GDALRATFieldUsage gfu;
+			if (v.hasAttribute("GFU"))
+				gfu = _getGFU(v.attr("GFU"));
 			Rcpp::String colName(colNames[col]);
 			err = GDALRATCreateColumn(hRAT, colName.get_cstring(),
 					GFT_String, gfu);
@@ -1386,6 +1314,7 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df,
 void GDALRaster::flushCache() {
 	this->_checkAccess(GA_Update);
 	
+	// GDAL >= 3.7 has CPLErr return value (RFC 91)
 	GDALFlushCache(hDataset);
 }
 
@@ -1399,6 +1328,7 @@ int GDALRaster::getChecksum(int band, int xoff, int yoff,
 }
 
 void GDALRaster::close() {
+	// GDAL >= 3.7 has CPLErr return value (RFC 91)
 	GDALClose(hDataset);
 	hDataset = NULL;
 }
