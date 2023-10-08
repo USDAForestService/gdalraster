@@ -273,3 +273,39 @@ test_that("Int64 data type is detected", {
 		ds$close()
 	}
 })
+
+test_that("get/set default RAT works", {
+	evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+	f <- paste0(tempdir(), "/", "storml_evt_tmp.tif")
+	file.copy(evt_file,  f)
+	ds <- new(GDALRaster, f, read_only=FALSE)
+	expect_true(is.null(ds$getDefaultRAT(band=1)))
+	df <- buildRAT(ds, table_type="thematic", na_value=-9999)
+	evt_csv <- system.file("extdata/LF20_EVT_220.csv", package="gdalraster")
+	evt_tbl <- read.csv(evt_csv)
+	evt_tbl <- evt_tbl[,1:7]
+	df <- merge(df, evt_tbl)
+	attr(df, "GDALRATTableType") <- "thematic"
+	attr(df$VALUE, "GFU") <- "MinMax"
+	attr(df$COUNT, "GFU") <- "PixelCount"
+	attr(df$EVT_NAME, "GFU") <- "Name"
+	attr(df$EVT_LF, "GFU") <- "Generic"
+	attr(df$EVT_PHYS, "GFU") <- "Generic"
+	attr(df$R, "GFU") <- "Red"
+	attr(df$G, "GFU") <- "Green"
+	attr(df$B, "GFU") <- "Blue"
+	ds$setDefaultRAT(band=1, df)
+	ds$flushCache()
+	df2 <- ds$getDefaultRAT(band=1)
+	expect_equal(nrow(df2), 24)
+	expect_equal(ncol(df2), 8)
+	expect_equal(attr(df2, "GDALRATTableType"), "thematic")
+	expect_equal(attr(df2$VALUE, "GFU"), "MinMax")
+	expect_equal(attr(df2$COUNT, "GFU"), "PixelCount")
+	expect_equal(attr(df2$EVT_NAME, "GFU"), "Name")
+	expect_equal(attr(df2$EVT_LF, "GFU"), "Generic")
+	expect_equal(attr(df2$B, "GFU"), "Blue")
+	ds$close()
+	deleteDataset(f)
+})
+
