@@ -8,7 +8,8 @@ buildRAT(
   raster,
   band = 1,
   col_names = c("VALUE", "COUNT"),
-  table_type = "athematic"
+  table_type = "athematic",
+  na_value = NULL
 )
 }
 \arguments{
@@ -24,6 +25,10 @@ frame (default \code{c("VALUE", "COUNT")}).}
 \item{table_type}{A character string describing the type of the attribute
 table. One of either \code{"thematic"}, or \code{"athematic"} for continuous data
 (the default).}
+
+\item{na_value}{Numeric scalar. An \code{NA} pixel value (if present) will be
+recoded to \code{na_value} in the returned data frame. If \code{NULL} (the default),
+\code{NA} will not be recoded.}
 }
 \value{
 A data frame with two columns containing the set of unique pixel
@@ -100,6 +105,13 @@ either \code{"thematic"} or \code{"athematic"}.
 }
 \note{
 The full raster will be scanned.
+
+If \code{na_value} is not specified, then the \code{NA} pixel value (if present)
+will not be recoded in the output data frame. This may have implications
+if joining to other data (\code{NA} will not match), or when using the returned
+data frame to set a default RAT on a dataset (\code{NA} will be interpreted
+as the internal value that R uses to represent it for the type, e.g.,
+-2147483648 for integer).
 }
 \examples{
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
@@ -110,7 +122,7 @@ file.copy(evt_file,  f)
 ds <- new(GDALRaster, f, read_only=FALSE)
 ds$getDefaultRAT(band=1) # NULL
 
-df <- buildRAT(ds, table_type="thematic")
+df <- buildRAT(ds, table_type = "thematic", na_value = -9999)
 attributes(df)
 attributes(df$VALUE)
 attributes(df$COUNT)

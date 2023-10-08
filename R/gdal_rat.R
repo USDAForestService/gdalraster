@@ -75,6 +75,13 @@
 #' @note
 #' The full raster will be scanned.
 #'
+#' If `na_value` is not specified, then the `NA` pixel value (if present)
+#' will not be recoded in the output data frame. This may have implications
+#' if joining to other data (`NA` will not match), or when using the returned
+#' data frame to set a default RAT on a dataset (`NA` will be interpreted
+#' as the internal value that R uses to represent it for the type, e.g.,
+#' -2147483648 for integer).
+#'
 #' @param raster Either a `GDALRaster` object, or a character string containing
 #' the file name of a raster dataset to open.
 #' @param band Integer scalar. Band number to read (default `1`).
@@ -84,6 +91,9 @@
 #' @param table_type A character string describing the type of the attribute
 #' table. One of either `"thematic"`, or `"athematic"` for continuous data
 #' (the default).
+#' @param na_value Numeric scalar. An `NA` pixel value (if present) will be
+#' recoded to `na_value` in the returned data frame. If `NULL` (the default),
+#' `NA` will not be recoded.
 #' @returns A data frame with two columns containing the set of unique pixel
 #' values and their counts. The columns have attribute `"GFU"` set to `"MinMax"`
 #' for the values and `"PixelCount"` for the counts. The data frame has
@@ -102,7 +112,7 @@
 #' ds <- new(GDALRaster, f, read_only=FALSE)
 #' ds$getDefaultRAT(band=1) # NULL
 #' 
-#' df <- buildRAT(ds, table_type="thematic")
+#' df <- buildRAT(ds, table_type = "thematic", na_value = -9999)
 #' attributes(df)
 #' attributes(df$VALUE)
 #' attributes(df$COUNT)
@@ -135,7 +145,8 @@
 buildRAT <- function(raster,
 				band = 1,
 				col_names = c("VALUE", "COUNT"),
-				table_type = "athematic") {
+				table_type = "athematic",
+				na_value = NULL) {
 
 	if (length(raster) != 1)
 		stop ("raster argument must have length 1.", call. = FALSE)
@@ -150,22 +161,24 @@ buildRAT <- function(raster,
 	if (length(band) != 1)
 		stop ("band argument must be an integer scalar.", call. = FALSE)
 	else
-		band = as.integer(band)
+		band <- as.integer(band)
 	
 	if (length(col_names) != 2)
 		stop ("col_names must have length 2.", call. = FALSE)
 
-	if (length(table_type) != 1)
+	if (length(table_type) != 1 || !is(table_type, "character"))
 		stop ("table_type must be a character string.", call. = FALSE)
 
-	df = combine(f, bands=band)
-	df = df[,c(3,2)]
-	names(df) = col_names
-	df = df[order(df[,1]),]
-	row.names(df) = NULL
-	attr(df[,1], "GFU") = "MinMax"
-	attr(df[,2], "GFU") = "PixelCount"
-	attr(df, "GDALRATTableType") = table_type
+	df <- combine(f, bands=band)
+	df <- df[,c(3,2)]
+	names(df) <- col_names
+	if (!is.null(na_value))
+		df[is.na(df[,1]), 1] <- na_value
+	df <- df[order(df[,1]),]
+	row.names(df) <- NULL
+	attr(df[,1], "GFU") <- "MinMax"
+	attr(df[,2], "GFU") <- "PixelCount"
+	attr(df, "GDALRATTableType") <- table_type
 	return(df)
 }
 
