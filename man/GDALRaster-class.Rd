@@ -571,7 +571,7 @@ format.
 \code{$setDefaultRAT(band, df)}
 Sets a default Raster Attribute Table for \code{band} from data frame \code{df}.
 The input data frame will be checked for attribute \code{"GDALRATTableType"}
-which can have values of \code{"themetic"} or \code{"athematic"} (for continuous data).
+which can have values of \code{"thematic"} or \code{"athematic"} (for continuous data).
 Columns of the data frame will be checked for attribute \code{"GFU"} (for "GDAL
 field usage"). If the \code{"GFU"} attribute is missing, a value of \code{"Generic"}
 will be used (corresponding to \code{GFU_Generic} in the GDAL API, for general

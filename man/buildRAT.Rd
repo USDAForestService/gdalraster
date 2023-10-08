@@ -138,7 +138,11 @@ evt_tbl <- evt_tbl[,1:7]
 df <- merge(df, evt_tbl)
 head(df)
 
+# set table type attribute
+attr(df, "GDALRATTableType") <- "thematic"
 # set column attributes for GDAL field usage
+attr(df$VALUE, "GFU") <- "MinMax"
+attr(df$COUNT, "GFU") <- "PixelCount"
 attr(df$EVT_NAME, "GFU") <- "Name"
 attr(df$EVT_LF, "GFU") <- "Generic"
 attr(df$EVT_PHYS, "GFU") <- "Generic"
