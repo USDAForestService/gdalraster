@@ -6,7 +6,7 @@
 \usage{
 buildRAT(
   raster,
-  band = 1,
+  band = 1L,
   col_names = c("VALUE", "COUNT"),
   table_type = "athematic",
   na_value = NULL
@@ -57,7 +57,7 @@ Each column in a raster attribute table has a name, a type (integer,
 floating point or string), and a \code{GDALRATFieldUsage}. The usage
 distinguishes columns with particular understood purposes (such as color,
 histogram count, name), and columns that have other purposes not understood
-by the library (long label, e.g., wildfire_risk_category, etc).
+by the library (long labels, ancillary attributes, etc).
 
 In the general case, each row has a column indicating the minimum pixel
 value falling into that category, and a column indicating the maximum pixel
@@ -95,9 +95,9 @@ the categories start and the size of a category. This is called
 "Linear Binning" and the information is kept specially on the raster
 attribute table as a whole. In R, an attribute table that uses linear
 binning would have the following attributes set on the data frame:
-attr \code{"Row0Min"} = numeric lower bound (pixel value) of the first category,
-and attr \code{"BinSize"} = numeric width of each category (in pixel value
-units).
+attribute \code{"Row0Min"} = numeric lower bound (pixel value) of the first
+category, and attribute \code{"BinSize"} = numeric width of each category (in
+pixel value units).
 
 A raster attribute table is thematic or athematic (continuous). In R, the
 data frame has an attribute named \code{"GDALRATTableType"} with string value of
@@ -106,12 +106,14 @@ either \code{"thematic"} or \code{"athematic"}.
 \note{
 The full raster will be scanned.
 
-If \code{na_value} is not specified, then the \code{NA} pixel value (if present)
+If \code{na_value} is not specified, then an \code{NA} pixel value (if present)
 will not be recoded in the output data frame. This may have implications
 if joining to other data (\code{NA} will not match), or when using the returned
 data frame to set a default RAT on a dataset (\code{NA} will be interpreted
-as the internal value that R uses to represent it for the type, e.g.,
--2147483648 for integer).
+as the value that R uses internally to represent it for the type, e.g.,
+-2147483648 for \code{NA_integer_}). In some cases, removing the row in the output
+data frame with value \code{NA}, rather than recoding, may be desirable (i.e.,
+removing manually or side effect of \code{merge()}, for example).
 }
 \examples{
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")

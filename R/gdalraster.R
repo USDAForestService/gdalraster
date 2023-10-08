@@ -90,6 +90,7 @@
 #' ds$setColorTable(band, col_tbl, palette_interp)
 #'
 #' ds$getDefaultRAT(band)
+#' ds$setDefaultRAT(band, df)
 #'
 #' ds$flushCache()
 #'
@@ -543,7 +544,25 @@
 #'
 #' \code{$getDefaultRAT(band)}
 #' Returns the Raster Attribute Table for \code{band} as a data frame,
-#' or \code{NULL} if there is no associated Raster Attribute Table.
+#' or \code{NULL} if there is no associated Raster Attribute Table. See the
+#' stand-alone function [buildRAT()] for details of the Raster Attribute Table
+#' format.
+#'
+#' \code{$setDefaultRAT(band, df)}
+#' Sets a default Raster Attribute Table for \code{band} from data frame `df`.
+#' The input data frame will be checked for attribute `"GDALRATTableType"`
+#' which can have values of `"themetic"` or `"athematic"` (for continuous data).
+#' Columns of the data frame will be checked for attribute `"GFU"` (for "GDAL
+#' field usage"). If the `"GFU"` attribute is missing, a value of `"Generic"`
+#' will be used (corresponding to `GFU_Generic` in the GDAL API, for general
+#' purpose field). Columns with other, specific field usage values should
+#' generally be present in `df`, such as fields containing the set of unique
+#' (discrete) pixel values (GFU `"MinMax"`), pixel counts (GFU `"PixelCount"`),
+#' class names (GFU `"Name"`), color values (GFUs `"Red"`, "`Green"`, `"Blue"`),
+#' etc. The data frame will also be checked for attributes `"Row0Min"` and
+#' `"BinSize"` which can have numeric values that describe linear binning.
+#' See the stand-alone function [buildRAT()] for details of the GDAL Raster
+#' Attribute Table format and its representation as data frame.
 #'
 #' \code{$flushCache()}
 #' Flush all write cached data to disk. Any raster data written via GDAL calls,
