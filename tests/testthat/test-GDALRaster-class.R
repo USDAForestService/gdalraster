@@ -273,3 +273,29 @@ test_that("Int64 data type is detected", {
 		ds$close()
 	}
 })
+
+test_that("get/set default RAT works", {
+	evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+	f <- paste0(tempdir(), "/", "storml_evt_tmp.tif")
+	file.copy(evt_file,  f)
+	ds <- new(GDALRaster, f, read_only=FALSE)
+	expect_true(is.null(ds$getDefaultRAT(band=1)))
+	evt_csv <- system.file("extdata/LF20_EVT_220.csv", package="gdalraster")
+	evt_tbl <- read.csv(evt_csv)
+	evt_tbl <- evt_tbl[,1:7]
+	rat <- buildRAT(ds, table_type="thematic", na_value=-9999, join_df=evt_tbl)
+	ds$setDefaultRAT(band=1, rat)
+	ds$flushCache()
+	rat2 <- ds$getDefaultRAT(band=1)
+	expect_equal(nrow(rat2), 24)
+	expect_equal(ncol(rat2), 8)
+	expect_equal(attr(rat2, "GDALRATTableType"), "thematic")
+	expect_equal(attr(rat2$VALUE, "GFU"), "MinMax")
+	expect_equal(attr(rat2$COUNT, "GFU"), "PixelCount")
+	expect_equal(attr(rat2$EVT_NAME, "GFU"), "Name")
+	expect_equal(attr(rat2$EVT_LF, "GFU"), "Generic")
+	expect_equal(attr(rat2$B, "GFU"), "Blue")
+	ds$close()
+	deleteDataset(f)
+})
+

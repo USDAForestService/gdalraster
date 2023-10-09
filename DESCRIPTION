@@ -55,7 +55,7 @@ Suggests:
     testthat (>= 3.0.0),
     xml2
 NeedsCompilation: yes
-SystemRequirements: GDAL (>= 2.3.0, built against GEOS), PROJ (>= 4.8.0),
+SystemRequirements: GDAL (>= 2.4.0, built against GEOS), PROJ (>= 4.8.0),
     sqlite3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)

@@ -2312,16 +2312,16 @@ fi
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: GDAL: ${GDAL_VERSION}" >&5
 printf "%s\n" "$as_me: GDAL: ${GDAL_VERSION}" >&6;}
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking GDAL version >= 2.3.0" >&5
-printf %s "checking GDAL version >= 2.3.0... " >&6; }
+{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking GDAL version >= 2.4.0" >&5
+printf %s "checking GDAL version >= 2.4.0... " >&6; }
 
 GDAL_MAJ_VER=`echo $GDAL_VERSION | cut -d "." -f1`
 GDAL_MIN_VER=`echo $GDAL_VERSION | cut -d "." -f2`
 GDAL_PATCH_VER=`echo $GDAL_VERSION | cut -d "." -f3`
-if test ${GDAL_MAJ_VER} -lt 2 && test ${GDAL_MIN_VER} lt 3; then
+if test ${GDAL_MAJ_VER} -lt 2 && test ${GDAL_MIN_VER} lt 4; then
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-  as_fn_error $? "gdalraster is not compatible with GDAL versions below 2.3.0" "$LINENO" 5
+  as_fn_error $? "gdalraster is not compatible with GDAL versions below 2.4.0" "$LINENO" 5
 else
    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }

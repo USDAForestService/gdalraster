@@ -23,6 +23,35 @@ void _gdal_init(DllInfo *dll) {
     CPLSetConfigOption("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "YES");
 }
 
+// Internal lookup of GDALRATFieldUsage by string descriptor
+// Returns GFU_Generic if no match
+//' @noRd
+GDALRATFieldUsage _getGFU(std::string fld_usage) {
+
+	if (MAP_GFU.count(fld_usage) == 0) {
+		Rcpp::warning("Unrecognized GFU string, using GFU_Generic.");
+		return GFU_Generic;
+	}
+	else {
+		auto gfu = MAP_GFU.find(fld_usage);
+		return gfu->second;
+	}
+}
+
+// Internal lookup of GFU string by GDALRATFieldUsage
+// Returns "Generic" if no match
+//' @noRd
+std::string _getGFU_string(GDALRATFieldUsage gfu) {
+
+	for (auto it = MAP_GFU.begin(); it != MAP_GFU.end(); ++it)
+		if (it->second == gfu)
+			return it->first;
+	
+	Rcpp::warning("Unrecognized GDALRATFieldUsage, using GFU_Generic.");
+	return "Generic";
+}
+
+
 GDALRaster::GDALRaster() : 
 				fname(""),
 				hDataset(NULL),
@@ -1017,7 +1046,7 @@ std::string GDALRaster::getPaletteInterp(int band) const {
 	}
 }
 
-bool GDALRaster::setColorTable(int band, Rcpp::RObject &col_tbl, 
+bool GDALRaster::setColorTable(int band, Rcpp::RObject& col_tbl, 
 		std::string palette_interp) {
 		
 	this->_checkAccess(GA_Update);
@@ -1097,18 +1126,21 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 	CPLErr err;
 	int nCol = GDALRATGetColumnCount(hRAT);
 	int nRow = GDALRATGetRowCount(hRAT);
-	Rcpp::DataFrame dfRAT = Rcpp::DataFrame::create();
+	Rcpp::DataFrame df = Rcpp::DataFrame::create();
 	
 	for (int i=0; i < nCol; ++i) {
-		std::string sColName(GDALRATGetNameOfCol(hRAT, i));
+		std::string colName(GDALRATGetNameOfCol(hRAT, i));
 		GDALRATFieldType gft = GDALRATGetTypeOfCol(hRAT, i);
+		GDALRATFieldUsage gfu = GDALRATGetUsageOfCol(hRAT, i);
 		if (gft == GFT_Integer) {
 			std::vector<int> int_values(nRow);
 			err = GDALRATValuesIOAsInteger(hRAT, GF_Read, i, 0, nRow,
 					int_values.data());
 			if (err == CE_Failure)
 				Rcpp::stop("Read column failed.");
-			dfRAT.push_back(Rcpp::wrap(int_values), sColName);
+			Rcpp::IntegerVector v = Rcpp::wrap(int_values);
+			v.attr("GFU") = _getGFU_string(gfu);
+			df.push_back(v, colName);
 		}
 		else if (gft == GFT_Real) {
 			std::vector<double> dbl_values(nRow);
@@ -1116,7 +1148,9 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 					dbl_values.data());
 			if (err == CE_Failure)
 				Rcpp::stop("Read column failed.");
-			dfRAT.push_back(Rcpp::wrap(dbl_values), sColName);
+			Rcpp::NumericVector v = Rcpp::wrap(dbl_values);
+			v.attr("GFU") = _getGFU_string(gfu);
+			df.push_back(v, colName);
 		}
 		else if (gft == GFT_String) {
 			std::vector<char *> char_values(nRow);
@@ -1127,19 +1161,154 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
 			std::vector<std::string> str_values(nRow);
 			for (int n=0; n < nRow; ++n)
 				str_values[n] = char_values[n];
-			dfRAT.push_back(Rcpp::wrap(str_values), sColName);
+			Rcpp::CharacterVector v = Rcpp::wrap(str_values);
+			v.attr("GFU") = _getGFU_string(gfu);
+			df.push_back(v, colName);
 		}
 		else {
 			Rcpp::warning("Unhandled GDAL field type.");
 		}
 	}
+	
+	GDALRATTableType grtt = GDALRATGetTableType(hRAT);
+	if (grtt == GRTT_ATHEMATIC)
+		df.attr("GDALRATTableType") = "athematic";
+	else if (grtt == GRTT_THEMATIC)
+		df.attr("GDALRATTableType") = "thematic";
+	
+	// check for linear binning information
+	double dfRow0Min; // lower bound (pixel value) of the first category
+	double dfBinSize; // width of each category (in pixel value units)
+	if (GDALRATGetLinearBinning(hRAT, &dfRow0Min, &dfBinSize)) {
+		df.attr("Row0Min") = dfRow0Min;
+		df.attr("BinSize") = dfBinSize;
+	}
 
-	return dfRAT;
+	return df;
+}
+
+bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df) {
+	this->_checkAccess(GA_Update);
+	
+	GDALRasterBandH hBand = this->_getBand(band);
+	
+	int nRow = df.nrows();
+	int nCol = df.size();
+	int nCol_added = 0;
+	Rcpp::CharacterVector colNames = df.names();
+	CPLErr err;
+	
+	GDALRasterAttributeTableH hRAT = GDALCreateRasterAttributeTable();
+	if (hRAT == NULL)
+		Rcpp::stop("GDALCreateRasterAttributeTable() returned null pointer.");
+	GDALRATSetRowCount(hRAT, nRow);
+	if (df.hasAttribute("GDALRATTableType")) {
+		std::string s = Rcpp::as<std::string>(df.attr("GDALRATTableType"));
+		if (s == "thematic")
+			err = GDALRATSetTableType(hRAT, GRTT_THEMATIC);
+		else if (s == "athematic")
+			err = GDALRATSetTableType(hRAT, GRTT_ATHEMATIC);
+		else
+			Rcpp::warning("Unrecognized table type.");
+		if (err == CE_Failure)
+			Rcpp::warning("Failed to set table type.");
+	}
+	if (df.hasAttribute("Row0Min") && df.hasAttribute("BinSize")) {
+		double dfRow0Min = Rcpp::as<double>(df.attr("Row0Min"));
+		double dfBinSize = Rcpp::as<double>(df.attr("BinSize"));
+		err = GDALRATSetLinearBinning(hRAT, dfRow0Min, dfBinSize);
+		if (err == CE_Failure)
+			Rcpp::warning("Failed to set linear binning information.");
+	}
+	
+	for (int col=0; col < nCol; ++col) {
+		if (Rf_isMatrix(df[col])) {
+			Rcpp::warning("Matrix column is not supported (skipping).");
+			continue;
+		}
+		if (Rf_isFactor(df[col])) {
+			Rcpp::warning("Factor column is not supported (skipping).");
+			continue;
+		}
+		if (Rcpp::is<Rcpp::IntegerVector>(df[col]) ||
+				Rcpp::is<Rcpp::LogicalVector>(df[col])) {
+			// add GFT_Integer column
+			Rcpp::IntegerVector v = df[col];
+			GDALRATFieldUsage gfu = GFU_Generic;
+			if (v.hasAttribute("GFU"))
+				gfu = _getGFU(v.attr("GFU"));
+			Rcpp::String colName(colNames[col]);
+			err = GDALRATCreateColumn(hRAT, colName.get_cstring(),
+					GFT_Integer, gfu);
+			if (err == CE_Failure) {
+				Rcpp::warning("Create integer column failed (skipping).");
+				continue;
+			}
+			for (int row=0; row < nRow; ++row) {
+				GDALRATSetValueAsInt(hRAT, row, col, v(row));
+			}
+			nCol_added += 1;
+		}
+		else if (Rcpp::is<Rcpp::NumericVector>(df[col])) {
+			// add GFT_Real column
+			Rcpp::NumericVector v = df[col];
+			GDALRATFieldUsage gfu = GFU_Generic;
+			if (v.hasAttribute("GFU"))
+				gfu = _getGFU(v.attr("GFU"));
+			Rcpp::String colName(colNames[col]);
+			err = GDALRATCreateColumn(hRAT, colName.get_cstring(),
+					GFT_Real, gfu);
+			if (err == CE_Failure) {
+				Rcpp::warning("Create real column failed (skipping).");
+				continue;
+			}
+			for (int row=0; row < nRow; ++row) {
+				GDALRATSetValueAsDouble(hRAT, row, col, v(row));
+			}
+			nCol_added += 1;
+		}
+		else if (Rcpp::is<Rcpp::CharacterVector>(df[col])) {
+			// add GFT_String column
+			Rcpp::CharacterVector v = df[col];
+			GDALRATFieldUsage gfu = GFU_Generic;
+			if (v.hasAttribute("GFU"))
+				gfu = _getGFU(v.attr("GFU"));
+			Rcpp::String colName(colNames[col]);
+			err = GDALRATCreateColumn(hRAT, colName.get_cstring(),
+					GFT_String, gfu);
+			if (err == CE_Failure) {
+				Rcpp::warning("Create string column failed (skipping).");
+				continue;
+			}
+			for (int row=0; row < nRow; ++row) {
+				Rcpp::String s(v(row));
+				GDALRATSetValueAsString(hRAT, row, col, s.get_cstring());
+			}
+			nCol_added += 1;
+		}
+		else {
+			Rcpp::warning("Unsupported column type (skipping).");
+		}
+	}
+
+	if (nCol_added > 0)
+		err = GDALSetDefaultRAT(hBand, hRAT);
+
+	GDALDestroyRasterAttributeTable(hRAT);
+	
+	if (nCol_added == 0 || err == CE_Failure) {
+		Rcpp::Rcerr << "Could not set raster attribute table.\n";
+		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 void GDALRaster::flushCache() {
 	this->_checkAccess(GA_Update);
 	
+	// GDAL >= 3.7 has CPLErr return value (RFC 91)
 	GDALFlushCache(hDataset);
 }
 
@@ -1153,6 +1322,7 @@ int GDALRaster::getChecksum(int band, int xoff, int yoff,
 }
 
 void GDALRaster::close() {
+	// GDAL >= 3.7 has CPLErr return value (RFC 91)
 	GDALClose(hDataset);
 	hDataset = NULL;
 }
@@ -1290,6 +1460,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Set a color table for this band.")
     .const_method("getDefaultRAT", &GDALRaster::getDefaultRAT, 
     	"Return default Raster Attribute Table as data frame.")
+    .method("setDefaultRAT", &GDALRaster::setDefaultRAT, 
+    	"Set Raster Attribute Table from data frame.")
     .method("flushCache", &GDALRaster::flushCache, 
     	"Flush all write cached data to disk.")
     .const_method("getChecksum", &GDALRaster::getChecksum, 

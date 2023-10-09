@@ -7,6 +7,7 @@
 
 #include "rcpp_util.h"
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -20,6 +21,31 @@ int CPL_DLL CPL_STDCALL GDALTermProgressR(double, const char *, void *);
 typedef void *GDALDatasetH;
 typedef void *GDALRasterBandH;
 typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
+#endif
+
+#ifdef GDAL_H_INCLUDED
+// Map certain GDAL enums to string names for use in R
+// GDALRATFieldUsage (GFU)
+const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
+	{"Generic", GFU_Generic},
+	{"PixelCount", GFU_PixelCount},
+	{"Name", GFU_Name},
+	{"Min", GFU_Min},
+	{"Max", GFU_Max},
+	{"MinMax", GFU_MinMax},
+	{"Red", GFU_Red},
+	{"Green", GFU_Green},
+	{"Blue", GFU_Blue},
+	{"Alpha", GFU_Alpha},
+	{"RedMin", GFU_RedMin},
+	{"GreenMin", GFU_GreenMin},
+	{"BlueMin", GFU_BlueMin},
+	{"AlphaMin", GFU_AlphaMin},
+	{"RedMax", GFU_RedMax},
+	{"GreenMax", GFU_GreenMax},
+	{"BlueMax", GFU_BlueMax},
+	{"AlphaMax", GFU_AlphaMax}
+};
 #endif
 
 Rcpp::CharacterVector gdal_version();
@@ -164,10 +190,11 @@ class GDALRaster {
 	
 	SEXP getColorTable(int band) const;
 	std::string getPaletteInterp(int band) const;
-	bool setColorTable(int band, Rcpp::RObject &col_tbl,
+	bool setColorTable(int band, Rcpp::RObject& col_tbl,
 			std::string palette_interp);
 	
 	SEXP getDefaultRAT(int band) const;
+	bool setDefaultRAT(int band, Rcpp::DataFrame& df);
 	
 	void flushCache();
 	
@@ -175,7 +202,7 @@ class GDALRaster {
 	
 	void close();
 	
-	// methods for internal use not exposed in R
+	// methods for internal use not exported to R
 	void _checkAccess(GDALAccess access_needed) const;
 	GDALRasterBandH _getBand(int band) const;
 };
