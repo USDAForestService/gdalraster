@@ -32,6 +32,7 @@ supporting:
   - creation from existing raster as template
   - read/set raster dataset parameters
   - low-level I/O
+  - read/set color tables and raster attribute tables
   - copy files/move/rename/delete datasets
   - virtual raster (VRT) for virtual subsetting, resampling and kernel
     filtering

@@ -1,6 +1,10 @@
 # gdalraster 1.5.1 (dev)
 
-* gdalraster now requires GDAL >= 2.4.0 (2023-10-05)
+* add `buildRAT()`: build a new GDAL Raster Attribute Table as data frame (2023-10-08)
+
+* add `GDALRaster$setDefaultRAT()`: set Raster Attribute Table from data frame (2023-10-08)
+
+* gdalraster now requires GDAL >= 2.4.0 (previously >= 2.3.0) (2023-10-08)
 
 * add `GDALRaster$getDefaultRAT()`: return Raster Attribute Table as a data frame (2023-10-04)
 

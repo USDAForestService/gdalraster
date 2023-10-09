@@ -26,6 +26,7 @@ reference:
   - bbox_to_wkt
   - bbox_intersect
   - bbox_union
+  - buildRAT
   - calc
   - combine
   - copyDatasetFiles
