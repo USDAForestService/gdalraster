@@ -237,13 +237,13 @@ buildRAT <- function(raster,
 	attr(d[,col_names[1]], "GFU") <- "MinMax"
 	attr(d[,col_names[2]], "GFU") <- "PixelCount"
 	if (join) {
-		for (nm in names(join_df)) {
+		for (nm in setdiff(names(join_df), col_names)) {
 			if (regexpr("name", tolower(nm), fixed=TRUE) > 0) {
 				attr(d[,nm], "GFU") <- "Name"
 				break
 			}
 		}
-		for (nm in names(join_df)) {
+		for (nm in setdiff(names(join_df), col_names)) {
 			if (tolower(nm) == "r" || tolower(nm) == "red")
 				attr(d[,nm], "GFU") <- "Red"
 			else if (tolower(nm) == "g" || tolower(nm) == "green")
