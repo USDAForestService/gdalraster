@@ -1,5 +1,7 @@
 # gdalraster 1.5.1 (dev)
 
+* add vignette: [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html) (2023-10-09)
+
 * add `buildRAT()`: build a new GDAL Raster Attribute Table as data frame (2023-10-08)
 
 * add `GDALRaster$setDefaultRAT()`: set Raster Attribute Table from data frame (2023-10-08)
