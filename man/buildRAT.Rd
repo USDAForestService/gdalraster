@@ -17,13 +17,13 @@ buildRAT(
 \item{raster}{Either a \code{GDALRaster} object, or a character string containing
 the file name of a raster dataset to open.}
 
-\item{band}{Integer scalar. Band number to read (default \code{1}).}
+\item{band}{Integer scalar, band number to read (default \code{1L}).}
 
 \item{col_names}{Character vector of length two containing names to use for
 column 1 (pixel values) and column 2 (pixel counts) in the output data
-frame (default \code{c("VALUE", "COUNT")}).}
+frame (defaults are \code{c("VALUE", "COUNT")}).}
 
-\item{table_type}{A character string describing the type of the attribute
+\item{table_type}{Character string describing the type of the attribute
 table. One of either \code{"thematic"}, or \code{"athematic"} for continuous data
 (the default).}
 
@@ -32,7 +32,8 @@ table. One of either \code{"thematic"}, or \code{"athematic"} for continuous dat
 If \code{NULL} (the default), \code{NA} will not be recoded.}
 
 \item{join_df}{Optional data frame for joining additional attributes. Must
-have a column of unique values with the same name as \code{col_names[1]}.}
+have a column of unique values with the same name as \code{col_names[1]}
+(\code{"VALUE"} by default).}
 }
 \value{
 A data frame with at least two columns containing the set of unique
@@ -40,7 +41,7 @@ pixel values and their counts. These columns have attribute \code{"GFU"} set to
 \code{"MinMax"} for the values, and \code{"PixelCount"} for the counts. If \code{join_df} is
 given, the returned data frame will have additional columns that result from
 \code{merge()}. The \code{"GFU"} attribute of the additional columns will be assigned
-automatically based on their names (\emph{case-insensitive} matching, see
+automatically based on the column names (\emph{case-insensitive} matching, see
 Details). The returned data frame has attribute \code{"GDALRATTableType"} set to
 \code{table_type}.
 }
@@ -48,7 +49,7 @@ Details). The returned data frame has attribute \code{"GDALRATTableType"} set to
 \code{buildRAT()} reads all pixels of an input raster to obtain the set of
 unique values and their counts. The result is returned as a data frame
 suitable for use with the class method \code{GDALRaster$setDefaultRAT()}. The
-returned data frame might be further modified before setting as a Raster
+returned data frame might be further modified before setting it as a Raster
 Attribute Table in a dataset, for example, by adding columns containing
 class names, color values, or other information (see Details).
 An optional input data frame containing such attributes may be given, in
@@ -128,7 +129,7 @@ attribute \code{"Row0Min"} = the numeric lower bound (pixel value) of the first
 category, and attribute \code{"BinSize"} = the numeric width of each category (in
 pixel value units). \code{buildRAT()} does not create tables with linear binning,
 but one could be created manually based on the specifications above, and
-applied to a raster with the class method \code{GDALRaster$setDefaultRAT()}.
+applied to a raster band with the class method \code{GDALRaster$setDefaultRAT()}.
 
 A raster attribute table is thematic or athematic (continuous). In R, the
 data frame has an attribute named \code{"GDALRATTableType"} with string value of

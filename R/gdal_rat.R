@@ -9,7 +9,7 @@
 #' `buildRAT()` reads all pixels of an input raster to obtain the set of
 #' unique values and their counts. The result is returned as a data frame
 #' suitable for use with the class method `GDALRaster$setDefaultRAT()`. The
-#' returned data frame might be further modified before setting as a Raster
+#' returned data frame might be further modified before setting it as a Raster
 #' Attribute Table in a dataset, for example, by adding columns containing
 #' class names, color values, or other information (see Details).
 #' An optional input data frame containing such attributes may be given, in
@@ -89,7 +89,7 @@
 #' category, and attribute `"BinSize"` = the numeric width of each category (in
 #' pixel value units). `buildRAT()` does not create tables with linear binning,
 #' but one could be created manually based on the specifications above, and
-#' applied to a raster with the class method `GDALRaster$setDefaultRAT()`.
+#' applied to a raster band with the class method `GDALRaster$setDefaultRAT()`.
 #'
 #' A raster attribute table is thematic or athematic (continuous). In R, the
 #' data frame has an attribute named `"GDALRATTableType"` with string value of
@@ -110,24 +110,25 @@
 #'
 #' @param raster Either a `GDALRaster` object, or a character string containing
 #' the file name of a raster dataset to open.
-#' @param band Integer scalar. Band number to read (default `1`).
+#' @param band Integer scalar, band number to read (default `1L`).
 #' @param col_names Character vector of length two containing names to use for
 #' column 1 (pixel values) and column 2 (pixel counts) in the output data
-#' frame (default `c("VALUE", "COUNT")`).
-#' @param table_type A character string describing the type of the attribute
+#' frame (defaults are `c("VALUE", "COUNT")`).
+#' @param table_type Character string describing the type of the attribute
 #' table. One of either `"thematic"`, or `"athematic"` for continuous data
 #' (the default).
 #' @param na_value Numeric scalar. If the set of unique pixel values has an
 #' `NA`, it will be recoded to `na_value` in the returned data frame.
 #' If `NULL` (the default), `NA` will not be recoded.
 #' @param join_df Optional data frame for joining additional attributes. Must
-#' have a column of unique values with the same name as `col_names[1]`.
+#' have a column of unique values with the same name as `col_names[1]`
+#' (`"VALUE"` by default).
 #' @returns A data frame with at least two columns containing the set of unique
 #' pixel values and their counts. These columns have attribute `"GFU"` set to
 #' `"MinMax"` for the values, and `"PixelCount"` for the counts. If `join_df` is
 #' given, the returned data frame will have additional columns that result from
 #' `merge()`. The `"GFU"` attribute of the additional columns will be assigned
-#' automatically based on their names (_case-insensitive_ matching, see
+#' automatically based on the column names (_case-insensitive_ matching, see
 #' Details). The returned data frame has attribute `"GDALRATTableType"` set to
 #' `table_type`.
 #'
@@ -212,9 +213,9 @@ buildRAT <- function(raster,
 		join = TRUE
 		if (!is.data.frame(join_df))
 			stop("join_df must be a data frame.", call. = FALSE)
-		if ( !(tolower(col_names[1]) %in% tolower(names(join_df))) )
+		if ( !(col_names[1] %in% names(join_df)) )
 			stop("names(join_df) must contain col_names[1].", call. = FALSE)
-		if (tolower(col_names[2]) %in% tolower(names(join_df)))
+		if (col_names[2] %in% names(join_df))
 			stop("names(join_df) cannot contain col_names[2].", call. = FALSE)
 	}
 
@@ -228,7 +229,7 @@ buildRAT <- function(raster,
 			message("Row with NA value will be dropped in join.")
 		n_before <- nrow(d)
 		d <- merge(d, join_df)
-		if (n_before > nrow(d))
+		if (n_before != nrow(d))
 			message("rows before join: ", n_before, ", rows after: ", nrow(d))
 	}
 	d <- d[order(d[,col_names[1]]),]
