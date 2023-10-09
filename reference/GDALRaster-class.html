@@ -170,6 +170,7 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setColorTable</span><span class="op">(</span><span class="va">band</span>, <span class="va">col_tbl</span>, <span class="va">palette_interp</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setDefaultRAT</span><span class="op">(</span><span class="va">band</span>, <span class="va">df</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">flushCache</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -519,7 +520,24 @@ Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the color 
 could not be set.</p>
 <p><code>$getDefaultRAT(band)</code>
 Returns the Raster Attribute Table for <code>band</code> as a data frame,
-or <code>NULL</code> if there is no associated Raster Attribute Table.</p>
+or <code>NULL</code> if there is no associated Raster Attribute Table. See the
+stand-alone function <code><a href="buildRAT.html">buildRAT()</a></code> for details of the Raster Attribute Table
+format.</p>
+<p><code>$setDefaultRAT(band, df)</code>
+Sets a default Raster Attribute Table for <code>band</code> from data frame <code>df</code>.
+The input data frame will be checked for attribute <code>"GDALRATTableType"</code>
+which can have values of <code>"thematic"</code> or <code>"athematic"</code> (for continuous data).
+Columns of the data frame will be checked for attribute <code>"GFU"</code> (for "GDAL
+field usage"). If the <code>"GFU"</code> attribute is missing, a value of <code>"Generic"</code>
+will be used (corresponding to <code>GFU_Generic</code> in the GDAL API, for general
+purpose field). Columns with other, specific field usage values should
+generally be present in <code>df</code>, such as fields containing the set of unique
+(discrete) pixel values (GFU <code>"MinMax"</code>), pixel counts (GFU <code>"PixelCount"</code>),
+class names (GFU <code>"Name"</code>), color values (GFUs <code>"Red"</code>, "<code>Green"</code>, <code>"Blue"</code>),
+etc. The data frame will also be checked for attributes <code>"Row0Min"</code> and
+<code>"BinSize"</code> which can have numeric values that describe linear binning.
+See the stand-alone function <code><a href="buildRAT.html">buildRAT()</a></code> for details of the GDAL Raster
+Attribute Table format and its representation as data frame.</p>
 <p><code>$flushCache()</code>
 Flush all write cached data to disk. Any raster data written via GDAL calls,
 but buffered internally will be written to disk. Using this method does not
