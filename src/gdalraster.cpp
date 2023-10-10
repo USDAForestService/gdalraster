@@ -1145,12 +1145,16 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df) {
 	GDALRATSetRowCount(hRAT, nRow);
 	if (df.hasAttribute("GDALRATTableType")) {
 		std::string s = Rcpp::as<std::string>(df.attr("GDALRATTableType"));
-		if (s == "thematic")
+		if (s == "thematic") {
 			err = GDALRATSetTableType(hRAT, GRTT_THEMATIC);
-		else if (s == "athematic")
+		}
+		else if (s == "athematic") {
 			err = GDALRATSetTableType(hRAT, GRTT_ATHEMATIC);
-		else
+		}
+		else {
+			err = CE_Failure;
 			Rcpp::warning("Unrecognized table type.");
+		}
 		if (err == CE_Failure)
 			Rcpp::warning("Failed to set table type.");
 	}
