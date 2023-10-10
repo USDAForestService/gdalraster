@@ -84,10 +84,12 @@ remotes::install_github("USDAForestService/gdalraster")
 ## Documentation
 
   - [Reference
-    manual](https://usdaforestservice.github.io/gdalraster/reference/)
+    Manual](https://usdaforestservice.github.io/gdalraster/reference/)
   - [Raster API
-    tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
+    Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
+  - [Raster Attribute
+    Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
   - [Raster
-    display](https://usdaforestservice.github.io/gdalraster/articles/raster-display.html)
-  - [GDAL block
-    caching](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
+    Display](https://usdaforestservice.github.io/gdalraster/articles/raster-display.html)
+  - [GDAL Block
+    Caching](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
