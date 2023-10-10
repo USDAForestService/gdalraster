@@ -23,11 +23,34 @@ void _gdal_init(DllInfo *dll) {
     CPLSetConfigOption("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "YES");
 }
 
+// Internal lookup of GDALColorInterp by string descriptor
+// Returns GCI_Undefined if no match
+//' @noRd
+GDALColorInterp _getGCI(std::string col_interp) {
+	if (MAP_GCI.count(col_interp) == 0) {
+		return GCI_Undefined;
+	}
+	else {
+		auto gci = MAP_GCI.find(col_interp);
+		return gci->second;
+	}
+}
+
+// Internal lookup of GCI string by GDALColorInterp
+// Returns "Undefined" if no match
+//' @noRd
+std::string _getGCI_string(GDALColorInterp gci) {
+	for (auto it = MAP_GCI.begin(); it != MAP_GCI.end(); ++it)
+		if (it->second == gci)
+			return it->first;
+	
+	return "Undefined";
+}
+
 // Internal lookup of GDALRATFieldUsage by string descriptor
 // Returns GFU_Generic if no match
 //' @noRd
 GDALRATFieldUsage _getGFU(std::string fld_usage) {
-
 	if (MAP_GFU.count(fld_usage) == 0) {
 		Rcpp::warning("Unrecognized GFU string, using GFU_Generic.");
 		return GFU_Generic;
@@ -42,7 +65,6 @@ GDALRATFieldUsage _getGFU(std::string fld_usage) {
 // Returns "Generic" if no match
 //' @noRd
 std::string _getGFU_string(GDALRATFieldUsage gfu) {
-
 	for (auto it = MAP_GFU.begin(); it != MAP_GFU.end(); ++it)
 		if (it->second == gfu)
 			return it->first;
@@ -279,8 +301,8 @@ std::vector<int> GDALRaster::dim() const {
 	this->_checkAccess(GA_ReadOnly);
 		
 	std::vector<int> ret = {this->getRasterXSize(),
-								this->getRasterYSize(),
-								this->getRasterCount()};
+							this->getRasterYSize(),
+							this->getRasterCount()};
 	return ret;
 }
 
@@ -501,62 +523,7 @@ std::string GDALRaster::getRasterColorInterp(int band) const {
 	GDALRasterBandH hBand = this->_getBand(band);
 	GDALColorInterp gci = GDALGetRasterColorInterpretation(hBand);
 	
-	std::string col_interp = "";
-	switch (gci) {
-		case GCI_Undefined:
-			col_interp = "Undefined";
-			break;
-		case GCI_GrayIndex:
-			col_interp = "Gray";
-			break;
-		case GCI_PaletteIndex:
-			col_interp = "Palette";
-			break;
-		case GCI_RedBand:
-			col_interp = "Red";
-			break;
-		case GCI_GreenBand:
-			col_interp = "Green";
-			break;
-		case GCI_BlueBand:
-			col_interp = "Blue";
-			break;
-		case GCI_AlphaBand:
-			col_interp = "Alpha";
-			break;
-		case GCI_HueBand:
-			col_interp = "Hue";
-			break;
-		case GCI_SaturationBand:
-			col_interp = "Saturation";
-			break;
-		case GCI_LightnessBand:
-			col_interp = "Lightness";
-			break;
-		case GCI_CyanBand:
-			col_interp = "Cyan";
-			break;
-		case GCI_MagentaBand:
-			col_interp = "Magenta";
-			break;
-		case GCI_YellowBand:
-			col_interp = "Yellow";
-			break;
-		case GCI_BlackBand:
-			col_interp = "Black";
-			break;
-		case GCI_YCbCr_YBand:
-			col_interp = "YCbCr_Y";
-			break;
-		case GCI_YCbCr_CbBand:
-			col_interp = "YCbCr_Cb";
-			break;
-		case GCI_YCbCr_CrBand:
-			col_interp = "YCbCr_Cr";
-			break;
-	}
-
-	return col_interp;
+	return _getGCI_string(gci);
 }
 
 void GDALRaster::setRasterColorInterp(int band, std::string col_interp) {
@@ -564,43 +531,14 @@ void GDALRaster::setRasterColorInterp(int band, std::string col_interp) {
 
 	GDALRasterBandH hBand = this->_getBand(band);
 	GDALColorInterp gci;
-	
-	if (col_interp == "Undefined")
+	if (col_interp == "Undefined") {
 		gci = GCI_Undefined;
-	else if (col_interp == "Gray")
-		gci = GCI_GrayIndex;
-	else if (col_interp == "Palette")
-		gci = GCI_PaletteIndex;
-	else if (col_interp == "Red")
-		gci = GCI_RedBand;
-	else if (col_interp == "Green")
-		gci = GCI_GreenBand;
-	else if (col_interp == "Blue")
-		gci = GCI_BlueBand;
-	else if (col_interp == "Alpha")
-		gci = GCI_AlphaBand;
-	else if (col_interp == "Hue")
-		gci = GCI_HueBand;
-	else if (col_interp == "Saturation")
-		gci = GCI_SaturationBand;
-	else if (col_interp == "Lightness")
-		gci = GCI_LightnessBand;
-	else if (col_interp == "Cyan")
-		gci = GCI_CyanBand;
-	else if (col_interp == "Magenta")
-		gci = GCI_MagentaBand;
-	else if (col_interp == "Yellow")
-		gci = GCI_YellowBand;
-	else if (col_interp == "Black")
-		gci = GCI_BlackBand;
-	else if (col_interp == "YCbCr_Y")
-		gci = GCI_YCbCr_YBand;
-	else if (col_interp == "YCbCr_Cb")
-		gci = GCI_YCbCr_CbBand;
-	else if (col_interp == "YCbCr_Cr")
-		gci = GCI_YCbCr_CrBand;
-	else
-		Rcpp::stop("Invalid col_interp.");
+	}
+	else {
+		gci = _getGCI(col_interp);
+		if (gci == GCI_Undefined)
+			Rcpp::stop("Invalid col_interp.");
+	}
 
 	GDALSetRasterColorInterpretation(hBand, gci);
 }
@@ -1109,10 +1047,13 @@ bool GDALRaster::setColorTable(int band, Rcpp::RObject& col_tbl,
 	
 	CPLErr err = GDALSetRasterColorTable(hBand, hColTbl);
 	GDALDestroyColorTable(hColTbl);
-	if (err == CE_None)
-		return true;
-	else
+	if (err == CE_Failure) {
+		Rcpp::Rcerr << "Failed to set color table.\n";
 		return false;
+	}
+	else {
+		return true;
+	}
 }
 
 SEXP GDALRaster::getDefaultRAT(int band) const {

@@ -25,6 +25,26 @@ typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 
 #ifdef GDAL_H_INCLUDED
 // Map certain GDAL enums to string names for use in R
+// GDALColorInterp (GCI)
+const std::map<std::string, GDALColorInterp> MAP_GCI{
+	{"Undefined", GCI_Undefined},
+	{"Gray", GCI_GrayIndex},
+	{"Palette", GCI_PaletteIndex},
+	{"Red", GCI_RedBand},
+	{"Green", GCI_GreenBand},
+	{"Blue", GCI_BlueBand},
+	{"Alpha", GCI_AlphaBand},
+	{"Hue", GCI_HueBand},
+	{"Saturation", GCI_SaturationBand},
+	{"Lightness", GCI_LightnessBand},
+	{"Cyan", GCI_CyanBand},
+	{"Magenta", GCI_MagentaBand},
+	{"Yellow", GCI_YellowBand},
+	{"Black", GCI_BlackBand},
+	{"YCbCr_Y", GCI_YCbCr_YBand},
+	{"YCbCr_Cb", GCI_YCbCr_CbBand},
+	{"YCbCr_Cr", GCI_YCbCr_CrBand}
+};
 // GDALRATFieldUsage (GFU)
 const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
 	{"Generic", GFU_Generic},
