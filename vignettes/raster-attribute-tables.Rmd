@@ -38,8 +38,6 @@ evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 f <- paste0(tempdir(), "/", "storml_evt_tmp.tif")
 file.copy(evt_file,  f)
 ds <- new(GDALRaster, f, read_only=FALSE)
-
-# NULL is returned if no default RAT is associated with the band
 ds$getDefaultRAT(band=1)
 
 # get the full attribute table for LANDFIRE EVT from its CSV file
@@ -84,7 +82,9 @@ ds$close()
 
 ## Using in QGIS
 
-The **Raster Attribute Table Plugin** for [QGIS](https://qgis.org/) can be used to edit and display RATs for discrete rasters using the paletted/unique-values renderer (QGIS-style classification on arbitrary RAT columns). The plugin also provides limited support for continuous raster RATs using the single-band/psesudocolor renderer. With the plugin enabled, "Open Attribute Table" can be selected after right-clicking a raster layer that has an associated RAT. For the LANDFIRE EVT layer modified above, classifying on EVT_NAME generates the following display:
+[QGIS](https://qgis.org/) >= 3.30 includes [extensive support for Raster Attribute Tables](https://qgis.org/en/site/forusers/visualchangelog330/index.html#feature-raster-attribute-tables-rat-suppport).
+
+For QGIS < 3.30, the **Raster Attribute Table Plugin** can be used to edit and display RATs for discrete rasters using the paletted/unique-values renderer (QGIS-style classification on arbitrary RAT columns). With the plugin enabled, "Open Attribute Table" can be selected after right-clicking a raster layer that has an associated RAT. For the LANDFIRE EVT layer as modified above, classifying on EVT_NAME generates the following display:
 
 ```{r, echo=FALSE, fig.cap="LANDFIRE EVT in the Raster Attribute Table QGIS Plugin", out.width = '90%'}
 knitr::include_graphics("qgis_rat_plugin_classify.png")
@@ -98,7 +98,7 @@ knitr::include_graphics("qgis_rat_plugin_classify.png")
 
 * [Raster Attribute Table QGIS Plugin](https://github.com/noaa-ocs-hydrography/qgis-raster-attribute-table-plugin)
 
-## Data source
+## Data sources
 
 The example dataset is Existing Vegetation Type (EVT) from the LANDFIRE Program (LF 2020 version, <https://landfire.gov/>). Map units are based on [NatureServe Ecological Systems](https://www.natureserve.org/products/terrestrial-ecological-systems-united-states).
 
