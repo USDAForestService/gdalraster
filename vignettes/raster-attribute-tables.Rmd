@@ -96,7 +96,9 @@ knitr::include_graphics("qgis_rat_plugin_classify.png")
 
 * [GDALRasterAttributeTable Class Reference](https://gdal.org/doxygen/classGDALRasterAttributeTable.html)
 
-* [Raster Attribute Table QGIS Plugin](https://github.com/noaa-ocs-hydrography/qgis-raster-attribute-table-plugin)
+* [Raster Attribute Table QGIS GUI](https://github.com/qgis/QGIS/pull/50687) (since QGIS 3.30; examples for different use cases and workflows)
+
+* [Raster Attribute Table QGIS Plugin](https://github.com/noaa-ocs-hydrography/qgis-raster-attribute-table-plugin) (QGIS < 3.30)
 
 ## Data sources
 
