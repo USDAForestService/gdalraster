@@ -152,8 +152,6 @@ usage in a GDAL RAT, suitable for passing to
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span><span class="va">evt_file</span>,  <span class="va">f</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co"># NULL is returned if no default RAT is associated with the band</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; NULL</span></span>
 <span></span>
@@ -275,14 +273,15 @@ usage in a GDAL RAT, suitable for passing to
 <div class="section level2">
 <h2 id="using-in-qgis">Using in QGIS<a class="anchor" aria-label="anchor" href="#using-in-qgis"></a>
 </h2>
-<p>The <strong>Raster Attribute Table Plugin</strong> for <a href="https://qgis.org/" class="external-link">QGIS</a> can be used to edit and display RATs
-for discrete rasters using the paletted/unique-values renderer
-(QGIS-style classification on arbitrary RAT columns). The plugin also
-provides limited support for continuous raster RATs using the
-single-band/psesudocolor renderer. With the plugin enabled, “Open
+<p><a href="https://qgis.org/" class="external-link">QGIS</a> &gt;= 3.30 includes <a href="https://qgis.org/en/site/forusers/visualchangelog330/index.html#feature-raster-attribute-tables-rat-suppport" class="external-link">extensive
+support for Raster Attribute Tables</a>.</p>
+<p>For QGIS &lt; 3.30, the <strong>Raster Attribute Table
+Plugin</strong> can be used to edit and display RATs for discrete
+rasters using the paletted/unique-values renderer (QGIS-style
+classification on arbitrary RAT columns). With the plugin enabled, “Open
 Attribute Table” can be selected after right-clicking a raster layer
-that has an associated RAT. For the LANDFIRE EVT layer modified above,
-classifying on EVT_NAME generates the following display:</p>
+that has an associated RAT. For the LANDFIRE EVT layer as modified
+above, classifying on EVT_NAME generates the following display:</p>
 <div class="figure">
 <img src="qgis_rat_plugin_classify.png" alt="LANDFIRE EVT in the Raster Attribute Table QGIS Plugin" width="90%"><p class="caption">
 LANDFIRE EVT in the Raster Attribute Table QGIS Plugin
@@ -301,7 +300,7 @@ Attribute Table QGIS Plugin</a></p></li>
 </ul>
 </div>
 <div class="section level2">
-<h2 id="data-source">Data source<a class="anchor" aria-label="anchor" href="#data-source"></a>
+<h2 id="data-sources">Data sources<a class="anchor" aria-label="anchor" href="#data-sources"></a>
 </h2>
 <p>The example dataset is Existing Vegetation Type (EVT) from the
 LANDFIRE Program (LF 2020 version, <a href="https://landfire.gov/" class="external-link uri">https://landfire.gov/</a>). Map units are based on <a href="https://www.natureserve.org/products/terrestrial-ecological-systems-united-states" class="external-link">NatureServe
