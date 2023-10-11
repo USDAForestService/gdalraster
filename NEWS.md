@@ -1,7 +1,5 @@
 # gdalraster 1.5.1 (dev)
 
-* add vignette: [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html) (2023-10-09)
-
 * add `buildRAT()`: build a new GDAL Raster Attribute Table as data frame (2023-10-08)
 
 * add `GDALRaster$setDefaultRAT()`: set Raster Attribute Table from data frame (2023-10-08)
@@ -32,7 +30,7 @@
 
 * add some missing error checks in src/gdal_exp.cpp (#104) (2023-09-27) 
 
-* documentation: add [notes](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note) for `RunningStats-class`; update vignette with `gdal_formats()` and `getCreationOptions()`
+* documentation: add [notes](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note) for `RunningStats-class`; update Raster API Tutorial with `gdal_formats()` and `getCreationOptions()`; add vignette: [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
 
 # gdalraster 1.5.0
 
