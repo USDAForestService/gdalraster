@@ -14,19 +14,19 @@ knitr::opts_chunk$set(
 )
 ```
 
-A GDAL Raster Attribute Table (RAT) provides attribute information about pixel values. Raster attribute tables can be used to represent histograms, color tables, and classification information. Each row in the table applies to either a single pixel value or a range of values, and might have attributes such as the histogram count for that value (or range), the color that pixels of that value (or range) should be displayed, names of classes, or various other information. **gdalraster** supports reading Raster Attribute Tables to an R data frame, building new tables, and setting a default RAT on a raster band.
+A GDAL Raster Attribute Table (RAT) provides attribute information about pixel values. Raster attribute tables can be used to represent histograms, color tables, and classification information. Each row in the table applies to either a single pixel value or a range of values, and might have attributes such as the histogram count for that value (or range), the color that pixels of that value (or range) should be displayed, names of classes, or various other information. **gdalraster** supports reading Raster Attribute Tables as R data frame, building new tables, and setting a default RAT on a raster band.
 
 ## Format of GDAL RAT
 
 Each column in a raster attribute table has a name, a type (integer, floating point or string), and a `GDALRATFieldUsage`. The field usage distinguishes columns with particular understood purposes (such as color, histogram count, class name), and columns that have other purposes not understood by the library (long labels, ancillary attributes, etc).
 
-In the general case, each row has a field indicating the minimum pixel value falling into that category, and a field indicating the maximum pixel value. In the GDAL API, these are indicated with usage values of `GFU_Min` and `GFU_Max` (`GDALRATFieldUsage` enumeration constants). This vignette will focus on the particular but common case where each row is a discrete pixel value. In this case, a single column with usage `GFU_MinMax` (indicating class value) would be used instead of separate min and max columns. The table is represented in R as a data frame with column attribute `"GFU"` containing the field usage as a string, e.g., `"MinMax"` (case-sensitive). Other field usage types include `"PixelCount"` (`GFU_PixelCount`, histogram pixel count), `"Name"` (`GFU_Name`, class name), `"Red"` (`GFU_Red`, class color 0-255), `"Green"` (`GFU_Green`, class color 0-255), `"Blue"` (`GFU_Blue`, class color 0-255), and `"Generic"` (`GFU_Generic`, general purpose field).
+In the general case, each row has a field indicating the minimum pixel value falling into that category, and a field indicating the maximum pixel value. In the GDAL API, these are indicated with usage values of `GFU_Min` and `GFU_Max` (`GDALRATFieldUsage` enumeration constants). This vignette will focus on the particular but common case where each row is a discrete pixel value. In this case, a single column with usage `GFU_MinMax` (indicating class value) would be used instead of separate min and max columns. The table is represented in R as a data frame with column attribute `"GFU"` containing the field usage, e.g., `"MinMax"` (case-sensitive string). Other field usage types include `"PixelCount"` (`GFU_PixelCount`, histogram pixel count), `"Name"` (`GFU_Name`, class name), `"Red"` (`GFU_Red`, class color 0-255), `"Green"` (`GFU_Green`, class color 0-255), `"Blue"` (`GFU_Blue`, class color 0-255), and `"Generic"` (`GFU_Generic`, general purpose field).
 
-A raster attribute table can be used with thematic or athematic (continuous) data. This is defined in R by an attribute on the data frame named `"GDALRATTableType"` with string value of either `"thematic"` or `"athematic"`.
+A raster attribute table can be used with thematic or athematic (continuous) data. This is defined in R by an attribute on the data frame named `"GDALRATTableType"` with a value of either `"thematic"` or `"athematic"`.
 
 ## Read/build/set attribute tables
 
-**gdalraster** supports reading, building and setting Raster Attribute Tables via data frame. An object of class `GDALRaster` has method `$getDefaultRAT()` to read an existing RAT, and method `$setDefaultRAT()` to set a RAT from a data frame. The stand-alone function `buildRAT()` will scan a raster to obtain the set of unique pixel values and their counts, optionally join additional columns from a passed data frame, and return a data frame with the appropriate metadata automatically assigned (i.e., R attributes assigned on the data frame and its columns that define usage in a GDAL RAT, suitable for passing to `GDALRaster$setDefaultRAT()`):
+**gdalraster** can read, build and set Raster Attribute Tables via data frame. An object of class `GDALRaster` has method `$getDefaultRAT()` to read an existing RAT, and method `$setDefaultRAT()` to set a RAT from a data frame. The stand-alone function `buildRAT()` scans a raster to obtain the set of unique pixel values and their counts, optionally joins additional columns from a passed data frame, and returns a data frame with the appropriate metadata automatically assigned (i.e., R attributes assigned on the data frame and its columns that define usage as a GDAL RAT, for passing to `GDALRaster$setDefaultRAT()`):
 
 ```{r}
 library(gdalraster)
@@ -82,17 +82,17 @@ ds$close()
 
 ## Using in QGIS
 
-[QGIS](https://qgis.org/) >= 3.30 includes [extensive support for Raster Attribute Tables](https://qgis.org/en/site/forusers/visualchangelog330/index.html#feature-raster-attribute-tables-rat-suppport).
+[QGIS](https://qgis.org/) since 3.30 includes [extensive support for Raster Attribute Tables](https://qgis.org/en/site/forusers/visualchangelog330/index.html#feature-raster-attribute-tables-rat-suppport).
 
 For QGIS < 3.30, the **Raster Attribute Table Plugin** can be used to edit and display RATs for discrete rasters using the paletted/unique-values renderer (QGIS-style classification on arbitrary RAT columns). With the plugin enabled, "Open Attribute Table" can be selected after right-clicking a raster layer that has an associated RAT. For the LANDFIRE EVT layer as modified above, classifying on EVT_NAME generates the following display:
 
 ```{r, echo=FALSE, fig.cap="LANDFIRE EVT in the Raster Attribute Table QGIS Plugin", out.width = '90%'}
-knitr::include_graphics("qgis_rat_plugin_classify.png")
+knitr::include_graphics("qgis_rat_classify.png")
 ```
 
 ## See also
 
-* Documentation for `gdalraster::buildRAT()`
+* Documentation for [`gdalraster::buildRAT()`](https://usdaforestservice.github.io/gdalraster/reference/buildRAT.html)
 
 * [GDALRasterAttributeTable Class Reference](https://gdal.org/doxygen/classGDALRasterAttributeTable.html)
 
