@@ -243,17 +243,38 @@ buildRAT <- function(raster,
 				break
 			}
 		}
+		hasRed <- FALSE
+		hasGreen <- FALSE
+		hasBlue <- FALSE
+		hasAlpha <- FALSE
 		for (nm in setdiff(names(join_df), col_names)) {
-			if (tolower(nm) == "r" || tolower(nm) == "red")
-				attr(d[,nm], "GFU") <- "Red"
-			else if (tolower(nm) == "g" || tolower(nm) == "green")
-				attr(d[,nm], "GFU") <- "Green"
-			else if (tolower(nm) == "b" || tolower(nm) == "blue")
-				attr(d[,nm], "GFU") <- "Blue"
-			else if (tolower(nm) == "a" || tolower(nm) == "alpha")
-				attr(d[,nm], "GFU") <- "Alpha"
-			else if (is.null(attr(d[,nm], "GFU")))
+			if (tolower(nm) == "r" || tolower(nm) == "red") {
+				if (!hasRed) {
+					attr(d[,nm], "GFU") <- "Red"
+					hasRed <- TRUE
+				}
+			}
+			else if (tolower(nm) == "g" || tolower(nm) == "green") {
+				if (!hasGreen) {
+					attr(d[,nm], "GFU") <- "Green"
+					hasGreen <- TRUE
+				}
+			}
+			else if (tolower(nm) == "b" || tolower(nm) == "blue") {
+				if (!hasBlue) {
+					attr(d[,nm], "GFU") <- "Blue"
+					hasBlue <- TRUE
+				}
+			}
+			else if (tolower(nm) == "a" || tolower(nm) == "alpha") {
+				if (!hasAlpha) {
+					attr(d[,nm], "GFU") <- "Alpha"
+					hasAlpha <- TRUE
+				}
+			}
+			if (is.null(attr(d[,nm], "GFU"))) {
 				attr(d[,nm], "GFU") <- "Generic"
+			}
 		}
 	}
 	attr(d, "GDALRATTableType") <- table_type
