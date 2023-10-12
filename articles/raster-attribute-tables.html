@@ -90,9 +90,9 @@ the table applies to either a single pixel value or a range of values,
 and might have attributes such as the histogram count for that value (or
 range), the color that pixels of that value (or range) should be
 displayed, names of classes, or various other information.
-<strong>gdalraster</strong> supports reading Raster Attribute Tables to
-an R data frame, building new tables, and setting a default RAT on a
-raster band.</p>
+<strong>gdalraster</strong> supports reading Raster Attribute Tables as
+R data frame, building new tables, and setting a default RAT on a raster
+band.</p>
 <div class="section level2">
 <h2 id="format-of-gdal-rat">Format of GDAL RAT<a class="anchor" aria-label="anchor" href="#format-of-gdal-rat"></a>
 </h2>
@@ -112,8 +112,8 @@ discrete pixel value. In this case, a single column with usage
 <code>GFU_MinMax</code> (indicating class value) would be used instead
 of separate min and max columns. The table is represented in R as a data
 frame with column attribute <code>"GFU"</code> containing the field
-usage as a string, e.g., <code>"MinMax"</code> (case-sensitive). Other
-field usage types include <code>"PixelCount"</code>
+usage, e.g., <code>"MinMax"</code> (case-sensitive string). Other field
+usage types include <code>"PixelCount"</code>
 (<code>GFU_PixelCount</code>, histogram pixel count),
 <code>"Name"</code> (<code>GFU_Name</code>, class name),
 <code>"Red"</code> (<code>GFU_Red</code>, class color 0-255),
@@ -123,23 +123,22 @@ field usage types include <code>"PixelCount"</code>
 field).</p>
 <p>A raster attribute table can be used with thematic or athematic
 (continuous) data. This is defined in R by an attribute on the data
-frame named <code>"GDALRATTableType"</code> with string value of either
+frame named <code>"GDALRATTableType"</code> with a value of either
 <code>"thematic"</code> or <code>"athematic"</code>.</p>
 </div>
 <div class="section level2">
 <h2 id="readbuildset-attribute-tables">Read/build/set attribute tables<a class="anchor" aria-label="anchor" href="#readbuildset-attribute-tables"></a>
 </h2>
-<p><strong>gdalraster</strong> supports reading, building and setting
-Raster Attribute Tables via data frame. An object of class
-<code>GDALRaster</code> has method <code>$getDefaultRAT()</code> to read
-an existing RAT, and method <code>$setDefaultRAT()</code> to set a RAT
-from a data frame. The stand-alone function <code><a href="../reference/buildRAT.html">buildRAT()</a></code> will
-scan a raster to obtain the set of unique pixel values and their counts,
-optionally join additional columns from a passed data frame, and return
-a data frame with the appropriate metadata automatically assigned (i.e.,
-R attributes assigned on the data frame and its columns that define
-usage in a GDAL RAT, suitable for passing to
-<code>GDALRaster$setDefaultRAT()</code>):</p>
+<p><strong>gdalraster</strong> can read, build and set Raster Attribute
+Tables via data frame. An object of class <code>GDALRaster</code> has
+method <code>$getDefaultRAT()</code> to read an existing RAT, and method
+<code>$setDefaultRAT()</code> to set a RAT from a data frame. The
+stand-alone function <code><a href="../reference/buildRAT.html">buildRAT()</a></code> scans a raster to obtain
+the set of unique pixel values and their counts, optionally joins
+additional columns from a passed data frame, and returns a data frame
+with the appropriate metadata automatically assigned (i.e., R attributes
+assigned on the data frame and its columns that define usage as a GDAL
+RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, PROJ 8.2.1</span></span>
@@ -273,7 +272,7 @@ usage in a GDAL RAT, suitable for passing to
 <div class="section level2">
 <h2 id="using-in-qgis">Using in QGIS<a class="anchor" aria-label="anchor" href="#using-in-qgis"></a>
 </h2>
-<p><a href="https://qgis.org/" class="external-link">QGIS</a> &gt;= 3.30 includes <a href="https://qgis.org/en/site/forusers/visualchangelog330/index.html#feature-raster-attribute-tables-rat-suppport" class="external-link">extensive
+<p><a href="https://qgis.org/" class="external-link">QGIS</a> since 3.30 includes <a href="https://qgis.org/en/site/forusers/visualchangelog330/index.html#feature-raster-attribute-tables-rat-suppport" class="external-link">extensive
 support for Raster Attribute Tables</a>.</p>
 <p>For QGIS &lt; 3.30, the <strong>Raster Attribute Table
 Plugin</strong> can be used to edit and display RATs for discrete
@@ -283,7 +282,7 @@ Attribute Table” can be selected after right-clicking a raster layer
 that has an associated RAT. For the LANDFIRE EVT layer as modified
 above, classifying on EVT_NAME generates the following display:</p>
 <div class="figure">
-<img src="qgis_rat_plugin_classify.png" alt="LANDFIRE EVT in the Raster Attribute Table QGIS Plugin" width="90%"><p class="caption">
+<img src="qgis_rat_classify.png" alt="LANDFIRE EVT in the Raster Attribute Table QGIS Plugin" width="90%"><p class="caption">
 LANDFIRE EVT in the Raster Attribute Table QGIS Plugin
 </p>
 </div>
@@ -292,7 +291,7 @@ LANDFIRE EVT in the Raster Attribute Table QGIS Plugin
 <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a>
 </h2>
 <ul>
-<li><p>Documentation for <code><a href="../reference/buildRAT.html">gdalraster::buildRAT()</a></code></p></li>
+<li><p>Documentation for <a href="https://usdaforestservice.github.io/gdalraster/reference/buildRAT.html"><code>gdalraster::buildRAT()</code></a></p></li>
 <li><p><a href="https://gdal.org/doxygen/classGDALRasterAttributeTable.html" class="external-link">GDALRasterAttributeTable
 Class Reference</a></p></li>
 <li><p><a href="https://github.com/qgis/QGIS/pull/50687" class="external-link">Raster
