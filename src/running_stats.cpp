@@ -17,7 +17,7 @@ void RunningStats::update(const Rcpp::NumericVector& newvalues) {
 			if (Rcpp::NumericVector::is_na(newvalues[i]))
 				continue;
 		}
-		++count;
+		count += 1;
 		if (count == 1) {
 			mean = min = max = sum = newvalues[i];
 			M2 = 0;
@@ -38,8 +38,9 @@ void RunningStats::reset() {
 	count = 0;
 }
 
-unsigned long long RunningStats::get_count() const {
-	return count;
+double RunningStats::get_count() const {
+	// return as double in R (no native int64)
+	return static_cast<double>(count);
 }
 
 double RunningStats::get_mean() const {
