@@ -55,7 +55,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.1" id="gdalraster-151-dev">gdalraster 1.5.1 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-151-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/buildRAT.html">buildRAT()</a></code>: build a new GDAL Raster Attribute Table as data frame (2023-10-08)</p></li>
+<ul><li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code>: normalize legend correctly for <code>minmax_def</code> and <code>minmax_pct_cut</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/131" class="external-link">#131</a>) (2023-10-18)</p></li>
+<li><p>class <code>RunningStats</code>: use <code>uint64_t</code> for the count accumulator (previously <code>long long</code>) and make explicit the return cast in <code>get_count()</code>, no user-visible changes (2023-10-16)</p></li>
+<li><p>add <code><a href="../reference/buildRAT.html">buildRAT()</a></code>: build a new GDAL Raster Attribute Table as data frame (2023-10-08)</p></li>
 <li><p>add <code>GDALRaster$setDefaultRAT()</code>: set Raster Attribute Table from data frame (2023-10-08)</p></li>
 <li><p>gdalraster now requires GDAL &gt;= 2.4.0 (previously &gt;= 2.3.0) (2023-10-08)</p></li>
 <li><p>add <code>GDALRaster$getDefaultRAT()</code>: return Raster Attribute Table as a data frame (2023-10-04)</p></li>
