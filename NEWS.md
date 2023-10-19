@@ -1,5 +1,9 @@
 # gdalraster 1.5.1 (dev)
 
+* `plot_raster()`: normalize legend correctly for `minmax_def` and `minmax_pct_cut` (#131) (2023-10-18)
+
+* class `RunningStats`: use `uint64_t` for the count accumulator (previously `long long`) and make explicit the return cast in `get_count()`, no user-visible changes (2023-10-16)
+
 * add `buildRAT()`: build a new GDAL Raster Attribute Table as data frame (2023-10-08)
 
 * add `GDALRaster$setDefaultRAT()`: set Raster Attribute Table from data frame (2023-10-08)
