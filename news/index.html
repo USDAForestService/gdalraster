@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.1" id="gdalraster-151-dev">gdalraster 1.5.1 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-151-dev"></a></h2>
-<ul><li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code>: normalize legend correctly for <code>minmax_def</code> and <code>minmax_pct_cut</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/131" class="external-link">#131</a>) (2023-10-18)</p></li>
+<ul><li><p>add <code><a href="../reference/displayRAT.html">displayRAT()</a></code>: generate a presentation table, showing colors if the RAT contains RGB columns (2023-10-19)</p></li>
+<li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code>: normalize legend correctly for <code>minmax_def</code> and <code>minmax_pct_cut</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/131" class="external-link">#131</a>) (2023-10-18)</p></li>
 <li><p>class <code>RunningStats</code>: use <code>uint64_t</code> for the count accumulator (previously <code>long long</code>) and make explicit the return cast in <code>get_count()</code>, no user-visible changes (2023-10-16)</p></li>
 <li><p>add <code><a href="../reference/buildRAT.html">buildRAT()</a></code>: build a new GDAL Raster Attribute Table as data frame (2023-10-08)</p></li>
 <li><p>add <code>GDALRaster$setDefaultRAT()</code>: set Raster Attribute Table from data frame (2023-10-08)</p></li>
@@ -72,7 +73,7 @@
 <li><p>add <code><a href="../reference/deleteDataset.html">deleteDataset()</a></code>: delete a dataset in a format-specific way (2023-09-27)</p></li>
 <li><p>add <code><a href="../reference/renameDataset.html">renameDataset()</a></code>: rename a dataset in a format-specific way (2023-09-27)</p></li>
 <li><p>add some missing error checks in src/gdal_exp.cpp (<a href="https://github.com/USDAForestService/gdalraster/issues/104" class="external-link">#104</a>) (2023-09-27)</p></li>
-<li><p>documentation: add <a href="https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note">notes</a> for <code>RunningStats-class</code>; update Raster API Tutorial with <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> and <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>; add vignette: <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html">Raster Attribute Tables</a></p></li>
+<li><p>Documentation: add <a href="https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note">notes</a> for <code>RunningStats-class</code>; update Raster API Tutorial with <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> and <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>; add vignette: <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html">Raster Attribute Tables</a></p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.0" id="gdalraster-150">gdalraster 1.5.0<a class="anchor" aria-label="anchor" href="#gdalraster-150"></a></h2><p class="text-muted">CRAN release: 2023-09-25</p>

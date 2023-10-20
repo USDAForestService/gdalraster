@@ -349,6 +349,688 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6   Tree  Conifer 236 252 204</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="displayRAT.html">displayRAT</a></span><span class="op">(</span><span class="va">rat2</span>, title <span class="op">=</span> <span class="st">"Raster Attribute Table for Storm Lake EVT"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;div id="mcdijwpqqd" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;style&gt;#mcdijwpqqd table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   -webkit-font-smoothing: antialiased;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   -moz-osx-font-smoothing: grayscale;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd thead, #mcdijwpqqd tbody, #mcdijwpqqd tfoot, #mcdijwpqqd tr, #mcdijwpqqd td, #mcdijwpqqd th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd p {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_table {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   display: table;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-collapse: collapse;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   line-height: normal;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   margin-left: auto;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   margin-right: auto;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 16px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: normal;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-style: normal;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   width: auto;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #A8A8A8;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #A8A8A8;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_caption {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_title {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 125%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_subtitle {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 85%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 3px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_bottom_border {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_col_headings {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_col_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: normal;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: bottom;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 6px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_column_spanner_outer {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: normal;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 4px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 4px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_column_spanner_outer:first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_column_spanner_outer:last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_column_spanner {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: bottom;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   display: inline-block;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   width: 100%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_spanner_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: hidden;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: middle;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_empty_group_heading {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding: 0.5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: middle;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_from_md &gt; :first-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   margin-top: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_from_md &gt; :last-child {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   margin-bottom: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 10px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-width: 1px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: middle;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   overflow-x: hidden;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_stub {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_stub_row_group {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: initial;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: top;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_row_group_first td {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_row_group_first th {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_first_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_first_summary_row.thick {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_last_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-transform: inherit;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_first_grand_summary_row {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: double;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 6px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_last_grand_summary_row_top {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 8px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: double;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 6px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_striped {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: rgba(128, 128, 128, 0.05);</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_table_body {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-top-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: solid;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_footnotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_footnote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   margin: 0px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_sourcenotes {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   color: #333333;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   background-color: #FFFFFF;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-bottom-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-left-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-style: none;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-width: 2px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   border-right-color: #D3D3D3;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_sourcenote {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 90%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-top: 4px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-bottom: 4px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-left: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   padding-right: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_left {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: left;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_center {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: center;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_right {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-align: right;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-variant-numeric: tabular-nums;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_font_normal {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: normal;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_font_bold {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-weight: bold;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_font_italic {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-style: italic;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_super {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 65%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_footnote_marks {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 75%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0.4em;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   position: initial;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_asterisk {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   font-size: 100%;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   vertical-align: 0;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_indent_1 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 5px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_indent_2 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 10px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_indent_3 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 15px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_indent_4 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 20px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> #mcdijwpqqd .gt_indent_5 {</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   text-indent: 25px;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/style&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;table class="gt_table" data-quarto-disable-processing="false" data-quarto-bootstrap="false"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;thead&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr class="gt_heading"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;td colspan="9" class="gt_heading gt_title gt_font_normal gt_bottom_border" style&gt;Raster Attribute Table for Storm Lake EVT&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr class="gt_col_headings"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="Color"&gt;Color&lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="VALUE"&gt;VALUE&lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="COUNT"&gt;COUNT&lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="EVT_NAME"&gt;EVT_NAME&lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="EVT_LF"&gt;EVT_LF&lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_left" rowspan="1" colspan="1" scope="col" id="EVT_PHYS"&gt;EVT_PHYS&lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="R"&gt;R&lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="G"&gt;G&lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       &lt;th class="gt_col_heading gt_columns_bottom_border gt_right" rowspan="1" colspan="1" scope="col" id="B"&gt;B&lt;/th&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/thead&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;tbody class="gt_table_body"&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #FFFFFF; color: #000000;"&gt;#FFFFFF&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;-9999&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;876&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Fill-NoData&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;NA&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;NA&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;255&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;255&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;255&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #C0FF8A; color: #000000;"&gt;#C0FF8A&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7011&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;28&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Aspen Forest and Woodland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Tree&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Hardwood&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;192&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;255&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;138&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #BFFFE9; color: #000000;"&gt;#BFFFE9&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7046&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;4564&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Northern Rocky Mountain Subalpine Woodland and Parkland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Tree&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Conifer&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;191&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;255&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;233&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #A3F0DB; color: #000000;"&gt;#A3F0DB&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7050&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;570&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Lodgepole Pine Forest&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Tree&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Conifer&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;163&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;240&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;219&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #ECFCCC; color: #000000;"&gt;#ECFCCC&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7055&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;889&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Subalpine Dry-Mesic Spruce-Fir Forest and Woodland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Tree&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Conifer&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;236&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;252&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;204&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #ECFCCC; color: #000000;"&gt;#ECFCCC&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7056&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;304&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Subalpine Mesic-Wet Spruce-Fir Forest and Woodland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Tree&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Conifer&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;236&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;252&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;204&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #3FFF2E; color: #000000;"&gt;#3FFF2E&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7057&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;11&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Subalpine-Montane Limber-Bristlecone Pine Woodland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Tree&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Conifer&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;63&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;255&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;46&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #AB916A; color: #FFFFFF;"&gt;#AB916A&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7070&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;267&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Alpine Dwarf-Shrubland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Shrub&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Shrubland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;171&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;145&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;106&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #75573D; color: #FFFFFF;"&gt;#75573D&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7106&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;3&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Northern Rocky Mountain Montane-Foothill Deciduous Shrubland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Shrub&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Shrubland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;117&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;87&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;61&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #E69729; color: #000000;"&gt;#E69729&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7125&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;1&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Inter-Mountain Basins Big Sagebrush Steppe&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Shrub&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Shrubland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;230&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;151&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;41&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #DB8C25; color: #FFFFFF;"&gt;#DB8C25&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7126&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;1082&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Inter-Mountain Basins Montane Sagebrush Steppe&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Shrub&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Shrubland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;219&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;140&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;37&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #FFB861; color: #000000;"&gt;#FFB861&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7140&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;679&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Northern Rocky Mountain Subalpine-Upper Montane Grassland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Herb&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Grassland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;255&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;184&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;97&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #AB916A; color: #FFFFFF;"&gt;#AB916A&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7143&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;199&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Alpine Fell-Field&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Herb&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Grassland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;171&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;145&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;106&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #AB916A; color: #FFFFFF;"&gt;#AB916A&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7144&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;765&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Alpine Turf&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Herb&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Grassland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;171&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;145&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;106&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #FFA352; color: #000000;"&gt;#FFA352&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7145&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;681&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Subalpine-Montane Mesic Meadow&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Herb&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Grassland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;255&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;163&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;82&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #003300; color: #FFFFFF;"&gt;#003300&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7166&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;32&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Middle Rocky Mountain Montane Douglas-fir Forest and Woodland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Tree&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Conifer&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;51&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;0&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #806145; color: #FFFFFF;"&gt;#806145&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7169&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;60&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Northern Rocky Mountain Subalpine Deciduous Shrubland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Shrub&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Shrubland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;128&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;97&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;69&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #0000FF; color: #FFFFFF;"&gt;#0000FF&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7292&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;397&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Open Water&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Water&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Open Water&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;0&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;255&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #AA66CD; color: #FFFFFF;"&gt;#AA66CD&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;7901&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;2&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Western Cool Temperate Urban Evergreen Forest&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Tree&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Developed&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;170&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;102&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;205&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #646464; color: #FFFFFF;"&gt;#646464&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;9016&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;2486&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Alpine Bedrock and Scree&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Sparse&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Sparsely Vegetated&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;100&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;100&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;100&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #B86018; color: #FFFFFF;"&gt;#B86018&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;9017&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;13&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Alpine-Montane Wet Meadow&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Herb&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Riparian&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;184&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;96&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;24&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #646464; color: #FFFFFF;"&gt;#646464&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;9018&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;1280&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Cliff Canyon and Massive Bedrock&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Sparse&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Sparsely Vegetated&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;100&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;100&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;100&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #B86018; color: #FFFFFF;"&gt;#B86018&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;9021&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;14&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Subalpine-Montane Riparian Shrubland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Shrub&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Riparian&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;184&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;96&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;24&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     &lt;tr&gt;&lt;td headers="Color" class="gt_row gt_left" style="background-color: #B86018; color: #FFFFFF;"&gt;#B86018&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="VALUE" class="gt_row gt_right"&gt;9022&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="COUNT" class="gt_row gt_right"&gt;98&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_NAME" class="gt_row gt_left"&gt;Rocky Mountain Subalpine-Montane Riparian Woodland&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_LF" class="gt_row gt_left"&gt;Tree&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="EVT_PHYS" class="gt_row gt_left"&gt;Riparian&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="R" class="gt_row gt_right"&gt;184&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="G" class="gt_row gt_right"&gt;96&lt;/td&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;td headers="B" class="gt_row gt_right"&gt;24&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   &lt;/tbody&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/table&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> &lt;/div&gt;</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
