@@ -192,7 +192,9 @@ head(rat2)
 
 ds$close()
 
-displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
+tbl <- displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
+class(tbl)
+# tbl
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}},
