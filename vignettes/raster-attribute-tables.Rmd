@@ -80,6 +80,14 @@ head(rat2)
 ds$close()
 ```
 
+## Display attribute tables
+
+The function `displayRAT()` generates a presentation table. Colors are shown if the RAT contains RGB columns. `displayRAT()` returns an object of class `gt::gt_tbl` (which could be modified if desired using functions of the **gt** package):
+
+```{r}
+displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
+```
+
 ## Using in QGIS
 
 [QGIS](https://qgis.org/) since 3.30 includes [extensive support for Raster Attribute Tables](https://qgis.org/en/site/forusers/visualchangelog330/index.html#feature-raster-attribute-tables-rat-suppport).
@@ -99,6 +107,8 @@ knitr::include_graphics("qgis_rat_classify.png")
 * [Raster Attribute Table QGIS GUI](https://github.com/qgis/QGIS/pull/50687) (since QGIS 3.30; examples for different use cases and workflows)
 
 * [Raster Attribute Table QGIS Plugin](https://github.com/noaa-ocs-hydrography/qgis-raster-attribute-table-plugin) (QGIS < 3.30)
+
+* Package [gt](https://gt.rstudio.com/)
 
 ## Data sources
 

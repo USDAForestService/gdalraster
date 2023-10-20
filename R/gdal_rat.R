@@ -1,5 +1,4 @@
 # Functions for working with GDAL Raster Attribute Tables
-# (currently only buildRAT())
 # Chris Toney <chris.toney at usda.gov>
 
 
@@ -179,6 +178,8 @@
 #' head(rat2)
 #' 
 #' ds$close()
+#'
+#' displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
 #' @export
 buildRAT <- function(raster,
 				band = 1L,
@@ -279,5 +280,92 @@ buildRAT <- function(raster,
 	}
 	attr(d, "GDALRATTableType") <- table_type
 	return(d)
+}
+
+
+#' Display a GDAL Raster Attribute Table
+#'
+#' @description
+#' `displayRAT()` generates a presentation table. Colors are shown if the
+#' Raster Attribute Table contains RGB columns.
+#' This function requires package `gt`.
+#'
+#' @param rat A data frame formatted as a GDAL RAT (e.g., as returned by
+#' `buildRAT()` or `GDALRaster$getDefaultRAT()`).
+#' @param title Character string to be used in the table title.
+#' @returns An object of class `gt::gt_tbl`.
+#'
+#' @seealso
+#' [buildRAT()], [`GDALRaster$getDefaultRAT()`][GDALRaster]
+#'
+#' @examples
+#' # see examples for `buildRAT()`
+#' @export
+displayRAT <- function(rat, title = "Raster Attribute Table") {
+
+	if (!requireNamespace("gt", quietly = TRUE))
+		stop("displayRAT() requires package 'gt'.", call.=FALSE)
+		
+	if (!is.data.frame(rat))
+		stop("Input must be a data frame.", call.=FALSE)
+
+	if (is.null(attr(rat, "GDALRATTableType"))) {
+		message("Input data frame is missing attribute 'GDALRATTableType'.")
+		stop("The passed data frame must be formatted as a GDAL RAT.",
+				call.=FALSE)
+	}
+	
+	if (length(title) != 1 || !is(title, "character"))
+		stop("title must be a character string.", call. = FALSE)
+	
+	col_red <- NULL
+	col_green <- NULL
+	col_blue <- NULL
+	col_alpha <- NULL
+	hasRGB <- FALSE
+	for (nm in names(rat)) {
+		if (attr(rat[,nm], "GFU") == "Red") {
+			col_red = nm
+		}
+		else if (attr(rat[,nm], "GFU") == "Green") {
+			col_green = nm
+		}
+		else if (attr(rat[,nm], "GFU") == "Blue") {
+			col_blue = nm
+		}
+		else if (attr(rat[,nm], "GFU") == "Alpha") {
+			col_alpha = nm
+		}
+	}
+	if (!is.null(col_red) && !is.null(col_green) && !is.null(col_blue)) {
+		hasRGB <- TRUE
+		if (!is.null(col_alpha)) {
+			rat$Color <- rgb(
+							rat[,col_red],
+							rat[,col_green],
+							rat[,col_blue],
+							rat[,col_alpha],
+							maxColorValue=255
+							)
+		}
+		else {
+			rat$Color <- rgb(
+							rat[,col_red],
+							rat[,col_green],
+							rat[,col_blue],
+							maxColorValue=255
+							)
+		}
+	}
+	
+	gt_rat <- gt::gt(rat)
+	if (hasRGB) {
+		f <- function(x) { rat$Color[match(x, rat$Color)] }
+		gt_rat <- gt::data_color(gt_rat, columns=Color, fn=f)
+		gt_rat <- gt::cols_move_to_start(gt_rat, columns=Color)
+	}
+	gt_rat <- gt::tab_header(gt_rat, title=title)
+
+	return(gt_rat)
 }
 
