@@ -23,7 +23,7 @@
 #'
 #' @examples
 #' getCreationOptions("GTiff", filter="COMPRESS")
-# [[Rcpp::export]]
+#' @export
 getCreationOptions <- function(format, filter=NULL) {
 
 	if (!is.character(format))
