@@ -82,11 +82,13 @@ ds$close()
 
 ## Display attribute tables
 
-The function `displayRAT()` generates a presentation table. Colors are shown if the RAT contains RGB columns. `displayRAT()` returns an object of class `gt::gt_tbl` (which could be modified if desired using functions of the **gt** package):
+The function `displayRAT()` generates a presentation table. Colors are shown if the RAT contains RGB columns:
 
 ```{r}
 displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
 ```
+
+`displayRAT()` returns an object of class `gt::gt_tbl`, which could be modified if desired using functions of the **gt** package.
 
 ## Using in QGIS
 

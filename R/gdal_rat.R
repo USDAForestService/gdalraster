@@ -179,7 +179,9 @@
 #' 
 #' ds$close()
 #'
-#' displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
+#' tbl <- displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
+#' class(tbl)
+#' # tbl
 #' @export
 buildRAT <- function(raster,
 				band = 1L,
