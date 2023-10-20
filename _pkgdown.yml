@@ -35,6 +35,7 @@ reference:
   - createCopy
   - deleteDataset
   - dem_proc
+  - displayRAT
   - epsg_to_wkt
   - fillNodata
   - gdal_formats

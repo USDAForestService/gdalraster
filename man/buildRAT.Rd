@@ -191,6 +191,8 @@ nrow(rat2)
 head(rat2)
 
 ds$close()
+
+displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}},

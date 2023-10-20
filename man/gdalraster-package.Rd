@@ -38,6 +38,11 @@
   \code{\link[=sieveFilter]{sieveFilter()}},
   \code{\link[=GDALRaster]{GDALRaster$getChecksum()}}
   
+  \item raster attribute tables: \code{\link[=buildRAT]{buildRAT()}},
+  \code{\link[=displayRAT]{displayRAT()}},
+  \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}},\cr
+  \code{\link[=GDALRaster]{GDALRaster$setDefaultRAT()}}
+  
   \item geotransform conversion:
   \code{\link[=inv_geotransform]{inv_geotransform()}}, 
   \code{\link[=get_pixel_line]{get_pixel_line()}}

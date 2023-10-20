@@ -48,7 +48,8 @@ Imports:
     tools,
     utils
 LinkingTo: Rcpp
-Suggests: 
+Suggests:
+    gt,
     knitr,
     rmarkdown,
     scales,

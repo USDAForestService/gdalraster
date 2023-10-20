@@ -1,5 +1,7 @@
 # gdalraster 1.5.1 (dev)
 
+* add `displayRAT()`: generate a presentation table, showing colors if the RAT contains RGB columns (2023-10-19)
+
 * `plot_raster()`: normalize legend correctly for `minmax_def` and `minmax_pct_cut` (#131) (2023-10-18)
 
 * class `RunningStats`: use `uint64_t` for the count accumulator (previously `long long`) and make explicit the return cast in `get_count()`, no user-visible changes (2023-10-16)
@@ -34,7 +36,7 @@
 
 * add some missing error checks in src/gdal_exp.cpp (#104) (2023-09-27) 
 
-* documentation: add [notes](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note) for `RunningStats-class`; update Raster API Tutorial with `gdal_formats()` and `getCreationOptions()`; add vignette: [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
+* Documentation: add [notes](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note) for `RunningStats-class`; update Raster API Tutorial with `gdal_formats()` and `getCreationOptions()`; add vignette: [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
 
 # gdalraster 1.5.0
 
