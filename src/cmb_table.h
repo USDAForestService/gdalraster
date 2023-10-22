@@ -1,11 +1,10 @@
-/* Hash table class for counting unique integer combinations
+/* Hash table class for counting unique combinations of integers
 Chris Toney <chris.toney at usda.gov> */
 
 #ifndef cmb_table_H
 #define cmb_table_H
 
 #include <Rcpp.h> 
-// [[Rcpp::plugins(cpp11)]]
 
 #include <string>
 #include <vector>
@@ -24,21 +23,20 @@ struct cmbKey {
 };
 
 struct cmbData {
-	double ID;
+	double ID = 0;
 	double count = 0;
 };
 
 struct cmbHasher {
-	// Boost hash_combine method
-	//Copyright 2005-2014 Daniel James.
-	//Copyright 2021, 2022 Peter Dimov.
-	//Distributed under the Boost Software License, Version 1.0.
-	//https://www.boost.org/LICENSE_1_0.txt
-	
-	std::size_t operator()(cmbKey const& vec) const {
+	std::size_t operator()(cmbKey const& key) const {
+		// Boost hash_combine method
+		//Copyright 2005-2014 Daniel James.
+		//Copyright 2021, 2022 Peter Dimov.
+		//Distributed under the Boost Software License, Version 1.0.
+		//https://www.boost.org/LICENSE_1_0.txt
 		std::size_t seed = 0;
-		for (R_xlen_t i=0; i < vec.cmb.size(); ++i) {
-			seed ^= vec.cmb[i] + 0x9e3779b9 + (seed << 6) + (seed >> 2);
+		for (R_xlen_t i=0; i < key.cmb.size(); ++i) {
+			seed ^= key.cmb[i] + 0x9e3779b9 + (seed << 6) + (seed >> 2);
 		}
 		return seed;
 	}
@@ -46,23 +44,20 @@ struct cmbHasher {
 
 class CmbTable {
 	private:
-	unsigned int key_len;
+	int key_len;
 	Rcpp::CharacterVector cvVarNames;
 	double last_ID;
-
 	std::unordered_map<cmbKey, cmbData, cmbHasher> cmb_map;
 
 	public:
 	CmbTable();
-	CmbTable(unsigned int keyLen, Rcpp::CharacterVector varNames);
+	CmbTable(int keyLen, Rcpp::CharacterVector varNames);
 	
-	double update(Rcpp::IntegerVector int_cmb, double incr);
-	
+	double update(const Rcpp::IntegerVector& int_cmb, double incr);
 	Rcpp::NumericVector updateFromMatrix(const Rcpp::IntegerMatrix& int_cmbs,
-		double incr);
-
+			double incr);
 	Rcpp::NumericVector updateFromMatrixByRow(
-		const Rcpp::IntegerMatrix& int_cmbs, double incr);
+			const Rcpp::IntegerMatrix& int_cmbs, double incr);
 	
 	Rcpp::DataFrame asDataFrame() const;
 	Rcpp::NumericMatrix asMatrix() const;
