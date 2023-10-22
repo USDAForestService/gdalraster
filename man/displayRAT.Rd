@@ -13,7 +13,8 @@ displayRAT(rat, title = "Raster Attribute Table")
 \item{title}{Character string to be used in the table title.}
 }
 \value{
-An object of class \code{gt::gt_tbl}.
+An object of class \code{"gt_tbl"} (i.e., a table created with
+\code{gt::gt()}).
 }
 \description{
 \code{displayRAT()} generates a presentation table. Colors are shown if the
@@ -24,5 +25,6 @@ This function requires package \code{gt}.
 # see examples for `buildRAT()`
 }
 \seealso{
-\code{\link[=buildRAT]{buildRAT()}}, \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}}
+\code{\link[=buildRAT]{buildRAT()}}, \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}},
+\code{vignette("raster-attribute-tables")}
 }

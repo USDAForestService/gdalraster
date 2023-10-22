@@ -49,7 +49,7 @@ Details). The returned data frame has attribute \code{"GDALRATTableType"} set to
 \code{buildRAT()} reads all pixels of an input raster to obtain the set of
 unique values and their counts. The result is returned as a data frame
 suitable for use with the class method \code{GDALRaster$setDefaultRAT()}. The
-returned data frame might be further modified before setting it as a Raster
+returned data frame might be further modified before setting as a Raster
 Attribute Table in a dataset, for example, by adding columns containing
 class names, color values, or other information (see Details).
 An optional input data frame containing such attributes may be given, in
@@ -68,7 +68,7 @@ that pixels of that value (or range) should be displayed, names of classes,
 or various other information.
 
 Each column in a raster attribute table has a name, a type (integer,
-floating point or string), and a \code{GDALRATFieldUsage}. The usage
+double, or string), and a \code{GDALRATFieldUsage}. The usage
 distinguishes columns with particular understood purposes (such as color,
 histogram count, class name), and columns that have other purposes not
 understood by the library (long labels, ancillary attributes, etc).
@@ -123,17 +123,17 @@ In a variation of RAT, all the categories are of equal size and regularly
 spaced, and the categorization can be determined by knowing the value at
 which the categories start and the size of a category. This is called
 "Linear Binning" and the information is kept specially on the raster
-attribute table as a whole. In R, an attribute table that uses linear
-binning would have the following attributes set on the data frame:
+attribute table as a whole. In R, a RAT that uses linear binning would
+have the following attributes set on the data frame:
 attribute \code{"Row0Min"} = the numeric lower bound (pixel value) of the first
 category, and attribute \code{"BinSize"} = the numeric width of each category (in
 pixel value units). \code{buildRAT()} does not create tables with linear binning,
 but one could be created manually based on the specifications above, and
-applied to a raster band with the class method \code{GDALRaster$setDefaultRAT()}.
+applied to a raster with the class method \code{GDALRaster$setDefaultRAT()}.
 
-A raster attribute table is thematic or athematic (continuous). In R, the
-data frame has an attribute named \code{"GDALRATTableType"} with string value of
-either \code{"thematic"} or \code{"athematic"}.
+A raster attribute table is thematic or athematic (continuous). In R, this
+is defined by an attribute on the data frame named \code{"GDALRATTableType"} with
+value of either \code{"thematic"} or \code{"athematic"}.
 }
 \note{
 The full raster will be scanned.
@@ -192,11 +192,16 @@ head(rat2)
 
 ds$close()
 
+# Display
 tbl <- displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
-class(tbl)
+class(tbl)  # an object of class "gt_tbl" from package gt
+# To show the table:
 # tbl
+# or simply call `displayRAT()` as above but without assignment.
+# `vignette("raster-attribute-tables")` has example output.
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}},
-\code{\link[=GDALRaster]{GDALRaster$setDefaultRAT()}}
+\code{\link[=GDALRaster]{GDALRaster$setDefaultRAT()}},
+\code{vignette("raster-attribute-tables")}
 }

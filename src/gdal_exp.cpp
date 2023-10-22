@@ -2,6 +2,7 @@
    Chris Toney <chris.toney at usda.gov> */
 
 #include <cmath>
+#include <unordered_map>
 
 #include "gdal.h"
 #include "cpl_port.h"
@@ -518,12 +519,9 @@ Rcpp::DataFrame _combine(
 		cmbid = tbl.updateFromMatrix(rowdata, 1);
 		
 		if (out_raster) {
-			//cmbid.attr("dim") = Rcpp::Dimension(1, ncols);
 			dst_ds.write( 1, 0, y, ncols, 1, cmbid );
 		}
 		pfnProgress(y / (nrows-1.0), NULL, pProgressData);
-		if (y % 1000 == 0)
-			Rcpp::checkUserInterrupt();
 	}
 
 	if (out_raster)
@@ -533,6 +531,77 @@ Rcpp::DataFrame _combine(
 		src_ds[i].close();
 	
 	return tbl.asDataFrame();
+}
+
+
+//' Compute for a raster band the set of unique pixel values and their counts
+//' 
+//' @noRd
+// [[Rcpp::export(name = ".value_count")]]
+Rcpp::DataFrame _value_count(std::string src_filename, int band = 1) {
+
+	GDALRaster src_ds = GDALRaster(src_filename, true);
+	int nrows = src_ds.getRasterYSize();
+	int ncols = src_ds.getRasterXSize();
+	GDALProgressFunc pfnProgress = GDALTermProgressR;
+	void* pProgressData = NULL;
+	Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
+	
+	Rcpp::Rcout << "Scanning raster...\n";
+	
+	if (src_ds._readableAsInt(band)) {
+		// read pixel values as int
+		Rcpp::IntegerVector rowdata(ncols);
+		std::unordered_map<int, double> tbl;
+		for (int y = 0; y < nrows; ++y) {
+			rowdata = Rcpp::as<Rcpp::IntegerVector>(
+							src_ds.read(band, 0, y, ncols, 1, ncols, 1) );
+			for (R_xlen_t n=0; n < rowdata.size(); ++n) {
+				tbl[rowdata(n)] += 1.0;
+			}
+			pfnProgress(y / (nrows-1.0), NULL, pProgressData);
+		}
+
+		Rcpp::IntegerVector value(tbl.size());
+		Rcpp::NumericVector count(tbl.size());
+		std::size_t this_idx = 0;
+		for(auto iter = tbl.begin(); iter != tbl.end(); ++iter) {
+			value[this_idx] = iter->first;
+			count[this_idx] = iter->second;
+			++this_idx;
+		}
+		
+		df_out.push_back(value, "VALUE");
+		df_out.push_back(count, "COUNT");
+	}
+	else {
+		// UInt32, Float32, Float64
+		// read pixel values as double
+		Rcpp::NumericVector rowdata(ncols);
+		std::unordered_map<double, double> tbl;
+		for (int y = 0; y < nrows; ++y) {
+			rowdata = Rcpp::as<Rcpp::NumericVector>(
+							src_ds.read(band, 0, y, ncols, 1, ncols, 1) );
+			for (R_xlen_t n=0; n < rowdata.size(); ++n) {
+				tbl[rowdata(n)] += 1.0;
+			}
+			pfnProgress(y / (nrows-1.0), NULL, pProgressData);
+		}
+
+		Rcpp::NumericVector value(tbl.size());
+		Rcpp::NumericVector count(tbl.size());
+		std::size_t this_idx = 0;
+		for(auto iter = tbl.begin(); iter != tbl.end(); ++iter) {
+			value[this_idx] = iter->first;
+			count[this_idx] = iter->second;
+			++this_idx;
+		}
+		
+		df_out.push_back(value, "VALUE");
+		df_out.push_back(count, "COUNT");
+	}
+	
+	return df_out;
 }
 
 

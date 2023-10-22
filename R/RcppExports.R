@@ -277,6 +277,13 @@ get_pixel_line <- function(xy, gt) {
     .Call(`_gdalraster__combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options)
 }
 
+#' Compute for a raster band the set of unique pixel values and their counts
+#' 
+#' @noRd
+.value_count <- function(src_filename, band = 1L) {
+    .Call(`_gdalraster__value_count`, src_filename, band)
+}
+
 #' Wrapper for GDALDEMProcessing in the GDAL Algorithms C API
 #'
 #' Called from and documented in R/gdalraster_proc.R

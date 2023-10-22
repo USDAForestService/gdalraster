@@ -784,14 +784,14 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 	}
 	else {
 	// real data types
-		if ( ( GDALDataTypeIsInteger(eDT) && 
-				(GDALGetDataTypeSizeBits(eDT) <= 32) && 
-				GDALDataTypeIsSigned(eDT) ) ||
-				( GDALDataTypeIsInteger(eDT) && 
-				(GDALGetDataTypeSizeBits(eDT) <= 16) && 
-				!GDALDataTypeIsSigned(eDT) ) ) {
+		if (GDALDataTypeIsInteger(eDT) && 
+				(
+				GDALGetDataTypeSizeBits(eDT) <= 16 ||
+				(GDALGetDataTypeSizeBits(eDT) <= 32 && 
+				GDALDataTypeIsSigned(eDT))
+				)) {
 			
-			// signed integer <= 32 bits and unsigned integer <= 16 bits
+			// signed integer <= 32 bits and any integer <= 16 bits
 			// use int32 buffer
 		
 			std::vector<GInt32> buf(out_xsize * out_ysize);
@@ -1292,6 +1292,27 @@ GDALRasterBandH GDALRaster::_getBand(int band) const {
 		Rcpp::stop("Failed to access the requested band.");
 	return hBand;
 }
+
+bool GDALRaster::_readableAsInt(int band) const {
+	GDALRasterBandH hBand = this->_getBand(band);
+	GDALDataType eDT = GDALGetRasterDataType(hBand);
+	
+	// readable as int32 / R integer type
+	// signed integer <= 32 bits or any integer <= 16 bits
+	if (GDALDataTypeIsInteger(eDT) && 
+			(
+			GDALGetDataTypeSizeBits(eDT) <= 16 ||
+			(GDALGetDataTypeSizeBits(eDT) <= 32 && 
+			GDALDataTypeIsSigned(eDT))
+			)) {
+			
+		return true;
+	}
+	else {
+		return false;
+	}
+}
+		
 
 // ****************************************************************************
 
