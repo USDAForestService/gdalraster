@@ -8,7 +8,7 @@
 #' `buildRAT()` reads all pixels of an input raster to obtain the set of
 #' unique values and their counts. The result is returned as a data frame
 #' suitable for use with the class method `GDALRaster$setDefaultRAT()`. The
-#' returned data frame might be further modified before setting it as a Raster
+#' returned data frame might be further modified before setting as a Raster
 #' Attribute Table in a dataset, for example, by adding columns containing
 #' class names, color values, or other information (see Details).
 #' An optional input data frame containing such attributes may be given, in
@@ -27,7 +27,7 @@
 #' or various other information.
 #'
 #' Each column in a raster attribute table has a name, a type (integer, 
-#' floating point or string), and a `GDALRATFieldUsage`. The usage
+#' double, or string), and a `GDALRATFieldUsage`. The usage
 #' distinguishes columns with particular understood purposes (such as color,
 #' histogram count, class name), and columns that have other purposes not
 #' understood by the library (long labels, ancillary attributes, etc).
@@ -82,17 +82,17 @@
 #' spaced, and the categorization can be determined by knowing the value at
 #' which the categories start and the size of a category. This is called
 #' "Linear Binning" and the information is kept specially on the raster
-#' attribute table as a whole. In R, an attribute table that uses linear
-#' binning would have the following attributes set on the data frame:
+#' attribute table as a whole. In R, a RAT that uses linear binning would
+#' have the following attributes set on the data frame:
 #' attribute `"Row0Min"` = the numeric lower bound (pixel value) of the first
 #' category, and attribute `"BinSize"` = the numeric width of each category (in
 #' pixel value units). `buildRAT()` does not create tables with linear binning,
 #' but one could be created manually based on the specifications above, and
-#' applied to a raster band with the class method `GDALRaster$setDefaultRAT()`.
+#' applied to a raster with the class method `GDALRaster$setDefaultRAT()`.
 #'
-#' A raster attribute table is thematic or athematic (continuous). In R, the
-#' data frame has an attribute named `"GDALRATTableType"` with string value of
-#' either `"thematic"` or `"athematic"`.
+#' A raster attribute table is thematic or athematic (continuous). In R, this
+#' is defined by an attribute on the data frame named `"GDALRATTableType"` with
+#' value of either `"thematic"` or `"athematic"`.
 #'
 #' @note
 #' The full raster will be scanned.
@@ -133,7 +133,8 @@
 #'
 #' @seealso
 #' [`GDALRaster$getDefaultRAT()`][GDALRaster],
-#' [`GDALRaster$setDefaultRAT()`][GDALRaster]
+#' [`GDALRaster$setDefaultRAT()`][GDALRaster],
+#' `vignette("raster-attribute-tables")`
 #'
 #' @examples
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
@@ -179,9 +180,13 @@
 #' 
 #' ds$close()
 #'
+#' # Display
 #' tbl <- displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
-#' class(tbl)
+#' class(tbl)  # an object of class "gt_tbl" from package gt
+#' # To show the table:
 #' # tbl
+#' # or simply call `displayRAT()` as above but without assignment.
+#' # `vignette("raster-attribute-tables")` has example output.
 #' @export
 buildRAT <- function(raster,
 				band = 1L,
@@ -222,8 +227,7 @@ buildRAT <- function(raster,
 			stop("names(join_df) cannot contain col_names[2].", call. = FALSE)
 	}
 
-	d <- combine(f, bands=band)
-	d <- d[,c(3,2)]
+	d <- .value_count(f, band)
 	names(d) <- col_names
 	if (!is.null(na_value))
 		d[is.na(d[,1]), 1] <- na_value
@@ -295,10 +299,12 @@ buildRAT <- function(raster,
 #' @param rat A data frame formatted as a GDAL RAT (e.g., as returned by
 #' `buildRAT()` or `GDALRaster$getDefaultRAT()`).
 #' @param title Character string to be used in the table title.
-#' @returns An object of class `gt::gt_tbl`.
+#' @returns An object of class `"gt_tbl"` (i.e., a table created with
+#' `gt::gt()`).
 #'
 #' @seealso
-#' [buildRAT()], [`GDALRaster$getDefaultRAT()`][GDALRaster]
+#' [buildRAT()], [`GDALRaster$getDefaultRAT()`][GDALRaster],
+#' `vignette("raster-attribute-tables")`
 #'
 #' @examples
 #' # see examples for `buildRAT()`

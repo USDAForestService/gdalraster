@@ -1,5 +1,7 @@
 # gdalraster 1.5.1 (dev)
 
+* add `_value_count()`: internal function to compute the set of unique pixel values and their counts faster than using `combine()` on one raster; used in `buildRAT()` (2023-10-21)
+
 * add `displayRAT()`: generate a presentation table, showing colors if the RAT contains RGB columns (2023-10-19)
 
 * `plot_raster()`: normalize legend correctly for `minmax_def` and `minmax_pct_cut` (#131) (2023-10-18)

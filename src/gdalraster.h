@@ -225,6 +225,7 @@ class GDALRaster {
 	// methods for internal use not exported to R
 	void _checkAccess(GDALAccess access_needed) const;
 	GDALRasterBandH _getBand(int band) const;
+	bool _readableAsInt(int band) const;
 };
 
 RCPP_EXPOSED_CLASS(GDALRaster)
