@@ -556,8 +556,8 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1) {
 		for (int y = 0; y < nrows; ++y) {
 			rowdata = Rcpp::as<Rcpp::IntegerVector>(
 							src_ds.read(band, 0, y, ncols, 1, ncols, 1) );
-			for (R_xlen_t n=0; n < rowdata.size(); ++n) {
-				tbl[rowdata(n)] += 1.0;
+			for (auto const& i : rowdata) {
+				tbl[i] += 1.0;
 			}
 			pfnProgress(y / (nrows-1.0), NULL, pProgressData);
 		}
@@ -582,8 +582,8 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1) {
 		for (int y = 0; y < nrows; ++y) {
 			rowdata = Rcpp::as<Rcpp::NumericVector>(
 							src_ds.read(band, 0, y, ncols, 1, ncols, 1) );
-			for (R_xlen_t n=0; n < rowdata.size(); ++n) {
-				tbl[rowdata(n)] += 1.0;
+			for (auto const& i : rowdata) {
+				tbl[i] += 1.0;
 			}
 			pfnProgress(y / (nrows-1.0), NULL, pProgressData);
 		}
