@@ -103,6 +103,8 @@ Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
 		std::string fmt, 
 		std::string dataType,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
+		
+Rcpp::DataFrame _value_count(std::string src_filename, int band);
 
 bool _dem_proc(std::string mode,
 		std::string src_filename, 
