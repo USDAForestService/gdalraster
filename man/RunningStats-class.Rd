@@ -126,7 +126,7 @@ sd(chunk)
 
 \donttest{
 ## 10^9 values read in 10,000 chunks
-## should take under 2 minutes on typical PC hardware
+## should take under 1 minute on most PC hardware
 for (i in 1:1e4) {
   chunk <- runif(1e5)
   rs$update(chunk)
