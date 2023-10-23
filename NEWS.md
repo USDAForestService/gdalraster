@@ -1,5 +1,7 @@
 # gdalraster 1.5.1 (dev)
 
+* performance improvement in `RunningStats::update()` (2023-10-22)
+
 * class `CmbTable`: zero is now allowed for the count increment `incr` in `update()`; small performance improvements (2023-10-22)
 
 * add `_value_count()`: internal function to compute the set of unique pixel values and their counts faster than using `combine()` on one raster; used in `buildRAT()` (2023-10-21)
