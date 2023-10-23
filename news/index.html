@@ -55,7 +55,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.1" id="gdalraster-151-dev">gdalraster 1.5.1 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-151-dev"></a></h2>
-<ul><li><p>class <code>CmbTable</code>: zero is now allowed for the count increment <code>incr</code> in <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code>; small performance improvements (2023-10-22)</p></li>
+<ul><li><p>performance improvement in <code>RunningStats::update()</code> (2023-10-22)</p></li>
+<li><p>class <code>CmbTable</code>: zero is now allowed for the count increment <code>incr</code> in <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code>; small performance improvements (2023-10-22)</p></li>
 <li><p>add <code>_value_count()</code>: internal function to compute the set of unique pixel values and their counts faster than using <code><a href="../reference/combine.html">combine()</a></code> on one raster; used in <code><a href="../reference/buildRAT.html">buildRAT()</a></code> (2023-10-21)</p></li>
 <li><p>add <code><a href="../reference/displayRAT.html">displayRAT()</a></code>: generate a presentation table, showing colors if the RAT contains RGB columns (2023-10-19)</p></li>
 <li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code>: normalize legend correctly for <code>minmax_def</code> and <code>minmax_pct_cut</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/131" class="external-link">#131</a>) (2023-10-18)</p></li>
