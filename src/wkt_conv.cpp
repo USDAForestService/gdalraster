@@ -2,7 +2,6 @@
    Chris Toney <chris.toney at usda.gov> */
 
 #include <Rcpp.h> 
-// [[Rcpp::plugins(cpp11)]]
 
 #include <string>
 
