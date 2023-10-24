@@ -134,6 +134,8 @@
 #' @seealso
 #' [`GDALRaster$getDefaultRAT()`][GDALRaster],
 #' [`GDALRaster$setDefaultRAT()`][GDALRaster],
+#' [displayRAT()]
+#'
 #' `vignette("raster-attribute-tables")`
 #'
 #' @examples
@@ -174,17 +176,17 @@
 #' ds$setDefaultRAT(band=1, tbl)
 #' ds$flushCache()
 #' 
-#' rat2 <- ds$getDefaultRAT(band=1)
-#' nrow(rat2)
-#' head(rat2)
+#' tbl2 <- ds$getDefaultRAT(band=1)
+#' nrow(tbl2)
+#' head(tbl2)
 #' 
 #' ds$close()
 #'
 #' # Display
-#' tbl <- displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
-#' class(tbl)  # an object of class "gt_tbl" from package gt
+#' evt_rat <- displayRAT(tbl2, title = "Raster Attribute Table for Storm Lake EVT")
+#' class(evt_rat)  # an object of class "gt_tbl" from package gt
 #' # To show the table:
-#' # tbl
+#' # evt_rat
 #' # or simply call `displayRAT()` as above but without assignment
 #' # `vignette("raster-attribute-tables")` has example output
 #' @export
@@ -303,7 +305,8 @@ buildRAT <- function(raster,
 #' `gt::gt()`).
 #'
 #' @seealso
-#' [buildRAT()], [`GDALRaster$getDefaultRAT()`][GDALRaster],
+#' [buildRAT()], [`GDALRaster$getDefaultRAT()`][GDALRaster]
+#'
 #' `vignette("raster-attribute-tables")`
 #'
 #' @examples
