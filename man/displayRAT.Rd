@@ -25,6 +25,7 @@ This function requires package \code{gt}.
 # see examples for `buildRAT()`
 }
 \seealso{
-\code{\link[=buildRAT]{buildRAT()}}, \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}},
+\code{\link[=buildRAT]{buildRAT()}}, \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}}
+
 \code{vignette("raster-attribute-tables")}
 }
