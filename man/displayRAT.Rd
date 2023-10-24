@@ -4,10 +4,10 @@
 \alias{displayRAT}
 \title{Display a GDAL Raster Attribute Table}
 \usage{
-displayRAT(rat, title = "Raster Attribute Table")
+displayRAT(tbl, title = "Raster Attribute Table")
 }
 \arguments{
-\item{rat}{A data frame formatted as a GDAL RAT (e.g., as returned by
+\item{tbl}{A data frame formatted as a GDAL RAT (e.g., as returned by
 \code{buildRAT()} or \code{GDALRaster$getDefaultRAT()}).}
 
 \item{title}{Character string to be used in the table title.}

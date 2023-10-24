@@ -88,7 +88,7 @@ The function `displayRAT()` generates a presentation table. Colors are shown if 
 displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
 ```
 
-`displayRAT()` returns an object of class `gt::gt_tbl`, which could be modified if desired using functions of the **gt** package.
+`displayRAT()` returns an object of class `"gt_tbl"`. The table object could be modified if desired using functions of the **gt** package.
 
 ## Using in QGIS
 

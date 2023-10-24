@@ -142,7 +142,7 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' [`GDALRaster$read()`][GDALRaster]
 #'
 #' @examples
-#' ## read three bands from a multi-band dataset
+#' # read three bands from a multi-band dataset
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
 #'
@@ -196,8 +196,8 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #' [bandCopyWholeRaster()]
 #'
 #' @examples
-#' ## band 2 in a FARSITE landscape file has slope degrees
-#' ## convert slope degrees to slope percent in a new raster
+#' # band 2 in a FARSITE landscape file has slope degrees
+#' # convert slope degrees to slope percent in a new raster
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
 #' ds_lcp$getMetadata(band=2, domain="")
@@ -212,17 +212,17 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #'                  init = -32767)
 #' ds_slp <- new(GDALRaster, slpp_file, read_only=FALSE)
 #' 
-#' ## slpp_file is initialized to -32767 and nodata value set
+#' # slpp_file is initialized to -32767 and nodata value set
 #' ds_slp$getNoDataValue(band=1)
 #' 
-#' ## extent and cell size are the same as lcp_file
+#' # extent and cell size are the same as lcp_file
 #' ds_lcp$bbox()
 #' ds_lcp$res()
 #' ds_slp$bbox()
 #' ds_slp$res()
 #' 
-#' ## convert slope degrees in lcp_file band 2 to slope percent in slpp_file
-#' ## bring through LCP nodata -9999 to the output nodata value
+#' # convert slope degrees in lcp_file band 2 to slope percent in slpp_file
+#' # bring through LCP nodata -9999 to the output nodata value
 #' ncols <- ds_slp$getRasterXSize()
 #' nrows <- ds_slp$getRasterYSize()
 #' for (row in 0:(nrows-1)) {
@@ -236,7 +236,7 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #'     ds_slp$write(band=1, xoff=0, yoff=row, xsize=ncols, ysize=1, rowslpp)
 #' }
 #' 
-#' ## min, max, mean, sd
+#' # min, max, mean, sd
 #' ds_slp$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' 
 #' ds_slp$close()
@@ -396,7 +396,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' [warp()] can write VRT for virtual reprojection
 #'
 #' @examples
-#' ### resample
+#' ## resample
 #'
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #' ds <- new(GDALRaster, evt_file, TRUE)
@@ -404,24 +404,23 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds$bbox()
 #' ds$close()
 #' 
-#' ## use combine() with one input to get a table of pixel counts for  
-#' ## the raster values
-#' vat <- combine(evt_file)
-#' print(vat[-1]) # drop the cmbid in this case
-#' sum(vat$count)
+#' # table of the unique pixel values and their counts
+#' tbl <- buildRAT(evt_file)
+#' print(tbl)
+#' sum(tbl$COUNT)
 #' 
-#' ## resample at 90-m resolution
-#' ## EVT is thematic vegetation type so use a majority value
+#' # resample at 90-m resolution
+#' # EVT is thematic vegetation type so use a majority value
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         resolution=c(90,90),
 #'                         resampling="mode")
 #' 
-#' ## .vrt is a small xml file pointing to the source raster
+#' # .vrt is a small xml file pointing to the source raster
 #' file.size(vrt_file)
 #' 
-#' vat90m <- combine(vrt_file, var.names=c("evt90m"))
-#' print(vat90m[-1])
-#' sum(vat90m$count)
+#' tbl90m <- buildRAT(vrt_file)
+#' print(tbl90m)
+#' sum(tbl90m$COUNT)
 #' 
 #' ds <- new(GDALRaster, vrt_file, TRUE)
 #' ds$res()
@@ -429,35 +428,35 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds$close()
 #'
 #'
-#' ### clip
+#' ## clip
 #' 
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #' ds_evt <- new(GDALRaster, evt_file, TRUE)
 #' ds_evt$bbox()
 #' 
-#' ## WKT string for a boundary within the EVT extent
+#' # WKT string for a boundary within the EVT extent
 #' bnd = "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2 
 #' 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, 
 #' 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
 #' 
-#' ## src_align = TRUE
+#' # src_align = TRUE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
 #'                         src_align=TRUE)
 #' ds_vrt <- new(GDALRaster, vrt_file, TRUE)
 #' 
-#' ## VRT is a virtual clip, pixel-aligned with the EVT raster
+#' # VRT is a virtual clip, pixel-aligned with the EVT raster
 #' bbox_from_wkt(bnd)
 #' ds_vrt$bbox()
 #' ds_vrt$res()
 #' 
-#' ## src_align = FALSE
+#' # src_align = FALSE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
 #'                         src_align=FALSE)
 #' ds_vrt_noalign <- new(GDALRaster, vrt_file, TRUE)
 #' 
-#' ## VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
+#' # VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
 #' ds_vrt_noalign$bbox()
 #' ds_vrt_noalign$res()
 #' 
@@ -466,13 +465,13 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_evt$close()
 #'
 #'
-#' ### subset and pixel align two rasters
+#' ## subset and pixel align two rasters
 #' 
-#' ## FARSITE landscape file for the Storm Lake area
+#' # FARSITE landscape file for the Storm Lake area
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
 #' 
-#' ## Landsat band 5 file covering the Storm Lake area
+#' # Landsat band 5 file covering the Storm Lake area
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 #' ds_b5 <- new(GDALRaster, b5_file, read_only=TRUE)
 #' 
@@ -482,7 +481,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_b5$bbox()   # 323400.9 5101815.8  327870.9 5105175.8
 #' ds_b5$res()    # 30 30
 #' 
-#' ## src_align = FALSE because we need target alignment in this case:
+#' # src_align = FALSE because we need target alignment in this case:
 #' vrt_file <- rasterToVRT(b5_file,
 #'                         resolution = ds_lcp$res(),
 #'                         subwindow = ds_lcp$bbox(),
@@ -492,14 +491,14 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_b5vrt$bbox() # 323476.1 5101872.0  327766.1 5105082.0
 #' ds_b5vrt$res()  # 30 30
 #' 
-#' ## read the the Landsat file pixel-aligned with the LCP file 
-#' ## summarize band 5 reflectance where FBFM = 165 
-#' ## LCP band 4 contains FBFM (a classification of fuel beds):
+#' # read the the Landsat file pixel-aligned with the LCP file 
+#' # summarize band 5 reflectance where FBFM = 165 
+#' # LCP band 4 contains FBFM (a classification of fuel beds):
 #' ds_lcp$getMetadata(band=4, domain="")
 #' 
-#' ## verify Landsat nodata (0):
+#' # verify Landsat nodata (0):
 #' ds_b5vrt$getNoDataValue(band=1)
-#' ## will be read as NA and omitted from stats
+#' # will be read as NA and omitted from stats
 #' rs <- new(RunningStats, na_rm=TRUE)
 #' 
 #' ncols <- ds_lcp$getRasterXSize()
@@ -763,26 +762,26 @@ rasterToVRT <- function(srcfile,
 #' [`GDALRaster-class`][GDALRaster], [combine()], [rasterToVRT()]
 #'
 #' @examples
-#' ### Using pixel longitude/latitude
+#' ## Using pixel longitude/latitude
 #'
-#' ## Hopkins bioclimatic index (HI) as described in:
-#' ## Bechtold, 2004, West. J. Appl. For. 19(4):245-251.
-#' ## Integrates elevation, latitude and longitude into an index of the 
-#' ## phenological occurrence of springtime. Here it is relativized to 
-#' ## mean values for an eight-state region in the western US.
-#' ## Positive HI means spring is delayed by that number of days relative 
-#' ## to the reference position, while negative values indicate spring is
-#' ## advanced. The original equation had elevation units as feet, so 
-#' ## converting m to ft in `expr`.
+#' # Hopkins bioclimatic index (HI) as described in:
+#' # Bechtold, 2004, West. J. Appl. For. 19(4):245-251.
+#' # Integrates elevation, latitude and longitude into an index of the 
+#' # phenological occurrence of springtime. Here it is relativized to 
+#' # mean values for an eight-state region in the western US.
+#' # Positive HI means spring is delayed by that number of days relative 
+#' # to the reference position, while negative values indicate spring is
+#' # advanced. The original equation had elevation units as feet, so 
+#' # converting m to ft in `expr`.
 #' 
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #'
-#' ## expression to calculate HI
+#' # expression to calculate HI
 #' expr <- "round( ((ELEV_M * 3.281 - 5449) / 100) + 
 #'                 ((pixelLat - 42.16) * 4) + 
 #'                 ((-116.39 - pixelLon) * 1.25) )"
 #' 
-#' ## calc() writes to a tempfile by default
+#' # calc() writes to a tempfile by default
 #' hi_file <- calc(expr = expr, 
 #'                 rasterfiles = elev_file, 
 #'                 var.names = "ELEV_M", 
@@ -792,18 +791,18 @@ rasterToVRT <- function(srcfile,
 #'                 usePixelLonLat = TRUE)
 #' 
 #' ds <- new(GDALRaster, hi_file, read_only=TRUE)
-#' ## min, max, mean, sd
+#' # min, max, mean, sd
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
 #'
 #'
-#' ### Calculate normalized difference vegetation index (NDVI)
+#' ## Calculate normalized difference vegetation index (NDVI)
 #' 
-#' ## Landast band 4 (red) and band 5 (near infrared):
+#' # Landast band 4 (red) and band 5 (near infrared):
 #' b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 #'
-#' ## is nodata value set
+#' # is nodata value set
 #' ds <- new(GDALRaster, b4_file, read_only=TRUE)
 #' ds$getNoDataValue(band=1)   # 0
 #' ds$close()
@@ -811,7 +810,7 @@ rasterToVRT <- function(srcfile,
 #' ds$getNoDataValue(band=1)   # 0
 #' ds$close()
 #'
-#' ## 0 will be read as NA so don't need to handle zeros in expr
+#' # 0 will be read as NA so don't need to handle zeros in expr
 #' expr <- "(B5-B4)/(B5+B4)"
 #' ndvi_file <- calc(expr = expr,
 #'                   rasterfiles = c(b4_file, b5_file),
@@ -825,37 +824,37 @@ rasterToVRT <- function(srcfile,
 #' ds$close()
 #'
 #'
-#' ### Reclassify a variable by rule set
+#' ## Reclassify a variable by rule set
 #' 
-#' ## Combine two raster layers and look for specific combinations. Then 
-#' ## recode to a new value by rule set.
-#' ##
-#' ## Based on example in:
-#' ##   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition, 
-#' ##   critique, modification, maintenance, and model calibration.
-#' ##   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture, 
-#' ##   Forest Service, Rocky Mountain Research Station. 54 p.
-#' ## Context: Refine national-scale fuels data to improve fire simulation
-#' ##   results in localized applications.
-#' ## Issue: Areas with steep slopes (40+ degrees) were mapped as
-#' ##   GR1 (101; short, sparse dry climate grass) and 
-#' ##   GR2 (102; low load, dry climate grass) but were not carrying fire.
-#' ## Resolution: After viewing these areas in Google Earth,
-#' ##   NB9 (99; bare ground) was selected as the replacement fuel model.
+#' # Combine two raster layers and look for specific combinations. Then 
+#' # recode to a new value by rule set.
+#' #
+#' # Based on example in:
+#' #   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition, 
+#' #   critique, modification, maintenance, and model calibration.
+#' #   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture, 
+#' #   Forest Service, Rocky Mountain Research Station. 54 p.
+#' # Context: Refine national-scale fuels data to improve fire simulation
+#' #   results in localized applications.
+#' # Issue: Areas with steep slopes (40+ degrees) were mapped as
+#' #   GR1 (101; short, sparse dry climate grass) and 
+#' #   GR2 (102; low load, dry climate grass) but were not carrying fire.
+#' # Resolution: After viewing these areas in Google Earth,
+#' #   NB9 (99; bare ground) was selected as the replacement fuel model.
 #' 
-#' ## look for combinations of slope >= 40 and FBFM 101 or 102
+#' # look for combinations of slope >= 40 and FBFM 101 or 102
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' rasterfiles <- c(lcp_file, lcp_file)
 #' var.names <- c("SLP", "FBFM")
 #' bands <- c(2, 4)
-#' df <- combine(rasterfiles, var.names, bands)
-#' nrow(df)
-#' df_subset <- subset(df, SLP >= 40 & FBFM %in% c(101,102))
-#' print(df_subset)       # twelve combinations meet the criteria
-#' sum(df_subset$count)   # 85 total pixels
+#' tbl <- combine(rasterfiles, var.names, bands)
+#' nrow(tbl)
+#' tbl_subset <- subset(tbl, SLP >= 40 & FBFM %in% c(101,102))
+#' print(tbl_subset)       # twelve combinations meet the criteria
+#' sum(tbl_subset$count)   # 85 total pixels
 #' 
-#' ## recode these pixels to 99 (bare ground)
-#' ## the LCP driver does not support in-place write so make a copy as GTiff
+#' # recode these pixels to 99 (bare ground)
+#' # the LCP driver does not support in-place write so make a copy as GTiff
 #' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
 #' createCopy("GTiff", tif_file, lcp_file)
 #' 
@@ -868,14 +867,14 @@ rasterToVRT <- function(srcfile,
 #'      out_band = 4,
 #'      write_mode = "update")
 #' 
-#' ## verify the ouput
+#' # verify the ouput
 #' rasterfiles <- c(tif_file, tif_file)
-#' df <- combine(rasterfiles, var.names, bands)
-#' df_subset <- subset(df, SLP >= 40 & FBFM %in% c(101,102))
-#' print(df_subset)
-#' sum(df_subset$count)
+#' tbl <- combine(rasterfiles, var.names, bands)
+#' tbl_subset <- subset(tbl, SLP >= 40 & FBFM %in% c(101,102))
+#' print(tbl_subset)
+#' sum(tbl_subset$count)
 #' 
-#' ## if LCP file format is needed: createCopy(tif_file, <new_lcp_file>)
+#' # if LCP file format is needed: createCopy(tif_file, <new_lcp_file>)
 #' @export
 calc <- function(expr, 
 					rasterfiles, 
@@ -1095,9 +1094,6 @@ calc <- function(expr,
 #' Typical output data types are the unsigned types: 
 #' Byte (0 to 255), UInt16 (0 to 65,535) and UInt32 (the default, 0 to 
 #' 4,294,967,295).
-#' 
-#' `combine()` can also run on a single raster layer to obtain a table of 
-#' pixel values and their counts.
 #'
 #' @param rasterfiles Character vector of raster filenames to combine.
 #' @param var.names Character vector of `length(rasterfiles)` containing 
@@ -1128,27 +1124,30 @@ calc <- function(expr,
 #' [`CmbTable-class`][CmbTable], [`GDALRaster-class`][GDALRaster], [calc()],
 #' [rasterToVRT()]
 #'
+#' [buildRAT()] to compute a table of the unique pixel values and their counts
+#' for a single raster layer
+#'
 #' @examples
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #' evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
 #' evh_file <- system.file("extdata/storml_evh.tif", package="gdalraster")
 #' rasterfiles <- c(evt_file, evc_file, evh_file)
 #' var.names <- c("veg_type", "veg_cov", "veg_ht")
-#' df <- combine(rasterfiles, var.names)
-#' nrow(df)
-#' df <- df[order(-df$count),]
-#' head(df, n = 20)
+#' tbl <- combine(rasterfiles, var.names)
+#' nrow(tbl)
+#' tbl <- tbl[order(-tbl$count),]
+#' head(tbl, n = 20)
 #'
-#' ## combine two bands from a multi-band file and write the combination IDs 
-#' ## to an output raster
+#' # combine two bands from a multi-band file and write the combination IDs 
+#' # to an output raster
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' rasterfiles <- c(lcp_file, lcp_file)
 #' bands <- c(4, 5)
 #' var.names <- c("fbfm", "tree_cov")
 #' cmb_file <- paste0(tempdir(), "/", "fbfm_cov_cmbid.tif")
 #' opt <- c("COMPRESS=LZW")
-#' df <- combine(rasterfiles, var.names, bands, cmb_file, options = opt)
-#' head(df)
+#' tbl <- combine(rasterfiles, var.names, bands, cmb_file, options = opt)
+#' head(tbl)
 #' ds <- new(GDALRaster, cmb_file, TRUE)
 #' ds$info()
 #' ds$close()
@@ -1206,8 +1205,8 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 		}
 	}
 
-	df <- .combine(rasterfiles, var.names, bands, dstfile, fmt, dtName, options)
-	return(df)
+	d <- .combine(rasterfiles, var.names, bands, dstfile, fmt, dtName, options)
+	return(d)
 }
 
 

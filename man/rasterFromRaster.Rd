@@ -47,8 +47,8 @@ Optionally changes the format, number of bands, data type and nodata value,
 sets driver-specific dataset creation options, and initializes to a value.
 }
 \examples{
-## band 2 in a FARSITE landscape file has slope degrees
-## convert slope degrees to slope percent in a new raster
+# band 2 in a FARSITE landscape file has slope degrees
+# convert slope degrees to slope percent in a new raster
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
 ds_lcp$getMetadata(band=2, domain="")
@@ -63,17 +63,17 @@ rasterFromRaster(srcfile = lcp_file,
                  init = -32767)
 ds_slp <- new(GDALRaster, slpp_file, read_only=FALSE)
 
-## slpp_file is initialized to -32767 and nodata value set
+# slpp_file is initialized to -32767 and nodata value set
 ds_slp$getNoDataValue(band=1)
 
-## extent and cell size are the same as lcp_file
+# extent and cell size are the same as lcp_file
 ds_lcp$bbox()
 ds_lcp$res()
 ds_slp$bbox()
 ds_slp$res()
 
-## convert slope degrees in lcp_file band 2 to slope percent in slpp_file
-## bring through LCP nodata -9999 to the output nodata value
+# convert slope degrees in lcp_file band 2 to slope percent in slpp_file
+# bring through LCP nodata -9999 to the output nodata value
 ncols <- ds_slp$getRasterXSize()
 nrows <- ds_slp$getRasterYSize()
 for (row in 0:(nrows-1)) {
@@ -87,7 +87,7 @@ for (row in 0:(nrows-1)) {
     ds_slp$write(band=1, xoff=0, yoff=row, xsize=ncols, ysize=1, rowslpp)
 }
 
-## min, max, mean, sd
+# min, max, mean, sd
 ds_slp$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 
 ds_slp$close()

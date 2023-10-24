@@ -76,9 +76,6 @@ output data type. Combination IDs are sequential integers starting at 1.
 Typical output data types are the unsigned types:
 Byte (0 to 255), UInt16 (0 to 65,535) and UInt32 (the default, 0 to
 4,294,967,295).
-
-\code{combine()} can also run on a single raster layer to obtain a table of
-pixel values and their counts.
 }
 \examples{
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
@@ -86,21 +83,21 @@ evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
 evh_file <- system.file("extdata/storml_evh.tif", package="gdalraster")
 rasterfiles <- c(evt_file, evc_file, evh_file)
 var.names <- c("veg_type", "veg_cov", "veg_ht")
-df <- combine(rasterfiles, var.names)
-nrow(df)
-df <- df[order(-df$count),]
-head(df, n = 20)
+tbl <- combine(rasterfiles, var.names)
+nrow(tbl)
+tbl <- tbl[order(-tbl$count),]
+head(tbl, n = 20)
 
-## combine two bands from a multi-band file and write the combination IDs 
-## to an output raster
+# combine two bands from a multi-band file and write the combination IDs 
+# to an output raster
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 rasterfiles <- c(lcp_file, lcp_file)
 bands <- c(4, 5)
 var.names <- c("fbfm", "tree_cov")
 cmb_file <- paste0(tempdir(), "/", "fbfm_cov_cmbid.tif")
 opt <- c("COMPRESS=LZW")
-df <- combine(rasterfiles, var.names, bands, cmb_file, options = opt)
-head(df)
+tbl <- combine(rasterfiles, var.names, bands, cmb_file, options = opt)
+head(tbl)
 ds <- new(GDALRaster, cmb_file, TRUE)
 ds$info()
 ds$close()
@@ -108,4 +105,7 @@ ds$close()
 \seealso{
 \code{\link[=CmbTable]{CmbTable-class}}, \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=calc]{calc()}},
 \code{\link[=rasterToVRT]{rasterToVRT()}}
+
+\code{\link[=buildRAT]{buildRAT()}} to compute a table of the unique pixel values and their counts
+for a single raster layer
 }

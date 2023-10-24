@@ -108,26 +108,26 @@ exists, set \code{write_mode = "update"} and set \code{out_band} to an existing
 band number in \code{dstfile} (new bands cannot be created in \code{dstfile}).
 }
 \examples{
-### Using pixel longitude/latitude
+## Using pixel longitude/latitude
 
-## Hopkins bioclimatic index (HI) as described in:
-## Bechtold, 2004, West. J. Appl. For. 19(4):245-251.
-## Integrates elevation, latitude and longitude into an index of the 
-## phenological occurrence of springtime. Here it is relativized to 
-## mean values for an eight-state region in the western US.
-## Positive HI means spring is delayed by that number of days relative 
-## to the reference position, while negative values indicate spring is
-## advanced. The original equation had elevation units as feet, so 
-## converting m to ft in `expr`.
+# Hopkins bioclimatic index (HI) as described in:
+# Bechtold, 2004, West. J. Appl. For. 19(4):245-251.
+# Integrates elevation, latitude and longitude into an index of the 
+# phenological occurrence of springtime. Here it is relativized to 
+# mean values for an eight-state region in the western US.
+# Positive HI means spring is delayed by that number of days relative 
+# to the reference position, while negative values indicate spring is
+# advanced. The original equation had elevation units as feet, so 
+# converting m to ft in `expr`.
 
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
-## expression to calculate HI
+# expression to calculate HI
 expr <- "round( ((ELEV_M * 3.281 - 5449) / 100) + 
                 ((pixelLat - 42.16) * 4) + 
                 ((-116.39 - pixelLon) * 1.25) )"
 
-## calc() writes to a tempfile by default
+# calc() writes to a tempfile by default
 hi_file <- calc(expr = expr, 
                 rasterfiles = elev_file, 
                 var.names = "ELEV_M", 
@@ -137,18 +137,18 @@ hi_file <- calc(expr = expr,
                 usePixelLonLat = TRUE)
 
 ds <- new(GDALRaster, hi_file, read_only=TRUE)
-## min, max, mean, sd
+# min, max, mean, sd
 ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
 
 
-### Calculate normalized difference vegetation index (NDVI)
+## Calculate normalized difference vegetation index (NDVI)
 
-## Landast band 4 (red) and band 5 (near infrared):
+# Landast band 4 (red) and band 5 (near infrared):
 b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
 b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 
-## is nodata value set
+# is nodata value set
 ds <- new(GDALRaster, b4_file, read_only=TRUE)
 ds$getNoDataValue(band=1)   # 0
 ds$close()
@@ -156,7 +156,7 @@ ds <- new(GDALRaster, b5_file, read_only=TRUE)
 ds$getNoDataValue(band=1)   # 0
 ds$close()
 
-## 0 will be read as NA so don't need to handle zeros in expr
+# 0 will be read as NA so don't need to handle zeros in expr
 expr <- "(B5-B4)/(B5+B4)"
 ndvi_file <- calc(expr = expr,
                   rasterfiles = c(b4_file, b5_file),
@@ -170,37 +170,37 @@ ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
 
 
-### Reclassify a variable by rule set
+## Reclassify a variable by rule set
 
-## Combine two raster layers and look for specific combinations. Then 
-## recode to a new value by rule set.
-##
-## Based on example in:
-##   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition, 
-##   critique, modification, maintenance, and model calibration.
-##   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture, 
-##   Forest Service, Rocky Mountain Research Station. 54 p.
-## Context: Refine national-scale fuels data to improve fire simulation
-##   results in localized applications.
-## Issue: Areas with steep slopes (40+ degrees) were mapped as
-##   GR1 (101; short, sparse dry climate grass) and 
-##   GR2 (102; low load, dry climate grass) but were not carrying fire.
-## Resolution: After viewing these areas in Google Earth,
-##   NB9 (99; bare ground) was selected as the replacement fuel model.
+# Combine two raster layers and look for specific combinations. Then 
+# recode to a new value by rule set.
+#
+# Based on example in:
+#   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition, 
+#   critique, modification, maintenance, and model calibration.
+#   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture, 
+#   Forest Service, Rocky Mountain Research Station. 54 p.
+# Context: Refine national-scale fuels data to improve fire simulation
+#   results in localized applications.
+# Issue: Areas with steep slopes (40+ degrees) were mapped as
+#   GR1 (101; short, sparse dry climate grass) and 
+#   GR2 (102; low load, dry climate grass) but were not carrying fire.
+# Resolution: After viewing these areas in Google Earth,
+#   NB9 (99; bare ground) was selected as the replacement fuel model.
 
-## look for combinations of slope >= 40 and FBFM 101 or 102
+# look for combinations of slope >= 40 and FBFM 101 or 102
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 rasterfiles <- c(lcp_file, lcp_file)
 var.names <- c("SLP", "FBFM")
 bands <- c(2, 4)
-df <- combine(rasterfiles, var.names, bands)
-nrow(df)
-df_subset <- subset(df, SLP >= 40 & FBFM \%in\% c(101,102))
-print(df_subset)       # twelve combinations meet the criteria
-sum(df_subset$count)   # 85 total pixels
+tbl <- combine(rasterfiles, var.names, bands)
+nrow(tbl)
+tbl_subset <- subset(tbl, SLP >= 40 & FBFM \%in\% c(101,102))
+print(tbl_subset)       # twelve combinations meet the criteria
+sum(tbl_subset$count)   # 85 total pixels
 
-## recode these pixels to 99 (bare ground)
-## the LCP driver does not support in-place write so make a copy as GTiff
+# recode these pixels to 99 (bare ground)
+# the LCP driver does not support in-place write so make a copy as GTiff
 tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
 createCopy("GTiff", tif_file, lcp_file)
 
@@ -213,14 +213,14 @@ calc(expr = expr,
      out_band = 4,
      write_mode = "update")
 
-## verify the ouput
+# verify the ouput
 rasterfiles <- c(tif_file, tif_file)
-df <- combine(rasterfiles, var.names, bands)
-df_subset <- subset(df, SLP >= 40 & FBFM \%in\% c(101,102))
-print(df_subset)
-sum(df_subset$count)
+tbl <- combine(rasterfiles, var.names, bands)
+tbl_subset <- subset(tbl, SLP >= 40 & FBFM \%in\% c(101,102))
+print(tbl_subset)
+sum(tbl_subset$count)
 
-## if LCP file format is needed: createCopy(tif_file, <new_lcp_file>)
+# if LCP file format is needed: createCopy(tif_file, <new_lcp_file>)
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=combine]{combine()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}
