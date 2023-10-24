@@ -324,9 +324,9 @@ get_pixel_line <- function(xy, gt) {
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' 
 #' ## get count of nodata
-#' df = combine(elev_file)
-#' head(df)
-#' df[is.na(df$storml_elev),]
+#' tbl <- buildRAT(elev_file)
+#' head(tbl)
+#' tbl[is.na(tbl$VALUE),]
 #' 
 #' ## make a copy that will be modified
 #' mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
@@ -334,9 +334,9 @@ get_pixel_line <- function(xy, gt) {
 #' 
 #' fillNodata(mod_file, band=1)
 #' 
-#' df_mod = combine(mod_file)
-#' head(df_mod)
-#' df_mod[is.na(df_mod$storml_elev_fill),]
+#' mod_tbl = buildRAT(mod_file)
+#' head(mod_tbl)
+#' mod_tbl[is.na(mod_tbl$VALUE),]
 fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_iterations = 0L) {
     invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations))
 }

@@ -693,9 +693,9 @@ bool _dem_proc(std::string mode,
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' 
 //' ## get count of nodata
-//' df = combine(elev_file)
-//' head(df)
-//' df[is.na(df$storml_elev),]
+//' tbl <- buildRAT(elev_file)
+//' head(tbl)
+//' tbl[is.na(tbl$VALUE),]
 //' 
 //' ## make a copy that will be modified
 //' mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
@@ -703,9 +703,9 @@ bool _dem_proc(std::string mode,
 //' 
 //' fillNodata(mod_file, band=1)
 //' 
-//' df_mod = combine(mod_file)
-//' head(df_mod)
-//' df_mod[is.na(df_mod$storml_elev_fill),]
+//' mod_tbl = buildRAT(mod_file)
+//' head(mod_tbl)
+//' mod_tbl[is.na(mod_tbl$VALUE),]
 // [[Rcpp::export(invisible = true)]]
 bool fillNodata(std::string filename, int band, std::string mask_file = "",
 		double max_dist = 100, int smooth_iterations = 0) {

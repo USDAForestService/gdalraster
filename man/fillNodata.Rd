@@ -51,9 +51,9 @@ The input raster will be modified in place. It should not be open in a
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
 ## get count of nodata
-df = combine(elev_file)
-head(df)
-df[is.na(df$storml_elev),]
+tbl <- buildRAT(elev_file)
+head(tbl)
+tbl[is.na(tbl$VALUE),]
 
 ## make a copy that will be modified
 mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
@@ -61,7 +61,7 @@ file.copy(elev_file,  mod_file)
 
 fillNodata(mod_file, band=1)
 
-df_mod = combine(mod_file)
-head(df_mod)
-df_mod[is.na(df_mod$storml_elev_fill),]
+mod_tbl = buildRAT(mod_file)
+head(mod_tbl)
+mod_tbl[is.na(mod_tbl$VALUE),]
 }
