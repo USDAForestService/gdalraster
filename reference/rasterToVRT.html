@@ -215,7 +215,7 @@ Requires package <code>xml2</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">### resample</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## resample</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">evt_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_evt.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">evt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -225,77 +225,76 @@ Requires package <code>xml2</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323476.1 5101872.0  327766.1 5105082.0</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## use combine() with one input to get a table of pixel counts for  </span></span></span>
-<span class="r-in"><span><span class="co">## the raster values</span></span></span>
-<span class="r-in"><span><span class="va">vat</span> <span class="op">&lt;-</span> <span class="fu"><a href="combine.html">combine</a></span><span class="op">(</span><span class="va">evt_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># table of the unique pixel values and their counts</span></span></span>
+<span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="buildRAT.html">buildRAT</a></span><span class="op">(</span><span class="va">evt_file</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Scanning raster...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vat</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="co"># drop the cmbid in this case</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    count storml_evt</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      1       7125</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2     13       9017</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      3       7106</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     14       9021</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5    397       7292</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6      2       7901</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7    681       7145</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    876         NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   1082       7126</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10    32       7166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11    98       9022</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12   570       7050</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13    28       7011</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14   889       7055</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15  4564       7046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16  1280       9018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17   679       7140</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18    60       7169</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19   199       7143</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20   304       7056</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21   267       7070</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 22  2486       9016</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 23    11       7057</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 24   765       7144</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">vat</span><span class="op">$</span><span class="va">count</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    VALUE COUNT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   7011    28</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   7046  4564</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   7050   570</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   7055   889</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   7056   304</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   7057    11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7070   267</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   7106     3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   7125     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  7126  1082</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  7140   679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  7143   199</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  7144   765</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  7145   681</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  7166    32</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  7169    60</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  7292   397</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  7901     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  9016  2486</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  9017    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21  9018  1280</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 22  9021    14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 23  9022    98</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 24    NA   876</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">COUNT</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 15301</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## resample at 90-m resolution</span></span></span>
-<span class="r-in"><span><span class="co">## EVT is thematic vegetation type so use a majority value</span></span></span>
+<span class="r-in"><span><span class="co"># resample at 90-m resolution</span></span></span>
+<span class="r-in"><span><span class="co"># EVT is thematic vegetation type so use a majority value</span></span></span>
 <span class="r-in"><span><span class="va">vrt_file</span> <span class="op">&lt;-</span> <span class="fu">rasterToVRT</span><span class="op">(</span><span class="va">evt_file</span>,</span></span>
 <span class="r-in"><span>                        resolution<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">90</span>,<span class="fl">90</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        resampling<span class="op">=</span><span class="st">"mode"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## .vrt is a small xml file pointing to the source raster</span></span></span>
+<span class="r-in"><span><span class="co"># .vrt is a small xml file pointing to the source raster</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">vrt_file</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1635</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">vat90m</span> <span class="op">&lt;-</span> <span class="fu"><a href="combine.html">combine</a></span><span class="op">(</span><span class="va">vrt_file</span>, var.names<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"evt90m"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tbl90m</span> <span class="op">&lt;-</span> <span class="fu"><a href="buildRAT.html">buildRAT</a></span><span class="op">(</span><span class="va">vrt_file</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Scanning raster...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">vat90m</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    count evt90m</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      1   9017</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2      1   9021</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3      1   7011</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4     48   7292</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5     54     NA</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6    119   7126</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7     75   7055</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8    614   7046</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9    152   9018</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10     2   7166</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 11     9   9022</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 12    59   7050</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 13    59   7140</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 14     4   7169</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 15    13   7143</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 16    27   7056</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 17    27   7070</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 18   322   9016</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 19     2   7057</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 20    75   7144</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 21    64   7145</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">vat90m</span><span class="op">$</span><span class="va">count</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tbl90m</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    VALUE COUNT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   7011     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   7046   614</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   7050    59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   7055    75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   7056    27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   7057     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7070    27</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   7126   119</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   7140    59</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10  7143    13</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 11  7144    75</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 12  7145    64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 13  7166     2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 14  7169     4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 15  7292    48</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 16  9016   322</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 17  9017     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 18  9018   152</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 19  9021     1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 20  9022     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 21    NA    54</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tbl90m</span><span class="op">$</span><span class="va">COUNT</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1728</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -306,25 +305,25 @@ Requires package <code>xml2</code>.</p>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">### clip</span></span></span>
+<span class="r-in"><span><span class="co">## clip</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">evt_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_evt.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds_evt</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">evt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds_evt</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323476.1 5101872.0  327766.1 5105082.0</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## WKT string for a boundary within the EVT extent</span></span></span>
+<span class="r-in"><span><span class="co"># WKT string for a boundary within the EVT extent</span></span></span>
 <span class="r-in"><span><span class="va">bnd</span> <span class="op">=</span> <span class="st">"POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2 </span></span></span>
 <span class="r-in"><span><span class="st">5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, </span></span></span>
 <span class="r-in"><span><span class="st">325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## src_align = TRUE</span></span></span>
+<span class="r-in"><span><span class="co"># src_align = TRUE</span></span></span>
 <span class="r-in"><span><span class="va">vrt_file</span> <span class="op">&lt;-</span> <span class="fu">rasterToVRT</span><span class="op">(</span><span class="va">evt_file</span>,</span></span>
 <span class="r-in"><span>                        subwindow <span class="op">=</span> <span class="fu"><a href="bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="va">bnd</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        src_align<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds_vrt</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## VRT is a virtual clip, pixel-aligned with the EVT raster</span></span></span>
+<span class="r-in"><span><span class="co"># VRT is a virtual clip, pixel-aligned with the EVT raster</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="va">bnd</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323794.2 5102885.8  326420.0 5104929.4</span>
 <span class="r-in"><span><span class="va">ds_vrt</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -332,13 +331,13 @@ Requires package <code>xml2</code>.</p>
 <span class="r-in"><span><span class="va">ds_vrt</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 30 30</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## src_align = FALSE</span></span></span>
+<span class="r-in"><span><span class="co"># src_align = FALSE</span></span></span>
 <span class="r-in"><span><span class="va">vrt_file</span> <span class="op">&lt;-</span> <span class="fu">rasterToVRT</span><span class="op">(</span><span class="va">evt_file</span>,</span></span>
 <span class="r-in"><span>                        subwindow <span class="op">=</span> <span class="fu"><a href="bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="va">bnd</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        src_align<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds_vrt_noalign</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax</span></span></span>
+<span class="r-in"><span><span class="co"># VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax</span></span></span>
 <span class="r-in"><span><span class="va">ds_vrt_noalign</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323794.2 5102859.4  326434.2 5104929.4</span>
 <span class="r-in"><span><span class="va">ds_vrt_noalign</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -349,13 +348,13 @@ Requires package <code>xml2</code>.</p>
 <span class="r-in"><span><span class="va">ds_evt</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">### subset and pixel align two rasters</span></span></span>
+<span class="r-in"><span><span class="co">## subset and pixel align two rasters</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## FARSITE landscape file for the Storm Lake area</span></span></span>
+<span class="r-in"><span><span class="co"># FARSITE landscape file for the Storm Lake area</span></span></span>
 <span class="r-in"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds_lcp</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">lcp_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Landsat band 5 file covering the Storm Lake area</span></span></span>
+<span class="r-in"><span><span class="co"># Landsat band 5 file covering the Storm Lake area</span></span></span>
 <span class="r-in"><span><span class="va">b5_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/sr_b5_20200829.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds_b5</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">b5_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -369,7 +368,7 @@ Requires package <code>xml2</code>.</p>
 <span class="r-in"><span><span class="va">ds_b5</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span>    <span class="co"># 30 30</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 30 30</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## src_align = FALSE because we need target alignment in this case:</span></span></span>
+<span class="r-in"><span><span class="co"># src_align = FALSE because we need target alignment in this case:</span></span></span>
 <span class="r-in"><span><span class="va">vrt_file</span> <span class="op">&lt;-</span> <span class="fu">rasterToVRT</span><span class="op">(</span><span class="va">b5_file</span>,</span></span>
 <span class="r-in"><span>                        resolution <span class="op">=</span> <span class="va">ds_lcp</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        subwindow <span class="op">=</span> <span class="va">ds_lcp</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span>,</span></span>
@@ -381,9 +380,9 @@ Requires package <code>xml2</code>.</p>
 <span class="r-in"><span><span class="va">ds_b5vrt</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span>  <span class="co"># 30 30</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 30 30</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## read the the Landsat file pixel-aligned with the LCP file </span></span></span>
-<span class="r-in"><span><span class="co">## summarize band 5 reflectance where FBFM = 165 </span></span></span>
-<span class="r-in"><span><span class="co">## LCP band 4 contains FBFM (a classification of fuel beds):</span></span></span>
+<span class="r-in"><span><span class="co"># read the the Landsat file pixel-aligned with the LCP file </span></span></span>
+<span class="r-in"><span><span class="co"># summarize band 5 reflectance where FBFM = 165 </span></span></span>
+<span class="r-in"><span><span class="co"># LCP band 4 contains FBFM (a classification of fuel beds):</span></span></span>
 <span class="r-in"><span><span class="va">ds_lcp</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">4</span>, domain<span class="op">=</span><span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "FUEL_MODEL_FILE=/netapp/sharedwebfs1/shared/landfire/public/temp_q8dTbIJ4w6Qi36Omkzk0/LCP_LF2022_FBFM40_220_CONUS/temp/merged_modified.tif"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "FUEL_MODEL_MAX=183"                                                                                                                        </span>
@@ -393,10 +392,10 @@ Requires package <code>xml2</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6] "FUEL_MODEL_OPTION_DESC=no custom models AND no conversion file needed"                                                                     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [7] "FUEL_MODEL_VALUES=0,98,99,101,102,121,122,123,142,162,165,181,183"                                                                         </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## verify Landsat nodata (0):</span></span></span>
+<span class="r-in"><span><span class="co"># verify Landsat nodata (0):</span></span></span>
 <span class="r-in"><span><span class="va">ds_b5vrt</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span><span class="co">## will be read as NA and omitted from stats</span></span></span>
+<span class="r-in"><span><span class="co"># will be read as NA and omitted from stats</span></span></span>
 <span class="r-in"><span><span class="va">rs</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">RunningStats</span>, na_rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds_lcp</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span></span>

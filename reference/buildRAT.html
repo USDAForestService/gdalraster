@@ -253,16 +253,16 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 Shrubland 255  37  13 1.000000 0.145098 0.050980</span>
 <span class="r-in"><span><span class="va">evt_tbl</span> <span class="op">&lt;-</span> <span class="va">evt_tbl</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">rat</span> <span class="op">&lt;-</span> <span class="fu">buildRAT</span><span class="op">(</span><span class="va">ds</span>,</span></span>
+<span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu">buildRAT</span><span class="op">(</span><span class="va">ds</span>,</span></span>
 <span class="r-in"><span>                table_type <span class="op">=</span> <span class="st">"thematic"</span>,</span></span>
 <span class="r-in"><span>                na_value <span class="op">=</span> <span class="op">-</span><span class="fl">9999</span>,</span></span>
 <span class="r-in"><span>                join_df <span class="op">=</span> <span class="va">evt_tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Scanning raster...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rat</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 24</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rat</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   VALUE COUNT                                                          EVT_NAME</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 -9999   876                                                       Fill-NoData</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  7011    28                          Rocky Mountain Aspen Forest and Woodland</span>
@@ -279,7 +279,7 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6   Tree  Conifer 236 252 204</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># attributes on the data frame and its columns define usage in a GDAL RAT</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">rat</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $names</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "VALUE"    "COUNT"    "EVT_NAME" "EVT_LF"   "EVT_PHYS" "R"        "G"       </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [8] "B"       </span>
@@ -293,40 +293,40 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $GDALRATTableType</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "thematic"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">rat</span><span class="op">$</span><span class="va">VALUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">VALUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $GFU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MinMax"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">rat</span><span class="op">$</span><span class="va">COUNT</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">COUNT</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $GFU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PixelCount"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">rat</span><span class="op">$</span><span class="va">EVT_NAME</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_NAME</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $GFU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Name"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">rat</span><span class="op">$</span><span class="va">EVT_LF</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_LF</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $GFU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Generic"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">rat</span><span class="op">$</span><span class="va">EVT_PHYS</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_PHYS</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $GFU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Generic"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">rat</span><span class="op">$</span><span class="va">R</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">R</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $GFU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Red"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">rat</span><span class="op">$</span><span class="va">G</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">G</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $GFU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Green"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">rat</span><span class="op">$</span><span class="va">B</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">B</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $GFU</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Blue"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">setDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="va">rat</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">setDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="va">tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">flushCache</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -357,8 +357,8 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "gt_tbl" "list"  </span>
 <span class="r-in"><span><span class="co"># To show the table:</span></span></span>
 <span class="r-in"><span><span class="co"># tbl</span></span></span>
-<span class="r-in"><span><span class="co"># or simply call `displayRAT()` as above but without assignment.</span></span></span>
-<span class="r-in"><span><span class="co"># `vignette("raster-attribute-tables")` has example output.</span></span></span>
+<span class="r-in"><span><span class="co"># or simply call `displayRAT()` as above but without assignment</span></span></span>
+<span class="r-in"><span><span class="co"># `vignette("raster-attribute-tables")` has example output</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>

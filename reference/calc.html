@@ -216,26 +216,26 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">### Using pixel longitude/latitude</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Using pixel longitude/latitude</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Hopkins bioclimatic index (HI) as described in:</span></span></span>
-<span class="r-in"><span><span class="co">## Bechtold, 2004, West. J. Appl. For. 19(4):245-251.</span></span></span>
-<span class="r-in"><span><span class="co">## Integrates elevation, latitude and longitude into an index of the </span></span></span>
-<span class="r-in"><span><span class="co">## phenological occurrence of springtime. Here it is relativized to </span></span></span>
-<span class="r-in"><span><span class="co">## mean values for an eight-state region in the western US.</span></span></span>
-<span class="r-in"><span><span class="co">## Positive HI means spring is delayed by that number of days relative </span></span></span>
-<span class="r-in"><span><span class="co">## to the reference position, while negative values indicate spring is</span></span></span>
-<span class="r-in"><span><span class="co">## advanced. The original equation had elevation units as feet, so </span></span></span>
-<span class="r-in"><span><span class="co">## converting m to ft in `expr`.</span></span></span>
+<span class="r-in"><span><span class="co"># Hopkins bioclimatic index (HI) as described in:</span></span></span>
+<span class="r-in"><span><span class="co"># Bechtold, 2004, West. J. Appl. For. 19(4):245-251.</span></span></span>
+<span class="r-in"><span><span class="co"># Integrates elevation, latitude and longitude into an index of the </span></span></span>
+<span class="r-in"><span><span class="co"># phenological occurrence of springtime. Here it is relativized to </span></span></span>
+<span class="r-in"><span><span class="co"># mean values for an eight-state region in the western US.</span></span></span>
+<span class="r-in"><span><span class="co"># Positive HI means spring is delayed by that number of days relative </span></span></span>
+<span class="r-in"><span><span class="co"># to the reference position, while negative values indicate spring is</span></span></span>
+<span class="r-in"><span><span class="co"># advanced. The original equation had elevation units as feet, so </span></span></span>
+<span class="r-in"><span><span class="co"># converting m to ft in `expr`.</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">elev_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_elev.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## expression to calculate HI</span></span></span>
+<span class="r-in"><span><span class="co"># expression to calculate HI</span></span></span>
 <span class="r-in"><span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="st">"round( ((ELEV_M * 3.281 - 5449) / 100) + </span></span></span>
 <span class="r-in"><span><span class="st">                ((pixelLat - 42.16) * 4) + </span></span></span>
 <span class="r-in"><span><span class="st">                ((-116.39 - pixelLon) * 1.25) )"</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## calc() writes to a tempfile by default</span></span></span>
+<span class="r-in"><span><span class="co"># calc() writes to a tempfile by default</span></span></span>
 <span class="r-in"><span><span class="va">hi_file</span> <span class="op">&lt;-</span> <span class="fu">calc</span><span class="op">(</span>expr <span class="op">=</span> <span class="va">expr</span>, </span></span>
 <span class="r-in"><span>                rasterfiles <span class="op">=</span> <span class="va">elev_file</span>, </span></span>
 <span class="r-in"><span>                var.names <span class="op">=</span> <span class="st">"ELEV_M"</span>, </span></span>
@@ -245,23 +245,23 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span>                usePixelLonLat <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 1 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/Rtmpn3OYME/rastcalc1f035c399a40.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/Rtmp2ToLg6/rastcalc1ea744eb68aa.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">hi_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## min, max, mean, sd</span></span></span>
+<span class="r-in"><span><span class="co"># min, max, mean, sd</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 37.000000 57.000000 44.992721  4.370487</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">### Calculate normalized difference vegetation index (NDVI)</span></span></span>
+<span class="r-in"><span><span class="co">## Calculate normalized difference vegetation index (NDVI)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Landast band 4 (red) and band 5 (near infrared):</span></span></span>
+<span class="r-in"><span><span class="co"># Landast band 4 (red) and band 5 (near infrared):</span></span></span>
 <span class="r-in"><span><span class="va">b4_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/sr_b4_20200829.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">b5_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/sr_b5_20200829.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## is nodata value set</span></span></span>
+<span class="r-in"><span><span class="co"># is nodata value set</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">b4_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span>   <span class="co"># 0</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
@@ -271,7 +271,7 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## 0 will be read as NA so don't need to handle zeros in expr</span></span></span>
+<span class="r-in"><span><span class="co"># 0 will be read as NA so don't need to handle zeros in expr</span></span></span>
 <span class="r-in"><span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="st">"(B5-B4)/(B5+B4)"</span></span></span>
 <span class="r-in"><span><span class="va">ndvi_file</span> <span class="op">&lt;-</span> <span class="fu">calc</span><span class="op">(</span>expr <span class="op">=</span> <span class="va">expr</span>,</span></span>
 <span class="r-in"><span>                  rasterfiles <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">b4_file</span>, <span class="va">b5_file</span><span class="op">)</span>,</span></span>
@@ -281,7 +281,7 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span>                  setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/Rtmpn3OYME/rastcalc1f03730167dc.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/Rtmp2ToLg6/rastcalc1ea74faebca8.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">ndvi_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -290,36 +290,36 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">### Reclassify a variable by rule set</span></span></span>
+<span class="r-in"><span><span class="co">## Reclassify a variable by rule set</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## Combine two raster layers and look for specific combinations. Then </span></span></span>
-<span class="r-in"><span><span class="co">## recode to a new value by rule set.</span></span></span>
-<span class="r-in"><span><span class="co">##</span></span></span>
-<span class="r-in"><span><span class="co">## Based on example in:</span></span></span>
-<span class="r-in"><span><span class="co">##   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition, </span></span></span>
-<span class="r-in"><span><span class="co">##   critique, modification, maintenance, and model calibration.</span></span></span>
-<span class="r-in"><span><span class="co">##   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture, </span></span></span>
-<span class="r-in"><span><span class="co">##   Forest Service, Rocky Mountain Research Station. 54 p.</span></span></span>
-<span class="r-in"><span><span class="co">## Context: Refine national-scale fuels data to improve fire simulation</span></span></span>
-<span class="r-in"><span><span class="co">##   results in localized applications.</span></span></span>
-<span class="r-in"><span><span class="co">## Issue: Areas with steep slopes (40+ degrees) were mapped as</span></span></span>
-<span class="r-in"><span><span class="co">##   GR1 (101; short, sparse dry climate grass) and </span></span></span>
-<span class="r-in"><span><span class="co">##   GR2 (102; low load, dry climate grass) but were not carrying fire.</span></span></span>
-<span class="r-in"><span><span class="co">## Resolution: After viewing these areas in Google Earth,</span></span></span>
-<span class="r-in"><span><span class="co">##   NB9 (99; bare ground) was selected as the replacement fuel model.</span></span></span>
+<span class="r-in"><span><span class="co"># Combine two raster layers and look for specific combinations. Then </span></span></span>
+<span class="r-in"><span><span class="co"># recode to a new value by rule set.</span></span></span>
+<span class="r-in"><span><span class="co">#</span></span></span>
+<span class="r-in"><span><span class="co"># Based on example in:</span></span></span>
+<span class="r-in"><span><span class="co">#   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition, </span></span></span>
+<span class="r-in"><span><span class="co">#   critique, modification, maintenance, and model calibration.</span></span></span>
+<span class="r-in"><span><span class="co">#   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture, </span></span></span>
+<span class="r-in"><span><span class="co">#   Forest Service, Rocky Mountain Research Station. 54 p.</span></span></span>
+<span class="r-in"><span><span class="co"># Context: Refine national-scale fuels data to improve fire simulation</span></span></span>
+<span class="r-in"><span><span class="co">#   results in localized applications.</span></span></span>
+<span class="r-in"><span><span class="co"># Issue: Areas with steep slopes (40+ degrees) were mapped as</span></span></span>
+<span class="r-in"><span><span class="co">#   GR1 (101; short, sparse dry climate grass) and </span></span></span>
+<span class="r-in"><span><span class="co">#   GR2 (102; low load, dry climate grass) but were not carrying fire.</span></span></span>
+<span class="r-in"><span><span class="co"># Resolution: After viewing these areas in Google Earth,</span></span></span>
+<span class="r-in"><span><span class="co">#   NB9 (99; bare ground) was selected as the replacement fuel model.</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## look for combinations of slope &gt;= 40 and FBFM 101 or 102</span></span></span>
+<span class="r-in"><span><span class="co"># look for combinations of slope &gt;= 40 and FBFM 101 or 102</span></span></span>
 <span class="r-in"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">rasterfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">lcp_file</span>, <span class="va">lcp_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">var.names</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"SLP"</span>, <span class="st">"FBFM"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">bands</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="combine.html">combine</a></span><span class="op">(</span><span class="va">rasterfiles</span>, <span class="va">var.names</span>, <span class="va">bands</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="combine.html">combine</a></span><span class="op">(</span><span class="va">rasterfiles</span>, <span class="va">var.names</span>, <span class="va">bands</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Combining 2 rasters...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 449</span>
-<span class="r-in"><span><span class="va">df_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">SLP</span> <span class="op">&gt;=</span> <span class="fl">40</span> <span class="op">&amp;</span> <span class="va">FBFM</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">101</span>,<span class="fl">102</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df_subset</span><span class="op">)</span>       <span class="co"># twelve combinations meet the criteria</span></span></span>
+<span class="r-in"><span><span class="va">tbl_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="va">SLP</span> <span class="op">&gt;=</span> <span class="fl">40</span> <span class="op">&amp;</span> <span class="va">FBFM</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">101</span>,<span class="fl">102</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tbl_subset</span><span class="op">)</span>       <span class="co"># twelve combinations meet the criteria</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     cmbid count SLP FBFM</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8     423     2  44  102</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10    421     1  49  102</span>
@@ -333,11 +333,11 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-out co"><span class="r-pr">#&gt;</span> 346   338    10  41  101</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 364   418     3  47  102</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 408   341     2  43  101</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">df_subset</span><span class="op">$</span><span class="va">count</span><span class="op">)</span>   <span class="co"># 85 total pixels</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tbl_subset</span><span class="op">$</span><span class="va">count</span><span class="op">)</span>   <span class="co"># 85 total pixels</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 85</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## recode these pixels to 99 (bare ground)</span></span></span>
-<span class="r-in"><span><span class="co">## the LCP driver does not support in-place write so make a copy as GTiff</span></span></span>
+<span class="r-in"><span><span class="co"># recode these pixels to 99 (bare ground)</span></span></span>
+<span class="r-in"><span><span class="co"># the LCP driver does not support in-place write so make a copy as GTiff</span></span></span>
 <span class="r-in"><span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_lndscp.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="createCopy.html">createCopy</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="va">tif_file</span>, <span class="va">lcp_file</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
@@ -352,21 +352,21 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span>     write_mode <span class="op">=</span> <span class="st">"update"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/Rtmpn3OYME/storml_lndscp.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/Rtmp2ToLg6/storml_lndscp.tif</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## verify the ouput</span></span></span>
+<span class="r-in"><span><span class="co"># verify the ouput</span></span></span>
 <span class="r-in"><span><span class="va">rasterfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">tif_file</span>, <span class="va">tif_file</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">&lt;-</span> <span class="fu"><a href="combine.html">combine</a></span><span class="op">(</span><span class="va">rasterfiles</span>, <span class="va">var.names</span>, <span class="va">bands</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="combine.html">combine</a></span><span class="op">(</span><span class="va">rasterfiles</span>, <span class="va">var.names</span>, <span class="va">bands</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Combining 2 rasters...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
-<span class="r-in"><span><span class="va">df_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">df</span>, <span class="va">SLP</span> <span class="op">&gt;=</span> <span class="fl">40</span> <span class="op">&amp;</span> <span class="va">FBFM</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">101</span>,<span class="fl">102</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">df_subset</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tbl_subset</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/subset.html" class="external-link">subset</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="va">SLP</span> <span class="op">&gt;=</span> <span class="fl">40</span> <span class="op">&amp;</span> <span class="va">FBFM</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">101</span>,<span class="fl">102</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">tbl_subset</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] cmbid count SLP   FBFM </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;0 rows&gt; (or 0-length row.names)</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">df_subset</span><span class="op">$</span><span class="va">count</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tbl_subset</span><span class="op">$</span><span class="va">count</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## if LCP file format is needed: createCopy(tif_file, &lt;new_lcp_file&gt;)</span></span></span>
+<span class="r-in"><span><span class="co"># if LCP file format is needed: createCopy(tif_file, &lt;new_lcp_file&gt;)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
