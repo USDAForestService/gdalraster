@@ -164,26 +164,26 @@ nrow(evt_tbl)
 head(evt_tbl)
 evt_tbl <- evt_tbl[,1:7]
 
-rat <- buildRAT(ds,
+tbl <- buildRAT(ds,
                 table_type = "thematic",
                 na_value = -9999,
                 join_df = evt_tbl)
 
-nrow(rat)
-head(rat)
+nrow(tbl)
+head(tbl)
 
 # attributes on the data frame and its columns define usage in a GDAL RAT
-attributes(rat)
-attributes(rat$VALUE)
-attributes(rat$COUNT)
-attributes(rat$EVT_NAME)
-attributes(rat$EVT_LF)
-attributes(rat$EVT_PHYS)
-attributes(rat$R)
-attributes(rat$G)
-attributes(rat$B)
+attributes(tbl)
+attributes(tbl$VALUE)
+attributes(tbl$COUNT)
+attributes(tbl$EVT_NAME)
+attributes(tbl$EVT_LF)
+attributes(tbl$EVT_PHYS)
+attributes(tbl$R)
+attributes(tbl$G)
+attributes(tbl$B)
 
-ds$setDefaultRAT(band=1, rat)
+ds$setDefaultRAT(band=1, tbl)
 ds$flushCache()
 
 rat2 <- ds$getDefaultRAT(band=1)
@@ -197,8 +197,8 @@ tbl <- displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
 class(tbl)  # an object of class "gt_tbl" from package gt
 # To show the table:
 # tbl
-# or simply call `displayRAT()` as above but without assignment.
-# `vignette("raster-attribute-tables")` has example output.
+# or simply call `displayRAT()` as above but without assignment
+# `vignette("raster-attribute-tables")` has example output
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}},

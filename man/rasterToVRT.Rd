@@ -133,7 +133,7 @@ Examples for both cases of \code{src_align} are given below.
 Requires package \code{xml2}.
 }
 \examples{
-### resample
+## resample
 
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 ds <- new(GDALRaster, evt_file, TRUE)
@@ -141,24 +141,23 @@ ds$res()
 ds$bbox()
 ds$close()
 
-## use combine() with one input to get a table of pixel counts for  
-## the raster values
-vat <- combine(evt_file)
-print(vat[-1]) # drop the cmbid in this case
-sum(vat$count)
+# table of the unique pixel values and their counts
+tbl <- buildRAT(evt_file)
+print(tbl)
+sum(tbl$COUNT)
 
-## resample at 90-m resolution
-## EVT is thematic vegetation type so use a majority value
+# resample at 90-m resolution
+# EVT is thematic vegetation type so use a majority value
 vrt_file <- rasterToVRT(evt_file,
                         resolution=c(90,90),
                         resampling="mode")
 
-## .vrt is a small xml file pointing to the source raster
+# .vrt is a small xml file pointing to the source raster
 file.size(vrt_file)
 
-vat90m <- combine(vrt_file, var.names=c("evt90m"))
-print(vat90m[-1])
-sum(vat90m$count)
+tbl90m <- buildRAT(vrt_file)
+print(tbl90m)
+sum(tbl90m$COUNT)
 
 ds <- new(GDALRaster, vrt_file, TRUE)
 ds$res()
@@ -166,35 +165,35 @@ ds$bbox()
 ds$close()
 
 
-### clip
+## clip
 
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 ds_evt <- new(GDALRaster, evt_file, TRUE)
 ds_evt$bbox()
 
-## WKT string for a boundary within the EVT extent
+# WKT string for a boundary within the EVT extent
 bnd = "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2 
 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5, 
 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
 
-## src_align = TRUE
+# src_align = TRUE
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
                         src_align=TRUE)
 ds_vrt <- new(GDALRaster, vrt_file, TRUE)
 
-## VRT is a virtual clip, pixel-aligned with the EVT raster
+# VRT is a virtual clip, pixel-aligned with the EVT raster
 bbox_from_wkt(bnd)
 ds_vrt$bbox()
 ds_vrt$res()
 
-## src_align = FALSE
+# src_align = FALSE
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
                         src_align=FALSE)
 ds_vrt_noalign <- new(GDALRaster, vrt_file, TRUE)
 
-## VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
+# VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
 ds_vrt_noalign$bbox()
 ds_vrt_noalign$res()
 
@@ -203,13 +202,13 @@ ds_vrt_noalign$close()
 ds_evt$close()
 
 
-### subset and pixel align two rasters
+## subset and pixel align two rasters
 
-## FARSITE landscape file for the Storm Lake area
+# FARSITE landscape file for the Storm Lake area
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
 
-## Landsat band 5 file covering the Storm Lake area
+# Landsat band 5 file covering the Storm Lake area
 b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 ds_b5 <- new(GDALRaster, b5_file, read_only=TRUE)
 
@@ -219,7 +218,7 @@ ds_lcp$res()   # 30 30
 ds_b5$bbox()   # 323400.9 5101815.8  327870.9 5105175.8
 ds_b5$res()    # 30 30
 
-## src_align = FALSE because we need target alignment in this case:
+# src_align = FALSE because we need target alignment in this case:
 vrt_file <- rasterToVRT(b5_file,
                         resolution = ds_lcp$res(),
                         subwindow = ds_lcp$bbox(),
@@ -229,14 +228,14 @@ ds_b5vrt <- new(GDALRaster, vrt_file, TRUE)
 ds_b5vrt$bbox() # 323476.1 5101872.0  327766.1 5105082.0
 ds_b5vrt$res()  # 30 30
 
-## read the the Landsat file pixel-aligned with the LCP file 
-## summarize band 5 reflectance where FBFM = 165 
-## LCP band 4 contains FBFM (a classification of fuel beds):
+# read the the Landsat file pixel-aligned with the LCP file 
+# summarize band 5 reflectance where FBFM = 165 
+# LCP band 4 contains FBFM (a classification of fuel beds):
 ds_lcp$getMetadata(band=4, domain="")
 
-## verify Landsat nodata (0):
+# verify Landsat nodata (0):
 ds_b5vrt$getNoDataValue(band=1)
-## will be read as NA and omitted from stats
+# will be read as NA and omitted from stats
 rs <- new(RunningStats, na_rm=TRUE)
 
 ncols <- ds_lcp$getRasterXSize()

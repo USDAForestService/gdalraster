@@ -71,7 +71,7 @@ approximately (xsize * ysize * number of bands * 4) for data read as
 \code{double} (plus small object overhead for the vector).
 }
 \examples{
-## read three bands from a multi-band dataset
+# read three bands from a multi-band dataset
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 ds <- new(GDALRaster, lcp_file, read_only=TRUE)
 

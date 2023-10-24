@@ -152,26 +152,26 @@
 #' head(evt_tbl)
 #' evt_tbl <- evt_tbl[,1:7]
 #' 
-#' rat <- buildRAT(ds,
+#' tbl <- buildRAT(ds,
 #'                 table_type = "thematic",
 #'                 na_value = -9999,
 #'                 join_df = evt_tbl)
 #'
-#' nrow(rat)
-#' head(rat)
+#' nrow(tbl)
+#' head(tbl)
 #'
 #' # attributes on the data frame and its columns define usage in a GDAL RAT
-#' attributes(rat)
-#' attributes(rat$VALUE)
-#' attributes(rat$COUNT)
-#' attributes(rat$EVT_NAME)
-#' attributes(rat$EVT_LF)
-#' attributes(rat$EVT_PHYS)
-#' attributes(rat$R)
-#' attributes(rat$G)
-#' attributes(rat$B)
+#' attributes(tbl)
+#' attributes(tbl$VALUE)
+#' attributes(tbl$COUNT)
+#' attributes(tbl$EVT_NAME)
+#' attributes(tbl$EVT_LF)
+#' attributes(tbl$EVT_PHYS)
+#' attributes(tbl$R)
+#' attributes(tbl$G)
+#' attributes(tbl$B)
 #'
-#' ds$setDefaultRAT(band=1, rat)
+#' ds$setDefaultRAT(band=1, tbl)
 #' ds$flushCache()
 #' 
 #' rat2 <- ds$getDefaultRAT(band=1)
@@ -185,8 +185,8 @@
 #' class(tbl)  # an object of class "gt_tbl" from package gt
 #' # To show the table:
 #' # tbl
-#' # or simply call `displayRAT()` as above but without assignment.
-#' # `vignette("raster-attribute-tables")` has example output.
+#' # or simply call `displayRAT()` as above but without assignment
+#' # `vignette("raster-attribute-tables")` has example output
 #' @export
 buildRAT <- function(raster,
 				band = 1L,
@@ -296,7 +296,7 @@ buildRAT <- function(raster,
 #' Raster Attribute Table contains RGB columns.
 #' This function requires package `gt`.
 #'
-#' @param rat A data frame formatted as a GDAL RAT (e.g., as returned by
+#' @param tbl A data frame formatted as a GDAL RAT (e.g., as returned by
 #' `buildRAT()` or `GDALRaster$getDefaultRAT()`).
 #' @param title Character string to be used in the table title.
 #' @returns An object of class `"gt_tbl"` (i.e., a table created with
@@ -309,15 +309,15 @@ buildRAT <- function(raster,
 #' @examples
 #' # see examples for `buildRAT()`
 #' @export
-displayRAT <- function(rat, title = "Raster Attribute Table") {
+displayRAT <- function(tbl, title = "Raster Attribute Table") {
 
 	if (!requireNamespace("gt", quietly = TRUE))
 		stop("displayRAT() requires package 'gt'.", call.=FALSE)
 		
-	if (!is.data.frame(rat))
+	if (!is.data.frame(tbl))
 		stop("Input must be a data frame.", call.=FALSE)
 
-	if (is.null(attr(rat, "GDALRATTableType"))) {
+	if (is.null(attr(tbl, "GDALRATTableType"))) {
 		message("Input data frame is missing attribute 'GDALRATTableType'.")
 		stop("The passed data frame must be formatted as a GDAL RAT.",
 				call.=FALSE)
@@ -331,49 +331,49 @@ displayRAT <- function(rat, title = "Raster Attribute Table") {
 	col_blue <- NULL
 	col_alpha <- NULL
 	hasRGB <- FALSE
-	for (nm in names(rat)) {
-		if (attr(rat[,nm], "GFU") == "Red") {
+	for (nm in names(tbl)) {
+		if (attr(tbl[,nm], "GFU") == "Red") {
 			col_red = nm
 		}
-		else if (attr(rat[,nm], "GFU") == "Green") {
+		else if (attr(tbl[,nm], "GFU") == "Green") {
 			col_green = nm
 		}
-		else if (attr(rat[,nm], "GFU") == "Blue") {
+		else if (attr(tbl[,nm], "GFU") == "Blue") {
 			col_blue = nm
 		}
-		else if (attr(rat[,nm], "GFU") == "Alpha") {
+		else if (attr(tbl[,nm], "GFU") == "Alpha") {
 			col_alpha = nm
 		}
 	}
 	if (!is.null(col_red) && !is.null(col_green) && !is.null(col_blue)) {
 		hasRGB <- TRUE
 		if (!is.null(col_alpha)) {
-			rat$Color <- rgb(
-							rat[,col_red],
-							rat[,col_green],
-							rat[,col_blue],
-							rat[,col_alpha],
+			tbl$Color <- rgb(
+							tbl[,col_red],
+							tbl[,col_green],
+							tbl[,col_blue],
+							tbl[,col_alpha],
 							maxColorValue=255
 							)
 		}
 		else {
-			rat$Color <- rgb(
-							rat[,col_red],
-							rat[,col_green],
-							rat[,col_blue],
+			tbl$Color <- rgb(
+							tbl[,col_red],
+							tbl[,col_green],
+							tbl[,col_blue],
 							maxColorValue=255
 							)
 		}
 	}
 	
-	gt_rat <- gt::gt(rat)
+	gt_tbl <- gt::gt(tbl)
 	if (hasRGB) {
-		f <- function(x) { rat$Color[match(x, rat$Color)] }
-		gt_rat <- gt::data_color(gt_rat, columns=Color, fn=f)
-		gt_rat <- gt::cols_move_to_start(gt_rat, columns=Color)
+		f <- function(x) { tbl$Color[match(x, tbl$Color)] }
+		gt_tbl <- gt::data_color(gt_tbl, columns=Color, fn=f)
+		gt_tbl <- gt::cols_move_to_start(gt_tbl, columns=Color)
 	}
-	gt_rat <- gt::tab_header(gt_rat, title=title)
+	gt_tbl <- gt::tab_header(gt_tbl, title=title)
 
-	return(gt_rat)
+	return(gt_tbl)
 }
 
