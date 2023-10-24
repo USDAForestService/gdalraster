@@ -138,20 +138,20 @@ An error is raised if the operation fails.</p>
 <span class="r-in"><span><span class="va">elev_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_elev.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## get count of nodata</span></span></span>
-<span class="r-in"><span><span class="va">df</span> <span class="op">=</span> <span class="fu"><a href="combine.html">combine</a></span><span class="op">(</span><span class="va">elev_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="buildRAT.html">buildRAT</a></span><span class="op">(</span><span class="va">elev_file</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Scanning raster...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   cmbid count storml_elev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   601     1        2949</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   600     1        2993</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   599     1        2972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   598     1        3008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   597     1        3022</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   596     1        3024</span>
-<span class="r-in"><span><span class="va">df</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">df</span><span class="op">$</span><span class="va">storml_elev</span><span class="op">)</span>,<span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>     cmbid count storml_elev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 323     1   876          NA</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   VALUE COUNT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  2438     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2439     6</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2440     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2441     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2442     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2443     2</span>
+<span class="r-in"><span><span class="va">tbl</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">VALUE</span><span class="op">)</span>,<span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     VALUE COUNT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 601    NA   876</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## make a copy that will be modified</span></span></span>
 <span class="r-in"><span><span class="va">mod_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_elev_fill.tif"</span><span class="op">)</span></span></span>
@@ -161,19 +161,19 @@ An error is raised if the operation fails.</p>
 <span class="r-in"><span><span class="fu">fillNodata</span><span class="op">(</span><span class="va">mod_file</span>, band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">df_mod</span> <span class="op">=</span> <span class="fu"><a href="combine.html">combine</a></span><span class="op">(</span><span class="va">mod_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mod_tbl</span> <span class="op">=</span> <span class="fu"><a href="buildRAT.html">buildRAT</a></span><span class="op">(</span><span class="va">mod_file</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Scanning raster...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">df_mod</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   cmbid count storml_elev_fill</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   600     1             2949</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   599     1             2993</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   598     1             2972</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   597     1             3008</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   596     1             3022</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   595     1             3024</span>
-<span class="r-in"><span><span class="va">df_mod</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">df_mod</span><span class="op">$</span><span class="va">storml_elev_fill</span><span class="op">)</span>,<span class="op">]</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] cmbid            count            storml_elev_fill</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">mod_tbl</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   VALUE COUNT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  2438     9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  2439     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  2440     8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  2441     5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  2442     7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  2443     2</span>
+<span class="r-in"><span><span class="va">mod_tbl</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">mod_tbl</span><span class="op">$</span><span class="va">VALUE</span><span class="op">)</span>,<span class="op">]</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] VALUE COUNT</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> &lt;0 rows&gt; (or 0-length row.names)</span>
 </code></pre></div>
     </div>
