@@ -216,7 +216,8 @@ Users should consider what is appropriate for a particular case.</p>
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="GDALRaster-class.html">GDALRaster$getDefaultRAT()</a></code>,
 <code><a href="GDALRaster-class.html">GDALRaster$setDefaultRAT()</a></code>,
-<code><a href="../articles/raster-attribute-tables.html">vignette("raster-attribute-tables")</a></code></p></div>
+<code><a href="displayRAT.html">displayRAT()</a></code></p>
+<p><code><a href="../articles/raster-attribute-tables.html">vignette("raster-attribute-tables")</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -330,10 +331,10 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">flushCache</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">rat2</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">rat2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tbl2</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tbl2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 24</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rat2</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   VALUE COUNT                                                          EVT_NAME</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 -9999   876                                                       Fill-NoData</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  7011    28                          Rocky Mountain Aspen Forest and Woodland</span>
@@ -352,11 +353,11 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Display</span></span></span>
-<span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="displayRAT.html">displayRAT</a></span><span class="op">(</span><span class="va">rat2</span>, title <span class="op">=</span> <span class="st">"Raster Attribute Table for Storm Lake EVT"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span>  <span class="co"># an object of class "gt_tbl" from package gt</span></span></span>
+<span class="r-in"><span><span class="va">evt_rat</span> <span class="op">&lt;-</span> <span class="fu"><a href="displayRAT.html">displayRAT</a></span><span class="op">(</span><span class="va">tbl2</span>, title <span class="op">=</span> <span class="st">"Raster Attribute Table for Storm Lake EVT"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">evt_rat</span><span class="op">)</span>  <span class="co"># an object of class "gt_tbl" from package gt</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "gt_tbl" "list"  </span>
 <span class="r-in"><span><span class="co"># To show the table:</span></span></span>
-<span class="r-in"><span><span class="co"># tbl</span></span></span>
+<span class="r-in"><span><span class="co"># evt_rat</span></span></span>
 <span class="r-in"><span><span class="co"># or simply call `displayRAT()` as above but without assignment</span></span></span>
 <span class="r-in"><span><span class="co"># `vignette("raster-attribute-tables")` has example output</span></span></span>
 </code></pre></div>
