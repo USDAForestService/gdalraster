@@ -11,8 +11,6 @@
 status](https://www.r-pkg.org/badges/version/gdalraster)](https://CRAN.R-project.org/package=gdalraster)
 [![cran
 checks](https://badges.cranchecks.info/worst/gdalraster.svg)](https://cran.r-project.org/web/checks/check_results_gdalraster.html)
-[![r-universe
-status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usdaforestservice.r-universe.dev/gdalraster)
 <!-- badges: end -->
 
 ## Overview
@@ -73,43 +71,32 @@ other utility.
 
 ## Installation
 
-The released version can be installed from CRAN with:
+Install the released version from CRAN with:
 
 ``` r
 install.packages("gdalraster")
 ```
 
-The development version can be installed from
-[R-universe](https://r-universe.dev/search/). The [R-universe package
-server](https://ropensci.org/blog/2021/03/04/r-universe-buildsystem/#part-3-a-high-performance-package-server)
-implements the standard repository format, so packages (including
-Windows and macOS binaries) can be installed the same way as from CRAN
-(no Rtools/devtools/sysreqs required):
-
-``` r
-# Install the development version of gdalraster from R-universe
-install.packages("gdalraster", repos = c("https://usdaforestservice.r-universe.dev", "https://cloud.r-project.org"))
-```
-
 ### From source code
-
-**gdalraster** depends on packages
-[Rcpp](https://CRAN.R-project.org/package=Rcpp) and
-[xml2](https://CRAN.R-project.org/package=xml2). These should be
-installed in R prior to installing **gdalraster** from source.
 
 #### Linux
 
 GDAL (\>= 2.4.0, built against GEOS), PROJ (\>= 4.8.0), and sqlite3 are
-required. On Ubuntu, recent versions of geospatial libraries can be
-installed from the [ubuntugis-unstable
+required.
+
+On Ubuntu, recent versions of geospatial libraries can be installed from
+the [ubuntugis-unstable
 PPA](https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable):
 
     sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
     sudo apt update
     sudo apt install libgdal-dev libgeos-dev libproj-dev libsqlite3-dev
 
-Then in R, install the released version of **gdalraster** from CRAN:
+Package **sf** provides helpful
+[instructions](https://github.com/r-spatial/sf#linux) for installing the
+geospatial libraries on other Linux distributions.
+
+Once the libraries are installed, install **gdalraster** from CRAN with:
 
 ``` r
 install.packages("gdalraster")
@@ -122,10 +109,6 @@ Or install the development version from GitHub using package
 remotes::install_github("USDAForestService/gdalraster")
 ```
 
-Package **sf** provides helpful
-[instructions](https://github.com/r-spatial/sf#linux) for installing
-geospatial libraries on other Linux distributions.
-
 #### Windows
 
 [RTools](https://cran.r-project.org/bin/windows/Rtools/) is required to
@@ -133,14 +116,14 @@ install from source on Windows. RTools since version 4.2 includes GDAL,
 PROJ and all other dependent libraries that are needed to compile
 **gdalraster**. Note that CRAN provides periodic revisions to RTools
 that include updates to the libraries as new versions become available.
-For example, the [5863-5818
+For example, the [5863
 revision](https://cran.r-project.org/bin/windows/Rtools/rtools43/news.html)
 of RTools 4.3 contains GDAL 3.7.2 and PROJ 9.3.0.
 
-With RTools installed, the development version of **gdalraster** can be
-installed in R with:
+With RTools installed:
 
 ``` r
+# Install the development version from GitHub
 remotes::install_github("USDAForestService/gdalraster")
 ```
 
@@ -153,7 +136,7 @@ GDAL and PROJ can be installed with Homebrew:
 Then in R, `configure.args` is needed:
 
 ``` r
-# Install the development version from GitHub:
+# Install the development version from GitHub
 remotes::install_github("USDAForestService/gdalraster", configure.args = "--with-proj-lib=$(brew --prefix)/lib/")
 ```
 
