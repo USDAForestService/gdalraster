@@ -130,7 +130,6 @@ its \code{srcfile}). Resampling defaults to \code{nearest} if not specified.
 Examples for both cases of \code{src_align} are given below.
 
 \code{rasterToVRT()} assumes \code{srcfile} is a north-up raster.
-Requires package \code{xml2}.
 }
 \examples{
 ## resample

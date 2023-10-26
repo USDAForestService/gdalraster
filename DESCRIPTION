@@ -39,22 +39,22 @@ URL: https://usdaforestservice.github.io/gdalraster/,
     https://github.com/USDAForestService/gdalraster
 BugReports: https://github.com/USDAForestService/gdalraster/issues
 Depends: R (>= 4.2.0)
-Imports: 
+Imports:
     graphics,
     grDevices,
     methods,
     Rcpp (>= 1.0.7),
     stats,
     tools,
-    utils
+    utils,
+    xml2
 LinkingTo: Rcpp
 Suggests:
     gt,
     knitr,
     rmarkdown,
     scales,
-    testthat (>= 3.0.0),
-    xml2
+    testthat (>= 3.0.0)
 NeedsCompilation: yes
 SystemRequirements: GDAL (>= 2.4.0, built against GEOS), PROJ (>= 4.8.0),
     sqlite3

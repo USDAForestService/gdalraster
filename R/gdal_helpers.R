@@ -1,4 +1,5 @@
 # Miscellaneous helper functions for working with the GDAL API
+# (currently only getCreationOptions())
 # Chris Toney <chris.toney at usda.gov>
 
 #' Return the list of creation options of a GDAL driver
@@ -39,9 +40,6 @@ getCreationOptions <- function(format, filter=NULL) {
 		message(paste0("No creation options found for ", format, "."))
 		return(invisible(.getCreationOptions(format)))
 	}
-		
-	if (!requireNamespace("xml2", quietly = TRUE))
-		stop("getCreationOptions() requires package xml2.", call. = FALSE)
 	
 	x = xml2::read_xml(.getCreationOptions(format))
 	opt_list <- xml2::xml_find_all(x, xpath = "//Option")

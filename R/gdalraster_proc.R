@@ -338,7 +338,6 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' Examples for both cases of `src_align` are given below.
 #' 
 #' `rasterToVRT()` assumes `srcfile` is a north-up raster.
-#' Requires package `xml2`.
 #'
 #' @param srcfile Source raster filename.
 #' @param relativeToVRT Logical. Indicates whether the source filename should 
@@ -533,9 +532,6 @@ rasterToVRT <- function(srcfile,
 				resampling = "nearest",
 				krnl = NULL,
 				normalized = TRUE) {
-
-	if (!requireNamespace("xml2", quietly = TRUE))
-		stop("rasterToVRT() requires package xml2.", call. = FALSE)
 
 	if (relativeToVRT) relativeToVRT <- 1 else relativeToVRT <- 0
 	if (normalized) normalized <- 1 else normalized <- 0
