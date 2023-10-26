@@ -42,40 +42,40 @@ ds$getDefaultRAT(band=1)
 
 # get the full attribute table for LANDFIRE EVT from its CSV file
 evt_csv <- system.file("extdata/LF20_EVT_220.csv", package="gdalraster")
-evt_tbl <- read.csv(evt_csv)
-nrow(evt_tbl)
-head(evt_tbl)
+evt_df <- read.csv(evt_csv)
+nrow(evt_df)
+head(evt_df)
 
 # keep just the R, G, B fields (0-255) and drop RED, GREEN, BLUE
-evt_tbl <- evt_tbl[,1:7]
+evt_df <- evt_df[,1:7]
 
-# build a RAT for the EVT raster, attaching additional columns from evt_tbl
-rat <- buildRAT(ds,
+# build a RAT for the EVT raster, attaching additional columns from evt_df
+tbl <- buildRAT(ds,
                 table_type = "thematic",
                 na_value = -9999,
-                join_df = evt_tbl)
+                join_df = evt_df)
 
-nrow(rat)
-head(rat)
+nrow(tbl)
+head(tbl)
 
 # attributes on the returned data frame and its columns define RAT metadata
-attributes(rat)
-attributes(rat$VALUE)     # GFU_MinMax for column of discrete pixel values
-attributes(rat$COUNT)
-attributes(rat$EVT_NAME)  # the class names
-attributes(rat$EVT_LF)
-attributes(rat$EVT_PHYS)
-attributes(rat$R)
-attributes(rat$G)
-attributes(rat$B)
+attributes(tbl)
+attributes(tbl$VALUE)     # GFU_MinMax for column of discrete pixel values
+attributes(tbl$COUNT)
+attributes(tbl$EVT_NAME)  # the class names
+attributes(tbl$EVT_LF)
+attributes(tbl$EVT_PHYS)
+attributes(tbl$R)
+attributes(tbl$G)
+attributes(tbl$B)
 
 # set as default RAT on the EVT raster
-ds$setDefaultRAT(band=1, rat)
+ds$setDefaultRAT(band=1, tbl)
 ds$flushCache()
 
-rat2 <- ds$getDefaultRAT(band=1)
-nrow(rat2)
-head(rat2)
+tbl2 <- ds$getDefaultRAT(band=1)
+nrow(tbl2)
+head(tbl2)
 
 ds$close()
 ```
@@ -85,10 +85,10 @@ ds$close()
 The function `displayRAT()` generates a presentation table. Colors are shown if the RAT contains RGB columns:
 
 ```{r}
-displayRAT(rat2, title = "Raster Attribute Table for Storm Lake EVT")
+displayRAT(tbl, title = "Raster Attribute Table for Storm Lake EVT")
 ```
 
-`displayRAT()` returns an object of class `"gt_tbl"`. The table object could be modified if desired using functions of the **gt** package.
+`displayRAT()` returns an object of class `"gt_tbl"`. The table object could be modified using functions of the **gt** package.
 
 ## Using in QGIS
 
