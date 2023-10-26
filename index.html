@@ -113,7 +113,7 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><code>gdalraster</code> is an R interface to the Raster API of the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Calling signatures resemble those of the native C, C++ and Python APIs provided by the GDAL project.</p>
+<p><strong>gdalraster</strong> is an R interface to the Raster API of the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Calling signatures resemble those of the native C, C++ and Python APIs provided by the GDAL project.</p>
 <p>Bindings to GDAL are implemented in the exposed C++ class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html"><code>GDALRaster</code></a> along with several <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions">stand-alone functions</a>, supporting:</p>
 <ul>
 <li>manual creation of uninitialized raster datasets</li>
@@ -140,7 +140,7 @@
 <li>
 <a href="https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html"><code>plot_raster()</code></a> displays raster data using base R graphics.</li>
 </ul>
-<p><code>gdalraster</code> may be suitable for applications that primarily need low-level raster I/O or prefer a direct GDAL API. The additional functionality is somewhat aimed at thematic data analysis but may have other utility.</p>
+<p><strong>gdalraster</strong> may be suitable for applications that primarily need low-level raster I/O or prefer a direct GDAL API. The additional functionality is somewhat aimed at thematic data analysis but may have other utility.</p>
 </div>
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
@@ -155,12 +155,12 @@
 <div class="section level3">
 <h3 id="from-source-code">From source code<a class="anchor" aria-label="anchor" href="#from-source-code"></a>
 </h3>
-<p><code>gdalraster</code> depends on packages <a href="https://CRAN.R-project.org/package=Rcpp" class="external-link"><code>Rcpp</code></a> and <a href="https://CRAN.R-project.org/package=xml2" class="external-link"><code>xml2</code></a>. These should be installed in R prior to installing <code>gdalraster</code> from source.</p>
+<p><strong>gdalraster</strong> depends on packages <a href="https://CRAN.R-project.org/package=Rcpp" class="external-link">Rcpp</a> and <a href="https://CRAN.R-project.org/package=xml2" class="external-link">xml2</a>. These should be installed in R prior to installing <strong>gdalraster</strong> from source.</p>
 <div class="section level4">
 <h4 id="windows">Windows<a class="anchor" aria-label="anchor" href="#windows"></a>
 </h4>
-<p>Installing from source on Windows requires <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a>. RTools includes recent versions of the geospatial libraries needed to compile <code>gdalraster</code> (GDAL, GEOS, PROJ).</p>
-<p>With RTools installed, the development version of <code>gdalraster</code> can be installed from GitHub with:</p>
+<p>Installing from source on Windows requires <a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a>. RTools since version 4.2 includes recent versions of the geospatial libraries (GDAL, GEOS, PROJ) needed to compile <strong>gdalraster</strong>.</p>
+<p>With RTools installed, the development version of <strong>gdalraster</strong> can be installed from GitHub with:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -184,7 +184,7 @@
 </h4>
 <p>GDAL and PROJ can be installed with Homebrew:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>brew install pkg<span class="sc">-</span>config gdal proj</span></code></pre></div>
-<p>Then in R (<code>configure.args</code> is needed):</p>
+<p>Then in R, <code>configure.args</code> is needed:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the released version from CRAN</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span>, type <span class="op">=</span> <span class="st">"source"</span>, configure.args <span class="op">=</span> <span class="st">"--with-proj-lib=$(brew --prefix)/lib/"</span><span class="op">)</span></span>
