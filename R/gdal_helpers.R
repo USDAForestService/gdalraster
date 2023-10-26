@@ -8,7 +8,7 @@
 #' GDAL format driver as an XML string (invisibly).
 #' Wrapper for `GDALGetDriverCreationOptionList()` in the GDAL API.
 #' Information about the available creation options is also printed to the
-#' console by default (requires package `xml2`).
+#' console by default.
 #'
 #' @param format Raster format short name (e.g., "GTiff").
 #' @param filter Optional character vector of creation option names. Controls

@@ -24,7 +24,7 @@ options or empty string \code{""} (full output of
 GDAL format driver as an XML string (invisibly).
 Wrapper for \code{GDALGetDriverCreationOptionList()} in the GDAL API.
 Information about the available creation options is also printed to the
-console by default (requires package \code{xml2}).
+console by default.
 }
 \examples{
 getCreationOptions("GTiff", filter="COMPRESS")
