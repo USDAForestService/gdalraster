@@ -17,8 +17,8 @@ status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usd
 
 ## Overview
 
-`gdalraster` is an R interface to the Raster API of the Geospatial Data
-Abstraction Library ([GDAL](https://gdal.org/)). Calling signatures
+**gdalraster** is an R interface to the Raster API of the Geospatial
+Data Abstraction Library ([GDAL](https://gdal.org/)). Calling signatures
 resemble those of the native C, C++ and Python APIs provided by the GDAL
 project.
 
@@ -66,7 +66,7 @@ Additional functionality includes:
   - [`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html)
     displays raster data using base R graphics.
 
-`gdalraster` may be suitable for applications that primarily need
+**gdalraster** may be suitable for applications that primarily need
 low-level raster I/O or prefer a direct GDAL API. The additional
 functionality is somewhat aimed at thematic data analysis but may have
 other utility.
@@ -93,19 +93,19 @@ install.packages('gdalraster', repos = c('https://usdaforestservice.r-universe.d
 
 ### From source code
 
-`gdalraster` depends on packages
-[`Rcpp`](https://CRAN.R-project.org/package=Rcpp) and
-[`xml2`](https://CRAN.R-project.org/package=xml2). These should be
-installed in R prior to installing `gdalraster` from source.
+**gdalraster** depends on packages
+[Rcpp](https://CRAN.R-project.org/package=Rcpp) and
+[xml2](https://CRAN.R-project.org/package=xml2). These should be
+installed in R prior to installing **gdalraster** from source.
 
 #### Windows
 
 Installing from source on Windows requires
-[RTools](https://cran.r-project.org/bin/windows/Rtools/). RTools
-includes recent versions of the geospatial libraries needed to compile
-`gdalraster` (GDAL, GEOS, PROJ).
+[RTools](https://cran.r-project.org/bin/windows/Rtools/). RTools since
+version 4.2 includes recent versions of the geospatial libraries (GDAL,
+GEOS, PROJ) needed to compile **gdalraster**.
 
-With RTools installed, the development version of `gdalraster` can be
+With RTools installed, the development version of **gdalraster** can be
 installed from GitHub with:
 
 ``` r
@@ -139,7 +139,7 @@ GDAL and PROJ can be installed with Homebrew:
 
     brew install pkg-config gdal proj
 
-Then in R (`configure.args` is needed):
+Then in R, `configure.args` is needed:
 
 ``` r
 # Install the released version from CRAN
