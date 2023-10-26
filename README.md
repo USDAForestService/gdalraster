@@ -73,12 +73,80 @@ other utility.
 
 ## Installation
 
+The released version can be installed from CRAN with:
+
+``` r
+install.packages("gdalraster")
+```
+
+The development version can be installed from
+[R-universe](https://r-universe.dev/search/). The [R-universe package
+server](https://ropensci.org/blog/2021/03/04/r-universe-buildsystem/#part-3-a-high-performance-package-server)
+implements the standard repository format, so packages (incl. Win/Mac
+binaries) can be installed the same way as from CRAN (no
+Rtools/devtools/sysreqs required):
+
+``` r
+# Install the development version of gdalraster from R-universe
+install.packages('gdalraster', repos = c('https://usdaforestservice.r-universe.dev', 'https://cloud.r-project.org'))
+```
+
+### From source code
+
+`gdalraster` depends on packages
+[`Rcpp`](https://CRAN.R-project.org/package=Rcpp) and
+[`xml2`](https://CRAN.R-project.org/package=xml2). These should be
+installed in R prior to installing `gdalraster` from source.
+
+#### Windows
+
+Installing from source on Windows requires
+[RTools](https://cran.r-project.org/bin/windows/Rtools/). RTools
+includes recent versions of the geospatial libraries needed to compile
+`gdalraster` (GDAL, GEOS, PROJ).
+
+With RTools installed, the development version of `gdalraster` can be
+installed from GitHub with:
+
+``` r
+remotes::install_github("USDAForestService/gdalraster")
+```
+
+#### Linux
+
+GDAL (\>= 2.4.0, built against GEOS), PROJ (\>= 4.8.0), and sqlite3
+libraries are required. On Ubuntu, recent versions of geospatial
+libraries can be installed from the [ubuntugis-unstable
+PPA](https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable):
+
+    sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
+    sudo apt update
+    sudo apt install libgdal-dev libgeos-dev libproj-dev libsqlite3-dev
+
+Then in R:
+
 ``` r
 # Install the released version from CRAN
 install.packages("gdalraster")
 
 # Or the development version from GitHub:
 remotes::install_github("USDAForestService/gdalraster")
+```
+
+#### macOS
+
+GDAL and PROJ can be installed with Homebrew:
+
+    brew install pkg-config gdal proj
+
+Then in R (`configure.args` is needed):
+
+``` r
+# Install the released version from CRAN
+install.packages("gdalraster", type = "source", configure.args = "--with-proj-lib=$(brew --prefix)/lib/")
+
+# Or the development version from GitHub:
+remotes::install_github("USDAForestService/gdalraster", configure.args = "--with-proj-lib=$(brew --prefix)/lib/")
 ```
 
 ## Documentation
