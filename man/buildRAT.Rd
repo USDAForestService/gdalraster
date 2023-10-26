@@ -159,15 +159,15 @@ ds$getDefaultRAT(band=1) # NULL
 
 # get the full attribute table for LANDFIRE EVT from the CSV file
 evt_csv <- system.file("extdata/LF20_EVT_220.csv", package="gdalraster")
-evt_tbl <- read.csv(evt_csv)
-nrow(evt_tbl)
-head(evt_tbl)
-evt_tbl <- evt_tbl[,1:7]
+evt_df <- read.csv(evt_csv)
+nrow(evt_df)
+head(evt_df)
+evt_df <- evt_df[,1:7]
 
 tbl <- buildRAT(ds,
                 table_type = "thematic",
                 na_value = -9999,
-                join_df = evt_tbl)
+                join_df = evt_df)
 
 nrow(tbl)
 head(tbl)
@@ -193,10 +193,10 @@ head(tbl2)
 ds$close()
 
 # Display
-evt_rat <- displayRAT(tbl2, title = "Raster Attribute Table for Storm Lake EVT")
-class(evt_rat)  # an object of class "gt_tbl" from package gt
+evt_gt <- displayRAT(tbl2, title = "Raster Attribute Table for Storm Lake EVT")
+class(evt_gt)  # an object of class "gt_tbl" from package gt
 # To show the table:
-# evt_rat
+# evt_gt
 # or simply call `displayRAT()` as above but without assignment
 # `vignette("raster-attribute-tables")` has example output
 }
