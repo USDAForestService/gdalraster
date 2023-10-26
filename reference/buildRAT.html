@@ -234,10 +234,10 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get the full attribute table for LANDFIRE EVT from the CSV file</span></span></span>
 <span class="r-in"><span><span class="va">evt_csv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/LF20_EVT_220.csv"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">evt_tbl</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">evt_csv</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">evt_tbl</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">evt_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">evt_csv</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">evt_df</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1068</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">evt_tbl</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">evt_df</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   VALUE                                                   EVT_NAME EVT_LF</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1 -9999                                                Fill-NoData   &lt;NA&gt;</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2  4401                Alaska Arctic Coastal Sedge-Dwarf-Shrubland  Shrub</span>
@@ -252,12 +252,12 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 4  Riparian  18  76 135 0.070588 0.298039 0.529412</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 5 Shrubland 146 237 224 0.572549 0.929412 0.878431</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6 Shrubland 255  37  13 1.000000 0.145098 0.050980</span>
-<span class="r-in"><span><span class="va">evt_tbl</span> <span class="op">&lt;-</span> <span class="va">evt_tbl</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">evt_df</span> <span class="op">&lt;-</span> <span class="va">evt_df</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu">buildRAT</span><span class="op">(</span><span class="va">ds</span>,</span></span>
 <span class="r-in"><span>                table_type <span class="op">=</span> <span class="st">"thematic"</span>,</span></span>
 <span class="r-in"><span>                na_value <span class="op">=</span> <span class="op">-</span><span class="fl">9999</span>,</span></span>
-<span class="r-in"><span>                join_df <span class="op">=</span> <span class="va">evt_tbl</span><span class="op">)</span></span></span>
+<span class="r-in"><span>                join_df <span class="op">=</span> <span class="va">evt_df</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Scanning raster...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-in"><span></span></span>
@@ -353,11 +353,11 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Display</span></span></span>
-<span class="r-in"><span><span class="va">evt_rat</span> <span class="op">&lt;-</span> <span class="fu"><a href="displayRAT.html">displayRAT</a></span><span class="op">(</span><span class="va">tbl2</span>, title <span class="op">=</span> <span class="st">"Raster Attribute Table for Storm Lake EVT"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">evt_rat</span><span class="op">)</span>  <span class="co"># an object of class "gt_tbl" from package gt</span></span></span>
+<span class="r-in"><span><span class="va">evt_gt</span> <span class="op">&lt;-</span> <span class="fu"><a href="displayRAT.html">displayRAT</a></span><span class="op">(</span><span class="va">tbl2</span>, title <span class="op">=</span> <span class="st">"Raster Attribute Table for Storm Lake EVT"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">evt_gt</span><span class="op">)</span>  <span class="co"># an object of class "gt_tbl" from package gt</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "gt_tbl" "list"  </span>
 <span class="r-in"><span><span class="co"># To show the table:</span></span></span>
-<span class="r-in"><span><span class="co"># evt_rat</span></span></span>
+<span class="r-in"><span><span class="co"># evt_gt</span></span></span>
 <span class="r-in"><span><span class="co"># or simply call `displayRAT()` as above but without assignment</span></span></span>
 <span class="r-in"><span><span class="co"># `vignette("raster-attribute-tables")` has example output</span></span></span>
 </code></pre></div>
