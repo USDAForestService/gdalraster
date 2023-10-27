@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.5.1</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.6.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,30 +54,61 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.5.1" id="gdalraster-151-dev">gdalraster 1.5.1 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-151-dev"></a></h2>
-<ul><li><p>performance improvement in <code>RunningStats::update()</code> (2023-10-22)</p></li>
-<li><p>class <code>CmbTable</code>: zero is now allowed for the count increment <code>incr</code> in <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code>; small performance improvements (2023-10-22)</p></li>
-<li><p>add <code>_value_count()</code>: internal function to compute the set of unique pixel values and their counts faster than using <code><a href="../reference/combine.html">combine()</a></code> on one raster; used in <code><a href="../reference/buildRAT.html">buildRAT()</a></code> (2023-10-21)</p></li>
-<li><p>add <code><a href="../reference/displayRAT.html">displayRAT()</a></code>: generate a presentation table, showing colors if the RAT contains RGB columns (2023-10-19)</p></li>
-<li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code>: normalize legend correctly for <code>minmax_def</code> and <code>minmax_pct_cut</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/131" class="external-link">#131</a>) (2023-10-18)</p></li>
-<li><p>class <code>RunningStats</code>: use <code>uint64_t</code> for the count accumulator (previously <code>long long</code>) and make explicit the return cast in <code>get_count()</code>, no user-visible changes (2023-10-16)</p></li>
-<li><p>add <code><a href="../reference/buildRAT.html">buildRAT()</a></code>: build a new GDAL Raster Attribute Table as data frame (2023-10-08)</p></li>
-<li><p>add <code>GDALRaster$setDefaultRAT()</code>: set Raster Attribute Table from data frame (2023-10-08)</p></li>
-<li><p>gdalraster now requires GDAL &gt;= 2.4.0 (previously &gt;= 2.3.0) (2023-10-08)</p></li>
-<li><p>add <code>GDALRaster$getDefaultRAT()</code>: return Raster Attribute Table as a data frame (2023-10-04)</p></li>
-<li><p>add <code>GDALRaster$getDefaultHistogram()</code>: fetch default raster histogram (2023-10-02)</p></li>
-<li><p>add <code>GDALRaster$getHistogram()</code>: compute raster histogram for a band (2023-10-01)</p></li>
-<li><p>add <code>GDALRaster$getMinMax()</code>: compute min/max for a raster band (2023-10-01)</p></li>
-<li><p>add <code>GDALRaster$getMetadataDomainList()</code>: get a list of metadata domains for a dataset or raster band (2023-09-28)</p></li>
-<li><p>fix <code>GDALRaster$getMetadataItem()</code> for domain at dataset level (<a href="https://github.com/USDAForestService/gdalraster/issues/109" class="external-link">#109</a>) (2023-09-28)</p></li>
-<li><p>add <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code>: report the supported raster formats (2023-09-28)</p></li>
-<li><p>add <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>: get the list of creation options of a raster format (2023-09-28)</p></li>
-<li><p>add <code><a href="../reference/copyDatasetFiles.html">copyDatasetFiles()</a></code>: copy all the files associated with a dataset (2023-09-28)</p></li>
-<li><p>add <code><a href="../reference/deleteDataset.html">deleteDataset()</a></code>: delete a dataset in a format-specific way (2023-09-27)</p></li>
-<li><p>add <code><a href="../reference/renameDataset.html">renameDataset()</a></code>: rename a dataset in a format-specific way (2023-09-27)</p></li>
-<li><p>add some missing error checks in src/gdal_exp.cpp (<a href="https://github.com/USDAForestService/gdalraster/issues/104" class="external-link">#104</a>) (2023-09-27)</p></li>
-<li><p>Documentation: add <a href="https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note">notes</a> for <code>RunningStats-class</code>; update Raster API Tutorial with <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> and <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>; add vignette: <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html">Raster Attribute Tables</a></p></li>
+<h2 class="pkg-version" data-toc-text="1.6.0" id="gdalraster-160">gdalraster 1.6.0<a class="anchor" aria-label="anchor" href="#gdalraster-160"></a></h2>
+<div class="section level3">
+<h3 id="dependencies-1-6-0">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-1-6-0"></a></h3>
+<ul><li>GDAL &gt;= 2.4.0 (previously &gt;= 2.3.0)</li>
+<li>package <a href="https://CRAN.R-project.org/package=xml2" class="external-link"><strong>xml2</strong></a> is now required (previously in Suggests)</li>
+<li>package <a href="https://CRAN.R-project.org/package=gt" class="external-link"><strong>gt</strong></a> has been added to Suggests (required for <code><a href="../reference/displayRAT.html">displayRAT()</a></code>)</li>
 </ul></div>
+<div class="section level3">
+<h3 id="gdalraster-class-1-6-0">GDALRaster-class<a class="anchor" aria-label="anchor" href="#gdalraster-class-1-6-0"></a></h3>
+<ul><li>add methods for Raster Attribute Tables: <code>getDefaultRAT()</code>, <code>setDefaultRAT()</code>
+</li>
+<li>add <code>getDefaultHistogram()</code>: fetch default raster histogram for a band</li>
+<li>add <code>getHistogram()</code>: compute raster histogram for a band</li>
+<li>add <code>getMinMax()</code>: compute min/max for a raster band</li>
+<li>add <code>getMetadataDomainList()</code>: get a list of metadata domains for a dataset or raster band</li>
+<li>fix <code>getMetadataItem()</code> for a specific domain at dataset level (<a href="https://github.com/USDAForestService/gdalraster/issues/109" class="external-link">#109</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="gdal-api-stand-alone-functions-1-6-0">GDAL API stand-alone functions<a class="anchor" aria-label="anchor" href="#gdal-api-stand-alone-functions-1-6-0"></a></h3>
+<ul><li>add <code><a href="../reference/buildRAT.html">buildRAT()</a></code>: compute for a raster band the set of unique pixel values and their counts, and build a GDAL Raster Attribute Table as data frame</li>
+<li>add <code><a href="../reference/displayRAT.html">displayRAT()</a></code>: generate a presentation Raster Attribute Table, showing colors if the table contains RGB columns</li>
+<li>add <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code>: report the supported raster formats</li>
+<li>add <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>: get the list of creation options of a raster format</li>
+<li>add <code><a href="../reference/copyDatasetFiles.html">copyDatasetFiles()</a></code>: copy all the files associated with a dataset</li>
+<li>add <code><a href="../reference/deleteDataset.html">deleteDataset()</a></code>: delete a dataset in a format-specific way</li>
+<li>add <code><a href="../reference/renameDataset.html">renameDataset()</a></code>: rename a dataset in a format-specific way</li>
+<li>add missing null checks in src/gdal_exp.cpp (<a href="https://github.com/USDAForestService/gdalraster/issues/104" class="external-link">#104</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="cmbtable-class-1-6-0">CmbTable-class<a class="anchor" aria-label="anchor" href="#cmbtable-class-1-6-0"></a></h3>
+<ul><li>argument <code>incr</code> for the count increment in <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code> can be zero</li>
+</ul></div>
+<div class="section level3">
+<h3 id="runningstats-class-1-6-0">RunningStats-class<a class="anchor" aria-label="anchor" href="#runningstats-class-1-6-0"></a></h3>
+<ul><li>use <code>uint64_t</code> for the count accumulator (previously <code>long long</code>) and make explicit the return cast in <code>get_count()</code> (no user-visible changes)</li>
+<li>slightly faster <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="other-miscellaneous-1-6-0">Other miscellaneous<a class="anchor" aria-label="anchor" href="#other-miscellaneous-1-6-0"></a></h3>
+<ul><li>
+<code><a href="../reference/plot_raster.html">plot_raster()</a></code>: normalize legend correctly for <code>minmax_def</code> and <code>minmax_pct_cut</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/131" class="external-link">#131</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-1-6-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-6-0"></a></h3>
+<ul><li>add vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html">Raster Attribute Tables</a>
+</li>
+<li>add <a href="https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note">notes</a> for <code>RunningStats-class</code>
+</li>
+<li>update vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a> with <code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> and <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>
+</li>
+<li>update installation instructions in <a href="https://github.com/USDAForestService/gdalraster/blob/main/README.md" class="external-link">README</a>
+</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.5.0" id="gdalraster-150">gdalraster 1.5.0<a class="anchor" aria-label="anchor" href="#gdalraster-150"></a></h2><p class="text-muted">CRAN release: 2023-09-25</p>
 <div class="section level3">
