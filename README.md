@@ -98,15 +98,16 @@ with the following commands:
     sudo apt install libgdal-dev libgeos-dev libproj-dev libsqlite3-dev
 
 The releases in ubuntugis-unstable generally work well and are more
-up-to-date, but the less recent versions in
-[ubuntugis-stable](https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa)
-could be used instead.
+up-to-date, but less recent versions in the [ubuntugis-stable
+PPA](https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa) could be used
+instead.
 
 Package **sf** provides helpful
 [instructions](https://github.com/r-spatial/sf#linux) for installing the
 geospatial libraries on other Linux distributions.
 
-With system requirements met, install **gdalraster** from CRAN:
+With the dependent libraries available on the system, install
+**gdalraster** from CRAN:
 
 ``` r
 install.packages("gdalraster")
@@ -126,8 +127,8 @@ install from source on Windows. RTools since version 4.2 includes GDAL,
 PROJ and all other dependent libraries that are needed to compile
 **gdalraster**. Note that CRAN releases periodic revisions to RTools
 that often include updates to the libraries as new versions become
-available. For example, the [5863
-revision](https://cran.r-project.org/bin/windows/Rtools/rtools43/news.html)
+available. For example,
+[revision 5863](https://cran.r-project.org/bin/windows/Rtools/rtools43/news.html)
 of RTools 4.3 contains GDAL 3.7.2 and PROJ 9.3.0.
 
 With RTools installed:
@@ -143,7 +144,7 @@ GDAL and PROJ can be installed with Homebrew:
 
     brew install pkg-config gdal proj
 
-Then in R, `configure.args` is needed:
+Then `configure.args` is needed:
 
 ``` r
 # Install the development version from GitHub
