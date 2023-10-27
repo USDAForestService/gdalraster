@@ -24,16 +24,16 @@
 * add `copyDatasetFiles()`: copy all the files associated with a dataset
 * add `deleteDataset()`: delete a dataset in a format-specific way
 * add `renameDataset()`: rename a dataset in a format-specific way
-* add missing null checks in src/gdal_exp.cpp (#104)
+* add some missing error checks in src/gdal_exp.cpp (#104)
 
 ## CmbTable-class
 
-* argument `incr` for the count increment in `update()` can be zero
+* argument `incr` for the count increment in `CmbTable::update()` can be zero
 
 ## RunningStats-class
 
 * use `uint64_t` for the count accumulator (previously `long long`) and make explicit the return cast in `get_count()` (no user-visible changes)
-* slightly faster `update()`
+* slightly faster update
 
 ## Other miscellaneous
 
