@@ -1,48 +1,51 @@
-# gdalraster 1.5.1 (dev)
+# gdalraster 1.6.0
 
-* performance improvement in `RunningStats::update()` (2023-10-22)
+## Dependencies
 
-* class `CmbTable`: zero is now allowed for the count increment `incr` in `update()`; small performance improvements (2023-10-22)
+* GDAL >= 2.4.0 (previously >= 2.3.0)
+* package [**xml2**](https://CRAN.R-project.org/package=xml2) is now required (previously in Suggests)
+* package [**gt**](https://CRAN.R-project.org/package=gt) has been added to Suggests (required for `displayRAT()`)
 
-* add `_value_count()`: internal function to compute the set of unique pixel values and their counts faster than using `combine()` on one raster; used in `buildRAT()` (2023-10-21)
+## GDALRaster-class
 
-* add `displayRAT()`: generate a presentation table, showing colors if the RAT contains RGB columns (2023-10-19)
+* add methods for Raster Attribute Tables: `getDefaultRAT()`, `setDefaultRAT()`
+* add `getDefaultHistogram()`: fetch default raster histogram for a band
+* add `getHistogram()`: compute raster histogram for a band
+* add `getMinMax()`: compute min/max for a raster band
+* add `getMetadataDomainList()`: get a list of metadata domains for a dataset or raster band
+* fix `getMetadataItem()` for a specific domain at dataset level (#109)
 
-* `plot_raster()`: normalize legend correctly for `minmax_def` and `minmax_pct_cut` (#131) (2023-10-18)
+## GDAL API stand-alone functions
 
-* class `RunningStats`: use `uint64_t` for the count accumulator (previously `long long`) and make explicit the return cast in `get_count()`, no user-visible changes (2023-10-16)
+* add `buildRAT()`: compute for a raster band the set of unique pixel values and their counts, and build a GDAL Raster Attribute Table as data frame
+* add `displayRAT()`: generate a presentation Raster Attribute Table, showing colors if the table contains RGB columns
+* add `gdal_formats()`: report the supported raster formats
+* add `getCreationOptions()`: get the list of creation options of a raster format
+* add `copyDatasetFiles()`: copy all the files associated with a dataset
+* add `deleteDataset()`: delete a dataset in a format-specific way
+* add `renameDataset()`: rename a dataset in a format-specific way
+* add missing null checks in src/gdal_exp.cpp (#104)
 
-* add `buildRAT()`: build a new GDAL Raster Attribute Table as data frame (2023-10-08)
+## CmbTable-class
 
-* add `GDALRaster$setDefaultRAT()`: set Raster Attribute Table from data frame (2023-10-08)
+* argument `incr` for the count increment in `update()` can be zero
 
-* gdalraster now requires GDAL >= 2.4.0 (previously >= 2.3.0) (2023-10-08)
+## RunningStats-class
 
-* add `GDALRaster$getDefaultRAT()`: return Raster Attribute Table as a data frame (2023-10-04)
+* use `uint64_t` for the count accumulator (previously `long long`) and make explicit the return cast in `get_count()` (no user-visible changes)
+* slightly faster `update()`
 
-* add `GDALRaster$getDefaultHistogram()`: fetch default raster histogram (2023-10-02)
+## Other miscellaneous
 
-* add `GDALRaster$getHistogram()`: compute raster histogram for a band (2023-10-01)
+* `plot_raster()`: normalize legend correctly for `minmax_def` and `minmax_pct_cut` (#131)
 
-* add `GDALRaster$getMinMax()`: compute min/max for a raster band (2023-10-01)
+## Documentation
 
-* add `GDALRaster$getMetadataDomainList()`: get a list of metadata domains for a dataset or raster band (2023-09-28)
+* add vignette [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
+* add [notes](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note) for `RunningStats-class`
+* update vignette [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) with `gdal_formats()` and `getCreationOptions()`
+* update installation instructions in [README](https://github.com/USDAForestService/gdalraster/blob/main/README.md)
 
-* fix `GDALRaster$getMetadataItem()` for domain at dataset level (#109) (2023-09-28)
-
-* add `gdal_formats()`: report the supported raster formats (2023-09-28)
-
-* add `getCreationOptions()`: get the list of creation options of a raster format (2023-09-28)
-
-* add `copyDatasetFiles()`: copy all the files associated with a dataset (2023-09-28)
-
-* add `deleteDataset()`: delete a dataset in a format-specific way (2023-09-27)
-
-* add `renameDataset()`: rename a dataset in a format-specific way (2023-09-27)
-
-* add some missing error checks in src/gdal_exp.cpp (#104) (2023-09-27) 
-
-* Documentation: add [notes](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html#note) for `RunningStats-class`; update Raster API Tutorial with `gdal_formats()` and `getCreationOptions()`; add vignette: [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
 
 # gdalraster 1.5.0
 
