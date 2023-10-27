@@ -80,17 +80,16 @@
 <li>add <code><a href="../reference/copyDatasetFiles.html">copyDatasetFiles()</a></code>: copy all the files associated with a dataset</li>
 <li>add <code><a href="../reference/deleteDataset.html">deleteDataset()</a></code>: delete a dataset in a format-specific way</li>
 <li>add <code><a href="../reference/renameDataset.html">renameDataset()</a></code>: rename a dataset in a format-specific way</li>
-<li>add missing null checks in src/gdal_exp.cpp (<a href="https://github.com/USDAForestService/gdalraster/issues/104" class="external-link">#104</a>)</li>
+<li>add some missing error checks in src/gdal_exp.cpp (<a href="https://github.com/USDAForestService/gdalraster/issues/104" class="external-link">#104</a>)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="cmbtable-class-1-6-0">CmbTable-class<a class="anchor" aria-label="anchor" href="#cmbtable-class-1-6-0"></a></h3>
-<ul><li>argument <code>incr</code> for the count increment in <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code> can be zero</li>
+<ul><li>argument <code>incr</code> for the count increment in <code>CmbTable::update()</code> can be zero</li>
 </ul></div>
 <div class="section level3">
 <h3 id="runningstats-class-1-6-0">RunningStats-class<a class="anchor" aria-label="anchor" href="#runningstats-class-1-6-0"></a></h3>
 <ul><li>use <code>uint64_t</code> for the count accumulator (previously <code>long long</code>) and make explicit the return cast in <code>get_count()</code> (no user-visible changes)</li>
-<li>slightly faster <code><a href="https://rdrr.io/r/stats/update.html" class="external-link">update()</a></code>
-</li>
+<li>slightly faster update</li>
 </ul></div>
 <div class="section level3">
 <h3 id="other-miscellaneous-1-6-0">Other miscellaneous<a class="anchor" aria-label="anchor" href="#other-miscellaneous-1-6-0"></a></h3>
