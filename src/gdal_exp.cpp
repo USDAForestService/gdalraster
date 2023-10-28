@@ -214,13 +214,11 @@ bool create(std::string format, std::string dst_filename,
 						xsize, ysize, nbands, dt,
                     	opt_list.data());
 
-	if (hDstDS != NULL) {
-		GDALClose(hDstDS);
-		return true;
-	}
-	else {
+	if (hDstDS == NULL)
 		Rcpp::stop("Create raster failed.");
-	}
+	
+	GDALClose(hDstDS);
+	return true;
 }
 
 
@@ -295,18 +293,12 @@ bool createCopy(std::string format, std::string dst_filename,
 	hDstDS = GDALCreateCopy(hDriver, dst_filename.c_str(), hSrcDS, strict,
 				opt_list.data(), GDALTermProgressR, NULL);
 
-	bool ret = false;
-	if (hDstDS != NULL) {
-		GDALClose(hDstDS);
-		ret = true;
-	}
-	else {
-		Rcpp::stop("Create raster failed.");
-	}
-	
 	GDALClose(hSrcDS);
-	
-	return ret;
+	if (hDstDS == NULL)
+		Rcpp::stop("Create raster failed.");
+
+	GDALClose(hDstDS);
+	return true;
 }
 
 
@@ -651,13 +643,11 @@ bool _dem_proc(std::string mode,
 							
 	GDALDEMProcessingOptionsFree(psOptions);
 	GDALClose(src_ds);
-	if (hDstDS != NULL) {
-		GDALClose(hDstDS);
-		return true;
-	}
-	else {
+	if (hDstDS == NULL)
 		Rcpp::stop("DEM processing failed.");
-	}
+
+	GDALClose(hDstDS);
+	return true;
 }
 
 
@@ -720,24 +710,34 @@ bool fillNodata(std::string filename, int band, std::string mask_file = "",
 	if (hDS == NULL)
 		Rcpp::stop("Open raster failed.");
 	hBand = GDALGetRasterBand(hDS, band);
-	
+	if (hBand == NULL) {
+		GDALClose(hDS);
+		Rcpp::stop("Failed to access the requested band.");
+	}
+
 	if (mask_file != "") {
 		hMaskDS = GDALOpenShared(mask_file.c_str(), GA_ReadOnly);
-		if (hMaskDS == NULL)
-			Rcpp::stop("Open raster failed.");
+		if (hMaskDS == NULL) {
+			GDALClose(hDS);
+			Rcpp::stop("Open mask raster failed.");
+		}
 		hMaskBand = GDALGetRasterBand(hMaskDS, 1);
+		if (hMaskBand == NULL) {
+			GDALClose(hDS);
+			GDALClose(hMaskDS);
+			Rcpp::stop("Failed to access the mask band.");
+		}
 	}
 	
 	err = GDALFillNodata(hBand, hMaskBand, max_dist, 0, smooth_iterations,
 			NULL, GDALTermProgressR, NULL);
-	
-	if (err != CE_None)
-		Rcpp::stop("fillNodata() failed.");
-		
+
 	GDALClose(hDS);
 	if (hMaskDS != NULL)
 		GDALClose(hMaskDS);
-		
+	if (err != CE_None)
+		Rcpp::stop("Error in GDALFillNodata().");
+
 	return true;
 }
 
@@ -847,19 +847,41 @@ bool sieveFilter(std::string src_filename, int src_band,
 	if (hSrcDS == NULL)
 		Rcpp::stop("Open source raster failed.");
 	hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
+	if (hSrcBand == NULL) {
+		GDALClose(hSrcDS);
+		Rcpp::stop("Failed to access the source band.");
+	}
 	
 	if (mask_filename != "") {
 		hMaskDS = GDALOpenShared(mask_filename.c_str(), GA_ReadOnly);
-		if (hMaskDS == NULL)
+		if (hMaskDS == NULL) {
+			GDALClose(hSrcDS);
 			Rcpp::stop("Open mask raster failed.");
+		}
 		hMaskBand = GDALGetRasterBand(hMaskDS, mask_band);
+		if (hMaskBand == NULL) {
+			GDALClose(hSrcDS);
+			GDALClose(hMaskDS);
+			Rcpp::stop("Failed to access the mask band.");
+		}
 	}
 	
 	if (!in_place) {
 		hDstDS = GDALOpenShared(dst_filename.c_str(), GA_Update);
-		if (hDstDS == NULL)
+		if (hDstDS == NULL) {
+			GDALClose(hSrcDS);
+			if (hMaskDS != NULL)
+				GDALClose(hMaskDS);
 			Rcpp::stop("Open destination raster failed.");
+		}
 		hDstBand = GDALGetRasterBand(hDstDS, dst_band);
+		if (hDstBand == NULL) {
+			GDALClose(hSrcDS);
+			if (hMaskDS != NULL)
+				GDALClose(hMaskDS);
+			GDALClose(hDstDS);
+			Rcpp::stop("Failed to access the destination band.");
+		}
 	}
 	
 	if (in_place)
@@ -868,16 +890,15 @@ bool sieveFilter(std::string src_filename, int src_band,
 	else
 		err = GDALSieveFilter(hSrcBand, hMaskBand, hDstBand, size_threshold,
 				connectedness, NULL, GDALTermProgressR, NULL);	
-			
-	if (err != CE_None)
-		Rcpp::stop("sieveFilter() failed.");
 		
 	GDALClose(hSrcDS);
 	if (hMaskDS != NULL)
 		GDALClose(hMaskDS);
 	if (hDstDS != NULL)
 		GDALClose(hDstDS);
-		
+	if (err != CE_None)
+		Rcpp::stop("Error in GDALSieveFilter().");
+
 	return true;
 }
 
@@ -959,17 +980,13 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 							psOptions, NULL);
 							
 	GDALWarpAppOptionsFree(psOptions);
-	for (std::size_t i = 0; i < src_files.size(); ++i) {
+	for (std::size_t i = 0; i < src_files.size(); ++i)
 		GDALClose(src_ds[i]);
-	}
-	
-	if (hDstDS != NULL) {
-		GDALClose(hDstDS);
-		return true;
-	}
-	else {
+	if (hDstDS == NULL)
 		Rcpp::stop("Warp raster failed.");
-	}
+	
+	GDALClose(hDstDS);
+	return true;
 }
 
 
@@ -1186,11 +1203,22 @@ bool bandCopyWholeRaster(std::string src_filename, int src_band,
 	if (hSrcDS == NULL)
 		Rcpp::stop("Open source raster failed.");
 	hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
+	if (hSrcBand == NULL) {
+		GDALClose(hSrcDS);
+		Rcpp::stop("Failed to access the source band.");
+	}
 	
 	hDstDS = GDALOpenShared(dst_filename.c_str(), GA_Update);
-	if (hDstDS == NULL)
+	if (hDstDS == NULL) {
+		GDALClose(hSrcDS);
 		Rcpp::stop("Open destination raster failed.");
+	}
 	hDstBand = GDALGetRasterBand(hDstDS, dst_band);
+	if (hDstBand == NULL) {
+		GDALClose(hSrcDS);
+		GDALClose(hDstDS);
+		Rcpp::stop("Failed to access the destination band.");
+	}
 	
 	std::vector<char *> opt_list = {NULL};
 	if (options.isNotNull()) {
@@ -1206,13 +1234,12 @@ bool bandCopyWholeRaster(std::string src_filename, int src_band,
 	
 	err = GDALRasterBandCopyWholeRaster(hSrcBand, hDstBand, opt_list.data(),
 			GDALTermProgressR, NULL);
-	
-	if (err != CE_None)
-		Rcpp::stop("bandCopyWholeRaster() failed.");
 		
 	GDALClose(hSrcDS);
 	GDALClose(hDstDS);
-		
+	if (err != CE_None)
+		Rcpp::stop("Error in GDALRasterBandCopyWholeRaster().");
+
 	return true;
 }
 
