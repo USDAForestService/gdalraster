@@ -160,9 +160,9 @@
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sudo add<span class="sc">-</span>apt<span class="sc">-</span>repository ppa<span class="sc">:</span>ubuntugis<span class="sc">/</span>ubuntugis<span class="sc">-</span>unstable</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sudo apt update</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sudo apt install libgdal<span class="sc">-</span>dev libgeos<span class="sc">-</span>dev libproj<span class="sc">-</span>dev libsqlite3<span class="sc">-</span>dev</span></code></pre></div>
-<p>The releases in ubuntugis-unstable generally work well and are more up-to-date, but the less recent versions in <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa" class="external-link">ubuntugis-stable</a> could be used instead.</p>
+<p>The releases in ubuntugis-unstable generally work well and are more up-to-date, but less recent versions in the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa" class="external-link">ubuntugis-stable PPA</a> could be used instead.</p>
 <p>Package <strong>sf</strong> provides helpful <a href="https://github.com/r-spatial/sf#linux" class="external-link">instructions</a> for installing the geospatial libraries on other Linux distributions.</p>
-<p>With system requirements met, install <strong>gdalraster</strong> from CRAN:</p>
+<p>With the dependent libraries available on the system, install <strong>gdalraster</strong> from CRAN:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span><span class="op">)</span></span></code></pre></div>
 <p>Or install the development version from GitHub using package <a href="https://CRAN.R-project.org/package=remotes" class="external-link">remotes</a>:</p>
@@ -172,7 +172,7 @@
 <div class="section level4">
 <h4 id="windows">Windows<a class="anchor" aria-label="anchor" href="#windows"></a>
 </h4>
-<p><a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a> is needed to install from source on Windows. RTools since version 4.2 includes GDAL, PROJ and all other dependent libraries that are needed to compile <strong>gdalraster</strong>. Note that CRAN releases periodic revisions to RTools that often include updates to the libraries as new versions become available. For example, the <a href="https://cran.r-project.org/bin/windows/Rtools/rtools43/news.html" class="external-link">5863 revision</a> of RTools 4.3 contains GDAL 3.7.2 and PROJ 9.3.0.</p>
+<p><a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a> is needed to install from source on Windows. RTools since version 4.2 includes GDAL, PROJ and all other dependent libraries that are needed to compile <strong>gdalraster</strong>. Note that CRAN releases periodic revisions to RTools that often include updates to the libraries as new versions become available. For example, <a href="https://cran.r-project.org/bin/windows/Rtools/rtools43/news.html" class="external-link">revision 5863</a> of RTools 4.3 contains GDAL 3.7.2 and PROJ 9.3.0.</p>
 <p>With RTools installed:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
@@ -183,7 +183,7 @@
 </h4>
 <p>GDAL and PROJ can be installed with Homebrew:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>brew install pkg<span class="sc">-</span>config gdal proj</span></code></pre></div>
-<p>Then in R, <code>configure.args</code> is needed:</p>
+<p>Then <code>configure.args</code> is needed:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span>, configure.args <span class="op">=</span> <span class="st">"--with-proj-lib=$(brew --prefix)/lib/"</span><span class="op">)</span></span></code></pre></div>
