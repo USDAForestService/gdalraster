@@ -67,32 +67,58 @@ test_that("warp runs without error", {
 	args = c("-tr", "90", "90", "-r", "average", "-tap")
 	args = c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 	alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
-	on.exit(unlink(alb83_file))
 	expect_true(warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args))
+
+	# incorrect source file
+	expect_error(warp(c(elev_file, "_err_"), alb83_file, t_srs="EPSG:5070",
+					cl_arg = args))
+	
+	# clean up
+	deleteDataset(alb83_file)
 })
 
 test_that("fillNodata writes correct output", {
 	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 	mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
 	file.copy(elev_file,  mod_file)
-	on.exit(unlink(mod_file))
 	fillNodata(mod_file, band=1)
 	ds <- new(GDALRaster, mod_file, read_only=TRUE)
 	dm <- ds$dim()
 	chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
 	ds$close()
 	expect_equal(chk, 49103)
+	
+	# invalid band
+	expect_error(fillNodata(mod_file, band=2))
+	# incorrect mask file
+	expect_error(fillNodata(mod_file, band=1, mask_file="_err_"))
+	
+	# clean up
+	deleteDataset(mod_file)
 })
 
 test_that("sieveFilter runs without error", {
 	evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 	evt_mmu_file <- paste0(tempdir(), "/", "storml_evt_mmu2.tif")
-	on.exit(unlink(evt_mmu_file))
 	rasterFromRaster(srcfile=evt_file, dstfile=evt_mmu_file, init=32767)
 	expr <- "ifelse(EVT == 7292, 0, EVT)"
 	mask_file <- calc(expr, rasterfiles=evt_file, var.names="EVT")
-	on.exit(unlink(mask_file))
 	expect_true(sieveFilter(evt_file, 1, evt_mmu_file, 1, 2, 8, mask_file, 1))
+	
+	# invalid source band
+	expect_error(sieveFilter(evt_file, 2, evt_mmu_file, 1, 2, 8, mask_file, 1))
+	# incorrect destination file
+	expect_error(sieveFilter(evt_file, 1, "_err_", 1, 2, 8, mask_file, 1))
+	# invalid destination band
+	expect_error(sieveFilter(evt_file, 1, evt_mmu_file, 2, 2, 8, mask_file, 1))
+	# incorrect mask file
+	expect_error(sieveFilter(evt_file, 1, evt_mmu_file, 1, 2, 8, "_err_", 1))
+	# invalid mask band
+	expect_error(sieveFilter(evt_file, 1, evt_mmu_file, 1, 2, 8, mask_file, 2))
+	
+	# clean up
+	deleteDataset(evt_mmu_file)
+	deleteDataset(mask_file)
 })
 
 test_that("createColorRamp works", {
@@ -126,6 +152,13 @@ test_that("bandCopyWholeRaster writes correct output", {
 	dst_stats <- ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
 	ds$close()
 	expect_equal(src_stats, dst_stats)
+	
+	# invalid source band
+	expect_error(bandCopyWholeRaster(b5_tmp, 2, dst_file, 5, options=opt))
+	# incorrect destination file
+	expect_error(bandCopyWholeRaster(b5_tmp, 1, "_err_", 5, options=opt))
+	# invalid destination band
+	expect_error(bandCopyWholeRaster(b5_tmp, 1, dst_file, 8, options=opt))
 })
 
 test_that("deleteDataset works", {
