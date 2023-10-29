@@ -1,6 +1,6 @@
 # gdalraster 1.6.1 (dev)
 
-* gdal_exp.cpp: additional error handling in several wrapper functions, mainly ensuring input datasets are closed properly on error; increase test coverage of the error handling code (#145)
+* gdal_exp.cpp: additional error handling in several wrapper functions, mainly ensuring input datasets are closed properly on error; increase test coverage of the error handling code (#145) (2023-10-29)
 
 # gdalraster 1.6.0
 
