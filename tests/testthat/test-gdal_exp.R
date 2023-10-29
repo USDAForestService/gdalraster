@@ -107,6 +107,10 @@ test_that("sieveFilter runs without error", {
 	
 	# invalid source band
 	expect_error(sieveFilter(evt_file, 2, evt_mmu_file, 1, 2, 8, mask_file, 1))
+	# incorrect destination file
+	expect_error(sieveFilter(evt_file, 1, "_err_", 1, 2, 8, mask_file, 1))
+	# invalid destination band
+	expect_error(sieveFilter(evt_file, 1, evt_mmu_file, 2, 2, 8, mask_file, 1))
 	# incorrect mask file
 	expect_error(sieveFilter(evt_file, 1, evt_mmu_file, 1, 2, 8, "_err_", 1))
 	# invalid mask band
