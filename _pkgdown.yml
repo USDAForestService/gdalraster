@@ -2,6 +2,7 @@ url: https://usdaforestservice.github.io/gdalraster/
 
 template:
   bootstrap: 5
+  bootswatch: spacelab
 
 home:
   title: R Bindings to the GDAL Raster API
