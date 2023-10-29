@@ -2,7 +2,7 @@
 # Based on configure.ac from https://github.com/appelmar/gdalcubes
 # Copyright (c) 2018-2019 Marius Appel, License: MIT
 
-AC_INIT([gdalraster],[1.6.0],[chris.toney@usda.gov])
+AC_INIT([gdalraster],[1.6.1],[chris.toney@usda.gov])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
@@ -276,7 +276,7 @@ if test "${gdal_has_proj}" = no; then
    AC_MSG_ERROR([cannot link projection code])
 fi
 
-AC_MSG_CHECKING(GDAL: checking whether PROJ is available fur running:)
+AC_MSG_CHECKING(GDAL: checking whether PROJ is available for running:)
 ./gdal_proj
 if test `echo $?` -ne 0 ; then
 gdal_has_proj=no
