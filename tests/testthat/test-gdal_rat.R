@@ -13,5 +13,17 @@ test_that("buildRAT/displayRAT work", {
 	expect_equal(sum(rat$COUNT), 15301)
 	tbl <- displayRAT(rat)
 	expect_true(is(tbl, "gt_tbl"))
+	
+	# uint32 raster
+	lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+	rasterfiles <- c(lcp_file, lcp_file)
+	bands <- c(4, 5)
+	var.names <- c("fbfm", "tree_cov")
+	cmb_file <- paste0(tempdir(), "/", "cmb_uint32.tif")
+	d <- combine(rasterfiles, var.names, bands, cmb_file)
+	tbl <- buildRAT(cmb_file)
+	expect_equal(nrow(tbl), nrow(d))
+	expect_equal(sum(tbl$COUNT), sum(d$count))
+	deleteDataset(cmb_file)
 })
 
