@@ -14,6 +14,12 @@ test_that("buildRAT/displayRAT work", {
 	tbl <- displayRAT(rat)
 	expect_true(is(tbl, "gt_tbl"))
 	
+	# with alpha
+	rat$A <- 255
+	attr(rat$A, "GFU") <- "Alpha"
+	tbl <- displayRAT(rat)
+	expect_true(is(tbl, "gt_tbl"))
+	
 	# uint32 raster
 	lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 	rasterfiles <- c(lcp_file, lcp_file)
