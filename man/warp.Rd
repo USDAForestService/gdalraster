@@ -2,38 +2,165 @@
 % Please edit documentation in R/RcppExports.R
 \name{warp}
 \alias{warp}
-\title{Raster reprojection}
+\title{Raster reprojection and mosaicing}
 \usage{
 warp(src_files, dst_filename, t_srs, cl_arg = NULL)
 }
 \arguments{
 \item{src_files}{Character vector of source file(s) to be reprojected.}
 
-\item{dst_filename}{Filename of the output raster.}
+\item{dst_filename}{Character string. Filename of the output raster.}
 
-\item{t_srs}{Character. Target spatial reference system. Usually an EPSG
-code ("EPSG:#####") or a well known text (WKT) SRS definition.}
+\item{t_srs}{Character string. Target spatial reference system. Usually an
+EPSG code ("EPSG:#####") or a well known text (WKT) SRS definition.
+If empty string \code{""}, the spatial reference of \code{src_files[1]} will be
+used (see Note).}
 
 \item{cl_arg}{Optional character vector of command-line arguments to
-\code{gdalwarp} in addition to -t_srs.}
+\code{gdalwarp} in addition to \code{-t_srs} (see Details).}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).
 An error is raised if the operation fails.
 }
 \description{
-\code{warp()} is a wrapper for the \command{gdalwarp} command-line utility.
-See \url{https://gdal.org/programs/gdalwarp.html} for details.
+\code{warp()} is a wrapper of the \command{gdalwarp} command-line utility for
+raster mosaicing, reprojection and warping
+(see \url{https://gdal.org/programs/gdalwarp.html}).
+The function can reproject to any supported spatial reference system (SRS).
+It can also be used to crop, resample, and optionally write output to a
+different raster format. See Details for a list of commonly used
+processing options that can be passed as arguments to \code{warp()}.
+}
+\details{
+Several processing options can be performed in one call to \code{warp()} by
+passing the necessary command-line arguments. The following list describes
+several commonly used arguments. Note that \code{gdalwarp} supports a large
+number of arguments that enable a variety of different processing options.
+Users are encouraged to review the original source documention provided
+by the GDAL project at the URL above for the full list.
+\itemize{
+\item \verb{-te <xmin> <ymin> <xmax> <ymax>}\cr
+Georeferenced extents of output file to be created (in target SRS by
+default).
+\item \verb{-te_srs <srs_def>}\cr
+SRS in which to interpret the coordinates given with \code{-te}
+(if different than \code{t_srs}).
+\item \verb{-tr <xres> <yres>}\cr
+Output pixel resolution (in target georeferenced units).
+\item \code{-tap}\cr
+(target aligned pixels) align the coordinates of the extent of the output
+file to the values of the \code{-tr}, such that the aligned extent includes
+the minimum extent. Alignment means that xmin / resx, ymin / resy,
+xmax / resx and ymax / resy are integer values.
+\item \verb{-ovr <level>|AUTO|AUTO-<n>|NONE}\cr
+Specify which overview level of source files must be used. The default
+choice, \code{AUTO}, will select the overview level whose resolution is the
+closest to the target resolution. Specify an integer value (0-based,
+i.e., 0=1st overview level) to select a particular level. Specify
+\code{AUTO-n} where \code{n} is an integer greater or equal to \code{1}, to select an
+overview level below the \code{AUTO} one. Or specify \code{NONE} to force the base
+resolution to be used (can be useful if overviews have been generated
+with a low quality resampling method, and the warping is done using a
+higher quality resampling method).
+\item \verb{-wo <NAME>=<VALUE>}\cr
+Set a warp option as described in the GDAL documention for
+\href{https://gdal.org/api/gdalwarp_cpp.html#_CPPv415GDALWarpOptions}{\code{GDALWarpOptions}}
+Multiple \code{-wo} may be given. See also \code{-multi} below.
+\item \verb{-ot <type>}\cr
+Force the output raster bands to have a specific data type supported by
+the format, which may be one of the following: \code{Byte}, \code{Int8}, \code{UInt16},
+\code{Int16}, \code{UInt32}, \code{Int32}, \code{UInt64}, \code{Int64}, \code{Float32}, \code{Float64},
+\code{CInt16}, \code{CInt32}, \code{CFloat32} or \code{CFloat64}.
+\item \verb{-r <resampling_method>}\cr
+Resampling method to use. Available methods are: \code{near} (nearest
+neighbour, the default), \code{bilinear}, \code{cubic}, \code{cubicspline}, \code{lanczos},
+\code{average}, \code{rms} (root mean square, GDAL >= 3.3), \code{mode}, \code{max}, \code{min},
+\code{med}, \code{q1} (first quartile), \code{q3} (third quartile), \code{sum} (GDAL >= 3.1).
+\item \verb{-dstnodata "<value>[ <value>]..."}\cr
+Set nodata values for output bands (different values can be supplied for
+each band). If more than one value is supplied all values should be
+quoted to keep them together as a single operating system argument. New
+files will be initialized to this value and if possible the nodata value
+will be recorded in the output file. Use a value of \code{"None"} to ensure
+that nodata is not defined. If this argument is not used then nodata
+values will be copied from the source dataset.
+\item \verb{-wm <memory_in_mb>}\cr
+Set the amount of memory that the warp API is allowed to use for caching.
+The value is interpreted as being in megabytes if the value is <10000.
+For values >=10000, this is interpreted as bytes. The warper will
+total up the memory required to hold the input and output image arrays
+and any auxiliary masking arrays and if they are larger than the
+"warp memory" allowed it will subdivide the chunk into smaller chunks and
+try again. If the \code{-wm} value is very small there is some extra overhead
+in doing many small chunks so setting it larger is better but it is a
+matter of diminishing returns.
+\item \code{-multi}\cr
+Use multithreaded warping implementation. Two threads will be used to
+process chunks of image and perform input/output operation
+simultaneously. Note that computation is not multithreaded itself. To do
+that, you can use the \verb{-wo NUM_THREADS=val/ALL_CPUS} option, which can be
+combined with \code{-multi}.
+\item \verb{-of <format>}
+Set the output raster format. Will be guessed from the extension if not
+specified. Use the short format name (e.g., \code{"GTiff"}).
+\item \verb{-co <NAME>=<VALUE>}\cr
+Set one or more format specific creation options for the output dataset.
+For example, the GeoTIFF driver supports creation options to control
+compression, and whether the file should be tiled.
+\code{\link[=getCreationOptions]{getCreationOptions()}} can be used to look up available creation options,
+but the GDAL \href{https://gdal.org/drivers/raster/index.html}{Raster drivers}
+documention is the definitive reference for format specific options.
+Multiple \code{-co} may be given, e.g.,
+\preformatted{ c("-co", "COMPRESS=LZW", "-co", "BIGTIFF=YES") }
+\item \code{-overwrite}\cr
+Overwrite the target dataset if it already exists. Overwriting means
+deleting and recreating the file from scratch. Note that if this option
+is not specified and the output file already exists, it will be updated
+in place.
+}
+
+The documention for \href{https://gdal.org/programs/gdalwarp.html}{\code{gdalwarp}}
+describes additional command-line options related to spatial reference
+systems, source nodata values, alpha bands, polygon cutlines as mask
+including blending, and more.
+
+Mosaicing into an existing output file is supported if the output file
+already exists. The spatial extent of the existing file will not be
+modified to accommodate new data, so you may have to remove it in that
+case, or use the \code{-overwrite} option.
+
+Command-line options are passed to \code{warp()} as a character vector. The
+elements of the vector are the individual options followed by their
+individual values, e.g.,
+\preformatted{
+cl_arg = c("-tr", "30", "30", "-r", "bilinear"))
+}
+to set the target pixel resolution to 30 x 30 in target georeferenced
+units and use bilinear resampling.
+}
+\note{
+\code{gdalwarp} can be used to reproject and also perform other processing such
+as crop, resample, and mosaic.
+This processing is generally done with a single function call by passing
+arguments for the target (output) pixel resolution, extent, resampling
+method, nodata value, format, and so forth.
+If \code{warp()} is called with \code{t_srs} set to \code{""} (empty string),
+the target spatial reference will be set to that of \code{src_files[1]},
+so that the processing options given in \code{cl_arg} will be performed without
+reprojecting (in the case of one input raster or multiple inputs that
+all use the same spatial reference system, otherwise would reproject
+inputs to the SRS of \code{src_files[1]} when they are different).
 }
 \examples{
-## reproject the elevation raster to NAD83 / CONUS Albers (EPSG:5070)
+# reproject the elevation raster to NAD83 / CONUS Albers (EPSG:5070)
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
-## command-line arguments for gdalwarp
-## resample to 90-m resolution using average and keep pixels aligned:
-args = c("-tr", "90", "90", "-r", "average", "-tap")
-## output to Erdas Imagine format (HFA), creation option for compression:
-args = c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
+# command-line arguments for gdalwarp
+# resample to 90-m resolution using average and keep pixels aligned:
+args <- c("-tr", "90", "90", "-r", "average", "-tap")
+# output to Erdas Imagine format (HFA), creation option for compression:
+args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 
 alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
 warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
