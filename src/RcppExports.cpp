@@ -209,14 +209,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // warp
-bool warp(std::vector<std::string> src_files, std::string dst_filename, Rcpp::CharacterVector t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+bool warp(std::vector<std::string> src_files, std::string dst_filename, std::string t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 RcppExport SEXP _gdalraster_warp(SEXP src_filesSEXP, SEXP dst_filenameSEXP, SEXP t_srsSEXP, SEXP cl_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::vector<std::string> >::type src_files(src_filesSEXP);
     Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type t_srs(t_srsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type t_srs(t_srsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
     rcpp_result_gen = Rcpp::wrap(warp(src_files, dst_filename, t_srs, cl_arg));
     return rcpp_result_gen;

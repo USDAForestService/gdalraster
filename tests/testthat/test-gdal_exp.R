@@ -64,8 +64,8 @@ test_that("_apply_geotransform gives correct result", {
 
 test_that("warp runs without error", {
 	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-	args = c("-tr", "90", "90", "-r", "average", "-tap")
-	args = c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
+	args <- c("-tr", "90", "90", "-r", "average", "-tap")
+	args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 	alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
 	expect_true(warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args))
 
@@ -73,8 +73,20 @@ test_that("warp runs without error", {
 	expect_error(warp(c(elev_file, "_err_"), alb83_file, t_srs="EPSG:5070",
 					cl_arg = args))
 	
+	# process without reprojection
+	resample_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
+	expect_true(warp(elev_file, resample_file, t_srs="", cl_arg = args))
+	ds1 <- new(GDALRaster, elev_file, read_only=TRUE)
+	srs1 <- ds1$getProjectionRef()
+	ds1$close()
+	ds2 <- new(GDALRaster, resample_file, read_only=TRUE)
+	srs2 <- ds2$getProjectionRef()
+	ds2$close()
+	expect_true(srs_is_same(srs1, srs2))
+	
 	# clean up
 	deleteDataset(alb83_file)
+	deleteDataset(resample_file)
 })
 
 test_that("fillNodata writes correct output", {

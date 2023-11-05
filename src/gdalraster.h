@@ -121,9 +121,9 @@ bool sieveFilter(std::string src_filename, int src_band,
 		std::string mask_filename , int mask_band,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 		
-bool warp(Rcpp::CharacterVector src_files, std::string dst_filename,
-		Rcpp::CharacterVector t_srs, 
-		Rcpp::Nullable<Rcpp::CharacterVector> arg_list);
+bool warp(std::vector<std::string> src_files, std::string dst_filename,
+		std::string t_srs, 
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 		
 Rcpp::IntegerMatrix createColorRamp(int start_index,
 		Rcpp::IntegerVector start_color,

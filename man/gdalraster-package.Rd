@@ -31,7 +31,7 @@
  
   \item virtual raster: \code{\link[=rasterToVRT]{rasterToVRT()}}
   
-  \item reproject: \code{\link[=warp]{warp()}}
+  \item reproject/resample/crop/mosaic: \code{\link[=warp]{warp()}}
   
   \item algorithms: \code{\link[=dem_proc]{dem_proc()}},
   \code{\link[=fillNodata]{fillNodata()}},
