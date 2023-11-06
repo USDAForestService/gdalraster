@@ -9,8 +9,10 @@
 [![codecov](https://codecov.io/gh/ctoney/gdalraster/branch/main/graph/badge.svg?token=MXIOPZQ2IU)](https://app.codecov.io/gh/ctoney/gdalraster)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/gdalraster)](https://CRAN.R-project.org/package=gdalraster)
-[![cran checks](https://badges.cranchecks.info/worst/gdalraster.svg)](https://cran.r-project.org/web/checks/check_results_gdalraster.html)
-[![r-universe status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usdaforestservice.r-universe.dev/gdalraster)
+[![cran
+checks](https://badges.cranchecks.info/worst/gdalraster.svg)](https://cran.r-project.org/web/checks/check_results_gdalraster.html)
+[![r-universe
+status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usdaforestservice.r-universe.dev/gdalraster)
 <!-- badges: end -->
 
 ## Overview
@@ -34,7 +36,7 @@ supporting:
   - copy files/move/rename/delete datasets
   - virtual raster (VRT) for virtual subsetting, resampling and kernel
     filtering
-  - `gdalwarp` wrapper for reprojection
+  - `gdalwarp` wrapper for reproject/resample/crop/mosaic
   - coordinate transformation
   - spatial reference convenience functions
   - several GDAL algorithms
