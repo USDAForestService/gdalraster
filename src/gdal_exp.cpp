@@ -958,7 +958,7 @@ bool sieveFilter(std::string src_filename, int src_band,
 //'   neighbour, the default), `bilinear`, `cubic`, `cubicspline`, `lanczos`,
 //'   `average`, `rms` (root mean square, GDAL >= 3.3), `mode`, `max`, `min`,
 //'   `med`, `q1` (first quartile), `q3` (third quartile), `sum` (GDAL >= 3.1).
-//'   * `-srcnodata "<value>[ <value>]..."\cr
+//'   * `-srcnodata "<value>[ <value>]..."`\cr
 //'   Set nodata masking values for input bands (different values can be
 //'   supplied for each band). If more than one value is supplied all values
 //'   should be quoted to keep them together as a single operating system
