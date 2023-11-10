@@ -154,7 +154,13 @@ Resampling method to use. Available methods are: <code>near</code> (nearest
 neighbour, the default), <code>bilinear</code>, <code>cubic</code>, <code>cubicspline</code>, <code>lanczos</code>,
 <code>average</code>, <code>rms</code> (root mean square, GDAL &gt;= 3.3), <code>mode</code>, <code>max</code>, <code>min</code>,
 <code>med</code>, <code>q1</code> (first quartile), <code>q3</code> (third quartile), <code>sum</code> (GDAL &gt;= 3.1).</p></li>
-<li><p><code>-srcnodata "&lt;value&gt;[ &lt;value&gt;]..."\cr   Set nodata masking values for input bands (different values can be   supplied for each band). If more than one value is supplied all values   should be quoted to keep them together as a single operating system   argument. Masked values will not be used in interpolation. Use a value of   </code>None<code>to ignore intrinsic nodata settings on the source dataset.   If</code>-srcnodata` is not explicitly set, but the source dataset has nodata
+<li><p><code>-srcnodata "&lt;value&gt;[ &lt;value&gt;]..."</code><br>
+Set nodata masking values for input bands (different values can be
+supplied for each band). If more than one value is supplied all values
+should be quoted to keep them together as a single operating system
+argument. Masked values will not be used in interpolation. Use a value of
+<code>None</code> to ignore intrinsic nodata settings on the source dataset.
+If <code>-srcnodata</code> is not explicitly set, but the source dataset has nodata
 values, they will be taken into account by default.</p></li>
 <li><p><code>-dstnodata "&lt;value&gt;[ &lt;value&gt;]..."</code><br>
 Set nodata values for output bands (different values can be supplied for
