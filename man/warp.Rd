@@ -77,7 +77,13 @@ Resampling method to use. Available methods are: \code{near} (nearest
 neighbour, the default), \code{bilinear}, \code{cubic}, \code{cubicspline}, \code{lanczos},
 \code{average}, \code{rms} (root mean square, GDAL >= 3.3), \code{mode}, \code{max}, \code{min},
 \code{med}, \code{q1} (first quartile), \code{q3} (third quartile), \code{sum} (GDAL >= 3.1).
-\item \verb{-srcnodata "<value>[ <value>]..."\\cr   Set nodata masking values for input bands (different values can be   supplied for each band). If more than one value is supplied all values   should be quoted to keep them together as a single operating system   argument. Masked values will not be used in interpolation. Use a value of   }None\verb{to ignore intrinsic nodata settings on the source dataset.   If}-srcnodata` is not explicitly set, but the source dataset has nodata
+\item \verb{-srcnodata "<value>[ <value>]..."}\cr
+Set nodata masking values for input bands (different values can be
+supplied for each band). If more than one value is supplied all values
+should be quoted to keep them together as a single operating system
+argument. Masked values will not be used in interpolation. Use a value of
+\code{None} to ignore intrinsic nodata settings on the source dataset.
+If \code{-srcnodata} is not explicitly set, but the source dataset has nodata
 values, they will be taken into account by default.
 \item \verb{-dstnodata "<value>[ <value>]..."}\cr
 Set nodata values for output bands (different values can be supplied for
