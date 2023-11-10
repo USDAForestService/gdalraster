@@ -154,6 +154,8 @@ Resampling method to use. Available methods are: <code>near</code> (nearest
 neighbour, the default), <code>bilinear</code>, <code>cubic</code>, <code>cubicspline</code>, <code>lanczos</code>,
 <code>average</code>, <code>rms</code> (root mean square, GDAL &gt;= 3.3), <code>mode</code>, <code>max</code>, <code>min</code>,
 <code>med</code>, <code>q1</code> (first quartile), <code>q3</code> (third quartile), <code>sum</code> (GDAL &gt;= 3.1).</p></li>
+<li><p><code>-srcnodata "&lt;value&gt;[ &lt;value&gt;]..."\cr   Set nodata masking values for input bands (different values can be   supplied for each band). If more than one value is supplied all values   should be quoted to keep them together as a single operating system   argument. Masked values will not be used in interpolation. Use a value of   </code>None<code>to ignore intrinsic nodata settings on the source dataset.   If</code>-srcnodata` is not explicitly set, but the source dataset has nodata
+values, they will be taken into account by default.</p></li>
 <li><p><code>-dstnodata "&lt;value&gt;[ &lt;value&gt;]..."</code><br>
 Set nodata values for output bands (different values can be supplied for
 each band). If more than one value is supplied all values should be
@@ -211,7 +213,7 @@ units and use bilinear resampling.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p><code>gdalwarp</code> can be used to reproject and also perform other processing such
+    <p><code>warp()</code> can be used to reproject and also perform other processing such
 as crop, resample, and mosaic.
 This processing is generally done with a single function call by passing
 arguments for the target (output) pixel resolution, extent, resampling
@@ -234,9 +236,9 @@ inputs to the SRS of <code>src_files[1]</code> when they are different).</p>
 <span class="r-in"><span><span class="va">elev_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_elev.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># command-line arguments for gdalwarp</span></span></span>
-<span class="r-in"><span><span class="co"># resample to 90-m resolution using average and keep pixels aligned:</span></span></span>
-<span class="r-in"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-tr"</span>, <span class="st">"90"</span>, <span class="st">"90"</span>, <span class="st">"-r"</span>, <span class="st">"average"</span>, <span class="st">"-tap"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># output to Erdas Imagine format (HFA), creation option for compression:</span></span></span>
+<span class="r-in"><span><span class="co"># resample to 90-m resolution and keep pixels aligned:</span></span></span>
+<span class="r-in"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-tr"</span>, <span class="st">"90"</span>, <span class="st">"90"</span>, <span class="st">"-r"</span>, <span class="st">"cubic"</span>, <span class="st">"-tap"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># write to Erdas Imagine format (HFA) with compression:</span></span></span>
 <span class="r-in"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">args</span>, <span class="st">"-of"</span>, <span class="st">"HFA"</span>, <span class="st">"-co"</span>, <span class="st">"COMPRESSED=YES"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">alb83_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_elev_alb83.img"</span><span class="op">)</span></span></span>
@@ -252,7 +254,7 @@ inputs to the SRS of <code>src_files[1]</code> when they are different).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 90 90</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2438.0000 3042.0000 2674.9397  132.3393</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2438.0000 3044.0000 2676.0243  132.9744</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
