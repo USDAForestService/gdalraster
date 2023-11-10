@@ -958,6 +958,14 @@ bool sieveFilter(std::string src_filename, int src_band,
 //'   neighbour, the default), `bilinear`, `cubic`, `cubicspline`, `lanczos`,
 //'   `average`, `rms` (root mean square, GDAL >= 3.3), `mode`, `max`, `min`,
 //'   `med`, `q1` (first quartile), `q3` (third quartile), `sum` (GDAL >= 3.1).
+//'   * `-srcnodata "<value>[ <value>]..."\cr
+//'   Set nodata masking values for input bands (different values can be
+//'   supplied for each band). If more than one value is supplied all values
+//'   should be quoted to keep them together as a single operating system
+//'   argument. Masked values will not be used in interpolation. Use a value of
+//'   `None` to ignore intrinsic nodata settings on the source dataset.
+//'   If `-srcnodata` is not explicitly set, but the source dataset has nodata
+//'   values, they will be taken into account by default.
 //'   * `-dstnodata "<value>[ <value>]..."`\cr
 //'   Set nodata values for output bands (different values can be supplied for
 //'   each band). If more than one value is supplied all values should be
@@ -1031,7 +1039,7 @@ bool sieveFilter(std::string src_filename, int src_band,
 //' An error is raised if the operation fails.
 //'
 //' @note
-//' `gdalwarp` can be used to reproject and also perform other processing such
+//' `warp()` can be used to reproject and also perform other processing such
 //' as crop, resample, and mosaic.
 //' This processing is generally done with a single function call by passing
 //' arguments for the target (output) pixel resolution, extent, resampling
@@ -1051,9 +1059,9 @@ bool sieveFilter(std::string src_filename, int src_band,
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //'
 //' # command-line arguments for gdalwarp
-//' # resample to 90-m resolution using average and keep pixels aligned:
-//' args <- c("-tr", "90", "90", "-r", "average", "-tap")
-//' # output to Erdas Imagine format (HFA), creation option for compression:
+//' # resample to 90-m resolution and keep pixels aligned:
+//' args <- c("-tr", "90", "90", "-r", "cubic", "-tap")
+//' # write to Erdas Imagine format (HFA) with compression:
 //' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 //'
 //' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")

@@ -77,6 +77,8 @@ Resampling method to use. Available methods are: \code{near} (nearest
 neighbour, the default), \code{bilinear}, \code{cubic}, \code{cubicspline}, \code{lanczos},
 \code{average}, \code{rms} (root mean square, GDAL >= 3.3), \code{mode}, \code{max}, \code{min},
 \code{med}, \code{q1} (first quartile), \code{q3} (third quartile), \code{sum} (GDAL >= 3.1).
+\item \verb{-srcnodata "<value>[ <value>]..."\\cr   Set nodata masking values for input bands (different values can be   supplied for each band). If more than one value is supplied all values   should be quoted to keep them together as a single operating system   argument. Masked values will not be used in interpolation. Use a value of   }None\verb{to ignore intrinsic nodata settings on the source dataset.   If}-srcnodata` is not explicitly set, but the source dataset has nodata
+values, they will be taken into account by default.
 \item \verb{-dstnodata "<value>[ <value>]..."}\cr
 Set nodata values for output bands (different values can be supplied for
 each band). If more than one value is supplied all values should be
@@ -140,7 +142,7 @@ to set the target pixel resolution to 30 x 30 in target georeferenced
 units and use bilinear resampling.
 }
 \note{
-\code{gdalwarp} can be used to reproject and also perform other processing such
+\code{warp()} can be used to reproject and also perform other processing such
 as crop, resample, and mosaic.
 This processing is generally done with a single function call by passing
 arguments for the target (output) pixel resolution, extent, resampling
@@ -157,9 +159,9 @@ inputs to the SRS of \code{src_files[1]} when they are different).
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
 # command-line arguments for gdalwarp
-# resample to 90-m resolution using average and keep pixels aligned:
-args <- c("-tr", "90", "90", "-r", "average", "-tap")
-# output to Erdas Imagine format (HFA), creation option for compression:
+# resample to 90-m resolution and keep pixels aligned:
+args <- c("-tr", "90", "90", "-r", "cubic", "-tap")
+# write to Erdas Imagine format (HFA) with compression:
 args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 
 alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
