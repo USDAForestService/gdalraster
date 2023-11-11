@@ -220,7 +220,8 @@ tbl_subset <- subset(tbl, SLP >= 40 & FBFM \%in\% c(101,102))
 print(tbl_subset)
 sum(tbl_subset$count)
 
-# if LCP file format is needed: createCopy(tif_file, <new_lcp_file>)
+# if LCP file format is needed:
+# createCopy("LCP", "storml_edited.lcp", tif_file)
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=combine]{combine()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}
