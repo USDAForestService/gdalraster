@@ -870,7 +870,8 @@ rasterToVRT <- function(srcfile,
 #' print(tbl_subset)
 #' sum(tbl_subset$count)
 #' 
-#' # if LCP file format is needed: createCopy(tif_file, <new_lcp_file>)
+#' # if LCP file format is needed:
+#' # createCopy("LCP", "storml_edited.lcp", tif_file)
 #' @export
 calc <- function(expr, 
 					rasterfiles, 
