@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdalraster_proc.R
 \name{rasterToVRT}
 \alias{rasterToVRT}
-\title{Create a GDAL virtual raster}
+\title{Create a GDAL virtual raster derived from one source dataset}
 \usage{
 rasterToVRT(
   srcfile,
@@ -81,15 +81,13 @@ Returns the VRT filename invisibly.
 }
 \description{
 \code{rasterToVRT()} creates a virtual raster dataset (VRT format) derived from
-a source raster with options for virtual subsetting, virtually resampling
+one source dataset with options for virtual subsetting, virtually resampling
 the source data at a different pixel resolution, or applying a virtual
-kernel filter.
+kernel filter. (See \code{\link[=buildVRT]{buildVRT()}} for virtual mosaicing.)
 }
 \details{
-\code{rasterToVRT()} has similarities to the command-line utility \code{gdalbuildvrt}
-(\url{https://gdal.org/programs/gdalbuildvrt.html}) but is not a wrapper for
-it and does not build mosaics. \code{rasterToVRT()} can be used to virtually clip
-and pixel-align various raster layers with each or in relation to vector
+\code{rasterToVRT()} can be used to virtually clip and pixel-align
+various raster layers with each other or in relation to vector
 polygon boundaries. It also supports VRT kernel filtering.
 
 A VRT dataset is saved as a plain-text file with extension .vrt. This file
@@ -114,7 +112,7 @@ raster in a series of processing steps, e.g., as a \code{tempfile} (the
 default).
 
 GDAL VRT format has several capabilities and uses beyond those
-covered by \code{rasterToVRT()}. See the URLs above for a full discussion.
+covered by \code{rasterToVRT()}. See the URL above for a full discussion.
 }
 \note{
 Pixel alignment is specified in terms of the source raster pixels (i.e.,
@@ -261,7 +259,7 @@ ds_lcp$close()
 ds_b5$close()
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=bbox_from_wkt]{bbox_from_wkt()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=buildVRT]{buildVRT()}}
 
 \code{\link[=warp]{warp()}} can write VRT for virtual reprojection
 }

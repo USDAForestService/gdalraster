@@ -241,3 +241,15 @@ test_that("copyDatasetFiles works", {
 	deleteDataset(lcp_tmp2)
 })
 
+test_that("buildVRT works", {
+	b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
+	b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+	b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
+	band_files <- c(b6_file, b5_file, b4_file)
+	vrt_file <- paste0(tempdir(), "/", "storml_b6_b5_b4.vrt")
+	buildVRT(vrt_file, band_files, cl_arg="-separate")
+	ds <- new(GDALRaster, vrt_file, read_only=TRUE)
+	expect_equal(ds$getRasterCount(), 3)
+	ds$close()
+	deleteDataset(vrt_file)
+})

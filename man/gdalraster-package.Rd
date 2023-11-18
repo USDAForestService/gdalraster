@@ -29,7 +29,8 @@
   \code{\link[=renameDataset]{renameDataset()}},\cr
   \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}
  
-  \item virtual raster: \code{\link[=rasterToVRT]{rasterToVRT()}}
+  \item virtual raster: \code{\link[=buildVRT]{buildVRT()}},
+  \code{\link[=rasterToVRT]{rasterToVRT()}}
   
   \item reproject/resample/crop/mosaic: \code{\link[=warp]{warp()}}
   

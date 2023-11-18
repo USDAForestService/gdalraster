@@ -261,6 +261,58 @@ get_pixel_line <- function(xy, gt) {
     .Call(`_gdalraster_get_pixel_line`, xy, gt)
 }
 
+#' Build a GDAL virtual raster from a list of datasets
+#'
+#' `buildVRT()` is a wrapper of the \command{gdalbuildvrt} command-line
+#' utility for building a VRT (Virtual Dataset) that is a mosaic of the list
+#' of input GDAL datasets
+#' (see \url{https://gdal.org/programs/gdalbuildvrt.html}).
+#'
+#' @details
+#' Several command-line options are described in the GDAL documentation at the
+#' URL above. By default, the input files are considered as tiles of a larger
+#' mosaic and the VRT file has as many bands as one of the input files.
+#' Alternatively, the `-separate` argument can be used to put each input
+#' raster into a separate band in the VRT dataset.
+#'
+#' Some amount of checks are done to assure that all files that will be put in
+#' the resulting VRT have similar characteristics: number of bands,
+#' projection, color interpretation.... If not, files that do not match the
+#' common characteristics will be skipped. (This is true in the default
+#' mode for virtual mosaicing, and not when using the `-separate` option).
+#'
+#' In a virtual mosaic, if there is spatial overlap between
+#' input rasters then the order of files appearing in the list of
+#' sources matter: files that are listed at the end are the ones
+#' from which the data will be fetched. Note that nodata will be taken into
+#' account to potentially fetch data from less priority datasets.
+#'
+#' @param vrt_filename Character string. Filename of the output VRT.
+#' @param input_rasters Character vector of input raster filenames.
+#' @param cl_arg Optional character vector of command-line arguments to 
+#' \code{gdalbuildvrt}.
+#' @returns Logical indicating success (invisible \code{TRUE}).
+#' An error is raised if the operation fails.
+#'
+#' @seealso
+#' [rasterToVRT()]
+#'
+#' @examples
+#' # build a virtual 3-band RGB raster from individual Landsat band files
+#' b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
+#' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
+#' b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
+#' band_files <- c(b6_file, b5_file, b4_file)
+#' vrt_file <- paste0(tempdir(), "/", "storml_b6_b5_b4.vrt")
+#' buildVRT(vrt_file, band_files, cl_arg = "-separate")
+#' ds <- new(GDALRaster, vrt_file, read_only=TRUE)
+#' ds$getRasterCount()
+#' plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
+#' ds$close()
+buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL) {
+    invisible(.Call(`_gdalraster_buildVRT`, vrt_filename, input_rasters, cl_arg))
+}
+
 #' Raster overlay for unique combinations
 #' 
 #' @description
@@ -433,7 +485,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' passing the necessary command-line arguments. The following list describes
 #' several commonly used arguments. Note that `gdalwarp` supports a large
 #' number of arguments that enable a variety of different processing options.
-#' Users are encouraged to review the original source documention provided
+#' Users are encouraged to review the original source documentation provided
 #' by the GDAL project at the URL above for the full list.
 #'
 #'   * `-te <xmin> <ymin> <xmax> <ymax>`\cr
@@ -460,7 +512,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #'   with a low quality resampling method, and the warping is done using a
 #'   higher quality resampling method).
 #'   * `-wo <NAME>=<VALUE>`\cr
-#'   Set a warp option as described in the GDAL documention for
+#'   Set a warp option as described in the GDAL documentation for
 #'   [`GDALWarpOptions`](https://gdal.org/api/gdalwarp_cpp.html#_CPPv415GDALWarpOptions)
 #'   Multiple `-wo` may be given. See also `-multi` below.
 #'   * `-ot <type>`\cr
@@ -514,7 +566,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #'   compression, and whether the file should be tiled.
 #'   [getCreationOptions()] can be used to look up available creation options,
 #'   but the GDAL [Raster drivers](https://gdal.org/drivers/raster/index.html)
-#'   documention is the definitive reference for format specific options.
+#'   documentation is the definitive reference for format specific options.
 #'   Multiple `-co` may be given, e.g.,
 #'   \preformatted{ c("-co", "COMPRESS=LZW", "-co", "BIGTIFF=YES") }
 #'   * `-overwrite`\cr
@@ -523,7 +575,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #'   is not specified and the output file already exists, it will be updated
 #'   in place.
 #'
-#' The documention for [`gdalwarp`](https://gdal.org/programs/gdalwarp.html)
+#' The documentation for [`gdalwarp`](https://gdal.org/programs/gdalwarp.html)
 #' describes additional command-line options related to spatial reference
 #' systems, source nodata values, alpha bands, polygon cutlines as mask
 #' including blending, and more.

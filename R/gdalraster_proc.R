@@ -285,19 +285,17 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 }
 
 
-#' Create a GDAL virtual raster
+#' Create a GDAL virtual raster derived from one source dataset
 #'
 #' @description
 #' `rasterToVRT()` creates a virtual raster dataset (VRT format) derived from
-#' a source raster with options for virtual subsetting, virtually resampling
+#' one source dataset with options for virtual subsetting, virtually resampling
 #' the source data at a different pixel resolution, or applying a virtual
-#' kernel filter.
+#' kernel filter. (See [buildVRT()] for virtual mosaicing.)
 #'
 #' @details
-#' `rasterToVRT()` has similarities to the command-line utility `gdalbuildvrt`
-#' (\url{https://gdal.org/programs/gdalbuildvrt.html}) but is not a wrapper for
-#' it and does not build mosaics. `rasterToVRT()` can be used to virtually clip
-#' and pixel-align various raster layers with each or in relation to vector
+#' `rasterToVRT()` can be used to virtually clip and pixel-align
+#' various raster layers with each other or in relation to vector
 #' polygon boundaries. It also supports VRT kernel filtering.
 #'
 #' A VRT dataset is saved as a plain-text file with extension .vrt. This file 
@@ -322,7 +320,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' default).
 #' 
 #' GDAL VRT format has several capabilities and uses beyond those
-#' covered by `rasterToVRT()`. See the URLs above for a full discussion.
+#' covered by `rasterToVRT()`. See the URL above for a full discussion.
 #'
 #' @note
 #' Pixel alignment is specified in terms of the source raster pixels (i.e., 
@@ -390,7 +388,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' @returns Returns the VRT filename invisibly.
 #'
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster], [bbox_from_wkt()]
+#' [`GDALRaster-class`][GDALRaster], [bbox_from_wkt()], [buildVRT()]
 #'
 #' [warp()] can write VRT for virtual reprojection
 #'

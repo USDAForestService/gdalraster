@@ -27,6 +27,7 @@ reference:
   - bbox_intersect
   - bbox_union
   - buildRAT
+  - buildVRT
   - calc
   - combine
   - copyDatasetFiles
