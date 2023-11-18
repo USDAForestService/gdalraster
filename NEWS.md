@@ -1,5 +1,7 @@
 # gdalraster 1.6.1 (dev)
 
+* add `buildVRT()`: wrapper for the `gdalbuildvrt` command-line utility, build a GDAL virtual raster from a list of datasets (2023-11-18)
+
 * `warp()`: make `t_srs` optional (2023-11-05)
 
 * gdal_exp.cpp: additional error handling in several wrapper functions, mainly ensuring input datasets are closed properly on error; increase test coverage of the error handling code (#145) (2023-10-29)
