@@ -130,6 +130,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// buildVRT
+bool buildVRT(std::string vrt_filename, Rcpp::CharacterVector input_rasters, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+RcppExport SEXP _gdalraster_buildVRT(SEXP vrt_filenameSEXP, SEXP input_rastersSEXP, SEXP cl_argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type vrt_filename(vrt_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type input_rasters(input_rastersSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    rcpp_result_gen = Rcpp::wrap(buildVRT(vrt_filename, input_rasters, cl_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _combine
 Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files, Rcpp::CharacterVector var_names, std::vector<int> bands, std::string dst_filename, std::string fmt, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
 RcppExport SEXP _gdalraster__combine(SEXP src_filesSEXP, SEXP var_namesSEXP, SEXP bandsSEXP, SEXP dst_filenameSEXP, SEXP fmtSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP) {
@@ -712,6 +725,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__apply_geotransform", (DL_FUNC) &_gdalraster__apply_geotransform, 3},
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
     {"_gdalraster_get_pixel_line", (DL_FUNC) &_gdalraster_get_pixel_line, 2},
+    {"_gdalraster_buildVRT", (DL_FUNC) &_gdalraster_buildVRT, 3},
     {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 7},
     {"_gdalraster__value_count", (DL_FUNC) &_gdalraster__value_count, 2},
     {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 5},

@@ -37,7 +37,7 @@ Several processing options can be performed in one call to \code{warp()} by
 passing the necessary command-line arguments. The following list describes
 several commonly used arguments. Note that \code{gdalwarp} supports a large
 number of arguments that enable a variety of different processing options.
-Users are encouraged to review the original source documention provided
+Users are encouraged to review the original source documentation provided
 by the GDAL project at the URL above for the full list.
 \itemize{
 \item \verb{-te <xmin> <ymin> <xmax> <ymax>}\cr
@@ -64,7 +64,7 @@ resolution to be used (can be useful if overviews have been generated
 with a low quality resampling method, and the warping is done using a
 higher quality resampling method).
 \item \verb{-wo <NAME>=<VALUE>}\cr
-Set a warp option as described in the GDAL documention for
+Set a warp option as described in the GDAL documentation for
 \href{https://gdal.org/api/gdalwarp_cpp.html#_CPPv415GDALWarpOptions}{\code{GDALWarpOptions}}
 Multiple \code{-wo} may be given. See also \code{-multi} below.
 \item \verb{-ot <type>}\cr
@@ -118,7 +118,7 @@ For example, the GeoTIFF driver supports creation options to control
 compression, and whether the file should be tiled.
 \code{\link[=getCreationOptions]{getCreationOptions()}} can be used to look up available creation options,
 but the GDAL \href{https://gdal.org/drivers/raster/index.html}{Raster drivers}
-documention is the definitive reference for format specific options.
+documentation is the definitive reference for format specific options.
 Multiple \code{-co} may be given, e.g.,
 \preformatted{ c("-co", "COMPRESS=LZW", "-co", "BIGTIFF=YES") }
 \item \code{-overwrite}\cr
@@ -128,7 +128,7 @@ is not specified and the output file already exists, it will be updated
 in place.
 }
 
-The documention for \href{https://gdal.org/programs/gdalwarp.html}{\code{gdalwarp}}
+The documentation for \href{https://gdal.org/programs/gdalwarp.html}{\code{gdalwarp}}
 describes additional command-line options related to spatial reference
 systems, source nodata values, alpha bands, polygon cutlines as mask
 including blending, and more.

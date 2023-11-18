@@ -96,6 +96,9 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
 Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 		const std::vector<double> gt);
 
+bool buildVRT(std::string vrt_filename, Rcpp::CharacterVector input_rasters,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+		
 Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
 		Rcpp::CharacterVector var_names,
 		std::vector<int> bands, 
