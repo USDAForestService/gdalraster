@@ -296,10 +296,14 @@ overviews for, or <code>0</code> to build for all bands.
 Note that for GTiff, overviews will be created internally if the dataset is
 open in update mode, while external overviews (.ovr) will be created if the
 dataset is open read-only.
-Starting with GDAL 3.2, the GDAL_NUM_THREADS configuration option can be set
-to "ALL_CPUS" or an integer value to specify the number of threads to use
-for overview computation (see <code><a href="set_config_option.html">set_config_option()</a></code>).
-No return value, called for side effects.</p>
+External overviews created in GTiff format may be compressed using the
+<code>COMPRESS_OVERVIEW</code> configuration option. All compression methods supported
+by the GTiff driver are available
+(e.g., <code>set_config_option("COMPRESS_OVERVIEW", "LZW")</code>).
+Since GDAL 3.6, <code>COMPRESS_OVERVIEW</code> is honoured when creating internal
+overviews of GTiff files. The <a href="https://gdal.org/programs/gdaladdo.html" class="external-link">GDAL documentation for <code>gdaladdo</code></a> command-line utility
+describes additional configuration for overview building.
+See also <code><a href="set_config_option.html">set_config_option()</a></code>. No return value, called for side effects.</p>
 <p><code>$getDataTypeName(band)</code>
 Returns the name of the pixel data type for <code>band</code>. The possible data
 types are:</p><table class="table table"><tr><td>Unknown</td><td>Unknown or unspecified type</td></tr><tr><td>Byte</td><td>8-bit unsigned integer</td></tr><tr><td>Int8</td><td>8-bit signed integer (GDAL &gt;= 3.7)</td></tr><tr><td>UInt16</td><td>16-bit unsigned integer</td></tr><tr><td>Int16</td><td>16-bit signed integer</td></tr><tr><td>UInt32</td><td>32-bit unsigned integer</td></tr><tr><td>Int32</td><td>32-bit signed integer</td></tr><tr><td>UInt64</td><td>64-bit unsigned integer (GDAL &gt;= 3.5)</td></tr><tr><td>Int64</td><td>64-bit signed integer (GDAL &gt;= 3.5)</td></tr><tr><td>Float32</td><td>32-bit floating point</td></tr><tr><td>Float64</td><td>64-bit floating point</td></tr><tr><td>CInt16</td><td>Complex Int16</td></tr><tr><td>CInt32</td><td>Complex Int32</td></tr><tr><td>CFloat32</td><td>Complex Float32</td></tr><tr><td>CFloat64</td><td>Complex Float64</td></tr></table><p>Some raster formats including GeoTIFF ("GTiff") and Erdas Imagine .img
@@ -568,7 +572,7 @@ The dataset can be re-opened on the existing <code>filename</code> with
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Package overview in <code><a href="gdalraster-package.html">help("gdalraster-package")</a></code></p>
-<p><code><a href="create.html">create()</a></code>, <code><a href="createCopy.html">createCopy()</a></code>, <code><a href="rasterFromRaster.html">rasterFromRaster()</a></code>, <code><a href="rasterToVRT.html">rasterToVRT()</a></code></p>
+<p><code><a href="create.html">create()</a></code>, <code><a href="createCopy.html">createCopy()</a></code>, <code><a href="rasterFromRaster.html">rasterFromRaster()</a></code></p>
 <p><code><a href="get_pixel_line.html">get_pixel_line()</a></code>, <code><a href="plot_raster.html">plot_raster()</a></code>, <code><a href="warp.html">warp()</a></code></p>
 <p><code><a href="read_ds.html">read_ds()</a></code> is a convenience wrapper for <code>GDALRaster$read()</code>.</p></div>
     </div>
