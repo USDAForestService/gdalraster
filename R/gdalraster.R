@@ -244,10 +244,15 @@
 #' Note that for GTiff, overviews will be created internally if the dataset is
 #' open in update mode, while external overviews (.ovr) will be created if the
 #' dataset is open read-only.
-#' Starting with GDAL 3.2, the GDAL_NUM_THREADS configuration option can be set
-#' to "ALL_CPUS" or an integer value to specify the number of threads to use
-#' for overview computation (see [set_config_option()]).
-#' No return value, called for side effects.
+#' External overviews created in GTiff format may be compressed using the
+#' `COMPRESS_OVERVIEW` configuration option. All compression methods supported
+#' by the GTiff driver are available
+#' (e.g., `set_config_option("COMPRESS_OVERVIEW", "LZW")`).
+#' Since GDAL 3.6, `COMPRESS_OVERVIEW` is honoured when creating internal
+#' overviews of GTiff files. The [GDAL documentation for
+#' `gdaladdo`](https://gdal.org/programs/gdaladdo.html) command-line utility
+#' describes additional configuration for overview building.
+#' See also [set_config_option()]. No return value, called for side effects.
 #'
 #' \code{$getDataTypeName(band)}
 #' Returns the name of the pixel data type for \code{band}. The possible data
@@ -603,7 +608,7 @@
 #' @seealso
 #' Package overview in [`help("gdalraster-package")`][gdalraster-package]
 #'
-#' [create()], [createCopy()], [rasterFromRaster()], [rasterToVRT()]
+#' [create()], [createCopy()], [rasterFromRaster()]
 #'
 #' [get_pixel_line()], [plot_raster()], [warp()]
 #'
