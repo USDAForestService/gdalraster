@@ -1,0 +1,183 @@
+---
+title: "GDAL Config Quick Ref"
+output:
+  rmarkdown::html_vignette:
+    toc: true
+vignette: >
+  %\VignetteIndexEntry{GDAL Config Quick Ref}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Overview
+
+Configuration options are essentially global variables the user can set. They are used to alter the default behavior of certain raster format drivers, and in some cases the GDAL core. A large number of configuration options are available. An overall discussion along with a full list of available options and where they apply is in the GDAL documentation at https://gdal.org/user/configoptions.html.
+
+This vignette is a quick reference for a small subset of configuration options that are commonly used, with links to topic-specific documentation provided by the GDAL project. The examples configure from R with `gdalraster::set_config_option()`. The values used in the examples are reasonable but not necessarily recommended as they are context dependent.
+
+```{r}
+library(gdalraster)
+```
+
+## General options
+
+GDAL doc: https://gdal.org/user/configoptions.html#general-options
+
+**`GDAL_RASTERIO_RESAMPLING`**
+
+The `$read()` method of a `GDALRaster` object will perform automatic resampling if the specified output size (`out_xsize * out_ysize`) is different than the size of the source region being read (`xsize * ysize`). In that case, resampling can be configured to override the default `NEAR` to one of `BILINEAR`, `CUBIC`, `CUBICSPLINE`, `LANCZOS`, `AVERAGE` or `MODE`:
+
+```{r}
+set_config_option("GDAL_RASTERIO_RESAMPLING", "BILINEAR")
+```
+
+**`CPL_TMPDIR`**
+
+By default, temporary files are written into the current working directory. This can be changed with:
+
+```{r}
+set_config_option("CPL_TMPDIR", "<dirname>") # tmpdir to use
+```
+
+## Performance and caching
+
+GDAL doc: https://gdal.org/user/configoptions.html#performance-and-caching
+
+**`GDAL_NUM_THREADS`**
+
+Sets the number of worker threads to be used by GDAL operations that support multithreading. This has effect in several different contexts including multi-threaded compression for GeoTiff and multithreaded computation during `warp()` (see respective topics below).
+
+**`GDAL_CACHEMAX`**
+
+The size limit of the block cache is set upon first use (first I/O). Setting `GDAL_CACHEMAX` after that point will not resize the cache. It is a per-session setting. If `GDAL_CACHEMAX` has not been set upon first use of the cache, then the default cache size (`5%` of physical RAM) will be in effect for the current session. See also [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html).
+
+```{r}
+# set to a specific size in MB
+set_config_option("GDAL_CACHEMAX", "800")
+
+# or percent of physical RAM
+set_config_option("GDAL_CACHEMAX", "10%")
+```
+
+**`GDAL_MAX_DATASET_POOL_SIZE`**
+
+The default number of datasets that can be opened simultaneously by the `GDALProxyPool` mechanism (used by VRT for example) is `100`. This can be increased to get better random I/O performance with VRT mosaics made of numerous underlying raster files. Note: on Linux systems, the number of file handles that can be opened by a process is generally limited to `1024`. This is currently clamped between `2` and `1000`:
+
+```{r}
+set_config_option("GDAL_MAX_DATASET_POOL_SIZE", "200") # default is 100
+```
+Also note that `gdalwarp` [increases the pool size to `450`](https://gdal.org/drivers/raster/vrt.html#performance-considerations) by default.
+
+## Networking
+
+GDAL doc: https://gdal.org/user/configoptions.html#networking-options
+
+## PROJ
+
+GDAL doc: https://gdal.org/user/configoptions.html#proj-options
+
+**`OSR_DEFAULT_AXIS_MAPPING_STRATEGY`**
+
+This option can be set to either `TRADITIONAL_GIS_ORDER` or `AUTHORITY_COMPLIANT`. GDAL >= 3.5 defaults to `AUTHORITY_COMPLIANT`. Determines whether to honor the declared axis mapping of a CRS or override it with the traditional GIS ordering (x = longitude, y = latitude). **Note:** On load, gdalraster sets this option to `TRADITIONAL_GIS_ORDER`.
+
+**`OSR_WKT_FORMAT`**
+
+As of GDAL 3.0, the default format for exporting a spatial reference definition to Well Known Text is WKT 1. This can be overridden with:
+
+```{r}
+# SFSQL/WKT1_SIMPLE/WKT1/WKT1_GDAL/WKT1_ESRI/WKT2_2015/WKT2_2018/WKT2/DEFAULT
+set_config_option("OSR_WKT_FORMAT", "WKT2")
+```
+
+## Warp
+
+GDAL doc: https://gdal.org/programs/gdalwarp.html#memory-usage
+
+The [performance and caching](#performance-and-caching) topic above generally applies to processing with `gdalraster::warp()` (reproject/resample/crop/mosaic).
+
+**`GDAL_NUM_THREADS`**
+
+Multithreaded computation in `warp()` can be enabled with:
+
+```{r}
+# note this also affects several other parts of GDAL
+set_config_option("GDAL_NUM_THREADS", "4") # number of threads or "ALL_CPUS"
+```
+
+Increasing the memory available to `warp()` may also increase performance (i.e., the options passed in `cl_arg` include a value like `c("-wm", "1000")`). The warp memory specified by `"-wm"` is shared among all threads. It is especially beneficial to increase this value when running `warp()` with multithreading enabled.
+
+Multithreading could also be enabled by including a GDAL warp option in `cl_arg` with `c("-wo", "NUM_THREADS=<value>")` greater than 1, which is equivalent to setting the `GDAL_NUM_THREADS` configuration option as shown above.
+
+**`GDAL_CACHEMAX`**
+
+Increasing the size of the I/O block cache may also help. This can be done by setting `GDAL_CACHEMAX` as described in the [performance and caching](#performance-and-caching) topic above.
+
+## GeoTIFF
+
+GDAL doc: https://gdal.org/drivers/raster/gtiff.html#configuration-options
+
+The behavior of the GTiff driver is highly configurable, including with respect to overview creation. For full discussion, see the link above and also the documentation for the [`gdaladdo`](https://gdal.org/programs/gdaladdo.html) command-line utility.
+
+**`GDAL_NUM_THREADS`**
+
+The GTiff driver supports multi-threaded compression (default is compression in the main thread). GDAL documentation states that it is worth it for slow compression algorithms such as `DEFLATE` or `LZMA`. Starting with GDAL 3.6, this option also enables multi-threaded decoding when read requests intersect several tiles/strips:
+
+```{r}
+# specify the number of worker threads or ALL_CPUS
+# note this also affects several other parts of GDAL
+set_config_option("GDAL_NUM_THREADS", "ALL_CPUS")
+```
+
+**`COMPRESS_OVERVIEW`**
+
+Raster overviews (also known as pyramids) can be built with the `$buildOverviews()` method of a `GDALRaster` object. It is generally desirable to compress the overviews when building:
+
+```{r}
+# applies to external overviews (.ovr), and internal overviews if GDAL >= 3.6
+# LZW is a good default but several other compression algorithms are available
+set_config_option("COMPRESS_OVERVIEW", "LZW")
+```
+
+## AWS S3 buckets
+
+GDAL doc: [/vsis3/](https://gdal.org/user/virtual_file_systems.html#vsis3-aws-s3-files) (AWS S3 file system handler)
+
+**`AWS_NO_SIGN_REQUEST`**
+
+Request signing can be disabled for public buckets that do not require an AWS account (`--no-sign-request` in AWS CLI):
+
+```{r}
+# public bucket no AWS account required
+set_config_option("AWS_NO_SIGN_REQUEST", "YES")
+```
+
+**`AWS_ACCESS_KEY_ID`**  
+**`AWS_SECRET_ACCESS_KEY`**  
+**`AWS_SESSION_TOKEN`**  
+**`AWS_REQUEST_PAYER`**
+
+If authentication is required, configure credentials with:
+
+```{r}
+set_config_option("AWS_ACCESS_KEY_ID", "<value>") # key ID
+set_config_option("AWS_SECRET_ACCESS_KEY", "<value>") # secret access key
+# used for validation if using temporary credentials:
+set_config_option("AWS_SESSION_TOKEN", "<value>") # session token
+# if requester pays:
+set_config_option("AWS_REQUEST_PAYER", "<value>") # requester
+```
+
+## Google Cloud Storage
+
+GDAL doc: [/vsigs/](https://gdal.org/user/virtual_file_systems.html#vsigs-google-cloud-storage-files) (Google Cloud Storage files)
+
+## Microsoft Azure
+
+GDAL doc: [/vsiaz/](https://gdal.org/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files) (Microsoft Azure Blob files)
