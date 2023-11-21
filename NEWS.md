@@ -6,7 +6,7 @@
 
 * gdal_exp.cpp: additional error handling in several wrapper functions, mainly ensuring input datasets are closed properly on error; increase test coverage of the error handling code (#145) (2023-10-29)
 
-* Documentation: `warp()` has additional documentation covering several processing options; added the `COMPRESS_OVERVIEW` option to the documentation for `GDALRaster::buildOverviews()`
+* Documentation: `warp()` has additional documentation covering several processing options; added the `COMPRESS_OVERVIEW` option to the documentation for `GDALRaster::buildOverviews()`; added vignette [GDAL Config Quick Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
 
 # gdalraster 1.6.0
 
