@@ -165,3 +165,5 @@ remotes::install_github("USDAForestService/gdalraster", configure.args = "--with
     Display](https://usdaforestservice.github.io/gdalraster/articles/raster-display.html)
   - [GDAL Block
     Caching](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
+  - [GDAL Config Quick
+    Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
