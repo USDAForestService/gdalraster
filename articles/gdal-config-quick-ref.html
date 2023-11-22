@@ -6,12 +6,12 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <meta name="description" content="gdalraster">
-<title>GDAL Config Quick Ref • gdalraster</title>
+<title>GDAL Config Quick Reference • gdalraster</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="GDAL Config Quick Ref">
+<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="GDAL Config Quick Reference">
 <meta property="og:description" content="gdalraster">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
@@ -43,7 +43,7 @@
   <div class="dropdown-menu" aria-labelledby="dropdown-articles">
     <a class="dropdown-item" href="../articles/gdal-block-cache.html">GDAL Block Cache</a>
     <a class="dropdown-item" href="../articles/raster-display.html">Raster Display</a>
-    <a class="dropdown-item" href="../articles/gdal-config-quick-ref.html">GDAL Config Quick Ref</a>
+    <a class="dropdown-item" href="../articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>
     <a class="dropdown-item" href="../articles/raster-api-tutorial.html">Raster API Tutorial</a>
     <a class="dropdown-item" href="../articles/raster-attribute-tables.html">Raster Attribute Tables</a>
   </div>
@@ -75,7 +75,7 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>GDAL Config Quick Ref</h1>
+      <img src="" class="logo" alt=""><h1>GDAL Config Quick Reference</h1>
             
       
       <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/HEAD/vignettes/gdal-config-quick-ref.Rmd" class="external-link"><code>vignettes/gdal-config-quick-ref.Rmd</code></a></small>
@@ -90,15 +90,14 @@
 <p>Configuration options are essentially global variables the user can
 set. They are used to alter the default behavior of certain raster
 format drivers, and in some cases the GDAL core. A large number of
-configuration options are available. An overall discussion along with a
+configuration options are available. An overall discussion along with
 full list of available options and where they apply is in the GDAL
 documentation at <a href="https://gdal.org/user/configoptions.html" class="external-link uri">https://gdal.org/user/configoptions.html</a>.</p>
-<p>This vignette is a quick reference for a small subset of
-configuration options that are commonly used, with links to
-topic-specific documentation provided by the GDAL project. The examples
-configure from R with <code><a href="../reference/set_config_option.html">gdalraster::set_config_option()</a></code>. The
-values used in the examples are reasonable but not necessarily
-recommended as they are context dependent.</p>
+<p>This quick reference covers a small subset of configuration options
+that may be useful in common scenarios, with links to topic-specific
+documentation provided by the GDAL project. Options can be set from R
+with <code><a href="../reference/set_config_option.html">gdalraster::set_config_option()</a></code>. Note that specific
+usage is context dependent.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
 <span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, PROJ 8.2.1</span></span></code></pre></div>
@@ -117,7 +116,8 @@ to one of <code>BILINEAR</code>, <code>CUBIC</code>,
 <code>CUBICSPLINE</code>, <code>LANCZOS</code>, <code>AVERAGE</code> or
 <code>MODE</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_RASTERIO_RESAMPLING"</span>, <span class="st">"BILINEAR"</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="co"># bilinear interpolation (2x2 neighborhood of pixels)</span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_RASTERIO_RESAMPLING"</span>, <span class="st">"BILINEAR"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>CPL_TMPDIR</code></strong></p>
 <p>By default, temporary files are written into the current working
 directory. This can be changed with:</p>
@@ -130,10 +130,9 @@ directory. This can be changed with:</p>
 <p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#performance-and-caching" class="external-link uri">https://gdal.org/user/configoptions.html#performance-and-caching</a></p>
 <p><strong><code>GDAL_NUM_THREADS</code></strong></p>
 <p>Sets the number of worker threads to be used by GDAL operations that
-support multithreading. This has effect in several different contexts
+support multithreading. This affects several different parts of GDAL
 including multi-threaded compression for GeoTiff and multithreaded
-computation during <code><a href="../reference/warp.html">warp()</a></code> (see respective topics
-below).</p>
+computation during <code><a href="../reference/warp.html">warp()</a></code> (see topics below).</p>
 <p><strong><code>GDAL_CACHEMAX</code></strong></p>
 <p>The size limit of the block cache is set upon first use (first I/O).
 Setting <code>GDAL_CACHEMAX</code> after that point will not resize the
@@ -157,7 +156,7 @@ Note: on Linux systems, the number of file handles that can be opened by
 a process is generally limited to <code>1024</code>. This is currently
 clamped between <code>2</code> and <code>1000</code>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_MAX_DATASET_POOL_SIZE"</span>, <span class="st">"200"</span><span class="op">)</span> <span class="co"># default is 100</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_MAX_DATASET_POOL_SIZE"</span>, <span class="st">"450"</span><span class="op">)</span> <span class="co"># default is 100</span></span></code></pre></div>
 <p>Also note that <code>gdalwarp</code> <a href="https://gdal.org/drivers/raster/vrt.html#performance-considerations" class="external-link">increases
 the pool size to <code>450</code></a> by default.</p>
 </div>
@@ -196,7 +195,7 @@ topic above generally applies to processing with
 with:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># note this also affects several other parts of GDAL</span></span>
-<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">"4"</span><span class="op">)</span> <span class="co"># number of threads or "ALL_CPUS"</span></span></code></pre></div>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">"4"</span><span class="op">)</span> <span class="co"># number of threads or ALL_CPUS</span></span></code></pre></div>
 <p>Increasing the memory available to <code><a href="../reference/warp.html">warp()</a></code> may also
 increase performance (i.e., the options passed in <code>cl_arg</code>
 include a value like <code>c("-wm", "1000")</code>). The warp memory
@@ -208,6 +207,12 @@ in <code>cl_arg</code> with
 <code>c("-wo", "NUM_THREADS=&lt;value&gt;")</code> greater than 1, which
 is equivalent to setting the <code>GDAL_NUM_THREADS</code> configuration
 option as shown above.</p>
+<p>This option can be combined with the <a href="https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-multi" class="external-link"><code>-multi</code>
+command-line argument</a> passed to <code><a href="../reference/warp.html">warp()</a></code> in
+<code>cl_arg</code>. With <code>-multi</code>, two threads will be used
+to process chunks of the raster and perform input/output operation
+simultaneously, whereas the <code>GDAL_NUM_THREADS</code> configuration
+option affects computation separately.</p>
 <p><strong><code>GDAL_CACHEMAX</code></strong></p>
 <p>Increasing the size of the I/O block cache may also help. This can be
 done by setting <code>GDAL_CACHEMAX</code> as described in the <a href="#performance-and-caching">performance and caching</a> topic
@@ -233,7 +238,7 @@ tiles/strips:</p>
 <span><span class="co"># note this also affects several other parts of GDAL</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">"ALL_CPUS"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>COMPRESS_OVERVIEW</code></strong></p>
-<p>Raster overviews (also known as pyramids) can be built with the
+<p>Raster overviews (a.k.a. pyramids) can be built with the
 <code>$buildOverviews()</code> method of a <code>GDALRaster</code>
 object. It is generally desirable to compress the overviews when
 building:</p>
@@ -241,6 +246,18 @@ building:</p>
 <code class="sourceCode R"><span><span class="co"># applies to external overviews (.ovr), and internal overviews if GDAL &gt;= 3.6</span></span>
 <span><span class="co"># LZW is a good default but several other compression algorithms are available</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"COMPRESS_OVERVIEW"</span>, <span class="st">"LZW"</span><span class="op">)</span></span></code></pre></div>
+<p><strong><code>PREDICTOR_OVERVIEW</code></strong></p>
+<p>Set the predictor to use for overviews with <code>LZW</code>,
+<code>DEFLATE</code> and <code>ZSTD</code> compression. The default is
+<code>1</code> (no predictor), <code>2</code> is horizontal differencing
+and <code>3</code> is floating point prediction.
+<code>PREDICTOR=2</code> is only supported for 8, 16, 32 and 64 bit
+samples (support for 64 bit was added in libtiff &gt; 4.3.0).
+<code>PREDICTOR=3</code> is only supported for 16, 32 and 64 bit
+floating-point data.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># horizontal differencing</span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"PREDICTOR_OVERVIEW"</span>, <span class="st">"2"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="aws-s3-buckets">AWS S3 buckets<a class="anchor" aria-label="anchor" href="#aws-s3-buckets"></a>
@@ -250,12 +267,12 @@ building:</p>
 <p><strong><code>AWS_NO_SIGN_REQUEST</code></strong></p>
 <p>Request signing can be disabled for public buckets that do not
 require an AWS account (<code>--no-sign-request</code> in AWS CLI):</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># public bucket no AWS account required</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_NO_SIGN_REQUEST"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>AWS_ACCESS_KEY_ID</code></strong><br><strong><code>AWS_SECRET_ACCESS_KEY</code></strong><br><strong><code>AWS_SESSION_TOKEN</code></strong><br><strong><code>AWS_REQUEST_PAYER</code></strong></p>
 <p>If authentication is required, configure credentials with:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_ACCESS_KEY_ID"</span>, <span class="st">"&lt;value&gt;"</span><span class="op">)</span> <span class="co"># key ID</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_SECRET_ACCESS_KEY"</span>, <span class="st">"&lt;value&gt;"</span><span class="op">)</span> <span class="co"># secret access key</span></span>
 <span><span class="co"># used for validation if using temporary credentials:</span></span>
