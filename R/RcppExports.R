@@ -154,7 +154,7 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' An error is raised if the operation fails.
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()],
-#' [getCreationOptions()]
+#' [getCreationOptions()], [translate()]
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
@@ -470,6 +470,47 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
     invisible(.Call(`_gdalraster_sieveFilter`, src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename, mask_band, options))
 }
 
+#' Convert raster data between different formats
+#'
+#' `translate()` is a wrapper of the \command{gdal_translate} command-line
+#' utility (see \url{https://gdal.org/programs/gdal_translate.html}).
+#' The function can be used to convert raster data between different
+#' formats, potentially performing some operations like subsetting,
+#' resampling, and rescaling pixels in the process. Refer to the GDAL
+#' documentation at the URL above for a list of command-line arguments that
+#' can be passed in `cl_arg`.
+#'
+#' @param src_filename Character string. Filename of the source raster.
+#' @param dst_filename Character string. Filename of the output raster.
+#' @param cl_arg Optional character vector of command-line arguments for 
+#' \code{gdal_translate}.
+#' @returns Logical indicating success (invisible \code{TRUE}).
+#' An error is raised if the operation fails.
+#' 
+#' @seealso
+#' [`GDALRaster-class`][GDALRaster], [rasterFromRaster()], [warp()]
+#'
+#' @examples
+#' # convert the elevation raster to Erdas Imagine format and resample to 90m
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#'
+#' # command-line arguments for gdal_translate
+#' args <- c("-tr", "90", "90", "-r", "average")
+#' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
+#'
+#' img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
+#' translate(elev_file, img_file, args)
+#' 
+#' ds <- new(GDALRaster, img_file, read_only=TRUE)
+#' ds$getDriverLongName()
+#' ds$bbox()
+#' ds$res()
+#' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
+#' ds$close()
+translate <- function(src_filename, dst_filename, cl_arg = NULL) {
+    invisible(.Call(`_gdalraster_translate`, src_filename, dst_filename, cl_arg))
+}
+
 #' Raster reprojection and mosaicing
 #'
 #' `warp()` is a wrapper of the \command{gdalwarp} command-line utility for
@@ -619,7 +660,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' inputs to the SRS of `src_files[1]` when they are different).
 #'
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster], [srs_to_wkt()]
+#' [`GDALRaster-class`][GDALRaster], [srs_to_wkt()], [translate()]
 #'
 #' @examples
 #' # reproject the elevation raster to NAD83 / CONUS Albers (EPSG:5070)

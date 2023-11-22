@@ -51,5 +51,5 @@ ds$close()
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}},
-\code{\link[=getCreationOptions]{getCreationOptions()}}
+\code{\link[=getCreationOptions]{getCreationOptions()}}, \code{\link[=translate]{translate()}}
 }

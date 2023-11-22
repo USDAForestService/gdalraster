@@ -193,7 +193,7 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #'
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
-#' [bandCopyWholeRaster()]
+#' [bandCopyWholeRaster()], [translate()]
 #'
 #' @examples
 #' # band 2 in a FARSITE landscape file has slope degrees

@@ -64,7 +64,7 @@ test_that("_apply_geotransform gives correct result", {
 
 test_that("warp runs without error", {
 	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-	args <- c("-tr", "90", "90", "-r", "average", "-tap")
+	args <- c("-tr", "90", "90", "-r", "cubic", "-tap")
 	args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 	alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
 	expect_true(warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args))
@@ -252,4 +252,13 @@ test_that("buildVRT works", {
 	expect_equal(ds$getRasterCount(), 3)
 	ds$close()
 	deleteDataset(vrt_file)
+})
+
+test_that("translate runs without error", {
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	args <- c("-tr", "90", "90", "-r", "average")
+	args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
+	img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
+	expect_true(translate(elev_file, img_file, args))
+	deleteDataset(img_file)
 })

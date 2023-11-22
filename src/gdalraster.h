@@ -123,6 +123,9 @@ bool sieveFilter(std::string src_filename, int src_band,
 		int size_threshold, int connectedness,
 		std::string mask_filename , int mask_band,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
+
+bool translate(std::string src_filename, std::string dst_filename,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 		
 bool warp(std::vector<std::string> src_files, std::string dst_filename,
 		std::string t_srs, 
