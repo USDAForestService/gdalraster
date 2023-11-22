@@ -7,6 +7,7 @@
 #ifndef running_stats_H
 #define running_stats_H
 
+#include <cstdint>
 #include <Rcpp.h> 
 
 class RunningStats {
