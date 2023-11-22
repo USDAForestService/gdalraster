@@ -1,5 +1,7 @@
 # gdalraster 1.6.1 (dev)
 
+* add `translate()`: wrapper for the `gdal_translate` command-line utility, convert raster data between different formats (2023-11-22)
+
 * add `buildVRT()`: wrapper for the `gdalbuildvrt` command-line utility, build a GDAL virtual raster from a list of datasets (2023-11-18)
 
 * `warp()`: make `t_srs` optional (2023-11-05)

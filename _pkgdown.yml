@@ -64,6 +64,7 @@ reference:
   - srs_is_same
   - srs_to_wkt
   - transform_xy
+  - translate
   - warp
 
 - title: Lookups

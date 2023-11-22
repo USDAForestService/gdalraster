@@ -22,6 +22,7 @@
   \item raster creation: \code{\link[=create]{create()}},
   \code{\link[=createCopy]{createCopy()}},
   \code{\link[=rasterFromRaster]{rasterFromRaster()}},
+  \code{\link[=translate]{translate()}},\cr
   \code{\link[=getCreationOptions]{getCreationOptions()}}
   
   \item data management: \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},

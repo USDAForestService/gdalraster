@@ -181,5 +181,5 @@ ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=srs_to_wkt]{srs_to_wkt()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=srs_to_wkt]{srs_to_wkt()}}, \code{\link[=translate]{translate()}}
 }
