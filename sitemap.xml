@@ -193,6 +193,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/transform_xy.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/translate.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/warp.html</loc>
   </url>
 </urlset>
