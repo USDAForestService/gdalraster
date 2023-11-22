@@ -29,7 +29,12 @@ ds <- new(GDALRaster, tcc_file, read_only=TRUE)
 
 An error is returned if the dataset cannot be opened (and creation of the `GDALRaster` object fails). Also, note that `filename` may not actually be the name of a physical file (though it usually is). Its interpretation is driver dependent, and it might be a URL, a database connection string, a file name with additional parameters, etc.
 
-`GDALRaster` is a C++ class exposed directly to R (via `RCPP_EXPOSED_CLASS`) that encapsulates a GDAL dataset object and its associated raster band objects. Methods of the class are accessed in R using the `$` operator. 
+`GDALRaster` is a C++ class exposed directly to R (via `RCPP_EXPOSED_CLASS`) that encapsulates a GDAL dataset object and its associated raster band objects. Methods of the class are accessed in R using the `$` operator:
+
+```{r}
+ds
+str(ds)
+```
 
 ## Getting dataset information
 
