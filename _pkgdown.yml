@@ -13,7 +13,7 @@ reference:
 - contents:
   - gdalraster-package
 
-- title: Classes
+- title: Exposed C++ classes
 - contents:
   - CmbTable-class
   - GDALRaster-class
