@@ -20,10 +20,14 @@ knitr::opts_chunk$set(
 
 Configuration options are essentially global variables the user can set. They are used to alter the default behavior of certain raster format drivers, and in some cases the GDAL core. A large number of configuration options are available. An overall discussion along with full list of available options and where they apply is in the GDAL documentation at https://gdal.org/user/configoptions.html.
 
-This quick reference covers a small subset of configuration options that may be useful in common scenarios, with links to topic-specific documentation provided by the GDAL project. Options can be set from R with `gdalraster::set_config_option()`. Note that specific usage is context dependent.
+This quick reference covers a small subset of configuration options that may be useful in common scenarios, with links to topic-specific documentation provided by the GDAL project. Options can be set from R with `gdalraster::set_config_option()`. Note that specific usage is context dependent. Passing `value = ""` (empty string) will unset a value previously set by `set_config_option()`:
 
 ```{r}
 library(gdalraster)
+
+set_config_option("GDAL_NUM_THREADS", "ALL_CPUS")
+# unset:
+set_config_option("GDAL_NUM_THREADS", "")
 ```
 
 ## General options
@@ -32,7 +36,7 @@ GDAL doc: https://gdal.org/user/configoptions.html#general-options
 
 **`GDAL_RASTERIO_RESAMPLING`**
 
-The `$read()` method of a `GDALRaster` object will perform automatic resampling if the specified output size (`out_xsize * out_ysize`) is different than the size of the source region being read (`xsize * ysize`). In that case, resampling can be configured to override the default `NEAR` to one of `BILINEAR`, `CUBIC`, `CUBICSPLINE`, `LANCZOS`, `AVERAGE` or `MODE`:
+The `$read()` method of a `GDALRaster` object will perform automatic resampling if the specified output size (`out_xsize * out_ysize`) is different than the size of the source region being read (`xsize * ysize`). In that case, resampling can be configured to override the default `NEAR` to one of `BILINEAR`, `CUBIC`, `CUBICSPLINE`, `LANCZOS`, `AVERAGE`, `MODE`, `RMS`, or `GAUSS`:
 
 ```{r}
 # bilinear interpolation (2x2 neighborhood of pixels)
@@ -140,7 +144,7 @@ set_config_option("GDAL_NUM_THREADS", "ALL_CPUS")
 
 **`COMPRESS_OVERVIEW`**
 
-Raster overviews (a.k.a. pyramids) can be built with the `$buildOverviews()` method of a `GDALRaster` object. It is generally desirable to compress the overviews when building:
+Raster overviews (a.k.a. pyramids) can be built with the `$buildOverviews()` method of a `GDALRaster` object. It may be desirable to compress the overviews when building:
 
 ```{r}
 # applies to external overviews (.ovr), and internal overviews if GDAL >= 3.6
@@ -150,7 +154,7 @@ set_config_option("COMPRESS_OVERVIEW", "LZW")
 
 **`PREDICTOR_OVERVIEW`**
 
-Set the predictor to use for overviews with `LZW`, `DEFLATE` and `ZSTD` compression. The default is `1` (no predictor), `2` is horizontal differencing and `3` is floating point prediction. `PREDICTOR=2` is only supported for 8, 16, 32 and 64 bit samples (support for 64 bit was added in libtiff > 4.3.0). `PREDICTOR=3` is only supported for 16, 32 and 64 bit floating-point data.
+Sets the predictor to use for overviews with `LZW`, `DEFLATE` and `ZSTD` compression. The default is `1` (no predictor), `2` is horizontal differencing and `3` is floating point prediction. `PREDICTOR=2` is only supported for 8, 16, 32 and 64 bit samples (support for 64 bit was added in libtiff > 4.3.0). `PREDICTOR=3` is only supported for 16, 32 and 64 bit floating-point data.
 
 ```{r}
 # horizontal differencing
@@ -163,7 +167,7 @@ GDAL doc: [/vsis3/](https://gdal.org/user/virtual_file_systems.html#vsis3-aws-s3
 
 **`AWS_NO_SIGN_REQUEST`**
 
-Request signing can be disabled for public buckets that do not require an AWS account (`--no-sign-request` in AWS CLI):
+Request signing can be disabled for public buckets that do not require an AWS account:
 
 ```{r}
 # public bucket no AWS account required
