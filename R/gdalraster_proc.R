@@ -1244,5 +1244,150 @@ dem_proc <- function(mode,
 	if (is.null(DEFAULT_DEM_PROC[[mode]]))
 		stop("DEM processing mode not recognized.", call.=FALSE)
 
-	return (invisible(.dem_proc(mode,srcfile,dstfile,mode_options,color_file)))
+	return(invisible(.dem_proc(mode,srcfile,dstfile,mode_options,color_file)))
+}
+
+
+#' @export
+rasterize <- function(src_dsn,
+					dstfile,
+					band = NULL,
+					layer = NULL,
+					where = NULL,
+					sql = NULL,
+					burn_value = NULL,
+					burn_attr = NULL,
+					invert = NULL,
+					te = NULL,
+					tr = NULL,
+					tap = NULL,
+					ts = NULL,
+					dtName = NULL,
+					dstnodata = NULL,
+					init = NULL,
+					co = NULL,
+					add_options = NULL) {
+
+	argv <- character(0)
+	
+	if (!is.null(band)) {
+		if (!is.numeric(band))
+			stop("band must be numeric.", call. = FALSE)
+		for (b in band)
+			argv <- c(argv, "-b", b)
+	}
+
+	if (!is.null(layer)) {
+		if (!is.character(layer))
+			stop("layer must be character type.", call. = FALSE)
+		for (l in layer)
+			argv <- c(argv, "-l", l)
+	}
+
+	if (!is.null(where)) {
+		if (is.character(where) && length(where) == 1)
+			argv <- c(argv, "-where", where)
+		else
+			stop("where must be a length-1 character vector.", call. = FALSE)
+	}
+
+	if (!is.null(sql)) {
+		if (is.character(sql) && length(sql) == 1)
+			argv <- c(argv, "-sql", sql)
+		else
+			stop("sql must be a length-1 character vector.", call. = FALSE)
+	}
+
+	if (!is.null(burn_value)) {
+		if (!is.numeric(burn_value))
+			stop("burn_value must be numeric.", call. = FALSE)
+		for (value in burn_value)
+			argv <- c(argv, "-burn", value)
+	}
+
+	if (!is.null(burn_attr)) {
+		if (is.character(burn_attr) && length(burn_attr) == 1)
+			argv <- c(argv, "-a", burn_attr)
+		else
+			stop("burn_attr must be a length-1 character vector.",
+					call. = FALSE)
+	}
+
+	if (!is.null(invert)) {
+		if (is.logical(invert) && length(invert) == 1)
+			if (invert)
+				argv <- c(argv, "-i")
+		else
+			stop("invert must be a logical scalar.", call. = FALSE)
+	}
+
+	if (!is.null(te)) {
+		if (is.numeric(te) && length(te) == 4)
+			argv <- c(argv, "-te", te)
+		else
+			stop("te must be a numeric vector of length 4.", call. = FALSE)
+	}
+
+	if (!is.null(tr)) {
+		if (is.numeric(tr) && length(tr) == 2)
+			argv <- c(argv, "-tr", tr)
+		else
+			stop("tr must be a numeric vector of length 2.", call. = FALSE)
+	}
+	
+	if (!is.null(tap)) {
+		if (is.logical(tap) && length(tap) == 1)
+			if (tap)
+				argv <- c(argv, "-tap")
+		else
+			stop("tap must be a logical scalar.", call. = FALSE)
+	}
+	
+	if (!is.null(ts)) {
+		if (!is.null(tr))
+			stop("ts cannot be used with tr.", call. = FALSE)
+		if (is.numeric(ts) && length(ts) == 2)
+			argv <- c(argv, "-ts", ts)
+		else
+			stop("ts must be a numeric vector of length 2.", call. = FALSE)
+	}
+
+	if (!is.null(dtName)) {
+		if (is.character(dtName) && length(dtName) == 1)
+			argv <- c(argv, "-ot", dtName)
+		else
+			stop("dtName must be a length-1 character vector.",
+					call. = FALSE)
+	}
+
+	if (!is.null(dstnodata)) {
+		if (is.numeric(dstnodata) && length(dstnodata) == 1)
+			argv <- c(argv, "-a_nodata", dstnodata)
+		else
+			stop("dstnodata must be a numeric scalar.", call. = FALSE)
+	}
+
+	if (!is.null(init)) {
+		if (!is.numeric(init)) {
+			stop("init must be numeric.", call. = FALSE)
+		for (value in init)
+			argv <- c(argv, "-init", value)
+		}
+	}
+
+	if (!is.null(co)) {
+		if (!is.character(co))
+			stop("co must be a character vector.", call. = FALSE)
+		for (name_value in co)
+			argv <- c(argv, "-co", name_value)
+	}
+
+	if (!is.null(add_options)) {
+		if (!is.character(add_options))
+			stop("add_options must be a character vector.", call. = FALSE)
+		else
+			argv <- c(argv, add_options)
+	}
+	
+	return(invisible(.rasterize(src_dsn, dstfile, argv)))
 }

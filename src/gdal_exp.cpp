@@ -115,7 +115,7 @@ std::string get_config_option(std::string key) {
 //' @seealso
 //' [get_config_option()]
 //' @examples
-//' set_config_option("GDAL_CACHEMAX", "64")
+//' set_config_option("GDAL_CACHEMAX", "10%")
 //' get_config_option("GDAL_CACHEMAX")
 //' ## unset:
 //' set_config_option("GDAL_CACHEMAX", "")
@@ -826,6 +826,44 @@ bool fillNodata(std::string filename, int band, std::string mask_file = "",
 	if (err != CE_None)
 		Rcpp::stop("Error in GDALFillNodata().");
 
+	return true;
+}
+
+
+//' Wrapper for GDALRasterize in the GDAL Algorithms C API
+//'
+//' Called from and documented in R/gdalraster_proc.R
+//' @noRd
+// [[Rcpp::export(name = ".rasterize")]]
+bool _rasterize(std::string src_dsn, std::string dst_filename,
+		Rcpp::CharacterVector cl_arg) {
+
+	GDALDatasetH hSrcDS;
+	hSrcDS = GDALOpenEx(src_dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
+	if (hSrcDS == NULL)
+		Rcpp::stop("Failed to open vector data source.");
+
+	std::vector<char *> argv(cl_arg.size() + 1);
+	for (R_xlen_t i = 0; i < cl_arg.size(); ++i) {
+		argv[i] = (char *) (cl_arg[i]);
+	}
+	argv[cl_arg.size()] = NULL;
+	
+	GDALRasterizeOptions* psOptions;
+	psOptions = GDALRasterizeOptionsNew(argv.data(), NULL);
+	if (psOptions == NULL)
+		Rcpp::stop("Rasterize failed (could not create options struct).");
+	GDALRasterizeOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	
+	GDALDatasetH hDstDS;
+	hDstDS = GDALRasterize(dst_filename.c_str(), NULL, hSrcDS, psOptions, NULL);
+							
+	GDALRasterizeOptionsFree(psOptions);
+	GDALClose(hSrcDS);
+	if (hDstDS == NULL)
+		Rcpp::stop("Rasterize failed.");
+
+	GDALClose(hDstDS);
 	return true;
 }
 

@@ -69,7 +69,7 @@ get_config_option <- function(key) {
 #' @seealso
 #' [get_config_option()]
 #' @examples
-#' set_config_option("GDAL_CACHEMAX", "64")
+#' set_config_option("GDAL_CACHEMAX", "10%")
 #' get_config_option("GDAL_CACHEMAX")
 #' ## unset:
 #' set_config_option("GDAL_CACHEMAX", "")
@@ -391,6 +391,14 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL) {
 #' mod_tbl[is.na(mod_tbl$VALUE),]
 fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_iterations = 0L) {
     invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations))
+}
+
+#' Wrapper for GDALRasterize in the GDAL Algorithms C API
+#'
+#' Called from and documented in R/gdalraster_proc.R
+#' @noRd
+.rasterize <- function(src_dsn, dst_filename, cl_arg) {
+    .Call(`_gdalraster__rasterize`, src_dsn, dst_filename, cl_arg)
 }
 
 #' Remove small raster polygons

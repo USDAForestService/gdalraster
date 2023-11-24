@@ -202,6 +202,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _rasterize
+bool _rasterize(std::string src_dsn, std::string dst_filename, Rcpp::CharacterVector cl_arg);
+RcppExport SEXP _gdalraster__rasterize(SEXP src_dsnSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type src_dsn(src_dsnSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cl_arg(cl_argSEXP);
+    rcpp_result_gen = Rcpp::wrap(_rasterize(src_dsn, dst_filename, cl_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
 // sieveFilter
 bool sieveFilter(std::string src_filename, int src_band, std::string dst_filename, int dst_band, int size_threshold, int connectedness, std::string mask_filename, int mask_band, Rcpp::Nullable<Rcpp::CharacterVector> options);
 RcppExport SEXP _gdalraster_sieveFilter(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP dst_filenameSEXP, SEXP dst_bandSEXP, SEXP size_thresholdSEXP, SEXP connectednessSEXP, SEXP mask_filenameSEXP, SEXP mask_bandSEXP, SEXP optionsSEXP) {
@@ -743,6 +756,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__value_count", (DL_FUNC) &_gdalraster__value_count, 2},
     {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 5},
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 5},
+    {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 3},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 9},
     {"_gdalraster_translate", (DL_FUNC) &_gdalraster_translate, 3},
     {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 4},
