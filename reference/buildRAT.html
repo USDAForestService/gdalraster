@@ -237,22 +237,22 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-in"><span><span class="va">evt_csv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/LF20_EVT_220.csv"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">evt_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">evt_csv</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">evt_df</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1068</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 860</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">evt_df</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   VALUE                                                   EVT_NAME EVT_LF</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -9999                                                Fill-NoData   &lt;NA&gt;</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2  4401                Alaska Arctic Coastal Sedge-Dwarf-Shrubland  Shrub</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  4402                            Alaska Arctic Floodplain Forest   Tree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  4403                Alaska Arctic Large River Floodplain Forest   Tree</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5  4404                        Alaska Arctic Mesic Alder Shrubland  Shrub</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6  4405 Alaska Arctic Permafrost Plateau Dwarf-Shrub Lichen Tundra  Shrub</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    EVT_PHYS   R   G   B      RED    GREEN     BLUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1      &lt;NA&gt; 255 255 255 1.000000 1.000000 1.000000</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2 Shrubland 255 205 112 1.000000 0.803922 0.439216</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3  Riparian  18  76 135 0.070588 0.298039 0.529412</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4  Riparian  18  76 135 0.070588 0.298039 0.529412</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5 Shrubland 146 237 224 0.572549 0.929412 0.878431</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6 Shrubland 255  37  13 1.000000 0.145098 0.050980</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   VALUE                                            EVT_NAME EVT_LF EVT_PHYS   R</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 -9999                                         Fill-NoData   &lt;NA&gt;     &lt;NA&gt; 255</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2  7008                          North Pacific Oak Woodland   Tree Hardwood 203</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  7009 Northwestern Great Plains Aspen Forest and Parkland   Tree Hardwood 192</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  7010       Northern Rocky Mountain Western Larch Savanna   Tree  Conifer 180</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5  7011            Rocky Mountain Aspen Forest and Woodland   Tree Hardwood 192</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  7012       Rocky Mountain Bigtooth Maple Ravine Woodland   Tree Hardwood 171</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>     G   B      RED GREEN     BLUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 255 255 1.000000     1 1.000000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 255 171 0.796078     1 0.670588</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 255 138 0.752941     1 0.541176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 255 148 0.705882     1 0.580392</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 255 138 0.752941     1 0.541176</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 255 138 0.670588     1 0.541176</span>
 <span class="r-in"><span><span class="va">evt_df</span> <span class="op">&lt;-</span> <span class="va">evt_df</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">]</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="fu">buildRAT</span><span class="op">(</span><span class="va">ds</span>,</span></span>
