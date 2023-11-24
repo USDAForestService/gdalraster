@@ -16,7 +16,7 @@ dem_proc(
 \item{mode}{Character. Name of the DEM processing mode. One of hillshade,
 slope, aspect, color-relief, TRI, TPI or roughness.}
 
-\item{srcfile}{Filename of the the source elevation raster.}
+\item{srcfile}{Filename of the source elevation raster.}
 
 \item{dstfile}{Filename of the output raster.}
 

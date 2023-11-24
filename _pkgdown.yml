@@ -54,6 +54,7 @@ reference:
   - proj_search_paths
   - proj_version
   - rasterFromRaster
+  - rasterize
   - rasterToVRT
   - read_ds
   - renameDataset

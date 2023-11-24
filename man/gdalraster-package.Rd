@@ -37,7 +37,8 @@
   
   \item algorithms: \code{\link[=dem_proc]{dem_proc()}},
   \code{\link[=fillNodata]{fillNodata()}},
-  \code{\link[=sieveFilter]{sieveFilter()}},
+  \code{\link[=rasterize]{rasterize()}},
+  \code{\link[=sieveFilter]{sieveFilter()}},\cr
   \code{\link[=GDALRaster]{GDALRaster$getChecksum()}}
   
   \item raster attribute tables: \code{\link[=buildRAT]{buildRAT()}},
@@ -130,9 +131,12 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
   Sample datasets included with the package are used in examples throughout
   the documentation. The sample data include
   \href{https://landfire.gov/}{LANDFIRE} raster layers describing terrain,
-  vegetation and wildland fuels (LF 2020 version), and
-  Landsat C2 Analysis Ready Data downloaded from
-  \href{https://earthexplorer.usgs.gov/}{USGS Earth Explorer}.
+  vegetation and wildland fuels (LF 2020 version),
+  Landsat C2 Analysis Ready Data from
+  \href{https://earthexplorer.usgs.gov/}{USGS Earth Explorer}, and
+  Monitoring Trends in Burn Severity (\href{https://www.mtbs.gov/}{MTBS})
+  fire perimeters from 1984-2022. Metadata for the sample datasets are in
+  inst/extdata/metadata.zip.
 
   \code{system.file()} is used in the examples to access the sample datasets. 
   This enables the code to run regardless of where R is installed. Users will 
