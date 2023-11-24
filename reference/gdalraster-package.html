@@ -88,8 +88,8 @@
 <li><p>reproject/resample/crop/mosaic: <code><a href="warp.html">warp()</a></code></p></li>
 <li><p>algorithms: <code><a href="dem_proc.html">dem_proc()</a></code>,
   <code><a href="fillNodata.html">fillNodata()</a></code>,
-  <code><a href="sieveFilter.html">sieveFilter()</a></code>,
-  <code><a href="GDALRaster-class.html">GDALRaster$getChecksum()</a></code></p></li>
+  <code><a href="rasterize.html">rasterize()</a></code>,
+  <code><a href="sieveFilter.html">sieveFilter()</a></code>,<br><code><a href="GDALRaster-class.html">GDALRaster$getChecksum()</a></code></p></li>
 <li><p>raster attribute tables: <code><a href="buildRAT.html">buildRAT()</a></code>,
   <code><a href="displayRAT.html">displayRAT()</a></code>,
   <code><a href="GDALRaster-class.html">GDALRaster$getDefaultRAT()</a></code>,<br><code><a href="GDALRaster-class.html">GDALRaster$setDefaultRAT()</a></code></p></li>
@@ -158,9 +158,12 @@
 <p>Sample datasets included with the package are used in examples throughout
   the documentation. The sample data include
   <a href="https://landfire.gov/" class="external-link">LANDFIRE</a> raster layers describing terrain,
-  vegetation and wildland fuels (LF 2020 version), and
-  Landsat C2 Analysis Ready Data downloaded from
-  <a href="https://earthexplorer.usgs.gov/" class="external-link">USGS Earth Explorer</a>.</p>
+  vegetation and wildland fuels (LF 2020 version),
+  Landsat C2 Analysis Ready Data from
+  <a href="https://earthexplorer.usgs.gov/" class="external-link">USGS Earth Explorer</a>, and
+  Monitoring Trends in Burn Severity (<a href="https://www.mtbs.gov/" class="external-link">MTBS</a>)
+  fire perimeters from 1984-2022. Metadata for the sample datasets are in
+  inst/extdata/metadata.zip.</p>
 <p><code><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file()</a></code> is used in the examples to access the sample datasets. 
   This enables the code to run regardless of where R is installed. Users will 
   normally give file names as a regular full path or relative to the current 
