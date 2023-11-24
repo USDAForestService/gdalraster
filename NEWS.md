@@ -1,5 +1,7 @@
 # gdalraster 1.6.1 (dev)
 
+* add `rasterize()`: wrapper for the `gdal_rasterize` command-line utility, burn vector geometries (points, lines, or polygons) into a raster (2023-11-24)
+
 * add `translate()`: wrapper for the `gdal_translate` command-line utility, convert raster data between different formats (2023-11-22)
 
 * add `buildVRT()`: wrapper for the `gdalbuildvrt` command-line utility, build a GDAL virtual raster from a list of datasets (2023-11-18)
@@ -8,7 +10,7 @@
 
 * gdal_exp.cpp: additional error handling in several wrapper functions, mainly ensuring input datasets are closed properly on error; increase test coverage of the error handling code (#145) (2023-10-29)
 
-* Documentation: `warp()` has additional documentation covering several processing options; added the `COMPRESS_OVERVIEW` option to the documentation for `GDALRaster::buildOverviews()`; added [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); added structure of `GDALRaster` object in [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html); added display of the EVT raster itself next its attribute table in [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
+* Documentation: `warp()` has additional documentation covering several processing options; added the `COMPRESS_OVERVIEW` option to the documentation for `GDALRaster::buildOverviews()`; added [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); added structure of the `GDALRaster` object in [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html); added display of the EVT raster itself next its attribute table in [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
 
 # gdalraster 1.6.0
 
