@@ -97,10 +97,16 @@ documentation at <a href="https://gdal.org/user/configoptions.html" class="exter
 that may be useful in common scenarios, with links to topic-specific
 documentation provided by the GDAL project. Options can be set from R
 with <code><a href="../reference/set_config_option.html">gdalraster::set_config_option()</a></code>. Note that specific
-usage is context dependent.</p>
+usage is context dependent. Passing <code>value = ""</code> (empty
+string) will unset a value previously set by
+<code><a href="../reference/set_config_option.html">set_config_option()</a></code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, PROJ 8.2.1</span></span></code></pre></div>
+<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, PROJ 8.2.1</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">"ALL_CPUS"</span><span class="op">)</span></span>
+<span><span class="co"># unset:</span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">""</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="general-options">General options<a class="anchor" aria-label="anchor" href="#general-options"></a>
@@ -113,8 +119,8 @@ will perform automatic resampling if the specified output size
 source region being read (<code>xsize * ysize</code>). In that case,
 resampling can be configured to override the default <code>NEAR</code>
 to one of <code>BILINEAR</code>, <code>CUBIC</code>,
-<code>CUBICSPLINE</code>, <code>LANCZOS</code>, <code>AVERAGE</code> or
-<code>MODE</code>:</p>
+<code>CUBICSPLINE</code>, <code>LANCZOS</code>, <code>AVERAGE</code>,
+<code>MODE</code>, <code>RMS</code>, or <code>GAUSS</code>:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># bilinear interpolation (2x2 neighborhood of pixels)</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_RASTERIO_RESAMPLING"</span>, <span class="st">"BILINEAR"</span><span class="op">)</span></span></code></pre></div>
@@ -240,14 +246,13 @@ tiles/strips:</p>
 <p><strong><code>COMPRESS_OVERVIEW</code></strong></p>
 <p>Raster overviews (a.k.a. pyramids) can be built with the
 <code>$buildOverviews()</code> method of a <code>GDALRaster</code>
-object. It is generally desirable to compress the overviews when
-building:</p>
+object. It may be desirable to compress the overviews when building:</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># applies to external overviews (.ovr), and internal overviews if GDAL &gt;= 3.6</span></span>
 <span><span class="co"># LZW is a good default but several other compression algorithms are available</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"COMPRESS_OVERVIEW"</span>, <span class="st">"LZW"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>PREDICTOR_OVERVIEW</code></strong></p>
-<p>Set the predictor to use for overviews with <code>LZW</code>,
+<p>Sets the predictor to use for overviews with <code>LZW</code>,
 <code>DEFLATE</code> and <code>ZSTD</code> compression. The default is
 <code>1</code> (no predictor), <code>2</code> is horizontal differencing
 and <code>3</code> is floating point prediction.
@@ -266,7 +271,7 @@ floating-point data.</p>
 (AWS S3 file system handler)</p>
 <p><strong><code>AWS_NO_SIGN_REQUEST</code></strong></p>
 <p>Request signing can be disabled for public buckets that do not
-require an AWS account (<code>--no-sign-request</code> in AWS CLI):</p>
+require an AWS account:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># public bucket no AWS account required</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_NO_SIGN_REQUEST"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
