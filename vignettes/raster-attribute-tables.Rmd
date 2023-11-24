@@ -59,36 +59,50 @@ nrow(tbl)
 head(tbl)
 
 # attributes on the returned data frame and its columns define RAT metadata
-attributes(tbl)
+attr(tbl, "GDALRATTableType")
 attributes(tbl$VALUE)     # GFU_MinMax for column of discrete pixel values
-attributes(tbl$COUNT)
+attributes(tbl$COUNT)     # pixel counts
 attributes(tbl$EVT_NAME)  # the class names
-attributes(tbl$EVT_LF)
-attributes(tbl$EVT_PHYS)
-attributes(tbl$R)
-attributes(tbl$G)
-attributes(tbl$B)
+attributes(tbl$EVT_LF)    # ancillary attribute
+attributes(tbl$EVT_PHYS)  # ancillary attribute
+attributes(tbl$R)         # red 0-255
+attributes(tbl$G)         # green 0-255
+attributes(tbl$B)         # blue 0-255
 
 # set as default RAT on the EVT raster
 ds$setDefaultRAT(band=1, tbl)
 ds$flushCache()
 
-tbl2 <- ds$getDefaultRAT(band=1)
-nrow(tbl2)
-head(tbl2)
-
-ds$close()
+# it can now be read from the raster dataset
+rm(tbl)
+tbl <- ds$getDefaultRAT(band=1)
+nrow(tbl)
 ```
 
 ## Display attribute tables
 
-The function `displayRAT()` generates a presentation table. Colors are shown if the RAT contains RGB columns:
+An attribute table with RGB columns can be passed to `gdalraster::plot_raster()` as a color table (columns `VALUE`, `R`, `G`, `B`):
+
+```{r fig.width=6, fig.height=4, dev="png"}
+bb <- ds$bbox()
+plot_raster(data = ds,
+            col_tbl = tbl[,c(1,6:8)],
+            maxColorValue = 255,
+            interpolate = FALSE,
+            main = "Storm Lake LANDFIRE EVT")
+```
+
+The function `displayRAT()` generates a nicely formatted table for display. Colors are shown if the RAT contains RGB columns:
 
 ```{r}
 displayRAT(tbl, title = "Raster Attribute Table for Storm Lake EVT")
 ```
 
-`displayRAT()` returns an object of class `"gt_tbl"`. The table object could be modified using functions of the **gt** package.
+`displayRAT()` returns an object of class `"gt_tbl"`. The table object can be modified using functions of the **gt** package.
+
+```{r}
+ds$close()
+```
 
 ## Using in QGIS
 
@@ -110,7 +124,7 @@ knitr::include_graphics("qgis_rat_classify.png")
 
 * [Raster Attribute Table QGIS Plugin](https://github.com/noaa-ocs-hydrography/qgis-raster-attribute-table-plugin) (QGIS < 3.30)
 
-* Package [**gt**](https://CRAN.R-project.org/package=gt)
+* Package [gt](https://CRAN.R-project.org/package=gt)
 
 ## Data sources
 
