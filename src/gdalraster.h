@@ -117,6 +117,9 @@ bool _dem_proc(std::string mode,
 
 bool fillNodata(std::string filename, int band, std::string mask_file,
 		double max_dist, int smooth_iterations);
+
+bool _rasterize(std::string src_dsn, std::string dst_filename,
+		Rcpp::CharacterVector cl_arg);
 		
 bool sieveFilter(std::string src_filename, int src_band,
 		std::string dst_filename, int dst_band,

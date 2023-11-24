@@ -262,3 +262,47 @@ test_that("translate runs without error", {
 	expect_true(translate(elev_file, img_file, args))
 	deleteDataset(img_file)
 })
+
+test_that("rasterize runs without error", {
+	# layer from sql query
+	dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+	sql <- "SELECT * FROM mtbs_perims ORDER BY mtbs_perims.ig_year"
+	out_file <- paste0(tempdir(), "/", "ynp_fires_1984_2022.tif")
+
+	res <- rasterize(src_dsn = dsn,
+				dstfile = out_file,
+				sql = sql,
+				burn_attr = "ig_year",
+				tr = c(90,90),
+				tap = TRUE,
+				dtName = "Int16",
+				dstnodata = -9999,
+				init = -9999,
+				co = c("TILED=YES","COMPRESS=LZW"))
+	expect_true(res)
+	ds <- new(GDALRaster, out_file, TRUE)
+	bbox <- ds$bbox()
+	dm <- ds$dim()
+	ds$close()
+	deleteDataset(out_file)
+	
+	# layer with where clause
+	out_file <- paste0(tempdir(), "/", "ynp_fires_1988.tif")
+	layer <- "mtbs_perims"
+	where <- "ig_year = 1988"
+
+	res <- rasterize(src_dsn = dsn,
+				dstfile = out_file,
+				layer = layer,
+				where = where,
+				burn_value = 1,
+				te = bbox,
+				ts = dm[1:2],
+				dtName = "Byte",
+				init = 0,
+				fmt = "GTiff",
+				co = c("TILED=YES","COMPRESS=LZW"),
+				add_options = "-q")
+	expect_true(res)
+	deleteDataset(out_file)
+})

@@ -1214,7 +1214,7 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 #'
 #' @param mode Character. Name of the DEM processing mode. One of hillshade,
 #' slope, aspect, color-relief, TRI, TPI or roughness.
-#' @param srcfile Filename of the the source elevation raster.
+#' @param srcfile Filename of the source elevation raster.
 #' @param dstfile Filename of the output raster.
 #' @param mode_options An optional character vector of command-line options
 #' (see [DEFAULT_DEM_PROC] for default values).
@@ -1244,5 +1244,253 @@ dem_proc <- function(mode,
 	if (is.null(DEFAULT_DEM_PROC[[mode]]))
 		stop("DEM processing mode not recognized.", call.=FALSE)
 
-	return (invisible(.dem_proc(mode,srcfile,dstfile,mode_options,color_file)))
+	return(invisible(.dem_proc(mode,srcfile,dstfile,mode_options,color_file)))
+}
+
+
+#' Burn vector geometries into a raster
+#' 
+#' @description
+#' `rasterize()` burns vector geometries (points, lines, or polygons) into
+#' the band(s) of a raster dataset. Vectors are read from any GDAL
+#' OGR-supported vector format.
+#' This function is a wrapper for the \command{gdal_rasterize} command-line
+#' utility (\url{https://gdal.org/programs/gdal_rasterize.html}).
+#'
+#' @param src_dsn Data source name for the input vector layer (filename or
+#' connection string).
+#' @param dstfile Filename of the output raster. Must support update mode
+#' access. This file will be created (or overwritten if it already exists -
+#' see Note).
+#' @param band Numeric vector. The band(s) to burn values into (for existing
+#' `dstfile`). The default is to burn into band 1. Not used when creating a
+#' new raster.
+#' @param layer Character vector of layer names(s) from `src_dsn`  that will be
+#' used for input features. At least one layer name or a `sql` option must be
+#' specified.
+#' @param where An optional SQL WHERE style query string to select features to
+#' burn in from the input `layer`(s).
+#' @param sql An SQL statement to be evaluated against `src_dsn` to produce a
+#' virtual layer of features to be burned in (alternative to `layer`).
+#' @param burn_value A fixed numeric value to burn into a band for all
+#' features. A numeric vector can be supplied, one burn value per band being
+#' written to.
+#' @param burn_attr Character string. Name of an attribute field on the
+#' features to be used for a burn-in value. The value will be burned into all
+#' output bands.
+#' @param invert Logical scalar. `TRUE` to invert rasterization. Burn the fixed
+#' burn value, or the burn value associated with the first feature, into all
+#' parts of the raster not inside the provided polygon.
+#' @param te Numeric vector of length four. Sets the output raster extent. The
+#' values must be expressed in georeferenced units. If not specified, the
+#' extent of the output raster will be the extent of the vector layer.
+#' @param tr Numeric vector of length two. Sets the target pixel resolution.
+#' The values must be expressed in georeferenced units. Both must be positive.
+#' @param tap Logical scalar. (target aligned pixels) Align the coordinates of
+#' the extent of the output raster to the values of `tr`, such that the
+#' aligned extent includes the minimum extent. Alignment means that
+#' xmin / resx, ymin / resy, xmax / resx and ymax / resy are integer values.
+#' @param ts Numeric vector of length two. Sets the output raster size in
+#' pixels (xsize, ysize). Note that `ts` cannot be used with `tr`.
+#' @param dtName Character name of output raster data type, e.g., `Byte`,
+#' `Int16`, `UInt16`, `Int32`, `UInt32`, `Float32`, `Float64`.
+#' Defaults to `Float64`.
+#' @param dstnodata	Numeric scalar. Assign a nodata value to output bands.
+#' @param init Numeric vector. Pre-initialize the output raster band(s) with
+#' these value(s). However, it is not marked as the nodata value in the output
+#' file. If only one value is given, the same value is used in all the bands.
+#' @param fmt Output raster format short name (e.g., `"GTiff"`). Will attempt
+#' to guess from the output filename if `fmt` is not specified.
+#' @param co Optional list of format-specific creation options for the output
+#' raster in a vector of "NAME=VALUE" pairs
+#' (e.g., \code{options = c("TILED=YES","COMPRESS=LZW")} to set LZW compression
+#' during creation of a tiled GTiff file).
+#' @param add_options An optional character vector of additional command-line
+#' options to `gdal_rasterize` (see the `gdal_rasterize` documentation at the
+#' URL above for all available options).
+#' @returns Logical indicating success (invisible `TRUE`).
+#' An error is raised if the operation fails.
+#'
+#' @note
+#' The function creates a new target raster when any of the `fmt`, `dstnodata`,
+#' `init`, `co`, `te`, `tr`, `tap`, `ts`, or `dtName` arguments are used. The
+#' resolution or size must be specified using the `tr` or `ts` argument for all
+#' new rasters. The target raster will be overwritten if it already exists and
+#' any of these creation-related options are used.
+#'
+#' @examples
+#' # MTBS fire perimeters for Yellowstone National Park 1984-2022
+#' dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#' sql <- "SELECT * FROM mtbs_perims ORDER BY mtbs_perims.ig_year"
+#' out_file <- paste0(tempdir(), "/", "ynp_fires_1984_2022.tif")
+#'
+#' rasterize(src_dsn = dsn,
+#'           dstfile = out_file,
+#'           sql = sql,
+#'           burn_attr = "ig_year",
+#'           tr = c(90,90),
+#'           tap = TRUE,
+#'           dtName = "Int16",
+#'           dstnodata = -9999,
+#'           init = -9999,
+#'           co = c("TILED=YES","COMPRESS=LZW"))
+#'
+#' ds <- new(GDALRaster, out_file, TRUE)
+#' pal <- scales::viridis_pal(end = 0.8, direction = -1)(6)
+#' ramp <- scales::colour_ramp(pal)
+#' plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",
+#'             main="YNP Fires 1984-2022 - Most Recent Burn Year")
+#'
+#' ds$close()
+#' @export
+rasterize <- function(src_dsn,
+					dstfile,
+					band = NULL,
+					layer = NULL,
+					where = NULL,
+					sql = NULL,
+					burn_value = NULL,
+					burn_attr = NULL,
+					invert = NULL,
+					te = NULL,
+					tr = NULL,
+					tap = NULL,
+					ts = NULL,
+					dtName = NULL,
+					dstnodata = NULL,
+					init = NULL,
+					fmt = NULL,
+					co = NULL,
+					add_options = NULL) {
+
+	argv <- character(0)
+	
+	if (!is.null(band)) {
+		if (!is.numeric(band))
+			stop("band must be numeric.", call. = FALSE)
+		for (b in band)
+			argv <- c(argv, "-b", b)
+	}
+
+	if (!is.null(layer)) {
+		if (!is.character(layer))
+			stop("layer must be character type.", call. = FALSE)
+		for (l in layer)
+			argv <- c(argv, "-l", l)
+	}
+
+	if (!is.null(where)) {
+		if (is.character(where) && length(where) == 1)
+			argv <- c(argv, "-where", where)
+		else
+			stop("where must be a length-1 character vector.", call. = FALSE)
+	}
+
+	if (!is.null(sql)) {
+		if (is.character(sql) && length(sql) == 1)
+			argv <- c(argv, "-sql", sql)
+		else
+			stop("sql must be a length-1 character vector.", call. = FALSE)
+	}
+
+	if (!is.null(burn_value)) {
+		if (!is.numeric(burn_value))
+			stop("burn_value must be numeric.", call. = FALSE)
+		for (value in burn_value)
+			argv <- c(argv, "-burn", value)
+	}
+
+	if (!is.null(burn_attr)) {
+		if (is.character(burn_attr) && length(burn_attr) == 1)
+			argv <- c(argv, "-a", burn_attr)
+		else
+			stop("burn_attr must be a length-1 character vector.",
+					call. = FALSE)
+	}
+
+	if (!is.null(invert)) {
+		if (is.logical(invert) && length(invert) == 1)
+			if (invert)
+				argv <- c(argv, "-i")
+		else
+			stop("invert must be a logical scalar.", call. = FALSE)
+	}
+
+	if (!is.null(te)) {
+		if (is.numeric(te) && length(te) == 4)
+			argv <- c(argv, "-te", te)
+		else
+			stop("te must be a numeric vector of length 4.", call. = FALSE)
+	}
+
+	if (!is.null(tr)) {
+		if (is.numeric(tr) && length(tr) == 2)
+			argv <- c(argv, "-tr", tr)
+		else
+			stop("tr must be a numeric vector of length 2.", call. = FALSE)
+	}
+	
+	if (!is.null(tap)) {
+		if (is.logical(tap) && length(tap) == 1)
+			if (tap)
+				argv <- c(argv, "-tap")
+		else
+			stop("tap must be a logical scalar.", call. = FALSE)
+	}
+	
+	if (!is.null(ts)) {
+		if (!is.null(tr))
+			stop("ts cannot be used with tr.", call. = FALSE)
+		if (is.numeric(ts) && length(ts) == 2)
+			argv <- c(argv, "-ts", ts)
+		else
+			stop("ts must be a numeric vector of length 2.", call. = FALSE)
+	}
+
+	if (!is.null(dtName)) {
+		if (is.character(dtName) && length(dtName) == 1)
+			argv <- c(argv, "-ot", dtName)
+		else
+			stop("dtName must be a length-1 character vector.",
+					call. = FALSE)
+	}
+
+	if (!is.null(dstnodata)) {
+		if (is.numeric(dstnodata) && length(dstnodata) == 1)
+			argv <- c(argv, "-a_nodata", dstnodata)
+		else
+			stop("dstnodata must be a numeric scalar.", call. = FALSE)
+	}
+
+	if (!is.null(init)) {
+		if (!is.numeric(init)) {
+			stop("init must be numeric.", call. = FALSE)
+		for (value in init)
+			argv <- c(argv, "-init", value)
+		}
+	}
+
+	if (!is.null(fmt)) {
+		if (is.character(fmt) && length(fmt) == 1)
+			argv <- c(argv, "-of", fmt)
+		else
+			stop("fmt must be a length-1 character vector.",
+					call. = FALSE)
+	}
+
+	if (!is.null(co)) {
+		if (!is.character(co))
+			stop("co must be a character vector.", call. = FALSE)
+		for (name_value in co)
+			argv <- c(argv, "-co", name_value)
+	}
+
+	if (!is.null(add_options)) {
+		if (!is.character(add_options))
+			stop("add_options must be a character vector.", call. = FALSE)
+		else
+			argv <- c(argv, add_options)
+	}
+	
+	return(invisible(.rasterize(src_dsn, dstfile, argv)))
 }

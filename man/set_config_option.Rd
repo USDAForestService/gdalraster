@@ -25,7 +25,7 @@ listing of available options see
 \url{https://gdal.org/user/configoptions.html}.
 }
 \examples{
-set_config_option("GDAL_CACHEMAX", "64")
+set_config_option("GDAL_CACHEMAX", "10\%")
 get_config_option("GDAL_CACHEMAX")
 ## unset:
 set_config_option("GDAL_CACHEMAX", "")
