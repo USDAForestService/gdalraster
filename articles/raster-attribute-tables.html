@@ -8,8 +8,8 @@
 <meta name="description" content="gdalraster">
 <title>Raster Attribute Tables • gdalraster</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.2.2/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.2.2/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
+<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
 <!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.6/clipboard.min.js" integrity="sha256-inc5kl9MA1hkeYUt+EC3BhlIgyp/2jDIyBLS6k3UxPI=" crossorigin="anonymous"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Raster Attribute Tables">
 <meta property="og:description" content="gdalraster">
@@ -206,41 +206,30 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <span><span class="co">#&gt; 6   Tree  Conifer 236 252 204</span></span>
 <span></span>
 <span><span class="co"># attributes on the returned data frame and its columns define RAT metadata</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $names</span></span>
-<span><span class="co">#&gt; [1] "VALUE"    "COUNT"    "EVT_NAME" "EVT_LF"   "EVT_PHYS" "R"        "G"       </span></span>
-<span><span class="co">#&gt; [8] "B"       </span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $row.names</span></span>
-<span><span class="co">#&gt;  [1]  1  2  3  4  5  6  7  8  9 10 11 12 13 14 15 16 17 18 19 20 21 22 23 24</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $class</span></span>
-<span><span class="co">#&gt; [1] "data.frame"</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $GDALRATTableType</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="st">"GDALRATTableType"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "thematic"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">VALUE</span><span class="op">)</span>     <span class="co"># GFU_MinMax for column of discrete pixel values</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
 <span><span class="co">#&gt; [1] "MinMax"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">COUNT</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">COUNT</span><span class="op">)</span>     <span class="co"># pixel counts</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
 <span><span class="co">#&gt; [1] "PixelCount"</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_NAME</span><span class="op">)</span>  <span class="co"># the class names</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
 <span><span class="co">#&gt; [1] "Name"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_LF</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_LF</span><span class="op">)</span>    <span class="co"># ancillary attribute</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
 <span><span class="co">#&gt; [1] "Generic"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_PHYS</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_PHYS</span><span class="op">)</span>  <span class="co"># ancillary attribute</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
 <span><span class="co">#&gt; [1] "Generic"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">R</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">R</span><span class="op">)</span>         <span class="co"># red 0-255</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
 <span><span class="co">#&gt; [1] "Red"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">G</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">G</span><span class="op">)</span>         <span class="co"># green 0-255</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
 <span><span class="co">#&gt; [1] "Green"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">B</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">B</span><span class="op">)</span>         <span class="co"># blue 0-255</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
 <span><span class="co">#&gt; [1] "Blue"</span></span>
 <span></span>
@@ -249,51 +238,47 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">flushCache</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">tbl2</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tbl2</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 24</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl2</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   VALUE COUNT                                                          EVT_NAME</span></span>
-<span><span class="co">#&gt; 1 -9999   876                                                       Fill-NoData</span></span>
-<span><span class="co">#&gt; 2  7011    28                          Rocky Mountain Aspen Forest and Woodland</span></span>
-<span><span class="co">#&gt; 3  7046  4564           Northern Rocky Mountain Subalpine Woodland and Parkland</span></span>
-<span><span class="co">#&gt; 4  7050   570                              Rocky Mountain Lodgepole Pine Forest</span></span>
-<span><span class="co">#&gt; 5  7055   889 Rocky Mountain Subalpine Dry-Mesic Spruce-Fir Forest and Woodland</span></span>
-<span><span class="co">#&gt; 6  7056   304 Rocky Mountain Subalpine Mesic-Wet Spruce-Fir Forest and Woodland</span></span>
-<span><span class="co">#&gt;   EVT_LF EVT_PHYS   R   G   B</span></span>
-<span><span class="co">#&gt; 1     NA       NA 255 255 255</span></span>
-<span><span class="co">#&gt; 2   Tree Hardwood 192 255 138</span></span>
-<span><span class="co">#&gt; 3   Tree  Conifer 191 255 233</span></span>
-<span><span class="co">#&gt; 4   Tree  Conifer 163 240 219</span></span>
-<span><span class="co">#&gt; 5   Tree  Conifer 236 252 204</span></span>
-<span><span class="co">#&gt; 6   Tree  Conifer 236 252 204</span></span>
-<span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co"># it can now be read from the raster dataset</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span>
+<span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 24</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="display-attribute-tables">Display attribute tables<a class="anchor" aria-label="anchor" href="#display-attribute-tables"></a>
 </h2>
-<p>The function <code><a href="../reference/displayRAT.html">displayRAT()</a></code> generates a presentation
-table. Colors are shown if the RAT contains RGB columns:</p>
+<p>An attribute table with RGB columns can be passed to
+<code><a href="../reference/plot_raster.html">gdalraster::plot_raster()</a></code> as a color table (columns
+<code>VALUE</code>, <code>R</code>, <code>G</code>, <code>B</code>):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds</span>,</span>
+<span>            col_tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">6</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span><span class="op">]</span>,</span>
+<span>            maxColorValue <span class="op">=</span> <span class="fl">255</span>,</span>
+<span>            interpolate <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>            main <span class="op">=</span> <span class="st">"Storm Lake LANDFIRE EVT"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="raster-attribute-tables_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
+<p>The function <code><a href="../reference/displayRAT.html">displayRAT()</a></code> generates a nicely formatted
+table for display. Colors are shown if the RAT contains RGB columns:</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/displayRAT.html">displayRAT</a></span><span class="op">(</span><span class="va">tbl</span>, title <span class="op">=</span> <span class="st">"Raster Attribute Table for Storm Lake EVT"</span><span class="op">)</span></span></code></pre></div>
-<div id="qygclgxlhc" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#qygclgxlhc table {
+<div id="ewcotezlpg" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#ewcotezlpg table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#qygclgxlhc thead, #qygclgxlhc tbody, #qygclgxlhc tfoot, #qygclgxlhc tr, #qygclgxlhc td, #qygclgxlhc th {
+#ewcotezlpg thead, #ewcotezlpg tbody, #ewcotezlpg tfoot, #ewcotezlpg tr, #ewcotezlpg td, #ewcotezlpg th {
   border-style: none;
 }
 
-#qygclgxlhc p {
+#ewcotezlpg p {
   margin: 0;
   padding: 0;
 }
 
-#qygclgxlhc .gt_table {
+#ewcotezlpg .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -319,12 +304,12 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-left-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_caption {
+#ewcotezlpg .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#qygclgxlhc .gt_title {
+#ewcotezlpg .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -336,7 +321,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-bottom-width: 0;
 }
 
-#qygclgxlhc .gt_subtitle {
+#ewcotezlpg .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -348,7 +333,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-top-width: 0;
 }
 
-#qygclgxlhc .gt_heading {
+#ewcotezlpg .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -360,13 +345,13 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-right-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_bottom_border {
+#ewcotezlpg .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_col_headings {
+#ewcotezlpg .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -381,7 +366,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-right-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_col_heading {
+#ewcotezlpg .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -401,7 +386,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   overflow-x: hidden;
 }
 
-#qygclgxlhc .gt_column_spanner_outer {
+#ewcotezlpg .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -413,15 +398,15 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   padding-right: 4px;
 }
 
-#qygclgxlhc .gt_column_spanner_outer:first-child {
+#ewcotezlpg .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#qygclgxlhc .gt_column_spanner_outer:last-child {
+#ewcotezlpg .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#qygclgxlhc .gt_column_spanner {
+#ewcotezlpg .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -433,11 +418,11 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   width: 100%;
 }
 
-#qygclgxlhc .gt_spanner_row {
+#ewcotezlpg .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#qygclgxlhc .gt_group_heading {
+#ewcotezlpg .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -463,7 +448,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   text-align: left;
 }
 
-#qygclgxlhc .gt_empty_group_heading {
+#ewcotezlpg .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -478,15 +463,15 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   vertical-align: middle;
 }
 
-#qygclgxlhc .gt_from_md > :first-child {
+#ewcotezlpg .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#qygclgxlhc .gt_from_md > :last-child {
+#ewcotezlpg .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#qygclgxlhc .gt_row {
+#ewcotezlpg .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -505,7 +490,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   overflow-x: hidden;
 }
 
-#qygclgxlhc .gt_stub {
+#ewcotezlpg .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -518,7 +503,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   padding-right: 5px;
 }
 
-#qygclgxlhc .gt_stub_row_group {
+#ewcotezlpg .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -532,15 +517,15 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   vertical-align: top;
 }
 
-#qygclgxlhc .gt_row_group_first td {
+#ewcotezlpg .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#qygclgxlhc .gt_row_group_first th {
+#ewcotezlpg .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#qygclgxlhc .gt_summary_row {
+#ewcotezlpg .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -550,16 +535,16 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   padding-right: 5px;
 }
 
-#qygclgxlhc .gt_first_summary_row {
+#ewcotezlpg .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_first_summary_row.thick {
+#ewcotezlpg .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#qygclgxlhc .gt_last_summary_row {
+#ewcotezlpg .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -569,7 +554,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-bottom-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_grand_summary_row {
+#ewcotezlpg .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -579,7 +564,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   padding-right: 5px;
 }
 
-#qygclgxlhc .gt_first_grand_summary_row {
+#ewcotezlpg .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -589,7 +574,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-top-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_last_grand_summary_row_top {
+#ewcotezlpg .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -599,11 +584,11 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-bottom-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_striped {
+#ewcotezlpg .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#qygclgxlhc .gt_table_body {
+#ewcotezlpg .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -612,7 +597,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-bottom-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_footnotes {
+#ewcotezlpg .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -626,7 +611,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-right-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_footnote {
+#ewcotezlpg .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -635,7 +620,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   padding-right: 5px;
 }
 
-#qygclgxlhc .gt_sourcenotes {
+#ewcotezlpg .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -649,7 +634,7 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   border-right-color: #D3D3D3;
 }
 
-#qygclgxlhc .gt_sourcenote {
+#ewcotezlpg .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -657,63 +642,63 @@ table. Colors are shown if the RAT contains RGB columns:</p>
   padding-right: 5px;
 }
 
-#qygclgxlhc .gt_left {
+#ewcotezlpg .gt_left {
   text-align: left;
 }
 
-#qygclgxlhc .gt_center {
+#ewcotezlpg .gt_center {
   text-align: center;
 }
 
-#qygclgxlhc .gt_right {
+#ewcotezlpg .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#qygclgxlhc .gt_font_normal {
+#ewcotezlpg .gt_font_normal {
   font-weight: normal;
 }
 
-#qygclgxlhc .gt_font_bold {
+#ewcotezlpg .gt_font_bold {
   font-weight: bold;
 }
 
-#qygclgxlhc .gt_font_italic {
+#ewcotezlpg .gt_font_italic {
   font-style: italic;
 }
 
-#qygclgxlhc .gt_super {
+#ewcotezlpg .gt_super {
   font-size: 65%;
 }
 
-#qygclgxlhc .gt_footnote_marks {
+#ewcotezlpg .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#qygclgxlhc .gt_asterisk {
+#ewcotezlpg .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#qygclgxlhc .gt_indent_1 {
+#ewcotezlpg .gt_indent_1 {
   text-indent: 5px;
 }
 
-#qygclgxlhc .gt_indent_2 {
+#ewcotezlpg .gt_indent_2 {
   text-indent: 10px;
 }
 
-#qygclgxlhc .gt_indent_3 {
+#ewcotezlpg .gt_indent_3 {
   text-indent: 15px;
 }
 
-#qygclgxlhc .gt_indent_4 {
+#ewcotezlpg .gt_indent_4 {
   text-indent: 20px;
 }
 
-#qygclgxlhc .gt_indent_5 {
+#ewcotezlpg .gt_indent_5 {
   text-indent: 25px;
 }
 </style>
@@ -1003,8 +988,10 @@ table. Colors are shown if the RAT contains RGB columns:</p>
 </table>
 </div>
 <p><code><a href="../reference/displayRAT.html">displayRAT()</a></code> returns an object of class
-<code>"gt_tbl"</code>. The table object could be modified using
-functions of the <strong>gt</strong> package.</p>
+<code>"gt_tbl"</code>. The table object can be modified using functions
+of the <strong>gt</strong> package.</p>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="using-in-qgis">Using in QGIS<a class="anchor" aria-label="anchor" href="#using-in-qgis"></a>
@@ -1036,7 +1023,7 @@ Attribute Table QGIS GUI</a> (since QGIS 3.30; examples for different
 use cases and workflows)</p></li>
 <li><p><a href="https://github.com/noaa-ocs-hydrography/qgis-raster-attribute-table-plugin" class="external-link">Raster
 Attribute Table QGIS Plugin</a> (QGIS &lt; 3.30)</p></li>
-<li><p>Package <a href="https://CRAN.R-project.org/package=gt" class="external-link"><strong>gt</strong></a></p></li>
+<li><p>Package <a href="https://CRAN.R-project.org/package=gt" class="external-link">gt</a></p></li>
 </ul>
 </div>
 <div class="section level2">
