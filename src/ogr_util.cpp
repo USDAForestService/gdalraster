@@ -111,3 +111,82 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
 	return ret;
 }
 
+//' Get field index or -1 if fld_name not found
+//' 
+//' @noRd
+// [[Rcpp::export(name = ".ogr_field_index")]]
+int _ogr_field_index(std::string dsn, std::string layer,
+		std::string fld_name) {
+
+	GDALDatasetH hDS;
+	OGRLayerH hLayer;
+	OGRFeatureDefnH hFDefn;
+	int iField;
+	
+	CPLPushErrorHandler(CPLQuietErrorHandler);	
+	hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
+	if (hDS == NULL)
+		return -1;
+	hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+	CPLPopErrorHandler();
+	
+	if (hLayer == NULL) {
+		GDALClose(hDS);
+		return -1;
+	}
+
+	hFDefn = OGR_L_GetLayerDefn(hLayer);
+	iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
+	GDALClose(hDS);
+	return iField;
+}
+
+//' Create a new field on layer
+//' currently hard coded for OFTInteger
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_field_create")]]
+bool _ogr_field_create(std::string dsn, std::string layer,
+		std::string fld_name) {
+
+	GDALDatasetH hDS;
+	OGRLayerH hLayer;
+	OGRFeatureDefnH hFDefn;
+	int iField;
+	OGRFieldDefnH hFieldDefn;
+	bool ret;
+	
+	CPLPushErrorHandler(CPLQuietErrorHandler);	
+	hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+			NULL, NULL, NULL);
+			
+	if (hDS == NULL)
+		return false;
+		
+	hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+	CPLPopErrorHandler();
+	
+	if (hLayer == NULL) {
+		GDALClose(hDS);
+		return false;
+	}
+
+	hFDefn = OGR_L_GetLayerDefn(hLayer);
+	iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
+	if (iField >= 0) {
+		// fld_name already exists
+		GDALClose(hDS);
+		return false;
+	}
+	
+	hFieldDefn = OGR_Fld_Create(fld_name.c_str(), OFTInteger);
+	if (OGR_L_CreateField(hLayer, hFieldDefn, TRUE) != OGRERR_NONE)
+		ret = false;
+	else
+		ret = true;
+
+	OGR_Fld_Destroy(hFieldDefn);
+	GDALClose(hDS);
+	return ret;
+}
+

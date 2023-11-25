@@ -1095,6 +1095,21 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_layer_create`, dsn, layer, srs, options)
 }
 
+#' Get field index or -1 if fld_name not found
+#' 
+#' @noRd
+.ogr_field_index <- function(dsn, layer, fld_name) {
+    .Call(`_gdalraster__ogr_field_index`, dsn, layer, fld_name)
+}
+
+#' Create a new field on layer
+#' currently hard coded for OFTInteger
+#'
+#' @noRd
+.ogr_field_create <- function(dsn, layer, fld_name) {
+    .Call(`_gdalraster__ogr_field_create`, dsn, layer, fld_name)
+}
+
 #' get PROJ version
 #' @noRd
 .getPROJVersion <- function() {

@@ -613,6 +613,32 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _ogr_field_index
+int _ogr_field_index(std::string dsn, std::string layer, std::string fld_name);
+RcppExport SEXP _gdalraster__ogr_field_index(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
+    Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
+    Rcpp::traits::input_parameter< std::string >::type fld_name(fld_nameSEXP);
+    rcpp_result_gen = Rcpp::wrap(_ogr_field_index(dsn, layer, fld_name));
+    return rcpp_result_gen;
+END_RCPP
+}
+// _ogr_field_create
+bool _ogr_field_create(std::string dsn, std::string layer, std::string fld_name);
+RcppExport SEXP _gdalraster__ogr_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
+    Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
+    Rcpp::traits::input_parameter< std::string >::type fld_name(fld_nameSEXP);
+    rcpp_result_gen = Rcpp::wrap(_ogr_field_create(dsn, layer, fld_name));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _getPROJVersion
 std::vector<int> _getPROJVersion();
 RcppExport SEXP _gdalraster__getPROJVersion() {
@@ -827,6 +853,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__ogr_ds_exists", (DL_FUNC) &_gdalraster__ogr_ds_exists, 2},
     {"_gdalraster__ogr_layer_exists", (DL_FUNC) &_gdalraster__ogr_layer_exists, 2},
     {"_gdalraster__ogr_layer_create", (DL_FUNC) &_gdalraster__ogr_layer_create, 4},
+    {"_gdalraster__ogr_field_index", (DL_FUNC) &_gdalraster__ogr_field_index, 3},
+    {"_gdalraster__ogr_field_create", (DL_FUNC) &_gdalraster__ogr_field_create, 3},
     {"_gdalraster__getPROJVersion", (DL_FUNC) &_gdalraster__getPROJVersion, 0},
     {"_gdalraster__getPROJSearchPaths", (DL_FUNC) &_gdalraster__getPROJSearchPaths, 0},
     {"_gdalraster__setPROJSearchPaths", (DL_FUNC) &_gdalraster__setPROJSearchPaths, 1},
