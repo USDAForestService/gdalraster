@@ -1,5 +1,7 @@
 # gdalraster 1.6.1 (dev)
 
+* add OGR utility functions for vector data sources, for internal use (2023-11-25)
+
 * add `rasterize()`: wrapper for the `gdal_rasterize` command-line utility, burn vector geometries (points, lines, or polygons) into a raster (2023-11-24)
 
 * add `translate()`: wrapper for the `gdal_translate` command-line utility, convert raster data between different formats (2023-11-22)

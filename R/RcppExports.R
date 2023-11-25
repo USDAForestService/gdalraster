@@ -1073,6 +1073,50 @@ has_geos <- function() {
     .Call(`_gdalraster__g_centroid`, geom)
 }
 
+#' Does vector data source exist
+#' 
+#' @noRd
+.ogr_ds_exists <- function(dsn, with_update = FALSE) {
+    .Call(`_gdalraster__ogr_ds_exists`, dsn, with_update)
+}
+
+#' Does layer exist
+#' 
+#' @noRd
+.ogr_layer_exists <- function(dsn, layer) {
+    .Call(`_gdalraster__ogr_layer_exists`, dsn, layer)
+}
+
+#' Create a layer in a vector data source
+#' currently hard coded as layer of wkbPolygon
+#'
+#' @noRd
+.ogr_layer_create <- function(dsn, layer, srs = "", options = NULL) {
+    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, srs, options)
+}
+
+#' Delete a layer in a vector data source
+#'
+#' @noRd
+.ogr_layer_delete <- function(dsn, layer) {
+    .Call(`_gdalraster__ogr_layer_delete`, dsn, layer)
+}
+
+#' Get field index or -1 if fld_name not found
+#' 
+#' @noRd
+.ogr_field_index <- function(dsn, layer, fld_name) {
+    .Call(`_gdalraster__ogr_field_index`, dsn, layer, fld_name)
+}
+
+#' Create a new field on layer
+#' currently hard coded for OFTInteger
+#'
+#' @noRd
+.ogr_field_create <- function(dsn, layer, fld_name) {
+    .Call(`_gdalraster__ogr_field_create`, dsn, layer, fld_name)
+}
+
 #' get PROJ version
 #' @noRd
 .getPROJVersion <- function() {
