@@ -42,7 +42,7 @@ bool _ogr_layer_exists(std::string dsn, std::string layer) {
 	OGRLayerH hLayer;
 	bool ret;
 	
-	CPLPushErrorHandler(CPLQuietErrorHandler);	
+	CPLPushErrorHandler(CPLQuietErrorHandler);
 	hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
 	if (hDS == NULL)
 		return false;
@@ -82,7 +82,7 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
 	if (hDS == NULL)
 		return false;
 
-	if(!GDALDatasetTestCapability(hDS, ODsCCreateLayer)) {
+	if (!GDALDatasetTestCapability(hDS, ODsCCreateLayer)) {
 		GDALClose(hDS);
 		return false;
 	}
@@ -107,7 +107,50 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
 		
 	OSRDestroySpatialReference(hSRS);
 	GDALClose(hDS);
+	return ret;
+}
+
+//' Delete a layer in a vector data source
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_layer_delete")]]
+bool _ogr_layer_delete(std::string dsn, std::string layer) {
+
+	GDALDatasetH hDS;
+	OGRLayerH  hLayer;
+	int layer_cnt, layer_idx;
+	bool ret;
+		
+	hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+			NULL, NULL, NULL);
+			
+	if (hDS == NULL)
+		return false;
+
+	if (!GDALDatasetTestCapability(hDS, ODsCDeleteLayer)) {
+		GDALClose(hDS);
+		return false;
+	}
+
+	hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+	if (hLayer == NULL) {
+		GDALClose(hDS);
+		return false;
+	}
 	
+	layer_cnt = GDALDatasetGetLayerCount(hDS);
+	for (layer_idx=0; layer_idx < layer_cnt; ++layer_idx) {
+		hLayer = GDALDatasetGetLayer(hDS, layer_idx);
+		if (EQUAL(OGR_L_GetName(hLayer), layer.c_str()))
+			break;
+	}
+	
+	if (GDALDatasetDeleteLayer(hDS, layer_idx) != OGRERR_NONE)
+		ret = false;
+	else
+		ret = true;
+		
+	GDALClose(hDS);
 	return ret;
 }
 

@@ -1095,6 +1095,13 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_layer_create`, dsn, layer, srs, options)
 }
 
+#' Delete a layer in a vector data source
+#'
+#' @noRd
+.ogr_layer_delete <- function(dsn, layer) {
+    .Call(`_gdalraster__ogr_layer_delete`, dsn, layer)
+}
+
 #' Get field index or -1 if fld_name not found
 #' 
 #' @noRd
