@@ -1,13 +1,11 @@
 /* Utility functions for vector data sources
    Chris Toney <chris.toney at usda.gov> */
 
-#include "rcpp_util.h"
-
-#include <string>
+#include "ogr_util.h"
 
 #include "gdal.h"
 #include "cpl_error.h"
-#include "cpl_string.h"
+#include "cpl_port.h"
 #include "ogr_srs_api.h"
 
 //' Does vector data source exist
