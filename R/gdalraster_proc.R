@@ -1463,11 +1463,10 @@ rasterize <- function(src_dsn,
 	}
 
 	if (!is.null(init)) {
-		if (!is.numeric(init)) {
+		if (!is.numeric(init))
 			stop("init must be numeric.", call. = FALSE)
 		for (value in init)
 			argv <- c(argv, "-init", value)
-		}
 	}
 
 	if (!is.null(fmt)) {
