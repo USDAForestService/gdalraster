@@ -1073,6 +1073,28 @@ has_geos <- function() {
     .Call(`_gdalraster__g_centroid`, geom)
 }
 
+#' Does vector data source exist
+#' 
+#' @noRd
+.ogr_ds_exists <- function(dsn, with_update = FALSE) {
+    .Call(`_gdalraster__ogr_ds_exists`, dsn, with_update)
+}
+
+#' Does layer exist
+#' 
+#' @noRd
+.ogr_layer_exists <- function(dsn, layer) {
+    .Call(`_gdalraster__ogr_layer_exists`, dsn, layer)
+}
+
+#' Create a layer in a vector data source
+#' currently hard coded as layer of wkbPolygon
+#'
+#' @noRd
+.ogr_layer_create <- function(dsn, layer, srs = "", options = NULL) {
+    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, srs, options)
+}
+
 #' get PROJ version
 #' @noRd
 .getPROJVersion <- function() {

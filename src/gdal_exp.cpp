@@ -215,7 +215,7 @@ bool create(std::string format, std::string dst_filename,
                     	opt_list.data());
 
 	if (hDstDS == NULL)
-		Rcpp::stop("Create raster failed.");
+		Rcpp::stop("Create dataset failed.");
 	
 	GDALClose(hDstDS);
 	return true;
@@ -295,7 +295,7 @@ bool createCopy(std::string format, std::string dst_filename,
 
 	GDALClose(hSrcDS);
 	if (hDstDS == NULL)
-		Rcpp::stop("Create raster failed.");
+		Rcpp::stop("Create copy failed.");
 
 	GDALClose(hDstDS);
 	return true;

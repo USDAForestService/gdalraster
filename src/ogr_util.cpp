@@ -1,0 +1,113 @@
+/* Utility functions for vector data sources
+   Chris Toney <chris.toney at usda.gov> */
+
+#include "rcpp_util.h"
+
+#include <string>
+
+#include "gdal.h"
+#include "cpl_error.h"
+#include "cpl_string.h"
+#include "ogr_srs_api.h"
+
+//' Does vector data source exist
+//' 
+//' @noRd
+// [[Rcpp::export(name = ".ogr_ds_exists")]]
+bool _ogr_ds_exists(std::string dsn, bool with_update = false) {
+
+	GDALDatasetH hDS;
+	
+	CPLPushErrorHandler(CPLQuietErrorHandler);	
+	if (with_update)
+		hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+				NULL, NULL, NULL);
+	else
+		hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
+	CPLPopErrorHandler();
+	if (hDS == NULL)
+		return false;
+
+	GDALClose(hDS);
+	return true;
+}
+
+//' Does layer exist
+//' 
+//' @noRd
+// [[Rcpp::export(name = ".ogr_layer_exists")]]
+bool _ogr_layer_exists(std::string dsn, std::string layer) {
+
+	GDALDatasetH hDS;
+	OGRLayerH hLayer;
+	bool ret;
+	
+	CPLPushErrorHandler(CPLQuietErrorHandler);	
+	hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
+	if (hDS == NULL)
+		return false;
+	hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+	CPLPopErrorHandler();
+	if (hLayer == NULL)
+		ret = false;
+	else
+		ret = true;
+	
+	GDALClose(hDS);
+	return ret;
+}
+
+//' Create a layer in a vector data source
+//' currently hard coded as layer of wkbPolygon
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_layer_create")]]
+bool _ogr_layer_create(std::string dsn, std::string layer,
+		std::string srs = "",
+		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+
+	GDALDatasetH hDS;
+	OGRLayerH  hLayer;
+	bool ret;
+
+	OGRSpatialReferenceH hSRS = OSRNewSpatialReference(NULL);
+	if (srs != "") {
+		if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE)
+			Rcpp::stop("Error importing SRS from user input.");
+	}
+		
+	hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+			NULL, NULL, NULL);
+			
+	if (hDS == NULL)
+		return false;
+
+	if(!GDALDatasetTestCapability(hDS, ODsCCreateLayer)) {
+		GDALClose(hDS);
+		return false;
+	}
+	
+	std::vector<char *> opt_list = {NULL};
+	if (options.isNotNull()) {
+		Rcpp::CharacterVector options_in(options);
+		opt_list.resize(options_in.size() + 1);
+		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+			opt_list[i] = (char *) (options_in[i]);
+		}
+		opt_list[options_in.size()] = NULL;
+	}
+
+	hLayer = GDALDatasetCreateLayer(hDS, layer.c_str(), hSRS, wkbPolygon,
+				opt_list.data());
+	
+	if (hLayer == NULL)
+		ret = false;
+	else
+		ret = true;
+		
+	OSRDestroySpatialReference(hSRS);
+	GDALClose(hDS);
+	
+	return ret;
+}
+
