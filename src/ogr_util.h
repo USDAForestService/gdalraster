@@ -9,6 +9,7 @@
 #include <string>
 
 bool _ogr_ds_exists(std::string dsn, bool with_update);
+int _ogr_ds_layer_count(std::string dsn);
 bool _ogr_layer_exists(std::string dsn, std::string layer);
 bool _ogr_layer_create(std::string dsn, std::string layer,
 		std::string srs, Rcpp::Nullable<Rcpp::CharacterVector> options);

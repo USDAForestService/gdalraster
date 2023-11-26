@@ -30,6 +30,25 @@ bool _ogr_ds_exists(std::string dsn, bool with_update = false) {
 	return true;
 }
 
+//' Get number of layers in a dataset
+//' 
+//' @noRd
+// [[Rcpp::export(name = ".ogr_ds_layer_count")]]
+int _ogr_ds_layer_count(std::string dsn) {
+
+	GDALDatasetH hDS;
+	
+	CPLPushErrorHandler(CPLQuietErrorHandler);
+	hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
+	if (hDS == NULL)
+		return -1;
+	CPLPopErrorHandler();
+	
+	int cnt = GDALDatasetGetLayerCount(hDS);
+	GDALClose(hDS);
+	return cnt;
+}
+
 //' Does layer exist
 //' 
 //' @noRd
