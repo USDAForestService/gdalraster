@@ -79,6 +79,25 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 	return(NULL)
 }
 
+#' @noRd
+.getOGRformat <- function(file) {
+# Only for guessing common output formats
+	file <- as.character(file)
+	if (endsWith(file, ".gpkg") || endsWith(file, ".GPKG")) {
+		return("GPKG")
+	}
+	if (endsWith(file, ".shp") || endsWith(file, ".SHP")) {
+		return("ESRI Shapefile")
+	}
+	if (endsWith(file, ".sqlite") || endsWith(file, ".SQLITE")) {
+		return("SQLite")
+	}
+	if (endsWith(file, ".fgb") || endsWith(file, ".FGB")) {
+		return("FlatGeobuf")
+	}
+	return(NULL)
+}
+
 
 #' Get a pixel or line offset for a north-up raster
 #' @param coord A georeferenced x or y
@@ -1245,6 +1264,95 @@ dem_proc <- function(mode,
 		stop("DEM processing mode not recognized.", call.=FALSE)
 
 	return(invisible(.dem_proc(mode,srcfile,dstfile,mode_options,color_file)))
+}
+
+
+
+#' @export
+polygonize <- function(src_filename,
+					out_dsn,
+					out_layer,
+					fld_name = "DN",
+					out_fmt = NULL,
+					connectedness = 4,
+					src_band = 1,
+					mask_file = NULL,
+					nomask = FALSE,
+					overwrite = FALSE,
+					dsco = NULL,
+					lco = NULL) {
+
+	if (connectedness !=4 && connectedness != 8)
+		stop("connectedness must be either 4 or 8.", call. = FALSE)
+		
+	ds <- new(GDALRaster, src_filename, TRUE)
+	srs <- ds$getProjectionRef()
+	ds$close()
+	
+	if (!is.null(mask_file)) {
+		ds <- new(GDALRaster, mask_file, TRUE)
+		ds$close()
+	}
+	else {
+		mask_file = ""
+	}
+	
+	if (!.ogr_ds_exists(out_dsn, with_update=TRUE)) {
+		if (.ogr_ds_exists(out_dsn) && !overwrite) {
+			msg <- "out_dsn exists but cannot be updated. "
+			msg <- paste0(msg, "Remove it first, or use overwrite=TRUE.")
+			stop(msg, call. = FALSE)
+		}
+	}
+
+	if (.ogr_ds_exists(out_dsn, with_update=TRUE) && overwrite) {
+		deleted <- FALSE
+		if (.ogr_layer_exists(out_dsn, out_layer)) {
+			deleted <- .ogr_layer_delete(out_dsn, out_layer)
+		}
+		if (!deleted) {
+			if (.ogr_ds_layer_count(out_dsn) == 1) {
+				if (isTRUE(file.exists(out_dsn)))
+					deleted <- deleteDataset(out_dsn)
+			}
+		}
+		if (!deleted) {
+			stop("Cannot overwrite out_layer.", call. = FALSE)
+		}
+	}
+	
+	if (.ogr_layer_exists(out_dsn, out_layer)) {
+		if (!is.null(lco)) {
+			warning("lco ignored since the layer already exists.",
+					call. = FALSE)
+		}
+	}
+	
+	if (!.ogr_ds_exists(out_dsn, with_update=TRUE)) {
+		if (is.null(out_fmt))
+			out_fmt <- .getOGRformat(out_dsn)
+		if (is.null(out_fmt)) {
+			message("Format driver cannot be determined for: ", out_dsn)
+			stop("Specify out_fmt to create a new dataset.", call. = FALSE)
+		}
+		if (!.create_ogr(out_fmt, out_dsn, 0, 0, 0, "Unknown",
+						out_layer, srs, fld_name, dsco, lco))
+			stop("Failed to create out_dsn.", call. = FALSE)
+	}
+	
+	if (!.ogr_layer_exists(out_dsn, out_layer)) {
+		res <- .ogr_layer_create(out_dsn, out_layer, srs, lco)
+		if (!res)
+			stop("Failed to create out_layer.", call. = FALSE)
+		if (fld_name != "") {
+			res <- .ogr_field_create(out_dsn, out_layer, fld_name)
+			if (!res)
+				stop("Failed to create output field.", call. = FALSE)
+		}
+	}
+	
+	return(invisible(.polygonize(src_filename, src_band, out_dsn, out_layer,
+					fld_name, mask_file, nomask, connectedness)))
 }
 
 
