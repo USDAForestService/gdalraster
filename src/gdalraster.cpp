@@ -21,6 +21,8 @@
 void _gdal_init(DllInfo *dll) {
     GDALAllRegister();
     CPLSetConfigOption("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "YES");
+    CPLSetConfigOption("OSR_DEFAULT_AXIS_MAPPING_STRATEGY",
+    		"TRADITIONAL_GIS_ORDER");
 }
 
 // Internal lookup of GDALColorInterp by string descriptor

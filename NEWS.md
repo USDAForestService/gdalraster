@@ -1,5 +1,7 @@
 # gdalraster 1.6.1 (dev)
 
+* set GDAL configuration option on init: `TRADITIONAL_GIS_ORDER=OSR_DEFAULT_AXIS_MAPPING_STRATEGY` (2023-11-25)
+
 * add OGR utility functions for vector data sources, for internal use (2023-11-25)
 
 * add `rasterize()`: wrapper for the `gdal_rasterize` command-line utility, burn vector geometries (points, lines, or polygons) into a raster (2023-11-24)
