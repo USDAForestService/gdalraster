@@ -165,6 +165,18 @@ clamped between <code>2</code> and <code>1000</code>:</p>
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_MAX_DATASET_POOL_SIZE"</span>, <span class="st">"450"</span><span class="op">)</span> <span class="co"># default is 100</span></span></code></pre></div>
 <p>Also note that <code>gdalwarp</code> <a href="https://gdal.org/drivers/raster/vrt.html#performance-considerations" class="external-link">increases
 the pool size to <code>450</code></a> by default.</p>
+<p><strong><code>SQLITE_USE_OGR_VFS</code></strong></p>
+<p>For the SQLite database formats GeoPackage (.gpkg) and Spatialite
+(.sqlite), setting to <code>YES</code> enables extra buffering/caching
+by the GDAL/OGR I/O layer and can speed up I/O. Be aware that no file
+locking will occur if this option is activated, so concurrent edits may
+lead to database corruption. This setting can substantially increase
+performance when using <code><a href="../reference/polygonize.html">gdalraster::polygonize()</a></code> to write
+polygons to a vector layer in these formats. Additional configuration
+and performance hints for SQLite databases are in the driver
+documentation at: <a href="https://gdal.org/drivers/vector/sqlite.html#configuration-options" class="external-link uri">https://gdal.org/drivers/vector/sqlite.html#configuration-options</a>.</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"SQLITE_USE_OGR_VFS"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="networking">Networking<a class="anchor" aria-label="anchor" href="#networking"></a>
@@ -185,7 +197,7 @@ gdalraster sets this option to <code>TRADITIONAL_GIS_ORDER</code>.</p>
 <p><strong><code>OSR_WKT_FORMAT</code></strong></p>
 <p>As of GDAL 3.0, the default format for exporting a spatial reference
 definition to Well Known Text is WKT 1. This can be overridden with:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SFSQL/WKT1_SIMPLE/WKT1/WKT1_GDAL/WKT1_ESRI/WKT2_2015/WKT2_2018/WKT2/DEFAULT</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"OSR_WKT_FORMAT"</span>, <span class="st">"WKT2"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -199,7 +211,7 @@ topic above generally applies to processing with
 <p><strong><code>GDAL_NUM_THREADS</code></strong></p>
 <p>Multithreaded computation in <code><a href="../reference/warp.html">warp()</a></code> can be enabled
 with:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># note this also affects several other parts of GDAL</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">"4"</span><span class="op">)</span> <span class="co"># number of threads or ALL_CPUS</span></span></code></pre></div>
 <p>Increasing the memory available to <code><a href="../reference/warp.html">warp()</a></code> may also
@@ -239,7 +251,7 @@ worth it for slow compression algorithms such as <code>DEFLATE</code> or
 <code>LZMA</code>. Starting with GDAL 3.6, this option also enables
 multi-threaded decoding when read requests intersect several
 tiles/strips:</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># specify the number of worker threads or ALL_CPUS</span></span>
 <span><span class="co"># note this also affects several other parts of GDAL</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">"ALL_CPUS"</span><span class="op">)</span></span></code></pre></div>
@@ -247,7 +259,7 @@ tiles/strips:</p>
 <p>Raster overviews (a.k.a. pyramids) can be built with the
 <code>$buildOverviews()</code> method of a <code>GDALRaster</code>
 object. It may be desirable to compress the overviews when building:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># applies to external overviews (.ovr), and internal overviews if GDAL &gt;= 3.6</span></span>
 <span><span class="co"># LZW is a good default but several other compression algorithms are available</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"COMPRESS_OVERVIEW"</span>, <span class="st">"LZW"</span><span class="op">)</span></span></code></pre></div>
@@ -260,7 +272,7 @@ and <code>3</code> is floating point prediction.
 samples (support for 64 bit was added in libtiff &gt; 4.3.0).
 <code>PREDICTOR=3</code> is only supported for 16, 32 and 64 bit
 floating-point data.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># horizontal differencing</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"PREDICTOR_OVERVIEW"</span>, <span class="st">"2"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -272,12 +284,12 @@ floating-point data.</p>
 <p><strong><code>AWS_NO_SIGN_REQUEST</code></strong></p>
 <p>Request signing can be disabled for public buckets that do not
 require an AWS account:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># public bucket no AWS account required</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_NO_SIGN_REQUEST"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>AWS_ACCESS_KEY_ID</code></strong><br><strong><code>AWS_SECRET_ACCESS_KEY</code></strong><br><strong><code>AWS_SESSION_TOKEN</code></strong><br><strong><code>AWS_REQUEST_PAYER</code></strong></p>
 <p>If authentication is required, configure credentials with:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_ACCESS_KEY_ID"</span>, <span class="st">"&lt;value&gt;"</span><span class="op">)</span> <span class="co"># key ID</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_SECRET_ACCESS_KEY"</span>, <span class="st">"&lt;value&gt;"</span><span class="op">)</span> <span class="co"># secret access key</span></span>
 <span><span class="co"># used for validation if using temporary credentials:</span></span>
