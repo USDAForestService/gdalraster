@@ -10,6 +10,7 @@ test_that("OGR utility functions work on a vector data source", {
 	lco <- "DESCRIPTION=gdalraster test"
 	expect_true(.ogr_layer_create(dsn, layer, "EPSG:5070", lco))
 	expect_true(.ogr_layer_exists(dsn, layer))
+	expect_equal(.ogr_ds_layer_count(dsn), 2)
 	expect_equal(.ogr_field_index(dsn, layer, "DN"), -1)
 	expect_true(.ogr_field_create(dsn, layer, "DN"))
 	expect_equal(.ogr_field_index(dsn, layer, "DN"), 0)
