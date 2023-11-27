@@ -34,10 +34,8 @@ the pixel values will be written. Will be created if necessary when using an
 existing layer.}
 
 \item{out_fmt}{GDAL short name of the output vector format. If unspecified,
-the function will attempt to guess the format from the file extension.
-Currently, \code{out_fmt} needs to specified if \code{out_dsn} is a database
-connection string (e.g., \code{out_fmt = "PostgreSQL"} if using a PostgreSQL
-connection string for \code{out_dsn}).}
+the function will attempt to guess the format from the filename/connection
+string.}
 
 \item{connectedness}{Integer scalar. Must be either \code{4} or \code{8}. For the
 default 4-connectedness, pixels with the same value are considered connected
@@ -105,17 +103,19 @@ When 8-connectedness is used, many of the resulting polygons will likely be
 invalid due to ring self-intersection (in the strict OGC definition of
 polygon validity). They may be suitable as-is for certain purposes such as
 calculating geometry attributes (area, perimeter). Package \strong{sf} has
-function \code{st_make_valid()}, PostGIS has \code{ST_MakeValid()}, and QGIS has
-vector processing utility "Fix geometries" (single polygons can become
-MultiPolygon in the case of self-intersections).
+\code{st_make_valid()}, PostGIS has \code{ST_MakeValid()}, and QGIS has vector
+processing utility "Fix geometries" (single polygons can become MultiPolygon
+in the case of self-intersections).
 
-If writing to a SQLite database format as \code{"GPKG"} (GeoPackage vector)
-or \code{"SQLite"} (SQLite / Spatialite RDBMS), setting the \code{SQLITE_USE_OGR_VFS}
-configuration option can increase performance substantially:
-\preformatted{
+If writing to a SQLite database format as either \code{"GPKG"} (GeoPackage
+vector) or \code{"SQLite"} (Spatialite vector), setting the
+\code{SQLITE_USE_OGR_VFS} configuration option can increase performance
+substantially:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# SQLite: GPKG (.gpkg) and Spatialite (.sqlite)
 # enable extra buffering/caching by the GDAL/OGR I/O layer
-set_config_option("SQLITE_USE_OGR_VFS", "YES")
-}
+set_config_option("SQLITE_USE_OGR_VFS", "YES")\}
+}\if{html}{\out{</div>}}
 }
 \examples{
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
