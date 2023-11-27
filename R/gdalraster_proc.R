@@ -1352,6 +1352,7 @@ dem_proc <- function(mode,
 #' or `"SQLite"` (SQLite / Spatialite RDBMS), setting the `SQLITE_USE_OGR_VFS`
 #' configuration option can increase performance substantially:
 #' \preformatted{
+#' # enable extra buffering/caching by the GDAL/OGR I/O layer
 #' set_config_option("SQLITE_USE_OGR_VFS", "YES")
 #' }
 #'

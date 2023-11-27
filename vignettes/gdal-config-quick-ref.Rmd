@@ -85,6 +85,7 @@ Also note that `gdalwarp` [increases the pool size to `450`](https://gdal.org/dr
 For the SQLite database formats GeoPackage (.gpkg) and Spatialite (.sqlite), setting to `YES` enables extra buffering/caching by the GDAL/OGR I/O layer and can speed up I/O. Be aware that no file locking will occur if this option is activated, so concurrent edits may lead to database corruption. This setting can substantially increase performance when using `gdalraster::polygonize()` to write polygons to a vector layer in these formats. Additional configuration and performance hints for SQLite databases are in the driver documentation at: https://gdal.org/drivers/vector/sqlite.html#configuration-options.
 
 ```{r}
+# enable extra buffering/caching by the GDAL/OGR I/O layer
 set_config_option("SQLITE_USE_OGR_VFS", "YES")
 ```
 

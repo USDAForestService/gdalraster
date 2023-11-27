@@ -34,12 +34,14 @@ supporting:
   - low-level I/O
   - read/set color tables and raster attribute tables
   - copy files/move/rename/delete datasets
-  - virtual raster (VRT) for virtual subsetting, resampling and kernel
-    filtering
+  - virtual raster (VRT) for virtual cropping, resampling, kernel
+    filtering, mosaicing
   - `gdalwarp` wrapper for reproject/resample/crop/mosaic
   - coordinate transformation
   - spatial reference convenience functions
-  - several GDAL algorithms
+  - several GDAL algorithms (`dem_proc()`, `polygonize()`,
+    `rasterize()`,
+    […](https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html#details))
 
 Additional functionality includes:
 
