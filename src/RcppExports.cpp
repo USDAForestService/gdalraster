@@ -202,6 +202,24 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _polygonize
+bool _polygonize(std::string src_filename, int src_band, std::string out_dsn, std::string out_layer, std::string fld_name, std::string mask_file, bool nomask, int connectedness);
+RcppExport SEXP _gdalraster__polygonize(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP out_dsnSEXP, SEXP out_layerSEXP, SEXP fld_nameSEXP, SEXP mask_fileSEXP, SEXP nomaskSEXP, SEXP connectednessSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< int >::type src_band(src_bandSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_dsn(out_dsnSEXP);
+    Rcpp::traits::input_parameter< std::string >::type out_layer(out_layerSEXP);
+    Rcpp::traits::input_parameter< std::string >::type fld_name(fld_nameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type mask_file(mask_fileSEXP);
+    Rcpp::traits::input_parameter< bool >::type nomask(nomaskSEXP);
+    Rcpp::traits::input_parameter< int >::type connectedness(connectednessSEXP);
+    rcpp_result_gen = Rcpp::wrap(_polygonize(src_filename, src_band, out_dsn, out_layer, fld_name, mask_file, nomask, connectedness));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _rasterize
 bool _rasterize(std::string src_dsn, std::string dst_filename, Rcpp::CharacterVector cl_arg);
 RcppExport SEXP _gdalraster__rasterize(SEXP src_dsnSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP) {
@@ -587,6 +605,38 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _create_ogr
+bool _create_ogr(std::string format, std::string dst_filename, int xsize, int ysize, int nbands, std::string dataType, std::string layer, std::string srs, std::string fld_name, Rcpp::Nullable<Rcpp::CharacterVector> dsco, Rcpp::Nullable<Rcpp::CharacterVector> lco);
+RcppExport SEXP _gdalraster__create_ogr(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP, SEXP dataTypeSEXP, SEXP layerSEXP, SEXP srsSEXP, SEXP fld_nameSEXP, SEXP dscoSEXP, SEXP lcoSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< int >::type xsize(xsizeSEXP);
+    Rcpp::traits::input_parameter< int >::type ysize(ysizeSEXP);
+    Rcpp::traits::input_parameter< int >::type nbands(nbandsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dataType(dataTypeSEXP);
+    Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
+    Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type fld_name(fld_nameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type dsco(dscoSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type lco(lcoSEXP);
+    rcpp_result_gen = Rcpp::wrap(_create_ogr(format, dst_filename, xsize, ysize, nbands, dataType, layer, srs, fld_name, dsco, lco));
+    return rcpp_result_gen;
+END_RCPP
+}
+// _ogr_ds_layer_count
+int _ogr_ds_layer_count(std::string dsn);
+RcppExport SEXP _gdalraster__ogr_ds_layer_count(SEXP dsnSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
+    rcpp_result_gen = Rcpp::wrap(_ogr_ds_layer_count(dsn));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _ogr_layer_exists
 bool _ogr_layer_exists(std::string dsn, std::string layer);
 RcppExport SEXP _gdalraster__ogr_layer_exists(SEXP dsnSEXP, SEXP layerSEXP) {
@@ -832,6 +882,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__value_count", (DL_FUNC) &_gdalraster__value_count, 2},
     {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 5},
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 5},
+    {"_gdalraster__polygonize", (DL_FUNC) &_gdalraster__polygonize, 8},
     {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 3},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 9},
     {"_gdalraster_translate", (DL_FUNC) &_gdalraster_translate, 3},
@@ -863,6 +914,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__g_area", (DL_FUNC) &_gdalraster__g_area, 1},
     {"_gdalraster__g_centroid", (DL_FUNC) &_gdalraster__g_centroid, 1},
     {"_gdalraster__ogr_ds_exists", (DL_FUNC) &_gdalraster__ogr_ds_exists, 2},
+    {"_gdalraster__create_ogr", (DL_FUNC) &_gdalraster__create_ogr, 11},
+    {"_gdalraster__ogr_ds_layer_count", (DL_FUNC) &_gdalraster__ogr_ds_layer_count, 1},
     {"_gdalraster__ogr_layer_exists", (DL_FUNC) &_gdalraster__ogr_layer_exists, 2},
     {"_gdalraster__ogr_layer_create", (DL_FUNC) &_gdalraster__ogr_layer_create, 4},
     {"_gdalraster__ogr_layer_delete", (DL_FUNC) &_gdalraster__ogr_layer_delete, 2},

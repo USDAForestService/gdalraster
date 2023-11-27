@@ -393,6 +393,14 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
     invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations))
 }
 
+#' Wrapper for GDALPolygonize in the GDAL Algorithms C API
+#'
+#' Called from and documented in R/gdalraster_proc.R
+#' @noRd
+.polygonize <- function(src_filename, src_band, out_dsn, out_layer, fld_name, mask_file = "", nomask = FALSE, connectedness = 4L) {
+    .Call(`_gdalraster__polygonize`, src_filename, src_band, out_dsn, out_layer, fld_name, mask_file, nomask, connectedness)
+}
+
 #' Wrapper for GDALRasterize in the GDAL Algorithms C API
 #'
 #' Called from and documented in R/gdalraster_proc.R
@@ -1073,11 +1081,26 @@ has_geos <- function() {
     .Call(`_gdalraster__g_centroid`, geom)
 }
 
-#' Does vector data source exist
+#' Does vector dataset exist
 #' 
 #' @noRd
 .ogr_ds_exists <- function(dsn, with_update = FALSE) {
     .Call(`_gdalraster__ogr_ds_exists`, dsn, with_update)
+}
+
+#' Create a vector dataset with layer and field
+#' currently hard coded as layer of wkbPolygon, field of OFTInteger
+#'
+#' @noRd
+.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, srs = "", fld_name = "", dsco = NULL, lco = NULL) {
+    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, srs, fld_name, dsco, lco)
+}
+
+#' Get number of layers in a dataset
+#' 
+#' @noRd
+.ogr_ds_layer_count <- function(dsn) {
+    .Call(`_gdalraster__ogr_ds_layer_count`, dsn)
 }
 
 #' Does layer exist
@@ -1087,7 +1110,7 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_layer_exists`, dsn, layer)
 }
 
-#' Create a layer in a vector data source
+#' Create a layer in a vector dataset
 #' currently hard coded as layer of wkbPolygon
 #'
 #' @noRd
@@ -1095,7 +1118,7 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_layer_create`, dsn, layer, srs, options)
 }
 
-#' Delete a layer in a vector data source
+#' Delete a layer in a vector dataset
 #'
 #' @noRd
 .ogr_layer_delete <- function(dsn, layer) {

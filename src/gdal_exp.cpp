@@ -15,6 +15,7 @@
 
 #include "gdalraster.h"
 #include "cmb_table.h"
+#include "ogr_util.h"
 
 //' Get GDAL version
 //'
@@ -825,6 +826,103 @@ bool fillNodata(std::string filename, int band, std::string mask_file = "",
 		GDALClose(hMaskDS);
 	if (err != CE_None)
 		Rcpp::stop("Error in GDALFillNodata().");
+
+	return true;
+}
+
+
+//' Wrapper for GDALPolygonize in the GDAL Algorithms C API
+//'
+//' Called from and documented in R/gdalraster_proc.R
+//' @noRd
+// [[Rcpp::export(name = ".polygonize")]]
+bool _polygonize(std::string src_filename, int src_band,
+		std::string out_dsn, std::string out_layer, std::string fld_name,
+		std::string mask_file = "", bool nomask = false,
+		int connectedness = 4) {
+
+	GDALDatasetH hSrcDS = NULL;
+	GDALRasterBandH hSrcBand = NULL;
+	GDALDatasetH hMaskDS = NULL;
+	GDALRasterBandH hMaskBand = NULL;
+	GDALDatasetH hOutDS = NULL;
+	OGRLayerH hOutLayer = NULL;
+	int iPixValField;
+	CPLErr err;
+
+	if (connectedness != 4 && connectedness != 8)
+		Rcpp::stop("connectedness must be 4 or 8.");
+		
+	hSrcDS = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
+	if (hSrcDS == NULL)
+		Rcpp::stop("Open source raster failed.");
+		
+	hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
+	if (hSrcBand == NULL) {
+		GDALClose(hSrcDS);
+		Rcpp::stop("Failed to access the source band.");
+	}
+
+	if (mask_file == "" && nomask == false) {
+		// default validity mask
+		hMaskBand = GDALGetMaskBand(hSrcBand);
+	}
+	else if (mask_file == "" && nomask == true) {
+		// do not use default validity mask for source band (such as nodata)
+		hMaskBand = NULL;
+	}
+	else {
+		// mask_file specified
+		hMaskDS = GDALOpenShared(mask_file.c_str(), GA_ReadOnly);
+		if (hMaskDS == NULL) {
+			GDALClose(hSrcDS);
+			Rcpp::stop("Open mask raster failed.");
+		}
+		hMaskBand = GDALGetRasterBand(hMaskDS, 1);
+		if (hMaskBand == NULL) {
+			GDALClose(hSrcDS);
+			GDALClose(hMaskDS);
+			Rcpp::stop("Failed to access the mask band.");
+		}
+	}
+
+	hOutDS = GDALOpenEx(out_dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+			NULL, NULL, NULL);
+	if (hOutDS == NULL) {
+		GDALClose(hSrcDS);
+		if (hMaskDS != NULL)
+			GDALClose(hMaskDS);
+		Rcpp::stop("Failed to open the output vector data source.");
+	}
+	
+	hOutLayer = GDALDatasetGetLayerByName(hOutDS, out_layer.c_str());
+	if (hOutLayer == NULL) {
+		GDALClose(hSrcDS);
+		if (hMaskDS != NULL)
+			GDALClose(hMaskDS);
+		GDALClose(hOutDS);
+		Rcpp::stop("Failed to open the output layer.");
+	}
+	
+	iPixValField = _ogr_field_index(out_dsn, out_layer, fld_name);
+	if (iPixValField == -1)
+		Rcpp::warning("Field not found, pixel values will not be written.");
+	
+	std::vector<char *> opt_list = {NULL};
+	if (connectedness == 8) {
+		auto it = opt_list.begin();
+    	it = opt_list.insert(it, (char *) ("8CONNECTED=8"));
+	}
+	
+	err = GDALPolygonize(hSrcBand, hMaskBand, hOutLayer, iPixValField,
+			opt_list.data(), GDALTermProgressR, NULL);
+
+	GDALClose(hSrcDS);
+	GDALClose(hOutDS);
+	if (hMaskDS != NULL)
+		GDALClose(hMaskDS);
+	if (err != CE_None)
+		Rcpp::stop("Error in GDALPolygonize().");
 
 	return true;
 }

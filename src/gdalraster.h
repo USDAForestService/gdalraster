@@ -118,6 +118,10 @@ bool _dem_proc(std::string mode,
 bool fillNodata(std::string filename, int band, std::string mask_file,
 		double max_dist, int smooth_iterations);
 
+bool _polygonize(std::string src_filename, int src_band,
+		std::string out_dsn, std::string out_layer, std::string fld_name,
+		std::string mask_file, bool nomask, int connectedness);
+		
 bool _rasterize(std::string src_dsn, std::string dst_filename,
 		Rcpp::CharacterVector cl_arg);
 		
