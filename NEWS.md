@@ -1,5 +1,7 @@
 # gdalraster 1.6.1 (dev)
 
+* add `polygonize()`: wrapper for `GDALPolygonize` in the GDAL Algorithms API, create a polygon feature layer from raster data (2023-11-26)
+
 * set GDAL configuration option on init: `TRADITIONAL_GIS_ORDER=OSR_DEFAULT_AXIS_MAPPING_STRATEGY` (2023-11-25)
 
 * add OGR utility functions for vector data sources, for internal use (2023-11-25)
