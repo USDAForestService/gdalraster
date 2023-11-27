@@ -37,8 +37,9 @@
   
   \item algorithms: \code{\link[=dem_proc]{dem_proc()}},
   \code{\link[=fillNodata]{fillNodata()}},
-  \code{\link[=rasterize]{rasterize()}},
-  \code{\link[=sieveFilter]{sieveFilter()}},\cr
+  \code{\link[=polygonize]{polygonize()}},
+  \code{\link[=rasterize]{rasterize()}},\cr
+  \code{\link[=sieveFilter]{sieveFilter()}},
   \code{\link[=GDALRaster]{GDALRaster$getChecksum()}}
   
   \item raster attribute tables: \code{\link[=buildRAT]{buildRAT()}},

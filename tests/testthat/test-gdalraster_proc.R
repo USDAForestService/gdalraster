@@ -273,3 +273,79 @@ test_that("dem_proc runs without error", {
 	expect_true(dem_proc("hillshade", elev_file, hs_file))
 })
 
+test_that("polygonize runs without error", {
+	evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+	dsn <- paste0(tempdir(), "/", "storml_evt.shp")
+	layer <- "storml_evt"
+	fld <- "evt_value"
+	expect_true(polygonize(evt_file, dsn, layer, fld))
+	
+	# overwrite
+	expect_true(polygonize(evt_file, dsn, layer, fld, connectedness=8,
+				overwrite=TRUE))
+	
+	# append: layer already exists so expect warning if lco given
+	expect_warning(polygonize(evt_file, dsn, layer, fld, connectedness=8,
+				lco="SPATIAL_INDEX=YES"))
+	
+	deleteDataset(dsn)
+	
+	# GPKG
+	set_config_option("SQLITE_USE_OGR_VFS", "YES")
+	dsn <- paste0(tempdir(), "/", "storml_evt.gpkg")
+	layer <- "lf_evt"
+	opt <- "VERSION=1.3"
+	expect_true(polygonize(evt_file, dsn, layer, fld, dsco=opt))
+	
+	# existing out_dsn, but create a new layer
+	layer <- "lf_evt_8connect"
+	opt <- c("GEOMETRY_NULLABLE=NO","DESCRIPTION=LF EVT 8-connected polygons")
+	expect_true(polygonize(evt_file,dsn,layer,fld,connectedness=8,lco=opt))
+	
+	set_config_option("SQLITE_USE_OGR_VFS", "")
+	deleteDataset(dsn)
+})
+
+test_that("rasterize runs without error", {
+	# layer from sql query
+	dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+	sql <- "SELECT * FROM mtbs_perims ORDER BY mtbs_perims.ig_year"
+	out_file <- paste0(tempdir(), "/", "ynp_fires_1984_2022.tif")
+
+	res <- rasterize(src_dsn = dsn,
+				dstfile = out_file,
+				sql = sql,
+				burn_attr = "ig_year",
+				tr = c(90,90),
+				tap = TRUE,
+				dtName = "Int16",
+				dstnodata = -9999,
+				init = -9999,
+				co = c("TILED=YES","COMPRESS=LZW"))
+	expect_true(res)
+	ds <- new(GDALRaster, out_file, TRUE)
+	bbox <- ds$bbox()
+	dm <- ds$dim()
+	ds$close()
+	deleteDataset(out_file)
+	
+	# layer with where clause
+	out_file <- paste0(tempdir(), "/", "ynp_fires_1988.tif")
+	layer <- "mtbs_perims"
+	where <- "ig_year = 1988"
+
+	res <- rasterize(src_dsn = dsn,
+				dstfile = out_file,
+				layer = layer,
+				where = where,
+				burn_value = 1,
+				te = bbox,
+				ts = dm[1:2],
+				dtName = "Byte",
+				init = 0,
+				fmt = "GTiff",
+				co = c("TILED=YES","COMPRESS=LZW"),
+				add_options = "-q")
+	expect_true(res)
+	deleteDataset(out_file)
+})

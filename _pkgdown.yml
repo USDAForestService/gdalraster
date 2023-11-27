@@ -50,6 +50,7 @@ reference:
   - inv_geotransform
   - inv_project
   - plot_raster
+  - polygonize
   - proj_networking
   - proj_search_paths
   - proj_version

@@ -140,3 +140,6 @@ plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",
 
 ds$close()
 }
+\seealso{
+\code{\link[=polygonize]{polygonize()}}
+}
