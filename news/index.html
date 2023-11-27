@@ -56,7 +56,8 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.6.1" id="gdalraster-161-dev">gdalraster 1.6.1 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-161-dev"></a></h2>
-<ul><li><p>set GDAL configuration option on init: <code>TRADITIONAL_GIS_ORDER=OSR_DEFAULT_AXIS_MAPPING_STRATEGY</code> (2023-11-25)</p></li>
+<ul><li><p>add <code><a href="../reference/polygonize.html">polygonize()</a></code>: wrapper for <code>GDALPolygonize</code> in the GDAL Algorithms API, create a polygon feature layer from raster data (2023-11-26)</p></li>
+<li><p>set GDAL configuration option on init: <code>TRADITIONAL_GIS_ORDER=OSR_DEFAULT_AXIS_MAPPING_STRATEGY</code> (2023-11-25)</p></li>
 <li><p>add OGR utility functions for vector data sources, for internal use (2023-11-25)</p></li>
 <li><p>add <code><a href="../reference/rasterize.html">rasterize()</a></code>: wrapper for the <code>gdal_rasterize</code> command-line utility, burn vector geometries (points, lines, or polygons) into a raster (2023-11-24)</p></li>
 <li><p>add <code><a href="../reference/translate.html">translate()</a></code>: wrapper for the <code>gdal_translate</code> command-line utility, convert raster data between different formats (2023-11-22)</p></li>
