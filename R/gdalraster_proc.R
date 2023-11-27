@@ -83,6 +83,9 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 .getOGRformat <- function(file) {
 # Only for guessing common output formats
 	file <- as.character(file)
+	if (startsWith(file, "PG:")) {
+		return("PostgreSQL")
+	}
 	if (endsWith(file, ".gpkg") || endsWith(file, ".GPKG")) {
 		return("GPKG")
 	}
@@ -1311,10 +1314,8 @@ dem_proc <- function(mode,
 #' the pixel values will be written. Will be created if necessary when using an
 #' existing layer.
 #' @param out_fmt GDAL short name of the output vector format. If unspecified,
-#' the function will attempt to guess the format from the file extension.
-#' Currently, `out_fmt` needs to specified if `out_dsn` is a database
-#' connection string (e.g., `out_fmt = "PostgreSQL"` if using a PostgreSQL
-#' connection string for `out_dsn`).
+#' the function will attempt to guess the format from the filename/connection
+#' string.
 #' @param connectedness Integer scalar. Must be either `4` or `8`. For the
 #' default 4-connectedness, pixels with the same value are considered connected
 #' only if they touch along one of the four sides, while 8-connectedness
@@ -1344,17 +1345,19 @@ dem_proc <- function(mode,
 #' invalid due to ring self-intersection (in the strict OGC definition of
 #' polygon validity). They may be suitable as-is for certain purposes such as
 #' calculating geometry attributes (area, perimeter). Package **sf** has
-#' function `st_make_valid()`, PostGIS has `ST_MakeValid()`, and QGIS has
-#' vector processing utility "Fix geometries" (single polygons can become
-#' MultiPolygon in the case of self-intersections).
+#' `st_make_valid()`, PostGIS has `ST_MakeValid()`, and QGIS has vector
+#' processing utility "Fix geometries" (single polygons can become MultiPolygon
+#' in the case of self-intersections).
 #'
-#' If writing to a SQLite database format as `"GPKG"` (GeoPackage vector)
-#' or `"SQLite"` (SQLite / Spatialite RDBMS), setting the `SQLITE_USE_OGR_VFS`
-#' configuration option can increase performance substantially:
-#' \preformatted{
+#' If writing to a SQLite database format as either `"GPKG"` (GeoPackage
+#' vector) or `"SQLite"` (Spatialite vector), setting the
+#' `SQLITE_USE_OGR_VFS` configuration option can increase performance
+#' substantially:
+#' ```
+#' # SQLite: GPKG (.gpkg) and Spatialite (.sqlite)
 #' # enable extra buffering/caching by the GDAL/OGR I/O layer
-#' set_config_option("SQLITE_USE_OGR_VFS", "YES")
-#' }
+#' set_config_option("SQLITE_USE_OGR_VFS", "YES")}
+#' ```
 #'
 #' @seealso
 #' [rasterize()]
