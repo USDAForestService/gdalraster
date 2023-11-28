@@ -111,7 +111,7 @@ If writing to a SQLite database format as either \code{GPKG} (GeoPackage
 vector) or \code{SQLite} (Spatialite vector), setting the
 \code{SQLITE_USE_OGR_VFS} and \code{OGR_SQLITE_JOURNAL} configuration options may
 increase performance substantially. If writing to \code{PostgreSQL}
-(PostGIS vector), setting \code{PG_USE_COPY} is recommended:
+(PostGIS vector), setting \code{PG_USE_COPY=YES} is faster:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{# SQLite: GPKG (.gpkg) and Spatialite (.sqlite)
 # enable extra buffering/caching by the GDAL/OGR I/O layer

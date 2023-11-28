@@ -608,11 +608,9 @@
 #' @seealso
 #' Package overview in [`help("gdalraster-package")`][gdalraster-package]
 #'
-#' [create()], [createCopy()], [rasterFromRaster()]
+#' `vignette("raster-api-tutorial")`
 #'
-#' [get_pixel_line()], [plot_raster()], [warp()]
-#'
-#' [read_ds()] is a convenience wrapper for `GDALRaster$read()`.
+#' [read_ds()] convenience wrapper for `GDALRaster$read()`
 #'
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")

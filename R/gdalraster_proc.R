@@ -1353,7 +1353,7 @@ dem_proc <- function(mode,
 #' vector) or `SQLite` (Spatialite vector), setting the
 #' `SQLITE_USE_OGR_VFS` and `OGR_SQLITE_JOURNAL` configuration options may
 #' increase performance substantially. If writing to `PostgreSQL`
-#' (PostGIS vector), setting `PG_USE_COPY` is recommended:
+#' (PostGIS vector), setting `PG_USE_COPY=YES` is faster:
 #' ```
 #' # SQLite: GPKG (.gpkg) and Spatialite (.sqlite)
 #' # enable extra buffering/caching by the GDAL/OGR I/O layer
@@ -1367,7 +1367,9 @@ dem_proc <- function(mode,
 #' ```
 #'
 #' @seealso
-#' [rasterize()], `vignette("gdal-config-quick-ref")`
+#' [rasterize()]
+#'
+#' `vignette("gdal-config-quick-ref")`
 #'
 #' @examples
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")

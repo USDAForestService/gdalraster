@@ -32,4 +32,6 @@ set_config_option("GDAL_CACHEMAX", "")
 }
 \seealso{
 \code{\link[=get_config_option]{get_config_option()}}
+
+\code{vignette("gdal-config-quick-ref")}
 }
