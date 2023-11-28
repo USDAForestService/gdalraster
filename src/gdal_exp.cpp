@@ -86,8 +86,12 @@ void gdal_formats() {
 //' @returns Character. The value of a (key, value) option previously set with 
 //' `set_config_option()`. An empty string (`""`) is returned if `key` is not 
 //' found.
+//'
 //' @seealso
 //' [set_config_option()]
+//'
+//' `vignette("gdal-config-quick-ref")`
+//'
 //' @examples
 //' ## this option is set during initialization of the gdalraster package
 //' get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER")
@@ -113,8 +117,12 @@ std::string get_config_option(std::string key) {
 //' `value = ""` (empty string) will unset a value previously set by 
 //' `set_config_option()`.
 //' @returns No return value, called for side effects.
+//'
 //' @seealso
 //' [get_config_option()]
+//'
+//' `vignette("gdal-config-quick-ref")`
+//'
 //' @examples
 //' set_config_option("GDAL_CACHEMAX", "10%")
 //' get_config_option("GDAL_CACHEMAX")
@@ -137,6 +145,9 @@ void set_config_option(std::string key, std::string value) {
 //' value as MB.
 //'
 //' @returns Integer. Amount of cache memory in use in MB.
+//'
+//' @seealso
+//' [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
 //'
 //' @examples
 //' get_cache_used()

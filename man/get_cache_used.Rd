@@ -17,3 +17,6 @@ value as MB.
 \examples{
 get_cache_used()
 }
+\seealso{
+\href{https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html}{GDAL Block Cache}
+}

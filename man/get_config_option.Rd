@@ -28,4 +28,6 @@ get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER")
 }
 \seealso{
 \code{\link[=set_config_option]{set_config_option()}}
+
+\code{vignette("gdal-config-quick-ref")}
 }
