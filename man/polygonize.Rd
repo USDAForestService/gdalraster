@@ -107,14 +107,21 @@ calculating geometry attributes (area, perimeter). Package \strong{sf} has
 processing utility "Fix geometries" (single polygons can become MultiPolygon
 in the case of self-intersections).
 
-If writing to a SQLite database format as either \code{"GPKG"} (GeoPackage
-vector) or \code{"SQLite"} (Spatialite vector), setting the
-\code{SQLITE_USE_OGR_VFS} configuration option can increase performance
-substantially:
+If writing to a SQLite database format as either \code{GPKG} (GeoPackage
+vector) or \code{SQLite} (Spatialite vector), setting the
+\code{SQLITE_USE_OGR_VFS} and \code{OGR_SQLITE_JOURNAL} configuration options may
+increase performance substantially. If writing to \code{PostgreSQL}
+(PostGIS vector), setting \code{PG_USE_COPY} is recommended:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{# SQLite: GPKG (.gpkg) and Spatialite (.sqlite)
 # enable extra buffering/caching by the GDAL/OGR I/O layer
 set_config_option("SQLITE_USE_OGR_VFS", "YES")\}
+# set the journal mode for the SQLite database to MEMORY
+set_config_option("OGR_SQLITE_JOURNAL", "MEMORY")
+
+# PostgreSQL / PostGIS
+# use COPY for inserting data rather than INSERT
+set_config_option("PG_USE_COPY", "YES")
 }\if{html}{\out{</div>}}
 }
 \examples{
@@ -123,9 +130,11 @@ dsn <- paste0(tempdir(), "/", "storm_lake.gpkg")
 layer <- "lf_evt"
 fld <- "evt_value"
 set_config_option("SQLITE_USE_OGR_VFS", "YES")
+set_config_option("OGR_SQLITE_JOURNAL", "MEMORY")
 polygonize(evt_file, dsn, layer, fld)
 set_config_option("SQLITE_USE_OGR_VFS", "")
+set_config_option("OGR_SQLITE_JOURNAL", "")
 }
 \seealso{
-\code{\link[=rasterize]{rasterize()}}
+\code{\link[=rasterize]{rasterize()}}, \code{vignette("gdal-config-quick-ref")}
 }

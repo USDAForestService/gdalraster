@@ -292,6 +292,7 @@ test_that("polygonize runs without error", {
 	
 	# GPKG
 	set_config_option("SQLITE_USE_OGR_VFS", "YES")
+	set_config_option("OGR_SQLITE_JOURNAL", "MEMORY")
 	dsn <- paste0(tempdir(), "/", "storml_evt.gpkg")
 	layer <- "lf_evt"
 	opt <- "VERSION=1.3"
@@ -303,6 +304,7 @@ test_that("polygonize runs without error", {
 	expect_true(polygonize(evt_file,dsn,layer,fld,connectedness=8,lco=opt))
 	
 	set_config_option("SQLITE_USE_OGR_VFS", "")
+	set_config_option("OGR_SQLITE_JOURNAL", "")
 	deleteDataset(dsn)
 })
 
