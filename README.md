@@ -68,11 +68,11 @@ Additional functionality includes:
   - [`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html)
     displays raster data using base R graphics.
 
-**gdalraster** includes thorough [documentation](#documentation) that is
-frequently cross-linked to source documentation provided by the GDAL
-project. It should be useful in applications that need low-level raster
-I/O or prefer a direct GDAL API. The additional functionality is
-somewhat aimed at thematic data analysis but may have other utility.
+**gdalraster** includes full [documentation](#documentation)
+cross-linked to original source documents provided by the GDAL project.
+It should be useful in applications that need low-level raster I/O or
+prefer a direct GDAL API. The additional functionality is somewhat aimed
+at thematic data analysis but may have other utility.
 
 ## Installation
 
