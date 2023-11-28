@@ -201,17 +201,24 @@ calculating geometry attributes (area, perimeter). Package <strong>sf</strong> h
 <code>st_make_valid()</code>, PostGIS has <code>ST_MakeValid()</code>, and QGIS has vector
 processing utility "Fix geometries" (single polygons can become MultiPolygon
 in the case of self-intersections).</p>
-<p>If writing to a SQLite database format as either <code>"GPKG"</code> (GeoPackage
-vector) or <code>"SQLite"</code> (Spatialite vector), setting the
-<code>SQLITE_USE_OGR_VFS</code> configuration option can increase performance
-substantially:</p>
+<p>If writing to a SQLite database format as either <code>GPKG</code> (GeoPackage
+vector) or <code>SQLite</code> (Spatialite vector), setting the
+<code>SQLITE_USE_OGR_VFS</code> and <code>OGR_SQLITE_JOURNAL</code> configuration options may
+increase performance substantially. If writing to <code>PostgreSQL</code>
+(PostGIS vector), setting <code>PG_USE_COPY</code> is recommended:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co"># SQLite: GPKG (.gpkg) and Spatialite (.sqlite)</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="co"># enable extra buffering/caching by the GDAL/OGR I/O layer</span></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set_config_option</span>(<span class="st">"SQLITE_USE_OGR_VFS"</span>, <span class="st">"YES"</span>)<span class="er">}</span></span></code></pre><p></p></div>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">set_config_option</span>(<span class="st">"SQLITE_USE_OGR_VFS"</span>, <span class="st">"YES"</span>)<span class="er">}</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="co"># set the journal mode for the SQLite database to MEMORY</span></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">set_config_option</span>(<span class="st">"OGR_SQLITE_JOURNAL"</span>, <span class="st">"MEMORY"</span>)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="co"># PostgreSQL / PostGIS</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="co"># use COPY for inserting data rather than INSERT</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="fu">set_config_option</span>(<span class="st">"PG_USE_COPY"</span>, <span class="st">"YES"</span>)</span></code></pre><p></p></div>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="rasterize.html">rasterize()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="rasterize.html">rasterize()</a></code>, <code><a href="../articles/gdal-config-quick-ref.html">vignette("gdal-config-quick-ref")</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -221,9 +228,11 @@ substantially:</p>
 <span class="r-in"><span><span class="va">layer</span> <span class="op">&lt;-</span> <span class="st">"lf_evt"</span></span></span>
 <span class="r-in"><span><span class="va">fld</span> <span class="op">&lt;-</span> <span class="st">"evt_value"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"SQLITE_USE_OGR_VFS"</span>, <span class="st">"YES"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"OGR_SQLITE_JOURNAL"</span>, <span class="st">"MEMORY"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">polygonize</span><span class="op">(</span><span class="va">evt_file</span>, <span class="va">dsn</span>, <span class="va">layer</span>, <span class="va">fld</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-in"><span><span class="fu"><a href="set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"SQLITE_USE_OGR_VFS"</span>, <span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"OGR_SQLITE_JOURNAL"</span>, <span class="st">""</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
