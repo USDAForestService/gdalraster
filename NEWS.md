@@ -1,22 +1,26 @@
-# gdalraster 1.6.1 (dev)
+# gdalraster 1.7.0
 
-* add `polygonize()`: wrapper for `GDALPolygonize` in the GDAL Algorithms API, create a polygon feature layer from raster data (2023-11-26)
+## GDAL API stand-alone functions
 
-* set GDAL configuration option on init: `TRADITIONAL_GIS_ORDER=OSR_DEFAULT_AXIS_MAPPING_STRATEGY` (2023-11-25)
+* add `polygonize()`: create a polygon feature layer from raster data, wrapper for `GDALPolygonize` in the GDAL Algorithms API.
+* add `rasterize()`: burn vector geometries (points, lines, or polygons) into a raster, wrapper for the `gdal_rasterize` command-line utility
+* add `buildVRT()`: build a GDAL virtual raster mosaic from a list of datasets, wrapper for the `gdalbuildvrt` command-line utility
+* add `translate()`: convert raster data between different formats, wrapper for the `gdal_translate` command-line utility
+* make `t_srs` optional in `warp()`
+* the GDAL configuration option `TRADITIONAL_GIS_ORDER=OSR_DEFAULT_AXIS_MAPPING_STRATEGY` is now set on package load
 
-* add OGR utility functions for vector data sources, for internal use (2023-11-25)
+## Documentation
 
-* add `rasterize()`: wrapper for the `gdal_rasterize` command-line utility, burn vector geometries (points, lines, or polygons) into a raster (2023-11-24)
+* add [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html) to vignettes
+* `warp()` has additional documentation covering several processing options
+* add the `COMPRESS_OVERVIEW` configuration option to the documentation for `GDALRaster::buildOverviews()`
+* add `str()` of the `GDALRaster` object in the [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
+* add display of the EVT raster itself along with its attribute table in [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
 
-* add `translate()`: wrapper for the `gdal_translate` command-line utility, convert raster data between different formats (2023-11-22)
+## Internal
 
-* add `buildVRT()`: wrapper for the `gdalbuildvrt` command-line utility, build a GDAL virtual raster from a list of datasets (2023-11-18)
-
-* `warp()`: make `t_srs` optional (2023-11-05)
-
-* gdal_exp.cpp: additional error handling in several wrapper functions, mainly ensuring input datasets are closed properly on error; increase test coverage of the error handling code (#145) (2023-10-29)
-
-* Documentation: `warp()` has additional documentation covering several processing options; added the `COMPRESS_OVERVIEW` option to the documentation for `GDALRaster::buildOverviews()`; added [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); added structure of the `GDALRaster` object in [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html); added display of the EVT raster itself next its attribute table in [Raster Attribute Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
+* add src/ogr_util.cpp and src/ogr_util.h: OGR utility functions for vector data sources
+* src/gdal_exp.cpp: additional error handling in several wrapper functions, increased test coverage
 
 # gdalraster 1.6.0
 
