@@ -283,12 +283,23 @@ test_that("polygonize runs without error", {
 	# overwrite
 	expect_true(polygonize(evt_file, dsn, layer, fld, connectedness=8,
 				overwrite=TRUE))
+
+	# with mask_file
+	expr <- "ifelse(EVT == -9999, 0, 1)"
+	mask_file <- calc(expr, rasterfiles=evt_file, var.names="EVT")
+	expect_true(polygonize(evt_file, dsn, layer, fld, mask_file=mask_file,
+				overwrite=TRUE))
+
+	# nomask
+	expect_true(polygonize(evt_file, dsn, layer, fld, nomask=TRUE,
+				overwrite=TRUE))
 	
 	# append: layer already exists so expect warning if lco given
 	expect_warning(polygonize(evt_file, dsn, layer, fld, connectedness=8,
 				lco="SPATIAL_INDEX=YES"))
 	
 	deleteDataset(dsn)
+	deleteDataset(mask_file)
 	
 	# GPKG
 	set_config_option("SQLITE_USE_OGR_VFS", "YES")
@@ -306,6 +317,10 @@ test_that("polygonize runs without error", {
 	set_config_option("SQLITE_USE_OGR_VFS", "")
 	set_config_option("OGR_SQLITE_JOURNAL", "")
 	deleteDataset(dsn)
+	
+	# unrecognized output format
+	dsn <- paste0(tempdir(), "/", "storml_evt.txt")
+	expect_error(polygonize(evt_file, dsn, layer, fld))
 })
 
 test_that("rasterize runs without error", {
