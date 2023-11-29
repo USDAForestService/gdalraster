@@ -195,8 +195,8 @@ statements are executed in close sequence, application code may group
 them into large batches within transactions in order to get optimal
 performance. By default, if no transaction is explicitly started, SQLite
 will autocommit on every statement which will be slow.</p>
-<p>The <code>OGR_SQLITE_JOURNAL</code> option controls how the rollback
-journal operates to implement transactions in SQLite. The <a href="https://www.sqlite.org/pragma.html#pragma_journal_mode" class="external-link">SQLite
+<p>The <code>OGR_SQLITE_JOURNAL</code> option configures operation of
+the rollback journal that implements transactions in SQLite. The <a href="https://www.sqlite.org/pragma.html#pragma_journal_mode" class="external-link">SQLite
 documentation</a> describes the default operation:</p>
 <blockquote>
 <p>The DELETE journaling mode is the normal behavior. In the DELETE
@@ -215,18 +215,7 @@ integrity. If the application using SQLite crashes in the middle of a
 transaction when the MEMORY journaling mode is set, then the database
 file will very likely go corrupt.</p>
 </blockquote>
-<blockquote>
-<p>The OFF journaling mode disables the rollback journal completely. No
-rollback journal is ever created and hence there is never a rollback
-journal to delete. The OFF journaling mode disables the atomic commit
-and rollback capabilities of SQLite. The ROLLBACK command no longer
-works; it behaves in an undefined way. Applications must avoid using the
-ROLLBACK command when the journal mode is OFF. If the application
-crashes in the middle of a transaction when the OFF journaling mode is
-set, then the database file will very likely go corrupt.</p>
-</blockquote>
-<p>See the SQLite documentation for a full description of all available
-<a href="https://www.sqlite.org/pragma.html#pragma_journal_mode" class="external-link">journal
+<p>See the SQLite documentation for all available <a href="https://www.sqlite.org/pragma.html#pragma_journal_mode" class="external-link">journal
 modes</a>. This setting also applies when using
 <code><a href="../reference/polygonize.html">gdalraster::polygonize()</a></code> to write polygons to a vector
 layer in GeoPackage (.gpkg) or Spatialite (.sqlite) formats (see
