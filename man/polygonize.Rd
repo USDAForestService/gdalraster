@@ -136,5 +136,7 @@ set_config_option("SQLITE_USE_OGR_VFS", "")
 set_config_option("OGR_SQLITE_JOURNAL", "")
 }
 \seealso{
-\code{\link[=rasterize]{rasterize()}}, \code{vignette("gdal-config-quick-ref")}
+\code{\link[=rasterize]{rasterize()}}
+
+\code{vignette("gdal-config-quick-ref")}
 }

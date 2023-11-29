@@ -1412,8 +1412,9 @@ polygonize <- function(raster_file,
 	
 	if (!.ogr_ds_exists(out_dsn, with_update=TRUE)) {
 		if (.ogr_ds_exists(out_dsn) && !overwrite) {
-			msg <- "out_dsn exists but cannot be updated. "
-			msg <- paste0(msg, "Remove it first, or use overwrite=TRUE.")
+			msg <- "out_dsn exists but cannot be updated.\n"
+			msg <- paste0(msg, "You may need to remove it first, ")
+			msg <- paste0(msg, "or use overwrite = TRUE.")
 			stop(msg, call. = FALSE)
 		}
 	}
