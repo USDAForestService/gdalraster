@@ -103,7 +103,7 @@ set_config_option("SQLITE_USE_OGR_VFS", "YES")
  
 SQLite is a transactional DBMS. When many `INSERT` statements are executed in close sequence, application code may group them into large batches within transactions in order to get optimal performance. By default, if no transaction is explicitly started, SQLite will autocommit on every statement which will be slow.
 
-The `OGR_SQLITE_JOURNAL` option controls how the rollback journal operates to implement transactions in SQLite. The [SQLite documentation](https://www.sqlite.org/pragma.html#pragma_journal_mode) describes the default operation:
+The `OGR_SQLITE_JOURNAL` option configures operation of the rollback journal that implements transactions in SQLite. The [SQLite documentation](https://www.sqlite.org/pragma.html#pragma_journal_mode) describes the default operation:
 
 > The DELETE journaling mode is the normal behavior. In the DELETE mode, the rollback journal is deleted at the conclusion of each transaction. Indeed, the delete operation is the action that causes the transaction to commit.
 
@@ -111,9 +111,7 @@ The `DELETE` mode requires file system I/O so performance is degraded if many `I
 
 > The MEMORY journaling mode stores the rollback journal in volatile RAM. This saves disk I/O but at the expense of database safety and integrity. If the application using SQLite crashes in the middle of a transaction when the MEMORY journaling mode is set, then the database file will very likely go corrupt.
 
-> The OFF journaling mode disables the rollback journal completely. No rollback journal is ever created and hence there is never a rollback journal to delete. The OFF journaling mode disables the atomic commit and rollback capabilities of SQLite. The ROLLBACK command no longer works; it behaves in an undefined way. Applications must avoid using the ROLLBACK command when the journal mode is OFF. If the application crashes in the middle of a transaction when the OFF journaling mode is set, then the database file will very likely go corrupt.
-
-See the SQLite documentation for a full description of all available [journal modes](https://www.sqlite.org/pragma.html#pragma_journal_mode). This setting also applies when using `gdalraster::polygonize()` to write polygons to a vector layer in GeoPackage (.gpkg) or Spatialite (.sqlite) formats (see `SQLITE_USE_OGR_VFS` above).
+See the SQLite documentation for all available [journal modes](https://www.sqlite.org/pragma.html#pragma_journal_mode). This setting also applies when using `gdalraster::polygonize()` to write polygons to a vector layer in GeoPackage (.gpkg) or Spatialite (.sqlite) formats (see `SQLITE_USE_OGR_VFS` above).
 
 ```{r}
 # configure SQLite to store the rollback journal in RAM
