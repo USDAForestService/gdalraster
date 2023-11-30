@@ -1,3 +1,9 @@
+# gdalraster 1.7.1 dev
+
+* add `GDALRaster::clearStatistics()`: clear statistics (PAM supported datasets GDAL >= 3.2) (2023-11-29)
+
+* Documentation: apply scale/offset in `calc()` example
+
 # gdalraster 1.7.0
 
 ## GDAL API stand-alone functions
