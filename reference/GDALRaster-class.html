@@ -155,6 +155,7 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMinMax</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span><span class="va">band</span>, <span class="va">approx_ok</span>, <span class="va">force</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">clearStatistics</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getHistogram</span><span class="op">(</span><span class="va">band</span>, <span class="va">min</span>, <span class="va">max</span>, <span class="va">num_buckets</span>, <span class="va">incl_out_of_range</span>, <span class="va">approx_ok</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultHistogram</span><span class="op">(</span><span class="va">band</span>, <span class="va">force</span><span class="op">)</span></span>
 <span></span>
@@ -401,7 +402,10 @@ definitive <code>force</code>.)</p></li>
 without scanning the raster, typically by using pre-existing
 STATISTICS_xxx metadata items). <code>NA</code>s will be returned if statistics
 cannot be obtained quickly.</p></li>
-</ul><p><code>$getHistogram(band, min, max, num_buckets, incl_out_of_range, 
+</ul><p><code>$clearStatistics()</code>
+Clear statistics. Only implemented for now in PAM supported datasets
+(Peristable Auxiliary Metadata via .aux.xml file). GDAL &gt;= 3.2.</p>
+<p><code>$getHistogram(band, min, max, num_buckets, incl_out_of_range, 
   approx_ok)</code><br>
 Computes raster histogram for <code>band</code>. <code>min</code> is the lower bound of
 the histogram. <code>max</code> is the upper bound of the histogram.
