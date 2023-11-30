@@ -818,16 +818,8 @@ rasterToVRT <- function(srcfile,
 #' b4_file <- system.file("extdata/sr_b4_20200829.tif", package="gdalraster")
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 #'
-#' # is nodata value set
-#' ds <- new(GDALRaster, b4_file, read_only=TRUE)
-#' ds$getNoDataValue(band=1)   # 0
-#' ds$close()
-#' ds <- new(GDALRaster, b5_file, read_only=TRUE)
-#' ds$getNoDataValue(band=1)   # 0
-#' ds$close()
-#'
-#' # 0 will be read as NA so don't need to handle zeros in expr
-#' expr <- "(B5-B4)/(B5+B4)"
+#' expr <- "((B5 * 0.0000275 - 0.2) - (B4 * 0.0000275 - 0.2)) /
+#'          ((B5 * 0.0000275 - 0.2) + (B4 * 0.0000275 - 0.2))"
 #' ndvi_file <- calc(expr = expr,
 #'                   rasterfiles = c(b4_file, b5_file),
 #'                   var.names = c("B4", "B5"),
