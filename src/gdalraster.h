@@ -204,6 +204,7 @@ class GDALRaster {
 	std::vector<double> getMinMax(int band, bool approx_ok) const;
 	Rcpp::NumericVector getStatistics(int band,	bool approx_ok, 
 			bool force) const;
+	void clearStatistics();
 	std::vector<double> getHistogram(int band, double min, double max,
 			int num_buckets, bool incl_out_of_range, bool approx_ok) const;
 	Rcpp::List getDefaultHistogram(int band, bool force) const;

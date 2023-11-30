@@ -594,6 +594,16 @@ Rcpp::NumericVector GDALRaster::getStatistics(int band,	bool approx_ok,
 	}
 }
 
+void GDALRaster::clearStatistics() {
+	this->_checkAccess(GA_Update);
+	
+#if GDAL_VERSION_NUM >= 3020000
+	GDALDatasetClearStatistics(hDataset);
+#else
+	Rcpp::Rcout << "clearStatistics() requires GDAL >= 3.2.\n";
+#endif
+}
+
 std::vector<double> GDALRaster::getHistogram(int band, double min, double max,
 		int num_buckets, bool incl_out_of_range, bool approx_ok) const {
 
@@ -1402,6 +1412,8 @@ RCPP_MODULE(mod_GDALRaster) {
     	"Compute the min/max values for this band.")
     .const_method("getStatistics", &GDALRaster::getStatistics, 
     	"Get min, max, mean and stdev for this band.")
+    .method("clearStatistics", &GDALRaster::clearStatistics, 
+    	"Clear statistics.")
     .const_method("getHistogram", &GDALRaster::getHistogram, 
     	"Compute raster histogram for this band.")
     .const_method("getDefaultHistogram", &GDALRaster::getDefaultHistogram, 
