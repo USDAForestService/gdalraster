@@ -237,7 +237,7 @@ ds$close()
 
 * `rasterToVRT()` creates a virtual raster dataset (VRT) derived from a source raster with options for virtual subsetting, virtually resampling the source data at a different pixel resolution, or applying a virtual kernel filter.
 
-See the [package overview](https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html) for a full summary of functionality provided by the GDAL API bindings.
+Wrapper functions for several GDAL utilities, including `translate()` and `warp()`, are also available. See the [package overview](https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html) for a full summary of functionality provided by the GDAL API bindings.
 
 ## Data sources
 
