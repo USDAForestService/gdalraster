@@ -116,7 +116,7 @@ and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x55ea724278f0&gt; of class 'GDALRaster' &lt;0x55ea735c3950&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x558ef073c320&gt; of class 'GDALRaster' &lt;0x558ef0938c80&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 0 fields</span></span>
 <span><span class="co">#&gt;  list()</span></span>
@@ -469,7 +469,9 @@ derived from a source raster with options for virtual subsetting,
 virtually resampling the source data at a different pixel resolution, or
 applying a virtual kernel filter.</p></li>
 </ul>
-<p>See the <a href="https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html">package
+<p>Wrapper functions for several GDAL utilities, including
+<code><a href="../reference/translate.html">translate()</a></code> and <code><a href="../reference/warp.html">warp()</a></code>, are also available.
+See the <a href="https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html">package
 overview</a> for a full summary of functionality provided by the GDAL
 API bindings.</p>
 </div>
