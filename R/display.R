@@ -164,10 +164,14 @@
 #' `grDevices::gray` for single-band data or `grDevices::rgb` for 3-band).
 #' Ignored if `col_tbl` is used. Set `normalize` to `FALSE` if using a color
 #' map function that operates on raw pixel values.
-#' @param xlim Numeric vector of length two giving the x coordinate range. The
-#' default uses pixel/line coordinates (`c(0, xsize)`).
-#' @param ylim Numeric vector of length two giving the y coordinate range. The
-#' default uses pixel/line coordinates (`c(ysize, 0)`).
+#' @param xlim Numeric vector of length two giving the x coordinate range.
+#' If `data` is a `GDALRaster` object, the default is the raster xmin, xmax in
+#' georeferenced coordinates, otherwise the default uses pixel/line
+#' coordinates (`c(0, xsize)`).
+#' @param ylim Numeric vector of length two giving the y coordinate range.
+#' If `data` is a `GDALRaster` object, the default is the raster ymin, ymax in
+#' georeferenced coordinates, otherwise the default uses pixel/line
+#' coordinates (`c(ysize, 0)`).
 #' @param xlab Title for the x axis (see `?title`).
 #' @param ylab Title for the y axis (see `?title`).
 #' @param interpolate Logical indicating whether to apply linear interpolation
@@ -270,12 +274,6 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 						xlab="x", ylab="y", xaxs="i", yaxs="i",
 						legend=FALSE, digits=2, na_col=rgb(0,0,0,0), ...) {
 
-    gt <- data$getGeoTransform()
-    dm <- c(data$getRasterXSize(), data$getRasterYSize())
-
-   if (is.null(xlim)) xlim <- c(gt[1L], gt[1L] + gt[2L] * dm[1L])
-   if (is.null(ylim)) ylim <- c(gt[4L] + gt[6L] * dm[2L], gt[4L])
-    print(ylim)
 	if (isTRUE((grDevices::dev.capabilities()$rasterImage == "no"))) {
 		message("Device does not support rasterImage().")
 		return()
@@ -313,6 +311,12 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 					maxColorValue = 255
 			}
 		}
+		
+		gt <- data$getGeoTransform()
+		if (is.null(xlim))
+			xlim <- c(gt[1L], gt[1L] + gt[2L] * dm[1L])
+		if (is.null(ylim))
+			ylim <- c(gt[4L] + gt[6L] * dm[2L], gt[4L])
 	}
 	else {
 		if (is.null(xsize) || is.null(ysize))
@@ -320,6 +324,10 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 		if ((xsize*ysize) > max_pixels)
 			stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
 		data_in <- data
+		if (is.null(xlim))
+			xlim <- c(0, xsize)
+		if (is.null(ylim))
+			ylim <- c(ysize, 0)
 	}
 
 	a <- array(data_in, dim = c(xsize, ysize, nbands))
