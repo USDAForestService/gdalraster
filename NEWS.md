@@ -1,5 +1,7 @@
 # gdalraster 1.7.0.9000 dev
 
+* `plot_raster()`: use georeferenced coordinates by default instead of pixel/line (#184 thanks to @mdsumner) (2023-11-15)
+
 * switch to using the R convention for x.x.x.9000 development versioning (2023-12-03)
 
 * add `GDALRaster::clearStatistics()`: clear statistics (PAM supported datasets GDAL >= 3.2) (2023-11-29)
