@@ -16,8 +16,8 @@ plot_raster(
   minmax_def = NULL,
   minmax_pct_cut = NULL,
   col_map_fn = NULL,
-  xlim = c(0, xsize),
-  ylim = c(ysize, 0),
+  xlim = NULL,
+  ylim = NULL,
   interpolate = TRUE,
   asp = 1,
   axes = TRUE,
@@ -87,11 +87,15 @@ the percentiles to use (e.g., \code{c(2, 98)}). Applied per band. Ignored if
 Ignored if \code{col_tbl} is used. Set \code{normalize} to \code{FALSE} if using a color
 map function that operates on raw pixel values.}
 
-\item{xlim}{Numeric vector of length two giving the x coordinate range. The
-default uses pixel/line coordinates (\code{c(0, xsize)}).}
+\item{xlim}{Numeric vector of length two giving the x coordinate range.
+If \code{data} is a \code{GDALRaster} object, the default is the raster xmin, xmax in
+georeferenced coordinates, otherwise the default uses pixel/line
+coordinates (\code{c(0, xsize)}).}
 
-\item{ylim}{Numeric vector of length two giving the y coordinate range. The
-default uses pixel/line coordinates (\code{c(ysize, 0)}).}
+\item{ylim}{Numeric vector of length two giving the y coordinate range.
+If \code{data} is a \code{GDALRaster} object, the default is the raster ymin, ymax in
+georeferenced coordinates, otherwise the default uses pixel/line
+coordinates (\code{c(ysize, 0)}).}
 
 \item{interpolate}{Logical indicating whether to apply linear interpolation
 to the image when drawing (default \code{TRUE}).}

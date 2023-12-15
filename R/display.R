@@ -15,7 +15,7 @@
 		xn[xn < 0] <- 0
 		xn[xn > 1] <- 1
 	}
-	
+
 	return(xn)
 }
 
@@ -23,28 +23,28 @@
 .as_raster <- function(a, col_tbl=NULL, maxColorValue=1,
 				normalize=TRUE, minmax_def=NULL, minmax_pct_cut=NULL,
 				col_map_fn=NULL, na_col=rgb(0,0,0,0), ...) {
-				
+
 # Create an object of class "raster", a matrix of color values representing
 # a bitmap image for input to graphics::rasterImage(). Input is an array of
 # pixel values with dimensions xsize, ysize, nbands.
 
 	nbands <- dim(a)[3]
-	
+
 	if ( !(nbands %in% c(1,3)) )
 		stop("Number of bands must be 1 or 3", call.=FALSE)
 
 	r <- array()
-	
+
 	if (!is.null(col_tbl)) {
 		# map to a color table
 		if(nbands != 1)
 			stop("A color table can only be used with single-band data.",
 					call.=FALSE)
-		
+
 		ct <- as.data.frame(col_tbl)
 		if(ncol(ct) < 4 || ncol(ct) > 5)
 			stop("Color table must have four or five columns.", call.=FALSE)
-		
+
 		if (ncol(ct) == 4) # add alpha channel
 			ct[,5] <- rep(maxColorValue, nrow(ct))
 		ct[,6] <- rgb(ct[,2], ct[,3], ct[,4], ct[,5],
@@ -83,7 +83,7 @@
 
 		if (is.null(col_map_fn))
 			col_map_fn <- ifelse(nbands==1, grDevices::gray, grDevices::rgb)
-		
+
 		has_na <- FALSE
 		nas <- array()
 		if (anyNA(a)) {
@@ -95,7 +95,7 @@
 			dim(nas) <- dim(nas)[1:2]
 			nas <- t(nas)
 		}
-		
+
 		if (nbands == 1) {
 			# grayscale
 			dim(a) <- dim(a)[1:2]
@@ -109,11 +109,11 @@
 			dim(r) <- dim(a)[2:1]
 			class(r) <- "raster"
 		}
-		
+
 		if (has_na)
 			r[nas] <- na_col
 	}
-	
+
 	return(r)
 }
 
@@ -160,14 +160,18 @@
 #' percentile cutoffs (removes outliers). A numeric vector of length two giving
 #' the percentiles to use (e.g., `c(2, 98)`). Applied per band. Ignored if
 #' `minmax_def` is used.
-#' @param col_map_fn An optional color map function (default is 
+#' @param col_map_fn An optional color map function (default is
 #' `grDevices::gray` for single-band data or `grDevices::rgb` for 3-band).
 #' Ignored if `col_tbl` is used. Set `normalize` to `FALSE` if using a color
 #' map function that operates on raw pixel values.
-#' @param xlim Numeric vector of length two giving the x coordinate range. The
-#' default uses pixel/line coordinates (`c(0, xsize)`).
-#' @param ylim Numeric vector of length two giving the y coordinate range. The
-#' default uses pixel/line coordinates (`c(ysize, 0)`).
+#' @param xlim Numeric vector of length two giving the x coordinate range.
+#' If `data` is a `GDALRaster` object, the default is the raster xmin, xmax in
+#' georeferenced coordinates, otherwise the default uses pixel/line
+#' coordinates (`c(0, xsize)`).
+#' @param ylim Numeric vector of length two giving the y coordinate range.
+#' If `data` is a `GDALRaster` object, the default is the raster ymin, ymax in
+#' georeferenced coordinates, otherwise the default uses pixel/line
+#' coordinates (`c(ysize, 0)`).
 #' @param xlab Title for the x axis (see `?title`).
 #' @param ylab Title for the y axis (see `?title`).
 #' @param interpolate Logical indicating whether to apply linear interpolation
@@ -255,7 +259,7 @@
 #' vat <- read.csv(evc_csv)
 #' head(vat)
 #' vat <- vat[,c(1,6:8)]
-#' 
+#'
 #' ds <- new(GDALRaster, evc_file, read_only=TRUE)
 #' plot_raster(ds, col_tbl=vat, interpolate=FALSE,
 #'             main="Storm Lake LANDFIRE EVC")
@@ -265,22 +269,22 @@
 plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 						max_pixels=2.5e7, col_tbl=NULL, maxColorValue=1,
 						normalize=TRUE, minmax_def=NULL, minmax_pct_cut=NULL,
-						col_map_fn=NULL, xlim=c(0, xsize), ylim=c(ysize, 0),
+						col_map_fn=NULL, xlim=NULL, ylim=NULL,
 						interpolate=TRUE, asp=1, axes=TRUE, main="",
-						xlab="x", ylab="y", xaxs="i", yaxs="i", 
+						xlab="x", ylab="y", xaxs="i", yaxs="i",
 						legend=FALSE, digits=2, na_col=rgb(0,0,0,0), ...) {
 
 	if (isTRUE((grDevices::dev.capabilities()$rasterImage == "no"))) {
 		message("Device does not support rasterImage().")
 		return()
 	}
-	
+
 	if ( !(nbands %in% c(1,3)) )
 		stop("Number of bands must be 1 or 3", call.=FALSE)
-		
+
 	if (is.null(max_pixels))
 		max_pixels = Inf
-	
+
 	if (is(data, "Rcpp_GDALRaster")) {
 		dm <- data$dim()
 		if (is.null(xsize))
@@ -294,19 +298,25 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 
 		if ((out_xsize*out_ysize) > max_pixels)
 			stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
-			
+
 		data_in <- read_ds(data, bands=1:nbands, xoff=0, yoff=0,
 							xsize=dm[1], ysize=dm[2],
 							out_xsize=out_xsize, out_ysize=out_ysize)
-		
+
 		if (nbands==1 && is.null(col_tbl) && is.null(col_map_fn)) {
 			# check for a built-in color table
-			if (!is.null(data$getColorTable(band=1)) && 
+			if (!is.null(data$getColorTable(band=1)) &&
 				data$getPaletteInterp(band=1)=="RGB") {
 					col_tbl = data$getColorTable(band=1)
 					maxColorValue = 255
 			}
 		}
+		
+		gt <- data$getGeoTransform()
+		if (is.null(xlim))
+			xlim <- c(gt[1L], gt[1L] + gt[2L] * dm[1L])
+		if (is.null(ylim))
+			ylim <- c(gt[4L] + gt[6L] * dm[2L], gt[4L])
 	}
 	else {
 		if (is.null(xsize) || is.null(ysize))
@@ -314,6 +324,10 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 		if ((xsize*ysize) > max_pixels)
 			stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
 		data_in <- data
+		if (is.null(xlim))
+			xlim <- c(0, xsize)
+		if (is.null(ylim))
+			ylim <- c(ysize, 0)
 	}
 
 	a <- array(data_in, dim = c(xsize, ysize, nbands))
@@ -330,7 +344,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 			message("Legend is not supported for RGB plot.")
 			legend <- FALSE
 	}
-	
+
 	op <- NULL
 	if (legend) {
 		if (is.null(col_map_fn))
@@ -339,7 +353,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 		graphics::layout(matrix(1:2, ncol=2), width=c(6,1), height=c(1,1))
 		graphics::par(mar=c(5, 4, 4, 0.5) + 0.1)
 	}
-	
+
 	graphics::plot.new()
 	graphics::plot.window(xlim=xlim, ylim=ylim, asp=asp,
 							xaxs=xaxs, yaxs=yaxs, ...)
@@ -354,7 +368,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 	else {
 		graphics::title(main=main)
 	}
-	
+
 	if (legend) {
 		mm <- NULL # define legend min/max
 		if (!is.null(minmax_def))
