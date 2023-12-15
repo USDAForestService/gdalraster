@@ -73,8 +73,8 @@
 <span>  minmax_def <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  minmax_pct_cut <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  col_map_fn <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  xlim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">0</span>, <span class="va">xsize</span><span class="op">)</span>,</span>
-<span>  ylim <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ysize</span>, <span class="fl">0</span><span class="op">)</span>,</span>
+<span>  xlim <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  ylim <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  interpolate <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  asp <span class="op">=</span> <span class="fl">1</span>,</span>
 <span>  axes <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -169,13 +169,17 @@ map function that operates on raw pixel values.</p></dd>
 
 
 <dt>xlim</dt>
-<dd><p>Numeric vector of length two giving the x coordinate range. The
-default uses pixel/line coordinates (<code>c(0, xsize)</code>).</p></dd>
+<dd><p>Numeric vector of length two giving the x coordinate range.
+If <code>data</code> is a <code>GDALRaster</code> object, the default is the raster xmin, xmax in
+georeferenced coordinates, otherwise the default uses pixel/line
+coordinates (<code>c(0, xsize)</code>).</p></dd>
 
 
 <dt>ylim</dt>
-<dd><p>Numeric vector of length two giving the y coordinate range. The
-default uses pixel/line coordinates (<code>c(ysize, 0)</code>).</p></dd>
+<dd><p>Numeric vector of length two giving the y coordinate range.
+If <code>data</code> is a <code>GDALRaster</code> object, the default is the raster ymin, ymax in
+georeferenced coordinates, otherwise the default uses pixel/line
+coordinates (<code>c(ysize, 0)</code>).</p></dd>
 
 
 <dt>interpolate</dt>
