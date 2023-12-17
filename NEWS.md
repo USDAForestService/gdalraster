@@ -6,7 +6,7 @@
 
 * add `GDALRaster::clearStatistics()`: clear statistics (PAM supported datasets GDAL >= 3.2) (2023-11-29)
 
-* Documentation: the example for `calc()` using Landsat bands should have applied scale/offset as given in the .json metadata - this has been corrected; include `translate()` and `warp()` in [Raster API Tutorial - See also](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also)
+* Documentation: the example for `calc()` using Landsat bands should have applied scale/offset as given in the .json metadata - this has been corrected; include `translate()` and `warp()` in [Raster API Tutorial - See also](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also); add `AWS_REGION` to [GDAL Config Quick Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
 
 # gdalraster 1.7.0
 
