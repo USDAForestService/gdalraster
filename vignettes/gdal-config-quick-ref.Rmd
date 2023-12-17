@@ -228,6 +228,15 @@ set_config_option("AWS_SESSION_TOKEN", "<value>") # session token
 set_config_option("AWS_REQUEST_PAYER", "<value>") # requester
 ```
 
+**`AWS_REGION`**
+
+Sets the AWS region to which requests should be sent. Defaults to `us-east-1`.
+
+```{r}
+# specify region
+set_config_option("AWS_REGION", "us-west-2")
+```
+
 ## Google Cloud Storage
 
 GDAL doc: [/vsigs/](https://gdal.org/user/virtual_file_systems.html#vsigs-google-cloud-storage-files) (Google Cloud Storage files)
