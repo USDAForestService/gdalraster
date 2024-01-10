@@ -1387,6 +1387,7 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 		std::string t_srs, 
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
 
+	bool ret = false;
 	std::vector<GDALDatasetH> src_ds(src_files.size());
 	for (std::size_t i = 0; i < src_files.size(); ++i) {
 		GDALDatasetH hDS = GDALOpenShared(src_files[i].c_str(), GA_ReadOnly);
@@ -1427,13 +1428,18 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 							psOptions, NULL);
 							
 	GDALWarpAppOptionsFree(psOptions);
+	
+	if (hDstDS != NULL) {
+		GDALClose(hDstDS);
+		ret = true;
+	}
 	for (std::size_t i = 0; i < src_files.size(); ++i)
 		GDALClose(src_ds[i]);
-	if (hDstDS == NULL)
+	
+	if (!ret)
 		Rcpp::stop("Warp raster failed.");
 	
-	GDALClose(hDstDS);
-	return true;
+	return ret;
 }
 
 
