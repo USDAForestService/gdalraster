@@ -1179,6 +1179,7 @@ bool sieveFilter(std::string src_filename, int src_band,
 bool translate(std::string src_filename, std::string dst_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
 
+	bool ret = false;
 	GDALDatasetH src_ds = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
 	if (src_ds == NULL)
 		Rcpp::stop("Open source raster failed.");
@@ -1203,12 +1204,17 @@ bool translate(std::string src_filename, std::string dst_filename,
 							psOptions, NULL);
 							
 	GDALTranslateOptionsFree(psOptions);
-	GDALClose(src_ds);
-	if (hDstDS == NULL)
-		Rcpp::stop("Translate raster failed.");
 	
-	GDALClose(hDstDS);
-	return true;
+	if (hDstDS != NULL) {
+		GDALClose(hDstDS);
+		ret = true;
+	}
+	GDALClose(src_ds);
+	
+	if (!ret)
+		Rcpp::stop("Warp raster failed.");
+	
+	return ret;
 }
 
 
