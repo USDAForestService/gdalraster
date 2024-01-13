@@ -153,6 +153,7 @@ class GDALRaster {
 	
 	public:
 	GDALRaster();
+	GDALRaster(std::string filename);
 	GDALRaster(std::string filename, bool read_only);
 	
 	std::string getFilename() const;
@@ -242,6 +243,8 @@ class GDALRaster {
 	void _checkAccess(GDALAccess access_needed) const;
 	GDALRasterBandH _getBand(int band) const;
 	bool _readableAsInt(int band) const;
+	bool _hasInt64() const;
+	void _warnInt64() const;
 };
 
 RCPP_EXPOSED_CLASS(GDALRaster)
