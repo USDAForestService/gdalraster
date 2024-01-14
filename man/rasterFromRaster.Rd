@@ -50,7 +50,7 @@ sets driver-specific dataset creation options, and initializes to a value.
 # band 2 in a FARSITE landscape file has slope degrees
 # convert slope degrees to slope percent in a new raster
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
+ds_lcp <- new(GDALRaster, lcp_file)
 ds_lcp$getMetadata(band=2, domain="")
 
 slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")

@@ -54,7 +54,7 @@ dst_file <- paste0(tempdir(), "/", "sr_multi.tif")
 rasterFromRaster(b5_file, dst_file, nbands=7, init=0)
 opt <- c("COMPRESSED=YES", "SKIP_HOLES=YES")
 bandCopyWholeRaster(b5_file, 1, dst_file, 5, options=opt)
-ds <- new(GDALRaster, dst_file, read_only=TRUE)
+ds <- new(GDALRaster, dst_file)
 ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
 ds$close()
 }

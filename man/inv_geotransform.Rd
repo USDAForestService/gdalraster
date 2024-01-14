@@ -24,7 +24,7 @@ geospatial x/y coordinate -> raster pixel/line (column/row)
 }
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-ds <- new(GDALRaster, elev_file, read_only=TRUE)
+ds <- new(GDALRaster, elev_file)
 gt <- ds$getGeoTransform()
 ds$close()
 invgt <- inv_geotransform(gt)

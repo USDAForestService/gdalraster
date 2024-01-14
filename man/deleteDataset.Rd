@@ -40,7 +40,7 @@ b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
 file.copy(b5_file,  b5_tmp)
 
-ds <- new(GDALRaster, b5_tmp, read_only=TRUE)
+ds <- new(GDALRaster, b5_tmp)
 ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
 files <- ds$getFileList()
 print(files)

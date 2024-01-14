@@ -29,12 +29,12 @@
 #' bbox_list <-list()
 #'
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' ds <- new(GDALRaster, elev_file, read_only=TRUE)
+#' ds <- new(GDALRaster, elev_file)
 #' bbox_list[[1]] <- ds$bbox()
 #' ds$close()
 #'
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-#' ds <- new(GDALRaster, b5_file, read_only=TRUE)
+#' ds <- new(GDALRaster, b5_file)
 #' bbox_list[[2]] <- ds$bbox()
 #' ds$close()
 #'

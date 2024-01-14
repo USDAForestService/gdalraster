@@ -220,7 +220,7 @@
 #' @examples
 #' ## Elevation
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' ds <- new(GDALRaster, elev_file, read_only=TRUE)
+#' ds <- new(GDALRaster, elev_file)
 #'
 #' # grayscale
 #' plot_raster(ds, legend=TRUE, main="Storm Lake elevation (m)")
@@ -242,7 +242,7 @@
 #'
 #' r <- vector("integer")
 #' for (f in band_files) {
-#'   ds <- new(GDALRaster, f, read_only=TRUE)
+#'   ds <- new(GDALRaster, f)
 #'   dm <- ds$dim()
 #'   r <- c(r, read_ds(ds))
 #'   ds$close()
@@ -260,7 +260,7 @@
 #' head(vat)
 #' vat <- vat[,c(1,6:8)]
 #'
-#' ds <- new(GDALRaster, evc_file, read_only=TRUE)
+#' ds <- new(GDALRaster, evc_file)
 #' plot_raster(ds, col_tbl=vat, interpolate=FALSE,
 #'             main="Storm Lake LANDFIRE EVC")
 #'

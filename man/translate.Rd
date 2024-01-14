@@ -38,7 +38,7 @@ args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
 translate(elev_file, img_file, args)
 
-ds <- new(GDALRaster, img_file, read_only=TRUE)
+ds <- new(GDALRaster, img_file)
 ds$getDriverLongName()
 ds$bbox()
 ds$res()

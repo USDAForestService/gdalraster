@@ -356,7 +356,7 @@ Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
 //' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [get_pixel_line()]
 //' @examples
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-//' ds <- new(GDALRaster, elev_file, read_only=TRUE)
+//' ds <- new(GDALRaster, elev_file)
 //' gt <- ds$getGeoTransform()
 //' ds$close()
 //' invgt <- inv_geotransform(gt)
@@ -407,7 +407,7 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' pts <- read.csv(pt_file)
 //' print(pts)
 //' raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-//' ds <- new(GDALRaster, raster_file, read_only=TRUE)
+//' ds <- new(GDALRaster, raster_file)
 //' gt <- ds$getGeoTransform()
 //' get_pixel_line(as.matrix(pts[,-1]), gt)
 //' ds$close()
@@ -479,7 +479,7 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 //' band_files <- c(b6_file, b5_file, b4_file)
 //' vrt_file <- paste0(tempdir(), "/", "storml_b6_b5_b4.vrt")
 //' buildVRT(vrt_file, band_files, cl_arg = "-separate")
-//' ds <- new(GDALRaster, vrt_file, read_only=TRUE)
+//' ds <- new(GDALRaster, vrt_file)
 //' ds$getRasterCount()
 //' plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
 //' ds$close()
@@ -1169,7 +1169,7 @@ bool sieveFilter(std::string src_filename, int src_band,
 //' img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
 //' translate(elev_file, img_file, args)
 //' 
-//' ds <- new(GDALRaster, img_file, read_only=TRUE)
+//' ds <- new(GDALRaster, img_file)
 //' ds$getDriverLongName()
 //' ds$bbox()
 //' ds$res()
@@ -1382,7 +1382,7 @@ bool translate(std::string src_filename, std::string dst_filename,
 //' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
 //' warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
 //' 
-//' ds <- new(GDALRaster, alb83_file, read_only=TRUE)
+//' ds <- new(GDALRaster, alb83_file)
 //' ds$getDriverLongName()
 //' ds$getProjectionRef()
 //' ds$res()
@@ -1485,7 +1485,7 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 //' # create a color ramp for tree canopy cover percent
 //' # band 5 of an LCP file contains canopy cover
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-//' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+//' ds <- new(GDALRaster, lcp_file)
 //' ds$getDescription(band=5)
 //' ds$getMetadata(band=5, domain="")
 //' ds$close()
@@ -1644,7 +1644,7 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //' rasterFromRaster(b5_file, dst_file, nbands=7, init=0)
 //' opt <- c("COMPRESSED=YES", "SKIP_HOLES=YES")
 //' bandCopyWholeRaster(b5_file, 1, dst_file, 5, options=opt)
-//' ds <- new(GDALRaster, dst_file, read_only=TRUE)
+//' ds <- new(GDALRaster, dst_file)
 //' ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
@@ -1738,7 +1738,7 @@ bool bandCopyWholeRaster(std::string src_filename, int src_band,
 //' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
 //' file.copy(b5_file,  b5_tmp)
 //' 
-//' ds <- new(GDALRaster, b5_tmp, read_only=TRUE)
+//' ds <- new(GDALRaster, b5_tmp)
 //' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
 //' files <- ds$getFileList()
 //' print(files)
@@ -1806,13 +1806,13 @@ bool deleteDataset(std::string filename, std::string format = "") {
 //' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
 //' file.copy(b5_file,  b5_tmp)
 //' 
-//' ds <- new(GDALRaster, b5_tmp, read_only=TRUE)
+//' ds <- new(GDALRaster, b5_tmp)
 //' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
 //' ds$getFileList()
 //' ds$close()
 //' b5_tmp2 <- paste0(tempdir(), "/", "b5_tmp_renamed.tif")
 //' renameDataset(b5_tmp2, b5_tmp)
-//' ds <- new(GDALRaster, b5_tmp2, read_only=TRUE)
+//' ds <- new(GDALRaster, b5_tmp2)
 //' ds$getFileList()
 //' ds$close()
 // [[Rcpp::export]]
@@ -1869,13 +1869,13 @@ bool renameDataset(std::string new_filename, std::string old_filename,
 //'
 //' @examples
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-//' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+//' ds <- new(GDALRaster, lcp_file)
 //' ds$getFileList()
 //' ds$close()
 //' 
 //' lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
 //' copyDatasetFiles(lcp_tmp, lcp_file)
-//' ds_copy <- new(GDALRaster, lcp_tmp, read_only=TRUE)
+//' ds_copy <- new(GDALRaster, lcp_tmp)
 //' ds_copy$getFileList()
 //' ds_copy$close()
 // [[Rcpp::export]]

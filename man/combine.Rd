@@ -98,7 +98,7 @@ cmb_file <- paste0(tempdir(), "/", "fbfm_cov_cmbid.tif")
 opt <- c("COMPRESS=LZW")
 tbl <- combine(rasterfiles, var.names, bands, cmb_file, options = opt)
 head(tbl)
-ds <- new(GDALRaster, cmb_file, TRUE)
+ds <- new(GDALRaster, cmb_file)
 ds$info()
 ds$close()
 }

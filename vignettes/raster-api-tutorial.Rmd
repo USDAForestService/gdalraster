@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ## Opening a raster dataset
 
-Before opening a GDAL-supported data store it is necessary to register drivers. There is a driver for each supported raster format. **gdalraster** automatically registers drivers when the package is loaded. A raster dataset is opened by creating a new instance of `GDALRaster-class` passing the `filename` and the access desired (`read_only = TRUE`, or `read_only = FALSE` to open with update access):
+Before opening a GDAL-supported data store it is necessary to register drivers. There is a driver for each supported raster format. **gdalraster** automatically registers drivers when the package is loaded. A raster dataset is opened by creating a new instance of `GDALRaster-class` passing the `filename` and the access desired (`read_only = TRUE` is the default if not specified, or `read_only = FALSE` to open with update access):
 
 ```{r}
 library(gdalraster)
