@@ -81,8 +81,8 @@ raster format descriptions:
 
 
 <dt>read_only</dt>
-<dd><p>Logical. <code>TRUE</code> to open the dataset read-only, or <code>FALSE</code>
-to open with write access.</p></dd>
+<dd><p>Logical. <code>TRUE</code> to open the dataset read-only (the default),
+or <code>FALSE</code> to open with write access.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -110,7 +110,7 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
     
 
 <div class="sourceCode"><pre><code><span></span>
-<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, <span class="va">read_only</span><span class="op">)</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Methods (see Details)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getFilename</span><span class="op">(</span><span class="op">)</span></span>
@@ -188,7 +188,8 @@ LANCZOS, AVERAGE or MODE (see <code><a href="set_config_option.html">set_config_
 
 
 <p><code>new(GDALRaster, filename, read_only)</code>
-Constructor. Returns an object of class <code>GDALRaster</code>.</p>
+Constructor. Returns an object of class <code>GDALRaster</code>.
+<code>read_only</code> defaults to <code>TRUE</code> if not specified.</p>
 <p><code>$getFilename()</code>
 Returns a character string containing the <code>filename</code> associated with this
 <code>GDALRaster</code> object (<code>filename</code> originally used to open the dataset).</p>
@@ -584,7 +585,7 @@ The dataset can be re-opened on the existing <code>filename</code> with
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">lcp_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">lcp_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## print information about the dataset to the console</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -835,7 +836,7 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url</span>, <span class="st">"usdaforestservice/gdalraster/main/sample-data/"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url</span>, <span class="st">"lf_elev_220_mt_hood_utm.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">url</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">url</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend<span class="op">=</span><span class="cn">TRUE</span>, main<span class="op">=</span><span class="st">"Mount Hood elevation (m)"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="GDALRaster-class-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>

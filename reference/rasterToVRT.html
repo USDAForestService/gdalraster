@@ -216,7 +216,7 @@ Examples for both cases of <code>src_align</code> are given below.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## resample</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">evt_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_evt.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">evt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">evt_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 30 30</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -295,7 +295,7 @@ Examples for both cases of <code>src_align</code> are given below.</p>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/sum.html" class="external-link">sum</a></span><span class="op">(</span><span class="va">tbl90m</span><span class="op">$</span><span class="va">COUNT</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1728</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 90 90</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -306,7 +306,7 @@ Examples for both cases of <code>src_align</code> are given below.</p>
 <span class="r-in"><span><span class="co">## clip</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">evt_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_evt.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds_evt</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">evt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_evt</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">evt_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds_evt</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323476.1 5101872.0  327766.1 5105082.0</span>
 <span class="r-in"><span></span></span>
@@ -319,7 +319,7 @@ Examples for both cases of <code>src_align</code> are given below.</p>
 <span class="r-in"><span><span class="va">vrt_file</span> <span class="op">&lt;-</span> <span class="fu">rasterToVRT</span><span class="op">(</span><span class="va">evt_file</span>,</span></span>
 <span class="r-in"><span>                        subwindow <span class="op">=</span> <span class="fu"><a href="bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="va">bnd</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        src_align<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds_vrt</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_vrt</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># VRT is a virtual clip, pixel-aligned with the EVT raster</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="va">bnd</span><span class="op">)</span></span></span>
@@ -333,7 +333,7 @@ Examples for both cases of <code>src_align</code> are given below.</p>
 <span class="r-in"><span><span class="va">vrt_file</span> <span class="op">&lt;-</span> <span class="fu">rasterToVRT</span><span class="op">(</span><span class="va">evt_file</span>,</span></span>
 <span class="r-in"><span>                        subwindow <span class="op">=</span> <span class="fu"><a href="bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="va">bnd</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        src_align<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds_vrt_noalign</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_vrt_noalign</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax</span></span></span>
 <span class="r-in"><span><span class="va">ds_vrt_noalign</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -350,11 +350,11 @@ Examples for both cases of <code>src_align</code> are given below.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># FARSITE landscape file for the Storm Lake area</span></span></span>
 <span class="r-in"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds_lcp</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">lcp_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_lcp</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">lcp_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Landsat band 5 file covering the Storm Lake area</span></span></span>
 <span class="r-in"><span><span class="va">b5_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/sr_b5_20200829.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds_b5</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">b5_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_b5</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">b5_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds_lcp</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span>  <span class="co"># 323476.1 5101872.0  327766.1 5105082.0</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323476.1 5101872.0  327766.1 5105082.0</span>
@@ -371,7 +371,7 @@ Examples for both cases of <code>src_align</code> are given below.</p>
 <span class="r-in"><span>                        resolution <span class="op">=</span> <span class="va">ds_lcp</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        subwindow <span class="op">=</span> <span class="va">ds_lcp</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span>,</span></span>
 <span class="r-in"><span>                        src_align <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds_b5vrt</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_b5vrt</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">vrt_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds_b5vrt</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span> <span class="co"># 323476.1 5101872.0  327766.1 5105082.0</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323476.1 5101872.0  327766.1 5105082.0</span>
