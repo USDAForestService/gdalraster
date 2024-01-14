@@ -1,5 +1,7 @@
 # gdalraster 1.7.0.9000 dev
 
+* `GDALRaster` class: add a constructor with default `read_only=TRUE` (2024-01-13)
+
 * use pkg-config on Windows (#125 thanks to @kalibera) (2024-01-12)
 
 * `plot_raster()`: use georeferenced coordinates by default instead of pixel/line (#184 thanks to @mdsumner) (2023-12-15)
@@ -8,7 +10,7 @@
 
 * add `GDALRaster::clearStatistics()`: clear statistics (PAM supported datasets GDAL >= 3.2) (2023-11-29)
 
-* Documentation: the example for `calc()` using Landsat bands should have applied scale/offset as given in the .json metadata - this has been corrected; include `translate()` and `warp()` in [Raster API Tutorial - See also](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also); add `AWS_REGION` to [GDAL Config Quick Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+* Documentation: the example for `calc()` using Landsat bands should have applied scale/offset as given in the .json metadata - this has been corrected; include `translate()` and `warp()` in [Raster API Tutorial - See also](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also); add `AWS_REGION` to [GDAL Config Quick Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update documentation and examples throughout for the optional constructor in class `GDALRaster` with default `read_only=TRUE`
 
 # gdalraster 1.7.0
 
