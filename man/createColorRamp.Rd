@@ -50,7 +50,7 @@ same as \code{start_color} of the next ramp).
 # create a color ramp for tree canopy cover percent
 # band 5 of an LCP file contains canopy cover
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+ds <- new(GDALRaster, lcp_file)
 ds$getDescription(band=5)
 ds$getMetadata(band=5, domain="")
 ds$close()

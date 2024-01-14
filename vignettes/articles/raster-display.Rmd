@@ -21,7 +21,7 @@ base_url <- "/vsicurl/https://raw.githubusercontent.com/usdaforestservice/gdalra
 
 ```{r}
 f <- paste0(base_url, "lf_elev_220_mt_hood_utm.tif")
-ds <- new(GDALRaster, f, read_only=TRUE)
+ds <- new(GDALRaster, f)
 
 # gray
 plot_raster(ds, legend=TRUE, main="Mount Hood elevation (m)")
@@ -38,7 +38,7 @@ ds$close()
 
 ```{r}
 f <- paste0(base_url, "landsat_c2ard_sr_mt_hood_jul2022_utm.tif")
-ds <- new(GDALRaster, f, read_only=TRUE)
+ds <- new(GDALRaster, f)
 dm <- ds$dim()
 
 # passing a vector of pixel values rather than the open dataset
@@ -56,7 +56,7 @@ plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
 
 ```{r}
 f <- paste0(base_url, "lf_fbfm40_220_mt_hood_utm.tif")
-ds <- new(GDALRaster, f, read_only=TRUE)
+ds <- new(GDALRaster, f)
 dm <- ds$dim()
 print(paste("Size is", dm[1], "x",  dm[2], "x", dm[3]))
 
@@ -78,7 +78,7 @@ ds$close()
 ```{r}
 f <- paste0(base_url, "bl_mrbl_ng_jul2004_rgb_720x360.tif")
 
-ds <- new(GDALRaster, f, read_only=TRUE)
+ds <- new(GDALRaster, f)
 dm <- ds$dim()
 print(paste("Size is", dm[1], "x",  dm[2], "x", dm[3]))
 

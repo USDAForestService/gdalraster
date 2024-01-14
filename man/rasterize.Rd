@@ -132,7 +132,7 @@ rasterize(src_dsn = dsn,
           init = -9999,
           co = c("TILED=YES","COMPRESS=LZW"))
 
-ds <- new(GDALRaster, out_file, TRUE)
+ds <- new(GDALRaster, out_file)
 pal <- scales::viridis_pal(end = 0.8, direction = -1)(6)
 ramp <- scales::colour_ramp(pal)
 plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",

@@ -166,7 +166,7 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' @examples
 #' # read three bands from a multi-band dataset
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-#' ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+#' ds <- new(GDALRaster, lcp_file)
 #'
 #' r <- read_ds(ds, bands=c(6,5,4))
 #' typeof(r)
@@ -221,7 +221,7 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #' # band 2 in a FARSITE landscape file has slope degrees
 #' # convert slope degrees to slope percent in a new raster
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-#' ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
+#' ds_lcp <- new(GDALRaster, lcp_file)
 #' ds_lcp$getMetadata(band=2, domain="")
 #' 
 #' slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
@@ -418,7 +418,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ## resample
 #'
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-#' ds <- new(GDALRaster, evt_file, TRUE)
+#' ds <- new(GDALRaster, evt_file)
 #' ds$res()
 #' ds$bbox()
 #' ds$close()
@@ -441,7 +441,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' print(tbl90m)
 #' sum(tbl90m$COUNT)
 #' 
-#' ds <- new(GDALRaster, vrt_file, TRUE)
+#' ds <- new(GDALRaster, vrt_file)
 #' ds$res()
 #' ds$bbox()
 #' ds$close()
@@ -450,7 +450,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ## clip
 #' 
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-#' ds_evt <- new(GDALRaster, evt_file, TRUE)
+#' ds_evt <- new(GDALRaster, evt_file)
 #' ds_evt$bbox()
 #' 
 #' # WKT string for a boundary within the EVT extent
@@ -462,7 +462,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
 #'                         src_align=TRUE)
-#' ds_vrt <- new(GDALRaster, vrt_file, TRUE)
+#' ds_vrt <- new(GDALRaster, vrt_file)
 #' 
 #' # VRT is a virtual clip, pixel-aligned with the EVT raster
 #' bbox_from_wkt(bnd)
@@ -473,7 +473,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
 #'                         src_align=FALSE)
-#' ds_vrt_noalign <- new(GDALRaster, vrt_file, TRUE)
+#' ds_vrt_noalign <- new(GDALRaster, vrt_file)
 #' 
 #' # VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
 #' ds_vrt_noalign$bbox()
@@ -488,11 +488,11 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' 
 #' # FARSITE landscape file for the Storm Lake area
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-#' ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
+#' ds_lcp <- new(GDALRaster, lcp_file)
 #' 
 #' # Landsat band 5 file covering the Storm Lake area
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-#' ds_b5 <- new(GDALRaster, b5_file, read_only=TRUE)
+#' ds_b5 <- new(GDALRaster, b5_file)
 #' 
 #' ds_lcp$bbox()  # 323476.1 5101872.0  327766.1 5105082.0
 #' ds_lcp$res()   # 30 30
@@ -505,7 +505,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #'                         resolution = ds_lcp$res(),
 #'                         subwindow = ds_lcp$bbox(),
 #'                         src_align = FALSE)
-#' ds_b5vrt <- new(GDALRaster, vrt_file, TRUE)
+#' ds_b5vrt <- new(GDALRaster, vrt_file)
 #'
 #' ds_b5vrt$bbox() # 323476.1 5101872.0  327766.1 5105082.0
 #' ds_b5vrt$res()  # 30 30
@@ -806,7 +806,7 @@ rasterToVRT <- function(srcfile,
 #'                 setRasterNodataValue = TRUE,
 #'                 usePixelLonLat = TRUE)
 #' 
-#' ds <- new(GDALRaster, hi_file, read_only=TRUE)
+#' ds <- new(GDALRaster, hi_file)
 #' # min, max, mean, sd
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
@@ -827,7 +827,7 @@ rasterToVRT <- function(srcfile,
 #'                   nodata_value = -32767,
 #'                   setRasterNodataValue = TRUE)
 #' 
-#' ds <- new(GDALRaster, ndvi_file, read_only=TRUE)
+#' ds <- new(GDALRaster, ndvi_file)
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
 #'
@@ -1157,7 +1157,7 @@ calc <- function(expr,
 #' opt <- c("COMPRESS=LZW")
 #' tbl <- combine(rasterfiles, var.names, bands, cmb_file, options = opt)
 #' head(tbl)
-#' ds <- new(GDALRaster, cmb_file, TRUE)
+#' ds <- new(GDALRaster, cmb_file)
 #' ds$info()
 #' ds$close()
 #' @export
@@ -1552,7 +1552,7 @@ polygonize <- function(raster_file,
 #'           init = -9999,
 #'           co = c("TILED=YES","COMPRESS=LZW"))
 #'
-#' ds <- new(GDALRaster, out_file, TRUE)
+#' ds <- new(GDALRaster, out_file)
 #' pal <- scales::viridis_pal(end = 0.8, direction = -1)(6)
 #' ramp <- scales::colour_ramp(pal)
 #' plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",

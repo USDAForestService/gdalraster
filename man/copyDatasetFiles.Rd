@@ -32,13 +32,13 @@ from the passed file name.
 }
 \examples{
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+ds <- new(GDALRaster, lcp_file)
 ds$getFileList()
 ds$close()
 
 lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
 copyDatasetFiles(lcp_tmp, lcp_file)
-ds_copy <- new(GDALRaster, lcp_tmp, read_only=TRUE)
+ds_copy <- new(GDALRaster, lcp_tmp)
 ds_copy$getFileList()
 ds_copy$close()
 }

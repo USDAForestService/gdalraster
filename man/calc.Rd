@@ -136,7 +136,7 @@ hi_file <- calc(expr = expr,
                 setRasterNodataValue = TRUE,
                 usePixelLonLat = TRUE)
 
-ds <- new(GDALRaster, hi_file, read_only=TRUE)
+ds <- new(GDALRaster, hi_file)
 # min, max, mean, sd
 ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
@@ -157,7 +157,7 @@ ndvi_file <- calc(expr = expr,
                   nodata_value = -32767,
                   setRasterNodataValue = TRUE)
 
-ds <- new(GDALRaster, ndvi_file, read_only=TRUE)
+ds <- new(GDALRaster, ndvi_file)
 ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
 

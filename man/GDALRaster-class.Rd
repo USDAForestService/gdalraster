@@ -14,8 +14,8 @@ contain format-specific information on how to access a dataset (see GDAL
 raster format descriptions:
 \url{https://gdal.org/drivers/raster/index.html}).}
 
-\item{read_only}{Logical. \code{TRUE} to open the dataset read-only, or \code{FALSE}
-to open with write access.}
+\item{read_only}{Logical. \code{TRUE} to open the dataset read-only (the default),
+or \code{FALSE} to open with write access.}
 }
 \value{
 An object of class \code{GDALRaster} which contains a pointer to the
@@ -42,7 +42,7 @@ LANCZOS, AVERAGE or MODE (see \code{\link[=set_config_option]{set_config_option(
 \section{Usage}{
 
 \preformatted{
-ds <- new(GDALRaster, filename, read_only)
+ds <- new(GDALRaster, filename, read_only=TRUE)
 
 ## Methods (see Details)
 ds$getFilename()
@@ -120,6 +120,7 @@ ds$close()
 
 \code{new(GDALRaster, filename, read_only)}
 Constructor. Returns an object of class \code{GDALRaster}.
+\code{read_only} defaults to \code{TRUE} if not specified.
 
 \code{$getFilename()}
 Returns a character string containing the \code{filename} associated with this
@@ -624,7 +625,7 @@ The dataset can be re-opened on the existing \code{filename} with
 
 \examples{
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-ds <- new(GDALRaster, lcp_file, read_only=TRUE)
+ds <- new(GDALRaster, lcp_file)
 
 ## print information about the dataset to the console
 ds$info()
@@ -714,7 +715,7 @@ url <- "/vsicurl/https://raw.githubusercontent.com/"
 url <- paste0(url, "usdaforestservice/gdalraster/main/sample-data/")
 url <- paste0(url, "lf_elev_220_mt_hood_utm.tif")
 
-ds <- new(GDALRaster, url, read_only=TRUE)
+ds <- new(GDALRaster, url)
 plot_raster(ds, legend=TRUE, main="Mount Hood elevation (m)")
 ds$close()
 }

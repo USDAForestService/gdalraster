@@ -133,7 +133,7 @@ Examples for both cases of \code{src_align} are given below.
 ## resample
 
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-ds <- new(GDALRaster, evt_file, TRUE)
+ds <- new(GDALRaster, evt_file)
 ds$res()
 ds$bbox()
 ds$close()
@@ -156,7 +156,7 @@ tbl90m <- buildRAT(vrt_file)
 print(tbl90m)
 sum(tbl90m$COUNT)
 
-ds <- new(GDALRaster, vrt_file, TRUE)
+ds <- new(GDALRaster, vrt_file)
 ds$res()
 ds$bbox()
 ds$close()
@@ -165,7 +165,7 @@ ds$close()
 ## clip
 
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-ds_evt <- new(GDALRaster, evt_file, TRUE)
+ds_evt <- new(GDALRaster, evt_file)
 ds_evt$bbox()
 
 # WKT string for a boundary within the EVT extent
@@ -177,7 +177,7 @@ bnd = "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
                         src_align=TRUE)
-ds_vrt <- new(GDALRaster, vrt_file, TRUE)
+ds_vrt <- new(GDALRaster, vrt_file)
 
 # VRT is a virtual clip, pixel-aligned with the EVT raster
 bbox_from_wkt(bnd)
@@ -188,7 +188,7 @@ ds_vrt$res()
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
                         src_align=FALSE)
-ds_vrt_noalign <- new(GDALRaster, vrt_file, TRUE)
+ds_vrt_noalign <- new(GDALRaster, vrt_file)
 
 # VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
 ds_vrt_noalign$bbox()
@@ -203,11 +203,11 @@ ds_evt$close()
 
 # FARSITE landscape file for the Storm Lake area
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-ds_lcp <- new(GDALRaster, lcp_file, read_only=TRUE)
+ds_lcp <- new(GDALRaster, lcp_file)
 
 # Landsat band 5 file covering the Storm Lake area
 b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-ds_b5 <- new(GDALRaster, b5_file, read_only=TRUE)
+ds_b5 <- new(GDALRaster, b5_file)
 
 ds_lcp$bbox()  # 323476.1 5101872.0  327766.1 5105082.0
 ds_lcp$res()   # 30 30
@@ -220,7 +220,7 @@ vrt_file <- rasterToVRT(b5_file,
                         resolution = ds_lcp$res(),
                         subwindow = ds_lcp$bbox(),
                         src_align = FALSE)
-ds_b5vrt <- new(GDALRaster, vrt_file, TRUE)
+ds_b5vrt <- new(GDALRaster, vrt_file)
 
 ds_b5vrt$bbox() # 323476.1 5101872.0  327766.1 5105082.0
 ds_b5vrt$res()  # 30 30
