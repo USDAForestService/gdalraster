@@ -56,8 +56,7 @@ Suggests:
     scales,
     testthat (>= 3.0.0)
 NeedsCompilation: yes
-SystemRequirements: GDAL (>= 2.4.0, built against GEOS), PROJ (>= 4.8.0),
-    sqlite3
+SystemRequirements: GDAL (>= 2.4.0, built against GEOS), PROJ, sqlite3
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.0
