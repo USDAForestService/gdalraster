@@ -1,10 +1,10 @@
 # Miscellaneous helper functions for working with the GDAL API
-# currently: addFileInZip(), getCreationOptions()
+# currently: addFilesInZip(), getCreationOptions()
 # Chris Toney <chris.toney at usda.gov>
 
-#' Create/append to a (potentially seek-optimized) ZIP file
+#' Create/append to a potentially seek-optimized ZIP file
 #'
-#' `addFileInZip()` creates or opens existing ZIP file, and adds one or
+#' `addFilesInZip()` creates or opens existing ZIP file, and adds one or
 #' more compressed files potentially using the seek optimization extension.
 #' This function is basically a wrapper for `CPLAddFileInZip()` in the GDAL
 #' Common Portability Library, but optionally creates a new ZIP file first
@@ -12,8 +12,8 @@
 #' is at \url{https://sozip.org/}. Requires GDAL >= 3.7.
 #'
 #' @param zip_file Filename of the ZIP file. Will be created if it does not
-#' exist or if `overwrite = TRUE`, otherwise will append to an existing file.
-#' @param in_files Character vector of input filenames to add.
+#' exist or if `overwrite = TRUE`. Otherwise will append to an existing file.
+#' @param add_files Character vector of one or more input filenames to add.
 #' 
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
@@ -24,23 +24,55 @@
 #' @examples
 #' 
 #' @export
-addFileInZip <- function(zip_file,
-						in_files,
-						overwrite = FALSE,
-						full_paths = TRUE,
-						sozip_enabled = "AUTO",
-						sozip_chunk_size = NULL,
-						sozip_min_file_size = NULL,
-						num_threads = NULL,
-						timestamp = NULL,
-						content_type = NULL,
-						quiet = FALSE) {
+addFilesInZip <- function(
+		zip_file,
+		add_files,
+		overwrite = FALSE,
+		full_paths = TRUE,
+		sozip_enabled = "AUTO",
+		sozip_chunk_size = NULL,
+		sozip_min_file_size = NULL,
+		num_threads = NULL,
+		timestamp = NULL,
+		content_type = NULL,
+		quiet = FALSE) {
 
 	if (as.integer(gdal_version()[2]) < 3070000)
 		stop("addFileInZip() requires GDAL >= 3.7.", call. = FALSE)
 	
+	opt <- NULL
+	if (is.null(sozip_enabled)) {
+		opt <- "SOZIP_ENABLED=AUTO"
+	}
+	else {
+		sozip_enabled <- toupper(sozip_enabled)
+		if ( !(sozip_enabled %in% c("AUTO", "YES", "NO")) )
+			stop("sozip_enabled must be one of AUTO, YES or NO.", call. = FALSE)
+		else
+			opt <- paste0("SOZIP_ENABLED=", sozip_enabled)
+	}	
+			
 	
-	
+	for (f in add_files) {
+		if (!(utils::file_test("-f", f)))
+			stop(paste0("File not found: ", f), call. = FALSE)
+		
+		f <- enc2utf8(f)
+		archive_fname <- f
+		if (!full_paths) {
+			archive_fname <- basename(f)
+		}
+		else if (substr(f, 1, 1) == "/") {
+			archive_fname <- substring(f, 2)
+		}
+		else if (nchar(f) > 3 && substr(f, 2, 2) == ":" &&
+					(substr(f, 3, 3) == "/" || substr(f, 3, 3) == '\\')) {
+			archive_fname <- substring(f, 4)
+		}
+		
+		
+	}
+
 }
 
 #SOZIP_ENABLED=AUTO/YES/NO: whether to generate a SOZip index for the file. The default can be changed with the CPL_SOZIP_ENABLED configuration option.
