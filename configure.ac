@@ -267,14 +267,6 @@ rm -fr errors.txt gdal_proj.cpp gdal_proj
 AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
 
 
-# sqlite3
-AC_ARG_WITH([sqlite3-lib],
-    AS_HELP_STRING([--with-sqlite3-lib=LIB_PATH],[the location of sqlite3 libraries]),
-               [sqlite3_lib_path=$withval])
-if test [ -n "$sqlite3_lib_path" ] ; then
-    AC_SUBST([SQLITE3_LIBS], ["-L${sqlite3_lib_path}"])
-fi
-
 # #############################################################################
 
 AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${GDAL_CPPFLAGS}"])
