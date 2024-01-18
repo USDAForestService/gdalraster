@@ -28,6 +28,7 @@ AC_MSG_NOTICE([CXX: ${CXX}])
 
 # GDAL ########################################################################
 # copied from https://github.com/r-spatial/sf/blob/master/configure.ac
+# sf configure.ac: GDAL stuff largely copied from rgdal, (c) Roger Bivand
 
 GDAL_CONFIG="gdal-config"
 
