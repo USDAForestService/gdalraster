@@ -1976,7 +1976,7 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
 	return true;
 	
 #else
-	Rcpp::stop("CPLAddFileInZip() requires GDAL >= 3.7.");
+	Rcpp::stop("_addFileInZip() requires GDAL >= 3.7.");
 	
 #endif
 }
