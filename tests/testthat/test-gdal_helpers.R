@@ -7,7 +7,15 @@ test_that("addFilesInZip works", {
 	evh_file <- system.file("extdata/storml_evh.tif", package="gdalraster")
 	files_to_add <- c(evt_file, evc_file, evh_file)
 	zip_file <- paste0(tempdir(), "/", "storml.zip")
-	addFilesInZip(zip_file, files_to_add, full_paths=FALSE, num_threads=1)
+	addFilesInZip(
+			zip_file,
+			files_to_add,
+			full_paths=FALSE,
+			sozip_enabled="YES",
+			sozip_chunk_size=16384,
+			sozip_min_file_size=1024,
+			content_type="TEST",
+			num_threads=1)
 	d <- unzip(zip_file, list=TRUE)
 	expect_equal(nrow(d), 3)
 	unlink(zip_file)
