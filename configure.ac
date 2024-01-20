@@ -1,6 +1,9 @@
 # Process this file with autoconf to produce a configure script.
-# Based on configure.ac from https://github.com/appelmar/gdalcubes
+# Initially based on configure.ac from https://github.com/appelmar/gdalcubes
 # Copyright (c) 2018-2019 Marius Appel, License: MIT
+# Much of the PROJ config was removed here because gdalraster only uses PROJ via
+# GDAL headers. Still checks that PROJ is available to GDAL and handles optional
+# local copy of the PROJ data directory.
 
 AC_INIT([gdalraster],[1.7.0.9000],[chris.toney@usda.gov])
 AC_LANG(C++)
