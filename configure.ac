@@ -3,8 +3,7 @@
 # Copyright (c) 2018-2019 Marius Appel, License: MIT
 # Much of the PROJ config was removed here because gdalraster only uses PROJ via
 # GDAL headers. Still checks that PROJ is available to GDAL and handles optional
-# local copy of the PROJ data directory.
-
+# local copy of the PROJ data directory. Compiler invocations are now logged.
 AC_INIT([gdalraster],[1.7.0.9000],[chris.toney@usda.gov])
 AC_LANG(C++)
 
@@ -132,6 +131,10 @@ fi
 
 NEED_DEPS=no
 LIBS="${INLIBS} ${PKG_LIBS}"
+
+AC_MSG_CHECKING(GDAL: linking with --libs only)
+gdalok=no
+
 [cat > gdal_test.cpp <<_EOCONF
 #include <gdal.h>
 #ifdef __cplusplus
@@ -145,10 +148,12 @@ GDALAllRegister();
 #endif
 _EOCONF]
 
-AC_MSG_CHECKING(GDAL: linking with --libs only)
-${CXX} ${CPPFLAGS} -o gdal_test gdal_test.cpp ${LIBS} 2> errors.txt
-if test `echo $?` -ne 0 ; then
-gdalok=no
+AC_LINK_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_test.cpp`])],
+   gdalok=yes,
+   gdalok=no
+)
+if test "${gdalok}" = no; then
 AC_MSG_RESULT(no)
 else
 AC_MSG_RESULT(yes)
@@ -157,11 +162,11 @@ fi
 if test "${gdalok}" = no; then
 AC_MSG_CHECKING(GDAL: linking with --libs and --dep-libs)
 LIBS="${LIBS} ${GDAL_DEP_LIBS}"
-gdalok=yes
-${CXX} ${CPPFLAGS} -o gdal_test gdal_test.cpp ${LIBS} 2>> errors.txt
-if test `echo $?` -ne 0 ; then
-gdalok=no
-fi
+AC_LINK_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_test.cpp`])],
+   gdalok=yes,
+   gdalok=no
+)
 if test "${gdalok}" = yes; then
     NEED_DEPS=yes
     AC_MSG_RESULT(yes)
@@ -171,15 +176,15 @@ fi
 fi
 
 if test "${gdalok}" = no; then
-   cat errors.txt
    AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
    AC_MSG_ERROR([GDALAllRegister not found in libgdal.])
 fi
 
-rm -f gdal_test errors.txt gdal_test.cpp
+rm -f gdal_test.cpp
 
-
+#
 # Optional local copy of GDAL datadir and PROJ_LIB
+#
 
 data_copy=no
 AC_ARG_WITH([data-copy],
@@ -220,6 +225,7 @@ fi
 #
 
 gdal_has_proj=no
+
 [cat > gdal_proj.cpp <<_EOCONF
 #include <gdal.h>
 #include <ogr_srs_api.h>
@@ -235,34 +241,34 @@ int main(int argc, char *argv[]) {
 _EOCONF]
 
 AC_MSG_CHECKING(GDAL: checking whether PROJ is available for linking:)
-${CXX} ${CPPFLAGS} -o gdal_proj gdal_proj.cpp ${LIBS} 2> errors.txt
-if test `echo $?` -ne 0 ; then
-gdal_has_proj=no
-AC_MSG_RESULT(no)
-else
-gdal_has_proj=yes
-AC_MSG_RESULT(yes)
-fi
-
+AC_LINK_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_proj.cpp`])],
+   gdal_has_proj=yes,
+   gdal_has_proj=no
+)
 if test "${gdal_has_proj}" = no; then
-   cat errors.txt
+AC_MSG_RESULT(no)
    AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
    AC_MSG_ERROR([cannot link projection code])
+else
+AC_MSG_RESULT(yes)
 fi
 
 AC_MSG_CHECKING(GDAL: checking whether PROJ is available for running:)
-./gdal_proj
-if test `echo $?` -ne 0 ; then
-gdal_has_proj=no
+AC_RUN_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_proj.cpp`])],
+   gdal_has_proj=yes,
+   gdal_has_proj=no
+)
+if test "${gdal_has_proj}" = no; then
 AC_MSG_RESULT(no)
+AC_MSG_ERROR([OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?])
 else
-gdal_has_proj=yes
 AC_MSG_RESULT(yes)
 fi
-if test "${gdal_has_proj}" = no; then
-   AC_MSG_ERROR([OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?])
-fi
-rm -fr errors.txt gdal_proj.cpp gdal_proj
+
+rm -f gdal_proj.cpp
+
 AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
 
 
