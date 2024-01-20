@@ -31,7 +31,7 @@ exists.}
 saved file (drop the path).}
 
 \item{sozip_enabled}{String. Whether to generate a SOZip index for the file.
-One of \code{"AUTO"} (the default), \code{"YES"} or \code{"NO"}.}
+One of \code{"AUTO"} (the default), \code{"YES"} or \code{"NO"} (see Details).}
 
 \item{sozip_chunk_size}{The chunk size for a seek-optimized file.
 Defaults to 32768 bytes. The value is specified in bytes, or K and M
@@ -65,9 +65,7 @@ This function is basically a wrapper for \code{CPLAddFileInZip()} in the GDAL
 Common Portability Library, but optionally creates a new ZIP file first
 (with \code{CPLCreateZip()}). It provides a subset of functionality in the
 GDAL \code{sozip} command-line utility
-(\href{https://gdal.org/programs/sozip.html}).
-Specification for SOZip (Seek-Optimized ZIP) is at
-\href{https://sozip.org/}. Requires GDAL >= 3.7.
+(\url{https://gdal.org/programs/sozip.html}). Requires GDAL >= 3.7.
 }
 \details{
 If \code{sozip_enabled="AUTO"} (the default), a file is seek-optimized only if
@@ -80,4 +78,15 @@ input files will be seek-optimized. The default can be changed with the
 The \code{GDAL_NUM_THREADS} configuration option can be set to \code{ALL_CPUS} or an
 integer value to specify the number of threads to use for SOZip-compressed
 files (see \code{\link[=set_config_option]{set_config_option()}}).
+}
+\examples{
+evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
+evh_file <- system.file("extdata/storml_evh.tif", package="gdalraster")
+files_to_add <- c(evt_file, evc_file, evh_file)
+zip_file <- paste0(tempdir(), "/", "storml.zip")
+# Note that the example files are too small to be seek-optimized by default
+# This creates a regular zip file
+addFilesInZip(zip_file, files_to_add, full_paths=FALSE, num_threads=1)
+unzip(zip_file, list=TRUE)
 }
