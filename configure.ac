@@ -66,7 +66,6 @@ else
   fi
 fi
 
-
 AC_MSG_CHECKING(gdal-config usability)
 if test `${GDAL_CONFIG} --version`;
 then
@@ -112,11 +111,6 @@ if test ${GDAL_MAJ_VER} = 3 && test ${GDAL_MIN_VER} = 6 && test ${GDAL_PATCH_VER
 else
   AC_MSG_RESULT(yes)
 fi
-
-INLIBS="${LIBS}"
-INCPPFLAGS="${CPPFLAGS}"
-INPKG_CPPFLAGS="${PKG_CPPFLAGS}"
-INPKG_LIBS="${PKG_LIBS}"
 
 AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${GDAL_CPPFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS}"])

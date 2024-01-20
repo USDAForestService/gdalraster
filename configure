@@ -649,7 +649,6 @@ ac_includes_default="\
 ac_header_cxx_list=
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-SQLITE3_LIBS
 OBJEXT
 EXEEXT
 ac_ct_CXX
@@ -706,7 +705,6 @@ enable_option_checking
 with_gdal_config
 with_data_copy
 with_proj_data
-with_sqlite3_lib
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1339,8 +1337,6 @@ Optional Packages:
   --with-data-copy=yes/no local copy of data directories in package, default
                           no
   --with-proj-data=DIR    location of PROJ data directory
-  --with-sqlite3-lib=LIB_PATH
-                          the location of sqlite3 libraries
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -2124,6 +2120,7 @@ printf "%s\n" "$as_me: CXX: ${CXX}" >&6;}
 
 # GDAL ########################################################################
 # copied from https://github.com/r-spatial/sf/blob/master/configure.ac
+# sf configure.ac: GDAL stuff largely copied from rgdal, (c) Roger Bivand
 
 GDAL_CONFIG="gdal-config"
 
@@ -2219,7 +2216,6 @@ printf "%s\n" "no" >&6; }
   fi
 fi
 
-
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking gdal-config usability" >&5
 printf %s "checking gdal-config usability... " >&6; }
 if test `${GDAL_CONFIG} --version`;
@@ -2275,11 +2271,6 @@ else
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 fi
-
-INLIBS="${LIBS}"
-INCPPFLAGS="${CPPFLAGS}"
-INPKG_CPPFLAGS="${PKG_CPPFLAGS}"
-INPKG_LIBS="${PKG_LIBS}"
 
 PKG_CPPFLAGS="${INPKG_CPPFLAGS} ${GDAL_CPPFLAGS}"
 
@@ -3129,19 +3120,6 @@ rm -fr errors.txt gdal_proj.cpp gdal_proj
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: GDAL: ${GDAL_VERSION}" >&5
 printf "%s\n" "$as_me: GDAL: ${GDAL_VERSION}" >&6;}
 
-
-# sqlite3
-
-# Check whether --with-sqlite3-lib was given.
-if test ${with_sqlite3_lib+y}
-then :
-  withval=$with_sqlite3_lib; sqlite3_lib_path=$withval
-fi
-
-if test  -n "$sqlite3_lib_path"  ; then
-    SQLITE3_LIBS="-L${sqlite3_lib_path}"
-
-fi
 
 # #############################################################################
 
