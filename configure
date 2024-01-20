@@ -2102,21 +2102,22 @@ if test -z "${R_HOME}"; then
   exit 1
 fi
 RBIN="${R_HOME}/bin/R"
-CC=`"${RBIN}" CMD config CC`;
-CFLAGS=`"${RBIN}" CMD config CFLAGS`;
-
-
-INLIBS="${LIBS}"
-INCPPFLAGS="${CPPFLAGS}"
-INPKG_CPPFLAGS="${PKG_CPPFLAGS}"
-INPKG_LIBS="${PKG_LIBS}"
-
+CC=`"${RBIN}" CMD config CC`
+CFLAGS=`"${RBIN}" CMD config CFLAGS`
+CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
 CXX=`"${RBIN}" CMD config CXX`
+
+
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: CC: ${CC}" >&5
 printf "%s\n" "$as_me: CC: ${CC}" >&6;}
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: CXX: ${CXX}" >&5
 printf "%s\n" "$as_me: CXX: ${CXX}" >&6;}
+
+INLIBS="${LIBS}"
+INCPPFLAGS="${CPPFLAGS}"
+INPKG_CPPFLAGS="${PKG_CPPFLAGS}"
+INPKG_LIBS="${PKG_LIBS}"
 
 # GDAL ########################################################################
 # copied from https://github.com/r-spatial/sf/blob/master/configure.ac

@@ -12,19 +12,20 @@ if test -z "${R_HOME}"; then
   exit 1
 fi
 RBIN="${R_HOME}/bin/R"
-CC=`"${RBIN}" CMD config CC`;
-CFLAGS=`"${RBIN}" CMD config CFLAGS`;
+CC=`"${RBIN}" CMD config CC`
+CFLAGS=`"${RBIN}" CMD config CFLAGS`
+CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
+CXX=`"${RBIN}" CMD config CXX`
+
 AC_SUBST(R_HOME)
+
+AC_MSG_NOTICE([CC: ${CC}])
+AC_MSG_NOTICE([CXX: ${CXX}])
 
 INLIBS="${LIBS}"
 INCPPFLAGS="${CPPFLAGS}"
 INPKG_CPPFLAGS="${PKG_CPPFLAGS}"
 INPKG_LIBS="${PKG_LIBS}"
-
-CXX=`"${RBIN}" CMD config CXX`
-
-AC_MSG_NOTICE([CC: ${CC}])
-AC_MSG_NOTICE([CXX: ${CXX}])
 
 # GDAL ########################################################################
 # copied from https://github.com/r-spatial/sf/blob/master/configure.ac
