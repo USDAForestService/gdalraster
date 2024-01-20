@@ -175,12 +175,12 @@ else
 fi
 fi
 
+rm -f gdal_test.cpp
+
 if test "${gdalok}" = no; then
    AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
    AC_MSG_ERROR([GDALAllRegister not found in libgdal.])
 fi
-
-rm -f gdal_test.cpp
 
 #
 # Optional local copy of GDAL datadir and PROJ_LIB
@@ -248,6 +248,7 @@ AC_LINK_IFELSE(
 )
 if test "${gdal_has_proj}" = no; then
 AC_MSG_RESULT(no)
+   rm -f gdal_proj.cpp
    AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
    AC_MSG_ERROR([cannot link projection code])
 else
@@ -260,14 +261,13 @@ AC_RUN_IFELSE(
    gdal_has_proj=yes,
    gdal_has_proj=no
 )
+rm -f gdal_proj.cpp
 if test "${gdal_has_proj}" = no; then
 AC_MSG_RESULT(no)
 AC_MSG_ERROR([OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?])
 else
 AC_MSG_RESULT(yes)
 fi
-
-rm -f gdal_proj.cpp
 
 AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
 

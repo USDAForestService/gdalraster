@@ -3118,13 +3118,13 @@ printf "%s\n" "no" >&6; }
 fi
 fi
 
+rm -f gdal_test.cpp
+
 if test "${gdalok}" = no; then
    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Install failure: compilation and/or linkage problems." >&5
 printf "%s\n" "$as_me: Install failure: compilation and/or linkage problems." >&6;}
    as_fn_error $? "GDALAllRegister not found in libgdal." "$LINENO" 5
 fi
-
-rm -f gdal_test.cpp
 
 #
 # Optional local copy of GDAL datadir and PROJ_LIB
@@ -3213,6 +3213,7 @@ rm -f core conftest.err conftest.$ac_objext conftest.beam \
 if test "${gdal_has_proj}" = no; then
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
+   rm -f gdal_proj.cpp
    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Install failure: compilation and/or linkage problems." >&5
 printf "%s\n" "$as_me: Install failure: compilation and/or linkage problems." >&6;}
    as_fn_error $? "cannot link projection code" "$LINENO" 5
@@ -3245,6 +3246,7 @@ rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
 fi
 
+rm -f gdal_proj.cpp
 if test "${gdal_has_proj}" = no; then
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
@@ -3253,8 +3255,6 @@ else
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 fi
-
-rm -f gdal_proj.cpp
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: GDAL: ${GDAL_VERSION}" >&5
 printf "%s\n" "$as_me: GDAL: ${GDAL_VERSION}" >&6;}
