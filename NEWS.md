@@ -1,5 +1,7 @@
 # gdalraster 1.7.0.9000 dev
 
+* add `addFilesInZip()`: create/append to Seek-Optimized ZIP file (GDAL >= 3.7) (2024-01-20)
+
 * `GDALRaster` class: add a constructor with default `read_only=TRUE` (2024-01-13)
 
 * use pkg-config on Windows (#125 thanks to @kalibera) (2024-01-12)
