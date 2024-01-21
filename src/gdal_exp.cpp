@@ -1932,7 +1932,11 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
 		Rcpp::Nullable<Rcpp::CharacterVector> options,
 		bool quiet) {
 
-#if GDAL_VERSION_NUM >= 3070000
+#if GDAL_VERSION_NUM < 3070000
+	Rcpp::stop("_addFileInZip() requires GDAL >= 3.7.");
+
+#else
+	bool ret;
 	std::vector<char *> opt_zip_create = {NULL};
 	VSIStatBufL buf;
 	if (overwrite) {
@@ -1947,7 +1951,7 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
 	
 	void *hZIP = CPLCreateZip(zip_filename.c_str(), opt_zip_create.data());
 	if (hZIP == nullptr)
-		Rcpp::stop("Failed to obtain file handle for zip filename.");
+		Rcpp::stop("Failed to obtain file handle for zip file.");
 	
 	std::vector<char *> opt_list = {NULL};
 	if (options.isNotNull()) {
@@ -1958,25 +1962,24 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
 		}
 		opt_list[options_in.size()] = NULL;
 	}
-	
-	GDALProgressFunc pProgressFunc = NULL;
+
 	if (!quiet) {
-		pProgressFunc = GDALTermProgressR;
 		Rcpp::Rcout << "Adding " << in_filename.c_str() << " ...\n";
+		GDALTermProgressR(0, NULL, NULL);
 	}
 	
-	if (CPLAddFileInZip(hZIP, archive_filename.c_str(), in_filename.c_str(),
-			NULL, opt_list.data(), pProgressFunc, NULL) != CE_None) {
-			
-		CPLCloseZip(hZIP);
-		Rcpp::stop("Error from CPLAddFileInZip().");
-	}
+	CPLErr err = CPLAddFileInZip(hZIP, archive_filename.c_str(),
+							in_filename.c_str(),
+							NULL, opt_list.data(),
+							quiet ? NULL : GDALTermProgressR, NULL);
+	
+	if (err == CE_None)
+		ret = true;
+	else
+		ret = false;
 	
 	CPLCloseZip(hZIP);
-	return true;
-	
-#else
-	Rcpp::stop("_addFileInZip() requires GDAL >= 3.7.");
+	return ret;
 	
 #endif
 }
