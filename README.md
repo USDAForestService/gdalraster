@@ -32,6 +32,7 @@ supporting:
   - low-level I/O
   - read/set color tables and raster attribute tables
   - copy files/move/rename/delete datasets
+  - create/append to Seek-Optimized ZIP ([SOZip](https://sozip.org/))
   - virtual raster (VRT) for virtual cropping, resampling, kernel
     filtering, mosaicing
   - `gdalwarp` wrapper for reproject/resample/crop/mosaic
