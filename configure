@@ -3129,8 +3129,22 @@ printf "%s\n" "$as_me: Install failure: compilation and/or linkage problems." >&
 fi
 
 #
-# Optional local copy of GDAL datadir and PROJ_LIB
+# Optional local copies of GDAL and PROJ data directories
 #
+
+PROJ_CONFIG="pkg-config proj"
+if `$PROJ_CONFIG --exists` ; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: pkg-config proj exists, will use it" >&5
+printf "%s\n" "$as_me: pkg-config proj exists, will use it" >&6;}
+  proj_config_ok=yes
+  proj_data_dir=`${PROJ_CONFIG} --variable=datadir`
+  if test -n "${proj_data_dir}" ; then
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: PROJ data directory: ${proj_data_dir}" >&5
+printf "%s\n" "$as_me: PROJ data directory: ${proj_data_dir}" >&6;}
+  fi
+else
+  proj_config_ok=no
+fi
 
 data_copy=no
 
@@ -3143,7 +3157,16 @@ fi
 if test "${data_copy}" = "yes" ; then
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Copy data for:" >&5
 printf "%s\n" "$as_me: Copy data for:" >&6;}
-  proj_lib0="${PROJ_LIB}"
+# proj_data_dir may come from pkg-config (above), environment variable or configure arg
+  if test -n "${proj_data_dir}" ; then
+    proj_lib0="${proj_data_dir}"
+  else
+    proj_lib0="${PROJ_LIB}"
+  fi
+  # at PROJ 9.1 the environment variable is PROJ_DATA and PROJ_LIB is deprecated
+  if test -z "${proj_lib0}" ; then
+    proj_lib0="${PROJ_DATA}"
+  fi
 
 # Check whether --with-proj-data was given.
 if test ${with_proj_data+y}

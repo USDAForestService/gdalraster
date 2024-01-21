@@ -185,8 +185,20 @@ if test "${gdalok}" = no; then
 fi
 
 #
-# Optional local copy of GDAL datadir and PROJ_LIB
+# Optional local copies of GDAL and PROJ data directories
 #
+
+PROJ_CONFIG="pkg-config proj"
+if `$PROJ_CONFIG --exists` ; then
+  AC_MSG_NOTICE([pkg-config proj exists, will use it])
+  proj_config_ok=yes
+  proj_data_dir=`${PROJ_CONFIG} --variable=datadir`
+  if test -n "${proj_data_dir}" ; then
+    AC_MSG_NOTICE([PROJ data directory: ${proj_data_dir}])
+  fi
+else
+  proj_config_ok=no
+fi
 
 data_copy=no
 AC_ARG_WITH([data-copy],
@@ -194,7 +206,16 @@ AC_ARG_WITH([data-copy],
                [data_copy=$withval])
 if test "${data_copy}" = "yes" ; then
 AC_MSG_NOTICE([Copy data for:])
-  proj_lib0="${PROJ_LIB}"
+# proj_data_dir may come from pkg-config (above), environment variable or configure arg
+  if test -n "${proj_data_dir}" ; then
+    proj_lib0="${proj_data_dir}"
+  else
+    proj_lib0="${PROJ_LIB}"
+  fi
+  # at PROJ 9.1 the environment variable is PROJ_DATA and PROJ_LIB is deprecated
+  if test -z "${proj_lib0}" ; then
+    proj_lib0="${PROJ_DATA}"
+  fi
   AC_ARG_WITH([proj-data],
     AS_HELP_STRING([--with-proj-data=DIR],[location of PROJ data directory]),
     [proj_lib1=$withval])
