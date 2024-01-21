@@ -972,6 +972,14 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
     .Call(`_gdalraster__getCreationOptions`, format)
 }
 
+#' Add a file inside a new or existing ZIP file
+#' Mainly for create/append to Seek-Optimized ZIP
+#'
+#' @noRd
+.addFileInZip <- function(zip_filename, overwrite, archive_filename, in_filename, options, quiet) {
+    .Call(`_gdalraster__addFileInZip`, zip_filename, overwrite, archive_filename, in_filename, options, quiet)
+}
+
 #' @noRd
 NULL
 

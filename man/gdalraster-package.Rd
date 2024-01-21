@@ -25,9 +25,10 @@
   \code{\link[=translate]{translate()}},\cr
   \code{\link[=getCreationOptions]{getCreationOptions()}}
   
-  \item data management: \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},
-  \code{\link[=deleteDataset]{deleteDataset()}},
-  \code{\link[=renameDataset]{renameDataset()}},\cr
+  \item data management: \code{\link[=addFilesInZip]{addFilesInZip()}},
+  \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},
+  \code{\link[=deleteDataset]{deleteDataset()}},\cr
+  \code{\link[=renameDataset]{renameDataset()}},
   \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}
  
   \item virtual raster: \code{\link[=buildVRT]{buildVRT()}},

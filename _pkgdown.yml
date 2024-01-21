@@ -23,6 +23,7 @@ reference:
 
 - title: Stand-alone functions
 - contents:
+  - addFilesInZip
   - bandCopyWholeRaster
   - bbox_from_wkt
   - bbox_to_wkt

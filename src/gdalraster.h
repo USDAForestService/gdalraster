@@ -89,6 +89,10 @@ bool renameDataset(std::string new_filename, std::string old_filename,
 bool bandCopyWholeRaster(std::string src_filename, int src_band,
 		std::string dst_filename, int dst_band,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
+bool _addFileInZip(std::string zip_filename, bool overwrite,
+		std::string archive_filename, std::string in_filename,
+		Rcpp::Nullable<Rcpp::CharacterVector> options,
+		bool quiet);
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
 		double pixel, double line);
