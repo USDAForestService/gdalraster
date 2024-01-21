@@ -358,6 +358,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _addFileInZip
+bool _addFileInZip(std::string zip_filename, bool overwrite, std::string archive_filename, std::string in_filename, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+RcppExport SEXP _gdalraster__addFileInZip(SEXP zip_filenameSEXP, SEXP overwriteSEXP, SEXP archive_filenameSEXP, SEXP in_filenameSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type zip_filename(zip_filenameSEXP);
+    Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
+    Rcpp::traits::input_parameter< std::string >::type archive_filename(archive_filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type in_filename(in_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(_addFileInZip(zip_filename, overwrite, archive_filename, in_filename, options, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // has_geos
 bool has_geos();
 RcppExport SEXP _gdalraster_has_geos() {
@@ -893,6 +909,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_renameDataset", (DL_FUNC) &_gdalraster_renameDataset, 3},
     {"_gdalraster_copyDatasetFiles", (DL_FUNC) &_gdalraster_copyDatasetFiles, 3},
     {"_gdalraster__getCreationOptions", (DL_FUNC) &_gdalraster__getCreationOptions, 1},
+    {"_gdalraster__addFileInZip", (DL_FUNC) &_gdalraster__addFileInZip, 6},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},

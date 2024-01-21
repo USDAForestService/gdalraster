@@ -8,6 +8,7 @@
 #include "cpl_port.h"
 #include "cpl_conv.h"
 #include "cpl_string.h"
+#include "cpl_vsi.h"
 #include "gdal_alg.h"
 #include "gdal_utils.h"
 
@@ -1918,5 +1919,65 @@ std::string _getCreationOptions(std::string format) {
 		Rcpp::stop("Failed to get driver from format name.");
 
 	return GDALGetDriverCreationOptionList(hDriver);
+}
+
+
+//' Add a file inside a new or existing ZIP file
+//' Mainly for create/append to Seek-Optimized ZIP
+//'
+//' @noRd
+// [[Rcpp::export(name = ".addFileInZip")]]
+bool _addFileInZip(std::string zip_filename, bool overwrite,
+		std::string archive_filename, std::string in_filename,
+		Rcpp::Nullable<Rcpp::CharacterVector> options,
+		bool quiet) {
+
+#if GDAL_VERSION_NUM >= 3070000
+	std::vector<char *> opt_zip_create = {NULL};
+	VSIStatBufL buf;
+	if (overwrite) {
+		VSIUnlink(zip_filename.c_str());
+	}
+	else {
+		if (VSIStatExL(zip_filename.c_str(), &buf, VSI_STAT_EXISTS_FLAG) == 0) {
+			auto it = opt_zip_create.begin();
+			it = opt_zip_create.insert(it, (char *) ("APPEND=TRUE"));
+		}
+	}
+	
+	void *hZIP = CPLCreateZip(zip_filename.c_str(), opt_zip_create.data());
+	if (hZIP == nullptr)
+		Rcpp::stop("Failed to obtain file handle for zip filename.");
+	
+	std::vector<char *> opt_list = {NULL};
+	if (options.isNotNull()) {
+		Rcpp::CharacterVector options_in(options);
+		opt_list.resize(options_in.size() + 1);
+		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+			opt_list[i] = (char *) (options_in[i]);
+		}
+		opt_list[options_in.size()] = NULL;
+	}
+	
+	GDALProgressFunc pProgressFunc = NULL;
+	if (!quiet) {
+		pProgressFunc = GDALTermProgressR;
+		Rcpp::Rcout << "Adding " << in_filename.c_str() << " ...\n";
+	}
+	
+	if (CPLAddFileInZip(hZIP, archive_filename.c_str(), in_filename.c_str(),
+			NULL, opt_list.data(), pProgressFunc, NULL) != CE_None) {
+			
+		CPLCloseZip(hZIP);
+		Rcpp::stop("Error from CPLAddFileInZip().");
+	}
+	
+	CPLCloseZip(hZIP);
+	return true;
+	
+#else
+	Rcpp::stop("_addFileInZip() requires GDAL >= 3.7.");
+	
+#endif
 }
 
