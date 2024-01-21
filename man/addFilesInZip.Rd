@@ -85,8 +85,11 @@ evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
 evh_file <- system.file("extdata/storml_evh.tif", package="gdalraster")
 files_to_add <- c(evt_file, evc_file, evh_file)
 zip_file <- paste0(tempdir(), "/", "storml.zip")
-# Note that the example files are too small to be seek-optimized by default
-# This creates a regular zip file
-addFilesInZip(zip_file, files_to_add, full_paths=FALSE, num_threads=1)
-unzip(zip_file, list=TRUE)
+# Requires GDAL >= 3.7
+if (as.integer(gdal_version()[2]) >= 3070000) {
+  # Note that the example files are too small to be seek-optimized by default
+  # So this creates a regular zip file
+  addFilesInZip(zip_file, files_to_add, full_paths=FALSE, num_threads=1)
+  unzip(zip_file, list=TRUE)
+}
 }
