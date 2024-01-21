@@ -4,17 +4,24 @@
 
 #' Create/append to a potentially Seek-Optimized ZIP file (SOZip)
 #'
-#' `addFilesInZip()` creates or opens existing ZIP file, and adds one or
-#' more compressed files potentially using the seek optimization extension.
-#' This function is basically a wrapper for `CPLAddFileInZip()` in the GDAL
-#' Common Portability Library, but optionally creates a new ZIP file first
-#' (with `CPLCreateZip()`). It provides a subset of functionality in the
-#' GDAL `sozip` command-line utility
+#' `addFilesInZip()` will create new or open existing ZIP file, and
+#' add one or more compressed files potentially using the seek optimization
+#' extension. This function is basically a wrapper for `CPLAddFileInZip()`
+#' in the GDAL Common Portability Library, but optionally creates a new ZIP
+#' file first (with `CPLCreateZip()`). It provides a subset of functionality
+#' in the GDAL `sozip` command-line utility
 #' (\url{https://gdal.org/programs/sozip.html}). Requires GDAL >= 3.7.
 #'
 #' @details
+#' A Seek-Optimized ZIP file (SOZip) contains one or more compressed files
+#' organized and annotated such that a SOZip-aware reader can perform very
+#' fast random access within the .zip file (see \url{https://sozip.org/}).
+#' Large compressed files can be accessed directly from SOZip without prior
+#' decompression. The .zip file is otherwise fully backward compatible.
+#'
 #' If `sozip_enabled="AUTO"` (the default), a file is seek-optimized only if
-#' its size is above the value of `sozip_chunk_size` (default `32768`).
+#' its size is above the values of `sozip_min_file_size` (default 1 MB) and
+#' `sozip_chunk_size` (default `32768`).
 #' In `"YES"` mode, all input files will be seek-optimized. In `"NO"` mode, no
 #' input files will be seek-optimized. The default can be changed with the
 #' `CPL_SOZIP_ENABLED` configuration option.
@@ -54,17 +61,22 @@
 #' files (see [set_config_option()]).
 #'
 #' @examples
-#' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-#' evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
-#' evh_file <- system.file("extdata/storml_evh.tif", package="gdalraster")
-#' files_to_add <- c(evt_file, evc_file, evh_file)
-#' zip_file <- paste0(tempdir(), "/", "storml.zip")
+#' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+#' zip_file <- paste0(tempdir(), "/", "storml_lcp.zip")
+#'
 #' # Requires GDAL >= 3.7
 #' if (as.integer(gdal_version()[2]) >= 3070000) {
-#'   # Note that the example files are too small to be seek-optimized by default
+#'   # Note that the example file is too small to be seek-optimized by default
 #'   # So this creates a regular zip file
-#'   addFilesInZip(zip_file, files_to_add, full_paths=FALSE, num_threads=1)
+#'   addFilesInZip(zip_file, lcp_file, full_paths=FALSE, num_threads=1)
 #'   unzip(zip_file, list=TRUE)
+#'
+#'   # Open with GDAL using Virtual File System handler '/vsizip/'
+#'   # see: https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives
+#'   lcp_in_zip <- paste0("/vsizip/", file.path(zip_file, "storm_lake.lcp"))
+#'   ds <- new(GDALRaster, lcp_in_zip)
+#'   ds$info()
+#'   ds$close()
 #' }
 #' @export
 addFilesInZip <- function(
