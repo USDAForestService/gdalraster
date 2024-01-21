@@ -179,6 +179,10 @@ addFilesInZip <- function(
 		}
 	}
 	
+	if (!ret)
+		stop("Failed to add file, error from CPLAddFileInZip().",
+				call. = FALSE)
+	
 	return(invisible(ret))
 }
 
