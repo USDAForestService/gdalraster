@@ -82,18 +82,7 @@ GDALRaster::GDALRaster() :
 				eAccess(GA_ReadOnly) {}
 
 GDALRaster::GDALRaster(std::string filename) : 
-				fname(filename),
-				hDataset(NULL),
-				eAccess(GA_ReadOnly) {
-	
-	hDataset = GDALOpenShared(fname.c_str(), eAccess);
-	if (hDataset == NULL)
-		Rcpp::stop("Open raster failed.");
-	
-	// warn for now if 64-bit integer
-	if (_hasInt64())
-		_warnInt64();
-}
+				GDALRaster(filename, true) {}
 
 GDALRaster::GDALRaster(std::string filename, bool read_only) : 
 				fname(filename),
