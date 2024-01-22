@@ -3,7 +3,8 @@
 # Copyright (c) 2018-2019 Marius Appel, License: MIT
 # Much of the PROJ config was removed here because gdalraster only uses PROJ via
 # GDAL headers. Still checks that PROJ is available to GDAL and handles optional
-# local copy of the PROJ data directory. Compiler invocations are now logged.
+# local copy of the PROJ data directory. The PROJ datadir is now obtained from
+# pkg-config if possible. Compiler invocations are now logged.
 AC_INIT([gdalraster],[1.7.0.9000],[chris.toney@usda.gov])
 AC_LANG(C++)
 
