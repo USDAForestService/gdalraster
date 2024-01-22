@@ -137,8 +137,9 @@ directory. This can be changed with:</p>
 <p><strong><code>GDAL_NUM_THREADS</code></strong></p>
 <p>Sets the number of worker threads to be used by GDAL operations that
 support multithreading. This affects several different parts of GDAL
-including multi-threaded compression for GeoTiff and multithreaded
-computation during <code><a href="../reference/warp.html">warp()</a></code> (see topics below).</p>
+including multi-threaded compression for GeoTiff and SOZip, and
+multithreaded computation during <code><a href="../reference/warp.html">warp()</a></code> (see topics
+below).</p>
 <p><strong><code>GDAL_CACHEMAX</code></strong></p>
 <p>The size limit of the block cache is set upon first use (first I/O).
 Setting <code>GDAL_CACHEMAX</code> after that point will not resize the
@@ -360,6 +361,40 @@ require an AWS account:</p>
 </h2>
 <p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files" class="external-link">/vsiaz/</a>
 (Microsoft Azure Blob files)</p>
+</div>
+<div class="section level2">
+<h2 id="sozip">SOZip<a class="anchor" aria-label="anchor" href="#sozip"></a>
+</h2>
+<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives" class="external-link">/vsizip/</a>
+(Seek-Optimized ZIP files, GDAL &gt;= 3.7)</p>
+<p>The function <code><a href="../reference/addFilesInZip.html">gdalraster::addFilesInZip()</a></code> can be used to
+create new or append to existing ZIP files, potentially using the seek
+optimization extension. Function arguments are available for the options
+below, or the configuration options can be set to change the default
+behavior.</p>
+<p><strong><code>GDAL_NUM_THREADS</code></strong></p>
+<p>The <code>GDAL_NUM_THREADS</code> configuration option can be set to
+<code>ALL_CPUS</code> or an integer value to specify the number of
+threads to use for SOZip-compressed files. This option is similarly
+described above for compression in <a href="#geotiff">GeoTiff</a>. Note
+that this option also affects several other parts of GDAL.</p>
+<p><strong><code>CPL_SOZIP_ENABLED</code></strong></p>
+<p>Defaults to <code>AUTO</code>. Determines whether the SOZip
+optimization should be enabled. If <code>AUTO</code>, SOZip will be
+enabled for uncompressed files larger than
+<code>CPL_SOZIP_MIN_FILE_SIZE</code>.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># SOZip optimization defaults to AUTO</span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"CPL_SOZIP_ENABLED"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
+<p><strong><code>CPL_SOZIP_MIN_FILE_SIZE</code></strong></p>
+<p>Defaults to <code>1M</code>. Determines the minimum file size for
+SOZip to be automatically enabled. Specified in bytes, or
+<code>K</code>, <code>M</code> or <code>G</code> suffix can be used
+respectively to specify a value in kilobytes, megabytes or
+gigabytes.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># SOZip minimum file size</span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"CPL_SOZIP_MIN_FILE_SIZE"</span>, <span class="st">"100K"</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>
