@@ -2,7 +2,7 @@
 
 * add `addFilesInZip()`: create/append to Seek-Optimized ZIP file (GDAL >= 3.7) (2024-01-20)
 
-* `GDALRaster` class: add a constructor with default `read_only=TRUE` (2024-01-13)
+* `GDALRaster-class`: add a constructor with default `read_only=TRUE` (2024-01-13)
 
 * use pkg-config on Windows (#125 thanks to @kalibera) (2024-01-12)
 
@@ -12,7 +12,7 @@
 
 * add `GDALRaster::clearStatistics()`: clear statistics (PAM supported datasets GDAL >= 3.2) (2023-11-29)
 
-* Documentation: the example for `calc()` using Landsat bands should have applied scale/offset as given in the .json metadata - this has been corrected; include `translate()` and `warp()` in [Raster API Tutorial - See also](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also); add `AWS_REGION` to [GDAL Config Quick Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update documentation and examples throughout for the optional constructor in class `GDALRaster` with default `read_only=TRUE`
+* Documentation: the example for `calc()` using Landsat bands should have applied scale/offset as given in the .json metadata - this has been corrected; add `translate()` and `warp()` in [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also); add `AWS_REGION`, and a section for SOZip to the [GDAL Config Quick Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update documentation and examples throughout for default `read_only=TRUE` in the constructor for `GDALRaster-class`
 
 # gdalraster 1.7.0
 
