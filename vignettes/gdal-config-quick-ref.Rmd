@@ -57,7 +57,7 @@ GDAL doc: https://gdal.org/user/configoptions.html#performance-and-caching
 
 **`GDAL_NUM_THREADS`**
 
-Sets the number of worker threads to be used by GDAL operations that support multithreading. This affects several different parts of GDAL including multi-threaded compression for GeoTiff and multithreaded computation during `warp()` (see topics below).
+Sets the number of worker threads to be used by GDAL operations that support multithreading. This affects several different parts of GDAL including multi-threaded compression for GeoTiff and SOZip, and multithreaded computation during `warp()` (see topics below).
 
 **`GDAL_CACHEMAX`**
 
@@ -244,3 +244,32 @@ GDAL doc: [/vsigs/](https://gdal.org/user/virtual_file_systems.html#vsigs-google
 ## Microsoft Azure
 
 GDAL doc: [/vsiaz/](https://gdal.org/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files) (Microsoft Azure Blob files)
+
+## SOZip
+
+GDAL doc: [/vsizip/](https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives) (Seek-Optimized ZIP files, GDAL >= 3.7)
+
+The function `gdalraster::addFilesInZip()` can be used to create new or append to existing ZIP files, potentially using the seek optimization extension. Function arguments are available for the options below, or the configuration options can be set to change the default behavior.
+
+**`GDAL_NUM_THREADS`**
+
+The `GDAL_NUM_THREADS` configuration option can be set to `ALL_CPUS` or an integer value to specify the number of threads to use for SOZip-compressed files. This option is similarly described above for compression in [GeoTiff](#geotiff). Note that this option also affects several other parts of GDAL.
+
+**`CPL_SOZIP_ENABLED`**
+
+Defaults to `AUTO`. Determines whether the SOZip optimization should be enabled. If `AUTO`, SOZip will be enabled for uncompressed files larger than `CPL_SOZIP_MIN_FILE_SIZE`.
+
+```{r}
+# SOZip optimization defaults to AUTO
+set_config_option("CPL_SOZIP_ENABLED", "YES")
+```
+
+**`CPL_SOZIP_MIN_FILE_SIZE`**
+
+Defaults to `1M`. Determines the minimum file size for SOZip to be automatically enabled. Specified in bytes, or `K`, `M` or `G` suffix can be used respectively to specify a value in kilobytes, megabytes or gigabytes.
+
+```{r}
+# SOZip minimum file size
+set_config_option("CPL_SOZIP_MIN_FILE_SIZE", "100K")
+```
+
