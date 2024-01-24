@@ -92,18 +92,18 @@ addFilesInZip <- function(
 		quiet = FALSE) {
 
 	if (as.integer(gdal_version()[2]) < 3070000)
-		stop("addFilesInZip() requires GDAL >= 3.7.", call. = FALSE)
+		stop("`addFilesInZip()` requires GDAL >= 3.7.", call. = FALSE)
 
 	if (!is.character(zip_file) || length(zip_file) > 1)
-		stop("zip_file argument must be a string.", call. = FALSE)
+		stop("`zip_file` must be a string.", call. = FALSE)
 	
 	if (!is.character(add_files))
-		stop("add_files must be a character vector of filenames.",
+		stop("`add_files` must be a character vector of filenames.",
 			call. = FALSE)
 
 	if (!is.null(overwrite)) {
 		if (!is.logical(overwrite) || length(overwrite) > 1)
-			stop("overwrite must be an logical scalar.", call. = FALSE)
+			stop("`overwrite` must be a logical scalar.", call. = FALSE)
 	}
 	else {
 		overwrite <- FALSE
@@ -111,7 +111,7 @@ addFilesInZip <- function(
 
 	if (!is.null(full_paths)) {
 		if (!is.logical(full_paths) || length(full_paths) > 1)
-			stop("full_paths must be an logical scalar.", call. = FALSE)
+			stop("`full_paths` must be a logical scalar.", call. = FALSE)
 	}
 	else {
 		full_paths <- FALSE
@@ -119,7 +119,7 @@ addFilesInZip <- function(
 
 	if (!is.null(quiet)) {
 		if (!is.logical(quiet) || length(quiet) > 1)
-			stop("quiet must be an logical scalar.", call. = FALSE)
+			stop("`quiet` must be a logical scalar.", call. = FALSE)
 	}
 	else {
 		quiet <- FALSE
@@ -128,31 +128,31 @@ addFilesInZip <- function(
 	opt <- NULL
 	if (!is.null(sozip_enabled)) {
 		if (!is.character(sozip_enabled) || length(sozip_enabled) > 1)
-			stop("sozip_enabled must be a string.", call. = FALSE)
+			stop("`sozip_enabled` must be a string.", call. = FALSE)
 		sozip_enabled <- toupper(sozip_enabled)
 		if ( !(sozip_enabled %in% c("AUTO", "YES", "NO")) )
-			stop("sozip_enabled must be one of AUTO, YES or NO.", call. = FALSE)
+			stop("`sozip_enabled` must be one of AUTO, YES or NO.", call. = FALSE)
 		else
 			opt <- c(opt, paste0("SOZIP_ENABLED=", sozip_enabled))
 	}
 	if (!is.null(sozip_chunk_size)) {
 		if (length(sozip_chunk_size) > 1)
-			stop("sozip_chunk_size must be length-1.", call. = FALSE)
+			stop("`sozip_chunk_size` must be length-1.", call. = FALSE)
 		opt <- c(opt, paste0("SOZIP_CHUNK_SIZE=", sozip_chunk_size))
 	}
 	if (!is.null(sozip_min_file_size)) {
 		if (length(sozip_min_file_size) > 1)
-			stop("sozip_min_file_size must be length-1.", call. = FALSE)
+			stop("`sozip_min_file_size` must be length-1.", call. = FALSE)
 		opt <- c(opt, paste0("SOZIP_MIN_FILE_SIZE=", sozip_min_file_size))
 	}
 	if (!is.null(num_threads)) {
 		if (length(num_threads) > 1)
-			stop("num_threads must be length-1.", call. = FALSE)
+			stop("`num_threads` must be length-1.", call. = FALSE)
 		opt <- c(opt, paste0("NUM_THREADS=", num_threads))
 	}
 	if (!is.null(content_type)) {
 		if (!is.character(content_type) || length(content_type) > 1)
-			stop("content_type must be a string.", call. = FALSE)
+			stop("`content_type` must be a string.", call. = FALSE)
 		opt <- c(opt, paste0("CONTENT_TYPE=", content_type))
 	}
 	
@@ -225,7 +225,7 @@ addFilesInZip <- function(
 getCreationOptions <- function(format, filter=NULL) {
 
 	if (!is.character(format) || length(format) > 1)
-		stop("format argument must be a string.", call.=FALSE)
+		stop("`format` must be a string.", call.=FALSE)
 		
 	if (is.null(filter))
 		filter = "_all_"
