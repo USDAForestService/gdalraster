@@ -1,7 +1,10 @@
 # Process this file with autoconf to produce a configure script.
-# Based on configure.ac from https://github.com/appelmar/gdalcubes
+# Initially based on configure.ac from https://github.com/appelmar/gdalcubes
 # Copyright (c) 2018-2019 Marius Appel, License: MIT
-
+# Much of the PROJ config was removed here because gdalraster only uses PROJ via
+# GDAL headers. Still checks that PROJ is available to GDAL and handles optional
+# local copy of the PROJ data directory. The PROJ datadir is now obtained from
+# pkg-config if possible. Compiler invocations are now logged.
 AC_INIT([gdalraster],[1.7.0.9000],[chris.toney@usda.gov])
 AC_LANG(C++)
 
@@ -12,24 +15,26 @@ if test -z "${R_HOME}"; then
   exit 1
 fi
 RBIN="${R_HOME}/bin/R"
-CC=`"${RBIN}" CMD config CC`;
-CFLAGS=`"${RBIN}" CMD config CFLAGS`;
+CC=`"${RBIN}" CMD config CC`
+CFLAGS=`"${RBIN}" CMD config CFLAGS`
+CPPFLAGS=`"${RBIN}" CMD config CPPFLAGS`
+LDFLAGS=`"${RBIN}" CMD config LDFLAGS`
+CXX=`"${RBIN}" CMD config CXX`
+CXXFLAGS=`"${RBIN}" CMD config CXXFLAGS`
+
 AC_SUBST(R_HOME)
 
+AC_MSG_NOTICE([CC: ${CC}])
+AC_MSG_NOTICE([CXX: ${CXX}])
 
 INLIBS="${LIBS}"
 INCPPFLAGS="${CPPFLAGS}"
 INPKG_CPPFLAGS="${PKG_CPPFLAGS}"
 INPKG_LIBS="${PKG_LIBS}"
 
-CXX=`"${RBIN}" CMD config CXX`
-
-
-AC_MSG_NOTICE([CC: ${CC}])
-AC_MSG_NOTICE([CXX: ${CXX}])
-
-# GDAL #########################################################################################################
+# GDAL ########################################################################
 # copied from https://github.com/r-spatial/sf/blob/master/configure.ac
+# sf configure.ac: GDAL stuff largely copied from rgdal, (c) Roger Bivand
 
 GDAL_CONFIG="gdal-config"
 
@@ -66,7 +71,6 @@ else
     AC_MSG_ERROR([gdal-config not executable.])
   fi
 fi
-
 
 AC_MSG_CHECKING(gdal-config usability)
 if test `${GDAL_CONFIG} --version`;
@@ -114,11 +118,6 @@ else
   AC_MSG_RESULT(yes)
 fi
 
-INLIBS="${LIBS}"
-INCPPFLAGS="${CPPFLAGS}"
-INPKG_CPPFLAGS="${PKG_CPPFLAGS}"
-INPKG_LIBS="${PKG_LIBS}"
-
 AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${GDAL_CPPFLAGS}"])
 AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS}"])
 
@@ -135,6 +134,10 @@ fi
 
 NEED_DEPS=no
 LIBS="${INLIBS} ${PKG_LIBS}"
+
+AC_MSG_CHECKING(GDAL: linking with --libs only)
+gdalok=no
+
 [cat > gdal_test.cpp <<_EOCONF
 #include <gdal.h>
 #ifdef __cplusplus
@@ -148,10 +151,12 @@ GDALAllRegister();
 #endif
 _EOCONF]
 
-AC_MSG_CHECKING(GDAL: linking with --libs only)
-${CXX} ${CPPFLAGS} -o gdal_test gdal_test.cpp ${LIBS} 2> errors.txt
-if test `echo $?` -ne 0 ; then
-gdalok=no
+AC_LINK_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_test.cpp`])],
+   gdalok=yes,
+   gdalok=no
+)
+if test "${gdalok}" = no; then
 AC_MSG_RESULT(no)
 else
 AC_MSG_RESULT(yes)
@@ -160,11 +165,11 @@ fi
 if test "${gdalok}" = no; then
 AC_MSG_CHECKING(GDAL: linking with --libs and --dep-libs)
 LIBS="${LIBS} ${GDAL_DEP_LIBS}"
-gdalok=yes
-${CXX} ${CPPFLAGS} -o gdal_test gdal_test.cpp ${LIBS} 2>> errors.txt
-if test `echo $?` -ne 0 ; then
-gdalok=no
-fi
+AC_LINK_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_test.cpp`])],
+   gdalok=yes,
+   gdalok=no
+)
 if test "${gdalok}" = yes; then
     NEED_DEPS=yes
     AC_MSG_RESULT(yes)
@@ -173,39 +178,28 @@ else
 fi
 fi
 
+rm -f gdal_test.cpp
+
 if test "${gdalok}" = no; then
-   cat errors.txt
    AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
    AC_MSG_ERROR([GDALAllRegister not found in libgdal.])
 fi
 
-rm -f gdal_test errors.txt gdal_test.cpp
+#
+# Optional local copies of GDAL and PROJ data directories
+#
 
-GDAL_GE_250="no"
-GDAL_MAJ_VER=`echo $GDAL_VERSION | cut -d "." -f1`
-GDAL_MOD_VER=`echo $GDAL_VERSION | cut -d "." -f2`
-if test "${GDAL_MAJ_VER}" = 2 ; then
-  if test "${GDAL_MOD_VER}" -ge 5 ; then
-    GDAL_GE_250="yes" 
+PROJ_CONFIG="pkg-config proj"
+if `$PROJ_CONFIG --exists` ; then
+  AC_MSG_NOTICE([pkg-config proj exists, will use it])
+  proj_config_ok=yes
+  proj_data_dir=`${PROJ_CONFIG} --variable=datadir`
+  if test -n "${proj_data_dir}" ; then
+    AC_MSG_NOTICE([PROJ data directory: ${proj_data_dir}])
   fi
-else 
-  if test "${GDAL_MAJ_VER}" -ge 3 ; then
-    GDAL_GE_250="yes" 
-  fi
-fi
-
-GDAL_DATA_TEST_FILE="${GDAL_DATADIR}/pcs.csv"
-AC_MSG_CHECKING(GDAL: ${GDAL_DATADIR}/pcs.csv readable)
-if test -r "${GDAL_DATA_TEST_FILE}" ; then
-  AC_MSG_RESULT(yes)
 else
-  AC_MSG_RESULT(no)
-  if test "${GDAL_GE_250}" = "no" ; then
-    AC_MSG_ERROR([pcs.csv not found in GDAL data directory.])
-  fi
+  proj_config_ok=no
 fi
-
-# Optional local copy of GDAL datadir and PROJ_LIB
 
 data_copy=no
 AC_ARG_WITH([data-copy],
@@ -213,7 +207,16 @@ AC_ARG_WITH([data-copy],
                [data_copy=$withval])
 if test "${data_copy}" = "yes" ; then
 AC_MSG_NOTICE([Copy data for:])
-  proj_lib0="${PROJ_LIB}"
+# proj_data_dir may come from pkg-config (above), environment variable or configure arg
+  if test -n "${proj_data_dir}" ; then
+    proj_lib0="${proj_data_dir}"
+  else
+    proj_lib0="${PROJ_LIB}"
+  fi
+  # at PROJ 9.1 the environment variable is PROJ_DATA and PROJ_LIB is deprecated
+  if test -z "${proj_lib0}" ; then
+    proj_lib0="${PROJ_DATA}"
+  fi
   AC_ARG_WITH([proj-data],
     AS_HELP_STRING([--with-proj-data=DIR],[location of PROJ data directory]),
     [proj_lib1=$withval])
@@ -246,6 +249,7 @@ fi
 #
 
 gdal_has_proj=no
+
 [cat > gdal_proj.cpp <<_EOCONF
 #include <gdal.h>
 #include <ogr_srs_api.h>
@@ -261,362 +265,42 @@ int main(int argc, char *argv[]) {
 _EOCONF]
 
 AC_MSG_CHECKING(GDAL: checking whether PROJ is available for linking:)
-${CXX} ${CPPFLAGS} -o gdal_proj gdal_proj.cpp ${LIBS} 2> errors.txt
-if test `echo $?` -ne 0 ; then
-gdal_has_proj=no
-AC_MSG_RESULT(no)
-else
-gdal_has_proj=yes
-AC_MSG_RESULT(yes)
-fi
-
+AC_LINK_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_proj.cpp`])],
+   gdal_has_proj=yes,
+   gdal_has_proj=no
+)
 if test "${gdal_has_proj}" = no; then
-   cat errors.txt
+AC_MSG_RESULT(no)
+   rm -f gdal_proj.cpp
    AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
    AC_MSG_ERROR([cannot link projection code])
+else
+AC_MSG_RESULT(yes)
 fi
 
 AC_MSG_CHECKING(GDAL: checking whether PROJ is available for running:)
-./gdal_proj
-if test `echo $?` -ne 0 ; then
-gdal_has_proj=no
+AC_RUN_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_proj.cpp`])],
+   gdal_has_proj=yes,
+   gdal_has_proj=no
+)
+rm -f gdal_proj.cpp
+if test "${gdal_has_proj}" = no; then
 AC_MSG_RESULT(no)
+AC_MSG_ERROR([OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?])
 else
-gdal_has_proj=yes
 AC_MSG_RESULT(yes)
 fi
-if test "${gdal_has_proj}" = no; then
-   AC_MSG_ERROR([OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?])
-fi
-rm -fr errors.txt gdal_proj.cpp gdal_proj
+
 AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
 
 
-# sqlite3
-AC_ARG_WITH([sqlite3-lib],
-    AS_HELP_STRING([--with-sqlite3-lib=LIB_PATH],[the location of sqlite3 libraries]),
-               [sqlite3_lib_path=$withval])
-if test [ -n "$sqlite3_lib_path" ] ; then
-    AC_SUBST([SQLITE3_LIBS], ["-L${sqlite3_lib_path}"])
-fi
+# #############################################################################
 
+AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${GDAL_CPPFLAGS}"])
 
-# proj #########################################################################################################
-# copied from https://github.com/r-spatial/sf/blob/master/configure.ac
-
-PROJ_CONFIG="pkg-config proj"
-
-if `$PROJ_CONFIG --exists` ; then
-  AC_MSG_NOTICE([pkg-config proj exists, will use it])
-  proj_config_ok=yes
-else
-  proj_config_ok=no
-fi
-
-AC_ARG_WITH([proj-include],
-    AS_HELP_STRING([--with-proj-include=DIR],[location of proj header files]),
-    [proj_include_path=$withval])
-if test [ -n "$proj_include_path" ] ; then
-   AC_SUBST([PROJ_CPPFLAGS],["-I${proj_include_path}"])
-else
-  if test "${proj_config_ok}" = yes; then
-    PROJ_INCLUDE_PATH=`${PROJ_CONFIG} --cflags`
-    AC_SUBST([PROJ_CPPFLAGS],["${PROJ_INCLUDE_PATH}"])
-  fi
-fi
-
-# honor PKG_xx overrides
-# for CPPFLAGS we will superfluously double R's flags
-# since we'll set PKG_CPPFLAGS with this, but that shouldn't hurt
-
-AC_ARG_WITH([proj-api],
-    AS_HELP_STRING([--with-proj-api=yes/no],[use the deprecated proj_api.h even when PROJ 6 is available; default no]),
-               [proj_api=$withval])
-PROJ6="no"
-PROJH="no"
-if test "${proj_config_ok}" = yes; then
-  PROJ_VERSION=`${PROJ_CONFIG} --modversion`
-  PROJV1=`echo "${PROJ_VERSION}" | cut -c 1`
-  if test "${PROJV1}" -ge 6; then
-    PROJ6="yes"
-    PROJ_CPPFLAGS="${PROJ_CPPFLAGS} -DHAVE_PROJ_H"
-    if test "${proj_api}" = yes; then
-        AC_MSG_NOTICE([using proj_api.h even with PROJ 5/6])
-        PROJ_CPPFLAGS="${PROJ_CPPFLAGS} -DACCEPT_USE_OF_DEPRECATED_PROJ_API_H"
-    else
-        AC_MSG_NOTICE([using proj.h.])
-        PROJH="yes"
-    fi
-  fi
-else
-  if test "${PROJH}" = no ; then
-    PROJH=yes
-    AC_CHECK_HEADERS(proj.h,,PROJH=no)
-    if test "${PROJH}" = yes; then
-      PROJ6="yes"
-      PROJ_CPPFLAGS="${PROJ_CPPFLAGS} -DHAVE_PROJ_H"
-    fi
-  fi
-fi
-
-CPPFLAGS="${INCPPFLAGS} ${PKG_CPPFLAGS} ${PROJ_CPPFLAGS}"
-
-if test "${PROJH}" = no
-then
-  proj4ok=yes
-  AC_CHECK_HEADERS(proj_api.h,,proj4ok=no)
-  if test "${proj4ok}" = no; then
-     AC_MSG_ERROR([proj_api.h not found in standard or given locations.])
-  fi
-fi
-
-# dnl ditto for a library path
-AC_ARG_WITH([proj-lib],
-    AS_HELP_STRING([--with-proj-lib=LIB_PATH],[the location of proj libraries]),
-               [proj_lib_path=$withval])
-if test [ -n "$proj_lib_path" ] ; then
-    AC_SUBST([PROJ_LIBS], ["-L${proj_lib_path} ${INPKG_LIBS} -lproj"])
-else
-  if test "${proj_config_ok}" = yes; then
-    if test `uname` = "Darwin"; then
-      PROJ_LIB_PATH=`${PROJ_CONFIG} --libs --static`
-    else
-      PROJ_LIB_PATH=`${PROJ_CONFIG} --libs`
-    fi
-    AC_SUBST([PROJ_LIBS], ["${PROJ_LIB_PATH} ${INPKG_LIBS}"])
-	proj_version=`${PROJ_CONFIG} --modversion`
-	AC_MSG_NOTICE([PROJ: ${proj_version}])
-  else
-    PROJ_LIBS="${PKG_LIBS} -lproj"
-  fi
-fi
-
-LIBS="${PROJ_LIBS} ${INLIBS} ${PKG_LIBS}"
-
-if test "${PROJH}" = no; then
-  proj4ok=yes
-  AC_CHECK_LIB(proj,pj_init_plus,,proj4ok=no)
-  if test "${proj4ok}" = no; then
-     AC_MSG_ERROR([libproj not found in standard or given locations.])
-  fi
-[cat > proj_conf_test.c <<_EOCONF
-#include <stdio.h>
-#include <stdlib.h>
-#include <proj_api.h>
-int main(void) {
-    printf("%d\n", PJ_VERSION);
-    exit(0);
-}
-_EOCONF]
-else
-[cat > proj_conf_test.cpp <<_EOCONF
-#include <stdio.h>
-#include <stdlib.h>
-#include <proj.h>
-int main(void) {
-	proj_context_create();
-    exit(0);
-}
-_EOCONF]
-  #AC_CHECK_LIB(proj,proj_context_create,,proj6ok=no)
-  AC_MSG_CHECKING(PROJ: checking whether PROJ and sqlite3 are available for linking:)
-  ${CXX} ${CPPFLAGS} -o proj_conf_test proj_conf_test.cpp ${LIBS} $SQLITE3_LIBS -lsqlite3 2> errors.txt
-  if test `echo $?` -ne 0 ; then
-    proj6ok=no
-    AC_MSG_RESULT(no)
-  else
-    proj6ok=yes
-    AC_MSG_RESULT(yes)
-  fi
-  if test "${proj6ok}" = no; then
-     AC_MSG_ERROR([libproj or sqlite3 not found in standard or given locations.])
-  fi
-
-[cat > proj_conf_test.c <<_EOCONF
-#include <stdio.h>
-#include <stdlib.h>
-#include <proj.h>
-int main(void) {
-    printf("%d.%d.%d\n", PROJ_VERSION_MAJOR, PROJ_VERSION_MINOR, PROJ_VERSION_PATCH);
-    exit(0);
-}
-_EOCONF]
-fi
-
-#AC_MSG_NOTICE([PKG_LIBS: ${PKG_LIBS}])
-
-${CC} ${CFLAGS} ${CPPFLAGS} -o proj_conf_test proj_conf_test.c ${PROJ_LIBS}
-
-proj_version=`./proj_conf_test`
-
-AC_ARG_WITH([proj-share],
-    AS_HELP_STRING([--with-proj-share=SHARE_PATH],[the location of proj metadata files]),
-               [proj_share_path=$withval])
-if test [ -n "$proj_share_path" ] ; then
-    AC_MSG_NOTICE([PROJ_LIB: ${proj_share_path}])
-fi
-
-if test ${PROJ6} = "no"; then
-
-[cat > proj_conf_test.c <<_EOCONF
-#include <stdio.h>
-#include <proj_api.h>
-#if PJ_VERSION <= 480
-FILE *pj_open_lib(projCtx, const char *, const char *);
-#endif
-int main(void) {
-#if PJ_VERSION <= 480
-    FILE *fp;
-#else
-    PAFile fp;
-#endif
-    projCtx ctx;
-    ctx = pj_get_default_ctx();
-    fp = pj_open_lib(ctx, "epsg", "rb");
-    if (fp == NULL) exit(1);
-#if PJ_VERSION <= 480
-    fclose(fp);
-#else
-    pj_ctx_fclose(ctx, fp);
-#endif
-    exit(0);
-}
-_EOCONF]
-
-${CC} ${CFLAGS} ${CPPFLAGS} -o proj_conf_test proj_conf_test.c ${PROJ_LIBS}
-if test [ -n "$proj_share_path" ] ; then
-  PROJ_LIB="${proj_share_path}" ./proj_conf_test
-  proj_share=`echo $?`
-else
-  ./proj_conf_test
-  proj_share=`echo $?`
-fi
-
-AC_MSG_CHECKING(PROJ: epsg found and readable)
-if test ${proj_share} -eq 1 ; then
-    AC_MSG_RESULT(no)
-    STOP="stop"
-else
-    AC_MSG_RESULT(yes)
-fi
-
-rm -f proj_conf_test.c proj_conf_test
-
-if test "$STOP" = "stop" ; then
-    echo "Error: proj/epsg not found"
-    echo "Either install missing proj support files, for example"
-    echo "the proj-nad and proj-epsg RPMs on systems using RPMs,"
-    echo "or if installed but not autodetected, set PROJ_LIB to the"
-    echo "correct path, and if need be use the --with-proj-share="
-    echo "configure argument."
-    exit 1
-fi
-
-else # proj >= 6
-
-if test "${PROJH}" = no; then
-
-[cat > proj_conf_test.c <<_EOCONF
-#include <stdio.h>
-#include <proj_api.h>
-int main(void) {
-    PAFile fp;
-    projCtx ctx;
-    ctx = pj_get_default_ctx();
-    fp = pj_open_lib(ctx, "proj.db", "rb");
-    if (fp == NULL) exit(1);
-    pj_ctx_fclose(ctx, fp);
-    exit(0);
-}
-_EOCONF]
-
-${CC} ${CFLAGS} ${CPPFLAGS} -o proj_conf_test proj_conf_test.c ${PROJ_LIBS}
-if test [ -n "$proj_share_path" ] ; then
-  PROJ_LIB="${proj_share_path}" ./proj_conf_test
-  proj_share=`echo $?`
-else
-  ./proj_conf_test
-  proj_share=`echo $?`
-fi
-
-AC_MSG_CHECKING(PROJ: proj.db found and readable)
-if test ${proj_share} -eq 1 ; then
-    AC_MSG_RESULT(no)
-    STOP="stop"
-else
-    AC_MSG_RESULT(yes)
-fi
-
-rm -f proj_conf_test.c proj_conf_test
-
-if test "$STOP" = "stop" ; then
-    echo "Error: proj/proj.db not found"
-    echo "Either install missing proj support files, set PROJ_LIB to the"
-    echo "correct path, and if need be use the --with-proj-share="
-    echo "configure argument."
-    exit 1
-fi
-
-[cat > proj_conf_test.c <<_EOCONF
-#include <stdio.h>
-#include <proj_api.h>
-#if PJ_VERSION <= 480
-FILE *pj_open_lib(projCtx, const char *, const char *);
-#endif
-int main(void) {
-#if PJ_VERSION <= 480
-    FILE *fp;
-#else
-    PAFile fp;
-#endif
-    projCtx ctx;
-    ctx = pj_get_default_ctx();
-    fp = pj_open_lib(ctx, "conus", "rb");
-    if (fp == NULL) exit(1);
-#if PJ_VERSION <= 480
-    fclose(fp);
-#else
-    pj_ctx_fclose(ctx, fp);
-#endif
-    exit(0);
-}
-_EOCONF]
-
-${CC} ${CFLAGS} ${CPPFLAGS} -o proj_conf_test proj_conf_test.c ${PROJ_LIBS}
-if test [ -n "$proj_share_path" ] ; then
-  PROJ_LIB="${proj_share_path}" ./proj_conf_test
-  proj_share=`echo $?`
-else
-  ./proj_conf_test
-  proj_share=`echo $?`
-fi
-
-AC_MSG_CHECKING(PROJ: conus found and readable)
-if test ${proj_share} -eq 1 ; then
-    WARN="warn"
-    AC_MSG_RESULT(no)
-else
-    AC_MSG_RESULT(yes)
-fi
-
-rm -f proj_conf_test.c proj_conf_test
-
-if test "$WARN" = "warn" ; then
-    echo "Note: proj/conus not found"
-    echo "No support available in PROJ4 for NAD grid datum transformations"
-    echo "If required, consider re-installing from source with the contents"
-    echo "of proj-datumgrid-1.<latest>.zip from http://download.osgeo.org/proj/ in nad/."
-fi
-
-fi # PROJH = no
-
-fi # proj >= 6
-
-# ######################
-
-AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${PROJ_CPPFLAGS} ${GDAL_CPPFLAGS}"])
-
-AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS} ${PROJ_LIBS}"])
+AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS}"])
 if test "${NEED_DEPS}" = yes; then
    AC_SUBST([PKG_LIBS], ["${PKG_LIBS} ${GDAL_DEP_LIBS}"])
 fi
