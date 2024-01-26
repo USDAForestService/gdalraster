@@ -3236,14 +3236,14 @@ fi
 rm -f core conftest.err conftest.$ac_objext conftest.beam \
     conftest$ac_exeext conftest.$ac_ext
 if test "${gdal_has_proj}" = no; then
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-   rm -f gdal_proj.cpp
-   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Install failure: compilation and/or linkage problems." >&5
+  rm -f gdal_proj.cpp
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Install failure: compilation and/or linkage problems." >&5
 printf "%s\n" "$as_me: Install failure: compilation and/or linkage problems." >&6;}
-   as_fn_error $? "cannot link projection code" "$LINENO" 5
+  as_fn_error $? "cannot link projection code" "$LINENO" 5
 else
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 fi
 
@@ -3251,10 +3251,8 @@ fi
 printf %s "checking GDAL: checking whether PROJ is available for running:... " >&6; }
 if test "$cross_compiling" = yes
 then :
-  { { printf "%s\n" "$as_me:${as_lineno-$LINENO}: error: in \`$ac_pwd':" >&5
-printf "%s\n" "$as_me: error: in \`$ac_pwd':" >&2;}
-as_fn_error $? "cannot run test program while cross compiling
-See \`config.log' for more details" "$LINENO" 5; }
+  gdal_has_proj=cross_compiling
+
 else $as_nop
   cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -3265,7 +3263,6 @@ then :
   gdal_has_proj=yes
 else $as_nop
   gdal_has_proj=no
-
 fi
 rm -f core *.core core.conftest.* gmon.out bb.out conftest$ac_exeext \
   conftest.$ac_objext conftest.beam conftest.$ac_ext
@@ -3273,11 +3270,14 @@ fi
 
 rm -f gdal_proj.cpp
 if test "${gdal_has_proj}" = no; then
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-as_fn_error $? "OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?" "$LINENO" 5
+  as_fn_error $? "OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?" "$LINENO" 5
+elif test "${gdal_has_proj}" = cross_compiling; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: assume yes for cross-compiling" >&5
+printf "%s\n" "assume yes for cross-compiling" >&6; }
 else
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 fi
 
