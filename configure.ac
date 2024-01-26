@@ -271,26 +271,29 @@ AC_LINK_IFELSE(
    gdal_has_proj=no
 )
 if test "${gdal_has_proj}" = no; then
-AC_MSG_RESULT(no)
-   rm -f gdal_proj.cpp
-   AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
-   AC_MSG_ERROR([cannot link projection code])
+  AC_MSG_RESULT(no)
+  rm -f gdal_proj.cpp
+  AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
+  AC_MSG_ERROR([cannot link projection code])
 else
-AC_MSG_RESULT(yes)
+  AC_MSG_RESULT(yes)
 fi
 
 AC_MSG_CHECKING(GDAL: checking whether PROJ is available for running:)
 AC_RUN_IFELSE(
    [AC_LANG_SOURCE([`cat gdal_proj.cpp`])],
    gdal_has_proj=yes,
-   gdal_has_proj=no
+   gdal_has_proj=no,
+   gdal_has_proj=cross_compiling
 )
 rm -f gdal_proj.cpp
 if test "${gdal_has_proj}" = no; then
-AC_MSG_RESULT(no)
-AC_MSG_ERROR([OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?])
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?])
+elif test "${gdal_has_proj}" = cross_compiling; then
+  AC_MSG_RESULT(assume yes for cross-compiling)
 else
-AC_MSG_RESULT(yes)
+  AC_MSG_RESULT(yes)
 fi
 
 AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
