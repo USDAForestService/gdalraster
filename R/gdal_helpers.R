@@ -15,7 +15,8 @@
 #' @details
 #' A Seek-Optimized ZIP file (SOZip) contains one or more compressed files
 #' organized and annotated such that a SOZip-aware reader can perform very
-#' fast random access within the .zip file (see \url{https://sozip.org/}).
+#' fast random access within the .zip file
+#' (see \url{https://github.com/sozip/sozip-spec}).
 #' Large compressed files can be accessed directly from SOZip without prior
 #' decompression. The .zip file is otherwise fully backward compatible.
 #'
