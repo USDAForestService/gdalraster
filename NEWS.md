@@ -2,7 +2,7 @@
 
 ## Dependencies
 
-* libxml2 is listed in `SystemRequirements` since it is required by dependent package **xml2**
+* libxml2 is listed in `SystemRequirements` since it is required by the imported package **xml2**
 
 ## GDALRaster-class
 
