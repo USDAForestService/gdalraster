@@ -1,18 +1,32 @@
-# gdalraster 1.7.0.9000 dev
+# gdalraster 1.8.0
 
-* add `addFilesInZip()`: create/append to Seek-Optimized ZIP file (GDAL >= 3.7) (2024-01-20)
+## Dependencies
 
-* `GDALRaster-class`: add a constructor with default `read_only=TRUE` (2024-01-13)
+* libxml2 is listed in `SystemRequirements` since it is required by dependent package **xml2**
 
-* use pkg-config on Windows (#125 thanks to @kalibera) (2024-01-12)
+## GDALRaster-class
 
-* `plot_raster()`: use georeferenced coordinates by default instead of pixel/line (#184 thanks to @mdsumner) (2023-12-15)
+* `read_only=TRUE` is now an optional default in the class constructor
+* add `clearStatistics()`: clear statistics on PAM supported datasets (GDAL >= 3.2)
 
-* switch to using the R convention for x.x.x.9000 development versioning (2023-12-03)
+## Stand-alone functions
 
-* add `GDALRaster::clearStatistics()`: clear statistics (PAM supported datasets GDAL >= 3.2) (2023-11-29)
+* add `addFilesInZip()`: create/append to Seek-Optimized ZIP files (GDAL >= 3.7)
+* `plot_raster()`: now uses georeferenced coordinates by default instead of pixel/line (#184 thanks to @mdsumner)
 
-* Documentation: the example for `calc()` using Landsat bands should have applied scale/offset as given in the .json metadata - this has been corrected; add `translate()` and `warp()` in [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also); add `AWS_REGION`, and a section for SOZip to the [GDAL Config Quick Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update documentation and examples throughout for default `read_only=TRUE` in the constructor for `GDALRaster-class`
+## Documentation
+
+* example code for `calc()` using Landsat bands should have applied scale/offset as given in the .json metadata - this has been corrected
+* add `AWS_REGION`, and a section for SOZip to [GDAL Config Quick Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+* update documentation and examples throughout for default `read_only=TRUE` in the constructor for `GDALRaster`
+* add `translate()` and `warp()` in [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html#see-also)
+
+## Internal
+
+* configure.ac: remove parts of PROJ config that were unneeded since **gdalraster** only uses PROJ via GDAL headers; use `autoconf` macros for compiler invocations; get the PROJ data directory from `pkg-config` if possible; add `action-if-cross-compiling` argument (#190 and #197; thanks to Simon Urbanek for debugging an initial issue and providing helpful feedback)
+* get GDAL libs from `pkg-config` on Windows when possible (#125 thanks to @kalibera)
+* `translate()` and `warp()`: close the output dataset before closing source dataset(s) in case the output is VRT
+* switch to using the R convention for x.x.x.9000 development versioning
 
 # gdalraster 1.7.0
 
