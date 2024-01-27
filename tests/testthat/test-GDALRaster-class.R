@@ -273,17 +273,17 @@ test_that("get/set band color interpretation works", {
 })
 
 test_that("Int64 data type is detected", {
-	if (as.integer(gdal_version()[2]) >= 3050000) {
-		f <- system.file("extdata/int64.tif", package="gdalraster")
-		expect_warning(ds <- new(GDALRaster, f, TRUE))
-		expect_equal(ds$getDataTypeName(1), "Int64")
-		ds$close()
-	}
+	skip_if(as.integer(gdal_version()[2]) < 3050000)
+	
+	f <- system.file("extdata/int64.tif", package="gdalraster")
+	expect_warning(ds <- new(GDALRaster, f, TRUE))
+	expect_equal(ds$getDataTypeName(1), "Int64")
+	ds$close()
 })
 
 test_that("get/set default RAT works", {
 	evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-	f <- paste0(tempdir(), "/", "storml_evt_tmp.tif")
+	f <- tempfile(fileext=".tif")
 	file.copy(evt_file,  f)
 	ds <- new(GDALRaster, f, read_only=FALSE)
 	expect_true(is.null(ds$getDefaultRAT(band=1)))

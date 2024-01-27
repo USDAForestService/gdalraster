@@ -410,7 +410,7 @@
 #'
 #' \code{$clearStatistics()}
 #' Clear statistics. Only implemented for now in PAM supported datasets
-#' (Peristable Auxiliary Metadata via .aux.xml file). GDAL >= 3.2.
+#' (Persistable Auxiliary Metadata via .aux.xml file). GDAL >= 3.2.
 #'
 #' \code{$getHistogram(band, min, max, num_buckets, incl_out_of_range, 
 #'   approx_ok)}\cr
