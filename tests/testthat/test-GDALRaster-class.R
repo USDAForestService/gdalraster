@@ -87,7 +87,7 @@ test_that("open/close/re-open works", {
 	expect_true(all(is.na(read_ds(ds))))
 	ds$close()
 	expect_false(ds$isOpen())
-	expect_equal(ds$getFilename(), mod_file)
+	expect_equal(ds$getFilename(), .check_gdal_filename(mod_file))
 	ds$open(read_only=FALSE)
 	expect_true(ds$isOpen())
 	ds$setDescription(band=1, "test")
