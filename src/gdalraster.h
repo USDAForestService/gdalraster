@@ -73,6 +73,7 @@ void gdal_formats();
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
+Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 
 bool create(std::string format, std::string dst_filename,
 		int xsize, int ysize, int nbands, std::string dataType,
@@ -157,8 +158,8 @@ class GDALRaster {
 	
 	public:
 	GDALRaster();
-	GDALRaster(std::string filename);
-	GDALRaster(std::string filename, bool read_only);
+	GDALRaster(Rcpp::CharacterVector filename);
+	GDALRaster(Rcpp::CharacterVector filename, bool read_only);
 	
 	std::string getFilename() const;
 	void open(bool read_only);

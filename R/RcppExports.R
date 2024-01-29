@@ -102,6 +102,15 @@ get_cache_used <- function() {
     .Call(`_gdalraster_get_cache_used`)
 }
 
+#' Check a filename before passing to GDAL and potentially fix.
+#' filename may be a physical file, URL, connection string, file name with
+#' additional parameters, etc. Returned in UTF-8 encoding.
+#'
+#' @noRd
+.check_gdal_filename <- function(filename) {
+    .Call(`_gdalraster__check_gdal_filename`, filename)
+}
+
 #' Create a new uninitialized raster
 #'
 #' `create()` makes an empty raster in the specified format.
