@@ -30,11 +30,16 @@ test_that("plot_raster works", {
 	vat <- read.csv(evc_vat)
 	vat <- vat[,c(1,6:8)]
 	ds <- new(GDALRaster, evc_file, read_only=TRUE)
-	dm <- ds$dim()
+	#dm <- ds$dim()
 	r <- read_ds(ds)
 	ds$close()
-	expect_silent(plot_raster(r, xsize=dm[1], ysize=dm[2], col_tbl=vat,
-					interpolate=FALSE))
+	expect_silent(plot_raster(r, col_tbl=vat, interpolate=FALSE))
+	
+	# as_list
+	ds$open(TRUE)
+	r <- read_ds(ds, as_list=TRUE)
+	ds$close()
+	expect_silent(plot_raster(r, col_tbl=vat, interpolate=FALSE))
 
 	# built-in color table
 	tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
