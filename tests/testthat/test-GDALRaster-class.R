@@ -153,7 +153,9 @@ test_that("floating point I/O works", {
 	z <- runif(10*10)
 	ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, z)
 	ds$open(read_only=TRUE)
-	expect_equal(round(read_ds(ds),5), round(z,5))
+	r <- read_ds(ds)
+	attributes(r) <- NULL
+	expect_equal(round(r,5), round(z,5))
 	ds$open(read_only=FALSE)
 	ds$setNoDataValue(band=1, -99999)
 	ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, rep(-99999, 100))
@@ -162,7 +164,9 @@ test_that("floating point I/O works", {
 	ds$open(read_only=FALSE)
 	ds$deleteNoDataValue(band=1)
 	ds$open(read_only=TRUE)
-	expect_equal(read_ds(ds), rep(-99999, 100))
+	r <- read_ds(ds)
+	attributes(r) <- NULL
+	expect_equal(r, rep(-99999, 100))
 	files <- ds$getFileList()
 	on.exit(unlink(files))
 	ds$close()
@@ -177,7 +181,9 @@ test_that("complex I/O works", {
 	z <- complex(real = stats::rnorm(100), imaginary = stats::rnorm(100))
 	ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, z)
 	ds$open(read_only=TRUE)
-	expect_vector(read_ds(ds), ptype=complex(0), size=100)
+	r <- read_ds(ds)
+	attributes(r) <- NULL
+	expect_vector(r, ptype=complex(0), size=100)
 	files <- ds$getFileList()
 	on.exit(unlink(files))
 	ds$close()

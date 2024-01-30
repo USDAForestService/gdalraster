@@ -12,7 +12,8 @@ read_ds(
   xsize = ds$getRasterXSize(),
   ysize = ds$getRasterYSize(),
   out_xsize = xsize,
-  out_ysize = ysize
+  out_ysize = ysize,
+  as_list = FALSE
 )
 }
 \arguments{
@@ -38,15 +39,18 @@ overview).}
 \item{out_ysize}{Integer. The height in pixels of the output buffer into
 which the desired region will be read (e.g., to read a reduced resolution
 overview).}
+
+\item{as_list}{Logical. If \code{TRUE}, return output as a list of band vectors.
+If \code{FALSE} (the default), output is a vector of pixel data interleaved by
+band.}
 }
 \value{
-Returns a \code{numeric} or \code{complex} vector containing the values that
-were read. It is organized in left to right, top to bottom pixel order,
-interleaved by band.
-\code{NA} will be returned in place of the nodata value if the raster dataset has
-a nodata value defined for the band. Data are read as R \code{integer} type when
-possible for the raster data type (Byte, Int8, Int16, UInt16, Int32),
-otherwise as type \code{double} (UInt32, Float32, Float64).
+If \code{as_list = FALSE} (the default), a \code{numeric} or \code{complex} vector
+containing the values that were read. It is organized in left to right, top
+to bottom pixel order, interleaved by band.
+If \code{as_list = TRUE}, a list with number of elements equal to the number of
+bands read. Each element contains a \code{numeric} or \code{complex} vector
+containing the pixel data read for the band.
 }
 \description{
 \code{read_ds()} will read from a raster dataset that is already open in a
@@ -55,6 +59,25 @@ extent from all bands at full resolution. \code{read_ds()} is sometimes more
 convenient than \code{GDALRaster$read()}, e.g., to read specific multiple bands
 for display with \code{\link[=plot_raster]{plot_raster()}}, or simply for the argument defaults to
 read an entire raster into memory (see Note).
+}
+\details{
+\code{NA} will be returned in place of the nodata value if the raster dataset has
+a nodata value defined for the band. Data are read as R \code{integer} type when
+possible for the raster data type (Byte, Int8, Int16, UInt16, Int32),
+otherwise as type \code{double} (UInt32, Float32, Float64).
+
+The output object has attribute \code{gis}, a list containing:
+\preformatted{
+  $type = "raster"
+  $extent = c(xmin, ymin, xmax, ymax)
+  $cellsize = c(pixel_width, pixel_height)
+  $dim = c(xsize, ysize, nbands)
+  $srs = <projection as WKT2 string>
+  $geotransform = <length-6 vector of double>
+}
+The WKT version used for the projection string can be overridden by setting
+the \code{OSR_WKT_FORMAT} configuration option. See \code{\link[=srs_to_wkt]{srs_to_wkt()}} for a list of
+supported values.
 }
 \note{
 There is small overhead in calling \code{read_ds()} compared with
@@ -75,10 +98,20 @@ approximately (xsize * ysize * number of bands * 4) for data read as
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 ds <- new(GDALRaster, lcp_file)
 
+# as a vector of pixel data interleaved by band
 r <- read_ds(ds, bands=c(6,5,4))
 typeof(r)
 length(r)
 object.size(r)
+
+# as a list of band vectors
+r <- read_ds(ds, bands=c(6,5,4), as_list=TRUE)
+typeof(r)
+length(r)
+object.size(r)
+
+# gis attribute list
+attr(r, "gis")
 
 ds$close()
 }
