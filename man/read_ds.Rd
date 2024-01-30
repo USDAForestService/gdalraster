@@ -70,10 +70,8 @@ The output object has attribute \code{gis}, a list containing:
 \preformatted{
   $type = "raster"
   $extent = c(xmin, ymin, xmax, ymax)
-  $cellsize = c(pixel_width, pixel_height)
   $dim = c(xsize, ysize, nbands)
   $srs = <projection as WKT2 string>
-  $geotransform = <length-6 vector of double>
 }
 The WKT version used for the projection string can be overridden by setting
 the \code{OSR_WKT_FORMAT} configuration option. See \code{\link[=srs_to_wkt]{srs_to_wkt()}} for a list of

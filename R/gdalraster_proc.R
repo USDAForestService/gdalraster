@@ -133,10 +133,8 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' \preformatted{
 #'   $type = "raster"
 #'   $extent = c(xmin, ymin, xmax, ymax)
-#'   $cellsize = c(pixel_width, pixel_height)
 #'   $dim = c(xsize, ysize, nbands)
 #'   $srs = <projection as WKT2 string>
-#'   $geotransform = <length-6 vector of double>
 #' }
 #' The WKT version used for the projection string can be overridden by setting
 #' the `OSR_WKT_FORMAT` configuration option. See [srs_to_wkt()] for a list of
@@ -241,10 +239,8 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 	attr(r, "gis") <- list(
 						type = "raster",
 						extent = bb,
-						cellsize = ds$res(),
 						dim = c(out_xsize, out_ysize, length(bands)),
-						srs = srs_to_wkt(ds$getProjectionRef()),
-						geotransform = ds$getGeoTransform()
+						srs = srs_to_wkt(ds$getProjectionRef())
 						)
 	set_config_option("OSR_WKT_FORMAT", wkt_fmt_config)
 	
