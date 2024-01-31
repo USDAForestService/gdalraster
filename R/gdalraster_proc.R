@@ -231,8 +231,7 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 	lr_xy <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))
 	bb <- c(ul_xy[1], lr_xy[2], lr_xy[1], ul_xy[2])
 	
-	# gis: a list with the raster extent, cellsize, dimension, projection, and
-	# geotransform
+	# gis: a list with the raster extent, dimensions, projection
 	wkt_fmt_config <- get_config_option("OSR_WKT_FORMAT")
 	if (wkt_fmt_config == "")
 		set_config_option("OSR_WKT_FORMAT", "WKT2")
@@ -240,7 +239,7 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 						type = "raster",
 						extent = bb,
 						dim = c(out_xsize, out_ysize, length(bands)),
-						srs = srs_to_wkt(ds$getProjectionRef())
+						srs = ds$getProjectionRef()
 						)
 	set_config_option("OSR_WKT_FORMAT", wkt_fmt_config)
 	
