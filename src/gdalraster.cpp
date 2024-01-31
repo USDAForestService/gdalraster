@@ -81,14 +81,14 @@ GDALRaster::GDALRaster() :
 				hDataset(NULL),
 				eAccess(GA_ReadOnly) {}
 
-GDALRaster::GDALRaster(std::string filename) : 
+GDALRaster::GDALRaster(Rcpp::CharacterVector filename) : 
 				GDALRaster(filename, true) {}
 
-GDALRaster::GDALRaster(std::string filename, bool read_only) : 
-				fname(filename),
+GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only) : 
 				hDataset(NULL),
 				eAccess(GA_ReadOnly) {
-						
+
+	fname = Rcpp::as<std::string>(_check_gdal_filename(filename));
 	if (!read_only)
 		eAccess = GA_Update;
 	hDataset = GDALOpenShared(fname.c_str(), eAccess);

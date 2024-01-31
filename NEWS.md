@@ -1,3 +1,7 @@
+# gdalraster 1.8.0.9000 (dev)
+
+* add `_check_gdal_filename()`: filename check for internal use (2024-01-30)
+
 # gdalraster 1.8.0
 
 ## Dependencies

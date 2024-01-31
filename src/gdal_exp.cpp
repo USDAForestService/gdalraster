@@ -159,6 +159,40 @@ int get_cache_used() {
 }
 
 
+//' Check a filename before passing to GDAL and potentially fix.
+//' filename may be a physical file, URL, connection string, file name with
+//' additional parameters, etc. Returned in UTF-8 encoding.
+//'
+//' @noRd
+// [[Rcpp::export(name = ".check_gdal_filename")]]
+Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
+	// Rcpp::CharacterVector should have encoding when needed
+	
+	if (filename.size() > 1)
+		Rcpp::stop("filename must be a character vector of length 1.");
+	
+	std::string std_filename(filename[0]);
+	Rcpp::CharacterVector out_filename(1);
+	
+	if (std_filename.find("/vsi") == 0) {
+		out_filename[0] = filename[0];
+	}
+	else if (std_filename.find("~") != std_filename.npos) {
+		try {
+			out_filename = _normalize_path(filename, true);
+		}
+		catch (...) {
+			out_filename[0] = filename[0];
+		}
+	}
+	else {
+		out_filename[0] = filename[0];
+	}
+
+	return _enc_to_utf8(out_filename);
+}
+
+
 //' Create a new uninitialized raster
 //'
 //' `create()` makes an empty raster in the specified format.
