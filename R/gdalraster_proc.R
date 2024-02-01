@@ -217,13 +217,17 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 	else
 		r <- NULL
 	
+	i = 1
 	for (b in bands) {
-		if (as_list)
-			r[[b]] <- ds$read(b, xoff, yoff, xsize, ysize,
+		if (as_list) {
+			r[[i]] <- ds$read(b, xoff, yoff, xsize, ysize,
 							out_xsize, out_ysize)
-		else
+			i = i + 1
+		}
+		else {
 			r <- c(r, ds$read(b, xoff, yoff, xsize, ysize,
 					out_xsize, out_ysize))
+		}
 	}
 	
 	gt <- ds$getGeoTransform()
