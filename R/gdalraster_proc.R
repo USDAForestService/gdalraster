@@ -67,13 +67,13 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 .getGDALformat <- function(file) {
 # Only for guessing common output formats
 	file <- as.character(file)
-	if (endsWith(file, ".img") || endsWith(file, ".IMG")) {
+	if (endsWith(tolower(file), ".img")) {
 		return("HFA")
 	}
-	if (endsWith(file, ".tif") || endsWith(file, ".TIF")) {
+	if (endsWith(tolower(file), ".tif")) {
 		return("GTiff")
 	}
-	if (endsWith(file, ".vrt") || endsWith(file, ".VRT")) {
+	if (endsWith(tolower(file), ".vrt")) {
 		return("VRT")
 	}
 	return(NULL)
@@ -86,16 +86,16 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 	if (startsWith(file, "PG:")) {
 		return("PostgreSQL")
 	}
-	if (endsWith(file, ".gpkg") || endsWith(file, ".GPKG")) {
+	if (endsWith(tolower(file), ".gpkg")) {
 		return("GPKG")
 	}
-	if (endsWith(file, ".shp") || endsWith(file, ".SHP")) {
+	if (endsWith(tolower(file), ".shp")) {
 		return("ESRI Shapefile")
 	}
-	if (endsWith(file, ".sqlite") || endsWith(file, ".SQLITE")) {
+	if (endsWith(tolower(file), ".sqlite")) {
 		return("SQLite")
 	}
-	if (endsWith(file, ".fgb") || endsWith(file, ".FGB")) {
+	if (endsWith(tolower(file), ".fgb")) {
 		return("FlatGeobuf")
 	}
 	return(NULL)
@@ -901,11 +901,6 @@ calc <- function(expr,
 {
 	
 	calc_expr <- parse(text=expr)
-
-	if ( !all(file.exists(rasterfiles)) ) {
-		message( rasterfiles[which(!file.exists(rasterfiles))] )
-		stop("File not found.", call. = FALSE)
-	}
 	
 	if (write_mode == "safe" && file.exists(dstfile))
 		stop("The output file already exists and write_mode is 'safe'.", 
@@ -1047,7 +1042,6 @@ calc <- function(expr,
 			stop("Result vector is the wrong size.", call. = FALSE)
 		}
 		outrow <- ifelse(is.na(outrow), nodata_value, outrow)
-		#dim(outrow) <- c(1, ncols)
 		dst_ds$write(band = out_band,
 					offx = 0,
 					offy = row,
