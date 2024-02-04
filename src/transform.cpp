@@ -144,24 +144,24 @@ void _setPROJEnableNetwork(int enabled) {
 //' inv_project(pts[,-1], epsg_to_wkt(26912))
 //' inv_project(pts[,-1], epsg_to_wkt(26912), "NAD27")
 // [[Rcpp::export]]
-Rcpp::NumericMatrix inv_project(Rcpp::RObject &pts, 
+Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts, 
 								std::string srs,
 								std::string well_known_gcs = "") {
 
-	Rcpp::NumericMatrix pts_m;
-	if (Rcpp::is<Rcpp::DataFrame>(pts))
-		pts_m = _df_to_matrix(pts);
+	Rcpp::NumericMatrix pts_in;
+	if (Rcpp::is<Rcpp::DataFrame>(pts)) {
+		pts_in = _df_to_matrix(pts);
+	}
 	else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
 		if (Rf_isMatrix(pts))
-			pts_m = Rcpp::as<Rcpp::NumericMatrix>(pts);
+			pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
 	}
-	else
+	else {
 		Rcpp::stop("pts must be a data frame or matrix.");
+	}
 		
-	if (pts_m.nrow() == 0)
+	if (pts_in.nrow() == 0)
 		Rcpp::stop("Input matrix is empty.");
-
-	Rcpp::NumericMatrix pts_in = Rcpp::clone(pts_m);
 
 	OGRSpatialReference oSourceSRS;
 	OGRSpatialReference *poLongLat;
@@ -198,12 +198,10 @@ Rcpp::NumericMatrix inv_project(Rcpp::RObject &pts,
 	if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) )
 		Rcpp::stop("Coordinate transformation failed.");
 	
-	Rcpp::NumericMatrix pts_out(pts_in.nrow(), 2);
-	for (R_xlen_t i=0; i < pts_in.nrow(); ++i) {
-		pts_out(i,0) = xbuf[i];
-		pts_out(i,1) = ybuf[i];
-	}
-	return pts_out;
+	Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
+	ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
+	ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
+	return ret;
 }
 
 //' Transform geospatial x/y coordinates
