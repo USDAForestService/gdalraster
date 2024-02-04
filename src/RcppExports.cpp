@@ -792,12 +792,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // transform_xy
-Rcpp::NumericMatrix transform_xy(Rcpp::RObject& pts, std::string srs_from, std::string srs_to);
+Rcpp::NumericMatrix transform_xy(const Rcpp::RObject& pts, std::string srs_from, std::string srs_to);
 RcppExport SEXP _gdalraster_transform_xy(SEXP ptsSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::RObject& >::type pts(ptsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type pts(ptsSEXP);
     Rcpp::traits::input_parameter< std::string >::type srs_from(srs_fromSEXP);
     Rcpp::traits::input_parameter< std::string >::type srs_to(srs_toSEXP);
     rcpp_result_gen = Rcpp::wrap(transform_xy(pts, srs_from, srs_to));

@@ -231,24 +231,24 @@ Rcpp::NumericMatrix inv_project(Rcpp::RObject &pts,
 //'              srs_from = epsg_to_wkt(26912), 
 //'              srs_to = epsg_to_wkt(5070))
 // [[Rcpp::export]]
-Rcpp::NumericMatrix transform_xy(Rcpp::RObject &pts, 
+Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts, 
 								std::string srs_from,
 								std::string srs_to) {
 
-	Rcpp::NumericMatrix pts_m;
-	if (Rcpp::is<Rcpp::DataFrame>(pts))
-		pts_m = _df_to_matrix(pts);
+	Rcpp::NumericMatrix pts_in;
+	if (Rcpp::is<Rcpp::DataFrame>(pts)) {
+		pts_in = _df_to_matrix(pts);
+	}
 	else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
 		if (Rf_isMatrix(pts))
-			pts_m = Rcpp::as<Rcpp::NumericMatrix>(pts);
+			pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
 	}
-	else
+	else {
 		Rcpp::stop("pts must be a data frame or matrix.");
+	}
 
-	if (pts_m.nrow() == 0)
+	if (pts_in.nrow() == 0)
 		Rcpp::stop("Input matrix is empty.");
-
-	Rcpp::NumericMatrix pts_in = Rcpp::clone(pts_m);
 
 	OGRSpatialReference oSourceSRS, oDestSRS;
 	OGRCoordinateTransformation *poCT;
@@ -277,11 +277,8 @@ Rcpp::NumericMatrix transform_xy(Rcpp::RObject &pts,
 		Rcpp::stop("Coordinate transformation failed.");
 	
 	Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
-	for (R_xlen_t i=0; i < pts_in.nrow(); ++i) {
-		ret(i,0) = xbuf[i];
-		ret(i,1) = ybuf[i];
-	}
+	ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
+	ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
 	return ret;
 }
-
 
