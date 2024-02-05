@@ -1,5 +1,7 @@
 # gdalraster 1.8.0.9000 (dev)
 
+* organize website reference index (2024-02-04)
+
 * add `_get_physical_RAM()`: wrapper for `CPLGetUsablePhysicalRAM()` (2024-02-04)
 
 * add `_check_gdal_filename()`: filename check for internal use (2024-01-30)
