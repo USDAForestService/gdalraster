@@ -31,17 +31,17 @@ supporting:
   - read/set raster dataset parameters
   - low-level I/O
   - read/set color tables and raster attribute tables
-  - copy files/move/rename/delete datasets
-  - create/append to Seek-Optimized ZIP
-    ([SOZip](https://github.com/sozip/sozip-spec))
   - virtual raster (VRT) for virtual cropping, resampling, kernel
     filtering, mosaicing
   - `gdalwarp` wrapper for reproject/resample/crop/mosaic
   - coordinate transformation
-  - spatial reference convenience functions
+  - spatial reference systems
   - several GDAL algorithms (`dem_proc()`, `polygonize()`,
     `rasterize()`,
-    [`...`](https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html#details))
+    [`...`](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms))
+  - copy files/move/rename/delete datasets
+  - create/append to Seek-Optimized ZIP
+    ([SOZip](https://github.com/sozip/sozip-spec))
 
 Additional functionality includes:
 
