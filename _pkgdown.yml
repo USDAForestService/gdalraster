@@ -22,55 +22,80 @@ reference:
   - RunningStats-class
 
 - title: Stand-alone functions
+- subtitle: Raster creation
+- contents:
+  - create
+  - createCopy
+  - getCreationOptions
+  - rasterFromRaster
+  - translate
+- subtitle: Data management
 - contents:
   - addFilesInZip
   - bandCopyWholeRaster
-  - bbox_from_wkt
-  - bbox_to_wkt
-  - bbox_intersect
-  - bbox_union
-  - buildRAT
+  - copyDatasetFiles
+  - deleteDataset
+  - renameDataset
+- subtitle: Virtual raster
+- contents:
   - buildVRT
+  - rasterToVRT
+- subtitle: Reproject/crop/mosaic
+- contents:
+  - warp
+- subtitle: Algorithms
+- contents:
   - calc
   - combine
-  - copyDatasetFiles
-  - create
-  - createColorRamp
-  - createCopy
-  - deleteDataset
   - dem_proc
-  - displayRAT
-  - epsg_to_wkt
   - fillNodata
-  - gdal_formats
-  - gdal_version
-  - getCreationOptions
-  - get_cache_used
-  - get_config_option
-  - get_pixel_line
-  - g_buffer
-  - has_geos
-  - inv_geotransform
-  - inv_project
-  - plot_raster
   - polygonize
-  - proj_networking
-  - proj_search_paths
-  - proj_version
-  - rasterFromRaster
   - rasterize
-  - rasterToVRT
-  - read_ds
-  - renameDataset
-  - set_config_option
   - sieveFilter
+- subtitle: Display
+- contents:
+  - plot_raster
+  - read_ds
+- subtitle: Raster attribute tables
+- contents:
+  - buildRAT
+  - createColorRamp
+  - displayRAT
+- subtitle: Geotransform conversion
+- contents:
+  - get_pixel_line
+  - inv_geotransform
+- subtitle: Coordinate transformation
+- contents:
+  - inv_project
+  - transform_xy
+- subtitle: Spatial reference systems
+- contents:
+  - epsg_to_wkt
   - srs_is_geographic
   - srs_is_projected
   - srs_is_same
   - srs_to_wkt
-  - transform_xy
-  - translate
-  - warp
+- subtitle: Geometry
+- contents:
+  - bbox_from_wkt
+  - bbox_to_wkt
+  - bbox_intersect
+  - bbox_union
+  - g_buffer
+  - has_geos
+- subtitle: GDAL configuration
+- contents:
+  - gdal_formats
+  - gdal_version
+  - get_cache_used
+  - get_config_option
+  - set_config_option
+- subtitle: PROJ configuration
+- contents:
+  - proj_networking
+  - proj_search_paths
+  - proj_version
 
 - title: Lookups
 - contents:
