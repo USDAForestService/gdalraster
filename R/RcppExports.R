@@ -111,6 +111,13 @@ get_cache_used <- function() {
     .Call(`_gdalraster__check_gdal_filename`, filename)
 }
 
+#' Get usable physical RAM in MB
+#'
+#' @noRd
+.get_physical_RAM <- function() {
+    .Call(`_gdalraster__get_physical_RAM`)
+}
+
 #' Create a new uninitialized raster
 #'
 #' `create()` makes an empty raster in the specified format.

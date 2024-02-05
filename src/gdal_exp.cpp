@@ -193,6 +193,16 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
 }
 
 
+//' Get usable physical RAM in MB
+//'
+//' @noRd
+// [[Rcpp::export(name = ".get_physical_RAM")]]
+int _get_physical_RAM() {
+	GIntBig nPhysicalRAM = CPLGetUsablePhysicalRAM();
+	return static_cast<int>(nPhysicalRAM / (1000 * 1000));
+}
+
+
 //' Create a new uninitialized raster
 //'
 //' `create()` makes an empty raster in the specified format.

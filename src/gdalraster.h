@@ -74,6 +74,7 @@ std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
+int _get_physical_RAM();
 
 bool create(std::string format, std::string dst_filename,
 		int xsize, int ysize, int nbands, std::string dataType,
