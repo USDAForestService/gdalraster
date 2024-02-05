@@ -101,6 +101,48 @@
       
 
       
+    </div><div class="section level2">
+      
+      <h3 id="raster-creation">Raster creation<a class="anchor" aria-label="anchor" href="#raster-creation"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="create.html">create()</a></code> 
+        </dt>
+        <dd>Create a new uninitialized raster</dd>
+      </dl><dl><dt>
+          
+          <code><a href="createCopy.html">createCopy()</a></code> 
+        </dt>
+        <dd>Create a copy of a raster</dd>
+      </dl><dl><dt>
+          
+          <code><a href="getCreationOptions.html">getCreationOptions()</a></code> 
+        </dt>
+        <dd>Return the list of creation options of a GDAL driver</dd>
+      </dl><dl><dt>
+          
+          <code><a href="rasterFromRaster.html">rasterFromRaster()</a></code> 
+        </dt>
+        <dd>Create a raster from an existing raster as template</dd>
+      </dl><dl><dt>
+          
+          <code><a href="translate.html">translate()</a></code> 
+        </dt>
+        <dd>Convert raster data between different formats</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="data-management">Data management<a class="anchor" aria-label="anchor" href="#data-management"></a></h3>
+      
+
+      
     </div><div id="" class="section level2">
       
       
@@ -118,30 +160,68 @@
         <dd>Copy a whole raster band efficiently</dd>
       </dl><dl><dt>
           
-          <code><a href="bbox_from_wkt.html">bbox_from_wkt()</a></code> 
+          <code><a href="copyDatasetFiles.html">copyDatasetFiles()</a></code> 
         </dt>
-        <dd>Get the bounding box of a geometry specified in OGC WKT format</dd>
+        <dd>Copy the files of a dataset</dd>
       </dl><dl><dt>
           
-          <code><a href="bbox_to_wkt.html">bbox_to_wkt()</a></code> 
+          <code><a href="deleteDataset.html">deleteDataset()</a></code> 
         </dt>
-        <dd>Convert a bounding box to POLYGON in OGC WKT format</dd>
+        <dd>Delete named dataset</dd>
       </dl><dl><dt>
           
-          <code><a href="bbox_intersect.html">bbox_intersect()</a></code> <code><a href="bbox_intersect.html">bbox_union()</a></code> 
+          <code><a href="renameDataset.html">renameDataset()</a></code> 
         </dt>
-        <dd>Bounding box intersection / union</dd>
-      </dl><dl><dt>
-          
-          <code><a href="buildRAT.html">buildRAT()</a></code> 
-        </dt>
-        <dd>Build a GDAL Raster Attribute Table as data frame</dd>
-      </dl><dl><dt>
+        <dd>Rename a dataset</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="virtual-raster">Virtual raster<a class="anchor" aria-label="anchor" href="#virtual-raster"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="buildVRT.html">buildVRT()</a></code> 
         </dt>
         <dd>Build a GDAL virtual raster from a list of datasets</dd>
       </dl><dl><dt>
+          
+          <code><a href="rasterToVRT.html">rasterToVRT()</a></code> 
+        </dt>
+        <dd>Create a GDAL virtual raster derived from one source dataset</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="reproject-crop-mosaic">Reproject/crop/mosaic<a class="anchor" aria-label="anchor" href="#reproject-crop-mosaic"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="warp.html">warp()</a></code> 
+        </dt>
+        <dd>Raster reprojection and mosaicing</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="algorithms">Algorithms<a class="anchor" aria-label="anchor" href="#algorithms"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
           
           <code><a href="calc.html">calc()</a></code> 
         </dt>
@@ -153,44 +233,9 @@
         <dd>Raster overlay for unique combinations</dd>
       </dl><dl><dt>
           
-          <code><a href="copyDatasetFiles.html">copyDatasetFiles()</a></code> 
-        </dt>
-        <dd>Copy the files of a dataset</dd>
-      </dl><dl><dt>
-          
-          <code><a href="create.html">create()</a></code> 
-        </dt>
-        <dd>Create a new uninitialized raster</dd>
-      </dl><dl><dt>
-          
-          <code><a href="createColorRamp.html">createColorRamp()</a></code> 
-        </dt>
-        <dd>Create a color ramp</dd>
-      </dl><dl><dt>
-          
-          <code><a href="createCopy.html">createCopy()</a></code> 
-        </dt>
-        <dd>Create a copy of a raster</dd>
-      </dl><dl><dt>
-          
-          <code><a href="deleteDataset.html">deleteDataset()</a></code> 
-        </dt>
-        <dd>Delete named dataset</dd>
-      </dl><dl><dt>
-          
           <code><a href="dem_proc.html">dem_proc()</a></code> 
         </dt>
         <dd>GDAL DEM processing</dd>
-      </dl><dl><dt>
-          
-          <code><a href="displayRAT.html">displayRAT()</a></code> 
-        </dt>
-        <dd>Display a GDAL Raster Attribute Table</dd>
-      </dl><dl><dt>
-          
-          <code><a href="epsg_to_wkt.html">epsg_to_wkt()</a></code> 
-        </dt>
-        <dd>Convert spatial reference from EPSG code to OGC Well Known Text</dd>
       </dl><dl><dt>
           
           <code><a href="fillNodata.html">fillNodata()</a></code> 
@@ -198,84 +243,9 @@
         <dd>Fill selected pixels by interpolation from surrounding areas</dd>
       </dl><dl><dt>
           
-          <code><a href="gdal_formats.html">gdal_formats()</a></code> 
-        </dt>
-        <dd>Report all configured GDAL drivers for raster formats</dd>
-      </dl><dl><dt>
-          
-          <code><a href="gdal_version.html">gdal_version()</a></code> 
-        </dt>
-        <dd>Get GDAL version</dd>
-      </dl><dl><dt>
-          
-          <code><a href="getCreationOptions.html">getCreationOptions()</a></code> 
-        </dt>
-        <dd>Return the list of creation options of a GDAL driver</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_cache_used.html">get_cache_used()</a></code> 
-        </dt>
-        <dd>Get the size of memory in use by the GDAL block cache</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_config_option.html">get_config_option()</a></code> 
-        </dt>
-        <dd>Get GDAL configuration option</dd>
-      </dl><dl><dt>
-          
-          <code><a href="get_pixel_line.html">get_pixel_line()</a></code> 
-        </dt>
-        <dd>Raster pixel/line from geospatial x,y coordinates</dd>
-      </dl><dl><dt>
-          
-          <code><a href="g_buffer.html">g_buffer()</a></code> 
-        </dt>
-        <dd>Compute buffer of a WKT geometry</dd>
-      </dl><dl><dt>
-          
-          <code><a href="has_geos.html">has_geos()</a></code> 
-        </dt>
-        <dd>Is GEOS available?</dd>
-      </dl><dl><dt>
-          
-          <code><a href="inv_geotransform.html">inv_geotransform()</a></code> 
-        </dt>
-        <dd>Invert geotransform</dd>
-      </dl><dl><dt>
-          
-          <code><a href="inv_project.html">inv_project()</a></code> 
-        </dt>
-        <dd>Inverse project geospatial x/y coordinates to longitude/latitude</dd>
-      </dl><dl><dt>
-          
-          <code><a href="plot_raster.html">plot_raster()</a></code> 
-        </dt>
-        <dd>Display raster data</dd>
-      </dl><dl><dt>
-          
           <code><a href="polygonize.html">polygonize()</a></code> 
         </dt>
         <dd>Create a polygon feature layer from raster data</dd>
-      </dl><dl><dt>
-          
-          <code><a href="proj_networking.html">proj_networking()</a></code> 
-        </dt>
-        <dd>Check, enable or disable PROJ networking capabilities</dd>
-      </dl><dl><dt>
-          
-          <code><a href="proj_search_paths.html">proj_search_paths()</a></code> 
-        </dt>
-        <dd>Get or set search path(s) for PROJ resource files</dd>
-      </dl><dl><dt>
-          
-          <code><a href="proj_version.html">proj_version()</a></code> 
-        </dt>
-        <dd>Get PROJ version</dd>
-      </dl><dl><dt>
-          
-          <code><a href="rasterFromRaster.html">rasterFromRaster()</a></code> 
-        </dt>
-        <dd>Create a raster from an existing raster as template</dd>
       </dl><dl><dt>
           
           <code><a href="rasterize.html">rasterize()</a></code> 
@@ -283,29 +253,114 @@
         <dd>Burn vector geometries into a raster</dd>
       </dl><dl><dt>
           
-          <code><a href="rasterToVRT.html">rasterToVRT()</a></code> 
+          <code><a href="sieveFilter.html">sieveFilter()</a></code> 
         </dt>
-        <dd>Create a GDAL virtual raster derived from one source dataset</dd>
+        <dd>Remove small raster polygons</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="display">Display<a class="anchor" aria-label="anchor" href="#display"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="plot_raster.html">plot_raster()</a></code> 
+        </dt>
+        <dd>Display raster data</dd>
       </dl><dl><dt>
           
           <code><a href="read_ds.html">read_ds()</a></code> 
         </dt>
         <dd>Convenience wrapper for <code>GDALRaster$read()</code></dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="raster-attribute-tables">Raster attribute tables<a class="anchor" aria-label="anchor" href="#raster-attribute-tables"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="buildRAT.html">buildRAT()</a></code> 
+        </dt>
+        <dd>Build a GDAL Raster Attribute Table as data frame</dd>
       </dl><dl><dt>
           
-          <code><a href="renameDataset.html">renameDataset()</a></code> 
+          <code><a href="createColorRamp.html">createColorRamp()</a></code> 
         </dt>
-        <dd>Rename a dataset</dd>
+        <dd>Create a color ramp</dd>
       </dl><dl><dt>
           
-          <code><a href="set_config_option.html">set_config_option()</a></code> 
+          <code><a href="displayRAT.html">displayRAT()</a></code> 
         </dt>
-        <dd>Set GDAL configuration option</dd>
+        <dd>Display a GDAL Raster Attribute Table</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="geotransform-conversion">Geotransform conversion<a class="anchor" aria-label="anchor" href="#geotransform-conversion"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="get_pixel_line.html">get_pixel_line()</a></code> 
+        </dt>
+        <dd>Raster pixel/line from geospatial x,y coordinates</dd>
       </dl><dl><dt>
           
-          <code><a href="sieveFilter.html">sieveFilter()</a></code> 
+          <code><a href="inv_geotransform.html">inv_geotransform()</a></code> 
         </dt>
-        <dd>Remove small raster polygons</dd>
+        <dd>Invert geotransform</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="coordinate-transformation">Coordinate transformation<a class="anchor" aria-label="anchor" href="#coordinate-transformation"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="inv_project.html">inv_project()</a></code> 
+        </dt>
+        <dd>Inverse project geospatial x/y coordinates to longitude/latitude</dd>
+      </dl><dl><dt>
+          
+          <code><a href="transform_xy.html">transform_xy()</a></code> 
+        </dt>
+        <dd>Transform geospatial x/y coordinates</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="spatial-reference-systems">Spatial reference systems<a class="anchor" aria-label="anchor" href="#spatial-reference-systems"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="epsg_to_wkt.html">epsg_to_wkt()</a></code> 
+        </dt>
+        <dd>Convert spatial reference from EPSG code to OGC Well Known Text</dd>
       </dl><dl><dt>
           
           <code><a href="srs_is_geographic.html">srs_is_geographic()</a></code> 
@@ -326,21 +381,104 @@
           <code><a href="srs_to_wkt.html">srs_to_wkt()</a></code> 
         </dt>
         <dd>Convert spatial reference definition to OGC Well Known Text</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="geometry">Geometry<a class="anchor" aria-label="anchor" href="#geometry"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="bbox_from_wkt.html">bbox_from_wkt()</a></code> 
+        </dt>
+        <dd>Get the bounding box of a geometry specified in OGC WKT format</dd>
       </dl><dl><dt>
           
-          <code><a href="transform_xy.html">transform_xy()</a></code> 
+          <code><a href="bbox_to_wkt.html">bbox_to_wkt()</a></code> 
         </dt>
-        <dd>Transform geospatial x/y coordinates</dd>
+        <dd>Convert a bounding box to POLYGON in OGC WKT format</dd>
       </dl><dl><dt>
           
-          <code><a href="translate.html">translate()</a></code> 
+          <code><a href="bbox_intersect.html">bbox_intersect()</a></code> <code><a href="bbox_intersect.html">bbox_union()</a></code> 
         </dt>
-        <dd>Convert raster data between different formats</dd>
+        <dd>Bounding box intersection / union</dd>
       </dl><dl><dt>
           
-          <code><a href="warp.html">warp()</a></code> 
+          <code><a href="g_buffer.html">g_buffer()</a></code> 
         </dt>
-        <dd>Raster reprojection and mosaicing</dd>
+        <dd>Compute buffer of a WKT geometry</dd>
+      </dl><dl><dt>
+          
+          <code><a href="has_geos.html">has_geos()</a></code> 
+        </dt>
+        <dd>Is GEOS available?</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="gdal-configuration">GDAL configuration<a class="anchor" aria-label="anchor" href="#gdal-configuration"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="gdal_formats.html">gdal_formats()</a></code> 
+        </dt>
+        <dd>Report all configured GDAL drivers for raster formats</dd>
+      </dl><dl><dt>
+          
+          <code><a href="gdal_version.html">gdal_version()</a></code> 
+        </dt>
+        <dd>Get GDAL version</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_cache_used.html">get_cache_used()</a></code> 
+        </dt>
+        <dd>Get the size of memory in use by the GDAL block cache</dd>
+      </dl><dl><dt>
+          
+          <code><a href="get_config_option.html">get_config_option()</a></code> 
+        </dt>
+        <dd>Get GDAL configuration option</dd>
+      </dl><dl><dt>
+          
+          <code><a href="set_config_option.html">set_config_option()</a></code> 
+        </dt>
+        <dd>Set GDAL configuration option</dd>
+      </dl></div><div class="section level2">
+      
+      <h3 id="proj-configuration">PROJ configuration<a class="anchor" aria-label="anchor" href="#proj-configuration"></a></h3>
+      
+
+      
+    </div><div id="" class="section level2">
+      
+      
+      
+
+      <dl><dt>
+          
+          <code><a href="proj_networking.html">proj_networking()</a></code> 
+        </dt>
+        <dd>Check, enable or disable PROJ networking capabilities</dd>
+      </dl><dl><dt>
+          
+          <code><a href="proj_search_paths.html">proj_search_paths()</a></code> 
+        </dt>
+        <dd>Get or set search path(s) for PROJ resource files</dd>
+      </dl><dl><dt>
+          
+          <code><a href="proj_version.html">proj_version()</a></code> 
+        </dt>
+        <dd>Get PROJ version</dd>
       </dl></div><div class="section level2">
       <h2 id="lookups">Lookups<a class="anchor" aria-label="anchor" href="#lookups"></a></h2>
       
