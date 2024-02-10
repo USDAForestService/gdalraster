@@ -395,6 +395,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// vsi_copy_file
+int vsi_copy_file(Rcpp::CharacterVector src_file, Rcpp::CharacterVector target_file, bool show_progess);
+RcppExport SEXP _gdalraster_vsi_copy_file(SEXP src_fileSEXP, SEXP target_fileSEXP, SEXP show_progessSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_file(src_fileSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type target_file(target_fileSEXP);
+    Rcpp::traits::input_parameter< bool >::type show_progess(show_progessSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_copy_file(src_file, target_file, show_progess));
+    return rcpp_result_gen;
+END_RCPP
+}
 // has_geos
 bool has_geos();
 RcppExport SEXP _gdalraster_has_geos() {
@@ -933,6 +946,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_copyDatasetFiles", (DL_FUNC) &_gdalraster_copyDatasetFiles, 3},
     {"_gdalraster__getCreationOptions", (DL_FUNC) &_gdalraster__getCreationOptions, 1},
     {"_gdalraster__addFileInZip", (DL_FUNC) &_gdalraster__addFileInZip, 6},
+    {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},

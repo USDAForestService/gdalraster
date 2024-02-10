@@ -29,7 +29,8 @@
   \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},
   \code{\link[=deleteDataset]{deleteDataset()}},\cr
   \code{\link[=renameDataset]{renameDataset()}},
-  \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}
+  \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}},
+  \code{\link[=vsi_copy_file]{vsi_copy_file()}}
  
   \item virtual raster: \code{\link[=buildVRT]{buildVRT()}},
   \code{\link[=rasterToVRT]{rasterToVRT()}}

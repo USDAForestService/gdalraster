@@ -963,7 +963,7 @@ renameDataset <- function(new_filename, old_filename, format = "") {
 #'
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()],
-#' [deleteDataset()], [renameDataset()]
+#' [deleteDataset()], [renameDataset()], [vsi_copy_file()]
 #'
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
@@ -994,6 +994,51 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #' @noRd
 .addFileInZip <- function(zip_filename, overwrite, archive_filename, in_filename, options, quiet) {
     .Call(`_gdalraster__addFileInZip`, zip_filename, overwrite, archive_filename, in_filename, options, quiet)
+}
+
+#' Copy a source file to a target filename.
+#'
+#' `vsi_copy_file()` is a wrapper for `VSICopyFile()` in the GDAL Common
+#' Portability Library. The GDAL VSI functions allow virtualization of disk
+#' I/O so that non file data sources can be made to appear as files.
+#' See \url{https://gdal.org/user/virtual_file_systems.html}.
+#' Requires GDAL >= 3.7.
+#' 
+#' The following copies are made fully on the target server, without local
+#' download from source and upload to target:
+#' \preformatted{
+#' /vsis3/ -> /vsis3/
+#' /vsigs/ -> /vsigs/
+#' /vsiaz/ -> /vsiaz/
+#' /vsiadls/ -> /vsiadls/
+#' any of the above or /vsicurl/ -> /vsiaz/ (starting with GDAL 3.8)
+#' }
+#'
+#' @param src_file Character string. Filename of the source file.
+#' @param target_file Character string. Filename of the target file.
+#' @param show_progess Logical scalar. If `TRUE`, a progress bar will be
+#' displayed (the size of `src_file` will be retrieved in GDAL with
+#' `VSIStatL()`). Default is `FALSE`.
+#' @returns Invisibly, 0 on success or -1 on an error.
+#'
+#' @note
+#' If `target_file` has the form /vsizip/foo.zip/bar, the default options
+#' described for the function `addFilesInZip()` will be in effect.
+#' 
+#' @seealso
+#' [copyDatasetFiles()]
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' tmp_file <- tempfile(fileext = ".tif")
+#'
+#' # Requires GDAL >= 3.7
+#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#'   result <- vsi_copy_file(elev_file, tmp_file)
+#'   print(result)
+#' }
+vsi_copy_file <- function(src_file, target_file, show_progess = FALSE) {
+    invisible(.Call(`_gdalraster_vsi_copy_file`, src_file, target_file, show_progess))
 }
 
 #' @noRd

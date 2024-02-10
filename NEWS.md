@@ -1,5 +1,7 @@
 # gdalraster 1.8.0.9000 (dev)
 
+* add `vsi_copy_file()`: wrapper for `VSICopyFile()` in the GDAL Common Portability Library (2024-02-09)
+
 * organize website reference index (2024-02-04)
 
 * add `_get_physical_RAM()`: wrapper for `CPLGetUsablePhysicalRAM()` (2024-02-04)
