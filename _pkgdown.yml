@@ -36,6 +36,7 @@ reference:
   - copyDatasetFiles
   - deleteDataset
   - renameDataset
+  - vsi_copy_file
 - subtitle: Virtual raster
 - contents:
   - buildVRT

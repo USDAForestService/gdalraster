@@ -95,6 +95,9 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
 		std::string archive_filename, std::string in_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> options,
 		bool quiet);
+int vsi_copy_file(Rcpp::CharacterVector src_file,
+		Rcpp::CharacterVector target_file,
+		bool show_progess);
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
 		double pixel, double line);

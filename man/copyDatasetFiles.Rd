@@ -44,5 +44,5 @@ ds_copy$close()
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}},
-\code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=renameDataset]{renameDataset()}}
+\code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=renameDataset]{renameDataset()}}, \code{\link[=vsi_copy_file]{vsi_copy_file()}}
 }
