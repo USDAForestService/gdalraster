@@ -2064,8 +2064,12 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
 //' @examples
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' tmp_file <- tempfile(fileext = ".tif")
-//' result <- vsi_copy_file(elev_file, tmp_file)
-//' print(result)
+//'
+//' # Requires GDAL >= 3.7
+//' if (as.integer(gdal_version()[2]) >= 3070000) {
+//'   result <- vsi_copy_file(elev_file, tmp_file)
+//'   print(result)
+//' }
 // [[Rcpp::export(invisible = true)]]
 int vsi_copy_file(Rcpp::CharacterVector src_file,
 		Rcpp::CharacterVector target_file,

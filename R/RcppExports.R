@@ -1031,8 +1031,12 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' tmp_file <- tempfile(fileext = ".tif")
-#' result <- vsi_copy_file(elev_file, tmp_file)
-#' print(result)
+#'
+#' # Requires GDAL >= 3.7
+#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#'   result <- vsi_copy_file(elev_file, tmp_file)
+#'   print(result)
+#' }
 vsi_copy_file <- function(src_file, target_file, show_progess = FALSE) {
     invisible(.Call(`_gdalraster_vsi_copy_file`, src_file, target_file, show_progess))
 }
