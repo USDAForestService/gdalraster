@@ -2099,3 +2099,42 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 #endif
 }
 
+
+//' Clean cache associated with /vsicurl/ and related file systems
+//'
+//' `vsi_curl_clear_cache()` cleans the local cache associated with /vsicurl/
+//' (and related file systems). This function is a wrapper for
+//' `VSICurlClearCache()` and `VSICurlPartialClearCache()` in the GDAL Common
+//' Portability Library. See Details for the GDAL documentation.
+//'
+//' @details
+//' /vsicurl (and related file systems like /vsis3/, /vsigs/, /vsiaz/,
+//' /vsioss/, /vsiswift/) cache a number of metadata and data for faster
+//' execution in read-only scenarios. But when the content on the server-side
+//' may change during the same process, those mechanisms can prevent opening
+//' new files, or give an outdated version of them.
+//' If `partial = TRUE`, cleans the local cache associated for a given filename
+//' (and its subfiles and subdirectories if it is a directory)
+//'
+//' @param partial Logical scalar. Whether to clear the cache only for a given
+//' filename (see Details).
+//' @param file_prefix Character string. Filename prefix to use if
+//' `partial = TRUE`.
+//' @returns No return value, called for side effects.
+//'
+//' @examples
+//' vsi_curl_clear_cache()
+// [[Rcpp::export()]]
+void vsi_curl_clear_cache(bool partial = false,
+		Rcpp::CharacterVector file_prefix = "") {
+
+	if (!partial) {
+		VSICurlClearCache();
+	}
+	else {
+		std::string f_prefix_in;
+		f_prefix_in = Rcpp::as<std::string>(_check_gdal_filename(file_prefix));
+		VSICurlPartialClearCache(f_prefix_in.c_str());
+	}
+}
+

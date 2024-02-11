@@ -30,7 +30,8 @@
   \code{\link[=deleteDataset]{deleteDataset()}},\cr
   \code{\link[=renameDataset]{renameDataset()}},
   \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}},
-  \code{\link[=vsi_copy_file]{vsi_copy_file()}}
+  \code{\link[=vsi_copy_file]{vsi_copy_file()}},
+  \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}}
  
   \item virtual raster: \code{\link[=buildVRT]{buildVRT()}},
   \code{\link[=rasterToVRT]{rasterToVRT()}}

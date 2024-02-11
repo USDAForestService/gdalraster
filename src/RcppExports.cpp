@@ -408,6 +408,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// vsi_curl_clear_cache
+void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix);
+RcppExport SEXP _gdalraster_vsi_curl_clear_cache(SEXP partialSEXP, SEXP file_prefixSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< bool >::type partial(partialSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type file_prefix(file_prefixSEXP);
+    vsi_curl_clear_cache(partial, file_prefix);
+    return R_NilValue;
+END_RCPP
+}
 // has_geos
 bool has_geos();
 RcppExport SEXP _gdalraster_has_geos() {
@@ -947,6 +958,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__getCreationOptions", (DL_FUNC) &_gdalraster__getCreationOptions, 1},
     {"_gdalraster__addFileInZip", (DL_FUNC) &_gdalraster__addFileInZip, 6},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
+    {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 2},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},
