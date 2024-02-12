@@ -155,7 +155,7 @@ possible for the raster data type (Byte, Int8, Int16, UInt16, Int32),
 otherwise as type <code>double</code> (UInt32, Float32, Float64).</p>
 <p>The output object has attribute <code>gis</code>, a list containing:</p><div class="sourceCode"><pre><code>
   $type = "raster"
-  $extent = c(xmin, ymin, xmax, ymax)
+  $bbox = c(xmin, ymin, xmax, ymax)
   $dim = c(xsize, ysize, nbands)
   $srs = &lt;projection as WKT2 string&gt;
 </code></pre></div><p>The WKT version used for the projection string can be overridden by setting
@@ -210,7 +210,7 @@ approximately (xsize * ysize * number of bands * 4) for data read as
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "raster"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $extent</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $bbox</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323476.1 5101872.0  327766.1 5105082.0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $dim</span>
