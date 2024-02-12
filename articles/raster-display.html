@@ -119,16 +119,16 @@ use pixel values that have already been read into a vector.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">base_url</span>, <span class="st">"landsat_c2ard_sr_mt_hood_jul2022_utm.tif"</span><span class="op">)</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span><span class="op">)</span></span>
-<span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># passing a vector of pixel values rather than the open dataset</span></span>
 <span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ds.html">read_ds</a></span><span class="op">(</span><span class="va">ds</span>, bands<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7</span>,<span class="fl">5</span>,<span class="fl">4</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># normalizing to ranges derived from the full Landsat scene (2-98 percentiles)</span></span>
-<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>, xsize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, ysize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, nbands<span class="op">=</span><span class="fl">3</span>,</span>
+<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>,</span>
 <span>            minmax_def<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7551</span>,<span class="fl">7679</span>,<span class="fl">7585</span>,<span class="fl">14842</span>,<span class="fl">24997</span>,<span class="fl">12451</span><span class="op">)</span>,</span>
-<span>            main<span class="op">=</span><span class="st">"Mount Hood July 2022 Landsat 7-5-4 (SWIR)"</span><span class="op">)</span></span></code></pre></div>
+<span>            main<span class="op">=</span><span class="st">"Mount Hood July 2022 Landsat 7-5-4 (SWIR)"</span></span>
+<span>           <span class="op">)</span></span></code></pre></div>
 <p><img src="raster-display_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 </div>
 <div class="section level2">
@@ -163,26 +163,21 @@ use pixel values that have already been read into a vector.</p>
 <code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
-<h2 id="label-with-geospatial-coordinates">Label with geospatial coordinates<a class="anchor" aria-label="anchor" href="#label-with-geospatial-coordinates"></a>
+<h2 id="axis-labels">Axis labels<a class="anchor" aria-label="anchor" href="#axis-labels"></a>
 </h2>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">base_url</span>, <span class="st">"bl_mrbl_ng_jul2004_rgb_720x360.tif"</span><span class="op">)</span></span>
-<span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span><span class="op">)</span></span>
-<span><span class="va">dm</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Size is"</span>, <span class="va">dm</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="st">"x"</span>,  <span class="va">dm</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="st">"x"</span>, <span class="va">dm</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Size is 720 x 360 x 3"</span></span>
-<span></span>
 <span><span class="fu"><a href="../reference/srs_is_projected.html">srs_is_projected</a></span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="fu">getProjectionRef</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ds.html">read_ds</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, nbands<span class="op">=</span><span class="fl">3</span>, xlim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">bb</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>,<span class="va">bb</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span><span class="op">)</span>, ylim<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">bb</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>,<span class="va">bb</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span>,</span>
+<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">r</span>,</span>
 <span>            xlab<span class="op">=</span><span class="st">"longitude"</span>, ylab<span class="op">=</span><span class="st">"latitude"</span>,</span>
-<span>            main<span class="op">=</span><span class="st">"NASA Earth Observatory Blue Marble July 2004"</span><span class="op">)</span></span></code></pre></div>
+<span>            main<span class="op">=</span><span class="st">"NASA Earth Observatory Blue Marble July 2004"</span></span>
+<span>           <span class="op">)</span></span></code></pre></div>
 <p><img src="raster-display_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
     </nav></aside>

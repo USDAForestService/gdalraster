@@ -95,7 +95,9 @@
     <dl><dt>data</dt>
 <dd><p>Either a <code>GDALRaster</code> object from which data will be read, or
 a numeric vector of pixel values arranged in left to right, top to
-bottom order.</p></dd>
+bottom order, or a list of band vectors. If input is vector or list,
+the information in attribute <code>gis</code> will be used if present (see <code><a href="read_ds.html">read_ds()</a></code>),
+potentially ignoring values below for <code>xsize</code>, <code>ysize</code>, <code>nbands</code>.</p></dd>
 
 
 <dt>xsize</dt>
