@@ -69,7 +69,7 @@ otherwise as type \code{double} (UInt32, Float32, Float64).
 The output object has attribute \code{gis}, a list containing:
 \preformatted{
   $type = "raster"
-  $extent = c(xmin, ymin, xmax, ymax)
+  $bbox = c(xmin, ymin, xmax, ymax)
   $dim = c(xsize, ysize, nbands)
   $srs = <projection as WKT2 string>
 }

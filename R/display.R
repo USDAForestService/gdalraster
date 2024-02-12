@@ -329,8 +329,8 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 			data_in <- unlist(data, use.names=FALSE)
 		else
 			data_in <- data
-		xlim <- c(gis$extent[1], gis$extent[3])
-		ylim <- c(gis$extent[2], gis$extent[4])
+		xlim <- c(gis$bbox[1], gis$bbox[3])
+		ylim <- c(gis$bbox[2], gis$bbox[4])
 		xsize <- gis$dim[1]
 		ysize <- gis$dim[2]
 		if ((xsize*ysize) > max_pixels)

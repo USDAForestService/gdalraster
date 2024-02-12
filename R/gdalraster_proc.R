@@ -132,7 +132,7 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' The output object has attribute `gis`, a list containing:
 #' \preformatted{
 #'   $type = "raster"
-#'   $extent = c(xmin, ymin, xmax, ymax)
+#'   $bbox = c(xmin, ymin, xmax, ymax)
 #'   $dim = c(xsize, ysize, nbands)
 #'   $srs = <projection as WKT2 string>
 #' }
@@ -235,13 +235,13 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 	lr_xy <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))
 	bb <- c(ul_xy[1], lr_xy[2], lr_xy[1], ul_xy[2])
 	
-	# gis: a list with the raster extent, dimensions, projection
+	# gis: a list with the raster bbox, dimensions, projection
 	wkt_fmt_config <- get_config_option("OSR_WKT_FORMAT")
 	if (wkt_fmt_config == "")
 		set_config_option("OSR_WKT_FORMAT", "WKT2")
 	attr(r, "gis") <- list(
 						type = "raster",
-						extent = bb,
+						bbox = bb,
 						dim = c(out_xsize, out_ysize, length(bands)),
 						srs = ds$getProjectionRef()
 						)
