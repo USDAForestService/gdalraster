@@ -1,5 +1,9 @@
 # gdalraster 1.8.0.9000 (dev)
 
+* `plot_raster()`: accept pixel data in list form (band vectors as list elements), and make use of `gis` attribute if present (#198) (2024-02-12)
+
+* `read_ds()`: add `as_list` argument for option to return multi-band output in list form; attach attribute `gis` to the output, a list containing extent, dimension and spatial reference (#198) (2024-02-12)
+
 * add `vsi_curl_clear_cache()`: wrapper for `VSICurlClearCache()` and `VSICurlPartialClearCache()` in the GDAL Common Portability Library (2024-02-11)
 
 * add `vsi_copy_file()`: wrapper for `VSICopyFile()` in the GDAL Common Portability Library (2024-02-09)
