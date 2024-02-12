@@ -123,7 +123,9 @@
 #'
 #' @param data Either a `GDALRaster` object from which data will be read, or
 #' a numeric vector of pixel values arranged in left to right, top to
-#' bottom order.
+#' bottom order, or a list of band vectors. If input is vector or list,
+#' the information in attribute `gis` will be used if present (see [read_ds()]),
+#' potentially ignoring values below for `xsize`, `ysize`, `nbands`.
 #' @param xsize The number of pixels along the x dimension in `data`. If `data`
 #' is a `GDALRaster` object, specifies the size at which the raster will be
 #' read (used for argument `out_xsize` in `GDALRaster$read()`). By default,
@@ -279,12 +281,15 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 		return()
 	}
 
-	if ( !(nbands %in% c(1,3)) )
-		stop("Number of bands must be 1 or 3", call.=FALSE)
+	if (!is.null(nbands)) {
+		if ( !(nbands %in% c(1,3)) )
+			stop("Number of bands must be 1 or 3", call.=FALSE)
+	}
 
 	if (is.null(max_pixels))
 		max_pixels = Inf
 
+	data_in <- NULL
 	if (is(data, "Rcpp_GDALRaster")) {
 		dm <- data$dim()
 		if (is.null(xsize))
@@ -318,6 +323,26 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 		if (is.null(ylim))
 			ylim <- c(gt[4L] + gt[6L] * dm[2L], gt[4L])
 	}
+	else if (!is.null(attr(data, "gis"))) {
+		gis <- attr(data, "gis")
+		if (is.list(data))
+			data_in <- unlist(data, use.names=FALSE)
+		else
+			data_in <- data
+		xlim <- c(gis$extent[1], gis$extent[3])
+		ylim <- c(gis$extent[2], gis$extent[4])
+		xsize <- gis$dim[1]
+		ysize <- gis$dim[2]
+		if ((xsize*ysize) > max_pixels)
+			stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
+		nbands <- gis$dim[3]
+		if (is.list(data)) {
+			if (nbands != length(data)) {
+				stop("length(data) is not equal to gis attribute dim[3].",
+						call.=FALSE)
+			}
+		}
+	}	
 	else {
 		if (is.null(xsize) || is.null(ysize))
 			stop("xsize and ysize of data must be specified.", call.=FALSE)

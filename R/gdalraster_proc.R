@@ -123,6 +123,23 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' for display with [plot_raster()], or simply for the argument defaults to
 #' read an entire raster into memory (see Note).
 #'
+#' @details
+#' `NA` will be returned in place of the nodata value if the raster dataset has
+#' a nodata value defined for the band. Data are read as R `integer` type when
+#' possible for the raster data type (Byte, Int8, Int16, UInt16, Int32),
+#' otherwise as type `double` (UInt32, Float32, Float64).
+#' 
+#' The output object has attribute `gis`, a list containing:
+#' \preformatted{
+#'   $type = "raster"
+#'   $extent = c(xmin, ymin, xmax, ymax)
+#'   $dim = c(xsize, ysize, nbands)
+#'   $srs = <projection as WKT2 string>
+#' }
+#' The WKT version used for the projection string can be overridden by setting
+#' the `OSR_WKT_FORMAT` configuration option. See [srs_to_wkt()] for a list of
+#' supported values.
+#'
 #' @param ds An object of class `GDALRaster` in open state.
 #' @param bands Integer vector of band numbers to read. By default all bands
 #' will be read.
@@ -138,13 +155,15 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' @param out_ysize Integer. The height in pixels of the output buffer into
 #' which the desired region will be read (e.g., to read a reduced resolution
 #' overview).
-#' @returns Returns a `numeric` or `complex` vector containing the values that
-#' were read. It is organized in left to right, top to bottom pixel order,
-#' interleaved by band.
-#' `NA` will be returned in place of the nodata value if the raster dataset has
-#' a nodata value defined for the band. Data are read as R `integer` type when
-#' possible for the raster data type (Byte, Int8, Int16, UInt16, Int32),
-#' otherwise as type `double` (UInt32, Float32, Float64).
+#' @param as_list Logical. If `TRUE`, return output as a list of band vectors.
+#' If `FALSE` (the default), output is a vector of pixel data interleaved by
+#' band.
+#' @returns If `as_list = FALSE` (the default), a `numeric` or `complex` vector
+#' containing the values that were read. It is organized in left to right, top
+#' to bottom pixel order, interleaved by band.
+#' If `as_list = TRUE`, a list with number of elements equal to the number of
+#' bands read. Each element contains a `numeric` or `complex` vector
+#' containing the pixel data read for the band.
 #'
 #' @note
 #' There is small overhead in calling `read_ds()` compared with
@@ -168,23 +187,65 @@ DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds <- new(GDALRaster, lcp_file)
 #'
+#' # as a vector of pixel data interleaved by band
 #' r <- read_ds(ds, bands=c(6,5,4))
 #' typeof(r)
 #' length(r)
 #' object.size(r)
 #'
+#' # as a list of band vectors
+#' r <- read_ds(ds, bands=c(6,5,4), as_list=TRUE)
+#' typeof(r)
+#' length(r)
+#' object.size(r)
+#'
+#' # gis attribute list
+#' attr(r, "gis")
+#'
 #' ds$close()
 #' @export
 read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 					xsize=ds$getRasterXSize(), ysize=ds$getRasterYSize(),
-					out_xsize=xsize, out_ysize=ysize) {
+					out_xsize=xsize, out_ysize=ysize,
+					as_list=FALSE) {
 	
 	if (is.null(bands))
 		bands <- seq_len(ds$getRasterCount())
 
-	r <- NULL
-	for (b in bands)
-		r <- c(r, ds$read(b, xoff, yoff, xsize, ysize, out_xsize, out_ysize))
+	if (as_list)
+		r <- list()
+	else
+		r <- NULL
+	
+	i = 1
+	for (b in bands) {
+		if (as_list) {
+			r[[i]] <- ds$read(b, xoff, yoff, xsize, ysize,
+							out_xsize, out_ysize)
+			i = i + 1
+		}
+		else {
+			r <- c(r, ds$read(b, xoff, yoff, xsize, ysize,
+					out_xsize, out_ysize))
+		}
+	}
+	
+	gt <- ds$getGeoTransform()
+	ul_xy <- .apply_geotransform(gt, xoff, yoff)
+	lr_xy <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))
+	bb <- c(ul_xy[1], lr_xy[2], lr_xy[1], ul_xy[2])
+	
+	# gis: a list with the raster extent, dimensions, projection
+	wkt_fmt_config <- get_config_option("OSR_WKT_FORMAT")
+	if (wkt_fmt_config == "")
+		set_config_option("OSR_WKT_FORMAT", "WKT2")
+	attr(r, "gis") <- list(
+						type = "raster",
+						extent = bb,
+						dim = c(out_xsize, out_ysize, length(bands)),
+						srs = ds$getProjectionRef()
+						)
+	set_config_option("OSR_WKT_FORMAT", wkt_fmt_config)
 	
 	return(r)
 }

@@ -127,6 +127,9 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
 // [[Rcpp::export]]
 std::string srs_to_wkt(std::string srs, bool pretty = false) {
 
+	if (srs == "")
+		return "";
+
 	OGRSpatialReferenceH hSRS = OSRNewSpatialReference(NULL);
 	char *pszSRS_WKT = NULL;
 	

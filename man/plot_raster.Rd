@@ -35,7 +35,9 @@ plot_raster(
 \arguments{
 \item{data}{Either a \code{GDALRaster} object from which data will be read, or
 a numeric vector of pixel values arranged in left to right, top to
-bottom order.}
+bottom order, or a list of band vectors. If input is vector or list,
+the information in attribute \code{gis} will be used if present (see \code{\link[=read_ds]{read_ds()}}),
+potentially ignoring values below for \code{xsize}, \code{ysize}, \code{nbands}.}
 
 \item{xsize}{The number of pixels along the x dimension in \code{data}. If \code{data}
 is a \code{GDALRaster} object, specifies the size at which the raster will be

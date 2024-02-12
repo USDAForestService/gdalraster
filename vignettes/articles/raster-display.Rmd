@@ -39,17 +39,16 @@ ds$close()
 ```{r}
 f <- paste0(base_url, "landsat_c2ard_sr_mt_hood_jul2022_utm.tif")
 ds <- new(GDALRaster, f)
-dm <- ds$dim()
 
 # passing a vector of pixel values rather than the open dataset
 r <- read_ds(ds, bands=c(7,5,4))
 ds$close()
 
 # normalizing to ranges derived from the full Landsat scene (2-98 percentiles)
-plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
+plot_raster(r,
             minmax_def=c(7551,7679,7585,14842,24997,12451),
-            main="Mount Hood July 2022 Landsat 7-5-4 (SWIR)")
-
+            main="Mount Hood July 2022 Landsat 7-5-4 (SWIR)"
+           )
 ```
 
 ## Color table
@@ -73,21 +72,18 @@ plot_raster(ds, xsize=dm[1] / 2, ysize=dm[2] / 2,
 ds$close()
 ```
 
-## Label with geospatial coordinates
+## Axis labels
 
 ```{r}
 f <- paste0(base_url, "bl_mrbl_ng_jul2004_rgb_720x360.tif")
-
 ds <- new(GDALRaster, f)
-dm <- ds$dim()
-print(paste("Size is", dm[1], "x",  dm[2], "x", dm[3]))
-
 srs_is_projected(ds$getProjectionRef())
-bb <- ds$bbox()
-
-plot_raster(ds, nbands=3, xlim=c(bb[1],bb[3]), ylim=c(bb[2],bb[4]),
-            xlab="longitude", ylab="latitude",
-            main="NASA Earth Observatory Blue Marble July 2004")
+r <- read_ds(ds)
 ds$close()
+
+plot_raster(r,
+            xlab="longitude", ylab="latitude",
+            main="NASA Earth Observatory Blue Marble July 2004"
+           )
 ```
 
