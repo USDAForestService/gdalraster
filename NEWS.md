@@ -2,6 +2,8 @@
 
 * `srs_is_same()`: add arguments for `criterion`, `ignore_axis_mapping` and `ignore_coord_epoch` (2024-02-12)
 
+* remove `OSR_DEFAULT_AXIS_MAPPING_STRATEGY=TRADITIONAL_GIS_ORDER` from `_gdal_init()` (#209) (2024-02-12)
+
 * `plot_raster()`: accept pixel data in list form (band vectors as list elements), and make use of `gis` attribute if present (thanks to input from @mdsumner #185) (2024-02-12)
 
 * `read_ds()`: add `as_list` argument for option to return multi-band output in list form; attach attribute `gis` to the output, a list containing bbox, dimension and spatial reference (thanks to input from @mdsumner #185) (2024-02-12)
@@ -12,7 +14,7 @@
 
 * organize website reference index (2024-02-04)
 
-* add `_get_physical_RAM()`: wrapper for `CPLGetUsablePhysicalRAM()` (2024-02-04)
+* add `_get_physical_RAM()`: wrapper for `CPLGetUsablePhysicalRAM()` for internal use (2024-02-04)
 
 * add `_check_gdal_filename()`: filename check for internal use (2024-01-30)
 
