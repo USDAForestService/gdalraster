@@ -1,4 +1,4 @@
-# gdalraster 1.8.0.9000 (dev)
+# gdalraster 1.8.0.9010 (dev)
 
 * `srs_is_same()`: add arguments for `criterion`, `ignore_axis_mapping` and `ignore_coord_epoch` (2024-02-12)
 
