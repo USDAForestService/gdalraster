@@ -128,7 +128,7 @@ GDAL doc: https://gdal.org/user/configoptions.html#proj-options
 
 **`OSR_DEFAULT_AXIS_MAPPING_STRATEGY`**
 
-This option can be set to either `TRADITIONAL_GIS_ORDER` or `AUTHORITY_COMPLIANT`. GDAL >= 3.5 defaults to `AUTHORITY_COMPLIANT`. Determines whether to honor the declared axis mapping of a CRS or override it with the traditional GIS ordering (x = longitude, y = latitude). **Note:** On load, gdalraster sets this option to `TRADITIONAL_GIS_ORDER`.
+This option can be set to either `TRADITIONAL_GIS_ORDER` or `AUTHORITY_COMPLIANT`. GDAL >= 3.5 defaults to `AUTHORITY_COMPLIANT`. Determines whether to honor the declared axis mapping of a CRS or override it with the traditional GIS ordering (x = longitude, y = latitude).
 
 **`OSR_WKT_FORMAT`**
 
