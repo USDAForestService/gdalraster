@@ -1492,8 +1492,17 @@ srs_is_projected <- function(srs) {
 #' the same system. This is a wrapper for `OSRIsSame()` in the GDAL Spatial 
 #' Reference System C API.
 #'
-#' @param srs1 Character OGC WKT string for a spatial reference system
-#' @param srs2 Character OGC WKT string for a spatial reference system
+#' @param srs1 Character string. OGC WKT for a spatial reference system.
+#' @param srs2 Character string. OGC WKT for a spatial reference system.
+#' @param criterion Character string. One of `STRICT`, `EQUIVALENT`,
+#' `EQUIVALENT_EXCEPT_AXIS_ORDER_GEOGCRS`.
+#' Defaults to `EQUIVALENT_EXCEPT_AXIS_ORDER_GEOGCRS`.
+#' @param ignore_axis_mapping Logical scalar. If `TRUE`, sets
+#' `IGNORE_DATA_AXIS_TO_SRS_AXIS_MAPPING=YES` in the call to `OSRIsSameEx()`
+#' in the GDAL Spatial Reference System API. Defaults to `NO`.
+#' @param ignore_coord_epoch Logical scalar. If `TRUE`, sets
+#' `IGNORE_COORDINATE_EPOCH=YES` in the call to `OSRIsSameEx()`
+#' in the GDAL Spatial Reference System API. Defaults to `NO`.
 #' @return Logical. `TRUE` if these two spatial references describe the same 
 #' system, otherwise `FALSE`.
 #'
@@ -1506,8 +1515,8 @@ srs_is_projected <- function(srs) {
 #' srs_is_same(ds$getProjectionRef(), epsg_to_wkt(26912))
 #' srs_is_same(ds$getProjectionRef(), epsg_to_wkt(5070))
 #' ds$close()
-srs_is_same <- function(srs1, srs2) {
-    .Call(`_gdalraster_srs_is_same`, srs1, srs2)
+srs_is_same <- function(srs1, srs2, criterion = "", ignore_axis_mapping = FALSE, ignore_coord_epoch = FALSE) {
+    .Call(`_gdalraster_srs_is_same`, srs1, srs2, criterion, ignore_axis_mapping, ignore_coord_epoch)
 }
 
 #' Get the bounding box of a geometry specified in OGC WKT format

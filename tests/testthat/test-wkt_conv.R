@@ -9,6 +9,22 @@ test_that("srs functions work", {
 	utm <- epsg_to_wkt(26912)
 	expect_true(srs_is_same(srs, utm))
 	
+	expect_true(srs_is_same(
+				srs_to_wkt("EPSG:4326"),
+				srs_to_wkt("OGC:CRS84"))
+				)
+	expect_true(srs_is_same(
+				srs_to_wkt("EPSG:4326"),
+				srs_to_wkt("OGC:CRS84"),
+				ignore_axis_mapping=TRUE)
+				)
+	expect_false(srs_is_same(
+				srs_to_wkt("EPSG:4326"),
+				srs_to_wkt("OGC:CRS84"),
+				ignore_axis_mapping=TRUE,
+				criterion="STRICT")
+				)
+	
 	expect_equal(srs_to_wkt("NAD83"), epsg_to_wkt(4269))
 	expect_equal(srs_to_wkt("NAD83", pretty=TRUE),
 					epsg_to_wkt(4269, pretty=TRUE))
