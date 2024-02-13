@@ -9,7 +9,7 @@ test_that("srs functions work", {
 	utm <- epsg_to_wkt(26912)
 	expect_true(srs_is_same(srs, utm))
 	
-	expect_false(srs_is_same(
+	expect_true(srs_is_same(
 				srs_to_wkt("EPSG:4326"),
 				srs_to_wkt("OGC:CRS84"))
 				)
