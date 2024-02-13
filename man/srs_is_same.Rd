@@ -4,12 +4,30 @@
 \alias{srs_is_same}
 \title{Do these two spatial references describe the same system?}
 \usage{
-srs_is_same(srs1, srs2)
+srs_is_same(
+  srs1,
+  srs2,
+  criterion = "",
+  ignore_axis_mapping = FALSE,
+  ignore_coord_epoch = FALSE
+)
 }
 \arguments{
-\item{srs1}{Character OGC WKT string for a spatial reference system}
+\item{srs1}{Character string. OGC WKT for a spatial reference system.}
 
-\item{srs2}{Character OGC WKT string for a spatial reference system}
+\item{srs2}{Character string. OGC WKT for a spatial reference system.}
+
+\item{criterion}{Character string. One of \code{STRICT}, \code{EQUIVALENT},
+\code{EQUIVALENT_EXCEPT_AXIS_ORDER_GEOGCRS}.
+Defaults to \code{EQUIVALENT_EXCEPT_AXIS_ORDER_GEOGCRS}.}
+
+\item{ignore_axis_mapping}{Logical scalar. If \code{TRUE}, sets
+\code{IGNORE_DATA_AXIS_TO_SRS_AXIS_MAPPING=YES} in the call to \code{OSRIsSameEx()}
+in the GDAL Spatial Reference System API. Defaults to \code{NO}.}
+
+\item{ignore_coord_epoch}{Logical scalar. If \code{TRUE}, sets
+\code{IGNORE_COORDINATE_EPOCH=YES} in the call to \code{OSRIsSameEx()}
+in the GDAL Spatial Reference System API. Defaults to \code{NO}.}
 }
 \value{
 Logical. \code{TRUE} if these two spatial references describe the same

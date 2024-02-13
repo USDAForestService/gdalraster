@@ -1,5 +1,7 @@
 # gdalraster 1.8.0.9000 (dev)
 
+* `srs_is_same()`: add arguments for `criterion`, `ignore_axis_mapping` and `ignore_coord_epoch` (2024-02-12)
+
 * `plot_raster()`: accept pixel data in list form (band vectors as list elements), and make use of `gis` attribute if present (#198) (2024-02-12)
 
 * `read_ds()`: add `as_list` argument for option to return multi-band output in list form; attach attribute `gis` to the output, a list containing extent, dimension and spatial reference (#198) (2024-02-12)

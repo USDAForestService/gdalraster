@@ -885,14 +885,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // srs_is_same
-bool srs_is_same(std::string srs1, std::string srs2);
-RcppExport SEXP _gdalraster_srs_is_same(SEXP srs1SEXP, SEXP srs2SEXP) {
+bool srs_is_same(std::string srs1, std::string srs2, std::string criterion, bool ignore_axis_mapping, bool ignore_coord_epoch);
+RcppExport SEXP _gdalraster_srs_is_same(SEXP srs1SEXP, SEXP srs2SEXP, SEXP criterionSEXP, SEXP ignore_axis_mappingSEXP, SEXP ignore_coord_epochSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type srs1(srs1SEXP);
     Rcpp::traits::input_parameter< std::string >::type srs2(srs2SEXP);
-    rcpp_result_gen = Rcpp::wrap(srs_is_same(srs1, srs2));
+    Rcpp::traits::input_parameter< std::string >::type criterion(criterionSEXP);
+    Rcpp::traits::input_parameter< bool >::type ignore_axis_mapping(ignore_axis_mappingSEXP);
+    Rcpp::traits::input_parameter< bool >::type ignore_coord_epoch(ignore_coord_epochSEXP);
+    rcpp_result_gen = Rcpp::wrap(srs_is_same(srs1, srs2, criterion, ignore_axis_mapping, ignore_coord_epoch));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -998,7 +1001,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_srs_to_wkt", (DL_FUNC) &_gdalraster_srs_to_wkt, 2},
     {"_gdalraster_srs_is_geographic", (DL_FUNC) &_gdalraster_srs_is_geographic, 1},
     {"_gdalraster_srs_is_projected", (DL_FUNC) &_gdalraster_srs_is_projected, 1},
-    {"_gdalraster_srs_is_same", (DL_FUNC) &_gdalraster_srs_is_same, 2},
+    {"_gdalraster_srs_is_same", (DL_FUNC) &_gdalraster_srs_is_same, 5},
     {"_gdalraster_bbox_from_wkt", (DL_FUNC) &_gdalraster_bbox_from_wkt, 3},
     {"_gdalraster_bbox_to_wkt", (DL_FUNC) &_gdalraster_bbox_to_wkt, 3},
     {"_rcpp_module_boot_mod_cmb_table", (DL_FUNC) &_rcpp_module_boot_mod_cmb_table, 0},
