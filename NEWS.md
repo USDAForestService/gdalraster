@@ -1,5 +1,7 @@
 # gdalraster 1.8.0.9010 (dev)
 
+* add `vsi_read_dir()`: wrapper for `VSIReadDirEx()` in the GDAL Common Portability Library (2024-02-14)
+
 * `srs_is_same()`: add arguments for `criterion`, `ignore_axis_mapping` and `ignore_coord_epoch` (2024-02-12)
 
 * remove `OSR_DEFAULT_AXIS_MAPPING_STRATEGY=TRADITIONAL_GIS_ORDER` from `_gdal_init()` (#209) (2024-02-12)

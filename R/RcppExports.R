@@ -996,7 +996,7 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
     .Call(`_gdalraster__addFileInZip`, zip_filename, overwrite, archive_filename, in_filename, options, quiet)
 }
 
-#' Copy a source file to a target filename.
+#' Copy a source file to a target filename
 #'
 #' `vsi_copy_file()` is a wrapper for `VSICopyFile()` in the GDAL Common
 #' Portability Library. The GDAL VSI functions allow virtualization of disk
@@ -1029,6 +1029,8 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #' [copyDatasetFiles()]
 #'
 #' @examples
+#' # for illustration only
+#' # this would normally be used with GDAL virtual file systems
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' tmp_file <- tempfile(fileext = ".tif")
 #'
@@ -1067,6 +1069,37 @@ vsi_copy_file <- function(src_file, target_file, show_progess = FALSE) {
 #' vsi_curl_clear_cache()
 vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "") {
     invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix))
+}
+
+#' Read names in a directory
+#'
+#' `vsi_read_dir()` abstracts access to directory contents. It returns a
+#' character vector containing the names of files and directories in this
+#' directory. This function is a wrapper for `VSIReadDirEx()` in the GDAL
+#' Common Portability Library.
+#'
+#' @param path Character string. The relative or absolute path of a
+#' directory to read.
+#' @param max_files Integer scalar. The maximum number of files after which to
+#' stop, or 0 for no limit (see Note).
+#' @returns A character vector containing the names of files and directories
+#' in the directory given by `path`. An empty string (`""`) is returned if
+#' `path` does not exist.
+#'
+#' @note
+#' If `max_files` is set to a positive number, directory listing will stop
+#' after that limit has been reached. Note that to indicate truncation, at
+#' least one element more than the `max_files` limit will be returned. If the
+#' length of the returned character vector is lesser or equal to `max_files`,
+#' then no truncation occurred.
+#'
+#' @examples
+#' # for illustration only
+#' # this would normally be used with GDAL virtual file systems
+#' data_dir <- system.file("extdata", package="gdalraster")
+#' vsi_read_dir(data_dir)
+vsi_read_dir <- function(path, max_files = 0L) {
+    .Call(`_gdalraster_vsi_read_dir`, path, max_files)
 }
 
 #' @noRd

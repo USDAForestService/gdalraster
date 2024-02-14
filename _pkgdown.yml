@@ -36,8 +36,11 @@ reference:
   - copyDatasetFiles
   - deleteDataset
   - renameDataset
+- subtitle: Virtual file systems
+- contents:
   - vsi_copy_file
   - vsi_curl_clear_cache
+  - vsi_read_dir
 - subtitle: Virtual raster
 - contents:
   - buildVRT
