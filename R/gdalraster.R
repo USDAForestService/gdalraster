@@ -3,7 +3,7 @@
 #' @aliases
 #' Rcpp_GDALRaster Rcpp_GDALRaster-class GDALRaster
 #'
-#' @title Class encapsulating a subset of the GDAL Raster C API
+#' @title Class encapsulating a raster dataset and its associated raster bands
 #'
 #' @description
 #' `GDALRaster` provides an interface for accessing a raster dataset via GDAL
@@ -235,9 +235,9 @@
 #' \code{$buildOverviews(resampling, levels, bands)}
 #' Build one or more raster overview images using the specified downsampling
 #' algorithm.
-#' \code{resampling} is one of "AVERAGE", "AVERAGE_MAGPHASE", "RMS",
-#' "BILINEAR", "CUBIC", "CUBICSPLINE", "GAUSS", "LANCZOS", "MODE", "NEAREST",
-#' or "NONE".
+#' \code{resampling} is a character string, one of `AVERAGE`,
+#' `AVERAGE_MAGPHASE`, `RMS`, `BILINEAR`, `CUBIC`, `CUBICSPLINE`, `GAUSS`,
+#' `LANCZOS`, `MODE`, `NEAREST` or `NONE`.
 #' \code{levels} is an integer vector giving the list of overview decimation
 #' factors to build (e.g., `c(2, 4, 8)`), or `0` to delete all overviews
 #' (at least for external overviews (.ovr) and GTiff internal overviews).
@@ -489,8 +489,8 @@
 #' \code{NA} will be returned in place of the nodata value if the
 #' raster dataset has a nodata value defined for this band.
 #' Data are read as R integer type when possible for the raster data type
-#' (Byte, Int8, Int16, UInt16, Int32), otherwise as type double (UInt32,
-#' Float32, Float64).
+#' (`Byte`, `Int8`, `Int16`, `UInt16`, `Int32`), otherwise as type double
+#' (`UInt32`, `Float32`, `Float64`).
 #' No rescaling of the data is performed (see \code{$getScale()} and
 #' \code{$getOffset()} above).
 #' An error is raised if the read operation fails.
@@ -544,12 +544,12 @@
 #' values. Valid values are integers 0 and larger (note that GTiff format
 #' supports color tables only for Byte and UInt16 bands). Negative values
 #' will be skipped with a warning emitted. Interpretation of columns 2:5
-#' depends on the value of `$getPaletteInterp()` (see above). For "RGB",
+#' depends on the value of `$getPaletteInterp()` (see above). For RGB,
 #' columns 2:4 contain red, green, blue as 0-255 integer values, and an
 #' optional column 5 contains alpha transparency values (defaults to 255
 #' opaque).
-#' \code{palette_interp} is one of "Gray", "RGB", "CMYK" or "HLS" (see
-#' \code{$getPaletteInterp()} above).
+#' \code{palette_interp} is a string, one of `Gray`, `RGB`, `CMYK` or `HLS`
+#' (see \code{$getPaletteInterp()} above).
 #' Returns logical \code{TRUE} on success or \code{FALSE} if the color table
 #' could not be set.
 #'
@@ -607,9 +607,9 @@
 #' The `$read()` method will perform automatic resampling if the
 #' specified output size (`out_xsize * out_ysize`) is different than
 #' the size of the region being read (`xsize * ysize`). In that case, the
-#' GDAL_RASTERIO_RESAMPLING configuration option could also be defined to
-#' override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE,
-#' LANCZOS, AVERAGE or MODE (see [set_config_option()]).
+#' `GDAL_RASTERIO_RESAMPLING` configuration option could also be defined to
+#' override the default resampling to one of `BILINEAR`, `CUBIC`,
+#' `CUBICSPLINE`, `LANCZOS`, `AVERAGE` or `MODE` (see [set_config_option()]).
 #'
 #' @seealso
 #' Package overview in [`help("gdalraster-package")`][gdalraster-package]

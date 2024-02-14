@@ -5,7 +5,7 @@
 \alias{Rcpp_GDALRaster}
 \alias{Rcpp_GDALRaster-class}
 \alias{GDALRaster}
-\title{Class encapsulating a subset of the GDAL Raster C API}
+\title{Class encapsulating a raster dataset and its associated raster bands}
 \arguments{
 \item{filename}{Character string containing the file name of a raster
 dataset to open, as full path or relative to the current working directory.
@@ -35,9 +35,9 @@ details of the GDAL Raster API.
 The \verb{$read()} method will perform automatic resampling if the
 specified output size (\code{out_xsize * out_ysize}) is different than
 the size of the region being read (\code{xsize * ysize}). In that case, the
-GDAL_RASTERIO_RESAMPLING configuration option could also be defined to
-override the default resampling to one of BILINEAR, CUBIC, CUBICSPLINE,
-LANCZOS, AVERAGE or MODE (see \code{\link[=set_config_option]{set_config_option()}}).
+\code{GDAL_RASTERIO_RESAMPLING} configuration option could also be defined to
+override the default resampling to one of \code{BILINEAR}, \code{CUBIC},
+\code{CUBICSPLINE}, \code{LANCZOS}, \code{AVERAGE} or \code{MODE} (see \code{\link[=set_config_option]{set_config_option()}}).
 }
 \section{Usage}{
 
@@ -251,9 +251,9 @@ Returns the number of overview layers (a.k.a. pyramids) available for
 \code{$buildOverviews(resampling, levels, bands)}
 Build one or more raster overview images using the specified downsampling
 algorithm.
-\code{resampling} is one of "AVERAGE", "AVERAGE_MAGPHASE", "RMS",
-"BILINEAR", "CUBIC", "CUBICSPLINE", "GAUSS", "LANCZOS", "MODE", "NEAREST",
-or "NONE".
+\code{resampling} is a character string, one of \code{AVERAGE},
+\code{AVERAGE_MAGPHASE}, \code{RMS}, \code{BILINEAR}, \code{CUBIC}, \code{CUBICSPLINE}, \code{GAUSS},
+\code{LANCZOS}, \code{MODE}, \code{NEAREST} or \code{NONE}.
 \code{levels} is an integer vector giving the list of overview decimation
 factors to build (e.g., \code{c(2, 4, 8)}), or \code{0} to delete all overviews
 (at least for external overviews (.ovr) and GTiff internal overviews).
@@ -508,8 +508,8 @@ It is organized in left to right, top to bottom pixel order.
 \code{NA} will be returned in place of the nodata value if the
 raster dataset has a nodata value defined for this band.
 Data are read as R integer type when possible for the raster data type
-(Byte, Int8, Int16, UInt16, Int32), otherwise as type double (UInt32,
-Float32, Float64).
+(\code{Byte}, \code{Int8}, \code{Int16}, \code{UInt16}, \code{Int32}), otherwise as type double
+(\code{UInt32}, \code{Float32}, \code{Float64}).
 No rescaling of the data is performed (see \code{$getScale()} and
 \code{$getOffset()} above).
 An error is raised if the read operation fails.
@@ -563,12 +563,12 @@ columns (see \code{$getColorTable()} above). Column 1 contains the pixel
 values. Valid values are integers 0 and larger (note that GTiff format
 supports color tables only for Byte and UInt16 bands). Negative values
 will be skipped with a warning emitted. Interpretation of columns 2:5
-depends on the value of \verb{$getPaletteInterp()} (see above). For "RGB",
+depends on the value of \verb{$getPaletteInterp()} (see above). For RGB,
 columns 2:4 contain red, green, blue as 0-255 integer values, and an
 optional column 5 contains alpha transparency values (defaults to 255
 opaque).
-\code{palette_interp} is one of "Gray", "RGB", "CMYK" or "HLS" (see
-\code{$getPaletteInterp()} above).
+\code{palette_interp} is a string, one of \code{Gray}, \code{RGB}, \code{CMYK} or \code{HLS}
+(see \code{$getPaletteInterp()} above).
 Returns logical \code{TRUE} on success or \code{FALSE} if the color table
 could not be set.
 
