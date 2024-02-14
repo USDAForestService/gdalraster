@@ -99,6 +99,8 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 		Rcpp::CharacterVector target_file,
 		bool show_progess);
 void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix);
+Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
+		int max_files);
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
 		double pixel, double line);

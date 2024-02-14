@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{vsi_copy_file}
 \alias{vsi_copy_file}
-\title{Copy a source file to a target filename.}
+\title{Copy a source file to a target filename}
 \usage{
 vsi_copy_file(src_file, target_file, show_progess = FALSE)
 }
@@ -41,6 +41,8 @@ If \code{target_file} has the form /vsizip/foo.zip/bar, the default options
 described for the function \code{addFilesInZip()} will be in effect.
 }
 \examples{
+# for illustration only
+# this would normally be used with GDAL virtual file systems
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 tmp_file <- tempfile(fileext = ".tif")
 
