@@ -211,6 +211,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_curl_clear_cache.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_read_dir.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/warp.html</loc>
   </url>
 </urlset>
