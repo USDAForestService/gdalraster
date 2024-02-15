@@ -29,7 +29,7 @@ execution in read-only scenarios. But when the content on the server-side
 may change during the same process, those mechanisms can prevent opening
 new files, or give an outdated version of them.
 If \code{partial = TRUE}, cleans the local cache associated for a given filename
-(and its subfiles and subdirectories if it is a directory)
+(and its subfiles and subdirectories if it is a directory).
 }
 \examples{
 vsi_curl_clear_cache()

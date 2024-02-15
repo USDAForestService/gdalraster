@@ -69,6 +69,7 @@ const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
 #endif
 
 Rcpp::CharacterVector gdal_version();
+int _gdal_version_num();
 void gdal_formats();
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);

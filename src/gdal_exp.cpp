@@ -42,6 +42,13 @@ Rcpp::CharacterVector gdal_version() {
 }
 
 
+//' @noRd
+int _gdal_version_num() {
+	std::string version(GDALVersionInfo("VERSION_NUM"));
+	return std::stoi(version);
+}
+
+
 //' Report all configured GDAL drivers for raster formats
 //'
 //' `gdal_formats()` prints to the console a list of the supported raster
