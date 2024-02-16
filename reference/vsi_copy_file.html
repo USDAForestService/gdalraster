@@ -96,20 +96,17 @@ displayed (the size of <code>src_file</code> will be retrieved in GDAL with
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Invisibly, 0 on success or -1 on an error.</p>
+<p>Invisibly, <code>0</code> on success or <code>-1</code> on an error.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The following copies are made fully on the target server, without local
-download from source and upload to target:</p><div class="sourceCode"><pre><code>
-/vsis3/ -&gt; /vsis3/
-/vsigs/ -&gt; /vsigs/
-/vsiaz/ -&gt; /vsiaz/
-/vsiadls/ -&gt; /vsiadls/
-any of the above or /vsicurl/ -&gt; /vsiaz/ (starting with GDAL 3.8)
-</code></pre></div>
-
-    </div>
+download from source and upload to target:</p><ul><li><p>/vsis3/ -&gt; /vsis3/</p></li>
+<li><p>/vsigs/ -&gt; /vsigs/</p></li>
+<li><p>/vsiaz/ -&gt; /vsiaz/</p></li>
+<li><p>/vsiadls/ -&gt; /vsiadls/</p></li>
+<li><p>any of the above or /vsicurl/ -&gt; /vsiaz/ (starting with GDAL 3.8)</p></li>
+</ul></div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p>If <code>target_file</code> has the form /vsizip/foo.zip/bar, the default options
