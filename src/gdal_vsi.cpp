@@ -1,6 +1,7 @@
 /* GDAL VSI wrapper functions supporting virtual file systems
    Chris Toney <chris.toney at usda.gov> */
 
+#include "gdal.h"
 #include "cpl_string.h"
 #include "cpl_vsi.h"
 
@@ -53,9 +54,10 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 		Rcpp::CharacterVector target_file,
 		bool show_progess = false) {
 
-	if (_gdal_version_num() < 3070000)
-		Rcpp::stop("vsi_copy_file() requires GDAL >= 3.7.");
+#if GDAL_VERSION_NUM < 3070000
+	Rcpp::stop("vsi_copy_file() requires GDAL >= 3.7.");
 
+#else
 	GDALProgressFunc pfnProgress = NULL;
 	std::string src_file_in;
 	src_file_in = Rcpp::as<std::string>(_check_gdal_filename(src_file));
@@ -72,6 +74,8 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 		return 0;
 	else
 		return -1;
+
+#endif
 }
 
 
