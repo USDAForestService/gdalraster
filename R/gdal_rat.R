@@ -2,7 +2,7 @@
 # Chris Toney <chris.toney at usda.gov>
 
 
-#' Build a GDAL Raster Attribute Table as data frame
+#' Build a GDAL Raster Attribute Table with VALUE, COUNT
 #'
 #' @description
 #' `buildRAT()` reads all pixels of an input raster to obtain the set of

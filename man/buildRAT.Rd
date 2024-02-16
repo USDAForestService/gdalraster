@@ -2,7 +2,7 @@
 % Please edit documentation in R/gdal_rat.R
 \name{buildRAT}
 \alias{buildRAT}
-\title{Build a GDAL Raster Attribute Table as data frame}
+\title{Build a GDAL Raster Attribute Table with VALUE, COUNT}
 \usage{
 buildRAT(
   raster,
