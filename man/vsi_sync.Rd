@@ -84,3 +84,49 @@ default is 8 MB since GDAL 3.3.\cr
 /vsiaz/ or /vsiadls/ object.
 }
 }
+\examples{
+\dontrun{
+# sample-data is a directory in the git repository for gdalraster that is
+# not included in the R package:
+# https://github.com/USDAForestService/gdalraster/tree/main/sample-data
+# A copy of sample-data in an AWS S3 bucket, and a partial copy in an
+# Azure Blob container, were used to generate the example below.
+
+src <- "/vsis3/gdalraster-sample-data/"
+# s3://gdalraster-sample-data is not public, set credentials
+set_config_option("AWS_ACCESS_KEY_ID", "xxxxxxxxxxxxxx")
+set_config_option("AWS_SECRET_ACCESS_KEY", "xxxxxxxxxxxxxxxxxxxxxxxxxxxxx")
+vsi_read_dir(src)
+#> [1] "README.md"
+#> [2] "bl_mrbl_ng_jul2004_rgb_720x360.tif"
+#> [3] "blue_marble_ng_neo_metadata.xml"
+#> [4] "landsat_c2ard_sr_mt_hood_jul2022_utm.json"
+#> [5] "landsat_c2ard_sr_mt_hood_jul2022_utm.tif"
+#> [6] "lf_elev_220_metadata.html"
+#> [7] "lf_elev_220_mt_hood_utm.tif"
+#> [8] "lf_fbfm40_220_metadata.html"
+#> [9] "lf_fbfm40_220_mt_hood_utm.tif"
+
+dst <- "/vsiaz/sampledata"
+set_config_option("AZURE_STORAGE_CONNECTION_STRING",
+                  "<connection_string_for_gdalraster_account>")
+vsi_read_dir(dst)
+#> [1] "lf_elev_220_metadata.html"   "lf_elev_220_mt_hood_utm.tif"
+
+# GDAL VSISync() supports direct copy for /vsis3/ -> /vsiaz/ (GDAL >= 3.8)
+result <- vsi_sync(src, dst, show_progess = TRUE)
+#> 0...10...20...30...40...50...60...70...80...90...100 - done.
+print(result)
+#> [1] TRUE
+vsi_read_dir(dst)
+#> [1] "README.md"
+#> [2] "bl_mrbl_ng_jul2004_rgb_720x360.tif"
+#> [3] "blue_marble_ng_neo_metadata.xml"
+#> [4] "landsat_c2ard_sr_mt_hood_jul2022_utm.json"
+#> [5] "landsat_c2ard_sr_mt_hood_jul2022_utm.tif"
+#> [6] "lf_elev_220_metadata.html"
+#> [7] "lf_elev_220_mt_hood_utm.tif"
+#> [8] "lf_fbfm40_220_metadata.html"
+#> [9] "lf_fbfm40_220_mt_hood_utm.tif"
+}
+}
