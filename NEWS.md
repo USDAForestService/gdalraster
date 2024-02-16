@@ -1,4 +1,4 @@
-# gdalraster 1.8.0.9010 (dev)
+# gdalraster 1.8.0.9020 (dev)
 
 * add `vsi_sync()`: wrapper for `VSISync()` in the GDAL Common Portability Library (2024-02-15)
 
