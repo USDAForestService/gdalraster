@@ -315,3 +315,31 @@ bool vsi_sync(Rcpp::CharacterVector src,
 
 	return result;
 }
+
+
+//' Create a directory
+//'
+//' `vsi_mkdir()` creates a new directory with the indicated mode.
+//' For POSIX-style systems, the mode is modified by the file creation mask
+//' (umask). However, some file systems and platforms may not use umask, or
+//' they may ignore the mode completely. So a reasonable cross-platform
+//' default mode value is 0755.
+//' This function is a wrapper for `VSIMkdir()` in the GDAL
+//' Common Portability Library. Analog of the POSIX `mkdir()` function.
+//'
+//' @param path Character string. The path to the directory to create.
+//' @param mode Integer scalar. The permissions mode
+//' @returns Invisibly, `0` on success or `-1` on an error.
+//'
+//' @examples
+//' # for illustration only
+//' # this would normally be used with GDAL virtual file systems
+//' vsi_mkdir(file.path(tempdir(), "newdir"))
+// [[Rcpp::export()]]
+int vsi_mkdir(Rcpp::CharacterVector path, int mode = 755) {
+	
+	std::string path_in;
+	path_in = Rcpp::as<std::string>(_check_gdal_filename(path));
+	
+	return VSIMkdir(path_in.c_str(), mode);
+}
