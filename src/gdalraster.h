@@ -69,6 +69,7 @@ const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
 #endif
 
 Rcpp::CharacterVector gdal_version();
+int _gdal_version_num();
 void gdal_formats();
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
@@ -101,6 +102,10 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix);
 Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
 		int max_files);
+bool vsi_sync(Rcpp::CharacterVector src,
+		Rcpp::CharacterVector target,
+		bool show_progess,
+		Rcpp::Nullable<Rcpp::CharacterVector> options); 
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
 		double pixel, double line);

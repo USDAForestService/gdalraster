@@ -41,6 +41,7 @@ reference:
   - vsi_copy_file
   - vsi_curl_clear_cache
   - vsi_read_dir
+  - vsi_sync
 - subtitle: Virtual raster
 - contents:
   - buildVRT

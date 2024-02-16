@@ -16,7 +16,7 @@ displayed (the size of \code{src_file} will be retrieved in GDAL with
 \code{VSIStatL()}). Default is \code{FALSE}.}
 }
 \value{
-Invisibly, 0 on success or -1 on an error.
+Invisibly, \code{0} on success or \code{-1} on an error.
 }
 \description{
 \code{vsi_copy_file()} is a wrapper for \code{VSICopyFile()} in the GDAL Common
@@ -28,12 +28,12 @@ Requires GDAL >= 3.7.
 \details{
 The following copies are made fully on the target server, without local
 download from source and upload to target:
-\preformatted{
-/vsis3/ -> /vsis3/
-/vsigs/ -> /vsigs/
-/vsiaz/ -> /vsiaz/
-/vsiadls/ -> /vsiadls/
-any of the above or /vsicurl/ -> /vsiaz/ (starting with GDAL 3.8)
+\itemize{
+\item /vsis3/ -> /vsis3/
+\item /vsigs/ -> /vsigs/
+\item /vsiaz/ -> /vsiaz/
+\item /vsiadls/ -> /vsiadls/
+\item any of the above or /vsicurl/ -> /vsiaz/ (starting with GDAL 3.8)
 }
 }
 \note{
