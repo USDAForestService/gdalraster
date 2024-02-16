@@ -1,5 +1,7 @@
 # gdalraster 1.8.0.9010 (dev)
 
+* add `vsi_sync()`: wrapper for `VSISync()` in the GDAL Common Portability Library (2024-02-14)
+
 * add `vsi_read_dir()`: wrapper for `VSIReadDirEx()` in the GDAL Common Portability Library (2024-02-14)
 
 * `srs_is_same()`: add arguments for `criterion`, `ignore_axis_mapping` and `ignore_coord_epoch` (2024-02-12)
