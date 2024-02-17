@@ -33,7 +33,12 @@
 
   \item virtual file systems: \code{\link[=vsi_copy_file]{vsi_copy_file()}},
   \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
-  \code{\link[=vsi_read_dir]{vsi_read_dir()}}
+  \code{\link[=vsi_read_dir]{vsi_read_dir()}},
+  \code{\link[=vsi_rmdir]{vsi_rmdir()}},
+  \code{\link[=vsi_mkdir]{vsi_mkdir()}},
+  \code{\link[=vsi_stat]{vsi_stat()}},
+  \code{\link[=vsi_sync]{vsi_sync()}},
+  \code{\link[=vsi_unlink]{vsi_unlink()}}
  
   \item virtual raster: \code{\link[=buildVRT]{buildVRT()}},
   \code{\link[=rasterToVRT]{rasterToVRT()}}
@@ -128,6 +133,9 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
   
   Geotransform tutorial:\cr 
   \url{https://gdal.org/tutorials/geotransforms_tut.html}
+
+  GDAL Virtual File Systems:\cr
+  \url{https://gdal.org/user/virtual_file_systems.html}
 }
 \note{
   Documentation for \code{GDALRaster-class} and several wrapper functions

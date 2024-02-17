@@ -28,3 +28,6 @@ file.copy(elev_file,  tmp_file)
 result <- vsi_unlink(tmp_file)
 print(result)
 }
+\seealso{
+\code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=vsi_rmdir]{vsi_rmdir()}}
+}

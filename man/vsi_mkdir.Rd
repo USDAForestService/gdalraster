@@ -32,3 +32,6 @@ print(result)
 result <- vsi_rmdir(new_dir)
 print(result)
 }
+\seealso{
+\code{\link[=vsi_read_dir]{vsi_read_dir()}}, \code{\link[=vsi_rmdir]{vsi_rmdir()}}
+}
