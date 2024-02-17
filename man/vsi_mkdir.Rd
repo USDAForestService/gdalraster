@@ -29,4 +29,6 @@ Common Portability Library. Analog of the POSIX \code{mkdir()} function.
 new_dir <- file.path(tempdir(), "newdir")
 result <- vsi_mkdir(new_dir)
 print(result)
+result <- vsi_rmdir(new_dir)
+print(result)
 }

@@ -1242,6 +1242,8 @@ vsi_sync <- function(src, target, show_progess = FALSE, options = NULL) {
 #' new_dir <- file.path(tempdir(), "newdir")
 #' result <- vsi_mkdir(new_dir)
 #' print(result)
+#' result <- vsi_rmdir(new_dir)
+#' print(result)
 vsi_mkdir <- function(path, mode = 755L) {
     invisible(.Call(`_gdalraster_vsi_mkdir`, path, mode))
 }

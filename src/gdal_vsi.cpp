@@ -337,6 +337,8 @@ bool vsi_sync(Rcpp::CharacterVector src,
 //' new_dir <- file.path(tempdir(), "newdir")
 //' result <- vsi_mkdir(new_dir)
 //' print(result)
+//' result <- vsi_rmdir(new_dir)
+//' print(result)
 // [[Rcpp::export(invisible = true)]]
 int vsi_mkdir(Rcpp::CharacterVector path, int mode = 755) {
 	
