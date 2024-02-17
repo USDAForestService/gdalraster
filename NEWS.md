@@ -1,5 +1,7 @@
 # gdalraster 1.8.0.9030 (dev)
 
+* add `vsi_unlink()`: wrapper for `VSIUnlink()` in the GDAL Common Portability Library (2024-02-17)
+
 * add `vsi_rmdir()`: wrapper for `VSIRmdir()` in the GDAL Common Portability Library (2024-02-16)
 
 * add `vsi_mkdir()`: wrapper for `VSIMkdir()` in the GDAL Common Portability Library (2024-02-16)

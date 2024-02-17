@@ -44,6 +44,7 @@ reference:
   - vsi_read_dir
   - vsi_rmdir
   - vsi_sync
+  - vsi_unlink
 - subtitle: Virtual raster
 - contents:
   - buildVRT
