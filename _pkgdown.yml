@@ -42,6 +42,7 @@ reference:
   - vsi_curl_clear_cache
   - vsi_mkdir
   - vsi_read_dir
+  - vsi_rmdir
   - vsi_sync
 - subtitle: Virtual raster
 - contents:
