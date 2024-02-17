@@ -1,6 +1,6 @@
 ignore:
     - "R/zzz.R"
 coverage:
-  range: 60..80
+  range: 60..90
   round: down
   precision: 2

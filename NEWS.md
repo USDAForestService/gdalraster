@@ -1,5 +1,7 @@
 # gdalraster 1.8.0.9040 (dev)
 
+* set test coverage target minimum to 90%, codecov range: 60..90 (previously 80%, 60..80) (2024-02-17)
+
 * add `vsi_stat()`: wrapper for `VSIStatExL()` in the GDAL Common Portability Library (2024-02-17)
 
 * add `vsi_unlink()`: wrapper for `VSIUnlink()` in the GDAL Common Portability Library (2024-02-17)
