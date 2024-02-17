@@ -15,10 +15,10 @@ Invisibly, \code{0} on success or \code{-1} on an error.
 \description{
 \code{vsi_rmdir()} deletes a directory object from the file system. On some
 systems the directory must be empty before it can be deleted.
-This method goes through the GDAL \code{VSIFileHandler} virtualization and may
+This function goes through the GDAL \code{VSIFileHandler} virtualization and may
 work on unusual filesystems such as in memory.
-This function is a wrapper for \code{VSIRmdir()} in the GDAL
-Common Portability Library. Analog of the POSIX \code{rmdir()} function.
+It is a wrapper for \code{VSIRmdir()} in the GDAL Common Portability Library.
+Analog of the POSIX \code{rmdir()} function.
 }
 \examples{
 # for illustration only
