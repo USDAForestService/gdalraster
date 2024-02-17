@@ -9,7 +9,7 @@ vsi_mkdir(path, mode = 755L)
 \arguments{
 \item{path}{Character string. The path to the directory to create.}
 
-\item{mode}{Integer scalar. The permissions mode}
+\item{mode}{Integer scalar. The permissions mode.}
 }
 \value{
 Invisibly, \code{0} on success or \code{-1} on an error.
@@ -26,5 +26,7 @@ Common Portability Library. Analog of the POSIX \code{mkdir()} function.
 \examples{
 # for illustration only
 # this would normally be used with GDAL virtual file systems
-vsi_mkdir(file.path(tempdir(), "newdir"))
+new_dir <- file.path(tempdir(), "newdir")
+result <- vsi_mkdir(new_dir)
+print(result)
 }

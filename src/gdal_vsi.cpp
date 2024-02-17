@@ -328,18 +328,50 @@ bool vsi_sync(Rcpp::CharacterVector src,
 //' Common Portability Library. Analog of the POSIX `mkdir()` function.
 //'
 //' @param path Character string. The path to the directory to create.
-//' @param mode Integer scalar. The permissions mode
+//' @param mode Integer scalar. The permissions mode.
 //' @returns Invisibly, `0` on success or `-1` on an error.
 //'
 //' @examples
 //' # for illustration only
 //' # this would normally be used with GDAL virtual file systems
-//' vsi_mkdir(file.path(tempdir(), "newdir"))
-// [[Rcpp::export()]]
+//' new_dir <- file.path(tempdir(), "newdir")
+//' result <- vsi_mkdir(new_dir)
+//' print(result)
+// [[Rcpp::export(invisible = true)]]
 int vsi_mkdir(Rcpp::CharacterVector path, int mode = 755) {
 	
 	std::string path_in;
 	path_in = Rcpp::as<std::string>(_check_gdal_filename(path));
 	
 	return VSIMkdir(path_in.c_str(), mode);
+}
+
+
+//' Delete a directory
+//'
+//' `vsi_rmdir()` deletes a directory object from the file system. On some
+//' systems the directory must be empty before it can be deleted.
+//' This method goes through the GDAL `VSIFileHandler` virtualization and may
+//' work on unusual filesystems such as in memory.
+//' This function is a wrapper for `VSIRmdir()` in the GDAL
+//' Common Portability Library. Analog of the POSIX `rmdir()` function.
+//'
+//' @param path Character string. The path to the directory to be deleted.
+//' @returns Invisibly, `0` on success or `-1` on an error.
+//'
+//' @examples
+//' # for illustration only
+//' # this would normally be used with GDAL virtual file systems
+//' new_dir <- file.path(tempdir(), "newdir")
+//' result <- vsi_mkdir(new_dir)
+//' print(result)
+//' result <- vsi_rmdir(new_dir)
+//' print(result)
+// [[Rcpp::export(invisible = true)]]
+int vsi_rmdir(Rcpp::CharacterVector path) {
+	
+	std::string path_in;
+	path_in = Rcpp::as<std::string>(_check_gdal_filename(path));
+	
+	return VSIRmdir(path_in.c_str());
 }
