@@ -29,23 +29,6 @@ reference:
   - getCreationOptions
   - rasterFromRaster
   - translate
-- subtitle: Data management
-- contents:
-  - addFilesInZip
-  - bandCopyWholeRaster
-  - copyDatasetFiles
-  - deleteDataset
-  - renameDataset
-- subtitle: Virtual file systems
-- contents:
-  - vsi_copy_file
-  - vsi_curl_clear_cache
-  - vsi_mkdir
-  - vsi_read_dir
-  - vsi_rmdir
-  - vsi_stat
-  - vsi_sync
-  - vsi_unlink
 - subtitle: Virtual raster
 - contents:
   - buildVRT
@@ -94,6 +77,23 @@ reference:
   - bbox_union
   - g_buffer
   - has_geos
+- subtitle: Data management
+- contents:
+  - addFilesInZip
+  - bandCopyWholeRaster
+  - copyDatasetFiles
+  - deleteDataset
+  - renameDataset
+- subtitle: Virtual file systems
+- contents:
+  - vsi_copy_file
+  - vsi_curl_clear_cache
+  - vsi_mkdir
+  - vsi_read_dir
+  - vsi_rmdir
+  - vsi_stat
+  - vsi_sync
+  - vsi_unlink
 - subtitle: GDAL configuration
 - contents:
   - gdal_formats
