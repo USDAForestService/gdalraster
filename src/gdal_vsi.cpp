@@ -351,10 +351,10 @@ int vsi_mkdir(Rcpp::CharacterVector path, int mode = 755) {
 //'
 //' `vsi_rmdir()` deletes a directory object from the file system. On some
 //' systems the directory must be empty before it can be deleted.
-//' This method goes through the GDAL `VSIFileHandler` virtualization and may
+//' This function goes through the GDAL `VSIFileHandler` virtualization and may
 //' work on unusual filesystems such as in memory.
-//' This function is a wrapper for `VSIRmdir()` in the GDAL
-//' Common Portability Library. Analog of the POSIX `rmdir()` function.
+//' It is a wrapper for `VSIRmdir()` in the GDAL Common Portability Library.
+//' Analog of the POSIX `rmdir()` function.
 //'
 //' @param path Character string. The path to the directory to be deleted.
 //' @returns Invisibly, `0` on success or `-1` on an error.
@@ -375,3 +375,33 @@ int vsi_rmdir(Rcpp::CharacterVector path) {
 	
 	return VSIRmdir(path_in.c_str());
 }
+
+
+//' Delete a file
+//'
+//' `vsi_unlink()` deletes a file object from the file system.
+//' This function goes through the GDAL `VSIFileHandler` virtualization and may
+//' work on unusual filesystems such as in memory.
+//' It is a wrapper for `VSIUnlink()` in the GDAL Common Portability Library.
+//' Analog of the POSIX `unlink()` function.
+//'
+//' @param filename Character string. The path of the file to be deleted.
+//' @returns Invisibly, `0` on success or `-1` on an error.
+//'
+//' @examples
+//' # for illustration only
+//' # this would normally be used with GDAL virtual file systems
+//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+//' tmp_file <- paste0(tempdir(), "/", "tmp.tif")
+//' file.copy(elev_file,  tmp_file)
+//' result <- vsi_unlink(tmp_file)
+//' print(result)
+// [[Rcpp::export(invisible = true)]]
+int vsi_unlink(Rcpp::CharacterVector filename) {
+	
+	std::string filename_in;
+	filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
+	
+	return VSIUnlink(filename_in.c_str());
+}
+

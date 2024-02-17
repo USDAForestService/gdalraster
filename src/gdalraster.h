@@ -108,6 +108,7 @@ bool vsi_sync(Rcpp::CharacterVector src,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 int vsi_mkdir(Rcpp::CharacterVector path, int mode);
 int vsi_rmdir(Rcpp::CharacterVector path);
+int vsi_unlink(Rcpp::CharacterVector filename);
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
 		double pixel, double line);
