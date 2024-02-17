@@ -29,3 +29,6 @@ print(result)
 result <- vsi_rmdir(new_dir)
 print(result)
 }
+\seealso{
+\code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=vsi_mkdir]{vsi_mkdir()}}, \code{\link[=vsi_read_dir]{vsi_read_dir()}}, \code{\link[=vsi_unlink]{vsi_unlink()}}
+}

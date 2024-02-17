@@ -36,7 +36,7 @@
 //' described for the function `addFilesInZip()` will be in effect.
 //' 
 //' @seealso
-//' [copyDatasetFiles()]
+//' [copyDatasetFiles()], [vsi_stat()], [vsi_sync()]
 //'
 //' @examples
 //' # for illustration only
@@ -140,6 +140,9 @@ void vsi_curl_clear_cache(bool partial = false,
 //' length of the returned character vector is lesser or equal to `max_files`,
 //' then no truncation occurred.
 //'
+//' @seealso
+//' [vsi_mkdir()], [vsi_rmdir()], [vsi_stat()], [vsi_sync()]
+//'
 //' @examples
 //' # for illustration only
 //' # this would normally be used with GDAL virtual file systems
@@ -240,6 +243,9 @@ Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
 //' @param options Character vector of `NAME=VALUE` pairs (see Details).
 //' @returns Invisibly, `TRUE` on success or `FALSE` on an error.
 //'
+//' @seealso
+//' [copyDatasetFiles()], [vsi_copy_file()]
+//'
 //' @examples
 //' \dontrun{
 //' # sample-data is a directory in the git repository for gdalraster that is
@@ -331,6 +337,9 @@ bool vsi_sync(Rcpp::CharacterVector src,
 //' @param mode Integer scalar. The permissions mode.
 //' @returns Invisibly, `0` on success or `-1` on an error.
 //'
+//' @seealso
+//' [vsi_read_dir()], [vsi_rmdir()]
+//'
 //' @examples
 //' # for illustration only
 //' # this would normally be used with GDAL virtual file systems
@@ -361,6 +370,9 @@ int vsi_mkdir(Rcpp::CharacterVector path, int mode = 755) {
 //' @param path Character string. The path to the directory to be deleted.
 //' @returns Invisibly, `0` on success or `-1` on an error.
 //'
+//' @seealso
+//' [deleteDataset()], [vsi_mkdir()], [vsi_read_dir()], [vsi_unlink()]
+//'
 //' @examples
 //' # for illustration only
 //' # this would normally be used with GDAL virtual file systems
@@ -390,6 +402,9 @@ int vsi_rmdir(Rcpp::CharacterVector path) {
 //' @param filename Character string. The path of the file to be deleted.
 //' @returns Invisibly, `0` on success or `-1` on an error.
 //'
+//' @seealso
+//' [deleteDataset()], [vsi_rmdir()]
+//'
 //' @examples
 //' # for illustration only
 //' # this would normally be used with GDAL virtual file systems
@@ -405,5 +420,103 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 	filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
 	
 	return VSIUnlink(filename_in.c_str());
+}
+
+
+//' Get filesystem object info
+//'
+//' `vsi_stat()` fetches status information about a filesystem object (file,
+//' directory, etc).
+//' This function goes through the GDAL `VSIFileHandler` virtualization and may
+//' work on unusual filesystems such as in memory.
+//' It is a wrapper for `VSIStatExL()` in the GDAL Common Portability Library.
+//' Analog of the POSIX `stat()` function.
+//'
+//' @param filename Character string. The path of the filesystem object to be
+//' queried.
+//' @param info Character string. The type of information to fetch, one of
+//' `"exists"` (the default), `"type"` or `"size"`.
+//' @returns If `info = "exists"`, returns logical `TRUE` if the file system
+//' object exists, otherwise `FALSE`. If `info = "type"`, returns a character
+//' string with one of `"file"` (regular file), `"dir"` (directory),
+//' `"symlink"` (symbolic link), or empty string (`""`). If `info = "size"`,
+//' returns the file size in bytes, or `-1` if an error occurs.
+//'
+//' @note
+//' For portabilty, `vsi_stat()` supports a subset of `stat()`-type
+//' information for filesystem objects. This function is primarily intended
+//' for use with GDAL virtual file systems (e.g., URLs, cloud storage systems,
+//' ZIP/GZip/7z/RAR archives, in-memory files).
+//' The base R function `utils::file_test()` could be used instead for file
+//' tests on regular local filesystems.
+//'
+//' @seealso
+//' GDAL Virtual File Systems:\cr
+//' \url{https://gdal.org/user/virtual_file_systems.html}
+//'
+//' @examples
+//' # for illustration only
+//' # this would normally be used with GDAL virtual filesystems
+//' data_dir <- system.file("extdata", package="gdalraster")
+//' vsi_stat(data_dir)
+//' vsi_stat(data_dir, "type")
+//' # stat() on a directory doesn't return the sum of the file sizes in it,
+//' # but rather how much space it used by the directory entry
+//' vsi_stat(data_dir, "size")
+//'
+//' elev_file <- file.path(data_dir, "storml_elev.tif")
+//' vsi_stat(elev_file)
+//' vsi_stat(elev_file, "type")
+//' vsi_stat(elev_file, "size")
+//'
+//' nonexistent <- file.path(data_dir, "wrong_filename.tif")
+//' vsi_stat(nonexistent)
+//' vsi_stat(nonexistent, "type")
+//' vsi_stat(nonexistent, "size")
+// [[Rcpp::export()]]
+SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info = "exists") {
+	
+	std::string filename_in;
+	filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
+	const char *fn = filename_in.c_str();
+	
+	VSIStatBufL sStat;
+	
+	if (info == "exists") {
+		bool ret;
+		if (VSIStatExL(fn, &sStat, VSI_STAT_EXISTS_FLAG) == 0)
+			ret = true;
+		else
+			ret = false;
+			
+		return Rcpp::LogicalVector(Rcpp::wrap(ret));
+	}
+	else if (info == "type") {
+		std::string ret;
+		if (VSIStatExL(fn, &sStat, VSI_STAT_NATURE_FLAG) == 0) {
+			if (VSI_ISDIR(sStat.st_mode))
+				ret = "dir";
+			else if (VSI_ISLNK(sStat.st_mode))
+				ret = "symlink";
+			else if (VSI_ISREG(sStat.st_mode))
+				ret = "file";
+			else
+				ret = "";
+		}
+		
+		return Rcpp::CharacterVector(Rcpp::wrap(ret));
+	}
+	else if (info == "size") {
+		double ret;
+		if (VSIStatExL(fn, &sStat, VSI_STAT_SIZE_FLAG) == 0)
+			ret = (double) sStat.st_size;
+		else
+			ret = -1;
+			
+		return Rcpp::NumericVector(Rcpp::wrap(ret));
+	}
+	else {
+		Rcpp::stop("Invalid value for `info`.");
+	}
 }
 

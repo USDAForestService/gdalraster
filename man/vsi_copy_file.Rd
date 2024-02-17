@@ -53,5 +53,5 @@ if (as.integer(gdal_version()[2]) >= 3070000) {
 }
 }
 \seealso{
-\code{\link[=copyDatasetFiles]{copyDatasetFiles()}}
+\code{\link[=copyDatasetFiles]{copyDatasetFiles()}}, \code{\link[=vsi_stat]{vsi_stat()}}, \code{\link[=vsi_sync]{vsi_sync()}}
 }

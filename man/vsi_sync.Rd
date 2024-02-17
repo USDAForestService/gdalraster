@@ -130,3 +130,6 @@ vsi_read_dir(dst)
 #> [9] "lf_fbfm40_220_mt_hood_utm.tif"
 }
 }
+\seealso{
+\code{\link[=copyDatasetFiles]{copyDatasetFiles()}}, \code{\link[=vsi_copy_file]{vsi_copy_file()}}
+}

@@ -43,6 +43,7 @@ reference:
   - vsi_mkdir
   - vsi_read_dir
   - vsi_rmdir
+  - vsi_stat
   - vsi_sync
   - vsi_unlink
 - subtitle: Virtual raster

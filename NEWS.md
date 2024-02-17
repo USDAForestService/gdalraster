@@ -1,4 +1,6 @@
-# gdalraster 1.8.0.9030 (dev)
+# gdalraster 1.8.0.9040 (dev)
+
+* add `vsi_stat()`: wrapper for `VSIStatExL()` in the GDAL Common Portability Library (2024-02-17)
 
 * add `vsi_unlink()`: wrapper for `VSIUnlink()` in the GDAL Common Portability Library (2024-02-17)
 
