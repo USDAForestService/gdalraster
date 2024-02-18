@@ -1,4 +1,4 @@
-# gdalraster 1.8.0.9040 (dev)
+# gdalraster 1.8.0.9050 (dev)
 
 * add `vsi_rename()`: wrapper for `VSIRename()` in the GDAL Common Portability Library (2024-02-18)
 
