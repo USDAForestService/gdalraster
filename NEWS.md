@@ -1,5 +1,7 @@
 # gdalraster 1.8.0.9040 (dev)
 
+* add `vsi_rename()`: wrapper for `VSIRename()` in the GDAL Common Portability Library (2024-02-18)
+
 * add unit tests for src/gdal_vsi.cpp, and additional tests for src/gdal_exp.cpp (2024-02-17)
 
 * set test coverage target minimum to 90%, codecov range: 70..90 (previously 80%, 60..80) (2024-02-17)

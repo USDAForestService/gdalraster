@@ -73,9 +73,10 @@
 
   \item virtual file systems: \code{\link[=vsi_copy_file]{vsi_copy_file()}},
   \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
-  \code{\link[=vsi_read_dir]{vsi_read_dir()}},
-  \code{\link[=vsi_rmdir]{vsi_rmdir()}},
   \code{\link[=vsi_mkdir]{vsi_mkdir()}},
+  \code{\link[=vsi_read_dir]{vsi_read_dir()}},
+  \code{\link[=vsi_rename]{vsi_rename()}},
+  \code{\link[=vsi_rmdir]{vsi_rmdir()}},
   \code{\link[=vsi_stat]{vsi_stat()}},
   \code{\link[=vsi_sync]{vsi_sync()}},
   \code{\link[=vsi_unlink]{vsi_unlink()}}
