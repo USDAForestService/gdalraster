@@ -24,21 +24,6 @@
   \code{\link[=rasterFromRaster]{rasterFromRaster()}},
   \code{\link[=translate]{translate()}},\cr
   \code{\link[=getCreationOptions]{getCreationOptions()}}
-  
-  \item data management: \code{\link[=addFilesInZip]{addFilesInZip()}},
-  \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},
-  \code{\link[=deleteDataset]{deleteDataset()}},\cr
-  \code{\link[=renameDataset]{renameDataset()}},
-  \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}
-
-  \item virtual file systems: \code{\link[=vsi_copy_file]{vsi_copy_file()}},
-  \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
-  \code{\link[=vsi_read_dir]{vsi_read_dir()}},
-  \code{\link[=vsi_rmdir]{vsi_rmdir()}},
-  \code{\link[=vsi_mkdir]{vsi_mkdir()}},
-  \code{\link[=vsi_stat]{vsi_stat()}},
-  \code{\link[=vsi_sync]{vsi_sync()}},
-  \code{\link[=vsi_unlink]{vsi_unlink()}}
  
   \item virtual raster: \code{\link[=buildVRT]{buildVRT()}},
   \code{\link[=rasterToVRT]{rasterToVRT()}}
@@ -79,6 +64,21 @@
   \code{\link[=bbox_union]{bbox_union()}}, 
   \code{\link[=g_buffer]{g_buffer()}},
   \code{\link[=has_geos]{has_geos()}}
+
+  \item data management: \code{\link[=addFilesInZip]{addFilesInZip()}},
+  \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},
+  \code{\link[=deleteDataset]{deleteDataset()}},\cr
+  \code{\link[=renameDataset]{renameDataset()}},
+  \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}
+
+  \item virtual file systems: \code{\link[=vsi_copy_file]{vsi_copy_file()}},
+  \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
+  \code{\link[=vsi_read_dir]{vsi_read_dir()}},
+  \code{\link[=vsi_rmdir]{vsi_rmdir()}},
+  \code{\link[=vsi_mkdir]{vsi_mkdir()}},
+  \code{\link[=vsi_stat]{vsi_stat()}},
+  \code{\link[=vsi_sync]{vsi_sync()}},
+  \code{\link[=vsi_unlink]{vsi_unlink()}}
   
   \item GDAL configuration:
   \code{\link[=gdal_version]{gdal_version()}},
@@ -139,7 +139,7 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
 }
 \note{
   Documentation for \code{GDALRaster-class} and several wrapper functions
-  borrows from the GDAL API documentation, (c) 1998-2023, Frank Warmerdam,
+  borrows from the GDAL API documentation, (c) 1998-2024, Frank Warmerdam,
   Even Rouault, and others, \href{https://gdal.org/license.html}{MIT license}.
 
   Sample datasets included with the package are used in examples throughout
