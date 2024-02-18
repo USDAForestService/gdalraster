@@ -1348,7 +1348,7 @@ vsi_unlink <- function(filename) {
 #' vsi_stat(data_dir)
 #' vsi_stat(data_dir, "type")
 #' # stat() on a directory doesn't return the sum of the file sizes in it,
-#' # but rather how much space it used by the directory entry
+#' # but rather how much space is used by the directory entry
 #' vsi_stat(data_dir, "size")
 #'
 #' elev_file <- file.path(data_dir, "storml_elev.tif")
