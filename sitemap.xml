@@ -217,6 +217,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_read_dir.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_rename.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_rmdir.html</loc>
   </url>
   <url>
