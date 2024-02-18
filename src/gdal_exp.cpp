@@ -186,7 +186,7 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
 	}
 	else if (std_filename.find("~") != std_filename.npos) {
 		try {
-			out_filename = _normalize_path(filename, true);
+			out_filename = _normalize_path(filename);
 		}
 		catch (...) {
 			out_filename[0] = filename[0];
