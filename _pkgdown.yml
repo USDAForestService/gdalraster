@@ -90,6 +90,7 @@ reference:
   - vsi_curl_clear_cache
   - vsi_mkdir
   - vsi_read_dir
+  - vsi_rename
   - vsi_rmdir
   - vsi_stat
   - vsi_sync

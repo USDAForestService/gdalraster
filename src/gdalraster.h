@@ -110,6 +110,7 @@ int vsi_mkdir(Rcpp::CharacterVector path, int mode);
 int vsi_rmdir(Rcpp::CharacterVector path);
 int vsi_unlink(Rcpp::CharacterVector filename);
 SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);
+int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath);
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
 		double pixel, double line);

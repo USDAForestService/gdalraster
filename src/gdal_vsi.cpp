@@ -520,3 +520,42 @@ SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info = "exists") {
 	}
 }
 
+
+//' Rename a file
+//'
+//' `vsi_rename()` renames a file object in the file system. The GDAL
+//' documentation states it should be possible to rename a file onto a new
+//' filesystem, but it is safest if this function is only used to rename files
+//' that remain in the same directory.
+//' This function goes through the GDAL `VSIFileHandler` virtualization and may
+//' work on unusual filesystems such as in memory.
+//' It is a wrapper for `VSIRename()` in the GDAL Common Portability Library.
+//' Analog of the POSIX `rename()` function.
+//'
+//' @param oldpath Character string. The name of the file to be renamed.
+//' @param newpath Character string. The name the file should be given.
+//' @returns Invisibly, `0` on success or `-1` on an error.
+//'
+//' @seealso
+//' [renameDataset()], [vsi_copy_file()]
+//'
+//' @examples
+//' # for illustration only
+//' # this would normally be used with GDAL virtual file systems
+//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+//' tmp_file <- tempfile(fileext = ".tif")
+//' file.copy(elev_file, tmp_file)
+//' new_file <- file.path(dirname(tmp_file), "storml_elev_copy.tif")
+//' result <- vsi_rename(tmp_file, new_file)
+//' print(result)
+// [[Rcpp::export(invisible = true)]]
+int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath) {
+	
+	std::string oldpath_in;
+	oldpath_in = Rcpp::as<std::string>(_check_gdal_filename(oldpath));
+	std::string newpath_in;
+	newpath_in = Rcpp::as<std::string>(_check_gdal_filename(newpath));
+	
+	return VSIRename(oldpath_in.c_str(), newpath_in.c_str());
+}
+

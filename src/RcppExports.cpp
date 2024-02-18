@@ -491,6 +491,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// vsi_rename
+int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath);
+RcppExport SEXP _gdalraster_vsi_rename(SEXP oldpathSEXP, SEXP newpathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type oldpath(oldpathSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type newpath(newpathSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_rename(oldpath, newpath));
+    return rcpp_result_gen;
+END_RCPP
+}
 // has_geos
 bool has_geos();
 RcppExport SEXP _gdalraster_has_geos() {
@@ -1040,6 +1052,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_rmdir", (DL_FUNC) &_gdalraster_vsi_rmdir, 1},
     {"_gdalraster_vsi_unlink", (DL_FUNC) &_gdalraster_vsi_unlink, 1},
     {"_gdalraster_vsi_stat", (DL_FUNC) &_gdalraster_vsi_stat, 2},
+    {"_gdalraster_vsi_rename", (DL_FUNC) &_gdalraster_vsi_rename, 2},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},

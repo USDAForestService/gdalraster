@@ -64,3 +64,12 @@ test_that("vsi_curl_clear_cache runs without error", {
 	expect_no_error(vsi_curl_clear_cache(partial=TRUE, file_prefix="test"))
 })
 
+test_that("vsi_rename works", {
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	tmp_file <- tempfile(fileext = ".tif")
+	file.copy(elev_file, tmp_file)
+	new_file <- file.path(dirname(tmp_file), "storml_elev_copy.tif")
+	expect_equal(vsi_rename(tmp_file, new_file), 0)
+})
+
+
