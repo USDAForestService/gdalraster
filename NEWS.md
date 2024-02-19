@@ -36,6 +36,8 @@
 
 * add `_check_gdal_filename()`: filename check for internal use (2024-01-30)
 
+* Documentation: add Microsoft Azure information in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+
 # gdalraster 1.8.0
 
 ## Dependencies
