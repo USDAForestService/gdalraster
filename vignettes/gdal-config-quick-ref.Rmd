@@ -241,9 +241,34 @@ set_config_option("AWS_REGION", "us-west-2")
 
 GDAL doc: [/vsigs/](https://gdal.org/user/virtual_file_systems.html#vsigs-google-cloud-storage-files) (Google Cloud Storage files)
 
-## Microsoft Azure
+## Microsoft Azure Blob
 
 GDAL doc: [/vsiaz/](https://gdal.org/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files) (Microsoft Azure Blob files)
+
+Recognized filenames are of the form `/vsiaz/container/key`, where `container` is the name of the container and `key` is the object "key", i.e. a filename potentially containing subdirectories.
+
+**`AZURE_NO_SIGN_REQUEST`**
+
+Controls whether requests are signed.
+
+```{r}
+# public access
+set_config_option("AZURE_NO_SIGN_REQUEST", "YES")
+```
+
+**`AZURE_STORAGE_CONNECTION_STRING`**
+
+Credential string provided in the Access Keys section of the administrative interface, containing both the account name and a secret key.
+
+```{r}
+set_config_option("AZURE_STORAGE_CONNECTION_STRING", "<my_connection_string>")
+```
+
+Several other authentication methods are possible for Azure. See the GDAL documentation for details.
+
+## Microsoft Azure Data Lake
+
+GDAL doc: [/vsiadls/](https://gdal.org/user/virtual_file_systems.html#vsiadls-microsoft-azure-data-lake-storage-gen2) (Microsoft Azure Data Lake Storage Gen2)
 
 ## SOZip
 
