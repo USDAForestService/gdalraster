@@ -356,10 +356,33 @@ require an AWS account:</p>
 (Google Cloud Storage files)</p>
 </div>
 <div class="section level2">
-<h2 id="microsoft-azure">Microsoft Azure<a class="anchor" aria-label="anchor" href="#microsoft-azure"></a>
+<h2 id="microsoft-azure-blob">Microsoft Azure Blob<a class="anchor" aria-label="anchor" href="#microsoft-azure-blob"></a>
 </h2>
 <p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files" class="external-link">/vsiaz/</a>
 (Microsoft Azure Blob files)</p>
+<p>Recognized filenames are of the form
+<code>/vsiaz/container/key</code>, where <code>container</code> is the
+name of the container and <code>key</code> is the object “key”, i.e. a
+filename potentially containing subdirectories.</p>
+<p><strong><code>AZURE_NO_SIGN_REQUEST</code></strong></p>
+<p>Controls whether requests are signed.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># public access</span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AZURE_NO_SIGN_REQUEST"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
+<p><strong><code>AZURE_STORAGE_CONNECTION_STRING</code></strong></p>
+<p>Credential string provided in the Access Keys section of the
+administrative interface, containing both the account name and a secret
+key.</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AZURE_STORAGE_CONNECTION_STRING"</span>, <span class="st">"&lt;my_connection_string&gt;"</span><span class="op">)</span></span></code></pre></div>
+<p>Several other authentication methods are possible for Azure. See the
+GDAL documentation for details.</p>
+</div>
+<div class="section level2">
+<h2 id="microsoft-azure-data-lake">Microsoft Azure Data Lake<a class="anchor" aria-label="anchor" href="#microsoft-azure-data-lake"></a>
+</h2>
+<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsiadls-microsoft-azure-data-lake-storage-gen2" class="external-link">/vsiadls/</a>
+(Microsoft Azure Data Lake Storage Gen2)</p>
 </div>
 <div class="section level2">
 <h2 id="sozip">SOZip<a class="anchor" aria-label="anchor" href="#sozip"></a>
@@ -382,7 +405,7 @@ that this option also affects several other parts of GDAL.</p>
 optimization should be enabled. If <code>AUTO</code>, SOZip will be
 enabled for uncompressed files larger than
 <code>CPL_SOZIP_MIN_FILE_SIZE</code>.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SOZip optimization defaults to AUTO</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"CPL_SOZIP_ENABLED"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>CPL_SOZIP_MIN_FILE_SIZE</code></strong></p>
@@ -391,7 +414,7 @@ SOZip to be automatically enabled. Specified in bytes, or
 <code>K</code>, <code>M</code> or <code>G</code> suffix can be used
 respectively to specify a value in kilobytes, megabytes or
 gigabytes.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SOZip minimum file size</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"CPL_SOZIP_MIN_FILE_SIZE"</span>, <span class="st">"100K"</span><span class="op">)</span></span></code></pre></div>
 </div>
