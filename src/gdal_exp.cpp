@@ -247,7 +247,7 @@ int _get_physical_RAM() {
 //' ## close the dataset when done
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
-bool create(std::string format, std::string dst_filename,
+bool create(std::string format, Rcpp::CharacterVector dst_filename,
 		int xsize, int ysize, int nbands, std::string dataType,
 		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
@@ -258,6 +258,9 @@ bool create(std::string format, std::string dst_filename,
 	char **papszMetadata = GDALGetMetadata(hDriver, NULL);
 	if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATE, FALSE))
 		Rcpp::stop("Driver does not support create.");
+	
+	std::string dst_filename_in;
+	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
 		
 	GDALDataType dt = GDALGetDataTypeByName( dataType.c_str() );
 	
@@ -274,7 +277,7 @@ bool create(std::string format, std::string dst_filename,
 	}
 	
 	GDALDatasetH hDstDS = NULL;
-	hDstDS = GDALCreate(hDriver, dst_filename.c_str(),
+	hDstDS = GDALCreate(hDriver, dst_filename_in.c_str(),
 						xsize, ysize, nbands, dt,
                     	opt_list.data());
 
@@ -325,8 +328,8 @@ bool create(std::string format, std::string dst_filename,
 //' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
-bool createCopy(std::string format, std::string dst_filename,
-		std::string src_filename, bool strict = false,
+bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
+		Rcpp::CharacterVector src_filename, bool strict = false,
 		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
 	GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
@@ -336,8 +339,13 @@ bool createCopy(std::string format, std::string dst_filename,
 	char **papszMetadata = GDALGetMetadata(hDriver, NULL);
 	if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATECOPY, FALSE))
 		Rcpp::stop("Driver does not support create copy.");
+	
+	std::string src_filename_in;
+	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+	std::string dst_filename_in;
+	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
 		
-	GDALDatasetH hSrcDS = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
+	GDALDatasetH hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
 	if(hSrcDS == NULL)
 		Rcpp::stop("Open source raster failed.");
 	
@@ -354,7 +362,7 @@ bool createCopy(std::string format, std::string dst_filename,
 	}
 	
 	GDALDatasetH hDstDS = NULL;
-	hDstDS = GDALCreateCopy(hDriver, dst_filename.c_str(), hSrcDS, strict,
+	hDstDS = GDALCreateCopy(hDriver, dst_filename_in.c_str(), hSrcDS, strict,
 				opt_list.data(), GDALTermProgressR, NULL);
 
 	GDALClose(hSrcDS);
@@ -1228,11 +1236,17 @@ bool sieveFilter(std::string src_filename, int src_band,
 //' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
-bool translate(std::string src_filename, std::string dst_filename,
+bool translate(Rcpp::CharacterVector src_filename,
+		Rcpp::CharacterVector dst_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
 
+	std::string src_filename_in;
+	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+	std::string dst_filename_in;
+	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+	
 	bool ret = false;
-	GDALDatasetH src_ds = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
+	GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
 	if (src_ds == NULL)
 		Rcpp::stop("Open source raster failed.");
 
@@ -1252,7 +1266,7 @@ bool translate(std::string src_filename, std::string dst_filename,
 		Rcpp::stop("Translate failed (could not create options struct).");
 	GDALTranslateOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
-	GDALDatasetH hDstDS = GDALTranslate(dst_filename.c_str(), src_ds,
+	GDALDatasetH hDstDS = GDALTranslate(dst_filename_in.c_str(), src_ds,
 							psOptions, NULL);
 							
 	GDALTranslateOptionsFree(psOptions);
@@ -1441,16 +1455,24 @@ bool translate(std::string src_filename, std::string dst_filename,
 //' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
-bool warp(std::vector<std::string> src_files, std::string dst_filename,
+bool warp(Rcpp::CharacterVector src_files,
+		Rcpp::CharacterVector dst_filename,
 		std::string t_srs, 
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
 
+	std::string dst_filename_in;
+	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+	
 	bool ret = false;
 	std::vector<GDALDatasetH> src_ds(src_files.size());
-	for (std::size_t i = 0; i < src_files.size(); ++i) {
-		GDALDatasetH hDS = GDALOpenShared(src_files[i].c_str(), GA_ReadOnly);
+	
+	for (R_xlen_t i = 0; i < src_files.size(); ++i) {
+		std::string src_file_in;
+		src_file_in = Rcpp::as<std::string>(_check_gdal_filename(
+				Rcpp::as<Rcpp::CharacterVector>(src_files[i])));
+		GDALDatasetH hDS = GDALOpenShared(src_file_in.c_str(), GA_ReadOnly);
 		if (hDS == NULL) {
-			Rcpp::Rcerr << "Error on source: " << src_files[i].c_str() << "\n";
+			Rcpp::Rcerr << "Error on source: " << src_file_in.c_str() << "\n";
 			Rcpp::stop("Open source raster failed.");
 		}
 		else {
@@ -1481,7 +1503,7 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 		Rcpp::stop("Warp raster failed (could not create options struct).");
 	GDALWarpAppOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
-	GDALDatasetH hDstDS = GDALWarp(dst_filename.c_str(), NULL,
+	GDALDatasetH hDstDS = GDALWarp(dst_filename_in.c_str(), NULL,
 							src_files.size(), src_ds.data(),
 							psOptions, NULL);
 							
@@ -1491,7 +1513,7 @@ bool warp(std::vector<std::string> src_files, std::string dst_filename,
 		GDALClose(hDstDS);
 		ret = true;
 	}
-	for (std::size_t i = 0; i < src_files.size(); ++i)
+	for (R_xlen_t i = 0; i < src_files.size(); ++i)
 		GDALClose(src_ds[i]);
 	
 	if (!ret)

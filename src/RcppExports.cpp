@@ -84,13 +84,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // create
-bool create(std::string format, std::string dst_filename, int xsize, int ysize, int nbands, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
+bool create(std::string format, Rcpp::CharacterVector dst_filename, int xsize, int ysize, int nbands, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
 RcppExport SEXP _gdalraster_create(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type xsize(xsizeSEXP);
     Rcpp::traits::input_parameter< int >::type ysize(ysizeSEXP);
     Rcpp::traits::input_parameter< int >::type nbands(nbandsSEXP);
@@ -101,14 +101,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // createCopy
-bool createCopy(std::string format, std::string dst_filename, std::string src_filename, bool strict, Rcpp::Nullable<Rcpp::CharacterVector> options);
+bool createCopy(std::string format, Rcpp::CharacterVector dst_filename, Rcpp::CharacterVector src_filename, bool strict, Rcpp::Nullable<Rcpp::CharacterVector> options);
 RcppExport SEXP _gdalraster_createCopy(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP src_filenameSEXP, SEXP strictSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_filename(src_filenameSEXP);
     Rcpp::traits::input_parameter< bool >::type strict(strictSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
     rcpp_result_gen = Rcpp::wrap(createCopy(format, dst_filename, src_filename, strict, options));
@@ -274,26 +274,26 @@ BEGIN_RCPP
 END_RCPP
 }
 // translate
-bool translate(std::string src_filename, std::string dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+bool translate(Rcpp::CharacterVector src_filename, Rcpp::CharacterVector dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 RcppExport SEXP _gdalraster_translate(SEXP src_filenameSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type src_filename(src_filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
     rcpp_result_gen = Rcpp::wrap(translate(src_filename, dst_filename, cl_arg));
     return rcpp_result_gen;
 END_RCPP
 }
 // warp
-bool warp(std::vector<std::string> src_files, std::string dst_filename, std::string t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+bool warp(Rcpp::CharacterVector src_files, Rcpp::CharacterVector dst_filename, std::string t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 RcppExport SEXP _gdalraster_warp(SEXP src_filesSEXP, SEXP dst_filenameSEXP, SEXP t_srsSEXP, SEXP cl_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<std::string> >::type src_files(src_filesSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_files(src_filesSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type t_srs(t_srsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
     rcpp_result_gen = Rcpp::wrap(warp(src_files, dst_filename, t_srs, cl_arg));

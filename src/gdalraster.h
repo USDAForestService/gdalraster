@@ -77,11 +77,11 @@ int get_cache_used();
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 int _get_physical_RAM();
 
-bool create(std::string format, std::string dst_filename,
+bool create(std::string format, Rcpp::CharacterVector dst_filename,
 		int xsize, int ysize, int nbands, std::string dataType,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
-bool createCopy(std::string format, std::string dst_filename,
-		std::string src_filename, bool strict,
+bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
+		Rcpp::CharacterVector src_filename, bool strict,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 std::string _getCreationOptions(std::string format);
 bool copyDatasetFiles(std::string new_filename, std::string old_filename,
@@ -153,10 +153,12 @@ bool sieveFilter(std::string src_filename, int src_band,
 		std::string mask_filename , int mask_band,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 
-bool translate(std::string src_filename, std::string dst_filename,
+bool translate(Rcpp::CharacterVector src_filename,
+		Rcpp::CharacterVector dst_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 		
-bool warp(std::vector<std::string> src_files, std::string dst_filename,
+bool warp(Rcpp::CharacterVector src_files,
+		Rcpp::CharacterVector dst_filename,
 		std::string t_srs, 
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 		
