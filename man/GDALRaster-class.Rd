@@ -16,6 +16,9 @@ raster format descriptions:
 
 \item{read_only}{Logical. \code{TRUE} to open the dataset read-only (the default),
 or \code{FALSE} to open with write access.}
+
+\item{open_options}{Optional character vector of \code{NAME=VALUE} pairs
+specifying dataset open options.}
 }
 \value{
 An object of class \code{GDALRaster} which contains a pointer to the
@@ -43,6 +46,8 @@ override the default resampling to one of \code{BILINEAR}, \code{CUBIC},
 
 \preformatted{
 ds <- new(GDALRaster, filename, read_only=TRUE)
+# or, using dataset open options:
+ds <- new(GDALRaster, filename, read_only, open_options)
 
 ## Methods (see Details)
 ds$getFilename()
@@ -121,6 +126,13 @@ ds$close()
 \code{new(GDALRaster, filename, read_only)}
 Constructor. Returns an object of class \code{GDALRaster}.
 \code{read_only} defaults to \code{TRUE} if not specified.
+
+\code{new(GDALRaster, filename, read_only, open_options)}
+Alternate constructor for passing dataset \code{open_options}, a character
+vector of \code{NAME=VALUE} pairs.
+\code{read_only} is required for this form of the contructor, \code{TRUE} for
+read-only, or \code{FALSE} to open with write access.
+Returns an object of class \code{GDALRaster}.
 
 \code{$getFilename()}
 Returns a character string containing the \code{filename} associated with this

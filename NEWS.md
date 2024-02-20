@@ -1,5 +1,9 @@
 # gdalraster 1.8.0.9050 (dev)
 
+* `GDALRaster$new()`: add an alternate class constructor for using dataset open options (2024-02-19)
+
+* use `_check_gdal_filename()` throughout for minimal filename check and UTF-8 (2024-02-19)
+
 * add `vsi_rename()`: wrapper for `VSIRename()` in the GDAL Common Portability Library (2024-02-18)
 
 * add unit tests for src/gdal_vsi.cpp, and additional tests for src/gdal_exp.cpp (2024-02-17)

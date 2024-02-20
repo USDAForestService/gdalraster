@@ -19,6 +19,8 @@
 #' \url{https://gdal.org/drivers/raster/index.html}).
 #' @param read_only Logical. `TRUE` to open the dataset read-only (the default),
 #' or `FALSE` to open with write access.
+#' @param open_options Optional character vector of `NAME=VALUE` pairs
+#' specifying dataset open options.
 #' @returns An object of class `GDALRaster` which contains a pointer to the
 #' opened dataset, and methods that operate on the dataset as described in
 #' Details.
@@ -29,6 +31,8 @@
 #' @section Usage:
 #' \preformatted{
 #' ds <- new(GDALRaster, filename, read_only=TRUE)
+#' # or, using dataset open options:
+#' ds <- new(GDALRaster, filename, read_only, open_options)
 #'
 #' ## Methods (see Details)
 #' ds$getFilename()
@@ -105,6 +109,13 @@
 #' \code{new(GDALRaster, filename, read_only)}
 #' Constructor. Returns an object of class `GDALRaster`.
 #' `read_only` defaults to `TRUE` if not specified.
+#'
+#' \code{new(GDALRaster, filename, read_only, open_options)}
+#' Alternate constructor for passing dataset `open_options`, a character
+#' vector of `NAME=VALUE` pairs.
+#' `read_only` is required for this form of the contructor, `TRUE` for
+#'  read-only, or `FALSE` to open with write access.
+#' Returns an object of class `GDALRaster`.
 #'
 #' \code{$getFilename()}
 #' Returns a character string containing the `filename` associated with this
