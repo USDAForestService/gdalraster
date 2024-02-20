@@ -84,13 +84,15 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 		Rcpp::CharacterVector src_filename, bool strict,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 std::string _getCreationOptions(std::string format);
-bool copyDatasetFiles(std::string new_filename, std::string old_filename,
+bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
+		Rcpp::CharacterVector old_filename,
 		std::string format);
-bool deleteDataset(std::string filename, std::string format);
-bool renameDataset(std::string new_filename, std::string old_filename,
+bool deleteDataset(Rcpp::CharacterVector filename, std::string format);
+bool renameDataset(Rcpp::CharacterVector new_filename,
+		Rcpp::CharacterVector old_filename,
 		std::string format);
-bool bandCopyWholeRaster(std::string src_filename, int src_band,
-		std::string dst_filename, int dst_band,
+bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
+		Rcpp::CharacterVector dst_filename, int dst_band,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 bool _addFileInZip(std::string zip_filename, bool overwrite,
 		std::string archive_filename, std::string in_filename,
@@ -147,14 +149,14 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
 		std::string out_layer, std::string fld_name,
 		Rcpp::CharacterVector mask_file, bool nomask,
 		int connectedness);
-		
+
 bool _rasterize(std::string src_dsn, std::string dst_filename,
 		Rcpp::CharacterVector cl_arg);
-		
-bool sieveFilter(std::string src_filename, int src_band,
-		std::string dst_filename, int dst_band,
+
+bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
+		Rcpp::CharacterVector dst_filename, int dst_band,
 		int size_threshold, int connectedness,
-		std::string mask_filename , int mask_band,
+		Rcpp::CharacterVector mask_filename , int mask_band,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 
 bool translate(Rcpp::CharacterVector src_filename,

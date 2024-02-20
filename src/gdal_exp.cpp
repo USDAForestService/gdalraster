@@ -43,6 +43,7 @@ Rcpp::CharacterVector gdal_version() {
 
 
 //' @noRd
+// [[Rcpp::export(name = ".gdal_version_num")]]
 int _gdal_version_num() {
 	std::string version(GDALVersionInfo("VERSION_NUM"));
 	return std::stoi(version);
@@ -173,10 +174,14 @@ int get_cache_used() {
 //' @noRd
 // [[Rcpp::export(name = ".check_gdal_filename")]]
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
-	// Rcpp::CharacterVector should have encoding when needed
-	
+	/*
+	Rcpp::CharacterVector may have marked encoding when needed.
+	Rcpp::String may drop encoding or have issues with encoding on Windows:
+	https://github.com/RcppCore/Rcpp/issues/988
+	*/
+
 	if (filename.size() > 1)
-		Rcpp::stop("filename must be a character vector of length 1.");
+		Rcpp::stop("`filename` must be a character vector of length 1.");
 	
 	std::string std_filename(filename[0]);
 	Rcpp::CharacterVector out_filename(1);
@@ -185,10 +190,9 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
 		out_filename[0] = filename[0];
 	}
 	else if (std_filename.find("~") != std_filename.npos) {
-		// This does not catch an error from wrapped normalizePath() in R.
-		// But we're not using mustWork = TRUE, so only a warning is emitted
-		// if path does not exist.
-		// Leaving try/catch for now.
+	/* 	This does not catch an error from normalizePath() in R. But we're
+		not using mustWork=TRUE, so only a warning is emitted if path does
+		not exist. Leaving as try/catch for now. */
 		try {
 			out_filename = _normalize_path(filename);
 		}
@@ -1141,10 +1145,10 @@ bool _rasterize(std::string src_dsn, std::string dst_filename,
 //'             mask_filename = mask_file,
 //'             mask_band = 1)
 // [[Rcpp::export(invisible = true)]]
-bool sieveFilter(std::string src_filename, int src_band,
-		std::string dst_filename, int dst_band,
+bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
+		Rcpp::CharacterVector dst_filename, int dst_band,
 		int size_threshold, int connectedness,
-		std::string mask_filename = "", int mask_band = 0,
+		Rcpp::CharacterVector mask_filename = "", int mask_band = 0,
 		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
 	GDALDatasetH hSrcDS = NULL;
@@ -1155,6 +1159,13 @@ bool sieveFilter(std::string src_filename, int src_band,
 	GDALRasterBandH hDstBand = NULL;
 	bool in_place = false;
 	CPLErr err;
+
+	std::string src_filename_in;
+	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+	std::string dst_filename_in;
+	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+	std::string mask_file_in;
+	mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_filename));
 	
 	if (size_threshold < 1)
 		Rcpp::stop("size_threshold must be 1 or larger.");
@@ -1162,13 +1173,13 @@ bool sieveFilter(std::string src_filename, int src_band,
 	if (connectedness != 4 && connectedness != 8)
 		Rcpp::stop("connectedness must be 4 or 8.");
 	
-	if (src_filename == dst_filename && src_band == dst_band)
+	if (src_filename_in == dst_filename_in && src_band == dst_band)
 		in_place = true;
 	
 	if (in_place)
-		hSrcDS = GDALOpenShared(src_filename.c_str(), GA_Update);
+		hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_Update);
 	else
-		hSrcDS = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
+		hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
 	if (hSrcDS == NULL)
 		Rcpp::stop("Open source raster failed.");
 	hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
@@ -1177,8 +1188,8 @@ bool sieveFilter(std::string src_filename, int src_band,
 		Rcpp::stop("Failed to access the source band.");
 	}
 	
-	if (mask_filename != "") {
-		hMaskDS = GDALOpenShared(mask_filename.c_str(), GA_ReadOnly);
+	if (mask_file_in != "") {
+		hMaskDS = GDALOpenShared(mask_file_in.c_str(), GA_ReadOnly);
 		if (hMaskDS == NULL) {
 			GDALClose(hSrcDS);
 			Rcpp::stop("Open mask raster failed.");
@@ -1192,7 +1203,7 @@ bool sieveFilter(std::string src_filename, int src_band,
 	}
 	
 	if (!in_place) {
-		hDstDS = GDALOpenShared(dst_filename.c_str(), GA_Update);
+		hDstDS = GDALOpenShared(dst_filename_in.c_str(), GA_Update);
 		if (hDstDS == NULL) {
 			GDALClose(hSrcDS);
 			if (hMaskDS != NULL)
@@ -1752,8 +1763,8 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //' ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
-bool bandCopyWholeRaster(std::string src_filename, int src_band,
-		std::string dst_filename, int dst_band,
+bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
+		Rcpp::CharacterVector dst_filename, int dst_band,
 		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
 	GDALDatasetH hSrcDS = NULL;
@@ -1761,8 +1772,13 @@ bool bandCopyWholeRaster(std::string src_filename, int src_band,
 	GDALDatasetH hDstDS = NULL;
 	GDALRasterBandH hDstBand = NULL;
 	CPLErr err;
+
+	std::string src_filename_in;
+	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+	std::string dst_filename_in;
+	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
 	
-	hSrcDS = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
+	hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
 	if (hSrcDS == NULL)
 		Rcpp::stop("Open source raster failed.");
 	hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
@@ -1771,7 +1787,7 @@ bool bandCopyWholeRaster(std::string src_filename, int src_band,
 		Rcpp::stop("Failed to access the source band.");
 	}
 	
-	hDstDS = GDALOpenShared(dst_filename.c_str(), GA_Update);
+	hDstDS = GDALOpenShared(dst_filename_in.c_str(), GA_Update);
 	if (hDstDS == NULL) {
 		GDALClose(hSrcDS);
 		Rcpp::stop("Open destination raster failed.");
@@ -1851,11 +1867,14 @@ bool bandCopyWholeRaster(std::string src_filename, int src_band,
 //' deleteDataset(b5_tmp)
 //' file.exists(files)
 // [[Rcpp::export]]
-bool deleteDataset(std::string filename, std::string format = "") {
+bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
+
+	std::string filename_in;
+	filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
 
 	GDALDriverH hDriver;
 	if (format == "") {
-		hDriver = GDALIdentifyDriver(filename.c_str(), NULL);
+		hDriver = GDALIdentifyDriver(filename_in.c_str(), NULL);
 		if (hDriver == NULL)
 			Rcpp::stop("Failed to get driver from file name.");
 	}
@@ -1865,7 +1884,7 @@ bool deleteDataset(std::string filename, std::string format = "") {
 			Rcpp::stop("Failed to get driver from format name.");
 	}
 	
-	CPLErr err = GDALDeleteDataset(hDriver, filename.c_str());
+	CPLErr err = GDALDeleteDataset(hDriver, filename_in.c_str());
 	if (err != CE_None) {
 		Rcpp::Rcerr << "Error from GDALDeleteDataset().\n";
 		return false;
@@ -1920,12 +1939,18 @@ bool deleteDataset(std::string filename, std::string format = "") {
 //' ds$getFileList()
 //' ds$close()
 // [[Rcpp::export]]
-bool renameDataset(std::string new_filename, std::string old_filename,
+bool renameDataset(Rcpp::CharacterVector new_filename,
+		Rcpp::CharacterVector old_filename,
 		std::string format = "") {
 
+	std::string new_filename_in;
+	new_filename_in = Rcpp::as<std::string>(_check_gdal_filename(new_filename));
+	std::string old_filename_in;
+	old_filename_in = Rcpp::as<std::string>(_check_gdal_filename(old_filename));
+	
 	GDALDriverH hDriver;
 	if (format == "") {
-		hDriver = GDALIdentifyDriver(old_filename.c_str(), NULL);
+		hDriver = GDALIdentifyDriver(old_filename_in.c_str(), NULL);
 		if (hDriver == NULL)
 			Rcpp::stop("Failed to get driver from file name.");
 	}
@@ -1935,8 +1960,8 @@ bool renameDataset(std::string new_filename, std::string old_filename,
 			Rcpp::stop("Failed to get driver from format name.");
 	}
 	
-	CPLErr err = GDALRenameDataset(hDriver, new_filename.c_str(),
-			old_filename.c_str());
+	CPLErr err = GDALRenameDataset(hDriver, new_filename_in.c_str(),
+			old_filename_in.c_str());
 	if (err != CE_None) {
 		Rcpp::Rcerr << "Error from GDALRenameDataset().\n";
 		return false;
@@ -1983,12 +2008,18 @@ bool renameDataset(std::string new_filename, std::string old_filename,
 //' ds_copy$getFileList()
 //' ds_copy$close()
 // [[Rcpp::export]]
-bool copyDatasetFiles(std::string new_filename, std::string old_filename,
+bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
+		Rcpp::CharacterVector old_filename,
 		std::string format = "") {
 
+	std::string new_filename_in;
+	new_filename_in = Rcpp::as<std::string>(_check_gdal_filename(new_filename));
+	std::string old_filename_in;
+	old_filename_in = Rcpp::as<std::string>(_check_gdal_filename(old_filename));
+	
 	GDALDriverH hDriver;
 	if (format == "") {
-		hDriver = GDALIdentifyDriver(old_filename.c_str(), NULL);
+		hDriver = GDALIdentifyDriver(old_filename_in.c_str(), NULL);
 		if (hDriver == NULL)
 			Rcpp::stop("Failed to get driver from file name.");
 	}
@@ -1998,8 +2029,8 @@ bool copyDatasetFiles(std::string new_filename, std::string old_filename,
 			Rcpp::stop("Failed to get driver from format name.");
 	}
 	
-	CPLErr err = GDALCopyDatasetFiles(hDriver, new_filename.c_str(),
-			old_filename.c_str());
+	CPLErr err = GDALCopyDatasetFiles(hDriver, new_filename_in.c_str(),
+			old_filename_in.c_str());
 	if (err != CE_None) {
 		Rcpp::Rcerr << "Error from GDALCopyDatasetFiles().\n";
 		return false;
