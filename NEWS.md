@@ -1,6 +1,6 @@
-# gdalraster 1.8.0.9050 (dev)
+# gdalraster 1.8.0.9100 (dev)
 
-* `GDALRaster$new()`: add an alternate class constructor for using dataset open options (2024-02-19)
+* `GDALRaster$new()`: add a constructor for using dataset open options (#224) (2024-02-19)
 
 * use `_check_gdal_filename()` throughout for minimal filename check and UTF-8 (2024-02-19)
 
