@@ -98,6 +98,36 @@ GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only) :
 		_warnInt64();
 }
 
+GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
+		Rcpp::CharacterVector open_options) :
+				hDataset(NULL),
+				eAccess(GA_ReadOnly) {
+
+	fname = Rcpp::as<std::string>(_check_gdal_filename(filename));
+	if (!read_only)
+		eAccess = GA_Update;
+
+	std::vector<char *> dsoo(open_options.size() + 1);
+	for (R_xlen_t i = 0; i < open_options.size(); ++i) {
+		dsoo[i] = (char *) (open_options[i]);
+	}
+	dsoo[open_options.size()] = NULL;
+
+	unsigned int nOpenFlags;
+	if (read_only)
+		nOpenFlags = GDAL_OF_RASTER | GDAL_OF_READONLY | GDAL_OF_SHARED;
+	else
+		nOpenFlags = GDAL_OF_RASTER | GDAL_OF_UPDATE | GDAL_OF_SHARED;
+
+	hDataset = GDALOpenEx(fname.c_str(), nOpenFlags, NULL, dsoo.data(), NULL);
+	if (hDataset == NULL)
+		Rcpp::stop("Open raster failed.");
+	
+	// warn for now if 64-bit integer
+	if (_hasInt64())
+		_warnInt64();
+}
+
 std::string GDALRaster::getFilename() const {
 	return fname;
 }
@@ -1345,10 +1375,12 @@ RCPP_MODULE(mod_GDALRaster) {
 
     .constructor
     	("Default constructor, no dataset opened.")
-    .constructor<std::string>
+    .constructor<Rcpp::CharacterVector>
     	("Usage: new(GDALRaster, filename)")
-    .constructor<std::string, bool>
-    	("Usage: new(GDALRaster, filename, read_only=FALSE)")
+    .constructor<Rcpp::CharacterVector, bool>
+    	("Usage: new(GDALRaster, filename, read_only=[TRUE|FALSE])")
+    .constructor<Rcpp::CharacterVector, bool, Rcpp::CharacterVector>
+    	("Usage: new(GDALRaster, filename, read_only, open_options)")
     
     // exposed member functions
     .const_method("getFilename", &GDALRaster::getFilename, 

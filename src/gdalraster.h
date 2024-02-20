@@ -185,6 +185,8 @@ class GDALRaster {
 	GDALRaster();
 	GDALRaster(Rcpp::CharacterVector filename);
 	GDALRaster(Rcpp::CharacterVector filename, bool read_only);
+	GDALRaster(Rcpp::CharacterVector filename, bool read_only,
+			Rcpp::CharacterVector open_options);
 	
 	std::string getFilename() const;
 	void open(bool read_only);
