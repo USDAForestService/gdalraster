@@ -185,6 +185,10 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
 		out_filename[0] = filename[0];
 	}
 	else if (std_filename.find("~") != std_filename.npos) {
+		// This does not catch an error from wrapped normalizePath() in R.
+		// But we're not using mustWork = TRUE, so only a warning is emitted
+		// if path does not exist.
+		// Leaving try/catch for now.
 		try {
 			out_filename = _normalize_path(filename);
 		}
@@ -544,15 +548,22 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 //' plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
-bool buildVRT(std::string vrt_filename, Rcpp::CharacterVector input_rasters,
+bool buildVRT(Rcpp::CharacterVector vrt_filename,
+		Rcpp::CharacterVector input_rasters,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
 
-	std::vector<char *> src_ds_names = {NULL};
-	src_ds_names.resize(input_rasters.size() + 1);
+	std::string vrt_filename_in;
+	vrt_filename_in = Rcpp::as<std::string>(_check_gdal_filename(vrt_filename));
+
+	std::vector<std::string> input_rasters_in(input_rasters.size());
+	std::vector<const char *> src_ds_files(input_rasters.size());
 	for (R_xlen_t i = 0; i < input_rasters.size(); ++i) {
-		src_ds_names[i] = (char *) (input_rasters[i]);
+		input_rasters_in[i] = Rcpp::as<std::string>(
+				_check_gdal_filename(
+				Rcpp::as<Rcpp::CharacterVector>(input_rasters[i])
+				));
+		src_ds_files[i] = input_rasters_in[i].c_str();
 	}
-	src_ds_names[input_rasters.size()] = NULL;
 	
 	std::vector<char *> argv = {NULL};
 	if (cl_arg.isNotNull()) {
@@ -570,8 +581,8 @@ bool buildVRT(std::string vrt_filename, Rcpp::CharacterVector input_rasters,
 		Rcpp::stop("Build VRT failed (could not create options struct).");
 	GDALBuildVRTOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
-	GDALDatasetH hDstDS = GDALBuildVRT(vrt_filename.c_str(),
-							input_rasters.size(), NULL, src_ds_names.data(),
+	GDALDatasetH hDstDS = GDALBuildVRT(vrt_filename_in.c_str(),
+							input_rasters.size(), NULL, src_ds_files.data(),
 							psOptions, NULL);
 							
 	GDALBuildVRTOptionsFree(psOptions);
@@ -763,12 +774,17 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1) {
 //' @noRd
 // [[Rcpp::export(name = ".dem_proc")]]
 bool _dem_proc(std::string mode,
-			std::string src_filename, 
-			std::string dst_filename,
+			Rcpp::CharacterVector src_filename, 
+			Rcpp::CharacterVector dst_filename,
 			Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
 			Rcpp::Nullable<Rcpp::String> col_file = R_NilValue) {
 
-	GDALDatasetH src_ds = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
+	std::string src_filename_in;
+	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+	std::string dst_filename_in;
+	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+	
+	GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
 	if (src_ds == NULL)
 		Rcpp::stop("Open source raster failed.");
 
@@ -793,11 +809,11 @@ bool _dem_proc(std::string mode,
 	if (col_file.isNotNull()) {
 		// cast Nullable to the underlying type
 		Rcpp::String col_file_in(col_file);
-		hDstDS = GDALDEMProcessing(dst_filename.c_str(), src_ds, mode.c_str(),
+		hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds, mode.c_str(),
 					col_file_in.get_cstring(), psOptions, NULL);
 	}
 	else {
-		hDstDS = GDALDEMProcessing(dst_filename.c_str(), src_ds, mode.c_str(),
+		hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds, mode.c_str(),
 					NULL, psOptions, NULL);
 	}
 							
@@ -857,7 +873,8 @@ bool _dem_proc(std::string mode,
 //' head(mod_tbl)
 //' mod_tbl[is.na(mod_tbl$VALUE),]
 // [[Rcpp::export(invisible = true)]]
-bool fillNodata(std::string filename, int band, std::string mask_file = "",
+bool fillNodata(Rcpp::CharacterVector filename, int band,
+		Rcpp::CharacterVector mask_file = "",
 		double max_dist = 100, int smooth_iterations = 0) {
 
 	GDALDatasetH hDS = NULL;
@@ -865,8 +882,13 @@ bool fillNodata(std::string filename, int band, std::string mask_file = "",
 	GDALDatasetH hMaskDS = NULL;
 	GDALRasterBandH hMaskBand = NULL;
 	CPLErr err;
+
+	std::string filename_in;
+	filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
+	std::string mask_file_in;
+	mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_file));
 	
-	hDS = GDALOpenShared(filename.c_str(), GA_Update);
+	hDS = GDALOpenShared(filename_in.c_str(), GA_Update);
 	if (hDS == NULL)
 		Rcpp::stop("Open raster failed.");
 	hBand = GDALGetRasterBand(hDS, band);
@@ -875,8 +897,8 @@ bool fillNodata(std::string filename, int band, std::string mask_file = "",
 		Rcpp::stop("Failed to access the requested band.");
 	}
 
-	if (mask_file != "") {
-		hMaskDS = GDALOpenShared(mask_file.c_str(), GA_ReadOnly);
+	if (mask_file_in != "") {
+		hMaskDS = GDALOpenShared(mask_file_in.c_str(), GA_ReadOnly);
 		if (hMaskDS == NULL) {
 			GDALClose(hDS);
 			Rcpp::stop("Open mask raster failed.");
@@ -907,9 +929,10 @@ bool fillNodata(std::string filename, int band, std::string mask_file = "",
 //' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".polygonize")]]
-bool _polygonize(std::string src_filename, int src_band,
-		std::string out_dsn, std::string out_layer, std::string fld_name,
-		std::string mask_file = "", bool nomask = false,
+bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
+		Rcpp::CharacterVector out_dsn,
+		std::string out_layer, std::string fld_name,
+		Rcpp::CharacterVector mask_file = "", bool nomask = false,
 		int connectedness = 4) {
 
 	GDALDatasetH hSrcDS = NULL;
@@ -919,12 +942,18 @@ bool _polygonize(std::string src_filename, int src_band,
 	GDALDatasetH hOutDS = NULL;
 	OGRLayerH hOutLayer = NULL;
 	int iPixValField;
-	CPLErr err;
+
+	std::string src_filename_in;
+	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+	std::string out_dsn_in;
+	out_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(out_dsn));
+	std::string mask_file_in;
+	mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_file));
 
 	if (connectedness != 4 && connectedness != 8)
 		Rcpp::stop("connectedness must be 4 or 8.");
 		
-	hSrcDS = GDALOpenShared(src_filename.c_str(), GA_ReadOnly);
+	hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
 	if (hSrcDS == NULL)
 		Rcpp::stop("Open source raster failed.");
 		
@@ -934,17 +963,17 @@ bool _polygonize(std::string src_filename, int src_band,
 		Rcpp::stop("Failed to access the source band.");
 	}
 
-	if (mask_file == "" && nomask == false) {
+	if (mask_file_in == "" && nomask == false) {
 		// default validity mask
 		hMaskBand = GDALGetMaskBand(hSrcBand);
 	}
-	else if (mask_file == "" && nomask == true) {
+	else if (mask_file_in == "" && nomask == true) {
 		// do not use default validity mask for source band (such as nodata)
 		hMaskBand = NULL;
 	}
 	else {
 		// mask_file specified
-		hMaskDS = GDALOpenShared(mask_file.c_str(), GA_ReadOnly);
+		hMaskDS = GDALOpenShared(mask_file_in.c_str(), GA_ReadOnly);
 		if (hMaskDS == NULL) {
 			GDALClose(hSrcDS);
 			Rcpp::stop("Open mask raster failed.");
@@ -957,7 +986,7 @@ bool _polygonize(std::string src_filename, int src_band,
 		}
 	}
 
-	hOutDS = GDALOpenEx(out_dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+	hOutDS = GDALOpenEx(out_dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
 			NULL, NULL, NULL);
 	if (hOutDS == NULL) {
 		GDALClose(hSrcDS);
@@ -975,7 +1004,7 @@ bool _polygonize(std::string src_filename, int src_band,
 		Rcpp::stop("Failed to open the output layer.");
 	}
 	
-	iPixValField = _ogr_field_index(out_dsn, out_layer, fld_name);
+	iPixValField = _ogr_field_index(out_dsn_in, out_layer, fld_name);
 	if (iPixValField == -1)
 		Rcpp::warning("Field not found, pixel values will not be written.");
 	
@@ -985,11 +1014,12 @@ bool _polygonize(std::string src_filename, int src_band,
     	it = opt_list.insert(it, (char *) ("8CONNECTED=8"));
 	}
 	
-	err = GDALPolygonize(hSrcBand, hMaskBand, hOutLayer, iPixValField,
+	CPLErr err = GDALPolygonize(hSrcBand, hMaskBand, hOutLayer, iPixValField,
 			opt_list.data(), GDALTermProgressR, NULL);
 
 	GDALClose(hSrcDS);
-	GDALClose(hOutDS);
+	//GDALClose(hOutDS);
+	GDALReleaseDataset(hOutDS);
 	if (hMaskDS != NULL)
 		GDALClose(hMaskDS);
 	if (err != CE_None)

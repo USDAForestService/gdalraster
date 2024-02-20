@@ -118,7 +118,8 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
 Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 		const std::vector<double> gt);
 
-bool buildVRT(std::string vrt_filename, Rcpp::CharacterVector input_rasters,
+bool buildVRT(Rcpp::CharacterVector vrt_filename,
+		Rcpp::CharacterVector input_rasters,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 		
 Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
@@ -132,17 +133,20 @@ Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
 Rcpp::DataFrame _value_count(std::string src_filename, int band);
 
 bool _dem_proc(std::string mode,
-		std::string src_filename, 
-		std::string dst_filename,
+		Rcpp::CharacterVector src_filename, 
+		Rcpp::CharacterVector dst_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
 		Rcpp::Nullable<Rcpp::String> col_file);
 
-bool fillNodata(std::string filename, int band, std::string mask_file,
+bool fillNodata(Rcpp::CharacterVector filename, int band,
+		Rcpp::CharacterVector mask_file,
 		double max_dist, int smooth_iterations);
 
-bool _polygonize(std::string src_filename, int src_band,
-		std::string out_dsn, std::string out_layer, std::string fld_name,
-		std::string mask_file, bool nomask, int connectedness);
+bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
+		Rcpp::CharacterVector out_dsn,
+		std::string out_layer, std::string fld_name,
+		Rcpp::CharacterVector mask_file, bool nomask,
+		int connectedness);
 		
 bool _rasterize(std::string src_dsn, std::string dst_filename,
 		Rcpp::CharacterVector cl_arg);
