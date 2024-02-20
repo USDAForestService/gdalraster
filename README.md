@@ -16,9 +16,12 @@ status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usd
 ## Overview
 
 **gdalraster** is an R interface to the Raster API of the Geospatial
-Data Abstraction Library ([GDAL](https://gdal.org/)). Calling signatures
-resemble those of the native C, C++ and Python APIs provided by the GDAL
-project.
+Data Abstraction Library ([GDAL](https://gdal.org/)). Bindings to a
+subset of the GDAL Virtual System Interface
+([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) are also provided to
+support filesystem operations on URLs, cloud storage systems,
+Zip/GZip/7z/RAR and in-memory files. Calling signatures resemble those
+of the native C, C++ and Python APIs provided by the GDAL project.
 
 Bindings to GDAL are implemented in the exposed C++ class
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
@@ -40,6 +43,7 @@ supporting:
     `rasterize()`,
     [`...`](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms))
   - copy files/move/rename/delete datasets
+  - abstraction of filesystem operations on URLs and cloud storage
   - create/append to Seek-Optimized ZIP
     ([SOZip](https://github.com/sozip/sozip-spec))
 
