@@ -1635,6 +1635,9 @@ rasterize <- function(src_dsn,
 					co = NULL,
 					add_options = NULL) {
 
+	src_dsn <- .check_gdal_filename(src_dsn)
+	dstfile <- .check_gdal_filename(dstfile)
+
 	argv <- character(0)
 	
 	if (!is.null(band)) {

@@ -77,20 +77,22 @@ int get_cache_used();
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 int _get_physical_RAM();
 
-bool create(std::string format, std::string dst_filename,
+bool create(std::string format, Rcpp::CharacterVector dst_filename,
 		int xsize, int ysize, int nbands, std::string dataType,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
-bool createCopy(std::string format, std::string dst_filename,
-		std::string src_filename, bool strict,
+bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
+		Rcpp::CharacterVector src_filename, bool strict,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 std::string _getCreationOptions(std::string format);
-bool copyDatasetFiles(std::string new_filename, std::string old_filename,
+bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
+		Rcpp::CharacterVector old_filename,
 		std::string format);
-bool deleteDataset(std::string filename, std::string format);
-bool renameDataset(std::string new_filename, std::string old_filename,
+bool deleteDataset(Rcpp::CharacterVector filename, std::string format);
+bool renameDataset(Rcpp::CharacterVector new_filename,
+		Rcpp::CharacterVector old_filename,
 		std::string format);
-bool bandCopyWholeRaster(std::string src_filename, int src_band,
-		std::string dst_filename, int dst_band,
+bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
+		Rcpp::CharacterVector dst_filename, int dst_band,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 bool _addFileInZip(std::string zip_filename, bool overwrite,
 		std::string archive_filename, std::string in_filename,
@@ -118,7 +120,8 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
 Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 		const std::vector<double> gt);
 
-bool buildVRT(std::string vrt_filename, Rcpp::CharacterVector input_rasters,
+bool buildVRT(Rcpp::CharacterVector vrt_filename,
+		Rcpp::CharacterVector input_rasters,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 		
 Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
@@ -132,31 +135,36 @@ Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
 Rcpp::DataFrame _value_count(std::string src_filename, int band);
 
 bool _dem_proc(std::string mode,
-		std::string src_filename, 
-		std::string dst_filename,
+		Rcpp::CharacterVector src_filename, 
+		Rcpp::CharacterVector dst_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
 		Rcpp::Nullable<Rcpp::String> col_file);
 
-bool fillNodata(std::string filename, int band, std::string mask_file,
+bool fillNodata(Rcpp::CharacterVector filename, int band,
+		Rcpp::CharacterVector mask_file,
 		double max_dist, int smooth_iterations);
 
-bool _polygonize(std::string src_filename, int src_band,
-		std::string out_dsn, std::string out_layer, std::string fld_name,
-		std::string mask_file, bool nomask, int connectedness);
-		
+bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
+		Rcpp::CharacterVector out_dsn,
+		std::string out_layer, std::string fld_name,
+		Rcpp::CharacterVector mask_file, bool nomask,
+		int connectedness);
+
 bool _rasterize(std::string src_dsn, std::string dst_filename,
 		Rcpp::CharacterVector cl_arg);
-		
-bool sieveFilter(std::string src_filename, int src_band,
-		std::string dst_filename, int dst_band,
+
+bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
+		Rcpp::CharacterVector dst_filename, int dst_band,
 		int size_threshold, int connectedness,
-		std::string mask_filename , int mask_band,
+		Rcpp::CharacterVector mask_filename , int mask_band,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 
-bool translate(std::string src_filename, std::string dst_filename,
+bool translate(Rcpp::CharacterVector src_filename,
+		Rcpp::CharacterVector dst_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 		
-bool warp(std::vector<std::string> src_files, std::string dst_filename,
+bool warp(Rcpp::CharacterVector src_files,
+		Rcpp::CharacterVector dst_filename,
 		std::string t_srs, 
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 		

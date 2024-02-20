@@ -97,6 +97,8 @@ addFilesInZip <- function(
 
 	if (!is.character(zip_file) || length(zip_file) > 1)
 		stop("`zip_file` must be a string.", call. = FALSE)
+	else
+		zip_file <- .check_gdal_filename(zip_file)
 	
 	if (!is.character(add_files))
 		stop("`add_files` must be a character vector of filenames.",
@@ -176,7 +178,7 @@ addFilesInZip <- function(
 					(substr(f, 3, 3) == "/" || substr(f, 3, 3) == '\\')) {
 			archive_fname <- substring(f, 4)
 		}
-		archive_fname <- enc2utf8(archive_fname)
+		archive_fname <- .check_gdal_filename(archive_fname)
 
 		if (!.addFileInZip(zip_file,
 							overwrite = FALSE,
