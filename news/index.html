@@ -56,7 +56,9 @@
 
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.8.0.9050" id="gdalraster-1809050-dev">gdalraster 1.8.0.9050 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1809050-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/vsi_rename.html">vsi_rename()</a></code>: wrapper for <code>VSIRename()</code> in the GDAL Common Portability Library (2024-02-18)</p></li>
+<ul><li><p><code>GDALRaster$new()</code>: add an alternate class constructor for using dataset open options (2024-02-19)</p></li>
+<li><p>use <code>_check_gdal_filename()</code> throughout for minimal filename check and UTF-8 (2024-02-19)</p></li>
+<li><p>add <code><a href="../reference/vsi_rename.html">vsi_rename()</a></code>: wrapper for <code>VSIRename()</code> in the GDAL Common Portability Library (2024-02-18)</p></li>
 <li><p>add unit tests for src/gdal_vsi.cpp, and additional tests for src/gdal_exp.cpp (2024-02-17)</p></li>
 <li><p>set test coverage target minimum to 90%, codecov range: 70..90 (previously 80%, 60..80) (2024-02-17)</p></li>
 <li><p>add <code><a href="../reference/vsi_stat.html">vsi_stat()</a></code>: wrapper for <code>VSIStatExL()</code> in the GDAL Common Portability Library (2024-02-17)</p></li>

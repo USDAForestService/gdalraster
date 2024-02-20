@@ -84,6 +84,11 @@ raster format descriptions:
 <dd><p>Logical. <code>TRUE</code> to open the dataset read-only (the default),
 or <code>FALSE</code> to open with write access.</p></dd>
 
+
+<dt>open_options</dt>
+<dd><p>Optional character vector of <code>NAME=VALUE</code> pairs
+specifying dataset open options.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -111,6 +116,8 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 
 <div class="sourceCode"><pre><code><span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co"># or, using dataset open options:</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, <span class="va">read_only</span>, <span class="va">open_options</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Methods (see Details)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getFilename</span><span class="op">(</span><span class="op">)</span></span>
@@ -190,6 +197,12 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <p><code>new(GDALRaster, filename, read_only)</code>
 Constructor. Returns an object of class <code>GDALRaster</code>.
 <code>read_only</code> defaults to <code>TRUE</code> if not specified.</p>
+<p><code>new(GDALRaster, filename, read_only, open_options)</code>
+Alternate constructor for passing dataset <code>open_options</code>, a character
+vector of <code>NAME=VALUE</code> pairs.
+<code>read_only</code> is required for this form of the contructor, <code>TRUE</code> for
+read-only, or <code>FALSE</code> to open with write access.
+Returns an object of class <code>GDALRaster</code>.</p>
 <p><code>$getFilename()</code>
 Returns a character string containing the <code>filename</code> associated with this
 <code>GDALRaster</code> object (<code>filename</code> originally used to open the dataset).</p>
