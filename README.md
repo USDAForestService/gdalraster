@@ -19,9 +19,9 @@ status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usd
 Data Abstraction Library ([GDAL](https://gdal.org/)). Bindings to a
 subset of the GDAL Virtual System Interface
 ([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) are also provided to
-support filesystem operations on URLs, cloud storage systems,
-Zip/GZip/7z/RAR and in-memory files. Calling signatures resemble those
-of the native C, C++ and Python APIs provided by the GDAL project.
+support filesystem operations on URLs, cloud storage, Zip/GZip/7z/RAR
+and in-memory files. Calling signatures resemble those of the native C,
+C++ and Python APIs provided by the GDAL project.
 
 Bindings to GDAL are implemented in the exposed C++ class
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
