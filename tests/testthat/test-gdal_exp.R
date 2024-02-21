@@ -279,6 +279,8 @@ test_that("translate runs without error", {
 })
 
 test_that("footprint runs without error", {
+	skip_if(.gdal_version_num() < 3080000)
+	
 	evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 	args <- c("-t_srs", "EPSG:4326")
 	out_file <- paste0(tempdir(), "/", "storml.geojson")
