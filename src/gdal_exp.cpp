@@ -560,7 +560,7 @@ bool buildVRT(Rcpp::CharacterVector vrt_filename,
 	vrt_filename_in = Rcpp::as<std::string>(_check_gdal_filename(vrt_filename));
 
 	std::vector<std::string> input_rasters_in(input_rasters.size());
-	std::vector<const char *> src_ds_files(input_rasters.size());
+	std::vector<const char *> src_ds_files(input_rasters.size() + 1);
 	for (R_xlen_t i = 0; i < input_rasters.size(); ++i) {
 		input_rasters_in[i] = Rcpp::as<std::string>(
 				_check_gdal_filename(
@@ -568,6 +568,7 @@ bool buildVRT(Rcpp::CharacterVector vrt_filename,
 				));
 		src_ds_files[i] = input_rasters_in[i].c_str();
 	}
+	src_ds_files[input_rasters.size()] = NULL;
 	
 	std::vector<char *> argv = {NULL};
 	if (cl_arg.isNotNull()) {
