@@ -462,9 +462,12 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #' out_file <- paste0(tempdir(), "/", "storml.geojson")
 #'
-#' # command-line arguments for gdal_footprint
-#' args <- c("-t_srs", "EPSG:4326")
-#' footprint(evt_file, out_file, args)
+#' # Requires GDAL >= 3.8
+#' if (as.integer(gdal_version()[2]) >= 3080000) {
+#'   # command-line arguments for gdal_footprint
+#'   args <- c("-t_srs", "EPSG:4326")
+#'   footprint(evt_file, out_file, args)
+#' }
 footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
     invisible(.Call(`_gdalraster_footprint`, src_filename, dst_filename, cl_arg))
 }

@@ -965,9 +965,12 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 //' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 //' out_file <- paste0(tempdir(), "/", "storml.geojson")
 //'
-//' # command-line arguments for gdal_footprint
-//' args <- c("-t_srs", "EPSG:4326")
-//' footprint(evt_file, out_file, args)
+//' # Requires GDAL >= 3.8
+//' if (as.integer(gdal_version()[2]) >= 3080000) {
+//'   # command-line arguments for gdal_footprint
+//'   args <- c("-t_srs", "EPSG:4326")
+//'   footprint(evt_file, out_file, args)
+//' }
 // [[Rcpp::export(invisible = true)]]
 bool footprint(Rcpp::CharacterVector src_filename,
 		Rcpp::CharacterVector dst_filename,
