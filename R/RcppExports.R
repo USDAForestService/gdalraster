@@ -425,6 +425,50 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
     invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations))
 }
 
+#' Compute footprint of a raster
+#'
+#' `footprint()` is a wrapper of the \command{gdal_footprint} command-line
+#' utility (see \url{https://gdal.org/programs/gdal_footprint.html}).
+#' The function can be used to compute the footprint of a raster file, taking
+#' into account nodata values (or more generally the mask band attached to
+#' the raster bands), and generating polygons/multipolygons corresponding to
+#' areas where pixels are valid, and write to an output vector file.
+#' Refer to the GDAL documentation at the URL above for a list of command-line
+#' arguments that can be passed in `cl_arg`. Requires GDAL >= 3.8.
+#'
+#' @details
+#' Post-vectorization geometric operations are applied in the following order:
+#' * optional splitting (`-split_polys`)
+#' * optional densification (`-densify`)
+#' * optional reprojection (`-t_srs`)
+#' * optional filtering by minimum ring area (`-min_ring_area`)
+#' * optional application of convex hull (`-convex_hull`)
+#' * optional simplification (`-simplify`)
+#' * limitation of number of points (`-max_points`)
+#'
+#' @param src_filename Character string. Filename of the source raster.
+#' @param dst_filename Character string. Filename of the destination vector.
+#' If the file and the output layer exist, the new footprint is appended to
+#' them, unless the `-overwrite` command-line argument is used.
+#' @param cl_arg Optional character vector of command-line arguments for 
+#' \code{gdal_footprint}.
+#' @returns Logical indicating success (invisible \code{TRUE}).
+#' An error is raised if the operation fails.
+#' 
+#' @seealso
+#' [polygonize()]
+#'
+#' @examples
+#' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+#' out_file <- paste0(tempdir(), "/", "storml.geojson")
+#'
+#' # command-line arguments for gdal_footprint
+#' args <- c("-t_srs", "EPSG:4326")
+#' footprint(evt_file, out_file, args)
+footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
+    invisible(.Call(`_gdalraster_footprint`, src_filename, dst_filename, cl_arg))
+}
+
 #' Wrapper for GDALPolygonize in the GDAL Algorithms C API
 #'
 #' Called from and documented in R/gdalraster_proc.R

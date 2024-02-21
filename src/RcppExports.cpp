@@ -233,6 +233,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// footprint
+bool footprint(Rcpp::CharacterVector src_filename, Rcpp::CharacterVector dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+RcppExport SEXP _gdalraster_footprint(SEXP src_filenameSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    rcpp_result_gen = Rcpp::wrap(footprint(src_filename, dst_filename, cl_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _polygonize
 bool _polygonize(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector out_dsn, std::string out_layer, std::string fld_name, Rcpp::CharacterVector mask_file, bool nomask, int connectedness);
 RcppExport SEXP _gdalraster__polygonize(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP out_dsnSEXP, SEXP out_layerSEXP, SEXP fld_nameSEXP, SEXP mask_fileSEXP, SEXP nomaskSEXP, SEXP connectednessSEXP) {
@@ -1043,6 +1056,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__value_count", (DL_FUNC) &_gdalraster__value_count, 2},
     {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 5},
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 5},
+    {"_gdalraster_footprint", (DL_FUNC) &_gdalraster_footprint, 3},
     {"_gdalraster__polygonize", (DL_FUNC) &_gdalraster__polygonize, 8},
     {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 3},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 9},

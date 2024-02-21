@@ -278,3 +278,11 @@ test_that("translate runs without error", {
 	deleteDataset(img_file)
 })
 
+test_that("footprint runs without error", {
+	evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+	args <- c("-t_srs", "EPSG:4326")
+	out_file <- paste0(tempdir(), "/", "storml.geojson")
+	expect_true(footprint(evt_file, out_file, args))
+	deleteDataset(out_file)
+})
+

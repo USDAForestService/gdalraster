@@ -928,6 +928,101 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 }
 
 
+//' Compute footprint of a raster
+//'
+//' `footprint()` is a wrapper of the \command{gdal_footprint} command-line
+//' utility (see \url{https://gdal.org/programs/gdal_footprint.html}).
+//' The function can be used to compute the footprint of a raster file, taking
+//' into account nodata values (or more generally the mask band attached to
+//' the raster bands), and generating polygons/multipolygons corresponding to
+//' areas where pixels are valid, and write to an output vector file.
+//' Refer to the GDAL documentation at the URL above for a list of command-line
+//' arguments that can be passed in `cl_arg`. Requires GDAL >= 3.8.
+//'
+//' @details
+//' Post-vectorization geometric operations are applied in the following order:
+//' * optional splitting (`-split_polys`)
+//' * optional densification (`-densify`)
+//' * optional reprojection (`-t_srs`)
+//' * optional filtering by minimum ring area (`-min_ring_area`)
+//' * optional application of convex hull (`-convex_hull`)
+//' * optional simplification (`-simplify`)
+//' * limitation of number of points (`-max_points`)
+//'
+//' @param src_filename Character string. Filename of the source raster.
+//' @param dst_filename Character string. Filename of the destination vector.
+//' If the file and the output layer exist, the new footprint is appended to
+//' them, unless the `-overwrite` command-line argument is used.
+//' @param cl_arg Optional character vector of command-line arguments for 
+//' \code{gdal_footprint}.
+//' @returns Logical indicating success (invisible \code{TRUE}).
+//' An error is raised if the operation fails.
+//' 
+//' @seealso
+//' [polygonize()]
+//'
+//' @examples
+//' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
+//' out_file <- paste0(tempdir(), "/", "storml.geojson")
+//'
+//' # command-line arguments for gdal_footprint
+//' args <- c("-t_srs", "EPSG:4326")
+//' footprint(evt_file, out_file, args)
+// [[Rcpp::export(invisible = true)]]
+bool footprint(Rcpp::CharacterVector src_filename,
+		Rcpp::CharacterVector dst_filename,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+
+#if GDAL_VERSION_NUM < 3080000
+	Rcpp::stop("footprint() requires GDAL >= 3.8.");
+
+#else
+	std::string src_filename_in;
+	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+	std::string dst_filename_in;
+	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+	
+	bool ret = false;
+	GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
+	if (src_ds == NULL)
+		Rcpp::stop("Open source raster failed.");
+
+	std::vector<char *> argv = {NULL};
+	if (cl_arg.isNotNull()) {
+		// cast Nullable to the underlying type
+		Rcpp::CharacterVector cl_arg_in(cl_arg);
+		argv.resize(cl_arg_in.size() + 1);
+		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+			argv[i] = (char *) (cl_arg_in[i]);
+		}
+		argv[cl_arg_in.size()] = NULL;
+	}
+	
+	GDALFootprintOptions* psOptions = GDALFootprintOptionsNew(argv.data(), NULL);
+	if (psOptions == NULL)
+		Rcpp::stop("footprint() failed (could not create options struct).");
+	GDALFootprintOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	
+	GDALDatasetH hDstDS = GDALFootprint(dst_filename_in.c_str(), NULL, src_ds,
+							psOptions, NULL);
+							
+	GDALFootprintOptionsFree(psOptions);
+	
+	if (hDstDS != NULL) {
+		GDALReleaseDataset(hDstDS);
+		ret = true;
+	}
+	GDALClose(src_ds);
+	
+	if (!ret)
+		Rcpp::stop("footprint() failed.");
+	
+	return ret;
+	
+#endif
+}
+
+
 //' Wrapper for GDALPolygonize in the GDAL Algorithms C API
 //'
 //' Called from and documented in R/gdalraster_proc.R

@@ -1,5 +1,7 @@
 # gdalraster 1.8.0.9100 (dev)
 
+* add `footprint()`: wrapper of the `gdal_footprint` command-line utility, compute footprint of a raster (GDAL >= 3.8) (2024-02-20)
+
 * `GDALRaster$new()`: add a constructor for using dataset open options (#224) (2024-02-19)
 
 * use `_check_gdal_filename()` throughout for minimal filename check and UTF-8 (2024-02-19)
