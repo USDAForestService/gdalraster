@@ -42,6 +42,7 @@ reference:
   - combine
   - dem_proc
   - fillNodata
+  - footprint
   - polygonize
   - rasterize
   - sieveFilter

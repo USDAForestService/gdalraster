@@ -144,6 +144,10 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 		Rcpp::CharacterVector mask_file,
 		double max_dist, int smooth_iterations);
 
+bool footprint(Rcpp::CharacterVector src_filename,
+		Rcpp::CharacterVector dst_filename,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+
 bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
 		Rcpp::CharacterVector out_dsn,
 		std::string out_layer, std::string fld_name,

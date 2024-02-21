@@ -32,6 +32,7 @@
   
   \item algorithms: \code{\link[=dem_proc]{dem_proc()}},
   \code{\link[=fillNodata]{fillNodata()}},
+  \code{\link[=footprint]{footprint()}},
   \code{\link[=polygonize]{polygonize()}},
   \code{\link[=rasterize]{rasterize()}},\cr
   \code{\link[=sieveFilter]{sieveFilter()}},
