@@ -96,6 +96,7 @@ reference:
   - vsi_stat
   - vsi_sync
   - vsi_unlink
+  - vsi_unlink_batch
 - subtitle: GDAL configuration
 - contents:
   - gdal_formats

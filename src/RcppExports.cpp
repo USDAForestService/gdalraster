@@ -502,6 +502,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// vsi_unlink_batch
+Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames);
+RcppExport SEXP _gdalraster_vsi_unlink_batch(SEXP filenamesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filenames(filenamesSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_unlink_batch(filenames));
+    return rcpp_result_gen;
+END_RCPP
+}
 // vsi_stat
 SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);
 RcppExport SEXP _gdalraster_vsi_stat(SEXP filenameSEXP, SEXP infoSEXP) {
@@ -1076,6 +1087,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_mkdir", (DL_FUNC) &_gdalraster_vsi_mkdir, 2},
     {"_gdalraster_vsi_rmdir", (DL_FUNC) &_gdalraster_vsi_rmdir, 1},
     {"_gdalraster_vsi_unlink", (DL_FUNC) &_gdalraster_vsi_unlink, 1},
+    {"_gdalraster_vsi_unlink_batch", (DL_FUNC) &_gdalraster_vsi_unlink_batch, 1},
     {"_gdalraster_vsi_stat", (DL_FUNC) &_gdalraster_vsi_stat, 2},
     {"_gdalraster_vsi_rename", (DL_FUNC) &_gdalraster_vsi_rename, 2},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},

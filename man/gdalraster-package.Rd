@@ -80,7 +80,8 @@
   \code{\link[=vsi_rmdir]{vsi_rmdir()}},
   \code{\link[=vsi_stat]{vsi_stat()}},
   \code{\link[=vsi_sync]{vsi_sync()}},
-  \code{\link[=vsi_unlink]{vsi_unlink()}}
+  \code{\link[=vsi_unlink]{vsi_unlink()}},
+  \code{\link[=vsi_unlink_batch]{vsi_unlink_batch()}}
   
   \item GDAL configuration:
   \code{\link[=gdal_version]{gdal_version()}},
