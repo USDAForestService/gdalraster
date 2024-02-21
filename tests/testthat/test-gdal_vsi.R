@@ -36,6 +36,20 @@ test_that("vsi_unlink works", {
 	expect_equal(vsi_unlink(tmp_file), 0)
 })
 
+test_that("vsi_unlink_batch works", {
+	skip_if(as.integer(gdal_version()[2]) < 3010000)
+	
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
+	tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
+	file.copy(elev_file,  tmp_elev)
+	tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
+	file.copy(tcc_file,  tmp_tcc)
+	expect_true(all(vsi_unlink_batch(c(tmp_elev, tmp_tcc))))
+	expect_false(all(vsi_unlink_batch(c(tmp_elev, tmp_tcc))))
+	expect_vector(vsi_unlink_batch(c(tmp_elev, tmp_tcc)), logical(), 2)
+})
+
 test_that("vsi_mkdir and vsi_rmdir work", {
 	new_dir <- file.path(tempdir(), "newdir")
 	expect_equal(vsi_mkdir(new_dir), 0)

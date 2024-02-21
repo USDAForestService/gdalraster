@@ -1345,7 +1345,7 @@ vsi_rmdir <- function(path) {
 #' @returns Invisibly, `0` on success or `-1` on an error.
 #'
 #' @seealso
-#' [deleteDataset()], [vsi_rmdir()]
+#' [deleteDataset()], [vsi_rmdir()], [vsi_unlink_batch()]
 #'
 #' @examples
 #' # for illustration only
@@ -1357,6 +1357,41 @@ vsi_rmdir <- function(path) {
 #' print(result)
 vsi_unlink <- function(filename) {
     invisible(.Call(`_gdalraster_vsi_unlink`, filename))
+}
+
+#' Delete several files in a batch
+#'
+#' `vsi_unlink_batch()` deletes a list of files passed in a character vector.
+#' All files should belong to the same file system handler.
+#' This is implemented efficiently for /vsis3/ and /vsigs/ (provided for
+#' /vsigs/ that OAuth2 authentication is used).
+#' This function is a wrapper for `VSIUnlinkBatch()` in the GDAL Common
+#' Portability Library. Requires GDAL >= 3.1
+#'
+#' @param filenames Character vector. The list of files to delete.
+#' @returns Invisibly, a logical vector of `length(filenames)` with values
+#' depending on the success of deletion of the corresponding file.
+#'
+#' @seealso
+#' [deleteDataset()], [vsi_rmdir()], [vsi_unlink()]
+#'
+#' @examples
+#' # for illustration only
+#' # this would normally be used with GDAL virtual file systems
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
+#'
+#' # Requires GDAL >= 3.1
+#' if (as.integer(gdal_version()[2]) >= 3010000) {
+#'   tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
+#'   file.copy(elev_file,  tmp_elev)
+#'   tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
+#'   file.copy(tcc_file,  tmp_tcc)
+#'   result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
+#'   print(result)
+#' }
+vsi_unlink_batch <- function(filenames) {
+    invisible(.Call(`_gdalraster_vsi_unlink_batch`, filenames))
 }
 
 #' Get filesystem object info

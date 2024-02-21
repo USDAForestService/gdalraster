@@ -29,5 +29,5 @@ result <- vsi_unlink(tmp_file)
 print(result)
 }
 \seealso{
-\code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=vsi_rmdir]{vsi_rmdir()}}
+\code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=vsi_rmdir]{vsi_rmdir()}}, \code{\link[=vsi_unlink_batch]{vsi_unlink_batch()}}
 }

@@ -1,4 +1,6 @@
-# gdalraster 1.8.0.9110 (dev)
+# gdalraster 1.8.0.9120 (dev)
+
+* add `vsi_unlink_batch()`: wrapper for `VSIUnlinkBatch()` in the GDAL Common Portability Library (2024-02-20)
 
 * add `footprint()`: wrapper of the `gdal_footprint` command-line utility, compute footprint of a raster (GDAL >= 3.8) (2024-02-20)
 
