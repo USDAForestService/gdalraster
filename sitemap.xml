@@ -235,6 +235,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_unlink.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_unlink_batch.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/warp.html</loc>
   </url>
 </urlset>
