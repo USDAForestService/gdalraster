@@ -1,4 +1,4 @@
-# gdalraster 1.8.0.9100 (dev)
+# gdalraster 1.8.0.9110 (dev)
 
 * add `footprint()`: wrapper of the `gdal_footprint` command-line utility, compute footprint of a raster (GDAL >= 3.8) (2024-02-20)
 
