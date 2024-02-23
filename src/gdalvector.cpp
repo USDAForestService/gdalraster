@@ -143,14 +143,87 @@ std::string GDALVector::getDriverLongName() const {
 	return GDALGetDriverLongName(hDriver);
 }
 
-double GDALVector::getFeatureCount(bool force) const {
-	// OGR_L_GetFeatureCount returns GIntBig so we return as double to R
+Rcpp::List GDALVector::getLayerDefn() const {
+	_checkAccess(GA_ReadOnly);
+	
+	OGRFeatureDefnH hFDefn = OGR_L_GetLayerDefn(hLayer);
+	if (hFDefn == nullptr)
+		Rcpp::stop("Error: could not obtain layer definition.");
+	
+	Rcpp::List list_out = Rcpp::List::create();
+	int iField;
+
+	for (iField=0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
+		OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
+		if (hFieldDefn == nullptr)
+			Rcpp::stop("Error: could not obtain field definition.");
+
+		OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+		Rcpp::CharacterVector value(1);
+		
+		// TODO: add list types, date, time, binary, etc.
+		if (fld_type == OFTInteger) {
+			value[0] = "OFTInteger";
+		}
+		else if (fld_type == OFTInteger64) {
+			value[0] = "OFTInteger64";
+		}
+		else if (fld_type == OFTReal) {
+			value[0] = "OFTReal";
+		}
+		else if (fld_type == OFTString) {
+			value[0] = "OFTString";
+		}
+		else {
+			value[0] = "default (read as OFTString)";
+		}
+		list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
+	}
+
+	int nGeomFieldCount = OGR_FD_GetGeomFieldCount(hFDefn);
+	for (int i = 0; i < nGeomFieldCount; ++i) {
+		// TODO: get geometry type
+//		OGRGeometryH hGeometry = OGR_F_GetGeomFieldRef(hFeature, i);
+//		if (hGeomFldDefn == nullptr)
+//			Rcpp::stop("Error: could not obtain geometry field definition.");
+//		char* pszWKT;
+//		OGR_G_ExportToWkt(hGeometry, &pszWKT);
+//		Rcpp::CharacterVector wkt(1);
+//		wkt[0] = pszWKT;
+		OGRGeomFieldDefnH hGeomFldDefn =
+				OGR_FD_GetGeomFieldDefn(hFDefn, i);
+		if (hGeomFldDefn == nullptr)
+			Rcpp::stop("Error: could not obtain geometry field definition.");
+		list_out.push_back("OGRwkbGeometryType", OGR_GFld_GetNameRef(hGeomFldDefn));
+		// TODO: get possible spatial ref for this field OGR_GFld_GetSpatialRef()
+		// where should spatial ref at the geometry field-level be stored
+		//CPLFree(pszWKT);
+	}
+	
+	return list_out;
+}
+
+void GDALVector::setAttributeFilter(std::string query) {
+	_checkAccess(GA_ReadOnly);
+
+	const char* query_in = NULL;
+	if (query != "")
+		query_in = query.c_str();
+		
+	if (OGR_L_SetAttributeFilter(hLayer, query_in) != OGRERR_NONE)
+		Rcpp::stop("Error setting filter, possibly in the query expression");
+}
+
+double GDALVector::getFeatureCount(bool force) {
+	// OGR_L_GetFeatureCount() returns GIntBig so we return as double to R.
+	// GDAL doc: Note that some implementations of this method may alter the
+	// read cursor of the layer.
 	_checkAccess(GA_ReadOnly);
 		
 	return OGR_L_GetFeatureCount(hLayer, force);
 }
 
-SEXP GDALVector::getNextFeature() const {
+SEXP GDALVector::getNextFeature() {
 	_checkAccess(GA_ReadOnly);
 
 	OGRFeatureH hFeature = OGR_L_GetNextFeature(hLayer);
@@ -158,15 +231,20 @@ SEXP GDALVector::getNextFeature() const {
 	if (hFeature != nullptr) {
 		Rcpp::List list_out = Rcpp::List::create();
 		OGRFeatureDefnH hFDefn = OGR_L_GetLayerDefn(hLayer);
+		if (hFDefn == nullptr)
+			Rcpp::stop("Error: could not obtain layer definition.");
 		int iField;
 
 		for (iField=0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
 			OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
+			if (hFieldDefn == nullptr)
+				Rcpp::stop("Error: could not obtain field definition.");
 			if (!OGR_F_IsFieldSet(hFeature, iField) ||
 					OGR_F_IsFieldNull(hFeature, iField)) {
 				continue;
 			}
 
+			// TODO: support date, time, binary, etc.
 			OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
 			if (fld_type == OFTInteger) {
 				Rcpp::IntegerVector value(1);
@@ -186,6 +264,7 @@ SEXP GDALVector::getNextFeature() const {
 				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
 			else {
+				// read as string for now
 				Rcpp::CharacterVector value(1);
 				value[0] = OGR_F_GetFieldAsString(hFeature, iField);
 				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
@@ -195,12 +274,16 @@ SEXP GDALVector::getNextFeature() const {
 		int nGeomFieldCount = OGR_F_GetGeomFieldCount(hFeature);
 		for (int i = 0; i < nGeomFieldCount; ++i) {
 			OGRGeometryH hGeometry = OGR_F_GetGeomFieldRef(hFeature, i);
+			if (hGeometry == nullptr)
+				Rcpp::stop("Error: could not obtain geometry reference.");
 			char* pszWKT;
 			OGR_G_ExportToWkt(hGeometry, &pszWKT);
 			Rcpp::CharacterVector wkt(1);
 			wkt[0] = pszWKT;
 			OGRGeomFieldDefnH hGeomFldDefn =
 					OGR_F_GetGeomFieldDefnRef(hFeature, i);
+			if (hGeomFldDefn == nullptr)
+				Rcpp::stop("Error: could not obtain geometry field definition.");
 			list_out.push_back(wkt, OGR_GFld_GetNameRef(hGeomFldDefn));
 			CPLFree(pszWKT);
 		}
@@ -210,6 +293,12 @@ SEXP GDALVector::getNextFeature() const {
 	else {
 		return R_NilValue;
 	}
+}
+
+void GDALVector::resetReading() {
+	_checkAccess(GA_ReadOnly);
+	
+	OGR_L_ResetReading(hLayer);
 }
 
 void GDALVector::close() {
@@ -248,23 +337,29 @@ RCPP_MODULE(mod_GDALVector) {
     	("Usage: new(GDALVector, dsn, layer, read_only, open_options)")
     
     // exposed member functions
-    .const_method("getDsn", &GDALVector::getDsn, 
+    .const_method("getDsn", &GDALVector::getDsn,
     	"Return the DSN.")
-    .const_method("isOpen", &GDALVector::isOpen, 
+    .const_method("isOpen", &GDALVector::isOpen,
     	"Is the dataset open?")
-    .const_method("isVirtual", &GDALVector::isVirtual, 
+    .const_method("isVirtual", &GDALVector::isVirtual,
     	"Is this a virtual layer?")
-    .const_method("getFileList", &GDALVector::getFileList, 
+    .const_method("getFileList", &GDALVector::getFileList,
     	"Fetch files forming dataset.")
     .const_method("getDriverShortName", &GDALVector::getDriverShortName,
     	 "Return the short name of the format driver.")
     .const_method("getDriverLongName", &GDALVector::getDriverLongName,
     	"Return the long name of the format driver.")
-    .const_method("getFeatureCount", &GDALVector::getFeatureCount,
+    .const_method("getLayerDefn", &GDALVector::getLayerDefn,
+    	"Fetch the schema information for this layer.")
+    .method("setAttributeFilter", &GDALVector::setAttributeFilter,
+    	"Set a new attribute query.")
+    .method("getFeatureCount", &GDALVector::getFeatureCount,
     	"Fetch the feature count in this layer.")
-    .const_method("getNextFeature", &GDALVector::getNextFeature,
+    .method("getNextFeature", &GDALVector::getNextFeature,
     	"Fetch the next available feature from this layer.")
-    .method("close", &GDALVector::close, 
+    .method("resetReading", &GDALVector::resetReading,
+    	"Reset feature reading to start on the first feature.")
+    .method("close", &GDALVector::close,
     	"Release the dataset for proper cleanup.")
     
     ;

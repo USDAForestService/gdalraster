@@ -43,8 +43,12 @@ class GDALVector {
 	std::string getDriverShortName() const;
 	std::string getDriverLongName() const;
 
-	double getFeatureCount(bool force) const;
-	SEXP getNextFeature() const;
+	Rcpp::List getLayerDefn() const;
+	
+	void setAttributeFilter(std::string qry);
+	double getFeatureCount(bool force);
+	SEXP getNextFeature();
+	void resetReading();
 
 	void close();
 	
