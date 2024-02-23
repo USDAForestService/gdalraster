@@ -46,7 +46,8 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 	else
 		nOpenFlags |= GDAL_OF_UPDATE;
 		
-	hDataset = GDALOpenEx(dsn_in.c_str(), nOpenFlags, nullptr, nullptr, nullptr);
+	hDataset = GDALOpenEx(dsn_in.c_str(), nOpenFlags,
+			nullptr, nullptr, nullptr);
 	if (hDataset == nullptr)
 		Rcpp::stop("Open dataset failed.");
 		
@@ -81,7 +82,8 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 	else
 		nOpenFlags |= GDAL_OF_UPDATE;
 
-	hDataset = GDALOpenEx(dsn_in.c_str(), nOpenFlags, nullptr, dsoo.data(), nullptr);
+	hDataset = GDALOpenEx(dsn_in.c_str(), nOpenFlags,
+			nullptr, dsoo.data(), nullptr);
 	if (hDataset == nullptr)
 		Rcpp::stop("Open raster failed.");
 		
@@ -151,53 +153,99 @@ Rcpp::List GDALVector::getLayerDefn() const {
 		Rcpp::stop("Error: could not obtain layer definition.");
 	
 	Rcpp::List list_out = Rcpp::List::create();
+	std::string sValue;
+	int nValue;
+	bool bValue;
 	int iField;
 
+	// attribute fields
 	for (iField=0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
+	
+		Rcpp::List list_fld_defn = Rcpp::List::create();
 		OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
 		if (hFieldDefn == nullptr)
 			Rcpp::stop("Error: could not obtain field definition.");
 
 		OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
-		Rcpp::CharacterVector value(1);
-		
 		// TODO: add list types, date, time, binary, etc.
 		if (fld_type == OFTInteger) {
-			value[0] = "OFTInteger";
+			sValue = "OFTInteger";
 		}
 		else if (fld_type == OFTInteger64) {
-			value[0] = "OFTInteger64";
+			sValue = "OFTInteger64";
 		}
 		else if (fld_type == OFTReal) {
-			value[0] = "OFTReal";
+			sValue = "OFTReal";
 		}
 		else if (fld_type == OFTString) {
-			value[0] = "OFTString";
+			sValue = "OFTString";
 		}
 		else {
-			value[0] = "default (read as OFTString)";
+			sValue = "default (read as OFTString)";
 		}
-		list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
+		list_fld_defn.push_back(sValue, "type");
+		
+		nValue = OGR_Fld_GetWidth(hFieldDefn);
+		list_fld_defn.push_back(nValue, "width");
+		
+		nValue = OGR_Fld_GetPrecision(hFieldDefn);
+		list_fld_defn.push_back(nValue, "precision");
+		
+		bValue = OGR_Fld_IsNullable(hFieldDefn);
+		list_fld_defn.push_back(bValue, "is_nullable");
+
+		bValue = OGR_Fld_IsUnique(hFieldDefn);
+		list_fld_defn.push_back(bValue, "is_unique");
+
+		if (OGR_Fld_GetDefault(hFieldDefn) != nullptr)
+			sValue = std::string(OGR_Fld_GetDefault(hFieldDefn));
+		else
+			sValue = "";
+		list_fld_defn.push_back(sValue, "default");
+
+		bValue = OGR_Fld_IsIgnored(hFieldDefn);
+		list_fld_defn.push_back(bValue, "is_ignored");
+
+		list_out.push_back(list_fld_defn, OGR_Fld_GetNameRef(hFieldDefn));
 	}
 
-	int nGeomFieldCount = OGR_FD_GetGeomFieldCount(hFDefn);
-	for (int i = 0; i < nGeomFieldCount; ++i) {
-		// TODO: get geometry type
-//		OGRGeometryH hGeometry = OGR_F_GetGeomFieldRef(hFeature, i);
-//		if (hGeomFldDefn == nullptr)
-//			Rcpp::stop("Error: could not obtain geometry field definition.");
-//		char* pszWKT;
-//		OGR_G_ExportToWkt(hGeometry, &pszWKT);
-//		Rcpp::CharacterVector wkt(1);
-//		wkt[0] = pszWKT;
+	// geometry fields
+	for (int i = 0; i < OGR_FD_GetGeomFieldCount(hFDefn); ++i) {
+	
+		Rcpp::List list_geom_fld_defn = Rcpp::List::create();
 		OGRGeomFieldDefnH hGeomFldDefn =
 				OGR_FD_GetGeomFieldDefn(hFDefn, i);
 		if (hGeomFldDefn == nullptr)
 			Rcpp::stop("Error: could not obtain geometry field definition.");
-		list_out.push_back("OGRwkbGeometryType", OGR_GFld_GetNameRef(hGeomFldDefn));
-		// TODO: get possible spatial ref for this field OGR_GFld_GetSpatialRef()
-		// where should spatial ref at the geometry field-level be stored
-		//CPLFree(pszWKT);
+		
+		// TODO: get geometry type name ("geometry" for now)
+		list_geom_fld_defn.push_back("geometry", "type");
+		
+		// include the geom type enum value?
+		//nValue = OGR_GFld_GetType(hGeomFldDefn);
+		//list_geom_fld_defn.push_back(nValue, "OGRwkbGeometryType");
+		
+		// TODO: make this always WKT2?
+		OGRSpatialReferenceH hSRS = OGR_GFld_GetSpatialRef(hGeomFldDefn);
+		if (hSRS == nullptr)
+			Rcpp::stop("Error: could not obtain geometry SRS.");
+		char *pszSRS_WKT = nullptr;
+		if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE) {
+			Rcpp::stop("Error exporting geometry SRS to WKT.");
+		}
+		sValue = std::string(pszSRS_WKT);
+		list_geom_fld_defn.push_back(sValue, "srs");
+		
+		bValue = OGR_GFld_IsNullable(hGeomFldDefn);
+		list_geom_fld_defn.push_back(bValue, "is_nullable");
+		
+		bValue = OGR_GFld_IsIgnored(hGeomFldDefn);
+		list_geom_fld_defn.push_back(bValue, "is_ignored");
+		
+		list_out.push_back(list_geom_fld_defn,
+				OGR_GFld_GetNameRef(hGeomFldDefn));
+				
+		CPLFree(pszSRS_WKT);
 	}
 	
 	return list_out;
@@ -244,7 +292,6 @@ SEXP GDALVector::getNextFeature() {
 				continue;
 			}
 
-			// TODO: support date, time, binary, etc.
 			OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
 			if (fld_type == OFTInteger) {
 				Rcpp::IntegerVector value(1);
@@ -264,6 +311,7 @@ SEXP GDALVector::getNextFeature() {
 				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
 			else {
+				// TODO: support date, time, binary, etc.
 				// read as string for now
 				Rcpp::CharacterVector value(1);
 				value[0] = OGR_F_GetFieldAsString(hFeature, iField);
@@ -271,8 +319,7 @@ SEXP GDALVector::getNextFeature() {
 			}
 		}
 
-		int nGeomFieldCount = OGR_F_GetGeomFieldCount(hFeature);
-		for (int i = 0; i < nGeomFieldCount; ++i) {
+		for (int i = 0; i < OGR_F_GetGeomFieldCount(hFeature); ++i) {
 			OGRGeometryH hGeometry = OGR_F_GetGeomFieldRef(hFeature, i);
 			if (hGeometry == nullptr)
 				Rcpp::stop("Error: could not obtain geometry reference.");
@@ -283,7 +330,7 @@ SEXP GDALVector::getNextFeature() {
 			OGRGeomFieldDefnH hGeomFldDefn =
 					OGR_F_GetGeomFieldDefnRef(hFeature, i);
 			if (hGeomFldDefn == nullptr)
-				Rcpp::stop("Error: could not obtain geometry field definition.");
+				Rcpp::stop("Error: could not obtain geometry field def.");
 			list_out.push_back(wkt, OGR_GFld_GetNameRef(hGeomFldDefn));
 			CPLFree(pszWKT);
 		}
@@ -312,7 +359,7 @@ void GDALVector::close() {
 
 void GDALVector::_checkAccess(GDALAccess access_needed) const {
 	if (!isOpen())
-		Rcpp::stop("Raster dataset is not open.");
+		Rcpp::stop("Dataset is not open.");
 	
 	if (access_needed == GA_Update && eAccess == GA_ReadOnly)
 		Rcpp::stop("Dataset is read-only.");
