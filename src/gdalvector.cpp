@@ -16,6 +16,7 @@
 GDALVector::GDALVector() : 
 			dsn_in(""),
 			layer_in(""),
+			open_options_in(Rcpp::CharacterVector::create()),
 			hDataset(nullptr),
 			eAccess(GA_ReadOnly),
 			hLayer(nullptr) {}
@@ -49,7 +50,6 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 
 	std::vector<char *> dsoo(open_options_in.size() + 1);
 	if (open_options_in.size() > 0) {
-		std::vector<char *> dsoo(open_options_in.size() + 1);
 		for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
 			dsoo[i] = (char *) (open_options_in[i]);
 		}
@@ -101,7 +101,6 @@ void GDALVector::open(bool read_only) {
 
 	std::vector<char *> dsoo(open_options_in.size() + 1);
 	if (open_options_in.size() > 0) {
-		std::vector<char *> dsoo(open_options_in.size() + 1);
 		for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
 			dsoo[i] = (char *) (open_options_in[i]);
 		}
