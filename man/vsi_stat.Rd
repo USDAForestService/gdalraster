@@ -51,10 +51,19 @@ vsi_stat(elev_file)
 vsi_stat(elev_file, "type")
 vsi_stat(elev_file, "size")
 
-nonexistent <- file.path(data_dir, "wrong_filename.tif")
+nonexistent <- file.path(data_dir, "nonexistent.tif")
 vsi_stat(nonexistent)
 vsi_stat(nonexistent, "type")
 vsi_stat(nonexistent, "size")
+
+# /vsicurl/ file system handler 
+base_url <- "https://raw.githubusercontent.com/usdaforestservice/"
+f <- "gdalraster/main/sample-data/landsat_c2ard_sr_mt_hood_jul2022_utm.tif"
+url_file <- paste0("/vsicurl/", base_url, f)
+
+vsi_stat(url_file)
+vsi_stat(url_file, "type")
+vsi_stat(url_file, "size")
 }
 \seealso{
 GDAL Virtual File Systems:\cr
