@@ -29,7 +29,7 @@ It is a wrapper for \code{VSIStatExL()} in the GDAL Common Portability Library.
 Analog of the POSIX \code{stat()} function.
 }
 \note{
-For portabilty, \code{vsi_stat()} supports a subset of \code{stat()}-type
+For portability, \code{vsi_stat()} supports a subset of \code{stat()}-type
 information for filesystem objects. This function is primarily intended
 for use with GDAL virtual file systems (e.g., URLs, cloud storage systems,
 ZIP/GZip/7z/RAR archives, in-memory files).
@@ -51,10 +51,19 @@ vsi_stat(elev_file)
 vsi_stat(elev_file, "type")
 vsi_stat(elev_file, "size")
 
-nonexistent <- file.path(data_dir, "wrong_filename.tif")
+nonexistent <- file.path(data_dir, "nonexistent.tif")
 vsi_stat(nonexistent)
 vsi_stat(nonexistent, "type")
 vsi_stat(nonexistent, "size")
+
+# /vsicurl/ file system handler 
+base_url <- "https://raw.githubusercontent.com/usdaforestservice/"
+f <- "gdalraster/main/sample-data/landsat_c2ard_sr_mt_hood_jul2022_utm.tif"
+url_file <- paste0("/vsicurl/", base_url, f)
+
+vsi_stat(url_file)
+vsi_stat(url_file, "type")
+vsi_stat(url_file, "size")
 }
 \seealso{
 GDAL Virtual File Systems:\cr
