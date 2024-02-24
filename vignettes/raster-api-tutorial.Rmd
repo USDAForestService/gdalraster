@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-**gdalraster** provides bindings to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Using the API natively enables fast and scalable raster I/O from R. This vignette is an R port of the [GDAL Raster API tutorial](https://gdal.org/tutorials/raster_api_tut.html) for C++, C and Python, (c) 1998-2023 [Frank Warmerdam](https://github.com/warmerdam), [Even Rouault](https://github.com/rouault), and [others](https://github.com/OSGeo/gdal/graphs/contributors) ([MIT license](https://gdal.org/license.html)).
+**gdalraster** provides bindings to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Using the API natively enables fast and scalable raster I/O from R. This vignette is an R port of the [GDAL Raster API tutorial](https://gdal.org/tutorials/raster_api_tut.html) for C++, C and Python, (c) 1998-2024 [Frank Warmerdam](https://github.com/warmerdam), [Even Rouault](https://github.com/rouault), and [others](https://github.com/OSGeo/gdal/graphs/contributors) ([MIT license](https://gdal.org/license.html)).
 
 ## Opening a raster dataset
 
