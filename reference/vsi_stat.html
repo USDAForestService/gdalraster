@@ -137,13 +137,25 @@ tests on regular local filesystems.</p>
 <span class="r-in"><span><span class="fu">vsi_stat</span><span class="op">(</span><span class="va">elev_file</span>, <span class="st">"size"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 31152</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">nonexistent</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"wrong_filename.tif"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">nonexistent</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">data_dir</span>, <span class="st">"nonexistent.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">vsi_stat</span><span class="op">(</span><span class="va">nonexistent</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span><span class="fu">vsi_stat</span><span class="op">(</span><span class="va">nonexistent</span>, <span class="st">"type"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] ""</span>
 <span class="r-in"><span><span class="fu">vsi_stat</span><span class="op">(</span><span class="va">nonexistent</span>, <span class="st">"size"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># /vsicurl/ file system handler </span></span></span>
+<span class="r-in"><span><span class="va">base_url</span> <span class="op">&lt;-</span> <span class="st">"https://raw.githubusercontent.com/usdaforestservice/"</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="st">"gdalraster/main/sample-data/landsat_c2ard_sr_mt_hood_jul2022_utm.tif"</span></span></span>
+<span class="r-in"><span><span class="va">url_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/vsicurl/"</span>, <span class="va">base_url</span>, <span class="va">f</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">vsi_stat</span><span class="op">(</span><span class="va">url_file</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span><span class="fu">vsi_stat</span><span class="op">(</span><span class="va">url_file</span>, <span class="st">"type"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "file"</span>
+<span class="r-in"><span><span class="fu">vsi_stat</span><span class="op">(</span><span class="va">url_file</span>, <span class="st">"size"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 13067777</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
