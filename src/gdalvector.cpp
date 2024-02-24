@@ -14,61 +14,45 @@
 
 
 GDALVector::GDALVector() : 
-				dsn_in(""),
-				layer_in(""),
-				hDataset(nullptr),
-				eAccess(GA_ReadOnly),
-				hLayer(nullptr) {}
+			dsn_in(""),
+			layer_in(""),
+			hDataset(nullptr),
+			eAccess(GA_ReadOnly),
+			hLayer(nullptr) {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer) : 
-				GDALVector(dsn, layer, true) {}
+			GDALVector(
+				dsn,
+				layer,
+				true,
+				Rcpp::CharacterVector::create()) {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 		bool read_only) :
-				layer_in(layer),
-				open_options_in(Rcpp::CharacterVector::create()),
-				hDataset(nullptr),
-				eAccess(GA_ReadOnly),
-				hLayer(nullptr) {
-
-	dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
-	if (!read_only)
-		eAccess = GA_Update;
-
-	unsigned int nOpenFlags = GDAL_OF_VECTOR;
-	if (read_only)
-		nOpenFlags |= GDAL_OF_READONLY;
-	else
-		nOpenFlags |= GDAL_OF_UPDATE;
-		
-	hDataset = GDALOpenEx(dsn_in.c_str(), nOpenFlags,
-			nullptr, nullptr, nullptr);
-	if (hDataset == nullptr)
-		Rcpp::stop("Open dataset failed.");
-		
-	hLayer = GDALDatasetGetLayerByName(hDataset, layer_in.c_str());
-	if (hLayer == nullptr)
-		Rcpp::stop("Failed to get layer object.");
-	else
-		OGR_L_ResetReading(hLayer);
-		
-}
+			GDALVector(
+				dsn,
+				layer,
+				read_only,
+				Rcpp::CharacterVector::create()) {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 		bool read_only, Rcpp::CharacterVector open_options) :
-				layer_in(layer),
-				open_options_in(open_options),
-				hDataset(nullptr),
-				eAccess(GA_ReadOnly),
-				hLayer(nullptr) {
+			layer_in(layer),
+			open_options_in(open_options),
+			hDataset(nullptr),
+			eAccess(GA_ReadOnly),
+			hLayer(nullptr) {
 
 	dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
 	if (!read_only)
 		eAccess = GA_Update;
 
 	std::vector<char *> dsoo(open_options_in.size() + 1);
-	for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
-		dsoo[i] = (char *) (open_options_in[i]);
+	if (open_options_in.size() > 0) {
+		std::vector<char *> dsoo(open_options_in.size() + 1);
+		for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
+			dsoo[i] = (char *) (open_options_in[i]);
+		}
 	}
 	dsoo.push_back(nullptr);
 
