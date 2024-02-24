@@ -1,11 +1,12 @@
 /* Implementation of class GDALVector
-   Encapsulates a GDALDataset and one OGRLayer
+   Encapsulates one OGRLayer and its GDALDataset
    Chris Toney <chris.toney at usda.gov> */
 
 #include "gdal.h"
 #include "cpl_error.h"
 #include "cpl_port.h"
 #include "cpl_string.h"
+#include "ogrsf_frmts.h"
 #include "ogr_srs_api.h"
 
 #include "gdalraster.h"
@@ -16,15 +17,7 @@ GDALVector::GDALVector() :
 				dsn_in(""),
 				hDataset(nullptr),
 				eAccess(GA_ReadOnly),
-				hLayer(nullptr),
-				bVirtual(true) {}
-
-GDALVector::GDALVector(OGRLayerH lyr_obj) :
-				dsn_in(""),
-				hDataset(nullptr),
-				eAccess(GA_ReadOnly),
-				hLayer(lyr_obj),
-				bVirtual(true) {}
+				hLayer(nullptr) {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer) : 
 				GDALVector(dsn, layer, true) {}
@@ -33,14 +26,13 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 		bool read_only) :
 				hDataset(nullptr),
 				eAccess(GA_ReadOnly),
-				hLayer(nullptr),
-				bVirtual(false) {
+				hLayer(nullptr) {
 
 	dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
 	if (!read_only)
 		eAccess = GA_Update;
 
-	unsigned int nOpenFlags = GDAL_OF_VECTOR | GDAL_OF_SHARED;
+	unsigned int nOpenFlags = GDAL_OF_VECTOR;
 	if (read_only)
 		nOpenFlags |= GDAL_OF_READONLY;
 	else
@@ -63,8 +55,7 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 		bool read_only, Rcpp::CharacterVector open_options) :
 				hDataset(nullptr),
 				eAccess(GA_ReadOnly),
-				hLayer(nullptr),
-				bVirtual(false) {
+				hLayer(nullptr) {
 
 	dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
 	if (!read_only)
@@ -76,7 +67,7 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 	}
 	dsoo.push_back(nullptr);
 
-	unsigned int nOpenFlags = GDAL_OF_VECTOR | GDAL_OF_SHARED;
+	unsigned int nOpenFlags = GDAL_OF_VECTOR;
 	if (read_only)
 		nOpenFlags |= GDAL_OF_READONLY;
 	else
@@ -104,10 +95,6 @@ bool GDALVector::isOpen() const {
 		return false;
 	else
 		return true;
-}
-
-bool GDALVector::isVirtual() const {
-	return bVirtual;
 }
 
 Rcpp::CharacterVector GDALVector::getFileList() const {
@@ -143,6 +130,59 @@ std::string GDALVector::getDriverLongName() const {
 		
 	GDALDriverH hDriver = GDALGetDatasetDriver(hDataset);
 	return GDALGetDriverLongName(hDriver);
+}
+
+std::string GDALVector::getName() const {
+	_checkAccess(GA_ReadOnly);
+
+	return OGR_L_GetName(hLayer);
+}
+
+std::string GDALVector::getGeomType() const {
+	_checkAccess(GA_ReadOnly);
+	
+	OGRwkbGeometryType eType = OGR_L_GetGeomType(hLayer);
+	return OGRGeometryTypeToName(eType);
+}
+
+std::string GDALVector::getGeometryColumn() const {
+	_checkAccess(GA_ReadOnly);
+
+	return OGR_L_GetGeometryColumn(hLayer);
+}
+
+std::string GDALVector::getSpatialRef() const {
+	// OGRLayer::GetSpatialRef() as WKT string
+	_checkAccess(GA_ReadOnly);
+
+	OGRSpatialReferenceH hSRS = OGR_L_GetSpatialRef(hLayer);
+	if (hSRS == nullptr)
+		Rcpp::stop("Error: could not obtain SRS.");
+	char *pszSRS_WKT = nullptr;
+	if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE) {
+		Rcpp::stop("Error exporting SRS to WKT.");
+	}
+	std::string srs_wkt(pszSRS_WKT);
+	CPLFree(pszSRS_WKT);
+
+	return srs_wkt;
+}
+
+Rcpp::NumericVector GDALVector::bbox() {
+	// Note: bForce=true in tha call to OGR_L_GetExtent(), so the entire
+	// layer may be scanned to compute MBR.
+	// Depending on the driver, a spatial filter may/may not be taken into
+	// account. So it is safer to call bbox() without setting a spatial filter.
+	_checkAccess(GA_ReadOnly);
+
+	OGREnvelope envelope;
+	if (OGR_L_GetExtent(hLayer, &envelope, true) != OGRERR_NONE)
+		Rcpp::stop("Error: the extent of the layer cannot be determined.");
+	
+	Rcpp::NumericVector bbox_out = {
+		envelope.MinX, envelope.MinY, envelope.MaxX, envelope.MaxY};
+	
+	return bbox_out;
 }
 
 Rcpp::List GDALVector::getLayerDefn() const {
@@ -206,6 +246,9 @@ Rcpp::List GDALVector::getLayerDefn() const {
 		bValue = OGR_Fld_IsIgnored(hFieldDefn);
 		list_fld_defn.push_back(bValue, "is_ignored");
 
+		bValue = false;
+		list_fld_defn.push_back(bValue, "is_geom");
+
 		list_out.push_back(list_fld_defn, OGR_Fld_GetNameRef(hFieldDefn));
 	}
 
@@ -218,14 +261,10 @@ Rcpp::List GDALVector::getLayerDefn() const {
 		if (hGeomFldDefn == nullptr)
 			Rcpp::stop("Error: could not obtain geometry field definition.");
 		
-		// TODO: get geometry type name ("geometry" for now)
-		list_geom_fld_defn.push_back("geometry", "type");
+		OGRwkbGeometryType eType = OGR_GFld_GetType(hGeomFldDefn);
+		sValue = std::string(OGRGeometryTypeToName(eType));
+		list_geom_fld_defn.push_back(sValue, "type");
 		
-		// include the geom type enum value?
-		//nValue = OGR_GFld_GetType(hGeomFldDefn);
-		//list_geom_fld_defn.push_back(nValue, "OGRwkbGeometryType");
-		
-		// TODO: make this always WKT2?
 		OGRSpatialReferenceH hSRS = OGR_GFld_GetSpatialRef(hGeomFldDefn);
 		if (hSRS == nullptr)
 			Rcpp::stop("Error: could not obtain geometry SRS.");
@@ -241,6 +280,9 @@ Rcpp::List GDALVector::getLayerDefn() const {
 		
 		bValue = OGR_GFld_IsIgnored(hGeomFldDefn);
 		list_geom_fld_defn.push_back(bValue, "is_ignored");
+
+		bValue = true;
+		list_geom_fld_defn.push_back(bValue, "is_geom");
 		
 		list_out.push_back(list_geom_fld_defn,
 				OGR_GFld_GetNameRef(hGeomFldDefn));
@@ -260,6 +302,21 @@ void GDALVector::setAttributeFilter(std::string query) {
 		
 	if (OGR_L_SetAttributeFilter(hLayer, query_in) != OGRERR_NONE)
 		Rcpp::stop("Error setting filter, possibly in the query expression");
+}
+
+void GDALVector::setSpatialFilterRect(Rcpp::NumericVector bbox) {
+	_checkAccess(GA_ReadOnly);
+	
+	if (Rcpp::any(Rcpp::is_na(bbox)))
+		Rcpp::stop("Error: bbox has one or more NA values.");
+		
+	OGR_L_SetSpatialFilterRect(hLayer, bbox[0], bbox[1], bbox[2], bbox[3]);
+}
+
+void GDALVector::clearSpatialFilter() {
+	_checkAccess(GA_ReadOnly);
+
+	OGR_L_SetSpatialFilter(hLayer, nullptr);
 }
 
 double GDALVector::getFeatureCount(bool force) {
@@ -348,6 +405,35 @@ void GDALVector::resetReading() {
 	OGR_L_ResetReading(hLayer);
 }
 
+void GDALVector::layerIntersection(
+		GDALVector method_layer,
+		GDALVector result_layer,
+		bool quiet,
+		Rcpp::Nullable<Rcpp::CharacterVector> options) {
+
+	std::vector<char *> opt_list = {NULL};
+	if (options.isNotNull()) {
+		// cast to the underlying type
+		Rcpp::CharacterVector options_in(options);
+		opt_list.resize(options_in.size() + 1);
+		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+			opt_list[i] = (char *) (options_in[i]);
+		}
+		opt_list[options_in.size()] = NULL;
+	}
+	
+	OGRErr err = OGR_L_Intersection(
+			hLayer,
+			method_layer._getOGRLayerH(),
+			result_layer._getOGRLayerH(),
+			opt_list.data(),
+			quiet ? nullptr : GDALTermProgressR, nullptr);
+	
+	if (err != OGRERR_NONE)
+		Rcpp::stop("Error during intersection or execution was interrupted.");
+
+}
+
 void GDALVector::close() {
 	GDALReleaseDataset(hDataset);
 	hDataset = nullptr;
@@ -365,6 +451,12 @@ void GDALVector::_checkAccess(GDALAccess access_needed) const {
 		Rcpp::stop("Dataset is read-only.");
 }
 
+OGRLayerH GDALVector::_getOGRLayerH() {
+	_checkAccess(GA_ReadOnly);
+	
+	return hLayer;
+}
+
 
 // ****************************************************************************
 
@@ -373,9 +465,7 @@ RCPP_MODULE(mod_GDALVector) {
     Rcpp::class_<GDALVector>("GDALVector")
 
     .constructor
-    	("Default constructor, only for allocation in std::vector.")
-    .constructor<OGRLayerH>
-    	("Usage: new(GDALVector, lyr_obj)")
+    	("Default constructor, only for allocations in std::vector.")
     .constructor<Rcpp::CharacterVector, std::string>
     	("Usage: new(GDALVector, dsn, layer)")
     .constructor<Rcpp::CharacterVector, std::string, bool>
@@ -388,26 +478,41 @@ RCPP_MODULE(mod_GDALVector) {
     	"Return the DSN.")
     .const_method("isOpen", &GDALVector::isOpen,
     	"Is the dataset open?")
-    .const_method("isVirtual", &GDALVector::isVirtual,
-    	"Is this a virtual layer?")
     .const_method("getFileList", &GDALVector::getFileList,
     	"Fetch files forming dataset.")
     .const_method("getDriverShortName", &GDALVector::getDriverShortName,
     	 "Return the short name of the format driver.")
     .const_method("getDriverLongName", &GDALVector::getDriverLongName,
     	"Return the long name of the format driver.")
+    .const_method("getName", &GDALVector::getName,
+    	"Return the layer name.")
+    .const_method("getGeomType", &GDALVector::getGeomType,
+    	"Return the layer geometry type.")
+    .const_method("getGeometryColumn", &GDALVector::getGeometryColumn,
+    	"Return name of the underlying db column being used as geom column.")
+    .const_method("getSpatialRef", &GDALVector::getSpatialRef,
+    	"Fetch the spatial reference system for this layer as WKT string.")
+    .method("bbox", &GDALVector::bbox,
+    	"Return the bounding box (xmin, ymin, xmax, ymax).")
     .const_method("getLayerDefn", &GDALVector::getLayerDefn,
     	"Fetch the schema information for this layer.")
     .method("setAttributeFilter", &GDALVector::setAttributeFilter,
     	"Set a new attribute query.")
+    .method("setSpatialFilterRect", &GDALVector::setSpatialFilterRect,
+    	"Set a new rectangular spatial filter.")
+    .method("clearSpatialFilter", &GDALVector::clearSpatialFilter,
+    	"Clear the current spatial filter.")
     .method("getFeatureCount", &GDALVector::getFeatureCount,
     	"Fetch the feature count in this layer.")
     .method("getNextFeature", &GDALVector::getNextFeature,
     	"Fetch the next available feature from this layer.")
     .method("resetReading", &GDALVector::resetReading,
     	"Reset feature reading to start on the first feature.")
+    .method("layerIntersection", &GDALVector::layerIntersection,
+    	"Intersection of this layer with a method layer.")
     .method("close", &GDALVector::close,
     	"Release the dataset for proper cleanup.")
     
     ;
 }
+
