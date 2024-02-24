@@ -57,10 +57,40 @@ class GDALVector {
 	void resetReading();
 
 	void layerIntersection(
-		GDALVector method_layer,
-		GDALVector result_layer,
-		bool quiet,
-		Rcpp::Nullable<Rcpp::CharacterVector> options);
+			GDALVector method_layer,
+			GDALVector result_layer,
+			bool quiet,
+			Rcpp::Nullable<Rcpp::CharacterVector> options);
+	void layerUnion(
+			GDALVector method_layer,
+			GDALVector result_layer,
+			bool quiet,
+			Rcpp::Nullable<Rcpp::CharacterVector> options);
+	void layerSymDifference(
+			GDALVector method_layer,
+			GDALVector result_layer,
+			bool quiet,
+			Rcpp::Nullable<Rcpp::CharacterVector> options);
+	void layerIdentity(
+			GDALVector method_layer,
+			GDALVector result_layer,
+			bool quiet,
+			Rcpp::Nullable<Rcpp::CharacterVector> options);
+	void layerUpdate(
+			GDALVector method_layer,
+			GDALVector result_layer,
+			bool quiet,
+			Rcpp::Nullable<Rcpp::CharacterVector> options);
+	void layerClip(
+			GDALVector method_layer,
+			GDALVector result_layer,
+			bool quiet,
+			Rcpp::Nullable<Rcpp::CharacterVector> options);
+	void layerErase(
+			GDALVector method_layer,
+			GDALVector result_layer,
+			bool quiet,
+			Rcpp::Nullable<Rcpp::CharacterVector> options);
 
 	void close();
 	

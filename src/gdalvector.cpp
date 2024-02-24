@@ -430,7 +430,181 @@ void GDALVector::layerIntersection(
 			quiet ? nullptr : GDALTermProgressR, nullptr);
 	
 	if (err != OGRERR_NONE)
-		Rcpp::stop("Error during intersection or execution was interrupted.");
+		Rcpp::stop("Error during Intersection, or execution was interrupted.");
+
+}
+
+void GDALVector::layerUnion(
+		GDALVector method_layer,
+		GDALVector result_layer,
+		bool quiet,
+		Rcpp::Nullable<Rcpp::CharacterVector> options) {
+
+	std::vector<char *> opt_list = {NULL};
+	if (options.isNotNull()) {
+		// cast to the underlying type
+		Rcpp::CharacterVector options_in(options);
+		opt_list.resize(options_in.size() + 1);
+		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+			opt_list[i] = (char *) (options_in[i]);
+		}
+		opt_list[options_in.size()] = NULL;
+	}
+	
+	OGRErr err = OGR_L_Union(
+			hLayer,
+			method_layer._getOGRLayerH(),
+			result_layer._getOGRLayerH(),
+			opt_list.data(),
+			quiet ? nullptr : GDALTermProgressR, nullptr);
+	
+	if (err != OGRERR_NONE)
+		Rcpp::stop("Error during Union, or execution was interrupted.");
+
+}
+
+void GDALVector::layerSymDifference(
+		GDALVector method_layer,
+		GDALVector result_layer,
+		bool quiet,
+		Rcpp::Nullable<Rcpp::CharacterVector> options) {
+
+	std::vector<char *> opt_list = {NULL};
+	if (options.isNotNull()) {
+		// cast to the underlying type
+		Rcpp::CharacterVector options_in(options);
+		opt_list.resize(options_in.size() + 1);
+		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+			opt_list[i] = (char *) (options_in[i]);
+		}
+		opt_list[options_in.size()] = NULL;
+	}
+	
+	OGRErr err = OGR_L_SymDifference(
+			hLayer,
+			method_layer._getOGRLayerH(),
+			result_layer._getOGRLayerH(),
+			opt_list.data(),
+			quiet ? nullptr : GDALTermProgressR, nullptr);
+	
+	if (err != OGRERR_NONE)
+		Rcpp::stop("Error during SymDifference, or execution was interrupted.");
+
+}
+
+void GDALVector::layerIdentity(
+		GDALVector method_layer,
+		GDALVector result_layer,
+		bool quiet,
+		Rcpp::Nullable<Rcpp::CharacterVector> options) {
+
+	std::vector<char *> opt_list = {NULL};
+	if (options.isNotNull()) {
+		// cast to the underlying type
+		Rcpp::CharacterVector options_in(options);
+		opt_list.resize(options_in.size() + 1);
+		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+			opt_list[i] = (char *) (options_in[i]);
+		}
+		opt_list[options_in.size()] = NULL;
+	}
+	
+	OGRErr err = OGR_L_Identity(
+			hLayer,
+			method_layer._getOGRLayerH(),
+			result_layer._getOGRLayerH(),
+			opt_list.data(),
+			quiet ? nullptr : GDALTermProgressR, nullptr);
+	
+	if (err != OGRERR_NONE)
+		Rcpp::stop("Error during Identity, or execution was interrupted.");
+
+}
+
+void GDALVector::layerUpdate(
+		GDALVector method_layer,
+		GDALVector result_layer,
+		bool quiet,
+		Rcpp::Nullable<Rcpp::CharacterVector> options) {
+
+	std::vector<char *> opt_list = {NULL};
+	if (options.isNotNull()) {
+		// cast to the underlying type
+		Rcpp::CharacterVector options_in(options);
+		opt_list.resize(options_in.size() + 1);
+		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+			opt_list[i] = (char *) (options_in[i]);
+		}
+		opt_list[options_in.size()] = NULL;
+	}
+	
+	OGRErr err = OGR_L_Update(
+			hLayer,
+			method_layer._getOGRLayerH(),
+			result_layer._getOGRLayerH(),
+			opt_list.data(),
+			quiet ? nullptr : GDALTermProgressR, nullptr);
+	
+	if (err != OGRERR_NONE)
+		Rcpp::stop("Error during Update, or execution was interrupted.");
+
+}
+
+void GDALVector::layerClip(
+		GDALVector method_layer,
+		GDALVector result_layer,
+		bool quiet,
+		Rcpp::Nullable<Rcpp::CharacterVector> options) {
+
+	std::vector<char *> opt_list = {NULL};
+	if (options.isNotNull()) {
+		// cast to the underlying type
+		Rcpp::CharacterVector options_in(options);
+		opt_list.resize(options_in.size() + 1);
+		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+			opt_list[i] = (char *) (options_in[i]);
+		}
+		opt_list[options_in.size()] = NULL;
+	}
+	
+	OGRErr err = OGR_L_Clip(
+			hLayer,
+			method_layer._getOGRLayerH(),
+			result_layer._getOGRLayerH(),
+			opt_list.data(),
+			quiet ? nullptr : GDALTermProgressR, nullptr);
+	
+	if (err != OGRERR_NONE)
+		Rcpp::stop("Error during Clip, or execution was interrupted.");
+
+}
+
+void GDALVector::layerErase(
+		GDALVector method_layer,
+		GDALVector result_layer,
+		bool quiet,
+		Rcpp::Nullable<Rcpp::CharacterVector> options) {
+
+	std::vector<char *> opt_list = {NULL};
+	if (options.isNotNull()) {
+		// cast to the underlying type
+		Rcpp::CharacterVector options_in(options);
+		opt_list.resize(options_in.size() + 1);
+		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+			opt_list[i] = (char *) (options_in[i]);
+		}
+		opt_list[options_in.size()] = NULL;
+	}
+	
+	OGRErr err = OGR_L_Erase(
+			hLayer,
+			method_layer._getOGRLayerH(),
+			result_layer._getOGRLayerH(),
+			opt_list.data(),
+			quiet ? nullptr : GDALTermProgressR, nullptr);
+	
+	if (err != OGRERR_NONE)
+		Rcpp::stop("Error during Erase, or execution was interrupted.");
 
 }
 
@@ -510,6 +684,18 @@ RCPP_MODULE(mod_GDALVector) {
     	"Reset feature reading to start on the first feature.")
     .method("layerIntersection", &GDALVector::layerIntersection,
     	"Intersection of this layer with a method layer.")
+    .method("layerUnion", &GDALVector::layerUnion,
+    	"Union of this layer with a method layer.")
+    .method("layerSymDifference", &GDALVector::layerSymDifference,
+    	"Symmetrical difference of this layer and a method layer.")
+    .method("layerIdentity", &GDALVector::layerIdentity,
+    	"Identify features of this layer with the ones from the method layer.")
+    .method("layerUpdate", &GDALVector::layerUpdate,
+    	"Update this layer with features from the method layer.")
+    .method("layerClip", &GDALVector::layerClip,
+    	"Clip off areas that are not covered by the method layer.")
+    .method("layerErase", &GDALVector::layerErase,
+    	"Remove areas that are covered by the method layer.")
     .method("close", &GDALVector::close,
     	"Release the dataset for proper cleanup.")
     
