@@ -15,6 +15,7 @@
 
 GDALVector::GDALVector() : 
 				dsn_in(""),
+				layer_in(""),
 				hDataset(nullptr),
 				eAccess(GA_ReadOnly),
 				hLayer(nullptr) {}
@@ -24,6 +25,8 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer) :
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 		bool read_only) :
+				layer_in(layer),
+				open_options_in(Rcpp::CharacterVector::create()),
 				hDataset(nullptr),
 				eAccess(GA_ReadOnly),
 				hLayer(nullptr) {
@@ -43,7 +46,7 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 	if (hDataset == nullptr)
 		Rcpp::stop("Open dataset failed.");
 		
-	hLayer = GDALDatasetGetLayerByName(hDataset, layer.c_str());
+	hLayer = GDALDatasetGetLayerByName(hDataset, layer_in.c_str());
 	if (hLayer == nullptr)
 		Rcpp::stop("Failed to get layer object.");
 	else
@@ -53,6 +56,8 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 		bool read_only, Rcpp::CharacterVector open_options) :
+				layer_in(layer),
+				open_options_in(open_options),
 				hDataset(nullptr),
 				eAccess(GA_ReadOnly),
 				hLayer(nullptr) {
@@ -61,9 +66,9 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 	if (!read_only)
 		eAccess = GA_Update;
 
-	std::vector<char *> dsoo(open_options.size() + 1);
-	for (R_xlen_t i = 0; i < open_options.size(); ++i) {
-		dsoo[i] = (char *) (open_options[i]);
+	std::vector<char *> dsoo(open_options_in.size() + 1);
+	for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
+		dsoo[i] = (char *) (open_options_in[i]);
 	}
 	dsoo.push_back(nullptr);
 
@@ -76,9 +81,9 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 	hDataset = GDALOpenEx(dsn_in.c_str(), nOpenFlags,
 			nullptr, dsoo.data(), nullptr);
 	if (hDataset == nullptr)
-		Rcpp::stop("Open raster failed.");
-		
-	hLayer = GDALDatasetGetLayerByName(hDataset, layer.c_str());
+		Rcpp::stop("Open dataset failed.");
+	
+	hLayer = GDALDatasetGetLayerByName(hDataset, layer_in.c_str());
 	if (hLayer == nullptr)
 		Rcpp::stop("Failed to get layer object.");
 	else
@@ -95,6 +100,46 @@ bool GDALVector::isOpen() const {
 		return false;
 	else
 		return true;
+}
+
+void GDALVector::open(bool read_only) {
+	if (dsn_in == "")
+		Rcpp::stop("DSN is not set.");
+	
+	GDALClose(hDataset);
+	hDataset = nullptr;
+	hLayer = nullptr;
+	
+	if (read_only)
+		eAccess = GA_ReadOnly;
+	else
+		eAccess = GA_Update;
+
+	std::vector<char *> dsoo(open_options_in.size() + 1);
+	if (open_options_in.size() > 0) {
+		std::vector<char *> dsoo(open_options_in.size() + 1);
+		for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
+			dsoo[i] = (char *) (open_options_in[i]);
+		}
+	}
+	dsoo.push_back(nullptr);
+
+	unsigned int nOpenFlags = GDAL_OF_VECTOR;
+	if (read_only)
+		nOpenFlags |= GDAL_OF_READONLY;
+	else
+		nOpenFlags |= GDAL_OF_UPDATE;
+	
+	hDataset = GDALOpenEx(dsn_in.c_str(), nOpenFlags,
+			nullptr, dsoo.data(), nullptr);
+	if (hDataset == nullptr)
+		Rcpp::stop("Open dataset failed.");
+	
+	hLayer = GDALDatasetGetLayerByName(hDataset, layer_in.c_str());
+	if (hLayer == nullptr)
+		Rcpp::stop("Failed to get layer object.");
+	else
+		OGR_L_ResetReading(hLayer);
 }
 
 Rcpp::CharacterVector GDALVector::getFileList() const {
@@ -617,6 +662,7 @@ void GDALVector::layerErase(
 void GDALVector::close() {
 	GDALReleaseDataset(hDataset);
 	hDataset = nullptr;
+	hLayer = nullptr;
 }
 
 // ****************************************************************************
@@ -658,6 +704,8 @@ RCPP_MODULE(mod_GDALVector) {
     	"Return the DSN.")
     .const_method("isOpen", &GDALVector::isOpen,
     	"Is the dataset open?")
+    .method("open", &GDALVector::open,
+    	"(Re-)open the dataset on the existing DSN and layer.")
     .const_method("getFileList", &GDALVector::getFileList,
     	"Fetch files forming dataset.")
     .const_method("getDriverShortName", &GDALVector::getDriverShortName,

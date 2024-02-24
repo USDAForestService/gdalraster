@@ -23,6 +23,8 @@ class GDALVector {
 
 	private:
 	std::string dsn_in;
+	std::string layer_in;
+	Rcpp::CharacterVector open_options_in;
 	GDALDatasetH  hDataset;
 	GDALAccess eAccess;
 	OGRLayerH hLayer;
@@ -33,9 +35,10 @@ class GDALVector {
 	GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only);
 	GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
 			Rcpp::CharacterVector open_options);
-	
+
 	std::string getDsn() const;
 	bool isOpen() const;
+	void open(bool read_only);
 	Rcpp::CharacterVector getFileList() const;
 	std::string getDriverShortName() const;
 	std::string getDriverLongName() const;
