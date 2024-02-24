@@ -106,13 +106,17 @@ bool _create_ogr(std::string format, std::string dst_filename,
 	}
 	else {
 		layer_ok = true;
-		hFieldDefn = OGR_Fld_Create(fld_name.c_str(), OFTInteger);
-		if (OGR_L_CreateField(hLayer, hFieldDefn, TRUE) != OGRERR_NONE)
-			fld_ok = false;
-		else
+		if (fld_name != "") {
+			hFieldDefn = OGR_Fld_Create(fld_name.c_str(), OFTInteger);
+			if (OGR_L_CreateField(hLayer, hFieldDefn, TRUE) != OGRERR_NONE)
+				fld_ok = false;
+			else
+				fld_ok = true;
+			OGR_Fld_Destroy(hFieldDefn);
+		}
+		else {
 			fld_ok = true;
-
-		OGR_Fld_Destroy(hFieldDefn);
+		}
 	}
 	
 	OSRDestroySpatialReference(hSRS);
