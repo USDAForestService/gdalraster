@@ -37,11 +37,11 @@ class GDALVector {
 	std::string getDsn() const;
 	bool isOpen() const;
 	Rcpp::CharacterVector getFileList() const;
-
 	std::string getDriverShortName() const;
 	std::string getDriverLongName() const;
 
 	std::string getName() const;
+	bool testCapability(std::string capability) const;
 	std::string getGeomType() const;
 	std::string getGeometryColumn() const;
 	std::string getSpatialRef() const;
@@ -52,7 +52,7 @@ class GDALVector {
 	void setSpatialFilterRect(Rcpp::NumericVector bbox);
 	void clearSpatialFilter();
 	
-	double getFeatureCount(bool force);
+	double getFeatureCount();
 	SEXP getNextFeature();
 	void resetReading();
 

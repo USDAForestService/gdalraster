@@ -138,6 +138,12 @@ std::string GDALVector::getName() const {
 	return OGR_L_GetName(hLayer);
 }
 
+bool GDALVector::testCapability(std::string capability) const {
+	_checkAccess(GA_ReadOnly);
+	
+	return OGR_L_TestCapability(hLayer, capability.c_str());
+}
+
 std::string GDALVector::getGeomType() const {
 	_checkAccess(GA_ReadOnly);
 	
@@ -197,6 +203,8 @@ Rcpp::List GDALVector::getLayerDefn() const {
 	int nValue;
 	bool bValue;
 	int iField;
+	
+	// TODO: include FID here?
 
 	// attribute fields
 	for (iField=0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
@@ -319,13 +327,13 @@ void GDALVector::clearSpatialFilter() {
 	OGR_L_SetSpatialFilter(hLayer, nullptr);
 }
 
-double GDALVector::getFeatureCount(bool force) {
+double GDALVector::getFeatureCount() {
 	// OGR_L_GetFeatureCount() returns GIntBig so we return as double to R.
 	// GDAL doc: Note that some implementations of this method may alter the
 	// read cursor of the layer.
 	_checkAccess(GA_ReadOnly);
-		
-	return OGR_L_GetFeatureCount(hLayer, force);
+	
+	return OGR_L_GetFeatureCount(hLayer, true);
 }
 
 SEXP GDALVector::getNextFeature() {
@@ -340,6 +348,9 @@ SEXP GDALVector::getNextFeature() {
 			Rcpp::stop("Error: could not obtain layer definition.");
 		int iField;
 
+		double FID = static_cast<double>(OGR_F_GetFID(hFeature));
+		list_out.push_back(FID, "FID");
+		
 		for (iField=0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
 			OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
 			if (hFieldDefn == nullptr)
@@ -351,27 +362,23 @@ SEXP GDALVector::getNextFeature() {
 
 			OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
 			if (fld_type == OFTInteger) {
-				Rcpp::IntegerVector value(1);
-				value[0] = OGR_F_GetFieldAsInteger(hFeature, iField);
+				int value = OGR_F_GetFieldAsInteger(hFeature, iField);
 				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
 			else if (fld_type == OFTInteger64) {
 				// R does not have native int64 so handled as double for now
-				Rcpp::NumericVector value(1);
-				value[0] = static_cast<double>(
+				double value = static_cast<double>(
 						OGR_F_GetFieldAsInteger64(hFeature, iField));
 				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
 			else if (fld_type == OFTReal) {
-				Rcpp::NumericVector value(1);
-				value[0] = OGR_F_GetFieldAsDouble(hFeature, iField);
+				double value = OGR_F_GetFieldAsDouble(hFeature, iField);
 				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
 			else {
 				// TODO: support date, time, binary, etc.
 				// read as string for now
-				Rcpp::CharacterVector value(1);
-				value[0] = OGR_F_GetFieldAsString(hFeature, iField);
+				std::string value = OGR_F_GetFieldAsString(hFeature, iField);
 				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
 		}
@@ -382,8 +389,7 @@ SEXP GDALVector::getNextFeature() {
 				Rcpp::stop("Error: could not obtain geometry reference.");
 			char* pszWKT;
 			OGR_G_ExportToWkt(hGeometry, &pszWKT);
-			Rcpp::CharacterVector wkt(1);
-			wkt[0] = pszWKT;
+			std::string wkt(pszWKT);
 			OGRGeomFieldDefnH hGeomFldDefn =
 					OGR_F_GetGeomFieldDefnRef(hFeature, i);
 			if (hGeomFldDefn == nullptr)
@@ -660,6 +666,8 @@ RCPP_MODULE(mod_GDALVector) {
     	"Return the long name of the format driver.")
     .const_method("getName", &GDALVector::getName,
     	"Return the layer name.")
+    .const_method("testCapability", &GDALVector::testCapability,
+    	"Test if this layer supports the named capability.")
     .const_method("getGeomType", &GDALVector::getGeomType,
     	"Return the layer geometry type.")
     .const_method("getGeometryColumn", &GDALVector::getGeometryColumn,
