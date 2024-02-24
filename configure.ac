@@ -5,7 +5,7 @@
 # GDAL headers. Still checks that PROJ is available to GDAL and handles optional
 # local copy of the PROJ data directory. The PROJ datadir is now obtained from
 # pkg-config if possible. Compiler invocations are now logged.
-AC_INIT([gdalraster],[1.8.0.9120],[chris.toney@usda.gov])
+AC_INIT([gdalraster],[1.8.0.9130],[chris.toney@usda.gov])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
