@@ -182,7 +182,8 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 class GDALRaster {
 
 	private:
-	std::string fname;
+	std::string fname_in;
+	Rcpp::CharacterVector open_options_in;
 	GDALDatasetH  hDataset;
 	GDALAccess eAccess;
 	
