@@ -29,7 +29,7 @@ It is a wrapper for \code{VSIStatExL()} in the GDAL Common Portability Library.
 Analog of the POSIX \code{stat()} function.
 }
 \note{
-For portabilty, \code{vsi_stat()} supports a subset of \code{stat()}-type
+For portability, \code{vsi_stat()} supports a subset of \code{stat()}-type
 information for filesystem objects. This function is primarily intended
 for use with GDAL virtual file systems (e.g., URLs, cloud storage systems,
 ZIP/GZip/7z/RAR archives, in-memory files).

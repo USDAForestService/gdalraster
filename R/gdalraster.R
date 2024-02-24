@@ -113,7 +113,7 @@
 #' \code{new(GDALRaster, filename, read_only, open_options)}
 #' Alternate constructor for passing dataset `open_options`, a character
 #' vector of `NAME=VALUE` pairs.
-#' `read_only` is required for this form of the contructor, `TRUE` for
+#' `read_only` is required for this form of the constructor, `TRUE` for
 #'  read-only, or `FALSE` to open with write access.
 #' Returns an object of class `GDALRaster`.
 #'

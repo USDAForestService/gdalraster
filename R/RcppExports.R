@@ -1414,7 +1414,7 @@ vsi_unlink_batch <- function(filenames) {
 #' returns the file size in bytes, or `-1` if an error occurs.
 #'
 #' @note
-#' For portabilty, `vsi_stat()` supports a subset of `stat()`-type
+#' For portability, `vsi_stat()` supports a subset of `stat()`-type
 #' information for filesystem objects. This function is primarily intended
 #' for use with GDAL virtual file systems (e.g., URLs, cloud storage systems,
 #' ZIP/GZip/7z/RAR archives, in-memory files).

@@ -130,7 +130,7 @@ Constructor. Returns an object of class \code{GDALRaster}.
 \code{new(GDALRaster, filename, read_only, open_options)}
 Alternate constructor for passing dataset \code{open_options}, a character
 vector of \code{NAME=VALUE} pairs.
-\code{read_only} is required for this form of the contructor, \code{TRUE} for
+\code{read_only} is required for this form of the constructor, \code{TRUE} for
 read-only, or \code{FALSE} to open with write access.
 Returns an object of class \code{GDALRaster}.
 
