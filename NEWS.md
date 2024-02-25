@@ -1,6 +1,6 @@
-# gdalraster 1.8.0.9130 (dev)
+# gdalraster 1.8.0.9140 (dev)
 
-* `GDALRaster`: refactor constructor for `open_options` (2024-02-24)
+* `GDALRaster`: refactor constructors for dataset `open_options` (2024-02-24)
 
 * add `vsi_unlink_batch()`: wrapper for `VSIUnlinkBatch()` in the GDAL Common Portability Library (2024-02-20)
 
