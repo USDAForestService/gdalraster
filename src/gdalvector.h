@@ -23,7 +23,8 @@ class GDALVector {
 
 	private:
 	std::string dsn_in;
-	std::string layer_in;
+	std::string layer_in;  // layer name or sql statement
+	bool is_sql_in;
 	Rcpp::CharacterVector open_options_in;
 	GDALDatasetH  hDataset;
 	GDALAccess eAccess;
@@ -37,15 +38,16 @@ class GDALVector {
 	GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
 			Rcpp::CharacterVector open_options);
 
-	std::string getDsn() const;
-	bool isOpen() const;
 	void open(bool read_only);
+	bool isOpen() const;
+	std::string getDsn() const;
 	Rcpp::CharacterVector getFileList() const;
 	std::string getDriverShortName() const;
 	std::string getDriverLongName() const;
 
 	std::string getName() const;
 	bool testCapability(std::string capability) const;
+	std::string getFIDColumn() const;
 	std::string getGeomType() const;
 	std::string getGeometryColumn() const;
 	std::string getSpatialRef() const;

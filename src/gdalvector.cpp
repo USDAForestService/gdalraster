@@ -3,7 +3,6 @@
    Chris Toney <chris.toney at usda.gov> */
 
 #include "gdal.h"
-#include "cpl_error.h"
 #include "cpl_port.h"
 #include "cpl_string.h"
 #include "ogrsf_frmts.h"
@@ -16,6 +15,7 @@
 GDALVector::GDALVector() : 
 			dsn_in(""),
 			layer_in(""),
+			is_sql_in(false),
 			open_options_in(Rcpp::CharacterVector::create()),
 			hDataset(nullptr),
 			eAccess(GA_ReadOnly),
@@ -48,22 +48,13 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 	open(read_only);
 }
 
-std::string GDALVector::getDsn() const {
-	return dsn_in;
-}
-
-bool GDALVector::isOpen() const {
-	if (hDataset == nullptr)
-		return false;
-	else
-		return true;
-}
-
 void GDALVector::open(bool read_only) {
 	if (dsn_in == "")
 		Rcpp::stop("DSN is not set.");
 	
 	if (hDataset != nullptr) {
+		if (is_sql_in)
+			GDALDatasetReleaseResultSet(hDataset, hLayer);
 		GDALReleaseDataset(hDataset);
 		hDataset = nullptr;
 		hLayer = nullptr;
@@ -93,7 +84,14 @@ void GDALVector::open(bool read_only) {
 	if (hDataset == nullptr)
 		Rcpp::stop("Open dataset failed.");
 	
-	hLayer = GDALDatasetGetLayerByName(hDataset, layer_in.c_str());
+	if (STARTS_WITH_CI(layer_in.c_str(), "SELECT ")) {
+		is_sql_in = true;
+		hLayer = GDALDatasetExecuteSQL(hDataset, layer_in.c_str(), NULL, NULL);
+	}
+	else {
+		is_sql_in = false;
+		hLayer = GDALDatasetGetLayerByName(hDataset, layer_in.c_str());
+	}
 	if (hLayer == nullptr) {
 		GDALReleaseDataset(hDataset);
 		Rcpp::stop("Get layer failed.");
@@ -104,9 +102,22 @@ void GDALVector::open(bool read_only) {
 	
 	hFDefn = OGR_L_GetLayerDefn(hLayer);
 	if (hFDefn == nullptr) {
+		if (is_sql_in)
+			GDALDatasetReleaseResultSet(hDataset, hLayer);
 		GDALReleaseDataset(hDataset);
 		Rcpp::stop("Get layer definition failed.");
 	}
+}
+
+bool GDALVector::isOpen() const {
+	if (hDataset == nullptr)
+		return false;
+	else
+		return true;
+}
+
+std::string GDALVector::getDsn() const {
+	return dsn_in;
 }
 
 Rcpp::CharacterVector GDALVector::getFileList() const {
@@ -156,6 +167,12 @@ bool GDALVector::testCapability(std::string capability) const {
 	return OGR_L_TestCapability(hLayer, capability.c_str());
 }
 
+std::string GDALVector::getFIDColumn() const {
+	_checkAccess(GA_ReadOnly);
+
+	return OGR_L_GetFIDColumn(hLayer);
+}
+
 std::string GDALVector::getGeomType() const {
 	_checkAccess(GA_ReadOnly);
 	
@@ -189,6 +206,7 @@ std::string GDALVector::getSpatialRef() const {
 Rcpp::NumericVector GDALVector::bbox() {
 	// Note: bForce=true in tha call to OGR_L_GetExtent(), so the entire
 	// layer may be scanned to compute MBR.
+	// see: testCapability("FastGetExtent")
 	// Depending on the driver, a spatial filter may/may not be taken into
 	// account. So it is safer to call bbox() without setting a spatial filter.
 	_checkAccess(GA_ReadOnly);
@@ -211,8 +229,6 @@ Rcpp::List GDALVector::getLayerDefn() const {
 	int nValue;
 	bool bValue;
 	int iField;
-	
-	// TODO: include FID here?
 
 	// attribute fields
 	for (iField=0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
@@ -339,6 +355,7 @@ double GDALVector::getFeatureCount() {
 	// OGR_L_GetFeatureCount() returns GIntBig so we return as double to R.
 	// GDAL doc: Note that some implementations of this method may alter the
 	// read cursor of the layer.
+	// see: testCapability("FastFeatureCount")
 	_checkAccess(GA_ReadOnly);
 	
 	return OGR_L_GetFeatureCount(hLayer, true);
@@ -621,6 +638,8 @@ void GDALVector::layerErase(
 
 void GDALVector::close() {
 	if (hDataset != nullptr) {
+		if (is_sql_in)
+			GDALDatasetReleaseResultSet(hDataset, hLayer);
 		GDALReleaseDataset(hDataset);
 		hDataset = nullptr;
 		hLayer = nullptr;
@@ -678,6 +697,8 @@ RCPP_MODULE(mod_GDALVector) {
     	"Return the layer name.")
     .const_method("testCapability", &GDALVector::testCapability,
     	"Test if this layer supports the named capability.")
+    .const_method("getFIDColumn", &GDALVector::getFIDColumn,
+    	"Return name of the underlying db column being used as FID column.")
     .const_method("getGeomType", &GDALVector::getGeomType,
     	"Return the layer geometry type.")
     .const_method("getGeometryColumn", &GDALVector::getGeometryColumn,
