@@ -72,7 +72,7 @@ Additional functionality includes:
   - [`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html)
     displays raster data using base R graphics.
 
-\*\*gdalraster\* may be useful in applications that need scalable,
+**gdalraster** may be useful in applications that need scalable,
 low-level I/O, or prefer a direct GDAL API. Comprehensive
 [documentation](#documentation) is provided in the package and online.
 

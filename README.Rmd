@@ -51,7 +51,7 @@ for each unique combination are obtained, and combination IDs are optionally wri
 * [`calc()`](https://usdaforestservice.github.io/gdalraster/reference/calc.html) evaluates an R expression for each pixel in a raster layer or stack of layers. Individual pixel coordinates are available as variables in the R expression, as either x/y in the raster projected coordinate system or inverse projected longitude/latitude.
 * [`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html) displays raster data using base R graphics.
 
-**gdalraster* may be useful in applications that need scalable, low-level I/O, or prefer a direct GDAL API. Comprehensive [documentation](#documentation) is provided in the package and online.
+**gdalraster** may be useful in applications that need scalable, low-level I/O, or prefer a direct GDAL API. Comprehensive [documentation](#documentation) is provided in the package and online.
 
 ## Installation
 
