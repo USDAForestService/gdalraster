@@ -20,22 +20,22 @@ Description: Interface to the Raster API of the 'Geospatial Data Abstraction
     objects, along with several stand-alone functions. These support manual
     creation of uninitialized datasets, creation from existing raster as
     template, read/set dataset parameters, low level I/O, color tables, raster 
-    attribute tables, virtual raster (VRT), and a 'gdalwarp' wrapper for
-    reproject and mosaic. Includes several 'GDAL' algorithms ('dem_proc()',
+    attribute tables, virtual raster (VRT), and 'gdalwarp' wrapper for
+    reprojection and mosaicing. Includes 'GDAL' algorithms ('dem_proc()',
     'polygonize()', 'rasterize()', etc.), and functions for coordinate
     transformation and spatial reference systems. Calling signatures resemble
     the native C, C++ and Python APIs provided by the 'GDAL' project. Includes
     raster 'calc()' to evaluate a given R expression on a layer or stack of
-    layers with pixel coordinates available as variables in the expression; and
-    raster 'combine()' to identify and count unique pixel combinations across
-    multiple input layers, with optional output of the pixel-level combination
-    IDs. Provides raster display using base 'graphics'. Bindings to a subset of
+    layers, with pixel x/y available as variables in the expression; and raster
+    'combine()' to identify and count unique pixel combinations across multiple
+    input layers, with optional output of the pixel-level combination IDs.
+    Provides raster display using base 'graphics'. Bindings to a subset of
     the Virtual Systems Interface ('VSI') are also included to support
     operations on 'GDAL' virtual file systems. These are general utility
     functions that abstract file system operations on URLs, cloud storage
-    services, Zip/GZip/7z/RAR archives, and in-memory files. 'gdalraster' may
-    be useful in applications that need scalable, low-level I/O, or prefer a
-    direct 'GDAL' API.
+    services, 'Zip'/'GZip'/'7z'/'RAR' archives, and in-memory files.
+    'gdalraster' may be useful in applications that need scalable, low-level
+    I/O, or prefer a direct 'GDAL' API.
 License: MIT + file LICENSE
 Copyright: See file inst/COPYRIGHTS for details.
 URL: https://usdaforestservice.github.io/gdalraster/,
