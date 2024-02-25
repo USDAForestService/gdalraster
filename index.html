@@ -11,22 +11,22 @@
     objects, along with several stand-alone functions. These support manual
     creation of uninitialized datasets, creation from existing raster as
     template, read/set dataset parameters, low level I/O, color tables, raster 
-    attribute tables, virtual raster (VRT), and a gdalwarp wrapper for
-    reproject and mosaic. Includes several GDAL algorithms (dem_proc(),
+    attribute tables, virtual raster (VRT), and gdalwarp wrapper for
+    reprojection and mosaicing. Includes GDAL algorithms (dem_proc(),
     polygonize(), rasterize(), etc.), and functions for coordinate
     transformation and spatial reference systems. Calling signatures resemble
     the native C, C++ and Python APIs provided by the GDAL project. Includes
     raster calc() to evaluate a given R expression on a layer or stack of
-    layers with pixel coordinates available as variables in the expression; and
-    raster combine() to identify and count unique pixel combinations across
-    multiple input layers, with optional output of the pixel-level combination
-    IDs. Provides raster display using base graphics. Bindings to a subset of
+    layers, with pixel x/y available as variables in the expression; and raster
+    combine() to identify and count unique pixel combinations across multiple
+    input layers, with optional output of the pixel-level combination IDs.
+    Provides raster display using base graphics. Bindings to a subset of
     the Virtual Systems Interface (VSI) are also included to support
     operations on GDAL virtual file systems. These are general utility
     functions that abstract file system operations on URLs, cloud storage
-    services, Zip/GZip/7z/RAR archives, and in-memory files. gdalraster may
-    be useful in applications that need scalable, low-level I/O, or prefer a
-    direct GDAL API.">
+    services, Zip/GZip/7z/RAR archives, and in-memory files.
+    gdalraster may be useful in applications that need scalable, low-level
+    I/O, or prefer a direct GDAL API.">
 <title>R Bindings to the GDAL Raster API • gdalraster</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
@@ -39,22 +39,22 @@
     objects, along with several stand-alone functions. These support manual
     creation of uninitialized datasets, creation from existing raster as
     template, read/set dataset parameters, low level I/O, color tables, raster 
-    attribute tables, virtual raster (VRT), and a gdalwarp wrapper for
-    reproject and mosaic. Includes several GDAL algorithms (dem_proc(),
+    attribute tables, virtual raster (VRT), and gdalwarp wrapper for
+    reprojection and mosaicing. Includes GDAL algorithms (dem_proc(),
     polygonize(), rasterize(), etc.), and functions for coordinate
     transformation and spatial reference systems. Calling signatures resemble
     the native C, C++ and Python APIs provided by the GDAL project. Includes
     raster calc() to evaluate a given R expression on a layer or stack of
-    layers with pixel coordinates available as variables in the expression; and
-    raster combine() to identify and count unique pixel combinations across
-    multiple input layers, with optional output of the pixel-level combination
-    IDs. Provides raster display using base graphics. Bindings to a subset of
+    layers, with pixel x/y available as variables in the expression; and raster
+    combine() to identify and count unique pixel combinations across multiple
+    input layers, with optional output of the pixel-level combination IDs.
+    Provides raster display using base graphics. Bindings to a subset of
     the Virtual Systems Interface (VSI) are also included to support
     operations on GDAL virtual file systems. These are general utility
     functions that abstract file system operations on URLs, cloud storage
-    services, Zip/GZip/7z/RAR archives, and in-memory files. gdalraster may
-    be useful in applications that need scalable, low-level I/O, or prefer a
-    direct GDAL API.">
+    services, Zip/GZip/7z/RAR archives, and in-memory files.
+    gdalraster may be useful in applications that need scalable, low-level
+    I/O, or prefer a direct GDAL API.">
 <!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
 <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
 <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
