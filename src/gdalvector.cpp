@@ -45,34 +45,7 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 			hLayer(nullptr) {
 
 	dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
-	if (!read_only)
-		eAccess = GA_Update;
-
-	std::vector<char *> dsoo(open_options_in.size() + 1);
-	if (open_options_in.size() > 0) {
-		for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
-			dsoo[i] = (char *) (open_options_in[i]);
-		}
-	}
-	dsoo.push_back(nullptr);
-
-	unsigned int nOpenFlags = GDAL_OF_VECTOR;
-	if (read_only)
-		nOpenFlags |= GDAL_OF_READONLY;
-	else
-		nOpenFlags |= GDAL_OF_UPDATE;
-
-	hDataset = GDALOpenEx(dsn_in.c_str(), nOpenFlags,
-			nullptr, dsoo.data(), nullptr);
-	if (hDataset == nullptr)
-		Rcpp::stop("Open dataset failed.");
-	
-	hLayer = GDALDatasetGetLayerByName(hDataset, layer_in.c_str());
-	if (hLayer == nullptr)
-		Rcpp::stop("Failed to get layer object.");
-	else
-		OGR_L_ResetReading(hLayer);
-		
+	open(read_only);
 }
 
 std::string GDALVector::getDsn() const {
@@ -90,9 +63,11 @@ void GDALVector::open(bool read_only) {
 	if (dsn_in == "")
 		Rcpp::stop("DSN is not set.");
 	
-	GDALClose(hDataset);
-	hDataset = nullptr;
-	hLayer = nullptr;
+	if (hDataset != nullptr) {
+		GDALReleaseDataset(hDataset);
+		hDataset = nullptr;
+		hLayer = nullptr;
+	}
 	
 	if (read_only)
 		eAccess = GA_ReadOnly;
@@ -119,10 +94,19 @@ void GDALVector::open(bool read_only) {
 		Rcpp::stop("Open dataset failed.");
 	
 	hLayer = GDALDatasetGetLayerByName(hDataset, layer_in.c_str());
-	if (hLayer == nullptr)
-		Rcpp::stop("Failed to get layer object.");
-	else
+	if (hLayer == nullptr) {
+		GDALReleaseDataset(hDataset);
+		Rcpp::stop("Get layer failed.");
+	}
+	else {
 		OGR_L_ResetReading(hLayer);
+	}
+	
+	hFDefn = OGR_L_GetLayerDefn(hLayer);
+	if (hFDefn == nullptr) {
+		GDALReleaseDataset(hDataset);
+		Rcpp::stop("Get layer definition failed.");
+	}
 }
 
 Rcpp::CharacterVector GDALVector::getFileList() const {
@@ -221,10 +205,6 @@ Rcpp::NumericVector GDALVector::bbox() {
 
 Rcpp::List GDALVector::getLayerDefn() const {
 	_checkAccess(GA_ReadOnly);
-	
-	OGRFeatureDefnH hFDefn = OGR_L_GetLayerDefn(hLayer);
-	if (hFDefn == nullptr)
-		Rcpp::stop("Error: could not obtain layer definition.");
 	
 	Rcpp::List list_out = Rcpp::List::create();
 	std::string sValue;
@@ -371,9 +351,6 @@ SEXP GDALVector::getNextFeature() {
 	
 	if (hFeature != nullptr) {
 		Rcpp::List list_out = Rcpp::List::create();
-		OGRFeatureDefnH hFDefn = OGR_L_GetLayerDefn(hLayer);
-		if (hFDefn == nullptr)
-			Rcpp::stop("Error: could not obtain layer definition.");
 		int iField;
 
 		double FID = static_cast<double>(OGR_F_GetFID(hFeature));
@@ -643,9 +620,11 @@ void GDALVector::layerErase(
 }
 
 void GDALVector::close() {
-	GDALReleaseDataset(hDataset);
-	hDataset = nullptr;
-	hLayer = nullptr;
+	if (hDataset != nullptr) {
+		GDALReleaseDataset(hDataset);
+		hDataset = nullptr;
+		hLayer = nullptr;
+	}
 }
 
 // ****************************************************************************

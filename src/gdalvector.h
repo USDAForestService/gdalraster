@@ -28,6 +28,7 @@ class GDALVector {
 	GDALDatasetH  hDataset;
 	GDALAccess eAccess;
 	OGRLayerH hLayer;
+	OGRFeatureDefnH hFDefn;
 	
 	public:
 	GDALVector();
