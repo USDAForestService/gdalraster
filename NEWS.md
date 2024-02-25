@@ -1,52 +1,44 @@
 # gdalraster 1.8.0.9140 (dev)
 
-* `GDALRaster`: refactor constructors for dataset `open_options` (2024-02-24)
+## Behavior change
 
-* add `vsi_unlink_batch()`: wrapper for `VSIUnlinkBatch()` in the GDAL Common Portability Library (2024-02-20)
+* remove `OSR_DEFAULT_AXIS_MAPPING_STRATEGY=TRADITIONAL_GIS_ORDER` from `_gdal_init()` (#209), since this could give a different SRS comparison result depending on GDAL version in cases where axis mapping matters and the default options in `OSRIsSameEx()` are used
 
-* add `footprint()`: wrapper of the `gdal_footprint` command-line utility, compute footprint of a raster (GDAL >= 3.8) (2024-02-20)
+## GDAL VSI for operations on virtual file systems
 
-* `GDALRaster$new()`: add a constructor for using dataset open options (#224) (2024-02-19)
+* add `vsi_copy_file()`: wrapper for `VSICopyFile()`
+* add `vsi_curl_clear_cache()`: wrapper for `VSICurlClearCache()` and `VSICurlPartialClearCache()`
+* add `vsi_mkdir()`: wrapper for `VSIMkdir()`
+* add `vsi_read_dir()`: wrapper for `VSIReadDirEx()`
+* add `vsi_rename()`: wrapper for `VSIRename()`
+* add `vsi_rmdir()`: wrapper for `VSIRmdir()`
+* add `vsi_stat()`: wrapper for `VSIStatExL()`
+* add `vsi_sync()`: wrapper for `VSISync()`
+* add `vsi_unlink()`: wrapper for `VSIUnlink()`
+* add `vsi_unlink_batch()`: wrapper for `VSIUnlinkBatch()`
 
-* use `_check_gdal_filename()` throughout for minimal filename check and UTF-8 (2024-02-19)
+## GDALRaster-class
 
-* add `vsi_rename()`: wrapper for `VSIRename()` in the GDAL Common Portability Library (2024-02-18)
+* `GDALRaster$new()`: add a constructor for passing dataset open options
 
-* add unit tests for src/gdal_vsi.cpp, and additional tests for src/gdal_exp.cpp (2024-02-17)
+## Stand-alone functions
 
-* set test coverage target minimum to 90%, codecov range: 70..90 (previously 80%, 60..80) (2024-02-17)
+* add `footprint()`: wrapper of the `gdal_footprint` command-line utility, compute footprint of a raster (GDAL >= 3.8)
+* `read_ds()`: add `as_list` argument for option to return multi-band output in list form; attach attribute `gis` to the output, a list containing bbox, dimension and spatial reference (thanks to input from @mdsumner #185)
+* `plot_raster()`: accept pixel data in list form (band vectors as list elements), and make use of `gis` attribute if present (thanks to input from @mdsumner #185)
+* `srs_is_same()`: add arguments for `criterion`, `ignore_axis_mapping` and `ignore_coord_epoch`
 
-* add `vsi_stat()`: wrapper for `VSIStatExL()` in the GDAL Common Portability Library (2024-02-17)
+## Documentation
 
-* add `vsi_unlink()`: wrapper for `VSIUnlink()` in the GDAL Common Portability Library (2024-02-17)
+* organize the website [reference index](https://usdaforestservice.github.io/gdalraster/reference/index.html)
+* add Microsoft Azure information in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+* update DESCRIPTION
 
-* add `vsi_rmdir()`: wrapper for `VSIRmdir()` in the GDAL Common Portability Library (2024-02-16)
+## Internal
 
-* add `vsi_mkdir()`: wrapper for `VSIMkdir()` in the GDAL Common Portability Library (2024-02-16)
-
-* add `vsi_sync()`: wrapper for `VSISync()` in the GDAL Common Portability Library (2024-02-15)
-
-* add `vsi_read_dir()`: wrapper for `VSIReadDirEx()` in the GDAL Common Portability Library (2024-02-14)
-
-* `srs_is_same()`: add arguments for `criterion`, `ignore_axis_mapping` and `ignore_coord_epoch` (2024-02-12)
-
-* remove `OSR_DEFAULT_AXIS_MAPPING_STRATEGY=TRADITIONAL_GIS_ORDER` from `_gdal_init()` (#209) (2024-02-12)
-
-* `plot_raster()`: accept pixel data in list form (band vectors as list elements), and make use of `gis` attribute if present (thanks to input from @mdsumner #185) (2024-02-12)
-
-* `read_ds()`: add `as_list` argument for option to return multi-band output in list form; attach attribute `gis` to the output, a list containing bbox, dimension and spatial reference (thanks to input from @mdsumner #185) (2024-02-12)
-
-* add `vsi_curl_clear_cache()`: wrapper for `VSICurlClearCache()` and `VSICurlPartialClearCache()` in the GDAL Common Portability Library (2024-02-11)
-
-* add `vsi_copy_file()`: wrapper for `VSICopyFile()` in the GDAL Common Portability Library (2024-02-09)
-
-* organize website reference index (2024-02-04)
-
-* add `_get_physical_RAM()`: wrapper for `CPLGetUsablePhysicalRAM()` for internal use (2024-02-04)
-
-* add `_check_gdal_filename()`: filename check for internal use (2024-01-30)
-
-* Documentation: add Microsoft Azure information in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+* add `_check_gdal_filename()`: minimal filename check and UTF-8
+* add `_get_physical_RAM()`: wrapper for `CPLGetUsablePhysicalRAM()` for internal use
+* set test coverage target minimum to 90%, codecov range: 70..90 (previously 80%, 60..80)
 
 # gdalraster 1.8.0
 
