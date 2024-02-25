@@ -86,7 +86,8 @@ void GDALVector::open(bool read_only) {
 	
 	if (STARTS_WITH_CI(layer_in.c_str(), "SELECT ")) {
 		is_sql_in = true;
-		hLayer = GDALDatasetExecuteSQL(hDataset, layer_in.c_str(), NULL, NULL);
+		hLayer = GDALDatasetExecuteSQL(hDataset, layer_in.c_str(),
+				nullptr, nullptr);
 	}
 	else {
 		is_sql_in = false;
@@ -328,7 +329,7 @@ Rcpp::List GDALVector::getLayerDefn() const {
 void GDALVector::setAttributeFilter(std::string query) {
 	_checkAccess(GA_ReadOnly);
 
-	const char* query_in = NULL;
+	const char* query_in = nullptr;
 	if (query != "")
 		query_in = query.c_str();
 		
@@ -368,44 +369,43 @@ SEXP GDALVector::getNextFeature() {
 	
 	if (hFeature != nullptr) {
 		Rcpp::List list_out = Rcpp::List::create();
-		int iField;
+		int i;
+		
+		if (!m_fld_info_is_set)
+			_setFldInfo();
 
 		double FID = static_cast<double>(OGR_F_GetFID(hFeature));
 		list_out.push_back(FID, "FID");
 		
-		for (iField=0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
-			OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
-			if (hFieldDefn == nullptr)
-				Rcpp::stop("Error: could not obtain field definition.");
-			if (!OGR_F_IsFieldSet(hFeature, iField) ||
-					OGR_F_IsFieldNull(hFeature, iField)) {
+		for (i = 0; i < m_num_flds; ++i) {
+			if (!OGR_F_IsFieldSet(hFeature, i) ||
+					OGR_F_IsFieldNull(hFeature, i)) {
 				continue;
 			}
 
-			OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
-			if (fld_type == OFTInteger) {
-				int value = OGR_F_GetFieldAsInteger(hFeature, iField);
-				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
+			if (m_fld_types[i] == OFTInteger) {
+				int value = OGR_F_GetFieldAsInteger(hFeature, i);
+				list_out.push_back(value, m_fld_names[i]);
 			}
-			else if (fld_type == OFTInteger64) {
+			else if (m_fld_types[i] == OFTInteger64) {
 				// R does not have native int64 so handled as double for now
 				double value = static_cast<double>(
-						OGR_F_GetFieldAsInteger64(hFeature, iField));
-				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
+						OGR_F_GetFieldAsInteger64(hFeature, i));
+				list_out.push_back(value, m_fld_names[i]);
 			}
-			else if (fld_type == OFTReal) {
-				double value = OGR_F_GetFieldAsDouble(hFeature, iField);
-				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
+			else if (m_fld_types[i] == OFTReal) {
+				double value = OGR_F_GetFieldAsDouble(hFeature, i);
+				list_out.push_back(value, m_fld_names[i]);
 			}
 			else {
 				// TODO: support date, time, binary, etc.
 				// read as string for now
-				std::string value = OGR_F_GetFieldAsString(hFeature, iField);
-				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
+				std::string value = OGR_F_GetFieldAsString(hFeature, i);
+				list_out.push_back(value, m_fld_names[i]);
 			}
 		}
 
-		for (int i = 0; i < OGR_F_GetGeomFieldCount(hFeature); ++i) {
+		for (i = 0; i < OGR_F_GetGeomFieldCount(hFeature); ++i) {
 			OGRGeometryH hGeometry = OGR_F_GetGeomFieldRef(hFeature, i);
 			if (hGeometry == nullptr)
 				Rcpp::stop("Error: could not obtain geometry reference.");
@@ -439,15 +439,14 @@ void GDALVector::layerIntersection(
 		bool quiet,
 		Rcpp::Nullable<Rcpp::CharacterVector> options) {
 
-	std::vector<char *> opt_list = {NULL};
+	std::vector<char *> opt_list = {nullptr};
 	if (options.isNotNull()) {
-		// cast to the underlying type
 		Rcpp::CharacterVector options_in(options);
 		opt_list.resize(options_in.size() + 1);
 		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
 			opt_list[i] = (char *) (options_in[i]);
 		}
-		opt_list[options_in.size()] = NULL;
+		opt_list[options_in.size()] = nullptr;
 	}
 	
 	OGRErr err = OGR_L_Intersection(
@@ -455,7 +454,8 @@ void GDALVector::layerIntersection(
 			method_layer._getOGRLayerH(),
 			result_layer._getOGRLayerH(),
 			opt_list.data(),
-			quiet ? nullptr : GDALTermProgressR, nullptr);
+			quiet ? nullptr : GDALTermProgressR,
+			nullptr);
 	
 	if (err != OGRERR_NONE)
 		Rcpp::stop("Error during Intersection, or execution was interrupted.");
@@ -468,15 +468,14 @@ void GDALVector::layerUnion(
 		bool quiet,
 		Rcpp::Nullable<Rcpp::CharacterVector> options) {
 
-	std::vector<char *> opt_list = {NULL};
+	std::vector<char *> opt_list = {nullptr};
 	if (options.isNotNull()) {
-		// cast to the underlying type
 		Rcpp::CharacterVector options_in(options);
 		opt_list.resize(options_in.size() + 1);
 		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
 			opt_list[i] = (char *) (options_in[i]);
 		}
-		opt_list[options_in.size()] = NULL;
+		opt_list[options_in.size()] = nullptr;
 	}
 	
 	OGRErr err = OGR_L_Union(
@@ -484,7 +483,8 @@ void GDALVector::layerUnion(
 			method_layer._getOGRLayerH(),
 			result_layer._getOGRLayerH(),
 			opt_list.data(),
-			quiet ? nullptr : GDALTermProgressR, nullptr);
+			quiet ? nullptr : GDALTermProgressR,
+			nullptr);
 	
 	if (err != OGRERR_NONE)
 		Rcpp::stop("Error during Union, or execution was interrupted.");
@@ -497,15 +497,14 @@ void GDALVector::layerSymDifference(
 		bool quiet,
 		Rcpp::Nullable<Rcpp::CharacterVector> options) {
 
-	std::vector<char *> opt_list = {NULL};
+	std::vector<char *> opt_list = {nullptr};
 	if (options.isNotNull()) {
-		// cast to the underlying type
 		Rcpp::CharacterVector options_in(options);
 		opt_list.resize(options_in.size() + 1);
 		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
 			opt_list[i] = (char *) (options_in[i]);
 		}
-		opt_list[options_in.size()] = NULL;
+		opt_list[options_in.size()] = nullptr;
 	}
 	
 	OGRErr err = OGR_L_SymDifference(
@@ -513,7 +512,8 @@ void GDALVector::layerSymDifference(
 			method_layer._getOGRLayerH(),
 			result_layer._getOGRLayerH(),
 			opt_list.data(),
-			quiet ? nullptr : GDALTermProgressR, nullptr);
+			quiet ? nullptr : GDALTermProgressR,
+			nullptr);
 	
 	if (err != OGRERR_NONE)
 		Rcpp::stop("Error during SymDifference, or execution was interrupted.");
@@ -526,15 +526,14 @@ void GDALVector::layerIdentity(
 		bool quiet,
 		Rcpp::Nullable<Rcpp::CharacterVector> options) {
 
-	std::vector<char *> opt_list = {NULL};
+	std::vector<char *> opt_list = {nullptr};
 	if (options.isNotNull()) {
-		// cast to the underlying type
 		Rcpp::CharacterVector options_in(options);
 		opt_list.resize(options_in.size() + 1);
 		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
 			opt_list[i] = (char *) (options_in[i]);
 		}
-		opt_list[options_in.size()] = NULL;
+		opt_list[options_in.size()] = nullptr;
 	}
 	
 	OGRErr err = OGR_L_Identity(
@@ -542,7 +541,8 @@ void GDALVector::layerIdentity(
 			method_layer._getOGRLayerH(),
 			result_layer._getOGRLayerH(),
 			opt_list.data(),
-			quiet ? nullptr : GDALTermProgressR, nullptr);
+			quiet ? nullptr : GDALTermProgressR,
+			nullptr);
 	
 	if (err != OGRERR_NONE)
 		Rcpp::stop("Error during Identity, or execution was interrupted.");
@@ -555,15 +555,14 @@ void GDALVector::layerUpdate(
 		bool quiet,
 		Rcpp::Nullable<Rcpp::CharacterVector> options) {
 
-	std::vector<char *> opt_list = {NULL};
+	std::vector<char *> opt_list = {nullptr};
 	if (options.isNotNull()) {
-		// cast to the underlying type
 		Rcpp::CharacterVector options_in(options);
 		opt_list.resize(options_in.size() + 1);
 		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
 			opt_list[i] = (char *) (options_in[i]);
 		}
-		opt_list[options_in.size()] = NULL;
+		opt_list[options_in.size()] = nullptr;
 	}
 	
 	OGRErr err = OGR_L_Update(
@@ -571,7 +570,8 @@ void GDALVector::layerUpdate(
 			method_layer._getOGRLayerH(),
 			result_layer._getOGRLayerH(),
 			opt_list.data(),
-			quiet ? nullptr : GDALTermProgressR, nullptr);
+			quiet ? nullptr : GDALTermProgressR,
+			nullptr);
 	
 	if (err != OGRERR_NONE)
 		Rcpp::stop("Error during Update, or execution was interrupted.");
@@ -584,15 +584,14 @@ void GDALVector::layerClip(
 		bool quiet,
 		Rcpp::Nullable<Rcpp::CharacterVector> options) {
 
-	std::vector<char *> opt_list = {NULL};
+	std::vector<char *> opt_list = {nullptr};
 	if (options.isNotNull()) {
-		// cast to the underlying type
 		Rcpp::CharacterVector options_in(options);
 		opt_list.resize(options_in.size() + 1);
 		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
 			opt_list[i] = (char *) (options_in[i]);
 		}
-		opt_list[options_in.size()] = NULL;
+		opt_list[options_in.size()] = nullptr;
 	}
 	
 	OGRErr err = OGR_L_Clip(
@@ -600,7 +599,8 @@ void GDALVector::layerClip(
 			method_layer._getOGRLayerH(),
 			result_layer._getOGRLayerH(),
 			opt_list.data(),
-			quiet ? nullptr : GDALTermProgressR, nullptr);
+			quiet ? nullptr : GDALTermProgressR,
+			nullptr);
 	
 	if (err != OGRERR_NONE)
 		Rcpp::stop("Error during Clip, or execution was interrupted.");
@@ -613,15 +613,14 @@ void GDALVector::layerErase(
 		bool quiet,
 		Rcpp::Nullable<Rcpp::CharacterVector> options) {
 
-	std::vector<char *> opt_list = {NULL};
+	std::vector<char *> opt_list = {nullptr};
 	if (options.isNotNull()) {
-		// cast to the underlying type
 		Rcpp::CharacterVector options_in(options);
 		opt_list.resize(options_in.size() + 1);
 		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
 			opt_list[i] = (char *) (options_in[i]);
 		}
-		opt_list[options_in.size()] = NULL;
+		opt_list[options_in.size()] = nullptr;
 	}
 	
 	OGRErr err = OGR_L_Erase(
@@ -629,7 +628,8 @@ void GDALVector::layerErase(
 			method_layer._getOGRLayerH(),
 			result_layer._getOGRLayerH(),
 			opt_list.data(),
-			quiet ? nullptr : GDALTermProgressR, nullptr);
+			quiet ? nullptr : GDALTermProgressR,
+			nullptr);
 	
 	if (err != OGRERR_NONE)
 		Rcpp::stop("Error during Erase, or execution was interrupted.");
@@ -662,6 +662,22 @@ OGRLayerH GDALVector::_getOGRLayerH() {
 	_checkAccess(GA_ReadOnly);
 	
 	return hLayer;
+}
+
+void GDALVector::_setFldInfo() {
+	m_num_flds = OGR_FD_GetFieldCount(hFDefn);
+	m_fld_types.clear();
+	m_fld_names.clear();
+	for (int i = 0; i < m_num_flds; ++i) {
+		OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
+		if (hFieldDefn == nullptr)
+			Rcpp::stop("Error: could not obtain field definition.");
+
+		m_fld_types.push_back(OGR_Fld_GetType(hFieldDefn));
+		m_fld_names.push_back(OGR_Fld_GetNameRef(hFieldDefn));
+	}
+
+	m_fld_info_is_set = true;
 }
 
 
