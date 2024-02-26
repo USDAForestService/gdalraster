@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.8.0.9140</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,13 +55,13 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.8.0.9140" id="gdalraster-1809140-dev">gdalraster 1.8.0.9140 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1809140-dev"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.9.0" id="gdalraster-190">gdalraster 1.9.0<a class="anchor" aria-label="anchor" href="#gdalraster-190"></a></h2>
 <div class="section level3">
-<h3 id="behavior-change-1-8-0-9140">Behavior change<a class="anchor" aria-label="anchor" href="#behavior-change-1-8-0-9140"></a></h3>
+<h3 id="behavior-change-1-9-0">Behavior change<a class="anchor" aria-label="anchor" href="#behavior-change-1-9-0"></a></h3>
 <ul><li>remove <code>OSR_DEFAULT_AXIS_MAPPING_STRATEGY=TRADITIONAL_GIS_ORDER</code> from <code>_gdal_init()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/209" class="external-link">#209</a>), since this could give a different SRS comparison result depending on GDAL version in cases where axis mapping matters and the default options in <code>OSRIsSameEx()</code> are used</li>
 </ul></div>
 <div class="section level3">
-<h3 id="gdal-vsi-for-operations-on-virtual-file-systems-1-8-0-9140">GDAL VSI for operations on virtual file systems<a class="anchor" aria-label="anchor" href="#gdal-vsi-for-operations-on-virtual-file-systems-1-8-0-9140"></a></h3>
+<h3 id="gdal-vsi-for-operations-on-virtual-file-systems-1-9-0">GDAL VSI for operations on virtual file systems<a class="anchor" aria-label="anchor" href="#gdal-vsi-for-operations-on-virtual-file-systems-1-9-0"></a></h3>
 <ul><li>add <code><a href="../reference/vsi_copy_file.html">vsi_copy_file()</a></code>: wrapper for <code>VSICopyFile()</code>
 </li>
 <li>add <code><a href="../reference/vsi_curl_clear_cache.html">vsi_curl_clear_cache()</a></code>: wrapper for <code>VSICurlClearCache()</code> and <code>VSICurlPartialClearCache()</code>
@@ -84,12 +84,12 @@
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="gdalraster-class-1-8-0-9140">GDALRaster-class<a class="anchor" aria-label="anchor" href="#gdalraster-class-1-8-0-9140"></a></h3>
+<h3 id="gdalraster-class-1-9-0">GDALRaster-class<a class="anchor" aria-label="anchor" href="#gdalraster-class-1-9-0"></a></h3>
 <ul><li>
 <code>GDALRaster$new()</code>: add a constructor for passing dataset open options</li>
 </ul></div>
 <div class="section level3">
-<h3 id="stand-alone-functions-1-8-0-9140">Stand-alone functions<a class="anchor" aria-label="anchor" href="#stand-alone-functions-1-8-0-9140"></a></h3>
+<h3 id="stand-alone-functions-1-9-0">Stand-alone functions<a class="anchor" aria-label="anchor" href="#stand-alone-functions-1-9-0"></a></h3>
 <ul><li>add <code><a href="../reference/footprint.html">footprint()</a></code>: wrapper of the <code>gdal_footprint</code> command-line utility, compute footprint of a raster (GDAL &gt;= 3.8)</li>
 <li>
 <code><a href="../reference/read_ds.html">read_ds()</a></code>: add <code>as_list</code> argument for option to return multi-band output in list form; attach attribute <code>gis</code> to the output, a list containing bbox, dimension and spatial reference (thanks to input from <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a> <a href="https://github.com/USDAForestService/gdalraster/issues/185" class="external-link">#185</a>)</li>
@@ -100,7 +100,7 @@
 </li>
 </ul></div>
 <div class="section level3">
-<h3 id="documentation-1-8-0-9140">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-8-0-9140"></a></h3>
+<h3 id="documentation-1-9-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-9-0"></a></h3>
 <ul><li>organize the website <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html">reference index</a>
 </li>
 <li>add Microsoft Azure information in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>
@@ -108,7 +108,7 @@
 <li>update DESCRIPTION</li>
 </ul></div>
 <div class="section level3">
-<h3 id="internal-1-8-0-9140">Internal<a class="anchor" aria-label="anchor" href="#internal-1-8-0-9140"></a></h3>
+<h3 id="internal-1-9-0">Internal<a class="anchor" aria-label="anchor" href="#internal-1-9-0"></a></h3>
 <ul><li>add <code>_check_gdal_filename()</code>: minimal filename check and UTF-8</li>
 <li>add <code>_get_physical_RAM()</code>: wrapper for <code>CPLGetUsablePhysicalRAM()</code> for internal use</li>
 <li>set test coverage target minimum to 90%, codecov range: 70..90 (previously 80%, 60..80)</li>
