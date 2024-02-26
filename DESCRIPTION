@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 1.8.0.9140
+Version: 1.9.0
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),
@@ -15,24 +15,27 @@ Authors@R: c(
     person("Peter", "Dimov", 
             role = c("ctb", "cph"), comment = "Boost combine hashes method in src/cmb_table.h"))
 Description: Interface to the Raster API of the 'Geospatial Data Abstraction
-    Library' ('GDAL') supporting manual creation of uninitialized datasets,
-    creation from existing raster as template, low level I/O, configuration of
-    virtual raster (VRT), coordinate transformation, and access to 'gdalwarp'
-    for reprojection. Includes several 'GDAL' algorithms and functions for
-    working with spatial reference systems. Calling signatures resemble the
-    native C, C++ and Python APIs provided by the 'GDAL' project
-    (<https://gdal.org>). Bindings are implemented via exposed C++ class
-    encapsulating a 'GDALDataset' and its associated 'GDALRasterBand' objects,
-    plus several stand-alone functions. Additional functionality includes:
-    class 'RunningStats' for efficient summary statistics on large data
-    streams; class 'CmbTable' for counting unique combinations of integers
-    with a hash table; raster 'combine()' to identify and count unique pixel
-    combinations across multiple input layers; raster 'calc()' to evaluate
-    an R expression on a stack of layers with pixel coordinates available as
-    variables in the expression; and raster display using base 'graphics'.
-    'gdalraster' may be suitable for applications that primarily need low-level
-    I/O or prefer a direct 'GDAL' API. The additional functionality is somewhat
-    aimed at thematic data analysis but may have other utility.
+    Library' ('GDAL', <https://gdal.org>). Bindings are implemented in an
+    exposed C++ class encapsulating a 'GDALDataset' and its raster band
+    objects, along with several stand-alone functions. These support manual
+    creation of uninitialized datasets, creation from existing raster as
+    template, read/set dataset parameters, low level I/O, color tables, raster 
+    attribute tables, virtual raster (VRT), and 'gdalwarp' wrapper for
+    reprojection and mosaicing. Includes 'GDAL' algorithms ('dem_proc()',
+    'polygonize()', 'rasterize()', etc.), and functions for coordinate
+    transformation and spatial reference systems. Calling signatures resemble
+    the native C, C++ and Python APIs provided by the 'GDAL' project. Includes
+    raster 'calc()' to evaluate a given R expression on a layer or stack of
+    layers, with pixel x/y available as variables in the expression; and raster
+    'combine()' to identify and count unique pixel combinations across multiple
+    input layers, with optional output of the pixel-level combination IDs.
+    Provides raster display using base 'graphics'. Bindings to a subset of
+    the Virtual Systems Interface ('VSI') are also included to support
+    operations on 'GDAL' virtual file systems. These are general utility
+    functions that abstract file system operations on URLs, cloud storage
+    services, 'Zip'/'GZip'/'7z'/'RAR' archives, and in-memory files.
+    'gdalraster' may be useful in applications that need scalable, low-level
+    I/O, or prefer a direct 'GDAL' API.
 License: MIT + file LICENSE
 Copyright: See file inst/COPYRIGHTS for details.
 URL: https://usdaforestservice.github.io/gdalraster/,

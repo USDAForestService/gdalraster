@@ -24,7 +24,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-**gdalraster** is an R interface to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Bindings to a subset of the GDAL Virtual System Interface ([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) are also provided to support filesystem operations on URLs, cloud storage, Zip/GZip/7z/RAR and in-memory files. Calling signatures resemble those of the native C, C++ and Python APIs provided by the GDAL project.
+**gdalraster** is an R interface to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Bindings to a subset of the GDAL Virtual Systems Interface ([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) are also provided to support filesystem operations on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files. Calling signatures resemble those of the native C, C++ and Python APIs provided by the GDAL project.
 
 Bindings to GDAL are implemented in the exposed C++ class [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html) along with several [stand-alone functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions), supporting:
 
@@ -51,7 +51,7 @@ for each unique combination are obtained, and combination IDs are optionally wri
 * [`calc()`](https://usdaforestservice.github.io/gdalraster/reference/calc.html) evaluates an R expression for each pixel in a raster layer or stack of layers. Individual pixel coordinates are available as variables in the R expression, as either x/y in the raster projected coordinate system or inverse projected longitude/latitude.
 * [`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html) displays raster data using base R graphics.
 
-**gdalraster** should be useful in applications that need low-level raster I/O or prefer a direct GDAL API. The additional functionality is somewhat aimed at thematic data analysis but may have other utility. Comprehensive [documentation](#documentation) is provided in the package and online.
+**gdalraster** may be useful in applications that need scalable, low-level I/O, or prefer a direct GDAL API. Comprehensive [documentation](#documentation) is provided in the package and online.
 
 ## Installation
 
