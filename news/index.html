@@ -55,7 +55,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.0" id="gdalraster-190">gdalraster 1.9.0<a class="anchor" aria-label="anchor" href="#gdalraster-190"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.9.0" id="gdalraster-190">gdalraster 1.9.0<a class="anchor" aria-label="anchor" href="#gdalraster-190"></a></h2><p class="text-muted">CRAN release: 2024-02-25</p>
 <div class="section level3">
 <h3 id="behavior-change-1-9-0">Behavior change<a class="anchor" aria-label="anchor" href="#behavior-change-1-9-0"></a></h3>
 <ul><li>remove <code>OSR_DEFAULT_AXIS_MAPPING_STRATEGY=TRADITIONAL_GIS_ORDER</code> from <code>_gdal_init()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/209" class="external-link">#209</a>), since this could give a different SRS comparison result depending on GDAL version in cases where axis mapping matters and the default options in <code>OSRIsSameEx()</code> are used</li>
