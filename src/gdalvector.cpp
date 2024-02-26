@@ -370,38 +370,40 @@ SEXP GDALVector::getNextFeature() {
 	if (hFeature != nullptr) {
 		Rcpp::List list_out = Rcpp::List::create();
 		int i;
-		
-		if (!m_fld_info_is_set)
-			_setFldInfo();
 
 		double FID = static_cast<double>(OGR_F_GetFID(hFeature));
 		list_out.push_back(FID, "FID");
 		
-		for (i = 0; i < m_num_flds; ++i) {
+		for (i = 0; i < OGR_FD_GetFieldCount(hFDefn); ++i) {
+			OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
+			if (hFieldDefn == nullptr)
+				Rcpp::stop("Error: could not obtain field definition.");
+			
 			if (!OGR_F_IsFieldSet(hFeature, i) ||
 					OGR_F_IsFieldNull(hFeature, i)) {
 				continue;
 			}
-
-			if (m_fld_types[i] == OFTInteger) {
+			
+			OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+			if (fld_type == OFTInteger) {
 				int value = OGR_F_GetFieldAsInteger(hFeature, i);
-				list_out.push_back(value, m_fld_names[i]);
+				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
-			else if (m_fld_types[i] == OFTInteger64) {
+			else if (fld_type == OFTInteger64) {
 				// R does not have native int64 so handled as double for now
 				double value = static_cast<double>(
 						OGR_F_GetFieldAsInteger64(hFeature, i));
-				list_out.push_back(value, m_fld_names[i]);
+				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
-			else if (m_fld_types[i] == OFTReal) {
+			else if (fld_type == OFTReal) {
 				double value = OGR_F_GetFieldAsDouble(hFeature, i);
-				list_out.push_back(value, m_fld_names[i]);
+				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
 			else {
 				// TODO: support date, time, binary, etc.
 				// read as string for now
 				std::string value = OGR_F_GetFieldAsString(hFeature, i);
-				list_out.push_back(value, m_fld_names[i]);
+				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
 		}
 
@@ -663,23 +665,6 @@ OGRLayerH GDALVector::_getOGRLayerH() {
 	
 	return hLayer;
 }
-
-void GDALVector::_setFldInfo() {
-	m_num_flds = OGR_FD_GetFieldCount(hFDefn);
-	m_fld_types.clear();
-	m_fld_names.clear();
-	for (int i = 0; i < m_num_flds; ++i) {
-		OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
-		if (hFieldDefn == nullptr)
-			Rcpp::stop("Error: could not obtain field definition.");
-
-		m_fld_types.push_back(OGR_Fld_GetType(hFieldDefn));
-		m_fld_names.push_back(OGR_Fld_GetNameRef(hFieldDefn));
-	}
-
-	m_fld_info_is_set = true;
-}
-
 
 // ****************************************************************************
 

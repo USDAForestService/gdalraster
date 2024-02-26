@@ -30,13 +30,6 @@ class GDALVector {
 	GDALAccess eAccess;
 	OGRLayerH hLayer;
 	OGRFeatureDefnH hFDefn;
-	int m_num_flds;
-	std::vector<OGRFieldType> m_fld_types;
-	std::vector<const char *> m_fld_names;
-	//int m_num_geom_flds;
-	//std::vector<OGRwkbGeometryType> m_geom_fld_types;
-	//std::vector<const char *> m_geom_fld_names;
-	bool m_fld_info_is_set = false;
 	
 	public:
 	GDALVector();
@@ -110,7 +103,6 @@ class GDALVector {
 	// methods for internal use not exported to R
 	void _checkAccess(GDALAccess access_needed) const;
 	OGRLayerH _getOGRLayerH();
-	void _setFldInfo();
 };
 
 RCPP_EXPOSED_CLASS(GDALVector)
