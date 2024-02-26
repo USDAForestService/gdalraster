@@ -1608,6 +1608,11 @@ has_geos <- function() {
     .Call(`_gdalraster__g_centroid`, geom)
 }
 
+#' @noRd
+.g_transform <- function(geom, srs_from, srs_to) {
+    .Call(`_gdalraster__g_transform`, geom, srs_from, srs_to)
+}
+
 #' Does vector dataset exist
 #' 
 #' @noRd

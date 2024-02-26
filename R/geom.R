@@ -163,8 +163,50 @@ g_buffer <- function(wkt, dist, quad_segs = 30) {
 	if (!has_geos())
 		return(NA_character_)
 	
-	if (!is.character(wkt))
-		stop("wkt must be character.", call. = FALSE)
+	if (!(is.character(wkt) && length(wkt) == 1))
+		stop("wkt must be a length-1 character vector.", call. = FALSE)
 
 	return(.g_buffer(wkt, dist, quad_segs))
 }
+
+#' Apply a coordinate transformation to a WKT geometry
+#'
+#' `g_transform()` will transform the coordinates of a geometry from their
+#' current spatial reference system to a new target spatial reference system.
+#' Normally this means reprojecting the vectors, but it could include datum
+#' shifts, and changes of units.
+#'
+#' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
+#' @param srs_from Character string in OGC WKT format specifying the  
+#' spatial reference system for the geometry given by `wkt`.
+#' @param srs_to Character string in OGC WKT format specifying the target
+#' spatial reference system.
+#' @return Character string for a transformed OGC WKT geometry.
+#' `NA` is returned if GDAL was built without the GEOS library.
+#'
+#' @note
+#' This function only does reprojection on a point-by-point basis. It does not
+#' include advanced logic to deal with discontinuities at poles or antimeridian.
+#'
+#' @seealso
+#' [bbox_from_wkt()], [bbox_to_wkt()]
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, elev_file)
+#' ds$bbox() |>
+#'   bbox_to_wkt() |>
+#'   g_transform(ds$getProjectionRef(), epsg_to_wkt(4326)) |>
+#'   bbox_from_wkt()
+#' ds$close()
+g_transform <- function(wkt, srs_from, srs_to) {
+
+	if (!has_geos())
+		return(NA_character_)
+	
+	if (!(is.character(wkt) && length(wkt) == 1))
+		stop("wkt must be a length-1 character vector.", call. = FALSE)
+
+	return(.g_transform(wkt, srs_from, srs_to))
+}
+
