@@ -16,7 +16,7 @@ polygon."><!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/ma
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9030</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9040</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +79,8 @@ polygon.</p>
 <span>  <span class="va">connectedness</span>,</span>
 <span>  mask_filename <span class="op">=</span> <span class="st">""</span>,</span>
 <span>  mask_band <span class="op">=</span> <span class="fl">0L</span>,</span>
-<span>  options <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  options <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -127,6 +128,11 @@ suitable for inclusion in polygons.</p></dd>
 <dt>options</dt>
 <dd><p>Algorithm options as a character vector of name=value pairs.
 None currently supported.</p></dd>
+
+
+<dt>quiet</dt>
+<dd><p>Logical scalar. If <code>TRUE</code>, a progress bar will not be
+displayed. Defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -177,7 +183,7 @@ values are rounded to integers.</p>
 <span class="r-in"><span>                  var.names <span class="op">=</span> <span class="st">"EVT"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 1 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpmtWKot/rastcalc202d48058c76.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpLPk7AM/rastcalc1e7f3d08062f.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># create a version of EVT with two-pixel minimum mapping unit</span></span></span>
 <span class="r-in"><span><span class="fu">sieveFilter</span><span class="op">(</span>src_filename <span class="op">=</span> <span class="va">evt_file</span>,</span></span>

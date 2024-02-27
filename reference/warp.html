@@ -22,7 +22,7 @@ processing options that can be passed as arguments to warp()."><!-- mathjax --><
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9030</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9040</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +79,7 @@ processing options that can be passed as arguments to <code>warp()</code>.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">warp</span><span class="op">(</span><span class="va">src_files</span>, <span class="va">dst_filename</span>, <span class="va">t_srs</span>, cl_arg <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">warp</span><span class="op">(</span><span class="va">src_files</span>, <span class="va">dst_filename</span>, <span class="va">t_srs</span>, cl_arg <span class="op">=</span> <span class="cn">NULL</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -102,6 +102,11 @@ used (see Note).</p></dd>
 <dt>cl_arg</dt>
 <dd><p>Optional character vector of command-line arguments to
 <code>gdalwarp</code> in addition to <code>-t_srs</code> (see Details).</p></dd>
+
+
+<dt>quiet</dt>
+<dd><p>Logical scalar. If <code>TRUE</code>, a progress bar will not be
+displayed. Defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">

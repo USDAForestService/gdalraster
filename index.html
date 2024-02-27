@@ -68,7 +68,7 @@
     
     <a class="navbar-brand me-2" href="index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9030</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9040</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -166,9 +166,9 @@
 </h4>
 <p>GDAL &gt;= 2.4.0 is required, but a more recent version is recommended (e.g., &gt;= 3.6.4). Ideally GDAL will be built against GEOS but it is not required for core functionality in <strong>gdalraster</strong>. PROJ &gt;= 6 became a build requirement at GDAL 3.0, and GDAL as of 3.9 requires PROJ &gt;= 6.3.1, but a more recent version of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package <strong>xml2</strong>.</p>
 <p>On Ubuntu, recent versions of geospatial libraries can be installed from the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable" class="external-link">ubuntugis-unstable PPA</a> with the following commands:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>sudo add<span class="sc">-</span>apt<span class="sc">-</span>repository ppa<span class="sc">:</span>ubuntugis<span class="sc">/</span>ubuntugis<span class="sc">-</span>unstable</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>sudo apt update</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>sudo apt install libgdal<span class="sc">-</span>dev libgeos<span class="sc">-</span>dev libproj<span class="sc">-</span>dev libsqlite3<span class="sc">-</span>dev libxml2<span class="sc">-</span>dev</span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>sudo add<span class="sc">-</span>apt<span class="sc">-</span>repository ppa<span class="sc">:</span>ubuntugis<span class="sc">/</span>ubuntugis<span class="sc">-</span>unstable</span>
+<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>sudo apt update</span>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>sudo apt install libgdal<span class="sc">-</span>dev libgeos<span class="sc">-</span>dev libproj<span class="sc">-</span>dev libsqlite3<span class="sc">-</span>dev libxml2<span class="sc">-</span>dev</span></code></pre></div>
 <p>The versions in ubuntugis-unstable generally work well and are more up-to-date, but less recent versions in the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa" class="external-link">ubuntugis-stable PPA</a> could be used instead.</p>
 <p>Package <strong>sf</strong> provides helpful <a href="https://github.com/r-spatial/sf#linux" class="external-link">instructions</a> for installing the geospatial libraries on other Linux distributions.</p>
 <p>With the dependent libraries available on the system, install <strong>gdalraster</strong> from CRAN:</p>
@@ -191,7 +191,7 @@
 <h4 id="macos">macOS<a class="anchor" aria-label="anchor" href="#macos"></a>
 </h4>
 <p>GDAL and PROJ can be installed with Homebrew:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>brew install pkg<span class="sc">-</span>config gdal proj</span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>brew install pkg<span class="sc">-</span>config gdal proj</span></code></pre></div>
 <p>Then <code>configure.args</code> is needed:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>

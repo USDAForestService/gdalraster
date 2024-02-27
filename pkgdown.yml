@@ -1,4 +1,4 @@
-pandoc: 2.19.2
+pandoc: 3.1.11
 pkgdown: 2.0.7
 pkgdown_sha: ~
 articles:
@@ -7,7 +7,7 @@ articles:
   gdal-config-quick-ref: gdal-config-quick-ref.html
   raster-api-tutorial: raster-api-tutorial.html
   raster-attribute-tables: raster-attribute-tables.html
-last_built: 2024-02-27T17:24Z
+last_built: 2024-02-27T23:20Z
 urls:
   reference: https://usdaforestservice.github.io/gdalraster/reference
   article: https://usdaforestservice.github.io/gdalraster/articles

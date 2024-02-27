@@ -18,7 +18,7 @@ utility (https://gdal.org/programs/gdal_rasterize.html)."><!-- mathjax --><scrip
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9030</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9040</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -92,7 +92,8 @@ utility (<a href="https://gdal.org/programs/gdal_rasterize.html" class="external
 <span>  init <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  fmt <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  co <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  add_options <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  add_options <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -204,6 +205,11 @@ during creation of a tiled GTiff file).</p></dd>
 <dd><p>An optional character vector of additional command-line
 options to <code>gdal_rasterize</code> (see the <code>gdal_rasterize</code> documentation at the
 URL above for all available options).</p></dd>
+
+
+<dt>quiet</dt>
+<dd><p>Logical scalar. If <code>TRUE</code>, a progress bar will not be
+displayed. Defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
