@@ -316,6 +316,8 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
 //' compression during creation of a GTiff file).
 //' The APPEND_SUBDATASET=YES option can be 
 //' specified to avoid prior destruction of existing dataset.
+//' @param quiet Logical scalar. If `TRUE`, a progress bar will be not be
+//' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' @seealso
@@ -338,7 +340,8 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
 // [[Rcpp::export(invisible = true)]]
 bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 		Rcpp::CharacterVector src_filename, bool strict = false,
-		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
+		bool quiet = false) {
 
 	GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
 	if (hDriver == NULL)
@@ -371,7 +374,7 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 	
 	GDALDatasetH hDstDS = NULL;
 	hDstDS = GDALCreateCopy(hDriver, dst_filename_in.c_str(), hSrcDS, strict,
-				opt_list.data(), GDALTermProgressR, NULL);
+				opt_list.data(), quiet ? NULL : GDALTermProgressR, NULL);
 
 	GDALClose(hSrcDS);
 	if (hDstDS == NULL)
@@ -533,6 +536,8 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 //' @param input_rasters Character vector of input raster filenames.
 //' @param cl_arg Optional character vector of command-line arguments to 
 //' \code{gdalbuildvrt}.
+//' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+//' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //'
@@ -554,7 +559,8 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 // [[Rcpp::export(invisible = true)]]
 bool buildVRT(Rcpp::CharacterVector vrt_filename,
 		Rcpp::CharacterVector input_rasters,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+		bool quiet = false) {
 
 	std::string vrt_filename_in;
 	vrt_filename_in = Rcpp::as<std::string>(_check_gdal_filename(vrt_filename));
@@ -584,7 +590,8 @@ bool buildVRT(Rcpp::CharacterVector vrt_filename,
 	GDALBuildVRTOptions* psOptions = GDALBuildVRTOptionsNew(argv.data(), NULL);
 	if (psOptions == NULL)
 		Rcpp::stop("Build VRT failed (could not create options struct).");
-	GDALBuildVRTOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	if (!quiet)
+		GDALBuildVRTOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
 	GDALDatasetH hDstDS = GDALBuildVRT(vrt_filename_in.c_str(),
 							input_rasters.size(), NULL, src_ds_files.data(),
@@ -1352,6 +1359,8 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' @param dst_filename Character string. Filename of the output raster.
 //' @param cl_arg Optional character vector of command-line arguments for 
 //' \code{gdal_translate}.
+//' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+//' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' 
@@ -1378,7 +1387,8 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 // [[Rcpp::export(invisible = true)]]
 bool translate(Rcpp::CharacterVector src_filename,
 		Rcpp::CharacterVector dst_filename,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+		bool quiet = false) {
 
 	std::string src_filename_in;
 	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
@@ -1404,7 +1414,8 @@ bool translate(Rcpp::CharacterVector src_filename,
 	GDALTranslateOptions* psOptions = GDALTranslateOptionsNew(argv.data(), NULL);
 	if (psOptions == NULL)
 		Rcpp::stop("Translate failed (could not create options struct).");
-	GDALTranslateOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	if (!quiet)
+		GDALTranslateOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
 	GDALDatasetH hDstDS = GDALTranslate(dst_filename_in.c_str(), src_ds,
 							psOptions, NULL);

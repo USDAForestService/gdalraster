@@ -182,6 +182,8 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' compression during creation of a GTiff file).
 #' The APPEND_SUBDATASET=YES option can be 
 #' specified to avoid prior destruction of existing dataset.
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will be not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' @seealso
@@ -201,8 +203,8 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #'     ds$setNoDataValue(band, -9999)
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
-createCopy <- function(format, dst_filename, src_filename, strict = FALSE, options = NULL) {
-    invisible(.Call(`_gdalraster_createCopy`, format, dst_filename, src_filename, strict, options))
+createCopy <- function(format, dst_filename, src_filename, strict = FALSE, options = NULL, quiet = FALSE) {
+    invisible(.Call(`_gdalraster_createCopy`, format, dst_filename, src_filename, strict, options, quiet))
 }
 
 #' Apply geotransform
@@ -323,6 +325,8 @@ get_pixel_line <- function(xy, gt) {
 #' @param input_rasters Character vector of input raster filenames.
 #' @param cl_arg Optional character vector of command-line arguments to 
 #' \code{gdalbuildvrt}.
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #'
@@ -341,8 +345,8 @@ get_pixel_line <- function(xy, gt) {
 #' ds$getRasterCount()
 #' plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
 #' ds$close()
-buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL) {
-    invisible(.Call(`_gdalraster_buildVRT`, vrt_filename, input_rasters, cl_arg))
+buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) {
+    invisible(.Call(`_gdalraster_buildVRT`, vrt_filename, input_rasters, cl_arg, quiet))
 }
 
 #' Raster overlay for unique combinations
@@ -579,6 +583,8 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' @param dst_filename Character string. Filename of the output raster.
 #' @param cl_arg Optional character vector of command-line arguments for 
 #' \code{gdal_translate}.
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' 
@@ -602,8 +608,8 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' ds$res()
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
-translate <- function(src_filename, dst_filename, cl_arg = NULL) {
-    invisible(.Call(`_gdalraster_translate`, src_filename, dst_filename, cl_arg))
+translate <- function(src_filename, dst_filename, cl_arg = NULL, quiet = FALSE) {
+    invisible(.Call(`_gdalraster_translate`, src_filename, dst_filename, cl_arg, quiet))
 }
 
 #' Raster reprojection and mosaicing

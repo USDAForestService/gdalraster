@@ -82,7 +82,7 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> options);
 bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 		Rcpp::CharacterVector src_filename, bool strict,
-		Rcpp::Nullable<Rcpp::CharacterVector> options);
+		Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
 std::string _getCreationOptions(std::string format);
 bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
 		Rcpp::CharacterVector old_filename,
@@ -123,7 +123,8 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 
 bool buildVRT(Rcpp::CharacterVector vrt_filename,
 		Rcpp::CharacterVector input_rasters,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+		bool quiet);
 		
 Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
 		Rcpp::CharacterVector var_names,
@@ -166,7 +167,7 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 
 bool translate(Rcpp::CharacterVector src_filename,
 		Rcpp::CharacterVector dst_filename,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet);
 		
 bool warp(Rcpp::CharacterVector src_files,
 		Rcpp::CharacterVector dst_filename,
