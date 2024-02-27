@@ -1,5 +1,7 @@
 # gdalraster 1.9.0.9030 (dev)
 
+* add optional argument `quiet` in several functions to configure progress reporting (#237) (2024-02-27)
+
 * fixed misspelled argument in `vsi_copy_file()` and `vsi_sync()` (#233) (2024-02-27)
 
 * add calls to `OGRCoordinateTransformation::DestroyCT()` in src/geos_wkt.cpp and src/transform.cpp - no known issues but fixes potential memory leak (2024-02-27)
