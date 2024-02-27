@@ -33,6 +33,7 @@ class GDALVector {
 	
 	public:
 	GDALVector();
+	GDALVector(Rcpp::CharacterVector dsn);
 	GDALVector(Rcpp::CharacterVector dsn, std::string layer);
 	GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only);
 	GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,

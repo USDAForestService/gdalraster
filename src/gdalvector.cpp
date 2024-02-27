@@ -21,6 +21,13 @@ GDALVector::GDALVector() :
 			eAccess(GA_ReadOnly),
 			hLayer(nullptr) {}
 
+GDALVector::GDALVector(Rcpp::CharacterVector dsn) : 
+			GDALVector(
+				dsn,
+				"",
+				true,
+				Rcpp::CharacterVector::create()) {}
+
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer) : 
 			GDALVector(
 				dsn,
@@ -84,7 +91,11 @@ void GDALVector::open(bool read_only) {
 	if (hDataset == nullptr)
 		Rcpp::stop("Open dataset failed.");
 	
-	if (STARTS_WITH_CI(layer_in.c_str(), "SELECT ")) {
+	if (layer_in == "") {
+		is_sql_in = false;
+		hLayer = GDALDatasetGetLayer(hDataset, 0);
+	}
+	else if (STARTS_WITH_CI(layer_in.c_str(), "SELECT ")) {
 		is_sql_in = true;
 		hLayer = GDALDatasetExecuteSQL(hDataset, layer_in.c_str(),
 				nullptr, nullptr);
@@ -674,6 +685,8 @@ RCPP_MODULE(mod_GDALVector) {
 
     .constructor
     	("Default constructor, only for allocations in std::vector.")
+    .constructor<Rcpp::CharacterVector>
+    	("Usage: new(GDALVector, dsn)")
     .constructor<Rcpp::CharacterVector, std::string>
     	("Usage: new(GDALVector, dsn, layer)")
     .constructor<Rcpp::CharacterVector, std::string, bool>
