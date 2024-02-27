@@ -1067,7 +1067,7 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #'
 #' @param src_file Character string. Filename of the source file.
 #' @param target_file Character string. Filename of the target file.
-#' @param show_progess Logical scalar. If `TRUE`, a progress bar will be
+#' @param show_progress Logical scalar. If `TRUE`, a progress bar will be
 #' displayed (the size of `src_file` will be retrieved in GDAL with
 #' `VSIStatL()`). Default is `FALSE`.
 #' @returns Invisibly, `0` on success or `-1` on an error.
@@ -1090,8 +1090,8 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #'   result <- vsi_copy_file(elev_file, tmp_file)
 #'   print(result)
 #' }
-vsi_copy_file <- function(src_file, target_file, show_progess = FALSE) {
-    invisible(.Call(`_gdalraster_vsi_copy_file`, src_file, target_file, show_progess))
+vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
+    invisible(.Call(`_gdalraster_vsi_copy_file`, src_file, target_file, show_progress))
 }
 
 #' Clean cache associated with /vsicurl/ and related file systems
@@ -1220,7 +1220,7 @@ vsi_read_dir <- function(path, max_files = 0L) {
 #'
 #' @param src Character string. Source file or directory.
 #' @param target Character string. Target file or directory.
-#' @param show_progess Logical scalar. If `TRUE`, a progress bar will be
+#' @param show_progress Logical scalar. If `TRUE`, a progress bar will be
 #' displayed. Defaults to `FALSE`.
 #' @param options Character vector of `NAME=VALUE` pairs (see Details).
 #' @returns Invisibly, `TRUE` on success or `FALSE` on an error.
@@ -1258,7 +1258,7 @@ vsi_read_dir <- function(path, max_files = 0L) {
 #' #> [1] "lf_elev_220_metadata.html"   "lf_elev_220_mt_hood_utm.tif"
 #' 
 #' # GDAL VSISync() supports direct copy for /vsis3/ -> /vsiaz/ (GDAL >= 3.8)
-#' result <- vsi_sync(src, dst, show_progess = TRUE)
+#' result <- vsi_sync(src, dst, show_progress = TRUE)
 #' #> 0...10...20...30...40...50...60...70...80...90...100 - done.
 #' print(result)
 #' #> [1] TRUE
@@ -1273,8 +1273,8 @@ vsi_read_dir <- function(path, max_files = 0L) {
 #' #> [8] "lf_fbfm40_220_metadata.html"
 #' #> [9] "lf_fbfm40_220_mt_hood_utm.tif"
 #' }
-vsi_sync <- function(src, target, show_progess = FALSE, options = NULL) {
-    invisible(.Call(`_gdalraster_vsi_sync`, src, target, show_progess, options))
+vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
+    invisible(.Call(`_gdalraster_vsi_sync`, src, target, show_progress, options))
 }
 
 #' Create a directory
