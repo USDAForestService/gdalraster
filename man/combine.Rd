@@ -11,7 +11,8 @@ combine(
   dstfile = NULL,
   fmt = NULL,
   dtName = "UInt32",
-  options = NULL
+  options = NULL,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -41,6 +42,9 @@ combinations of the input values
 vector of "NAME=VALUE" pairs
 (e.g., \code{options = c("COMPRESS=LZW")} to set LZW compression
 during creation of a GTiff file).}
+
+\item{quiet}{Logical scalar. If \code{TRUE}, progress bar and messages will be
+suppressed. Defaults to \code{FALSE}.}
 }
 \value{
 A data frame with column \code{cmbid} containing the combination IDs,

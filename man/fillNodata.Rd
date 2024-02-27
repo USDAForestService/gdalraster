@@ -9,7 +9,8 @@ fillNodata(
   band,
   mask_file = "",
   max_dist = 100,
-  smooth_iterations = 0L
+  smooth_iterations = 0L,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -26,6 +27,9 @@ will search out for values to interpolate (100 pixels by default).}
 \item{smooth_iterations}{The number of 3x3 average filter smoothing
 iterations to run after the interpolation to dampen artifacts
 (0 by default).}
+
+\item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will not be
+displayed. Defaults to \code{FALSE}.}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).

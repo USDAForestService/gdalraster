@@ -9,7 +9,8 @@ bandCopyWholeRaster(
   src_band,
   dst_filename,
   dst_band,
-  options = NULL
+  options = NULL,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,9 @@ not set. The query is done in an efficient way without reading the actual
 pixel values (if implemented by the raster format driver, otherwise will
 not be skipped).
 }}
+
+\item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will not be
+displayed. Defaults to \code{FALSE}.}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).

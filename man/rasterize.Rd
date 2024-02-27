@@ -23,7 +23,8 @@ rasterize(
   init = NULL,
   fmt = NULL,
   co = NULL,
-  add_options = NULL
+  add_options = NULL,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -96,6 +97,9 @@ during creation of a tiled GTiff file).}
 \item{add_options}{An optional character vector of additional command-line
 options to \code{gdal_rasterize} (see the \code{gdal_rasterize} documentation at the
 URL above for all available options).}
+
+\item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will not be
+displayed. Defaults to \code{FALSE}.}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).

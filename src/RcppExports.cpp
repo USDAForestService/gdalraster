@@ -177,8 +177,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // _combine
-Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files, Rcpp::CharacterVector var_names, std::vector<int> bands, std::string dst_filename, std::string fmt, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
-RcppExport SEXP _gdalraster__combine(SEXP src_filesSEXP, SEXP var_namesSEXP, SEXP bandsSEXP, SEXP dst_filenameSEXP, SEXP fmtSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP) {
+Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files, Rcpp::CharacterVector var_names, std::vector<int> bands, std::string dst_filename, std::string fmt, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+RcppExport SEXP _gdalraster__combine(SEXP src_filesSEXP, SEXP var_namesSEXP, SEXP bandsSEXP, SEXP dst_filenameSEXP, SEXP fmtSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -189,7 +189,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type fmt(fmtSEXP);
     Rcpp::traits::input_parameter< std::string >::type dataType(dataTypeSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(_combine(src_files, var_names, bands, dst_filename, fmt, dataType, options));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(_combine(src_files, var_names, bands, dst_filename, fmt, dataType, options, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -206,8 +207,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // _dem_proc
-bool _dem_proc(std::string mode, Rcpp::CharacterVector src_filename, Rcpp::CharacterVector dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::String> col_file);
-RcppExport SEXP _gdalraster__dem_proc(SEXP modeSEXP, SEXP src_filenameSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP col_fileSEXP) {
+bool _dem_proc(std::string mode, Rcpp::CharacterVector src_filename, Rcpp::CharacterVector dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::String> col_file, bool quiet);
+RcppExport SEXP _gdalraster__dem_proc(SEXP modeSEXP, SEXP src_filenameSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP col_fileSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -216,13 +217,14 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::String> >::type col_file(col_fileSEXP);
-    rcpp_result_gen = Rcpp::wrap(_dem_proc(mode, src_filename, dst_filename, cl_arg, col_file));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(_dem_proc(mode, src_filename, dst_filename, cl_arg, col_file, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // fillNodata
-bool fillNodata(Rcpp::CharacterVector filename, int band, Rcpp::CharacterVector mask_file, double max_dist, int smooth_iterations);
-RcppExport SEXP _gdalraster_fillNodata(SEXP filenameSEXP, SEXP bandSEXP, SEXP mask_fileSEXP, SEXP max_distSEXP, SEXP smooth_iterationsSEXP) {
+bool fillNodata(Rcpp::CharacterVector filename, int band, Rcpp::CharacterVector mask_file, double max_dist, int smooth_iterations, bool quiet);
+RcppExport SEXP _gdalraster_fillNodata(SEXP filenameSEXP, SEXP bandSEXP, SEXP mask_fileSEXP, SEXP max_distSEXP, SEXP smooth_iterationsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -231,7 +233,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type mask_file(mask_fileSEXP);
     Rcpp::traits::input_parameter< double >::type max_dist(max_distSEXP);
     Rcpp::traits::input_parameter< int >::type smooth_iterations(smooth_iterationsSEXP);
-    rcpp_result_gen = Rcpp::wrap(fillNodata(filename, band, mask_file, max_dist, smooth_iterations));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(fillNodata(filename, band, mask_file, max_dist, smooth_iterations, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -249,8 +252,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // _polygonize
-bool _polygonize(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector out_dsn, std::string out_layer, std::string fld_name, Rcpp::CharacterVector mask_file, bool nomask, int connectedness);
-RcppExport SEXP _gdalraster__polygonize(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP out_dsnSEXP, SEXP out_layerSEXP, SEXP fld_nameSEXP, SEXP mask_fileSEXP, SEXP nomaskSEXP, SEXP connectednessSEXP) {
+bool _polygonize(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector out_dsn, std::string out_layer, std::string fld_name, Rcpp::CharacterVector mask_file, bool nomask, int connectedness, bool quiet);
+RcppExport SEXP _gdalraster__polygonize(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP out_dsnSEXP, SEXP out_layerSEXP, SEXP fld_nameSEXP, SEXP mask_fileSEXP, SEXP nomaskSEXP, SEXP connectednessSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -262,26 +265,28 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type mask_file(mask_fileSEXP);
     Rcpp::traits::input_parameter< bool >::type nomask(nomaskSEXP);
     Rcpp::traits::input_parameter< int >::type connectedness(connectednessSEXP);
-    rcpp_result_gen = Rcpp::wrap(_polygonize(src_filename, src_band, out_dsn, out_layer, fld_name, mask_file, nomask, connectedness));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(_polygonize(src_filename, src_band, out_dsn, out_layer, fld_name, mask_file, nomask, connectedness, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // _rasterize
-bool _rasterize(std::string src_dsn, std::string dst_filename, Rcpp::CharacterVector cl_arg);
-RcppExport SEXP _gdalraster__rasterize(SEXP src_dsnSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP) {
+bool _rasterize(std::string src_dsn, std::string dst_filename, Rcpp::CharacterVector cl_arg, bool quiet);
+RcppExport SEXP _gdalraster__rasterize(SEXP src_dsnSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type src_dsn(src_dsnSEXP);
     Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cl_arg(cl_argSEXP);
-    rcpp_result_gen = Rcpp::wrap(_rasterize(src_dsn, dst_filename, cl_arg));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(_rasterize(src_dsn, dst_filename, cl_arg, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // sieveFilter
-bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector dst_filename, int dst_band, int size_threshold, int connectedness, Rcpp::CharacterVector mask_filename, int mask_band, Rcpp::Nullable<Rcpp::CharacterVector> options);
-RcppExport SEXP _gdalraster_sieveFilter(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP dst_filenameSEXP, SEXP dst_bandSEXP, SEXP size_thresholdSEXP, SEXP connectednessSEXP, SEXP mask_filenameSEXP, SEXP mask_bandSEXP, SEXP optionsSEXP) {
+bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector dst_filename, int dst_band, int size_threshold, int connectedness, Rcpp::CharacterVector mask_filename, int mask_band, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+RcppExport SEXP _gdalraster_sieveFilter(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP dst_filenameSEXP, SEXP dst_bandSEXP, SEXP size_thresholdSEXP, SEXP connectednessSEXP, SEXP mask_filenameSEXP, SEXP mask_bandSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -294,7 +299,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type mask_filename(mask_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type mask_band(mask_bandSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(sieveFilter(src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename, mask_band, options));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(sieveFilter(src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename, mask_band, options, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -313,8 +319,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // warp
-bool warp(Rcpp::CharacterVector src_files, Rcpp::CharacterVector dst_filename, std::string t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
-RcppExport SEXP _gdalraster_warp(SEXP src_filesSEXP, SEXP dst_filenameSEXP, SEXP t_srsSEXP, SEXP cl_argSEXP) {
+bool warp(Rcpp::CharacterVector src_files, Rcpp::CharacterVector dst_filename, std::string t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet);
+RcppExport SEXP _gdalraster_warp(SEXP src_filesSEXP, SEXP dst_filenameSEXP, SEXP t_srsSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -322,7 +328,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< std::string >::type t_srs(t_srsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
-    rcpp_result_gen = Rcpp::wrap(warp(src_files, dst_filename, t_srs, cl_arg));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(warp(src_files, dst_filename, t_srs, cl_arg, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -342,8 +349,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // bandCopyWholeRaster
-bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector dst_filename, int dst_band, Rcpp::Nullable<Rcpp::CharacterVector> options);
-RcppExport SEXP _gdalraster_bandCopyWholeRaster(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP dst_filenameSEXP, SEXP dst_bandSEXP, SEXP optionsSEXP) {
+bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector dst_filename, int dst_band, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+RcppExport SEXP _gdalraster_bandCopyWholeRaster(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP dst_filenameSEXP, SEXP dst_bandSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -352,7 +359,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type dst_band(dst_bandSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(bandCopyWholeRaster(src_filename, src_band, dst_filename, dst_band, options));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(bandCopyWholeRaster(src_filename, src_band, dst_filename, dst_band, options, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1079,18 +1087,18 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
     {"_gdalraster_get_pixel_line", (DL_FUNC) &_gdalraster_get_pixel_line, 2},
     {"_gdalraster_buildVRT", (DL_FUNC) &_gdalraster_buildVRT, 4},
-    {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 7},
+    {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 8},
     {"_gdalraster__value_count", (DL_FUNC) &_gdalraster__value_count, 2},
-    {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 5},
-    {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 5},
+    {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 6},
+    {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 6},
     {"_gdalraster_footprint", (DL_FUNC) &_gdalraster_footprint, 3},
-    {"_gdalraster__polygonize", (DL_FUNC) &_gdalraster__polygonize, 8},
-    {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 3},
-    {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 9},
+    {"_gdalraster__polygonize", (DL_FUNC) &_gdalraster__polygonize, 9},
+    {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 4},
+    {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 10},
     {"_gdalraster_translate", (DL_FUNC) &_gdalraster_translate, 4},
-    {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 4},
+    {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 5},
     {"_gdalraster_createColorRamp", (DL_FUNC) &_gdalraster_createColorRamp, 5},
-    {"_gdalraster_bandCopyWholeRaster", (DL_FUNC) &_gdalraster_bandCopyWholeRaster, 5},
+    {"_gdalraster_bandCopyWholeRaster", (DL_FUNC) &_gdalraster_bandCopyWholeRaster, 6},
     {"_gdalraster_deleteDataset", (DL_FUNC) &_gdalraster_deleteDataset, 2},
     {"_gdalraster_renameDataset", (DL_FUNC) &_gdalraster_renameDataset, 3},
     {"_gdalraster_copyDatasetFiles", (DL_FUNC) &_gdalraster_copyDatasetFiles, 3},

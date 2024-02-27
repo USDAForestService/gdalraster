@@ -93,7 +93,8 @@ bool renameDataset(Rcpp::CharacterVector new_filename,
 		std::string format);
 bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 		Rcpp::CharacterVector dst_filename, int dst_band,
-		Rcpp::Nullable<Rcpp::CharacterVector> options);
+		Rcpp::Nullable<Rcpp::CharacterVector> options,
+		bool quiet);
 bool _addFileInZip(std::string zip_filename, bool overwrite,
 		std::string archive_filename, std::string in_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> options,
@@ -132,7 +133,8 @@ Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
 		std::string dst_filename,
 		std::string fmt, 
 		std::string dataType,
-		Rcpp::Nullable<Rcpp::CharacterVector> options);
+		Rcpp::Nullable<Rcpp::CharacterVector> options,
+		bool quiet);
 		
 Rcpp::DataFrame _value_count(std::string src_filename, int band);
 
@@ -140,11 +142,13 @@ bool _dem_proc(std::string mode,
 		Rcpp::CharacterVector src_filename, 
 		Rcpp::CharacterVector dst_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
-		Rcpp::Nullable<Rcpp::String> col_file);
+		Rcpp::Nullable<Rcpp::String> col_file,
+		bool quiet);
 
 bool fillNodata(Rcpp::CharacterVector filename, int band,
 		Rcpp::CharacterVector mask_file,
-		double max_dist, int smooth_iterations);
+		double max_dist, int smooth_iterations,
+		bool quiet);
 
 bool footprint(Rcpp::CharacterVector src_filename,
 		Rcpp::CharacterVector dst_filename,
@@ -154,25 +158,27 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
 		Rcpp::CharacterVector out_dsn,
 		std::string out_layer, std::string fld_name,
 		Rcpp::CharacterVector mask_file, bool nomask,
-		int connectedness);
+		int connectedness, bool quiet);
 
 bool _rasterize(std::string src_dsn, std::string dst_filename,
-		Rcpp::CharacterVector cl_arg);
+		Rcpp::CharacterVector cl_arg, bool quiet);
 
 bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 		Rcpp::CharacterVector dst_filename, int dst_band,
 		int size_threshold, int connectedness,
 		Rcpp::CharacterVector mask_filename , int mask_band,
-		Rcpp::Nullable<Rcpp::CharacterVector> options);
+		Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
 
 bool translate(Rcpp::CharacterVector src_filename,
 		Rcpp::CharacterVector dst_filename,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet);
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+		bool quiet);
 		
 bool warp(Rcpp::CharacterVector src_files,
 		Rcpp::CharacterVector dst_filename,
 		std::string t_srs, 
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+		bool quiet);
 		
 Rcpp::IntegerMatrix createColorRamp(int start_index,
 		Rcpp::IntegerVector start_color,
