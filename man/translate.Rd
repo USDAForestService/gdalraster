@@ -4,7 +4,7 @@
 \alias{translate}
 \title{Convert raster data between different formats}
 \usage{
-translate(src_filename, dst_filename, cl_arg = NULL)
+translate(src_filename, dst_filename, cl_arg = NULL, quiet = FALSE)
 }
 \arguments{
 \item{src_filename}{Character string. Filename of the source raster.}
@@ -13,6 +13,9 @@ translate(src_filename, dst_filename, cl_arg = NULL)
 
 \item{cl_arg}{Optional character vector of command-line arguments for
 \code{gdal_translate}.}
+
+\item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will not be
+displayed. Defaults to \code{FALSE}.}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).

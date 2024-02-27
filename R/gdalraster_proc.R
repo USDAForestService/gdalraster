@@ -833,6 +833,8 @@ rasterToVRT <- function(srcfile,
 #'   * `overwrite` - if `dstfile` exists if will be overwritten with a new file
 #'   * `update` - if `dstfile` exists, will attempt to open in update mode 
 #'   and write output to `out_band`
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Returns the output filename invisibly.
 #'
 #' @seealso
@@ -958,7 +960,8 @@ calc <- function(expr,
 					nodata_value = NULL, 
 					setRasterNodataValue = FALSE,
 					usePixelLonLat = FALSE,
-					write_mode = "safe")
+					write_mode = "safe",
+					quiet = FALSE)
 {
 	
 	calc_expr <- parse(text=expr)
@@ -1109,13 +1112,16 @@ calc <- function(expr,
 					xsize = ncols,
 					ysize = 1,
 					outrow)
-					
-		setTxtProgressBar(pb, row+1)
+		
+		if (!quiet)
+			setTxtProgressBar(pb, row+1)
 		return()
 	}
 	
-	message(paste("Calculating from", nrasters, "input layer(s)..."))
-	pb <- txtProgressBar(min=0, max=nrows)
+	if (!quiet) {
+		message(paste("Calculating from", nrasters, "input layer(s)..."))
+		pb <- txtProgressBar(min=0, max=nrows)
+	}
 	lapply(0:(nrows-1), process_row)
 	close(pb)
 
@@ -1179,6 +1185,8 @@ calc <- function(expr,
 #' vector of "NAME=VALUE" pairs
 #' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW compression
 #' during creation of a GTiff file).
+#' @param quiet Logical scalar. If `TRUE`, progress bar and messages will be
+#' suppressed. Defaults to `FALSE`.
 #' @returns A data frame with column `cmbid` containing the combination IDs, 
 #' column `count` containing the pixel counts for each combination, 
 #' and `length(rasterfiles)` columns named `var.names` containing the integer 
@@ -1217,7 +1225,8 @@ calc <- function(expr,
 #' ds$close()
 #' @export
 combine <- function(rasterfiles, var.names=NULL, bands=NULL, 
-					dstfile=NULL, fmt=NULL, dtName="UInt32", options=NULL) {
+					dstfile=NULL, fmt=NULL, dtName="UInt32",
+					options=NULL, quiet=FALSE) {
 
 	if ( (!is.null(dstfile)) && (is.null(fmt)) ) {
 		fmt <- .getGDALformat(dstfile)
@@ -1269,7 +1278,9 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 		}
 	}
 
-	d <- .combine(rasterfiles, var.names, bands, dstfile, fmt, dtName, options)
+	d <- .combine(rasterfiles, var.names, bands, dstfile, fmt, dtName,
+			options, quiet)
+	
 	return(d)
 }
 
@@ -1289,6 +1300,8 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 #' (see [DEFAULT_DEM_PROC] for default values).
 #' @param color_file Filename of a text file containing lines formatted as:
 #' "elevation_value red green blue". Only used when `mode = "color-relief"`.
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible `TRUE`).
 #' An error is raised if the operation fails.
 #'
@@ -1308,12 +1321,14 @@ dem_proc <- function(mode,
 					srcfile,
 					dstfile, 
 					mode_options=DEFAULT_DEM_PROC[[mode]],
-					color_file=NULL) {
+					color_file=NULL,
+					quiet=FALSE) {
 
 	if (is.null(DEFAULT_DEM_PROC[[mode]]))
 		stop("DEM processing mode not recognized.", call.=FALSE)
 
-	return(invisible(.dem_proc(mode,srcfile,dstfile,mode_options,color_file)))
+	return(invisible(
+			.dem_proc(mode,srcfile,dstfile,mode_options,color_file,quiet)))
 }
 
 
@@ -1382,6 +1397,8 @@ dem_proc <- function(mode,
 #' for `out_dsn` (`"NAME=VALUE"` pairs).
 #' @param lco Optional character vector of format-specific creation options
 #' for `out_layer` (`"NAME=VALUE"` pairs).
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #'
 #' @note
 #' The source pixel band values are read into a signed 64-bit integer buffer
@@ -1440,7 +1457,8 @@ polygonize <- function(raster_file,
 					nomask = FALSE,
 					overwrite = FALSE,
 					dsco = NULL,
-					lco = NULL) {
+					lco = NULL,
+					quiet = FALSE) {
 
 	if (connectedness !=4 && connectedness != 8)
 		stop("connectedness must be either 4 or 8.", call. = FALSE)
@@ -1513,7 +1531,7 @@ polygonize <- function(raster_file,
 	}
 	
 	return(invisible(.polygonize(raster_file, src_band, out_dsn, out_layer,
-					fld_name, mask_file, nomask, connectedness)))
+					fld_name, mask_file, nomask, connectedness, quiet)))
 }
 
 
@@ -1577,6 +1595,8 @@ polygonize <- function(raster_file,
 #' @param add_options An optional character vector of additional command-line
 #' options to `gdal_rasterize` (see the `gdal_rasterize` documentation at the
 #' URL above for all available options).
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible `TRUE`).
 #' An error is raised if the operation fails.
 #'
@@ -1633,7 +1653,8 @@ rasterize <- function(src_dsn,
 					init = NULL,
 					fmt = NULL,
 					co = NULL,
-					add_options = NULL) {
+					add_options = NULL,
+					quiet = FALSE) {
 
 	src_dsn <- .check_gdal_filename(src_dsn)
 	dstfile <- .check_gdal_filename(dstfile)
@@ -1766,5 +1787,5 @@ rasterize <- function(src_dsn,
 			argv <- c(argv, add_options)
 	}
 	
-	return(invisible(.rasterize(src_dsn, dstfile, argv)))
+	return(invisible(.rasterize(src_dsn, dstfile, argv, quiet)))
 }

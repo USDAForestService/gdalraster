@@ -16,7 +16,8 @@ polygonize(
   nomask = FALSE,
   overwrite = FALSE,
   dsco = NULL,
-  lco = NULL
+  lco = NULL,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -62,6 +63,9 @@ for \code{out_dsn} (\code{"NAME=VALUE"} pairs).}
 
 \item{lco}{Optional character vector of format-specific creation options
 for \code{out_layer} (\code{"NAME=VALUE"} pairs).}
+
+\item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will not be
+displayed. Defaults to \code{FALSE}.}
 }
 \description{
 \code{polygonize()} creates vector polygons for all connected regions of pixels

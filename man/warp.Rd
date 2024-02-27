@@ -4,7 +4,7 @@
 \alias{warp}
 \title{Raster reprojection and mosaicing}
 \usage{
-warp(src_files, dst_filename, t_srs, cl_arg = NULL)
+warp(src_files, dst_filename, t_srs, cl_arg = NULL, quiet = FALSE)
 }
 \arguments{
 \item{src_files}{Character vector of source file(s) to be reprojected.}
@@ -18,6 +18,9 @@ used (see Note).}
 
 \item{cl_arg}{Optional character vector of command-line arguments to
 \code{gdalwarp} in addition to \code{-t_srs} (see Details).}
+
+\item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will not be
+displayed. Defaults to \code{FALSE}.}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).

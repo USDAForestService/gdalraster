@@ -182,6 +182,8 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' compression during creation of a GTiff file).
 #' The APPEND_SUBDATASET=YES option can be 
 #' specified to avoid prior destruction of existing dataset.
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will be not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' @seealso
@@ -201,8 +203,8 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #'     ds$setNoDataValue(band, -9999)
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
-createCopy <- function(format, dst_filename, src_filename, strict = FALSE, options = NULL) {
-    invisible(.Call(`_gdalraster_createCopy`, format, dst_filename, src_filename, strict, options))
+createCopy <- function(format, dst_filename, src_filename, strict = FALSE, options = NULL, quiet = FALSE) {
+    invisible(.Call(`_gdalraster_createCopy`, format, dst_filename, src_filename, strict, options, quiet))
 }
 
 #' Apply geotransform
@@ -323,6 +325,8 @@ get_pixel_line <- function(xy, gt) {
 #' @param input_rasters Character vector of input raster filenames.
 #' @param cl_arg Optional character vector of command-line arguments to 
 #' \code{gdalbuildvrt}.
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #'
@@ -341,8 +345,8 @@ get_pixel_line <- function(xy, gt) {
 #' ds$getRasterCount()
 #' plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
 #' ds$close()
-buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL) {
-    invisible(.Call(`_gdalraster_buildVRT`, vrt_filename, input_rasters, cl_arg))
+buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) {
+    invisible(.Call(`_gdalraster_buildVRT`, vrt_filename, input_rasters, cl_arg, quiet))
 }
 
 #' Raster overlay for unique combinations
@@ -357,8 +361,8 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL) {
 #'
 #' Called from and documented in R/gdalraster_proc.R
 #' @noRd
-.combine <- function(src_files, var_names, bands, dst_filename = "", fmt = "", dataType = "UInt32", options = NULL) {
-    .Call(`_gdalraster__combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options)
+.combine <- function(src_files, var_names, bands, dst_filename = "", fmt = "", dataType = "UInt32", options = NULL, quiet = FALSE) {
+    .Call(`_gdalraster__combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options, quiet)
 }
 
 #' Compute for a raster band the set of unique pixel values and their counts
@@ -372,8 +376,8 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL) {
 #'
 #' Called from and documented in R/gdalraster_proc.R
 #' @noRd
-.dem_proc <- function(mode, src_filename, dst_filename, cl_arg = NULL, col_file = NULL) {
-    .Call(`_gdalraster__dem_proc`, mode, src_filename, dst_filename, cl_arg, col_file)
+.dem_proc <- function(mode, src_filename, dst_filename, cl_arg = NULL, col_file = NULL, quiet = FALSE) {
+    .Call(`_gdalraster__dem_proc`, mode, src_filename, dst_filename, cl_arg, col_file, quiet)
 }
 
 #' Fill selected pixels by interpolation from surrounding areas
@@ -401,6 +405,8 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL) {
 #' @param smooth_iterations The number of 3x3 average filter smoothing
 #' iterations to run after the interpolation to dampen artifacts
 #' (0 by default).
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' @examples
@@ -421,8 +427,8 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL) {
 #' mod_tbl = buildRAT(mod_file)
 #' head(mod_tbl)
 #' mod_tbl[is.na(mod_tbl$VALUE),]
-fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_iterations = 0L) {
-    invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations))
+fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_iterations = 0L, quiet = FALSE) {
+    invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations, quiet))
 }
 
 #' Compute footprint of a raster
@@ -476,16 +482,16 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
 #'
 #' Called from and documented in R/gdalraster_proc.R
 #' @noRd
-.polygonize <- function(src_filename, src_band, out_dsn, out_layer, fld_name, mask_file = "", nomask = FALSE, connectedness = 4L) {
-    .Call(`_gdalraster__polygonize`, src_filename, src_band, out_dsn, out_layer, fld_name, mask_file, nomask, connectedness)
+.polygonize <- function(src_filename, src_band, out_dsn, out_layer, fld_name, mask_file = "", nomask = FALSE, connectedness = 4L, quiet = FALSE) {
+    .Call(`_gdalraster__polygonize`, src_filename, src_band, out_dsn, out_layer, fld_name, mask_file, nomask, connectedness, quiet)
 }
 
 #' Wrapper for GDALRasterize in the GDAL Algorithms C API
 #'
 #' Called from and documented in R/gdalraster_proc.R
 #' @noRd
-.rasterize <- function(src_dsn, dst_filename, cl_arg) {
-    .Call(`_gdalraster__rasterize`, src_dsn, dst_filename, cl_arg)
+.rasterize <- function(src_dsn, dst_filename, cl_arg, quiet = FALSE) {
+    .Call(`_gdalraster__rasterize`, src_dsn, dst_filename, cl_arg, quiet)
 }
 
 #' Remove small raster polygons
@@ -532,6 +538,8 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
 #' suitable for inclusion in polygons.
 #' @param options Algorithm options as a character vector of name=value pairs.
 #' None currently supported.
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #'
@@ -561,8 +569,8 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
 #'             connectedness = 8,
 #'             mask_filename = mask_file,
 #'             mask_band = 1)
-sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename = "", mask_band = 0L, options = NULL) {
-    invisible(.Call(`_gdalraster_sieveFilter`, src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename, mask_band, options))
+sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename = "", mask_band = 0L, options = NULL, quiet = FALSE) {
+    invisible(.Call(`_gdalraster_sieveFilter`, src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename, mask_band, options, quiet))
 }
 
 #' Convert raster data between different formats
@@ -579,6 +587,8 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' @param dst_filename Character string. Filename of the output raster.
 #' @param cl_arg Optional character vector of command-line arguments for 
 #' \code{gdal_translate}.
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' 
@@ -602,8 +612,8 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' ds$res()
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
-translate <- function(src_filename, dst_filename, cl_arg = NULL) {
-    invisible(.Call(`_gdalraster_translate`, src_filename, dst_filename, cl_arg))
+translate <- function(src_filename, dst_filename, cl_arg = NULL, quiet = FALSE) {
+    invisible(.Call(`_gdalraster_translate`, src_filename, dst_filename, cl_arg, quiet))
 }
 
 #' Raster reprojection and mosaicing
@@ -738,6 +748,8 @@ translate <- function(src_filename, dst_filename, cl_arg = NULL) {
 #' used (see Note).
 #' @param cl_arg Optional character vector of command-line arguments to 
 #' \code{gdalwarp} in addition to `-t_srs` (see Details).
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #'
@@ -776,8 +788,8 @@ translate <- function(src_filename, dst_filename, cl_arg = NULL) {
 #' ds$res()
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
-warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL) {
-    invisible(.Call(`_gdalraster_warp`, src_files, dst_filename, t_srs, cl_arg))
+warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL, quiet = FALSE) {
+    invisible(.Call(`_gdalraster_warp`, src_files, dst_filename, t_srs, cl_arg, quiet))
 }
 
 #' Create a color ramp
@@ -878,6 +890,8 @@ createColorRamp <- function(start_index, start_color, end_index, end_color, pale
 #'    not set. The query is done in an efficient way without reading the actual
 #'    pixel values (if implemented by the raster format driver, otherwise will
 #'    not be skipped).
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #'
@@ -895,8 +909,8 @@ createColorRamp <- function(start_index, start_color, end_index, end_color, pale
 #' ds <- new(GDALRaster, dst_file)
 #' ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
 #' ds$close()
-bandCopyWholeRaster <- function(src_filename, src_band, dst_filename, dst_band, options = NULL) {
-    invisible(.Call(`_gdalraster_bandCopyWholeRaster`, src_filename, src_band, dst_filename, dst_band, options))
+bandCopyWholeRaster <- function(src_filename, src_band, dst_filename, dst_band, options = NULL, quiet = FALSE) {
+    invisible(.Call(`_gdalraster_bandCopyWholeRaster`, src_filename, src_band, dst_filename, dst_band, options, quiet))
 }
 
 #' Delete named dataset
