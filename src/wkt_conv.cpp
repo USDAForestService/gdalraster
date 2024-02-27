@@ -338,6 +338,8 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt,
 		sBbox.MaxX + extend_x,
 		sBbox.MaxY + extend_y
 	};
+	
+	OGR_G_DestroyGeometry(hGeometry);
 
 	return bbox;
 }
