@@ -1,5 +1,7 @@
 # gdalraster 1.9.0.9000 (dev)
 
+* free *phGeometry with `OGR_G_DestroyGeometry()` in src/geos_wkt.cpp and src/wkt_conv.cpp - no known issues but fixes potential memory leak (2024-02-27)
+
 * add `g_transform()`: apply a coordinate transformation to a WKT geometry (2024-02-26)
 
 # gdalraster 1.9.0
