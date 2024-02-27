@@ -1,4 +1,4 @@
-# gdalraster 1.9.0.9030 (dev)
+# gdalraster 1.9.0.9040 (dev)
 
 * add optional argument `quiet` in several functions to configure progress reporting (#237) (2024-02-27)
 
