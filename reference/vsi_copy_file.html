@@ -18,7 +18,7 @@ Requires GDAL &amp;gt;= 3.7."><!-- mathjax --><script src="https://cdnjs.cloudfl
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9030</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -73,7 +73,7 @@ Requires GDAL &gt;= 3.7.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vsi_copy_file</span><span class="op">(</span><span class="va">src_file</span>, <span class="va">target_file</span>, show_progess <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vsi_copy_file</span><span class="op">(</span><span class="va">src_file</span>, <span class="va">target_file</span>, show_progress <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -86,7 +86,7 @@ Requires GDAL &gt;= 3.7.</p>
 <dd><p>Character string. Filename of the target file.</p></dd>
 
 
-<dt>show_progess</dt>
+<dt>show_progress</dt>
 <dd><p>Logical scalar. If <code>TRUE</code>, a progress bar will be
 displayed (the size of <code>src_file</code> will be retrieved in GDAL with
 <code>VSIStatL()</code>). Default is <code>FALSE</code>.</p></dd>

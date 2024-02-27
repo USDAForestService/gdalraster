@@ -12,7 +12,7 @@ Library. The GDAL documentation is given in Details."><!-- mathjax --><script sr
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9030</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -64,7 +64,7 @@ Library. The GDAL documentation is given in Details.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vsi_sync</span><span class="op">(</span><span class="va">src</span>, <span class="va">target</span>, show_progess <span class="op">=</span> <span class="cn">FALSE</span>, options <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">vsi_sync</span><span class="op">(</span><span class="va">src</span>, <span class="va">target</span>, show_progress <span class="op">=</span> <span class="cn">FALSE</span>, options <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -77,7 +77,7 @@ Library. The GDAL documentation is given in Details.</p>
 <dd><p>Character string. Target file or directory.</p></dd>
 
 
-<dt>show_progess</dt>
+<dt>show_progress</dt>
 <dd><p>Logical scalar. If <code>TRUE</code>, a progress bar will be
 displayed. Defaults to <code>FALSE</code>.</p></dd>
 
@@ -182,7 +182,7 @@ default is 8 MB since GDAL 3.3.<br></p></li>
 <span class="r-in"><span><span class="co">#&gt; [1] "lf_elev_220_metadata.html"   "lf_elev_220_mt_hood_utm.tif"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># GDAL VSISync() supports direct copy for /vsis3/ -&gt; /vsiaz/ (GDAL &gt;= 3.8)</span></span></span>
-<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">vsi_sync</span><span class="op">(</span><span class="va">src</span>, <span class="va">dst</span>, show_progess <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">vsi_sync</span><span class="op">(</span><span class="va">src</span>, <span class="va">dst</span>, show_progress <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">#&gt; [1] TRUE</span></span></span>
