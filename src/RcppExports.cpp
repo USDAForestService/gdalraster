@@ -419,15 +419,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_copy_file
-int vsi_copy_file(Rcpp::CharacterVector src_file, Rcpp::CharacterVector target_file, bool show_progess);
-RcppExport SEXP _gdalraster_vsi_copy_file(SEXP src_fileSEXP, SEXP target_fileSEXP, SEXP show_progessSEXP) {
+int vsi_copy_file(Rcpp::CharacterVector src_file, Rcpp::CharacterVector target_file, bool show_progress);
+RcppExport SEXP _gdalraster_vsi_copy_file(SEXP src_fileSEXP, SEXP target_fileSEXP, SEXP show_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_file(src_fileSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type target_file(target_fileSEXP);
-    Rcpp::traits::input_parameter< bool >::type show_progess(show_progessSEXP);
-    rcpp_result_gen = Rcpp::wrap(vsi_copy_file(src_file, target_file, show_progess));
+    Rcpp::traits::input_parameter< bool >::type show_progress(show_progressSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_copy_file(src_file, target_file, show_progress));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -455,16 +455,16 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_sync
-bool vsi_sync(Rcpp::CharacterVector src, Rcpp::CharacterVector target, bool show_progess, Rcpp::Nullable<Rcpp::CharacterVector> options);
-RcppExport SEXP _gdalraster_vsi_sync(SEXP srcSEXP, SEXP targetSEXP, SEXP show_progessSEXP, SEXP optionsSEXP) {
+bool vsi_sync(Rcpp::CharacterVector src, Rcpp::CharacterVector target, bool show_progress, Rcpp::Nullable<Rcpp::CharacterVector> options);
+RcppExport SEXP _gdalraster_vsi_sync(SEXP srcSEXP, SEXP targetSEXP, SEXP show_progressSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src(srcSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type target(targetSEXP);
-    Rcpp::traits::input_parameter< bool >::type show_progess(show_progessSEXP);
+    Rcpp::traits::input_parameter< bool >::type show_progress(show_progressSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(vsi_sync(src, target, show_progess, options));
+    rcpp_result_gen = Rcpp::wrap(vsi_sync(src, target, show_progress, options));
     return rcpp_result_gen;
 END_RCPP
 }

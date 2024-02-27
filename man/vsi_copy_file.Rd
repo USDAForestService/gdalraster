@@ -4,14 +4,14 @@
 \alias{vsi_copy_file}
 \title{Copy a source file to a target filename}
 \usage{
-vsi_copy_file(src_file, target_file, show_progess = FALSE)
+vsi_copy_file(src_file, target_file, show_progress = FALSE)
 }
 \arguments{
 \item{src_file}{Character string. Filename of the source file.}
 
 \item{target_file}{Character string. Filename of the target file.}
 
-\item{show_progess}{Logical scalar. If \code{TRUE}, a progress bar will be
+\item{show_progress}{Logical scalar. If \code{TRUE}, a progress bar will be
 displayed (the size of \code{src_file} will be retrieved in GDAL with
 \code{VSIStatL()}). Default is \code{FALSE}.}
 }

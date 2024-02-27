@@ -4,14 +4,14 @@
 \alias{vsi_sync}
 \title{Synchronize a source file/directory with a target file/directory}
 \usage{
-vsi_sync(src, target, show_progess = FALSE, options = NULL)
+vsi_sync(src, target, show_progress = FALSE, options = NULL)
 }
 \arguments{
 \item{src}{Character string. Source file or directory.}
 
 \item{target}{Character string. Target file or directory.}
 
-\item{show_progess}{Logical scalar. If \code{TRUE}, a progress bar will be
+\item{show_progress}{Logical scalar. If \code{TRUE}, a progress bar will be
 displayed. Defaults to \code{FALSE}.}
 
 \item{options}{Character vector of \code{NAME=VALUE} pairs (see Details).}
@@ -114,7 +114,7 @@ vsi_read_dir(dst)
 #> [1] "lf_elev_220_metadata.html"   "lf_elev_220_mt_hood_utm.tif"
 
 # GDAL VSISync() supports direct copy for /vsis3/ -> /vsiaz/ (GDAL >= 3.8)
-result <- vsi_sync(src, dst, show_progess = TRUE)
+result <- vsi_sync(src, dst, show_progress = TRUE)
 #> 0...10...20...30...40...50...60...70...80...90...100 - done.
 print(result)
 #> [1] TRUE
