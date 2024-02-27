@@ -1,4 +1,4 @@
-# gdalraster 1.9.0.9000 (dev)
+# gdalraster 1.9.0.9010 (dev)
 
 * free *phGeometry with `OGR_G_DestroyGeometry()` in src/geos_wkt.cpp and src/wkt_conv.cpp - no known issues but fixes potential memory leak (2024-02-27)
 
