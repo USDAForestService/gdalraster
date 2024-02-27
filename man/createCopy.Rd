@@ -4,7 +4,14 @@
 \alias{createCopy}
 \title{Create a copy of a raster}
 \usage{
-createCopy(format, dst_filename, src_filename, strict = FALSE, options = NULL)
+createCopy(
+  format,
+  dst_filename,
+  src_filename,
+  strict = FALSE,
+  options = NULL,
+  quiet = FALSE
+)
 }
 \arguments{
 \item{format}{Format short name for the output raster
@@ -24,6 +31,9 @@ vector of \code{"NAME=VALUE"} pairs
 compression during creation of a GTiff file).
 The APPEND_SUBDATASET=YES option can be
 specified to avoid prior destruction of existing dataset.}
+
+\item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will be not be
+displayed. Defaults to \code{FALSE}.}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).

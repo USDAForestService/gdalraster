@@ -17,7 +17,8 @@ calc(
   nodata_value = NULL,
   setRasterNodataValue = FALSE,
   usePixelLonLat = FALSE,
-  write_mode = "safe"
+  write_mode = "safe",
+  quiet = FALSE
 )
 }
 \arguments{
@@ -63,6 +64,9 @@ One of:
 \item \code{update} - if \code{dstfile} exists, will attempt to open in update mode
 and write output to \code{out_band}
 }}
+
+\item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will not be
+displayed. Defaults to \code{FALSE}.}
 }
 \value{
 Returns the output filename invisibly.

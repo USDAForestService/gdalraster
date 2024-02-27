@@ -316,6 +316,8 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
 //' compression during creation of a GTiff file).
 //' The APPEND_SUBDATASET=YES option can be 
 //' specified to avoid prior destruction of existing dataset.
+//' @param quiet Logical scalar. If `TRUE`, a progress bar will be not be
+//' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' @seealso
@@ -338,7 +340,8 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
 // [[Rcpp::export(invisible = true)]]
 bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 		Rcpp::CharacterVector src_filename, bool strict = false,
-		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
+		bool quiet = false) {
 
 	GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
 	if (hDriver == NULL)
@@ -371,7 +374,7 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 	
 	GDALDatasetH hDstDS = NULL;
 	hDstDS = GDALCreateCopy(hDriver, dst_filename_in.c_str(), hSrcDS, strict,
-				opt_list.data(), GDALTermProgressR, NULL);
+				opt_list.data(), quiet ? NULL : GDALTermProgressR, NULL);
 
 	GDALClose(hSrcDS);
 	if (hDstDS == NULL)
@@ -533,6 +536,8 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 //' @param input_rasters Character vector of input raster filenames.
 //' @param cl_arg Optional character vector of command-line arguments to 
 //' \code{gdalbuildvrt}.
+//' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+//' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //'
@@ -554,7 +559,8 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 // [[Rcpp::export(invisible = true)]]
 bool buildVRT(Rcpp::CharacterVector vrt_filename,
 		Rcpp::CharacterVector input_rasters,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+		bool quiet = false) {
 
 	std::string vrt_filename_in;
 	vrt_filename_in = Rcpp::as<std::string>(_check_gdal_filename(vrt_filename));
@@ -584,7 +590,8 @@ bool buildVRT(Rcpp::CharacterVector vrt_filename,
 	GDALBuildVRTOptions* psOptions = GDALBuildVRTOptionsNew(argv.data(), NULL);
 	if (psOptions == NULL)
 		Rcpp::stop("Build VRT failed (could not create options struct).");
-	GDALBuildVRTOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	if (!quiet)
+		GDALBuildVRTOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
 	GDALDatasetH hDstDS = GDALBuildVRT(vrt_filename_in.c_str(),
 							input_rasters.size(), NULL, src_ds_files.data(),
@@ -619,7 +626,8 @@ Rcpp::DataFrame _combine(
 		std::string dst_filename = "",
 		std::string fmt = "", 
 		std::string dataType = "UInt32",
-		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
+		bool quiet = false) {
 
 	std::size_t nrasters = (std::size_t) src_files.size();
 	
@@ -674,10 +682,12 @@ Rcpp::DataFrame _combine(
 	Rcpp::NumericVector cmbid;
 	GDALProgressFunc pfnProgress = GDALTermProgressR;
 	void* pProgressData = NULL;
-	if (nrasters == 1)
-		Rcpp::Rcout << "Scanning raster...\n";
-	else
-		Rcpp::Rcout << "Combining " << nrasters << " rasters...\n";
+	if (!quiet) {
+		if (nrasters == 1)
+			Rcpp::Rcout << "Scanning raster...\n";
+		else
+			Rcpp::Rcout << "Combining " << nrasters << " rasters...\n";
+	}
 	for (int y = 0; y < nrows; ++y) {
 		for (std::size_t i = 0; i < nrasters; ++i)
 			rowdata.row(i) = Rcpp::as<Rcpp::IntegerVector>(
@@ -689,7 +699,9 @@ Rcpp::DataFrame _combine(
 		if (out_raster) {
 			dst_ds.write( 1, 0, y, ncols, 1, cmbid );
 		}
-		pfnProgress(y / (nrows-1.0), NULL, pProgressData);
+		if (!quiet) {
+			pfnProgress(y / (nrows-1.0), NULL, pProgressData);
+		}
 	}
 
 	if (out_raster)
@@ -782,7 +794,8 @@ bool _dem_proc(std::string mode,
 			Rcpp::CharacterVector src_filename, 
 			Rcpp::CharacterVector dst_filename,
 			Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-			Rcpp::Nullable<Rcpp::String> col_file = R_NilValue) {
+			Rcpp::Nullable<Rcpp::String> col_file = R_NilValue,
+			bool quiet = false) {
 
 	std::string src_filename_in;
 	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
@@ -808,18 +821,19 @@ bool _dem_proc(std::string mode,
 	psOptions = GDALDEMProcessingOptionsNew(argv.data(), NULL);
 	if (psOptions == NULL)
 		Rcpp::stop("DEM processing failed (could not create options struct).");
-	GDALDEMProcessingOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	if (!quiet)
+		GDALDEMProcessingOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
 	GDALDatasetH hDstDS;
 	if (col_file.isNotNull()) {
 		// cast Nullable to the underlying type
 		Rcpp::String col_file_in(col_file);
 		hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds, mode.c_str(),
-					col_file_in.get_cstring(), psOptions, NULL);
+				col_file_in.get_cstring(), psOptions, NULL);
 	}
 	else {
 		hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds, mode.c_str(),
-					NULL, psOptions, NULL);
+				NULL, psOptions, NULL);
 	}
 							
 	GDALDEMProcessingOptionsFree(psOptions);
@@ -857,6 +871,8 @@ bool _dem_proc(std::string mode,
 //' @param smooth_iterations The number of 3x3 average filter smoothing
 //' iterations to run after the interpolation to dampen artifacts
 //' (0 by default).
+//' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+//' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' @examples
@@ -880,7 +896,8 @@ bool _dem_proc(std::string mode,
 // [[Rcpp::export(invisible = true)]]
 bool fillNodata(Rcpp::CharacterVector filename, int band,
 		Rcpp::CharacterVector mask_file = "",
-		double max_dist = 100, int smooth_iterations = 0) {
+		double max_dist = 100, int smooth_iterations = 0,
+		bool quiet = false) {
 
 	GDALDatasetH hDS = NULL;
 	GDALRasterBandH hBand = NULL;
@@ -917,7 +934,7 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 	}
 	
 	err = GDALFillNodata(hBand, hMaskBand, max_dist, 0, smooth_iterations,
-			NULL, GDALTermProgressR, NULL);
+			NULL, quiet ? NULL : GDALTermProgressR, NULL);
 
 	GDALClose(hDS);
 	if (hMaskDS != NULL)
@@ -1036,7 +1053,7 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
 		Rcpp::CharacterVector out_dsn,
 		std::string out_layer, std::string fld_name,
 		Rcpp::CharacterVector mask_file = "", bool nomask = false,
-		int connectedness = 4) {
+		int connectedness = 4, bool quiet = false) {
 
 	GDALDatasetH hSrcDS = NULL;
 	GDALRasterBandH hSrcBand = NULL;
@@ -1118,10 +1135,9 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
 	}
 	
 	CPLErr err = GDALPolygonize(hSrcBand, hMaskBand, hOutLayer, iPixValField,
-			opt_list.data(), GDALTermProgressR, NULL);
+			opt_list.data(), quiet ? NULL : GDALTermProgressR, NULL);
 
 	GDALClose(hSrcDS);
-	//GDALClose(hOutDS);
 	GDALReleaseDataset(hOutDS);
 	if (hMaskDS != NULL)
 		GDALClose(hMaskDS);
@@ -1138,7 +1154,7 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
 //' @noRd
 // [[Rcpp::export(name = ".rasterize")]]
 bool _rasterize(std::string src_dsn, std::string dst_filename,
-		Rcpp::CharacterVector cl_arg) {
+		Rcpp::CharacterVector cl_arg, bool quiet = false) {
 
 	GDALDatasetH hSrcDS;
 	hSrcDS = GDALOpenEx(src_dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
@@ -1155,7 +1171,8 @@ bool _rasterize(std::string src_dsn, std::string dst_filename,
 	psOptions = GDALRasterizeOptionsNew(argv.data(), NULL);
 	if (psOptions == NULL)
 		Rcpp::stop("Rasterize failed (could not create options struct).");
-	GDALRasterizeOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	if (!quiet)
+		GDALRasterizeOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
 	GDALDatasetH hDstDS;
 	hDstDS = GDALRasterize(dst_filename.c_str(), NULL, hSrcDS, psOptions, NULL);
@@ -1214,6 +1231,8 @@ bool _rasterize(std::string src_dsn, std::string dst_filename,
 //' suitable for inclusion in polygons.
 //' @param options Algorithm options as a character vector of name=value pairs.
 //' None currently supported.
+//' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+//' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //'
@@ -1248,7 +1267,8 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 		Rcpp::CharacterVector dst_filename, int dst_band,
 		int size_threshold, int connectedness,
 		Rcpp::CharacterVector mask_filename = "", int mask_band = 0,
-		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
+		bool quiet = false) {
 
 	GDALDatasetH hSrcDS = NULL;
 	GDALRasterBandH hSrcBand = NULL;
@@ -1321,10 +1341,10 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 	
 	if (in_place)
 		err = GDALSieveFilter(hSrcBand, hMaskBand, hSrcBand, size_threshold,
-				connectedness, NULL, GDALTermProgressR, NULL);
+				connectedness, NULL, quiet ? NULL : GDALTermProgressR, NULL);
 	else
 		err = GDALSieveFilter(hSrcBand, hMaskBand, hDstBand, size_threshold,
-				connectedness, NULL, GDALTermProgressR, NULL);	
+				connectedness, NULL, quiet ? NULL : GDALTermProgressR, NULL);	
 		
 	GDALClose(hSrcDS);
 	if (hMaskDS != NULL)
@@ -1352,6 +1372,8 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' @param dst_filename Character string. Filename of the output raster.
 //' @param cl_arg Optional character vector of command-line arguments for 
 //' \code{gdal_translate}.
+//' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+//' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //' 
@@ -1378,7 +1400,8 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 // [[Rcpp::export(invisible = true)]]
 bool translate(Rcpp::CharacterVector src_filename,
 		Rcpp::CharacterVector dst_filename,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+		bool quiet = false) {
 
 	std::string src_filename_in;
 	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
@@ -1404,7 +1427,8 @@ bool translate(Rcpp::CharacterVector src_filename,
 	GDALTranslateOptions* psOptions = GDALTranslateOptionsNew(argv.data(), NULL);
 	if (psOptions == NULL)
 		Rcpp::stop("Translate failed (could not create options struct).");
-	GDALTranslateOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	if (!quiet)
+		GDALTranslateOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
 	GDALDatasetH hDstDS = GDALTranslate(dst_filename_in.c_str(), src_ds,
 							psOptions, NULL);
@@ -1556,6 +1580,8 @@ bool translate(Rcpp::CharacterVector src_filename,
 //' used (see Note).
 //' @param cl_arg Optional character vector of command-line arguments to 
 //' \code{gdalwarp} in addition to `-t_srs` (see Details).
+//' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+//' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //'
@@ -1598,7 +1624,8 @@ bool translate(Rcpp::CharacterVector src_filename,
 bool warp(Rcpp::CharacterVector src_files,
 		Rcpp::CharacterVector dst_filename,
 		std::string t_srs, 
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+		bool quiet = false) {
 
 	std::string dst_filename_in;
 	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
@@ -1641,7 +1668,8 @@ bool warp(Rcpp::CharacterVector src_files,
 	GDALWarpAppOptions* psOptions = GDALWarpAppOptionsNew(argv.data(), NULL);
 	if (psOptions == NULL)
 		Rcpp::stop("Warp raster failed (could not create options struct).");
-	GDALWarpAppOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+	if (!quiet)
+		GDALWarpAppOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
 	
 	GDALDatasetH hDstDS = GDALWarp(dst_filename_in.c_str(), NULL,
 							src_files.size(), src_ds.data(),
@@ -1844,6 +1872,8 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //'    not set. The query is done in an efficient way without reading the actual
 //'    pixel values (if implemented by the raster format driver, otherwise will
 //'    not be skipped).
+//' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+//' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //'
@@ -1864,7 +1894,8 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 // [[Rcpp::export(invisible = true)]]
 bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 		Rcpp::CharacterVector dst_filename, int dst_band,
-		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
+		bool quiet = false) {
 
 	GDALDatasetH hSrcDS = NULL;
 	GDALRasterBandH hSrcBand = NULL;
@@ -1911,7 +1942,7 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 	}
 	
 	err = GDALRasterBandCopyWholeRaster(hSrcBand, hDstBand, opt_list.data(),
-			GDALTermProgressR, NULL);
+			quiet ? NULL : GDALTermProgressR, NULL);
 		
 	GDALClose(hSrcDS);
 	GDALClose(hDstDS);

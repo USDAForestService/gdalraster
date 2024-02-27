@@ -9,7 +9,8 @@ dem_proc(
   srcfile,
   dstfile,
   mode_options = DEFAULT_DEM_PROC[[mode]],
-  color_file = NULL
+  color_file = NULL,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -25,6 +26,9 @@ slope, aspect, color-relief, TRI, TPI or roughness.}
 
 \item{color_file}{Filename of a text file containing lines formatted as:
 "elevation_value red green blue". Only used when \code{mode = "color-relief"}.}
+
+\item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will not be
+displayed. Defaults to \code{FALSE}.}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).
