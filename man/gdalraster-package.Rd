@@ -64,6 +64,7 @@
   \code{\link[=bbox_intersect]{bbox_intersect()}},
   \code{\link[=bbox_union]{bbox_union()}}, 
   \code{\link[=g_buffer]{g_buffer()}},
+  \code{\link[=g_transform]{g_transform()}},
   \code{\link[=has_geos]{has_geos()}}
 
   \item data management: \code{\link[=addFilesInZip]{addFilesInZip()}},

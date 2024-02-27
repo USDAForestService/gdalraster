@@ -1,3 +1,7 @@
+# gdalraster 1.9.0.9000 (dev)
+
+* add `g_transform()`: apply a coordinate transformation to a WKT geometry (2024-02-26)
+
 # gdalraster 1.9.0
 
 ## Behavior change
