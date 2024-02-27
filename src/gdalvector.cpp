@@ -419,11 +419,11 @@ SEXP GDALVector::getNextFeature() {
 		}
 
 		for (i = 0; i < OGR_F_GetGeomFieldCount(hFeature); ++i) {
-			OGRGeometryH hGeometry = OGR_F_GetGeomFieldRef(hFeature, i);
-			if (hGeometry == nullptr)
+			OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeature, i);
+			if (hGeom == nullptr)
 				Rcpp::stop("Error: could not obtain geometry reference.");
 			char* pszWKT;
-			OGR_G_ExportToWkt(hGeometry, &pszWKT);
+			OGR_G_ExportToWkt(hGeom, &pszWKT);
 			std::string wkt(pszWKT);
 			OGRGeomFieldDefnH hGeomFldDefn =
 					OGR_F_GetGeomFieldDefnRef(hFeature, i);
@@ -431,6 +431,7 @@ SEXP GDALVector::getNextFeature() {
 				Rcpp::stop("Error: could not obtain geometry field def.");
 			list_out.push_back(wkt, OGR_GFld_GetNameRef(hGeomFldDefn));
 			CPLFree(pszWKT);
+			OGR_G_DestroyGeometry(hGeom);
 		}
 
 		return list_out;
