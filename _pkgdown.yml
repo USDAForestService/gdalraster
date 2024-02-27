@@ -77,6 +77,7 @@ reference:
   - bbox_intersect
   - bbox_union
   - g_buffer
+  - g_transform
   - has_geos
 - subtitle: Data management
 - contents:

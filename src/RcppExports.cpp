@@ -772,6 +772,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _g_transform
+std::string _g_transform(std::string geom, std::string srs_from, std::string srs_to);
+RcppExport SEXP _gdalraster__g_transform(SEXP geomSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< std::string >::type srs_from(srs_fromSEXP);
+    Rcpp::traits::input_parameter< std::string >::type srs_to(srs_toSEXP);
+    rcpp_result_gen = Rcpp::wrap(_g_transform(geom, srs_from, srs_to));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _ogr_ds_exists
 bool _ogr_ds_exists(std::string dsn, bool with_update);
 RcppExport SEXP _gdalraster__ogr_ds_exists(SEXP dsnSEXP, SEXP with_updateSEXP) {
@@ -1111,6 +1124,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__g_length", (DL_FUNC) &_gdalraster__g_length, 1},
     {"_gdalraster__g_area", (DL_FUNC) &_gdalraster__g_area, 1},
     {"_gdalraster__g_centroid", (DL_FUNC) &_gdalraster__g_centroid, 1},
+    {"_gdalraster__g_transform", (DL_FUNC) &_gdalraster__g_transform, 3},
     {"_gdalraster__ogr_ds_exists", (DL_FUNC) &_gdalraster__ogr_ds_exists, 2},
     {"_gdalraster__create_ogr", (DL_FUNC) &_gdalraster__create_ogr, 11},
     {"_gdalraster__ogr_ds_layer_count", (DL_FUNC) &_gdalraster__ogr_ds_layer_count, 1},

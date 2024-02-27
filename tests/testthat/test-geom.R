@@ -26,9 +26,20 @@ test_that("intersect/union return correct values", {
 					c(323400.9, 5101815.8, 327870.9, 5105175.8))
 })
 
-test_that("buffer_wkt returns correct values", {
+test_that("g_buffer returns correct values", {
 	pt <- "POINT (0 0)"
 	bb <- bbox_from_wkt(g_buffer(wkt = pt, dist = 10))
 	expect_equal(bb, c(-10, -10,  10,  10))
 })
 
+test_that("g_transform returns correct values", {
+	elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+	ds <- new(GDALRaster, elev_file)
+	bbox_wgs84 <- c(-113.28289, 46.04764, -113.22629, 46.07760)
+	bbox_test <- ds$bbox() |>
+	  bbox_to_wkt() |>
+	  g_transform(srs_from = ds$getProjectionRef(), srs_to = epsg_to_wkt(4326)) |>
+	  bbox_from_wkt()
+	ds$close()
+	expect_equal(bbox_test, bbox_wgs84, tolerance = 0.001)
+})

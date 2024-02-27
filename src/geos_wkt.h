@@ -36,5 +36,8 @@ double _g_length(std::string geom);
 double _g_area(std::string geom);
 Rcpp::NumericVector _g_centroid(std::string geom);
 
+std::string _g_transform(std::string geom, std::string srs_from,
+		std::string srs_to);
+
 #endif
 

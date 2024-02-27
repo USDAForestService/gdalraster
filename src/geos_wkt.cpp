@@ -4,6 +4,8 @@
 
 #include "cpl_conv.h"
 #include "ogrsf_frmts.h"
+#include "ogr_srs_api.h"
+#include "ogr_spatialref.h"
 
 #include "geos_wkt.h"
 
@@ -572,3 +574,64 @@ Rcpp::NumericVector _g_centroid(std::string geom) {
 	return pt;
 }
 
+
+// *** spatial reference ***
+
+
+//' @noRd
+// [[Rcpp::export(name = ".g_transform")]]
+std::string _g_transform(std::string geom, std::string srs_from,
+		std::string srs_to) {
+// Returns a transformed geometry as WKT
+// Apply arbitrary coordinate transformation to geometry.
+// This function will transform the coordinates of a geometry from their
+// current spatial reference system to a new target spatial reference system.
+// Normally this means reprojecting the vectors, but it could include datum
+// shifts, and changes of units.
+// Note that this function does not require that the geometry already have a
+// spatial reference system. It will be assumed that they can be treated as
+// having the source spatial reference system of the
+// OGRCoordinateTransformation object, and the actual SRS of the geometry will
+// be ignored. On successful completion the output OGRSpatialReference of the
+// OGRCoordinateTransformation will be assigned to the geometry.
+// This function only does reprojection on a point-by-point basis. It does not
+// include advanced logic to deal with discontinuities at poles or antimeridian.
+// For that, use the OGR_GeomTransformer_Create() and
+// OGR_GeomTransformer_Transform() functions.
+
+	OGRGeometryH hGeom;
+	char* pszWKT = (char*) geom.c_str();
+	
+	if (OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom) != OGRERR_NONE)
+		Rcpp::stop("Failed to create geometry object from WKT string.");
+
+	OGRSpatialReference oSourceSRS, oDestSRS;
+	OGRCoordinateTransformation *poCT;
+	OGRErr err;
+	
+	err = oSourceSRS.importFromWkt(srs_from.c_str());
+	if (err != OGRERR_NONE)
+		Rcpp::stop("Failed to import source SRS from WKT string.");
+	
+	err = oDestSRS.importFromWkt(srs_to.c_str());
+	if (err != OGRERR_NONE)
+		Rcpp::stop("Failed to import destination SRS from WKT string.");
+
+	poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
+	if (poCT == NULL)
+		Rcpp::stop("Failed to create coordinate transformer.");
+
+	err = OGR_G_Transform(hGeom, OGRCoordinateTransformation::ToHandle(poCT));
+	if (err != OGRERR_NONE)
+		Rcpp::stop("Transformation failed.");
+	
+	char* pszWKT_out;
+	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
+	std::string wkt_out(pszWKT_out);
+	CPLFree(pszWKT_out);
+	
+	return wkt_out;
+}
+	
+	
+	
