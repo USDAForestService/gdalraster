@@ -201,6 +201,9 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 	Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
 	ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
 	ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
+	
+	OGRCoordinateTransformation::DestroyCT(poCT);
+	
 	return ret;
 }
 
@@ -277,6 +280,9 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 	Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
 	ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
 	ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
+
+	OGRCoordinateTransformation::DestroyCT(poCT);
+	
 	return ret;
 }
 
