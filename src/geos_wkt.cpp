@@ -695,6 +695,8 @@ std::string _g_transform(std::string geom, std::string srs_from,
 	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
 	std::string wkt_out(pszWKT_out);
 	CPLFree(pszWKT_out);
+	
+	OGRCoordinateTransformation::DestroyCT(poCT);
 	OGR_G_DestroyGeometry(hGeom);
 	
 	return wkt_out;
