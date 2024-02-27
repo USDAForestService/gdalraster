@@ -26,7 +26,7 @@
 //'
 //' @param src_file Character string. Filename of the source file.
 //' @param target_file Character string. Filename of the target file.
-//' @param show_progess Logical scalar. If `TRUE`, a progress bar will be
+//' @param show_progress Logical scalar. If `TRUE`, a progress bar will be
 //' displayed (the size of `src_file` will be retrieved in GDAL with
 //' `VSIStatL()`). Default is `FALSE`.
 //' @returns Invisibly, `0` on success or `-1` on an error.
@@ -52,7 +52,7 @@
 // [[Rcpp::export(invisible = true)]]
 int vsi_copy_file(Rcpp::CharacterVector src_file,
 		Rcpp::CharacterVector target_file,
-		bool show_progess = false) {
+		bool show_progress = false) {
 
 #if GDAL_VERSION_NUM < 3070000
 	Rcpp::stop("vsi_copy_file() requires GDAL >= 3.7.");
@@ -64,7 +64,7 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 	std::string target_file_in;
 	target_file_in = Rcpp::as<std::string>(_check_gdal_filename(target_file));
 	
-	if (show_progess)
+	if (show_progress)
 		pfnProgress = GDALTermProgressR;
 	
 	int result = VSICopyFile(src_file_in.c_str(), target_file_in.c_str(),
@@ -238,7 +238,7 @@ Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
 //'
 //' @param src Character string. Source file or directory.
 //' @param target Character string. Target file or directory.
-//' @param show_progess Logical scalar. If `TRUE`, a progress bar will be
+//' @param show_progress Logical scalar. If `TRUE`, a progress bar will be
 //' displayed. Defaults to `FALSE`.
 //' @param options Character vector of `NAME=VALUE` pairs (see Details).
 //' @returns Invisibly, `TRUE` on success or `FALSE` on an error.
@@ -276,7 +276,7 @@ Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
 //' #> [1] "lf_elev_220_metadata.html"   "lf_elev_220_mt_hood_utm.tif"
 //' 
 //' # GDAL VSISync() supports direct copy for /vsis3/ -> /vsiaz/ (GDAL >= 3.8)
-//' result <- vsi_sync(src, dst, show_progess = TRUE)
+//' result <- vsi_sync(src, dst, show_progress = TRUE)
 //' #> 0...10...20...30...40...50...60...70...80...90...100 - done.
 //' print(result)
 //' #> [1] TRUE
@@ -294,7 +294,7 @@ Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
 // [[Rcpp::export(invisible = true)]]
 bool vsi_sync(Rcpp::CharacterVector src,
 		Rcpp::CharacterVector target,
-		bool show_progess = false,
+		bool show_progress = false,
 		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
 	std::string src_file_in;
@@ -303,7 +303,7 @@ bool vsi_sync(Rcpp::CharacterVector src,
 	target_file_in = Rcpp::as<std::string>(_check_gdal_filename(target));
 	
 	GDALProgressFunc pfnProgress = NULL;
-	if (show_progess)
+	if (show_progress)
 		pfnProgress = GDALTermProgressR;
 	
 	std::vector<char *> opt_list = {NULL};
