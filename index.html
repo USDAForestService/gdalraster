@@ -120,7 +120,7 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><strong>gdalraster</strong> is an R interface to the Raster API of the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Bindings to a subset of the GDAL Virtual Systems Interface (<a href="https://gdal.org/api/cpl.html#cpl-vsi-h" class="external-link">VSI</a>) are also provided to support filesystem operations on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files. Calling signatures resemble those of the native C, C++ and Python APIs provided by the GDAL project.</p>
+<p><strong>gdalraster</strong> is an R interface to the Raster API of the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Bindings to a subset of the GDAL Virtual Systems Interface (<a href="https://gdal.org/api/cpl.html#cpl-vsi-h" class="external-link">VSI</a>) are also provided to support filesystem operations on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project.</p>
 <p>Bindings to GDAL are implemented in the exposed C++ class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html"><code>GDALRaster</code></a> along with several <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions">stand-alone functions</a>, supporting:</p>
 <ul>
 <li>manual creation of uninitialized raster datasets</li>
@@ -164,7 +164,7 @@
 <div class="section level4">
 <h4 id="linux">Linux<a class="anchor" aria-label="anchor" href="#linux"></a>
 </h4>
-<p>GDAL &gt;= 2.4.0 is required, but a more recent version is recommended (e.g., &gt;= 3.6.4). Ideally GDAL will be built against GEOS but it is not required for core functionality in <strong>gdalraster</strong>. PROJ &gt;= 6 became a build requirement at GDAL 3.0, and GDAL as of 3.9 requires PROJ &gt;= 6.3.1, but a more recent version of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package <strong>xml2</strong>.</p>
+<p>GDAL &gt;= 2.4.0 is required, but a more recent version is recommended (e.g., &gt;= 3.6.4). Ideally GDAL will be built against GEOS but it is currently not required for core functionality in <strong>gdalraster</strong>. PROJ &gt;= 6 became a build requirement at GDAL 3.0, and GDAL as of 3.9 requires PROJ &gt;= 6.3.1, but a more recent version of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package <strong>xml2</strong>.</p>
 <p>On Ubuntu, recent versions of geospatial libraries can be installed from the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable" class="external-link">ubuntugis-unstable PPA</a> with the following commands:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>sudo add<span class="sc">-</span>apt<span class="sc">-</span>repository ppa<span class="sc">:</span>ubuntugis<span class="sc">/</span>ubuntugis<span class="sc">-</span>unstable</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>sudo apt update</span>
@@ -174,14 +174,14 @@
 <p>With the dependent libraries available on the system, install <strong>gdalraster</strong> from CRAN:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span><span class="op">)</span></span></code></pre></div>
-<p>Or install the development version from GitHub using package <a href="https://CRAN.R-project.org/package=remotes" class="external-link">remotes</a>:</p>
+<p>Or install the development version from GitHub using package <a href="https://remotes.r-lib.org/" class="external-link">remotes</a>:</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
 <h4 id="windows">Windows<a class="anchor" aria-label="anchor" href="#windows"></a>
 </h4>
-<p><a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a> is needed to install from source on Windows. RTools since version 4.2 includes GDAL, PROJ and all other dependent libraries that are needed to compile <strong>gdalraster</strong>. Note that CRAN releases periodic revisions to RTools that often include updates to the libraries as new versions become available. For example, <a href="https://cran.r-project.org/bin/windows/Rtools/rtools43/news.html" class="external-link">revision 5863</a> of RTools 4.3 contains GDAL 3.7.2 and PROJ 9.3.0.</p>
+<p><a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a> is needed to install from source on Windows. RTools since version 4.2 includes GDAL, PROJ and all other dependent libraries that are needed to compile <strong>gdalraster</strong>. Note that CRAN releases periodic revisions to RTools that often include updates to the libraries as new versions become available. For example, <a href="https://cran.r-project.org/bin/windows/Rtools/rtools43/rtools.html" class="external-link">revision 5958</a> of RTools 4.3 contains GDAL 3.8.2 and PROJ 9.3.1.</p>
 <p>With RTools installed:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
