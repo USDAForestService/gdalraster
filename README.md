@@ -20,8 +20,8 @@ Data Abstraction Library ([GDAL](https://gdal.org/)). Bindings to a
 subset of the GDAL Virtual Systems Interface
 ([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) are also provided to
 support filesystem operations on URLs, cloud storage services,
-Zip/GZip/7z/RAR, and in-memory files. Calling signatures resemble those
-of the native C, C++ and Python APIs provided by the GDAL project.
+Zip/GZip/7z/RAR, and in-memory files. Calling signatures resemble the
+native C, C++ and Python APIs provided by the GDAL project.
 
 Bindings to GDAL are implemented in the exposed C++ class
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
@@ -92,11 +92,12 @@ do not require any separate installation of external libraries for GDAL.
 #### Linux
 
 GDAL \>= 2.4.0 is required, but a more recent version is recommended
-(e.g., \>= 3.6.4). Ideally GDAL will be built against GEOS but it is not
-required for core functionality in **gdalraster**. PROJ \>= 6 became a
-build requirement at GDAL 3.0, and GDAL as of 3.9 requires PROJ \>=
-6.3.1, but a more recent version of PROJ is recommended. PROJ requires
-sqlite3, and libxml2 is required for the imported R package **xml2**.
+(e.g., \>= 3.6.4). Ideally GDAL will be built against GEOS but it is
+currently not required for core functionality in **gdalraster**. PROJ
+\>= 6 became a build requirement at GDAL 3.0, and GDAL as of 3.9
+requires PROJ \>= 6.3.1, but a more recent version of PROJ is
+recommended. PROJ requires sqlite3, and libxml2 is required for the
+imported R package **xml2**.
 
 On Ubuntu, recent versions of geospatial libraries can be installed from
 the [ubuntugis-unstable
@@ -124,7 +125,7 @@ install.packages("gdalraster")
 ```
 
 Or install the development version from GitHub using package
-[remotes](https://CRAN.R-project.org/package=remotes):
+[remotes](https://remotes.r-lib.org/):
 
 ``` r
 remotes::install_github("USDAForestService/gdalraster")
@@ -138,8 +139,8 @@ PROJ and all other dependent libraries that are needed to compile
 **gdalraster**. Note that CRAN releases periodic revisions to RTools
 that often include updates to the libraries as new versions become
 available. For example,
-[revision 5863](https://cran.r-project.org/bin/windows/Rtools/rtools43/news.html)
-of RTools 4.3 contains GDAL 3.7.2 and PROJ 9.3.0.
+[revision 5958](https://cran.r-project.org/bin/windows/Rtools/rtools43/rtools.html)
+of RTools 4.3 contains GDAL 3.8.2 and PROJ 9.3.1.
 
 With RTools installed:
 
