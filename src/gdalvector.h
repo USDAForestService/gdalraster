@@ -1,5 +1,5 @@
 /* R interface to a subset of the GDAL C API for vector.
-   An OGRLayer class, a layer of features in a GDALDataset.
+   A class for OGRLayer, a layer of features in a GDALDataset.
    https://gdal.org/api/vector_c_api.html
    Chris Toney <chris.toney at usda.gov> */
 

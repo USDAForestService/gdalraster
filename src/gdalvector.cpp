@@ -104,6 +104,7 @@ void GDALVector::open(bool read_only) {
 		is_sql_in = false;
 		hLayer = GDALDatasetGetLayerByName(hDataset, layer_in.c_str());
 	}
+	
 	if (hLayer == nullptr) {
 		GDALReleaseDataset(hDataset);
 		Rcpp::stop("Get layer failed.");
@@ -227,8 +228,8 @@ Rcpp::NumericVector GDALVector::bbox() {
 	if (OGR_L_GetExtent(hLayer, &envelope, true) != OGRERR_NONE)
 		Rcpp::stop("Error: the extent of the layer cannot be determined.");
 	
-	Rcpp::NumericVector bbox_out = {
-		envelope.MinX, envelope.MinY, envelope.MaxX, envelope.MaxY};
+	Rcpp::NumericVector bbox_out =
+		{envelope.MinX, envelope.MinY, envelope.MaxX, envelope.MaxY};
 	
 	return bbox_out;
 }
@@ -243,6 +244,7 @@ Rcpp::List GDALVector::getLayerDefn() const {
 	int iField;
 
 	// attribute fields
+	// TODO: add subtype and field domain name
 	for (iField=0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
 	
 		Rcpp::List list_fld_defn = Rcpp::List::create();
@@ -401,6 +403,7 @@ SEXP GDALVector::getNextFeature() {
 				list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
 			}
 			else if (fld_type == OFTInteger64) {
+				// TODO: emit a warning?
 				// R does not have native int64 so handled as double for now
 				double value = static_cast<double>(
 						OGR_F_GetFieldAsInteger64(hFeature, i));
