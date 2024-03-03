@@ -30,9 +30,10 @@ Bindings will be implemented with **Rcpp** modules including `RCPP_EXPOSED_CLASS
 A  GDAL Dataset for vector is a file or database containing one or more OGR layers. A vector dataset is represented in R as a data source name (DSN), a character string that may be a filename, database connection string, URL, virtual file, etc. Management of datasets and their vector schemas will be done with:
 
 * existing management functions in **gdalraster** that operate on vector datasets: `copyDatasetFiles()`, `deleteDataset()`, `renameDataset()` and `addFilesInZip()` (supports SOZip)
-* existing internal utility functions to be further developed: `.ogr_ds_exists()`, `.create_ogr()`, `.ogr_ds_layer_count()`, `.ogr_layer_exists()`, `.ogr_layer_create()`, `.ogr_layer_delete()` `.ogr_field_index()`, `.ogr_field_create()`
-* wrappers for `vector_translate()` and `vector_info()` from the gdal_utils.h API (**gdalraster** 1.10)
-* additional stand-alone functions TBD
+* existing internal utility functions to be further developed (potentially renamed/refactored): `.ogr_ds_exists()`, `.create_ogr()`, `.ogr_ds_layer_count()`, `.ogr_layer_exists()`, `.ogr_layer_create()`, `.ogr_layer_delete()` `.ogr_field_index()`, `.ogr_field_create()`
+* wrappers `vector_translate()` (`ogr2ogr`) and `vector_info()` (`ogrinfo`) from the gdal_utils.h API (**gdalraster** 1.10 around late March)
+* `ogr_execute_sql()`: SQL `SELECT` statements can be used to open a layer as an object of class `GDALVector` described below. `ogr_execute_sql()` will execute an SQL statement against the data store for `CREATE INDEX`, `DROP INDEX`, `ALTER TABLE`, `DROP TABLE`.
+* other stand-alone functions TBD
 
 OGR Layer class represents a layer of features within a data source. It will be modeled in R as class `GDALVector`, an exposed C++ class encapsulating an OGR Layer and the GDAL Dataset that owns it. A `GDALVector` object will persist an open connection to the dataset and expose methods for retrieving layer information, setting attribute and spatial filters, reading/writing features, and layer geoprocessing. A draft definition for class `GDALVector` is given below.
 
@@ -712,6 +713,7 @@ lyr_tiles$close()
 * add comment in the layer intersection example re: feature retrieval by FID (2024-03-02)
 * add arguments `fields` and `geom_column` in `GDALVector::getFeatureSet()` - optionally retrieve a subset of attribute fields, and specify whether to include geometry column(s) in the returned data frame (2024-03-02)
 * the return value of feature writing methods should be the FID of the newly created/set/deleted feature upon successful write, or `OGRNullFID` on failure (2024-03-02)
-* add note above `class GDALVector` re: handling of 64-bit integer types to be determined (2024-03-02)
-* add `GDALVector::setIgnoredFields()`: set which fields can be omitted when retrieving features from the layer. If the driver supports this functionality (testable using OLCIgnoreFields capability), it will not fetch the specified fields in subsequent calls to `getFeature()` / `getNextFeature()` thus save some processing time and/or bandwidth.
+* add a note above `class GDALVector` re: handling of 64-bit integer types to be determined (2024-03-02)
+* add `GDALVector::setIgnoredFields()`: set which fields can be omitted when retrieving features from the layer. If the driver supports this functionality (testable using OLCIgnoreFields capability), it will not fetch the specified fields in subsequent calls to `getFeature()` / `getNextFeature()` thus save some processing time and/or bandwidth. (2024-03-02)
+* add `ogr_execute_sql()` for dataset/schema management (2024-03-02)
 
