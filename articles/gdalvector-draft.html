@@ -86,7 +86,7 @@
     
     
 <p>Chris Toney (chris.toney at usda.gov)</p>
-<p>Last modified: 2024-03-02</p>
+<p>Last modified: 2024-03-03</p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
 </h2>
@@ -253,73 +253,74 @@ defined in the OGR API. For now it would be implemented as R numeric
 <span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a>    <span class="dt">void</span> setAttributeFilter<span class="op">(</span><span class="bu">std::</span>string query<span class="op">);</span></span>
 <span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>    <span class="dt">void</span> setSpatialFilterRect<span class="op">(</span>Rcpp<span class="op">::</span>NumericVector bbox<span class="op">);</span></span>
 <span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>    <span class="dt">void</span> setSpatialFilter<span class="op">(</span><span class="bu">std::</span>string wkt<span class="op">);</span></span>
-<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>    <span class="dt">void</span> clearSpatialFilter<span class="op">();</span></span>
-<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a>    </span>
-<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>    <span class="dt">double</span> getFeatureCount<span class="op">();</span></span>
-<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>    SEXP getNextFeature<span class="op">();</span></span>
-<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>    <span class="dt">void</span> resetReading<span class="op">();</span></span>
-<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>    <span class="co">// int64 handling </span><span class="al">TBD</span></span>
-<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a>    SEXP getFeature<span class="op">(</span>GIntBig fid<span class="op">);</span></span>
-<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>    <span class="dt">void</span> setNextByIndex<span class="op">(</span>GIntBig fid<span class="op">);</span></span>
-<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a>    <span class="dt">void</span> setIgnoredFields<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector fields<span class="op">);</span></span>
-<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>    </span>
-<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>    Rcpp<span class="op">::</span>DataFrame getFeatureSet<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector fields<span class="op">,</span></span>
-<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a>                                  <span class="dt">bool</span> geom_column<span class="op">);</span></span>
-<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a>    </span>
-<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a>    <span class="co">// int64 handling </span><span class="al">TBD</span></span>
-<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a>    GIntBig createFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
-<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a>    GIntBig setFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
-<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a>    GIntBig upsertFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
-<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a>    GIntBig deleteFeature<span class="op">(</span>GIntBig fid<span class="op">);</span></span>
-<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a>    </span>
-<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a>    <span class="dt">bool</span> startTransaction<span class="op">(</span><span class="dt">bool</span> force<span class="op">);</span></span>
-<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a>    <span class="dt">bool</span> commitTransaction<span class="op">();</span></span>
-<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a>    <span class="dt">bool</span> rollbackTransaction<span class="op">();</span></span>
-<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a></span>
-<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a>    <span class="dt">void</span> layerIntersection<span class="op">(</span></span>
-<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a>    <span class="dt">void</span> layerUnion<span class="op">(</span></span>
-<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb4-70"><a href="#cb4-70" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb4-71"><a href="#cb4-71" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb4-72"><a href="#cb4-72" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb4-73"><a href="#cb4-73" tabindex="-1"></a>    <span class="dt">void</span> layerSymDifference<span class="op">(</span></span>
-<span id="cb4-74"><a href="#cb4-74" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb4-75"><a href="#cb4-75" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb4-76"><a href="#cb4-76" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb4-77"><a href="#cb4-77" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb4-78"><a href="#cb4-78" tabindex="-1"></a>    <span class="dt">void</span> layerIdentity<span class="op">(</span></span>
-<span id="cb4-79"><a href="#cb4-79" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb4-80"><a href="#cb4-80" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb4-81"><a href="#cb4-81" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb4-82"><a href="#cb4-82" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb4-83"><a href="#cb4-83" tabindex="-1"></a>    <span class="dt">void</span> layerUpdate<span class="op">(</span></span>
-<span id="cb4-84"><a href="#cb4-84" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb4-85"><a href="#cb4-85" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb4-86"><a href="#cb4-86" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb4-87"><a href="#cb4-87" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb4-88"><a href="#cb4-88" tabindex="-1"></a>    <span class="dt">void</span> layerClip<span class="op">(</span></span>
-<span id="cb4-89"><a href="#cb4-89" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb4-90"><a href="#cb4-90" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb4-91"><a href="#cb4-91" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb4-92"><a href="#cb4-92" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb4-93"><a href="#cb4-93" tabindex="-1"></a>    <span class="dt">void</span> layerErase<span class="op">(</span></span>
-<span id="cb4-94"><a href="#cb4-94" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb4-95"><a href="#cb4-95" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb4-96"><a href="#cb4-96" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb4-97"><a href="#cb4-97" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb4-98"><a href="#cb4-98" tabindex="-1"></a></span>
-<span id="cb4-99"><a href="#cb4-99" tabindex="-1"></a>    <span class="dt">void</span> close<span class="op">();</span></span>
-<span id="cb4-100"><a href="#cb4-100" tabindex="-1"></a>    </span>
-<span id="cb4-101"><a href="#cb4-101" tabindex="-1"></a>    <span class="co">// methods for internal use not exported to R</span></span>
-<span id="cb4-102"><a href="#cb4-102" tabindex="-1"></a>    <span class="dt">void</span> _checkAccess<span class="op">(</span>GDALAccess access_needed<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb4-103"><a href="#cb4-103" tabindex="-1"></a>    OGRLayerH _getOGRLayerH<span class="op">();</span></span>
-<span id="cb4-104"><a href="#cb4-104" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb4-105"><a href="#cb4-105" tabindex="-1"></a></span>
-<span id="cb4-106"><a href="#cb4-106" tabindex="-1"></a>RCPP_EXPOSED_CLASS<span class="op">(</span>GDALVector<span class="op">)</span></span></code></pre></div>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>    <span class="bu">std::</span>string getSpatialFilter<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a>    <span class="dt">void</span> clearSpatialFilter<span class="op">();</span></span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>    </span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>    <span class="dt">double</span> getFeatureCount<span class="op">();</span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>    SEXP getNextFeature<span class="op">();</span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>    <span class="dt">void</span> resetReading<span class="op">();</span></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a>    <span class="co">// int64 handling </span><span class="al">TBD</span></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>    SEXP getFeature<span class="op">(</span>GIntBig fid<span class="op">);</span></span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a>    <span class="dt">void</span> setNextByIndex<span class="op">(</span>GIntBig fid<span class="op">);</span></span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>    <span class="dt">void</span> setIgnoredFields<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector fields<span class="op">);</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>    </span>
+<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a>    Rcpp<span class="op">::</span>DataFrame getFeatureSet<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector fields<span class="op">,</span></span>
+<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a>                                  <span class="dt">bool</span> geom_column<span class="op">);</span></span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a>    </span>
+<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a>    <span class="co">// int64 handling </span><span class="al">TBD</span></span>
+<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a>    GIntBig createFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
+<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a>    GIntBig setFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
+<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a>    GIntBig upsertFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
+<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a>    GIntBig deleteFeature<span class="op">(</span>GIntBig fid<span class="op">);</span></span>
+<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a>    </span>
+<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a>    <span class="dt">bool</span> startTransaction<span class="op">(</span><span class="dt">bool</span> force<span class="op">);</span></span>
+<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a>    <span class="dt">bool</span> commitTransaction<span class="op">();</span></span>
+<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a>    <span class="dt">bool</span> rollbackTransaction<span class="op">();</span></span>
+<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a></span>
+<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a>    <span class="dt">void</span> layerIntersection<span class="op">(</span></span>
+<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a>    <span class="dt">void</span> layerUnion<span class="op">(</span></span>
+<span id="cb4-70"><a href="#cb4-70" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-71"><a href="#cb4-71" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-72"><a href="#cb4-72" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-73"><a href="#cb4-73" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-74"><a href="#cb4-74" tabindex="-1"></a>    <span class="dt">void</span> layerSymDifference<span class="op">(</span></span>
+<span id="cb4-75"><a href="#cb4-75" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-76"><a href="#cb4-76" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-77"><a href="#cb4-77" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-78"><a href="#cb4-78" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-79"><a href="#cb4-79" tabindex="-1"></a>    <span class="dt">void</span> layerIdentity<span class="op">(</span></span>
+<span id="cb4-80"><a href="#cb4-80" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-81"><a href="#cb4-81" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-82"><a href="#cb4-82" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-83"><a href="#cb4-83" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-84"><a href="#cb4-84" tabindex="-1"></a>    <span class="dt">void</span> layerUpdate<span class="op">(</span></span>
+<span id="cb4-85"><a href="#cb4-85" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-86"><a href="#cb4-86" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-87"><a href="#cb4-87" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-88"><a href="#cb4-88" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-89"><a href="#cb4-89" tabindex="-1"></a>    <span class="dt">void</span> layerClip<span class="op">(</span></span>
+<span id="cb4-90"><a href="#cb4-90" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-91"><a href="#cb4-91" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-92"><a href="#cb4-92" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-93"><a href="#cb4-93" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-94"><a href="#cb4-94" tabindex="-1"></a>    <span class="dt">void</span> layerErase<span class="op">(</span></span>
+<span id="cb4-95"><a href="#cb4-95" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-96"><a href="#cb4-96" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-97"><a href="#cb4-97" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-98"><a href="#cb4-98" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-99"><a href="#cb4-99" tabindex="-1"></a></span>
+<span id="cb4-100"><a href="#cb4-100" tabindex="-1"></a>    <span class="dt">void</span> close<span class="op">();</span></span>
+<span id="cb4-101"><a href="#cb4-101" tabindex="-1"></a>    </span>
+<span id="cb4-102"><a href="#cb4-102" tabindex="-1"></a>    <span class="co">// methods for internal use not exported to R</span></span>
+<span id="cb4-103"><a href="#cb4-103" tabindex="-1"></a>    <span class="dt">void</span> _checkAccess<span class="op">(</span>GDALAccess access_needed<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-104"><a href="#cb4-104" tabindex="-1"></a>    OGRLayerH _getOGRLayerH<span class="op">();</span></span>
+<span id="cb4-105"><a href="#cb4-105" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb4-106"><a href="#cb4-106" tabindex="-1"></a></span>
+<span id="cb4-107"><a href="#cb4-107" tabindex="-1"></a>RCPP_EXPOSED_CLASS<span class="op">(</span>GDALVector<span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example-usage-for-class-gdalvector">Example: usage for class GDALVector<a class="anchor" aria-label="anchor" href="#example-usage-for-class-gdalvector"></a>
@@ -838,6 +839,24 @@ defined in the OGR API. For now it would be implemented as R numeric
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
+<h2 id="further-consideration-tbd">Further consideration / TBD<a class="anchor" aria-label="anchor" href="#further-consideration-tbd"></a>
+</h2>
+<p>This is a working list of of potential issues and design questions
+that need further consideration, to be determined:</p>
+<ul>
+<li>handling of 64-bit integer: OGR FID currently is
+<code>GIntBig</code> (<code>int64_t</code>) and integer fields in vector
+data sources will commonly be <code>OFTInteger64</code>. These would
+likely be handled using <strong>RcppInt64</strong>, with
+<strong>bit64</strong> on the R side providing S3 class
+<code>integer64</code>.</li>
+<li>OGR’s Arrow C interface: Implement
+<code>GDALVector::getArrowStream()</code> (GDAL &gt;= 3.6) and
+<code>GDALVector::writeArrowBatch()</code> (GDAL &gt;= 3.8), supported
+on the R side with package <strong>nanoarrow</strong>.</li>
+</ul>
+</div>
+<div class="section level2">
 <h2 id="document-changelog">Document changelog<a class="anchor" aria-label="anchor" href="#document-changelog"></a>
 </h2>
 <ul>
@@ -864,6 +883,10 @@ processing time and/or bandwidth. (2024-03-02)</li>
 (2024-03-02)</li>
 <li>add <code>GDALVector::setNextByIndex()</code> for cursor positioning
 (2024-03-03)</li>
+<li>add <code>GDALVector::getSpatialFilter()</code>: get the WKT
+geometry currently in use as the spatial filter, or <code>""</code>
+(2024-03-03)</li>
+<li>add section “Further consideration / TBD” (2024-03-03)</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
