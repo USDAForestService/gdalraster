@@ -142,12 +142,12 @@ operate on vector datasets: <code><a href="../reference/copyDatasetFiles.html">c
 <code>vector_info()</code> (<code>ogrinfo</code>) from the gdal_utils.h
 API (<strong>gdalraster</strong> 1.10 around late March)</li>
 <li>
-<code>ogr_execute_sql()</code>: SQL <code>SELECT</code> statements
-can be used to open a layer as an object of class
-<code>GDALVector</code> described below. <code>ogr_execute_sql()</code>
-will execute an SQL statement against the data store for
-<code>CREATE INDEX</code>, <code>DROP INDEX</code>,
-<code>ALTER TABLE</code>, <code>DROP TABLE</code>.</li>
+<code>ogr_execute_sql()</code>: execute an SQL statement against the
+data store for <code>CREATE INDEX</code>, <code>DROP INDEX</code>,
+<code>ALTER TABLE</code>, <code>DROP TABLE</code> (a SQL
+<code>SELECT</code> statement can be used in the constructor for class
+<code>GDALVector</code> described below, to open a layer of
+features)</li>
 <li>other stand-alone functions TBD</li>
 </ul>
 <p>OGR Layer class represents a layer of features within a data source.
