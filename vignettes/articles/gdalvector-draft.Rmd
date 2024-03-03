@@ -123,6 +123,7 @@ class GDALVector {
 	void resetReading();
 	// int64 handling TBD
 	SEXP getFeature(GIntBig fid);
+	void setNextByIndex(GIntBig fid);
 	void setIgnoredFields(Rcpp::CharacterVector fields);
 	
 	Rcpp::DataFrame getFeatureSet(Rcpp::CharacterVector fields,
@@ -716,4 +717,5 @@ lyr_tiles$close()
 * add a note above `class GDALVector` re: handling of 64-bit integer types to be determined (2024-03-02)
 * add `GDALVector::setIgnoredFields()`: set which fields can be omitted when retrieving features from the layer. If the driver supports this functionality (testable using OLCIgnoreFields capability), it will not fetch the specified fields in subsequent calls to `getFeature()` / `getNextFeature()` thus save some processing time and/or bandwidth. (2024-03-02)
 * add `ogr_execute_sql()` for dataset/schema management (2024-03-02)
+* add `GDALVector::setNextByIndex()` for cursor positioning (2024-03-03)
 
