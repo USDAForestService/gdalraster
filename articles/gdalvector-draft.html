@@ -202,7 +202,10 @@ that will provide schema management. The existing definitions in
 <strong>Rcpp</strong> <code>.finalizer</code> function will be
 implemented to properly release resources in case an object of class
 <code>GDALVector</code> is garbage collected without an explicit call to
-<code><a href="https://rdrr.io/r/base/connections.html" class="external-link">close()</a></code>.</p>
+<code><a href="https://rdrr.io/r/base/connections.html" class="external-link">close()</a></code>. Also note that <code>GIntBig</code> is currently a
+placeholder type in the class definition. It is the type currently
+defined in the OGR API. For now it would be implemented as R numeric
+(i.e., <code>double</code>), with <code>int64</code> handling TBD.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="kw">class</span> GDALVector <span class="op">{</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a></span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="kw">private</span><span class="op">:</span></span>
@@ -247,15 +250,15 @@ implemented to properly release resources in case an object of class
 <span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>    <span class="dt">double</span> getFeatureCount<span class="op">();</span></span>
 <span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>    SEXP getNextFeature<span class="op">();</span></span>
 <span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>    <span class="dt">void</span> resetReading<span class="op">();</span></span>
-<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>    SEXP getFeature<span class="op">(</span>GIntBig fid<span class="op">);</span>         <span class="co">// int64 handling </span><span class="al">TBD</span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>    SEXP getFeature<span class="op">(</span>GIntBig fid<span class="op">);</span>            <span class="co">// int64 handling </span><span class="al">TBD</span></span>
 <span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a>    </span>
 <span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>    Rcpp<span class="op">::</span>DataFrame getFeatureSet<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector fields<span class="op">,</span></span>
 <span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a>                                  <span class="dt">bool</span> geom_column<span class="op">);</span></span>
 <span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>    </span>
-<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>    <span class="dt">void</span> createFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>    GIntBig createFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span>  <span class="co">// int64 handling </span><span class="al">TBD</span></span>
 <span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a>    <span class="dt">void</span> setFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
 <span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a>    <span class="dt">void</span> upsertFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
-<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a>    <span class="dt">void</span> deleteFeature<span class="op">(</span>GIntBig fid<span class="op">);</span>      <span class="co">// int64 handling </span><span class="al">TBD</span></span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a>    <span class="dt">void</span> deleteFeature<span class="op">(</span>GIntBig fid<span class="op">);</span>         <span class="co">// int64 handling </span><span class="al">TBD</span></span>
 <span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a>    </span>
 <span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a>    <span class="dt">bool</span> startTransaction<span class="op">(</span><span class="dt">bool</span> force<span class="op">);</span></span>
 <span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a>    <span class="dt">bool</span> commitTransaction<span class="op">();</span></span>
@@ -833,7 +836,13 @@ by FID (2024-03-02)</li>
 <li>add arguments <code>fields</code> and <code>geom_column</code> in
 <code>GDALVector::getFeatureSet()</code> - optionally retrieve a subset
 of attribute fields, and specify whether to include geometry column(s)
-in the returned data frame</li>
+in the returned data frame (2024-03-02)</li>
+<li>the return value of <code>GDALVector::createFeature()</code> should
+be the FID of the newly created feature upon successful write, or
+<code>-1</code> on failure; note that the other write methods currently
+have no return value, but this should possibly change (2024-03-02)</li>
+<li>add note above <code>class GDALVector</code> re: handling of 64-bit
+integer types to be determined (2024-03-02)</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
