@@ -121,7 +121,9 @@ class GDALVector {
 	SEXP getNextFeature();
 	void resetReading();
 	SEXP getFeature(GIntBig fid);         // int64 handling TBD
-	Rcpp::DataFrame getFeatureSet();
+	
+	Rcpp::DataFrame getFeatureSet(Rcpp::CharacterVector fields,
+	                              bool geom_column);
 	
 	void createFeature(Rcpp::List feat);
 	void setFeature(Rcpp::List feat);
@@ -703,6 +705,7 @@ lyr_tiles$close()
 
 ## Document changelog
 
-* added `GDALVector::setSpatialFilter()` to the draft class definition - set spatial filter from WKT geometry (2024-03-02)
-* added comment in the layer intersection example re: feature retrieval by FID (2024-03-02)
+* add `GDALVector::setSpatialFilter()` to the draft class definition - set spatial filter from WKT geometry (2024-03-02)
+* add comment in the layer intersection example re: feature retrieval by FID (2024-03-02)
+* add arguments `fields` and `geom_column` in `GDALVector::getFeatureSet()` - optionally retrieve a subset of attribute fields, and specify whether to include geometry column(s) in the returned data frame
 
