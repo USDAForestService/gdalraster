@@ -711,7 +711,7 @@ lyr_tiles$close()
 
 ## Further consideration / TBD
 
-This is a working list of of potential issues and design questions that need further consideration, to be determined:
+This is a working list of potential issues and design questions that need further consideration, to be determined:
 
 * handling of 64-bit integer: OGR FID currently is `GIntBig` (`int64_t`) and integer fields in vector data sources will commonly be `OFTInteger64`. These would likely be handled using **RcppInt64**, with **bit64** on the R side providing S3 class `integer64`.
 * OGR's Arrow C interface: Implement `GDALVector::getArrowStream()` (GDAL >= 3.6) and `GDALVector::writeArrowBatch()` (GDAL >= 3.8), supported on the R side with package **nanoarrow**.
