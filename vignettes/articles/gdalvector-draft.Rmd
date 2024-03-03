@@ -122,6 +122,7 @@ class GDALVector {
 	void resetReading();
 	// int64 handling TBD
 	SEXP getFeature(GIntBig fid);
+	void setIgnoredFields(Rcpp::CharacterVector fields);
 	
 	Rcpp::DataFrame getFeatureSet(Rcpp::CharacterVector fields,
 	                              bool geom_column);
@@ -710,5 +711,7 @@ lyr_tiles$close()
 * add `GDALVector::setSpatialFilter()` to the draft class definition - set spatial filter from WKT geometry (2024-03-02)
 * add comment in the layer intersection example re: feature retrieval by FID (2024-03-02)
 * add arguments `fields` and `geom_column` in `GDALVector::getFeatureSet()` - optionally retrieve a subset of attribute fields, and specify whether to include geometry column(s) in the returned data frame (2024-03-02)
-* the return value of feature writing methods should be the FID of the newly created/set/deleted feature upon successful write, or `-1` on failure (2024-03-02)
+* the return value of feature writing methods should be the FID of the newly created/set/deleted feature upon successful write, or `OGRNullFID` on failure (2024-03-02)
 * add note above `class GDALVector` re: handling of 64-bit integer types to be determined (2024-03-02)
+* add `GDALVector::setIgnoredFields()`: set which fields can be omitted when retrieving features from the layer. If the driver supports this functionality (testable using OLCIgnoreFields capability), it will not fetch the specified fields in subsequent calls to `getFeature()` / `getNextFeature()` thus save some processing time and/or bandwidth.
+
