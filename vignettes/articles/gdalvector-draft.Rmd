@@ -120,15 +120,17 @@ class GDALVector {
 	double getFeatureCount();
 	SEXP getNextFeature();
 	void resetReading();
-	SEXP getFeature(GIntBig fid);            // int64 handling TBD
+	// int64 handling TBD
+	SEXP getFeature(GIntBig fid);
 	
 	Rcpp::DataFrame getFeatureSet(Rcpp::CharacterVector fields,
 	                              bool geom_column);
 	
-	GIntBig createFeature(Rcpp::List feat);  // int64 handling TBD
-	void setFeature(Rcpp::List feat);
-	void upsertFeature(Rcpp::List feat);
-	void deleteFeature(GIntBig fid);         // int64 handling TBD
+	// int64 handling TBD
+	GIntBig createFeature(Rcpp::List feat);
+	GIntBig setFeature(Rcpp::List feat);
+	GIntBig upsertFeature(Rcpp::List feat);
+	GIntBig deleteFeature(GIntBig fid);
 	
 	bool startTransaction(bool force);
 	bool commitTransaction();
@@ -708,5 +710,5 @@ lyr_tiles$close()
 * add `GDALVector::setSpatialFilter()` to the draft class definition - set spatial filter from WKT geometry (2024-03-02)
 * add comment in the layer intersection example re: feature retrieval by FID (2024-03-02)
 * add arguments `fields` and `geom_column` in `GDALVector::getFeatureSet()` - optionally retrieve a subset of attribute fields, and specify whether to include geometry column(s) in the returned data frame (2024-03-02)
-* the return value of `GDALVector::createFeature()` should be the FID of the newly created feature upon successful write, or `-1` on failure; note that the other write methods currently have no return value, but this should possibly change (2024-03-02)
+* the return value of feature writing methods should be the FID of the newly created/set/deleted feature upon successful write, or `-1` on failure (2024-03-02)
 * add note above `class GDALVector` re: handling of 64-bit integer types to be determined (2024-03-02)
