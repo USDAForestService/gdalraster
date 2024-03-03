@@ -32,7 +32,7 @@ A  GDAL Dataset for vector is a file or database containing one or more OGR laye
 * existing management functions in **gdalraster** that operate on vector datasets: `copyDatasetFiles()`, `deleteDataset()`, `renameDataset()` and `addFilesInZip()` (supports SOZip)
 * existing internal utility functions to be further developed (potentially renamed/refactored): `.ogr_ds_exists()`, `.create_ogr()`, `.ogr_ds_layer_count()`, `.ogr_layer_exists()`, `.ogr_layer_create()`, `.ogr_layer_delete()` `.ogr_field_index()`, `.ogr_field_create()`
 * wrappers `vector_translate()` (`ogr2ogr`) and `vector_info()` (`ogrinfo`) from the gdal_utils.h API (**gdalraster** 1.10 around late March)
-* `ogr_execute_sql()`: SQL `SELECT` statements can be used to open a layer as an object of class `GDALVector` described below. `ogr_execute_sql()` will execute an SQL statement against the data store for `CREATE INDEX`, `DROP INDEX`, `ALTER TABLE`, `DROP TABLE`.
+* `ogr_execute_sql()`: execute an SQL statement against the data store for `CREATE INDEX`, `DROP INDEX`, `ALTER TABLE`, `DROP TABLE` (a SQL `SELECT` statement can be used in the constructor for class `GDALVector` described below, to open a layer of features)
 * other stand-alone functions TBD
 
 OGR Layer class represents a layer of features within a data source. It will be modeled in R as class `GDALVector`, an exposed C++ class encapsulating an OGR Layer and the GDAL Dataset that owns it. A `GDALVector` object will persist an open connection to the dataset and expose methods for retrieving layer information, setting attribute and spatial filters, reading/writing features, and layer geoprocessing. A draft definition for class `GDALVector` is given below.
