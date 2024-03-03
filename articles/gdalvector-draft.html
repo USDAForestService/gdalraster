@@ -131,16 +131,24 @@ their vector schemas will be done with:</p>
 operate on vector datasets: <code><a href="../reference/copyDatasetFiles.html">copyDatasetFiles()</a></code>,
 <code><a href="../reference/deleteDataset.html">deleteDataset()</a></code>, <code><a href="../reference/renameDataset.html">renameDataset()</a></code> and
 <code><a href="../reference/addFilesInZip.html">addFilesInZip()</a></code> (supports SOZip)</li>
-<li>existing internal utility functions to be further developed:
-<code>.ogr_ds_exists()</code>, <code>.create_ogr()</code>,
-<code>.ogr_ds_layer_count()</code>, <code>.ogr_layer_exists()</code>,
-<code>.ogr_layer_create()</code>, <code>.ogr_layer_delete()</code>
-<code>.ogr_field_index()</code>, <code>.ogr_field_create()</code>
+<li>existing internal utility functions to be further developed
+(potentially renamed/refactored): <code>.ogr_ds_exists()</code>,
+<code>.create_ogr()</code>, <code>.ogr_ds_layer_count()</code>,
+<code>.ogr_layer_exists()</code>, <code>.ogr_layer_create()</code>,
+<code>.ogr_layer_delete()</code> <code>.ogr_field_index()</code>,
+<code>.ogr_field_create()</code>
 </li>
-<li>wrappers for <code>vector_translate()</code> and
-<code>vector_info()</code> from the gdal_utils.h API
-(<strong>gdalraster</strong> 1.10)</li>
-<li>additional stand-alone functions TBD</li>
+<li>wrappers <code>vector_translate()</code> (<code>ogr2ogr</code>) and
+<code>vector_info()</code> (<code>ogrinfo</code>) from the gdal_utils.h
+API (<strong>gdalraster</strong> 1.10 around late March)</li>
+<li>
+<code>ogr_execute_sql()</code>: SQL <code>SELECT</code> statements
+can be used to open a layer as an object of class
+<code>GDALVector</code> described below. <code>ogr_execute_sql()</code>
+will execute an SQL statement against the data store for
+<code>CREATE INDEX</code>, <code>DROP INDEX</code>,
+<code>ALTER TABLE</code>, <code>DROP TABLE</code>.</li>
+<li>other stand-alone functions TBD</li>
 </ul>
 <p>OGR Layer class represents a layer of features within a data source.
 It will be modeled in R as class <code>GDALVector</code>, an exposed C++
@@ -843,14 +851,16 @@ in the returned data frame (2024-03-02)</li>
 <li>the return value of feature writing methods should be the FID of the
 newly created/set/deleted feature upon successful write, or
 <code>OGRNullFID</code> on failure (2024-03-02)</li>
-<li>add note above <code>class GDALVector</code> re: handling of 64-bit
-integer types to be determined (2024-03-02)</li>
+<li>add a note above <code>class GDALVector</code> re: handling of
+64-bit integer types to be determined (2024-03-02)</li>
 <li>add <code>GDALVector::setIgnoredFields()</code>: set which fields
 can be omitted when retrieving features from the layer. If the driver
 supports this functionality (testable using OLCIgnoreFields capability),
 it will not fetch the specified fields in subsequent calls to
 <code>getFeature()</code> / <code>getNextFeature()</code> thus save some
-processing time and/or bandwidth.</li>
+processing time and/or bandwidth. (2024-03-02)</li>
+<li>add <code>ogr_execute_sql()</code> for dataset/schema management
+(2024-03-02)</li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
