@@ -6,7 +6,9 @@ test_that("gdal_version returns vector", {
 })
 
 test_that("gdal_formats returns a data frame", {
-	expect_s3_class(gdal_formats(), "data.frame")
+	x <- gdal_formats()
+	expect_s3_class(x, "data.frame")
+	expect_true(nrow(x) > 1)
 })
 
 test_that("_check_gdal_filename works", {
