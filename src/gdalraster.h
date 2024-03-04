@@ -154,6 +154,11 @@ bool footprint(Rcpp::CharacterVector src_filename,
 		Rcpp::CharacterVector dst_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
 
+bool ogr2ogr(Rcpp::CharacterVector src_dsn,
+		Rcpp::CharacterVector dst_dsn,
+		Rcpp::Nullable<Rcpp::CharacterVector> src_layers,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+
 bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
 		Rcpp::CharacterVector out_dsn,
 		std::string out_layer, std::string fld_name,

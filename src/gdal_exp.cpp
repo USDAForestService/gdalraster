@@ -1044,6 +1044,130 @@ bool footprint(Rcpp::CharacterVector src_filename,
 }
 
 
+//' Convert vector data between different formats
+//'
+//' `ogr2ogr()` is a wrapper of the \command{ogr2ogr} command-line
+//' utility (see \url{https://gdal.org/programs/ogr2ogr.html}).
+//' This function can be used to convert simple features data between file
+//' formats. It can also perform various operations during the process, such
+//' as spatial or attribute selection, reducing the set of attributes, setting
+//' the output coordinate system or even reprojecting the features during
+//' translation.
+//' Refer to the GDAL documentation at the URL above for a description of
+//' command-line arguments that can be passed in `cl_arg`.
+//'
+//' @param src_dsn Character string. Data source name of the source vector
+//' dataset.
+//' @param dst_dsn Character string. Data source name of the destination vector
+//' dataset.
+//' @param src_layers Optional character vector of layer names in the source
+//' dataset. Defaults to all layers.
+//' @param cl_arg Optional character vector of command-line arguments for 
+//' the GDAL \code{ogr2ogr} command-line utility (see URL above).
+//' @returns Logical indicating success (invisible \code{TRUE}).
+//' An error is raised if the operation fails.
+//'
+//' @note
+//' For progress reporting, see command-line argument `-progress`: Display
+//' progress on terminal. Only works if input layers have the "fast feature
+//' count" capability.
+//'
+//' @seealso
+//' [translate()] for raster data
+//' 
+//' @examples
+//' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+//' 
+//' # Convert GeoPackage to Shapefile
+//' shp_file <- file.path(tempdir(), "ynp_fires.shp")
+//' ogr2ogr(src, shp_file, src_layers = "mtbs_perims")
+//' 
+//' # Reproject to WGS84
+//' ynp_wgs84 <- file.path(tempdir(), "ynp_fires_wgs84.gpkg")
+//' args <- c("-t_srs", "EPSG:4326")
+//' ogr2ogr(src, ynp_wgs84, cl_arg = args)
+//' 
+//' # Clip to a bounding box (xmin, ymin, xmax, ymax in the source SRS)
+//' # This will select features whose geometry intersects the bounding box.
+//' # The geometries themselves will not be clipped unless "-clipsrc" is
+//' # specified.
+//' # The source SRS can be overridden with "-spat_srs" "<srs_def>"
+//' ynp_clip <- file.path(tempdir(), "ynp_fires_aoi_clip.gpkg")
+//' bb <- c(469685.97, 11442.45, 544069.63, 85508.15)
+//' args <- c("-spat", bb)
+//' ogr2ogr(src, ynp_clip, cl_arg = args)
+//' 
+//' # Filter features by a -where clause
+//' ynp_filtered <- file.path(tempdir(), "ynp_fires_2000_2022.gpkg")
+//' sql <- "ig_year >= 2000 ORDER BY ig_year"
+//' args <- c("-where", sql)
+//' ogr2ogr(src, ynp_filtered, src_layers = "mtbs_perims", cl_arg = args)
+//' 
+//' deleteDataset(shp_file)
+//' deleteDataset(ynp_wgs84)
+//' deleteDataset(ynp_clip)
+//' deleteDataset(ynp_filtered)
+// [[Rcpp::export(invisible = true)]]
+bool ogr2ogr(Rcpp::CharacterVector src_dsn,
+		Rcpp::CharacterVector dst_dsn,
+		Rcpp::Nullable<Rcpp::CharacterVector> src_layers = R_NilValue,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+
+	std::string src_dsn_in;
+	src_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(src_dsn));
+	std::string dst_dsn_in;
+	dst_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dst_dsn));
+
+	// only 1 source dataset is supported currently by GDALVectorTranslate(),
+	// but takes a list of datasets as input
+	std::vector<GDALDatasetH> src_ds(1);
+	bool ret = false;
+	
+	src_ds[0] = GDALOpenEx(src_dsn_in.c_str(), GDAL_OF_VECTOR,
+			NULL, NULL, NULL);
+	if (src_ds[0] == NULL)
+		Rcpp::stop("Failed to open the source dataset.");
+
+	std::vector<char *> argv;
+	if (cl_arg.isNotNull()) {
+		Rcpp::CharacterVector cl_arg_in(cl_arg);
+		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+			argv.push_back((char *) (cl_arg_in[i]));
+		}
+	}
+	if (src_layers.isNotNull()) {
+		Rcpp::CharacterVector src_layers_in(src_layers);
+		for (R_xlen_t i = 0; i < src_layers_in.size(); ++i) {
+			argv.push_back((char *) (src_layers_in[i]));
+		}
+	}
+	argv.push_back(NULL);
+
+	GDALVectorTranslateOptions* psOptions =
+			GDALVectorTranslateOptionsNew(argv.data(), NULL);
+	if (psOptions == NULL) {
+		Rcpp::stop("ogr2ogr() failed (could not create options struct).");
+	}
+
+	GDALDatasetH hDstDS = GDALVectorTranslate(dst_dsn_in.c_str(), NULL,
+			1, src_ds.data(), psOptions, NULL);
+							
+	GDALVectorTranslateOptionsFree(psOptions);
+	
+	if (hDstDS != NULL) {
+		GDALClose(hDstDS);
+		ret = true;
+	}
+	
+	GDALClose(src_ds[0]);
+	
+	if (!ret)
+		Rcpp::stop("Vector translate failed.");
+	
+	return ret;
+}
+
+
 //' Wrapper for GDALPolygonize in the GDAL Algorithms C API
 //'
 //' Called from and documented in R/gdalraster_proc.R
@@ -1371,7 +1495,7 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' @param src_filename Character string. Filename of the source raster.
 //' @param dst_filename Character string. Filename of the output raster.
 //' @param cl_arg Optional character vector of command-line arguments for 
-//' \code{gdal_translate}.
+//' \code{gdal_translate} (see URL above).
 //' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
 //' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
@@ -1379,6 +1503,8 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' 
 //' @seealso
 //' [`GDALRaster-class`][GDALRaster], [rasterFromRaster()], [warp()]
+//'
+//' [ogr2ogr()] for vector data
 //'
 //' @examples
 //' # convert the elevation raster to Erdas Imagine format and resample to 90m

@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9040 (dev)
+# gdalraster 1.9.0.9050 (dev)
+
+* add `ogr2ogr()`: wrapper of the `ogr2ogr` command-line utility, convert vector data between different formats (2024-03-03)
 
 * add optional argument `quiet` in several functions to configure progress reporting (#237) (2024-02-27)
 
