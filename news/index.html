@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9050</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9060</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.0.9050" id="gdalraster-1909050-dev">gdalraster 1.9.0.9050 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909050-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code>: wrapper of the <code>ogr2ogr</code> command-line utility, convert vector data between different formats (2024-03-03)</p></li>
+<h2 class="pkg-version" data-toc-text="1.9.0.9060" id="gdalraster-1909060-dev">gdalraster 1.9.0.9060 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909060-dev"></a></h2>
+<ul><li><p>GDAL built with GEOS is now a system requirement, add test in configure.ac (2024-03-03)</p></li>
+<li><p>add <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code>: wrapper of the <code>ogr2ogr</code> command-line utility, convert vector data between different formats (2024-03-03)</p></li>
 <li><p>add optional argument <code>quiet</code> in several functions to configure progress reporting (<a href="https://github.com/USDAForestService/gdalraster/issues/237" class="external-link">#237</a>) (2024-02-27)</p></li>
 <li><p>fixed misspelled argument in <code><a href="../reference/vsi_copy_file.html">vsi_copy_file()</a></code> and <code><a href="../reference/vsi_sync.html">vsi_sync()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/233" class="external-link">#233</a>) (2024-02-27)</p></li>
 <li><p>add calls to <code>OGRCoordinateTransformation::DestroyCT()</code> in src/geos_wkt.cpp and src/transform.cpp - no known issues but fixes potential memory leak (2024-02-27)</p></li>

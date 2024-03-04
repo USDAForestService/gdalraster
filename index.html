@@ -68,7 +68,7 @@
     
     <a class="navbar-brand me-2" href="index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9050</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9060</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -165,7 +165,7 @@
 <div class="section level4">
 <h4 id="linux">Linux<a class="anchor" aria-label="anchor" href="#linux"></a>
 </h4>
-<p>GDAL &gt;= 2.4.0 is required, but a more recent version is recommended (e.g., &gt;= 3.6.4). Ideally GDAL will be built against GEOS but it is currently not required for core functionality in <strong>gdalraster</strong>. PROJ &gt;= 6 became a build requirement at GDAL 3.0, and GDAL as of 3.9 requires PROJ &gt;= 6.3.1, but a more recent version of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package <strong>xml2</strong>.</p>
+<p>GDAL &gt;= 2.4.0 is required, but a more recent version is recommended (e.g., &gt;= 3.6.4). <strong>gdalraster</strong> as of 1.10 requires GDAL built with GEOS. GDAL as of 3.9 requires PROJ &gt;= 6.3.1, but a more recent version of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package <strong>xml2</strong>.</p>
 <p>On Ubuntu, recent versions of geospatial libraries can be installed from the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable" class="external-link">ubuntugis-unstable PPA</a> with the following commands:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>sudo add<span class="sc">-</span>apt<span class="sc">-</span>repository ppa<span class="sc">:</span>ubuntugis<span class="sc">/</span>ubuntugis<span class="sc">-</span>unstable</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>sudo apt update</span>
