@@ -251,6 +251,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ogr2ogr
+bool ogr2ogr(Rcpp::CharacterVector src_dsn, Rcpp::CharacterVector dst_dsn, Rcpp::Nullable<Rcpp::CharacterVector> src_layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+RcppExport SEXP _gdalraster_ogr2ogr(SEXP src_dsnSEXP, SEXP dst_dsnSEXP, SEXP src_layersSEXP, SEXP cl_argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_dsn(src_dsnSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_dsn(dst_dsnSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type src_layers(src_layersSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogr2ogr(src_dsn, dst_dsn, src_layers, cl_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _polygonize
 bool _polygonize(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector out_dsn, std::string out_layer, std::string fld_name, Rcpp::CharacterVector mask_file, bool nomask, int connectedness, bool quiet);
 RcppExport SEXP _gdalraster__polygonize(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP out_dsnSEXP, SEXP out_layerSEXP, SEXP fld_nameSEXP, SEXP mask_fileSEXP, SEXP nomaskSEXP, SEXP connectednessSEXP, SEXP quietSEXP) {
@@ -1092,6 +1106,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 6},
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 6},
     {"_gdalraster_footprint", (DL_FUNC) &_gdalraster_footprint, 3},
+    {"_gdalraster_ogr2ogr", (DL_FUNC) &_gdalraster_ogr2ogr, 4},
     {"_gdalraster__polygonize", (DL_FUNC) &_gdalraster__polygonize, 9},
     {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 4},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 10},

@@ -12,7 +12,7 @@ translate(src_filename, dst_filename, cl_arg = NULL, quiet = FALSE)
 \item{dst_filename}{Character string. Filename of the output raster.}
 
 \item{cl_arg}{Optional character vector of command-line arguments for
-\code{gdal_translate}.}
+\code{gdal_translate} (see URL above).}
 
 \item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will not be
 displayed. Defaults to \code{FALSE}.}
@@ -50,4 +50,6 @@ ds$close()
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}, \code{\link[=warp]{warp()}}
+
+\code{\link[=ogr2ogr]{ogr2ogr()}} for vector data
 }

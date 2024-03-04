@@ -86,6 +86,9 @@ reference:
   - copyDatasetFiles
   - deleteDataset
   - renameDataset
+- subtitle: OGR vector utilities
+- contents:
+  - ogr2ogr
 - subtitle: Virtual file systems
 - contents:
   - vsi_copy_file
