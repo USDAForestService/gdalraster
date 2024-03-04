@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9050 (dev)
+# gdalraster 1.9.0.9060 (dev)
+
+* GDAL built with GEOS is now a system requirement, add test in configure.ac (2024-03-03)
 
 * add `ogr2ogr()`: wrapper of the `ogr2ogr` command-line utility, convert vector data between different formats (2024-03-03)
 

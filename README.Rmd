@@ -67,7 +67,7 @@ CRAN provides pre-compiled binary packages for Windows and macOS. These do not r
 
 #### Linux
 
-GDAL >= 2.4.0 is required, but a more recent version is recommended (e.g., >= 3.6.4). Ideally GDAL will be built against GEOS but it is currently not required for core functionality in **gdalraster**. PROJ >= 6 became a build requirement at GDAL 3.0, and GDAL as of 3.9 requires PROJ >= 6.3.1, but a more recent version of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package **xml2**.
+GDAL >= 2.4.0 is required, but a more recent version is recommended (e.g., >= 3.6.4). **gdalraster** as of 1.10 requires GDAL built with GEOS. GDAL as of 3.9 requires PROJ >= 6.3.1, but a more recent version of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package **xml2**.
 
 On Ubuntu, recent versions of geospatial libraries can be installed from the [ubuntugis-unstable PPA](https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable) with the following commands:
 
