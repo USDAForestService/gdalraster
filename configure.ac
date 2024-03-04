@@ -6,7 +6,7 @@
 # local copy of the PROJ data directory. The PROJ datadir is now obtained from
 # pkg-config if possible. Compiler invocations are now logged.
 # 2024-03-03: Test that GEOS is available to GDAL.
-AC_INIT([gdalraster],[1.9.0.9060],[chris.toney@usda.gov])
+AC_INIT([gdalraster],[1.9.0.9070],[chris.toney@usda.gov])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
