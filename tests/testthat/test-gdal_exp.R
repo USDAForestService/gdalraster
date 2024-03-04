@@ -5,8 +5,10 @@ test_that("gdal_version returns vector", {
 	expect_length(gdal_version(), 4)
 })
 
-test_that("gdal_formats prints output", {
-	expect_output(gdal_formats())
+test_that("gdal_formats returns a data frame", {
+	x <- gdal_formats()
+	expect_s3_class(x, "data.frame")
+	expect_true(nrow(x) > 1)
 })
 
 test_that("_check_gdal_filename works", {

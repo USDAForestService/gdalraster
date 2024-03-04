@@ -23,16 +23,29 @@ gdal_version <- function() {
     .Call(`_gdalraster__gdal_version_num`)
 }
 
-#' Report all configured GDAL drivers for raster formats
+#' Retrieve information on GDAL format drivers for raster and vector
 #'
-#' `gdal_formats()` prints to the console a list of the supported raster
-#' formats.
+#' `gdal_formats()` returns a table of the supported raster and vector
+#' formats, with information about the capabilities of each format driver.
 #'
-#' @returns No return value, called for reporting only.
+#' @param fmt A character string containing a driver short name. By default,
+#' information for all configured raster and vector format drivers will be
+#' returned.
+#' @returns A data frame containing the format short name, long name, raster
+#' (logical), vector (logical), read/write flag (`ro` is read-only,
+#' `w` supports CreateCopy, `w+` supports Create), virtual I/O supported
+#' (logical), and subdatasets (logical).
+#'
+#' @note
+#' Virtual I/O refers to operations on GDAL Virtual File Systems. See
+#' \url{https://gdal.org/user/virtual_file_systems.html#virtual-file-systems}.
+#'
 #' @examples
-#' gdal_formats()
-gdal_formats <- function() {
-    invisible(.Call(`_gdalraster_gdal_formats`))
+#' head(gdal_formats())
+#'
+#' gdal_formats("GPKG")
+gdal_formats <- function(fmt = "") {
+    .Call(`_gdalraster_gdal_formats`, fmt)
 }
 
 #' Get GDAL configuration option

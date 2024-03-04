@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9060 (dev)
+# gdalraster 1.9.0.9070 (dev)
+
+* `gdal_formats()` now returns a data frame with the supported raster and vector formats, and information about the capabilities of each format driver (2024-03-04)
 
 * GDAL built with GEOS is now a system requirement, add test in configure.ac (2024-03-03)
 
@@ -10,7 +12,7 @@
 
 * add calls to `OGRCoordinateTransformation::DestroyCT()` in src/geos_wkt.cpp and src/transform.cpp - no known issues but fixes potential memory leak (2024-02-27)
 
-* free *phGeometry with `OGR_G_DestroyGeometry()` in src/geos_wkt.cpp and src/wkt_conv.cpp - no known issues but fixes potential memory leak (2024-02-27)
+* free `*phGeometry` with `OGR_G_DestroyGeometry()` in src/geos_wkt.cpp and src/wkt_conv.cpp - no known issues but fixes potential memory leak (2024-02-27)
 
 * add `g_transform()`: apply a coordinate transformation to a WKT geometry (2024-02-26)
 

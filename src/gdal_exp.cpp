@@ -50,35 +50,90 @@ int _gdal_version_num() {
 }
 
 
-//' Report all configured GDAL drivers for raster formats
+//' Retrieve information on GDAL format drivers for raster and vector
 //'
-//' `gdal_formats()` prints to the console a list of the supported raster
-//' formats.
+//' `gdal_formats()` returns a table of the supported raster and vector
+//' formats, with information about the capabilities of each format driver.
 //'
-//' @returns No return value, called for reporting only.
+//' @param fmt A character string containing a driver short name. By default,
+//' information for all configured raster and vector format drivers will be
+//' returned.
+//' @returns A data frame containing the format short name, long name, raster
+//' (logical), vector (logical), read/write flag (`ro` is read-only,
+//' `w` supports CreateCopy, `w+` supports Create), virtual I/O supported
+//' (logical), and subdatasets (logical).
+//'
+//' @note
+//' Virtual I/O refers to operations on GDAL Virtual File Systems. See
+//' \url{https://gdal.org/user/virtual_file_systems.html#virtual-file-systems}.
+//'
 //' @examples
-//' gdal_formats()
+//' head(gdal_formats())
+//'
+//' gdal_formats("GPKG")
 // [[Rcpp::export]]
-void gdal_formats() {
-	Rprintf("Supported raster formats:\n");
+Rcpp::DataFrame gdal_formats(std::string fmt = "") {
+
+	Rcpp::CharacterVector short_name = Rcpp::CharacterVector::create();
+	Rcpp::CharacterVector long_name = Rcpp::CharacterVector::create();
+	Rcpp::LogicalVector raster_fmt = Rcpp::LogicalVector::create();
+	Rcpp::LogicalVector vector_fmt = Rcpp::LogicalVector::create();
+	Rcpp::CharacterVector rw_flag = Rcpp::CharacterVector::create();
+	Rcpp::LogicalVector virtual_io = Rcpp::LogicalVector::create();
+	Rcpp::LogicalVector subdatasets = Rcpp::LogicalVector::create();
+	
 	for (int i=0; i < GDALGetDriverCount(); ++i) {
 		GDALDriverH hDriver = GDALGetDriver(i);
 		char **papszMD = GDALGetMetadata(hDriver, NULL);
-		const char *pszRFlag = "", *pszWFlag;
-		std::string rw_flag = "";
-		if (!CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false))
+		std::string rw = "";
+		
+		if (fmt != "" && fmt != GDALGetDriverShortName(hDriver))
 			continue;
+		
+		if (CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ||
+				CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false)) {
+				
+			CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ?
+					raster_fmt.push_back(true) : raster_fmt.push_back(false);
+				
+			CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false) ?
+					vector_fmt.push_back(true) : vector_fmt.push_back(false);
+		
+		}
+		else {
+			continue;
+		}
+		
 		if (CPLFetchBool(papszMD, GDAL_DCAP_OPEN, false))
-			pszRFlag = "r";
+			rw += "r";
 		if (CPLFetchBool(papszMD, GDAL_DCAP_CREATE, false))
-			pszWFlag = "w+";
+			rw += "w+";
 		else if (CPLFetchBool(papszMD, GDAL_DCAP_CREATECOPY, false))
-			pszWFlag = "w";
+			rw += "w";
 		else
-			pszWFlag = "o";
-		Rprintf("  %s (%s%s): %s\n", GDALGetDriverShortName(hDriver),
-				pszRFlag, pszWFlag, GDALGetDriverLongName(hDriver));
+			rw += "o";
+		rw_flag.push_back(rw);
+
+		CPLFetchBool(papszMD, GDAL_DCAP_VIRTUALIO, false) ?
+				virtual_io.push_back(true) : virtual_io.push_back(false);
+
+		CPLFetchBool(papszMD, GDAL_DMD_SUBDATASETS, false) ?
+				subdatasets.push_back(true) : subdatasets.push_back(false);
+
+		short_name.push_back(GDALGetDriverShortName(hDriver));
+		long_name.push_back(GDALGetDriverLongName(hDriver));
 	}
+	
+	Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
+	df_out.push_back(short_name, "short_name");
+	df_out.push_back(raster_fmt, "raster");
+	df_out.push_back(vector_fmt, "vector");
+	df_out.push_back(rw_flag, "rw_flag");
+	df_out.push_back(virtual_io, "virtual_io");
+	df_out.push_back(subdatasets, "subdatasets");
+	df_out.push_back(long_name, "long_name");
+	
+	return df_out;
 }
 
 
