@@ -70,7 +70,7 @@ const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
 
 Rcpp::CharacterVector gdal_version();
 int _gdal_version_num();
-void gdal_formats();
+Rcpp::DataFrame gdal_formats(std::string fmt);
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
