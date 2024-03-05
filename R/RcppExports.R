@@ -41,6 +41,7 @@ gdal_version <- function() {
 #' \url{https://gdal.org/user/virtual_file_systems.html#virtual-file-systems}.
 #'
 #' @examples
+#' nrow(gdal_formats())
 #' head(gdal_formats())
 #'
 #' gdal_formats("GPKG")
