@@ -735,6 +735,6 @@ This is a working list of potential issues and design questions that need furthe
 
 ## Contributors
 
-* @goergen95 (#205)
-* @mdsumner
+* [@goergen95](https://github.com/goergen95) ([#205](https://github.com/USDAForestService/gdalraster/issues/205))
+* [@mdsumner](https://github.com/mdsumner)
 
