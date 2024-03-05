@@ -89,6 +89,7 @@ reference:
 - subtitle: OGR vector utilities
 - contents:
   - ogr2ogr
+  - ogrinfo
 - subtitle: Virtual file systems
 - contents:
   - vsi_copy_file

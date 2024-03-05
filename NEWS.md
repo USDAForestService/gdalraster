@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9070 (dev)
+# gdalraster 1.9.0.9080 (dev)
+
+* add `ogrinfo()`: wrapper of the `ogrinfo` command-line utility, retrieve information about a vector data source and potentially edit data with SQL statements (GDAL >= 3.7) (2024-03-04)
 
 * `gdal_formats()` now returns a data frame with the supported raster and vector formats, and information about the capabilities of each format driver (2024-03-04)
 

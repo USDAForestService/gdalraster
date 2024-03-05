@@ -331,3 +331,22 @@ test_that("ogr2ogr works", {
 
 })
 
+test_that("ogrinfo works", {
+	skip_if(.gdal_version_num() < 3070000)
+	
+	src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+
+	info <- ogrinfo(src)
+	expect_vector(info, ptype = character(), size = 1)
+	expect_false(info[1] == "")
+	
+	src_mem <- paste0("/vsimem/", basename(src))
+	vsi_copy_file(src, src_mem)
+	
+	args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
+	ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
+	idx <- .ogr_field_index(src_mem, "mtbs_perims", "burn_bnd_ha")
+	expect_equal(idx, 9)
+
+	vsi_unlink(src_mem)
+})
