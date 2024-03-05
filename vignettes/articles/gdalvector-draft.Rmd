@@ -11,7 +11,9 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-03-04
+Last modified: 2024-03-05
+
+Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
 ## Summary
 
@@ -732,6 +734,7 @@ This is a working list of potential issues and design questions that need furthe
 * `ogr2ogr()` and `ogrinfo()` are available in 1.9.0.9080 dev (2024-03-04)
 * add potential output vectors of geos or ogr pointers, or wkb/wkt with support by {wk} (@mdsumner, 2024-03-04)
 * add section "Contributors" (2024-03-04)
+* add link to issue 241 for discussion thread (2024-03-05)
 
 ## Contributors
 
