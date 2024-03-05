@@ -42,43 +42,47 @@ command-line arguments that can be passed in \code{cl_arg}.
 \examples{
 src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 
-# Get the names of the layers in a GeoPackage file
-info <- ogrinfo(src)
-writeLines(info)
+# Requires GDAL >= 3.7
+if (as.integer(gdal_version()[2]) >= 3070000) {
+  # Get the names of the layers in a GeoPackage file.
+  info <- ogrinfo(src)
+  writeLines(info)
 
-# Summary (-so) of a layer without showing details about every single feature
-# -nomd suppresses metadata printing. Some datasets may contain a lot of
-# metadata strings.
-args <- c("-so", "-nomd")
-info <- ogrinfo(src, "mtbs_perims", args)
-writeLines(info)
+  # Summary (-so) of a layer without showing details about every single
+  # feature.
+  # -nomd suppresses metadata printing. Some datasets may contain a lot of
+  # metadata strings.
+  args <- c("-so", "-nomd")
+  info <- ogrinfo(src, "mtbs_perims", args)
+  writeLines(info)
 
-# Retrieve information in JSON format without showing details about every
-# single feature
-args <- c("-json", "-nomd")
-json <- ogrinfo(src, "mtbs_perims", args)
-#info <- jsonlite::fromJSON(json)
+  # Retrieve information in JSON format without showing details about every
+  # single feature.
+  args <- c("-json", "-nomd")
+  json <- ogrinfo(src, "mtbs_perims", args)
+  #info <- jsonlite::fromJSON(json)
 
-# Attribute query to restrict the output of the features in a layer
-args <- c("-ro", "-nomd", "-where", "ig_year = 2020")
-info <- ogrinfo(src, "mtbs_perims", args)
-writeLines(info)
+  # Attribute query to restrict the output of the features in a layer.
+  args <- c("-ro", "-nomd", "-where", "ig_year = 2020")
+  info <- ogrinfo(src, "mtbs_perims", args)
+  writeLines(info)
 
-# Copy to a temporary in-memory file that is writeable
-src_mem <- paste0("/vsimem/", basename(src))
-vsi_copy_file(src, src_mem)
-print(src_mem)
+  # Copy to a temporary in-memory file that is writeable.
+  src_mem <- paste0("/vsimem/", basename(src))
+  vsi_copy_file(src, src_mem)
+  print(src_mem)
 
-# Add a column to a layer
-args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
-ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
+  # Add a column to a layer.
+  args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
+  ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
 
-# Update a value of an attribute with SQL by using the SQLite dialect
-sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
-args <- c("-dialect", "sqlite", "-sql", sql)
-ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
+  # Update a value of an attribute with SQL by using the SQLite dialect.
+  sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
+  args <- c("-dialect", "sqlite", "-sql", sql)
+  ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
 
-vsi_unlink(src_mem)
+  vsi_unlink(src_mem)
+}
 }
 \seealso{
 \code{\link[=ogr2ogr]{ogr2ogr()}}
