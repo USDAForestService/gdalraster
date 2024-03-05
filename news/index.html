@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.0.9070" id="gdalraster-1909070-dev">gdalraster 1.9.0.9070 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909070-dev"></a></h2>
-<ul><li><p><code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> now returns a data frame with the supported raster and vector formats, and information about the capabilities of each format driver (2024-03-04)</p></li>
+<h2 class="pkg-version" data-toc-text="1.9.0.9080" id="gdalraster-1909080-dev">gdalraster 1.9.0.9080 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909080-dev"></a></h2>
+<ul><li><p>add <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code>: wrapper of the <code>ogrinfo</code> command-line utility, retrieve information about a vector data source and potentially edit data with SQL statements (GDAL &gt;= 3.7) (2024-03-04)</p></li>
+<li><p><code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> now returns a data frame with the supported raster and vector formats, and information about the capabilities of each format driver (2024-03-04)</p></li>
 <li><p>GDAL built with GEOS is now a system requirement, add test in configure.ac (2024-03-03)</p></li>
 <li><p>add <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code>: wrapper of the <code>ogr2ogr</code> command-line utility, convert vector data between different formats (2024-03-03)</p></li>
 <li><p>add optional argument <code>quiet</code> in several functions to configure progress reporting (<a href="https://github.com/USDAForestService/gdalraster/issues/237" class="external-link">#237</a>) (2024-02-27)</p></li>
