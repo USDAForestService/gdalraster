@@ -1128,6 +1128,8 @@ bool footprint(Rcpp::CharacterVector src_filename,
 //' count" capability.
 //'
 //' @seealso
+//' [ogrinfo()]
+//'
 //' [translate()] for raster data
 //' 
 //' @examples
@@ -1220,6 +1222,143 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 		Rcpp::stop("Vector translate failed.");
 	
 	return ret;
+}
+
+
+//' Retrieve information about a vector data source
+//'
+//' `ogrinfo()` is a wrapper of the \command{ogrinfo} command-line
+//' utility (see \url{https://gdal.org/programs/ogrinfo.html}).
+//' This function lists information about an OGR-supported data source. With
+//' SQL statements it is also possible to edit data.
+//' Refer to the GDAL documentation at the URL above for a description of
+//' command-line arguments that can be passed in `cl_arg`.
+//'
+//' @param dsn Character string. Data source name (e.g., filename, database
+//' connection string, etc.)
+//' @param layers Optional character vector of layer names in the source
+//' dataset.
+//' @param cl_arg Optional character vector of command-line arguments for 
+//' the GDAL \code{ogrinfo} command-line utility (see URL above).
+//' @param open_options Optional character vector of dataset open options.
+//' @param read_only Logical scalar. `TRUE` to open the data source read-only
+//' (the default), or `FALSE` to open with write access.
+//' @returns Character string containing information about the vector dataset,
+//' or empty string ('""`) in case of error.
+//'
+//' @seealso
+//' [ogr2ogr()]
+//' 
+//' @examples
+//' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+//' 
+//' # Get the names of the layers in a GeoPackage file
+//' info <- ogrinfo(src)
+//' writeLines(info)
+//' 
+//' # Summary (-so) of a layer without showing details about every single feature
+//' # -nomd suppresses metadata printing. Some datasets may contain a lot of
+//' # metadata strings.
+//' args <- c("-so", "-nomd")
+//' info <- ogrinfo(src, "mtbs_perims", args)
+//' writeLines(info)
+//' 
+//' # Retrieve information in JSON format without showing details about every
+//' # single feature
+//' args <- c("-json", "-nomd")
+//' json <- ogrinfo(src, "mtbs_perims", args)
+//' #info <- jsonlite::fromJSON(json)
+//' 
+//' # Attribute query to restrict the output of the features in a layer
+//' args <- c("-ro", "-nomd", "-where", "ig_year = 2020")
+//' info <- ogrinfo(src, "mtbs_perims", args)
+//' writeLines(info)
+//' 
+//' # Copy to a temporary in-memory file that is writeable
+//' src_mem <- paste0("/vsimem/", basename(src))
+//' vsi_copy_file(src, src_mem)
+//' print(src_mem)
+//' 
+//' # Add a column to a layer
+//' args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
+//' ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
+//' 
+//' # Update a value of an attribute with SQL by using the SQLite dialect
+//' sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
+//' args <- c("-dialect", "sqlite", "-sql", sql)
+//' ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
+//' 
+//' vsi_unlink(src_mem)
+// [[Rcpp::export()]]
+std::string ogrinfo(Rcpp::CharacterVector dsn,
+		Rcpp::Nullable<Rcpp::CharacterVector> layers = R_NilValue,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+		Rcpp::Nullable<Rcpp::CharacterVector> open_options = R_NilValue,
+		bool read_only = true) {
+
+#if GDAL_VERSION_NUM < 3070000
+	Rcpp::stop("ogrinfo() requires GDAL >= 3.7.");
+
+#else
+	std::string dsn_in;
+	dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+
+	GDALDatasetH src_ds;
+
+	std::vector<char *> dsoo;
+	if (open_options.isNotNull()) {
+		Rcpp::CharacterVector open_options_in(open_options);
+		for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
+			dsoo.push_back((char *) (open_options_in[i]));
+		}
+	}
+	dsoo.push_back(NULL);
+	
+	unsigned int nOpenFlags = GDAL_OF_VECTOR;
+	if (read_only)
+		nOpenFlags |= GDAL_OF_READONLY;
+	else
+		nOpenFlags |= GDAL_OF_UPDATE;
+	
+	src_ds = GDALOpenEx(dsn_in.c_str(), nOpenFlags, NULL, dsoo.data(), NULL);
+	if (src_ds == NULL)
+		Rcpp::stop("Failed to open the source dataset.");
+
+	std::vector<char *> argv;
+	if (cl_arg.isNotNull()) {
+		Rcpp::CharacterVector cl_arg_in(cl_arg);
+		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+			argv.push_back((char *) (cl_arg_in[i]));
+		}
+	}
+	argv.push_back((char *) (dsn[0]));
+	if (layers.isNotNull()) {
+		Rcpp::CharacterVector layers_in(layers);
+		for (R_xlen_t i = 0; i < layers_in.size(); ++i) {
+			argv.push_back((char *) (layers_in[i]));
+		}
+	}
+	argv.push_back(NULL);
+	
+	GDALVectorInfoOptions *psOptions =
+			GDALVectorInfoOptionsNew(argv.data(), NULL);
+	
+	if (psOptions == NULL) {
+		Rcpp::stop("ogrinfo() failed (could not create options struct).");
+	}
+
+	std::string info_out = "";
+	char *pszInfo = GDALVectorInfo(src_ds, psOptions);
+	if (pszInfo != NULL)
+		info_out = pszInfo;
+	
+	CPLFree(pszInfo);
+	GDALVectorInfoOptionsFree(psOptions);
+	GDALClose(src_ds);
+	
+	return info_out;
+	
+#endif
 }
 
 
