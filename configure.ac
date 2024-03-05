@@ -5,7 +5,8 @@
 # GDAL headers. Still checks that PROJ is available to GDAL and handles optional
 # local copy of the PROJ data directory. The PROJ datadir is now obtained from
 # pkg-config if possible. Compiler invocations are now logged.
-AC_INIT([gdalraster],[1.9.0.9040],[chris.toney@usda.gov])
+# 2024-03-03: Test that GEOS is available to GDAL.
+AC_INIT([gdalraster],[1.9.0.9080],[chris.toney@usda.gov])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
@@ -291,6 +292,59 @@ if test "${gdal_has_proj}" = no; then
   AC_MSG_RESULT(no)
   AC_MSG_ERROR([OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?])
 elif test "${gdal_has_proj}" = cross_compiling; then
+  AC_MSG_RESULT(assume yes for cross-compiling)
+else
+  AC_MSG_RESULT(yes)
+fi
+
+#
+# test whether GEOS is available to gdal:
+#
+
+gdal_has_geos=no
+
+[cat > gdal_geos.cpp <<_EOCONF
+#include <ogr_api.h>
+int main(int argc, char *argv[]) {
+	OGRGeometryH hGeom = OGR_G_CreateGeometry(wkbPoint);
+	if (hGeom == NULL)
+		return false;
+	OGR_G_SetPoint_2D(hGeom, 0, 0, 0);
+	// If GDAL is built without the GEOS library, this function will 
+	// always return FALSE:
+	bool ret = OGR_G_IsSimple(hGeom);
+	OGR_G_DestroyGeometry(hGeom);
+	return (ret == FALSE); // signals GEOS is not available through gdal
+}
+_EOCONF]
+
+AC_MSG_CHECKING(GDAL: checking whether GEOS is available for linking:)
+AC_LINK_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_geos.cpp`])],
+   gdal_has_geos=yes,
+   gdal_has_geos=no
+)
+if test "${gdal_has_geos}" = no; then
+  AC_MSG_RESULT(no)
+  rm -f gdal_geos.cpp
+  AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
+  AC_MSG_ERROR([cannot link geometry code])
+else
+  AC_MSG_RESULT(yes)
+fi
+
+AC_MSG_CHECKING(GDAL: checking whether GEOS is available for running:)
+AC_RUN_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_geos.cpp`])],
+   gdal_has_geos=yes,
+   gdal_has_geos=no,
+   gdal_has_geos=cross_compiling
+)
+rm -f gdal_geos.cpp
+if test "${gdal_has_geos}" = no; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([OGR_G_IsSimple() returns false for a valid point: GEOS not available?])
+elif test "${gdal_has_geos}" = cross_compiling; then
   AC_MSG_RESULT(assume yes for cross-compiling)
 else
   AC_MSG_RESULT(yes)

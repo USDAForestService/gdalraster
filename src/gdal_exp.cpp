@@ -50,35 +50,91 @@ int _gdal_version_num() {
 }
 
 
-//' Report all configured GDAL drivers for raster formats
+//' Retrieve information on GDAL format drivers for raster and vector
 //'
-//' `gdal_formats()` prints to the console a list of the supported raster
-//' formats.
+//' `gdal_formats()` returns a table of the supported raster and vector
+//' formats, with information about the capabilities of each format driver.
 //'
-//' @returns No return value, called for reporting only.
+//' @param fmt A character string containing a driver short name. By default,
+//' information for all configured raster and vector format drivers will be
+//' returned.
+//' @returns A data frame containing the format short name, long name, raster
+//' (logical), vector (logical), read/write flag (`ro` is read-only,
+//' `w` supports CreateCopy, `w+` supports Create), virtual I/O supported
+//' (logical), and subdatasets (logical).
+//'
+//' @note
+//' Virtual I/O refers to operations on GDAL Virtual File Systems. See
+//' \url{https://gdal.org/user/virtual_file_systems.html#virtual-file-systems}.
+//'
 //' @examples
-//' gdal_formats()
+//' nrow(gdal_formats())
+//' head(gdal_formats())
+//'
+//' gdal_formats("GPKG")
 // [[Rcpp::export]]
-void gdal_formats() {
-	Rprintf("Supported raster formats:\n");
+Rcpp::DataFrame gdal_formats(std::string fmt = "") {
+
+	Rcpp::CharacterVector short_name = Rcpp::CharacterVector::create();
+	Rcpp::CharacterVector long_name = Rcpp::CharacterVector::create();
+	Rcpp::LogicalVector raster_fmt = Rcpp::LogicalVector::create();
+	Rcpp::LogicalVector vector_fmt = Rcpp::LogicalVector::create();
+	Rcpp::CharacterVector rw_flag = Rcpp::CharacterVector::create();
+	Rcpp::LogicalVector virtual_io = Rcpp::LogicalVector::create();
+	Rcpp::LogicalVector subdatasets = Rcpp::LogicalVector::create();
+	
 	for (int i=0; i < GDALGetDriverCount(); ++i) {
 		GDALDriverH hDriver = GDALGetDriver(i);
 		char **papszMD = GDALGetMetadata(hDriver, NULL);
-		const char *pszRFlag = "", *pszWFlag;
-		std::string rw_flag = "";
-		if (!CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false))
+		std::string rw = "";
+		
+		if (fmt != "" && fmt != GDALGetDriverShortName(hDriver))
 			continue;
+		
+		if (CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ||
+				CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false)) {
+				
+			CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ?
+					raster_fmt.push_back(true) : raster_fmt.push_back(false);
+				
+			CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false) ?
+					vector_fmt.push_back(true) : vector_fmt.push_back(false);
+		
+		}
+		else {
+			continue;
+		}
+		
 		if (CPLFetchBool(papszMD, GDAL_DCAP_OPEN, false))
-			pszRFlag = "r";
+			rw += "r";
 		if (CPLFetchBool(papszMD, GDAL_DCAP_CREATE, false))
-			pszWFlag = "w+";
+			rw += "w+";
 		else if (CPLFetchBool(papszMD, GDAL_DCAP_CREATECOPY, false))
-			pszWFlag = "w";
+			rw += "w";
 		else
-			pszWFlag = "o";
-		Rprintf("  %s (%s%s): %s\n", GDALGetDriverShortName(hDriver),
-				pszRFlag, pszWFlag, GDALGetDriverLongName(hDriver));
+			rw += "o";
+		rw_flag.push_back(rw);
+
+		CPLFetchBool(papszMD, GDAL_DCAP_VIRTUALIO, false) ?
+				virtual_io.push_back(true) : virtual_io.push_back(false);
+
+		CPLFetchBool(papszMD, GDAL_DMD_SUBDATASETS, false) ?
+				subdatasets.push_back(true) : subdatasets.push_back(false);
+
+		short_name.push_back(GDALGetDriverShortName(hDriver));
+		long_name.push_back(GDALGetDriverLongName(hDriver));
 	}
+	
+	Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
+	df_out.push_back(short_name, "short_name");
+	df_out.push_back(raster_fmt, "raster");
+	df_out.push_back(vector_fmt, "vector");
+	df_out.push_back(rw_flag, "rw_flag");
+	df_out.push_back(virtual_io, "virtual_io");
+	df_out.push_back(subdatasets, "subdatasets");
+	df_out.push_back(long_name, "long_name");
+	
+	return df_out;
 }
 
 
@@ -1044,6 +1100,273 @@ bool footprint(Rcpp::CharacterVector src_filename,
 }
 
 
+//' Convert vector data between different formats
+//'
+//' `ogr2ogr()` is a wrapper of the \command{ogr2ogr} command-line
+//' utility (see \url{https://gdal.org/programs/ogr2ogr.html}).
+//' This function can be used to convert simple features data between file
+//' formats. It can also perform various operations during the process, such
+//' as spatial or attribute selection, reducing the set of attributes, setting
+//' the output coordinate system or even reprojecting the features during
+//' translation.
+//' Refer to the GDAL documentation at the URL above for a description of
+//' command-line arguments that can be passed in `cl_arg`.
+//'
+//' @param src_dsn Character string. Data source name of the source vector
+//' dataset.
+//' @param dst_dsn Character string. Data source name of the destination vector
+//' dataset.
+//' @param src_layers Optional character vector of layer names in the source
+//' dataset. Defaults to all layers.
+//' @param cl_arg Optional character vector of command-line arguments for 
+//' the GDAL \code{ogr2ogr} command-line utility (see URL above).
+//' @returns Logical indicating success (invisible \code{TRUE}).
+//' An error is raised if the operation fails.
+//'
+//' @note
+//' For progress reporting, see command-line argument `-progress`: Display
+//' progress on terminal. Only works if input layers have the "fast feature
+//' count" capability.
+//'
+//' @seealso
+//' [ogrinfo()]
+//'
+//' [translate()] for raster data
+//' 
+//' @examples
+//' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+//' 
+//' # Convert GeoPackage to Shapefile
+//' shp_file <- file.path(tempdir(), "ynp_fires.shp")
+//' ogr2ogr(src, shp_file, src_layers = "mtbs_perims")
+//' 
+//' # Reproject to WGS84
+//' ynp_wgs84 <- file.path(tempdir(), "ynp_fires_wgs84.gpkg")
+//' args <- c("-t_srs", "EPSG:4326")
+//' ogr2ogr(src, ynp_wgs84, cl_arg = args)
+//' 
+//' # Clip to a bounding box (xmin, ymin, xmax, ymax in the source SRS)
+//' # This will select features whose geometry intersects the bounding box.
+//' # The geometries themselves will not be clipped unless "-clipsrc" is
+//' # specified.
+//' # The source SRS can be overridden with "-spat_srs" "<srs_def>"
+//' ynp_clip <- file.path(tempdir(), "ynp_fires_aoi_clip.gpkg")
+//' bb <- c(469685.97, 11442.45, 544069.63, 85508.15)
+//' args <- c("-spat", bb)
+//' ogr2ogr(src, ynp_clip, cl_arg = args)
+//' 
+//' # Filter features by a -where clause
+//' ynp_filtered <- file.path(tempdir(), "ynp_fires_2000_2022.gpkg")
+//' sql <- "ig_year >= 2000 ORDER BY ig_year"
+//' args <- c("-where", sql)
+//' ogr2ogr(src, ynp_filtered, src_layers = "mtbs_perims", cl_arg = args)
+//' 
+//' deleteDataset(shp_file)
+//' deleteDataset(ynp_wgs84)
+//' deleteDataset(ynp_clip)
+//' deleteDataset(ynp_filtered)
+// [[Rcpp::export(invisible = true)]]
+bool ogr2ogr(Rcpp::CharacterVector src_dsn,
+		Rcpp::CharacterVector dst_dsn,
+		Rcpp::Nullable<Rcpp::CharacterVector> src_layers = R_NilValue,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+
+	std::string src_dsn_in;
+	src_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(src_dsn));
+	std::string dst_dsn_in;
+	dst_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dst_dsn));
+
+	// only 1 source dataset is supported currently by GDALVectorTranslate(),
+	// but takes a list of datasets as input
+	std::vector<GDALDatasetH> src_ds(1);
+	bool ret = false;
+	
+	src_ds[0] = GDALOpenEx(src_dsn_in.c_str(), GDAL_OF_VECTOR,
+			NULL, NULL, NULL);
+	if (src_ds[0] == NULL)
+		Rcpp::stop("Failed to open the source dataset.");
+
+	std::vector<char *> argv;
+	if (cl_arg.isNotNull()) {
+		Rcpp::CharacterVector cl_arg_in(cl_arg);
+		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+			argv.push_back((char *) (cl_arg_in[i]));
+		}
+	}
+	if (src_layers.isNotNull()) {
+		Rcpp::CharacterVector src_layers_in(src_layers);
+		for (R_xlen_t i = 0; i < src_layers_in.size(); ++i) {
+			argv.push_back((char *) (src_layers_in[i]));
+		}
+	}
+	argv.push_back(NULL);
+
+	GDALVectorTranslateOptions* psOptions =
+			GDALVectorTranslateOptionsNew(argv.data(), NULL);
+	if (psOptions == NULL) {
+		Rcpp::stop("ogr2ogr() failed (could not create options struct).");
+	}
+
+	GDALDatasetH hDstDS = GDALVectorTranslate(dst_dsn_in.c_str(), NULL,
+			1, src_ds.data(), psOptions, NULL);
+							
+	GDALVectorTranslateOptionsFree(psOptions);
+	
+	if (hDstDS != NULL) {
+		GDALClose(hDstDS);
+		ret = true;
+	}
+	
+	GDALClose(src_ds[0]);
+	
+	if (!ret)
+		Rcpp::stop("Vector translate failed.");
+	
+	return ret;
+}
+
+
+//' Retrieve information about a vector data source
+//'
+//' `ogrinfo()` is a wrapper of the \command{ogrinfo} command-line
+//' utility (see \url{https://gdal.org/programs/ogrinfo.html}).
+//' This function lists information about an OGR-supported data source. With
+//' SQL statements it is also possible to edit data.
+//' Refer to the GDAL documentation at the URL above for a description of
+//' command-line arguments that can be passed in `cl_arg`.
+//'
+//' @param dsn Character string. Data source name (e.g., filename, database
+//' connection string, etc.)
+//' @param layers Optional character vector of layer names in the source
+//' dataset.
+//' @param cl_arg Optional character vector of command-line arguments for 
+//' the GDAL \code{ogrinfo} command-line utility (see URL above).
+//' @param open_options Optional character vector of dataset open options.
+//' @param read_only Logical scalar. `TRUE` to open the data source read-only
+//' (the default), or `FALSE` to open with write access.
+//' @returns Character string containing information about the vector dataset,
+//' or empty string ('""`) in case of error.
+//'
+//' @seealso
+//' [ogr2ogr()]
+//' 
+//' @examples
+//' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+//'
+//' # Requires GDAL >= 3.7
+//' if (as.integer(gdal_version()[2]) >= 3070000) {
+//'   # Get the names of the layers in a GeoPackage file.
+//'   info <- ogrinfo(src)
+//'   writeLines(info)
+//' 
+//'   # Summary (-so) of a layer without showing details about every single
+//'   # feature.
+//'   # -nomd suppresses metadata printing. Some datasets may contain a lot of
+//'   # metadata strings.
+//'   args <- c("-so", "-nomd")
+//'   info <- ogrinfo(src, "mtbs_perims", args)
+//'   writeLines(info)
+//' 
+//'   # Retrieve information in JSON format without showing details about every
+//'   # single feature.
+//'   args <- c("-json", "-nomd")
+//'   json <- ogrinfo(src, "mtbs_perims", args)
+//'   #info <- jsonlite::fromJSON(json)
+//' 
+//'   # Attribute query to restrict the output of the features in a layer.
+//'   args <- c("-ro", "-nomd", "-where", "ig_year = 2020")
+//'   info <- ogrinfo(src, "mtbs_perims", args)
+//'   writeLines(info)
+//' 
+//'   # Copy to a temporary in-memory file that is writeable.
+//'   src_mem <- paste0("/vsimem/", basename(src))
+//'   vsi_copy_file(src, src_mem)
+//'   print(src_mem)
+//' 
+//'   # Add a column to a layer.
+//'   args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
+//'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
+//' 
+//'   # Update a value of an attribute with SQL by using the SQLite dialect.
+//'   sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
+//'   args <- c("-dialect", "sqlite", "-sql", sql)
+//'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
+//' 
+//'   vsi_unlink(src_mem)
+//' }
+// [[Rcpp::export()]]
+std::string ogrinfo(Rcpp::CharacterVector dsn,
+		Rcpp::Nullable<Rcpp::CharacterVector> layers = R_NilValue,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+		Rcpp::Nullable<Rcpp::CharacterVector> open_options = R_NilValue,
+		bool read_only = true) {
+
+#if GDAL_VERSION_NUM < 3070000
+	Rcpp::stop("ogrinfo() requires GDAL >= 3.7.");
+
+#else
+	std::string dsn_in;
+	dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+
+	GDALDatasetH src_ds;
+
+	std::vector<char *> dsoo;
+	if (open_options.isNotNull()) {
+		Rcpp::CharacterVector open_options_in(open_options);
+		for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
+			dsoo.push_back((char *) (open_options_in[i]));
+		}
+	}
+	dsoo.push_back(NULL);
+	
+	unsigned int nOpenFlags = GDAL_OF_VECTOR;
+	if (read_only)
+		nOpenFlags |= GDAL_OF_READONLY;
+	else
+		nOpenFlags |= GDAL_OF_UPDATE;
+	
+	src_ds = GDALOpenEx(dsn_in.c_str(), nOpenFlags, NULL, dsoo.data(), NULL);
+	if (src_ds == NULL)
+		Rcpp::stop("Failed to open the source dataset.");
+
+	std::vector<char *> argv;
+	if (cl_arg.isNotNull()) {
+		Rcpp::CharacterVector cl_arg_in(cl_arg);
+		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+			argv.push_back((char *) (cl_arg_in[i]));
+		}
+	}
+	argv.push_back((char *) (dsn[0]));
+	if (layers.isNotNull()) {
+		Rcpp::CharacterVector layers_in(layers);
+		for (R_xlen_t i = 0; i < layers_in.size(); ++i) {
+			argv.push_back((char *) (layers_in[i]));
+		}
+	}
+	argv.push_back(NULL);
+	
+	GDALVectorInfoOptions *psOptions =
+			GDALVectorInfoOptionsNew(argv.data(), NULL);
+	
+	if (psOptions == NULL) {
+		Rcpp::stop("ogrinfo() failed (could not create options struct).");
+	}
+
+	std::string info_out = "";
+	char *pszInfo = GDALVectorInfo(src_ds, psOptions);
+	if (pszInfo != NULL)
+		info_out = pszInfo;
+	
+	CPLFree(pszInfo);
+	GDALVectorInfoOptionsFree(psOptions);
+	GDALClose(src_ds);
+	
+	return info_out;
+	
+#endif
+}
+
+
 //' Wrapper for GDALPolygonize in the GDAL Algorithms C API
 //'
 //' Called from and documented in R/gdalraster_proc.R
@@ -1371,7 +1694,7 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' @param src_filename Character string. Filename of the source raster.
 //' @param dst_filename Character string. Filename of the output raster.
 //' @param cl_arg Optional character vector of command-line arguments for 
-//' \code{gdal_translate}.
+//' \code{gdal_translate} (see URL above).
 //' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
 //' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
@@ -1379,6 +1702,8 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' 
 //' @seealso
 //' [`GDALRaster-class`][GDALRaster], [rasterFromRaster()], [warp()]
+//'
+//' [ogr2ogr()] for vector data
 //'
 //' @examples
 //' # convert the elevation raster to Erdas Imagine format and resample to 90m

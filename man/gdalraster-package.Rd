@@ -73,6 +73,10 @@
   \code{\link[=renameDataset]{renameDataset()}},
   \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}
 
+  \item OGR vector utilities:
+  \code{\link[=ogr2ogr]{ogr2ogr()}},
+  \code{\link[=ogrinfo]{ogrinfo()}}
+
   \item virtual file systems: \code{\link[=vsi_copy_file]{vsi_copy_file()}},
   \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
   \code{\link[=vsi_mkdir]{vsi_mkdir()}},

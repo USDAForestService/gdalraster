@@ -5,8 +5,10 @@ test_that("gdal_version returns vector", {
 	expect_length(gdal_version(), 4)
 })
 
-test_that("gdal_formats prints output", {
-	expect_output(gdal_formats())
+test_that("gdal_formats returns a data frame", {
+	x <- gdal_formats()
+	expect_s3_class(x, "data.frame")
+	expect_true(nrow(x) > 1)
 })
 
 test_that("_check_gdal_filename works", {
@@ -288,3 +290,63 @@ test_that("footprint runs without error", {
 	deleteDataset(out_file)
 })
 
+test_that("ogr2ogr works", {
+	src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+
+	# convert GeoPackage to Shapefile
+	shp_file <- file.path(tempdir(), "ynp_fires.shp")
+	ogr2ogr(src, shp_file, src_layers = "mtbs_perims")
+	fld_idx <- .ogr_field_index(shp_file, "ynp_fires", "ig_year")
+	expect_equal(fld_idx, 8)
+	deleteDataset(shp_file)
+	fld_idx <- -1
+	
+	# reproject to WGS84
+	ynp_wgs84 <- file.path(tempdir(), "ynp_fires_wgs84.gpkg")
+	args <- c("-t_srs", "EPSG:4326")
+	ogr2ogr(src, ynp_wgs84, cl_arg = args)
+	fld_idx <- .ogr_field_index(ynp_wgs84, "mtbs_perims", "ig_year")
+	expect_equal(fld_idx, 8)
+	deleteDataset(ynp_wgs84)
+	fld_idx <- -1
+
+	# clip to a bounding box (xmin, ymin, xmax, ymax)
+	ynp_clip <- file.path(tempdir(), "ynp_fires_aoi_clip.gpkg")
+	bb <- c(469685.97, 11442.45, 544069.63, 85508.15)
+	args <- c("-spat", bb)
+	ogr2ogr(src, ynp_clip, cl_arg = args)
+	fld_idx <- .ogr_field_index(ynp_clip, "mtbs_perims", "ig_year")
+	expect_equal(fld_idx, 8)
+	deleteDataset(ynp_clip)
+	fld_idx <- -1
+
+	# filter features by a -where clause
+	ynp_filtered <- file.path(tempdir(), "ynp_fires_2000_2022.gpkg")
+	sql <- "ig_year >= 2000 ORDER BY ig_year"
+	args <- c("-where", sql)
+	ogr2ogr(src, ynp_filtered, src_layers = "mtbs_perims", cl_arg = args)
+	fld_idx <- .ogr_field_index(ynp_filtered, "mtbs_perims", "ig_year")
+	expect_equal(fld_idx, 8)
+	deleteDataset(ynp_filtered)
+
+})
+
+test_that("ogrinfo works", {
+	skip_if(.gdal_version_num() < 3070000)
+	
+	src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+
+	info <- ogrinfo(src)
+	expect_vector(info, ptype = character(), size = 1)
+	expect_false(info[1] == "")
+	
+	src_mem <- paste0("/vsimem/", basename(src))
+	vsi_copy_file(src, src_mem)
+	
+	args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
+	ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
+	idx <- .ogr_field_index(src_mem, "mtbs_perims", "burn_bnd_ha")
+	expect_equal(idx, 9)
+
+	vsi_unlink(src_mem)
+})

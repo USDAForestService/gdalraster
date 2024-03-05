@@ -3,7 +3,7 @@
    Chris Toney <chris.toney at usda.gov> */
 
 #include "cpl_conv.h"
-#include "ogrsf_frmts.h"
+#include "ogr_api.h"
 #include "ogr_srs_api.h"
 #include "ogr_spatialref.h"
 
@@ -27,7 +27,7 @@ bool has_geos() {
 	OGR_G_SetPoint_2D(hGeom, 0, 0, 0);
 	
 	// If GDAL is built without the GEOS library, this function will 
-	//always return FALSE:
+	// always return FALSE:
 	bool ret = OGR_G_IsSimple(hGeom);
 	OGR_G_DestroyGeometry(hGeom);
 	return ret;

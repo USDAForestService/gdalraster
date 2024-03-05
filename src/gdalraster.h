@@ -70,7 +70,7 @@ const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
 
 Rcpp::CharacterVector gdal_version();
 int _gdal_version_num();
-void gdal_formats();
+Rcpp::DataFrame gdal_formats(std::string fmt);
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
@@ -153,6 +153,16 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 bool footprint(Rcpp::CharacterVector src_filename,
 		Rcpp::CharacterVector dst_filename,
 		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+
+bool ogr2ogr(Rcpp::CharacterVector src_dsn,
+		Rcpp::CharacterVector dst_dsn,
+		Rcpp::Nullable<Rcpp::CharacterVector> src_layers,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+
+std::string ogrinfo(Rcpp::CharacterVector dsn,
+		Rcpp::Nullable<Rcpp::CharacterVector> layers,
+		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+		bool read_only);
 
 bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
 		Rcpp::CharacterVector out_dsn,

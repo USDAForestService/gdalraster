@@ -2,17 +2,32 @@
 % Please edit documentation in R/RcppExports.R
 \name{gdal_formats}
 \alias{gdal_formats}
-\title{Report all configured GDAL drivers for raster formats}
+\title{Retrieve information on GDAL format drivers for raster and vector}
 \usage{
-gdal_formats()
+gdal_formats(fmt = "")
+}
+\arguments{
+\item{fmt}{A character string containing a driver short name. By default,
+information for all configured raster and vector format drivers will be
+returned.}
 }
 \value{
-No return value, called for reporting only.
+A data frame containing the format short name, long name, raster
+(logical), vector (logical), read/write flag (\code{ro} is read-only,
+\code{w} supports CreateCopy, \verb{w+} supports Create), virtual I/O supported
+(logical), and subdatasets (logical).
 }
 \description{
-\code{gdal_formats()} prints to the console a list of the supported raster
-formats.
+\code{gdal_formats()} returns a table of the supported raster and vector
+formats, with information about the capabilities of each format driver.
+}
+\note{
+Virtual I/O refers to operations on GDAL Virtual File Systems. See
+\url{https://gdal.org/user/virtual_file_systems.html#virtual-file-systems}.
 }
 \examples{
-gdal_formats()
+nrow(gdal_formats())
+head(gdal_formats())
+
+gdal_formats("GPKG")
 }

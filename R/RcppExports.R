@@ -23,16 +23,30 @@ gdal_version <- function() {
     .Call(`_gdalraster__gdal_version_num`)
 }
 
-#' Report all configured GDAL drivers for raster formats
+#' Retrieve information on GDAL format drivers for raster and vector
 #'
-#' `gdal_formats()` prints to the console a list of the supported raster
-#' formats.
+#' `gdal_formats()` returns a table of the supported raster and vector
+#' formats, with information about the capabilities of each format driver.
 #'
-#' @returns No return value, called for reporting only.
+#' @param fmt A character string containing a driver short name. By default,
+#' information for all configured raster and vector format drivers will be
+#' returned.
+#' @returns A data frame containing the format short name, long name, raster
+#' (logical), vector (logical), read/write flag (`ro` is read-only,
+#' `w` supports CreateCopy, `w+` supports Create), virtual I/O supported
+#' (logical), and subdatasets (logical).
+#'
+#' @note
+#' Virtual I/O refers to operations on GDAL Virtual File Systems. See
+#' \url{https://gdal.org/user/virtual_file_systems.html#virtual-file-systems}.
+#'
 #' @examples
-#' gdal_formats()
-gdal_formats <- function() {
-    invisible(.Call(`_gdalraster_gdal_formats`))
+#' nrow(gdal_formats())
+#' head(gdal_formats())
+#'
+#' gdal_formats("GPKG")
+gdal_formats <- function(fmt = "") {
+    .Call(`_gdalraster_gdal_formats`, fmt)
 }
 
 #' Get GDAL configuration option
@@ -478,6 +492,147 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
     invisible(.Call(`_gdalraster_footprint`, src_filename, dst_filename, cl_arg))
 }
 
+#' Convert vector data between different formats
+#'
+#' `ogr2ogr()` is a wrapper of the \command{ogr2ogr} command-line
+#' utility (see \url{https://gdal.org/programs/ogr2ogr.html}).
+#' This function can be used to convert simple features data between file
+#' formats. It can also perform various operations during the process, such
+#' as spatial or attribute selection, reducing the set of attributes, setting
+#' the output coordinate system or even reprojecting the features during
+#' translation.
+#' Refer to the GDAL documentation at the URL above for a description of
+#' command-line arguments that can be passed in `cl_arg`.
+#'
+#' @param src_dsn Character string. Data source name of the source vector
+#' dataset.
+#' @param dst_dsn Character string. Data source name of the destination vector
+#' dataset.
+#' @param src_layers Optional character vector of layer names in the source
+#' dataset. Defaults to all layers.
+#' @param cl_arg Optional character vector of command-line arguments for 
+#' the GDAL \code{ogr2ogr} command-line utility (see URL above).
+#' @returns Logical indicating success (invisible \code{TRUE}).
+#' An error is raised if the operation fails.
+#'
+#' @note
+#' For progress reporting, see command-line argument `-progress`: Display
+#' progress on terminal. Only works if input layers have the "fast feature
+#' count" capability.
+#'
+#' @seealso
+#' [ogrinfo()]
+#'
+#' [translate()] for raster data
+#' 
+#' @examples
+#' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#' 
+#' # Convert GeoPackage to Shapefile
+#' shp_file <- file.path(tempdir(), "ynp_fires.shp")
+#' ogr2ogr(src, shp_file, src_layers = "mtbs_perims")
+#' 
+#' # Reproject to WGS84
+#' ynp_wgs84 <- file.path(tempdir(), "ynp_fires_wgs84.gpkg")
+#' args <- c("-t_srs", "EPSG:4326")
+#' ogr2ogr(src, ynp_wgs84, cl_arg = args)
+#' 
+#' # Clip to a bounding box (xmin, ymin, xmax, ymax in the source SRS)
+#' # This will select features whose geometry intersects the bounding box.
+#' # The geometries themselves will not be clipped unless "-clipsrc" is
+#' # specified.
+#' # The source SRS can be overridden with "-spat_srs" "<srs_def>"
+#' ynp_clip <- file.path(tempdir(), "ynp_fires_aoi_clip.gpkg")
+#' bb <- c(469685.97, 11442.45, 544069.63, 85508.15)
+#' args <- c("-spat", bb)
+#' ogr2ogr(src, ynp_clip, cl_arg = args)
+#' 
+#' # Filter features by a -where clause
+#' ynp_filtered <- file.path(tempdir(), "ynp_fires_2000_2022.gpkg")
+#' sql <- "ig_year >= 2000 ORDER BY ig_year"
+#' args <- c("-where", sql)
+#' ogr2ogr(src, ynp_filtered, src_layers = "mtbs_perims", cl_arg = args)
+#' 
+#' deleteDataset(shp_file)
+#' deleteDataset(ynp_wgs84)
+#' deleteDataset(ynp_clip)
+#' deleteDataset(ynp_filtered)
+ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL) {
+    invisible(.Call(`_gdalraster_ogr2ogr`, src_dsn, dst_dsn, src_layers, cl_arg))
+}
+
+#' Retrieve information about a vector data source
+#'
+#' `ogrinfo()` is a wrapper of the \command{ogrinfo} command-line
+#' utility (see \url{https://gdal.org/programs/ogrinfo.html}).
+#' This function lists information about an OGR-supported data source. With
+#' SQL statements it is also possible to edit data.
+#' Refer to the GDAL documentation at the URL above for a description of
+#' command-line arguments that can be passed in `cl_arg`.
+#'
+#' @param dsn Character string. Data source name (e.g., filename, database
+#' connection string, etc.)
+#' @param layers Optional character vector of layer names in the source
+#' dataset.
+#' @param cl_arg Optional character vector of command-line arguments for 
+#' the GDAL \code{ogrinfo} command-line utility (see URL above).
+#' @param open_options Optional character vector of dataset open options.
+#' @param read_only Logical scalar. `TRUE` to open the data source read-only
+#' (the default), or `FALSE` to open with write access.
+#' @returns Character string containing information about the vector dataset,
+#' or empty string ('""`) in case of error.
+#'
+#' @seealso
+#' [ogr2ogr()]
+#' 
+#' @examples
+#' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#'
+#' # Requires GDAL >= 3.7
+#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#'   # Get the names of the layers in a GeoPackage file.
+#'   info <- ogrinfo(src)
+#'   writeLines(info)
+#' 
+#'   # Summary (-so) of a layer without showing details about every single
+#'   # feature.
+#'   # -nomd suppresses metadata printing. Some datasets may contain a lot of
+#'   # metadata strings.
+#'   args <- c("-so", "-nomd")
+#'   info <- ogrinfo(src, "mtbs_perims", args)
+#'   writeLines(info)
+#' 
+#'   # Retrieve information in JSON format without showing details about every
+#'   # single feature.
+#'   args <- c("-json", "-nomd")
+#'   json <- ogrinfo(src, "mtbs_perims", args)
+#'   #info <- jsonlite::fromJSON(json)
+#' 
+#'   # Attribute query to restrict the output of the features in a layer.
+#'   args <- c("-ro", "-nomd", "-where", "ig_year = 2020")
+#'   info <- ogrinfo(src, "mtbs_perims", args)
+#'   writeLines(info)
+#' 
+#'   # Copy to a temporary in-memory file that is writeable.
+#'   src_mem <- paste0("/vsimem/", basename(src))
+#'   vsi_copy_file(src, src_mem)
+#'   print(src_mem)
+#' 
+#'   # Add a column to a layer.
+#'   args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
+#'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
+#' 
+#'   # Update a value of an attribute with SQL by using the SQLite dialect.
+#'   sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
+#'   args <- c("-dialect", "sqlite", "-sql", sql)
+#'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
+#' 
+#'   vsi_unlink(src_mem)
+#' }
+ogrinfo <- function(dsn, layers = NULL, cl_arg = NULL, open_options = NULL, read_only = TRUE) {
+    .Call(`_gdalraster_ogrinfo`, dsn, layers, cl_arg, open_options, read_only)
+}
+
 #' Wrapper for GDALPolygonize in the GDAL Algorithms C API
 #'
 #' Called from and documented in R/gdalraster_proc.R
@@ -586,7 +741,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' @param src_filename Character string. Filename of the source raster.
 #' @param dst_filename Character string. Filename of the output raster.
 #' @param cl_arg Optional character vector of command-line arguments for 
-#' \code{gdal_translate}.
+#' \code{gdal_translate} (see URL above).
 #' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
 #' displayed. Defaults to `FALSE`.
 #' @returns Logical indicating success (invisible \code{TRUE}).
@@ -594,6 +749,8 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' 
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [rasterFromRaster()], [warp()]
+#'
+#' [ogr2ogr()] for vector data
 #'
 #' @examples
 #' # convert the elevation raster to Erdas Imagine format and resample to 90m

@@ -32,12 +32,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // gdal_formats
-void gdal_formats();
-RcppExport SEXP _gdalraster_gdal_formats() {
+Rcpp::DataFrame gdal_formats(std::string fmt);
+RcppExport SEXP _gdalraster_gdal_formats(SEXP fmtSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    gdal_formats();
-    return R_NilValue;
+    Rcpp::traits::input_parameter< std::string >::type fmt(fmtSEXP);
+    rcpp_result_gen = Rcpp::wrap(gdal_formats(fmt));
+    return rcpp_result_gen;
 END_RCPP
 }
 // get_config_option
@@ -248,6 +250,35 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
     rcpp_result_gen = Rcpp::wrap(footprint(src_filename, dst_filename, cl_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ogr2ogr
+bool ogr2ogr(Rcpp::CharacterVector src_dsn, Rcpp::CharacterVector dst_dsn, Rcpp::Nullable<Rcpp::CharacterVector> src_layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+RcppExport SEXP _gdalraster_ogr2ogr(SEXP src_dsnSEXP, SEXP dst_dsnSEXP, SEXP src_layersSEXP, SEXP cl_argSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_dsn(src_dsnSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_dsn(dst_dsnSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type src_layers(src_layersSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogr2ogr(src_dsn, dst_dsn, src_layers, cl_arg));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ogrinfo
+std::string ogrinfo(Rcpp::CharacterVector dsn, Rcpp::Nullable<Rcpp::CharacterVector> layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::CharacterVector> open_options, bool read_only);
+RcppExport SEXP _gdalraster_ogrinfo(SEXP dsnSEXP, SEXP layersSEXP, SEXP cl_argSEXP, SEXP open_optionsSEXP, SEXP read_onlySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dsn(dsnSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type layers(layersSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type open_options(open_optionsSEXP);
+    Rcpp::traits::input_parameter< bool >::type read_only(read_onlySEXP);
+    rcpp_result_gen = Rcpp::wrap(ogrinfo(dsn, layers, cl_arg, open_options, read_only));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1076,7 +1107,7 @@ RcppExport SEXP _rcpp_module_boot_mod_running_stats();
 static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_gdal_version", (DL_FUNC) &_gdalraster_gdal_version, 0},
     {"_gdalraster__gdal_version_num", (DL_FUNC) &_gdalraster__gdal_version_num, 0},
-    {"_gdalraster_gdal_formats", (DL_FUNC) &_gdalraster_gdal_formats, 0},
+    {"_gdalraster_gdal_formats", (DL_FUNC) &_gdalraster_gdal_formats, 1},
     {"_gdalraster_get_config_option", (DL_FUNC) &_gdalraster_get_config_option, 1},
     {"_gdalraster_set_config_option", (DL_FUNC) &_gdalraster_set_config_option, 2},
     {"_gdalraster_get_cache_used", (DL_FUNC) &_gdalraster_get_cache_used, 0},
@@ -1093,6 +1124,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 6},
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 6},
     {"_gdalraster_footprint", (DL_FUNC) &_gdalraster_footprint, 3},
+    {"_gdalraster_ogr2ogr", (DL_FUNC) &_gdalraster_ogr2ogr, 4},
+    {"_gdalraster_ogrinfo", (DL_FUNC) &_gdalraster_ogrinfo, 5},
     {"_gdalraster__polygonize", (DL_FUNC) &_gdalraster__polygonize, 9},
     {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 4},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 10},
