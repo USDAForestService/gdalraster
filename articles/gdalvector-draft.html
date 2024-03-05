@@ -138,12 +138,11 @@ operate on vector datasets: <code><a href="../reference/copyDatasetFiles.html">c
 <code>.ogr_layer_delete()</code> <code>.ogr_field_index()</code>,
 <code>.ogr_field_create()</code>
 </li>
-<li>wrappers <code>vector_translate()</code> (<code>ogr2ogr</code>) and
-<code>vector_info()</code> (<code>ogrinfo</code>) from the gdal_utils.h
-API (<strong>gdalraster</strong> 1.10 around late March)</li>
-<li>
-<code>ogr_execute_sql()</code>: execute an SQL statement against the
-data store for <code>CREATE INDEX</code>, <code>DROP INDEX</code>,
+<li>existing wrappers <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> and <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code>
+from the gdal_utils.h API (<strong>gdalraster</strong> 1.9.0.9080
+dev)</li>
+<li>add <code>ogr_execute_sql()</code>: execute an SQL statement against
+the data store for <code>CREATE INDEX</code>, <code>DROP INDEX</code>,
 <code>ALTER TABLE</code>, <code>DROP TABLE</code> (a SQL
 <code>SELECT</code> statement can be used in the constructor for class
 <code>GDALVector</code> described below, to open a layer of
@@ -854,6 +853,9 @@ likely be handled using <strong>RcppInt64</strong>, with
 <code>GDALVector::getArrowStream()</code> (GDAL &gt;= 3.6) and
 <code>GDALVector::writeArrowBatch()</code> (GDAL &gt;= 3.8), supported
 on the R side with package <strong>nanoarrow</strong>.</li>
+<li>potential output vectors of GEOS or OGR pointers, WKB with support
+by <strong>wk</strong>
+</li>
 </ul>
 </div>
 <div class="section level2">
@@ -887,6 +889,22 @@ processing time and/or bandwidth. (2024-03-02)</li>
 geometry currently in use as the spatial filter, or <code>""</code>
 (2024-03-03)</li>
 <li>add section “Further consideration / TBD” (2024-03-03)</li>
+<li>
+<code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> and <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code> are available in
+1.9.0.9080 dev (2024-03-04)</li>
+<li>add potential output vectors of geos or ogr pointers, or wkb/wkt
+with support by {wk} (<span class="citation">@mdsumner</span>,
+2024-03-04)</li>
+<li>add section “Contributors” (2024-03-04)</li>
+</ul>
+</div>
+<div class="section level2">
+<h2 id="contributors">Contributors<a class="anchor" aria-label="anchor" href="#contributors"></a>
+</h2>
+<ul>
+<li>
+<span class="citation">@goergen95</span> (#205)</li>
+<li><span class="citation">@mdsumner</span></li>
 </ul>
 </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
