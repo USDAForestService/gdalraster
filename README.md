@@ -36,7 +36,7 @@ supporting:
   - build/read/set color tables and raster attribute tables
   - virtual raster (VRT) for virtual cropping, resampling, kernel
     filtering, mosaicing
-  - `gdalwarp()` wrapper for reproject/resample/crop/mosaic
+  - `gdalwarp` wrapper for reproject/resample/crop/mosaic
   - coordinate transformation
   - spatial reference systems
   - GDAL algorithms (`dem_proc()`, `polygonize()`, `rasterize()`,
@@ -92,10 +92,10 @@ do not require any separate installation of external libraries for GDAL.
 #### Linux
 
 GDAL \>= 2.4.0 is required, but a more recent version is recommended
-(e.g., \>= 3.6.4). **gdalraster** as of 1.10 requires GDAL built with
-GEOS. GDAL as of 3.9 requires PROJ \>= 6.3.1, but a more recent version
-of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required
-for the imported R package **xml2**.
+(e.g., \>= 3.6.4). GDAL built with GEOS is a system requirement as of
+**gdalraster** 1.10. GDAL as of 3.9 requires PROJ \>= 6.3.1, but a more
+recent version of PROJ is recommended. PROJ requires sqlite3, and
+libxml2 is required for the imported R package **xml2**.
 
 On Ubuntu, recent versions of geospatial libraries can be installed from
 the [ubuntugis-unstable
@@ -115,8 +115,7 @@ Package **sf** provides helpful
 [instructions](https://github.com/r-spatial/sf#linux) for installing the
 geospatial libraries on other Linux distributions.
 
-With the dependent libraries available on the system, install
-**gdalraster** from CRAN:
+With the dependent libraries available on the system, install from CRAN:
 
 ``` r
 install.packages("gdalraster")
