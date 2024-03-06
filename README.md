@@ -33,15 +33,15 @@ supporting:
   - creation from existing raster as template
   - read/set raster dataset parameters
   - low-level I/O
-  - read/set color tables and raster attribute tables
+  - build/read/set color tables and raster attribute tables
   - virtual raster (VRT) for virtual cropping, resampling, kernel
     filtering, mosaicing
-  - `gdalwarp` wrapper for reproject/resample/crop/mosaic
+  - `gdalwarp()` wrapper for reproject/resample/crop/mosaic
   - coordinate transformation
   - spatial reference systems
-  - several GDAL algorithms (`dem_proc()`, `polygonize()`,
-    `rasterize()`,
+  - GDAL algorithms (`dem_proc()`, `polygonize()`, `rasterize()`,
     [`...`](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms))
+  - OGR vector utilities (`ogrinfo()`, `ogr2ogr()`)
   - copy files/move/rename/delete datasets
   - abstraction of filesystem operations on URLs and cloud storage
   - create/append to Seek-Optimized ZIP
