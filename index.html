@@ -131,7 +131,7 @@
 <li>build/read/set color tables and raster attribute tables</li>
 <li>virtual raster (VRT) for virtual cropping, resampling, kernel filtering, mosaicing</li>
 <li>
-<code>gdalwarp()</code> wrapper for reproject/resample/crop/mosaic</li>
+<code>gdalwarp</code> wrapper for reproject/resample/crop/mosaic</li>
 <li>coordinate transformation</li>
 <li>spatial reference systems</li>
 <li>GDAL algorithms (<code><a href="reference/dem_proc.html">dem_proc()</a></code>, <code><a href="reference/polygonize.html">polygonize()</a></code>, <code><a href="reference/rasterize.html">rasterize()</a></code>, <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms"><code>...</code></a>)</li>
@@ -166,14 +166,14 @@
 <div class="section level4">
 <h4 id="linux">Linux<a class="anchor" aria-label="anchor" href="#linux"></a>
 </h4>
-<p>GDAL &gt;= 2.4.0 is required, but a more recent version is recommended (e.g., &gt;= 3.6.4). <strong>gdalraster</strong> as of 1.10 requires GDAL built with GEOS. GDAL as of 3.9 requires PROJ &gt;= 6.3.1, but a more recent version of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package <strong>xml2</strong>.</p>
+<p>GDAL &gt;= 2.4.0 is required, but a more recent version is recommended (e.g., &gt;= 3.6.4). GDAL built with GEOS is a system requirement as of <strong>gdalraster</strong> 1.10. GDAL as of 3.9 requires PROJ &gt;= 6.3.1, but a more recent version of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package <strong>xml2</strong>.</p>
 <p>On Ubuntu, recent versions of geospatial libraries can be installed from the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable" class="external-link">ubuntugis-unstable PPA</a> with the following commands:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>sudo add<span class="sc">-</span>apt<span class="sc">-</span>repository ppa<span class="sc">:</span>ubuntugis<span class="sc">/</span>ubuntugis<span class="sc">-</span>unstable</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>sudo apt update</span>
 <span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>sudo apt install libgdal<span class="sc">-</span>dev libgeos<span class="sc">-</span>dev libproj<span class="sc">-</span>dev libsqlite3<span class="sc">-</span>dev libxml2<span class="sc">-</span>dev</span></code></pre></div>
 <p>The versions in ubuntugis-unstable generally work well and are more up-to-date, but less recent versions in the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa" class="external-link">ubuntugis-stable PPA</a> could be used instead.</p>
 <p>Package <strong>sf</strong> provides helpful <a href="https://github.com/r-spatial/sf#linux" class="external-link">instructions</a> for installing the geospatial libraries on other Linux distributions.</p>
-<p>With the dependent libraries available on the system, install <strong>gdalraster</strong> from CRAN:</p>
+<p>With the dependent libraries available on the system, install from CRAN:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span><span class="op">)</span></span></code></pre></div>
 <p>Or install the development version from GitHub using package <a href="https://remotes.r-lib.org/" class="external-link">remotes</a>:</p>
