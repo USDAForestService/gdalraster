@@ -1,4 +1,4 @@
-# gdalraster 1.9.0.9080 (dev)
+# gdalraster 1.9.0.9090 (dev)
 
 * add `vsi_get_fs_options()`: get the list of options associated with a virtual file system handler, for setting with `set_config_option()` (2024-03-06)
 
