@@ -94,6 +94,8 @@ reference:
 - contents:
   - vsi_copy_file
   - vsi_curl_clear_cache
+  - vsi_get_fs_options
+  - vsi_get_fs_prefixes
   - vsi_mkdir
   - vsi_read_dir
   - vsi_rename

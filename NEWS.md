@@ -1,5 +1,9 @@
 # gdalraster 1.9.0.9080 (dev)
 
+* add `vsi_get_fs_options()`: get the list of options associated with a virtual file system handler, for setting with `set_config_option()` (2024-03-06)
+
+* add `vsi_get_fs_prefixes`: get the list of prefixes for virtual file system handlers currently registered (2024-03-06)
+
 * add `ogrinfo()`: wrapper of the `ogrinfo` command-line utility, retrieve information about a vector data source and potentially edit data with SQL statements (GDAL >= 3.7) (2024-03-04)
 
 * `gdal_formats()` now returns a data frame with the supported raster and vector formats, and information about the capabilities of each format driver (2024-03-04)
