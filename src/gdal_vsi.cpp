@@ -630,3 +630,58 @@ int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath) {
 	return VSIRename(oldpath_in.c_str(), newpath_in.c_str());
 }
 
+
+//' Return the list of virtual file system handlers currently registered
+//'
+//' `vsi_get_fs_prefixes()` returns the list of prefixes for virtual file
+//' system handlers currently registered (e.g., `"/vsimem/"`, `"/vsicurl/"`,
+//' etc). Wrapper for `VSIGetFileSystemsPrefixes()` in the GDAL API.
+//'
+//' @returns Character vector containing prefixes of the virtual file system
+//' handlers.
+//'
+//' @seealso
+//' [vsi_get_fs_options()]
+//'
+//' \url{https://gdal.org/user/virtual_file_systems.html}
+//'
+//' @examples
+//' vsi_get_fs_prefixes()
+// [[Rcpp::export()]]
+Rcpp::CharacterVector vsi_get_fs_prefixes() {
+
+	char **papszPrefixes;
+	papszPrefixes = VSIGetFileSystemsPrefixes();
+	
+	int items = CSLCount(papszPrefixes);
+	if (items > 0) {
+		Rcpp::CharacterVector prefixes(items);
+		for (int i=0; i < items; ++i) {
+			prefixes(i) = papszPrefixes[i];
+		}
+		CSLDestroy(papszPrefixes);
+		return prefixes;
+	}
+	else {
+		CSLDestroy(papszPrefixes);
+		return "";	
+	}
+}
+
+
+//' Return the list of options associated with a virtual file system handler
+//' as a serialized XML string.
+//'
+//' Called from and documented in R/gdal_helpers.R
+//' @noRd
+// [[Rcpp::export(name = ".vsi_get_fs_options")]]
+std::string _vsi_get_fs_options(Rcpp::CharacterVector filename) {
+
+	std::string filename_in;
+	filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
+	if (VSIGetFileSystemOptions(filename_in.c_str()) != NULL)
+		return VSIGetFileSystemOptions(filename_in.c_str());
+	else
+		return "";
+}
+

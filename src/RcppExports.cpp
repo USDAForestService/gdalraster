@@ -579,6 +579,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// vsi_get_fs_prefixes
+Rcpp::CharacterVector vsi_get_fs_prefixes();
+RcppExport SEXP _gdalraster_vsi_get_fs_prefixes() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(vsi_get_fs_prefixes());
+    return rcpp_result_gen;
+END_RCPP
+}
+// _vsi_get_fs_options
+std::string _vsi_get_fs_options(Rcpp::CharacterVector filename);
+RcppExport SEXP _gdalraster__vsi_get_fs_options(SEXP filenameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    rcpp_result_gen = Rcpp::wrap(_vsi_get_fs_options(filename));
+    return rcpp_result_gen;
+END_RCPP
+}
 // has_geos
 bool has_geos();
 RcppExport SEXP _gdalraster_has_geos() {
@@ -1147,6 +1168,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_unlink_batch", (DL_FUNC) &_gdalraster_vsi_unlink_batch, 1},
     {"_gdalraster_vsi_stat", (DL_FUNC) &_gdalraster_vsi_stat, 2},
     {"_gdalraster_vsi_rename", (DL_FUNC) &_gdalraster_vsi_rename, 2},
+    {"_gdalraster_vsi_get_fs_prefixes", (DL_FUNC) &_gdalraster_vsi_get_fs_prefixes, 0},
+    {"_gdalraster__vsi_get_fs_options", (DL_FUNC) &_gdalraster__vsi_get_fs_options, 1},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},

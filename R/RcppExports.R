@@ -1659,6 +1659,35 @@ vsi_rename <- function(oldpath, newpath) {
     invisible(.Call(`_gdalraster_vsi_rename`, oldpath, newpath))
 }
 
+#' Return the list of virtual file system handlers currently registered
+#'
+#' `vsi_get_fs_prefixes()` returns the list of prefixes for virtual file
+#' system handlers currently registered (e.g., `"/vsimem/"`, `"/vsicurl/"`,
+#' etc). Wrapper for `VSIGetFileSystemsPrefixes()` in the GDAL API.
+#'
+#' @returns Character vector containing prefixes of the virtual file system
+#' handlers.
+#'
+#' @seealso
+#' [vsi_get_fs_options()]
+#'
+#' \url{https://gdal.org/user/virtual_file_systems.html}
+#'
+#' @examples
+#' vsi_get_fs_prefixes()
+vsi_get_fs_prefixes <- function() {
+    .Call(`_gdalraster_vsi_get_fs_prefixes`)
+}
+
+#' Return the list of options associated with a virtual file system handler
+#' as a serialized XML string.
+#'
+#' Called from and documented in R/gdal_helpers.R
+#' @noRd
+.vsi_get_fs_options <- function(filename) {
+    .Call(`_gdalraster__vsi_get_fs_options`, filename)
+}
+
 #' @noRd
 NULL
 

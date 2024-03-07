@@ -115,6 +115,8 @@ int vsi_unlink(Rcpp::CharacterVector filename);
 Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames);
 SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);
 int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath);
+std::string _vsi_get_fs_options(Rcpp::CharacterVector filename);
+Rcpp::CharacterVector vsi_get_fs_prefixes();
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
 		double pixel, double line);

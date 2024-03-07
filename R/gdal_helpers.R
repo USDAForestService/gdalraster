@@ -1,5 +1,4 @@
 # Miscellaneous helper functions for working with the GDAL API
-# currently: addFilesInZip(), getCreationOptions()
 # Chris Toney <chris.toney at usda.gov>
 
 #' Create/append to a potentially Seek-Optimized ZIP file (SOZip)
@@ -250,5 +249,48 @@ getCreationOptions <- function(format, filter=NULL) {
 			print(opt_list[[n]])
 	}
 	return(invisible(.getCreationOptions(format)))
+}
+
+
+#' Return the list of options associated with a virtual file system handler
+#'
+#' `vsi_get_fs_options()` returns the list of options associated with a virtual
+#' file system handler. Those options may be set as configuration options with
+#' `set_config_option()`.
+#' Wrapper for `VSIGetFileSystemOptions()` in the GDAL API.
+#'
+#' @param filename Filename, or prefix of a virtual file system handler.
+#' @param as_list Logical scalar. If `TRUE` (the default), the XML string
+#' returned by GDAL will be coerced to list. `FALSE` to return the configuration
+#' options as a serialized XML string.
+#' @returns An XML string, or empty string (`""`) if no options are declared.
+#' If `as_list = TRUE` (the default), the XML string will be coerced to list
+#' with `xml2::as_list()`.
+#'
+#' @seealso
+#' [set_config_option()], [vsi_get_fs_prefixes()]
+#'
+#' \url{https://gdal.org/user/virtual_file_systems.html}
+#'
+#' @examples
+#' vsi_get_fs_options("/vsimem/")
+#'
+#' vsi_get_fs_options("/vsizip/")
+#'
+#' vsi_get_fs_options("/vsizip/", as_list = FALSE)
+#' @export
+vsi_get_fs_options <- function(filename, as_list = TRUE) {
+
+	if (!is.character(filename) || length(filename) > 1)
+		stop("`filename` must be a length-1 character vector.", call.=FALSE)
+	
+	opts <- .vsi_get_fs_options(filename)
+	
+	if (opts == "")
+		return(opts)
+	else if (as_list)
+		return(xml2::read_xml(opts) |> xml2::as_list())
+	else
+		return(opts)
 }
 
