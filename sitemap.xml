@@ -226,6 +226,12 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_curl_clear_cache.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_options.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_prefixes.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_mkdir.html</loc>
   </url>
   <url>
