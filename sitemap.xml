@@ -247,6 +247,12 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_supports_rnd_write.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_supports_seq_write.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_sync.html</loc>
   </url>
   <url>
