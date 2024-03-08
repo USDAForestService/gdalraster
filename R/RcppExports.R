@@ -1688,6 +1688,62 @@ vsi_get_fs_prefixes <- function() {
     .Call(`_gdalraster__vsi_get_fs_options`, filename)
 }
 
+#' Return whether the filesystem supports sequential write
+#'
+#' `vsi_supports_seq_write()` returns whether the filesystem supports
+#' sequential write.
+#' Wrapper for `VSISupportsSequentialWrite()` in the GDAL API.
+#'
+#' @param filename Character string. The path of the filesystem object to be
+#' tested.
+#' @param allow_local_tmpfile Logical scalar. `TRUE` if the filesystem is
+#' allowed to use a local temporary file before uploading to the target
+#' location.
+#' @returns Logical scalar. `TRUE` if sequential write is supported.
+#'
+#' @note
+#' The location GDAL uses for temporary files can be forced via the
+#' `CPL_TMPDIR` configuration option.
+#'
+#' @seealso
+#' [vsi_supports_rnd_write()]
+#'
+#' @examples
+#' # Requires GDAL >= 3.6
+#' if (as.integer(gdal_version()[2]) >= 3060000)
+#'   vsi_supports_seq_write("/vsimem/test-mem-file.gpkg", TRUE)
+vsi_supports_seq_write <- function(filename, allow_local_tmpfile) {
+    .Call(`_gdalraster_vsi_supports_seq_write`, filename, allow_local_tmpfile)
+}
+
+#' Return whether the filesystem supports random write
+#'
+#' `vsi_supports_rnd_write()` returns whether the filesystem supports
+#' random write.
+#' Wrapper for `VSISupportsRandomWrite()` in the GDAL API.
+#'
+#' @param filename Character string. The path of the filesystem object to be
+#' tested.
+#' @param allow_local_tmpfile Logical scalar. `TRUE` if the filesystem is
+#' allowed to use a local temporary file before uploading to the target
+#' location.
+#' @returns Logical scalar. `TRUE` if random write is supported.
+#'
+#' @note
+#' The location GDAL uses for temporary files can be forced via the
+#' `CPL_TMPDIR` configuration option.
+#'
+#' @seealso
+#' [vsi_supports_seq_write()]
+#'
+#' @examples
+#' # Requires GDAL >= 3.6
+#' if (as.integer(gdal_version()[2]) >= 3060000)
+#'   vsi_supports_rnd_write("/vsimem/test-mem-file.gpkg", TRUE)
+vsi_supports_rnd_write <- function(filename, allow_local_tmpfile) {
+    .Call(`_gdalraster_vsi_supports_rnd_write`, filename, allow_local_tmpfile)
+}
+
 #' @noRd
 NULL
 

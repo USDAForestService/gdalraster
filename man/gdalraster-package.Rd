@@ -86,6 +86,8 @@
   \code{\link[=vsi_rename]{vsi_rename()}},
   \code{\link[=vsi_rmdir]{vsi_rmdir()}},
   \code{\link[=vsi_stat]{vsi_stat()}},
+  \code{\link[=vsi_supports_rnd_write]{vsi_supports_rnd_write()}},
+  \code{\link[=vsi_supports_seq_write]{vsi_supports_seq_write()}},
   \code{\link[=vsi_sync]{vsi_sync()}},
   \code{\link[=vsi_unlink]{vsi_unlink()}},
   \code{\link[=vsi_unlink_batch]{vsi_unlink_batch()}}
