@@ -100,3 +100,9 @@ test_that("vsi_get_fs_options works", {
 	expect_type(x, "list")
 })
 
+test_that("vsi_supports_seq_write and vsi_supports_rnd_write work", {
+	skip_if(as.integer(gdal_version()[2]) < 3060000)
+	
+	expect_true(vsi_supports_seq_write("/vsimem/test-mem-file.gpkg", TRUE))
+	expect_true(vsi_supports_rnd_write("/vsimem/test-mem-file.gpkg", TRUE))
+})

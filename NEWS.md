@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9090 (dev)
+# gdalraster 1.9.0.9100 (dev)
+
+* add `vsi_supports_rnd_write()` and `vsi_supports_seq_write()`: test whether the filesystem supports random write or sequential write, dependent on whether a local temp file is allowed before uploading to the target location (2024-03-08)
 
 * add `vsi_get_fs_options()`: get the list of options associated with a virtual file system handler, for setting with `set_config_option()` (2024-03-06)
 

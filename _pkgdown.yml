@@ -101,6 +101,8 @@ reference:
   - vsi_rename
   - vsi_rmdir
   - vsi_stat
+  - vsi_supports_rnd_write
+  - vsi_supports_seq_write
   - vsi_sync
   - vsi_unlink
   - vsi_unlink_batch
