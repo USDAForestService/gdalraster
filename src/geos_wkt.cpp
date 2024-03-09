@@ -377,15 +377,16 @@ std::string _g_buffer(std::string geom, double dist, int quad_segs = 30) {
 	if (OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from WKT string.");
 
-	OGRGeometryH hBuffer = OGR_G_Buffer(hGeom, dist, quad_segs);
-	if (hBuffer == NULL)
+	OGRGeometryH hBufferGeom = OGR_G_Buffer(hGeom, dist, quad_segs);
+	if (hBufferGeom == NULL)
 		Rcpp::stop("Failed to create buffer geometry.");
 	
 	char* pszWKT_out;
-	OGR_G_ExportToWkt(hBuffer, &pszWKT_out);
+	OGR_G_ExportToWkt(hBufferGeom, &pszWKT_out);
 	std::string wkt_out(pszWKT_out);
 	CPLFree(pszWKT_out);
 	OGR_G_DestroyGeometry(hGeom);
+	OGR_G_DestroyGeometry(hBufferGeom);
 	
 	return wkt_out;
 }
