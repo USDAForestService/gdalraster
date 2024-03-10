@@ -152,8 +152,10 @@ bool _g_intersects(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	bool ret = OGR_G_Intersects(hGeom_this, hGeom_other);
 	OGR_G_DestroyGeometry(hGeom_other);
@@ -179,8 +181,10 @@ bool _g_equals(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	bool ret = OGR_G_Equals(hGeom_this, hGeom_other);
 	OGR_G_DestroyGeometry(hGeom_other);
@@ -206,8 +210,10 @@ bool _g_disjoint(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	bool ret = OGR_G_Disjoint(hGeom_this, hGeom_other);
 	OGR_G_DestroyGeometry(hGeom_other);
@@ -233,8 +239,10 @@ bool _g_touches(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	bool ret = OGR_G_Touches(hGeom_this, hGeom_other);
 	OGR_G_DestroyGeometry(hGeom_other);
@@ -260,8 +268,10 @@ bool _g_contains(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	bool ret = OGR_G_Contains(hGeom_this, hGeom_other);
 	OGR_G_DestroyGeometry(hGeom_other);
@@ -287,8 +297,10 @@ bool _g_within(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	bool ret = OGR_G_Within(hGeom_this, hGeom_other);
 	OGR_G_DestroyGeometry(hGeom_other);
@@ -314,8 +326,10 @@ bool _g_crosses(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	bool ret = OGR_G_Crosses(hGeom_this, hGeom_other);
 	OGR_G_DestroyGeometry(hGeom_other);
@@ -342,8 +356,10 @@ bool _g_overlaps(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	bool ret = OGR_G_Overlaps(hGeom_this, hGeom_other);
 	OGR_G_DestroyGeometry(hGeom_other);
@@ -378,8 +394,10 @@ std::string _g_buffer(std::string geom, double dist, int quad_segs = 30) {
 		Rcpp::stop("Failed to create geometry object from WKT string.");
 
 	OGRGeometryH hBufferGeom = OGR_G_Buffer(hGeom, dist, quad_segs);
-	if (hBufferGeom == NULL)
+	if (hBufferGeom == NULL) {
+		OGR_G_DestroyGeometry(hGeom);
 		Rcpp::stop("Failed to create buffer geometry.");
+	}
 	
 	char* pszWKT_out;
 	OGR_G_ExportToWkt(hBufferGeom, &pszWKT_out);
@@ -415,12 +433,17 @@ std::string _g_intersection(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	OGRGeometryH hGeom = OGR_G_Intersection(hGeom_this, hGeom_other);
-	if (hGeom == NULL)
+	if (hGeom == NULL) {
+		OGR_G_DestroyGeometry(hGeom_this);
+		OGR_G_DestroyGeometry(hGeom_other);
 		return "";
+	}
 	
 	char* pszWKT_out;
 	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
@@ -452,12 +475,17 @@ std::string _g_union(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	OGRGeometryH hGeom = OGR_G_Union(hGeom_this, hGeom_other);
-	if (hGeom == NULL)
+	if (hGeom == NULL) {
+		OGR_G_DestroyGeometry(hGeom_this);
+		OGR_G_DestroyGeometry(hGeom_other);
 		return "";
+	}
 	
 	char* pszWKT_out;
 	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
@@ -489,12 +517,17 @@ std::string _g_difference(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	OGRGeometryH hGeom = OGR_G_Difference(hGeom_this, hGeom_other);
-	if (hGeom == NULL)
+	if (hGeom == NULL) {
+		OGR_G_DestroyGeometry(hGeom_this);
+		OGR_G_DestroyGeometry(hGeom_other);
 		return "";
+	}
 	
 	char* pszWKT_out;
 	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
@@ -526,12 +559,17 @@ std::string _g_sym_difference(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 		
 	OGRGeometryH hGeom = OGR_G_SymDifference(hGeom_this, hGeom_other);
-	if (hGeom == NULL)
+	if (hGeom == NULL) {
+		OGR_G_DestroyGeometry(hGeom_this);
+		OGR_G_DestroyGeometry(hGeom_other);
 		return "";
+	}
 	
 	char* pszWKT_out;
 	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
@@ -565,8 +603,10 @@ double _g_distance(std::string this_geom, std::string other_geom) {
 	if (OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this) != OGRERR_NONE)
 		Rcpp::stop("Failed to create geometry object from first WKT string.");
 		
-	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE)
+	if (OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other) != OGRERR_NONE) {
+		OGR_G_DestroyGeometry(hGeom_this);
 		Rcpp::stop("Failed to create geometry object from second WKT string.");
+	}
 	
 	double ret = OGR_G_Distance(hGeom_this, hGeom_other);
 	OGR_G_DestroyGeometry(hGeom_this);
@@ -629,8 +669,15 @@ Rcpp::NumericVector _g_centroid(std::string geom) {
 		Rcpp::stop("Failed to create geometry object from WKT string.");
 		
 	OGRGeometryH hPoint = OGR_G_CreateGeometry(wkbPoint);
-	if (OGR_G_Centroid(hGeom, hPoint) ==  OGRERR_FAILURE)
+	if (hPoint == NULL) {
+		Rcpp::stop("Failed to create point geometry object.");
+		OGR_G_DestroyGeometry(hGeom);
+	}
+	if (OGR_G_Centroid(hGeom, hPoint) ==  OGRERR_FAILURE) {
+		OGR_G_DestroyGeometry(hPoint);
+		OGR_G_DestroyGeometry(hGeom);
 		Rcpp::stop("Failed to compute centroid for the geometry.");
+	}
 
 	double x = OGR_G_GetX(hPoint, 0);
 	double y = OGR_G_GetY(hPoint, 0);
@@ -666,12 +713,6 @@ std::string _g_transform(std::string geom, std::string srs_from,
 // For that, use the OGR_GeomTransformer_Create() and
 // OGR_GeomTransformer_Transform() functions.
 
-	OGRGeometryH hGeom;
-	char* pszWKT = (char*) geom.c_str();
-	
-	if (OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom) != OGRERR_NONE)
-		Rcpp::stop("Failed to create geometry object from WKT string.");
-
 	OGRSpatialReference oSourceSRS, oDestSRS;
 	OGRCoordinateTransformation *poCT;
 	OGRErr err;
@@ -688,9 +729,19 @@ std::string _g_transform(std::string geom, std::string srs_from,
 	if (poCT == NULL)
 		Rcpp::stop("Failed to create coordinate transformer.");
 
+	OGRGeometryH hGeom;
+	char* pszWKT = (char*) geom.c_str();
+	if (OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom) != OGRERR_NONE) {
+		OGRCoordinateTransformation::DestroyCT(poCT);
+		Rcpp::stop("Failed to create geometry object from WKT string.");
+	}
+
 	err = OGR_G_Transform(hGeom, OGRCoordinateTransformation::ToHandle(poCT));
-	if (err != OGRERR_NONE)
+	if (err != OGRERR_NONE) {
+		OGRCoordinateTransformation::DestroyCT(poCT);
+		OGR_G_DestroyGeometry(hGeom);	
 		Rcpp::stop("Transformation failed.");
+	}
 	
 	char* pszWKT_out;
 	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
