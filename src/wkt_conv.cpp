@@ -387,11 +387,11 @@ Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox,
 	bbox_in[3] += extend_y;
 
 	Rcpp::NumericMatrix poly_xy(5, 2);
-	poly_xy.row(0) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(3));
-	poly_xy.row(1) = Rcpp::NumericVector::create(bbox_in(2), bbox_in(3));
-	poly_xy.row(2) = Rcpp::NumericVector::create(bbox_in(2), bbox_in(1));
-	poly_xy.row(3) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(1));
-	poly_xy.row(4) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(3));
+	poly_xy.row(0) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(1));
+	poly_xy.row(1) = Rcpp::NumericVector::create(bbox_in(2), bbox_in(1));
+	poly_xy.row(2) = Rcpp::NumericVector::create(bbox_in(2), bbox_in(3));
+	poly_xy.row(3) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(3));
+	poly_xy.row(4) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(1));
 	
 	return _g_create(poly_xy, "POLYGON");
 }

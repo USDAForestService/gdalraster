@@ -21,10 +21,13 @@ test_that("geos functions work on wkt geometries", {
 	pt_xy <- cbind(x, y)
 	expect_error(.g_create(pt_xy, "POLYGON"))
 	
-	x <- c(324467.3, 323909.4, 323794.2, 324970.7)
-	y <- c(5104814.2, 5104365.4, 5103455.8, 5102885.8)
-	pt_xy <- cbind(x, y)
-	expect_error(.g_create(pt_xy, "POLYGON"))
+	if (as.integer(gdal_version()[2]) >= 3050000) {
+		# OGR_GEOMETRY_ACCEPT_UNCLOSED_RING config option added at 3.5.0
+		x <- c(324467.3, 323909.4, 323794.2, 324970.7)
+		y <- c(5104814.2, 5104365.4, 5103455.8, 5102885.8)
+		pt_xy <- cbind(x, y)
+		expect_error(.g_create(pt_xy, "POLYGON"))
+	}
 	
 	x <- c(324467.3, 323909.4, 323794.2, 324970.7, 326420.0, 326389.6, 325298.1, 325298.1, 324467.3)
 	y <- c(5104814.2, 5104365.4, 5103455.8, 5102885.8, 5103595.3, 5104747.5, 5104929.4, 5104929.4, 5104814.2)

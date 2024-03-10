@@ -95,7 +95,7 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 		
 		CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", "NO");
 		if (OGR_G_AddGeometryDirectly(hPoly, hGeom) != OGRERR_NONE)
-			Rcpp::stop("Failed to create polygon geometry.");
+			Rcpp::stop("Failed to create polygon geometry (unclosed ring?).");
 		CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", NULL);
 		
 		char* pszWKT;
