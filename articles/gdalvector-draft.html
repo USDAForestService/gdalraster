@@ -86,7 +86,7 @@
     
     
 <p>Chris Toney (chris.toney at usda.gov)</p>
-<p>Last modified: 2024-03-05</p>
+<p>Last modified: 2024-03-10</p>
 <p>Comment/discussion: <a href="https://github.com/USDAForestService/gdalraster/issues/241" class="external-link uri">https://github.com/USDAForestService/gdalraster/issues/241</a></p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
@@ -204,6 +204,10 @@ convenience functions also operating on WKT (GEOS via GDAL headers).</p>
 <p>The draft class definition below has been partially implemented
 in:</p>
 <p><a href="https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.cpp" class="external-link uri">https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.cpp</a></p>
+<p>The header file can be referenced for the public class methods that
+have been implemented so far in the prototype (a subset of the draft
+class definition below):</p>
+<p><a href="https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h" class="external-link uri">https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h</a></p>
 <p>This does not include definitions of several stand-alone functions
 that will provide schema management. The existing definitions in
 <code>src/ogr_util.h</code> are a starting point for those. An
@@ -857,6 +861,10 @@ on the R side with package <strong>nanoarrow</strong>.</li>
 <li>potential output vectors of GEOS or OGR pointers, WKB with support
 by <strong>wk</strong>
 </li>
+<li>OGR layer geoprocessing might be stand-alone functions instead of
+class methods in <code>GDALVector</code>. We would have more flexibility
+in terms of optional/argument defaults. Either way, we should add an
+option to create the output layer.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -898,6 +906,10 @@ with support by {wk} (<span class="citation">@mdsumner</span>,
 2024-03-04)</li>
 <li>add section “Contributors” (2024-03-04)</li>
 <li>add link to issue 241 for discussion thread (2024-03-05)</li>
+<li>OGR layer geoprocessing may be stand-alone functions instead of
+class methods TBD (2024-03-10)</li>
+<li>add link to the header file to reference the class methods that have
+been implemented so far in the prototype (2024-03-10)</li>
 </ul>
 </div>
 <div class="section level2">
