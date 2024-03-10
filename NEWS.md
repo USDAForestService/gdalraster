@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9110 (dev)
+# gdalraster 1.9.0.9120 (dev)
+
+* additional unit tests for geometry operations using GEOS via GDAL headers (2024-03-10)
 
 * additional error checks and `OGR_G_DestroyGeometry()` on created geometries in src/geos_wkt.cpp (2024-03-09)
 
