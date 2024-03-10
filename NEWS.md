@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9100 (dev)
+# gdalraster 1.9.0.9110 (dev)
+
+* additional error checks and `OGR_G_DestroyGeometry()` on created geometries in src/geos_wkt.cpp (2024-03-09)
 
 * add `vsi_supports_rnd_write()` and `vsi_supports_seq_write()`: test whether the filesystem supports random write or sequential write, dependent on whether a local temp file is allowed before uploading to the target location (2024-03-08)
 
