@@ -44,7 +44,7 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 // Currently only for POINT, LINESTRING, POLYGON.
 // Only simple polygons composed of one exterior ring are supported.
 
-	OGRGeometryH hGeom;
+	OGRGeometryH hGeom = NULL;
 	
 	if (geom_type == "point" || geom_type == "POINT") {
 		geom_type = "POINT";
@@ -56,7 +56,7 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 	}
 	else if (geom_type == "polygon" || geom_type == "POLYGON") {
 		geom_type = "POLYGON";
-		hGeom = OGR_G_CreateGeometry(wkbLineString);
+		hGeom = OGR_G_CreateGeometry(wkbLinearRing);
 	}
 	else {
 		Rcpp::stop("Geometry type is not valid.");
@@ -91,11 +91,13 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 	}
 	
 	if (geom_type == "POLYGON") {
-		OGRGeometryH hPoly = OGR_G_ForceToPolygon(hGeom);
-		if (hPoly == NULL || !OGR_G_IsValid(hPoly)) {
-			OGR_G_DestroyGeometry(hPoly);
-			Rcpp::stop("The resulting geometry is not valid.");
-		}
+		OGRGeometryH hPoly = OGR_G_CreateGeometry(wkbPolygon);
+		
+		CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", "NO");
+		if (OGR_G_AddGeometryDirectly(hPoly, hGeom) != OGRERR_NONE)
+			Rcpp::stop("Failed to create polygon geometry.");
+		CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", NULL);
+		
 		char* pszWKT;
 		OGR_G_ExportToWkt(hPoly, &pszWKT);
 		std::string wkt(pszWKT);
@@ -104,8 +106,6 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 		return wkt;
 	}
 	else {
-		if (!OGR_G_IsValid(hGeom))
-			Rcpp::stop("The resulting geometry is not valid.");
 		char* pszWKT;
 		OGR_G_ExportToWkt(hGeom, &pszWKT);
 		std::string wkt(pszWKT);
@@ -123,7 +123,7 @@ bool _g_is_valid(std::string geom) {
 // of the geometry operation. If OGR is built without the GEOS library, 
 // this function will always return FALSE.
 
-	OGRGeometryH hGeom;
+	OGRGeometryH hGeom = NULL;
 	OGRErr err;
 	char* pszWKT = (char*) geom.c_str();
 	
@@ -147,7 +147,8 @@ bool _g_intersects(std::string this_geom, std::string other_geom) {
 // is done in rigorous fashion otherwise TRUE is returned if the envelopes 
 // (bounding boxes) of the two geometries overlap.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -179,7 +180,8 @@ bool _g_equals(std::string this_geom, std::string other_geom) {
 // considered equal by this method if their WKT/WKB representation is equal. 
 // Note: this must be distinguished from equality in a spatial way.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -211,7 +213,8 @@ bool _g_disjoint(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -243,7 +246,8 @@ bool _g_touches(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -275,7 +279,8 @@ bool _g_contains(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -307,7 +312,8 @@ bool _g_within(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -339,7 +345,8 @@ bool _g_crosses(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -372,7 +379,8 @@ bool _g_overlaps(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -413,7 +421,7 @@ std::string _g_buffer(std::string geom, double dist, int quad_segs = 30) {
 // numbers of vertices in the resulting buffer geometry while small numbers 
 // reduce the accuracy of the result.
 
-	OGRGeometryH hGeom;
+	OGRGeometryH hGeom = NULL;
 	OGRErr err;
 	char* pszWKT = (char*) geom.c_str();
 	
@@ -454,7 +462,8 @@ std::string _g_intersection(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -499,7 +508,8 @@ std::string _g_union(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -544,7 +554,8 @@ std::string _g_difference(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -589,7 +600,8 @@ std::string _g_sym_difference(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -636,7 +648,8 @@ double _g_distance(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom_this, hGeom_other;
+	OGRGeometryH hGeom_this = NULL;
+	OGRGeometryH hGeom_other = NULL;
 	OGRErr err;
 	char* pszWKT_this = (char*) this_geom.c_str();
 	char* pszWKT_other = (char*) other_geom.c_str();
@@ -663,7 +676,7 @@ double _g_length(std::string geom) {
 // Computes the length for OGRCurve (LineString) or MultiCurve objects. 
 // Undefined for all other geometry types (returns zero).
 
-	OGRGeometryH hGeom;
+	OGRGeometryH hGeom = NULL;
 	OGRErr err;
 	char* pszWKT = (char*) geom.c_str();
 	
@@ -682,7 +695,7 @@ double _g_area(std::string geom) {
 // Computes the area for an OGRLinearRing, OGRPolygon or OGRMultiPolygon.
 // Undefined for all other geometry types (returns zero).
 
-	OGRGeometryH hGeom;
+	OGRGeometryH hGeom = NULL;
 	OGRErr err;
 	char* pszWKT = (char*) geom.c_str();
 	
@@ -709,7 +722,7 @@ Rcpp::NumericVector _g_centroid(std::string geom) {
 // the geometry operation. If OGR is built without the GEOS library, this 
 // function will always fail, issuing a CPLE_NotSupported error.
 
-	OGRGeometryH hGeom;
+	OGRGeometryH hGeom = NULL;
 	OGRErr err;
 	char* pszWKT = (char*) geom.c_str();
 	
@@ -778,7 +791,7 @@ std::string _g_transform(std::string geom, std::string srs_from,
 	if (poCT == NULL)
 		Rcpp::stop("Failed to create coordinate transformer.");
 
-	OGRGeometryH hGeom;
+	OGRGeometryH hGeom = NULL;
 	char* pszWKT = (char*) geom.c_str();
 	err = OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom);
 	if (err != OGRERR_NONE || hGeom == NULL) {
