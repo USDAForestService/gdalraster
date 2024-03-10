@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-03-05
+Last modified: 2024-03-10
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -75,6 +75,10 @@ An OGR Geometry is represented in R as a character string containing OGC Well Kn
 The draft class definition below has been partially implemented in:
 
 <https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.cpp>
+
+The header file can be referenced for the public class methods that have been implemented so far in the prototype (a subset of the draft class definition below):
+
+<https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h>
 
 This does not include definitions of several stand-alone functions that will provide schema management. The existing definitions in `src/ogr_util.h` are a starting point for those. An **Rcpp** `.finalizer` function will be implemented to properly release resources in case an object of class `GDALVector` is garbage collected without an explicit call to `close()`. Also note that `GIntBig` is currently a placeholder type in the class definition. It is the type currently defined in the OGR API. For now it would be implemented as R numeric (i.e., `double`), with `int64` handling TBD.
 
@@ -718,6 +722,7 @@ This is a working list of potential issues and design questions that need furthe
 * handling of 64-bit integer: OGR FID currently is `GIntBig` (`int64_t`) and integer fields in vector data sources will commonly be `OFTInteger64`. These would likely be handled using **RcppInt64**, with **bit64** on the R side providing S3 class `integer64`.
 * OGR's Arrow C interface: Implement `GDALVector::getArrowStream()` (GDAL >= 3.6) and `GDALVector::writeArrowBatch()` (GDAL >= 3.8), supported on the R side with package **nanoarrow**.
 * potential output vectors of GEOS or OGR pointers, WKB with support by **wk**
+* OGR layer geoprocessing might be stand-alone functions instead of class methods in `GDALVector`. We would have more flexibility in terms of optional/argument defaults. Either way, we should add an option to create the output layer.
 
 ## Document changelog
 
@@ -735,6 +740,8 @@ This is a working list of potential issues and design questions that need furthe
 * add potential output vectors of geos or ogr pointers, or wkb/wkt with support by {wk} (@mdsumner, 2024-03-04)
 * add section "Contributors" (2024-03-04)
 * add link to issue 241 for discussion thread (2024-03-05)
+* OGR layer geoprocessing may be stand-alone functions instead of class methods TBD (2024-03-10)
+* add link to the header file to reference the class methods that have been implemented so far in the prototype (2024-03-10)
 
 ## Contributors
 
