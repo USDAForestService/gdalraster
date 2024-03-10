@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9110</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9120</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.0.9110" id="gdalraster-1909110-dev">gdalraster 1.9.0.9110 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909110-dev"></a></h2>
-<ul><li><p>additional error checks and <code>OGR_G_DestroyGeometry()</code> on created geometries in src/geos_wkt.cpp (2024-03-09)</p></li>
+<h2 class="pkg-version" data-toc-text="1.9.0.9120" id="gdalraster-1909120-dev">gdalraster 1.9.0.9120 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909120-dev"></a></h2>
+<ul><li><p>additional unit tests for geometry operations using GEOS via GDAL headers (2024-03-10)</p></li>
+<li><p>additional error checks and <code>OGR_G_DestroyGeometry()</code> on created geometries in src/geos_wkt.cpp (2024-03-09)</p></li>
 <li><p>add <code><a href="../reference/vsi_supports_rnd_write.html">vsi_supports_rnd_write()</a></code> and <code><a href="../reference/vsi_supports_seq_write.html">vsi_supports_seq_write()</a></code>: test whether the filesystem supports random write or sequential write, dependent on whether a local temp file is allowed before uploading to the target location (2024-03-08)</p></li>
 <li><p>add <code><a href="../reference/vsi_get_fs_options.html">vsi_get_fs_options()</a></code>: get the list of options associated with a virtual file system handler, for setting with <code><a href="../reference/set_config_option.html">set_config_option()</a></code> (2024-03-06)</p></li>
 <li><p>add <code><a href="../reference/vsi_get_fs_prefixes.html">vsi_get_fs_prefixes()</a></code>: get the list of prefixes for virtual file system handlers currently registered (2024-03-06)</p></li>
