@@ -92,9 +92,10 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 	
 	if (geom_type == "POLYGON") {
 		OGRGeometryH hPoly = OGR_G_ForceToPolygon(hGeom);
-		if (hPoly == NULL || !OGR_G_IsValid(hPoly))
+		if (hPoly == NULL || !OGR_G_IsValid(hPoly)) {
+			OGR_G_DestroyGeometry(hPoly);
 			Rcpp::stop("The resulting geometry is not valid.");
-
+		}
 		char* pszWKT;
 		OGR_G_ExportToWkt(hPoly, &pszWKT);
 		std::string wkt(pszWKT);
@@ -431,6 +432,7 @@ std::string _g_buffer(std::string geom, double dist, int quad_segs = 30) {
 	std::string wkt_out(pszWKT_out);
 	CPLFree(pszWKT_out);
 	OGR_G_DestroyGeometry(hGeom);
+	OGR_G_DestroyGeometry(hBufferGeom);
 	
 	return wkt_out;
 }
@@ -478,6 +480,7 @@ std::string _g_intersection(std::string this_geom, std::string other_geom) {
 	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
 	std::string wkt_out(pszWKT_out);
 	CPLFree(pszWKT_out);
+	OGR_G_DestroyGeometry(hGeom);
 	OGR_G_DestroyGeometry(hGeom_this);
 	OGR_G_DestroyGeometry(hGeom_other);
 	
@@ -522,6 +525,7 @@ std::string _g_union(std::string this_geom, std::string other_geom) {
 	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
 	std::string wkt_out(pszWKT_out);
 	CPLFree(pszWKT_out);
+	OGR_G_DestroyGeometry(hGeom);
 	OGR_G_DestroyGeometry(hGeom_this);
 	OGR_G_DestroyGeometry(hGeom_other);
 	
@@ -566,6 +570,7 @@ std::string _g_difference(std::string this_geom, std::string other_geom) {
 	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
 	std::string wkt_out(pszWKT_out);
 	CPLFree(pszWKT_out);
+	OGR_G_DestroyGeometry(hGeom);
 	OGR_G_DestroyGeometry(hGeom_this);
 	OGR_G_DestroyGeometry(hGeom_other);
 	
@@ -610,6 +615,7 @@ std::string _g_sym_difference(std::string this_geom, std::string other_geom) {
 	OGR_G_ExportToWkt(hGeom, &pszWKT_out);
 	std::string wkt_out(pszWKT_out);
 	CPLFree(pszWKT_out);
+	OGR_G_DestroyGeometry(hGeom);
 	OGR_G_DestroyGeometry(hGeom_this);
 	OGR_G_DestroyGeometry(hGeom_other);
 	
