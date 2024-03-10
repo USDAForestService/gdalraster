@@ -15,15 +15,15 @@ test_that("intersect/union return correct values", {
 	325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
 	bbox_list[[3]] <- bbox_from_wkt(bnd)
 	expect_equal(bbox_intersect(bbox_list),
-					c(323794.2, 5102885.8, 326420.0, 5104929.4))
+			c(323794.2, 5102885.8, 326420.0, 5104929.4))
 	expect_equal(bbox_union(bbox_list),
-					c(323400.9, 5101815.8, 327870.9, 5105175.8))
+			c(323400.9, 5101815.8, 327870.9, 5105175.8))
 	expect_equal(bbox_intersect(c(elev_file, b5_file)),
-					c(323476.1, 5101872.0, 327766.1, 5105082.0))
+			c(323476.1, 5101872.0, 327766.1, 5105082.0))
 	expect_equal(bbox_union(c(elev_file, b5_file)),
-					c(323400.9, 5101815.8, 327870.9, 5105175.8))
+			c(323400.9, 5101815.8, 327870.9, 5105175.8))
 	expect_equal(bbox_from_wkt(bbox_union(c(elev_file, b5_file), as_wkt=TRUE)),
-					c(323400.9, 5101815.8, 327870.9, 5105175.8))
+			c(323400.9, 5101815.8, 327870.9, 5105175.8))
 })
 
 test_that("g_buffer returns correct values", {

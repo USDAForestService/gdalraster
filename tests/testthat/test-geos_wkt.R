@@ -78,17 +78,31 @@ test_that("geos functions work on wkt geometries", {
 	expect_error(.g_overlaps(bb, "invalid WKT"))
 
 	expect_equal(round(bbox_from_wkt(.g_buffer(bnd, 100))),
-					round(c(323694.2, 5102785.8, 326520.0, 5105029.4)))
-
-	expect_equal(round(.g_area(.g_difference(bb, bnd))), 9731255)
-
-	expect_equal(round(.g_area(.g_sym_difference(bb, bnd))), 9731255)
-
-	expect_equal(round(.g_distance(pt, bnd), 2), round(215.0365, 2))
+			round(c(323694.2, 5102785.8, 326520.0, 5105029.4)))
+	expect_error(.g_buffer("invalid WKT", 100))
 
 	expect_equal(round(.g_area(bnd)), 4039645)
+	expect_equal(.g_area(.g_intersection(bb, bnd)), .g_area(bnd))
+	expect_equal(.g_area(.g_union(bb, bnd)), .g_area(bb))
+	expect_equal(round(.g_area(.g_difference(bb, bnd))), 9731255)
+	expect_equal(round(.g_area(.g_sym_difference(bb, bnd))), 9731255)
+	expect_error(.g_area("invalid WKT"))
+
+	expect_equal(round(.g_distance(pt, bnd), 2), round(215.0365, 2))
+	expect_error(.g_distance("invalid WKT"))
 	
 	expect_equal(round(.g_length(line), 1), round(3822.927, 1))
+	expect_error(.g_length("invalid WKT"))
 
 	expect_equal(round(.g_centroid(bnd)), round(c(325134.9, 5103985.4)))
+	expect_error(.g_centroid("invalid WKT"))
+	
+	expect_error(.g_intersection("invalid WKT", bnd))
+	expect_error(.g_intersection(bb, "invalid WKT"))
+	expect_error(.g_union("invalid WKT", bnd))
+	expect_error(.g_union(bb, "invalid WKT"))
+	expect_error(.g_difference("invalid WKT", bnd))
+	expect_error(.g_difference(bb, "invalid WKT"))
+	expect_error(.g_sym_difference("invalid WKT", bnd))
+	expect_error(.g_sym_difference(bb, "invalid WKT"))
 })
