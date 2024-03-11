@@ -94,11 +94,15 @@ reference:
 - contents:
   - vsi_copy_file
   - vsi_curl_clear_cache
+  - vsi_get_fs_options
+  - vsi_get_fs_prefixes
   - vsi_mkdir
   - vsi_read_dir
   - vsi_rename
   - vsi_rmdir
   - vsi_stat
+  - vsi_supports_rnd_write
+  - vsi_supports_seq_write
   - vsi_sync
   - vsi_unlink
   - vsi_unlink_batch

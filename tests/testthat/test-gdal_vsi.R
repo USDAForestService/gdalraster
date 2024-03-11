@@ -86,4 +86,23 @@ test_that("vsi_rename works", {
 	expect_equal(vsi_rename(tmp_file, new_file), 0)
 })
 
+test_that("vsi_get_fs_prefixes works", {
+	x <- vsi_get_fs_prefixes()
+	expect_vector(x, ptype = character())
+	expect_true(length(x) > 1)
+})
 
+test_that("vsi_get_fs_options works", {
+	x <- vsi_get_fs_options("/vsizip/", as_list = FALSE)
+	expect_vector(x, ptype = character(), size = 1)
+	
+	x <- vsi_get_fs_options("/vsizip/")
+	expect_type(x, "list")
+})
+
+test_that("vsi_supports_seq_write and vsi_supports_rnd_write work", {
+	skip_if(as.integer(gdal_version()[2]) < 3060000)
+	
+	expect_true(vsi_supports_seq_write("/vsimem/test-mem-file.gpkg", TRUE))
+	expect_true(vsi_supports_rnd_write("/vsimem/test-mem-file.gpkg", TRUE))
+})

@@ -1,4 +1,14 @@
-# gdalraster 1.9.0.9080 (dev)
+# gdalraster 1.9.0.9120 (dev)
+
+* additional unit tests for geometry operations using GEOS via GDAL headers (2024-03-10)
+
+* additional error checks and `OGR_G_DestroyGeometry()` on created geometries in src/geos_wkt.cpp (2024-03-09)
+
+* add `vsi_supports_rnd_write()` and `vsi_supports_seq_write()`: test whether the filesystem supports random write or sequential write, dependent on whether a local temp file is allowed before uploading to the target location (2024-03-08)
+
+* add `vsi_get_fs_options()`: get the list of options associated with a virtual file system handler, for setting with `set_config_option()` (2024-03-06)
+
+* add `vsi_get_fs_prefixes()`: get the list of prefixes for virtual file system handlers currently registered (2024-03-06)
 
 * add `ogrinfo()`: wrapper of the `ogrinfo` command-line utility, retrieve information about a vector data source and potentially edit data with SQL statements (GDAL >= 3.7) (2024-03-04)
 
