@@ -6,7 +6,7 @@
 # local copy of the PROJ data directory. The PROJ datadir is now obtained from
 # pkg-config if possible. Compiler invocations are now logged.
 # 2024-03-03: Test that GEOS is available to GDAL.
-AC_INIT([gdalraster],[1.9.0.9120],[chris.toney@usda.gov])
+AC_INIT([gdalraster],[1.9.0.9130],[chris.toney@usda.gov])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
@@ -246,6 +246,48 @@ AC_MSG_NOTICE([Copy data for:])
 fi
 
 #
+# PROJ include dir
+#
+
+AC_ARG_WITH([proj-include],
+    AS_HELP_STRING([--with-proj-include=DIR],[location of proj header files]),
+    [proj_include_path=$withval])
+if test [ -n "$proj_include_path" ] ; then
+   AC_SUBST([PROJ_CPPFLAGS],["-I${proj_include_path}"])
+else
+  if test "${proj_config_ok}" = yes; then
+    PROJ_INCLUDE_PATH=`${PROJ_CONFIG} --cflags`
+    AC_SUBST([PROJ_CPPFLAGS],["${PROJ_INCLUDE_PATH}"])
+  fi
+fi
+
+#
+# PROJ libs
+#
+
+AC_ARG_WITH([proj-lib],
+    AS_HELP_STRING([--with-proj-lib=LIB_PATH],[the location of proj libraries]),
+               [proj_lib_path=$withval])
+if test [ -n "$proj_lib_path" ] ; then
+    AC_SUBST([PROJ_LIBS], ["-L${proj_lib_path} ${INPKG_LIBS} -lproj"])
+else
+  if test "${proj_config_ok}" = yes; then
+    if test `uname` = "Darwin"; then
+      PROJ_LIB_PATH=`${PROJ_CONFIG} --libs --static`
+    else
+      PROJ_LIB_PATH=`${PROJ_CONFIG} --libs`
+    fi
+    AC_SUBST([PROJ_LIBS], ["${PROJ_LIB_PATH} ${INPKG_LIBS}"])
+	proj_version=`${PROJ_CONFIG} --modversion`
+	AC_MSG_NOTICE([PROJ: ${proj_version}])
+  else
+    PROJ_LIBS="${PKG_LIBS} -lproj"
+  fi
+fi
+
+LIBS="${LIBS} ${PROJ_LIBS}"
+
+#
 # test whether PROJ is available to gdal:
 #
 
@@ -355,9 +397,9 @@ AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
 
 # #############################################################################
 
-AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${GDAL_CPPFLAGS}"])
+AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${PROJ_CPPFLAGS} ${GDAL_CPPFLAGS}"])
 
-AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS}"])
+AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS} ${PROJ_LIBS}"])
 if test "${NEED_DEPS}" = yes; then
    AC_SUBST([PKG_LIBS], ["${PKG_LIBS} ${GDAL_DEP_LIBS}"])
 fi
