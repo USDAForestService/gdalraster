@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9120 (dev)
+# gdalraster 1.9.0.9130 (dev)
+
+* configure.ac: add back `proj-include` and `proj-lib`, the latter needed in some cases for macOS source install (2024-03-12)
 
 * additional unit tests for geometry operations using GEOS via GDAL headers (2024-03-10)
 
