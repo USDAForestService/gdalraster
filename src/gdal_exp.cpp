@@ -1287,7 +1287,7 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //'   args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
 //'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
 //' 
-//'   # Update a value of an attribute with SQL by using the SQLite dialect.
+//'   # Update values of an attribute with SQL by using the SQLite dialect.
 //'   sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
 //'   args <- c("-dialect", "sqlite", "-sql", sql)
 //'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
