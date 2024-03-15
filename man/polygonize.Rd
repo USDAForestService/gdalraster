@@ -119,7 +119,7 @@ increase performance substantially. If writing to \code{PostgreSQL}
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{# SQLite: GPKG (.gpkg) and Spatialite (.sqlite)
 # enable extra buffering/caching by the GDAL/OGR I/O layer
-set_config_option("SQLITE_USE_OGR_VFS", "YES")\}
+set_config_option("SQLITE_USE_OGR_VFS", "YES")
 # set the journal mode for the SQLite database to MEMORY
 set_config_option("OGR_SQLITE_JOURNAL", "MEMORY")
 
