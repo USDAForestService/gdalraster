@@ -36,5 +36,5 @@ indent_style = tab
 [{configure,configure.*,config.*,*.{sh,yml}}]
 indent_size = 2
 
-[{GNUmakefile,*.in}]
+[{GNUmakefile,*.in,*.win}]
 indent_style = tab
