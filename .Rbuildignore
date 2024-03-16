@@ -20,3 +20,6 @@ config.status
 ^SECURITY\.md$
 ^sample-data$
 ^codecov\.yml$
+^.vscode$
+^.editorconfig
+^.git-blame-ignore-revs
