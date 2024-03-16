@@ -180,11 +180,11 @@ addFilesInZip <- function(
         archive_fname <- .check_gdal_filename(archive_fname)
 
         if (!.addFileInZip(zip_file,
-                            overwrite = FALSE,
-                            archive_fname,
-                            f,
-                            opt,
-                            quiet)) {
+                           overwrite = FALSE,
+                           archive_fname,
+                           f,
+                           opt,
+                           quiet)) {
             ret <- FALSE
             break
         }

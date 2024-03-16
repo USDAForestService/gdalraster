@@ -23,7 +23,8 @@ DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
 #'
 #' These values are used in `dem_proc()` as the default processing options:
 #' \preformatted{
-#'     list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
+#'     list(
+#'          hillshade = c("-z", "1", "-s", "1", "-az", "315",
 #'                        "-alt", "45", "-alg", "Horn",
 #'                        "-combined", "-compute_edges"),
 #'          slope = c("-s", "1", "-alg", "Horn", "-compute_edges"),
@@ -31,7 +32,8 @@ DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
 #'          color_relief = character(),
 #'          TRI = c("-alg", "Riley", "-compute_edges"),
 #'          TPI = c("-compute_edges"),
-#'          roughness = c("-compute_edges"))
+#'          roughness = c("-compute_edges")
+#'          )
 #' }
 #' @seealso
 #' [dem_proc()]
@@ -39,15 +41,17 @@ DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
 #' \url{https://gdal.org/programs/gdaldem.html} for a description of all
 #' available command-line options for each processing mode
 #' @export
-DEFAULT_DEM_PROC <- list(hillshade = c("-z", "1", "-s", "1", "-az", "315",
-                                       "-alt", "45", "-alg", "Horn",
-                                       "-combined", "-compute_edges"),
+DEFAULT_DEM_PROC <- list(
+                        hillshade = c("-z", "1", "-s", "1", "-az", "315",
+                                      "-alt", "45", "-alg", "Horn",
+                                      "-combined", "-compute_edges"),
                         slope = c("-s", "1", "-alg", "Horn", "-compute_edges"),
                         aspect = c("-alg", "Horn", "-compute_edges"),
                         color_relief = character(),
                         TRI = c("-alg", "Riley", "-compute_edges"),
                         TPI = c("-compute_edges"),
-                        roughness = c("-compute_edges"))
+                        roughness = c("-compute_edges")
+                        )
 
 
 #' @noRd
@@ -221,12 +225,12 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
     for (b in bands) {
         if (as_list) {
             r[[i]] <- ds$read(b, xoff, yoff, xsize, ysize,
-                            out_xsize, out_ysize)
+                              out_xsize, out_ysize)
             i = i + 1
         }
         else {
             r <- c(r, ds$read(b, xoff, yoff, xsize, ysize,
-                    out_xsize, out_ysize))
+                              out_xsize, out_ysize))
         }
     }
 
@@ -690,7 +694,7 @@ rasterToVRT <- function(srcfile,
 
     xds <- xml2::xml_find_first(x, "/VRTDataset")
     xml2::xml_attrs(xds) <- c("rasterXSize" = as.character(vrt_ncols),
-                            "rasterYSize" = as.character(vrt_nrows))
+                              "rasterYSize" = as.character(vrt_nrows))
 
     xgt <- xml2::xml_find_first(x, "/VRTDataset/GeoTransform")
     xml2::xml_text(xgt) <- paste(vrt_gt, collapse=", ")
@@ -698,16 +702,16 @@ rasterToVRT <- function(srcfile,
     xpath <- "/VRTDataset/VRTRasterBand/SimpleSource/SrcRect"
     xsrcrect <- xml2::xml_find_all(x, xpath)
     xml2::xml_attrs(xsrcrect) <- c("xOff" = as.character(src_xoff),
-                                "yOff" = as.character(src_yoff),
-                                "xSize" = as.character(srcwin_xsize),
-                                "ySize" = as.character(srcwin_ysize))
+                                   "yOff" = as.character(src_yoff),
+                                   "xSize" = as.character(srcwin_xsize),
+                                   "ySize" = as.character(srcwin_ysize))
 
     xpath <- "/VRTDataset/VRTRasterBand/SimpleSource/DstRect"
     xdstrect <- xml2::xml_find_all(x, xpath)
     xml2::xml_attrs(xdstrect) <- c("xOff" = "0",
-                                "yOff" = "0",
-                                "xSize" = as.character(vrt_ncols),
-                                "ySize" = as.character(vrt_nrows))
+                                   "yOff" = "0",
+                                   "xSize" = as.character(vrt_ncols),
+                                   "ySize" = as.character(vrt_nrows))
 
     if (vrt_ncols != srcwin_xsize || vrt_nrows != srcwin_ysize) {
         xpath <- "/VRTDataset/VRTRasterBand/SimpleSource"
@@ -949,19 +953,19 @@ rasterToVRT <- function(srcfile,
 #' # createCopy("LCP", "storml_edited.lcp", tif_file)
 #' @export
 calc <- function(expr,
-                    rasterfiles,
-                    bands = NULL,
-                    var.names = NULL,
-                    dstfile = tempfile("rastcalc", fileext=".tif"),
-                    fmt = NULL,
-                    dtName = "Int16",
-                    out_band = NULL,
-                    options = NULL,
-                    nodata_value = NULL,
-                    setRasterNodataValue = FALSE,
-                    usePixelLonLat = FALSE,
-                    write_mode = "safe",
-                    quiet = FALSE)
+                 rasterfiles,
+                 bands = NULL,
+                 var.names = NULL,
+                 dstfile = tempfile("rastcalc", fileext=".tif"),
+                 fmt = NULL,
+                 dtName = "Int16",
+                 out_band = NULL,
+                 options = NULL,
+                 nodata_value = NULL,
+                 setRasterNodataValue = FALSE,
+                 usePixelLonLat = FALSE,
+                 write_mode = "safe",
+                 quiet = FALSE)
 {
 
     calc_expr <- parse(text=expr)
@@ -1058,13 +1062,14 @@ calc <- function(expr,
         dstnodata <- NULL
         if(setRasterNodataValue)
             dstnodata <- nodata_value
+
         rasterFromRaster(rasterfiles[1],
-                            dstfile,
-                            fmt,
-                            nbands = 1,
-                            dtName = dtName,
-                            options = options,
-                            dstnodata = dstnodata)
+                         dstfile,
+                         fmt,
+                         nbands = 1,
+                         dtName = dtName,
+                         options = options,
+                         dstnodata = dstnodata)
         dst_ds <- new(GDALRaster, dstfile, read_only=FALSE)
     }
 
@@ -1089,12 +1094,12 @@ calc <- function(expr,
 
         for (r in 1:nrasters) {
             inrow <- ds_list[[r]]$read(band = bands[r],
-                                        xoff = 0,
-                                        yoff = row,
-                                        xsize = ncols,
-                                        ysize = 1,
-                                        out_xsize = ncols,
-                                        out_ysize = 1)
+                                       xoff = 0,
+                                       yoff = row,
+                                       xsize = ncols,
+                                       ysize = 1,
+                                       out_xsize = ncols,
+                                       out_ysize = 1)
             assign(var.names[r], inrow)
         }
 
@@ -1107,11 +1112,11 @@ calc <- function(expr,
         }
         outrow <- ifelse(is.na(outrow), nodata_value, outrow)
         dst_ds$write(band = out_band,
-                    offx = 0,
-                    offy = row,
-                    xsize = ncols,
-                    ysize = 1,
-                    outrow)
+                     offx = 0,
+                     offy = row,
+                     xsize = ncols,
+                     ysize = 1,
+                     outrow)
 
         if (!quiet)
             setTxtProgressBar(pb, row+1)
@@ -1318,11 +1323,11 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 #' dem_proc("slope", elev_file, slp_file)
 #' @export
 dem_proc <- function(mode,
-                    srcfile,
-                    dstfile,
-                    mode_options=DEFAULT_DEM_PROC[[mode]],
-                    color_file=NULL,
-                    quiet=FALSE) {
+                     srcfile,
+                     dstfile,
+                     mode_options=DEFAULT_DEM_PROC[[mode]],
+                     color_file=NULL,
+                     quiet=FALSE) {
 
     if (is.null(DEFAULT_DEM_PROC[[mode]]))
         stop("DEM processing mode not recognized.", call.=FALSE)
@@ -1447,18 +1452,18 @@ dem_proc <- function(mode,
 #' set_config_option("OGR_SQLITE_JOURNAL", "")
 #' @export
 polygonize <- function(raster_file,
-                    out_dsn,
-                    out_layer,
-                    fld_name = "DN",
-                    out_fmt = NULL,
-                    connectedness = 4,
-                    src_band = 1,
-                    mask_file = NULL,
-                    nomask = FALSE,
-                    overwrite = FALSE,
-                    dsco = NULL,
-                    lco = NULL,
-                    quiet = FALSE) {
+                       out_dsn,
+                       out_layer,
+                       fld_name = "DN",
+                       out_fmt = NULL,
+                       connectedness = 4,
+                       src_band = 1,
+                       mask_file = NULL,
+                       nomask = FALSE,
+                       overwrite = FALSE,
+                       dsco = NULL,
+                       lco = NULL,
+                       quiet = FALSE) {
 
     if (connectedness !=4 && connectedness != 8)
         stop("connectedness must be either 4 or 8.", call. = FALSE)
@@ -1515,7 +1520,7 @@ polygonize <- function(raster_file,
             stop("Specify out_fmt to create a new dataset.", call. = FALSE)
         }
         if (!.create_ogr(out_fmt, out_dsn, 0, 0, 0, "Unknown",
-                        out_layer, srs, fld_name, dsco, lco))
+                         out_layer, srs, fld_name, dsco, lco))
             stop("Failed to create out_dsn.", call. = FALSE)
     }
 
@@ -1636,25 +1641,25 @@ polygonize <- function(raster_file,
 #' ds$close()
 #' @export
 rasterize <- function(src_dsn,
-                    dstfile,
-                    band = NULL,
-                    layer = NULL,
-                    where = NULL,
-                    sql = NULL,
-                    burn_value = NULL,
-                    burn_attr = NULL,
-                    invert = NULL,
-                    te = NULL,
-                    tr = NULL,
-                    tap = NULL,
-                    ts = NULL,
-                    dtName = NULL,
-                    dstnodata = NULL,
-                    init = NULL,
-                    fmt = NULL,
-                    co = NULL,
-                    add_options = NULL,
-                    quiet = FALSE) {
+                      dstfile,
+                      band = NULL,
+                      layer = NULL,
+                      where = NULL,
+                      sql = NULL,
+                      burn_value = NULL,
+                      burn_attr = NULL,
+                      invert = NULL,
+                      te = NULL,
+                      tr = NULL,
+                      tap = NULL,
+                      ts = NULL,
+                      dtName = NULL,
+                      dstnodata = NULL,
+                      init = NULL,
+                      fmt = NULL,
+                      co = NULL,
+                      add_options = NULL,
+                      quiet = FALSE) {
 
     src_dsn <- .check_gdal_filename(src_dsn)
     dstfile <- .check_gdal_filename(dstfile)

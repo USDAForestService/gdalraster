@@ -48,7 +48,7 @@
         if (ncol(ct) == 4) # add alpha channel
             ct[,5] <- rep(maxColorValue, nrow(ct))
         ct[,6] <- rgb(ct[,2], ct[,3], ct[,4], ct[,5],
-                        maxColorValue=maxColorValue)
+                      maxColorValue=maxColorValue)
         names(ct) <- c("value", "r", "g", "b", "a", "rgb")
         f <- function(x) { ct$rgb[match(x, ct$value)] }
         r <- vapply(a, FUN=f, FUN.VALUE="#00000000", USE.NAMES=FALSE)
@@ -305,8 +305,8 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
             stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
 
         data_in <- read_ds(data, bands=1:nbands, xoff=0, yoff=0,
-                            xsize=dm[1], ysize=dm[2],
-                            out_xsize=out_xsize, out_ysize=out_ysize)
+                           xsize=dm[1], ysize=dm[2],
+                           out_xsize=out_xsize, out_ysize=out_ysize)
 
         if (nbands==1 && is.null(col_tbl) && is.null(col_map_fn)) {
             # check for a built-in color table
@@ -381,9 +381,9 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 
     graphics::plot.new()
     graphics::plot.window(xlim=xlim, ylim=ylim, asp=asp,
-                            xaxs=xaxs, yaxs=yaxs, ...)
+                          xaxs=xaxs, yaxs=yaxs, ...)
     graphics::rasterImage(r, xlim[1], ylim[1], xlim[2], ylim[2],
-                            interpolate=interpolate)
+                          interpolate=interpolate)
 
     if (axes) {
         graphics::title(main=main, xlab=xlab, ylab=ylab)
@@ -400,9 +400,9 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
             mm <- minmax_def
         else if (!is.null(minmax_pct_cut))
             mm <- stats::quantile(data_in,
-                            probs=c(minmax_pct_cut[1] / 100,
-                            minmax_pct_cut[2] / 100),
-                            na.rm = TRUE, names=FALSE)
+                                  probs=c(minmax_pct_cut[1] / 100,
+                                  minmax_pct_cut[2] / 100),
+                                  na.rm = TRUE, names=FALSE)
         else
             mm <- c(min(data_in, na.rm=TRUE), max(data_in, na.rm=TRUE))
 
@@ -420,23 +420,23 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
             leg_data <- sort(seq(mm[1], mm[2], by=1), decreasing=TRUE)
             leg_data <- array(leg_data, dim=c(1, length(leg_data), 1))
             leg_img <- .as_raster(leg_data,
-                            col_tbl=col_tbl,
-                            maxColorValue=maxColorValue,
-                            na_col=na_col)
+                                  col_tbl=col_tbl,
+                                  maxColorValue=maxColorValue,
+                                  na_col=na_col)
         }
         graphics::par(mar=c(6, 0.5, 6, 2) + 0.1)
         graphics::plot(c(0,2), c(0,1), type="n", axes=FALSE,
-                        xlab="", ylab="", main="")
+                       xlab="", ylab="", main="")
         if (is(data_in, "integer"))
             leg_lab <- formatC(seq(mm[1], mm[2], length.out=5), format="d")
         else
             leg_lab <- formatC(seq(mm[1], mm[2], length.out=5), format="f",
-                                digits=digits)
+                               digits=digits)
         graphics::text(x=1.5,
-                        y=seq(0, 1, length.out=5),
-                        labels=leg_lab,
-                        adj=c(0, NA),
-                        xpd=TRUE)
+                       y=seq(0, 1, length.out=5),
+                       labels=leg_lab,
+                       adj=c(0, NA),
+                       xpd=TRUE)
         graphics::rasterImage(leg_img, 0, 0, 1, 1)
         graphics::par(op)  # reset to original
     }

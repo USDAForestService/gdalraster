@@ -551,12 +551,12 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
             double geo_y = xy(i, 1);
             // column
             pixel_line(i, 0) = static_cast<int>(std::floor(inv_gt[0] +
-                                            inv_gt[1] * geo_x +
-                                            inv_gt[2] * geo_y));
+                                                inv_gt[1] * geo_x +
+                                                inv_gt[2] * geo_y));
             // row
             pixel_line(i, 1) = static_cast<int>(std::floor(inv_gt[3] +
-                                            inv_gt[4] * geo_x +
-                                            inv_gt[5] * geo_y));
+                                                inv_gt[4] * geo_x +
+                                                inv_gt[5] * geo_y));
     }
     return pixel_line;
 }
