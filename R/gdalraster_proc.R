@@ -24,15 +24,15 @@ DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
 #' These values are used in `dem_proc()` as the default processing options:
 #' \preformatted{
 #'     list(
-#'          hillshade = c("-z", "1", "-s", "1", "-az", "315",
-#'                        "-alt", "45", "-alg", "Horn",
-#'                        "-combined", "-compute_edges"),
-#'          slope = c("-s", "1", "-alg", "Horn", "-compute_edges"),
-#'          aspect = c("-alg", "Horn", "-compute_edges"),
+#'          hillshade =    c("-z", "1", "-s", "1", "-az", "315",
+#'                           "-alt", "45", "-alg", "Horn",
+#'                           "-combined", "-compute_edges"),
+#'          slope =        c("-s", "1", "-alg", "Horn", "-compute_edges"),
+#'          aspect =       c("-alg", "Horn", "-compute_edges"),
 #'          color_relief = character(),
-#'          TRI = c("-alg", "Riley", "-compute_edges"),
-#'          TPI = c("-compute_edges"),
-#'          roughness = c("-compute_edges")
+#'          TRI =          c("-alg", "Riley", "-compute_edges"),
+#'          TPI =          c("-compute_edges"),
+#'          roughness =    c("-compute_edges")
 #'          )
 #' }
 #' @seealso
