@@ -116,27 +116,27 @@ band number in \code{dstfile} (new bands cannot be created in \code{dstfile}).
 
 # Hopkins bioclimatic index (HI) as described in:
 # Bechtold, 2004, West. J. Appl. For. 19(4):245-251.
-# Integrates elevation, latitude and longitude into an index of the 
-# phenological occurrence of springtime. Here it is relativized to 
+# Integrates elevation, latitude and longitude into an index of the
+# phenological occurrence of springtime. Here it is relativized to
 # mean values for an eight-state region in the western US.
-# Positive HI means spring is delayed by that number of days relative 
+# Positive HI means spring is delayed by that number of days relative
 # to the reference position, while negative values indicate spring is
-# advanced. The original equation had elevation units as feet, so 
+# advanced. The original equation had elevation units as feet, so
 # converting m to ft in `expr`.
 
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
 # expression to calculate HI
-expr <- "round( ((ELEV_M * 3.281 - 5449) / 100) + 
-                ((pixelLat - 42.16) * 4) + 
+expr <- "round( ((ELEV_M * 3.281 - 5449) / 100) +
+                ((pixelLat - 42.16) * 4) +
                 ((-116.39 - pixelLon) * 1.25) )"
 
 # calc() writes to a tempfile by default
-hi_file <- calc(expr = expr, 
-                rasterfiles = elev_file, 
-                var.names = "ELEV_M", 
+hi_file <- calc(expr = expr,
+                rasterfiles = elev_file,
+                var.names = "ELEV_M",
                 dtName = "Int16",
-                nodata_value = -32767, 
+                nodata_value = -32767,
                 setRasterNodataValue = TRUE,
                 usePixelLonLat = TRUE)
 
@@ -168,18 +168,18 @@ ds$close()
 
 ## Reclassify a variable by rule set
 
-# Combine two raster layers and look for specific combinations. Then 
+# Combine two raster layers and look for specific combinations. Then
 # recode to a new value by rule set.
 #
 # Based on example in:
-#   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition, 
+#   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition,
 #   critique, modification, maintenance, and model calibration.
-#   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture, 
+#   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture,
 #   Forest Service, Rocky Mountain Research Station. 54 p.
 # Context: Refine national-scale fuels data to improve fire simulation
 #   results in localized applications.
 # Issue: Areas with steep slopes (40+ degrees) were mapped as
-#   GR1 (101; short, sparse dry climate grass) and 
+#   GR1 (101; short, sparse dry climate grass) and
 #   GR2 (102; low load, dry climate grass) but were not carrying fire.
 # Resolution: After viewing these areas in Google Earth,
 #   NB9 (99; bare ground) was selected as the replacement fuel model.

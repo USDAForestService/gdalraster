@@ -2318,30 +2318,29 @@ fi
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking gdal-config usability" >&5
 printf %s "checking gdal-config usability... " >&6; }
-if test `${GDAL_CONFIG} --version`;
-then
-	GDAL_CPPFLAGS=`${GDAL_CONFIG} --cflags`
-	GDAL_VERSION=`${GDAL_CONFIG} --version`
-	GDAL_LIBS=`${GDAL_CONFIG} --libs`
-	GDAL_DEP_LIBS=`${GDAL_CONFIG} --dep-libs`
-	GDAL_DATADIR=`${GDAL_CONFIG} --datadir`
-	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
+if test `${GDAL_CONFIG} --version`; then
+  GDAL_CPPFLAGS=`${GDAL_CONFIG} --cflags`
+  GDAL_VERSION=`${GDAL_CONFIG} --version`
+  GDAL_LIBS=`${GDAL_CONFIG} --libs`
+  GDAL_DEP_LIBS=`${GDAL_CONFIG} --dep-libs`
+  GDAL_DATADIR=`${GDAL_CONFIG} --datadir`
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 else
-	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
-	echo "Error: gdal-config not found"
-	echo "The gdal-config script distributed with GDAL could not be found."
-	echo "If you have not installed the GDAL libraries, you can"
-	echo "download the source from  http://www.gdal.org/"
-	echo "If you have installed the GDAL libraries, then make sure that"
-	echo "gdal-config is in your path. Try typing gdal-config at a"
-	echo "shell prompt and see if it runs. If not, use:"
-	echo " --configure-args='--with-gdal-config=/usr/local/bin/gdal-config'"
-	echo "with appropriate values for your installation."
-	echo ""
+  echo "Error: gdal-config not found"
+  echo "The gdal-config script distributed with GDAL could not be found."
+  echo "If you have not installed the GDAL libraries, you can"
+  echo "download the source from  http://www.gdal.org/"
+  echo "If you have installed the GDAL libraries, then make sure that"
+  echo "gdal-config is in your path. Try typing gdal-config at a"
+  echo "shell prompt and see if it runs. If not, use:"
+  echo " --configure-args='--with-gdal-config=/usr/local/bin/gdal-config'"
+  echo "with appropriate values for your installation."
+  echo ""
 
-	exit 1
+  exit 1
 fi
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: GDAL: ${GDAL_VERSION}" >&5
@@ -3252,8 +3251,8 @@ else
     fi
     PROJ_LIBS="${PROJ_LIB_PATH} ${INPKG_LIBS}"
 
-	proj_version=`${PROJ_CONFIG} --modversion`
-	{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: PROJ: ${proj_version}" >&5
+    proj_version=`${PROJ_CONFIG} --modversion`
+    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: PROJ: ${proj_version}" >&5
 printf "%s\n" "$as_me: PROJ: ${proj_version}" >&6;}
   else
     PROJ_LIBS="${PKG_LIBS} -lproj"
@@ -3273,12 +3272,12 @@ cat > gdal_proj.cpp <<_EOCONF
 #include <ogr_srs_api.h>
 #include <ogr_spatialref.h>
 int main(int argc, char *argv[]) {
-	OGRSpatialReference *dest = new OGRSpatialReference;
-	OGRSpatialReference *src = new OGRSpatialReference;
-    src->importFromEPSG(4326);
-    dest->importFromEPSG(3857);
-	OGRCoordinateTransformation *ct = OGRCreateCoordinateTransformation(src, dest);
-	return(ct == NULL); // signals PROJ is not available through gdal
+  OGRSpatialReference *dest = new OGRSpatialReference;
+  OGRSpatialReference *src = new OGRSpatialReference;
+  src->importFromEPSG(4326);
+  dest->importFromEPSG(3857);
+  OGRCoordinateTransformation *ct = OGRCreateCoordinateTransformation(src, dest);
+  return(ct == NULL); // signals PROJ is not available through gdal
 }
 _EOCONF
 
@@ -3352,15 +3351,15 @@ gdal_has_geos=no
 cat > gdal_geos.cpp <<_EOCONF
 #include <ogr_api.h>
 int main(int argc, char *argv[]) {
-	OGRGeometryH hGeom = OGR_G_CreateGeometry(wkbPoint);
-	if (hGeom == NULL)
-		return false;
-	OGR_G_SetPoint_2D(hGeom, 0, 0, 0);
-	// If GDAL is built without the GEOS library, this function will
-	// always return FALSE:
-	bool ret = OGR_G_IsSimple(hGeom);
-	OGR_G_DestroyGeometry(hGeom);
-	return (ret == FALSE); // signals GEOS is not available through gdal
+  OGRGeometryH hGeom = OGR_G_CreateGeometry(wkbPoint);
+  if (hGeom == NULL)
+    return false;
+  OGR_G_SetPoint_2D(hGeom, 0, 0, 0);
+  // If GDAL is built without the GEOS library, this function will
+  // always return FALSE:
+  bool ret = OGR_G_IsSimple(hGeom);
+  OGR_G_DestroyGeometry(hGeom);
+  return (ret == FALSE); // signals GEOS is not available through gdal
 }
 _EOCONF
 

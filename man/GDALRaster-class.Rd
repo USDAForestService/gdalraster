@@ -443,7 +443,7 @@ cannot be obtained quickly.
 Clear statistics. Only implemented for now in PAM supported datasets
 (Persistable Auxiliary Metadata via .aux.xml file). GDAL >= 3.2.
 
-\code{$getHistogram(band, min, max, num_buckets, incl_out_of_range, 
+\code{$getHistogram(band, min, max, num_buckets, incl_out_of_range,
   approx_ok)}\cr
 Computes raster histogram for \code{band}. \code{min} is the lower bound of
 the histogram. \code{max} is the upper bound of the histogram.
@@ -684,8 +684,8 @@ ds$getMetadataItem(band=2, mdi_name="SLOPE_UNIT_NAME", domain="")
 ## the upper left corner is the origin
 ## read the tenth row:
 ncols <- ds$getRasterXSize()
-rowdata <- ds$read(band=1, xoff=0, yoff=9, 
-                    xsize=ncols, ysize=1, 
+rowdata <- ds$read(band=1, xoff=0, yoff=9,
+                    xsize=ncols, ysize=1,
                     out_xsize=ncols, out_ysize=1)
 head(rowdata)
 

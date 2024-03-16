@@ -9,17 +9,17 @@
 #' `RunningStats` computes summary statistics on a data stream efficiently.
 #' Mean and variance are calculated with Welford's online algorithm
 #' (\url{https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance}).
-#' The min, max, sum and count are also tracked. The input data values are not 
-#' stored in memory, so this class can be used to compute statistics for very 
+#' The min, max, sum and count are also tracked. The input data values are not
+#' stored in memory, so this class can be used to compute statistics for very
 #' large data streams.
 #'
 #' @param na_rm Logical scalar. `TRUE` to remove `NA` from the input data or
 #' `FALSE` to retain `NA` (defaults to `TRUE`).
-#' @returns An object of class `RunningStats`. A `RunningStats` object 
-#' maintains the current minimum, maximum, mean, variance, sum and count of 
-#' values that have been read from the stream. It can be updated repeatedly 
-#' with new values (i.e., chunks of data read from the input stream), but its 
-#' memory footprint is negligible. Class methods for updating with new values 
+#' @returns An object of class `RunningStats`. A `RunningStats` object
+#' maintains the current minimum, maximum, mean, variance, sum and count of
+#' values that have been read from the stream. It can be updated repeatedly
+#' with new values (i.e., chunks of data read from the input stream), but its
+#' memory footprint is negligible. Class methods for updating with new values
 #' and retrieving current values of statistics are described in Details.
 #' `RunningStats` is a C++ class exposed directly to R (via
 #' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed in R using the `$`
@@ -59,8 +59,8 @@
 #' Constructor. Returns an object of class \code{RunningStats}.
 #'
 #' \code{$update(newvalues)}
-#' Updates the `RunningStats` object with a numeric vector of `newvalues` 
-#' (i.e., a chunk of values from the data stream). No return value, called 
+#' Updates the `RunningStats` object with a numeric vector of `newvalues`
+#' (i.e., a chunk of values from the data stream). No return value, called
 #' for side effects.
 #'
 #' \code{$get_count()}
@@ -79,7 +79,7 @@
 #' Returns the sum of values received from the data stream.
 #'
 #' \code{$get_var()}
-#' Returns the variance of values from the data stream 
+#' Returns the variance of values from the data stream
 #' (denominator n - 1).
 #'
 #' \code{$get_sd()}
@@ -89,7 +89,7 @@
 #' \code{$reset()}
 #' Clears the \code{RunningStats} object to its initialized state (count = 0).
 #' No return value, called for side effects.
-#' 
+#'
 #' @examples
 #' set.seed(42)
 #'
@@ -115,7 +115,7 @@
 #'
 #' rs$get_sd()
 #' sd(chunk)
-#' 
+#'
 #' \donttest{
 #' ## 10^9 values read in 10,000 chunks
 #' ## should take under 1 minute on most PC hardware
