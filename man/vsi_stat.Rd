@@ -56,7 +56,7 @@ vsi_stat(nonexistent)
 vsi_stat(nonexistent, "type")
 vsi_stat(nonexistent, "size")
 
-# /vsicurl/ file system handler 
+# /vsicurl/ file system handler
 base_url <- "https://raw.githubusercontent.com/usdaforestservice/"
 f <- "gdalraster/main/sample-data/landsat_c2ard_sr_mt_hood_jul2022_utm.tif"
 url_file <- paste0("/vsicurl/", base_url, f)

@@ -13,13 +13,13 @@
 //' @noRd
 // [[Rcpp::export(name = ".getPROJVersion")]]
 std::vector<int> _getPROJVersion() {
-	int major, minor, patch;
-	major = minor = patch = NA_INTEGER;
-#if GDAL_VERSION_NUM >= 3000100	
-	OSRGetPROJVersion(&major, &minor, &patch);
+    int major, minor, patch;
+    major = minor = patch = NA_INTEGER;
+#if GDAL_VERSION_NUM >= 3000100
+    OSRGetPROJVersion(&major, &minor, &patch);
 #endif
-	std::vector<int> ret = {major, minor, patch};
-	return ret;
+    std::vector<int> ret = {major, minor, patch};
+    return ret;
 }
 
 //' get search path(s) for PROJ resource files
@@ -27,24 +27,24 @@ std::vector<int> _getPROJVersion() {
 // [[Rcpp::export(name = ".getPROJSearchPaths")]]
 Rcpp::CharacterVector _getPROJSearchPaths() {
 #if GDAL_VERSION_NUM >= 3000300
-	char **papszPaths;
-	papszPaths = OSRGetPROJSearchPaths();
-	
-	int items = CSLCount(papszPaths);
-	if (items > 0) {
-		Rcpp::CharacterVector paths(items);
-		for (int i=0; i < items; ++i) {
-			paths(i) = papszPaths[i];
-		}
-		CSLDestroy(papszPaths);
-		return paths;
-	}
-	else {
-		CSLDestroy(papszPaths);
-		return "";	
-	}
+    char **papszPaths;
+    papszPaths = OSRGetPROJSearchPaths();
+
+    int items = CSLCount(papszPaths);
+    if (items > 0) {
+        Rcpp::CharacterVector paths(items);
+        for (int i=0; i < items; ++i) {
+            paths(i) = papszPaths[i];
+        }
+        CSLDestroy(papszPaths);
+        return paths;
+    }
+    else {
+        CSLDestroy(papszPaths);
+        return "";
+    }
 #endif
-	return NA_STRING;
+    return NA_STRING;
 }
 
 //' set search path(s) for PROJ resource files
@@ -52,17 +52,17 @@ Rcpp::CharacterVector _getPROJSearchPaths() {
 // [[Rcpp::export(name = ".setPROJSearchPaths")]]
 void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
 #if GDAL_VERSION_NUM >= 3000000
-	std::vector<char *> path_list = {NULL};
-	path_list.resize(paths.size() + 1);
-	for (R_xlen_t i = 0; i < paths.size(); ++i) {
-		path_list[i] = (char *) (paths[i]);
-	}
-	path_list[paths.size()] = NULL;
-	OSRSetPROJSearchPaths(path_list.data());
+    std::vector<char *> path_list = {NULL};
+    path_list.resize(paths.size() + 1);
+    for (R_xlen_t i = 0; i < paths.size(); ++i) {
+        path_list[i] = (char *) (paths[i]);
+    }
+    path_list[paths.size()] = NULL;
+    OSRSetPROJSearchPaths(path_list.data());
 #else
-	Rcpp::Rcerr << "OSRSetPROJSearchPaths requires GDAL 3.0 or later.\n";
+    Rcpp::Rcerr << "OSRSetPROJSearchPaths requires GDAL 3.0 or later.\n";
 #endif
-	return;
+    return;
 }
 
 //' get whether PROJ networking capabilities are enabled
@@ -70,18 +70,18 @@ void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
 //' @noRd
 // [[Rcpp::export(name = ".getPROJEnableNetwork")]]
 Rcpp::LogicalVector _getPROJEnableNetwork() {
-	Rcpp::LogicalVector ret = Rcpp::LogicalVector::create(NA_LOGICAL);
+    Rcpp::LogicalVector ret = Rcpp::LogicalVector::create(NA_LOGICAL);
 #if GDAL_VERSION_NUM >= 3040000
-	if (_getPROJVersion()[0] >= 7) {
-		ret[0] = OSRGetPROJEnableNetwork();
-		return ret;
-	}
-	else {
-		ret[0] = false;
-		return ret;
-	}
+    if (_getPROJVersion()[0] >= 7) {
+        ret[0] = OSRGetPROJEnableNetwork();
+        return ret;
+    }
+    else {
+        ret[0] = false;
+        return ret;
+    }
 #endif
-	return ret;
+    return ret;
 }
 
 //' enable or disable PROJ networking capabilities
@@ -89,14 +89,14 @@ Rcpp::LogicalVector _getPROJEnableNetwork() {
 // [[Rcpp::export(name = ".setPROJEnableNetwork")]]
 void _setPROJEnableNetwork(int enabled) {
 #if GDAL_VERSION_NUM >= 3040000
-	if (_getPROJVersion()[0] >= 7)
-		OSRSetPROJEnableNetwork(enabled);
-	else
-		Rcpp::Rcerr << "OSRSetPROJEnableNetwork requires PROJ 7 or later.\n";
+    if (_getPROJVersion()[0] >= 7)
+        OSRSetPROJEnableNetwork(enabled);
+    else
+        Rcpp::Rcerr << "OSRSetPROJEnableNetwork requires PROJ 7 or later.\n";
 #else
-	Rcpp::Rcerr << "OSRSetPROJEnableNetwork requires GDAL 3.4 or later.\n";
+    Rcpp::Rcerr << "OSRSetPROJEnableNetwork requires GDAL 3.4 or later.\n";
 #endif
-	return;
+    return;
 }
 
 //' Inverse project geospatial x/y coordinates to longitude/latitude
@@ -127,12 +127,12 @@ void _setPROJEnableNetwork(int enabled) {
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
 //' x/y coordinates.
-//' @param srs Character string in OGC WKT format specifying the projected 
+//' @param srs Character string in OGC WKT format specifying the projected
 //' spatial reference system for `pts`.
-//' @param well_known_gcs Optional character string containing a supported 
-//' well known name of a geographic coordinate system (see Details for 
+//' @param well_known_gcs Optional character string containing a supported
+//' well known name of a geographic coordinate system (see Details for
 //' supported values).
-//' @returns Numeric array of longitude, latitude. An error is raised if the 
+//' @returns Numeric array of longitude, latitude. An error is raised if the
 //' transformation cannot be performed.
 //' @seealso
 //' [transform_xy()]
@@ -144,67 +144,67 @@ void _setPROJEnableNetwork(int enabled) {
 //' inv_project(pts[,-1], epsg_to_wkt(26912))
 //' inv_project(pts[,-1], epsg_to_wkt(26912), "NAD27")
 // [[Rcpp::export]]
-Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts, 
-								std::string srs,
-								std::string well_known_gcs = "") {
+Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
+                                std::string srs,
+                                std::string well_known_gcs = "") {
 
-	Rcpp::NumericMatrix pts_in;
-	if (Rcpp::is<Rcpp::DataFrame>(pts)) {
-		pts_in = _df_to_matrix(pts);
-	}
-	else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
-		if (Rf_isMatrix(pts))
-			pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
-	}
-	else {
-		Rcpp::stop("pts must be a data frame or matrix.");
-	}
-		
-	if (pts_in.nrow() == 0)
-		Rcpp::stop("Input matrix is empty.");
+    Rcpp::NumericMatrix pts_in;
+    if (Rcpp::is<Rcpp::DataFrame>(pts)) {
+        pts_in = _df_to_matrix(pts);
+    }
+    else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
+        if (Rf_isMatrix(pts))
+            pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
+    }
+    else {
+        Rcpp::stop("pts must be a data frame or matrix.");
+    }
 
-	OGRSpatialReference oSourceSRS;
-	OGRSpatialReference *poLongLat;
-	OGRCoordinateTransformation *poCT;
-	OGRErr err;
-	
-	err = oSourceSRS.importFromWkt(srs.c_str());
-	if (err != OGRERR_NONE)
-		Rcpp::stop("Failed to import SRS from WKT string.");
-	
-	if (well_known_gcs == "") {
-		poLongLat = oSourceSRS.CloneGeogCS();
-	}
-	else {
-		poLongLat = new OGRSpatialReference();
-		err = poLongLat->SetWellKnownGeogCS(well_known_gcs.c_str());
-		if (err == OGRERR_FAILURE)
-			Rcpp::stop("Failed to set well known GCS.");
-	}
+    if (pts_in.nrow() == 0)
+        Rcpp::stop("Input matrix is empty.");
+
+    OGRSpatialReference oSourceSRS;
+    OGRSpatialReference *poLongLat;
+    OGRCoordinateTransformation *poCT;
+    OGRErr err;
+
+    err = oSourceSRS.importFromWkt(srs.c_str());
+    if (err != OGRERR_NONE)
+        Rcpp::stop("Failed to import SRS from WKT string.");
+
+    if (well_known_gcs == "") {
+        poLongLat = oSourceSRS.CloneGeogCS();
+    }
+    else {
+        poLongLat = new OGRSpatialReference();
+        err = poLongLat->SetWellKnownGeogCS(well_known_gcs.c_str());
+        if (err == OGRERR_FAILURE)
+            Rcpp::stop("Failed to set well known GCS.");
+    }
 #if GDAL_VERSION_NUM >= 3000000
-	poLongLat->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+    poLongLat->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 #endif
 
-	poCT = OGRCreateCoordinateTransformation(&oSourceSRS, poLongLat);
-	if (poCT == NULL)
-		Rcpp::stop("Failed to create coordinate transformer.");
-	
-	poLongLat->Release();
-	
-	Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
-	Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
-	std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
-	std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
-	if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) )
-		Rcpp::stop("Coordinate transformation failed.");
-	
-	Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
-	ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
-	ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
-	
-	OGRCoordinateTransformation::DestroyCT(poCT);
-	
-	return ret;
+    poCT = OGRCreateCoordinateTransformation(&oSourceSRS, poLongLat);
+    if (poCT == NULL)
+        Rcpp::stop("Failed to create coordinate transformer.");
+
+    poLongLat->Release();
+
+    Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
+    Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
+    std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
+    std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
+    if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) )
+        Rcpp::stop("Coordinate transformation failed.");
+
+    Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
+    ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
+    ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
+
+    OGRCoordinateTransformation::DestroyCT(poCT);
+
+    return ret;
 }
 
 //' Transform geospatial x/y coordinates
@@ -213,11 +213,11 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
 //' x/y coordinates.
-//' @param srs_from Character string in OGC WKT format specifying the  
+//' @param srs_from Character string in OGC WKT format specifying the
 //' spatial reference system for `pts`.
-//' @param srs_to Character string in OGC WKT format specifying the output 
+//' @param srs_to Character string in OGC WKT format specifying the output
 //' spatial reference system.
-//' @returns Numeric array of geospatial x/y coordinates in the projection 
+//' @returns Numeric array of geospatial x/y coordinates in the projection
 //' specified by `srs_to`.
 //'
 //' @seealso
@@ -228,61 +228,61 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 //' print(pts)
 //' ## id, x, y in NAD83 / UTM zone 12N
 //' ## transform to NAD83 / CONUS Albers
-//' transform_xy(pts = pts[,-1], 
-//'              srs_from = epsg_to_wkt(26912), 
+//' transform_xy(pts = pts[,-1],
+//'              srs_from = epsg_to_wkt(26912),
 //'              srs_to = epsg_to_wkt(5070))
 // [[Rcpp::export]]
-Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts, 
-								std::string srs_from,
-								std::string srs_to) {
+Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
+                                std::string srs_from,
+                                std::string srs_to) {
 
-	Rcpp::NumericMatrix pts_in;
-	if (Rcpp::is<Rcpp::DataFrame>(pts)) {
-		pts_in = _df_to_matrix(pts);
-	}
-	else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
-		if (Rf_isMatrix(pts))
-			pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
-	}
-	else {
-		Rcpp::stop("pts must be a data frame or matrix.");
-	}
+    Rcpp::NumericMatrix pts_in;
+    if (Rcpp::is<Rcpp::DataFrame>(pts)) {
+        pts_in = _df_to_matrix(pts);
+    }
+    else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
+        if (Rf_isMatrix(pts))
+            pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
+    }
+    else {
+        Rcpp::stop("pts must be a data frame or matrix.");
+    }
 
-	if (pts_in.nrow() == 0)
-		Rcpp::stop("Input matrix is empty.");
+    if (pts_in.nrow() == 0)
+        Rcpp::stop("Input matrix is empty.");
 
-	OGRSpatialReference oSourceSRS, oDestSRS;
-	OGRCoordinateTransformation *poCT;
-	OGRErr err;
-	
-	err = oSourceSRS.importFromWkt(srs_from.c_str());
-	if (err != OGRERR_NONE)
-		Rcpp::stop("Failed to import source SRS from WKT string.");
-	
-	err = oDestSRS.importFromWkt(srs_to.c_str());
-	if (err != OGRERR_NONE)
-		Rcpp::stop("Failed to import destination SRS from WKT string.");
+    OGRSpatialReference oSourceSRS, oDestSRS;
+    OGRCoordinateTransformation *poCT;
+    OGRErr err;
+
+    err = oSourceSRS.importFromWkt(srs_from.c_str());
+    if (err != OGRERR_NONE)
+        Rcpp::stop("Failed to import source SRS from WKT string.");
+
+    err = oDestSRS.importFromWkt(srs_to.c_str());
+    if (err != OGRERR_NONE)
+        Rcpp::stop("Failed to import destination SRS from WKT string.");
 #if GDAL_VERSION_NUM >= 3000000
-	oDestSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+    oDestSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 #endif
 
-	poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
-	if (poCT == NULL)
-		Rcpp::stop("Failed to create coordinate transformer.");
-	
-	Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
-	Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
-	std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
-	std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
-	if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) )
-		Rcpp::stop("Coordinate transformation failed.");
-	
-	Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
-	ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
-	ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
+    poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
+    if (poCT == NULL)
+        Rcpp::stop("Failed to create coordinate transformer.");
 
-	OGRCoordinateTransformation::DestroyCT(poCT);
-	
-	return ret;
+    Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
+    Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
+    std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
+    std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
+    if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) )
+        Rcpp::stop("Coordinate transformation failed.");
+
+    Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
+    ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
+    ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
+
+    OGRCoordinateTransformation::DestroyCT(poCT);
+
+    return ret;
 }
 

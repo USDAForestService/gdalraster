@@ -1,5 +1,5 @@
 /* GDALTermProgress() works in R on Linux, but not on Windows.
-  This was copied from /gdal/port/cpl_progress.cpp and modified to use 
+  This was copied from /gdal/port/cpl_progress.cpp and modified to use
   Rprintf() and works on Linux and Windows R. -CT 2023-04-30 */
 
  /******************************************************************************

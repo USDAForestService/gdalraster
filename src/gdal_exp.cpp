@@ -23,9 +23,9 @@
 //' `gdal_version()` returns runtime version information.
 //'
 //' @returns Character vector of length four containing:
-//'   * "–version" - one line version message, e.g., “GDAL 3.6.3, released 
+//'   * "–version" - one line version message, e.g., “GDAL 3.6.3, released
 //'   2023/03/12”
-//'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “3060300” for 
+//'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “3060300” for
 //'   GDAL 3.6.3.0
 //'   * "GDAL_RELEASE_DATE" - formatted as a string, e.g., “20230312”
 //'   * "GDAL_RELEASE_NAME" - e.g., “3.6.3”
@@ -33,20 +33,20 @@
 //' gdal_version()
 // [[Rcpp::export]]
 Rcpp::CharacterVector gdal_version() {
-	Rcpp::CharacterVector ret(4);
-	ret(0) = GDALVersionInfo("-version");
-	ret(1) = GDALVersionInfo("VERSION_NUM");
-	ret(2) = GDALVersionInfo("RELEASE_DATE");
-	ret(3) = GDALVersionInfo("RELEASE_NAME");
-	return ret;
+    Rcpp::CharacterVector ret(4);
+    ret(0) = GDALVersionInfo("-version");
+    ret(1) = GDALVersionInfo("VERSION_NUM");
+    ret(2) = GDALVersionInfo("RELEASE_DATE");
+    ret(3) = GDALVersionInfo("RELEASE_NAME");
+    return ret;
 }
 
 
 //' @noRd
 // [[Rcpp::export(name = ".gdal_version_num")]]
 int _gdal_version_num() {
-	std::string version(GDALVersionInfo("VERSION_NUM"));
-	return std::stoi(version);
+    std::string version(GDALVersionInfo("VERSION_NUM"));
+    return std::stoi(version);
 }
 
 
@@ -75,66 +75,66 @@ int _gdal_version_num() {
 // [[Rcpp::export]]
 Rcpp::DataFrame gdal_formats(std::string fmt = "") {
 
-	Rcpp::CharacterVector short_name = Rcpp::CharacterVector::create();
-	Rcpp::CharacterVector long_name = Rcpp::CharacterVector::create();
-	Rcpp::LogicalVector raster_fmt = Rcpp::LogicalVector::create();
-	Rcpp::LogicalVector vector_fmt = Rcpp::LogicalVector::create();
-	Rcpp::CharacterVector rw_flag = Rcpp::CharacterVector::create();
-	Rcpp::LogicalVector virtual_io = Rcpp::LogicalVector::create();
-	Rcpp::LogicalVector subdatasets = Rcpp::LogicalVector::create();
-	
-	for (int i=0; i < GDALGetDriverCount(); ++i) {
-		GDALDriverH hDriver = GDALGetDriver(i);
-		char **papszMD = GDALGetMetadata(hDriver, NULL);
-		std::string rw = "";
-		
-		if (fmt != "" && fmt != GDALGetDriverShortName(hDriver))
-			continue;
-		
-		if (CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ||
-				CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false)) {
-				
-			CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ?
-					raster_fmt.push_back(true) : raster_fmt.push_back(false);
-				
-			CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false) ?
-					vector_fmt.push_back(true) : vector_fmt.push_back(false);
-		
-		}
-		else {
-			continue;
-		}
-		
-		if (CPLFetchBool(papszMD, GDAL_DCAP_OPEN, false))
-			rw += "r";
-		if (CPLFetchBool(papszMD, GDAL_DCAP_CREATE, false))
-			rw += "w+";
-		else if (CPLFetchBool(papszMD, GDAL_DCAP_CREATECOPY, false))
-			rw += "w";
-		else
-			rw += "o";
-		rw_flag.push_back(rw);
+    Rcpp::CharacterVector short_name = Rcpp::CharacterVector::create();
+    Rcpp::CharacterVector long_name = Rcpp::CharacterVector::create();
+    Rcpp::LogicalVector raster_fmt = Rcpp::LogicalVector::create();
+    Rcpp::LogicalVector vector_fmt = Rcpp::LogicalVector::create();
+    Rcpp::CharacterVector rw_flag = Rcpp::CharacterVector::create();
+    Rcpp::LogicalVector virtual_io = Rcpp::LogicalVector::create();
+    Rcpp::LogicalVector subdatasets = Rcpp::LogicalVector::create();
 
-		CPLFetchBool(papszMD, GDAL_DCAP_VIRTUALIO, false) ?
-				virtual_io.push_back(true) : virtual_io.push_back(false);
+    for (int i=0; i < GDALGetDriverCount(); ++i) {
+        GDALDriverH hDriver = GDALGetDriver(i);
+        char **papszMD = GDALGetMetadata(hDriver, NULL);
+        std::string rw = "";
 
-		CPLFetchBool(papszMD, GDAL_DMD_SUBDATASETS, false) ?
-				subdatasets.push_back(true) : subdatasets.push_back(false);
+        if (fmt != "" && fmt != GDALGetDriverShortName(hDriver))
+            continue;
 
-		short_name.push_back(GDALGetDriverShortName(hDriver));
-		long_name.push_back(GDALGetDriverLongName(hDriver));
-	}
-	
-	Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
-	df_out.push_back(short_name, "short_name");
-	df_out.push_back(raster_fmt, "raster");
-	df_out.push_back(vector_fmt, "vector");
-	df_out.push_back(rw_flag, "rw_flag");
-	df_out.push_back(virtual_io, "virtual_io");
-	df_out.push_back(subdatasets, "subdatasets");
-	df_out.push_back(long_name, "long_name");
-	
-	return df_out;
+        if (CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ||
+                CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false)) {
+
+            CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ?
+                    raster_fmt.push_back(true) : raster_fmt.push_back(false);
+
+            CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false) ?
+                    vector_fmt.push_back(true) : vector_fmt.push_back(false);
+
+        }
+        else {
+            continue;
+        }
+
+        if (CPLFetchBool(papszMD, GDAL_DCAP_OPEN, false))
+            rw += "r";
+        if (CPLFetchBool(papszMD, GDAL_DCAP_CREATE, false))
+            rw += "w+";
+        else if (CPLFetchBool(papszMD, GDAL_DCAP_CREATECOPY, false))
+            rw += "w";
+        else
+            rw += "o";
+        rw_flag.push_back(rw);
+
+        CPLFetchBool(papszMD, GDAL_DCAP_VIRTUALIO, false) ?
+                virtual_io.push_back(true) : virtual_io.push_back(false);
+
+        CPLFetchBool(papszMD, GDAL_DMD_SUBDATASETS, false) ?
+                subdatasets.push_back(true) : subdatasets.push_back(false);
+
+        short_name.push_back(GDALGetDriverShortName(hDriver));
+        long_name.push_back(GDALGetDriverLongName(hDriver));
+    }
+
+    Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
+    df_out.push_back(short_name, "short_name");
+    df_out.push_back(raster_fmt, "raster");
+    df_out.push_back(vector_fmt, "vector");
+    df_out.push_back(rw_flag, "rw_flag");
+    df_out.push_back(virtual_io, "virtual_io");
+    df_out.push_back(subdatasets, "subdatasets");
+    df_out.push_back(long_name, "long_name");
+
+    return df_out;
 }
 
 
@@ -142,14 +142,14 @@ Rcpp::DataFrame gdal_formats(std::string fmt = "") {
 //'
 //' `get_config_option()` gets the value of GDAL runtime configuration option.
 //' Configuration options are essentially global variables the user can set.
-//' They are used to alter the default behavior of certain raster format 
-//' drivers, and in some cases the GDAL core. For a full description and 
-//' listing of available options see 
+//' They are used to alter the default behavior of certain raster format
+//' drivers, and in some cases the GDAL core. For a full description and
+//' listing of available options see
 //' \url{https://gdal.org/user/configoptions.html}.
 //'
 //' @param key Character name of a configuration option.
-//' @returns Character. The value of a (key, value) option previously set with 
-//' `set_config_option()`. An empty string (`""`) is returned if `key` is not 
+//' @returns Character. The value of a (key, value) option previously set with
+//' `set_config_option()`. An empty string (`""`) is returned if `key` is not
 //' found.
 //'
 //' @seealso
@@ -162,24 +162,24 @@ Rcpp::DataFrame gdal_formats(std::string fmt = "") {
 //' get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER")
 // [[Rcpp::export]]
 std::string get_config_option(std::string key) {
-	const char* default_ = "";
-	std::string ret(CPLGetConfigOption(key.c_str(), default_));
-	return ret;
+    const char* default_ = "";
+    std::string ret(CPLGetConfigOption(key.c_str(), default_));
+    return ret;
 }
 
 
 //' Set GDAL configuration option
 //'
-//' `set_config_option()` sets a GDAL runtime configuration option. 
+//' `set_config_option()` sets a GDAL runtime configuration option.
 //' Configuration options are essentially global variables the user can set.
-//' They are used to alter the default behavior of certain raster format 
-//' drivers, and in some cases the GDAL core. For a full description and 
-//' listing of available options see 
+//' They are used to alter the default behavior of certain raster format
+//' drivers, and in some cases the GDAL core. For a full description and
+//' listing of available options see
 //' \url{https://gdal.org/user/configoptions.html}.
 //'
 //' @param key Character name of a configuration option.
-//' @param value Character value to set for the option. 
-//' `value = ""` (empty string) will unset a value previously set by 
+//' @param value Character value to set for the option.
+//' `value = ""` (empty string) will unset a value previously set by
 //' `set_config_option()`.
 //' @returns No return value, called for side effects.
 //'
@@ -195,11 +195,11 @@ std::string get_config_option(std::string key) {
 //' set_config_option("GDAL_CACHEMAX", "")
 // [[Rcpp::export]]
 void set_config_option(std::string key, std::string value) {
-	const char* value_ = NULL;
-	if (value != "")
-		value_ = value.c_str();
-		
-	CPLSetConfigOption(key.c_str(), value_);
+    const char* value_ = NULL;
+    if (value != "")
+        value_ = value.c_str();
+
+    CPLSetConfigOption(key.c_str(), value_);
 }
 
 
@@ -218,8 +218,8 @@ void set_config_option(std::string key, std::string value) {
 //' get_cache_used()
 // [[Rcpp::export]]
 int get_cache_used() {
-	GIntBig nCacheUsed = GDALGetCacheUsed64();
-	return static_cast<int>(nCacheUsed / (1000 * 1000));
+    GIntBig nCacheUsed = GDALGetCacheUsed64();
+    return static_cast<int>(nCacheUsed / (1000 * 1000));
 }
 
 
@@ -230,37 +230,37 @@ int get_cache_used() {
 //' @noRd
 // [[Rcpp::export(name = ".check_gdal_filename")]]
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
-	/*
-	Rcpp::CharacterVector may have marked encoding when needed.
-	Rcpp::String may drop encoding or have issues with encoding on Windows:
-	https://github.com/RcppCore/Rcpp/issues/988
-	*/
+    /*
+    Rcpp::CharacterVector may have marked encoding when needed.
+    Rcpp::String may drop encoding or have issues with encoding on Windows:
+    https://github.com/RcppCore/Rcpp/issues/988
+    */
 
-	if (filename.size() > 1)
-		Rcpp::stop("`filename` must be a character vector of length 1.");
-	
-	std::string std_filename(filename[0]);
-	Rcpp::CharacterVector out_filename(1);
-	
-	if (std_filename.find("/vsi") == 0) {
-		out_filename[0] = filename[0];
-	}
-	else if (std_filename.find("~") != std_filename.npos) {
-	/* 	This does not catch an error from normalizePath() in R. But we're
-		not using mustWork=TRUE, so only a warning is emitted if path does
-		not exist. Leaving as try/catch for now. */
-		try {
-			out_filename = _normalize_path(filename);
-		}
-		catch (...) {
-			out_filename[0] = filename[0];
-		}
-	}
-	else {
-		out_filename[0] = filename[0];
-	}
+    if (filename.size() > 1)
+        Rcpp::stop("`filename` must be a character vector of length 1.");
 
-	return _enc_to_utf8(out_filename);
+    std::string std_filename(filename[0]);
+    Rcpp::CharacterVector out_filename(1);
+
+    if (std_filename.find("/vsi") == 0) {
+        out_filename[0] = filename[0];
+    }
+    else if (std_filename.find("~") != std_filename.npos) {
+    /* 	This does not catch an error from normalizePath() in R. But we're
+        not using mustWork=TRUE, so only a warning is emitted if path does
+        not exist. Leaving as try/catch for now. */
+        try {
+            out_filename = _normalize_path(filename);
+        }
+        catch (...) {
+            out_filename[0] = filename[0];
+        }
+    }
+    else {
+        out_filename[0] = filename[0];
+    }
+
+    return _enc_to_utf8(out_filename);
 }
 
 
@@ -269,8 +269,8 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
 //' @noRd
 // [[Rcpp::export(name = ".get_physical_RAM")]]
 int _get_physical_RAM() {
-	GIntBig nPhysicalRAM = CPLGetUsablePhysicalRAM();
-	return static_cast<int>(nPhysicalRAM / (1000 * 1000));
+    GIntBig nPhysicalRAM = CPLGetUsablePhysicalRAM();
+    return static_cast<int>(nPhysicalRAM / (1000 * 1000));
 }
 
 
@@ -286,10 +286,10 @@ int _get_physical_RAM() {
 //' @param dataType Character data type name.
 //' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 //' @param options Optional list of format-specific creation options in a
-//' vector of `"NAME=VALUE"` pairs 
-//' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW 
+//' vector of `"NAME=VALUE"` pairs
+//' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW
 //' compression during creation of a GTiff file).
-//' The APPEND_SUBDATASET=YES option can be 
+//' The APPEND_SUBDATASET=YES option can be
 //' specified to avoid prior destruction of existing dataset.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
@@ -312,65 +312,65 @@ int _get_physical_RAM() {
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
 bool create(std::string format, Rcpp::CharacterVector dst_filename,
-		int xsize, int ysize, int nbands, std::string dataType,
-		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+        int xsize, int ysize, int nbands, std::string dataType,
+        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
-	GDALDriverH hDriver = GDALGetDriverByName( format.c_str() );
-	if (hDriver == NULL)
-		Rcpp::stop("Failed to get driver for the specified format.");
-		
-	char **papszMetadata = GDALGetMetadata(hDriver, NULL);
-	if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATE, FALSE))
-		Rcpp::stop("Driver does not support create.");
-	
-	std::string dst_filename_in;
-	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
-		
-	GDALDataType dt = GDALGetDataTypeByName( dataType.c_str() );
-	
-	std::vector<char *> opt_list = {NULL};
-	if (options.isNotNull()) {
-		// cast to the underlying type
-		// https://gallery.rcpp.org/articles/optional-null-function-arguments/
-		Rcpp::CharacterVector options_in(options);
-		opt_list.resize(options_in.size() + 1);
-		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
-			opt_list[i] = (char *) (options_in[i]);
-		}
-		opt_list[options_in.size()] = NULL;
-	}
-	
-	GDALDatasetH hDstDS = NULL;
-	hDstDS = GDALCreate(hDriver, dst_filename_in.c_str(),
-						xsize, ysize, nbands, dt,
-                    	opt_list.data());
+    GDALDriverH hDriver = GDALGetDriverByName( format.c_str() );
+    if (hDriver == NULL)
+        Rcpp::stop("Failed to get driver for the specified format.");
 
-	if (hDstDS == NULL)
-		Rcpp::stop("Create dataset failed.");
-	
-	GDALClose(hDstDS);
-	return true;
+    char **papszMetadata = GDALGetMetadata(hDriver, NULL);
+    if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATE, FALSE))
+        Rcpp::stop("Driver does not support create.");
+
+    std::string dst_filename_in;
+    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+
+    GDALDataType dt = GDALGetDataTypeByName( dataType.c_str() );
+
+    std::vector<char *> opt_list = {NULL};
+    if (options.isNotNull()) {
+        // cast to the underlying type
+        // https://gallery.rcpp.org/articles/optional-null-function-arguments/
+        Rcpp::CharacterVector options_in(options);
+        opt_list.resize(options_in.size() + 1);
+        for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+            opt_list[i] = (char *) (options_in[i]);
+        }
+        opt_list[options_in.size()] = NULL;
+    }
+
+    GDALDatasetH hDstDS = NULL;
+    hDstDS = GDALCreate(hDriver, dst_filename_in.c_str(),
+                        xsize, ysize, nbands, dt,
+                        opt_list.data());
+
+    if (hDstDS == NULL)
+        Rcpp::stop("Create dataset failed.");
+
+    GDALClose(hDstDS);
+    return true;
 }
 
 
 //' Create a copy of a raster
 //'
 //' `createCopy()` copies a raster dataset, optionally changing the format.
-//' The extent, cell size, number of bands, data type, projection, and 
+//' The extent, cell size, number of bands, data type, projection, and
 //' geotransform are all copied from the source raster.
 //'
-//' @param format Format short name for the output raster 
+//' @param format Format short name for the output raster
 //' (e.g., "GTiff" or "HFA").
 //' @param dst_filename Filename to create.
 //' @param src_filename Filename of source raster.
-//' @param strict Logical. TRUE if the copy must be strictly equivalent, 
-//' or more normally FALSE indicating that the copy may adapt as needed for  
+//' @param strict Logical. TRUE if the copy must be strictly equivalent,
+//' or more normally FALSE indicating that the copy may adapt as needed for
 //' the output format.
 //' @param options Optional list of format-specific creation options in a
-//' vector of `"NAME=VALUE"` pairs 
+//' vector of `"NAME=VALUE"` pairs
 //' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
 //' compression during creation of a GTiff file).
-//' The APPEND_SUBDATASET=YES option can be 
+//' The APPEND_SUBDATASET=YES option can be
 //' specified to avoid prior destruction of existing dataset.
 //' @param quiet Logical scalar. If `TRUE`, a progress bar will be not be
 //' displayed. Defaults to `FALSE`.
@@ -395,89 +395,89 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
 bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
-		Rcpp::CharacterVector src_filename, bool strict = false,
-		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
-		bool quiet = false) {
+        Rcpp::CharacterVector src_filename, bool strict = false,
+        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
+        bool quiet = false) {
 
-	GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
-	if (hDriver == NULL)
-		Rcpp::stop("Failed to get driver from format name.");
-		
-	char **papszMetadata = GDALGetMetadata(hDriver, NULL);
-	if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATECOPY, FALSE))
-		Rcpp::stop("Driver does not support create copy.");
-	
-	std::string src_filename_in;
-	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
-	std::string dst_filename_in;
-	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
-		
-	GDALDatasetH hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
-	if(hSrcDS == NULL)
-		Rcpp::stop("Open source raster failed.");
-	
-	std::vector<char *> opt_list = {NULL};
-	if (options.isNotNull()) {
-		// cast to the underlying type
-		// https://gallery.rcpp.org/articles/optional-null-function-arguments/
-		Rcpp::CharacterVector options_in(options);
-		opt_list.resize(options_in.size() + 1);
-		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
-			opt_list[i] = (char *) (options_in[i]);
-		}
-		opt_list[options_in.size()] = NULL;
-	}
-	
-	GDALDatasetH hDstDS = NULL;
-	hDstDS = GDALCreateCopy(hDriver, dst_filename_in.c_str(), hSrcDS, strict,
-				opt_list.data(), quiet ? NULL : GDALTermProgressR, NULL);
+    GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
+    if (hDriver == NULL)
+        Rcpp::stop("Failed to get driver from format name.");
 
-	GDALClose(hSrcDS);
-	if (hDstDS == NULL)
-		Rcpp::stop("Create copy failed.");
+    char **papszMetadata = GDALGetMetadata(hDriver, NULL);
+    if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATECOPY, FALSE))
+        Rcpp::stop("Driver does not support create copy.");
 
-	GDALClose(hDstDS);
-	return true;
+    std::string src_filename_in;
+    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    std::string dst_filename_in;
+    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+
+    GDALDatasetH hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
+    if(hSrcDS == NULL)
+        Rcpp::stop("Open source raster failed.");
+
+    std::vector<char *> opt_list = {NULL};
+    if (options.isNotNull()) {
+        // cast to the underlying type
+        // https://gallery.rcpp.org/articles/optional-null-function-arguments/
+        Rcpp::CharacterVector options_in(options);
+        opt_list.resize(options_in.size() + 1);
+        for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+            opt_list[i] = (char *) (options_in[i]);
+        }
+        opt_list[options_in.size()] = NULL;
+    }
+
+    GDALDatasetH hDstDS = NULL;
+    hDstDS = GDALCreateCopy(hDriver, dst_filename_in.c_str(), hSrcDS, strict,
+                opt_list.data(), quiet ? NULL : GDALTermProgressR, NULL);
+
+    GDALClose(hSrcDS);
+    if (hDstDS == NULL)
+        Rcpp::stop("Create copy failed.");
+
+    GDALClose(hDstDS);
+    return true;
 }
 
 
 //' Apply geotransform
 //'
-//' `_apply_geotransform()` applies geotransform coefficients to a raster 
-//' coordinate in pixel/line space (colum/row), converting into a 
+//' `_apply_geotransform()` applies geotransform coefficients to a raster
+//' coordinate in pixel/line space (colum/row), converting into a
 //' georeferenced (x, y) coordinate.
 //'
-//' @param gt Numeric vector of length six containing the geotransform to 
+//' @param gt Numeric vector of length six containing the geotransform to
 //' apply.
 //' @param pixel Numeric scalar. A raster pixel (column) coordinate.
 //' @param line Numeric scalar. A raster line (row) coordinate.
-//' @returns Numeric vector of length two containing a geospatial x/y 
+//' @returns Numeric vector of length two containing a geospatial x/y
 //' coordinate (spatial reference system of `gt`).
-//' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [get_pixel_line()], 
+//' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [get_pixel_line()],
 //' [inv_geotransform()]
 //' @noRd
 // [[Rcpp::export(name = ".apply_geotransform")]]
-Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, 
-		double pixel, double line) {
-		
-	double geo_x, geo_y;
-	GDALApplyGeoTransform((double *) (gt.data()), pixel, line, &geo_x, &geo_y);
-	Rcpp::NumericVector geo_xy = {geo_x, geo_y};
-	return geo_xy;
+Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
+        double pixel, double line) {
+
+    double geo_x, geo_y;
+    GDALApplyGeoTransform((double *) (gt.data()), pixel, line, &geo_x, &geo_y);
+    Rcpp::NumericVector geo_xy = {geo_x, geo_y};
+    return geo_xy;
 }
 
 
 //' Invert geotransform
 //'
-//' `inv_geotransform()` inverts a vector of geotransform coefficients. This 
+//' `inv_geotransform()` inverts a vector of geotransform coefficients. This
 //' converts the equation from being:\cr
 //' raster pixel/line (column/row) -> geospatial x/y coordinate\cr
 //' to:\cr
 //' geospatial x/y coordinate -> raster pixel/line (column/row)
 //'
-//' @param gt Numeric vector of length six containing the geotransform to 
+//' @param gt Numeric vector of length six containing the geotransform to
 //' invert.
-//' @returns Numeric vector of length six containing the inverted 
+//' @returns Numeric vector of length six containing the inverted
 //' geotransform. The output vector will contain NAs if the input geotransform
 //' is uninvertable.
 //' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [get_pixel_line()]
@@ -487,42 +487,42 @@ Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
 //' gt <- ds$getGeoTransform()
 //' ds$close()
 //' invgt <- inv_geotransform(gt)
-//' 
+//'
 //' ptX = 324181.7
 //' ptY = 5103901.4
-//' 
+//'
 //' ## for a point x, y in the spatial reference system of elev_file
 //' ## raster pixel (column number):
 //' pixel <- floor(invgt[1] +
 //'                invgt[2] * ptX +
 //'                invgt[3] * ptY)
-//' 
+//'
 //' ## raster line (row number):
 //' line <- floor(invgt[4] +
 //'               invgt[5] * ptX +
 //'               invgt[6] * ptY)
-//' 
+//'
 //' ## get_pixel_line() applies this conversion
 // [[Rcpp::export]]
 Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
-	std::vector<double> gt_inv(6);
-	if (GDALInvGeoTransform( (double *) (gt.data()), gt_inv.data() ))
-		return Rcpp::wrap(gt_inv);
-	else
-		return Rcpp::NumericVector(6, NA_REAL);
+    std::vector<double> gt_inv(6);
+    if (GDALInvGeoTransform( (double *) (gt.data()), gt_inv.data() ))
+        return Rcpp::wrap(gt_inv);
+    else
+        return Rcpp::NumericVector(6, NA_REAL);
 }
 
 
 //' Raster pixel/line from geospatial x,y coordinates
 //'
-//' `get_pixel_line()` converts geospatial coordinates to pixel/line (raster 
+//' `get_pixel_line()` converts geospatial coordinates to pixel/line (raster
 //' column, row numbers).
 //' The upper left corner pixel is the raster origin (0,0) with column, row
 //' increasing left to right, top to bottom.
 //'
 //' @param xy Numeric array of geospatial x,y coordinates in the same
-//' spatial reference system as \code{gt}. 
-//' @param gt Numeric vector of length six. The affine geotransform for the 
+//' spatial reference system as \code{gt}.
+//' @param gt Numeric vector of length six. The affine geotransform for the
 //' raster.
 //' @returns Integer array of raster pixel/line.
 //'
@@ -540,25 +540,25 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' ds$close()
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
-		const std::vector<double> gt) {
-									
-	Rcpp::NumericVector inv_gt = inv_geotransform(gt);
-	if (Rcpp::any(Rcpp::is_na(inv_gt)))
-		Rcpp::stop("Could not get inverse geotransform.");
-	Rcpp::IntegerMatrix pixel_line(xy.nrow(), 2);
-	for (R_xlen_t i = 0; i < xy.nrow(); ++i) {
-			double geo_x = xy(i, 0);
-			double geo_y = xy(i, 1);
-			// column
-			pixel_line(i, 0) = static_cast<int>(std::floor(inv_gt[0] + 
-											inv_gt[1] * geo_x +
-											inv_gt[2] * geo_y));
-			// row
-			pixel_line(i, 1) = static_cast<int>(std::floor(inv_gt[3] + 
-											inv_gt[4] * geo_x +
-											inv_gt[5] * geo_y));
-	}
-	return pixel_line;
+        const std::vector<double> gt) {
+
+    Rcpp::NumericVector inv_gt = inv_geotransform(gt);
+    if (Rcpp::any(Rcpp::is_na(inv_gt)))
+        Rcpp::stop("Could not get inverse geotransform.");
+    Rcpp::IntegerMatrix pixel_line(xy.nrow(), 2);
+    for (R_xlen_t i = 0; i < xy.nrow(); ++i) {
+            double geo_x = xy(i, 0);
+            double geo_y = xy(i, 1);
+            // column
+            pixel_line(i, 0) = static_cast<int>(std::floor(inv_gt[0] +
+                                                inv_gt[1] * geo_x +
+                                                inv_gt[2] * geo_y));
+            // row
+            pixel_line(i, 1) = static_cast<int>(std::floor(inv_gt[3] +
+                                                inv_gt[4] * geo_x +
+                                                inv_gt[5] * geo_y));
+    }
+    return pixel_line;
 }
 
 
@@ -590,7 +590,7 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 //'
 //' @param vrt_filename Character string. Filename of the output VRT.
 //' @param input_rasters Character vector of input raster filenames.
-//' @param cl_arg Optional character vector of command-line arguments to 
+//' @param cl_arg Optional character vector of command-line arguments to
 //' \code{gdalbuildvrt}.
 //' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
 //' displayed. Defaults to `FALSE`.
@@ -614,230 +614,230 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
 bool buildVRT(Rcpp::CharacterVector vrt_filename,
-		Rcpp::CharacterVector input_rasters,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-		bool quiet = false) {
+        Rcpp::CharacterVector input_rasters,
+        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+        bool quiet = false) {
 
-	std::string vrt_filename_in;
-	vrt_filename_in = Rcpp::as<std::string>(_check_gdal_filename(vrt_filename));
+    std::string vrt_filename_in;
+    vrt_filename_in = Rcpp::as<std::string>(_check_gdal_filename(vrt_filename));
 
-	std::vector<std::string> input_rasters_in(input_rasters.size());
-	std::vector<const char *> src_ds_files(input_rasters.size() + 1);
-	for (R_xlen_t i = 0; i < input_rasters.size(); ++i) {
-		input_rasters_in[i] = Rcpp::as<std::string>(
-				_check_gdal_filename(
-				Rcpp::as<Rcpp::CharacterVector>(input_rasters[i])
-				));
-		src_ds_files[i] = input_rasters_in[i].c_str();
-	}
-	src_ds_files[input_rasters.size()] = NULL;
-	
-	std::vector<char *> argv = {NULL};
-	if (cl_arg.isNotNull()) {
-		// cast Nullable to the underlying type
-		Rcpp::CharacterVector cl_arg_in(cl_arg);
-		argv.resize(cl_arg_in.size() + 1);
-		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-			argv[i] = (char *) (cl_arg_in[i]);
-		}
-		argv[cl_arg_in.size()] = NULL;
-	}
-	
-	GDALBuildVRTOptions* psOptions = GDALBuildVRTOptionsNew(argv.data(), NULL);
-	if (psOptions == NULL)
-		Rcpp::stop("Build VRT failed (could not create options struct).");
-	if (!quiet)
-		GDALBuildVRTOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
-	
-	GDALDatasetH hDstDS = GDALBuildVRT(vrt_filename_in.c_str(),
-							input_rasters.size(), NULL, src_ds_files.data(),
-							psOptions, NULL);
-							
-	GDALBuildVRTOptionsFree(psOptions);
+    std::vector<std::string> input_rasters_in(input_rasters.size());
+    std::vector<const char *> src_ds_files(input_rasters.size() + 1);
+    for (R_xlen_t i = 0; i < input_rasters.size(); ++i) {
+        input_rasters_in[i] = Rcpp::as<std::string>(
+                _check_gdal_filename(
+                Rcpp::as<Rcpp::CharacterVector>(input_rasters[i])
+                ));
+        src_ds_files[i] = input_rasters_in[i].c_str();
+    }
+    src_ds_files[input_rasters.size()] = NULL;
 
-	if (hDstDS == NULL)
-		Rcpp::stop("Build VRT failed.");
-	
-	GDALClose(hDstDS);
-	return true;
+    std::vector<char *> argv = {NULL};
+    if (cl_arg.isNotNull()) {
+        // cast Nullable to the underlying type
+        Rcpp::CharacterVector cl_arg_in(cl_arg);
+        argv.resize(cl_arg_in.size() + 1);
+        for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+            argv[i] = (char *) (cl_arg_in[i]);
+        }
+        argv[cl_arg_in.size()] = NULL;
+    }
+
+    GDALBuildVRTOptions* psOptions = GDALBuildVRTOptionsNew(argv.data(), NULL);
+    if (psOptions == NULL)
+        Rcpp::stop("Build VRT failed (could not create options struct).");
+    if (!quiet)
+        GDALBuildVRTOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+
+    GDALDatasetH hDstDS = GDALBuildVRT(vrt_filename_in.c_str(),
+                            input_rasters.size(), NULL, src_ds_files.data(),
+                            psOptions, NULL);
+
+    GDALBuildVRTOptionsFree(psOptions);
+
+    if (hDstDS == NULL)
+        Rcpp::stop("Build VRT failed.");
+
+    GDALClose(hDstDS);
+    return true;
 }
 
 //' Raster overlay for unique combinations
-//' 
+//'
 //' @description
-//' `combine()` overlays multiple rasters so that a unique ID is assigned to 
-//' each unique combination of input values. The input raster layers  
-//' typically have integer data types (floating point will be coerced to 
-//' integer by truncation), and must have the same projection, extent and cell 
-//' size. Pixel counts for each unique combination are obtained, and 
+//' `combine()` overlays multiple rasters so that a unique ID is assigned to
+//' each unique combination of input values. The input raster layers
+//' typically have integer data types (floating point will be coerced to
+//' integer by truncation), and must have the same projection, extent and cell
+//' size. Pixel counts for each unique combination are obtained, and
 //' combination IDs are optionally written to an output raster.
 //'
 //' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".combine")]]
 Rcpp::DataFrame _combine(
-		Rcpp::CharacterVector src_files,
-		Rcpp::CharacterVector var_names,
-		std::vector<int> bands, 
-		std::string dst_filename = "",
-		std::string fmt = "", 
-		std::string dataType = "UInt32",
-		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
-		bool quiet = false) {
+        Rcpp::CharacterVector src_files,
+        Rcpp::CharacterVector var_names,
+        std::vector<int> bands,
+        std::string dst_filename = "",
+        std::string fmt = "",
+        std::string dataType = "UInt32",
+        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
+        bool quiet = false) {
 
-	std::size_t nrasters = (std::size_t) src_files.size();
-	
-	std::vector<GDALRaster> src_ds;
-	src_ds.reserve(nrasters);
-	
-	int nrows = 0;
-	int ncols = 0;
-	std::vector<double> gt;
-	std::string srs;
-	GDALRaster dst_ds;
-	bool out_raster = false;
-	
-	if ( (nrasters != ((std::size_t) var_names.size())) ||
-			(nrasters !=  bands.size()) )
-		Rcpp::stop("src_files, var_names and bands must be the same length.");
-	
-	if (dst_filename != "") {
-		out_raster = true;
-		if (fmt == "")
-			Rcpp::stop("Output raster format must be specified.");
-	}
-	
-	for (std::size_t i = 0; i < nrasters; ++i) {
-		src_ds.push_back(GDALRaster(std::string(src_files[i]), true));
-		// use the first raster as reference
-		if (i==0) {
-			nrows = src_ds[i].getRasterYSize();
-			ncols = src_ds[i].getRasterXSize();
-			gt = src_ds[i].getGeoTransform();
-			srs = src_ds[i].getProjectionRef();
-		}
-	}
-	
-	if (out_raster) {
-		if (create(fmt, dst_filename, ncols, nrows, 1, dataType, options)) {
-			dst_ds = GDALRaster(dst_filename, false);
-			if (!dst_ds.setGeoTransform(gt))
-				Rcpp::warning("Failed to set output geotransform.");
-			if (!dst_ds.setProjection(srs))
-				Rcpp::warning("Failed to set output projection.");
-		}
-		else {
-			for (std::size_t i = 0; i < nrasters; ++i)
-				src_ds[i].close();
-			Rcpp::stop("Failed to create output raster.");
-		}
-	}
-	
-	CmbTable tbl(nrasters, var_names);
-	Rcpp::IntegerMatrix rowdata(nrasters, ncols);
-	Rcpp::NumericVector cmbid;
-	GDALProgressFunc pfnProgress = GDALTermProgressR;
-	void* pProgressData = NULL;
-	if (!quiet) {
-		if (nrasters == 1)
-			Rcpp::Rcout << "Scanning raster...\n";
-		else
-			Rcpp::Rcout << "Combining " << nrasters << " rasters...\n";
-	}
-	for (int y = 0; y < nrows; ++y) {
-		for (std::size_t i = 0; i < nrasters; ++i)
-			rowdata.row(i) = Rcpp::as<Rcpp::IntegerVector>(
-								src_ds[i].read(
-									bands[i], 0, y, ncols, 1, ncols, 1) );
-									
-		cmbid = tbl.updateFromMatrix(rowdata, 1);
-		
-		if (out_raster) {
-			dst_ds.write( 1, 0, y, ncols, 1, cmbid );
-		}
-		if (!quiet) {
-			pfnProgress(y / (nrows-1.0), NULL, pProgressData);
-		}
-	}
+    std::size_t nrasters = (std::size_t) src_files.size();
 
-	if (out_raster)
-		dst_ds.close();
+    std::vector<GDALRaster> src_ds;
+    src_ds.reserve(nrasters);
 
-	for (std::size_t i = 0; i < nrasters; ++i)
-		src_ds[i].close();
-	
-	return tbl.asDataFrame();
+    int nrows = 0;
+    int ncols = 0;
+    std::vector<double> gt;
+    std::string srs;
+    GDALRaster dst_ds;
+    bool out_raster = false;
+
+    if ( (nrasters != ((std::size_t) var_names.size())) ||
+            (nrasters !=  bands.size()) )
+        Rcpp::stop("src_files, var_names and bands must be the same length.");
+
+    if (dst_filename != "") {
+        out_raster = true;
+        if (fmt == "")
+            Rcpp::stop("Output raster format must be specified.");
+    }
+
+    for (std::size_t i = 0; i < nrasters; ++i) {
+        src_ds.push_back(GDALRaster(std::string(src_files[i]), true));
+        // use the first raster as reference
+        if (i==0) {
+            nrows = src_ds[i].getRasterYSize();
+            ncols = src_ds[i].getRasterXSize();
+            gt = src_ds[i].getGeoTransform();
+            srs = src_ds[i].getProjectionRef();
+        }
+    }
+
+    if (out_raster) {
+        if (create(fmt, dst_filename, ncols, nrows, 1, dataType, options)) {
+            dst_ds = GDALRaster(dst_filename, false);
+            if (!dst_ds.setGeoTransform(gt))
+                Rcpp::warning("Failed to set output geotransform.");
+            if (!dst_ds.setProjection(srs))
+                Rcpp::warning("Failed to set output projection.");
+        }
+        else {
+            for (std::size_t i = 0; i < nrasters; ++i)
+                src_ds[i].close();
+            Rcpp::stop("Failed to create output raster.");
+        }
+    }
+
+    CmbTable tbl(nrasters, var_names);
+    Rcpp::IntegerMatrix rowdata(nrasters, ncols);
+    Rcpp::NumericVector cmbid;
+    GDALProgressFunc pfnProgress = GDALTermProgressR;
+    void* pProgressData = NULL;
+    if (!quiet) {
+        if (nrasters == 1)
+            Rcpp::Rcout << "Scanning raster...\n";
+        else
+            Rcpp::Rcout << "Combining " << nrasters << " rasters...\n";
+    }
+    for (int y = 0; y < nrows; ++y) {
+        for (std::size_t i = 0; i < nrasters; ++i)
+            rowdata.row(i) = Rcpp::as<Rcpp::IntegerVector>(
+                                src_ds[i].read(
+                                    bands[i], 0, y, ncols, 1, ncols, 1) );
+
+        cmbid = tbl.updateFromMatrix(rowdata, 1);
+
+        if (out_raster) {
+            dst_ds.write( 1, 0, y, ncols, 1, cmbid );
+        }
+        if (!quiet) {
+            pfnProgress(y / (nrows-1.0), NULL, pProgressData);
+        }
+    }
+
+    if (out_raster)
+        dst_ds.close();
+
+    for (std::size_t i = 0; i < nrasters; ++i)
+        src_ds[i].close();
+
+    return tbl.asDataFrame();
 }
 
 
 //' Compute for a raster band the set of unique pixel values and their counts
-//' 
+//'
 //' @noRd
 // [[Rcpp::export(name = ".value_count")]]
 Rcpp::DataFrame _value_count(std::string src_filename, int band = 1) {
 
-	GDALRaster src_ds = GDALRaster(src_filename, true);
-	int nrows = src_ds.getRasterYSize();
-	int ncols = src_ds.getRasterXSize();
-	GDALProgressFunc pfnProgress = GDALTermProgressR;
-	void* pProgressData = NULL;
-	Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
-	
-	Rcpp::Rcout << "Scanning raster...\n";
-	
-	if (src_ds._readableAsInt(band)) {
-		// read pixel values as int
-		Rcpp::IntegerVector rowdata(ncols);
-		std::unordered_map<int, double> tbl;
-		for (int y = 0; y < nrows; ++y) {
-			rowdata = Rcpp::as<Rcpp::IntegerVector>(
-							src_ds.read(band, 0, y, ncols, 1, ncols, 1) );
-			for (auto const& i : rowdata) {
-				tbl[i] += 1.0;
-			}
-			pfnProgress(y / (nrows-1.0), NULL, pProgressData);
-		}
+    GDALRaster src_ds = GDALRaster(src_filename, true);
+    int nrows = src_ds.getRasterYSize();
+    int ncols = src_ds.getRasterXSize();
+    GDALProgressFunc pfnProgress = GDALTermProgressR;
+    void* pProgressData = NULL;
+    Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
 
-		Rcpp::IntegerVector value(tbl.size());
-		Rcpp::NumericVector count(tbl.size());
-		std::size_t this_idx = 0;
-		for(auto iter = tbl.begin(); iter != tbl.end(); ++iter) {
-			value[this_idx] = iter->first;
-			count[this_idx] = iter->second;
-			++this_idx;
-		}
-		
-		df_out.push_back(value, "VALUE");
-		df_out.push_back(count, "COUNT");
-	}
-	else {
-		// UInt32, Float32, Float64
-		// read pixel values as double
-		Rcpp::NumericVector rowdata(ncols);
-		std::unordered_map<double, double> tbl;
-		for (int y = 0; y < nrows; ++y) {
-			rowdata = Rcpp::as<Rcpp::NumericVector>(
-							src_ds.read(band, 0, y, ncols, 1, ncols, 1) );
-			for (auto const& i : rowdata) {
-				tbl[i] += 1.0;
-			}
-			pfnProgress(y / (nrows-1.0), NULL, pProgressData);
-		}
+    Rcpp::Rcout << "Scanning raster...\n";
 
-		Rcpp::NumericVector value(tbl.size());
-		Rcpp::NumericVector count(tbl.size());
-		std::size_t this_idx = 0;
-		for(auto iter = tbl.begin(); iter != tbl.end(); ++iter) {
-			value[this_idx] = iter->first;
-			count[this_idx] = iter->second;
-			++this_idx;
-		}
-		
-		df_out.push_back(value, "VALUE");
-		df_out.push_back(count, "COUNT");
-	}
-	
-	return df_out;
+    if (src_ds._readableAsInt(band)) {
+        // read pixel values as int
+        Rcpp::IntegerVector rowdata(ncols);
+        std::unordered_map<int, double> tbl;
+        for (int y = 0; y < nrows; ++y) {
+            rowdata = Rcpp::as<Rcpp::IntegerVector>(
+                            src_ds.read(band, 0, y, ncols, 1, ncols, 1) );
+            for (auto const& i : rowdata) {
+                tbl[i] += 1.0;
+            }
+            pfnProgress(y / (nrows-1.0), NULL, pProgressData);
+        }
+
+        Rcpp::IntegerVector value(tbl.size());
+        Rcpp::NumericVector count(tbl.size());
+        std::size_t this_idx = 0;
+        for(auto iter = tbl.begin(); iter != tbl.end(); ++iter) {
+            value[this_idx] = iter->first;
+            count[this_idx] = iter->second;
+            ++this_idx;
+        }
+
+        df_out.push_back(value, "VALUE");
+        df_out.push_back(count, "COUNT");
+    }
+    else {
+        // UInt32, Float32, Float64
+        // read pixel values as double
+        Rcpp::NumericVector rowdata(ncols);
+        std::unordered_map<double, double> tbl;
+        for (int y = 0; y < nrows; ++y) {
+            rowdata = Rcpp::as<Rcpp::NumericVector>(
+                            src_ds.read(band, 0, y, ncols, 1, ncols, 1) );
+            for (auto const& i : rowdata) {
+                tbl[i] += 1.0;
+            }
+            pfnProgress(y / (nrows-1.0), NULL, pProgressData);
+        }
+
+        Rcpp::NumericVector value(tbl.size());
+        Rcpp::NumericVector count(tbl.size());
+        std::size_t this_idx = 0;
+        for(auto iter = tbl.begin(); iter != tbl.end(); ++iter) {
+            value[this_idx] = iter->first;
+            count[this_idx] = iter->second;
+            ++this_idx;
+        }
+
+        df_out.push_back(value, "VALUE");
+        df_out.push_back(count, "COUNT");
+    }
+
+    return df_out;
 }
 
 
@@ -847,71 +847,71 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1) {
 //' @noRd
 // [[Rcpp::export(name = ".dem_proc")]]
 bool _dem_proc(std::string mode,
-			Rcpp::CharacterVector src_filename, 
-			Rcpp::CharacterVector dst_filename,
-			Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-			Rcpp::Nullable<Rcpp::String> col_file = R_NilValue,
-			bool quiet = false) {
+            Rcpp::CharacterVector src_filename,
+            Rcpp::CharacterVector dst_filename,
+            Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+            Rcpp::Nullable<Rcpp::String> col_file = R_NilValue,
+            bool quiet = false) {
 
-	std::string src_filename_in;
-	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
-	std::string dst_filename_in;
-	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
-	
-	GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
-	if (src_ds == NULL)
-		Rcpp::stop("Open source raster failed.");
+    std::string src_filename_in;
+    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    std::string dst_filename_in;
+    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
 
-	std::vector<char *> argv = {NULL};
-	if (cl_arg.isNotNull()) {
-		// cast Nullable to the underlying type
-		Rcpp::CharacterVector cl_arg_in(cl_arg);
-		argv.resize(cl_arg_in.size() + 1);
-		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-			argv[i] = (char *) (cl_arg_in[i]);
-		}
-		argv[cl_arg_in.size()] = NULL;
-	}
-	
-	GDALDEMProcessingOptions* psOptions;
-	psOptions = GDALDEMProcessingOptionsNew(argv.data(), NULL);
-	if (psOptions == NULL)
-		Rcpp::stop("DEM processing failed (could not create options struct).");
-	if (!quiet)
-		GDALDEMProcessingOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
-	
-	GDALDatasetH hDstDS;
-	if (col_file.isNotNull()) {
-		// cast Nullable to the underlying type
-		Rcpp::String col_file_in(col_file);
-		hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds, mode.c_str(),
-				col_file_in.get_cstring(), psOptions, NULL);
-	}
-	else {
-		hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds, mode.c_str(),
-				NULL, psOptions, NULL);
-	}
-							
-	GDALDEMProcessingOptionsFree(psOptions);
-	GDALClose(src_ds);
-	if (hDstDS == NULL)
-		Rcpp::stop("DEM processing failed.");
+    GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
+    if (src_ds == NULL)
+        Rcpp::stop("Open source raster failed.");
 
-	GDALClose(hDstDS);
-	return true;
+    std::vector<char *> argv = {NULL};
+    if (cl_arg.isNotNull()) {
+        // cast Nullable to the underlying type
+        Rcpp::CharacterVector cl_arg_in(cl_arg);
+        argv.resize(cl_arg_in.size() + 1);
+        for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+            argv[i] = (char *) (cl_arg_in[i]);
+        }
+        argv[cl_arg_in.size()] = NULL;
+    }
+
+    GDALDEMProcessingOptions* psOptions;
+    psOptions = GDALDEMProcessingOptionsNew(argv.data(), NULL);
+    if (psOptions == NULL)
+        Rcpp::stop("DEM processing failed (could not create options struct).");
+    if (!quiet)
+        GDALDEMProcessingOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+
+    GDALDatasetH hDstDS;
+    if (col_file.isNotNull()) {
+        // cast Nullable to the underlying type
+        Rcpp::String col_file_in(col_file);
+        hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds, mode.c_str(),
+                col_file_in.get_cstring(), psOptions, NULL);
+    }
+    else {
+        hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds, mode.c_str(),
+                NULL, psOptions, NULL);
+    }
+
+    GDALDEMProcessingOptionsFree(psOptions);
+    GDALClose(src_ds);
+    if (hDstDS == NULL)
+        Rcpp::stop("DEM processing failed.");
+
+    GDALClose(hDstDS);
+    return true;
 }
 
 
 //' Fill selected pixels by interpolation from surrounding areas
 //'
 //' `fillNodata()` is a wrapper for `GDALFillNodata()` in the GDAL Algorithms
-//' API. This algorithm will interpolate values for all designated nodata 
+//' API. This algorithm will interpolate values for all designated nodata
 //' pixels (pixels having an intrinsic nodata value, or marked by zero-valued
-//' pixels in the optional raster specified in `mask_file`). For each nodata 
+//' pixels in the optional raster specified in `mask_file`). For each nodata
 //' pixel, a four direction conic search is done to find values to interpolate
 //' from (using inverse distance weighting).
 //' Once all values are interpolated, zero or more smoothing iterations
-//' (3x3 average filters on interpolated pixels) are applied to smooth out 
+//' (3x3 average filters on interpolated pixels) are applied to smooth out
 //' artifacts.
 //'
 //' @note
@@ -922,7 +922,7 @@ bool _dem_proc(std::string mode,
 //' @param band Integer band number to modify in place.
 //' @param mask_file Optional filename of raster to use as a validity mask
 //' (band 1 is used, zero marks nodata pixels, non-zero marks valid pixels).
-//' @param max_dist Maximum distance (in pixels) that the algorithm 
+//' @param max_dist Maximum distance (in pixels) that the algorithm
 //' will search out for values to interpolate (100 pixels by default).
 //' @param smooth_iterations The number of 3x3 average filter smoothing
 //' iterations to run after the interpolation to dampen artifacts
@@ -934,71 +934,71 @@ bool _dem_proc(std::string mode,
 //' @examples
 //' ## fill nodata edge pixels in the elevation raster
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-//' 
+//'
 //' ## get count of nodata
 //' tbl <- buildRAT(elev_file)
 //' head(tbl)
 //' tbl[is.na(tbl$VALUE),]
-//' 
+//'
 //' ## make a copy that will be modified
 //' mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
 //' file.copy(elev_file,  mod_file)
-//' 
+//'
 //' fillNodata(mod_file, band=1)
-//' 
+//'
 //' mod_tbl = buildRAT(mod_file)
 //' head(mod_tbl)
 //' mod_tbl[is.na(mod_tbl$VALUE),]
 // [[Rcpp::export(invisible = true)]]
 bool fillNodata(Rcpp::CharacterVector filename, int band,
-		Rcpp::CharacterVector mask_file = "",
-		double max_dist = 100, int smooth_iterations = 0,
-		bool quiet = false) {
+        Rcpp::CharacterVector mask_file = "",
+        double max_dist = 100, int smooth_iterations = 0,
+        bool quiet = false) {
 
-	GDALDatasetH hDS = NULL;
-	GDALRasterBandH hBand = NULL;
-	GDALDatasetH hMaskDS = NULL;
-	GDALRasterBandH hMaskBand = NULL;
-	CPLErr err;
+    GDALDatasetH hDS = NULL;
+    GDALRasterBandH hBand = NULL;
+    GDALDatasetH hMaskDS = NULL;
+    GDALRasterBandH hMaskBand = NULL;
+    CPLErr err;
 
-	std::string filename_in;
-	filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
-	std::string mask_file_in;
-	mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_file));
-	
-	hDS = GDALOpenShared(filename_in.c_str(), GA_Update);
-	if (hDS == NULL)
-		Rcpp::stop("Open raster failed.");
-	hBand = GDALGetRasterBand(hDS, band);
-	if (hBand == NULL) {
-		GDALClose(hDS);
-		Rcpp::stop("Failed to access the requested band.");
-	}
+    std::string filename_in;
+    filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
+    std::string mask_file_in;
+    mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_file));
 
-	if (mask_file_in != "") {
-		hMaskDS = GDALOpenShared(mask_file_in.c_str(), GA_ReadOnly);
-		if (hMaskDS == NULL) {
-			GDALClose(hDS);
-			Rcpp::stop("Open mask raster failed.");
-		}
-		hMaskBand = GDALGetRasterBand(hMaskDS, 1);
-		if (hMaskBand == NULL) {
-			GDALClose(hDS);
-			GDALClose(hMaskDS);
-			Rcpp::stop("Failed to access the mask band.");
-		}
-	}
-	
-	err = GDALFillNodata(hBand, hMaskBand, max_dist, 0, smooth_iterations,
-			NULL, quiet ? NULL : GDALTermProgressR, NULL);
+    hDS = GDALOpenShared(filename_in.c_str(), GA_Update);
+    if (hDS == NULL)
+        Rcpp::stop("Open raster failed.");
+    hBand = GDALGetRasterBand(hDS, band);
+    if (hBand == NULL) {
+        GDALClose(hDS);
+        Rcpp::stop("Failed to access the requested band.");
+    }
 
-	GDALClose(hDS);
-	if (hMaskDS != NULL)
-		GDALClose(hMaskDS);
-	if (err != CE_None)
-		Rcpp::stop("Error in GDALFillNodata().");
+    if (mask_file_in != "") {
+        hMaskDS = GDALOpenShared(mask_file_in.c_str(), GA_ReadOnly);
+        if (hMaskDS == NULL) {
+            GDALClose(hDS);
+            Rcpp::stop("Open mask raster failed.");
+        }
+        hMaskBand = GDALGetRasterBand(hMaskDS, 1);
+        if (hMaskBand == NULL) {
+            GDALClose(hDS);
+            GDALClose(hMaskDS);
+            Rcpp::stop("Failed to access the mask band.");
+        }
+    }
 
-	return true;
+    err = GDALFillNodata(hBand, hMaskBand, max_dist, 0, smooth_iterations,
+            NULL, quiet ? NULL : GDALTermProgressR, NULL);
+
+    GDALClose(hDS);
+    if (hMaskDS != NULL)
+        GDALClose(hMaskDS);
+    if (err != CE_None)
+        Rcpp::stop("Error in GDALFillNodata().");
+
+    return true;
 }
 
 
@@ -1027,11 +1027,11 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 //' @param dst_filename Character string. Filename of the destination vector.
 //' If the file and the output layer exist, the new footprint is appended to
 //' them, unless the `-overwrite` command-line argument is used.
-//' @param cl_arg Optional character vector of command-line arguments for 
+//' @param cl_arg Optional character vector of command-line arguments for
 //' \code{gdal_footprint}.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
-//' 
+//'
 //' @seealso
 //' [polygonize()]
 //'
@@ -1047,55 +1047,55 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 //' }
 // [[Rcpp::export(invisible = true)]]
 bool footprint(Rcpp::CharacterVector src_filename,
-		Rcpp::CharacterVector dst_filename,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+        Rcpp::CharacterVector dst_filename,
+        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
 
 #if GDAL_VERSION_NUM < 3080000
-	Rcpp::stop("footprint() requires GDAL >= 3.8.");
+    Rcpp::stop("footprint() requires GDAL >= 3.8.");
 
 #else
-	std::string src_filename_in;
-	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
-	std::string dst_filename_in;
-	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
-	
-	bool ret = false;
-	GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
-	if (src_ds == NULL)
-		Rcpp::stop("Open source raster failed.");
+    std::string src_filename_in;
+    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    std::string dst_filename_in;
+    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
 
-	std::vector<char *> argv = {NULL};
-	if (cl_arg.isNotNull()) {
-		// cast Nullable to the underlying type
-		Rcpp::CharacterVector cl_arg_in(cl_arg);
-		argv.resize(cl_arg_in.size() + 1);
-		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-			argv[i] = (char *) (cl_arg_in[i]);
-		}
-		argv[cl_arg_in.size()] = NULL;
-	}
-	
-	GDALFootprintOptions* psOptions = GDALFootprintOptionsNew(argv.data(), NULL);
-	if (psOptions == NULL)
-		Rcpp::stop("footprint() failed (could not create options struct).");
-	GDALFootprintOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
-	
-	GDALDatasetH hDstDS = GDALFootprint(dst_filename_in.c_str(), NULL, src_ds,
-							psOptions, NULL);
-							
-	GDALFootprintOptionsFree(psOptions);
-	
-	if (hDstDS != NULL) {
-		GDALReleaseDataset(hDstDS);
-		ret = true;
-	}
-	GDALClose(src_ds);
-	
-	if (!ret)
-		Rcpp::stop("footprint() failed.");
-	
-	return ret;
-	
+    bool ret = false;
+    GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
+    if (src_ds == NULL)
+        Rcpp::stop("Open source raster failed.");
+
+    std::vector<char *> argv = {NULL};
+    if (cl_arg.isNotNull()) {
+        // cast Nullable to the underlying type
+        Rcpp::CharacterVector cl_arg_in(cl_arg);
+        argv.resize(cl_arg_in.size() + 1);
+        for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+            argv[i] = (char *) (cl_arg_in[i]);
+        }
+        argv[cl_arg_in.size()] = NULL;
+    }
+
+    GDALFootprintOptions* psOptions = GDALFootprintOptionsNew(argv.data(), NULL);
+    if (psOptions == NULL)
+        Rcpp::stop("footprint() failed (could not create options struct).");
+    GDALFootprintOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+
+    GDALDatasetH hDstDS = GDALFootprint(dst_filename_in.c_str(), NULL, src_ds,
+                            psOptions, NULL);
+
+    GDALFootprintOptionsFree(psOptions);
+
+    if (hDstDS != NULL) {
+        GDALReleaseDataset(hDstDS);
+        ret = true;
+    }
+    GDALClose(src_ds);
+
+    if (!ret)
+        Rcpp::stop("footprint() failed.");
+
+    return ret;
+
 #endif
 }
 
@@ -1118,7 +1118,7 @@ bool footprint(Rcpp::CharacterVector src_filename,
 //' dataset.
 //' @param src_layers Optional character vector of layer names in the source
 //' dataset. Defaults to all layers.
-//' @param cl_arg Optional character vector of command-line arguments for 
+//' @param cl_arg Optional character vector of command-line arguments for
 //' the GDAL \code{ogr2ogr} command-line utility (see URL above).
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
@@ -1132,19 +1132,19 @@ bool footprint(Rcpp::CharacterVector src_filename,
 //' [ogrinfo()]
 //'
 //' [translate()] for raster data
-//' 
+//'
 //' @examples
 //' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
-//' 
+//'
 //' # Convert GeoPackage to Shapefile
 //' shp_file <- file.path(tempdir(), "ynp_fires.shp")
 //' ogr2ogr(src, shp_file, src_layers = "mtbs_perims")
-//' 
+//'
 //' # Reproject to WGS84
 //' ynp_wgs84 <- file.path(tempdir(), "ynp_fires_wgs84.gpkg")
 //' args <- c("-t_srs", "EPSG:4326")
 //' ogr2ogr(src, ynp_wgs84, cl_arg = args)
-//' 
+//'
 //' # Clip to a bounding box (xmin, ymin, xmax, ymax in the source SRS)
 //' # This will select features whose geometry intersects the bounding box.
 //' # The geometries themselves will not be clipped unless "-clipsrc" is
@@ -1154,75 +1154,75 @@ bool footprint(Rcpp::CharacterVector src_filename,
 //' bb <- c(469685.97, 11442.45, 544069.63, 85508.15)
 //' args <- c("-spat", bb)
 //' ogr2ogr(src, ynp_clip, cl_arg = args)
-//' 
+//'
 //' # Filter features by a -where clause
 //' ynp_filtered <- file.path(tempdir(), "ynp_fires_2000_2022.gpkg")
 //' sql <- "ig_year >= 2000 ORDER BY ig_year"
 //' args <- c("-where", sql)
 //' ogr2ogr(src, ynp_filtered, src_layers = "mtbs_perims", cl_arg = args)
-//' 
+//'
 //' deleteDataset(shp_file)
 //' deleteDataset(ynp_wgs84)
 //' deleteDataset(ynp_clip)
 //' deleteDataset(ynp_filtered)
 // [[Rcpp::export(invisible = true)]]
 bool ogr2ogr(Rcpp::CharacterVector src_dsn,
-		Rcpp::CharacterVector dst_dsn,
-		Rcpp::Nullable<Rcpp::CharacterVector> src_layers = R_NilValue,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+        Rcpp::CharacterVector dst_dsn,
+        Rcpp::Nullable<Rcpp::CharacterVector> src_layers = R_NilValue,
+        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
 
-	std::string src_dsn_in;
-	src_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(src_dsn));
-	std::string dst_dsn_in;
-	dst_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dst_dsn));
+    std::string src_dsn_in;
+    src_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(src_dsn));
+    std::string dst_dsn_in;
+    dst_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dst_dsn));
 
-	// only 1 source dataset is supported currently by GDALVectorTranslate(),
-	// but takes a list of datasets as input
-	std::vector<GDALDatasetH> src_ds(1);
-	bool ret = false;
-	
-	src_ds[0] = GDALOpenEx(src_dsn_in.c_str(), GDAL_OF_VECTOR,
-			NULL, NULL, NULL);
-	if (src_ds[0] == NULL)
-		Rcpp::stop("Failed to open the source dataset.");
+    // only 1 source dataset is supported currently by GDALVectorTranslate(),
+    // but takes a list of datasets as input
+    std::vector<GDALDatasetH> src_ds(1);
+    bool ret = false;
 
-	std::vector<char *> argv;
-	if (cl_arg.isNotNull()) {
-		Rcpp::CharacterVector cl_arg_in(cl_arg);
-		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-			argv.push_back((char *) (cl_arg_in[i]));
-		}
-	}
-	if (src_layers.isNotNull()) {
-		Rcpp::CharacterVector src_layers_in(src_layers);
-		for (R_xlen_t i = 0; i < src_layers_in.size(); ++i) {
-			argv.push_back((char *) (src_layers_in[i]));
-		}
-	}
-	argv.push_back(NULL);
+    src_ds[0] = GDALOpenEx(src_dsn_in.c_str(), GDAL_OF_VECTOR,
+            NULL, NULL, NULL);
+    if (src_ds[0] == NULL)
+        Rcpp::stop("Failed to open the source dataset.");
 
-	GDALVectorTranslateOptions* psOptions =
-			GDALVectorTranslateOptionsNew(argv.data(), NULL);
-	if (psOptions == NULL) {
-		Rcpp::stop("ogr2ogr() failed (could not create options struct).");
-	}
+    std::vector<char *> argv;
+    if (cl_arg.isNotNull()) {
+        Rcpp::CharacterVector cl_arg_in(cl_arg);
+        for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+            argv.push_back((char *) (cl_arg_in[i]));
+        }
+    }
+    if (src_layers.isNotNull()) {
+        Rcpp::CharacterVector src_layers_in(src_layers);
+        for (R_xlen_t i = 0; i < src_layers_in.size(); ++i) {
+            argv.push_back((char *) (src_layers_in[i]));
+        }
+    }
+    argv.push_back(NULL);
 
-	GDALDatasetH hDstDS = GDALVectorTranslate(dst_dsn_in.c_str(), NULL,
-			1, src_ds.data(), psOptions, NULL);
-							
-	GDALVectorTranslateOptionsFree(psOptions);
-	
-	if (hDstDS != NULL) {
-		GDALClose(hDstDS);
-		ret = true;
-	}
-	
-	GDALClose(src_ds[0]);
-	
-	if (!ret)
-		Rcpp::stop("Vector translate failed.");
-	
-	return ret;
+    GDALVectorTranslateOptions* psOptions =
+            GDALVectorTranslateOptionsNew(argv.data(), NULL);
+    if (psOptions == NULL) {
+        Rcpp::stop("ogr2ogr() failed (could not create options struct).");
+    }
+
+    GDALDatasetH hDstDS = GDALVectorTranslate(dst_dsn_in.c_str(), NULL,
+            1, src_ds.data(), psOptions, NULL);
+
+    GDALVectorTranslateOptionsFree(psOptions);
+
+    if (hDstDS != NULL) {
+        GDALClose(hDstDS);
+        ret = true;
+    }
+
+    GDALClose(src_ds[0]);
+
+    if (!ret)
+        Rcpp::stop("Vector translate failed.");
+
+    return ret;
 }
 
 
@@ -1239,7 +1239,7 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //' connection string, etc.)
 //' @param layers Optional character vector of layer names in the source
 //' dataset.
-//' @param cl_arg Optional character vector of command-line arguments for 
+//' @param cl_arg Optional character vector of command-line arguments for
 //' the GDAL \code{ogrinfo} command-line utility (see URL above).
 //' @param open_options Optional character vector of dataset open options.
 //' @param read_only Logical scalar. `TRUE` to open the data source read-only
@@ -1249,7 +1249,7 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //'
 //' @seealso
 //' [ogr2ogr()]
-//' 
+//'
 //' @examples
 //' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 //'
@@ -1258,7 +1258,7 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //'   # Get the names of the layers in a GeoPackage file.
 //'   info <- ogrinfo(src)
 //'   writeLines(info)
-//' 
+//'
 //'   # Summary (-so) of a layer without showing details about every single
 //'   # feature.
 //'   # -nomd suppresses metadata printing. Some datasets may contain a lot of
@@ -1266,103 +1266,103 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //'   args <- c("-so", "-nomd")
 //'   info <- ogrinfo(src, "mtbs_perims", args)
 //'   writeLines(info)
-//' 
+//'
 //'   # Retrieve information in JSON format without showing details about every
 //'   # single feature.
 //'   args <- c("-json", "-nomd")
 //'   json <- ogrinfo(src, "mtbs_perims", args)
 //'   #info <- jsonlite::fromJSON(json)
-//' 
+//'
 //'   # Attribute query to restrict the output of the features in a layer.
 //'   args <- c("-ro", "-nomd", "-where", "ig_year = 2020")
 //'   info <- ogrinfo(src, "mtbs_perims", args)
 //'   writeLines(info)
-//' 
+//'
 //'   # Copy to a temporary in-memory file that is writeable.
 //'   src_mem <- paste0("/vsimem/", basename(src))
 //'   vsi_copy_file(src, src_mem)
 //'   print(src_mem)
-//' 
+//'
 //'   # Add a column to a layer.
 //'   args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
 //'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
-//' 
+//'
 //'   # Update values of an attribute with SQL by using the SQLite dialect.
 //'   sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
 //'   args <- c("-dialect", "sqlite", "-sql", sql)
 //'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
-//' 
+//'
 //'   vsi_unlink(src_mem)
 //' }
 // [[Rcpp::export()]]
 std::string ogrinfo(Rcpp::CharacterVector dsn,
-		Rcpp::Nullable<Rcpp::CharacterVector> layers = R_NilValue,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-		Rcpp::Nullable<Rcpp::CharacterVector> open_options = R_NilValue,
-		bool read_only = true) {
+        Rcpp::Nullable<Rcpp::CharacterVector> layers = R_NilValue,
+        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+        Rcpp::Nullable<Rcpp::CharacterVector> open_options = R_NilValue,
+        bool read_only = true) {
 
 #if GDAL_VERSION_NUM < 3070000
-	Rcpp::stop("ogrinfo() requires GDAL >= 3.7.");
+    Rcpp::stop("ogrinfo() requires GDAL >= 3.7.");
 
 #else
-	std::string dsn_in;
-	dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+    std::string dsn_in;
+    dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
 
-	GDALDatasetH src_ds;
+    GDALDatasetH src_ds;
 
-	std::vector<char *> dsoo;
-	if (open_options.isNotNull()) {
-		Rcpp::CharacterVector open_options_in(open_options);
-		for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
-			dsoo.push_back((char *) (open_options_in[i]));
-		}
-	}
-	dsoo.push_back(NULL);
-	
-	unsigned int nOpenFlags = GDAL_OF_VECTOR;
-	if (read_only)
-		nOpenFlags |= GDAL_OF_READONLY;
-	else
-		nOpenFlags |= GDAL_OF_UPDATE;
-	
-	src_ds = GDALOpenEx(dsn_in.c_str(), nOpenFlags, NULL, dsoo.data(), NULL);
-	if (src_ds == NULL)
-		Rcpp::stop("Failed to open the source dataset.");
+    std::vector<char *> dsoo;
+    if (open_options.isNotNull()) {
+        Rcpp::CharacterVector open_options_in(open_options);
+        for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
+            dsoo.push_back((char *) (open_options_in[i]));
+        }
+    }
+    dsoo.push_back(NULL);
 
-	std::vector<char *> argv;
-	if (cl_arg.isNotNull()) {
-		Rcpp::CharacterVector cl_arg_in(cl_arg);
-		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-			argv.push_back((char *) (cl_arg_in[i]));
-		}
-	}
-	argv.push_back((char *) (dsn[0]));
-	if (layers.isNotNull()) {
-		Rcpp::CharacterVector layers_in(layers);
-		for (R_xlen_t i = 0; i < layers_in.size(); ++i) {
-			argv.push_back((char *) (layers_in[i]));
-		}
-	}
-	argv.push_back(NULL);
-	
-	GDALVectorInfoOptions *psOptions =
-			GDALVectorInfoOptionsNew(argv.data(), NULL);
-	
-	if (psOptions == NULL) {
-		Rcpp::stop("ogrinfo() failed (could not create options struct).");
-	}
+    unsigned int nOpenFlags = GDAL_OF_VECTOR;
+    if (read_only)
+        nOpenFlags |= GDAL_OF_READONLY;
+    else
+        nOpenFlags |= GDAL_OF_UPDATE;
 
-	std::string info_out = "";
-	char *pszInfo = GDALVectorInfo(src_ds, psOptions);
-	if (pszInfo != NULL)
-		info_out = pszInfo;
-	
-	CPLFree(pszInfo);
-	GDALVectorInfoOptionsFree(psOptions);
-	GDALClose(src_ds);
-	
-	return info_out;
-	
+    src_ds = GDALOpenEx(dsn_in.c_str(), nOpenFlags, NULL, dsoo.data(), NULL);
+    if (src_ds == NULL)
+        Rcpp::stop("Failed to open the source dataset.");
+
+    std::vector<char *> argv;
+    if (cl_arg.isNotNull()) {
+        Rcpp::CharacterVector cl_arg_in(cl_arg);
+        for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+            argv.push_back((char *) (cl_arg_in[i]));
+        }
+    }
+    argv.push_back((char *) (dsn[0]));
+    if (layers.isNotNull()) {
+        Rcpp::CharacterVector layers_in(layers);
+        for (R_xlen_t i = 0; i < layers_in.size(); ++i) {
+            argv.push_back((char *) (layers_in[i]));
+        }
+    }
+    argv.push_back(NULL);
+
+    GDALVectorInfoOptions *psOptions =
+            GDALVectorInfoOptionsNew(argv.data(), NULL);
+
+    if (psOptions == NULL) {
+        Rcpp::stop("ogrinfo() failed (could not create options struct).");
+    }
+
+    std::string info_out = "";
+    char *pszInfo = GDALVectorInfo(src_ds, psOptions);
+    if (pszInfo != NULL)
+        info_out = pszInfo;
+
+    CPLFree(pszInfo);
+    GDALVectorInfoOptionsFree(psOptions);
+    GDALClose(src_ds);
+
+    return info_out;
+
 #endif
 }
 
@@ -1373,101 +1373,101 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
 //' @noRd
 // [[Rcpp::export(name = ".polygonize")]]
 bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
-		Rcpp::CharacterVector out_dsn,
-		std::string out_layer, std::string fld_name,
-		Rcpp::CharacterVector mask_file = "", bool nomask = false,
-		int connectedness = 4, bool quiet = false) {
+        Rcpp::CharacterVector out_dsn,
+        std::string out_layer, std::string fld_name,
+        Rcpp::CharacterVector mask_file = "", bool nomask = false,
+        int connectedness = 4, bool quiet = false) {
 
-	GDALDatasetH hSrcDS = NULL;
-	GDALRasterBandH hSrcBand = NULL;
-	GDALDatasetH hMaskDS = NULL;
-	GDALRasterBandH hMaskBand = NULL;
-	GDALDatasetH hOutDS = NULL;
-	OGRLayerH hOutLayer = NULL;
-	int iPixValField;
+    GDALDatasetH hSrcDS = NULL;
+    GDALRasterBandH hSrcBand = NULL;
+    GDALDatasetH hMaskDS = NULL;
+    GDALRasterBandH hMaskBand = NULL;
+    GDALDatasetH hOutDS = NULL;
+    OGRLayerH hOutLayer = NULL;
+    int iPixValField;
 
-	std::string src_filename_in;
-	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
-	std::string out_dsn_in;
-	out_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(out_dsn));
-	std::string mask_file_in;
-	mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_file));
+    std::string src_filename_in;
+    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    std::string out_dsn_in;
+    out_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(out_dsn));
+    std::string mask_file_in;
+    mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_file));
 
-	if (connectedness != 4 && connectedness != 8)
-		Rcpp::stop("connectedness must be 4 or 8.");
-		
-	hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
-	if (hSrcDS == NULL)
-		Rcpp::stop("Open source raster failed.");
-		
-	hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
-	if (hSrcBand == NULL) {
-		GDALClose(hSrcDS);
-		Rcpp::stop("Failed to access the source band.");
-	}
+    if (connectedness != 4 && connectedness != 8)
+        Rcpp::stop("connectedness must be 4 or 8.");
 
-	if (mask_file_in == "" && nomask == false) {
-		// default validity mask
-		hMaskBand = GDALGetMaskBand(hSrcBand);
-	}
-	else if (mask_file_in == "" && nomask == true) {
-		// do not use default validity mask for source band (such as nodata)
-		hMaskBand = NULL;
-	}
-	else {
-		// mask_file specified
-		hMaskDS = GDALOpenShared(mask_file_in.c_str(), GA_ReadOnly);
-		if (hMaskDS == NULL) {
-			GDALClose(hSrcDS);
-			Rcpp::stop("Open mask raster failed.");
-		}
-		hMaskBand = GDALGetRasterBand(hMaskDS, 1);
-		if (hMaskBand == NULL) {
-			GDALClose(hSrcDS);
-			GDALClose(hMaskDS);
-			Rcpp::stop("Failed to access the mask band.");
-		}
-	}
+    hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
+    if (hSrcDS == NULL)
+        Rcpp::stop("Open source raster failed.");
 
-	hOutDS = GDALOpenEx(out_dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
-			NULL, NULL, NULL);
-	if (hOutDS == NULL) {
-		GDALClose(hSrcDS);
-		if (hMaskDS != NULL)
-			GDALClose(hMaskDS);
-		Rcpp::stop("Failed to open the output vector data source.");
-	}
-	
-	hOutLayer = GDALDatasetGetLayerByName(hOutDS, out_layer.c_str());
-	if (hOutLayer == NULL) {
-		GDALClose(hSrcDS);
-		if (hMaskDS != NULL)
-			GDALClose(hMaskDS);
-		GDALClose(hOutDS);
-		Rcpp::stop("Failed to open the output layer.");
-	}
-	
-	iPixValField = _ogr_field_index(out_dsn_in, out_layer, fld_name);
-	if (iPixValField == -1)
-		Rcpp::warning("Field not found, pixel values will not be written.");
-	
-	std::vector<char *> opt_list = {NULL};
-	if (connectedness == 8) {
-		auto it = opt_list.begin();
-    	it = opt_list.insert(it, (char *) ("8CONNECTED=8"));
-	}
-	
-	CPLErr err = GDALPolygonize(hSrcBand, hMaskBand, hOutLayer, iPixValField,
-			opt_list.data(), quiet ? NULL : GDALTermProgressR, NULL);
+    hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
+    if (hSrcBand == NULL) {
+        GDALClose(hSrcDS);
+        Rcpp::stop("Failed to access the source band.");
+    }
 
-	GDALClose(hSrcDS);
-	GDALReleaseDataset(hOutDS);
-	if (hMaskDS != NULL)
-		GDALClose(hMaskDS);
-	if (err != CE_None)
-		Rcpp::stop("Error in GDALPolygonize().");
+    if (mask_file_in == "" && nomask == false) {
+        // default validity mask
+        hMaskBand = GDALGetMaskBand(hSrcBand);
+    }
+    else if (mask_file_in == "" && nomask == true) {
+        // do not use default validity mask for source band (such as nodata)
+        hMaskBand = NULL;
+    }
+    else {
+        // mask_file specified
+        hMaskDS = GDALOpenShared(mask_file_in.c_str(), GA_ReadOnly);
+        if (hMaskDS == NULL) {
+            GDALClose(hSrcDS);
+            Rcpp::stop("Open mask raster failed.");
+        }
+        hMaskBand = GDALGetRasterBand(hMaskDS, 1);
+        if (hMaskBand == NULL) {
+            GDALClose(hSrcDS);
+            GDALClose(hMaskDS);
+            Rcpp::stop("Failed to access the mask band.");
+        }
+    }
 
-	return true;
+    hOutDS = GDALOpenEx(out_dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+            NULL, NULL, NULL);
+    if (hOutDS == NULL) {
+        GDALClose(hSrcDS);
+        if (hMaskDS != NULL)
+            GDALClose(hMaskDS);
+        Rcpp::stop("Failed to open the output vector data source.");
+    }
+
+    hOutLayer = GDALDatasetGetLayerByName(hOutDS, out_layer.c_str());
+    if (hOutLayer == NULL) {
+        GDALClose(hSrcDS);
+        if (hMaskDS != NULL)
+            GDALClose(hMaskDS);
+        GDALClose(hOutDS);
+        Rcpp::stop("Failed to open the output layer.");
+    }
+
+    iPixValField = _ogr_field_index(out_dsn_in, out_layer, fld_name);
+    if (iPixValField == -1)
+        Rcpp::warning("Field not found, pixel values will not be written.");
+
+    std::vector<char *> opt_list = {NULL};
+    if (connectedness == 8) {
+        auto it = opt_list.begin();
+        it = opt_list.insert(it, (char *) ("8CONNECTED=8"));
+    }
+
+    CPLErr err = GDALPolygonize(hSrcBand, hMaskBand, hOutLayer, iPixValField,
+            opt_list.data(), quiet ? NULL : GDALTermProgressR, NULL);
+
+    GDALClose(hSrcDS);
+    GDALReleaseDataset(hOutDS);
+    if (hMaskDS != NULL)
+        GDALClose(hMaskDS);
+    if (err != CE_None)
+        Rcpp::stop("Error in GDALPolygonize().");
+
+    return true;
 }
 
 
@@ -1477,36 +1477,36 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
 //' @noRd
 // [[Rcpp::export(name = ".rasterize")]]
 bool _rasterize(std::string src_dsn, std::string dst_filename,
-		Rcpp::CharacterVector cl_arg, bool quiet = false) {
+        Rcpp::CharacterVector cl_arg, bool quiet = false) {
 
-	GDALDatasetH hSrcDS;
-	hSrcDS = GDALOpenEx(src_dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
-	if (hSrcDS == NULL)
-		Rcpp::stop("Failed to open vector data source.");
+    GDALDatasetH hSrcDS;
+    hSrcDS = GDALOpenEx(src_dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
+    if (hSrcDS == NULL)
+        Rcpp::stop("Failed to open vector data source.");
 
-	std::vector<char *> argv(cl_arg.size() + 1);
-	for (R_xlen_t i = 0; i < cl_arg.size(); ++i) {
-		argv[i] = (char *) (cl_arg[i]);
-	}
-	argv[cl_arg.size()] = NULL;
-	
-	GDALRasterizeOptions* psOptions;
-	psOptions = GDALRasterizeOptionsNew(argv.data(), NULL);
-	if (psOptions == NULL)
-		Rcpp::stop("Rasterize failed (could not create options struct).");
-	if (!quiet)
-		GDALRasterizeOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
-	
-	GDALDatasetH hDstDS;
-	hDstDS = GDALRasterize(dst_filename.c_str(), NULL, hSrcDS, psOptions, NULL);
-							
-	GDALRasterizeOptionsFree(psOptions);
-	GDALClose(hSrcDS);
-	if (hDstDS == NULL)
-		Rcpp::stop("Rasterize failed.");
+    std::vector<char *> argv(cl_arg.size() + 1);
+    for (R_xlen_t i = 0; i < cl_arg.size(); ++i) {
+        argv[i] = (char *) (cl_arg[i]);
+    }
+    argv[cl_arg.size()] = NULL;
 
-	GDALClose(hDstDS);
-	return true;
+    GDALRasterizeOptions* psOptions;
+    psOptions = GDALRasterizeOptionsNew(argv.data(), NULL);
+    if (psOptions == NULL)
+        Rcpp::stop("Rasterize failed (could not create options struct).");
+    if (!quiet)
+        GDALRasterizeOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+
+    GDALDatasetH hDstDS;
+    hDstDS = GDALRasterize(dst_filename.c_str(), NULL, hSrcDS, psOptions, NULL);
+
+    GDALRasterizeOptionsFree(psOptions);
+    GDALClose(hSrcDS);
+    if (hDstDS == NULL)
+        Rcpp::stop("Rasterize failed.");
+
+    GDALClose(hDstDS);
+    return true;
 }
 
 
@@ -1587,97 +1587,97 @@ bool _rasterize(std::string src_dsn, std::string dst_filename,
 //'             mask_band = 1)
 // [[Rcpp::export(invisible = true)]]
 bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
-		Rcpp::CharacterVector dst_filename, int dst_band,
-		int size_threshold, int connectedness,
-		Rcpp::CharacterVector mask_filename = "", int mask_band = 0,
-		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
-		bool quiet = false) {
+        Rcpp::CharacterVector dst_filename, int dst_band,
+        int size_threshold, int connectedness,
+        Rcpp::CharacterVector mask_filename = "", int mask_band = 0,
+        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
+        bool quiet = false) {
 
-	GDALDatasetH hSrcDS = NULL;
-	GDALRasterBandH hSrcBand = NULL;
-	GDALDatasetH hMaskDS = NULL;
-	GDALRasterBandH hMaskBand = NULL;
-	GDALDatasetH hDstDS = NULL;
-	GDALRasterBandH hDstBand = NULL;
-	bool in_place = false;
-	CPLErr err;
+    GDALDatasetH hSrcDS = NULL;
+    GDALRasterBandH hSrcBand = NULL;
+    GDALDatasetH hMaskDS = NULL;
+    GDALRasterBandH hMaskBand = NULL;
+    GDALDatasetH hDstDS = NULL;
+    GDALRasterBandH hDstBand = NULL;
+    bool in_place = false;
+    CPLErr err;
 
-	std::string src_filename_in;
-	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
-	std::string dst_filename_in;
-	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
-	std::string mask_file_in;
-	mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_filename));
-	
-	if (size_threshold < 1)
-		Rcpp::stop("size_threshold must be 1 or larger.");
-		
-	if (connectedness != 4 && connectedness != 8)
-		Rcpp::stop("connectedness must be 4 or 8.");
-	
-	if (src_filename_in == dst_filename_in && src_band == dst_band)
-		in_place = true;
-	
-	if (in_place)
-		hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_Update);
-	else
-		hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
-	if (hSrcDS == NULL)
-		Rcpp::stop("Open source raster failed.");
-	hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
-	if (hSrcBand == NULL) {
-		GDALClose(hSrcDS);
-		Rcpp::stop("Failed to access the source band.");
-	}
-	
-	if (mask_file_in != "") {
-		hMaskDS = GDALOpenShared(mask_file_in.c_str(), GA_ReadOnly);
-		if (hMaskDS == NULL) {
-			GDALClose(hSrcDS);
-			Rcpp::stop("Open mask raster failed.");
-		}
-		hMaskBand = GDALGetRasterBand(hMaskDS, mask_band);
-		if (hMaskBand == NULL) {
-			GDALClose(hSrcDS);
-			GDALClose(hMaskDS);
-			Rcpp::stop("Failed to access the mask band.");
-		}
-	}
-	
-	if (!in_place) {
-		hDstDS = GDALOpenShared(dst_filename_in.c_str(), GA_Update);
-		if (hDstDS == NULL) {
-			GDALClose(hSrcDS);
-			if (hMaskDS != NULL)
-				GDALClose(hMaskDS);
-			Rcpp::stop("Open destination raster failed.");
-		}
-		hDstBand = GDALGetRasterBand(hDstDS, dst_band);
-		if (hDstBand == NULL) {
-			GDALClose(hSrcDS);
-			if (hMaskDS != NULL)
-				GDALClose(hMaskDS);
-			GDALClose(hDstDS);
-			Rcpp::stop("Failed to access the destination band.");
-		}
-	}
-	
-	if (in_place)
-		err = GDALSieveFilter(hSrcBand, hMaskBand, hSrcBand, size_threshold,
-				connectedness, NULL, quiet ? NULL : GDALTermProgressR, NULL);
-	else
-		err = GDALSieveFilter(hSrcBand, hMaskBand, hDstBand, size_threshold,
-				connectedness, NULL, quiet ? NULL : GDALTermProgressR, NULL);	
-		
-	GDALClose(hSrcDS);
-	if (hMaskDS != NULL)
-		GDALClose(hMaskDS);
-	if (hDstDS != NULL)
-		GDALClose(hDstDS);
-	if (err != CE_None)
-		Rcpp::stop("Error in GDALSieveFilter().");
+    std::string src_filename_in;
+    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    std::string dst_filename_in;
+    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+    std::string mask_file_in;
+    mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_filename));
 
-	return true;
+    if (size_threshold < 1)
+        Rcpp::stop("size_threshold must be 1 or larger.");
+
+    if (connectedness != 4 && connectedness != 8)
+        Rcpp::stop("connectedness must be 4 or 8.");
+
+    if (src_filename_in == dst_filename_in && src_band == dst_band)
+        in_place = true;
+
+    if (in_place)
+        hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_Update);
+    else
+        hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
+    if (hSrcDS == NULL)
+        Rcpp::stop("Open source raster failed.");
+    hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
+    if (hSrcBand == NULL) {
+        GDALClose(hSrcDS);
+        Rcpp::stop("Failed to access the source band.");
+    }
+
+    if (mask_file_in != "") {
+        hMaskDS = GDALOpenShared(mask_file_in.c_str(), GA_ReadOnly);
+        if (hMaskDS == NULL) {
+            GDALClose(hSrcDS);
+            Rcpp::stop("Open mask raster failed.");
+        }
+        hMaskBand = GDALGetRasterBand(hMaskDS, mask_band);
+        if (hMaskBand == NULL) {
+            GDALClose(hSrcDS);
+            GDALClose(hMaskDS);
+            Rcpp::stop("Failed to access the mask band.");
+        }
+    }
+
+    if (!in_place) {
+        hDstDS = GDALOpenShared(dst_filename_in.c_str(), GA_Update);
+        if (hDstDS == NULL) {
+            GDALClose(hSrcDS);
+            if (hMaskDS != NULL)
+                GDALClose(hMaskDS);
+            Rcpp::stop("Open destination raster failed.");
+        }
+        hDstBand = GDALGetRasterBand(hDstDS, dst_band);
+        if (hDstBand == NULL) {
+            GDALClose(hSrcDS);
+            if (hMaskDS != NULL)
+                GDALClose(hMaskDS);
+            GDALClose(hDstDS);
+            Rcpp::stop("Failed to access the destination band.");
+        }
+    }
+
+    if (in_place)
+        err = GDALSieveFilter(hSrcBand, hMaskBand, hSrcBand, size_threshold,
+                connectedness, NULL, quiet ? NULL : GDALTermProgressR, NULL);
+    else
+        err = GDALSieveFilter(hSrcBand, hMaskBand, hDstBand, size_threshold,
+                connectedness, NULL, quiet ? NULL : GDALTermProgressR, NULL);
+
+    GDALClose(hSrcDS);
+    if (hMaskDS != NULL)
+        GDALClose(hMaskDS);
+    if (hDstDS != NULL)
+        GDALClose(hDstDS);
+    if (err != CE_None)
+        Rcpp::stop("Error in GDALSieveFilter().");
+
+    return true;
 }
 
 
@@ -1693,13 +1693,13 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //'
 //' @param src_filename Character string. Filename of the source raster.
 //' @param dst_filename Character string. Filename of the output raster.
-//' @param cl_arg Optional character vector of command-line arguments for 
+//' @param cl_arg Optional character vector of command-line arguments for
 //' \code{gdal_translate} (see URL above).
 //' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
 //' displayed. Defaults to `FALSE`.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
-//' 
+//'
 //' @seealso
 //' [`GDALRaster-class`][GDALRaster], [rasterFromRaster()], [warp()]
 //'
@@ -1715,7 +1715,7 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //'
 //' img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
 //' translate(elev_file, img_file, args)
-//' 
+//'
 //' ds <- new(GDALRaster, img_file)
 //' ds$getDriverLongName()
 //' ds$bbox()
@@ -1724,52 +1724,52 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
 bool translate(Rcpp::CharacterVector src_filename,
-		Rcpp::CharacterVector dst_filename,
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-		bool quiet = false) {
+        Rcpp::CharacterVector dst_filename,
+        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+        bool quiet = false) {
 
-	std::string src_filename_in;
-	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
-	std::string dst_filename_in;
-	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
-	
-	bool ret = false;
-	GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
-	if (src_ds == NULL)
-		Rcpp::stop("Open source raster failed.");
+    std::string src_filename_in;
+    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    std::string dst_filename_in;
+    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
 
-	std::vector<char *> argv = {NULL};
-	if (cl_arg.isNotNull()) {
-		// cast Nullable to the underlying type
-		Rcpp::CharacterVector cl_arg_in(cl_arg);
-		argv.resize(cl_arg_in.size() + 1);
-		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-			argv[i] = (char *) (cl_arg_in[i]);
-		}
-		argv[cl_arg_in.size()] = NULL;
-	}
-	
-	GDALTranslateOptions* psOptions = GDALTranslateOptionsNew(argv.data(), NULL);
-	if (psOptions == NULL)
-		Rcpp::stop("Translate failed (could not create options struct).");
-	if (!quiet)
-		GDALTranslateOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
-	
-	GDALDatasetH hDstDS = GDALTranslate(dst_filename_in.c_str(), src_ds,
-							psOptions, NULL);
-							
-	GDALTranslateOptionsFree(psOptions);
-	
-	if (hDstDS != NULL) {
-		GDALClose(hDstDS);
-		ret = true;
-	}
-	GDALClose(src_ds);
-	
-	if (!ret)
-		Rcpp::stop("Warp raster failed.");
-	
-	return ret;
+    bool ret = false;
+    GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
+    if (src_ds == NULL)
+        Rcpp::stop("Open source raster failed.");
+
+    std::vector<char *> argv = {NULL};
+    if (cl_arg.isNotNull()) {
+        // cast Nullable to the underlying type
+        Rcpp::CharacterVector cl_arg_in(cl_arg);
+        argv.resize(cl_arg_in.size() + 1);
+        for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+            argv[i] = (char *) (cl_arg_in[i]);
+        }
+        argv[cl_arg_in.size()] = NULL;
+    }
+
+    GDALTranslateOptions* psOptions = GDALTranslateOptionsNew(argv.data(), NULL);
+    if (psOptions == NULL)
+        Rcpp::stop("Translate failed (could not create options struct).");
+    if (!quiet)
+        GDALTranslateOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+
+    GDALDatasetH hDstDS = GDALTranslate(dst_filename_in.c_str(), src_ds,
+                            psOptions, NULL);
+
+    GDALTranslateOptionsFree(psOptions);
+
+    if (hDstDS != NULL) {
+        GDALClose(hDstDS);
+        ret = true;
+    }
+    GDALClose(src_ds);
+
+    if (!ret)
+        Rcpp::stop("Warp raster failed.");
+
+    return ret;
 }
 
 
@@ -1896,14 +1896,14 @@ bool translate(Rcpp::CharacterVector src_filename,
 //' }
 //' to set the target pixel resolution to 30 x 30 in target georeferenced
 //' units and use bilinear resampling.
-//' 
+//'
 //' @param src_files Character vector of source file(s) to be reprojected.
 //' @param dst_filename Character string. Filename of the output raster.
-//' @param t_srs Character string. Target spatial reference system. Usually an 
+//' @param t_srs Character string. Target spatial reference system. Usually an
 //' EPSG code ("EPSG:#####") or a well known text (WKT) SRS definition.
 //' If empty string `""`, the spatial reference of `src_files[1]` will be
 //' used (see Note).
-//' @param cl_arg Optional character vector of command-line arguments to 
+//' @param cl_arg Optional character vector of command-line arguments to
 //' \code{gdalwarp} in addition to `-t_srs` (see Details).
 //' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
 //' displayed. Defaults to `FALSE`.
@@ -1938,7 +1938,7 @@ bool translate(Rcpp::CharacterVector src_filename,
 //'
 //' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
 //' warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
-//' 
+//'
 //' ds <- new(GDALRaster, alb83_file)
 //' ds$getDriverLongName()
 //' ds$getProjectionRef()
@@ -1947,72 +1947,72 @@ bool translate(Rcpp::CharacterVector src_filename,
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
 bool warp(Rcpp::CharacterVector src_files,
-		Rcpp::CharacterVector dst_filename,
-		std::string t_srs, 
-		Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-		bool quiet = false) {
+        Rcpp::CharacterVector dst_filename,
+        std::string t_srs,
+        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+        bool quiet = false) {
 
-	std::string dst_filename_in;
-	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
-	
-	bool ret = false;
-	std::vector<GDALDatasetH> src_ds(src_files.size());
-	
-	for (R_xlen_t i = 0; i < src_files.size(); ++i) {
-		std::string src_file_in;
-		src_file_in = Rcpp::as<std::string>(_check_gdal_filename(
-				Rcpp::as<Rcpp::CharacterVector>(src_files[i])));
-		GDALDatasetH hDS = GDALOpenShared(src_file_in.c_str(), GA_ReadOnly);
-		if (hDS == NULL) {
-			Rcpp::Rcerr << "Error on source: " << src_file_in.c_str() << "\n";
-			Rcpp::stop("Open source raster failed.");
-		}
-		else {
-			src_ds[i] = hDS;
-		}
-	}
-	
-	std::string t_srs_in;
-	if (t_srs != "")
-		t_srs_in = t_srs;
-	else
-		t_srs_in = GDALGetProjectionRef(src_ds[0]);
+    std::string dst_filename_in;
+    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
 
-	std::vector<char *> argv =
-			{(char *) ("-t_srs"), (char *) (t_srs_in.c_str()), NULL};
-			
-	if (cl_arg.isNotNull()) {
-		Rcpp::CharacterVector cl_arg_in(cl_arg);
-		argv.resize(cl_arg_in.size() + 3);
-		for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-			argv[i+2] = (char *) (cl_arg_in[i]);
-		}
-		argv[cl_arg_in.size() + 2] = NULL;
-	}
-	
-	GDALWarpAppOptions* psOptions = GDALWarpAppOptionsNew(argv.data(), NULL);
-	if (psOptions == NULL)
-		Rcpp::stop("Warp raster failed (could not create options struct).");
-	if (!quiet)
-		GDALWarpAppOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
-	
-	GDALDatasetH hDstDS = GDALWarp(dst_filename_in.c_str(), NULL,
-							src_files.size(), src_ds.data(),
-							psOptions, NULL);
-							
-	GDALWarpAppOptionsFree(psOptions);
-	
-	if (hDstDS != NULL) {
-		GDALClose(hDstDS);
-		ret = true;
-	}
-	for (R_xlen_t i = 0; i < src_files.size(); ++i)
-		GDALClose(src_ds[i]);
-	
-	if (!ret)
-		Rcpp::stop("Warp raster failed.");
-	
-	return ret;
+    bool ret = false;
+    std::vector<GDALDatasetH> src_ds(src_files.size());
+
+    for (R_xlen_t i = 0; i < src_files.size(); ++i) {
+        std::string src_file_in;
+        src_file_in = Rcpp::as<std::string>(_check_gdal_filename(
+                Rcpp::as<Rcpp::CharacterVector>(src_files[i])));
+        GDALDatasetH hDS = GDALOpenShared(src_file_in.c_str(), GA_ReadOnly);
+        if (hDS == NULL) {
+            Rcpp::Rcerr << "Error on source: " << src_file_in.c_str() << "\n";
+            Rcpp::stop("Open source raster failed.");
+        }
+        else {
+            src_ds[i] = hDS;
+        }
+    }
+
+    std::string t_srs_in;
+    if (t_srs != "")
+        t_srs_in = t_srs;
+    else
+        t_srs_in = GDALGetProjectionRef(src_ds[0]);
+
+    std::vector<char *> argv =
+            {(char *) ("-t_srs"), (char *) (t_srs_in.c_str()), NULL};
+
+    if (cl_arg.isNotNull()) {
+        Rcpp::CharacterVector cl_arg_in(cl_arg);
+        argv.resize(cl_arg_in.size() + 3);
+        for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
+            argv[i+2] = (char *) (cl_arg_in[i]);
+        }
+        argv[cl_arg_in.size() + 2] = NULL;
+    }
+
+    GDALWarpAppOptions* psOptions = GDALWarpAppOptionsNew(argv.data(), NULL);
+    if (psOptions == NULL)
+        Rcpp::stop("Warp raster failed (could not create options struct).");
+    if (!quiet)
+        GDALWarpAppOptionsSetProgress(psOptions, GDALTermProgressR, NULL);
+
+    GDALDatasetH hDstDS = GDALWarp(dst_filename_in.c_str(), NULL,
+                            src_files.size(), src_ds.data(),
+                            psOptions, NULL);
+
+    GDALWarpAppOptionsFree(psOptions);
+
+    if (hDstDS != NULL) {
+        GDALClose(hDstDS);
+        ret = true;
+    }
+    for (R_xlen_t i = 0; i < src_files.size(); ++i)
+        GDALClose(src_ds[i]);
+
+    if (!ret)
+        Rcpp::stop("Warp raster failed.");
+
+    return ret;
 }
 
 
@@ -2038,7 +2038,7 @@ bool warp(Rcpp::CharacterVector src_files,
 //' A color entry value to end the ramp (e.g., RGB values).
 //' @param palette_interp One of "Gray", "RGB" (the default), "CMYK" or "HLS"
 //' describing interpretation of `start_color` and `end_color` values
-//' (see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL 
+//' (see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL
 //' Color Table}).
 //' @returns Integer matrix with five columns containing the color ramp from
 //' `start_index` to `end_index`, with raster index values in column 1 and
@@ -2067,109 +2067,109 @@ bool warp(Rcpp::CharacterVector src_files,
 //'                  dtName = "Byte",
 //'                  nodata_value = 255,
 //'                  setRasterNodataValue = TRUE)
-//' 
+//'
 //' ds_tcc <- new(GDALRaster, tcc_file, read_only=FALSE)
-//' 
+//'
 //' # create a color ramp from 0 to 100 and set as the color table
 //' colors <- createColorRamp(start_index = 0,
 //'                           start_color = c(211, 211, 211),
 //'                           end_index = 100,
 //'                           end_color = c(0, 100, 0))
-//' 
+//'
 //' print(colors)
 //' ds_tcc$setColorTable(band=1, col_tbl=colors, palette_interp="RGB")
 //' ds_tcc$setRasterColorInterp(band=1, col_interp="Palette")
-//' 
+//'
 //' # close and re-open the dataset in read_only mode
 //' ds_tcc$open(read_only=TRUE)
-//' 
+//'
 //' plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
 //'             main="Storm Lake Tree Canopy Cover (%)")
 //' ds_tcc$close()
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix createColorRamp(int start_index,
-		Rcpp::IntegerVector start_color,
-		int end_index,
-		Rcpp::IntegerVector end_color,
-		std::string palette_interp = "RGB") {
-		
-	if (end_index <= start_index)
-		Rcpp::stop("end_index must be greater than start_index.");
-	if (start_color.size() < 3 || start_color.size() > 4)
-		Rcpp::stop("Length of start_color must be 3 or 4.");
-	if (end_color.size() < 3 || end_color.size() > 4)
-		Rcpp::stop("Length of end_color must be 3 or 4.");
-	
-	if (start_color.size() == 3)
-		start_color.push_back(255);
-	if (end_color.size() == 3)
-		end_color.push_back(255);
+        Rcpp::IntegerVector start_color,
+        int end_index,
+        Rcpp::IntegerVector end_color,
+        std::string palette_interp = "RGB") {
 
-	GDALPaletteInterp gpi;
-	if (palette_interp ==  "Gray" || palette_interp == "gray")
-		gpi = GPI_Gray;
-	else if (palette_interp ==  "RGB")
-		gpi = GPI_RGB;
-	else if (palette_interp ==  "CMYK")
-		gpi = GPI_CMYK;
-	else if (palette_interp ==  "HLS")
-		gpi = GPI_HLS;
-	else
-		Rcpp::stop("Invalid palette_interp.");
+    if (end_index <= start_index)
+        Rcpp::stop("end_index must be greater than start_index.");
+    if (start_color.size() < 3 || start_color.size() > 4)
+        Rcpp::stop("Length of start_color must be 3 or 4.");
+    if (end_color.size() < 3 || end_color.size() > 4)
+        Rcpp::stop("Length of end_color must be 3 or 4.");
 
-	GDALColorTableH hColTbl = GDALCreateColorTable(gpi);
-	if (hColTbl == NULL)
-		Rcpp::stop("Could not create GDAL color table.");
-	
-	const GDALColorEntry colStart = {
-			static_cast<short>(start_color(0)),
-			static_cast<short>(start_color(1)),
-			static_cast<short>(start_color(2)),
-			static_cast<short>(start_color(3)) };
-	const GDALColorEntry colEnd = {
-			static_cast<short>(end_color(0)),
-			static_cast<short>(end_color(1)),
-			static_cast<short>(end_color(2)),
-			static_cast<short>(end_color(3)) };
+    if (start_color.size() == 3)
+        start_color.push_back(255);
+    if (end_color.size() == 3)
+        end_color.push_back(255);
 
-	GDALCreateColorRamp(hColTbl, start_index, &colStart, end_index, &colEnd);
-	
-	//int nEntries = GDALGetColorEntryCount(hColTbl);
-	int nEntries = (end_index - start_index) + 1;
-	Rcpp::IntegerMatrix col_tbl(nEntries, 5);
-	Rcpp::CharacterVector col_tbl_names;
+    GDALPaletteInterp gpi;
+    if (palette_interp ==  "Gray" || palette_interp == "gray")
+        gpi = GPI_Gray;
+    else if (palette_interp ==  "RGB")
+        gpi = GPI_RGB;
+    else if (palette_interp ==  "CMYK")
+        gpi = GPI_CMYK;
+    else if (palette_interp ==  "HLS")
+        gpi = GPI_HLS;
+    else
+        Rcpp::stop("Invalid palette_interp.");
 
-	if (gpi == GPI_Gray) {
-		col_tbl_names = {"value", "gray", "c2", "c3", "c4"};
-		Rcpp::colnames(col_tbl) = col_tbl_names;
-	}
-	else if (gpi == GPI_RGB) {
-		col_tbl_names = {"value", "red", "green", "blue", "alpha"};
-		Rcpp::colnames(col_tbl) = col_tbl_names;
-	}
-	else if (gpi == GPI_CMYK) {
-		col_tbl_names = {"value", "cyan", "magenta", "yellow", "black"};
-		Rcpp::colnames(col_tbl) = col_tbl_names;
-	}
-	else if (gpi == GPI_HLS) {
-		col_tbl_names = {"value", "hue", "lightness", "saturation", "c4"};
-		Rcpp::colnames(col_tbl) = col_tbl_names;
-	}
+    GDALColorTableH hColTbl = GDALCreateColorTable(gpi);
+    if (hColTbl == NULL)
+        Rcpp::stop("Could not create GDAL color table.");
 
-	int idx = start_index;
-	for (int i=0; i < nEntries; ++i) {
-		const GDALColorEntry* colEntry = GDALGetColorEntry(hColTbl, idx);
-		col_tbl(i, 0) = idx;
-		col_tbl(i, 1) = colEntry->c1;
-		col_tbl(i, 2) = colEntry->c2;
-		col_tbl(i, 3) = colEntry->c3;
-		col_tbl(i, 4) = colEntry->c4;
-		++idx;
-	}
-	
-	GDALDestroyColorTable(hColTbl);
-	
-	return col_tbl;
+    const GDALColorEntry colStart = {
+            static_cast<short>(start_color(0)),
+            static_cast<short>(start_color(1)),
+            static_cast<short>(start_color(2)),
+            static_cast<short>(start_color(3)) };
+    const GDALColorEntry colEnd = {
+            static_cast<short>(end_color(0)),
+            static_cast<short>(end_color(1)),
+            static_cast<short>(end_color(2)),
+            static_cast<short>(end_color(3)) };
+
+    GDALCreateColorRamp(hColTbl, start_index, &colStart, end_index, &colEnd);
+
+    //int nEntries = GDALGetColorEntryCount(hColTbl);
+    int nEntries = (end_index - start_index) + 1;
+    Rcpp::IntegerMatrix col_tbl(nEntries, 5);
+    Rcpp::CharacterVector col_tbl_names;
+
+    if (gpi == GPI_Gray) {
+        col_tbl_names = {"value", "gray", "c2", "c3", "c4"};
+        Rcpp::colnames(col_tbl) = col_tbl_names;
+    }
+    else if (gpi == GPI_RGB) {
+        col_tbl_names = {"value", "red", "green", "blue", "alpha"};
+        Rcpp::colnames(col_tbl) = col_tbl_names;
+    }
+    else if (gpi == GPI_CMYK) {
+        col_tbl_names = {"value", "cyan", "magenta", "yellow", "black"};
+        Rcpp::colnames(col_tbl) = col_tbl_names;
+    }
+    else if (gpi == GPI_HLS) {
+        col_tbl_names = {"value", "hue", "lightness", "saturation", "c4"};
+        Rcpp::colnames(col_tbl) = col_tbl_names;
+    }
+
+    int idx = start_index;
+    for (int i=0; i < nEntries; ++i) {
+        const GDALColorEntry* colEntry = GDALGetColorEntry(hColTbl, idx);
+        col_tbl(i, 0) = idx;
+        col_tbl(i, 1) = colEntry->c1;
+        col_tbl(i, 2) = colEntry->c2;
+        col_tbl(i, 3) = colEntry->c3;
+        col_tbl(i, 4) = colEntry->c4;
+        ++idx;
+    }
+
+    GDALDestroyColorTable(hColTbl);
+
+    return col_tbl;
 }
 
 
@@ -2189,7 +2189,7 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //' @param options Optional list of transfer hints in a vector of `"NAME=VALUE"`
 //' pairs. The currently supported `options` are:
 //'   * `"COMPRESSED=YES"` to force alignment on target dataset block sizes to
-//'   achieve best compression. 
+//'   achieve best compression.
 //'    * `"SKIP_HOLES=YES"` to skip chunks that contain only empty blocks.
 //'    Empty blocks are blocks that are generally not physically present in the
 //'    file, and when read through GDAL, contain only pixels whose value is the
@@ -2218,63 +2218,63 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //' ds$close()
 // [[Rcpp::export(invisible = true)]]
 bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
-		Rcpp::CharacterVector dst_filename, int dst_band,
-		Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
-		bool quiet = false) {
+        Rcpp::CharacterVector dst_filename, int dst_band,
+        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
+        bool quiet = false) {
 
-	GDALDatasetH hSrcDS = NULL;
-	GDALRasterBandH hSrcBand = NULL;
-	GDALDatasetH hDstDS = NULL;
-	GDALRasterBandH hDstBand = NULL;
-	CPLErr err;
+    GDALDatasetH hSrcDS = NULL;
+    GDALRasterBandH hSrcBand = NULL;
+    GDALDatasetH hDstDS = NULL;
+    GDALRasterBandH hDstBand = NULL;
+    CPLErr err;
 
-	std::string src_filename_in;
-	src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
-	std::string dst_filename_in;
-	dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
-	
-	hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
-	if (hSrcDS == NULL)
-		Rcpp::stop("Open source raster failed.");
-	hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
-	if (hSrcBand == NULL) {
-		GDALClose(hSrcDS);
-		Rcpp::stop("Failed to access the source band.");
-	}
-	
-	hDstDS = GDALOpenShared(dst_filename_in.c_str(), GA_Update);
-	if (hDstDS == NULL) {
-		GDALClose(hSrcDS);
-		Rcpp::stop("Open destination raster failed.");
-	}
-	hDstBand = GDALGetRasterBand(hDstDS, dst_band);
-	if (hDstBand == NULL) {
-		GDALClose(hSrcDS);
-		GDALClose(hDstDS);
-		Rcpp::stop("Failed to access the destination band.");
-	}
-	
-	std::vector<char *> opt_list = {NULL};
-	if (options.isNotNull()) {
-		// cast to the underlying type
-		// https://gallery.rcpp.org/articles/optional-null-function-arguments/
-		Rcpp::CharacterVector options_in(options);
-		opt_list.resize(options_in.size() + 1);
-		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
-			opt_list[i] = (char *) (options_in[i]);
-		}
-		opt_list[options_in.size()] = NULL;
-	}
-	
-	err = GDALRasterBandCopyWholeRaster(hSrcBand, hDstBand, opt_list.data(),
-			quiet ? NULL : GDALTermProgressR, NULL);
-		
-	GDALClose(hSrcDS);
-	GDALClose(hDstDS);
-	if (err != CE_None)
-		Rcpp::stop("Error in GDALRasterBandCopyWholeRaster().");
+    std::string src_filename_in;
+    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    std::string dst_filename_in;
+    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
 
-	return true;
+    hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
+    if (hSrcDS == NULL)
+        Rcpp::stop("Open source raster failed.");
+    hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
+    if (hSrcBand == NULL) {
+        GDALClose(hSrcDS);
+        Rcpp::stop("Failed to access the source band.");
+    }
+
+    hDstDS = GDALOpenShared(dst_filename_in.c_str(), GA_Update);
+    if (hDstDS == NULL) {
+        GDALClose(hSrcDS);
+        Rcpp::stop("Open destination raster failed.");
+    }
+    hDstBand = GDALGetRasterBand(hDstDS, dst_band);
+    if (hDstBand == NULL) {
+        GDALClose(hSrcDS);
+        GDALClose(hDstDS);
+        Rcpp::stop("Failed to access the destination band.");
+    }
+
+    std::vector<char *> opt_list = {NULL};
+    if (options.isNotNull()) {
+        // cast to the underlying type
+        // https://gallery.rcpp.org/articles/optional-null-function-arguments/
+        Rcpp::CharacterVector options_in(options);
+        opt_list.resize(options_in.size() + 1);
+        for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+            opt_list[i] = (char *) (options_in[i]);
+        }
+        opt_list[options_in.size()] = NULL;
+    }
+
+    err = GDALRasterBandCopyWholeRaster(hSrcBand, hDstBand, opt_list.data(),
+            quiet ? NULL : GDALTermProgressR, NULL);
+
+    GDALClose(hSrcDS);
+    GDALClose(hDstDS);
+    if (err != CE_None)
+        Rcpp::stop("Error in GDALRasterBandCopyWholeRaster().");
+
+    return true;
 }
 
 
@@ -2312,7 +2312,7 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 //' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
 //' file.copy(b5_file,  b5_tmp)
-//' 
+//'
 //' ds <- new(GDALRaster, b5_tmp)
 //' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
 //' files <- ds$getFileList()
@@ -2324,29 +2324,29 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 // [[Rcpp::export]]
 bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
 
-	std::string filename_in;
-	filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
+    std::string filename_in;
+    filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
 
-	GDALDriverH hDriver;
-	if (format == "") {
-		hDriver = GDALIdentifyDriver(filename_in.c_str(), NULL);
-		if (hDriver == NULL)
-			Rcpp::stop("Failed to get driver from file name.");
-	}
-	else {
-		hDriver = GDALGetDriverByName(format.c_str());
-		if (hDriver == NULL)
-			Rcpp::stop("Failed to get driver from format name.");
-	}
-	
-	CPLErr err = GDALDeleteDataset(hDriver, filename_in.c_str());
-	if (err != CE_None) {
-		Rcpp::Rcerr << "Error from GDALDeleteDataset().\n";
-		return false;
-	}
-	else {
-		return true;
-	}
+    GDALDriverH hDriver;
+    if (format == "") {
+        hDriver = GDALIdentifyDriver(filename_in.c_str(), NULL);
+        if (hDriver == NULL)
+            Rcpp::stop("Failed to get driver from file name.");
+    }
+    else {
+        hDriver = GDALGetDriverByName(format.c_str());
+        if (hDriver == NULL)
+            Rcpp::stop("Failed to get driver from format name.");
+    }
+
+    CPLErr err = GDALDeleteDataset(hDriver, filename_in.c_str());
+    if (err != CE_None) {
+        Rcpp::Rcerr << "Error from GDALDeleteDataset().\n";
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 
@@ -2383,7 +2383,7 @@ bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 //' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
 //' file.copy(b5_file,  b5_tmp)
-//' 
+//'
 //' ds <- new(GDALRaster, b5_tmp)
 //' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
 //' ds$getFileList()
@@ -2395,35 +2395,35 @@ bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
 //' ds$close()
 // [[Rcpp::export]]
 bool renameDataset(Rcpp::CharacterVector new_filename,
-		Rcpp::CharacterVector old_filename,
-		std::string format = "") {
+        Rcpp::CharacterVector old_filename,
+        std::string format = "") {
 
-	std::string new_filename_in;
-	new_filename_in = Rcpp::as<std::string>(_check_gdal_filename(new_filename));
-	std::string old_filename_in;
-	old_filename_in = Rcpp::as<std::string>(_check_gdal_filename(old_filename));
-	
-	GDALDriverH hDriver;
-	if (format == "") {
-		hDriver = GDALIdentifyDriver(old_filename_in.c_str(), NULL);
-		if (hDriver == NULL)
-			Rcpp::stop("Failed to get driver from file name.");
-	}
-	else {
-		hDriver = GDALGetDriverByName(format.c_str());
-		if (hDriver == NULL)
-			Rcpp::stop("Failed to get driver from format name.");
-	}
-	
-	CPLErr err = GDALRenameDataset(hDriver, new_filename_in.c_str(),
-			old_filename_in.c_str());
-	if (err != CE_None) {
-		Rcpp::Rcerr << "Error from GDALRenameDataset().\n";
-		return false;
-	}
-	else {
-		return true;
-	}
+    std::string new_filename_in;
+    new_filename_in = Rcpp::as<std::string>(_check_gdal_filename(new_filename));
+    std::string old_filename_in;
+    old_filename_in = Rcpp::as<std::string>(_check_gdal_filename(old_filename));
+
+    GDALDriverH hDriver;
+    if (format == "") {
+        hDriver = GDALIdentifyDriver(old_filename_in.c_str(), NULL);
+        if (hDriver == NULL)
+            Rcpp::stop("Failed to get driver from file name.");
+    }
+    else {
+        hDriver = GDALGetDriverByName(format.c_str());
+        if (hDriver == NULL)
+            Rcpp::stop("Failed to get driver from format name.");
+    }
+
+    CPLErr err = GDALRenameDataset(hDriver, new_filename_in.c_str(),
+            old_filename_in.c_str());
+    if (err != CE_None) {
+        Rcpp::Rcerr << "Error from GDALRenameDataset().\n";
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 
@@ -2456,7 +2456,7 @@ bool renameDataset(Rcpp::CharacterVector new_filename,
 //' ds <- new(GDALRaster, lcp_file)
 //' ds$getFileList()
 //' ds$close()
-//' 
+//'
 //' lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
 //' copyDatasetFiles(lcp_tmp, lcp_file)
 //' ds_copy <- new(GDALRaster, lcp_tmp)
@@ -2464,35 +2464,35 @@ bool renameDataset(Rcpp::CharacterVector new_filename,
 //' ds_copy$close()
 // [[Rcpp::export]]
 bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
-		Rcpp::CharacterVector old_filename,
-		std::string format = "") {
+        Rcpp::CharacterVector old_filename,
+        std::string format = "") {
 
-	std::string new_filename_in;
-	new_filename_in = Rcpp::as<std::string>(_check_gdal_filename(new_filename));
-	std::string old_filename_in;
-	old_filename_in = Rcpp::as<std::string>(_check_gdal_filename(old_filename));
-	
-	GDALDriverH hDriver;
-	if (format == "") {
-		hDriver = GDALIdentifyDriver(old_filename_in.c_str(), NULL);
-		if (hDriver == NULL)
-			Rcpp::stop("Failed to get driver from file name.");
-	}
-	else {
-		hDriver = GDALGetDriverByName(format.c_str());
-		if (hDriver == NULL)
-			Rcpp::stop("Failed to get driver from format name.");
-	}
-	
-	CPLErr err = GDALCopyDatasetFiles(hDriver, new_filename_in.c_str(),
-			old_filename_in.c_str());
-	if (err != CE_None) {
-		Rcpp::Rcerr << "Error from GDALCopyDatasetFiles().\n";
-		return false;
-	}
-	else {
-		return true;
-	}
+    std::string new_filename_in;
+    new_filename_in = Rcpp::as<std::string>(_check_gdal_filename(new_filename));
+    std::string old_filename_in;
+    old_filename_in = Rcpp::as<std::string>(_check_gdal_filename(old_filename));
+
+    GDALDriverH hDriver;
+    if (format == "") {
+        hDriver = GDALIdentifyDriver(old_filename_in.c_str(), NULL);
+        if (hDriver == NULL)
+            Rcpp::stop("Failed to get driver from file name.");
+    }
+    else {
+        hDriver = GDALGetDriverByName(format.c_str());
+        if (hDriver == NULL)
+            Rcpp::stop("Failed to get driver from format name.");
+    }
+
+    CPLErr err = GDALCopyDatasetFiles(hDriver, new_filename_in.c_str(),
+            old_filename_in.c_str());
+    if (err != CE_None) {
+        Rcpp::Rcerr << "Error from GDALCopyDatasetFiles().\n";
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 
@@ -2503,11 +2503,11 @@ bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
 // [[Rcpp::export(name = ".getCreationOptions")]]
 std::string _getCreationOptions(std::string format) {
 
-	GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
-	if (hDriver == NULL)
-		Rcpp::stop("Failed to get driver from format name.");
+    GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
+    if (hDriver == NULL)
+        Rcpp::stop("Failed to get driver from format name.");
 
-	return GDALGetDriverCreationOptionList(hDriver);
+    return GDALGetDriverCreationOptionList(hDriver);
 }
 
 
@@ -2517,59 +2517,59 @@ std::string _getCreationOptions(std::string format) {
 //' @noRd
 // [[Rcpp::export(name = ".addFileInZip")]]
 bool _addFileInZip(std::string zip_filename, bool overwrite,
-		std::string archive_filename, std::string in_filename,
-		Rcpp::Nullable<Rcpp::CharacterVector> options,
-		bool quiet) {
+        std::string archive_filename, std::string in_filename,
+        Rcpp::Nullable<Rcpp::CharacterVector> options,
+        bool quiet) {
 
 #if GDAL_VERSION_NUM < 3070000
-	Rcpp::stop("_addFileInZip() requires GDAL >= 3.7.");
+    Rcpp::stop("_addFileInZip() requires GDAL >= 3.7.");
 
 #else
-	bool ret;
-	std::vector<char *> opt_zip_create = {NULL};
-	VSIStatBufL buf;
-	if (overwrite) {
-		VSIUnlink(zip_filename.c_str());
-	}
-	else {
-		if (VSIStatExL(zip_filename.c_str(), &buf, VSI_STAT_EXISTS_FLAG) == 0) {
-			auto it = opt_zip_create.begin();
-			it = opt_zip_create.insert(it, (char *) ("APPEND=TRUE"));
-		}
-	}
-	
-	void *hZIP = CPLCreateZip(zip_filename.c_str(), opt_zip_create.data());
-	if (hZIP == nullptr)
-		Rcpp::stop("Failed to obtain file handle for zip file.");
-	
-	std::vector<char *> opt_list = {NULL};
-	if (options.isNotNull()) {
-		Rcpp::CharacterVector options_in(options);
-		opt_list.resize(options_in.size() + 1);
-		for (R_xlen_t i = 0; i < options_in.size(); ++i) {
-			opt_list[i] = (char *) (options_in[i]);
-		}
-		opt_list[options_in.size()] = NULL;
-	}
+    bool ret;
+    std::vector<char *> opt_zip_create = {NULL};
+    VSIStatBufL buf;
+    if (overwrite) {
+        VSIUnlink(zip_filename.c_str());
+    }
+    else {
+        if (VSIStatExL(zip_filename.c_str(), &buf, VSI_STAT_EXISTS_FLAG) == 0) {
+            auto it = opt_zip_create.begin();
+            it = opt_zip_create.insert(it, (char *) ("APPEND=TRUE"));
+        }
+    }
 
-	if (!quiet) {
-		Rcpp::Rcout << "Adding " << in_filename.c_str() << " ...\n";
-		GDALTermProgressR(0, NULL, NULL);
-	}
-	
-	CPLErr err = CPLAddFileInZip(hZIP, archive_filename.c_str(),
-							in_filename.c_str(),
-							NULL, opt_list.data(),
-							quiet ? NULL : GDALTermProgressR, NULL);
-	
-	if (err == CE_None)
-		ret = true;
-	else
-		ret = false;
-	
-	CPLCloseZip(hZIP);
-	return ret;
-	
+    void *hZIP = CPLCreateZip(zip_filename.c_str(), opt_zip_create.data());
+    if (hZIP == nullptr)
+        Rcpp::stop("Failed to obtain file handle for zip file.");
+
+    std::vector<char *> opt_list = {NULL};
+    if (options.isNotNull()) {
+        Rcpp::CharacterVector options_in(options);
+        opt_list.resize(options_in.size() + 1);
+        for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+            opt_list[i] = (char *) (options_in[i]);
+        }
+        opt_list[options_in.size()] = NULL;
+    }
+
+    if (!quiet) {
+        Rcpp::Rcout << "Adding " << in_filename.c_str() << " ...\n";
+        GDALTermProgressR(0, NULL, NULL);
+    }
+
+    CPLErr err = CPLAddFileInZip(hZIP, archive_filename.c_str(),
+                            in_filename.c_str(),
+                            NULL, opt_list.data(),
+                            quiet ? NULL : GDALTermProgressR, NULL);
+
+    if (err == CE_None)
+        ret = true;
+    else
+        ret = false;
+
+    CPLCloseZip(hZIP);
+    return ret;
+
 #endif
 }
 

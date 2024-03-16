@@ -92,7 +92,7 @@ nrow(tbl)
 tbl <- tbl[order(-tbl$count),]
 head(tbl, n = 20)
 
-# combine two bands from a multi-band file and write the combination IDs 
+# combine two bands from a multi-band file and write the combination IDs
 # to an output raster
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 rasterfiles <- c(lcp_file, lcp_file)

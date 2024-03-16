@@ -29,8 +29,8 @@ pts <- read.csv(pt_file)
 print(pts)
 ## id, x, y in NAD83 / UTM zone 12N
 ## transform to NAD83 / CONUS Albers
-transform_xy(pts = pts[,-1], 
-             srs_from = epsg_to_wkt(26912), 
+transform_xy(pts = pts[,-1],
+             srs_from = epsg_to_wkt(26912),
              srs_to = epsg_to_wkt(5070))
 }
 \seealso{
