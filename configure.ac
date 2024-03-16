@@ -6,7 +6,7 @@
 # local copy of the PROJ data directory. The PROJ datadir is now obtained from
 # pkg-config if possible. Compiler invocations are now logged.
 # 2024-03-03: Test that GEOS is available to GDAL.
-AC_INIT([gdalraster],[1.9.0.9120],[chris.toney@usda.gov])
+AC_INIT([gdalraster],[1.9.0.9140],[chris.toney@usda.gov])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
@@ -74,28 +74,27 @@ else
 fi
 
 AC_MSG_CHECKING(gdal-config usability)
-if test `${GDAL_CONFIG} --version`;
-then
-	GDAL_CPPFLAGS=`${GDAL_CONFIG} --cflags`
-	GDAL_VERSION=`${GDAL_CONFIG} --version`
-	GDAL_LIBS=`${GDAL_CONFIG} --libs`
-	GDAL_DEP_LIBS=`${GDAL_CONFIG} --dep-libs`
-	GDAL_DATADIR=`${GDAL_CONFIG} --datadir`
-	AC_MSG_RESULT(yes)
+if test `${GDAL_CONFIG} --version`; then
+  GDAL_CPPFLAGS=`${GDAL_CONFIG} --cflags`
+  GDAL_VERSION=`${GDAL_CONFIG} --version`
+  GDAL_LIBS=`${GDAL_CONFIG} --libs`
+  GDAL_DEP_LIBS=`${GDAL_CONFIG} --dep-libs`
+  GDAL_DATADIR=`${GDAL_CONFIG} --datadir`
+  AC_MSG_RESULT(yes)
 else
-	AC_MSG_RESULT(no)
-	echo "Error: gdal-config not found"
-	echo "The gdal-config script distributed with GDAL could not be found."
-	echo "If you have not installed the GDAL libraries, you can"
-	echo "download the source from  http://www.gdal.org/"
-	echo "If you have installed the GDAL libraries, then make sure that"
-	echo "gdal-config is in your path. Try typing gdal-config at a"
-	echo "shell prompt and see if it runs. If not, use:"
-	echo " --configure-args='--with-gdal-config=/usr/local/bin/gdal-config'"
-	echo "with appropriate values for your installation."
-	echo ""
+  AC_MSG_RESULT(no)
+  echo "Error: gdal-config not found"
+  echo "The gdal-config script distributed with GDAL could not be found."
+  echo "If you have not installed the GDAL libraries, you can"
+  echo "download the source from  http://www.gdal.org/"
+  echo "If you have installed the GDAL libraries, then make sure that"
+  echo "gdal-config is in your path. Try typing gdal-config at a"
+  echo "shell prompt and see if it runs. If not, use:"
+  echo " --configure-args='--with-gdal-config=/usr/local/bin/gdal-config'"
+  echo "with appropriate values for your installation."
+  echo ""
 
-	exit 1
+  exit 1
 fi
 
 AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
@@ -246,6 +245,48 @@ AC_MSG_NOTICE([Copy data for:])
 fi
 
 #
+# PROJ include dir
+#
+
+AC_ARG_WITH([proj-include],
+    AS_HELP_STRING([--with-proj-include=DIR],[location of proj header files]),
+    [proj_include_path=$withval])
+if test [ -n "$proj_include_path" ] ; then
+   AC_SUBST([PROJ_CPPFLAGS],["-I${proj_include_path}"])
+else
+  if test "${proj_config_ok}" = yes; then
+    PROJ_INCLUDE_PATH=`${PROJ_CONFIG} --cflags`
+    AC_SUBST([PROJ_CPPFLAGS],["${PROJ_INCLUDE_PATH}"])
+  fi
+fi
+
+#
+# PROJ libs
+#
+
+AC_ARG_WITH([proj-lib],
+    AS_HELP_STRING([--with-proj-lib=LIB_PATH],[the location of proj libraries]),
+               [proj_lib_path=$withval])
+if test [ -n "$proj_lib_path" ] ; then
+    AC_SUBST([PROJ_LIBS], ["-L${proj_lib_path} ${INPKG_LIBS} -lproj"])
+else
+  if test "${proj_config_ok}" = yes; then
+    if test `uname` = "Darwin"; then
+      PROJ_LIB_PATH=`${PROJ_CONFIG} --libs --static`
+    else
+      PROJ_LIB_PATH=`${PROJ_CONFIG} --libs`
+    fi
+    AC_SUBST([PROJ_LIBS], ["${PROJ_LIB_PATH} ${INPKG_LIBS}"])
+    proj_version=`${PROJ_CONFIG} --modversion`
+    AC_MSG_NOTICE([PROJ: ${proj_version}])
+  else
+    PROJ_LIBS="${PKG_LIBS} -lproj"
+  fi
+fi
+
+LIBS="${LIBS} ${PROJ_LIBS}"
+
+#
 # test whether PROJ is available to gdal:
 #
 
@@ -256,12 +297,12 @@ gdal_has_proj=no
 #include <ogr_srs_api.h>
 #include <ogr_spatialref.h>
 int main(int argc, char *argv[]) {
-	OGRSpatialReference *dest = new OGRSpatialReference;
-	OGRSpatialReference *src = new OGRSpatialReference;
-    src->importFromEPSG(4326);
-    dest->importFromEPSG(3857);
-	OGRCoordinateTransformation *ct = OGRCreateCoordinateTransformation(src, dest);
-	return(ct == NULL); // signals PROJ is not available through gdal
+  OGRSpatialReference *dest = new OGRSpatialReference;
+  OGRSpatialReference *src = new OGRSpatialReference;
+  src->importFromEPSG(4326);
+  dest->importFromEPSG(3857);
+  OGRCoordinateTransformation *ct = OGRCreateCoordinateTransformation(src, dest);
+  return(ct == NULL); // signals PROJ is not available through gdal
 }
 _EOCONF]
 
@@ -306,15 +347,15 @@ gdal_has_geos=no
 [cat > gdal_geos.cpp <<_EOCONF
 #include <ogr_api.h>
 int main(int argc, char *argv[]) {
-	OGRGeometryH hGeom = OGR_G_CreateGeometry(wkbPoint);
-	if (hGeom == NULL)
-		return false;
-	OGR_G_SetPoint_2D(hGeom, 0, 0, 0);
-	// If GDAL is built without the GEOS library, this function will 
-	// always return FALSE:
-	bool ret = OGR_G_IsSimple(hGeom);
-	OGR_G_DestroyGeometry(hGeom);
-	return (ret == FALSE); // signals GEOS is not available through gdal
+  OGRGeometryH hGeom = OGR_G_CreateGeometry(wkbPoint);
+  if (hGeom == NULL)
+    return false;
+  OGR_G_SetPoint_2D(hGeom, 0, 0, 0);
+  // If GDAL is built without the GEOS library, this function will
+  // always return FALSE:
+  bool ret = OGR_G_IsSimple(hGeom);
+  OGR_G_DestroyGeometry(hGeom);
+  return (ret == FALSE); // signals GEOS is not available through gdal
 }
 _EOCONF]
 
@@ -355,9 +396,9 @@ AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
 
 # #############################################################################
 
-AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${GDAL_CPPFLAGS}"])
+AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${PROJ_CPPFLAGS} ${GDAL_CPPFLAGS}"])
 
-AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS}"])
+AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS} ${PROJ_LIBS}"])
 if test "${NEED_DEPS}" = yes; then
    AC_SUBST([PKG_LIBS], ["${PKG_LIBS} ${GDAL_DEP_LIBS}"])
 fi

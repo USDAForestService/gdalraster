@@ -77,7 +77,7 @@ ds_slp$res()
 ncols <- ds_slp$getRasterXSize()
 nrows <- ds_slp$getRasterYSize()
 for (row in 0:(nrows-1)) {
-    rowdata <- ds_lcp$read(band=2, 
+    rowdata <- ds_lcp$read(band=2,
                            xoff=0, yoff=row,
                            xsize=ncols, ysize=1,
                            out_xsize=ncols, out_ysize=1)

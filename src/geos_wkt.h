@@ -6,7 +6,7 @@
 #ifndef geos_wkt_H
 #define geos_wkt_H
 
-#include <Rcpp.h> 
+#include <Rcpp.h>
 
 #include <string>
 
@@ -37,7 +37,7 @@ double _g_area(std::string geom);
 Rcpp::NumericVector _g_centroid(std::string geom);
 
 std::string _g_transform(std::string geom, std::string srs_from,
-		std::string srs_to);
+        std::string srs_to);
 
 #endif
 
