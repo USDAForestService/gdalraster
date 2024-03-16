@@ -228,32 +228,32 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Hopkins bioclimatic index (HI) as described in:</span></span></span>
 <span class="r-in"><span><span class="co"># Bechtold, 2004, West. J. Appl. For. 19(4):245-251.</span></span></span>
-<span class="r-in"><span><span class="co"># Integrates elevation, latitude and longitude into an index of the </span></span></span>
-<span class="r-in"><span><span class="co"># phenological occurrence of springtime. Here it is relativized to </span></span></span>
+<span class="r-in"><span><span class="co"># Integrates elevation, latitude and longitude into an index of the</span></span></span>
+<span class="r-in"><span><span class="co"># phenological occurrence of springtime. Here it is relativized to</span></span></span>
 <span class="r-in"><span><span class="co"># mean values for an eight-state region in the western US.</span></span></span>
-<span class="r-in"><span><span class="co"># Positive HI means spring is delayed by that number of days relative </span></span></span>
+<span class="r-in"><span><span class="co"># Positive HI means spring is delayed by that number of days relative</span></span></span>
 <span class="r-in"><span><span class="co"># to the reference position, while negative values indicate spring is</span></span></span>
-<span class="r-in"><span><span class="co"># advanced. The original equation had elevation units as feet, so </span></span></span>
+<span class="r-in"><span><span class="co"># advanced. The original equation had elevation units as feet, so</span></span></span>
 <span class="r-in"><span><span class="co"># converting m to ft in `expr`.</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">elev_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_elev.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># expression to calculate HI</span></span></span>
-<span class="r-in"><span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="st">"round( ((ELEV_M * 3.281 - 5449) / 100) + </span></span></span>
-<span class="r-in"><span><span class="st">                ((pixelLat - 42.16) * 4) + </span></span></span>
+<span class="r-in"><span><span class="va">expr</span> <span class="op">&lt;-</span> <span class="st">"round( ((ELEV_M * 3.281 - 5449) / 100) +</span></span></span>
+<span class="r-in"><span><span class="st">                ((pixelLat - 42.16) * 4) +</span></span></span>
 <span class="r-in"><span><span class="st">                ((-116.39 - pixelLon) * 1.25) )"</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># calc() writes to a tempfile by default</span></span></span>
-<span class="r-in"><span><span class="va">hi_file</span> <span class="op">&lt;-</span> <span class="fu">calc</span><span class="op">(</span>expr <span class="op">=</span> <span class="va">expr</span>, </span></span>
-<span class="r-in"><span>                rasterfiles <span class="op">=</span> <span class="va">elev_file</span>, </span></span>
-<span class="r-in"><span>                var.names <span class="op">=</span> <span class="st">"ELEV_M"</span>, </span></span>
+<span class="r-in"><span><span class="va">hi_file</span> <span class="op">&lt;-</span> <span class="fu">calc</span><span class="op">(</span>expr <span class="op">=</span> <span class="va">expr</span>,</span></span>
+<span class="r-in"><span>                rasterfiles <span class="op">=</span> <span class="va">elev_file</span>,</span></span>
+<span class="r-in"><span>                var.names <span class="op">=</span> <span class="st">"ELEV_M"</span>,</span></span>
 <span class="r-in"><span>                dtName <span class="op">=</span> <span class="st">"Int16"</span>,</span></span>
-<span class="r-in"><span>                nodata_value <span class="op">=</span> <span class="op">-</span><span class="fl">32767</span>, </span></span>
+<span class="r-in"><span>                nodata_value <span class="op">=</span> <span class="op">-</span><span class="fl">32767</span>,</span></span>
 <span class="r-in"><span>                setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
 <span class="r-in"><span>                usePixelLonLat <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 1 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpNmEM7P/rastcalc1f4170b07fbe.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpD9RKqO/rastcalc1fed57daf0c0.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">hi_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># min, max, mean, sd</span></span></span>
@@ -279,7 +279,7 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span>                  setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpNmEM7P/rastcalc1f4124a6bf03.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpD9RKqO/rastcalc1fed5f36eb22.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">ndvi_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -290,18 +290,18 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## Reclassify a variable by rule set</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Combine two raster layers and look for specific combinations. Then </span></span></span>
+<span class="r-in"><span><span class="co"># Combine two raster layers and look for specific combinations. Then</span></span></span>
 <span class="r-in"><span><span class="co"># recode to a new value by rule set.</span></span></span>
 <span class="r-in"><span><span class="co">#</span></span></span>
 <span class="r-in"><span><span class="co"># Based on example in:</span></span></span>
-<span class="r-in"><span><span class="co">#   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition, </span></span></span>
+<span class="r-in"><span><span class="co">#   Stratton, R.D. 2009. Guidebook on LANDFIRE fuels data acquisition,</span></span></span>
 <span class="r-in"><span><span class="co">#   critique, modification, maintenance, and model calibration.</span></span></span>
-<span class="r-in"><span><span class="co">#   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture, </span></span></span>
+<span class="r-in"><span><span class="co">#   Gen. Tech. Rep. RMRS-GTR-220. U.S. Department of Agriculture,</span></span></span>
 <span class="r-in"><span><span class="co">#   Forest Service, Rocky Mountain Research Station. 54 p.</span></span></span>
 <span class="r-in"><span><span class="co"># Context: Refine national-scale fuels data to improve fire simulation</span></span></span>
 <span class="r-in"><span><span class="co">#   results in localized applications.</span></span></span>
 <span class="r-in"><span><span class="co"># Issue: Areas with steep slopes (40+ degrees) were mapped as</span></span></span>
-<span class="r-in"><span><span class="co">#   GR1 (101; short, sparse dry climate grass) and </span></span></span>
+<span class="r-in"><span><span class="co">#   GR1 (101; short, sparse dry climate grass) and</span></span></span>
 <span class="r-in"><span><span class="co">#   GR2 (102; low load, dry climate grass) but were not carrying fire.</span></span></span>
 <span class="r-in"><span><span class="co"># Resolution: After viewing these areas in Google Earth,</span></span></span>
 <span class="r-in"><span><span class="co">#   NB9 (99; bare ground) was selected as the replacement fuel model.</span></span></span>
@@ -350,7 +350,7 @@ band number in <code>dstfile</code> (new bands cannot be created in <code>dstfil
 <span class="r-in"><span>     write_mode <span class="op">=</span> <span class="st">"update"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> Calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpNmEM7P/storml_lndscp.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> Output written to: /tmp/RtmpD9RKqO/storml_lndscp.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># verify the ouput</span></span></span>
 <span class="r-in"><span><span class="va">rasterfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">tif_file</span>, <span class="va">tif_file</span><span class="op">)</span></span></span>

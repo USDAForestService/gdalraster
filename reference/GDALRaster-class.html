@@ -420,7 +420,7 @@ cannot be obtained quickly.</p></li>
 </ul><p><code>$clearStatistics()</code>
 Clear statistics. Only implemented for now in PAM supported datasets
 (Persistable Auxiliary Metadata via .aux.xml file). GDAL &gt;= 3.2.</p>
-<p><code>$getHistogram(band, min, max, num_buckets, incl_out_of_range, 
+<p><code>$getHistogram(band, min, max, num_buckets, incl_out_of_range,
   approx_ok)</code><br>
 Computes raster histogram for <code>band</code>. <code>min</code> is the lower bound of
 the histogram. <code>max</code> is the upper bound of the histogram.
@@ -801,8 +801,8 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-in"><span><span class="co">## the upper left corner is the origin</span></span></span>
 <span class="r-in"><span><span class="co">## read the tenth row:</span></span></span>
 <span class="r-in"><span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, xoff<span class="op">=</span><span class="fl">0</span>, yoff<span class="op">=</span><span class="fl">9</span>, </span></span>
-<span class="r-in"><span>                    xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="fl">1</span>, </span></span>
+<span class="r-in"><span><span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, xoff<span class="op">=</span><span class="fl">0</span>, yoff<span class="op">=</span><span class="fl">9</span>,</span></span>
+<span class="r-in"><span>                    xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="fl">1</span>,</span></span>
 <span class="r-in"><span>                    out_xsize<span class="op">=</span><span class="va">ncols</span>, out_ysize<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -9999 -9999 -9999  2456  2466  2479</span>
