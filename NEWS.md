@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9130 (dev)
+# gdalraster 1.9.0.9140 (dev)
+
+* use .editorconfig file and bulk reformat code style (2024-03-16)
 
 * configure.ac: add back `proj-include` and `proj-lib`, the latter needed in some cases for macOS source install (2024-03-12)
 
