@@ -160,6 +160,7 @@ ds <- new(GDALRaster, vrt_file)
 ds$res()
 ds$bbox()
 ds$close()
+vsi_unlink(vrt_file)
 
 
 ## clip
@@ -184,6 +185,9 @@ bbox_from_wkt(bnd)
 ds_vrt$bbox()
 ds_vrt$res()
 
+ds_vrt$close()
+vsi_unlink(vrt_file)
+
 # src_align = FALSE
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
@@ -194,8 +198,8 @@ ds_vrt_noalign <- new(GDALRaster, vrt_file)
 ds_vrt_noalign$bbox()
 ds_vrt_noalign$res()
 
-ds_vrt$close()
 ds_vrt_noalign$close()
+vsi_unlink(vrt_file)
 ds_evt$close()
 
 
@@ -255,6 +259,7 @@ rs$get_var()
 rs$get_sd()
 
 ds_b5vrt$close()
+vsi_unlink(vrt_file)
 ds_lcp$close()
 ds_b5$close()
 }

@@ -50,6 +50,8 @@ tmp_file <- tempfile(fileext = ".tif")
 if (as.integer(gdal_version()[2]) >= 3070000) {
   result <- vsi_copy_file(elev_file, tmp_file)
   print(result)
+
+  vsi_unlink(tmp_file)
 }
 }
 \seealso{

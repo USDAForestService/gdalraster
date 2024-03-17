@@ -724,6 +724,8 @@
 #' ds <- new(GDALRaster, url)
 #' plot_raster(ds, legend=TRUE, main="Mount Hood elevation (m)")
 #' ds$close()
+#'
+#' deleteDataset(new_file)
 #' }
 NULL
 

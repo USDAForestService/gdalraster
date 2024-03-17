@@ -32,8 +32,7 @@ include advanced logic to deal with discontinuities at poles or antimeridian.
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, elev_file)
-ds$bbox() |>
-  bbox_to_wkt() |>
+bbox_to_wkt(ds$bbox()) |>
   g_transform(ds$getProjectionRef(), epsg_to_wkt(4326)) |>
   bbox_from_wkt()
 ds$close()

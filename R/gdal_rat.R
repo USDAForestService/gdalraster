@@ -181,6 +181,7 @@
 #' head(tbl2)
 #'
 #' ds$close()
+#' deleteDataset(f)
 #'
 #' # Display
 #' evt_gt <- displayRAT(tbl2, title = "Raster Attribute Table for Storm Lake EVT")
@@ -379,4 +380,3 @@ displayRAT <- function(tbl, title = "Raster Attribute Table") {
 
     return(gt_tbl)
 }
-

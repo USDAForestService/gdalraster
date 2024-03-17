@@ -41,6 +41,8 @@ copyDatasetFiles(lcp_tmp, lcp_file)
 ds_copy <- new(GDALRaster, lcp_tmp)
 ds_copy$getFileList()
 ds_copy$close()
+
+deleteDataset(lcp_tmp)
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}},

@@ -55,7 +55,7 @@ int _gdal_version_num() {
 //' `gdal_formats()` returns a table of the supported raster and vector
 //' formats, with information about the capabilities of each format driver.
 //'
-//' @param fmt A character string containing a driver short name. By default,
+//' @param format A character string containing a driver short name. By default,
 //' information for all configured raster and vector format drivers will be
 //' returned.
 //' @returns A data frame containing the format short name, long name, raster
@@ -73,7 +73,7 @@ int _gdal_version_num() {
 //'
 //' gdal_formats("GPKG")
 // [[Rcpp::export]]
-Rcpp::DataFrame gdal_formats(std::string fmt = "") {
+Rcpp::DataFrame gdal_formats(std::string format = "") {
 
     Rcpp::CharacterVector short_name = Rcpp::CharacterVector::create();
     Rcpp::CharacterVector long_name = Rcpp::CharacterVector::create();
@@ -88,7 +88,7 @@ Rcpp::DataFrame gdal_formats(std::string fmt = "") {
         char **papszMD = GDALGetMetadata(hDriver, NULL);
         std::string rw = "";
 
-        if (fmt != "" && fmt != GDALGetDriverShortName(hDriver))
+        if (format != "" && format != GDALGetDriverShortName(hDriver))
             continue;
 
         if (CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ||
@@ -310,6 +310,8 @@ int _get_physical_RAM() {
 //' ## ...
 //' ## close the dataset when done
 //' ds$close()
+//'
+//' deleteDataset(new_file)
 // [[Rcpp::export(invisible = true)]]
 bool create(std::string format, Rcpp::CharacterVector dst_filename,
         int xsize, int ysize, int nbands, std::string dataType,
@@ -393,6 +395,8 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
 //'     ds$setNoDataValue(band, -9999)
 //' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 //' ds$close()
+//'
+//' deleteDataset(tif_file)
 // [[Rcpp::export(invisible = true)]]
 bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
         Rcpp::CharacterVector src_filename, bool strict = false,
@@ -612,6 +616,8 @@ Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
 //' ds$getRasterCount()
 //' plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
 //' ds$close()
+//'
+//' vsi_unlink(vrt_file)
 // [[Rcpp::export(invisible = true)]]
 bool buildVRT(Rcpp::CharacterVector vrt_filename,
         Rcpp::CharacterVector input_rasters,
@@ -949,6 +955,8 @@ bool _dem_proc(std::string mode,
 //' mod_tbl = buildRAT(mod_file)
 //' head(mod_tbl)
 //' mod_tbl[is.na(mod_tbl$VALUE),]
+//'
+//' deleteDataset(mod_file)
 // [[Rcpp::export(invisible = true)]]
 bool fillNodata(Rcpp::CharacterVector filename, int band,
         Rcpp::CharacterVector mask_file = "",
@@ -1044,6 +1052,8 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 //'   # command-line arguments for gdal_footprint
 //'   args <- c("-t_srs", "EPSG:4326")
 //'   footprint(evt_file, out_file, args)
+//'
+//'   deleteDataset(out_file)
 //' }
 // [[Rcpp::export(invisible = true)]]
 bool footprint(Rcpp::CharacterVector src_filename,
@@ -1585,6 +1595,9 @@ bool _rasterize(std::string src_dsn, std::string dst_filename,
 //'             connectedness = 8,
 //'             mask_filename = mask_file,
 //'             mask_band = 1)
+//'
+//' deleteDataset(mask_file)
+//' deleteDataset(evt_mmu_file)
 // [[Rcpp::export(invisible = true)]]
 bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
         Rcpp::CharacterVector dst_filename, int dst_band,
@@ -1722,6 +1735,8 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' ds$res()
 //' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 //' ds$close()
+//'
+//' deleteDataset(img_file)
 // [[Rcpp::export(invisible = true)]]
 bool translate(Rcpp::CharacterVector src_filename,
         Rcpp::CharacterVector dst_filename,
@@ -1945,6 +1960,8 @@ bool translate(Rcpp::CharacterVector src_filename,
 //' ds$res()
 //' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 //' ds$close()
+//'
+//' deleteDataset(alb83_file)
 // [[Rcpp::export(invisible = true)]]
 bool warp(Rcpp::CharacterVector src_files,
         Rcpp::CharacterVector dst_filename,
@@ -2086,6 +2103,8 @@ bool warp(Rcpp::CharacterVector src_files,
 //' plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
 //'             main="Storm Lake Tree Canopy Cover (%)")
 //' ds_tcc$close()
+//'
+//' deleteDataset(tcc_file)
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix createColorRamp(int start_index,
         Rcpp::IntegerVector start_color,
@@ -2216,6 +2235,8 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //' ds <- new(GDALRaster, dst_file)
 //' ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
 //' ds$close()
+//'
+//' deleteDataset(dst_file)
 // [[Rcpp::export(invisible = true)]]
 bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
         Rcpp::CharacterVector dst_filename, int dst_band,
@@ -2393,6 +2414,8 @@ bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
 //' ds <- new(GDALRaster, b5_tmp2)
 //' ds$getFileList()
 //' ds$close()
+//'
+//' deleteDataset(b5_tmp2)
 // [[Rcpp::export]]
 bool renameDataset(Rcpp::CharacterVector new_filename,
         Rcpp::CharacterVector old_filename,
@@ -2462,6 +2485,8 @@ bool renameDataset(Rcpp::CharacterVector new_filename,
 //' ds_copy <- new(GDALRaster, lcp_tmp)
 //' ds_copy$getFileList()
 //' ds_copy$close()
+//'
+//' deleteDataset(lcp_tmp)
 // [[Rcpp::export]]
 bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
         Rcpp::CharacterVector old_filename,
@@ -2572,4 +2597,3 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
 
 #endif
 }
-

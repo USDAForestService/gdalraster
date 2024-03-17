@@ -51,6 +51,8 @@ if (as.integer(gdal_version()[2]) >= 3080000) {
   # command-line arguments for gdal_footprint
   args <- c("-t_srs", "EPSG:4326")
   footprint(evt_file, out_file, args)
+
+  deleteDataset(out_file)
 }
 }
 \seealso{

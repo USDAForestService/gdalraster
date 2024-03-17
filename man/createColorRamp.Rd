@@ -84,6 +84,8 @@ ds_tcc$open(read_only=TRUE)
 plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
             main="Storm Lake Tree Canopy Cover (\%)")
 ds_tcc$close()
+
+deleteDataset(tcc_file)
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster$getColorTable()}},
