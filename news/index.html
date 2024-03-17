@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9140</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9150</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,11 +56,13 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.0.9140" id="gdalraster-1909140-dev">gdalraster 1.9.0.9140 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909140-dev"></a></h2>
-<ul><li><p>use .editorconfig file and bulk reformat code style (2024-03-16)</p></li>
-<li><p>configure.ac: add back <code>proj-include</code> and <code>proj-lib</code>, the latter needed in some cases for macOS source install (2024-03-12)</p></li>
+<h2 class="pkg-version" data-toc-text="1.9.0.9150" id="gdalraster-1909150-dev">gdalraster 1.9.0.9150 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909150-dev"></a></h2>
+<ul><li><p>cleanup temp files in examples throughout (2024-03-17)</p></li>
+<li><p><code>src/wkt_conv.cpp</code>: destroy OSR spatial ref objects in srs functions to avoid memory leaks (2024-03-17)</p></li>
+<li><p>use <code>.editorconfig</code> file and bulk reformat code style (2024-03-16)</p></li>
+<li><p><code>configure.ac</code>: add back <code>proj-include</code> and <code>proj-lib</code>, the latter needed in some cases for macOS source install (2024-03-12)</p></li>
 <li><p>additional unit tests for geometry operations using GEOS via GDAL headers (2024-03-10)</p></li>
-<li><p>additional error checks and <code>OGR_G_DestroyGeometry()</code> on created geometries in src/geos_wkt.cpp (2024-03-09)</p></li>
+<li><p>additional error checks and <code>OGR_G_DestroyGeometry()</code> on created geometries in <code>src/geos_wkt.cpp</code> (2024-03-09)</p></li>
 <li><p>add <code><a href="../reference/vsi_supports_rnd_write.html">vsi_supports_rnd_write()</a></code> and <code><a href="../reference/vsi_supports_seq_write.html">vsi_supports_seq_write()</a></code>: test whether the filesystem supports random write or sequential write, dependent on whether a local temp file is allowed before uploading to the target location (2024-03-08)</p></li>
 <li><p>add <code><a href="../reference/vsi_get_fs_options.html">vsi_get_fs_options()</a></code>: get the list of options associated with a virtual file system handler, for setting with <code><a href="../reference/set_config_option.html">set_config_option()</a></code> (2024-03-06)</p></li>
 <li><p>add <code><a href="../reference/vsi_get_fs_prefixes.html">vsi_get_fs_prefixes()</a></code>: get the list of prefixes for virtual file system handlers currently registered (2024-03-06)</p></li>
@@ -70,8 +72,8 @@
 <li><p>add <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code>: wrapper of the <code>ogr2ogr</code> command-line utility, convert vector data between different formats (2024-03-03)</p></li>
 <li><p>add optional argument <code>quiet</code> in several functions to configure progress reporting (<a href="https://github.com/USDAForestService/gdalraster/issues/237" class="external-link">#237</a>) (2024-02-27)</p></li>
 <li><p>fixed misspelled argument in <code><a href="../reference/vsi_copy_file.html">vsi_copy_file()</a></code> and <code><a href="../reference/vsi_sync.html">vsi_sync()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/233" class="external-link">#233</a>) (2024-02-27)</p></li>
-<li><p>add calls to <code>OGRCoordinateTransformation::DestroyCT()</code> in src/geos_wkt.cpp and src/transform.cpp - no known issues but fixes potential memory leak (2024-02-27)</p></li>
-<li><p>free <code>*phGeometry</code> with <code>OGR_G_DestroyGeometry()</code> in src/geos_wkt.cpp and src/wkt_conv.cpp - no known issues but fixes potential memory leak (2024-02-27)</p></li>
+<li><p>add calls to <code>OGRCoordinateTransformation::DestroyCT()</code> in <code>src/geos_wkt.cpp</code> and <code>src/transform.cpp</code> - no known issues but fixes potential memory leak (2024-02-27)</p></li>
+<li><p>free <code>*phGeometry</code> with <code>OGR_G_DestroyGeometry()</code> in <code>src/geos_wkt.cpp</code> and <code>src/wkt_conv.cpp</code> - no known issues but fixes potential memory leak (2024-02-27)</p></li>
 <li><p>add <code><a href="../reference/g_transform.html">g_transform()</a></code>: apply a coordinate transformation to a WKT geometry (2024-02-26)</p></li>
 </ul></div>
     <div class="section level2">
