@@ -1,12 +1,16 @@
-# gdalraster 1.9.0.9140 (dev)
+# gdalraster 1.9.0.9150 (dev)
 
-* use .editorconfig file and bulk reformat code style (2024-03-16)
+* cleanup temp files in examples throughout (2024-03-17)
 
-* configure.ac: add back `proj-include` and `proj-lib`, the latter needed in some cases for macOS source install (2024-03-12)
+* `src/wkt_conv.cpp`: destroy OSR spatial ref objects in srs functions to avoid memory leaks (2024-03-17)
+
+* use `.editorconfig` file and bulk reformat code style (2024-03-16)
+
+* `configure.ac`: add back `proj-include` and `proj-lib`, the latter needed in some cases for macOS source install (2024-03-12)
 
 * additional unit tests for geometry operations using GEOS via GDAL headers (2024-03-10)
 
-* additional error checks and `OGR_G_DestroyGeometry()` on created geometries in src/geos_wkt.cpp (2024-03-09)
+* additional error checks and `OGR_G_DestroyGeometry()` on created geometries in `src/geos_wkt.cpp` (2024-03-09)
 
 * add `vsi_supports_rnd_write()` and `vsi_supports_seq_write()`: test whether the filesystem supports random write or sequential write, dependent on whether a local temp file is allowed before uploading to the target location (2024-03-08)
 
@@ -26,9 +30,9 @@
 
 * fixed misspelled argument in `vsi_copy_file()` and `vsi_sync()` (#233) (2024-02-27)
 
-* add calls to `OGRCoordinateTransformation::DestroyCT()` in src/geos_wkt.cpp and src/transform.cpp - no known issues but fixes potential memory leak (2024-02-27)
+* add calls to `OGRCoordinateTransformation::DestroyCT()` in `src/geos_wkt.cpp` and `src/transform.cpp` - no known issues but fixes potential memory leak (2024-02-27)
 
-* free `*phGeometry` with `OGR_G_DestroyGeometry()` in src/geos_wkt.cpp and src/wkt_conv.cpp - no known issues but fixes potential memory leak (2024-02-27)
+* free `*phGeometry` with `OGR_G_DestroyGeometry()` in `src/geos_wkt.cpp` and `src/wkt_conv.cpp` - no known issues but fixes potential memory leak (2024-02-27)
 
 * add `g_transform()`: apply a coordinate transformation to a WKT geometry (2024-02-26)
 
