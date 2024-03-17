@@ -77,6 +77,8 @@
 #'   ds <- new(GDALRaster, lcp_in_zip)
 #'   ds$info()
 #'   ds$close()
+#'
+#'   vsi_unlink(zip_file)
 #' }
 #' @export
 addFilesInZip <- function(

@@ -58,6 +58,8 @@ ds <- new(GDALRaster, vrt_file)
 ds$getRasterCount()
 plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
 ds$close()
+
+vsi_unlink(vrt_file)
 }
 \seealso{
 \code{\link[=rasterToVRT]{rasterToVRT()}}

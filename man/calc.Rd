@@ -144,6 +144,7 @@ ds <- new(GDALRaster, hi_file)
 # min, max, mean, sd
 ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
+deleteDataset(hi_file)
 
 
 ## Calculate normalized difference vegetation index (NDVI)
@@ -164,6 +165,7 @@ ndvi_file <- calc(expr = expr,
 ds <- new(GDALRaster, ndvi_file)
 ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
+deleteDataset(ndvi_file)
 
 
 ## Reclassify a variable by rule set
@@ -218,6 +220,8 @@ sum(tbl_subset$count)
 
 # if LCP file format is needed:
 # createCopy("LCP", "storml_edited.lcp", tif_file)
+
+deleteDataset(tif_file)
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=combine]{combine()}}, \code{\link[=rasterToVRT]{rasterToVRT()}}

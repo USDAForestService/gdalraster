@@ -103,4 +103,7 @@ sieveFilter(src_filename = evt_file,
             connectedness = 8,
             mask_filename = mask_file,
             mask_band = 1)
+
+deleteDataset(mask_file)
+deleteDataset(evt_mmu_file)
 }

@@ -32,13 +32,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // gdal_formats
-Rcpp::DataFrame gdal_formats(std::string fmt);
-RcppExport SEXP _gdalraster_gdal_formats(SEXP fmtSEXP) {
+Rcpp::DataFrame gdal_formats(std::string format);
+RcppExport SEXP _gdalraster_gdal_formats(SEXP formatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type fmt(fmtSEXP);
-    rcpp_result_gen = Rcpp::wrap(gdal_formats(fmt));
+    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    rcpp_result_gen = Rcpp::wrap(gdal_formats(format));
     return rcpp_result_gen;
 END_RCPP
 }

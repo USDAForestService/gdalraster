@@ -48,6 +48,8 @@ ds$fillRaster(band = 1, -9999, 0)
 ## ...
 ## close the dataset when done
 ds$close()
+
+deleteDataset(new_file)
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}},
