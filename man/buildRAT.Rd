@@ -194,7 +194,7 @@ ds$close()
 deleteDataset(f)
 
 # Display
-evt_gt <- displayRAT(tbl2, title = "Raster Attribute Table for Storm Lake EVT")
+evt_gt <- displayRAT(tbl2, title = "Storm Lake EVT Raster Attribute Table")
 class(evt_gt)  # an object of class "gt_tbl" from package gt
 # To show the table:
 # evt_gt

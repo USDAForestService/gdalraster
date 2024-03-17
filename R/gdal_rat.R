@@ -184,7 +184,7 @@
 #' deleteDataset(f)
 #'
 #' # Display
-#' evt_gt <- displayRAT(tbl2, title = "Raster Attribute Table for Storm Lake EVT")
+#' evt_gt <- displayRAT(tbl2, title = "Storm Lake EVT Raster Attribute Table")
 #' class(evt_gt)  # an object of class "gt_tbl" from package gt
 #' # To show the table:
 #' # evt_gt
@@ -192,11 +192,11 @@
 #' # `vignette("raster-attribute-tables")` has example output
 #' @export
 buildRAT <- function(raster,
-                band = 1L,
-                col_names = c("VALUE", "COUNT"),
-                table_type = "athematic",
-                na_value = NULL,
-                join_df = NULL) {
+                     band = 1L,
+                     col_names = c("VALUE", "COUNT"),
+                     table_type = "athematic",
+                     na_value = NULL,
+                     join_df = NULL) {
 
     if (length(raster) != 1)
         stop("raster argument must have length 1.", call. = FALSE)
@@ -206,7 +206,7 @@ buildRAT <- function(raster,
         f <- raster
     else
         stop("raster must be a GDALRaster object or filename.",
-                call. = FALSE)
+             call. = FALSE)
 
     if (length(band) != 1)
         stop("band must be an integer scalar.", call. = FALSE)
@@ -219,12 +219,12 @@ buildRAT <- function(raster,
     if (length(table_type) != 1 || !is(table_type, "character"))
         stop("table_type must be a character string.", call. = FALSE)
 
-    join = FALSE
+    join <- FALSE
     if (!is.null(join_df)) {
-        join = TRUE
+        join <- TRUE
         if (!is.data.frame(join_df))
             stop("join_df must be a data frame.", call. = FALSE)
-        if ( !(col_names[1] %in% names(join_df)) )
+        if (!(col_names[1] %in% names(join_df)))
             stop("names(join_df) must contain col_names[1].", call. = FALSE)
         if (col_names[2] %in% names(join_df))
             stop("names(join_df) cannot contain col_names[2].", call. = FALSE)
@@ -233,23 +233,23 @@ buildRAT <- function(raster,
     d <- .value_count(f, band)
     names(d) <- col_names
     if (!is.null(na_value))
-        d[is.na(d[,1]), 1] <- na_value
+        d[is.na(d[, 1]), 1] <- na_value
     if (join) {
-        if (anyNA(d[,1]))
+        if (anyNA(d[, 1]))
             message("Row with NA value will be dropped in join.")
         n_before <- nrow(d)
         d <- merge(d, join_df)
         if (n_before != nrow(d))
             message("rows before join: ", n_before, ", rows after: ", nrow(d))
     }
-    d <- d[order(d[,col_names[1]]),]
+    d <- d[order(d[, col_names[1]]), ]
     row.names(d) <- NULL
-    attr(d[,col_names[1]], "GFU") <- "MinMax"
-    attr(d[,col_names[2]], "GFU") <- "PixelCount"
+    attr(d[, col_names[1]], "GFU") <- "MinMax"
+    attr(d[, col_names[2]], "GFU") <- "PixelCount"
     if (join) {
         for (nm in setdiff(names(join_df), col_names)) {
             if (regexpr("name", tolower(nm), fixed=TRUE) > 0) {
-                attr(d[,nm], "GFU") <- "Name"
+                attr(d[, nm], "GFU") <- "Name"
                 break
             }
         }
@@ -260,30 +260,27 @@ buildRAT <- function(raster,
         for (nm in setdiff(names(join_df), col_names)) {
             if (tolower(nm) == "r" || tolower(nm) == "red") {
                 if (!hasRed) {
-                    attr(d[,nm], "GFU") <- "Red"
+                    attr(d[, nm], "GFU") <- "Red"
                     hasRed <- TRUE
                 }
-            }
-            else if (tolower(nm) == "g" || tolower(nm) == "green") {
+            } else if (tolower(nm) == "g" || tolower(nm) == "green") {
                 if (!hasGreen) {
-                    attr(d[,nm], "GFU") <- "Green"
+                    attr(d[, nm], "GFU") <- "Green"
                     hasGreen <- TRUE
                 }
-            }
-            else if (tolower(nm) == "b" || tolower(nm) == "blue") {
+            } else if (tolower(nm) == "b" || tolower(nm) == "blue") {
                 if (!hasBlue) {
-                    attr(d[,nm], "GFU") <- "Blue"
+                    attr(d[, nm], "GFU") <- "Blue"
                     hasBlue <- TRUE
                 }
-            }
-            else if (tolower(nm) == "a" || tolower(nm) == "alpha") {
+            } else if (tolower(nm) == "a" || tolower(nm) == "alpha") {
                 if (!hasAlpha) {
-                    attr(d[,nm], "GFU") <- "Alpha"
+                    attr(d[, nm], "GFU") <- "Alpha"
                     hasAlpha <- TRUE
                 }
             }
-            if (is.null(attr(d[,nm], "GFU"))) {
-                attr(d[,nm], "GFU") <- "Generic"
+            if (is.null(attr(d[, nm], "GFU"))) {
+                attr(d[, nm], "GFU") <- "Generic"
             }
         }
     }
@@ -324,7 +321,7 @@ displayRAT <- function(tbl, title = "Raster Attribute Table") {
     if (is.null(attr(tbl, "GDALRATTableType"))) {
         message("Input data frame is missing attribute 'GDALRATTableType'.")
         stop("The passed data frame must be formatted as a GDAL RAT.",
-                call.=FALSE)
+             call.=FALSE)
     }
 
     if (length(title) != 1 || !is(title, "character"))
@@ -336,37 +333,29 @@ displayRAT <- function(tbl, title = "Raster Attribute Table") {
     col_alpha <- NULL
     hasRGB <- FALSE
     for (nm in names(tbl)) {
-        if (attr(tbl[,nm], "GFU") == "Red") {
-            col_red = nm
-        }
-        else if (attr(tbl[,nm], "GFU") == "Green") {
-            col_green = nm
-        }
-        else if (attr(tbl[,nm], "GFU") == "Blue") {
-            col_blue = nm
-        }
-        else if (attr(tbl[,nm], "GFU") == "Alpha") {
-            col_alpha = nm
+        if (attr(tbl[, nm], "GFU") == "Red") {
+            col_red <- nm
+        } else if (attr(tbl[, nm], "GFU") == "Green") {
+            col_green <- nm
+        } else if (attr(tbl[, nm], "GFU") == "Blue") {
+            col_blue <- nm
+        } else if (attr(tbl[, nm], "GFU") == "Alpha") {
+            col_alpha <- nm
         }
     }
     if (!is.null(col_red) && !is.null(col_green) && !is.null(col_blue)) {
         hasRGB <- TRUE
         if (!is.null(col_alpha)) {
-            tbl$Color <- rgb(
-                            tbl[,col_red],
-                            tbl[,col_green],
-                            tbl[,col_blue],
-                            tbl[,col_alpha],
-                            maxColorValue=255
-                            )
-        }
-        else {
-            tbl$Color <- rgb(
-                            tbl[,col_red],
-                            tbl[,col_green],
-                            tbl[,col_blue],
-                            maxColorValue=255
-                            )
+            tbl$Color <- rgb(tbl[, col_red],
+                             tbl[, col_green],
+                             tbl[, col_blue],
+                             tbl[, col_alpha],
+                             maxColorValue=255)
+        } else {
+            tbl$Color <- rgb(tbl[, col_red],
+                             tbl[, col_green],
+                             tbl[, col_blue],
+                             maxColorValue=255)
         }
     }
 

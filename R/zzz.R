@@ -13,13 +13,13 @@
         }
         if (!proj_path_set) {
             assign(".orig_proj_lib", Sys.getenv("PROJ_LIB"),
-                    envir=.gdalraster_env)
+                   envir=.gdalraster_env)
             Sys.setenv("PROJ_LIB" = gdalraster_proj)
         }
     }
     if (dir.exists(system.file("gdal", package="gdalraster"))) {
         assign(".orig_gdal_data", Sys.getenv("GDAL_DATA"),
-                envir=.gdalraster_env)
+               envir=.gdalraster_env)
         Sys.setenv("GDAL_DATA" = system.file("gdal", package="gdalraster"))
     }
 }
@@ -41,4 +41,3 @@
         Sys.setenv("GDAL_DATA"=get(".orig_gdal_data", envir=.gdalraster_env))
     }
 }
-
