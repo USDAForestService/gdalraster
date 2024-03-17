@@ -182,7 +182,9 @@ bool srs_is_geographic(std::string srs) {
     if (OSRImportFromWkt(hSRS, &pszWKT) != OGRERR_NONE)
         Rcpp::stop("Error importing SRS from user input.");
 
-    return OSRIsGeographic(hSRS);
+    bool ret = OSRIsGeographic(hSRS);
+    OSRDestroySpatialReference(hSRS);
+    return ret;
 }
 
 //' Check if WKT definition is a projected coordinate system
@@ -211,7 +213,9 @@ bool srs_is_projected(std::string srs) {
     if (OSRImportFromWkt(hSRS, &pszWKT) != OGRERR_NONE)
         Rcpp::stop("Error importing SRS from user input.");
 
-    return OSRIsProjected(hSRS);
+    bool ret = OSRIsProjected(hSRS);
+    OSRDestroySpatialReference(hSRS);
+    return ret;
 }
 
 //' Do these two spatial references describe the same system?
@@ -254,13 +258,19 @@ bool srs_is_same(std::string srs1, std::string srs2,
 
     char* pszWKT1;
     pszWKT1 = (char*) srs1.c_str();
-    if (OSRImportFromWkt(hSRS1, &pszWKT1) != OGRERR_NONE)
+    if (OSRImportFromWkt(hSRS1, &pszWKT1) != OGRERR_NONE) {
+        OSRDestroySpatialReference(hSRS1);
+        OSRDestroySpatialReference(hSRS2);
         Rcpp::stop("Error importing SRS from user input.");
+    }
 
     char* pszWKT2;
     pszWKT2 = (char*) srs2.c_str();
-    if (OSRImportFromWkt(hSRS2, &pszWKT2) != OGRERR_NONE)
+    if (OSRImportFromWkt(hSRS2, &pszWKT2) != OGRERR_NONE) {
+        OSRDestroySpatialReference(hSRS1);
+        OSRDestroySpatialReference(hSRS2);
         Rcpp::stop("Error importing SRS from user input.");
+    }
 
     std::vector<char *> opt_list;
     std::string str_axis;
@@ -289,7 +299,10 @@ bool srs_is_same(std::string srs1, std::string srs2,
 
     opt_list.push_back(NULL);
 
-    return OSRIsSameEx(hSRS1, hSRS2, opt_list.data());
+    bool ret = OSRIsSameEx(hSRS1, hSRS2, opt_list.data());
+    OSRDestroySpatialReference(hSRS1);
+    OSRDestroySpatialReference(hSRS2);
+    return ret;
 }
 
 //' Get the bounding box of a geometry specified in OGC WKT format
@@ -395,4 +408,3 @@ Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox,
 
     return _g_create(poly_xy, "POLYGON");
 }
-
