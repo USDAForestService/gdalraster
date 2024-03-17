@@ -1,12 +1,16 @@
-# gdalraster 1.9.0.9150 (dev)
+# gdalraster 1.9.0.9160 (dev)
 
-* cleanup temp files in examples throughout (2024-03-17)
+* `calc()`: argument `usePixelLonLat` is deprecated as unnecessary, variables `pixelLon` / `pixelLat` are now auto-detected if used in the calc expression. Also add a small performance improvement from computing `pixelY` only when needed (2024-03-17)
+
+* fix up R code for `lintr` and add `.lintr` file (2024-03-17)
+
+* clean up temp files in examples throughout (2024-03-17)
 
 * `src/wkt_conv.cpp`: destroy OSR spatial ref objects in srs functions to avoid memory leaks (2024-03-17)
 
 * use `.editorconfig` file and bulk reformat code style (2024-03-16)
 
-* `configure.ac`: add back `proj-include` and `proj-lib`, the latter needed in some cases for macOS source install (2024-03-12)
+* `configure.ac`: add back `proj-include` and `proj-lib`, the latter needed in some cases for source install on macOS (2024-03-12)
 
 * additional unit tests for geometry operations using GEOS via GDAL headers (2024-03-10)
 
