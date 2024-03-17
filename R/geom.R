@@ -1,5 +1,5 @@
-# Exported functions that use the GEOS convenience library defined in
-# src/geos_wkt.h.
+# Exported functions that use the GEOS convenience library defined
+# in src/geos_wkt.h.
 # Chris Toney <chris.toney at usda.gov>
 
 #' Bounding box intersection / union
@@ -63,11 +63,9 @@ bbox_intersect <- function(x, as_wkt = FALSE) {
         ds <- new(GDALRaster, x[1], read_only=TRUE)
         this_bbox <- bbox_to_wkt(ds$bbox())
         ds$close()
-    }
-    else if (is.list(x)) {
+    } else if (is.list(x)) {
         this_bbox <- bbox_to_wkt(x[[1]])
-    }
-    else {
+    } else {
         stop("Input object not recognized.", call. = FALSE)
     }
 
@@ -75,11 +73,10 @@ bbox_intersect <- function(x, as_wkt = FALSE) {
     while (i <= n) {
         if (is.character(x)) {
             ds <- new(GDALRaster, x[i], read_only=TRUE)
-            this_bbox <- .g_intersection( this_bbox, bbox_to_wkt(ds$bbox()) )
+            this_bbox <- .g_intersection(this_bbox, bbox_to_wkt(ds$bbox()))
             ds$close()
-        }
-        else {
-            this_bbox <- .g_intersection( this_bbox, bbox_to_wkt(x[[i]]) )
+        } else {
+            this_bbox <- .g_intersection(this_bbox, bbox_to_wkt(x[[i]]))
         }
         i <- i + 1
     }
@@ -109,11 +106,9 @@ bbox_union <- function(x, as_wkt = FALSE) {
         ds <- new(GDALRaster, x[1], read_only=TRUE)
         this_bbox <- bbox_to_wkt(ds$bbox())
         ds$close()
-    }
-    else if (is.list(x)) {
+    } else if (is.list(x)) {
         this_bbox <- bbox_to_wkt(x[[1]])
-    }
-    else {
+    } else {
         stop("Input object not recognized.", call. = FALSE)
     }
 
@@ -121,11 +116,10 @@ bbox_union <- function(x, as_wkt = FALSE) {
     while (i <= n) {
         if (is.character(x)) {
             ds <- new(GDALRaster, x[i], read_only=TRUE)
-            this_bbox <- .g_union( this_bbox, bbox_to_wkt(ds$bbox()) )
+            this_bbox <- .g_union(this_bbox, bbox_to_wkt(ds$bbox()))
             ds$close()
-        }
-        else {
-            this_bbox <- .g_union( this_bbox, bbox_to_wkt(x[[i]]) )
+        } else {
+            this_bbox <- .g_union(this_bbox, bbox_to_wkt(x[[i]]))
         }
         i <- i + 1
     }
