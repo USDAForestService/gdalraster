@@ -16,7 +16,7 @@ calc(
   options = NULL,
   nodata_value = NULL,
   setRasterNodataValue = FALSE,
-  usePixelLonLat = FALSE,
+  usePixelLonLat = NULL,
   write_mode = "safe",
   quiet = FALSE
 )
@@ -52,9 +52,10 @@ during creation of a GTiff file).}
 format nodata value to \code{nodata_value}, or \code{FALSE} not to set a raster
 nodata value.}
 
-\item{usePixelLonLat}{Logical. If \code{TRUE}, \code{pixelX} and \code{pixelY} will be
-inverse projected to geographic coordinates and available as \code{pixelLon} and
-\code{pixelLat} in \code{expr} (adds computation time).}
+\item{usePixelLonLat}{This argument is deprecated and will be removed in a
+future version. Variable names \code{pixelLon} and \code{pixelLat} can be used in
+\code{expr}, and the pixel x/y coordinates will be inverse projected to
+longitude/latitude (adds computation time).}
 
 \item{write_mode}{Character. Name of the file write mode for output.
 One of:
@@ -90,13 +91,13 @@ The variables in \code{expr} are vectors of length raster xsize
 (row vectors of the input raster layer(s)).
 The expression should return a vector also of length raster xsize
 (an output row).
-Two special variable names are available in \code{expr} by default:
-\code{pixelX} and \code{pixelY} provide the pixel center coordinate in
-projection units. If \code{usePixelLonLat = TRUE}, the pixel x/y coordinates
-will also be inverse projected to longitude/latitude and available
-in \code{expr} as \code{pixelLon} and \code{pixelLat} (in the same geographic
-coordinate system used by the input projection, which is read from the
-first input raster).
+Four special variable names are available in \code{expr}:
+\code{pixelX} and \code{pixelY} provide pixel center coordinates in projection units.
+\code{pixelLon} and \code{pixelLat} can also be used, in which case the pixel x/y
+coordinates will be inverse projected to longitude/latitude
+(in the same geographic coordinate system used by the input projection,
+which is read from the first input raster). Note that inverse projection
+adds computation time.
 
 To refer to specific bands in a multi-band file, repeat the filename in
 \code{rasterfiles} and specify corresponding band numbers in \code{bands}, along with
@@ -137,8 +138,7 @@ hi_file <- calc(expr = expr,
                 var.names = "ELEV_M",
                 dtName = "Int16",
                 nodata_value = -32767,
-                setRasterNodataValue = TRUE,
-                usePixelLonLat = TRUE)
+                setRasterNodataValue = TRUE)
 
 ds <- new(GDALRaster, hi_file)
 # min, max, mean, sd
