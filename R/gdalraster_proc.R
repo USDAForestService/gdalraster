@@ -793,13 +793,13 @@ rasterToVRT <- function(srcfile,
 #' (row vectors of the input raster layer(s)).
 #' The expression should return a vector also of length raster xsize
 #' (an output row).
-#' Two special variable names are available in `expr` by default:
-#' `pixelX` and `pixelY` provide the pixel center coordinate in
-#' projection units. If `usePixelLonLat = TRUE`, the pixel x/y coordinates
-#' will also be inverse projected to longitude/latitude and available
-#' in `expr` as `pixelLon` and `pixelLat` (in the same geographic
-#' coordinate system used by the input projection, which is read from the
-#' first input raster).
+#' Four special variable names are available in `expr`:
+#' `pixelX` and `pixelY` provide pixel center coordinates in projection units.
+#' `pixelLon` and `pixelLat` can also be used, in which case the pixel x/y
+#' coordinates will be inverse projected to longitude/latitude
+#' (in the same geographic coordinate system used by the input projection,
+#' which is read from the first input raster). Note that inverse projection
+#' adds computation time.
 #'
 #' To refer to specific bands in a multi-band file, repeat the filename in
 #' `rasterfiles` and specify corresponding band numbers in `bands`, along with
@@ -833,9 +833,10 @@ rasterToVRT <- function(srcfile,
 #' @param setRasterNodataValue Logical. `TRUE` will attempt to set the raster
 #' format nodata value to `nodata_value`, or `FALSE` not to set a raster
 #' nodata value.
-#' @param usePixelLonLat Logical. If `TRUE`, `pixelX` and `pixelY` will be
-#' inverse projected to geographic coordinates and available as `pixelLon` and
-#' `pixelLat` in `expr` (adds computation time).
+#' @param usePixelLonLat This argument is deprecated and will be removed in a
+#' future version. Variable names `pixelLon` and `pixelLat` can be used in
+#' `expr`, and the pixel x/y coordinates will be inverse projected to
+#' longitude/latitude (adds computation time).
 #' @param write_mode Character. Name of the file write mode for output.
 #' One of:
 #'   * `safe` - execution stops if `dstfile` already exists (no output written)
@@ -875,8 +876,7 @@ rasterToVRT <- function(srcfile,
 #'                 var.names = "ELEV_M",
 #'                 dtName = "Int16",
 #'                 nodata_value = -32767,
-#'                 setRasterNodataValue = TRUE,
-#'                 usePixelLonLat = TRUE)
+#'                 setRasterNodataValue = TRUE)
 #'
 #' ds <- new(GDALRaster, hi_file)
 #' # min, max, mean, sd
@@ -972,7 +972,7 @@ calc <- function(expr,
                  options = NULL,
                  nodata_value = NULL,
                  setRasterNodataValue = FALSE,
-                 usePixelLonLat = FALSE,
+                 usePixelLonLat = NULL,
                  write_mode = "safe",
                  quiet = FALSE) {
 
@@ -1082,12 +1082,37 @@ calc <- function(expr,
         ds_list[[r]] <- new(GDALRaster, rasterfiles[r], read_only=TRUE)
     }
 
-    x <- seq(from = xmin + (cellsizeX/2), by = cellsizeX, length.out = ncols)
-    assign("pixelX", x)
+    # are pixel coordinates being used
+    usePixelX <- FALSE
+    usePixelY <- FALSE
+    usePixelLonLat <- FALSE
+    if (length(grep("pixelX", expr, fixed = TRUE)))
+        usePixelX <- TRUE
+
+    if (length(grep("pixelY", expr, fixed = TRUE)))
+        usePixelY <- TRUE
+
+    if (length(grep("pixelLon", expr, fixed = TRUE)) ||
+            length(grep("pixelLat", expr, fixed = TRUE)))
+        usePixelLonLat <- TRUE
+
+    if (usePixelLonLat) {
+        usePixelX <- TRUE
+        usePixelY <- TRUE
+    }
+
+    if (usePixelX) {
+        x <- seq(from = xmin + (cellsizeX/2),
+                 by = cellsizeX,
+                 length.out = ncols)
+        assign("pixelX", x) # nolint: object_usage_linter.
+    }
 
     process_row <- function(row) {
-        y <- rep((ymax - (cellsizeY/2) - (cellsizeY*row)), ncols)
-        assign("pixelY", y)
+        if (usePixelY) {
+            y <- rep((ymax - (cellsizeY / 2) - (cellsizeY * row)), ncols)
+            assign("pixelY", y) # nolint: object_usage_linter.
+        }
 
         if (usePixelLonLat) {
             lonlat <- inv_project(cbind(x, y), srs)
@@ -1124,6 +1149,7 @@ calc <- function(expr,
 
         if (!quiet)
             setTxtProgressBar(pb, row+1)
+
         return()
     }
 
@@ -1547,14 +1573,8 @@ polygonize <- function(raster_file,
         }
     }
 
-    return(invisible(.polygonize(raster_file,
-                                 src_band,
-                                 out_dsn,
-                                 out_layer,
-                                 fld_name,
-                                 mask_file,
-                                 nomask,
-                                 connectedness,
+    return(invisible(.polygonize(raster_file, src_band, out_dsn, out_layer,
+                                 fld_name, mask_file, nomask, connectedness,
                                  quiet)))
 }
 

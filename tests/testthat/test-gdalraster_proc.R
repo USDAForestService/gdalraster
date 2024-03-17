@@ -17,8 +17,7 @@ test_that("calc writes correct results", {
                     rasterfiles = elev_file,
                     var.names = "ELEV_M",
                     dtName = "Int16",
-                    setRasterNodataValue = TRUE,
-                    usePixelLonLat = TRUE)
+                    setRasterNodataValue = TRUE)
     on.exit(unlink(hi_file))
     ds <- new(GDALRaster, hi_file, read_only=TRUE)
     dm <- ds$dim()
