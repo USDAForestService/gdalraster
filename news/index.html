@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9170</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9180</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.0.9170" id="gdalraster-1909170-dev">gdalraster 1.9.0.9170 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909170-dev"></a></h2>
-<ul><li><p><code>configure.ac</code>: rework for GDAL built with GEOS system requirement (2024-03-17)</p></li>
+<h2 class="pkg-version" data-toc-text="1.9.0.9180" id="gdalraster-1909180-dev">gdalraster 1.9.0.9180 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909180-dev"></a></h2>
+<ul><li><p>remove internal <code><a href="../reference/has_geos.html">has_geos()</a></code> checks and update documentation, since GDAL with GEOS is now a system requirement (2024-03-18)</p></li>
+<li><p><code>configure.ac</code>: rework for GDAL built with GEOS system requirement (2024-03-17)</p></li>
 <li><p><code><a href="../reference/calc.html">calc()</a></code>: argument <code>usePixelLonLat</code> is deprecated as unnecessary, variables <code>pixelLon</code> / <code>pixelLat</code> are now auto-detected if used in the calc expression. Also add a small performance improvement from computing <code>pixelY</code> only when needed (2024-03-17)</p></li>
 <li><p>fix up R code for <code>lintr</code> and add <code>.lintr</code> file (2024-03-17)</p></li>
 <li><p>clean up temp files in examples throughout (2024-03-17)</p></li>
