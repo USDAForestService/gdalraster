@@ -10,7 +10,8 @@ buildRAT(
   col_names = c("VALUE", "COUNT"),
   table_type = "athematic",
   na_value = NULL,
-  join_df = NULL
+  join_df = NULL,
+  quiet = FALSE
 )
 }
 \arguments{
@@ -34,6 +35,8 @@ If \code{NULL} (the default), \code{NA} will not be recoded.}
 \item{join_df}{Optional data frame for joining additional attributes. Must
 have a column of unique values with the same name as \code{col_names[1]}
 (\code{"VALUE"} by default).}
+
+\item{quiet}{Logical scalar. If \verb{TRUE``, a progress bar will not be displayed. Defaults to }FALSE``.}
 }
 \value{
 A data frame with at least two columns containing the set of unique

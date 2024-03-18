@@ -780,16 +780,20 @@ Rcpp::DataFrame _combine(
 //'
 //' @noRd
 // [[Rcpp::export(name = ".value_count")]]
-Rcpp::DataFrame _value_count(std::string src_filename, int band = 1) {
+Rcpp::DataFrame _value_count(std::string src_filename, int band = 1,
+                             bool quiet = false) {
 
     GDALRaster src_ds = GDALRaster(src_filename, true);
     int nrows = src_ds.getRasterYSize();
     int ncols = src_ds.getRasterXSize();
-    GDALProgressFunc pfnProgress = GDALTermProgressR;
+    GDALProgressFunc pfnProgress = NULL;
     void* pProgressData = NULL;
+    if (!quiet)
+        pfnProgress = GDALTermProgressR;
     Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
 
-    Rcpp::Rcout << "Scanning raster...\n";
+    if (!quiet)
+        Rcpp::Rcout << "Scanning raster...\n";
 
     if (src_ds._readableAsInt(band)) {
         // read pixel values as int
@@ -801,7 +805,8 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1) {
             for (auto const& i : rowdata) {
                 tbl[i] += 1.0;
             }
-            pfnProgress(y / (nrows-1.0), NULL, pProgressData);
+            if (!quiet)
+                pfnProgress(y / (nrows-1.0), NULL, pProgressData);
         }
 
         Rcpp::IntegerVector value(tbl.size());
@@ -827,7 +832,8 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1) {
             for (auto const& i : rowdata) {
                 tbl[i] += 1.0;
             }
-            pfnProgress(y / (nrows-1.0), NULL, pProgressData);
+            if (!quiet)
+                pfnProgress(y / (nrows-1.0), NULL, pProgressData);
         }
 
         Rcpp::NumericVector value(tbl.size());

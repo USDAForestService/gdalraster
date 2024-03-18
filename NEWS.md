@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9180 (dev)
+# gdalraster 1.9.0.9190 (dev)
+
+* `buildRAT()`: add argument `quiet`, optionally suppress progress bar when computing unique VALUE, COUNT (2024-03-18)
 
 * remove internal `has_geos()` checks and update documentation, since GDAL with GEOS is now a system requirement (2024-03-18)
 
