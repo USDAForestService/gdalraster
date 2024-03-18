@@ -10,6 +10,7 @@
 #include "cpl_port.h"
 #include "cpl_conv.h"
 #include "cpl_string.h"
+#include "cpl_vsi.h"
 #include "gdal_utils.h"
 #include "gdal_alg.h"
 
@@ -137,10 +138,11 @@ void GDALRaster::open(bool read_only) {
     else
         nOpenFlags |= GDAL_OF_UPDATE;
 
-    hDataset = GDALOpenEx(fname_in.c_str(), nOpenFlags, NULL, dsoo.data(), NULL);
-    if (hDataset == NULL) {
+    hDataset = GDALOpenEx(fname_in.c_str(), nOpenFlags, NULL,
+                          dsoo.data(), NULL);
+
+    if (hDataset == NULL)
         Rcpp::stop("Open raster failed.");
-    }
 }
 
 bool GDALRaster::isOpen() const {
@@ -661,7 +663,7 @@ Rcpp::List GDALRaster::getDefaultHistogram(int band, bool force) const {
     if (err == CE_None) {
         for (int i=0; i < num_buckets; ++i)
             hist[i] = static_cast<double>(panHistogram[i]);
-        CPLFree(panHistogram);
+        VSIFree(panHistogram);
     }
 
     Rcpp::List list_out = Rcpp::List::create(
@@ -775,9 +777,11 @@ Rcpp::CharacterVector GDALRaster::getMetadataDomainList(int band) const {
         for (int i=0; i < items; ++i) {
             md(i) = papszMD[i];
         }
+        CSLDestroy(papszMD);
         return md;
     }
     else {
+        CSLDestroy(papszMD);
         return "";
     }
 }
