@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9160</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9170</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.0.9160" id="gdalraster-1909160-dev">gdalraster 1.9.0.9160 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909160-dev"></a></h2>
-<ul><li><p><code><a href="../reference/calc.html">calc()</a></code>: argument <code>usePixelLonLat</code> is deprecated as unnecessary, variables <code>pixelLon</code> / <code>pixelLat</code> are now auto-detected if used in the calc expression. Also add a small performance improvement from computing <code>pixelY</code> only when needed (2024-03-17)</p></li>
+<h2 class="pkg-version" data-toc-text="1.9.0.9170" id="gdalraster-1909170-dev">gdalraster 1.9.0.9170 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909170-dev"></a></h2>
+<ul><li><p><code>configure.ac</code>: rework for GDAL built with GEOS system requirement (2024-03-17)</p></li>
+<li><p><code><a href="../reference/calc.html">calc()</a></code>: argument <code>usePixelLonLat</code> is deprecated as unnecessary, variables <code>pixelLon</code> / <code>pixelLat</code> are now auto-detected if used in the calc expression. Also add a small performance improvement from computing <code>pixelY</code> only when needed (2024-03-17)</p></li>
 <li><p>fix up R code for <code>lintr</code> and add <code>.lintr</code> file (2024-03-17)</p></li>
 <li><p>clean up temp files in examples throughout (2024-03-17)</p></li>
 <li><p><code>src/wkt_conv.cpp</code>: destroy OSR spatial ref objects in srs functions to avoid memory leaks (2024-03-17)</p></li>
@@ -70,7 +71,7 @@
 <li><p>add <code><a href="../reference/vsi_get_fs_prefixes.html">vsi_get_fs_prefixes()</a></code>: get the list of prefixes for virtual file system handlers currently registered (2024-03-06)</p></li>
 <li><p>add <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code>: wrapper of the <code>ogrinfo</code> command-line utility, retrieve information about a vector data source and potentially edit data with SQL statements (GDAL &gt;= 3.7) (2024-03-04)</p></li>
 <li><p><code><a href="../reference/gdal_formats.html">gdal_formats()</a></code> now returns a data frame with the supported raster and vector formats, and information about the capabilities of each format driver (2024-03-04)</p></li>
-<li><p>GDAL built with GEOS is now a system requirement, add test in configure.ac (2024-03-03)</p></li>
+<li><p>GDAL built with GEOS is now a system requirement, add test in <code>configure.ac</code> (2024-03-03)</p></li>
 <li><p>add <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code>: wrapper of the <code>ogr2ogr</code> command-line utility, convert vector data between different formats (2024-03-03)</p></li>
 <li><p>add optional argument <code>quiet</code> in several functions to configure progress reporting (<a href="https://github.com/USDAForestService/gdalraster/issues/237" class="external-link">#237</a>) (2024-02-27)</p></li>
 <li><p>fixed misspelled argument in <code><a href="../reference/vsi_copy_file.html">vsi_copy_file()</a></code> and <code><a href="../reference/vsi_sync.html">vsi_sync()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/233" class="external-link">#233</a>) (2024-02-27)</p></li>
