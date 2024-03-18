@@ -88,7 +88,8 @@ Rcpp::DataFrame gdal_formats(std::string format = "") {
         char **papszMD = GDALGetMetadata(hDriver, NULL);
         std::string rw = "";
 
-        if (format != "" && format != GDALGetDriverShortName(hDriver))
+        if (format != "" &&
+                !EQUAL(format.c_str(), GDALGetDriverShortName(hDriver)))
             continue;
 
         if (CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ||
