@@ -197,14 +197,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // _value_count
-Rcpp::DataFrame _value_count(std::string src_filename, int band);
-RcppExport SEXP _gdalraster__value_count(SEXP src_filenameSEXP, SEXP bandSEXP) {
+Rcpp::DataFrame _value_count(std::string src_filename, int band, bool quiet);
+RcppExport SEXP _gdalraster__value_count(SEXP src_filenameSEXP, SEXP bandSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type src_filename(src_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type band(bandSEXP);
-    rcpp_result_gen = Rcpp::wrap(_value_count(src_filename, band));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(_value_count(src_filename, band, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1164,7 +1165,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_get_pixel_line", (DL_FUNC) &_gdalraster_get_pixel_line, 2},
     {"_gdalraster_buildVRT", (DL_FUNC) &_gdalraster_buildVRT, 4},
     {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 8},
-    {"_gdalraster__value_count", (DL_FUNC) &_gdalraster__value_count, 2},
+    {"_gdalraster__value_count", (DL_FUNC) &_gdalraster__value_count, 3},
     {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 6},
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 6},
     {"_gdalraster_footprint", (DL_FUNC) &_gdalraster_footprint, 3},

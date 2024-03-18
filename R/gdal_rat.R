@@ -122,6 +122,8 @@
 #' @param join_df Optional data frame for joining additional attributes. Must
 #' have a column of unique values with the same name as `col_names[1]`
 #' (`"VALUE"` by default).
+#' @param quiet Logical scalar. If `TRUE``, a progress bar will not be
+#' displayed. Defaults to `FALSE``.
 #' @returns A data frame with at least two columns containing the set of unique
 #' pixel values and their counts. These columns have attribute `"GFU"` set to
 #' `"MinMax"` for the values, and `"PixelCount"` for the counts. If `join_df` is
@@ -196,7 +198,8 @@ buildRAT <- function(raster,
                      col_names = c("VALUE", "COUNT"),
                      table_type = "athematic",
                      na_value = NULL,
-                     join_df = NULL) {
+                     join_df = NULL,
+                     quiet = FALSE) {
 
     if (length(raster) != 1)
         stop("raster argument must have length 1.", call. = FALSE)
@@ -230,7 +233,7 @@ buildRAT <- function(raster,
             stop("names(join_df) cannot contain col_names[2].", call. = FALSE)
     }
 
-    d <- .value_count(f, band)
+    d <- .value_count(f, band, quiet)
     names(d) <- col_names
     if (!is.null(na_value))
         d[is.na(d[, 1]), 1] <- na_value

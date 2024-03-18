@@ -388,8 +388,8 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #' Compute for a raster band the set of unique pixel values and their counts
 #'
 #' @noRd
-.value_count <- function(src_filename, band = 1L) {
-    .Call(`_gdalraster__value_count`, src_filename, band)
+.value_count <- function(src_filename, band = 1L, quiet = FALSE) {
+    .Call(`_gdalraster__value_count`, src_filename, band, quiet)
 }
 
 #' Wrapper for GDALDEMProcessing in the GDAL Algorithms C API
