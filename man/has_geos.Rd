@@ -11,7 +11,9 @@ Logical. \code{TRUE} if GEOS is available, otherwise \code{FALSE}.
 }
 \description{
 \code{has_geos()} returns a logical value indicating whether GDAL was built
-against the GEOS library.
+against the GEOS library. GDAL built with GEOS is a system requirement
+as of \code{gdalraster} 1.10.0, so this function will always return \code{TRUE}
+(may be removed in a future version).
 }
 \examples{
 has_geos()

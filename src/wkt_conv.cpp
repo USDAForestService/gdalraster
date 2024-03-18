@@ -388,11 +388,6 @@ Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox,
     if (bbox.size() != 4)
         Rcpp::stop("Invalid bounding box.");
 
-    if (!has_geos()) {
-        Rcpp::Rcout << "bbox_to_wkt() requires GEOS.\n";
-        return NA_STRING;
-    }
-
     Rcpp::NumericVector bbox_in = Rcpp::clone(bbox);
     bbox_in[0] -= extend_x;
     bbox_in[1] -= extend_y;
