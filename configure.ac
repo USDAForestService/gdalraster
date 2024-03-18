@@ -38,7 +38,8 @@ INPKG_CPPFLAGS="${PKG_CPPFLAGS}"
 INPKG_LIBS="${PKG_LIBS}"
 
 # GDAL ########################################################################
-# copied from https://github.com/r-spatial/sf/blob/master/configure.ac
+# original version copied from
+# https://github.com/r-spatial/sf/blob/master/configure.ac
 # sf configure.ac: GDAL stuff largely copied from rgdal, (c) Roger Bivand
 
 GDAL_CONFIG="gdal-config"
