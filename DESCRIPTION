@@ -1,25 +1,25 @@
 Package: gdalraster
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 1.9.0.9170
+Version: 1.9.0.9180
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),
-    person("Frank", "Warmerdam", 
+    person("Frank", "Warmerdam",
             role = c("ctb", "cph"), comment = "GDAL API documentation; src/progress_r.cpp from gdal/port/cpl_progress.cpp"),
-    person("Even", "Rouault", 
+    person("Even", "Rouault",
             role = c("ctb", "cph"), comment = "GDAL API documentation"),
-    person("Marius", "Appel", 
+    person("Marius", "Appel",
             role = c("ctb", "cph"), comment = "configure.ac based on https://github.com/appelmar/gdalcubes"),
-    person("Daniel", "James", 
+    person("Daniel", "James",
             role = c("ctb", "cph"), comment = "Boost combine hashes method in src/cmb_table.h"),
-    person("Peter", "Dimov", 
+    person("Peter", "Dimov",
             role = c("ctb", "cph"), comment = "Boost combine hashes method in src/cmb_table.h"))
 Description: Interface to the Raster API of the 'Geospatial Data Abstraction
     Library' ('GDAL', <https://gdal.org>). Bindings are implemented in an
     exposed C++ class encapsulating a 'GDALDataset' and its raster band
     objects, along with several stand-alone functions. These support manual
     creation of uninitialized datasets, creation from existing raster as
-    template, read/set dataset parameters, low level I/O, color tables, raster 
+    template, read/set dataset parameters, low level I/O, color tables, raster
     attribute tables, virtual raster (VRT), and 'gdalwarp' wrapper for
     reprojection and mosaicing. Includes 'GDAL' algorithms ('dem_proc()',
     'polygonize()', 'rasterize()', etc.), and functions for coordinate
