@@ -740,7 +740,7 @@ Rcpp::DataFrame _combine(
         }
     }
 
-    CmbTable tbl(nrasters, var_names);
+    CmbTable* tbl = new CmbTable(nrasters, var_names);
     Rcpp::IntegerMatrix rowdata(nrasters, ncols);
     Rcpp::NumericVector cmbid;
     GDALProgressFunc pfnProgress = GDALTermProgressR;
@@ -757,7 +757,7 @@ Rcpp::DataFrame _combine(
                                 src_ds[i].read(
                                     bands[i], 0, y, ncols, 1, ncols, 1) );
 
-        cmbid = tbl.updateFromMatrix(rowdata, 1);
+        cmbid = tbl->updateFromMatrix(rowdata, 1);
 
         if (out_raster) {
             dst_ds.write( 1, 0, y, ncols, 1, cmbid );
@@ -773,7 +773,10 @@ Rcpp::DataFrame _combine(
     for (std::size_t i = 0; i < nrasters; ++i)
         src_ds[i].close();
 
-    return tbl.asDataFrame();
+    Rcpp::DataFrame df = tbl->asDataFrame();
+    delete tbl;
+    tbl = nullptr;
+    return df;
 }
 
 
