@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9160 (dev)
+# gdalraster 1.9.0.9170 (dev)
+
+* `configure.ac`: rework for GDAL built with GEOS system requirement (2024-03-17)
 
 * `calc()`: argument `usePixelLonLat` is deprecated as unnecessary, variables `pixelLon` / `pixelLat` are now auto-detected if used in the calc expression. Also add a small performance improvement from computing `pixelY` only when needed (2024-03-17)
 
@@ -26,7 +28,7 @@
 
 * `gdal_formats()` now returns a data frame with the supported raster and vector formats, and information about the capabilities of each format driver (2024-03-04)
 
-* GDAL built with GEOS is now a system requirement, add test in configure.ac (2024-03-03)
+* GDAL built with GEOS is now a system requirement, add test in `configure.ac` (2024-03-03)
 
 * add `ogr2ogr()`: wrapper of the `ogr2ogr` command-line utility, convert vector data between different formats (2024-03-03)
 
