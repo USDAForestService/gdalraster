@@ -5,8 +5,12 @@
 # GDAL headers. Still checks that PROJ is available to GDAL and handles optional
 # local copy of the PROJ data directory. The PROJ datadir is now obtained from
 # pkg-config if possible. Compiler invocations are now logged.
-# 2024-03-03: Test that GEOS is available to GDAL.
-AC_INIT([gdalraster],[1.9.0.9160],[chris.toney@usda.gov])
+# subsequent changelog:
+# 2024-03-03: test that GEOS is available to GDAL (required at gdalraster 1.10)
+# 2024-03-12: restore proj_include_path and proj_lib_path
+# 2024-03-17: rework GEOS test, include <ogr_api.h> in initial gdal_test.cpp
+
+AC_INIT([gdalraster],[1.9.0.9170],[chris.toney@usda.gov])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
@@ -138,13 +142,25 @@ LIBS="${INLIBS} ${PKG_LIBS}"
 AC_MSG_CHECKING(GDAL: linking with --libs only)
 gdalok=no
 
+# GDAL must be built with GEOS
 [cat > gdal_test.cpp <<_EOCONF
 #include <gdal.h>
+#include <ogr_api.h>
 #ifdef __cplusplus
 extern "C" {
 #endif
 int main(void) {
-GDALAllRegister();
+  GDALAllRegister();
+  bool ret = false;
+  OGRGeometryH hGeom = OGR_G_CreateGeometry(wkbPoint);
+  if (hGeom == NULL)
+    return (ret == FALSE); // signals OGR failure
+  OGR_G_SetPoint_2D(hGeom, 0, 0, 0);
+  // If GDAL is built without the GEOS library, this function will
+  // always return FALSE:
+  ret = OGR_G_IsSimple(hGeom);
+  OGR_G_DestroyGeometry(hGeom);
+  return (ret == FALSE); // signals GEOS is not available via GDAL
 }
 #ifdef __cplusplus
 }
@@ -178,11 +194,27 @@ else
 fi
 fi
 
-rm -f gdal_test.cpp
-
 if test "${gdalok}" = no; then
-   AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
-   AC_MSG_ERROR([GDALAllRegister not found in libgdal.])
+  rm -f gdal_test.cpp
+  AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
+  AC_MSG_ERROR([GDALAllRegister not found in libgdal, or GDAL not built with GEOS.])
+fi
+
+AC_MSG_CHECKING(GDAL: checking whether GEOS is available at runtime:)
+AC_RUN_IFELSE(
+   [AC_LANG_SOURCE([`cat gdal_test.cpp`])],
+   gdal_has_geos=yes,
+   gdal_has_geos=no,
+   gdal_has_geos=cross_compiling
+)
+rm -f gdal_test.cpp
+if test "${gdal_has_geos}" = no; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([OGR_G_IsSimple() returns false for a valid point: GEOS not available?])
+elif test "${gdal_has_geos}" = cross_compiling; then
+  AC_MSG_RESULT([assume yes for cross-compiling])
+else
+  AC_MSG_RESULT(yes)
 fi
 
 #
@@ -276,14 +308,21 @@ else
     else
       PROJ_LIB_PATH=`${PROJ_CONFIG} --libs`
     fi
-    AC_SUBST([PROJ_LIBS], ["${PROJ_LIB_PATH} ${INPKG_LIBS}"])
+    PROJ_LIBS="${PROJ_LIB_PATH}"
     proj_version=`${PROJ_CONFIG} --modversion`
     AC_MSG_NOTICE([PROJ: ${proj_version}])
   else
-    PROJ_LIBS="${PKG_LIBS} -lproj"
+    PROJ_LIBS="-lproj"
   fi
 fi
 
+AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${PROJ_CPPFLAGS} ${GDAL_CPPFLAGS}"])
+AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS} ${PROJ_LIBS}"])
+if test "${NEED_DEPS}" = yes; then
+   AC_SUBST([PKG_LIBS], ["${PKG_LIBS} ${GDAL_DEP_LIBS}"])
+fi
+
+CPPFLAGS="${INCPPFLAGS} ${PKG_CPPFLAGS}"
 LIBS="${LIBS} ${PROJ_LIBS}"
 
 #
@@ -302,7 +341,7 @@ int main(int argc, char *argv[]) {
   src->importFromEPSG(4326);
   dest->importFromEPSG(3857);
   OGRCoordinateTransformation *ct = OGRCreateCoordinateTransformation(src, dest);
-  return(ct == NULL); // signals PROJ is not available through gdal
+  return(ct == NULL); // signals PROJ is not available via GDAL
 }
 _EOCONF]
 
@@ -321,7 +360,7 @@ else
   AC_MSG_RESULT(yes)
 fi
 
-AC_MSG_CHECKING(GDAL: checking whether PROJ is available for running:)
+AC_MSG_CHECKING(GDAL: checking whether PROJ is available at runtime:)
 AC_RUN_IFELSE(
    [AC_LANG_SOURCE([`cat gdal_proj.cpp`])],
    gdal_has_proj=yes,
@@ -331,81 +370,16 @@ AC_RUN_IFELSE(
 rm -f gdal_proj.cpp
 if test "${gdal_has_proj}" = no; then
   AC_MSG_RESULT(no)
-  AC_MSG_ERROR([OGRCoordinateTransformation() does not return a coord.trans: PROJ not available?])
+  AC_MSG_ERROR([OGRCoordinateTransformation() returns NULL: PROJ not available?])
 elif test "${gdal_has_proj}" = cross_compiling; then
-  AC_MSG_RESULT(assume yes for cross-compiling)
+  AC_MSG_RESULT([assume yes for cross-compiling])
 else
   AC_MSG_RESULT(yes)
 fi
 
-#
-# test whether GEOS is available to gdal:
-#
-
-gdal_has_geos=no
-
-[cat > gdal_geos.cpp <<_EOCONF
-#include <ogr_api.h>
-int main(int argc, char *argv[]) {
-  OGRGeometryH hGeom = OGR_G_CreateGeometry(wkbPoint);
-  if (hGeom == NULL)
-    return false;
-  OGR_G_SetPoint_2D(hGeom, 0, 0, 0);
-  // If GDAL is built without the GEOS library, this function will
-  // always return FALSE:
-  bool ret = OGR_G_IsSimple(hGeom);
-  OGR_G_DestroyGeometry(hGeom);
-  return (ret == FALSE); // signals GEOS is not available through gdal
-}
-_EOCONF]
-
-AC_MSG_CHECKING(GDAL: checking whether GEOS is available for linking:)
-AC_LINK_IFELSE(
-   [AC_LANG_SOURCE([`cat gdal_geos.cpp`])],
-   gdal_has_geos=yes,
-   gdal_has_geos=no
-)
-if test "${gdal_has_geos}" = no; then
-  AC_MSG_RESULT(no)
-  rm -f gdal_geos.cpp
-  AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
-  AC_MSG_ERROR([cannot link geometry code])
-else
-  AC_MSG_RESULT(yes)
-fi
-
-AC_MSG_CHECKING(GDAL: checking whether GEOS is available for running:)
-AC_RUN_IFELSE(
-   [AC_LANG_SOURCE([`cat gdal_geos.cpp`])],
-   gdal_has_geos=yes,
-   gdal_has_geos=no,
-   gdal_has_geos=cross_compiling
-)
-rm -f gdal_geos.cpp
-if test "${gdal_has_geos}" = no; then
-  AC_MSG_RESULT(no)
-  AC_MSG_ERROR([OGR_G_IsSimple() returns false for a valid point: GEOS not available?])
-elif test "${gdal_has_geos}" = cross_compiling; then
-  AC_MSG_RESULT(assume yes for cross-compiling)
-else
-  AC_MSG_RESULT(yes)
-fi
-
-AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
-
-
-# #############################################################################
-
-AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${PROJ_CPPFLAGS} ${GDAL_CPPFLAGS}"])
-
-AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS} ${PROJ_LIBS}"])
-if test "${NEED_DEPS}" = yes; then
-   AC_SUBST([PKG_LIBS], ["${PKG_LIBS} ${GDAL_DEP_LIBS}"])
-fi
 
 AC_MSG_NOTICE([Package CPP flags: ${PKG_CPPFLAGS}])
 AC_MSG_NOTICE([Package LIBS: ${PKG_LIBS}])
 
 AC_CONFIG_FILES([src/Makevars])
 AC_OUTPUT
-
