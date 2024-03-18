@@ -18,13 +18,11 @@ accuracy of the result.}
 }
 \value{
 Character string for an OGC WKT polygon.
-\code{NA} is returned if GDAL was built without the GEOS library.
 }
 \description{
 \code{g_buffer()} builds a new geometry containing the buffer region around
 the geometry on which it is invoked. The buffer is a polygon containing
-the region within the buffer distance of the original geometry. Requires
-GDAL built with the GEOS library.
+the region within the buffer distance of the original geometry.
 }
 \examples{
 g_buffer(wkt = "POINT (0 0)", dist = 10)

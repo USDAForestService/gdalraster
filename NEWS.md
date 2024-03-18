@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9170 (dev)
+# gdalraster 1.9.0.9180 (dev)
+
+* remove internal `has_geos()` checks and update documentation, since GDAL with GEOS is now a system requirement (2024-03-18)
 
 * `configure.ac`: rework for GDAL built with GEOS system requirement (2024-03-17)
 

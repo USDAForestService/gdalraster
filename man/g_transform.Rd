@@ -17,7 +17,6 @@ spatial reference system.}
 }
 \value{
 Character string for a transformed OGC WKT geometry.
-\code{NA} is returned if GDAL was built without the GEOS library.
 }
 \description{
 \code{g_transform()} will transform the coordinates of a geometry from their
