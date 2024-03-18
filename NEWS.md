@@ -1,4 +1,8 @@
-# gdalraster 1.9.0.9190 (dev)
+# gdalraster 1.9.0.9200 (dev)
+
+* `_combine()`: allocate `CmbTable` on the heap (2024-03-18)
+
+* `GDALRaster::getMetadataDomainList()`: deallocate the returned string list (2024-03-18)
 
 * `buildRAT()`: add argument `quiet`, optionally suppress progress bar when computing unique VALUE, COUNT (2024-03-18)
 
