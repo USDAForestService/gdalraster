@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9210</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9220</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.0.9210" id="gdalraster-1909210-dev">gdalraster 1.9.0.9210 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909210-dev"></a></h2>
-<ul><li><p>deallocate objects in some error handlers where needed (2024-03-18)</p></li>
+<h2 class="pkg-version" data-toc-text="1.9.0.9220" id="gdalraster-1909220-dev">gdalraster 1.9.0.9220 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909220-dev"></a></h2>
+<ul><li><p>mass replace <code>NULL</code> -&gt; <code>nullptr</code> in C++ code (2024-03-19)</p></li>
+<li><p>deallocate objects in a few error handlers where needed (2024-03-18)</p></li>
 <li><p><code>_combine()</code>: allocate <code>CmbTable</code> on the heap (2024-03-18)</p></li>
 <li><p><code>GDALRaster::getMetadataDomainList()</code>: deallocate the returned string list (2024-03-18)</p></li>
 <li><p><code><a href="../reference/buildRAT.html">buildRAT()</a></code>: add argument <code>quiet</code>, optionally suppress progress bar when computing unique VALUE, COUNT (2024-03-18)</p></li>
