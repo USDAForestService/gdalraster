@@ -24,7 +24,7 @@
 bool has_geos() {
 // Test if GDAL built against GEOS
     OGRGeometryH hGeom = OGR_G_CreateGeometry(wkbPoint);
-    if (hGeom == NULL)
+    if (hGeom == nullptr)
         Rcpp::stop("Failed to create geometry object.");
     OGR_G_SetPoint_2D(hGeom, 0, 0, 0);
 
@@ -46,7 +46,7 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 // Currently only for POINT, LINESTRING, POLYGON.
 // Only simple polygons composed of one exterior ring are supported.
 
-    OGRGeometryH hGeom = NULL;
+    OGRGeometryH hGeom = nullptr;
 
     if (geom_type == "point" || geom_type == "POINT") {
         geom_type = "POINT";
@@ -64,7 +64,7 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
         Rcpp::stop("Geometry type is not valid.");
     }
 
-    if (hGeom == NULL)
+    if (hGeom == nullptr)
         Rcpp::stop("Failed to create geometry object.");
 
     R_xlen_t nPts = xy.nrow();
@@ -98,7 +98,7 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
         CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", "NO");
         if (OGR_G_AddGeometryDirectly(hPoly, hGeom) != OGRERR_NONE)
             Rcpp::stop("Failed to create polygon geometry (unclosed ring?).");
-        CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", NULL);
+        CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", nullptr);
 
         char* pszWKT;
         OGR_G_ExportToWkt(hPoly, &pszWKT);
@@ -125,12 +125,12 @@ bool _g_is_valid(std::string geom) {
 // of the geometry operation. If OGR is built without the GEOS library,
 // this function will always return FALSE.
 
-    OGRGeometryH hGeom = NULL;
+    OGRGeometryH hGeom = nullptr;
     OGRErr err;
     char* pszWKT = (char*) geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom);
-    if (err != OGRERR_NONE || hGeom == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
+    if (err != OGRERR_NONE || hGeom == nullptr)
         Rcpp::stop("Failed to create geometry object from WKT string.");
 
     bool ret = OGR_G_IsValid(hGeom);
@@ -149,18 +149,18 @@ bool _g_intersects(std::string this_geom, std::string other_geom) {
 // is done in rigorous fashion otherwise TRUE is returned if the envelopes
 // (bounding boxes) of the two geometries overlap.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
@@ -182,18 +182,18 @@ bool _g_equals(std::string this_geom, std::string other_geom) {
 // considered equal by this method if their WKT/WKB representation is equal.
 // Note: this must be distinguished from equality in a spatial way.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
@@ -215,18 +215,18 @@ bool _g_disjoint(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
@@ -248,18 +248,18 @@ bool _g_touches(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
@@ -281,18 +281,18 @@ bool _g_contains(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
@@ -314,18 +314,18 @@ bool _g_within(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
@@ -347,18 +347,18 @@ bool _g_crosses(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
@@ -381,18 +381,18 @@ bool _g_overlaps(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
@@ -423,16 +423,16 @@ std::string _g_buffer(std::string geom, double dist, int quad_segs = 30) {
 // numbers of vertices in the resulting buffer geometry while small numbers
 // reduce the accuracy of the result.
 
-    OGRGeometryH hGeom = NULL;
+    OGRGeometryH hGeom = nullptr;
     OGRErr err;
     char* pszWKT = (char*) geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom);
-    if (err != OGRERR_NONE || hGeom == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
+    if (err != OGRERR_NONE || hGeom == nullptr)
         Rcpp::stop("Failed to create geometry object from WKT string.");
 
     OGRGeometryH hBufferGeom = OGR_G_Buffer(hGeom, dist, quad_segs);
-    if (hBufferGeom == NULL) {
+    if (hBufferGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
         Rcpp::stop("Failed to create buffer geometry.");
     }
@@ -464,24 +464,24 @@ std::string _g_intersection(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
 
     OGRGeometryH hGeom = OGR_G_Intersection(hGeom_this, hGeom_other);
-    if (hGeom == NULL) {
+    if (hGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         OGR_G_DestroyGeometry(hGeom_other);
         return "";
@@ -510,24 +510,24 @@ std::string _g_union(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
 
     OGRGeometryH hGeom = OGR_G_Union(hGeom_this, hGeom_other);
-    if (hGeom == NULL) {
+    if (hGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         OGR_G_DestroyGeometry(hGeom_other);
         return "";
@@ -556,24 +556,24 @@ std::string _g_difference(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
 
     OGRGeometryH hGeom = OGR_G_Difference(hGeom_this, hGeom_other);
-    if (hGeom == NULL) {
+    if (hGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         OGR_G_DestroyGeometry(hGeom_other);
         return "";
@@ -602,24 +602,24 @@ std::string _g_sym_difference(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
 
     OGRGeometryH hGeom = OGR_G_SymDifference(hGeom_this, hGeom_other);
-    if (hGeom == NULL) {
+    if (hGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         OGR_G_DestroyGeometry(hGeom_other);
         return "";
@@ -650,18 +650,18 @@ double _g_distance(std::string this_geom, std::string other_geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom_this = NULL;
-    OGRGeometryH hGeom_other = NULL;
+    OGRGeometryH hGeom_this = nullptr;
+    OGRGeometryH hGeom_other = nullptr;
     OGRErr err;
     char* pszWKT_this = (char*) this_geom.c_str();
     char* pszWKT_other = (char*) other_geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT_this, NULL, &hGeom_this);
-    if (err != OGRERR_NONE || hGeom_this == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
+    if (err != OGRERR_NONE || hGeom_this == nullptr)
         Rcpp::stop("Failed to create geometry object from first WKT string.");
 
-    err = OGR_G_CreateFromWkt(&pszWKT_other, NULL, &hGeom_other);
-    if (err != OGRERR_NONE || hGeom_other == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT_other, nullptr, &hGeom_other);
+    if (err != OGRERR_NONE || hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         Rcpp::stop("Failed to create geometry object from second WKT string.");
     }
@@ -678,12 +678,12 @@ double _g_length(std::string geom) {
 // Computes the length for OGRCurve (LineString) or MultiCurve objects.
 // Undefined for all other geometry types (returns zero).
 
-    OGRGeometryH hGeom = NULL;
+    OGRGeometryH hGeom = nullptr;
     OGRErr err;
     char* pszWKT = (char*) geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom);
-    if (err != OGRERR_NONE || hGeom == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
+    if (err != OGRERR_NONE || hGeom == nullptr)
         Rcpp::stop("Failed to create geometry object from WKT string.");
 
     double ret = OGR_G_Length(hGeom);
@@ -697,12 +697,12 @@ double _g_area(std::string geom) {
 // Computes the area for an OGRLinearRing, OGRPolygon or OGRMultiPolygon.
 // Undefined for all other geometry types (returns zero).
 
-    OGRGeometryH hGeom = NULL;
+    OGRGeometryH hGeom = nullptr;
     OGRErr err;
     char* pszWKT = (char*) geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom);
-    if (err != OGRERR_NONE || hGeom == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
+    if (err != OGRERR_NONE || hGeom == nullptr)
         Rcpp::stop("Failed to create geometry object from WKT string.");
 
     double ret = OGR_G_Area(hGeom);
@@ -724,16 +724,16 @@ Rcpp::NumericVector _g_centroid(std::string geom) {
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    OGRGeometryH hGeom = NULL;
+    OGRGeometryH hGeom = nullptr;
     OGRErr err;
     char* pszWKT = (char*) geom.c_str();
 
-    err = OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom);
-    if (err != OGRERR_NONE || hGeom == NULL)
+    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
+    if (err != OGRERR_NONE || hGeom == nullptr)
         Rcpp::stop("Failed to create geometry object from WKT string.");
 
     OGRGeometryH hPoint = OGR_G_CreateGeometry(wkbPoint);
-    if (hPoint == NULL) {
+    if (hPoint == nullptr) {
         Rcpp::stop("Failed to create point geometry object.");
         OGR_G_DestroyGeometry(hGeom);
     }
@@ -790,13 +790,13 @@ std::string _g_transform(std::string geom, std::string srs_from,
         Rcpp::stop("Failed to import destination SRS from WKT string.");
 
     poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
-    if (poCT == NULL)
+    if (poCT == nullptr)
         Rcpp::stop("Failed to create coordinate transformer.");
 
-    OGRGeometryH hGeom = NULL;
+    OGRGeometryH hGeom = nullptr;
     char* pszWKT = (char*) geom.c_str();
-    err = OGR_G_CreateFromWkt(&pszWKT, NULL, &hGeom);
-    if (err != OGRERR_NONE || hGeom == NULL) {
+    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
+    if (err != OGRERR_NONE || hGeom == nullptr) {
         OGRCoordinateTransformation::DestroyCT(poCT);
         Rcpp::stop("Failed to create geometry object from WKT string.");
     }
