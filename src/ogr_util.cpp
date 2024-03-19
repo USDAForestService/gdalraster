@@ -93,6 +93,8 @@ bool _create_ogr(std::string format, std::string dst_filename,
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(NULL);
     if (srs != "") {
         if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+            if (hSRS != NULL)
+                OSRDestroySpatialReference(hSRS);
             GDALClose(hDstDS);
             Rcpp::stop("Error importing SRS from user input.");
         }
@@ -187,18 +189,26 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
 
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(NULL);
     if (srs != "") {
-        if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE)
+        if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+            if (hSRS != NULL)
+                OSRDestroySpatialReference(hSRS);
             Rcpp::stop("Error importing SRS from user input.");
+        }
     }
 
     hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
             NULL, NULL, NULL);
 
-    if (hDS == NULL)
+    if (hDS == NULL) {
+        if (hSRS != NULL)
+            OSRDestroySpatialReference(hSRS);
         return false;
+    }
 
     if (!GDALDatasetTestCapability(hDS, ODsCCreateLayer)) {
         GDALClose(hDS);
+        if (hSRS != NULL)
+            OSRDestroySpatialReference(hSRS);
         return false;
     }
 
