@@ -1,6 +1,8 @@
-# gdalraster 1.9.0.9210 (dev)
+# gdalraster 1.9.0.9220 (dev)
 
-* deallocate objects in some error handlers where needed (2024-03-18)
+* mass replace `NULL` -> `nullptr` in C++ code (2024-03-19)
+
+* deallocate objects in a few error handlers where needed (2024-03-18)
 
 * `_combine()`: allocate `CmbTable` on the heap (2024-03-18)
 
