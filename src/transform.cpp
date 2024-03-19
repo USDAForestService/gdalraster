@@ -52,12 +52,12 @@ Rcpp::CharacterVector _getPROJSearchPaths() {
 // [[Rcpp::export(name = ".setPROJSearchPaths")]]
 void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
 #if GDAL_VERSION_NUM >= 3000000
-    std::vector<char *> path_list = {NULL};
+    std::vector<char *> path_list = {nullptr};
     path_list.resize(paths.size() + 1);
     for (R_xlen_t i = 0; i < paths.size(); ++i) {
         path_list[i] = (char *) (paths[i]);
     }
-    path_list[paths.size()] = NULL;
+    path_list[paths.size()] = nullptr;
     OSRSetPROJSearchPaths(path_list.data());
 #else
     Rcpp::Rcerr << "OSRSetPROJSearchPaths requires GDAL 3.0 or later.\n";
