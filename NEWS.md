@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9200 (dev)
+# gdalraster 1.9.0.9210 (dev)
+
+* deallocate objects in some error handlers where needed (2024-03-18)
 
 * `_combine()`: allocate `CmbTable` on the heap (2024-03-18)
 
