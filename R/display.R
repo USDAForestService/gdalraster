@@ -2,15 +2,13 @@
 
 #' @noRd
 .normalize <- function(x, minmax=NULL) {
-
-# Normalize to a range of [0,1].
-# Normalize to the full range of the input data by default.
-# Optionally normalize to a user-defined range in terms of the input.
+    # Normalize to a range of [0,1].
+    # Normalize to the full range of the input data by default.
+    # Optionally normalize to a user-defined range in terms of the input.
 
     if (is.null(minmax)) {
         xn <- (x - min(x,na.rm=TRUE)) / (max(x,na.rm=TRUE) - min(x,na.rm=TRUE))
-    }
-    else {
+    } else {
         xn <- (x - minmax[1]) / (minmax[2] - minmax[1])
         xn[xn < 0] <- 0
         xn[xn > 1] <- 1
@@ -20,35 +18,41 @@
 }
 
 #' @noRd
-.as_raster <- function(a, col_tbl=NULL, maxColorValue=1,
-                normalize=TRUE, minmax_def=NULL, minmax_pct_cut=NULL,
-                col_map_fn=NULL, na_col=rgb(0,0,0,0), ...) {
+.as_raster <- function(a,
+                       col_tbl=NULL,
+                       maxColorValue=1,
+                       normalize=TRUE,
+                       minmax_def=NULL,
+                       minmax_pct_cut=NULL,
+                       col_map_fn=NULL,
+                       na_col=rgb(0,0,0,0),
+                       ...) {
 
-# Create an object of class "raster", a matrix of color values representing
-# a bitmap image for input to graphics::rasterImage(). Input is an array of
-# pixel values with dimensions xsize, ysize, nbands.
+    # Create an object of class "raster", a matrix of color values representing
+    # a bitmap image for input to graphics::rasterImage(). Input is an array of
+    # pixel values with dimensions xsize, ysize, nbands.
 
     nbands <- dim(a)[3]
 
-    if ( !(nbands %in% c(1,3)) )
+    if (!(nbands %in% c(1, 3)))
         stop("Number of bands must be 1 or 3", call.=FALSE)
 
     r <- array()
 
     if (!is.null(col_tbl)) {
         # map to a color table
-        if(nbands != 1)
+        if (nbands != 1)
             stop("A color table can only be used with single-band data.",
-                    call.=FALSE)
+                 call.=FALSE)
 
         ct <- as.data.frame(col_tbl)
-        if(ncol(ct) < 4 || ncol(ct) > 5)
+        if (ncol(ct) < 4 || ncol(ct) > 5)
             stop("Color table must have four or five columns.", call.=FALSE)
 
         if (ncol(ct) == 4) # add alpha channel
-            ct[,5] <- rep(maxColorValue, nrow(ct))
-        ct[,6] <- rgb(ct[,2], ct[,3], ct[,4], ct[,5],
-                      maxColorValue=maxColorValue)
+            ct[, 5] <- rep(maxColorValue, nrow(ct))
+        ct[, 6] <- rgb(ct[, 2], ct[, 3], ct[, 4], ct[, 5],
+                       maxColorValue=maxColorValue)
         names(ct) <- c("value", "r", "g", "b", "a", "rgb")
         f <- function(x) { ct$rgb[match(x, ct$value)] }
         r <- vapply(a, FUN=f, FUN.VALUE="#00000000", USE.NAMES=FALSE)
@@ -56,25 +60,24 @@
             r[is.na(r)] <- na_col
         dim(r) <- dim(a)[2:1]
         class(r) <- "raster"
-    }
-    else {
+
+    } else {
         # gray/rgb color scaling
         if (normalize) {
             if (!is.null(minmax_def)) {
                 for (b in 1:nbands) {
                     a[,,b] <- .normalize(a[,,b], minmax_def[c(b, b+nbands)])
                 }
-            }
-            else if (!is.null(minmax_pct_cut)) {
+            } else if (!is.null(minmax_pct_cut)) {
                 for (b in 1:nbands) {
                     q <- stats::quantile(a[,,b],
-                                probs=c(minmax_pct_cut[1] / 100,
-                                        minmax_pct_cut[2] / 100),
-                                na.rm = TRUE, names=FALSE)
+                                         probs=c(minmax_pct_cut[1] / 100,
+                                                 minmax_pct_cut[2] / 100),
+                                         na.rm = TRUE,
+                                         names = FALSE)
                     a[,,b] <- .normalize(a[,,b], q)
                 }
-            }
-            else {
+            } else {
                 for (b in 1:nbands) {
                     a[,,b] <- .normalize(a[,,b])
                 }
@@ -102,8 +105,7 @@
             r <- col_map_fn(a)
             dim(r) <- dim(a)[2:1]
             class(r) <- "raster"
-        }
-        else {
+        } else {
             # rgb
             r <- col_map_fn(a[,,1], a[,,2], a[,,3])
             dim(r) <- dim(a)[2:1]
@@ -282,20 +284,23 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
     }
 
     if (!is.null(nbands)) {
-        if ( !(nbands %in% c(1,3)) )
+        if (!(nbands %in% c(1, 3)))
             stop("Number of bands must be 1 or 3", call.=FALSE)
     }
 
     if (is.null(max_pixels))
-        max_pixels = Inf
+        max_pixels <- Inf
 
     data_in <- NULL
+
     if (is(data, "Rcpp_GDALRaster")) {
         dm <- data$dim()
+
         if (is.null(xsize))
             xsize <- out_xsize <- dm[1]
         else
             out_xsize <- xsize
+
         if (is.null(ysize))
             ysize <- out_ysize <- dm[2]
         else
@@ -311,9 +316,9 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
         if (nbands==1 && is.null(col_tbl) && is.null(col_map_fn)) {
             # check for a built-in color table
             if (!is.null(data$getColorTable(band=1)) &&
-                data$getPaletteInterp(band=1)=="RGB") {
-                    col_tbl = data$getColorTable(band=1)
-                    maxColorValue = 255
+                    data$getPaletteInterp(band=1)=="RGB") {
+                col_tbl <- data$getColorTable(band=1)
+                maxColorValue <- 255
             }
         }
 
@@ -322,33 +327,40 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
             xlim <- c(gt[1L], gt[1L] + gt[2L] * dm[1L])
         if (is.null(ylim))
             ylim <- c(gt[4L] + gt[6L] * dm[2L], gt[4L])
-    }
-    else if (!is.null(attr(data, "gis"))) {
+
+    } else if (!is.null(attr(data, "gis"))) {
         gis <- attr(data, "gis")
+
         if (is.list(data))
             data_in <- unlist(data, use.names=FALSE)
         else
             data_in <- data
+
         xlim <- c(gis$bbox[1], gis$bbox[3])
         ylim <- c(gis$bbox[2], gis$bbox[4])
         xsize <- gis$dim[1]
         ysize <- gis$dim[2]
+
         if ((xsize*ysize) > max_pixels)
             stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
+
         nbands <- gis$dim[3]
         if (is.list(data)) {
             if (nbands != length(data)) {
                 stop("length(data) is not equal to gis attribute dim[3].",
-                        call.=FALSE)
+                     call.=FALSE)
             }
         }
-    }
-    else {
+
+    } else {
         if (is.null(xsize) || is.null(ysize))
             stop("xsize and ysize of data must be specified.", call.=FALSE)
+
         if ((xsize*ysize) > max_pixels)
             stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
+
         data_in <- data
+
         if (is.null(xlim))
             xlim <- c(0, xsize)
         if (is.null(ylim))
@@ -366,8 +378,8 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
                     na_col=na_col)
 
     if (legend && nbands != 1) {
-            message("Legend is not supported for RGB plot.")
-            legend <- FALSE
+        message("Legend is not supported for RGB plot.")
+        legend <- FALSE
     }
 
     op <- NULL
@@ -389,8 +401,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
         graphics::title(main=main, xlab=xlab, ylab=ylab)
         graphics::axis(1)
         graphics::axis(2)
-    }
-    else {
+    } else {
         graphics::title(main=main)
     }
 
@@ -401,8 +412,9 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
         else if (!is.null(minmax_pct_cut))
             mm <- stats::quantile(data_in,
                                   probs=c(minmax_pct_cut[1] / 100,
-                                  minmax_pct_cut[2] / 100),
-                                  na.rm = TRUE, names=FALSE)
+                                          minmax_pct_cut[2] / 100),
+                                  na.rm = TRUE,
+                                  names=FALSE)
         else
             mm <- c(min(data_in, na.rm=TRUE), max(data_in, na.rm=TRUE))
 
@@ -414,8 +426,8 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
             leg_data <- sort(leg_data, decreasing=TRUE)
             leg_data <- col_map_fn(leg_data)
             leg_img <- grDevices::as.raster(matrix(leg_data, ncol=1))
-        }
-        else {
+
+        } else {
             # continuous data with col_tbl
             leg_data <- sort(seq(mm[1], mm[2], by=1), decreasing=TRUE)
             leg_data <- array(leg_data, dim=c(1, length(leg_data), 1))
@@ -424,14 +436,17 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
                                   maxColorValue=maxColorValue,
                                   na_col=na_col)
         }
+
         graphics::par(mar=c(6, 0.5, 6, 2) + 0.1)
         graphics::plot(c(0,2), c(0,1), type="n", axes=FALSE,
                        xlab="", ylab="", main="")
+
         if (is(data_in, "integer"))
             leg_lab <- formatC(seq(mm[1], mm[2], length.out=5), format="d")
         else
             leg_lab <- formatC(seq(mm[1], mm[2], length.out=5), format="f",
                                digits=digits)
+
         graphics::text(x=1.5,
                        y=seq(0, 1, length.out=5),
                        labels=leg_lab,
@@ -443,4 +458,3 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 
     invisible()
 }
-

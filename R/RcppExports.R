@@ -28,7 +28,7 @@ gdal_version <- function() {
 #' `gdal_formats()` returns a table of the supported raster and vector
 #' formats, with information about the capabilities of each format driver.
 #'
-#' @param fmt A character string containing a driver short name. By default,
+#' @param format A character string containing a driver short name. By default,
 #' information for all configured raster and vector format drivers will be
 #' returned.
 #' @returns A data frame containing the format short name, long name, raster
@@ -45,8 +45,8 @@ gdal_version <- function() {
 #' head(gdal_formats())
 #'
 #' gdal_formats("GPKG")
-gdal_formats <- function(fmt = "") {
-    .Call(`_gdalraster_gdal_formats`, fmt)
+gdal_formats <- function(format = "") {
+    .Call(`_gdalraster_gdal_formats`, format)
 }
 
 #' Get GDAL configuration option
@@ -173,6 +173,8 @@ get_cache_used <- function() {
 #' ## ...
 #' ## close the dataset when done
 #' ds$close()
+#'
+#' deleteDataset(new_file)
 create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options = NULL) {
     invisible(.Call(`_gdalraster_create`, format, dst_filename, xsize, ysize, nbands, dataType, options))
 }
@@ -217,6 +219,8 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #'     ds$setNoDataValue(band, -9999)
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
+#'
+#' deleteDataset(tif_file)
 createCopy <- function(format, dst_filename, src_filename, strict = FALSE, options = NULL, quiet = FALSE) {
     invisible(.Call(`_gdalraster_createCopy`, format, dst_filename, src_filename, strict, options, quiet))
 }
@@ -359,6 +363,8 @@ get_pixel_line <- function(xy, gt) {
 #' ds$getRasterCount()
 #' plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
 #' ds$close()
+#'
+#' vsi_unlink(vrt_file)
 buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) {
     invisible(.Call(`_gdalraster_buildVRT`, vrt_filename, input_rasters, cl_arg, quiet))
 }
@@ -382,8 +388,8 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #' Compute for a raster band the set of unique pixel values and their counts
 #'
 #' @noRd
-.value_count <- function(src_filename, band = 1L) {
-    .Call(`_gdalraster__value_count`, src_filename, band)
+.value_count <- function(src_filename, band = 1L, quiet = FALSE) {
+    .Call(`_gdalraster__value_count`, src_filename, band, quiet)
 }
 
 #' Wrapper for GDALDEMProcessing in the GDAL Algorithms C API
@@ -441,6 +447,8 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #' mod_tbl = buildRAT(mod_file)
 #' head(mod_tbl)
 #' mod_tbl[is.na(mod_tbl$VALUE),]
+#'
+#' deleteDataset(mod_file)
 fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_iterations = 0L, quiet = FALSE) {
     invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations, quiet))
 }
@@ -487,6 +495,8 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
 #'   # command-line arguments for gdal_footprint
 #'   args <- c("-t_srs", "EPSG:4326")
 #'   footprint(evt_file, out_file, args)
+#'
+#'   deleteDataset(out_file)
 #' }
 footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
     invisible(.Call(`_gdalraster_footprint`, src_filename, dst_filename, cl_arg))
@@ -724,6 +734,9 @@ ogrinfo <- function(dsn, layers = NULL, cl_arg = NULL, open_options = NULL, read
 #'             connectedness = 8,
 #'             mask_filename = mask_file,
 #'             mask_band = 1)
+#'
+#' deleteDataset(mask_file)
+#' deleteDataset(evt_mmu_file)
 sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename = "", mask_band = 0L, options = NULL, quiet = FALSE) {
     invisible(.Call(`_gdalraster_sieveFilter`, src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename, mask_band, options, quiet))
 }
@@ -769,6 +782,8 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' ds$res()
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
+#'
+#' deleteDataset(img_file)
 translate <- function(src_filename, dst_filename, cl_arg = NULL, quiet = FALSE) {
     invisible(.Call(`_gdalraster_translate`, src_filename, dst_filename, cl_arg, quiet))
 }
@@ -945,6 +960,8 @@ translate <- function(src_filename, dst_filename, cl_arg = NULL, quiet = FALSE) 
 #' ds$res()
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
+#'
+#' deleteDataset(alb83_file)
 warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL, quiet = FALSE) {
     invisible(.Call(`_gdalraster_warp`, src_files, dst_filename, t_srs, cl_arg, quiet))
 }
@@ -1019,6 +1036,8 @@ warp <- function(src_files, dst_filename, t_srs, cl_arg = NULL, quiet = FALSE) {
 #' plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
 #'             main="Storm Lake Tree Canopy Cover (%)")
 #' ds_tcc$close()
+#'
+#' deleteDataset(tcc_file)
 createColorRamp <- function(start_index, start_color, end_index, end_color, palette_interp = "RGB") {
     .Call(`_gdalraster_createColorRamp`, start_index, start_color, end_index, end_color, palette_interp)
 }
@@ -1066,6 +1085,8 @@ createColorRamp <- function(start_index, start_color, end_index, end_color, pale
 #' ds <- new(GDALRaster, dst_file)
 #' ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
 #' ds$close()
+#'
+#' deleteDataset(dst_file)
 bandCopyWholeRaster <- function(src_filename, src_band, dst_filename, dst_band, options = NULL, quiet = FALSE) {
     invisible(.Call(`_gdalraster_bandCopyWholeRaster`, src_filename, src_band, dst_filename, dst_band, options, quiet))
 }
@@ -1160,6 +1181,8 @@ deleteDataset <- function(filename, format = "") {
 #' ds <- new(GDALRaster, b5_tmp2)
 #' ds$getFileList()
 #' ds$close()
+#'
+#' deleteDataset(b5_tmp2)
 renameDataset <- function(new_filename, old_filename, format = "") {
     .Call(`_gdalraster_renameDataset`, new_filename, old_filename, format)
 }
@@ -1199,6 +1222,8 @@ renameDataset <- function(new_filename, old_filename, format = "") {
 #' ds_copy <- new(GDALRaster, lcp_tmp)
 #' ds_copy$getFileList()
 #' ds_copy$close()
+#'
+#' deleteDataset(lcp_tmp)
 copyDatasetFiles <- function(new_filename, old_filename, format = "") {
     .Call(`_gdalraster_copyDatasetFiles`, new_filename, old_filename, format)
 }
@@ -1260,6 +1285,8 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #' if (as.integer(gdal_version()[2]) >= 3070000) {
 #'   result <- vsi_copy_file(elev_file, tmp_file)
 #'   print(result)
+#'
+#'   vsi_unlink(tmp_file)
 #' }
 vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
     invisible(.Call(`_gdalraster_vsi_copy_file`, src_file, target_file, show_progress))
@@ -1273,7 +1300,7 @@ vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
 #' Portability Library. See Details for the GDAL documentation.
 #'
 #' @details
-#' /vsicurl (and related file systems like /vsis3/, /vsigs/, /vsiaz/,
+#' /vsicurl/ (and related file systems like /vsis3/, /vsigs/, /vsiaz/,
 #' /vsioss/, /vsiswift/) cache a number of metadata and data for faster
 #' execution in read-only scenarios. But when the content on the server-side
 #' may change during the same process, those mechanisms can prevent opening
@@ -1285,12 +1312,14 @@ vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
 #' filename (see Details).
 #' @param file_prefix Character string. Filename prefix to use if
 #' `partial = TRUE`.
+#' @param quiet_error Logical scalar. `TRUE` to use GDAL's
+#' `CPLQuietErrorHandler` (the default).
 #' @returns No return value, called for side effects.
 #'
 #' @examples
 #' vsi_curl_clear_cache()
-vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "") {
-    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix))
+vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet_error = TRUE) {
+    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix, quiet_error))
 }
 
 #' Read names in a directory
@@ -1759,7 +1788,9 @@ NULL
 #' Is GEOS available?
 #'
 #' `has_geos()` returns a logical value indicating whether GDAL was built
-#' against the GEOS library.
+#' against the GEOS library. GDAL built with GEOS is a system requirement
+#' as of `gdalraster` 1.10.0, so this function will always return `TRUE`
+#' (may be removed in a future version).
 #'
 #' @return Logical. `TRUE` if GEOS is available, otherwise `FALSE`.
 #'

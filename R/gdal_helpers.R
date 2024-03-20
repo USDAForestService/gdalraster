@@ -77,6 +77,8 @@
 #'   ds <- new(GDALRaster, lcp_in_zip)
 #'   ds$info()
 #'   ds$close()
+#'
+#'   vsi_unlink(zip_file)
 #' }
 #' @export
 addFilesInZip <- function(
@@ -101,29 +103,26 @@ addFilesInZip <- function(
 
     if (!is.character(add_files))
         stop("`add_files` must be a character vector of filenames.",
-            call. = FALSE)
+             call. = FALSE)
 
     if (!is.null(overwrite)) {
         if (!is.logical(overwrite) || length(overwrite) > 1)
             stop("`overwrite` must be a logical scalar.", call. = FALSE)
-    }
-    else {
+    } else {
         overwrite <- FALSE
     }
 
     if (!is.null(full_paths)) {
         if (!is.logical(full_paths) || length(full_paths) > 1)
             stop("`full_paths` must be a logical scalar.", call. = FALSE)
-    }
-    else {
+    } else {
         full_paths <- FALSE
     }
 
     if (!is.null(quiet)) {
         if (!is.logical(quiet) || length(quiet) > 1)
             stop("`quiet` must be a logical scalar.", call. = FALSE)
-    }
-    else {
+    } else {
         quiet <- FALSE
     }
 
@@ -132,8 +131,9 @@ addFilesInZip <- function(
         if (!is.character(sozip_enabled) || length(sozip_enabled) > 1)
             stop("`sozip_enabled` must be a string.", call. = FALSE)
         sozip_enabled <- toupper(sozip_enabled)
-        if ( !(sozip_enabled %in% c("AUTO", "YES", "NO")) )
-            stop("`sozip_enabled` must be one of AUTO, YES or NO.", call. = FALSE)
+        if (!(sozip_enabled %in% c("AUTO", "YES", "NO")))
+            stop("`sozip_enabled` must be one of AUTO, YES or NO.",
+                 call. = FALSE)
         else
             opt <- c(opt, paste0("SOZIP_ENABLED=", sozip_enabled))
     }
@@ -169,12 +169,10 @@ addFilesInZip <- function(
         archive_fname <- f
         if (!full_paths) {
             archive_fname <- basename(f)
-        }
-        else if (substr(f, 1, 1) == "/") {
+        } else if (substr(f, 1, 1) == "/") {
             archive_fname <- substring(f, 2)
-        }
-        else if (nchar(f) > 3 && substr(f, 2, 2) == ":" &&
-                    (substr(f, 3, 3) == "/" || substr(f, 3, 3) == '\\')) {
+        } else if (nchar(f) > 3 && substr(f, 2, 2) == ":" &&
+                       (substr(f, 3, 3) == "/" || substr(f, 3, 3) == "\\")) {
             archive_fname <- substring(f, 4)
         }
         archive_fname <- .check_gdal_filename(archive_fname)
@@ -187,15 +185,14 @@ addFilesInZip <- function(
                            quiet)) {
             ret <- FALSE
             break
-        }
-        else {
+        } else {
             ret <- TRUE
         }
     }
 
     if (!ret)
         stop("Failed to add file, error from CPLAddFileInZip().",
-                call. = FALSE)
+             call. = FALSE)
 
     return(invisible(ret))
 }
@@ -230,7 +227,7 @@ getCreationOptions <- function(format, filter=NULL) {
         stop("`format` must be a string.", call.=FALSE)
 
     if (is.null(filter))
-        filter = "_all_"
+        filter <- "_all_"
 
     if (filter[1] == "")
         return(invisible(.getCreationOptions(format)))
@@ -240,13 +237,13 @@ getCreationOptions <- function(format, filter=NULL) {
         return(invisible(.getCreationOptions(format)))
     }
 
-    x = xml2::read_xml(.getCreationOptions(format))
+    x <- xml2::read_xml(.getCreationOptions(format))
     opt_list <- xml2::xml_find_all(x, xpath = "//Option")
-    for (n in 1:length(opt_list)) {
-        if (filter[1] == "_all_"
-            || xml2::xml_attr(opt_list[[n]], "name") %in% filter)
-
+    for (n in seq_along(opt_list)) {
+        if (filter[1] == "_all_" ||
+                xml2::xml_attr(opt_list[[n]], "name") %in% filter) {
             print(opt_list[[n]])
+        }
     }
     return(invisible(.getCreationOptions(format)))
 }
@@ -293,4 +290,3 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
     else
         return(opts)
 }
-

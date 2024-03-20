@@ -48,6 +48,8 @@
 //' if (as.integer(gdal_version()[2]) >= 3070000) {
 //'   result <- vsi_copy_file(elev_file, tmp_file)
 //'   print(result)
+//'
+//'   vsi_unlink(tmp_file)
 //' }
 // [[Rcpp::export(invisible = true)]]
 int vsi_copy_file(Rcpp::CharacterVector src_file,
@@ -58,7 +60,7 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
     Rcpp::stop("vsi_copy_file() requires GDAL >= 3.7.");
 
 #else
-    GDALProgressFunc pfnProgress = NULL;
+    GDALProgressFunc pfnProgress = nullptr;
     std::string src_file_in;
     src_file_in = Rcpp::as<std::string>(_check_gdal_filename(src_file));
     std::string target_file_in;
@@ -68,7 +70,7 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
         pfnProgress = GDALTermProgressR;
 
     int result = VSICopyFile(src_file_in.c_str(), target_file_in.c_str(),
-            NULL, -1, NULL, pfnProgress, NULL);
+            nullptr, -1, nullptr, pfnProgress, nullptr);
 
     if (result == 0)
         return 0;
@@ -87,7 +89,7 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 //' Portability Library. See Details for the GDAL documentation.
 //'
 //' @details
-//' /vsicurl (and related file systems like /vsis3/, /vsigs/, /vsiaz/,
+//' /vsicurl/ (and related file systems like /vsis3/, /vsigs/, /vsiaz/,
 //' /vsioss/, /vsiswift/) cache a number of metadata and data for faster
 //' execution in read-only scenarios. But when the content on the server-side
 //' may change during the same process, those mechanisms can prevent opening
@@ -99,13 +101,18 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 //' filename (see Details).
 //' @param file_prefix Character string. Filename prefix to use if
 //' `partial = TRUE`.
+//' @param quiet_error Logical scalar. `TRUE` to use GDAL's
+//' `CPLQuietErrorHandler` (the default).
 //' @returns No return value, called for side effects.
 //'
 //' @examples
 //' vsi_curl_clear_cache()
 // [[Rcpp::export()]]
 void vsi_curl_clear_cache(bool partial = false,
-        Rcpp::CharacterVector file_prefix = "") {
+                          Rcpp::CharacterVector file_prefix = "",
+                          bool quiet_error = true) {
+    if (quiet_error)
+        CPLPushErrorHandler(CPLQuietErrorHandler);
 
     if (!partial) {
         VSICurlClearCache();
@@ -115,6 +122,9 @@ void vsi_curl_clear_cache(bool partial = false,
         f_prefix_in = Rcpp::as<std::string>(_check_gdal_filename(file_prefix));
         VSICurlPartialClearCache(f_prefix_in.c_str());
     }
+
+    if (quiet_error)
+        CPLPopErrorHandler();
 }
 
 
@@ -302,22 +312,22 @@ bool vsi_sync(Rcpp::CharacterVector src,
     std::string target_file_in;
     target_file_in = Rcpp::as<std::string>(_check_gdal_filename(target));
 
-    GDALProgressFunc pfnProgress = NULL;
+    GDALProgressFunc pfnProgress = nullptr;
     if (show_progress)
         pfnProgress = GDALTermProgressR;
 
-    std::vector<char *> opt_list = {NULL};
+    std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
         Rcpp::CharacterVector options_in(options);
         opt_list.resize(options_in.size() + 1);
         for (R_xlen_t i = 0; i < options_in.size(); ++i) {
             opt_list[i] = (char *) (options_in[i]);
         }
-        opt_list[options_in.size()] = NULL;
+        opt_list[options_in.size()] = nullptr;
     }
 
     int result = VSISync(src_file_in.c_str(), target_file_in.c_str(),
-            opt_list.data(), pfnProgress, NULL, NULL);
+            opt_list.data(), pfnProgress, nullptr, nullptr);
 
     return result;
 }
@@ -470,10 +480,10 @@ Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames) {
                 ));
         filenames_cstr[i] = (char *) filenames_in[i].c_str();
     }
-    filenames_cstr[filenames.size()] = NULL;
+    filenames_cstr[filenames.size()] = nullptr;
 
     int *result = VSIUnlinkBatch(filenames_cstr.data());
-    if (result == NULL)
+    if (result == nullptr)
         Rcpp::stop("VSIUnlinkBatch() general error.");
     Rcpp::LogicalVector ret(filenames.size());
     for (R_xlen_t i = 0; i < filenames.size(); ++i)
@@ -679,7 +689,7 @@ std::string _vsi_get_fs_options(Rcpp::CharacterVector filename) {
 
     std::string filename_in;
     filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
-    if (VSIGetFileSystemOptions(filename_in.c_str()) != NULL)
+    if (VSIGetFileSystemOptions(filename_in.c_str()) != nullptr)
         return VSIGetFileSystemOptions(filename_in.c_str());
     else
         return "";

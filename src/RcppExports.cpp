@@ -32,13 +32,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // gdal_formats
-Rcpp::DataFrame gdal_formats(std::string fmt);
-RcppExport SEXP _gdalraster_gdal_formats(SEXP fmtSEXP) {
+Rcpp::DataFrame gdal_formats(std::string format);
+RcppExport SEXP _gdalraster_gdal_formats(SEXP formatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type fmt(fmtSEXP);
-    rcpp_result_gen = Rcpp::wrap(gdal_formats(fmt));
+    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    rcpp_result_gen = Rcpp::wrap(gdal_formats(format));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -197,14 +197,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // _value_count
-Rcpp::DataFrame _value_count(std::string src_filename, int band);
-RcppExport SEXP _gdalraster__value_count(SEXP src_filenameSEXP, SEXP bandSEXP) {
+Rcpp::DataFrame _value_count(std::string src_filename, int band, bool quiet);
+RcppExport SEXP _gdalraster__value_count(SEXP src_filenameSEXP, SEXP bandSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type src_filename(src_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type band(bandSEXP);
-    rcpp_result_gen = Rcpp::wrap(_value_count(src_filename, band));
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(_value_count(src_filename, band, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -474,13 +475,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_curl_clear_cache
-void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix);
-RcppExport SEXP _gdalraster_vsi_curl_clear_cache(SEXP partialSEXP, SEXP file_prefixSEXP) {
+void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix, bool quiet_error);
+RcppExport SEXP _gdalraster_vsi_curl_clear_cache(SEXP partialSEXP, SEXP file_prefixSEXP, SEXP quiet_errorSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< bool >::type partial(partialSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type file_prefix(file_prefixSEXP);
-    vsi_curl_clear_cache(partial, file_prefix);
+    Rcpp::traits::input_parameter< bool >::type quiet_error(quiet_errorSEXP);
+    vsi_curl_clear_cache(partial, file_prefix, quiet_error);
     return R_NilValue;
 END_RCPP
 }
@@ -1165,7 +1167,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_get_pixel_line", (DL_FUNC) &_gdalraster_get_pixel_line, 2},
     {"_gdalraster_buildVRT", (DL_FUNC) &_gdalraster_buildVRT, 4},
     {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 8},
-    {"_gdalraster__value_count", (DL_FUNC) &_gdalraster__value_count, 2},
+    {"_gdalraster__value_count", (DL_FUNC) &_gdalraster__value_count, 3},
     {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 6},
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 6},
     {"_gdalraster_footprint", (DL_FUNC) &_gdalraster_footprint, 3},
@@ -1184,7 +1186,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__getCreationOptions", (DL_FUNC) &_gdalraster__getCreationOptions, 1},
     {"_gdalraster__addFileInZip", (DL_FUNC) &_gdalraster__addFileInZip, 6},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
-    {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 2},
+    {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 3},
     {"_gdalraster_vsi_read_dir", (DL_FUNC) &_gdalraster_vsi_read_dir, 2},
     {"_gdalraster_vsi_sync", (DL_FUNC) &_gdalraster_vsi_sync, 4},
     {"_gdalraster_vsi_mkdir", (DL_FUNC) &_gdalraster_vsi_mkdir, 2},

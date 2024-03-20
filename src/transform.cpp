@@ -52,12 +52,12 @@ Rcpp::CharacterVector _getPROJSearchPaths() {
 // [[Rcpp::export(name = ".setPROJSearchPaths")]]
 void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
 #if GDAL_VERSION_NUM >= 3000000
-    std::vector<char *> path_list = {NULL};
+    std::vector<char *> path_list = {nullptr};
     path_list.resize(paths.size() + 1);
     for (R_xlen_t i = 0; i < paths.size(); ++i) {
         path_list[i] = (char *) (paths[i]);
     }
-    path_list[paths.size()] = NULL;
+    path_list[paths.size()] = nullptr;
     OSRSetPROJSearchPaths(path_list.data());
 #else
     Rcpp::Rcerr << "OSRSetPROJSearchPaths requires GDAL 3.0 or later.\n";
@@ -164,8 +164,8 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
         Rcpp::stop("Input matrix is empty.");
 
     OGRSpatialReference oSourceSRS;
-    OGRSpatialReference *poLongLat;
-    OGRCoordinateTransformation *poCT;
+    OGRSpatialReference *poLongLat = nullptr;
+    OGRCoordinateTransformation *poCT = nullptr;
     OGRErr err;
 
     err = oSourceSRS.importFromWkt(srs.c_str());
@@ -174,35 +174,46 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 
     if (well_known_gcs == "") {
         poLongLat = oSourceSRS.CloneGeogCS();
+        if (poLongLat == nullptr)
+            Rcpp::stop("Failed to clone GCS.");
     }
     else {
         poLongLat = new OGRSpatialReference();
         err = poLongLat->SetWellKnownGeogCS(well_known_gcs.c_str());
-        if (err == OGRERR_FAILURE)
+        if (err == OGRERR_FAILURE) {
+            delete poLongLat;
             Rcpp::stop("Failed to set well known GCS.");
+        }
     }
 #if GDAL_VERSION_NUM >= 3000000
     poLongLat->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 #endif
 
     poCT = OGRCreateCoordinateTransformation(&oSourceSRS, poLongLat);
-    if (poCT == NULL)
+    if (poCT == nullptr) {
+        if (poLongLat != nullptr)
+            poLongLat->Release();
         Rcpp::stop("Failed to create coordinate transformer.");
-
-    poLongLat->Release();
+    }
 
     Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
     Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
     std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
-    if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) )
+    if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) ) {
+        OGRCoordinateTransformation::DestroyCT(poCT);
+        if (poLongLat != nullptr)
+            poLongLat->Release();
         Rcpp::stop("Coordinate transformation failed.");
+    }
 
     Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
     ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
     ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
 
     OGRCoordinateTransformation::DestroyCT(poCT);
+    if (poLongLat != nullptr)
+        poLongLat->Release();
 
     return ret;
 }
@@ -252,7 +263,7 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
         Rcpp::stop("Input matrix is empty.");
 
     OGRSpatialReference oSourceSRS, oDestSRS;
-    OGRCoordinateTransformation *poCT;
+    OGRCoordinateTransformation *poCT = nullptr;
     OGRErr err;
 
     err = oSourceSRS.importFromWkt(srs_from.c_str());
@@ -267,15 +278,17 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 #endif
 
     poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
-    if (poCT == NULL)
+    if (poCT == nullptr)
         Rcpp::stop("Failed to create coordinate transformer.");
 
     Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
     Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
     std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
-    if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) )
+    if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) ) {
+        OGRCoordinateTransformation::DestroyCT(poCT);
         Rcpp::stop("Coordinate transformation failed.");
+    }
 
     Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
     ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));

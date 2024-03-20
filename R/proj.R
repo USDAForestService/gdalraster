@@ -89,4 +89,3 @@ proj_networking <- function(enabled=NULL) {
     }
     return(.getPROJEnableNetwork())
 }
-

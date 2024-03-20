@@ -1,5 +1,5 @@
-# Exported functions that use the GEOS convenience library defined in
-# src/geos_wkt.h.
+# Exported functions that use the GEOS convenience library defined
+# in src/geos_wkt.h.
 # Chris Toney <chris.toney at usda.gov>
 
 #' Bounding box intersection / union
@@ -9,7 +9,6 @@
 #' `bbox_union()` returns the bounding box union, for input of
 #' either raster file names or list of bounding boxes. All of the inputs
 #' must be in the same projected coordinate system.
-#' These functions require GDAL built with the GEOS library.
 #'
 #' @param x Either a character vector of raster file names, or a list with
 #' each element a bounding box numeric vector (xmin, ymin, xmax, ymax).
@@ -20,7 +19,6 @@
 #' If `as_wkt = FALSE`, a numeric vector of length four containing
 #' xmin, ymin, xmax, ymax. If `as_wkt = TRUE`, a character string
 #' containing OGC WKT for the bbox as POLYGON.
-#' `NA` is returned if GDAL was built without the GEOS library.
 #'
 #' @seealso
 #' [bbox_from_wkt()], [bbox_to_wkt()]
@@ -48,14 +46,6 @@
 #' bbox_union(bbox_list)
 #' @export
 bbox_intersect <- function(x, as_wkt = FALSE) {
-
-    if (!has_geos()) {
-        if (as_wkt)
-            return(NA_character_)
-        else
-            return(rep(NA_real_, 4))
-    }
-
     n <- length(x)
     this_bbox <- ""
 
@@ -63,11 +53,9 @@ bbox_intersect <- function(x, as_wkt = FALSE) {
         ds <- new(GDALRaster, x[1], read_only=TRUE)
         this_bbox <- bbox_to_wkt(ds$bbox())
         ds$close()
-    }
-    else if (is.list(x)) {
+    } else if (is.list(x)) {
         this_bbox <- bbox_to_wkt(x[[1]])
-    }
-    else {
+    } else {
         stop("Input object not recognized.", call. = FALSE)
     }
 
@@ -75,11 +63,10 @@ bbox_intersect <- function(x, as_wkt = FALSE) {
     while (i <= n) {
         if (is.character(x)) {
             ds <- new(GDALRaster, x[i], read_only=TRUE)
-            this_bbox <- .g_intersection( this_bbox, bbox_to_wkt(ds$bbox()) )
+            this_bbox <- .g_intersection(this_bbox, bbox_to_wkt(ds$bbox()))
             ds$close()
-        }
-        else {
-            this_bbox <- .g_intersection( this_bbox, bbox_to_wkt(x[[i]]) )
+        } else {
+            this_bbox <- .g_intersection(this_bbox, bbox_to_wkt(x[[i]]))
         }
         i <- i + 1
     }
@@ -94,14 +81,6 @@ bbox_intersect <- function(x, as_wkt = FALSE) {
 #' @rdname bbox_intersect
 #' @export
 bbox_union <- function(x, as_wkt = FALSE) {
-
-    if (!has_geos()) {
-        if (as_wkt)
-            return(NA_character_)
-        else
-            return(rep(NA_real_, 4))
-    }
-
     n <- length(x)
     this_bbox <- ""
 
@@ -109,11 +88,9 @@ bbox_union <- function(x, as_wkt = FALSE) {
         ds <- new(GDALRaster, x[1], read_only=TRUE)
         this_bbox <- bbox_to_wkt(ds$bbox())
         ds$close()
-    }
-    else if (is.list(x)) {
+    } else if (is.list(x)) {
         this_bbox <- bbox_to_wkt(x[[1]])
-    }
-    else {
+    } else {
         stop("Input object not recognized.", call. = FALSE)
     }
 
@@ -121,11 +98,10 @@ bbox_union <- function(x, as_wkt = FALSE) {
     while (i <= n) {
         if (is.character(x)) {
             ds <- new(GDALRaster, x[i], read_only=TRUE)
-            this_bbox <- .g_union( this_bbox, bbox_to_wkt(ds$bbox()) )
+            this_bbox <- .g_union(this_bbox, bbox_to_wkt(ds$bbox()))
             ds$close()
-        }
-        else {
-            this_bbox <- .g_union( this_bbox, bbox_to_wkt(x[[i]]) )
+        } else {
+            this_bbox <- .g_union(this_bbox, bbox_to_wkt(x[[i]]))
         }
         i <- i + 1
     }
@@ -141,8 +117,7 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #'
 #' `g_buffer()` builds a new geometry containing the buffer region around
 #' the geometry on which it is invoked. The buffer is a polygon containing
-#' the region within the buffer distance of the original geometry. Requires
-#' GDAL built with the GEOS library.
+#' the region within the buffer distance of the original geometry.
 #'
 #' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
 #' @param dist Numeric buffer distance in units of the `wkt` geometry.
@@ -151,7 +126,6 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' vertices in the resulting buffer geometry while small numbers reduce the
 #' accuracy of the result.
 #' @return Character string for an OGC WKT polygon.
-#' `NA` is returned if GDAL was built without the GEOS library.
 #'
 #' @seealso
 #' [bbox_from_wkt()], [bbox_to_wkt()]
@@ -159,10 +133,6 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' @examples
 #' g_buffer(wkt = "POINT (0 0)", dist = 10)
 g_buffer <- function(wkt, dist, quad_segs = 30) {
-
-    if (!has_geos())
-        return(NA_character_)
-
     if (!(is.character(wkt) && length(wkt) == 1))
         stop("wkt must be a length-1 character vector.", call. = FALSE)
 
@@ -182,7 +152,6 @@ g_buffer <- function(wkt, dist, quad_segs = 30) {
 #' @param srs_to Character string in OGC WKT format specifying the target
 #' spatial reference system.
 #' @return Character string for a transformed OGC WKT geometry.
-#' `NA` is returned if GDAL was built without the GEOS library.
 #'
 #' @note
 #' This function only does reprojection on a point-by-point basis. It does not
@@ -194,19 +163,13 @@ g_buffer <- function(wkt, dist, quad_segs = 30) {
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' ds <- new(GDALRaster, elev_file)
-#' ds$bbox() |>
-#'   bbox_to_wkt() |>
+#' bbox_to_wkt(ds$bbox()) |>
 #'   g_transform(ds$getProjectionRef(), epsg_to_wkt(4326)) |>
 #'   bbox_from_wkt()
 #' ds$close()
 g_transform <- function(wkt, srs_from, srs_to) {
-
-    if (!has_geos())
-        return(NA_character_)
-
     if (!(is.character(wkt) && length(wkt) == 1))
         stop("wkt must be a length-1 character vector.", call. = FALSE)
 
     return(.g_transform(wkt, srs_from, srs_to))
 }
-

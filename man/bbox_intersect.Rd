@@ -22,14 +22,12 @@ of inputs.
 If \code{as_wkt = FALSE}, a numeric vector of length four containing
 xmin, ymin, xmax, ymax. If \code{as_wkt = TRUE}, a character string
 containing OGC WKT for the bbox as POLYGON.
-\code{NA} is returned if GDAL was built without the GEOS library.
 }
 \description{
 \code{bbox_intersect()} returns the bounding box intersection, and
 \code{bbox_union()} returns the bounding box union, for input of
 either raster file names or list of bounding boxes. All of the inputs
 must be in the same projected coordinate system.
-These functions require GDAL built with the GEOS library.
 }
 \examples{
 bbox_list <-list()

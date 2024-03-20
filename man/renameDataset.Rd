@@ -49,6 +49,8 @@ renameDataset(b5_tmp2, b5_tmp)
 ds <- new(GDALRaster, b5_tmp2)
 ds$getFileList()
 ds$close()
+
+deleteDataset(b5_tmp2)
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}},

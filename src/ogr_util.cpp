@@ -20,11 +20,12 @@ bool _ogr_ds_exists(std::string dsn, bool with_update = false) {
     CPLPushErrorHandler(CPLQuietErrorHandler);
     if (with_update)
         hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
-                NULL, NULL, NULL);
+                         nullptr, nullptr, nullptr);
     else
-        hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
+        hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR,
+                         nullptr, nullptr, nullptr);
     CPLPopErrorHandler();
-    if (hDS == NULL)
+    if (hDS == nullptr)
         return false;
 
     GDALClose(hDS);
@@ -43,31 +44,31 @@ bool _create_ogr(std::string format, std::string dst_filename,
         Rcpp::Nullable<Rcpp::CharacterVector> lco = R_NilValue) {
 
     GDALDriverH hDriver = GDALGetDriverByName( format.c_str() );
-    if (hDriver == NULL)
+    if (hDriver == nullptr)
         Rcpp::stop("Failed to get driver for the specified format.");
 
-    char **papszMetadata = GDALGetMetadata(hDriver, NULL);
+    char **papszMetadata = GDALGetMetadata(hDriver, nullptr);
     if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATE, FALSE))
         Rcpp::stop("Driver does not support create.");
 
     GDALDataType dt = GDALGetDataTypeByName( dataType.c_str() );
 
-    std::vector<char *> opt_list = {NULL};
+    std::vector<char *> opt_list = {nullptr};
     if (dsco.isNotNull()) {
         Rcpp::CharacterVector dsco_in(dsco);
         opt_list.resize(dsco_in.size() + 1);
         for (R_xlen_t i = 0; i < dsco_in.size(); ++i) {
             opt_list[i] = (char *) (dsco_in[i]);
         }
-        opt_list[dsco_in.size()] = NULL;
+        opt_list[dsco_in.size()] = nullptr;
     }
 
-    GDALDatasetH hDstDS = NULL;
+    GDALDatasetH hDstDS = nullptr;
     hDstDS = GDALCreate(hDriver, dst_filename.c_str(),
                         xsize, ysize, nbands, dt,
                         opt_list.data());
 
-    if (hDstDS == NULL)
+    if (hDstDS == nullptr)
         Rcpp::stop("Create dataset failed.");
 
     if (!GDALDatasetTestCapability(hDstDS, ODsCCreateLayer)) {
@@ -88,11 +89,13 @@ bool _create_ogr(std::string format, std::string dst_filename,
             opt_list[i] = (char *) (lco_in[i]);
         }
     }
-    opt_list.push_back(NULL);
+    opt_list.push_back(nullptr);
 
-    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(NULL);
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     if (srs != "") {
         if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+            if (hSRS != nullptr)
+                OSRDestroySpatialReference(hSRS);
             GDALClose(hDstDS);
             Rcpp::stop("Error importing SRS from user input.");
         }
@@ -101,7 +104,7 @@ bool _create_ogr(std::string format, std::string dst_filename,
     hLayer = GDALDatasetCreateLayer(hDstDS, layer.c_str(), hSRS, wkbPolygon,
                 opt_list.data());
 
-    if (hLayer == NULL) {
+    if (hLayer == nullptr) {
         layer_ok = false;
     }
     else {
@@ -137,8 +140,8 @@ int _ogr_ds_layer_count(std::string dsn) {
     GDALDatasetH hDS;
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
-    hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
-    if (hDS == NULL)
+    hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (hDS == nullptr)
         return -1;
     CPLPopErrorHandler();
 
@@ -158,12 +161,12 @@ bool _ogr_layer_exists(std::string dsn, std::string layer) {
     bool ret;
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
-    hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
-    if (hDS == NULL)
+    hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (hDS == nullptr)
         return false;
     hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     CPLPopErrorHandler();
-    if (hLayer == NULL)
+    if (hLayer == nullptr)
         ret = false;
     else
         ret = true;
@@ -185,37 +188,45 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
     OGRLayerH  hLayer;
     bool ret;
 
-    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(NULL);
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     if (srs != "") {
-        if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE)
+        if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+            if (hSRS != nullptr)
+                OSRDestroySpatialReference(hSRS);
             Rcpp::stop("Error importing SRS from user input.");
+        }
     }
 
     hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
-            NULL, NULL, NULL);
+            nullptr, nullptr, nullptr);
 
-    if (hDS == NULL)
-        return false;
-
-    if (!GDALDatasetTestCapability(hDS, ODsCCreateLayer)) {
-        GDALClose(hDS);
+    if (hDS == nullptr) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
         return false;
     }
 
-    std::vector<char *> opt_list = {NULL};
+    if (!GDALDatasetTestCapability(hDS, ODsCCreateLayer)) {
+        GDALClose(hDS);
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        return false;
+    }
+
+    std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
         Rcpp::CharacterVector options_in(options);
         opt_list.resize(options_in.size() + 1);
         for (R_xlen_t i = 0; i < options_in.size(); ++i) {
             opt_list[i] = (char *) (options_in[i]);
         }
-        opt_list[options_in.size()] = NULL;
+        opt_list[options_in.size()] = nullptr;
     }
 
     hLayer = GDALDatasetCreateLayer(hDS, layer.c_str(), hSRS, wkbPolygon,
                 opt_list.data());
 
-    if (hLayer == NULL)
+    if (hLayer == nullptr)
         ret = false;
     else
         ret = true;
@@ -237,9 +248,9 @@ bool _ogr_layer_delete(std::string dsn, std::string layer) {
     bool ret;
 
     hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
-            NULL, NULL, NULL);
+            nullptr, nullptr, nullptr);
 
-    if (hDS == NULL)
+    if (hDS == nullptr)
         return false;
 
     if (!GDALDatasetTestCapability(hDS, ODsCDeleteLayer)) {
@@ -248,7 +259,7 @@ bool _ogr_layer_delete(std::string dsn, std::string layer) {
     }
 
     hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
-    if (hLayer == NULL) {
+    if (hLayer == nullptr) {
         GDALClose(hDS);
         return false;
     }
@@ -282,13 +293,13 @@ int _ogr_field_index(std::string dsn, std::string layer,
     int iField;
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
-    hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, NULL, NULL, NULL);
-    if (hDS == NULL)
+    hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (hDS == nullptr)
         return -1;
     hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     CPLPopErrorHandler();
 
-    if (hLayer == NULL) {
+    if (hLayer == nullptr) {
         GDALClose(hDS);
         return -1;
     }
@@ -316,15 +327,15 @@ bool _ogr_field_create(std::string dsn, std::string layer,
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
     hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
-            NULL, NULL, NULL);
+            nullptr, nullptr, nullptr);
 
-    if (hDS == NULL)
+    if (hDS == nullptr)
         return false;
 
     hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     CPLPopErrorHandler();
 
-    if (hLayer == NULL) {
+    if (hLayer == nullptr) {
         GDALClose(hDS);
         return false;
     }

@@ -4,10 +4,10 @@
 \alias{gdal_formats}
 \title{Retrieve information on GDAL format drivers for raster and vector}
 \usage{
-gdal_formats(fmt = "")
+gdal_formats(format = "")
 }
 \arguments{
-\item{fmt}{A character string containing a driver short name. By default,
+\item{format}{A character string containing a driver short name. By default,
 information for all configured raster and vector format drivers will be
 returned.}
 }

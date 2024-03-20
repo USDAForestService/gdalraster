@@ -13,10 +13,12 @@
 #'          "Float32" = -99999.0, "Float64" = -99999.0)
 #' }
 #' @export
-DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
-                       "UInt16" = 65535, "Int16" = -32767,
-                       "UInt32" = 4294967293, "Int32" = -2147483647,
-                       "Float32" = -99999.0, "Float64" = -99999.0)
+DEFAULT_NODATA <- list(
+    "Byte" = 255, "Int8" = -128,
+    "UInt16" = 65535, "Int16" = -32767,
+    "UInt32" = 4294967293, "Int32" = -2147483647,
+    "Float32" = -99999.0, "Float64" = -99999.0
+)
 
 
 #' List of default DEM processing options
@@ -24,15 +26,15 @@ DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
 #' These values are used in `dem_proc()` as the default processing options:
 #' \preformatted{
 #'     list(
-#'          hillshade = c("-z", "1", "-s", "1", "-az", "315",
-#'                        "-alt", "45", "-alg", "Horn",
-#'                        "-combined", "-compute_edges"),
-#'          slope = c("-s", "1", "-alg", "Horn", "-compute_edges"),
-#'          aspect = c("-alg", "Horn", "-compute_edges"),
+#'          hillshade =    c("-z", "1", "-s", "1", "-az", "315",
+#'                           "-alt", "45", "-alg", "Horn",
+#'                           "-combined", "-compute_edges"),
+#'          slope =        c("-s", "1", "-alg", "Horn", "-compute_edges"),
+#'          aspect =       c("-alg", "Horn", "-compute_edges"),
 #'          color_relief = character(),
-#'          TRI = c("-alg", "Riley", "-compute_edges"),
-#'          TPI = c("-compute_edges"),
-#'          roughness = c("-compute_edges")
+#'          TRI =          c("-alg", "Riley", "-compute_edges"),
+#'          TPI =          c("-compute_edges"),
+#'          roughness =    c("-compute_edges")
 #'          )
 #' }
 #' @seealso
@@ -42,19 +44,18 @@ DEFAULT_NODATA <- list("Byte" = 255, "Int8" = -128,
 #' available command-line options for each processing mode
 #' @export
 DEFAULT_DEM_PROC <- list(
-                        hillshade = c("-z", "1", "-s", "1", "-az", "315",
-                                      "-alt", "45", "-alg", "Horn",
-                                      "-combined", "-compute_edges"),
-                        slope = c("-s", "1", "-alg", "Horn", "-compute_edges"),
-                        aspect = c("-alg", "Horn", "-compute_edges"),
-                        color_relief = character(),
-                        TRI = c("-alg", "Riley", "-compute_edges"),
-                        TPI = c("-compute_edges"),
-                        roughness = c("-compute_edges")
-                        )
+    hillshade = c("-z", "1", "-s", "1", "-az", "315",
+                  "-alt", "45", "-alg", "Horn",
+                  "-combined", "-compute_edges"),
+    slope = c("-s", "1", "-alg", "Horn", "-compute_edges"),
+    aspect = c("-alg", "Horn", "-compute_edges"),
+    color_relief = character(),
+    TRI = c("-alg", "Riley", "-compute_edges"),
+    TPI = c("-compute_edges"),
+    roughness = c("-compute_edges")
+)
 
 
-#' @noRd
 .VRT_KERNEL_TEMPLATE <-
 "<KernelFilteredSource>
   <SourceFilename relativeToVRT=\"%d\">%s</SourceFilename><SourceBand>%d</SourceBand>
@@ -69,7 +70,7 @@ DEFAULT_DEM_PROC <- list(
 
 #' @noRd
 .getGDALformat <- function(file) {
-# Only for guessing common output formats
+    # Only for guessing common output formats
     file <- as.character(file)
     if (endsWith(tolower(file), ".img")) {
         return("HFA")
@@ -85,7 +86,7 @@ DEFAULT_DEM_PROC <- list(
 
 #' @noRd
 .getOGRformat <- function(file) {
-# Only for guessing common output formats
+    # Only for guessing common output formats
     file <- as.character(file)
     if (startsWith(file, "PG:")) {
         return("PostgreSQL")
@@ -221,14 +222,13 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
     else
         r <- NULL
 
-    i = 1
+    i <- 1
     for (b in bands) {
         if (as_list) {
             r[[i]] <- ds$read(b, xoff, yoff, xsize, ysize,
                               out_xsize, out_ysize)
-            i = i + 1
-        }
-        else {
+            i <- i + 1
+        } else {
             r <- c(r, ds$read(b, xoff, yoff, xsize, ysize,
                               out_xsize, out_ysize))
         }
@@ -243,12 +243,10 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
     wkt_fmt_config <- get_config_option("OSR_WKT_FORMAT")
     if (wkt_fmt_config == "")
         set_config_option("OSR_WKT_FORMAT", "WKT2")
-    attr(r, "gis") <- list(
-                        type = "raster",
-                        bbox = bb,
-                        dim = c(out_xsize, out_ysize, length(bands)),
-                        srs = ds$getProjectionRef()
-                        )
+    attr(r, "gis") <- list(type = "raster",
+                           bbox = bb,
+                           dim = c(out_xsize, out_ysize, length(bands)),
+                           srs = ds$getProjectionRef())
     set_config_option("OSR_WKT_FORMAT", wkt_fmt_config)
 
     return(r)
@@ -328,15 +326,17 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #'
 #' ds_slp$close()
 #' ds_lcp$close()
+#' deleteDataset(slpp_file)
 #' @export
 rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
-                        dtName=NULL, options=NULL, init=NULL, dstnodata=init) {
+                             dtName=NULL, options=NULL, init=NULL,
+                             dstnodata=init) {
 
     if (is.null(fmt)) {
         fmt <- .getGDALformat(dstfile)
         if (is.null(fmt)) {
             stop("Use fmt argument to specify a GDAL raster format name.",
-                call. = FALSE)
+                 call. = FALSE)
         }
     }
 
@@ -356,14 +356,17 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
     dst_ds <- new(GDALRaster, dstfile, FALSE)
     dst_ds$setGeoTransform(gt)
     dst_ds$setProjection(srs)
-    if(!is.null(dstnodata))
-        for (b in 1:nbands)
+    if (!is.null(dstnodata)) {
+        for (b in 1:nbands) {
             dst_ds$setNoDataValue(b, dstnodata)
+        }
+    }
 
     if (!is.null(init)) {
         message("Initializing destination raster...")
-        for (b in 1:nbands)
+        for (b in 1:nbands) {
             dst_ds$fillRaster(b, init, 0)
+        }
         message("Done.")
     }
 
@@ -510,6 +513,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds$res()
 #' ds$bbox()
 #' ds$close()
+#' vsi_unlink(vrt_file)
 #'
 #'
 #' ## clip
@@ -534,6 +538,9 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_vrt$bbox()
 #' ds_vrt$res()
 #'
+#' ds_vrt$close()
+#' vsi_unlink(vrt_file)
+#'
 #' # src_align = FALSE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
@@ -544,8 +551,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_vrt_noalign$bbox()
 #' ds_vrt_noalign$res()
 #'
-#' ds_vrt$close()
 #' ds_vrt_noalign$close()
+#' vsi_unlink(vrt_file)
 #' ds_evt$close()
 #'
 #'
@@ -605,18 +612,19 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' rs$get_sd()
 #'
 #' ds_b5vrt$close()
+#' vsi_unlink(vrt_file)
 #' ds_lcp$close()
 #' ds_b5$close()
 #' @export
 rasterToVRT <- function(srcfile,
-                relativeToVRT = FALSE,
-                vrtfile = tempfile("tmprast", fileext=".vrt"),
-                resolution = NULL,
-                subwindow = NULL,
-                src_align = TRUE,
-                resampling = "nearest",
-                krnl = NULL,
-                normalized = TRUE) {
+                        relativeToVRT = FALSE,
+                        vrtfile = tempfile("tmprast", fileext=".vrt"),
+                        resolution = NULL,
+                        subwindow = NULL,
+                        src_align = TRUE,
+                        resampling = "nearest",
+                        krnl = NULL,
+                        normalized = TRUE) {
 
     if (relativeToVRT) relativeToVRT <- 1 else relativeToVRT <- 0
     if (normalized) normalized <- 1 else normalized <- 0
@@ -636,7 +644,7 @@ rasterToVRT <- function(srcfile,
     if (!is.null(resolution) && !is.null(krnl)) {
         if (src_xres != resolution[1] || src_yres != resolution[2])
             stop("Cannot apply a kernel to sub-sampled or over-sampled data.",
-                    call. = FALSE)
+                 call. = FALSE)
     }
 
     if (!is.null(krnl)) {
@@ -650,21 +658,20 @@ rasterToVRT <- function(srcfile,
     if (is.null(resolution)) {
         vrt_xres <- src_xres
         vrt_yres <- src_yres
-    }
-    else {
+    } else {
         vrt_xres <- resolution[1]
         vrt_yres <- -resolution[2]
     }
 
     # src offsets
     if (is.null(subwindow)) {
-        subwindow <- c(src_xmin,src_ymin,src_xmax,src_ymax)
-    }
-    else {
+        subwindow <- c(src_xmin, src_ymin, src_xmax, src_ymax)
+    } else {
         if (subwindow[1] < src_xmin || subwindow[3] > src_xmax ||
-            subwindow[2] < src_ymin || subwindow[4] > src_ymax) {
-                stop("Subwindow is not within source raster extent.",
-                    call. = FALSE)
+                subwindow[2] < src_ymin || subwindow[4] > src_ymax) {
+
+            stop("Subwindow is not within source raster extent.",
+                 call. = FALSE)
         }
     }
     src_xoff <- floor(.getOffset(subwindow[1], src_xmin, src_xres))
@@ -676,8 +683,7 @@ rasterToVRT <- function(srcfile,
         #of ul src pixel
         vrt_xmin <- src_xmin + src_xoff * src_xres
         vrt_ymax <- src_ymax + src_yoff * src_yres
-    }
-    else {
+    } else {
         #lay out the vrt raster with origin at the subwindow origin
         vrt_xmin <- subwindow[1]
         vrt_ymax <- subwindow[4]
@@ -725,14 +731,14 @@ rasterToVRT <- function(srcfile,
         #this assumes the VRT file will be in the same directory as source file
         xml2::xml_attr(xfn, "relativeToVRT") <- "1"
         xml2::xml_text(xfn) <- basename(srcfile)
-    }
-    else {
+    } else {
         xml2::xml_attr(xfn, "relativeToVRT") <- "0"
         xml2::xml_text(xfn) <- srcfile
     }
 
     # clear statistics metadata if present
-    xsrcstats <- xml2::xml_find_all(x, "//MDI[starts-with(@key, 'STATISTICS_')]")
+    xsrcstats <- xml2::xml_find_all(x,
+                                    "//MDI[starts-with(@key, 'STATISTICS_')]")
     if (length(xsrcstats) != 0) {
         xml2::xml_text(xsrcstats) <- rep("", length(xsrcstats))
     }
@@ -743,20 +749,19 @@ rasterToVRT <- function(srcfile,
         vrt_ds <- new(GDALRaster, vrtfile, read_only=FALSE)
         if (relativeToVRT) srcfile <- basename(srcfile)
         for (band in 1:src_bands) {
-            krnl_xml <- enc2utf8( sprintf(
-                .VRT_KERNEL_TEMPLATE,
-                relativeToVRT,
-                srcfile,
-                band,
-                src_xoff,
-                src_yoff,
-                srcwin_xsize,
-                srcwin_ysize,
-                vrt_ncols,
-                vrt_nrows,
-                normalized,
-                sqrt(length(krnl)),
-                paste(krnl, collapse=" ")) )
+            krnl_xml <- enc2utf8(sprintf(.VRT_KERNEL_TEMPLATE,
+                                         relativeToVRT,
+                                         srcfile,
+                                         band,
+                                         src_xoff,
+                                         src_yoff,
+                                         srcwin_xsize,
+                                         srcwin_ysize,
+                                         vrt_ncols,
+                                         vrt_nrows,
+                                         normalized,
+                                         sqrt(length(krnl)),
+                                         paste(krnl, collapse=" ")))
 
             vrt_ds$setMetadataItem(band, "source_0", krnl_xml, "vrt_sources")
         }
@@ -788,13 +793,13 @@ rasterToVRT <- function(srcfile,
 #' (row vectors of the input raster layer(s)).
 #' The expression should return a vector also of length raster xsize
 #' (an output row).
-#' Two special variable names are available in `expr` by default:
-#' `pixelX` and `pixelY` provide the pixel center coordinate in
-#' projection units. If `usePixelLonLat = TRUE`, the pixel x/y coordinates
-#' will also be inverse projected to longitude/latitude and available
-#' in `expr` as `pixelLon` and `pixelLat` (in the same geographic
-#' coordinate system used by the input projection, which is read from the
-#' first input raster).
+#' Four special variable names are available in `expr`:
+#' `pixelX` and `pixelY` provide pixel center coordinates in projection units.
+#' `pixelLon` and `pixelLat` can also be used, in which case the pixel x/y
+#' coordinates will be inverse projected to longitude/latitude
+#' (in the same geographic coordinate system used by the input projection,
+#' which is read from the first input raster). Note that inverse projection
+#' adds computation time.
 #'
 #' To refer to specific bands in a multi-band file, repeat the filename in
 #' `rasterfiles` and specify corresponding band numbers in `bands`, along with
@@ -828,9 +833,10 @@ rasterToVRT <- function(srcfile,
 #' @param setRasterNodataValue Logical. `TRUE` will attempt to set the raster
 #' format nodata value to `nodata_value`, or `FALSE` not to set a raster
 #' nodata value.
-#' @param usePixelLonLat Logical. If `TRUE`, `pixelX` and `pixelY` will be
-#' inverse projected to geographic coordinates and available as `pixelLon` and
-#' `pixelLat` in `expr` (adds computation time).
+#' @param usePixelLonLat This argument is deprecated and will be removed in a
+#' future version. Variable names `pixelLon` and `pixelLat` can be used in
+#' `expr`, and the pixel x/y coordinates will be inverse projected to
+#' longitude/latitude (adds computation time).
 #' @param write_mode Character. Name of the file write mode for output.
 #' One of:
 #'   * `safe` - execution stops if `dstfile` already exists (no output written)
@@ -870,13 +876,13 @@ rasterToVRT <- function(srcfile,
 #'                 var.names = "ELEV_M",
 #'                 dtName = "Int16",
 #'                 nodata_value = -32767,
-#'                 setRasterNodataValue = TRUE,
-#'                 usePixelLonLat = TRUE)
+#'                 setRasterNodataValue = TRUE)
 #'
 #' ds <- new(GDALRaster, hi_file)
 #' # min, max, mean, sd
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
+#' deleteDataset(hi_file)
 #'
 #'
 #' ## Calculate normalized difference vegetation index (NDVI)
@@ -897,6 +903,7 @@ rasterToVRT <- function(srcfile,
 #' ds <- new(GDALRaster, ndvi_file)
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
+#' deleteDataset(ndvi_file)
 #'
 #'
 #' ## Reclassify a variable by rule set
@@ -951,6 +958,8 @@ rasterToVRT <- function(srcfile,
 #'
 #' # if LCP file format is needed:
 #' # createCopy("LCP", "storml_edited.lcp", tif_file)
+#'
+#' deleteDataset(tif_file)
 #' @export
 calc <- function(expr,
                  rasterfiles,
@@ -963,32 +972,29 @@ calc <- function(expr,
                  options = NULL,
                  nodata_value = NULL,
                  setRasterNodataValue = FALSE,
-                 usePixelLonLat = FALSE,
+                 usePixelLonLat = NULL,
                  write_mode = "safe",
-                 quiet = FALSE)
-{
+                 quiet = FALSE) {
 
     calc_expr <- parse(text=expr)
 
     if (write_mode == "safe" && file.exists(dstfile))
         stop("The output file already exists and write_mode is 'safe'.",
-            call. = FALSE)
+             call. = FALSE)
 
     if (write_mode == "update" && is.null(out_band))
         stop("out_band must be specified for update mode.", call. = FALSE)
 
     if (write_mode == "update") {
         update_mode <- TRUE
-    }
-    else if (write_mode == "safe" || write_mode == "overwrite") {
+    } else if (write_mode == "safe" || write_mode == "overwrite") {
         if (!is.null(out_band))
             if (out_band != 1)
                 stop("out_band other than 1 requires 'update' mode.",
-                    call. = FALSE)
+                     call. = FALSE)
         update_mode <- FALSE
         out_band <- 1
-    }
-    else {
+    } else {
         stop("Unknown write_mode.", call. = FALSE)
     }
 
@@ -997,20 +1003,18 @@ calc <- function(expr,
     if (!is.null(bands)) {
         if (length(bands) != nrasters) {
             stop("List of band numbers must be same length as raster list.",
-                call. = FALSE)
+                 call. = FALSE)
         }
-    }
-    else {
+    } else {
         bands <- rep(1, nrasters)
     }
 
     if (!is.null(var.names)) {
         if (length(var.names) != nrasters) {
             stop("List of variable names must be same length as raster list.",
-                call. = FALSE)
+                 call. = FALSE)
         }
-    }
-    else {
+    } else {
         var.names <- LETTERS[1:nrasters]
     }
 
@@ -1018,7 +1022,7 @@ calc <- function(expr,
         fmt <- .getGDALformat(dstfile)
         if (is.null(fmt)) {
             stop("Use fmt argument to specify a GDAL raster format code.",
-                call. = FALSE)
+                 call. = FALSE)
         }
     }
 
@@ -1026,7 +1030,7 @@ calc <- function(expr,
         nodata_value <- DEFAULT_NODATA[[dtName]]
         if (is.null(nodata_value)) {
             stop("Default nodata value unavailable for output data type.",
-                call. = FALSE)
+                 call. = FALSE)
         }
     }
 
@@ -1041,13 +1045,13 @@ calc <- function(expr,
     srs <- ref$getProjectionRef()
     ref$close()
 
-    if(nrasters > 1) {
-        for(r in rasterfiles) {
+    if (nrasters > 1) {
+        for (r in rasterfiles) {
             ds <- new(GDALRaster, r, TRUE)
-            if(ds$getRasterYSize() != nrows || ds$getRasterXSize() != ncols) {
+            if (ds$getRasterYSize() != nrows || ds$getRasterXSize() != ncols) {
                 message(r)
                 stop("All input rasters must have the same dimensions.",
-                    call. = FALSE)
+                     call. = FALSE)
             }
             ds$close()
         }
@@ -1056,11 +1060,10 @@ calc <- function(expr,
     if (update_mode) {
         # write to an existing raster
         dst_ds <- new(GDALRaster, dstfile, read_only=FALSE)
-    }
-    else {
+    } else {
         #create the output raster
         dstnodata <- NULL
-        if(setRasterNodataValue)
+        if (setRasterNodataValue)
             dstnodata <- nodata_value
 
         rasterFromRaster(rasterfiles[1],
@@ -1073,23 +1076,48 @@ calc <- function(expr,
         dst_ds <- new(GDALRaster, dstfile, read_only=FALSE)
     }
 
-
     # list of GDALRaster objects for each raster layer
     ds_list <- list()
-    for (r in 1:nrasters)
+    for (r in 1:nrasters) {
         ds_list[[r]] <- new(GDALRaster, rasterfiles[r], read_only=TRUE)
+    }
 
-    x <- seq(from = xmin + (cellsizeX/2), by = cellsizeX, length.out = ncols)
-    assign("pixelX", x)
+    # are pixel coordinates being used
+    usePixelX <- FALSE
+    usePixelY <- FALSE
+    usePixelLonLat <- FALSE
+    if (length(grep("pixelX", expr, fixed = TRUE)))
+        usePixelX <- TRUE
+
+    if (length(grep("pixelY", expr, fixed = TRUE)))
+        usePixelY <- TRUE
+
+    if (length(grep("pixelLon", expr, fixed = TRUE)) ||
+            length(grep("pixelLat", expr, fixed = TRUE)))
+        usePixelLonLat <- TRUE
+
+    if (usePixelLonLat) {
+        usePixelX <- TRUE
+        usePixelY <- TRUE
+    }
+
+    if (usePixelX) {
+        x <- seq(from = xmin + (cellsizeX/2),
+                 by = cellsizeX,
+                 length.out = ncols)
+        assign("pixelX", x) # nolint: object_usage_linter.
+    }
 
     process_row <- function(row) {
-        y <- rep( (ymax - (cellsizeY/2) - (cellsizeY*row)), ncols )
-        assign("pixelY", y)
+        if (usePixelY) {
+            y <- rep((ymax - (cellsizeY / 2) - (cellsizeY * row)), ncols)
+            assign("pixelY", y) # nolint: object_usage_linter.
+        }
 
-        if(usePixelLonLat) {
-            lonlat <- inv_project(cbind(x,y), srs)
-            assign("pixelLon", lonlat[,1])
-            assign("pixelLat", lonlat[,2])
+        if (usePixelLonLat) {
+            lonlat <- inv_project(cbind(x, y), srs)
+            assign("pixelLon", lonlat[, 1]) # nolint: object_usage_linter.
+            assign("pixelLat", lonlat[, 2]) # nolint: object_usage_linter.
         }
 
         for (r in 1:nrasters) {
@@ -1106,8 +1134,9 @@ calc <- function(expr,
         outrow <- eval(calc_expr)
         if (length(outrow) != ncols) {
             dst_ds$close()
-            for (r in 1:nrasters)
+            for (r in 1:nrasters) {
                 ds_list[[r]]$close()
+            }
             stop("Result vector is the wrong size.", call. = FALSE)
         }
         outrow <- ifelse(is.na(outrow), nodata_value, outrow)
@@ -1120,6 +1149,7 @@ calc <- function(expr,
 
         if (!quiet)
             setTxtProgressBar(pb, row+1)
+
         return()
     }
 
@@ -1132,8 +1162,9 @@ calc <- function(expr,
 
     message(paste("Output written to:", dstfile))
     dst_ds$close()
-    for (r in 1:nrasters)
+    for (r in 1:nrasters) {
         ds_list[[r]]$close()
+    }
 
     return(invisible(dstfile))
 }
@@ -1228,16 +1259,17 @@ calc <- function(expr,
 #' ds <- new(GDALRaster, cmb_file)
 #' ds$info()
 #' ds$close()
+#' deleteDataset(cmb_file)
 #' @export
 combine <- function(rasterfiles, var.names=NULL, bands=NULL,
                     dstfile=NULL, fmt=NULL, dtName="UInt32",
                     options=NULL, quiet=FALSE) {
 
-    if ( (!is.null(dstfile)) && (is.null(fmt)) ) {
+    if ((!is.null(dstfile)) && (is.null(fmt))) {
         fmt <- .getGDALformat(dstfile)
         if (is.null(fmt)) {
             stop("Use fmt argument to specify a GDAL raster format name.",
-                call. = FALSE)
+                 call. = FALSE)
         }
     }
 
@@ -1254,29 +1286,29 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 
     nrasters <- length(rasterfiles)
     if (is.null(var.names)) {
-        for (n in 1:nrasters)
+        for (n in 1:nrasters) {
             var.names[n] <- tools::file_path_sans_ext(basename(rasterfiles[n]))
+        }
     }
 
     if (is.null(bands)) {
-        bands <- rep(1,nrasters)
+        bands <- rep(1, nrasters)
     }
 
     ref_ds <- new(GDALRaster, rasterfiles[1], read.only=TRUE)
     ref_nrows <- ref_ds$getRasterYSize()
     ref_ncols <- ref_ds$getRasterXSize()
-    ref_gt <- ref_ds$getGeoTransform()
     ref_res <- ref_ds$res()
     ref_ds$close()
 
     if (nrasters > 1) {
         for (i in 2:length(rasterfiles)) {
             ds <- new(GDALRaster, rasterfiles[i], read.only=TRUE)
-            if ( (ds$getRasterYSize() != ref_nrows) ||
-                    (ds$getRasterXSize() != ref_ncols) )
+            if ((ds$getRasterYSize() != ref_nrows) ||
+                    (ds$getRasterXSize() != ref_ncols))
                 stop("All input rasters must have the same extent and
                     cell size.", call. = FALSE)
-            if ( !all(ds$res() == ref_res) )
+            if (!all(ds$res() == ref_res))
                 stop("All input rasters must have the same extent and
                     cell size.", call. = FALSE)
             ds$close()
@@ -1284,7 +1316,7 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
     }
 
     d <- .combine(rasterfiles, var.names, bands, dstfile, fmt, dtName,
-            options, quiet)
+                  options, quiet)
 
     return(d)
 }
@@ -1321,19 +1353,25 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' slp_file <- paste0(tempdir(), "/", "storml_slp.tif")
 #' dem_proc("slope", elev_file, slp_file)
+#'
+#' deleteDataset(slp_file)
 #' @export
 dem_proc <- function(mode,
                      srcfile,
                      dstfile,
-                     mode_options=DEFAULT_DEM_PROC[[mode]],
-                     color_file=NULL,
-                     quiet=FALSE) {
+                     mode_options = DEFAULT_DEM_PROC[[mode]],
+                     color_file = NULL,
+                     quiet = FALSE) {
 
     if (is.null(DEFAULT_DEM_PROC[[mode]]))
         stop("DEM processing mode not recognized.", call.=FALSE)
 
-    return(invisible(
-            .dem_proc(mode,srcfile,dstfile,mode_options,color_file,quiet)))
+    return(invisible(.dem_proc(mode,
+                               srcfile,
+                               dstfile,
+                               mode_options,
+                               color_file,
+                               quiet)))
 }
 
 
@@ -1450,6 +1488,7 @@ dem_proc <- function(mode,
 #' polygonize(evt_file, dsn, layer, fld)
 #' set_config_option("SQLITE_USE_OGR_VFS", "")
 #' set_config_option("OGR_SQLITE_JOURNAL", "")
+#' deleteDataset(dsn)
 #' @export
 polygonize <- function(raster_file,
                        out_dsn,
@@ -1475,9 +1514,8 @@ polygonize <- function(raster_file,
     if (!is.null(mask_file)) {
         ds <- new(GDALRaster, mask_file, TRUE)
         ds$close()
-    }
-    else {
-        mask_file = ""
+    } else {
+        mask_file <- ""
     }
 
     if (!.ogr_ds_exists(out_dsn, with_update=TRUE)) {
@@ -1536,7 +1574,8 @@ polygonize <- function(raster_file,
     }
 
     return(invisible(.polygonize(raster_file, src_band, out_dsn, out_layer,
-                    fld_name, mask_file, nomask, connectedness, quiet)))
+                                 fld_name, mask_file, nomask, connectedness,
+                                 quiet)))
 }
 
 
@@ -1639,6 +1678,7 @@ polygonize <- function(raster_file,
 #'             main="YNP Fires 1984-2022 - Most Recent Burn Year")
 #'
 #' ds$close()
+#' deleteDataset(out_file)
 #' @export
 rasterize <- function(src_dsn,
                       dstfile,
@@ -1669,15 +1709,17 @@ rasterize <- function(src_dsn,
     if (!is.null(band)) {
         if (!is.numeric(band))
             stop("band must be numeric.", call. = FALSE)
-        for (b in band)
+        for (b in band) {
             argv <- c(argv, "-b", b)
+        }
     }
 
     if (!is.null(layer)) {
         if (!is.character(layer))
             stop("layer must be character type.", call. = FALSE)
-        for (l in layer)
+        for (l in layer) {
             argv <- c(argv, "-l", l)
+        }
     }
 
     if (!is.null(where)) {
@@ -1697,8 +1739,9 @@ rasterize <- function(src_dsn,
     if (!is.null(burn_value)) {
         if (!is.numeric(burn_value))
             stop("burn_value must be numeric.", call. = FALSE)
-        for (value in burn_value)
+        for (value in burn_value) {
             argv <- c(argv, "-burn", value)
+        }
     }
 
     if (!is.null(burn_attr)) {
@@ -1706,15 +1749,16 @@ rasterize <- function(src_dsn,
             argv <- c(argv, "-a", burn_attr)
         else
             stop("burn_attr must be a length-1 character vector.",
-                    call. = FALSE)
+                 call. = FALSE)
     }
 
     if (!is.null(invert)) {
-        if (is.logical(invert) && length(invert) == 1)
+        if (is.logical(invert) && length(invert) == 1) {
             if (invert)
                 argv <- c(argv, "-i")
-        else
+        } else {
             stop("invert must be a logical scalar.", call. = FALSE)
+        }
     }
 
     if (!is.null(te)) {
@@ -1732,11 +1776,12 @@ rasterize <- function(src_dsn,
     }
 
     if (!is.null(tap)) {
-        if (is.logical(tap) && length(tap) == 1)
+        if (is.logical(tap) && length(tap) == 1) {
             if (tap)
                 argv <- c(argv, "-tap")
-        else
+        } else {
             stop("tap must be a logical scalar.", call. = FALSE)
+        }
     }
 
     if (!is.null(ts)) {
@@ -1753,7 +1798,7 @@ rasterize <- function(src_dsn,
             argv <- c(argv, "-ot", dtName)
         else
             stop("dtName must be a length-1 character vector.",
-                    call. = FALSE)
+                 call. = FALSE)
     }
 
     if (!is.null(dstnodata)) {
@@ -1766,8 +1811,9 @@ rasterize <- function(src_dsn,
     if (!is.null(init)) {
         if (!is.numeric(init))
             stop("init must be numeric.", call. = FALSE)
-        for (value in init)
+        for (value in init) {
             argv <- c(argv, "-init", value)
+        }
     }
 
     if (!is.null(fmt)) {
@@ -1775,14 +1821,15 @@ rasterize <- function(src_dsn,
             argv <- c(argv, "-of", fmt)
         else
             stop("fmt must be a length-1 character vector.",
-                    call. = FALSE)
+                 call. = FALSE)
     }
 
     if (!is.null(co)) {
         if (!is.character(co))
             stop("co must be a character vector.", call. = FALSE)
-        for (name_value in co)
+        for (name_value in co) {
             argv <- c(argv, "-co", name_value)
+        }
     }
 
     if (!is.null(add_options)) {

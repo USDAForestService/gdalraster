@@ -17,7 +17,6 @@ spatial reference system.}
 }
 \value{
 Character string for a transformed OGC WKT geometry.
-\code{NA} is returned if GDAL was built without the GEOS library.
 }
 \description{
 \code{g_transform()} will transform the coordinates of a geometry from their
@@ -32,8 +31,7 @@ include advanced logic to deal with discontinuities at poles or antimeridian.
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, elev_file)
-ds$bbox() |>
-  bbox_to_wkt() |>
+bbox_to_wkt(ds$bbox()) |>
   g_transform(ds$getProjectionRef(), epsg_to_wkt(4326)) |>
   bbox_from_wkt()
 ds$close()

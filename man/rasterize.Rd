@@ -143,6 +143,7 @@ plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",
             main="YNP Fires 1984-2022 - Most Recent Burn Year")
 
 ds$close()
+deleteDataset(out_file)
 }
 \seealso{
 \code{\link[=polygonize]{polygonize()}}
