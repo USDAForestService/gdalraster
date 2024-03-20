@@ -1300,7 +1300,7 @@ vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
 #' Portability Library. See Details for the GDAL documentation.
 #'
 #' @details
-#' /vsicurl (and related file systems like /vsis3/, /vsigs/, /vsiaz/,
+#' /vsicurl/ (and related file systems like /vsis3/, /vsigs/, /vsiaz/,
 #' /vsioss/, /vsiswift/) cache a number of metadata and data for faster
 #' execution in read-only scenarios. But when the content on the server-side
 #' may change during the same process, those mechanisms can prevent opening
@@ -1312,12 +1312,14 @@ vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
 #' filename (see Details).
 #' @param file_prefix Character string. Filename prefix to use if
 #' `partial = TRUE`.
+#' @param quiet_error Logical scalar. `TRUE` to use GDAL's
+#' `CPLQuietErrorHandler` (the default).
 #' @returns No return value, called for side effects.
 #'
 #' @examples
 #' vsi_curl_clear_cache()
-vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "") {
-    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix))
+vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet_error = TRUE) {
+    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix, quiet_error))
 }
 
 #' Read names in a directory
