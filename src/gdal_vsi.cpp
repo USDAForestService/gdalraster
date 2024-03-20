@@ -89,7 +89,7 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 //' Portability Library. See Details for the GDAL documentation.
 //'
 //' @details
-//' /vsicurl (and related file systems like /vsis3/, /vsigs/, /vsiaz/,
+//' /vsicurl/ (and related file systems like /vsis3/, /vsigs/, /vsiaz/,
 //' /vsioss/, /vsiswift/) cache a number of metadata and data for faster
 //' execution in read-only scenarios. But when the content on the server-side
 //' may change during the same process, those mechanisms can prevent opening
@@ -101,13 +101,18 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 //' filename (see Details).
 //' @param file_prefix Character string. Filename prefix to use if
 //' `partial = TRUE`.
+//' @param quiet_error Logical scalar. `TRUE` to use GDAL's
+//' `CPLQuietErrorHandler` (the default).
 //' @returns No return value, called for side effects.
 //'
 //' @examples
 //' vsi_curl_clear_cache()
 // [[Rcpp::export()]]
 void vsi_curl_clear_cache(bool partial = false,
-        Rcpp::CharacterVector file_prefix = "") {
+                          Rcpp::CharacterVector file_prefix = "",
+                          bool quiet_error = true) {
+    if (quiet_error)
+        CPLPushErrorHandler(CPLQuietErrorHandler);
 
     if (!partial) {
         VSICurlClearCache();
@@ -117,6 +122,9 @@ void vsi_curl_clear_cache(bool partial = false,
         f_prefix_in = Rcpp::as<std::string>(_check_gdal_filename(file_prefix));
         VSICurlPartialClearCache(f_prefix_in.c_str());
     }
+
+    if (quiet_error)
+        CPLPopErrorHandler();
 }
 
 
