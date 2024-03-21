@@ -20,7 +20,7 @@ Portability Library. Requires GDAL &amp;gt;= 3.1"><!-- mathjax --><script src="h
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9230</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9240</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -91,7 +91,9 @@ Portability Library. Requires GDAL &gt;= 3.1</p>
     
 
 <p>Invisibly, a logical vector of <code>length(filenames)</code> with values
-depending on the success of deletion of the corresponding file.</p>
+depending on the success of deletion of the corresponding file.
+<code>NULL</code> might be returned in case of a more general error (for example,
+files belonging to different file system handlers).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

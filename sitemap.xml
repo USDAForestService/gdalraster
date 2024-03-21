@@ -172,6 +172,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/polygonize.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/pop_error_handler.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/proj_networking.html</loc>
   </url>
   <url>
@@ -179,6 +182,9 @@
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/proj_version.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/push_error_handler.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/rasterFromRaster.html</loc>
