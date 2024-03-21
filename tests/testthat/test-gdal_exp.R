@@ -182,7 +182,7 @@ test_that("bandCopyWholeRaster writes correct output", {
     ds$close()
     expect_equal(src_stats, dst_stats)
 
-    push_error_handler()
+    push_error_handler("quiet")
     # invalid source band
     expect_false(bandCopyWholeRaster(b5_tmp, 2, dst_file, 5, options=opt))
     # incorrect destination file

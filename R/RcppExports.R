@@ -121,30 +121,36 @@ get_cache_used <- function() {
     .Call(`_gdalraster_get_cache_used`)
 }
 
-#' Push a CPLQuietErrorHandler
+#' Push a new GDAL CPLError handler
 #'
 #' `push_error_handler()` is a wrapper for
-#' `CPLPushErrorHandler(CPLQuietErrorHandler)` in the GDAL Common Portability
+#' `CPLPushErrorHandler()` in the GDAL Common Portability
 #' Library.
 #' This pushes a new error handler on the thread-local error handler stack.
 #' This handler will be used until removed with `pop_error_handler()`.
-#' `CPLQuietErrorHandler()` doesn't make any attempt to report passed error or
-#' warning messages but will process debug messages via
-#' `CPLDefaultErrorHandler`.
+#' A typical use is to temporarily set `CPLQuietErrorHandler()` which doesn't
+#' make any attempt to report passed error or warning messages, but will
+#' process debug messages via `CPLDefaultErrorHandler`.
 #'
-#' @param handler Character name of the error handler to push. `quiet` is
-#' currently the only supported handler.
+#' @param handler Character name of the error handler to push.
+#' One of `quiet`, `logging` or `default`.
 #' @returns No return value, called for side effects.
+#'
+#' @note
+#' Setting `handler = "logging"` will use `CPLLoggingErrorHandler()`, error
+#' handler that logs into the file defined by the `CPL_LOG` configuration
+#' option, or `stderr` otherwise.
+#'
+#' This only affects error reporting from GDAL.
 #'
 #' @seealso
 #' [pop_error_handler()]
 #'
 #' @examples
-#' result <- deleteDataset("/vsimem/nonexistent.tif")
-#' push_error_handler()
-#' result <- deleteDataset("/vsimem/nonexistent.tif")
+#' push_error_handler("quiet")
+#' # ...
 #' pop_error_handler()
-push_error_handler <- function(handler = "quiet") {
+push_error_handler <- function(handler) {
     invisible(.Call(`_gdalraster_push_error_handler`, handler))
 }
 
@@ -163,9 +169,8 @@ push_error_handler <- function(handler = "quiet") {
 #' [push_error_handler()]
 #'
 #' @examples
-#' result <- deleteDataset("/vsimem/nonexistent.tif")
-#' push_error_handler()
-#' result <- deleteDataset("/vsimem/nonexistent.tif")
+#' push_error_handler("quiet")
+#' # ...
 #' pop_error_handler()
 pop_error_handler <- function() {
     invisible(.Call(`_gdalraster_pop_error_handler`))
