@@ -2,31 +2,37 @@
 % Please edit documentation in R/RcppExports.R
 \name{push_error_handler}
 \alias{push_error_handler}
-\title{Push a CPLQuietErrorHandler}
+\title{Push a new GDAL CPLError handler}
 \usage{
-push_error_handler(handler = "quiet")
+push_error_handler(handler)
 }
 \arguments{
-\item{handler}{Character name of the error handler to push. \code{quiet} is
-currently the only supported handler.}
+\item{handler}{Character name of the error handler to push.
+One of \code{quiet}, \code{logging} or \code{default}.}
 }
 \value{
 No return value, called for side effects.
 }
 \description{
 \code{push_error_handler()} is a wrapper for
-\code{CPLPushErrorHandler(CPLQuietErrorHandler)} in the GDAL Common Portability
+\code{CPLPushErrorHandler()} in the GDAL Common Portability
 Library.
 This pushes a new error handler on the thread-local error handler stack.
 This handler will be used until removed with \code{pop_error_handler()}.
-\code{CPLQuietErrorHandler()} doesn't make any attempt to report passed error or
-warning messages but will process debug messages via
-\code{CPLDefaultErrorHandler}.
+A typical use is to temporarily set \code{CPLQuietErrorHandler()} which doesn't
+make any attempt to report passed error or warning messages, but will
+process debug messages via \code{CPLDefaultErrorHandler}.
+}
+\note{
+Setting \code{handler = "logging"} will use \code{CPLLoggingErrorHandler()}, error
+handler that logs into the file defined by the \code{CPL_LOG} configuration
+option, or \code{stderr} otherwise.
+
+This only affects error reporting from GDAL.
 }
 \examples{
-result <- deleteDataset("/vsimem/nonexistent.tif")
-push_error_handler()
-result <- deleteDataset("/vsimem/nonexistent.tif")
+push_error_handler("quiet")
+# ...
 pop_error_handler()
 }
 \seealso{

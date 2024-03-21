@@ -18,9 +18,8 @@ no effect if there are no error handlers on the current thread's error
 handler stack.
 }
 \examples{
-result <- deleteDataset("/vsimem/nonexistent.tif")
-push_error_handler()
-result <- deleteDataset("/vsimem/nonexistent.tif")
+push_error_handler("quiet")
+# ...
 pop_error_handler()
 }
 \seealso{
