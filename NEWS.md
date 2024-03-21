@@ -6,7 +6,7 @@
 
 * add `pop_error_handler()`: wrapper for `CPLPopErrorHandler()` in the GDAL Common Portability Library (2024-03-20)
 
-* make the dataset management functions quieter (2024-03-20)
+* make the dataset management functions quieter (#282) (2024-03-20)
 
 * mass replace `NULL` -> `nullptr` in C++ code (2024-03-19)
 
