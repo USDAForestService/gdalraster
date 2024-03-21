@@ -1,10 +1,12 @@
-# gdalraster 1.9.0.9240 (dev)
+# gdalraster 1.9.0.9250 (dev)
+
+* add `vsi_get_disk_free_space()`: return the free disk space available on the filesystem (2024-03-20)
 
 * add `push_error_handler()`: wrapper for `CPLPushErrorHandler(CPLQuietErrorHandler)` in the GDAL Common Portability Library (2024-03-20)
 
 * add `pop_error_handler()`: wrapper for `CPLPopErrorHandler()` in the GDAL Common Portability Library (2024-03-20)
 
-* make the dataset management functions quieter (2024-03-20)
+* make the dataset management functions quieter (#282) (2024-03-20)
 
 * mass replace `NULL` -> `nullptr` in C++ code (2024-03-19)
 

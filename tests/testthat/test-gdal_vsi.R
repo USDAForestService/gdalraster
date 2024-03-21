@@ -106,3 +106,11 @@ test_that("vsi_supports_seq_write and vsi_supports_rnd_write work", {
     expect_true(vsi_supports_seq_write("/vsimem/test-mem-file.gpkg", TRUE))
     expect_true(vsi_supports_rnd_write("/vsimem/test-mem-file.gpkg", TRUE))
 })
+
+test_that("vsi_get_disk_free_space returns length-1 numeric vector", {
+    tmp_dir <- file.path(tempdir(), "tmpdir")
+    vsi_mkdir(tmp_dir)
+    x <- vsi_get_disk_free_space(tmp_dir)
+    expect_vector(x, ptype = numeric(), 1)
+    vsi_rmdir(tmp_dir)
+})
