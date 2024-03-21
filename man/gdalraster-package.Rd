@@ -78,6 +78,7 @@
 
   \item virtual file systems: \code{\link[=vsi_copy_file]{vsi_copy_file()}},
   \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
+  \code{\link[=vsi_get_disk_free_space]{vsi_get_disk_free_space()}},
   \code{\link[=vsi_get_fs_options]{vsi_get_fs_options()}},
   \code{\link[=vsi_get_fs_prefixes]{vsi_get_fs_prefixes()}},
   \code{\link[=vsi_mkdir]{vsi_mkdir()}},

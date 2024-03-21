@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9240 (dev)
+# gdalraster 1.9.0.9250 (dev)
+
+* add `vsi_get_disk_free_space()`: return the free disk space available on the filesystem (2024-03-20)
 
 * add `push_error_handler()`: wrapper for `CPLPushErrorHandler(CPLQuietErrorHandler)` in the GDAL Common Portability Library (2024-03-20)
 

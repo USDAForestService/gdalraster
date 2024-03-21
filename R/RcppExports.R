@@ -1823,6 +1823,24 @@ vsi_supports_rnd_write <- function(filename, allow_local_tmpfile) {
     .Call(`_gdalraster_vsi_supports_rnd_write`, filename, allow_local_tmpfile)
 }
 
+#' Return free disk space available on the filesystem
+#'
+#' `vsi_get_disk_free_space()` returns the free disk space available on the
+#' filesystem. Wrapper for `VSIGetDiskFreeSpace()` in the GDAL Common
+#' Portability Library.
+#'
+#' @param path Character string. A directory of the filesystem to query.
+#' @returns Numeric scalar. The free space in bytes, or `-1` in case of error.
+#'
+#' @examples
+#' tmp_dir <- file.path(tempdir(), "tmpdir")
+#' vsi_mkdir(tmp_dir)
+#' vsi_get_disk_free_space(tmp_dir)
+#' vsi_rmdir(tmp_dir)
+vsi_get_disk_free_space <- function(path) {
+    .Call(`_gdalraster_vsi_get_disk_free_space`, path)
+}
+
 #' @noRd
 NULL
 

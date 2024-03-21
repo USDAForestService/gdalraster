@@ -778,3 +778,26 @@ bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
 
 #endif
 }
+
+//' Return free disk space available on the filesystem
+//'
+//' `vsi_get_disk_free_space()` returns the free disk space available on the
+//' filesystem. Wrapper for `VSIGetDiskFreeSpace()` in the GDAL Common
+//' Portability Library.
+//'
+//' @param path Character string. A directory of the filesystem to query.
+//' @returns Numeric scalar. The free space in bytes, or `-1` in case of error.
+//'
+//' @examples
+//' tmp_dir <- file.path(tempdir(), "tmpdir")
+//' vsi_mkdir(tmp_dir)
+//' vsi_get_disk_free_space(tmp_dir)
+//' vsi_rmdir(tmp_dir)
+// [[Rcpp::export()]]
+double vsi_get_disk_free_space(Rcpp::CharacterVector path) {
+
+    std::string path_in;
+    path_in = Rcpp::as<std::string>(_check_gdal_filename(path));
+
+    return static_cast<double>(VSIGetDiskFreeSpace(path_in.c_str()));
+}
