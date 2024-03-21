@@ -1,6 +1,10 @@
-# gdalraster 1.9.0.9230 (dev)
+# gdalraster 1.9.0.9240 (dev)
 
-* `vsi_curl_clear_cache()`: add argument `quiet_error`, whether to use GDAL's `CPLQuietErrorHandler` (defaults to `TRUE`) (2024-03-20)
+* add `push_error_handler()`: wrapper for `CPLPushErrorHandler(CPLQuietErrorHandler)` in the GDAL Common Portability Library (2024-03-20)
+
+* add `pop_error_handler()`: wrapper for `CPLPopErrorHandler()` in the GDAL Common Portability Library (2024-03-20)
+
+* make the dataset management functions quieter (2024-03-20)
 
 * mass replace `NULL` -> `nullptr` in C++ code (2024-03-19)
 

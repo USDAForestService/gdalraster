@@ -74,6 +74,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// push_error_handler
+void push_error_handler(std::string handler);
+RcppExport SEXP _gdalraster_push_error_handler(SEXP handlerSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type handler(handlerSEXP);
+    push_error_handler(handler);
+    return R_NilValue;
+END_RCPP
+}
+// pop_error_handler
+void pop_error_handler();
+RcppExport SEXP _gdalraster_pop_error_handler() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    pop_error_handler();
+    return R_NilValue;
+END_RCPP
+}
 // _check_gdal_filename
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 RcppExport SEXP _gdalraster__check_gdal_filename(SEXP filenameSEXP) {
@@ -475,14 +494,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_curl_clear_cache
-void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix, bool quiet_error);
-RcppExport SEXP _gdalraster_vsi_curl_clear_cache(SEXP partialSEXP, SEXP file_prefixSEXP, SEXP quiet_errorSEXP) {
+void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix);
+RcppExport SEXP _gdalraster_vsi_curl_clear_cache(SEXP partialSEXP, SEXP file_prefixSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< bool >::type partial(partialSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type file_prefix(file_prefixSEXP);
-    Rcpp::traits::input_parameter< bool >::type quiet_error(quiet_errorSEXP);
-    vsi_curl_clear_cache(partial, file_prefix, quiet_error);
+    vsi_curl_clear_cache(partial, file_prefix);
     return R_NilValue;
 END_RCPP
 }
@@ -547,7 +565,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_unlink_batch
-Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames);
+SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames);
 RcppExport SEXP _gdalraster_vsi_unlink_batch(SEXP filenamesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -1157,6 +1175,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_get_config_option", (DL_FUNC) &_gdalraster_get_config_option, 1},
     {"_gdalraster_set_config_option", (DL_FUNC) &_gdalraster_set_config_option, 2},
     {"_gdalraster_get_cache_used", (DL_FUNC) &_gdalraster_get_cache_used, 0},
+    {"_gdalraster_push_error_handler", (DL_FUNC) &_gdalraster_push_error_handler, 1},
+    {"_gdalraster_pop_error_handler", (DL_FUNC) &_gdalraster_pop_error_handler, 0},
     {"_gdalraster__check_gdal_filename", (DL_FUNC) &_gdalraster__check_gdal_filename, 1},
     {"_gdalraster__get_physical_RAM", (DL_FUNC) &_gdalraster__get_physical_RAM, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
@@ -1185,7 +1205,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__getCreationOptions", (DL_FUNC) &_gdalraster__getCreationOptions, 1},
     {"_gdalraster__addFileInZip", (DL_FUNC) &_gdalraster__addFileInZip, 6},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
-    {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 3},
+    {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 2},
     {"_gdalraster_vsi_read_dir", (DL_FUNC) &_gdalraster_vsi_read_dir, 2},
     {"_gdalraster_vsi_sync", (DL_FUNC) &_gdalraster_vsi_sync, 4},
     {"_gdalraster_vsi_mkdir", (DL_FUNC) &_gdalraster_vsi_mkdir, 2},

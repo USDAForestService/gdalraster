@@ -4,7 +4,7 @@
 \alias{vsi_curl_clear_cache}
 \title{Clean cache associated with /vsicurl/ and related file systems}
 \usage{
-vsi_curl_clear_cache(partial = FALSE, file_prefix = "", quiet_error = TRUE)
+vsi_curl_clear_cache(partial = FALSE, file_prefix = "")
 }
 \arguments{
 \item{partial}{Logical scalar. Whether to clear the cache only for a given
@@ -12,9 +12,6 @@ filename (see Details).}
 
 \item{file_prefix}{Character string. Filename prefix to use if
 \code{partial = TRUE}.}
-
-\item{quiet_error}{Logical scalar. \code{TRUE} to use GDAL's
-\code{CPLQuietErrorHandler} (the default).}
 }
 \value{
 No return value, called for side effects.

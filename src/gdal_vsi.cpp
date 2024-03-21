@@ -101,18 +101,13 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 //' filename (see Details).
 //' @param file_prefix Character string. Filename prefix to use if
 //' `partial = TRUE`.
-//' @param quiet_error Logical scalar. `TRUE` to use GDAL's
-//' `CPLQuietErrorHandler` (the default).
 //' @returns No return value, called for side effects.
 //'
 //' @examples
 //' vsi_curl_clear_cache()
 // [[Rcpp::export()]]
 void vsi_curl_clear_cache(bool partial = false,
-                          Rcpp::CharacterVector file_prefix = "",
-                          bool quiet_error = true) {
-    if (quiet_error)
-        CPLPushErrorHandler(CPLQuietErrorHandler);
+                          Rcpp::CharacterVector file_prefix = "") {
 
     if (!partial) {
         VSICurlClearCache();
@@ -122,9 +117,6 @@ void vsi_curl_clear_cache(bool partial = false,
         f_prefix_in = Rcpp::as<std::string>(_check_gdal_filename(file_prefix));
         VSICurlPartialClearCache(f_prefix_in.c_str());
     }
-
-    if (quiet_error)
-        CPLPopErrorHandler();
 }
 
 
@@ -445,6 +437,8 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 //' @param filenames Character vector. The list of files to delete.
 //' @returns Invisibly, a logical vector of `length(filenames)` with values
 //' depending on the success of deletion of the corresponding file.
+//' `NULL` might be returned in case of a more general error (for example,
+//' files belonging to different file system handlers).
 //'
 //' @seealso
 //' [deleteDataset()], [vsi_rmdir()], [vsi_unlink()]
@@ -465,7 +459,7 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 //'   print(result)
 //' }
 // [[Rcpp::export(invisible = true)]]
-Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames) {
+SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames) {
 
 #if GDAL_VERSION_NUM < 3010000
     Rcpp::stop("vsi_unlink_batch() requires GDAL >= 3.1.");
@@ -483,13 +477,17 @@ Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames) {
     filenames_cstr[filenames.size()] = nullptr;
 
     int *result = VSIUnlinkBatch(filenames_cstr.data());
-    if (result == nullptr)
-        Rcpp::stop("VSIUnlinkBatch() general error.");
-    Rcpp::LogicalVector ret(filenames.size());
-    for (R_xlen_t i = 0; i < filenames.size(); ++i)
-        ret[i] = result[i];
-    VSIFree(result);
-    return ret;
+
+    if (result == nullptr) {
+        return R_NilValue;
+    }
+    else {
+        Rcpp::LogicalVector ret(filenames.size());
+        for (R_xlen_t i = 0; i < filenames.size(); ++i)
+            ret[i] = result[i];
+        VSIFree(result);
+        return ret;
+    }
 
 #endif
 }

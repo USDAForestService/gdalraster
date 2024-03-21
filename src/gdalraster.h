@@ -74,6 +74,9 @@ Rcpp::DataFrame gdal_formats(std::string fmt);
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
+void push_error_handler(std::string handler);
+void pop_error_handler();
+
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 int _get_physical_RAM();
 
@@ -113,7 +116,7 @@ bool vsi_sync(Rcpp::CharacterVector src,
 int vsi_mkdir(Rcpp::CharacterVector path, int mode);
 int vsi_rmdir(Rcpp::CharacterVector path);
 int vsi_unlink(Rcpp::CharacterVector filename);
-Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames);
+SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames);
 SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);
 int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath);
 std::string _vsi_get_fs_options(Rcpp::CharacterVector filename);
