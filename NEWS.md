@@ -1,4 +1,4 @@
-# gdalraster 1.9.0.9260 (dev)
+# gdalraster 1.9.0.9270 (dev)
 
 * add `vsi_get_disk_free_space()`: return the free disk space available on the filesystem (2024-03-20)
 
@@ -11,8 +11,6 @@
 * mass replace `NULL` -> `nullptr` in C++ code (2024-03-19)
 
 * deallocate objects in a few error handlers where needed (2024-03-18)
-
-* `_combine()`: allocate `CmbTable` on the heap (2024-03-18)
 
 * `GDALRaster::getMetadataDomainList()`: deallocate the returned string list (2024-03-18)
 
