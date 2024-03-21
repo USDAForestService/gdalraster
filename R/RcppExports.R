@@ -121,6 +121,56 @@ get_cache_used <- function() {
     .Call(`_gdalraster_get_cache_used`)
 }
 
+#' Push a CPLQuietErrorHandler
+#'
+#' `push_error_handler()` is a wrapper for
+#' `CPLPushErrorHandler(CPLQuietErrorHandler)` in the GDAL Common Portability
+#' Library.
+#' This pushes a new error handler on the thread-local error handler stack.
+#' This handler will be used until removed with `pop_error_handler()`.
+#' `CPLQuietErrorHandler()` doesn't make any attempt to report passed error or
+#' warning messages but will process debug messages via
+#' `CPLDefaultErrorHandler`.
+#'
+#' @param handler Character name of the error handler to push. `quiet` is
+#' currently the only supported handler.
+#' @returns No return value, called for side effects.
+#'
+#' @seealso
+#' [pop_error_handler()]
+#'
+#' @examples
+#' result <- deleteDataset("/vsimem/nonexistent.tif")
+#' push_error_handler()
+#' result <- deleteDataset("/vsimem/nonexistent.tif")
+#' pop_error_handler()
+push_error_handler <- function(handler = "quiet") {
+    invisible(.Call(`_gdalraster_push_error_handler`, handler))
+}
+
+#' Pop error handler off stack
+#'
+#' `pop_error_handler()` is a wrapper for `CPLPopErrorHandler()` in the GDAL
+#' Common Portability Library.
+#' Discards the current error handler on the error handler stack, and restores
+#' the one in use before the last `push_error_handler()` call. This method has
+#' no effect if there are no error handlers on the current thread's error
+#' handler stack.
+#'
+#' @returns No return value, called for side effects.
+#'
+#' @seealso
+#' [push_error_handler()]
+#'
+#' @examples
+#' result <- deleteDataset("/vsimem/nonexistent.tif")
+#' push_error_handler()
+#' result <- deleteDataset("/vsimem/nonexistent.tif")
+#' pop_error_handler()
+pop_error_handler <- function() {
+    invisible(.Call(`_gdalraster_pop_error_handler`))
+}
+
 #' Check a filename before passing to GDAL and potentially fix.
 #' filename may be a physical file, URL, connection string, file name with
 #' additional parameters, etc. Returned in UTF-8 encoding.
@@ -1312,14 +1362,12 @@ vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
 #' filename (see Details).
 #' @param file_prefix Character string. Filename prefix to use if
 #' `partial = TRUE`.
-#' @param quiet_error Logical scalar. `TRUE` to use GDAL's
-#' `CPLQuietErrorHandler` (the default).
 #' @returns No return value, called for side effects.
 #'
 #' @examples
 #' vsi_curl_clear_cache()
-vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet_error = TRUE) {
-    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix, quiet_error))
+vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "") {
+    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix))
 }
 
 #' Read names in a directory
@@ -1571,6 +1619,8 @@ vsi_unlink <- function(filename) {
 #' @param filenames Character vector. The list of files to delete.
 #' @returns Invisibly, a logical vector of `length(filenames)` with values
 #' depending on the success of deletion of the corresponding file.
+#' `NULL` might be returned in case of a more general error (for example,
+#' files belonging to different file system handlers).
 #'
 #' @seealso
 #' [deleteDataset()], [vsi_rmdir()], [vsi_unlink()]

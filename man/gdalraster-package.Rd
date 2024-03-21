@@ -96,7 +96,9 @@
   \code{\link[=gdal_formats]{gdal_formats()}},
   \code{\link[=get_cache_used]{get_cache_used()}},\cr
   \code{\link[=get_config_option]{get_config_option()}},
-  \code{\link[=set_config_option]{set_config_option()}}
+  \code{\link[=set_config_option]{set_config_option()}},
+  \code{\link[=push_error_handler]{push_error_handler()}},
+  \code{\link[=pop_error_handler]{pop_error_handler()}}
 
   \item PROJ configuration:
   \code{\link[=proj_version]{proj_version()}},

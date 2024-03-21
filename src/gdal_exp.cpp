@@ -224,6 +224,62 @@ int get_cache_used() {
 }
 
 
+//' Push a CPLQuietErrorHandler
+//'
+//' `push_error_handler()` is a wrapper for
+//' `CPLPushErrorHandler(CPLQuietErrorHandler)` in the GDAL Common Portability
+//' Library.
+//' This pushes a new error handler on the thread-local error handler stack.
+//' This handler will be used until removed with `pop_error_handler()`.
+//' `CPLQuietErrorHandler()` doesn't make any attempt to report passed error or
+//' warning messages but will process debug messages via
+//' `CPLDefaultErrorHandler`.
+//'
+//' @param handler Character name of the error handler to push. `quiet` is
+//' currently the only supported handler.
+//' @returns No return value, called for side effects.
+//'
+//' @seealso
+//' [pop_error_handler()]
+//'
+//' @examples
+//' result <- deleteDataset("/vsimem/nonexistent.tif")
+//' push_error_handler()
+//' result <- deleteDataset("/vsimem/nonexistent.tif")
+//' pop_error_handler()
+// [[Rcpp::export]]
+void push_error_handler(std::string handler = "quiet") {
+    if (EQUAL(handler.c_str(), "quiet"))
+        CPLPushErrorHandler(CPLQuietErrorHandler);
+}
+
+
+//' Pop error handler off stack
+//'
+//' `pop_error_handler()` is a wrapper for `CPLPopErrorHandler()` in the GDAL
+//' Common Portability Library.
+//' Discards the current error handler on the error handler stack, and restores
+//' the one in use before the last `push_error_handler()` call. This method has
+//' no effect if there are no error handlers on the current thread's error
+//' handler stack.
+//'
+//' @returns No return value, called for side effects.
+//'
+//' @seealso
+//' [push_error_handler()]
+//'
+//' @examples
+//' result <- deleteDataset("/vsimem/nonexistent.tif")
+//' push_error_handler()
+//' result <- deleteDataset("/vsimem/nonexistent.tif")
+//' pop_error_handler()
+// [[Rcpp::export]]
+void pop_error_handler() {
+    CPLPopErrorHandler();
+}
+
+
+
 //' Check a filename before passing to GDAL and potentially fix.
 //' filename may be a physical file, URL, connection string, file name with
 //' additional parameters, etc. Returned in UTF-8 encoding.
@@ -2278,23 +2334,23 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 
     hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
     if (hSrcDS == nullptr)
-        Rcpp::stop("Open source raster failed.");
+        return false;
     hSrcBand = GDALGetRasterBand(hSrcDS, src_band);
     if (hSrcBand == nullptr) {
         GDALClose(hSrcDS);
-        Rcpp::stop("Failed to access the source band.");
+        return false;
     }
 
     hDstDS = GDALOpenShared(dst_filename_in.c_str(), GA_Update);
     if (hDstDS == nullptr) {
         GDALClose(hSrcDS);
-        Rcpp::stop("Open destination raster failed.");
+        return false;
     }
     hDstBand = GDALGetRasterBand(hDstDS, dst_band);
     if (hDstBand == nullptr) {
         GDALClose(hSrcDS);
         GDALClose(hDstDS);
-        Rcpp::stop("Failed to access the destination band.");
+        return false;
     }
 
     std::vector<char *> opt_list = {nullptr};
@@ -2315,9 +2371,9 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
     GDALClose(hSrcDS);
     GDALClose(hDstDS);
     if (err != CE_None)
-        Rcpp::stop("Error in GDALRasterBandCopyWholeRaster().");
-
-    return true;
+        return false;
+    else
+        return true;
 }
 
 
@@ -2374,22 +2430,19 @@ bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
     if (format == "") {
         hDriver = GDALIdentifyDriver(filename_in.c_str(), nullptr);
         if (hDriver == nullptr)
-            Rcpp::stop("Failed to get driver from file name.");
+            return false;
     }
     else {
         hDriver = GDALGetDriverByName(format.c_str());
         if (hDriver == nullptr)
-            Rcpp::stop("Failed to get driver from format name.");
+            return false;
     }
 
     CPLErr err = GDALDeleteDataset(hDriver, filename_in.c_str());
-    if (err != CE_None) {
-        Rcpp::Rcerr << "Error from GDALDeleteDataset().\n";
+    if (err != CE_None)
         return false;
-    }
-    else {
+    else
         return true;
-    }
 }
 
 
@@ -2452,23 +2505,20 @@ bool renameDataset(Rcpp::CharacterVector new_filename,
     if (format == "") {
         hDriver = GDALIdentifyDriver(old_filename_in.c_str(), nullptr);
         if (hDriver == nullptr)
-            Rcpp::stop("Failed to get driver from file name.");
+            return false;
     }
     else {
         hDriver = GDALGetDriverByName(format.c_str());
         if (hDriver == nullptr)
-            Rcpp::stop("Failed to get driver from format name.");
+            return false;
     }
 
     CPLErr err = GDALRenameDataset(hDriver, new_filename_in.c_str(),
-            old_filename_in.c_str());
-    if (err != CE_None) {
-        Rcpp::Rcerr << "Error from GDALRenameDataset().\n";
+                                   old_filename_in.c_str());
+    if (err != CE_None)
         return false;
-    }
-    else {
+    else
         return true;
-    }
 }
 
 
@@ -2523,23 +2573,20 @@ bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
     if (format == "") {
         hDriver = GDALIdentifyDriver(old_filename_in.c_str(), nullptr);
         if (hDriver == nullptr)
-            Rcpp::stop("Failed to get driver from file name.");
+            return false;
     }
     else {
         hDriver = GDALGetDriverByName(format.c_str());
         if (hDriver == nullptr)
-            Rcpp::stop("Failed to get driver from format name.");
+            return false;
     }
 
     CPLErr err = GDALCopyDatasetFiles(hDriver, new_filename_in.c_str(),
-            old_filename_in.c_str());
-    if (err != CE_None) {
-        Rcpp::Rcerr << "Error from GDALCopyDatasetFiles().\n";
+                                      old_filename_in.c_str());
+    if (err != CE_None)
         return false;
-    }
-    else {
+    else
         return true;
-    }
 }
 
 

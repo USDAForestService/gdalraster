@@ -12,6 +12,8 @@ vsi_unlink_batch(filenames)
 \value{
 Invisibly, a logical vector of \code{length(filenames)} with values
 depending on the success of deletion of the corresponding file.
+\code{NULL} might be returned in case of a more general error (for example,
+files belonging to different file system handlers).
 }
 \description{
 \code{vsi_unlink_batch()} deletes a list of files passed in a character vector.
