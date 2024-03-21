@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9240</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9250</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,10 +56,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.9.0.9240" id="gdalraster-1909240-dev">gdalraster 1.9.0.9240 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909240-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/push_error_handler.html">push_error_handler()</a></code>: wrapper for <code>CPLPushErrorHandler(CPLQuietErrorHandler)</code> in the GDAL Common Portability Library (2024-03-20)</p></li>
+<h2 class="pkg-version" data-toc-text="1.9.0.9250" id="gdalraster-1909250-dev">gdalraster 1.9.0.9250 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1909250-dev"></a></h2>
+<ul><li><p>add <code><a href="../reference/vsi_get_disk_free_space.html">vsi_get_disk_free_space()</a></code>: return the free disk space available on the filesystem (2024-03-20)</p></li>
+<li><p>add <code><a href="../reference/push_error_handler.html">push_error_handler()</a></code>: wrapper for <code>CPLPushErrorHandler(CPLQuietErrorHandler)</code> in the GDAL Common Portability Library (2024-03-20)</p></li>
 <li><p>add <code><a href="../reference/pop_error_handler.html">pop_error_handler()</a></code>: wrapper for <code>CPLPopErrorHandler()</code> in the GDAL Common Portability Library (2024-03-20)</p></li>
-<li><p>make the dataset management functions quieter (2024-03-20)</p></li>
+<li><p>make the dataset management functions quieter (<a href="https://github.com/USDAForestService/gdalraster/issues/282" class="external-link">#282</a>) (2024-03-20)</p></li>
 <li><p>mass replace <code>NULL</code> -&gt; <code>nullptr</code> in C++ code (2024-03-19)</p></li>
 <li><p>deallocate objects in a few error handlers where needed (2024-03-18)</p></li>
 <li><p><code>_combine()</code>: allocate <code>CmbTable</code> on the heap (2024-03-18)</p></li>
