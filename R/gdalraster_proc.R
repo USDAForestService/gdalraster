@@ -335,7 +335,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
     if (is.null(fmt)) {
         fmt <- .getGDALformat(dstfile)
         if (is.null(fmt)) {
-            stop("Use fmt argument to specify a GDAL raster format name.",
+            stop("use 'fmt' to specify a GDAL raster format name",
                  call. = FALSE)
         }
     }
@@ -363,11 +363,11 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
     }
 
     if (!is.null(init)) {
-        message("Initializing destination raster...")
+        message("initializing destination raster...")
         for (b in 1:nbands) {
             dst_ds$fillRaster(b, init, 0)
         }
-        message("Done.")
+        message("done")
     }
 
     dst_ds$close()
@@ -643,13 +643,13 @@ rasterToVRT <- function(srcfile,
 
     if (!is.null(resolution) && !is.null(krnl)) {
         if (src_xres != resolution[1] || src_yres != resolution[2])
-            stop("Cannot apply a kernel to sub-sampled or over-sampled data.",
+            stop("cannot apply a kernel to sub-sampled or over-sampled data",
                  call. = FALSE)
     }
 
     if (!is.null(krnl)) {
         if ((length(krnl) %% 2) == 0)
-            stop("Kernel size must be an odd number.", call. = FALSE)
+            stop("kernel size must be an odd number", call. = FALSE)
     }
 
     tmp_vrtfile <- tempfile("src", fileext=".vrt")
@@ -670,7 +670,7 @@ rasterToVRT <- function(srcfile,
         if (subwindow[1] < src_xmin || subwindow[3] > src_xmax ||
                 subwindow[2] < src_ymin || subwindow[4] > src_ymax) {
 
-            stop("Subwindow is not within source raster extent.",
+            stop("'subwindow' is not within source raster extent",
                  call. = FALSE)
         }
     }
@@ -979,30 +979,31 @@ calc <- function(expr,
     calc_expr <- parse(text=expr)
 
     if (write_mode == "safe" && file.exists(dstfile))
-        stop("The output file already exists and write_mode is 'safe'.",
+        stop("'dstfile' already exists and 'write_mode' is \"safe\"",
              call. = FALSE)
 
     if (write_mode == "update" && is.null(out_band))
-        stop("out_band must be specified for update mode.", call. = FALSE)
+        stop("'out_band' must be specified for \"update\" mode",
+             call. = FALSE)
 
     if (write_mode == "update") {
         update_mode <- TRUE
     } else if (write_mode == "safe" || write_mode == "overwrite") {
         if (!is.null(out_band))
             if (out_band != 1)
-                stop("out_band other than 1 requires 'update' mode.",
+                stop("'out_band' other than 1 requires \"update\" mode",
                      call. = FALSE)
         update_mode <- FALSE
         out_band <- 1
     } else {
-        stop("Unknown write_mode.", call. = FALSE)
+        stop("unknown 'write_mode'", call. = FALSE)
     }
 
     nrasters <- length(rasterfiles)
 
     if (!is.null(bands)) {
         if (length(bands) != nrasters) {
-            stop("List of band numbers must be same length as raster list.",
+            stop("'bands' must have same length as 'rasterfiles'",
                  call. = FALSE)
         }
     } else {
@@ -1011,7 +1012,7 @@ calc <- function(expr,
 
     if (!is.null(var.names)) {
         if (length(var.names) != nrasters) {
-            stop("List of variable names must be same length as raster list.",
+            stop("'var.names' must have same length as 'rasterfiles'",
                  call. = FALSE)
         }
     } else {
@@ -1021,7 +1022,7 @@ calc <- function(expr,
     if (is.null(fmt)) {
         fmt <- .getGDALformat(dstfile)
         if (is.null(fmt)) {
-            stop("Use fmt argument to specify a GDAL raster format code.",
+            stop("use 'fmt' to specify a GDAL raster format code",
                  call. = FALSE)
         }
     }
@@ -1029,7 +1030,7 @@ calc <- function(expr,
     if (is.null(nodata_value)) {
         nodata_value <- DEFAULT_NODATA[[dtName]]
         if (is.null(nodata_value)) {
-            stop("Default nodata value unavailable for output data type.",
+            stop("a default nodata value is not available for 'dtName'",
                  call. = FALSE)
         }
     }
@@ -1050,7 +1051,7 @@ calc <- function(expr,
             ds <- new(GDALRaster, r, TRUE)
             if (ds$getRasterYSize() != nrows || ds$getRasterXSize() != ncols) {
                 message(r)
-                stop("All input rasters must have the same dimensions.",
+                stop("all input rasters must have the same dimensions",
                      call. = FALSE)
             }
             ds$close()
@@ -1137,7 +1138,7 @@ calc <- function(expr,
             for (r in 1:nrasters) {
                 ds_list[[r]]$close()
             }
-            stop("Result vector is the wrong size.", call. = FALSE)
+            stop("result vector is the wrong size", call. = FALSE)
         }
         outrow <- ifelse(is.na(outrow), nodata_value, outrow)
         dst_ds$write(band = out_band,
@@ -1154,13 +1155,13 @@ calc <- function(expr,
     }
 
     if (!quiet) {
-        message(paste("Calculating from", nrasters, "input layer(s)..."))
+        message("calculating from ", nrasters, " input layer(s)...")
         pb <- txtProgressBar(min=0, max=nrows)
     }
     lapply(0:(nrows-1), process_row)
     close(pb)
 
-    message(paste("Output written to:", dstfile))
+    message("output written to: ", dstfile)
     dst_ds$close()
     for (r in 1:nrasters) {
         ds_list[[r]]$close()
@@ -1268,14 +1269,14 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
     if ((!is.null(dstfile)) && (is.null(fmt))) {
         fmt <- .getGDALformat(dstfile)
         if (is.null(fmt)) {
-            stop("Use fmt argument to specify a GDAL raster format name.",
+            stop("use 'fmt' to specify a GDAL raster format name",
                  call. = FALSE)
         }
     }
 
     if (!is.null(options)) {
         if (!is.character(options))
-            stop("options argument must be character type.", call. = FALSE)
+            stop("'options' must be a character vector", call. = FALSE)
     }
 
     if (is.null(dstfile))
@@ -1306,11 +1307,11 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
             ds <- new(GDALRaster, rasterfiles[i], read.only=TRUE)
             if ((ds$getRasterYSize() != ref_nrows) ||
                     (ds$getRasterXSize() != ref_ncols))
-                stop("All input rasters must have the same extent and
-                    cell size.", call. = FALSE)
+                stop("all input rasters must have the same extent/cell size",
+                     call. = FALSE)
             if (!all(ds$res() == ref_res))
-                stop("All input rasters must have the same extent and
-                    cell size.", call. = FALSE)
+                stop("all input rasters must have the same extent/cell size",
+                     call. = FALSE)
             ds$close()
         }
     }
@@ -1364,7 +1365,7 @@ dem_proc <- function(mode,
                      quiet = FALSE) {
 
     if (is.null(DEFAULT_DEM_PROC[[mode]]))
-        stop("DEM processing mode not recognized.", call.=FALSE)
+        stop("DEM processing 'mode' not recognized", call.=FALSE)
 
     return(invisible(.dem_proc(mode,
                                srcfile,
@@ -1505,7 +1506,7 @@ polygonize <- function(raster_file,
                        quiet = FALSE) {
 
     if (connectedness !=4 && connectedness != 8)
-        stop("connectedness must be either 4 or 8.", call. = FALSE)
+        stop("'connectedness' must be either 4 or 8", call. = FALSE)
 
     ds <- new(GDALRaster, raster_file, TRUE)
     srs <- ds$getProjectionRef()
@@ -1520,7 +1521,7 @@ polygonize <- function(raster_file,
 
     if (!.ogr_ds_exists(out_dsn, with_update=TRUE)) {
         if (.ogr_ds_exists(out_dsn) && !overwrite) {
-            msg <- "out_dsn exists but cannot be updated.\n"
+            msg <- "'out_dsn' exists but cannot be updated.\n"
             msg <- paste0(msg, "You may need to remove it first, ")
             msg <- paste0(msg, "or use overwrite = TRUE.")
             stop(msg, call. = FALSE)
@@ -1539,13 +1540,13 @@ polygonize <- function(raster_file,
             }
         }
         if (!deleted) {
-            stop("Cannot overwrite out_layer.", call. = FALSE)
+            stop("cannot overwrite 'out_layer'", call. = FALSE)
         }
     }
 
     if (.ogr_layer_exists(out_dsn, out_layer)) {
         if (!is.null(lco)) {
-            warning("lco ignored since the layer already exists.",
+            warning("'lco' ignored since the layer already exists",
                     call. = FALSE)
         }
     }
@@ -1554,22 +1555,22 @@ polygonize <- function(raster_file,
         if (is.null(out_fmt))
             out_fmt <- .getOGRformat(out_dsn)
         if (is.null(out_fmt)) {
-            message("Format driver cannot be determined for: ", out_dsn)
-            stop("Specify out_fmt to create a new dataset.", call. = FALSE)
+            message("format driver cannot be determined for: ", out_dsn)
+            stop("specify 'out_fmt' to create a new dataset", call. = FALSE)
         }
         if (!.create_ogr(out_fmt, out_dsn, 0, 0, 0, "Unknown",
                          out_layer, srs, fld_name, dsco, lco))
-            stop("Failed to create out_dsn.", call. = FALSE)
+            stop("failed to create 'out_dsn'", call. = FALSE)
     }
 
     if (!.ogr_layer_exists(out_dsn, out_layer)) {
         res <- .ogr_layer_create(out_dsn, out_layer, srs, lco)
         if (!res)
-            stop("Failed to create out_layer.", call. = FALSE)
+            stop("failed to create 'out_layer'", call. = FALSE)
         if (fld_name != "") {
             res <- .ogr_field_create(out_dsn, out_layer, fld_name)
             if (!res)
-                stop("Failed to create output field.", call. = FALSE)
+                stop("failed to create the output field", call. = FALSE)
         }
     }
 
@@ -1708,15 +1709,15 @@ rasterize <- function(src_dsn,
 
     if (!is.null(band)) {
         if (!is.numeric(band))
-            stop("band must be numeric.", call. = FALSE)
+            stop("'band' must be numeric", call. = FALSE)
         for (b in band) {
             argv <- c(argv, "-b", b)
         }
     }
 
     if (!is.null(layer)) {
-        if (!is.character(layer))
-            stop("layer must be character type.", call. = FALSE)
+        if (!is.character(layer) || length(layer) > 1)
+            stop("'layer' must be a length-1 character vector", call. = FALSE)
         for (l in layer) {
             argv <- c(argv, "-l", l)
         }
@@ -1726,19 +1727,19 @@ rasterize <- function(src_dsn,
         if (is.character(where) && length(where) == 1)
             argv <- c(argv, "-where", where)
         else
-            stop("where must be a length-1 character vector.", call. = FALSE)
+            stop("'where' must be a length-1 character vector", call. = FALSE)
     }
 
     if (!is.null(sql)) {
         if (is.character(sql) && length(sql) == 1)
             argv <- c(argv, "-sql", sql)
         else
-            stop("sql must be a length-1 character vector.", call. = FALSE)
+            stop("'sql' must be a length-1 character vector", call. = FALSE)
     }
 
     if (!is.null(burn_value)) {
         if (!is.numeric(burn_value))
-            stop("burn_value must be numeric.", call. = FALSE)
+            stop("'burn_value' must be numeric", call. = FALSE)
         for (value in burn_value) {
             argv <- c(argv, "-burn", value)
         }
@@ -1748,7 +1749,7 @@ rasterize <- function(src_dsn,
         if (is.character(burn_attr) && length(burn_attr) == 1)
             argv <- c(argv, "-a", burn_attr)
         else
-            stop("burn_attr must be a length-1 character vector.",
+            stop("'burn_attr' must be a length-1 character vector",
                  call. = FALSE)
     }
 
@@ -1757,7 +1758,7 @@ rasterize <- function(src_dsn,
             if (invert)
                 argv <- c(argv, "-i")
         } else {
-            stop("invert must be a logical scalar.", call. = FALSE)
+            stop("'invert' must be a logical scalar", call. = FALSE)
         }
     }
 
@@ -1765,14 +1766,14 @@ rasterize <- function(src_dsn,
         if (is.numeric(te) && length(te) == 4)
             argv <- c(argv, "-te", te)
         else
-            stop("te must be a numeric vector of length 4.", call. = FALSE)
+            stop("'te' must be a numeric vector of length 4", call. = FALSE)
     }
 
     if (!is.null(tr)) {
         if (is.numeric(tr) && length(tr) == 2)
             argv <- c(argv, "-tr", tr)
         else
-            stop("tr must be a numeric vector of length 2.", call. = FALSE)
+            stop("'tr' must be a numeric vector of length 2", call. = FALSE)
     }
 
     if (!is.null(tap)) {
@@ -1780,24 +1781,24 @@ rasterize <- function(src_dsn,
             if (tap)
                 argv <- c(argv, "-tap")
         } else {
-            stop("tap must be a logical scalar.", call. = FALSE)
+            stop("'tap' must be a logical scalar", call. = FALSE)
         }
     }
 
     if (!is.null(ts)) {
         if (!is.null(tr))
-            stop("ts cannot be used with tr.", call. = FALSE)
+            stop("'ts' cannot be used with 'tr'", call. = FALSE)
         if (is.numeric(ts) && length(ts) == 2)
             argv <- c(argv, "-ts", ts)
         else
-            stop("ts must be a numeric vector of length 2.", call. = FALSE)
+            stop("'ts' must be a numeric vector of length 2", call. = FALSE)
     }
 
     if (!is.null(dtName)) {
         if (is.character(dtName) && length(dtName) == 1)
             argv <- c(argv, "-ot", dtName)
         else
-            stop("dtName must be a length-1 character vector.",
+            stop("'dtName' must be a length-1 character vector",
                  call. = FALSE)
     }
 
@@ -1805,12 +1806,12 @@ rasterize <- function(src_dsn,
         if (is.numeric(dstnodata) && length(dstnodata) == 1)
             argv <- c(argv, "-a_nodata", dstnodata)
         else
-            stop("dstnodata must be a numeric scalar.", call. = FALSE)
+            stop("'dstnodata' must be a numeric scalar", call. = FALSE)
     }
 
     if (!is.null(init)) {
         if (!is.numeric(init))
-            stop("init must be numeric.", call. = FALSE)
+            stop("'init' must be numeric", call. = FALSE)
         for (value in init) {
             argv <- c(argv, "-init", value)
         }
@@ -1820,13 +1821,13 @@ rasterize <- function(src_dsn,
         if (is.character(fmt) && length(fmt) == 1)
             argv <- c(argv, "-of", fmt)
         else
-            stop("fmt must be a length-1 character vector.",
+            stop("'fmt' must be a length-1 character vector",
                  call. = FALSE)
     }
 
     if (!is.null(co)) {
         if (!is.character(co))
-            stop("co must be a character vector.", call. = FALSE)
+            stop("'co' must be a character vector", call. = FALSE)
         for (name_value in co) {
             argv <- c(argv, "-co", name_value)
         }
@@ -1834,7 +1835,7 @@ rasterize <- function(src_dsn,
 
     if (!is.null(add_options)) {
         if (!is.character(add_options))
-            stop("add_options must be a character vector.", call. = FALSE)
+            stop("'add_options' must be a character vector", call. = FALSE)
         else
             argv <- c(argv, add_options)
     }

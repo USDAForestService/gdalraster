@@ -60,7 +60,7 @@ void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
     path_list[paths.size()] = nullptr;
     OSRSetPROJSearchPaths(path_list.data());
 #else
-    Rcpp::Rcerr << "OSRSetPROJSearchPaths requires GDAL 3.0 or later.\n";
+    Rcpp::Rcerr << "OSRSetPROJSearchPaths() requires GDAL 3.0 or later\n";
 #endif
     return;
 }
@@ -92,9 +92,9 @@ void _setPROJEnableNetwork(int enabled) {
     if (_getPROJVersion()[0] >= 7)
         OSRSetPROJEnableNetwork(enabled);
     else
-        Rcpp::Rcerr << "OSRSetPROJEnableNetwork requires PROJ 7 or later.\n";
+        Rcpp::Rcerr << "OSRSetPROJEnableNetwork() requires PROJ 7 or later\n";
 #else
-    Rcpp::Rcerr << "OSRSetPROJEnableNetwork requires GDAL 3.4 or later.\n";
+    Rcpp::Rcerr << "OSRSetPROJEnableNetwork() requires GDAL 3.4 or later\n";
 #endif
     return;
 }
@@ -157,11 +157,11 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
             pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
     }
     else {
-        Rcpp::stop("pts must be a data frame or matrix.");
+        Rcpp::stop("'pts' must be a data frame or matrix");
     }
 
     if (pts_in.nrow() == 0)
-        Rcpp::stop("Input matrix is empty.");
+        Rcpp::stop("input matrix is empty");
 
     OGRSpatialReference oSourceSRS;
     OGRSpatialReference *poLongLat = nullptr;
@@ -170,19 +170,19 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 
     err = oSourceSRS.importFromWkt(srs.c_str());
     if (err != OGRERR_NONE)
-        Rcpp::stop("Failed to import SRS from WKT string.");
+        Rcpp::stop("failed to import SRS from WKT string");
 
     if (well_known_gcs == "") {
         poLongLat = oSourceSRS.CloneGeogCS();
         if (poLongLat == nullptr)
-            Rcpp::stop("Failed to clone GCS.");
+            Rcpp::stop("failed to clone GCS");
     }
     else {
         poLongLat = new OGRSpatialReference();
         err = poLongLat->SetWellKnownGeogCS(well_known_gcs.c_str());
         if (err == OGRERR_FAILURE) {
             delete poLongLat;
-            Rcpp::stop("Failed to set well known GCS.");
+            Rcpp::stop("failed to set well known GCS");
         }
     }
 #if GDAL_VERSION_NUM >= 3000000
@@ -193,7 +193,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     if (poCT == nullptr) {
         if (poLongLat != nullptr)
             poLongLat->Release();
-        Rcpp::stop("Failed to create coordinate transformer.");
+        Rcpp::stop("failed to create coordinate transformer");
     }
 
     Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
@@ -204,7 +204,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
         OGRCoordinateTransformation::DestroyCT(poCT);
         if (poLongLat != nullptr)
             poLongLat->Release();
-        Rcpp::stop("Coordinate transformation failed.");
+        Rcpp::stop("coordinate transformation failed");
     }
 
     Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
@@ -256,11 +256,11 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
             pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
     }
     else {
-        Rcpp::stop("pts must be a data frame or matrix.");
+        Rcpp::stop("'pts' must be a data frame or matrix");
     }
 
     if (pts_in.nrow() == 0)
-        Rcpp::stop("Input matrix is empty.");
+        Rcpp::stop("input matrix is empty");
 
     OGRSpatialReference oSourceSRS, oDestSRS;
     OGRCoordinateTransformation *poCT = nullptr;
@@ -268,18 +268,18 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     err = oSourceSRS.importFromWkt(srs_from.c_str());
     if (err != OGRERR_NONE)
-        Rcpp::stop("Failed to import source SRS from WKT string.");
+        Rcpp::stop("failed to import source SRS from WKT string");
 
     err = oDestSRS.importFromWkt(srs_to.c_str());
     if (err != OGRERR_NONE)
-        Rcpp::stop("Failed to import destination SRS from WKT string.");
+        Rcpp::stop("failed to import destination SRS from WKT string");
 #if GDAL_VERSION_NUM >= 3000000
     oDestSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 #endif
 
     poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
     if (poCT == nullptr)
-        Rcpp::stop("Failed to create coordinate transformer.");
+        Rcpp::stop("failed to create coordinate transformer");
 
     Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
     Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
@@ -287,7 +287,7 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
     if( !poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data()) ) {
         OGRCoordinateTransformation::DestroyCT(poCT);
-        Rcpp::stop("Coordinate transformation failed.");
+        Rcpp::stop("coordinate transformation failed");
     }
 
     Rcpp::NumericMatrix ret(pts_in.nrow(), 2);

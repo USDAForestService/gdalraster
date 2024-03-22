@@ -53,19 +53,19 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
     if (OSRImportFromEPSG(hSRS, epsg) != OGRERR_NONE) {
         if (hSRS != nullptr)
             OSRDestroySpatialReference(hSRS);
-        Rcpp::stop("Error importing from EPSG code.");
+        Rcpp::stop("error importing SRS from EPSG code");
     }
 
     if (pretty) {
         if (OSRExportToPrettyWkt(hSRS, &pszSRS_WKT, false) != OGRERR_NONE) {
             OSRDestroySpatialReference(hSRS);
-            Rcpp::stop("Error exporting to pretty WKT.");
+            Rcpp::stop("error exporting to pretty WKT");
         }
     }
     else {
         if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE) {
             OSRDestroySpatialReference(hSRS);
-            Rcpp::stop("Error exporting to WKT.");
+            Rcpp::stop("error exporting to WKT");
         }
     }
 
@@ -139,19 +139,19 @@ std::string srs_to_wkt(std::string srs, bool pretty = false) {
     if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
         if (hSRS != nullptr)
             OSRDestroySpatialReference(hSRS);
-        Rcpp::stop("Error importing SRS from user input.");
+        Rcpp::stop("error importing SRS from user input");
     }
 
     if (pretty) {
         if (OSRExportToPrettyWkt(hSRS, &pszSRS_WKT, false) != OGRERR_NONE) {
             OSRDestroySpatialReference(hSRS);
-            Rcpp::stop("Error exporting to pretty WKT.");
+            Rcpp::stop("error exporting to pretty WKT");
         }
     }
     else {
         if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE) {
             OSRDestroySpatialReference(hSRS);
-            Rcpp::stop("Error exporting to WKT.");
+            Rcpp::stop("error exporting to WKT");
         }
     }
 
@@ -188,7 +188,7 @@ bool srs_is_geographic(std::string srs) {
     if (OSRImportFromWkt(hSRS, &pszWKT) != OGRERR_NONE) {
         if (hSRS != nullptr)
             OSRDestroySpatialReference(hSRS);
-        Rcpp::stop("Error importing SRS from user input.");
+        Rcpp::stop("error importing SRS from user input");
     }
 
     bool ret = OSRIsGeographic(hSRS);
@@ -222,7 +222,7 @@ bool srs_is_projected(std::string srs) {
     if (OSRImportFromWkt(hSRS, &pszWKT) != OGRERR_NONE) {
         if (hSRS != nullptr)
             OSRDestroySpatialReference(hSRS);
-        Rcpp::stop("Error importing SRS from user input.");
+        Rcpp::stop("error importing SRS from user input");
     }
 
     bool ret = OSRIsProjected(hSRS);
@@ -275,7 +275,7 @@ bool srs_is_same(std::string srs1, std::string srs2,
             OSRDestroySpatialReference(hSRS1);
         if (hSRS2 != nullptr)
             OSRDestroySpatialReference(hSRS2);
-        Rcpp::stop("Error importing SRS from user input.");
+        Rcpp::stop("error importing SRS from user input");
     }
 
     char* pszWKT2;
@@ -285,7 +285,7 @@ bool srs_is_same(std::string srs1, std::string srs2,
             OSRDestroySpatialReference(hSRS1);
         if (hSRS2 != nullptr)
             OSRDestroySpatialReference(hSRS2);
-        Rcpp::stop("Error importing SRS from user input.");
+        Rcpp::stop("error importing SRS from user input");
     }
 
     std::vector<char *> opt_list;
@@ -356,7 +356,7 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt,
     if (OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeometry) != OGRERR_NONE) {
         if (hGeometry != nullptr)
             OGR_G_DestroyGeometry(hGeometry);
-        Rcpp::Rcerr << "Failed to create geometry object from WKT string.\n";
+        Rcpp::Rcerr << "failed to create geometry object from WKT string\n";
         Rcpp::NumericVector ret(4, NA_REAL);
         return ret;
     }
@@ -404,7 +404,7 @@ Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox,
         double extend_x = 0, double extend_y = 0) {
 
     if (bbox.size() != 4)
-        Rcpp::stop("Invalid bounding box.");
+        Rcpp::stop("invalid bounding box");
 
     Rcpp::NumericVector bbox_in = Rcpp::clone(bbox);
     bbox_in[0] -= extend_x;

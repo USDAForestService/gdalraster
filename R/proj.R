@@ -84,7 +84,7 @@ proj_search_paths <- function(paths=NULL) {
 proj_networking <- function(enabled=NULL) {
     if (!is.null(enabled)) {
         if (!is.logical(enabled) || length(enabled) > 1)
-            stop("Argument must be a logical scalar.", call.=FALSE)
+            stop("'enabled' must be a logical scalar", call.=FALSE)
         .setPROJEnableNetwork(enabled)
     }
     return(.getPROJEnableNetwork())

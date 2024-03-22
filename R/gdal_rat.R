@@ -202,35 +202,37 @@ buildRAT <- function(raster,
                      quiet = FALSE) {
 
     if (length(raster) != 1)
-        stop("raster argument must have length 1.", call. = FALSE)
+        stop("'raster' argument must have length 1", call. = FALSE)
     if (is(raster, "Rcpp_GDALRaster"))
         f <- raster$getFilename()
     else if (is(raster, "character"))
         f <- raster
     else
-        stop("raster must be a GDALRaster object or filename.",
+        stop("'raster' must be a 'GDALRaster' object or a filename",
              call. = FALSE)
 
     if (length(band) != 1)
-        stop("band must be an integer scalar.", call. = FALSE)
+        stop("'band' must be an integer scalar", call. = FALSE)
     else
         band <- as.integer(band)
 
     if (length(col_names) != 2)
-        stop("col_names must have length 2.", call. = FALSE)
+        stop("'col_names' must have length 2", call. = FALSE)
 
     if (length(table_type) != 1 || !is(table_type, "character"))
-        stop("table_type must be a character string.", call. = FALSE)
+        stop("'table_type' must be a character string", call. = FALSE)
 
     join <- FALSE
     if (!is.null(join_df)) {
         join <- TRUE
         if (!is.data.frame(join_df))
-            stop("join_df must be a data frame.", call. = FALSE)
+            stop("'join_df' must be a data frame", call. = FALSE)
         if (!(col_names[1] %in% names(join_df)))
-            stop("names(join_df) must contain col_names[1].", call. = FALSE)
+            stop("'names(join_df)' must contain 'col_names[1]'",
+                 call. = FALSE)
         if (col_names[2] %in% names(join_df))
-            stop("names(join_df) cannot contain col_names[2].", call. = FALSE)
+            stop("'names(join_df)' cannot contain 'col_names[2]'",
+                 call. = FALSE)
     }
 
     d <- .value_count(f, band, quiet)
@@ -239,7 +241,7 @@ buildRAT <- function(raster,
         d[is.na(d[, 1]), 1] <- na_value
     if (join) {
         if (anyNA(d[, 1]))
-            message("Row with NA value will be dropped in join.")
+            message("row with 'NA' value will be dropped in join")
         n_before <- nrow(d)
         d <- merge(d, join_df)
         if (n_before != nrow(d))
@@ -316,19 +318,19 @@ buildRAT <- function(raster,
 displayRAT <- function(tbl, title = "Raster Attribute Table") {
 
     if (!requireNamespace("gt", quietly = TRUE))
-        stop("displayRAT() requires package 'gt'.", call.=FALSE)
+        stop("displayRAT() requires package 'gt'", call.=FALSE)
 
     if (!is.data.frame(tbl))
-        stop("Input must be a data frame.", call.=FALSE)
+        stop("'tbl' must be a data frame", call.=FALSE)
 
     if (is.null(attr(tbl, "GDALRATTableType"))) {
-        message("Input data frame is missing attribute 'GDALRATTableType'.")
-        stop("The passed data frame must be formatted as a GDAL RAT.",
+        message("input data frame is missing attribute 'GDALRATTableType'")
+        stop("'tbl' must be formatted as a GDAL RAT",
              call.=FALSE)
     }
 
     if (length(title) != 1 || !is(title, "character"))
-        stop("title must be a character string.", call. = FALSE)
+        stop("'title' must be a character string", call. = FALSE)
 
     col_red <- NULL
     col_green <- NULL

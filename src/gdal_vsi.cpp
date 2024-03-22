@@ -57,7 +57,7 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
         bool show_progress = false) {
 
 #if GDAL_VERSION_NUM < 3070000
-    Rcpp::stop("vsi_copy_file() requires GDAL >= 3.7.");
+    Rcpp::stop("vsi_copy_file() requires GDAL >= 3.7");
 
 #else
     GDALProgressFunc pfnProgress = nullptr;
@@ -462,7 +462,7 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames) {
 
 #if GDAL_VERSION_NUM < 3010000
-    Rcpp::stop("vsi_unlink_batch() requires GDAL >= 3.1.");
+    Rcpp::stop("vsi_unlink_batch() requires GDAL >= 3.1");
 
 #else
     std::vector<std::string> filenames_in(filenames.size());
@@ -595,7 +595,7 @@ SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info = "exists") {
         return Rcpp::NumericVector(Rcpp::wrap(ret));
     }
     else {
-        Rcpp::stop("Invalid value for `info`.");
+        Rcpp::stop("invalid value for 'info'");
     }
 }
 
@@ -723,7 +723,7 @@ bool vsi_supports_seq_write(Rcpp::CharacterVector filename,
         bool allow_local_tmpfile) {
 
 #if GDAL_VERSION_NUM < 3060000
-    Rcpp::stop("vsi_supports_seq_write() requires GDAL >= 3.6.");
+    Rcpp::stop("vsi_supports_seq_write() requires GDAL >= 3.6");
 
 #else
     std::string filename_in;
@@ -766,7 +766,7 @@ bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
         bool allow_local_tmpfile) {
 
 #if GDAL_VERSION_NUM < 3060000
-    Rcpp::stop("vsi_supports_rnd_write() requires GDAL >= 3.6.");
+    Rcpp::stop("vsi_supports_rnd_write() requires GDAL >= 3.6");
 
 #else
     std::string filename_in;
