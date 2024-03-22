@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9270 (dev)
+# gdalraster 1.9.0.9280 (dev)
+
+* format diagnostic messages throughout for consistency and WRE guidelines (2024-03-22)
 
 * add `vsi_get_disk_free_space()`: return the free disk space available on the filesystem (2024-03-20)
 
