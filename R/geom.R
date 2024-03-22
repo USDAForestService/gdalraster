@@ -56,7 +56,7 @@ bbox_intersect <- function(x, as_wkt = FALSE) {
     } else if (is.list(x)) {
         this_bbox <- bbox_to_wkt(x[[1]])
     } else {
-        stop("Input object not recognized.", call. = FALSE)
+        stop("input must be a list or character vector", call. = FALSE)
     }
 
     i <- 2
@@ -91,7 +91,7 @@ bbox_union <- function(x, as_wkt = FALSE) {
     } else if (is.list(x)) {
         this_bbox <- bbox_to_wkt(x[[1]])
     } else {
-        stop("Input object not recognized.", call. = FALSE)
+        stop("input must be a list or character vector", call. = FALSE)
     }
 
     i <- 2
@@ -134,7 +134,7 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' g_buffer(wkt = "POINT (0 0)", dist = 10)
 g_buffer <- function(wkt, dist, quad_segs = 30) {
     if (!(is.character(wkt) && length(wkt) == 1))
-        stop("wkt must be a length-1 character vector.", call. = FALSE)
+        stop("'wkt' must be a length-1 character vector", call. = FALSE)
 
     return(.g_buffer(wkt, dist, quad_segs))
 }
@@ -169,7 +169,7 @@ g_buffer <- function(wkt, dist, quad_segs = 30) {
 #' ds$close()
 g_transform <- function(wkt, srs_from, srs_to) {
     if (!(is.character(wkt) && length(wkt) == 1))
-        stop("wkt must be a length-1 character vector.", call. = FALSE)
+        stop("'wkt' must be a length-1 character vector", call. = FALSE)
 
     return(.g_transform(wkt, srs_from, srs_to))
 }

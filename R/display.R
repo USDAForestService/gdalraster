@@ -35,19 +35,19 @@
     nbands <- dim(a)[3]
 
     if (!(nbands %in% c(1, 3)))
-        stop("Number of bands must be 1 or 3", call.=FALSE)
+        stop("number of bands must be 1 or 3", call.=FALSE)
 
     r <- array()
 
     if (!is.null(col_tbl)) {
         # map to a color table
         if (nbands != 1)
-            stop("A color table can only be used with single-band data.",
+            stop("color table can only be used with single-band data",
                  call.=FALSE)
 
         ct <- as.data.frame(col_tbl)
         if (ncol(ct) < 4 || ncol(ct) > 5)
-            stop("Color table must have four or five columns.", call.=FALSE)
+            stop("color table must have four or five columns", call.=FALSE)
 
         if (ncol(ct) == 4) # add alpha channel
             ct[, 5] <- rep(maxColorValue, nrow(ct))
@@ -279,13 +279,13 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
                         legend=FALSE, digits=2, na_col=rgb(0,0,0,0), ...) {
 
     if (isTRUE((grDevices::dev.capabilities()$rasterImage == "no"))) {
-        message("Device does not support rasterImage().")
+        message("device does not support 'rasterImage()'")
         return()
     }
 
     if (!is.null(nbands)) {
         if (!(nbands %in% c(1, 3)))
-            stop("Number of bands must be 1 or 3", call.=FALSE)
+            stop("number of bands must be 1 or 3", call.=FALSE)
     }
 
     if (is.null(max_pixels))
@@ -307,7 +307,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
             out_ysize <- ysize
 
         if ((out_xsize*out_ysize) > max_pixels)
-            stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
+            stop("'xsize * ysize' exceeds 'max_pixels'", call.=FALSE)
 
         data_in <- read_ds(data, bands=1:nbands, xoff=0, yoff=0,
                            xsize=dm[1], ysize=dm[2],
@@ -342,22 +342,22 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
         ysize <- gis$dim[2]
 
         if ((xsize*ysize) > max_pixels)
-            stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
+            stop("'xsize * ysize' exceeds 'max_pixels'", call.=FALSE)
 
         nbands <- gis$dim[3]
         if (is.list(data)) {
             if (nbands != length(data)) {
-                stop("length(data) is not equal to gis attribute dim[3].",
+                stop("'length(data)' is not equal to 'gis' attribute 'dim[3]'",
                      call.=FALSE)
             }
         }
 
     } else {
         if (is.null(xsize) || is.null(ysize))
-            stop("xsize and ysize of data must be specified.", call.=FALSE)
+            stop("'xsize' and 'ysize' of data must be specified", call.=FALSE)
 
         if ((xsize*ysize) > max_pixels)
-            stop("xsize * ysize exceeds max_pixels.", call.=FALSE)
+            stop("'xsize * ysize' exceeds 'max_pixels'", call.=FALSE)
 
         data_in <- data
 
@@ -378,7 +378,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
                     na_col=na_col)
 
     if (legend && nbands != 1) {
-        message("Legend is not supported for RGB plot.")
+        message("legend is not supported for RGB plot")
         legend <- FALSE
     }
 

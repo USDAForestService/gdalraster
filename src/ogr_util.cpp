@@ -45,11 +45,11 @@ bool _create_ogr(std::string format, std::string dst_filename,
 
     GDALDriverH hDriver = GDALGetDriverByName( format.c_str() );
     if (hDriver == nullptr)
-        Rcpp::stop("Failed to get driver for the specified format.");
+        Rcpp::stop("failed to get driver for the specified format");
 
     char **papszMetadata = GDALGetMetadata(hDriver, nullptr);
     if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATE, FALSE))
-        Rcpp::stop("Driver does not support create.");
+        Rcpp::stop("driver does not support create");
 
     GDALDataType dt = GDALGetDataTypeByName( dataType.c_str() );
 
@@ -69,7 +69,7 @@ bool _create_ogr(std::string format, std::string dst_filename,
                         opt_list.data());
 
     if (hDstDS == nullptr)
-        Rcpp::stop("Create dataset failed.");
+        Rcpp::stop("create dataset failed");
 
     if (!GDALDatasetTestCapability(hDstDS, ODsCCreateLayer)) {
         GDALClose(hDstDS);
@@ -97,7 +97,7 @@ bool _create_ogr(std::string format, std::string dst_filename,
             if (hSRS != nullptr)
                 OSRDestroySpatialReference(hSRS);
             GDALClose(hDstDS);
-            Rcpp::stop("Error importing SRS from user input.");
+            Rcpp::stop("error importing SRS from user input");
         }
     }
 
@@ -193,7 +193,7 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
         if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
             if (hSRS != nullptr)
                 OSRDestroySpatialReference(hSRS);
-            Rcpp::stop("Error importing SRS from user input.");
+            Rcpp::stop("error importing SRS from user input");
         }
     }
 

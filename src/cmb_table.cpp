@@ -10,7 +10,7 @@ CmbTable::CmbTable(int keyLen, Rcpp::CharacterVector varNames):
     key_len(keyLen), cvVarNames(varNames), last_ID(0)  {
 
     if (key_len != cvVarNames.size())
-        Rcpp::stop("keyLen must equal length(varNames).");
+        Rcpp::stop("'keyLen' must equal 'length(varNames)'");
     }
 
 double CmbTable::update(const Rcpp::IntegerVector& int_cmb, double incr) {
