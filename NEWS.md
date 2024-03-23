@@ -1,4 +1,4 @@
-# gdalraster 1.9.0.9290 (dev)
+# gdalraster 1.9.0.9291 (dev)
 
 * `ogrinfo()`: interface improvements, add argument `cout` (2024-03-23)
 
