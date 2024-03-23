@@ -74,6 +74,9 @@ Rcpp::DataFrame gdal_formats(std::string fmt);
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
+void push_error_handler(std::string handler);
+void pop_error_handler();
+
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 int _get_physical_RAM();
 
@@ -113,7 +116,7 @@ bool vsi_sync(Rcpp::CharacterVector src,
 int vsi_mkdir(Rcpp::CharacterVector path, int mode);
 int vsi_rmdir(Rcpp::CharacterVector path);
 int vsi_unlink(Rcpp::CharacterVector filename);
-Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames);
+SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames);
 SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);
 int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath);
 std::string _vsi_get_fs_options(Rcpp::CharacterVector filename);
@@ -122,6 +125,7 @@ bool vsi_supports_seq_write(Rcpp::CharacterVector filename,
                             bool allow_local_tmpfile);
 bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
                             bool allow_local_tmpfile);
+double vsi_get_disk_free_space(Rcpp::CharacterVector path);
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
                                         double pixel, double line);
@@ -170,7 +174,9 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 std::string ogrinfo(Rcpp::CharacterVector dsn,
                     Rcpp::Nullable<Rcpp::CharacterVector> layers,
                     Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
-                    bool read_only);
+                    Rcpp::Nullable<Rcpp::CharacterVector> open_options,
+                    bool read_only,
+                    bool cout);
 
 bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
                  Rcpp::CharacterVector out_dsn,

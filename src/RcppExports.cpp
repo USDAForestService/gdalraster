@@ -74,6 +74,25 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// push_error_handler
+void push_error_handler(std::string handler);
+RcppExport SEXP _gdalraster_push_error_handler(SEXP handlerSEXP) {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type handler(handlerSEXP);
+    push_error_handler(handler);
+    return R_NilValue;
+END_RCPP
+}
+// pop_error_handler
+void pop_error_handler();
+RcppExport SEXP _gdalraster_pop_error_handler() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    pop_error_handler();
+    return R_NilValue;
+END_RCPP
+}
 // _check_gdal_filename
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 RcppExport SEXP _gdalraster__check_gdal_filename(SEXP filenameSEXP) {
@@ -269,8 +288,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ogrinfo
-std::string ogrinfo(Rcpp::CharacterVector dsn, Rcpp::Nullable<Rcpp::CharacterVector> layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::CharacterVector> open_options, bool read_only);
-RcppExport SEXP _gdalraster_ogrinfo(SEXP dsnSEXP, SEXP layersSEXP, SEXP cl_argSEXP, SEXP open_optionsSEXP, SEXP read_onlySEXP) {
+std::string ogrinfo(Rcpp::CharacterVector dsn, Rcpp::Nullable<Rcpp::CharacterVector> layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::CharacterVector> open_options, bool read_only, bool cout);
+RcppExport SEXP _gdalraster_ogrinfo(SEXP dsnSEXP, SEXP layersSEXP, SEXP cl_argSEXP, SEXP open_optionsSEXP, SEXP read_onlySEXP, SEXP coutSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -279,7 +298,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type open_options(open_optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type read_only(read_onlySEXP);
-    rcpp_result_gen = Rcpp::wrap(ogrinfo(dsn, layers, cl_arg, open_options, read_only));
+    Rcpp::traits::input_parameter< bool >::type cout(coutSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogrinfo(dsn, layers, cl_arg, open_options, read_only, cout));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -475,14 +495,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_curl_clear_cache
-void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix, bool quiet_error);
-RcppExport SEXP _gdalraster_vsi_curl_clear_cache(SEXP partialSEXP, SEXP file_prefixSEXP, SEXP quiet_errorSEXP) {
+void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix);
+RcppExport SEXP _gdalraster_vsi_curl_clear_cache(SEXP partialSEXP, SEXP file_prefixSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< bool >::type partial(partialSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type file_prefix(file_prefixSEXP);
-    Rcpp::traits::input_parameter< bool >::type quiet_error(quiet_errorSEXP);
-    vsi_curl_clear_cache(partial, file_prefix, quiet_error);
+    vsi_curl_clear_cache(partial, file_prefix);
     return R_NilValue;
 END_RCPP
 }
@@ -547,7 +566,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_unlink_batch
-Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames);
+SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames);
 RcppExport SEXP _gdalraster_vsi_unlink_batch(SEXP filenamesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -623,6 +642,17 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< bool >::type allow_local_tmpfile(allow_local_tmpfileSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_supports_rnd_write(filename, allow_local_tmpfile));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vsi_get_disk_free_space
+double vsi_get_disk_free_space(Rcpp::CharacterVector path);
+RcppExport SEXP _gdalraster_vsi_get_disk_free_space(SEXP pathSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path(pathSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_get_disk_free_space(path));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1158,6 +1188,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_get_config_option", (DL_FUNC) &_gdalraster_get_config_option, 1},
     {"_gdalraster_set_config_option", (DL_FUNC) &_gdalraster_set_config_option, 2},
     {"_gdalraster_get_cache_used", (DL_FUNC) &_gdalraster_get_cache_used, 0},
+    {"_gdalraster_push_error_handler", (DL_FUNC) &_gdalraster_push_error_handler, 1},
+    {"_gdalraster_pop_error_handler", (DL_FUNC) &_gdalraster_pop_error_handler, 0},
     {"_gdalraster__check_gdal_filename", (DL_FUNC) &_gdalraster__check_gdal_filename, 1},
     {"_gdalraster__get_physical_RAM", (DL_FUNC) &_gdalraster__get_physical_RAM, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
@@ -1172,7 +1204,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 6},
     {"_gdalraster_footprint", (DL_FUNC) &_gdalraster_footprint, 3},
     {"_gdalraster_ogr2ogr", (DL_FUNC) &_gdalraster_ogr2ogr, 4},
-    {"_gdalraster_ogrinfo", (DL_FUNC) &_gdalraster_ogrinfo, 5},
+    {"_gdalraster_ogrinfo", (DL_FUNC) &_gdalraster_ogrinfo, 6},
     {"_gdalraster__polygonize", (DL_FUNC) &_gdalraster__polygonize, 9},
     {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 4},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 10},
@@ -1186,7 +1218,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__getCreationOptions", (DL_FUNC) &_gdalraster__getCreationOptions, 1},
     {"_gdalraster__addFileInZip", (DL_FUNC) &_gdalraster__addFileInZip, 6},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
-    {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 3},
+    {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 2},
     {"_gdalraster_vsi_read_dir", (DL_FUNC) &_gdalraster_vsi_read_dir, 2},
     {"_gdalraster_vsi_sync", (DL_FUNC) &_gdalraster_vsi_sync, 4},
     {"_gdalraster_vsi_mkdir", (DL_FUNC) &_gdalraster_vsi_mkdir, 2},
@@ -1199,6 +1231,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__vsi_get_fs_options", (DL_FUNC) &_gdalraster__vsi_get_fs_options, 1},
     {"_gdalraster_vsi_supports_seq_write", (DL_FUNC) &_gdalraster_vsi_supports_seq_write, 2},
     {"_gdalraster_vsi_supports_rnd_write", (DL_FUNC) &_gdalraster_vsi_supports_rnd_write, 2},
+    {"_gdalraster_vsi_get_disk_free_space", (DL_FUNC) &_gdalraster_vsi_get_disk_free_space, 1},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},

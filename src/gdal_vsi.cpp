@@ -57,7 +57,7 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
         bool show_progress = false) {
 
 #if GDAL_VERSION_NUM < 3070000
-    Rcpp::stop("vsi_copy_file() requires GDAL >= 3.7.");
+    Rcpp::stop("vsi_copy_file() requires GDAL >= 3.7");
 
 #else
     GDALProgressFunc pfnProgress = nullptr;
@@ -101,18 +101,13 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 //' filename (see Details).
 //' @param file_prefix Character string. Filename prefix to use if
 //' `partial = TRUE`.
-//' @param quiet_error Logical scalar. `TRUE` to use GDAL's
-//' `CPLQuietErrorHandler` (the default).
 //' @returns No return value, called for side effects.
 //'
 //' @examples
 //' vsi_curl_clear_cache()
 // [[Rcpp::export()]]
 void vsi_curl_clear_cache(bool partial = false,
-                          Rcpp::CharacterVector file_prefix = "",
-                          bool quiet_error = true) {
-    if (quiet_error)
-        CPLPushErrorHandler(CPLQuietErrorHandler);
+                          Rcpp::CharacterVector file_prefix = "") {
 
     if (!partial) {
         VSICurlClearCache();
@@ -122,9 +117,6 @@ void vsi_curl_clear_cache(bool partial = false,
         f_prefix_in = Rcpp::as<std::string>(_check_gdal_filename(file_prefix));
         VSICurlPartialClearCache(f_prefix_in.c_str());
     }
-
-    if (quiet_error)
-        CPLPopErrorHandler();
 }
 
 
@@ -445,6 +437,8 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 //' @param filenames Character vector. The list of files to delete.
 //' @returns Invisibly, a logical vector of `length(filenames)` with values
 //' depending on the success of deletion of the corresponding file.
+//' `NULL` might be returned in case of a more general error (for example,
+//' files belonging to different file system handlers).
 //'
 //' @seealso
 //' [deleteDataset()], [vsi_rmdir()], [vsi_unlink()]
@@ -465,10 +459,10 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 //'   print(result)
 //' }
 // [[Rcpp::export(invisible = true)]]
-Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames) {
+SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames) {
 
 #if GDAL_VERSION_NUM < 3010000
-    Rcpp::stop("vsi_unlink_batch() requires GDAL >= 3.1.");
+    Rcpp::stop("vsi_unlink_batch() requires GDAL >= 3.1");
 
 #else
     std::vector<std::string> filenames_in(filenames.size());
@@ -483,13 +477,17 @@ Rcpp::LogicalVector vsi_unlink_batch(Rcpp::CharacterVector filenames) {
     filenames_cstr[filenames.size()] = nullptr;
 
     int *result = VSIUnlinkBatch(filenames_cstr.data());
-    if (result == nullptr)
-        Rcpp::stop("VSIUnlinkBatch() general error.");
-    Rcpp::LogicalVector ret(filenames.size());
-    for (R_xlen_t i = 0; i < filenames.size(); ++i)
-        ret[i] = result[i];
-    VSIFree(result);
-    return ret;
+
+    if (result == nullptr) {
+        return R_NilValue;
+    }
+    else {
+        Rcpp::LogicalVector ret(filenames.size());
+        for (R_xlen_t i = 0; i < filenames.size(); ++i)
+            ret[i] = result[i];
+        VSIFree(result);
+        return ret;
+    }
 
 #endif
 }
@@ -597,7 +595,7 @@ SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info = "exists") {
         return Rcpp::NumericVector(Rcpp::wrap(ret));
     }
     else {
-        Rcpp::stop("Invalid value for `info`.");
+        Rcpp::stop("invalid value for 'info'");
     }
 }
 
@@ -725,7 +723,7 @@ bool vsi_supports_seq_write(Rcpp::CharacterVector filename,
         bool allow_local_tmpfile) {
 
 #if GDAL_VERSION_NUM < 3060000
-    Rcpp::stop("vsi_supports_seq_write() requires GDAL >= 3.6.");
+    Rcpp::stop("vsi_supports_seq_write() requires GDAL >= 3.6");
 
 #else
     std::string filename_in;
@@ -768,7 +766,7 @@ bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
         bool allow_local_tmpfile) {
 
 #if GDAL_VERSION_NUM < 3060000
-    Rcpp::stop("vsi_supports_rnd_write() requires GDAL >= 3.6.");
+    Rcpp::stop("vsi_supports_rnd_write() requires GDAL >= 3.6");
 
 #else
     std::string filename_in;
@@ -779,4 +777,27 @@ bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
         return false;
 
 #endif
+}
+
+//' Return free disk space available on the filesystem
+//'
+//' `vsi_get_disk_free_space()` returns the free disk space available on the
+//' filesystem. Wrapper for `VSIGetDiskFreeSpace()` in the GDAL Common
+//' Portability Library.
+//'
+//' @param path Character string. A directory of the filesystem to query.
+//' @returns Numeric scalar. The free space in bytes, or `-1` in case of error.
+//'
+//' @examples
+//' tmp_dir <- file.path(tempdir(), "tmpdir")
+//' vsi_mkdir(tmp_dir)
+//' vsi_get_disk_free_space(tmp_dir)
+//' vsi_rmdir(tmp_dir)
+// [[Rcpp::export()]]
+double vsi_get_disk_free_space(Rcpp::CharacterVector path) {
+
+    std::string path_in;
+    path_in = Rcpp::as<std::string>(_check_gdal_filename(path));
+
+    return static_cast<double>(VSIGetDiskFreeSpace(path_in.c_str()));
 }

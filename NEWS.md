@@ -1,12 +1,20 @@
-# gdalraster 1.9.0.9230 (dev)
+# gdalraster 1.9.0.9290 (dev)
 
-* `vsi_curl_clear_cache()`: add argument `quiet_error`, whether to use GDAL's `CPLQuietErrorHandler` (defaults to `TRUE`) (2024-03-20)
+* `ogrinfo()`: interface improvements, add argument `cout` (2024-03-23)
+
+* format diagnostic messages throughout for consistency and WRE guidelines (2024-03-22)
+
+* add `vsi_get_disk_free_space()`: return the free disk space available on the filesystem (2024-03-20)
+
+* add `push_error_handler()`: wrapper for `CPLPushErrorHandler()` in the GDAL Common Portability Library (2024-03-20)
+
+* add `pop_error_handler()`: wrapper for `CPLPopErrorHandler()` in the GDAL Common Portability Library (2024-03-20)
+
+* make the dataset management functions quieter (#282) (2024-03-20)
 
 * mass replace `NULL` -> `nullptr` in C++ code (2024-03-19)
 
 * deallocate objects in a few error handlers where needed (2024-03-18)
-
-* `_combine()`: allocate `CmbTable` on the heap (2024-03-18)
 
 * `GDALRaster::getMetadataDomainList()`: deallocate the returned string list (2024-03-18)
 

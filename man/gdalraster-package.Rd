@@ -78,6 +78,7 @@
 
   \item virtual file systems: \code{\link[=vsi_copy_file]{vsi_copy_file()}},
   \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
+  \code{\link[=vsi_get_disk_free_space]{vsi_get_disk_free_space()}},
   \code{\link[=vsi_get_fs_options]{vsi_get_fs_options()}},
   \code{\link[=vsi_get_fs_prefixes]{vsi_get_fs_prefixes()}},
   \code{\link[=vsi_mkdir]{vsi_mkdir()}},
@@ -96,7 +97,9 @@
   \code{\link[=gdal_formats]{gdal_formats()}},
   \code{\link[=get_cache_used]{get_cache_used()}},\cr
   \code{\link[=get_config_option]{get_config_option()}},
-  \code{\link[=set_config_option]{set_config_option()}}
+  \code{\link[=set_config_option]{set_config_option()}},
+  \code{\link[=push_error_handler]{push_error_handler()}},
+  \code{\link[=pop_error_handler]{pop_error_handler()}}
 
   \item PROJ configuration:
   \code{\link[=proj_version]{proj_version()}},

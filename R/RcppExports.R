@@ -121,6 +121,61 @@ get_cache_used <- function() {
     .Call(`_gdalraster_get_cache_used`)
 }
 
+#' Push a new GDAL CPLError handler
+#'
+#' `push_error_handler()` is a wrapper for
+#' `CPLPushErrorHandler()` in the GDAL Common Portability
+#' Library.
+#' This pushes a new error handler on the thread-local error handler stack.
+#' This handler will be used until removed with `pop_error_handler()`.
+#' A typical use is to temporarily set `CPLQuietErrorHandler()` which doesn't
+#' make any attempt to report passed error or warning messages, but will
+#' process debug messages via `CPLDefaultErrorHandler`.
+#'
+#' @param handler Character name of the error handler to push.
+#' One of `quiet`, `logging` or `default`.
+#' @returns No return value, called for side effects.
+#'
+#' @note
+#' Setting `handler = "logging"` will use `CPLLoggingErrorHandler()`, error
+#' handler that logs into the file defined by the `CPL_LOG` configuration
+#' option, or `stderr` otherwise.
+#'
+#' This only affects error reporting from GDAL.
+#'
+#' @seealso
+#' [pop_error_handler()]
+#'
+#' @examples
+#' push_error_handler("quiet")
+#' # ...
+#' pop_error_handler()
+push_error_handler <- function(handler) {
+    invisible(.Call(`_gdalraster_push_error_handler`, handler))
+}
+
+#' Pop error handler off stack
+#'
+#' `pop_error_handler()` is a wrapper for `CPLPopErrorHandler()` in the GDAL
+#' Common Portability Library.
+#' Discards the current error handler on the error handler stack, and restores
+#' the one in use before the last `push_error_handler()` call. This method has
+#' no effect if there are no error handlers on the current thread's error
+#' handler stack.
+#'
+#' @returns No return value, called for side effects.
+#'
+#' @seealso
+#' [push_error_handler()]
+#'
+#' @examples
+#' push_error_handler("quiet")
+#' # ...
+#' pop_error_handler()
+pop_error_handler <- function() {
+    invisible(.Call(`_gdalraster_pop_error_handler`))
+}
+
 #' Check a filename before passing to GDAL and potentially fix.
 #' filename may be a physical file, URL, connection string, file name with
 #' additional parameters, etc. Returned in UTF-8 encoding.
@@ -575,22 +630,32 @@ ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL) {
 #'
 #' `ogrinfo()` is a wrapper of the \command{ogrinfo} command-line
 #' utility (see \url{https://gdal.org/programs/ogrinfo.html}).
-#' This function lists information about an OGR-supported data source. With
-#' SQL statements it is also possible to edit data.
+#' This function lists information about an OGR-supported data source.
+#' It is also possible to edit data with SQL statements.
 #' Refer to the GDAL documentation at the URL above for a description of
 #' command-line arguments that can be passed in `cl_arg`.
+#' Requires GDAL >= 3.7.
 #'
 #' @param dsn Character string. Data source name (e.g., filename, database
 #' connection string, etc.)
 #' @param layers Optional character vector of layer names in the source
 #' dataset.
 #' @param cl_arg Optional character vector of command-line arguments for
-#' the GDAL \code{ogrinfo} command-line utility (see URL above).
+#' the \code{ogrinfo} command-line utility in GDAL (see URL above for
+#' reference). The default is `c("-so", "-nomd")` (see Note).
 #' @param open_options Optional character vector of dataset open options.
 #' @param read_only Logical scalar. `TRUE` to open the data source read-only
 #' (the default), or `FALSE` to open with write access.
-#' @returns Character string containing information about the vector dataset,
-#' or empty string ('""`) in case of error.
+#' @param cout Logical scalar. `TRUE` to write info to the standard C output
+#' stream (the default). `FALSE` to suppress console output.
+#' @returns Invisibly, a character string containing information about the
+#' vector dataset, or empty string (`""`) in case of error.
+#'
+#' @note
+#' The command-line argument `-so` provides a summary only, i.e., does not
+#' include details about every single feature of a layer.
+#' `-nomd` suppresses metadata printing. Some datasets may contain a lot of
+#' metadata strings.
 #'
 #' @seealso
 #' [ogr2ogr()]
@@ -601,46 +666,38 @@ ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL) {
 #' # Requires GDAL >= 3.7
 #' if (as.integer(gdal_version()[2]) >= 3070000) {
 #'   # Get the names of the layers in a GeoPackage file.
-#'   info <- ogrinfo(src)
-#'   writeLines(info)
+#'   ogrinfo(src)
 #'
-#'   # Summary (-so) of a layer without showing details about every single
-#'   # feature.
-#'   # -nomd suppresses metadata printing. Some datasets may contain a lot of
-#'   # metadata strings.
-#'   args <- c("-so", "-nomd")
-#'   info <- ogrinfo(src, "mtbs_perims", args)
-#'   writeLines(info)
+#'   # Summary of a layer
+#'   ogrinfo(src, "mtbs_perims")
 #'
-#'   # Retrieve information in JSON format without showing details about every
-#'   # single feature.
+#'   # JSON format
 #'   args <- c("-json", "-nomd")
-#'   json <- ogrinfo(src, "mtbs_perims", args)
+#'   json <- ogrinfo(src, "mtbs_perims", args, cout = FALSE)
 #'   #info <- jsonlite::fromJSON(json)
 #'
-#'   # Attribute query to restrict the output of the features in a layer.
+#'   # Query an attribute to restrict the output of the features in a layer
 #'   args <- c("-ro", "-nomd", "-where", "ig_year = 2020")
-#'   info <- ogrinfo(src, "mtbs_perims", args)
-#'   writeLines(info)
+#'   ogrinfo(src, "mtbs_perims", args)
 #'
-#'   # Copy to a temporary in-memory file that is writeable.
+#'   # Copy to a temporary in-memory file that is writeable
 #'   src_mem <- paste0("/vsimem/", basename(src))
 #'   vsi_copy_file(src, src_mem)
 #'   print(src_mem)
 #'
-#'   # Add a column to a layer.
+#'   # Add a column to a layer
 #'   args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
 #'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
 #'
-#'   # Update values of an attribute with SQL by using the SQLite dialect.
+#'   # Update values of the column with SQL and specify a dialect
 #'   sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
 #'   args <- c("-dialect", "sqlite", "-sql", sql)
 #'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
 #'
 #'   vsi_unlink(src_mem)
 #' }
-ogrinfo <- function(dsn, layers = NULL, cl_arg = NULL, open_options = NULL, read_only = TRUE) {
-    .Call(`_gdalraster_ogrinfo`, dsn, layers, cl_arg, open_options, read_only)
+ogrinfo <- function(dsn, layers = NULL, cl_arg = as.character( c("-so", "-nomd")), open_options = NULL, read_only = TRUE, cout = TRUE) {
+    invisible(.Call(`_gdalraster_ogrinfo`, dsn, layers, cl_arg, open_options, read_only, cout))
 }
 
 #' Wrapper for GDALPolygonize in the GDAL Algorithms C API
@@ -1312,14 +1369,12 @@ vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
 #' filename (see Details).
 #' @param file_prefix Character string. Filename prefix to use if
 #' `partial = TRUE`.
-#' @param quiet_error Logical scalar. `TRUE` to use GDAL's
-#' `CPLQuietErrorHandler` (the default).
 #' @returns No return value, called for side effects.
 #'
 #' @examples
 #' vsi_curl_clear_cache()
-vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet_error = TRUE) {
-    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix, quiet_error))
+vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "") {
+    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix))
 }
 
 #' Read names in a directory
@@ -1571,6 +1626,8 @@ vsi_unlink <- function(filename) {
 #' @param filenames Character vector. The list of files to delete.
 #' @returns Invisibly, a logical vector of `length(filenames)` with values
 #' depending on the success of deletion of the corresponding file.
+#' `NULL` might be returned in case of a more general error (for example,
+#' files belonging to different file system handlers).
 #'
 #' @seealso
 #' [deleteDataset()], [vsi_rmdir()], [vsi_unlink()]
@@ -1771,6 +1828,24 @@ vsi_supports_seq_write <- function(filename, allow_local_tmpfile) {
 #'   vsi_supports_rnd_write("/vsimem/test-mem-file.gpkg", TRUE)
 vsi_supports_rnd_write <- function(filename, allow_local_tmpfile) {
     .Call(`_gdalraster_vsi_supports_rnd_write`, filename, allow_local_tmpfile)
+}
+
+#' Return free disk space available on the filesystem
+#'
+#' `vsi_get_disk_free_space()` returns the free disk space available on the
+#' filesystem. Wrapper for `VSIGetDiskFreeSpace()` in the GDAL Common
+#' Portability Library.
+#'
+#' @param path Character string. A directory of the filesystem to query.
+#' @returns Numeric scalar. The free space in bytes, or `-1` in case of error.
+#'
+#' @examples
+#' tmp_dir <- file.path(tempdir(), "tmpdir")
+#' vsi_mkdir(tmp_dir)
+#' vsi_get_disk_free_space(tmp_dir)
+#' vsi_rmdir(tmp_dir)
+vsi_get_disk_free_space <- function(path) {
+    .Call(`_gdalraster_vsi_get_disk_free_space`, path)
 }
 
 #' @noRd
