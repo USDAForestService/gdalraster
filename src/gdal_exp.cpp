@@ -1320,6 +1320,7 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //' It is also possible to edit data with SQL statements.
 //' Refer to the GDAL documentation at the URL above for a description of
 //' command-line arguments that can be passed in `cl_arg`.
+//' Requires GDAL >= 3.7.
 //'
 //' @param dsn Character string. Data source name (e.g., filename, database
 //' connection string, etc.)

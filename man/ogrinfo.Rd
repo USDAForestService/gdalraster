@@ -43,6 +43,7 @@ This function lists information about an OGR-supported data source.
 It is also possible to edit data with SQL statements.
 Refer to the GDAL documentation at the URL above for a description of
 command-line arguments that can be passed in \code{cl_arg}.
+Requires GDAL >= 3.7.
 }
 \note{
 The command-line argument \code{-so} provides a summary only, i.e., does not
