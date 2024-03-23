@@ -174,7 +174,9 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 std::string ogrinfo(Rcpp::CharacterVector dsn,
                     Rcpp::Nullable<Rcpp::CharacterVector> layers,
                     Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
-                    bool read_only);
+                    Rcpp::Nullable<Rcpp::CharacterVector> open_options,
+                    bool read_only,
+                    bool cout);
 
 bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
                  Rcpp::CharacterVector out_dsn,

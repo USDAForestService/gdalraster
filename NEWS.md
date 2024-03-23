@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9280 (dev)
+# gdalraster 1.9.0.9290 (dev)
+
+* `ogrinfo()`: interface improvements, add argument `cout` (2024-03-23)
 
 * format diagnostic messages throughout for consistency and WRE guidelines (2024-03-22)
 

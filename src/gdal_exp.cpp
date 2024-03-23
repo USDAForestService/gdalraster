@@ -1299,11 +1299,11 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
     GDALVectorTranslateOptionsFree(psOptions);
 
     if (hDstDS != nullptr) {
-        GDALClose(hDstDS);
+        GDALReleaseDataset(hDstDS);
         ret = true;
     }
 
-    GDALClose(src_ds[0]);
+    GDALReleaseDataset(src_ds[0]);
 
     if (!ret)
         Rcpp::stop("vector translate failed");
@@ -1316,8 +1316,8 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //'
 //' `ogrinfo()` is a wrapper of the \command{ogrinfo} command-line
 //' utility (see \url{https://gdal.org/programs/ogrinfo.html}).
-//' This function lists information about an OGR-supported data source. With
-//' SQL statements it is also possible to edit data.
+//' This function lists information about an OGR-supported data source.
+//' It is also possible to edit data with SQL statements.
 //' Refer to the GDAL documentation at the URL above for a description of
 //' command-line arguments that can be passed in `cl_arg`.
 //'
@@ -1326,12 +1326,21 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //' @param layers Optional character vector of layer names in the source
 //' dataset.
 //' @param cl_arg Optional character vector of command-line arguments for
-//' the GDAL \code{ogrinfo} command-line utility (see URL above).
+//' the \code{ogrinfo} command-line utility in GDAL (see URL above for
+//' reference). The default is `c("-so", "-nomd")` (see Note).
 //' @param open_options Optional character vector of dataset open options.
 //' @param read_only Logical scalar. `TRUE` to open the data source read-only
 //' (the default), or `FALSE` to open with write access.
-//' @returns Character string containing information about the vector dataset,
-//' or empty string ('""`) in case of error.
+//' @param cout Logical scalar. `TRUE` to write info to the standard C output
+//' stream (the default). `FALSE` to suppress console output.
+//' @returns Invisibly, a character string containing information about the
+//' vector dataset, or empty string (`""`) in case of error.
+//'
+//' @note
+//' The command-line argument `-so` provides a summary only, i.e., does not
+//' include details about every single feature of a layer.
+//' `-nomd` suppresses metadata printing. Some datasets may contain a lot of
+//' metadata strings.
 //'
 //' @seealso
 //' [ogr2ogr()]
@@ -1342,50 +1351,44 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //' # Requires GDAL >= 3.7
 //' if (as.integer(gdal_version()[2]) >= 3070000) {
 //'   # Get the names of the layers in a GeoPackage file.
-//'   info <- ogrinfo(src)
-//'   writeLines(info)
+//'   ogrinfo(src)
 //'
-//'   # Summary (-so) of a layer without showing details about every single
-//'   # feature.
-//'   # -nomd suppresses metadata printing. Some datasets may contain a lot of
-//'   # metadata strings.
-//'   args <- c("-so", "-nomd")
-//'   info <- ogrinfo(src, "mtbs_perims", args)
-//'   writeLines(info)
+//'   # Summary of a layer
+//'   ogrinfo(src, "mtbs_perims")
 //'
-//'   # Retrieve information in JSON format without showing details about every
-//'   # single feature.
+//'   # JSON format
 //'   args <- c("-json", "-nomd")
-//'   json <- ogrinfo(src, "mtbs_perims", args)
+//'   json <- ogrinfo(src, "mtbs_perims", args, cout = FALSE)
 //'   #info <- jsonlite::fromJSON(json)
 //'
-//'   # Attribute query to restrict the output of the features in a layer.
+//'   # Query an attribute to restrict the output of the features in a layer
 //'   args <- c("-ro", "-nomd", "-where", "ig_year = 2020")
-//'   info <- ogrinfo(src, "mtbs_perims", args)
-//'   writeLines(info)
+//'   ogrinfo(src, "mtbs_perims", args)
 //'
-//'   # Copy to a temporary in-memory file that is writeable.
+//'   # Copy to a temporary in-memory file that is writeable
 //'   src_mem <- paste0("/vsimem/", basename(src))
 //'   vsi_copy_file(src, src_mem)
 //'   print(src_mem)
 //'
-//'   # Add a column to a layer.
+//'   # Add a column to a layer
 //'   args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
 //'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
 //'
-//'   # Update values of an attribute with SQL by using the SQLite dialect.
+//'   # Update values of the column with SQL and specify a dialect
 //'   sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
 //'   args <- c("-dialect", "sqlite", "-sql", sql)
 //'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
 //'
 //'   vsi_unlink(src_mem)
 //' }
-// [[Rcpp::export()]]
+// [[Rcpp::export(invisible = true)]]
 std::string ogrinfo(Rcpp::CharacterVector dsn,
         Rcpp::Nullable<Rcpp::CharacterVector> layers = R_NilValue,
-        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg =
+                Rcpp::CharacterVector::create("-so", "-nomd"),
         Rcpp::Nullable<Rcpp::CharacterVector> open_options = R_NilValue,
-        bool read_only = true) {
+        bool read_only = true,
+        bool cout = true) {
 
 #if GDAL_VERSION_NUM < 3070000
     Rcpp::stop("ogrinfo() requires GDAL >= 3.7");
@@ -1400,7 +1403,7 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
     if (open_options.isNotNull()) {
         Rcpp::CharacterVector open_options_in(open_options);
         for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
-            dsoo.push_back((char *) (open_options_in[i]));
+            dsoo.push_back((char *) open_options_in[i]);
         }
     }
     dsoo.push_back(nullptr);
@@ -1417,18 +1420,21 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
     if (src_ds == nullptr)
         Rcpp::stop("failed to open the source dataset");
 
+    bool have_args_in = false;
+    Rcpp::CharacterVector cl_arg_in;
     std::vector<char *> argv;
     if (cl_arg.isNotNull()) {
-        Rcpp::CharacterVector cl_arg_in(cl_arg);
+        cl_arg_in = cl_arg;
         for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-            argv.push_back((char *) (cl_arg_in[i]));
+            argv.push_back((char *) cl_arg_in[i]);
         }
+        have_args_in = true;
     }
-    argv.push_back((char *) (dsn[0]));
+    argv.push_back((char *) dsn_in.c_str());
     if (layers.isNotNull()) {
         Rcpp::CharacterVector layers_in(layers);
         for (R_xlen_t i = 0; i < layers_in.size(); ++i) {
-            argv.push_back((char *) (layers_in[i]));
+            argv.push_back((char *) layers_in[i]);
         }
     }
     argv.push_back(nullptr);
@@ -1447,7 +1453,22 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
 
     CPLFree(pszInfo);
     GDALVectorInfoOptionsFree(psOptions);
-    GDALClose(src_ds);
+    GDALReleaseDataset(src_ds);
+
+    if (cout)
+        Rcpp::Rcout << info_out;
+
+    if (have_args_in) {
+        Rcpp::CharacterVector::iterator i;
+        for (i = cl_arg_in.begin(); i != cl_arg_in.end(); ++i) {
+            if (EQUAL(*i, "-json")) {
+                info_out.erase(std::remove(info_out.begin(),
+                                           info_out.end(),
+                                           '\n'),
+                               info_out.cend());
+            }
+        }
+    }
 
     return info_out;
 

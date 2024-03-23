@@ -288,8 +288,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ogrinfo
-std::string ogrinfo(Rcpp::CharacterVector dsn, Rcpp::Nullable<Rcpp::CharacterVector> layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::CharacterVector> open_options, bool read_only);
-RcppExport SEXP _gdalraster_ogrinfo(SEXP dsnSEXP, SEXP layersSEXP, SEXP cl_argSEXP, SEXP open_optionsSEXP, SEXP read_onlySEXP) {
+std::string ogrinfo(Rcpp::CharacterVector dsn, Rcpp::Nullable<Rcpp::CharacterVector> layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::CharacterVector> open_options, bool read_only, bool cout);
+RcppExport SEXP _gdalraster_ogrinfo(SEXP dsnSEXP, SEXP layersSEXP, SEXP cl_argSEXP, SEXP open_optionsSEXP, SEXP read_onlySEXP, SEXP coutSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -298,7 +298,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type open_options(open_optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type read_only(read_onlySEXP);
-    rcpp_result_gen = Rcpp::wrap(ogrinfo(dsn, layers, cl_arg, open_options, read_only));
+    Rcpp::traits::input_parameter< bool >::type cout(coutSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogrinfo(dsn, layers, cl_arg, open_options, read_only, cout));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1202,7 +1203,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 6},
     {"_gdalraster_footprint", (DL_FUNC) &_gdalraster_footprint, 3},
     {"_gdalraster_ogr2ogr", (DL_FUNC) &_gdalraster_ogr2ogr, 4},
-    {"_gdalraster_ogrinfo", (DL_FUNC) &_gdalraster_ogrinfo, 5},
+    {"_gdalraster_ogrinfo", (DL_FUNC) &_gdalraster_ogrinfo, 6},
     {"_gdalraster__polygonize", (DL_FUNC) &_gdalraster__polygonize, 9},
     {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 4},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 10},
