@@ -394,16 +394,14 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
     std::string dst_filename_in;
     dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
 
-    GDALDataType dt = GDALGetDataTypeByName( dataType.c_str() );
+    GDALDataType dt = GDALGetDataTypeByName(dataType.c_str() );
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
-        // cast to the underlying type
-        // https://gallery.rcpp.org/articles/optional-null-function-arguments/
         Rcpp::CharacterVector options_in(options);
         opt_list.resize(options_in.size() + 1);
         for (R_xlen_t i = 0; i < options_in.size(); ++i) {
-            opt_list[i] = (char *) (options_in[i]);
+            opt_list[i] = (char *) options_in[i];
         }
         opt_list[options_in.size()] = nullptr;
     }
@@ -488,19 +486,18 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
-        // cast to the underlying type
-        // https://gallery.rcpp.org/articles/optional-null-function-arguments/
         Rcpp::CharacterVector options_in(options);
         opt_list.resize(options_in.size() + 1);
         for (R_xlen_t i = 0; i < options_in.size(); ++i) {
-            opt_list[i] = (char *) (options_in[i]);
+            opt_list[i] = (char *) options_in[i];
         }
         opt_list[options_in.size()] = nullptr;
     }
 
     GDALDatasetH hDstDS = nullptr;
     hDstDS = GDALCreateCopy(hDriver, dst_filename_in.c_str(), hSrcDS, strict,
-                opt_list.data(), quiet ? nullptr : GDALTermProgressR, nullptr);
+                            opt_list.data(),
+                            quiet ? nullptr : GDALTermProgressR, nullptr);
 
     GDALClose(hSrcDS);
     if (hDstDS == nullptr)
@@ -576,7 +573,7 @@ Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
 // [[Rcpp::export]]
 Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
     std::vector<double> gt_inv(6);
-    if (GDALInvGeoTransform( (double *) (gt.data()), gt_inv.data() ))
+    if (GDALInvGeoTransform((double *) (gt.data()), gt_inv.data()))
         return Rcpp::wrap(gt_inv);
     else
         return Rcpp::NumericVector(6, NA_REAL);
@@ -691,26 +688,25 @@ bool buildVRT(Rcpp::CharacterVector vrt_filename,
         bool quiet = false) {
 
     std::string vrt_filename_in;
-    vrt_filename_in = Rcpp::as<std::string>(_check_gdal_filename(vrt_filename));
+    vrt_filename_in = Rcpp::as<std::string>(
+            _check_gdal_filename(vrt_filename));
 
     std::vector<std::string> input_rasters_in(input_rasters.size());
     std::vector<const char *> src_ds_files(input_rasters.size() + 1);
     for (R_xlen_t i = 0; i < input_rasters.size(); ++i) {
         input_rasters_in[i] = Rcpp::as<std::string>(
                 _check_gdal_filename(
-                Rcpp::as<Rcpp::CharacterVector>(input_rasters[i])
-                ));
+                        Rcpp::as<Rcpp::CharacterVector>(input_rasters[i])));
         src_ds_files[i] = input_rasters_in[i].c_str();
     }
     src_ds_files[input_rasters.size()] = nullptr;
 
     std::vector<char *> argv = {nullptr};
     if (cl_arg.isNotNull()) {
-        // cast Nullable to the underlying type
         Rcpp::CharacterVector cl_arg_in(cl_arg);
         argv.resize(cl_arg_in.size() + 1);
         for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-            argv[i] = (char *) (cl_arg_in[i]);
+            argv[i] = (char *) cl_arg_in[i];
         }
         argv[cl_arg_in.size()] = nullptr;
     }
@@ -723,8 +719,9 @@ bool buildVRT(Rcpp::CharacterVector vrt_filename,
         GDALBuildVRTOptionsSetProgress(psOptions, GDALTermProgressR, nullptr);
 
     GDALDatasetH hDstDS = GDALBuildVRT(vrt_filename_in.c_str(),
-                            input_rasters.size(), nullptr, src_ds_files.data(),
-                            psOptions, nullptr);
+                                       input_rasters.size(), nullptr,
+                                       src_ds_files.data(), psOptions,
+                                       nullptr);
 
     GDALBuildVRTOptionsFree(psOptions);
 
@@ -770,8 +767,8 @@ Rcpp::DataFrame _combine(
     GDALRaster dst_ds;
     bool out_raster = false;
 
-    if ( (nrasters != ((std::size_t) var_names.size())) ||
-            (nrasters !=  bands.size()) )
+    if ((nrasters != ((std::size_t) var_names.size())) ||
+            (nrasters !=  bands.size()))
         Rcpp::stop("'src_files', 'var_names', 'bands' must have same length");
 
     if (dst_filename != "") {
@@ -811,23 +808,28 @@ Rcpp::DataFrame _combine(
     Rcpp::NumericVector cmbid;
     GDALProgressFunc pfnProgress = GDALTermProgressR;
     void* pProgressData = nullptr;
+
     if (!quiet) {
         if (nrasters == 1)
             Rcpp::Rcout << "scanning raster...\n";
         else
             Rcpp::Rcout << "combining " << nrasters << " rasters...\n";
     }
+
     for (int y = 0; y < nrows; ++y) {
-        for (std::size_t i = 0; i < nrasters; ++i)
+        for (std::size_t i = 0; i < nrasters; ++i) {
             rowdata.row(i) = Rcpp::as<Rcpp::IntegerVector>(
-                                src_ds[i].read(
-                                    bands[i], 0, y, ncols, 1, ncols, 1) );
+                                    src_ds[i].read(bands[i], 0, y,
+                                                   ncols, 1,
+                                                   ncols, 1));
+        }
 
         cmbid = tbl.updateFromMatrix(rowdata, 1);
 
         if (out_raster) {
-            dst_ds.write( 1, 0, y, ncols, 1, cmbid );
+            dst_ds.write(1, 0, y, ncols, 1, cmbid);
         }
+
         if (!quiet) {
             pfnProgress(y / (nrows-1.0), nullptr, pProgressData);
         }
@@ -868,10 +870,9 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1,
         std::unordered_map<int, double> tbl;
         for (int y = 0; y < nrows; ++y) {
             rowdata = Rcpp::as<Rcpp::IntegerVector>(
-                            src_ds.read(band, 0, y, ncols, 1, ncols, 1) );
-            for (auto const& i : rowdata) {
+                            src_ds.read(band, 0, y, ncols, 1, ncols, 1));
+            for (auto const& i : rowdata)
                 tbl[i] += 1.0;
-            }
             if (!quiet)
                 pfnProgress(y / (nrows-1.0), nullptr, pProgressData);
         }
@@ -895,10 +896,9 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1,
         std::unordered_map<double, double> tbl;
         for (int y = 0; y < nrows; ++y) {
             rowdata = Rcpp::as<Rcpp::NumericVector>(
-                            src_ds.read(band, 0, y, ncols, 1, ncols, 1) );
-            for (auto const& i : rowdata) {
+                            src_ds.read(band, 0, y, ncols, 1, ncols, 1));
+            for (auto const& i : rowdata)
                 tbl[i] += 1.0;
-            }
             if (!quiet)
                 pfnProgress(y / (nrows-1.0), nullptr, pProgressData);
         }
@@ -943,11 +943,10 @@ bool _dem_proc(std::string mode,
 
     std::vector<char *> argv = {nullptr};
     if (cl_arg.isNotNull()) {
-        // cast Nullable to the underlying type
         Rcpp::CharacterVector cl_arg_in(cl_arg);
         argv.resize(cl_arg_in.size() + 1);
         for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-            argv[i] = (char *) (cl_arg_in[i]);
+            argv[i] = (char *) cl_arg_in[i];
         }
         argv[cl_arg_in.size()] = nullptr;
     }
@@ -962,14 +961,14 @@ bool _dem_proc(std::string mode,
 
     GDALDatasetH hDstDS;
     if (col_file.isNotNull()) {
-        // cast Nullable to the underlying type
         Rcpp::String col_file_in(col_file);
-        hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds, mode.c_str(),
-                col_file_in.get_cstring(), psOptions, nullptr);
+        hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds,
+                                   mode.c_str(), col_file_in.get_cstring(),
+                                   psOptions, nullptr);
     }
     else {
-        hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds, mode.c_str(),
-                nullptr, psOptions, nullptr);
+        hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds,
+                                   mode.c_str(), nullptr, psOptions, nullptr);
     }
 
     GDALDEMProcessingOptionsFree(psOptions);
@@ -1072,7 +1071,8 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
     }
 
     err = GDALFillNodata(hBand, hMaskBand, max_dist, 0, smooth_iterations,
-            nullptr, quiet ? nullptr : GDALTermProgressR, nullptr);
+                         nullptr, quiet ? nullptr : GDALTermProgressR,
+                         nullptr);
 
     GDALClose(hDS);
     if (hMaskDS != nullptr)
@@ -1150,11 +1150,10 @@ bool footprint(Rcpp::CharacterVector src_filename,
 
     std::vector<char *> argv = {nullptr};
     if (cl_arg.isNotNull()) {
-        // cast Nullable to the underlying type
         Rcpp::CharacterVector cl_arg_in(cl_arg);
         argv.resize(cl_arg_in.size() + 1);
         for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-            argv[i] = (char *) (cl_arg_in[i]);
+            argv[i] = (char *) cl_arg_in[i];
         }
         argv[cl_arg_in.size()] = nullptr;
     }
@@ -1276,13 +1275,13 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
     if (cl_arg.isNotNull()) {
         Rcpp::CharacterVector cl_arg_in(cl_arg);
         for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-            argv.push_back((char *) (cl_arg_in[i]));
+            argv.push_back((char *) cl_arg_in[i]);
         }
     }
     if (src_layers.isNotNull()) {
         Rcpp::CharacterVector src_layers_in(src_layers);
         for (R_xlen_t i = 0; i < src_layers_in.size(); ++i) {
-            argv.push_back((char *) (src_layers_in[i]));
+            argv.push_back((char *) src_layers_in[i]);
         }
     }
     argv.push_back(nullptr);
@@ -1294,7 +1293,8 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
     }
 
     GDALDatasetH hDstDS = GDALVectorTranslate(dst_dsn_in.c_str(), nullptr,
-            1, src_ds.data(), psOptions, nullptr);
+                                              1, src_ds.data(), psOptions,
+                                              nullptr);
 
     GDALVectorTranslateOptionsFree(psOptions);
 
@@ -1467,6 +1467,7 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
                                            info_out.end(),
                                            '\n'),
                                info_out.cend());
+                break;
             }
         }
     }
@@ -1564,11 +1565,12 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
     std::vector<char *> opt_list = {nullptr};
     if (connectedness == 8) {
         auto it = opt_list.begin();
-        it = opt_list.insert(it, (char *) ("8CONNECTED=8"));
+        it = opt_list.insert(it, (char *) "8CONNECTED=8");
     }
 
     CPLErr err = GDALPolygonize(hSrcBand, hMaskBand, hOutLayer, iPixValField,
-            opt_list.data(), quiet ? nullptr : GDALTermProgressR, nullptr);
+                                opt_list.data(),
+                                quiet ? nullptr : GDALTermProgressR, nullptr);
 
     GDALClose(hSrcDS);
     GDALReleaseDataset(hOutDS);
@@ -1598,7 +1600,7 @@ bool _rasterize(std::string src_dsn, std::string dst_filename,
 
     std::vector<char *> argv(cl_arg.size() + 1);
     for (R_xlen_t i = 0; i < cl_arg.size(); ++i) {
-        argv[i] = (char *) (cl_arg[i]);
+        argv[i] = (char *) cl_arg[i];
     }
     argv[cl_arg.size()] = nullptr;
 
@@ -1860,11 +1862,10 @@ bool translate(Rcpp::CharacterVector src_filename,
 
     std::vector<char *> argv = {nullptr};
     if (cl_arg.isNotNull()) {
-        // cast Nullable to the underlying type
         Rcpp::CharacterVector cl_arg_in(cl_arg);
         argv.resize(cl_arg_in.size() + 1);
         for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-            argv[i] = (char *) (cl_arg_in[i]);
+            argv[i] = (char *) cl_arg_in[i];
         }
         argv[cl_arg_in.size()] = nullptr;
     }
@@ -1877,7 +1878,7 @@ bool translate(Rcpp::CharacterVector src_filename,
         GDALTranslateOptionsSetProgress(psOptions, GDALTermProgressR, nullptr);
 
     GDALDatasetH hDstDS = GDALTranslate(dst_filename_in.c_str(), src_ds,
-                            psOptions, nullptr);
+                                        psOptions, nullptr);
 
     GDALTranslateOptionsFree(psOptions);
 
@@ -2088,6 +2089,8 @@ bool warp(Rcpp::CharacterVector src_files,
         GDALDatasetH hDS = GDALOpenShared(src_file_in.c_str(), GA_ReadOnly);
         if (hDS == nullptr) {
             Rcpp::Rcerr << "error on source: " << src_file_in.c_str() << "\n";
+            for (R_xlen_t j = 0; j < i; ++j)
+                GDALClose(src_ds[j]);
             Rcpp::stop("open source raster failed");
         }
         else {
@@ -2102,13 +2105,13 @@ bool warp(Rcpp::CharacterVector src_files,
         t_srs_in = GDALGetProjectionRef(src_ds[0]);
 
     std::vector<char *> argv =
-            {(char *) ("-t_srs"), (char *) (t_srs_in.c_str()), nullptr};
+            {(char *) "-t_srs", (char *) t_srs_in.c_str(), nullptr};
 
     if (cl_arg.isNotNull()) {
         Rcpp::CharacterVector cl_arg_in(cl_arg);
         argv.resize(cl_arg_in.size() + 3);
         for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
-            argv[i+2] = (char *) (cl_arg_in[i]);
+            argv[i+2] = (char *) cl_arg_in[i];
         }
         argv[cl_arg_in.size() + 2] = nullptr;
     }
@@ -2383,18 +2386,17 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
-        // cast to the underlying type
-        // https://gallery.rcpp.org/articles/optional-null-function-arguments/
         Rcpp::CharacterVector options_in(options);
         opt_list.resize(options_in.size() + 1);
         for (R_xlen_t i = 0; i < options_in.size(); ++i) {
-            opt_list[i] = (char *) (options_in[i]);
+            opt_list[i] = (char *) options_in[i];
         }
         opt_list[options_in.size()] = nullptr;
     }
 
     err = GDALRasterBandCopyWholeRaster(hSrcBand, hDstBand, opt_list.data(),
-            quiet ? nullptr : GDALTermProgressR, nullptr);
+                                        quiet ? nullptr : GDALTermProgressR,
+                                        nullptr);
 
     GDALClose(hSrcDS);
     GDALClose(hDstDS);
@@ -2648,17 +2650,17 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
 
 #else
     bool ret;
-    std::vector<char *> opt_zip_create = {nullptr};
+    std::vector<char *> opt_zip_create;
     VSIStatBufL buf;
+
     if (overwrite) {
         VSIUnlink(zip_filename.c_str());
     }
     else {
-        if (VSIStatExL(zip_filename.c_str(), &buf, VSI_STAT_EXISTS_FLAG) == 0) {
-            auto it = opt_zip_create.begin();
-            it = opt_zip_create.insert(it, (char *) ("APPEND=TRUE"));
-        }
+        if (VSIStatExL(zip_filename.c_str(), &buf, VSI_STAT_EXISTS_FLAG) == 0)
+            opt_zip_create.push_back((char *) "APPEND=TRUE");
     }
+    opt_zip_create.push_back(nullptr);
 
     void *hZIP = CPLCreateZip(zip_filename.c_str(), opt_zip_create.data());
     if (hZIP == nullptr)
@@ -2669,7 +2671,7 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
         Rcpp::CharacterVector options_in(options);
         opt_list.resize(options_in.size() + 1);
         for (R_xlen_t i = 0; i < options_in.size(); ++i) {
-            opt_list[i] = (char *) (options_in[i]);
+            opt_list[i] = (char *) options_in[i];
         }
         opt_list[options_in.size()] = nullptr;
     }
@@ -2680,9 +2682,10 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
     }
 
     CPLErr err = CPLAddFileInZip(hZIP, archive_filename.c_str(),
-                            in_filename.c_str(),
-                            nullptr, opt_list.data(),
-                            quiet ? nullptr : GDALTermProgressR, nullptr);
+                                 in_filename.c_str(),
+                                 nullptr, opt_list.data(),
+                                 quiet ? nullptr : GDALTermProgressR,
+                                 nullptr);
 
     if (err == CE_None)
         ret = true;
