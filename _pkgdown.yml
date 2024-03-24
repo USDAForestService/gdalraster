@@ -78,6 +78,7 @@ reference:
   - bbox_union
   - g_buffer
   - g_transform
+  - geos_version
   - has_geos
 - subtitle: Data management
 - contents:

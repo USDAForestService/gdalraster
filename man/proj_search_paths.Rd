@@ -24,5 +24,5 @@ optionally setting them first. Requires GDAL 3.0.3 or later.
 proj_search_paths()
 }
 \seealso{
-\code{\link[=gdal_version]{gdal_version()}}, \code{\link[=proj_version]{proj_version()}}, \code{\link[=proj_networking]{proj_networking()}}
+\code{\link[=proj_version]{proj_version()}}, \code{\link[=proj_networking]{proj_networking()}}
 }

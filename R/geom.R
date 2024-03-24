@@ -2,6 +2,41 @@
 # in src/geos_wkt.h.
 # Chris Toney <chris.toney at usda.gov>
 
+
+#' Get GEOS version
+#'
+#' @description
+#' `geos_version()` returns version information for the GEOS library in use by
+#' GDAL. Requires GDAL >= 3.4.
+#'
+#' @returns A list of length four containing:
+#'   * `name` - a string formatted as "major.minor.patch"
+#'   * `major` - major version as integer
+#'   * `minor` - minor version as integer
+#'   * `patch` - patch version as integer
+#'
+#' List elements will be `NA` if GDAL < 3.4.
+#'
+#' @seealso
+#' [gdal_version()], [proj_version()]
+#'
+#' @examples
+#' geos_version()
+#' @export
+geos_version <- function() {
+    ver <- .getGEOSVersion()
+    gv <- list()
+    if (anyNA(ver))
+        gv$name <- NA_character_
+    else
+        gv$name <- paste(ver, collapse=".")
+    gv$major <- ver[1]
+    gv$minor <- ver[2]
+    gv$patch <- ver[3]
+    return(gv)
+}
+
+
 #' Bounding box intersection / union
 #'
 #' @description

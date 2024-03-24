@@ -24,7 +24,7 @@ PROJ 7 or later.
 proj_networking()
 }
 \seealso{
-\code{\link[=gdal_version]{gdal_version()}}, \code{\link[=proj_version]{proj_version()}}, \code{\link[=proj_search_paths]{proj_search_paths()}}
+\code{\link[=proj_version]{proj_version()}}, \code{\link[=proj_search_paths]{proj_search_paths()}}
 
 \href{https://github.com/OSGeo/PROJ-data}{PROJ-data on GitHub},
 \href{https://cdn.proj.org/}{PROJ Content Delivery Network}
