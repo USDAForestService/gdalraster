@@ -14,7 +14,7 @@ value. A unique ID is assigned to each unique combination of input values."><!--
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9291</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9300</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -94,6 +94,8 @@ Methods of the class are accessed in R using the <code>$</code> operator.</p>
     
 
 <div class="sourceCode"><pre><code><span></span>
+<span><span class="va">cmb</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">CmbTable</span>, <span class="va">keyLen</span><span class="op">)</span></span>
+<span><span class="co"># or, with variable names</span></span>
 <span><span class="va">cmb</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">CmbTable</span>, <span class="va">keyLen</span>, <span class="va">varNames</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Methods (see Details)</span></span>
@@ -109,8 +111,12 @@ Methods of the class are accessed in R using the <code>$</code> operator.</p>
     
 
 
+<p><code>new(CmbTable, keyLen)</code>
+Constructor. Variable names will be assigned as <code>V1</code>, <code>V2</code>, ....
+Returns an object of class <code>CmbTable</code>.</p>
 <p><code>new(CmbTable, keyLen, varNames)</code>
-Constructor. Returns an object of class CmbTable.</p>
+Alternate constructor to specify variable names.
+Returns an object of class <code>CmbTable</code>.</p>
 <p><code>$update(int_cmb, incr)</code>
 Updates the hash table for the integer combination in the numeric vector
 <code>int_cmb</code> (coerced to integer by truncation).
@@ -118,7 +124,7 @@ If this combination exists in the table, its count will be
 incremented by <code>incr</code>. If the combination is not found in the table,
 it will be inserted with count set to <code>incr</code>.
 Returns the unique ID assigned to this combination.
-Combination IDs are sequential integers starting at 1.</p>
+Combination IDs are sequential integers starting at <code>1</code>.</p>
 <p><code>$updateFromMatrix(int_cmbs, incr)</code>
 This method is the same as <code>$update()</code> but for a numeric matrix of
 integer combinations <code>int_cmbs</code> (coerced to integer by truncation).
@@ -141,22 +147,22 @@ combinations, or inserting new combinations with count set to <code>incr</code>.
 Returns a numeric vector of length <code>nrow(int_cmbs)</code> containing the
 IDs assigned to the combinations.</p>
 <p><code>$asDataFrame()</code>
-Returns the <code>CmbTable</code> as a data frame with column <code>"cmbid"</code> containing
-the unique combination IDs, column <code>"count"</code> containing the counts of
-occurrences, and <code>keyLen</code> columns named <code>varNames</code> containing
+Returns the <code>CmbTable</code> as a data frame with column <code>cmbid</code> containing
+the unique combination IDs, column <code>count</code> containing the counts of
+occurrences, and <code>keyLen</code> columns (with names from <code>varNames</code>) containing
 the integer values comprising each unique combination.</p>
 <p><code>$asMatrix()</code>
-Returns the <code>CmbTable</code> as a matrix with column <code>1</code> (<code>"cmbid"</code>)
-containing the unique combination IDs, column <code>2</code> (<code>"count"</code>)
-containing the counts of occurrences, and columns <code>3:keyLen+2</code> named
-<code>varNames</code> containing the integer values comprising each unique
-combination.</p>
+Returns the <code>CmbTable</code> as a matrix with column <code>1</code> (<code>cmbid</code>)
+containing the unique combination IDs, column <code>2</code> (<code>count</code>)
+containing the counts of occurrences, and columns <code>3:keyLen+2</code>
+(with names from <code>varNames</code>) containing the integer values comprising each
+unique combination.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, <span class="fl">3</span>, <span class="fl">6</span>, byrow<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"layer1"</span>,<span class="st">"layer2"</span>,<span class="st">"layer3"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"layer1"</span>, <span class="st">"layer2"</span>, <span class="st">"layer3"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>        [,1] [,2] [,3] [,4] [,5] [,6]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> layer1    1    1    4    1    4    1</span>
@@ -185,20 +191,20 @@ combination.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># same as above but matrix arranged with integer combinations in the rows</span></span></span>
 <span class="r-in"><span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">matrix</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">1</span>,<span class="fl">2</span>,<span class="fl">3</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">2</span>,<span class="fl">4</span>,<span class="fl">5</span>,<span class="fl">6</span>,<span class="fl">1</span>,<span class="fl">1</span>,<span class="fl">1</span><span class="op">)</span>, <span class="fl">6</span>, <span class="fl">3</span>, byrow<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"v1"</span>,<span class="st">"v2"</span>,<span class="st">"v3"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"V1"</span>, <span class="st">"V2"</span>, <span class="st">"V3"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>      v1 v2 v3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>      V1 V2 V3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1,]  1  2  3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2,]  1  2  3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3,]  4  5  6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [4,]  1  3  2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5,]  4  5  6</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [6,]  1  1  1</span>
-<span class="r-in"><span><span class="va">cmb</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">CmbTable</span>, <span class="fl">3</span>, <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">m</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">cmb</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">CmbTable</span>, <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">cmb</span><span class="op">$</span><span class="fu">updateFromMatrixByRow</span><span class="op">(</span><span class="va">m</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1 1 2 3 2 4</span>
 <span class="r-in"><span><span class="va">cmb</span><span class="op">$</span><span class="fu">asDataFrame</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   cmbid count v1 v2 v3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cmbid count V1 V2 V3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     4     1  1  1  1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2     3     1  1  3  2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3     2     2  4  5  6</span>
@@ -208,7 +214,7 @@ combination.</p>
 <span class="r-in"><span><span class="va">cmb</span><span class="op">$</span><span class="fu">update</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">3</span>,<span class="fl">5</span><span class="op">)</span>, <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 5</span>
 <span class="r-in"><span><span class="va">cmb</span><span class="op">$</span><span class="fu">asDataFrame</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   cmbid count v1 v2 v3</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   cmbid count V1 V2 V3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1     5     1  1  3  5</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 2     4     1  1  1  1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 3     3     1  1  3  2</span>

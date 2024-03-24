@@ -8,7 +8,7 @@ articles:
   gdal-config-quick-ref: gdal-config-quick-ref.html
   raster-api-tutorial: raster-api-tutorial.html
   raster-attribute-tables: raster-attribute-tables.html
-last_built: 2024-03-24T01:43Z
+last_built: 2024-03-24T03:09Z
 urls:
   reference: https://usdaforestservice.github.io/gdalraster/reference
   article: https://usdaforestservice.github.io/gdalraster/articles
