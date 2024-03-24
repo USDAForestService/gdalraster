@@ -2,6 +2,7 @@
    Chris Toney <chris.toney at usda.gov> */
 
 #include "gdal.h"
+#include "cpl_port.h"
 #include "cpl_string.h"
 #include "cpl_vsi.h"
 
@@ -70,7 +71,7 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
         pfnProgress = GDALTermProgressR;
 
     int result = VSICopyFile(src_file_in.c_str(), target_file_in.c_str(),
-            nullptr, -1, nullptr, pfnProgress, nullptr);
+                             nullptr, -1, nullptr, pfnProgress, nullptr);
 
     if (result == 0)
         return 0;
@@ -107,7 +108,7 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 //' vsi_curl_clear_cache()
 // [[Rcpp::export()]]
 void vsi_curl_clear_cache(bool partial = false,
-                          Rcpp::CharacterVector file_prefix = "") {
+        Rcpp::CharacterVector file_prefix = "") {
 
     if (!partial) {
         VSICurlClearCache();
@@ -313,13 +314,13 @@ bool vsi_sync(Rcpp::CharacterVector src,
         Rcpp::CharacterVector options_in(options);
         opt_list.resize(options_in.size() + 1);
         for (R_xlen_t i = 0; i < options_in.size(); ++i) {
-            opt_list[i] = (char *) (options_in[i]);
+            opt_list[i] = (char *) options_in[i];
         }
         opt_list[options_in.size()] = nullptr;
     }
 
     int result = VSISync(src_file_in.c_str(), target_file_in.c_str(),
-            opt_list.data(), pfnProgress, nullptr, nullptr);
+                         opt_list.data(), pfnProgress, nullptr, nullptr);
 
     return result;
 }
@@ -470,8 +471,7 @@ SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames) {
     for (R_xlen_t i = 0; i < filenames.size(); ++i) {
         filenames_in[i] = Rcpp::as<std::string>(
                 _check_gdal_filename(
-                Rcpp::as<Rcpp::CharacterVector>(filenames[i])
-                ));
+                        Rcpp::as<Rcpp::CharacterVector>(filenames[i])));
         filenames_cstr[i] = (char *) filenames_in[i].c_str();
     }
     filenames_cstr[filenames.size()] = nullptr;
@@ -525,8 +525,6 @@ SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames) {
 //' \url{https://gdal.org/user/virtual_file_systems.html}
 //'
 //' @examples
-//' # for illustration only
-//' # this would normally be used with GDAL virtual filesystems
 //' data_dir <- system.file("extdata", package="gdalraster")
 //' vsi_stat(data_dir)
 //' vsi_stat(data_dir, "type")
@@ -561,7 +559,7 @@ SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info = "exists") {
 
     VSIStatBufL sStat;
 
-    if (info == "exists") {
+    if (EQUALN(info.c_str(), "exists", 6)) {
         bool ret;
         if (VSIStatExL(fn, &sStat, VSI_STAT_EXISTS_FLAG) == 0)
             ret = true;
@@ -570,7 +568,7 @@ SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info = "exists") {
 
         return Rcpp::LogicalVector(Rcpp::wrap(ret));
     }
-    else if (info == "type") {
+    else if (EQUALN(info.c_str(), "type", 4)) {
         std::string ret;
         if (VSIStatExL(fn, &sStat, VSI_STAT_NATURE_FLAG) == 0) {
             if (VSI_ISDIR(sStat.st_mode))
@@ -585,7 +583,7 @@ SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info = "exists") {
 
         return Rcpp::CharacterVector(Rcpp::wrap(ret));
     }
-    else if (info == "size") {
+    else if (EQUALN(info.c_str(), "size", 4)) {
         double ret;
         if (VSIStatExL(fn, &sStat, VSI_STAT_SIZE_FLAG) == 0)
             ret = (double) sStat.st_size;
@@ -627,6 +625,7 @@ SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info = "exists") {
 //' new_file <- file.path(dirname(tmp_file), "storml_elev_copy.tif")
 //' result <- vsi_rename(tmp_file, new_file)
 //' print(result)
+//' vsi_unlink(new_file)
 // [[Rcpp::export(invisible = true)]]
 int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath) {
 

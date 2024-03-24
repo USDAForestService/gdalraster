@@ -1683,8 +1683,6 @@ vsi_unlink_batch <- function(filenames) {
 #' \url{https://gdal.org/user/virtual_file_systems.html}
 #'
 #' @examples
-#' # for illustration only
-#' # this would normally be used with GDAL virtual filesystems
 #' data_dir <- system.file("extdata", package="gdalraster")
 #' vsi_stat(data_dir)
 #' vsi_stat(data_dir, "type")
@@ -1741,6 +1739,7 @@ vsi_stat <- function(filename, info = "exists") {
 #' new_file <- file.path(dirname(tmp_file), "storml_elev_copy.tif")
 #' result <- vsi_rename(tmp_file, new_file)
 #' print(result)
+#' vsi_unlink(new_file)
 vsi_rename <- function(oldpath, newpath) {
     invisible(.Call(`_gdalraster_vsi_rename`, oldpath, newpath))
 }

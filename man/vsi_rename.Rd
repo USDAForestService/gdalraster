@@ -33,6 +33,7 @@ file.copy(elev_file, tmp_file)
 new_file <- file.path(dirname(tmp_file), "storml_elev_copy.tif")
 result <- vsi_rename(tmp_file, new_file)
 print(result)
+vsi_unlink(new_file)
 }
 \seealso{
 \code{\link[=renameDataset]{renameDataset()}}, \code{\link[=vsi_copy_file]{vsi_copy_file()}}
