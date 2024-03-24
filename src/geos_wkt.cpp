@@ -9,6 +9,20 @@
 
 #include "geos_wkt.h"
 
+//' get GEOS version
+//' @noRd
+// [[Rcpp::export(name = ".getGEOSVersion")]]
+std::vector<int> _getGEOSVersion() {
+    int major, minor, patch;
+    major = minor = patch = NA_INTEGER;
+#if GDAL_VERSION_NUM >= 3040000
+    if (!OGRGetGEOSVersion(&major, &minor, &patch))
+        Rcpp::warning("GDAL not built against GEOS");
+#endif
+    std::vector<int> ret = {major, minor, patch};
+    return ret;
+}
+
 //' Is GEOS available?
 //'
 //' `has_geos()` returns a logical value indicating whether GDAL was built
@@ -22,7 +36,9 @@
 //' has_geos()
 // [[Rcpp::export]]
 bool has_geos() {
-// Test if GDAL built against GEOS
+// test if GDAL built against GEOS
+// this is now obsolete:
+// GDAL built against GEOS is required at gdalraster 1.10
     OGRGeometryH hGeom = OGR_G_CreateGeometry(wkbPoint);
     if (hGeom == nullptr)
         Rcpp::stop("failed to create geometry object");
