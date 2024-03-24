@@ -3,15 +3,24 @@ Chris Toney <chris.toney at usda.gov> */
 
 #include "cmb_table.h"
 
-CmbTable::CmbTable():
-    key_len(1), cvVarNames({"V1"}), last_ID(0)  {}
+CmbTable::CmbTable() :
+    key_len(1), var_names_in({"V1"}), last_ID(0)  {}
 
-CmbTable::CmbTable(int keyLen, Rcpp::CharacterVector varNames):
-    key_len(keyLen), cvVarNames(varNames), last_ID(0)  {
+CmbTable::CmbTable(unsigned int keyLen) :
+    key_len(keyLen), last_ID(0)  {
 
-    if (key_len != cvVarNames.size())
-        Rcpp::stop("'keyLen' must equal 'length(varNames)'");
+    for (unsigned int i = 1; i <= key_len; ++i) {
+        std::string s = "V" + std::to_string(i);
+        var_names_in.push_back(s);
     }
+}
+
+CmbTable::CmbTable(unsigned int keyLen, Rcpp::CharacterVector varNames) :
+    key_len(keyLen), var_names_in(varNames), last_ID(0)  {
+
+    if (key_len != var_names_in.size())
+        Rcpp::stop("'keyLen' must equal 'length(varNames)'");
+}
 
 double CmbTable::update(const Rcpp::IntegerVector& int_cmb, double incr) {
     // Increment count for existing int_cmb
@@ -22,8 +31,8 @@ double CmbTable::update(const Rcpp::IntegerVector& int_cmb, double incr) {
     cmbData& cmbdat = cmb_map[key];
     cmbdat.count += incr;
     if (cmbdat.ID == 0.0) {
-        this->last_ID += 1.0;
-        cmbdat.ID = this->last_ID;
+        last_ID += 1.0;
+        cmbdat.ID = last_ID;
     }
     return cmbdat.ID;
 }
@@ -68,20 +77,20 @@ Rcpp::DataFrame CmbTable::asDataFrame() const {
 
     Rcpp::NumericVector dvCmbID(cmb_map.size());
     Rcpp::NumericVector dvCmbCount(cmb_map.size());
-    std::vector<Rcpp::IntegerVector> aVec(this->key_len);
+    std::vector<Rcpp::IntegerVector> aVec(key_len);
     cmbKey key;
     cmbData cmbdat;
 
-    for(int n=0; n < this->key_len; ++n) {
+    for (unsigned int n=0; n < key_len; ++n) {
         aVec[n] = Rcpp::IntegerVector(cmb_map.size());
     }
     std::size_t this_idx = 0;
-    for(auto iter = cmb_map.begin(); iter != cmb_map.end(); ++iter) {
+    for (auto iter = cmb_map.begin(); iter != cmb_map.end(); ++iter) {
         key = iter->first;
         cmbdat = iter->second;
         dvCmbID[this_idx] = cmbdat.ID;
         dvCmbCount[this_idx] = cmbdat.count;
-        for(int var=0; var < this->key_len; ++var) {
+        for (unsigned int var=0; var < key_len; ++var) {
             aVec[var][this_idx] = key.cmb[var];
         }
         ++this_idx;
@@ -90,8 +99,8 @@ Rcpp::DataFrame CmbTable::asDataFrame() const {
     Rcpp::DataFrame dfOut = Rcpp::DataFrame::create();
     dfOut.push_back(dvCmbID, "cmbid");
     dfOut.push_back(dvCmbCount, "count");
-    for(int n=0; n < this->key_len; ++n) {
-        dfOut.push_back(aVec[n], Rcpp::String(this->cvVarNames[n]));
+    for (unsigned int n=0; n < key_len; ++n) {
+        dfOut.push_back(aVec[n], Rcpp::String(var_names_in[n]));
     }
 
     return dfOut;
@@ -99,23 +108,23 @@ Rcpp::DataFrame CmbTable::asDataFrame() const {
 
 Rcpp::NumericMatrix CmbTable::asMatrix() const {
 
-    Rcpp::NumericMatrix m_out(cmb_map.size(), this->key_len + 2);
+    Rcpp::NumericMatrix m_out(cmb_map.size(), key_len + 2);
     cmbKey key;
     cmbData cmbdat;
 
     std::size_t this_idx = 0;
-    for(auto iter = cmb_map.begin(); iter != cmb_map.end(); ++iter) {
+    for (auto iter = cmb_map.begin(); iter != cmb_map.end(); ++iter) {
         key = iter->first;
         cmbdat = iter->second;
         m_out(this_idx, 0) = cmbdat.ID;
         m_out(this_idx, 1) = cmbdat.count;
-        for(int var=0; var < this->key_len; ++var) {
+        for (unsigned int var=0; var < key_len; ++var) {
             m_out(this_idx, var+2) = key.cmb[var];
         }
         ++this_idx;
     }
 
-    Rcpp::CharacterVector cvColNames = Rcpp::clone(this->cvVarNames);
+    Rcpp::CharacterVector cvColNames = Rcpp::clone(var_names_in);
     cvColNames.push_front("count");
     cvColNames.push_front("cmbid");
     Rcpp::colnames(m_out) = cvColNames;
@@ -129,6 +138,8 @@ RCPP_MODULE(mod_cmb_table) {
 
     .constructor
         ("Default constructor (combination vector of length 1)")
+    .constructor<int>
+        ("Length of the combination vector")
     .constructor<int, Rcpp::CharacterVector>
         ("Length of the combination vector, vector of variable names")
 
