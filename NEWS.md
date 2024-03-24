@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9300 (dev)
+# gdalraster 1.9.0.9310 (dev)
+
+* add `geos_version()`: get version information for the GEOS library in use by GDAL (2024-03-24)
 
 * class `CmbTable`: add a constructor that assigns default variable names (2024-03-23)
 

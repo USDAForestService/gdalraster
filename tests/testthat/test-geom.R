@@ -1,4 +1,6 @@
-skip_if_not(has_geos())
+test_that("geos_version returns a list of length 4", {
+    expect_length(geos_version(), 4)
+})
 
 test_that("intersect/union return correct values", {
     bbox_list <-list()

@@ -26,8 +26,16 @@
 
 .onAttach <- function(libname, pkgname) {
     msg <- gdal_version()[1]
+    if (!is.na(geos_version()$name))
+        geos_ver <- geos_version()$name
+    else
+        geos_ver <- "version unknown"
+    msg <- paste0(msg, ", GEOS ", geos_ver)
     if (!is.na(proj_version()$name))
-        msg <- paste0(msg, ", PROJ ", proj_version()$name)
+        proj_ver <- proj_version()$name
+    else
+        proj_ver <- "version unknown"
+    msg <- paste0(msg, ", PROJ ", proj_ver)
     packageStartupMessage(msg)
 }
 

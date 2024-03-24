@@ -656,6 +656,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _getGEOSVersion
+std::vector<int> _getGEOSVersion();
+RcppExport SEXP _gdalraster__getGEOSVersion() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(_getGEOSVersion());
+    return rcpp_result_gen;
+END_RCPP
+}
 // has_geos
 bool has_geos();
 RcppExport SEXP _gdalraster_has_geos() {
@@ -1231,6 +1241,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_supports_seq_write", (DL_FUNC) &_gdalraster_vsi_supports_seq_write, 2},
     {"_gdalraster_vsi_supports_rnd_write", (DL_FUNC) &_gdalraster_vsi_supports_rnd_write, 2},
     {"_gdalraster_vsi_get_disk_free_space", (DL_FUNC) &_gdalraster_vsi_get_disk_free_space, 1},
+    {"_gdalraster__getGEOSVersion", (DL_FUNC) &_gdalraster__getGEOSVersion, 0},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},

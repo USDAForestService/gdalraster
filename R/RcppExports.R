@@ -1859,6 +1859,12 @@ NULL
 #' @noRd
 NULL
 
+#' get GEOS version
+#' @noRd
+.getGEOSVersion <- function() {
+    .Call(`_gdalraster__getGEOSVersion`)
+}
+
 #' Is GEOS available?
 #'
 #' `has_geos()` returns a logical value indicating whether GDAL was built

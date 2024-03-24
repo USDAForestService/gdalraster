@@ -10,7 +10,8 @@
 
 #include <string>
 
-bool has_geos();
+std::vector<int> _getGEOSVersion();
+bool has_geos(); // GDAL built against GEOS is required at gdalraster 1.10
 
 std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type);
 bool _g_is_valid(std::string geom);

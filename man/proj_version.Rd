@@ -25,5 +25,6 @@ GDAL. Requires GDAL >= 3.0.1.
 proj_version()
 }
 \seealso{
-\code{\link[=gdal_version]{gdal_version()}}, \code{\link[=proj_search_paths]{proj_search_paths()}}, \code{\link[=proj_networking]{proj_networking()}}
+\code{\link[=gdal_version]{gdal_version()}}, \code{\link[=geos_version]{geos_version()}}, \code{\link[=proj_search_paths]{proj_search_paths()}},
+\code{\link[=proj_networking]{proj_networking()}}
 }

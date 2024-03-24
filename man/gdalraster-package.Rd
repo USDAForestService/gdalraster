@@ -64,7 +64,8 @@
   \code{\link[=bbox_intersect]{bbox_intersect()}},
   \code{\link[=bbox_union]{bbox_union()}},
   \code{\link[=g_buffer]{g_buffer()}},
-  \code{\link[=g_transform]{g_transform()}}
+  \code{\link[=g_transform]{g_transform()}},
+  \code{\link[=geos_version]{geos_version()}}
 
   \item data management: \code{\link[=addFilesInZip]{addFilesInZip()}},
   \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},

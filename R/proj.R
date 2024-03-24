@@ -16,7 +16,8 @@
 #' List elements will be `NA` if GDAL < 3.0.1.
 #'
 #' @seealso
-#' [gdal_version()], [proj_search_paths()], [proj_networking()]
+#' [gdal_version()], [geos_version()], [proj_search_paths()],
+#' [proj_networking()]
 #'
 #' @examples
 #' proj_version()
@@ -48,7 +49,7 @@ proj_version <- function() {
 #' Reference System C API. `NA` is returned if GDAL < 3.0.3.
 #'
 #' @seealso
-#' [gdal_version()], [proj_version()], [proj_networking()]
+#' [proj_version()], [proj_networking()]
 #'
 #' @examples
 #' proj_search_paths()
@@ -73,7 +74,7 @@ proj_search_paths <- function(paths=NULL) {
 #' Spatial Reference System C API). Logical `NA` is returned if GDAL < 3.4.
 #'
 #' @seealso
-#' [gdal_version()], [proj_version()], [proj_search_paths()]
+#' [proj_version()], [proj_search_paths()]
 #'
 #' \href{https://github.com/OSGeo/PROJ-data}{PROJ-data on GitHub},
 #' \href{https://cdn.proj.org/}{PROJ Content Delivery Network}
