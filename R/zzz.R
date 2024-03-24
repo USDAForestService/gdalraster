@@ -35,7 +35,7 @@
         proj_ver <- proj_version()$name
     else
         proj_ver <- "version unknown"
-    msg <- paste0(msg, ", PROJ ", proj_version()$name)
+    msg <- paste0(msg, ", PROJ ", proj_ver)
     packageStartupMessage(msg)
 }
 
