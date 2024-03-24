@@ -37,8 +37,6 @@ The base R function \code{utils::file_test()} could be used instead for file
 tests on regular local filesystems.
 }
 \examples{
-# for illustration only
-# this would normally be used with GDAL virtual filesystems
 data_dir <- system.file("extdata", package="gdalraster")
 vsi_stat(data_dir)
 vsi_stat(data_dir, "type")
