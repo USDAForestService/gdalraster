@@ -44,14 +44,15 @@ struct cmbHasher {
 
 class CmbTable {
     private:
-    int key_len;
-    Rcpp::CharacterVector cvVarNames;
+    unsigned int key_len;
+    Rcpp::CharacterVector var_names_in;
     double last_ID;
     std::unordered_map<cmbKey, cmbData, cmbHasher> cmb_map;
 
     public:
     CmbTable();
-    CmbTable(int keyLen, Rcpp::CharacterVector varNames);
+    CmbTable(unsigned int keyLen);
+    CmbTable(unsigned int keyLen, Rcpp::CharacterVector varNames);
 
     double update(const Rcpp::IntegerVector& int_cmb, double incr);
     Rcpp::NumericVector updateFromMatrix(const Rcpp::IntegerMatrix& int_cmbs,
