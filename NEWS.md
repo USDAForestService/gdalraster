@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9291 (dev)
+# gdalraster 1.9.0.9300 (dev)
+
+* class `CmbTable`: add a constructor that assigns default variable names (2024-03-23)
 
 * `ogrinfo()`: interface improvements, add argument `cout` (2024-03-23)
 
