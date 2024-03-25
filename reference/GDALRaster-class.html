@@ -16,7 +16,7 @@ details of the GDAL Raster API."><!-- mathjax --><script src="https://cdnjs.clou
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9310</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.9.0.9320</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -97,17 +97,18 @@ specifying dataset open options.</p></dd>
 
 <p>An object of class <code>GDALRaster</code> which contains a pointer to the
 opened dataset, and methods that operate on the dataset as described in
-Details.
-<code>GDALRaster</code> is a C++ class exposed directly to R (via
-<code>RCPP_EXPOSED_CLASS</code>). Methods of the class are accessed in R using the
+Details. <code>GDALRaster</code> is a C++ class exposed directly to R (via
+<code>RCPP_EXPOSED_CLASS</code>). Methods of the class are accessed using the
 <code>$</code> operator.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>The <code>$read()</code> method will perform automatic resampling if the
+    <p>If a dataset object is opened with update access (<code>read_only = FALSE</code>), it
+is not recommended to open a new dataset on the same underlying <code>filename</code>.</p>
+<p>The <code>$read()</code> method will perform automatic resampling if the
 specified output size (<code>out_xsize * out_ysize</code>) is different than
 the size of the region being read (<code>xsize * ysize</code>). In that case, the
-<code>GDAL_RASTERIO_RESAMPLING</code> configuration option could also be defined to
+<code>GDAL_RASTERIO_RESAMPLING</code> configuration option could also be set to
 override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</code>,
 <code>CUBICSPLINE</code>, <code>LANCZOS</code>, <code>AVERAGE</code> or <code>MODE</code> (see <code><a href="set_config_option.html">set_config_option()</a></code>).</p>
     </div>
