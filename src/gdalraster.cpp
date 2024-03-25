@@ -114,10 +114,8 @@ void GDALRaster::open(bool read_only) {
     if (fname_in == "")
         Rcpp::stop("'filename' is not set");
 
-    if (hDataset != nullptr) {
-        GDALClose(hDataset);
-        hDataset = nullptr;
-    }
+    if (hDataset != nullptr)
+        close();
 
     if (read_only)
         eAccess = GA_ReadOnly;
@@ -1289,10 +1287,13 @@ bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df) {
 }
 
 void GDALRaster::flushCache() {
-    _checkAccess(GA_ReadOnly);
-
-    // GDAL >= 3.7 has CPLErr return value (RFC 91)
-    GDALFlushCache(hDataset);
+    if (hDataset != nullptr)
+#if GDAL_VERSION_NUM >= 3070000
+        if (GDALFlushCache(hDataset) != CE_None)
+            Rcpp::warning("error occurred during GDALFlushCache()!");
+#else
+        GDALFlushCache(hDataset);
+#endif
 }
 
 int GDALRaster::getChecksum(int band, int xoff, int yoff,
@@ -1305,8 +1306,24 @@ int GDALRaster::getChecksum(int band, int xoff, int yoff,
 }
 
 void GDALRaster::close() {
-    // GDAL >= 3.7 has CPLErr return value (RFC 91)
+    // since the dataset was opened shared, and could still have a shared
+    // read-only handle (not recommended), or may be re-opened for read and
+    // is on a /vsicurl/ filesystem, make sure caches are flushed when access
+    // was GA_Update
+    if (eAccess == GA_Update) {
+        flushCache();
+        CPLPushErrorHandler(CPLQuietErrorHandler);
+        vsi_curl_clear_cache(true, fname_in);
+        CPLPopErrorHandler();
+    }
+
+#if GDAL_VERSION_NUM >= 3070000
+    if (GDALClose(hDataset) != CE_None)
+        Rcpp::warning("error occurred during GDALClose()!");
+#else
     GDALClose(hDataset);
+#endif
+
     hDataset = nullptr;
 }
 
@@ -1316,7 +1333,7 @@ void GDALRaster::close() {
 
 void GDALRaster::_checkAccess(GDALAccess access_needed) const {
     if (!isOpen())
-        Rcpp::stop("raster dataset is not open");
+        Rcpp::stop("dataset is not open");
 
     if (access_needed == GA_Update && eAccess == GA_ReadOnly)
         Rcpp::stop("dataset is read-only");
