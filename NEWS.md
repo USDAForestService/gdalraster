@@ -1,4 +1,6 @@
-# gdalraster 1.9.0.9310 (dev)
+# gdalraster 1.9.0.9320 (dev)
+
+* `GDALRaster::close()`: clear cache if needed, and check return values of `GDALClose()` and `GDALFlushCache()` if GDAL >= 3.7 (GDAL RFC 91) (2024-03-24)
 
 * add `geos_version()`: get version information for the GEOS library in use by GDAL (2024-03-24)
 
