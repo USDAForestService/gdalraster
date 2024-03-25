@@ -105,8 +105,7 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
 int vsi_copy_file(Rcpp::CharacterVector src_file,
                   Rcpp::CharacterVector target_file,
                   bool show_progess);
-void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix,
-                          bool quiet_error);
+void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix);
 Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
                                    int max_files);
 bool vsi_sync(Rcpp::CharacterVector src,

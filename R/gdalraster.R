@@ -23,9 +23,8 @@
 #' specifying dataset open options.
 #' @returns An object of class `GDALRaster` which contains a pointer to the
 #' opened dataset, and methods that operate on the dataset as described in
-#' Details.
-#' `GDALRaster` is a C++ class exposed directly to R (via
-#' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed in R using the
+#' Details. `GDALRaster` is a C++ class exposed directly to R (via
+#' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed using the
 #' `$` operator.
 #'
 #' @section Usage:
@@ -615,10 +614,13 @@
 #' \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
 #'
 #' @note
+#' If a dataset object is opened with update access (`read_only = FALSE`), it
+#' is not recommended to open a new dataset on the same underlying `filename`.
+#'
 #' The `$read()` method will perform automatic resampling if the
 #' specified output size (`out_xsize * out_ysize`) is different than
 #' the size of the region being read (`xsize * ysize`). In that case, the
-#' `GDAL_RASTERIO_RESAMPLING` configuration option could also be defined to
+#' `GDAL_RASTERIO_RESAMPLING` configuration option could also be set to
 #' override the default resampling to one of `BILINEAR`, `CUBIC`,
 #' `CUBICSPLINE`, `LANCZOS`, `AVERAGE` or `MODE` (see [set_config_option()]).
 #'

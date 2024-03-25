@@ -23,9 +23,8 @@ specifying dataset open options.}
 \value{
 An object of class \code{GDALRaster} which contains a pointer to the
 opened dataset, and methods that operate on the dataset as described in
-Details.
-\code{GDALRaster} is a C++ class exposed directly to R (via
-\code{RCPP_EXPOSED_CLASS}). Methods of the class are accessed in R using the
+Details. \code{GDALRaster} is a C++ class exposed directly to R (via
+\code{RCPP_EXPOSED_CLASS}). Methods of the class are accessed using the
 \code{$} operator.
 }
 \description{
@@ -35,10 +34,13 @@ and calling methods on the underlying \code{GDALDataset}, \code{GDALDriver} and
 details of the GDAL Raster API.
 }
 \note{
+If a dataset object is opened with update access (\code{read_only = FALSE}), it
+is not recommended to open a new dataset on the same underlying \code{filename}.
+
 The \verb{$read()} method will perform automatic resampling if the
 specified output size (\code{out_xsize * out_ysize}) is different than
 the size of the region being read (\code{xsize * ysize}). In that case, the
-\code{GDAL_RASTERIO_RESAMPLING} configuration option could also be defined to
+\code{GDAL_RASTERIO_RESAMPLING} configuration option could also be set to
 override the default resampling to one of \code{BILINEAR}, \code{CUBIC},
 \code{CUBICSPLINE}, \code{LANCZOS}, \code{AVERAGE} or \code{MODE} (see \code{\link[=set_config_option]{set_config_option()}}).
 }
