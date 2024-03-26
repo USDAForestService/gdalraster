@@ -1,74 +1,47 @@
-# gdalraster 1.9.0.9320 (dev)
+# gdalraster 1.10.0
 
-* `GDALRaster::close()`: clear cache if needed, and check return values of `GDALClose()` and `GDALFlushCache()` if GDAL >= 3.7 (GDAL RFC 91) (2024-03-24)
+## System requirements
 
-* add `geos_version()`: get version information for the GEOS library in use by GDAL (2024-03-24)
+* GDAL built against GEOS is now required
 
-* class `CmbTable`: add a constructor that assigns default variable names (2024-03-23)
+## GDAL VSI for operations on virtual file systems
 
-* `ogrinfo()`: interface improvements, add argument `cout` (2024-03-23)
+* add `vsi_get_fs_prefixes()`: get the list of prefixes for virtual file system handlers currently registered
+* add `vsi_get_fs_options()`: get the list of options associated with a virtual file system handler (for setting with `set_config_option()`)
+* add `vsi_supports_rnd_write()` and `vsi_supports_seq_write()`: test whether the filesystem supports random write or sequential write, conditional on whether a local temp file is allowed before uploading to the target location
+* add `vsi_get_disk_free_space()`: return the free disk space available on the filesystem
+* fixed misspelled argument in `vsi_copy_file()` and `vsi_sync()` (#233)
 
-* format diagnostic messages throughout for consistency and WRE guidelines (2024-03-22)
+## Other stand-alone functions
 
-* add `vsi_get_disk_free_space()`: return the free disk space available on the filesystem (2024-03-20)
+* add `ogrinfo()`: wrapper of the `ogrinfo` command-line utility, retrieve information about a vector data source and potentially edit data with SQL statements (GDAL >= 3.7)
+* add `ogr2ogr()`: wrapper of the `ogr2ogr` command-line utility, convert vector data between different formats
+* add `g_transform()`: apply a coordinate transformation to a WKT geometry
+* add `geos_version()`: get version information for the GEOS library in use by GDAL
+* add `push_error_handler()`: wrapper for `CPLPushErrorHandler()` in the GDAL Common Portability Library
+* add `pop_error_handler()`: wrapper for `CPLPopErrorHandler()` in the GDAL Common Portability Library
+* `calc()`: the argument `usePixelLonLat` is deprecated as unnecessary, variables `pixelLon` / `pixelLat` are now auto-detected if used in the calc expression; small performance improvement from computing `pixelY` only when needed
+* add optional argument `quiet` in several functions to configure progress reporting (#237)
+* make the dataset management functions quieter (#282)
+* `gdal_formats()` now returns a data frame with the supported raster and vector formats, and information about the capabilities of each format driver
 
-* add `push_error_handler()`: wrapper for `CPLPushErrorHandler()` in the GDAL Common Portability Library (2024-03-20)
+## CmbTable-class
 
-* add `pop_error_handler()`: wrapper for `CPLPopErrorHandler()` in the GDAL Common Portability Library (2024-03-20)
+* `new()`: assign default variable names in the constructor if names are not given
 
-* make the dataset management functions quieter (#282) (2024-03-20)
+## Internal
 
-* mass replace `NULL` -> `nullptr` in C++ code (2024-03-19)
-
-* deallocate objects in a few error handlers where needed (2024-03-18)
-
-* `GDALRaster::getMetadataDomainList()`: deallocate the returned string list (2024-03-18)
-
-* `buildRAT()`: add argument `quiet`, optionally suppress progress bar when computing unique VALUE, COUNT (2024-03-18)
-
-* remove internal `has_geos()` checks and update documentation, since GDAL with GEOS is now a system requirement (2024-03-18)
-
-* `configure.ac`: rework for GDAL built with GEOS system requirement (2024-03-17)
-
-* `calc()`: argument `usePixelLonLat` is deprecated as unnecessary, variables `pixelLon` / `pixelLat` are now auto-detected if used in the calc expression. Also add a small performance improvement from computing `pixelY` only when needed (2024-03-17)
-
-* fix up R code for `lintr` and add `.lintr` file (2024-03-17)
-
-* clean up temp files in examples throughout (2024-03-17)
-
-* `src/wkt_conv.cpp`: destroy OSR spatial ref objects in srs functions to avoid memory leaks (2024-03-17)
-
-* use `.editorconfig` file and bulk reformat code style (2024-03-16)
-
-* `configure.ac`: add back `proj-include` and `proj-lib`, the latter needed in some cases for source install on macOS (2024-03-12)
-
-* additional unit tests for geometry operations using GEOS via GDAL headers (2024-03-10)
-
-* additional error checks and `OGR_G_DestroyGeometry()` on created geometries in `src/geos_wkt.cpp` (2024-03-09)
-
-* add `vsi_supports_rnd_write()` and `vsi_supports_seq_write()`: test whether the filesystem supports random write or sequential write, dependent on whether a local temp file is allowed before uploading to the target location (2024-03-08)
-
-* add `vsi_get_fs_options()`: get the list of options associated with a virtual file system handler, for setting with `set_config_option()` (2024-03-06)
-
-* add `vsi_get_fs_prefixes()`: get the list of prefixes for virtual file system handlers currently registered (2024-03-06)
-
-* add `ogrinfo()`: wrapper of the `ogrinfo` command-line utility, retrieve information about a vector data source and potentially edit data with SQL statements (GDAL >= 3.7) (2024-03-04)
-
-* `gdal_formats()` now returns a data frame with the supported raster and vector formats, and information about the capabilities of each format driver (2024-03-04)
-
-* GDAL built with GEOS is now a system requirement, add test in `configure.ac` (2024-03-03)
-
-* add `ogr2ogr()`: wrapper of the `ogr2ogr` command-line utility, convert vector data between different formats (2024-03-03)
-
-* add optional argument `quiet` in several functions to configure progress reporting (#237) (2024-02-27)
-
-* fixed misspelled argument in `vsi_copy_file()` and `vsi_sync()` (#233) (2024-02-27)
-
-* add calls to `OGRCoordinateTransformation::DestroyCT()` in `src/geos_wkt.cpp` and `src/transform.cpp` - no known issues but fixes potential memory leak (2024-02-27)
-
-* free `*phGeometry` with `OGR_G_DestroyGeometry()` in `src/geos_wkt.cpp` and `src/wkt_conv.cpp` - no known issues but fixes potential memory leak (2024-02-27)
-
-* add `g_transform()`: apply a coordinate transformation to a WKT geometry (2024-02-26)
+* `src/geos_wkt.cpp`, `src/transform.cpp`, `src/wkt_conv.cpp`: deallocate some OGR geometry and OSR spatial ref objects to fix memory leaks
+* add more unit tests for geometry operations using GEOS via GDAL headers
+* `GDALRaster::getMetadataDomainList()`: deallocate the returned string list to avoid memory leak
+* `GDALRaster::close()`: clear cache if needed, and check the return values of `GDALClose()` and `GDALFlushCache()` if GDAL >= 3.7
+* `configure.ac`: add back `proj-include` and `proj-lib`, the latter needed in some cases for source install on macOS; rework for the system requirement of GDAL built against GEOS
+* remove internal `has_geos()` checks and update the documentation, since GDAL with GEOS is now required
+* add `.editorconfig` file and bulk reformat code style
+* fix up R code for `lintr` and add `.lintr` file
+* mass replace `NULL` -> `nullptr` in C++ code
+* format diagnostic messages throughout for consistency and follow guidelines given in "Writing R Extensions"
+* clean up temp files in the examples throughout
 
 # gdalraster 1.9.0
 
