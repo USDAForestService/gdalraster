@@ -208,3 +208,23 @@ g_transform <- function(wkt, srs_from, srs_to) {
 
     return(.g_transform(wkt, srs_from, srs_to))
 }
+
+#' Extract the geometry type name from a WKT geometry
+#'
+#' `g_name()` returns the name for this geometry type in well known text
+#' format.
+#'
+#' @param wkt Character. OGC WKT string for a simple feature geometry.
+#' @return WKT name for this geometry type.
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, elev_file)
+#' bbox_to_wkt(ds$bbox()) |> g_name()
+#' ds$close()
+g_name <- function(wkt) {
+    if (!(is.character(wkt) && length(wkt) == 1))
+        stop("'wkt' must be a length-1 character vector", call. = FALSE)
+
+    return(.g_name(wkt))
+}

@@ -154,6 +154,24 @@ bool _g_is_valid(std::string geom) {
     return ret;
 }
 
+//' @noRd
+// [[Rcpp::export(name = ".g_name")]]
+std::string _g_name(std::string geom) {
+// extract the geometry type name from a WKT geometry
+
+    OGRGeometryH hGeom = nullptr;
+    OGRErr err;
+    char* pszWKT = (char*) geom.c_str();
+
+    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
+    if (err != OGRERR_NONE || hGeom == nullptr)
+        Rcpp::stop("failed to create geometry object from WKT string");
+
+    std::string ret = OGR_G_GetGeometryName(hGeom);
+    OGR_G_DestroyGeometry(hGeom);
+    return ret;
+}
+
 
 // *** binary predicates ***
 
