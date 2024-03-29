@@ -1891,6 +1891,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_name <- function(geom) {
+    .Call(`_gdalraster__g_name`, geom)
+}
+
+#' @noRd
 .g_intersects <- function(this_geom, other_geom) {
     .Call(`_gdalraster__g_intersects`, this_geom, other_geom)
 }

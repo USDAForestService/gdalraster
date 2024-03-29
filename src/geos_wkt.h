@@ -15,6 +15,7 @@ bool has_geos(); // GDAL built against GEOS is required at gdalraster 1.10
 
 std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type);
 bool _g_is_valid(std::string geom);
+std::string _g_name(std::string geom);
 
 bool _g_intersects(std::string this_geom, std::string other_geom);
 bool _g_equals(std::string this_geom, std::string other_geom);

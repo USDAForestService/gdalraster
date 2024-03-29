@@ -699,6 +699,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _g_name
+std::string _g_name(std::string geom);
+RcppExport SEXP _gdalraster__g_name(SEXP geomSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
+    rcpp_result_gen = Rcpp::wrap(_g_name(geom));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _g_intersects
 bool _g_intersects(std::string this_geom, std::string other_geom);
 RcppExport SEXP _gdalraster__g_intersects(SEXP this_geomSEXP, SEXP other_geomSEXP) {
@@ -1245,6 +1256,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},
+    {"_gdalraster__g_name", (DL_FUNC) &_gdalraster__g_name, 1},
     {"_gdalraster__g_intersects", (DL_FUNC) &_gdalraster__g_intersects, 2},
     {"_gdalraster__g_equals", (DL_FUNC) &_gdalraster__g_equals, 2},
     {"_gdalraster__g_disjoint", (DL_FUNC) &_gdalraster__g_disjoint, 2},

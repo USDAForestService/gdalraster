@@ -64,6 +64,7 @@
   \code{\link[=bbox_intersect]{bbox_intersect()}},
   \code{\link[=bbox_union]{bbox_union()}},
   \code{\link[=g_buffer]{g_buffer()}},
+  \code{\link[=g_name]{g_name()}},
   \code{\link[=g_transform]{g_transform()}},
   \code{\link[=geos_version]{geos_version()}}
 

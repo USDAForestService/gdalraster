@@ -54,3 +54,10 @@ test_that("g_transform returns correct values", {
     ds$close()
     expect_equal(bbox_test, bbox_wgs84, tolerance = 0.001)
 })
+
+test_that("g_name returns correct values", {
+    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    ds <- new(GDALRaster, elev_file)
+    expect_equal(bbox_to_wkt(ds$bbox()) |> g_name(), "POLYGON")
+    ds$close()
+})
