@@ -1,3 +1,7 @@
+# gdalraster 1.10.9000 (dev)
+
+* add `g_name()`: extract the geometry type name from a WKT geometry (2024-03-28)
+
 # gdalraster 1.10.0
 
 ## System requirements
