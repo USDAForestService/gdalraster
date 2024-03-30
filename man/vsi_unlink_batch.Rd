@@ -21,7 +21,7 @@ All files should belong to the same file system handler.
 This is implemented efficiently for /vsis3/ and /vsigs/ (provided for
 /vsigs/ that OAuth2 authentication is used).
 This function is a wrapper for \code{VSIUnlinkBatch()} in the GDAL Common
-Portability Library. Requires GDAL >= 3.1
+Portability Library.
 }
 \examples{
 # for illustration only
@@ -29,15 +29,12 @@ Portability Library. Requires GDAL >= 3.1
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 
-# Requires GDAL >= 3.1
-if (as.integer(gdal_version()[2]) >= 3010000) {
-  tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
-  file.copy(elev_file,  tmp_elev)
-  tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
-  file.copy(tcc_file,  tmp_tcc)
-  result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
-  print(result)
-}
+tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
+file.copy(elev_file,  tmp_elev)
+tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
+file.copy(tcc_file,  tmp_tcc)
+result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
+print(result)
 }
 \seealso{
 \code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=vsi_rmdir]{vsi_rmdir()}}, \code{\link[=vsi_unlink]{vsi_unlink()}}

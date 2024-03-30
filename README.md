@@ -91,7 +91,7 @@ do not require any separate installation of external libraries for GDAL.
 
 #### Linux
 
-GDAL \>= 2.4.0 is required, but a more recent version is recommended
+GDAL \>= 3.1.0 is required, but a more recent version is recommended
 (e.g., \>= 3.6.4). GDAL built with GEOS is a system requirement as of
 **gdalraster** 1.10. GDAL as of 3.9 requires PROJ \>= 6.3.1, but a more
 recent version of PROJ is recommended. PROJ requires sqlite3, and

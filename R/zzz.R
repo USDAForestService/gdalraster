@@ -5,12 +5,9 @@
     if (dir.exists(system.file("proj", package="gdalraster"))) {
         gdalraster_proj <- system.file("proj", package="gdalraster")
         proj_path_set <- FALSE
-        if (as.integer(gdal_version()[2] >= 3000100)) {
-            # set with API
-            path_api <- proj_search_paths(gdalraster_proj)
-            if (normalizePath(path_api) == normalizePath(gdalraster_proj))
-                proj_path_set <- TRUE
-        }
+        path_api <- proj_search_paths(gdalraster_proj)
+        if (normalizePath(path_api) == normalizePath(gdalraster_proj))
+            proj_path_set <- TRUE
         if (!proj_path_set) {
             assign(".orig_proj_lib", Sys.getenv("PROJ_LIB"),
                    envir=.gdalraster_env)

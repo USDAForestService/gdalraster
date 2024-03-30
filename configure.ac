@@ -10,7 +10,7 @@
 # 2024-03-12: restore proj_include_path and proj_lib_path
 # 2024-03-17: rework GEOS test, include <ogr_api.h> in initial gdal_test.cpp
 
-AC_INIT([gdalraster],[1.10.9000],[chris.toney@usda.gov])
+AC_INIT([gdalraster],[1.10.9001],[chris.toney@usda.gov])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
@@ -103,14 +103,14 @@ else
 fi
 
 AC_MSG_NOTICE([GDAL: ${GDAL_VERSION}])
-AC_MSG_CHECKING([GDAL version >= 2.4.0])
+AC_MSG_CHECKING([GDAL version >= 3.1.0])
 
 GDAL_MAJ_VER=`echo $GDAL_VERSION | cut -d "." -f1`
 GDAL_MIN_VER=`echo $GDAL_VERSION | cut -d "." -f2`
 GDAL_PATCH_VER=`echo $GDAL_VERSION | cut -d "." -f3`
-if test ${GDAL_MAJ_VER} -lt 2 && test ${GDAL_MIN_VER} lt 4; then
+if test ${GDAL_MAJ_VER} -lt 3 && test ${GDAL_MIN_VER} lt 1; then
   AC_MSG_RESULT(no)
-  AC_MSG_ERROR([gdalraster is not compatible with GDAL versions below 2.4.0])
+  AC_MSG_ERROR([gdalraster is not compatible with GDAL versions below 3.1.0])
 else
    AC_MSG_RESULT(yes)
 fi

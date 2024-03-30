@@ -15,9 +15,7 @@
 std::vector<int> _getPROJVersion() {
     int major, minor, patch;
     major = minor = patch = NA_INTEGER;
-#if GDAL_VERSION_NUM >= 3000100
     OSRGetPROJVersion(&major, &minor, &patch);
-#endif
     std::vector<int> ret = {major, minor, patch};
     return ret;
 }
@@ -26,7 +24,6 @@ std::vector<int> _getPROJVersion() {
 //' @noRd
 // [[Rcpp::export(name = ".getPROJSearchPaths")]]
 Rcpp::CharacterVector _getPROJSearchPaths() {
-#if GDAL_VERSION_NUM >= 3000300
     char **papszPaths;
     papszPaths = OSRGetPROJSearchPaths();
 
@@ -43,15 +40,12 @@ Rcpp::CharacterVector _getPROJSearchPaths() {
         CSLDestroy(papszPaths);
         return "";
     }
-#endif
-    return NA_STRING;
 }
 
 //' set search path(s) for PROJ resource files
 //' @noRd
 // [[Rcpp::export(name = ".setPROJSearchPaths")]]
 void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
-#if GDAL_VERSION_NUM >= 3000000
     std::vector<char *> path_list = {nullptr};
     path_list.resize(paths.size() + 1);
     for (R_xlen_t i = 0; i < paths.size(); ++i) {
@@ -59,9 +53,6 @@ void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
     }
     path_list[paths.size()] = nullptr;
     OSRSetPROJSearchPaths(path_list.data());
-#else
-    Rcpp::Rcerr << "OSRSetPROJSearchPaths() requires GDAL 3.0 or later\n";
-#endif
     return;
 }
 
@@ -185,9 +176,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
             Rcpp::stop("failed to set well known GCS");
         }
     }
-#if GDAL_VERSION_NUM >= 3000000
     poLongLat->SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-#endif
 
     poCT = OGRCreateCoordinateTransformation(&oSourceSRS, poLongLat);
     if (poCT == nullptr) {
@@ -273,9 +262,8 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     err = oDestSRS.importFromWkt(srs_to.c_str());
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import destination SRS from WKT string");
-#if GDAL_VERSION_NUM >= 3000000
+
     oDestSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
-#endif
 
     poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
     if (poCT == nullptr)
