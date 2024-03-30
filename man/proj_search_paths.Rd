@@ -14,11 +14,11 @@ paths to set.}
 A character vector containing the currently used search path(s) for
 PROJ resource files. An empty string (\code{""}) is returned if no search paths
 are returned by the function \code{OSRGetPROJSearchPaths()} in the GDAL Spatial
-Reference System C API. \code{NA} is returned if GDAL < 3.0.3.
+Reference System C API.
 }
 \description{
 \code{proj_search_paths()} returns the search path(s) for PROJ resource files,
-optionally setting them first. Requires GDAL 3.0.3 or later.
+optionally setting them first.
 }
 \examples{
 proj_search_paths()

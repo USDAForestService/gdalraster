@@ -1,4 +1,6 @@
-# gdalraster 1.10.9000 (dev)
+# gdalraster 1.10.9001 (dev)
+
+* GDAL >= 3.1.0 is now required (previously >= 2.4.0) (2024-03-30)
 
 * add `g_name()`: extract the geometry type name from a WKT geometry (2024-03-28)
 
