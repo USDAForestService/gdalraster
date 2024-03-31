@@ -79,6 +79,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_to_wkt.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_transform.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/buildRAT.html</loc>
   </url>
   <url>
@@ -121,13 +124,67 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/footprint.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_area.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/g_buffer.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_centroid.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_contains.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_crosses.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_difference.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_disjoint.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_distance.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_equals.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_intersection.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_intersects.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_is_empty.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_is_valid.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_length.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/g_name.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_overlaps.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_sym_difference.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_touches.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/g_transform.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_union.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_within.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/gdal_formats.html</loc>

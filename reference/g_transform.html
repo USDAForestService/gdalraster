@@ -16,7 +16,7 @@ shifts, and changes of units."><!-- mathjax --><script src="https://cdnjs.cloudf
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9010</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,13 @@ shifts, and changes of units.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">g_transform</span><span class="op">(</span><span class="va">wkt</span>, <span class="va">srs_from</span>, <span class="va">srs_to</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">g_transform</span><span class="op">(</span></span>
+<span>  <span class="va">wkt</span>,</span>
+<span>  <span class="va">srs_from</span>,</span>
+<span>  <span class="va">srs_to</span>,</span>
+<span>  wrap_date_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  date_line_offset <span class="op">=</span> <span class="fl">10L</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -89,6 +95,17 @@ spatial reference system for the geometry given by <code>wkt</code>.</p></dd>
 <dd><p>Character string in OGC WKT format specifying the target
 spatial reference system.</p></dd>
 
+
+<dt>wrap_date_line</dt>
+<dd><p>Logical scalar. <code>TRUE</code> to correct geometries that
+incorrectly go from a longitude on a side of the antimeridian to the other
+side. Defaults to <code>FALSE</code>.</p></dd>
+
+
+<dt>date_line_offset</dt>
+<dd><p>Integer scalar. Longitude gap in degree. Defaults
+to <code>10</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -98,23 +115,39 @@ spatial reference system.</p></dd>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>This function only does reprojection on a point-by-point basis. It does not
-include advanced logic to deal with discontinuities at poles or antimeridian.</p>
+    <p>This function uses the <code>OGR_GeomTransformer_Create()</code> and
+<code>OGR_GeomTransformer_Transform()</code> functions in the GDAL API: "This is an
+enhanced version of <code>OGR_G_Transform()</code>. When reprojecting geometries from
+a Polar Stereographic projection or a projection naturally crossing the
+antimeridian (like UTM Zone 60) to a geographic CRS, it will cut geometries
+along the antimeridian. So a <code>LineString</code> might be returned as a
+<code>MultiLineString</code>."</p>
+<p>The <code>wrap_date_line = TRUE</code> option might be specified for circumstances to
+correct geometries that incorrectly go from a longitude on a side of the
+antimeridian to the other side, e.g., <code>LINESTRING (-179 0,179 0)</code> will be
+transformed to <code>MULTILINESTRING ((-179 0,-180 0),(180 0,179 0))</code>. For that
+use case, <code>srs_to</code> might be the same as <code>srs_from</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="bbox_from_wkt.html">bbox_from_wkt()</a></code>, <code><a href="bbox_to_wkt.html">bbox_to_wkt()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="bbox_transform.html">bbox_transform()</a></code></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">elev_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_elev.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">elev_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># the convenience function bbox_transform() does this:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="bbox_to_wkt.html">bbox_to_wkt</a></span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu">g_transform</span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="fu">getProjectionRef</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -113.28289   46.04764 -113.22629   46.07760</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">geom</span> <span class="op">&lt;-</span> <span class="st">"LINESTRING (-179 0,179 0)"</span></span></span>
+<span class="r-in"><span><span class="va">srs</span> <span class="op">&lt;-</span> <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">g_transform</span><span class="op">(</span><span class="va">geom</span>, <span class="va">srs</span>, <span class="va">srs</span>, <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "MULTILINESTRING ((-179 0,-180 0),(180 0,179 0))"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
