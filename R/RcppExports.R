@@ -1888,6 +1888,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_is_empty <- function(geom) {
+    .Call(`_gdalraster__g_is_empty`, geom)
+}
+
+#' @noRd
 .g_name <- function(geom) {
     .Call(`_gdalraster__g_name`, geom)
 }
@@ -1978,8 +1983,8 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_transform <- function(geom, srs_from, srs_to) {
-    .Call(`_gdalraster__g_transform`, geom, srs_from, srs_to)
+.g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE, date_line_offset = 10L) {
+    .Call(`_gdalraster__g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset)
 }
 
 #' Does vector dataset exist

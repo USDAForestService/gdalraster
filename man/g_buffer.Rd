@@ -4,7 +4,7 @@
 \alias{g_buffer}
 \title{Compute buffer of a WKT geometry}
 \usage{
-g_buffer(wkt, dist, quad_segs = 30)
+g_buffer(wkt, dist, quad_segs = 30L)
 }
 \arguments{
 \item{wkt}{Character. OGC WKT string for a simple feature 2D geometry.}
