@@ -155,6 +155,24 @@ bool _g_is_valid(std::string geom) {
 }
 
 //' @noRd
+// [[Rcpp::export(name = ".g_is_empty")]]
+bool _g_is_empty(std::string geom) {
+// Test if the geometry is empty.
+
+    OGRGeometryH hGeom = nullptr;
+    OGRErr err;
+    char* pszWKT = (char*) geom.c_str();
+
+    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
+    if (err != OGRERR_NONE || hGeom == nullptr)
+        Rcpp::stop("failed to create geometry object from WKT string");
+
+    bool ret = OGR_G_IsEmpty(hGeom);
+    OGR_G_DestroyGeometry(hGeom);
+    return ret;
+}
+
+//' @noRd
 // [[Rcpp::export(name = ".g_name")]]
 std::string _g_name(std::string geom) {
 // extract the geometry type name from a WKT geometry
@@ -407,7 +425,8 @@ bool _g_crosses(std::string this_geom, std::string other_geom) {
 // [[Rcpp::export(name = ".g_overlaps")]]
 bool _g_overlaps(std::string this_geom, std::string other_geom) {
 // Tests if this geometry and the other geometry overlap, that is their
-// intersection has a non-zero area.
+// intersection has a non-zero area (they have some but not all points in
+// common).
 // Geometry validity is not checked. In case you are unsure of the validity
 // of the input geometries, call _g_is_valid() before, otherwise the result
 // might be wrong.
@@ -793,7 +812,8 @@ Rcpp::NumericVector _g_centroid(std::string geom) {
 //' @noRd
 // [[Rcpp::export(name = ".g_transform")]]
 std::string _g_transform(std::string geom, std::string srs_from,
-        std::string srs_to) {
+        std::string srs_to, bool wrap_date_line = false,
+        int date_line_offset = 10) {
 // Returns a transformed geometry as WKT
 // Apply arbitrary coordinate transformation to geometry.
 // This function will transform the coordinates of a geometry from their
@@ -806,49 +826,78 @@ std::string _g_transform(std::string geom, std::string srs_from,
 // OGRCoordinateTransformation object, and the actual SRS of the geometry will
 // be ignored. On successful completion the output OGRSpatialReference of the
 // OGRCoordinateTransformation will be assigned to the geometry.
-// This function only does reprojection on a point-by-point basis. It does not
-// include advanced logic to deal with discontinuities at poles or antimeridian.
-// For that, use the OGR_GeomTransformer_Create() and
-// OGR_GeomTransformer_Transform() functions.
+// This function uses the OGR_GeomTransformer_Create() and
+// OGR_GeomTransformer_Transform() functions: this is a enhanced version of
+// OGR_G_Transform(). When reprojecting geometries from a Polar Stereographic
+// projection or a projection naturally crossing the antimeridian (like UTM
+// Zone 60) to a geographic CRS, it will cut geometries along the antimeridian.
+// So a LineString might be returned as a MultiLineString.
 
     OGRSpatialReference oSourceSRS, oDestSRS;
     OGRCoordinateTransformation *poCT;
+    OGRGeomTransformerH hGeomTransformer;
+    OGRGeometryH hGeom = nullptr;
+    OGRGeometryH hGeom2 = nullptr;
     OGRErr err;
 
-    err = oSourceSRS.importFromWkt(srs_from.c_str());
-    if (err != OGRERR_NONE)
-        Rcpp::stop("failed to import source SRS from WKT string");
-
-    err = oDestSRS.importFromWkt(srs_to.c_str());
-    if (err != OGRERR_NONE)
-        Rcpp::stop("failed to import destination SRS from WKT string");
-
-    poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
-    if (poCT == nullptr)
-        Rcpp::stop("failed to create coordinate transformer");
-
-    OGRGeometryH hGeom = nullptr;
     char* pszWKT = (char*) geom.c_str();
     err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
     if (err != OGRERR_NONE || hGeom == nullptr) {
-        OGRCoordinateTransformation::DestroyCT(poCT);
         Rcpp::stop("failed to create geometry object from WKT string");
     }
 
-    err = OGR_G_Transform(hGeom, OGRCoordinateTransformation::ToHandle(poCT));
+    err = oSourceSRS.importFromWkt(srs_from.c_str());
     if (err != OGRERR_NONE) {
+        OGR_G_DestroyGeometry(hGeom);
+        Rcpp::stop("failed to import source SRS from WKT string");
+    }
+
+    err = oDestSRS.importFromWkt(srs_to.c_str());
+    if (err != OGRERR_NONE) {
+        OGR_G_DestroyGeometry(hGeom);
+        Rcpp::stop("failed to import destination SRS from WKT string");
+    }
+
+    poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
+    if (poCT == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
+        Rcpp::stop("failed to create coordinate transformer");
+    }
+
+    std::vector<char *> options;
+    if (wrap_date_line) {
+        options.push_back((char *) "WRAPDATELINE=YES");
+        std::string offset = "DATELINEOFFSET=" +
+                std::to_string(date_line_offset);
+        options.push_back((char *) offset.c_str());
+    }
+    options.push_back(nullptr);
+
+    hGeomTransformer = OGR_GeomTransformer_Create(
+            OGRCoordinateTransformation::ToHandle(poCT), options.data());
+    if (hGeomTransformer == nullptr) {
         OGRCoordinateTransformation::DestroyCT(poCT);
+        OGR_G_DestroyGeometry(hGeom);
+        Rcpp::stop("failed to create geometry transformer");
+    }
+
+    hGeom2 = OGR_GeomTransformer_Transform(hGeomTransformer, hGeom);
+    if (hGeom2 == nullptr) {
+        OGRCoordinateTransformation::DestroyCT(poCT);
+        OGR_GeomTransformer_Destroy(hGeomTransformer);
         OGR_G_DestroyGeometry(hGeom);
         Rcpp::stop("transformation failed");
     }
 
     char* pszWKT_out;
-    OGR_G_ExportToWkt(hGeom, &pszWKT_out);
+    OGR_G_ExportToWkt(hGeom2, &pszWKT_out);
     std::string wkt_out(pszWKT_out);
     CPLFree(pszWKT_out);
 
     OGRCoordinateTransformation::DestroyCT(poCT);
+    OGR_GeomTransformer_Destroy(hGeomTransformer);
     OGR_G_DestroyGeometry(hGeom);
+    OGR_G_DestroyGeometry(hGeom2);
 
     return wkt_out;
 }

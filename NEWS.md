@@ -1,4 +1,8 @@
-# gdalraster 1.10.9001 (dev)
+# gdalraster 1.10.9010 (dev)
+
+* new additional geometry functions operating on WKT (GEOS via GDAL headers): `bbox_transform()`, `g_is_empty()`, `g_is_valid()`, `g_intersects()`, `g_equals()`, `g_disjoint()`, `g_touches()`, `g_contains()`, `g_within()`, `g_crosses()`,`g_overlaps()`, `g_intersection()`, `g_union()`, `g_difference()`, `g_sym_difference()`, `g_distance()`, `g_length()`, `g_area()`, `g_centroid()` (2024-03-20)
+
+* `g_transform()`: now uses `OGR_GeomTransformer_Create()` and `OGR_GeomTransformer_Transform()` in the GDAL API, enhanced version of `OGR_G_Transform()`; add arguments `wrap_date_line` and `date_line_offset` (2024-03-30)
 
 * GDAL >= 3.1.0 is now required (previously >= 2.4.0) (2024-03-30)
 
