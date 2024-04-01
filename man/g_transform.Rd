@@ -4,7 +4,13 @@
 \alias{g_transform}
 \title{Apply a coordinate transformation to a WKT geometry}
 \usage{
-g_transform(wkt, srs_from, srs_to)
+g_transform(
+  wkt,
+  srs_from,
+  srs_to,
+  wrap_date_line = FALSE,
+  date_line_offset = 10L
+)
 }
 \arguments{
 \item{wkt}{Character. OGC WKT string for a simple feature 2D geometry.}
@@ -14,6 +20,13 @@ spatial reference system for the geometry given by \code{wkt}.}
 
 \item{srs_to}{Character string in OGC WKT format specifying the target
 spatial reference system.}
+
+\item{wrap_date_line}{Logical scalar. \code{TRUE} to correct geometries that
+incorrectly go from a longitude on a side of the antimeridian to the other
+side. Defaults to \code{FALSE}.}
+
+\item{date_line_offset}{Integer scalar. Longitude gap in degree. Defaults
+to \code{10}.}
 }
 \value{
 Character string for a transformed OGC WKT geometry.
@@ -25,17 +38,33 @@ Normally this means reprojecting the vectors, but it could include datum
 shifts, and changes of units.
 }
 \note{
-This function only does reprojection on a point-by-point basis. It does not
-include advanced logic to deal with discontinuities at poles or antimeridian.
+This function uses the \code{OGR_GeomTransformer_Create()} and
+\code{OGR_GeomTransformer_Transform()} functions in the GDAL API: "This is an
+enhanced version of \code{OGR_G_Transform()}. When reprojecting geometries from
+a Polar Stereographic projection or a projection naturally crossing the
+antimeridian (like UTM Zone 60) to a geographic CRS, it will cut geometries
+along the antimeridian. So a \code{LineString} might be returned as a
+\code{MultiLineString}."
+
+The \code{wrap_date_line = TRUE} option might be specified for circumstances to
+correct geometries that incorrectly go from a longitude on a side of the
+antimeridian to the other side, e.g., \verb{LINESTRING (-179 0,179 0)} will be
+transformed to \verb{MULTILINESTRING ((-179 0,-180 0),(180 0,179 0))}. For that
+use case, \code{srs_to} might be the same as \code{srs_from}.
 }
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, elev_file)
+# the convenience function bbox_transform() does this:
 bbox_to_wkt(ds$bbox()) |>
   g_transform(ds$getProjectionRef(), epsg_to_wkt(4326)) |>
   bbox_from_wkt()
 ds$close()
+
+geom <- "LINESTRING (-179 0,179 0)"
+srs <- epsg_to_wkt(4326)
+g_transform(geom, srs, srs, TRUE)
 }
 \seealso{
-\code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=bbox_to_wkt]{bbox_to_wkt()}}
+\code{\link[=bbox_transform]{bbox_transform()}}
 }

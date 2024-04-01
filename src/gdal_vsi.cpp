@@ -433,7 +433,7 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 //' This is implemented efficiently for /vsis3/ and /vsigs/ (provided for
 //' /vsigs/ that OAuth2 authentication is used).
 //' This function is a wrapper for `VSIUnlinkBatch()` in the GDAL Common
-//' Portability Library. Requires GDAL >= 3.1
+//' Portability Library.
 //'
 //' @param filenames Character vector. The list of files to delete.
 //' @returns Invisibly, a logical vector of `length(filenames)` with values
@@ -450,22 +450,15 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 //'
-//' # Requires GDAL >= 3.1
-//' if (as.integer(gdal_version()[2]) >= 3010000) {
-//'   tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
-//'   file.copy(elev_file,  tmp_elev)
-//'   tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
-//'   file.copy(tcc_file,  tmp_tcc)
-//'   result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
-//'   print(result)
-//' }
+//' tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
+//' file.copy(elev_file,  tmp_elev)
+//' tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
+//' file.copy(tcc_file,  tmp_tcc)
+//' result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
+//' print(result)
 // [[Rcpp::export(invisible = true)]]
 SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames) {
 
-#if GDAL_VERSION_NUM < 3010000
-    Rcpp::stop("vsi_unlink_batch() requires GDAL >= 3.1");
-
-#else
     std::vector<std::string> filenames_in(filenames.size());
     std::vector<char *> filenames_cstr(filenames.size() + 1);
     for (R_xlen_t i = 0; i < filenames.size(); ++i) {
@@ -488,8 +481,6 @@ SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames) {
         VSIFree(result);
         return ret;
     }
-
-#endif
 }
 
 

@@ -699,6 +699,28 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _g_is_empty
+bool _g_is_empty(std::string geom);
+RcppExport SEXP _gdalraster__g_is_empty(SEXP geomSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
+    rcpp_result_gen = Rcpp::wrap(_g_is_empty(geom));
+    return rcpp_result_gen;
+END_RCPP
+}
+// _g_name
+std::string _g_name(std::string geom);
+RcppExport SEXP _gdalraster__g_name(SEXP geomSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
+    rcpp_result_gen = Rcpp::wrap(_g_name(geom));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _g_intersects
 bool _g_intersects(std::string this_geom, std::string other_geom);
 RcppExport SEXP _gdalraster__g_intersects(SEXP this_geomSEXP, SEXP other_geomSEXP) {
@@ -902,15 +924,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // _g_transform
-std::string _g_transform(std::string geom, std::string srs_from, std::string srs_to);
-RcppExport SEXP _gdalraster__g_transform(SEXP geomSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP) {
+std::string _g_transform(std::string geom, std::string srs_from, std::string srs_to, bool wrap_date_line, int date_line_offset);
+RcppExport SEXP _gdalraster__g_transform(SEXP geomSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP, SEXP wrap_date_lineSEXP, SEXP date_line_offsetSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type srs_from(srs_fromSEXP);
     Rcpp::traits::input_parameter< std::string >::type srs_to(srs_toSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_transform(geom, srs_from, srs_to));
+    Rcpp::traits::input_parameter< bool >::type wrap_date_line(wrap_date_lineSEXP);
+    Rcpp::traits::input_parameter< int >::type date_line_offset(date_line_offsetSEXP);
+    rcpp_result_gen = Rcpp::wrap(_g_transform(geom, srs_from, srs_to, wrap_date_line, date_line_offset));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1246,6 +1270,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},
+    {"_gdalraster__g_is_empty", (DL_FUNC) &_gdalraster__g_is_empty, 1},
+    {"_gdalraster__g_name", (DL_FUNC) &_gdalraster__g_name, 1},
     {"_gdalraster__g_intersects", (DL_FUNC) &_gdalraster__g_intersects, 2},
     {"_gdalraster__g_equals", (DL_FUNC) &_gdalraster__g_equals, 2},
     {"_gdalraster__g_disjoint", (DL_FUNC) &_gdalraster__g_disjoint, 2},
@@ -1263,7 +1289,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__g_length", (DL_FUNC) &_gdalraster__g_length, 1},
     {"_gdalraster__g_area", (DL_FUNC) &_gdalraster__g_area, 1},
     {"_gdalraster__g_centroid", (DL_FUNC) &_gdalraster__g_centroid, 1},
-    {"_gdalraster__g_transform", (DL_FUNC) &_gdalraster__g_transform, 3},
+    {"_gdalraster__g_transform", (DL_FUNC) &_gdalraster__g_transform, 5},
     {"_gdalraster__ogr_ds_exists", (DL_FUNC) &_gdalraster__ogr_ds_exists, 2},
     {"_gdalraster__create_ogr", (DL_FUNC) &_gdalraster__create_ogr, 11},
     {"_gdalraster__ogr_ds_layer_count", (DL_FUNC) &_gdalraster__ogr_ds_layer_count, 1},

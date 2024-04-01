@@ -15,6 +15,8 @@ bool has_geos(); // GDAL built against GEOS is required at gdalraster 1.10
 
 std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type);
 bool _g_is_valid(std::string geom);
+bool _g_is_empty(std::string geom);
+std::string _g_name(std::string geom);
 
 bool _g_intersects(std::string this_geom, std::string other_geom);
 bool _g_equals(std::string this_geom, std::string other_geom);
@@ -38,7 +40,7 @@ double _g_area(std::string geom);
 Rcpp::NumericVector _g_centroid(std::string geom);
 
 std::string _g_transform(std::string geom, std::string srs_from,
-        std::string srs_to);
+                         std::string srs_to, bool wrap_date_line,
+                         int date_line_offset);
 
 #endif
-

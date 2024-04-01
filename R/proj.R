@@ -5,15 +5,13 @@
 #'
 #' @description
 #' `proj_version()` returns version information for the PROJ library in use by
-#' GDAL. Requires GDAL >= 3.0.1.
+#' GDAL.
 #'
 #' @returns A list of length four containing:
 #'   * `name` - a string formatted as "major.minor.patch"
 #'   * `major` - major version as integer
 #'   * `minor` - minor version as integer
 #'   * `patch` - patch version as integer
-#'
-#' List elements will be `NA` if GDAL < 3.0.1.
 #'
 #' @seealso
 #' [gdal_version()], [geos_version()], [proj_search_paths()],
@@ -39,14 +37,14 @@ proj_version <- function() {
 #'
 #' @description
 #' `proj_search_paths()` returns the search path(s) for PROJ resource files,
-#' optionally setting them first. Requires GDAL 3.0.3 or later.
+#' optionally setting them first.
 #'
 #' @param paths Optional character vector containing one or more directory
 #' paths to set.
 #' @returns A character vector containing the currently used search path(s) for
 #' PROJ resource files. An empty string (`""`) is returned if no search paths
 #' are returned by the function `OSRGetPROJSearchPaths()` in the GDAL Spatial
-#' Reference System C API. `NA` is returned if GDAL < 3.0.3.
+#' Reference System C API.
 #'
 #' @seealso
 #' [proj_version()], [proj_networking()]

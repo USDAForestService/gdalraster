@@ -76,8 +76,28 @@ reference:
   - bbox_to_wkt
   - bbox_intersect
   - bbox_union
+  - bbox_transform
+  - g_area
   - g_buffer
+  - g_centroid
+  - g_contains
+  - g_crosses
+  - g_difference
+  - g_disjoint
+  - g_distance
+  - g_equals
+  - g_intersection
+  - g_intersects
+  - g_is_empty
+  - g_is_valid
+  - g_length
+  - g_name
+  - g_overlaps
+  - g_sym_difference
+  - g_touches
   - g_transform
+  - g_union
+  - g_within
   - geos_version
   - has_geos
 - subtitle: Data management

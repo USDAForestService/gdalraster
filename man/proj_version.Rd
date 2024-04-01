@@ -14,12 +14,10 @@ A list of length four containing:
 \item \code{minor} - minor version as integer
 \item \code{patch} - patch version as integer
 }
-
-List elements will be \code{NA} if GDAL < 3.0.1.
 }
 \description{
 \code{proj_version()} returns version information for the PROJ library in use by
-GDAL. Requires GDAL >= 3.0.1.
+GDAL.
 }
 \examples{
 proj_version()

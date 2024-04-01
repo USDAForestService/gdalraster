@@ -1621,7 +1621,7 @@ vsi_unlink <- function(filename) {
 #' This is implemented efficiently for /vsis3/ and /vsigs/ (provided for
 #' /vsigs/ that OAuth2 authentication is used).
 #' This function is a wrapper for `VSIUnlinkBatch()` in the GDAL Common
-#' Portability Library. Requires GDAL >= 3.1
+#' Portability Library.
 #'
 #' @param filenames Character vector. The list of files to delete.
 #' @returns Invisibly, a logical vector of `length(filenames)` with values
@@ -1638,15 +1638,12 @@ vsi_unlink <- function(filename) {
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 #'
-#' # Requires GDAL >= 3.1
-#' if (as.integer(gdal_version()[2]) >= 3010000) {
-#'   tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
-#'   file.copy(elev_file,  tmp_elev)
-#'   tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
-#'   file.copy(tcc_file,  tmp_tcc)
-#'   result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
-#'   print(result)
-#' }
+#' tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
+#' file.copy(elev_file,  tmp_elev)
+#' tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
+#' file.copy(tcc_file,  tmp_tcc)
+#' result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
+#' print(result)
 vsi_unlink_batch <- function(filenames) {
     invisible(.Call(`_gdalraster_vsi_unlink_batch`, filenames))
 }
@@ -1891,6 +1888,16 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_is_empty <- function(geom) {
+    .Call(`_gdalraster__g_is_empty`, geom)
+}
+
+#' @noRd
+.g_name <- function(geom) {
+    .Call(`_gdalraster__g_name`, geom)
+}
+
+#' @noRd
 .g_intersects <- function(this_geom, other_geom) {
     .Call(`_gdalraster__g_intersects`, this_geom, other_geom)
 }
@@ -1976,8 +1983,8 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_transform <- function(geom, srs_from, srs_to) {
-    .Call(`_gdalraster__g_transform`, geom, srs_from, srs_to)
+.g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE, date_line_offset = 10L) {
+    .Call(`_gdalraster__g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset)
 }
 
 #' Does vector dataset exist
