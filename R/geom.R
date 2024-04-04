@@ -148,11 +148,11 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' Transform a bounding box to a different projection
 #'
 #' `bbox_transform()` is a convenience function for:
-#' \preformatted{
+#' ```
 #' bbox_to_wkt(bbox) |>
 #'   g_transform(srs_from, srs_to) |>
 #'   bbox_from_wkt()
-#' }
+#' ```
 #'
 #' @param bbox Numeric vector of length four containing a bounding box
 #' (xmin, ymin, xmax, ymax) to transform.
@@ -169,6 +169,7 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' ds <- new(GDALRaster, elev_file)
+#' ds$bbox()
 #' bbox_transform(ds$bbox(), ds$getProjectionRef(), epsg_to_wkt(4326))
 #' ds$close()
 bbox_transform <- function(bbox, srs_from, srs_to) {
@@ -213,7 +214,7 @@ g_buffer <- function(wkt, dist, quad_segs = 30L) {
 #' Normally this means reprojecting the vectors, but it could include datum
 #' shifts, and changes of units.
 #'
-#' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
+#' @param wkt Character. OGC WKT string for a simple feature geometry.
 #' @param srs_from Character string in OGC WKT format specifying the
 #' spatial reference system for the geometry given by `wkt`.
 #' @param srs_to Character string in OGC WKT format specifying the target
