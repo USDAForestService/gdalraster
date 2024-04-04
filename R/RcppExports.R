@@ -1883,6 +1883,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_add_geom <- function(sub_geom, container) {
+    .Call(`_gdalraster__g_add_geom`, sub_geom, container)
+}
+
+#' @noRd
 .g_is_valid <- function(geom) {
     .Call(`_gdalraster__g_is_valid`, geom)
 }

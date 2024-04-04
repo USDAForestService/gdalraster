@@ -1,5 +1,3 @@
-skip_if_not(has_geos())
-
 test_that("geos functions work on wkt geometries", {
     elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file, read_only=TRUE)
@@ -32,14 +30,16 @@ test_that("geos functions work on wkt geometries", {
     x <- c(324467.3, 323909.4, 323794.2, 324970.7, 326420.0, 326389.6, 325298.1, 325298.1, 324467.3)
     y <- c(5104814.2, 5104365.4, 5103455.8, 5102885.8, 5103595.3, 5104747.5, 5104929.4, 5104929.4, 5104814.2)
     pt_xy <- cbind(x, y)
-    expect_true(startsWith(.g_create(pt_xy, "POLYGON"), "POLYGON"))
+
+    expect_true(.g_create(pt_xy, "POLYGON") |> g_is_valid())
+    expect_true((.g_create(pt_xy, "POLYGON") |> g_area()) > 0)
 
     pt_xy <- matrix(c(324171, 5103034.3), nrow=1, ncol=2)
     expect_error(.g_create(pt_xy, "POLYGON"))
     pt <- .g_create(pt_xy, "POINT")
 
     line_xy <- matrix(c(324171, 327711.7, 5103034.3, 5104475.9),
-                        nrow=2, ncol=2)
+                      nrow=2, ncol=2)
     expect_error(.g_create(line_xy, "POINT"))
     line <- .g_create(line_xy, "LINESTRING")
 
@@ -78,7 +78,7 @@ test_that("geos functions work on wkt geometries", {
     expect_error(.g_overlaps(bb, "invalid WKT"))
 
     expect_equal(round(bbox_from_wkt(.g_buffer(bnd, 100))),
-            round(c(323694.2, 5102785.8, 326520.0, 5105029.4)))
+                 round(c(323694.2, 5102785.8, 326520.0, 5105029.4)))
     expect_error(.g_buffer("invalid WKT", 100))
 
     expect_equal(round(.g_area(bnd)), 4039645)
