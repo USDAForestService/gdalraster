@@ -688,6 +688,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _g_add_geom
+std::string _g_add_geom(std::string sub_geom, std::string container);
+RcppExport SEXP _gdalraster__g_add_geom(SEXP sub_geomSEXP, SEXP containerSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type sub_geom(sub_geomSEXP);
+    Rcpp::traits::input_parameter< std::string >::type container(containerSEXP);
+    rcpp_result_gen = Rcpp::wrap(_g_add_geom(sub_geom, container));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _g_is_valid
 bool _g_is_valid(std::string geom);
 RcppExport SEXP _gdalraster__g_is_valid(SEXP geomSEXP) {
@@ -1268,6 +1280,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__getGEOSVersion", (DL_FUNC) &_gdalraster__getGEOSVersion, 0},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
+    {"_gdalraster__g_add_geom", (DL_FUNC) &_gdalraster__g_add_geom, 2},
     {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},
     {"_gdalraster__g_is_empty", (DL_FUNC) &_gdalraster__g_is_empty, 1},
     {"_gdalraster__g_name", (DL_FUNC) &_gdalraster__g_name, 1},
