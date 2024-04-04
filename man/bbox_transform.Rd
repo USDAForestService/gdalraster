@@ -22,15 +22,16 @@ Numeric vector of length four containing a transformed bounding box
 }
 \description{
 \code{bbox_transform()} is a convenience function for:
-\preformatted{
-bbox_to_wkt(bbox) |>
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{bbox_to_wkt(bbox) |>
   g_transform(srs_from, srs_to) |>
   bbox_from_wkt()
-}
+}\if{html}{\out{</div>}}
 }
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, elev_file)
+ds$bbox()
 bbox_transform(ds$bbox(), ds$getProjectionRef(), epsg_to_wkt(4326))
 ds$close()
 }

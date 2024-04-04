@@ -13,7 +13,7 @@ g_transform(
 )
 }
 \arguments{
-\item{wkt}{Character. OGC WKT string for a simple feature 2D geometry.}
+\item{wkt}{Character. OGC WKT string for a simple feature geometry.}
 
 \item{srs_from}{Character string in OGC WKT format specifying the
 spatial reference system for the geometry given by \code{wkt}.}
