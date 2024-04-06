@@ -5,6 +5,7 @@
 #define rcpp_util_H
 
 #include <Rcpp.h>
+#include <RcppInt64>
 
 Rcpp::NumericMatrix _df_to_matrix(Rcpp::DataFrame df);
 Rcpp::IntegerMatrix _df_to_int_matrix(Rcpp::DataFrame df);
