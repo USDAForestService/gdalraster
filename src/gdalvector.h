@@ -60,6 +60,9 @@ class GDALVector {
 
     double getFeatureCount();
     SEXP getNextFeature();
+    // fid must be a length-1 numeric vector, since numeric vector can carry
+    // the class attribute for integer64:
+    SEXP getFeature(Rcpp::NumericVector fid);
     void resetReading();
 
     void layerIntersection(
@@ -102,7 +105,8 @@ class GDALVector {
 
     // methods for internal use not exported to R
     void _checkAccess(GDALAccess access_needed) const;
-    OGRLayerH _getOGRLayerH();
+    OGRLayerH _getOGRLayerH() const;
+    Rcpp::List _featureToList(OGRFeatureH hFeature) const;
 };
 
 RCPP_EXPOSED_CLASS(GDALVector)

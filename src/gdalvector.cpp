@@ -1,7 +1,9 @@
 /* Implementation of class GDALVector
    Encapsulates one OGRLayer and its GDALDataset
-   Requires bit64 on the R side for the integer64 S3 class
+   Requires bit64 on the R side for its integer64 S3 type
    Chris Toney <chris.toney at usda.gov> */
+
+#include <cstdint>
 
 #include "gdal.h"
 #include "cpl_port.h"
@@ -380,67 +382,35 @@ SEXP GDALVector::getNextFeature() {
     _checkAccess(GA_ReadOnly);
 
     OGRFeatureH hFeature = OGR_L_GetNextFeature(hLayer);
-
-    if (hFeature != nullptr) {
-        Rcpp::List list_out = Rcpp::List::create();
-        int i;
-
-        int64_t FID = static_cast<int64_t>(OGR_F_GetFID(hFeature));
-        list_out.push_back(Rcpp::toInteger64(FID), "FID");
-
-        for (i = 0; i < OGR_FD_GetFieldCount(hFDefn); ++i) {
-            OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
-            if (hFieldDefn == nullptr)
-                Rcpp::stop("could not obtain field definition");
-
-            if (!OGR_F_IsFieldSet(hFeature, i) ||
-                    OGR_F_IsFieldNull(hFeature, i)) {
-                continue;
-            }
-
-            OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
-            if (fld_type == OFTInteger) {
-                int value = OGR_F_GetFieldAsInteger(hFeature, i);
-                list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
-            }
-            else if (fld_type == OFTInteger64) {
-                int64_t value = static_cast<int64_t>(
-                        OGR_F_GetFieldAsInteger64(hFeature, i));
-                list_out.push_back(Rcpp::toInteger64(value),
-                                   OGR_Fld_GetNameRef(hFieldDefn));
-            }
-            else if (fld_type == OFTReal) {
-                double value = OGR_F_GetFieldAsDouble(hFeature, i);
-                list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
-            }
-            else {
-                // TODO: support date, time, binary, etc.
-                // read as string for now
-                std::string value = OGR_F_GetFieldAsString(hFeature, i);
-                list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
-            }
-        }
-
-        for (i = 0; i < OGR_F_GetGeomFieldCount(hFeature); ++i) {
-            OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeature, i);
-            if (hGeom == nullptr)
-                Rcpp::stop("could not obtain geometry reference");
-            char* pszWKT;
-            OGR_G_ExportToWkt(hGeom, &pszWKT);
-            std::string wkt(pszWKT);
-            OGRGeomFieldDefnH hGeomFldDefn =
-                    OGR_F_GetGeomFieldDefnRef(hFeature, i);
-            if (hGeomFldDefn == nullptr)
-                Rcpp::stop("could not obtain geometry field def");
-            list_out.push_back(wkt, OGR_GFld_GetNameRef(hGeomFldDefn));
-            CPLFree(pszWKT);
-        }
-
-        return list_out;
-    }
-    else {
+    if (hFeature != nullptr)
+        return _featureToList(hFeature);
+    else
         return R_NilValue;
-    }
+}
+
+SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
+    // fid must be an R numeric vector of length 1
+    // i.e., a scalar but use NumericVector here since it can carry the class
+    // attribute for integer64
+    _checkAccess(GA_ReadOnly);
+
+    if (fid.size() != 1)
+        Rcpp::stop("'fid' must be a length-1 numeric vector (integer64)");
+
+    int64_t fid_in;
+
+    if (Rcpp::isInteger64(fid))
+        fid_in = Rcpp::fromInteger64(fid[0]);
+    else
+        fid_in = static_cast<int64_t>(fid[0]);
+
+    OGRFeatureH hFeature = OGR_L_GetFeature(hLayer,
+                                            static_cast<GIntBig>(fid_in));
+
+    if (hFeature != nullptr)
+        return _featureToList(hFeature);
+    else
+        return R_NilValue;
 }
 
 void GDALVector::resetReading() {
@@ -674,10 +644,68 @@ void GDALVector::_checkAccess(GDALAccess access_needed) const {
         Rcpp::stop("dataset is read-only");
 }
 
-OGRLayerH GDALVector::_getOGRLayerH() {
+OGRLayerH GDALVector::_getOGRLayerH() const {
     _checkAccess(GA_ReadOnly);
 
     return hLayer;
+}
+
+Rcpp::List GDALVector::_featureToList(OGRFeatureH hFeature) const {
+    Rcpp::List list_out = Rcpp::List::create();
+    int i;
+
+    int64_t FID = static_cast<int64_t>(OGR_F_GetFID(hFeature));
+    list_out.push_back(Rcpp::toInteger64(FID), "FID");
+
+    for (i = 0; i < OGR_FD_GetFieldCount(hFDefn); ++i) {
+        OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
+        if (hFieldDefn == nullptr)
+            Rcpp::stop("could not obtain field definition");
+
+        if (!OGR_F_IsFieldSet(hFeature, i) ||
+                OGR_F_IsFieldNull(hFeature, i)) {
+            continue;
+        }
+
+        OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+        if (fld_type == OFTInteger) {
+            int value = OGR_F_GetFieldAsInteger(hFeature, i);
+            list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
+        }
+        else if (fld_type == OFTInteger64) {
+            int64_t value = static_cast<int64_t>(
+                    OGR_F_GetFieldAsInteger64(hFeature, i));
+            list_out.push_back(Rcpp::toInteger64(value),
+                                OGR_Fld_GetNameRef(hFieldDefn));
+        }
+        else if (fld_type == OFTReal) {
+            double value = OGR_F_GetFieldAsDouble(hFeature, i);
+            list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
+        }
+        else {
+            // TODO: support date, time, binary, etc.
+            // read as string for now
+            std::string value = OGR_F_GetFieldAsString(hFeature, i);
+            list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
+        }
+    }
+
+    for (i = 0; i < OGR_F_GetGeomFieldCount(hFeature); ++i) {
+        OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeature, i);
+        if (hGeom == nullptr)
+            Rcpp::stop("could not obtain geometry reference");
+        char* pszWKT;
+        OGR_G_ExportToWkt(hGeom, &pszWKT);
+        std::string wkt(pszWKT);
+        OGRGeomFieldDefnH hGeomFldDefn =
+                OGR_F_GetGeomFieldDefnRef(hFeature, i);
+        if (hGeomFldDefn == nullptr)
+            Rcpp::stop("could not obtain geometry field def");
+        list_out.push_back(wkt, OGR_GFld_GetNameRef(hGeomFldDefn));
+        CPLFree(pszWKT);
+    }
+
+    return list_out;
 }
 
 // ****************************************************************************
@@ -736,6 +764,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Fetch the feature count in this layer")
     .method("getNextFeature", &GDALVector::getNextFeature,
         "Fetch the next available feature from this layer")
+    .method("getFeature", &GDALVector::getFeature,
+        "Fetch a feature by its identifier")
     .method("resetReading", &GDALVector::resetReading,
         "Reset feature reading to start on the first feature")
     .method("layerIntersection", &GDALVector::layerIntersection,
