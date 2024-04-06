@@ -140,8 +140,8 @@ operate on vector datasets: <code><a href="../reference/copyDatasetFiles.html">c
 <code>.ogr_field_create()</code>
 </li>
 <li>existing wrappers <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> and <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code>
-from the gdal_utils.h API (<strong>gdalraster</strong> 1.9.0.9080
-dev)</li>
+from the gdal_utils.h API (<strong>gdalraster</strong> 1.10.0 CRAN
+release)</li>
 <li>add <code>ogr_execute_sql()</code>: execute an SQL statement against
 the data store for <code>CREATE INDEX</code>, <code>DROP INDEX</code>,
 <code>ALTER TABLE</code>, <code>DROP TABLE</code> (a SQL
@@ -710,7 +710,7 @@ implemented to properly release resources in case an object of class
 </h2>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## WorldCover Sentinel-2 annual composites</span></span>
-<span><span class="co">## see: https://blog.vito.be/remotesensing/worldcover-annual-composites</span></span>
+<span><span class="co">## https://blog.vito.be/remotesensing/worldcover-annual-composites</span></span>
 <span><span class="co">## tile index lookup on remote filesystem and obtain raster data</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
@@ -847,8 +847,12 @@ implemented to properly release resources in case an object of class
 <span>            xlab <span class="op">=</span> <span class="st">"longitude"</span>,</span>
 <span>            ylab <span class="op">=</span> <span class="st">"latitude"</span>,</span>
 <span>            main <span class="op">=</span> <span class="va">txt</span><span class="op">)</span></span></code></pre></div>
-<p>ds<span class="math inline">\(close()
-lyr_ynp\)</span>close() lyr_tiles$close() ```</p>
+<p><img src="img/worldcov2021_N44W110_S2RGBNIR_ex.png"><!-- --></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p><sup>Created on 2024-04-06 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.0</a></sup></p>
 </div>
 <div class="section level2">
