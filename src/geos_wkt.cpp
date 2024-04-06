@@ -59,25 +59,30 @@ bool has_geos() {
 // [[Rcpp::export(name = ".g_create")]]
 std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 // Create a geometry from a list of points (vertices).
-// Currently only for POINT, LINESTRING, POLYGON.
-// Only simple polygons composed of one exterior ring are supported.
+// Currently for POINT, MULTIPOINT, LINESTRING, POLYGON.
+// Only simple polygons composed of one ring are supported.
 
     OGRGeometryH hGeom = nullptr;
+    OGRErr err;
 
-    if (geom_type == "point" || geom_type == "POINT") {
+    if (EQUALN(geom_type.c_str(), "POINT", 5)) {
         geom_type = "POINT";
         hGeom = OGR_G_CreateGeometry(wkbPoint);
     }
-    else if (geom_type == "linestring" || geom_type == "LINESTRING") {
+    else if (EQUALN(geom_type.c_str(), "MULTIPOINT", 10)) {
+        geom_type = "MULTIPOINT";
+        hGeom = OGR_G_CreateGeometry(wkbMultiPoint);
+    }
+    else if (EQUALN(geom_type.c_str(), "LINESTRING", 10)) {
         geom_type = "LINESTRING";
         hGeom = OGR_G_CreateGeometry(wkbLineString);
     }
-    else if (geom_type == "polygon" || geom_type == "POLYGON") {
+    else if (EQUALN(geom_type.c_str(), "POLYGON", 7)) {
         geom_type = "POLYGON";
         hGeom = OGR_G_CreateGeometry(wkbLinearRing);
     }
     else {
-        Rcpp::stop("geometry type is not valid");
+        Rcpp::stop("geometry type not supported");
     }
 
     if (hGeom == nullptr)
@@ -100,21 +105,32 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
         }
         if (geom_type == "POLYGON" && nPts < 4) {
             OGR_G_DestroyGeometry(hGeom);
-            Rcpp::stop("polygon geometry must have at least four points");
+            Rcpp::stop("polygon must have at least four points");
         }
 
-        OGR_G_SetPointCount(hGeom, (int) nPts);
-        for (R_xlen_t i=0; i < nPts; ++i)
-            OGR_G_SetPoint_2D(hGeom, i, xy(i, 0), xy(i, 1));
+        if (geom_type == "MULTIPOINT") {
+            for (R_xlen_t i=0; i < nPts; ++i) {
+                OGRGeometryH hPt = OGR_G_CreateGeometry(wkbPoint);
+                OGR_G_SetPoint_2D(hPt, 0, xy(i, 0), xy(i, 1));
+                err = OGR_G_AddGeometryDirectly(hGeom, hPt);
+                if (err != OGRERR_NONE)
+                    Rcpp::stop("failed to add POINT to MULTIPOINT");
+            }
+        }
+        else {
+            OGR_G_SetPointCount(hGeom, (int) nPts);
+            for (R_xlen_t i=0; i < nPts; ++i)
+                OGR_G_SetPoint_2D(hGeom, i, xy(i, 0), xy(i, 1));
+        }
     }
 
     if (geom_type == "POLYGON") {
         OGRGeometryH hPoly = OGR_G_CreateGeometry(wkbPolygon);
-
         CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", "NO");
-        if (OGR_G_AddGeometryDirectly(hPoly, hGeom) != OGRERR_NONE)
-            Rcpp::stop("failed to create polygon geometry (unclosed ring?)");
+        err = OGR_G_AddGeometryDirectly(hPoly, hGeom);
         CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", nullptr);
+        if (err != OGRERR_NONE)
+            Rcpp::stop("failed to create polygon geometry (unclosed ring?)");
 
         char* pszWKT;
         OGR_G_ExportToWkt(hPoly, &pszWKT);
@@ -131,6 +147,56 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
         OGR_G_DestroyGeometry(hGeom);
         return wkt;
     }
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_add_geom")]]
+std::string _g_add_geom(std::string sub_geom, std::string container) {
+// Add a geometry to a geometry container.
+// LINEARRING (as POLYGON) to POLYGON, POINT to MULTIPOINT, LINESTRING to
+// MULTILINESTRING, or POLYGON to MULTIPOLYGON
+
+    OGRGeometryH hSubGeom = nullptr;
+    OGRGeometryH hGeom = nullptr;
+    OGRErr err;
+    char* pszWKT_sub = (char*) sub_geom.c_str();
+    char* pszWKT_container = (char*) container.c_str();
+
+    err = OGR_G_CreateFromWkt(&pszWKT_sub, nullptr, &hSubGeom);
+    if (err != OGRERR_NONE || hSubGeom == nullptr)
+        Rcpp::stop("failed to create geometry object for 'sub_geom'");
+
+    err = OGR_G_CreateFromWkt(&pszWKT_container, nullptr, &hGeom);
+    if (err != OGRERR_NONE || hGeom == nullptr) {
+        OGR_G_DestroyGeometry(hSubGeom);
+        Rcpp::stop("failed to create geometry object for 'container'");
+    }
+
+    CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", "NO");
+
+    if (EQUALN(OGR_G_GetGeometryName(hGeom), "POLYGON", 7) &&
+            EQUALN(OGR_G_GetGeometryName(hSubGeom), "POLYGON", 7)) {
+        // interpret sub_geom as one linearring
+
+        OGRGeometryH hRing = OGR_G_GetGeometryRef(hSubGeom, 0);
+        err = OGR_G_AddGeometry(hGeom, hRing);
+        if (err != OGRERR_NONE)
+            Rcpp::stop("failed to add 'sub_geom' to 'container'");
+    }
+    else {
+        err = OGR_G_AddGeometryDirectly(hGeom, hSubGeom);
+        if (err != OGRERR_NONE)
+            Rcpp::stop("failed to add 'sub_geom' to 'container'");
+    }
+
+    CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", nullptr);
+
+    char* pszWKT;
+    OGR_G_ExportToWkt(hGeom, &pszWKT);
+    std::string wkt(pszWKT);
+    CPLFree(pszWKT);
+    OGR_G_DestroyGeometry(hGeom);
+    return wkt;
 }
 
 //' @noRd
