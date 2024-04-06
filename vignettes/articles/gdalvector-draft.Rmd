@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-03-10
+Last modified: 2024-04-06
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -45,7 +45,7 @@ An attribute field definition is a list with named elements:
 
 ```
 $type       : OGR Field Type ("OFTString", "OFTInteger", ...)
-$subtype    : optional ("OFSTBoolean", ...) 
+$subtype    : optional ("OFSTBoolean", ...)
 $width      : optional max number of characters
 $precision  : optional number of digits after the decimal point
 $is_nullable: optional NOT NULL constraint (logical scalar)
@@ -66,7 +66,7 @@ $is_ignored : whether ignored when retrieving features (logical scalar)
 $is_geom    : TRUE for geometry fields
 ```
 
-An OGR Feature &ndash; as read by `GDALVector::getNextFeature()` or `GDALVector::getFeature()`, or as passed to write methods &ndash; is a list with the unique feature identifier (FID), attribute and geometry field names, and their values. `GDALVector::getFeatureSet()` will return a set of features as a data frame. (Note that FID is an `int64` type in GDAL. Handling of `int64` TBD, currently as R `double` type).
+An OGR Feature &ndash; as read by `GDALVector::getNextFeature()` or `GDALVector::getFeature()`, or as passed to write methods &ndash; is a list with the unique feature identifier (FID), attribute and geometry field names, and their values. `GDALVector::getFeatureSet()` will return a set of features as a data frame.
 
 An OGR Geometry is represented in R as a character string containing OGC Well Known Text (WKT). Likewise, an OGR Spatial Reference, which encapsulates the definition of a projection and datum, is represented in R as WKT. **gdalraster** has existing functions for working with spatial reference systems as WKT (`srs_to_wkt()`, `srs_is_projected()`, etc.), and a set of geometry convenience functions also operating on WKT (GEOS via GDAL headers).
 
@@ -80,7 +80,7 @@ The header file can be referenced for the public class methods that have been im
 
 <https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h>
 
-This does not include definitions of several stand-alone functions that will provide schema management. The existing definitions in `src/ogr_util.h` are a starting point for those. An **Rcpp** `.finalizer` function will be implemented to properly release resources in case an object of class `GDALVector` is garbage collected without an explicit call to `close()`. Also note that `GIntBig` is currently a placeholder type in the class definition. It is the type currently defined in the OGR API. For now it would be implemented as R numeric (i.e., `double`), with `int64` handling TBD.
+This does not include definitions of several stand-alone functions that will provide schema management. The existing definitions in `src/ogr_util.h` are a starting point for those. An **Rcpp** `.finalizer` function will be implemented to properly release resources in case an object of class `GDALVector` is garbage collected without an explicit call to `close()`. Support for 64-bit integers requires **bit64** on the R side, with conversions in C++ using **RcppInt64**.
 
 ```cpp
 class GDALVector {
@@ -94,7 +94,7 @@ class GDALVector {
 	GDALAccess eAccess;
 	OGRLayerH hLayer;
 	OGRFeatureDefnH hFDefn;
-	
+
 	public:
 	GDALVector();
 	GDALVector(Rcpp::CharacterVector dsn);
@@ -118,30 +118,30 @@ class GDALVector {
 	std::string getSpatialRef() const;
 	Rcpp::NumericVector bbox();
 	Rcpp::List getLayerDefn() const;
-	
+
 	void setAttributeFilter(std::string query);
 	void setSpatialFilterRect(Rcpp::NumericVector bbox);
 	void setSpatialFilter(std::string wkt);
 	std::string getSpatialFilter() const;
 	void clearSpatialFilter();
-	
+
 	double getFeatureCount();
 	SEXP getNextFeature();
 	void resetReading();
 	// int64 handling TBD
-	SEXP getFeature(GIntBig fid);
-	void setNextByIndex(GIntBig fid);
+	SEXP getFeature(int64_t fid);
+	void setNextByIndex(int64_t fid);
 	void setIgnoredFields(Rcpp::CharacterVector fields);
-	
+
 	Rcpp::DataFrame getFeatureSet(Rcpp::CharacterVector fields,
 	                              bool geom_column);
-	
-	// int64 handling TBD
-	GIntBig createFeature(Rcpp::List feat);
-	GIntBig setFeature(Rcpp::List feat);
-	GIntBig upsertFeature(Rcpp::List feat);
-	GIntBig deleteFeature(GIntBig fid);
-	
+
+	// returning the FID of the affected feature if successful
+	int64_t createFeature(Rcpp::List feat);
+	int64_t setFeature(Rcpp::List feat);
+	int64_t upsertFeature(Rcpp::List feat);
+	int64_t deleteFeature(int64_t fid);
+
 	bool startTransaction(bool force);
 	bool commitTransaction();
 	bool rollbackTransaction();
@@ -183,7 +183,7 @@ class GDALVector {
 			Rcpp::Nullable<Rcpp::CharacterVector> options);
 
 	void close();
-	
+
 	// methods for internal use not exported to R
 	void _checkAccess(GDALAccess access_needed) const;
 	OGRLayerH _getOGRLayerH();
@@ -195,9 +195,10 @@ RCPP_EXPOSED_CLASS(GDALVector)
 ## Example: usage for class GDALVector
 
 ``` r
+## usage for GDALVector class
 
 library(gdalraster)
-#> GDAL 3.8.3, released 2024/01/04, PROJ 9.3.1
+#> GDAL 3.8.4, released 2024/02/08, GEOS 3.12.1, PROJ 9.3.1
 
 # MTBS fires in Yellowstone National Park 1984-2022
 f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
@@ -206,6 +207,20 @@ dsn <- paste0("/vsimem/", basename(f))
 vsi_copy_file(f, dsn)
 
 lyr <- new(GDALVector, dsn, "mtbs_perims")
+
+# object of class GDALVector
+lyr
+#> C++ object <0x58a6a88edc80> of class 'GDALVector' <0x58a6a2fce150>
+str(lyr)
+#> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 0 fields
+#>  list()
+#>  and 44 methods, of which 30 are  possibly relevant:
+#>    bbox, clearSpatialFilter, close, finalize, getDriverLongName,
+#>    getDriverShortName, getDsn, getFeatureCount, getFIDColumn, getFileList,
+#>    getGeometryColumn, getGeomType, getLayerDefn, getName, getNextFeature,
+#>    getSpatialRef, initialize, isOpen, layerClip, layerErase, layerIdentity,
+#>    layerIntersection, layerSymDifference, layerUnion, layerUpdate, open,
+#>    resetReading, setAttributeFilter, setSpatialFilterRect, testCapability
 
 # dataset info
 lyr$getDriverShortName()
@@ -257,7 +272,7 @@ lyr$testCapability("RandomWrite")
 # feature class definition - a list of fields and their definitions
 defn <- lyr$getLayerDefn()
 names(defn)
-#>  [1] "event_id"     "incid_name"   "incid_type"   "map_id"       "burn_bnd_ac" 
+#>  [1] "event_id"     "incid_name"   "incid_type"   "map_id"       "burn_bnd_ac"
 #>  [6] "burn_bnd_lat" "burn_bnd_lon" "ig_date"      "ig_year"      "geom"
 
 # each list element holds a field definition list
@@ -359,12 +374,12 @@ feat <- lyr$getNextFeature()
 # a list of field names and their values
 str(feat)
 #> List of 11
-#>  $ FID         : num 1
+#>  $ FID         :integer64 1
 #>  $ event_id    : chr "WY4413411069519870807"
 #>  $ incid_name  : chr "POLECAT"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      : num 1e+07
-#>  $ burn_bnd_ac : num 1093
+#>  $ map_id      :integer64 10015934
+#>  $ burn_bnd_ac :integer64 1093
 #>  $ burn_bnd_lat: chr "44.132"
 #>  $ burn_bnd_lon: chr "-110.696"
 #>  $ ig_date     : chr "1987/08/07"
@@ -379,12 +394,12 @@ lyr$getFeatureCount()
 feat <- lyr$getNextFeature()
 str(feat)
 #> List of 11
-#>  $ FID         : num 61
+#>  $ FID         :integer64 61
 #>  $ event_id    : chr "WY4438911082120200822"
 #>  $ incid_name  : chr "LONE STAR"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      : num 1e+07
-#>  $ burn_bnd_ac : num 3348
+#>  $ map_id      :integer64 10020495
+#>  $ burn_bnd_ac :integer64 3348
 #>  $ burn_bnd_lat: chr "44.4"
 #>  $ burn_bnd_lon: chr "-110.782"
 #>  $ ig_date     : chr "2020/08/22"
@@ -401,12 +416,12 @@ lyr$resetReading()
 feat <- lyr$getNextFeature()
 str(feat)
 #> List of 11
-#>  $ FID         : num 61
+#>  $ FID         :integer64 61
 #>  $ event_id    : chr "WY4438911082120200822"
 #>  $ incid_name  : chr "LONE STAR"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      : num 1e+07
-#>  $ burn_bnd_ac : num 3348
+#>  $ map_id      :integer64 10020495
+#>  $ burn_bnd_ac :integer64 3348
 #>  $ burn_bnd_lat: chr "44.4"
 #>  $ burn_bnd_lon: chr "-110.782"
 #>  $ ig_date     : chr "2020/08/22"
@@ -424,12 +439,12 @@ lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
 feat <- lyr$getNextFeature()
 str(feat)
 #> List of 11
-#>  $ FID         : num 7
+#>  $ FID         :integer64 7
 #>  $ event_id    : chr "WY4470811082119880722"
 #>  $ incid_name  : chr "NORTH FORK"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      : num 1e+07
-#>  $ burn_bnd_ac : num 563527
+#>  $ map_id      :integer64 10014217
+#>  $ burn_bnd_ac :integer64 563527
 #>  $ burn_bnd_lat: chr "44.678"
 #>  $ burn_bnd_lon: chr "-110.716"
 #>  $ ig_date     : chr "1988/07/22"
@@ -457,34 +472,33 @@ lyr$close()
 vsi_unlink(dsn)
 ```
 
+<sup>Created on 2024-04-06 with [reprex v2.1.0](https://reprex.tidyverse.org)</sup>
+
 ## Example: layer geoprocessing
 
 ``` r
-
 ## layer intersection example
 
 library(gdalraster)
-#> GDAL 3.8.3, released 2024/01/04, PROJ 9.3.1
+#> GDAL 3.8.4, released 2024/02/08, GEOS 3.12.1, PROJ 9.3.1
 
 # MTBS fires in Yellowstone National Park 1984-2022
 dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 lyr <- new(GDALVector, dsn, "mtbs_perims")
 
 # largest 1988 fire (FID from the example above)
-# Note that retrieving a feature by FID would normally be done with
-# lyr$getFeature(fid), but that method is not exposed in the prototype yet.
 lyr$setAttributeFilter("FID = 7")
 lyr$getFeatureCount()
 #> [1] 1
 feat <- lyr$getNextFeature()
 str(feat)
 #> List of 11
-#>  $ FID         : num 7
+#>  $ FID         :integer64 7
 #>  $ event_id    : chr "WY4470811082119880722"
 #>  $ incid_name  : chr "NORTH FORK"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      : num 1e+07
-#>  $ burn_bnd_ac : num 563527
+#>  $ map_id      :integer64 10014217
+#>  $ burn_bnd_ac :integer64 563527
 #>  $ burn_bnd_lat: chr "44.678"
 #>  $ burn_bnd_lon: chr "-110.716"
 #>  $ ig_date     : chr "1988/07/22"
@@ -522,12 +536,12 @@ lyr_out$getFeatureCount()
 defn <- lyr_out$getLayerDefn()
 # combined attributes
 names(defn)
-#>  [1] "input_event_id"      "input_incid_name"    "input_incid_type"   
-#>  [4] "input_map_id"        "input_burn_bnd_ac"   "input_burn_bnd_lat" 
-#>  [7] "input_burn_bnd_lon"  "input_ig_date"       "input_ig_year"      
-#> [10] "method_event_id"     "method_incid_name"   "method_incid_type"  
+#>  [1] "input_event_id"      "input_incid_name"    "input_incid_type"
+#>  [4] "input_map_id"        "input_burn_bnd_ac"   "input_burn_bnd_lat"
+#>  [7] "input_burn_bnd_lon"  "input_ig_date"       "input_ig_year"
+#> [10] "method_event_id"     "method_incid_name"   "method_incid_type"
 #> [13] "method_map_id"       "method_burn_bnd_ac"  "method_burn_bnd_lat"
-#> [16] "method_burn_bnd_lon" "method_ig_date"      "method_ig_year"     
+#> [16] "method_burn_bnd_lon" "method_ig_date"      "method_ig_year"
 #> [19] "geom"
 
 # we don't have vector plotting yet, so rasterize and use plot_raster()
@@ -563,6 +577,8 @@ vsi_unlink(dsn_out)
 vsi_unlink(out_file)
 ```
 
+<sup>Created on 2024-04-06 with [reprex v2.1.0](https://reprex.tidyverse.org)</sup>
+
 ## Example: WorldCover Sentinel-2 composites
 
 ``` r
@@ -571,7 +587,7 @@ vsi_unlink(out_file)
 ## tile index lookup on remote filesystem and obtain raster data
 
 library(gdalraster)
-#> GDAL 3.8.3, released 2024/01/04, PROJ 9.3.1
+#> GDAL 3.8.4, released 2024/02/08, GEOS 3.12.1, PROJ 9.3.1
 
 fgb = "/vsicurl/https://esa-worldcover.s3.eu-central-1.amazonaws.com/esa_worldcover_grid_composites.fgb"
 lyr_tiles <- new(GDALVector, fgb)
@@ -602,8 +618,8 @@ lyr_tiles$bbox()
 defn <- lyr_tiles$getLayerDefn()
 names(defn)
 #>  [1] "tile"              "s1_vvvhratio_2020" "s1_vvvhratio_2021"
-#>  [4] "s2_rgbnir_2020"    "s2_rgbnir_2021"    "s2_ndvi_2020"     
-#>  [7] "s2_ndvi_2021"      "s2_swir_2020"      "s2_swir_2021"     
+#>  [4] "s2_rgbnir_2020"    "s2_rgbnir_2021"    "s2_ndvi_2020"
+#>  [7] "s2_ndvi_2021"      "s2_swir_2020"      "s2_swir_2021"
 #> [10] ""
 
 # AOI for the Fishhawk fire
@@ -616,12 +632,12 @@ lyr_ynp$getFeatureCount()
 feat <- lyr_ynp$getNextFeature()
 str(feat)
 #> List of 11
-#>  $ FID         : num 60
+#>  $ FID         :integer64 60
 #>  $ event_id    : chr "WY4437710988020190902"
 #>  $ incid_name  : chr "FISHHAWK"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      : num 1e+07
-#>  $ burn_bnd_ac : num 10775
+#>  $ map_id      :integer64 10016957
+#>  $ burn_bnd_ac :integer64 10775
 #>  $ burn_bnd_lat: chr "44.384"
 #>  $ burn_bnd_lon: chr "-109.85"
 #>  $ ig_date     : chr "2019/09/02"
@@ -641,7 +657,7 @@ lyr_tiles$getFeatureCount()
 feat <- lyr_tiles$getNextFeature()
 str(feat)
 #> List of 11
-#>  $ FID              : num 16615
+#>  $ FID              :integer64 16615
 #>  $ tile             : chr "N44W110"
 #>  $ s1_vvvhratio_2020: chr "s3://esa-worldcover-s1/vvvhratio/2020/N44/ESA_WorldCover_10m_2020_v100_N44W110_S1VVVHratio.tif"
 #>  $ s1_vvvhratio_2021: chr "s3://esa-worldcover-s1/vvvhratio/2021/N44/ESA_WorldCover_10m_2021_v200_N44W110_S1VVVHratio.tif"
@@ -676,24 +692,24 @@ ds <- new(GDALRaster, tif_file)
 ds$dim()
 #> [1] 12000 12000     4
 ds$getMetadata(band=0, domain="")
-#>  [1] "algorithm_version=V2.0.0"                                                                                                                                            
-#>  [2] "AREA_OR_POINT=Area"                                                                                                                                                  
-#>  [3] "bands=Band 1: B04 (Red), Band 2: B03 (Green), Band 3: B02 (Blue), Band 4: B08 (Infrared)"                                                                            
-#>  [4] "copyright=ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium"                                    
-#>  [5] "creation_time=2022-12-09 17:08:25.881589"                                                                                                                            
+#>  [1] "algorithm_version=V2.0.0"
+#>  [2] "AREA_OR_POINT=Area"
+#>  [3] "bands=Band 1: B04 (Red), Band 2: B03 (Green), Band 3: B02 (Blue), Band 4: B08 (Infrared)"
+#>  [4] "copyright=ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium"
+#>  [5] "creation_time=2022-12-09 17:08:25.881589"
 #>  [6] "description=The ESA WorldCover Sentinel-2 median L2A (RGBNIR) composite is a color image made from images in Blue (B02), Green (B03), Red (B04) and Infrared (B08). "
-#>  [7] "license=CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/"                                                                                                    
-#>  [8] "product_crs=EPSG:4326"                                                                                                                                               
-#>  [9] "product_grid=1x1 degree tiling grid"                                                                                                                                 
-#> [10] "product_tile=N44W110"                                                                                                                                                
-#> [11] "product_type=Sentinel-2 median L2A (RGBNIR) composite"                                                                                                               
-#> [12] "product_version=V2.0.0"                                                                                                                                              
-#> [13] "reference=https://esa-worldcover.org"                                                                                                                                
-#> [14] "time_end=2021-12-31T23:59:59Z"                                                                                                                                       
-#> [15] "time_start=2021-01-01T00:00:00Z"                                                                                                                                     
+#>  [7] "license=CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/"
+#>  [8] "product_crs=EPSG:4326"
+#>  [9] "product_grid=1x1 degree tiling grid"
+#> [10] "product_tile=N44W110"
+#> [11] "product_type=Sentinel-2 median L2A (RGBNIR) composite"
+#> [12] "product_version=V2.0.0"
+#> [13] "reference=https://esa-worldcover.org"
+#> [14] "time_end=2021-12-31T23:59:59Z"
+#> [15] "time_start=2021-01-01T00:00:00Z"
 #> [16] "title=ESA WorldCover Sentinel-2 median L2A (RGBNIR) composite at 10m resolution for year 2021"
 ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
-#> [1] "COMPRESSION=DEFLATE" "INTERLEAVE=PIXEL"    "LAYOUT=COG"         
+#> [1] "COMPRESSION=DEFLATE" "INTERLEAVE=PIXEL"    "LAYOUT=COG"
 #> [4] "PREDICTOR=2"
 
 r <- read_ds(ds, bands=c(4,1,2), out_xsize = 800, out_ysize = 800)
@@ -706,20 +722,18 @@ plot_raster(r,
             main = txt)
 ```
 
-![](img/worldcov2021_N44W110_S2RGBNIR_ex.png)<!-- -->
-
-``` r
 ds$close()
 lyr_ynp$close()
 lyr_tiles$close()
-
 ```
+
+<sup>Created on 2024-04-06 with [reprex v2.1.0](https://reprex.tidyverse.org)</sup>
 
 ## Further consideration / TBD
 
 This is a working list of potential issues and design questions that need further consideration, to be determined:
 
-* handling of 64-bit integer: OGR FID currently is `GIntBig` (`int64_t`) and integer fields in vector data sources will commonly be `OFTInteger64`. These would likely be handled using **RcppInt64**, with **bit64** on the R side providing S3 class `integer64`.
+* handling of 64-bit integer: OGR FID currently is `GIntBig` and integer fields in vector data sources will commonly be `OFTInteger64`. These are now handled using **RcppInt64**, with **bit64** on the R side providing S3 class `integer64`.
 * OGR's Arrow C interface: Implement `GDALVector::getArrowStream()` (GDAL >= 3.6) and `GDALVector::writeArrowBatch()` (GDAL >= 3.8), supported on the R side with package **nanoarrow**.
 * potential output vectors of GEOS or OGR pointers, WKB with support by **wk**
 * OGR layer geoprocessing might be stand-alone functions instead of class methods in `GDALVector`. We would have more flexibility in terms of optional/argument defaults. Either way, we should add an option to create the output layer.
@@ -742,6 +756,8 @@ This is a working list of potential issues and design questions that need furthe
 * add link to issue 241 for discussion thread (2024-03-05)
 * OGR layer geoprocessing may be stand-alone functions instead of class methods TBD (2024-03-10)
 * add link to the header file to reference the class methods that have been implemented so far in the prototype (2024-03-10)
+* `ogr2ogr()` and `ogrinfo()` are available in **gdalraster** 1.10.0 on CRAN (2024-03-26)
+* initial int64 support; now linking to **RcppInt64**, and importing **bit64**; `FID` and `OFTInteger64` fields are now returned in R as `integer64`; updated the examples (2024-04-06)
 
 ## Contributors
 
