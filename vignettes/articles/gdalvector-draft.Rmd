@@ -33,7 +33,7 @@ A  GDAL Dataset for vector is a file or database containing one or more OGR laye
 
 * existing management functions in **gdalraster** that operate on vector datasets: `copyDatasetFiles()`, `deleteDataset()`, `renameDataset()` and `addFilesInZip()` (supports SOZip)
 * existing internal utility functions to be further developed (potentially renamed/refactored): `.ogr_ds_exists()`, `.create_ogr()`, `.ogr_ds_layer_count()`, `.ogr_layer_exists()`, `.ogr_layer_create()`, `.ogr_layer_delete()` `.ogr_field_index()`, `.ogr_field_create()`
-* existing wrappers `ogr2ogr()` and `ogrinfo()` from the gdal_utils.h API (**gdalraster** 1.9.0.9080 dev)
+* existing wrappers `ogr2ogr()` and `ogrinfo()` from the gdal_utils.h API (**gdalraster** 1.10.0 CRAN release)
 * add `ogr_execute_sql()`: execute an SQL statement against the data store for `CREATE INDEX`, `DROP INDEX`, `ALTER TABLE`, `DROP TABLE` (a SQL `SELECT` statement can be used in the constructor for class `GDALVector` described below, to open a layer of features)
 * other stand-alone functions TBD
 
@@ -583,7 +583,7 @@ vsi_unlink(out_file)
 
 ``` r
 ## WorldCover Sentinel-2 annual composites
-## see: https://blog.vito.be/remotesensing/worldcover-annual-composites
+## https://blog.vito.be/remotesensing/worldcover-annual-composites
 ## tile index lookup on remote filesystem and obtain raster data
 
 library(gdalraster)
@@ -721,6 +721,10 @@ plot_raster(r,
             ylab = "latitude",
             main = txt)
 ```
+
+![](img/worldcov2021_N44W110_S2RGBNIR_ex.png)<!-- -->
+
+``` r
 
 ds$close()
 lyr_ynp$close()
