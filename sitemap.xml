@@ -289,6 +289,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/translate.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_clear_path_options.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_copy_file.html</loc>
   </url>
   <url>
@@ -314,6 +317,9 @@
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_rmdir.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_set_path_option.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.html</loc>

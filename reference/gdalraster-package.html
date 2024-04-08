@@ -16,7 +16,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9020</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -80,7 +80,8 @@
 <li><p>raster creation: <code><a href="create.html">create()</a></code>,
   <code><a href="createCopy.html">createCopy()</a></code>,
   <code><a href="rasterFromRaster.html">rasterFromRaster()</a></code>,
-  <code><a href="translate.html">translate()</a></code>,<br><code><a href="getCreationOptions.html">getCreationOptions()</a></code></p></li>
+  <code><a href="translate.html">translate()</a></code>,
+  <code><a href="getCreationOptions.html">getCreationOptions()</a></code></p></li>
 <li><p>virtual raster: <code><a href="buildVRT.html">buildVRT()</a></code>,
   <code><a href="rasterToVRT.html">rasterToVRT()</a></code></p></li>
 <li><p>reproject/resample/crop/mosaic: <code><a href="warp.html">warp()</a></code></p></li>
@@ -88,11 +89,13 @@
   <code><a href="fillNodata.html">fillNodata()</a></code>,
   <code><a href="footprint.html">footprint()</a></code>,
   <code><a href="polygonize.html">polygonize()</a></code>,
-  <code><a href="rasterize.html">rasterize()</a></code>,<br><code><a href="sieveFilter.html">sieveFilter()</a></code>,
+  <code><a href="rasterize.html">rasterize()</a></code>,
+  <code><a href="sieveFilter.html">sieveFilter()</a></code>,
   <code><a href="GDALRaster-class.html">GDALRaster$getChecksum()</a></code></p></li>
 <li><p>raster attribute tables: <code><a href="buildRAT.html">buildRAT()</a></code>,
   <code><a href="displayRAT.html">displayRAT()</a></code>,
-  <code><a href="GDALRaster-class.html">GDALRaster$getDefaultRAT()</a></code>,<br><code><a href="GDALRaster-class.html">GDALRaster$setDefaultRAT()</a></code></p></li>
+  <code><a href="GDALRaster-class.html">GDALRaster$getDefaultRAT()</a></code>,
+  <code><a href="GDALRaster-class.html">GDALRaster$setDefaultRAT()</a></code></p></li>
 <li><p>geotransform conversion:
   <code><a href="inv_geotransform.html">inv_geotransform()</a></code>,
   <code><a href="get_pixel_line.html">get_pixel_line()</a></code></p></li>
@@ -139,7 +142,9 @@
 <li><p>OGR vector utilities:
   <code><a href="ogr2ogr.html">ogr2ogr()</a></code>,
   <code><a href="ogrinfo.html">ogrinfo()</a></code></p></li>
-<li><p>virtual file systems: <code><a href="vsi_copy_file.html">vsi_copy_file()</a></code>,
+<li><p>virtual file systems:
+  <code><a href="vsi_clear_path_options.html">vsi_clear_path_options()</a></code>,
+  <code><a href="vsi_copy_file.html">vsi_copy_file()</a></code>,
   <code><a href="vsi_curl_clear_cache.html">vsi_curl_clear_cache()</a></code>,
   <code><a href="vsi_get_disk_free_space.html">vsi_get_disk_free_space()</a></code>,
   <code><a href="vsi_get_fs_options.html">vsi_get_fs_options()</a></code>,
@@ -148,6 +153,7 @@
   <code><a href="vsi_read_dir.html">vsi_read_dir()</a></code>,
   <code><a href="vsi_rename.html">vsi_rename()</a></code>,
   <code><a href="vsi_rmdir.html">vsi_rmdir()</a></code>,
+  <code><a href="vsi_set_path_option.html">vsi_set_path_option()</a></code>,
   <code><a href="vsi_stat.html">vsi_stat()</a></code>,
   <code><a href="vsi_supports_rnd_write.html">vsi_supports_rnd_write()</a></code>,
   <code><a href="vsi_supports_seq_write.html">vsi_supports_seq_write()</a></code>,
