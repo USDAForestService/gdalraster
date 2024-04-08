@@ -22,7 +22,7 @@
   \item raster creation: \code{\link[=create]{create()}},
   \code{\link[=createCopy]{createCopy()}},
   \code{\link[=rasterFromRaster]{rasterFromRaster()}},
-  \code{\link[=translate]{translate()}},\cr
+  \code{\link[=translate]{translate()}},
   \code{\link[=getCreationOptions]{getCreationOptions()}}
 
   \item virtual raster: \code{\link[=buildVRT]{buildVRT()}},
@@ -34,13 +34,13 @@
   \code{\link[=fillNodata]{fillNodata()}},
   \code{\link[=footprint]{footprint()}},
   \code{\link[=polygonize]{polygonize()}},
-  \code{\link[=rasterize]{rasterize()}},\cr
+  \code{\link[=rasterize]{rasterize()}},
   \code{\link[=sieveFilter]{sieveFilter()}},
   \code{\link[=GDALRaster]{GDALRaster$getChecksum()}}
 
   \item raster attribute tables: \code{\link[=buildRAT]{buildRAT()}},
   \code{\link[=displayRAT]{displayRAT()}},
-  \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}},\cr
+  \code{\link[=GDALRaster]{GDALRaster$getDefaultRAT()}},
   \code{\link[=GDALRaster]{GDALRaster$setDefaultRAT()}}
 
   \item geotransform conversion:
@@ -97,7 +97,9 @@
   \code{\link[=ogr2ogr]{ogr2ogr()}},
   \code{\link[=ogrinfo]{ogrinfo()}}
 
-  \item virtual file systems: \code{\link[=vsi_copy_file]{vsi_copy_file()}},
+  \item virtual file systems:
+  \code{\link[=vsi_clear_path_options]{vsi_clear_path_options()}},
+  \code{\link[=vsi_copy_file]{vsi_copy_file()}},
   \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
   \code{\link[=vsi_get_disk_free_space]{vsi_get_disk_free_space()}},
   \code{\link[=vsi_get_fs_options]{vsi_get_fs_options()}},
@@ -106,6 +108,7 @@
   \code{\link[=vsi_read_dir]{vsi_read_dir()}},
   \code{\link[=vsi_rename]{vsi_rename()}},
   \code{\link[=vsi_rmdir]{vsi_rmdir()}},
+  \code{\link[=vsi_set_path_option]{vsi_set_path_option()}},
   \code{\link[=vsi_stat]{vsi_stat()}},
   \code{\link[=vsi_supports_rnd_write]{vsi_supports_rnd_write()}},
   \code{\link[=vsi_supports_seq_write]{vsi_supports_seq_write()}},
