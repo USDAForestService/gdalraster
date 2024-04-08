@@ -114,3 +114,13 @@ test_that("vsi_get_disk_free_space returns length-1 numeric vector", {
     expect_vector(x, ptype = numeric(), 1)
     vsi_rmdir(tmp_dir)
 })
+
+test_that("vsi path specific options can be set/unset", {
+    skip_if(as.integer(gdal_version()[2]) < 3060000)
+
+    prefix <- "/vsiaz/sampledata"
+    expect_no_error(vsi_set_path_option(prefix,
+                                        "AZURE_STORAGE_CONNECTION_STRING",
+                                        "connection_string_for_gdalraster"))
+    expect_no_error(vsi_clear_path_options(prefix))
+})

@@ -791,3 +791,93 @@ double vsi_get_disk_free_space(Rcpp::CharacterVector path) {
 
     return static_cast<double>(VSIGetDiskFreeSpace(path_in.c_str()));
 }
+
+//' Set a path specific option for a given path prefix
+//'
+//' `vsi_set_path_option()` sets a path specific option for a given path
+//' prefix. Such option is typically, but not limited to, a credential setting
+//' for a virtual file system.
+//' Wrapper for `VSISetPathSpecificOption()` in the GDAL Common Portability
+//' Library. Requires GDAL >= 3.6.
+//'
+//' @details
+//' Options may also be set as configuration options with `set_config_option()`
+//' but this function allows specifying them with a granularity at the level of
+//' a file path, which makes it easier if using the same virtual file system
+//' but with different credentials (e.g., different credentials for bucket
+//' "/vsis3/foo" and "/vsis3/bar"). This is supported for the following virtual
+//' file systems: /vsis3/, /vsigs/, /vsiaz/, /vsioss/, /vsiwebhdfs, /vsiswift.
+//'
+//' @param path_prefix Character string. A path prefix of a virtual file system
+//' handler. Typically of the form `"/vsiXXX/bucket"`.
+//' @param key Character string. Option key.
+//' @param value Character string. Option value. Passing `value = ""` (empty
+//' string) will unset a value previously set by `vsi_set_path_option()`.
+//' @returns No return value, called for side effect.
+//'
+//' @note
+//' Setting options for a path starting with /vsiXXX/ will also apply for
+//' /vsiXXX_streaming/ requests.
+//'
+//' No particular care is taken to store options in RAM in a secure way.
+//' So they might accidentally hit persistent storage if swapping occurs,
+//' or someone with access to the memory allocated by the process may be
+//' able to read them.
+//'
+//' @seealso
+//' [vsi_clear_path_options()]
+// [[Rcpp::export()]]
+void vsi_set_path_option(Rcpp::CharacterVector path_prefix, std::string key,
+                           std::string value) {
+
+#if GDAL_VERSION_NUM < 3060000
+    Rcpp::stop("vsi_set_path_option() requires GDAL >= 3.6");
+
+#else
+    std::string path_prefix_in;
+    path_prefix_in = Rcpp::as<std::string>(_check_gdal_filename(path_prefix));
+
+    const char* value_in = nullptr;
+    if (value != "")
+        value_in = value.c_str();
+
+    VSISetPathSpecificOption(path_prefix_in.c_str(), key.c_str(), value_in);
+
+#endif
+}
+
+//' Clear path specific configuration options
+//'
+//' `vsi_clear_path_options()` clears path specific options previously set
+//' with `vsi_set_path_option()`.
+//' Wrapper for `VSIClearPathSpecificOptions()` in the GDAL Common Portability
+//' Library. Requires GDAL >= 3.6.
+//'
+//' @param path_prefix Character string. If set to `""` (empty string), all
+//' path specific options are cleared. If set to a path prefix, only those
+//' options set with `vsi_set_path_option(path_prefix, ...)` will be cleared.
+//' @returns No return value, called for side effect.
+//'
+//' @note
+//' No particular care is taken to remove options from RAM in a secure way.
+//'
+//' @seealso
+//' [vsi_set_path_option()]
+// [[Rcpp::export()]]
+void vsi_clear_path_options(Rcpp::CharacterVector path_prefix) {
+
+#if GDAL_VERSION_NUM < 3060000
+    Rcpp::stop("vsi_clear_path_options() requires GDAL >= 3.6");
+
+#else
+    std::string path_prefix_in;
+    path_prefix_in = Rcpp::as<std::string>(_check_gdal_filename(path_prefix));
+
+    const char* path_cstr = nullptr;
+    if (path_prefix_in != "")
+        path_cstr = path_prefix_in.c_str();
+
+    VSIClearPathSpecificOptions(path_cstr);
+
+#endif
+}
