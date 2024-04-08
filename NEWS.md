@@ -1,4 +1,8 @@
-# gdalraster 1.10.9010 (dev)
+# gdalraster 1.10.9020 (dev)
+
+* add `vsi_set_path_option()`: set a path specific option for a given path prefix, e.g., credential setting for a virtual file system (GDAL >= 3.6) (2024-04-08)
+
+* add `vsi_clear_path_options()`: clear path specific configuration options previously set with `vsi_set_path_option()` (GDAL >= 3.6) (2024-04-08)
 
 * new additional geometry functions operating on WKT (GEOS via GDAL headers): `g_is_empty()`, `g_is_valid()`, `g_intersects()`, `g_equals()`, `g_disjoint()`, `g_touches()`, `g_contains()`, `g_within()`, `g_crosses()`,`g_overlaps()`, `g_intersection()`, `g_union()`, `g_difference()`, `g_sym_difference()`, `g_distance()`, `g_length()`, `g_area()`, `g_centroid()` (2024-03-30)
 
