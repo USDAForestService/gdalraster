@@ -1523,7 +1523,7 @@ polygonize <- function(raster_file,
         if (.ogr_ds_exists(out_dsn) && !overwrite) {
             msg <- "'out_dsn' exists but cannot be updated.\n"
             msg <- paste0(msg, "You may need to remove it first, ")
-            msg <- paste0(msg, "or use overwrite = TRUE.")
+            msg <- paste0(msg, "or use 'overwrite = TRUE'.")
             stop(msg, call. = FALSE)
         }
     }
@@ -1559,16 +1559,17 @@ polygonize <- function(raster_file,
             stop("specify 'out_fmt' to create a new dataset", call. = FALSE)
         }
         if (!.create_ogr(out_fmt, out_dsn, 0, 0, 0, "Unknown",
-                         out_layer, srs, fld_name, dsco, lco))
+                         out_layer, "POLYGON", srs, fld_name, dsco, lco)) {
             stop("failed to create 'out_dsn'", call. = FALSE)
+        }
     }
 
     if (!.ogr_layer_exists(out_dsn, out_layer)) {
-        res <- .ogr_layer_create(out_dsn, out_layer, srs, lco)
+        res <- .ogr_layer_create(out_dsn, out_layer, "POLYGON", srs, lco)
         if (!res)
             stop("failed to create 'out_layer'", call. = FALSE)
         if (fld_name != "") {
-            res <- .ogr_field_create(out_dsn, out_layer, fld_name)
+            res <- .ogr_field_create(out_dsn, out_layer, fld_name, "OFTInteger")
             if (!res)
                 stop("failed to create the output field", call. = FALSE)
         }
