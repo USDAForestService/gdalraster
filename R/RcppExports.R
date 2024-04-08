@@ -1875,6 +1875,9 @@ vsi_get_disk_free_space <- function(path) {
 #' So they might accidentally hit persistent storage if swapping occurs,
 #' or someone with access to the memory allocated by the process may be
 #' able to read them.
+#'
+#' @seealso
+#' [vsi_clear_path_options()]
 vsi_set_path_option <- function(path_prefix, key, value) {
     invisible(.Call(`_gdalraster_vsi_set_path_option`, path_prefix, key, value))
 }
@@ -1893,6 +1896,9 @@ vsi_set_path_option <- function(path_prefix, key, value) {
 #'
 #' @note
 #' No particular care is taken to remove options from RAM in a secure way.
+#'
+#' @seealso
+#' [vsi_set_path_option()]
 vsi_clear_path_options <- function(path_prefix) {
     invisible(.Call(`_gdalraster_vsi_clear_path_options`, path_prefix))
 }

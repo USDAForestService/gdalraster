@@ -23,3 +23,6 @@ Library. Requires GDAL >= 3.6.
 \note{
 No particular care is taken to remove options from RAM in a secure way.
 }
+\seealso{
+\code{\link[=vsi_set_path_option]{vsi_set_path_option()}}
+}

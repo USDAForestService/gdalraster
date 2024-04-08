@@ -823,6 +823,9 @@ double vsi_get_disk_free_space(Rcpp::CharacterVector path) {
 //' So they might accidentally hit persistent storage if swapping occurs,
 //' or someone with access to the memory allocated by the process may be
 //' able to read them.
+//'
+//' @seealso
+//' [vsi_clear_path_options()]
 // [[Rcpp::export()]]
 void vsi_set_path_option(Rcpp::CharacterVector path_prefix, std::string key,
                            std::string value) {
@@ -857,6 +860,9 @@ void vsi_set_path_option(Rcpp::CharacterVector path_prefix, std::string key,
 //'
 //' @note
 //' No particular care is taken to remove options from RAM in a secure way.
+//'
+//' @seealso
+//' [vsi_set_path_option()]
 // [[Rcpp::export()]]
 void vsi_clear_path_options(Rcpp::CharacterVector path_prefix) {
 

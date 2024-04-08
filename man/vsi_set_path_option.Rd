@@ -42,3 +42,6 @@ So they might accidentally hit persistent storage if swapping occurs,
 or someone with access to the memory allocated by the process may be
 able to read them.
 }
+\seealso{
+\code{\link[=vsi_clear_path_options]{vsi_clear_path_options()}}
+}
