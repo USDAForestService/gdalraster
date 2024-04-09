@@ -115,6 +115,12 @@ test_that("open/close/re-open works", {
     files <- ds$getFileList()
     on.exit(unlink(files))
     ds$close()
+
+    ds <- new(GDALRaster)
+    ds$setFilename(elev_file)
+    ds$open(TRUE)
+    expect_equal(ds$dim(), dm)
+    ds$close()
 })
 
 test_that("statistics are correct", {

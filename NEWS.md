@@ -1,4 +1,6 @@
-# gdalraster 1.10.9030 (dev)
+# gdalraster 1.10.9040 (dev)
+
+* add `GDALRaster::setFilename()`: set the filename of an unitialized `GDALRaster` object, currently undocumented (2024-04-08)
 
 * add `GDALRaster::_getGDALDatasetH()`: get the GDAL dataset handle for internal use (2024-04-08)
 
