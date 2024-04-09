@@ -2052,6 +2052,24 @@ has_geos <- function() {
     .Call(`_gdalraster__g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset)
 }
 
+#' @noRd
+NULL
+
+#' @noRd
+NULL
+
+#' @noRd
+NULL
+
+#' @noRd
+NULL
+
+#' @noRd
+NULL
+
+#' @noRd
+NULL
+
 #' Does vector dataset exist
 #'
 #' @noRd
@@ -2060,11 +2078,11 @@ has_geos <- function() {
 }
 
 #' Create a vector dataset with layer and field
-#' currently hard coded as layer of wkbPolygon, field of OFTInteger
+#' currently hard coded for field of OFTInteger
 #'
 #' @noRd
-.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, srs = "", fld_name = "", dsco = NULL, lco = NULL) {
-    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, srs, fld_name, dsco, lco)
+.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", dsco = NULL, lco = NULL) {
+    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, dsco, lco)
 }
 
 #' Get number of layers in a dataset
@@ -2082,11 +2100,10 @@ has_geos <- function() {
 }
 
 #' Create a layer in a vector dataset
-#' currently hard coded as layer of wkbPolygon
 #'
 #' @noRd
-.ogr_layer_create <- function(dsn, layer, srs = "", options = NULL) {
-    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, srs, options)
+.ogr_layer_create <- function(dsn, layer, geom_type, srs = "", options = NULL) {
+    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, geom_type, srs, options)
 }
 
 #' Delete a layer in a vector dataset
@@ -2104,11 +2121,17 @@ has_geos <- function() {
 }
 
 #' Create a new field on layer
-#' currently hard coded for OFTInteger
 #'
 #' @noRd
-.ogr_field_create <- function(dsn, layer, fld_name) {
-    .Call(`_gdalraster__ogr_field_create`, dsn, layer, fld_name)
+.ogr_field_create <- function(dsn, layer, fld_name, fld_type, fld_subtype = "OFSTNone", fld_width = 0L, fld_precision = 0L, is_nullable = TRUE, is_ignored = FALSE, is_unique = FALSE, default_value = "") {
+    .Call(`_gdalraster__ogr_field_create`, dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_ignored, is_unique, default_value)
+}
+
+#' Create a new geom field on layer
+#'
+#' @noRd
+.ogr_geom_field_create <- function(dsn, layer, fld_name, geom_type, srs = "", is_nullable = TRUE, is_ignored = FALSE) {
+    .Call(`_gdalraster__ogr_geom_field_create`, dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored)
 }
 
 #' get PROJ version

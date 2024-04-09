@@ -1,13 +1,87 @@
 /* Utility functions for vector data sources
    Chris Toney <chris.toney at usda.gov> */
 
-#include "ogr_util.h"
-
 #include "gdal.h"
 #include "cpl_error.h"
 #include "cpl_port.h"
 #include "cpl_string.h"
 #include "ogr_srs_api.h"
+
+#include "ogr_util.h"
+#include "gdalraster.h"
+
+// Internal lookup of OGRwkbGeometryType by string descriptor
+// Returns wkbUnknown if no match
+//' @noRd
+OGRwkbGeometryType _getWkbGeomType(std::string geom_type) {
+    if (auto it = MAP_OGR_GEOM_TYPE.find(geom_type);
+            it != MAP_OGR_GEOM_TYPE.end())
+        return it->second;
+    else
+        return wkbUnknown;
+}
+
+// Internal lookup of geometry type string by OGRwkbGeometryType
+// Returns "UNKNOWN" if no match
+//' @noRd
+std::string _getWkbGeomString(OGRwkbGeometryType eType) {
+    for (auto it = MAP_OGR_GEOM_TYPE.begin();
+            it != MAP_OGR_GEOM_TYPE.end(); ++it) {
+        if (it->second == eType) {
+            return it->first;
+        }
+    }
+    return "UNKNOWN";
+}
+
+// Internal lookup of OGRFieldType by string descriptor
+// Error if no match
+//' @noRd
+OGRFieldType _getOFT(std::string fld_type) {
+    if (auto it = MAP_OGR_FLD_TYPE.find(fld_type);
+            it != MAP_OGR_FLD_TYPE.end())
+        return it->second;
+    else
+        Rcpp::stop("unrecognized OGR field type descriptor");
+}
+
+// Internal lookup of OGR field type string by OGRFieldType
+// Returns empty string if no match, with warning emitted
+//' @noRd
+std::string _getOFTString(OGRFieldType eType) {
+    for (auto it = MAP_OGR_FLD_TYPE.begin();
+            it != MAP_OGR_FLD_TYPE.end(); ++it) {
+        if (it->second == eType) {
+            return it->first;
+        }
+    }
+    Rcpp::warning("unrecognized OGRFieldType enumerator");
+    return "";
+}
+
+// Internal lookup of OGRFieldSubType by string descriptor
+// Returns OFSTNone if no match
+//' @noRd
+OGRFieldSubType _getOFTSubtype(std::string fld_subtype) {
+    if (auto it = MAP_OGR_FLD_SUBTYPE.find(fld_subtype);
+            it != MAP_OGR_FLD_SUBTYPE.end())
+        return it->second;
+    else
+        return OFSTNone;
+}
+
+// Internal lookup of OGR field subtype string by OGRFieldSubType
+// Returns "OFSTNone" if no match
+//' @noRd
+std::string _getOFTSubtypeString(OGRFieldSubType eType) {
+    for (auto it = MAP_OGR_FLD_SUBTYPE.begin();
+            it != MAP_OGR_FLD_SUBTYPE.end(); ++it) {
+        if (it->second == eType) {
+            return it->first;
+        }
+    }
+    return "OFSTNone";
+}
 
 //' Does vector dataset exist
 //'
@@ -15,7 +89,7 @@
 // [[Rcpp::export(name = ".ogr_ds_exists")]]
 bool _ogr_ds_exists(std::string dsn, bool with_update = false) {
 
-    GDALDatasetH hDS;
+    GDALDatasetH hDS = nullptr;
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
     if (with_update)
@@ -25,21 +99,25 @@ bool _ogr_ds_exists(std::string dsn, bool with_update = false) {
         hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR,
                          nullptr, nullptr, nullptr);
     CPLPopErrorHandler();
-    if (hDS == nullptr)
-        return false;
 
-    GDALClose(hDS);
-    return true;
+    if (hDS != nullptr) {
+        GDALReleaseDataset(hDS);
+        return true;
+    }
+    else {
+        return false;
+    }
 }
 
 //' Create a vector dataset with layer and field
-//' currently hard coded as layer of wkbPolygon, field of OFTInteger
+//' currently hard coded for field of OFTInteger
 //'
 //' @noRd
 // [[Rcpp::export(name = ".create_ogr")]]
 bool _create_ogr(std::string format, std::string dst_filename,
         int xsize, int ysize, int nbands, std::string dataType,
-        std::string layer, std::string srs = "", std::string fld_name = "",
+        std::string layer, std::string geom_type,
+        std::string srs = "", std::string fld_name = "",
         Rcpp::Nullable<Rcpp::CharacterVector> dsco = R_NilValue,
         Rcpp::Nullable<Rcpp::CharacterVector> lco = R_NilValue) {
 
@@ -47,11 +125,18 @@ bool _create_ogr(std::string format, std::string dst_filename,
     if (hDriver == nullptr)
         Rcpp::stop("failed to get driver for the specified format");
 
+    std::string dsn_in = Rcpp::as<std::string>(
+            _check_gdal_filename(dst_filename));
+
     char **papszMetadata = GDALGetMetadata(hDriver, nullptr);
     if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATE, FALSE))
         Rcpp::stop("driver does not support create");
 
-    GDALDataType dt = GDALGetDataTypeByName( dataType.c_str() );
+    OGRwkbGeometryType eGeomType = _getWkbGeomType(geom_type);
+    if (eGeomType == wkbUnknown)
+        Rcpp::stop("'geom_type' is unknown");
+
+    GDALDataType dt = GDALGetDataTypeByName(dataType.c_str());
 
     std::vector<char *> opt_list = {nullptr};
     if (dsco.isNotNull()) {
@@ -64,20 +149,20 @@ bool _create_ogr(std::string format, std::string dst_filename,
     }
 
     GDALDatasetH hDstDS = nullptr;
-    hDstDS = GDALCreate(hDriver, dst_filename.c_str(),
+    hDstDS = GDALCreate(hDriver, dsn_in.c_str(),
                         xsize, ysize, nbands, dt,
                         opt_list.data());
 
     if (hDstDS == nullptr)
-        Rcpp::stop("create dataset failed");
+        return false;
 
     if (!GDALDatasetTestCapability(hDstDS, ODsCCreateLayer)) {
-        GDALClose(hDstDS);
+        GDALReleaseDataset(hDstDS);
         return false;
     }
 
-    OGRLayerH  hLayer;
-    OGRFieldDefnH hFieldDefn;
+    OGRLayerH  hLayer = nullptr;
+    OGRFieldDefnH hFieldDefn = nullptr;
     bool layer_ok = false;
     bool fld_ok = false;
 
@@ -96,34 +181,37 @@ bool _create_ogr(std::string format, std::string dst_filename,
         if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
             if (hSRS != nullptr)
                 OSRDestroySpatialReference(hSRS);
-            GDALClose(hDstDS);
+            GDALReleaseDataset(hDstDS);
             Rcpp::stop("error importing SRS from user input");
         }
     }
 
-    hLayer = GDALDatasetCreateLayer(hDstDS, layer.c_str(), hSRS, wkbPolygon,
-                opt_list.data());
+    hLayer = GDALDatasetCreateLayer(hDstDS, layer.c_str(), hSRS, eGeomType,
+                                    opt_list.data());
 
-    if (hLayer == nullptr) {
-        layer_ok = false;
-    }
-    else {
+    if (hLayer != nullptr) {
         layer_ok = true;
         if (fld_name != "") {
             hFieldDefn = OGR_Fld_Create(fld_name.c_str(), OFTInteger);
-            if (OGR_L_CreateField(hLayer, hFieldDefn, TRUE) != OGRERR_NONE)
+            if (hFieldDefn == nullptr)
+                fld_ok = false;
+            else if (OGR_L_CreateField(hLayer, hFieldDefn, true) != OGRERR_NONE)
                 fld_ok = false;
             else
                 fld_ok = true;
-            OGR_Fld_Destroy(hFieldDefn);
+
+            if (hFieldDefn != nullptr)
+                OGR_Fld_Destroy(hFieldDefn);
         }
         else {
             fld_ok = true;
         }
     }
 
-    OSRDestroySpatialReference(hSRS);
-    GDALClose(hDstDS);
+    if (hSRS != nullptr)
+        OSRDestroySpatialReference(hSRS);
+
+    GDALReleaseDataset(hDstDS);
 
     if (layer_ok && fld_ok)
         return true;
@@ -137,7 +225,7 @@ bool _create_ogr(std::string format, std::string dst_filename,
 // [[Rcpp::export(name = ".ogr_ds_layer_count")]]
 int _ogr_ds_layer_count(std::string dsn) {
 
-    GDALDatasetH hDS;
+    GDALDatasetH hDS = nullptr;
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
     hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
@@ -146,7 +234,7 @@ int _ogr_ds_layer_count(std::string dsn) {
     CPLPopErrorHandler();
 
     int cnt = GDALDatasetGetLayerCount(hDS);
-    GDALClose(hDS);
+    GDALReleaseDataset(hDS);
     return cnt;
 }
 
@@ -156,9 +244,9 @@ int _ogr_ds_layer_count(std::string dsn) {
 // [[Rcpp::export(name = ".ogr_layer_exists")]]
 bool _ogr_layer_exists(std::string dsn, std::string layer) {
 
-    GDALDatasetH hDS;
-    OGRLayerH hLayer;
-    bool ret;
+    GDALDatasetH hDS = nullptr;
+    OGRLayerH hLayer = nullptr;
+    bool ret = false;
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
     hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
@@ -166,27 +254,28 @@ bool _ogr_layer_exists(std::string dsn, std::string layer) {
         return false;
     hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     CPLPopErrorHandler();
-    if (hLayer == nullptr)
-        ret = false;
-    else
+
+    if (hLayer != nullptr)
         ret = true;
 
-    GDALClose(hDS);
+    GDALReleaseDataset(hDS);
     return ret;
 }
 
 //' Create a layer in a vector dataset
-//' currently hard coded as layer of wkbPolygon
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_create")]]
 bool _ogr_layer_create(std::string dsn, std::string layer,
-        std::string srs = "",
+        std::string geom_type, std::string srs = "",
         Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
-    GDALDatasetH hDS;
-    OGRLayerH  hLayer;
-    bool ret;
+    GDALDatasetH hDS = nullptr;
+    OGRLayerH hLayer = nullptr;
+
+    OGRwkbGeometryType eGeomType = _getWkbGeomType(geom_type);
+    if (eGeomType == wkbUnknown && !EQUALN(geom_type.c_str(), "UNKNOWN", 7))
+        Rcpp::stop("'geom_type' not recognized");
 
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     if (srs != "") {
@@ -198,7 +287,7 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
     }
 
     hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
-            nullptr, nullptr, nullptr);
+                     nullptr, nullptr, nullptr);
 
     if (hDS == nullptr) {
         if (hSRS != nullptr)
@@ -207,7 +296,7 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
     }
 
     if (!GDALDatasetTestCapability(hDS, ODsCCreateLayer)) {
-        GDALClose(hDS);
+        GDALReleaseDataset(hDS);
         if (hSRS != nullptr)
             OSRDestroySpatialReference(hSRS);
         return false;
@@ -223,16 +312,18 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
         opt_list[options_in.size()] = nullptr;
     }
 
-    hLayer = GDALDatasetCreateLayer(hDS, layer.c_str(), hSRS, wkbPolygon,
-                opt_list.data());
+    hLayer = GDALDatasetCreateLayer(hDS, layer.c_str(), hSRS, eGeomType,
+                                    opt_list.data());
 
-    if (hLayer == nullptr)
-        ret = false;
-    else
+    bool ret = false;
+    if (hLayer != nullptr)
         ret = true;
 
-    OSRDestroySpatialReference(hSRS);
-    GDALClose(hDS);
+    if (hSRS != nullptr)
+        OSRDestroySpatialReference(hSRS);
+
+    GDALReleaseDataset(hDS);
+
     return ret;
 }
 
@@ -242,25 +333,24 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
 // [[Rcpp::export(name = ".ogr_layer_delete")]]
 bool _ogr_layer_delete(std::string dsn, std::string layer) {
 
-    GDALDatasetH hDS;
-    OGRLayerH  hLayer;
+    GDALDatasetH hDS = nullptr;
+    OGRLayerH  hLayer = nullptr;
     int layer_cnt, layer_idx;
-    bool ret;
 
     hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
-            nullptr, nullptr, nullptr);
+                     nullptr, nullptr, nullptr);
 
     if (hDS == nullptr)
         return false;
 
     if (!GDALDatasetTestCapability(hDS, ODsCDeleteLayer)) {
-        GDALClose(hDS);
+        GDALReleaseDataset(hDS);
         return false;
     }
 
     hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     if (hLayer == nullptr) {
-        GDALClose(hDS);
+        GDALReleaseDataset(hDS);
         return false;
     }
 
@@ -271,12 +361,11 @@ bool _ogr_layer_delete(std::string dsn, std::string layer) {
             break;
     }
 
-    if (GDALDatasetDeleteLayer(hDS, layer_idx) != OGRERR_NONE)
-        ret = false;
-    else
+    bool ret = false;
+    if (GDALDatasetDeleteLayer(hDS, layer_idx) == OGRERR_NONE)
         ret = true;
 
-    GDALClose(hDS);
+    GDALReleaseDataset(hDS);
     return ret;
 }
 
@@ -287,9 +376,9 @@ bool _ogr_layer_delete(std::string dsn, std::string layer) {
 int _ogr_field_index(std::string dsn, std::string layer,
         std::string fld_name) {
 
-    GDALDatasetH hDS;
-    OGRLayerH hLayer;
-    OGRFeatureDefnH hFDefn;
+    GDALDatasetH hDS = nullptr;
+    OGRLayerH hLayer = nullptr;
+    OGRFeatureDefnH hFDefn = nullptr;
     int iField;
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
@@ -300,30 +389,39 @@ int _ogr_field_index(std::string dsn, std::string layer,
     CPLPopErrorHandler();
 
     if (hLayer == nullptr) {
-        GDALClose(hDS);
+        GDALReleaseDataset(hDS);
         return -1;
     }
 
     hFDefn = OGR_L_GetLayerDefn(hLayer);
-    iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
-    GDALClose(hDS);
+    if (hFDefn != nullptr)
+        iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
+    else
+        iField = -1;
+
+    GDALReleaseDataset(hDS);
     return iField;
 }
 
 //' Create a new field on layer
-//' currently hard coded for OFTInteger
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_field_create")]]
 bool _ogr_field_create(std::string dsn, std::string layer,
-        std::string fld_name) {
+                       std::string fld_name, std::string fld_type,
+                       std::string fld_subtype = "OFSTNone",
+                       int fld_width = 0,
+                       int fld_precision = 0,
+                       bool is_nullable = true,
+                       bool is_ignored = false,
+                       bool is_unique = false,
+                       std::string default_value = "") {
 
-    GDALDatasetH hDS;
-    OGRLayerH hLayer;
-    OGRFeatureDefnH hFDefn;
+    GDALDatasetH hDS = nullptr;
+    OGRLayerH hLayer = nullptr;
+    OGRFeatureDefnH hFDefn = nullptr;
     int iField;
-    OGRFieldDefnH hFieldDefn;
-    bool ret;
+    OGRFieldDefnH hFieldDefn = nullptr;
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
     hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
@@ -336,26 +434,136 @@ bool _ogr_field_create(std::string dsn, std::string layer,
     CPLPopErrorHandler();
 
     if (hLayer == nullptr) {
-        GDALClose(hDS);
+        GDALReleaseDataset(hDS);
         return false;
     }
 
     hFDefn = OGR_L_GetLayerDefn(hLayer);
-    iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
-    if (iField >= 0) {
-        // fld_name already exists
-        GDALClose(hDS);
+    if (hFDefn != nullptr) {
+        iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
+    }
+    else {
+        GDALReleaseDataset(hDS);
         return false;
     }
 
-    hFieldDefn = OGR_Fld_Create(fld_name.c_str(), OFTInteger);
-    if (OGR_L_CreateField(hLayer, hFieldDefn, TRUE) != OGRERR_NONE)
-        ret = false;
-    else
-        ret = true;
+    if (iField >= 0) {
+        // fld_name already exists
+        GDALReleaseDataset(hDS);
+        return false;
+    }
 
-    OGR_Fld_Destroy(hFieldDefn);
-    GDALClose(hDS);
+    OGRFieldType eFieldType = _getOFT(fld_type);
+    OGRFieldSubType eFieldSubType = _getOFTSubtype(fld_subtype);
+    bool ret = false;
+
+    hFieldDefn = OGR_Fld_Create(fld_name.c_str(), eFieldType);
+    if (hFieldDefn != nullptr) {
+        OGR_Fld_SetSubType(hFieldDefn, eFieldSubType);
+        if (fld_width > 0)
+            OGR_Fld_SetWidth(hFieldDefn, fld_width);
+        if (fld_precision > 0)
+            OGR_Fld_SetPrecision(hFieldDefn, fld_precision);
+        if (!is_nullable)
+            OGR_Fld_SetNullable(hFieldDefn, false);
+        if (is_ignored)
+            OGR_Fld_SetIgnored(hFieldDefn, true);
+        if (default_value != "")
+            OGR_Fld_SetDefault(hFieldDefn, default_value.c_str());
+#if GDAL_VERSION_NUM >= 3020000
+        if (is_unique)
+            OGR_Fld_SetUnique(hFieldDefn, true);
+#endif
+
+        if (OGR_L_CreateField(hLayer, hFieldDefn, TRUE) == OGRERR_NONE)
+            ret = true;
+
+        OGR_Fld_Destroy(hFieldDefn);
+    }
+
+    GDALReleaseDataset(hDS);
     return ret;
 }
 
+//' Create a new geom field on layer
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_geom_field_create")]]
+bool _ogr_geom_field_create(std::string dsn, std::string layer,
+                            std::string fld_name, std::string geom_type,
+                            std::string srs = "",
+                            bool is_nullable = true,
+                            bool is_ignored = false) {
+
+    GDALDatasetH hDS = nullptr;
+    OGRLayerH hLayer = nullptr;
+    OGRFeatureDefnH hFDefn = nullptr;
+    int iField;
+    OGRGeomFieldDefnH hGeomFieldDefn = nullptr;
+
+    OGRwkbGeometryType eGeomType = _getWkbGeomType(geom_type);
+    if (eGeomType == wkbUnknown && !EQUALN(geom_type.c_str(), "UNKNOWN", 7))
+        Rcpp::stop("'geom_type' not recognized");
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+    if (srs != "") {
+        if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+            if (hSRS != nullptr)
+                OSRDestroySpatialReference(hSRS);
+            Rcpp::stop("error importing SRS from user input");
+        }
+    }
+
+    CPLPushErrorHandler(CPLQuietErrorHandler);
+    hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+            nullptr, nullptr, nullptr);
+
+    if (hDS == nullptr)
+        return false;
+
+    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    CPLPopErrorHandler();
+
+    if (hLayer == nullptr) {
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    if (hFDefn != nullptr) {
+        iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
+    }
+    else {
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    if (iField >= 0) {
+        // fld_name already exists
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    bool ret = false;
+
+    hGeomFieldDefn = OGR_GFld_Create(fld_name.c_str(), eGeomType);
+    if (hGeomFieldDefn != nullptr) {
+        if (!is_nullable)
+            OGR_GFld_SetNullable(hGeomFieldDefn, false);
+        if (is_ignored)
+            OGR_GFld_SetIgnored(hGeomFieldDefn, true);
+        if (hSRS != nullptr)
+            OGR_GFld_SetSpatialRef(hGeomFieldDefn, hSRS);
+
+        if (OGR_L_CreateGeomField(hLayer, hGeomFieldDefn, TRUE) == OGRERR_NONE)
+            ret = true;
+
+        OGR_GFld_Destroy(hGeomFieldDefn);
+    }
+
+    if (hSRS != nullptr)
+        OSRDestroySpatialReference(hSRS);
+
+    GDALReleaseDataset(hDS);
+    return ret;
+}
