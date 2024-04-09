@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9030</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9040</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.10.9030" id="gdalraster-1109030-dev">gdalraster 1.10.9030 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109030-dev"></a></h2>
-<ul><li><p>add <code>GDALRaster::_getGDALDatasetH()</code>: get the GDAL dataset handle for internal use (2024-04-08)</p></li>
+<h2 class="pkg-version" data-toc-text="1.10.9040" id="gdalraster-1109040-dev">gdalraster 1.10.9040 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109040-dev"></a></h2>
+<ul><li><p>add <code>GDALRaster::setFilename()</code>: set the filename of an unitialized <code>GDALRaster</code> object, currently undocumented (2024-04-08)</p></li>
+<li><p>add <code>GDALRaster::_getGDALDatasetH()</code>: get the GDAL dataset handle for internal use (2024-04-08)</p></li>
 <li><p>add <code><a href="../reference/vsi_set_path_option.html">vsi_set_path_option()</a></code>: set a path specific option for a given path prefix, e.g., credential setting for a virtual file system (GDAL &gt;= 3.6) (2024-04-08)</p></li>
 <li><p>add <code><a href="../reference/vsi_clear_path_options.html">vsi_clear_path_options()</a></code>: clear path specific configuration options previously set with <code><a href="../reference/vsi_set_path_option.html">vsi_set_path_option()</a></code> (GDAL &gt;= 3.6) (2024-04-08)</p></li>
 <li><p>new additional geometry functions operating on WKT (GEOS via GDAL headers): <code><a href="../reference/g_is_empty.html">g_is_empty()</a></code>, <code><a href="../reference/g_is_valid.html">g_is_valid()</a></code>, <code><a href="../reference/g_intersects.html">g_intersects()</a></code>, <code><a href="../reference/g_equals.html">g_equals()</a></code>, <code><a href="../reference/g_disjoint.html">g_disjoint()</a></code>, <code><a href="../reference/g_touches.html">g_touches()</a></code>, <code><a href="../reference/g_contains.html">g_contains()</a></code>, <code><a href="../reference/g_within.html">g_within()</a></code>, <code><a href="../reference/g_crosses.html">g_crosses()</a></code>,<code><a href="../reference/g_overlaps.html">g_overlaps()</a></code>, <code><a href="../reference/g_intersection.html">g_intersection()</a></code>, <code><a href="../reference/g_union.html">g_union()</a></code>, <code><a href="../reference/g_difference.html">g_difference()</a></code>, <code><a href="../reference/g_sym_difference.html">g_sym_difference()</a></code>, <code><a href="../reference/g_distance.html">g_distance()</a></code>, <code><a href="../reference/g_length.html">g_length()</a></code>, <code><a href="../reference/g_area.html">g_area()</a></code>, <code><a href="../reference/g_centroid.html">g_centroid()</a></code> (2024-03-30)</p></li>
