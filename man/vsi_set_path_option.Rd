@@ -8,7 +8,7 @@ vsi_set_path_option(path_prefix, key, value)
 }
 \arguments{
 \item{path_prefix}{Character string. A path prefix of a virtual file system
-handler. Typically of the form \code{"/vsiXXX/bucket"}.}
+handler. Typically of the form \verb{/vsiXXX/bucket}.}
 
 \item{key}{Character string. Option key.}
 
@@ -20,18 +20,19 @@ No return value, called for side effect.
 }
 \description{
 \code{vsi_set_path_option()} sets a path specific option for a given path
-prefix. Such option is typically, but not limited to, a credential setting
-for a virtual file system.
+prefix. Such an option is typically, but not limited to, setting
+credentials for a virtual file system.
 Wrapper for \code{VSISetPathSpecificOption()} in the GDAL Common Portability
 Library. Requires GDAL >= 3.6.
 }
 \details{
-Options may also be set as configuration options with \code{set_config_option()}
-but this function allows specifying them with a granularity at the level of
-a file path, which makes it easier if using the same virtual file system
-but with different credentials (e.g., different credentials for bucket
-"/vsis3/foo" and "/vsis3/bar"). This is supported for the following virtual
-file systems: /vsis3/, /vsigs/, /vsiaz/, /vsioss/, /vsiwebhdfs, /vsiswift.
+Options may also be set with \code{set_config_option()}, but
+\code{vsi_set_path_option()} allows specifying them with a granularity at the
+level of a file path. This makes it easier if using the same virtual file
+system but with different credentials (e.g., different credentials for
+buckets "/vsis3/foo" and "/vsis3/bar"). This is supported for the following
+virtual file systems: /vsis3/, /vsigs/, /vsiaz/, /vsioss/, /vsiwebhdfs,
+/vsiswift.
 }
 \note{
 Setting options for a path starting with /vsiXXX/ will also apply for
@@ -43,5 +44,5 @@ or someone with access to the memory allocated by the process may be
 able to read them.
 }
 \seealso{
-\code{\link[=vsi_clear_path_options]{vsi_clear_path_options()}}
+\code{\link[=set_config_option]{set_config_option()}}, \code{\link[=vsi_clear_path_options]{vsi_clear_path_options()}}
 }
