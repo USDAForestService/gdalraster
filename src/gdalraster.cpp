@@ -1390,6 +1390,11 @@ void GDALRaster::_warnInt64() const {
     Rcpp::warning(msg);
 }
 
+GDALDatasetH GDALRaster::_getGDALDatasetH() const {
+    _checkAccess(GA_ReadOnly);
+
+    return hDataset;
+}
 
 // ****************************************************************************
 

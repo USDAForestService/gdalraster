@@ -314,6 +314,7 @@ class GDALRaster {
     bool _readableAsInt(int band) const;
     bool _hasInt64() const;
     void _warnInt64() const;
+    GDALDatasetH _getGDALDatasetH() const;
 };
 
 RCPP_EXPOSED_CLASS(GDALRaster)

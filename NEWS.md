@@ -1,4 +1,6 @@
-# gdalraster 1.10.9020 (dev)
+# gdalraster 1.10.9030 (dev)
+
+* add `GDALRaster::_getGDALDatasetH()`: get the GDAL dataset handle for internal use (2024-04-08)
 
 * add `vsi_set_path_option()`: set a path specific option for a given path prefix, e.g., credential setting for a virtual file system (GDAL >= 3.6) (2024-04-08)
 
