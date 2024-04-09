@@ -1847,21 +1847,22 @@ vsi_get_disk_free_space <- function(path) {
 #' Set a path specific option for a given path prefix
 #'
 #' `vsi_set_path_option()` sets a path specific option for a given path
-#' prefix. Such option is typically, but not limited to, a credential setting
-#' for a virtual file system.
+#' prefix. Such an option is typically, but not limited to, setting
+#' credentials for a virtual file system.
 #' Wrapper for `VSISetPathSpecificOption()` in the GDAL Common Portability
 #' Library. Requires GDAL >= 3.6.
 #'
 #' @details
-#' Options may also be set as configuration options with `set_config_option()`
-#' but this function allows specifying them with a granularity at the level of
-#' a file path, which makes it easier if using the same virtual file system
-#' but with different credentials (e.g., different credentials for bucket
-#' "/vsis3/foo" and "/vsis3/bar"). This is supported for the following virtual
-#' file systems: /vsis3/, /vsigs/, /vsiaz/, /vsioss/, /vsiwebhdfs, /vsiswift.
+#' Options may also be set with `set_config_option()`, but
+#' `vsi_set_path_option()` allows specifying them with a granularity at the
+#' level of a file path. This makes it easier if using the same virtual file
+#' system but with different credentials (e.g., different credentials for
+#' buckets "/vsis3/foo" and "/vsis3/bar"). This is supported for the following
+#' virtual file systems: /vsis3/, /vsigs/, /vsiaz/, /vsioss/, /vsiwebhdfs,
+#' /vsiswift.
 #'
 #' @param path_prefix Character string. A path prefix of a virtual file system
-#' handler. Typically of the form `"/vsiXXX/bucket"`.
+#' handler. Typically of the form `/vsiXXX/bucket`.
 #' @param key Character string. Option key.
 #' @param value Character string. Option value. Passing `value = ""` (empty
 #' string) will unset a value previously set by `vsi_set_path_option()`.
@@ -1877,7 +1878,7 @@ vsi_get_disk_free_space <- function(path) {
 #' able to read them.
 #'
 #' @seealso
-#' [vsi_clear_path_options()]
+#' [set_config_option()], [vsi_clear_path_options()]
 vsi_set_path_option <- function(path_prefix, key, value) {
     invisible(.Call(`_gdalraster_vsi_set_path_option`, path_prefix, key, value))
 }
