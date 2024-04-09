@@ -849,10 +849,9 @@ Rcpp::DataFrame _combine(
 //'
 //' @noRd
 // [[Rcpp::export(name = ".value_count")]]
-Rcpp::DataFrame _value_count(std::string src_filename, int band = 1,
+Rcpp::DataFrame _value_count(GDALRaster& src_ds, int band = 1,
                              bool quiet = false) {
 
-    GDALRaster src_ds = GDALRaster(src_filename, true);
     int nrows = src_ds.getRasterYSize();
     int ncols = src_ds.getRasterXSize();
     GDALProgressFunc pfnProgress = nullptr;

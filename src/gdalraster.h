@@ -68,147 +68,6 @@ const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
 };
 #endif
 
-Rcpp::CharacterVector gdal_version();
-int _gdal_version_num();
-Rcpp::DataFrame gdal_formats(std::string fmt);
-std::string get_config_option(std::string key);
-void set_config_option(std::string key, std::string value);
-int get_cache_used();
-void push_error_handler(std::string handler);
-void pop_error_handler();
-
-Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
-int _get_physical_RAM();
-
-bool create(std::string format, Rcpp::CharacterVector dst_filename,
-            int xsize, int ysize, int nbands, std::string dataType,
-            Rcpp::Nullable<Rcpp::CharacterVector> options);
-bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
-                Rcpp::CharacterVector src_filename, bool strict,
-                Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
-std::string _getCreationOptions(std::string format);
-bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
-                      Rcpp::CharacterVector old_filename,
-                      std::string format);
-bool deleteDataset(Rcpp::CharacterVector filename, std::string format);
-bool renameDataset(Rcpp::CharacterVector new_filename,
-                   Rcpp::CharacterVector old_filename,
-                   std::string format);
-bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
-                         Rcpp::CharacterVector dst_filename, int dst_band,
-                         Rcpp::Nullable<Rcpp::CharacterVector> options,
-                         bool quiet);
-bool _addFileInZip(std::string zip_filename, bool overwrite,
-                   std::string archive_filename, std::string in_filename,
-                   Rcpp::Nullable<Rcpp::CharacterVector> options,
-                   bool quiet);
-int vsi_copy_file(Rcpp::CharacterVector src_file,
-                  Rcpp::CharacterVector target_file,
-                  bool show_progess);
-void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix);
-Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
-                                   int max_files);
-bool vsi_sync(Rcpp::CharacterVector src,
-              Rcpp::CharacterVector target,
-              bool show_progess,
-              Rcpp::Nullable<Rcpp::CharacterVector> options);
-int vsi_mkdir(Rcpp::CharacterVector path, int mode);
-int vsi_rmdir(Rcpp::CharacterVector path);
-int vsi_unlink(Rcpp::CharacterVector filename);
-SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames);
-SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);
-int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath);
-std::string _vsi_get_fs_options(Rcpp::CharacterVector filename);
-Rcpp::CharacterVector vsi_get_fs_prefixes();
-bool vsi_supports_seq_write(Rcpp::CharacterVector filename,
-                            bool allow_local_tmpfile);
-bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
-                            bool allow_local_tmpfile);
-double vsi_get_disk_free_space(Rcpp::CharacterVector path);
-
-Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
-                                        double pixel, double line);
-Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
-Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
-                                   const std::vector<double> gt);
-
-bool buildVRT(Rcpp::CharacterVector vrt_filename,
-              Rcpp::CharacterVector input_rasters,
-              Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
-              bool quiet);
-
-Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
-                         Rcpp::CharacterVector var_names,
-                         std::vector<int> bands,
-                         std::string dst_filename,
-                         std::string fmt,
-                         std::string dataType,
-                         Rcpp::Nullable<Rcpp::CharacterVector> options,
-                         bool quiet);
-
-Rcpp::DataFrame _value_count(std::string src_filename, int band,
-                             bool quiet);
-
-bool _dem_proc(std::string mode,
-               Rcpp::CharacterVector src_filename,
-               Rcpp::CharacterVector dst_filename,
-               Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
-               Rcpp::Nullable<Rcpp::String> col_file,
-               bool quiet);
-
-bool fillNodata(Rcpp::CharacterVector filename, int band,
-                Rcpp::CharacterVector mask_file,
-                double max_dist, int smooth_iterations,
-                bool quiet);
-
-bool footprint(Rcpp::CharacterVector src_filename,
-               Rcpp::CharacterVector dst_filename,
-               Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
-
-bool ogr2ogr(Rcpp::CharacterVector src_dsn,
-             Rcpp::CharacterVector dst_dsn,
-             Rcpp::Nullable<Rcpp::CharacterVector> src_layers,
-             Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
-
-std::string ogrinfo(Rcpp::CharacterVector dsn,
-                    Rcpp::Nullable<Rcpp::CharacterVector> layers,
-                    Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
-                    Rcpp::Nullable<Rcpp::CharacterVector> open_options,
-                    bool read_only,
-                    bool cout);
-
-bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
-                 Rcpp::CharacterVector out_dsn,
-                 std::string out_layer, std::string fld_name,
-                 Rcpp::CharacterVector mask_file, bool nomask,
-                 int connectedness, bool quiet);
-
-bool _rasterize(std::string src_dsn, std::string dst_filename,
-                Rcpp::CharacterVector cl_arg, bool quiet);
-
-bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
-                 Rcpp::CharacterVector dst_filename, int dst_band,
-                 int size_threshold, int connectedness,
-                 Rcpp::CharacterVector mask_filename , int mask_band,
-                 Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
-
-bool translate(Rcpp::CharacterVector src_filename,
-               Rcpp::CharacterVector dst_filename,
-               Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
-               bool quiet);
-
-bool warp(Rcpp::CharacterVector src_files,
-          Rcpp::CharacterVector dst_filename,
-          std::string t_srs,
-          Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
-          bool quiet);
-
-Rcpp::IntegerMatrix createColorRamp(int start_index,
-                                    Rcpp::IntegerVector start_color,
-                                    int end_index,
-                                    Rcpp::IntegerVector end_color,
-                                    std::string palette_interp);
-
 class GDALRaster {
 
     private:
@@ -319,5 +178,146 @@ class GDALRaster {
 };
 
 RCPP_EXPOSED_CLASS(GDALRaster)
+
+Rcpp::CharacterVector gdal_version();
+int _gdal_version_num();
+Rcpp::DataFrame gdal_formats(std::string fmt);
+std::string get_config_option(std::string key);
+void set_config_option(std::string key, std::string value);
+int get_cache_used();
+void push_error_handler(std::string handler);
+void pop_error_handler();
+
+Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
+int _get_physical_RAM();
+
+bool create(std::string format, Rcpp::CharacterVector dst_filename,
+            int xsize, int ysize, int nbands, std::string dataType,
+            Rcpp::Nullable<Rcpp::CharacterVector> options);
+bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
+                Rcpp::CharacterVector src_filename, bool strict,
+                Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+std::string _getCreationOptions(std::string format);
+bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
+                      Rcpp::CharacterVector old_filename,
+                      std::string format);
+bool deleteDataset(Rcpp::CharacterVector filename, std::string format);
+bool renameDataset(Rcpp::CharacterVector new_filename,
+                   Rcpp::CharacterVector old_filename,
+                   std::string format);
+bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
+                         Rcpp::CharacterVector dst_filename, int dst_band,
+                         Rcpp::Nullable<Rcpp::CharacterVector> options,
+                         bool quiet);
+bool _addFileInZip(std::string zip_filename, bool overwrite,
+                   std::string archive_filename, std::string in_filename,
+                   Rcpp::Nullable<Rcpp::CharacterVector> options,
+                   bool quiet);
+int vsi_copy_file(Rcpp::CharacterVector src_file,
+                  Rcpp::CharacterVector target_file,
+                  bool show_progess);
+void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix);
+Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
+                                   int max_files);
+bool vsi_sync(Rcpp::CharacterVector src,
+              Rcpp::CharacterVector target,
+              bool show_progess,
+              Rcpp::Nullable<Rcpp::CharacterVector> options);
+int vsi_mkdir(Rcpp::CharacterVector path, int mode);
+int vsi_rmdir(Rcpp::CharacterVector path);
+int vsi_unlink(Rcpp::CharacterVector filename);
+SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames);
+SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);
+int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath);
+std::string _vsi_get_fs_options(Rcpp::CharacterVector filename);
+Rcpp::CharacterVector vsi_get_fs_prefixes();
+bool vsi_supports_seq_write(Rcpp::CharacterVector filename,
+                            bool allow_local_tmpfile);
+bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
+                            bool allow_local_tmpfile);
+double vsi_get_disk_free_space(Rcpp::CharacterVector path);
+
+Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
+                                        double pixel, double line);
+Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
+Rcpp::IntegerMatrix get_pixel_line(const Rcpp::NumericMatrix xy,
+                                   const std::vector<double> gt);
+
+bool buildVRT(Rcpp::CharacterVector vrt_filename,
+              Rcpp::CharacterVector input_rasters,
+              Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+              bool quiet);
+
+Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
+                         Rcpp::CharacterVector var_names,
+                         std::vector<int> bands,
+                         std::string dst_filename,
+                         std::string fmt,
+                         std::string dataType,
+                         Rcpp::Nullable<Rcpp::CharacterVector> options,
+                         bool quiet);
+
+Rcpp::DataFrame _value_count(GDALRaster& src_ds, int band,
+                             bool quiet);
+
+bool _dem_proc(std::string mode,
+               Rcpp::CharacterVector src_filename,
+               Rcpp::CharacterVector dst_filename,
+               Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+               Rcpp::Nullable<Rcpp::String> col_file,
+               bool quiet);
+
+bool fillNodata(Rcpp::CharacterVector filename, int band,
+                Rcpp::CharacterVector mask_file,
+                double max_dist, int smooth_iterations,
+                bool quiet);
+
+bool footprint(Rcpp::CharacterVector src_filename,
+               Rcpp::CharacterVector dst_filename,
+               Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+
+bool ogr2ogr(Rcpp::CharacterVector src_dsn,
+             Rcpp::CharacterVector dst_dsn,
+             Rcpp::Nullable<Rcpp::CharacterVector> src_layers,
+             Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+
+std::string ogrinfo(Rcpp::CharacterVector dsn,
+                    Rcpp::Nullable<Rcpp::CharacterVector> layers,
+                    Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+                    Rcpp::Nullable<Rcpp::CharacterVector> open_options,
+                    bool read_only,
+                    bool cout);
+
+bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
+                 Rcpp::CharacterVector out_dsn,
+                 std::string out_layer, std::string fld_name,
+                 Rcpp::CharacterVector mask_file, bool nomask,
+                 int connectedness, bool quiet);
+
+bool _rasterize(std::string src_dsn, std::string dst_filename,
+                Rcpp::CharacterVector cl_arg, bool quiet);
+
+bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
+                 Rcpp::CharacterVector dst_filename, int dst_band,
+                 int size_threshold, int connectedness,
+                 Rcpp::CharacterVector mask_filename , int mask_band,
+                 Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+
+bool translate(Rcpp::CharacterVector src_filename,
+               Rcpp::CharacterVector dst_filename,
+               Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+               bool quiet);
+
+bool warp(Rcpp::CharacterVector src_files,
+          Rcpp::CharacterVector dst_filename,
+          std::string t_srs,
+          Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+          bool quiet);
+
+Rcpp::IntegerMatrix createColorRamp(int start_index,
+                                    Rcpp::IntegerVector start_color,
+                                    int end_index,
+                                    Rcpp::IntegerVector end_color,
+                                    std::string palette_interp);
 
 #endif
