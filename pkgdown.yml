@@ -1,14 +1,14 @@
 pandoc: 3.1.11
-pkgdown: 2.0.7
+pkgdown: 2.0.8
 pkgdown_sha: ~
 articles:
   gdal-block-cache: gdal-block-cache.html
-  gdalvector-draft: gdalvector-draft.html
-  raster-display: raster-display.html
   gdal-config-quick-ref: gdal-config-quick-ref.html
+  gdalvector-draft: gdalvector-draft.html
   raster-api-tutorial: raster-api-tutorial.html
   raster-attribute-tables: raster-attribute-tables.html
-last_built: 2024-04-09T05:18Z
+  raster-display: raster-display.html
+last_built: 2024-04-11T21:44Z
 urls:
   reference: https://usdaforestservice.github.io/gdalraster/reference
   article: https://usdaforestservice.github.io/gdalraster/articles
