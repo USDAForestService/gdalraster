@@ -101,6 +101,7 @@ class GDALRaster {
     bool setGeoTransform(std::vector<double> transform);
     int getRasterCount() const;
 
+    std::string getProjection() const;
     std::string getProjectionRef() const;
     bool setProjection(std::string projection);
 

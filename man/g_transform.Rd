@@ -57,7 +57,7 @@ elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, elev_file)
 # the convenience function bbox_transform() does this:
 bbox_to_wkt(ds$bbox()) |>
-  g_transform(ds$getProjectionRef(), epsg_to_wkt(4326)) |>
+  g_transform(ds$getProjection(), epsg_to_wkt(4326)) |>
   bbox_from_wkt()
 ds$close()
 

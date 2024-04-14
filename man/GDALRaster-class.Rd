@@ -67,6 +67,7 @@ ds$getRasterXSize()
 ds$getRasterYSize()
 ds$getGeoTransform()
 ds$setGeoTransform(transform)
+ds$getProjection()
 ds$getProjectionRef()
 ds$setProjection(projection)
 ds$bbox()
@@ -206,6 +207,10 @@ Sets the affine transformation coefficients on this dataset.
 \code{transform} is a numeric vector of length six.
 Returns logical \code{TRUE} on success or \code{FALSE} if the geotransform
 could not be set.
+
+\code{$getProjection()}
+Returns the coordinate reference system of the raster as an OGC WKT
+format string. Equivalent to \code{ds$getProjectionRef()}.
 
 \code{$getProjectionRef()}
 Returns the coordinate reference system of the raster as an OGC WKT
@@ -655,7 +660,7 @@ ds$getFileList()
 ds$getRasterXSize()
 ds$getRasterYSize()
 ds$getGeoTransform()
-ds$getProjectionRef()
+ds$getProjection()
 ds$getRasterCount()
 ds$bbox()
 ds$res()
