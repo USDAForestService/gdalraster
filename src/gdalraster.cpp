@@ -834,6 +834,20 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
                 GDALDataTypeIsSigned(eDT))
                 )) {
 
+          // Byte, use raw
+          if (eDT == GDT_Byte) {
+            std::vector<uint8_t> buf(out_xsize * out_ysize); 
+            err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
+                               buf.data(), out_xsize, out_ysize,
+                               GDT_Byte, 0, 0);
+            
+            if (err == CE_Failure)
+              Rcpp::stop("read raster failed");
+            
+
+            Rcpp::RawVector v = Rcpp::wrap(buf);
+            return v;            
+          }
             // signed integer <= 32 bits and any integer <= 16 bits
             // use int32 buffer
 
@@ -939,8 +953,18 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
         err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
                            buf_.data(), xsize, ysize, eBufType, 0, 0);
     }
+    else if (Rcpp::is<Rcpp::RawVector>(rasterData)) {
+      // Byte data type
+      eBufType = GDT_Byte;
+      std::vector<uint8_t> buf_ = Rcpp::as<std::vector<uint8_t>>(rasterData);
+      if (buf_.size() != ((std::size_t) (xsize * ysize)))
+        Rcpp::stop("size of input data is not the same as region size");
+      err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
+                         buf_.data(), xsize, ysize, eBufType, 0, 0);
+
+    }
     else {
-        Rcpp::stop("data must be a vector of 'numeric' or 'complex'");
+        Rcpp::stop("data must be a vector of 'numeric' or 'complex' or 'raw'");
     }
 
     if (err == CE_Failure)

@@ -211,6 +211,28 @@ test_that("complex I/O works", {
     ds$close()
 })
 
+test_that("Byte I/O works", {
+  f <- paste0(tempdir(), "/", "testbyte.tif")
+  create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
+         nbands=1, dataType="Byte")
+  ds <- new(GDALRaster, f, read_only=FALSE)
+  set.seed(42)
+  z <- as.raw(sample(100, 100))
+  ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, z)
+  
+  ds$open(read_only=TRUE)
+  expect_warning(r <- read_ds(ds))
+  
+  deleteDataset(f)
+  
+  expect_type(r, "raw")
+
+  attributes(r) <- NULL
+  expect_equal(r, z)
+  files <- ds$getFileList()
+  on.exit(unlink(files))
+  ds$close()
+})
 test_that("set unit type, scale and offset works", {
     elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
     mod_file <- paste0(tempdir(), "/", "storml_elev_mod.tif")
