@@ -267,6 +267,10 @@ int GDALRaster::getRasterCount() const {
     return GDALGetRasterCount(hDataset);
 }
 
+std::string GDALRaster::getProjection() const {
+    return getProjectionRef();
+}
+
 std::string GDALRaster::getProjectionRef() const {
     _checkAccess(GA_ReadOnly);
 
@@ -1445,6 +1449,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Set the affine transformation coefficients for this dataset")
     .const_method("getRasterCount", &GDALRaster::getRasterCount,
         "Return the number of raster bands on this dataset")
+    .const_method("getProjection", &GDALRaster::getProjection,
+        "Return the projection (equivalent to getProjectionRef)")
     .const_method("getProjectionRef", &GDALRaster::getProjectionRef,
         "Return the projection definition for this dataset")
     .method("setProjection", &GDALRaster::setProjection,

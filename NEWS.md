@@ -1,4 +1,6 @@
-# gdalraster 1.10.9050 (dev)
+# gdalraster 1.10.9060 (dev)
+
+* add `GDALRaster::getProjection()`: equivalent to `GDALRaster::getProjectionRef()` (consistent with `osgeo.gdal.Dataset.getProjection()` / `osgeo.gdal.Dataset.getProjectionRef()` in the GDAL Python API) (2024-04-14)
 
 * `buildRAT()`: if the input raster is an object of class `GDALRaster`, use it by reference rather than instantiating another `GDALRaster` object internally (2024-04-09)
 

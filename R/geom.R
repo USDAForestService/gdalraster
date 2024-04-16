@@ -170,7 +170,7 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' ds <- new(GDALRaster, elev_file)
 #' ds$bbox()
-#' bbox_transform(ds$bbox(), ds$getProjectionRef(), epsg_to_wkt(4326))
+#' bbox_transform(ds$bbox(), ds$getProjection(), epsg_to_wkt(4326))
 #' ds$close()
 bbox_transform <- function(bbox, srs_from, srs_to) {
     if (!(is.numeric(bbox) && length(bbox) == 4))
@@ -249,7 +249,7 @@ g_buffer <- function(wkt, dist, quad_segs = 30L) {
 #' ds <- new(GDALRaster, elev_file)
 #' # the convenience function bbox_transform() does this:
 #' bbox_to_wkt(ds$bbox()) |>
-#'   g_transform(ds$getProjectionRef(), epsg_to_wkt(4326)) |>
+#'   g_transform(ds$getProjection(), epsg_to_wkt(4326)) |>
 #'   bbox_from_wkt()
 #' ds$close()
 #'
