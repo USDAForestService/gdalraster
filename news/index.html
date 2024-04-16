@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9050</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9060</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.10.9050" id="gdalraster-1109050-dev">gdalraster 1.10.9050 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109050-dev"></a></h2>
-<ul><li><p><code><a href="../reference/buildRAT.html">buildRAT()</a></code>: if the input raster is an object of class <code>GDALRaster</code>, use it by reference rather than instantiating another <code>GDALRaster</code> object internally (2024-04-09)</p></li>
+<h2 class="pkg-version" data-toc-text="1.10.9060" id="gdalraster-1109060-dev">gdalraster 1.10.9060 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109060-dev"></a></h2>
+<ul><li><p>add <code>GDALRaster::getProjection()</code>: equivalent to <code>GDALRaster::getProjectionRef()</code> (consistent with <code>osgeo.gdal.Dataset.getProjection()</code> / <code>osgeo.gdal.Dataset.getProjectionRef()</code> in the GDAL Python API) (2024-04-14)</p></li>
+<li><p><code><a href="../reference/buildRAT.html">buildRAT()</a></code>: if the input raster is an object of class <code>GDALRaster</code>, use it by reference rather than instantiating another <code>GDALRaster</code> object internally (2024-04-09)</p></li>
 <li><p>add <code>GDALRaster::setFilename()</code>: set the filename of an unitialized <code>GDALRaster</code> object, currently undocumented (2024-04-08)</p></li>
 <li><p>add <code>GDALRaster::_getGDALDatasetH()</code>: get the GDAL dataset handle for internal use (2024-04-08)</p></li>
 <li><p>add <code><a href="../reference/vsi_set_path_option.html">vsi_set_path_option()</a></code>: set a path specific option for a given path prefix, e.g., credential setting for a virtual file system (GDAL &gt;= 3.6) (2024-04-08)</p></li>
