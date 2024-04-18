@@ -835,7 +835,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
                 )) {
 
           // Byte, use raw
-          if (eDT == GDT_Byte) {
+          if (eDT == GDT_Byte && readByteAsRaw) {
             std::vector<uint8_t> buf(out_xsize * out_ysize); 
             err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
                                buf.data(), out_xsize, out_ysize,
@@ -1560,5 +1560,6 @@ RCPP_MODULE(mod_GDALRaster) {
     .method("close", &GDALRaster::close,
         "Close the GDAL dataset for proper cleanup")
 
+    .field("readByteAsRaw", &GDALRaster::readByteAsRaw)
     ;
 }

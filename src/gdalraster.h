@@ -169,6 +169,7 @@ class GDALRaster {
 
     void close();
 
+    bool readByteAsRaw; 
     // methods for internal use not exported to R
     void _checkAccess(GDALAccess access_needed) const;
     GDALRasterBandH _getBand(int band) const;
