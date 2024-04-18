@@ -164,8 +164,10 @@ DEFAULT_DEM_PROC <- list(
 #' If `FALSE` (the default), output is a vector of pixel data interleaved by
 #' band.
 #' @param as_raw Logical. If `TRUE` and the underlying data type is Byte, return output
-#' as R's raw vector type. This maps to the property `readByteAsRaw` on `GDALRaster`, which
-#' is used to temporarily update the field in this function. 
+#' as R's raw vector type. This maps to the property `$readByteAsRaw` on `GDALRaster`, which
+#' is used to temporarily update the field in this function. To control  this behaviour 
+#' in a persisent way on a data set see \code{$readByteAsRaw()}  in 
+#' [`GDALRaster-class`][GDALRaster]. 
 #' @returns If `as_list = FALSE` (the default), a `numeric` or `complex` vector
 #' containing the values that were read. It is organized in left to right, top
 #' to bottom pixel order, interleaved by band.
@@ -227,7 +229,13 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 
     i <- 1
     readByteAsRaw <- ds$readByteAsRaw
-    if (as_raw) ds$readByteAsRaw <- TRUE
+    if (as_raw) {
+      ds$readByteAsRaw <- TRUE
+      dtype <- ds$getDataTypeName(bands[1L])
+      if (!dtype == "Byte") {
+        warning(sprintf("'as_raw' set to 'TRUE' only affects read for band type 'Byte',  current data type: '%s'", dtype))
+      }
+    }
     for (b in bands) {
         if (as_list) {
             r[[i]] <- ds$read(b, xoff, yoff, xsize, ysize,

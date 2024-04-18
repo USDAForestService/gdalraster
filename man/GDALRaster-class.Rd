@@ -119,6 +119,8 @@ ds$flushCache()
 
 ds$getChecksum(band, xoff, yoff, xsize, ysize)
 
+ds$readByteAsRaw
+
 ds$close()
 }
 }
@@ -631,6 +633,13 @@ components of complex bands influence the result.
 \emph{Raster row/column offsets use 0-based indexing.}
 \code{xsize} is the width in pixels of the window to read.
 \code{ysize} is the height in pixels of the window to read.
+
+\code{$readByteAsRaw}
+A logical value, \code{FALSE} by default. This field can be set to \code{TRUE} which will
+affect the data type returned by \verb{$read()} and \code{\link[=read_ds]{read_ds()}}. When the underlying band data type
+is 'Byte' and \code{readByteAsRaw} is \code{TRUE} the output type will be raw rather than
+integer. See also the \code{as_raw} argument to \code{\link[=read_ds]{read_ds()}} to control this in a non-persisent
+setting. If the underlying band data type is not Byte this setting has no effect.
 
 \code{$close()}
 Closes the GDAL dataset (no return value, called for side effects).
