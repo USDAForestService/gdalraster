@@ -55,6 +55,7 @@ test_that("band-level parameters are correct", {
     evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
     ds <- new(GDALRaster, evt_file, TRUE)
     expect_equal(ds$getBlockSize(1), c(143,28))
+    expect_equal(ds$getActualBlockSize(1, 0, 0), c(143,28))
     expect_equal(ds$getOverviewCount(1), 0)
     expect_equal(ds$getDataTypeName(1), "Int16")
     expect_equal(ds$getNoDataValue(1), 32767)

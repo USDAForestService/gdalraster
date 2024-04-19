@@ -216,12 +216,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // _value_count
-Rcpp::DataFrame _value_count(GDALRaster& src_ds, int band, bool quiet);
+Rcpp::DataFrame _value_count(const GDALRaster& src_ds, int band, bool quiet);
 RcppExport SEXP _gdalraster__value_count(SEXP src_dsSEXP, SEXP bandSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< GDALRaster& >::type src_ds(src_dsSEXP);
+    Rcpp::traits::input_parameter< const GDALRaster& >::type src_ds(src_dsSEXP);
     Rcpp::traits::input_parameter< int >::type band(bandSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(_value_count(src_ds, band, quiet));

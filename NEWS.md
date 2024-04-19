@@ -1,4 +1,6 @@
-# gdalraster 1.10.9060 (dev)
+# gdalraster 1.10.9070 (dev)
+
+* add `GDALRaster::getActualBlockSize()`: retrieve the actual block size for a given block offset (2024-04-19)
 
 * add `GDALRaster::getProjection()`: equivalent to `GDALRaster::getProjectionRef()` (consistent with `osgeo.gdal.Dataset.getProjection()` / `osgeo.gdal.Dataset.getProjectionRef()` in the GDAL Python API) (2024-04-14)
 
