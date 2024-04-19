@@ -79,7 +79,8 @@ GDALRaster::GDALRaster() :
             fname_in(""),
             open_options_in(Rcpp::CharacterVector::create()),
             hDataset(nullptr),
-            eAccess(GA_ReadOnly) {}
+            eAccess(GA_ReadOnly), 
+            readByteAsRaw(false) {}
 
 GDALRaster::GDALRaster(Rcpp::CharacterVector filename) :
             GDALRaster(
@@ -97,7 +98,8 @@ GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
         Rcpp::CharacterVector open_options) :
                 open_options_in(open_options),
                 hDataset(nullptr),
-                eAccess(GA_ReadOnly) {
+                eAccess(GA_ReadOnly), 
+                readByteAsRaw(false) {
 
     fname_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
     open(read_only);
