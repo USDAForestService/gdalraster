@@ -1,6 +1,6 @@
 # gdalraster 1.10.9080 (dev)
 
-* support I/O of Byte raster as R '"raw"' type; add the setting `readByteAsRaw` as a field in class `GDALRaster`; add argument `as_raw` in `read_ds()` (#314, thanks to @mdsumner) (2024-04-19)
+* support I/O of Byte raster as R `raw` type; add the setting `readByteAsRaw` as a field in class `GDALRaster`; add argument `as_raw` in `read_ds()` (#314, thanks to @mdsumner) (2024-04-19)
 
 * add `GDALRaster::getActualBlockSize()`: retrieve the actual block size for a given block offset (2024-04-19)
 
