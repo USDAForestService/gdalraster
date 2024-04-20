@@ -110,6 +110,8 @@ class GDALRaster {
     std::vector<int> dim() const;
 
     std::vector<int> getBlockSize(int band) const;
+    std::vector<int> getActualBlockSize(int band, int xblockoff,
+                                        int yblockoff) const;
     int getOverviewCount(int band) const;
     void buildOverviews(std::string resampling, std::vector<int> levels,
                         std::vector<int> bands);

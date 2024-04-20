@@ -78,6 +78,7 @@ ds$getRasterCount()
 ds$getDescription(band)
 ds$setDescription(band)
 ds$getBlockSize(band)
+ds$getActualBlockSize(band, xblockoff, yblockoff)
 ds$getOverviewCount(band)
 ds$buildOverviews(resampling, levels, bands)
 ds$getDataTypeName(band)
@@ -262,6 +263,15 @@ and block ysize is 1. However, for tiled images block size will typically
 be the tile size. Note that the X and Y block sizes don't have to divide
 the image size evenly, meaning that right and bottom edge blocks may be
 incomplete.
+
+\code{$getActualBlockSize(band, xblockoff, yblockoff)}
+Returns an integer vector of length two (xvalid, yvalid) containing the
+actual block size for a given block offset in \code{band}. Handles partial
+blocks at the edges of the raster and returns the true number of pixels.
+\code{xblockoff} is an integer scalar, the horizontal block offset for which to
+calculate the number of valid pixels, with zero indicating the left most
+block, 1 the next block, etc. \code{yblockoff} is likewise the vertical block
+offset, with zero indicating the top most block, 1 the next block, etc.
 
 \code{$getOverviewCount(band)}
 Returns the number of overview layers (a.k.a. pyramids) available for

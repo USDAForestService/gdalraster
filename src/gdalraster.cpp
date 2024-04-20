@@ -342,6 +342,18 @@ std::vector<int> GDALRaster::getBlockSize(int band) const {
     return ret;
 }
 
+std::vector<int> GDALRaster::getActualBlockSize(int band, int xblockoff,
+                                                int yblockoff) const {
+    _checkAccess(GA_ReadOnly);
+
+    GDALRasterBandH hBand = _getBand(band);
+    int nXValid, nYValid;
+    GDALGetActualBlockSize(hBand, xblockoff, yblockoff,
+                           &nXValid, &nYValid);
+    std::vector<int> ret = {nXValid, nYValid};
+    return ret;
+}
+
 int GDALRaster::getOverviewCount(int band) const {
     _checkAccess(GA_ReadOnly);
 
@@ -1462,6 +1474,8 @@ RCPP_MODULE(mod_GDALRaster) {
     .const_method("dim", &GDALRaster::dim,
         "Return raster dimensions (xsize, ysize, number of bands)")
     .const_method("getBlockSize", &GDALRaster::getBlockSize,
+        "Retrieve the actual block size for a given block offset")
+    .const_method("getActualBlockSize", &GDALRaster::getActualBlockSize,
         "Get the natural block size of this band")
     .const_method("getOverviewCount", &GDALRaster::getOverviewCount,
         "Return the number of overview layers available")
