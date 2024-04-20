@@ -163,6 +163,11 @@ DEFAULT_DEM_PROC <- list(
 #' @param as_list Logical. If `TRUE`, return output as a list of band vectors.
 #' If `FALSE` (the default), output is a vector of pixel data interleaved by
 #' band.
+#' @param as_raw Logical. If `TRUE` and the underlying data type is Byte, return output
+#' as R's raw vector type. This maps to the setting `$readByteAsRaw` on the `GDALRaster` object,
+#' which is used to temporarily update that field in this function. To control this behaviour 
+#' in a persisent way on a data set see \code{$readByteAsRaw}  in 
+#' [`GDALRaster-class`][GDALRaster].  
 #' @returns If `as_list = FALSE` (the default), a `numeric` or `complex` vector
 #' containing the values that were read. It is organized in left to right, top
 #' to bottom pixel order, interleaved by band.
@@ -212,7 +217,7 @@ DEFAULT_DEM_PROC <- list(
 read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
                     xsize=ds$getRasterXSize(), ysize=ds$getRasterYSize(),
                     out_xsize=xsize, out_ysize=ysize,
-                    as_list=FALSE) {
+                    as_list=FALSE, as_raw = FALSE) {
 
     if (is.null(bands))
         bands <- seq_len(ds$getRasterCount())
@@ -223,6 +228,14 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
         r <- NULL
 
     i <- 1
+    readByteAsRaw <- ds$readByteAsRaw
+    if (as_raw) {
+      ds$readByteAsRaw <- TRUE
+      dtype <- ds$getDataTypeName(bands[1L])
+      if (!dtype == "Byte") {
+        warning(sprintf("'as_raw' set to 'TRUE' only affects read for band type 'Byte',  current data type: '%s'", dtype))
+      }
+    }
     for (b in bands) {
         if (as_list) {
             r[[i]] <- ds$read(b, xoff, yoff, xsize, ysize,
@@ -234,6 +247,8 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
         }
     }
 
+    ## restore the field, note that it may have had no impact
+    ds$readByteAsRaw <- readByteAsRaw
     gt <- ds$getGeoTransform()
     ul_xy <- .apply_geotransform(gt, xoff, yoff)
     lr_xy <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))

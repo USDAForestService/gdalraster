@@ -367,6 +367,9 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
             ylim <- c(ysize, 0)
     }
 
+    if (typeof(data_in) == "raw") {
+      data_in <- as.integer(data_in)
+    }
     a <- array(data_in, dim = c(xsize, ysize, nbands))
     r <- .as_raster(a,
                     col_tbl=col_tbl,

@@ -121,6 +121,9 @@ ds$flushCache()
 ds$getChecksum(band, xoff, yoff, xsize, ysize)
 
 ds$close()
+
+## Fields
+ds$readByteAsRaw
 }
 }
 
@@ -541,7 +544,8 @@ Data are read as R integer type when possible for the raster data type
 (\code{UInt32}, \code{Float32}, \code{Float64}).
 No rescaling of the data is performed (see \code{$getScale()} and
 \code{$getOffset()} above).
-An error is raised if the read operation fails.
+An error is raised if the read operation fails. See also the setting
+\verb{$readByteAsRaw} below.
 
 \code{$write(band, xoff, yoff, xsize, ysize, rasterData)}
 Writes a region of raster data to \code{band}.
@@ -650,6 +654,13 @@ formats such as GTiff could result in being unable to open it afterwards.
 The \code{GDALRaster} object is still available after calling \code{$close()}.
 The dataset can be re-opened on the existing \code{filename} with
 \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
+
+\code{$readByteAsRaw}
+A logical value, \code{FALSE} by default. This field can be set to \code{TRUE} which will
+affect the data type returned by \verb{$read()} and \code{\link[=read_ds]{read_ds()}}. When the underlying band data type
+is 'Byte' and \code{readByteAsRaw} is \code{TRUE} the output type will be raw rather than
+integer. See also the \code{as_raw} argument to \code{\link[=read_ds]{read_ds()}} to control this in a non-persisent
+setting. If the underlying band data type is not Byte this setting has no effect.
 }
 
 \examples{

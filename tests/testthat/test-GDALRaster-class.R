@@ -212,6 +212,47 @@ test_that("complex I/O works", {
     ds$close()
 })
 
+test_that("Byte I/O works", {
+  f <- paste0(tempdir(), "/", "testbyte.tif")
+  create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
+         nbands=1, dataType="Byte")
+  ds <- new(GDALRaster, f, read_only=FALSE)
+  set.seed(42)
+  z <- as.raw(sample(100, 100))
+  ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, z)
+  
+  ds$open(read_only=TRUE)
+  expect_false(ds$readByteAsRaw)
+  ## read as raw with the temporary setting
+  expect_warning(r_raw <- read_ds(ds, as_raw = TRUE))
+  ## read with to-integer conversion (as default, not affected by 'as_raw')
+  expect_warning(r_int <- read_ds(ds))
+  ## set and read as raw via field
+  ds$readByteAsRaw <- TRUE
+  expect_warning(r_raw1 <- read_ds(ds, as_raw = TRUE))
+  
+  
+  deleteDataset(f)
+  
+  expect_type(r_int, "integer")
+
+  expect_type(r_raw, "raw")
+  expect_type(r_raw1, "raw")
+  attributes(r_raw) <- NULL
+  expect_equal(r_raw, z)
+  
+  
+  ds$close()
+})
+
+test_that("Byte I/O: warn when data type not compatible", {
+  ## expect a warning when data type is not Byte
+  elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+  ds <- new(GDALRaster, elev_file)
+  expect_warning(read_ds(ds, 1L, 0L, 0L, 2L, 3L, 2L, 3L, as_raw = TRUE))
+  ds$close()
+})
+
 test_that("set unit type, scale and offset works", {
     elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
     mod_file <- paste0(tempdir(), "/", "storml_elev_mod.tif")

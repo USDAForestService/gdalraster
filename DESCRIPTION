@@ -4,6 +4,7 @@ Version: 1.10.9070
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),
+    person("Michael D.","Sumner", role = c("ctb")),
     person("Frank", "Warmerdam",
             role = c("ctb", "cph"), comment = "GDAL API documentation; src/progress_r.cpp from gdal/port/cpl_progress.cpp"),
     person("Even", "Rouault",
