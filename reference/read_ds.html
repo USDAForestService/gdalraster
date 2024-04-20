@@ -86,7 +86,8 @@ read an entire raster into memory (see Note).</p>
 <span>  ysize <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>  out_xsize <span class="op">=</span> <span class="va">xsize</span>,</span>
 <span>  out_ysize <span class="op">=</span> <span class="va">ysize</span>,</span>
-<span>  as_list <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  as_list <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  as_raw <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -135,6 +136,14 @@ overview).</p></dd>
 <dd><p>Logical. If <code>TRUE</code>, return output as a list of band vectors.
 If <code>FALSE</code> (the default), output is a vector of pixel data interleaved by
 band.</p></dd>
+
+
+<dt>as_raw</dt>
+<dd><p>Logical. If <code>TRUE</code> and the underlying data type is Byte, return output
+as R's raw vector type. This maps to the setting <code>$readByteAsRaw</code> on the <code>GDALRaster</code> object,
+which is used to temporarily update that field in this function. To control this behaviour
+in a persisent way on a data set see <code>$readByteAsRaw</code>  in
+<code><a href="GDALRaster-class.html">GDALRaster-class</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
