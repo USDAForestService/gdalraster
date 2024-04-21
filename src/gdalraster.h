@@ -171,7 +171,7 @@ class GDALRaster {
 
     void close();
 
-    bool readByteAsRaw; 
+    bool readByteAsRaw;
     // methods for internal use not exported to R
     void _checkAccess(GDALAccess access_needed) const;
     GDALRasterBandH _getBand(int band) const;
@@ -227,8 +227,8 @@ bool vsi_sync(Rcpp::CharacterVector src,
               Rcpp::CharacterVector target,
               bool show_progess,
               Rcpp::Nullable<Rcpp::CharacterVector> options);
-int vsi_mkdir(Rcpp::CharacterVector path, int mode);
-int vsi_rmdir(Rcpp::CharacterVector path);
+int vsi_mkdir(Rcpp::CharacterVector path, std::string mode, bool recursive);
+int vsi_rmdir(Rcpp::CharacterVector path, bool recursive);
 int vsi_unlink(Rcpp::CharacterVector filename);
 SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames);
 SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);

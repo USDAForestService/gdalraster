@@ -532,25 +532,27 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_mkdir
-int vsi_mkdir(Rcpp::CharacterVector path, int mode);
-RcppExport SEXP _gdalraster_vsi_mkdir(SEXP pathSEXP, SEXP modeSEXP) {
+int vsi_mkdir(Rcpp::CharacterVector path, std::string mode, bool recursive);
+RcppExport SEXP _gdalraster_vsi_mkdir(SEXP pathSEXP, SEXP modeSEXP, SEXP recursiveSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path(pathSEXP);
-    Rcpp::traits::input_parameter< int >::type mode(modeSEXP);
-    rcpp_result_gen = Rcpp::wrap(vsi_mkdir(path, mode));
+    Rcpp::traits::input_parameter< std::string >::type mode(modeSEXP);
+    Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_mkdir(path, mode, recursive));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_rmdir
-int vsi_rmdir(Rcpp::CharacterVector path);
-RcppExport SEXP _gdalraster_vsi_rmdir(SEXP pathSEXP) {
+int vsi_rmdir(Rcpp::CharacterVector path, bool recursive);
+RcppExport SEXP _gdalraster_vsi_rmdir(SEXP pathSEXP, SEXP recursiveSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path(pathSEXP);
-    rcpp_result_gen = Rcpp::wrap(vsi_rmdir(path));
+    Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_rmdir(path, recursive));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1315,8 +1317,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 2},
     {"_gdalraster_vsi_read_dir", (DL_FUNC) &_gdalraster_vsi_read_dir, 2},
     {"_gdalraster_vsi_sync", (DL_FUNC) &_gdalraster_vsi_sync, 4},
-    {"_gdalraster_vsi_mkdir", (DL_FUNC) &_gdalraster_vsi_mkdir, 2},
-    {"_gdalraster_vsi_rmdir", (DL_FUNC) &_gdalraster_vsi_rmdir, 1},
+    {"_gdalraster_vsi_mkdir", (DL_FUNC) &_gdalraster_vsi_mkdir, 3},
+    {"_gdalraster_vsi_rmdir", (DL_FUNC) &_gdalraster_vsi_rmdir, 2},
     {"_gdalraster_vsi_unlink", (DL_FUNC) &_gdalraster_vsi_unlink, 1},
     {"_gdalraster_vsi_unlink_batch", (DL_FUNC) &_gdalraster_vsi_unlink_batch, 1},
     {"_gdalraster_vsi_stat", (DL_FUNC) &_gdalraster_vsi_stat, 2},

@@ -53,7 +53,14 @@ test_that("vsi_unlink_batch works", {
 test_that("vsi_mkdir and vsi_rmdir work", {
     new_dir <- file.path(tempdir(), "newdir")
     expect_equal(vsi_mkdir(new_dir), 0)
-    expect_equal(result <- vsi_rmdir(new_dir), 0)
+    expect_equal(vsi_rmdir(new_dir), 0)
+
+    # recursive
+    top_dir <- file.path(tempdir(), "topdir")
+    sub_dir <- file.path(top_dir, "subdir")
+    expect_equal(vsi_mkdir(sub_dir), -1)
+    expect_equal(vsi_mkdir(sub_dir, recursive = TRUE), 0)
+    expect_equal(vsi_rmdir(top_dir, recursive = TRUE), 0)
 })
 
 test_that("vsi_sync works", {

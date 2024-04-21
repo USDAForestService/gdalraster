@@ -4,10 +4,13 @@
 \alias{vsi_rmdir}
 \title{Delete a directory}
 \usage{
-vsi_rmdir(path)
+vsi_rmdir(path, recursive = FALSE)
 }
 \arguments{
 \item{path}{Character string. The path to the directory to be deleted.}
+
+\item{recursive}{Logical scalar. \code{TRUE} to delete the directory and its
+content. Defaults to \code{FALSE}.}
 }
 \value{
 Invisibly, \code{0} on success or \code{-1} on an error.
@@ -15,14 +18,19 @@ Invisibly, \code{0} on success or \code{-1} on an error.
 \description{
 \code{vsi_rmdir()} deletes a directory object from the file system. On some
 systems the directory must be empty before it can be deleted.
+With \code{recursive = TRUE}, deletes a directory object and its content from
+the file system.
 This function goes through the GDAL \code{VSIFileHandler} virtualization and may
 work on unusual filesystems such as in memory.
-It is a wrapper for \code{VSIRmdir()} in the GDAL Common Portability Library.
-Analog of the POSIX \code{rmdir()} function.
+It is a wrapper for \code{VSIRmdir()} and \code{VSIRmdirRecursive()} in the GDAL
+Common Portability Library.
+}
+\note{
+/vsis3/ has an efficient implementation for deleting recursively. Starting
+with GDAL 3.4, /vsigs/ has an efficient implementation for deleting
+recursively, provided that OAuth2 authentication is used.
 }
 \examples{
-# for illustration only
-# this would normally be used with GDAL virtual file systems
 new_dir <- file.path(tempdir(), "newdir")
 result <- vsi_mkdir(new_dir)
 print(result)

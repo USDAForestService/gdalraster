@@ -1,4 +1,10 @@
-# gdalraster 1.10.9080 (dev)
+# gdalraster 1.10.9090 (dev)
+
+* `vsi_rmdir()`: add argument `recursive`, `TRUE` to delete the directory and its content (2024-04-21)
+
+* `vsi_mkdir()`: add argument `recursive`, `TRUE` to create the directory and its ancestors (2024-04-21)
+
+* fix `vsi_mkdir()`: the file mode was set incorrectly because `mode` was not passed correctly as octal literal. `mode` is now passed as a character string containing the file mode as octal (2024-04-21)
 
 * support I/O of Byte raster as R `raw` type; add the setting `readByteAsRaw` as a field in class `GDALRaster`; add argument `as_raw` in `read_ds()` (#314, thanks to @mdsumner) (2024-04-19)
 
