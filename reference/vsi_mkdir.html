@@ -75,7 +75,7 @@ the GDAL Common Portability Library."><!-- mathjax --><script src="https://cdnjs
 For POSIX-style systems, the mode is modified by the file creation mask
 (umask). However, some file systems and platforms may not use umask, or
 they may ignore the mode completely. So a reasonable cross-platform
-default mode value is 0755.
+default mode value is <code>0755</code>.
 With <code>recursive = TRUE</code>, creates a directory and all its ancestors.
 This function is a wrapper for <code>VSIMkdir()</code> and <code>VSIMkdirRecursive()</code> in
 the GDAL Common Portability Library.</p>
@@ -93,7 +93,8 @@ the GDAL Common Portability Library.</p>
 
 
 <dt>mode</dt>
-<dd><p>Character string. The permissions mode in octal.</p></dd>
+<dd><p>Character string. The permissions mode in octal with prefix
+<code>0</code>, e.g., <code>"0755"</code> (the default).</p></dd>
 
 
 <dt>recursive</dt>
