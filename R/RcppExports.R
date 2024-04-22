@@ -1457,11 +1457,11 @@ vsi_read_dir <- function(path, max_files = 0L) {
 #' be used for /vsis3/, /vsigs/ or other filesystems using a MD5Sum as ETAG.
 #' The `OVERWRITE` strategy (GDAL >= 3.2) will always overwrite the target
 #' file with the source one.\cr
-#' * `NUM_THREADS=integer`. (GDAL >= 3.1) Number of threads to use for parallel
-#' file copying. Only use for when /vsis3/, /vsigs/, /vsiaz/ or /vsiadls/ is
+#' * `NUM_THREADS=integer`. Number of threads to use for parallel file
+#' copying. Only use for when /vsis3/, /vsigs/, /vsiaz/ or /vsiadls/ is
 #' in source or target. The default is 10 since GDAL 3.3.\cr
-#' * `CHUNK_SIZE=integer`. (GDAL >= 3.1) Maximum size of chunk (in bytes) to use
-#' to split large objects when downloading them from /vsis3/, /vsigs/, /vsiaz/
+#' * `CHUNK_SIZE=integer`. Maximum size of chunk (in bytes) to use to split
+#' large objects when downloading them from /vsis3/, /vsigs/, /vsiaz/
 #' or /vsiadls/ to local file system, or for upload to /vsis3/, /vsiaz/ or
 #' /vsiadls/ from local file system. Only used if `NUM_THREADS > 1`.
 #' For upload to /vsis3/, this chunk size must be set at least to 5 MB. The
@@ -1538,13 +1538,14 @@ vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
 #' For POSIX-style systems, the mode is modified by the file creation mask
 #' (umask). However, some file systems and platforms may not use umask, or
 #' they may ignore the mode completely. So a reasonable cross-platform
-#' default mode value is 0755.
+#' default mode value is `0755`.
 #' With `recursive = TRUE`, creates a directory and all its ancestors.
 #' This function is a wrapper for `VSIMkdir()` and `VSIMkdirRecursive()` in
 #' the GDAL Common Portability Library.
 #'
 #' @param path Character string. The path to the directory to create.
-#' @param mode Character string. The permissions mode in octal.
+#' @param mode Character string. The permissions mode in octal with prefix
+#' `0`, e.g., `"0755"` (the default).
 #' @param recursive Logical scalar. `TRUE` to create the directory and its
 #' ancestors. Defaults to `FALSE`.
 #' @returns Invisibly, `0` on success or `-1` on an error.

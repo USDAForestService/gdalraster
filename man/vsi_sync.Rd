@@ -67,11 +67,11 @@ operation (so smaller than 50 MB given the default used by GDAL). Only to
 be used for /vsis3/, /vsigs/ or other filesystems using a MD5Sum as ETAG.
 The \code{OVERWRITE} strategy (GDAL >= 3.2) will always overwrite the target
 file with the source one.\cr
-\item \code{NUM_THREADS=integer}. (GDAL >= 3.1) Number of threads to use for parallel
-file copying. Only use for when /vsis3/, /vsigs/, /vsiaz/ or /vsiadls/ is
+\item \code{NUM_THREADS=integer}. Number of threads to use for parallel file
+copying. Only use for when /vsis3/, /vsigs/, /vsiaz/ or /vsiadls/ is
 in source or target. The default is 10 since GDAL 3.3.\cr
-\item \code{CHUNK_SIZE=integer}. (GDAL >= 3.1) Maximum size of chunk (in bytes) to use
-to split large objects when downloading them from /vsis3/, /vsigs/, /vsiaz/
+\item \code{CHUNK_SIZE=integer}. Maximum size of chunk (in bytes) to use to split
+large objects when downloading them from /vsis3/, /vsigs/, /vsiaz/
 or /vsiadls/ to local file system, or for upload to /vsis3/, /vsiaz/ or
 /vsiadls/ from local file system. Only used if \code{NUM_THREADS > 1}.
 For upload to /vsis3/, this chunk size must be set at least to 5 MB. The
