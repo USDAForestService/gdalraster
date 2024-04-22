@@ -1539,53 +1539,61 @@ vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
 #' (umask). However, some file systems and platforms may not use umask, or
 #' they may ignore the mode completely. So a reasonable cross-platform
 #' default mode value is 0755.
-#' This function is a wrapper for `VSIMkdir()` in the GDAL
-#' Common Portability Library. Analog of the POSIX `mkdir()` function.
+#' With `recursive = TRUE`, creates a directory and all its ancestors.
+#' This function is a wrapper for `VSIMkdir()` and `VSIMkdirRecursive()` in
+#' the GDAL Common Portability Library.
 #'
 #' @param path Character string. The path to the directory to create.
-#' @param mode Integer scalar. The permissions mode.
+#' @param mode Character string. The permissions mode in octal.
+#' @param recursive Logical scalar. `TRUE` to create the directory and its
+#' ancestors. Defaults to `FALSE`.
 #' @returns Invisibly, `0` on success or `-1` on an error.
 #'
 #' @seealso
 #' [vsi_read_dir()], [vsi_rmdir()]
 #'
 #' @examples
-#' # for illustration only
-#' # this would normally be used with GDAL virtual file systems
 #' new_dir <- file.path(tempdir(), "newdir")
 #' result <- vsi_mkdir(new_dir)
 #' print(result)
 #' result <- vsi_rmdir(new_dir)
 #' print(result)
-vsi_mkdir <- function(path, mode = 755L) {
-    invisible(.Call(`_gdalraster_vsi_mkdir`, path, mode))
+vsi_mkdir <- function(path, mode = "0755", recursive = FALSE) {
+    invisible(.Call(`_gdalraster_vsi_mkdir`, path, mode, recursive))
 }
 
 #' Delete a directory
 #'
 #' `vsi_rmdir()` deletes a directory object from the file system. On some
 #' systems the directory must be empty before it can be deleted.
+#' With `recursive = TRUE`, deletes a directory object and its content from
+#' the file system.
 #' This function goes through the GDAL `VSIFileHandler` virtualization and may
 #' work on unusual filesystems such as in memory.
-#' It is a wrapper for `VSIRmdir()` in the GDAL Common Portability Library.
-#' Analog of the POSIX `rmdir()` function.
+#' It is a wrapper for `VSIRmdir()` and `VSIRmdirRecursive()` in the GDAL
+#' Common Portability Library.
 #'
 #' @param path Character string. The path to the directory to be deleted.
+#' @param recursive Logical scalar. `TRUE` to delete the directory and its
+#' content. Defaults to `FALSE`.
 #' @returns Invisibly, `0` on success or `-1` on an error.
+#'
+#' @note
+#' /vsis3/ has an efficient implementation for deleting recursively. Starting
+#' with GDAL 3.4, /vsigs/ has an efficient implementation for deleting
+#' recursively, provided that OAuth2 authentication is used.
 #'
 #' @seealso
 #' [deleteDataset()], [vsi_mkdir()], [vsi_read_dir()], [vsi_unlink()]
 #'
 #' @examples
-#' # for illustration only
-#' # this would normally be used with GDAL virtual file systems
 #' new_dir <- file.path(tempdir(), "newdir")
 #' result <- vsi_mkdir(new_dir)
 #' print(result)
 #' result <- vsi_rmdir(new_dir)
 #' print(result)
-vsi_rmdir <- function(path) {
-    invisible(.Call(`_gdalraster_vsi_rmdir`, path))
+vsi_rmdir <- function(path, recursive = FALSE) {
+    invisible(.Call(`_gdalraster_vsi_rmdir`, path, recursive))
 }
 
 #' Delete a file

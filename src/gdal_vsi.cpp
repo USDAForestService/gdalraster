@@ -333,31 +333,38 @@ bool vsi_sync(Rcpp::CharacterVector src,
 //' (umask). However, some file systems and platforms may not use umask, or
 //' they may ignore the mode completely. So a reasonable cross-platform
 //' default mode value is 0755.
-//' This function is a wrapper for `VSIMkdir()` in the GDAL
-//' Common Portability Library. Analog of the POSIX `mkdir()` function.
+//' With `recursive = TRUE`, creates a directory and all its ancestors.
+//' This function is a wrapper for `VSIMkdir()` and `VSIMkdirRecursive()` in
+//' the GDAL Common Portability Library.
 //'
 //' @param path Character string. The path to the directory to create.
-//' @param mode Integer scalar. The permissions mode.
+//' @param mode Character string. The permissions mode in octal.
+//' @param recursive Logical scalar. `TRUE` to create the directory and its
+//' ancestors. Defaults to `FALSE`.
 //' @returns Invisibly, `0` on success or `-1` on an error.
 //'
 //' @seealso
 //' [vsi_read_dir()], [vsi_rmdir()]
 //'
 //' @examples
-//' # for illustration only
-//' # this would normally be used with GDAL virtual file systems
 //' new_dir <- file.path(tempdir(), "newdir")
 //' result <- vsi_mkdir(new_dir)
 //' print(result)
 //' result <- vsi_rmdir(new_dir)
 //' print(result)
 // [[Rcpp::export(invisible = true)]]
-int vsi_mkdir(Rcpp::CharacterVector path, int mode = 755) {
+int vsi_mkdir(Rcpp::CharacterVector path, std::string mode = "0755",
+              bool recursive = false) {
 
     std::string path_in;
     path_in = Rcpp::as<std::string>(_check_gdal_filename(path));
 
-    return VSIMkdir(path_in.c_str(), mode);
+    long mode_in = std::stol(mode, nullptr, 8);
+
+    if (recursive)
+        return VSIMkdirRecursive(path_in.c_str(), mode_in);
+    else
+        return VSIMkdir(path_in.c_str(), mode_in);
 }
 
 
@@ -365,32 +372,42 @@ int vsi_mkdir(Rcpp::CharacterVector path, int mode = 755) {
 //'
 //' `vsi_rmdir()` deletes a directory object from the file system. On some
 //' systems the directory must be empty before it can be deleted.
+//' With `recursive = TRUE`, deletes a directory object and its content from
+//' the file system.
 //' This function goes through the GDAL `VSIFileHandler` virtualization and may
 //' work on unusual filesystems such as in memory.
-//' It is a wrapper for `VSIRmdir()` in the GDAL Common Portability Library.
-//' Analog of the POSIX `rmdir()` function.
+//' It is a wrapper for `VSIRmdir()` and `VSIRmdirRecursive()` in the GDAL
+//' Common Portability Library.
 //'
 //' @param path Character string. The path to the directory to be deleted.
+//' @param recursive Logical scalar. `TRUE` to delete the directory and its
+//' content. Defaults to `FALSE`.
 //' @returns Invisibly, `0` on success or `-1` on an error.
+//'
+//' @note
+//' /vsis3/ has an efficient implementation for deleting recursively. Starting
+//' with GDAL 3.4, /vsigs/ has an efficient implementation for deleting
+//' recursively, provided that OAuth2 authentication is used.
 //'
 //' @seealso
 //' [deleteDataset()], [vsi_mkdir()], [vsi_read_dir()], [vsi_unlink()]
 //'
 //' @examples
-//' # for illustration only
-//' # this would normally be used with GDAL virtual file systems
 //' new_dir <- file.path(tempdir(), "newdir")
 //' result <- vsi_mkdir(new_dir)
 //' print(result)
 //' result <- vsi_rmdir(new_dir)
 //' print(result)
 // [[Rcpp::export(invisible = true)]]
-int vsi_rmdir(Rcpp::CharacterVector path) {
+int vsi_rmdir(Rcpp::CharacterVector path, bool recursive = false) {
 
     std::string path_in;
     path_in = Rcpp::as<std::string>(_check_gdal_filename(path));
 
-    return VSIRmdir(path_in.c_str());
+    if (recursive)
+        return VSIRmdirRecursive(path_in.c_str());
+    else
+        return VSIRmdir(path_in.c_str());
 }
 
 
