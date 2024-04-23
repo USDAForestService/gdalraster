@@ -63,7 +63,6 @@ test_that("calc writes correct results", {
 
     # multiband output
     # https://github.com/USDAForestService/gdalraster/issues/319
-    # TODO: checksum the output bands once confirmed as correct
     expr <- "
 to_terrainrgb <- function(dtm) {
     startingvalue <- 10000
@@ -80,7 +79,7 @@ to_terrainrgb <- function(dtm) {
 to_terrainrgb(ELEV)"
 
     out_file <- "/vsimem/multiband-calc.tif"
-    result <- calc(expr,
+    result <- calc(expr = expr,
                    rasterfiles = elev_file,
                    var.names = "ELEV",
                    dstfile = out_file,
@@ -88,7 +87,39 @@ to_terrainrgb(ELEV)"
                    out_band = 1:3,
                    nodata_value = 0)
     expect_equal(result, out_file)
+
+    # revert out_file using from_terrainrgb()
+    expr <- "
+from_terrainrgb <- function(R,G,B) {
+  elevation <- -10000 + ((R * 256 * 256 + G * 256 + B) * 0.1)
+  return(elevation)
+}
+from_terrainrgb(R,G,B)"
+
+    revert_file <- "/vsimem/multiband-calc-revert.tif"
+    result <- calc(expr = expr,
+                   rasterfiles = c(out_file, out_file, out_file),
+                   bands = c(1, 2 ,3),
+                   var.names = c("R", "G", "B"),
+                   dstfile = revert_file,
+                   dtName = "Int16",
+                   nodata_value = -10000,
+                   setRasterNodataValue = TRUE)
+    expect_equal(result, revert_file)
+    # compare revert_file with the original elev_file
+    ds <- new(GDALRaster, elev_file)
+    orig_elev_values <- read_ds(ds)
+    attributes(orig_elev_values) <- NULL
+    ds$close()
+    ds2 <- new(GDALRaster, revert_file)
+    revert_elev_values <- read_ds(ds2)
+    attributes(revert_elev_values) <- NULL
+    ds2$close()
+    expect_equal(revert_elev_values, orig_elev_values)
+    expect_equal(mean(revert_elev_values, na.rm = TRUE),
+                 mean(orig_elev_values, na.rm = TRUE))
     deleteDataset(out_file)
+    deleteDataset(revert_file)
 
     # test errors from input validation
     expr <- "((B5-B4)/(B5+B4))"
