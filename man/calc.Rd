@@ -39,7 +39,9 @@ to guess from the output filename if not specified.}
 \item{dtName}{Character name of output data type (e.g., Byte, Int16,
 UInt16, Int32, UInt32, Float32).}
 
-\item{out_band}{Integer band number in \code{dstfile} for writing output.}
+\item{out_band}{Integer band number(s) in \code{dstfile} for writing output.
+Defaults to \code{1}. Multiband output is supported as of {gdalraster} 1.11.0,
+in which case \code{out_band} would be a vector of band numbers.}
 
 \item{options}{Optional list of format-specific creation options in a
 vector of "NAME=VALUE" pairs
@@ -85,6 +87,7 @@ of inputs.
 Individual pixel coordinates are also available as variables in the
 R expression, as either x/y in the raster projected coordinate system or
 inverse projected longitude/latitude.
+Multiband output is supported as of {gdalraster} 1.11.0.
 }
 \details{
 The variables in \code{expr} are vectors of length raster xsize
@@ -99,7 +102,7 @@ coordinates will be inverse projected to longitude/latitude
 which is read from the first input raster). Note that inverse projection
 adds computation time.
 
-To refer to specific bands in a multi-band file, repeat the filename in
+To refer to specific bands in a multi-band input file, repeat the filename in
 \code{rasterfiles} and specify corresponding band numbers in \code{bands}, along with
 optional variable names in \code{var.names}, for example,
 \preformatted{
@@ -110,7 +113,16 @@ var.names = c("B4", "B5")
 
 Output will be written to \code{dstfile}. To update a file that already
 exists, set \code{write_mode = "update"} and set \code{out_band} to an existing
-band number in \code{dstfile} (new bands cannot be created in \code{dstfile}).
+band number(s) in \code{dstfile} (new bands cannot be created in \code{dstfile}).
+
+To write multiband output, \code{expr} must return a vector of values
+interleaved by band. This is equivalent to, and can also be returned as,
+a matrix \code{m} with \code{nrow(m)} equal to \code{length()} of an input vector, and
+\code{ncol(m)} equal to the number of output bands. In matrix form, each column
+contains a vector of output values for a band.
+\code{length(m)} must be equal to the \code{length()} of an input vector multiplied by
+\code{length(out_band)}. The dimensions described above are assumed and not
+read from the return value of \code{expr}.
 }
 \examples{
 ## Using pixel longitude/latitude
