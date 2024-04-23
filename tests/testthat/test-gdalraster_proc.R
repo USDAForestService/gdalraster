@@ -64,20 +64,23 @@ test_that("calc writes correct results", {
     # multiband output
     # https://github.com/USDAForestService/gdalraster/issues/319
     # TODO: checksum the output bands once confirmed as correct
-    to_terrainrgb <- function(dtm) {
-        startingvalue <- 10000
-        precision <- 0.1
-        rfactor <- 256*256 * precision
-        gfactor <- 256 * precision
+    expr <- "
+to_terrainrgb <- function(dtm) {
+    startingvalue <- 10000
+    precision <- 0.1
+    rfactor <- 256*256 * precision
+    gfactor <- 256 * precision
 
-        r <- floor((startingvalue +dtm)*(1/precision) / 256 / 256)
-        g <- floor((startingvalue +dtm - r*rfactor)*(1/precision) / 256)
-        b <- floor((startingvalue +dtm - r*rfactor - g*gfactor)*(1/precision))
+    r <- floor((startingvalue +dtm)*(1/precision) / 256 / 256)
+    g <- floor((startingvalue +dtm - r*rfactor)*(1/precision) / 256)
+    b <- floor((startingvalue +dtm - r*rfactor - g*gfactor)*(1/precision))
 
-        return(c(r,g,b))
-    }
+    return(c(r,g,b))
+}
+to_terrainrgb(ELEV)"
+
     out_file <- "/vsimem/multiband-calc.tif"
-    result <- calc(expr = "to_terrainrgb(ELEV)",
+    result <- calc(expr,
                    rasterfiles = elev_file,
                    var.names = "ELEV",
                    dstfile = out_file,
