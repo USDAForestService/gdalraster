@@ -61,6 +61,32 @@ test_that("calc writes correct results", {
     ds$close()
     expect_equal(chk, 28017)
 
+    # multiband output
+    # https://github.com/USDAForestService/gdalraster/issues/319
+    # TODO: checksum the output bands once confirmed as correct
+    to_terrainrgb <- function(dtm) {
+        startingvalue <- 10000
+        precision <- 0.1
+        rfactor <- 256*256 * precision
+        gfactor <- 256 * precision
+
+        r <- floor((startingvalue +dtm)*(1/precision) / 256 / 256)
+        g <- floor((startingvalue +dtm - r*rfactor)*(1/precision) / 256)
+        b <- floor((startingvalue +dtm - r*rfactor - g*gfactor)*(1/precision))
+
+        return(c(r,g,b))
+    }
+    out_file <- "/vsimem/multiband-calc.tif"
+    result <- calc(expr = "to_terrainrgb(ELEV)",
+                   rasterfiles = elev_file,
+                   var.names = "ELEV",
+                   dstfile = out_file,
+                   dtName = "Byte",
+                   out_band = 1:3,
+                   nodata_value = 0)
+    expect_equal(result, out_file)
+    deleteDataset(out_file)
+
     # test errors from input validation
     expr <- "((B5-B4)/(B5+B4))"
     expect_error(calc(expr = expr,

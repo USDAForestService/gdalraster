@@ -1,4 +1,6 @@
-# gdalraster 1.10.9090 (dev)
+# gdalraster 1.10.9100 (dev)
+
+* support multiband `calc()` (#319) (2024-04-23)
 
 * `vsi_rmdir()`: add argument `recursive`, `TRUE` to delete the directory and its content (2024-04-21)
 
