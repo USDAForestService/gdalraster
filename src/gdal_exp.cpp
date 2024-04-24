@@ -1414,12 +1414,14 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
         Rcpp::stop("failed to open the source dataset");
 
     bool have_args_in = false;
-    Rcpp::CharacterVector cl_arg_in;
+    bool as_json = false;
     std::vector<char *> argv;
     if (cl_arg.isNotNull()) {
-        cl_arg_in = cl_arg;
+        Rcpp::CharacterVector cl_arg_in(cl_arg);
         for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
             argv.push_back((char *) cl_arg_in[i]);
+            if (EQUAL(cl_arg_in[i], "-json"))
+                as_json = true;
         }
         have_args_in = true;
     }
@@ -1451,17 +1453,11 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
     if (cout)
         Rcpp::Rcout << info_out;
 
-    if (have_args_in) {
-        Rcpp::CharacterVector::iterator i;
-        for (i = cl_arg_in.begin(); i != cl_arg_in.end(); ++i) {
-            if (EQUAL(*i, "-json")) {
-                info_out.erase(std::remove(info_out.begin(),
-                                           info_out.end(),
-                                           '\n'),
-                               info_out.cend());
-                break;
-            }
-        }
+    if (as_json) {
+        info_out.erase(std::remove(info_out.begin(),
+                                   info_out.end(),
+                                   '\n'),
+                       info_out.cend());
     }
 
     return info_out;
