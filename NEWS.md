@@ -1,4 +1,6 @@
-# gdalraster 1.10.9100 (dev)
+# gdalraster 1.10.9110 (dev)
+
+* improve the check for `"-json"` as a `cl_arg` to `ogrinfo()` (2024-04-23)
 
 * support multiband output in `calc()` (#319) (2024-04-23)
 
