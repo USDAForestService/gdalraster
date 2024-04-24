@@ -342,6 +342,9 @@ test_that("ogrinfo works", {
     expect_vector(info, ptype = character(), size = 1)
     expect_false(info[1] == "")
 
+    json <- ogrinfo(src, "mtbs_perims", cl_arg = c("-json", "-so", "-nomd"))
+    expect_true(nchar(json) > 1000)
+
     src_mem <- paste0("/vsimem/", basename(src))
     vsi_copy_file(src, src_mem)
 
