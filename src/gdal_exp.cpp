@@ -1413,19 +1413,18 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
     if (src_ds == nullptr)
         Rcpp::stop("failed to open the source dataset");
 
-    bool have_args_in = false;
     bool as_json = false;
     std::vector<char *> argv;
     if (cl_arg.isNotNull()) {
         Rcpp::CharacterVector cl_arg_in(cl_arg);
         for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
             argv.push_back((char *) cl_arg_in[i]);
-            if (EQUAL(cl_arg_in[i], "-json"))
+            if (EQUAL(cl_arg_in[i], "-json")) {
                 as_json = true;
+            }
         }
-        have_args_in = true;
     }
-    argv.push_back((char *) dsn_in.c_str());
+    argv.push_back((char *) "");  // dsn passed as src_ds below
     if (layers.isNotNull()) {
         Rcpp::CharacterVector layers_in(layers);
         for (R_xlen_t i = 0; i < layers_in.size(); ++i) {
@@ -1434,12 +1433,8 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
     }
     argv.push_back(nullptr);
 
-    GDALVectorInfoOptions *psOptions =
-            GDALVectorInfoOptionsNew(argv.data(), nullptr);
-
-    if (psOptions == nullptr) {
-        Rcpp::stop("ogrinfo() failed (could not create options struct)");
-    }
+    GDALVectorInfoOptions *psOptions = nullptr;
+    psOptions = GDALVectorInfoOptionsNew(argv.data(), nullptr);
 
     std::string info_out = "";
     char *pszInfo = GDALVectorInfo(src_ds, psOptions);
