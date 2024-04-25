@@ -1424,9 +1424,7 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
             }
         }
     }
-#if GDAL_VERSION_NUM < 3090000
     argv.push_back((char *) dsn_in.c_str());
-#endif
     if (layers.isNotNull()) {
         Rcpp::CharacterVector layers_in(layers);
         for (R_xlen_t i = 0; i < layers_in.size(); ++i) {
