@@ -1424,7 +1424,9 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
             }
         }
     }
-    argv.push_back((char *) "");  // dsn passed as src_ds below
+#if GDAL_VERSION_NUM < 3090000
+    argv.push_back((char *) dsn_in.c_str());
+#endif
     if (layers.isNotNull()) {
         Rcpp::CharacterVector layers_in(layers);
         for (R_xlen_t i = 0; i < layers_in.size(); ++i) {
@@ -1433,8 +1435,11 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
     }
     argv.push_back(nullptr);
 
-    GDALVectorInfoOptions *psOptions = nullptr;
-    psOptions = GDALVectorInfoOptionsNew(argv.data(), nullptr);
+    GDALVectorInfoOptions *psOptions =
+            GDALVectorInfoOptionsNew(argv.data(), nullptr);
+    if (psOptions == nullptr) {
+        Rcpp::stop("ogrinfo() failed (could not create options struct)");
+    }
 
     std::string info_out = "";
     char *pszInfo = GDALVectorInfo(src_ds, psOptions);
