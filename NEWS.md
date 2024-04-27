@@ -1,4 +1,30 @@
-# gdalraster 1.10.9010 (dev)
+# gdalraster 1.10.9110 (dev)
+
+* improve the check for `"-json"` as a `cl_arg` to `ogrinfo()` (2024-04-23)
+
+* support multiband output in `calc()` (#319) (2024-04-23)
+
+* `vsi_rmdir()`: add argument `recursive`, `TRUE` to delete the directory and its content (2024-04-21)
+
+* `vsi_mkdir()`: add argument `recursive`, `TRUE` to create the directory and its ancestors (2024-04-21)
+
+* fix `vsi_mkdir()`: the file mode was set incorrectly because `mode` was not passed correctly as octal literal. `mode` is now passed as a character string containing the file mode as octal (2024-04-21)
+
+* support I/O of Byte raster as R `raw` type; add the setting `readByteAsRaw` as a field in class `GDALRaster`; add argument `as_raw` in `read_ds()` (#314, thanks to @mdsumner) (2024-04-19)
+
+* add `GDALRaster::getActualBlockSize()`: retrieve the actual block size for a given block offset (2024-04-19)
+
+* add `GDALRaster::getProjection()`: equivalent to `GDALRaster::getProjectionRef()` (consistent with `osgeo.gdal.Dataset.getProjection()` / `osgeo.gdal.Dataset.getProjectionRef()` in the GDAL Python API) (2024-04-14)
+
+* `buildRAT()`: if the input raster is an object of class `GDALRaster`, use it by reference rather than instantiating another `GDALRaster` object internally (2024-04-09)
+
+* add `GDALRaster::setFilename()`: set the filename of an unitialized `GDALRaster` object, currently undocumented (2024-04-08)
+
+* add `GDALRaster::_getGDALDatasetH()`: get the GDAL dataset handle for internal use (2024-04-08)
+
+* add `vsi_set_path_option()`: set a path specific option for a given path prefix, e.g., credential setting for a virtual file system (GDAL >= 3.6) (2024-04-08)
+
+* add `vsi_clear_path_options()`: clear path specific configuration options previously set with `vsi_set_path_option()` (GDAL >= 3.6) (2024-04-08)
 
 * new additional geometry functions operating on WKT (GEOS via GDAL headers): `g_is_empty()`, `g_is_valid()`, `g_intersects()`, `g_equals()`, `g_disjoint()`, `g_touches()`, `g_contains()`, `g_within()`, `g_crosses()`,`g_overlaps()`, `g_intersection()`, `g_union()`, `g_difference()`, `g_sym_difference()`, `g_distance()`, `g_length()`, `g_area()`, `g_centroid()` (2024-03-30)
 

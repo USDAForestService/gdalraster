@@ -4,7 +4,7 @@ test_that("buildRAT/displayRAT work", {
     evt_tbl <- read.csv(evt_csv)
     evt_tbl <- evt_tbl[,1:7]
     rat <- buildRAT(evt_file, table_type="thematic", na_value=-9999,
-            join_df=evt_tbl)
+                    join_df=evt_tbl)
     expect_equal(nrow(rat), 24)
     expect_equal(ncol(rat), 8)
     expect_equal(attr(rat, "GDALRATTableType"), "thematic")
@@ -19,6 +19,16 @@ test_that("buildRAT/displayRAT work", {
     attr(rat$A, "GFU") <- "Alpha"
     tbl <- displayRAT(rat)
     expect_true(is(tbl, "gt_tbl"))
+
+    # pass as an object of class GDALRaster
+    rat <- NULL
+    ds <- new(GDALRaster, evt_file)
+    rat <- buildRAT(ds, table_type="thematic", na_value=-9999,
+                    join_df=evt_tbl)
+    expect_equal(nrow(rat), 24)
+    expect_equal(ncol(rat), 8)
+    expect_equal(sum(rat$COUNT), 15301)
+    ds$close()
 
     # uint32 raster
     lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")

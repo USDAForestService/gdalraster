@@ -163,6 +163,11 @@ DEFAULT_DEM_PROC <- list(
 #' @param as_list Logical. If `TRUE`, return output as a list of band vectors.
 #' If `FALSE` (the default), output is a vector of pixel data interleaved by
 #' band.
+#' @param as_raw Logical. If `TRUE` and the underlying data type is Byte, return output
+#' as R's raw vector type. This maps to the setting `$readByteAsRaw` on the `GDALRaster` object,
+#' which is used to temporarily update that field in this function. To control this behaviour
+#' in a persisent way on a data set see \code{$readByteAsRaw}  in
+#' [`GDALRaster-class`][GDALRaster].
 #' @returns If `as_list = FALSE` (the default), a `numeric` or `complex` vector
 #' containing the values that were read. It is organized in left to right, top
 #' to bottom pixel order, interleaved by band.
@@ -212,7 +217,7 @@ DEFAULT_DEM_PROC <- list(
 read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
                     xsize=ds$getRasterXSize(), ysize=ds$getRasterYSize(),
                     out_xsize=xsize, out_ysize=ysize,
-                    as_list=FALSE) {
+                    as_list=FALSE, as_raw = FALSE) {
 
     if (is.null(bands))
         bands <- seq_len(ds$getRasterCount())
@@ -223,6 +228,14 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
         r <- NULL
 
     i <- 1
+    readByteAsRaw <- ds$readByteAsRaw
+    if (as_raw) {
+      ds$readByteAsRaw <- TRUE
+      dtype <- ds$getDataTypeName(bands[1L])
+      if (!dtype == "Byte") {
+        warning(sprintf("'as_raw' set to 'TRUE' only affects read for band type 'Byte',  current data type: '%s'", dtype))
+      }
+    }
     for (b in bands) {
         if (as_list) {
             r[[i]] <- ds$read(b, xoff, yoff, xsize, ysize,
@@ -234,6 +247,8 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
         }
     }
 
+    ## restore the field, note that it may have had no impact
+    ds$readByteAsRaw <- readByteAsRaw
     gt <- ds$getGeoTransform()
     ul_xy <- .apply_geotransform(gt, xoff, yoff)
     lr_xy <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))
@@ -787,6 +802,7 @@ rasterToVRT <- function(srcfile,
 #' Individual pixel coordinates are also available as variables in the
 #' R expression, as either x/y in the raster projected coordinate system or
 #' inverse projected longitude/latitude.
+#' Multiband output is supported as of {gdalraster} 1.11.0.
 #'
 #' @details
 #' The variables in `expr` are vectors of length raster xsize
@@ -801,7 +817,7 @@ rasterToVRT <- function(srcfile,
 #' which is read from the first input raster). Note that inverse projection
 #' adds computation time.
 #'
-#' To refer to specific bands in a multi-band file, repeat the filename in
+#' To refer to specific bands in a multi-band input file, repeat the filename in
 #' `rasterfiles` and specify corresponding band numbers in `bands`, along with
 #' optional variable names in `var.names`, for example,
 #' \preformatted{
@@ -812,7 +828,16 @@ rasterToVRT <- function(srcfile,
 #'
 #' Output will be written to `dstfile`. To update a file that already
 #' exists, set `write_mode = "update"` and set `out_band` to an existing
-#' band number in `dstfile` (new bands cannot be created in `dstfile`).
+#' band number(s) in `dstfile` (new bands cannot be created in `dstfile`).
+#'
+#' To write multiband output, `expr` must return a vector of values
+#' interleaved by band. This is equivalent to, and can also be returned as,
+#' a matrix `m` with `nrow(m)` equal to `length()` of an input vector, and
+#' `ncol(m)` equal to the number of output bands. In matrix form, each column
+#' contains a vector of output values for a band.
+#' `length(m)` must be equal to the `length()` of an input vector multiplied by
+#' `length(out_band)`. The dimensions described above are assumed and not
+#' read from the return value of `expr`.
 #'
 #' @param expr An R expression as a character string (e.g., `"A + B"`).
 #' @param rasterfiles Character vector of source raster filenames.
@@ -824,7 +849,9 @@ rasterToVRT <- function(srcfile,
 #' to guess from the output filename if not specified.
 #' @param dtName Character name of output data type (e.g., Byte, Int16,
 #' UInt16, Int32, UInt32, Float32).
-#' @param out_band Integer band number in `dstfile` for writing output.
+#' @param out_band Integer band number(s) in `dstfile` for writing output.
+#' Defaults to `1`. Multiband output is supported as of {gdalraster} 1.11.0,
+#' in which case `out_band` would be a vector of band numbers.
 #' @param options Optional list of format-specific creation options in a
 #' vector of "NAME=VALUE" pairs
 #' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW compression
@@ -989,12 +1016,9 @@ calc <- function(expr,
     if (write_mode == "update") {
         update_mode <- TRUE
     } else if (write_mode == "safe" || write_mode == "overwrite") {
-        if (!is.null(out_band))
-            if (out_band != 1)
-                stop("'out_band' other than 1 requires \"update\" mode",
-                     call. = FALSE)
         update_mode <- FALSE
-        out_band <- 1
+        if (is.null(out_band))
+            out_band <- 1
     } else {
         stop("unknown 'write_mode'", call. = FALSE)
     }
@@ -1070,7 +1094,7 @@ calc <- function(expr,
         rasterFromRaster(rasterfiles[1],
                          dstfile,
                          fmt,
-                         nbands = 1,
+                         nbands = length(out_band),
                          dtName = dtName,
                          options = options,
                          dstnodata = dstnodata)
@@ -1109,6 +1133,10 @@ calc <- function(expr,
         assign("pixelX", x) # nolint: object_usage_linter.
     }
 
+    # expected size of vector returned by expr
+    num_out_bands <- length(out_band)
+    expect_outrow_len <- ncols * num_out_bands
+
     process_row <- function(row) {
         if (usePixelY) {
             y <- rep((ymax - (cellsizeY / 2) - (cellsizeY * row)), ncols)
@@ -1133,7 +1161,7 @@ calc <- function(expr,
         }
 
         outrow <- eval(calc_expr)
-        if (length(outrow) != ncols) {
+        if (length(outrow) != expect_outrow_len) {
             dst_ds$close()
             for (r in 1:nrasters) {
                 ds_list[[r]]$close()
@@ -1141,13 +1169,17 @@ calc <- function(expr,
             stop("result vector is the wrong size", call. = FALSE)
         }
         outrow <- ifelse(is.na(outrow), nodata_value, outrow)
-        dst_ds$write(band = out_band,
-                     offx = 0,
-                     offy = row,
-                     xsize = ncols,
-                     ysize = 1,
-                     outrow)
-
+        dim(outrow) <- c(ncols, num_out_bands)
+        i <- 1
+        for (b in out_band) {
+            dst_ds$write(band = b,
+                         offx = 0,
+                         offy = row,
+                         xsize = ncols,
+                         ysize = 1,
+                         rasterData = outrow[, i])
+            i <- i + 1
+        }
         if (!quiet)
             setTxtProgressBar(pb, row+1)
 
@@ -1523,7 +1555,7 @@ polygonize <- function(raster_file,
         if (.ogr_ds_exists(out_dsn) && !overwrite) {
             msg <- "'out_dsn' exists but cannot be updated.\n"
             msg <- paste0(msg, "You may need to remove it first, ")
-            msg <- paste0(msg, "or use overwrite = TRUE.")
+            msg <- paste0(msg, "or use 'overwrite = TRUE'.")
             stop(msg, call. = FALSE)
         }
     }
@@ -1559,16 +1591,17 @@ polygonize <- function(raster_file,
             stop("specify 'out_fmt' to create a new dataset", call. = FALSE)
         }
         if (!.create_ogr(out_fmt, out_dsn, 0, 0, 0, "Unknown",
-                         out_layer, srs, fld_name, dsco, lco))
+                         out_layer, "POLYGON", srs, fld_name, dsco, lco)) {
             stop("failed to create 'out_dsn'", call. = FALSE)
+        }
     }
 
     if (!.ogr_layer_exists(out_dsn, out_layer)) {
-        res <- .ogr_layer_create(out_dsn, out_layer, srs, lco)
+        res <- .ogr_layer_create(out_dsn, out_layer, "POLYGON", srs, lco)
         if (!res)
             stop("failed to create 'out_layer'", call. = FALSE)
         if (fld_name != "") {
-            res <- .ogr_field_create(out_dsn, out_layer, fld_name)
+            res <- .ogr_field_create(out_dsn, out_layer, fld_name, "OFTInteger")
             if (!res)
                 stop("failed to create the output field", call. = FALSE)
         }

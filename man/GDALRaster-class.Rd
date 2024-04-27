@@ -67,6 +67,7 @@ ds$getRasterXSize()
 ds$getRasterYSize()
 ds$getGeoTransform()
 ds$setGeoTransform(transform)
+ds$getProjection()
 ds$getProjectionRef()
 ds$setProjection(projection)
 ds$bbox()
@@ -77,6 +78,7 @@ ds$getRasterCount()
 ds$getDescription(band)
 ds$setDescription(band)
 ds$getBlockSize(band)
+ds$getActualBlockSize(band, xblockoff, yblockoff)
 ds$getOverviewCount(band)
 ds$buildOverviews(resampling, levels, bands)
 ds$getDataTypeName(band)
@@ -119,6 +121,9 @@ ds$flushCache()
 ds$getChecksum(band, xoff, yoff, xsize, ysize)
 
 ds$close()
+
+## Fields
+ds$readByteAsRaw
 }
 }
 
@@ -207,6 +212,10 @@ Sets the affine transformation coefficients on this dataset.
 Returns logical \code{TRUE} on success or \code{FALSE} if the geotransform
 could not be set.
 
+\code{$getProjection()}
+Returns the coordinate reference system of the raster as an OGC WKT
+format string. Equivalent to \code{ds$getProjectionRef()}.
+
 \code{$getProjectionRef()}
 Returns the coordinate reference system of the raster as an OGC WKT
 format string.
@@ -257,6 +266,15 @@ and block ysize is 1. However, for tiled images block size will typically
 be the tile size. Note that the X and Y block sizes don't have to divide
 the image size evenly, meaning that right and bottom edge blocks may be
 incomplete.
+
+\code{$getActualBlockSize(band, xblockoff, yblockoff)}
+Returns an integer vector of length two (xvalid, yvalid) containing the
+actual block size for a given block offset in \code{band}. Handles partial
+blocks at the edges of the raster and returns the true number of pixels.
+\code{xblockoff} is an integer scalar, the horizontal block offset for which to
+calculate the number of valid pixels, with zero indicating the left most
+block, 1 the next block, etc. \code{yblockoff} is likewise the vertical block
+offset, with zero indicating the top most block, 1 the next block, etc.
 
 \code{$getOverviewCount(band)}
 Returns the number of overview layers (a.k.a. pyramids) available for
@@ -526,7 +544,8 @@ Data are read as R integer type when possible for the raster data type
 (\code{UInt32}, \code{Float32}, \code{Float64}).
 No rescaling of the data is performed (see \code{$getScale()} and
 \code{$getOffset()} above).
-An error is raised if the read operation fails.
+An error is raised if the read operation fails. See also the setting
+\verb{$readByteAsRaw} below.
 
 \code{$write(band, xoff, yoff, xsize, ysize, rasterData)}
 Writes a region of raster data to \code{band}.
@@ -635,6 +654,13 @@ formats such as GTiff could result in being unable to open it afterwards.
 The \code{GDALRaster} object is still available after calling \code{$close()}.
 The dataset can be re-opened on the existing \code{filename} with
 \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
+
+\code{$readByteAsRaw}
+A logical value, \code{FALSE} by default. This field can be set to \code{TRUE} which will
+affect the data type returned by \verb{$read()} and \code{\link[=read_ds]{read_ds()}}. When the underlying band data type
+is 'Byte' and \code{readByteAsRaw} is \code{TRUE} the output type will be raw rather than
+integer. See also the \code{as_raw} argument to \code{\link[=read_ds]{read_ds()}} to control this in a non-persisent
+setting. If the underlying band data type is not Byte this setting has no effect.
 }
 
 \examples{
@@ -655,7 +681,7 @@ ds$getFileList()
 ds$getRasterXSize()
 ds$getRasterYSize()
 ds$getGeoTransform()
-ds$getProjectionRef()
+ds$getProjection()
 ds$getRasterCount()
 ds$bbox()
 ds$res()

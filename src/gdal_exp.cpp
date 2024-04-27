@@ -1,6 +1,7 @@
 /* Exported stand-alone functions for gdalraster
    Chris Toney <chris.toney at usda.gov> */
 
+#include <errno.h>
 #include <cmath>
 #include <unordered_map>
 
@@ -11,8 +12,6 @@
 #include "cpl_vsi.h"
 #include "gdal_alg.h"
 #include "gdal_utils.h"
-
-#include <errno.h>
 
 #include "gdalraster.h"
 #include "cmb_table.h"
@@ -101,8 +100,7 @@ Rcpp::DataFrame gdal_formats(std::string format = "") {
             CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false) ?
                     vector_fmt.push_back(true) : vector_fmt.push_back(false);
 
-        }
-        else {
+        } else {
             continue;
         }
 
@@ -310,8 +308,7 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
 
     if (std_filename.find("/vsi") == 0) {
         out_filename[0] = filename[0];
-    }
-    else if (std_filename.find("~") != std_filename.npos) {
+    } else if (std_filename.find("~") != std_filename.npos) {
     /* 	This does not catch an error from normalizePath() in R. But we're
         not using mustWork=TRUE, so only a warning is emitted if path does
         not exist. Leaving as try/catch for now. */
@@ -321,8 +318,7 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
         catch (...) {
             out_filename[0] = filename[0];
         }
-    }
-    else {
+    } else {
         out_filename[0] = filename[0];
     }
 
@@ -383,7 +379,7 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
         int xsize, int ysize, int nbands, std::string dataType,
         Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
-    GDALDriverH hDriver = GDALGetDriverByName( format.c_str() );
+    GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
     if (hDriver == nullptr)
         Rcpp::stop("failed to get driver for the specified format");
 
@@ -481,7 +477,7 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
     dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
 
     GDALDatasetH hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
-    if(hSrcDS == nullptr)
+    if (hSrcDS == nullptr)
         Rcpp::stop("open source raster failed");
 
     std::vector<char *> opt_list = {nullptr};
@@ -780,7 +776,7 @@ Rcpp::DataFrame _combine(
     for (std::size_t i = 0; i < nrasters; ++i) {
         src_ds.push_back(GDALRaster(std::string(src_files[i]), true));
         // use the first raster as reference
-        if (i==0) {
+        if (i == 0) {
             nrows = src_ds[i].getRasterYSize();
             ncols = src_ds[i].getRasterXSize();
             gt = src_ds[i].getGeoTransform();
@@ -795,8 +791,7 @@ Rcpp::DataFrame _combine(
                 Rcpp::warning("failed to set output geotransform");
             if (!dst_ds.setProjection(srs))
                 Rcpp::warning("failed to set output projection");
-        }
-        else {
+        } else {
             for (std::size_t i = 0; i < nrasters; ++i)
                 src_ds[i].close();
             Rcpp::stop("failed to create output raster");
@@ -849,10 +844,9 @@ Rcpp::DataFrame _combine(
 //'
 //' @noRd
 // [[Rcpp::export(name = ".value_count")]]
-Rcpp::DataFrame _value_count(std::string src_filename, int band = 1,
+Rcpp::DataFrame _value_count(const GDALRaster& src_ds, int band = 1,
                              bool quiet = false) {
 
-    GDALRaster src_ds = GDALRaster(src_filename, true);
     int nrows = src_ds.getRasterYSize();
     int ncols = src_ds.getRasterXSize();
     GDALProgressFunc pfnProgress = nullptr;
@@ -880,7 +874,7 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1,
         Rcpp::IntegerVector value(tbl.size());
         Rcpp::NumericVector count(tbl.size());
         std::size_t this_idx = 0;
-        for(auto iter = tbl.begin(); iter != tbl.end(); ++iter) {
+        for (auto iter = tbl.begin(); iter != tbl.end(); ++iter) {
             value[this_idx] = iter->first;
             count[this_idx] = iter->second;
             ++this_idx;
@@ -888,8 +882,7 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1,
 
         df_out.push_back(value, "VALUE");
         df_out.push_back(count, "COUNT");
-    }
-    else {
+    } else {
         // UInt32, Float32, Float64
         // read pixel values as double
         Rcpp::NumericVector rowdata(ncols);
@@ -906,7 +899,7 @@ Rcpp::DataFrame _value_count(std::string src_filename, int band = 1,
         Rcpp::NumericVector value(tbl.size());
         Rcpp::NumericVector count(tbl.size());
         std::size_t this_idx = 0;
-        for(auto iter = tbl.begin(); iter != tbl.end(); ++iter) {
+        for (auto iter = tbl.begin(); iter != tbl.end(); ++iter) {
             value[this_idx] = iter->first;
             count[this_idx] = iter->second;
             ++this_idx;
@@ -965,8 +958,7 @@ bool _dem_proc(std::string mode,
         hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds,
                                    mode.c_str(), col_file_in.get_cstring(),
                                    psOptions, nullptr);
-    }
-    else {
+    } else {
         hDstDS = GDALDEMProcessing(dst_filename_in.c_str(), src_ds,
                                    mode.c_str(), nullptr, psOptions, nullptr);
     }
@@ -1421,15 +1413,16 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
     if (src_ds == nullptr)
         Rcpp::stop("failed to open the source dataset");
 
-    bool have_args_in = false;
-    Rcpp::CharacterVector cl_arg_in;
+    bool as_json = false;
     std::vector<char *> argv;
     if (cl_arg.isNotNull()) {
-        cl_arg_in = cl_arg;
+        Rcpp::CharacterVector cl_arg_in(cl_arg);
         for (R_xlen_t i = 0; i < cl_arg_in.size(); ++i) {
             argv.push_back((char *) cl_arg_in[i]);
+            if (EQUAL(cl_arg_in[i], "-json")) {
+                as_json = true;
+            }
         }
-        have_args_in = true;
     }
     argv.push_back((char *) dsn_in.c_str());
     if (layers.isNotNull()) {
@@ -1442,7 +1435,6 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
 
     GDALVectorInfoOptions *psOptions =
             GDALVectorInfoOptionsNew(argv.data(), nullptr);
-
     if (psOptions == nullptr) {
         Rcpp::stop("ogrinfo() failed (could not create options struct)");
     }
@@ -1459,17 +1451,11 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
     if (cout)
         Rcpp::Rcout << info_out;
 
-    if (have_args_in) {
-        Rcpp::CharacterVector::iterator i;
-        for (i = cl_arg_in.begin(); i != cl_arg_in.end(); ++i) {
-            if (EQUAL(*i, "-json")) {
-                info_out.erase(std::remove(info_out.begin(),
-                                           info_out.end(),
-                                           '\n'),
-                               info_out.cend());
-                break;
-            }
-        }
+    if (as_json) {
+        info_out.erase(std::remove(info_out.begin(),
+                                   info_out.end(),
+                                   '\n'),
+                       info_out.cend());
     }
 
     return info_out;
@@ -1520,12 +1506,10 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
     if (mask_file_in == "" && nomask == false) {
         // default validity mask
         hMaskBand = GDALGetMaskBand(hSrcBand);
-    }
-    else if (mask_file_in == "" && nomask == true) {
+    } else if (mask_file_in == "" && nomask == true) {
         // do not use default validity mask for source band (such as nodata)
         hMaskBand = nullptr;
-    }
-    else {
+    } else {
         // mask_file specified
         hMaskDS = GDALOpenShared(mask_file_in.c_str(), GA_ReadOnly);
         if (hMaskDS == nullptr) {
@@ -2092,8 +2076,7 @@ bool warp(Rcpp::CharacterVector src_files,
             for (R_xlen_t j = 0; j < i; ++j)
                 GDALClose(src_ds[j]);
             Rcpp::stop("open source raster failed");
-        }
-        else {
+        } else {
             src_ds[i] = hDS;
         }
     }
@@ -2262,7 +2245,7 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 
     GDALCreateColorRamp(hColTbl, start_index, &colStart, end_index, &colEnd);
 
-    //int nEntries = GDALGetColorEntryCount(hColTbl);
+    // int nEntries = GDALGetColorEntryCount(hColTbl);
     int nEntries = (end_index - start_index) + 1;
     Rcpp::IntegerMatrix col_tbl(nEntries, 5);
     Rcpp::CharacterVector col_tbl_names;
@@ -2270,16 +2253,13 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
     if (gpi == GPI_Gray) {
         col_tbl_names = {"value", "gray", "c2", "c3", "c4"};
         Rcpp::colnames(col_tbl) = col_tbl_names;
-    }
-    else if (gpi == GPI_RGB) {
+    } else if (gpi == GPI_RGB) {
         col_tbl_names = {"value", "red", "green", "blue", "alpha"};
         Rcpp::colnames(col_tbl) = col_tbl_names;
-    }
-    else if (gpi == GPI_CMYK) {
+    } else if (gpi == GPI_CMYK) {
         col_tbl_names = {"value", "cyan", "magenta", "yellow", "black"};
         Rcpp::colnames(col_tbl) = col_tbl_names;
-    }
-    else if (gpi == GPI_HLS) {
+    } else if (gpi == GPI_HLS) {
         col_tbl_names = {"value", "hue", "lightness", "saturation", "c4"};
         Rcpp::colnames(col_tbl) = col_tbl_names;
     }
@@ -2461,8 +2441,7 @@ bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
         hDriver = GDALIdentifyDriver(filename_in.c_str(), nullptr);
         if (hDriver == nullptr)
             return false;
-    }
-    else {
+    } else {
         hDriver = GDALGetDriverByName(format.c_str());
         if (hDriver == nullptr)
             return false;
@@ -2536,8 +2515,7 @@ bool renameDataset(Rcpp::CharacterVector new_filename,
         hDriver = GDALIdentifyDriver(old_filename_in.c_str(), nullptr);
         if (hDriver == nullptr)
             return false;
-    }
-    else {
+    } else {
         hDriver = GDALGetDriverByName(format.c_str());
         if (hDriver == nullptr)
             return false;
@@ -2604,8 +2582,7 @@ bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
         hDriver = GDALIdentifyDriver(old_filename_in.c_str(), nullptr);
         if (hDriver == nullptr)
             return false;
-    }
-    else {
+    } else {
         hDriver = GDALGetDriverByName(format.c_str());
         if (hDriver == nullptr)
             return false;
@@ -2655,8 +2632,7 @@ bool _addFileInZip(std::string zip_filename, bool overwrite,
 
     if (overwrite) {
         VSIUnlink(zip_filename.c_str());
-    }
-    else {
+    } else {
         if (VSIStatExL(zip_filename.c_str(), &buf, VSI_STAT_EXISTS_FLAG) == 0)
             opt_zip_create.push_back((char *) "APPEND=TRUE");
     }

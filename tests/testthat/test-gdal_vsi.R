@@ -53,7 +53,14 @@ test_that("vsi_unlink_batch works", {
 test_that("vsi_mkdir and vsi_rmdir work", {
     new_dir <- file.path(tempdir(), "newdir")
     expect_equal(vsi_mkdir(new_dir), 0)
-    expect_equal(result <- vsi_rmdir(new_dir), 0)
+    expect_equal(vsi_rmdir(new_dir), 0)
+
+    # recursive
+    top_dir <- file.path(tempdir(), "topdir")
+    sub_dir <- file.path(top_dir, "subdir")
+    expect_equal(vsi_mkdir(sub_dir), -1)
+    expect_equal(vsi_mkdir(sub_dir, recursive = TRUE), 0)
+    expect_equal(vsi_rmdir(top_dir, recursive = TRUE), 0)
 })
 
 test_that("vsi_sync works", {
@@ -113,4 +120,14 @@ test_that("vsi_get_disk_free_space returns length-1 numeric vector", {
     x <- vsi_get_disk_free_space(tmp_dir)
     expect_vector(x, ptype = numeric(), 1)
     vsi_rmdir(tmp_dir)
+})
+
+test_that("vsi path specific options can be set/unset", {
+    skip_if(as.integer(gdal_version()[2]) < 3060000)
+
+    prefix <- "/vsiaz/sampledata"
+    expect_no_error(vsi_set_path_option(prefix,
+                                        "AZURE_STORAGE_CONNECTION_STRING",
+                                        "connection_string_for_gdalraster"))
+    expect_no_error(vsi_clear_path_options(prefix))
 })

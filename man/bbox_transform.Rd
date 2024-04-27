@@ -32,7 +32,7 @@ Numeric vector of length four containing a transformed bounding box
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, elev_file)
 ds$bbox()
-bbox_transform(ds$bbox(), ds$getProjectionRef(), epsg_to_wkt(4326))
+bbox_transform(ds$bbox(), ds$getProjection(), epsg_to_wkt(4326))
 ds$close()
 }
 \seealso{

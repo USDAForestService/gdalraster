@@ -79,7 +79,8 @@ GDALRaster::GDALRaster() :
             fname_in(""),
             open_options_in(Rcpp::CharacterVector::create()),
             hDataset(nullptr),
-            eAccess(GA_ReadOnly) {}
+            eAccess(GA_ReadOnly), 
+            readByteAsRaw(false) {}
 
 GDALRaster::GDALRaster(Rcpp::CharacterVector filename) :
             GDALRaster(
@@ -97,7 +98,8 @@ GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
         Rcpp::CharacterVector open_options) :
                 open_options_in(open_options),
                 hDataset(nullptr),
-                eAccess(GA_ReadOnly) {
+                eAccess(GA_ReadOnly), 
+                readByteAsRaw(false) {
 
     fname_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
     open(read_only);
@@ -108,6 +110,11 @@ GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
 
 std::string GDALRaster::getFilename() const {
     return fname_in;
+}
+
+void GDALRaster::setFilename(std::string filename) {
+    if (fname_in == "" && filename != "" && hDataset == nullptr)
+        fname_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
 }
 
 void GDALRaster::open(bool read_only) {
@@ -262,6 +269,10 @@ int GDALRaster::getRasterCount() const {
     return GDALGetRasterCount(hDataset);
 }
 
+std::string GDALRaster::getProjection() const {
+    return getProjectionRef();
+}
+
 std::string GDALRaster::getProjectionRef() const {
     _checkAccess(GA_ReadOnly);
 
@@ -330,6 +341,18 @@ std::vector<int> GDALRaster::getBlockSize(int band) const {
     int nBlockXSize, nBlockYSize;
     GDALGetBlockSize(hBand, &nBlockXSize, &nBlockYSize);
     std::vector<int> ret = {nBlockXSize, nBlockYSize};
+    return ret;
+}
+
+std::vector<int> GDALRaster::getActualBlockSize(int band, int xblockoff,
+                                                int yblockoff) const {
+    _checkAccess(GA_ReadOnly);
+
+    GDALRasterBandH hBand = _getBand(band);
+    int nXValid, nYValid;
+    GDALGetActualBlockSize(hBand, xblockoff, yblockoff,
+                           &nXValid, &nYValid);
+    std::vector<int> ret = {nXValid, nYValid};
     return ret;
 }
 
@@ -825,6 +848,20 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
                 GDALDataTypeIsSigned(eDT))
                 )) {
 
+          // Byte, use raw
+          if (eDT == GDT_Byte && readByteAsRaw) {
+            std::vector<uint8_t> buf(out_xsize * out_ysize); 
+            err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
+                               buf.data(), out_xsize, out_ysize,
+                               GDT_Byte, 0, 0);
+            
+            if (err == CE_Failure)
+              Rcpp::stop("read raster failed");
+            
+
+            Rcpp::RawVector v = Rcpp::wrap(buf);
+            return v;            
+          }
             // signed integer <= 32 bits and any integer <= 16 bits
             // use int32 buffer
 
@@ -930,8 +967,18 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
         err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
                            buf_.data(), xsize, ysize, eBufType, 0, 0);
     }
+    else if (Rcpp::is<Rcpp::RawVector>(rasterData)) {
+      // Byte data type
+      eBufType = GDT_Byte;
+      std::vector<uint8_t> buf_ = Rcpp::as<std::vector<uint8_t>>(rasterData);
+      if (buf_.size() != ((std::size_t) (xsize * ysize)))
+        Rcpp::stop("size of input data is not the same as region size");
+      err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
+                         buf_.data(), xsize, ysize, eBufType, 0, 0);
+
+    }
     else {
-        Rcpp::stop("data must be a vector of 'numeric' or 'complex'");
+        Rcpp::stop("data must be a vector of 'numeric' or 'complex' or 'raw'");
     }
 
     if (err == CE_Failure)
@@ -1341,7 +1388,7 @@ void GDALRaster::_checkAccess(GDALAccess access_needed) const {
 
 GDALRasterBandH GDALRaster::_getBand(int band) const {
     if (band < 1 || band > getRasterCount())
-        Rcpp::stop("illegal band number.");
+        Rcpp::stop("illegal band number");
     GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
     if (hBand == nullptr)
         Rcpp::stop("failed to access the requested band");
@@ -1390,6 +1437,11 @@ void GDALRaster::_warnInt64() const {
     Rcpp::warning(msg);
 }
 
+GDALDatasetH GDALRaster::_getGDALDatasetH() const {
+    _checkAccess(GA_ReadOnly);
+
+    return hDataset;
+}
 
 // ****************************************************************************
 
@@ -1398,7 +1450,7 @@ RCPP_MODULE(mod_GDALRaster) {
     Rcpp::class_<GDALRaster>("GDALRaster")
 
     .constructor
-        ("Default constructor, no dataset opened.")
+        ("Default constructor, no dataset opened")
     .constructor<Rcpp::CharacterVector>
         ("Usage: new(GDALRaster, filename)")
     .constructor<Rcpp::CharacterVector, bool>
@@ -1408,115 +1460,122 @@ RCPP_MODULE(mod_GDALRaster) {
 
     // exposed member functions
     .const_method("getFilename", &GDALRaster::getFilename,
-        "Return the raster filename.")
+        "Return the raster filename")
+    .method("setFilename", &GDALRaster::setFilename,
+        "Set the raster filename")
     .method("open", &GDALRaster::open,
-        "(Re-)open the raster dataset on the existing filename.")
+        "(Re-)open the raster dataset on the existing filename")
     .const_method("isOpen", &GDALRaster::isOpen,
-        "Is the raster dataset open?")
+        "Is the raster dataset open")
     .const_method("getFileList", &GDALRaster::getFileList,
-        "Fetch files forming dataset.")
+        "Fetch files forming dataset")
     .const_method("info", &GDALRaster::info,
-        "Print various information about the raster dataset.")
+        "Print various information about the raster dataset")
     .const_method("infoAsJSON", &GDALRaster::infoAsJSON,
-        "Returns full output of gdalinfo as a JSON-formatted string.")
+        "Returns full output of gdalinfo as a JSON-formatted string")
     .const_method("getDriverShortName", &GDALRaster::getDriverShortName,
-         "Return the short name of the format driver.")
+         "Return the short name of the format driver")
     .const_method("getDriverLongName", &GDALRaster::getDriverLongName,
-        "Return the long name of the format driver.")
+        "Return the long name of the format driver")
     .const_method("getRasterXSize", &GDALRaster::getRasterXSize,
-        "Return raster width in pixels.")
+        "Return raster width in pixels")
     .const_method("getRasterYSize", &GDALRaster::getRasterYSize,
-        "Return raster height in pixels.")
+        "Return raster height in pixels")
     .const_method("getGeoTransform", &GDALRaster::getGeoTransform,
-        "Return the affine transformation coefficients.")
+        "Return the affine transformation coefficients")
     .method("setGeoTransform", &GDALRaster::setGeoTransform,
-        "Set the affine transformation coefficients for this dataset.")
+        "Set the affine transformation coefficients for this dataset")
     .const_method("getRasterCount", &GDALRaster::getRasterCount,
-        "Return the number of raster bands on this dataset.")
+        "Return the number of raster bands on this dataset")
+    .const_method("getProjection", &GDALRaster::getProjection,
+        "Return the projection (equivalent to getProjectionRef)")
     .const_method("getProjectionRef", &GDALRaster::getProjectionRef,
-        "Return the projection definition for this dataset.")
+        "Return the projection definition for this dataset")
     .method("setProjection", &GDALRaster::setProjection,
-        "Set the projection reference string for this dataset.")
+        "Set the projection reference string for this dataset")
     .const_method("bbox", &GDALRaster::bbox,
-        "Return the bounding box (xmin, ymin, xmax, ymax).")
+        "Return the bounding box (xmin, ymin, xmax, ymax)")
     .const_method("res", &GDALRaster::res,
-        "Return the resolution (pixel width, pixel height).")
+        "Return the resolution (pixel width, pixel height)")
     .const_method("dim", &GDALRaster::dim,
-        "Return raster dimensions (xsize, ysize, number of bands).")
+        "Return raster dimensions (xsize, ysize, number of bands)")
     .const_method("getBlockSize", &GDALRaster::getBlockSize,
-        "Get the natural block size of this band.")
+        "Retrieve the actual block size for a given block offset")
+    .const_method("getActualBlockSize", &GDALRaster::getActualBlockSize,
+        "Get the natural block size of this band")
     .const_method("getOverviewCount", &GDALRaster::getOverviewCount,
-        "Return the number of overview layers available.")
+        "Return the number of overview layers available")
     .method("buildOverviews", &GDALRaster::buildOverviews,
-        "Build raster overview(s).")
+        "Build raster overview(s)")
     .const_method("getDataTypeName", &GDALRaster::getDataTypeName,
-        "Get name of the data type for this band.")
+        "Get name of the data type for this band")
     .const_method("getNoDataValue", &GDALRaster::getNoDataValue,
-        "Return the nodata value for this band.")
+        "Return the nodata value for this band")
     .method("setNoDataValue", &GDALRaster::setNoDataValue,
-        "Set the nodata value for this band.")
+        "Set the nodata value for this band")
     .method("deleteNoDataValue", &GDALRaster::deleteNoDataValue,
-        "Delete the nodata value for this band.")
+        "Delete the nodata value for this band")
     .const_method("getUnitType", &GDALRaster::getUnitType,
-        "Get name of the raster value units (e.g., m or ft).")
+        "Get name of the raster value units (e.g., m or ft)")
     .method("setUnitType", &GDALRaster::setUnitType,
-        "Set name of the raster value units (e.g., m or ft).")
+        "Set name of the raster value units (e.g., m or ft)")
     .const_method("getScale", &GDALRaster::getScale,
-        "Return the raster value scaling ratio.")
+        "Return the raster value scaling ratio")
     .method("setScale", &GDALRaster::setScale,
-        "Set the raster value scaling ratio.")
+        "Set the raster value scaling ratio")
     .const_method("getOffset", &GDALRaster::getOffset,
-        "Return the raster value offset.")
+        "Return the raster value offset")
     .method("setOffset", &GDALRaster::setOffset,
-        "Set the raster value offset.")
+        "Set the raster value offset")
     .const_method("getDescription", &GDALRaster::getDescription,
-        "Return object description for a raster band.")
+        "Return object description for a raster band")
     .method("setDescription", &GDALRaster::setDescription,
-        "Set object description for a raster band.")
+        "Set object description for a raster band")
     .const_method("getRasterColorInterp", &GDALRaster::getRasterColorInterp,
         "How should this band be interpreted as color?")
     .method("setRasterColorInterp", &GDALRaster::setRasterColorInterp,
-        "Set color interpretation of a band.")
+        "Set color interpretation of a band")
     .const_method("getMinMax", &GDALRaster::getMinMax,
-        "Compute the min/max values for this band.")
+        "Compute the min/max values for this band")
     .const_method("getStatistics", &GDALRaster::getStatistics,
-        "Get min, max, mean and stdev for this band.")
+        "Get min, max, mean and stdev for this band")
     .method("clearStatistics", &GDALRaster::clearStatistics,
-        "Clear statistics.")
+        "Clear statistics")
     .const_method("getHistogram", &GDALRaster::getHistogram,
-        "Compute raster histogram for this band.")
+        "Compute raster histogram for this band")
     .const_method("getDefaultHistogram", &GDALRaster::getDefaultHistogram,
-        "Fetch default raster histogram for this band.")
+        "Fetch default raster histogram for this band")
     .const_method("getMetadata", &GDALRaster::getMetadata,
-        "Return a list of metadata item=value for a domain.")
+        "Return a list of metadata item=value for a domain")
     .const_method("getMetadataItem", &GDALRaster::getMetadataItem,
-        "Return the value of a metadata item.")
+        "Return the value of a metadata item")
     .method("setMetadataItem", &GDALRaster::setMetadataItem,
-        "Set metadata item name=value in domain.")
+        "Set metadata item name=value in domain")
     .const_method("getMetadataDomainList", &GDALRaster::getMetadataDomainList,
-        "Return list of metadata domains.")
+        "Return list of metadata domains")
     .const_method("read", &GDALRaster::read,
-        "Read a region of raster data for a band.")
+        "Read a region of raster data for a band")
     .method("write", &GDALRaster::write,
-        "Write a region of raster data for a band.")
+        "Write a region of raster data for a band")
     .method("fillRaster", &GDALRaster::fillRaster,
-        "Fill this band with a constant value.")
+        "Fill this band with a constant value")
     .const_method("getColorTable", &GDALRaster::getColorTable,
-        "Return the color table associated with this band.")
+        "Return the color table associated with this band")
     .const_method("getPaletteInterp", &GDALRaster::getPaletteInterp,
-        "Get the palette interpretation.")
+        "Get the palette interpretation")
     .method("setColorTable", &GDALRaster::setColorTable,
-        "Set a color table for this band.")
+        "Set a color table for this band")
     .const_method("getDefaultRAT", &GDALRaster::getDefaultRAT,
-        "Return default Raster Attribute Table as data frame.")
+        "Return default Raster Attribute Table as data frame")
     .method("setDefaultRAT", &GDALRaster::setDefaultRAT,
-        "Set Raster Attribute Table from data frame.")
+        "Set Raster Attribute Table from data frame")
     .method("flushCache", &GDALRaster::flushCache,
-        "Flush all write cached data to disk.")
+        "Flush all write cached data to disk")
     .const_method("getChecksum", &GDALRaster::getChecksum,
-        "Compute checksum for raster region.")
+        "Compute checksum for raster region")
     .method("close", &GDALRaster::close,
-        "Close the GDAL dataset for proper cleanup.")
+        "Close the GDAL dataset for proper cleanup")
 
+    .field("readByteAsRaw", &GDALRaster::readByteAsRaw)
     ;
 }

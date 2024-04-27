@@ -49,6 +49,7 @@
 #' ds$getRasterYSize()
 #' ds$getGeoTransform()
 #' ds$setGeoTransform(transform)
+#' ds$getProjection()
 #' ds$getProjectionRef()
 #' ds$setProjection(projection)
 #' ds$bbox()
@@ -59,6 +60,7 @@
 #' ds$getDescription(band)
 #' ds$setDescription(band)
 #' ds$getBlockSize(band)
+#' ds$getActualBlockSize(band, xblockoff, yblockoff)
 #' ds$getOverviewCount(band)
 #' ds$buildOverviews(resampling, levels, bands)
 #' ds$getDataTypeName(band)
@@ -101,8 +103,10 @@
 #' ds$getChecksum(band, xoff, yoff, xsize, ysize)
 #'
 #' ds$close()
+#' 
+#' ## Fields
+#' ds$readByteAsRaw
 #' }
-#'
 #' @section Details:
 #'
 #' \code{new(GDALRaster, filename, read_only)}
@@ -187,6 +191,10 @@
 #' Returns logical \code{TRUE} on success or \code{FALSE} if the geotransform
 #' could not be set.
 #'
+#' \code{$getProjection()}
+#' Returns the coordinate reference system of the raster as an OGC WKT
+#' format string. Equivalent to \code{ds$getProjectionRef()}.
+#'
 #' \code{$getProjectionRef()}
 #' Returns the coordinate reference system of the raster as an OGC WKT
 #' format string.
@@ -237,6 +245,15 @@
 #' be the tile size. Note that the X and Y block sizes don't have to divide
 #' the image size evenly, meaning that right and bottom edge blocks may be
 #' incomplete.
+#'
+#' \code{$getActualBlockSize(band, xblockoff, yblockoff)}
+#' Returns an integer vector of length two (xvalid, yvalid) containing the
+#' actual block size for a given block offset in \code{band}. Handles partial
+#' blocks at the edges of the raster and returns the true number of pixels.
+#' `xblockoff` is an integer scalar, the horizontal block offset for which to
+#' calculate the number of valid pixels, with zero indicating the left most
+#' block, 1 the next block, etc. `yblockoff` is likewise the vertical block
+#' offset, with zero indicating the top most block, 1 the next block, etc.
 #'
 #' \code{$getOverviewCount(band)}
 #' Returns the number of overview layers (a.k.a. pyramids) available for
@@ -503,7 +520,8 @@
 #' (`UInt32`, `Float32`, `Float64`).
 #' No rescaling of the data is performed (see \code{$getScale()} and
 #' \code{$getOffset()} above).
-#' An error is raised if the read operation fails.
+#' An error is raised if the read operation fails. See also the setting 
+#' `$readByteAsRaw` below.
 #'
 #' \code{$write(band, xoff, yoff, xsize, ysize, rasterData)}
 #' Writes a region of raster data to \code{band}.
@@ -603,7 +621,7 @@
 #' \emph{Raster row/column offsets use 0-based indexing.}
 #' \code{xsize} is the width in pixels of the window to read.
 #' \code{ysize} is the height in pixels of the window to read.
-#'
+#' 
 #' \code{$close()}
 #' Closes the GDAL dataset (no return value, called for side effects).
 #' Calling \code{$close()} results in proper cleanup, and flushing of any
@@ -613,6 +631,13 @@
 #' The dataset can be re-opened on the existing \code{filename} with
 #' \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
 #'
+#' \code{$readByteAsRaw}
+#' A logical value, `FALSE` by default. This field can be set to `TRUE` which will 
+#' affect the data type returned by `$read()` and [read_ds()]. When the underlying band data type
+#' is 'Byte' and `readByteAsRaw` is `TRUE` the output type will be raw rather than
+#' integer. See also the `as_raw` argument to [read_ds()] to control this in a non-persisent
+#' setting. If the underlying band data type is not Byte this setting has no effect. 
+#' 
 #' @note
 #' If a dataset object is opened with update access (`read_only = FALSE`), it
 #' is not recommended to open a new dataset on the same underlying `filename`.
@@ -649,7 +674,7 @@
 #' ds$getRasterXSize()
 #' ds$getRasterYSize()
 #' ds$getGeoTransform()
-#' ds$getProjectionRef()
+#' ds$getProjection()
 #' ds$getRasterCount()
 #' ds$bbox()
 #' ds$res()

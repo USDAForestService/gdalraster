@@ -203,13 +203,18 @@ buildRAT <- function(raster,
 
     if (length(raster) != 1)
         stop("'raster' argument must have length 1", call. = FALSE)
-    if (is(raster, "Rcpp_GDALRaster"))
-        f <- raster$getFilename()
-    else if (is(raster, "character"))
-        f <- raster
-    else
+
+    ds <- NULL
+    close_ds <- FALSE
+    if (is(raster, "Rcpp_GDALRaster")) {
+        ds <- raster
+    } else if (is(raster, "character")) {
+        ds <- new(GDALRaster, raster)
+        close_ds <- TRUE
+    } else {
         stop("'raster' must be a 'GDALRaster' object or a filename",
              call. = FALSE)
+    }
 
     if (length(band) != 1)
         stop("'band' must be an integer scalar", call. = FALSE)
@@ -235,7 +240,9 @@ buildRAT <- function(raster,
                  call. = FALSE)
     }
 
-    d <- .value_count(f, band, quiet)
+    d <- .value_count(ds, band, quiet)
+    if (close_ds)
+        ds$close()
     names(d) <- col_names
     if (!is.null(na_value))
         d[is.na(d[, 1]), 1] <- na_value

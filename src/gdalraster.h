@@ -68,6 +68,121 @@ const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
 };
 #endif
 
+class GDALRaster {
+
+    private:
+    std::string fname_in;
+    Rcpp::CharacterVector open_options_in;
+    GDALDatasetH  hDataset;
+    GDALAccess eAccess;
+
+    public:
+    GDALRaster();
+    GDALRaster(Rcpp::CharacterVector filename);
+    GDALRaster(Rcpp::CharacterVector filename, bool read_only);
+    GDALRaster(Rcpp::CharacterVector filename, bool read_only,
+               Rcpp::CharacterVector open_options);
+
+    std::string getFilename() const;
+    void setFilename(std::string filename);
+    void open(bool read_only);
+    bool isOpen() const;
+    Rcpp::CharacterVector getFileList() const;
+
+    void info() const;
+    std::string infoAsJSON() const;
+
+    std::string getDriverShortName() const;
+    std::string getDriverLongName() const;
+
+    int getRasterXSize() const;
+    int getRasterYSize() const;
+    std::vector<double> getGeoTransform() const;
+    bool setGeoTransform(std::vector<double> transform);
+    int getRasterCount() const;
+
+    std::string getProjection() const;
+    std::string getProjectionRef() const;
+    bool setProjection(std::string projection);
+
+    std::vector<double> bbox() const;
+    std::vector<double> res() const;
+    std::vector<int> dim() const;
+
+    std::vector<int> getBlockSize(int band) const;
+    std::vector<int> getActualBlockSize(int band, int xblockoff,
+                                        int yblockoff) const;
+    int getOverviewCount(int band) const;
+    void buildOverviews(std::string resampling, std::vector<int> levels,
+                        std::vector<int> bands);
+    std::string getDataTypeName(int band) const;
+    bool hasNoDataValue(int band) const;
+    double getNoDataValue(int band) const;
+    bool setNoDataValue(int band, double nodata_value);
+    void deleteNoDataValue(int band);
+    std::string getUnitType(int band) const;
+    bool setUnitType(int band, std::string unit_type);
+    bool hasScale(int band) const;
+    double getScale(int band) const;
+    bool setScale(int band, double scale);
+    bool hasOffset(int band) const;
+    double getOffset(int band) const;
+    bool setOffset(int band, double offset);
+    std::string getDescription(int band) const;
+    void setDescription(int band, std::string desc);
+    std::string getRasterColorInterp(int band) const;
+    void setRasterColorInterp(int band, std::string col_interp);
+
+    std::vector<double> getMinMax(int band, bool approx_ok) const;
+    Rcpp::NumericVector getStatistics(int band,	bool approx_ok,
+                                      bool force) const;
+    void clearStatistics();
+    std::vector<double> getHistogram(int band, double min, double max,
+                                     int num_buckets, bool incl_out_of_range,
+                                     bool approx_ok) const;
+    Rcpp::List getDefaultHistogram(int band, bool force) const;
+
+    Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
+    std::string getMetadataItem(int band, std::string mdi_name,
+                                std::string domain) const;
+    void setMetadataItem(int band, std::string mdi_name, std::string mdi_value,
+                         std::string domain);
+    Rcpp::CharacterVector getMetadataDomainList(int band) const;
+
+    SEXP read(int band, int xoff, int yoff, int xsize, int ysize,
+              int out_xsize, int out_ysize) const;
+
+    void write(int band, int xoff, int yoff, int xsize, int ysize,
+               Rcpp::RObject rasterData);
+
+    void fillRaster(int band, double value, double ivalue);
+
+    SEXP getColorTable(int band) const;
+    std::string getPaletteInterp(int band) const;
+    bool setColorTable(int band, Rcpp::RObject& col_tbl,
+                       std::string palette_interp);
+
+    SEXP getDefaultRAT(int band) const;
+    bool setDefaultRAT(int band, Rcpp::DataFrame& df);
+
+    void flushCache();
+
+    int getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
+
+    void close();
+
+    bool readByteAsRaw;
+    // methods for internal use not exported to R
+    void _checkAccess(GDALAccess access_needed) const;
+    GDALRasterBandH _getBand(int band) const;
+    bool _readableAsInt(int band) const;
+    bool _hasInt64() const;
+    void _warnInt64() const;
+    GDALDatasetH _getGDALDatasetH() const;
+};
+
+RCPP_EXPOSED_CLASS(GDALRaster)
+
 Rcpp::CharacterVector gdal_version();
 int _gdal_version_num();
 Rcpp::DataFrame gdal_formats(std::string fmt);
@@ -112,8 +227,8 @@ bool vsi_sync(Rcpp::CharacterVector src,
               Rcpp::CharacterVector target,
               bool show_progess,
               Rcpp::Nullable<Rcpp::CharacterVector> options);
-int vsi_mkdir(Rcpp::CharacterVector path, int mode);
-int vsi_rmdir(Rcpp::CharacterVector path);
+int vsi_mkdir(Rcpp::CharacterVector path, std::string mode, bool recursive);
+int vsi_rmdir(Rcpp::CharacterVector path, bool recursive);
 int vsi_unlink(Rcpp::CharacterVector filename);
 SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames);
 SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);
@@ -146,7 +261,7 @@ Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
                          Rcpp::Nullable<Rcpp::CharacterVector> options,
                          bool quiet);
 
-Rcpp::DataFrame _value_count(std::string src_filename, int band,
+Rcpp::DataFrame _value_count(GDALRaster& src_ds, int band,
                              bool quiet);
 
 bool _dem_proc(std::string mode,
@@ -208,114 +323,5 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
                                     int end_index,
                                     Rcpp::IntegerVector end_color,
                                     std::string palette_interp);
-
-class GDALRaster {
-
-    private:
-    std::string fname_in;
-    Rcpp::CharacterVector open_options_in;
-    GDALDatasetH  hDataset;
-    GDALAccess eAccess;
-
-    public:
-    GDALRaster();
-    GDALRaster(Rcpp::CharacterVector filename);
-    GDALRaster(Rcpp::CharacterVector filename, bool read_only);
-    GDALRaster(Rcpp::CharacterVector filename, bool read_only,
-               Rcpp::CharacterVector open_options);
-
-    std::string getFilename() const;
-    void open(bool read_only);
-    bool isOpen() const;
-    Rcpp::CharacterVector getFileList() const;
-
-    void info() const;
-    std::string infoAsJSON() const;
-
-    std::string getDriverShortName() const;
-    std::string getDriverLongName() const;
-
-    int getRasterXSize() const;
-    int getRasterYSize() const;
-    std::vector<double> getGeoTransform() const;
-    bool setGeoTransform(std::vector<double> transform);
-    int getRasterCount() const;
-
-    std::string getProjectionRef() const;
-    bool setProjection(std::string projection);
-
-    std::vector<double> bbox() const;
-    std::vector<double> res() const;
-    std::vector<int> dim() const;
-
-    std::vector<int> getBlockSize(int band) const;
-    int getOverviewCount(int band) const;
-    void buildOverviews(std::string resampling, std::vector<int> levels,
-                        std::vector<int> bands);
-    std::string getDataTypeName(int band) const;
-    bool hasNoDataValue(int band) const;
-    double getNoDataValue(int band) const;
-    bool setNoDataValue(int band, double nodata_value);
-    void deleteNoDataValue(int band);
-    std::string getUnitType(int band) const;
-    bool setUnitType(int band, std::string unit_type);
-    bool hasScale(int band) const;
-    double getScale(int band) const;
-    bool setScale(int band, double scale);
-    bool hasOffset(int band) const;
-    double getOffset(int band) const;
-    bool setOffset(int band, double offset);
-    std::string getDescription(int band) const;
-    void setDescription(int band, std::string desc);
-    std::string getRasterColorInterp(int band) const;
-    void setRasterColorInterp(int band, std::string col_interp);
-
-    std::vector<double> getMinMax(int band, bool approx_ok) const;
-    Rcpp::NumericVector getStatistics(int band,	bool approx_ok,
-                                      bool force) const;
-    void clearStatistics();
-    std::vector<double> getHistogram(int band, double min, double max,
-                                     int num_buckets, bool incl_out_of_range,
-                                     bool approx_ok) const;
-    Rcpp::List getDefaultHistogram(int band, bool force) const;
-
-    Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
-    std::string getMetadataItem(int band, std::string mdi_name,
-                                std::string domain) const;
-    void setMetadataItem(int band, std::string mdi_name, std::string mdi_value,
-                         std::string domain);
-    Rcpp::CharacterVector getMetadataDomainList(int band) const;
-
-    SEXP read(int band, int xoff, int yoff, int xsize, int ysize,
-              int out_xsize, int out_ysize) const;
-
-    void write(int band, int xoff, int yoff, int xsize, int ysize,
-               Rcpp::RObject rasterData);
-
-    void fillRaster(int band, double value, double ivalue);
-
-    SEXP getColorTable(int band) const;
-    std::string getPaletteInterp(int band) const;
-    bool setColorTable(int band, Rcpp::RObject& col_tbl,
-                       std::string palette_interp);
-
-    SEXP getDefaultRAT(int band) const;
-    bool setDefaultRAT(int band, Rcpp::DataFrame& df);
-
-    void flushCache();
-
-    int getChecksum(int band, int xoff, int yoff, int xsize, int ysize) const;
-
-    void close();
-
-    // methods for internal use not exported to R
-    void _checkAccess(GDALAccess access_needed) const;
-    GDALRasterBandH _getBand(int band) const;
-    bool _readableAsInt(int band) const;
-    bool _hasInt64() const;
-    void _warnInt64() const;
-};
-
-RCPP_EXPOSED_CLASS(GDALRaster)
 
 #endif

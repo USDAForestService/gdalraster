@@ -443,8 +443,8 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #' Compute for a raster band the set of unique pixel values and their counts
 #'
 #' @noRd
-.value_count <- function(src_filename, band = 1L, quiet = FALSE) {
-    .Call(`_gdalraster__value_count`, src_filename, band, quiet)
+.value_count <- function(src_ds, band = 1L, quiet = FALSE) {
+    .Call(`_gdalraster__value_count`, src_ds, band, quiet)
 }
 
 #' Wrapper for GDALDEMProcessing in the GDAL Algorithms C API
@@ -1457,11 +1457,11 @@ vsi_read_dir <- function(path, max_files = 0L) {
 #' be used for /vsis3/, /vsigs/ or other filesystems using a MD5Sum as ETAG.
 #' The `OVERWRITE` strategy (GDAL >= 3.2) will always overwrite the target
 #' file with the source one.\cr
-#' * `NUM_THREADS=integer`. (GDAL >= 3.1) Number of threads to use for parallel
-#' file copying. Only use for when /vsis3/, /vsigs/, /vsiaz/ or /vsiadls/ is
+#' * `NUM_THREADS=integer`. Number of threads to use for parallel file
+#' copying. Only use for when /vsis3/, /vsigs/, /vsiaz/ or /vsiadls/ is
 #' in source or target. The default is 10 since GDAL 3.3.\cr
-#' * `CHUNK_SIZE=integer`. (GDAL >= 3.1) Maximum size of chunk (in bytes) to use
-#' to split large objects when downloading them from /vsis3/, /vsigs/, /vsiaz/
+#' * `CHUNK_SIZE=integer`. Maximum size of chunk (in bytes) to use to split
+#' large objects when downloading them from /vsis3/, /vsigs/, /vsiaz/
 #' or /vsiadls/ to local file system, or for upload to /vsis3/, /vsiaz/ or
 #' /vsiadls/ from local file system. Only used if `NUM_THREADS > 1`.
 #' For upload to /vsis3/, this chunk size must be set at least to 5 MB. The
@@ -1538,54 +1538,63 @@ vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
 #' For POSIX-style systems, the mode is modified by the file creation mask
 #' (umask). However, some file systems and platforms may not use umask, or
 #' they may ignore the mode completely. So a reasonable cross-platform
-#' default mode value is 0755.
-#' This function is a wrapper for `VSIMkdir()` in the GDAL
-#' Common Portability Library. Analog of the POSIX `mkdir()` function.
+#' default mode value is `0755`.
+#' With `recursive = TRUE`, creates a directory and all its ancestors.
+#' This function is a wrapper for `VSIMkdir()` and `VSIMkdirRecursive()` in
+#' the GDAL Common Portability Library.
 #'
 #' @param path Character string. The path to the directory to create.
-#' @param mode Integer scalar. The permissions mode.
+#' @param mode Character string. The permissions mode in octal with prefix
+#' `0`, e.g., `"0755"` (the default).
+#' @param recursive Logical scalar. `TRUE` to create the directory and its
+#' ancestors. Defaults to `FALSE`.
 #' @returns Invisibly, `0` on success or `-1` on an error.
 #'
 #' @seealso
 #' [vsi_read_dir()], [vsi_rmdir()]
 #'
 #' @examples
-#' # for illustration only
-#' # this would normally be used with GDAL virtual file systems
 #' new_dir <- file.path(tempdir(), "newdir")
 #' result <- vsi_mkdir(new_dir)
 #' print(result)
 #' result <- vsi_rmdir(new_dir)
 #' print(result)
-vsi_mkdir <- function(path, mode = 755L) {
-    invisible(.Call(`_gdalraster_vsi_mkdir`, path, mode))
+vsi_mkdir <- function(path, mode = "0755", recursive = FALSE) {
+    invisible(.Call(`_gdalraster_vsi_mkdir`, path, mode, recursive))
 }
 
 #' Delete a directory
 #'
 #' `vsi_rmdir()` deletes a directory object from the file system. On some
 #' systems the directory must be empty before it can be deleted.
+#' With `recursive = TRUE`, deletes a directory object and its content from
+#' the file system.
 #' This function goes through the GDAL `VSIFileHandler` virtualization and may
 #' work on unusual filesystems such as in memory.
-#' It is a wrapper for `VSIRmdir()` in the GDAL Common Portability Library.
-#' Analog of the POSIX `rmdir()` function.
+#' It is a wrapper for `VSIRmdir()` and `VSIRmdirRecursive()` in the GDAL
+#' Common Portability Library.
 #'
 #' @param path Character string. The path to the directory to be deleted.
+#' @param recursive Logical scalar. `TRUE` to delete the directory and its
+#' content. Defaults to `FALSE`.
 #' @returns Invisibly, `0` on success or `-1` on an error.
+#'
+#' @note
+#' /vsis3/ has an efficient implementation for deleting recursively. Starting
+#' with GDAL 3.4, /vsigs/ has an efficient implementation for deleting
+#' recursively, provided that OAuth2 authentication is used.
 #'
 #' @seealso
 #' [deleteDataset()], [vsi_mkdir()], [vsi_read_dir()], [vsi_unlink()]
 #'
 #' @examples
-#' # for illustration only
-#' # this would normally be used with GDAL virtual file systems
 #' new_dir <- file.path(tempdir(), "newdir")
 #' result <- vsi_mkdir(new_dir)
 #' print(result)
 #' result <- vsi_rmdir(new_dir)
 #' print(result)
-vsi_rmdir <- function(path) {
-    invisible(.Call(`_gdalraster_vsi_rmdir`, path))
+vsi_rmdir <- function(path, recursive = FALSE) {
+    invisible(.Call(`_gdalraster_vsi_rmdir`, path, recursive))
 }
 
 #' Delete a file
@@ -1844,6 +1853,66 @@ vsi_get_disk_free_space <- function(path) {
     .Call(`_gdalraster_vsi_get_disk_free_space`, path)
 }
 
+#' Set a path specific option for a given path prefix
+#'
+#' `vsi_set_path_option()` sets a path specific option for a given path
+#' prefix. Such an option is typically, but not limited to, setting
+#' credentials for a virtual file system.
+#' Wrapper for `VSISetPathSpecificOption()` in the GDAL Common Portability
+#' Library. Requires GDAL >= 3.6.
+#'
+#' @details
+#' Options may also be set with `set_config_option()`, but
+#' `vsi_set_path_option()` allows specifying them with a granularity at the
+#' level of a file path. This makes it easier if using the same virtual file
+#' system but with different credentials (e.g., different credentials for
+#' buckets "/vsis3/foo" and "/vsis3/bar"). This is supported for the following
+#' virtual file systems: /vsis3/, /vsigs/, /vsiaz/, /vsioss/, /vsiwebhdfs,
+#' /vsiswift.
+#'
+#' @param path_prefix Character string. A path prefix of a virtual file system
+#' handler. Typically of the form `/vsiXXX/bucket`.
+#' @param key Character string. Option key.
+#' @param value Character string. Option value. Passing `value = ""` (empty
+#' string) will unset a value previously set by `vsi_set_path_option()`.
+#' @returns No return value, called for side effect.
+#'
+#' @note
+#' Setting options for a path starting with /vsiXXX/ will also apply for
+#' /vsiXXX_streaming/ requests.
+#'
+#' No particular care is taken to store options in RAM in a secure way.
+#' So they might accidentally hit persistent storage if swapping occurs,
+#' or someone with access to the memory allocated by the process may be
+#' able to read them.
+#'
+#' @seealso
+#' [set_config_option()], [vsi_clear_path_options()]
+vsi_set_path_option <- function(path_prefix, key, value) {
+    invisible(.Call(`_gdalraster_vsi_set_path_option`, path_prefix, key, value))
+}
+
+#' Clear path specific configuration options
+#'
+#' `vsi_clear_path_options()` clears path specific options previously set
+#' with `vsi_set_path_option()`.
+#' Wrapper for `VSIClearPathSpecificOptions()` in the GDAL Common Portability
+#' Library. Requires GDAL >= 3.6.
+#'
+#' @param path_prefix Character string. If set to `""` (empty string), all
+#' path specific options are cleared. If set to a path prefix, only those
+#' options set with `vsi_set_path_option(path_prefix, ...)` will be cleared.
+#' @returns No return value, called for side effect.
+#'
+#' @note
+#' No particular care is taken to remove options from RAM in a secure way.
+#'
+#' @seealso
+#' [vsi_set_path_option()]
+vsi_clear_path_options <- function(path_prefix) {
+    invisible(.Call(`_gdalraster_vsi_clear_path_options`, path_prefix))
+}
+
 #' @noRd
 NULL
 
@@ -1992,6 +2061,24 @@ has_geos <- function() {
     .Call(`_gdalraster__g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset)
 }
 
+#' @noRd
+NULL
+
+#' @noRd
+NULL
+
+#' @noRd
+NULL
+
+#' @noRd
+NULL
+
+#' @noRd
+NULL
+
+#' @noRd
+NULL
+
 #' Does vector dataset exist
 #'
 #' @noRd
@@ -2000,11 +2087,11 @@ has_geos <- function() {
 }
 
 #' Create a vector dataset with layer and field
-#' currently hard coded as layer of wkbPolygon, field of OFTInteger
+#' currently hard coded for field of OFTInteger
 #'
 #' @noRd
-.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, srs = "", fld_name = "", dsco = NULL, lco = NULL) {
-    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, srs, fld_name, dsco, lco)
+.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", dsco = NULL, lco = NULL) {
+    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, dsco, lco)
 }
 
 #' Get number of layers in a dataset
@@ -2022,11 +2109,10 @@ has_geos <- function() {
 }
 
 #' Create a layer in a vector dataset
-#' currently hard coded as layer of wkbPolygon
 #'
 #' @noRd
-.ogr_layer_create <- function(dsn, layer, srs = "", options = NULL) {
-    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, srs, options)
+.ogr_layer_create <- function(dsn, layer, geom_type, srs = "", options = NULL) {
+    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, geom_type, srs, options)
 }
 
 #' Delete a layer in a vector dataset
@@ -2044,11 +2130,17 @@ has_geos <- function() {
 }
 
 #' Create a new field on layer
-#' currently hard coded for OFTInteger
 #'
 #' @noRd
-.ogr_field_create <- function(dsn, layer, fld_name) {
-    .Call(`_gdalraster__ogr_field_create`, dsn, layer, fld_name)
+.ogr_field_create <- function(dsn, layer, fld_name, fld_type, fld_subtype = "OFSTNone", fld_width = 0L, fld_precision = 0L, is_nullable = TRUE, is_ignored = FALSE, is_unique = FALSE, default_value = "") {
+    .Call(`_gdalraster__ogr_field_create`, dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_ignored, is_unique, default_value)
+}
+
+#' Create a new geom field on layer
+#'
+#' @noRd
+.ogr_geom_field_create <- function(dsn, layer, fld_name, geom_type, srs = "", is_nullable = TRUE, is_ignored = FALSE) {
+    .Call(`_gdalraster__ogr_geom_field_create`, dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored)
 }
 
 #' get PROJ version

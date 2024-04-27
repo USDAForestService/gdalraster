@@ -113,6 +113,7 @@ reference:
   - ogrinfo
 - subtitle: Virtual file systems
 - contents:
+  - vsi_clear_path_options
   - vsi_copy_file
   - vsi_curl_clear_cache
   - vsi_get_disk_free_space
@@ -122,6 +123,7 @@ reference:
   - vsi_read_dir
   - vsi_rename
   - vsi_rmdir
+  - vsi_set_path_option
   - vsi_stat
   - vsi_supports_rnd_write
   - vsi_supports_seq_write

@@ -931,10 +931,10 @@ std::string _g_transform(std::string geom, std::string srs_from,
     }
 
     std::vector<char *> options;
+    std::string offset;
     if (wrap_date_line) {
         options.push_back((char *) "WRAPDATELINE=YES");
-        std::string offset = "DATELINEOFFSET=" +
-                std::to_string(date_line_offset);
+        offset = "DATELINEOFFSET=" + std::to_string(date_line_offset);
         options.push_back((char *) offset.c_str());
     }
     options.push_back(nullptr);
