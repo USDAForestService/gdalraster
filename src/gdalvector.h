@@ -1,15 +1,14 @@
-/* R interface to a subset of the GDAL C API for vector.
-   A class for OGRLayer, a layer of features in a GDALDataset.
-   https://gdal.org/api/vector_c_api.html
+/* R interface to a subset of the GDAL C API for vector. A class for OGRLayer,
+   a layer of features in a GDALDataset. https://gdal.org/api/vector_c_api.html
    Chris Toney <chris.toney at usda.gov> */
 
 #ifndef gdalvector_H
 #define gdalvector_H
 
-#include "rcpp_util.h"
-
 #include <string>
 #include <vector>
+
+#include "rcpp_util.h"
 
 // Predeclare some GDAL types until the public header is included
 #ifndef GDAL_H_INCLUDED
@@ -19,24 +18,28 @@ typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 #endif
 
 class GDALVector {
-
-    private:
+ private:
     std::string dsn_in;
     std::string layer_in;  // layer name or sql statement
     bool is_sql_in;
     Rcpp::CharacterVector open_options_in;
-    GDALDatasetH  hDataset;
+    std::string spatial_filter_in;
+    std::string dialect_in;
+    GDALDatasetH hDataset;
     GDALAccess eAccess;
     OGRLayerH hLayer;
     OGRFeatureDefnH hFDefn;
 
-    public:
+ public:
     GDALVector();
-    GDALVector(Rcpp::CharacterVector dsn);
+    explicit GDALVector(Rcpp::CharacterVector dsn);
     GDALVector(Rcpp::CharacterVector dsn, std::string layer);
     GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only);
     GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
                Rcpp::CharacterVector open_options);
+    GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
+               Rcpp::Nullable<Rcpp::CharacterVector> open_options,
+               std::string spatial_filter, std::string dialect);
 
     void open(bool read_only);
     bool isOpen() const;

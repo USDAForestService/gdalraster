@@ -1,6 +1,5 @@
-/* Implementation of class GDALVector
-   Encapsulates one OGRLayer and its GDALDataset
-   Requires bit64 on the R side for its integer64 S3 type
+/* Implementation of class GDALVector. Encapsulates one OGRLayer and its
+   GDALDataset. Requires bit64 on the R side for its integer64 S3 type.
    Chris Toney <chris.toney at usda.gov> */
 
 #include <cstdint>
@@ -14,44 +13,43 @@
 #include "gdalraster.h"
 #include "gdalvector.h"
 
-
 GDALVector::GDALVector() :
             dsn_in(""),
             layer_in(""),
             is_sql_in(false),
             open_options_in(Rcpp::CharacterVector::create()),
+            spatial_filter_in(""),
+            dialect_in(""),
             hDataset(nullptr),
             eAccess(GA_ReadOnly),
             hLayer(nullptr) {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn) :
-            GDALVector(
-                dsn,
-                "",
-                true,
-                Rcpp::CharacterVector::create()) {}
+            GDALVector(dsn, "", true, Rcpp::CharacterVector::create(),
+                       "", "") {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer) :
-            GDALVector(
-                dsn,
-                layer,
-                true,
-                Rcpp::CharacterVector::create()) {}
+            GDALVector(dsn, layer, true, Rcpp::CharacterVector::create(),
+                       "", "") {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
                        bool read_only) :
-
-            GDALVector(
-                dsn,
-                layer,
-                read_only,
-                Rcpp::CharacterVector::create()) {}
+            GDALVector(dsn, layer, read_only, Rcpp::CharacterVector::create(),
+                       "", "") {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
                        bool read_only, Rcpp::CharacterVector open_options) :
+            GDALVector(dsn, layer, read_only, open_options, "", "") {}
 
+GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
+                       bool read_only,
+                       Rcpp::Nullable<Rcpp::CharacterVector> open_options,
+                       std::string spatial_filter, std::string dialect) :
             layer_in(layer),
-            open_options_in(open_options),
+            open_options_in(open_options.isNotNull() ? open_options :
+                            Rcpp::CharacterVector::create()),
+            spatial_filter_in(spatial_filter),
+            dialect_in(dialect),
             hDataset(nullptr),
             eAccess(GA_ReadOnly),
             hLayer(nullptr) {
@@ -85,6 +83,23 @@ void GDALVector::open(bool read_only) {
     }
     dsoo.push_back(nullptr);
 
+    OGRGeometryH hGeom_filter = nullptr;
+    if (spatial_filter_in != "") {
+        char* pszWKT = (char*) spatial_filter_in.c_str();
+        if (OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom_filter) !=
+                OGRERR_NONE) {
+            if (hGeom_filter != nullptr)
+                OGR_G_DestroyGeometry(hGeom_filter);
+            Rcpp::stop("failed to create geometry from 'spatial_filter'");
+        }
+    }
+
+    const char* pszDialect;
+    if (dialect_in != "")
+        pszDialect = dialect_in.c_str();
+    else
+        pszDialect = nullptr;
+
     unsigned int nOpenFlags = GDAL_OF_VECTOR;
     if (read_only)
         nOpenFlags |= GDAL_OF_READONLY;
@@ -103,7 +118,7 @@ void GDALVector::open(bool read_only) {
     else if (STARTS_WITH_CI(layer_in.c_str(), "SELECT ")) {
         is_sql_in = true;
         hLayer = GDALDatasetExecuteSQL(hDataset, layer_in.c_str(),
-                                       nullptr, nullptr);
+                                       hGeom_filter, pszDialect);
     }
     else {
         is_sql_in = false;
@@ -125,6 +140,9 @@ void GDALVector::open(bool read_only) {
         GDALReleaseDataset(hDataset);
         Rcpp::stop("failed to get layer definition");
     }
+
+    if (hGeom_filter != nullptr)
+        OGR_G_DestroyGeometry(hGeom_filter);
 }
 
 bool GDALVector::isOpen() const {
@@ -722,8 +740,13 @@ RCPP_MODULE(mod_GDALVector) {
         ("Usage: new(GDALVector, dsn, layer)")
     .constructor<Rcpp::CharacterVector, std::string, bool>
         ("Usage: new(GDALVector, dsn, layer, read_only=[TRUE|FALSE])")
-    .constructor<Rcpp::CharacterVector, std::string, bool, Rcpp::CharacterVector>
+    .constructor<Rcpp::CharacterVector, std::string, bool,
+                 Rcpp::CharacterVector>
         ("Usage: new(GDALVector, dsn, layer, read_only, open_options)")
+    .constructor<Rcpp::CharacterVector, std::string, bool,
+                 Rcpp::Nullable<Rcpp::CharacterVector>, std::string,
+                 std::string>
+        ("Usage: new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)")
 
     // exposed member functions
     .const_method("getDsn", &GDALVector::getDsn,
