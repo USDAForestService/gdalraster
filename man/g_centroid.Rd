@@ -10,10 +10,10 @@ g_centroid(wkt)
 \item{wkt}{Character. OGC WKT string for a simple feature geometry.}
 }
 \value{
-Numeric vector of length 2 containing the centroid (ptX, ptY).
+Numeric vector of length 2 containing the centroid (X, Y).
 }
 \description{
-\code{g_centroid()} returns a vector of ptX, ptY.
+\code{g_centroid()} returns a vector of point X, point Y.
 }
 \details{
 The GDAL documentation states "This method relates to the SFCOM
