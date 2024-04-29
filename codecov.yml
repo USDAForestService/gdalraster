@@ -4,3 +4,6 @@ coverage:
   range: 70..90
   round: down
   precision: 2
+codecov: 
+  token: 6a942d1f-00e5-4fa4-8561-095189224d23
+  
