@@ -114,6 +114,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _has_spatialite
+bool _has_spatialite();
+RcppExport SEXP _gdalraster__has_spatialite() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(_has_spatialite());
+    return rcpp_result_gen;
+END_RCPP
+}
 // create
 bool create(std::string format, Rcpp::CharacterVector dst_filename, int xsize, int ysize, int nbands, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
 RcppExport SEXP _gdalraster_create(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP) {
@@ -1289,6 +1299,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_pop_error_handler", (DL_FUNC) &_gdalraster_pop_error_handler, 0},
     {"_gdalraster__check_gdal_filename", (DL_FUNC) &_gdalraster__check_gdal_filename, 1},
     {"_gdalraster__get_physical_RAM", (DL_FUNC) &_gdalraster__get_physical_RAM, 0},
+    {"_gdalraster__has_spatialite", (DL_FUNC) &_gdalraster__has_spatialite, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 6},
     {"_gdalraster__apply_geotransform", (DL_FUNC) &_gdalraster__apply_geotransform, 3},
