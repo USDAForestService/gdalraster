@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-04-06
+Last modified: 2024-04-28
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -84,24 +84,28 @@ This does not include definitions of several stand-alone functions that will pro
 
 ```cpp
 class GDALVector {
+ private:
+    std::string dsn_in;
+    std::string layer_in;  // layer name or sql statement
+    bool is_sql_in;
+    Rcpp::CharacterVector open_options_in;
+    std::string spatial_filter_in;
+    std::string dialect_in;
+    GDALDatasetH hDataset;
+    GDALAccess eAccess;
+    OGRLayerH hLayer;
+    OGRFeatureDefnH hFDefn;
 
-	private:
-	std::string dsn_in;
-	std::string layer_in;  // layer name or sql statement
-	bool is_sql_in;
-	Rcpp::CharacterVector open_options_in;
-	GDALDatasetH  hDataset;
-	GDALAccess eAccess;
-	OGRLayerH hLayer;
-	OGRFeatureDefnH hFDefn;
-
-	public:
-	GDALVector();
-	GDALVector(Rcpp::CharacterVector dsn);
-	GDALVector(Rcpp::CharacterVector dsn, std::string layer);
-	GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only);
-	GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
-			Rcpp::CharacterVector open_options);
+ public:
+    GDALVector();
+    explicit GDALVector(Rcpp::CharacterVector dsn);
+    GDALVector(Rcpp::CharacterVector dsn, std::string layer);
+    GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only);
+    GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
+               Rcpp::CharacterVector open_options);
+    GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
+               Rcpp::Nullable<Rcpp::CharacterVector> open_options,
+               std::string spatial_filter, std::string dialect);
 
 	void open(bool read_only);
 	bool isOpen() const;
@@ -128,7 +132,6 @@ class GDALVector {
 	double getFeatureCount();
 	SEXP getNextFeature();
 	void resetReading();
-	// int64 handling TBD
 	SEXP getFeature(int64_t fid);
 	void setNextByIndex(int64_t fid);
 	void setIgnoredFields(Rcpp::CharacterVector fields);
@@ -136,10 +139,16 @@ class GDALVector {
 	Rcpp::DataFrame getFeatureSet(Rcpp::CharacterVector fields,
 	                              bool geom_column);
 
-	// returning the FID of the affected feature if successful
+    // initialize an empty feature as list:
+    Rcpp::List initFeature();
+	// the following return the FID of the affected feature if successful
+    // create and write a new feature within a layer:
 	int64_t createFeature(Rcpp::List feat);
+    // rewrite/replace an existing feature:
 	int64_t setFeature(Rcpp::List feat);
+    // rewrite/replace an existing feature or create a new feature:
 	int64_t upsertFeature(Rcpp::List feat);
+    // delete feature from layer:
 	int64_t deleteFeature(int64_t fid);
 
 	bool startTransaction(bool force);
@@ -486,11 +495,8 @@ library(gdalraster)
 dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 lyr <- new(GDALVector, dsn, "mtbs_perims")
 
-# largest 1988 fire (FID from the example above)
-lyr$setAttributeFilter("FID = 7")
-lyr$getFeatureCount()
-#> [1] 1
-feat <- lyr$getNextFeature()
+# largest 1988 fire (FID = 7 from the example above)
+feat <- lyr$getFeature(7)
 str(feat)
 #> List of 11
 #>  $ FID         :integer64 7
@@ -762,6 +768,8 @@ This is a working list of potential issues and design questions that need furthe
 * add link to the header file to reference the class methods that have been implemented so far in the prototype (2024-03-10)
 * `ogr2ogr()` and `ogrinfo()` are available in **gdalraster** 1.10.0 on CRAN (2024-03-26)
 * initial int64 support; now linking to **RcppInt64**, and importing **bit64**; `FID` and `OFTInteger64` fields are now returned in R as `integer64`; updated the examples (2024-04-06)
+* add `GDALVector::getFeature()`: fetch a feature from its FID (2024-04-06)
+* add a `GDALVector` class constructor with `spatial_filter` and SQL `dialect` arguments (2024-04-28)
 
 ## Contributors
 
