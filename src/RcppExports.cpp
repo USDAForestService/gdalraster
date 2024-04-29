@@ -114,6 +114,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _has_spatialite
+bool _has_spatialite();
+RcppExport SEXP _gdalraster__has_spatialite() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(_has_spatialite());
+    return rcpp_result_gen;
+END_RCPP
+}
 // create
 bool create(std::string format, Rcpp::CharacterVector dst_filename, int xsize, int ysize, int nbands, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
 RcppExport SEXP _gdalraster_create(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP) {
@@ -274,8 +284,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ogr2ogr
-bool ogr2ogr(Rcpp::CharacterVector src_dsn, Rcpp::CharacterVector dst_dsn, Rcpp::Nullable<Rcpp::CharacterVector> src_layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
-RcppExport SEXP _gdalraster_ogr2ogr(SEXP src_dsnSEXP, SEXP dst_dsnSEXP, SEXP src_layersSEXP, SEXP cl_argSEXP) {
+bool ogr2ogr(Rcpp::CharacterVector src_dsn, Rcpp::CharacterVector dst_dsn, Rcpp::Nullable<Rcpp::CharacterVector> src_layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::CharacterVector> open_options);
+RcppExport SEXP _gdalraster_ogr2ogr(SEXP src_dsnSEXP, SEXP dst_dsnSEXP, SEXP src_layersSEXP, SEXP cl_argSEXP, SEXP open_optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -283,7 +293,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_dsn(dst_dsnSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type src_layers(src_layersSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
-    rcpp_result_gen = Rcpp::wrap(ogr2ogr(src_dsn, dst_dsn, src_layers, cl_arg));
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type open_options(open_optionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogr2ogr(src_dsn, dst_dsn, src_layers, cl_arg, open_options));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1289,6 +1300,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_pop_error_handler", (DL_FUNC) &_gdalraster_pop_error_handler, 0},
     {"_gdalraster__check_gdal_filename", (DL_FUNC) &_gdalraster__check_gdal_filename, 1},
     {"_gdalraster__get_physical_RAM", (DL_FUNC) &_gdalraster__get_physical_RAM, 0},
+    {"_gdalraster__has_spatialite", (DL_FUNC) &_gdalraster__has_spatialite, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 6},
     {"_gdalraster__apply_geotransform", (DL_FUNC) &_gdalraster__apply_geotransform, 3},
@@ -1300,7 +1312,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 6},
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 6},
     {"_gdalraster_footprint", (DL_FUNC) &_gdalraster_footprint, 3},
-    {"_gdalraster_ogr2ogr", (DL_FUNC) &_gdalraster_ogr2ogr, 4},
+    {"_gdalraster_ogr2ogr", (DL_FUNC) &_gdalraster_ogr2ogr, 5},
     {"_gdalraster_ogrinfo", (DL_FUNC) &_gdalraster_ogrinfo, 6},
     {"_gdalraster__polygonize", (DL_FUNC) &_gdalraster__polygonize, 9},
     {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 4},

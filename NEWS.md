@@ -1,6 +1,10 @@
-# gdalraster 1.10.9110 (dev)
+# gdalraster 1.10.9130 (dev)
 
-* improve the check for `"-json"` as a `cl_arg` to `ogrinfo()` (2024-04-23)
+* add `_has_spatialite()` for internal use (2024-04-29)
+
+* `ogr2ogr()`: add argument `open_options` to support options on the source dataset (2024-04-28)
+
+* (internal) improve the check for `"-json"` as a `cl_arg` to `ogrinfo()` (2024-04-23)
 
 * support multiband output in `calc()` (#319) (2024-04-23)
 

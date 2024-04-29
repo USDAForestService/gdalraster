@@ -16,3 +16,7 @@ Numeric scalar. Area of the geometry or \code{0}.
 \code{g_area()} computes the area for a \code{LinearRing}, \code{Polygon} or
 \code{MultiPolygon}. Undefined for all other geometry types (returns zero).
 }
+\note{
+\code{LinearRing} is a non-standard geometry type, used in GDAL just for geometry
+creation.
+}

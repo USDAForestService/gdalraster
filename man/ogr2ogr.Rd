@@ -4,7 +4,13 @@
 \alias{ogr2ogr}
 \title{Convert vector data between different formats}
 \usage{
-ogr2ogr(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL)
+ogr2ogr(
+  src_dsn,
+  dst_dsn,
+  src_layers = NULL,
+  cl_arg = NULL,
+  open_options = NULL
+)
 }
 \arguments{
 \item{src_dsn}{Character string. Data source name of the source vector
@@ -18,6 +24,8 @@ dataset. Defaults to all layers.}
 
 \item{cl_arg}{Optional character vector of command-line arguments for
 the GDAL \code{ogr2ogr} command-line utility (see URL above).}
+
+\item{open_options}{Optional character vector of dataset open options.}
 }
 \value{
 Logical indicating success (invisible \code{TRUE}).

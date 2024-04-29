@@ -194,6 +194,7 @@ void pop_error_handler();
 
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 int _get_physical_RAM();
+bool _has_spatialite();
 
 bool create(std::string format, Rcpp::CharacterVector dst_filename,
             int xsize, int ysize, int nbands, std::string dataType,
@@ -283,7 +284,8 @@ bool footprint(Rcpp::CharacterVector src_filename,
 bool ogr2ogr(Rcpp::CharacterVector src_dsn,
              Rcpp::CharacterVector dst_dsn,
              Rcpp::Nullable<Rcpp::CharacterVector> src_layers,
-             Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+             Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+             Rcpp::Nullable<Rcpp::CharacterVector> open_options);
 
 std::string ogrinfo(Rcpp::CharacterVector dsn,
                     Rcpp::Nullable<Rcpp::CharacterVector> layers,

@@ -3,6 +3,7 @@
 
 #include <errno.h>
 #include <cmath>
+#include <cstring>
 #include <unordered_map>
 
 #include "gdal.h"
@@ -286,7 +287,6 @@ void pop_error_handler() {
 }
 
 
-
 //' Check a filename before passing to GDAL and potentially fix.
 //' filename may be a physical file, URL, connection string, file name with
 //' additional parameters, etc. Returned in UTF-8 encoding.
@@ -333,6 +333,26 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
 int _get_physical_RAM() {
     GIntBig nPhysicalRAM = CPLGetUsablePhysicalRAM();
     return static_cast<int>(nPhysicalRAM / (1000 * 1000));
+}
+
+
+//' GDAL has Spatialite?
+//'
+//' @noRd
+// [[Rcpp::export(name = ".has_spatialite")]]
+bool _has_spatialite() {
+    GDALDriverH hDriver = GDALGetDriverByName("SQLite");
+    if (hDriver == nullptr)
+        return false;
+
+    const char *pszCO = GDALGetMetadataItem(hDriver,
+                                            GDAL_DMD_CREATIONOPTIONLIST,
+                                            nullptr);
+
+    if (pszCO == nullptr || std::strstr(pszCO, "SPATIALITE") == nullptr)
+        return false;
+    else
+        return true;
 }
 
 
@@ -1196,6 +1216,7 @@ bool footprint(Rcpp::CharacterVector src_filename,
 //' dataset. Defaults to all layers.
 //' @param cl_arg Optional character vector of command-line arguments for
 //' the GDAL \code{ogr2ogr} command-line utility (see URL above).
+//' @param open_options Optional character vector of dataset open options.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //'
@@ -1245,7 +1266,8 @@ bool footprint(Rcpp::CharacterVector src_filename,
 bool ogr2ogr(Rcpp::CharacterVector src_dsn,
         Rcpp::CharacterVector dst_dsn,
         Rcpp::Nullable<Rcpp::CharacterVector> src_layers = R_NilValue,
-        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+        Rcpp::Nullable<Rcpp::CharacterVector> open_options = R_NilValue) {
 
     std::string src_dsn_in;
     src_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(src_dsn));
@@ -1257,8 +1279,17 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
     std::vector<GDALDatasetH> src_ds(1);
     bool ret = false;
 
+    std::vector<char *> dsoo;
+    if (open_options.isNotNull()) {
+        Rcpp::CharacterVector open_options_in(open_options);
+        for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
+            dsoo.push_back((char *) open_options_in[i]);
+        }
+    }
+    dsoo.push_back(nullptr);
+
     src_ds[0] = GDALOpenEx(src_dsn_in.c_str(), GDAL_OF_VECTOR,
-                           nullptr, nullptr, nullptr);
+                           nullptr, dsoo.data(), nullptr);
 
     if (src_ds[0] == nullptr)
         Rcpp::stop("failed to open the source dataset");

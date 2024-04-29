@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/USDAForestService/gdalraster/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/USDAForestService/gdalraster/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/ctoney/gdalraster/branch/main/graph/badge.svg?token=MXIOPZQ2IU)](https://app.codecov.io/gh/ctoney/gdalraster)
+[![codecov](https://codecov.io/gh/ctoney/gdalraster/graph/badge.svg?token=MXIOPZQ2IU)](https://codecov.io/gh/ctoney/gdalraster)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/gdalraster)](https://CRAN.R-project.org/package=gdalraster)
 [![r-universe
@@ -136,8 +136,8 @@ PROJ and all other dependent libraries that are needed to compile
 **gdalraster**. Note that CRAN releases periodic revisions to RTools
 that often include updates to the libraries as new versions become
 available. For example,
-[revision 5958](https://cran.r-project.org/bin/windows/Rtools/rtools43/rtools.html)
-of RTools 4.3 contains GDAL 3.8.2 and PROJ 9.3.1.
+[release 6104](https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html)
+of RTools 4.4 contains GDAL 3.8.4 and PROJ 9.3.1.
 
 With RTools installed:
 
