@@ -37,6 +37,10 @@ test_that(".get_physical_RAM returns integer", {
     expect_type(.get_physical_RAM(), "integer")
 })
 
+test_that(".has_spatialite returns logical", {
+    expect_type(.has_spatialite(), "logical")
+})
+
 test_that("createCopy writes correct output", {
     lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
     tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")

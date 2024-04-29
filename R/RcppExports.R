@@ -192,6 +192,13 @@ pop_error_handler <- function() {
     .Call(`_gdalraster__get_physical_RAM`)
 }
 
+#' GDAL has Spatialite?
+#'
+#' @noRd
+.has_spatialite <- function() {
+    .Call(`_gdalraster__has_spatialite`)
+}
+
 #' Create a new uninitialized raster
 #'
 #' `create()` makes an empty raster in the specified format.

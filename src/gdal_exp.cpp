@@ -3,6 +3,7 @@
 
 #include <errno.h>
 #include <cmath>
+#include <cstring>
 #include <unordered_map>
 
 #include "gdal.h"
@@ -286,7 +287,6 @@ void pop_error_handler() {
 }
 
 
-
 //' Check a filename before passing to GDAL and potentially fix.
 //' filename may be a physical file, URL, connection string, file name with
 //' additional parameters, etc. Returned in UTF-8 encoding.
@@ -333,6 +333,26 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
 int _get_physical_RAM() {
     GIntBig nPhysicalRAM = CPLGetUsablePhysicalRAM();
     return static_cast<int>(nPhysicalRAM / (1000 * 1000));
+}
+
+
+//' GDAL has Spatialite?
+//'
+//' @noRd
+// [[Rcpp::export(name = ".has_spatialite")]]
+bool _has_spatialite() {
+    GDALDriverH hDriver = GDALGetDriverByName("SQLite");
+    if (hDriver == nullptr)
+        return false;
+
+    const char *pszCO = GDALGetMetadataItem(hDriver,
+                                            GDAL_DMD_CREATIONOPTIONLIST,
+                                            nullptr);
+
+    if (pszCO == nullptr || std::strstr(pszCO, "SPATIALITE") == nullptr)
+        return false;
+    else
+        return true;
 }
 
 

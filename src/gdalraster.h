@@ -194,6 +194,7 @@ void pop_error_handler();
 
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 int _get_physical_RAM();
+bool _has_spatialite();
 
 bool create(std::string format, Rcpp::CharacterVector dst_filename,
             int xsize, int ysize, int nbands, std::string dataType,
