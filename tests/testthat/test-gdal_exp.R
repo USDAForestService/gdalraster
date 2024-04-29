@@ -42,14 +42,14 @@ test_that("createCopy writes correct output", {
     tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
     options <- c("COMPRESS=LZW")
     createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
-                options=options)
+               options=options)
     ds <- new(GDALRaster, tif_file, read_only=FALSE)
     files <- ds$getFileList()
     on.exit(unlink(files))
     md <- ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
     expect_equal(md, c("COMPRESSION=LZW", "INTERLEAVE=PIXEL"))
     for (band in 1:ds$getRasterCount())
-        ds$setNoDataValue(band, -9999)
+         ds$setNoDataValue(band, -9999)
     stats <- ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
     expect_equal(round(stats), round(c(2438.0, 3046.0, 2675.9713, 133.0185)))
     dm <- ds$dim()
@@ -62,7 +62,7 @@ test_that("get_pixel_line gives correct results", {
     pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
     pts <- read.csv(pt_file)
     pix_line <- c(39, 23, 1, 58, 74, 94, 68, 92, 141, 23, 57, 68, 58, 52, 90,
-                    38, 31, 85, 20, 39)
+                  38, 31, 85, 20, 39)
     raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
     ds <- new(GDALRaster, raster_file, read_only=TRUE)
     gt <- ds$getGeoTransform()
@@ -152,9 +152,9 @@ test_that("sieveFilter runs without error", {
 
 test_that("createColorRamp works", {
     colors <- createColorRamp(start_index = 0,
-                start_color = c(211, 211, 211),
-                end_index = 100,
-                end_color = c(0, 100, 0))
+                              start_color = c(211, 211, 211),
+                              end_index = 100,
+                              end_color = c(0, 100, 0))
     expect_equal(nrow(colors), 101)
     # non-zero start_index
     colors = createColorRamp(109, c(254, 231, 152), 127, c(254, 254, 189))
@@ -312,6 +312,14 @@ test_that("ogr2ogr works", {
     deleteDataset(ynp_wgs84)
     fld_idx <- -1
 
+    # with open_options
+    vsi_curl_clear_cache()
+    ogr2ogr(src, ynp_wgs84, cl_arg = args, open_options = "LIST_ALL_TABLES=NO")
+    fld_idx <- .ogr_field_index(ynp_wgs84, "mtbs_perims", "ig_year")
+    expect_equal(fld_idx, 8)
+    deleteDataset(ynp_wgs84)
+    fld_idx <- -1
+
     # clip to a bounding box (xmin, ymin, xmax, ymax)
     ynp_clip <- file.path(tempdir(), "ynp_fires_aoi_clip.gpkg")
     bb <- c(469685.97, 11442.45, 544069.63, 85508.15)
@@ -330,7 +338,6 @@ test_that("ogr2ogr works", {
     fld_idx <- .ogr_field_index(ynp_filtered, "mtbs_perims", "ig_year")
     expect_equal(fld_idx, 8)
     deleteDataset(ynp_filtered)
-
 })
 
 test_that("ogrinfo works", {
