@@ -1,4 +1,6 @@
-# gdalraster 1.10.9110 (dev)
+# gdalraster 1.10.9120 (dev)
+
+* `ogr2ogr()`: add argument `open_options` to support options on the source dataset (2024-04-28)
 
 * improve the check for `"-json"` as a `cl_arg` to `ogrinfo()` (2024-04-23)
 

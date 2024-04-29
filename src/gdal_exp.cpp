@@ -1196,6 +1196,7 @@ bool footprint(Rcpp::CharacterVector src_filename,
 //' dataset. Defaults to all layers.
 //' @param cl_arg Optional character vector of command-line arguments for
 //' the GDAL \code{ogr2ogr} command-line utility (see URL above).
+//' @param open_options Optional character vector of dataset open options.
 //' @returns Logical indicating success (invisible \code{TRUE}).
 //' An error is raised if the operation fails.
 //'
@@ -1245,7 +1246,8 @@ bool footprint(Rcpp::CharacterVector src_filename,
 bool ogr2ogr(Rcpp::CharacterVector src_dsn,
         Rcpp::CharacterVector dst_dsn,
         Rcpp::Nullable<Rcpp::CharacterVector> src_layers = R_NilValue,
-        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+        Rcpp::Nullable<Rcpp::CharacterVector> open_options = R_NilValue) {
 
     std::string src_dsn_in;
     src_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(src_dsn));
@@ -1257,8 +1259,17 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
     std::vector<GDALDatasetH> src_ds(1);
     bool ret = false;
 
+    std::vector<char *> dsoo;
+    if (open_options.isNotNull()) {
+        Rcpp::CharacterVector open_options_in(open_options);
+        for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
+            dsoo.push_back((char *) open_options_in[i]);
+        }
+    }
+    dsoo.push_back(nullptr);
+
     src_ds[0] = GDALOpenEx(src_dsn_in.c_str(), GDAL_OF_VECTOR,
-                           nullptr, nullptr, nullptr);
+                           nullptr, dsoo.data(), nullptr);
 
     if (src_ds[0] == nullptr)
         Rcpp::stop("failed to open the source dataset");

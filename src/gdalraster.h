@@ -283,7 +283,8 @@ bool footprint(Rcpp::CharacterVector src_filename,
 bool ogr2ogr(Rcpp::CharacterVector src_dsn,
              Rcpp::CharacterVector dst_dsn,
              Rcpp::Nullable<Rcpp::CharacterVector> src_layers,
-             Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+             Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+             Rcpp::Nullable<Rcpp::CharacterVector> open_options);
 
 std::string ogrinfo(Rcpp::CharacterVector dsn,
                     Rcpp::Nullable<Rcpp::CharacterVector> layers,

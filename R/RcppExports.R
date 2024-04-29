@@ -577,6 +577,7 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
 #' dataset. Defaults to all layers.
 #' @param cl_arg Optional character vector of command-line arguments for
 #' the GDAL \code{ogr2ogr} command-line utility (see URL above).
+#' @param open_options Optional character vector of dataset open options.
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #'
@@ -622,8 +623,8 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
 #' deleteDataset(ynp_wgs84)
 #' deleteDataset(ynp_clip)
 #' deleteDataset(ynp_filtered)
-ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL) {
-    invisible(.Call(`_gdalraster_ogr2ogr`, src_dsn, dst_dsn, src_layers, cl_arg))
+ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL, open_options = NULL) {
+    invisible(.Call(`_gdalraster_ogr2ogr`, src_dsn, dst_dsn, src_layers, cl_arg, open_options))
 }
 
 #' Retrieve information about a vector data source
