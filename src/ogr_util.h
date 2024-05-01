@@ -1,8 +1,8 @@
 /* GDAL OGR utility functions for vector data sources
    Chris Toney <chris.toney at usda.gov> */
 
-#ifndef ogr_util_H
-#define ogr_util_H
+#ifndef SRC_OGR_UTIL_H_
+#define SRC_OGR_UTIL_H_
 
 #include <map>
 #include <string>
@@ -146,4 +146,4 @@ bool _ogr_geom_field_create(std::string dsn, std::string layer,
                             std::string srs, bool is_nullable,
                             bool is_ignored);
 
-#endif
+#endif  // SRC_OGR_UTIL_H_
