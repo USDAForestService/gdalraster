@@ -2069,24 +2069,6 @@ has_geos <- function() {
     .Call(`_gdalraster__g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset)
 }
 
-#' @noRd
-NULL
-
-#' @noRd
-NULL
-
-#' @noRd
-NULL
-
-#' @noRd
-NULL
-
-#' @noRd
-NULL
-
-#' @noRd
-NULL
-
 #' Does vector dataset exist
 #'
 #' @noRd
