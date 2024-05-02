@@ -103,8 +103,8 @@ bool _ogr_ds_exists(std::string dsn, bool with_update = false) {
     }
 }
 
-//' Create a vector dataset with layer and field
-//' currently hard coded for field of OFTInteger
+//' Create a vector dataset. Optionally create a layer in the dataset.
+//' A field is also created optionally, currently hard coded as type OFTInteger.
 //'
 //' @noRd
 // [[Rcpp::export(name = ".create_ogr")]]
@@ -149,6 +149,11 @@ bool _create_ogr(std::string format, std::string dst_filename,
 
     if (hDstDS == nullptr)
         return false;
+
+    if (layer == "") {
+        GDALReleaseDataset(hDstDS);
+        return true;
+    }
 
     if (!GDALDatasetTestCapability(hDstDS, ODsCCreateLayer)) {
         GDALReleaseDataset(hDstDS);
