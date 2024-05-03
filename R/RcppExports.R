@@ -2076,8 +2076,8 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_ds_exists`, dsn, with_update)
 }
 
-#' Create a vector dataset with layer and field
-#' currently hard coded for field of OFTInteger
+#' Create a vector dataset. Optionally create a layer in the dataset.
+#' A field is also created optionally, currently hard coded as type OFTInteger.
 #'
 #' @noRd
 .create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", dsco = NULL, lco = NULL) {

@@ -13,7 +13,8 @@
 // Internal lookup of OGRwkbGeometryType by string descriptor
 // Returns wkbUnknown if no match
 OGRwkbGeometryType _getWkbGeomType(std::string geom_type) {
-    if (auto it = MAP_OGR_GEOM_TYPE.find(geom_type);
+    std::string geom_type_in = str_toupper(geom_type);
+    if (auto it = MAP_OGR_GEOM_TYPE.find(geom_type_in);
             it != MAP_OGR_GEOM_TYPE.end())
         return it->second;
     else
@@ -115,7 +116,7 @@ bool _create_ogr(std::string format, std::string dst_filename,
         Rcpp::Nullable<Rcpp::CharacterVector> dsco = R_NilValue,
         Rcpp::Nullable<Rcpp::CharacterVector> lco = R_NilValue) {
 
-    GDALDriverH hDriver = GDALGetDriverByName( format.c_str() );
+    GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
     if (hDriver == nullptr)
         Rcpp::stop("failed to get driver for the specified format");
 
