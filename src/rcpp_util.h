@@ -1,8 +1,8 @@
 /* Misc. utility functions for internal use
    Chris Toney <chris.toney at usda.gov> */
 
-#ifndef rcpp_util_H
-#define rcpp_util_H
+#ifndef SRC_RCPP_UTIL_H_
+#define SRC_RCPP_UTIL_H_
 
 #include <Rcpp.h>
 
@@ -13,5 +13,6 @@ Rcpp::CharacterVector _normalize_path(Rcpp::CharacterVector path,
 Rcpp::CharacterVector _normalize_path(Rcpp::CharacterVector path,
         int must_work = NA_LOGICAL);
 Rcpp::CharacterVector _enc_to_utf8(Rcpp::CharacterVector x);
+std::string str_toupper(std::string s);
 
-#endif
+#endif  // SRC_RCPP_UTIL_H_
