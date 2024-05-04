@@ -21,7 +21,7 @@ std::string _str_toupper(std::string s);
 
 // case-insensitive comparator for std::map
 // https://stackoverflow.com/questions/1801892/how-can-i-make-the-mapfind-operation-case-insensitive
-struct ci_less {
+struct _ci_less {
     struct nocase_compare {
         bool operator() (const unsigned char& c1,
                          const unsigned char& c2) const {
