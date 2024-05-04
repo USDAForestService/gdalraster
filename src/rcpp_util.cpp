@@ -1,8 +1,6 @@
 /* Misc. utility functions for internal use
    Chris Toney <chris.toney at usda.gov> */
 
-#include <algorithm>
-#include <string>
 #include "rcpp_util.h"
 
 //' convert data frame to numeric matrix in Rcpp
@@ -44,7 +42,7 @@ Rcpp::CharacterVector _enc_to_utf8(Rcpp::CharacterVector x) {
 
 //' std::string to uppercase
 //' @noRd
-std::string str_toupper(std::string s) {
+std::string _str_toupper(std::string s) {
     std::transform(s.begin(), s.end(), s.begin(),
                    [](unsigned char c){ return std::toupper(c); });
     return s;
