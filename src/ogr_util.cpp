@@ -13,7 +13,7 @@
 // Internal lookup of OGRwkbGeometryType by string descriptor
 // Returns wkbUnknown if no match
 OGRwkbGeometryType _getWkbGeomType(std::string geom_type) {
-    std::string geom_type_in = str_toupper(geom_type);
+    std::string geom_type_in = _str_toupper(geom_type);
     if (auto it = MAP_OGR_GEOM_TYPE.find(geom_type_in);
             it != MAP_OGR_GEOM_TYPE.end())
         return it->second;
@@ -104,8 +104,49 @@ bool _ogr_ds_exists(std::string dsn, bool with_update = false) {
     }
 }
 
+//' Test if capabilities are available for a vector dataset
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_ds_test_cap")]]
+SEXP _ogr_ds_test_cap(std::string dsn, bool with_update = true) {
+
+    GDALDatasetH hDS = nullptr;
+
+    CPLPushErrorHandler(CPLQuietErrorHandler);
+    if (with_update)
+        hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+                         nullptr, nullptr, nullptr);
+    else
+        hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR,
+                         nullptr, nullptr, nullptr);
+    CPLPopErrorHandler();
+
+    if (hDS == nullptr)
+        return R_NilValue;
+
+    Rcpp::List cap = Rcpp::List::create(
+        Rcpp::Named("CreateLayer") = static_cast<bool>(
+            GDALDatasetTestCapability(hDS, ODsCCreateLayer)),
+        Rcpp::Named("DeleteLayer") = static_cast<bool>(
+            GDALDatasetTestCapability(hDS, ODsCDeleteLayer)),
+        Rcpp::Named("CreateGeomFieldAfterCreateLayer") = static_cast<bool>(
+            GDALDatasetTestCapability(hDS, ODsCCreateGeomFieldAfterCreateLayer)),
+        Rcpp::Named("CurveGeometries") = static_cast<bool>(
+            GDALDatasetTestCapability(hDS, ODsCCurveGeometries)),
+        Rcpp::Named("Transactions") = static_cast<bool>(
+            GDALDatasetTestCapability(hDS, ODsCTransactions)),
+        Rcpp::Named("EmulatedTransactions") = static_cast<bool>(
+            GDALDatasetTestCapability(hDS, ODsCEmulatedTransactions)),
+        Rcpp::Named("RandomLayerRead") = static_cast<bool>(
+            GDALDatasetTestCapability(hDS, ODsCRandomLayerRead)),
+        Rcpp::Named("RandomLayerWrite") = static_cast<bool>(
+            GDALDatasetTestCapability(hDS, ODsCRandomLayerWrite)));
+
+    return cap;
+}
+
 //' Create a vector dataset. Optionally create a layer in the dataset.
-//' A field is also created optionally, currently hard coded as type OFTInteger.
+//' A field is also created optionally (name and type only).
 //'
 //' @noRd
 // [[Rcpp::export(name = ".create_ogr")]]
@@ -113,6 +154,7 @@ bool _create_ogr(std::string format, std::string dst_filename,
         int xsize, int ysize, int nbands, std::string dataType,
         std::string layer, std::string geom_type,
         std::string srs = "", std::string fld_name = "",
+        std::string fld_type = "OFTInteger",
         Rcpp::Nullable<Rcpp::CharacterVector> dsco = R_NilValue,
         Rcpp::Nullable<Rcpp::CharacterVector> lco = R_NilValue) {
 
@@ -130,6 +172,13 @@ bool _create_ogr(std::string format, std::string dst_filename,
     OGRwkbGeometryType eGeomType = _getWkbGeomType(geom_type);
     if (eGeomType == wkbUnknown)
         Rcpp::stop("'geom_type' is unknown");
+
+    if (fld_name != "" && fld_type == "")
+        Rcpp::stop("'fld_type' required when 'fld_name' is given");
+
+    OGRFieldType fld_oft = OFTInteger;
+    if (fld_type != "")
+        fld_oft = _getOFT(fld_type);
 
     GDALDataType dt = GDALGetDataTypeByName(dataType.c_str());
 
@@ -192,7 +241,7 @@ bool _create_ogr(std::string format, std::string dst_filename,
     if (hLayer != nullptr) {
         layer_ok = true;
         if (fld_name != "") {
-            hFieldDefn = OGR_Fld_Create(fld_name.c_str(), OFTInteger);
+            hFieldDefn = OGR_Fld_Create(fld_name.c_str(), fld_oft);
             if (hFieldDefn == nullptr)
                 fld_ok = false;
             else if (OGR_L_CreateField(hLayer, hFieldDefn, true) != OGRERR_NONE)
@@ -236,6 +285,41 @@ int _ogr_ds_layer_count(std::string dsn) {
     int cnt = GDALDatasetGetLayerCount(hDS);
     GDALReleaseDataset(hDS);
     return cnt;
+}
+
+//' Get names of layers in a dataset
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_ds_layer_names")]]
+SEXP _ogr_ds_layer_names(std::string dsn) {
+
+    GDALDatasetH hDS = nullptr;
+
+    CPLPushErrorHandler(CPLQuietErrorHandler);
+    hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (hDS == nullptr)
+        return R_NilValue;
+    CPLPopErrorHandler();
+
+    int cnt = GDALDatasetGetLayerCount(hDS);
+    if (cnt == 0)
+        return R_NilValue;
+
+    Rcpp::CharacterVector names = Rcpp::CharacterVector::create();
+    for (int i = 0; i < cnt; ++i) {
+        OGRLayerH hLayer = nullptr;
+        hLayer = GDALDatasetGetLayer(hDS, i);
+        if (hLayer != nullptr) {
+            names.push_back(OGR_L_GetName(hLayer));
+        }
+        else {
+            Rcpp::warning("failed to obtain layer handle");
+            names.push_back("");
+        }
+    }
+
+    GDALReleaseDataset(hDS);
+    return names;
 }
 
 //' Does layer exist
@@ -344,12 +428,14 @@ bool _ogr_layer_delete(std::string dsn, std::string layer) {
         return false;
 
     if (!GDALDatasetTestCapability(hDS, ODsCDeleteLayer)) {
+        Rcpp::Rcerr << "dataset does not support delete layer\n";
         GDALReleaseDataset(hDS);
         return false;
     }
 
     hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     if (hLayer == nullptr) {
+        Rcpp::Rcerr << "failed to access 'layer'\n";
         GDALReleaseDataset(hDS);
         return false;
     }
@@ -367,6 +453,61 @@ bool _ogr_layer_delete(std::string dsn, std::string layer) {
 
     GDALReleaseDataset(hDS);
     return ret;
+}
+
+//' Get names of fields on a layer
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_layer_fld_names")]]
+SEXP _ogr_layer_fld_names(std::string dsn, std::string layer) {
+
+    GDALDatasetH hDS = nullptr;
+    OGRLayerH hLayer = nullptr;
+    OGRFeatureDefnH hFDefn = nullptr;
+
+    CPLPushErrorHandler(CPLQuietErrorHandler);
+    hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (hDS == nullptr)
+        return R_NilValue;
+    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    CPLPopErrorHandler();
+
+    if (hLayer == nullptr) {
+        GDALReleaseDataset(hDS);
+        return R_NilValue;
+    }
+
+    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    if (hFDefn == nullptr)
+        return R_NilValue;
+
+    Rcpp::CharacterVector names = Rcpp::CharacterVector::create();
+
+    for (int i = 0; i < OGR_FD_GetFieldCount(hFDefn); ++i) {
+        OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
+        if (hFieldDefn != nullptr) {
+            names.push_back(OGR_Fld_GetNameRef(hFieldDefn));
+        }
+        else {
+            Rcpp::warning("failed to obtain field definition");
+            names.push_back("");
+        }
+    }
+
+    for (int i = 0; i < OGR_FD_GetGeomFieldCount(hFDefn); ++i) {
+        OGRGeomFieldDefnH hGeomFldDefn =
+                OGR_FD_GetGeomFieldDefn(hFDefn, i);
+        if (hGeomFldDefn != nullptr) {
+            names.push_back(OGR_GFld_GetNameRef(hGeomFldDefn));
+        }
+        else {
+            Rcpp::warning("failed to obtain geom field definition");
+            names.push_back("");
+        }
+    }
+
+    GDALReleaseDataset(hDS);
+    return names;
 }
 
 //' Get field index or -1 if fld_name not found
@@ -563,6 +704,59 @@ bool _ogr_geom_field_create(std::string dsn, std::string layer,
 
     if (hSRS != nullptr)
         OSRDestroySpatialReference(hSRS);
+
+    GDALReleaseDataset(hDS);
+    return ret;
+}
+
+//' Delete an attribute field on a vector layer
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_field_delete")]]
+bool _ogr_field_delete(std::string dsn, std::string layer,
+                       std::string fld_name) {
+
+    GDALDatasetH hDS = nullptr;
+    hDS = GDALOpenEx(dsn.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+                     nullptr, nullptr, nullptr);
+    if (hDS == nullptr) {
+        Rcpp::Rcerr << "failed to open 'dsn' for update\n";
+        return false;
+    }
+
+    OGRLayerH  hLayer = nullptr;
+    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    if (hLayer == nullptr) {
+        Rcpp::Rcerr << "failed to access 'layer'\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+    if (!OGR_L_TestCapability(hLayer, OLCDeleteField)) {
+        Rcpp::Rcerr << "layer does not support delete field\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    OGRFeatureDefnH hFDefn = nullptr;
+    int iField;
+    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    if (hFDefn != nullptr) {
+        iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
+    }
+    else {
+        Rcpp::Rcerr << "failed to obtain OGRFeatureDefnH\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+    if (iField == -1) {
+        Rcpp::Rcerr << "'fld_name' not found on 'layer'\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    bool ret = false;
+    if (OGR_L_DeleteField(hLayer, iField) == OGRERR_NONE)
+        ret = true;
 
     GDALReleaseDataset(hDS);
     return ret;

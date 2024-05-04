@@ -2076,12 +2076,19 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_ds_exists`, dsn, with_update)
 }
 
-#' Create a vector dataset. Optionally create a layer in the dataset.
-#' A field is also created optionally, currently hard coded as type OFTInteger.
+#' Test if capabilities are available for a vector dataset
 #'
 #' @noRd
-.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", dsco = NULL, lco = NULL) {
-    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, dsco, lco)
+.ogr_ds_test_cap <- function(dsn, with_update = TRUE) {
+    .Call(`_gdalraster__ogr_ds_test_cap`, dsn, with_update)
+}
+
+#' Create a vector dataset. Optionally create a layer in the dataset.
+#' A field is also created optionally (name and type only).
+#'
+#' @noRd
+.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", fld_type = "OFTInteger", dsco = NULL, lco = NULL) {
+    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, fld_type, dsco, lco)
 }
 
 #' Get number of layers in a dataset
@@ -2089,6 +2096,13 @@ has_geos <- function() {
 #' @noRd
 .ogr_ds_layer_count <- function(dsn) {
     .Call(`_gdalraster__ogr_ds_layer_count`, dsn)
+}
+
+#' Get names of layers in a dataset
+#'
+#' @noRd
+.ogr_ds_layer_names <- function(dsn) {
+    .Call(`_gdalraster__ogr_ds_layer_names`, dsn)
 }
 
 #' Does layer exist
@@ -2112,6 +2126,13 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_layer_delete`, dsn, layer)
 }
 
+#' Get names of fields on a layer
+#'
+#' @noRd
+.ogr_layer_fld_names <- function(dsn, layer) {
+    .Call(`_gdalraster__ogr_layer_fld_names`, dsn, layer)
+}
+
 #' Get field index or -1 if fld_name not found
 #'
 #' @noRd
@@ -2131,6 +2152,13 @@ has_geos <- function() {
 #' @noRd
 .ogr_geom_field_create <- function(dsn, layer, fld_name, geom_type, srs = "", is_nullable = TRUE, is_ignored = FALSE) {
     .Call(`_gdalraster__ogr_geom_field_create`, dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored)
+}
+
+#' Delete an attribute field on a vector layer
+#'
+#' @noRd
+.ogr_field_delete <- function(dsn, layer, fld_name) {
+    .Call(`_gdalraster__ogr_field_delete`, dsn, layer, fld_name)
 }
 
 #' get PROJ version

@@ -1591,7 +1591,8 @@ polygonize <- function(raster_file,
             stop("specify 'out_fmt' to create a new dataset", call. = FALSE)
         }
         if (!.create_ogr(out_fmt, out_dsn, 0, 0, 0, "Unknown",
-                         out_layer, "POLYGON", srs, fld_name, dsco, lco)) {
+                         out_layer, "POLYGON", srs, fld_name, "OFTInteger",
+                         dsco, lco)) {
             stop("failed to create 'out_dsn'", call. = FALSE)
         }
     }

@@ -3,48 +3,87 @@
 
 #' Utility functions for managing vector data sources
 #'
-#' Bindings to OGR wrap portions of GDAL's Vector API (ogr_core.h and
-#' ogr_api.h).
-#' This set of OGR management functions can be used to create new vector
-#' datasets, test existence of dataset/layer/field, test read/write access,
-#' create new layers in an existing dataset, delete layers, and create new
-#' attribute and geometry fields in an existing layer. They are intended to be
-#' complementary to `ogrinfo()` and `ogr2ogr()`, and to support implementation
-#' of OGR bindings for vector I/O in a future release of {gdalraster}.
+#' This set of management functions can be used to create new vector datasets,
+#' test existence of dataset/layer/field, test dataset capabilities,
+#' create new layers in an existing dataset, delete layers, create new
+#' attribute and geometry fields on an existing layer, and delete fields.
+#' These functions are intended as complementary to `ogrinfo()` and
+#' `ogr2ogr()`. Bindings to OGR wrap portions of GDAL's Vector API
+#' (ogr_core.h and ogr_api.h). The management utilities will also support
+#' implementation of vector I/O, and OGR facilities for geoprocessing, in a
+#' future release of `gdalraster`.
 #'
 #' @name ogr_manage
 #' @details
-#' `ogr_ds_exists()` tests whether a vector dataset can be opened with the
-#' given DSN, potentially testing for update access.
+#' ### Utilities for vector data sources
 #'
-#' `ogr_ds_create()` creates a new vector data store, optionally creating
-#' also a layer, and optionally creating one or more fields on the layer.
+#' `ogr_ds_exists()` tests whether a vector dataset can be opened from the
+#' given data source name (DSN), potentially testing for update access.
+#' Returns a logical scalar.
+#'
+#' `ogr_ds_test_cap()` tests the capabilities of a vector dataset, attempting
+#' to open it with update access by default. Returns a list of capabilities
+#' with values `TRUE` or `FALSE` (or `NULL` is returned if `dsn` cannot be
+#' opened with the requested access). List elements include the following:
+#' * `CreateLayer`: `TRUE` if this datasource can create new layers
+#' * `DeleteLayer`: `TRUE` if this datasource can delete existing layers
+#' * `CreateGeomFieldAfterCreateLayer`: `TRUE` if the layers of this
+#' datasource support geometry field creation just after layer creation
+#' * `CurveGeometries`: `TRUE` if this datasource supports curve geometries
+#' * `Transactions`: `TRUE` if this datasource supports (efficient)
+#' transactions
+#' * `EmulatedTransactions`: `TRUE` if this datasource supports transactions
+#' through emulation
+#' * `RandomLayerRead`: `TRUE` if this datasource has a dedicated
+#' `GetNextFeature()` implementation, potentially returning features from
+#' layers in a non-sequential way
+#' * `RandomLayerWrite`: `TRUE` if this datasource supports calling
+#' `CreateFeature()` on layers in a non-sequential way
+#'
+#' `ogr_ds_create()` creates a new vector datasource, optionally also creating
+#' a layer, and optionally creating one or more fields on the layer.
 #' The attribute fields and geometry field(s) to create can be specified as a
 #' feature class definition (`layer_defn` as list, see below), or
 #' alternatively, by giving the `geom_type` and `srs`, optionally along with
-#' one `fld_name` and `fld_type` to be created in the layer.
+#' one `fld_name` and `fld_type` to be created in the layer. Returns a logical
+#' scalar, `TRUE` indicating success.
 #'
-#' `ogr_ds_layer_count()` returns the number of layers in a GDAL vector dataset.
+#' `ogr_ds_layer_count()` returns the number of layers in a vector dataset.
 #'
-#' `ogr_layer_exists()` tests whether a layer can be accessed by name for a
-#' given DSN.
+#' `ogr_ds_layer_names()` returns a character vector of layer names in a
+#' vector dataset, or `NULL` if no layers are found.
+#'
+#' `ogr_layer_exists()` tests whether a layer can be accessed by name in a
+#' given vector dataset. Returns a logical scalar.
 #'
 #' `ogr_layer_create()` creates a new layer in a vector dataset, with a
 #' specified geometry type and spatial reference definition. This function also
 #' accepts a feature class definition given as a list of field names and their
-#' definitions (see below).
+#' definitions (see below). Returns a logical scalar, `TRUE` indicating success.
 #'
-#' `ogr_layer_delete()` deletes a layer in a vector dataset.
+#' `ogr_layer_fld_names()` returns a character vector of field names on a
+#' layer, or `NULL` if no fields are found.
+#'
+#' `ogr_layer_delete()` deletes an existing layer in a vector dataset.
+#' Returns a logical scalar, `TRUE` indicating success.
 #'
 #' `ogr_field_index()` tests for existence of an attribute field by name.
-#' Returns the field index on the layer, or `-1` if the field does not exist.
+#' Returns the field index on the layer (0-based), or `-1` if the field does
+#' not exist.
 #'
 #' `ogr_field_create()` creates a new attribute field of specified data type in
 #' a given DSN/layer. Several optional field properties can be specified in
-#' addition to the type.
+#' addition to the type. Returns a logical scalar, `TRUE` indicating success.
 #'
 #' `ogr_geom_field_create()` creates a new geometry field of specified type in
-#' a given DSN/layer.
+#' a given DSN/layer. Returns a logical scalar, `TRUE` indicating success.
+#'
+#' `ogr_field_delete()` deletes an existing field on a vector layer.
+#' Not all format drivers support this function. Some drivers may only support
+#' deleting a field while there are still no features in the layer.
+#' Returns a logical scalar, `TRUE` indicating success.
+#'
+#' ### Feature class definition
 #'
 #' All features in an OGR Layer share a common schema (feature class), modeled
 #' in GDAL as OGR Feature Definition. The feature class definition includes the
@@ -66,14 +105,13 @@
 #' $is_geom    : FALSE (the default) for attribute fields
 #' ```
 #'
-#' An OGR field type is specified as a case-sensitive character string with
-#' possible values:
+#' An OGR field type is specified as a character string with possible values:
 #' `OFTInteger`, `OFTIntegerList`, `OFTReal`, `OFTRealList`, `OFTString`,
 #' `OFTStringList`, `OFTBinary`,  `OFTDate`, `OFTTime`, `OFTDateTime`,
 #' `OFTInteger64`, `OFTInteger64List`.
 #'
-#' An optional field subtype is specified as a case-sensitive character string
-#' with possible values:
+#' An optional field subtype is specified as a character string with possible
+#' values:
 #' `OFSTNone`, `OFSTBoolean`, `OFSTInt16`, `OFSTFloat32`, `OFSTJSON`,
 #' `OFSTUUID`.
 #'
@@ -86,29 +124,29 @@
 #' $is_geom    : TRUE (required) for geometry fields
 #' ```
 #'
-#' Geometry types are specified as a character string containing OGC WKT
-#' (case-insensitive).
+#' Geometry types are specified as a character string containing OGC WKT.
 #' Common types include: `Point`, `LineString`, `Polygon`, `MultiPoint`,
 #' `MultiLineString`, `MultiPolygon`. See the GDAL documentation for a list
-#' of all supported geometry types
-#' ([https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType]).
+#' of all supported geometry types:\cr
+#' [https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType]
 #'
 #' @param dsn Character string. The vector data source name, e.g., a filename
 #' or database connection string.
-#' @param with_update Logical scalar. `TRUE` to test for update access on the
-#' dataset, or `FALSE` (the default) to test for existence regardless of
-#' read/write access.
+#' @param with_update Logical scalar. `TRUE` to request update access when
+#' opening the dataset, or `FALSE` to open read-only.
 #' @param format GDAL short name of the vector format as character string.
 #' Examples of some common output formats include: `"GPKG"`, `"FlatGeobuf"`,
-#' `"PostgreSQL"`, `"ESRI Shapefile"`, `"SQLite"`.
+#' `"ESRI Shapefile"`, `"SQLite"`.
 #' @param layer Character string for a layer name in a vector dataset.
 #' @param layer_defn A feature class definition for `layer` as a list of
-#' attribute field definition(s), and at least one geometry field definition.
-#' Each field definition is a list containing the field name, type and other
-#' properties (see Details). If a `layer_defn` is given, it will be used and
-#' any additional values passed for defining a single field will be ignored.
-#' The first geometry field definition in `layer_defn` defines the latyer
-#' `geom_type` and `srs`.
+#' zero or more attribute field definitions, and at least one geometry field
+#' definition.
+#' A field definition is a list with named elements containing values for the
+#' field type and other properties (see Details).
+#' If a `layer_defn` is given, it will be used and any additional values passed
+#' for optionally creating only a single field on the layer will be ignored.
+#' The first geometry field definition in `layer_defn` defines the `geom_type`
+#' and `srs` for the layer.
 #' @param geom_type Character string specifying a geometry type (see Details).
 #' @param srs Character string containing a spatial reference system definition
 #' as OGC WKT or other well-known format (e.g., the input formats usable with
@@ -140,14 +178,9 @@
 #' for `dsn` (`"NAME=VALUE"` pairs).
 #' @param lco Optional character vector of format-specific creation options
 #' for `layer` (`"NAME=VALUE"` pairs).
-#' @return Functions for create/delete return a logical scalar indicating
-#' success or failure of the operation. Functions that test existence also
-#' return a logical scalar. Otherwise, an integer scalar (see Details).
 #'
 #' @seealso
 #' [https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry]
-#'
-#' @note
 #'
 #' @export
 ogr_ds_exists <- function(dsn, with_update = FALSE) {
@@ -159,11 +192,71 @@ ogr_ds_exists <- function(dsn, with_update = FALSE) {
 
 #' @name ogr_manage
 #' @export
+ogr_ds_test_cap <- function(dsn, with_update = TRUE) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+
+    return(.ogr_ds_test_cap(dsn, with_update))
+}
+
+#' @name ogr_manage
+#' @export
+ogr_ds_create <- function(format, dsn, layer, layer_defn = NULL,
+                          geom_type = NULL, srs = NULL, fld_name = NULL,
+                          fld_type = NULL, dsco = NULL, lco = NULL) {
+
+    if (!(is.character(format) && length(format) == 1))
+        stop("'format' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(layer) && length(layer) == 1))
+        stop("'layer' must be a length-1 character vector", call. = FALSE)
+    if (is.null(geom_type))
+        geom_type <- "UNKNOWN"
+    if (!(is.character(geom_type) && length(geom_type) == 1))
+        stop("'geom_type' must be a length-1 character vector", call. = FALSE)
+    if (is.null(srs))
+        srs <- ""
+    if (is.null(fld_name))
+        fld_name <- ""
+    if (is.null(fld_type))
+        fld_type <- ""
+
+    if (is.null(layer_defn)) {
+        return(.create_ogr(format, dsn, 0, 0, 0, "Unknown",
+                           layer, geom_type, srs, fld_name, fld_type,
+                           dsco, lco))
+    } else {
+        ds_ok <- .create_ogr(format, dsn, 0, 0, 0, "Unknown",
+                             layer = "", geom_type = "", srs = "",
+                             fld_name = "", fld_type = "",
+                             dsco = dsco, lco = lco)
+        if (!ds_ok) {
+            return(FALSE)
+
+        } else {
+            return(ogr_layer_create(dsn, layer, layer_defn, lco = lco))
+
+        }
+    }
+}
+
+#' @name ogr_manage
+#' @export
 ogr_ds_layer_count <- function(dsn) {
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
 
     return(.ogr_ds_layer_count(dsn))
+}
+
+#' @name ogr_manage
+#' @export
+ogr_ds_layer_names <- function(dsn) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+
+    return(.ogr_ds_layer_names(dsn))
 }
 
 #' @name ogr_manage
@@ -200,7 +293,7 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
         for (nm in names(layer_defn)) {
             if (is.null(layer_defn[[nm]]$is_geom) ||
                     !is.logical(layer_defn[[nm]]$is_geom)) {
-                stop("field definition must contain '$is_geom' as logical",
+                stop("field definitions must contain `$is_geom=TRUE|FALSE`",
                      call. = FALSE)
             }
             if (layer_defn[[nm]]$is_geom) {
@@ -253,6 +346,17 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
     }
 
     return(TRUE)
+}
+
+#' @name ogr_manage
+#' @export
+ogr_layer_fld_names <- function(dsn, layer) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(layer) && length(layer) == 1))
+        stop("'layer' must be a length-1 character vector", call. = FALSE)
+
+    return(.ogr_layer_fld_names(dsn, layer))
 }
 
 #' @name ogr_manage
@@ -422,4 +526,17 @@ ogr_geom_field_create <- function(dsn, layer, fld_name,
 
     return(.ogr_geom_field_create(dsn, layer, fld_name, geom_type,
                                   is_nullable, is_ignored))
+}
+
+#' @name ogr_manage
+#' @export
+ogr_field_delete <- function(dsn, layer, fld_name) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(layer) && length(layer) == 1))
+        stop("'layer' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(fld_name) && length(fld_name) == 1))
+        stop("'fld_name' must be a length-1 character vector", call. = FALSE)
+
+    return(.ogr_field_delete(dsn, layer, fld_name))
 }

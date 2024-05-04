@@ -3,18 +3,40 @@
 \name{ogr_manage}
 \alias{ogr_manage}
 \alias{ogr_ds_exists}
+\alias{ogr_ds_test_cap}
+\alias{ogr_ds_create}
 \alias{ogr_ds_layer_count}
+\alias{ogr_ds_layer_names}
 \alias{ogr_layer_exists}
 \alias{ogr_layer_create}
+\alias{ogr_layer_fld_names}
 \alias{ogr_layer_delete}
 \alias{ogr_field_index}
 \alias{ogr_field_create}
 \alias{ogr_geom_field_create}
+\alias{ogr_field_delete}
 \title{Utility functions for managing vector data sources}
 \usage{
 ogr_ds_exists(dsn, with_update = FALSE)
 
+ogr_ds_test_cap(dsn, with_update = TRUE)
+
+ogr_ds_create(
+  format,
+  dsn,
+  layer,
+  layer_defn = NULL,
+  geom_type = NULL,
+  srs = NULL,
+  fld_name = NULL,
+  fld_type = NULL,
+  dsco = NULL,
+  lco = NULL
+)
+
 ogr_ds_layer_count(dsn)
+
+ogr_ds_layer_names(dsn)
 
 ogr_layer_exists(dsn, layer)
 
@@ -26,6 +48,8 @@ ogr_layer_create(
   srs = NULL,
   lco = NULL
 )
+
+ogr_layer_fld_names(dsn, layer)
 
 ogr_layer_delete(dsn, layer)
 
@@ -56,24 +80,31 @@ ogr_geom_field_create(
   is_nullable = TRUE,
   is_ignored = FALSE
 )
+
+ogr_field_delete(dsn, layer, fld_name)
 }
 \arguments{
 \item{dsn}{Character string. The vector data source name, e.g., a filename
 or database connection string.}
 
-\item{with_update}{Logical scalar. \code{TRUE} to test for update access on the
-dataset, or \code{FALSE} (the default) to test for existence regardless of
-read/write access.}
+\item{with_update}{Logical scalar. \code{TRUE} to request update access when
+opening the dataset, or \code{FALSE} to open read-only.}
+
+\item{format}{GDAL short name of the vector format as character string.
+Examples of some common output formats include: \code{"GPKG"}, \code{"FlatGeobuf"},
+\code{"ESRI Shapefile"}, \code{"SQLite"}.}
 
 \item{layer}{Character string for a layer name in a vector dataset.}
 
 \item{layer_defn}{A feature class definition for \code{layer} as a list of
-attribute field definition(s), and at least one geometry field definition.
-Each field definition is a list containing the field name, type and other
-properties (see Details). If a \code{layer_defn} is given, it will be used and
-any additional values passed for defining a single field will be ignored.
-The first geometry field definition in \code{layer_defn} defines the latyer
-\code{geom_type} and \code{srs}.}
+zero or more attribute field definitions, and at least one geometry field
+definition.
+A field definition is a list with named elements containing values for the
+field type and other properties (see Details).
+If a \code{layer_defn} is given, it will be used and any additional values passed
+for optionally creating only a single field on the layer will be ignored.
+The first geometry field definition in \code{layer_defn} defines the \code{geom_type}
+and \code{srs} for the layer.}
 
 \item{geom_type}{Character string specifying a geometry type (see Details).}
 
@@ -81,17 +112,20 @@ The first geometry field definition in \code{layer_defn} defines the latyer
 as OGC WKT or other well-known format (e.g., the input formats usable with
 \code{\link[=srs_to_wkt]{srs_to_wkt()}}).}
 
-\item{lco}{Optional character vector of format-specific creation options
-for \code{layer} (\code{"NAME=VALUE"} pairs).}
-
 \item{fld_name}{Character string containing the name of an attribute field
 in \code{layer}.}
 
-\item{fld_defn}{A field definition as list (see Details). Additional
-arguments in \code{ogr_field_create()} will be ignored if a \code{fld_defn} is given.}
-
 \item{fld_type}{Character string containing the name of a field data type
 (e.g., \code{OFTInteger}, \code{OFTReal}, \code{OFTString}, see Details.)}
+
+\item{dsco}{Optional character vector of format-specific creation options
+for \code{dsn} (\code{"NAME=VALUE"} pairs).}
+
+\item{lco}{Optional character vector of format-specific creation options
+for \code{layer} (\code{"NAME=VALUE"} pairs).}
+
+\item{fld_defn}{A field definition as list (see Details). Additional
+arguments in \code{ogr_field_create()} will be ignored if a \code{fld_defn} is given.}
 
 \item{fld_subtype}{Character string containing the name of a field subtype.
 One of  \code{OFSTNone} (the default), \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32},
@@ -117,61 +151,91 @@ string.}
 \item{geom_fld_defn}{A geometry field definition as list (see Details).
 Additional arguments in \code{ogr_geom_field_create()} will be ignored if a
 \code{geom_fld_defn} is given.}
-
-\item{format}{GDAL short name of the vector format as character string.
-Examples of some common output formats include: \code{"GPKG"}, \code{"FlatGeobuf"},
-\code{"PostgreSQL"}, \code{"ESRI Shapefile"}, \code{"SQLite"}.}
-
-\item{dsco}{Optional character vector of format-specific creation options
-for \code{dsn} (\code{"NAME=VALUE"} pairs).}
-}
-\value{
-Functions for create/delete return a logical scalar indicating
-success or failure of the operation. Functions that test existence also
-return a logical scalar. Otherwise, an integer scalar (see Details).
 }
 \description{
-Bindings to OGR wrap portions of GDAL's Vector API (ogr_core.h and
-ogr_api.h).
-This set of OGR management functions can be used to create new vector
-datasets, test existence of dataset/layer/field, test read/write access,
-create new layers in an existing dataset, delete layers, and create new
-attribute and geometry fields in an existing layer. They are intended to be
-complementary to \code{ogrinfo()} and \code{ogr2ogr()}, and to support implementation
-of OGR bindings for vector I/O in a future release of {gdalraster}.
+This set of management functions can be used to create new vector datasets,
+test existence of dataset/layer/field, test dataset capabilities,
+create new layers in an existing dataset, delete layers, create new
+attribute and geometry fields on an existing layer, and delete fields.
+These functions are intended as complementary to \code{ogrinfo()} and
+\code{ogr2ogr()}. Bindings to OGR wrap portions of GDAL's Vector API
+(ogr_core.h and ogr_api.h). The management utilities will also support
+implementation of vector I/O, and OGR facilities for geoprocessing, in a
+future release of \code{gdalraster}.
 }
 \details{
-\code{ogr_ds_exists()} tests whether a vector dataset can be opened with the
-given DSN, potentially testing for update access.
+\subsection{Utilities for vector data sources}{
 
-\code{ogr_ds_create()} creates a new vector data store, optionally creating
-also a layer, and optionally creating one or more fields on the layer.
+\code{ogr_ds_exists()} tests whether a vector dataset can be opened from the
+given data source name (DSN), potentially testing for update access.
+Returns a logical scalar.
+
+\code{ogr_ds_test_cap()} tests the capabilities of a vector dataset, attempting
+to open it with update access by default. Returns a list of capabilities
+with values \code{TRUE} or \code{FALSE} (or \code{NULL} is returned if \code{dsn} cannot be
+opened with the requested access). List elements include the following:
+\itemize{
+\item \code{CreateLayer}: \code{TRUE} if this datasource can create new layers
+\item \code{DeleteLayer}: \code{TRUE} if this datasource can delete existing layers
+\item \code{CreateGeomFieldAfterCreateLayer}: \code{TRUE} if the layers of this
+datasource support geometry field creation just after layer creation
+\item \code{CurveGeometries}: \code{TRUE} if this datasource supports curve geometries
+\item \code{Transactions}: \code{TRUE} if this datasource supports (efficient)
+transactions
+\item \code{EmulatedTransactions}: \code{TRUE} if this datasource supports transactions
+through emulation
+\item \code{RandomLayerRead}: \code{TRUE} if this datasource has a dedicated
+\code{GetNextFeature()} implementation, potentially returning features from
+layers in a non-sequential way
+\item \code{RandomLayerWrite}: \code{TRUE} if this datasource supports calling
+\code{CreateFeature()} on layers in a non-sequential way
+}
+
+\code{ogr_ds_create()} creates a new vector datasource, optionally also creating
+a layer, and optionally creating one or more fields on the layer.
 The attribute fields and geometry field(s) to create can be specified as a
 feature class definition (\code{layer_defn} as list, see below), or
 alternatively, by giving the \code{geom_type} and \code{srs}, optionally along with
-one \code{fld_name} and \code{fld_type} to be created in the layer.
+one \code{fld_name} and \code{fld_type} to be created in the layer. Returns a logical
+scalar, \code{TRUE} indicating success.
 
-\code{ogr_ds_layer_count()} returns the number of layers in a GDAL vector dataset.
+\code{ogr_ds_layer_count()} returns the number of layers in a vector dataset.
 
-\code{ogr_layer_exists()} tests whether a layer can be accessed by name for a
-given DSN.
+\code{ogr_ds_layer_names()} returns a character vector of layer names in a
+vector dataset, or \code{NULL} in no layers are found.
+
+\code{ogr_layer_exists()} tests whether a layer can be accessed by name in a
+given vector dataset. Returns a logical scalar.
 
 \code{ogr_layer_create()} creates a new layer in a vector dataset, with a
 specified geometry type and spatial reference definition. This function also
 accepts a feature class definition given as a list of field names and their
-definitions (see below).
+definitions (see below). Returns a logical scalar, \code{TRUE} indicating success.
 
-\code{ogr_layer_delete()} deletes a layer in a vector dataset.
+\code{ogr_layer_fld_names()} returns a character vector of field names on a
+layer, or \code{NULL} if no fields are found.
+
+\code{ogr_layer_delete()} deletes an existing layer in a vector dataset.
+Returns a logical scalar, \code{TRUE} indicating success.
 
 \code{ogr_field_index()} tests for existence of an attribute field by name.
-Returns the field index on the layer, or \code{-1} if the field does not exist.
+Returns the field index on the layer (0-based), or \code{-1} if the field does
+not exist.
 
 \code{ogr_field_create()} creates a new attribute field of specified data type in
 a given DSN/layer. Several optional field properties can be specified in
-addition to the type.
+addition to the type. Returns a logical scalar, \code{TRUE} indicating success.
 
 \code{ogr_geom_field_create()} creates a new geometry field of specified type in
-a given DSN/layer.
+a given DSN/layer. Returns a logical scalar, \code{TRUE} indicating success.
+
+\code{ogr_field_delete()} deletes an existing field on a vector layer.
+Not all format drivers support this function. Some drivers may only support
+deleting a field while there are still no features in the layer.
+Returns a logical scalar, \code{TRUE} indicating success.
+}
+
+\subsection{Feature class definition}{
 
 All features in an OGR Layer share a common schema (feature class), modeled
 in GDAL as OGR Feature Definition. The feature class definition includes the
@@ -193,14 +257,13 @@ $is_ignored : optionally ignored when retrieving features (logical scalar)
 $is_geom    : FALSE (the default) for attribute fields
 }\if{html}{\out{</div>}}
 
-An OGR field type is specified as a case-sensitive character string with
-possible values:
+An OGR field type is specified as a character string with possible values:
 \code{OFTInteger}, \code{OFTIntegerList}, \code{OFTReal}, \code{OFTRealList}, \code{OFTString},
 \code{OFTStringList}, \code{OFTBinary},  \code{OFTDate}, \code{OFTTime}, \code{OFTDateTime},
 \code{OFTInteger64}, \code{OFTInteger64List}.
 
-An optional field subtype is specified as a case-sensitive character string
-with possible values:
+An optional field subtype is specified as a character string with possible
+values:
 \code{OFSTNone}, \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32}, \code{OFSTJSON},
 \code{OFSTUUID}.
 
@@ -213,12 +276,12 @@ $is_ignored : optionally ignored when retrieving features (logical scalar)
 $is_geom    : TRUE (required) for geometry fields
 }\if{html}{\out{</div>}}
 
-Geometry types are specified as a character string containing OGC WKT
-(case-insensitive).
+Geometry types are specified as a character string containing OGC WKT.
 Common types include: \code{Point}, \code{LineString}, \code{Polygon}, \code{MultiPoint},
 \code{MultiLineString}, \code{MultiPolygon}. See the GDAL documentation for a list
-of all supported geometry types
-(\link{https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType}).
+of all supported geometry types:\cr
+\link{https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType}
+}
 }
 \seealso{
 \link{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
