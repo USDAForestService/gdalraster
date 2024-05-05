@@ -155,4 +155,7 @@ bool _ogr_geom_field_create(std::string dsn, std::string layer,
 bool _ogr_field_delete(std::string dsn, std::string layer,
                        std::string fld_name);
 
+SEXP _ogr_execute_sql(std::string dsn, std::string sql,
+                      std::string spatial_filter, std::string dialect);
+
 #endif  // SRC_OGR_UTIL_H_

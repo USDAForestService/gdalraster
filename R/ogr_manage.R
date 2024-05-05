@@ -7,15 +7,14 @@
 #' test existence of dataset/layer/field, test dataset capabilities,
 #' create new layers in an existing dataset, delete layers, create new
 #' attribute and geometry fields on an existing layer, and delete fields.
-#' These functions are intended as complementary to `ogrinfo()` and
-#' `ogr2ogr()`. Bindings to OGR wrap portions of GDAL's Vector API
-#' (ogr_core.h and ogr_api.h). The management utilities will also support
-#' implementation of vector I/O, and OGR facilities for geoprocessing, in a
-#' future release of `gdalraster`.
 #'
 #' @name ogr_manage
 #' @details
 #' ### Utilities for vector data sources
+#'
+#' These functions should be complementary to `ogrinfo()` and `ogr2ogr()` for
+#' vector data management. Bindings to OGR wrap portions of the GDAL Vector
+#' API (ogr_core.h and ogr_api.h, [https://gdal.org/api/vector_c_api.html]).
 #'
 #' `ogr_ds_exists()` tests whether a vector dataset can be opened from the
 #' given data source name (DSN), potentially testing for update access.
@@ -23,8 +22,9 @@
 #'
 #' `ogr_ds_test_cap()` tests the capabilities of a vector dataset, attempting
 #' to open it with update access by default. Returns a list of capabilities
-#' with values `TRUE` or `FALSE` (or `NULL` is returned if `dsn` cannot be
-#' opened with the requested access). List elements include the following:
+#' with values `TRUE` or `FALSE`, or `NULL` is returned if `dsn` cannot be
+#' opened with the requested access. The returned list elements include the
+#' following:
 #' * `CreateLayer`: `TRUE` if this datasource can create new layers
 #' * `DeleteLayer`: `TRUE` if this datasource can delete existing layers
 #' * `CreateGeomFieldAfterCreateLayer`: `TRUE` if the layers of this
@@ -82,6 +82,12 @@
 #' Not all format drivers support this function. Some drivers may only support
 #' deleting a field while there are still no features in the layer.
 #' Returns a logical scalar, `TRUE` indicating success.
+#'
+#' `ogr_execute_sql()` executes an SQL statement against the data store.
+#' This function can be used to modify the schema or edit data using SQL
+#' (e.g., `ALTER TABLE`, `DROP TABLE`, `CREATE INDEX`, `DROP INDEX`, `INSERT`,
+#' `UPDATE`, `DELETE`). Currently, this function does not return a result set
+#' for a `SELECT` statement. Returns `NULL` invisibly.
 #'
 #' ### Feature class definition
 #'
@@ -178,9 +184,41 @@
 #' for `dsn` (`"NAME=VALUE"` pairs).
 #' @param lco Optional character vector of format-specific creation options
 #' for `layer` (`"NAME=VALUE"` pairs).
+#' @param sql Character string containing an SQL statement (see Note).
+#' @param spatial_filter Either a numeric vector of length four containing a
+#' bounding box (xmin, ymin, xmax, ymax), or a character string containing a
+#' geometry as OGC WKT, representing a spatial filter.
+#' @param dialect Character string specifying the SQL dialect to use.
+#' The OGR SQL engine (`"OGRSQL"`) will be used by default if a value is not
+#' given. The `"SQLite"` dialect can also be used (see Note).
+#'
+#' @note
+#' The OGR SQL document linked under **See Also** contains information on the
+#' SQL dialect supported internally by OGR. Some format drivers (e.g., PostGIS)
+#' pass the SQL directly through to the underlying RDBMS (unless `OGRSQL` is
+#' explicitly passed as the dialect). The SQLite dialect can also be requested
+#' with the `SQLite` string passed as the `dialect` argument of
+#' `ogr_execute_sql()`. This assumes that GDAL/OGR is built with support for
+#' SQLite, and preferably also with Spatialite support to benefit from spatial
+#' functions. The GDAL document for the SQLite dialect has detailed information.
+#'
+#' Other SQL dialects may also be present for some vector formats.
+#' For example, the `"INDIRECT_SQLITE"` dialect could potentially be used with
+#' GeoPackage format ([https://gdal.org/drivers/vector/gpkg.html#sql]).
+#'
+#' `ogrinfo()` can also be used to edit data with SQL statements (GDAL >= 3.7).
 #'
 #' @seealso
+#' [ogrinfo()], [ogr2ogr()]
+#'
+#' WKT representation of geometry:\cr
 #' [https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry]
+#'
+#' OGR SQL dialect:\cr
+#' [https://gdal.org/user/ogr_sql_dialect.html]
+#'
+#' SQLite dialect:\cr
+#' [https://gdal.org/user/sql_sqlite_dialect.html#sql-sqlite-dialect]
 #'
 #' @export
 ogr_ds_exists <- function(dsn, with_update = FALSE) {
@@ -201,7 +239,7 @@ ogr_ds_test_cap <- function(dsn, with_update = TRUE) {
 
 #' @name ogr_manage
 #' @export
-ogr_ds_create <- function(format, dsn, layer, layer_defn = NULL,
+ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
                           geom_type = NULL, srs = NULL, fld_name = NULL,
                           fld_type = NULL, dsco = NULL, lco = NULL) {
 
@@ -209,10 +247,12 @@ ogr_ds_create <- function(format, dsn, layer, layer_defn = NULL,
         stop("'format' must be a length-1 character vector", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (is.null(layer))
+        layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
     if (is.null(geom_type))
-        geom_type <- "UNKNOWN"
+        geom_type <- ""
     if (!(is.character(geom_type) && length(geom_type) == 1))
         stop("'geom_type' must be a length-1 character vector", call. = FALSE)
     if (is.null(srs))
@@ -409,8 +449,8 @@ ogr_field_create <- function(dsn, layer, fld_name,
         stop("'layer' does not exist", call. = FALSE)
 
     fld_idx <- ogr_field_index(dsn, layer, fld_name)
-    if (fld_idx == -1)
-        stop("field ", fld_name, " already exists", call. = FALSE)
+    if (fld_idx >= 0)
+        stop("field '", fld_name, "' already exists", call. = FALSE)
 
     # use field definition if given
     if (!is.null(fld_defn)) {
@@ -539,4 +579,30 @@ ogr_field_delete <- function(dsn, layer, fld_name) {
         stop("'fld_name' must be a length-1 character vector", call. = FALSE)
 
     return(.ogr_field_delete(dsn, layer, fld_name))
+}
+
+#' @name ogr_manage
+#' @export
+ogr_execute_sql <- function(dsn, sql, spatial_filter = NULL, dialect = NULL) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(sql) && length(sql) == 1))
+        stop("'sql' must be a length-1 character vector", call. = FALSE)
+
+    if (!is.null(spatial_filter)) {
+        if (is.numeric(spatial_filter) && length(spatial_filter) == 4) {
+            spatial_filter <- bbox_to_wkt(spatial_filter)
+        }
+        if (!(is.character(spatial_filter) && length(spatial_filter) == 1)) {
+            stop("spatial_filter must be length-4 numeric or character string",
+                 call. = FALSE)
+        }
+    }
+
+    if (!is.null(dialect)) {
+        if (!(is.character(dialect) && length(dialect) == 1))
+            stop("'dialect' must be a length-1 character vector", call. = FALSE)
+    }
+
+    return(.ogr_execute_sql(dsn, sql, spatial_filter, dialect))
 }

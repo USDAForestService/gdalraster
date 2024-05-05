@@ -1169,6 +1169,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _ogr_execute_sql
+SEXP _ogr_execute_sql(std::string dsn, std::string sql, std::string spatial_filter, std::string dialect);
+RcppExport SEXP _gdalraster__ogr_execute_sql(SEXP dsnSEXP, SEXP sqlSEXP, SEXP spatial_filterSEXP, SEXP dialectSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
+    Rcpp::traits::input_parameter< std::string >::type sql(sqlSEXP);
+    Rcpp::traits::input_parameter< std::string >::type spatial_filter(spatial_filterSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dialect(dialectSEXP);
+    rcpp_result_gen = Rcpp::wrap(_ogr_execute_sql(dsn, sql, spatial_filter, dialect));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _getPROJVersion
 std::vector<int> _getPROJVersion();
 RcppExport SEXP _gdalraster__getPROJVersion() {
@@ -1429,6 +1443,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__ogr_field_create", (DL_FUNC) &_gdalraster__ogr_field_create, 11},
     {"_gdalraster__ogr_geom_field_create", (DL_FUNC) &_gdalraster__ogr_geom_field_create, 7},
     {"_gdalraster__ogr_field_delete", (DL_FUNC) &_gdalraster__ogr_field_delete, 3},
+    {"_gdalraster__ogr_execute_sql", (DL_FUNC) &_gdalraster__ogr_execute_sql, 4},
     {"_gdalraster__getPROJVersion", (DL_FUNC) &_gdalraster__getPROJVersion, 0},
     {"_gdalraster__getPROJSearchPaths", (DL_FUNC) &_gdalraster__getPROJSearchPaths, 0},
     {"_gdalraster__setPROJSearchPaths", (DL_FUNC) &_gdalraster__setPROJSearchPaths, 1},

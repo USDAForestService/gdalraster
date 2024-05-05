@@ -15,6 +15,7 @@
 \alias{ogr_field_create}
 \alias{ogr_geom_field_create}
 \alias{ogr_field_delete}
+\alias{ogr_execute_sql}
 \title{Utility functions for managing vector data sources}
 \usage{
 ogr_ds_exists(dsn, with_update = FALSE)
@@ -24,7 +25,7 @@ ogr_ds_test_cap(dsn, with_update = TRUE)
 ogr_ds_create(
   format,
   dsn,
-  layer,
+  layer = NULL,
   layer_defn = NULL,
   geom_type = NULL,
   srs = NULL,
@@ -82,6 +83,8 @@ ogr_geom_field_create(
 )
 
 ogr_field_delete(dsn, layer, fld_name)
+
+ogr_execute_sql(dsn, sql, spatial_filter = NULL, dialect = NULL)
 }
 \arguments{
 \item{dsn}{Character string. The vector data source name, e.g., a filename
@@ -151,20 +154,29 @@ string.}
 \item{geom_fld_defn}{A geometry field definition as list (see Details).
 Additional arguments in \code{ogr_geom_field_create()} will be ignored if a
 \code{geom_fld_defn} is given.}
+
+\item{sql}{Character string containing an SQL statement (see Note).}
+
+\item{spatial_filter}{Either a numeric vector of length four containing a
+bounding box (xmin, ymin, xmax, ymax), or a character string containing a
+geometry as OGC WKT, representing a spatial filter.}
+
+\item{dialect}{Character string specifying the SQL dialect to use.
+The OGR SQL engine (\code{"OGRSQL"}) will be used by default if a value is not
+given. The \code{"SQLite"} dialect can also be used (see Note).}
 }
 \description{
 This set of management functions can be used to create new vector datasets,
 test existence of dataset/layer/field, test dataset capabilities,
 create new layers in an existing dataset, delete layers, create new
 attribute and geometry fields on an existing layer, and delete fields.
-These functions are intended as complementary to \code{ogrinfo()} and
-\code{ogr2ogr()}. Bindings to OGR wrap portions of GDAL's Vector API
-(ogr_core.h and ogr_api.h). The management utilities will also support
-implementation of vector I/O, and OGR facilities for geoprocessing, in a
-future release of \code{gdalraster}.
 }
 \details{
 \subsection{Utilities for vector data sources}{
+
+These functions should be complementary to \code{ogrinfo()} and \code{ogr2ogr()} for
+vector data management. Bindings to OGR wrap portions of the GDAL Vector
+API (ogr_core.h and ogr_api.h, \link{https://gdal.org/api/vector_c_api.html}).
 
 \code{ogr_ds_exists()} tests whether a vector dataset can be opened from the
 given data source name (DSN), potentially testing for update access.
@@ -172,8 +184,9 @@ Returns a logical scalar.
 
 \code{ogr_ds_test_cap()} tests the capabilities of a vector dataset, attempting
 to open it with update access by default. Returns a list of capabilities
-with values \code{TRUE} or \code{FALSE} (or \code{NULL} is returned if \code{dsn} cannot be
-opened with the requested access). List elements include the following:
+with values \code{TRUE} or \code{FALSE}, or \code{NULL} is returned if \code{dsn} cannot be
+opened with the requested access. The returned list elements include the
+following:
 \itemize{
 \item \code{CreateLayer}: \code{TRUE} if this datasource can create new layers
 \item \code{DeleteLayer}: \code{TRUE} if this datasource can delete existing layers
@@ -202,7 +215,7 @@ scalar, \code{TRUE} indicating success.
 \code{ogr_ds_layer_count()} returns the number of layers in a vector dataset.
 
 \code{ogr_ds_layer_names()} returns a character vector of layer names in a
-vector dataset, or \code{NULL} in no layers are found.
+vector dataset, or \code{NULL} if no layers are found.
 
 \code{ogr_layer_exists()} tests whether a layer can be accessed by name in a
 given vector dataset. Returns a logical scalar.
@@ -233,6 +246,12 @@ a given DSN/layer. Returns a logical scalar, \code{TRUE} indicating success.
 Not all format drivers support this function. Some drivers may only support
 deleting a field while there are still no features in the layer.
 Returns a logical scalar, \code{TRUE} indicating success.
+
+\code{ogr_execute_sql()} executes an SQL statement against the data store.
+This function can be used to modify the schema or edit data using SQL
+(e.g., \verb{ALTER TABLE}, \verb{DROP TABLE}, \verb{CREATE INDEX}, \verb{DROP INDEX}, \code{INSERT},
+\code{UPDATE}, \code{DELETE}). Currently, this function does not return a result set
+for a \code{SELECT} statement. Returns \code{NULL} invisibly.
 }
 
 \subsection{Feature class definition}{
@@ -283,6 +302,31 @@ of all supported geometry types:\cr
 \link{https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType}
 }
 }
+\note{
+The OGR SQL document linked under \strong{See Also} contains information on the
+SQL dialect supported internally by OGR. Some format drivers (e.g., PostGIS)
+pass the SQL directly through to the underlying RDBMS (unless \code{OGRSQL} is
+explicitly passed as the dialect). The SQLite dialect can also be requested
+with the \code{SQLite} string passed as the \code{dialect} argument of
+\code{ogr_execute_sql()}. This assumes that GDAL/OGR is built with support for
+SQLite, and preferably also with Spatialite support to benefit from spatial
+functions. The GDAL document for the SQLite dialect has detailed information.
+
+Other SQL dialects may also be present for some vector formats.
+For example, the \code{"INDIRECT_SQLITE"} dialect could potentially be used with
+GeoPackage format (\link{https://gdal.org/drivers/vector/gpkg.html#sql}).
+
+\code{ogrinfo()} can also be used to edit data with SQL statements (GDAL >= 3.7).
+}
 \seealso{
+\code{\link[=ogrinfo]{ogrinfo()}}, \code{\link[=ogr2ogr]{ogr2ogr()}}
+
+WKT representation of geometry:\cr
 \link{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
+
+OGR SQL dialect:\cr
+\link{https://gdal.org/user/ogr_sql_dialect.html}
+
+SQLite dialect:\cr
+\link{https://gdal.org/user/sql_sqlite_dialect.html#sql-sqlite-dialect}
 }

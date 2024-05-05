@@ -2161,6 +2161,13 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_field_delete`, dsn, layer, fld_name)
 }
 
+#' Execute an SQL statement against the data store
+#'
+#' @noRd
+.ogr_execute_sql <- function(dsn, sql, spatial_filter = "", dialect = "") {
+    invisible(.Call(`_gdalraster__ogr_execute_sql`, dsn, sql, spatial_filter, dialect))
+}
+
 #' get PROJ version
 #' @noRd
 .getPROJVersion <- function() {
