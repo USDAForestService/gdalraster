@@ -131,6 +131,7 @@ SEXP _ogr_ds_layer_names(std::string dsn);
 bool _ogr_layer_exists(std::string dsn, std::string layer);
 
 bool _ogr_layer_create(std::string dsn, std::string layer,
+                       Rcpp::Nullable<Rcpp::List> layer_defn,
                        std::string geom_type, std::string srs,
                        Rcpp::Nullable<Rcpp::CharacterVector> options);
 
@@ -140,12 +141,21 @@ SEXP _ogr_layer_fld_names(std::string dsn, std::string layer);
 
 int _ogr_field_index(std::string dsn, std::string layer, std::string fld_name);
 
+bool _CreateField(GDALDatasetH hDS, OGRLayerH hLayer, std::string fld_name,
+                  std::string fld_type, std::string fld_subtype, int fld_width,
+                  int fld_precision, bool is_nullable, bool is_ignored,
+                  bool is_unique, std::string default_value);
+
 bool _ogr_field_create(std::string dsn, std::string layer,
                        std::string fld_name, std::string fld_type,
                        std::string fld_subtype, int fld_width ,
                        int fld_precision, bool is_nullable,
                        bool is_ignored, bool is_unique,
                        std::string default_value);
+
+bool _CreateGeomField(GDALDatasetH hDS, OGRLayerH hLayer, std::string fld_name,
+                      OGRwkbGeometryType eGeomType, std::string srs,
+                      bool is_nullable, bool is_ignored);
 
 bool _ogr_geom_field_create(std::string dsn, std::string layer,
                             std::string fld_name, std::string geom_type,

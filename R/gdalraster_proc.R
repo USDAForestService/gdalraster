@@ -1598,7 +1598,7 @@ polygonize <- function(raster_file,
     }
 
     if (!.ogr_layer_exists(out_dsn, out_layer)) {
-        res <- .ogr_layer_create(out_dsn, out_layer, "POLYGON", srs, lco)
+        res <- .ogr_layer_create(out_dsn, out_layer, NULL, "POLYGON", srs, lco)
         if (!res)
             stop("failed to create 'out_layer'", call. = FALSE)
         if (fld_name != "") {

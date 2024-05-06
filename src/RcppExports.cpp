@@ -1067,17 +1067,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // _ogr_layer_create
-bool _ogr_layer_create(std::string dsn, std::string layer, std::string geom_type, std::string srs, Rcpp::Nullable<Rcpp::CharacterVector> options);
-RcppExport SEXP _gdalraster__ogr_layer_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP optionsSEXP) {
+bool _ogr_layer_create(std::string dsn, std::string layer, Rcpp::Nullable<Rcpp::List> layer_defn, std::string geom_type, std::string srs, Rcpp::Nullable<Rcpp::CharacterVector> options);
+RcppExport SEXP _gdalraster__ogr_layer_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP layer_defnSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::List> >::type layer_defn(layer_defnSEXP);
     Rcpp::traits::input_parameter< std::string >::type geom_type(geom_typeSEXP);
     Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_layer_create(dsn, layer, geom_type, srs, options));
+    rcpp_result_gen = Rcpp::wrap(_ogr_layer_create(dsn, layer, layer_defn, geom_type, srs, options));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1436,7 +1437,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__ogr_ds_layer_count", (DL_FUNC) &_gdalraster__ogr_ds_layer_count, 1},
     {"_gdalraster__ogr_ds_layer_names", (DL_FUNC) &_gdalraster__ogr_ds_layer_names, 1},
     {"_gdalraster__ogr_layer_exists", (DL_FUNC) &_gdalraster__ogr_layer_exists, 2},
-    {"_gdalraster__ogr_layer_create", (DL_FUNC) &_gdalraster__ogr_layer_create, 5},
+    {"_gdalraster__ogr_layer_create", (DL_FUNC) &_gdalraster__ogr_layer_create, 6},
     {"_gdalraster__ogr_layer_delete", (DL_FUNC) &_gdalraster__ogr_layer_delete, 2},
     {"_gdalraster__ogr_layer_fld_names", (DL_FUNC) &_gdalraster__ogr_layer_fld_names, 2},
     {"_gdalraster__ogr_field_index", (DL_FUNC) &_gdalraster__ogr_field_index, 3},

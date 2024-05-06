@@ -2115,8 +2115,8 @@ has_geos <- function() {
 #' Create a layer in a vector dataset
 #'
 #' @noRd
-.ogr_layer_create <- function(dsn, layer, geom_type, srs = "", options = NULL) {
-    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, geom_type, srs, options)
+.ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = "UNKNOWN", srs = "", options = NULL) {
+    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, layer_defn, geom_type, srs, options)
 }
 
 #' Delete a layer in a vector dataset

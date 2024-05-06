@@ -360,20 +360,46 @@ bool _ogr_layer_exists(std::string dsn, std::string layer) {
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_create")]]
 bool _ogr_layer_create(std::string dsn, std::string layer,
-        std::string geom_type, std::string srs = "",
+        Rcpp::Nullable<Rcpp::List> layer_defn = R_NilValue,
+        std::string geom_type = "UNKNOWN", std::string srs = "",
         Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+    std::string geom_type_in = geom_type;
+    std::string srs_in = srs;
     GDALDatasetH hDS = nullptr;
     OGRLayerH hLayer = nullptr;
 
-    OGRwkbGeometryType eGeomType = _getWkbGeomType(geom_type);
-    if (eGeomType == wkbUnknown && !EQUALN(geom_type.c_str(), "UNKNOWN", 7))
+    Rcpp::List layer_defn_in;
+    Rcpp::CharacterVector fld_names;
+    std::string geom_fld_name = "";
+    if (layer_defn.isNotNull()) {
+        // layer_defn given so get geom_type and srs from first geom field defn
+        layer_defn_in = layer_defn;
+        fld_names = layer_defn_in.names();
+        bool has_geom_fld_defn = false;
+        for (R_xlen_t i = 0; i < layer_defn_in.size(); ++i) {
+            Rcpp::List fld = layer_defn_in[i];
+            Rcpp::LogicalVector is_geom = fld["is_geom"];
+            if (Rcpp::is_true(Rcpp::all(is_geom))) {
+                geom_type_in = Rcpp::as<std::string>(fld["type"]);
+                geom_fld_name = Rcpp::as<std::string>(fld_names(i));
+                srs_in = Rcpp::as<std::string>(fld["srs"]);
+                has_geom_fld_defn = true;
+                break;
+            }
+        }
+        if (!has_geom_fld_defn)
+            Rcpp::stop("'layer_defn' is missing a geometry field definition");
+    }
+
+    OGRwkbGeometryType eGeomType = _getWkbGeomType(geom_type_in);
+    if (eGeomType == wkbUnknown && !EQUALN(geom_type_in.c_str(), "UNKNOWN", 7))
         Rcpp::stop("'geom_type' not recognized");
 
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
-    if (srs != "") {
-        if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+    if (srs_in != "") {
+        if (OSRSetFromUserInput(hSRS, srs_in.c_str()) != OGRERR_NONE) {
             if (hSRS != nullptr)
                 OSRDestroySpatialReference(hSRS);
             Rcpp::stop("error importing SRS from user input");
@@ -410,8 +436,121 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
                                     opt_list.data());
 
     bool ret = false;
-    if (hLayer != nullptr)
+    if (hLayer != nullptr) {
         ret = true;
+        // create fields if layer_defn given
+        if (layer_defn.isNotNull()) {
+            for (R_xlen_t i = 0; i < layer_defn_in.size(); ++i) {
+                std::string fld_name;
+                std::string fld_type;
+                std::string fld_subtype = "OFSTNone";
+                int fld_width = 0;
+                int fld_precision = 0;
+                bool is_nullable = true;
+                bool is_ignored = false;
+                bool is_unique = false;
+                std::string default_value = "";
+                std::string srs = "";
+
+                fld_name = Rcpp::as<std::string>(fld_names(i));
+                if (fld_name == geom_fld_name)
+                        continue;
+
+                Rcpp::List fld = layer_defn_in[i];
+                Rcpp::LogicalVector fld_is_geom = fld["is_geom"];
+                if (Rcpp::is_false(Rcpp::all(fld_is_geom))) {
+                    // attribute field defn
+                    if (fld.containsElementNamed("type")) {
+                        fld_type = Rcpp::as<std::string>(fld["type"]);
+                    }
+                    else {
+                        Rcpp::Rcerr << "$type missing in field definition\n" <<
+                                "could not create field: " <<
+                                fld_name.c_str() << "\n";
+                        continue;
+                    }
+                    if (fld.containsElementNamed("subtype"))
+                        fld_subtype = Rcpp::as<std::string>(fld["subtype"]);
+                    if (fld.containsElementNamed("width"))
+                        fld_width = Rcpp::as<int>(fld["width"]);
+                    if (fld.containsElementNamed("precision"))
+                        fld_precision = Rcpp::as<int>(fld["precision"]);
+                    if (fld.containsElementNamed("is_nullable")) {
+                        Rcpp::LogicalVector fld_is_nullable =
+                                fld["is_nullable"];
+                        is_nullable =
+                                Rcpp::is_true(Rcpp::all(fld_is_nullable));
+                    }
+                    if (fld.containsElementNamed("is_ignored")) {
+                        Rcpp::LogicalVector fld_is_ignored =
+                                fld["is_ignored"];
+                        is_ignored =
+                                Rcpp::is_true(Rcpp::all(fld_is_ignored));
+                    }
+                    if (fld.containsElementNamed("is_unique")) {
+                        Rcpp::LogicalVector fld_is_unique =
+                                fld["is_unique"];
+                        is_unique =
+                                Rcpp::is_true(Rcpp::all(fld_is_unique));
+                    }
+                    if (fld.containsElementNamed("default"))
+                        default_value = Rcpp::as<std::string>(fld["default"]);
+
+                    if (!_CreateField(hDS, hLayer, fld_name, fld_type,
+                                      fld_subtype, fld_width, fld_precision,
+                                      is_nullable, is_ignored, is_unique,
+                                      default_value)) {
+
+                        Rcpp::Rcerr << "failed to create field: " <<
+                                fld_name.c_str() << "\n";
+                    }
+                }
+                else {
+                    // geometry field defn
+                    OGRwkbGeometryType eThisGeomType = eGeomType;
+                    if (fld.containsElementNamed("type")) {
+                        std::string this_geom_type;
+                        this_geom_type = Rcpp::as<std::string>(fld["type"]);
+                        if (this_geom_type != geom_type_in) {
+                            eThisGeomType = _getWkbGeomType(this_geom_type);
+                            if (eThisGeomType == wkbUnknown &&
+                                    !EQUALN(this_geom_type.c_str(),
+                                            "UNKNOWN", 7)) {
+                                Rcpp::warning("geometry type not recognized");
+                            }
+                        }
+                    }
+                    else {
+                        Rcpp::Rcerr << "$type missing in field definition\n" <<
+                                "could not create geom field: " <<
+                                fld_name.c_str() << "\n";
+                        continue;
+                    }
+                    if (fld.containsElementNamed("srs"))
+                        srs = Rcpp::as<std::string>(fld["srs"]);
+                    if (fld.containsElementNamed("is_nullable")) {
+                        Rcpp::LogicalVector fld_is_nullable =
+                                fld["is_nullable"];
+                        is_nullable =
+                                Rcpp::is_true(Rcpp::all(fld_is_nullable));
+                    }
+                    if (fld.containsElementNamed("is_ignored")) {
+                        Rcpp::LogicalVector fld_is_ignored =
+                                fld["is_ignored"];
+                        is_ignored =
+                                Rcpp::is_true(Rcpp::all(fld_is_ignored));
+                    }
+
+                    if (!_CreateGeomField(hDS, hLayer, fld_name, eThisGeomType,
+                                          srs, is_nullable, is_ignored)) {
+
+                        Rcpp::Rcerr << "failed to create geom field: " <<
+                                fld_name.c_str() << "\n";
+                    }
+                }
+            }
+        }
+    }
 
     if (hSRS != nullptr)
         OSRDestroySpatialReference(hSRS);
@@ -574,25 +713,41 @@ bool _CreateField(GDALDatasetH hDS, OGRLayerH hLayer,
     OGRFieldDefnH hFieldDefn = nullptr;
     OGRFieldType eFieldType = _getOFT(fld_type);
     OGRFieldSubType eFieldSubType = _getOFTSubtype(fld_subtype);
+    GDALDriverH hDriver = GDALGetDatasetDriver(hDS);
+    char **papszMD = GDALGetMetadata(hDriver, nullptr);
     bool ret = false;
 
     hFieldDefn = OGR_Fld_Create(fld_name.c_str(), eFieldType);
     if (hFieldDefn != nullptr) {
         OGR_Fld_SetSubType(hFieldDefn, eFieldSubType);
+
         if (fld_width > 0)
             OGR_Fld_SetWidth(hFieldDefn, fld_width);
+
         if (fld_precision > 0)
             OGR_Fld_SetPrecision(hFieldDefn, fld_precision);
-        if (!is_nullable)
-            OGR_Fld_SetNullable(hFieldDefn, false);
+
+        if (!is_nullable) {
+            if (CPLFetchBool(papszMD, GDAL_DCAP_NOTNULL_FIELDS, false))
+                OGR_Fld_SetNullable(hFieldDefn, false);
+            else
+                Rcpp::warning(
+                    "not-null constraint is unsupported by the format driver");
+        }
+
         if (is_ignored)
             OGR_Fld_SetIgnored(hFieldDefn, true);
-        if (default_value != "")
-            OGR_Fld_SetDefault(hFieldDefn, default_value.c_str());
+
+        if (default_value != "") {
+            if (CPLFetchBool(papszMD, GDAL_DCAP_DEFAULT_FIELDS, false))
+                OGR_Fld_SetDefault(hFieldDefn, default_value.c_str());
+            else
+                Rcpp::warning(
+                    "default field value not supported by the format driver");
+        }
+
 #if GDAL_VERSION_NUM >= 3020000
         if (is_unique) {
-            GDALDriverH hDriver = GDALGetDatasetDriver(hDS);
-            char **papszMD = GDALGetMetadata(hDriver, nullptr);
             if (CPLFetchBool(papszMD, GDAL_DCAP_UNIQUE_FIELDS, false))
                 OGR_Fld_SetUnique(hFieldDefn, true);
             else
@@ -668,13 +823,14 @@ bool _ogr_field_create(std::string dsn, std::string layer,
 }
 
 // Internal wrapper of OGR_L_CreateGeomField()
-bool _CreateGeomField(OGRLayerH hLayer, std::string fld_name,
+bool _CreateGeomField(GDALDatasetH hDS, OGRLayerH hLayer,
+                      std::string fld_name,
                       OGRwkbGeometryType eGeomType,
                       std::string srs = "",
                       bool is_nullable = true,
                       bool is_ignored = false) {
 
-    if (hLayer == nullptr)
+    if (hDS == nullptr || hLayer == nullptr)
         return false;
 
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
@@ -687,16 +843,27 @@ bool _CreateGeomField(OGRLayerH hLayer, std::string fld_name,
         }
     }
 
+    GDALDriverH hDriver = GDALGetDatasetDriver(hDS);
+    char **papszMD = GDALGetMetadata(hDriver, nullptr);
     bool ret = false;
+
     OGRGeomFieldDefnH hGeomFieldDefn = nullptr;
     hGeomFieldDefn = OGR_GFld_Create(fld_name.c_str(), eGeomType);
     if (hGeomFieldDefn != nullptr) {
-        if (!is_nullable)
-            OGR_GFld_SetNullable(hGeomFieldDefn, false);
+        if (!is_nullable) {
+            if (CPLFetchBool(papszMD, GDAL_DCAP_NOTNULL_GEOMFIELDS, false))
+                OGR_GFld_SetNullable(hGeomFieldDefn, false);
+            else
+                Rcpp::warning(
+                    "not-null constraint is unsupported by the format driver");
+        }
+
         if (is_ignored)
             OGR_GFld_SetIgnored(hGeomFieldDefn, true);
+
         if (hSRS != nullptr)
             OGR_GFld_SetSpatialRef(hGeomFieldDefn, hSRS);
+
 
         if (OGR_L_CreateGeomField(hLayer, hGeomFieldDefn, TRUE) == OGRERR_NONE)
             ret = true;
@@ -759,7 +926,7 @@ bool _ogr_geom_field_create(std::string dsn, std::string layer,
         return false;
     }
 
-    bool ret = _CreateGeomField(hLayer, fld_name, eGeomType, srs,
+    bool ret = _CreateGeomField(hDS, hLayer, fld_name, eGeomType, srs,
                                 is_nullable, is_ignored);
 
     GDALReleaseDataset(hDS);

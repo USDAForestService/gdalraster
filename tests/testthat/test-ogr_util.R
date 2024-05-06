@@ -8,7 +8,8 @@ test_that("OGR utility functions work on a vector data source", {
     layer <- "test_layer_2"
     expect_false(.ogr_layer_exists(dsn, layer))
     lco <- "DESCRIPTION=gdalraster test"
-    expect_true(.ogr_layer_create(dsn, layer, "POLYGON", "EPSG:5070", lco))
+    expect_true(.ogr_layer_create(dsn, layer, NULL,
+                                  "POLYGON", "EPSG:5070", lco))
     expect_true(.ogr_layer_exists(dsn, layer))
     expect_equal(.ogr_ds_layer_count(dsn), 2)
     expect_equal(.ogr_ds_layer_names(dsn), c("test_layer", "test_layer_2"))

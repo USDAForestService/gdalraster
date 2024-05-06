@@ -63,8 +63,8 @@ ogr_field_create(
   fld_defn = NULL,
   fld_type = "OFTInteger",
   fld_subtype = "OFSTNone",
-  fld_width = 0,
-  fld_precision = 0,
+  fld_width = 0L,
+  fld_precision = 0L,
   is_nullable = TRUE,
   is_ignored = FALSE,
   is_unique = FALSE,
@@ -103,13 +103,15 @@ Examples of some common output formats include: \code{"GPKG"}, \code{"FlatGeobuf
 zero or more attribute field definitions, and at least one geometry field
 definition (see Details).
 Each field definition is a list with named elements containing values for
-the field type and other properties.
+the field \verb{$type} and other properties.
 If \code{layer_defn} is given, it will be used and any additional parameters
 passed that relate to the feature class definition will be ignored (i.e.,
 \code{geom_type} and \code{srs}, as well as \code{fld_name} and \code{fld_type} in
 \code{ogr_ds_create()}).
 The first geometry field definition in \code{layer_defn} defines the
-\code{geom_type} and \code{srs} for the layer.}
+geometry type and spatial reference system for the layer (the geom field
+definition must contain \verb{$type}, and should also contain \verb{$srs} when
+creating a layer from a feature class definition).}
 
 \item{geom_type}{Character string specifying a geometry type (see Details).}
 
@@ -287,6 +289,21 @@ An optional field subtype is specified as a character string with possible
 values:
 \code{OFSTNone}, \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32}, \code{OFSTJSON},
 \code{OFSTUUID}.
+
+By default, fields are nullable, have no unique constraint, and are not
+ignored (i.e., not omitted when fetching features). Not-null and unique
+constraints are not supported by all format drivers.
+
+A default field value is taken into account by format drivers (generally
+those with a SQL interface) that support it at field creation time.
+If given in the field definition, \verb{$default} must be a character string.
+The accepted values are \code{"NULL"}, a numeric value (e.g., \code{"0"}), a literal
+value enclosed between single quote characters (e.g., \code{"'a default value'"},
+and inner single quote characters escaped by repetition of the single quote
+character), \code{"CURRENT_TIMESTAMP"}, \code{"CURRENT_TIME"}, \code{"CURRENT_DATE"} or a
+driver specific expression (that might be ignored by other drivers).
+For a datetime literal value, format should be
+\code{"'YYYY/MM/DD HH:MM:SS[.sss]'"} (considered as UTC time).
 
 A geometry field definition is a list with named elements:
 

@@ -121,6 +121,21 @@
 #' `OFSTNone`, `OFSTBoolean`, `OFSTInt16`, `OFSTFloat32`, `OFSTJSON`,
 #' `OFSTUUID`.
 #'
+#' By default, fields are nullable, have no unique constraint, and are not
+#' ignored (i.e., not omitted when fetching features). Not-null and unique
+#' constraints are not supported by all format drivers.
+#'
+#' A default field value is taken into account by format drivers (generally
+#' those with a SQL interface) that support it at field creation time.
+#' If given in the field definition, `$default` must be a character string.
+#' The accepted values are `"NULL"`, a numeric value (e.g., `"0"`), a literal
+#' value enclosed between single quote characters (e.g., `"'a default value'"`,
+#' and inner single quote characters escaped by repetition of the single quote
+#' character), `"CURRENT_TIMESTAMP"`, `"CURRENT_TIME"`, `"CURRENT_DATE"` or a
+#' driver specific expression (that might be ignored by other drivers).
+#' For a datetime literal value, format should be
+#' `"'YYYY/MM/DD HH:MM:SS[.sss]'"` (considered as UTC time).
+#'
 #' A geometry field definition is a list with named elements:
 #' ```
 #' $type       : geom type ("Point", "Polygon", etc.)
@@ -158,13 +173,15 @@
 #' zero or more attribute field definitions, and at least one geometry field
 #' definition (see Details).
 #' Each field definition is a list with named elements containing values for
-#' the field type and other properties.
+#' the field `$type` and other properties.
 #' If `layer_defn` is given, it will be used and any additional parameters
 #' passed that relate to the feature class definition will be ignored (i.e.,
 #' `geom_type` and `srs`, as well as `fld_name` and `fld_type` in
 #' `ogr_ds_create()`).
 #' The first geometry field definition in `layer_defn` defines the
-#' `geom_type` and `srs` for the layer.
+#' geometry type and spatial reference system for the layer (the geom field
+#' definition must contain `$type`, and should also contain `$srs` when
+#' creating a layer from a feature class definition).
 #' @param geom_type Character string specifying a geometry type (see Details).
 #' @param srs Character string containing a spatial reference system definition
 #' as OGC WKT or other well-known format (e.g., the input formats usable with
@@ -343,11 +360,15 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
         # using layer_defn so get geom_type and srs from the geom field defn
         has_geom_fld_defn <- FALSE
         for (nm in names(layer_defn)) {
+            if (!is.list(layer_defn[[nm]]))
+                stop("field definition must be a list", call. = FALSE)
+
             if (is.null(layer_defn[[nm]]$is_geom) ||
                     !is.logical(layer_defn[[nm]]$is_geom)) {
-                stop("field definitions must contain `$is_geom=TRUE|FALSE`",
+                stop("field definitions must contain `$is_geom=[TRUE|FALSE]`",
                      call. = FALSE)
             }
+
             if (layer_defn[[nm]]$is_geom) {
                 geom_type <- layer_defn[[nm]]$type
                 srs <- layer_defn[[nm]]$srs
@@ -361,43 +382,15 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
         }
     }
 
-    if (is.null(geom_type))
-        stop("'geom_type' is required", call. = FALSE)
-    else
-        geom_type <- geom_type
+    if (is.null(geom_type)) {
+        message("geometry type not specified, using 'UNKNOWN'", call. = FALSE)
+        geom_type <- "UNKNOWN"
+    }
 
     if (is.null(srs))
         srs <- ""
 
-    ret <- .ogr_layer_create(dsn, layer, geom_type, srs, lco)
-    if (!ret)
-        return(FALSE)
-
-    # create fields if layer_defn given
-    if (!is.null(layer_defn)) {
-        geom_fld_count <- 0
-        for (nm in names(layer_defn)) {
-            if (!layer_defn[[nm]]$is_geom) {
-                ret <- ogr_field_create(dsn, layer, nm, layer_defn[[nm]])
-                if (!ret)
-                    warning("failed to create field ", nm, call. = FALSE)
-            } else {
-                if (geom_fld_count == 0) {
-                    geom_fld_count <- 1
-                    next
-                } else {
-                    geom_fld_count <- geom_fld_count + 1
-                    ret <- ogr_geom_field_create(dsn, layer, nm,
-                                                 layer_defn[[nm]])
-                    if (!ret)
-                        warning("failed to create geom field ", nm,
-                                call. = FALSE)
-                }
-            }
-        }
-    }
-
-    return(TRUE)
+    return(.ogr_layer_create(dsn, layer, layer_defn, geom_type, srs, lco))
 }
 
 #' @name ogr_manage
@@ -441,8 +434,8 @@ ogr_field_create <- function(dsn, layer, fld_name,
                              fld_defn = NULL,
                              fld_type = "OFTInteger",
                              fld_subtype = "OFSTNone",
-                             fld_width = 0,
-                             fld_precision = 0,
+                             fld_width = 0L,
+                             fld_precision = 0L,
                              is_nullable = TRUE,
                              is_ignored = FALSE,
                              is_unique = FALSE,
@@ -602,13 +595,11 @@ ogr_execute_sql <- function(dsn, sql, spatial_filter = NULL, dialect = NULL) {
         stop("'sql' must be a length-1 character vector", call. = FALSE)
 
     if (!is.null(spatial_filter)) {
-        if (is.numeric(spatial_filter) && length(spatial_filter) == 4) {
+        if (is.numeric(spatial_filter) && length(spatial_filter) == 4)
             spatial_filter <- bbox_to_wkt(spatial_filter)
-        }
-        if (!(is.character(spatial_filter) && length(spatial_filter) == 1)) {
+        if (!(is.character(spatial_filter) && length(spatial_filter) == 1))
             stop("spatial_filter must be length-4 numeric or character string",
                  call. = FALSE)
-        }
     }
 
     if (!is.null(dialect)) {
