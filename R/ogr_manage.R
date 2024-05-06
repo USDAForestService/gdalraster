@@ -130,11 +130,21 @@
 #' $is_geom    : TRUE (required) for geometry fields
 #' ```
 #'
+#' Typically, there is one geometry field on a layer, but some formats support
+#' more than one geometry column per table (e.g., PostGIS).
+#'
 #' Geometry types are specified as a character string containing OGC WKT.
 #' Common types include: `Point`, `LineString`, `Polygon`, `MultiPoint`,
 #' `MultiLineString`, `MultiPolygon`. See the GDAL documentation for a list
 #' of all supported geometry types:\cr
 #' [https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType]
+#'
+#' Format drivers may or may not support not-null constraints on attribute and
+#' geometry fields. If they support creating fields with not-null constraints,
+#' this is generally before creating any features to the layer. In some cases,
+#' a not-null constraint may be available as a layer creation option. For
+#' example, GeoPackage format has a layer creation option
+#' `GEOMETRY_NULLABLE=[YES/NO]`.
 #'
 #' @param dsn Character string. The vector data source name, e.g., a filename
 #' or database connection string.
@@ -146,13 +156,15 @@
 #' @param layer Character string for a layer name in a vector dataset.
 #' @param layer_defn A feature class definition for `layer` as a list of
 #' zero or more attribute field definitions, and at least one geometry field
-#' definition.
-#' A field definition is a list with named elements containing values for the
-#' field type and other properties (see Details).
-#' If a `layer_defn` is given, it will be used and any additional values passed
-#' for optionally creating only a single field on the layer will be ignored.
-#' The first geometry field definition in `layer_defn` defines the `geom_type`
-#' and `srs` for the layer.
+#' definition (see Details).
+#' Each field definition is a list with named elements containing values for
+#' the field type and other properties.
+#' If `layer_defn` is given, it will be used and any additional parameters
+#' passed that relate to the feature class definition will be ignored (i.e.,
+#' `geom_type` and `srs`, as well as `fld_name` and `fld_type` in
+#' `ogr_ds_create()`).
+#' The first geometry field definition in `layer_defn` defines the
+#' `geom_type` and `srs` for the layer.
 #' @param geom_type Character string specifying a geometry type (see Details).
 #' @param srs Character string containing a spatial reference system definition
 #' as OGC WKT or other well-known format (e.g., the input formats usable with

@@ -101,13 +101,15 @@ Examples of some common output formats include: \code{"GPKG"}, \code{"FlatGeobuf
 
 \item{layer_defn}{A feature class definition for \code{layer} as a list of
 zero or more attribute field definitions, and at least one geometry field
-definition.
-A field definition is a list with named elements containing values for the
-field type and other properties (see Details).
-If a \code{layer_defn} is given, it will be used and any additional values passed
-for optionally creating only a single field on the layer will be ignored.
-The first geometry field definition in \code{layer_defn} defines the \code{geom_type}
-and \code{srs} for the layer.}
+definition (see Details).
+Each field definition is a list with named elements containing values for
+the field type and other properties.
+If \code{layer_defn} is given, it will be used and any additional parameters
+passed that relate to the feature class definition will be ignored (i.e.,
+\code{geom_type} and \code{srs}, as well as \code{fld_name} and \code{fld_type} in
+\code{ogr_ds_create()}).
+The first geometry field definition in \code{layer_defn} defines the
+\code{geom_type} and \code{srs} for the layer.}
 
 \item{geom_type}{Character string specifying a geometry type (see Details).}
 
@@ -295,11 +297,21 @@ $is_ignored : optionally ignored when retrieving features (logical scalar)
 $is_geom    : TRUE (required) for geometry fields
 }\if{html}{\out{</div>}}
 
+Typically, there is one geometry field on a layer, but some formats support
+more than one geometry column per table (e.g., PostGIS).
+
 Geometry types are specified as a character string containing OGC WKT.
 Common types include: \code{Point}, \code{LineString}, \code{Polygon}, \code{MultiPoint},
 \code{MultiLineString}, \code{MultiPolygon}. See the GDAL documentation for a list
 of all supported geometry types:\cr
 \link{https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType}
+
+Format drivers may or may not support not-null constraints on attribute and
+geometry fields. If they support creating fields with not-null constraints,
+this is generally before creating any features to the layer. In some cases,
+a not-null constraint may be available as a layer creation option. For
+example, GeoPackage format has a layer creation option
+\verb{GEOMETRY_NULLABLE=[YES/NO]}.
 }
 }
 \note{
