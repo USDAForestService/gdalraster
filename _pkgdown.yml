@@ -127,6 +127,7 @@ reference:
   - get_cache_used
   - get_config_option
   - set_config_option
+  - has_spatialite
   - push_error_handler
   - pop_error_handler
 - subtitle: PROJ configuration

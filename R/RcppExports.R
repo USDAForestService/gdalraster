@@ -192,11 +192,42 @@ pop_error_handler <- function() {
     .Call(`_gdalraster__get_physical_RAM`)
 }
 
-#' GDAL has Spatialite?
+#' Is SpatiaLite available?
 #'
-#' @noRd
-.has_spatialite <- function() {
-    .Call(`_gdalraster__has_spatialite`)
+#' `has_spatialite()` returns a logical value indicating whether GDAL was
+#' built with support for the SpatiaLite library. SpatiaLite extends the
+#' SQLite core to support full Spatial SQL capabilities.
+#'
+#' @details
+#' GDAL supports executing SQL statments against a datasource. For most file
+#' formats (e.g. Shapefiles, GeoJSON, FlatGeobuf files), the built-in OGR SQL
+#' dialect will be used by default. It is also possible to request the
+#' alternate `"SQLite"`  dialect, which will use the SQLite engine to evaluate
+#' commands on GDAL datasets. This assumes that GDAL is built with support for
+#' SQLite, and preferably with Spatialite support too to benefit from spatial
+#' functions.
+#'
+#' @return Logical scalar. `TRUE` if SpatiaLite is available to GDAL.
+#'
+#' @note
+#' All GDAL/OGR drivers for database systems, e.g., PostgreSQL / PostGIS,
+#' Oracle Spatial, SQLite / Spatialite RDBMS, GeoPackage, etc., override the
+#' `GDALDataset::ExecuteSQL()` function with a dedicated implementation and, by
+#' default, pass the SQL statements directly to the underlying RDBMS. In these
+#' cases the SQL syntax varies in some particulars from OGR SQL. Also, anything
+#' possible in SQL can then be accomplished for these particular databases. For
+#' those drivers, it is also possible to explicitly request the `OGRSQL` or
+#' `SQLite` dialects, although performance will generally be much less than the
+#' native SQL engine of those database systems.
+#'
+#' @seealso
+#' OGR SQL dialect and SQLITE SQL dialect:\cr
+#' [https://gdal.org/user/ogr_sql_sqlite_dialect.html]
+#'
+#' @examples
+#' has_spatialite()
+has_spatialite <- function() {
+    .Call(`_gdalraster_has_spatialite`)
 }
 
 #' Create a new uninitialized raster
