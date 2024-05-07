@@ -123,7 +123,8 @@
   \code{\link[=get_config_option]{get_config_option()}},
   \code{\link[=set_config_option]{set_config_option()}},
   \code{\link[=push_error_handler]{push_error_handler()}},
-  \code{\link[=pop_error_handler]{pop_error_handler()}}
+  \code{\link[=pop_error_handler]{pop_error_handler()}},
+  \code{\link[=has_spatialite]{has_spatialite()}}
 
   \item PROJ configuration:
   \code{\link[=proj_version]{proj_version()}},

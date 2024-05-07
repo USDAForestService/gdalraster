@@ -1,6 +1,6 @@
-# gdalraster 1.10.9130 (dev)
+# gdalraster 1.10.9140 (dev)
 
-* add `_has_spatialite()` for internal use (2024-04-29)
+* add `has_spatialite()`: is SpatiaLite available to GDAL (2024-05-06)
 
 * `ogr2ogr()`: add argument `open_options` to support options on the source dataset (2024-04-28)
 
