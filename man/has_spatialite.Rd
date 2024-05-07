@@ -15,7 +15,7 @@ built with support for the SpatiaLite library. SpatiaLite extends the
 SQLite core to support full Spatial SQL capabilities.
 }
 \details{
-GDAL supports executing SQL statments against a datasource. For most file
+GDAL supports executing SQL statements against a datasource. For most file
 formats (e.g. Shapefiles, GeoJSON, FlatGeobuf files), the built-in OGR SQL
 dialect will be used by default. It is also possible to request the
 alternate \code{"SQLite"}  dialect, which will use the SQLite engine to evaluate
