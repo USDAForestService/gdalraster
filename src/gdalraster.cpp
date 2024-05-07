@@ -2,6 +2,7 @@
    Encapsulates a subset of GDALDataset, GDALDriver and GDALRasterBand.
    Chris Toney <chris.toney at usda.gov> */
 
+#include <errno.h>
 #include <algorithm>
 #include <cmath>
 #include <complex>
@@ -13,8 +14,6 @@
 #include "cpl_vsi.h"
 #include "gdal_utils.h"
 #include "gdal_alg.h"
-
-#include <errno.h>
 
 #include "gdalraster.h"
 
@@ -79,7 +78,7 @@ GDALRaster::GDALRaster() :
             fname_in(""),
             open_options_in(Rcpp::CharacterVector::create()),
             hDataset(nullptr),
-            eAccess(GA_ReadOnly), 
+            eAccess(GA_ReadOnly),
             readByteAsRaw(false) {}
 
 GDALRaster::GDALRaster(Rcpp::CharacterVector filename) :
@@ -98,7 +97,7 @@ GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
         Rcpp::CharacterVector open_options) :
                 open_options_in(open_options),
                 hDataset(nullptr),
-                eAccess(GA_ReadOnly), 
+                eAccess(GA_ReadOnly),
                 readByteAsRaw(false) {
 
     fname_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
@@ -277,7 +276,7 @@ std::string GDALRaster::getProjectionRef() const {
     _checkAccess(GA_ReadOnly);
 
     std::string srs(GDALGetProjectionRef(hDataset));
-    if (srs.size() > 0 and srs != "") {
+    if (srs.size() > 0 && srs != "") {
         return srs;
     }
     else {
@@ -601,7 +600,7 @@ std::vector<double> GDALRaster::getMinMax(int band, bool approx_ok) const {
         return min_max;
 }
 
-Rcpp::NumericVector GDALRaster::getStatistics(int band,	bool approx_ok,
+Rcpp::NumericVector GDALRaster::getStatistics(int band, bool approx_ok,
                                               bool force) const {
 
     _checkAccess(GA_ReadOnly);
@@ -845,26 +844,24 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
                 (
                 GDALGetDataTypeSizeBits(eDT) <= 16 ||
                 (GDALGetDataTypeSizeBits(eDT) <= 32 &&
-                GDALDataTypeIsSigned(eDT))
-                )) {
+                GDALDataTypeIsSigned(eDT)))) {
 
-          // Byte, use raw
-          if (eDT == GDT_Byte && readByteAsRaw) {
-            std::vector<uint8_t> buf(out_xsize * out_ysize); 
-            err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
-                               buf.data(), out_xsize, out_ysize,
-                               GDT_Byte, 0, 0);
-            
+            // Byte, use raw
+            if (eDT == GDT_Byte && readByteAsRaw) {
+                std::vector<uint8_t> buf(out_xsize * out_ysize);
+                err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
+                                   buf.data(), out_xsize, out_ysize,
+                                   GDT_Byte, 0, 0);
+
             if (err == CE_Failure)
-              Rcpp::stop("read raster failed");
-            
+                Rcpp::stop("read raster failed");
 
             Rcpp::RawVector v = Rcpp::wrap(buf);
-            return v;            
-          }
+            return v;
+            }
+
             // signed integer <= 32 bits and any integer <= 16 bits
             // use int32 buffer
-
             std::vector<GInt32> buf(out_xsize * out_ysize);
 
             err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
@@ -1067,7 +1064,7 @@ std::string GDALRaster::getPaletteInterp(int band) const {
     }
 }
 
-bool GDALRaster::setColorTable(int band, Rcpp::RObject& col_tbl,
+bool GDALRaster::setColorTable(int band, const Rcpp::RObject& col_tbl,
                                std::string palette_interp) {
 
     _checkAccess(GA_ReadOnly);
@@ -1115,13 +1112,13 @@ bool GDALRaster::setColorTable(int band, Rcpp::RObject& col_tbl,
 
     // set entries from input table
     for (int i=0; i < m_col_tbl.nrow(); ++i) {
-        if (m_col_tbl(i,0) >= 0) {
+        if (m_col_tbl(i, 0) >= 0) {
             const GDALColorEntry col = {
-                    static_cast<short>(m_col_tbl(i,1)),
-                    static_cast<short>(m_col_tbl(i,2)),
-                    static_cast<short>(m_col_tbl(i,3)),
-                    static_cast<short>(m_col_tbl(i,4)) };
-            GDALSetColorEntry(hColTbl, m_col_tbl(i,0), &col);
+                    static_cast<short>(m_col_tbl(i, 1)),
+                    static_cast<short>(m_col_tbl(i, 2)),
+                    static_cast<short>(m_col_tbl(i, 3)),
+                    static_cast<short>(m_col_tbl(i, 4)) };
+            GDALSetColorEntry(hColTbl, m_col_tbl(i, 0), &col);
         }
         else {
             Rcpp::warning("skipped entry with negative value");
@@ -1201,8 +1198,8 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
         df.attr("GDALRATTableType") = "thematic";
 
     // check for linear binning information
-    double dfRow0Min; // lower bound (pixel value) of the first category
-    double dfBinSize; // width of each category (in pixel value units)
+    double dfRow0Min;  // lower bound (pixel value) of the first category
+    double dfBinSize;  // width of each category (in pixel value units)
     if (GDALRATGetLinearBinning(hRAT, &dfRow0Min, &dfBinSize)) {
         df.attr("Row0Min") = dfRow0Min;
         df.attr("BinSize") = dfBinSize;
@@ -1211,7 +1208,7 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
     return df;
 }
 
-bool GDALRaster::setDefaultRAT(int band, Rcpp::DataFrame& df) {
+bool GDALRaster::setDefaultRAT(int band, const Rcpp::DataFrame& df) {
     _checkAccess(GA_ReadOnly);
 
     GDALRasterBandH hBand = _getBand(band);
@@ -1405,8 +1402,7 @@ bool GDALRaster::_readableAsInt(int band) const {
             (
             GDALGetDataTypeSizeBits(eDT) <= 16 ||
             (GDALGetDataTypeSizeBits(eDT) <= 32 &&
-            GDALDataTypeIsSigned(eDT))
-            )) {
+            GDALDataTypeIsSigned(eDT)))) {
 
         return true;
     }
