@@ -40,7 +40,7 @@ to guess from the output filename if not specified.}
 UInt16, Int32, UInt32, Float32).}
 
 \item{out_band}{Integer band number(s) in \code{dstfile} for writing output.
-Defaults to \code{1}. Multiband output is supported as of {gdalraster} 1.11.0,
+Defaults to \code{1}. Multiband output is supported as of gdalraster 1.11.0,
 in which case \code{out_band} would be a vector of band numbers.}
 
 \item{options}{Optional list of format-specific creation options in a
@@ -87,7 +87,7 @@ of inputs.
 Individual pixel coordinates are also available as variables in the
 R expression, as either x/y in the raster projected coordinate system or
 inverse projected longitude/latitude.
-Multiband output is supported as of {gdalraster} 1.11.0.
+Multiband output is supported as of gdalraster 1.11.0.
 }
 \details{
 The variables in \code{expr} are vectors of length raster xsize
