@@ -366,7 +366,7 @@ int _get_physical_RAM() {
 //'
 //' @seealso
 //' OGR SQL dialect and SQLITE SQL dialect:\cr
-//' [https://gdal.org/user/ogr_sql_sqlite_dialect.html]
+//' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
 //'
 //' @examples
 //' has_spatialite()
