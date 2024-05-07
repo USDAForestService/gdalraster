@@ -5,11 +5,11 @@
 #ifndef gdalraster_H
 #define gdalraster_H
 
-#include "rcpp_util.h"
-
 #include <map>
 #include <string>
 #include <vector>
+
+#include "rcpp_util.h"
 
 #ifndef gdalraster_types_H
 #include "cpl_port.h"
@@ -69,16 +69,15 @@ const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
 #endif
 
 class GDALRaster {
-
-    private:
+ private:
     std::string fname_in;
     Rcpp::CharacterVector open_options_in;
     GDALDatasetH  hDataset;
     GDALAccess eAccess;
 
-    public:
+ public:
     GDALRaster();
-    GDALRaster(Rcpp::CharacterVector filename);
+    explicit GDALRaster(Rcpp::CharacterVector filename);
     GDALRaster(Rcpp::CharacterVector filename, bool read_only);
     GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                Rcpp::CharacterVector open_options);
@@ -134,7 +133,7 @@ class GDALRaster {
     void setRasterColorInterp(int band, std::string col_interp);
 
     std::vector<double> getMinMax(int band, bool approx_ok) const;
-    Rcpp::NumericVector getStatistics(int band,	bool approx_ok,
+    Rcpp::NumericVector getStatistics(int band, bool approx_ok,
                                       bool force) const;
     void clearStatistics();
     std::vector<double> getHistogram(int band, double min, double max,
@@ -159,11 +158,11 @@ class GDALRaster {
 
     SEXP getColorTable(int band) const;
     std::string getPaletteInterp(int band) const;
-    bool setColorTable(int band, Rcpp::RObject& col_tbl,
+    bool setColorTable(int band, const Rcpp::RObject& col_tbl,
                        std::string palette_interp);
 
     SEXP getDefaultRAT(int band) const;
-    bool setDefaultRAT(int band, Rcpp::DataFrame& df);
+    bool setDefaultRAT(int band, const Rcpp::DataFrame& df);
 
     void flushCache();
 
@@ -191,10 +190,10 @@ void set_config_option(std::string key, std::string value);
 int get_cache_used();
 void push_error_handler(std::string handler);
 void pop_error_handler();
+bool has_spatialite();
 
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 int _get_physical_RAM();
-bool _has_spatialite();
 
 bool create(std::string format, Rcpp::CharacterVector dst_filename,
             int xsize, int ysize, int nbands, std::string dataType,
@@ -262,7 +261,7 @@ Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files,
                          Rcpp::Nullable<Rcpp::CharacterVector> options,
                          bool quiet);
 
-Rcpp::DataFrame _value_count(GDALRaster& src_ds, int band,
+Rcpp::DataFrame _value_count(const GDALRaster& src_ds, int band,
                              bool quiet);
 
 bool _dem_proc(std::string mode,
@@ -326,4 +325,4 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
                                     Rcpp::IntegerVector end_color,
                                     std::string palette_interp);
 
-#endif
+#endif  // gdalraster_H
