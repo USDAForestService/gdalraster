@@ -607,11 +607,12 @@ The <code>GDALRaster</code> object is still available after calling <code>$close
 The dataset can be re-opened on the existing <code>filename</code> with
 <code>$open(read_only=TRUE)</code> or <code>$open(read_only=FALSE)</code>.</p>
 <p><code>$readByteAsRaw</code>
-A logical value, <code>FALSE</code> by default. This field can be set to <code>TRUE</code> which will
-affect the data type returned by <code>$read()</code> and <code><a href="read_ds.html">read_ds()</a></code>. When the underlying band data type
-is 'Byte' and <code>readByteAsRaw</code> is <code>TRUE</code> the output type will be raw rather than
-integer. See also the <code>as_raw</code> argument to <code><a href="read_ds.html">read_ds()</a></code> to control this in a non-persisent
-setting. If the underlying band data type is not Byte this setting has no effect.</p>
+A logical value, <code>FALSE</code> by default. This field can be set to <code>TRUE</code> which
+will affect the data type returned by <code>$read()</code> and <code><a href="read_ds.html">read_ds()</a></code>. When the
+underlying band data type is 'Byte' and <code>readByteAsRaw</code> is <code>TRUE</code> the output
+type will be raw rather than integer. See also the <code>as_raw</code> argument to
+<code><a href="read_ds.html">read_ds()</a></code> to control this in a non-persistent setting. If the underlying
+band data type is not Byte this setting has no effect.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
