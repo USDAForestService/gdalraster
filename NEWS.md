@@ -22,7 +22,7 @@
 
 * `buildRAT()`: if the input raster is an object of class `GDALRaster`, use it by reference rather than instantiating another `GDALRaster` object internally (2024-04-09)
 
-* add `GDALRaster::setFilename()`: set the filename of an unitialized `GDALRaster` object, currently undocumented (2024-04-08)
+* add `GDALRaster::setFilename()`: set the filename of an uninitialized `GDALRaster` object, currently undocumented (2024-04-08)
 
 * add `GDALRaster::_getGDALDatasetH()`: get the GDAL dataset handle for internal use (2024-04-08)
 
