@@ -656,11 +656,12 @@ The dataset can be re-opened on the existing \code{filename} with
 \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
 
 \code{$readByteAsRaw}
-A logical value, \code{FALSE} by default. This field can be set to \code{TRUE} which will
-affect the data type returned by \verb{$read()} and \code{\link[=read_ds]{read_ds()}}. When the underlying band data type
-is 'Byte' and \code{readByteAsRaw} is \code{TRUE} the output type will be raw rather than
-integer. See also the \code{as_raw} argument to \code{\link[=read_ds]{read_ds()}} to control this in a non-persisent
-setting. If the underlying band data type is not Byte this setting has no effect.
+A logical value, \code{FALSE} by default. This field can be set to \code{TRUE} which
+will affect the data type returned by \verb{$read()} and \code{\link[=read_ds]{read_ds()}}. When the
+underlying band data type is 'Byte' and \code{readByteAsRaw} is \code{TRUE} the output
+type will be raw rather than integer. See also the \code{as_raw} argument to
+\code{\link[=read_ds]{read_ds()}} to control this in a non-persistent setting. If the underlying
+band data type is not Byte this setting has no effect.
 }
 
 \examples{

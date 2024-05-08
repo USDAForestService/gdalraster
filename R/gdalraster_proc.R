@@ -802,7 +802,7 @@ rasterToVRT <- function(srcfile,
 #' Individual pixel coordinates are also available as variables in the
 #' R expression, as either x/y in the raster projected coordinate system or
 #' inverse projected longitude/latitude.
-#' Multiband output is supported as of {gdalraster} 1.11.0.
+#' Multiband output is supported as of gdalraster 1.11.0.
 #'
 #' @details
 #' The variables in `expr` are vectors of length raster xsize
@@ -850,7 +850,7 @@ rasterToVRT <- function(srcfile,
 #' @param dtName Character name of output data type (e.g., Byte, Int16,
 #' UInt16, Int32, UInt32, Float32).
 #' @param out_band Integer band number(s) in `dstfile` for writing output.
-#' Defaults to `1`. Multiband output is supported as of {gdalraster} 1.11.0,
+#' Defaults to `1`. Multiband output is supported as of gdalraster 1.11.0,
 #' in which case `out_band` would be a vector of band numbers.
 #' @param options Optional list of format-specific creation options in a
 #' vector of "NAME=VALUE" pairs

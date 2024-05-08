@@ -1,6 +1,6 @@
-# gdalraster 1.10.9130 (dev)
+# gdalraster 1.10.9150 (dev)
 
-* add `_has_spatialite()` for internal use (2024-04-29)
+* add `has_spatialite()`: is GDAL built with SpatiaLite support (2024-05-06)
 
 * `ogr2ogr()`: add argument `open_options` to support options on the source dataset (2024-04-28)
 
@@ -22,7 +22,7 @@
 
 * `buildRAT()`: if the input raster is an object of class `GDALRaster`, use it by reference rather than instantiating another `GDALRaster` object internally (2024-04-09)
 
-* add `GDALRaster::setFilename()`: set the filename of an unitialized `GDALRaster` object, currently undocumented (2024-04-08)
+* add `GDALRaster::setFilename()`: set the filename of an uninitialized `GDALRaster` object, currently undocumented (2024-04-08)
 
 * add `GDALRaster::_getGDALDatasetH()`: get the GDAL dataset handle for internal use (2024-04-08)
 
