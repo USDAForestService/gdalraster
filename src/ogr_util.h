@@ -115,6 +115,8 @@ const std::map<std::string, OGRFieldSubType, _ci_less> MAP_OGR_FLD_SUBTYPE{
 
 bool _ogr_ds_exists(std::string dsn, bool with_update);
 
+std::string _ogr_ds_format(std::string dsn);
+
 SEXP _ogr_ds_test_cap(std::string dsn, bool with_update);
 
 bool _create_ogr(std::string format, std::string dst_filename,

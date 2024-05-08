@@ -20,6 +20,10 @@
 #' given data source name (DSN), potentially testing for update access.
 #' Returns a logical scalar.
 #'
+#' `ogr_ds_format()` returns a character string containing the short name of
+#' the format driver for a given DSN, or `NULL` if the dataset cannot be
+#' opened as a vector source.
+#'
 #' `ogr_ds_test_cap()` tests the capabilities of a vector dataset, attempting
 #' to open it with update access by default. Returns a list of capabilities
 #' with values `TRUE` or `FALSE`, or `NULL` is returned if `dsn` cannot be
@@ -243,11 +247,8 @@
 #' WKT representation of geometry:\cr
 #' [https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry]
 #'
-#' OGR SQL dialect:\cr
+#' OGR SQL dialect and SQLite SQL dialect:\cr
 #' [https://gdal.org/user/ogr_sql_dialect.html]
-#'
-#' SQLite dialect:\cr
-#' [https://gdal.org/user/sql_sqlite_dialect.html#sql-sqlite-dialect]
 #'
 #' @export
 ogr_ds_exists <- function(dsn, with_update = FALSE) {
@@ -255,6 +256,19 @@ ogr_ds_exists <- function(dsn, with_update = FALSE) {
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
 
     return(.ogr_ds_exists(dsn, with_update))
+}
+
+#' @name ogr_manage
+#' @export
+ogr_ds_format <- function(dsn) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+
+    ret <- .ogr_ds_format(dsn)
+    if (ret == "")
+        return(NULL)
+    else
+        return(ret)
 }
 
 #' @name ogr_manage
@@ -600,11 +614,15 @@ ogr_execute_sql <- function(dsn, sql, spatial_filter = NULL, dialect = NULL) {
         if (!(is.character(spatial_filter) && length(spatial_filter) == 1))
             stop("spatial_filter must be length-4 numeric or character string",
                  call. = FALSE)
+    } else {
+        spatial_filter <- ""
     }
 
     if (!is.null(dialect)) {
         if (!(is.character(dialect) && length(dialect) == 1))
             stop("'dialect' must be a length-1 character vector", call. = FALSE)
+    } else {
+        dialect <- ""
     }
 
     return(.ogr_execute_sql(dsn, sql, spatial_filter, dialect))

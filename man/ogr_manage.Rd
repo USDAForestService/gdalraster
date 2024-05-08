@@ -3,6 +3,7 @@
 \name{ogr_manage}
 \alias{ogr_manage}
 \alias{ogr_ds_exists}
+\alias{ogr_ds_format}
 \alias{ogr_ds_test_cap}
 \alias{ogr_ds_create}
 \alias{ogr_ds_layer_count}
@@ -19,6 +20,8 @@
 \title{Utility functions for managing vector data sources}
 \usage{
 ogr_ds_exists(dsn, with_update = FALSE)
+
+ogr_ds_format(dsn)
 
 ogr_ds_test_cap(dsn, with_update = TRUE)
 
@@ -185,6 +188,10 @@ API (ogr_core.h and ogr_api.h, \link{https://gdal.org/api/vector_c_api.html}).
 \code{ogr_ds_exists()} tests whether a vector dataset can be opened from the
 given data source name (DSN), potentially testing for update access.
 Returns a logical scalar.
+
+\code{ogr_ds_format()} returns a character string containing the short name of
+the format driver for a given DSN, or \code{NULL} if the dataset cannot be
+opened as a vector source.
 
 \code{ogr_ds_test_cap()} tests the capabilities of a vector dataset, attempting
 to open it with update access by default. Returns a list of capabilities
@@ -353,9 +360,6 @@ GeoPackage format (\link{https://gdal.org/drivers/vector/gpkg.html#sql}).
 WKT representation of geometry:\cr
 \link{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
 
-OGR SQL dialect:\cr
+OGR SQL dialect and SQLite SQL dialect:\cr
 \link{https://gdal.org/user/ogr_sql_dialect.html}
-
-SQLite dialect:\cr
-\link{https://gdal.org/user/sql_sqlite_dialect.html#sql-sqlite-dialect}
 }

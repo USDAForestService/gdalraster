@@ -221,6 +221,8 @@ pop_error_handler <- function() {
 #' native SQL engine of those database systems.
 #'
 #' @seealso
+#' [ogrinfo()]
+#'
 #' OGR SQL dialect and SQLITE SQL dialect:\cr
 #' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
 #'
@@ -2105,6 +2107,13 @@ has_geos <- function() {
 #' @noRd
 .ogr_ds_exists <- function(dsn, with_update = FALSE) {
     .Call(`_gdalraster__ogr_ds_exists`, dsn, with_update)
+}
+
+#' Get the format driver short name for a vector dataset
+#'
+#' @noRd
+.ogr_ds_format <- function(dsn) {
+    .Call(`_gdalraster__ogr_ds_format`, dsn)
 }
 
 #' Test if capabilities are available for a vector dataset

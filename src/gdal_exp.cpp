@@ -365,6 +365,8 @@ int _get_physical_RAM() {
 //' native SQL engine of those database systems.
 //'
 //' @seealso
+//' [ogrinfo()]
+//'
 //' OGR SQL dialect and SQLITE SQL dialect:\cr
 //' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
 //'

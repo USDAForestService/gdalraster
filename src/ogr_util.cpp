@@ -15,20 +15,23 @@
 OGRwkbGeometryType _getWkbGeomType(std::string geom_type) {
     std::string geom_type_in = _str_toupper(geom_type);
     if (auto it = MAP_OGR_GEOM_TYPE.find(geom_type_in);
-            it != MAP_OGR_GEOM_TYPE.end())
+        it != MAP_OGR_GEOM_TYPE.end()) {
+
         return it->second;
-    else
+    }
+    else {
         return wkbUnknown;
+    }
 }
 
 // Internal lookup of geometry type string by OGRwkbGeometryType
 // Returns "UNKNOWN" if no match
 std::string _getWkbGeomString(OGRwkbGeometryType eType) {
     for (auto it = MAP_OGR_GEOM_TYPE.begin();
-            it != MAP_OGR_GEOM_TYPE.end(); ++it) {
-        if (it->second == eType) {
+         it != MAP_OGR_GEOM_TYPE.end(); ++it) {
+
+        if (it->second == eType)
             return it->first;
-        }
     }
     return "UNKNOWN";
 }
@@ -37,20 +40,23 @@ std::string _getWkbGeomString(OGRwkbGeometryType eType) {
 // Error if no match
 OGRFieldType _getOFT(std::string fld_type) {
     if (auto it = MAP_OGR_FLD_TYPE.find(fld_type);
-            it != MAP_OGR_FLD_TYPE.end())
+        it != MAP_OGR_FLD_TYPE.end()) {
+
         return it->second;
-    else
+    }
+    else {
         Rcpp::stop("unrecognized OGR field type descriptor");
+    }
 }
 
 // Internal lookup of OGR field type string by OGRFieldType
 // Returns empty string if no match, with warning emitted
 std::string _getOFTString(OGRFieldType eType) {
     for (auto it = MAP_OGR_FLD_TYPE.begin();
-            it != MAP_OGR_FLD_TYPE.end(); ++it) {
-        if (it->second == eType) {
+         it != MAP_OGR_FLD_TYPE.end(); ++it) {
+
+        if (it->second == eType)
             return it->first;
-        }
     }
     Rcpp::warning("unrecognized OGRFieldType enumerator");
     return "";
@@ -60,20 +66,23 @@ std::string _getOFTString(OGRFieldType eType) {
 // Returns OFSTNone if no match
 OGRFieldSubType _getOFTSubtype(std::string fld_subtype) {
     if (auto it = MAP_OGR_FLD_SUBTYPE.find(fld_subtype);
-            it != MAP_OGR_FLD_SUBTYPE.end())
+        it != MAP_OGR_FLD_SUBTYPE.end()) {
+
         return it->second;
-    else
+    }
+    else {
         return OFSTNone;
+    }
 }
 
 // Internal lookup of OGR field subtype string by OGRFieldSubType
 // Returns "OFSTNone" if no match
 std::string _getOFTSubtypeString(OGRFieldSubType eType) {
     for (auto it = MAP_OGR_FLD_SUBTYPE.begin();
-            it != MAP_OGR_FLD_SUBTYPE.end(); ++it) {
-        if (it->second == eType) {
+         it != MAP_OGR_FLD_SUBTYPE.end(); ++it) {
+
+        if (it->second == eType)
             return it->first;
-        }
     }
     return "OFSTNone";
 }
@@ -105,12 +114,37 @@ bool _ogr_ds_exists(std::string dsn, bool with_update = false) {
     }
 }
 
+//' Get the format driver short name for a vector dataset
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_ds_format")]]
+std::string _ogr_ds_format(std::string dsn) {
+
+    std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+    GDALDatasetH hDS = nullptr;
+    std::string fmt = "";
+
+    CPLPushErrorHandler(CPLQuietErrorHandler);
+    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR,
+                     nullptr, nullptr, nullptr);
+    CPLPopErrorHandler();
+
+    if (hDS == nullptr)
+        return "";
+
+    GDALDriverH hDriver = GDALGetDatasetDriver(hDS);
+    if (hDriver)
+        fmt = GDALGetDriverShortName(hDriver);
+
+    GDALReleaseDataset(hDS);
+    return fmt;
+}
+
 //' Test if capabilities are available for a vector dataset
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_ds_test_cap")]]
 SEXP _ogr_ds_test_cap(std::string dsn, bool with_update = true) {
-
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
 
@@ -279,7 +313,6 @@ bool _create_ogr(std::string format, std::string dst_filename,
 //' @noRd
 // [[Rcpp::export(name = ".ogr_ds_layer_count")]]
 int _ogr_ds_layer_count(std::string dsn) {
-
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
 
@@ -299,7 +332,6 @@ int _ogr_ds_layer_count(std::string dsn) {
 //' @noRd
 // [[Rcpp::export(name = ".ogr_ds_layer_names")]]
 SEXP _ogr_ds_layer_names(std::string dsn) {
-
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
 
@@ -335,7 +367,6 @@ SEXP _ogr_ds_layer_names(std::string dsn) {
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_exists")]]
 bool _ogr_layer_exists(std::string dsn, std::string layer) {
-
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
     OGRLayerH hLayer = nullptr;
@@ -380,8 +411,8 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
         bool has_geom_fld_defn = false;
         for (R_xlen_t i = 0; i < layer_defn_in.size(); ++i) {
             Rcpp::List fld = layer_defn_in[i];
-            Rcpp::LogicalVector is_geom = fld["is_geom"];
-            if (Rcpp::is_true(Rcpp::all(is_geom))) {
+            Rcpp::LogicalVector fld_is_geom = fld["is_geom"];
+            if (Rcpp::is_true(Rcpp::all(fld_is_geom))) {
                 geom_type_in = Rcpp::as<std::string>(fld["type"]);
                 geom_fld_name = Rcpp::as<std::string>(fld_names(i));
                 srs_in = Rcpp::as<std::string>(fld["srs"]);
@@ -438,8 +469,8 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
     bool ret = false;
     if (hLayer != nullptr) {
         ret = true;
-        // create fields if layer_defn given
         if (layer_defn.isNotNull()) {
+            // create fields
             for (R_xlen_t i = 0; i < layer_defn_in.size(); ++i) {
                 std::string fld_name;
                 std::string fld_type;
@@ -454,7 +485,7 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
 
                 fld_name = Rcpp::as<std::string>(fld_names(i));
                 if (fld_name == geom_fld_name)
-                        continue;
+                    continue;
 
                 Rcpp::List fld = layer_defn_in[i];
                 Rcpp::LogicalVector fld_is_geom = fld["is_geom"];
@@ -467,6 +498,7 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
                         Rcpp::Rcerr << "$type missing in field definition\n" <<
                                 "could not create field: " <<
                                 fld_name.c_str() << "\n";
+
                         continue;
                     }
                     if (fld.containsElementNamed("subtype"))
@@ -478,20 +510,17 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
                     if (fld.containsElementNamed("is_nullable")) {
                         Rcpp::LogicalVector fld_is_nullable =
                                 fld["is_nullable"];
+
                         is_nullable =
                                 Rcpp::is_true(Rcpp::all(fld_is_nullable));
                     }
                     if (fld.containsElementNamed("is_ignored")) {
-                        Rcpp::LogicalVector fld_is_ignored =
-                                fld["is_ignored"];
-                        is_ignored =
-                                Rcpp::is_true(Rcpp::all(fld_is_ignored));
+                        Rcpp::LogicalVector fld_is_ignored = fld["is_ignored"];
+                        is_ignored = Rcpp::is_true(Rcpp::all(fld_is_ignored));
                     }
                     if (fld.containsElementNamed("is_unique")) {
-                        Rcpp::LogicalVector fld_is_unique =
-                                fld["is_unique"];
-                        is_unique =
-                                Rcpp::is_true(Rcpp::all(fld_is_unique));
+                        Rcpp::LogicalVector fld_is_unique = fld["is_unique"];
+                        is_unique = Rcpp::is_true(Rcpp::all(fld_is_unique));
                     }
                     if (fld.containsElementNamed("default"))
                         default_value = Rcpp::as<std::string>(fld["default"]);
@@ -514,8 +543,8 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
                         if (this_geom_type != geom_type_in) {
                             eThisGeomType = _getWkbGeomType(this_geom_type);
                             if (eThisGeomType == wkbUnknown &&
-                                    !EQUALN(this_geom_type.c_str(),
-                                            "UNKNOWN", 7)) {
+                                !EQUALN(this_geom_type.c_str(), "UNKNOWN", 7)) {
+
                                 Rcpp::warning("geometry type not recognized");
                             }
                         }
@@ -524,6 +553,7 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
                         Rcpp::Rcerr << "$type missing in field definition\n" <<
                                 "could not create geom field: " <<
                                 fld_name.c_str() << "\n";
+
                         continue;
                     }
                     if (fld.containsElementNamed("srs"))
@@ -531,14 +561,13 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
                     if (fld.containsElementNamed("is_nullable")) {
                         Rcpp::LogicalVector fld_is_nullable =
                                 fld["is_nullable"];
+
                         is_nullable =
                                 Rcpp::is_true(Rcpp::all(fld_is_nullable));
                     }
                     if (fld.containsElementNamed("is_ignored")) {
-                        Rcpp::LogicalVector fld_is_ignored =
-                                fld["is_ignored"];
-                        is_ignored =
-                                Rcpp::is_true(Rcpp::all(fld_is_ignored));
+                        Rcpp::LogicalVector fld_is_ignored = fld["is_ignored"];
+                        is_ignored = Rcpp::is_true(Rcpp::all(fld_is_ignored));
                     }
 
                     if (!_CreateGeomField(hDS, hLayer, fld_name, eThisGeomType,
@@ -565,7 +594,6 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_delete")]]
 bool _ogr_layer_delete(std::string dsn, std::string layer) {
-
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
     OGRLayerH  hLayer = nullptr;
@@ -610,7 +638,6 @@ bool _ogr_layer_delete(std::string dsn, std::string layer) {
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_fld_names")]]
 SEXP _ogr_layer_fld_names(std::string dsn, std::string layer) {
-
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
     OGRLayerH hLayer = nullptr;
@@ -666,7 +693,7 @@ SEXP _ogr_layer_fld_names(std::string dsn, std::string layer) {
 //' @noRd
 // [[Rcpp::export(name = ".ogr_field_index")]]
 int _ogr_field_index(std::string dsn, std::string layer,
-        std::string fld_name) {
+                     std::string fld_name) {
 
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
@@ -1013,17 +1040,17 @@ SEXP _ogr_execute_sql(std::string dsn, std::string sql,
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
                      nullptr, nullptr, nullptr);
     if (hDS == nullptr) {
-        Rcpp::Rcerr << "failed to open dsn for update:\n'" <<
+        Rcpp::Rcerr << "failed to open DSN for update:\n'" <<
                 dsn_in.c_str() << "'\n";
         return R_NilValue;
     }
     else {
-        Rcpp::Rcout << "info: open for update successful on dsn:\n'" <<
+        Rcpp::Rcout << "info: open dataset successful on DSN:\n  '" <<
                 dsn_in.c_str() << "'\n";
     }
 
-    if (EQUALN(dialect.c_str(), "SQLITE", 6) && !_has_spatialite())
-        Rcpp::Rcout << "info: GDAL built without Spatialite support.\n" <<
+    if (EQUALN(dialect.c_str(), "SQLITE", 6) && !has_spatialite())
+        Rcpp::Rcout << "info: GDAL built without Spatialite support\n" <<
                 "Spatial functions may be unavailable in SQLite dialect.\n";
 
     const char* pszDialect = nullptr;

@@ -997,6 +997,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _ogr_ds_format
+std::string _ogr_ds_format(std::string dsn);
+RcppExport SEXP _gdalraster__ogr_ds_format(SEXP dsnSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
+    rcpp_result_gen = Rcpp::wrap(_ogr_ds_format(dsn));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _ogr_ds_test_cap
 SEXP _ogr_ds_test_cap(std::string dsn, bool with_update);
 RcppExport SEXP _gdalraster__ogr_ds_test_cap(SEXP dsnSEXP, SEXP with_updateSEXP) {
@@ -1432,6 +1443,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__g_centroid", (DL_FUNC) &_gdalraster__g_centroid, 1},
     {"_gdalraster__g_transform", (DL_FUNC) &_gdalraster__g_transform, 5},
     {"_gdalraster__ogr_ds_exists", (DL_FUNC) &_gdalraster__ogr_ds_exists, 2},
+    {"_gdalraster__ogr_ds_format", (DL_FUNC) &_gdalraster__ogr_ds_format, 1},
     {"_gdalraster__ogr_ds_test_cap", (DL_FUNC) &_gdalraster__ogr_ds_test_cap, 2},
     {"_gdalraster__create_ogr", (DL_FUNC) &_gdalraster__create_ogr, 13},
     {"_gdalraster__ogr_ds_layer_count", (DL_FUNC) &_gdalraster__ogr_ds_layer_count, 1},
