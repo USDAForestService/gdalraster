@@ -117,7 +117,7 @@ void GDALVector::open(bool read_only) {
     }
     else if (STARTS_WITH_CI(layer_in.c_str(), "SELECT ")) {
         is_sql_in = true;
-        if (EQUALN(pszDialect, "SQLite", 6) && !has_spatialite())
+        if (EQUALN(dialect_in.c_str(), "SQLite", 6) && !has_spatialite())
             Rcpp::warning("spatialite not available");
         hLayer = GDALDatasetExecuteSQL(hDataset, layer_in.c_str(),
                                        hGeom_filter, pszDialect);
