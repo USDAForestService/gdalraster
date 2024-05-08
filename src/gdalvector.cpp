@@ -1,5 +1,5 @@
-/* Implementation of class GDALVector. Encapsulates one OGRLayer and its
-   GDALDataset. Requires bit64 on the R side for its integer64 S3 type.
+/* Implementation of class GDALVector. Encapsulates an OGRLayer and its
+   GDALDataset. Requires {bit64} on the R side for its integer64 S3 type.
    Chris Toney <chris.toney at usda.gov> */
 
 #include <cstdint>
@@ -117,6 +117,8 @@ void GDALVector::open(bool read_only) {
     }
     else if (STARTS_WITH_CI(layer_in.c_str(), "SELECT ")) {
         is_sql_in = true;
+        if (EQUALN(pszDialect, "SQLite", 6) && !has_spatialite())
+            Rcpp::warning("spatialite not available");
         hLayer = GDALDatasetExecuteSQL(hDataset, layer_in.c_str(),
                                        hGeom_filter, pszDialect);
     }
@@ -266,16 +268,15 @@ Rcpp::List GDALVector::getLayerDefn() const {
     int iField;
 
     // attribute fields
-    // TODO: add subtype and field domain name
+    // TODO(ctoney): add subtype and field domain name
     for (iField=0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
-
         Rcpp::List list_fld_defn = Rcpp::List::create();
         OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
         if (hFieldDefn == nullptr)
             Rcpp::stop("could not obtain field definition");
 
         OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
-        // TODO: add list types, date, time, binary, etc.
+        // TODO(ctoney): add list types, date, time, binary, etc.
         if (fld_type == OFTInteger) {
             sValue = "OFTInteger";
         }
@@ -322,7 +323,6 @@ Rcpp::List GDALVector::getLayerDefn() const {
 
     // geometry fields
     for (int i = 0; i < OGR_FD_GetGeomFieldCount(hFDefn); ++i) {
-
         Rcpp::List list_geom_fld_defn = Rcpp::List::create();
         OGRGeomFieldDefnH hGeomFldDefn =
                 OGR_FD_GetGeomFieldDefn(hFDefn, i);
@@ -463,7 +463,6 @@ void GDALVector::layerIntersection(
 
     if (err != OGRERR_NONE)
         Rcpp::stop("error during Intersection, or execution was interrupted");
-
 }
 
 void GDALVector::layerUnion(
@@ -492,7 +491,6 @@ void GDALVector::layerUnion(
 
     if (err != OGRERR_NONE)
         Rcpp::stop("error during Union, or execution was interrupted");
-
 }
 
 void GDALVector::layerSymDifference(
@@ -521,7 +519,6 @@ void GDALVector::layerSymDifference(
 
     if (err != OGRERR_NONE)
         Rcpp::stop("error during SymDifference, or execution was interrupted");
-
 }
 
 void GDALVector::layerIdentity(
@@ -550,7 +547,6 @@ void GDALVector::layerIdentity(
 
     if (err != OGRERR_NONE)
         Rcpp::stop("error during Identity, or execution was interrupted");
-
 }
 
 void GDALVector::layerUpdate(
@@ -579,7 +575,6 @@ void GDALVector::layerUpdate(
 
     if (err != OGRERR_NONE)
         Rcpp::stop("error during Update, or execution was interrupted");
-
 }
 
 void GDALVector::layerClip(
@@ -608,7 +603,6 @@ void GDALVector::layerClip(
 
     if (err != OGRERR_NONE)
         Rcpp::stop("error during Clip, or execution was interrupted");
-
 }
 
 void GDALVector::layerErase(
@@ -637,7 +631,6 @@ void GDALVector::layerErase(
 
     if (err != OGRERR_NONE)
         Rcpp::stop("error during Erase, or execution was interrupted");
-
 }
 
 void GDALVector::close() {
@@ -701,7 +694,7 @@ Rcpp::List GDALVector::_featureToList(OGRFeatureH hFeature) const {
             list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
         }
         else {
-            // TODO: support date, time, binary, etc.
+            // TODO(ctoney): support date, time, binary, etc.
             // read as string for now
             std::string value = OGR_F_GetFieldAsString(hFeature, i);
             list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
@@ -729,7 +722,6 @@ Rcpp::List GDALVector::_featureToList(OGRFeatureH hFeature) const {
 // ****************************************************************************
 
 RCPP_MODULE(mod_GDALVector) {
-
     Rcpp::class_<GDALVector>("GDALVector")
 
     .constructor

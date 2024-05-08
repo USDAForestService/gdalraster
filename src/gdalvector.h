@@ -2,8 +2,8 @@
    a layer of features in a GDALDataset. https://gdal.org/api/vector_c_api.html
    Chris Toney <chris.toney at usda.gov> */
 
-#ifndef gdalvector_H
-#define gdalvector_H
+#ifndef SRC_GDALVECTOR_H_
+#define SRC_GDALVECTOR_H_
 
 #include <string>
 #include <vector>
@@ -114,4 +114,4 @@ class GDALVector {
 
 RCPP_EXPOSED_CLASS(GDALVector)
 
-#endif
+#endif  // SRC_GDALVECTOR_H_

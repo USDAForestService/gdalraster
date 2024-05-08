@@ -529,7 +529,7 @@ bool _g_overlaps(std::string this_geom, std::string other_geom) {
 //' @noRd
 // [[Rcpp::export(name = ".g_buffer")]]
 std::string _g_buffer(std::string geom, double dist, int quad_segs = 30) {
-//Compute buffer of geometry.
+// Compute buffer of geometry.
 
 // Builds a new geometry containing the buffer region around the geometry on
 // which it is invoked. The buffer is a polygon containing the region within
