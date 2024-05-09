@@ -76,7 +76,7 @@
 #' accepts a feature class definition given as a list of field names and their
 #' definitions (see below). Returns a logical scalar, `TRUE` indicating success.
 #'
-#' `ogr_layer_fld_names()` returns a character vector of field names on a
+#' `ogr_layer_field_names()` returns a character vector of field names on a
 #' layer, or `NULL` if no fields are found.
 #'
 #' `ogr_layer_delete()` deletes an existing layer in a vector dataset.
@@ -358,13 +358,13 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
 
 #' @name ogr_manage
 #' @export
-ogr_layer_fld_names <- function(dsn, layer) {
+ogr_layer_field_names <- function(dsn, layer) {
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
 
-    return(.ogr_layer_fld_names(dsn, layer))
+    return(.ogr_layer_field_names(dsn, layer))
 }
 
 #' @name ogr_manage

@@ -31,8 +31,8 @@ OGR feature class.
 containing the field data type and potentially other optional field
 properties.
 \code{ogr_def_geom_field()} similarly creates a geometry field definition.
-A list containing zero or more attribute field definitions, and one or more
-geomtery field definitions, comprise an OGR feature class definition
+A list containing zero or more attribute field definitions, along with one
+or more geomtery field definitions, comprise an OGR feature class definition
 (a.k.a. layer definition).
 }
 \details{
@@ -75,9 +75,9 @@ those with a SQL interface) that support it at field creation time.
 If given in the field definition, \verb{$default} must be a character string.
 The accepted values are \code{"NULL"}, a numeric value (e.g., \code{"0"}), a literal
 value enclosed between single quote characters (e.g., \code{"'a default value'"},
-and inner single quote characters escaped by repetition of the single quote
-character), \code{"CURRENT_TIMESTAMP"}, \code{"CURRENT_TIME"}, \code{"CURRENT_DATE"} or a
-driver specific expression (that might be ignored by other drivers).
+with any inner single quote characters escaped by repetition of the single
+quote character), \code{"CURRENT_TIMESTAMP"}, \code{"CURRENT_TIME"}, \code{"CURRENT_DATE"}
+or a driver-specific expression (that might be ignored by other drivers).
 For a datetime literal value, format should be
 \code{"'YYYY/MM/DD HH:MM:SS[.sss]'"} (considered as UTC time).
 
@@ -107,7 +107,7 @@ example, GeoPackage format has a layer creation option
 \verb{GEOMETRY_NULLABLE=[YES/NO]}.
 }
 \seealso{
-\link{ogr_manage}
+the \link{ogr_manage} functions, \code{\link[=ogrinfo]{ogrinfo()}}
 
 WKT representation of geometry:\cr
 \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}

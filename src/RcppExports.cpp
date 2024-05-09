@@ -1118,15 +1118,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_layer_fld_names
-SEXP _ogr_layer_fld_names(std::string dsn, std::string layer);
-RcppExport SEXP _gdalraster__ogr_layer_fld_names(SEXP dsnSEXP, SEXP layerSEXP) {
+// _ogr_layer_field_names
+SEXP _ogr_layer_field_names(std::string dsn, std::string layer);
+RcppExport SEXP _gdalraster__ogr_layer_field_names(SEXP dsnSEXP, SEXP layerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_layer_fld_names(dsn, layer));
+    rcpp_result_gen = Rcpp::wrap(_ogr_layer_field_names(dsn, layer));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1465,7 +1465,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__ogr_layer_test_cap", (DL_FUNC) &_gdalraster__ogr_layer_test_cap, 3},
     {"_gdalraster__ogr_layer_create", (DL_FUNC) &_gdalraster__ogr_layer_create, 6},
     {"_gdalraster__ogr_layer_delete", (DL_FUNC) &_gdalraster__ogr_layer_delete, 2},
-    {"_gdalraster__ogr_layer_fld_names", (DL_FUNC) &_gdalraster__ogr_layer_fld_names, 2},
+    {"_gdalraster__ogr_layer_field_names", (DL_FUNC) &_gdalraster__ogr_layer_field_names, 2},
     {"_gdalraster__ogr_field_index", (DL_FUNC) &_gdalraster__ogr_field_index, 3},
     {"_gdalraster__ogr_field_create", (DL_FUNC) &_gdalraster__ogr_field_create, 11},
     {"_gdalraster__ogr_geom_field_create", (DL_FUNC) &_gdalraster__ogr_geom_field_create, 7},

@@ -11,7 +11,7 @@
 \alias{ogr_layer_exists}
 \alias{ogr_layer_test_cap}
 \alias{ogr_layer_create}
-\alias{ogr_layer_fld_names}
+\alias{ogr_layer_field_names}
 \alias{ogr_layer_delete}
 \alias{ogr_field_index}
 \alias{ogr_field_create}
@@ -56,7 +56,7 @@ ogr_layer_create(
   lco = NULL
 )
 
-ogr_layer_fld_names(dsn, layer)
+ogr_layer_field_names(dsn, layer)
 
 ogr_layer_delete(dsn, layer)
 
@@ -252,7 +252,7 @@ specified geometry type and spatial reference definition. This function also
 accepts a feature class definition given as a list of field names and their
 definitions (see below). Returns a logical scalar, \code{TRUE} indicating success.
 
-\code{ogr_layer_fld_names()} returns a character vector of field names on a
+\code{ogr_layer_field_names()} returns a character vector of field names on a
 layer, or \code{NULL} if no fields are found.
 
 \code{ogr_layer_delete()} deletes an existing layer in a vector dataset.

@@ -142,7 +142,7 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
 
 bool _ogr_layer_delete(std::string dsn, std::string layer);
 
-SEXP _ogr_layer_fld_names(std::string dsn, std::string layer);
+SEXP _ogr_layer_field_names(std::string dsn, std::string layer);
 
 int _ogr_field_index(std::string dsn, std::string layer, std::string fld_name);
 

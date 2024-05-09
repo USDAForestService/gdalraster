@@ -2176,8 +2176,8 @@ has_geos <- function() {
 #' Get names of fields on a layer
 #'
 #' @noRd
-.ogr_layer_fld_names <- function(dsn, layer) {
-    .Call(`_gdalraster__ogr_layer_fld_names`, dsn, layer)
+.ogr_layer_field_names <- function(dsn, layer) {
+    .Call(`_gdalraster__ogr_layer_field_names`, dsn, layer)
 }
 
 #' Get field index or -1 if fld_name not found

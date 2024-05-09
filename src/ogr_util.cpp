@@ -705,8 +705,8 @@ bool _ogr_layer_delete(std::string dsn, std::string layer) {
 //' Get names of fields on a layer
 //'
 //' @noRd
-// [[Rcpp::export(name = ".ogr_layer_fld_names")]]
-SEXP _ogr_layer_fld_names(std::string dsn, std::string layer) {
+// [[Rcpp::export(name = ".ogr_layer_field_names")]]
+SEXP _ogr_layer_field_names(std::string dsn, std::string layer) {
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
     OGRLayerH hLayer = nullptr;
