@@ -3,7 +3,7 @@
 
 #' Utility functions for managing vector data sources
 #'
-#' This set of management functions can be used to create new vector datasets,
+#' This set of functions can be used to create new vector datasets,
 #' test existence of dataset/layer/field, test dataset capabilities,
 #' create new layers in an existing dataset, delete layers, create new
 #' attribute and geometry fields on an existing layer, and delete fields.
@@ -14,7 +14,8 @@
 #'
 #' These functions should be complementary to `ogrinfo()` and `ogr2ogr()` for
 #' vector data management. Bindings to OGR wrap portions of the GDAL Vector
-#' API (ogr_core.h and ogr_api.h, [https://gdal.org/api/vector_c_api.html]).
+#' API (ogr_core.h and ogr_api.h,
+#' \url{https://gdal.org/api/vector_c_api.html}).
 #'
 #' `ogr_ds_exists()` tests whether a vector dataset can be opened from the
 #' given data source name (DSN), potentially testing for update access.
@@ -24,11 +25,11 @@
 #' the format driver for a given DSN, or `NULL` if the dataset cannot be
 #' opened as a vector source.
 #'
-#' `ogr_ds_test_cap()` tests the capabilities of a vector dataset, attempting
-#' to open it with update access by default. Returns a list of capabilities
-#' with values `TRUE` or `FALSE`, or `NULL` is returned if `dsn` cannot be
-#' opened with the requested access. The returned list elements include the
-#' following:
+#' `ogr_ds_test_cap()` tests the capabilities of a vector data source,
+#' attempting to open it with update access by default.
+#' Returns a list of capabilities with values `TRUE` or `FALSE`, or `NULL` is
+#' returned if `dsn` cannot be opened with the requested access.
+#' The returned list elements include the following:
 #' * `CreateLayer`: `TRUE` if this datasource can create new layers
 #' * `DeleteLayer`: `TRUE` if this datasource can delete existing layers
 #' * `CreateGeomFieldAfterCreateLayer`: `TRUE` if the layers of this
@@ -59,6 +60,18 @@
 #'
 #' `ogr_layer_exists()` tests whether a layer can be accessed by name in a
 #' given vector dataset. Returns a logical scalar.
+#'
+#' `ogr_layer_test_cap()` tests whether a layer supports named capabilities,
+#' attempting to open the dataset with update access by default.
+#' Returns a list of capabilities with values `TRUE` or `FALSE`. `NULL` is
+#' returned if `dsn` cannot be opened with the requested access, or `layer`
+#' cannot be found. The returned list elements include the following:
+#' `RandomRead`, `SequentialWrite`, `RandomWrite`, `UpsertFeature`,
+#' `FastSpatialFilter`, `FastFeatureCount`, `FastGetExtent`,
+#' `FastSetNextByIndex`, `CreateField`, `CreateGeomField`, `DeleteField`,
+#' `ReorderFields`, `AlterFieldDefn`, `AlterGeomFieldDefn`, `DeleteFeature`,
+#' `StringsAsUTF8`, `Transactions`, `CurveGeometries`. See the GDAL
+#' documentation for [`OGR_L_TestCapability()`](https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).
 #'
 #' `ogr_layer_create()` creates a new layer in a vector dataset, with a
 #' specified geometry type and spatial reference definition. This function also
@@ -156,7 +169,7 @@
 #' Common types include: `Point`, `LineString`, `Polygon`, `MultiPoint`,
 #' `MultiLineString`, `MultiPolygon`. See the GDAL documentation for a list
 #' of all supported geometry types:\cr
-#' [https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType]
+#' \url{https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType}
 #'
 #' Format drivers may or may not support not-null constraints on attribute and
 #' geometry fields. If they support creating fields with not-null constraints,
@@ -237,7 +250,7 @@
 #'
 #' Other SQL dialects may also be present for some vector formats.
 #' For example, the `"INDIRECT_SQLITE"` dialect could potentially be used with
-#' GeoPackage format ([https://gdal.org/drivers/vector/gpkg.html#sql]).
+#' GeoPackage format (\url{https://gdal.org/drivers/vector/gpkg.html#sql}).
 #'
 #' `ogrinfo()` can also be used to edit data with SQL statements (GDAL >= 3.7).
 #'
@@ -245,10 +258,10 @@
 #' [ogrinfo()], [ogr2ogr()]
 #'
 #' WKT representation of geometry:\cr
-#' [https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry]
+#' \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
 #'
 #' OGR SQL dialect and SQLite SQL dialect:\cr
-#' [https://gdal.org/user/ogr_sql_dialect.html]
+#' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
 #'
 #' @export
 ogr_ds_exists <- function(dsn, with_update = FALSE) {
@@ -351,6 +364,17 @@ ogr_layer_exists <- function(dsn, layer) {
         stop("'layer' must be a length-1 character vector", call. = FALSE)
 
     return(.ogr_layer_exists(dsn, layer))
+}
+
+#' @name ogr_manage
+#' @export
+ogr_layer_test_cap <- function(dsn, layer, with_update = TRUE) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(layer) && length(layer) == 1))
+        stop("'layer' must be a length-1 character vector", call. = FALSE)
+
+    return(.ogr_layer_test_cap(dsn, layer, with_update))
 }
 
 #' @name ogr_manage

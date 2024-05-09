@@ -179,6 +179,7 @@ SEXP _ogr_ds_test_cap(std::string dsn, bool with_update = true) {
         Rcpp::Named("RandomLayerWrite") = static_cast<bool>(
             GDALDatasetTestCapability(hDS, ODsCRandomLayerWrite)));
 
+    GDALReleaseDataset(hDS);
     return cap;
 }
 
@@ -386,6 +387,73 @@ bool _ogr_layer_exists(std::string dsn, std::string layer) {
     return ret;
 }
 
+//' Test if capabilities are available for a vector layer
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_layer_test_cap")]]
+SEXP _ogr_layer_test_cap(std::string dsn, std::string layer,
+                         bool with_update = true) {
+
+    std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+    GDALDatasetH hDS = nullptr;
+    OGRLayerH hLayer = nullptr;
+
+    CPLPushErrorHandler(CPLQuietErrorHandler);
+    if (with_update)
+        hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+                         nullptr, nullptr, nullptr);
+    else
+        hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR,
+                         nullptr, nullptr, nullptr);
+    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    CPLPopErrorHandler();
+
+    if (hDS == nullptr || hLayer == nullptr)
+        return R_NilValue;
+
+    Rcpp::List cap = Rcpp::List::create(
+        Rcpp::Named("RandomRead") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCRandomRead)),
+        Rcpp::Named("SequentialWrite") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCSequentialWrite)),
+        Rcpp::Named("RandomWrite") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCRandomWrite)),
+        Rcpp::Named("UpsertFeature") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCUpsertFeature)),
+        Rcpp::Named("FastSpatialFilter") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCFastSpatialFilter)),
+        Rcpp::Named("FastFeatureCount") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCFastFeatureCount)),
+        Rcpp::Named("FastGetExtent") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCFastGetExtent)),
+        Rcpp::Named("FastSetNextByIndex") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCFastSetNextByIndex)),
+        Rcpp::Named("CreateField") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCCreateField)),
+        Rcpp::Named("CreateGeomField") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCCreateGeomField)),
+        Rcpp::Named("DeleteField") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCDeleteField)),
+        Rcpp::Named("ReorderFields") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCReorderFields)),
+        Rcpp::Named("AlterFieldDefn") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCAlterFieldDefn)),
+        Rcpp::Named("AlterGeomFieldDefn") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCAlterGeomFieldDefn)),
+        Rcpp::Named("DeleteFeature") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCDeleteFeature)),
+        Rcpp::Named("StringsAsUTF8") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCStringsAsUTF8)),
+        Rcpp::Named("Transactions") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCTransactions)),
+        Rcpp::Named("CurveGeometries") = static_cast<bool>(
+            OGR_L_TestCapability(hLayer, OLCCurveGeometries)));
+
+
+    GDALReleaseDataset(hDS);
+    return cap;
+}
+
 //' Create a layer in a vector dataset
 //'
 //' @noRd
@@ -450,6 +518,7 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
         GDALReleaseDataset(hDS);
         if (hSRS != nullptr)
             OSRDestroySpatialReference(hSRS);
+        Rcpp::Rcerr << "dataset does not have CreateLayer capability\n";
         return false;
     }
 
@@ -606,7 +675,7 @@ bool _ogr_layer_delete(std::string dsn, std::string layer) {
         return false;
 
     if (!GDALDatasetTestCapability(hDS, ODsCDeleteLayer)) {
-        Rcpp::Rcerr << "dataset does not support delete layer\n";
+        Rcpp::Rcerr << "dataset does not have DeleteLayer capability\n";
         GDALReleaseDataset(hDS);
         return false;
     }
@@ -827,6 +896,12 @@ bool _ogr_field_create(std::string dsn, std::string layer,
         return false;
     }
 
+    if (!OGR_L_TestCapability(hLayer, OLCCreateField)) {
+        GDALReleaseDataset(hDS);
+        Rcpp::Rcerr << "'layer' does not have CreateField capability\n";
+        return false;
+    }
+
     hFDefn = OGR_L_GetLayerDefn(hLayer);
     if (hFDefn != nullptr) {
         iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
@@ -939,6 +1014,12 @@ bool _ogr_geom_field_create(std::string dsn, std::string layer,
         return false;
     }
 
+    if (!OGR_L_TestCapability(hLayer, OLCCreateGeomField)) {
+        GDALReleaseDataset(hDS);
+        Rcpp::Rcerr << "'layer' does not have CreateGeomField capability\n";
+        return false;
+    }
+
     hFDefn = OGR_L_GetLayerDefn(hLayer);
     if (hFDefn != nullptr) {
         iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
@@ -984,7 +1065,7 @@ bool _ogr_field_delete(std::string dsn, std::string layer,
         return false;
     }
     if (!OGR_L_TestCapability(hLayer, OLCDeleteField)) {
-        Rcpp::Rcerr << "layer does not support delete field\n";
+        Rcpp::Rcerr << "'layer' does not have DeleteField capability\n";
         GDALReleaseDataset(hDS);
         return false;
     }
@@ -1049,13 +1130,10 @@ SEXP _ogr_execute_sql(std::string dsn, std::string sql,
                 dsn_in.c_str() << "'\n";
     }
 
-    if (EQUALN(dialect.c_str(), "SQLITE", 6) && !has_spatialite())
+    const char* pszDialect = dialect.c_str();
+    if (EQUALN(pszDialect, "SQLITE", 6) && !has_spatialite())
         Rcpp::Rcout << "info: GDAL built without Spatialite support\n" <<
                 "Spatial functions may be unavailable in SQLite dialect.\n";
-
-    const char* pszDialect = nullptr;
-    if (dialect != "")
-        pszDialect = dialect.c_str();
 
     OGRLayerH hLayer = nullptr;
     hLayer = GDALDatasetExecuteSQL(hDS, sql.c_str(), hGeom_filter, pszDialect);

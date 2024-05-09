@@ -1077,6 +1077,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _ogr_layer_test_cap
+SEXP _ogr_layer_test_cap(std::string dsn, std::string layer, bool with_update);
+RcppExport SEXP _gdalraster__ogr_layer_test_cap(SEXP dsnSEXP, SEXP layerSEXP, SEXP with_updateSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
+    Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
+    Rcpp::traits::input_parameter< bool >::type with_update(with_updateSEXP);
+    rcpp_result_gen = Rcpp::wrap(_ogr_layer_test_cap(dsn, layer, with_update));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _ogr_layer_create
 bool _ogr_layer_create(std::string dsn, std::string layer, Rcpp::Nullable<Rcpp::List> layer_defn, std::string geom_type, std::string srs, Rcpp::Nullable<Rcpp::CharacterVector> options);
 RcppExport SEXP _gdalraster__ogr_layer_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP layer_defnSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP optionsSEXP) {
@@ -1449,6 +1462,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster__ogr_ds_layer_count", (DL_FUNC) &_gdalraster__ogr_ds_layer_count, 1},
     {"_gdalraster__ogr_ds_layer_names", (DL_FUNC) &_gdalraster__ogr_ds_layer_names, 1},
     {"_gdalraster__ogr_layer_exists", (DL_FUNC) &_gdalraster__ogr_layer_exists, 2},
+    {"_gdalraster__ogr_layer_test_cap", (DL_FUNC) &_gdalraster__ogr_layer_test_cap, 3},
     {"_gdalraster__ogr_layer_create", (DL_FUNC) &_gdalraster__ogr_layer_create, 6},
     {"_gdalraster__ogr_layer_delete", (DL_FUNC) &_gdalraster__ogr_layer_delete, 2},
     {"_gdalraster__ogr_layer_fld_names", (DL_FUNC) &_gdalraster__ogr_layer_fld_names, 2},

@@ -132,6 +132,9 @@ SEXP _ogr_ds_layer_names(std::string dsn);
 
 bool _ogr_layer_exists(std::string dsn, std::string layer);
 
+SEXP _ogr_layer_test_cap(std::string dsn, std::string layer,
+                         bool with_update);
+
 bool _ogr_layer_create(std::string dsn, std::string layer,
                        Rcpp::Nullable<Rcpp::List> layer_defn,
                        std::string geom_type, std::string srs,

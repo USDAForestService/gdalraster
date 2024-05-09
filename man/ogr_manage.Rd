@@ -9,6 +9,7 @@
 \alias{ogr_ds_layer_count}
 \alias{ogr_ds_layer_names}
 \alias{ogr_layer_exists}
+\alias{ogr_layer_test_cap}
 \alias{ogr_layer_create}
 \alias{ogr_layer_fld_names}
 \alias{ogr_layer_delete}
@@ -43,6 +44,8 @@ ogr_ds_layer_count(dsn)
 ogr_ds_layer_names(dsn)
 
 ogr_layer_exists(dsn, layer)
+
+ogr_layer_test_cap(dsn, layer, with_update = TRUE)
 
 ogr_layer_create(
   dsn,
@@ -173,7 +176,7 @@ The OGR SQL engine (\code{"OGRSQL"}) will be used by default if a value is not
 given. The \code{"SQLite"} dialect can also be used (see Note).}
 }
 \description{
-This set of management functions can be used to create new vector datasets,
+This set of functions can be used to create new vector datasets,
 test existence of dataset/layer/field, test dataset capabilities,
 create new layers in an existing dataset, delete layers, create new
 attribute and geometry fields on an existing layer, and delete fields.
@@ -183,7 +186,8 @@ attribute and geometry fields on an existing layer, and delete fields.
 
 These functions should be complementary to \code{ogrinfo()} and \code{ogr2ogr()} for
 vector data management. Bindings to OGR wrap portions of the GDAL Vector
-API (ogr_core.h and ogr_api.h, \link{https://gdal.org/api/vector_c_api.html}).
+API (ogr_core.h and ogr_api.h,
+\url{https://gdal.org/api/vector_c_api.html}).
 
 \code{ogr_ds_exists()} tests whether a vector dataset can be opened from the
 given data source name (DSN), potentially testing for update access.
@@ -193,11 +197,11 @@ Returns a logical scalar.
 the format driver for a given DSN, or \code{NULL} if the dataset cannot be
 opened as a vector source.
 
-\code{ogr_ds_test_cap()} tests the capabilities of a vector dataset, attempting
-to open it with update access by default. Returns a list of capabilities
-with values \code{TRUE} or \code{FALSE}, or \code{NULL} is returned if \code{dsn} cannot be
-opened with the requested access. The returned list elements include the
-following:
+\code{ogr_ds_test_cap()} tests the capabilities of a vector data source,
+attempting to open it with update access by default.
+Returns a list of capabilities with values \code{TRUE} or \code{FALSE}, or \code{NULL} is
+returned if \code{dsn} cannot be opened with the requested access.
+The returned list elements include the following:
 \itemize{
 \item \code{CreateLayer}: \code{TRUE} if this datasource can create new layers
 \item \code{DeleteLayer}: \code{TRUE} if this datasource can delete existing layers
@@ -230,6 +234,18 @@ vector dataset, or \code{NULL} if no layers are found.
 
 \code{ogr_layer_exists()} tests whether a layer can be accessed by name in a
 given vector dataset. Returns a logical scalar.
+
+\code{ogr_layer_test_cap()} tests whether a layer supports named capabilities,
+attempting to open the dataset with update access by default.
+Returns a list of capabilities with values \code{TRUE} or \code{FALSE}. \code{NULL} is
+returned if \code{dsn} cannot be opened with the requested access, or \code{layer}
+cannot be found. The returned list elements include the following:
+\code{RandomRead}, \code{SequentialWrite}, \code{RandomWrite}, \code{UpsertFeature},
+\code{FastSpatialFilter}, \code{FastFeatureCount}, \code{FastGetExtent},
+\code{FastSetNextByIndex}, \code{CreateField}, \code{CreateGeomField}, \code{DeleteField},
+\code{ReorderFields}, \code{AlterFieldDefn}, \code{AlterGeomFieldDefn}, \code{DeleteFeature},
+\code{StringsAsUTF8}, \code{Transactions}, \code{CurveGeometries}. See the GDAL
+documentation for \href{https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc}{\code{OGR_L_TestCapability()}}.
 
 \code{ogr_layer_create()} creates a new layer in a vector dataset, with a
 specified geometry type and spatial reference definition. This function also
@@ -328,7 +344,7 @@ Geometry types are specified as a character string containing OGC WKT.
 Common types include: \code{Point}, \code{LineString}, \code{Polygon}, \code{MultiPoint},
 \code{MultiLineString}, \code{MultiPolygon}. See the GDAL documentation for a list
 of all supported geometry types:\cr
-\link{https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType}
+\url{https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType}
 
 Format drivers may or may not support not-null constraints on attribute and
 geometry fields. If they support creating fields with not-null constraints,
@@ -350,7 +366,7 @@ functions. The GDAL document for the SQLite dialect has detailed information.
 
 Other SQL dialects may also be present for some vector formats.
 For example, the \code{"INDIRECT_SQLITE"} dialect could potentially be used with
-GeoPackage format (\link{https://gdal.org/drivers/vector/gpkg.html#sql}).
+GeoPackage format (\url{https://gdal.org/drivers/vector/gpkg.html#sql}).
 
 \code{ogrinfo()} can also be used to edit data with SQL statements (GDAL >= 3.7).
 }
@@ -358,8 +374,8 @@ GeoPackage format (\link{https://gdal.org/drivers/vector/gpkg.html#sql}).
 \code{\link[=ogrinfo]{ogrinfo()}}, \code{\link[=ogr2ogr]{ogr2ogr()}}
 
 WKT representation of geometry:\cr
-\link{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
+\url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
 
 OGR SQL dialect and SQLite SQL dialect:\cr
-\link{https://gdal.org/user/ogr_sql_dialect.html}
+\url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
 }

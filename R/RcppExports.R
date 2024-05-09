@@ -2152,6 +2152,13 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_layer_exists`, dsn, layer)
 }
 
+#' Test if capabilities are available for a vector layer
+#'
+#' @noRd
+.ogr_layer_test_cap <- function(dsn, layer, with_update = TRUE) {
+    .Call(`_gdalraster__ogr_layer_test_cap`, dsn, layer, with_update)
+}
+
 #' Create a layer in a vector dataset
 #'
 #' @noRd
