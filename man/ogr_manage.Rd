@@ -107,7 +107,7 @@ Examples of some common output formats include: \code{"GPKG"}, \code{"FlatGeobuf
 
 \item{layer_defn}{A feature class definition for \code{layer} as a list of
 zero or more attribute field definitions, and at least one geometry field
-definition (see Details).
+definition (see \link{ogr_define}).
 Each field definition is a list with named elements containing values for
 the field \verb{$type} and other properties.
 If \code{layer_defn} is given, it will be used and any additional parameters
@@ -129,7 +129,7 @@ as OGC WKT or other well-known format (e.g., the input formats usable with
 in \code{layer}.}
 
 \item{fld_type}{Character string containing the name of a field data type
-(e.g., \code{OFTInteger}, \code{OFTReal}, \code{OFTString}, see Details.)}
+(e.g., \code{OFTInteger}, \code{OFTReal}, \code{OFTString}).}
 
 \item{dsco}{Optional character vector of format-specific creation options
 for \code{dsn} (\code{"NAME=VALUE"} pairs).}
@@ -137,8 +137,9 @@ for \code{dsn} (\code{"NAME=VALUE"} pairs).}
 \item{lco}{Optional character vector of format-specific creation options
 for \code{layer} (\code{"NAME=VALUE"} pairs).}
 
-\item{fld_defn}{A field definition as list (see Details). Additional
-arguments in \code{ogr_field_create()} will be ignored if a \code{fld_defn} is given.}
+\item{fld_defn}{A field definition as list (see \code{\link[=ogr_def_field]{ogr_def_field()}}).
+Additional arguments in \code{ogr_field_create()} will be ignored if a \code{fld_defn}
+is given.}
 
 \item{fld_subtype}{Character string containing the name of a field subtype.
 One of  \code{OFSTNone} (the default), \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32},
@@ -161,7 +162,8 @@ Defaults to \code{FALSE}.}
 \item{default_value}{Optional default value for the field as a character
 string.}
 
-\item{geom_fld_defn}{A geometry field definition as list (see Details).
+\item{geom_fld_defn}{A geometry field definition as list
+(see \code{\link[=ogr_def_geom_field]{ogr_def_geom_field()}}).
 Additional arguments in \code{ogr_geom_field_create()} will be ignored if a
 \code{geom_fld_defn} is given.}
 
@@ -182,8 +184,6 @@ create new layers in an existing dataset, delete layers, create new
 attribute and geometry fields on an existing layer, and delete fields.
 }
 \details{
-\subsection{Utilities for vector data sources}{
-
 These functions should be complementary to \code{ogrinfo()} and \code{ogr2ogr()} for
 vector data management. Bindings to OGR wrap portions of the GDAL Vector
 API (ogr_core.h and ogr_api.h,
@@ -280,80 +280,6 @@ This function can be used to modify the schema or edit data using SQL
 \code{UPDATE}, \code{DELETE}). Currently, this function does not return a result set
 for a \code{SELECT} statement. Returns \code{NULL} invisibly.
 }
-
-\subsection{Feature class definition}{
-
-All features in an OGR Layer share a common schema (feature class), modeled
-in GDAL as OGR Feature Definition. The feature class definition includes the
-set of attribute fields and their data types and the geometry field(s).
-In R, a feature class definition is represented as a list, having as names
-the attribute/geometry field names, with each list element holding a field
-definition.
-
-An attribute field definition is a list with named elements:
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{$type       : OGR Field Type ("OFTReal", "OFTString" etc.)
-$subtype    : optional ("OFSTBoolean", ...)
-$width      : optional max number of characters
-$precision  : optional number of digits after the decimal point
-$is_nullable: optional NOT NULL constraint (logical scalar)
-$is_unique  : optional UNIQUE constraint (logical scalar)
-$default    : optional default value as character string
-$is_ignored : optionally ignored when retrieving features (logical scalar)
-$is_geom    : FALSE (the default) for attribute fields
-}\if{html}{\out{</div>}}
-
-An OGR field type is specified as a character string with possible values:
-\code{OFTInteger}, \code{OFTIntegerList}, \code{OFTReal}, \code{OFTRealList}, \code{OFTString},
-\code{OFTStringList}, \code{OFTBinary},  \code{OFTDate}, \code{OFTTime}, \code{OFTDateTime},
-\code{OFTInteger64}, \code{OFTInteger64List}.
-
-An optional field subtype is specified as a character string with possible
-values:
-\code{OFSTNone}, \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32}, \code{OFSTJSON},
-\code{OFSTUUID}.
-
-By default, fields are nullable, have no unique constraint, and are not
-ignored (i.e., not omitted when fetching features). Not-null and unique
-constraints are not supported by all format drivers.
-
-A default field value is taken into account by format drivers (generally
-those with a SQL interface) that support it at field creation time.
-If given in the field definition, \verb{$default} must be a character string.
-The accepted values are \code{"NULL"}, a numeric value (e.g., \code{"0"}), a literal
-value enclosed between single quote characters (e.g., \code{"'a default value'"},
-and inner single quote characters escaped by repetition of the single quote
-character), \code{"CURRENT_TIMESTAMP"}, \code{"CURRENT_TIME"}, \code{"CURRENT_DATE"} or a
-driver specific expression (that might be ignored by other drivers).
-For a datetime literal value, format should be
-\code{"'YYYY/MM/DD HH:MM:SS[.sss]'"} (considered as UTC time).
-
-A geometry field definition is a list with named elements:
-
-\if{html}{\out{<div class="sourceCode">}}\preformatted{$type       : geom type ("Point", "Polygon", etc.)
-$srs        : optional spatial reference as WKT string
-$is_nullable: optional NOT NULL constraint (logical scalar)
-$is_ignored : optionally ignored when retrieving features (logical scalar)
-$is_geom    : TRUE (required) for geometry fields
-}\if{html}{\out{</div>}}
-
-Typically, there is one geometry field on a layer, but some formats support
-more than one geometry column per table (e.g., PostGIS).
-
-Geometry types are specified as a character string containing OGC WKT.
-Common types include: \code{Point}, \code{LineString}, \code{Polygon}, \code{MultiPoint},
-\code{MultiLineString}, \code{MultiPolygon}. See the GDAL documentation for a list
-of all supported geometry types:\cr
-\url{https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType}
-
-Format drivers may or may not support not-null constraints on attribute and
-geometry fields. If they support creating fields with not-null constraints,
-this is generally before creating any features to the layer. In some cases,
-a not-null constraint may be available as a layer creation option. For
-example, GeoPackage format has a layer creation option
-\verb{GEOMETRY_NULLABLE=[YES/NO]}.
-}
-}
 \note{
 The OGR SQL document linked under \strong{See Also} contains information on the
 SQL dialect supported internally by OGR. Some format drivers (e.g., PostGIS)
@@ -371,10 +297,7 @@ GeoPackage format (\url{https://gdal.org/drivers/vector/gpkg.html#sql}).
 \code{ogrinfo()} can also be used to edit data with SQL statements (GDAL >= 3.7).
 }
 \seealso{
-\code{\link[=ogrinfo]{ogrinfo()}}, \code{\link[=ogr2ogr]{ogr2ogr()}}
-
-WKT representation of geometry:\cr
-\url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
+\code{\link[=ogr_def_field]{ogr_def_field()}}, \code{\link[=ogr_def_geom_field]{ogr_def_geom_field()}}, \code{\link[=ogrinfo]{ogrinfo()}}, \code{\link[=ogr2ogr]{ogr2ogr()}}
 
 OGR SQL dialect and SQLite SQL dialect:\cr
 \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
