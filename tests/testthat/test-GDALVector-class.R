@@ -26,13 +26,13 @@ test_that("class constructors work", {
     # spatial filter with SQL layer
     sql <- "SELECT FID, * FROM mtbs_perims"
     lyr <- new(GDALVector, dsn, sql, read_only = TRUE, open_options = NULL,
-               spatial_filter = bbox_to_wkt(bb), dialect = "")
+               spatial_filter = bbox_to_wkt(bb))
     expect_equal(lyr$getFeatureCount(), 40)
     lyr$close()
 
     # add dialect
     lyr <- new(GDALVector, dsn, sql, read_only = TRUE, open_options = NULL,
-               spatial_filter = bbox_to_wkt(bb), dialect = "OGRSQL")
+               spatial_filter = bbox_to_wkt(bb), dialect = "")
     expect_equal(lyr$getFeatureCount(), 40)
     lyr$close()
 

@@ -34,17 +34,20 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer) :
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
                        bool read_only) :
+
             GDALVector(dsn, layer, read_only, Rcpp::CharacterVector::create(),
                        "", "") {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
                        bool read_only, Rcpp::CharacterVector open_options) :
+
             GDALVector(dsn, layer, read_only, open_options, "", "") {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
                        bool read_only,
                        Rcpp::Nullable<Rcpp::CharacterVector> open_options,
-                       std::string spatial_filter, std::string dialect) :
+                       std::string spatial_filter, std::string dialect = "") :
+
             layer_in(layer),
             open_options_in(open_options.isNotNull() ? open_options :
                             Rcpp::CharacterVector::create()),
@@ -94,12 +97,6 @@ void GDALVector::open(bool read_only) {
         }
     }
 
-    const char* pszDialect;
-    if (dialect_in != "")
-        pszDialect = dialect_in.c_str();
-    else
-        pszDialect = nullptr;
-
     unsigned int nOpenFlags = GDAL_OF_VECTOR;
     if (read_only)
         nOpenFlags |= GDAL_OF_READONLY;
@@ -111,13 +108,15 @@ void GDALVector::open(bool read_only) {
     if (hDataset == nullptr)
         Rcpp::stop("open dataset failed");
 
+    const char* pszDialect = dialect_in.c_str();
+
     if (layer_in == "") {
         is_sql_in = false;
         hLayer = GDALDatasetGetLayer(hDataset, 0);
     }
     else if (STARTS_WITH_CI(layer_in.c_str(), "SELECT ")) {
         is_sql_in = true;
-        if (EQUALN(dialect_in.c_str(), "SQLite", 6) && !has_spatialite())
+        if (EQUALN(pszDialect, "SQLite", 6) && !has_spatialite())
             Rcpp::warning("spatialite not available");
         hLayer = GDALDatasetExecuteSQL(hDataset, layer_in.c_str(),
                                        hGeom_filter, pszDialect);
@@ -735,6 +734,9 @@ RCPP_MODULE(mod_GDALVector) {
     .constructor<Rcpp::CharacterVector, std::string, bool,
                  Rcpp::CharacterVector>
         ("Usage: new(GDALVector, dsn, layer, read_only, open_options)")
+    .constructor<Rcpp::CharacterVector, std::string, bool,
+                 Rcpp::Nullable<Rcpp::CharacterVector>, std::string>
+        ("Usage: new(GDALVector, dsn, layer, read_only, open_options, spatial_filter)")
     .constructor<Rcpp::CharacterVector, std::string, bool,
                  Rcpp::Nullable<Rcpp::CharacterVector>, std::string,
                  std::string>
