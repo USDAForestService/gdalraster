@@ -11,7 +11,9 @@
 #' `ogr_def_geom_field()` similarly creates a geometry field definition.
 #' A list containing zero or more attribute field definitions, along with one
 #' or more geomtery field definitions, comprise an OGR feature class definition
-#' (a.k.a. layer definition).
+#' (a.k.a. layer definition). `ogr_def_layer()` initializes such a list with a
+#' geometry field. Attribute fields can be added to a feature class definition
+#' with calls to `ogr_def_field()` as in the examples.
 #'
 #' @name ogr_define
 #' @details
@@ -85,8 +87,40 @@
 #' example, GeoPackage format has a layer creation option
 #' `GEOMETRY_NULLABLE=[YES/NO]`.
 #'
+#' @param fld_type Character string containing the name of a field data type
+#' (e.g., `OFTInteger`, `OFTReal`, `OFTString`).
+#' @param fld_subtype Character string containing the name of a field subtype.
+#' One of  `OFSTNone` (the default), `OFSTBoolean`, `OFSTInt16`, `OFSTFloat32`,
+#' `OFSTJSON`, `OFSTUUID`.
+#' @param fld_width Optional integer scalar specifying max number of characters.
+#' @param fld_precision Optional integer scalar specifying number of digits
+#' after the decimal point.
+#' @param is_nullable Optional NOT NULL field constraint (logical scalar).
+#' Defaults to `TRUE`.
+#' @param is_ignored Whether field is ignored when retrieving features (logical
+#' scalar). Defaults to `FALSE`.
+#' @param is_unique Optional UNIQUE constraint on the field (logical scalar).
+#' Defaults to `FALSE`.
+#' @param default_value Optional default value for the field as a character
+#' string.
+#' @param geom_type Character string specifying a geometry type (see Details).
+#' @param srs Character string containing a spatial reference system definition
+#' as OGC WKT or other well-known format (e.g., the input formats usable with
+#' [srs_to_wkt()]).
+#' @param geom_fld_name Character string specifying a geometry field name
+#' Defaults to `"geometry"`.
+#'
+#' @note
+#' The feature id (FID) is a special property of a feature and not treated as
+#' an attribute of the feature. Addiotional information is given in the GDAL
+#' documentation for the
+#' [OGR SQL](https://gdal.org/user/ogr_sql_dialect.html#feature-id-fid) and
+#' [SQLite](https://gdal.org/user/sql_sqlite_dialect.html#feature-id-fid)
+#' SQL dialects. Implications for SQL statements and result sets may depend
+#' on the dialect used.
+#'
 #' @seealso
-#' the [ogr_manage] functions, [ogrinfo()]
+#' [ogr_ds_create()], [ogr_layer_create()], [ogrinfo()]
 #'
 #' WKT representation of geometry:\cr
 #' \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
@@ -95,7 +129,7 @@
 ogr_def_field <- function(fld_type, subtype = NULL, width = NULL,
                           precision = NULL, is_nullable = NULL,
                           is_unique = NULL, is_ignored = NULL,
-                          default = NULL) {
+                          default_value = NULL) {
 
     defn <- list()
 
@@ -112,14 +146,14 @@ ogr_def_field <- function(fld_type, subtype = NULL, width = NULL,
     }
 
     if (!is.null(width)) {
-        if (!(is.integer(width) && length(width) == 1))
+        if (!(is.numeric(width) && length(width) == 1))
             stop("'width' must be an integer scalar", call. = FALSE)
         else
             defn$width <- width
     }
 
     if (!is.null(precision)) {
-        if (!(is.integer(precision) && length(precision) == 1))
+        if (!(is.numeric(precision) && length(precision) == 1))
             stop("'precision' must be an integer scalar", call. = FALSE)
         else
             defn$precision <- precision
@@ -146,11 +180,12 @@ ogr_def_field <- function(fld_type, subtype = NULL, width = NULL,
             defn$is_ignored <- is_ignored
     }
 
-    if (!is.null(default)) {
-        if (!(is.character(default) && length(default) == 1))
-            stop("'default' must be a length-1 character vector", call. = FALSE)
+    if (!is.null(default_value)) {
+        if (!(is.character(default_value) && length(default_value) == 1))
+            stop("'default_value' must be a length-1 character vector",
+                 call. = FALSE)
         else
-            defn$default <- default
+            defn$default <- default_value
     }
 
     defn$is_geom <- FALSE
@@ -192,6 +227,22 @@ ogr_def_geom_field <- function(geom_type, srs = NULL, is_nullable = NULL,
     }
 
     defn$is_geom <- TRUE
+
+    return(defn)
+}
+
+#' @name ogr_define
+#' @export
+ogr_def_layer <- function(geom_type, geom_fld_name = "geom", srs = NULL,
+                          fld_names = NULL, ...) {
+
+    defn <- list()
+
+    if (!(is.character(geom_fld_name) && length(geom_fld_name) == 1))
+        stop("'geom_fld_name' must be a length-1 character vector",
+             call. = FALSE)
+    else
+        defn[[geom_fld_name]] <- ogr_def_geom_field(geom_type, srs)
 
     return(defn)
 }

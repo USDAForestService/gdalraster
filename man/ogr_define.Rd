@@ -4,6 +4,7 @@
 \alias{ogr_define}
 \alias{ogr_def_field}
 \alias{ogr_def_geom_field}
+\alias{ogr_def_layer}
 \title{OGR feature class definition for vector data}
 \usage{
 ogr_def_field(
@@ -14,7 +15,7 @@ ogr_def_field(
   is_nullable = NULL,
   is_unique = NULL,
   is_ignored = NULL,
-  default = NULL
+  default_value = NULL
 )
 
 ogr_def_geom_field(
@@ -23,6 +24,48 @@ ogr_def_geom_field(
   is_nullable = NULL,
   is_ignored = NULL
 )
+
+ogr_def_layer(
+  geom_type,
+  geom_fld_name = "geom",
+  srs = NULL,
+  fld_names = NULL,
+  ...
+)
+}
+\arguments{
+\item{fld_type}{Character string containing the name of a field data type
+(e.g., \code{OFTInteger}, \code{OFTReal}, \code{OFTString}).}
+
+\item{is_nullable}{Optional NOT NULL field constraint (logical scalar).
+Defaults to \code{TRUE}.}
+
+\item{is_unique}{Optional UNIQUE constraint on the field (logical scalar).
+Defaults to \code{FALSE}.}
+
+\item{is_ignored}{Whether field is ignored when retrieving features (logical
+scalar). Defaults to \code{FALSE}.}
+
+\item{default_value}{Optional default value for the field as a character
+string.}
+
+\item{geom_type}{Character string specifying a geometry type (see Details).}
+
+\item{srs}{Character string containing a spatial reference system definition
+as OGC WKT or other well-known format (e.g., the input formats usable with
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}).}
+
+\item{geom_fld_name}{Character string specifying a geometry field name
+Defaults to \code{"geometry"}.}
+
+\item{fld_subtype}{Character string containing the name of a field subtype.
+One of  \code{OFSTNone} (the default), \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32},
+\code{OFSTJSON}, \code{OFSTUUID}.}
+
+\item{fld_width}{Optional integer scalar specifying max number of characters.}
+
+\item{fld_precision}{Optional integer scalar specifying number of digits
+after the decimal point.}
 }
 \description{
 This topic contains documentation and helper functions for defining an
@@ -33,7 +76,9 @@ properties.
 \code{ogr_def_geom_field()} similarly creates a geometry field definition.
 A list containing zero or more attribute field definitions, along with one
 or more geomtery field definitions, comprise an OGR feature class definition
-(a.k.a. layer definition).
+(a.k.a. layer definition). \code{ogr_def_layer()} initializes such a list with a
+geometry field. Attribute fields can be added to a feature class definition
+with calls to \code{ogr_def_field()} as in the examples.
 }
 \details{
 All features in an OGR Layer share a common schema (feature class), modeled
@@ -106,8 +151,17 @@ a not-null constraint may be available as a layer creation option. For
 example, GeoPackage format has a layer creation option
 \verb{GEOMETRY_NULLABLE=[YES/NO]}.
 }
+\note{
+The feature id (FID) is a special property of a feature and not treated as
+an attribute of the feature. Addiotional information is given in the GDAL
+documentation for the
+\href{https://gdal.org/user/ogr_sql_dialect.html#feature-id-fid}{OGR SQL} and
+\href{https://gdal.org/user/sql_sqlite_dialect.html#feature-id-fid}{SQLite}
+SQL dialects. Implications for SQL statements and result sets may depend
+on the dialect used.
+}
 \seealso{
-the \link{ogr_manage} functions, \code{\link[=ogrinfo]{ogrinfo()}}
+\code{\link[=ogr_ds_create]{ogr_ds_create()}}, \code{\link[=ogr_layer_create]{ogr_layer_create()}}, \code{\link[=ogrinfo]{ogrinfo()}}
 
 WKT representation of geometry:\cr
 \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}

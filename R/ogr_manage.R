@@ -4,15 +4,16 @@
 #' Utility functions for managing vector data sources
 #'
 #' This set of functions can be used to create new vector datasets,
-#' test existence of dataset/layer/field, test dataset capabilities,
+#' test existence of dataset/layer/field, test dataset and layer capabilities,
 #' create new layers in an existing dataset, delete layers, create new
 #' attribute and geometry fields on an existing layer, and delete fields.
 #'
 #' @name ogr_manage
 #' @details
-#' These functions should be complementary to `ogrinfo()` and `ogr2ogr()` for
-#' vector data management. Bindings to OGR wrap portions of the GDAL Vector
-#' API (ogr_core.h and ogr_api.h,
+#' These functions are complementary to `ogrinfo()` and `ogr2ogr()` for
+#' vector data management. They are also intended to support vector I/O in a
+#' future release of gdalraster. Bindings to OGR wrap portions of the GDAL
+#' Vector API (ogr_core.h and ogr_api.h,
 #' \url{https://gdal.org/api/vector_c_api.html}).
 #'
 #' `ogr_ds_exists()` tests whether a vector dataset can be opened from the
@@ -27,7 +28,8 @@
 #' attempting to open it with update access by default.
 #' Returns a list of capabilities with values `TRUE` or `FALSE`, or `NULL` is
 #' returned if `dsn` cannot be opened with the requested access.
-#' The returned list elements include the following:
+#' Wrapper of `GDALDatasetTestCapability()` in the GDAL API.
+#' The returned list contains the following named elements:
 #' * `CreateLayer`: `TRUE` if this datasource can create new layers
 #' * `DeleteLayer`: `TRUE` if this datasource can delete existing layers
 #' * `CreateGeomFieldAfterCreateLayer`: `TRUE` if the layers of this
@@ -46,7 +48,7 @@
 #' `ogr_ds_create()` creates a new vector datasource, optionally also creating
 #' a layer, and optionally creating one or more fields on the layer.
 #' The attribute fields and geometry field(s) to create can be specified as a
-#' feature class definition (`layer_defn` as list, see below), or
+#' feature class definition (`layer_defn` as list, see [ogr_define]), or
 #' alternatively, by giving the `geom_type` and `srs`, optionally along with
 #' one `fld_name` and `fld_type` to be created in the layer. Returns a logical
 #' scalar, `TRUE` indicating success.
@@ -63,18 +65,20 @@
 #' attempting to open the dataset with update access by default.
 #' Returns a list of capabilities with values `TRUE` or `FALSE`. `NULL` is
 #' returned if `dsn` cannot be opened with the requested access, or `layer`
-#' cannot be found. The returned list elements include the following:
+#' cannot be found. The returned list contains the following named elements:
 #' `RandomRead`, `SequentialWrite`, `RandomWrite`, `UpsertFeature`,
 #' `FastSpatialFilter`, `FastFeatureCount`, `FastGetExtent`,
 #' `FastSetNextByIndex`, `CreateField`, `CreateGeomField`, `DeleteField`,
 #' `ReorderFields`, `AlterFieldDefn`, `AlterGeomFieldDefn`, `DeleteFeature`,
-#' `StringsAsUTF8`, `Transactions`, `CurveGeometries`. See the GDAL
-#' documentation for [`OGR_L_TestCapability()`](https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).
+#' `StringsAsUTF8`, `Transactions`, `CurveGeometries`.
+#' See the GDAL documentation for
+#' [`OGR_L_TestCapability()`](https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).
 #'
 #' `ogr_layer_create()` creates a new layer in a vector dataset, with a
 #' specified geometry type and spatial reference definition. This function also
 #' accepts a feature class definition given as a list of field names and their
-#' definitions (see below). Returns a logical scalar, `TRUE` indicating success.
+#' definitions (see [ogr_define]). Returns a logical scalar, `TRUE` indicating
+#' success.
 #'
 #' `ogr_layer_field_names()` returns a character vector of field names on a
 #' layer, or `NULL` if no fields are found.
@@ -103,6 +107,7 @@
 #' (e.g., `ALTER TABLE`, `DROP TABLE`, `CREATE INDEX`, `DROP INDEX`, `INSERT`,
 #' `UPDATE`, `DELETE`). Currently, this function does not return a result set
 #' for a `SELECT` statement. Returns `NULL` invisibly.
+#' Wrapper of `GDALDatasetExecuteSQL()` in the GDAL C API.
 #'
 #' @param dsn Character string. The vector data source name, e.g., a filename
 #' or database connection string.
@@ -168,22 +173,28 @@
 #'
 #' @note
 #' The OGR SQL document linked under **See Also** contains information on the
-#' SQL dialect supported internally by OGR. Some format drivers (e.g., PostGIS)
-#' pass the SQL directly through to the underlying RDBMS (unless `OGRSQL` is
-#' explicitly passed as the dialect). The SQLite dialect can also be requested
-#' with the `SQLite` string passed as the `dialect` argument of
+#' SQL dialect supported internally by GDAL/OGR. Some format drivers (e.g.,
+#' PostGIS) pass the SQL directly through to the underlying RDBMS (unless
+#' `OGRSQL` is explicitly passed as the dialect). The SQLite dialect can also
+#' be requested with the `SQLite` string passed as the `dialect` argument of
 #' `ogr_execute_sql()`. This assumes that GDAL/OGR is built with support for
 #' SQLite, and preferably also with Spatialite support to benefit from spatial
-#' functions. The GDAL document for the SQLite dialect has detailed information.
+#' functions. The GDAL document for SQLite dialect has detailed information.
 #'
 #' Other SQL dialects may also be present for some vector formats.
-#' For example, the `"INDIRECT_SQLITE"` dialect could potentially be used with
+#' For example, the `"INDIRECT_SQLITE"` dialect might potentially be used with
 #' GeoPackage format (\url{https://gdal.org/drivers/vector/gpkg.html#sql}).
 #'
-#' `ogrinfo()` can also be used to edit data with SQL statements (GDAL >= 3.7).
+#' [ogrinfo()] can also be used to edit data with SQL statements (GDAL >= 3.7).
+#'
+#' The name of the geometry column of a layer is empty (`""`) with some formats
+#' such as ESRI Shapefile and Flatgeobuf. Implications for SQL may depend on the
+#' dialect used. See the GDAL documentation for the "OGR SQL" and "SQLite" SQL
+#' dialects for details.
 #'
 #' @seealso
-#' [ogr_def_field()], [ogr_def_geom_field()], [ogrinfo()], [ogr2ogr()]
+#' [gdal_formats()], [has_spatialite()], [ogr_def_field()], [ogrinfo()],
+#' [ogr2ogr()]
 #'
 #' OGR SQL dialect and SQLite SQL dialect:\cr
 #' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}

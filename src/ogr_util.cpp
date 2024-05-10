@@ -317,11 +317,11 @@ int _ogr_ds_layer_count(std::string dsn) {
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
 
-    CPLPushErrorHandler(CPLQuietErrorHandler);
+    //CPLPushErrorHandler(CPLQuietErrorHandler);
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
-    if (hDS == nullptr)
-        return -1;
-    CPLPopErrorHandler();
+    //if (hDS == nullptr)
+    //    return -1;
+    //CPLPopErrorHandler();
 
     int cnt = GDALDatasetGetLayerCount(hDS);
     GDALReleaseDataset(hDS);
