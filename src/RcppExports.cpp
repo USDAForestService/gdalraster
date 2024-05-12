@@ -182,25 +182,25 @@ BEGIN_RCPP
 END_RCPP
 }
 // _get_pixel_line_gt
-Rcpp::IntegerMatrix _get_pixel_line_gt(const Rcpp::NumericMatrix xy, const std::vector<double> gt);
+Rcpp::IntegerMatrix _get_pixel_line_gt(const Rcpp::RObject& xy, const std::vector<double> gt);
 RcppExport SEXP _gdalraster__get_pixel_line_gt(SEXP xySEXP, SEXP gtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix >::type xy(xySEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type xy(xySEXP);
     Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
     rcpp_result_gen = Rcpp::wrap(_get_pixel_line_gt(xy, gt));
     return rcpp_result_gen;
 END_RCPP
 }
 // _get_pixel_line_ds
-Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::NumericMatrix xy, const GDALRaster& ds);
+Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::RObject& xy, const GDALRaster* ds);
 RcppExport SEXP _gdalraster__get_pixel_line_ds(SEXP xySEXP, SEXP dsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericMatrix >::type xy(xySEXP);
-    Rcpp::traits::input_parameter< const GDALRaster& >::type ds(dsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type xy(xySEXP);
+    Rcpp::traits::input_parameter< const GDALRaster* >::type ds(dsSEXP);
     rcpp_result_gen = Rcpp::wrap(_get_pixel_line_ds(xy, ds));
     return rcpp_result_gen;
 END_RCPP
