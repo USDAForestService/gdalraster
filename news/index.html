@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9160</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9170</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.10.9160" id="gdalraster-1109160-dev">gdalraster 1.10.9160 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109160-dev"></a></h2>
-<ul><li><p><code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code>: an object of class <code>GDALRaster</code> can now be passed for the <code>gt</code> parameter, in which case the geotransform will be obtained from the object and bounds checking on the raster extent will be done (original behaviour for <code>gt</code> as numeric vector is unchanged) (2024-05-12)</p></li>
+<h2 class="pkg-version" data-toc-text="1.10.9170" id="gdalraster-1109170-dev">gdalraster 1.10.9170 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109170-dev"></a></h2>
+<ul><li><p>add <code>GDALRaster::get_pixel_line()</code>: alternate calling for <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code> on an object of class <code>GDALRaster</code> (2024-05-12)</p></li>
+<li><p><code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code>: an object of class <code>GDALRaster</code> can now be passed for the <code>gt</code> parameter, in which case the geotransform will be obtained from the object and bounds checking on the raster extent will be done (original behaviour for <code>gt</code> as numeric vector is unchanged) (2024-05-12)</p></li>
 <li><p>add <code><a href="../reference/has_spatialite.html">has_spatialite()</a></code>: is GDAL built with SpatiaLite support (2024-05-06)</p></li>
 <li><p><code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code>: add argument <code>open_options</code> to support options on the source dataset (2024-04-28)</p></li>
 <li><p>(internal) improve the check for <code>"-json"</code> as a <code>cl_arg</code> to <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code> (2024-04-23)</p></li>

@@ -16,7 +16,7 @@ increasing left to right, top to bottom."><!-- mathjax --><script src="https://c
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9160</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9170</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -77,8 +77,9 @@ increasing left to right, top to bottom.</p>
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
     <dl><dt>xy</dt>
-<dd><p>Numeric array of geospatial x,y coordinates in the same
-spatial reference system as <code>gt</code>.</p></dd>
+<dd><p>Numeric matrix of geospatial x,y coordinates in the same spatial
+reference system as <code>gt</code> (or two-column data frame that will be coerced
+to numeric matrix).</p></dd>
 
 
 <dt>gt</dt>
@@ -91,7 +92,7 @@ which the geotransform will be obtained (see Note).</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     
 
-<p>Integer array of raster pixel/line.</p>
+<p>Integer matrix of raster pixel/line.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -101,7 +102,8 @@ pixel/line could be less than zero and max pixel/line could be greater than
 the raster x/y size). If <code>gt</code> is obtained from an object of class
 <code>GDALRaster</code>, then <code>NA</code> is returned for points that fall outside the
 raster extent and a warning emitted giving the number points that were
-outside.</p>
+outside. This latter case is equivalent to calling the <code>$get_pixel_line()</code>
+class method on the <code>GDALRaster</code> object (see Examples).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -111,7 +113,7 @@ outside.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">pt_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_pts.csv"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co">## id, x, y in NAD83 / UTM zone 12N</span></span></span>
+<span class="r-in"><span><span class="co"># id, x, y in NAD83 / UTM zone 12N</span></span></span>
 <span class="r-in"><span><span class="va">pts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">pt_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">pts</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id   xcoord  ycoord</span>
@@ -125,10 +127,11 @@ outside.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8   8 326247.7 5102506</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 9   9 327711.7 5104476</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 10 10 324181.7 5103901</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">raster_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">raster_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">gt</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getGeoTransform</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">get_pixel_line</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/matrix.html" class="external-link">as.matrix</a></span><span class="op">(</span><span class="va">pts</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span>, <span class="va">gt</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_pixel_line</span><span class="op">(</span><span class="va">pts</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="va">gt</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       [,1] [,2]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]   39   57</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]   23   68</span>
@@ -140,6 +143,53 @@ outside.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]   92   85</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  141   20</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10,]   23   39</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># or, using the class method</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">get_pixel_line</span><span class="op">(</span><span class="va">pts</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       [,1] [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]   39   57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]   23   68</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]    1   58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]   58   52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]   74   90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,]   94   38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]   68   31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]   92   85</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  141   20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]   23   39</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># add a point outside the raster extent</span></span></span>
+<span class="r-in"><span><span class="va">pts</span><span class="op">[</span><span class="fl">11</span>, <span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">11</span>, <span class="fl">323318</span>, <span class="fl">5105104</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">get_pixel_line</span><span class="op">(</span><span class="va">pts</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span>, <span class="va">gt</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       [,1] [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]   39   57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]   23   68</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]    1   58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]   58   52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]   74   90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,]   94   38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]   68   31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]   92   85</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  141   20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]   23   39</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11,]   -6   -1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># with bounds checking on the raster extent</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">get_pixel_line</span><span class="op">(</span><span class="va">pts</span><span class="op">[</span>, <span class="op">-</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></span>
+<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>1 point(s) outside the raster extent, NA returned</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>       [,1] [,2]</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]   39   57</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]   23   68</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]    1   58</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]   58   52</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]   74   90</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,]   94   38</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]   68   31</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]   92   85</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]  141   20</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]   23   39</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11,]   NA   NA</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>

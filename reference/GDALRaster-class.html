@@ -16,7 +16,7 @@ details of the GDAL Raster API."><!-- mathjax --><script src="https://cdnjs.clou
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9160</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9170</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -143,6 +143,7 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">get_pixel_line</span><span class="op">(</span><span class="va">xy</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDescription</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
@@ -283,6 +284,13 @@ raster.</p>
 Returns an integer vector of length three containing the raster dimensions.
 Equivalent to:
 <code>c(ds$getRasterXSize(), ds$getRasterYSize(), ds$getRasterCount())</code></p>
+<p><code>$get_pixel_line()</code>
+Converts geospatial coordinates to pixel/line (raster column/row numbers).
+<code>xy</code> is a numeric matrix of geospatial x,y coordinates in the same spatial
+reference system as the raster (or two-column data frame that will be
+coerced to numeric matrix). Returns an integer matrix of raster pixel/line.
+See the stand-alone function of the same name (<code><a href="get_pixel_line.html">get_pixel_line()</a></code>) for more
+info and examples.</p>
 <p><code>$getRasterCount()</code>
 Returns the number of raster bands on this dataset. For the methods
 described below that operate on individual bands, the <code>band</code>
