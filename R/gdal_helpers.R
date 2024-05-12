@@ -290,3 +290,52 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
     else
         return(opts)
 }
+
+#' Raster pixel/line from geospatial x,y coordinates
+#'
+#' `get_pixel_line()` converts geospatial coordinates to pixel/line (raster
+#' column, row numbers).
+#' The upper left corner pixel is the raster origin (0,0) with column, row
+#' increasing left to right, top to bottom.
+#'
+#' @param xy Numeric array of geospatial x,y coordinates in the same
+#' spatial reference system as \code{gt}.
+#' @param gt Either a numeric vector of length six containing the affine
+#' geotransform for the raster, or an object of class `GDALRaster` from
+#' which the geotransform will be obtained (see Note).
+#' @returns Integer array of raster pixel/line.
+#'
+#' @note
+#' This function applies the inverse geotranform to the input points. If `gt`
+#' is given as the numeric vector, no bounds checking is done (i.e., min
+#' pixel/line could be less than zero and max pixel/line could be greater than
+#' the raster x/y size). If `gt` is obtained from an object of class
+#' `GDALRaster`, then `NA` is returned for points that fall outside the
+#' raster extent and a warning emitted giving the number points that were
+#' outside.
+#'
+#' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [inv_geotransform()]
+#'
+#' @examples
+#' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
+#' ## id, x, y in NAD83 / UTM zone 12N
+#' pts <- read.csv(pt_file)
+#' print(pts)
+#' raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+#' ds <- new(GDALRaster, raster_file)
+#' gt <- ds$getGeoTransform()
+#' get_pixel_line(as.matrix(pts[,-1]), gt)
+#' ds$close()
+get_pixel_line <- function(xy, gt) {
+    if (!is.numeric(xy) && !is.matrix(xy))
+        stop("'xy' must be a numeric matrix", call. = FALSE)
+
+    if (is(gt, "Rcpp_GDALRaster")) {
+        return(.get_pixel_line_ds(xy, gt))
+    } else if (is.numeric(gt) && length(gt) == 6) {
+        return(.get_pixel_line_gt(xy, gt))
+    } else {
+        stop("'gt' must be a numeric vector of length 6, or GDALRaster object",
+             call. = FALSE)
+    }
+}
