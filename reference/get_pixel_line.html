@@ -16,7 +16,7 @@ increasing left to right, top to bottom."><!-- mathjax --><script src="https://c
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9150</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9160</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -58,7 +58,7 @@ increasing left to right, top to bottom."><!-- mathjax --><script src="https://c
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
       <img src="" class="logo" alt=""><h1>Raster pixel/line from geospatial x,y coordinates</h1>
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/HEAD/R/RcppExports.R" class="external-link"><code>R/RcppExports.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/HEAD/R/gdal_helpers.R" class="external-link"><code>R/gdal_helpers.R</code></a></small>
       <div class="d-none name"><code>get_pixel_line.Rd</code></div>
     </div>
 
@@ -82,8 +82,9 @@ spatial reference system as <code>gt</code>.</p></dd>
 
 
 <dt>gt</dt>
-<dd><p>Numeric vector of length six. The affine geotransform for the
-raster.</p></dd>
+<dd><p>Either a numeric vector of length six containing the affine
+geotransform for the raster, or an object of class <code>GDALRaster</code> from
+which the geotransform will be obtained (see Note).</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -91,6 +92,16 @@ raster.</p></dd>
     
 
 <p>Integer array of raster pixel/line.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p>This function applies the inverse geotranform to the input points. If <code>gt</code>
+is given as the numeric vector, no bounds checking is done (i.e., min
+pixel/line could be less than zero and max pixel/line could be greater than
+the raster x/y size). If <code>gt</code> is obtained from an object of class
+<code>GDALRaster</code>, then <code>NA</code> is returned for points that fall outside the
+raster extent and a warning emitted giving the number points that were
+outside.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
