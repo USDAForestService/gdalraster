@@ -333,27 +333,11 @@ std::vector<int> GDALRaster::dim() const {
     return ret;
 }
 
-Rcpp::IntegerMatrix GDALRaster::get_pixel_line(
-                    const Rcpp::RObject& xy) const {
+Rcpp::IntegerMatrix GDALRaster::get_pixel_line(const Rcpp::RObject& xy) const {
 
     _checkAccess(GA_ReadOnly);
 
-    Rcpp::NumericMatrix xy_in;
-    if (Rcpp::is<Rcpp::DataFrame>(xy)) {
-        xy_in = _df_to_matrix(xy);
-    }
-    else if (Rcpp::is<Rcpp::NumericVector>(xy)) {
-        if (Rf_isMatrix(xy))
-            xy_in = Rcpp::as<Rcpp::NumericMatrix>(xy);
-    }
-    else {
-        Rcpp::stop("'xy' must be a two-column data frame or matrix");
-    }
-
-    if (xy_in.nrow() == 0)
-        Rcpp::stop("input matrix is empty");
-
-    return _get_pixel_line_ds(xy_in, this);
+    return _get_pixel_line_ds(xy, this);
 }
 
 std::vector<int> GDALRaster::getBlockSize(int band) const {
