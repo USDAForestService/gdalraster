@@ -333,6 +333,29 @@ std::vector<int> GDALRaster::dim() const {
     return ret;
 }
 
+Rcpp::IntegerMatrix GDALRaster::get_pixel_line(
+                    const Rcpp::RObject& xy) const {
+
+    _checkAccess(GA_ReadOnly);
+
+    Rcpp::NumericMatrix xy_in;
+    if (Rcpp::is<Rcpp::DataFrame>(xy)) {
+        xy_in = _df_to_matrix(xy);
+    }
+    else if (Rcpp::is<Rcpp::NumericVector>(xy)) {
+        if (Rf_isMatrix(xy))
+            xy_in = Rcpp::as<Rcpp::NumericMatrix>(xy);
+    }
+    else {
+        Rcpp::stop("'xy' must be a two-column data frame or matrix");
+    }
+
+    if (xy_in.nrow() == 0)
+        Rcpp::stop("input matrix is empty");
+
+    return _get_pixel_line_ds(xy_in, this);
+}
+
 std::vector<int> GDALRaster::getBlockSize(int band) const {
     _checkAccess(GA_ReadOnly);
 
@@ -1495,6 +1518,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Return the resolution (pixel width, pixel height)")
     .const_method("dim", &GDALRaster::dim,
         "Return raster dimensions (xsize, ysize, number of bands)")
+    .const_method("get_pixel_line", &GDALRaster::get_pixel_line,
+        "Convert geospatial coordinates to pixel/line")
     .const_method("getBlockSize", &GDALRaster::getBlockSize,
         "Retrieve the actual block size for a given block offset")
     .const_method("getActualBlockSize", &GDALRaster::getActualBlockSize,

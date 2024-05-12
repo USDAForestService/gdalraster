@@ -631,16 +631,31 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' input is gt vector, no bounds checking done on output
 //' @noRd
 // [[Rcpp::export(name = ".get_pixel_line_gt")]]
-Rcpp::IntegerMatrix _get_pixel_line_gt(const Rcpp::NumericMatrix xy,
+Rcpp::IntegerMatrix _get_pixel_line_gt(const Rcpp::RObject& xy,
         const std::vector<double> gt) {
+
+    Rcpp::NumericMatrix xy_in;
+    if (Rcpp::is<Rcpp::DataFrame>(xy)) {
+        xy_in = _df_to_matrix(xy);
+    }
+    else if (Rcpp::is<Rcpp::NumericVector>(xy)) {
+        if (Rf_isMatrix(xy))
+            xy_in = Rcpp::as<Rcpp::NumericMatrix>(xy);
+    }
+    else {
+        Rcpp::stop("'xy' must be a two-column data frame or matrix");
+    }
+
+    if (xy_in.nrow() == 0)
+        Rcpp::stop("input matrix is empty");
 
     Rcpp::NumericVector inv_gt = inv_geotransform(gt);
     if (Rcpp::any(Rcpp::is_na(inv_gt)))
         Rcpp::stop("could not get inverse geotransform");
-    Rcpp::IntegerMatrix pixel_line(xy.nrow(), 2);
-    for (R_xlen_t i = 0; i < xy.nrow(); ++i) {
-        double geo_x = xy(i, 0);
-        double geo_y = xy(i, 1);
+    Rcpp::IntegerMatrix pixel_line(xy_in.nrow(), 2);
+    for (R_xlen_t i = 0; i < xy_in.nrow(); ++i) {
+        double geo_x = xy_in(i, 0);
+        double geo_y = xy_in(i, 1);
         // column
         pixel_line(i, 0) = static_cast<int>(std::floor(inv_gt[0] +
                                             inv_gt[1] * geo_x +
@@ -658,18 +673,33 @@ Rcpp::IntegerMatrix _get_pixel_line_gt(const Rcpp::NumericMatrix xy,
 //' alternate version for GDALRaster input, with bounds checking
 //' @noRd
 // [[Rcpp::export(name = ".get_pixel_line_ds")]]
-Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::NumericMatrix xy,
-        const GDALRaster& ds) {
+Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::RObject& xy,
+        const GDALRaster* ds) {
 
-    std::vector<double> gt = ds.getGeoTransform();
+    Rcpp::NumericMatrix xy_in;
+    if (Rcpp::is<Rcpp::DataFrame>(xy)) {
+        xy_in = _df_to_matrix(xy);
+    }
+    else if (Rcpp::is<Rcpp::NumericVector>(xy)) {
+        if (Rf_isMatrix(xy))
+            xy_in = Rcpp::as<Rcpp::NumericMatrix>(xy);
+    }
+    else {
+        Rcpp::stop("'xy' must be a two-column data frame or matrix");
+    }
+
+    if (xy_in.nrow() == 0)
+        Rcpp::stop("input matrix is empty");
+
+    std::vector<double> gt = ds->getGeoTransform();
     Rcpp::NumericVector inv_gt = inv_geotransform(gt);
     if (Rcpp::any(Rcpp::is_na(inv_gt)))
         Rcpp::stop("could not get inverse geotransform");
-    Rcpp::IntegerMatrix pixel_line(xy.nrow(), 2);
+    Rcpp::IntegerMatrix pixel_line(xy_in.nrow(), 2);
     uint64_t num_outside = 0;
-    for (R_xlen_t i = 0; i < xy.nrow(); ++i) {
-        double geo_x = xy(i, 0);
-        double geo_y = xy(i, 1);
+    for (R_xlen_t i = 0; i < xy_in.nrow(); ++i) {
+        double geo_x = xy_in(i, 0);
+        double geo_y = xy_in(i, 1);
         // column
         pixel_line(i, 0) = static_cast<int>(std::floor(inv_gt[0] +
                                             inv_gt[1] * geo_x +
@@ -680,8 +710,8 @@ Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::NumericMatrix xy,
                                             inv_gt[5] * geo_y));
 
         if (pixel_line(i, 0) < 0 || pixel_line(i, 1) < 0 ||
-                pixel_line(i, 0) >= ds.getRasterXSize() ||
-                pixel_line(i, 1) >= ds.getRasterYSize()) {
+                pixel_line(i, 0) >= ds->getRasterXSize() ||
+                pixel_line(i, 1) >= ds->getRasterYSize()) {
 
             num_outside += 1;
             pixel_line(i, 0) = NA_INTEGER;
@@ -691,7 +721,7 @@ Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::NumericMatrix xy,
 
     if (num_outside > 0)
         Rcpp::warning(std::to_string(num_outside) +
-                      " points were outside the raster extent, NA returned");
+                      " point(s) outside the raster extent, NA returned");
 
     return pixel_line;
 }

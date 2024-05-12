@@ -1,4 +1,6 @@
-# gdalraster 1.10.9160 (dev)
+# gdalraster 1.10.9170 (dev)
+
+* add `GDALRaster::get_pixel_line()`: alternate calling for `get_pixel_line()` on an object of class `GDALRaster` (2024-05-12)
 
 * `get_pixel_line()`: an object of class `GDALRaster` can now be passed for the `gt` parameter, in which case the geotransform will be obtained from the object and bounds checking on the raster extent will be done (original behaviour for `gt` as numeric vector is unchanged) (2024-05-12)
 

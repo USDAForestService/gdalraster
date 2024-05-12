@@ -107,6 +107,7 @@ class GDALRaster {
     std::vector<double> bbox() const;
     std::vector<double> res() const;
     std::vector<int> dim() const;
+    Rcpp::IntegerMatrix get_pixel_line(const Rcpp::RObject& xy) const;
 
     std::vector<int> getBlockSize(int band) const;
     std::vector<int> getActualBlockSize(int band, int xblockoff,
@@ -244,11 +245,11 @@ double vsi_get_disk_free_space(Rcpp::CharacterVector path);
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
                                         double pixel, double line);
 Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
-Rcpp::IntegerMatrix _get_pixel_line_gt(const Rcpp::NumericMatrix xy,
+Rcpp::IntegerMatrix _get_pixel_line_gt(const Rcpp::RObject& xy,
                                        const std::vector<double> gt);
 
-Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::NumericMatrix xy,
-                                       const GDALRaster& ds);
+Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::RObject& xy,
+                                       const GDALRaster* ds);
 
 bool buildVRT(Rcpp::CharacterVector vrt_filename,
               Rcpp::CharacterVector input_rasters,

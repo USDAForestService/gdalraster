@@ -298,12 +298,13 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
 #' The upper left corner pixel is the raster origin (0,0) with column, row
 #' increasing left to right, top to bottom.
 #'
-#' @param xy Numeric array of geospatial x,y coordinates in the same
-#' spatial reference system as \code{gt}.
+#' @param xy Numeric matrix of geospatial x,y coordinates in the same spatial
+#' reference system as \code{gt} (or two-column data frame that will be coerced
+#' to numeric matrix).
 #' @param gt Either a numeric vector of length six containing the affine
 #' geotransform for the raster, or an object of class `GDALRaster` from
 #' which the geotransform will be obtained (see Note).
-#' @returns Integer array of raster pixel/line.
+#' @returns Integer matrix of raster pixel/line.
 #'
 #' @note
 #' This function applies the inverse geotranform to the input points. If `gt`
@@ -312,23 +313,40 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
 #' the raster x/y size). If `gt` is obtained from an object of class
 #' `GDALRaster`, then `NA` is returned for points that fall outside the
 #' raster extent and a warning emitted giving the number points that were
-#' outside.
+#' outside. This latter case is equivalent to calling the `$get_pixel_line()`
+#' class method on the `GDALRaster` object (see Examples).
 #'
 #' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [inv_geotransform()]
 #'
 #' @examples
 #' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
-#' ## id, x, y in NAD83 / UTM zone 12N
+#' # id, x, y in NAD83 / UTM zone 12N
 #' pts <- read.csv(pt_file)
 #' print(pts)
+#'
 #' raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds <- new(GDALRaster, raster_file)
 #' gt <- ds$getGeoTransform()
-#' get_pixel_line(as.matrix(pts[,-1]), gt)
+#' get_pixel_line(pts[, -1], gt)
+#'
+#' # or, using the class method
+#' ds$get_pixel_line(pts[, -1])
+#'
+#' # add a point outside the raster extent
+#' pts[11, ] <- c(11, 323318, 5105104)
+#' get_pixel_line(pts[, -1], gt)
+#'
+#' # with bounds checking on the raster extent
+#' ds$get_pixel_line(pts[, -1])
+#'
 #' ds$close()
 get_pixel_line <- function(xy, gt) {
-    if (!is.numeric(xy) && !is.matrix(xy))
-        stop("'xy' must be a numeric matrix", call. = FALSE)
+    if (!(is.matrix(xy) || is.data.frame(xy)))
+        stop("'xy' must be a data frame or numeric matrix", call. = FALSE)
+
+    if (ncol(xy) != 2)
+        stop("'xy' must have 2 columns",
+             call. = FALSE)
 
     if (is(gt, "Rcpp_GDALRaster")) {
         return(.get_pixel_line_ds(xy, gt))
