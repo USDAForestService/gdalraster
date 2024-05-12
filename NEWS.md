@@ -1,4 +1,6 @@
-# gdalraster 1.10.9150 (dev)
+# gdalraster 1.10.9160 (dev)
+
+* `get_pixel_line()`: an object of class `GDALRaster` can now be passed for the `gt` parameter, in which case the geotransform will be obtained from the object and bounds checking on the raster extent will be done (original behaviour for `gt` as numeric vector is unchanged) (2024-05-12)
 
 * add `has_spatialite()`: is GDAL built with SpatiaLite support (2024-05-06)
 
