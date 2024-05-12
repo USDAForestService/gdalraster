@@ -380,32 +380,17 @@ inv_geotransform <- function(gt) {
 }
 
 #' Raster pixel/line from geospatial x,y coordinates
-#'
-#' `get_pixel_line()` converts geospatial coordinates to pixel/line (raster
-#' column, row numbers).
-#' The upper left corner pixel is the raster origin (0,0) with column, row
-#' increasing left to right, top to bottom.
-#'
-#' @param xy Numeric array of geospatial x,y coordinates in the same
-#' spatial reference system as \code{gt}.
-#' @param gt Numeric vector of length six. The affine geotransform for the
-#' raster.
-#' @returns Integer array of raster pixel/line.
-#'
-#' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [inv_geotransform()]
-#'
-#' @examples
-#' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
-#' ## id, x, y in NAD83 / UTM zone 12N
-#' pts <- read.csv(pt_file)
-#' print(pts)
-#' raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-#' ds <- new(GDALRaster, raster_file)
-#' gt <- ds$getGeoTransform()
-#' get_pixel_line(as.matrix(pts[,-1]), gt)
-#' ds$close()
-get_pixel_line <- function(xy, gt) {
-    .Call(`_gdalraster_get_pixel_line`, xy, gt)
+#' input is gt vector, no bounds checking done on output
+#' @noRd
+.get_pixel_line_gt <- function(xy, gt) {
+    .Call(`_gdalraster__get_pixel_line_gt`, xy, gt)
+}
+
+#' Raster pixel/line from geospatial x,y coordinates
+#' alternate version for GDALRaster input, with bounds checking
+#' @noRd
+.get_pixel_line_ds <- function(xy, ds) {
+    .Call(`_gdalraster__get_pixel_line_ds`, xy, ds)
 }
 
 #' Build a GDAL virtual raster from a list of datasets
