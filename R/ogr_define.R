@@ -126,8 +126,8 @@
 #' \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
 #'
 #' @export
-ogr_def_field <- function(fld_type, subtype = NULL, width = NULL,
-                          precision = NULL, is_nullable = NULL,
+ogr_def_field <- function(fld_type, fld_subtype = NULL, fld_width = NULL,
+                          fld_precision = NULL, is_nullable = NULL,
                           is_unique = NULL, is_ignored = NULL,
                           default_value = NULL) {
 
@@ -138,25 +138,26 @@ ogr_def_field <- function(fld_type, subtype = NULL, width = NULL,
     else
         defn$type <- fld_type
 
-    if (!is.null(subtype)) {
-        if (!(is.character(subtype) && length(subtype) == 1))
-            stop("'subtype' must be a length-1 character vector", call. = FALSE)
+    if (!is.null(fld_subtype)) {
+        if (!(is.character(fld_subtype) && length(fld_subtype) == 1))
+            stop("'fld_subtype' must be a length-1 character vector",
+                 call. = FALSE)
         else
-            defn$subtype <- subtype
+            defn$subtype <- fld_subtype
     }
 
-    if (!is.null(width)) {
-        if (!(is.numeric(width) && length(width) == 1))
-            stop("'width' must be an integer scalar", call. = FALSE)
+    if (!is.null(fld_width)) {
+        if (!(is.numeric(fld_width) && length(fld_width) == 1))
+            stop("'fld_width' must be an integer scalar", call. = FALSE)
         else
-            defn$width <- width
+            defn$width <- fld_width
     }
 
-    if (!is.null(precision)) {
-        if (!(is.numeric(precision) && length(precision) == 1))
-            stop("'precision' must be an integer scalar", call. = FALSE)
+    if (!is.null(fld_precision)) {
+        if (!(is.numeric(fld_precision) && length(fld_precision) == 1))
+            stop("'fld_precision' must be an integer scalar", call. = FALSE)
         else
-            defn$precision <- precision
+            defn$precision <- fld_precision
     }
 
     if (!is.null(is_nullable)) {
@@ -233,8 +234,7 @@ ogr_def_geom_field <- function(geom_type, srs = NULL, is_nullable = NULL,
 
 #' @name ogr_define
 #' @export
-ogr_def_layer <- function(geom_type, geom_fld_name = "geom", srs = NULL,
-                          fld_names = NULL, ...) {
+ogr_def_layer <- function(geom_type, geom_fld_name = "geom", srs = NULL) {
 
     defn <- list()
 

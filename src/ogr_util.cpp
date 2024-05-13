@@ -1,6 +1,8 @@
 /* Utility functions for vector data sources
    Chris Toney <chris.toney at usda.gov> */
 
+#include <vector>
+
 #include "gdal.h"
 #include "cpl_error.h"
 #include "cpl_port.h"
@@ -317,14 +319,15 @@ int _ogr_ds_layer_count(std::string dsn) {
     std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
 
-    //CPLPushErrorHandler(CPLQuietErrorHandler);
+    CPLPushErrorHandler(CPLQuietErrorHandler);
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
-    //if (hDS == nullptr)
-    //    return -1;
-    //CPLPopErrorHandler();
+    CPLPopErrorHandler();
 
-    int cnt = GDALDatasetGetLayerCount(hDS);
-    GDALReleaseDataset(hDS);
+    int cnt = 0;
+    if (hDS != nullptr) {
+        cnt = GDALDatasetGetLayerCount(hDS);
+        GDALReleaseDataset(hDS);
+    }
     return cnt;
 }
 
@@ -1039,6 +1042,74 @@ bool _ogr_geom_field_create(std::string dsn, std::string layer,
 
     GDALReleaseDataset(hDS);
     return ret;
+}
+
+//' Rename an attribute field on a vector layer
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_field_rename")]]
+bool _ogr_field_rename(std::string dsn, std::string layer,
+                       std::string fld_name, std::string new_name) {
+
+    std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+    GDALDatasetH hDS = nullptr;
+    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+                     nullptr, nullptr, nullptr);
+    if (hDS == nullptr) {
+        Rcpp::Rcerr << "failed to open 'dsn' for update\n";
+        return false;
+    }
+
+    OGRLayerH  hLayer = nullptr;
+    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    if (hLayer == nullptr) {
+        Rcpp::Rcerr << "failed to access 'layer'\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+    if (!OGR_L_TestCapability(hLayer, OLCAlterFieldDefn)) {
+        Rcpp::Rcerr << "'layer' does not have AlterFieldDefn capability\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    int iField;
+    OGRFeatureDefnH hFDefn = nullptr;
+    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    if (hFDefn != nullptr) {
+        iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
+    }
+    else {
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+    if (iField == -1) {
+        Rcpp::Rcerr << "'fld_name' not found on 'layer'\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    OGRFieldDefnH hFieldDefn = nullptr;
+    OGRFieldType eFieldType;
+    hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
+    if (hFieldDefn != nullptr)
+        eFieldType = OGR_Fld_GetType(hFieldDefn);
+    else
+        eFieldType = OFTString;  // not changing the type anyway
+
+
+    OGRFieldDefnH hNewFieldDefn;
+    hNewFieldDefn = OGR_Fld_Create(new_name.c_str(), eFieldType);
+    OGRErr err = OGR_L_AlterFieldDefn(hLayer, iField, hNewFieldDefn,
+                                      ALTER_NAME_FLAG);
+
+    if (err != OGRERR_NONE) {
+        Rcpp::Rcerr << "failed to rename field\n";
+        return false;
+    }
+    else {
+        return true;
+    }
 }
 
 //' Delete an attribute field on a vector layer

@@ -2186,6 +2186,13 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_geom_field_create`, dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored)
 }
 
+#' Rename an attribute field on a vector layer
+#'
+#' @noRd
+.ogr_field_rename <- function(dsn, layer, fld_name, new_name) {
+    .Call(`_gdalraster__ogr_field_rename`, dsn, layer, fld_name, new_name)
+}
+
 #' Delete an attribute field on a vector layer
 #'
 #' @noRd

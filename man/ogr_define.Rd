@@ -9,9 +9,9 @@
 \usage{
 ogr_def_field(
   fld_type,
-  subtype = NULL,
-  width = NULL,
-  precision = NULL,
+  fld_subtype = NULL,
+  fld_width = NULL,
+  fld_precision = NULL,
   is_nullable = NULL,
   is_unique = NULL,
   is_ignored = NULL,
@@ -25,17 +25,20 @@ ogr_def_geom_field(
   is_ignored = NULL
 )
 
-ogr_def_layer(
-  geom_type,
-  geom_fld_name = "geom",
-  srs = NULL,
-  fld_names = NULL,
-  ...
-)
+ogr_def_layer(geom_type, geom_fld_name = "geom", srs = NULL)
 }
 \arguments{
 \item{fld_type}{Character string containing the name of a field data type
 (e.g., \code{OFTInteger}, \code{OFTReal}, \code{OFTString}).}
+
+\item{fld_subtype}{Character string containing the name of a field subtype.
+One of  \code{OFSTNone} (the default), \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32},
+\code{OFSTJSON}, \code{OFSTUUID}.}
+
+\item{fld_width}{Optional integer scalar specifying max number of characters.}
+
+\item{fld_precision}{Optional integer scalar specifying number of digits
+after the decimal point.}
 
 \item{is_nullable}{Optional NOT NULL field constraint (logical scalar).
 Defaults to \code{TRUE}.}
@@ -57,15 +60,6 @@ as OGC WKT or other well-known format (e.g., the input formats usable with
 
 \item{geom_fld_name}{Character string specifying a geometry field name
 Defaults to \code{"geometry"}.}
-
-\item{fld_subtype}{Character string containing the name of a field subtype.
-One of  \code{OFSTNone} (the default), \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32},
-\code{OFSTJSON}, \code{OFSTUUID}.}
-
-\item{fld_width}{Optional integer scalar specifying max number of characters.}
-
-\item{fld_precision}{Optional integer scalar specifying number of digits
-after the decimal point.}
 }
 \description{
 This topic contains documentation and helper functions for defining an
