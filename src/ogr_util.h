@@ -85,7 +85,7 @@ const std::map<std::string, OGRwkbGeometryType> MAP_OGR_GEOM_TYPE{
 };
 
 // map OGRFieldType enum to string names for use in R
-const std::map<std::string, OGRFieldType> MAP_OGR_FLD_TYPE{
+const std::map<std::string, OGRFieldType, _ci_less> MAP_OGR_FLD_TYPE{
     {"OFTInteger", OFTInteger},
     {"OFTIntegerList", OFTIntegerList},
     {"OFTReal", OFTReal},
@@ -103,7 +103,7 @@ const std::map<std::string, OGRFieldType> MAP_OGR_FLD_TYPE{
 // map OGRFieldSubType enum to string names for use in R
 // A subtype represents a hint, a restriction of the main type, that is not
 // strictly necessary to consult.
-const std::map<std::string, OGRFieldSubType> MAP_OGR_FLD_SUBTYPE{
+const std::map<std::string, OGRFieldSubType, _ci_less> MAP_OGR_FLD_SUBTYPE{
     {"OFSTNone", OFSTNone},
     {"OFSTBoolean", OFSTBoolean},
     {"OFSTInt16", OFSTInt16},
@@ -115,24 +115,47 @@ const std::map<std::string, OGRFieldSubType> MAP_OGR_FLD_SUBTYPE{
 
 bool _ogr_ds_exists(std::string dsn, bool with_update);
 
+std::string _ogr_ds_format(std::string dsn);
+
+SEXP _ogr_ds_test_cap(std::string dsn, bool with_update);
+
 bool _create_ogr(std::string format, std::string dst_filename,
                  int xsize, int ysize, int nbands, std::string dataType,
                  std::string layer, std::string geom_type, std::string srs,
-                 std::string fld_name,
+                 std::string fld_name, std::string fld_type,
                  Rcpp::Nullable<Rcpp::CharacterVector> dsco,
-                 Rcpp::Nullable<Rcpp::CharacterVector> lco);
+                 Rcpp::Nullable<Rcpp::CharacterVector> lco,
+                 Rcpp::Nullable<Rcpp::List> layer_defn);
 
 int _ogr_ds_layer_count(std::string dsn);
 
+SEXP _ogr_ds_layer_names(std::string dsn);
+
 bool _ogr_layer_exists(std::string dsn, std::string layer);
 
+SEXP _ogr_layer_test_cap(std::string dsn, std::string layer,
+                         bool with_update);
+
+OGRLayerH _CreateLayer(GDALDatasetH hDS, std::string layer,
+                       Rcpp::Nullable<Rcpp::List> layer_defn,
+                       std::string geom_type, std::string srs,
+                       Rcpp::Nullable<Rcpp::CharacterVector> options);
+
 bool _ogr_layer_create(std::string dsn, std::string layer,
+                       Rcpp::Nullable<Rcpp::List> layer_defn,
                        std::string geom_type, std::string srs,
                        Rcpp::Nullable<Rcpp::CharacterVector> options);
 
 bool _ogr_layer_delete(std::string dsn, std::string layer);
 
+SEXP _ogr_layer_field_names(std::string dsn, std::string layer);
+
 int _ogr_field_index(std::string dsn, std::string layer, std::string fld_name);
+
+bool _CreateField(GDALDatasetH hDS, OGRLayerH hLayer, std::string fld_name,
+                  std::string fld_type, std::string fld_subtype, int fld_width,
+                  int fld_precision, bool is_nullable, bool is_ignored,
+                  bool is_unique, std::string default_value);
 
 bool _ogr_field_create(std::string dsn, std::string layer,
                        std::string fld_name, std::string fld_type,
@@ -141,9 +164,19 @@ bool _ogr_field_create(std::string dsn, std::string layer,
                        bool is_ignored, bool is_unique,
                        std::string default_value);
 
+bool _CreateGeomField(GDALDatasetH hDS, OGRLayerH hLayer, std::string fld_name,
+                      OGRwkbGeometryType eGeomType, std::string srs,
+                      bool is_nullable, bool is_ignored);
+
 bool _ogr_geom_field_create(std::string dsn, std::string layer,
                             std::string fld_name, std::string geom_type,
                             std::string srs, bool is_nullable,
                             bool is_ignored);
+
+bool _ogr_field_delete(std::string dsn, std::string layer,
+                       std::string fld_name);
+
+SEXP _ogr_execute_sql(std::string dsn, std::string sql,
+                      std::string spatial_filter, std::string dialect);
 
 #endif  // SRC_OGR_UTIL_H_

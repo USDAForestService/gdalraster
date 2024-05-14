@@ -221,6 +221,8 @@ pop_error_handler <- function() {
 #' native SQL engine of those database systems.
 #'
 #' @seealso
+#' [ogrinfo()]
+#'
 #' OGR SQL dialect and SQLITE SQL dialect:\cr
 #' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
 #'
@@ -378,32 +380,17 @@ inv_geotransform <- function(gt) {
 }
 
 #' Raster pixel/line from geospatial x,y coordinates
-#'
-#' `get_pixel_line()` converts geospatial coordinates to pixel/line (raster
-#' column, row numbers).
-#' The upper left corner pixel is the raster origin (0,0) with column, row
-#' increasing left to right, top to bottom.
-#'
-#' @param xy Numeric array of geospatial x,y coordinates in the same
-#' spatial reference system as \code{gt}.
-#' @param gt Numeric vector of length six. The affine geotransform for the
-#' raster.
-#' @returns Integer array of raster pixel/line.
-#'
-#' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [inv_geotransform()]
-#'
-#' @examples
-#' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
-#' ## id, x, y in NAD83 / UTM zone 12N
-#' pts <- read.csv(pt_file)
-#' print(pts)
-#' raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-#' ds <- new(GDALRaster, raster_file)
-#' gt <- ds$getGeoTransform()
-#' get_pixel_line(as.matrix(pts[,-1]), gt)
-#' ds$close()
-get_pixel_line <- function(xy, gt) {
-    .Call(`_gdalraster_get_pixel_line`, xy, gt)
+#' input is gt vector, no bounds checking done on output
+#' @noRd
+.get_pixel_line_gt <- function(xy, gt) {
+    .Call(`_gdalraster__get_pixel_line_gt`, xy, gt)
+}
+
+#' Raster pixel/line from geospatial x,y coordinates
+#' alternate version for GDALRaster input, with bounds checking
+#' @noRd
+.get_pixel_line_ds <- function(xy, ds) {
+    .Call(`_gdalraster__get_pixel_line_ds`, xy, ds)
 }
 
 #' Build a GDAL virtual raster from a list of datasets
@@ -625,7 +612,7 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
 #' count" capability.
 #'
 #' @seealso
-#' [ogrinfo()]
+#' [ogrinfo()], the [ogr_manage] utilities
 #'
 #' [translate()] for raster data
 #'
@@ -697,7 +684,7 @@ ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL, open_opt
 #' metadata strings.
 #'
 #' @seealso
-#' [ogr2ogr()]
+#' [ogr2ogr()], the [ogr_manage] utilities
 #'
 #' @examples
 #' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
@@ -2107,12 +2094,26 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_ds_exists`, dsn, with_update)
 }
 
-#' Create a vector dataset with layer and field
-#' currently hard coded for field of OFTInteger
+#' Get the format driver short name for a vector dataset
 #'
 #' @noRd
-.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", dsco = NULL, lco = NULL) {
-    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, dsco, lco)
+.ogr_ds_format <- function(dsn) {
+    .Call(`_gdalraster__ogr_ds_format`, dsn)
+}
+
+#' Test if capabilities are available for a vector dataset
+#'
+#' @noRd
+.ogr_ds_test_cap <- function(dsn, with_update = TRUE) {
+    .Call(`_gdalraster__ogr_ds_test_cap`, dsn, with_update)
+}
+
+#' Create a vector dataset. Optionally create a layer in the dataset.
+#' A field is also created optionally (name and type only).
+#'
+#' @noRd
+.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", fld_type = "OFTInteger", dsco = NULL, lco = NULL, layer_defn = NULL) {
+    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, fld_type, dsco, lco, layer_defn)
 }
 
 #' Get number of layers in a dataset
@@ -2122,6 +2123,13 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_ds_layer_count`, dsn)
 }
 
+#' Get names of layers in a dataset
+#'
+#' @noRd
+.ogr_ds_layer_names <- function(dsn) {
+    .Call(`_gdalraster__ogr_ds_layer_names`, dsn)
+}
+
 #' Does layer exist
 #'
 #' @noRd
@@ -2129,11 +2137,18 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_layer_exists`, dsn, layer)
 }
 
+#' Test if capabilities are available for a vector layer
+#'
+#' @noRd
+.ogr_layer_test_cap <- function(dsn, layer, with_update = TRUE) {
+    .Call(`_gdalraster__ogr_layer_test_cap`, dsn, layer, with_update)
+}
+
 #' Create a layer in a vector dataset
 #'
 #' @noRd
-.ogr_layer_create <- function(dsn, layer, geom_type, srs = "", options = NULL) {
-    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, geom_type, srs, options)
+.ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = "UNKNOWN", srs = "", options = NULL) {
+    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, layer_defn, geom_type, srs, options)
 }
 
 #' Delete a layer in a vector dataset
@@ -2141,6 +2156,13 @@ has_geos <- function() {
 #' @noRd
 .ogr_layer_delete <- function(dsn, layer) {
     .Call(`_gdalraster__ogr_layer_delete`, dsn, layer)
+}
+
+#' Get names of fields on a layer
+#'
+#' @noRd
+.ogr_layer_field_names <- function(dsn, layer) {
+    .Call(`_gdalraster__ogr_layer_field_names`, dsn, layer)
 }
 
 #' Get field index or -1 if fld_name not found
@@ -2162,6 +2184,27 @@ has_geos <- function() {
 #' @noRd
 .ogr_geom_field_create <- function(dsn, layer, fld_name, geom_type, srs = "", is_nullable = TRUE, is_ignored = FALSE) {
     .Call(`_gdalraster__ogr_geom_field_create`, dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored)
+}
+
+#' Rename an attribute field on a vector layer
+#'
+#' @noRd
+.ogr_field_rename <- function(dsn, layer, fld_name, new_name) {
+    .Call(`_gdalraster__ogr_field_rename`, dsn, layer, fld_name, new_name)
+}
+
+#' Delete an attribute field on a vector layer
+#'
+#' @noRd
+.ogr_field_delete <- function(dsn, layer, fld_name) {
+    .Call(`_gdalraster__ogr_field_delete`, dsn, layer, fld_name)
+}
+
+#' Execute an SQL statement against the data store
+#'
+#' @noRd
+.ogr_execute_sql <- function(dsn, sql, spatial_filter = "", dialect = "") {
+    invisible(.Call(`_gdalraster__ogr_execute_sql`, dsn, sql, spatial_filter, dialect))
 }
 
 #' get PROJ version

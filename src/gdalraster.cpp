@@ -333,6 +333,13 @@ std::vector<int> GDALRaster::dim() const {
     return ret;
 }
 
+Rcpp::IntegerMatrix GDALRaster::get_pixel_line(const Rcpp::RObject& xy) const {
+
+    _checkAccess(GA_ReadOnly);
+
+    return _get_pixel_line_ds(xy, this);
+}
+
 std::vector<int> GDALRaster::getBlockSize(int band) const {
     _checkAccess(GA_ReadOnly);
 
@@ -607,7 +614,7 @@ Rcpp::NumericVector GDALRaster::getStatistics(int band, bool approx_ok,
 
     GDALRasterBandH hBand = _getBand(band);
     double min, max, mean, sd;
-    CPLErr err;
+    CPLErr err = CE_None;
 
     if (!force) {
         err = GDALGetRasterStatistics(hBand, approx_ok, force,
@@ -651,11 +658,10 @@ std::vector<double> GDALRaster::getHistogram(int band, double min, double max,
 
     GDALRasterBandH hBand = _getBand(band);
     std::vector<GUIntBig> hist(num_buckets);
-    CPLErr err;
-
-    err = GDALGetRasterHistogramEx(hBand, min, max, num_buckets, hist.data(),
-                                   incl_out_of_range, approx_ok,
-                                   GDALTermProgressR, nullptr);
+    CPLErr err = GDALGetRasterHistogramEx(hBand, min, max, num_buckets,
+                                          hist.data(), incl_out_of_range,
+                                          approx_ok, GDALTermProgressR,
+                                          nullptr);
 
     if (err != CE_None)
         Rcpp::stop("failed to get histogram");
@@ -672,11 +678,10 @@ Rcpp::List GDALRaster::getDefaultHistogram(int band, bool force) const {
     double max = NA_REAL;
     int num_buckets = 0;
     GUIntBig *panHistogram = nullptr;
-    CPLErr err;
 
-    err = GDALGetDefaultHistogramEx(hBand, &min, &max, &num_buckets,
-                                    &panHistogram, force,
-                                    GDALTermProgressR, nullptr);
+    CPLErr err = GDALGetDefaultHistogramEx(hBand, &min, &max, &num_buckets,
+                                           &panHistogram, force,
+                                           GDALTermProgressR, nullptr);
 
     if (err == CE_Failure)
         Rcpp::stop("failed to get default histogram");
@@ -821,7 +826,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
         Rcpp::stop("failed to access the requested band");
     GDALDataType eDT = GDALGetRasterDataType(hBand);
 
-    CPLErr err;
+    CPLErr err = CE_None;
 
     if (GDALDataTypeIsComplex(eDT)) {
     // complex data types
@@ -934,7 +939,7 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
     _checkAccess(GA_Update);
 
     GDALDataType eBufType;
-    CPLErr err;
+    CPLErr err = CE_None;
 
     GDALRasterBandH hBand = GDALGetRasterBand(hDataset, band);
     if (hBand == nullptr)
@@ -1144,7 +1149,7 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
     if (hRAT == nullptr)
         return R_NilValue;
 
-    CPLErr err;
+    CPLErr err = CE_None;
     int nCol = GDALRATGetColumnCount(hRAT);
     int nRow = GDALRATGetRowCount(hRAT);
     Rcpp::DataFrame df = Rcpp::DataFrame::create();
@@ -1217,7 +1222,7 @@ bool GDALRaster::setDefaultRAT(int band, const Rcpp::DataFrame& df) {
     int nCol = df.size();
     int nCol_added = 0;
     Rcpp::CharacterVector colNames = df.names();
-    CPLErr err;
+    CPLErr err = CE_None;
 
     GDALRasterAttributeTableH hRAT = GDALCreateRasterAttributeTable();
     if (hRAT == nullptr)
@@ -1495,6 +1500,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Return the resolution (pixel width, pixel height)")
     .const_method("dim", &GDALRaster::dim,
         "Return raster dimensions (xsize, ysize, number of bands)")
+    .const_method("get_pixel_line", &GDALRaster::get_pixel_line,
+        "Convert geospatial coordinates to pixel/line")
     .const_method("getBlockSize", &GDALRaster::getBlockSize,
         "Retrieve the actual block size for a given block offset")
     .const_method("getActualBlockSize", &GDALRaster::getActualBlockSize,
