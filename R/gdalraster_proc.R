@@ -1591,13 +1591,14 @@ polygonize <- function(raster_file,
             stop("specify 'out_fmt' to create a new dataset", call. = FALSE)
         }
         if (!.create_ogr(out_fmt, out_dsn, 0, 0, 0, "Unknown",
-                         out_layer, "POLYGON", srs, fld_name, dsco, lco)) {
+                         out_layer, "POLYGON", srs, fld_name, "OFTInteger",
+                         dsco, lco)) {
             stop("failed to create 'out_dsn'", call. = FALSE)
         }
     }
 
     if (!.ogr_layer_exists(out_dsn, out_layer)) {
-        res <- .ogr_layer_create(out_dsn, out_layer, "POLYGON", srs, lco)
+        res <- .ogr_layer_create(out_dsn, out_layer, NULL, "POLYGON", srs, lco)
         if (!res)
             stop("failed to create 'out_layer'", call. = FALSE)
         if (fld_name != "") {

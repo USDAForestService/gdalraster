@@ -221,6 +221,8 @@ pop_error_handler <- function() {
 #' native SQL engine of those database systems.
 #'
 #' @seealso
+#' [ogrinfo()]
+#'
 #' OGR SQL dialect and SQLITE SQL dialect:\cr
 #' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
 #'
@@ -2092,12 +2094,26 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_ds_exists`, dsn, with_update)
 }
 
-#' Create a vector dataset with layer and field
-#' currently hard coded for field of OFTInteger
+#' Get the format driver short name for a vector dataset
 #'
 #' @noRd
-.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", dsco = NULL, lco = NULL) {
-    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, dsco, lco)
+.ogr_ds_format <- function(dsn) {
+    .Call(`_gdalraster__ogr_ds_format`, dsn)
+}
+
+#' Test if capabilities are available for a vector dataset
+#'
+#' @noRd
+.ogr_ds_test_cap <- function(dsn, with_update = TRUE) {
+    .Call(`_gdalraster__ogr_ds_test_cap`, dsn, with_update)
+}
+
+#' Create a vector dataset. Optionally create a layer in the dataset.
+#' A field is also created optionally (name and type only).
+#'
+#' @noRd
+.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", fld_type = "OFTInteger", dsco = NULL, lco = NULL, layer_defn = NULL) {
+    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, fld_type, dsco, lco, layer_defn)
 }
 
 #' Get number of layers in a dataset
@@ -2107,6 +2123,13 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_ds_layer_count`, dsn)
 }
 
+#' Get names of layers in a dataset
+#'
+#' @noRd
+.ogr_ds_layer_names <- function(dsn) {
+    .Call(`_gdalraster__ogr_ds_layer_names`, dsn)
+}
+
 #' Does layer exist
 #'
 #' @noRd
@@ -2114,11 +2137,18 @@ has_geos <- function() {
     .Call(`_gdalraster__ogr_layer_exists`, dsn, layer)
 }
 
+#' Test if capabilities are available for a vector layer
+#'
+#' @noRd
+.ogr_layer_test_cap <- function(dsn, layer, with_update = TRUE) {
+    .Call(`_gdalraster__ogr_layer_test_cap`, dsn, layer, with_update)
+}
+
 #' Create a layer in a vector dataset
 #'
 #' @noRd
-.ogr_layer_create <- function(dsn, layer, geom_type, srs = "", options = NULL) {
-    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, geom_type, srs, options)
+.ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = "UNKNOWN", srs = "", options = NULL) {
+    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, layer_defn, geom_type, srs, options)
 }
 
 #' Delete a layer in a vector dataset
@@ -2126,6 +2156,13 @@ has_geos <- function() {
 #' @noRd
 .ogr_layer_delete <- function(dsn, layer) {
     .Call(`_gdalraster__ogr_layer_delete`, dsn, layer)
+}
+
+#' Get names of fields on a layer
+#'
+#' @noRd
+.ogr_layer_field_names <- function(dsn, layer) {
+    .Call(`_gdalraster__ogr_layer_field_names`, dsn, layer)
 }
 
 #' Get field index or -1 if fld_name not found
@@ -2147,6 +2184,27 @@ has_geos <- function() {
 #' @noRd
 .ogr_geom_field_create <- function(dsn, layer, fld_name, geom_type, srs = "", is_nullable = TRUE, is_ignored = FALSE) {
     .Call(`_gdalraster__ogr_geom_field_create`, dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored)
+}
+
+#' Rename an attribute field on a vector layer
+#'
+#' @noRd
+.ogr_field_rename <- function(dsn, layer, fld_name, new_name) {
+    .Call(`_gdalraster__ogr_field_rename`, dsn, layer, fld_name, new_name)
+}
+
+#' Delete an attribute field on a vector layer
+#'
+#' @noRd
+.ogr_field_delete <- function(dsn, layer, fld_name) {
+    .Call(`_gdalraster__ogr_field_delete`, dsn, layer, fld_name)
+}
+
+#' Execute an SQL statement against the data store
+#'
+#' @noRd
+.ogr_execute_sql <- function(dsn, sql, spatial_filter = "", dialect = "") {
+    invisible(.Call(`_gdalraster__ogr_execute_sql`, dsn, sql, spatial_filter, dialect))
 }
 
 #' get PROJ version
