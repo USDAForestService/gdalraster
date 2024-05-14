@@ -49,26 +49,28 @@ test_that("OGR management utilities work", {
                  c("field1", "field2", "field3", "geom"))
 
     deleteDataset(dsn)
+})
 
-    # edit data using SQL
-    # Flageobuf
+test_that("edit data using SQL works on shapefile", {
     src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
-    perims_fgb <- paste0(tempdir(), "/", "mtbs_perims.fgb")
-    ogr2ogr(src, perims_fgb, src_layers = "mtbs_perims")
-    expect_equal(ogr_ds_layer_names(perims_fgb), "mtbs_perims")
-    num_fields <- length(ogr_layer_field_names(perims_fgb, "mtbs_perims"))
+    perims_shp <- paste0(tempdir(), "/", "mtbs_perims.shp")
+    ogr2ogr(src, perims_shp, src_layers = "mtbs_perims")
+    expect_equal(ogr_ds_layer_names(perims_shp), "mtbs_perims")
+    num_fields <- length(ogr_layer_field_names(perims_shp, "mtbs_perims"))
     expect_true(num_fields > 2)
-    expect_true(ogr_layer_test_cap(perims_fgb, "mtbs_perims")$CreateField)
+    expect_true(ogr_layer_test_cap(perims_shp, "mtbs_perims")$CreateField)
     sql <- "ALTER TABLE mtbs_perims ADD burn_bnd_ha float"
-    expect_true(is.null(ogr_execute_sql(perims_fgb, sql)))
+    expect_true(is.null(ogr_execute_sql(perims_shp, sql)))
     sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
-    ogr_execute_sql(perims_fgb, sql, dialect = "SQLite")
-    expect_length(ogr_layer_field_names(perims_fgb, "mtbs_perims"),
+    ogr_execute_sql(perims_shp, sql, dialect = "SQLite")
+    expect_length(ogr_layer_field_names(perims_shp, "mtbs_perims"),
                   num_fields + 1)
+    # TODO(ctoney): confirm data once vector I/O is implemented
 
-    deleteDataset(perims_fgb)
+    deleteDataset(perims_shp)
+})
 
-    # GeoJSON
+test_that("GeoJSON layer and field names are correct", {
     dsn <- system.file("extdata/test.geojson", package="gdalraster")
     expect_true(ogr_ds_exists(dsn, with_update = TRUE))
     expect_equal(ogr_ds_format(dsn), "GeoJSON")
