@@ -86,7 +86,7 @@
     
     
 <p>Chris Toney (chris.toney at usda.gov)</p>
-<p>Last modified: 2024-04-28</p>
+<p>Last modified: 2024-05-14</p>
 <p>Comment/discussion: <a href="https://github.com/USDAForestService/gdalraster/issues/241" class="external-link uri">https://github.com/USDAForestService/gdalraster/issues/241</a></p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
@@ -132,23 +132,18 @@ their vector schemas will be done with:</p>
 operate on vector datasets: <code><a href="../reference/copyDatasetFiles.html">copyDatasetFiles()</a></code>,
 <code><a href="../reference/deleteDataset.html">deleteDataset()</a></code>, <code><a href="../reference/renameDataset.html">renameDataset()</a></code> and
 <code><a href="../reference/addFilesInZip.html">addFilesInZip()</a></code> (supports SOZip)</li>
-<li>existing internal utility functions to be further developed
-(potentially renamed/refactored): <code>.ogr_ds_exists()</code>,
-<code>.create_ogr()</code>, <code>.ogr_ds_layer_count()</code>,
-<code>.ogr_layer_exists()</code>, <code>.ogr_layer_create()</code>,
-<code>.ogr_layer_delete()</code> <code>.ogr_field_index()</code>,
-<code>.ogr_field_create()</code>
+<li>existing utility functions for managing vector data sources (added
+at <strong>gdalraster</strong> 1.10.0.9180 dev): <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html">ogr_manage</a>
+and <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html">ogr_define</a>
 </li>
 <li>existing wrappers <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> and <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code>
-from the gdal_utils.h API (<strong>gdalraster</strong> 1.10.0 CRAN
+from the GDAL Utils API (<strong>gdalraster</strong> 1.10.0 CRAN
 release)</li>
-<li>add <code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code>: execute an SQL statement against
-the data store for <code>CREATE INDEX</code>, <code>DROP INDEX</code>,
-<code>ALTER TABLE</code>, <code>DROP TABLE</code> (a SQL
-<code>SELECT</code> statement can be used in the constructor for class
-<code>GDALVector</code> described below, to open a layer of
-features)</li>
-<li>other stand-alone functions TBD</li>
+<li>
+<code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code>: execute an SQL statement against the
+data store to edit data (a SQL <code>SELECT</code> statement can be used
+in the constructor for class <code>GDALVector</code> described below, to
+open a layer of features)</li>
 </ul>
 <p>OGR Layer class represents a layer of features within a data source.
 It will be modeled in R as class <code>GDALVector</code>, an exposed C++
@@ -652,12 +647,13 @@ implemented to properly release resources in case an object of class
 <span><span class="co"># create an output layer using a temporary in-memory dataset</span></span>
 <span><span class="va">dsn_out</span> <span class="op">&lt;-</span> <span class="st">"/vsimem/lyr_proc_tmp.gpkg"</span></span>
 <span><span class="va">srs</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># this uses existing internal OGR utilities</span></span>
-<span><span class="fu">gdalraster</span><span class="fu">:::</span><span class="fu">.create_ogr</span><span class="op">(</span><span class="st">"GPKG"</span>, <span class="va">dsn_out</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="fl">0</span>, <span class="st">"Unknown"</span>, <span class="st">"result_layer"</span>, <span class="va">srs</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/ogr_manage.html">ogr_ds_create</a></span><span class="op">(</span><span class="st">"GPKG"</span>, <span class="va">dsn_out</span>, <span class="st">"result_layer"</span>,</span>
+<span>              geom_type <span class="op">=</span> <span class="st">"Polygon"</span>,</span>
+<span>              srs <span class="op">=</span> <span class="va">srs</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu">gdalraster</span><span class="fu">:::</span><span class="fu">.ogr_ds_exists</span><span class="op">(</span><span class="va">dsn_out</span>, with_update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/ogr_manage.html">ogr_ds_exists</a></span><span class="op">(</span><span class="va">dsn_out</span>, with_update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu">gdalraster</span><span class="fu">:::</span><span class="fu">.ogr_layer_exists</span><span class="op">(</span><span class="va">dsn_out</span>, <span class="st">"result_layer"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/ogr_manage.html">ogr_layer_exists</a></span><span class="op">(</span><span class="va">dsn_out</span>, <span class="st">"result_layer"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
 <span><span class="va">lyr_out</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn_out</span>, <span class="st">"result_layer"</span>, read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
@@ -669,7 +665,7 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span></span>
 <span><span class="va">lyr_out</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 5</span></span>
+<span><span class="co">#&gt; [1] 86</span></span>
 <span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="va">lyr_out</span><span class="op">$</span><span class="fu">getLayerDefn</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># combined attributes</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span>
@@ -709,7 +705,7 @@ implemented to properly release resources in case an object of class
 <span></span>
 <span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">dsn_out</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">out_file</span><span class="op">)</span></span></code></pre></div>
-<p><sup>Created on 2024-04-06 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.0</a></sup></p>
+<p><sup>Created on 2024-05-14 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.0</a></sup></p>
 </div>
 <div class="section level2">
 <h2 id="example-worldcover-sentinel-2-composites">Example: WorldCover Sentinel-2 composites<a class="anchor" aria-label="anchor" href="#example-worldcover-sentinel-2-composites"></a>
@@ -940,6 +936,11 @@ FID (2024-04-06)</li>
 <li>add a <code>GDALVector</code> class constructor with
 <code>spatial_filter</code> and SQL <code>dialect</code> arguments
 (2024-04-28)</li>
+<li>
+<a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html">ogr_manage</a>
+and <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html">ogr_define</a>
+added in <strong>gdalraster</strong> dev; examples updated
+(2024-05-14)</li>
 </ul>
 </div>
 <div class="section level2">
