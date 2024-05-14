@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/USDAForestService/gdalraster/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/USDAForestService/gdalraster/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/ctoney/gdalraster/graph/badge.svg?token=MXIOPZQ2IU)](https://codecov.io/gh/ctoney/gdalraster)
+[![codecov](https://codecov.io/gh/ctoney/gdalraster/graph/badge.svg?token=MXIOPZQ2IU)](https://app.codecov.io/gh/ctoney/gdalraster)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/gdalraster)](https://CRAN.R-project.org/package=gdalraster)
 [![r-universe
@@ -41,7 +41,9 @@ supporting:
   - spatial reference systems
   - GDAL algorithms (`dem_proc()`, `polygonize()`, `rasterize()`,
     [`...`](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms))
-  - OGR vector utilities (`ogrinfo()`, `ogr2ogr()`)
+  - OGR vector utilities (`ogrinfo()`, `ogr2ogr()`,
+    [ogr\_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
+    interface)
   - copy files/move/rename/delete datasets
   - abstraction of filesystem operations on URLs and cloud storage
   - create/append to Seek-Optimized ZIP
