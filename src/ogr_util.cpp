@@ -391,8 +391,10 @@ SEXP _ogr_layer_test_cap(std::string dsn, std::string layer,
             OGR_L_TestCapability(hLayer, OLCSequentialWrite)),
         Rcpp::Named("RandomWrite") = static_cast<bool>(
             OGR_L_TestCapability(hLayer, OLCRandomWrite)),
+#if GDAL_VERSION_NUM >= 3060000
         Rcpp::Named("UpsertFeature") = static_cast<bool>(
             OGR_L_TestCapability(hLayer, OLCUpsertFeature)),
+#endif
         Rcpp::Named("FastSpatialFilter") = static_cast<bool>(
             OGR_L_TestCapability(hLayer, OLCFastSpatialFilter)),
         Rcpp::Named("FastFeatureCount") = static_cast<bool>(
@@ -411,8 +413,10 @@ SEXP _ogr_layer_test_cap(std::string dsn, std::string layer,
             OGR_L_TestCapability(hLayer, OLCReorderFields)),
         Rcpp::Named("AlterFieldDefn") = static_cast<bool>(
             OGR_L_TestCapability(hLayer, OLCAlterFieldDefn)),
+#if GDAL_VERSION_NUM >= 3060000
         Rcpp::Named("AlterGeomFieldDefn") = static_cast<bool>(
             OGR_L_TestCapability(hLayer, OLCAlterGeomFieldDefn)),
+#endif
         Rcpp::Named("DeleteFeature") = static_cast<bool>(
             OGR_L_TestCapability(hLayer, OLCDeleteFeature)),
         Rcpp::Named("StringsAsUTF8") = static_cast<bool>(
