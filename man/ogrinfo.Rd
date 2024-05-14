@@ -89,5 +89,5 @@ if (as.integer(gdal_version()[2]) >= 3070000) {
 }
 }
 \seealso{
-\code{\link[=ogr2ogr]{ogr2ogr()}}
+\code{\link[=ogr2ogr]{ogr2ogr()}}, the \link{ogr_manage} utilities
 }

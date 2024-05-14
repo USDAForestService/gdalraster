@@ -95,7 +95,9 @@
 
   \item OGR vector utilities:
   \code{\link[=ogr2ogr]{ogr2ogr()}},
-  \code{\link[=ogrinfo]{ogrinfo()}}
+  \code{\link[=ogrinfo]{ogrinfo()}},
+  \code{\link[=ogr_manage]{ogr_manage}},
+  \code{\link[=ogr_define]{ogr_define}},
 
   \item virtual file systems:
   \code{\link[=vsi_clear_path_options]{vsi_clear_path_options()}},

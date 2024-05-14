@@ -1310,7 +1310,7 @@ bool footprint(Rcpp::CharacterVector src_filename,
 //' count" capability.
 //'
 //' @seealso
-//' [ogrinfo()]
+//' [ogrinfo()], the [ogr_manage] utilities
 //'
 //' [translate()] for raster data
 //'
@@ -1451,7 +1451,7 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //' metadata strings.
 //'
 //' @seealso
-//' [ogr2ogr()]
+//' [ogr2ogr()], the [ogr_manage] utilities
 //'
 //' @examples
 //' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
