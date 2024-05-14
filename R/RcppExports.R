@@ -612,7 +612,7 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
 #' count" capability.
 #'
 #' @seealso
-#' [ogrinfo()]
+#' [ogrinfo()], the [ogr_manage] utilities
 #'
 #' [translate()] for raster data
 #'
@@ -684,7 +684,7 @@ ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL, open_opt
 #' metadata strings.
 #'
 #' @seealso
-#' [ogr2ogr()]
+#' [ogr2ogr()], the [ogr_manage] utilities
 #'
 #' @examples
 #' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")

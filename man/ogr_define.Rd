@@ -161,6 +161,26 @@ objects in a collection to have the same schema of properties, nor does
 it require all \emph{Feature} objects in a collection to have geometry of the
 same type (\url{https://geojson.org/}).
 }
+\examples{
+dsn <- paste0(tempdir(), "/", "test.sqlite")
+opt <- NULL
+if (has_spatialite())
+  opt <- "SPATIALITE=YES"
+ogr_ds_create("SQLite", dsn, dsco = opt)
+
+# define a layer
+defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4326))
+defn$fld1_int64 <- ogr_def_field("OFTInteger64")
+defn$fld2_string <- ogr_def_field("OFTString")
+
+if (ogr_ds_test_cap(dsn)$CreateLayer)
+  ogr_layer_create(dsn, "layer1", layer_defn = defn)
+
+ogr_ds_layer_names(dsn)
+ogr_layer_field_names(dsn, "layer1")
+
+deleteDataset(dsn)
+}
 \seealso{
 \code{\link[=ogr_ds_create]{ogr_ds_create()}}, \code{\link[=ogr_layer_create]{ogr_layer_create()}}, \code{\link[=ogrinfo]{ogrinfo()}}
 

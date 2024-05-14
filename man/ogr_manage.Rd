@@ -186,7 +186,8 @@ given. The \code{"SQLite"} dialect can also be used (see Note).}
 This set of functions can be used to create new vector datasets,
 test existence of dataset/layer/field, test dataset and layer capabilities,
 create new layers in an existing dataset, delete layers, create new
-attribute and geometry fields on an existing layer, and delete fields.
+attribute and geometry fields on an existing layer, rename and delete
+fields, and edit data with SQL statements.
 }
 \details{
 These functions are complementary to \code{ogrinfo()} and \code{ogr2ogr()} for
@@ -404,16 +405,16 @@ if (ogr_layer_test_cap(perims_shp, "mtbs_perims")$CreateField) {
 sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
 ogr_execute_sql(perims_shp, sql, dialect = "SQLite")
 ogr_layer_field_names(perims_shp, "mtbs_perims")
-# if GDAL >= 3.7
-# ogrinfo(perims_shp, "mtbs_perims")
-# or, output incl. the feature data (omit the default "-so" arg):
-# ogrinfo(perims_shp, "mtbs_perims", cl_arg = "-nomd")
+# if GDAL >= 3.7:
+#   ogrinfo(perims_shp, "mtbs_perims")
+# or, for output incl. the feature data (omit the default "-so" arg):
+#   ogrinfo(perims_shp, "mtbs_perims", cl_arg = "-nomd")
 
 deleteDataset(perims_shp)
 }
 \seealso{
-\code{\link[=gdal_formats]{gdal_formats()}}, \code{\link[=has_spatialite]{has_spatialite()}}, \code{\link[=ogr_def_field]{ogr_def_field()}}, \code{\link[=ogrinfo]{ogrinfo()}},
-\code{\link[=ogr2ogr]{ogr2ogr()}}
+\code{\link[=gdal_formats]{gdal_formats()}}, \code{\link[=has_spatialite]{has_spatialite()}}, \code{\link[=ogr_def_field]{ogr_def_field()}}, \code{\link[=ogr_def_layer]{ogr_def_layer()}},
+\code{\link[=ogrinfo]{ogrinfo()}}, \code{\link[=ogr2ogr]{ogr2ogr()}}
 
 OGR SQL dialect and SQLite SQL dialect:\cr
 \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}

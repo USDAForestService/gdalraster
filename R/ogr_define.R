@@ -132,6 +132,25 @@
 #' WKT representation of geometry:\cr
 #' \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
 #'
+#' @examples
+#' dsn <- paste0(tempdir(), "/", "test.sqlite")
+#' opt <- NULL
+#' if (has_spatialite())
+#'   opt <- "SPATIALITE=YES"
+#' ogr_ds_create("SQLite", dsn, dsco = opt)
+#'
+#' # define a layer
+#' defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4326))
+#' defn$fld1_int64 <- ogr_def_field("OFTInteger64")
+#' defn$fld2_string <- ogr_def_field("OFTString")
+#'
+#' if (ogr_ds_test_cap(dsn)$CreateLayer)
+#'   ogr_layer_create(dsn, "layer1", layer_defn = defn)
+#'
+#' ogr_ds_layer_names(dsn)
+#' ogr_layer_field_names(dsn, "layer1")
+#'
+#' deleteDataset(dsn)
 #' @export
 ogr_def_field <- function(fld_type, fld_subtype = NULL, fld_width = NULL,
                           fld_precision = NULL, is_nullable = NULL,
