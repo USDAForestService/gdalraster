@@ -196,7 +196,8 @@ bool _create_ogr(std::string format, std::string dst_filename,
         std::string srs = "", std::string fld_name = "",
         std::string fld_type = "OFTInteger",
         Rcpp::Nullable<Rcpp::CharacterVector> dsco = R_NilValue,
-        Rcpp::Nullable<Rcpp::CharacterVector> lco = R_NilValue) {
+        Rcpp::Nullable<Rcpp::CharacterVector> lco = R_NilValue,
+        Rcpp::Nullable<Rcpp::List> layer_defn = R_NilValue) {
 
     GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
     if (hDriver == nullptr)
@@ -208,13 +209,6 @@ bool _create_ogr(std::string format, std::string dst_filename,
     char **papszMetadata = GDALGetMetadata(hDriver, nullptr);
     if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATE, FALSE))
         Rcpp::stop("driver does not support create");
-
-    OGRwkbGeometryType eGeomType = wkbUnknown;
-    if (geom_type != "") {
-        eGeomType = _getWkbGeomType(geom_type);
-        if (eGeomType == wkbUnknown)
-            Rcpp::stop("'geom_type' is unknown");
-    }
 
     if (fld_name != "" && fld_type == "")
         Rcpp::stop("'fld_type' required when 'fld_name' is given");
@@ -243,7 +237,7 @@ bool _create_ogr(std::string format, std::string dst_filename,
     if (hDstDS == nullptr)
         return false;
 
-    if (layer == "") {
+    if (layer == "" && layer_defn.isNull()) {
         GDALReleaseDataset(hDstDS);
         return true;
     }
@@ -254,36 +248,15 @@ bool _create_ogr(std::string format, std::string dst_filename,
     }
 
     OGRLayerH  hLayer = nullptr;
-    OGRFieldDefnH hFieldDefn = nullptr;
     bool layer_ok = false;
     bool fld_ok = false;
 
-    opt_list.clear();
-    if (lco.isNotNull()) {
-        Rcpp::CharacterVector lco_in(lco);
-        opt_list.resize(lco_in.size() + 1);
-        for (R_xlen_t i = 0; i < lco_in.size(); ++i) {
-            opt_list[i] = (char *) (lco_in[i]);
-        }
-    }
-    opt_list.push_back(nullptr);
-
-    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
-    if (srs != "") {
-        if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
-            if (hSRS != nullptr)
-                OSRDestroySpatialReference(hSRS);
-            GDALReleaseDataset(hDstDS);
-            Rcpp::stop("error importing SRS from user input");
-        }
-    }
-
-    hLayer = GDALDatasetCreateLayer(hDstDS, layer.c_str(), hSRS, eGeomType,
-                                    opt_list.data());
+    hLayer = _CreateLayer(hDstDS, layer, layer_defn, geom_type, srs, lco);
 
     if (hLayer != nullptr) {
         layer_ok = true;
-        if (fld_name != "") {
+        if (layer_defn.isNull() && fld_name != "") {
+            OGRFieldDefnH hFieldDefn = nullptr;
             hFieldDefn = OGR_Fld_Create(fld_name.c_str(), fld_oft);
             if (hFieldDefn == nullptr)
                 fld_ok = false;
@@ -299,9 +272,6 @@ bool _create_ogr(std::string format, std::string dst_filename,
             fld_ok = true;
         }
     }
-
-    if (hSRS != nullptr)
-        OSRDestroySpatialReference(hSRS);
 
     GDALReleaseDataset(hDstDS);
 
@@ -457,21 +427,18 @@ SEXP _ogr_layer_test_cap(std::string dsn, std::string layer,
     return cap;
 }
 
-//' Create a layer in a vector dataset
-//'
-//' @noRd
-// [[Rcpp::export(name = ".ogr_layer_create")]]
-bool _ogr_layer_create(std::string dsn, std::string layer,
+// Internal wrapper of GDALDatasetCreateLayer()
+OGRLayerH _CreateLayer(GDALDatasetH hDS, std::string layer,
         Rcpp::Nullable<Rcpp::List> layer_defn = R_NilValue,
         std::string geom_type = "UNKNOWN", std::string srs = "",
         Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
-    std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+    if (hDS == nullptr)
+        return nullptr;
+
+    OGRLayerH hLayer = nullptr;
     std::string geom_type_in = geom_type;
     std::string srs_in = srs;
-    GDALDatasetH hDS = nullptr;
-    OGRLayerH hLayer = nullptr;
-
     Rcpp::List layer_defn_in;
     Rcpp::CharacterVector fld_names;
     std::string geom_fld_name = "";
@@ -508,23 +475,6 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
         }
     }
 
-    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
-                     nullptr, nullptr, nullptr);
-
-    if (hDS == nullptr) {
-        if (hSRS != nullptr)
-            OSRDestroySpatialReference(hSRS);
-        return false;
-    }
-
-    if (!GDALDatasetTestCapability(hDS, ODsCCreateLayer)) {
-        GDALReleaseDataset(hDS);
-        if (hSRS != nullptr)
-            OSRDestroySpatialReference(hSRS);
-        Rcpp::Rcerr << "dataset does not have CreateLayer capability\n";
-        return false;
-    }
-
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
         Rcpp::CharacterVector options_in(options);
@@ -538,9 +488,7 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
     hLayer = GDALDatasetCreateLayer(hDS, layer.c_str(), hSRS, eGeomType,
                                     opt_list.data());
 
-    bool ret = false;
     if (hLayer != nullptr) {
-        ret = true;
         if (layer_defn.isNotNull()) {
             // create fields
             for (R_xlen_t i = 0; i < layer_defn_in.size(); ++i) {
@@ -656,9 +604,42 @@ bool _ogr_layer_create(std::string dsn, std::string layer,
     if (hSRS != nullptr)
         OSRDestroySpatialReference(hSRS);
 
+    return hLayer;
+}
+
+//' Create a layer in a vector dataset
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_layer_create")]]
+bool _ogr_layer_create(std::string dsn, std::string layer,
+        Rcpp::Nullable<Rcpp::List> layer_defn = R_NilValue,
+        std::string geom_type = "UNKNOWN", std::string srs = "",
+        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+
+    std::string dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+    GDALDatasetH hDS = nullptr;
+    OGRLayerH hLayer = nullptr;
+
+    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+                     nullptr, nullptr, nullptr);
+
+    if (hDS == nullptr)
+        return false;
+
+    if (!GDALDatasetTestCapability(hDS, ODsCCreateLayer)) {
+        GDALReleaseDataset(hDS);
+        Rcpp::Rcerr << "dataset does not have CreateLayer capability\n";
+        return false;
+    }
+
+    hLayer = _CreateLayer(hDS, layer, layer_defn, geom_type, srs, options);
+
     GDALReleaseDataset(hDS);
 
-    return ret;
+    if (hLayer != nullptr)
+        return true;
+    else
+        return false;
 }
 
 //' Delete a layer in a vector dataset

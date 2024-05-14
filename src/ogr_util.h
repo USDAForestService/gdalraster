@@ -124,7 +124,8 @@ bool _create_ogr(std::string format, std::string dst_filename,
                  std::string layer, std::string geom_type, std::string srs,
                  std::string fld_name, std::string fld_type,
                  Rcpp::Nullable<Rcpp::CharacterVector> dsco,
-                 Rcpp::Nullable<Rcpp::CharacterVector> lco);
+                 Rcpp::Nullable<Rcpp::CharacterVector> lco,
+                 Rcpp::Nullable<Rcpp::List> layer_defn);
 
 int _ogr_ds_layer_count(std::string dsn);
 
@@ -134,6 +135,11 @@ bool _ogr_layer_exists(std::string dsn, std::string layer);
 
 SEXP _ogr_layer_test_cap(std::string dsn, std::string layer,
                          bool with_update);
+
+OGRLayerH _CreateLayer(GDALDatasetH hDS, std::string layer,
+                       Rcpp::Nullable<Rcpp::List> layer_defn,
+                       std::string geom_type, std::string srs,
+                       Rcpp::Nullable<Rcpp::CharacterVector> options);
 
 bool _ogr_layer_create(std::string dsn, std::string layer,
                        Rcpp::Nullable<Rcpp::List> layer_defn,

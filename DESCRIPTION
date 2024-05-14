@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 1.10.9170
+Version: 1.10.9180
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),
@@ -30,8 +30,9 @@ Description: Interface to the Raster API of the 'Geospatial Data Abstraction
     layers, with pixel x/y available as variables in the expression; and raster
     'combine()' to identify and count unique pixel combinations across multiple
     input layers, with optional output of the pixel-level combination IDs.
-    Provides raster display using base 'graphics'. Bindings to a subset of
-    the Virtual Systems Interface ('VSI') are also included to support
+    Provides raster display using base 'graphics'. Bindings to a subset of the
+    'OGR' API are also included for managing vector data sources. Bindings to a
+    subset of the Virtual Systems Interface ('VSI') are also included to support
     operations on 'GDAL' virtual file systems. These are general utility
     functions that abstract file system operations on URLs, cloud storage
     services, 'Zip'/'GZip'/'7z'/'RAR' archives, and in-memory files.

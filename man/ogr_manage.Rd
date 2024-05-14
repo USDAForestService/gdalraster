@@ -255,11 +255,13 @@ cannot be found. The returned list contains the following named elements:
 See the GDAL documentation for
 \href{https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc}{\code{OGR_L_TestCapability()}}.
 
-\code{ogr_layer_create()} creates a new layer in a vector dataset, with a
-specified geometry type and spatial reference definition. This function also
-accepts a feature class definition given as a list of field names and their
-definitions (see \link{ogr_define}). Returns a logical scalar, \code{TRUE} indicating
-success.
+\code{ogr_layer_create()} creates a new layer in an existing vector data source,
+with a specified geometry type and spatial reference definition.
+This function also accepts a feature class definition given as a list of
+field names and their definitions (see \link{ogr_define}).
+(Note: use \code{ogr_ds_create()} to create single-layer formats such as "ESRI
+Shapefile", "FlatGeobuf", "GeoJSON", etc.)
+Returns a logical scalar, \code{TRUE} indicating success.
 
 \code{ogr_layer_field_names()} returns a character vector of field names on a
 layer, or \code{NULL} if no fields are found.
@@ -313,7 +315,7 @@ GeoPackage format (\url{https://gdal.org/drivers/vector/gpkg.html#sql}).
 \code{\link[=ogrinfo]{ogrinfo()}} can also be used to edit data with SQL statements (GDAL >= 3.7).
 
 The name of the geometry column of a layer is empty (\code{""}) with some formats
-such as ESRI Shapefile and Flatgeobuf. Implications for SQL may depend on the
+such as ESRI Shapefile and FlatGeobuf. Implications for SQL may depend on the
 dialect used. See the GDAL documentation for the "OGR SQL" and "SQLite" SQL
 dialects for details.
 }

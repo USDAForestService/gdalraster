@@ -69,14 +69,11 @@ test_that("OGR management utilities work", {
     deleteDataset(perims_fgb)
 
     # GeoJSON
-    dsn <- paste0(tempdir(), "/", "test.geojson")
-    defn <- ogr_def_layer("Polygon", srs = epsg_to_wkt(4326))
-    defn$field1 <- ogr_def_field("OFTInteger64")
-    defn$field2 <- ogr_def_field("OFTString")
-    expect_true(ogr_ds_create("GeoJSON", dsn, layer = "layer1",
-                              layer_defn = defn))
-    expect_equal(ogr_layer_field_names(dsn, "layer1"),
-                 c("field1", "field2", "geom"))
-
-    deleteDataset(dsn)
+    dsn <- system.file("extdata/test.geojson", package="gdalraster")
+    expect_true(ogr_ds_exists(dsn, with_update = TRUE))
+    expect_equal(ogr_ds_format(dsn), "GeoJSON")
+    expect_equal(ogr_ds_layer_count(dsn), 1)
+    expect_equal(ogr_ds_layer_names(dsn), "test")
+    expect_equal(ogr_layer_field_names(dsn, "test"),
+                 c("int", "string", "double", "int2", ""))
 })

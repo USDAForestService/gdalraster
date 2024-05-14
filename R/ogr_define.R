@@ -10,7 +10,7 @@
 #' properties.
 #' `ogr_def_geom_field()` similarly creates a geometry field definition.
 #' A list containing zero or more attribute field definitions, along with one
-#' or more geomtery field definitions, comprise an OGR feature class definition
+#' or more geometry field definitions, comprise an OGR feature class definition
 #' (a.k.a. layer definition). `ogr_def_layer()` initializes such a list with a
 #' geometry field. Attribute fields can be added to a feature class definition
 #' with calls to `ogr_def_field()` as in the examples.
@@ -112,12 +112,19 @@
 #'
 #' @note
 #' The feature id (FID) is a special property of a feature and not treated as
-#' an attribute of the feature. Addiotional information is given in the GDAL
+#' an attribute of the feature. Additional information is given in the GDAL
 #' documentation for the
 #' [OGR SQL](https://gdal.org/user/ogr_sql_dialect.html#feature-id-fid) and
 #' [SQLite](https://gdal.org/user/sql_sqlite_dialect.html#feature-id-fid)
 #' SQL dialects. Implications for SQL statements and result sets may depend
 #' on the dialect used.
+#'
+#' Some vector formats do not support schema definition prior to creating
+#' features. For example, with GeoJSON only the *Feature* object has a member
+#' with name *properties*. The specification does not require all *Feature*
+#' objects in a collection to have the same schema of properties, nor does
+#' it require all *Feature* objects in a collection to have geometry of the
+#' same type (\url{https://geojson.org/}).
 #'
 #' @seealso
 #' [ogr_ds_create()], [ogr_layer_create()], [ogrinfo()]

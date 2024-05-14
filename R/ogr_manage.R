@@ -74,11 +74,13 @@
 #' See the GDAL documentation for
 #' [`OGR_L_TestCapability()`](https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).
 #'
-#' `ogr_layer_create()` creates a new layer in a vector dataset, with a
-#' specified geometry type and spatial reference definition. This function also
-#' accepts a feature class definition given as a list of field names and their
-#' definitions (see [ogr_define]). Returns a logical scalar, `TRUE` indicating
-#' success.
+#' `ogr_layer_create()` creates a new layer in an existing vector data source,
+#' with a specified geometry type and spatial reference definition.
+#' This function also accepts a feature class definition given as a list of
+#' field names and their definitions (see [ogr_define]).
+#' (Note: use `ogr_ds_create()` to create single-layer formats such as "ESRI
+#' Shapefile", "FlatGeobuf", "GeoJSON", etc.)
+#' Returns a logical scalar, `TRUE` indicating success.
 #'
 #' `ogr_layer_field_names()` returns a character vector of field names on a
 #' layer, or `NULL` if no fields are found.
@@ -195,7 +197,7 @@
 #' [ogrinfo()] can also be used to edit data with SQL statements (GDAL >= 3.7).
 #'
 #' The name of the geometry column of a layer is empty (`""`) with some formats
-#' such as ESRI Shapefile and Flatgeobuf. Implications for SQL may depend on the
+#' such as ESRI Shapefile and FlatGeobuf. Implications for SQL may depend on the
 #' dialect used. See the GDAL documentation for the "OGR SQL" and "SQLite" SQL
 #' dialects for details.
 #'
@@ -355,19 +357,12 @@ ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
     if (is.null(layer_defn)) {
         return(.create_ogr(format, dsn, 0, 0, 0, "Unknown",
                            layer, geom_type, srs, fld_name, fld_type,
-                           dsco, lco))
+                           dsco, lco, NULL))
     } else {
-        ds_ok <- .create_ogr(format, dsn, 0, 0, 0, "Unknown",
-                             layer = "", geom_type = "", srs = "",
-                             fld_name = "", fld_type = "",
-                             dsco = dsco, lco = lco)
-        if (!ds_ok) {
-            return(FALSE)
-
-        } else {
-            return(ogr_layer_create(dsn, layer, layer_defn, lco = lco))
-
-        }
+        return(.create_ogr(format, dsn, 0, 0, 0, "Unknown",
+                           layer = "", geom_type = "", srs = "",
+                           fld_name = "", fld_type = "",
+                           dsco = dsco, lco = lco, layer_defn = layer_defn))
     }
 }
 
@@ -462,7 +457,12 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
     if (is.null(srs))
         srs <- ""
 
-    return(.ogr_layer_create(dsn, layer, layer_defn, geom_type, srs, lco))
+    return(.ogr_layer_create(dsn = dsn,
+                             layer = layer,
+                             layer_defn = layer_defn,
+                             geom_type = geom_type,
+                             srs = srs,
+                             options = lco))
 }
 
 #' @name ogr_manage

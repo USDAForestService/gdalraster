@@ -2112,8 +2112,8 @@ has_geos <- function() {
 #' A field is also created optionally (name and type only).
 #'
 #' @noRd
-.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", fld_type = "OFTInteger", dsco = NULL, lco = NULL) {
-    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, fld_type, dsco, lco)
+.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", fld_type = "OFTInteger", dsco = NULL, lco = NULL, layer_defn = NULL) {
+    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, fld_type, dsco, lco, layer_defn)
 }
 
 #' Get number of layers in a dataset
