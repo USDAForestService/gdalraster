@@ -388,28 +388,28 @@ deleteDataset(dsn)
 
 # edit data using SQL
 src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
-perims_fgb <- paste0(tempdir(), "/", "mtbs_perims.fgb")
-ogr2ogr(src, perims_fgb, src_layers = "mtbs_perims")
-ogr_ds_format(perims_fgb)
-ogr_ds_layer_names(perims_fgb)
-ogr_layer_field_names(perims_fgb, "mtbs_perims")
+perims_shp <- paste0(tempdir(), "/", "mtbs_perims.shp")
+ogr2ogr(src, perims_shp, src_layers = "mtbs_perims")
+ogr_ds_format(perims_shp)
+ogr_ds_layer_names(perims_shp)
+ogr_layer_field_names(perims_shp, "mtbs_perims")
 
-if (ogr_layer_test_cap(perims_fgb, "mtbs_perims")$CreateField) {
+if (ogr_layer_test_cap(perims_shp, "mtbs_perims")$CreateField) {
   sql <- "ALTER TABLE mtbs_perims ADD burn_bnd_ha float"
-  ogr_execute_sql(perims_fgb, sql)
+  ogr_execute_sql(perims_shp, sql)
   # with GDAL >= 3.7, equivalent to:
-  # ogrinfo(perims_fgb, cl_arg = c("-sql", sql), read_only = FALSE)
+  # ogrinfo(perims_shp, cl_arg = c("-sql", sql), read_only = FALSE)
 }
 
 sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
-ogr_execute_sql(perims_fgb, sql, dialect = "SQLite")
-ogr_layer_field_names(perims_fgb, "mtbs_perims")
+ogr_execute_sql(perims_shp, sql, dialect = "SQLite")
+ogr_layer_field_names(perims_shp, "mtbs_perims")
 # if GDAL >= 3.7
-# ogrinfo(perims_fgb, "mtbs_perims")
+# ogrinfo(perims_shp, "mtbs_perims")
 # or, output incl. the feature data (omit the default "-so" arg):
-# ogrinfo(perims_fgb, "mtbs_perims", cl_arg = "-nomd")
+# ogrinfo(perims_shp, "mtbs_perims", cl_arg = "-nomd")
 
-deleteDataset(perims_fgb)
+deleteDataset(perims_shp)
 }
 \seealso{
 \code{\link[=gdal_formats]{gdal_formats()}}, \code{\link[=has_spatialite]{has_spatialite()}}, \code{\link[=ogr_def_field]{ogr_def_field()}}, \code{\link[=ogrinfo]{ogrinfo()}},
