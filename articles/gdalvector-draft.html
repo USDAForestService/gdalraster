@@ -26,7 +26,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9170</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9180</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -142,7 +142,7 @@ operate on vector datasets: <code><a href="../reference/copyDatasetFiles.html">c
 <li>existing wrappers <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> and <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code>
 from the gdal_utils.h API (<strong>gdalraster</strong> 1.10.0 CRAN
 release)</li>
-<li>add <code>ogr_execute_sql()</code>: execute an SQL statement against
+<li>add <code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code>: execute an SQL statement against
 the data store for <code>CREATE INDEX</code>, <code>DROP INDEX</code>,
 <code>ALTER TABLE</code>, <code>DROP TABLE</code> (a SQL
 <code>SELECT</code> statement can be used in the constructor for class
@@ -908,7 +908,7 @@ supports this functionality (testable using OLCIgnoreFields capability),
 it will not fetch the specified fields in subsequent calls to
 <code>getFeature()</code> / <code>getNextFeature()</code> thus save some
 processing time and/or bandwidth. (2024-03-02)</li>
-<li>add <code>ogr_execute_sql()</code> for dataset/schema management
+<li>add <code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code> for dataset/schema management
 (2024-03-02)</li>
 <li>add <code>GDALVector::setNextByIndex()</code> for cursor positioning
 (2024-03-03)</li>
