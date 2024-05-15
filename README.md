@@ -42,7 +42,7 @@ supporting:
   - GDAL algorithms (`dem_proc()`, `polygonize()`, `rasterize()`,
     [`...`](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms))
   - OGR vector utilities (`ogrinfo()`, `ogr2ogr()`,
-    [ogr\_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
+    [`ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
     interface)
   - copy files/move/rename/delete datasets
   - abstraction of filesystem operations on URLs and cloud storage

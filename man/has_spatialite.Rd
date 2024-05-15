@@ -38,7 +38,7 @@ native SQL engine of those database systems.
 has_spatialite()
 }
 \seealso{
-\code{\link[=ogrinfo]{ogrinfo()}}
+\code{\link[=ogrinfo]{ogrinfo()}}, \code{\link[=ogr_execute_sql]{ogr_execute_sql()}}
 
 OGR SQL dialect and SQLITE SQL dialect:\cr
 \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
