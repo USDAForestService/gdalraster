@@ -356,9 +356,8 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE, optio
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' ds <- new(GDALRaster, elev_file)
-#' gt <- ds$getGeoTransform()
+#' invgt <- ds$getGeoTransform() |> inv_geotransform()
 #' ds$close()
-#' invgt <- inv_geotransform(gt)
 #'
 #' ptX = 324181.7
 #' ptY = 5103901.4
