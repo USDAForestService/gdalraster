@@ -389,10 +389,11 @@ functions. The GDAL document for SQLite dialect has detailed information.</p>
 <p>Other SQL dialects may also be present for some vector formats.
 For example, the <code>"INDIRECT_SQLITE"</code> dialect might potentially be used with
 GeoPackage format (<a href="https://gdal.org/drivers/vector/gpkg.html#sql" class="external-link">https://gdal.org/drivers/vector/gpkg.html#sql</a>).</p>
-<p><code><a href="ogrinfo.html">ogrinfo()</a></code> can also be used to edit data with SQL statements (GDAL &gt;= 3.7).</p>
+<p>The function <code><a href="ogrinfo.html">ogrinfo()</a></code> can also be used to edit data with SQL statements
+(GDAL &gt;= 3.7).</p>
 <p>The name of the geometry column of a layer is empty (<code>""</code>) with some formats
 such as ESRI Shapefile and FlatGeobuf. Implications for SQL may depend on the
-dialect used. See the GDAL documentation for the "OGR SQL" and "SQLite" SQL
+dialect used. See the GDAL documentation for the "OGR SQL" and "SQLite"
 dialects for details.</p>
     </div>
     <div class="section level2">
@@ -500,7 +501,7 @@ dialects for details.</p>
 <span class="r-in"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"ALTER TABLE layer2 ADD field4 float"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">dsn</span>, <span class="va">sql</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpXmRgcX/test1.gpkg'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpIeVJ0U/test1.gpkg'</span>
 <span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fld1_name"   "fld2_name"   "third_field" "field4"      "geom"       </span>
 <span class="r-in"><span></span></span>
@@ -513,8 +514,9 @@ dialects for details.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fld1_name"     "fld2_name"     "third_field"   "renamed_field"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "geom"         </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># if GDAL &gt;= 3.7</span></span></span>
-<span class="r-in"><span><span class="co"># ogrinfo(dsn, "layer2")</span></span></span>
+<span class="r-in"><span><span class="co"># GDAL &gt;= 3.7</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">3070000</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="ogrinfo.html">ogrinfo</a></span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -538,16 +540,17 @@ dialects for details.</p>
 <span class="r-in"><span>  <span class="co"># ogrinfo(perims_shp, cl_arg = c("-sql", sql), read_only = FALSE)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpXmRgcX/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpIeVJ0U/mtbs_perims.shp'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="va">sql</span>, dialect <span class="op">=</span> <span class="st">"SQLite"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpXmRgcX/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpIeVJ0U/mtbs_perims.shp'</span>
 <span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "event_id"   "incid_name" "incid_type" "map_id"     "burn_bnd_a"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "burn_bnd_l" "burn_bnd_1" "ig_date"    "ig_year"    "burn_bnd_h"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] ""          </span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># if GDAL &gt;= 3.7:</span></span></span>
 <span class="r-in"><span><span class="co">#   ogrinfo(perims_shp, "mtbs_perims")</span></span></span>
 <span class="r-in"><span><span class="co"># or, for output incl. the feature data (omit the default "-so" arg):</span></span></span>
