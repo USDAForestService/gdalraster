@@ -365,7 +365,7 @@ int _get_physical_RAM() {
 //' native SQL engine of those database systems.
 //'
 //' @seealso
-//' [ogrinfo()]
+//' [ogrinfo()], [ogr_execute_sql()]
 //'
 //' OGR SQL dialect and SQLITE SQL dialect:\cr
 //' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
@@ -600,9 +600,8 @@ Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
 //' @examples
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' ds <- new(GDALRaster, elev_file)
-//' gt <- ds$getGeoTransform()
+//' invgt <- ds$getGeoTransform() |> inv_geotransform()
 //' ds$close()
-//' invgt <- inv_geotransform(gt)
 //'
 //' ptX = 324181.7
 //' ptY = 5103901.4

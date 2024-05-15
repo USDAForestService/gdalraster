@@ -195,11 +195,12 @@
 #' For example, the `"INDIRECT_SQLITE"` dialect might potentially be used with
 #' GeoPackage format (\url{https://gdal.org/drivers/vector/gpkg.html#sql}).
 #'
-#' [ogrinfo()] can also be used to edit data with SQL statements (GDAL >= 3.7).
+#' The function [ogrinfo()] can also be used to edit data with SQL statements
+#' (GDAL >= 3.7).
 #'
 #' The name of the geometry column of a layer is empty (`""`) with some formats
 #' such as ESRI Shapefile and FlatGeobuf. Implications for SQL may depend on the
-#' dialect used. See the GDAL documentation for the "OGR SQL" and "SQLite" SQL
+#' dialect used. See the GDAL documentation for the "OGR SQL" and "SQLite"
 #' dialects for details.
 #'
 #' @seealso
@@ -271,8 +272,9 @@
 #' }
 #' ogr_layer_field_names(dsn, "layer2")
 #'
-#' # if GDAL >= 3.7
-#' # ogrinfo(dsn, "layer2")
+#' # GDAL >= 3.7
+#' if (as.integer(gdal_version()[2]) >= 3070000)
+#'   ogrinfo(dsn, "layer2")
 #'
 #' deleteDataset(dsn)
 #'
@@ -294,6 +296,7 @@
 #' sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
 #' ogr_execute_sql(perims_shp, sql, dialect = "SQLite")
 #' ogr_layer_field_names(perims_shp, "mtbs_perims")
+#'
 #' # if GDAL >= 3.7:
 #' #   ogrinfo(perims_shp, "mtbs_perims")
 #' # or, for output incl. the feature data (omit the default "-so" arg):
