@@ -53,8 +53,9 @@ Imports:
     tools,
     utils,
     xml2
-LinkingTo: Rcpp
+LinkingTo: Rcpp, RcppInt64
 Suggests:
+    bit64,
     gt,
     knitr,
     rmarkdown,

@@ -9,6 +9,7 @@
 #include <string>
 
 #include <Rcpp.h>
+#include <RcppInt64>
 
 Rcpp::NumericMatrix _df_to_matrix(const Rcpp::DataFrame& df);
 Rcpp::IntegerMatrix _df_to_int_matrix(const Rcpp::DataFrame& df);
