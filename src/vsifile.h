@@ -31,20 +31,19 @@ class VSIFile {
             Rcpp::CharacterVector options);
 
     SEXP open();
-    int close();
     SEXP stat(std::string info);
-    int seek(int64_t offset, int origin);
+    int seek(Rcpp::NumericVector offset, std::string origin);
     int64_t tell() const;
     void rewind();
-    Rcpp::RawVector read(std::size_t size, std::size_t count);
+    SEXP read(std::size_t count);
     std::size_t write(const Rcpp::RawVector& buf);
     bool eof() const;
     int truncate(GUIntBig offset);
     int flush();
     int printf(std::string fmt);
     int putc(int c);
-    Rcpp::RawVector ingest(int64_t max_size);
-
+    SEXP ingest(Rcpp::NumericVector max_size);
+    int close();
 };
 
 RCPP_EXPOSED_CLASS(VSIFile)
