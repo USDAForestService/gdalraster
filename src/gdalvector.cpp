@@ -415,11 +415,13 @@ SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
         Rcpp::stop("'fid' must be a length-1 numeric vector (integer64)");
 
     int64_t fid_in;
-
-    if (Rcpp::isInteger64(fid))
+    if (Rcpp::isInteger64(fid)) {
         fid_in = Rcpp::fromInteger64(fid[0]);
-    else
-        fid_in = static_cast<int64_t>(fid[0]);
+    }
+    else {
+        std::vector<double> tmp = Rcpp::as<std::vector<double>>(fid);
+        fid_in = static_cast<int64_t>(tmp[0]);
+    }
 
     OGRFeatureH hFeature = OGR_L_GetFeature(hLayer,
                                             static_cast<GIntBig>(fid_in));

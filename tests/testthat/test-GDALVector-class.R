@@ -6,6 +6,7 @@ test_that("class constructors work", {
 
     lyr <- new(GDALVector, dsn)
     expect_equal(lyr$getName(), "mtbs_perims")
+    expect_type(lyr$getFeature(1), "list")
     lyr$close()
 
     lyr <- new(GDALVector, dsn, "mtbs_perims")
