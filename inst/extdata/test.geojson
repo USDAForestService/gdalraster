@@ -1,0 +1,8 @@
+{
+   "type": "FeatureCollection",
+
+  "features": [
+      { "type": "Feature", "properties": { "int": 168, "string": "string value", "double": 1.23 }, "geometry":{"type":"Point","coordinates":[1,2]} },
+      { "type": "Feature", "properties": { "int": null, "string": null, "int2": 42 }, "geometry":{"type":"Point","coordinates":[3,4]} }
+  ]
+}

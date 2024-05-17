@@ -55,6 +55,7 @@
 #' ds$bbox()
 #' ds$res()
 #' ds$dim()
+#' ds$get_pixel_line(xy)
 #'
 #' ds$getRasterCount()
 #' ds$getDescription(band)
@@ -219,6 +220,14 @@
 #' Returns an integer vector of length three containing the raster dimensions.
 #' Equivalent to:
 #' `c(ds$getRasterXSize(), ds$getRasterYSize(), ds$getRasterCount())`
+#'
+#' \code{$get_pixel_line()}
+#' Converts geospatial coordinates to pixel/line (raster column/row numbers).
+#' `xy` is a numeric matrix of geospatial x,y coordinates in the same spatial
+#' reference system as the raster (or two-column data frame that will be
+#' coerced to numeric matrix). Returns an integer matrix of raster pixel/line.
+#' See the stand-alone function of the same name ([get_pixel_line()]) for more
+#' info and examples.
 #'
 #' \code{$getRasterCount()}
 #' Returns the number of raster bands on this dataset. For the methods

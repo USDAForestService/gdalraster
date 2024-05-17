@@ -70,9 +70,15 @@ test_that("get_pixel_line gives correct results", {
     raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
     ds <- new(GDALRaster, raster_file, read_only=TRUE)
     gt <- ds$getGeoTransform()
-    ds$close()
-    res <- get_pixel_line(as.matrix(pts[,-1]), gt)
+    res <- get_pixel_line(as.matrix(pts[, -1]), gt)
     expect_equal(as.vector(res), pix_line)
+
+    pts[11, ] <- c(11, 323318, 5105104)
+    expect_warning(res2 <- ds$get_pixel_line(pts[, -1]))
+    res <- rbind(res, c(NA, NA))
+    expect_equal(res2, res)
+
+    ds$close()
 })
 
 test_that("_apply_geotransform gives correct result", {

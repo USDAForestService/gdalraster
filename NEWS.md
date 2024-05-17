@@ -1,4 +1,12 @@
-# gdalraster 1.10.9150 (dev)
+# gdalraster 1.10.9180 (dev)
+
+* add utility functions for managing vector data sources: `ogr_ds_exists()`, `ogr_ds_format()`, `ogr_ds_test_cap()`, `ogr_ds_create()`, `ogr_ds_layer_count()`, `ogr_ds_layer_names()`, `ogr_layer_exists()`, `ogr_layer_test_cap()`, `ogr_layer_create()`, `ogr_layer_field_names()`, `ogr_layer_delete()`, `ogr_field_index()`, `ogr_field_create()`, `ogr_geom_field_create()`, `ogr_field_rename()`, `ogr_field_delete()`, `ogr_execute_sql()` (2024-05-13)
+
+* add documentation and helper functions for feature class definition: `ogr_def_field()`, `ogr_def_geom_field()`, `ogr_def_layer()` (2024-05-13)
+
+* add `GDALRaster::get_pixel_line()`: alternate calling for `get_pixel_line()` on an object of class `GDALRaster` (2024-05-12)
+
+* `get_pixel_line()`: an object of class `GDALRaster` can now be passed for the `gt` parameter, in which case the geotransform will be obtained from the object and bounds checking on the raster extent will be done (original behaviour for `gt` as numeric vector is unchanged) (2024-05-12)
 
 * add `has_spatialite()`: is GDAL built with SpatiaLite support (2024-05-06)
 

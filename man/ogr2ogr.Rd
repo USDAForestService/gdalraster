@@ -81,7 +81,7 @@ deleteDataset(ynp_clip)
 deleteDataset(ynp_filtered)
 }
 \seealso{
-\code{\link[=ogrinfo]{ogrinfo()}}
+\code{\link[=ogrinfo]{ogrinfo()}}, the \link{ogr_manage} utilities
 
 \code{\link[=translate]{translate()}} for raster data
 }
