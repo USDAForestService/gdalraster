@@ -102,8 +102,9 @@ specified, or <code>read_only = FALSE</code> to open with update
 access):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, GEOS 3.10.2, PROJ 8.2.1</span></span>
-<span></span>
+<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, GEOS 3.10.2, PROJ 8.2.1</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">tcc_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_tcc.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tcc_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>An error is returned if the dataset cannot be opened (and creation of
@@ -116,10 +117,11 @@ additional parameters, etc.</p>
 <code>RCPP_EXPOSED_CLASS</code>) that encapsulates a GDAL dataset object
 and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x55c34ab46c50&gt; of class 'GDALRaster' &lt;0x55c344f6ade0&gt;</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x55a0deb55e70&gt; of class 'GDALRaster' &lt;0x55a0db2d6e80&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 1 field</span></span>
 <span><span class="co">#&gt;  $ readByteAsRaw: logi FALSE</span></span>
 <span><span class="co">#&gt;  and 75 methods, of which 61 are  possibly relevant:</span></span>
@@ -149,55 +151,69 @@ raster and various other information.</p>
 rotation or shearing, the georeferencing transform (see <a href="https://gdal.org/tutorials/geotransforms_tut.html" class="external-link">Geotransform
 Tutorial</a>) takes the following form <em>with 1-based indexing in
 R</em>:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getGeoTransform</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">gt</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>  <span class="co"># x-coordinate of upper-left corner of the upper-left pixel</span></span>
-<span><span class="co">#&gt; [1] 323476.1</span></span>
-<span><span class="va">gt</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>  <span class="co"># pixel width (w-e resolution)</span></span>
-<span><span class="co">#&gt; [1] 30</span></span>
-<span><span class="va">gt</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>  <span class="co"># 0 for north-up</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
-<span><span class="va">gt</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>  <span class="co"># y-coordinate of upper-left corner of the upper-left pixel</span></span>
-<span><span class="co">#&gt; [1] 5105082</span></span>
-<span><span class="va">gt</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>  <span class="co"># 0 for north-up</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
-<span><span class="va">gt</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>  <span class="co"># pixel height (n-s resolution, negative value)</span></span>
+<span><span class="co">#&gt; [1] 323476.1</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gt</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>  <span class="co"># pixel width (w-e resolution)</span></span>
+<span><span class="co">#&gt; [1] 30</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gt</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>  <span class="co"># 0 for north-up</span></span>
+<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gt</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>  <span class="co"># y-coordinate of upper-left corner of the upper-left pixel</span></span>
+<span><span class="co">#&gt; [1] 5105082</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gt</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>  <span class="co"># 0 for north-up</span></span>
+<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">gt</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>  <span class="co"># pixel height (n-s resolution, negative value)</span></span>
 <span><span class="co">#&gt; [1] -30</span></span></code></pre></div>
 <p>In the general case, this is an affine transform. Class
 <code>GDALRaster</code> includes convenience methods for the case of a
 north-up raster:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span>  <span class="co"># xmin, ymin, xmax, ymax</span></span>
-<span><span class="co">#&gt; [1]  323476.1 5101872.0  327766.1 5105082.0</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span>   <span class="co"># pixel width, pixel height as positive values</span></span>
+<span><span class="co">#&gt; [1]  323476.1 5101872.0  327766.1 5105082.0</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span>   <span class="co"># pixel width, pixel height as positive values</span></span>
 <span><span class="co">#&gt; [1] 30 30</span></span></code></pre></div>
 <p>The following code retrieves some additional information about the
 dataset:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># GDAL format driver</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "GTiff"</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "GeoTIFF"</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] "GTiff"</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "GeoTIFF"</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># raster size in pixels, number of bands</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 143</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 107</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 143 107   1</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] 143</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 107</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 143 107   1</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># coordinate reference system as WKT string</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getProjectionRef</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "PROJCS[\"NAD83 / UTM zone 12N\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6269\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4269\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-111],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"26912\"]]"</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] "PROJCS[\"NAD83 / UTM zone 12N\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6269\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4269\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-111],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"26912\"]]"</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># origin and pixel size from the geotransform</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Origin:"</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Origin: 323476.1 5105082"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Pixel size:"</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Origin: 323476.1 5105082"</span></span></code></pre></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Pixel size:"</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Pixel size: 30 -30"</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -209,28 +225,33 @@ information are available on a per-band basis. Class
 <code>GDALRaster</code> provides methods to access raster band objects
 of the dataset (numbered 1 through <code>ds$getRasterCount()</code>) by
 specifying a <code>band</code> number as the first argument:</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># block size</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 143  57</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] 143  57</span></span></code></pre></div>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># data type</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Byte"</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] "Byte"</span></span></code></pre></div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># nodata value</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 255</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] 255</span></span></code></pre></div>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># min, max, mean, sd of pixel values in the band</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
-<span><span class="co">#&gt; [1]  0.00000 71.00000 23.69950 23.17744</span></span>
-<span></span>
+<span><span class="co">#&gt; [1]  0.00000 71.00000 23.69950 23.17744</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># does this band have overviews? (aka "pyramids")</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># does this band have a color table?</span></span>
 <span><span class="va">col_tbl</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getColorTable</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">col_tbl</span><span class="op">)</span><span class="op">)</span></span>
@@ -259,7 +280,7 @@ type <code>double</code> (UInt32, Float32, Float64) or
 data are organized in left to right, top to bottom pixel order.
 <code>NA</code> will be returned in place of the nodata value if the
 raster dataset has a nodata value defined for the band:</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read the first row of pixel values</span></span>
 <span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -271,10 +292,12 @@ raster dataset has a nodata value defined for the band:</p>
 <span>                   out_ysize <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 143</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/typeof.html" class="external-link">typeof</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "integer"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 143</span></span></code></pre></div>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/typeof.html" class="external-link">typeof</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "integer"</span></span></code></pre></div>
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 59 63 64 51 25 20</span></span></code></pre></div>
 <p>Writing data with <code>GDALRaster$write()</code> is similar to
 <code>$read()</code> with an additional argument specifying a vector of
@@ -304,7 +327,7 @@ overviews are available at suitable resolution.</p>
 <code>graphics</code> to display raster data read from an open dataset
 (with options to display a subwindow, to read a reduced resolution
 overview, or read from multiple bands for RGB data):</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend<span class="op">=</span><span class="cn">TRUE</span>, main<span class="op">=</span><span class="st">"Storm Lake Tree Canopy Cover (%)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="raster-api-tutorial_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
 </div>
@@ -315,7 +338,7 @@ overview, or read from multiple bands for RGB data):</p>
 cleanup, and flushing of any pending writes. Forgetting to close a
 dataset opened in update mode in a popular format like GTiff will likely
 result in being unable to open it afterwards.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># close the dataset for proper cleanup</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -363,7 +386,7 @@ size and arrangement, compression, various metadata, etc. The following
 code copies a multi-band raster in FARSITE v.4 LCP format (basically a
 raw format without support for compression or nodata values) to
 LZW-compressed GeoTiff:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_lndscp.tif"</span><span class="op">)</span></span>
 <span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span><span class="op">)</span></span>
@@ -371,19 +394,23 @@ LZW-compressed GeoTiff:</p>
 <span>           dst_filename <span class="op">=</span> <span class="va">tif_file</span>,</span>
 <span>           src_filename <span class="op">=</span> <span class="va">lcp_file</span>, </span>
 <span>           options <span class="op">=</span> <span class="va">opt</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
-<span></span>
+<span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span></code></pre></div>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">lcp_file</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 252132</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tif_file</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 108510</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] 252132</span></span></code></pre></div>
+<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tif_file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 108510</span></span></code></pre></div>
+<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tif_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># band=0 for dataset-level metadata:</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "COMPRESSION=LZW"  "INTERLEAVE=PIXEL"</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] "COMPRESSION=LZW"  "INTERLEAVE=PIXEL"</span></span></code></pre></div>
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># set nodata value for all bands</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">band</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span><span class="va">band</span>, <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
@@ -391,13 +418,14 @@ LZW-compressed GeoTiff:</p>
 <span><span class="co"># band 2 of an LCP file is slope degrees</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">2</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
-<span><span class="co">#&gt; [1]  0.00000 54.00000 22.93012 12.51330</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; [1]  0.00000 54.00000 22.93012 12.51330</span></span></code></pre></div>
+<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Information about format specific creation options can be obtained
 with the function <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>. By default, this
 function lists all available creation options for a format. Output can
 also be filtered to specific options:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"COMPRESS"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; {xml_node}</span></span>
 <span><span class="co">#&gt; &lt;Option name="COMPRESS" type="string-select"&gt;</span></span>
@@ -411,8 +439,9 @@ also be filtered to specific options:</p>
 <span><span class="co">#&gt;  [8] &lt;Value&gt;DEFLATE&lt;/Value&gt;</span></span>
 <span><span class="co">#&gt;  [9] &lt;Value&gt;LZMA&lt;/Value&gt;</span></span>
 <span><span class="co">#&gt; [10] &lt;Value&gt;ZSTD&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt; [11] &lt;Value&gt;WEBP&lt;/Value&gt;</span></span>
-<span></span>
+<span><span class="co">#&gt; [11] &lt;Value&gt;WEBP&lt;/Value&gt;</span></span></code></pre></div>
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"SPARSE_OK"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; {xml_node}</span></span>
 <span><span class="co">#&gt; &lt;Option name="SPARSE_OK" type="boolean" description="Should empty blocks be omitted on disk?" default="FALSE"&gt;</span></span></code></pre></div>
@@ -424,7 +453,7 @@ also be filtered to specific options:</p>
 manually. This function can also take a list of creation options as
 described above for <code><a href="../reference/createCopy.html">createCopy()</a></code>, but the raster size,
 number of bands and band type must be provided explicitly:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"newdata.tif"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/create.html">create</a></span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
 <span>       dst_filename <span class="op">=</span> <span class="va">new_file</span>,</span>
@@ -436,20 +465,23 @@ number of bands and band type must be provided explicitly:</p>
 and raster data must be written to the file. What this includes will
 vary according to usage, but a simple case with a projection,
 geotransform and raster data is covered here:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">new_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># EPSG:26912 - NAD83 / UTM zone 12N</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setProjection</span><span class="op">(</span><span class="fu"><a href="../reference/epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">gt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">323476.1</span>, <span class="fl">30</span>, <span class="fl">0</span>, <span class="fl">5105082.0</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">30</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setGeoTransform</span><span class="op">(</span><span class="va">gt</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">fillRaster</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">9999</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">fillRaster</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">9999</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># ...</span></span>
 <span></span>

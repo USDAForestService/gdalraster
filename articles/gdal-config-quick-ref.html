@@ -103,8 +103,9 @@ string) will unset a value previously set by
 <code><a href="../reference/set_config_option.html">set_config_option()</a></code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, GEOS 3.10.2, PROJ 8.2.1</span></span>
-<span></span>
+<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, GEOS 3.10.2, PROJ 8.2.1</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">"ALL_CPUS"</span><span class="op">)</span></span>
 <span><span class="co"># unset:</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">""</span><span class="op">)</span></span></code></pre></div>
@@ -122,13 +123,13 @@ resampling can be configured to override the default <code>NEAR</code>
 to one of <code>BILINEAR</code>, <code>CUBIC</code>,
 <code>CUBICSPLINE</code>, <code>LANCZOS</code>, <code>AVERAGE</code>,
 <code>MODE</code>, <code>RMS</code>, or <code>GAUSS</code>:</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># bilinear interpolation (2x2 neighborhood of pixels)</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_RASTERIO_RESAMPLING"</span>, <span class="st">"BILINEAR"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>CPL_TMPDIR</code></strong></p>
 <p>By default, temporary files are written into the current working
 directory. This can be changed with:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"CPL_TMPDIR"</span>, <span class="st">"&lt;dirname&gt;"</span><span class="op">)</span> <span class="co"># tmpdir to use</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -149,7 +150,7 @@ not been set upon first use of the cache, then the default cache size
 (<code>5%</code> of physical RAM) will be in effect for the current
 session. See also <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html">GDAL
 Block Cache</a>.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># set to a specific size in MB</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_CACHEMAX"</span>, <span class="st">"800"</span><span class="op">)</span></span>
 <span></span>
@@ -164,7 +165,7 @@ Note: on Linux systems, the number of file handles that can be opened by
 a process is generally limited to <code>1024</code>. This is currently
 clamped between <code>2</code> and <code>1000</code>. Also note that <a href="https://gdal.org/drivers/raster/vrt.html#performance-considerations" class="external-link"><code>gdalwarp</code>
 increases the pool size to <code>450</code></a>:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># default is 100</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_MAX_DATASET_POOL_SIZE"</span>, <span class="st">"450"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>PG_USE_COPY</code></strong></p>
@@ -174,7 +175,7 @@ This can increase performance substantially when using
 <code><a href="../reference/polygonize.html">gdalraster::polygonize()</a></code> to write polygons to PostGIS
 vector. See also <a href="https://gdal.org/drivers/vector/pg.html#configuration-options" class="external-link">GDAL
 configuration options for PostgreSQL</a>.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use COPY for inserting to PostGIS</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"PG_USE_COPY"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>SQLITE_USE_OGR_VFS</code></strong></p>
@@ -187,7 +188,7 @@ increase performance substantially when using
 <code><a href="../reference/polygonize.html">gdalraster::polygonize()</a></code> to write polygons to a vector
 layer in these formats. Additional configuration and performance hints
 for SQLite databases are in the driver documentation at: <a href="https://gdal.org/drivers/vector/sqlite.html#configuration-options" class="external-link uri">https://gdal.org/drivers/vector/sqlite.html#configuration-options</a>.</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SQLite: GPKG (.gpkg) and Spatialite (.sqlite)</span></span>
 <span><span class="co"># enable extra buffering/caching by the GDAL/OGR I/O layer</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"SQLITE_USE_OGR_VFS"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
@@ -222,7 +223,7 @@ modes</a>. This setting also applies when using
 <code><a href="../reference/polygonize.html">gdalraster::polygonize()</a></code> to write polygons to a vector
 layer in GeoPackage (.gpkg) or Spatialite (.sqlite) formats (see
 <code>SQLITE_USE_OGR_VFS</code> above).</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># configure SQLite to store the rollback journal in RAM</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"OGR_SQLITE_JOURNAL"</span>, <span class="st">"MEMORY"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -244,7 +245,7 @@ ordering (x = longitude, y = latitude).</p>
 <p><strong><code>OSR_WKT_FORMAT</code></strong></p>
 <p>As of GDAL 3.0, the default format for exporting a spatial reference
 definition to Well Known Text is WKT 1. This can be overridden with:</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SFSQL/WKT1_SIMPLE/WKT1/WKT1_GDAL/WKT1_ESRI/WKT2_2015/WKT2_2018/WKT2/DEFAULT</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"OSR_WKT_FORMAT"</span>, <span class="st">"WKT2"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -258,7 +259,7 @@ topic above generally applies to processing with
 <p><strong><code>GDAL_NUM_THREADS</code></strong></p>
 <p>Multithreaded computation in <code><a href="../reference/warp.html">warp()</a></code> can be enabled
 with:</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># note this also affects several other parts of GDAL</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">"4"</span><span class="op">)</span> <span class="co"># number of threads or ALL_CPUS</span></span></code></pre></div>
 <p>Increasing the memory available to <code><a href="../reference/warp.html">warp()</a></code> may also
@@ -298,7 +299,7 @@ worth it for slow compression algorithms such as <code>DEFLATE</code> or
 <code>LZMA</code>. Starting with GDAL 3.6, this option also enables
 multi-threaded decoding when read requests intersect several
 tiles/strips:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># specify the number of worker threads or ALL_CPUS</span></span>
 <span><span class="co"># note this also affects several other parts of GDAL</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_NUM_THREADS"</span>, <span class="st">"ALL_CPUS"</span><span class="op">)</span></span></code></pre></div>
@@ -306,7 +307,7 @@ tiles/strips:</p>
 <p>Raster overviews (a.k.a. pyramids) can be built with the
 <code>$buildOverviews()</code> method of a <code>GDALRaster</code>
 object. It may be desirable to compress the overviews when building:</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># applies to external overviews (.ovr), and internal overviews if GDAL &gt;= 3.6</span></span>
 <span><span class="co"># LZW is a good default but several other compression algorithms are available</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"COMPRESS_OVERVIEW"</span>, <span class="st">"LZW"</span><span class="op">)</span></span></code></pre></div>
@@ -319,7 +320,7 @@ and <code>3</code> is floating point prediction.
 samples (support for 64 bit was added in libtiff &gt; 4.3.0).
 <code>PREDICTOR=3</code> is only supported for 16, 32 and 64 bit
 floating-point data.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># horizontal differencing</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"PREDICTOR_OVERVIEW"</span>, <span class="st">"2"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -331,12 +332,12 @@ floating-point data.</p>
 <p><strong><code>AWS_NO_SIGN_REQUEST</code></strong></p>
 <p>Request signing can be disabled for public buckets that do not
 require an AWS account:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># public bucket no AWS account required</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_NO_SIGN_REQUEST"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>AWS_ACCESS_KEY_ID</code></strong><br><strong><code>AWS_SECRET_ACCESS_KEY</code></strong><br><strong><code>AWS_SESSION_TOKEN</code></strong><br><strong><code>AWS_REQUEST_PAYER</code></strong></p>
 <p>If authentication is required, configure credentials with:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_ACCESS_KEY_ID"</span>, <span class="st">"&lt;value&gt;"</span><span class="op">)</span> <span class="co"># key ID</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_SECRET_ACCESS_KEY"</span>, <span class="st">"&lt;value&gt;"</span><span class="op">)</span> <span class="co"># secret access key</span></span>
 <span><span class="co"># used for validation if using temporary credentials:</span></span>
@@ -346,7 +347,7 @@ require an AWS account:</p>
 <p><strong><code>AWS_REGION</code></strong></p>
 <p>Sets the AWS region to which requests should be sent. Defaults to
 <code>us-east-1</code>.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># specify region</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_REGION"</span>, <span class="st">"us-west-2"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -367,14 +368,14 @@ name of the container and <code>key</code> is the object “key”, i.e. a
 filename potentially containing subdirectories.</p>
 <p><strong><code>AZURE_NO_SIGN_REQUEST</code></strong></p>
 <p>Controls whether requests are signed.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># public access</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AZURE_NO_SIGN_REQUEST"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>AZURE_STORAGE_CONNECTION_STRING</code></strong></p>
 <p>Credential string provided in the Access Keys section of the
 administrative interface, containing both the account name and a secret
 key.</p>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AZURE_STORAGE_CONNECTION_STRING"</span>, <span class="st">"&lt;my_connection_string&gt;"</span><span class="op">)</span></span></code></pre></div>
 <p>Several other authentication methods are possible for Azure. See the
 GDAL documentation for details.</p>
@@ -406,7 +407,7 @@ that this option also affects several other parts of GDAL.</p>
 optimization should be enabled. If <code>AUTO</code>, SOZip will be
 enabled for uncompressed files larger than
 <code>CPL_SOZIP_MIN_FILE_SIZE</code>.</p>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SOZip optimization defaults to AUTO</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"CPL_SOZIP_ENABLED"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>CPL_SOZIP_MIN_FILE_SIZE</code></strong></p>
@@ -415,7 +416,7 @@ SOZip to be automatically enabled. Specified in bytes, or
 <code>K</code>, <code>M</code> or <code>G</code> suffix can be used
 respectively to specify a value in kilobytes, megabytes or
 gigabytes.</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SOZip minimum file size</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"CPL_SOZIP_MIN_FILE_SIZE"</span>, <span class="st">"100K"</span><span class="op">)</span></span></code></pre></div>
 </div>

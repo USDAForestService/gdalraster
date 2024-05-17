@@ -143,25 +143,29 @@ assigned on the data frame and its columns that define usage as a GDAL
 RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, GEOS 3.10.2, PROJ 8.2.1</span></span>
-<span></span>
+<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, GEOS 3.10.2, PROJ 8.2.1</span></span></code></pre></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># LANDFIRE Existing Vegetation Type (EVT)</span></span>
 <span><span class="va">evt_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_evt.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># make a copy to modify</span></span>
 <span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_evt_tmp.tif"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span><span class="va">evt_file</span>,  <span class="va">f</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; NULL</span></span>
-<span></span>
+<span><span class="co">#&gt; NULL</span></span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># get the full attribute table for LANDFIRE EVT from its CSV file</span></span>
 <span><span class="va">evt_csv</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/LF20_EVT_220.csv"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span><span class="va">evt_df</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">evt_csv</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">evt_df</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 860</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">evt_df</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 860</span></span></code></pre></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">evt_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   VALUE                                            EVT_NAME EVT_LF EVT_PHYS   R</span></span>
 <span><span class="co">#&gt; 1 -9999                                         Fill-NoData   &lt;NA&gt;     &lt;NA&gt; 255</span></span>
 <span><span class="co">#&gt; 2  7008                          North Pacific Oak Woodland   Tree Hardwood 203</span></span>
@@ -175,8 +179,9 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <span><span class="co">#&gt; 3 255 138 0.752941     1 0.541176</span></span>
 <span><span class="co">#&gt; 4 255 148 0.705882     1 0.580392</span></span>
 <span><span class="co">#&gt; 5 255 138 0.752941     1 0.541176</span></span>
-<span><span class="co">#&gt; 6 255 138 0.670588     1 0.541176</span></span>
-<span></span>
+<span><span class="co">#&gt; 6 255 138 0.670588     1 0.541176</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># keep just the R, G, B fields (0-255) and drop RED, GREEN, BLUE</span></span>
 <span><span class="va">evt_df</span> <span class="op">&lt;-</span> <span class="va">evt_df</span><span class="op">[</span>,<span class="fl">1</span><span class="op">:</span><span class="fl">7</span><span class="op">]</span></span>
 <span></span>
@@ -186,11 +191,13 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <span>                na_value <span class="op">=</span> <span class="op">-</span><span class="fl">9999</span>,</span>
 <span>                join_df <span class="op">=</span> <span class="va">evt_df</span><span class="op">)</span></span>
 <span><span class="co">#&gt; scanning raster...</span></span>
-<span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
-<span></span>
+<span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span></code></pre></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 24</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 24</span></span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span>
 <span><span class="co">#&gt;   VALUE COUNT                                                          EVT_NAME</span></span>
 <span><span class="co">#&gt; 1 -9999   876                                                       Fill-NoData</span></span>
 <span><span class="co">#&gt; 2  7011    28                          Rocky Mountain Aspen Forest and Woodland</span></span>
@@ -204,40 +211,51 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <span><span class="co">#&gt; 3   Tree  Conifer 191 255 233</span></span>
 <span><span class="co">#&gt; 4   Tree  Conifer 163 240 219</span></span>
 <span><span class="co">#&gt; 5   Tree  Conifer 236 252 204</span></span>
-<span><span class="co">#&gt; 6   Tree  Conifer 236 252 204</span></span>
-<span></span>
+<span><span class="co">#&gt; 6   Tree  Conifer 236 252 204</span></span></code></pre></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># attributes on the returned data frame and its columns define RAT metadata</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">tbl</span>, <span class="st">"GDALRATTableType"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "thematic"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">VALUE</span><span class="op">)</span>     <span class="co"># GFU_MinMax for column of discrete pixel values</span></span>
+<span><span class="co">#&gt; [1] "thematic"</span></span></code></pre></div>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">VALUE</span><span class="op">)</span>     <span class="co"># GFU_MinMax for column of discrete pixel values</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
-<span><span class="co">#&gt; [1] "MinMax"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">COUNT</span><span class="op">)</span>     <span class="co"># pixel counts</span></span>
+<span><span class="co">#&gt; [1] "MinMax"</span></span></code></pre></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">COUNT</span><span class="op">)</span>     <span class="co"># pixel counts</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
-<span><span class="co">#&gt; [1] "PixelCount"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_NAME</span><span class="op">)</span>  <span class="co"># the class names</span></span>
+<span><span class="co">#&gt; [1] "PixelCount"</span></span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_NAME</span><span class="op">)</span>  <span class="co"># the class names</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
-<span><span class="co">#&gt; [1] "Name"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_LF</span><span class="op">)</span>    <span class="co"># ancillary attribute</span></span>
+<span><span class="co">#&gt; [1] "Name"</span></span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_LF</span><span class="op">)</span>    <span class="co"># ancillary attribute</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
-<span><span class="co">#&gt; [1] "Generic"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_PHYS</span><span class="op">)</span>  <span class="co"># ancillary attribute</span></span>
+<span><span class="co">#&gt; [1] "Generic"</span></span></code></pre></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">EVT_PHYS</span><span class="op">)</span>  <span class="co"># ancillary attribute</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
-<span><span class="co">#&gt; [1] "Generic"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">R</span><span class="op">)</span>         <span class="co"># red 0-255</span></span>
+<span><span class="co">#&gt; [1] "Generic"</span></span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">R</span><span class="op">)</span>         <span class="co"># red 0-255</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
-<span><span class="co">#&gt; [1] "Red"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">G</span><span class="op">)</span>         <span class="co"># green 0-255</span></span>
+<span><span class="co">#&gt; [1] "Red"</span></span></code></pre></div>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">G</span><span class="op">)</span>         <span class="co"># green 0-255</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
-<span><span class="co">#&gt; [1] "Green"</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">B</span><span class="op">)</span>         <span class="co"># blue 0-255</span></span>
+<span><span class="co">#&gt; [1] "Green"</span></span></code></pre></div>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/attributes.html" class="external-link">attributes</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">$</span><span class="va">B</span><span class="op">)</span>         <span class="co"># blue 0-255</span></span>
 <span><span class="co">#&gt; $GFU</span></span>
-<span><span class="co">#&gt; [1] "Blue"</span></span>
-<span></span>
+<span><span class="co">#&gt; [1] "Blue"</span></span></code></pre></div>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="co"># set as default RAT on the EVT raster</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="va">tbl</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">flushCache</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">flushCache</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># it can now be read from the raster dataset</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span>
@@ -251,7 +269,7 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <p>An attribute table with RGB columns can be passed to
 <code><a href="../reference/plot_raster.html">gdalraster::plot_raster()</a></code> as a color table (columns
 <code>VALUE</code>, <code>R</code>, <code>G</code>, <code>B</code>):</p>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds</span>,</span>
 <span>            col_tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">6</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span><span class="op">]</span>,</span>
@@ -261,7 +279,7 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <p><img src="raster-attribute-tables_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
 <p>The function <code><a href="../reference/displayRAT.html">displayRAT()</a></code> generates a nicely formatted
 table for display. Colors are shown if the RAT contains RGB columns:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/displayRAT.html">displayRAT</a></span><span class="op">(</span><span class="va">tbl</span>, title <span class="op">=</span> <span class="st">"Raster Attribute Table for Storm Lake EVT"</span><span class="op">)</span></span></code></pre></div>
 <div id="mwlefoodfi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#mwlefoodfi table {
@@ -991,7 +1009,7 @@ table for display. Colors are shown if the RAT contains RGB columns:</p>
 <p><code><a href="../reference/displayRAT.html">displayRAT()</a></code> returns an object of class
 <code>"gt_tbl"</code>. The table object can be modified using functions
 of the <strong>gt</strong> package.</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
