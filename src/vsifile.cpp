@@ -3,6 +3,7 @@
    Chris Toney <chris.toney at usda.gov> */
 
 #include <cstdlib>
+#include <vector>
 
 #include "vsifile.h"
 #include "gdalraster.h"
@@ -27,11 +28,12 @@ VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access) :
 
 
 VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
-            Rcpp::CharacterVector options) {
+            Rcpp::CharacterVector options) :
+
+            VSILFILE(nullptr) {
 
     filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
     access_in = access.c_str();
-    VSILFILE = nullptr;
     VSILFILE = reinterpret_cast<VSIVirtualHandle *>(
             VSIFOpenL(filename_in.c_str(), access_in));
     if (VSILFILE == nullptr)
@@ -39,28 +41,34 @@ VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
 }
 
 int VSIFile::seek(Rcpp::NumericVector offset, std::string origin) {
-    // origin must be an R numeric vector of length 1
+    // offset must be an R numeric vector of length 1
     // i.e., a scalar but use NumericVector here since it can carry the class
     // attribute for integer64
     //
-    // origin:
+    // allowed values of origin:
     // "SEEK_SET" seeking from beginning of the file
     // "SEEK_CUR" seeking from the current file position
     // "SEEK_END" seeking from end of the file
 
+    if (VSILFILE == nullptr)
+        Rcpp::stop("the file is not open");
+
     if (offset.size() != 1)
         Rcpp::stop("'offset' must be a length-1 numeric vector (integer64)");
 
-    int64_t offset_in;
-    if (Rcpp::isInteger64(offset))
+    int64_t offset_in = -1;
+    if (Rcpp::isInteger64(offset)) {
         offset_in = Rcpp::fromInteger64(offset[0]);
-    else
-        offset_in = static_cast<int64_t>(offset[0]);
+    }
+    else {
+        std::vector<double> tmp = Rcpp::as<std::vector<double>>(offset);
+        offset_in = static_cast<int64_t>(tmp[0]);
+    }
 
     if (offset_in < 0)
         Rcpp::stop("'offset cannot be a negative number");
 
-    int origin_in;
+    int origin_in = -1;
     if (EQUALN(origin.c_str(), "SEEK_SET", 8))
         origin_in = SEEK_SET;
     else if (EQUALN(origin.c_str(), "SEEK_CUR", 8))
@@ -70,7 +78,19 @@ int VSIFile::seek(Rcpp::NumericVector offset, std::string origin) {
     else
         Rcpp::stop("'origin' is invalid");
 
-    return VSIFSeekL(VSILFILE, static_cast<vsi_l_offset>(offset_in), origin_in);
+    return VSIFSeekL(VSILFILE, offset_in, origin_in);
+}
+
+Rcpp::NumericVector VSIFile::tell() const {
+    if (VSILFILE == nullptr)
+        Rcpp::stop("the file is not open");
+
+    vsi_l_offset offset = VSIFTellL(VSILFILE);
+    if (offset > _R_VSI_L_OFFSET_MAX)
+        Rcpp::stop("the current file offset exceeds R integer64 upper limit");
+
+    int64_t ret = static_cast<int64_t>(offset);
+    return Rcpp::toInteger64(ret);
 }
 
 SEXP VSIFile::read(std::size_t count) {
@@ -118,7 +138,16 @@ SEXP VSIFile::ingest(Rcpp::NumericVector max_size) {
 }
 
 int VSIFile::close() {
-    return VSIFCloseL(VSILFILE);
+    int ret = -1;
+    if (VSILFILE != nullptr) {
+        ret = VSIFCloseL(VSILFILE);
+        if (ret == 0)
+            VSILFILE = nullptr;
+    }
+    else {
+        Rcpp::Rcout << "VSIVirtualHandle is NULL so VSIFCloseL() not called\n";
+    }
+    return ret;
 }
 
 
@@ -140,6 +169,8 @@ RCPP_MODULE(mod_VSIFile) {
     // exposed member functions
     .method("seek", &VSIFile::seek,
         "Seek to requested offset")
+    .const_method("tell", &VSIFile::tell,
+        "Tell current file offset")
     .method("read", &VSIFile::read,
         "Read bytes from file")
     .method("ingest", &VSIFile::ingest,

@@ -14,14 +14,13 @@
 // #include "cpl_string.h"
 #include "cpl_vsi.h"
 
-// define R_VSI_L_OFFSET_MAX = lim.integer64()[2]
-
 class VSIFile {
  private:
     std::string filename_in;
     const char* access_in;  // access: "r", "r+", "w", "a"
     Rcpp::CharacterVector options_in;
     VSIVirtualHandle *VSILFILE;
+    const uint64_t _R_VSI_L_OFFSET_MAX = 9223372036854775807;
 
  public:
     VSIFile();
@@ -33,19 +32,21 @@ class VSIFile {
     SEXP open();
     SEXP stat(std::string info);
     int seek(Rcpp::NumericVector offset, std::string origin);
-    int64_t tell() const;
+    Rcpp::NumericVector tell() const;  // returns integer64 scalar
     void rewind();
-    SEXP read(std::size_t count);
+    SEXP read(std::size_t count);  // returns RawVector, or NULL
     std::size_t write(const Rcpp::RawVector& buf);
     bool eof() const;
     int truncate(GUIntBig offset);
     int flush();
     int printf(std::string fmt);
     int putc(int c);
-    SEXP ingest(Rcpp::NumericVector max_size);
+    SEXP ingest(Rcpp::NumericVector max_size);  // returns RawVector, or NULL
     int close();
 };
 
 RCPP_EXPOSED_CLASS(VSIFile)
+
+
 
 #endif  // SRC_VSIFILE_H_
