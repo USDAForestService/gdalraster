@@ -177,8 +177,10 @@ pop_error_handler <- function() {
 }
 
 #' Check a filename before passing to GDAL and potentially fix.
-#' filename may be a physical file, URL, connection string, file name with
-#' additional parameters, etc. Returned in UTF-8 encoding.
+#' 'filename' may be a physical file, URL, connection string, filename with
+#' additional parameters, etc.
+#' Currently, only checks for leading tilde and does path expasion in that
+#' case. Returns the filename in UTF-8 encoding if possible using R enc2utf8.
 #'
 #' @noRd
 .check_gdal_filename <- function(filename) {
@@ -320,7 +322,7 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE, optio
     invisible(.Call(`_gdalraster_createCopy`, format, dst_filename, src_filename, strict, options, quiet))
 }
 
-#' Apply geotransform
+#' Apply geotransform - internal wrapper of GDALApplyGeoTransform()
 #'
 #' `_apply_geotransform()` applies geotransform coefficients to a raster
 #' coordinate in pixel/line space (colum/row), converting into a

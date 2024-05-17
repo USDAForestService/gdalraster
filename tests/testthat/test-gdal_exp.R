@@ -11,14 +11,14 @@ test_that("gdal_formats returns a data frame", {
     expect_true(nrow(x) > 1)
 })
 
-test_that("_check_gdal_filename works", {
+test_that(".check_gdal_filename works", {
     elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
     b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
     expect_error(.check_gdal_filename(c(elev_file, b5_file)))
     vsifn <- paste0("/vsi/", b5_file)
     expect_equal(vsifn, .check_gdal_filename(vsifn))
     fn <- "~/_r82jRwnT.test"
-    expect_warning(fn_out <- .check_gdal_filename(fn))
+    fn_out <- .check_gdal_filename(fn)
     expect_equal(basename(fn_out), basename(fn))
 })
 

@@ -288,8 +288,10 @@ void pop_error_handler() {
 
 
 //' Check a filename before passing to GDAL and potentially fix.
-//' filename may be a physical file, URL, connection string, file name with
-//' additional parameters, etc. Returned in UTF-8 encoding.
+//' 'filename' may be a physical file, URL, connection string, filename with
+//' additional parameters, etc.
+//' Currently, only checks for leading tilde and does path expasion in that
+//' case. Returns the filename in UTF-8 encoding if possible using R enc2utf8.
 //'
 //' @noRd
 // [[Rcpp::export(name = ".check_gdal_filename")]]
@@ -306,21 +308,10 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
     std::string std_filename(filename[0]);
     Rcpp::CharacterVector out_filename(1);
 
-    if (std_filename.find("/vsi") == 0) {
-        out_filename[0] = filename[0];
-    } else if (std_filename.find("~") != std_filename.npos) {
-    /* 	This does not catch an error from normalizePath() in R. But we're
-        not using mustWork=TRUE, so only a warning is emitted if path does
-        not exist. Leaving as try/catch for now. */
-        try {
-            out_filename = _normalize_path(filename);
-        }
-        catch (...) {
-            out_filename[0] = filename[0];
-        }
-    } else {
-        out_filename[0] = filename[0];
-    }
+    if (STARTS_WITH(std_filename.c_str(), "~"))
+        out_filename = _path_expand(filename);
+    else
+        out_filename = filename;
 
     return _enc_to_utf8(out_filename);
 }
@@ -557,7 +548,7 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 }
 
 
-//' Apply geotransform
+//' Apply geotransform - internal wrapper of GDALApplyGeoTransform()
 //'
 //' `_apply_geotransform()` applies geotransform coefficients to a raster
 //' coordinate in pixel/line space (colum/row), converting into a
