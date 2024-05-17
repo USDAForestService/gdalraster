@@ -1,6 +1,25 @@
 /* class VSIFile
-   Bindings to the GDAL VSIVirtualHandle API. Encapsulates a VSIVirtualHandle.
-   Chris Toney <chris.toney at usda.gov> */
+    Bindings to the GDAL VSIVirtualHandle API. Encapsulates a VSIVirtualHandle.
+    Chris Toney <chris.toney at usda.gov>
+
+    Requires {bit64} on the R side for its integer64 S3 type, since R does not
+    have a native int64 type. Uses RcppInt64 for conversion between R double
+    type (passed as numeric vector) and C++ int64_t.
+
+    From RcppInt64 (inst/include/rcppint64_bits/functions.h):
+        It relies on the bit64 package and its s3 type integer64 which use
+        a variable stored as 'double' to transport the int64_t type it
+        represents, along with proper type casting methods.
+
+        One key aspect is that the 'double' (or in Rcpp parlance the
+        'NumericVector' must carry the R class attribute so that the
+        payload is taken---and interpreted---as a int64.
+
+    Use of the integer64 type is only required in order to specify file offsets
+    larger than the range of double for representing exact integer (2^53).
+    The bit64::integer64 type is signed, so the max file offset that can be
+    used with the interface here is 9223372036854775807.
+*/
 
 #ifndef SRC_VSIFILE_H_
 #define SRC_VSIFILE_H_
@@ -17,7 +36,7 @@
 class VSIFile {
  private:
     std::string filename_in;
-    const char* access_in;  // access: "r", "r+", "w", "a"
+    const char* access_in;  // access: "r", "r+", "w"
     Rcpp::CharacterVector options_in;
     VSIVirtualHandle *VSILFILE;
     const uint64_t _R_VSI_L_OFFSET_MAX = 9223372036854775807;
@@ -32,16 +51,20 @@ class VSIFile {
     SEXP open();
     SEXP stat(std::string info);
     int seek(Rcpp::NumericVector offset, std::string origin);
-    Rcpp::NumericVector tell() const;  // returns integer64 scalar
+    // returns integer64 scalar:
+    Rcpp::NumericVector tell() const;
     void rewind();
-    SEXP read(std::size_t count);  // returns RawVector, or NULL
-    std::size_t write(const Rcpp::RawVector& buf);
+    // returns raw vector, or NULL:
+    SEXP read(std::size_t count);
+    // returns integer64 scalar:
+    Rcpp::NumericVector write(const Rcpp::RawVector& buf);
     bool eof() const;
-    int truncate(GUIntBig offset);
+    int truncate(Rcpp::NumericVector offset);
     int flush();
-    int printf(std::string fmt);
+    int printf(std::string fmt, ...);
     int putc(int c);
-    SEXP ingest(Rcpp::NumericVector max_size);  // returns RawVector, or NULL
+    // returns raw vector, or NULL:
+    SEXP ingest(Rcpp::NumericVector max_size);
     int close();
 };
 
