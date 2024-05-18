@@ -3,6 +3,7 @@
    Chris Toney <chris.toney at usda.gov> */
 
 #include <cstdlib>
+#include <complex>
 #include <vector>
 
 #include "vsifile.h"
@@ -26,7 +27,6 @@ VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access) :
                 access,
                 Rcpp::CharacterVector::create()) {}
 
-
 VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
             Rcpp::CharacterVector options) :
 
@@ -40,6 +40,8 @@ VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
     options_in = options;
     open();
 }
+
+VSIFile::~VSIFile() {}
 
 void VSIFile::open() {
     if (VSILFILE != nullptr)
@@ -136,13 +138,13 @@ void VSIFile::rewind() {
     return;
 }
 
-SEXP VSIFile::read(std::size_t count) {
+SEXP VSIFile::read(std::size_t nbytes) {
     if (VSILFILE == nullptr)
         Rcpp::stop("the file is not open");
 
-    void *buf = VSIMalloc(count);
+    void *buf = VSIMalloc(nbytes);
     size_t nRead = 0;
-    nRead = VSIFReadL(buf, 1, count, VSILFILE);
+    nRead = VSIFReadL(buf, 1, nbytes, VSILFILE);
     if (nRead == 0)
         return R_NilValue;
 
@@ -152,14 +154,79 @@ SEXP VSIFile::read(std::size_t count) {
     return raw;
 }
 
-Rcpp::NumericVector VSIFile::write(const Rcpp::RawVector& buf) {
+Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
     if (VSILFILE == nullptr)
         Rcpp::stop("the file is not open");
 
+    if (object.isNULL())
+        return 0;
+
+    if (Rf_isFactor(object)) {
+        Rcpp::Rcerr << "factor object not supported\n";
+        return 0;
+    }
+
+    Rcpp::RawVector obj_in_raw;
+    Rcpp::NumericVector obj_in_num;
+    Rcpp::IntegerVector obj_in_int;
+    Rcpp::ComplexVector obj_in_com;
+    Rcpp::LogicalVector obj_in_log;
+
+    const void* obj_ptr = nullptr;
+    size_t obj_size = 0;
+    size_t nat_size = 0;
+    if (Rcpp::is<Rcpp::RawVector>(object)) {
+        obj_in_raw = Rcpp::as<Rcpp::RawVector>(object);
+        obj_ptr = &obj_in_raw[0];
+        obj_size = obj_in_raw.size();
+        nat_size = 1;
+    }
+    else if (Rcpp::is<Rcpp::NumericVector>(object)) {
+        obj_in_num = Rcpp::as<Rcpp::NumericVector>(object);
+        obj_ptr = &obj_in_num[0];
+        obj_size = obj_in_num.size();
+        nat_size = sizeof(double);
+    }
+    else if (Rcpp::is<Rcpp::IntegerVector>(object)) {
+        obj_in_int = Rcpp::as<Rcpp::IntegerVector>(object);
+        obj_ptr = &obj_in_int[0];
+        obj_size = obj_in_int.size();
+        nat_size = sizeof(int);
+    }
+    else if (Rcpp::is<Rcpp::ComplexVector>(object)) {
+        obj_in_com = Rcpp::as<Rcpp::ComplexVector>(object);
+        obj_ptr = &obj_in_com[0];
+        obj_size = obj_in_com.size();
+        nat_size = sizeof(std::complex<double>);
+    }
+    else if (Rcpp::is<Rcpp::LogicalVector>(object)) {
+        obj_in_log = Rcpp::as<Rcpp::LogicalVector>(object);
+        obj_ptr = &obj_in_log[0];
+        obj_size = obj_in_log.size();
+        nat_size = sizeof(bool);
+    }
+    else {
+        Rcpp::Rcerr << "'object' must be a non-character atomic vector\n";
+        return 0;
+    }
+
+    // R ?writeBin:
+    // Possible sizes are 1, 2, 4 and possibly 8 for integer or logical
+    // vectors, and 4, 8 and possibly 12/16 for numeric vectors.
+    // (what does 12/16 mean?)
+    if (size == 0 || size > 16) {
+        Rcpp::Rcerr << "'size' is invalid, must be in 1:16 or negative\n";
+        return 0;
+    }
+
     size_t nSize = 1;
-    size_t nCount = buf.size();
+    if (size < 0)
+        nSize = nat_size;
+    else
+        nSize = static_cast<size_t>(size);
+
     int64_t ret = static_cast<int64_t>(
-            VSIFWriteL(&buf[0], nSize, nCount, VSILFILE));
+            VSIFWriteL(obj_ptr, nSize, obj_size, VSILFILE));
 
     return Rcpp::wrap(ret);
 }
@@ -248,12 +315,13 @@ int VSIFile::close() {
         if (ret == 0)
             VSILFILE = nullptr;
     }
-    else {
-        Rcpp::Rcout << "VSIVirtualHandle is NULL so VSIFCloseL() not called\n";
-    }
     return ret;
 }
 
+static void vsifile_finalizer(VSIFile* ptr) {
+    if (ptr)
+        ptr->close();
+}
 
 // ****************************************************************************
 
@@ -296,5 +364,6 @@ RCPP_MODULE(mod_VSIFile) {
     .method("close", &VSIFile::close,
         "Close file")
 
+    .finalizer(&vsifile_finalizer)
     ;
 }

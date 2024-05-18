@@ -30,13 +30,12 @@
 #include "RcppInt64"
 
 #include "gdal.h"
-// #include "cpl_string.h"
 #include "cpl_vsi.h"
 
 class VSIFile {
  private:
     std::string filename_in;
-    const char* access_in;  // access: "r", "r+", "w"
+    const char* access_in;  // "r", "r+", "w"
     Rcpp::CharacterVector options_in;
     VSIVirtualHandle *VSILFILE;
     const uint64_t _R_VSI_L_OFFSET_MAX = 9223372036854775807;
@@ -47,14 +46,15 @@ class VSIFile {
     VSIFile(Rcpp::CharacterVector filename, std::string access);
     VSIFile(Rcpp::CharacterVector filename, std::string access,
             Rcpp::CharacterVector options);
+    virtual ~VSIFile();
 
     std::string get_filename() const;
     void open();
     int seek(Rcpp::NumericVector offset, std::string origin);
     Rcpp::NumericVector tell() const;
     void rewind();
-    SEXP read(std::size_t count);
-    Rcpp::NumericVector write(const Rcpp::RawVector& buf);
+    SEXP read(std::size_t nbytes);
+    Rcpp::NumericVector write(const Rcpp::RObject& object, int size);
     bool eof() const;
     int truncate(Rcpp::NumericVector offset);
     int flush();
@@ -62,8 +62,8 @@ class VSIFile {
     int close();
 };
 
+static void vsifile_finalizer(VSIFile* ptr);
+
 RCPP_EXPOSED_CLASS(VSIFile)
-
-
 
 #endif  // SRC_VSIFILE_H_
