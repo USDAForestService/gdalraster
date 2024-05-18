@@ -45,6 +45,7 @@ URL: https://usdaforestservice.github.io/gdalraster/,
 BugReports: https://github.com/USDAForestService/gdalraster/issues
 Depends: R (>= 4.2.0)
 Imports:
+    bit64,
     graphics,
     grDevices,
     methods,
@@ -55,7 +56,6 @@ Imports:
     xml2
 LinkingTo: Rcpp, RcppInt64
 Suggests:
-    bit64,
     gt,
     knitr,
     rmarkdown,

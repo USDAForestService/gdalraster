@@ -211,9 +211,20 @@ Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
     }
 
     // R ?writeBin:
+    // (for info only, not accounting for all this here)
     // Possible sizes are 1, 2, 4 and possibly 8 for integer or logical
     // vectors, and 4, 8 and possibly 12/16 for numeric vectors.
-    // (what does 12/16 mean?)
+    // Note that coercion occurs as signed types ...
+    // ‘Endian-ness’ is relevant for ‘size > 1’, and should always be set
+    // for portable code (the default is only appropriate when writing
+    // and then reading files on the same platform).
+    // Integer read/writes of size 8 will be available if either C type
+    // ‘long’ is of size 8 bytes or C type ‘long long’ exists and is of
+    // size 8 bytes.
+    // Real read/writes of size ‘sizeof(long double)’ (usually 12 or 16
+    // bytes) will be available only if that type is available and
+    // different from ‘double’.
+
     if (size == 0 || size > 16) {
         Rcpp::Rcerr << "'size' is invalid, must be in 1:16 or negative\n";
         return 0;
