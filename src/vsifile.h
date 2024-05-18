@@ -46,7 +46,7 @@ class VSIFile {
     VSIFile(Rcpp::CharacterVector filename, std::string access);
     VSIFile(Rcpp::CharacterVector filename, std::string access,
             Rcpp::CharacterVector options);
-    virtual ~VSIFile();
+    ~VSIFile();
 
     std::string get_filename() const;
     void open();

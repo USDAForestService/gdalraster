@@ -13,7 +13,7 @@ a file in a "standard" local filesystem, or a filename with a GDAL
 
 \item{access}{Character string containing the access requested (i.e., \code{"r"},
 \code{"r+"}, \code{"w"}). Defaults to \code{"r"}. Binary access is always implied and the
-"b" does not need to be included in the \code{access}.}
+"b" does not need to be included in \code{access}.}
 
 \item{options}{Optional character vector of \code{NAME=VALUE} pairs specifying
 filesystem-dependent options (GDAL >= 3.3, see Details).}
@@ -29,8 +29,11 @@ described in Details. \code{VSIFile} is a C++ class exposed directly to R (via
 \code{VSIFile} provides bindings to the GDAL VSIVirtualHandle API. Encapsulates a
 \code{VSIVirtualHandle}
 (\url{https://gdal.org/api/cpl_cpp.html#_CPPv416VSIVirtualHandle}).
-This API abstracts binary file I/O for standard filesystems, URLs,
+This API abstracts binary file I/O for "regular" filesystems, URLs,
 cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
+It provides analogs of several Standard C file I/O functions, allowing
+virtualization of disk I/O so that non-file data sources can be made to
+appear as files.
 }
 \section{Usage}{
 
@@ -60,7 +63,6 @@ vf$get_filename()
 }
 
 \section{Details}{
-
 
 \code{new(VSIFile, filename)}
 Constructor. Returns an object of class \code{VSIFile}, or an error is raised
@@ -127,8 +129,9 @@ to use the natural size for the data type, i.e., \code{raw} size = \code{1},
 \code{numeric} size = \code{sizeof(double)}, \code{integer} size = \code{sizeof(int)},
 \code{logical} size = \code{sizeof(bool)},
 \code{complex} size = \verb{sizeof(std::complex<double>)}. Some of the information
-given in base R \code{?writeBin} is relevant here, but realize that the
-implementation here is different with minimal automatic handling.
+given in base R \code{?writeBin} is relevant here, but note that the
+implementation here is different and has minimal automatic handling.
+See also base R \code{charToRaw()}, convert to or from (bit/packed) raw vectors.
 Returns the number of objects successfully written, as numeric scalar
 carrying the \code{integer64} class attribute.
 
@@ -177,6 +180,6 @@ GDAL Virtual File Systems (compressed, network hosted, etc...): /vsimem,
 /vsizip, /vsitar, /vsicurl, ...\cr
 \url{https://gdal.org/user/virtual_file_systems.html}
 
-\code{\link[=vsi_copy_file]{vsi_copy_file()}}, \code{\link[=vsi_stat]{vsi_stat()}}, \code{\link[=vsi_unlink]{vsi_unlink()}}, \code{\link[=vsi_get_fs_prefixes]{vsi_get_fs_prefixes()}},
+\code{\link[=vsi_copy_file]{vsi_copy_file()}}, \code{\link[=vsi_read_dir]{vsi_read_dir()}}, \code{\link[=vsi_stat]{vsi_stat()}}, \code{\link[=vsi_unlink]{vsi_unlink()}},
 \code{\link[=vsi_get_fs_options]{vsi_get_fs_options()}}
 }

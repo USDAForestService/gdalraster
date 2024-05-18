@@ -8,15 +8,18 @@
 #' `VSIFile` provides bindings to the GDAL VSIVirtualHandle API. Encapsulates a
 #' `VSIVirtualHandle`
 #' (\url{https://gdal.org/api/cpl_cpp.html#_CPPv416VSIVirtualHandle}).
-#' This API abstracts binary file I/O for standard filesystems, URLs,
+#' This API abstracts binary file I/O for "regular" filesystems, URLs,
 #' cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
+#' It provides analogs of several Standard C file I/O functions, allowing
+#' virtualization of disk I/O so that non-file data sources can be made to
+#' appear as files.
 #'
 #' @param filename Character string containing the filename to open. It may be
 #' a file in a "standard" local filesystem, or a filename with a GDAL
 #' /vsiPREFIX/ (see \url{https://gdal.org/user/virtual_file_systems.html}).
 #' @param access Character string containing the access requested (i.e., `"r"`,
 #' `"r+"`, `"w"`). Defaults to `"r"`. Binary access is always implied and the
-#' "b" does not need to be included in the `access`.
+#' "b" does not need to be included in `access`.
 #' @param options Optional character vector of `NAME=VALUE` pairs specifying
 #' filesystem-dependent options (GDAL >= 3.3, see Details).
 #' @returns An object of class `VSIFile` which contains a pointer to a
@@ -50,7 +53,6 @@
 #' vf$get_filename()
 #' }
 #' @section Details:
-#'
 #' \code{new(VSIFile, filename)}
 #' Constructor. Returns an object of class `VSIFile`, or an error is raised
 #' if a file handle cannot be obtained.
@@ -113,8 +115,9 @@
 #' `numeric` size = `sizeof(double)`, `integer` size = `sizeof(int)`,
 #' `logical` size = `sizeof(bool)`,
 #' `complex` size = `sizeof(std::complex<double>)`. Some of the information
-#' given in base R `?writeBin` is relevant here, but realize that the
-#' implementation here is different with minimal automatic handling.
+#' given in base R `?writeBin` is relevant here, but note that the
+#' implementation here is different and has minimal automatic handling.
+#' See also base R `charToRaw()`, convert to or from (bit/packed) raw vectors.
 #' Returns the number of objects successfully written, as numeric scalar
 #' carrying the `integer64` class attribute.
 #'
@@ -164,7 +167,7 @@
 #' /vsizip, /vsitar, /vsicurl, ...\cr
 #' \url{https://gdal.org/user/virtual_file_systems.html}
 #'
-#' [vsi_copy_file()], [vsi_stat()], [vsi_unlink()], [vsi_get_fs_prefixes()],
+#' [vsi_copy_file()], [vsi_read_dir()], [vsi_stat()], [vsi_unlink()],
 #' [vsi_get_fs_options()]
 #'
 #' @examples

@@ -41,7 +41,9 @@ VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
     open();
 }
 
-VSIFile::~VSIFile() {}
+VSIFile::~VSIFile() {
+    close();
+}
 
 void VSIFile::open() {
     if (VSILFILE != nullptr)
@@ -78,11 +80,6 @@ int VSIFile::seek(Rcpp::NumericVector offset, std::string origin) {
     // offset must be an R numeric vector of length 1
     // i.e., a scalar but use NumericVector here since it can carry the class
     // attribute for integer64
-    //
-    // allowed values of origin:
-    // "SEEK_SET" seeking from beginning of the file
-    // "SEEK_CUR" seeking from the current file position
-    // "SEEK_END" seeking from end of the file
 
     if (VSILFILE == nullptr)
         Rcpp::stop("the file is not open");
@@ -134,13 +131,19 @@ void VSIFile::rewind() {
         Rcpp::stop("the file is not open");
 
     VSIRewindL(VSILFILE);
-
     return;
 }
 
 SEXP VSIFile::read(std::size_t nbytes) {
+    // should nbytes be changed to integer64 (via NumericVector)?
+    // ingest() could be used instead
+
     if (VSILFILE == nullptr)
         Rcpp::stop("the file is not open");
+
+    // Rcpp may enforce this for param of size_t, but to be sure
+    if (nbytes < 0)
+        Rcpp::stop("'nbytes' must be a positive integer");
 
     void *buf = VSIMalloc(nbytes);
     size_t nRead = 0;
@@ -211,8 +214,8 @@ Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
     }
 
     // R ?writeBin:
-    // (for info only, not accounting for all this here)
-    // Possible sizes are 1, 2, 4 and possibly 8 for integer or logical
+    // (for info only, not accounting for all of this here)
+    // "Possible sizes are 1, 2, 4 and possibly 8 for integer or logical
     // vectors, and 4, 8 and possibly 12/16 for numeric vectors.
     // Note that coercion occurs as signed types ...
     // ‘Endian-ness’ is relevant for ‘size > 1’, and should always be set
@@ -223,7 +226,7 @@ Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
     // size 8 bytes.
     // Real read/writes of size ‘sizeof(long double)’ (usually 12 or 16
     // bytes) will be available only if that type is available and
-    // different from ‘double’.
+    // different from ‘double’.""
 
     if (size == 0 || size > 16) {
         Rcpp::Rcerr << "'size' is invalid, must be in 1:16 or negative\n";
@@ -235,6 +238,11 @@ Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
         nSize = nat_size;
     else
         nSize = static_cast<size_t>(size);
+
+    if (obj_size % nSize != 0) {
+        Rcpp::Rcerr << "size of 'object' incompatible with 'size' parameter\n";
+        return 0;
+    }
 
     int64_t ret = static_cast<int64_t>(
             VSIFWriteL(obj_ptr, nSize, obj_size, VSILFILE));
@@ -287,6 +295,7 @@ SEXP VSIFile::ingest(Rcpp::NumericVector max_size) {
     // max_size must be an R numeric vector of length 1
     // i.e., a scalar but use NumericVector here since it can carry the class
     // attribute for integer64
+
     if (VSILFILE == nullptr)
         Rcpp::stop("the file is not open");
 
