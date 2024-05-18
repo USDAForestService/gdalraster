@@ -338,7 +338,7 @@ int VSIFile::close() {
     return ret;
 }
 
-static void vsifile_finalizer(VSIFile* ptr) {
+void vsifile_finalizer(VSIFile* ptr) {
     if (ptr)
         ptr->close();
 }
