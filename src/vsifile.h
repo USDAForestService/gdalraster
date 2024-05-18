@@ -4,16 +4,16 @@
 
     Requires {bit64} on the R side for its integer64 S3 type, since R does not
     have a native int64 type. Uses RcppInt64 for conversion between R double
-    type (passed as numeric vector) and C++ int64_t.
+    type (passed as Rccp::NumericVector) and C++ int64_t.
 
-    From RcppInt64 (inst/include/rcppint64_bits/functions.h):
-        It relies on the bit64 package and its s3 type integer64 which use
+    From RcppInt64:
+        "It relies on the bit64 package and its s3 type integer64 which use
         a variable stored as 'double' to transport the int64_t type it
         represents, along with proper type casting methods.
 
         One key aspect is that the 'double' (or in Rcpp parlance the
         'NumericVector' must carry the R class attribute so that the
-        payload is taken---and interpreted---as a int64.
+        payload is taken---and interpreted---as a int64.""
 
     Use of the integer64 type is only required in order to specify file offsets
     larger than the range of double for representing exact integer (2^53).
@@ -48,22 +48,16 @@ class VSIFile {
     VSIFile(Rcpp::CharacterVector filename, std::string access,
             Rcpp::CharacterVector options);
 
-    SEXP open();
-    SEXP stat(std::string info);
+    std::string get_filename() const;
+    void open();
     int seek(Rcpp::NumericVector offset, std::string origin);
-    // returns integer64 scalar:
     Rcpp::NumericVector tell() const;
     void rewind();
-    // returns raw vector, or NULL:
     SEXP read(std::size_t count);
-    // returns integer64 scalar:
     Rcpp::NumericVector write(const Rcpp::RawVector& buf);
     bool eof() const;
     int truncate(Rcpp::NumericVector offset);
     int flush();
-    int printf(std::string fmt, ...);
-    int putc(int c);
-    // returns raw vector, or NULL:
     SEXP ingest(Rcpp::NumericVector max_size);
     int close();
 };
