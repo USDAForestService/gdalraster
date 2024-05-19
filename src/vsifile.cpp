@@ -122,7 +122,8 @@ Rcpp::NumericVector VSIFile::tell() const {
     if (offset > _R_VSI_L_OFFSET_MAX)
         Rcpp::stop("the current file offset exceeds R integer64 upper limit");
 
-    int64_t ret = static_cast<int64_t>(offset);
+    std::vector<int64_t> ret(1);
+    ret[0] = static_cast<int64_t>(offset);
     return Rcpp::wrap(ret);
 }
 
@@ -243,7 +244,8 @@ Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
         return 0;
     }
 
-    int64_t ret = static_cast<int64_t>(
+    std::vector<int64_t> ret(1);
+    ret[0] = static_cast<int64_t>(
             VSIFWriteL(obj_ptr, nSize, obj_size, VSILFILE));
 
     return Rcpp::wrap(ret);
