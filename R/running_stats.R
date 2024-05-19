@@ -39,6 +39,7 @@
 #'
 #' @section Usage:
 #' \preformatted{
+#' ## Constructor
 #' rs <- new(RunningStats, na_rm)
 #'
 #' ## Methods (see Details)

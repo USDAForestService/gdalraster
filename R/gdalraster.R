@@ -29,9 +29,13 @@
 #'
 #' @section Usage:
 #' \preformatted{
+#' ## Constructors
 #' ds <- new(GDALRaster, filename, read_only=TRUE)
 #' # or, using dataset open options:
 #' ds <- new(GDALRaster, filename, read_only, open_options)
+#'
+#' ## Fields (see Details)
+#' ds$readByteAsRaw
 #'
 #' ## Methods (see Details)
 #' ds$getFilename()
@@ -104,9 +108,6 @@
 #' ds$getChecksum(band, xoff, yoff, xsize, ysize)
 #'
 #' ds$close()
-#'
-#' ## Fields
-#' ds$readByteAsRaw
 #' }
 #' @section Details:
 #'
@@ -120,6 +121,15 @@
 #' `read_only` is required for this form of the constructor, `TRUE` for
 #'  read-only, or `FALSE` to open with write access.
 #' Returns an object of class `GDALRaster`.
+#'
+#' \code{$readByteAsRaw}
+#' Read/write field.
+#' A logical value, `FALSE` by default. This field can be set to `TRUE` which
+#' will affect the data type returned by `$read()` and [read_ds()]. When the
+#' underlying band data type is 'Byte' and `readByteAsRaw` is `TRUE` the output
+#' type will be raw rather than integer. See also the `as_raw` argument to
+#' [read_ds()] to control this in a non-persistent setting. If the underlying
+#' band data type is not Byte this setting has no effect.
 #'
 #' \code{$getFilename()}
 #' Returns a character string containing the `filename` associated with this
@@ -530,7 +540,7 @@
 #' No rescaling of the data is performed (see \code{$getScale()} and
 #' \code{$getOffset()} above).
 #' An error is raised if the read operation fails. See also the setting
-#' `$readByteAsRaw` below.
+#' `$readByteAsRaw` above.
 #'
 #' \code{$write(band, xoff, yoff, xsize, ysize, rasterData)}
 #' Writes a region of raster data to \code{band}.
@@ -639,14 +649,6 @@
 #' The `GDALRaster` object is still available after calling \code{$close()}.
 #' The dataset can be re-opened on the existing \code{filename} with
 #' \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
-#'
-#' \code{$readByteAsRaw}
-#' A logical value, `FALSE` by default. This field can be set to `TRUE` which
-#' will affect the data type returned by `$read()` and [read_ds()]. When the
-#' underlying band data type is 'Byte' and `readByteAsRaw` is `TRUE` the output
-#' type will be raw rather than integer. See also the `as_raw` argument to
-#' [read_ds()] to control this in a non-persistent setting. If the underlying
-#' band data type is not Byte this setting has no effect.
 #'
 #' @note
 #' If a dataset object is opened with update access (`read_only = FALSE`), it

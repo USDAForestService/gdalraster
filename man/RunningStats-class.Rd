@@ -44,6 +44,7 @@ computes statistics for a whole raster band.
 \section{Usage}{
 
 \preformatted{
+## Constructor
 rs <- new(RunningStats, na_rm)
 
 ## Methods (see Details)
