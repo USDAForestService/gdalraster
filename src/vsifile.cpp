@@ -34,7 +34,7 @@ VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
 
     filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
     if (access.length() > 0 && access.length() < 4)
-        access_in = access.c_str();
+        access_in = access;
     else
         Rcpp::stop("'access' should be 'r', 'r+' or 'w'");
     options_in = options;
@@ -59,21 +59,17 @@ void VSIFile::open() {
         }
         opt_list[options_in.size()] = nullptr;
 
-        VSILFILE = VSIFOpenEx2L(filename_in.c_str(), access_in, TRUE,
+        VSILFILE = VSIFOpenEx2L(filename_in.c_str(), access_in.c_str(), TRUE,
                                 opt_list.data());
     }
     else {
-        VSILFILE = VSIFOpenExL(filename_in.c_str(), access_in, TRUE);
+        VSILFILE = VSIFOpenExL(filename_in.c_str(), access_in.c_str(), TRUE);
     }
 
     if (VSILFILE == nullptr)
         Rcpp::stop("failed to obtain a virtual file handle");
 
     return;
-}
-
-std::string VSIFile::get_filename() const {
-    return filename_in;
 }
 
 int VSIFile::seek(Rcpp::NumericVector offset, std::string origin) {
@@ -280,7 +276,7 @@ int VSIFile::truncate(Rcpp::NumericVector new_size) {
     }
 
     if (new_size_in < 0)
-        Rcpp::stop("'offset cannot be a negative number");
+        Rcpp::stop("'offset' cannot be a negative number");
 
     return VSIFTruncateL(VSILFILE, static_cast<vsi_l_offset>(new_size_in));
 }
@@ -339,6 +335,28 @@ int VSIFile::close() {
     return ret;
 }
 
+std::string VSIFile::get_filename() const {
+    return filename_in;
+}
+
+std::string VSIFile::get_access() const {
+    return access_in;
+}
+
+int VSIFile::set_access(std::string access) {
+    if (VSILFILE != nullptr)
+        Rcpp::stop("cannot set access while the file is open");
+
+    if (access.length() > 0 && access.length() < 4) {
+        access_in = access;
+        return 0;
+    }
+    else {
+        Rcpp::Rcerr << "'access' should be 'r', 'r+' or 'w'\n";
+        return -1;
+    }
+}
+
 void vsifile_finalizer(VSIFile* ptr) {
     if (ptr)
         ptr->close();
@@ -362,8 +380,6 @@ RCPP_MODULE(mod_VSIFile) {
     // exposed member functions
     .method("open", &VSIFile::open,
         "Open file")
-    .const_method("get_filename", &VSIFile::get_filename,
-        "Return the filename")
     .method("seek", &VSIFile::seek,
         "Seek to requested offset")
     .const_method("tell", &VSIFile::tell,
@@ -384,6 +400,12 @@ RCPP_MODULE(mod_VSIFile) {
         "Ingest file into memory and return as raw vector")
     .method("close", &VSIFile::close,
         "Close file")
+    .const_method("get_filename", &VSIFile::get_filename,
+        "Return the filename")
+    .const_method("get_access", &VSIFile::get_access,
+        "Return the access")
+    .method("set_access", &VSIFile::set_access,
+        "Set the access if the file is closed")
 
     .finalizer(&vsifile_finalizer)
     ;

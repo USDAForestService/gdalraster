@@ -57,8 +57,10 @@ vf$flush()
 vf$ingest(max_size)
 
 vf$close()
-vf$open()
 vf$get_filename()
+vf$get_access()
+vf$set_access(access)
+vf$open()
 }
 }
 
@@ -168,32 +170,46 @@ completed. Returns \code{0} on success or \code{-1} on error.
 
 \code{$open()}
 This method can be used to re-open the file after it has been closed, using
-the same \code{filename}, \code{access}, and \code{options} (if any). No return value.
-An error is raised if a file handle cannot be obtained.
+the same \code{filename}, and same \code{options} if any are set. The file will be
+opened using \code{access} as currently set. The \verb{$set_access()} method can be
+called to change the requested access while the file is closed.
+No return value. An error is raised if a file handle cannot be obtained.
 
 \code{$get_filename()}
 Returns a character string containing the \code{filename} associated with this
 \code{VSIFile} object (the \code{filename} originally used to create the object).
+
+\code{$get_access()}
+Returns a character string containing the \code{access} as currently set on this
+\code{VSIFile} object.
+
+\code{$set_access(access)}
+Sets the requested read/write access on this \code{VSIFile} object, given as a
+character string (i.e., \code{"r"}, \code{"r+"}, \code{"w"}). The access can be changed
+only while the \code{VSIFile} object is closed, and will apply when it is
+re-opened with a call to \verb{$open()}.
 }
 
 \examples{
-# The examples make use of the FARSITE v.4 LCP format specification at:
+# The examples make use of the FARSITE LCP format specification at:
 # https://gdal.org/drivers/raster/lcp.html
-# An LCP file is a raw format with a 7,316-byte header. The format spec gives
-# the byte offets and data types for fields in the header.
+# An LCP file is a raw format with a 7,316-byte header. The format
+# specification gives byte offets and data types for fields in the header.
 
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 
-# identify FARSITE v.4 LCP file
+# identify a FARSITE v.4 LCP file
+# function to check if the first three fields have valid data
+# input is the first twelve raw bytes in the file
 is_lcp <- function(byte_0_11) {
   # 1-based indexing in R
   if ((as.integer(byte_0_11)[1] == 20 || as.integer(byte_0_11)[1] == 21) &&
       (as.integer(byte_0_11)[5] == 20 || as.integer(byte_0_11)[5] == 21) &&
       (as.integer(byte_0_11)[9] >= -90 || as.integer(byte_0_11)[9] <= 90)) {
 
-    message("FARSITE v.4 LCP file")
+    return(TRUE)
   } else {
-    message("identify failed")
+    return(FALSE)
   }
 }
 
@@ -206,6 +222,7 @@ vf$tell()
 bytes <- vf$ingest(-1)
 vf$close()
 
+# write to an in-memory file
 mem_file <- "/vsimem/storml_copy.lcp"
 vf <- new(VSIFile, mem_file, "w")
 vf$write(bytes, 1)
@@ -225,20 +242,24 @@ vf$seek(6804, SEEK_SET)
 bytes <- vf$read(512)
 rawToChar(bytes)
 
-# edit Description
+# edit the Description
 desc <- paste(rawToChar(bytes),
               "Storm Lake AOI,",
-              "Beaverhead-Deerlodge National Forest, Montana")
+              "Beaverhead-Deerlodge National Forest, Montana.")
 
 vf$seek(6804, SEEK_SET)
 vf$write(charToRaw(desc), 1)
 vf$close()
 
 ds <- new(GDALRaster, mem_file)
-# ds$info()
-ds$getMetadataItem(band = 0, mdi_name = "DESCRIPTION", domain = "")
-ds$close()
+ds$info()
 
+# or retrieve from the metadata
+# band = 0 for dataset-level metadata, domain = "" for default domain
+ds$getMetadata(band = 0, domain = "")
+ds$getMetadataItem(band = 0, mdi_name = "DESCRIPTION", domain = "")
+
+ds$close()
 vsi_unlink(mem_file)
 }
 \seealso{

@@ -35,7 +35,7 @@
 class VSIFile {
  private:
     std::string filename_in;
-    const char* access_in;  // "r", "r+", "w"
+    std::string access_in;  // "r", "r+", "w"
     Rcpp::CharacterVector options_in;
     VSIVirtualHandle *VSILFILE;
     const uint64_t _R_VSI_L_OFFSET_MAX = 9223372036854775807;
@@ -48,7 +48,6 @@ class VSIFile {
             Rcpp::CharacterVector options);
     ~VSIFile();
 
-    std::string get_filename() const;
     void open();
     int seek(Rcpp::NumericVector offset, std::string origin);
     Rcpp::NumericVector tell() const;
@@ -60,6 +59,9 @@ class VSIFile {
     int flush();
     SEXP ingest(Rcpp::NumericVector max_size);
     int close();
+    std::string get_filename() const;
+    std::string get_access() const;
+    int set_access(std::string access);
 };
 
 static void vsifile_finalizer(VSIFile* ptr);
