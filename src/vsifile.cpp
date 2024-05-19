@@ -13,7 +13,7 @@ VSIFile::VSIFile() :
             filename_in(""),
             access_in("r"),
             options_in(Rcpp::CharacterVector::create()),
-            VSILFILE(nullptr) {}
+            fp(nullptr) {}
 
 VSIFile::VSIFile(Rcpp::CharacterVector filename) :
             VSIFile(
@@ -30,7 +30,7 @@ VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access) :
 VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
             Rcpp::CharacterVector options) :
 
-            VSILFILE(nullptr) {
+            fp(nullptr) {
 
     filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
     if (access.length() > 0 && access.length() < 4)
@@ -46,7 +46,7 @@ VSIFile::~VSIFile() {
 }
 
 void VSIFile::open() {
-    if (VSILFILE != nullptr)
+    if (fp != nullptr)
         Rcpp::stop("the file is already open");
 
     if (options_in.size() > 0) {
@@ -59,14 +59,14 @@ void VSIFile::open() {
         }
         opt_list[options_in.size()] = nullptr;
 
-        VSILFILE = VSIFOpenEx2L(filename_in.c_str(), access_in.c_str(), TRUE,
-                                opt_list.data());
+        fp = VSIFOpenEx2L(filename_in.c_str(), access_in.c_str(), TRUE,
+                          opt_list.data());
     }
     else {
-        VSILFILE = VSIFOpenExL(filename_in.c_str(), access_in.c_str(), TRUE);
+        fp = VSIFOpenExL(filename_in.c_str(), access_in.c_str(), TRUE);
     }
 
-    if (VSILFILE == nullptr)
+    if (fp == nullptr)
         Rcpp::stop("failed to obtain a virtual file handle");
 
     return;
@@ -77,7 +77,7 @@ int VSIFile::seek(Rcpp::NumericVector offset, std::string origin) {
     // i.e., a scalar but use NumericVector here since it can carry the class
     // attribute for integer64
 
-    if (VSILFILE == nullptr)
+    if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
     if (offset.size() != 1)
@@ -106,15 +106,15 @@ int VSIFile::seek(Rcpp::NumericVector offset, std::string origin) {
     else
         Rcpp::stop("'origin' is invalid");
 
-    return VSIFSeekL(VSILFILE, static_cast<vsi_l_offset>(offset_in),
+    return VSIFSeekL(fp, static_cast<vsi_l_offset>(offset_in),
                      origin_in);
 }
 
 Rcpp::NumericVector VSIFile::tell() const {
-    if (VSILFILE == nullptr)
+    if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
-    vsi_l_offset offset = VSIFTellL(VSILFILE);
+    vsi_l_offset offset = VSIFTellL(fp);
     if (offset > _R_VSI_L_OFFSET_MAX)
         Rcpp::stop("the current file offset exceeds R integer64 upper limit");
 
@@ -124,10 +124,10 @@ Rcpp::NumericVector VSIFile::tell() const {
 }
 
 void VSIFile::rewind() {
-    if (VSILFILE == nullptr)
+    if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
-    VSIRewindL(VSILFILE);
+    VSIRewindL(fp);
     return;
 }
 
@@ -135,7 +135,7 @@ SEXP VSIFile::read(std::size_t nbytes) {
     // should nbytes be changed to integer64 (via NumericVector)?
     // ingest() could be used instead
 
-    if (VSILFILE == nullptr)
+    if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
     if (nbytes < 0)
@@ -143,7 +143,7 @@ SEXP VSIFile::read(std::size_t nbytes) {
 
     void *buf = VSIMalloc(nbytes);
     size_t nRead = 0;
-    nRead = VSIFReadL(buf, 1, nbytes, VSILFILE);
+    nRead = VSIFReadL(buf, 1, nbytes, fp);
     if (nRead == 0)
         return R_NilValue;
 
@@ -154,7 +154,7 @@ SEXP VSIFile::read(std::size_t nbytes) {
 }
 
 Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
-    if (VSILFILE == nullptr)
+    if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
     if (object.isNULL())
@@ -242,16 +242,16 @@ Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
 
     std::vector<int64_t> ret(1);
     ret[0] = static_cast<int64_t>(
-            VSIFWriteL(obj_ptr, nSize, obj_size, VSILFILE));
+            VSIFWriteL(obj_ptr, nSize, obj_size, fp));
 
     return Rcpp::wrap(ret);
 }
 
 bool VSIFile::eof() const {
-    if (VSILFILE == nullptr)
+    if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
-    int eof = VSIFEofL(VSILFILE);
+    int eof = VSIFEofL(fp);
     if (eof == 0)
         return false;
     else
@@ -259,7 +259,7 @@ bool VSIFile::eof() const {
 }
 
 int VSIFile::truncate(Rcpp::NumericVector new_size) {
-    if (VSILFILE == nullptr)
+    if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
     if (new_size.size() != 1)
@@ -278,14 +278,14 @@ int VSIFile::truncate(Rcpp::NumericVector new_size) {
     if (new_size_in < 0)
         Rcpp::stop("'offset' cannot be a negative number");
 
-    return VSIFTruncateL(VSILFILE, static_cast<vsi_l_offset>(new_size_in));
+    return VSIFTruncateL(fp, static_cast<vsi_l_offset>(new_size_in));
 }
 
 int VSIFile::flush() {
-    if (VSILFILE == nullptr)
+    if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
-    return VSIFFlushL(VSILFILE);
+    return VSIFFlushL(fp);
 }
 
 SEXP VSIFile::ingest(Rcpp::NumericVector max_size) {
@@ -293,7 +293,7 @@ SEXP VSIFile::ingest(Rcpp::NumericVector max_size) {
     // i.e., a scalar but use NumericVector here since it can carry the class
     // attribute for integer64
 
-    if (VSILFILE == nullptr)
+    if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
     if (max_size.size() != 1)
@@ -312,7 +312,7 @@ SEXP VSIFile::ingest(Rcpp::NumericVector max_size) {
     GByte *paby = nullptr;
     vsi_l_offset nSize = 0;
 
-    int result = VSIIngestFile(VSILFILE, nullptr, &paby, &nSize, max_size_in);
+    int result = VSIIngestFile(fp, nullptr, &paby, &nSize, max_size_in);
 
     if (!result) {
         Rcpp::Rcerr << "failed to ingest file\n";
@@ -327,10 +327,10 @@ SEXP VSIFile::ingest(Rcpp::NumericVector max_size) {
 
 int VSIFile::close() {
     int ret = -1;
-    if (VSILFILE != nullptr) {
-        ret = VSIFCloseL(VSILFILE);
+    if (fp != nullptr) {
+        ret = VSIFCloseL(fp);
         if (ret == 0)
-            VSILFILE = nullptr;
+            fp = nullptr;
     }
     return ret;
 }
@@ -344,7 +344,7 @@ std::string VSIFile::get_access() const {
 }
 
 int VSIFile::set_access(std::string access) {
-    if (VSILFILE != nullptr)
+    if (fp != nullptr)
         Rcpp::stop("cannot set access while the file is open");
 
     if (access.length() > 0 && access.length() < 4) {
