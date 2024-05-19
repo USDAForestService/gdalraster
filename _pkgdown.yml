@@ -20,6 +20,7 @@ reference:
   - CmbTable-class
   - GDALRaster-class
   - RunningStats-class
+  - VSIFile-class
 
 - title: Stand-alone functions
 - subtitle: Raster creation
