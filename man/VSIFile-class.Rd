@@ -8,8 +8,8 @@
 \title{Class wrapping the GDAL VSIVirtualHandle API for binary file I/O}
 \arguments{
 \item{filename}{Character string containing the filename to open. It may be
-a file in a "standard" local filesystem, or a filename with a GDAL
-/vsiPREFIX/ (see \url{https://gdal.org/user/virtual_file_systems.html}).}
+a file in a regular local filesystem, or a filename with a GDAL /vsiPREFIX/
+(see \url{https://gdal.org/user/virtual_file_systems.html}).}
 
 \item{access}{Character string containing the access requested (i.e., \code{"r"},
 \code{"r+"}, \code{"w"}). Defaults to \code{"r"}. Binary access is always implied and the
@@ -20,8 +20,8 @@ filesystem-dependent options (GDAL >= 3.3, see Details).}
 }
 \value{
 An object of class \code{VSIFile} which contains a pointer to a
-\code{VSIVirtualHandle}, and methods that operate on the file pointer as
-described in Details. \code{VSIFile} is a C++ class exposed directly to R (via
+\code{VSIVirtualHandle}, and methods that operate on the file as described in
+Details. \code{VSIFile} is a C++ class exposed directly to R (via
 \code{RCPP_EXPOSED_CLASS}). Methods of the class are accessed using the
 \code{$} operator.
 }
@@ -29,7 +29,7 @@ described in Details. \code{VSIFile} is a C++ class exposed directly to R (via
 \code{VSIFile} provides bindings to the GDAL VSIVirtualHandle API. Encapsulates a
 \code{VSIVirtualHandle}
 (\url{https://gdal.org/api/cpl_cpp.html#_CPPv416VSIVirtualHandle}).
-This API abstracts binary file I/O for "regular" filesystems, URLs,
+This API abstracts binary file I/O across "regular" file systems, URLs,
 cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
 It provides analogs of several Standard C file I/O functions, allowing
 virtualization of disk I/O so that non-file data sources can be made to
@@ -81,7 +81,7 @@ Returns an object of class \code{VSIFile} with an open file handle, or an error
 is raised if a file handle cannot be obtained.
 
 The \code{options} argument is highly file system dependent. Supported options
-as GDAL 3.9 include:
+as of GDAL 3.9 include:
 \itemize{
 \item MIME headers such as Content-Type and Content-Encoding are supported for
 the /vsis3/, /vsigs/, /vsiaz/, /vsiadls/ file systems.
@@ -99,10 +99,11 @@ Seek to a requested \code{offset} in the file.
 \code{offset} is given as a postive numeric scalar, optionally as
 \code{bit64::integer64} type.
 \code{origin} is given as a character string, one of \code{SEEK_SET}, \code{SEEK_CUR} or
-\code{SEEK_END}. Note that \code{offset} is an unsigned type, so \code{SEEK_CUR} can only
-be used for positive seek. If negative seek is needed, use for example:
+\code{SEEK_END}. Package global constants are defined for convenience, so these
+can be passed unquoted. Note that \code{offset} is an unsigned type, so `SEEK_CUR
+can only be used for positive seek. If negative seek is needed, use:
 
-\if{html}{\out{<div class="sourceCode">}}\preformatted{vf$seek(vf$tell() + negative_offset, "SEEK_SET")
+\if{html}{\out{<div class="sourceCode">}}\preformatted{vf$seek(vf$tell() + negative_offset, SEEK_SET)
 }\if{html}{\out{</div>}}
 
 Returns \code{0} on success or \code{-1} on failure.
@@ -114,7 +115,7 @@ class attribute.
 
 \code{$rewind()}
 Rewind the file pointer to the beginning of the file. This is equivalent to
-\code{vf$seek(0, "SEEK_SET")}. No return value, called for that side effect.
+\code{vf$seek(0, SEEK_SET)}. No return value, called for that side effect.
 
 \code{$read(nbytes)}
 Reads \code{nbytes} bytes from the file at the current offset. Returns a vector
@@ -124,14 +125,14 @@ of R \code{raw} type, or \code{NULL} if the operation fails.
 Writes objects of \code{size} bytes to the file at the current offset. \code{object}
 is a non-character atomic vector (i.e., \code{raw}, \code{numeric}, \code{integer},
 \code{logical}, \code{complex}). \code{size} is the number of bytes per element in
-\code{object}. The element \code{size} may be give as a negative number (e.g., \code{-1})
+\code{object}. The element \code{size} may be given as a negative number (e.g., \code{-1})
 to use the natural size for the data type, i.e., \code{raw} size = \code{1},
 \code{numeric} size = \code{sizeof(double)}, \code{integer} size = \code{sizeof(int)},
 \code{logical} size = \code{sizeof(bool)},
 \code{complex} size = \verb{sizeof(std::complex<double>)}. Some of the information
 given in base R \code{?writeBin} is relevant here, but note that the
 implementation here is different and has minimal automatic handling.
-See also base R \code{charToRaw()}, convert to or from (bit/packed) raw vectors.
+See also base R \code{charToRaw()}, convert to or from raw vectors.
 Returns the number of objects successfully written, as numeric scalar
 carrying the \code{integer64} class attribute.
 
@@ -147,7 +148,7 @@ Returns \code{0} on success.
 
 \code{$flush()}
 Flush pending writes to disk. For files in write or update mode and on
-filesystem types where it is applicable, all pending output on the file is
+file system types where it is applicable, all pending output on the file is
 flushed to the physical disk.
 On Windows regular files, this method does nothing, unless the
 \code{VSI_FLUSH=YES} configuration option is set (and only when the file has not
@@ -157,27 +158,92 @@ Returns \code{0} on success or \code{-1} on error.
 \code{$ingest(max_size)}
 Ingest a file into memory. Read the whole content of the file into a \code{raw}
 vector.
-\code{max_size} is the maximum size of file allowed, given as a positive
-numeric scalar, optionally as \code{bit64::integer64} type. If no limit, set to
-a negative value. Returns a \code{raw} vector, or \code{NULL} if the operation fails.
+\code{max_size} is the maximum size of file allowed, given as a numeric scalar,
+optionally as \code{bit64::integer64} type. If no limit, set to a negative value.
+Returns a \code{raw} vector, or \code{NULL} if the operation fails.
 
 \code{$close()}
 Closes the file. The file should always be closed when I/O has been
 completed. Returns \code{0} on success or \code{-1} on error.
 
 \code{$open()}
-The method can be used to re-open the file after it has been closed, using
+This method can be used to re-open the file after it has been closed, using
 the same \code{filename}, \code{access}, and \code{options} (if any). No return value.
 An error is raised if a file handle cannot be obtained.
 
 \code{$get_filename()}
 Returns a character string containing the \code{filename} associated with this
-\code{VSIFile} object (\code{filename} originally used to create the object).
+\code{VSIFile} object (the \code{filename} originally used to create the object).
 }
 
+\examples{
+# The examples make use of the FARSITE v.4 LCP format specification at:
+# https://gdal.org/drivers/raster/lcp.html
+# An LCP file is a raw format with a 7,316-byte header. The format spec gives
+# the byte offets and data types for fields in the header.
+
+lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+
+# identify FARSITE v.4 LCP file
+is_lcp <- function(byte_0_11) {
+  # 1-based indexing in R
+  if ((as.integer(byte_0_11)[1] == 20 || as.integer(byte_0_11)[1] == 21) &&
+      (as.integer(byte_0_11)[5] == 20 || as.integer(byte_0_11)[5] == 21) &&
+      (as.integer(byte_0_11)[9] >= -90 || as.integer(byte_0_11)[9] <= 90)) {
+
+    message("FARSITE v.4 LCP file")
+  } else {
+    message("identify failed")
+  }
+}
+
+vf <- new(VSIFile, lcp_file)
+bytes <- vf$read(12)
+is_lcp(bytes)
+
+vf$tell()
+
+bytes <- vf$ingest(-1)
+vf$close()
+
+mem_file <- "/vsimem/storml_copy.lcp"
+vf <- new(VSIFile, mem_file, "w")
+vf$write(bytes, 1)
+
+vf$tell()
+vf$rewind()
+vf$tell()
+
+vf$seek(0, SEEK_END)
+(vf$tell() == vsi_stat(lcp_file, "size"))
+
+vf$rewind()
+is_lcp(vf$read(12))
+
+# read the Description field
+vf$seek(6804, SEEK_SET)
+bytes <- vf$read(512)
+rawToChar(bytes)
+
+# edit Description
+desc <- paste(rawToChar(bytes),
+              "Storm Lake AOI,",
+              "Beaverhead-Deerlodge National Forest, Montana")
+
+vf$seek(6804, SEEK_SET)
+vf$write(charToRaw(desc), 1)
+vf$close()
+
+ds <- new(GDALRaster, mem_file)
+# ds$info()
+ds$getMetadataItem(band = 0, mdi_name = "DESCRIPTION", domain = "")
+ds$close()
+
+vsi_unlink(mem_file)
+}
 \seealso{
-GDAL Virtual File Systems (compressed, network hosted, etc...): /vsimem,
-/vsizip, /vsitar, /vsicurl, ...\cr
+GDAL Virtual File Systems (compressed, network hosted, etc...):\cr
+/vsimem, /vsizip, /vsitar, /vsicurl, ...\cr
 \url{https://gdal.org/user/virtual_file_systems.html}
 
 \code{\link[=vsi_copy_file]{vsi_copy_file()}}, \code{\link[=vsi_read_dir]{vsi_read_dir()}}, \code{\link[=vsi_stat]{vsi_stat()}}, \code{\link[=vsi_unlink]{vsi_unlink()}},

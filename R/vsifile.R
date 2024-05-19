@@ -1,3 +1,18 @@
+#' Constants for VSIFile$seek()
+#'
+#' These are package global constants for convenience in calling
+#' `VSIFile$seek()`.
+#'
+#' @name vsi_seek_constants
+#' @export
+SEEK_SET <- "SEEK_SET"
+#' @name vsi_seek_constants
+#' @export
+SEEK_CUR <- "SEEK_CUR"
+#' @name vsi_seek_constants
+#' @export
+SEEK_END <- "SEEK_END"
+
 #' @name VSIFile-class
 #'
 #' @aliases
@@ -8,23 +23,23 @@
 #' `VSIFile` provides bindings to the GDAL VSIVirtualHandle API. Encapsulates a
 #' `VSIVirtualHandle`
 #' (\url{https://gdal.org/api/cpl_cpp.html#_CPPv416VSIVirtualHandle}).
-#' This API abstracts binary file I/O for "regular" filesystems, URLs,
+#' This API abstracts binary file I/O across "regular" file systems, URLs,
 #' cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
 #' It provides analogs of several Standard C file I/O functions, allowing
 #' virtualization of disk I/O so that non-file data sources can be made to
 #' appear as files.
 #'
 #' @param filename Character string containing the filename to open. It may be
-#' a file in a "standard" local filesystem, or a filename with a GDAL
-#' /vsiPREFIX/ (see \url{https://gdal.org/user/virtual_file_systems.html}).
+#' a file in a regular local filesystem, or a filename with a GDAL /vsiPREFIX/
+#' (see \url{https://gdal.org/user/virtual_file_systems.html}).
 #' @param access Character string containing the access requested (i.e., `"r"`,
 #' `"r+"`, `"w"`). Defaults to `"r"`. Binary access is always implied and the
 #' "b" does not need to be included in `access`.
 #' @param options Optional character vector of `NAME=VALUE` pairs specifying
 #' filesystem-dependent options (GDAL >= 3.3, see Details).
 #' @returns An object of class `VSIFile` which contains a pointer to a
-#' `VSIVirtualHandle`, and methods that operate on the file pointer as
-#' described in Details. `VSIFile` is a C++ class exposed directly to R (via
+#' `VSIVirtualHandle`, and methods that operate on the file as described in
+#' Details. `VSIFile` is a C++ class exposed directly to R (via
 #' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed using the
 #' `$` operator.
 #'
@@ -70,7 +85,7 @@
 #' is raised if a file handle cannot be obtained.
 #'
 #' The `options` argument is highly file system dependent. Supported options
-#' as GDAL 3.9 include:
+#' as of GDAL 3.9 include:
 #' * MIME headers such as Content-Type and Content-Encoding are supported for
 #' the /vsis3/, /vsigs/, /vsiaz/, /vsiadls/ file systems.
 #' * DISABLE_READDIR_ON_OPEN=YES/NO (GDAL >= 3.6) for /vsicurl/ and other
@@ -86,10 +101,11 @@
 #' `offset` is given as a postive numeric scalar, optionally as
 #' `bit64::integer64` type.
 #' `origin` is given as a character string, one of `SEEK_SET`, `SEEK_CUR` or
-#' `SEEK_END`. Note that `offset` is an unsigned type, so `SEEK_CUR` can only
-#' be used for positive seek. If negative seek is needed, use for example:
+#' `SEEK_END`. Package global constants are defined for convenience, so these
+#' can be passed unquoted. Note that `offset` is an unsigned type, so `SEEK_CUR
+#' can only be used for positive seek. If negative seek is needed, use:
 #' ```
-#' vf$seek(vf$tell() + negative_offset, "SEEK_SET")
+#' vf$seek(vf$tell() + negative_offset, SEEK_SET)
 #' ```
 #' Returns `0` on success or `-1` on failure.
 #'
@@ -100,7 +116,7 @@
 #'
 #' \code{$rewind()}
 #' Rewind the file pointer to the beginning of the file. This is equivalent to
-#' `vf$seek(0, "SEEK_SET")`. No return value, called for that side effect.
+#' `vf$seek(0, SEEK_SET)`. No return value, called for that side effect.
 #'
 #' \code{$read(nbytes)}
 #' Reads `nbytes` bytes from the file at the current offset. Returns a vector
@@ -110,14 +126,14 @@
 #' Writes objects of `size` bytes to the file at the current offset. `object`
 #' is a non-character atomic vector (i.e., `raw`, `numeric`, `integer`,
 #' `logical`, `complex`). `size` is the number of bytes per element in
-#' `object`. The element `size` may be give as a negative number (e.g., `-1`)
+#' `object`. The element `size` may be given as a negative number (e.g., `-1`)
 #' to use the natural size for the data type, i.e., `raw` size = `1`,
 #' `numeric` size = `sizeof(double)`, `integer` size = `sizeof(int)`,
 #' `logical` size = `sizeof(bool)`,
 #' `complex` size = `sizeof(std::complex<double>)`. Some of the information
 #' given in base R `?writeBin` is relevant here, but note that the
 #' implementation here is different and has minimal automatic handling.
-#' See also base R `charToRaw()`, convert to or from (bit/packed) raw vectors.
+#' See also base R `charToRaw()`, convert to or from raw vectors.
 #' Returns the number of objects successfully written, as numeric scalar
 #' carrying the `integer64` class attribute.
 #'
@@ -133,7 +149,7 @@
 #'
 #' \code{$flush()}
 #' Flush pending writes to disk. For files in write or update mode and on
-#' filesystem types where it is applicable, all pending output on the file is
+#' file system types where it is applicable, all pending output on the file is
 #' flushed to the physical disk.
 #' On Windows regular files, this method does nothing, unless the
 #' `VSI_FLUSH=YES` configuration option is set (and only when the file has not
@@ -143,35 +159,95 @@
 #' \code{$ingest(max_size)}
 #' Ingest a file into memory. Read the whole content of the file into a `raw`
 #' vector.
-#' `max_size` is the maximum size of file allowed, given as a positive
-#' numeric scalar, optionally as `bit64::integer64` type. If no limit, set to
-#' a negative value. Returns a `raw` vector, or `NULL` if the operation fails.
+#' `max_size` is the maximum size of file allowed, given as a numeric scalar,
+#' optionally as `bit64::integer64` type. If no limit, set to a negative value.
+#' Returns a `raw` vector, or `NULL` if the operation fails.
 #'
 #' \code{$close()}
 #' Closes the file. The file should always be closed when I/O has been
 #' completed. Returns `0` on success or `-1` on error.
 #'
 #' \code{$open()}
-#' The method can be used to re-open the file after it has been closed, using
+#' This method can be used to re-open the file after it has been closed, using
 #' the same `filename`, `access`, and `options` (if any). No return value.
 #' An error is raised if a file handle cannot be obtained.
 #'
 #' \code{$get_filename()}
 #' Returns a character string containing the `filename` associated with this
-#' `VSIFile` object (`filename` originally used to create the object).
-#'
-#' @note
+#' `VSIFile` object (the `filename` originally used to create the object).
 #'
 #' @seealso
-#' GDAL Virtual File Systems (compressed, network hosted, etc...): /vsimem,
-#' /vsizip, /vsitar, /vsicurl, ...\cr
+#' GDAL Virtual File Systems (compressed, network hosted, etc...):\cr
+#' /vsimem, /vsizip, /vsitar, /vsicurl, ...\cr
 #' \url{https://gdal.org/user/virtual_file_systems.html}
 #'
 #' [vsi_copy_file()], [vsi_read_dir()], [vsi_stat()], [vsi_unlink()],
 #' [vsi_get_fs_options()]
 #'
 #' @examples
+#' # The examples make use of the FARSITE v.4 LCP format specification at:
+#' # https://gdal.org/drivers/raster/lcp.html
+#' # An LCP file is a raw format with a 7,316-byte header. The format spec gives
+#' # the byte offets and data types for fields in the header.
 #'
+#' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+#'
+#' # identify FARSITE v.4 LCP file
+#' is_lcp <- function(byte_0_11) {
+#'   # 1-based indexing in R
+#'   if ((as.integer(byte_0_11)[1] == 20 || as.integer(byte_0_11)[1] == 21) &&
+#'       (as.integer(byte_0_11)[5] == 20 || as.integer(byte_0_11)[5] == 21) &&
+#'       (as.integer(byte_0_11)[9] >= -90 || as.integer(byte_0_11)[9] <= 90)) {
+#'
+#'     message("FARSITE v.4 LCP file")
+#'   } else {
+#'     message("identify failed")
+#'   }
+#' }
+#'
+#' vf <- new(VSIFile, lcp_file)
+#' bytes <- vf$read(12)
+#' is_lcp(bytes)
+#'
+#' vf$tell()
+#'
+#' bytes <- vf$ingest(-1)
+#' vf$close()
+#'
+#' mem_file <- "/vsimem/storml_copy.lcp"
+#' vf <- new(VSIFile, mem_file, "w")
+#' vf$write(bytes, 1)
+#'
+#' vf$tell()
+#' vf$rewind()
+#' vf$tell()
+#'
+#' vf$seek(0, SEEK_END)
+#' (vf$tell() == vsi_stat(lcp_file, "size"))
+#'
+#' vf$rewind()
+#' is_lcp(vf$read(12))
+#'
+#' # read the Description field
+#' vf$seek(6804, SEEK_SET)
+#' bytes <- vf$read(512)
+#' rawToChar(bytes)
+#'
+#' # edit Description
+#' desc <- paste(rawToChar(bytes),
+#'               "Storm Lake AOI,",
+#'               "Beaverhead-Deerlodge National Forest, Montana")
+#'
+#' vf$seek(6804, SEEK_SET)
+#' vf$write(charToRaw(desc), 1)
+#' vf$close()
+#'
+#' ds <- new(GDALRaster, mem_file)
+#' # ds$info()
+#' ds$getMetadataItem(band = 0, mdi_name = "DESCRIPTION", domain = "")
+#' ds$close()
+#'
+#' vsi_unlink(mem_file)
 NULL
 
 Rcpp::loadModule("mod_VSIFile", TRUE)

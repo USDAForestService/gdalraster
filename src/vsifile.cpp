@@ -141,7 +141,6 @@ SEXP VSIFile::read(std::size_t nbytes) {
     if (VSILFILE == nullptr)
         Rcpp::stop("the file is not open");
 
-    // Rcpp may enforce this for param of size_t, but to be sure
     if (nbytes < 0)
         Rcpp::stop("'nbytes' must be a positive integer");
 
@@ -226,7 +225,7 @@ Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
     // size 8 bytes.
     // Real read/writes of size ‘sizeof(long double)’ (usually 12 or 16
     // bytes) will be available only if that type is available and
-    // different from ‘double’.""
+    // different from ‘double’."
 
     if (size == 0 || size > 16) {
         Rcpp::Rcerr << "'size' is invalid, must be in 1:16 or negative\n";
