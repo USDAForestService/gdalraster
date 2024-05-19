@@ -117,9 +117,13 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
     
 
 <div class="sourceCode"><pre><code><span></span>
+<span><span class="co">## Constructors</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># or, using dataset open options:</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, <span class="va">read_only</span>, <span class="va">open_options</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co">## Fields (see Details)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="va">readByteAsRaw</span></span>
 <span></span>
 <span><span class="co">## Methods (see Details)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getFilename</span><span class="op">(</span><span class="op">)</span></span>
@@ -191,10 +195,7 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getChecksum</span><span class="op">(</span><span class="va">band</span>, <span class="va">xoff</span>, <span class="va">yoff</span>, <span class="va">xsize</span>, <span class="va">ysize</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="co">## Fields</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="va">readByteAsRaw</span></span></code></pre></div>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 
     </div>
     <div class="section level2">
@@ -211,6 +212,14 @@ vector of <code>NAME=VALUE</code> pairs.
 <code>read_only</code> is required for this form of the constructor, <code>TRUE</code> for
 read-only, or <code>FALSE</code> to open with write access.
 Returns an object of class <code>GDALRaster</code>.</p>
+<p><code>$readByteAsRaw</code>
+Read/write field.
+A logical value, <code>FALSE</code> by default. This field can be set to <code>TRUE</code> which
+will affect the data type returned by <code>$read()</code> and <code><a href="read_ds.html">read_ds()</a></code>. When the
+underlying band data type is 'Byte' and <code>readByteAsRaw</code> is <code>TRUE</code> the output
+type will be raw rather than integer. See also the <code>as_raw</code> argument to
+<code><a href="read_ds.html">read_ds()</a></code> to control this in a non-persistent setting. If the underlying
+band data type is not Byte this setting has no effect.</p>
 <p><code>$getFilename()</code>
 Returns a character string containing the <code>filename</code> associated with this
 <code>GDALRaster</code> object (<code>filename</code> originally used to open the dataset).</p>
@@ -521,7 +530,7 @@ Data are read as R integer type when possible for the raster data type
 No rescaling of the data is performed (see <code>$getScale()</code> and
 <code>$getOffset()</code> above).
 An error is raised if the read operation fails. See also the setting
-<code>$readByteAsRaw</code> below.</p>
+<code>$readByteAsRaw</code> above.</p>
 <p><code>$write(band, xoff, yoff, xsize, ysize, rasterData)</code>
 Writes a region of raster data to <code>band</code>.
 <code>xoff</code> is the pixel (column) offset to the top left corner of the
@@ -614,13 +623,6 @@ formats such as GTiff could result in being unable to open it afterwards.
 The <code>GDALRaster</code> object is still available after calling <code>$close()</code>.
 The dataset can be re-opened on the existing <code>filename</code> with
 <code>$open(read_only=TRUE)</code> or <code>$open(read_only=FALSE)</code>.</p>
-<p><code>$readByteAsRaw</code>
-A logical value, <code>FALSE</code> by default. This field can be set to <code>TRUE</code> which
-will affect the data type returned by <code>$read()</code> and <code><a href="read_ds.html">read_ds()</a></code>. When the
-underlying band data type is 'Byte' and <code>readByteAsRaw</code> is <code>TRUE</code> the output
-type will be raw rather than integer. See also the <code>as_raw</code> argument to
-<code><a href="read_ds.html">read_ds()</a></code> to control this in a non-persistent setting. If the underlying
-band data type is not Byte this setting has no effect.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
