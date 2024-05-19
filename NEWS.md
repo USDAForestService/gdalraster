@@ -1,4 +1,6 @@
-# gdalraster 1.10.9180 (dev)
+# gdalraster 1.10.9190 (dev)
+
+* add class `VSIFile`: bindings to the GDAL VSIVirtualHandle API, abstracts Standard C binary file I/O across regular file systems, URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files (2024-05-19)
 
 * add utility functions for managing vector data sources: `ogr_ds_exists()`, `ogr_ds_format()`, `ogr_ds_test_cap()`, `ogr_ds_create()`, `ogr_ds_layer_count()`, `ogr_ds_layer_names()`, `ogr_layer_exists()`, `ogr_layer_test_cap()`, `ogr_layer_create()`, `ogr_layer_field_names()`, `ogr_layer_delete()`, `ogr_field_index()`, `ogr_field_create()`, `ogr_geom_field_create()`, `ogr_field_rename()`, `ogr_field_delete()`, `ogr_execute_sql()` (2024-05-13)
 
