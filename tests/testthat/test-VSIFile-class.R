@@ -15,11 +15,12 @@ test_that("VSIFile works", {
     ## Methods
 
     # function to identify LCP file
-    is_lcp <- function(byte_0_11) {
+    is_lcp <- function(bytes) {
         # 1-based indexing in R
-        if ((as.integer(byte_0_11)[1] == 20 || as.integer(byte_0_11)[1] == 21) &&
-            (as.integer(byte_0_11)[5] == 20 || as.integer(byte_0_11)[5] == 21) &&
-            (as.integer(byte_0_11)[9] >= -90 && as.integer(byte_0_11)[9] <= 90)) {
+        values <- readBin(bytes, "integer", 3)
+        if ((values[1] == 20 || values[1] == 21) &&
+                (values[2] == 20 || values[2] == 21) &&
+                (values[3] >= -90 && values[3] <= 90)) {
 
             return(TRUE)
         } else {
@@ -46,13 +47,32 @@ test_that("VSIFile works", {
     lcp_size <- vsi_stat(lcp_file, "size")
     mem_file <- "/vsimem/storml_copy.lcp"
     vf <- new(VSIFile, mem_file, "w")
-    expect_equal(vf$write(bytes, 1), bit64::as.integer64(lcp_size))
+    expect_equal(vf$write(bytes), bit64::as.integer64(lcp_size))
     expect_equal(vf$flush(), 0)
     expect_equal(vf$tell(), bit64::as.integer64(lcp_size))
     expect_equal(vf$seek(0, SEEK_SET), 0)
     expect_equal(vf$tell(), bit64::as.integer64(0))
     expect_equal(vf$seek(0, SEEK_END), 0)
     expect_equal(vf$tell(), bit64::as.integer64(lcp_size))
+    vf$rewind()
+    expect_true(is_lcp(vf$read(12)))
+
+    # read/write an integer field
+    # write invalid data for the Latitude field and then set back
+    # save original
+    vf$seek(8, SEEK_SET)
+    lat_orig <- vf$read(4)
+    # latitude -99 out of range
+    bytes <- writeBin(-99L, raw())
+    vf$seek(8, SEEK_SET)
+    vf$write(bytes)
+    vf$rewind()
+    expect_false(is_lcp(vf$read(12)))
+    vf$seek(8, SEEK_SET)
+    expect_equal(readBin(vf$read(4), "integer"), -99L)
+    # set back to original
+    vf$seek(8, SEEK_SET)
+    vf$write(lat_orig)
     vf$rewind()
     expect_true(is_lcp(vf$read(12)))
 
@@ -67,7 +87,7 @@ test_that("VSIFile works", {
                   "Beaverhead-Deerlodge National Forest, Montana.")
 
     vf$seek(6804, SEEK_SET)
-    expect_equal(vf$write(charToRaw(desc), 1), bit64::as.integer64(nchar(desc)))
+    expect_equal(vf$write(charToRaw(desc)), bit64::as.integer64(nchar(desc)))
     vf$close()
 
     # be sure it works as a raster dataset
@@ -119,7 +139,7 @@ test_that("VSIFile works", {
     expect_error(vf$tell())
     expect_error(vf$rewind())
     expect_error(vf$read(1))
-    expect_error(vf$write(bytes, 1))
+    expect_error(vf$write(bytes))
     expect_error(vf$eof())
     expect_error(vf$truncate(100))
     expect_error(vf$flush())

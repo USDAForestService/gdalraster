@@ -122,19 +122,16 @@ SEEK_END <- "SEEK_END"
 #' `vf$seek(0, SEEK_SET)`. No return value, called for that side effect.
 #'
 #' \code{$read(nbytes)}
-#' Reads `nbytes` bytes from the file at the current offset. Returns a vector
+#' Read `nbytes` bytes from the file at the current offset. Returns a vector
 #' of R `raw` type, or `NULL` if the operation fails.
 #'
-#' \code{$write(object, size)}
-#' Writes objects of `size` bytes to the file at the current offset. `object`
-#' is a `raw` vector. `size` is the number of bytes per element in `object`.
-#' This should normally be `1` (a negative number will be interpreted as `1`).
-#' Some of the information given in base R `?writeBin` is relevant here, but
-#' note that the implementation here is different and has minimal automatic
-#' handling.
-#' Returns the number of objects successfully written, as numeric scalar
+#' \code{$write(object)}
+#' Write bytes to the file at the current offset. `object` is a `raw` vector.
+#' Returns the number of bytes successfully written, as numeric scalar
 #' carrying the `integer64` class attribute.
-#' See also base R `charToRaw()`, convert to or from raw vectors.
+#' See also base R `charToRaw()` / `rawToChar()`, convert to or from raw
+#' vectors, and `readBin()` / `writeBin()` which read binary data from or write
+#' binary data to a raw vector.
 #'
 #' \code{$eof()}
 #' Test for end of file. Returns `TRUE` if an end-of-file condition occurred
@@ -206,11 +203,12 @@ SEEK_END <- "SEEK_END"
 #' # identify a FARSITE v.4 LCP file
 #' # function to check if the first three fields have valid data
 #' # input is the first twelve raw bytes in the file
-#' is_lcp <- function(byte_0_11) {
+#' is_lcp <- function(bytes) {
 #'   # 1-based indexing in R
-#'   if ((as.integer(byte_0_11)[1] == 20 || as.integer(byte_0_11)[1] == 21) &&
-#'       (as.integer(byte_0_11)[5] == 20 || as.integer(byte_0_11)[5] == 21) &&
-#'       (as.integer(byte_0_11)[9] >= -90 && as.integer(byte_0_11)[9] <= 90)) {
+#'   values <- readBin(bytes, "integer", 3)
+#'   if ((values[1] == 20 || values[1] == 21) &&
+#'         (values[2] == 20 || values[2] == 21) &&
+#'         (values[3] >= -90 && values[3] <= 90)) {
 #'
 #'     return(TRUE)
 #'   } else {
@@ -230,7 +228,7 @@ SEEK_END <- "SEEK_END"
 #' # write to an in-memory file
 #' mem_file <- "/vsimem/storml_copy.lcp"
 #' vf <- new(VSIFile, mem_file, "w")
-#' vf$write(bytes, 1)
+#' vf$write(bytes)
 #'
 #' vf$tell()
 #' vf$rewind()
@@ -239,6 +237,25 @@ SEEK_END <- "SEEK_END"
 #' vf$seek(0, SEEK_END)
 #' (vf$tell() == vsi_stat(lcp_file, "size"))
 #'
+#' vf$rewind()
+#' is_lcp(vf$read(12))
+#'
+#' # read/write an integer field
+#' # write invalid data for the Latitude field and then set back
+#' # save original
+#' vf$seek(8, SEEK_SET)
+#' lat_orig <- vf$read(4)
+#' # latitude -99 out of range
+#' bytes <- writeBin(-99L, raw())
+#' vf$seek(8, SEEK_SET)
+#' vf$write(bytes)
+#' vf$rewind()
+#' is_lcp(vf$read(12))
+#' vf$seek(8, SEEK_SET)
+#' readBin(vf$read(4), "integer")
+#' # set back to original
+#' vf$seek(8, SEEK_SET)
+#' vf$write(lat_orig)
 #' vf$rewind()
 #' is_lcp(vf$read(12))
 #'
@@ -253,7 +270,7 @@ SEEK_END <- "SEEK_END"
 #'               "Beaverhead-Deerlodge National Forest, Montana.")
 #'
 #' vf$seek(6804, SEEK_SET)
-#' vf$write(charToRaw(desc), 1)
+#' vf$write(charToRaw(desc))
 #' vf$close()
 #'
 #' ds <- new(GDALRaster, mem_file)
