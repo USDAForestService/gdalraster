@@ -1,4 +1,4 @@
-# gdalraster 1.10.9190 (dev)
+# gdalraster 1.10.9200 (dev)
 
 * package `bit64` added in Imports, and `RcppInt64` added in LinkingTo (2024-05-19)
 
