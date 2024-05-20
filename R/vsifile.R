@@ -184,6 +184,13 @@ SEEK_END <- "SEEK_END"
 #' only while the `VSIFile` object is closed, and will apply when it is
 #' re-opened with a call to `$open()`.
 #'
+#' @note
+#' File offsets are given as R `numeric` (aka `double` type), optionally
+#' carrying the `bit64::integer64` class attribute. They are returned as
+#' numeric with the `integer64` class attribute attached. The `integer64`
+#' type is signed, so the maximum file offset supported by this interface
+#' is 9223372036854775807 (the value of `bit64::lim.integer64()[2]`).
+#'
 #' @seealso
 #' GDAL Virtual File Systems (compressed, network hosted, etc...):\cr
 #' /vsimem, /vsizip, /vsitar, /vsicurl, ...\cr

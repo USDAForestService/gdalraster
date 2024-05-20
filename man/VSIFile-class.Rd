@@ -35,6 +35,13 @@ It provides analogs of several Standard C file I/O functions, allowing
 virtualization of disk I/O so that non-file data sources can be made to
 appear as files.
 }
+\note{
+File offsets are given as R \code{numeric} (aka \code{double} type), optionally
+carrying the \code{bit64::integer64} class attribute. They are returned as
+numeric with the \code{integer64} class attribute attached. The \code{integer64}
+type is signed, so the maximum file offset supported by this interface
+is 9223372036854775807 (the value of \code{bit64::lim.integer64()[2]}).
+}
 \section{Usage}{
 
 \preformatted{
