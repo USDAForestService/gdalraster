@@ -196,7 +196,6 @@ lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 # function to check if the first three fields have valid data
 # input is the first twelve raw bytes in the file
 is_lcp <- function(bytes) {
-  # 1-based indexing in R
   values <- readBin(bytes, "integer", 3)
   if ((values[1] == 20 || values[1] == 21) &&
         (values[2] == 20 || values[2] == 21) &&
