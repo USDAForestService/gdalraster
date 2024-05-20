@@ -228,7 +228,7 @@ SEEK_END <- "SEEK_END"
 #' # write to an in-memory file
 #' mem_file <- "/vsimem/storml_copy.lcp"
 #' vf <- new(VSIFile, mem_file, "w")
-#' vf$write(bytes, 1)
+#' vf$write(bytes)
 #'
 #' vf$tell()
 #' vf$rewind()
