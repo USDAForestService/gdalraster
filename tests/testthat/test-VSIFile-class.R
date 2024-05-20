@@ -19,7 +19,7 @@ test_that("VSIFile works", {
         # 1-based indexing in R
         if ((as.integer(byte_0_11)[1] == 20 || as.integer(byte_0_11)[1] == 21) &&
             (as.integer(byte_0_11)[5] == 20 || as.integer(byte_0_11)[5] == 21) &&
-            (as.integer(byte_0_11)[9] >= -90 || as.integer(byte_0_11)[9] <= 90)) {
+            (as.integer(byte_0_11)[9] >= -90 && as.integer(byte_0_11)[9] <= 90)) {
 
             return(TRUE)
         } else {

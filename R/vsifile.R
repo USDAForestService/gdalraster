@@ -127,18 +127,14 @@ SEEK_END <- "SEEK_END"
 #'
 #' \code{$write(object, size)}
 #' Writes objects of `size` bytes to the file at the current offset. `object`
-#' is a non-character atomic vector (i.e., `raw`, `numeric`, `integer`,
-#' `logical`, `complex`). `size` is the number of bytes per element in
-#' `object`. The element `size` may be given as a negative number (e.g., `-1`)
-#' to use the natural size for the data type, i.e., `raw` size = `1`,
-#' `numeric` size = `sizeof(double)`, `integer` size = `sizeof(int)`,
-#' `logical` size = `sizeof(bool)`,
-#' `complex` size = `sizeof(std::complex<double>)`. Some of the information
-#' given in base R `?writeBin` is relevant here, but note that the
-#' implementation here is different and has minimal automatic handling.
-#' See also base R `charToRaw()`, convert to or from raw vectors.
+#' is a `raw` vector. `size` is the number of bytes per element in `object`.
+#' This should normally be `1` (a negative number will be interpreted as `1`).
+#' Some of the information given in base R `?writeBin` is relevant here, but
+#' note that the implementation here is different and has minimal automatic
+#' handling.
 #' Returns the number of objects successfully written, as numeric scalar
 #' carrying the `integer64` class attribute.
+#' See also base R `charToRaw()`, convert to or from raw vectors.
 #'
 #' \code{$eof()}
 #' Test for end of file. Returns `TRUE` if an end-of-file condition occurred
@@ -214,7 +210,7 @@ SEEK_END <- "SEEK_END"
 #'   # 1-based indexing in R
 #'   if ((as.integer(byte_0_11)[1] == 20 || as.integer(byte_0_11)[1] == 21) &&
 #'       (as.integer(byte_0_11)[5] == 20 || as.integer(byte_0_11)[5] == 21) &&
-#'       (as.integer(byte_0_11)[9] >= -90 || as.integer(byte_0_11)[9] <= 90)) {
+#'       (as.integer(byte_0_11)[9] >= -90 && as.integer(byte_0_11)[9] <= 90)) {
 #'
 #'     return(TRUE)
 #'   } else {

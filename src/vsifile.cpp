@@ -153,64 +153,12 @@ SEXP VSIFile::read(std::size_t nbytes) {
     return raw;
 }
 
-Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
+Rcpp::NumericVector VSIFile::write(const Rcpp::RawVector& object, int size) {
     if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
-    if (object.isNULL())
-        return 0;
-
-    if (Rf_isFactor(object)) {
-        Rcpp::Rcerr << "factor object not supported\n";
-        return 0;
-    }
-
-    Rcpp::RawVector obj_in_raw;
-    Rcpp::NumericVector obj_in_num;
-    Rcpp::IntegerVector obj_in_int;
-    Rcpp::ComplexVector obj_in_com;
-    Rcpp::LogicalVector obj_in_log;
-
-    const void* obj_ptr = nullptr;
-    size_t obj_size = 0;
-    size_t nat_size = 0;
-    if (Rcpp::is<Rcpp::RawVector>(object)) {
-        obj_in_raw = Rcpp::as<Rcpp::RawVector>(object);
-        obj_ptr = &obj_in_raw[0];
-        obj_size = obj_in_raw.size();
-        nat_size = 1;
-    }
-    else if (Rcpp::is<Rcpp::NumericVector>(object)) {
-        obj_in_num = Rcpp::as<Rcpp::NumericVector>(object);
-        obj_ptr = &obj_in_num[0];
-        obj_size = obj_in_num.size();
-        nat_size = sizeof(double);
-    }
-    else if (Rcpp::is<Rcpp::IntegerVector>(object)) {
-        obj_in_int = Rcpp::as<Rcpp::IntegerVector>(object);
-        obj_ptr = &obj_in_int[0];
-        obj_size = obj_in_int.size();
-        nat_size = sizeof(int);
-    }
-    else if (Rcpp::is<Rcpp::ComplexVector>(object)) {
-        obj_in_com = Rcpp::as<Rcpp::ComplexVector>(object);
-        obj_ptr = &obj_in_com[0];
-        obj_size = obj_in_com.size();
-        nat_size = sizeof(std::complex<double>);
-    }
-    else if (Rcpp::is<Rcpp::LogicalVector>(object)) {
-        obj_in_log = Rcpp::as<Rcpp::LogicalVector>(object);
-        obj_ptr = &obj_in_log[0];
-        obj_size = obj_in_log.size();
-        nat_size = sizeof(bool);
-    }
-    else {
-        Rcpp::Rcerr << "'object' must be a non-character atomic vector\n";
-        return 0;
-    }
-
     // R ?writeBin:
-    // (for info only, not accounting for all of this here)
+    // (for info only, not accounting for all of this here, currently)
     // "Possible sizes are 1, 2, 4 and possibly 8 for integer or logical
     // vectors, and 4, 8 and possibly 12/16 for numeric vectors.
     // Note that coercion occurs as signed types ...
@@ -231,18 +179,16 @@ Rcpp::NumericVector VSIFile::write(const Rcpp::RObject& object, int size) {
 
     size_t nSize = 1;
     if (size < 0)
-        nSize = nat_size;
+        nSize = 1;
     else
         nSize = static_cast<size_t>(size);
 
-    if (obj_size % nSize != 0) {
-        Rcpp::Rcerr << "size of 'object' incompatible with 'size' parameter\n";
-        return 0;
-    }
-
     std::vector<int64_t> ret(1);
     ret[0] = static_cast<int64_t>(
-            VSIFWriteL(obj_ptr, nSize, obj_size, fp));
+            VSIFWriteL(&object[0],
+                       nSize,
+                       static_cast<size_t>(object.size()),
+                       fp));
 
     return Rcpp::wrap(ret);
 }
