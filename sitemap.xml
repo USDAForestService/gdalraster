@@ -64,6 +64,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/addFilesInZip.html</loc>
   </url>
   <url>
@@ -269,6 +272,9 @@
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_clear_path_options.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_constants.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_copy_file.html</loc>
