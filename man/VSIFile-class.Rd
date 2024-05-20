@@ -42,7 +42,7 @@ appear as files.
 vf <- new(VSIFile, filename)
 # specifying access:
 vf <- new(VSIFile, filename, access)
-# specifying access and options (both required)
+# specifying access and options (both required):
 vf <- new(VSIFile, filename, access, options)
 
 ## Methods (see Details)
@@ -71,7 +71,8 @@ Constructor. Returns an object of class \code{VSIFile}, or an error is raised
 if a file handle cannot be obtained.
 
 \code{new(VSIFile, filename, access)}
-Alternate constructor for passing \code{access} as a character string.
+Alternate constructor for passing \code{access} as a character string (\code{"r"},
+\code{"r+"}, \code{"w"}).
 Returns an object of class \code{VSIFile} with an open file handle, or an error
 is raised if a file handle cannot be obtained.
 
@@ -98,11 +99,11 @@ delay.
 
 \code{$seek(offset, origin)}
 Seek to a requested \code{offset} in the file.
-\code{offset} is given as a postive numeric scalar, optionally as
+\code{offset} is given as a positive numeric scalar, optionally as
 \code{bit64::integer64} type.
 \code{origin} is given as a character string, one of \code{SEEK_SET}, \code{SEEK_CUR} or
 \code{SEEK_END}. Package global constants are defined for convenience, so these
-can be passed unquoted. Note that \code{offset} is an unsigned type, so `SEEK_CUR
+can be passed unquoted. Note that \code{offset} is an unsigned type, so \code{SEEK_CUR}
 can only be used for positive seek. If negative seek is needed, use:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{vf$seek(vf$tell() + negative_offset, SEEK_SET)

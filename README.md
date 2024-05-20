@@ -19,9 +19,9 @@ status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usd
 Data Abstraction Library ([GDAL](https://gdal.org/)). Bindings to a
 subset of the GDAL Virtual Systems Interface
 ([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) are also provided to
-support filesystem operations on URLs, cloud storage services,
-Zip/GZip/7z/RAR, and in-memory files. Calling signatures resemble the
-native C, C++ and Python APIs provided by the GDAL project.
+support file system operations and binary I/O on URLs, cloud storage
+services, Zip/GZip/7z/RAR, and in-memory files. Calling signatures
+resemble the native C, C++ and Python APIs provided by the GDAL project.
 
 Bindings to GDAL are implemented in the exposed C++ class
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
@@ -45,9 +45,11 @@ supporting:
     [`ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
     interface)
   - copy files/move/rename/delete datasets
-  - abstraction of filesystem operations on URLs and cloud storage
   - create/append to Seek-Optimized ZIP
     ([SOZip](https://github.com/sozip/sozip-spec))
+  - abstraction of file system operations on URLs and cloud storage
+  - Standard C file I/O through VSI
+    ([`VSIFile`](https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html))
 
 Additional functionality includes:
 

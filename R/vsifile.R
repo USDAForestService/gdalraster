@@ -49,7 +49,7 @@ SEEK_END <- "SEEK_END"
 #' vf <- new(VSIFile, filename)
 #' # specifying access:
 #' vf <- new(VSIFile, filename, access)
-#' # specifying access and options (both required)
+#' # specifying access and options (both required):
 #' vf <- new(VSIFile, filename, access, options)
 #'
 #' ## Methods (see Details)
@@ -75,7 +75,8 @@ SEEK_END <- "SEEK_END"
 #' if a file handle cannot be obtained.
 #'
 #' \code{new(VSIFile, filename, access)}
-#' Alternate constructor for passing `access` as a character string.
+#' Alternate constructor for passing `access` as a character string (`"r"`,
+#' `"r+"`, `"w"`).
 #' Returns an object of class `VSIFile` with an open file handle, or an error
 #' is raised if a file handle cannot be obtained.
 #'
@@ -100,11 +101,11 @@ SEEK_END <- "SEEK_END"
 #'
 #' \code{$seek(offset, origin)}
 #' Seek to a requested `offset` in the file.
-#' `offset` is given as a postive numeric scalar, optionally as
+#' `offset` is given as a positive numeric scalar, optionally as
 #' `bit64::integer64` type.
 #' `origin` is given as a character string, one of `SEEK_SET`, `SEEK_CUR` or
 #' `SEEK_END`. Package global constants are defined for convenience, so these
-#' can be passed unquoted. Note that `offset` is an unsigned type, so `SEEK_CUR
+#' can be passed unquoted. Note that `offset` is an unsigned type, so `SEEK_CUR`
 #' can only be used for positive seek. If negative seek is needed, use:
 #' ```
 #' vf$seek(vf$tell() + negative_offset, SEEK_SET)
