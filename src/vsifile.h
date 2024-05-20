@@ -53,7 +53,7 @@ class VSIFile {
     Rcpp::NumericVector tell() const;
     void rewind();
     SEXP read(std::size_t nbytes);
-    Rcpp::NumericVector write(const Rcpp::RawVector& object, int size);
+    Rcpp::NumericVector write(const Rcpp::RawVector& object);
     bool eof() const;
     int truncate(Rcpp::NumericVector offset);
     int flush();
