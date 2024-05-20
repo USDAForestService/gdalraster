@@ -112,6 +112,14 @@ Details. <code>VSIFile</code> is a C++ class exposed directly to R (via
 <code>$</code> operator.</p>
     </div>
     <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p>File offsets are given as R <code>numeric</code> (aka <code>double</code> type), optionally
+carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class attribute. They are returned as
+numeric with the <code>integer64</code> class attribute attached. The <code>integer64</code>
+type is signed, so the maximum file offset supported by this interface
+is 9223372036854775807 (the value of <code>bit64::lim.integer64()[2]</code>).</p>
+    </div>
+    <div class="section level2">
     <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
     
 
