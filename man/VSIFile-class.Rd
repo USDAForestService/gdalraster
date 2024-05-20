@@ -126,18 +126,14 @@ of R \code{raw} type, or \code{NULL} if the operation fails.
 
 \code{$write(object, size)}
 Writes objects of \code{size} bytes to the file at the current offset. \code{object}
-is a non-character atomic vector (i.e., \code{raw}, \code{numeric}, \code{integer},
-\code{logical}, \code{complex}). \code{size} is the number of bytes per element in
-\code{object}. The element \code{size} may be given as a negative number (e.g., \code{-1})
-to use the natural size for the data type, i.e., \code{raw} size = \code{1},
-\code{numeric} size = \code{sizeof(double)}, \code{integer} size = \code{sizeof(int)},
-\code{logical} size = \code{sizeof(bool)},
-\code{complex} size = \verb{sizeof(std::complex<double>)}. Some of the information
-given in base R \code{?writeBin} is relevant here, but note that the
-implementation here is different and has minimal automatic handling.
-See also base R \code{charToRaw()}, convert to or from raw vectors.
+is a \code{raw} vector. \code{size} is the number of bytes per element in \code{object}.
+This should normally be \code{1} (a negative number will be interpreted as \code{1}).
+Some of the information given in base R \code{?writeBin} is relevant here, but
+note that the implementation here is different and has minimal automatic
+handling.
 Returns the number of objects successfully written, as numeric scalar
 carrying the \code{integer64} class attribute.
+See also base R \code{charToRaw()}, convert to or from raw vectors.
 
 \code{$eof()}
 Test for end of file. Returns \code{TRUE} if an end-of-file condition occurred
@@ -206,7 +202,7 @@ is_lcp <- function(byte_0_11) {
   # 1-based indexing in R
   if ((as.integer(byte_0_11)[1] == 20 || as.integer(byte_0_11)[1] == 21) &&
       (as.integer(byte_0_11)[5] == 20 || as.integer(byte_0_11)[5] == 21) &&
-      (as.integer(byte_0_11)[9] >= -90 || as.integer(byte_0_11)[9] <= 90)) {
+      (as.integer(byte_0_11)[9] >= -90 && as.integer(byte_0_11)[9] <= 90)) {
 
     return(TRUE)
   } else {
