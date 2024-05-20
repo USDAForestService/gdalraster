@@ -57,7 +57,7 @@ SEEK_END <- "SEEK_END"
 #' vf$tell()
 #' vf$rewind()
 #' vf$read(nbytes)
-#' vf$write(object, size)
+#' vf$write(object)
 #' vf$eof()
 #' vf$truncate(new_size)
 #' vf$flush()
@@ -222,10 +222,11 @@ SEEK_END <- "SEEK_END"
 #'
 #' vf$tell()
 #'
+#' # read the whole file into memory
 #' bytes <- vf$ingest(-1)
 #' vf$close()
 #'
-#' # write to an in-memory file
+#' # write to a VSI in-memory file
 #' mem_file <- "/vsimem/storml_copy.lcp"
 #' vf <- new(VSIFile, mem_file, "w")
 #' vf$write(bytes)
@@ -245,19 +246,20 @@ SEEK_END <- "SEEK_END"
 #' # save original
 #' vf$seek(8, SEEK_SET)
 #' lat_orig <- vf$read(4)
+#' readBin(lat_orig, "integer")  # 46
 #' # latitude -99 out of range
 #' bytes <- writeBin(-99L, raw())
 #' vf$seek(8, SEEK_SET)
 #' vf$write(bytes)
 #' vf$rewind()
-#' is_lcp(vf$read(12))
+#' is_lcp(vf$read(12))  # FALSE
 #' vf$seek(8, SEEK_SET)
-#' readBin(vf$read(4), "integer")
+#' readBin(vf$read(4), "integer")  # -99
 #' # set back to original
 #' vf$seek(8, SEEK_SET)
 #' vf$write(lat_orig)
 #' vf$rewind()
-#' is_lcp(vf$read(12))
+#' is_lcp(vf$read(12))  # TRUE
 #'
 #' # read the Description field
 #' vf$seek(6804, SEEK_SET)
@@ -273,10 +275,11 @@ SEEK_END <- "SEEK_END"
 #' vf$write(charToRaw(desc))
 #' vf$close()
 #'
+#' # verify the file as a raster dataset
 #' ds <- new(GDALRaster, mem_file)
 #' ds$info()
 #'
-#' # or retrieve from the metadata
+#' # retrieve Description from the metadata
 #' # band = 0 for dataset-level metadata, domain = "" for default domain
 #' ds$getMetadata(band = 0, domain = "")
 #' ds$getMetadataItem(band = 0, mdi_name = "DESCRIPTION", domain = "")
