@@ -120,7 +120,7 @@ Details. <code>VSIFile</code> is a C++ class exposed directly to R (via
 <span><span class="va">vf</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">VSIFile</span>, <span class="va">filename</span><span class="op">)</span></span>
 <span><span class="co"># specifying access:</span></span>
 <span><span class="va">vf</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">VSIFile</span>, <span class="va">filename</span>, <span class="va">access</span><span class="op">)</span></span>
-<span><span class="co"># specifying access and options (both required)</span></span>
+<span><span class="co"># specifying access and options (both required):</span></span>
 <span><span class="va">vf</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">VSIFile</span>, <span class="va">filename</span>, <span class="va">access</span>, <span class="va">options</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Methods (see Details)</span></span>
@@ -149,7 +149,8 @@ Details. <code>VSIFile</code> is a C++ class exposed directly to R (via
 Constructor. Returns an object of class <code>VSIFile</code>, or an error is raised
 if a file handle cannot be obtained.</p>
 <p><code>new(VSIFile, filename, access)</code>
-Alternate constructor for passing <code>access</code> as a character string.
+Alternate constructor for passing <code>access</code> as a character string (<code>"r"</code>,
+<code>"r+"</code>, <code>"w"</code>).
 Returns an object of class <code>VSIFile</code> with an open file handle, or an error
 is raised if a file handle cannot be obtained.</p>
 <p><code>new(VSIFile, filename, access, options)</code>
@@ -170,11 +171,11 @@ the data are written to the system cache but are flushed to disk without
 delay.</p></li>
 </ul><p><code>$seek(offset, origin)</code>
 Seek to a requested <code>offset</code> in the file.
-<code>offset</code> is given as a postive numeric scalar, optionally as
+<code>offset</code> is given as a positive numeric scalar, optionally as
 <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> type.
 <code>origin</code> is given as a character string, one of <code>SEEK_SET</code>, <code>SEEK_CUR</code> or
 <code>SEEK_END</code>. Package global constants are defined for convenience, so these
-can be passed unquoted. Note that <code>offset</code> is an unsigned type, so `SEEK_CUR
+can be passed unquoted. Note that <code>offset</code> is an unsigned type, so <code>SEEK_CUR</code>
 can only be used for positive seek. If negative seek is needed, use:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>vf<span class="sc">$</span><span class="fu">seek</span>(vf<span class="sc">$</span><span class="fu">tell</span>() <span class="sc">+</span> negative_offset, SEEK_SET)</span></code></pre><p></p></div>
 <p>Returns <code>0</code> on success or <code>-1</code> on failure.</p>
