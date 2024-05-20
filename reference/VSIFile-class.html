@@ -191,18 +191,14 @@ Reads <code>nbytes</code> bytes from the file at the current offset. Returns a v
 of R <code>raw</code> type, or <code>NULL</code> if the operation fails.</p>
 <p><code>$write(object, size)</code>
 Writes objects of <code>size</code> bytes to the file at the current offset. <code>object</code>
-is a non-character atomic vector (i.e., <code>raw</code>, <code>numeric</code>, <code>integer</code>,
-<code>logical</code>, <code>complex</code>). <code>size</code> is the number of bytes per element in
-<code>object</code>. The element <code>size</code> may be given as a negative number (e.g., <code>-1</code>)
-to use the natural size for the data type, i.e., <code>raw</code> size = <code>1</code>,
-<code>numeric</code> size = <code>sizeof(double)</code>, <code>integer</code> size = <code>sizeof(int)</code>,
-<code>logical</code> size = <code>sizeof(bool)</code>,
-<code>complex</code> size = <code>sizeof(std::complex&lt;double&gt;)</code>. Some of the information
-given in base R <code><a href="https://rdrr.io/r/base/readBin.html" class="external-link">?writeBin</a></code> is relevant here, but note that the
-implementation here is different and has minimal automatic handling.
-See also base R <code><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">charToRaw()</a></code>, convert to or from raw vectors.
+is a <code>raw</code> vector. <code>size</code> is the number of bytes per element in <code>object</code>.
+This should normally be <code>1</code> (a negative number will be interpreted as <code>1</code>).
+Some of the information given in base R <code><a href="https://rdrr.io/r/base/readBin.html" class="external-link">?writeBin</a></code> is relevant here, but
+note that the implementation here is different and has minimal automatic
+handling.
 Returns the number of objects successfully written, as numeric scalar
-carrying the <code>integer64</code> class attribute.</p>
+carrying the <code>integer64</code> class attribute.
+See also base R <code><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">charToRaw()</a></code>, convert to or from raw vectors.</p>
 <p><code>$eof()</code>
 Test for end of file. Returns <code>TRUE</code> if an end-of-file condition occurred
 during the previous read operation. The end-of-file flag is cleared by a
@@ -270,7 +266,7 @@ re-opened with a call to <code>$open()</code>.</p>
 <span class="r-in"><span>  <span class="co"># 1-based indexing in R</span></span></span>
 <span class="r-in"><span>  <span class="kw">if</span> <span class="op">(</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">byte_0_11</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">==</span> <span class="fl">20</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">byte_0_11</span><span class="op">)</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">==</span> <span class="fl">21</span><span class="op">)</span> <span class="op">&amp;&amp;</span></span></span>
 <span class="r-in"><span>      <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">byte_0_11</span><span class="op">)</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span> <span class="op">==</span> <span class="fl">20</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">byte_0_11</span><span class="op">)</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span> <span class="op">==</span> <span class="fl">21</span><span class="op">)</span> <span class="op">&amp;&amp;</span></span></span>
-<span class="r-in"><span>      <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">byte_0_11</span><span class="op">)</span><span class="op">[</span><span class="fl">9</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="op">-</span><span class="fl">90</span> <span class="op">||</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">byte_0_11</span><span class="op">)</span><span class="op">[</span><span class="fl">9</span><span class="op">]</span> <span class="op">&lt;=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>      <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">byte_0_11</span><span class="op">)</span><span class="op">[</span><span class="fl">9</span><span class="op">]</span> <span class="op">&gt;=</span> <span class="op">-</span><span class="fl">90</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="va">byte_0_11</span><span class="op">)</span><span class="op">[</span><span class="fl">9</span><span class="op">]</span> <span class="op">&lt;=</span> <span class="fl">90</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="op">}</span> <span class="kw">else</span> <span class="op">{</span></span></span>
