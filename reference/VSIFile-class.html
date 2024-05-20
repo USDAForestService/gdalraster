@@ -128,7 +128,7 @@ Details. <code>VSIFile</code> is a C++ class exposed directly to R (via
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">tell</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">rewind</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">nbytes</span><span class="op">)</span></span>
-<span><span class="va">vf</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="va">object</span>, <span class="va">size</span><span class="op">)</span></span>
+<span><span class="va">vf</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="va">object</span><span class="op">)</span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">eof</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">truncate</span><span class="op">(</span><span class="va">new_size</span><span class="op">)</span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">flush</span><span class="op">(</span><span class="op">)</span></span>
@@ -281,11 +281,12 @@ re-opened with a call to <code>$open()</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 12</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># read the whole file into memory</span></span></span>
 <span class="r-in"><span><span class="va">bytes</span> <span class="op">&lt;-</span> <span class="va">vf</span><span class="op">$</span><span class="fu">ingest</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># write to an in-memory file</span></span></span>
+<span class="r-in"><span><span class="co"># write to a VSI in-memory file</span></span></span>
 <span class="r-in"><span><span class="va">mem_file</span> <span class="op">&lt;-</span> <span class="st">"/vsimem/storml_copy.lcp"</span></span></span>
 <span class="r-in"><span><span class="va">vf</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">VSIFile</span>, <span class="va">mem_file</span>, <span class="st">"w"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="va">bytes</span><span class="op">)</span></span></span>
@@ -315,6 +316,8 @@ re-opened with a call to <code>$open()</code>.</p>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">seek</span><span class="op">(</span><span class="fl">8</span>, <span class="va">SEEK_SET</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span><span class="va">lat_orig</span> <span class="op">&lt;-</span> <span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/readBin.html" class="external-link">readBin</a></span><span class="op">(</span><span class="va">lat_orig</span>, <span class="st">"integer"</span><span class="op">)</span>  <span class="co"># 46</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 46</span>
 <span class="r-in"><span><span class="co"># latitude -99 out of range</span></span></span>
 <span class="r-in"><span><span class="va">bytes</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/readBin.html" class="external-link">writeBin</a></span><span class="op">(</span><span class="op">-</span><span class="fl">99L</span>, <span class="fu"><a href="https://rdrr.io/r/base/raw.html" class="external-link">raw</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">seek</span><span class="op">(</span><span class="fl">8</span>, <span class="va">SEEK_SET</span><span class="op">)</span></span></span>
@@ -323,11 +326,11 @@ re-opened with a call to <code>$open()</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">rewind</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">is_lcp</span><span class="op">(</span><span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">12</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">is_lcp</span><span class="op">(</span><span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">12</span><span class="op">)</span><span class="op">)</span>  <span class="co"># FALSE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">seek</span><span class="op">(</span><span class="fl">8</span>, <span class="va">SEEK_SET</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/readBin.html" class="external-link">readBin</a></span><span class="op">(</span><span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="st">"integer"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/readBin.html" class="external-link">readBin</a></span><span class="op">(</span><span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">4</span><span class="op">)</span>, <span class="st">"integer"</span><span class="op">)</span>  <span class="co"># -99</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -99</span>
 <span class="r-in"><span><span class="co"># set back to original</span></span></span>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">seek</span><span class="op">(</span><span class="fl">8</span>, <span class="va">SEEK_SET</span><span class="op">)</span></span></span>
@@ -336,7 +339,7 @@ re-opened with a call to <code>$open()</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 4</span>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">rewind</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">is_lcp</span><span class="op">(</span><span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">12</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">is_lcp</span><span class="op">(</span><span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">12</span><span class="op">)</span><span class="op">)</span>  <span class="co"># TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># read the Description field</span></span></span>
@@ -359,6 +362,7 @@ re-opened with a call to <code>$open()</code>.</p>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># verify the file as a raster dataset</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">mem_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Driver: LCP/FARSITE v.4 Landscape File (.lcp)</span>
@@ -450,7 +454,7 @@ re-opened with a call to <code>$open()</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     CBD_UNIT=3</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     CBD_UNIT_NAME=kg/m^3 x 100</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># or retrieve from the metadata</span></span></span>
+<span class="r-in"><span><span class="co"># retrieve Description from the metadata</span></span></span>
 <span class="r-in"><span><span class="co"># band = 0 for dataset-level metadata, domain = "" for default domain</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">0</span>, domain <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "DESCRIPTION=LCP file created by GDAL. Storm Lake AOI, Beaverhead-Deerlodge National Forest, Montana."</span>
