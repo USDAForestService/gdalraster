@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 1.10.9180
+Version: 1.10.9190
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),
@@ -45,6 +45,7 @@ URL: https://usdaforestservice.github.io/gdalraster/,
 BugReports: https://github.com/USDAForestService/gdalraster/issues
 Depends: R (>= 4.2.0)
 Imports:
+    bit64,
     graphics,
     grDevices,
     methods,
@@ -53,7 +54,7 @@ Imports:
     tools,
     utils,
     xml2
-LinkingTo: Rcpp
+LinkingTo: Rcpp, RcppInt64
 Suggests:
     gt,
     knitr,

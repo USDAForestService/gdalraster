@@ -100,6 +100,7 @@
   \code{\link[=ogr_define]{ogr_define}},
 
   \item virtual file systems:
+  \code{\link[=VSIFile-class]{VSIFile}},
   \code{\link[=vsi_clear_path_options]{vsi_clear_path_options()}},
   \code{\link[=vsi_copy_file]{vsi_copy_file()}},
   \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
