@@ -3,7 +3,6 @@
    Chris Toney <chris.toney at usda.gov> */
 
 #include <cstdlib>
-#include <complex>
 #include <vector>
 
 #include "vsifile.h"
