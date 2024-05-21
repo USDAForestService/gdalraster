@@ -79,6 +79,7 @@ GDALRaster::GDALRaster() :
             open_options_in(Rcpp::CharacterVector::create()),
             hDataset(nullptr),
             eAccess(GA_ReadOnly),
+            quiet(false),
             readByteAsRaw(false) {}
 
 GDALRaster::GDALRaster(Rcpp::CharacterVector filename) :
@@ -98,6 +99,7 @@ GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                 open_options_in(open_options),
                 hDataset(nullptr),
                 eAccess(GA_ReadOnly),
+                quiet(false),
                 readByteAsRaw(false) {
 
     fname_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
@@ -1153,6 +1155,8 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
     int nCol = GDALRATGetColumnCount(hRAT);
     int nRow = GDALRATGetRowCount(hRAT);
     Rcpp::DataFrame df = Rcpp::DataFrame::create();
+    GDALProgressFunc pfnProgress = GDALTermProgressR;
+    void* pProgressData = nullptr;
 
     for (int i=0; i < nCol; ++i) {
         std::string colName(GDALRATGetNameOfCol(hRAT, i));
@@ -1193,6 +1197,10 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
         }
         else {
             Rcpp::warning("unhandled GDAL field type");
+        }
+
+        if (!quiet) {
+            pfnProgress(i / (nCol-1.0), nullptr, pProgressData);
         }
     }
 

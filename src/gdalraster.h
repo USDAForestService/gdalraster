@@ -82,6 +82,9 @@ class GDALRaster {
     GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                Rcpp::CharacterVector open_options);
 
+    bool quiet;  // not yet exported as read/write field
+    bool readByteAsRaw;
+
     std::string getFilename() const;
     void setFilename(std::string filename);
     void open(bool read_only);
@@ -171,7 +174,6 @@ class GDALRaster {
 
     void close();
 
-    bool readByteAsRaw;
     // methods for internal use not exported to R
     void _checkAccess(GDALAccess access_needed) const;
     GDALRasterBandH _getBand(int band) const;
