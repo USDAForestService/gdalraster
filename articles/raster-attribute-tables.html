@@ -260,7 +260,9 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <span><span class="co"># it can now be read from the raster dataset</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html" class="external-link">rm</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span>
 <span><span class="va">tbl</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span></code></pre></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tbl</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 24</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -269,7 +271,7 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <p>An attribute table with RGB columns can be passed to
 <code><a href="../reference/plot_raster.html">gdalraster::plot_raster()</a></code> as a color table (columns
 <code>VALUE</code>, <code>R</code>, <code>G</code>, <code>B</code>):</p>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds</span>,</span>
 <span>            col_tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">6</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span><span class="op">]</span>,</span>
@@ -279,7 +281,7 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <p><img src="raster-attribute-tables_files/figure-html/unnamed-chunk-3-1.png" width="576"></p>
 <p>The function <code><a href="../reference/displayRAT.html">displayRAT()</a></code> generates a nicely formatted
 table for display. Colors are shown if the RAT contains RGB columns:</p>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/displayRAT.html">displayRAT</a></span><span class="op">(</span><span class="va">tbl</span>, title <span class="op">=</span> <span class="st">"Raster Attribute Table for Storm Lake EVT"</span><span class="op">)</span></span></code></pre></div>
 <div id="mwlefoodfi" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
 <style>#mwlefoodfi table {
@@ -1009,7 +1011,7 @@ table for display. Colors are shown if the RAT contains RGB columns:</p>
 <p><code><a href="../reference/displayRAT.html">displayRAT()</a></code> returns an object of class
 <code>"gt_tbl"</code>. The table object can be modified using functions
 of the <strong>gt</strong> package.</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">

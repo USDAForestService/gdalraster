@@ -98,8 +98,8 @@ specifying dataset open options.</p></dd>
 <p>An object of class <code>GDALRaster</code> which contains a pointer to the
 opened dataset, and methods that operate on the dataset as described in
 Details. <code>GDALRaster</code> is a C++ class exposed directly to R (via
-<code>RCPP_EXPOSED_CLASS</code>). Methods of the class are accessed using the
-<code>$</code> operator.</p>
+<code>RCPP_EXPOSED_CLASS</code>). Methods and fields of the class are accessed using
+the <code>$</code> operator.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -118,9 +118,12 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 
 <div class="sourceCode"><pre><code><span></span>
 <span><span class="co">## Constructors</span></span>
-<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co"># read-only by default:</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span><span class="op">)</span></span>
+<span><span class="co"># for update access:</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="co"># or, using dataset open options:</span></span>
-<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, <span class="va">read_only</span>, <span class="va">open_options</span><span class="op">)</span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">|</span><span class="cn">FALSE</span>, <span class="va">open_options</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Fields (see Details)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="va">readByteAsRaw</span></span>
