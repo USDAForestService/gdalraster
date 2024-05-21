@@ -113,11 +113,11 @@ Details. <code>VSIFile</code> is a C++ class exposed directly to R (via
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>File offsets are given as R <code>numeric</code> (aka <code>double</code> type), optionally
+    <p>File offsets are given as R <code>numeric</code> (i.e., <code>double</code> type), optionally
 carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class attribute. They are returned as
-numeric with the <code>integer64</code> class attribute attached. The <code>integer64</code>
+<code>numeric</code> with the <code>integer64</code> class attribute attached. The <code>integer64</code>
 type is signed, so the maximum file offset supported by this interface
-is 9223372036854775807 (the value of <code>bit64::lim.integer64()[2]</code>).</p>
+is <code>9223372036854775807</code> (the value of <code>bit64::lim.integer64()[2]</code>).</p>
     </div>
     <div class="section level2">
     <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
@@ -143,10 +143,10 @@ is 9223372036854775807 (the value of <code>bit64::lim.integer64()[2]</code>).</p
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">ingest</span><span class="op">(</span><span class="va">max_size</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">vf</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">get_filename</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">get_access</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">vf</span><span class="op">$</span><span class="fu">set_access</span><span class="op">(</span><span class="va">access</span><span class="op">)</span></span>
-<span><span class="va">vf</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">vf</span><span class="op">$</span><span class="fu">set_access</span><span class="op">(</span><span class="va">access</span><span class="op">)</span></span></code></pre></div>
 
     </div>
     <div class="section level2">
@@ -348,6 +348,18 @@ re-opened with a call to <code>$open()</code>.</p>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">rewind</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">is_lcp</span><span class="op">(</span><span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">12</span><span class="op">)</span><span class="op">)</span>  <span class="co"># TRUE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># read a double, the raster min X coord</span></span></span>
+<span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">seek</span><span class="op">(</span><span class="fl">4180</span>, <span class="va">SEEK_SET</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/readBin.html" class="external-link">readBin</a></span><span class="op">(</span><span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">8</span><span class="op">)</span>, <span class="st">"double"</span><span class="op">)</span>  <span class="co"># 323476.1</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 323476.1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># read a short int, the canopy cover units</span></span></span>
+<span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">seek</span><span class="op">(</span><span class="fl">4232</span>, <span class="va">SEEK_SET</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/readBin.html" class="external-link">readBin</a></span><span class="op">(</span><span class="va">vf</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="fl">2</span><span class="op">)</span>, <span class="st">"integer"</span>, size <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>  <span class="co"># 1 = "percent"</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># read the Description field</span></span></span>
 <span class="r-in"><span><span class="va">vf</span><span class="op">$</span><span class="fu">seek</span><span class="op">(</span><span class="fl">6804</span>, <span class="va">SEEK_SET</span><span class="op">)</span></span></span>
