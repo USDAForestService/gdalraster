@@ -36,11 +36,11 @@ virtualization of disk I/O so that non-file data sources can be made to
 appear as files.
 }
 \note{
-File offsets are given as R \code{numeric} (aka \code{double} type), optionally
+File offsets are given as R \code{numeric} (i.e., \code{double} type), optionally
 carrying the \code{bit64::integer64} class attribute. They are returned as
-numeric with the \code{integer64} class attribute attached. The \code{integer64}
+\code{numeric} with the \code{integer64} class attribute attached. The \code{integer64}
 type is signed, so the maximum file offset supported by this interface
-is 9223372036854775807 (the value of \code{bit64::lim.integer64()[2]}).
+is \code{9223372036854775807} (the value of \code{bit64::lim.integer64()[2]}).
 }
 \section{Usage}{
 
@@ -64,10 +64,10 @@ vf$flush()
 vf$ingest(max_size)
 
 vf$close()
+vf$open()
 vf$get_filename()
 vf$get_access()
 vf$set_access(access)
-vf$open()
 }
 }
 
@@ -258,6 +258,14 @@ vf$seek(8, SEEK_SET)
 vf$write(lat_orig)
 vf$rewind()
 is_lcp(vf$read(12))  # TRUE
+
+# read a double, the raster min X coord
+vf$seek(4180, SEEK_SET)
+readBin(vf$read(8), "double")  # 323476.1
+
+# read a short int, the canopy cover units
+vf$seek(4232, SEEK_SET)
+readBin(vf$read(2), "integer", size = 2)  # 1 = "percent"
 
 # read the Description field
 vf$seek(6804, SEEK_SET)

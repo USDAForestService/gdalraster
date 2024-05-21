@@ -64,10 +64,10 @@ SEEK_END <- "SEEK_END"
 #' vf$ingest(max_size)
 #'
 #' vf$close()
+#' vf$open()
 #' vf$get_filename()
 #' vf$get_access()
 #' vf$set_access(access)
-#' vf$open()
 #' }
 #' @section Details:
 #' \code{new(VSIFile, filename)}
@@ -185,11 +185,11 @@ SEEK_END <- "SEEK_END"
 #' re-opened with a call to `$open()`.
 #'
 #' @note
-#' File offsets are given as R `numeric` (aka `double` type), optionally
+#' File offsets are given as R `numeric` (i.e., `double` type), optionally
 #' carrying the `bit64::integer64` class attribute. They are returned as
-#' numeric with the `integer64` class attribute attached. The `integer64`
+#' `numeric` with the `integer64` class attribute attached. The `integer64`
 #' type is signed, so the maximum file offset supported by this interface
-#' is 9223372036854775807 (the value of `bit64::lim.integer64()[2]`).
+#' is `9223372036854775807` (the value of `bit64::lim.integer64()[2]`).
 #'
 #' @seealso
 #' GDAL Virtual File Systems (compressed, network hosted, etc...):\cr
@@ -266,6 +266,14 @@ SEEK_END <- "SEEK_END"
 #' vf$write(lat_orig)
 #' vf$rewind()
 #' is_lcp(vf$read(12))  # TRUE
+#'
+#' # read a double, the raster min X coord
+#' vf$seek(4180, SEEK_SET)
+#' readBin(vf$read(8), "double")  # 323476.1
+#'
+#' # read a short int, the canopy cover units
+#' vf$seek(4232, SEEK_SET)
+#' readBin(vf$read(2), "integer", size = 2)  # 1 = "percent"
 #'
 #' # read the Description field
 #' vf$seek(6804, SEEK_SET)
