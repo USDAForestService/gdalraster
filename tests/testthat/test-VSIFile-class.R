@@ -16,7 +16,6 @@ test_that("VSIFile works", {
 
     # function to identify LCP file
     is_lcp <- function(bytes) {
-        # 1-based indexing in R
         values <- readBin(bytes, "integer", 3)
         if ((values[1] == 20 || values[1] == 21) &&
                 (values[2] == 20 || values[2] == 21) &&
@@ -75,6 +74,14 @@ test_that("VSIFile works", {
     vf$write(lat_orig)
     vf$rewind()
     expect_true(is_lcp(vf$read(12)))
+
+    # read double - min X coord
+    vf$seek(4180, SEEK_SET)
+    expect_equal(readBin(vf$read(8), "double"), 323476.071970863151364)
+
+    # read short int - canopy cover units, 1 = percent
+    vf$seek(4232, SEEK_SET)
+    expect_equal(readBin(vf$read(2), "integer", size = 2), 1L)
 
     # read the Description field
     vf$seek(6804, SEEK_SET)
