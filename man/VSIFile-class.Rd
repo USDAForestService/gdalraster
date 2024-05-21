@@ -259,9 +259,10 @@ vf$write(lat_orig)
 vf$rewind()
 is_lcp(vf$read(12))  # TRUE
 
-# read a double, the raster min X coord
-vf$seek(4180, SEEK_SET)
-readBin(vf$read(8), "double")  # 323476.1
+# read a vector of doubles - xmax, xmin, ymax, ymin
+# 327766.1, 323476.1, 5105082.0, 5101872.0
+vf$seek(4172, SEEK_SET)
+readBin(vf$read(32), "double", n = 4)
 
 # read a short int, the canopy cover units
 vf$seek(4232, SEEK_SET)
