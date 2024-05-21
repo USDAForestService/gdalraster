@@ -47,9 +47,13 @@ override the default resampling to one of \code{BILINEAR}, \code{CUBIC},
 \section{Usage}{
 
 \preformatted{
+## Constructors
 ds <- new(GDALRaster, filename, read_only=TRUE)
 # or, using dataset open options:
 ds <- new(GDALRaster, filename, read_only, open_options)
+
+## Fields (see Details)
+ds$readByteAsRaw
 
 ## Methods (see Details)
 ds$getFilename()
@@ -122,9 +126,6 @@ ds$flushCache()
 ds$getChecksum(band, xoff, yoff, xsize, ysize)
 
 ds$close()
-
-## Fields
-ds$readByteAsRaw
 }
 }
 
@@ -141,6 +142,15 @@ vector of \code{NAME=VALUE} pairs.
 \code{read_only} is required for this form of the constructor, \code{TRUE} for
 read-only, or \code{FALSE} to open with write access.
 Returns an object of class \code{GDALRaster}.
+
+\code{$readByteAsRaw}
+Read/write field.
+A logical value, \code{FALSE} by default. This field can be set to \code{TRUE} which
+will affect the data type returned by \verb{$read()} and \code{\link[=read_ds]{read_ds()}}. When the
+underlying band data type is 'Byte' and \code{readByteAsRaw} is \code{TRUE} the output
+type will be raw rather than integer. See also the \code{as_raw} argument to
+\code{\link[=read_ds]{read_ds()}} to control this in a non-persistent setting. If the underlying
+band data type is not Byte this setting has no effect.
 
 \code{$getFilename()}
 Returns a character string containing the \code{filename} associated with this
@@ -554,7 +564,7 @@ Data are read as R integer type when possible for the raster data type
 No rescaling of the data is performed (see \code{$getScale()} and
 \code{$getOffset()} above).
 An error is raised if the read operation fails. See also the setting
-\verb{$readByteAsRaw} below.
+\verb{$readByteAsRaw} above.
 
 \code{$write(band, xoff, yoff, xsize, ysize, rasterData)}
 Writes a region of raster data to \code{band}.
@@ -663,14 +673,6 @@ formats such as GTiff could result in being unable to open it afterwards.
 The \code{GDALRaster} object is still available after calling \code{$close()}.
 The dataset can be re-opened on the existing \code{filename} with
 \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
-
-\code{$readByteAsRaw}
-A logical value, \code{FALSE} by default. This field can be set to \code{TRUE} which
-will affect the data type returned by \verb{$read()} and \code{\link[=read_ds]{read_ds()}}. When the
-underlying band data type is 'Byte' and \code{readByteAsRaw} is \code{TRUE} the output
-type will be raw rather than integer. See also the \code{as_raw} argument to
-\code{\link[=read_ds]{read_ds()}} to control this in a non-persistent setting. If the underlying
-band data type is not Byte this setting has no effect.
 }
 
 \examples{

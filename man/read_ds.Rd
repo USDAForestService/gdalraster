@@ -45,10 +45,11 @@ overview).}
 If \code{FALSE} (the default), output is a vector of pixel data interleaved by
 band.}
 
-\item{as_raw}{Logical. If \code{TRUE} and the underlying data type is Byte, return output
-as R's raw vector type. This maps to the setting \verb{$readByteAsRaw} on the \code{GDALRaster} object,
-which is used to temporarily update that field in this function. To control this behaviour
-in a persisent way on a data set see \code{$readByteAsRaw}  in
+\item{as_raw}{Logical. If \code{TRUE} and the underlying data type is Byte,
+return output as R's raw vector type. This maps to the setting
+\verb{$readByteAsRaw} on the \code{GDALRaster} object, which is used to temporarily
+update that field in this function. To control this behaviour in a
+persistent way on a data set see \code{$readByteAsRaw} in
 \code{\link[=GDALRaster]{GDALRaster-class}}.}
 }
 \value{

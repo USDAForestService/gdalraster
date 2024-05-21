@@ -6,7 +6,7 @@
 <!-- badges: start -->
 
 [![R-CMD-check](https://github.com/USDAForestService/gdalraster/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/USDAForestService/gdalraster/actions/workflows/R-CMD-check.yaml)
-[![codecov](https://codecov.io/gh/ctoney/gdalraster/graph/badge.svg?token=MXIOPZQ2IU)](https://codecov.io/gh/ctoney/gdalraster)
+[![codecov](https://codecov.io/gh/ctoney/gdalraster/graph/badge.svg?token=MXIOPZQ2IU)](https://app.codecov.io/gh/ctoney/gdalraster)
 [![CRAN
 status](https://www.r-pkg.org/badges/version/gdalraster)](https://CRAN.R-project.org/package=gdalraster)
 [![r-universe
@@ -19,9 +19,9 @@ status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usd
 Data Abstraction Library ([GDAL](https://gdal.org/)). Bindings to a
 subset of the GDAL Virtual Systems Interface
 ([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) are also provided to
-support filesystem operations on URLs, cloud storage services,
-Zip/GZip/7z/RAR, and in-memory files. Calling signatures resemble the
-native C, C++ and Python APIs provided by the GDAL project.
+support file system operations and binary I/O on URLs, cloud storage
+services, Zip/GZip/7z/RAR, and in-memory files. Calling signatures
+resemble the native C, C++ and Python APIs provided by the GDAL project.
 
 Bindings to GDAL are implemented in the exposed C++ class
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
@@ -41,11 +41,15 @@ supporting:
   - spatial reference systems
   - GDAL algorithms (`dem_proc()`, `polygonize()`, `rasterize()`,
     [`...`](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms))
-  - OGR vector utilities (`ogrinfo()`, `ogr2ogr()`)
+  - OGR vector utilities (`ogrinfo()`, `ogr2ogr()`,
+    [`ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
+    interface)
   - copy files/move/rename/delete datasets
-  - abstraction of filesystem operations on URLs and cloud storage
   - create/append to Seek-Optimized ZIP
     ([SOZip](https://github.com/sozip/sozip-spec))
+  - abstraction of file system operations on URLs and cloud storage
+  - Standard C file I/O through VSI
+    ([`VSIFile`](https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html))
 
 Additional functionality includes:
 

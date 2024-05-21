@@ -23,6 +23,14 @@ Rcpp::IntegerMatrix _df_to_int_matrix(const Rcpp::DataFrame& df) {
     return m;
 }
 
+//' wrapper for base R path.expand()
+//' @noRd
+Rcpp::CharacterVector _path_expand(Rcpp::CharacterVector path) {
+
+    Rcpp::Function f("path.expand");
+    return f(path);
+}
+
 //' wrapper for base R normalizePath()
 //' int must_work should be NA_LOGICAL (the default), 0 or 1
 //' @noRd

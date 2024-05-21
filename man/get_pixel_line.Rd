@@ -25,7 +25,7 @@ The upper left corner pixel is the raster origin (0,0) with column, row
 increasing left to right, top to bottom.
 }
 \note{
-This function applies the inverse geotranform to the input points. If \code{gt}
+This function applies the inverse geotransform to the input points. If \code{gt}
 is given as the numeric vector, no bounds checking is done (i.e., min
 pixel/line could be less than zero and max pixel/line could be greater than
 the raster x/y size). If \code{gt} is obtained from an object of class

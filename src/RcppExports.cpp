@@ -1403,6 +1403,7 @@ RcppExport SEXP _rcpp_module_boot_mod_cmb_table();
 RcppExport SEXP _rcpp_module_boot_mod_GDALRaster();
 RcppExport SEXP _rcpp_module_boot_mod_GDALVector();
 RcppExport SEXP _rcpp_module_boot_mod_running_stats();
+RcppExport SEXP _rcpp_module_boot_mod_VSIFile();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_gdal_version", (DL_FUNC) &_gdalraster_gdal_version, 0},
@@ -1519,6 +1520,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_rcpp_module_boot_mod_GDALRaster", (DL_FUNC) &_rcpp_module_boot_mod_GDALRaster, 0},
     {"_rcpp_module_boot_mod_GDALVector", (DL_FUNC) &_rcpp_module_boot_mod_GDALVector, 0},
     {"_rcpp_module_boot_mod_running_stats", (DL_FUNC) &_rcpp_module_boot_mod_running_stats, 0},
+    {"_rcpp_module_boot_mod_VSIFile", (DL_FUNC) &_rcpp_module_boot_mod_VSIFile, 0},
     {NULL, NULL, 0}
 };
 

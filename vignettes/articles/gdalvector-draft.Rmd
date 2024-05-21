@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-04-28
+Last modified: 2024-05-14
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -32,10 +32,9 @@ Bindings will be implemented with **Rcpp** modules including `RCPP_EXPOSED_CLASS
 A  GDAL Dataset for vector is a file or database containing one or more OGR layers. A vector dataset is represented in R as a data source name (DSN), a character string that may be a filename, database connection string, URL, virtual file, etc. Management of datasets and their vector schemas will be done with:
 
 * existing management functions in **gdalraster** that operate on vector datasets: `copyDatasetFiles()`, `deleteDataset()`, `renameDataset()` and `addFilesInZip()` (supports SOZip)
-* existing internal utility functions to be further developed (potentially renamed/refactored): `.ogr_ds_exists()`, `.create_ogr()`, `.ogr_ds_layer_count()`, `.ogr_layer_exists()`, `.ogr_layer_create()`, `.ogr_layer_delete()` `.ogr_field_index()`, `.ogr_field_create()`
-* existing wrappers `ogr2ogr()` and `ogrinfo()` from the gdal_utils.h API (**gdalraster** 1.10.0 CRAN release)
-* add `ogr_execute_sql()`: execute an SQL statement against the data store for `CREATE INDEX`, `DROP INDEX`, `ALTER TABLE`, `DROP TABLE` (a SQL `SELECT` statement can be used in the constructor for class `GDALVector` described below, to open a layer of features)
-* other stand-alone functions TBD
+* existing utility functions for managing vector data sources (added at **gdalraster** 1.10.0.9180 dev): [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html)
+* existing wrappers `ogr2ogr()` and `ogrinfo()` from the GDAL Utils API (**gdalraster** 1.10.0 CRAN release)
+* `ogr_execute_sql()`: execute an SQL statement against the data store to edit data (a SQL `SELECT` statement can be used in the constructor for class `GDALVector` described below, to open a layer of features)
 
 OGR Layer class represents a layer of features within a data source. It will be modeled in R as class `GDALVector`, an exposed C++ class encapsulating an OGR Layer and the GDAL Dataset that owns it. A `GDALVector` object will persist an open connection to the dataset and expose methods for retrieving layer information, setting attribute and spatial filters, reading/writing features, and layer geoprocessing. A draft definition for class `GDALVector` is given below.
 
@@ -521,12 +520,13 @@ lyr2$getFeatureCount()
 # create an output layer using a temporary in-memory dataset
 dsn_out <- "/vsimem/lyr_proc_tmp.gpkg"
 srs <- lyr$getSpatialRef()
-# this uses existing internal OGR utilities
-gdalraster:::.create_ogr("GPKG", dsn_out, 0, 0, 0, "Unknown", "result_layer", srs)
+ogr_ds_create("GPKG", dsn_out, "result_layer",
+              geom_type = "Polygon",
+              srs = srs)
 #> [1] TRUE
-gdalraster:::.ogr_ds_exists(dsn_out, with_update = TRUE)
+ogr_ds_exists(dsn_out, with_update = TRUE)
 #> [1] TRUE
-gdalraster:::.ogr_layer_exists(dsn_out, "result_layer")
+ogr_layer_exists(dsn_out, "result_layer")
 #> [1] TRUE
 
 lyr_out <- new(GDALVector, dsn_out, "result_layer", read_only = FALSE)
@@ -538,7 +538,7 @@ lyr$layerIntersection(lyr2, lyr_out, quiet = FALSE, options = NULL)
 #> 0...10...20...30...40...50...60...70...80...90...100 - done.
 
 lyr_out$getFeatureCount()
-#> [1] 5
+#> [1] 86
 defn <- lyr_out$getLayerDefn()
 # combined attributes
 names(defn)
@@ -583,7 +583,7 @@ vsi_unlink(dsn_out)
 vsi_unlink(out_file)
 ```
 
-<sup>Created on 2024-04-06 with [reprex v2.1.0](https://reprex.tidyverse.org)</sup>
+<sup>Created on 2024-05-14 with [reprex v2.1.0](https://reprex.tidyverse.org)</sup>
 
 ## Example: WorldCover Sentinel-2 composites
 
@@ -770,6 +770,7 @@ This is a working list of potential issues and design questions that need furthe
 * initial int64 support; now linking to **RcppInt64**, and importing **bit64**; `FID` and `OFTInteger64` fields are now returned in R as `integer64`; updated the examples (2024-04-06)
 * add `GDALVector::getFeature()`: fetch a feature from its FID (2024-04-06)
 * add a `GDALVector` class constructor with `spatial_filter` and SQL `dialect` arguments (2024-04-28)
+* [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html) added in **gdalraster** dev; examples updated (2024-05-14)
 
 ## Contributors
 

@@ -20,6 +20,7 @@ reference:
   - CmbTable-class
   - GDALRaster-class
   - RunningStats-class
+  - VSIFile-class
 
 - title: Stand-alone functions
 - subtitle: Raster creation
@@ -156,10 +157,13 @@ reference:
   - proj_search_paths
   - proj_version
 
-- title: Lookups
+- title: Constants
 - contents:
   - DEFAULT_DEM_PROC
   - DEFAULT_NODATA
+  - SEEK_SET
+  - SEEK_CUR
+  - SEEK_END
 
 authors:
   before: "<strong>GDAL is by</strong>: Frank Warmerdam, Even Rouault and others (<a href=\"https://github.com/OSGeo/gdal/graphs/contributors\" class=\"external-link\">GDAL contributors</a>)"

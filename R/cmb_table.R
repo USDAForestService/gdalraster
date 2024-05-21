@@ -22,6 +22,7 @@
 #'
 #' @section Usage:
 #' \preformatted{
+#' ## Constructors
 #' cmb <- new(CmbTable, keyLen)
 #' # or, with variable names
 #' cmb <- new(CmbTable, keyLen, varNames)

@@ -177,8 +177,10 @@ pop_error_handler <- function() {
 }
 
 #' Check a filename before passing to GDAL and potentially fix.
-#' filename may be a physical file, URL, connection string, file name with
-#' additional parameters, etc. Returned in UTF-8 encoding.
+#' 'filename' may be a physical file, URL, connection string, filename with
+#' additional parameters, etc.
+#' Currently, only checks for leading tilde and does path expasion in that
+#' case. Returns the filename in UTF-8 encoding if possible using R enc2utf8.
 #'
 #' @noRd
 .check_gdal_filename <- function(filename) {
@@ -221,7 +223,7 @@ pop_error_handler <- function() {
 #' native SQL engine of those database systems.
 #'
 #' @seealso
-#' [ogrinfo()]
+#' [ogrinfo()], [ogr_execute_sql()]
 #'
 #' OGR SQL dialect and SQLITE SQL dialect:\cr
 #' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
@@ -320,7 +322,7 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE, optio
     invisible(.Call(`_gdalraster_createCopy`, format, dst_filename, src_filename, strict, options, quiet))
 }
 
-#' Apply geotransform
+#' Apply geotransform - internal wrapper of GDALApplyGeoTransform()
 #'
 #' `_apply_geotransform()` applies geotransform coefficients to a raster
 #' coordinate in pixel/line space (colum/row), converting into a
@@ -356,9 +358,8 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE, optio
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' ds <- new(GDALRaster, elev_file)
-#' gt <- ds$getGeoTransform()
+#' invgt <- ds$getGeoTransform() |> inv_geotransform()
 #' ds$close()
-#' invgt <- inv_geotransform(gt)
 #'
 #' ptX = 324181.7
 #' ptY = 5103901.4
