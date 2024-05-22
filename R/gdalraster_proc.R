@@ -1073,13 +1073,14 @@ calc <- function(expr,
 
     if (nrasters > 1) {
         for (r in rasterfiles) {
-            ds <- new(GDALRaster, r, TRUE)
-            if (ds$getRasterYSize() != nrows || ds$getRasterXSize() != ncols) {
+            ds <- new(GDALRaster, r, read_only=TRUE)
+            dm <- ds$dim()
+            ds$close()
+            if (dm[2] != nrows || dm[1] != ncols) {
                 message(r)
-                stop("all input rasters must have the same dimensions",
+                stop("all input rasters must have the same extent",
                      call. = FALSE)
             }
-            ds$close()
         }
     }
 
@@ -1087,7 +1088,7 @@ calc <- function(expr,
         # write to an existing raster
         dst_ds <- new(GDALRaster, dstfile, read_only=FALSE)
     } else {
-        #create the output raster
+        # create the output raster
         dstnodata <- NULL
         if (setRasterNodataValue)
             dstnodata <- nodata_value
@@ -1104,8 +1105,8 @@ calc <- function(expr,
 
     # list of GDALRaster objects for each raster layer
     ds_list <- list()
-    for (r in 1:nrasters) {
-        ds_list[[r]] <- new(GDALRaster, rasterfiles[r], read_only=TRUE)
+    for (i in seq_len(nrasters)) {
+        ds_list[[i]] <- new(GDALRaster, rasterfiles[i], read_only=TRUE)
     }
 
     # are pixel coordinates being used
@@ -1131,7 +1132,7 @@ calc <- function(expr,
         x <- seq(from = xmin + (cellsizeX/2),
                  by = cellsizeX,
                  length.out = ncols)
-        assign("pixelX", x) # nolint: object_usage_linter.
+        assign("pixelX", x)
     }
 
     # expected size of vector returned by expr
@@ -1141,31 +1142,31 @@ calc <- function(expr,
     process_row <- function(row) {
         if (usePixelY) {
             y <- rep((ymax - (cellsizeY / 2) - (cellsizeY * row)), ncols)
-            assign("pixelY", y) # nolint: object_usage_linter.
+            assign("pixelY", y)
         }
 
         if (usePixelLonLat) {
             lonlat <- inv_project(cbind(x, y), srs)
-            assign("pixelLon", lonlat[, 1]) # nolint: object_usage_linter.
-            assign("pixelLat", lonlat[, 2]) # nolint: object_usage_linter.
+            assign("pixelLon", lonlat[, 1])
+            assign("pixelLat", lonlat[, 2])
         }
 
-        for (r in 1:nrasters) {
-            inrow <- ds_list[[r]]$read(band = bands[r],
+        for (i in seq_len(nrasters)) {
+            inrow <- ds_list[[i]]$read(band = bands[i],
                                        xoff = 0,
                                        yoff = row,
                                        xsize = ncols,
                                        ysize = 1,
                                        out_xsize = ncols,
                                        out_ysize = 1)
-            assign(var.names[r], inrow)
+            assign(var.names[i], inrow)
         }
 
         outrow <- eval(calc_expr)
         if (length(outrow) != expect_outrow_len) {
             dst_ds$close()
-            for (r in 1:nrasters) {
-                ds_list[[r]]$close()
+            for (i in seq_len(nrasters)) {
+                ds_list[[i]]$close()
             }
             stop("result vector is the wrong size", call. = FALSE)
         }
@@ -1196,8 +1197,8 @@ calc <- function(expr,
 
     message("output written to: ", dstfile)
     dst_ds$close()
-    for (r in 1:nrasters) {
-        ds_list[[r]]$close()
+    for (i in seq_len(nrasters)) {
+        ds_list[[i]]$close()
     }
 
     return(invisible(dstfile))
