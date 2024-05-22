@@ -1,4 +1,6 @@
-# gdalraster 1.10.9200 (dev)
+# gdalraster 1.10.9210 (dev)
+
+* `GDALRaster::getDefaultRAT()`: add progress bar since retrieving large raster attribute tables could take >30 sec (2024-05-21)
 
 * package `bit64` added in Imports, and `RcppInt64` added in LinkingTo (2024-05-19)
 
