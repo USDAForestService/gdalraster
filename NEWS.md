@@ -1,4 +1,6 @@
-# gdalraster 1.10.9210 (dev)
+# gdalraster 1.10.9211 (dev)
+
+* `calc()`: close input raster dataset before exit when differing extent detected (2024-05-22)
 
 * `GDALRaster::getDefaultRAT()`: add progress bar since retrieving large raster attribute tables could take >30 sec (2024-05-21)
 
