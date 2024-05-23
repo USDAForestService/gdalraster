@@ -10,8 +10,8 @@ vsi_unlink_batch(filenames)
 \item{filenames}{Character vector. The list of files to delete.}
 }
 \value{
-Invisibly, a logical vector of \code{length(filenames)} with values
-depending on the success of deletion of the corresponding file.
+Logical vector of \code{length(filenames)} with values depending
+on the success of deletion of the corresponding file.
 \code{NULL} might be returned in case of a more general error (for example,
 files belonging to different file system handlers).
 }

@@ -7,11 +7,11 @@ test_that("vsi_stat works", {
     elev_file <- file.path(data_dir, "storml_elev.tif")
     expect_true(vsi_stat(elev_file))
     expect_equal(vsi_stat(elev_file, "type"), "file")
-    expect_equal(vsi_stat(elev_file, "size"), 31152)
+    expect_equal(vsi_stat(elev_file, "size"), bit64::as.integer64(31152))
     nonexistent <- file.path(data_dir, "wrong_filename.tif")
     expect_false(vsi_stat(nonexistent))
     expect_equal(vsi_stat(nonexistent, "type"), "")
-    expect_equal(vsi_stat(nonexistent, "size"), -1)
+    expect_equal(vsi_stat(nonexistent, "size"), bit64::as.integer64(-1))
     expect_error(vsi_stat(elev_file, "invalid"))
 })
 
@@ -118,7 +118,7 @@ test_that("vsi_get_disk_free_space returns length-1 numeric vector", {
     tmp_dir <- file.path(tempdir(), "tmpdir")
     vsi_mkdir(tmp_dir)
     x <- vsi_get_disk_free_space(tmp_dir)
-    expect_vector(x, ptype = numeric(), 1)
+    expect_vector(x, ptype = bit64::integer64(), 1)
     vsi_rmdir(tmp_dir)
 })
 

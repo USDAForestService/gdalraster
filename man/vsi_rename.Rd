@@ -12,7 +12,7 @@ vsi_rename(oldpath, newpath)
 \item{newpath}{Character string. The name the file should be given.}
 }
 \value{
-Invisibly, \code{0} on success or \code{-1} on an error.
+\code{0} on success or \code{-1} on an error.
 }
 \description{
 \code{vsi_rename()} renames a file object in the file system. The GDAL

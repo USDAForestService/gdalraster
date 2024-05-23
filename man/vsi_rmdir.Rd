@@ -13,7 +13,7 @@ vsi_rmdir(path, recursive = FALSE)
 content. Defaults to \code{FALSE}.}
 }
 \value{
-Invisibly, \code{0} on success or \code{-1} on an error.
+\code{0} on success or \code{-1} on an error.
 }
 \description{
 \code{vsi_rmdir()} deletes a directory object from the file system. On some

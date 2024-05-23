@@ -18,7 +18,8 @@ If \code{info = "exists"}, returns logical \code{TRUE} if the file system
 object exists, otherwise \code{FALSE}. If \code{info = "type"}, returns a character
 string with one of \code{"file"} (regular file), \code{"dir"} (directory),
 \code{"symlink"} (symbolic link), or empty string (\code{""}). If \code{info = "size"},
-returns the file size in bytes, or \code{-1} if an error occurs.
+returns the file size in bytes (as \code{bit64::integer64} type), or \code{-1} if an
+error occurs.
 }
 \description{
 \code{vsi_stat()} fetches status information about a filesystem object (file,

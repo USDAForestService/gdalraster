@@ -1350,7 +1350,7 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #' @param show_progress Logical scalar. If `TRUE`, a progress bar will be
 #' displayed (the size of `src_file` will be retrieved in GDAL with
 #' `VSIStatL()`). Default is `FALSE`.
-#' @returns Invisibly, `0` on success or `-1` on an error.
+#' @returns `0` on success or `-1` on an error.
 #'
 #' @note
 #' If `target_file` has the form /vsizip/foo.zip/bar, the default options
@@ -1373,7 +1373,7 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #'   vsi_unlink(tmp_file)
 #' }
 vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
-    invisible(.Call(`_gdalraster_vsi_copy_file`, src_file, target_file, show_progress))
+    .Call(`_gdalraster_vsi_copy_file`, src_file, target_file, show_progress)
 }
 
 #' Clean cache associated with /vsicurl/ and related file systems
@@ -1505,7 +1505,7 @@ vsi_read_dir <- function(path, max_files = 0L) {
 #' @param show_progress Logical scalar. If `TRUE`, a progress bar will be
 #' displayed. Defaults to `FALSE`.
 #' @param options Character vector of `NAME=VALUE` pairs (see Details).
-#' @returns Invisibly, `TRUE` on success or `FALSE` on an error.
+#' @returns Logical scalar, `TRUE` on success or `FALSE` on an error.
 #'
 #' @seealso
 #' [copyDatasetFiles()], [vsi_copy_file()]
@@ -1556,7 +1556,7 @@ vsi_read_dir <- function(path, max_files = 0L) {
 #' #> [9] "lf_fbfm40_220_mt_hood_utm.tif"
 #' }
 vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
-    invisible(.Call(`_gdalraster_vsi_sync`, src, target, show_progress, options))
+    .Call(`_gdalraster_vsi_sync`, src, target, show_progress, options)
 }
 
 #' Create a directory
@@ -1575,7 +1575,7 @@ vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
 #' `0`, e.g., `"0755"` (the default).
 #' @param recursive Logical scalar. `TRUE` to create the directory and its
 #' ancestors. Defaults to `FALSE`.
-#' @returns Invisibly, `0` on success or `-1` on an error.
+#' @returns `0` on success or `-1` on an error.
 #'
 #' @seealso
 #' [vsi_read_dir()], [vsi_rmdir()]
@@ -1587,7 +1587,7 @@ vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
 #' result <- vsi_rmdir(new_dir)
 #' print(result)
 vsi_mkdir <- function(path, mode = "0755", recursive = FALSE) {
-    invisible(.Call(`_gdalraster_vsi_mkdir`, path, mode, recursive))
+    .Call(`_gdalraster_vsi_mkdir`, path, mode, recursive)
 }
 
 #' Delete a directory
@@ -1604,7 +1604,7 @@ vsi_mkdir <- function(path, mode = "0755", recursive = FALSE) {
 #' @param path Character string. The path to the directory to be deleted.
 #' @param recursive Logical scalar. `TRUE` to delete the directory and its
 #' content. Defaults to `FALSE`.
-#' @returns Invisibly, `0` on success or `-1` on an error.
+#' @returns `0` on success or `-1` on an error.
 #'
 #' @note
 #' /vsis3/ has an efficient implementation for deleting recursively. Starting
@@ -1621,7 +1621,7 @@ vsi_mkdir <- function(path, mode = "0755", recursive = FALSE) {
 #' result <- vsi_rmdir(new_dir)
 #' print(result)
 vsi_rmdir <- function(path, recursive = FALSE) {
-    invisible(.Call(`_gdalraster_vsi_rmdir`, path, recursive))
+    .Call(`_gdalraster_vsi_rmdir`, path, recursive)
 }
 
 #' Delete a file
@@ -1633,7 +1633,7 @@ vsi_rmdir <- function(path, recursive = FALSE) {
 #' Analog of the POSIX `unlink()` function.
 #'
 #' @param filename Character string. The path of the file to be deleted.
-#' @returns Invisibly, `0` on success or `-1` on an error.
+#' @returns `0` on success or `-1` on an error.
 #'
 #' @seealso
 #' [deleteDataset()], [vsi_rmdir()], [vsi_unlink_batch()]
@@ -1647,7 +1647,7 @@ vsi_rmdir <- function(path, recursive = FALSE) {
 #' result <- vsi_unlink(tmp_file)
 #' print(result)
 vsi_unlink <- function(filename) {
-    invisible(.Call(`_gdalraster_vsi_unlink`, filename))
+    .Call(`_gdalraster_vsi_unlink`, filename)
 }
 
 #' Delete several files in a batch
@@ -1660,8 +1660,8 @@ vsi_unlink <- function(filename) {
 #' Portability Library.
 #'
 #' @param filenames Character vector. The list of files to delete.
-#' @returns Invisibly, a logical vector of `length(filenames)` with values
-#' depending on the success of deletion of the corresponding file.
+#' @returns Logical vector of `length(filenames)` with values depending
+#' on the success of deletion of the corresponding file.
 #' `NULL` might be returned in case of a more general error (for example,
 #' files belonging to different file system handlers).
 #'
@@ -1681,7 +1681,7 @@ vsi_unlink <- function(filename) {
 #' result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
 #' print(result)
 vsi_unlink_batch <- function(filenames) {
-    invisible(.Call(`_gdalraster_vsi_unlink_batch`, filenames))
+    .Call(`_gdalraster_vsi_unlink_batch`, filenames)
 }
 
 #' Get filesystem object info
@@ -1701,7 +1701,8 @@ vsi_unlink_batch <- function(filenames) {
 #' object exists, otherwise `FALSE`. If `info = "type"`, returns a character
 #' string with one of `"file"` (regular file), `"dir"` (directory),
 #' `"symlink"` (symbolic link), or empty string (`""`). If `info = "size"`,
-#' returns the file size in bytes, or `-1` if an error occurs.
+#' returns the file size in bytes (as `bit64::integer64` type), or `-1` if an
+#' error occurs.
 #'
 #' @note
 #' For portability, `vsi_stat()` supports a subset of `stat()`-type
@@ -1758,7 +1759,7 @@ vsi_stat <- function(filename, info = "exists") {
 #'
 #' @param oldpath Character string. The name of the file to be renamed.
 #' @param newpath Character string. The name the file should be given.
-#' @returns Invisibly, `0` on success or `-1` on an error.
+#' @returns `0` on success or `-1` on an error.
 #'
 #' @seealso
 #' [renameDataset()], [vsi_copy_file()]
@@ -1774,7 +1775,7 @@ vsi_stat <- function(filename, info = "exists") {
 #' print(result)
 #' vsi_unlink(new_file)
 vsi_rename <- function(oldpath, newpath) {
-    invisible(.Call(`_gdalraster_vsi_rename`, oldpath, newpath))
+    .Call(`_gdalraster_vsi_rename`, oldpath, newpath)
 }
 
 #' Return the list of virtual file system handlers currently registered
@@ -1869,7 +1870,8 @@ vsi_supports_rnd_write <- function(filename, allow_local_tmpfile) {
 #' Portability Library.
 #'
 #' @param path Character string. A directory of the filesystem to query.
-#' @returns Numeric scalar. The free space in bytes, or `-1` in case of error.
+#' @returns Numeric scalar. The free space in bytes (as `bit64::integer64`
+#' type), or `-1` in case of error.
 #'
 #' @examples
 #' tmp_dir <- file.path(tempdir(), "tmpdir")

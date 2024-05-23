@@ -671,7 +671,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_get_disk_free_space
-double vsi_get_disk_free_space(Rcpp::CharacterVector path);
+Rcpp::NumericVector vsi_get_disk_free_space(Rcpp::CharacterVector path);
 RcppExport SEXP _gdalraster_vsi_get_disk_free_space(SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
