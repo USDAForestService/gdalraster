@@ -16,7 +16,7 @@ vsi_mkdir(path, mode = "0755", recursive = FALSE)
 ancestors. Defaults to \code{FALSE}.}
 }
 \value{
-Invisibly, \code{0} on success or \code{-1} on an error.
+\code{0} on success or \code{-1} on an error.
 }
 \description{
 \code{vsi_mkdir()} creates a new directory with the indicated mode.

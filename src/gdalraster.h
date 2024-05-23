@@ -242,7 +242,7 @@ bool vsi_supports_seq_write(Rcpp::CharacterVector filename,
                             bool allow_local_tmpfile);
 bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
                             bool allow_local_tmpfile);
-double vsi_get_disk_free_space(Rcpp::CharacterVector path);
+Rcpp::NumericVector vsi_get_disk_free_space(Rcpp::CharacterVector path);
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
                                         double pixel, double line);

@@ -16,7 +16,7 @@ displayed (the size of \code{src_file} will be retrieved in GDAL with
 \code{VSIStatL()}). Default is \code{FALSE}.}
 }
 \value{
-Invisibly, \code{0} on success or \code{-1} on an error.
+\code{0} on success or \code{-1} on an error.
 }
 \description{
 \code{vsi_copy_file()} is a wrapper for \code{VSICopyFile()} in the GDAL Common
