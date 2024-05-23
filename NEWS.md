@@ -1,4 +1,8 @@
-# gdalraster 1.10.9211 (dev)
+# gdalraster 1.10.9212 (dev)
+
+* `vsi_stat()` with `info = "size"`, and `vsi_get_disk_free_space()` now return `bit64::integer64` type (2024-05-22)
+
+* `vsi_*()`: several VSI functions returned `0` or `-1` invisibly to indicate success/failure consistent with GDAL return values. Those return values are now visible to be consistent with return values from `VSIFile` class methods (2024-05-22)
 
 * `calc()`: close input raster dataset before exit when differing extent detected (2024-05-22)
 
