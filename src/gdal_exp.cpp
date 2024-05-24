@@ -9,6 +9,7 @@
 #include "gdal.h"
 #include "cpl_port.h"
 #include "cpl_conv.h"
+#include "cpl_multiproc.h"
 #include "cpl_string.h"
 #include "cpl_vsi.h"
 #include "gdal_alg.h"
@@ -317,13 +318,34 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
 }
 
 
-//' Get usable physical RAM in MB
+//' Get the number of processors detected by GDAL
 //'
-//' @noRd
-// [[Rcpp::export(name = ".get_physical_RAM")]]
-int _get_physical_RAM() {
-    GIntBig nPhysicalRAM = CPLGetUsablePhysicalRAM();
-    return static_cast<int>(nPhysicalRAM / (1000 * 1000));
+//' `get_num_cpus()` returns the number of processors detected by GDAL.
+//'
+//' @return Integer scalar, number of CPUs.
+//'
+//' @examples
+//' get_num_cpus()
+// [[Rcpp::export(name = "get_num_cpus")]]
+int get_num_cpus() {
+    return CPLGetNumCPUs();
+}
+
+
+//' Get usable physical RAM
+//'
+//' `get_usable_physical_ram()` returns the total physical RAM, usable by a
+//' process, in bytes.
+//'
+//' @return Numeric scalar, bytes as `bit64::integer64` type.
+//'
+//' @examples
+//' get_usable_physical_ram()
+// [[Rcpp::export(name = "get_usable_physical_ram")]]
+Rcpp::NumericVector get_usable_physical_ram() {
+    std::vector<int64_t> ret(1);
+    ret[0] = CPLGetUsablePhysicalRAM();
+    return Rcpp::wrap(ret);
 }
 
 

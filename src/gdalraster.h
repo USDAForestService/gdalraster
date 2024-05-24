@@ -191,12 +191,13 @@ Rcpp::DataFrame gdal_formats(std::string fmt);
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
+int get_num_cpus();
+Rcpp::NumericVector get_usable_physical_ram();
 void push_error_handler(std::string handler);
 void pop_error_handler();
 bool has_spatialite();
 
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
-int _get_physical_RAM();
 
 bool create(std::string format, Rcpp::CharacterVector dst_filename,
             int xsize, int ysize, int nbands, std::string dataType,
