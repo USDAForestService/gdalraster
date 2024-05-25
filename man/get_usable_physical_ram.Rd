@@ -7,7 +7,7 @@
 get_usable_physical_ram()
 }
 \value{
-Numeric scalar, bytes as \code{bit64::integer64} type.
+Numeric scalar, number of bytes as \code{bit64::integer64} type.
 }
 \description{
 \code{get_usable_physical_ram()} returns the total physical RAM, usable by a

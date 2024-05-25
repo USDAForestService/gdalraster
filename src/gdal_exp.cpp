@@ -337,7 +337,7 @@ int get_num_cpus() {
 //' `get_usable_physical_ram()` returns the total physical RAM, usable by a
 //' process, in bytes.
 //'
-//' @return Numeric scalar, bytes as `bit64::integer64` type.
+//' @return Numeric scalar, number of bytes as `bit64::integer64` type.
 //'
 //' @examples
 //' get_usable_physical_ram()
