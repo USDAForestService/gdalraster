@@ -63,7 +63,10 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 // Only simple polygons composed of one ring are supported.
 
     OGRGeometryH hGeom = nullptr;
-    OGRErr err;
+    OGRGeometryH hPoly = nullptr;
+    OGRErr err = OGRERR_NONE;
+    char* pszWKT = nullptr;
+    std::string wkt = "";
 
     if (EQUALN(geom_type.c_str(), "POINT", 5)) {
         geom_type = "POINT";
@@ -118,35 +121,33 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
             }
         }
         else {
-            OGR_G_SetPointCount(hGeom, (int) nPts);
+            OGR_G_SetPointCount(hGeom, static_cast<int>(nPts));
             for (R_xlen_t i=0; i < nPts; ++i)
                 OGR_G_SetPoint_2D(hGeom, i, xy(i, 0), xy(i, 1));
         }
     }
 
     if (geom_type == "POLYGON") {
-        OGRGeometryH hPoly = OGR_G_CreateGeometry(wkbPolygon);
+        hPoly = OGR_G_CreateGeometry(wkbPolygon);
         CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", "NO");
         err = OGR_G_AddGeometryDirectly(hPoly, hGeom);
         CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", nullptr);
-        if (err != OGRERR_NONE)
+        if (hPoly == nullptr || err != OGRERR_NONE)
             Rcpp::stop("failed to create polygon geometry (unclosed ring?)");
 
-        char* pszWKT;
         OGR_G_ExportToWkt(hPoly, &pszWKT);
-        std::string wkt(pszWKT);
-        CPLFree(pszWKT);
         OGR_G_DestroyGeometry(hPoly);
-        return wkt;
     }
     else {
-        char* pszWKT;
         OGR_G_ExportToWkt(hGeom, &pszWKT);
-        std::string wkt(pszWKT);
-        CPLFree(pszWKT);
         OGR_G_DestroyGeometry(hGeom);
-        return wkt;
     }
+
+    if (pszWKT != nullptr) {
+        wkt = pszWKT;
+        CPLFree(pszWKT);
+    }
+    return wkt;
 }
 
 //' @noRd
