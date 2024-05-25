@@ -1082,11 +1082,11 @@ bool _ogr_field_rename(std::string dsn, std::string layer,
     else
         eFieldType = OFTString;  // not changing the type anyway
 
-
     OGRFieldDefnH hNewFieldDefn;
     hNewFieldDefn = OGR_Fld_Create(new_name.c_str(), eFieldType);
     OGRErr err = OGR_L_AlterFieldDefn(hLayer, iField, hNewFieldDefn,
                                       ALTER_NAME_FLAG);
+    OGR_Fld_Destroy(hNewFieldDefn);
 
     if (err != OGRERR_NONE) {
         Rcpp::Rcerr << "failed to rename field\n";
