@@ -181,7 +181,13 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/get_config_option.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/get_num_cpus.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/get_pixel_line.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/get_usable_physical_ram.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/has_geos.html</loc>
