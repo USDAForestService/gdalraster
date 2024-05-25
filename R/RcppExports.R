@@ -190,6 +190,7 @@ pop_error_handler <- function() {
 #' Get the number of processors detected by GDAL
 #'
 #' `get_num_cpus()` returns the number of processors detected by GDAL.
+#' Wrapper of `CPLGetNumCPUs()` in the GDAL Common Portability Library.
 #'
 #' @return Integer scalar, number of CPUs.
 #'
@@ -205,7 +206,8 @@ get_num_cpus <- function() {
 #' process, in bytes. It will limit to 2 GB for 32 bit processes. Starting
 #' with GDAL 2.4.0, it will also take into account resource limits (virtual
 #' memory) on Posix systems. Starting with GDAL 3.6.1, it will also take into
-#' account RLIMIT_RSS on Linux.
+#' account RLIMIT_RSS on Linux. Wrapper of `CPLGetUsablePhysicalRAM()` in the
+#' GDAL Common Portability Library.
 #'
 #' @return Numeric scalar, number of bytes as `bit64::integer64` type (or 0 in
 #' case of failure).

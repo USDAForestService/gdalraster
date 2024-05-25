@@ -15,7 +15,8 @@ case of failure).
 process, in bytes. It will limit to 2 GB for 32 bit processes. Starting
 with GDAL 2.4.0, it will also take into account resource limits (virtual
 memory) on Posix systems. Starting with GDAL 3.6.1, it will also take into
-account RLIMIT_RSS on Linux.
+account RLIMIT_RSS on Linux. Wrapper of \code{CPLGetUsablePhysicalRAM()} in the
+GDAL Common Portability Library.
 }
 \note{
 This memory may already be partly used by other processes.

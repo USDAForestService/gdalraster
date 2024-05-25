@@ -11,6 +11,7 @@ Integer scalar, number of CPUs.
 }
 \description{
 \code{get_num_cpus()} returns the number of processors detected by GDAL.
+Wrapper of \code{CPLGetNumCPUs()} in the GDAL Common Portability Library.
 }
 \examples{
 get_num_cpus()
