@@ -84,7 +84,7 @@ ds$get_pixel_line(xy)
 
 ds$getRasterCount()
 ds$getDescription(band)
-ds$setDescription(band)
+ds$setDescription(band, desc)
 ds$getBlockSize(band)
 ds$getActualBlockSize(band, xblockoff, yblockoff)
 ds$getOverviewCount(band)
