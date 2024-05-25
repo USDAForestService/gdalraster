@@ -122,12 +122,14 @@
   \item GDAL configuration:
   \code{\link[=gdal_version]{gdal_version()}},
   \code{\link[=gdal_formats]{gdal_formats()}},
-  \code{\link[=get_cache_used]{get_cache_used()}},\cr
+  \code{\link[=get_cache_used]{get_cache_used()}},
   \code{\link[=get_config_option]{get_config_option()}},
   \code{\link[=set_config_option]{set_config_option()}},
+  \code{\link[=get_num_cpus]{get_num_cpus()}},
+  \code{\link[=get_usable_physical_ram]{get_usable_physical_ram()}},
+  \code{\link[=has_spatialite]{has_spatialite()}},
   \code{\link[=push_error_handler]{push_error_handler()}},
-  \code{\link[=pop_error_handler]{pop_error_handler()}},
-  \code{\link[=has_spatialite]{has_spatialite()}}
+  \code{\link[=pop_error_handler]{pop_error_handler()}}
 
   \item PROJ configuration:
   \code{\link[=proj_version]{proj_version()}},

@@ -187,11 +187,38 @@ pop_error_handler <- function() {
     .Call(`_gdalraster__check_gdal_filename`, filename)
 }
 
-#' Get usable physical RAM in MB
+#' Get the number of processors detected by GDAL
 #'
-#' @noRd
-.get_physical_RAM <- function() {
-    .Call(`_gdalraster__get_physical_RAM`)
+#' `get_num_cpus()` returns the number of processors detected by GDAL.
+#' Wrapper of `CPLGetNumCPUs()` in the GDAL Common Portability Library.
+#'
+#' @return Integer scalar, number of CPUs.
+#'
+#' @examples
+#' get_num_cpus()
+get_num_cpus <- function() {
+    .Call(`_gdalraster_get_num_cpus`)
+}
+
+#' Get usable physical RAM
+#'
+#' `get_usable_physical_ram()` returns the total physical RAM, usable by a
+#' process, in bytes. It will limit to 2 GB for 32 bit processes. Starting
+#' with GDAL 2.4.0, it will also take into account resource limits (virtual
+#' memory) on Posix systems. Starting with GDAL 3.6.1, it will also take into
+#' account RLIMIT_RSS on Linux. Wrapper of `CPLGetUsablePhysicalRAM()` in the
+#' GDAL Common Portability Library.
+#'
+#' @return Numeric scalar, number of bytes as `bit64::integer64` type (or 0 in
+#' case of failure).
+#'
+#' @note
+#' This memory may already be partly used by other processes.
+#'
+#' @examples
+#' get_usable_physical_ram()
+get_usable_physical_ram <- function() {
+    .Call(`_gdalraster_get_usable_physical_ram`)
 }
 
 #' Is SpatiaLite available?

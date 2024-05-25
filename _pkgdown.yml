@@ -148,6 +148,8 @@ reference:
   - get_cache_used
   - get_config_option
   - set_config_option
+  - get_num_cpus
+  - get_usable_physical_ram
   - has_spatialite
   - push_error_handler
   - pop_error_handler

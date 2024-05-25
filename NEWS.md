@@ -1,4 +1,6 @@
-# gdalraster 1.10.9212 (dev)
+# gdalraster 1.10.9220 (dev)
+
+* add `get_num_cpus()` and `get_usable_physical_ram()` (2024-05-24)
 
 * `vsi_stat()` with `info = "size"`, and `vsi_get_disk_free_space()` now return `bit64::integer64` type (2024-05-22)
 

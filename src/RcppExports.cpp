@@ -104,13 +104,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _get_physical_RAM
-int _get_physical_RAM();
-RcppExport SEXP _gdalraster__get_physical_RAM() {
+// get_num_cpus
+int get_num_cpus();
+RcppExport SEXP _gdalraster_get_num_cpus() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(_get_physical_RAM());
+    rcpp_result_gen = Rcpp::wrap(get_num_cpus());
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_usable_physical_ram
+Rcpp::NumericVector get_usable_physical_ram();
+RcppExport SEXP _gdalraster_get_usable_physical_ram() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(get_usable_physical_ram());
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1414,7 +1424,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_push_error_handler", (DL_FUNC) &_gdalraster_push_error_handler, 1},
     {"_gdalraster_pop_error_handler", (DL_FUNC) &_gdalraster_pop_error_handler, 0},
     {"_gdalraster__check_gdal_filename", (DL_FUNC) &_gdalraster__check_gdal_filename, 1},
-    {"_gdalraster__get_physical_RAM", (DL_FUNC) &_gdalraster__get_physical_RAM, 0},
+    {"_gdalraster_get_num_cpus", (DL_FUNC) &_gdalraster_get_num_cpus, 0},
+    {"_gdalraster_get_usable_physical_ram", (DL_FUNC) &_gdalraster_get_usable_physical_ram, 0},
     {"_gdalraster_has_spatialite", (DL_FUNC) &_gdalraster_has_spatialite, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 6},
