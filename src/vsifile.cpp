@@ -131,16 +131,16 @@ void VSIFile::rewind() {
 }
 
 SEXP VSIFile::read(std::size_t nbytes) {
-    // should nbytes be changed to integer64 (via NumericVector)?
-    // ingest() could be used instead
-
     if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
-    if (nbytes < 0)
+    if (nbytes <= 0)
         Rcpp::stop("'nbytes' must be a positive integer");
 
-    void *buf = VSIMalloc(nbytes);
+    GByte *buf = static_cast<GByte *>(VSIMalloc(nbytes));
+    if (buf == nullptr)
+        Rcpp::stop("could not allocate memory for 'nbytes'");
+
     size_t nRead = 0;
     nRead = VSIFReadL(buf, 1, nbytes, fp);
     if (nRead == 0)
