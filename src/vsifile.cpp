@@ -5,6 +5,7 @@
 #include <cstdlib>
 #include <vector>
 
+#include "cpl_conv.h"
 #include "vsifile.h"
 #include "gdalraster.h"
 
@@ -135,12 +136,9 @@ SEXP VSIFile::read(std::size_t nbytes) {
         Rcpp::stop("the file is not open");
 
     if (nbytes <= 0)
-        Rcpp::stop("'nbytes' must be a positive integer");
+        return R_NilValue;
 
-    GByte *buf = static_cast<GByte *>(VSIMalloc(nbytes));
-    if (buf == nullptr)
-        Rcpp::stop("could not allocate memory for 'nbytes'");
-
+    GByte *buf = static_cast<GByte *>(CPLMalloc(nbytes));
     size_t nRead = 0;
     nRead = VSIFReadL(buf, 1, nbytes, fp);
     if (nRead == 0)
