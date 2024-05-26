@@ -3,13 +3,13 @@
    For spatial predicate definitions: https://en.wikipedia.org/wiki/DE-9IM
    Chris Toney <chris.toney at usda.gov> */
 
-#ifndef geos_wkt_H
-#define geos_wkt_H
-
-#include <Rcpp.h>
+#ifndef SRC_GEOS_WKT_H_
+#define SRC_GEOS_WKT_H_
 
 #include <string>
 #include <vector>
+
+#include <Rcpp.h>
 
 std::vector<int> _getGEOSVersion();
 bool has_geos();  // GDAL built against GEOS is required at gdalraster 1.10
@@ -45,4 +45,4 @@ std::string _g_transform(std::string geom, std::string srs_from,
                          std::string srs_to, bool wrap_date_line,
                          int date_line_offset);
 
-#endif
+#endif  // SRC_GEOS_WKT_H_

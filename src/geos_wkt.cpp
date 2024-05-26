@@ -4,8 +4,9 @@
 
 #include "cpl_conv.h"
 #include "ogr_api.h"
-#include "ogr_srs_api.h"
+#include "ogr_core.h"
 #include "ogr_spatialref.h"
+#include "ogr_srs_api.h"
 
 #include "geos_wkt.h"
 
@@ -65,7 +66,7 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
     OGRGeometryH hGeom = nullptr;
     OGRGeometryH hPoly = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT = nullptr;
+    char *pszWKT = nullptr;
     std::string wkt = "";
 
     if (EQUALN(geom_type.c_str(), "POINT", 5)) {
@@ -116,24 +117,36 @@ std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
                 OGRGeometryH hPt = OGR_G_CreateGeometry(wkbPoint);
                 OGR_G_SetPoint_2D(hPt, 0, xy(i, 0), xy(i, 1));
                 err = OGR_G_AddGeometryDirectly(hGeom, hPt);
-                if (err != OGRERR_NONE)
+                if (err != OGRERR_NONE) {
+                    if (hGeom != nullptr)
+                        OGR_G_DestroyGeometry(hGeom);
                     Rcpp::stop("failed to add POINT to MULTIPOINT");
+                }
             }
         }
         else {
             OGR_G_SetPointCount(hGeom, static_cast<int>(nPts));
-            for (R_xlen_t i=0; i < nPts; ++i)
+            for (R_xlen_t i=0; i < nPts; ++i) {
                 OGR_G_SetPoint_2D(hGeom, i, xy(i, 0), xy(i, 1));
+            }
         }
     }
 
     if (geom_type == "POLYGON") {
         hPoly = OGR_G_CreateGeometry(wkbPolygon);
+        if (hPoly == nullptr) {
+            if (hGeom != nullptr)
+                OGR_G_DestroyGeometry(hGeom);
+            Rcpp::stop("failed to create polygon geometry object");
+        }
         CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", "NO");
         err = OGR_G_AddGeometryDirectly(hPoly, hGeom);
         CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", nullptr);
-        if (hPoly == nullptr || err != OGRERR_NONE)
+        if (err != OGRERR_NONE) {
+            if (hPoly != nullptr)
+                OGR_G_DestroyGeometry(hPoly);
             Rcpp::stop("failed to create polygon geometry (unclosed ring?)");
+        }
 
         OGR_G_ExportToWkt(hPoly, &pszWKT);
         OGR_G_DestroyGeometry(hPoly);
