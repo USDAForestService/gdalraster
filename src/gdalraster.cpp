@@ -170,8 +170,10 @@ void GDALRaster::info() const {
     GDALInfoOptions* psOptions = GDALInfoOptionsNew(opt.data(), nullptr);
     if (psOptions == nullptr)
         Rcpp::stop("creation of GDALInfoOptions failed");
-    Rcpp::Rcout << GDALInfo(hDataset, psOptions);
+    char *pszGDALInfoOutput = GDALInfo(hDataset, psOptions);
+    Rcpp::Rcout << pszGDALInfoOutput;
     GDALInfoOptionsFree(psOptions);
+    CPLFree(pszGDALInfoOutput);
 }
 
 std::string GDALRaster::infoAsJSON() const {
@@ -186,8 +188,11 @@ std::string GDALRaster::infoAsJSON() const {
     GDALInfoOptions* psOptions = GDALInfoOptionsNew(opt.data(), nullptr);
     if (psOptions == nullptr)
         Rcpp::stop("creation of GDALInfoOptions failed");
-    std::string out = GDALInfo(hDataset, psOptions);
+
+    char *pszGDALInfoOutput = GDALInfo(hDataset, psOptions);
+    std::string out = pszGDALInfoOutput;
     GDALInfoOptionsFree(psOptions);
+    CPLFree(pszGDALInfoOutput);
     out.erase(std::remove(out.begin(), out.end(), '\n'), out.cend());
     return out;
 }
@@ -1183,17 +1188,24 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
             df.push_back(v, colName);
         }
         else if (gft == GFT_String) {
-            std::vector<char *> char_values(nRow);
+            char **papszStringList = reinterpret_cast<char**>(
+                    CPLCalloc(sizeof(char*), nRow));
             err = GDALRATValuesIOAsString(hRAT, GF_Read, i, 0, nRow,
-                                          char_values.data());
+                                          papszStringList);
             if (err == CE_Failure)
                 Rcpp::stop("read column failed");
             std::vector<std::string> str_values(nRow);
-            for (int n=0; n < nRow; ++n)
-                str_values[n] = char_values[n];
+            for (int n=0; n < nRow; ++n) {
+                str_values[n] = papszStringList[n];
+            }
             Rcpp::CharacterVector v = Rcpp::wrap(str_values);
             v.attr("GFU") = _getGFU_string(gfu);
             df.push_back(v, colName);
+            // free the list of strings
+            for (int n = 0; n < nRow; ++n) {
+                CPLFree(papszStringList[n]);
+            }
+            CPLFree(papszStringList);
         }
         else {
             Rcpp::warning("unhandled GDAL field type");
