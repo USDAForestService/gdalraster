@@ -1,4 +1,8 @@
-# gdalraster 1.10.9220 (dev)
+# gdalraster 1.10.9230 (dev)
+
+* add some missing null checks, and object destruction on error conditions, in src/geos_wkt.cpp (2024-05-26)
+
+* fix memory leaks detected by Valgrind in `GDALRaster` class methods `info()`, `infoAsJSON()` and `getDefaultRAT()` (2024-05-25)
 
 * add `get_num_cpus()` and `get_usable_physical_ram()` (2024-05-24)
 
