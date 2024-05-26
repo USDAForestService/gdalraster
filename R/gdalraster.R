@@ -25,7 +25,7 @@
 #' opened dataset, and methods that operate on the dataset as described in
 #' Details. `GDALRaster` is a C++ class exposed directly to R (via
 #' `RCPP_EXPOSED_CLASS`). Methods and fields of the class are accessed using
-#' the `$` operator.
+#' the `$` operator. Read/write fields can be used for per-object settings.
 #'
 #' @section Usage:
 #' \preformatted{
@@ -37,7 +37,10 @@
 #' # or, using dataset open options:
 #' ds <- new(GDALRaster, filename, read_only = TRUE|FALSE, open_options)
 #'
-#' ## Fields (see Details)
+#' ## Read/write fields (see Details)
+#' ds$infoOptions
+#' ds$infoAsJSONOptions
+#' ds$quiet
 #' ds$readByteAsRaw
 #'
 #' ## Methods (see Details)
@@ -125,6 +128,26 @@
 #'  read-only, or `FALSE` to open with write access.
 #' Returns an object of class `GDALRaster`.
 #'
+#' \code{$infoOptions}
+#' Read/write field.
+#' A character vector of command-line arguments to control the output of
+#' `$info()` (see below). Defaults to `c("-norat", "-noct")`. Set to empty
+#' string (`""`) to use `gdalinfo` defaults.
+#'
+#' \code{$infoAsJSONOptions}
+#' Read/write field.
+#' A character vector of command-line arguments to control the output of
+#' `$infoAsJSON()` (see below). Defaults to `c("-stats", "-hist")` (`"-json"`
+#' is implied and does not need to be specified). Set to empty string (`""`)
+#' to use `gdalinfo` defaults.
+#'
+#' \code{$quiet}
+#' Read/write field.
+#' A logical value, `FALSE` by default. This field can be set to `TRUE` which
+#' will suppress various messages as well as progress reporting for potentially
+#' long-running processes such as building overviews and computation of
+#' statistics and histograms.
+#'
 #' \code{$readByteAsRaw}
 #' Read/write field.
 #' A logical value, `FALSE` by default. This field can be set to `TRUE` which
@@ -160,13 +183,16 @@
 #' Prints various information about the raster dataset to the console (no
 #' return value, called for that side effect only).
 #' Equivalent to the output of the \command{gdalinfo} command-line utility
-#' (\command{gdalinfo -norat -noct filename}). Intended here as an
-#' informational convenience function.
+#' (\command{gdalinfo -norat -noct filename}, if using the default
+#' `infoOptions`).
+#' See the field `$infoOptions` above for setting the arguments to `gdalinfo`.
 #'
 #' \code{$infoAsJSON()}
 #' Returns information about the raster dataset as a JSON-formatted string.
 #' Contains full output of the \command{gdalinfo} command-line utility
-#' (\command{gdalinfo -json -stats -hist filename}).
+#' (\command{gdalinfo -json -stats -hist filename}, if using the default
+#' `infoAsJSONOptions`). See the field `$infoAsJSONOptions` above for setting
+#' the arguments to `gdalinfo`.
 #'
 #' \code{$getDriverShortName()}
 #' Returns the short name of the raster format driver

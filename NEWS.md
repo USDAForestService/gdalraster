@@ -1,4 +1,6 @@
-# gdalraster 1.10.9230 (dev)
+# gdalraster 1.10.9231 (dev)
+
+* class `GDALRaster`: add read/write fields `infoOptions`, `infoAsJSONOptions` and `quiet`, for applying per-object settings (2024-05-26)
 
 * add some missing null checks, and object destruction on error conditions, in src/geos_wkt.cpp (2024-05-26)
 
