@@ -29,7 +29,6 @@
 #include "Rcpp.h"
 #include "RcppInt64"
 
-#include "gdal.h"
 #include "cpl_vsi.h"
 
 class VSIFile {

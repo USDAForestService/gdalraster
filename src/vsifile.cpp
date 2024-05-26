@@ -6,8 +6,9 @@
 #include <vector>
 
 #include "cpl_conv.h"
-#include "vsifile.h"
+#include "cpl_port.h"
 #include "gdalraster.h"
+#include "vsifile.h"
 
 VSIFile::VSIFile() :
             filename_in(""),
@@ -141,8 +142,10 @@ SEXP VSIFile::read(std::size_t nbytes) {
     GByte *buf = static_cast<GByte *>(CPLMalloc(nbytes));
     size_t nRead = 0;
     nRead = VSIFReadL(buf, 1, nbytes, fp);
-    if (nRead == 0)
+    if (nRead == 0) {
+        VSIFree(buf);
         return R_NilValue;
+    }
 
     Rcpp::RawVector raw(nRead);
     std::memcpy(&raw[0], buf, nRead);
