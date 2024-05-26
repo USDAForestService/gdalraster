@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9220</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9230</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,10 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.10.9220" id="gdalraster-1109220-dev">gdalraster 1.10.9220 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109220-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/get_num_cpus.html">get_num_cpus()</a></code> and <code><a href="../reference/get_usable_physical_ram.html">get_usable_physical_ram()</a></code> (2024-05-24)</p></li>
+<h2 class="pkg-version" data-toc-text="1.10.9230" id="gdalraster-1109230-dev">gdalraster 1.10.9230 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109230-dev"></a></h2>
+<ul><li><p>add some missing null checks, and object destruction on error conditions, in src/geos_wkt.cpp (2024-05-26)</p></li>
+<li><p>fix memory leaks detected by Valgrind in <code>GDALRaster</code> class methods <code>info()</code>, <code>infoAsJSON()</code> and <code>getDefaultRAT()</code> (2024-05-25)</p></li>
+<li><p>add <code><a href="../reference/get_num_cpus.html">get_num_cpus()</a></code> and <code><a href="../reference/get_usable_physical_ram.html">get_usable_physical_ram()</a></code> (2024-05-24)</p></li>
 <li><p><code><a href="../reference/vsi_stat.html">vsi_stat()</a></code> with <code>info = "size"</code>, and <code><a href="../reference/vsi_get_disk_free_space.html">vsi_get_disk_free_space()</a></code> now return <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> type (2024-05-22)</p></li>
 <li><p><code>vsi_*()</code>: several VSI functions returned <code>0</code> or <code>-1</code> invisibly to indicate success/failure consistent with GDAL return values. Those return values are now visible to be consistent with return values from <code>VSIFile</code> class methods (2024-05-22)</p></li>
 <li><p><code><a href="../reference/calc.html">calc()</a></code>: close input raster dataset before exit when differing extent detected (2024-05-22)</p></li>
