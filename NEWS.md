@@ -1,4 +1,6 @@
-# gdalraster 1.10.9250 (dev)
+# gdalraster 1.10.9251 (dev)
+
+* fixes in `ogr_geom_field_create()`: the check for field name already exists was wrong; the `srs` param was not passed to the internal create function (2024-05-27)
 
 * Behavior change: `GDALRaster::info()` and `GDALRaster::infoAsJSON()` now use the default command-line arguments for the underlying `gdalinfo` utility. The arguments are configurable in the `infoOptions` field, which is an empty vector by default (`character(0)`) (2024-05-27)
 
