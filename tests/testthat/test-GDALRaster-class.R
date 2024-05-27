@@ -11,7 +11,13 @@ test_that("infoAsJSON() returns string output", {
     tmp_file <- paste0(tempdir(), "/", "storml_evt_tmp.tif")
     file.copy(evt_file,  tmp_file)
     ds <- new(GDALRaster, tmp_file, TRUE)
-    expect_type(ds$infoAsJSON(), "character")
+    expect_vector(ds$infoAsJSON(), character(), size = 1)
+    expect_true(nchar(ds$infoAsJSON()) > 100)
+    # test passing extra `-json`
+    ds$infoOptions <- "-json"
+    expect_vector(ds$infoAsJSON(), character(), size = 1)
+    expect_true(nchar(ds$infoAsJSON()) > 100)
+
     files <- ds$getFileList()
     on.exit(unlink(files))
     ds$close()
@@ -29,7 +35,7 @@ test_that("dataset parameters are correct", {
     expect_equal(ds$getRasterXSize(), 143)
     expect_equal(ds$getRasterYSize(), 107)
     expect_equal(ds$getGeoTransform(),
-                    c(323476.1,30.0,0.0,5105082.0,0.0,-30.0))
+                 c(323476.1,30.0,0.0,5105082.0,0.0,-30.0))
     expect_equal(ds$bbox(), c(323476.1,5101872.0,327766.1,5105082.0))
     expect_equal(ds$res(), c(30,30))
     expect_equal(ds$dim(), c(143,107,1))
@@ -44,7 +50,7 @@ test_that("dataset parameters are correct", {
     expect_equal(ds_oo$getRasterXSize(), 143)
     expect_equal(ds_oo$getRasterYSize(), 107)
     expect_equal(ds_oo$getGeoTransform(),
-                    c(323476.1,30.0,0.0,5105082.0,0.0,-30.0))
+                 c(323476.1,30.0,0.0,5105082.0,0.0,-30.0))
     expect_equal(ds_oo$bbox(), c(323476.1,5101872.0,327766.1,5105082.0))
     expect_equal(ds_oo$res(), c(30,30))
     expect_equal(ds_oo$dim(), c(143,107,1))
@@ -139,6 +145,14 @@ test_that("statistics are correct", {
         stats <- round(ds$getStatistics(band=1, approx_ok=TRUE, force=FALSE))
         expect_true(all(is.na(stats)))
     }
+
+    # quiet
+    stats <- NULL
+    ds$quiet <- TRUE
+    expect_silent(stats <- ds$getStatistics(band=1, approx_ok=FALSE,
+                                            force=TRUE))
+    expect_equal(round(stats), c(2438, 3046, 2676, 133))
+
     files <- ds$getFileList()
     on.exit(unlink(files))
     ds$close()
@@ -153,6 +167,13 @@ test_that("get histogram works", {
     expect_equal(num_bins, 101)
     num_pixels <- sum(ds$getHistogram(1, -0.5, 100.5, 101, FALSE, FALSE))
     expect_equal(num_pixels, 15301)
+    # quiet
+    num_pixels <- 0
+    ds$quiet <- TRUE
+    expect_silent(num_pixels <- sum(ds$getHistogram(1, -0.5, 100.5, 101,
+                                                    FALSE, FALSE)))
+    expect_equal(num_pixels, 15301)
+
     ds$close()
     deleteDataset(f)
 
@@ -220,7 +241,7 @@ test_that("Byte I/O works", {
   set.seed(42)
   z <- as.raw(sample(100, 100))
   ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, z)
-  
+
   ds$open(read_only=TRUE)
   expect_false(ds$readByteAsRaw)
   ## read as raw with the temporary setting
@@ -230,18 +251,18 @@ test_that("Byte I/O works", {
   ## set and read as raw via field
   ds$readByteAsRaw <- TRUE
   expect_warning(r_raw1 <- read_ds(ds, as_raw = TRUE))
-  
-  
+
+
   deleteDataset(f)
-  
+
   expect_type(r_int, "integer")
 
   expect_type(r_raw, "raw")
   expect_type(r_raw1, "raw")
   attributes(r_raw) <- NULL
   expect_equal(r_raw, z)
-  
-  
+
+
   ds$close()
 })
 
@@ -276,6 +297,11 @@ test_that("build overviews runs without error", {
     ds <- new(GDALRaster, mod_file, read_only=FALSE)
     expect_no_error(ds$buildOverviews("BILINEAR", c(2,4,8), 0))
     expect_no_error(ds$buildOverviews("NONE", 0, 0))
+    # quiet
+    ds$quiet <- TRUE
+    expect_silent(ds$buildOverviews("BILINEAR", c(2,4,8), 0))
+    expect_silent(ds$buildOverviews("NONE", 0, 0))
+
     files <- ds$getFileList()
     on.exit(unlink(files))
     ds$close()
@@ -285,7 +311,7 @@ test_that("get/set color table works", {
     f <- system.file("extdata/storml_evc.tif", package="gdalraster")
     f2 <- paste0(tempdir(), "/", "storml_evc_ct.tif")
     calc("A", f, dstfile=f2, dtName="UInt16", nodata_value=32767,
-            setRasterNodataValue=TRUE)
+         setRasterNodataValue=TRUE)
     ds <- new(GDALRaster, f2, read_only=FALSE)
     evc_csv <- system.file("extdata/LF20_EVC_220.csv", package="gdalraster")
     vat <- read.csv(evc_csv)
@@ -372,6 +398,14 @@ test_that("get/set default RAT works", {
     expect_equal(attr(rat2$EVT_NAME, "GFU"), "Name")
     expect_equal(attr(rat2$EVT_LF, "GFU"), "Generic")
     expect_equal(attr(rat2$B, "GFU"), "Blue")
+
+    # quiet
+    ds$close()
+    ds$open(TRUE)
+    ds$quiet <- TRUE
+    expect_silent(rat3 <- ds$getDefaultRAT(band=1))
+    expect_equal(nrow(rat2), 24)
+
     ds$close()
     deleteDataset(f)
 })
