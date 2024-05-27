@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9230</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9240</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,10 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.10.9230" id="gdalraster-1109230-dev">gdalraster 1.10.9230 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109230-dev"></a></h2>
-<ul><li><p>add some missing null checks, and object destruction on error conditions, in src/geos_wkt.cpp (2024-05-26)</p></li>
+<h2 class="pkg-version" data-toc-text="1.10.9240" id="gdalraster-1109240-dev">gdalraster 1.10.9240 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109240-dev"></a></h2>
+<ul><li><p>class <code>GDALRaster</code>: add read/write fields <code>infoOptions</code> and <code>quiet</code> for applying per-object settings (2024-05-26)</p></li>
+<li><p>Behavior change: <code>GDALRaster::infoAsJSON()</code> now uses the command-line arguments set in the <code>infoOptions</code> field, with default <code>c("-norat", "-noct")</code> (2024-05-26)</p></li>
+<li><p>add some missing null checks, and object destruction on error conditions, in src/geos_wkt.cpp (2024-05-26)</p></li>
 <li><p>fix memory leaks detected by Valgrind in <code>GDALRaster</code> class methods <code>info()</code>, <code>infoAsJSON()</code> and <code>getDefaultRAT()</code> (2024-05-25)</p></li>
 <li><p>add <code><a href="../reference/get_num_cpus.html">get_num_cpus()</a></code> and <code><a href="../reference/get_usable_physical_ram.html">get_usable_physical_ram()</a></code> (2024-05-24)</p></li>
 <li><p><code><a href="../reference/vsi_stat.html">vsi_stat()</a></code> with <code>info = "size"</code>, and <code><a href="../reference/vsi_get_disk_free_space.html">vsi_get_disk_free_space()</a></code> now return <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> type (2024-05-22)</p></li>
