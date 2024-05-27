@@ -1,6 +1,8 @@
-# gdalraster 1.10.9231 (dev)
+# gdalraster 1.10.9240 (dev)
 
-* class `GDALRaster`: add read/write fields `infoOptions`, `infoAsJSONOptions` and `quiet`, for applying per-object settings (2024-05-26)
+* class `GDALRaster`: add read/write fields `infoOptions` and `quiet` for applying per-object settings (2024-05-26)
+
+* Behavior change: `GDALRaster::infoAsJSON()` now uses the command-line arguments set in the `infoOptions` field, with default `c("-norat", "-noct")` (2024-05-26)
 
 * add some missing null checks, and object destruction on error conditions, in src/geos_wkt.cpp (2024-05-26)
 
