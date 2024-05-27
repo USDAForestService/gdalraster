@@ -364,7 +364,7 @@ ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
                            dsco, lco, NULL))
     } else {
         return(.create_ogr(format, dsn, 0, 0, 0, "Unknown",
-                           layer = "", geom_type = "", srs = "",
+                           layer = layer, geom_type = "", srs = "",
                            fld_name = "", fld_type = "",
                            dsco = dsco, lco = lco, layer_defn = layer_defn))
     }
