@@ -82,9 +82,13 @@ class GDALRaster {
     GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                Rcpp::CharacterVector open_options);
 
-    bool quiet;  // not yet exported as read/write field
-    bool readByteAsRaw;
+    // read/write fields exposed in R
+    Rcpp::CharacterVector infoOptions =
+            Rcpp::CharacterVector::create("-norat", "-noct");
+    bool quiet = false;
+    bool readByteAsRaw = false;
 
+    // methods exposed in R
     std::string getFilename() const;
     void setFilename(std::string filename);
     void open(bool read_only);
