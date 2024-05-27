@@ -16,7 +16,7 @@ details of the GDAL Raster API."><!-- mathjax --><script src="https://cdnjs.clou
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9240</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9250</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -221,8 +221,10 @@ Returns an object of class <code>GDALRaster</code>.</p>
 Read/write field.
 A character vector of command-line arguments to control the output of
 <code>$info()</code> and <code>$infoAsJSON()</code> (see below).
-Defaults to <code>c("-norat", "-noct")</code>. Set to empty string (<code>""</code>) to use
-<code>gdalinfo</code> defaults.</p>
+Defaults to <code>character(0)</code>. Can be set to a vector of strings specifying
+arguments to the <code class="command">gdalinfo</code> command-line utility, e.g.,
+<code>c("-nomd", "-norat", "-noct")</code>.
+Restore the default by setting to empty string (<code>""</code>) or <code>character(0)</code>.</p>
 <p><code>$quiet</code>
 Read/write field.
 A logical value, <code>FALSE</code> by default. This field can be set to <code>TRUE</code> which
@@ -259,21 +261,17 @@ paths depending on the path used to originally open the dataset.</p>
 Prints various information about the raster dataset to the console (no
 return value, called for that side effect only).
 Equivalent to the output of the <code class="command">gdalinfo</code> command-line utility
-(<code class="command">gdalinfo -norat -noct filename</code>, if using the default
-<code>infoOptions</code>).
+(<code class="command">gdalinfo filename</code>, if using the default <code>infoOptions</code>).
 See the field <code>$infoOptions</code> above for setting the arguments to <code>gdalinfo</code>.</p>
 <p><code>$infoAsJSON()</code>
 Returns information about the raster dataset as a JSON-formatted string.
 Equivalent to the output of the <code class="command">gdalinfo</code> command-line utility
-(<code class="command">gdalinfo -json -norat -noct filename</code>, if using the default
-<code>infoOptions</code>).
+(<code class="command">gdalinfo -json filename</code>, if using the default <code>infoOptions</code>).
 See the field <code>$infoOptions</code> above for setting the arguments to <code>gdalinfo</code>.</p>
 <p><code>$getDriverShortName()</code>
-Returns the short name of the raster format driver
-(e.g., "HFA").</p>
+Returns the short name of the raster format driver.</p>
 <p><code>$getDriverLongName()</code>
-Returns the long name of the raster format driver
-(e.g., "Erdas Imagine Images (.img)").</p>
+Returns the long name of the raster format driver.</p>
 <p><code>$getRasterXSize()</code>
 Returns the number of pixels along the x dimension.</p>
 <p><code>$getRasterYSize()</code>
@@ -816,29 +814,29 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 143 107   8</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## retrieve some band-level parameters</span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDescription</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDescription</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Elevation"</span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 143   1</span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Int16"</span>
 <span class="r-in"><span><span class="co"># LCP format does not support an intrinsic nodata value so this returns NA:</span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] NA</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## LCP driver reports several dataset- and band-level metadata</span></span></span>
 <span class="r-in"><span><span class="co">## see the format description at https://gdal.org/drivers/raster/lcp.html</span></span></span>
-<span class="r-in"><span><span class="co">## set band=0 to retrieve dataset-level metadata</span></span></span>
-<span class="r-in"><span><span class="co">## set domain="" (empty string) for the default metadata domain</span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## set band = 0 to retrieve dataset-level metadata</span></span></span>
+<span class="r-in"><span><span class="co">## set domain = "" (empty string) for the default metadata domain</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">0</span>, domain <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "DESCRIPTION=LCP file created by GDAL."</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "LATITUDE=46"                          </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "LINEAR_UNIT=Meters"                   </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## retrieve metadata for a band as a vector of name=value pairs</span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">4</span>, domain<span class="op">=</span><span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">4</span>, domain <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "FUEL_MODEL_FILE=/netapp/sharedwebfs1/shared/landfire/public/temp_q8dTbIJ4w6Qi36Omkzk0/LCP_LF2022_FBFM40_220_CONUS/temp/merged_modified.tif"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [2] "FUEL_MODEL_MAX=183"                                                                                                                        </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [3] "FUEL_MODEL_MIN=-9999"                                                                                                                      </span>
@@ -848,7 +846,7 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> [7] "FUEL_MODEL_VALUES=0,98,99,101,102,121,122,123,142,162,165,181,183"                                                                         </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## retrieve the value of a specific metadata item</span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span>band<span class="op">=</span><span class="fl">2</span>, mdi_name<span class="op">=</span><span class="st">"SLOPE_UNIT_NAME"</span>, domain<span class="op">=</span><span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">2</span>, mdi_name <span class="op">=</span> <span class="st">"SLOPE_UNIT_NAME"</span>, domain <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Degrees"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## read one row of pixel values from band 1 (elevation)</span></span></span>
@@ -856,9 +854,9 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-in"><span><span class="co">## the upper left corner is the origin</span></span></span>
 <span class="r-in"><span><span class="co">## read the tenth row:</span></span></span>
 <span class="r-in"><span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, xoff<span class="op">=</span><span class="fl">0</span>, yoff<span class="op">=</span><span class="fl">9</span>,</span></span>
-<span class="r-in"><span>                    xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="fl">1</span>,</span></span>
-<span class="r-in"><span>                    out_xsize<span class="op">=</span><span class="va">ncols</span>, out_ysize<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, xoff <span class="op">=</span> <span class="fl">0</span>, yoff <span class="op">=</span> <span class="fl">9</span>,</span></span>
+<span class="r-in"><span>                   xsize <span class="op">=</span> <span class="va">ncols</span>, ysize <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                   out_xsize <span class="op">=</span> <span class="va">ncols</span>, out_ysize <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -9999 -9999 -9999  2456  2466  2479</span>
 <span class="r-in"><span></span></span>
@@ -873,30 +871,38 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-in"><span>                 init <span class="op">=</span> <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> initializing destination raster...</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> done</span>
-<span class="r-in"><span><span class="va">ds_new</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">new_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">ds_new</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">new_file</span>, read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## write random values to all pixels</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">42</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds_new</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">nrows</span> <span class="op">&lt;-</span> <span class="va">ds_new</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">row</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">row</span> <span class="kw">in</span> <span class="fl">0</span><span class="op">:</span><span class="op">(</span><span class="va">nrows</span> <span class="op">-</span> <span class="fl">1</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>    <span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html" class="external-link">round</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/Uniform.html" class="external-link">runif</a></span><span class="op">(</span><span class="va">ncols</span>, <span class="fl">0</span>, <span class="fl">100</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>    <span class="va">ds_new</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, xoff<span class="op">=</span><span class="fl">0</span>, yoff<span class="op">=</span><span class="va">row</span>, xsize<span class="op">=</span><span class="va">ncols</span>, ysize<span class="op">=</span><span class="fl">1</span>, <span class="va">rowdata</span><span class="op">)</span></span></span>
+<span class="r-in"><span>    <span class="va">ds_new</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                 xoff <span class="op">=</span> <span class="fl">0</span>,</span></span>
+<span class="r-in"><span>                 yoff <span class="op">=</span> <span class="va">row</span>,</span></span>
+<span class="r-in"><span>                 xsize <span class="op">=</span> <span class="va">ncols</span>,</span></span>
+<span class="r-in"><span>                 ysize <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>                 <span class="va">rowdata</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## re-open in read-only mode when done writing</span></span></span>
 <span class="r-in"><span><span class="co">## this will ensure flushing of any pending writes (implicit $close)</span></span></span>
-<span class="r-in"><span><span class="va">ds_new</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_new</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## getStatistics returns min, max, mean, sd, and sets stats in the metadata</span></span></span>
-<span class="r-in"><span><span class="va">ds_new</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_new</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, approx_ok <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]   0.00000 100.00000  49.90667  29.05491</span>
-<span class="r-in"><span><span class="va">ds_new</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="st">"STATISTICS_MEAN"</span>, <span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_new</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, <span class="st">"STATISTICS_MEAN"</span>, <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "49.906672766486"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## close the dataset for proper cleanup</span></span></span>
 <span class="r-in"><span><span class="va">ds_new</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">new_file</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># \donttest{</span></span></span>
 <span class="r-in"><span><span class="co">## using a GDAL Virtual File System handler '/vsicurl/'</span></span></span>
@@ -906,12 +912,9 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url</span>, <span class="st">"lf_elev_220_mt_hood_utm.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">url</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend<span class="op">=</span><span class="cn">TRUE</span>, main<span class="op">=</span><span class="st">"Mount Hood elevation (m)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span>, main <span class="op">=</span> <span class="st">"Mount Hood elevation (m)"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="GDALRaster-class-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">new_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>
