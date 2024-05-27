@@ -3,6 +3,15 @@ test_that("info() prints output to the console", {
     evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
     ds <- new(GDALRaster, evt_file, TRUE)
     expect_output(ds$info())
+    # with args
+    ds$infoOptions <- c("-nomd", "-norat", "-noct")
+    expect_output(ds$info())
+    # with invalid arg
+    ds$infoOptions <- "--invalid_arg"
+    expect_error(ds$info())
+    # restore default
+    ds$infoOptions <- ""
+    expect_output(ds$info())
     ds$close()
 })
 

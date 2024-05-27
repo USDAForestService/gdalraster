@@ -1,8 +1,8 @@
-# gdalraster 1.10.9240 (dev)
+# gdalraster 1.10.9250 (dev)
+
+* Behavior change: `GDALRaster::info()` and `GDALRaster::infoAsJSON()` now use the default command-line arguments for the underlying `gdalinfo` utility. The arguments are configurable in the `infoOptions` field, which is an empty vector by default (`character(0)`) (2024-05-27)
 
 * class `GDALRaster`: add read/write fields `infoOptions` and `quiet` for applying per-object settings (2024-05-26)
-
-* Behavior change: `GDALRaster::infoAsJSON()` now uses the command-line arguments set in the `infoOptions` field, with default `c("-norat", "-noct")` (2024-05-26)
 
 * add some missing null checks, and object destruction on error conditions, in src/geos_wkt.cpp (2024-05-26)
 
