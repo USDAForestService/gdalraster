@@ -158,15 +158,14 @@ void GDALRaster::info() const {
     _checkAccess(GA_ReadOnly);
 
     const Rcpp::CharacterVector argv = infoOptions;
-    std::vector<char *> opt;
-    if (argv.size() == 1 && argv[0] == "") {
-        opt.resize(1);
+    std::vector<char *> opt(1);
+    if (argv.size() == 0 || (argv.size() == 1 && argv[0] == "")) {
         opt[0] = nullptr;
     }
     else {
         opt.resize(argv.size() + 1);
         for (R_xlen_t i = 0; i < argv.size(); ++i) {
-            opt[i] = (char *) (argv[i]);
+            opt[i] = (char *) argv[i];
         }
         opt[argv.size()] = nullptr;
     }

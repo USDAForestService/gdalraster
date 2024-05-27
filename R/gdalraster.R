@@ -131,8 +131,10 @@
 #' Read/write field.
 #' A character vector of command-line arguments to control the output of
 #' `$info()` and `$infoAsJSON()` (see below).
-#' Defaults to `c("-norat", "-noct")`. Set to empty string (`""`) to use
-#' `gdalinfo` defaults.
+#' Defaults to `character(0)`. Can be set to a vector of strings specifying
+#' arguments to the \command{gdalinfo} command-line utility, e.g.,
+#' `c("-nomd", "-norat", "-noct")`.
+#' Restore the default by setting to empty string (`""`) or `character(0)`.
 #'
 #' \code{$quiet}
 #' Read/write field.
@@ -176,24 +178,20 @@
 #' Prints various information about the raster dataset to the console (no
 #' return value, called for that side effect only).
 #' Equivalent to the output of the \command{gdalinfo} command-line utility
-#' (\command{gdalinfo -norat -noct filename}, if using the default
-#' `infoOptions`).
+#' (\command{gdalinfo filename}, if using the default `infoOptions`).
 #' See the field `$infoOptions` above for setting the arguments to `gdalinfo`.
 #'
 #' \code{$infoAsJSON()}
 #' Returns information about the raster dataset as a JSON-formatted string.
 #' Equivalent to the output of the \command{gdalinfo} command-line utility
-#' (\command{gdalinfo -json -norat -noct filename}, if using the default
-#' `infoOptions`).
+#' (\command{gdalinfo -json filename}, if using the default `infoOptions`).
 #' See the field `$infoOptions` above for setting the arguments to `gdalinfo`.
 #'
 #' \code{$getDriverShortName()}
-#' Returns the short name of the raster format driver
-#' (e.g., "HFA").
+#' Returns the short name of the raster format driver.
 #'
 #' \code{$getDriverLongName()}
-#' Returns the long name of the raster format driver
-#' (e.g., "Erdas Imagine Images (.img)").
+#' Returns the long name of the raster format driver.
 #'
 #' \code{$getRasterXSize()}
 #' Returns the number of pixels along the x dimension.
@@ -715,33 +713,33 @@
 #' ds$dim()
 #'
 #' ## retrieve some band-level parameters
-#' ds$getDescription(band=1)
-#' ds$getBlockSize(band=1)
-#' ds$getOverviewCount(band=1)
-#' ds$getDataTypeName(band=1)
+#' ds$getDescription(band = 1)
+#' ds$getBlockSize(band = 1)
+#' ds$getOverviewCount(band = 1)
+#' ds$getDataTypeName(band = 1)
 #' # LCP format does not support an intrinsic nodata value so this returns NA:
-#' ds$getNoDataValue(band=1)
+#' ds$getNoDataValue(band = 1)
 #'
 #' ## LCP driver reports several dataset- and band-level metadata
 #' ## see the format description at https://gdal.org/drivers/raster/lcp.html
-#' ## set band=0 to retrieve dataset-level metadata
-#' ## set domain="" (empty string) for the default metadata domain
-#' ds$getMetadata(band=0, domain="")
+#' ## set band = 0 to retrieve dataset-level metadata
+#' ## set domain = "" (empty string) for the default metadata domain
+#' ds$getMetadata(band = 0, domain = "")
 #'
 #' ## retrieve metadata for a band as a vector of name=value pairs
-#' ds$getMetadata(band=4, domain="")
+#' ds$getMetadata(band = 4, domain = "")
 #'
 #' ## retrieve the value of a specific metadata item
-#' ds$getMetadataItem(band=2, mdi_name="SLOPE_UNIT_NAME", domain="")
+#' ds$getMetadataItem(band = 2, mdi_name = "SLOPE_UNIT_NAME", domain = "")
 #'
 #' ## read one row of pixel values from band 1 (elevation)
 #' ## raster row/column index are 0-based
 #' ## the upper left corner is the origin
 #' ## read the tenth row:
 #' ncols <- ds$getRasterXSize()
-#' rowdata <- ds$read(band=1, xoff=0, yoff=9,
-#'                     xsize=ncols, ysize=1,
-#'                     out_xsize=ncols, out_ysize=1)
+#' rowdata <- ds$read(band = 1, xoff = 0, yoff = 9,
+#'                    xsize = ncols, ysize = 1,
+#'                    out_xsize = ncols, out_ysize = 1)
 #' head(rowdata)
 #'
 #' ds$close()
@@ -753,27 +751,34 @@
 #'                  nbands = 1,
 #'                  dtName = "Byte",
 #'                  init = -9999)
-#' ds_new <- new(GDALRaster, new_file, read_only=FALSE)
+#'
+#' ds_new <- new(GDALRaster, new_file, read_only = FALSE)
 #'
 #' ## write random values to all pixels
 #' set.seed(42)
 #' ncols <- ds_new$getRasterXSize()
 #' nrows <- ds_new$getRasterYSize()
-#' for (row in 0:(nrows-1)) {
+#' for (row in 0:(nrows - 1)) {
 #'     rowdata <- round(runif(ncols, 0, 100))
-#'     ds_new$write(band=1, xoff=0, yoff=row, xsize=ncols, ysize=1, rowdata)
+#'     ds_new$write(band = 1,
+#'                  xoff = 0,
+#'                  yoff = row,
+#'                  xsize = ncols,
+#'                  ysize = 1,
+#'                  rowdata)
 #' }
 #'
 #' ## re-open in read-only mode when done writing
 #' ## this will ensure flushing of any pending writes (implicit $close)
-#' ds_new$open(read_only=TRUE)
+#' ds_new$open(read_only = TRUE)
 #'
 #' ## getStatistics returns min, max, mean, sd, and sets stats in the metadata
-#' ds_new$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
-#' ds_new$getMetadataItem(band=1, "STATISTICS_MEAN", "")
+#' ds_new$getStatistics(band = 1, approx_ok = FALSE, force = TRUE)
+#' ds_new$getMetadataItem(band = 1, "STATISTICS_MEAN", "")
 #'
 #' ## close the dataset for proper cleanup
 #' ds_new$close()
+#' deleteDataset(new_file)
 #'
 #' \donttest{
 #' ## using a GDAL Virtual File System handler '/vsicurl/'
@@ -783,10 +788,8 @@
 #' url <- paste0(url, "lf_elev_220_mt_hood_utm.tif")
 #'
 #' ds <- new(GDALRaster, url)
-#' plot_raster(ds, legend=TRUE, main="Mount Hood elevation (m)")
+#' plot_raster(ds, legend = TRUE, main = "Mount Hood elevation (m)")
 #' ds$close()
-#'
-#' deleteDataset(new_file)
 #' }
 NULL
 

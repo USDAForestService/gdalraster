@@ -83,8 +83,7 @@ class GDALRaster {
                Rcpp::CharacterVector open_options);
 
     // read/write fields exposed in R
-    Rcpp::CharacterVector infoOptions =
-            Rcpp::CharacterVector::create("-norat", "-noct");
+    Rcpp::CharacterVector infoOptions = Rcpp::CharacterVector::create();
     bool quiet = false;
     bool readByteAsRaw = false;
 
