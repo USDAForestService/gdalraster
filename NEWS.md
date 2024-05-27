@@ -1,4 +1,6 @@
-# gdalraster 1.10.9251 (dev)
+# gdalraster 1.10.9252 (dev)
+
+* fix `ogr_ds_create()`: `layer` name was not passed to the internal create function when `layer_defn` was used (2024-05-27)
 
 * fixes in `ogr_geom_field_create()`: the check for field name already exists was wrong; the `srs` param was not passed to the internal create function (2024-05-27)
 
