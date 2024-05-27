@@ -173,9 +173,10 @@ void GDALRaster::info() const {
 
     GDALInfoOptions* psOptions = GDALInfoOptionsNew(opt.data(), nullptr);
     if (psOptions == nullptr)
-        Rcpp::stop("creation of GDALInfoOptions failed");
+        Rcpp::stop("creation of GDALInfoOptions failed (check $infoOptions)");
     char *pszGDALInfoOutput = GDALInfo(hDataset, psOptions);
-    Rcpp::Rcout << pszGDALInfoOutput;
+    if (pszGDALInfoOutput != nullptr)
+        Rcpp::Rcout << pszGDALInfoOutput;
     GDALInfoOptionsFree(psOptions);
     CPLFree(pszGDALInfoOutput);
 }
@@ -183,7 +184,7 @@ void GDALRaster::info() const {
 std::string GDALRaster::infoAsJSON() const {
     _checkAccess(GA_ReadOnly);
 
-    const Rcpp::CharacterVector argv = infoAsJSONOptions;
+    const Rcpp::CharacterVector argv = infoOptions;
     std::vector<char *> opt = {nullptr};
     if (argv.size() == 1 && argv[0] == "") {
         opt.resize(2);
@@ -202,7 +203,7 @@ std::string GDALRaster::infoAsJSON() const {
 
     GDALInfoOptions* psOptions = GDALInfoOptionsNew(opt.data(), nullptr);
     if (psOptions == nullptr)
-        Rcpp::stop("creation of GDALInfoOptions failed");
+        Rcpp::stop("creation of GDALInfoOptions failed (check $infoOptions)");
 
     char *pszGDALInfoOutput = GDALInfo(hDataset, psOptions);
     std::string out = "";
@@ -1521,7 +1522,6 @@ RCPP_MODULE(mod_GDALRaster) {
 
     // exposed read/write fields
     .field("infoOptions", &GDALRaster::infoOptions)
-    .field("infoAsJSONOptions", &GDALRaster::infoAsJSONOptions)
     .field("quiet", &GDALRaster::quiet)
     .field("readByteAsRaw", &GDALRaster::readByteAsRaw)
 

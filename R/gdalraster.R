@@ -39,7 +39,6 @@
 #'
 #' ## Read/write fields (see Details)
 #' ds$infoOptions
-#' ds$infoAsJSONOptions
 #' ds$quiet
 #' ds$readByteAsRaw
 #'
@@ -131,15 +130,9 @@
 #' \code{$infoOptions}
 #' Read/write field.
 #' A character vector of command-line arguments to control the output of
-#' `$info()` (see below). Defaults to `c("-norat", "-noct")`. Set to empty
-#' string (`""`) to use `gdalinfo` defaults.
-#'
-#' \code{$infoAsJSONOptions}
-#' Read/write field.
-#' A character vector of command-line arguments to control the output of
-#' `$infoAsJSON()` (see below). Defaults to `c("-stats", "-hist")` (`"-json"`
-#' is implied and does not need to be specified). Set to empty string (`""`)
-#' to use `gdalinfo` defaults.
+#' `$info()` and `$infoAsJSON()` (see below).
+#' Defaults to `c("-norat", "-noct")`. Set to empty string (`""`) to use
+#' `gdalinfo` defaults.
 #'
 #' \code{$quiet}
 #' Read/write field.
@@ -189,10 +182,10 @@
 #'
 #' \code{$infoAsJSON()}
 #' Returns information about the raster dataset as a JSON-formatted string.
-#' Contains full output of the \command{gdalinfo} command-line utility
-#' (\command{gdalinfo -json -stats -hist filename}, if using the default
-#' `infoAsJSONOptions`). See the field `$infoAsJSONOptions` above for setting
-#' the arguments to `gdalinfo`.
+#' Equivalent to the output of the \command{gdalinfo} command-line utility
+#' (\command{gdalinfo -json -norat -noct filename}, if using the default
+#' `infoOptions`).
+#' See the field `$infoOptions` above for setting the arguments to `gdalinfo`.
 #'
 #' \code{$getDriverShortName()}
 #' Returns the short name of the raster format driver
