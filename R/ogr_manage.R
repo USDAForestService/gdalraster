@@ -606,7 +606,7 @@ ogr_geom_field_create <- function(dsn, layer, fld_name,
         stop("'layer' does not exist", call. = FALSE)
 
     fld_idx <- ogr_field_index(dsn, layer, fld_name)
-    if (fld_idx == -1)
+    if (fld_idx >= 0)
         stop("field ", fld_name, " already exists", call. = FALSE)
 
     if (is.null(geom_type))
@@ -645,7 +645,7 @@ ogr_geom_field_create <- function(dsn, layer, fld_name,
             is_ignored <- FALSE
     }
 
-    return(.ogr_geom_field_create(dsn, layer, fld_name, geom_type,
+    return(.ogr_geom_field_create(dsn, layer, fld_name, geom_type, srs,
                                   is_nullable, is_ignored))
 }
 
