@@ -689,7 +689,7 @@ ogr_execute_sql <- function(dsn, sql, spatial_filter = NULL, dialect = NULL) {
         if (is.numeric(spatial_filter) && length(spatial_filter) == 4)
             spatial_filter <- bbox_to_wkt(spatial_filter)
         if (!(is.character(spatial_filter) && length(spatial_filter) == 1))
-            stop("spatial_filter must be length-4 numeric or character string",
+            stop("spatial_filter must be length-4 numeric, or WKT string",
                  call. = FALSE)
     } else {
         spatial_filter <- ""

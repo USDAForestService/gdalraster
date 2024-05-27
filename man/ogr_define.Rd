@@ -182,7 +182,7 @@ ogr_layer_field_names(dsn, "layer1")
 deleteDataset(dsn)
 }
 \seealso{
-\code{\link[=ogr_ds_create]{ogr_ds_create()}}, \code{\link[=ogr_layer_create]{ogr_layer_create()}}, \code{\link[=ogrinfo]{ogrinfo()}}
+\code{\link[=ogr_ds_create]{ogr_ds_create()}}, \code{\link[=ogr_layer_create]{ogr_layer_create()}}, \code{\link[=ogr_field_create]{ogr_field_create()}}, \code{\link[=ogrinfo]{ogrinfo()}}
 
 WKT representation of geometry:\cr
 \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
