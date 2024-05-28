@@ -1,4 +1,6 @@
-# gdalraster 1.10.9260 (dev)
+# gdalraster 1.10.9261 (dev)
+
+* add HTTP/HTTPS in GDAL Config Quick Reference (2024-05-28)
 
 * add `http_enabled()`: returns `TRUE` if GDAL was built with `libcurl` support (2024-05-27)
 
