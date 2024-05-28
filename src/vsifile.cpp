@@ -261,8 +261,10 @@ std::string VSIFile::get_access() const {
 }
 
 int VSIFile::set_access(std::string access) {
-    if (fp != nullptr)
-        Rcpp::stop("cannot set access while the file is open");
+    if (fp != nullptr) {
+        Rcpp::Rcerr << "cannot set access while the file is open\n";
+        return -1;
+    }
 
     if (access.length() > 0 && access.length() < 4) {
         access_in = access;
