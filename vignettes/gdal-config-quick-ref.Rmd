@@ -208,17 +208,28 @@ GDAL doc: [/vsicurl/](https://gdal.org/user/configoptions.html#networking-option
 Maximum delay for connection to be established before being aborted.
 
 ```r
-# max delay in seconds
-set_config_option("GDAL_HTTP_CONNECTTIMEOUT", "20")
+# max delay for connection establishment in seconds
+set_config_option("GDAL_HTTP_CONNECTTIMEOUT", "<seconds>")
 ```
 
 **`GDAL_HTTP_TIMEOUT`**
 
-Set HTTP timeout value in seconds.
+Maximum delay for the whole request to complete before being aborted.
 
 ```r
-# max delay in seconds
-set_config_option("GDAL_HTTP_TIMEOUT", "20")
+# max delay for whole request completion in seconds
+set_config_option("GDAL_HTTP_TIMEOUT", "<seconds>")
+```
+
+**`CPL_VSIL_CURL_CHUNK_SIZE`**
+
+Partial downloads (requires the HTTP server to support random reading) are done with a 16 KB granularity by default. The chunk size can be configured with this option.
+
+If the driver detects sequential reading, it will progressively increase the chunk size up to 128 times `CPL_VSIL_CURL_CHUNK_SIZE` (so 2 MB by default) to improve download performance. When increasing the value of `CPL_VSIL_CURL_CHUNK_SIZE` to optimize sequential reading, it is recommended to increase `CPL_VSIL_CURL_CACHE_SIZE` as well to 128 times the value of `CPL_VSIL_CURL_CHUNK_SIZE`.
+
+```r
+# chunk size in bytes
+set_config_option("CPL_VSIL_CURL_CHUNK_SIZE", "<bytes>")
 ```
 
 **`CPL_VSIL_CURL_CACHE_SIZE`**
@@ -227,7 +238,7 @@ A global least-recently-used cache of 16 MB shared among all downloaded content 
 
 ```r
 # size in bytes defaults to 16 MB
-set_config_option("CPL_VSIL_CURL_CACHE_SIZE", "33554432")
+set_config_option("CPL_VSIL_CURL_CACHE_SIZE", "<bytes>")
 ```
 
 ## AWS S3 buckets
