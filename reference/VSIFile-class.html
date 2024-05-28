@@ -245,7 +245,8 @@ Returns a character string containing the <code>access</code> as currently set o
 Sets the requested read/write access on this <code>VSIFile</code> object, given as a
 character string (i.e., <code>"r"</code>, <code>"r+"</code>, <code>"w"</code>). The access can be changed
 only while the <code>VSIFile</code> object is closed, and will apply when it is
-re-opened with a call to <code>$open()</code>.</p>
+re-opened with a call to <code>$open()</code>.
+Returns <code>0</code> on success or <code>-1</code> on error.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
