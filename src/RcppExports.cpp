@@ -134,6 +134,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// http_enabled
+bool http_enabled();
+RcppExport SEXP _gdalraster_http_enabled() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(http_enabled());
+    return rcpp_result_gen;
+END_RCPP
+}
 // create
 bool create(std::string format, Rcpp::CharacterVector dst_filename, int xsize, int ysize, int nbands, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
 RcppExport SEXP _gdalraster_create(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP) {
@@ -1427,6 +1437,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_get_num_cpus", (DL_FUNC) &_gdalraster_get_num_cpus, 0},
     {"_gdalraster_get_usable_physical_ram", (DL_FUNC) &_gdalraster_get_usable_physical_ram, 0},
     {"_gdalraster_has_spatialite", (DL_FUNC) &_gdalraster_has_spatialite, 0},
+    {"_gdalraster_http_enabled", (DL_FUNC) &_gdalraster_http_enabled, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 6},
     {"_gdalraster__apply_geotransform", (DL_FUNC) &_gdalraster__apply_geotransform, 3},

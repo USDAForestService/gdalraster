@@ -151,6 +151,7 @@ reference:
   - get_num_cpus
   - get_usable_physical_ram
   - has_spatialite
+  - http_enabled
   - push_error_handler
   - pop_error_handler
 - subtitle: PROJ configuration

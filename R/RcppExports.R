@@ -261,6 +261,19 @@ has_spatialite <- function() {
     .Call(`_gdalraster_has_spatialite`)
 }
 
+#' Return if GDAL CPLHTTP services can be useful (libcurl)
+#'
+#' `http_enabled()` returns `TRUE` if `libcurl` support is enabled.
+#' Wrapper of `CPLHTTPEnabled()` in the GDAL Common Portability Library.
+#'
+#' @return Logical scalar, `TRUE` if GDAL was built with `libcurl` support.
+#'
+#' @examples
+#' http_enabled()
+http_enabled <- function() {
+    .Call(`_gdalraster_http_enabled`)
+}
+
 #' Create a new uninitialized raster
 #'
 #' `create()` makes an empty raster in the specified format.

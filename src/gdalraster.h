@@ -199,6 +199,7 @@ Rcpp::NumericVector get_usable_physical_ram();
 void push_error_handler(std::string handler);
 void pop_error_handler();
 bool has_spatialite();
+bool http_enabled();
 
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
 

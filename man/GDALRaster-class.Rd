@@ -794,9 +794,15 @@ url <- "/vsicurl/https://raw.githubusercontent.com/"
 url <- paste0(url, "usdaforestservice/gdalraster/main/sample-data/")
 url <- paste0(url, "lf_elev_220_mt_hood_utm.tif")
 
-ds <- new(GDALRaster, url)
-plot_raster(ds, legend = TRUE, main = "Mount Hood elevation (m)")
-ds$close()
+set_config_option("GDAL_HTTP_CONNECTTIMEOUT", "20")
+set_config_option("GDAL_HTTP_TIMEOUT", "20")
+if (http_enabled() && vsi_stat(url)) {
+  ds <- new(GDALRaster, url)
+  plot_raster(ds, legend = TRUE, main = "Mount Hood elevation (m)")
+  ds$close()
+}
+set_config_option("GDAL_HTTP_CONNECTTIMEOUT", "")
+set_config_option("GDAL_HTTP_TIMEOUT", "")
 }
 }
 \seealso{
