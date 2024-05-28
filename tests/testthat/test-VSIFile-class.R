@@ -2,15 +2,29 @@ test_that("VSIFile works", {
     lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 
     ## Constructors
+    # default constructor, no file
+    expect_no_error(vf <- new(VSIFile))
+    expect_true(is(vf, "Rcpp_VSIFile"))
+    expect_equal(vf$close(), -1)
+    # filename
     expect_no_error(vf <- new(VSIFile, lcp_file))
     expect_true(is(vf, "Rcpp_VSIFile"))
     expect_equal(vf$close(), 0)
+    # filename, access
     expect_no_error(vf <- new(VSIFile, lcp_file, "r"))
     expect_true(is(vf, "Rcpp_VSIFile"))
     expect_equal(vf$close(), 0)
+    # testing options depends on GDAL version, and needs internet access
+    # so only testing with an empty vector for now
     expect_no_error(vf <- new(VSIFile, lcp_file, "r", character(0)))
     expect_true(is(vf, "Rcpp_VSIFile"))
     expect_equal(vf$close(), 0)
+    # error on invalid options or GDAL < 3.3
+    # invalid options do not seem to raise an error
+    # url <- "/vsicurl/https://raw.githubusercontent.com/"
+    # url <- paste0(url, "usdaforestservice/gdalraster/main/sample-data/")
+    # url <- paste0(url, "lf_elev_220_mt_hood_utm.tif")
+    # expect_error(vf <- new(VSIFile, url, "r", "INAVLID_OPTION=YES"))
 
     ## Methods
 
@@ -63,7 +77,8 @@ test_that("VSIFile works", {
     lat_orig <- vf$read(4)
     # latitude -99 out of range
     bytes <- writeBin(-99L, raw())
-    vf$seek(8, SEEK_SET)
+    # giving offset as integer64 type
+    vf$seek(bit64::as.integer64(8), SEEK_SET)
     vf$write(bytes)
     vf$rewind()
     expect_false(is_lcp(vf$read(12)))
@@ -152,5 +167,18 @@ test_that("VSIFile works", {
     expect_error(vf$flush())
     expect_error(vf$ingest(-1))
 
+    expect_no_error(vf$open())
+    expect_error(vf$seek(c(0, 10), SEEK_SET))
+    expect_error(vf$seek(-1, SEEK_SET))
+    expect_error(vf$seek(0, "invalid_origin"))
+    expect_true(is.null((vf$read(0))))
+    expect_error(vf$truncate(-1))
+    expect_error(vf$truncate(bit64::as.integer64(-1)))
+    expect_true(is.null(vf$ingest(bit64::as.integer64(1))))
+    expect_equal(vf$set_access("r"), -1)
+    expect_no_error(vf$close())
+    expect_equal(vf$set_access("string_too_long"), -1)
+
     vsi_unlink(mem_file)
+    expect_error(vf <- new(VSIFile, mem_file, "r"))
 })

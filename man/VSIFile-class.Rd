@@ -195,6 +195,7 @@ Sets the requested read/write access on this \code{VSIFile} object, given as a
 character string (i.e., \code{"r"}, \code{"r+"}, \code{"w"}). The access can be changed
 only while the \code{VSIFile} object is closed, and will apply when it is
 re-opened with a call to \verb{$open()}.
+Returns \code{0} on success or \code{-1} on error.
 }
 
 \examples{

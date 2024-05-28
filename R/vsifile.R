@@ -189,6 +189,7 @@ SEEK_END <- "SEEK_END"
 #' character string (i.e., `"r"`, `"r+"`, `"w"`). The access can be changed
 #' only while the `VSIFile` object is closed, and will apply when it is
 #' re-opened with a call to `$open()`.
+#' Returns `0` on success or `-1` on error.
 #'
 #' @note
 #' File offsets are given as R `numeric` (i.e., `double` type), optionally
