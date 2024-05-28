@@ -128,6 +128,7 @@
   \code{\link[=get_num_cpus]{get_num_cpus()}},
   \code{\link[=get_usable_physical_ram]{get_usable_physical_ram()}},
   \code{\link[=has_spatialite]{has_spatialite()}},
+  \code{\link[=http_enabled]{http_enabled()}},
   \code{\link[=push_error_handler]{push_error_handler()}},
   \code{\link[=pop_error_handler]{pop_error_handler()}}
 

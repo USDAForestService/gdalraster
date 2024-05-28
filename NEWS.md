@@ -1,4 +1,6 @@
-# gdalraster 1.10.9252 (dev)
+# gdalraster 1.10.9260 (dev)
+
+* add `http_enabled()`: returns `TRUE` if GDAL was built with `libcurl` support (2024-05-27)
 
 * fix `ogr_ds_create()`: `layer` name was not passed to the internal create function when `layer_defn` was used (2024-05-27)
 

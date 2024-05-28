@@ -9,6 +9,7 @@
 #include "gdal.h"
 #include "cpl_port.h"
 #include "cpl_conv.h"
+#include "cpl_http.h"
 #include "cpl_multiproc.h"
 #include "cpl_string.h"
 #include "cpl_vsi.h"
@@ -408,6 +409,21 @@ bool has_spatialite() {
         return false;
     else
         return true;
+}
+
+
+//' Return if GDAL CPLHTTP services can be useful (libcurl)
+//'
+//' `http_enabled()` returns `TRUE` if `libcurl` support is enabled.
+//' Wrapper of `CPLHTTPEnabled()` in the GDAL Common Portability Library.
+//'
+//' @return Logical scalar, `TRUE` if GDAL was built with `libcurl` support.
+//'
+//' @examples
+//' http_enabled()
+// [[Rcpp::export]]
+bool http_enabled() {
+    return static_cast<bool>(CPLHTTPEnabled());
 }
 
 
