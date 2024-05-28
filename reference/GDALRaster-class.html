@@ -16,7 +16,7 @@ details of the GDAL Raster API."><!-- mathjax --><script src="https://cdnjs.clou
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9252</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9260</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -911,10 +911,16 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url</span>, <span class="st">"usdaforestservice/gdalraster/main/sample-data/"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">url</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">url</span>, <span class="st">"lf_elev_220_mt_hood_utm.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">url</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span>, main <span class="op">=</span> <span class="st">"Mount Hood elevation (m)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_HTTP_CONNECTTIMEOUT"</span>, <span class="st">"20"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_HTTP_TIMEOUT"</span>, <span class="st">"20"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="http_enabled.html">http_enabled</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&amp;&amp;</span> <span class="fu"><a href="vsi_stat.html">vsi_stat</a></span><span class="op">(</span><span class="va">url</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">url</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span>, main <span class="op">=</span> <span class="st">"Mount Hood elevation (m)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-plt img"><img src="GDALRaster-class-1.png" alt="" width="700" height="433"></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_HTTP_CONNECTTIMEOUT"</span>, <span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"GDAL_HTTP_TIMEOUT"</span>, <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># }</span></span></span>
 </code></pre></div>
     </div>

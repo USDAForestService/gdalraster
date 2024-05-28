@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9252</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9260</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.10.9252" id="gdalraster-1109252-dev">gdalraster 1.10.9252 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109252-dev"></a></h2>
-<ul><li><p>fix <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code>: <code>layer</code> name was not passed to the internal create function when <code>layer_defn</code> was used (2024-05-27)</p></li>
+<h2 class="pkg-version" data-toc-text="1.10.9260" id="gdalraster-1109260-dev">gdalraster 1.10.9260 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109260-dev"></a></h2>
+<ul><li><p>add <code><a href="../reference/http_enabled.html">http_enabled()</a></code>: returns <code>TRUE</code> if GDAL was built with <code>libcurl</code> support (2024-05-27)</p></li>
+<li><p>fix <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code>: <code>layer</code> name was not passed to the internal create function when <code>layer_defn</code> was used (2024-05-27)</p></li>
 <li><p>fixes in <code><a href="../reference/ogr_manage.html">ogr_geom_field_create()</a></code>: the check for field name already exists was wrong; the <code>srs</code> param was not passed to the internal create function (2024-05-27)</p></li>
 <li><p>Behavior change: <code>GDALRaster::info()</code> and <code>GDALRaster::infoAsJSON()</code> now use the default command-line arguments for the underlying <code>gdalinfo</code> utility. The arguments are configurable in the <code>infoOptions</code> field, which is an empty vector by default (<code>character(0)</code>) (2024-05-27)</p></li>
 <li><p>class <code>GDALRaster</code>: add read/write fields <code>infoOptions</code> and <code>quiet</code> for applying per-object settings (2024-05-26)</p></li>
