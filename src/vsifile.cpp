@@ -5,8 +5,10 @@
 #include <cstdlib>
 #include <vector>
 
-#include "vsifile.h"
+#include "cpl_conv.h"
+#include "cpl_port.h"
 #include "gdalraster.h"
+#include "vsifile.h"
 
 VSIFile::VSIFile() :
             filename_in(""),
@@ -131,20 +133,19 @@ void VSIFile::rewind() {
 }
 
 SEXP VSIFile::read(std::size_t nbytes) {
-    // should nbytes be changed to integer64 (via NumericVector)?
-    // ingest() could be used instead
-
     if (fp == nullptr)
         Rcpp::stop("the file is not open");
 
-    if (nbytes < 0)
-        Rcpp::stop("'nbytes' must be a positive integer");
+    if (nbytes <= 0)
+        return R_NilValue;
 
-    void *buf = VSIMalloc(nbytes);
+    GByte *buf = static_cast<GByte *>(CPLMalloc(nbytes));
     size_t nRead = 0;
     nRead = VSIFReadL(buf, 1, nbytes, fp);
-    if (nRead == 0)
+    if (nRead == 0) {
+        VSIFree(buf);
         return R_NilValue;
+    }
 
     Rcpp::RawVector raw(nRead);
     std::memcpy(&raw[0], buf, nRead);
@@ -260,8 +261,10 @@ std::string VSIFile::get_access() const {
 }
 
 int VSIFile::set_access(std::string access) {
-    if (fp != nullptr)
-        Rcpp::stop("cannot set access while the file is open");
+    if (fp != nullptr) {
+        Rcpp::Rcerr << "cannot set access while the file is open\n";
+        return -1;
+    }
 
     if (access.length() > 0 && access.length() < 4) {
         access_in = access;

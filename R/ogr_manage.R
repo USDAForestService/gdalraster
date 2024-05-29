@@ -364,7 +364,7 @@ ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
                            dsco, lco, NULL))
     } else {
         return(.create_ogr(format, dsn, 0, 0, 0, "Unknown",
-                           layer = "", geom_type = "", srs = "",
+                           layer = layer, geom_type = "", srs = "",
                            fld_name = "", fld_type = "",
                            dsco = dsco, lco = lco, layer_defn = layer_defn))
     }
@@ -606,7 +606,7 @@ ogr_geom_field_create <- function(dsn, layer, fld_name,
         stop("'layer' does not exist", call. = FALSE)
 
     fld_idx <- ogr_field_index(dsn, layer, fld_name)
-    if (fld_idx == -1)
+    if (fld_idx >= 0)
         stop("field ", fld_name, " already exists", call. = FALSE)
 
     if (is.null(geom_type))
@@ -645,7 +645,7 @@ ogr_geom_field_create <- function(dsn, layer, fld_name,
             is_ignored <- FALSE
     }
 
-    return(.ogr_geom_field_create(dsn, layer, fld_name, geom_type,
+    return(.ogr_geom_field_create(dsn, layer, fld_name, geom_type, srs,
                                   is_nullable, is_ignored))
 }
 
@@ -689,7 +689,7 @@ ogr_execute_sql <- function(dsn, sql, spatial_filter = NULL, dialect = NULL) {
         if (is.numeric(spatial_filter) && length(spatial_filter) == 4)
             spatial_filter <- bbox_to_wkt(spatial_filter)
         if (!(is.character(spatial_filter) && length(spatial_filter) == 1))
-            stop("spatial_filter must be length-4 numeric or character string",
+            stop("spatial_filter must be length-4 numeric, or WKT string",
                  call. = FALSE)
     } else {
         spatial_filter <- ""

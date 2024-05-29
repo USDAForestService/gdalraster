@@ -7,11 +7,11 @@ test_that("vsi_stat works", {
     elev_file <- file.path(data_dir, "storml_elev.tif")
     expect_true(vsi_stat(elev_file))
     expect_equal(vsi_stat(elev_file, "type"), "file")
-    expect_equal(vsi_stat(elev_file, "size"), 31152)
+    expect_equal(vsi_stat(elev_file, "size"), bit64::as.integer64(31152))
     nonexistent <- file.path(data_dir, "wrong_filename.tif")
     expect_false(vsi_stat(nonexistent))
     expect_equal(vsi_stat(nonexistent, "type"), "")
-    expect_equal(vsi_stat(nonexistent, "size"), -1)
+    expect_equal(vsi_stat(nonexistent, "size"), bit64::as.integer64(-1))
     expect_error(vsi_stat(elev_file, "invalid"))
 })
 
@@ -118,7 +118,7 @@ test_that("vsi_get_disk_free_space returns length-1 numeric vector", {
     tmp_dir <- file.path(tempdir(), "tmpdir")
     vsi_mkdir(tmp_dir)
     x <- vsi_get_disk_free_space(tmp_dir)
-    expect_vector(x, ptype = numeric(), 1)
+    expect_vector(x, ptype = bit64::integer64(), 1)
     vsi_rmdir(tmp_dir)
 })
 
@@ -130,4 +130,18 @@ test_that("vsi path specific options can be set/unset", {
                                         "AZURE_STORAGE_CONNECTION_STRING",
                                         "connection_string_for_gdalraster"))
     expect_no_error(vsi_clear_path_options(prefix))
+})
+
+test_that("vsi_get_file_metadata works", {
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    expect_no_error(vsi_get_file_metadata(f, domain=""))
+
+    skip_if(as.integer(gdal_version()[2]) < 3070000)
+
+    zip_file <- tempfile(fileext=".zip")
+    addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
+    zip_vsi <- file.path("/vsizip", zip_file)
+    expect_no_error(md <- vsi_get_file_metadata(zip_vsi, domain="ZIP"))
+    expect_type(md, "list")
+    expect_equal(md$SOZIP_VALID, "YES")
 })

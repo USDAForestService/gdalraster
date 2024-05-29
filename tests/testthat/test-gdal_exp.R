@@ -33,12 +33,20 @@ test_that("get_cache_used returns integer", {
     expect_type(get_cache_used(), "integer")
 })
 
-test_that(".get_physical_RAM returns integer", {
-    expect_type(.get_physical_RAM(), "integer")
+test_that("get_num_cpus returns integer", {
+    expect_type(get_num_cpus(), "integer")
+})
+
+test_that("get_usable_physical_ram returns integer64", {
+    expect_s3_class(get_usable_physical_ram(), "integer64")
 })
 
 test_that("has_spatialite returns logical", {
     expect_type(has_spatialite(), "logical")
+})
+
+test_that("http_enabled returns logical", {
+    expect_type(http_enabled(), "logical")
 })
 
 test_that("createCopy writes correct output", {

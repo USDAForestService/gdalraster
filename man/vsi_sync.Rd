@@ -17,7 +17,7 @@ displayed. Defaults to \code{FALSE}.}
 \item{options}{Character vector of \code{NAME=VALUE} pairs (see Details).}
 }
 \value{
-Invisibly, \code{TRUE} on success or \code{FALSE} on an error.
+Logical scalar, \code{TRUE} on success or \code{FALSE} on an error.
 }
 \description{
 \code{vsi_sync()} is a wrapper for \code{VSISync()} in the GDAL Common Portability

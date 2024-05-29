@@ -10,7 +10,7 @@ vsi_unlink(filename)
 \item{filename}{Character string. The path of the file to be deleted.}
 }
 \value{
-Invisibly, \code{0} on success or \code{-1} on an error.
+\code{0} on success or \code{-1} on an error.
 }
 \description{
 \code{vsi_unlink()} deletes a file object from the file system.

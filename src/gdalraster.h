@@ -82,6 +82,12 @@ class GDALRaster {
     GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                Rcpp::CharacterVector open_options);
 
+    // read/write fields exposed in R
+    Rcpp::CharacterVector infoOptions = Rcpp::CharacterVector::create();
+    bool quiet = false;
+    bool readByteAsRaw = false;
+
+    // methods exposed in R
     std::string getFilename() const;
     void setFilename(std::string filename);
     void open(bool read_only);
@@ -171,7 +177,6 @@ class GDALRaster {
 
     void close();
 
-    bool readByteAsRaw;
     // methods for internal use not exported to R
     void _checkAccess(GDALAccess access_needed) const;
     GDALRasterBandH _getBand(int band) const;
@@ -189,12 +194,14 @@ Rcpp::DataFrame gdal_formats(std::string fmt);
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
+int get_num_cpus();
+Rcpp::NumericVector get_usable_physical_ram();
 void push_error_handler(std::string handler);
 void pop_error_handler();
 bool has_spatialite();
+bool http_enabled();
 
 Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
-int _get_physical_RAM();
 
 bool create(std::string format, Rcpp::CharacterVector dst_filename,
             int xsize, int ysize, int nbands, std::string dataType,
@@ -240,7 +247,8 @@ bool vsi_supports_seq_write(Rcpp::CharacterVector filename,
                             bool allow_local_tmpfile);
 bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
                             bool allow_local_tmpfile);
-double vsi_get_disk_free_space(Rcpp::CharacterVector path);
+Rcpp::NumericVector vsi_get_disk_free_space(Rcpp::CharacterVector path);
+SEXP vsi_get_file_metadata(Rcpp::CharacterVector filename, std::string domain);
 
 Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
                                         double pixel, double line);

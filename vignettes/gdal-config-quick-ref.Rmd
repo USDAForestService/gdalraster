@@ -22,7 +22,7 @@ Configuration options are essentially global variables the user can set. They ar
 
 This quick reference covers a small subset of configuration options that may be useful in common scenarios, with links to topic-specific documentation provided by the GDAL project. Options can be set from R with `gdalraster::set_config_option()`. Note that specific usage is context dependent. Passing `value = ""` (empty string) will unset a value previously set by `set_config_option()`:
 
-```{r}
+```r
 library(gdalraster)
 
 set_config_option("GDAL_NUM_THREADS", "ALL_CPUS")
@@ -38,7 +38,7 @@ GDAL doc: https://gdal.org/user/configoptions.html#general-options
 
 The `$read()` method of a `GDALRaster` object will perform automatic resampling if the specified output size (`out_xsize * out_ysize`) is different than the size of the source region being read (`xsize * ysize`). In that case, resampling can be configured to override the default `NEAR` to one of `BILINEAR`, `CUBIC`, `CUBICSPLINE`, `LANCZOS`, `AVERAGE`, `MODE`, `RMS`, or `GAUSS`:
 
-```{r}
+```r
 # bilinear interpolation (2x2 neighborhood of pixels)
 set_config_option("GDAL_RASTERIO_RESAMPLING", "BILINEAR")
 ```
@@ -47,7 +47,7 @@ set_config_option("GDAL_RASTERIO_RESAMPLING", "BILINEAR")
 
 By default, temporary files are written into the current working directory. This can be changed with:
 
-```{r}
+```r
 set_config_option("CPL_TMPDIR", "<dirname>") # tmpdir to use
 ```
 
@@ -63,7 +63,7 @@ Sets the number of worker threads to be used by GDAL operations that support mul
 
 The size limit of the block cache is set upon first use (first I/O). Setting `GDAL_CACHEMAX` after that point will not resize the cache. It is a per-session setting. If `GDAL_CACHEMAX` has not been set upon first use of the cache, then the default cache size (`5%` of physical RAM) will be in effect for the current session. See also [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html).
 
-```{r}
+```r
 # set to a specific size in MB
 set_config_option("GDAL_CACHEMAX", "800")
 
@@ -75,7 +75,7 @@ set_config_option("GDAL_CACHEMAX", "10%")
 
 The default number of datasets that can be opened simultaneously by the `GDALProxyPool` mechanism (used by VRT for example) is `100`. This can be increased to get better random I/O performance with VRT mosaics made of numerous underlying raster files. Note: on Linux systems, the number of file handles that can be opened by a process is generally limited to `1024`. This is currently clamped between `2` and `1000`. Also note that [`gdalwarp` increases the pool size to `450`](https://gdal.org/drivers/raster/vrt.html#performance-considerations):
 
-```{r}
+```r
 # default is 100
 set_config_option("GDAL_MAX_DATASET_POOL_SIZE", "450")
 ```
@@ -84,7 +84,7 @@ set_config_option("GDAL_MAX_DATASET_POOL_SIZE", "450")
 
 This configures PostgreSQL/PostGIS to use `COPY` for inserting data which is significantly faster than `INSERT`. This can increase performance substantially when using `gdalraster::polygonize()` to write polygons to PostGIS vector. See also [GDAL configuration options for PostgreSQL](https://gdal.org/drivers/vector/pg.html#configuration-options).
 
-```{r}
+```r
 # use COPY for inserting to PostGIS
 set_config_option("PG_USE_COPY", "YES")
 ```
@@ -93,14 +93,14 @@ set_config_option("PG_USE_COPY", "YES")
 
 For the SQLite-based formats GeoPackage (.gpkg) and Spatialite (.sqlite), setting `SQLITE_USE_OGR_VFS` enables extra buffering/caching by the GDAL/OGR I/O layer and can speed up I/O. Be aware that no file locking will occur if this option is activated, so concurrent edits may lead to database corruption. This setting may increase performance substantially when using `gdalraster::polygonize()` to write polygons to a vector layer in these formats. Additional configuration and performance hints for SQLite databases are in the driver documentation at: https://gdal.org/drivers/vector/sqlite.html#configuration-options.
 
-```{r}
+```r
 # SQLite: GPKG (.gpkg) and Spatialite (.sqlite)
 # enable extra buffering/caching by the GDAL/OGR I/O layer
 set_config_option("SQLITE_USE_OGR_VFS", "YES")
 ```
 
 **`OGR_SQLITE_JOURNAL`**
- 
+
 SQLite is a transactional DBMS. When many `INSERT` statements are executed in close sequence, application code may group them into large batches within transactions in order to get optimal performance. By default, if no transaction is explicitly started, SQLite will autocommit on every statement which will be slow.
 
 The `OGR_SQLITE_JOURNAL` option configures operation of the rollback journal that implements transactions in SQLite. The [SQLite documentation](https://www.sqlite.org/pragma.html#pragma_journal_mode) describes the default operation:
@@ -113,7 +113,7 @@ The `DELETE` mode requires file system I/O so performance is degraded if many `I
 
 See the SQLite documentation for all available [journal modes](https://www.sqlite.org/pragma.html#pragma_journal_mode). This setting also applies when using `gdalraster::polygonize()` to write polygons to a vector layer in GeoPackage (.gpkg) or Spatialite (.sqlite) formats (see `SQLITE_USE_OGR_VFS` above).
 
-```{r}
+```r
 # configure SQLite to store the rollback journal in RAM
 set_config_option("OGR_SQLITE_JOURNAL", "MEMORY")
 ```
@@ -134,7 +134,7 @@ This option can be set to either `TRADITIONAL_GIS_ORDER` or `AUTHORITY_COMPLIANT
 
 As of GDAL 3.0, the default format for exporting a spatial reference definition to Well Known Text is WKT 1. This can be overridden with:
 
-```{r}
+```r
 # SFSQL/WKT1_SIMPLE/WKT1/WKT1_GDAL/WKT1_ESRI/WKT2_2015/WKT2_2018/WKT2/DEFAULT
 set_config_option("OSR_WKT_FORMAT", "WKT2")
 ```
@@ -149,7 +149,7 @@ The [performance and caching](#performance-and-caching) topic above generally ap
 
 Multithreaded computation in `warp()` can be enabled with:
 
-```{r}
+```r
 # note this also affects several other parts of GDAL
 set_config_option("GDAL_NUM_THREADS", "4") # number of threads or ALL_CPUS
 ```
@@ -174,7 +174,7 @@ The behavior of the GTiff driver is highly configurable, including with respect 
 
 The GTiff driver supports multi-threaded compression (default is compression in the main thread). GDAL documentation states that it is worth it for slow compression algorithms such as `DEFLATE` or `LZMA`. Starting with GDAL 3.6, this option also enables multi-threaded decoding when read requests intersect several tiles/strips:
 
-```{r}
+```r
 # specify the number of worker threads or ALL_CPUS
 # note this also affects several other parts of GDAL
 set_config_option("GDAL_NUM_THREADS", "ALL_CPUS")
@@ -184,7 +184,7 @@ set_config_option("GDAL_NUM_THREADS", "ALL_CPUS")
 
 Raster overviews (a.k.a. pyramids) can be built with the `$buildOverviews()` method of a `GDALRaster` object. It may be desirable to compress the overviews when building:
 
-```{r}
+```r
 # applies to external overviews (.ovr), and internal overviews if GDAL >= 3.6
 # LZW is a good default but several other compression algorithms are available
 set_config_option("COMPRESS_OVERVIEW", "LZW")
@@ -194,9 +194,51 @@ set_config_option("COMPRESS_OVERVIEW", "LZW")
 
 Sets the predictor to use for overviews with `LZW`, `DEFLATE` and `ZSTD` compression. The default is `1` (no predictor), `2` is horizontal differencing and `3` is floating point prediction. `PREDICTOR=2` is only supported for 8, 16, 32 and 64 bit samples (support for 64 bit was added in libtiff > 4.3.0). `PREDICTOR=3` is only supported for 16, 32 and 64 bit floating-point data.
 
-```{r}
+```r
 # horizontal differencing
 set_config_option("PREDICTOR_OVERVIEW", "2")
+```
+
+## HTTP/HTTPS
+
+GDAL doc: [/vsicurl/](https://gdal.org/user/configoptions.html#networking-options) (HTTP/HTTPS random access)
+
+**`GDAL_HTTP_CONNECTTIMEOUT`**
+
+Maximum delay for connection to be established before being aborted.
+
+```r
+# max delay for connection establishment in seconds
+set_config_option("GDAL_HTTP_CONNECTTIMEOUT", "<seconds>")
+```
+
+**`GDAL_HTTP_TIMEOUT`**
+
+Maximum delay for the whole request to complete before being aborted.
+
+```r
+# max delay for whole request completion in seconds
+set_config_option("GDAL_HTTP_TIMEOUT", "<seconds>")
+```
+
+**`CPL_VSIL_CURL_CHUNK_SIZE`**
+
+Partial downloads (requires the HTTP server to support random reading) are done with a 16 KB granularity by default. The chunk size can be configured with this option.
+
+If the driver detects sequential reading, it will progressively increase the chunk size up to 128 times `CPL_VSIL_CURL_CHUNK_SIZE` (so 2 MB by default) to improve download performance. When increasing the value of `CPL_VSIL_CURL_CHUNK_SIZE` to optimize sequential reading, it is recommended to increase `CPL_VSIL_CURL_CACHE_SIZE` as well to 128 times the value of `CPL_VSIL_CURL_CHUNK_SIZE`.
+
+```r
+# chunk size in bytes
+set_config_option("CPL_VSIL_CURL_CHUNK_SIZE", "<bytes>")
+```
+
+**`CPL_VSIL_CURL_CACHE_SIZE`**
+
+A global least-recently-used cache of 16 MB shared among all downloaded content is used, and content in it may be reused after a file handle has been closed and reopen, during the life-time of the process or until `vsi_curl_clear_cache()` is called. The size of this global LRU cache can be modified with:
+
+```r
+# size in bytes defaults to 16 MB
+set_config_option("CPL_VSIL_CURL_CACHE_SIZE", "<bytes>")
 ```
 
 ## AWS S3 buckets
@@ -207,19 +249,19 @@ GDAL doc: [/vsis3/](https://gdal.org/user/virtual_file_systems.html#vsis3-aws-s3
 
 Request signing can be disabled for public buckets that do not require an AWS account:
 
-```{r}
+```r
 # public bucket no AWS account required
 set_config_option("AWS_NO_SIGN_REQUEST", "YES")
 ```
 
-**`AWS_ACCESS_KEY_ID`**  
-**`AWS_SECRET_ACCESS_KEY`**  
-**`AWS_SESSION_TOKEN`**  
+**`AWS_ACCESS_KEY_ID`**
+**`AWS_SECRET_ACCESS_KEY`**
+**`AWS_SESSION_TOKEN`**
 **`AWS_REQUEST_PAYER`**
 
 If authentication is required, configure credentials with:
 
-```{r}
+```r
 set_config_option("AWS_ACCESS_KEY_ID", "<value>") # key ID
 set_config_option("AWS_SECRET_ACCESS_KEY", "<value>") # secret access key
 # used for validation if using temporary credentials:
@@ -232,7 +274,7 @@ set_config_option("AWS_REQUEST_PAYER", "<value>") # requester
 
 Sets the AWS region to which requests should be sent. Defaults to `us-east-1`.
 
-```{r}
+```r
 # specify region
 set_config_option("AWS_REGION", "us-west-2")
 ```
@@ -251,7 +293,7 @@ Recognized filenames are of the form `/vsiaz/container/key`, where `container` i
 
 Controls whether requests are signed.
 
-```{r}
+```r
 # public access
 set_config_option("AZURE_NO_SIGN_REQUEST", "YES")
 ```
@@ -260,7 +302,7 @@ set_config_option("AZURE_NO_SIGN_REQUEST", "YES")
 
 Credential string provided in the Access Keys section of the administrative interface, containing both the account name and a secret key.
 
-```{r}
+```r
 set_config_option("AZURE_STORAGE_CONNECTION_STRING", "<my_connection_string>")
 ```
 
@@ -284,7 +326,7 @@ The `GDAL_NUM_THREADS` configuration option can be set to `ALL_CPUS` or an integ
 
 Defaults to `AUTO`. Determines whether the SOZip optimization should be enabled. If `AUTO`, SOZip will be enabled for uncompressed files larger than `CPL_SOZIP_MIN_FILE_SIZE`.
 
-```{r}
+```r
 # SOZip optimization defaults to AUTO
 set_config_option("CPL_SOZIP_ENABLED", "YES")
 ```
@@ -293,7 +335,7 @@ set_config_option("CPL_SOZIP_ENABLED", "YES")
 
 Defaults to `1M`. Determines the minimum file size for SOZip to be automatically enabled. Specified in bytes, or `K`, `M` or `G` suffix can be used respectively to specify a value in kilobytes, megabytes or gigabytes.
 
-```{r}
+```r
 # SOZip minimum file size
 set_config_option("CPL_SOZIP_MIN_FILE_SIZE", "100K")
 ```

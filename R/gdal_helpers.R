@@ -60,20 +60,30 @@
 #' integer value to specify the number of threads to use for SOZip-compressed
 #' files (see [set_config_option()]).
 #'
+#' SOzip can be validated with:
+#' ```
+#' vsi_get_file_metadata(zip_file, domain="ZIP")
+#' ```
+#'
+#' @seealso
+#' [vsi_get_file_metadata()]
+#'
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' zip_file <- paste0(tempdir(), "/", "storml_lcp.zip")
 #'
 #' # Requires GDAL >= 3.7
 #' if (as.integer(gdal_version()[2]) >= 3070000) {
-#'   # Note that the example file is too small to be seek-optimized by default
-#'   # So this creates a regular zip file
-#'   addFilesInZip(zip_file, lcp_file, full_paths=FALSE, num_threads=1)
+#'   addFilesInZip(zip_file, lcp_file, full_paths=FALSE, sozip_enabled="YES",
+#'                 num_threads=1)
+#'
 #'   unzip(zip_file, list=TRUE)
 #'
 #'   # Open with GDAL using Virtual File System handler '/vsizip/'
 #'   # see: https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives
-#'   lcp_in_zip <- paste0("/vsizip/", file.path(zip_file, "storm_lake.lcp"))
+#'   lcp_in_zip <- file.path("/vsizip", zip_file, "storm_lake.lcp")
+#'   vsi_get_file_metadata(lcp_in_zip, domain="ZIP")
+#'
 #'   ds <- new(GDALRaster, lcp_in_zip)
 #'   ds$info()
 #'   ds$close()

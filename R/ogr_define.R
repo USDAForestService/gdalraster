@@ -127,7 +127,7 @@
 #' same type (\url{https://geojson.org/}).
 #'
 #' @seealso
-#' [ogr_ds_create()], [ogr_layer_create()], [ogrinfo()]
+#' [ogr_ds_create()], [ogr_layer_create()], [ogr_field_create()], [ogrinfo()]
 #'
 #' WKT representation of geometry:\cr
 #' \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}

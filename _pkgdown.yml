@@ -128,6 +128,7 @@ reference:
   - vsi_copy_file
   - vsi_curl_clear_cache
   - vsi_get_disk_free_space
+  - vsi_get_file_metadata
   - vsi_get_fs_options
   - vsi_get_fs_prefixes
   - vsi_mkdir
@@ -148,7 +149,10 @@ reference:
   - get_cache_used
   - get_config_option
   - set_config_option
+  - get_num_cpus
+  - get_usable_physical_ram
   - has_spatialite
+  - http_enabled
   - push_error_handler
   - pop_error_handler
 - subtitle: PROJ configuration

@@ -105,6 +105,7 @@
   \code{\link[=vsi_copy_file]{vsi_copy_file()}},
   \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
   \code{\link[=vsi_get_disk_free_space]{vsi_get_disk_free_space()}},
+  \code{\link[=vsi_get_file_metadata]{vsi_get_file_metadata()}},
   \code{\link[=vsi_get_fs_options]{vsi_get_fs_options()}},
   \code{\link[=vsi_get_fs_prefixes]{vsi_get_fs_prefixes()}},
   \code{\link[=vsi_mkdir]{vsi_mkdir()}},
@@ -122,12 +123,15 @@
   \item GDAL configuration:
   \code{\link[=gdal_version]{gdal_version()}},
   \code{\link[=gdal_formats]{gdal_formats()}},
-  \code{\link[=get_cache_used]{get_cache_used()}},\cr
+  \code{\link[=get_cache_used]{get_cache_used()}},
   \code{\link[=get_config_option]{get_config_option()}},
   \code{\link[=set_config_option]{set_config_option()}},
+  \code{\link[=get_num_cpus]{get_num_cpus()}},
+  \code{\link[=get_usable_physical_ram]{get_usable_physical_ram()}},
+  \code{\link[=has_spatialite]{has_spatialite()}},
+  \code{\link[=http_enabled]{http_enabled()}},
   \code{\link[=push_error_handler]{push_error_handler()}},
-  \code{\link[=pop_error_handler]{pop_error_handler()}},
-  \code{\link[=has_spatialite]{has_spatialite()}}
+  \code{\link[=pop_error_handler]{pop_error_handler()}}
 
   \item PROJ configuration:
   \code{\link[=proj_version]{proj_version()}},

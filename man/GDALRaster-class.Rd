@@ -24,8 +24,8 @@ specifying dataset open options.}
 An object of class \code{GDALRaster} which contains a pointer to the
 opened dataset, and methods that operate on the dataset as described in
 Details. \code{GDALRaster} is a C++ class exposed directly to R (via
-\code{RCPP_EXPOSED_CLASS}). Methods of the class are accessed using the
-\code{$} operator.
+\code{RCPP_EXPOSED_CLASS}). Methods and fields of the class are accessed using
+the \code{$} operator. Read/write fields can be used for per-object settings.
 }
 \description{
 \code{GDALRaster} provides an interface for accessing a raster dataset via GDAL
@@ -48,11 +48,16 @@ override the default resampling to one of \code{BILINEAR}, \code{CUBIC},
 
 \preformatted{
 ## Constructors
-ds <- new(GDALRaster, filename, read_only=TRUE)
+# read-only by default:
+ds <- new(GDALRaster, filename)
+# for update access:
+ds <- new(GDALRaster, filename, read_only = FALSE)
 # or, using dataset open options:
-ds <- new(GDALRaster, filename, read_only, open_options)
+ds <- new(GDALRaster, filename, read_only = TRUE|FALSE, open_options)
 
-## Fields (see Details)
+## Read/write fields (see Details)
+ds$infoOptions
+ds$quiet
 ds$readByteAsRaw
 
 ## Methods (see Details)
@@ -81,7 +86,7 @@ ds$get_pixel_line(xy)
 
 ds$getRasterCount()
 ds$getDescription(band)
-ds$setDescription(band)
+ds$setDescription(band, desc)
 ds$getBlockSize(band)
 ds$getActualBlockSize(band, xblockoff, yblockoff)
 ds$getOverviewCount(band)
@@ -143,6 +148,22 @@ vector of \code{NAME=VALUE} pairs.
 read-only, or \code{FALSE} to open with write access.
 Returns an object of class \code{GDALRaster}.
 
+\code{$infoOptions}
+Read/write field.
+A character vector of command-line arguments to control the output of
+\verb{$info()} and \verb{$infoAsJSON()} (see below).
+Defaults to \code{character(0)}. Can be set to a vector of strings specifying
+arguments to the \command{gdalinfo} command-line utility, e.g.,
+\code{c("-nomd", "-norat", "-noct")}.
+Restore the default by setting to empty string (\code{""}) or \code{character(0)}.
+
+\code{$quiet}
+Read/write field.
+A logical value, \code{FALSE} by default. This field can be set to \code{TRUE} which
+will suppress various messages as well as progress reporting for potentially
+long-running processes such as building overviews and computation of
+statistics and histograms.
+
 \code{$readByteAsRaw}
 Read/write field.
 A logical value, \code{FALSE} by default. This field can be set to \code{TRUE} which
@@ -178,21 +199,20 @@ paths depending on the path used to originally open the dataset.
 Prints various information about the raster dataset to the console (no
 return value, called for that side effect only).
 Equivalent to the output of the \command{gdalinfo} command-line utility
-(\command{gdalinfo -norat -noct filename}). Intended here as an
-informational convenience function.
+(\command{gdalinfo filename}, if using the default \code{infoOptions}).
+See the field \verb{$infoOptions} above for setting the arguments to \code{gdalinfo}.
 
 \code{$infoAsJSON()}
 Returns information about the raster dataset as a JSON-formatted string.
-Contains full output of the \command{gdalinfo} command-line utility
-(\command{gdalinfo -json -stats -hist filename}).
+Equivalent to the output of the \command{gdalinfo} command-line utility
+(\command{gdalinfo -json filename}, if using the default \code{infoOptions}).
+See the field \verb{$infoOptions} above for setting the arguments to \code{gdalinfo}.
 
 \code{$getDriverShortName()}
-Returns the short name of the raster format driver
-(e.g., "HFA").
+Returns the short name of the raster format driver.
 
 \code{$getDriverLongName()}
-Returns the long name of the raster format driver
-(e.g., "Erdas Imagine Images (.img)").
+Returns the long name of the raster format driver.
 
 \code{$getRasterXSize()}
 Returns the number of pixels along the x dimension.
@@ -700,33 +720,33 @@ ds$res()
 ds$dim()
 
 ## retrieve some band-level parameters
-ds$getDescription(band=1)
-ds$getBlockSize(band=1)
-ds$getOverviewCount(band=1)
-ds$getDataTypeName(band=1)
+ds$getDescription(band = 1)
+ds$getBlockSize(band = 1)
+ds$getOverviewCount(band = 1)
+ds$getDataTypeName(band = 1)
 # LCP format does not support an intrinsic nodata value so this returns NA:
-ds$getNoDataValue(band=1)
+ds$getNoDataValue(band = 1)
 
 ## LCP driver reports several dataset- and band-level metadata
 ## see the format description at https://gdal.org/drivers/raster/lcp.html
-## set band=0 to retrieve dataset-level metadata
-## set domain="" (empty string) for the default metadata domain
-ds$getMetadata(band=0, domain="")
+## set band = 0 to retrieve dataset-level metadata
+## set domain = "" (empty string) for the default metadata domain
+ds$getMetadata(band = 0, domain = "")
 
 ## retrieve metadata for a band as a vector of name=value pairs
-ds$getMetadata(band=4, domain="")
+ds$getMetadata(band = 4, domain = "")
 
 ## retrieve the value of a specific metadata item
-ds$getMetadataItem(band=2, mdi_name="SLOPE_UNIT_NAME", domain="")
+ds$getMetadataItem(band = 2, mdi_name = "SLOPE_UNIT_NAME", domain = "")
 
 ## read one row of pixel values from band 1 (elevation)
 ## raster row/column index are 0-based
 ## the upper left corner is the origin
 ## read the tenth row:
 ncols <- ds$getRasterXSize()
-rowdata <- ds$read(band=1, xoff=0, yoff=9,
-                    xsize=ncols, ysize=1,
-                    out_xsize=ncols, out_ysize=1)
+rowdata <- ds$read(band = 1, xoff = 0, yoff = 9,
+                   xsize = ncols, ysize = 1,
+                   out_xsize = ncols, out_ysize = 1)
 head(rowdata)
 
 ds$close()
@@ -738,27 +758,34 @@ rasterFromRaster(srcfile = lcp_file,
                  nbands = 1,
                  dtName = "Byte",
                  init = -9999)
-ds_new <- new(GDALRaster, new_file, read_only=FALSE)
+
+ds_new <- new(GDALRaster, new_file, read_only = FALSE)
 
 ## write random values to all pixels
 set.seed(42)
 ncols <- ds_new$getRasterXSize()
 nrows <- ds_new$getRasterYSize()
-for (row in 0:(nrows-1)) {
+for (row in 0:(nrows - 1)) {
     rowdata <- round(runif(ncols, 0, 100))
-    ds_new$write(band=1, xoff=0, yoff=row, xsize=ncols, ysize=1, rowdata)
+    ds_new$write(band = 1,
+                 xoff = 0,
+                 yoff = row,
+                 xsize = ncols,
+                 ysize = 1,
+                 rowdata)
 }
 
 ## re-open in read-only mode when done writing
 ## this will ensure flushing of any pending writes (implicit $close)
-ds_new$open(read_only=TRUE)
+ds_new$open(read_only = TRUE)
 
 ## getStatistics returns min, max, mean, sd, and sets stats in the metadata
-ds_new$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
-ds_new$getMetadataItem(band=1, "STATISTICS_MEAN", "")
+ds_new$getStatistics(band = 1, approx_ok = FALSE, force = TRUE)
+ds_new$getMetadataItem(band = 1, "STATISTICS_MEAN", "")
 
 ## close the dataset for proper cleanup
 ds_new$close()
+deleteDataset(new_file)
 
 \donttest{
 ## using a GDAL Virtual File System handler '/vsicurl/'
@@ -767,11 +794,15 @@ url <- "/vsicurl/https://raw.githubusercontent.com/"
 url <- paste0(url, "usdaforestservice/gdalraster/main/sample-data/")
 url <- paste0(url, "lf_elev_220_mt_hood_utm.tif")
 
-ds <- new(GDALRaster, url)
-plot_raster(ds, legend=TRUE, main="Mount Hood elevation (m)")
-ds$close()
-
-deleteDataset(new_file)
+set_config_option("GDAL_HTTP_CONNECTTIMEOUT", "20")
+set_config_option("GDAL_HTTP_TIMEOUT", "20")
+if (http_enabled() && vsi_stat(url)) {
+  ds <- new(GDALRaster, url)
+  plot_raster(ds, legend = TRUE, main = "Mount Hood elevation (m)")
+  ds$close()
+}
+set_config_option("GDAL_HTTP_CONNECTTIMEOUT", "")
+set_config_option("GDAL_HTTP_TIMEOUT", "")
 }
 }
 \seealso{

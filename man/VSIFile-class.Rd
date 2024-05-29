@@ -13,7 +13,13 @@ a file in a regular local filesystem, or a filename with a GDAL /vsiPREFIX/
 
 \item{access}{Character string containing the access requested (i.e., \code{"r"},
 \code{"r+"}, \code{"w"}). Defaults to \code{"r"}. Binary access is always implied and the
-"b" does not need to be included in \code{access}.}
+"b" does not need to be included in \code{access}.
+\tabular{lll}{
+\strong{Access} \tab \strong{Explanation}           \tab \strong{If file exists}\cr
+\code{"r"}      \tab open file for reading     \tab read from start\cr
+\code{"r+"}     \tab open file for read/write  \tab read from start\cr
+\code{"w"}      \tab create file for writing   \tab destroy contents
+}}
 
 \item{options}{Optional character vector of \code{NAME=VALUE} pairs specifying
 filesystem-dependent options (GDAL >= 3.3, see Details).}
@@ -189,6 +195,7 @@ Sets the requested read/write access on this \code{VSIFile} object, given as a
 character string (i.e., \code{"r"}, \code{"r+"}, \code{"w"}). The access can be changed
 only while the \code{VSIFile} object is closed, and will apply when it is
 re-opened with a call to \verb{$open()}.
+Returns \code{0} on success or \code{-1} on error.
 }
 
 \examples{
@@ -203,10 +210,10 @@ lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 # function to check if the first three fields have valid data
 # input is the first twelve raw bytes in the file
 is_lcp <- function(bytes) {
-  values <- readBin(bytes, "integer", 3)
+  values <- readBin(bytes, "integer", n = 3)
   if ((values[1] == 20 || values[1] == 21) &&
-        (values[2] == 20 || values[2] == 21) &&
-        (values[3] >= -90 && values[3] <= 90)) {
+      (values[2] == 20 || values[2] == 21) &&
+      (values[3] >= -90 && values[3] <= 90)) {
 
     return(TRUE)
   } else {
@@ -215,8 +222,7 @@ is_lcp <- function(bytes) {
 }
 
 vf <- new(VSIFile, lcp_file)
-bytes <- vf$read(12)
-is_lcp(bytes)
+vf$read(12) |> is_lcp()
 
 vf$tell()
 
@@ -234,39 +240,38 @@ vf$rewind()
 vf$tell()
 
 vf$seek(0, SEEK_END)
-(vf$tell() == vsi_stat(lcp_file, "size"))
+(vf$tell() == vsi_stat(lcp_file, "size"))  # TRUE
 
 vf$rewind()
-is_lcp(vf$read(12))
+vf$read(12) |> is_lcp()
 
 # read/write an integer field
 # write invalid data for the Latitude field and then set back
-# save original
+# save the original first
 vf$seek(8, SEEK_SET)
 lat_orig <- vf$read(4)
 readBin(lat_orig, "integer")  # 46
 # latitude -99 out of range
-bytes <- writeBin(-99L, raw())
 vf$seek(8, SEEK_SET)
-vf$write(bytes)
+writeBin(-99L, raw()) |> vf$write()
 vf$rewind()
-is_lcp(vf$read(12))  # FALSE
+vf$read(12) |> is_lcp()  # FALSE
 vf$seek(8, SEEK_SET)
-readBin(vf$read(4), "integer")  # -99
+vf$read(4) |> readBin("integer")  # -99
 # set back to original
 vf$seek(8, SEEK_SET)
 vf$write(lat_orig)
 vf$rewind()
-is_lcp(vf$read(12))  # TRUE
+vf$read(12) |> is_lcp()  # TRUE
 
 # read a vector of doubles - xmax, xmin, ymax, ymin
 # 327766.1, 323476.1, 5105082.0, 5101872.0
 vf$seek(4172, SEEK_SET)
-readBin(vf$read(32), "double", n = 4)
+vf$read(32) |> readBin("double", n = 4)
 
 # read a short int, the canopy cover units
 vf$seek(4232, SEEK_SET)
-readBin(vf$read(2), "integer", size = 2)  # 1 = "percent"
+vf$read(2) |> readBin("integer", size = 2)  # 1 = "percent"
 
 # read the Description field
 vf$seek(6804, SEEK_SET)
@@ -279,7 +284,7 @@ desc <- paste(rawToChar(bytes),
               "Beaverhead-Deerlodge National Forest, Montana.")
 
 vf$seek(6804, SEEK_SET)
-vf$write(charToRaw(desc))
+charToRaw(desc) |> vf$write()
 vf$close()
 
 # verify the file as a raster dataset
@@ -299,6 +304,5 @@ GDAL Virtual File Systems (compressed, network hosted, etc...):\cr
 /vsimem, /vsizip, /vsitar, /vsicurl, ...\cr
 \url{https://gdal.org/user/virtual_file_systems.html}
 
-\code{\link[=vsi_copy_file]{vsi_copy_file()}}, \code{\link[=vsi_read_dir]{vsi_read_dir()}}, \code{\link[=vsi_stat]{vsi_stat()}}, \code{\link[=vsi_unlink]{vsi_unlink()}},
-\code{\link[=vsi_get_fs_options]{vsi_get_fs_options()}}
+\code{\link[=vsi_copy_file]{vsi_copy_file()}}, \code{\link[=vsi_read_dir]{vsi_read_dir()}}, \code{\link[=vsi_stat]{vsi_stat()}}, \code{\link[=vsi_unlink]{vsi_unlink()}}
 }

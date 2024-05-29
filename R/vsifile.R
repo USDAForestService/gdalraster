@@ -35,6 +35,12 @@ SEEK_END <- "SEEK_END"
 #' @param access Character string containing the access requested (i.e., `"r"`,
 #' `"r+"`, `"w"`). Defaults to `"r"`. Binary access is always implied and the
 #' "b" does not need to be included in `access`.
+#' \tabular{lll}{
+#'  **Access** \tab **Explanation**           \tab **If file exists**\cr
+#'  `"r"`      \tab open file for reading     \tab read from start\cr
+#'  `"r+"`     \tab open file for read/write  \tab read from start\cr
+#'  `"w"`      \tab create file for writing   \tab destroy contents
+#' }
 #' @param options Optional character vector of `NAME=VALUE` pairs specifying
 #' filesystem-dependent options (GDAL >= 3.3, see Details).
 #' @returns An object of class `VSIFile` which contains a pointer to a
@@ -183,6 +189,7 @@ SEEK_END <- "SEEK_END"
 #' character string (i.e., `"r"`, `"r+"`, `"w"`). The access can be changed
 #' only while the `VSIFile` object is closed, and will apply when it is
 #' re-opened with a call to `$open()`.
+#' Returns `0` on success or `-1` on error.
 #'
 #' @note
 #' File offsets are given as R `numeric` (i.e., `double` type), optionally
@@ -196,8 +203,7 @@ SEEK_END <- "SEEK_END"
 #' /vsimem, /vsizip, /vsitar, /vsicurl, ...\cr
 #' \url{https://gdal.org/user/virtual_file_systems.html}
 #'
-#' [vsi_copy_file()], [vsi_read_dir()], [vsi_stat()], [vsi_unlink()],
-#' [vsi_get_fs_options()]
+#' [vsi_copy_file()], [vsi_read_dir()], [vsi_stat()], [vsi_unlink()]
 #'
 #' @examples
 #' # The examples make use of the FARSITE LCP format specification at:
@@ -211,10 +217,10 @@ SEEK_END <- "SEEK_END"
 #' # function to check if the first three fields have valid data
 #' # input is the first twelve raw bytes in the file
 #' is_lcp <- function(bytes) {
-#'   values <- readBin(bytes, "integer", 3)
+#'   values <- readBin(bytes, "integer", n = 3)
 #'   if ((values[1] == 20 || values[1] == 21) &&
-#'         (values[2] == 20 || values[2] == 21) &&
-#'         (values[3] >= -90 && values[3] <= 90)) {
+#'       (values[2] == 20 || values[2] == 21) &&
+#'       (values[3] >= -90 && values[3] <= 90)) {
 #'
 #'     return(TRUE)
 #'   } else {
@@ -223,8 +229,7 @@ SEEK_END <- "SEEK_END"
 #' }
 #'
 #' vf <- new(VSIFile, lcp_file)
-#' bytes <- vf$read(12)
-#' is_lcp(bytes)
+#' vf$read(12) |> is_lcp()
 #'
 #' vf$tell()
 #'
@@ -242,39 +247,38 @@ SEEK_END <- "SEEK_END"
 #' vf$tell()
 #'
 #' vf$seek(0, SEEK_END)
-#' (vf$tell() == vsi_stat(lcp_file, "size"))
+#' (vf$tell() == vsi_stat(lcp_file, "size"))  # TRUE
 #'
 #' vf$rewind()
-#' is_lcp(vf$read(12))
+#' vf$read(12) |> is_lcp()
 #'
 #' # read/write an integer field
 #' # write invalid data for the Latitude field and then set back
-#' # save original
+#' # save the original first
 #' vf$seek(8, SEEK_SET)
 #' lat_orig <- vf$read(4)
 #' readBin(lat_orig, "integer")  # 46
 #' # latitude -99 out of range
-#' bytes <- writeBin(-99L, raw())
 #' vf$seek(8, SEEK_SET)
-#' vf$write(bytes)
+#' writeBin(-99L, raw()) |> vf$write()
 #' vf$rewind()
-#' is_lcp(vf$read(12))  # FALSE
+#' vf$read(12) |> is_lcp()  # FALSE
 #' vf$seek(8, SEEK_SET)
-#' readBin(vf$read(4), "integer")  # -99
+#' vf$read(4) |> readBin("integer")  # -99
 #' # set back to original
 #' vf$seek(8, SEEK_SET)
 #' vf$write(lat_orig)
 #' vf$rewind()
-#' is_lcp(vf$read(12))  # TRUE
+#' vf$read(12) |> is_lcp()  # TRUE
 #'
 #' # read a vector of doubles - xmax, xmin, ymax, ymin
 #' # 327766.1, 323476.1, 5105082.0, 5101872.0
 #' vf$seek(4172, SEEK_SET)
-#' readBin(vf$read(32), "double", n = 4)
+#' vf$read(32) |> readBin("double", n = 4)
 #'
 #' # read a short int, the canopy cover units
 #' vf$seek(4232, SEEK_SET)
-#' readBin(vf$read(2), "integer", size = 2)  # 1 = "percent"
+#' vf$read(2) |> readBin("integer", size = 2)  # 1 = "percent"
 #'
 #' # read the Description field
 #' vf$seek(6804, SEEK_SET)
@@ -287,7 +291,7 @@ SEEK_END <- "SEEK_END"
 #'               "Beaverhead-Deerlodge National Forest, Montana.")
 #'
 #' vf$seek(6804, SEEK_SET)
-#' vf$write(charToRaw(desc))
+#' charToRaw(desc) |> vf$write()
 #' vf$close()
 #'
 #' # verify the file as a raster dataset

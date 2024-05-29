@@ -104,13 +104,23 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _get_physical_RAM
-int _get_physical_RAM();
-RcppExport SEXP _gdalraster__get_physical_RAM() {
+// get_num_cpus
+int get_num_cpus();
+RcppExport SEXP _gdalraster_get_num_cpus() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(_get_physical_RAM());
+    rcpp_result_gen = Rcpp::wrap(get_num_cpus());
+    return rcpp_result_gen;
+END_RCPP
+}
+// get_usable_physical_ram
+Rcpp::NumericVector get_usable_physical_ram();
+RcppExport SEXP _gdalraster_get_usable_physical_ram() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(get_usable_physical_ram());
     return rcpp_result_gen;
 END_RCPP
 }
@@ -121,6 +131,16 @@ BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     rcpp_result_gen = Rcpp::wrap(has_spatialite());
+    return rcpp_result_gen;
+END_RCPP
+}
+// http_enabled
+bool http_enabled();
+RcppExport SEXP _gdalraster_http_enabled() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(http_enabled());
     return rcpp_result_gen;
 END_RCPP
 }
@@ -671,7 +691,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_get_disk_free_space
-double vsi_get_disk_free_space(Rcpp::CharacterVector path);
+Rcpp::NumericVector vsi_get_disk_free_space(Rcpp::CharacterVector path);
 RcppExport SEXP _gdalraster_vsi_get_disk_free_space(SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -701,6 +721,18 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path_prefix(path_prefixSEXP);
     vsi_clear_path_options(path_prefix);
     return R_NilValue;
+END_RCPP
+}
+// vsi_get_file_metadata
+SEXP vsi_get_file_metadata(Rcpp::CharacterVector filename, std::string domain);
+RcppExport SEXP _gdalraster_vsi_get_file_metadata(SEXP filenameSEXP, SEXP domainSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type domain(domainSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_get_file_metadata(filename, domain));
+    return rcpp_result_gen;
 END_RCPP
 }
 // _getGEOSVersion
@@ -1415,8 +1447,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_push_error_handler", (DL_FUNC) &_gdalraster_push_error_handler, 1},
     {"_gdalraster_pop_error_handler", (DL_FUNC) &_gdalraster_pop_error_handler, 0},
     {"_gdalraster__check_gdal_filename", (DL_FUNC) &_gdalraster__check_gdal_filename, 1},
-    {"_gdalraster__get_physical_RAM", (DL_FUNC) &_gdalraster__get_physical_RAM, 0},
+    {"_gdalraster_get_num_cpus", (DL_FUNC) &_gdalraster_get_num_cpus, 0},
+    {"_gdalraster_get_usable_physical_ram", (DL_FUNC) &_gdalraster_get_usable_physical_ram, 0},
     {"_gdalraster_has_spatialite", (DL_FUNC) &_gdalraster_has_spatialite, 0},
+    {"_gdalraster_http_enabled", (DL_FUNC) &_gdalraster_http_enabled, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 6},
     {"_gdalraster__apply_geotransform", (DL_FUNC) &_gdalraster__apply_geotransform, 3},
@@ -1460,6 +1494,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_get_disk_free_space", (DL_FUNC) &_gdalraster_vsi_get_disk_free_space, 1},
     {"_gdalraster_vsi_set_path_option", (DL_FUNC) &_gdalraster_vsi_set_path_option, 3},
     {"_gdalraster_vsi_clear_path_options", (DL_FUNC) &_gdalraster_vsi_clear_path_options, 1},
+    {"_gdalraster_vsi_get_file_metadata", (DL_FUNC) &_gdalraster_vsi_get_file_metadata, 2},
     {"_gdalraster__getGEOSVersion", (DL_FUNC) &_gdalraster__getGEOSVersion, 0},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},

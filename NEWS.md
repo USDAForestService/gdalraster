@@ -1,4 +1,32 @@
-# gdalraster 1.10.9200 (dev)
+# gdalraster 1.10.9270 (dev)
+
+* add `vsi_get_file_metadata()`: returns metadata for network filesystem objects (/vsicurl/, /vsis3/, /vsiaz/, etc.), and with GDAL >= 3.7, /vsizip/ SOZip metadata (2024-05-28)
+
+* add section for HTTP/HTTPS (/vsicurl/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html) (2024-05-28)
+
+* add `http_enabled()`: returns `TRUE` if GDAL was built with `libcurl` support (2024-05-27)
+
+* fix `ogr_ds_create()`: `layer` name was not passed to the internal create function when `layer_defn` was used (2024-05-27)
+
+* fixes in `ogr_geom_field_create()`: the check for field name already exists was wrong; the `srs` param was not passed to the internal create function (2024-05-27)
+
+* Behavior change: `GDALRaster::info()` and `GDALRaster::infoAsJSON()` now use the default command-line arguments for the underlying `gdalinfo` utility. The arguments are configurable in the `infoOptions` field, which is an empty vector by default (`character(0)`) (2024-05-27)
+
+* class `GDALRaster`: add read/write fields `infoOptions` and `quiet` for applying per-object settings (2024-05-26)
+
+* add some missing null checks, and object destruction on error conditions, in src/geos_wkt.cpp (2024-05-26)
+
+* fix memory leaks detected by Valgrind in `GDALRaster` class methods `info()`, `infoAsJSON()` and `getDefaultRAT()` (2024-05-25)
+
+* add `get_num_cpus()` and `get_usable_physical_ram()` (2024-05-24)
+
+* `vsi_stat()` with `info = "size"`, and `vsi_get_disk_free_space()` now return `bit64::integer64` type (2024-05-22)
+
+* `vsi_*()`: several VSI functions returned `0` or `-1` invisibly to indicate success/failure consistent with GDAL return values. Those return values are now visible to be consistent with return values from `VSIFile` class methods (2024-05-22)
+
+* `calc()`: close input raster dataset before exit when differing extent detected (2024-05-22)
+
+* `GDALRaster::getDefaultRAT()`: add progress bar since retrieving large raster attribute tables could take >30 sec (2024-05-21)
 
 * package `bit64` added in Imports, and `RcppInt64` added in LinkingTo (2024-05-19)
 

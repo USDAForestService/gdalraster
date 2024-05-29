@@ -9,6 +9,8 @@
 #include "gdal.h"
 #include "cpl_port.h"
 #include "cpl_conv.h"
+#include "cpl_http.h"
+#include "cpl_multiproc.h"
 #include "cpl_string.h"
 #include "cpl_vsi.h"
 #include "gdal_alg.h"
@@ -317,13 +319,43 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
 }
 
 
-//' Get usable physical RAM in MB
+//' Get the number of processors detected by GDAL
 //'
-//' @noRd
-// [[Rcpp::export(name = ".get_physical_RAM")]]
-int _get_physical_RAM() {
-    GIntBig nPhysicalRAM = CPLGetUsablePhysicalRAM();
-    return static_cast<int>(nPhysicalRAM / (1000 * 1000));
+//' `get_num_cpus()` returns the number of processors detected by GDAL.
+//' Wrapper of `CPLGetNumCPUs()` in the GDAL Common Portability Library.
+//'
+//' @return Integer scalar, number of CPUs.
+//'
+//' @examples
+//' get_num_cpus()
+// [[Rcpp::export(name = "get_num_cpus")]]
+int get_num_cpus() {
+    return CPLGetNumCPUs();
+}
+
+
+//' Get usable physical RAM
+//'
+//' `get_usable_physical_ram()` returns the total physical RAM, usable by a
+//' process, in bytes. It will limit to 2 GB for 32 bit processes. Starting
+//' with GDAL 2.4.0, it will also take into account resource limits (virtual
+//' memory) on Posix systems. Starting with GDAL 3.6.1, it will also take into
+//' account RLIMIT_RSS on Linux. Wrapper of `CPLGetUsablePhysicalRAM()` in the
+//' GDAL Common Portability Library.
+//'
+//' @return Numeric scalar, number of bytes as `bit64::integer64` type (or 0 in
+//' case of failure).
+//'
+//' @note
+//' This memory may already be partly used by other processes.
+//'
+//' @examples
+//' get_usable_physical_ram()
+// [[Rcpp::export(name = "get_usable_physical_ram")]]
+Rcpp::NumericVector get_usable_physical_ram() {
+    std::vector<int64_t> ret(1);
+    ret[0] = CPLGetUsablePhysicalRAM();
+    return Rcpp::wrap(ret);
 }
 
 
@@ -377,6 +409,21 @@ bool has_spatialite() {
         return false;
     else
         return true;
+}
+
+
+//' Return if GDAL CPLHTTP services can be useful (libcurl)
+//'
+//' `http_enabled()` returns `TRUE` if `libcurl` support is enabled.
+//' Wrapper of `CPLHTTPEnabled()` in the GDAL Common Portability Library.
+//'
+//' @return Logical scalar, `TRUE` if GDAL was built with `libcurl` support.
+//'
+//' @examples
+//' http_enabled()
+// [[Rcpp::export]]
+bool http_enabled() {
+    return static_cast<bool>(CPLHTTPEnabled());
 }
 
 

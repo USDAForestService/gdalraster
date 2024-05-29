@@ -187,11 +187,38 @@ pop_error_handler <- function() {
     .Call(`_gdalraster__check_gdal_filename`, filename)
 }
 
-#' Get usable physical RAM in MB
+#' Get the number of processors detected by GDAL
 #'
-#' @noRd
-.get_physical_RAM <- function() {
-    .Call(`_gdalraster__get_physical_RAM`)
+#' `get_num_cpus()` returns the number of processors detected by GDAL.
+#' Wrapper of `CPLGetNumCPUs()` in the GDAL Common Portability Library.
+#'
+#' @return Integer scalar, number of CPUs.
+#'
+#' @examples
+#' get_num_cpus()
+get_num_cpus <- function() {
+    .Call(`_gdalraster_get_num_cpus`)
+}
+
+#' Get usable physical RAM
+#'
+#' `get_usable_physical_ram()` returns the total physical RAM, usable by a
+#' process, in bytes. It will limit to 2 GB for 32 bit processes. Starting
+#' with GDAL 2.4.0, it will also take into account resource limits (virtual
+#' memory) on Posix systems. Starting with GDAL 3.6.1, it will also take into
+#' account RLIMIT_RSS on Linux. Wrapper of `CPLGetUsablePhysicalRAM()` in the
+#' GDAL Common Portability Library.
+#'
+#' @return Numeric scalar, number of bytes as `bit64::integer64` type (or 0 in
+#' case of failure).
+#'
+#' @note
+#' This memory may already be partly used by other processes.
+#'
+#' @examples
+#' get_usable_physical_ram()
+get_usable_physical_ram <- function() {
+    .Call(`_gdalraster_get_usable_physical_ram`)
 }
 
 #' Is SpatiaLite available?
@@ -232,6 +259,19 @@ pop_error_handler <- function() {
 #' has_spatialite()
 has_spatialite <- function() {
     .Call(`_gdalraster_has_spatialite`)
+}
+
+#' Return if GDAL CPLHTTP services can be useful (libcurl)
+#'
+#' `http_enabled()` returns `TRUE` if `libcurl` support is enabled.
+#' Wrapper of `CPLHTTPEnabled()` in the GDAL Common Portability Library.
+#'
+#' @return Logical scalar, `TRUE` if GDAL was built with `libcurl` support.
+#'
+#' @examples
+#' http_enabled()
+http_enabled <- function() {
+    .Call(`_gdalraster_http_enabled`)
 }
 
 #' Create a new uninitialized raster
@@ -1350,7 +1390,7 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #' @param show_progress Logical scalar. If `TRUE`, a progress bar will be
 #' displayed (the size of `src_file` will be retrieved in GDAL with
 #' `VSIStatL()`). Default is `FALSE`.
-#' @returns Invisibly, `0` on success or `-1` on an error.
+#' @returns `0` on success or `-1` on an error.
 #'
 #' @note
 #' If `target_file` has the form /vsizip/foo.zip/bar, the default options
@@ -1373,7 +1413,7 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #'   vsi_unlink(tmp_file)
 #' }
 vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
-    invisible(.Call(`_gdalraster_vsi_copy_file`, src_file, target_file, show_progress))
+    .Call(`_gdalraster_vsi_copy_file`, src_file, target_file, show_progress)
 }
 
 #' Clean cache associated with /vsicurl/ and related file systems
@@ -1505,7 +1545,7 @@ vsi_read_dir <- function(path, max_files = 0L) {
 #' @param show_progress Logical scalar. If `TRUE`, a progress bar will be
 #' displayed. Defaults to `FALSE`.
 #' @param options Character vector of `NAME=VALUE` pairs (see Details).
-#' @returns Invisibly, `TRUE` on success or `FALSE` on an error.
+#' @returns Logical scalar, `TRUE` on success or `FALSE` on an error.
 #'
 #' @seealso
 #' [copyDatasetFiles()], [vsi_copy_file()]
@@ -1556,7 +1596,7 @@ vsi_read_dir <- function(path, max_files = 0L) {
 #' #> [9] "lf_fbfm40_220_mt_hood_utm.tif"
 #' }
 vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
-    invisible(.Call(`_gdalraster_vsi_sync`, src, target, show_progress, options))
+    .Call(`_gdalraster_vsi_sync`, src, target, show_progress, options)
 }
 
 #' Create a directory
@@ -1575,7 +1615,7 @@ vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
 #' `0`, e.g., `"0755"` (the default).
 #' @param recursive Logical scalar. `TRUE` to create the directory and its
 #' ancestors. Defaults to `FALSE`.
-#' @returns Invisibly, `0` on success or `-1` on an error.
+#' @returns `0` on success or `-1` on an error.
 #'
 #' @seealso
 #' [vsi_read_dir()], [vsi_rmdir()]
@@ -1587,7 +1627,7 @@ vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
 #' result <- vsi_rmdir(new_dir)
 #' print(result)
 vsi_mkdir <- function(path, mode = "0755", recursive = FALSE) {
-    invisible(.Call(`_gdalraster_vsi_mkdir`, path, mode, recursive))
+    .Call(`_gdalraster_vsi_mkdir`, path, mode, recursive)
 }
 
 #' Delete a directory
@@ -1604,7 +1644,7 @@ vsi_mkdir <- function(path, mode = "0755", recursive = FALSE) {
 #' @param path Character string. The path to the directory to be deleted.
 #' @param recursive Logical scalar. `TRUE` to delete the directory and its
 #' content. Defaults to `FALSE`.
-#' @returns Invisibly, `0` on success or `-1` on an error.
+#' @returns `0` on success or `-1` on an error.
 #'
 #' @note
 #' /vsis3/ has an efficient implementation for deleting recursively. Starting
@@ -1621,7 +1661,7 @@ vsi_mkdir <- function(path, mode = "0755", recursive = FALSE) {
 #' result <- vsi_rmdir(new_dir)
 #' print(result)
 vsi_rmdir <- function(path, recursive = FALSE) {
-    invisible(.Call(`_gdalraster_vsi_rmdir`, path, recursive))
+    .Call(`_gdalraster_vsi_rmdir`, path, recursive)
 }
 
 #' Delete a file
@@ -1633,7 +1673,7 @@ vsi_rmdir <- function(path, recursive = FALSE) {
 #' Analog of the POSIX `unlink()` function.
 #'
 #' @param filename Character string. The path of the file to be deleted.
-#' @returns Invisibly, `0` on success or `-1` on an error.
+#' @returns `0` on success or `-1` on an error.
 #'
 #' @seealso
 #' [deleteDataset()], [vsi_rmdir()], [vsi_unlink_batch()]
@@ -1647,7 +1687,7 @@ vsi_rmdir <- function(path, recursive = FALSE) {
 #' result <- vsi_unlink(tmp_file)
 #' print(result)
 vsi_unlink <- function(filename) {
-    invisible(.Call(`_gdalraster_vsi_unlink`, filename))
+    .Call(`_gdalraster_vsi_unlink`, filename)
 }
 
 #' Delete several files in a batch
@@ -1660,8 +1700,8 @@ vsi_unlink <- function(filename) {
 #' Portability Library.
 #'
 #' @param filenames Character vector. The list of files to delete.
-#' @returns Invisibly, a logical vector of `length(filenames)` with values
-#' depending on the success of deletion of the corresponding file.
+#' @returns Logical vector of `length(filenames)` with values depending
+#' on the success of deletion of the corresponding file.
 #' `NULL` might be returned in case of a more general error (for example,
 #' files belonging to different file system handlers).
 #'
@@ -1681,7 +1721,7 @@ vsi_unlink <- function(filename) {
 #' result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
 #' print(result)
 vsi_unlink_batch <- function(filenames) {
-    invisible(.Call(`_gdalraster_vsi_unlink_batch`, filenames))
+    .Call(`_gdalraster_vsi_unlink_batch`, filenames)
 }
 
 #' Get filesystem object info
@@ -1701,7 +1741,8 @@ vsi_unlink_batch <- function(filenames) {
 #' object exists, otherwise `FALSE`. If `info = "type"`, returns a character
 #' string with one of `"file"` (regular file), `"dir"` (directory),
 #' `"symlink"` (symbolic link), or empty string (`""`). If `info = "size"`,
-#' returns the file size in bytes, or `-1` if an error occurs.
+#' returns the file size in bytes (as `bit64::integer64` type), or `-1` if an
+#' error occurs.
 #'
 #' @note
 #' For portability, `vsi_stat()` supports a subset of `stat()`-type
@@ -1758,7 +1799,7 @@ vsi_stat <- function(filename, info = "exists") {
 #'
 #' @param oldpath Character string. The name of the file to be renamed.
 #' @param newpath Character string. The name the file should be given.
-#' @returns Invisibly, `0` on success or `-1` on an error.
+#' @returns `0` on success or `-1` on an error.
 #'
 #' @seealso
 #' [renameDataset()], [vsi_copy_file()]
@@ -1774,7 +1815,7 @@ vsi_stat <- function(filename, info = "exists") {
 #' print(result)
 #' vsi_unlink(new_file)
 vsi_rename <- function(oldpath, newpath) {
-    invisible(.Call(`_gdalraster_vsi_rename`, oldpath, newpath))
+    .Call(`_gdalraster_vsi_rename`, oldpath, newpath)
 }
 
 #' Return the list of virtual file system handlers currently registered
@@ -1869,7 +1910,8 @@ vsi_supports_rnd_write <- function(filename, allow_local_tmpfile) {
 #' Portability Library.
 #'
 #' @param path Character string. A directory of the filesystem to query.
-#' @returns Numeric scalar. The free space in bytes, or `-1` in case of error.
+#' @returns Numeric scalar. The free space in bytes (as `bit64::integer64`
+#' type), or `-1` in case of error.
 #'
 #' @examples
 #' tmp_dir <- file.path(tempdir(), "tmpdir")
@@ -1938,6 +1980,56 @@ vsi_set_path_option <- function(path_prefix, key, value) {
 #' [vsi_set_path_option()]
 vsi_clear_path_options <- function(path_prefix) {
     invisible(.Call(`_gdalraster_vsi_clear_path_options`, path_prefix))
+}
+
+#' Get metadata on files
+#'
+#' `vsi_get_file_metadata()` returns metadata for file system objects.
+#' Implemented for network-like filesystems. Starting with GDAL 3.7,
+#' implemeted for /vsizip/ with SOZip metadata.
+#' Wrapper of `VSIGetFileMetadata()` in the GDAL Common Portability Library.
+#'
+#' @details
+#' The metadata available depends on the file system. The following are
+#' supported as of GDAL 3.9:
+#'   * HEADERS: to get HTTP headers for network-like filesystems (/vsicurl/,
+#'     /vsis3/, /vsgis/, etc).
+#'   * TAGS: for /vsis3/, to get S3 Object tagging information. For /vsiaz/,
+#'     to get blob tags.
+#'   * STATUS: specific to /vsiadls/: returns all system-defined properties
+#'     for a path (seems in practice to be a subset of HEADERS).
+#'   * ACL: specific to /vsiadls/ and /vsigs/: returns the access control list
+#'     for a path. For /vsigs/, a single `XML=xml_content` string is returned.
+#'   * METADATA: specific to /vsiaz/: blob metadata (this will be a subset of
+#'     what `domain=HEADERS` returns).
+#'   * ZIP: specific to /vsizip/: to obtain ZIP specific metadata, in
+#'     particular if a file is SOZIP-enabled (`SOZIP_VALID=YES`).
+#'
+#' @param filename Character string. The path of the file system object to be
+#' queried.
+#' @param domain Character string. Metadata domain to query. Depends on the
+#' file system, see Details.
+#' @returns A named list of values, or `NULL` in case of error or empty list.
+#'
+#' @seealso
+#' [vsi_stat()], [addFilesInZip()]
+#'
+#' @examples
+#' # create an SOZip-enabled file and validate
+#' # Requires GDAL >= 3.7
+#' f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#'
+#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#'   zip_file <- tempfile(fileext=".zip")
+#'   addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
+#'   zip_vsi <- file.path("/vsizip", zip_file)
+#'   vsi_read_dir(zip_vsi)
+#'   vsi_get_file_metadata(zip_vsi, domain="ZIP")
+#'
+#'   vsi_unlink(zip_file)
+#' }
+vsi_get_file_metadata <- function(filename, domain) {
+    .Call(`_gdalraster_vsi_get_file_metadata`, filename, domain)
 }
 
 #' @noRd
