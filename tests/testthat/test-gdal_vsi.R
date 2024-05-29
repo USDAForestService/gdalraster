@@ -134,7 +134,7 @@ test_that("vsi path specific options can be set/unset", {
 
 test_that("vsi_get_file_metadata works", {
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
-    expect_no_error(vsi_get_file_metadata(zip_vsi, domain=""))
+    expect_no_error(vsi_get_file_metadata(f, domain=""))
 
     skip_if(as.integer(gdal_version()[2]) < 3070000)
 
