@@ -936,7 +936,7 @@ void vsi_clear_path_options(Rcpp::CharacterVector path_prefix) {
 //' if (as.integer(gdal_version()[2]) >= 3070000) {
 //'   zip_file <- tempfile(fileext=".zip")
 //'   addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
-//'   zip_vsi <- file.path("/vsizip", zip_file
+//'   zip_vsi <- file.path("/vsizip", zip_file)
 //'   print("Files in zip archive:")
 //'   print(vsi_read_dir(zip_vsi))
 //'   print("SOZip metadata:")
