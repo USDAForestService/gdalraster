@@ -723,6 +723,18 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
+// vsi_get_file_metadata
+SEXP vsi_get_file_metadata(Rcpp::CharacterVector filename, std::string domain);
+RcppExport SEXP _gdalraster_vsi_get_file_metadata(SEXP filenameSEXP, SEXP domainSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< std::string >::type domain(domainSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_get_file_metadata(filename, domain));
+    return rcpp_result_gen;
+END_RCPP
+}
 // _getGEOSVersion
 std::vector<int> _getGEOSVersion();
 RcppExport SEXP _gdalraster__getGEOSVersion() {
@@ -1481,6 +1493,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_get_disk_free_space", (DL_FUNC) &_gdalraster_vsi_get_disk_free_space, 1},
     {"_gdalraster_vsi_set_path_option", (DL_FUNC) &_gdalraster_vsi_set_path_option, 3},
     {"_gdalraster_vsi_clear_path_options", (DL_FUNC) &_gdalraster_vsi_clear_path_options, 1},
+    {"_gdalraster_vsi_get_file_metadata", (DL_FUNC) &_gdalraster_vsi_get_file_metadata, 2},
     {"_gdalraster__getGEOSVersion", (DL_FUNC) &_gdalraster__getGEOSVersion, 0},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},

@@ -1982,6 +1982,56 @@ vsi_clear_path_options <- function(path_prefix) {
     invisible(.Call(`_gdalraster_vsi_clear_path_options`, path_prefix))
 }
 
+#' Get metadata on files
+#'
+#' `vsi_get_file_metadata()` returns metadata for file system objects.
+#' Implemented for network-like filesystems. Starting with GDAL 3.7,
+#' implemeted for /vsizip/ with SOZip metadata.
+#' Wrapper of `VSIGetFileMetadata()` in the GDAL Common Portability Library.
+#'
+#' @details
+#' The metadata available depends on the file system. The following are
+#' supported as of GDAL 3.9:
+#'   * HEADERS: to get HTTP headers for network-like filesystems (/vsicurl/,
+#'     /vsis3/, /vsgis/, etc).
+#'   * TAGS: for /vsis3/, to get S3 Object tagging information. For /vsiaz/,
+#'     to get blob tags.
+#'   * STATUS: specific to /vsiadls/: returns all system-defined properties
+#'     for a path (seems in practice to be a subset of HEADERS).
+#'   * ACL: specific to /vsiadls/ and /vsigs/: returns the access control list
+#'     for a path. For /vsigs/, a single `XML=xml_content` string is returned.
+#'   * METADATA: specific to /vsiaz/: blob metadata (this will be a subset of
+#'     what `domain=HEADERS` returns).
+#'   * ZIP: specific to /vsizip/: to obtain ZIP specific metadata, in
+#'     particular if a file is SOZIP-enabled (`SOZIP_VALID=YES`).
+#'
+#' @param filename Character string. The path of the file system object to be
+#' queried.
+#' @param domain Character string. Metadata domain to query. Depends on the
+#' file system, see Details.
+#' @returns A named list of values, or `NULL` in case of error or empty list.
+#'
+#' @seealso
+#' [vsi_stat()], [addFilesInZip()]
+#'
+#' @examples
+#' # create an SOZip-enabled file and validate
+#' # Requires GDAL >= 3.7
+#' f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#'
+#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#'   zip_file <- tempfile(fileext=".zip")
+#'   addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
+#'   zip_vsi <- file.path("/vsizip", zip_file)
+#'   vsi_read_dir(zip_vsi)
+#'   vsi_get_file_metadata(zip_vsi, domain="ZIP")
+#'
+#'   vsi_unlink(zip_file)
+#' }
+vsi_get_file_metadata <- function(filename, domain) {
+    .Call(`_gdalraster_vsi_get_file_metadata`, filename, domain)
+}
+
 #' @noRd
 NULL
 

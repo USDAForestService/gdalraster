@@ -1,4 +1,6 @@
-# gdalraster 1.10.9261 (dev)
+# gdalraster 1.10.9270 (dev)
+
+* add `vsi_get_file_metadata()`: returns metadata for network filesystem objects (/vsicurl/, /vsis3/, /vsiaz/, etc.), and with GDAL >= 3.7, /vsizip/ SOZip metadata (2024-05-28)
 
 * add section for HTTP/HTTPS (/vsicurl/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html) (2024-05-28)
 
