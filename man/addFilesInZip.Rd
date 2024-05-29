@@ -101,12 +101,14 @@ if (as.integer(gdal_version()[2]) >= 3070000) {
   addFilesInZip(zip_file, lcp_file, full_paths=FALSE, sozip_enabled="YES",
                 num_threads=1)
 
-  unzip(zip_file, list=TRUE)
+  print("Files in zip archive:")
+  print(unzip(zip_file, list=TRUE))
 
   # Open with GDAL using Virtual File System handler '/vsizip/'
   # see: https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives
   lcp_in_zip <- file.path("/vsizip", zip_file, "storm_lake.lcp")
-  vsi_get_file_metadata(lcp_in_zip, domain="ZIP")
+  print("SOZip metadata:")
+  print(vsi_get_file_metadata(lcp_in_zip, domain="ZIP"))
 
   ds <- new(GDALRaster, lcp_in_zip)
   ds$info()
