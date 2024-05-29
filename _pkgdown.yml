@@ -9,6 +9,9 @@ home:
   title: R Bindings to the GDAL Raster API
   sidebar:
     structure: [dev, links, community, authors, license, citation]
+  links:
+  - text: Discussions
+    href: https://github.com/USDAForestService/gdalraster/discussions
 
 reference:
 - title: Package overview
