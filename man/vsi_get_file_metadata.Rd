@@ -42,14 +42,18 @@ particular if a file is SOZIP-enabled (\code{SOZIP_VALID=YES}).
 }
 \examples{
 # create an SOZip-enabled file and validate
+# Requires GDAL >= 3.7
 f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
-zip_file <- tempfile(fileext=".zip")
-addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
-zip_vsi <- file.path("/vsizip", zip_file)
-vsi_read_dir(zip_vsi)
-vsi_get_file_metadata(zip_vsi, domain="ZIP")
 
-vsi_unlink(zip_file)
+if (as.integer(gdal_version()[2]) >= 3070000) {
+  zip_file <- tempfile(fileext=".zip")
+  addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
+  zip_vsi <- file.path("/vsizip", zip_file)
+  vsi_read_dir(zip_vsi)
+  vsi_get_file_metadata(zip_vsi, domain="ZIP")
+
+  vsi_unlink(zip_file)
+}
 }
 \seealso{
 \code{\link[=vsi_stat]{vsi_stat()}}, \code{\link[=addFilesInZip]{addFilesInZip()}}
