@@ -131,3 +131,17 @@ test_that("vsi path specific options can be set/unset", {
                                         "connection_string_for_gdalraster"))
     expect_no_error(vsi_clear_path_options(prefix))
 })
+
+test_that("vsi_get_file_metadata works", {
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    expect_no_error(vsi_get_file_metadata(zip_vsi, domain=""))
+
+    skip_if(as.integer(gdal_version()[2]) < 3070000)
+
+    zip_file <- tempfile(fileext=".zip")
+    addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
+    zip_vsi <- file.path("/vsizip", zip_file)
+    expect_no_error(md <- vsi_get_file_metadata(zip_vsi, domain="ZIP"))
+    expect_type(md, "list")
+    expect_equal(md$SOZIP_VALID, "YES")
+})
