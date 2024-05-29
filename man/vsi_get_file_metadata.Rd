@@ -49,8 +49,10 @@ if (as.integer(gdal_version()[2]) >= 3070000) {
   zip_file <- tempfile(fileext=".zip")
   addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
   zip_vsi <- file.path("/vsizip", zip_file)
-  vsi_read_dir(zip_vsi)
-  vsi_get_file_metadata(zip_vsi, domain="ZIP")
+  print("Files in zip archive:")
+  print(vsi_read_dir(zip_vsi))
+  print("SOZip metadata:")
+  print(vsi_get_file_metadata(zip_vsi, domain="ZIP"))
 
   vsi_unlink(zip_file)
 }
