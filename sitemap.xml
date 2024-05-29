@@ -295,6 +295,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_disk_free_space.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_file_metadata.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_options.html</loc>
   </url>
   <url>

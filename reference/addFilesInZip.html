@@ -22,7 +22,7 @@ in the GDAL sozip command-line utility
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9261</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9270</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -179,6 +179,12 @@ input files will be seek-optimized. The default can be changed with the
     <p>The <code>GDAL_NUM_THREADS</code> configuration option can be set to <code>ALL_CPUS</code> or an
 integer value to specify the number of threads to use for SOZip-compressed
 files (see <code><a href="set_config_option.html">set_config_option()</a></code>).</p>
+<p>SOzip can be validated with:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">vsi_get_file_metadata</span>(zip_file, <span class="at">domain=</span><span class="st">"ZIP"</span>)</span></code></pre><p></p></div>
+    </div>
+    <div class="section level2">
+    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
+    <div class="dont-index"><p><code><a href="vsi_get_file_metadata.html">vsi_get_file_metadata()</a></code></p></div>
     </div>
 
     <div class="section level2">
@@ -188,14 +194,16 @@ files (see <code><a href="set_config_option.html">set_config_option()</a></code>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># Requires GDAL &gt;= 3.7</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">3070000</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="co"># Note that the example file is too small to be seek-optimized by default</span></span></span>
-<span class="r-in"><span>  <span class="co"># So this creates a regular zip file</span></span></span>
-<span class="r-in"><span>  <span class="fu">addFilesInZip</span><span class="op">(</span><span class="va">zip_file</span>, <span class="va">lcp_file</span>, full_paths<span class="op">=</span><span class="cn">FALSE</span>, num_threads<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">addFilesInZip</span><span class="op">(</span><span class="va">zip_file</span>, <span class="va">lcp_file</span>, full_paths<span class="op">=</span><span class="cn">FALSE</span>, sozip_enabled<span class="op">=</span><span class="st">"YES"</span>,</span></span>
+<span class="r-in"><span>                num_threads<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="va">zip_file</span>, list<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="co"># Open with GDAL using Virtual File System handler '/vsizip/'</span></span></span>
 <span class="r-in"><span>  <span class="co"># see: https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives</span></span></span>
-<span class="r-in"><span>  <span class="va">lcp_in_zip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/vsizip/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">zip_file</span>, <span class="st">"storm_lake.lcp"</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">lcp_in_zip</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"/vsizip"</span>, <span class="va">zip_file</span>, <span class="st">"storm_lake.lcp"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="vsi_get_file_metadata.html">vsi_get_file_metadata</a></span><span class="op">(</span><span class="va">lcp_in_zip</span>, domain<span class="op">=</span><span class="st">"ZIP"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">lcp_in_zip</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">ds</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>

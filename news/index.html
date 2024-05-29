@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9261</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9270</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.10.9261" id="gdalraster-1109261-dev">gdalraster 1.10.9261 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109261-dev"></a></h2>
-<ul><li><p>add section for HTTP/HTTPS (/vsicurl/) in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a> (2024-05-28)</p></li>
+<h2 class="pkg-version" data-toc-text="1.10.9270" id="gdalraster-1109270-dev">gdalraster 1.10.9270 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109270-dev"></a></h2>
+<ul><li><p>add <code><a href="../reference/vsi_get_file_metadata.html">vsi_get_file_metadata()</a></code>: returns metadata for network filesystem objects (/vsicurl/, /vsis3/, /vsiaz/, etc.), and with GDAL &gt;= 3.7, /vsizip/ SOZip metadata (2024-05-28)</p></li>
+<li><p>add section for HTTP/HTTPS (/vsicurl/) in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a> (2024-05-28)</p></li>
 <li><p>add <code><a href="../reference/http_enabled.html">http_enabled()</a></code>: returns <code>TRUE</code> if GDAL was built with <code>libcurl</code> support (2024-05-27)</p></li>
 <li><p>fix <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code>: <code>layer</code> name was not passed to the internal create function when <code>layer_defn</code> was used (2024-05-27)</p></li>
 <li><p>fixes in <code><a href="../reference/ogr_manage.html">ogr_geom_field_create()</a></code>: the check for field name already exists was wrong; the <code>srs</code> param was not passed to the internal create function (2024-05-27)</p></li>
