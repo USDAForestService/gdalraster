@@ -151,13 +151,22 @@
 <div class="section level4">
 <h4 id="macos">macOS<a class="anchor" aria-label="anchor" href="#macos"></a>
 </h4>
-<p>Caution seems warranted with regard to mixing source installation and installation of binaries from CRAN or r-universe. GDAL and PROJ can be installed with Homebrew:</p>
+<p>GDAL and PROJ can be installed with Homebrew:</p>
 <div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>brew install pkg<span class="sc">-</span>config gdal proj</span></code></pre></div>
 <p>Then <code>configure.args</code> may be needed:</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span>, configure.args <span class="op">=</span> <span class="st">"--with-proj-lib=$(brew --prefix)/lib/"</span><span class="op">)</span></span></code></pre></div>
+<p>Caution seems warranted on macOS with regard to mixing a source installation with installation of binaries from CRAN.</p>
 </div>
+</div>
+<div class="section level3">
+<h3 id="from-r-universe">From R-universe<a class="anchor" aria-label="anchor" href="#from-r-universe"></a>
+</h3>
+<p><a href="https://usdaforestservice.r-universe.dev/gdalraster" class="external-link">R-universe</a> provides pre-compiled binary packages for Windows and macOS that track the development version of <strong>gdalraster</strong>. New packages are built usually within ~1 hour of the most recent commit.</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Install the development version from r-universe</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://usdaforestservice.r-universe.dev"</span>, <span class="st">"https://cran.r-project.org"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
