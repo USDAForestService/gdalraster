@@ -41,15 +41,14 @@
 //' [copyDatasetFiles()], [vsi_stat()], [vsi_sync()]
 //'
 //' @examples
-//' # for illustration only
-//' # this would normally be used with GDAL virtual file systems
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-//' tmp_file <- tempfile(fileext = ".tif")
+//' tmp_file <- "/vsimem/elev_temp.tif"
 //'
 //' # Requires GDAL >= 3.7
 //' if (as.integer(gdal_version()[2]) >= 3070000) {
 //'   result <- vsi_copy_file(elev_file, tmp_file)
 //'   print(result)
+//'   print(vsi_stat(tmp_file, "size"))
 //'
 //'   vsi_unlink(tmp_file)
 //' }
@@ -148,8 +147,7 @@ void vsi_curl_clear_cache(bool partial = false,
 //' [vsi_mkdir()], [vsi_rmdir()], [vsi_stat()], [vsi_sync()]
 //'
 //' @examples
-//' # for illustration only
-//' # this would normally be used with GDAL virtual file systems
+//' # regular file system for illustration
 //' data_dir <- system.file("extdata", package="gdalraster")
 //' vsi_read_dir(data_dir)
 // [[Rcpp::export()]]
@@ -350,10 +348,9 @@ bool vsi_sync(Rcpp::CharacterVector src,
 //'
 //' @examples
 //' new_dir <- file.path(tempdir(), "newdir")
-//' result <- vsi_mkdir(new_dir)
-//' print(result)
-//' result <- vsi_rmdir(new_dir)
-//' print(result)
+//' vsi_mkdir(new_dir)
+//' vsi_stat(new_dir, "type")
+//' vsi_rmdir(new_dir)
 // [[Rcpp::export()]]
 int vsi_mkdir(Rcpp::CharacterVector path, std::string mode = "0755",
               bool recursive = false) {
@@ -396,10 +393,8 @@ int vsi_mkdir(Rcpp::CharacterVector path, std::string mode = "0755",
 //'
 //' @examples
 //' new_dir <- file.path(tempdir(), "newdir")
-//' result <- vsi_mkdir(new_dir)
-//' print(result)
-//' result <- vsi_rmdir(new_dir)
-//' print(result)
+//' vsi_mkdir(new_dir)
+//' vsi_rmdir(new_dir)
 // [[Rcpp::export()]]
 int vsi_rmdir(Rcpp::CharacterVector path, bool recursive = false) {
     std::string path_in;
@@ -427,13 +422,13 @@ int vsi_rmdir(Rcpp::CharacterVector path, bool recursive = false) {
 //' [deleteDataset()], [vsi_rmdir()], [vsi_unlink_batch()]
 //'
 //' @examples
-//' # for illustration only
-//' # this would normally be used with GDAL virtual file systems
+//' # regular file system for illustration
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' tmp_file <- paste0(tempdir(), "/", "tmp.tif")
 //' file.copy(elev_file,  tmp_file)
-//' result <- vsi_unlink(tmp_file)
-//' print(result)
+//' vsi_stat(tmp_file)
+//' vsi_unlink(tmp_file)
+//' vsi_stat(tmp_file)
 // [[Rcpp::export()]]
 int vsi_unlink(Rcpp::CharacterVector filename) {
     std::string filename_in;
@@ -462,8 +457,7 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 //' [deleteDataset()], [vsi_rmdir()], [vsi_unlink()]
 //'
 //' @examples
-//' # for illustration only
-//' # this would normally be used with GDAL virtual file systems
+//' # regular file system for illustration
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 //'
@@ -471,8 +465,7 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 //' file.copy(elev_file,  tmp_elev)
 //' tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
 //' file.copy(tcc_file,  tmp_tcc)
-//' result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
-//' print(result)
+//' vsi_unlink_batch(c(tmp_elev, tmp_tcc))
 // [[Rcpp::export()]]
 SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames) {
     std::vector<std::string> filenames_in(filenames.size());
@@ -624,14 +617,13 @@ SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info = "exists") {
 //' [renameDataset()], [vsi_copy_file()]
 //'
 //' @examples
-//' # for illustration only
-//' # this would normally be used with GDAL virtual file systems
+//' # regular file system for illustration
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' tmp_file <- tempfile(fileext = ".tif")
 //' file.copy(elev_file, tmp_file)
 //' new_file <- file.path(dirname(tmp_file), "storml_elev_copy.tif")
-//' result <- vsi_rename(tmp_file, new_file)
-//' print(result)
+//' vsi_rename(tmp_file, new_file)
+//' vsi_stat(new_file)
 //' vsi_unlink(new_file)
 // [[Rcpp::export()]]
 int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath) {
@@ -793,7 +785,7 @@ bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
 //' type), or `-1` in case of error.
 //'
 //' @examples
-//' tmp_dir <- file.path(tempdir(), "tmpdir")
+//' tmp_dir <- file.path("/vsimem", "tmpdir")
 //' vsi_mkdir(tmp_dir)
 //' vsi_get_disk_free_space(tmp_dir)
 //' vsi_rmdir(tmp_dir)
@@ -900,7 +892,7 @@ void vsi_clear_path_options(Rcpp::CharacterVector path_prefix) {
 //'
 //' `vsi_get_file_metadata()` returns metadata for file system objects.
 //' Implemented for network-like filesystems. Starting with GDAL 3.7,
-//' implemeted for /vsizip/ with SOZip metadata.
+//' implemented for /vsizip/ with SOZip metadata.
 //' Wrapper of `VSIGetFileMetadata()` in the GDAL Common Portability Library.
 //'
 //' @details

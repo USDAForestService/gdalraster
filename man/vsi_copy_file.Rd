@@ -41,15 +41,14 @@ If \code{target_file} has the form /vsizip/foo.zip/bar, the default options
 described for the function \code{addFilesInZip()} will be in effect.
 }
 \examples{
-# for illustration only
-# this would normally be used with GDAL virtual file systems
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-tmp_file <- tempfile(fileext = ".tif")
+tmp_file <- "/vsimem/elev_temp.tif"
 
 # Requires GDAL >= 3.7
 if (as.integer(gdal_version()[2]) >= 3070000) {
   result <- vsi_copy_file(elev_file, tmp_file)
   print(result)
+  print(vsi_stat(tmp_file, "size"))
 
   vsi_unlink(tmp_file)
 }

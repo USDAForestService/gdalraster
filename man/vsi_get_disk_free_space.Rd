@@ -19,7 +19,7 @@ filesystem. Wrapper for \code{VSIGetDiskFreeSpace()} in the GDAL Common
 Portability Library.
 }
 \examples{
-tmp_dir <- file.path(tempdir(), "tmpdir")
+tmp_dir <- file.path("/vsimem", "tmpdir")
 vsi_mkdir(tmp_dir)
 vsi_get_disk_free_space(tmp_dir)
 vsi_rmdir(tmp_dir)

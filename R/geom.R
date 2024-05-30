@@ -248,15 +248,19 @@ g_buffer <- function(wkt, dist, quad_segs = 30L) {
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' ds <- new(GDALRaster, elev_file)
+#'
 #' # the convenience function bbox_transform() does this:
 #' bbox_to_wkt(ds$bbox()) |>
 #'   g_transform(ds$getProjection(), epsg_to_wkt(4326)) |>
 #'   bbox_from_wkt()
+#'
 #' ds$close()
 #'
+#' # correct geometries that incorrectly go from a longitude on a side of the
+#' # antimeridian to the other side
 #' geom <- "LINESTRING (-179 0,179 0)"
 #' srs <- epsg_to_wkt(4326)
-#' g_transform(geom, srs, srs, TRUE)
+#' g_transform(geom, srs, srs, wrap_date_line = TRUE)
 #' @export
 g_transform <- function(wkt, srs_from, srs_to, wrap_date_line = FALSE,
                         date_line_offset = 10L) {

@@ -334,7 +334,7 @@ int get_num_cpus() {
 }
 
 
-//' Get usable physical RAM
+//' Get usable physical RAM reported by GDAL
 //'
 //' `get_usable_physical_ram()` returns the total physical RAM, usable by a
 //' process, in bytes. It will limit to 2 GB for 32 bit processes. Starting
@@ -412,7 +412,7 @@ bool has_spatialite() {
 }
 
 
-//' Return if GDAL CPLHTTP services can be useful (libcurl)
+//' Check if GDAL CPLHTTP services can be useful (libcurl)
 //'
 //' `http_enabled()` returns `TRUE` if `libcurl` support is enabled.
 //' Wrapper of `CPLHTTPEnabled()` in the GDAL Common Portability Library.

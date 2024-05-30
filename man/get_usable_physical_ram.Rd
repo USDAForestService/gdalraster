@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{get_usable_physical_ram}
 \alias{get_usable_physical_ram}
-\title{Get usable physical RAM}
+\title{Get usable physical RAM reported by GDAL}
 \usage{
 get_usable_physical_ram()
 }

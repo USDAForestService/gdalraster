@@ -19,7 +19,7 @@ A named list of values, or \code{NULL} in case of error or empty list.
 \description{
 \code{vsi_get_file_metadata()} returns metadata for file system objects.
 Implemented for network-like filesystems. Starting with GDAL 3.7,
-implemeted for /vsizip/ with SOZip metadata.
+implemented for /vsizip/ with SOZip metadata.
 Wrapper of \code{VSIGetFileMetadata()} in the GDAL Common Portability Library.
 }
 \details{
