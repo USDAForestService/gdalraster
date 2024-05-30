@@ -427,6 +427,13 @@ bool http_enabled() {
 }
 
 
+//' @noRd
+// [[Rcpp::export(name = ".cpl_http_cleanup")]]
+void _cpl_http_cleanup() {
+    CPLHTTPCleanup();
+}
+
+
 //' Create a new uninitialized raster
 //'
 //' `create()` makes an empty raster in the specified format.

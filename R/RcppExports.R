@@ -274,6 +274,11 @@ http_enabled <- function() {
     .Call(`_gdalraster_http_enabled`)
 }
 
+#' @noRd
+.cpl_http_cleanup <- function() {
+    invisible(.Call(`_gdalraster__cpl_http_cleanup`))
+}
+
 #' Create a new uninitialized raster
 #'
 #' `create()` makes an empty raster in the specified format.

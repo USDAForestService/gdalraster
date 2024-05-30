@@ -45,10 +45,8 @@
     if (dir.exists(system.file("gdal", package="gdalraster"))) {
         Sys.setenv("GDAL_DATA"=get(".orig_gdal_data", envir=.gdalraster_env))
     }
-    # Clean the cache associated with /vsicurl/ and related file systems.
-    # Potentially avoids q() sometimes failing with error "ignoring SIGPIPE
-    # signal" after GDAL has had a /vsicurl/ file system in use.
+    # clean-up for /vsicurl/ and related file systems
     push_error_handler("quiet")
-    vsi_curl_clear_cache()
+    .cpl_http_cleanup()
     pop_error_handler()
 }
