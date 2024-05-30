@@ -1,4 +1,6 @@
-# gdalraster 1.10.9270 (dev)
+# gdalraster 1.10.9280 (dev)
+
+* add `_cpl_http_cleanup()` for internal use (2024-05-29)
 
 * use [Discussions](https://github.com/USDAForestService/gdalraster/discussions) on the GitHub repository (2024-05-29)
 
