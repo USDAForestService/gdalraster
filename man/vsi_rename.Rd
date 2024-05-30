@@ -25,14 +25,13 @@ It is a wrapper for \code{VSIRename()} in the GDAL Common Portability Library.
 Analog of the POSIX \code{rename()} function.
 }
 \examples{
-# for illustration only
-# this would normally be used with GDAL virtual file systems
+# regular file system for illustration
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 tmp_file <- tempfile(fileext = ".tif")
 file.copy(elev_file, tmp_file)
 new_file <- file.path(dirname(tmp_file), "storml_elev_copy.tif")
-result <- vsi_rename(tmp_file, new_file)
-print(result)
+vsi_rename(tmp_file, new_file)
+vsi_stat(new_file)
 vsi_unlink(new_file)
 }
 \seealso{

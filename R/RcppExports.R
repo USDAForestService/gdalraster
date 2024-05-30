@@ -200,7 +200,7 @@ get_num_cpus <- function() {
     .Call(`_gdalraster_get_num_cpus`)
 }
 
-#' Get usable physical RAM
+#' Get usable physical RAM reported by GDAL
 #'
 #' `get_usable_physical_ram()` returns the total physical RAM, usable by a
 #' process, in bytes. It will limit to 2 GB for 32 bit processes. Starting
@@ -261,7 +261,7 @@ has_spatialite <- function() {
     .Call(`_gdalraster_has_spatialite`)
 }
 
-#' Return if GDAL CPLHTTP services can be useful (libcurl)
+#' Check if GDAL CPLHTTP services can be useful (libcurl)
 #'
 #' `http_enabled()` returns `TRUE` if `libcurl` support is enabled.
 #' Wrapper of `CPLHTTPEnabled()` in the GDAL Common Portability Library.
@@ -1400,15 +1400,14 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #' [copyDatasetFiles()], [vsi_stat()], [vsi_sync()]
 #'
 #' @examples
-#' # for illustration only
-#' # this would normally be used with GDAL virtual file systems
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' tmp_file <- tempfile(fileext = ".tif")
+#' tmp_file <- "/vsimem/elev_temp.tif"
 #'
 #' # Requires GDAL >= 3.7
 #' if (as.integer(gdal_version()[2]) >= 3070000) {
 #'   result <- vsi_copy_file(elev_file, tmp_file)
 #'   print(result)
+#'   print(vsi_stat(tmp_file, "size"))
 #'
 #'   vsi_unlink(tmp_file)
 #' }
@@ -1470,8 +1469,7 @@ vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "") {
 #' [vsi_mkdir()], [vsi_rmdir()], [vsi_stat()], [vsi_sync()]
 #'
 #' @examples
-#' # for illustration only
-#' # this would normally be used with GDAL virtual file systems
+#' # regular file system for illustration
 #' data_dir <- system.file("extdata", package="gdalraster")
 #' vsi_read_dir(data_dir)
 vsi_read_dir <- function(path, max_files = 0L) {
@@ -1622,10 +1620,9 @@ vsi_sync <- function(src, target, show_progress = FALSE, options = NULL) {
 #'
 #' @examples
 #' new_dir <- file.path(tempdir(), "newdir")
-#' result <- vsi_mkdir(new_dir)
-#' print(result)
-#' result <- vsi_rmdir(new_dir)
-#' print(result)
+#' vsi_mkdir(new_dir)
+#' vsi_stat(new_dir, "type")
+#' vsi_rmdir(new_dir)
 vsi_mkdir <- function(path, mode = "0755", recursive = FALSE) {
     .Call(`_gdalraster_vsi_mkdir`, path, mode, recursive)
 }
@@ -1656,10 +1653,8 @@ vsi_mkdir <- function(path, mode = "0755", recursive = FALSE) {
 #'
 #' @examples
 #' new_dir <- file.path(tempdir(), "newdir")
-#' result <- vsi_mkdir(new_dir)
-#' print(result)
-#' result <- vsi_rmdir(new_dir)
-#' print(result)
+#' vsi_mkdir(new_dir)
+#' vsi_rmdir(new_dir)
 vsi_rmdir <- function(path, recursive = FALSE) {
     .Call(`_gdalraster_vsi_rmdir`, path, recursive)
 }
@@ -1679,13 +1674,13 @@ vsi_rmdir <- function(path, recursive = FALSE) {
 #' [deleteDataset()], [vsi_rmdir()], [vsi_unlink_batch()]
 #'
 #' @examples
-#' # for illustration only
-#' # this would normally be used with GDAL virtual file systems
+#' # regular file system for illustration
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' tmp_file <- paste0(tempdir(), "/", "tmp.tif")
 #' file.copy(elev_file,  tmp_file)
-#' result <- vsi_unlink(tmp_file)
-#' print(result)
+#' vsi_stat(tmp_file)
+#' vsi_unlink(tmp_file)
+#' vsi_stat(tmp_file)
 vsi_unlink <- function(filename) {
     .Call(`_gdalraster_vsi_unlink`, filename)
 }
@@ -1709,8 +1704,7 @@ vsi_unlink <- function(filename) {
 #' [deleteDataset()], [vsi_rmdir()], [vsi_unlink()]
 #'
 #' @examples
-#' # for illustration only
-#' # this would normally be used with GDAL virtual file systems
+#' # regular file system for illustration
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 #'
@@ -1718,8 +1712,7 @@ vsi_unlink <- function(filename) {
 #' file.copy(elev_file,  tmp_elev)
 #' tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
 #' file.copy(tcc_file,  tmp_tcc)
-#' result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
-#' print(result)
+#' vsi_unlink_batch(c(tmp_elev, tmp_tcc))
 vsi_unlink_batch <- function(filenames) {
     .Call(`_gdalraster_vsi_unlink_batch`, filenames)
 }
@@ -1805,14 +1798,13 @@ vsi_stat <- function(filename, info = "exists") {
 #' [renameDataset()], [vsi_copy_file()]
 #'
 #' @examples
-#' # for illustration only
-#' # this would normally be used with GDAL virtual file systems
+#' # regular file system for illustration
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' tmp_file <- tempfile(fileext = ".tif")
 #' file.copy(elev_file, tmp_file)
 #' new_file <- file.path(dirname(tmp_file), "storml_elev_copy.tif")
-#' result <- vsi_rename(tmp_file, new_file)
-#' print(result)
+#' vsi_rename(tmp_file, new_file)
+#' vsi_stat(new_file)
 #' vsi_unlink(new_file)
 vsi_rename <- function(oldpath, newpath) {
     .Call(`_gdalraster_vsi_rename`, oldpath, newpath)
@@ -1914,7 +1906,7 @@ vsi_supports_rnd_write <- function(filename, allow_local_tmpfile) {
 #' type), or `-1` in case of error.
 #'
 #' @examples
-#' tmp_dir <- file.path(tempdir(), "tmpdir")
+#' tmp_dir <- file.path("/vsimem", "tmpdir")
 #' vsi_mkdir(tmp_dir)
 #' vsi_get_disk_free_space(tmp_dir)
 #' vsi_rmdir(tmp_dir)
@@ -1986,7 +1978,7 @@ vsi_clear_path_options <- function(path_prefix) {
 #'
 #' `vsi_get_file_metadata()` returns metadata for file system objects.
 #' Implemented for network-like filesystems. Starting with GDAL 3.7,
-#' implemeted for /vsizip/ with SOZip metadata.
+#' implemented for /vsizip/ with SOZip metadata.
 #' Wrapper of `VSIGetFileMetadata()` in the GDAL Common Portability Library.
 #'
 #' @details
@@ -2445,7 +2437,7 @@ epsg_to_wkt <- function(epsg, pretty = FALSE) {
     .Call(`_gdalraster_epsg_to_wkt`, epsg, pretty)
 }
 
-#' Convert spatial reference definition to OGC Well Known Text
+#' Convert various spatial reference formats to Well Known Text
 #'
 #' `srs_to_wkt()` converts a spatial reference system (SRS) definition
 #' in various text formats to WKT. The function will examine the input SRS,

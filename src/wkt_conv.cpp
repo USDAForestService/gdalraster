@@ -76,7 +76,7 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
     return wkt;
 }
 
-//' Convert spatial reference definition to OGC Well Known Text
+//' Convert various spatial reference formats to Well Known Text
 //'
 //' `srs_to_wkt()` converts a spatial reference system (SRS) definition
 //' in various text formats to WKT. The function will examine the input SRS,

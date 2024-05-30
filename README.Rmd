@@ -24,13 +24,13 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-**gdalraster** is an R interface to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Bindings to a subset of the GDAL Virtual Systems Interface ([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) are also provided to support file system operations and binary I/O on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project.
+**gdalraster** is an R interface to the [Raster API](https://gdal.org/api/raster_c_api.html) of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Bindings to a subset of the [GDAL/OGR Vector API](https://gdal.org/api/vector_c_api.html) are also included for managing vector data sources. Bindings to a subset of the GDAL Virtual Systems Interface ([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) are provided to support file system operations and binary I/O on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project.
 
 Bindings to GDAL are implemented in the exposed C++ class [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html) along with several [stand-alone functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions), supporting:
 
 * manual creation of uninitialized raster datasets
 * creation from existing raster as template
-* read/set raster dataset parameters
+* read/set raster dataset parameters and metadata
 * low-level I/O
 * build/read/set color tables and raster attribute tables
 * virtual raster (VRT) for virtual cropping, resampling, kernel filtering, mosaicing
@@ -39,10 +39,10 @@ Bindings to GDAL are implemented in the exposed C++ class [`GDALRaster`](https:/
 * spatial reference systems
 * GDAL algorithms (`dem_proc()`, `polygonize()`, `rasterize()`, [`...`](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms))
 * OGR vector utilities (`ogrinfo()`, `ogr2ogr()`, [`ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html) interface)
-* copy files/move/rename/delete datasets
+* copy files/move/rename/delete raster and vector datasets
 * create/append to Seek-Optimized ZIP ([SOZip](https://github.com/sozip/sozip-spec))
 * abstraction of file system operations on URLs and cloud storage
-* Standard C file I/O through VSI ([`VSIFile`](https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html))
+* Standard C binary file I/O through VSI (class [`VSIFile`](https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html))
 
 Additional functionality includes:
 
@@ -69,7 +69,7 @@ CRAN provides pre-compiled binary packages for Windows and macOS. These do not r
 
 #### Linux
 
-GDAL >= 3.1.0 is required, but a more recent version is recommended (e.g., >= 3.6.4). GDAL built with GEOS is a system requirement as of **gdalraster** 1.10. GDAL as of 3.9 requires PROJ >= 6.3.1, but a more recent version of PROJ is recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package **xml2**.
+GDAL >= 3.1.0 built with GEOS is required, but a more recent GDAL version is recommended, e.g., >= 3.6.4. GDAL as of version 3.9 requires PROJ >= 6.3.1, but a more recent version of PROJ is also recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package **xml2**.
 
 On Ubuntu, recent versions of geospatial libraries can be installed from the [ubuntugis-unstable PPA](https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable) with the following commands:
 
@@ -108,13 +108,13 @@ remotes::install_github("USDAForestService/gdalraster")
 
 #### macOS
 
-GDAL and PROJ can be installed with Homebrew:
+Caution seems warranted with regard to mixing source installation and installation of binaries from CRAN or r-universe. GDAL and PROJ can be installed with Homebrew:
 
 ```
 brew install pkg-config gdal proj
 ```
 
-Then `configure.args` is needed:
+Then `configure.args` may be needed:
 
 ```{r, eval=FALSE}
 # Install the development version from GitHub

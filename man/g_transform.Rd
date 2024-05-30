@@ -55,15 +55,19 @@ use case, \code{srs_to} might be the same as \code{srs_from}.
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, elev_file)
+
 # the convenience function bbox_transform() does this:
 bbox_to_wkt(ds$bbox()) |>
   g_transform(ds$getProjection(), epsg_to_wkt(4326)) |>
   bbox_from_wkt()
+
 ds$close()
 
+# correct geometries that incorrectly go from a longitude on a side of the
+# antimeridian to the other side
 geom <- "LINESTRING (-179 0,179 0)"
 srs <- epsg_to_wkt(4326)
-g_transform(geom, srs, srs, TRUE)
+g_transform(geom, srs, srs, wrap_date_line = TRUE)
 }
 \seealso{
 \code{\link[=bbox_transform]{bbox_transform()}}

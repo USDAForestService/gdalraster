@@ -32,10 +32,8 @@ recursively, provided that OAuth2 authentication is used.
 }
 \examples{
 new_dir <- file.path(tempdir(), "newdir")
-result <- vsi_mkdir(new_dir)
-print(result)
-result <- vsi_rmdir(new_dir)
-print(result)
+vsi_mkdir(new_dir)
+vsi_rmdir(new_dir)
 }
 \seealso{
 \code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=vsi_mkdir]{vsi_mkdir()}}, \code{\link[=vsi_read_dir]{vsi_read_dir()}}, \code{\link[=vsi_unlink]{vsi_unlink()}}

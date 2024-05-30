@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{http_enabled}
 \alias{http_enabled}
-\title{Return if GDAL CPLHTTP services can be useful (libcurl)}
+\title{Check if GDAL CPLHTTP services can be useful (libcurl)}
 \usage{
 http_enabled()
 }
