@@ -156,9 +156,7 @@ remotes::install_github("USDAForestService/gdalraster")
 
 #### macOS
 
-Caution seems warranted with regard to mixing source installation and
-installation of binaries from CRAN or r-universe. GDAL and PROJ can be
-installed with Homebrew:
+GDAL and PROJ can be installed with Homebrew:
 
     brew install pkg-config gdal proj
 
@@ -167,6 +165,21 @@ Then `configure.args` may be needed:
 ``` r
 # Install the development version from GitHub
 remotes::install_github("USDAForestService/gdalraster", configure.args = "--with-proj-lib=$(brew --prefix)/lib/")
+```
+
+Caution seems warranted on macOS with regard to mixing a source
+installation with installation of binaries from CRAN.
+
+### From R-universe
+
+[R-universe](https://usdaforestservice.r-universe.dev/gdalraster)
+provides pre-compiled binary packages for Windows and macOS that track
+the development version of **gdalraster**. New packages are built
+usually within \~1 hour of the most recent commit.
+
+``` r
+# Install the development version from r-universe
+install.packages("gdalraster", repos = c("https://usdaforestservice.r-universe.dev", "https://cran.r-project.org"))
 ```
 
 ## Documentation
