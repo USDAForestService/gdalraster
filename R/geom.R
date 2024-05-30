@@ -163,7 +163,7 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' (xmin, ymin, xmax, ymax).
 #'
 #' @seealso
-#' [g_transform()], [bborasterx_from_wkt()], [bbox_to_wkt()]
+#' [g_transform()], [bbox_from_wkt()], [bbox_to_wkt()]
 #'
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")

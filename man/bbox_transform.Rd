@@ -36,5 +36,5 @@ bbox_transform(ds$bbox(), ds$getProjection(), epsg_to_wkt(4326))
 ds$close()
 }
 \seealso{
-\code{\link[=g_transform]{g_transform()}}, \code{\link[=bborasterx_from_wkt]{bborasterx_from_wkt()}}, \code{\link[=bbox_to_wkt]{bbox_to_wkt()}}
+\code{\link[=g_transform]{g_transform()}}, \code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=bbox_to_wkt]{bbox_to_wkt()}}
 }
