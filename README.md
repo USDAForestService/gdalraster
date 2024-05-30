@@ -18,11 +18,11 @@ status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usd
 **gdalraster** is an R interface to the [Raster
 API](https://gdal.org/api/raster_c_api.html) of the Geospatial Data
 Abstraction Library ([GDAL](https://gdal.org/)). Bindings to a subset of
-the [GDAL/OGR Vector API](https://gdal.org/api/vector_c_api.html) are
-also included for managing vector data sources. Bindings to a subset of
-the GDAL Virtual Systems Interface
-([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) are provided to support
-file system operations and binary I/O on URLs, cloud storage services,
+the GDAL [Vector API](https://gdal.org/api/vector_c_api.html) are
+included to provide utilities for managing vector data sources. Bindings
+to the GDAL Virtual Systems Interface
+([VSI](https://gdal.org/api/cpl.html#cpl-vsi-h)) support file system
+operations and binary I/O on URLs, cloud storage services,
 Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems.
 Calling signatures resemble the native C, C++ and Python APIs provided
 by the GDAL project.
