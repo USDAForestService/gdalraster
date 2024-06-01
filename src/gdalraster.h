@@ -1,9 +1,12 @@
 /* R interface to a subset of the GDAL C API for raster
    https://gdal.org/api/raster_c_api.html
-   Chris Toney <chris.toney at usda.gov> */
 
-#ifndef gdalraster_H
-#define gdalraster_H
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
+
+#ifndef SRC_GDALRASTER_H_
+#define SRC_GDALRASTER_H_
 
 #include <map>
 #include <string>
@@ -11,7 +14,7 @@
 
 #include "rcpp_util.h"
 
-#ifndef gdalraster_types_H
+#ifndef SRC_GDALRASTER_TYPES_H_
 #include "cpl_port.h"
 int CPL_DLL CPL_STDCALL GDALTermProgressR(double, const char *, void *);
 #endif
@@ -82,12 +85,12 @@ class GDALRaster {
     GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                Rcpp::CharacterVector open_options);
 
-    // read/write fields exposed in R
+    // read/write fields exposed to R
     Rcpp::CharacterVector infoOptions = Rcpp::CharacterVector::create();
     bool quiet = false;
     bool readByteAsRaw = false;
 
-    // methods exposed in R
+    // methods exported to R
     std::string getFilename() const;
     void setFilename(std::string filename);
     void open(bool read_only);
@@ -159,7 +162,7 @@ class GDALRaster {
               int out_xsize, int out_ysize) const;
 
     void write(int band, int xoff, int yoff, int xsize, int ysize,
-               Rcpp::RObject rasterData);
+               const Rcpp::RObject& rasterData);
 
     void fillRaster(int band, double value, double ivalue);
 
@@ -337,4 +340,4 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
                                     Rcpp::IntegerVector end_color,
                                     std::string palette_interp);
 
-#endif  // gdalraster_H
+#endif  // SRC_GDALRASTER_H_
