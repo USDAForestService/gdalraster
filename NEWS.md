@@ -1,4 +1,6 @@
-# gdalraster 1.10.9281 (dev)
+# gdalraster 1.10.9290 (dev)
+
+* add an optional constructor in class `GDALRaster` to allow specifying whether the dataset is opened in shared mode, `TRUE` by default (2024-06-01)
 
 * add `_cpl_http_cleanup()` for internal use (2024-05-29)
 

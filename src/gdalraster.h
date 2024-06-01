@@ -90,6 +90,7 @@ class GDALRaster {
  private:
     std::string fname_in;
     Rcpp::CharacterVector open_options_in;
+    bool shared_in;
     GDALDatasetH  hDataset;
     GDALAccess eAccess;
 
@@ -99,6 +100,8 @@ class GDALRaster {
     GDALRaster(Rcpp::CharacterVector filename, bool read_only);
     GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                Rcpp::CharacterVector open_options);
+    GDALRaster(Rcpp::CharacterVector filename, bool read_only,
+               Rcpp::CharacterVector open_options, bool shared);
 
     // read/write fields exposed to R
     Rcpp::CharacterVector infoOptions = Rcpp::CharacterVector::create();

@@ -19,6 +19,9 @@ or \code{FALSE} to open with write access.}
 
 \item{open_options}{Optional character vector of \code{NAME=VALUE} pairs
 specifying dataset open options.}
+
+\item{shared}{Logical. \code{FALSE} to open the dataset without using shared
+mode. Default is \code{TRUE} (see Note).}
 }
 \value{
 An object of class \code{GDALRaster} which contains a pointer to the
@@ -36,6 +39,17 @@ details of the GDAL Raster API.
 \note{
 If a dataset object is opened with update access (\code{read_only = FALSE}), it
 is not recommended to open a new dataset on the same underlying \code{filename}.
+
+Datasets are opened in shared mode by default. This allows the sharing of
+\code{GDALDataset} handles for a dataset with other callers that open shared on
+the same \code{filename}, if the dataset is opened from the same thread.
+Functions in \code{gdalraster} that do processing will open input datasets in
+shared mode. This provides potential efficiency for cases when an object of
+class \code{GDALRaster} is already open in read-only mode on the same \code{filename}
+(avoids overhead associated with the initial dataset opening by using the
+existing handle, and potentially makes use of existing data in the GDAL
+block cache). Opening in shared mode can be disabled by specifying the
+optional \code{shared} paramater in the class constructor.
 
 The \verb{$read()} method will perform automatic resampling if the
 specified output size (\code{out_xsize * out_ysize}) is different than
@@ -146,6 +160,14 @@ Alternate constructor for passing dataset \code{open_options}, a character
 vector of \code{NAME=VALUE} pairs.
 \code{read_only} is required for this form of the constructor, \code{TRUE} for
 read-only, or \code{FALSE} to open with write access.
+Returns an object of class \code{GDALRaster}.
+
+\code{new(GDALRaster, filename, read_only, open_options, shared)}
+Alternate constructor for setting the \code{shared} mode for dataset opening.
+\code{shared} defaults to \code{TRUE} but can be set to \code{FALSE} with this constructor
+(see Note).
+All arguments are required with this form of the constructor, but
+\code{open_options} may be given as empty vector (\code{open_opens = character(0)}).
 Returns an object of class \code{GDALRaster}.
 
 \code{$infoOptions}

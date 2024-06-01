@@ -21,6 +21,8 @@
 #' or `FALSE` to open with write access.
 #' @param open_options Optional character vector of `NAME=VALUE` pairs
 #' specifying dataset open options.
+#' @param shared Logical. `FALSE` to open the dataset without using shared
+#' mode. Default is `TRUE` (see Note).
 #' @returns An object of class `GDALRaster` which contains a pointer to the
 #' opened dataset, and methods that operate on the dataset as described in
 #' Details. `GDALRaster` is a C++ class exposed directly to R (via
@@ -125,6 +127,14 @@
 #' vector of `NAME=VALUE` pairs.
 #' `read_only` is required for this form of the constructor, `TRUE` for
 #'  read-only, or `FALSE` to open with write access.
+#' Returns an object of class `GDALRaster`.
+#'
+#' \code{new(GDALRaster, filename, read_only, open_options, shared)}
+#' Alternate constructor for setting the `shared` mode for dataset opening.
+#' `shared` defaults to `TRUE` but can be set to `FALSE` with this constructor
+#' (see Note).
+#' All arguments are required with this form of the constructor, but
+#' `open_options` may be given as empty vector (`open_opens = character(0)`).
 #' Returns an object of class `GDALRaster`.
 #'
 #' \code{$infoOptions}
@@ -673,6 +683,17 @@
 #' @note
 #' If a dataset object is opened with update access (`read_only = FALSE`), it
 #' is not recommended to open a new dataset on the same underlying `filename`.
+#'
+#' Datasets are opened in shared mode by default. This allows the sharing of
+#' `GDALDataset` handles for a dataset with other callers that open shared on
+#' the same `filename`, if the dataset is opened from the same thread.
+#' Functions in `gdalraster` that do processing will open input datasets in
+#' shared mode. This provides potential efficiency for cases when an object of
+#' class `GDALRaster` is already open in read-only mode on the same `filename`
+#' (avoids overhead associated with the initial dataset opening by using the
+#' existing handle, and potentially makes use of existing data in the GDAL
+#' block cache). Opening in shared mode can be disabled by specifying the
+#' optional `shared` paramater in the class constructor.
 #'
 #' The `$read()` method will perform automatic resampling if the
 #' specified output size (`out_xsize * out_ysize`) is different than
