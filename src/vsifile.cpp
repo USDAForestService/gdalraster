@@ -1,6 +1,8 @@
 /* Implementation of class VSIFile
    Encapsulates a VSIVirtualHandle file pointer.
-   Chris Toney <chris.toney at usda.gov> */
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
 
 #include <cstdlib>
 #include <vector>
@@ -17,21 +19,13 @@ VSIFile::VSIFile() :
             fp(nullptr) {}
 
 VSIFile::VSIFile(Rcpp::CharacterVector filename) :
-            VSIFile(
-                filename,
-                "r",
-                Rcpp::CharacterVector::create()) {}
+            VSIFile(filename, "r", Rcpp::CharacterVector::create()) {}
 
 VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access) :
-            VSIFile(
-                filename,
-                access,
-                Rcpp::CharacterVector::create()) {}
+            VSIFile(filename, access, Rcpp::CharacterVector::create()) {}
 
 VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
-            Rcpp::CharacterVector options) :
-
-            fp(nullptr) {
+                 Rcpp::CharacterVector options) : fp(nullptr) {
 
     filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
     if (access.length() > 0 && access.length() < 4)
@@ -276,19 +270,11 @@ int VSIFile::set_access(std::string access) {
     }
 }
 
-// void vsifile_finalizer(VSIFile* ptr) {
-//     if (ptr)
-//         ptr->close();
-// }
-
-// ****************************************************************************
-
 RCPP_MODULE(mod_VSIFile) {
-
     Rcpp::class_<VSIFile>("VSIFile")
 
     .constructor
-        ("Default constructor")
+        ("Default constructor, no file handle opened")
     .constructor<Rcpp::CharacterVector>
         ("Usage: new(VSIFile, filename)")
     .constructor<Rcpp::CharacterVector, std::string>
@@ -326,6 +312,5 @@ RCPP_MODULE(mod_VSIFile) {
     .method("set_access", &VSIFile::set_access,
         "Set the access if the file is closed")
 
-    // .finalizer(&vsifile_finalizer)
     ;
 }
