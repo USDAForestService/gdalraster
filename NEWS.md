@@ -1,4 +1,6 @@
-# gdalraster 1.10.9290 (dev)
+# gdalraster 1.10.9300 (dev)
+
+* add `dump_open_datasets()`: dump a list of all open datasets (shared or not) to the console, wrapper of `GDALDumpOpenDatasets()` (2024-06-01)
 
 * add an optional constructor in class `GDALRaster` to allow specifying whether the dataset is opened in shared mode, `TRUE` by default (2024-06-01)
 
