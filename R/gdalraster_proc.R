@@ -1044,6 +1044,11 @@ calc <- function(expr,
         var.names <- LETTERS[1:nrasters]
     }
 
+    for (nm in var.names) {
+        if (!length(grep(nm, expr, fixed = TRUE)))
+            stop("variable name '", nm, "' not in 'expr'", call. = FALSE)
+    }
+
     if (is.null(fmt)) {
         fmt <- .getGDALformat(dstfile)
         if (is.null(fmt)) {
