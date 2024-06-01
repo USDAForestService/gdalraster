@@ -74,6 +74,17 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// _dump_open_datasets
+int _dump_open_datasets(std::string outfile);
+RcppExport SEXP _gdalraster__dump_open_datasets(SEXP outfileSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type outfile(outfileSEXP);
+    rcpp_result_gen = Rcpp::wrap(_dump_open_datasets(outfile));
+    return rcpp_result_gen;
+END_RCPP
+}
 // push_error_handler
 void push_error_handler(std::string handler);
 RcppExport SEXP _gdalraster_push_error_handler(SEXP handlerSEXP) {
@@ -1452,6 +1463,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_get_config_option", (DL_FUNC) &_gdalraster_get_config_option, 1},
     {"_gdalraster_set_config_option", (DL_FUNC) &_gdalraster_set_config_option, 2},
     {"_gdalraster_get_cache_used", (DL_FUNC) &_gdalraster_get_cache_used, 0},
+    {"_gdalraster__dump_open_datasets", (DL_FUNC) &_gdalraster__dump_open_datasets, 1},
     {"_gdalraster_push_error_handler", (DL_FUNC) &_gdalraster_push_error_handler, 1},
     {"_gdalraster_pop_error_handler", (DL_FUNC) &_gdalraster_pop_error_handler, 0},
     {"_gdalraster__check_gdal_filename", (DL_FUNC) &_gdalraster__check_gdal_filename, 1},

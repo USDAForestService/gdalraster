@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <cmath>
 #include <cstring>
+#include <cstdio>
 #include <unordered_map>
 
 #include "gdal.h"
@@ -222,6 +223,19 @@ void set_config_option(std::string key, std::string value) {
 int get_cache_used() {
     GIntBig nCacheUsed = GDALGetCacheUsed64();
     return static_cast<int>(nCacheUsed / (1000 * 1000));
+}
+
+
+//' @noRd
+// [[Rcpp::export(name = ".dump_open_datasets")]]
+int _dump_open_datasets(std::string outfile) {
+    FILE* fp = std::fopen(outfile.c_str(), "w");
+    if (!fp)
+        return -1;
+
+    int ret = GDALDumpOpenDatasets(fp);
+    std::fclose(fp);
+    return ret;
 }
 
 

@@ -136,11 +136,6 @@ void GDALRaster::open(bool read_only) {
     if (hDataset != nullptr)
         close();
 
-    if (read_only)
-        eAccess = GA_ReadOnly;
-    else
-        eAccess = GA_Update;
-
     std::vector<char *> dsoo(open_options_in.size() + 1);
     if (open_options_in.size() > 0) {
         for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
@@ -150,10 +145,14 @@ void GDALRaster::open(bool read_only) {
     dsoo.push_back(nullptr);
 
     unsigned int nOpenFlags = GDAL_OF_RASTER;
-    if (read_only)
+    if (read_only) {
+        eAccess = GA_ReadOnly;
         nOpenFlags |= GDAL_OF_READONLY;
-    else
+    }
+    else {
+        eAccess = GA_Update;
         nOpenFlags |= GDAL_OF_UPDATE;
+    }
     if (shared_in)
         nOpenFlags |= GDAL_OF_SHARED;
 

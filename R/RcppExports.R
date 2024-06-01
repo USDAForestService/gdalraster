@@ -121,6 +121,11 @@ get_cache_used <- function() {
     .Call(`_gdalraster_get_cache_used`)
 }
 
+#' @noRd
+.dump_open_datasets <- function(outfile) {
+    .Call(`_gdalraster__dump_open_datasets`, outfile)
+}
+
 #' Push a new GDAL CPLError handler
 #'
 #' `push_error_handler()` is a wrapper for
