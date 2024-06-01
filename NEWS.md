@@ -1,4 +1,6 @@
-# gdalraster 1.10.9302 (dev)
+# gdalraster 1.10.9303 (dev)
+
+* `ogr_ds_create()`: add param `overwrite` with default `FALSE` to avoid overwriting existing dataset (#400) (2024-06-01)
 
 * `calc()`: add input validation for `var.names`, must be in `expr` (2024-06-01)
 
