@@ -63,7 +63,7 @@ class VSIFile {
     int set_access(std::string access);
 };
 
-static void vsifile_finalizer(VSIFile* ptr);
+// static void vsifile_finalizer(VSIFile* ptr);
 
 RCPP_EXPOSED_CLASS(VSIFile)
 
