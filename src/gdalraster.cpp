@@ -80,6 +80,7 @@ std::string _getGFU_string(GDALRATFieldUsage gfu) {
 GDALRaster::GDALRaster() :
             fname_in(""),
             open_options_in(Rcpp::CharacterVector::create()),
+            shared_in(true),
             hDataset(nullptr),
             eAccess(GA_ReadOnly) {}
 
@@ -87,17 +88,28 @@ GDALRaster::GDALRaster(Rcpp::CharacterVector filename) :
             GDALRaster(
                 filename,
                 true,
-                Rcpp::CharacterVector::create()) {}
+                Rcpp::CharacterVector::create(),
+                true) {}
 
 GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only) :
             GDALRaster(
                 filename,
                 read_only,
-                Rcpp::CharacterVector::create()) {}
+                Rcpp::CharacterVector::create(),
+                true) {}
 
 GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
         Rcpp::CharacterVector open_options) :
+            GDALRaster(
+                filename,
+                read_only,
+                open_options,
+                true) {}
+
+GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
+        Rcpp::CharacterVector open_options, bool shared) :
                 open_options_in(open_options),
+                shared_in(shared),
                 hDataset(nullptr),
                 eAccess(GA_ReadOnly) {
 
@@ -137,11 +149,13 @@ void GDALRaster::open(bool read_only) {
     }
     dsoo.push_back(nullptr);
 
-    unsigned int nOpenFlags = GDAL_OF_RASTER | GDAL_OF_SHARED;
+    unsigned int nOpenFlags = GDAL_OF_RASTER;
     if (read_only)
         nOpenFlags |= GDAL_OF_READONLY;
     else
         nOpenFlags |= GDAL_OF_UPDATE;
+    if (shared_in)
+        nOpenFlags |= GDAL_OF_SHARED;
 
     hDataset = GDALOpenEx(fname_in.c_str(), nOpenFlags, nullptr,
                           dsoo.data(), nullptr);
@@ -1508,6 +1522,8 @@ RCPP_MODULE(mod_GDALRaster) {
         ("Usage: new(GDALRaster, filename, read_only=[TRUE|FALSE])")
     .constructor<Rcpp::CharacterVector, bool, Rcpp::CharacterVector>
         ("Usage: new(GDALRaster, filename, read_only, open_options)")
+    .constructor<Rcpp::CharacterVector, bool, Rcpp::CharacterVector, bool>
+        ("Usage: new(GDALRaster, filename, read_only, open_options, shared)")
 
     // exposed read/write fields
     .field("infoOptions", &GDALRaster::infoOptions)
