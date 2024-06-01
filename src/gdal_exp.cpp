@@ -1768,12 +1768,12 @@ bool _rasterize(std::string src_dsn, std::string dst_filename,
     if (!quiet)
         GDALRasterizeOptionsSetProgress(psOptions, GDALTermProgressR, nullptr);
 
-    GDALDatasetH hDstDS;
+    GDALDatasetH hDstDS = nullptr;
     hDstDS = GDALRasterize(dst_filename.c_str(), nullptr, hSrcDS,
                            psOptions, nullptr);
 
     GDALRasterizeOptionsFree(psOptions);
-    GDALClose(hSrcDS);
+    GDALReleaseDataset(hSrcDS);
     if (hDstDS == nullptr)
         Rcpp::stop("rasterize failed");
 

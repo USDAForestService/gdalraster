@@ -316,8 +316,10 @@ SEXP _ogr_ds_layer_names(std::string dsn) {
     CPLPopErrorHandler();
 
     int cnt = GDALDatasetGetLayerCount(hDS);
-    if (cnt == 0)
+    if (cnt == 0) {
+        GDALReleaseDataset(hDS);
         return R_NilValue;
+    }
 
     Rcpp::CharacterVector names = Rcpp::CharacterVector::create();
     for (int i = 0; i < cnt; ++i) {
@@ -425,7 +427,6 @@ SEXP _ogr_layer_test_cap(std::string dsn, std::string layer,
             OGR_L_TestCapability(hLayer, OLCTransactions)),
         Rcpp::Named("CurveGeometries") = static_cast<bool>(
             OGR_L_TestCapability(hLayer, OLCCurveGeometries)));
-
 
     GDALReleaseDataset(hDS);
     return cap;
@@ -713,8 +714,10 @@ SEXP _ogr_layer_field_names(std::string dsn, std::string layer) {
     }
 
     hFDefn = OGR_L_GetLayerDefn(hLayer);
-    if (hFDefn == nullptr)
+    if (hFDefn == nullptr) {
+        GDALReleaseDataset(hDS);
         return R_NilValue;
+    }
 
     Rcpp::CharacterVector names = Rcpp::CharacterVector::create();
 
@@ -1087,6 +1090,7 @@ bool _ogr_field_rename(std::string dsn, std::string layer,
     OGRErr err = OGR_L_AlterFieldDefn(hLayer, iField, hNewFieldDefn,
                                       ALTER_NAME_FLAG);
     OGR_Fld_Destroy(hNewFieldDefn);
+    GDALReleaseDataset(hDS);
 
     if (err != OGRERR_NONE) {
         Rcpp::Rcerr << "failed to rename field\n";
