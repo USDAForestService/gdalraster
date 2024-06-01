@@ -10,7 +10,7 @@
 #include <cmath>
 #include <complex>
 
-#include "gdal_priv.h"
+#include "gdal.h"
 #include "cpl_conv.h"
 #include "cpl_port.h"
 #include "cpl_string.h"
@@ -949,9 +949,9 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
                 double nodata_value = getNoDataValue(band);
                 if (GDALDataTypeIsFloating(eDT)) {
                     for (double& val : buf) {
-                        if (ARE_REAL_EQUAL(val, nodata_value))
+                        if (CPLIsNan(val))
                             val = NA_REAL;
-                        else if (CPLIsNan(val))
+                        else if (ARE_REAL_EQUAL(val, nodata_value))
                             val = NA_REAL;
                     }
                 }
