@@ -16,7 +16,7 @@ details of the GDAL Raster API."><!-- mathjax --><script src="https://cdnjs.clou
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9281</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9290</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -90,6 +90,11 @@ or <code>FALSE</code> to open with write access.</p></dd>
 <dd><p>Optional character vector of <code>NAME=VALUE</code> pairs
 specifying dataset open options.</p></dd>
 
+
+<dt>shared</dt>
+<dd><p>Logical. <code>FALSE</code> to open the dataset without using shared
+mode. Default is <code>TRUE</code> (see Note).</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
@@ -105,6 +110,16 @@ the <code>$</code> operator. Read/write fields can be used for per-object settin
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p>If a dataset object is opened with update access (<code>read_only = FALSE</code>), it
 is not recommended to open a new dataset on the same underlying <code>filename</code>.</p>
+<p>Datasets are opened in shared mode by default. This allows the sharing of
+<code>GDALDataset</code> handles for a dataset with other callers that open shared on
+the same <code>filename</code>, if the dataset is opened from the same thread.
+Functions in <code>gdalraster</code> that do processing will open input datasets in
+shared mode. This provides potential efficiency for cases when an object of
+class <code>GDALRaster</code> is already open in read-only mode on the same <code>filename</code>
+(avoids overhead associated with the initial dataset opening by using the
+existing handle, and potentially makes use of existing data in the GDAL
+block cache). Opening in shared mode can be disabled by specifying the
+optional <code>shared</code> paramater in the class constructor.</p>
 <p>The <code>$read()</code> method will perform automatic resampling if the
 specified output size (<code>out_xsize * out_ysize</code>) is different than
 the size of the region being read (<code>xsize * ysize</code>). In that case, the
@@ -216,6 +231,13 @@ Alternate constructor for passing dataset <code>open_options</code>, a character
 vector of <code>NAME=VALUE</code> pairs.
 <code>read_only</code> is required for this form of the constructor, <code>TRUE</code> for
 read-only, or <code>FALSE</code> to open with write access.
+Returns an object of class <code>GDALRaster</code>.</p>
+<p><code>new(GDALRaster, filename, read_only, open_options, shared)</code>
+Alternate constructor for setting the <code>shared</code> mode for dataset opening.
+<code>shared</code> defaults to <code>TRUE</code> but can be set to <code>FALSE</code> with this constructor
+(see Note).
+All arguments are required with this form of the constructor, but
+<code>open_options</code> may be given as empty vector (<code>open_opens = character(0)</code>).
 Returns an object of class <code>GDALRaster</code>.</p>
 <p><code>$infoOptions</code>
 Read/write field.
