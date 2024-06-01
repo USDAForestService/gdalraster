@@ -27,3 +27,11 @@ test_that("getCreationOptions works", {
     expect_type(x, "character")
     expect_message(getCreationOptions("AIG"))
 })
+
+test_that("dump_open_datasets works", {
+    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    ds <- new(GDALRaster, elev_file)
+    expect_output(dump_open_datasets())
+    expect_true(dump_open_datasets() > 0)
+    ds$close()
+})

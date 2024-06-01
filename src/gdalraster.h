@@ -215,6 +215,7 @@ Rcpp::DataFrame gdal_formats(std::string fmt);
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
+int _dump_open_datasets(std::string outfile);
 int get_num_cpus();
 Rcpp::NumericVector get_usable_physical_ram();
 void push_error_handler(std::string handler);

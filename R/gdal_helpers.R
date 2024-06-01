@@ -369,3 +369,36 @@ get_pixel_line <- function(xy, gt) {
              call. = FALSE)
     }
 }
+
+#' Report open datasets
+#'
+#' `dump_open_datasets()` dumps a list of all open datasets (shared or not) to
+#' the console. This function is primarily intended to assist in debugging
+#' "dataset leaks" and reference counting issues. The information reported
+#' includes the dataset name, referenced count, shared status, driver name,
+#' size, and band count. This a wrapper for `GDALDumpOpenDatasets()` with
+#' output to the console.
+#'
+#' @returns Number of open datasets.
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, elev_file)
+#' dump_open_datasets()
+#' ds2 <- new(GDALRaster, elev_file)
+#' dump_open_datasets()
+#' ds$close()
+#' dump_open_datasets()
+#' ds2$close()
+#' dump_open_datasets()
+dump_open_datasets <- function() {
+    f <- tempfile(fileext = ".txt")
+    nopen <- .dump_open_datasets(f)
+    if (nopen < 0)
+        stop("failed to obtain the list of open datasets", call. = FALSE)
+
+    out <- readLines(f)
+    unlink(f)
+    writeLines(out)
+    return(nopen)
+}
