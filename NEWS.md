@@ -1,4 +1,4 @@
-# gdalraster 1.10.9280 (dev)
+# gdalraster 1.10.9281 (dev)
 
 * add `_cpl_http_cleanup()` for internal use (2024-05-29)
 
