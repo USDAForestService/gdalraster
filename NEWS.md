@@ -1,4 +1,6 @@
-# gdalraster 1.10.9301 (dev)
+# gdalraster 1.10.9302 (dev)
+
+* `calc()`: add input validation for `var.names`, must be in `expr` (2024-06-01)
 
 * fix missing calls to `GDALReleaseDataset()` on error condition in some vector related functions (2024-06-01)
 
