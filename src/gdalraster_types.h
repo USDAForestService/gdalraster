@@ -1,4 +1,6 @@
-#ifndef gdalraster_types_H
-#define gdalraster_types_H
+#ifndef SRC_GDALRASTER_TYPES_H_
+#define SRC_GDALRASTER_TYPES_H_
+
 #include "gdalraster.h"
-#endif
+
+#endif  // SRC_GDALRASTER_TYPES_H_

@@ -19,7 +19,7 @@ A named list of values, or \code{NULL} in case of error or empty list.
 \description{
 \code{vsi_get_file_metadata()} returns metadata for file system objects.
 Implemented for network-like filesystems. Starting with GDAL 3.7,
-implemeted for /vsizip/ with SOZip metadata.
+implemented for /vsizip/ with SOZip metadata.
 Wrapper of \code{VSIGetFileMetadata()} in the GDAL Common Portability Library.
 }
 \details{
@@ -49,8 +49,10 @@ if (as.integer(gdal_version()[2]) >= 3070000) {
   zip_file <- tempfile(fileext=".zip")
   addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
   zip_vsi <- file.path("/vsizip", zip_file)
-  vsi_read_dir(zip_vsi)
-  vsi_get_file_metadata(zip_vsi, domain="ZIP")
+  print("Files in zip archive:")
+  print(vsi_read_dir(zip_vsi))
+  print("SOZip metadata:")
+  print(vsi_get_file_metadata(zip_vsi, domain="ZIP"))
 
   vsi_unlink(zip_file)
 }

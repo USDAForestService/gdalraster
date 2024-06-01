@@ -30,10 +30,9 @@ the GDAL Common Portability Library.
 }
 \examples{
 new_dir <- file.path(tempdir(), "newdir")
-result <- vsi_mkdir(new_dir)
-print(result)
-result <- vsi_rmdir(new_dir)
-print(result)
+vsi_mkdir(new_dir)
+vsi_stat(new_dir, "type")
+vsi_rmdir(new_dir)
 }
 \seealso{
 \code{\link[=vsi_read_dir]{vsi_read_dir()}}, \code{\link[=vsi_rmdir]{vsi_rmdir()}}

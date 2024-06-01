@@ -32,8 +32,7 @@ length of the returned character vector is lesser or equal to \code{max_files},
 then no truncation occurred.
 }
 \examples{
-# for illustration only
-# this would normally be used with GDAL virtual file systems
+# regular file system for illustration
 data_dir <- system.file("extdata", package="gdalraster")
 vsi_read_dir(data_dir)
 }

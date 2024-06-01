@@ -1,6 +1,7 @@
 /* class VSIFile
     Bindings to the GDAL VSIVirtualHandle API. Encapsulates a VSIVirtualHandle.
     Chris Toney <chris.toney at usda.gov>
+    Copyright (c) 2023-2024 gdalraster authors
 
     Requires {bit64} on the R side for its integer64 S3 type, since R does not
     have a native int64 type. Uses RcppInt64 for conversion between R double
@@ -62,8 +63,6 @@ class VSIFile {
     std::string get_access() const;
     int set_access(std::string access);
 };
-
-static void vsifile_finalizer(VSIFile* ptr);
 
 RCPP_EXPOSED_CLASS(VSIFile)
 

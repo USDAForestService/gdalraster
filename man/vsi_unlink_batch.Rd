@@ -24,8 +24,7 @@ This function is a wrapper for \code{VSIUnlinkBatch()} in the GDAL Common
 Portability Library.
 }
 \examples{
-# for illustration only
-# this would normally be used with GDAL virtual file systems
+# regular file system for illustration
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 
@@ -33,8 +32,7 @@ tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
 file.copy(elev_file,  tmp_elev)
 tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
 file.copy(tcc_file,  tmp_tcc)
-result <- vsi_unlink_batch(c(tmp_elev, tmp_tcc))
-print(result)
+vsi_unlink_batch(c(tmp_elev, tmp_tcc))
 }
 \seealso{
 \code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=vsi_rmdir]{vsi_rmdir()}}, \code{\link[=vsi_unlink]{vsi_unlink()}}

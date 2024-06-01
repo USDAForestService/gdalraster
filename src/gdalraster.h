@@ -1,17 +1,21 @@
 /* R interface to a subset of the GDAL C API for raster
    https://gdal.org/api/raster_c_api.html
-   Chris Toney <chris.toney at usda.gov> */
 
-#ifndef gdalraster_H
-#define gdalraster_H
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
 
+#ifndef SRC_GDALRASTER_H_
+#define SRC_GDALRASTER_H_
+
+#include <limits>
 #include <map>
 #include <string>
 #include <vector>
 
 #include "rcpp_util.h"
 
-#ifndef gdalraster_types_H
+#ifndef SRC_GDALRASTER_TYPES_H_
 #include "cpl_port.h"
 int CPL_DLL CPL_STDCALL GDALTermProgressR(double, const char *, void *);
 #endif
@@ -22,6 +26,20 @@ typedef void *GDALDatasetH;
 typedef void *GDALRasterBandH;
 typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 #endif
+
+// The function ARE_REAL_EQUAL was copied from gcore/gdal_priv.h since we
+// do not need that header otherwise
+// Copyright (c) 1998, Frank Warmerdam
+// Copyright (c) 2007-2014, Even Rouault <even dot rouault at spatialys.com>
+// License: MIT
+// Behavior is undefined if fVal1 or fVal2 are NaN (should be tested before
+// calling this function)
+template <class T> inline bool ARE_REAL_EQUAL(T fVal1, T fVal2, int ulp = 2)
+{
+    return fVal1 == fVal2 || /* Should cover infinity */
+           std::abs(fVal1 - fVal2) < std::numeric_limits<float>::epsilon() *
+                                         std::abs(fVal1 + fVal2) * ulp;
+}
 
 #ifdef GDAL_H_INCLUDED
 // Map certain GDAL enums to string names for use in R
@@ -72,6 +90,7 @@ class GDALRaster {
  private:
     std::string fname_in;
     Rcpp::CharacterVector open_options_in;
+    bool shared_in;
     GDALDatasetH  hDataset;
     GDALAccess eAccess;
 
@@ -81,13 +100,15 @@ class GDALRaster {
     GDALRaster(Rcpp::CharacterVector filename, bool read_only);
     GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                Rcpp::CharacterVector open_options);
+    GDALRaster(Rcpp::CharacterVector filename, bool read_only,
+               Rcpp::CharacterVector open_options, bool shared);
 
-    // read/write fields exposed in R
+    // read/write fields exposed to R
     Rcpp::CharacterVector infoOptions = Rcpp::CharacterVector::create();
     bool quiet = false;
     bool readByteAsRaw = false;
 
-    // methods exposed in R
+    // methods exported to R
     std::string getFilename() const;
     void setFilename(std::string filename);
     void open(bool read_only);
@@ -159,7 +180,7 @@ class GDALRaster {
               int out_xsize, int out_ysize) const;
 
     void write(int band, int xoff, int yoff, int xsize, int ysize,
-               Rcpp::RObject rasterData);
+               const Rcpp::RObject& rasterData);
 
     void fillRaster(int band, double value, double ivalue);
 
@@ -194,6 +215,7 @@ Rcpp::DataFrame gdal_formats(std::string fmt);
 std::string get_config_option(std::string key);
 void set_config_option(std::string key, std::string value);
 int get_cache_used();
+int _dump_open_datasets(std::string outfile);
 int get_num_cpus();
 Rcpp::NumericVector get_usable_physical_ram();
 void push_error_handler(std::string handler);
@@ -337,4 +359,4 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
                                     Rcpp::IntegerVector end_color,
                                     std::string palette_interp);
 
-#endif  // gdalraster_H
+#endif  // SRC_GDALRASTER_H_

@@ -1,4 +1,18 @@
-# gdalraster 1.10.9270 (dev)
+# gdalraster 1.10.9303 (dev)
+
+* `ogr_ds_create()`: add param `overwrite` with default `FALSE` to avoid overwriting existing dataset (#400) (2024-06-01)
+
+* `calc()`: add input validation for `var.names`, must be in `expr` (2024-06-01)
+
+* fix missing calls to `GDALReleaseDataset()` on error condition in some vector related functions (2024-06-01)
+
+* add `dump_open_datasets()`: dump a list of all open datasets (shared or not) to the console, wrapper of `GDALDumpOpenDatasets()` (2024-06-01)
+
+* add an optional constructor in class `GDALRaster` to allow specifying whether the dataset is opened in shared mode, `TRUE` by default (2024-06-01)
+
+* add `_cpl_http_cleanup()` for internal use (2024-05-29)
+
+* use [Discussions](https://github.com/USDAForestService/gdalraster/discussions) on the GitHub repository (2024-05-29)
 
 * add `vsi_get_file_metadata()`: returns metadata for network filesystem objects (/vsicurl/, /vsis3/, /vsiaz/, etc.), and with GDAL >= 3.7, /vsizip/ SOZip metadata (2024-05-28)
 

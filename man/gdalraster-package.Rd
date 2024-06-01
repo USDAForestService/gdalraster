@@ -97,7 +97,7 @@
   \code{\link[=ogr2ogr]{ogr2ogr()}},
   \code{\link[=ogrinfo]{ogrinfo()}},
   \code{\link[=ogr_manage]{ogr_manage}},
-  \code{\link[=ogr_define]{ogr_define}},
+  \code{\link[=ogr_define]{ogr_define}}
 
   \item virtual file systems:
   \code{\link[=VSIFile-class]{VSIFile}},
@@ -131,7 +131,8 @@
   \code{\link[=has_spatialite]{has_spatialite()}},
   \code{\link[=http_enabled]{http_enabled()}},
   \code{\link[=push_error_handler]{push_error_handler()}},
-  \code{\link[=pop_error_handler]{pop_error_handler()}}
+  \code{\link[=pop_error_handler]{pop_error_handler()}},
+  \code{\link[=dump_open_datasets]{dump_open_datasets()}}
 
   \item PROJ configuration:
   \code{\link[=proj_version]{proj_version()}},
@@ -142,7 +143,7 @@
   \itemize{
   \item \code{\link{RunningStats-class}} calculates mean and variance in one
   pass. The min, max, sum, and count are also tracked (efficient summary
-  statistics on large data streams).
+  statistics on data streams).
 
   \item \code{\link{CmbTable-class}} implements a hash table for counting
   unique combinations of integer values.

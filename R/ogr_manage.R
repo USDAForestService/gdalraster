@@ -180,6 +180,8 @@
 #' @param dialect Character string specifying the SQL dialect to use.
 #' The OGR SQL engine (`"OGRSQL"`) will be used by default if a value is not
 #' given. The `"SQLite"` dialect can also be used (see Note).
+#' @param overwrite Logical scalar. `TRUE` to overwrite `dsn` if it already
+#' exists when calling `ogr_ds_create()`. Default is `FALSE`.
 #'
 #' @note
 #' The OGR SQL document linked under **See Also** contains information on the
@@ -337,12 +339,15 @@ ogr_ds_test_cap <- function(dsn, with_update = TRUE) {
 #' @export
 ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
                           geom_type = NULL, srs = NULL, fld_name = NULL,
-                          fld_type = NULL, dsco = NULL, lco = NULL) {
+                          fld_type = NULL, dsco = NULL, lco = NULL,
+                          overwrite = FALSE) {
 
     if (!(is.character(format) && length(format) == 1))
         stop("'format' must be a length-1 character vector", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (vsi_stat(dsn) && !overwrite)
+        stop("'dsn' exists and 'overwrite' is FALSE", call. = FALSE)
     if (is.null(layer))
         layer <- ""
     if (!(is.character(layer) && length(layer) == 1))

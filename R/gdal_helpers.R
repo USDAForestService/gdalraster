@@ -77,12 +77,14 @@
 #'   addFilesInZip(zip_file, lcp_file, full_paths=FALSE, sozip_enabled="YES",
 #'                 num_threads=1)
 #'
-#'   unzip(zip_file, list=TRUE)
+#'   print("Files in zip archive:")
+#'   print(unzip(zip_file, list=TRUE))
 #'
 #'   # Open with GDAL using Virtual File System handler '/vsizip/'
 #'   # see: https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives
 #'   lcp_in_zip <- file.path("/vsizip", zip_file, "storm_lake.lcp")
-#'   vsi_get_file_metadata(lcp_in_zip, domain="ZIP")
+#'   print("SOZip metadata:")
+#'   print(vsi_get_file_metadata(lcp_in_zip, domain="ZIP"))
 #'
 #'   ds <- new(GDALRaster, lcp_in_zip)
 #'   ds$info()
@@ -366,4 +368,37 @@ get_pixel_line <- function(xy, gt) {
         stop("'gt' must be a numeric vector of length 6, or GDALRaster object",
              call. = FALSE)
     }
+}
+
+#' Report open datasets
+#'
+#' `dump_open_datasets()` dumps a list of all open datasets (shared or not) to
+#' the console. This function is primarily intended to assist in debugging
+#' "dataset leaks" and reference counting issues. The information reported
+#' includes the dataset name, referenced count, shared status, driver name,
+#' size, and band count. This a wrapper for `GDALDumpOpenDatasets()` with
+#' output to the console.
+#'
+#' @returns Number of open datasets.
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, elev_file)
+#' dump_open_datasets()
+#' ds2 <- new(GDALRaster, elev_file)
+#' dump_open_datasets()
+#' ds$close()
+#' dump_open_datasets()
+#' ds2$close()
+#' dump_open_datasets()
+dump_open_datasets <- function() {
+    f <- tempfile(fileext = ".txt")
+    nopen <- .dump_open_datasets(f)
+    if (nopen < 0)
+        stop("failed to obtain the list of open datasets", call. = FALSE)
+
+    out <- readLines(f)
+    unlink(f)
+    writeLines(out)
+    return(nopen)
 }

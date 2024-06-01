@@ -4,6 +4,7 @@
 #include <errno.h>
 #include <cmath>
 #include <cstring>
+#include <cstdio>
 #include <unordered_map>
 
 #include "gdal.h"
@@ -225,6 +226,19 @@ int get_cache_used() {
 }
 
 
+//' @noRd
+// [[Rcpp::export(name = ".dump_open_datasets")]]
+int _dump_open_datasets(std::string outfile) {
+    FILE* fp = std::fopen(outfile.c_str(), "w");
+    if (!fp)
+        return -1;
+
+    int ret = GDALDumpOpenDatasets(fp);
+    std::fclose(fp);
+    return ret;
+}
+
+
 //' Push a new GDAL CPLError handler
 //'
 //' `push_error_handler()` is a wrapper for
@@ -334,7 +348,7 @@ int get_num_cpus() {
 }
 
 
-//' Get usable physical RAM
+//' Get usable physical RAM reported by GDAL
 //'
 //' `get_usable_physical_ram()` returns the total physical RAM, usable by a
 //' process, in bytes. It will limit to 2 GB for 32 bit processes. Starting
@@ -412,7 +426,7 @@ bool has_spatialite() {
 }
 
 
-//' Return if GDAL CPLHTTP services can be useful (libcurl)
+//' Check if GDAL CPLHTTP services can be useful (libcurl)
 //'
 //' `http_enabled()` returns `TRUE` if `libcurl` support is enabled.
 //' Wrapper of `CPLHTTPEnabled()` in the GDAL Common Portability Library.
@@ -424,6 +438,13 @@ bool has_spatialite() {
 // [[Rcpp::export]]
 bool http_enabled() {
     return static_cast<bool>(CPLHTTPEnabled());
+}
+
+
+//' @noRd
+// [[Rcpp::export(name = ".cpl_http_cleanup")]]
+void _cpl_http_cleanup() {
+    CPLHTTPCleanup();
 }
 
 
@@ -1747,12 +1768,12 @@ bool _rasterize(std::string src_dsn, std::string dst_filename,
     if (!quiet)
         GDALRasterizeOptionsSetProgress(psOptions, GDALTermProgressR, nullptr);
 
-    GDALDatasetH hDstDS;
+    GDALDatasetH hDstDS = nullptr;
     hDstDS = GDALRasterize(dst_filename.c_str(), nullptr, hSrcDS,
                            psOptions, nullptr);
 
     GDALRasterizeOptionsFree(psOptions);
-    GDALClose(hSrcDS);
+    GDALReleaseDataset(hSrcDS);
     if (hDstDS == nullptr)
         Rcpp::stop("rasterize failed");
 

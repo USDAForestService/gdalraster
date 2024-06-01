@@ -37,7 +37,8 @@ ogr_ds_create(
   fld_name = NULL,
   fld_type = NULL,
   dsco = NULL,
-  lco = NULL
+  lco = NULL,
+  overwrite = FALSE
 )
 
 ogr_ds_layer_count(dsn)
@@ -139,6 +140,9 @@ for \code{dsn} (\code{"NAME=VALUE"} pairs).}
 
 \item{lco}{Optional character vector of format-specific creation options
 for \code{layer} (\code{"NAME=VALUE"} pairs).}
+
+\item{overwrite}{Logical scalar. \code{TRUE} to overwrite \code{dsn} if it already
+exists when calling \code{ogr_ds_create()}. Default is \code{FALSE}.}
 
 \item{fld_defn}{A field definition as list (see \code{\link[=ogr_def_field]{ogr_def_field()}}).
 Additional arguments in \code{ogr_field_create()} will be ignored if a \code{fld_defn}
