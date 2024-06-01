@@ -1,4 +1,6 @@
-# gdalraster 1.10.9300 (dev)
+# gdalraster 1.10.9301 (dev)
+
+* fix missing calls to `GDALReleaseDataset()` on error condition in some vector related functions (2024-06-01)
 
 * add `dump_open_datasets()`: dump a list of all open datasets (shared or not) to the console, wrapper of `GDALDumpOpenDatasets()` (2024-06-01)
 
