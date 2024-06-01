@@ -8,6 +8,13 @@ test_that("OGR management utilities work", {
     expect_true(ogr_ds_create("GPKG", dsn, "test_layer", geom_type = "POLYGON"))
     expect_true(ogr_ds_exists(dsn, with_update=TRUE))
     expect_true(ogr_layer_exists(dsn, "test_layer"))
+    # overwrite defaults to FALSE
+    expect_error(ogr_ds_create("GPKG", dsn, "test_layer",
+                               geom_type = "POLYGON"))
+    expect_true(ogr_ds_create("GPKG", dsn, "test_layer", geom_type = "POLYGON",
+                              overwrite = TRUE))
+    expect_true(ogr_ds_exists(dsn, with_update=TRUE))
+    expect_true(ogr_layer_exists(dsn, "test_layer"))
     expect_false(ogr_layer_exists(dsn, "test_layer_2"))
     expect_true(ogr_ds_test_cap(dsn)$CreateLayer)
     lco <- "DESCRIPTION=test layer2"
