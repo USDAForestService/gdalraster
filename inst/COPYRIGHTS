@@ -10,17 +10,17 @@ https://gdal.org/license.html
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the “Software”), to deal
-in the Software without restriction, including without limitation the rights 
+in the Software without restriction, including without limitation the rights
 to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
 copies of the Software, and to permit persons to whom the Software is furnished
 to do so, subject to the following conditions:
 The above copyright notice and this permission notice shall be included in all
 copies or substantial portions of the Software.
 
-THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
 FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
@@ -28,10 +28,37 @@ SOFTWARE.
 
 =====file: src/progress_r.cpp =================================================
 File src/progress_r.cpp:
-This file is a slightly modified version of /gdal/port/cpl_progress.cpp, to 
+This file is a slightly modified version of gdal/port/cpl_progress.cpp, to
 work in R on Windows and Linux.
 
 Copyright (c) 2013, Frank Warmerdam
+
+Permission is hereby granted, free of charge, to any person obtaining a
+copy of this software and associated documentation files (the "Software"),
+to deal in the Software without restriction, including without limitation
+the rights to use, copy, modify, merge, publish, distribute, sublicense,
+and/or sell copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following conditions:
+ *
+The above copyright notice and this permission notice shall be included
+in all copies or substantial portions of the Software.
+ *
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+DEALINGS IN THE SOFTWARE.
+===============================================================================
+
+=====file: src/gdalraster.h ===================================================
+Function: ARE_REAL_EQUAL
+This function was copied from gdal/gcore/gdal_priv.h since that header is
+otherwise not needed. We include gdal.h instead for the C API.
+
+Copyright (c) 1998, Frank Warmerdam
+Copyright (c) 2007-2014, Even Rouault <even dot rouault at spatialys.com>
 
 Permission is hereby granted, free of charge, to any person obtaining a
 copy of this software and associated documentation files (the "Software"),
@@ -91,10 +118,10 @@ Copyright (c) 2018-2019 Marius Appel
 License: MIT
 
 =====All other files ==========================================================
-All files in this package other than those referred to above, were prepared by 
-Chris Toney, a U.S. Government employee working on official time, and are in 
+All files in this package other than those referred to above, were prepared by
+Chris Toney, a U.S. Government employee working on official time, and are in
 the public domain in the United States of America. Copyright and related rights
-in the work are also waived worldwide through the CC0 1.0 Universal public 
+in the work are also waived worldwide through the CC0 1.0 Universal public
 domain dedication.
 
 The software is provided "as is" without warranty of any kind, either expressed
