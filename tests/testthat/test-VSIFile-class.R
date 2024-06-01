@@ -14,6 +14,19 @@ test_that("VSIFile works", {
     expect_no_error(vf <- new(VSIFile, lcp_file, "r"))
     expect_true(is(vf, "Rcpp_VSIFile"))
     expect_equal(vf$close(), 0)
+    # filename, r+ access
+    tmp_file <- tempfile(fileext = ".lcp")
+    file.copy(lcp_file, tmp_file, overwrite = TRUE)
+    expect_no_error(vf <- new(VSIFile, tmp_file, "r+"))
+    vf$seek(0, SEEK_END)
+    expect_equal(vf$tell(), vsi_stat(lcp_file, "size"))
+    expect_equal(vf$close(), 0)
+    # filename, w access
+    expect_no_error(vf <- new(VSIFile, tmp_file, "w"))
+    vf$seek(0, SEEK_END)
+    expect_equal(vf$tell(), bit64::as.integer64(0))
+    expect_equal(vf$close(), 0)
+    vsi_unlink(tmp_file)
     # testing options depends on GDAL version, and needs internet access
     # so only testing with an empty vector for now
     expect_no_error(vf <- new(VSIFile, lcp_file, "r", character(0)))

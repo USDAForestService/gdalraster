@@ -276,10 +276,10 @@ int VSIFile::set_access(std::string access) {
     }
 }
 
-void vsifile_finalizer(VSIFile* ptr) {
-    if (ptr)
-        ptr->close();
-}
+// void vsifile_finalizer(VSIFile* ptr) {
+//     if (ptr)
+//         ptr->close();
+// }
 
 // ****************************************************************************
 
@@ -326,6 +326,6 @@ RCPP_MODULE(mod_VSIFile) {
     .method("set_access", &VSIFile::set_access,
         "Set the access if the file is closed")
 
-    .finalizer(&vsifile_finalizer)
+    // .finalizer(&vsifile_finalizer)
     ;
 }
