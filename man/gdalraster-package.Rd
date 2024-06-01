@@ -131,7 +131,8 @@
   \code{\link[=has_spatialite]{has_spatialite()}},
   \code{\link[=http_enabled]{http_enabled()}},
   \code{\link[=push_error_handler]{push_error_handler()}},
-  \code{\link[=pop_error_handler]{pop_error_handler()}}
+  \code{\link[=pop_error_handler]{pop_error_handler()}},
+  \code{\link[=dump_open_datasets]{dump_open_datasets()}}
 
   \item PROJ configuration:
   \code{\link[=proj_version]{proj_version()}},

@@ -158,6 +158,7 @@ reference:
   - http_enabled
   - push_error_handler
   - pop_error_handler
+  - dump_open_datasets
 - subtitle: PROJ configuration
 - contents:
   - proj_networking
