@@ -88,14 +88,14 @@ GDALRaster::GDALRaster(Rcpp::CharacterVector filename) :
             GDALRaster(
                 filename,
                 true,
-                Rcpp::CharacterVector::create(),
+                R_NilValue,
                 true) {}
 
 GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only) :
             GDALRaster(
                 filename,
                 read_only,
-                Rcpp::CharacterVector::create(),
+                R_NilValue,
                 true) {}
 
 GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
@@ -107,14 +107,20 @@ GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                 true) {}
 
 GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
-        Rcpp::CharacterVector open_options, bool shared) :
-                open_options_in(open_options),
+        Rcpp::Nullable<Rcpp::CharacterVector> open_options, bool shared) :
                 shared_in(shared),
                 hDataset(nullptr),
                 eAccess(GA_ReadOnly) {
 
     fname_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
+
+    if (open_options.isNotNull())
+        open_options_in = open_options;
+    else
+        open_options_in = Rcpp::CharacterVector::create();
+
     open(read_only);
+
     // warn for now if 64-bit integer
     if (_hasInt64())
         _warnInt64();
@@ -1521,7 +1527,7 @@ RCPP_MODULE(mod_GDALRaster) {
         ("Usage: new(GDALRaster, filename, read_only=[TRUE|FALSE])")
     .constructor<Rcpp::CharacterVector, bool, Rcpp::CharacterVector>
         ("Usage: new(GDALRaster, filename, read_only, open_options)")
-    .constructor<Rcpp::CharacterVector, bool, Rcpp::CharacterVector, bool>
+    .constructor<Rcpp::CharacterVector, bool, Rcpp::Nullable<Rcpp::CharacterVector>, bool>
         ("Usage: new(GDALRaster, filename, read_only, open_options, shared)")
 
     // exposed read/write fields
