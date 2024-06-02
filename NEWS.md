@@ -1,4 +1,6 @@
-# gdalraster 1.10.9310 (dev)
+# gdalraster 1.10.9320 (dev)
+
+* register a finalizer to call `CPLHTTPCleanup()` upon R session exit (2024-06-02)
 
 * make `open_options` nullable in the constructor for class `GDALRaster` (2024-06-01)
 
