@@ -1,4 +1,6 @@
-# gdalraster 1.10.9303 (dev)
+# gdalraster 1.10.9310 (dev)
+
+* make `open_options` nullable in the constructor for class `GDALRaster` (2024-06-01)
 
 * `ogr_ds_create()`: add param `overwrite` with default `FALSE` to avoid overwriting existing dataset (#400) (2024-06-01)
 

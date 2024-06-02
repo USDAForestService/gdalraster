@@ -64,6 +64,11 @@ test_that("dataset parameters are correct", {
     expect_equal(ds_oo$res(), c(30,30))
     expect_equal(ds_oo$dim(), c(143,107,1))
     ds_oo$close()
+
+    # without using shared mode
+    ds_ns <- new(GDALRaster, elev_file, TRUE, NULL, FALSE)
+    expect_equal(ds_ns$getDriverShortName(), "GTiff")
+    ds_ns$close()
 })
 
 test_that("band-level parameters are correct", {
@@ -86,16 +91,19 @@ test_that("metadata are correct", {
     ds <- new(GDALRaster, evt_file, TRUE)
     expect_equal(ds$getMetadata(band=0, domain=""), "AREA_OR_POINT=Area")
     expect_equal(ds$getMetadata(band=1, domain=""),
-                "RepresentationType=ATHEMATIC")
+                 "RepresentationType=ATHEMATIC")
     expect_equal(ds$getMetadata(band=0, domain="IMAGE_STRUCTURE"),
-                "INTERLEAVE=BAND")
+                 "INTERLEAVE=BAND")
     expect_equal(ds$getMetadata(band=1, domain="IMAGE_STRUCTURE"), "")
     expect_equal(ds$getMetadataItem(band=0, mdi_name="AREA_OR_POINT",
-                domain=""), "Area")
+                                    domain=""),
+                 "Area")
     expect_equal(ds$getMetadataItem(band=0, "INTERLEAVE",
-                domain="IMAGE_STRUCTURE"), "BAND")
+                                    domain="IMAGE_STRUCTURE"),
+                 "BAND")
     expect_equal(ds$getMetadataItem(band=1, mdi_name="COMPRESSION",
-                domain="IMAGE_STRUCTURE"), "")
+                                    domain="IMAGE_STRUCTURE"),
+                 "")
     expect_equal(length(ds$getMetadataDomainList(band=0)), 3)
     expect_equal(length(ds$getMetadataDomainList(band=1)), 1)
     ds$close()
@@ -109,10 +117,10 @@ test_that("open/close/re-open works", {
     ds$close()
     mod_file <- paste0(tempdir(), "/", "storml_elev_mod.tif")
     rasterFromRaster(srcfile = elev_file,
-                    dstfile = mod_file,
-                    nbands = 1,
-                    dtName = "UInt32",
-                    init = DEFAULT_NODATA[["UInt32"]])
+                     dstfile = mod_file,
+                     nbands = 1,
+                     dtName = "UInt32",
+                     init = DEFAULT_NODATA[["UInt32"]])
     ds <- new(GDALRaster, mod_file, read_only=TRUE)
     expect_true(ds$isOpen())
     expect_true(all(is.na(read_ds(ds))))
@@ -199,7 +207,7 @@ test_that("get histogram works", {
 test_that("floating point I/O works", {
     f <- paste0(tempdir(), "/", "testfloat.tif")
     create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
-            nbands=1, dataType="Float32")
+           nbands=1, dataType="Float32")
     ds <- new(GDALRaster, f, read_only=FALSE)
     set.seed(42)
     z <- runif(10*10)
@@ -228,7 +236,7 @@ test_that("floating point I/O works", {
 test_that("complex I/O works", {
     f <- paste0(tempdir(), "/", "testcomplex.tif")
     create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
-            nbands=1, dataType="CFloat32")
+           nbands=1, dataType="CFloat32")
     ds <- new(GDALRaster, f, read_only=FALSE)
     set.seed(42)
     z <- complex(real = stats::rnorm(100), imaginary = stats::rnorm(100))
@@ -243,44 +251,41 @@ test_that("complex I/O works", {
 })
 
 test_that("Byte I/O works", {
-  f <- paste0(tempdir(), "/", "testbyte.tif")
-  create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
-         nbands=1, dataType="Byte")
-  ds <- new(GDALRaster, f, read_only=FALSE)
-  set.seed(42)
-  z <- as.raw(sample(100, 100))
-  ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, z)
+    f <- paste0(tempdir(), "/", "testbyte.tif")
+    create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
+           nbands=1, dataType="Byte")
+    ds <- new(GDALRaster, f, read_only=FALSE)
+    set.seed(42)
+    z <- as.raw(sample(100, 100))
+    ds$write(band=1, xoff=0, yoff=0, xsize=10, ysize=10, z)
 
-  ds$open(read_only=TRUE)
-  expect_false(ds$readByteAsRaw)
-  ## read as raw with the temporary setting
-  expect_warning(r_raw <- read_ds(ds, as_raw = TRUE))
-  ## read with to-integer conversion (as default, not affected by 'as_raw')
-  expect_warning(r_int <- read_ds(ds))
-  ## set and read as raw via field
-  ds$readByteAsRaw <- TRUE
-  expect_warning(r_raw1 <- read_ds(ds, as_raw = TRUE))
+    ds$open(read_only=TRUE)
+    expect_false(ds$readByteAsRaw)
+    ## read as raw with the temporary setting
+    expect_warning(r_raw <- read_ds(ds, as_raw = TRUE))
+    ## read with to-integer conversion (as default, not affected by 'as_raw')
+    expect_warning(r_int <- read_ds(ds))
+    ## set and read as raw via field
+    ds$readByteAsRaw <- TRUE
+    expect_warning(r_raw1 <- read_ds(ds, as_raw = TRUE))
 
+    deleteDataset(f)
 
-  deleteDataset(f)
+    expect_type(r_int, "integer")
+    expect_type(r_raw, "raw")
+    expect_type(r_raw1, "raw")
+    attributes(r_raw) <- NULL
+    expect_equal(r_raw, z)
 
-  expect_type(r_int, "integer")
-
-  expect_type(r_raw, "raw")
-  expect_type(r_raw1, "raw")
-  attributes(r_raw) <- NULL
-  expect_equal(r_raw, z)
-
-
-  ds$close()
+    ds$close()
 })
 
 test_that("Byte I/O: warn when data type not compatible", {
-  ## expect a warning when data type is not Byte
-  elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-  ds <- new(GDALRaster, elev_file)
-  expect_warning(read_ds(ds, 1L, 0L, 0L, 2L, 3L, 2L, 3L, as_raw = TRUE))
-  ds$close()
+    ## expect a warning when data type is not Byte
+    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    ds <- new(GDALRaster, elev_file)
+    expect_warning(read_ds(ds, 1L, 0L, 0L, 2L, 3L, 2L, 3L, as_raw = TRUE))
+    ds$close()
 })
 
 test_that("set unit type, scale and offset works", {
