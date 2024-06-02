@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9310</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.10.9320</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.10.9310" id="gdalraster-1109310-dev">gdalraster 1.10.9310 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109310-dev"></a></h2>
-<ul><li><p>make <code>open_options</code> nullable in the constructor for class <code>GDALRaster</code> (2024-06-01)</p></li>
+<h2 class="pkg-version" data-toc-text="1.10.9320" id="gdalraster-1109320-dev">gdalraster 1.10.9320 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-1109320-dev"></a></h2>
+<ul><li><p>register a finalizer to call <code>CPLHTTPCleanup()</code> upon R session exit (2024-06-02)</p></li>
+<li><p>make <code>open_options</code> nullable in the constructor for class <code>GDALRaster</code> (2024-06-01)</p></li>
 <li><p><code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code>: add param <code>overwrite</code> with default <code>FALSE</code> to avoid overwriting existing dataset (<a href="https://github.com/USDAForestService/gdalraster/issues/400" class="external-link">#400</a>) (2024-06-01)</p></li>
 <li><p><code><a href="../reference/calc.html">calc()</a></code>: add input validation for <code>var.names</code>, must be in <code>expr</code> (2024-06-01)</p></li>
 <li><p>fix missing calls to <code>GDALReleaseDataset()</code> on error condition in some vector related functions (2024-06-01)</p></li>
