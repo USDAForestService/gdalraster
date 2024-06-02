@@ -9,7 +9,7 @@
 \arguments{
 \item{filename}{Character string containing the file name of a raster
 dataset to open, as full path or relative to the current working directory.
-In some cases, \code{filename} may not refer to a local file sytem, but instead
+In some cases, \code{filename} may not refer to a local file system, but instead
 contain format-specific information on how to access a dataset such
 as database connection string, URL, /vsiPREFIX/, etc. (see GDAL
 raster format descriptions:
@@ -47,10 +47,10 @@ the same \code{filename}, if the dataset is opened from the same thread.
 Functions in \code{gdalraster} that do processing will open input datasets in
 shared mode. This provides potential efficiency for cases when an object of
 class \code{GDALRaster} is already open in read-only mode on the same \code{filename}
-(avoids overhead associated with the initial dataset opening by using the
+(avoids overhead associated with initial dataset opening by using the
 existing handle, and potentially makes use of existing data in the GDAL
 block cache). Opening in shared mode can be disabled by specifying the
-optional \code{shared} paramater in the class constructor.
+optional \code{shared} parameter in the class constructor.
 
 The \verb{$read()} method will perform automatic resampling if the
 specified output size (\code{out_xsize * out_ysize}) is different than

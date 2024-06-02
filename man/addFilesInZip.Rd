@@ -87,10 +87,12 @@ The \code{GDAL_NUM_THREADS} configuration option can be set to \code{ALL_CPUS} o
 integer value to specify the number of threads to use for SOZip-compressed
 files (see \code{\link[=set_config_option]{set_config_option()}}).
 
-SOzip can be validated with:
+SOZip can be validated with:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{vsi_get_file_metadata(zip_file, domain="ZIP")
 }\if{html}{\out{</div>}}
+
+where \code{zip_file} uses the /vsizip/ prefix.
 }
 \examples{
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")

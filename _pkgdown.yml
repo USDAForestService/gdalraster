@@ -37,9 +37,6 @@ reference:
 - contents:
   - buildVRT
   - rasterToVRT
-- subtitle: Reproject/crop/mosaic
-- contents:
-  - warp
 - subtitle: Algorithms
 - contents:
   - calc
@@ -50,6 +47,7 @@ reference:
   - polygonize
   - rasterize
   - sieveFilter
+  - warp
 - subtitle: Display
 - contents:
   - plot_raster
