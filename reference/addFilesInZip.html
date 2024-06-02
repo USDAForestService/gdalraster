@@ -179,8 +179,9 @@ input files will be seek-optimized. The default can be changed with the
     <p>The <code>GDAL_NUM_THREADS</code> configuration option can be set to <code>ALL_CPUS</code> or an
 integer value to specify the number of threads to use for SOZip-compressed
 files (see <code><a href="set_config_option.html">set_config_option()</a></code>).</p>
-<p>SOzip can be validated with:</p>
+<p>SOZip can be validated with:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">vsi_get_file_metadata</span>(zip_file, <span class="at">domain=</span><span class="st">"ZIP"</span>)</span></code></pre><p></p></div>
+<p>where <code>zip_file</code> uses the /vsizip/ prefix.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
