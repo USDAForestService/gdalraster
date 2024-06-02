@@ -101,7 +101,8 @@ class GDALRaster {
     GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                Rcpp::CharacterVector open_options);
     GDALRaster(Rcpp::CharacterVector filename, bool read_only,
-               Rcpp::CharacterVector open_options, bool shared);
+               Rcpp::Nullable<Rcpp::CharacterVector> open_options,
+               bool shared);
 
     // read/write fields exposed to R
     Rcpp::CharacterVector infoOptions = Rcpp::CharacterVector::create();

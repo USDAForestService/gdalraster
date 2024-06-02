@@ -5,12 +5,13 @@
 \alias{Rcpp_GDALRaster}
 \alias{Rcpp_GDALRaster-class}
 \alias{GDALRaster}
-\title{Class encapsulating a raster dataset and its associated raster bands}
+\title{Class encapsulating a raster dataset and associated band objects}
 \arguments{
 \item{filename}{Character string containing the file name of a raster
 dataset to open, as full path or relative to the current working directory.
-In some cases, \code{filename} may not refer to a physical file, but instead
-contain format-specific information on how to access a dataset (see GDAL
+In some cases, \code{filename} may not refer to a local file sytem, but instead
+contain format-specific information on how to access a dataset such
+as database connection string, URL, /vsiPREFIX/, etc. (see GDAL
 raster format descriptions:
 \url{https://gdal.org/drivers/raster/index.html}).}
 
@@ -27,8 +28,8 @@ mode. Default is \code{TRUE} (see Note).}
 An object of class \code{GDALRaster} which contains a pointer to the
 opened dataset, and methods that operate on the dataset as described in
 Details. \code{GDALRaster} is a C++ class exposed directly to R (via
-\code{RCPP_EXPOSED_CLASS}). Methods and fields of the class are accessed using
-the \code{$} operator. Read/write fields can be used for per-object settings.
+\code{RCPP_EXPOSED_CLASS}). Fields and methods of the class are accessed using
+the \code{$} operator. The read/write fields can be used for per-object settings.
 }
 \description{
 \code{GDALRaster} provides an interface for accessing a raster dataset via GDAL
@@ -66,8 +67,10 @@ override the default resampling to one of \code{BILINEAR}, \code{CUBIC},
 ds <- new(GDALRaster, filename)
 # for update access:
 ds <- new(GDALRaster, filename, read_only = FALSE)
-# or, using dataset open options:
+# to use dataset open options:
 ds <- new(GDALRaster, filename, read_only = TRUE|FALSE, open_options)
+# to open without shared mode:
+new(GDALRaster, filename, read_only, open_options, shared = FALSE)
 
 ## Read/write fields (see Details)
 ds$infoOptions
@@ -163,11 +166,11 @@ read-only, or \code{FALSE} to open with write access.
 Returns an object of class \code{GDALRaster}.
 
 \code{new(GDALRaster, filename, read_only, open_options, shared)}
-Alternate constructor for setting the \code{shared} mode for dataset opening.
+Alternate constructor for specifying the \code{shared} mode for dataset opening.
 \code{shared} defaults to \code{TRUE} but can be set to \code{FALSE} with this constructor
 (see Note).
-All arguments are required with this form of the constructor, but
-\code{open_options} may be given as empty vector (\code{open_opens = character(0)}).
+All parameters are required with this form of the constructor, but
+\code{open_options} can be \code{NULL}.
 Returns an object of class \code{GDALRaster}.
 
 \code{$infoOptions}

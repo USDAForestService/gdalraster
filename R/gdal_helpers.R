@@ -387,9 +387,15 @@ get_pixel_line <- function(xy, gt) {
 #' dump_open_datasets()
 #' ds2 <- new(GDALRaster, elev_file)
 #' dump_open_datasets()
+#' # open without using shared mode
+#' ds3 <- new(GDALRaster, elev_file, read_only = TRUE,
+#'            open_options = NULL, shared = FALSE)
+#' dump_open_datasets()
 #' ds$close()
 #' dump_open_datasets()
 #' ds2$close()
+#' dump_open_datasets()
+#' ds3$close()
 #' dump_open_datasets()
 dump_open_datasets <- function() {
     f <- tempfile(fileext = ".txt")
