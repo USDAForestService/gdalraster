@@ -1,4 +1,11 @@
-.gdalraster_env <- new.env(parent=.GlobalEnv)
+.gdalraster_env <- new.env()
+
+.gdalraster_finalizer <- function(env) {
+    # clean-up for /vsicurl/ and related file systems
+    push_error_handler("quiet")
+    .cpl_http_cleanup()
+    pop_error_handler()
+}
 
 .onLoad <- function(libname, pkgname) {
     # set environment variables on Windows
@@ -19,6 +26,9 @@
                envir=.gdalraster_env)
         Sys.setenv("GDAL_DATA" = system.file("gdal", package="gdalraster"))
     }
+
+    # register a finalizer for cleanup at the end of an R session
+    reg.finalizer(.gdalraster_env, .gdalraster_finalizer, onexit = TRUE)
 }
 
 .onAttach <- function(libname, pkgname) {
@@ -45,8 +55,5 @@
     if (dir.exists(system.file("gdal", package="gdalraster"))) {
         Sys.setenv("GDAL_DATA"=get(".orig_gdal_data", envir=.gdalraster_env))
     }
-    # clean-up for /vsicurl/ and related file systems
-    push_error_handler("quiet")
-    .cpl_http_cleanup()
-    pop_error_handler()
+    .gdalraster_finalizer(.gdalraster_env)
 }
