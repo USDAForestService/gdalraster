@@ -90,15 +90,14 @@
 </ul></div>
 <div class="section level3">
 <h3 id="gdalraster-class-1-11-0">GDALRaster-class<a class="anchor" aria-label="anchor" href="#gdalraster-class-1-11-0"></a></h3>
-<ul><li>behavior change: the class methods <code>info()</code> and <code>infoAsJSON()</code> now use the default command-line arguments for the underlying <code>gdalinfo</code> utility. Arguments are configurable in the new read/write <code>infoOptions</code> field, which is an empty vector by default (<code>character(0)</code>).</li>
-<li>add support for I/O of Byte raster as R <code>raw</code> type, and add the setting <code>readByteAsRaw</code> as a class field (<a href="https://github.com/USDAForestService/gdalraster/issues/314" class="external-link">#314</a>, thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>)</li>
-<li>add read/write fields <code>infoOptions</code> and <code>quiet</code> for applying per-object settings</li>
+<ul><li>behavior change: the class methods <code>$info()</code> and <code>$infoAsJSON()</code> now use the default command-line arguments for the underlying <code>gdalinfo</code> utility. Arguments are configurable in the new read/write <code>$infoOptions</code> field, which is an empty vector by default (<code>character(0)</code>).</li>
+<li>add support for I/O of Byte raster as R <code>raw</code> type, and add the setting <code>$readByteAsRaw</code> as a class field (<a href="https://github.com/USDAForestService/gdalraster/issues/314" class="external-link">#314</a>, thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>)</li>
+<li>add read/write fields <code>$infoOptions</code> and <code>$quiet</code> for applying per-object settings</li>
 <li>add an optional constructor to allow specifying whether the dataset is opened in shared mode, <code>TRUE</code> by default</li>
-<li>add method <code>getActualBlockSize()</code>: retrieve the actual block size for a given block offset</li>
-<li>add method <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code>: class method alternative to calling the stand-alone function <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code> on an object of class <code>GDALRaster</code>
-</li>
-<li>add <code>GDALRaster::getProjection()</code>: equivalent to <code>GDALRaster::getProjectionRef()</code> (consistent with <code>osgeo.gdal.Dataset.getProjection()</code> / <code>osgeo.gdal.Dataset.getProjectionRef()</code> in the GDAL Python API)</li>
-<li>method <code>getDefaultRAT()</code>: add progress bar since retrieving large raster attribute tables could take &gt;30 sec</li>
+<li>add method <code>$getActualBlockSize()</code>: retrieve the actual block size for a given block offset</li>
+<li>add method <code>$get_pixel_line()</code>: class method alternative to calling the stand-alone function <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code> on an object of class <code>GDALRaster</code>(<a href="https://github.com/USDAForestService/gdalraster/issues/339" class="external-link">#339</a>)</li>
+<li>add method <code>$getProjection()</code>: equivalent to <code>$getProjectionRef()</code> (consistent with <code>osgeo.gdal.Dataset.getProjection()</code> / <code>osgeo.gdal.Dataset.getProjectionRef()</code> in the GDAL Python API)</li>
+<li>method <code>$getDefaultRAT()</code>: add progress bar since retrieving large raster attribute tables could take &gt;30 sec</li>
 </ul></div>
 <div class="section level3">
 <h3 id="stand-alone-processing-functions-1-11-0">Stand-alone processing functions<a class="anchor" aria-label="anchor" href="#stand-alone-processing-functions-1-11-0"></a></h3>
@@ -108,7 +107,7 @@
 <code><a href="../reference/calc.html">calc()</a></code>: add input validation for <code>var.names</code>, must be in <code>expr</code>
 </li>
 <li>
-<code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code>: an object of class <code>GDALRaster</code> can now be passed for the <code>gt</code> parameter, in which case the geotransform will be obtained from the object and bounds checking on the raster extent will be done (original behavior for <code>gt</code> as numeric vector is unchanged)</li>
+<code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code>: an object of class <code>GDALRaster</code> can now be passed for the <code>gt</code> parameter, in which case the geotransform will be obtained from the object and bounds checking on the raster extent will be done (original behavior for <code>gt</code> as numeric vector is unchanged) (<a href="https://github.com/USDAForestService/gdalraster/issues/339" class="external-link">#339</a>)</li>
 <li>
 <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code>: add parameter <code>open_options</code> to support options on the source dataset</li>
 <li>
@@ -142,10 +141,10 @@
 </ul></div>
 <div class="section level3">
 <h3 id="other-internal-changes-and-fixes-1-11-0">Other internal changes and fixes<a class="anchor" aria-label="anchor" href="#other-internal-changes-and-fixes-1-11-0"></a></h3>
-<ul><li>fix memory leaks detected by Valgrind in <code>GDALRaster</code> class methods <code>info()</code>, <code>infoAsJSON()</code> and <code>getDefaultRAT()</code>
+<ul><li>fix memory leaks detected by Valgrind in <code>GDALRaster</code> class methods <code>$info()</code>, <code>$infoAsJSON()</code> and <code>$getDefaultRAT()</code>
 </li>
 <li>register a finalizer to call <code>CPLHTTPCleanup()</code> upon R session exit</li>
-<li>add <code>GDALRaster</code> class method <code>setFilename()</code>: set the filename of an uninitialized <code>GDALRaster</code> object, currently undocumented / for internal use</li>
+<li>add <code>GDALRaster</code> class method <code>$setFilename()</code>: set the filename of an uninitialized <code>GDALRaster</code> object, currently undocumented / for internal use</li>
 <li>add <code>GDALRaster</code> class method <code>_getGDALDatasetH()</code>: get the GDAL dataset handle for internal use</li>
 <li>
 <code><a href="../reference/buildRAT.html">buildRAT()</a></code>: if the input raster is an object of class <code>GDALRaster</code>, use it by reference rather than instantiating another <code>GDALRaster</code> object internally</li>
