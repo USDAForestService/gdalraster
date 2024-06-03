@@ -28,20 +28,20 @@
 
 ## GDALRaster-class
 
-* behavior change: the class methods `info()` and `infoAsJSON()` now use the default command-line arguments for the underlying `gdalinfo` utility. Arguments are configurable in the new read/write `infoOptions` field, which is an empty vector by default (`character(0)`).
-* add support for I/O of Byte raster as R `raw` type, and add the setting `readByteAsRaw` as a class field (#314, thanks to @mdsumner)
-* add read/write fields `infoOptions` and `quiet` for applying per-object settings
+* behavior change: the class methods `$info()` and `$infoAsJSON()` now use the default command-line arguments for the underlying `gdalinfo` utility. Arguments are configurable in the new read/write `$infoOptions` field, which is an empty vector by default (`character(0)`).
+* add support for I/O of Byte raster as R `raw` type, and add the setting `$readByteAsRaw` as a class field (#314, thanks to @mdsumner)
+* add read/write fields `$infoOptions` and `$quiet` for applying per-object settings
 * add an optional constructor to allow specifying whether the dataset is opened in shared mode, `TRUE` by default
-* add method `getActualBlockSize()`: retrieve the actual block size for a given block offset
-* add method `get_pixel_line()`: class method alternative to calling the stand-alone function `get_pixel_line()` on an object of class `GDALRaster`
-* add `GDALRaster::getProjection()`: equivalent to `GDALRaster::getProjectionRef()` (consistent with `osgeo.gdal.Dataset.getProjection()` / `osgeo.gdal.Dataset.getProjectionRef()` in the GDAL Python API)
-* method `getDefaultRAT()`: add progress bar since retrieving large raster attribute tables could take >30 sec
+* add method `$getActualBlockSize()`: retrieve the actual block size for a given block offset
+* add method `$get_pixel_line()`: class method alternative to calling the stand-alone function `get_pixel_line()` on an object of class `GDALRaster`(#339)
+* add method `$getProjection()`: equivalent to `$getProjectionRef()` (consistent with `osgeo.gdal.Dataset.getProjection()` / `osgeo.gdal.Dataset.getProjectionRef()` in the GDAL Python API)
+* method `$getDefaultRAT()`: add progress bar since retrieving large raster attribute tables could take >30 sec
 
 ## Stand-alone processing functions
 
 * `calc()`: add support for multiband output (#319)
 * `calc()`: add input validation for `var.names`, must be in `expr`
-* `get_pixel_line()`: an object of class `GDALRaster` can now be passed for the `gt` parameter, in which case the geotransform will be obtained from the object and bounds checking on the raster extent will be done (original behavior for `gt` as numeric vector is unchanged)
+* `get_pixel_line()`: an object of class `GDALRaster` can now be passed for the `gt` parameter, in which case the geotransform will be obtained from the object and bounds checking on the raster extent will be done (original behavior for `gt` as numeric vector is unchanged) (#339)
 * `ogr2ogr()`: add parameter `open_options` to support options on the source dataset
 * `read_ds()`: add parameter `as_raw` to read a Byte raster as R `raw` type (#314, thanks to @mdsumner)
 
@@ -68,9 +68,9 @@
 
 ## Other internal changes and fixes
 
-* fix memory leaks detected by Valgrind in `GDALRaster` class methods `info()`, `infoAsJSON()` and `getDefaultRAT()`
+* fix memory leaks detected by Valgrind in `GDALRaster` class methods `$info()`, `$infoAsJSON()` and `$getDefaultRAT()`
 * register a finalizer to call `CPLHTTPCleanup()` upon R session exit
-* add `GDALRaster` class method `setFilename()`: set the filename of an uninitialized `GDALRaster` object, currently undocumented / for internal use
+* add `GDALRaster` class method `$setFilename()`: set the filename of an uninitialized `GDALRaster` object, currently undocumented / for internal use
 * add `GDALRaster` class method `_getGDALDatasetH()`: get the GDAL dataset handle for internal use
 * `buildRAT()`: if the input raster is an object of class `GDALRaster`, use it by reference rather than instantiating another `GDALRaster` object internally
 * `calc()`: close input raster dataset before exit when a differing extent is detected
