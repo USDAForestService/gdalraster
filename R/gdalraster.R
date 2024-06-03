@@ -13,7 +13,7 @@
 #'
 #' @param filename Character string containing the file name of a raster
 #' dataset to open, as full path or relative to the current working directory.
-#' In some cases, `filename` may not refer to a local file sytem, but instead
+#' In some cases, `filename` may not refer to a local file system, but instead
 #' contain format-specific information on how to access a dataset such
 #' as database connection string, URL, /vsiPREFIX/, etc. (see GDAL
 #' raster format descriptions:
@@ -693,10 +693,10 @@
 #' Functions in `gdalraster` that do processing will open input datasets in
 #' shared mode. This provides potential efficiency for cases when an object of
 #' class `GDALRaster` is already open in read-only mode on the same `filename`
-#' (avoids overhead associated with the initial dataset opening by using the
+#' (avoids overhead associated with initial dataset opening by using the
 #' existing handle, and potentially makes use of existing data in the GDAL
 #' block cache). Opening in shared mode can be disabled by specifying the
-#' optional `shared` paramater in the class constructor.
+#' optional `shared` parameter in the class constructor.
 #'
 #' The `$read()` method will perform automatic resampling if the
 #' specified output size (`out_xsize * out_ysize`) is different than

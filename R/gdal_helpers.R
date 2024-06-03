@@ -60,10 +60,12 @@
 #' integer value to specify the number of threads to use for SOZip-compressed
 #' files (see [set_config_option()]).
 #'
-#' SOzip can be validated with:
+#' SOZip can be validated with:
 #' ```
 #' vsi_get_file_metadata(zip_file, domain="ZIP")
 #' ```
+#'
+#' where `zip_file` uses the /vsizip/ prefix.
 #'
 #' @seealso
 #' [vsi_get_file_metadata()]
