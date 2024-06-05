@@ -163,7 +163,7 @@ test_that("GeoJSON layer and field names are correct", {
     dsn <- system.file("extdata/test.geojson", package="gdalraster")
     expect_true(ogr_ds_exists(dsn))
     dsn2 <- file.path(tempdir(TRUE), "test.geojson")
-    vsi_copy_file(dsn, dsn2)
+    file.copy(dsn, dsn2)
     expect_true(ogr_ds_exists(dsn2, with_update = TRUE))
     expect_equal(ogr_ds_format(dsn2), "GeoJSON")
     expect_equal(ogr_ds_layer_count(dsn2), 1)
