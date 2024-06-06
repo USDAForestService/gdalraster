@@ -1,3 +1,7 @@
+# gdalraster 1.11.0.9000
+
+* fix test in test-ogr_manage.R: the test for GeoJSON layer did not need to check existence using `with_update = TRUE` on a file in extdata (#410) (2024-06-06)
+
 # gdalraster 1.11.0
 
 ## System requirements
