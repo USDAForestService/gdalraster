@@ -33,13 +33,14 @@ SEEK_END <- "SEEK_END"
 #' a file in a regular local filesystem, or a filename with a GDAL /vsiPREFIX/
 #' (see \url{https://gdal.org/user/virtual_file_systems.html}).
 #' @param access Character string containing the access requested (i.e., `"r"`,
-#' `"r+"`, `"w"`). Defaults to `"r"`. Binary access is always implied and the
-#' "b" does not need to be included in `access`.
+#' `"r+"`, `"w"`, `"w+`). Defaults to `"r"`. Binary access is always implied
+#' and the "b" does not need to be included in `access`.
 #' \tabular{lll}{
-#'  **Access** \tab **Explanation**           \tab **If file exists**\cr
-#'  `"r"`      \tab open file for reading     \tab read from start\cr
-#'  `"r+"`     \tab open file for read/write  \tab read from start\cr
-#'  `"w"`      \tab create file for writing   \tab destroy contents
+#'  **Access** \tab **Explanation**             \tab **If file exists**\cr
+#'  `"r"`      \tab open file for reading       \tab read from start\cr
+#'  `"r+"`     \tab open file for read/write    \tab read from start\cr
+#'  `"w"`      \tab create file for writing     \tab destroy contents\cr
+#'  `"w+"`     \tab create file for read/write  \tab destroy contents
 #' }
 #' @param options Optional character vector of `NAME=VALUE` pairs specifying
 #' filesystem-dependent options (GDAL >= 3.3, see Details).
@@ -81,8 +82,8 @@ SEEK_END <- "SEEK_END"
 #' if a file handle cannot be obtained.
 #'
 #' \code{new(VSIFile, filename, access)}
-#' Alternate constructor for passing `access` as a character string (`"r"`,
-#' `"r+"`, `"w"`).
+#' Alternate constructor for passing `access` as a character string
+#' (e.g., `"r"`, `"r+"`, `"w"`, `"w+"`).
 #' Returns an object of class `VSIFile` with an open file handle, or an error
 #' is raised if a file handle cannot be obtained.
 #'
@@ -186,8 +187,8 @@ SEEK_END <- "SEEK_END"
 #'
 #' \code{$set_access(access)}
 #' Sets the requested read/write access on this `VSIFile` object, given as a
-#' character string (i.e., `"r"`, `"r+"`, `"w"`). The access can be changed
-#' only while the `VSIFile` object is closed, and will apply when it is
+#' character string (i.e., `"r"`, `"r+"`, `"w"`, `"w+"`). The access can be
+#' changed only while the `VSIFile` object is closed, and will apply when it is
 #' re-opened with a call to `$open()`.
 #' Returns `0` on success or `-1` on error.
 #'
@@ -197,6 +198,19 @@ SEEK_END <- "SEEK_END"
 #' `numeric` with the `integer64` class attribute attached. The `integer64`
 #' type is signed, so the maximum file offset supported by this interface
 #' is `9223372036854775807` (the value of `bit64::lim.integer64()[2]`).
+#'
+#' Some virtual file systems allow only sequential write, so no seeks or read
+#' operations are then allowed (e.g., AWS S3 files with /vsis3/).
+#' Starting with GDAL 3.2, a configuration option can be set with:
+#' ```
+#' set_config_option("CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE", "YES")
+#' ````
+#' in which case random-write access is possible (involves the creation of a
+#' temporary local file, whose location is controlled by the `CPL_TMPDIR`
+#' configuration option). In this case, setting `access` to `"w+"` may be
+#' needed for writing with seek and read operations (if creating a new file,
+#' otherwise, `"r+"` to open an existing file), while `"w"` access would
+#' allow sequential write only.
 #'
 #' @seealso
 #' GDAL Virtual File Systems (compressed, network hosted, etc...):\cr

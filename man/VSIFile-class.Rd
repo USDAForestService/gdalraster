@@ -12,13 +12,14 @@ a file in a regular local filesystem, or a filename with a GDAL /vsiPREFIX/
 (see \url{https://gdal.org/user/virtual_file_systems.html}).}
 
 \item{access}{Character string containing the access requested (i.e., \code{"r"},
-\code{"r+"}, \code{"w"}). Defaults to \code{"r"}. Binary access is always implied and the
-"b" does not need to be included in \code{access}.
+\code{"r+"}, \code{"w"}, \verb{"w+}). Defaults to \code{"r"}. Binary access is always implied
+and the "b" does not need to be included in \code{access}.
 \tabular{lll}{
-\strong{Access} \tab \strong{Explanation}           \tab \strong{If file exists}\cr
-\code{"r"}      \tab open file for reading     \tab read from start\cr
-\code{"r+"}     \tab open file for read/write  \tab read from start\cr
-\code{"w"}      \tab create file for writing   \tab destroy contents
+\strong{Access} \tab \strong{Explanation}             \tab \strong{If file exists}\cr
+\code{"r"}      \tab open file for reading       \tab read from start\cr
+\code{"r+"}     \tab open file for read/write    \tab read from start\cr
+\code{"w"}      \tab create file for writing     \tab destroy contents\cr
+\code{"w+"}     \tab create file for read/write  \tab destroy contents
 }}
 
 \item{options}{Optional character vector of \code{NAME=VALUE} pairs specifying
@@ -47,6 +48,20 @@ carrying the \code{bit64::integer64} class attribute. They are returned as
 \code{numeric} with the \code{integer64} class attribute attached. The \code{integer64}
 type is signed, so the maximum file offset supported by this interface
 is \code{9223372036854775807} (the value of \code{bit64::lim.integer64()[2]}).
+
+Some virtual file systems allow only sequential write, so no seeks or read
+operations are then allowed (e.g., AWS S3 files with /vsis3/).
+Starting with GDAL 3.2, a configuration option can be set with:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{set_config_option("CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE", "YES")
+}\if{html}{\out{</div>}}
+
+in which case random-write access is possible (involves the creation of a
+temporary local file, whose location is controlled by the \code{CPL_TMPDIR}
+configuration option). In this case, setting \code{access} to \code{"w+"} may be
+needed for writing with seek and read operations (if creating a new file,
+otherwise, \code{"r+"} to open an existing file), while \code{"w"} access would
+allow sequential write only.
 }
 \section{Usage}{
 
@@ -84,8 +99,8 @@ Constructor. Returns an object of class \code{VSIFile}, or an error is raised
 if a file handle cannot be obtained.
 
 \code{new(VSIFile, filename, access)}
-Alternate constructor for passing \code{access} as a character string (\code{"r"},
-\code{"r+"}, \code{"w"}).
+Alternate constructor for passing \code{access} as a character string
+(e.g., \code{"r"}, \code{"r+"}, \code{"w"}, \code{"w+"}).
 Returns an object of class \code{VSIFile} with an open file handle, or an error
 is raised if a file handle cannot be obtained.
 
@@ -192,8 +207,8 @@ Returns a character string containing the \code{access} as currently set on this
 
 \code{$set_access(access)}
 Sets the requested read/write access on this \code{VSIFile} object, given as a
-character string (i.e., \code{"r"}, \code{"r+"}, \code{"w"}). The access can be changed
-only while the \code{VSIFile} object is closed, and will apply when it is
+character string (i.e., \code{"r"}, \code{"r+"}, \code{"w"}, \code{"w+"}). The access can be
+changed only while the \code{VSIFile} object is closed, and will apply when it is
 re-opened with a call to \verb{$open()}.
 Returns \code{0} on success or \code{-1} on error.
 }
