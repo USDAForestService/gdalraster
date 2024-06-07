@@ -1445,12 +1445,15 @@ vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
 #' filename (see Details).
 #' @param file_prefix Character string. Filename prefix to use if
 #' `partial = TRUE`.
+#' @param quiet Logical scalar. `TRUE` (the default) to wrap the API call in
+#' a quiet error handler, or `FALSE` to print any potential error messages to
+#' the console.
 #' @returns No return value, called for side effects.
 #'
 #' @examples
 #' vsi_curl_clear_cache()
-vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "") {
-    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix))
+vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet = TRUE) {
+    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix, quiet))
 }
 
 #' Read names in a directory

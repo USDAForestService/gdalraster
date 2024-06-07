@@ -1431,9 +1431,7 @@ void GDALRaster::close() {
     // is on a /vsicurl/ filesystem,
     if (eAccess == GA_Update) {
         flushCache();
-        CPLPushErrorHandler(CPLQuietErrorHandler);
-        vsi_curl_clear_cache(true, fname_in);
-        CPLPopErrorHandler();
+        vsi_curl_clear_cache(true, fname_in, true);
     }
 
 #if GDAL_VERSION_NUM >= 3070000

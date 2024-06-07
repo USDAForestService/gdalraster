@@ -102,13 +102,20 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 //' filename (see Details).
 //' @param file_prefix Character string. Filename prefix to use if
 //' `partial = TRUE`.
+//' @param quiet Logical scalar. `TRUE` (the default) to wrap the API call in
+//' a quiet error handler, or `FALSE` to print any potential error messages to
+//' the console.
 //' @returns No return value, called for side effects.
 //'
 //' @examples
 //' vsi_curl_clear_cache()
 // [[Rcpp::export()]]
 void vsi_curl_clear_cache(bool partial = false,
-                          Rcpp::CharacterVector file_prefix = "") {
+                          Rcpp::CharacterVector file_prefix = "",
+                          bool quiet = true) {
+
+    if (quiet)
+        push_error_handler("quiet");
 
     if (!partial) {
         VSICurlClearCache();
@@ -118,6 +125,9 @@ void vsi_curl_clear_cache(bool partial = false,
         f_prefix_in = Rcpp::as<std::string>(_check_gdal_filename(file_prefix));
         VSICurlPartialClearCache(f_prefix_in.c_str());
     }
+
+    if (quiet)
+        pop_error_handler();
 }
 
 
