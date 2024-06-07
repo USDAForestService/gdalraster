@@ -207,8 +207,9 @@ SEEK_END <- "SEEK_END"
 #' ````
 #' in which case random-write access is possible (involves the creation of a
 #' temporary local file, whose location is controlled by the `CPL_TMPDIR`
-#' configuration option). In this case, setting `access` to `"w+"` is needed
-#' for random-write with seek and read operations, while `"w"` access would
+#' configuration option). In this case, setting `access` to `"w+"` may be
+#' needed for writing with seek and read operations (if creating a new file,
+#' otherwise, `"r+"` to open an existing file), while `"w"` access would
 #' allow sequential write only.
 #'
 #' @seealso

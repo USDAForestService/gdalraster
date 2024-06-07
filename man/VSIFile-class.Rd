@@ -58,8 +58,9 @@ Starting with GDAL 3.2, a configuration option can be set with:
 
 in which case random-write access is possible (involves the creation of a
 temporary local file, whose location is controlled by the \code{CPL_TMPDIR}
-configuration option). In this case, setting \code{access} to \code{"w+"} is needed
-for random-write with seek and read operations, while \code{"w"} access would
+configuration option). In this case, setting \code{access} to \code{"w+"} may be
+needed for writing with seek and read operations (if creating a new file,
+otherwise, \code{"r+"} to open an existing file), while \code{"w"} access would
 allow sequential write only.
 }
 \section{Usage}{
