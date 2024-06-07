@@ -31,7 +31,7 @@ VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
     if (access.length() > 0 && access.length() < 4)
         access_in = access;
     else
-        Rcpp::stop("'access' should be 'r', 'r+' or 'w'");
+        Rcpp::stop("'access' should be 'r', 'r+', 'w' or 'w+'");
     options_in = options;
     open();
 }
@@ -265,7 +265,7 @@ int VSIFile::set_access(std::string access) {
         return 0;
     }
     else {
-        Rcpp::Rcerr << "'access' should be 'r', 'r+' or 'w'\n";
+        Rcpp::Rcerr << "'access' should be 'r', 'r+', 'w' or 'w+'\n";
         return -1;
     }
 }
