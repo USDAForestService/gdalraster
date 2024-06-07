@@ -4,7 +4,7 @@
 \alias{vsi_curl_clear_cache}
 \title{Clean cache associated with /vsicurl/ and related file systems}
 \usage{
-vsi_curl_clear_cache(partial = FALSE, file_prefix = "")
+vsi_curl_clear_cache(partial = FALSE, file_prefix = "", quiet = TRUE)
 }
 \arguments{
 \item{partial}{Logical scalar. Whether to clear the cache only for a given
@@ -12,6 +12,10 @@ filename (see Details).}
 
 \item{file_prefix}{Character string. Filename prefix to use if
 \code{partial = TRUE}.}
+
+\item{quiet}{Logical scalar. \code{TRUE} (the default) to wrap the API call in
+a quiet error handler, or \code{FALSE} to print any potential error messages to
+the console.}
 }
 \value{
 No return value, called for side effects.
