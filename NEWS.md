@@ -1,4 +1,6 @@
-# gdalraster 1.11.0.9000
+# gdalraster 1.11.0.9010
+
+* `vsi_curl_clear_cache()`: add parameter `quiet` to wrap the API call in a quiet error handler, `TRUE` by default (2024-06-06)
 
 * document the `w+` access flag for class `VSIFile` and add `CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE` configuration option in vignette [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html) (2024-06-06)
 
