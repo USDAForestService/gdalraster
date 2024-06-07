@@ -92,8 +92,8 @@ a file in a regular local filesystem, or a filename with a GDAL /vsiPREFIX/
 
 <dt>access</dt>
 <dd><p>Character string containing the access requested (i.e., <code>"r"</code>,
-<code>"r+"</code>, <code>"w"</code>). Defaults to <code>"r"</code>. Binary access is always implied and the
-"b" does not need to be included in <code>access</code>.</p><table class="table table"><tr><td><strong>Access</strong></td><td><strong>Explanation</strong></td><td><strong>If file exists</strong></td></tr><tr><td><code>"r"</code></td><td>open file for reading</td><td>read from start</td></tr><tr><td><code>"r+"</code></td><td>open file for read/write</td><td>read from start</td></tr><tr><td><code>"w"</code></td><td>create file for writing</td><td>destroy contents</td></tr></table></dd>
+<code>"r+"</code>, <code>"w"</code>, <code>"w+</code>). Defaults to <code>"r"</code>. Binary access is always implied
+and the "b" does not need to be included in <code>access</code>.</p><table class="table table"><tr><td><strong>Access</strong></td><td><strong>Explanation</strong></td><td><strong>If file exists</strong></td></tr><tr><td><code>"r"</code></td><td>open file for reading</td><td>read from start</td></tr><tr><td><code>"r+"</code></td><td>open file for read/write</td><td>read from start</td></tr><tr><td><code>"w"</code></td><td>create file for writing</td><td>destroy contents</td></tr><tr><td><code>"w+"</code></td><td>create file for read/write</td><td>destroy contents</td></tr></table></dd>
 
 
 <dt>options</dt>
@@ -118,6 +118,16 @@ carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" cl
 <code>numeric</code> with the <code>integer64</code> class attribute attached. The <code>integer64</code>
 type is signed, so the maximum file offset supported by this interface
 is <code>9223372036854775807</code> (the value of <code>bit64::lim.integer64()[2]</code>).</p>
+<p>Some virtual file systems allow only sequential write, so no seeks or read
+operations are then allowed (e.g., AWS S3 files with /vsis3/).
+Starting with GDAL 3.2, a configuration option can be set with:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">set_config_option</span>(<span class="st">"CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE"</span>, <span class="st">"YES"</span>)</span></code></pre><p></p></div>
+<p>in which case random-write access is possible (involves the creation of a
+temporary local file, whose location is controlled by the <code>CPL_TMPDIR</code>
+configuration option). In this case, setting <code>access</code> to <code>"w+"</code> may be
+needed for writing with seek and read operations (if creating a new file,
+otherwise, <code>"r+"</code> to open an existing file), while <code>"w"</code> access would
+allow sequential write only.</p>
     </div>
     <div class="section level2">
     <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
@@ -157,8 +167,8 @@ is <code>9223372036854775807</code> (the value of <code>bit64::lim.integer64()[2
 Constructor. Returns an object of class <code>VSIFile</code>, or an error is raised
 if a file handle cannot be obtained.</p>
 <p><code>new(VSIFile, filename, access)</code>
-Alternate constructor for passing <code>access</code> as a character string (<code>"r"</code>,
-<code>"r+"</code>, <code>"w"</code>).
+Alternate constructor for passing <code>access</code> as a character string
+(e.g., <code>"r"</code>, <code>"r+"</code>, <code>"w"</code>, <code>"w+"</code>).
 Returns an object of class <code>VSIFile</code> with an open file handle, or an error
 is raised if a file handle cannot be obtained.</p>
 <p><code>new(VSIFile, filename, access, options)</code>
@@ -243,8 +253,8 @@ Returns a character string containing the <code>access</code> as currently set o
 <code>VSIFile</code> object.</p>
 <p><code>$set_access(access)</code>
 Sets the requested read/write access on this <code>VSIFile</code> object, given as a
-character string (i.e., <code>"r"</code>, <code>"r+"</code>, <code>"w"</code>). The access can be changed
-only while the <code>VSIFile</code> object is closed, and will apply when it is
+character string (i.e., <code>"r"</code>, <code>"r+"</code>, <code>"w"</code>, <code>"w+"</code>). The access can be
+changed only while the <code>VSIFile</code> object is closed, and will apply when it is
 re-opened with a call to <code>$open()</code>.
 Returns <code>0</code> on success or <code>-1</code> on error.</p>
     </div>
