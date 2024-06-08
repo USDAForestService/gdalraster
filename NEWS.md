@@ -1,4 +1,6 @@
-# gdalraster 1.11.0.9010 (dev)
+# gdalraster 1.11.0.9020 (dev)
+
+* code linting (2024-06-08)
 
 * `vsi_curl_clear_cache()`: add parameter `quiet` to wrap the API call in a quiet error handler, `TRUE` by default (2024-06-06)
 
