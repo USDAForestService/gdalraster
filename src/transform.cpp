@@ -1,5 +1,7 @@
 /* Functions for coordinate transformation using PROJ via GDAL headers
-   Chris Toney <chris.toney at usda.gov> */
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
 
 #include <string>
 
@@ -12,7 +14,7 @@
 //' get PROJ version
 //' @noRd
 // [[Rcpp::export(name = ".getPROJVersion")]]
-std::vector<int> _getPROJVersion() {
+std::vector<int> getPROJVersion() {
     int major, minor, patch;
     major = minor = patch = NA_INTEGER;
     OSRGetPROJVersion(&major, &minor, &patch);
@@ -23,7 +25,7 @@ std::vector<int> _getPROJVersion() {
 //' get search path(s) for PROJ resource files
 //' @noRd
 // [[Rcpp::export(name = ".getPROJSearchPaths")]]
-Rcpp::CharacterVector _getPROJSearchPaths() {
+Rcpp::CharacterVector getPROJSearchPaths() {
     char **papszPaths;
     papszPaths = OSRGetPROJSearchPaths();
 
@@ -45,7 +47,7 @@ Rcpp::CharacterVector _getPROJSearchPaths() {
 //' set search path(s) for PROJ resource files
 //' @noRd
 // [[Rcpp::export(name = ".setPROJSearchPaths")]]
-void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
+void setPROJSearchPaths(Rcpp::CharacterVector paths) {
     std::vector<char *> path_list = {nullptr};
     path_list.resize(paths.size() + 1);
     for (R_xlen_t i = 0; i < paths.size(); ++i) {
@@ -60,10 +62,10 @@ void _setPROJSearchPaths(Rcpp::CharacterVector paths) {
 //' returns logical NA if GDAL < 3.4
 //' @noRd
 // [[Rcpp::export(name = ".getPROJEnableNetwork")]]
-Rcpp::LogicalVector _getPROJEnableNetwork() {
+Rcpp::LogicalVector getPROJEnableNetwork() {
     Rcpp::LogicalVector ret = Rcpp::LogicalVector::create(NA_LOGICAL);
 #if GDAL_VERSION_NUM >= 3040000
-    if (_getPROJVersion()[0] >= 7) {
+    if (getPROJVersion()[0] >= 7) {
         ret[0] = OSRGetPROJEnableNetwork();
         return ret;
     }
@@ -78,9 +80,9 @@ Rcpp::LogicalVector _getPROJEnableNetwork() {
 //' enable or disable PROJ networking capabilities
 //' @noRd
 // [[Rcpp::export(name = ".setPROJEnableNetwork")]]
-void _setPROJEnableNetwork(int enabled) {
+void setPROJEnableNetwork(int enabled) {
 #if GDAL_VERSION_NUM >= 3040000
-    if (_getPROJVersion()[0] >= 7)
+    if (getPROJVersion()[0] >= 7)
         OSRSetPROJEnableNetwork(enabled);
     else
         Rcpp::Rcerr << "OSRSetPROJEnableNetwork() requires PROJ 7 or later\n";
@@ -141,7 +143,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 
     Rcpp::NumericMatrix pts_in;
     if (Rcpp::is<Rcpp::DataFrame>(pts)) {
-        pts_in = _df_to_matrix(pts);
+        pts_in = df_to_matrix_(pts);
     }
     else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
         if (Rf_isMatrix(pts))
@@ -235,7 +237,7 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     Rcpp::NumericMatrix pts_in;
     if (Rcpp::is<Rcpp::DataFrame>(pts)) {
-        pts_in = _df_to_matrix(pts);
+        pts_in = df_to_matrix_(pts);
     }
     else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
         if (Rf_isMatrix(pts))

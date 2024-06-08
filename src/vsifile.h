@@ -35,10 +35,10 @@
 class VSIFile {
  private:
     std::string filename_in;
-    std::string access_in;  // "r", "r+", "w"
+    std::string access_in;
     Rcpp::CharacterVector options_in;
     VSILFILE *fp;
-    const uint64_t _R_VSI_L_OFFSET_MAX = 9223372036854775807;
+    const uint64_t VSI_L_OFFSET_MAX_R = 9223372036854775807;
 
  public:
     VSIFile();

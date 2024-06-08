@@ -1,8 +1,9 @@
 /* WKT-related convenience functions
-   Chris Toney <chris.toney at usda.gov> */
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
 
 #include <Rcpp.h>
-
 #include <string>
 
 #include "cpl_conv.h"
@@ -46,7 +47,6 @@
 //' set_config_option("OSR_WKT_FORMAT", "")
 // [[Rcpp::export]]
 std::string epsg_to_wkt(int epsg, bool pretty = false) {
-
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     char *pszSRS_WKT = nullptr;
 
@@ -129,7 +129,6 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
 //' set_config_option("OSR_WKT_FORMAT", "")
 // [[Rcpp::export]]
 std::string srs_to_wkt(std::string srs, bool pretty = false) {
-
     if (srs == "")
         return "";
 
@@ -180,7 +179,6 @@ std::string srs_to_wkt(std::string srs, bool pretty = false) {
 //' srs_is_geographic(srs_to_wkt("WGS84"))
 // [[Rcpp::export]]
 bool srs_is_geographic(std::string srs) {
-
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     char* pszWKT;
     pszWKT = (char*) srs.c_str();
@@ -214,7 +212,6 @@ bool srs_is_geographic(std::string srs) {
 //' srs_is_projected(srs_to_wkt("WGS84"))
 // [[Rcpp::export]]
 bool srs_is_projected(std::string srs) {
-
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     char* pszWKT;
     pszWKT = (char*) srs.c_str();
@@ -419,5 +416,5 @@ Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox,
     poly_xy.row(3) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(3));
     poly_xy.row(4) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(1));
 
-    return _g_create(poly_xy, "POLYGON");
+    return g_create(poly_xy, "POLYGON");
 }

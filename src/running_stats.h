@@ -4,23 +4,22 @@
    Also tracks the min, max, sum and count.
    Chris Toney <chris.toney at usda.gov> */
 
-#ifndef running_stats_H
-#define running_stats_H
+#ifndef SRC_RUNNING_STATS_H_
+#define SRC_RUNNING_STATS_H_
 
 #include <cstdint>
 #include <Rcpp.h>
 
 class RunningStats {
-
-    private:
+ private:
     bool na_rm;
     uint64_t count;
     double mean, min, max, sum;
     double M2;
 
-    public:
+ public:
     RunningStats();
-    RunningStats(bool na_rm);
+    explicit RunningStats(bool na_rm);
 
     void update(const Rcpp::NumericVector& newvalues);
 
@@ -31,10 +30,10 @@ class RunningStats {
     double get_min() const;
     double get_max() const;
     double get_sum() const;
-    double get_var() const ;
+    double get_var() const;
     double get_sd() const;
 };
 
 RCPP_EXPOSED_CLASS(RunningStats)
 
-#endif
+#endif  // SRC_RUNNING_STATS_H_

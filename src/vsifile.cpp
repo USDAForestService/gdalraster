@@ -27,7 +27,7 @@ VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access) :
 VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
                  Rcpp::CharacterVector options) : fp(nullptr) {
 
-    filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
+    filename_in = Rcpp::as<std::string>(check_gdal_filename(filename));
     if (access.length() > 0 && access.length() < 4)
         access_in = access;
     else
@@ -45,7 +45,7 @@ void VSIFile::open() {
         Rcpp::stop("the file is already open");
 
     if (options_in.size() > 0) {
-        if (_gdal_version_num() < 3030000)
+        if (gdal_version_num() < 3030000)
             Rcpp::stop("'options' parameter requires GDAL >= 3.3");
 
         std::vector<const char *> opt_list(options_in.size());
@@ -110,7 +110,7 @@ Rcpp::NumericVector VSIFile::tell() const {
         Rcpp::stop("the file is not open");
 
     vsi_l_offset offset = VSIFTellL(fp);
-    if (offset > _R_VSI_L_OFFSET_MAX)
+    if (offset > VSI_L_OFFSET_MAX_R)
         Rcpp::stop("the current file offset exceeds R integer64 upper limit");
 
     std::vector<int64_t> ret(1);
