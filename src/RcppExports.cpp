@@ -21,13 +21,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _gdal_version_num
-int _gdal_version_num();
-RcppExport SEXP _gdalraster__gdal_version_num() {
+// gdal_version_num
+int gdal_version_num();
+RcppExport SEXP _gdalraster_gdal_version_num() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(_gdal_version_num());
+    rcpp_result_gen = Rcpp::wrap(gdal_version_num());
     return rcpp_result_gen;
 END_RCPP
 }
@@ -74,14 +74,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _dump_open_datasets
-int _dump_open_datasets(std::string outfile);
-RcppExport SEXP _gdalraster__dump_open_datasets(SEXP outfileSEXP) {
+// dump_open_datasets
+int dump_open_datasets(std::string outfile);
+RcppExport SEXP _gdalraster_dump_open_datasets(SEXP outfileSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type outfile(outfileSEXP);
-    rcpp_result_gen = Rcpp::wrap(_dump_open_datasets(outfile));
+    rcpp_result_gen = Rcpp::wrap(dump_open_datasets(outfile));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -104,14 +104,14 @@ BEGIN_RCPP
     return R_NilValue;
 END_RCPP
 }
-// _check_gdal_filename
-Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename);
-RcppExport SEXP _gdalraster__check_gdal_filename(SEXP filenameSEXP) {
+// check_gdal_filename
+Rcpp::CharacterVector check_gdal_filename(Rcpp::CharacterVector filename);
+RcppExport SEXP _gdalraster_check_gdal_filename(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
-    rcpp_result_gen = Rcpp::wrap(_check_gdal_filename(filename));
+    rcpp_result_gen = Rcpp::wrap(check_gdal_filename(filename));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -155,12 +155,12 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _cpl_http_cleanup
-void _cpl_http_cleanup();
-RcppExport SEXP _gdalraster__cpl_http_cleanup() {
+// cpl_http_cleanup
+void cpl_http_cleanup();
+RcppExport SEXP _gdalraster_cpl_http_cleanup() {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    _cpl_http_cleanup();
+    cpl_http_cleanup();
     return R_NilValue;
 END_RCPP
 }
@@ -197,16 +197,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _apply_geotransform
-Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt, double pixel, double line);
-RcppExport SEXP _gdalraster__apply_geotransform(SEXP gtSEXP, SEXP pixelSEXP, SEXP lineSEXP) {
+// apply_geotransform
+Rcpp::NumericVector apply_geotransform(const std::vector<double> gt, double pixel, double line);
+RcppExport SEXP _gdalraster_apply_geotransform(SEXP gtSEXP, SEXP pixelSEXP, SEXP lineSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
     Rcpp::traits::input_parameter< double >::type pixel(pixelSEXP);
     Rcpp::traits::input_parameter< double >::type line(lineSEXP);
-    rcpp_result_gen = Rcpp::wrap(_apply_geotransform(gt, pixel, line));
+    rcpp_result_gen = Rcpp::wrap(apply_geotransform(gt, pixel, line));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -221,27 +221,27 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _get_pixel_line_gt
-Rcpp::IntegerMatrix _get_pixel_line_gt(const Rcpp::RObject& xy, const std::vector<double> gt);
-RcppExport SEXP _gdalraster__get_pixel_line_gt(SEXP xySEXP, SEXP gtSEXP) {
+// get_pixel_line_gt_
+Rcpp::IntegerMatrix get_pixel_line_gt_(const Rcpp::RObject& xy, const std::vector<double> gt);
+RcppExport SEXP _gdalraster_get_pixel_line_gt_(SEXP xySEXP, SEXP gtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type xy(xySEXP);
     Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
-    rcpp_result_gen = Rcpp::wrap(_get_pixel_line_gt(xy, gt));
+    rcpp_result_gen = Rcpp::wrap(get_pixel_line_gt_(xy, gt));
     return rcpp_result_gen;
 END_RCPP
 }
-// _get_pixel_line_ds
-Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::RObject& xy, const GDALRaster* ds);
-RcppExport SEXP _gdalraster__get_pixel_line_ds(SEXP xySEXP, SEXP dsSEXP) {
+// get_pixel_line_ds
+Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy, const GDALRaster* ds);
+RcppExport SEXP _gdalraster_get_pixel_line_ds(SEXP xySEXP, SEXP dsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type xy(xySEXP);
     Rcpp::traits::input_parameter< const GDALRaster* >::type ds(dsSEXP);
-    rcpp_result_gen = Rcpp::wrap(_get_pixel_line_ds(xy, ds));
+    rcpp_result_gen = Rcpp::wrap(get_pixel_line_ds(xy, ds));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -259,9 +259,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _combine
-Rcpp::DataFrame _combine(Rcpp::CharacterVector src_files, Rcpp::CharacterVector var_names, std::vector<int> bands, std::string dst_filename, std::string fmt, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
-RcppExport SEXP _gdalraster__combine(SEXP src_filesSEXP, SEXP var_namesSEXP, SEXP bandsSEXP, SEXP dst_filenameSEXP, SEXP fmtSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
+// combine
+Rcpp::DataFrame combine(Rcpp::CharacterVector src_files, Rcpp::CharacterVector var_names, std::vector<int> bands, std::string dst_filename, std::string fmt, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+RcppExport SEXP _gdalraster_combine(SEXP src_filesSEXP, SEXP var_namesSEXP, SEXP bandsSEXP, SEXP dst_filenameSEXP, SEXP fmtSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -273,26 +273,26 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type dataType(dataTypeSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(_combine(src_files, var_names, bands, dst_filename, fmt, dataType, options, quiet));
+    rcpp_result_gen = Rcpp::wrap(combine(src_files, var_names, bands, dst_filename, fmt, dataType, options, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
-// _value_count
-Rcpp::DataFrame _value_count(const GDALRaster& src_ds, int band, bool quiet);
-RcppExport SEXP _gdalraster__value_count(SEXP src_dsSEXP, SEXP bandSEXP, SEXP quietSEXP) {
+// value_count
+Rcpp::DataFrame value_count(const GDALRaster& src_ds, int band, bool quiet);
+RcppExport SEXP _gdalraster_value_count(SEXP src_dsSEXP, SEXP bandSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const GDALRaster& >::type src_ds(src_dsSEXP);
     Rcpp::traits::input_parameter< int >::type band(bandSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(_value_count(src_ds, band, quiet));
+    rcpp_result_gen = Rcpp::wrap(value_count(src_ds, band, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
-// _dem_proc
-bool _dem_proc(std::string mode, Rcpp::CharacterVector src_filename, Rcpp::CharacterVector dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::String> col_file, bool quiet);
-RcppExport SEXP _gdalraster__dem_proc(SEXP modeSEXP, SEXP src_filenameSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP col_fileSEXP, SEXP quietSEXP) {
+// dem_proc
+bool dem_proc(std::string mode, Rcpp::CharacterVector src_filename, Rcpp::CharacterVector dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::String> col_file, bool quiet);
+RcppExport SEXP _gdalraster_dem_proc(SEXP modeSEXP, SEXP src_filenameSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP col_fileSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -302,7 +302,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::String> >::type col_file(col_fileSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(_dem_proc(mode, src_filename, dst_filename, cl_arg, col_file, quiet));
+    rcpp_result_gen = Rcpp::wrap(dem_proc(mode, src_filename, dst_filename, cl_arg, col_file, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -366,9 +366,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _polygonize
-bool _polygonize(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector out_dsn, std::string out_layer, std::string fld_name, Rcpp::CharacterVector mask_file, bool nomask, int connectedness, bool quiet);
-RcppExport SEXP _gdalraster__polygonize(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP out_dsnSEXP, SEXP out_layerSEXP, SEXP fld_nameSEXP, SEXP mask_fileSEXP, SEXP nomaskSEXP, SEXP connectednessSEXP, SEXP quietSEXP) {
+// polygonize
+bool polygonize(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector out_dsn, std::string out_layer, std::string fld_name, Rcpp::CharacterVector mask_file, bool nomask, int connectedness, bool quiet);
+RcppExport SEXP _gdalraster_polygonize(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP out_dsnSEXP, SEXP out_layerSEXP, SEXP fld_nameSEXP, SEXP mask_fileSEXP, SEXP nomaskSEXP, SEXP connectednessSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -381,13 +381,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type nomask(nomaskSEXP);
     Rcpp::traits::input_parameter< int >::type connectedness(connectednessSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(_polygonize(src_filename, src_band, out_dsn, out_layer, fld_name, mask_file, nomask, connectedness, quiet));
+    rcpp_result_gen = Rcpp::wrap(polygonize(src_filename, src_band, out_dsn, out_layer, fld_name, mask_file, nomask, connectedness, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
-// _rasterize
-bool _rasterize(std::string src_dsn, std::string dst_filename, Rcpp::CharacterVector cl_arg, bool quiet);
-RcppExport SEXP _gdalraster__rasterize(SEXP src_dsnSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
+// rasterize
+bool rasterize(std::string src_dsn, std::string dst_filename, Rcpp::CharacterVector cl_arg, bool quiet);
+RcppExport SEXP _gdalraster_rasterize(SEXP src_dsnSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -395,7 +395,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(_rasterize(src_dsn, dst_filename, cl_arg, quiet));
+    rcpp_result_gen = Rcpp::wrap(rasterize(src_dsn, dst_filename, cl_arg, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -517,20 +517,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _getCreationOptions
-std::string _getCreationOptions(std::string format);
-RcppExport SEXP _gdalraster__getCreationOptions(SEXP formatSEXP) {
+// getCreationOptions
+std::string getCreationOptions(std::string format);
+RcppExport SEXP _gdalraster_getCreationOptions(SEXP formatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
-    rcpp_result_gen = Rcpp::wrap(_getCreationOptions(format));
+    rcpp_result_gen = Rcpp::wrap(getCreationOptions(format));
     return rcpp_result_gen;
 END_RCPP
 }
-// _addFileInZip
-bool _addFileInZip(std::string zip_filename, bool overwrite, std::string archive_filename, std::string in_filename, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
-RcppExport SEXP _gdalraster__addFileInZip(SEXP zip_filenameSEXP, SEXP overwriteSEXP, SEXP archive_filenameSEXP, SEXP in_filenameSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
+// addFileInZip
+bool addFileInZip(std::string zip_filename, bool overwrite, std::string archive_filename, std::string in_filename, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+RcppExport SEXP _gdalraster_addFileInZip(SEXP zip_filenameSEXP, SEXP overwriteSEXP, SEXP archive_filenameSEXP, SEXP in_filenameSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -540,7 +540,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type in_filename(in_filenameSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(_addFileInZip(zip_filename, overwrite, archive_filename, in_filename, options, quiet));
+    rcpp_result_gen = Rcpp::wrap(addFileInZip(zip_filename, overwrite, archive_filename, in_filename, options, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -756,13 +756,13 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _getGEOSVersion
-std::vector<int> _getGEOSVersion();
-RcppExport SEXP _gdalraster__getGEOSVersion() {
+// getGEOSVersion
+std::vector<int> getGEOSVersion();
+RcppExport SEXP _gdalraster_getGEOSVersion() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(_getGEOSVersion());
+    rcpp_result_gen = Rcpp::wrap(getGEOSVersion());
     return rcpp_result_gen;
 END_RCPP
 }
@@ -776,268 +776,268 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_create
-std::string _g_create(Rcpp::NumericMatrix xy, std::string geom_type);
-RcppExport SEXP _gdalraster__g_create(SEXP xySEXP, SEXP geom_typeSEXP) {
+// g_create
+std::string g_create(Rcpp::NumericMatrix xy, std::string geom_type);
+RcppExport SEXP _gdalraster_g_create(SEXP xySEXP, SEXP geom_typeSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::NumericMatrix >::type xy(xySEXP);
     Rcpp::traits::input_parameter< std::string >::type geom_type(geom_typeSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_create(xy, geom_type));
+    rcpp_result_gen = Rcpp::wrap(g_create(xy, geom_type));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_add_geom
-std::string _g_add_geom(std::string sub_geom, std::string container);
-RcppExport SEXP _gdalraster__g_add_geom(SEXP sub_geomSEXP, SEXP containerSEXP) {
+// g_add_geom
+std::string g_add_geom(std::string sub_geom, std::string container);
+RcppExport SEXP _gdalraster_g_add_geom(SEXP sub_geomSEXP, SEXP containerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type sub_geom(sub_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type container(containerSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_add_geom(sub_geom, container));
+    rcpp_result_gen = Rcpp::wrap(g_add_geom(sub_geom, container));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_is_valid
-bool _g_is_valid(std::string geom);
-RcppExport SEXP _gdalraster__g_is_valid(SEXP geomSEXP) {
+// g_is_valid
+bool g_is_valid(std::string geom);
+RcppExport SEXP _gdalraster_g_is_valid(SEXP geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_is_valid(geom));
+    rcpp_result_gen = Rcpp::wrap(g_is_valid(geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_is_empty
-bool _g_is_empty(std::string geom);
-RcppExport SEXP _gdalraster__g_is_empty(SEXP geomSEXP) {
+// g_is_empty
+bool g_is_empty(std::string geom);
+RcppExport SEXP _gdalraster_g_is_empty(SEXP geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_is_empty(geom));
+    rcpp_result_gen = Rcpp::wrap(g_is_empty(geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_name
-std::string _g_name(std::string geom);
-RcppExport SEXP _gdalraster__g_name(SEXP geomSEXP) {
+// g_name
+std::string g_name(std::string geom);
+RcppExport SEXP _gdalraster_g_name(SEXP geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_name(geom));
+    rcpp_result_gen = Rcpp::wrap(g_name(geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_intersects
-bool _g_intersects(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_intersects(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_intersects
+bool g_intersects(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_intersects(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_intersects(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_intersects(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_equals
-bool _g_equals(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_equals(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_equals
+bool g_equals(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_equals(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_equals(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_equals(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_disjoint
-bool _g_disjoint(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_disjoint(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_disjoint
+bool g_disjoint(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_disjoint(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_disjoint(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_disjoint(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_touches
-bool _g_touches(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_touches(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_touches
+bool g_touches(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_touches(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_touches(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_touches(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_contains
-bool _g_contains(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_contains(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_contains
+bool g_contains(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_contains(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_contains(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_contains(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_within
-bool _g_within(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_within(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_within
+bool g_within(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_within(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_within(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_within(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_crosses
-bool _g_crosses(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_crosses(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_crosses
+bool g_crosses(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_crosses(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_crosses(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_crosses(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_overlaps
-bool _g_overlaps(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_overlaps(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_overlaps
+bool g_overlaps(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_overlaps(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_overlaps(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_overlaps(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_buffer
-std::string _g_buffer(std::string geom, double dist, int quad_segs);
-RcppExport SEXP _gdalraster__g_buffer(SEXP geomSEXP, SEXP distSEXP, SEXP quad_segsSEXP) {
+// g_buffer
+std::string g_buffer(std::string geom, double dist, int quad_segs);
+RcppExport SEXP _gdalraster_g_buffer(SEXP geomSEXP, SEXP distSEXP, SEXP quad_segsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
     Rcpp::traits::input_parameter< double >::type dist(distSEXP);
     Rcpp::traits::input_parameter< int >::type quad_segs(quad_segsSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_buffer(geom, dist, quad_segs));
+    rcpp_result_gen = Rcpp::wrap(g_buffer(geom, dist, quad_segs));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_intersection
-std::string _g_intersection(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_intersection(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_intersection
+std::string g_intersection(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_intersection(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_intersection(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_intersection(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_union
-std::string _g_union(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_union(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_union
+std::string g_union(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_union(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_union(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_union(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_difference
-std::string _g_difference(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_difference(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_difference
+std::string g_difference(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_difference(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_difference(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_difference(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_sym_difference
-std::string _g_sym_difference(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_sym_difference(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_sym_difference
+std::string g_sym_difference(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_sym_difference(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_sym_difference(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_sym_difference(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_distance
-double _g_distance(std::string this_geom, std::string other_geom);
-RcppExport SEXP _gdalraster__g_distance(SEXP this_geomSEXP, SEXP other_geomSEXP) {
+// g_distance
+double g_distance(std::string this_geom, std::string other_geom);
+RcppExport SEXP _gdalraster_g_distance(SEXP this_geomSEXP, SEXP other_geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type this_geom(this_geomSEXP);
     Rcpp::traits::input_parameter< std::string >::type other_geom(other_geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_distance(this_geom, other_geom));
+    rcpp_result_gen = Rcpp::wrap(g_distance(this_geom, other_geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_length
-double _g_length(std::string geom);
-RcppExport SEXP _gdalraster__g_length(SEXP geomSEXP) {
+// g_length
+double g_length(std::string geom);
+RcppExport SEXP _gdalraster_g_length(SEXP geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_length(geom));
+    rcpp_result_gen = Rcpp::wrap(g_length(geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_area
-double _g_area(std::string geom);
-RcppExport SEXP _gdalraster__g_area(SEXP geomSEXP) {
+// g_area
+double g_area(std::string geom);
+RcppExport SEXP _gdalraster_g_area(SEXP geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_area(geom));
+    rcpp_result_gen = Rcpp::wrap(g_area(geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_centroid
-Rcpp::NumericVector _g_centroid(std::string geom);
-RcppExport SEXP _gdalraster__g_centroid(SEXP geomSEXP) {
+// g_centroid
+Rcpp::NumericVector g_centroid(std::string geom);
+RcppExport SEXP _gdalraster_g_centroid(SEXP geomSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type geom(geomSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_centroid(geom));
+    rcpp_result_gen = Rcpp::wrap(g_centroid(geom));
     return rcpp_result_gen;
 END_RCPP
 }
-// _g_transform
-std::string _g_transform(std::string geom, std::string srs_from, std::string srs_to, bool wrap_date_line, int date_line_offset);
-RcppExport SEXP _gdalraster__g_transform(SEXP geomSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP, SEXP wrap_date_lineSEXP, SEXP date_line_offsetSEXP) {
+// g_transform
+std::string g_transform(std::string geom, std::string srs_from, std::string srs_to, bool wrap_date_line, int date_line_offset);
+RcppExport SEXP _gdalraster_g_transform(SEXP geomSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP, SEXP wrap_date_lineSEXP, SEXP date_line_offsetSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1046,48 +1046,48 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type srs_to(srs_toSEXP);
     Rcpp::traits::input_parameter< bool >::type wrap_date_line(wrap_date_lineSEXP);
     Rcpp::traits::input_parameter< int >::type date_line_offset(date_line_offsetSEXP);
-    rcpp_result_gen = Rcpp::wrap(_g_transform(geom, srs_from, srs_to, wrap_date_line, date_line_offset));
+    rcpp_result_gen = Rcpp::wrap(g_transform(geom, srs_from, srs_to, wrap_date_line, date_line_offset));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_ds_exists
-bool _ogr_ds_exists(std::string dsn, bool with_update);
-RcppExport SEXP _gdalraster__ogr_ds_exists(SEXP dsnSEXP, SEXP with_updateSEXP) {
+// ogr_ds_exists
+bool ogr_ds_exists(std::string dsn, bool with_update);
+RcppExport SEXP _gdalraster_ogr_ds_exists(SEXP dsnSEXP, SEXP with_updateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< bool >::type with_update(with_updateSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_ds_exists(dsn, with_update));
+    rcpp_result_gen = Rcpp::wrap(ogr_ds_exists(dsn, with_update));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_ds_format
-std::string _ogr_ds_format(std::string dsn);
-RcppExport SEXP _gdalraster__ogr_ds_format(SEXP dsnSEXP) {
+// ogr_ds_format
+std::string ogr_ds_format(std::string dsn);
+RcppExport SEXP _gdalraster_ogr_ds_format(SEXP dsnSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_ds_format(dsn));
+    rcpp_result_gen = Rcpp::wrap(ogr_ds_format(dsn));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_ds_test_cap
-SEXP _ogr_ds_test_cap(std::string dsn, bool with_update);
-RcppExport SEXP _gdalraster__ogr_ds_test_cap(SEXP dsnSEXP, SEXP with_updateSEXP) {
+// ogr_ds_test_cap
+SEXP ogr_ds_test_cap(std::string dsn, bool with_update);
+RcppExport SEXP _gdalraster_ogr_ds_test_cap(SEXP dsnSEXP, SEXP with_updateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< bool >::type with_update(with_updateSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_ds_test_cap(dsn, with_update));
+    rcpp_result_gen = Rcpp::wrap(ogr_ds_test_cap(dsn, with_update));
     return rcpp_result_gen;
 END_RCPP
 }
-// _create_ogr
-bool _create_ogr(std::string format, std::string dst_filename, int xsize, int ysize, int nbands, std::string dataType, std::string layer, std::string geom_type, std::string srs, std::string fld_name, std::string fld_type, Rcpp::Nullable<Rcpp::CharacterVector> dsco, Rcpp::Nullable<Rcpp::CharacterVector> lco, Rcpp::Nullable<Rcpp::List> layer_defn);
-RcppExport SEXP _gdalraster__create_ogr(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP, SEXP dataTypeSEXP, SEXP layerSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP fld_nameSEXP, SEXP fld_typeSEXP, SEXP dscoSEXP, SEXP lcoSEXP, SEXP layer_defnSEXP) {
+// create_ogr
+bool create_ogr(std::string format, std::string dst_filename, int xsize, int ysize, int nbands, std::string dataType, std::string layer, std::string geom_type, std::string srs, std::string fld_name, std::string fld_type, Rcpp::Nullable<Rcpp::CharacterVector> dsco, Rcpp::Nullable<Rcpp::CharacterVector> lco, Rcpp::Nullable<Rcpp::List> layer_defn);
+RcppExport SEXP _gdalraster_create_ogr(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP, SEXP dataTypeSEXP, SEXP layerSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP fld_nameSEXP, SEXP fld_typeSEXP, SEXP dscoSEXP, SEXP lcoSEXP, SEXP layer_defnSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1105,60 +1105,60 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type dsco(dscoSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type lco(lcoSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::List> >::type layer_defn(layer_defnSEXP);
-    rcpp_result_gen = Rcpp::wrap(_create_ogr(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, fld_type, dsco, lco, layer_defn));
+    rcpp_result_gen = Rcpp::wrap(create_ogr(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, fld_type, dsco, lco, layer_defn));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_ds_layer_count
-int _ogr_ds_layer_count(std::string dsn);
-RcppExport SEXP _gdalraster__ogr_ds_layer_count(SEXP dsnSEXP) {
+// ogr_ds_layer_count
+int ogr_ds_layer_count(std::string dsn);
+RcppExport SEXP _gdalraster_ogr_ds_layer_count(SEXP dsnSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_ds_layer_count(dsn));
+    rcpp_result_gen = Rcpp::wrap(ogr_ds_layer_count(dsn));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_ds_layer_names
-SEXP _ogr_ds_layer_names(std::string dsn);
-RcppExport SEXP _gdalraster__ogr_ds_layer_names(SEXP dsnSEXP) {
+// ogr_ds_layer_names
+SEXP ogr_ds_layer_names(std::string dsn);
+RcppExport SEXP _gdalraster_ogr_ds_layer_names(SEXP dsnSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_ds_layer_names(dsn));
+    rcpp_result_gen = Rcpp::wrap(ogr_ds_layer_names(dsn));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_layer_exists
-bool _ogr_layer_exists(std::string dsn, std::string layer);
-RcppExport SEXP _gdalraster__ogr_layer_exists(SEXP dsnSEXP, SEXP layerSEXP) {
+// ogr_layer_exists
+bool ogr_layer_exists(std::string dsn, std::string layer);
+RcppExport SEXP _gdalraster_ogr_layer_exists(SEXP dsnSEXP, SEXP layerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_layer_exists(dsn, layer));
+    rcpp_result_gen = Rcpp::wrap(ogr_layer_exists(dsn, layer));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_layer_test_cap
-SEXP _ogr_layer_test_cap(std::string dsn, std::string layer, bool with_update);
-RcppExport SEXP _gdalraster__ogr_layer_test_cap(SEXP dsnSEXP, SEXP layerSEXP, SEXP with_updateSEXP) {
+// ogr_layer_test_cap
+SEXP ogr_layer_test_cap(std::string dsn, std::string layer, bool with_update);
+RcppExport SEXP _gdalraster_ogr_layer_test_cap(SEXP dsnSEXP, SEXP layerSEXP, SEXP with_updateSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
     Rcpp::traits::input_parameter< bool >::type with_update(with_updateSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_layer_test_cap(dsn, layer, with_update));
+    rcpp_result_gen = Rcpp::wrap(ogr_layer_test_cap(dsn, layer, with_update));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_layer_create
-bool _ogr_layer_create(std::string dsn, std::string layer, Rcpp::Nullable<Rcpp::List> layer_defn, std::string geom_type, std::string srs, Rcpp::Nullable<Rcpp::CharacterVector> options);
-RcppExport SEXP _gdalraster__ogr_layer_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP layer_defnSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP optionsSEXP) {
+// ogr_layer_create
+bool ogr_layer_create(std::string dsn, std::string layer, Rcpp::Nullable<Rcpp::List> layer_defn, std::string geom_type, std::string srs, Rcpp::Nullable<Rcpp::CharacterVector> options);
+RcppExport SEXP _gdalraster_ogr_layer_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP layer_defnSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1168,50 +1168,50 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type geom_type(geom_typeSEXP);
     Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_layer_create(dsn, layer, layer_defn, geom_type, srs, options));
+    rcpp_result_gen = Rcpp::wrap(ogr_layer_create(dsn, layer, layer_defn, geom_type, srs, options));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_layer_delete
-bool _ogr_layer_delete(std::string dsn, std::string layer);
-RcppExport SEXP _gdalraster__ogr_layer_delete(SEXP dsnSEXP, SEXP layerSEXP) {
+// ogr_layer_delete
+bool ogr_layer_delete(std::string dsn, std::string layer);
+RcppExport SEXP _gdalraster_ogr_layer_delete(SEXP dsnSEXP, SEXP layerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_layer_delete(dsn, layer));
+    rcpp_result_gen = Rcpp::wrap(ogr_layer_delete(dsn, layer));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_layer_field_names
-SEXP _ogr_layer_field_names(std::string dsn, std::string layer);
-RcppExport SEXP _gdalraster__ogr_layer_field_names(SEXP dsnSEXP, SEXP layerSEXP) {
+// ogr_layer_field_names
+SEXP ogr_layer_field_names(std::string dsn, std::string layer);
+RcppExport SEXP _gdalraster_ogr_layer_field_names(SEXP dsnSEXP, SEXP layerSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_layer_field_names(dsn, layer));
+    rcpp_result_gen = Rcpp::wrap(ogr_layer_field_names(dsn, layer));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_field_index
-int _ogr_field_index(std::string dsn, std::string layer, std::string fld_name);
-RcppExport SEXP _gdalraster__ogr_field_index(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP) {
+// ogr_field_index
+int ogr_field_index(std::string dsn, std::string layer, std::string fld_name);
+RcppExport SEXP _gdalraster_ogr_field_index(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
     Rcpp::traits::input_parameter< std::string >::type fld_name(fld_nameSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_field_index(dsn, layer, fld_name));
+    rcpp_result_gen = Rcpp::wrap(ogr_field_index(dsn, layer, fld_name));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_field_create
-bool _ogr_field_create(std::string dsn, std::string layer, std::string fld_name, std::string fld_type, std::string fld_subtype, int fld_width, int fld_precision, bool is_nullable, bool is_ignored, bool is_unique, std::string default_value);
-RcppExport SEXP _gdalraster__ogr_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP fld_typeSEXP, SEXP fld_subtypeSEXP, SEXP fld_widthSEXP, SEXP fld_precisionSEXP, SEXP is_nullableSEXP, SEXP is_ignoredSEXP, SEXP is_uniqueSEXP, SEXP default_valueSEXP) {
+// ogr_field_create
+bool ogr_field_create(std::string dsn, std::string layer, std::string fld_name, std::string fld_type, std::string fld_subtype, int fld_width, int fld_precision, bool is_nullable, bool is_ignored, bool is_unique, std::string default_value);
+RcppExport SEXP _gdalraster_ogr_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP fld_typeSEXP, SEXP fld_subtypeSEXP, SEXP fld_widthSEXP, SEXP fld_precisionSEXP, SEXP is_nullableSEXP, SEXP is_ignoredSEXP, SEXP is_uniqueSEXP, SEXP default_valueSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1226,13 +1226,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type is_ignored(is_ignoredSEXP);
     Rcpp::traits::input_parameter< bool >::type is_unique(is_uniqueSEXP);
     Rcpp::traits::input_parameter< std::string >::type default_value(default_valueSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_field_create(dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_ignored, is_unique, default_value));
+    rcpp_result_gen = Rcpp::wrap(ogr_field_create(dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_ignored, is_unique, default_value));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_geom_field_create
-bool _ogr_geom_field_create(std::string dsn, std::string layer, std::string fld_name, std::string geom_type, std::string srs, bool is_nullable, bool is_ignored);
-RcppExport SEXP _gdalraster__ogr_geom_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP is_nullableSEXP, SEXP is_ignoredSEXP) {
+// ogr_geom_field_create
+bool ogr_geom_field_create(std::string dsn, std::string layer, std::string fld_name, std::string geom_type, std::string srs, bool is_nullable, bool is_ignored);
+RcppExport SEXP _gdalraster_ogr_geom_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP is_nullableSEXP, SEXP is_ignoredSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1243,13 +1243,13 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
     Rcpp::traits::input_parameter< bool >::type is_nullable(is_nullableSEXP);
     Rcpp::traits::input_parameter< bool >::type is_ignored(is_ignoredSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_geom_field_create(dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored));
+    rcpp_result_gen = Rcpp::wrap(ogr_geom_field_create(dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_field_rename
-bool _ogr_field_rename(std::string dsn, std::string layer, std::string fld_name, std::string new_name);
-RcppExport SEXP _gdalraster__ogr_field_rename(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP new_nameSEXP) {
+// ogr_field_rename
+bool ogr_field_rename(std::string dsn, std::string layer, std::string fld_name, std::string new_name);
+RcppExport SEXP _gdalraster_ogr_field_rename(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP new_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1257,26 +1257,26 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
     Rcpp::traits::input_parameter< std::string >::type fld_name(fld_nameSEXP);
     Rcpp::traits::input_parameter< std::string >::type new_name(new_nameSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_field_rename(dsn, layer, fld_name, new_name));
+    rcpp_result_gen = Rcpp::wrap(ogr_field_rename(dsn, layer, fld_name, new_name));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_field_delete
-bool _ogr_field_delete(std::string dsn, std::string layer, std::string fld_name);
-RcppExport SEXP _gdalraster__ogr_field_delete(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP) {
+// ogr_field_delete
+bool ogr_field_delete(std::string dsn, std::string layer, std::string fld_name);
+RcppExport SEXP _gdalraster_ogr_field_delete(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
     Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
     Rcpp::traits::input_parameter< std::string >::type fld_name(fld_nameSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_field_delete(dsn, layer, fld_name));
+    rcpp_result_gen = Rcpp::wrap(ogr_field_delete(dsn, layer, fld_name));
     return rcpp_result_gen;
 END_RCPP
 }
-// _ogr_execute_sql
-SEXP _ogr_execute_sql(std::string dsn, std::string sql, std::string spatial_filter, std::string dialect);
-RcppExport SEXP _gdalraster__ogr_execute_sql(SEXP dsnSEXP, SEXP sqlSEXP, SEXP spatial_filterSEXP, SEXP dialectSEXP) {
+// ogr_execute_sql
+SEXP ogr_execute_sql(std::string dsn, std::string sql, std::string spatial_filter, std::string dialect);
+RcppExport SEXP _gdalraster_ogr_execute_sql(SEXP dsnSEXP, SEXP sqlSEXP, SEXP spatial_filterSEXP, SEXP dialectSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1284,57 +1284,57 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type sql(sqlSEXP);
     Rcpp::traits::input_parameter< std::string >::type spatial_filter(spatial_filterSEXP);
     Rcpp::traits::input_parameter< std::string >::type dialect(dialectSEXP);
-    rcpp_result_gen = Rcpp::wrap(_ogr_execute_sql(dsn, sql, spatial_filter, dialect));
+    rcpp_result_gen = Rcpp::wrap(ogr_execute_sql(dsn, sql, spatial_filter, dialect));
     return rcpp_result_gen;
 END_RCPP
 }
-// _getPROJVersion
-std::vector<int> _getPROJVersion();
-RcppExport SEXP _gdalraster__getPROJVersion() {
+// getPROJVersion
+std::vector<int> getPROJVersion();
+RcppExport SEXP _gdalraster_getPROJVersion() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(_getPROJVersion());
+    rcpp_result_gen = Rcpp::wrap(getPROJVersion());
     return rcpp_result_gen;
 END_RCPP
 }
-// _getPROJSearchPaths
-Rcpp::CharacterVector _getPROJSearchPaths();
-RcppExport SEXP _gdalraster__getPROJSearchPaths() {
+// getPROJSearchPaths
+Rcpp::CharacterVector getPROJSearchPaths();
+RcppExport SEXP _gdalraster_getPROJSearchPaths() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(_getPROJSearchPaths());
+    rcpp_result_gen = Rcpp::wrap(getPROJSearchPaths());
     return rcpp_result_gen;
 END_RCPP
 }
-// _setPROJSearchPaths
-void _setPROJSearchPaths(Rcpp::CharacterVector paths);
-RcppExport SEXP _gdalraster__setPROJSearchPaths(SEXP pathsSEXP) {
+// setPROJSearchPaths
+void setPROJSearchPaths(Rcpp::CharacterVector paths);
+RcppExport SEXP _gdalraster_setPROJSearchPaths(SEXP pathsSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type paths(pathsSEXP);
-    _setPROJSearchPaths(paths);
+    setPROJSearchPaths(paths);
     return R_NilValue;
 END_RCPP
 }
-// _getPROJEnableNetwork
-Rcpp::LogicalVector _getPROJEnableNetwork();
-RcppExport SEXP _gdalraster__getPROJEnableNetwork() {
+// getPROJEnableNetwork
+Rcpp::LogicalVector getPROJEnableNetwork();
+RcppExport SEXP _gdalraster_getPROJEnableNetwork() {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(_getPROJEnableNetwork());
+    rcpp_result_gen = Rcpp::wrap(getPROJEnableNetwork());
     return rcpp_result_gen;
 END_RCPP
 }
-// _setPROJEnableNetwork
-void _setPROJEnableNetwork(int enabled);
-RcppExport SEXP _gdalraster__setPROJEnableNetwork(SEXP enabledSEXP) {
+// setPROJEnableNetwork
+void setPROJEnableNetwork(int enabled);
+RcppExport SEXP _gdalraster_setPROJEnableNetwork(SEXP enabledSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type enabled(enabledSEXP);
-    _setPROJEnableNetwork(enabled);
+    setPROJEnableNetwork(enabled);
     return R_NilValue;
 END_RCPP
 }
@@ -1459,36 +1459,36 @@ RcppExport SEXP _rcpp_module_boot_mod_VSIFile();
 
 static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_gdal_version", (DL_FUNC) &_gdalraster_gdal_version, 0},
-    {"_gdalraster__gdal_version_num", (DL_FUNC) &_gdalraster__gdal_version_num, 0},
+    {"_gdalraster_gdal_version_num", (DL_FUNC) &_gdalraster_gdal_version_num, 0},
     {"_gdalraster_gdal_formats", (DL_FUNC) &_gdalraster_gdal_formats, 1},
     {"_gdalraster_get_config_option", (DL_FUNC) &_gdalraster_get_config_option, 1},
     {"_gdalraster_set_config_option", (DL_FUNC) &_gdalraster_set_config_option, 2},
     {"_gdalraster_get_cache_used", (DL_FUNC) &_gdalraster_get_cache_used, 0},
-    {"_gdalraster__dump_open_datasets", (DL_FUNC) &_gdalraster__dump_open_datasets, 1},
+    {"_gdalraster_dump_open_datasets", (DL_FUNC) &_gdalraster_dump_open_datasets, 1},
     {"_gdalraster_push_error_handler", (DL_FUNC) &_gdalraster_push_error_handler, 1},
     {"_gdalraster_pop_error_handler", (DL_FUNC) &_gdalraster_pop_error_handler, 0},
-    {"_gdalraster__check_gdal_filename", (DL_FUNC) &_gdalraster__check_gdal_filename, 1},
+    {"_gdalraster_check_gdal_filename", (DL_FUNC) &_gdalraster_check_gdal_filename, 1},
     {"_gdalraster_get_num_cpus", (DL_FUNC) &_gdalraster_get_num_cpus, 0},
     {"_gdalraster_get_usable_physical_ram", (DL_FUNC) &_gdalraster_get_usable_physical_ram, 0},
     {"_gdalraster_has_spatialite", (DL_FUNC) &_gdalraster_has_spatialite, 0},
     {"_gdalraster_http_enabled", (DL_FUNC) &_gdalraster_http_enabled, 0},
-    {"_gdalraster__cpl_http_cleanup", (DL_FUNC) &_gdalraster__cpl_http_cleanup, 0},
+    {"_gdalraster_cpl_http_cleanup", (DL_FUNC) &_gdalraster_cpl_http_cleanup, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 6},
-    {"_gdalraster__apply_geotransform", (DL_FUNC) &_gdalraster__apply_geotransform, 3},
+    {"_gdalraster_apply_geotransform", (DL_FUNC) &_gdalraster_apply_geotransform, 3},
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
-    {"_gdalraster__get_pixel_line_gt", (DL_FUNC) &_gdalraster__get_pixel_line_gt, 2},
-    {"_gdalraster__get_pixel_line_ds", (DL_FUNC) &_gdalraster__get_pixel_line_ds, 2},
+    {"_gdalraster_get_pixel_line_gt_", (DL_FUNC) &_gdalraster_get_pixel_line_gt_, 2},
+    {"_gdalraster_get_pixel_line_ds", (DL_FUNC) &_gdalraster_get_pixel_line_ds, 2},
     {"_gdalraster_buildVRT", (DL_FUNC) &_gdalraster_buildVRT, 4},
-    {"_gdalraster__combine", (DL_FUNC) &_gdalraster__combine, 8},
-    {"_gdalraster__value_count", (DL_FUNC) &_gdalraster__value_count, 3},
-    {"_gdalraster__dem_proc", (DL_FUNC) &_gdalraster__dem_proc, 6},
+    {"_gdalraster_combine", (DL_FUNC) &_gdalraster_combine, 8},
+    {"_gdalraster_value_count", (DL_FUNC) &_gdalraster_value_count, 3},
+    {"_gdalraster_dem_proc", (DL_FUNC) &_gdalraster_dem_proc, 6},
     {"_gdalraster_fillNodata", (DL_FUNC) &_gdalraster_fillNodata, 6},
     {"_gdalraster_footprint", (DL_FUNC) &_gdalraster_footprint, 3},
     {"_gdalraster_ogr2ogr", (DL_FUNC) &_gdalraster_ogr2ogr, 5},
     {"_gdalraster_ogrinfo", (DL_FUNC) &_gdalraster_ogrinfo, 6},
-    {"_gdalraster__polygonize", (DL_FUNC) &_gdalraster__polygonize, 9},
-    {"_gdalraster__rasterize", (DL_FUNC) &_gdalraster__rasterize, 4},
+    {"_gdalraster_polygonize", (DL_FUNC) &_gdalraster_polygonize, 9},
+    {"_gdalraster_rasterize", (DL_FUNC) &_gdalraster_rasterize, 4},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 10},
     {"_gdalraster_translate", (DL_FUNC) &_gdalraster_translate, 4},
     {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 5},
@@ -1497,8 +1497,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_deleteDataset", (DL_FUNC) &_gdalraster_deleteDataset, 2},
     {"_gdalraster_renameDataset", (DL_FUNC) &_gdalraster_renameDataset, 3},
     {"_gdalraster_copyDatasetFiles", (DL_FUNC) &_gdalraster_copyDatasetFiles, 3},
-    {"_gdalraster__getCreationOptions", (DL_FUNC) &_gdalraster__getCreationOptions, 1},
-    {"_gdalraster__addFileInZip", (DL_FUNC) &_gdalraster__addFileInZip, 6},
+    {"_gdalraster_getCreationOptions", (DL_FUNC) &_gdalraster_getCreationOptions, 1},
+    {"_gdalraster_addFileInZip", (DL_FUNC) &_gdalraster_addFileInZip, 6},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
     {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 3},
     {"_gdalraster_vsi_read_dir", (DL_FUNC) &_gdalraster_vsi_read_dir, 2},
@@ -1517,53 +1517,53 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_set_path_option", (DL_FUNC) &_gdalraster_vsi_set_path_option, 3},
     {"_gdalraster_vsi_clear_path_options", (DL_FUNC) &_gdalraster_vsi_clear_path_options, 1},
     {"_gdalraster_vsi_get_file_metadata", (DL_FUNC) &_gdalraster_vsi_get_file_metadata, 2},
-    {"_gdalraster__getGEOSVersion", (DL_FUNC) &_gdalraster__getGEOSVersion, 0},
+    {"_gdalraster_getGEOSVersion", (DL_FUNC) &_gdalraster_getGEOSVersion, 0},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
-    {"_gdalraster__g_create", (DL_FUNC) &_gdalraster__g_create, 2},
-    {"_gdalraster__g_add_geom", (DL_FUNC) &_gdalraster__g_add_geom, 2},
-    {"_gdalraster__g_is_valid", (DL_FUNC) &_gdalraster__g_is_valid, 1},
-    {"_gdalraster__g_is_empty", (DL_FUNC) &_gdalraster__g_is_empty, 1},
-    {"_gdalraster__g_name", (DL_FUNC) &_gdalraster__g_name, 1},
-    {"_gdalraster__g_intersects", (DL_FUNC) &_gdalraster__g_intersects, 2},
-    {"_gdalraster__g_equals", (DL_FUNC) &_gdalraster__g_equals, 2},
-    {"_gdalraster__g_disjoint", (DL_FUNC) &_gdalraster__g_disjoint, 2},
-    {"_gdalraster__g_touches", (DL_FUNC) &_gdalraster__g_touches, 2},
-    {"_gdalraster__g_contains", (DL_FUNC) &_gdalraster__g_contains, 2},
-    {"_gdalraster__g_within", (DL_FUNC) &_gdalraster__g_within, 2},
-    {"_gdalraster__g_crosses", (DL_FUNC) &_gdalraster__g_crosses, 2},
-    {"_gdalraster__g_overlaps", (DL_FUNC) &_gdalraster__g_overlaps, 2},
-    {"_gdalraster__g_buffer", (DL_FUNC) &_gdalraster__g_buffer, 3},
-    {"_gdalraster__g_intersection", (DL_FUNC) &_gdalraster__g_intersection, 2},
-    {"_gdalraster__g_union", (DL_FUNC) &_gdalraster__g_union, 2},
-    {"_gdalraster__g_difference", (DL_FUNC) &_gdalraster__g_difference, 2},
-    {"_gdalraster__g_sym_difference", (DL_FUNC) &_gdalraster__g_sym_difference, 2},
-    {"_gdalraster__g_distance", (DL_FUNC) &_gdalraster__g_distance, 2},
-    {"_gdalraster__g_length", (DL_FUNC) &_gdalraster__g_length, 1},
-    {"_gdalraster__g_area", (DL_FUNC) &_gdalraster__g_area, 1},
-    {"_gdalraster__g_centroid", (DL_FUNC) &_gdalraster__g_centroid, 1},
-    {"_gdalraster__g_transform", (DL_FUNC) &_gdalraster__g_transform, 5},
-    {"_gdalraster__ogr_ds_exists", (DL_FUNC) &_gdalraster__ogr_ds_exists, 2},
-    {"_gdalraster__ogr_ds_format", (DL_FUNC) &_gdalraster__ogr_ds_format, 1},
-    {"_gdalraster__ogr_ds_test_cap", (DL_FUNC) &_gdalraster__ogr_ds_test_cap, 2},
-    {"_gdalraster__create_ogr", (DL_FUNC) &_gdalraster__create_ogr, 14},
-    {"_gdalraster__ogr_ds_layer_count", (DL_FUNC) &_gdalraster__ogr_ds_layer_count, 1},
-    {"_gdalraster__ogr_ds_layer_names", (DL_FUNC) &_gdalraster__ogr_ds_layer_names, 1},
-    {"_gdalraster__ogr_layer_exists", (DL_FUNC) &_gdalraster__ogr_layer_exists, 2},
-    {"_gdalraster__ogr_layer_test_cap", (DL_FUNC) &_gdalraster__ogr_layer_test_cap, 3},
-    {"_gdalraster__ogr_layer_create", (DL_FUNC) &_gdalraster__ogr_layer_create, 6},
-    {"_gdalraster__ogr_layer_delete", (DL_FUNC) &_gdalraster__ogr_layer_delete, 2},
-    {"_gdalraster__ogr_layer_field_names", (DL_FUNC) &_gdalraster__ogr_layer_field_names, 2},
-    {"_gdalraster__ogr_field_index", (DL_FUNC) &_gdalraster__ogr_field_index, 3},
-    {"_gdalraster__ogr_field_create", (DL_FUNC) &_gdalraster__ogr_field_create, 11},
-    {"_gdalraster__ogr_geom_field_create", (DL_FUNC) &_gdalraster__ogr_geom_field_create, 7},
-    {"_gdalraster__ogr_field_rename", (DL_FUNC) &_gdalraster__ogr_field_rename, 4},
-    {"_gdalraster__ogr_field_delete", (DL_FUNC) &_gdalraster__ogr_field_delete, 3},
-    {"_gdalraster__ogr_execute_sql", (DL_FUNC) &_gdalraster__ogr_execute_sql, 4},
-    {"_gdalraster__getPROJVersion", (DL_FUNC) &_gdalraster__getPROJVersion, 0},
-    {"_gdalraster__getPROJSearchPaths", (DL_FUNC) &_gdalraster__getPROJSearchPaths, 0},
-    {"_gdalraster__setPROJSearchPaths", (DL_FUNC) &_gdalraster__setPROJSearchPaths, 1},
-    {"_gdalraster__getPROJEnableNetwork", (DL_FUNC) &_gdalraster__getPROJEnableNetwork, 0},
-    {"_gdalraster__setPROJEnableNetwork", (DL_FUNC) &_gdalraster__setPROJEnableNetwork, 1},
+    {"_gdalraster_g_create", (DL_FUNC) &_gdalraster_g_create, 2},
+    {"_gdalraster_g_add_geom", (DL_FUNC) &_gdalraster_g_add_geom, 2},
+    {"_gdalraster_g_is_valid", (DL_FUNC) &_gdalraster_g_is_valid, 1},
+    {"_gdalraster_g_is_empty", (DL_FUNC) &_gdalraster_g_is_empty, 1},
+    {"_gdalraster_g_name", (DL_FUNC) &_gdalraster_g_name, 1},
+    {"_gdalraster_g_intersects", (DL_FUNC) &_gdalraster_g_intersects, 2},
+    {"_gdalraster_g_equals", (DL_FUNC) &_gdalraster_g_equals, 2},
+    {"_gdalraster_g_disjoint", (DL_FUNC) &_gdalraster_g_disjoint, 2},
+    {"_gdalraster_g_touches", (DL_FUNC) &_gdalraster_g_touches, 2},
+    {"_gdalraster_g_contains", (DL_FUNC) &_gdalraster_g_contains, 2},
+    {"_gdalraster_g_within", (DL_FUNC) &_gdalraster_g_within, 2},
+    {"_gdalraster_g_crosses", (DL_FUNC) &_gdalraster_g_crosses, 2},
+    {"_gdalraster_g_overlaps", (DL_FUNC) &_gdalraster_g_overlaps, 2},
+    {"_gdalraster_g_buffer", (DL_FUNC) &_gdalraster_g_buffer, 3},
+    {"_gdalraster_g_intersection", (DL_FUNC) &_gdalraster_g_intersection, 2},
+    {"_gdalraster_g_union", (DL_FUNC) &_gdalraster_g_union, 2},
+    {"_gdalraster_g_difference", (DL_FUNC) &_gdalraster_g_difference, 2},
+    {"_gdalraster_g_sym_difference", (DL_FUNC) &_gdalraster_g_sym_difference, 2},
+    {"_gdalraster_g_distance", (DL_FUNC) &_gdalraster_g_distance, 2},
+    {"_gdalraster_g_length", (DL_FUNC) &_gdalraster_g_length, 1},
+    {"_gdalraster_g_area", (DL_FUNC) &_gdalraster_g_area, 1},
+    {"_gdalraster_g_centroid", (DL_FUNC) &_gdalraster_g_centroid, 1},
+    {"_gdalraster_g_transform", (DL_FUNC) &_gdalraster_g_transform, 5},
+    {"_gdalraster_ogr_ds_exists", (DL_FUNC) &_gdalraster_ogr_ds_exists, 2},
+    {"_gdalraster_ogr_ds_format", (DL_FUNC) &_gdalraster_ogr_ds_format, 1},
+    {"_gdalraster_ogr_ds_test_cap", (DL_FUNC) &_gdalraster_ogr_ds_test_cap, 2},
+    {"_gdalraster_create_ogr", (DL_FUNC) &_gdalraster_create_ogr, 14},
+    {"_gdalraster_ogr_ds_layer_count", (DL_FUNC) &_gdalraster_ogr_ds_layer_count, 1},
+    {"_gdalraster_ogr_ds_layer_names", (DL_FUNC) &_gdalraster_ogr_ds_layer_names, 1},
+    {"_gdalraster_ogr_layer_exists", (DL_FUNC) &_gdalraster_ogr_layer_exists, 2},
+    {"_gdalraster_ogr_layer_test_cap", (DL_FUNC) &_gdalraster_ogr_layer_test_cap, 3},
+    {"_gdalraster_ogr_layer_create", (DL_FUNC) &_gdalraster_ogr_layer_create, 6},
+    {"_gdalraster_ogr_layer_delete", (DL_FUNC) &_gdalraster_ogr_layer_delete, 2},
+    {"_gdalraster_ogr_layer_field_names", (DL_FUNC) &_gdalraster_ogr_layer_field_names, 2},
+    {"_gdalraster_ogr_field_index", (DL_FUNC) &_gdalraster_ogr_field_index, 3},
+    {"_gdalraster_ogr_field_create", (DL_FUNC) &_gdalraster_ogr_field_create, 11},
+    {"_gdalraster_ogr_geom_field_create", (DL_FUNC) &_gdalraster_ogr_geom_field_create, 7},
+    {"_gdalraster_ogr_field_rename", (DL_FUNC) &_gdalraster_ogr_field_rename, 4},
+    {"_gdalraster_ogr_field_delete", (DL_FUNC) &_gdalraster_ogr_field_delete, 3},
+    {"_gdalraster_ogr_execute_sql", (DL_FUNC) &_gdalraster_ogr_execute_sql, 4},
+    {"_gdalraster_getPROJVersion", (DL_FUNC) &_gdalraster_getPROJVersion, 0},
+    {"_gdalraster_getPROJSearchPaths", (DL_FUNC) &_gdalraster_getPROJSearchPaths, 0},
+    {"_gdalraster_setPROJSearchPaths", (DL_FUNC) &_gdalraster_setPROJSearchPaths, 1},
+    {"_gdalraster_getPROJEnableNetwork", (DL_FUNC) &_gdalraster_getPROJEnableNetwork, 0},
+    {"_gdalraster_setPROJEnableNetwork", (DL_FUNC) &_gdalraster_setPROJEnableNetwork, 1},
     {"_gdalraster_inv_project", (DL_FUNC) &_gdalraster_inv_project, 3},
     {"_gdalraster_transform_xy", (DL_FUNC) &_gdalraster_transform_xy, 3},
     {"_gdalraster_epsg_to_wkt", (DL_FUNC) &_gdalraster_epsg_to_wkt, 2},
@@ -1580,9 +1580,9 @@ static const R_CallMethodDef CallEntries[] = {
     {NULL, NULL, 0}
 };
 
-void _gdal_init(DllInfo *dll);
+void gdal_init(DllInfo *dll);
 RcppExport void R_init_gdalraster(DllInfo *dll) {
     R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
     R_useDynamicSymbols(dll, FALSE);
-    _gdal_init(dll);
+    gdal_init(dll);
 }

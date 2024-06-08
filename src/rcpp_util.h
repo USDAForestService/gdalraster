@@ -1,25 +1,27 @@
 /* Misc. utility functions for internal use
-   Chris Toney <chris.toney at usda.gov> */
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
 
 #ifndef SRC_RCPP_UTIL_H_
 #define SRC_RCPP_UTIL_H_
+
+#include <Rcpp.h>
+#include <RcppInt64>
 
 #include <algorithm>
 #include <cctype>
 #include <string>
 
-#include <Rcpp.h>
-#include <RcppInt64>
-
-Rcpp::NumericMatrix _df_to_matrix(const Rcpp::DataFrame& df);
-Rcpp::IntegerMatrix _df_to_int_matrix(const Rcpp::DataFrame& df);
-Rcpp::CharacterVector _path_expand(Rcpp::CharacterVector path);
-Rcpp::CharacterVector _normalize_path(Rcpp::CharacterVector path,
+Rcpp::NumericMatrix df_to_matrix_(const Rcpp::DataFrame& df);
+Rcpp::IntegerMatrix df_to_int_matrix_(const Rcpp::DataFrame& df);
+Rcpp::CharacterVector path_expand_(Rcpp::CharacterVector path);
+Rcpp::CharacterVector normalize_path_(Rcpp::CharacterVector path,
                                       int must_work);
-Rcpp::CharacterVector _normalize_path(Rcpp::CharacterVector path,
+Rcpp::CharacterVector normalize_path_(Rcpp::CharacterVector path,
                                       int must_work = NA_LOGICAL);
-Rcpp::CharacterVector _enc_to_utf8(Rcpp::CharacterVector x);
-std::string _str_toupper(std::string s);
+Rcpp::CharacterVector enc_to_utf8_(Rcpp::CharacterVector x);
+std::string str_toupper_(std::string s);
 
 // case-insensitive comparator for std::map
 // https://stackoverflow.com/questions/1801892/how-can-i-make-the-mapfind-operation-case-insensitive

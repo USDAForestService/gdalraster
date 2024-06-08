@@ -49,7 +49,7 @@ Rcpp::NumericVector CmbTable::updateFromMatrix(
     R_xlen_t ncol = int_cmbs.ncol();
     Rcpp::NumericVector out(ncol);
 
-    for (R_xlen_t k=0; k<ncol; ++k) {
+    for (R_xlen_t k = 0; k < ncol; ++k) {
         out[k] = update(int_cmbs.column(k), incr);
     }
     return out;
@@ -67,14 +67,13 @@ Rcpp::NumericVector CmbTable::updateFromMatrixByRow(
     R_xlen_t nrow = int_cmbs.nrow();
     Rcpp::NumericVector out(nrow);
 
-    for (R_xlen_t k=0; k<nrow; ++k) {
+    for (R_xlen_t k = 0; k < nrow; ++k) {
         out[k] = update(int_cmbs.row(k), incr);
     }
     return out;
 }
 
 Rcpp::DataFrame CmbTable::asDataFrame() const {
-
     Rcpp::NumericVector dvCmbID(cmb_map.size());
     Rcpp::NumericVector dvCmbCount(cmb_map.size());
     std::vector<Rcpp::IntegerVector> aVec(key_len);
@@ -107,7 +106,6 @@ Rcpp::DataFrame CmbTable::asDataFrame() const {
 }
 
 Rcpp::NumericMatrix CmbTable::asMatrix() const {
-
     Rcpp::NumericMatrix m_out(cmb_map.size(), key_len + 2);
     cmbKey key;
     cmbData cmbdat;
@@ -133,7 +131,6 @@ Rcpp::NumericMatrix CmbTable::asMatrix() const {
 }
 
 RCPP_MODULE(mod_cmb_table) {
-
     Rcpp::class_<CmbTable>("CmbTable")
 
     .constructor
