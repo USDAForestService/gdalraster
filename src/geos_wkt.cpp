@@ -7,7 +7,6 @@
 
 #include "cpl_conv.h"
 #include "ogr_api.h"
-#include "ogr_core.h"
 #include "ogr_spatialref.h"
 #include "ogr_srs_api.h"
 
@@ -178,8 +177,8 @@ std::string g_add_geom(std::string sub_geom, std::string container) {
     OGRGeometryH hSubGeom = nullptr;
     OGRGeometryH hGeom = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_sub = (char*) sub_geom.c_str();
-    char* pszWKT_container = (char*) container.c_str();
+    char *pszWKT_sub = const_cast<char *>(sub_geom.c_str());
+    char *pszWKT_container = const_cast<char *>(container.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_sub, nullptr, &hSubGeom);
     if (err != OGRERR_NONE || hSubGeom == nullptr) {
@@ -244,7 +243,7 @@ bool g_is_valid(std::string geom) {
 
     OGRGeometryH hGeom = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT = (char*) geom.c_str();
+    char *pszWKT = const_cast<char *>(geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
     if (err != OGRERR_NONE || hGeom == nullptr) {
@@ -266,7 +265,7 @@ bool g_is_empty(std::string geom) {
 
     OGRGeometryH hGeom = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT = (char*) geom.c_str();
+    char *pszWKT = const_cast<char *>(geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
     if (err != OGRERR_NONE || hGeom == nullptr) {
@@ -288,7 +287,7 @@ std::string g_name(std::string geom) {
 
     OGRGeometryH hGeom = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT = (char*) geom.c_str();
+    char *pszWKT = const_cast<char *>(geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
     if (err != OGRERR_NONE || hGeom == nullptr) {
@@ -317,8 +316,8 @@ bool g_intersects(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -356,8 +355,8 @@ bool g_equals(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -386,7 +385,7 @@ bool g_equals(std::string this_geom, std::string other_geom) {
 bool g_disjoint(std::string this_geom, std::string other_geom) {
 // Tests if this geometry and the other geometry are disjoint.
 // Geometry validity is not checked. In case you are unsure of the validity
-// of the input geometries, call _g_is_valid() before, otherwise the result
+// of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
 // the geometry operation. If OGR is built without the GEOS library, this
@@ -395,8 +394,8 @@ bool g_disjoint(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -425,7 +424,7 @@ bool g_disjoint(std::string this_geom, std::string other_geom) {
 bool g_touches(std::string this_geom, std::string other_geom) {
 // Tests if this geometry and the other geometry are touching.
 // Geometry validity is not checked. In case you are unsure of the validity
-// of the input geometries, call _g_is_valid() before, otherwise the result
+// of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
 // the geometry operation. If OGR is built without the GEOS library, this
@@ -434,8 +433,8 @@ bool g_touches(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -464,7 +463,7 @@ bool g_touches(std::string this_geom, std::string other_geom) {
 bool g_contains(std::string this_geom, std::string other_geom) {
 // Tests if this geometry contains the other geometry.
 // Geometry validity is not checked. In case you are unsure of the validity
-// of the input geometries, call _g_is_valid() before, otherwise the result
+// of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
 // the geometry operation. If OGR is built without the GEOS library, this
@@ -473,8 +472,8 @@ bool g_contains(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -503,7 +502,7 @@ bool g_contains(std::string this_geom, std::string other_geom) {
 bool g_within(std::string this_geom, std::string other_geom) {
 // Tests if this geometry is within the other geometry.
 // Geometry validity is not checked. In case you are unsure of the validity
-// of the input geometries, call _g_is_valid() before, otherwise the result
+// of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
 // the geometry operation. If OGR is built without the GEOS library, this
@@ -512,8 +511,8 @@ bool g_within(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -542,7 +541,7 @@ bool g_within(std::string this_geom, std::string other_geom) {
 bool g_crosses(std::string this_geom, std::string other_geom) {
 // Tests if this geometry and the other geometry are crossing.
 // Geometry validity is not checked. In case you are unsure of the validity
-// of the input geometries, call _g_is_valid() before, otherwise the result
+// of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
 // the geometry operation. If OGR is built without the GEOS library, this
@@ -551,8 +550,8 @@ bool g_crosses(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -583,7 +582,7 @@ bool g_overlaps(std::string this_geom, std::string other_geom) {
 // intersection has a non-zero area (they have some but not all points in
 // common).
 // Geometry validity is not checked. In case you are unsure of the validity
-// of the input geometries, call _g_is_valid() before, otherwise the result
+// of the input geometries, call g_is_valid() before, otherwise the result
 // might be wrong.
 // This function is built on the GEOS library, check it for the definition of
 // the geometry operation. If OGR is built without the GEOS library, this
@@ -592,8 +591,8 @@ bool g_overlaps(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -640,7 +639,7 @@ std::string g_buffer(std::string geom, double dist, int quad_segs = 30) {
     OGRGeometryH hGeom = nullptr;
     OGRGeometryH hBufferGeom = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT = (char*) geom.c_str();
+    char *pszWKT = const_cast<char *>(geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
     if (err != OGRERR_NONE || hGeom == nullptr) {
@@ -676,7 +675,7 @@ std::string g_buffer(std::string geom, double dist, int quad_segs = 30) {
 // [[Rcpp::export(name = ".g_intersection")]]
 std::string g_intersection(std::string this_geom, std::string other_geom) {
 // Generates a new geometry which is the region of intersection of the two
-// geometries operated on. The _g_intersects() function can be used to test
+// geometries operated on. The g_intersects() function can be used to test
 // if two geometries intersect.
 // Geometry validity is not checked. In case you are unsure of the validity
 // of the input geometries, call IsValid() before, otherwise the result might
@@ -688,8 +687,8 @@ std::string g_intersection(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -719,7 +718,7 @@ std::string g_intersection(std::string this_geom, std::string other_geom) {
     OGR_G_ExportToWkt(hGeom, &pszWKT_out);
     std::string wkt_out = "";
     if (pszWKT_out != nullptr) {
-        wkt_out = pszWKT_out;
+        wkt_out = std::string(pszWKT_out);
         CPLFree(pszWKT_out);
     }
     OGR_G_DestroyGeometry(hGeom);
@@ -744,8 +743,8 @@ std::string g_union(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -800,8 +799,8 @@ std::string g_difference(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -856,8 +855,8 @@ std::string g_sym_difference(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -914,8 +913,8 @@ double g_distance(std::string this_geom, std::string other_geom) {
     OGRGeometryH hGeom_this = nullptr;
     OGRGeometryH hGeom_other = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT_this = (char*) this_geom.c_str();
-    char* pszWKT_other = (char*) other_geom.c_str();
+    char *pszWKT_this = const_cast<char *>(this_geom.c_str());
+    char *pszWKT_other = const_cast<char *>(other_geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT_this, nullptr, &hGeom_this);
     if (err != OGRERR_NONE || hGeom_this == nullptr) {
@@ -948,7 +947,7 @@ double g_length(std::string geom) {
 
     OGRGeometryH hGeom = nullptr;
     OGRErr err;
-    char* pszWKT = (char*) geom.c_str();
+    char *pszWKT = const_cast<char *>(geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
     if (err != OGRERR_NONE || hGeom == nullptr) {
@@ -971,7 +970,7 @@ double g_area(std::string geom) {
 
     OGRGeometryH hGeom = nullptr;
     OGRErr err;
-    char* pszWKT = (char*) geom.c_str();
+    char *pszWKT = const_cast<char *>(geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
     if (err != OGRERR_NONE || hGeom == nullptr) {
@@ -1002,7 +1001,7 @@ Rcpp::NumericVector g_centroid(std::string geom) {
 
     OGRGeometryH hGeom = nullptr;
     OGRErr err = OGRERR_NONE;
-    char* pszWKT = (char*) geom.c_str();
+    char *pszWKT = const_cast<char *>(geom.c_str());
 
     err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
     if (err != OGRERR_NONE || hGeom == nullptr) {
@@ -1067,7 +1066,7 @@ std::string g_transform(std::string geom, std::string srs_from,
     OGRGeometryH hGeom2 = nullptr;
     OGRErr err = OGRERR_NONE;
 
-    char* pszWKT = (char*) geom.c_str();
+    char *pszWKT = const_cast<char *>(geom.c_str());
     err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
     if (err != OGRERR_NONE || hGeom == nullptr) {
         if (hGeom != nullptr)
@@ -1096,9 +1095,9 @@ std::string g_transform(std::string geom, std::string srs_from,
     std::vector<char *> options;
     std::string offset;
     if (wrap_date_line) {
-        options.push_back((char *) "WRAPDATELINE=YES");
+        options.push_back(const_cast<char *>("WRAPDATELINE=YES"));
         offset = "DATELINEOFFSET=" + std::to_string(date_line_offset);
-        options.push_back((char *) offset.c_str());
+        options.push_back(const_cast<char *>(offset.c_str()));
     }
     options.push_back(nullptr);
 
