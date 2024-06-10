@@ -82,7 +82,7 @@ values are rounded to integers.
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 
 # create a blank raster to hold the output
-evt_mmu_file <- paste0(tempdir(), "/", "storml_evt_mmu2.tif")
+evt_mmu_file <- file.path(tempdir(), "storml_evt_mmu2.tif")
 rasterFromRaster(srcfile = evt_file,
                  dstfile = evt_mmu_file,
                  init = 32767)

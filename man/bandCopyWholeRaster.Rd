@@ -54,7 +54,7 @@ in the GDAL API.
 \examples{
 ## copy Landsat data from a single-band file to a new multi-band image
 b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-dst_file <- paste0(tempdir(), "/", "sr_multi.tif")
+dst_file <- file.path(tempdir(), "sr_multi.tif")
 rasterFromRaster(b5_file, dst_file, nbands=7, init=0)
 opt <- c("COMPRESSED=YES", "SKIP_HOLES=YES")
 bandCopyWholeRaster(b5_file, 1, dst_file, 5, options=opt)

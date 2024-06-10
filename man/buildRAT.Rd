@@ -154,7 +154,7 @@ Users should consider what is appropriate for a particular case.
 \examples{
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 # make a copy to modify
-f <- paste0(tempdir(), "/", "storml_evt_tmp.tif")
+f <- file.path(tempdir(), "storml_evt_tmp.tif")
 file.copy(evt_file,  f)
 
 ds <- new(GDALRaster, f, read_only=FALSE)

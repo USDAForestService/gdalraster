@@ -37,7 +37,7 @@ passed file name.
 }
 \examples{
 b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+b5_tmp <- file.path(tempdir(), "b5_tmp.tif")
 file.copy(b5_file,  b5_tmp)
 
 ds <- new(GDALRaster, b5_tmp)

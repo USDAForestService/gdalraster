@@ -473,7 +473,7 @@ void cpl_http_cleanup() {
 //' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()],
 //' [getCreationOptions()]
 //' @examples
-//' new_file <- paste0(tempdir(), "/", "newdata.tif")
+//' new_file <- file.path(tempdir(), "newdata.tif")
 //' create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
 //'        nbands=1, dataType="Int16")
 //' ds <- new(GDALRaster, new_file, read_only=FALSE)
@@ -557,7 +557,7 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
 //' [getCreationOptions()], [translate()]
 //' @examples
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-//' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
+//' tif_file <- file.path(tempdir(), "storml_lndscp.tif")
 //' opt <- c("COMPRESS=LZW")
 //' createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
 //'            options=opt)
@@ -833,7 +833,7 @@ Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 //' b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
 //' band_files <- c(b6_file, b5_file, b4_file)
-//' vrt_file <- paste0(tempdir(), "/", "storml_b6_b5_b4.vrt")
+//' vrt_file <- file.path(tempdir(), "storml_b6_b5_b4.vrt")
 //' buildVRT(vrt_file, band_files, cl_arg = "-separate")
 //' ds <- new(GDALRaster, vrt_file)
 //' ds$getRasterCount()
@@ -1172,7 +1172,7 @@ bool dem_proc(std::string mode,
 //' tbl[is.na(tbl$VALUE),]
 //'
 //' ## make a copy that will be modified
-//' mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+//' mod_file <- file.path(tempdir(), "storml_elev_fill.tif")
 //' file.copy(elev_file,  mod_file)
 //'
 //' fillNodata(mod_file, band=1)
@@ -1271,7 +1271,7 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 //'
 //' @examples
 //' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-//' out_file <- paste0(tempdir(), "/", "storml.geojson")
+//' out_file <- file.path(tempdir(), "storml.geojson")
 //'
 //' # Requires GDAL >= 3.8
 //' if (as.integer(gdal_version()[2]) >= 3080000) {
@@ -1834,7 +1834,7 @@ bool rasterize(std::string src_dsn, std::string dst_filename,
 //' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 //'
 //' # create a blank raster to hold the output
-//' evt_mmu_file <- paste0(tempdir(), "/", "storml_evt_mmu2.tif")
+//' evt_mmu_file <- file.path(tempdir(), "storml_evt_mmu2.tif")
 //' rasterFromRaster(srcfile = evt_file,
 //'                  dstfile = evt_mmu_file,
 //'                  init = 32767)
@@ -1988,7 +1988,7 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' args <- c("-tr", "90", "90", "-r", "average")
 //' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 //'
-//' img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
+//' img_file <- file.path(tempdir(), "storml_elev_90m.img")
 //' translate(elev_file, img_file, args)
 //'
 //' ds <- new(GDALRaster, img_file)
@@ -2213,7 +2213,7 @@ bool translate(Rcpp::CharacterVector src_filename,
 //' # write to Erdas Imagine format (HFA) with compression:
 //' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 //'
-//' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
+//' alb83_file <- file.path(tempdir(), "storml_elev_alb83.img")
 //' warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
 //'
 //' ds <- new(GDALRaster, alb83_file)
@@ -2488,7 +2488,7 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //' @examples
 //' ## copy Landsat data from a single-band file to a new multi-band image
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-//' dst_file <- paste0(tempdir(), "/", "sr_multi.tif")
+//' dst_file <- file.path(tempdir(), "sr_multi.tif")
 //' rasterFromRaster(b5_file, dst_file, nbands=7, init=0)
 //' opt <- c("COMPRESSED=YES", "SKIP_HOLES=YES")
 //' bandCopyWholeRaster(b5_file, 1, dst_file, 5, options=opt)
@@ -2590,7 +2590,7 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 //'
 //' @examples
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-//' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+//' b5_tmp <- file.path(tempdir(), "b5_tmp.tif")
 //' file.copy(b5_file,  b5_tmp)
 //'
 //' ds <- new(GDALRaster, b5_tmp)
@@ -2657,14 +2657,14 @@ bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
 //'
 //' @examples
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-//' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+//' b5_tmp <- file.path(tempdir(), "b5_tmp.tif")
 //' file.copy(b5_file,  b5_tmp)
 //'
 //' ds <- new(GDALRaster, b5_tmp)
 //' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
 //' ds$getFileList()
 //' ds$close()
-//' b5_tmp2 <- paste0(tempdir(), "/", "b5_tmp_renamed.tif")
+//' b5_tmp2 <- file.path(tempdir(), "b5_tmp_renamed.tif")
 //' renameDataset(b5_tmp2, b5_tmp)
 //' ds <- new(GDALRaster, b5_tmp2)
 //' ds$getFileList()
@@ -2731,7 +2731,7 @@ bool renameDataset(Rcpp::CharacterVector new_filename,
 //' ds$getFileList()
 //' ds$close()
 //'
-//' lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
+//' lcp_tmp <- file.path(tempdir(), "storm_lake_copy.lcp")
 //' copyDatasetFiles(lcp_tmp, lcp_file)
 //' ds_copy <- new(GDALRaster, lcp_tmp)
 //' ds_copy$getFileList()

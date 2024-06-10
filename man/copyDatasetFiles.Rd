@@ -36,7 +36,7 @@ ds <- new(GDALRaster, lcp_file)
 ds$getFileList()
 ds$close()
 
-lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
+lcp_tmp <- file.path(tempdir(), "storm_lake_copy.lcp")
 copyDatasetFiles(lcp_tmp, lcp_file)
 ds_copy <- new(GDALRaster, lcp_tmp)
 ds_copy$getFileList()

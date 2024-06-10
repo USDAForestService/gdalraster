@@ -1,4 +1,6 @@
-# gdalraster 1.11.0.9020 (dev)
+# gdalraster 1.11.0.9030 (dev)
+
+* Doc: replace `paste0()` with `file.path()` in the examples (2024-06-10)
 
 * code linting (2024-06-08)
 

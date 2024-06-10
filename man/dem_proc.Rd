@@ -48,7 +48,7 @@ mode.
 }
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-slp_file <- paste0(tempdir(), "/", "storml_slp.tif")
+slp_file <- file.path(tempdir(), "storml_slp.tif")
 dem_proc("slope", elev_file, slp_file)
 
 deleteDataset(slp_file)

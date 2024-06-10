@@ -35,7 +35,7 @@ An error is raised if the operation fails.
 \code{create()} makes an empty raster in the specified format.
 }
 \examples{
-new_file <- paste0(tempdir(), "/", "newdata.tif")
+new_file <- file.path(tempdir(), "newdata.tif")
 create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
        nbands=1, dataType="Int16")
 ds <- new(GDALRaster, new_file, read_only=FALSE)

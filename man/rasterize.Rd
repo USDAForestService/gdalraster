@@ -123,7 +123,7 @@ any of these creation-related options are used.
 # MTBS fire perimeters for Yellowstone National Park 1984-2022
 dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 sql <- "SELECT * FROM mtbs_perims ORDER BY mtbs_perims.ig_year"
-out_file <- paste0(tempdir(), "/", "ynp_fires_1984_2022.tif")
+out_file <- file.path(tempdir(), "ynp_fires_1984_2022.tif")
 
 rasterize(src_dsn = dsn,
           dstfile = out_file,
