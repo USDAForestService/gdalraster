@@ -16,7 +16,7 @@ details of the GDAL Raster API."><!-- mathjax --><script src="https://cdnjs.clou
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.0.9020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.0.9030</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -888,7 +888,7 @@ The dataset can be re-opened on the existing <code>filename</code> with
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## create a new raster using lcp_file as a template</span></span></span>
-<span class="r-in"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_newdata.tif"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"storml_newdata.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="rasterFromRaster.html">rasterFromRaster</a></span><span class="op">(</span>srcfile <span class="op">=</span> <span class="va">lcp_file</span>,</span></span>
 <span class="r-in"><span>                 dstfile <span class="op">=</span> <span class="va">new_file</span>,</span></span>
 <span class="r-in"><span>                 nbands <span class="op">=</span> <span class="fl">1</span>,</span></span>

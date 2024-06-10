@@ -26,7 +26,7 @@ command-line program (https://gdal.org/programs/gdal_polygonize.html)."><!-- mat
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.0.9020</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.0.9030</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -232,7 +232,7 @@ increase performance substantially. If writing to <code>PostgreSQL</code>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">evt_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_evt.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storm_lake.gpkg"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"storm_lake.gpkg"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">layer</span> <span class="op">&lt;-</span> <span class="st">"lf_evt"</span></span></span>
 <span class="r-in"><span><span class="va">fld</span> <span class="op">&lt;-</span> <span class="st">"evt_value"</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"SQLITE_USE_OGR_VFS"</span>, <span class="st">"YES"</span><span class="op">)</span></span></span>
