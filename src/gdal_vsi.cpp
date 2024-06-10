@@ -436,7 +436,7 @@ int vsi_rmdir(Rcpp::CharacterVector path, bool recursive = false) {
 //' @examples
 //' # regular file system for illustration
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-//' tmp_file <- paste0(tempdir(), "/", "tmp.tif")
+//' tmp_file <- file.path(tempdir(), "tmp.tif")
 //' file.copy(elev_file,  tmp_file)
 //' vsi_stat(tmp_file)
 //' vsi_unlink(tmp_file)
@@ -473,9 +473,9 @@ int vsi_unlink(Rcpp::CharacterVector filename) {
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 //' tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 //'
-//' tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
+//' tmp_elev <- file.path(tempdir(), "tmp_elev.tif")
 //' file.copy(elev_file,  tmp_elev)
-//' tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
+//' tmp_tcc <- file.path(tempdir(), "tmp_tcc.tif")
 //' file.copy(tcc_file,  tmp_tcc)
 //' vsi_unlink_batch(c(tmp_elev, tmp_tcc))
 // [[Rcpp::export()]]

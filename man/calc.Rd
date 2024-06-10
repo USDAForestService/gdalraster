@@ -211,7 +211,7 @@ sum(tbl_subset$count)   # 85 total pixels
 
 # recode these pixels to 99 (bare ground)
 # the LCP driver does not support in-place write so make a copy as GTiff
-tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
+tif_file <- file.path(tempdir(), "storml_lndscp.tif")
 createCopy("GTiff", tif_file, lcp_file)
 
 expr <- "ifelse( SLP >= 40 & FBFM \%in\% c(101,102), 99, FBFM)"

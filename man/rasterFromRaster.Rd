@@ -53,7 +53,7 @@ lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 ds_lcp <- new(GDALRaster, lcp_file)
 ds_lcp$getMetadata(band=2, domain="")
 
-slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
+slpp_file <- file.path(tempdir(), "storml_slpp.tif")
 opt = c("COMPRESS=LZW")
 rasterFromRaster(srcfile = lcp_file,
                  dstfile = slpp_file,

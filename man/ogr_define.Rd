@@ -162,7 +162,7 @@ it require all \emph{Feature} objects in a collection to have geometry of the
 same type (\url{https://geojson.org/}).
 }
 \examples{
-dsn <- paste0(tempdir(), "/", "test.sqlite")
+dsn <- file.path(tempdir(), "test.sqlite")
 opt <- NULL
 if (has_spatialite())
   opt <- "SPATIALITE=YES"

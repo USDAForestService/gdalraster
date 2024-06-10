@@ -60,7 +60,7 @@ head(tbl)
 tbl[is.na(tbl$VALUE),]
 
 ## make a copy that will be modified
-mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+mod_file <- file.path(tempdir(), "storml_elev_fill.tif")
 file.copy(elev_file,  mod_file)
 
 fillNodata(mod_file, band=1)

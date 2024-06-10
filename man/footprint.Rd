@@ -44,7 +44,7 @@ Post-vectorization geometric operations are applied in the following order:
 }
 \examples{
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-out_file <- paste0(tempdir(), "/", "storml.geojson")
+out_file <- file.path(tempdir(), "storml.geojson")
 
 # Requires GDAL >= 3.8
 if (as.integer(gdal_version()[2]) >= 3080000) {

@@ -22,7 +22,7 @@ Analog of the POSIX \code{unlink()} function.
 \examples{
 # regular file system for illustration
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-tmp_file <- paste0(tempdir(), "/", "tmp.tif")
+tmp_file <- file.path(tempdir(), "tmp.tif")
 file.copy(elev_file,  tmp_file)
 vsi_stat(tmp_file)
 vsi_unlink(tmp_file)

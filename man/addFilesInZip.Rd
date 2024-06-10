@@ -96,7 +96,7 @@ where \code{zip_file} uses the /vsizip/ prefix.
 }
 \examples{
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-zip_file <- paste0(tempdir(), "/", "storml_lcp.zip")
+zip_file <- file.path(tempdir(), "storml_lcp.zip")
 
 # Requires GDAL >= 3.7
 if (as.integer(gdal_version()[2]) >= 3070000) {

@@ -307,7 +307,7 @@ http_enabled <- function() {
 #' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()],
 #' [getCreationOptions()]
 #' @examples
-#' new_file <- paste0(tempdir(), "/", "newdata.tif")
+#' new_file <- file.path(tempdir(), "newdata.tif")
 #' create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
 #'        nbands=1, dataType="Int16")
 #' ds <- new(GDALRaster, new_file, read_only=FALSE)
@@ -354,7 +354,7 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' [getCreationOptions()], [translate()]
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-#' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
+#' tif_file <- file.path(tempdir(), "storml_lndscp.tif")
 #' opt <- c("COMPRESS=LZW")
 #' createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
 #'            options=opt)
@@ -488,7 +488,7 @@ inv_geotransform <- function(gt) {
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 #' b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
 #' band_files <- c(b6_file, b5_file, b4_file)
-#' vrt_file <- paste0(tempdir(), "/", "storml_b6_b5_b4.vrt")
+#' vrt_file <- file.path(tempdir(), "storml_b6_b5_b4.vrt")
 #' buildVRT(vrt_file, band_files, cl_arg = "-separate")
 #' ds <- new(GDALRaster, vrt_file)
 #' ds$getRasterCount()
@@ -570,7 +570,7 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #' tbl[is.na(tbl$VALUE),]
 #'
 #' ## make a copy that will be modified
-#' mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+#' mod_file <- file.path(tempdir(), "storml_elev_fill.tif")
 #' file.copy(elev_file,  mod_file)
 #'
 #' fillNodata(mod_file, band=1)
@@ -619,7 +619,7 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
 #'
 #' @examples
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-#' out_file <- paste0(tempdir(), "/", "storml.geojson")
+#' out_file <- file.path(tempdir(), "storml.geojson")
 #'
 #' # Requires GDAL >= 3.8
 #' if (as.integer(gdal_version()[2]) >= 3080000) {
@@ -847,7 +847,7 @@ ogrinfo <- function(dsn, layers = NULL, cl_arg = as.character( c("-so", "-nomd")
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #'
 #' # create a blank raster to hold the output
-#' evt_mmu_file <- paste0(tempdir(), "/", "storml_evt_mmu2.tif")
+#' evt_mmu_file <- file.path(tempdir(), "storml_evt_mmu2.tif")
 #' rasterFromRaster(srcfile = evt_file,
 #'                  dstfile = evt_mmu_file,
 #'                  init = 32767)
@@ -907,7 +907,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' args <- c("-tr", "90", "90", "-r", "average")
 #' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 #'
-#' img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
+#' img_file <- file.path(tempdir(), "storml_elev_90m.img")
 #' translate(elev_file, img_file, args)
 #'
 #' ds <- new(GDALRaster, img_file)
@@ -1085,7 +1085,7 @@ translate <- function(src_filename, dst_filename, cl_arg = NULL, quiet = FALSE) 
 #' # write to Erdas Imagine format (HFA) with compression:
 #' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 #'
-#' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
+#' alb83_file <- file.path(tempdir(), "storml_elev_alb83.img")
 #' warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
 #'
 #' ds <- new(GDALRaster, alb83_file)
@@ -1212,7 +1212,7 @@ createColorRamp <- function(start_index, start_color, end_index, end_color, pale
 #' @examples
 #' ## copy Landsat data from a single-band file to a new multi-band image
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-#' dst_file <- paste0(tempdir(), "/", "sr_multi.tif")
+#' dst_file <- file.path(tempdir(), "sr_multi.tif")
 #' rasterFromRaster(b5_file, dst_file, nbands=7, init=0)
 #' opt <- c("COMPRESSED=YES", "SKIP_HOLES=YES")
 #' bandCopyWholeRaster(b5_file, 1, dst_file, 5, options=opt)
@@ -1257,7 +1257,7 @@ bandCopyWholeRaster <- function(src_filename, src_band, dst_filename, dst_band, 
 #'
 #' @examples
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-#' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+#' b5_tmp <- file.path(tempdir(), "b5_tmp.tif")
 #' file.copy(b5_file,  b5_tmp)
 #'
 #' ds <- new(GDALRaster, b5_tmp)
@@ -1303,14 +1303,14 @@ deleteDataset <- function(filename, format = "") {
 #'
 #' @examples
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-#' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+#' b5_tmp <- file.path(tempdir(), "b5_tmp.tif")
 #' file.copy(b5_file,  b5_tmp)
 #'
 #' ds <- new(GDALRaster, b5_tmp)
 #' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
 #' ds$getFileList()
 #' ds$close()
-#' b5_tmp2 <- paste0(tempdir(), "/", "b5_tmp_renamed.tif")
+#' b5_tmp2 <- file.path(tempdir(), "b5_tmp_renamed.tif")
 #' renameDataset(b5_tmp2, b5_tmp)
 #' ds <- new(GDALRaster, b5_tmp2)
 #' ds$getFileList()
@@ -1351,7 +1351,7 @@ renameDataset <- function(new_filename, old_filename, format = "") {
 #' ds$getFileList()
 #' ds$close()
 #'
-#' lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
+#' lcp_tmp <- file.path(tempdir(), "storm_lake_copy.lcp")
 #' copyDatasetFiles(lcp_tmp, lcp_file)
 #' ds_copy <- new(GDALRaster, lcp_tmp)
 #' ds_copy$getFileList()
@@ -1689,7 +1689,7 @@ vsi_rmdir <- function(path, recursive = FALSE) {
 #' @examples
 #' # regular file system for illustration
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' tmp_file <- paste0(tempdir(), "/", "tmp.tif")
+#' tmp_file <- file.path(tempdir(), "tmp.tif")
 #' file.copy(elev_file,  tmp_file)
 #' vsi_stat(tmp_file)
 #' vsi_unlink(tmp_file)
@@ -1721,9 +1721,9 @@ vsi_unlink <- function(filename) {
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 #'
-#' tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
+#' tmp_elev <- file.path(tempdir(), "tmp_elev.tif")
 #' file.copy(elev_file,  tmp_elev)
-#' tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
+#' tmp_tcc <- file.path(tempdir(), "tmp_tcc.tif")
 #' file.copy(tcc_file,  tmp_tcc)
 #' vsi_unlink_batch(c(tmp_elev, tmp_tcc))
 vsi_unlink_batch <- function(filenames) {

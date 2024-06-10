@@ -769,7 +769,7 @@
 #' ds$close()
 #'
 #' ## create a new raster using lcp_file as a template
-#' new_file <- paste0(tempdir(), "/", "storml_newdata.tif")
+#' new_file <- file.path(tempdir(), "storml_newdata.tif")
 #' rasterFromRaster(srcfile = lcp_file,
 #'                  dstfile = new_file,
 #'                  nbands = 1,

@@ -133,7 +133,7 @@
 #' \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
 #'
 #' @examples
-#' dsn <- paste0(tempdir(), "/", "test.sqlite")
+#' dsn <- file.path(tempdir(), "test.sqlite")
 #' opt <- NULL
 #' if (has_spatialite())
 #'   opt <- "SPATIALITE=YES"

@@ -46,7 +46,7 @@ geotransform are all copied from the source raster.
 }
 \examples{
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
+tif_file <- file.path(tempdir(), "storml_lndscp.tif")
 opt <- c("COMPRESS=LZW")
 createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
            options=opt)
