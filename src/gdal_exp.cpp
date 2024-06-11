@@ -5,6 +5,7 @@
 
 #include <errno.h>
 #include <cmath>
+#include <cstdint>
 #include <cstdio>
 #include <cstring>
 #include <unordered_map>
