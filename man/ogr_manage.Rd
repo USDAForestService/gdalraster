@@ -395,7 +395,7 @@ deleteDataset(dsn)
 
 # edit data using SQL
 src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
-perims_shp <- paste0(tempdir(), "/", "mtbs_perims.shp")
+perims_shp <- file.path(tempdir(), "mtbs_perims.shp")
 ogr2ogr(src, perims_shp, src_layers = "mtbs_perims")
 ogr_ds_format(perims_shp)
 ogr_ds_layer_names(perims_shp)

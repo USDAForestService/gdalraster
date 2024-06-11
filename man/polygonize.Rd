@@ -130,7 +130,7 @@ set_config_option("PG_USE_COPY", "YES")
 }
 \examples{
 evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-dsn <- paste0(tempdir(), "/", "storm_lake.gpkg")
+dsn <- file.path(tempdir(), "storm_lake.gpkg")
 layer <- "lf_evt"
 fld <- "evt_value"
 set_config_option("SQLITE_USE_OGR_VFS", "YES")

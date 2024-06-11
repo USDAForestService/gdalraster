@@ -1,10 +1,13 @@
 /* Exported stand-alone functions for gdalraster
-   Chris Toney <chris.toney at usda.gov> */
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
 
 #include <errno.h>
 #include <cmath>
-#include <cstring>
+#include <cstdint>
 #include <cstdio>
+#include <cstring>
 #include <unordered_map>
 
 #include "gdal.h"
@@ -17,9 +20,9 @@
 #include "gdal_alg.h"
 #include "gdal_utils.h"
 
-#include "gdalraster.h"
 #include "cmb_table.h"
 #include "ogr_util.h"
+#include "gdalraster.h"
 
 //' Get GDAL version
 //'
@@ -47,7 +50,7 @@ Rcpp::CharacterVector gdal_version() {
 
 //' @noRd
 // [[Rcpp::export(name = ".gdal_version_num")]]
-int _gdal_version_num() {
+int gdal_version_num() {
     std::string version(GDALVersionInfo("VERSION_NUM"));
     return std::stoi(version);
 }
@@ -228,7 +231,7 @@ int get_cache_used() {
 
 //' @noRd
 // [[Rcpp::export(name = ".dump_open_datasets")]]
-int _dump_open_datasets(std::string outfile) {
+int dump_open_datasets(std::string outfile) {
     FILE* fp = std::fopen(outfile.c_str(), "w");
     if (!fp)
         return -1;
@@ -311,9 +314,9 @@ void pop_error_handler() {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".check_gdal_filename")]]
-Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
+Rcpp::CharacterVector check_gdal_filename(Rcpp::CharacterVector filename) {
     /*
-    Rcpp::CharacterVector may have marked encoding when needed.
+    We use Rcpp::CharacterVector since it may have marked encoding when needed.
     Rcpp::String may drop encoding or have issues with encoding on Windows:
     https://github.com/RcppCore/Rcpp/issues/988
     */
@@ -325,11 +328,11 @@ Rcpp::CharacterVector _check_gdal_filename(Rcpp::CharacterVector filename) {
     Rcpp::CharacterVector out_filename(1);
 
     if (STARTS_WITH(std_filename.c_str(), "~"))
-        out_filename = _path_expand(filename);
+        out_filename = path_expand_(filename);
     else
         out_filename = filename;
 
-    return _enc_to_utf8(out_filename);
+    return enc_to_utf8_(out_filename);
 }
 
 
@@ -443,7 +446,7 @@ bool http_enabled() {
 
 //' @noRd
 // [[Rcpp::export(name = ".cpl_http_cleanup")]]
-void _cpl_http_cleanup() {
+void cpl_http_cleanup() {
     CPLHTTPCleanup();
 }
 
@@ -471,7 +474,7 @@ void _cpl_http_cleanup() {
 //' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()],
 //' [getCreationOptions()]
 //' @examples
-//' new_file <- paste0(tempdir(), "/", "newdata.tif")
+//' new_file <- file.path(tempdir(), "newdata.tif")
 //' create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
 //'        nbands=1, dataType="Int16")
 //' ds <- new(GDALRaster, new_file, read_only=FALSE)
@@ -500,7 +503,7 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
         Rcpp::stop("driver does not support create");
 
     std::string dst_filename_in;
-    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+    dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
     GDALDataType dt = GDALGetDataTypeByName(dataType.c_str() );
 
@@ -555,7 +558,7 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
 //' [getCreationOptions()], [translate()]
 //' @examples
 //' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-//' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
+//' tif_file <- file.path(tempdir(), "storml_lndscp.tif")
 //' opt <- c("COMPRESS=LZW")
 //' createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
 //'            options=opt)
@@ -584,9 +587,9 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
         Rcpp::stop("driver does not support createCopy");
 
     std::string src_filename_in;
-    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    src_filename_in = Rcpp::as<std::string>(check_gdal_filename(src_filename));
     std::string dst_filename_in;
-    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+    dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
     GDALDatasetH hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
     if (hSrcDS == nullptr)
@@ -618,7 +621,7 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 
 //' Apply geotransform - internal wrapper of GDALApplyGeoTransform()
 //'
-//' `_apply_geotransform()` applies geotransform coefficients to a raster
+//' `apply_geotransform_()` applies geotransform coefficients to a raster
 //' coordinate in pixel/line space (colum/row), converting into a
 //' georeferenced (x, y) coordinate.
 //'
@@ -632,13 +635,95 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 //' [inv_geotransform()]
 //' @noRd
 // [[Rcpp::export(name = ".apply_geotransform")]]
-Rcpp::NumericVector _apply_geotransform(const std::vector<double> gt,
+Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt,
         double pixel, double line) {
 
     double geo_x, geo_y;
     GDALApplyGeoTransform((double *) (gt.data()), pixel, line, &geo_x, &geo_y);
     Rcpp::NumericVector geo_xy = {geo_x, geo_y};
     return geo_xy;
+}
+
+
+//' Apply geotransform (raster column/row to geospatial x/y)
+//' input as geotransform vector, no bounds checking on col/row
+//' @noRd
+// [[Rcpp::export(name = ".apply_geotransform_gt")]]
+Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row,
+        const std::vector<double> gt) {
+
+    Rcpp::NumericMatrix col_row_in;
+    if (Rcpp::is<Rcpp::DataFrame>(col_row)) {
+        col_row_in = df_to_matrix_(col_row);
+    }
+    else if (Rcpp::is<Rcpp::NumericVector>(col_row)) {
+        if (Rf_isMatrix(col_row))
+            col_row_in = Rcpp::as<Rcpp::NumericMatrix>(col_row);
+    }
+    else {
+        Rcpp::stop("'col_row' must be a two-column data frame or matrix");
+    }
+
+    if (col_row_in.nrow() == 0)
+        Rcpp::stop("input matrix is empty");
+
+    Rcpp::NumericMatrix xy(col_row_in.nrow(), 2);
+    for (R_xlen_t i = 0; i < col_row_in.nrow(); ++i) {
+        GDALApplyGeoTransform((double *) (gt.data()),
+                              col_row_in(i, 0), col_row_in(i, 1),
+                              &xy(i, 0), &xy(i, 1));
+    }
+
+    return xy;
+}
+
+
+//' Apply geotransform (raster column/row to geospatial x/y)
+//' alternate version for GDALRaster input, with bounds checking
+//' @noRd
+// [[Rcpp::export(name = ".apply_geotransform_ds")]]
+Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject& col_row,
+        const GDALRaster* ds) {
+
+    Rcpp::NumericMatrix col_row_in;
+    if (Rcpp::is<Rcpp::DataFrame>(col_row)) {
+        col_row_in = df_to_matrix_(col_row);
+    }
+    else if (Rcpp::is<Rcpp::NumericVector>(col_row)) {
+        if (Rf_isMatrix(col_row))
+            col_row_in = Rcpp::as<Rcpp::NumericMatrix>(col_row);
+    }
+    else {
+        Rcpp::stop("'col_row' must be a two-column data frame or matrix");
+    }
+
+    if (col_row_in.nrow() == 0)
+        Rcpp::stop("input matrix is empty");
+
+    std::vector<double> gt = ds->getGeoTransform();
+    Rcpp::NumericMatrix xy(col_row_in.nrow(), 2);
+    uint64_t num_outside = 0;
+    for (R_xlen_t i = 0; i < col_row_in.nrow(); ++i) {
+        if (col_row_in(i, 0) < 0 || col_row_in(i, 1) < 0 ||
+                col_row_in(i, 0) >= ds->getRasterXSize() ||
+                col_row_in(i, 1) >= ds->getRasterYSize()) {
+
+            num_outside += 1;
+            xy(i, 0) = NA_REAL;
+            xy(i, 1) = NA_REAL;
+        }
+        else {
+            GDALApplyGeoTransform((double *) (gt.data()),
+                                  col_row_in(i, 0), col_row_in(i, 1),
+                                  &xy(i, 0), &xy(i, 1));
+        }
+    }
+
+    if (num_outside > 0)
+        Rcpp::warning(std::to_string(num_outside) +
+                " coordinates(s) were outside the raster extent, NA returned");
+
+    return xy;
 }
 
 
@@ -691,12 +776,12 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' input is gt vector, no bounds checking done on output
 //' @noRd
 // [[Rcpp::export(name = ".get_pixel_line_gt")]]
-Rcpp::IntegerMatrix _get_pixel_line_gt(const Rcpp::RObject& xy,
+Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy,
         const std::vector<double> gt) {
 
     Rcpp::NumericMatrix xy_in;
     if (Rcpp::is<Rcpp::DataFrame>(xy)) {
-        xy_in = _df_to_matrix(xy);
+        xy_in = df_to_matrix_(xy);
     }
     else if (Rcpp::is<Rcpp::NumericVector>(xy)) {
         if (Rf_isMatrix(xy))
@@ -733,12 +818,12 @@ Rcpp::IntegerMatrix _get_pixel_line_gt(const Rcpp::RObject& xy,
 //' alternate version for GDALRaster input, with bounds checking
 //' @noRd
 // [[Rcpp::export(name = ".get_pixel_line_ds")]]
-Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::RObject& xy,
+Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
         const GDALRaster* ds) {
 
     Rcpp::NumericMatrix xy_in;
     if (Rcpp::is<Rcpp::DataFrame>(xy)) {
-        xy_in = _df_to_matrix(xy);
+        xy_in = df_to_matrix_(xy);
     }
     else if (Rcpp::is<Rcpp::NumericVector>(xy)) {
         if (Rf_isMatrix(xy))
@@ -781,7 +866,7 @@ Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::RObject& xy,
 
     if (num_outside > 0)
         Rcpp::warning(std::to_string(num_outside) +
-                      " point(s) outside the raster extent, NA returned");
+                " point(s) were outside the raster extent, NA returned");
 
     return pixel_line;
 }
@@ -831,7 +916,7 @@ Rcpp::IntegerMatrix _get_pixel_line_ds(const Rcpp::RObject& xy,
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 //' b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
 //' band_files <- c(b6_file, b5_file, b4_file)
-//' vrt_file <- paste0(tempdir(), "/", "storml_b6_b5_b4.vrt")
+//' vrt_file <- file.path(tempdir(), "storml_b6_b5_b4.vrt")
 //' buildVRT(vrt_file, band_files, cl_arg = "-separate")
 //' ds <- new(GDALRaster, vrt_file)
 //' ds$getRasterCount()
@@ -847,13 +932,13 @@ bool buildVRT(Rcpp::CharacterVector vrt_filename,
 
     std::string vrt_filename_in;
     vrt_filename_in = Rcpp::as<std::string>(
-            _check_gdal_filename(vrt_filename));
+            check_gdal_filename(vrt_filename));
 
     std::vector<std::string> input_rasters_in(input_rasters.size());
     std::vector<const char *> src_ds_files(input_rasters.size() + 1);
     for (R_xlen_t i = 0; i < input_rasters.size(); ++i) {
         input_rasters_in[i] = Rcpp::as<std::string>(
-                _check_gdal_filename(
+                check_gdal_filename(
                         Rcpp::as<Rcpp::CharacterVector>(input_rasters[i])));
         src_ds_files[i] = input_rasters_in[i].c_str();
     }
@@ -903,8 +988,7 @@ bool buildVRT(Rcpp::CharacterVector vrt_filename,
 //' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".combine")]]
-Rcpp::DataFrame _combine(
-        Rcpp::CharacterVector src_files,
+Rcpp::DataFrame combine(Rcpp::CharacterVector src_files,
         Rcpp::CharacterVector var_names,
         std::vector<int> bands,
         std::string dst_filename = "",
@@ -914,10 +998,7 @@ Rcpp::DataFrame _combine(
         bool quiet = false) {
 
     std::size_t nrasters = (std::size_t) src_files.size();
-
-    std::vector<GDALRaster> src_ds;
-    src_ds.reserve(nrasters);
-
+    std::vector<GDALRaster> src_ds(nrasters);
     int nrows = 0;
     int ncols = 0;
     std::vector<double> gt;
@@ -936,7 +1017,7 @@ Rcpp::DataFrame _combine(
     }
 
     for (std::size_t i = 0; i < nrasters; ++i) {
-        src_ds.push_back(GDALRaster(std::string(src_files[i]), true));
+        src_ds[i] = GDALRaster(std::string(src_files[i]), true);
         // use the first raster as reference
         if (i == 0) {
             nrows = src_ds[i].getRasterYSize();
@@ -1006,8 +1087,8 @@ Rcpp::DataFrame _combine(
 //'
 //' @noRd
 // [[Rcpp::export(name = ".value_count")]]
-Rcpp::DataFrame _value_count(const GDALRaster& src_ds, int band = 1,
-                             bool quiet = false) {
+Rcpp::DataFrame value_count(const GDALRaster& src_ds, int band = 1,
+                            bool quiet = false) {
 
     int nrows = src_ds.getRasterYSize();
     int ncols = src_ds.getRasterXSize();
@@ -1020,7 +1101,7 @@ Rcpp::DataFrame _value_count(const GDALRaster& src_ds, int band = 1,
     if (!quiet)
         Rcpp::Rcout << "scanning raster...\n";
 
-    if (src_ds._readableAsInt(band)) {
+    if (src_ds.readableAsInt_(band)) {
         // read pixel values as int
         Rcpp::IntegerVector rowdata(ncols);
         std::unordered_map<int, double> tbl;
@@ -1080,17 +1161,17 @@ Rcpp::DataFrame _value_count(const GDALRaster& src_ds, int band = 1,
 //' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".dem_proc")]]
-bool _dem_proc(std::string mode,
-            Rcpp::CharacterVector src_filename,
-            Rcpp::CharacterVector dst_filename,
-            Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-            Rcpp::Nullable<Rcpp::String> col_file = R_NilValue,
-            bool quiet = false) {
+bool dem_proc(std::string mode,
+              Rcpp::CharacterVector src_filename,
+              Rcpp::CharacterVector dst_filename,
+              Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
+              Rcpp::Nullable<Rcpp::String> col_file = R_NilValue,
+              bool quiet = false) {
 
     std::string src_filename_in;
-    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    src_filename_in = Rcpp::as<std::string>(check_gdal_filename(src_filename));
     std::string dst_filename_in;
-    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+    dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
     GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
     if (src_ds == nullptr)
@@ -1174,7 +1255,7 @@ bool _dem_proc(std::string mode,
 //' tbl[is.na(tbl$VALUE),]
 //'
 //' ## make a copy that will be modified
-//' mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+//' mod_file <- file.path(tempdir(), "storml_elev_fill.tif")
 //' file.copy(elev_file,  mod_file)
 //'
 //' fillNodata(mod_file, band=1)
@@ -1197,9 +1278,9 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
     CPLErr err;
 
     std::string filename_in;
-    filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
+    filename_in = Rcpp::as<std::string>(check_gdal_filename(filename));
     std::string mask_file_in;
-    mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_file));
+    mask_file_in = Rcpp::as<std::string>(check_gdal_filename(mask_file));
 
     hDS = GDALOpenShared(filename_in.c_str(), GA_Update);
     if (hDS == nullptr)
@@ -1273,7 +1354,7 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 //'
 //' @examples
 //' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-//' out_file <- paste0(tempdir(), "/", "storml.geojson")
+//' out_file <- file.path(tempdir(), "storml.geojson")
 //'
 //' # Requires GDAL >= 3.8
 //' if (as.integer(gdal_version()[2]) >= 3080000) {
@@ -1293,9 +1374,9 @@ bool footprint(Rcpp::CharacterVector src_filename,
 
 #else
     std::string src_filename_in;
-    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    src_filename_in = Rcpp::as<std::string>(check_gdal_filename(src_filename));
     std::string dst_filename_in;
-    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+    dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
     bool ret = false;
     GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
@@ -1412,9 +1493,9 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
         Rcpp::Nullable<Rcpp::CharacterVector> open_options = R_NilValue) {
 
     std::string src_dsn_in;
-    src_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(src_dsn));
+    src_dsn_in = Rcpp::as<std::string>(check_gdal_filename(src_dsn));
     std::string dst_dsn_in;
-    dst_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dst_dsn));
+    dst_dsn_in = Rcpp::as<std::string>(check_gdal_filename(dst_dsn));
 
     // only 1 source dataset is supported currently by GDALVectorTranslate(),
     // but takes a list of datasets as input
@@ -1561,7 +1642,7 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
 
 #else
     std::string dsn_in;
-    dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+    dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
 
     GDALDatasetH src_ds;
 
@@ -1642,7 +1723,7 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
 //' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".polygonize")]]
-bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
+bool polygonize(Rcpp::CharacterVector src_filename, int src_band,
         Rcpp::CharacterVector out_dsn,
         std::string out_layer, std::string fld_name,
         Rcpp::CharacterVector mask_file = "", bool nomask = false,
@@ -1657,11 +1738,11 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
     int iPixValField;
 
     std::string src_filename_in;
-    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    src_filename_in = Rcpp::as<std::string>(check_gdal_filename(src_filename));
     std::string out_dsn_in;
-    out_dsn_in = Rcpp::as<std::string>(_check_gdal_filename(out_dsn));
+    out_dsn_in = Rcpp::as<std::string>(check_gdal_filename(out_dsn));
     std::string mask_file_in;
-    mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_file));
+    mask_file_in = Rcpp::as<std::string>(check_gdal_filename(mask_file));
 
     if (connectedness != 4 && connectedness != 8)
         Rcpp::stop("'connectedness' must be 4 or 8");
@@ -1715,7 +1796,7 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
         Rcpp::stop("failed to open the output layer");
     }
 
-    iPixValField = _ogr_field_index(out_dsn_in, out_layer, fld_name);
+    iPixValField = ogr_field_index(out_dsn_in, out_layer, fld_name);
     if (iPixValField == -1)
         Rcpp::warning("field not found, pixel values will not be written");
 
@@ -1745,7 +1826,7 @@ bool _polygonize(Rcpp::CharacterVector src_filename, int src_band,
 //' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".rasterize")]]
-bool _rasterize(std::string src_dsn, std::string dst_filename,
+bool rasterize(std::string src_dsn, std::string dst_filename,
         Rcpp::CharacterVector cl_arg, bool quiet = false) {
 
     GDALDatasetH hSrcDS;
@@ -1836,7 +1917,7 @@ bool _rasterize(std::string src_dsn, std::string dst_filename,
 //' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 //'
 //' # create a blank raster to hold the output
-//' evt_mmu_file <- paste0(tempdir(), "/", "storml_evt_mmu2.tif")
+//' evt_mmu_file <- file.path(tempdir(), "storml_evt_mmu2.tif")
 //' rasterFromRaster(srcfile = evt_file,
 //'                  dstfile = evt_mmu_file,
 //'                  init = 32767)
@@ -1878,11 +1959,11 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
     CPLErr err;
 
     std::string src_filename_in;
-    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    src_filename_in = Rcpp::as<std::string>(check_gdal_filename(src_filename));
     std::string dst_filename_in;
-    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+    dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
     std::string mask_file_in;
-    mask_file_in = Rcpp::as<std::string>(_check_gdal_filename(mask_filename));
+    mask_file_in = Rcpp::as<std::string>(check_gdal_filename(mask_filename));
 
     if (size_threshold < 1)
         Rcpp::stop("'size_threshold' must be 1 or larger.");
@@ -1990,7 +2071,7 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' args <- c("-tr", "90", "90", "-r", "average")
 //' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 //'
-//' img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
+//' img_file <- file.path(tempdir(), "storml_elev_90m.img")
 //' translate(elev_file, img_file, args)
 //'
 //' ds <- new(GDALRaster, img_file)
@@ -2008,9 +2089,9 @@ bool translate(Rcpp::CharacterVector src_filename,
         bool quiet = false) {
 
     std::string src_filename_in;
-    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    src_filename_in = Rcpp::as<std::string>(check_gdal_filename(src_filename));
     std::string dst_filename_in;
-    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+    dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
     bool ret = false;
     GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
@@ -2215,7 +2296,7 @@ bool translate(Rcpp::CharacterVector src_filename,
 //' # write to Erdas Imagine format (HFA) with compression:
 //' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 //'
-//' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
+//' alb83_file <- file.path(tempdir(), "storml_elev_alb83.img")
 //' warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
 //'
 //' ds <- new(GDALRaster, alb83_file)
@@ -2234,14 +2315,14 @@ bool warp(Rcpp::CharacterVector src_files,
         bool quiet = false) {
 
     std::string dst_filename_in;
-    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+    dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
     bool ret = false;
     std::vector<GDALDatasetH> src_ds(src_files.size());
 
     for (R_xlen_t i = 0; i < src_files.size(); ++i) {
         std::string src_file_in;
-        src_file_in = Rcpp::as<std::string>(_check_gdal_filename(
+        src_file_in = Rcpp::as<std::string>(check_gdal_filename(
                 Rcpp::as<Rcpp::CharacterVector>(src_files[i])));
         GDALDatasetH hDS = GDALOpenShared(src_file_in.c_str(), GA_ReadOnly);
         if (hDS == nullptr) {
@@ -2490,7 +2571,7 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //' @examples
 //' ## copy Landsat data from a single-band file to a new multi-band image
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-//' dst_file <- paste0(tempdir(), "/", "sr_multi.tif")
+//' dst_file <- file.path(tempdir(), "sr_multi.tif")
 //' rasterFromRaster(b5_file, dst_file, nbands=7, init=0)
 //' opt <- c("COMPRESSED=YES", "SKIP_HOLES=YES")
 //' bandCopyWholeRaster(b5_file, 1, dst_file, 5, options=opt)
@@ -2512,9 +2593,9 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
     CPLErr err;
 
     std::string src_filename_in;
-    src_filename_in = Rcpp::as<std::string>(_check_gdal_filename(src_filename));
+    src_filename_in = Rcpp::as<std::string>(check_gdal_filename(src_filename));
     std::string dst_filename_in;
-    dst_filename_in = Rcpp::as<std::string>(_check_gdal_filename(dst_filename));
+    dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
     hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
     if (hSrcDS == nullptr)
@@ -2592,7 +2673,7 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 //'
 //' @examples
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-//' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+//' b5_tmp <- file.path(tempdir(), "b5_tmp.tif")
 //' file.copy(b5_file,  b5_tmp)
 //'
 //' ds <- new(GDALRaster, b5_tmp)
@@ -2607,7 +2688,7 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
 
     std::string filename_in;
-    filename_in = Rcpp::as<std::string>(_check_gdal_filename(filename));
+    filename_in = Rcpp::as<std::string>(check_gdal_filename(filename));
 
     GDALDriverH hDriver;
     if (format == "") {
@@ -2659,14 +2740,14 @@ bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
 //'
 //' @examples
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-//' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+//' b5_tmp <- file.path(tempdir(), "b5_tmp.tif")
 //' file.copy(b5_file,  b5_tmp)
 //'
 //' ds <- new(GDALRaster, b5_tmp)
 //' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
 //' ds$getFileList()
 //' ds$close()
-//' b5_tmp2 <- paste0(tempdir(), "/", "b5_tmp_renamed.tif")
+//' b5_tmp2 <- file.path(tempdir(), "b5_tmp_renamed.tif")
 //' renameDataset(b5_tmp2, b5_tmp)
 //' ds <- new(GDALRaster, b5_tmp2)
 //' ds$getFileList()
@@ -2679,9 +2760,9 @@ bool renameDataset(Rcpp::CharacterVector new_filename,
         std::string format = "") {
 
     std::string new_filename_in;
-    new_filename_in = Rcpp::as<std::string>(_check_gdal_filename(new_filename));
+    new_filename_in = Rcpp::as<std::string>(check_gdal_filename(new_filename));
     std::string old_filename_in;
-    old_filename_in = Rcpp::as<std::string>(_check_gdal_filename(old_filename));
+    old_filename_in = Rcpp::as<std::string>(check_gdal_filename(old_filename));
 
     GDALDriverH hDriver;
     if (format == "") {
@@ -2733,7 +2814,7 @@ bool renameDataset(Rcpp::CharacterVector new_filename,
 //' ds$getFileList()
 //' ds$close()
 //'
-//' lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
+//' lcp_tmp <- file.path(tempdir(), "storm_lake_copy.lcp")
 //' copyDatasetFiles(lcp_tmp, lcp_file)
 //' ds_copy <- new(GDALRaster, lcp_tmp)
 //' ds_copy$getFileList()
@@ -2746,9 +2827,9 @@ bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
         std::string format = "") {
 
     std::string new_filename_in;
-    new_filename_in = Rcpp::as<std::string>(_check_gdal_filename(new_filename));
+    new_filename_in = Rcpp::as<std::string>(check_gdal_filename(new_filename));
     std::string old_filename_in;
-    old_filename_in = Rcpp::as<std::string>(_check_gdal_filename(old_filename));
+    old_filename_in = Rcpp::as<std::string>(check_gdal_filename(old_filename));
 
     GDALDriverH hDriver;
     if (format == "") {
@@ -2775,7 +2856,7 @@ bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
 //' Called from and documented in R/gdal_helpers.R
 //' @noRd
 // [[Rcpp::export(name = ".getCreationOptions")]]
-std::string _getCreationOptions(std::string format) {
+std::string getCreationOptions(std::string format) {
 
     GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
     if (hDriver == nullptr)
@@ -2790,13 +2871,13 @@ std::string _getCreationOptions(std::string format) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".addFileInZip")]]
-bool _addFileInZip(std::string zip_filename, bool overwrite,
+bool addFileInZip(std::string zip_filename, bool overwrite,
         std::string archive_filename, std::string in_filename,
         Rcpp::Nullable<Rcpp::CharacterVector> options,
         bool quiet) {
 
 #if GDAL_VERSION_NUM < 3070000
-    Rcpp::stop("_addFileInZip() requires GDAL >= 3.7");
+    Rcpp::stop("addFileInZip() requires GDAL >= 3.7");
 
 #else
     bool ret;

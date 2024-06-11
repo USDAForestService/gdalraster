@@ -59,6 +59,7 @@ reference:
   - displayRAT
 - subtitle: Geotransform conversion
 - contents:
+  - apply_geotransform
   - get_pixel_line
   - inv_geotransform
 - subtitle: Coordinate transformation

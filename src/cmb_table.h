@@ -1,8 +1,8 @@
 /* Hash table class for counting unique combinations of integers
 Chris Toney <chris.toney at usda.gov> */
 
-#ifndef cmb_table_H
-#define cmb_table_H
+#ifndef SRC_CMB_TABLE_H_
+#define SRC_CMB_TABLE_H_
 
 #include <Rcpp.h>
 
@@ -30,10 +30,10 @@ struct cmbData {
 struct cmbHasher {
     std::size_t operator()(cmbKey const& key) const {
         // Boost hash_combine method
-        //Copyright 2005-2014 Daniel James.
-        //Copyright 2021, 2022 Peter Dimov.
-        //Distributed under the Boost Software License, Version 1.0.
-        //https://www.boost.org/LICENSE_1_0.txt
+        // Copyright 2005-2014 Daniel James.
+        // Copyright 2021, 2022 Peter Dimov.
+        // Distributed under the Boost Software License, Version 1.0.
+        // https://www.boost.org/LICENSE_1_0.txt
         std::size_t seed = 0;
         for (R_xlen_t i=0; i < key.cmb.size(); ++i) {
             seed ^= key.cmb[i] + 0x9e3779b9 + (seed << 6) + (seed >> 2);
@@ -43,15 +43,15 @@ struct cmbHasher {
 };
 
 class CmbTable {
-    private:
+ private:
     unsigned int key_len;
     Rcpp::CharacterVector var_names_in;
     double last_ID;
     std::unordered_map<cmbKey, cmbData, cmbHasher> cmb_map;
 
-    public:
+ public:
     CmbTable();
-    CmbTable(unsigned int keyLen);
+    explicit CmbTable(unsigned int keyLen);
     CmbTable(unsigned int keyLen, Rcpp::CharacterVector varNames);
 
     double update(const Rcpp::IntegerVector& int_cmb, double incr);
@@ -66,4 +66,4 @@ class CmbTable {
 
 RCPP_EXPOSED_CLASS(CmbTable)
 
-#endif
+#endif  // SRC_CMB_TABLE_H_

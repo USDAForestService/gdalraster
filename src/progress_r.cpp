@@ -1,6 +1,7 @@
 /* GDALTermProgress() works in R on Linux, but not on Windows.
-  This was copied from /gdal/port/cpl_progress.cpp and modified to use
-  Rprintf() and works on Linux and Windows R. -CT 2023-04-30 */
+   This was copied from /gdal/port/cpl_progress.cpp and modified to use
+   Rprintf() and works on Linux and Windows R. -CT 2023-04-30
+*/
 
  /******************************************************************************
  * Copyright (c) 2013, Frank Warmerdam
@@ -24,10 +25,8 @@
  * DEALINGS IN THE SOFTWARE.
  ****************************************************************************/
 
-#include "gdalraster.h"
-
 #include <cmath>
-
+#include "gdalraster.h"
 
 /************************************************************************/
 /*                          GDALTermProgressR()                          */

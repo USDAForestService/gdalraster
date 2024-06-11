@@ -28,9 +28,9 @@ Portability Library.
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 
-tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
+tmp_elev <- file.path(tempdir(), "tmp_elev.tif")
 file.copy(elev_file,  tmp_elev)
-tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
+tmp_tcc <- file.path(tempdir(), "tmp_tcc.tif")
 file.copy(tcc_file,  tmp_tcc)
 vsi_unlink_batch(c(tmp_elev, tmp_tcc))
 }

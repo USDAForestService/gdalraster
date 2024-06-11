@@ -194,4 +194,22 @@ test_that("VSIFile works", {
 
     vsi_unlink(mem_file)
     expect_error(vf <- new(VSIFile, mem_file, "r"))
+
+    # test /vsizip/ SOZip for read access only
+    skip_if(as.integer(gdal_version()[2]) < 3070000)
+
+    zip_file <- file.path(tempdir(), "storml_lcp.zip")
+    addFilesInZip(zip_file, lcp_file, overwrite = TRUE, full_paths = FALSE,
+                  sozip_enabled = "YES", num_threads = 1)
+
+    lcp_in_zip <- file.path("/vsizip", zip_file, "storm_lake.lcp")
+    expect_no_error(vf <- new(VSIFile, lcp_in_zip, "r"))
+    expect_true(vf$read(12) |> is_lcp())
+    # read the Description field
+    vf$seek(6804, SEEK_SET)
+    bytes <- vf$read(512)
+    expect_equal(rawToChar(bytes), "LCP file created by GDAL.")
+
+    vf$close()
+    vsi_unlink(zip_file)
 })

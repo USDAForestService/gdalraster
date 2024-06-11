@@ -303,7 +303,7 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #' ds_lcp <- new(GDALRaster, lcp_file)
 #' ds_lcp$getMetadata(band=2, domain="")
 #'
-#' slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
+#' slpp_file <- file.path(tempdir(), "storml_slpp.tif")
 #' opt = c("COMPRESS=LZW")
 #' rasterFromRaster(srcfile = lcp_file,
 #'                  dstfile = slpp_file,
@@ -965,7 +965,7 @@ rasterToVRT <- function(srcfile,
 #'
 #' # recode these pixels to 99 (bare ground)
 #' # the LCP driver does not support in-place write so make a copy as GTiff
-#' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
+#' tif_file <- file.path(tempdir(), "storml_lndscp.tif")
 #' createCopy("GTiff", tif_file, lcp_file)
 #'
 #' expr <- "ifelse( SLP >= 40 & FBFM %in% c(101,102), 99, FBFM)"
@@ -1292,7 +1292,7 @@ calc <- function(expr,
 #' rasterfiles <- c(lcp_file, lcp_file)
 #' bands <- c(4, 5)
 #' var.names <- c("fbfm", "tree_cov")
-#' cmb_file <- paste0(tempdir(), "/", "fbfm_cov_cmbid.tif")
+#' cmb_file <- file.path(tempdir(), "fbfm_cov_cmbid.tif")
 #' opt <- c("COMPRESS=LZW")
 #' tbl <- combine(rasterfiles, var.names, bands, cmb_file, options = opt)
 #' head(tbl)
@@ -1391,7 +1391,7 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 #'
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' slp_file <- paste0(tempdir(), "/", "storml_slp.tif")
+#' slp_file <- file.path(tempdir(), "storml_slp.tif")
 #' dem_proc("slope", elev_file, slp_file)
 #'
 #' deleteDataset(slp_file)
@@ -1520,7 +1520,7 @@ dem_proc <- function(mode,
 #'
 #' @examples
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-#' dsn <- paste0(tempdir(), "/", "storm_lake.gpkg")
+#' dsn <- file.path(tempdir(), "storm_lake.gpkg")
 #' layer <- "lf_evt"
 #' fld <- "evt_value"
 #' set_config_option("SQLITE_USE_OGR_VFS", "YES")
@@ -1700,7 +1700,7 @@ polygonize <- function(raster_file,
 #' # MTBS fire perimeters for Yellowstone National Park 1984-2022
 #' dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 #' sql <- "SELECT * FROM mtbs_perims ORDER BY mtbs_perims.ig_year"
-#' out_file <- paste0(tempdir(), "/", "ynp_fires_1984_2022.tif")
+#' out_file <- file.path(tempdir(), "ynp_fires_1984_2022.tif")
 #'
 #' rasterize(src_dsn = dsn,
 #'           dstfile = out_file,

@@ -38,7 +38,7 @@ elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 args <- c("-tr", "90", "90", "-r", "average")
 args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 
-img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
+img_file <- file.path(tempdir(), "storml_elev_90m.img")
 translate(elev_file, img_file, args)
 
 ds <- new(GDALRaster, img_file)

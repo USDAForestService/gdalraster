@@ -97,7 +97,6 @@ double RunningStats::get_sd() const {
 }
 
 RCPP_MODULE(mod_running_stats) {
-
     Rcpp::class_<RunningStats>("RunningStats")
 
     .constructor

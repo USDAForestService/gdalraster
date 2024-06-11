@@ -20,7 +20,7 @@ gdal_version <- function() {
 
 #' @noRd
 .gdal_version_num <- function() {
-    .Call(`_gdalraster__gdal_version_num`)
+    .Call(`_gdalraster_gdal_version_num`)
 }
 
 #' Retrieve information on GDAL format drivers for raster and vector
@@ -123,7 +123,7 @@ get_cache_used <- function() {
 
 #' @noRd
 .dump_open_datasets <- function(outfile) {
-    .Call(`_gdalraster__dump_open_datasets`, outfile)
+    .Call(`_gdalraster_dump_open_datasets`, outfile)
 }
 
 #' Push a new GDAL CPLError handler
@@ -189,7 +189,7 @@ pop_error_handler <- function() {
 #'
 #' @noRd
 .check_gdal_filename <- function(filename) {
-    .Call(`_gdalraster__check_gdal_filename`, filename)
+    .Call(`_gdalraster_check_gdal_filename`, filename)
 }
 
 #' Get the number of processors detected by GDAL
@@ -281,7 +281,7 @@ http_enabled <- function() {
 
 #' @noRd
 .cpl_http_cleanup <- function() {
-    invisible(.Call(`_gdalraster__cpl_http_cleanup`))
+    invisible(.Call(`_gdalraster_cpl_http_cleanup`))
 }
 
 #' Create a new uninitialized raster
@@ -307,7 +307,7 @@ http_enabled <- function() {
 #' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()],
 #' [getCreationOptions()]
 #' @examples
-#' new_file <- paste0(tempdir(), "/", "newdata.tif")
+#' new_file <- file.path(tempdir(), "newdata.tif")
 #' create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
 #'        nbands=1, dataType="Int16")
 #' ds <- new(GDALRaster, new_file, read_only=FALSE)
@@ -354,7 +354,7 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' [getCreationOptions()], [translate()]
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-#' tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
+#' tif_file <- file.path(tempdir(), "storml_lndscp.tif")
 #' opt <- c("COMPRESS=LZW")
 #' createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
 #'            options=opt)
@@ -374,7 +374,7 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE, optio
 
 #' Apply geotransform - internal wrapper of GDALApplyGeoTransform()
 #'
-#' `_apply_geotransform()` applies geotransform coefficients to a raster
+#' `apply_geotransform_()` applies geotransform coefficients to a raster
 #' coordinate in pixel/line space (colum/row), converting into a
 #' georeferenced (x, y) coordinate.
 #'
@@ -388,7 +388,21 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE, optio
 #' [inv_geotransform()]
 #' @noRd
 .apply_geotransform <- function(gt, pixel, line) {
-    .Call(`_gdalraster__apply_geotransform`, gt, pixel, line)
+    .Call(`_gdalraster_apply_geotransform_`, gt, pixel, line)
+}
+
+#' Apply geotransform (raster column/row to geospatial x/y)
+#' input as geotransform vector, no bounds checking on col/row
+#' @noRd
+.apply_geotransform_gt <- function(col_row, gt) {
+    .Call(`_gdalraster_apply_geotransform_gt`, col_row, gt)
+}
+
+#' Apply geotransform (raster column/row to geospatial x/y)
+#' alternate version for GDALRaster input, with bounds checking
+#' @noRd
+.apply_geotransform_ds <- function(col_row, ds) {
+    .Call(`_gdalraster_apply_geotransform_ds`, col_row, ds)
 }
 
 #' Invert geotransform
@@ -434,14 +448,14 @@ inv_geotransform <- function(gt) {
 #' input is gt vector, no bounds checking done on output
 #' @noRd
 .get_pixel_line_gt <- function(xy, gt) {
-    .Call(`_gdalraster__get_pixel_line_gt`, xy, gt)
+    .Call(`_gdalraster_get_pixel_line_gt`, xy, gt)
 }
 
 #' Raster pixel/line from geospatial x,y coordinates
 #' alternate version for GDALRaster input, with bounds checking
 #' @noRd
 .get_pixel_line_ds <- function(xy, ds) {
-    .Call(`_gdalraster__get_pixel_line_ds`, xy, ds)
+    .Call(`_gdalraster_get_pixel_line_ds`, xy, ds)
 }
 
 #' Build a GDAL virtual raster from a list of datasets
@@ -488,7 +502,7 @@ inv_geotransform <- function(gt) {
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 #' b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
 #' band_files <- c(b6_file, b5_file, b4_file)
-#' vrt_file <- paste0(tempdir(), "/", "storml_b6_b5_b4.vrt")
+#' vrt_file <- file.path(tempdir(), "storml_b6_b5_b4.vrt")
 #' buildVRT(vrt_file, band_files, cl_arg = "-separate")
 #' ds <- new(GDALRaster, vrt_file)
 #' ds$getRasterCount()
@@ -513,14 +527,14 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #' Called from and documented in R/gdalraster_proc.R
 #' @noRd
 .combine <- function(src_files, var_names, bands, dst_filename = "", fmt = "", dataType = "UInt32", options = NULL, quiet = FALSE) {
-    .Call(`_gdalraster__combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options, quiet)
+    .Call(`_gdalraster_combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options, quiet)
 }
 
 #' Compute for a raster band the set of unique pixel values and their counts
 #'
 #' @noRd
 .value_count <- function(src_ds, band = 1L, quiet = FALSE) {
-    .Call(`_gdalraster__value_count`, src_ds, band, quiet)
+    .Call(`_gdalraster_value_count`, src_ds, band, quiet)
 }
 
 #' Wrapper for GDALDEMProcessing in the GDAL Algorithms C API
@@ -528,7 +542,7 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #' Called from and documented in R/gdalraster_proc.R
 #' @noRd
 .dem_proc <- function(mode, src_filename, dst_filename, cl_arg = NULL, col_file = NULL, quiet = FALSE) {
-    .Call(`_gdalraster__dem_proc`, mode, src_filename, dst_filename, cl_arg, col_file, quiet)
+    .Call(`_gdalraster_dem_proc`, mode, src_filename, dst_filename, cl_arg, col_file, quiet)
 }
 
 #' Fill selected pixels by interpolation from surrounding areas
@@ -570,7 +584,7 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #' tbl[is.na(tbl$VALUE),]
 #'
 #' ## make a copy that will be modified
-#' mod_file <- paste0(tempdir(), "/", "storml_elev_fill.tif")
+#' mod_file <- file.path(tempdir(), "storml_elev_fill.tif")
 #' file.copy(elev_file,  mod_file)
 #'
 #' fillNodata(mod_file, band=1)
@@ -619,7 +633,7 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
 #'
 #' @examples
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
-#' out_file <- paste0(tempdir(), "/", "storml.geojson")
+#' out_file <- file.path(tempdir(), "storml.geojson")
 #'
 #' # Requires GDAL >= 3.8
 #' if (as.integer(gdal_version()[2]) >= 3080000) {
@@ -782,7 +796,7 @@ ogrinfo <- function(dsn, layers = NULL, cl_arg = as.character( c("-so", "-nomd")
 #' Called from and documented in R/gdalraster_proc.R
 #' @noRd
 .polygonize <- function(src_filename, src_band, out_dsn, out_layer, fld_name, mask_file = "", nomask = FALSE, connectedness = 4L, quiet = FALSE) {
-    .Call(`_gdalraster__polygonize`, src_filename, src_band, out_dsn, out_layer, fld_name, mask_file, nomask, connectedness, quiet)
+    .Call(`_gdalraster_polygonize`, src_filename, src_band, out_dsn, out_layer, fld_name, mask_file, nomask, connectedness, quiet)
 }
 
 #' Wrapper for GDALRasterize in the GDAL Algorithms C API
@@ -790,7 +804,7 @@ ogrinfo <- function(dsn, layers = NULL, cl_arg = as.character( c("-so", "-nomd")
 #' Called from and documented in R/gdalraster_proc.R
 #' @noRd
 .rasterize <- function(src_dsn, dst_filename, cl_arg, quiet = FALSE) {
-    .Call(`_gdalraster__rasterize`, src_dsn, dst_filename, cl_arg, quiet)
+    .Call(`_gdalraster_rasterize`, src_dsn, dst_filename, cl_arg, quiet)
 }
 
 #' Remove small raster polygons
@@ -847,7 +861,7 @@ ogrinfo <- function(dsn, layers = NULL, cl_arg = as.character( c("-so", "-nomd")
 #' evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 #'
 #' # create a blank raster to hold the output
-#' evt_mmu_file <- paste0(tempdir(), "/", "storml_evt_mmu2.tif")
+#' evt_mmu_file <- file.path(tempdir(), "storml_evt_mmu2.tif")
 #' rasterFromRaster(srcfile = evt_file,
 #'                  dstfile = evt_mmu_file,
 #'                  init = 32767)
@@ -907,7 +921,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' args <- c("-tr", "90", "90", "-r", "average")
 #' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 #'
-#' img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
+#' img_file <- file.path(tempdir(), "storml_elev_90m.img")
 #' translate(elev_file, img_file, args)
 #'
 #' ds <- new(GDALRaster, img_file)
@@ -1085,7 +1099,7 @@ translate <- function(src_filename, dst_filename, cl_arg = NULL, quiet = FALSE) 
 #' # write to Erdas Imagine format (HFA) with compression:
 #' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
 #'
-#' alb83_file <- paste0(tempdir(), "/", "storml_elev_alb83.img")
+#' alb83_file <- file.path(tempdir(), "storml_elev_alb83.img")
 #' warp(elev_file, alb83_file, t_srs="EPSG:5070", cl_arg = args)
 #'
 #' ds <- new(GDALRaster, alb83_file)
@@ -1212,7 +1226,7 @@ createColorRamp <- function(start_index, start_color, end_index, end_color, pale
 #' @examples
 #' ## copy Landsat data from a single-band file to a new multi-band image
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-#' dst_file <- paste0(tempdir(), "/", "sr_multi.tif")
+#' dst_file <- file.path(tempdir(), "sr_multi.tif")
 #' rasterFromRaster(b5_file, dst_file, nbands=7, init=0)
 #' opt <- c("COMPRESSED=YES", "SKIP_HOLES=YES")
 #' bandCopyWholeRaster(b5_file, 1, dst_file, 5, options=opt)
@@ -1257,7 +1271,7 @@ bandCopyWholeRaster <- function(src_filename, src_band, dst_filename, dst_band, 
 #'
 #' @examples
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-#' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+#' b5_tmp <- file.path(tempdir(), "b5_tmp.tif")
 #' file.copy(b5_file,  b5_tmp)
 #'
 #' ds <- new(GDALRaster, b5_tmp)
@@ -1303,14 +1317,14 @@ deleteDataset <- function(filename, format = "") {
 #'
 #' @examples
 #' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
-#' b5_tmp <- paste0(tempdir(), "/", "b5_tmp.tif")
+#' b5_tmp <- file.path(tempdir(), "b5_tmp.tif")
 #' file.copy(b5_file,  b5_tmp)
 #'
 #' ds <- new(GDALRaster, b5_tmp)
 #' ds$buildOverviews("BILINEAR", levels = c(2, 4, 8), bands = c(1))
 #' ds$getFileList()
 #' ds$close()
-#' b5_tmp2 <- paste0(tempdir(), "/", "b5_tmp_renamed.tif")
+#' b5_tmp2 <- file.path(tempdir(), "b5_tmp_renamed.tif")
 #' renameDataset(b5_tmp2, b5_tmp)
 #' ds <- new(GDALRaster, b5_tmp2)
 #' ds$getFileList()
@@ -1351,7 +1365,7 @@ renameDataset <- function(new_filename, old_filename, format = "") {
 #' ds$getFileList()
 #' ds$close()
 #'
-#' lcp_tmp <- paste0(tempdir(), "/", "storm_lake_copy.lcp")
+#' lcp_tmp <- file.path(tempdir(), "storm_lake_copy.lcp")
 #' copyDatasetFiles(lcp_tmp, lcp_file)
 #' ds_copy <- new(GDALRaster, lcp_tmp)
 #' ds_copy$getFileList()
@@ -1367,7 +1381,7 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #' Called from and documented in R/gdal_helpers.R
 #' @noRd
 .getCreationOptions <- function(format) {
-    .Call(`_gdalraster__getCreationOptions`, format)
+    .Call(`_gdalraster_getCreationOptions`, format)
 }
 
 #' Add a file inside a new or existing ZIP file
@@ -1375,7 +1389,7 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
 #'
 #' @noRd
 .addFileInZip <- function(zip_filename, overwrite, archive_filename, in_filename, options, quiet) {
-    .Call(`_gdalraster__addFileInZip`, zip_filename, overwrite, archive_filename, in_filename, options, quiet)
+    .Call(`_gdalraster_addFileInZip`, zip_filename, overwrite, archive_filename, in_filename, options, quiet)
 }
 
 #' Copy a source file to a target filename
@@ -1445,12 +1459,15 @@ vsi_copy_file <- function(src_file, target_file, show_progress = FALSE) {
 #' filename (see Details).
 #' @param file_prefix Character string. Filename prefix to use if
 #' `partial = TRUE`.
+#' @param quiet Logical scalar. `TRUE` (the default) to wrap the API call in
+#' a quiet error handler, or `FALSE` to print any potential error messages to
+#' the console.
 #' @returns No return value, called for side effects.
 #'
 #' @examples
 #' vsi_curl_clear_cache()
-vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "") {
-    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix))
+vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet = TRUE) {
+    invisible(.Call(`_gdalraster_vsi_curl_clear_cache`, partial, file_prefix, quiet))
 }
 
 #' Read names in a directory
@@ -1686,7 +1703,7 @@ vsi_rmdir <- function(path, recursive = FALSE) {
 #' @examples
 #' # regular file system for illustration
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' tmp_file <- paste0(tempdir(), "/", "tmp.tif")
+#' tmp_file <- file.path(tempdir(), "tmp.tif")
 #' file.copy(elev_file,  tmp_file)
 #' vsi_stat(tmp_file)
 #' vsi_unlink(tmp_file)
@@ -1718,9 +1735,9 @@ vsi_unlink <- function(filename) {
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 #'
-#' tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
+#' tmp_elev <- file.path(tempdir(), "tmp_elev.tif")
 #' file.copy(elev_file,  tmp_elev)
-#' tmp_tcc <- paste0(tempdir(), "/", "tmp_tcc.tif")
+#' tmp_tcc <- file.path(tempdir(), "tmp_tcc.tif")
 #' file.copy(tcc_file,  tmp_tcc)
 #' vsi_unlink_batch(c(tmp_elev, tmp_tcc))
 vsi_unlink_batch <- function(filenames) {
@@ -2051,7 +2068,7 @@ NULL
 #' get GEOS version
 #' @noRd
 .getGEOSVersion <- function() {
-    .Call(`_gdalraster__getGEOSVersion`)
+    .Call(`_gdalraster_getGEOSVersion`)
 }
 
 #' Is GEOS available?
@@ -2071,138 +2088,138 @@ has_geos <- function() {
 
 #' @noRd
 .g_create <- function(xy, geom_type) {
-    .Call(`_gdalraster__g_create`, xy, geom_type)
+    .Call(`_gdalraster_g_create`, xy, geom_type)
 }
 
 #' @noRd
 .g_add_geom <- function(sub_geom, container) {
-    .Call(`_gdalraster__g_add_geom`, sub_geom, container)
+    .Call(`_gdalraster_g_add_geom`, sub_geom, container)
 }
 
 #' @noRd
 .g_is_valid <- function(geom) {
-    .Call(`_gdalraster__g_is_valid`, geom)
+    .Call(`_gdalraster_g_is_valid`, geom)
 }
 
 #' @noRd
 .g_is_empty <- function(geom) {
-    .Call(`_gdalraster__g_is_empty`, geom)
+    .Call(`_gdalraster_g_is_empty`, geom)
 }
 
 #' @noRd
 .g_name <- function(geom) {
-    .Call(`_gdalraster__g_name`, geom)
+    .Call(`_gdalraster_g_name`, geom)
 }
 
 #' @noRd
 .g_intersects <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_intersects`, this_geom, other_geom)
+    .Call(`_gdalraster_g_intersects`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_equals <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_equals`, this_geom, other_geom)
+    .Call(`_gdalraster_g_equals`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_disjoint <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_disjoint`, this_geom, other_geom)
+    .Call(`_gdalraster_g_disjoint`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_touches <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_touches`, this_geom, other_geom)
+    .Call(`_gdalraster_g_touches`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_contains <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_contains`, this_geom, other_geom)
+    .Call(`_gdalraster_g_contains`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_within <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_within`, this_geom, other_geom)
+    .Call(`_gdalraster_g_within`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_crosses <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_crosses`, this_geom, other_geom)
+    .Call(`_gdalraster_g_crosses`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_overlaps <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_overlaps`, this_geom, other_geom)
+    .Call(`_gdalraster_g_overlaps`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_buffer <- function(geom, dist, quad_segs = 30L) {
-    .Call(`_gdalraster__g_buffer`, geom, dist, quad_segs)
+    .Call(`_gdalraster_g_buffer`, geom, dist, quad_segs)
 }
 
 #' @noRd
 .g_intersection <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_intersection`, this_geom, other_geom)
+    .Call(`_gdalraster_g_intersection`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_union <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_union`, this_geom, other_geom)
+    .Call(`_gdalraster_g_union`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_difference <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_difference`, this_geom, other_geom)
+    .Call(`_gdalraster_g_difference`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_sym_difference <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_sym_difference`, this_geom, other_geom)
+    .Call(`_gdalraster_g_sym_difference`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_distance <- function(this_geom, other_geom) {
-    .Call(`_gdalraster__g_distance`, this_geom, other_geom)
+    .Call(`_gdalraster_g_distance`, this_geom, other_geom)
 }
 
 #' @noRd
 .g_length <- function(geom) {
-    .Call(`_gdalraster__g_length`, geom)
+    .Call(`_gdalraster_g_length`, geom)
 }
 
 #' @noRd
 .g_area <- function(geom) {
-    .Call(`_gdalraster__g_area`, geom)
+    .Call(`_gdalraster_g_area`, geom)
 }
 
 #' @noRd
 .g_centroid <- function(geom) {
-    .Call(`_gdalraster__g_centroid`, geom)
+    .Call(`_gdalraster_g_centroid`, geom)
 }
 
 #' @noRd
 .g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE, date_line_offset = 10L) {
-    .Call(`_gdalraster__g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset)
+    .Call(`_gdalraster_g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset)
 }
 
 #' Does vector dataset exist
 #'
 #' @noRd
 .ogr_ds_exists <- function(dsn, with_update = FALSE) {
-    .Call(`_gdalraster__ogr_ds_exists`, dsn, with_update)
+    .Call(`_gdalraster_ogr_ds_exists`, dsn, with_update)
 }
 
 #' Get the format driver short name for a vector dataset
 #'
 #' @noRd
 .ogr_ds_format <- function(dsn) {
-    .Call(`_gdalraster__ogr_ds_format`, dsn)
+    .Call(`_gdalraster_ogr_ds_format`, dsn)
 }
 
 #' Test if capabilities are available for a vector dataset
 #'
 #' @noRd
 .ogr_ds_test_cap <- function(dsn, with_update = TRUE) {
-    .Call(`_gdalraster__ogr_ds_test_cap`, dsn, with_update)
+    .Call(`_gdalraster_ogr_ds_test_cap`, dsn, with_update)
 }
 
 #' Create a vector dataset. Optionally create a layer in the dataset.
@@ -2210,129 +2227,129 @@ has_geos <- function() {
 #'
 #' @noRd
 .create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", fld_type = "OFTInteger", dsco = NULL, lco = NULL, layer_defn = NULL) {
-    .Call(`_gdalraster__create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, fld_type, dsco, lco, layer_defn)
+    .Call(`_gdalraster_create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, fld_type, dsco, lco, layer_defn)
 }
 
 #' Get number of layers in a dataset
 #'
 #' @noRd
 .ogr_ds_layer_count <- function(dsn) {
-    .Call(`_gdalraster__ogr_ds_layer_count`, dsn)
+    .Call(`_gdalraster_ogr_ds_layer_count`, dsn)
 }
 
 #' Get names of layers in a dataset
 #'
 #' @noRd
 .ogr_ds_layer_names <- function(dsn) {
-    .Call(`_gdalraster__ogr_ds_layer_names`, dsn)
+    .Call(`_gdalraster_ogr_ds_layer_names`, dsn)
 }
 
 #' Does layer exist
 #'
 #' @noRd
 .ogr_layer_exists <- function(dsn, layer) {
-    .Call(`_gdalraster__ogr_layer_exists`, dsn, layer)
+    .Call(`_gdalraster_ogr_layer_exists`, dsn, layer)
 }
 
 #' Test if capabilities are available for a vector layer
 #'
 #' @noRd
 .ogr_layer_test_cap <- function(dsn, layer, with_update = TRUE) {
-    .Call(`_gdalraster__ogr_layer_test_cap`, dsn, layer, with_update)
+    .Call(`_gdalraster_ogr_layer_test_cap`, dsn, layer, with_update)
 }
 
 #' Create a layer in a vector dataset
 #'
 #' @noRd
 .ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = "UNKNOWN", srs = "", options = NULL) {
-    .Call(`_gdalraster__ogr_layer_create`, dsn, layer, layer_defn, geom_type, srs, options)
+    .Call(`_gdalraster_ogr_layer_create`, dsn, layer, layer_defn, geom_type, srs, options)
 }
 
 #' Delete a layer in a vector dataset
 #'
 #' @noRd
 .ogr_layer_delete <- function(dsn, layer) {
-    .Call(`_gdalraster__ogr_layer_delete`, dsn, layer)
+    .Call(`_gdalraster_ogr_layer_delete`, dsn, layer)
 }
 
 #' Get names of fields on a layer
 #'
 #' @noRd
 .ogr_layer_field_names <- function(dsn, layer) {
-    .Call(`_gdalraster__ogr_layer_field_names`, dsn, layer)
+    .Call(`_gdalraster_ogr_layer_field_names`, dsn, layer)
 }
 
 #' Get field index or -1 if fld_name not found
 #'
 #' @noRd
 .ogr_field_index <- function(dsn, layer, fld_name) {
-    .Call(`_gdalraster__ogr_field_index`, dsn, layer, fld_name)
+    .Call(`_gdalraster_ogr_field_index`, dsn, layer, fld_name)
 }
 
 #' Create a new field on layer
 #'
 #' @noRd
 .ogr_field_create <- function(dsn, layer, fld_name, fld_type, fld_subtype = "OFSTNone", fld_width = 0L, fld_precision = 0L, is_nullable = TRUE, is_ignored = FALSE, is_unique = FALSE, default_value = "") {
-    .Call(`_gdalraster__ogr_field_create`, dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_ignored, is_unique, default_value)
+    .Call(`_gdalraster_ogr_field_create`, dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_ignored, is_unique, default_value)
 }
 
 #' Create a new geom field on layer
 #'
 #' @noRd
 .ogr_geom_field_create <- function(dsn, layer, fld_name, geom_type, srs = "", is_nullable = TRUE, is_ignored = FALSE) {
-    .Call(`_gdalraster__ogr_geom_field_create`, dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored)
+    .Call(`_gdalraster_ogr_geom_field_create`, dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored)
 }
 
 #' Rename an attribute field on a vector layer
 #'
 #' @noRd
 .ogr_field_rename <- function(dsn, layer, fld_name, new_name) {
-    .Call(`_gdalraster__ogr_field_rename`, dsn, layer, fld_name, new_name)
+    .Call(`_gdalraster_ogr_field_rename`, dsn, layer, fld_name, new_name)
 }
 
 #' Delete an attribute field on a vector layer
 #'
 #' @noRd
 .ogr_field_delete <- function(dsn, layer, fld_name) {
-    .Call(`_gdalraster__ogr_field_delete`, dsn, layer, fld_name)
+    .Call(`_gdalraster_ogr_field_delete`, dsn, layer, fld_name)
 }
 
 #' Execute an SQL statement against the data store
 #'
 #' @noRd
 .ogr_execute_sql <- function(dsn, sql, spatial_filter = "", dialect = "") {
-    invisible(.Call(`_gdalraster__ogr_execute_sql`, dsn, sql, spatial_filter, dialect))
+    invisible(.Call(`_gdalraster_ogr_execute_sql`, dsn, sql, spatial_filter, dialect))
 }
 
 #' get PROJ version
 #' @noRd
 .getPROJVersion <- function() {
-    .Call(`_gdalraster__getPROJVersion`)
+    .Call(`_gdalraster_getPROJVersion`)
 }
 
 #' get search path(s) for PROJ resource files
 #' @noRd
 .getPROJSearchPaths <- function() {
-    .Call(`_gdalraster__getPROJSearchPaths`)
+    .Call(`_gdalraster_getPROJSearchPaths`)
 }
 
 #' set search path(s) for PROJ resource files
 #' @noRd
 .setPROJSearchPaths <- function(paths) {
-    invisible(.Call(`_gdalraster__setPROJSearchPaths`, paths))
+    invisible(.Call(`_gdalraster_setPROJSearchPaths`, paths))
 }
 
 #' get whether PROJ networking capabilities are enabled
 #' returns logical NA if GDAL < 3.4
 #' @noRd
 .getPROJEnableNetwork <- function() {
-    .Call(`_gdalraster__getPROJEnableNetwork`)
+    .Call(`_gdalraster_getPROJEnableNetwork`)
 }
 
 #' enable or disable PROJ networking capabilities
 #' @noRd
 .setPROJEnableNetwork <- function(enabled) {
-    invisible(.Call(`_gdalraster__setPROJEnableNetwork`, enabled))
+    invisible(.Call(`_gdalraster_setPROJEnableNetwork`, enabled))
 }
 
 #' Inverse project geospatial x/y coordinates to longitude/latitude

@@ -1,11 +1,13 @@
 /* Misc. utility functions for internal use
-   Chris Toney <chris.toney at usda.gov> */
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
 
 #include "rcpp_util.h"
 
 //' convert data frame to numeric matrix in Rcpp
 //' @noRd
-Rcpp::NumericMatrix _df_to_matrix(const Rcpp::DataFrame& df) {
+Rcpp::NumericMatrix df_to_matrix_(const Rcpp::DataFrame& df) {
     Rcpp::NumericMatrix m(df.nrows(), df.size());
     for (R_xlen_t i=0; i < df.size(); ++i) {
         m.column(i) = Rcpp::NumericVector(df[i]);
@@ -15,7 +17,7 @@ Rcpp::NumericMatrix _df_to_matrix(const Rcpp::DataFrame& df) {
 
 //' convert data frame to integer matrix in Rcpp
 //' @noRd
-Rcpp::IntegerMatrix _df_to_int_matrix(const Rcpp::DataFrame& df) {
+Rcpp::IntegerMatrix df_to_int_matrix_(const Rcpp::DataFrame& df) {
     Rcpp::IntegerMatrix m(df.nrows(), df.size());
     for (R_xlen_t i=0; i < df.size(); ++i) {
         m.column(i) = Rcpp::IntegerVector(df[i]);
@@ -25,7 +27,7 @@ Rcpp::IntegerMatrix _df_to_int_matrix(const Rcpp::DataFrame& df) {
 
 //' wrapper for base R path.expand()
 //' @noRd
-Rcpp::CharacterVector _path_expand(Rcpp::CharacterVector path) {
+Rcpp::CharacterVector path_expand_(Rcpp::CharacterVector path) {
 
     Rcpp::Function f("path.expand");
     return f(path);
@@ -34,7 +36,7 @@ Rcpp::CharacterVector _path_expand(Rcpp::CharacterVector path) {
 //' wrapper for base R normalizePath()
 //' int must_work should be NA_LOGICAL (the default), 0 or 1
 //' @noRd
-Rcpp::CharacterVector _normalize_path(Rcpp::CharacterVector path,
+Rcpp::CharacterVector normalize_path_(Rcpp::CharacterVector path,
         int must_work) {
 
     Rcpp::Function f("normalizePath");
@@ -43,14 +45,14 @@ Rcpp::CharacterVector _normalize_path(Rcpp::CharacterVector path,
 
 //' wrapper for base R enc2utf8()
 //' @noRd
-Rcpp::CharacterVector _enc_to_utf8(Rcpp::CharacterVector x) {
+Rcpp::CharacterVector enc_to_utf8_(Rcpp::CharacterVector x) {
     Rcpp::Function f("enc2utf8");
     return f(x);
 }
 
 //' std::string to uppercase
 //' @noRd
-std::string _str_toupper(std::string s) {
+std::string str_toupper_(std::string s) {
     std::transform(s.begin(), s.end(), s.begin(),
                    [](unsigned char c){ return std::toupper(c); });
     return s;

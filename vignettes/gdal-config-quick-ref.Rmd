@@ -122,6 +122,15 @@ set_config_option("OGR_SQLITE_JOURNAL", "MEMORY")
 
 GDAL doc: https://gdal.org/user/configoptions.html#networking-options
 
+**`CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE`**
+
+Whether to use a local temporary file to support random writes in certain virtual file systems. The temporary file will be located in `CPL_TMPDIR` (see above).
+
+```r
+# YES|NO to use a temp file
+set_config_option("CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE", "YES")
+```
+
 ## PROJ
 
 GDAL doc: https://gdal.org/user/configoptions.html#proj-options

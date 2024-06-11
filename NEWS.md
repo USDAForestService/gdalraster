@@ -1,3 +1,19 @@
+# gdalraster 1.11.0.9040 (dev)
+
+* add `apply_geotransform()`: convert raster column/row to geospatial x/y coordinates, wrapper of `GDALApplyGeoTransform()` in the GDAL API, operating on matrix input (the internal wrapper `.apply_geotransform()` is unchanged) (2024-06-11)
+
+* add `GDALRaster$apply_geotransform()`: class method alternative to calling the stand-alone function `apply_geotransform()` on an object of class `GDALRaster` (2024-06-11)
+
+* Doc: replace `paste0()` with `file.path()` in the examples (2024-06-10)
+
+* code linting (2024-06-08)
+
+* `vsi_curl_clear_cache()`: add parameter `quiet` to wrap the API call in a quiet error handler, `TRUE` by default (2024-06-06)
+
+* document the `w+` access flag for class `VSIFile` and add `CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE` configuration option in vignette [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html) (2024-06-06)
+
+* fix test in test-ogr_manage.R: the test for GeoJSON layer did not need to check existence using `with_update = TRUE` on a file in extdata (#410) (2024-06-06)
+
 # gdalraster 1.11.0
 
 ## System requirements

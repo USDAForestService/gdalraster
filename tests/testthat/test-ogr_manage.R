@@ -161,10 +161,15 @@ test_that("edit data using SQL works on shapefile", {
 
 test_that("GeoJSON layer and field names are correct", {
     dsn <- system.file("extdata/test.geojson", package="gdalraster")
-    expect_true(ogr_ds_exists(dsn, with_update = TRUE))
-    expect_equal(ogr_ds_format(dsn), "GeoJSON")
-    expect_equal(ogr_ds_layer_count(dsn), 1)
-    expect_equal(ogr_ds_layer_names(dsn), "test")
-    expect_equal(ogr_layer_field_names(dsn, "test"),
+    expect_true(ogr_ds_exists(dsn))
+    dsn2 <- file.path(tempdir(TRUE), "test.geojson")
+    file.copy(dsn, dsn2)
+    expect_true(ogr_ds_exists(dsn2, with_update = TRUE))
+    expect_equal(ogr_ds_format(dsn2), "GeoJSON")
+    expect_equal(ogr_ds_layer_count(dsn2), 1)
+    expect_equal(ogr_ds_layer_names(dsn2), "test")
+    expect_equal(ogr_layer_field_names(dsn2, "test"),
                  c("int", "string", "double", "int2", ""))
+
+    deleteDataset(dsn2)
 })
