@@ -16,7 +16,7 @@ details of the GDAL Raster API."><!-- mathjax --><script src="https://cdnjs.clou
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.0.9030</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.0.9040</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -170,6 +170,7 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">apply_geotransform</span><span class="op">(</span><span class="va">col_row</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">get_pixel_line</span><span class="op">(</span><span class="va">xy</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
@@ -336,7 +337,15 @@ raster.</p>
 Returns an integer vector of length three containing the raster dimensions.
 Equivalent to:
 <code>c(ds$getRasterXSize(), ds$getRasterYSize(), ds$getRasterCount())</code></p>
-<p><code>$get_pixel_line()</code>
+<p><code>$apply_geotransform(col_row)</code>
+Applies geotransform coefficients to raster coordinates in pixel/line space
+(column/row), converting into georeferenced (x/y) coordinates.
+<code>col_row</code> is a numeric matrix of raster col/row coordinates (or two-column
+data frame that will be coerced to numeric matrix).
+Returns a numeric matrix of geospatial x/y coordinates.
+See the stand-alone function of the same name (<code><a href="apply_geotransform.html">apply_geotransform()</a></code>) for
+more info and examples.</p>
+<p><code>$get_pixel_line(xy)</code>
 Converts geospatial coordinates to pixel/line (raster column/row numbers).
 <code>xy</code> is a numeric matrix of geospatial x,y coordinates in the same spatial
 reference system as the raster (or two-column data frame that will be
