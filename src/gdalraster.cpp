@@ -387,6 +387,14 @@ std::vector<int> GDALRaster::dim() const {
     return ret;
 }
 
+Rcpp::NumericMatrix GDALRaster::apply_geotransform(
+        const Rcpp::RObject& col_row) const {
+
+    checkAccess_(GA_ReadOnly);
+
+    return apply_geotransform_ds(col_row, this);
+}
+
 Rcpp::IntegerMatrix GDALRaster::get_pixel_line(const Rcpp::RObject& xy) const {
     checkAccess_(GA_ReadOnly);
 
@@ -1572,6 +1580,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Return the resolution (pixel width, pixel height)")
     .const_method("dim", &GDALRaster::dim,
         "Return raster dimensions (xsize, ysize, number of bands)")
+    .const_method("apply_geotransform", &GDALRaster::apply_geotransform,
+        "Apply geotransform (raster column/row to geospatial x/y)")
     .const_method("get_pixel_line", &GDALRaster::get_pixel_line,
         "Convert geospatial coordinates to pixel/line")
     .const_method("getBlockSize", &GDALRaster::getBlockSize,

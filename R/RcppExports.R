@@ -374,7 +374,7 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE, optio
 
 #' Apply geotransform - internal wrapper of GDALApplyGeoTransform()
 #'
-#' `_apply_geotransform()` applies geotransform coefficients to a raster
+#' `apply_geotransform_()` applies geotransform coefficients to a raster
 #' coordinate in pixel/line space (colum/row), converting into a
 #' georeferenced (x, y) coordinate.
 #'
@@ -388,7 +388,21 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE, optio
 #' [inv_geotransform()]
 #' @noRd
 .apply_geotransform <- function(gt, pixel, line) {
-    .Call(`_gdalraster_apply_geotransform`, gt, pixel, line)
+    .Call(`_gdalraster_apply_geotransform_`, gt, pixel, line)
+}
+
+#' Apply geotransform (raster column/row to geospatial x/y)
+#' input as geotransform vector, no bounds checking on col/row
+#' @noRd
+.apply_geotransform_gt <- function(col_row, gt) {
+    .Call(`_gdalraster_apply_geotransform_gt`, col_row, gt)
+}
+
+#' Apply geotransform (raster column/row to geospatial x/y)
+#' alternate version for GDALRaster input, with bounds checking
+#' @noRd
+.apply_geotransform_ds <- function(col_row, ds) {
+    .Call(`_gdalraster_apply_geotransform_ds`, col_row, ds)
 }
 
 #' Invert geotransform
@@ -434,7 +448,7 @@ inv_geotransform <- function(gt) {
 #' input is gt vector, no bounds checking done on output
 #' @noRd
 .get_pixel_line_gt <- function(xy, gt) {
-    .Call(`_gdalraster_get_pixel_line_gt_`, xy, gt)
+    .Call(`_gdalraster_get_pixel_line_gt`, xy, gt)
 }
 
 #' Raster pixel/line from geospatial x,y coordinates

@@ -44,8 +44,9 @@
   \code{\link[=GDALRaster]{GDALRaster$setDefaultRAT()}}
 
   \item geotransform conversion:
-  \code{\link[=inv_geotransform]{inv_geotransform()}},
-  \code{\link[=get_pixel_line]{get_pixel_line()}}
+  \code{\link[=apply_geotransform]{apply_geotransform()}},
+  \code{\link[=get_pixel_line]{get_pixel_line()}},
+  \code{\link[=inv_geotransform]{inv_geotransform()}}
 
   \item coordinate transformation:
   \code{\link[=transform_xy]{transform_xy()}},

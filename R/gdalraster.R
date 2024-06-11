@@ -69,6 +69,7 @@
 #' ds$bbox()
 #' ds$res()
 #' ds$dim()
+#' ds$apply_geotransform(col_row)
 #' ds$get_pixel_line(xy)
 #'
 #' ds$getRasterCount()
@@ -264,7 +265,16 @@
 #' Equivalent to:
 #' `c(ds$getRasterXSize(), ds$getRasterYSize(), ds$getRasterCount())`
 #'
-#' \code{$get_pixel_line()}
+#' \code{$apply_geotransform(col_row)}
+#' Applies geotransform coefficients to raster coordinates in pixel/line space
+#' (column/row), converting into georeferenced (x/y) coordinates.
+#' `col_row` is a numeric matrix of raster col/row coordinates (or two-column
+#' data frame that will be coerced to numeric matrix).
+#' Returns a numeric matrix of geospatial x/y coordinates.
+#' See the stand-alone function of the same name ([apply_geotransform()]) for
+#' more info and examples.
+#'
+#' \code{$get_pixel_line(xy)}
 #' Converts geospatial coordinates to pixel/line (raster column/row numbers).
 #' `xy` is a numeric matrix of geospatial x,y coordinates in the same spatial
 #' reference system as the raster (or two-column data frame that will be

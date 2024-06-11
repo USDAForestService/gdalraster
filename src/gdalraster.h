@@ -136,6 +136,7 @@ class GDALRaster {
     std::vector<double> bbox() const;
     std::vector<double> res() const;
     std::vector<int> dim() const;
+    Rcpp::NumericMatrix apply_geotransform(const Rcpp::RObject& col_row) const;
     Rcpp::IntegerMatrix get_pixel_line(const Rcpp::RObject& xy) const;
 
     std::vector<int> getBlockSize(int band) const;
@@ -276,10 +277,14 @@ bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
 Rcpp::NumericVector vsi_get_disk_free_space(Rcpp::CharacterVector path);
 SEXP vsi_get_file_metadata(Rcpp::CharacterVector filename, std::string domain);
 
-Rcpp::NumericVector apply_geotransform(const std::vector<double> gt,
+Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt,
                                        double pixel, double line);
+Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row,
+        const std::vector<double> gt);
+Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject& col_row,
+        const GDALRaster* ds);
 Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
-Rcpp::IntegerMatrix get_pixel_line_gt_(const Rcpp::RObject& xy,
+Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy,
                                        const std::vector<double> gt);
 
 Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
