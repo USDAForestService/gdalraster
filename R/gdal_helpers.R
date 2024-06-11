@@ -305,6 +305,65 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
         return(opts)
 }
 
+#' Apply geotransform (raster column/row to geospatial x/y)
+#'
+#' `apply_geotransform()` applies geotransform coefficients to raster
+#' coordinates in pixel/line space (column/row), converting into
+#' georeferenced (x/y) coordinates. Wrapper of `GDALApplyGeoTransform()` in
+#' the GDAL API, operating on matrix input.
+#'
+#' @param col_row Numeric matrix of raster column/row (pixel/line) coordinates
+#' (or two-column data frame that will be coerced to numeric matrix).
+#' @param gt Either a numeric vector of length six containing the affine
+#' geotransform for the raster, or an object of class `GDALRaster` from
+#' which the geotransform will be obtained.
+#' @returns Numeric matrix of geospatia x/y coordinates.
+#'
+#' @note
+#' Bounds checking on the input coordinates is done if `gt` is obtained from an
+#' object of class `GDALRaster`. See Note for [get_pixel_line()].
+#'
+#' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [get_pixel_line()]
+#'
+#' @examples
+#' raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+#' ds <- new(GDALRaster, raster_file)
+#'
+#' # compute some raster coordinates in column/row space
+#' set.seed(42)
+#' col_coords <- runif(10, min = 0, max = ds$getRasterXSize() - 0.00001)
+#' row_coords <- runif(10, min = 0, max = ds$getRasterYSize() - 0.00001)
+#' col_row <- cbind(col_coords, row_coords)
+#'
+#' convert to geospatial x/y coordinates
+#' gt <- ds$getGeoTransform()
+#' apply_geotransform(col_row, gt)
+#'
+#' # or, using the class method
+#' ds$apply_geotransform(col_row)
+#'
+#' # bounds checking
+#' col_row <- rbind(col_row, c(ds$getRasterXSize(), ds$getRasterYSize()))
+#' ds$apply_geotransform(col_row)
+#'
+#' ds$close()
+apply_geotransform <- function(col_row, gt) {
+    if (!(is.matrix(col_row) || is.data.frame(col_row)))
+        stop("'col_row' must be a data frame or numeric matrix", call. = FALSE)
+
+    if (ncol(col_row) != 2)
+        stop("'col_row' must have 2 columns", call. = FALSE)
+
+    if (is(gt, "Rcpp_GDALRaster")) {
+        return(.apply_geotransform_ds(col_row, gt))
+    } else if (is.numeric(gt) && length(gt) == 6) {
+        return(.apply_geotransform_gt(col_row, gt))
+    } else {
+        stop("'gt' must be a numeric vector of length 6, or GDALRaster object",
+             call. = FALSE)
+    }
+}
+
 #' Raster pixel/line from geospatial x,y coordinates
 #'
 #' `get_pixel_line()` converts geospatial coordinates to pixel/line (raster
@@ -359,8 +418,7 @@ get_pixel_line <- function(xy, gt) {
         stop("'xy' must be a data frame or numeric matrix", call. = FALSE)
 
     if (ncol(xy) != 2)
-        stop("'xy' must have 2 columns",
-             call. = FALSE)
+        stop("'xy' must have 2 columns", call. = FALSE)
 
     if (is(gt, "Rcpp_GDALRaster")) {
         return(.get_pixel_line_ds(xy, gt))

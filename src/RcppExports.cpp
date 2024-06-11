@@ -197,16 +197,40 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// apply_geotransform
-Rcpp::NumericVector apply_geotransform(const std::vector<double> gt, double pixel, double line);
-RcppExport SEXP _gdalraster_apply_geotransform(SEXP gtSEXP, SEXP pixelSEXP, SEXP lineSEXP) {
+// apply_geotransform_
+Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt, double pixel, double line);
+RcppExport SEXP _gdalraster_apply_geotransform_(SEXP gtSEXP, SEXP pixelSEXP, SEXP lineSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
     Rcpp::traits::input_parameter< double >::type pixel(pixelSEXP);
     Rcpp::traits::input_parameter< double >::type line(lineSEXP);
-    rcpp_result_gen = Rcpp::wrap(apply_geotransform(gt, pixel, line));
+    rcpp_result_gen = Rcpp::wrap(apply_geotransform_(gt, pixel, line));
+    return rcpp_result_gen;
+END_RCPP
+}
+// apply_geotransform_gt
+Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row, const std::vector<double> gt);
+RcppExport SEXP _gdalraster_apply_geotransform_gt(SEXP col_rowSEXP, SEXP gtSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type col_row(col_rowSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
+    rcpp_result_gen = Rcpp::wrap(apply_geotransform_gt(col_row, gt));
+    return rcpp_result_gen;
+END_RCPP
+}
+// apply_geotransform_ds
+Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject& col_row, const GDALRaster* ds);
+RcppExport SEXP _gdalraster_apply_geotransform_ds(SEXP col_rowSEXP, SEXP dsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type col_row(col_rowSEXP);
+    Rcpp::traits::input_parameter< const GDALRaster* >::type ds(dsSEXP);
+    rcpp_result_gen = Rcpp::wrap(apply_geotransform_ds(col_row, ds));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -221,15 +245,15 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// get_pixel_line_gt_
-Rcpp::IntegerMatrix get_pixel_line_gt_(const Rcpp::RObject& xy, const std::vector<double> gt);
-RcppExport SEXP _gdalraster_get_pixel_line_gt_(SEXP xySEXP, SEXP gtSEXP) {
+// get_pixel_line_gt
+Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy, const std::vector<double> gt);
+RcppExport SEXP _gdalraster_get_pixel_line_gt(SEXP xySEXP, SEXP gtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type xy(xySEXP);
     Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
-    rcpp_result_gen = Rcpp::wrap(get_pixel_line_gt_(xy, gt));
+    rcpp_result_gen = Rcpp::wrap(get_pixel_line_gt(xy, gt));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1475,9 +1499,11 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_cpl_http_cleanup", (DL_FUNC) &_gdalraster_cpl_http_cleanup, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 6},
-    {"_gdalraster_apply_geotransform", (DL_FUNC) &_gdalraster_apply_geotransform, 3},
+    {"_gdalraster_apply_geotransform_", (DL_FUNC) &_gdalraster_apply_geotransform_, 3},
+    {"_gdalraster_apply_geotransform_gt", (DL_FUNC) &_gdalraster_apply_geotransform_gt, 2},
+    {"_gdalraster_apply_geotransform_ds", (DL_FUNC) &_gdalraster_apply_geotransform_ds, 2},
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
-    {"_gdalraster_get_pixel_line_gt_", (DL_FUNC) &_gdalraster_get_pixel_line_gt_, 2},
+    {"_gdalraster_get_pixel_line_gt", (DL_FUNC) &_gdalraster_get_pixel_line_gt, 2},
     {"_gdalraster_get_pixel_line_ds", (DL_FUNC) &_gdalraster_get_pixel_line_ds, 2},
     {"_gdalraster_buildVRT", (DL_FUNC) &_gdalraster_buildVRT, 4},
     {"_gdalraster_combine", (DL_FUNC) &_gdalraster_combine, 8},

@@ -74,6 +74,36 @@ test_that("createCopy writes correct output", {
     ds$close()
 })
 
+test_that("apply_geotransform gives correct results", {
+    raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+    ds <- new(GDALRaster, raster_file)
+
+    # compute some raster coordinates in column/row space
+    set.seed(1)
+    col_coords <- runif(10, min = 0, max = ds$getRasterXSize() - 0.00001)
+    row_coords <- runif(10, min = 0, max = ds$getRasterYSize() - 0.00001)
+    col_row <- cbind(col_coords, row_coords)
+    dimnames(col_row) <- NULL
+
+    x_expected <- c(324615.1, 325072.5, 325933.6, 327372.3, 324341.3, 327330.2,
+                    327528.7, 326310.9, 326175.0, 323741.1)
+    y_expected <- c(5104421, 5104515, 5102877, 5103849, 5102611, 5103484,
+                    5102778, 5101898, 5103862, 5102586)
+    xy_expected <- cbind(x_expected, y_expected)
+    dimnames(xy_expected) <- NULL
+
+    gt <- ds$getGeoTransform()
+    expect_equal(apply_geotransform(col_row, gt), xy_expected, tolerance = 1)
+
+    # or, using the class method
+    expect_equal(ds$apply_geotransform(col_row), xy_expected,  tolerance = 1)
+
+    expect_equal(ds$apply_geotransform(col_row) |> ds$get_pixel_line(),
+                 trunc(col_row))
+
+    ds$close()
+})
+
 test_that("get_pixel_line gives correct results", {
     pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
     pts <- read.csv(pt_file)
