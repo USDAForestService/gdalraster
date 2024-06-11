@@ -335,7 +335,7 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
 #' row_coords <- runif(10, min = 0, max = ds$getRasterYSize() - 0.00001)
 #' col_row <- cbind(col_coords, row_coords)
 #'
-#' convert to geospatial x/y coordinates
+#' # convert to geospatial x/y coordinates
 #' gt <- ds$getGeoTransform()
 #' apply_geotransform(col_row, gt)
 #'
