@@ -317,7 +317,7 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
 #' @param gt Either a numeric vector of length six containing the affine
 #' geotransform for the raster, or an object of class `GDALRaster` from
 #' which the geotransform will be obtained.
-#' @returns Numeric matrix of geospatia x/y coordinates.
+#' @returns Numeric matrix of geospatial x/y coordinates.
 #'
 #' @note
 #' Bounds checking on the input coordinates is done if `gt` is obtained from an

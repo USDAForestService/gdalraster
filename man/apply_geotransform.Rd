@@ -15,7 +15,7 @@ geotransform for the raster, or an object of class \code{GDALRaster} from
 which the geotransform will be obtained.}
 }
 \value{
-Numeric matrix of geospatia x/y coordinates.
+Numeric matrix of geospatial x/y coordinates.
 }
 \description{
 \code{apply_geotransform()} applies geotransform coefficients to raster
