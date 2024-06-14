@@ -56,7 +56,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1" id="gdalraster-1111">gdalraster 1.11.1<a class="anchor" aria-label="anchor" href="#gdalraster-1111"></a></h2>
+<h2 class="pkg-version" data-toc-text="1.11.1" id="gdalraster-1111">gdalraster 1.11.1<a class="anchor" aria-label="anchor" href="#gdalraster-1111"></a></h2><p class="text-muted">CRAN release: 2024-06-13</p>
 <ul><li><p>fix test in test-ogr_manage.R: the test for GeoJSON layer did not need to check existence using <code>with_update = TRUE</code> on a file in extdata (<a href="https://github.com/USDAForestService/gdalraster/issues/410" class="external-link">#410</a>)</p></li>
 <li><p>add <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code>: convert raster column/row to geospatial x/y coordinates, wrapper of <code>GDALApplyGeoTransform()</code> in the GDAL API, operating on a matrix of input col/row coordinates (the internal wrapper <code>.apply_geotransform()</code> is unchanged)</p></li>
 <li><p>add <code>GDALRaster$apply_geotransform()</code>: class method alternative to calling the stand-alone function <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code> on an object of class <code>GDALRaster</code></p></li>
