@@ -1,6 +1,9 @@
 /* Implementation of class GDALVector. Encapsulates an OGRLayer and its
    GDALDataset. Requires {bit64} on the R side for its integer64 S3 type.
-   Chris Toney <chris.toney at usda.gov> */
+
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
 
 #include <cstdint>
 
@@ -57,7 +60,7 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
             eAccess(GA_ReadOnly),
             hLayer(nullptr) {
 
-    dsn_in = Rcpp::as<std::string>(_check_gdal_filename(dsn));
+    dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     open(read_only);
 }
 
@@ -134,14 +137,6 @@ void GDALVector::open(bool read_only) {
         OGR_L_ResetReading(hLayer);
     }
 
-    hFDefn = OGR_L_GetLayerDefn(hLayer);
-    if (hFDefn == nullptr) {
-        if (is_sql_in)
-            GDALDatasetReleaseResultSet(hDataset, hLayer);
-        GDALReleaseDataset(hDataset);
-        Rcpp::stop("failed to get layer definition");
-    }
-
     if (hGeom_filter != nullptr)
         OGR_G_DestroyGeometry(hGeom_filter);
 }
@@ -158,7 +153,7 @@ std::string GDALVector::getDsn() const {
 }
 
 Rcpp::CharacterVector GDALVector::getFileList() const {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     char **papszFiles;
     papszFiles = GDALGetFileList(hDataset);
@@ -179,53 +174,53 @@ Rcpp::CharacterVector GDALVector::getFileList() const {
 }
 
 std::string GDALVector::getDriverShortName() const {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     GDALDriverH hDriver = GDALGetDatasetDriver(hDataset);
     return GDALGetDriverShortName(hDriver);
 }
 
 std::string GDALVector::getDriverLongName() const {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     GDALDriverH hDriver = GDALGetDatasetDriver(hDataset);
     return GDALGetDriverLongName(hDriver);
 }
 
 std::string GDALVector::getName() const {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     return OGR_L_GetName(hLayer);
 }
 
 bool GDALVector::testCapability(std::string capability) const {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     return OGR_L_TestCapability(hLayer, capability.c_str());
 }
 
 std::string GDALVector::getFIDColumn() const {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     return OGR_L_GetFIDColumn(hLayer);
 }
 
 std::string GDALVector::getGeomType() const {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     OGRwkbGeometryType eType = OGR_L_GetGeomType(hLayer);
     return OGRGeometryTypeToName(eType);
 }
 
 std::string GDALVector::getGeometryColumn() const {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     return OGR_L_GetGeometryColumn(hLayer);
 }
 
 std::string GDALVector::getSpatialRef() const {
     // OGRLayer::GetSpatialRef() as WKT string
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     OGRSpatialReferenceH hSRS = OGR_L_GetSpatialRef(hLayer);
     if (hSRS == nullptr)
@@ -245,7 +240,7 @@ Rcpp::NumericVector GDALVector::bbox() {
     // see: testCapability("FastGetExtent")
     // Depending on the driver, a spatial filter may/may not be taken into
     // account. So it is safer to call bbox() without setting a spatial filter.
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     OGREnvelope envelope;
     if (OGR_L_GetExtent(hLayer, &envelope, true) != OGRERR_NONE)
@@ -258,7 +253,12 @@ Rcpp::NumericVector GDALVector::bbox() {
 }
 
 Rcpp::List GDALVector::getLayerDefn() const {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
+
+    OGRFeatureDefnH hFDefn;
+    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    if (hFDefn == nullptr)
+        Rcpp::stop("failed to get layer definition");
 
     Rcpp::List list_out = Rcpp::List::create();
     std::string sValue;
@@ -360,7 +360,7 @@ Rcpp::List GDALVector::getLayerDefn() const {
 }
 
 void GDALVector::setAttributeFilter(std::string query) {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     const char* query_in = nullptr;
     if (query != "")
@@ -371,7 +371,7 @@ void GDALVector::setAttributeFilter(std::string query) {
 }
 
 void GDALVector::setSpatialFilterRect(Rcpp::NumericVector bbox) {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     if (Rcpp::any(Rcpp::is_na(bbox)))
         Rcpp::stop("'bbox' has one or more 'NA' values");
@@ -380,7 +380,7 @@ void GDALVector::setSpatialFilterRect(Rcpp::NumericVector bbox) {
 }
 
 void GDALVector::clearSpatialFilter() {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     OGR_L_SetSpatialFilter(hLayer, nullptr);
 }
@@ -390,17 +390,17 @@ double GDALVector::getFeatureCount() {
     // GDAL doc: Note that some implementations of this method may alter the
     // read cursor of the layer.
     // see: testCapability("FastFeatureCount")
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     return static_cast<double>(OGR_L_GetFeatureCount(hLayer, true));
 }
 
 SEXP GDALVector::getNextFeature() {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     OGRFeatureH hFeature = OGR_L_GetNextFeature(hLayer);
     if (hFeature != nullptr)
-        return _featureToList(hFeature);
+        return featureToList_(hFeature);
     else
         return R_NilValue;
 }
@@ -409,7 +409,7 @@ SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
     // fid must be an R numeric vector of length 1
     // i.e., a scalar but use NumericVector here since it can carry the class
     // attribute for integer64
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     if (fid.size() != 1)
         Rcpp::stop("'fid' must be a length-1 numeric vector (integer64)");
@@ -427,13 +427,13 @@ SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
                                             static_cast<GIntBig>(fid_in));
 
     if (hFeature != nullptr)
-        return _featureToList(hFeature);
+        return featureToList_(hFeature);
     else
         return R_NilValue;
 }
 
 void GDALVector::resetReading() {
-    _checkAccess(GA_ReadOnly);
+    checkAccess_(GA_ReadOnly);
 
     OGR_L_ResetReading(hLayer);
 }
@@ -456,8 +456,8 @@ void GDALVector::layerIntersection(
 
     OGRErr err = OGR_L_Intersection(
                     hLayer,
-                    method_layer._getOGRLayerH(),
-                    result_layer._getOGRLayerH(),
+                    method_layer.getOGRLayerH_(),
+                    result_layer.getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -484,8 +484,8 @@ void GDALVector::layerUnion(
 
     OGRErr err = OGR_L_Union(
                     hLayer,
-                    method_layer._getOGRLayerH(),
-                    result_layer._getOGRLayerH(),
+                    method_layer.getOGRLayerH_(),
+                    result_layer.getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -512,8 +512,8 @@ void GDALVector::layerSymDifference(
 
     OGRErr err = OGR_L_SymDifference(
                     hLayer,
-                    method_layer._getOGRLayerH(),
-                    result_layer._getOGRLayerH(),
+                    method_layer.getOGRLayerH_(),
+                    result_layer.getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -540,8 +540,8 @@ void GDALVector::layerIdentity(
 
     OGRErr err = OGR_L_Identity(
                     hLayer,
-                    method_layer._getOGRLayerH(),
-                    result_layer._getOGRLayerH(),
+                    method_layer.getOGRLayerH_(),
+                    result_layer.getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -568,8 +568,8 @@ void GDALVector::layerUpdate(
 
     OGRErr err = OGR_L_Update(
                     hLayer,
-                    method_layer._getOGRLayerH(),
-                    result_layer._getOGRLayerH(),
+                    method_layer.getOGRLayerH_(),
+                    result_layer.getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -596,8 +596,8 @@ void GDALVector::layerClip(
 
     OGRErr err = OGR_L_Clip(
                     hLayer,
-                    method_layer._getOGRLayerH(),
-                    result_layer._getOGRLayerH(),
+                    method_layer.getOGRLayerH_(),
+                    result_layer.getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -624,8 +624,8 @@ void GDALVector::layerErase(
 
     OGRErr err = OGR_L_Erase(
                     hLayer,
-                    method_layer._getOGRLayerH(),
-                    result_layer._getOGRLayerH(),
+                    method_layer.getOGRLayerH_(),
+                    result_layer.getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -648,7 +648,7 @@ void GDALVector::close() {
 // class methods for internal use not exposed in R
 // ****************************************************************************
 
-void GDALVector::_checkAccess(GDALAccess access_needed) const {
+void GDALVector::checkAccess_(GDALAccess access_needed) const {
     if (!isOpen())
         Rcpp::stop("dataset is not open");
 
@@ -656,13 +656,18 @@ void GDALVector::_checkAccess(GDALAccess access_needed) const {
         Rcpp::stop("dataset is read-only");
 }
 
-OGRLayerH GDALVector::_getOGRLayerH() const {
-    _checkAccess(GA_ReadOnly);
+OGRLayerH GDALVector::getOGRLayerH_() const {
+    checkAccess_(GA_ReadOnly);
 
     return hLayer;
 }
 
-Rcpp::List GDALVector::_featureToList(OGRFeatureH hFeature) const {
+Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
+    OGRFeatureDefnH hFDefn;
+    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    if (hFDefn == nullptr)
+        Rcpp::stop("failed to get layer definition");
+
     Rcpp::List list_out = Rcpp::List::create();
     int i;
 

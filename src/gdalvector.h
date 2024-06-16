@@ -1,6 +1,9 @@
 /* R interface to a subset of the GDAL C API for vector. A class for OGRLayer,
    a layer of features in a GDALDataset. https://gdal.org/api/vector_c_api.html
-   Chris Toney <chris.toney at usda.gov> */
+
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
 
 #ifndef SRC_GDALVECTOR_H_
 #define SRC_GDALVECTOR_H_
@@ -28,7 +31,6 @@ class GDALVector {
     GDALDatasetH hDataset;
     GDALAccess eAccess;
     OGRLayerH hLayer;
-    OGRFeatureDefnH hFDefn;
 
  public:
     GDALVector();
@@ -107,9 +109,9 @@ class GDALVector {
     void close();
 
     // methods for internal use not exported to R
-    void _checkAccess(GDALAccess access_needed) const;
-    OGRLayerH _getOGRLayerH() const;
-    Rcpp::List _featureToList(OGRFeatureH hFeature) const;
+    void checkAccess_(GDALAccess access_needed) const;
+    OGRLayerH getOGRLayerH_() const;
+    Rcpp::List featureToList_(OGRFeatureH hFeature) const;
 };
 
 RCPP_EXPOSED_CLASS(GDALVector)
