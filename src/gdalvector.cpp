@@ -10,7 +10,7 @@
 #include "gdal.h"
 #include "cpl_port.h"
 #include "cpl_string.h"
-#include "ogrsf_frmts.h"
+// #include "ogrsf_frmts.h"
 #include "ogr_srs_api.h"
 
 #include "gdalraster.h"
@@ -723,6 +723,58 @@ Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
     }
 
     return list_out;
+}
+
+Rcpp::DataFrame GDALVector::initDF_(R_xlen_t nrow) const {
+    OGRFeatureDefnH hFDefn;
+    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    if (hFDefn == nullptr)
+        Rcpp::stop("failed to get layer definition");
+
+    Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
+    int i;
+
+    std::vector<int64_t> fid_(nrow);
+    Rcpp::NumericVector fid = Rcpp::wrap(fid_);
+    df_out.push_back(fid, "FID");
+
+    for (i = 0; i < OGR_FD_GetFieldCount(hFDefn); ++i) {
+        OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
+        if (hFieldDefn == nullptr)
+            Rcpp::stop("could not obtain field definition");
+
+        OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+        if (fld_type == OFTInteger) {
+            Rcpp::IntegerVector v(nrow);
+            df_out.push_back(v, OGR_Fld_GetNameRef(hFieldDefn));
+        }
+        else if (fld_type == OFTInteger64) {
+            std::vector<int64_t> v_(nrow);
+            Rcpp::NumericVector v = Rcpp::wrap(v_);
+            df_out.push_back(v, OGR_Fld_GetNameRef(hFieldDefn));
+        }
+        else if (fld_type == OFTReal) {
+            Rcpp::NumericVector v(nrow);
+            df_out.push_back(v, OGR_Fld_GetNameRef(hFieldDefn));
+        }
+        else {
+            // TODO(ctoney): support date, time, binary, etc.
+            // read as string for now
+            Rcpp::CharacterVector v(nrow);
+            df_out.push_back(v, OGR_Fld_GetNameRef(hFieldDefn));
+        }
+    }
+
+    for (i = 0; i < OGR_FD_GetGeomFieldCount(hFDefn); ++i) {
+        OGRGeomFieldDefnH hGeomFldDefn = OGR_FD_GetGeomFieldDefn(hFDefn, i);
+        if (hGeomFldDefn == nullptr)
+            Rcpp::stop("could not obtain geometry field def");
+
+        Rcpp::CharacterVector v(nrow);
+        df_out.push_back(v, OGR_GFld_GetNameRef(hGeomFldDefn));
+    }
+
+    return df_out;
 }
 
 // ****************************************************************************

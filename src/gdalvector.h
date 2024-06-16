@@ -112,6 +112,7 @@ class GDALVector {
     void checkAccess_(GDALAccess access_needed) const;
     OGRLayerH getOGRLayerH_() const;
     Rcpp::List featureToList_(OGRFeatureH hFeature) const;
+    Rcpp::DataFrame initDF_(R_xlen_t nrow) const;
 };
 
 RCPP_EXPOSED_CLASS(GDALVector)
