@@ -679,62 +679,81 @@ Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
         if (hFieldDefn == nullptr)
             Rcpp::stop("could not obtain field definition");
 
+        bool has_value = true;
         if (!OGR_F_IsFieldSet(hFeature, i) ||
                 OGR_F_IsFieldNull(hFeature, i)) {
-            continue;
+            has_value = false;
         }
 
         OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
         if (fld_type == OFTInteger) {
-            int value = OGR_F_GetFieldAsInteger(hFeature, i);
+            int value = NA_INTEGER;
+            if (has_value)
+                value = OGR_F_GetFieldAsInteger(hFeature, i);
+
             list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
         }
         else if (fld_type == OFTInteger64) {
-            int64_t value = static_cast<int64_t>(
-                    OGR_F_GetFieldAsInteger64(hFeature, i));
+            int64_t value = NA_INTEGER64;
+            if (has_value)
+                value = static_cast<int64_t>(
+                        OGR_F_GetFieldAsInteger64(hFeature, i));
+
             list_out.push_back(Rcpp::toInteger64(value),
-                                OGR_Fld_GetNameRef(hFieldDefn));
+                               OGR_Fld_GetNameRef(hFieldDefn));
         }
         else if (fld_type == OFTReal) {
-            double value = OGR_F_GetFieldAsDouble(hFeature, i);
+            double value =  NA_REAL;
+            if (has_value)
+                value = OGR_F_GetFieldAsDouble(hFeature, i);
+
             list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
         }
         else {
             // TODO(ctoney): support date, time, binary, etc.
             // read as string for now
-            std::string value = OGR_F_GetFieldAsString(hFeature, i);
+            std::string value = "";
+            if (has_value)
+                OGR_F_GetFieldAsString(hFeature, i);
+
             list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
         }
     }
 
     for (i = 0; i < OGR_F_GetGeomFieldCount(hFeature); ++i) {
-        OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeature, i);
-        if (hGeom == nullptr)
-            Rcpp::stop("could not obtain geometry reference");
-        char* pszWKT;
-        OGR_G_ExportToWkt(hGeom, &pszWKT);
-        std::string wkt(pszWKT);
         OGRGeomFieldDefnH hGeomFldDefn =
                 OGR_F_GetGeomFieldDefnRef(hFeature, i);
         if (hGeomFldDefn == nullptr)
             Rcpp::stop("could not obtain geometry field def");
-        list_out.push_back(wkt, OGR_GFld_GetNameRef(hGeomFldDefn));
-        CPLFree(pszWKT);
+
+        OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeature, i);
+        if (hGeom != nullptr) {
+            char* pszWKT;
+            OGR_G_ExportToWkt(hGeom, &pszWKT);
+            std::string wkt(pszWKT);
+            list_out.push_back(wkt, OGR_GFld_GetNameRef(hGeomFldDefn));
+            CPLFree(pszWKT);
+        }
+        else {
+            list_out.push_back("", OGR_GFld_GetNameRef(hGeomFldDefn));
+        }
     }
 
     return list_out;
 }
 
-Rcpp::DataFrame GDALVector::initDF_(R_xlen_t nrow) const {
+SEXP GDALVector::initDF_(R_xlen_t nrow) const {
     OGRFeatureDefnH hFDefn;
     hFDefn = OGR_L_GetLayerDefn(hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
 
-    Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
+    // construct the output data frame as list
+    // it will be coerced to data frame at return
+    Rcpp::List df_out = Rcpp::List::create();
     int i;
 
-    std::vector<int64_t> fid_(nrow);
+    std::vector<int64_t> fid_(nrow, NA_INTEGER64);
     Rcpp::NumericVector fid = Rcpp::wrap(fid_);
     df_out.push_back(fid, "FID");
 
@@ -745,22 +764,23 @@ Rcpp::DataFrame GDALVector::initDF_(R_xlen_t nrow) const {
 
         OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
         if (fld_type == OFTInteger) {
-            Rcpp::IntegerVector v(nrow);
+            // TODO: handle boolean subtype
+            Rcpp::IntegerVector v(nrow, NA_INTEGER);
             df_out.push_back(v, OGR_Fld_GetNameRef(hFieldDefn));
         }
         else if (fld_type == OFTInteger64) {
-            std::vector<int64_t> v_(nrow);
+            std::vector<int64_t> v_(nrow, NA_INTEGER64);
             Rcpp::NumericVector v = Rcpp::wrap(v_);
             df_out.push_back(v, OGR_Fld_GetNameRef(hFieldDefn));
         }
         else if (fld_type == OFTReal) {
-            Rcpp::NumericVector v(nrow);
+            Rcpp::NumericVector v(nrow, NA_REAL);
             df_out.push_back(v, OGR_Fld_GetNameRef(hFieldDefn));
         }
         else {
             // TODO(ctoney): support date, time, binary, etc.
             // read as string for now
-            Rcpp::CharacterVector v(nrow);
+            Rcpp::CharacterVector v(nrow, NA_STRING);
             df_out.push_back(v, OGR_Fld_GetNameRef(hFieldDefn));
         }
     }
@@ -770,10 +790,12 @@ Rcpp::DataFrame GDALVector::initDF_(R_xlen_t nrow) const {
         if (hGeomFldDefn == nullptr)
             Rcpp::stop("could not obtain geometry field def");
 
-        Rcpp::CharacterVector v(nrow);
+        Rcpp::CharacterVector v(nrow, NA_STRING);
         df_out.push_back(v, OGR_GFld_GetNameRef(hGeomFldDefn));
     }
 
+    df_out.attr("class") = "data.frame";
+    df_out.attr("row.names") = Rcpp::seq_len(nrow);
     return df_out;
 }
 

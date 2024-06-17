@@ -6,12 +6,18 @@
 #ifndef SRC_RCPP_UTIL_H_
 #define SRC_RCPP_UTIL_H_
 
+#include <limits.h>
+
 #include <Rcpp.h>
 #include <RcppInt64>
 
 #include <algorithm>
 #include <cctype>
 #include <string>
+
+// as defined in the bit64 package src/integer64.h
+#define NA_INTEGER64 LLONG_MIN
+#define ISNA_INTEGER64(X)((X) == NA_INTEGER64)
 
 Rcpp::NumericMatrix df_to_matrix_(const Rcpp::DataFrame& df);
 Rcpp::IntegerMatrix df_to_int_matrix_(const Rcpp::DataFrame& df);
