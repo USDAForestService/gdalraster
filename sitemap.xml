@@ -298,6 +298,9 @@
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_curl_clear_cache.html</loc>
   </url>
   <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_actual_url.html</loc>
+  </url>
+  <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_disk_free_space.html</loc>
   </url>
   <url>
@@ -308,6 +311,9 @@
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_prefixes.html</loc>
+  </url>
+  <url>
+    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_signed_url.html</loc>
   </url>
   <url>
     <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_mkdir.html</loc>
