@@ -1,3 +1,9 @@
+# gdalraster 1.11.1.9000 (dev)
+
+* add `vsi_get_actual_url()`: return the actual URL of a supplied VSI filename, wrapper of `VSIGetActualURL()` in the GDAL API (2024-06-20)
+
+* add `vsi_get_signed_url()`: return a signed URL for a supplied VSI filename, wrapper of `VSIGetSignedURL()` in the GDAL API (2024-06-20)
+
 # gdalraster 1.11.1
 
 * fix test in test-ogr_manage.R: the test for GeoJSON layer did not need to check existence using `with_update = TRUE` on a file in extdata (#410)

@@ -780,6 +780,29 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// vsi_get_actual_url
+SEXP vsi_get_actual_url(Rcpp::CharacterVector filename);
+RcppExport SEXP _gdalraster_vsi_get_actual_url(SEXP filenameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_get_actual_url(filename));
+    return rcpp_result_gen;
+END_RCPP
+}
+// vsi_get_signed_url
+SEXP vsi_get_signed_url(Rcpp::CharacterVector filename, Rcpp::Nullable<Rcpp::CharacterVector> options);
+RcppExport SEXP _gdalraster_vsi_get_signed_url(SEXP filenameSEXP, SEXP optionsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_get_signed_url(filename, options));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getGEOSVersion
 std::vector<int> getGEOSVersion();
 RcppExport SEXP _gdalraster_getGEOSVersion() {
@@ -1544,6 +1567,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_set_path_option", (DL_FUNC) &_gdalraster_vsi_set_path_option, 3},
     {"_gdalraster_vsi_clear_path_options", (DL_FUNC) &_gdalraster_vsi_clear_path_options, 1},
     {"_gdalraster_vsi_get_file_metadata", (DL_FUNC) &_gdalraster_vsi_get_file_metadata, 2},
+    {"_gdalraster_vsi_get_actual_url", (DL_FUNC) &_gdalraster_vsi_get_actual_url, 1},
+    {"_gdalraster_vsi_get_signed_url", (DL_FUNC) &_gdalraster_vsi_get_signed_url, 2},
     {"_gdalraster_getGEOSVersion", (DL_FUNC) &_gdalraster_getGEOSVersion, 0},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster_g_create", (DL_FUNC) &_gdalraster_g_create, 2},
