@@ -74,9 +74,8 @@ test_that("vsi_sync works", {
         expect_true(vsi_sync(src_dir, target_dir, options=opt))
     }
     expect_true(length(vsi_read_dir(target_dir)) > 1)
-    lapply( vsi_read_dir(target_dir),
-            function(f) {f <- file.path(target_dir, f); vsi_unlink(f)}
-            )
+    lapply(vsi_read_dir(target_dir),
+           function(f) {f <- file.path(target_dir, f); vsi_unlink(f)})
     expect_equal(vsi_rmdir(target_dir), 0)
 })
 
@@ -144,4 +143,12 @@ test_that("vsi_get_file_metadata works", {
     expect_no_error(md <- vsi_get_file_metadata(zip_vsi, domain="ZIP"))
     expect_type(md, "list")
     expect_equal(md$SOZIP_VALID, "YES")
+})
+
+test_that("get URL functions work", {
+    # currently not tested using network access
+    # only checking the null return value for now
+    expect_null(vsi_get_actual_url("/vsimem/test.tif"))
+    opt <- "EXPIRATION_DELAY=604800"
+    expect_null(vsi_get_signed_url("/vsimem/test.tif", opt))
 })

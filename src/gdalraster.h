@@ -276,6 +276,9 @@ bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
                             bool allow_local_tmpfile);
 Rcpp::NumericVector vsi_get_disk_free_space(Rcpp::CharacterVector path);
 SEXP vsi_get_file_metadata(Rcpp::CharacterVector filename, std::string domain);
+SEXP vsi_get_actual_url(Rcpp::CharacterVector filename);
+SEXP vsi_get_signed_url(Rcpp::CharacterVector filename,
+                               Rcpp::Nullable<Rcpp::CharacterVector> options);
 
 Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt,
                                        double pixel, double line);

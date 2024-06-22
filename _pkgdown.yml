@@ -129,10 +129,12 @@ reference:
   - vsi_clear_path_options
   - vsi_copy_file
   - vsi_curl_clear_cache
+  - vsi_get_actual_url
   - vsi_get_disk_free_space
   - vsi_get_file_metadata
   - vsi_get_fs_options
   - vsi_get_fs_prefixes
+  - vsi_get_signed_url
   - vsi_mkdir
   - vsi_read_dir
   - vsi_rename
