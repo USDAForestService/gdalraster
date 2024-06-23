@@ -70,6 +70,8 @@ class GDALVector {
     SEXP getFeature(Rcpp::NumericVector fid);
     void resetReading();
 
+    Rcpp::DataFrame fetch(double n);
+
     void layerIntersection(
             GDALVector method_layer,
             GDALVector result_layer,

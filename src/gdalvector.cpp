@@ -5,6 +5,7 @@
    Copyright (c) 2023-2024 gdalraster authors
 */
 
+#include <cmath>
 #include <cstdint>
 
 #include "gdal.h"
@@ -398,9 +399,9 @@ double GDALVector::getFeatureCount() {
 SEXP GDALVector::getNextFeature() {
     checkAccess_(GA_ReadOnly);
 
-    OGRFeatureH hFeature = OGR_L_GetNextFeature(hLayer);
-    if (hFeature != nullptr)
-        return featureToList_(hFeature);
+    OGRFeatureH hFeat = OGR_L_GetNextFeature(hLayer);
+    if (hFeat != nullptr)
+        return featureToList_(hFeat);
     else
         return R_NilValue;
 }
@@ -423,11 +424,11 @@ SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
         fid_in = static_cast<int64_t>(tmp[0]);
     }
 
-    OGRFeatureH hFeature = OGR_L_GetFeature(hLayer,
+    OGRFeatureH hFeat = OGR_L_GetFeature(hLayer,
                                             static_cast<GIntBig>(fid_in));
 
-    if (hFeature != nullptr)
-        return featureToList_(hFeature);
+    if (hFeat != nullptr)
+        return featureToList_(hFeat);
     else
         return R_NilValue;
 }
@@ -436,6 +437,99 @@ void GDALVector::resetReading() {
     checkAccess_(GA_ReadOnly);
 
     OGR_L_ResetReading(hLayer);
+}
+
+Rcpp::DataFrame GDALVector::fetch(double n) {
+    // Analog of DBI::dbFetch(), mostly following its specification:
+    // https://dbi.r-dbi.org/reference/dbFetch.html#specification
+    // n should be passed as a whole number (integer or numeric). A value of
+    // Inf for the n argument is supported and also returns the full result.
+
+    OGRFeatureDefnH hFDefn = nullptr;
+    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    if (hFDefn == nullptr)
+        Rcpp::stop("failed to get layer definition");
+
+    bool fetch_all = true;
+    double fetch_num = 0;
+    if (n >= 0 && std::isfinite(n)) {
+        fetch_all = false;
+        fetch_num = std::trunc(n);
+    }
+    else {
+        fetch_num = getFeatureCount();
+    }
+
+    Rcpp::DataFrame df = initDF_(static_cast<R_xlen_t>(fetch_num));
+
+    if (fetch_num == 0 || std::isnan(n))
+        return df;
+
+    OGRFeatureH hFeat = nullptr;
+    double fetch_count = 0;
+
+    while ((hFeat = OGR_L_GetNextFeature(hLayer)) != nullptr) {
+        R_xlen_t row = static_cast<R_xlen_t>(fetch_count);
+
+        int64_t fid = static_cast<int64_t>(OGR_F_GetFID(hFeat));
+        Rcpp::NumericVector fid_col = df[0];
+        fid_col(row) = Rcpp::toInteger64(fid)[0];
+
+        for (int i = 0; i < OGR_FD_GetFieldCount(hFDefn); ++i) {
+            OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
+            if (hFieldDefn == nullptr)
+                Rcpp::stop("could not obtain field definition");
+
+            bool has_value = true;
+            if (!OGR_F_IsFieldSet(hFeat, i) ||
+                    OGR_F_IsFieldNull(hFeat, i)) {
+                has_value = false;
+            }
+
+            OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+            if (fld_type == OFTInteger) {
+                int value = NA_INTEGER;
+                if (has_value)
+                    value = OGR_F_GetFieldAsInteger(hFeat, i);
+
+                Rcpp::IntegerVector col = df[i + 1];
+                col(row) = value;
+            }
+            else if (fld_type == OFTInteger64) {
+                int64_t value = NA_INTEGER64;
+                if (has_value)
+                    value = static_cast<int64_t>(
+                            OGR_F_GetFieldAsInteger64(hFeat, i));
+
+                Rcpp::NumericVector col = df[i + 1];
+                col(row) = Rcpp::toInteger64(value)[0];
+            }
+            else if (fld_type == OFTReal) {
+                double value =  NA_REAL;
+                if (has_value)
+                    value = OGR_F_GetFieldAsDouble(hFeat, i);
+
+                Rcpp::NumericVector col = df[i + 1];
+                col(row) = value;
+            }
+            else {
+                // TODO(ctoney): support date, time, binary, etc.
+                // read as string for now
+                std::string value = "";
+                if (has_value)
+                    value = OGR_F_GetFieldAsString(hFeat, i);
+
+                Rcpp::CharacterVector col = df[i + 1];
+                col(row) = value;
+            }
+        }
+
+        fetch_count += 1;
+        if (!fetch_all && (fetch_count == fetch_num))
+            break;
+    }
+
+    return df;
 }
 
 void GDALVector::layerIntersection(
@@ -662,8 +756,8 @@ OGRLayerH GDALVector::getOGRLayerH_() const {
     return hLayer;
 }
 
-Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
-    OGRFeatureDefnH hFDefn;
+Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeat) const {
+    OGRFeatureDefnH hFDefn = nullptr;
     hFDefn = OGR_L_GetLayerDefn(hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
@@ -671,7 +765,7 @@ Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
     Rcpp::List list_out = Rcpp::List::create();
     int i;
 
-    int64_t FID = static_cast<int64_t>(OGR_F_GetFID(hFeature));
+    int64_t FID = static_cast<int64_t>(OGR_F_GetFID(hFeat));
     list_out.push_back(Rcpp::toInteger64(FID), "FID");
 
     for (i = 0; i < OGR_FD_GetFieldCount(hFDefn); ++i) {
@@ -680,8 +774,8 @@ Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
             Rcpp::stop("could not obtain field definition");
 
         bool has_value = true;
-        if (!OGR_F_IsFieldSet(hFeature, i) ||
-                OGR_F_IsFieldNull(hFeature, i)) {
+        if (!OGR_F_IsFieldSet(hFeat, i) ||
+                OGR_F_IsFieldNull(hFeat, i)) {
             has_value = false;
         }
 
@@ -689,7 +783,7 @@ Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
         if (fld_type == OFTInteger) {
             int value = NA_INTEGER;
             if (has_value)
-                value = OGR_F_GetFieldAsInteger(hFeature, i);
+                value = OGR_F_GetFieldAsInteger(hFeat, i);
 
             list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
         }
@@ -697,7 +791,7 @@ Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
             int64_t value = NA_INTEGER64;
             if (has_value)
                 value = static_cast<int64_t>(
-                        OGR_F_GetFieldAsInteger64(hFeature, i));
+                        OGR_F_GetFieldAsInteger64(hFeat, i));
 
             list_out.push_back(Rcpp::toInteger64(value),
                                OGR_Fld_GetNameRef(hFieldDefn));
@@ -705,7 +799,7 @@ Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
         else if (fld_type == OFTReal) {
             double value =  NA_REAL;
             if (has_value)
-                value = OGR_F_GetFieldAsDouble(hFeature, i);
+                value = OGR_F_GetFieldAsDouble(hFeat, i);
 
             list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
         }
@@ -714,19 +808,19 @@ Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
             // read as string for now
             std::string value = "";
             if (has_value)
-                OGR_F_GetFieldAsString(hFeature, i);
+                value = OGR_F_GetFieldAsString(hFeat, i);
 
             list_out.push_back(value, OGR_Fld_GetNameRef(hFieldDefn));
         }
     }
 
-    for (i = 0; i < OGR_F_GetGeomFieldCount(hFeature); ++i) {
+    for (i = 0; i < OGR_F_GetGeomFieldCount(hFeat); ++i) {
         OGRGeomFieldDefnH hGeomFldDefn =
-                OGR_F_GetGeomFieldDefnRef(hFeature, i);
+                OGR_F_GetGeomFieldDefnRef(hFeat, i);
         if (hGeomFldDefn == nullptr)
             Rcpp::stop("could not obtain geometry field def");
 
-        OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeature, i);
+        OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
         if (hGeom != nullptr) {
             char* pszWKT;
             OGR_G_ExportToWkt(hGeom, &pszWKT);
@@ -743,7 +837,8 @@ Rcpp::List GDALVector::featureToList_(OGRFeatureH hFeature) const {
 }
 
 SEXP GDALVector::initDF_(R_xlen_t nrow) const {
-    OGRFeatureDefnH hFDefn;
+    // initialize a data frame with nrow rows for the layer definition
+    OGRFeatureDefnH hFDefn = nullptr;
     hFDefn = OGR_L_GetLayerDefn(hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
@@ -778,7 +873,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
             df_out.push_back(v, OGR_Fld_GetNameRef(hFieldDefn));
         }
         else {
-            // TODO(ctoney): support date, time, binary, etc.
+            // TODO: support date, time, binary, etc.
             // read as string for now
             Rcpp::CharacterVector v(nrow, NA_STRING);
             df_out.push_back(v, OGR_Fld_GetNameRef(hFieldDefn));
@@ -866,6 +961,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Fetch a feature by its identifier")
     .method("resetReading", &GDALVector::resetReading,
         "Reset feature reading to start on the first feature")
+    .method("fetch", &GDALVector::fetch,
+        "Fetch a set features as a data frame")
     .method("layerIntersection", &GDALVector::layerIntersection,
         "Intersection of this layer with a method layer")
     .method("layerUnion", &GDALVector::layerUnion,
