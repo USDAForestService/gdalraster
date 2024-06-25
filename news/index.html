@@ -10,7 +10,7 @@
     
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9010</small>
 
     
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,8 +56,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9000" id="gdalraster-11119000-dev">gdalraster 1.11.1.9000 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119000-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/vsi_get_actual_url.html">vsi_get_actual_url()</a></code>: return the actual URL of a supplied VSI filename, wrapper of <code>VSIGetActualURL()</code> in the GDAL API (2024-06-20)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9010" id="gdalraster-11119010-dev">gdalraster 1.11.1.9010 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119010-dev"></a></h2>
+<ul><li><p>avoid data copy in <code>GDALRaster::getDefaultRAT()</code> for better performance in the case of large attribute tables (2024-06-24)</p></li>
+<li><p>add <code><a href="../reference/vsi_get_actual_url.html">vsi_get_actual_url()</a></code>: return the actual URL of a supplied VSI filename, wrapper of <code>VSIGetActualURL()</code> in the GDAL API (2024-06-20)</p></li>
 <li><p>add <code><a href="../reference/vsi_get_signed_url.html">vsi_get_signed_url()</a></code>: return a signed URL for a supplied VSI filename, wrapper of <code>VSIGetSignedURL()</code> in the GDAL API (2024-06-20)</p></li>
 <li><p>Documentation: additions to the section on Azure (/vsiaz/) in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a></p></li>
 </ul></div>
