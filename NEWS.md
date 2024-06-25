@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9000 (dev)
+# gdalraster 1.11.1.9010 (dev)
+
+* avoid data copy in `GDALRaster::getDefaultRAT()` for better performance in the case of large attribute tables (2024-06-24)
 
 * add `vsi_get_actual_url()`: return the actual URL of a supplied VSI filename, wrapper of `VSIGetActualURL()` in the GDAL API (2024-06-20)
 
