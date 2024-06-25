@@ -1212,7 +1212,9 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
     CPLErr err = CE_None;
     int nCol = GDALRATGetColumnCount(hRAT);
     int nRow = GDALRATGetRowCount(hRAT);
-    Rcpp::DataFrame df = Rcpp::DataFrame::create();
+    Rcpp::List df(nCol);
+    Rcpp::CharacterVector col_names(nCol);
+
     GDALProgressFunc pfnProgress = nullptr;
     if (!quiet)
         pfnProgress = GDALTermProgressR;
@@ -1230,7 +1232,8 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
                 Rcpp::stop("read column failed");
             Rcpp::IntegerVector v = Rcpp::wrap(int_values);
             v.attr("GFU") = getGFU_string_(gfu);
-            df.push_back(v, colName);
+            df[i] = v;
+            col_names[i] = colName;
         }
         else if (gft == GFT_Real) {
             std::vector<double> dbl_values(nRow);
@@ -1240,7 +1243,8 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
                 Rcpp::stop("read column failed");
             Rcpp::NumericVector v = Rcpp::wrap(dbl_values);
             v.attr("GFU") = getGFU_string_(gfu);
-            df.push_back(v, colName);
+            df[i] = v;
+            col_names[i] = colName;
         }
         else if (gft == GFT_String) {
             char **papszStringList = reinterpret_cast<char**>(
@@ -1252,12 +1256,13 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
                 Rcpp::stop("read column failed");
             }
             std::vector<std::string> str_values(nRow);
-            for (int n=0; n < nRow; ++n) {
+            for (int n = 0; n < nRow; ++n) {
                 str_values[n] = papszStringList[n];
             }
             Rcpp::CharacterVector v = Rcpp::wrap(str_values);
             v.attr("GFU") = getGFU_string_(gfu);
-            df.push_back(v, colName);
+            df[i] = v;
+            col_names[i] = colName;
             // free the list of strings
             for (int n = 0; n < nRow; ++n) {
                 CPLFree(papszStringList[n]);
@@ -1272,6 +1277,10 @@ SEXP GDALRaster::getDefaultRAT(int band) const {
             pfnProgress(i / (nCol-1.0), nullptr, pProgressData);
         }
     }
+
+    df.names() = col_names;
+    df.attr("class") = "data.frame";
+    df.attr("row.names") = Rcpp::seq_len(nRow);
 
     GDALRATTableType grtt = GDALRATGetTableType(hRAT);
     if (grtt == GRTT_ATHEMATIC)
