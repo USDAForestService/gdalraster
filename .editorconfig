@@ -38,3 +38,6 @@ indent_size = 2
 
 [{GNUmakefile,*.in,*.win}]
 indent_style = tab
+
+[*.Rmd]
+trim_trailing_whitespace = false
