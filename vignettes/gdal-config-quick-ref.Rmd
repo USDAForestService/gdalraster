@@ -263,10 +263,10 @@ Request signing can be disabled for public buckets that do not require an AWS ac
 set_config_option("AWS_NO_SIGN_REQUEST", "YES")
 ```
 
-**`AWS_ACCESS_KEY_ID`**
-**`AWS_SECRET_ACCESS_KEY`**
-**`AWS_SESSION_TOKEN`**
-**`AWS_REQUEST_PAYER`**
+**`AWS_ACCESS_KEY_ID`**  
+**`AWS_SECRET_ACCESS_KEY`** 
+**`AWS_SESSION_TOKEN`**  
+**`AWS_REQUEST_PAYER`**  
 
 If authentication is required, configure credentials with:
 
@@ -315,7 +315,36 @@ Credential string provided in the Access Keys section of the administrative inte
 set_config_option("AZURE_STORAGE_CONNECTION_STRING", "<my_connection_string>")
 ```
 
-Several other authentication methods are possible for Azure. See the GDAL documentation for details.
+**`AZURE_STORAGE_ACCOUNT`**  
+**`AZURE_STORAGE_ACCESS_TOKEN`**  
+**`AZURE_STORAGE_ACCESS_KEY`**  
+**`AZURE_STORAGE_SAS_TOKEN`**  
+
+Whereas an Azure connection string contains both the account name and key, the storage account name might be set using `AZURE_STORAGE_ACCOUNT` along with one of:
+
+* `AZURE_STORAGE_ACCESS_TOKEN`: value obtained using Microsoft Authentication Library (MSAL)
+* `AZURE_STORAGE_ACCESS_KEY`: value is the secret key associated with `AZURE_STORAGE_ACCOUNT`
+* `AZURE_STORAGE_SAS_TOKEN`: value is a Shared Access Signature
+* `AZURE_NO_SIGN_REQUEST=YES` to disable request signing
+
+The `AZURE_STORAGE_SAS_TOKEN` is used, for example, with Microsoft Planetary Computer as documented at:
+https://planetarycomputer.microsoft.com/docs/concepts/sas/
+
+SAS token can be requested via API with the `token` endpoint:
+`https://planetarycomputer.microsoft.com/api/sas/v1/token/{collection_id}`
+or
+`https://planetarycomputer.microsoft.com/api/sas/v1/token/{storage_account}/{container}`
+
+```r
+# e.g., Planetary Computer access to STAC items as geoparquet datasets
+# https://planetarycomputer.microsoft.com/docs/quickstarts/stac-geoparquet/
+set_config_option("AZURE_STORAGE_ACCOUNT", "pcstacitems")
+# SAS token is the value of "token" in the JSON returned by:
+# https://planetarycomputer.microsoft.com/api/sas/v1/token/pcstacitems/items
+set_config_option("AZURE_STORAGE_SAS_TOKEN", "<token>")
+```
+
+Other authentication methods are possible for Azure. See the GDAL documentation for details.
 
 ## Microsoft Azure Data Lake
 

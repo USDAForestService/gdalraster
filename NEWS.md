@@ -1,8 +1,12 @@
-# gdalraster 1.11.1.9000 (dev)
+# gdalraster 1.11.1.9010 (dev)
+
+* avoid data copy in `GDALRaster::getDefaultRAT()` for better performance in the case of large attribute tables (2024-06-24)
 
 * add `vsi_get_actual_url()`: return the actual URL of a supplied VSI filename, wrapper of `VSIGetActualURL()` in the GDAL API (2024-06-20)
 
 * add `vsi_get_signed_url()`: return a signed URL for a supplied VSI filename, wrapper of `VSIGetSignedURL()` in the GDAL API (2024-06-20)
+
+* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
 
 # gdalraster 1.11.1
 
