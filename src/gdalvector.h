@@ -43,6 +43,10 @@ class GDALVector {
                Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                std::string spatial_filter, std::string dialect);
 
+    std::string defaultGeomFldName = "geometry";
+    std::string returnGeomAs = "WKB";
+    std::string wkbByteOrder = "LSB";
+
     void open(bool read_only);
     bool isOpen() const;
     std::string getDsn() const;
