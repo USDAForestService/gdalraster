@@ -1474,13 +1474,17 @@ vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet = TRUE
 #'
 #' `vsi_read_dir()` abstracts access to directory contents. It returns a
 #' character vector containing the names of files and directories in this
-#' directory. This function is a wrapper for `VSIReadDirEx()` in the GDAL
-#' Common Portability Library.
+#' directory. With `recursive = TRUE`, reads the list of entries in the
+#' directory and subdirectories.
+#' This function is a wrapper for `VSIReadDirEx()` and `VSIReadDirRecursive()`
+#' in the GDAL Common Portability Library.
 #'
 #' @param path Character string. The relative or absolute path of a
 #' directory to read.
 #' @param max_files Integer scalar. The maximum number of files after which to
-#' stop, or 0 for no limit (see Note).
+#' stop, or 0 for no limit (see Note). Ignored if `recursive = TRUE`.
+#' @param recursive Logical scalar. `TRUE` to read the directory and its
+#' subdirectories. Defaults to `FALSE`.
 #' @returns A character vector containing the names of files and directories
 #' in the directory given by `path`. An empty string (`""`) is returned if
 #' `path` does not exist.
@@ -1490,7 +1494,8 @@ vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet = TRUE
 #' after that limit has been reached. Note that to indicate truncation, at
 #' least one element more than the `max_files` limit will be returned. If the
 #' length of the returned character vector is lesser or equal to `max_files`,
-#' then no truncation occurred.
+#' then no truncation occurred. The `max_files` parameter is ignored when
+#' `recursive = TRUE`.
 #'
 #' @seealso
 #' [vsi_mkdir()], [vsi_rmdir()], [vsi_stat()], [vsi_sync()]
@@ -1499,8 +1504,8 @@ vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet = TRUE
 #' # regular file system for illustration
 #' data_dir <- system.file("extdata", package="gdalraster")
 #' vsi_read_dir(data_dir)
-vsi_read_dir <- function(path, max_files = 0L) {
-    .Call(`_gdalraster_vsi_read_dir`, path, max_files)
+vsi_read_dir <- function(path, max_files = 0L, recursive = FALSE) {
+    .Call(`_gdalraster_vsi_read_dir`, path, max_files, recursive)
 }
 
 #' Synchronize a source file/directory with a target file/directory
