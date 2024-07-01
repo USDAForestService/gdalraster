@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9010 (dev)
+# gdalraster 1.11.1.9020 (dev)
+
+* `vsi_read_dir()`: add parameter `recursive`, `TRUE` to read the list of entries in the directory and subdirectories (2024-07-01)
 
 * avoid data copy in `GDALRaster::getDefaultRAT()` for better performance in the case of large attribute tables (2024-06-24)
 

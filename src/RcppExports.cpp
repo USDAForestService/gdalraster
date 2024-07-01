@@ -594,14 +594,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_read_dir
-Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path, int max_files);
-RcppExport SEXP _gdalraster_vsi_read_dir(SEXP pathSEXP, SEXP max_filesSEXP) {
+Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path, int max_files, bool recursive);
+RcppExport SEXP _gdalraster_vsi_read_dir(SEXP pathSEXP, SEXP max_filesSEXP, SEXP recursiveSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path(pathSEXP);
     Rcpp::traits::input_parameter< int >::type max_files(max_filesSEXP);
-    rcpp_result_gen = Rcpp::wrap(vsi_read_dir(path, max_files));
+    Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
+    rcpp_result_gen = Rcpp::wrap(vsi_read_dir(path, max_files, recursive));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1550,7 +1551,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_addFileInZip", (DL_FUNC) &_gdalraster_addFileInZip, 6},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
     {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 3},
-    {"_gdalraster_vsi_read_dir", (DL_FUNC) &_gdalraster_vsi_read_dir, 2},
+    {"_gdalraster_vsi_read_dir", (DL_FUNC) &_gdalraster_vsi_read_dir, 3},
     {"_gdalraster_vsi_sync", (DL_FUNC) &_gdalraster_vsi_sync, 4},
     {"_gdalraster_vsi_mkdir", (DL_FUNC) &_gdalraster_vsi_mkdir, 3},
     {"_gdalraster_vsi_rmdir", (DL_FUNC) &_gdalraster_vsi_rmdir, 2},
