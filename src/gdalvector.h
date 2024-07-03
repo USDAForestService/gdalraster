@@ -44,7 +44,7 @@ class GDALVector {
                std::string spatial_filter, std::string dialect);
 
     std::string defaultGeomFldName = "geometry";
-    std::string returnGeomAs = "WKB";
+    std::string returnGeomAs = "NONE";
     std::string wkbByteOrder = "LSB";
 
     void open(bool read_only);
