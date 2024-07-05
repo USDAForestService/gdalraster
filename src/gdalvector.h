@@ -31,6 +31,7 @@ class GDALVector {
     GDALDatasetH hDataset;
     GDALAccess eAccess;
     OGRLayerH hLayer;
+    std::string m_attr_filter = "";
 
  public:
     GDALVector();
@@ -117,7 +118,6 @@ class GDALVector {
     // methods for internal use not exported to R
     void checkAccess_(GDALAccess access_needed) const;
     OGRLayerH getOGRLayerH_() const;
-    Rcpp::List featureToList_(OGRFeatureH hFeature) const;
     SEXP initDF_(R_xlen_t nrow) const;
 };
 
