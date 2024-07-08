@@ -2,6 +2,7 @@ url: https://usdaforestservice.github.io/gdalraster/
 
 template:
   bootstrap: 5
+  light-switch: true
   bslib:
     preset: bootstrap
 
