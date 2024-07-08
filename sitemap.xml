@@ -1,354 +1,120 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/404.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/CODE_OF_CONDUCT.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/LICENSE-text.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/LICENSE.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/SECURITY.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/articles/gdalvector-draft.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/articles/index.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/articles/raster-display.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/authors.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/index.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/news/index.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/CmbTable-class.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/DEFAULT_DEM_PROC.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/DEFAULT_NODATA.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/addFilesInZip.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/apply_geotransform.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/bandCopyWholeRaster.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_from_wkt.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_intersect.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_to_wkt.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_transform.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/buildRAT.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/buildVRT.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/calc.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/combine.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/copyDatasetFiles.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/create.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/createColorRamp.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/createCopy.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/deleteDataset.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/dem_proc.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/displayRAT.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/dump_open_datasets.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/epsg_to_wkt.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/fillNodata.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/footprint.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_area.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_binary_op.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_binary_pred.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_buffer.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_centroid.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_distance.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_is_empty.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_is_valid.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_length.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_name.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/g_transform.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/gdal_formats.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/gdal_version.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/geos_version.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/getCreationOptions.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/get_cache_used.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/get_config_option.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/get_num_cpus.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/get_pixel_line.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/get_usable_physical_ram.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/has_geos.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/has_spatialite.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/http_enabled.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/index.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/inv_geotransform.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/inv_project.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/polygonize.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/pop_error_handler.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/proj_networking.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/proj_search_paths.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/proj_version.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/push_error_handler.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/rasterFromRaster.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/rasterize.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/read_ds.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/renameDataset.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/set_config_option.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/sieveFilter.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_geographic.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_projected.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_same.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/srs_to_wkt.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/transform_xy.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/translate.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_clear_path_options.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_constants.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_copy_file.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_curl_clear_cache.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_actual_url.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_disk_free_space.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_file_metadata.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_options.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_prefixes.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_signed_url.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_mkdir.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_read_dir.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_rename.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_rmdir.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_set_path_option.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_supports_rnd_write.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_supports_seq_write.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_sync.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_unlink.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_unlink_batch.html</loc>
-  </url>
-  <url>
-    <loc>https://usdaforestservice.github.io/gdalraster/reference/warp.html</loc>
-  </url>
+<urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
+<url><loc>https://usdaforestservice.github.io/gdalraster/404.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/CODE_OF_CONDUCT.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/LICENSE-text.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/LICENSE.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/SECURITY.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/articles/gdalvector-draft.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/articles/index.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/articles/raster-display.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/authors.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/index.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/news/index.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/CmbTable-class.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/DEFAULT_DEM_PROC.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/DEFAULT_NODATA.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/addFilesInZip.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/apply_geotransform.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/bandCopyWholeRaster.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_from_wkt.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_intersect.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_to_wkt.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/bbox_transform.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/buildRAT.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/buildVRT.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/calc.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/combine.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/copyDatasetFiles.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/create.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/createColorRamp.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/createCopy.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/deleteDataset.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/dem_proc.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/displayRAT.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/dump_open_datasets.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/epsg_to_wkt.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/fillNodata.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/footprint.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_area.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_binary_op.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_binary_pred.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_buffer.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_centroid.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_distance.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_is_empty.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_is_valid.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_length.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_name.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_transform.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/gdal_formats.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/gdal_version.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/geos_version.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/getCreationOptions.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/get_cache_used.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/get_config_option.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/get_num_cpus.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/get_pixel_line.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/get_usable_physical_ram.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/has_geos.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/has_spatialite.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/http_enabled.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/index.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/inv_geotransform.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/inv_project.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/ogr2ogr.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/ogrinfo.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/polygonize.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/pop_error_handler.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/proj_networking.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/proj_search_paths.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/proj_version.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/push_error_handler.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/rasterFromRaster.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/rasterToVRT.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/rasterize.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/read_ds.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/renameDataset.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/set_config_option.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/sieveFilter.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_geographic.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_projected.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_same.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_to_wkt.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/transform_xy.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/translate.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_clear_path_options.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_constants.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_copy_file.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_curl_clear_cache.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_actual_url.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_disk_free_space.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_file_metadata.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_options.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_prefixes.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_signed_url.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_mkdir.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_read_dir.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_rename.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_rmdir.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_set_path_option.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_stat.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_supports_rnd_write.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_supports_seq_write.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_sync.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_unlink.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_unlink_batch.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/warp.html</loc></url>
 </urlset>
+

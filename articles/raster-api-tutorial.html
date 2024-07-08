@@ -5,69 +5,61 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<meta name="description" content="gdalraster">
 <title>Raster API Tutorial • gdalraster</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><!-- Font Awesome icons --><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/all.min.css" integrity="sha256-mmgLkCYLUQbXn0B1SRqzHar6dCnv9oZFPEC1g1cwlkk=" crossorigin="anonymous">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.12.1/css/v4-shims.min.css" integrity="sha256-wZjR52fzng1pJHwx4aV2AO3yyTOXrcDW7jBpJtTwVxw=" crossorigin="anonymous">
-<!-- bootstrap-toc --><script src="https://cdn.jsdelivr.net/gh/afeld/bootstrap-toc@v1.0.1/dist/bootstrap-toc.min.js" integrity="sha256-4veVQbu7//Lk5TSmc7YV48MxtMy98e26cf5MrgZYnwo=" crossorigin="anonymous"></script><!-- headroom.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/headroom.min.js" integrity="sha256-AsUX4SJE1+yuDu5+mAVzJbuYNPHj/WroHuZ8Ir/CkE0=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/headroom/0.11.0/jQuery.headroom.min.js" integrity="sha256-ZX/yNShbjqsohH1k95liqY9Gd8uOiE1S4vZc+9KQ1K4=" crossorigin="anonymous"></script><!-- clipboard.js --><script src="https://cdnjs.cloudflare.com/ajax/libs/clipboard.js/2.0.11/clipboard.min.js" integrity="sha512-7O5pXpc0oCRrxk8RUfDYFgn0nO1t+jLuIOQdOMRp4APB7uZ4vSjspzp5y6YDtDs4VzUSTbWzBFZ/LKJhnyFOKw==" crossorigin="anonymous" referrerpolicy="no-referrer"></script><!-- search --><script src="https://cdnjs.cloudflare.com/ajax/libs/fuse.js/6.4.6/fuse.js" integrity="sha512-zv6Ywkjyktsohkbp9bb45V6tEMoWhzFzXis+LrMehmJZZSys19Yxf1dopHx7WzIKxr5tK2dVcYmaCk2uqdjF4A==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/autocomplete.js/0.38.0/autocomplete.jquery.min.js" integrity="sha512-GU9ayf+66Xx2TmpxqJpliWbT5PiGYxpaG8rfnBEk1LL8l1KGkRShhngwdXK1UgqhAzWpZHSiYPc09/NwDQIGyg==" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mark.js/8.11.1/mark.min.js" integrity="sha512-5CYOlHXGh6QpOFA/TeTylKLWfB3ftPsde7AnmhuitiTX4K5SqCLBeKro6sPS8ilsz1Q4NRx3v8Ko2IBiszzdww==" crossorigin="anonymous"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Raster API Tutorial">
-<meta property="og:description" content="gdalraster">
-<!-- mathjax --><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script><!--[if lt IE 9]>
-<script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
-<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-<![endif]-->
+<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.4.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/font-awesome-6.4.2/css/v4-shims.min.css" rel="stylesheet">
+<script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="Raster API Tutorial">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
-    
 
-    <nav class="navbar fixed-top navbar-light navbar-expand-lg bg-light" data-bs-theme="light"><div class="container">
-    
+
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
     <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9020</small>
 
-    
+
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
 
     <div id="navbar" class="collapse navbar-collapse ms-3">
       <ul class="navbar-nav me-auto">
-<li class="nav-item">
-  <a class="nav-link" href="../reference/index.html">Reference</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../reference/index.html">Reference</a></li>
 <li class="active nav-item dropdown">
-  <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown" role="button" aria-expanded="false" aria-haspopup="true" id="dropdown-articles">Articles</a>
-  <div class="dropdown-menu" aria-labelledby="dropdown-articles">
-    <a class="dropdown-item" href="../articles/gdal-block-cache.html">GDAL Block Cache</a>
-    <a class="dropdown-item" href="../articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>
-    <a class="dropdown-item" href="../articles/gdalvector-draft.html">Draft Bindings to the GDAL/OGR Vector API</a>
-    <a class="dropdown-item" href="../articles/raster-api-tutorial.html">Raster API Tutorial</a>
-    <a class="dropdown-item" href="../articles/raster-attribute-tables.html">Raster Attribute Tables</a>
-    <a class="dropdown-item" href="../articles/raster-display.html">Raster Display</a>
-  </div>
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-articles" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true">Articles</button>
+  <ul class="dropdown-menu" aria-labelledby="dropdown-articles">
+<li><a class="dropdown-item" href="../articles/gdal-block-cache.html">GDAL Block Cache</a></li>
+    <li><a class="dropdown-item" href="../articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a></li>
+    <li><a class="dropdown-item" href="../articles/gdalvector-draft.html">Draft Bindings to the GDAL/OGR Vector API</a></li>
+    <li><a class="dropdown-item" href="../articles/raster-api-tutorial.html">Raster API Tutorial</a></li>
+    <li><a class="dropdown-item" href="../articles/raster-attribute-tables.html">Raster Attribute Tables</a></li>
+    <li><a class="dropdown-item" href="../articles/raster-display.html">Raster Display</a></li>
+  </ul>
 </li>
-<li class="nav-item">
-  <a class="nav-link" href="../news/index.html">Changelog</a>
-</li>
+<li class="nav-item"><a class="nav-link" href="../news/index.html">Changelog</a></li>
       </ul>
-<form class="form-inline my-2 my-lg-0" role="search">
-        <input type="search" class="form-control me-sm-2" aria-label="Toggle navigation" name="search-input" data-search-index="../search.json" id="search-input" placeholder="Search for" autocomplete="off">
-</form>
-
-      <ul class="navbar-nav">
-<li class="nav-item">
-  <a class="external-link nav-link" href="https://github.com/USDAForestService/gdalraster/" aria-label="github">
-    <span class="fab fa fab fa-github fa-lg"></span>
-     
-  </a>
+<ul class="navbar-nav">
+<li class="nav-item"><form class="form-inline" role="search">
+ <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
+</form></li>
+<li class="nav-item"><a class="external-link nav-link" href="https://github.com/USDAForestService/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
 </li>
       </ul>
 </div>
 
-    
+
   </div>
 </nav><div class="container template-article">
 
@@ -76,10 +68,11 @@
 
 <div class="row">
   <main id="main" class="col-md-9"><div class="page-header">
-      <img src="" class="logo" alt=""><h1>Raster API Tutorial</h1>
+
+      <h1>Raster API Tutorial</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/HEAD/vignettes/raster-api-tutorial.Rmd" class="external-link"><code>vignettes/raster-api-tutorial.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/vignettes/raster-api-tutorial.Rmd" class="external-link"><code>vignettes/raster-api-tutorial.Rmd</code></a></small>
       <div class="d-none name"><code>raster-api-tutorial.Rmd</code></div>
     </div>
 
@@ -102,9 +95,8 @@ specified, or <code>read_only = FALSE</code> to open with update
 access):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, GEOS 3.10.2, PROJ 8.2.1</span></span></code></pre></div>
-<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, GEOS 3.10.2, PROJ 8.2.1</span></span>
+<span></span>
 <span><span class="va">tcc_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_tcc.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tcc_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>An error is returned if the dataset cannot be opened (and creation of
@@ -117,11 +109,10 @@ additional parameters, etc.</p>
 <code>RCPP_EXPOSED_CLASS</code>) that encapsulates a GDAL dataset object
 and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x55dac29f1df0&gt; of class 'GDALRaster' &lt;0x55dac29d3170&gt;</span></span></code></pre></div>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x55cc7c81d0a0&gt; of class 'GDALRaster' &lt;0x55cc82230770&gt;</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 3 fields</span></span>
 <span><span class="co">#&gt;  $ infoOptions  : chr(0) </span></span>
 <span><span class="co">#&gt;  $ quiet        : logi FALSE</span></span>
@@ -153,69 +144,55 @@ raster and various other information.</p>
 rotation or shearing, the georeferencing transform (see <a href="https://gdal.org/tutorials/geotransforms_tut.html" class="external-link">Geotransform
 Tutorial</a>) takes the following form <em>with 1-based indexing in
 R</em>:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">gt</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getGeoTransform</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">gt</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>  <span class="co"># x-coordinate of upper-left corner of the upper-left pixel</span></span>
-<span><span class="co">#&gt; [1] 323476.1</span></span></code></pre></div>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gt</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>  <span class="co"># pixel width (w-e resolution)</span></span>
-<span><span class="co">#&gt; [1] 30</span></span></code></pre></div>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gt</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>  <span class="co"># 0 for north-up</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gt</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>  <span class="co"># y-coordinate of upper-left corner of the upper-left pixel</span></span>
-<span><span class="co">#&gt; [1] 5105082</span></span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gt</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>  <span class="co"># 0 for north-up</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">gt</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>  <span class="co"># pixel height (n-s resolution, negative value)</span></span>
+<span><span class="co">#&gt; [1] 323476.1</span></span>
+<span><span class="va">gt</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>  <span class="co"># pixel width (w-e resolution)</span></span>
+<span><span class="co">#&gt; [1] 30</span></span>
+<span><span class="va">gt</span><span class="op">[</span><span class="fl">3</span><span class="op">]</span>  <span class="co"># 0 for north-up</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span><span class="va">gt</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span>  <span class="co"># y-coordinate of upper-left corner of the upper-left pixel</span></span>
+<span><span class="co">#&gt; [1] 5105082</span></span>
+<span><span class="va">gt</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span>  <span class="co"># 0 for north-up</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span><span class="va">gt</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span>  <span class="co"># pixel height (n-s resolution, negative value)</span></span>
 <span><span class="co">#&gt; [1] -30</span></span></code></pre></div>
 <p>In the general case, this is an affine transform. Class
 <code>GDALRaster</code> includes convenience methods for the case of a
 north-up raster:</p>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span>  <span class="co"># xmin, ymin, xmax, ymax</span></span>
-<span><span class="co">#&gt; [1]  323476.1 5101872.0  327766.1 5105082.0</span></span></code></pre></div>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span>   <span class="co"># pixel width, pixel height as positive values</span></span>
+<span><span class="co">#&gt; [1]  323476.1 5101872.0  327766.1 5105082.0</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span>   <span class="co"># pixel width, pixel height as positive values</span></span>
 <span><span class="co">#&gt; [1] 30 30</span></span></code></pre></div>
 <p>The following code retrieves some additional information about the
 dataset:</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># GDAL format driver</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "GTiff"</span></span></code></pre></div>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "GeoTIFF"</span></span></code></pre></div>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] "GTiff"</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "GeoTIFF"</span></span>
+<span></span>
 <span><span class="co"># raster size in pixels, number of bands</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 143</span></span></code></pre></div>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 107</span></span></code></pre></div>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1</span></span></code></pre></div>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 143 107   1</span></span></code></pre></div>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] 143</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 107</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 143 107   1</span></span>
+<span></span>
 <span><span class="co"># coordinate reference system as WKT string</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getProjectionRef</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "PROJCS[\"NAD83 / UTM zone 12N\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6269\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4269\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-111],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"26912\"]]"</span></span></code></pre></div>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] "PROJCS[\"NAD83 / UTM zone 12N\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6269\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AUTHORITY[\"EPSG\",\"4269\"]],PROJECTION[\"Transverse_Mercator\"],PARAMETER[\"latitude_of_origin\",0],PARAMETER[\"central_meridian\",-111],PARAMETER[\"scale_factor\",0.9996],PARAMETER[\"false_easting\",500000],PARAMETER[\"false_northing\",0],UNIT[\"metre\",1,AUTHORITY[\"EPSG\",\"9001\"]],AXIS[\"Easting\",EAST],AXIS[\"Northing\",NORTH],AUTHORITY[\"EPSG\",\"26912\"]]"</span></span>
+<span></span>
 <span><span class="co"># origin and pixel size from the geotransform</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Origin:"</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Origin: 323476.1 5105082"</span></span></code></pre></div>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Pixel size:"</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "Origin: 323476.1 5105082"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="st">"Pixel size:"</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span>, <span class="va">gt</span><span class="op">[</span><span class="fl">6</span><span class="op">]</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Pixel size: 30 -30"</span></span></code></pre></div>
 </div>
 <div class="section level2">
@@ -227,33 +204,28 @@ information are available on a per-band basis. Class
 <code>GDALRaster</code> provides methods to access raster band objects
 of the dataset (numbered 1 through <code>ds$getRasterCount()</code>) by
 specifying a <code>band</code> number as the first argument:</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># block size</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 143  57</span></span></code></pre></div>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] 143  57</span></span>
+<span></span>
 <span><span class="co"># data type</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Byte"</span></span></code></pre></div>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] "Byte"</span></span>
+<span></span>
 <span><span class="co"># nodata value</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 255</span></span></code></pre></div>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] 255</span></span>
+<span></span>
 <span><span class="co"># min, max, mean, sd of pixel values in the band</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
-<span><span class="co">#&gt; [1]  0.00000 71.00000 23.69950 23.17744</span></span></code></pre></div>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1]  0.00000 71.00000 23.69950 23.17744</span></span>
+<span></span>
 <span><span class="co"># does this band have overviews? (aka "pyramids")</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span></span>
 <span><span class="co"># does this band have a color table?</span></span>
 <span><span class="va">col_tbl</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getColorTable</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">col_tbl</span><span class="op">)</span><span class="op">)</span></span>
@@ -282,7 +254,7 @@ type <code>double</code> (UInt32, Float32, Float64) or
 data are organized in left to right, top to bottom pixel order.
 <code>NA</code> will be returned in place of the nodata value if the
 raster dataset has a nodata value defined for the band:</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># read the first row of pixel values</span></span>
 <span><span class="va">ncols</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">rowdata</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, </span>
@@ -294,12 +266,10 @@ raster dataset has a nodata value defined for the band:</p>
 <span>                   out_ysize <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 143</span></span></code></pre></div>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/typeof.html" class="external-link">typeof</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "integer"</span></span></code></pre></div>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 143</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/typeof.html" class="external-link">typeof</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "integer"</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">rowdata</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 59 63 64 51 25 20</span></span></code></pre></div>
 <p>Writing data with <code>GDALRaster$write()</code> is similar to
 <code>$read()</code> with an additional argument specifying a vector of
@@ -329,7 +299,7 @@ overviews are available at suitable resolution.</p>
 <code>graphics</code> to display raster data read from an open dataset
 (with options to display a subwindow, to read a reduced resolution
 overview, or read from multiple bands for RGB data):</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend<span class="op">=</span><span class="cn">TRUE</span>, main<span class="op">=</span><span class="st">"Storm Lake Tree Canopy Cover (%)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="raster-api-tutorial_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
 </div>
@@ -340,7 +310,7 @@ overview, or read from multiple bands for RGB data):</p>
 cleanup, and flushing of any pending writes. Forgetting to close a
 dataset opened in update mode in a popular format like GTiff will likely
 result in being unable to open it afterwards.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># close the dataset for proper cleanup</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -388,7 +358,7 @@ size and arrangement, compression, various metadata, etc. The following
 code copies a multi-band raster in FARSITE v.4 LCP format (basically a
 raw format without support for compression or nodata values) to
 LZW-compressed GeoTiff:</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_lndscp.tif"</span><span class="op">)</span></span>
 <span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span><span class="op">)</span></span>
@@ -396,23 +366,19 @@ LZW-compressed GeoTiff:</p>
 <span>           dst_filename <span class="op">=</span> <span class="va">tif_file</span>,</span>
 <span>           src_filename <span class="op">=</span> <span class="va">lcp_file</span>, </span>
 <span>           options <span class="op">=</span> <span class="va">opt</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span></code></pre></div>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
+<span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">lcp_file</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 252132</span></span></code></pre></div>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tif_file</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 108510</span></span></code></pre></div>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] 252132</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tif_file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 108510</span></span>
+<span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tif_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># band=0 for dataset-level metadata:</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "COMPRESSION=LZW"  "INTERLEAVE=PIXEL"</span></span></code></pre></div>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] "COMPRESSION=LZW"  "INTERLEAVE=PIXEL"</span></span>
+<span></span>
 <span><span class="co"># set nodata value for all bands</span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">band</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span><span class="va">band</span>, <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
@@ -420,14 +386,13 @@ LZW-compressed GeoTiff:</p>
 <span><span class="co"># band 2 of an LCP file is slope degrees</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">2</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
-<span><span class="co">#&gt; [1]  0.00000 54.00000 22.93012 12.51330</span></span></code></pre></div>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="co">#&gt; [1]  0.00000 54.00000 22.93012 12.51330</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Information about format specific creation options can be obtained
 with the function <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>. By default, this
 function lists all available creation options for a format. Output can
 also be filtered to specific options:</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"COMPRESS"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; {xml_node}</span></span>
 <span><span class="co">#&gt; &lt;Option name="COMPRESS" type="string-select"&gt;</span></span>
@@ -441,9 +406,8 @@ also be filtered to specific options:</p>
 <span><span class="co">#&gt;  [8] &lt;Value&gt;DEFLATE&lt;/Value&gt;</span></span>
 <span><span class="co">#&gt;  [9] &lt;Value&gt;LZMA&lt;/Value&gt;</span></span>
 <span><span class="co">#&gt; [10] &lt;Value&gt;ZSTD&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt; [11] &lt;Value&gt;WEBP&lt;/Value&gt;</span></span></code></pre></div>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [11] &lt;Value&gt;WEBP&lt;/Value&gt;</span></span>
+<span></span>
 <span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"SPARSE_OK"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; {xml_node}</span></span>
 <span><span class="co">#&gt; &lt;Option name="SPARSE_OK" type="boolean" description="Should empty blocks be omitted on disk?" default="FALSE"&gt;</span></span></code></pre></div>
@@ -455,7 +419,7 @@ also be filtered to specific options:</p>
 manually. This function can also take a list of creation options as
 described above for <code><a href="../reference/createCopy.html">createCopy()</a></code>, but the raster size,
 number of bands and band type must be provided explicitly:</p>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"newdata.tif"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/create.html">create</a></span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
 <span>       dst_filename <span class="op">=</span> <span class="va">new_file</span>,</span>
@@ -467,23 +431,20 @@ number of bands and band type must be provided explicitly:</p>
 and raster data must be written to the file. What this includes will
 vary according to usage, but a simple case with a projection,
 geotransform and raster data is covered here:</p>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">new_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># EPSG:26912 - NAD83 / UTM zone 12N</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setProjection</span><span class="op">(</span><span class="fu"><a href="../reference/epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span></span>
 <span><span class="va">gt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">323476.1</span>, <span class="fl">30</span>, <span class="fl">0</span>, <span class="fl">5105082.0</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">30</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setGeoTransform</span><span class="op">(</span><span class="va">gt</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">fillRaster</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">9999</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">fillRaster</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">9999</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># ...</span></span>
 <span></span>
@@ -520,7 +481,7 @@ Canopy Cover (TCC v2021.4) from the USDA Forest Service (<a href="https://data.f
 and a multi-band FARSITE landscape file describing terrain, vegetation
 and wildland fuels from the LANDFIRE Program (LF 2020 version, <a href="https://landfire.gov/" class="external-link uri">https://landfire.gov/</a>).</p>
 </div>
-  </main><aside class="col-md-3"><nav id="toc"><h2>On this page</h2>
+  </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>
 </div>
 
@@ -531,15 +492,15 @@ and wildland fuels from the LANDFIRE Program (LF 2020 version, <a href="https://
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.9.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
 </div>
 
     </footer>
 </div>
 
-  
 
-  
+
+
 
   </body>
 </html>
