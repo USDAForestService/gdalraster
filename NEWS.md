@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9020 (dev)
+# gdalraster 1.11.1.9030 (dev)
+
+* fix the mode name for `color-relief` in `DEFAULT_DEM_PROC` (`"color-relief"` instead of `"color_relief"`, fixes #428) (2024-07-09)
 
 * `vsi_read_dir()`: add parameter `recursive`, `TRUE` to read the list of entries in the directory and subdirectories (2024-07-01)
 
