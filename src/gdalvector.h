@@ -1,6 +1,9 @@
 /* R interface to a subset of the GDAL C API for vector. A class for OGRLayer,
    a layer of features in a GDALDataset. https://gdal.org/api/vector_c_api.html
-   Chris Toney <chris.toney at usda.gov> */
+
+   Chris Toney <chris.toney at usda.gov>
+   Copyright (c) 2023-2024 gdalraster authors
+*/
 
 #ifndef SRC_GDALVECTOR_H_
 #define SRC_GDALVECTOR_H_
@@ -19,16 +22,16 @@ typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 
 class GDALVector {
  private:
-    std::string dsn_in;
-    std::string layer_in;  // layer name or sql statement
-    bool is_sql_in;
-    Rcpp::CharacterVector open_options_in;
-    std::string spatial_filter_in;
-    std::string dialect_in;
-    GDALDatasetH hDataset;
-    GDALAccess eAccess;
-    OGRLayerH hLayer;
-    OGRFeatureDefnH hFDefn;
+    std::string m_dsn;
+    std::string m_layer_name;  // layer name or sql statement
+    bool m_is_sql;
+    Rcpp::CharacterVector m_open_options;
+    std::string m_spatial_filter;
+    std::string m_dialect;
+    GDALDatasetH m_hDataset;
+    GDALAccess m_eAccess;
+    OGRLayerH m_hLayer;
+    std::string m_attr_filter = "";
 
  public:
     GDALVector();
@@ -40,6 +43,10 @@ class GDALVector {
     GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
                Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                std::string spatial_filter, std::string dialect);
+
+    std::string defaultGeomFldName = "geometry";
+    std::string returnGeomAs = "NONE";
+    std::string wkbByteOrder = "LSB";
 
     void open(bool read_only);
     bool isOpen() const;
@@ -67,6 +74,8 @@ class GDALVector {
     // the class attribute for integer64:
     SEXP getFeature(Rcpp::NumericVector fid);
     void resetReading();
+
+    Rcpp::DataFrame fetch(double n);
 
     void layerIntersection(
             GDALVector method_layer,
@@ -107,9 +116,9 @@ class GDALVector {
     void close();
 
     // methods for internal use not exported to R
-    void _checkAccess(GDALAccess access_needed) const;
-    OGRLayerH _getOGRLayerH() const;
-    Rcpp::List _featureToList(OGRFeatureH hFeature) const;
+    void checkAccess_(GDALAccess access_needed) const;
+    OGRLayerH getOGRLayerH_() const;
+    SEXP initDF_(R_xlen_t nrow) const;
 };
 
 RCPP_EXPOSED_CLASS(GDALVector)

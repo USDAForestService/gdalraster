@@ -115,6 +115,31 @@ const std::map<std::string, OGRFieldSubType, _ci_less> MAP_OGR_FLD_SUBTYPE{
 };
 #endif
 
+// Internal lookup of OGRwkbGeometryType by string descriptor
+// Returns wkbUnknown if no match
+OGRwkbGeometryType getWkbGeomType_(std::string geom_type);
+
+// Internal lookup of geometry type string by OGRwkbGeometryType
+// Returns "UNKNOWN" if no match
+std::string getWkbGeomString_(OGRwkbGeometryType eType);
+
+// Internal lookup of OGRFieldType by string descriptor
+// Error if no match
+OGRFieldType getOFT_(std::string fld_type);
+
+// Internal lookup of OGR field type string by OGRFieldType
+// Returns empty string if no match, with warning emitted
+std::string getOFTString_(OGRFieldType eType);
+
+// Internal lookup of OGRFieldSubType by string descriptor
+// Returns OFSTNone if no match
+OGRFieldSubType getOFTSubtype_(std::string fld_subtype);
+
+// Internal lookup of OGR field subtype string by OGRFieldSubType
+// Returns "OFSTNone" if no match
+std::string getOFTSubtypeString_(OGRFieldSubType eType);
+
+
 bool ogr_ds_exists(std::string dsn, bool with_update);
 
 std::string ogr_ds_format(std::string dsn);
@@ -138,6 +163,7 @@ bool ogr_layer_exists(std::string dsn, std::string layer);
 SEXP ogr_layer_test_cap(std::string dsn, std::string layer,
                          bool with_update);
 
+// internal CreateLayer
 OGRLayerH CreateLayer_(GDALDatasetH hDS, std::string layer,
                        Rcpp::Nullable<Rcpp::List> layer_defn,
                        std::string geom_type, std::string srs,
@@ -154,6 +180,7 @@ SEXP ogr_layer_field_names(std::string dsn, std::string layer);
 
 int ogr_field_index(std::string dsn, std::string layer, std::string fld_name);
 
+// internal CreateField
 bool CreateField_(GDALDatasetH hDS, OGRLayerH hLayer, std::string fld_name,
                   std::string fld_type, std::string fld_subtype, int fld_width,
                   int fld_precision, bool is_nullable, bool is_ignored,
@@ -166,6 +193,7 @@ bool ogr_field_create(std::string dsn, std::string layer,
                       bool is_ignored, bool is_unique,
                       std::string default_value);
 
+// internal CreateGeomField
 bool CreateGeomField_(GDALDatasetH hDS, OGRLayerH hLayer, std::string fld_name,
                       OGRwkbGeometryType eGeomType, std::string srs,
                       bool is_nullable, bool is_ignored);

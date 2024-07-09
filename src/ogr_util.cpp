@@ -14,8 +14,7 @@
 #include "gdalraster.h"
 #include "ogr_util.h"
 
-// Internal lookup of OGRwkbGeometryType by string descriptor
-// Returns wkbUnknown if no match
+
 OGRwkbGeometryType getWkbGeomType_(std::string geom_type) {
     std::string geom_type_in = str_toupper_(geom_type);
     if (auto it = MAP_OGR_GEOM_TYPE.find(geom_type_in);
@@ -28,8 +27,6 @@ OGRwkbGeometryType getWkbGeomType_(std::string geom_type) {
     }
 }
 
-// Internal lookup of geometry type string by OGRwkbGeometryType
-// Returns "UNKNOWN" if no match
 std::string getWkbGeomString_(OGRwkbGeometryType eType) {
     for (auto it = MAP_OGR_GEOM_TYPE.begin();
          it != MAP_OGR_GEOM_TYPE.end(); ++it) {
@@ -40,8 +37,6 @@ std::string getWkbGeomString_(OGRwkbGeometryType eType) {
     return "UNKNOWN";
 }
 
-// Internal lookup of OGRFieldType by string descriptor
-// Error if no match
 OGRFieldType getOFT_(std::string fld_type) {
     if (auto it = MAP_OGR_FLD_TYPE.find(fld_type);
         it != MAP_OGR_FLD_TYPE.end()) {
@@ -53,8 +48,6 @@ OGRFieldType getOFT_(std::string fld_type) {
     }
 }
 
-// Internal lookup of OGR field type string by OGRFieldType
-// Returns empty string if no match, with warning emitted
 std::string getOFTString_(OGRFieldType eType) {
     for (auto it = MAP_OGR_FLD_TYPE.begin();
          it != MAP_OGR_FLD_TYPE.end(); ++it) {
@@ -66,8 +59,6 @@ std::string getOFTString_(OGRFieldType eType) {
     return "";
 }
 
-// Internal lookup of OGRFieldSubType by string descriptor
-// Returns OFSTNone if no match
 OGRFieldSubType getOFTSubtype_(std::string fld_subtype) {
     if (auto it = MAP_OGR_FLD_SUBTYPE.find(fld_subtype);
         it != MAP_OGR_FLD_SUBTYPE.end()) {
@@ -79,8 +70,6 @@ OGRFieldSubType getOFTSubtype_(std::string fld_subtype) {
     }
 }
 
-// Internal lookup of OGR field subtype string by OGRFieldSubType
-// Returns "OFSTNone" if no match
 std::string getOFTSubtypeString_(OGRFieldSubType eType) {
     for (auto it = MAP_OGR_FLD_SUBTYPE.begin();
          it != MAP_OGR_FLD_SUBTYPE.end(); ++it) {
