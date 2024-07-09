@@ -567,13 +567,13 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 col[row_num] = OGR_F_GetFieldAsDouble(hFeat, i);
             }
             else if ((fld_type == OFTDate || fld_type == OFTDateTime)
-                        && has_value) {
+                     && has_value) {
 
-                int yr = 9999;
-                int mo, day = 9;
-                int hr, min, sec, tzflag = 0;
-                if (OGR_F_GetFieldAsDateTime(hFeat, i, &yr, &mo, &day,
-                                             &hr, &min, &sec, &tzflag)) {
+                Rcpp::NumericVector col = df[i + 1];
+                int yr, mo, day, hr, min, tzflag = 0;
+                float sec = 0;
+                if (OGR_F_GetFieldAsDateTimeEx(hFeat, i, &yr, &mo, &day,
+                                               &hr, &min, &sec, &tzflag)) {
 
                     struct tm brokendowntime;
                     brokendowntime.tm_year = yr - 1900;
@@ -581,12 +581,10 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                     brokendowntime.tm_mday = day;
                     brokendowntime.tm_hour = hr;
                     brokendowntime.tm_min = min;
-                    brokendowntime.tm_sec = sec;
+                    brokendowntime.tm_sec = static_cast<int>(sec);
                     int64_t nUnixTime = CPLYMDHMSToUnixTime(&brokendowntime);
-                    Rcpp::NumericVector col = df[i + 1];
                     if (fld_type == OFTDate) {
-                        const int64_t nUnixTime_days = nUnixTime / 86400;
-                        col[row_num] = static_cast<double>(nUnixTime_days);
+                        col[row_num] = static_cast<double>(nUnixTime / 86400);
                     }
                     else {
                         // OFTDateTime
@@ -595,13 +593,14 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                             const int tzoffset = std::abs(tzflag - 100) * 15;
                             const int tzhour = tzoffset / 60;
                             const int tzmin = tzoffset - tzhour * 60;
-                            const int offset = tzhour * 3600 + tzmin * 60;
+                            const int offset_sec = tzhour * 3600 + tzmin * 60;
                             if (tzflag >= 100)
-                                nUnixTime -= offset;
+                                nUnixTime -= offset_sec;
                             else
-                                nUnixTime += offset;
+                                nUnixTime += offset_sec;
                         }
-                        col[row_num] = static_cast<double>(nUnixTime);
+                        col[row_num] = static_cast<double>(
+                                nUnixTime + std::fmod(sec, 1));
                     }
                 }
             }
