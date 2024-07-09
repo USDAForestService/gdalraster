@@ -22,15 +22,15 @@ typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 
 class GDALVector {
  private:
-    std::string dsn_in;
-    std::string layer_in;  // layer name or sql statement
-    bool is_sql_in;
-    Rcpp::CharacterVector open_options_in;
-    std::string spatial_filter_in;
-    std::string dialect_in;
-    GDALDatasetH hDataset;
-    GDALAccess eAccess;
-    OGRLayerH hLayer;
+    std::string m_dsn;
+    std::string m_layer_name;  // layer name or sql statement
+    bool m_is_sql;
+    Rcpp::CharacterVector m_open_options;
+    std::string m_spatial_filter;
+    std::string m_dialect;
+    GDALDatasetH m_hDataset;
+    GDALAccess m_eAccess;
+    OGRLayerH m_hLayer;
     std::string m_attr_filter = "";
 
  public:

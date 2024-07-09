@@ -13,7 +13,6 @@
 #include "cpl_port.h"
 #include "cpl_string.h"
 #include "cpl_time.h"
-// #include "ogrsf_frmts.h"
 #include "ogr_srs_api.h"
 
 #include "gdalraster.h"
@@ -21,15 +20,15 @@
 #include "ogr_util.h"
 
 GDALVector::GDALVector() :
-            dsn_in(""),
-            layer_in(""),
-            is_sql_in(false),
-            open_options_in(Rcpp::CharacterVector::create()),
-            spatial_filter_in(""),
-            dialect_in(""),
-            hDataset(nullptr),
-            eAccess(GA_ReadOnly),
-            hLayer(nullptr) {}
+            m_dsn(""),
+            m_layer_name(""),
+            m_is_sql(false),
+            m_open_options(Rcpp::CharacterVector::create()),
+            m_spatial_filter(""),
+            m_dialect(""),
+            m_hDataset(nullptr),
+            m_eAccess(GA_ReadOnly),
+            m_hLayer(nullptr) {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn) :
             GDALVector(dsn, "", true, Rcpp::CharacterVector::create(),
@@ -55,47 +54,47 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
                        Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                        std::string spatial_filter, std::string dialect = "") :
 
-            layer_in(layer),
-            open_options_in(open_options.isNotNull() ? open_options :
-                            Rcpp::CharacterVector::create()),
-            spatial_filter_in(spatial_filter),
-            dialect_in(dialect),
-            hDataset(nullptr),
-            eAccess(GA_ReadOnly),
-            hLayer(nullptr) {
+            m_layer_name(layer),
+            m_open_options(open_options.isNotNull() ? open_options :
+                           Rcpp::CharacterVector::create()),
+            m_spatial_filter(spatial_filter),
+            m_dialect(dialect),
+            m_hDataset(nullptr),
+            m_eAccess(GA_ReadOnly),
+            m_hLayer(nullptr) {
 
-    dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
+    m_dsn = Rcpp::as<std::string>(check_gdal_filename(dsn));
     open(read_only);
 }
 
 void GDALVector::open(bool read_only) {
-    if (dsn_in == "")
+    if (m_dsn == "")
         Rcpp::stop("DSN is not set");
 
-    if (hDataset != nullptr) {
-        if (is_sql_in)
-            GDALDatasetReleaseResultSet(hDataset, hLayer);
-        GDALReleaseDataset(hDataset);
-        hDataset = nullptr;
-        hLayer = nullptr;
+    if (m_hDataset != nullptr) {
+        if (m_is_sql)
+            GDALDatasetReleaseResultSet(m_hDataset, m_hLayer);
+        GDALReleaseDataset(m_hDataset);
+        m_hDataset = nullptr;
+        m_hLayer = nullptr;
     }
 
     if (read_only)
-        eAccess = GA_ReadOnly;
+        m_eAccess = GA_ReadOnly;
     else
-        eAccess = GA_Update;
+        m_eAccess = GA_Update;
 
-    std::vector<char *> dsoo(open_options_in.size() + 1);
-    if (open_options_in.size() > 0) {
-        for (R_xlen_t i = 0; i < open_options_in.size(); ++i) {
-            dsoo[i] = (char *) (open_options_in[i]);
+    std::vector<char *> dsoo(m_open_options.size() + 1);
+    if (m_open_options.size() > 0) {
+        for (R_xlen_t i = 0; i < m_open_options.size(); ++i) {
+             dsoo[i] = (char *) (m_open_options[i]);
         }
     }
     dsoo.push_back(nullptr);
 
     OGRGeometryH hGeom_filter = nullptr;
-    if (spatial_filter_in != "") {
-        char* pszWKT = (char*) spatial_filter_in.c_str();
+    if (m_spatial_filter != "") {
+        char* pszWKT = (char*) m_spatial_filter.c_str();
         if (OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom_filter) !=
                 OGRERR_NONE) {
             if (hGeom_filter != nullptr)
@@ -110,35 +109,35 @@ void GDALVector::open(bool read_only) {
     else
         nOpenFlags |= GDAL_OF_UPDATE;
 
-    hDataset = GDALOpenEx(dsn_in.c_str(), nOpenFlags, nullptr,
-                          dsoo.data(), nullptr);
-    if (hDataset == nullptr)
+    m_hDataset = GDALOpenEx(m_dsn.c_str(), nOpenFlags, nullptr,
+                            dsoo.data(), nullptr);
+    if (m_hDataset == nullptr)
         Rcpp::stop("open dataset failed");
 
-    const char* pszDialect = dialect_in.c_str();
+    const char* pszDialect = m_dialect.c_str();
 
-    if (layer_in == "") {
-        is_sql_in = false;
-        hLayer = GDALDatasetGetLayer(hDataset, 0);
+    if (m_layer_name == "") {
+        m_is_sql = false;
+        m_hLayer = GDALDatasetGetLayer(m_hDataset, 0);
     }
-    else if (STARTS_WITH_CI(layer_in.c_str(), "SELECT ")) {
-        is_sql_in = true;
+    else if (STARTS_WITH_CI(m_layer_name.c_str(), "SELECT ")) {
+        m_is_sql = true;
         if (EQUAL(pszDialect, "SQLite") && !has_spatialite())
-            Rcpp::warning("spatialite not available");
-        hLayer = GDALDatasetExecuteSQL(hDataset, layer_in.c_str(),
-                                       hGeom_filter, pszDialect);
+            Rcpp::warning("SpatiaLite not available");
+        m_hLayer = GDALDatasetExecuteSQL(m_hDataset, m_layer_name.c_str(),
+                                         hGeom_filter, pszDialect);
     }
     else {
-        is_sql_in = false;
-        hLayer = GDALDatasetGetLayerByName(hDataset, layer_in.c_str());
+        m_is_sql = false;
+        m_hLayer = GDALDatasetGetLayerByName(m_hDataset, m_layer_name.c_str());
     }
 
-    if (hLayer == nullptr) {
-        GDALReleaseDataset(hDataset);
+    if (m_hLayer == nullptr) {
+        GDALReleaseDataset(m_hDataset);
         Rcpp::stop("failed to get layer");
     }
     else {
-        OGR_L_ResetReading(hLayer);
+        OGR_L_ResetReading(m_hLayer);
     }
 
     if (hGeom_filter != nullptr)
@@ -146,21 +145,21 @@ void GDALVector::open(bool read_only) {
 }
 
 bool GDALVector::isOpen() const {
-    if (hDataset == nullptr)
+    if (m_hDataset == nullptr)
         return false;
     else
         return true;
 }
 
 std::string GDALVector::getDsn() const {
-    return dsn_in;
+    return m_dsn;
 }
 
 Rcpp::CharacterVector GDALVector::getFileList() const {
     checkAccess_(GA_ReadOnly);
 
     char **papszFiles;
-    papszFiles = GDALGetFileList(hDataset);
+    papszFiles = GDALGetFileList(m_hDataset);
 
     int items = CSLCount(papszFiles);
     if (items > 0) {
@@ -180,53 +179,53 @@ Rcpp::CharacterVector GDALVector::getFileList() const {
 std::string GDALVector::getDriverShortName() const {
     checkAccess_(GA_ReadOnly);
 
-    GDALDriverH hDriver = GDALGetDatasetDriver(hDataset);
+    GDALDriverH hDriver = GDALGetDatasetDriver(m_hDataset);
     return GDALGetDriverShortName(hDriver);
 }
 
 std::string GDALVector::getDriverLongName() const {
     checkAccess_(GA_ReadOnly);
 
-    GDALDriverH hDriver = GDALGetDatasetDriver(hDataset);
+    GDALDriverH hDriver = GDALGetDatasetDriver(m_hDataset);
     return GDALGetDriverLongName(hDriver);
 }
 
 std::string GDALVector::getName() const {
     checkAccess_(GA_ReadOnly);
 
-    return OGR_L_GetName(hLayer);
+    return OGR_L_GetName(m_hLayer);
 }
 
 bool GDALVector::testCapability(std::string capability) const {
     checkAccess_(GA_ReadOnly);
 
-    return OGR_L_TestCapability(hLayer, capability.c_str());
+    return OGR_L_TestCapability(m_hLayer, capability.c_str());
 }
 
 std::string GDALVector::getFIDColumn() const {
     checkAccess_(GA_ReadOnly);
 
-    return OGR_L_GetFIDColumn(hLayer);
+    return OGR_L_GetFIDColumn(m_hLayer);
 }
 
 std::string GDALVector::getGeomType() const {
     checkAccess_(GA_ReadOnly);
 
-    OGRwkbGeometryType eType = OGR_L_GetGeomType(hLayer);
-    return OGRGeometryTypeToName(eType);
+    OGRwkbGeometryType eType = OGR_L_GetGeomType(m_hLayer);
+    return getWkbGeomString_(eType);
 }
 
 std::string GDALVector::getGeometryColumn() const {
     checkAccess_(GA_ReadOnly);
 
-    return OGR_L_GetGeometryColumn(hLayer);
+    return OGR_L_GetGeometryColumn(m_hLayer);
 }
 
 std::string GDALVector::getSpatialRef() const {
     // OGRLayer::GetSpatialRef() as WKT string
     checkAccess_(GA_ReadOnly);
 
-    OGRSpatialReferenceH hSRS = OGR_L_GetSpatialRef(hLayer);
+    OGRSpatialReferenceH hSRS = OGR_L_GetSpatialRef(m_hLayer);
     if (hSRS == nullptr)
         Rcpp::stop("could not obtain spatial reference");
     char *pszSRS_WKT = nullptr;
@@ -239,7 +238,7 @@ std::string GDALVector::getSpatialRef() const {
 }
 
 Rcpp::NumericVector GDALVector::bbox() {
-    // Note: bForce=true in tha call to OGR_L_GetExtent(), so the entire
+    // Note: bForce = true in the call to OGR_L_GetExtent(), so the entire
     // layer may be scanned to compute MBR.
     // see: testCapability("FastGetExtent")
     // Depending on the driver, a spatial filter may/may not be taken into
@@ -247,7 +246,7 @@ Rcpp::NumericVector GDALVector::bbox() {
     checkAccess_(GA_ReadOnly);
 
     OGREnvelope envelope;
-    if (OGR_L_GetExtent(hLayer, &envelope, true) != OGRERR_NONE)
+    if (OGR_L_GetExtent(m_hLayer, &envelope, true) != OGRERR_NONE)
         Rcpp::stop("the extent of the layer cannot be determined");
 
     Rcpp::NumericVector bbox_out =
@@ -260,37 +259,30 @@ Rcpp::List GDALVector::getLayerDefn() const {
     checkAccess_(GA_ReadOnly);
 
     OGRFeatureDefnH hFDefn;
-    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
 
     Rcpp::List list_out = Rcpp::List::create();
-    std::string sValue = "";
-    int nValue = -1;
     bool bValue;
-    int iField;
 
     // attribute fields
     // TODO(ctoney): add field domain name
-    for (iField = 0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
+    for (int iField = 0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
         Rcpp::List list_fld_defn = Rcpp::List::create();
         OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
         if (hFieldDefn == nullptr)
             Rcpp::stop("could not obtain field definition");
 
         OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
-        sValue = getOFTString_(fld_type);
-        list_fld_defn.push_back(sValue, "type");
+        list_fld_defn.push_back(getOFTString_(fld_type), "type");
 
         OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
-        sValue = getOFTSubtypeString_(fld_subtype);
-        list_fld_defn.push_back(sValue, "subtype");
+        list_fld_defn.push_back(getOFTSubtypeString_(fld_subtype), "subtype");
 
-        nValue = OGR_Fld_GetWidth(hFieldDefn);
-        list_fld_defn.push_back(nValue, "width");
+        list_fld_defn.push_back(OGR_Fld_GetWidth(hFieldDefn), "width");
 
-        nValue = OGR_Fld_GetPrecision(hFieldDefn);
-        list_fld_defn.push_back(nValue, "precision");
+        list_fld_defn.push_back(OGR_Fld_GetPrecision(hFieldDefn), "precision");
 
         bValue = OGR_Fld_IsNullable(hFieldDefn);
         list_fld_defn.push_back(bValue, "is_nullable");
@@ -298,10 +290,9 @@ Rcpp::List GDALVector::getLayerDefn() const {
         bValue = OGR_Fld_IsUnique(hFieldDefn);
         list_fld_defn.push_back(bValue, "is_unique");
 
+        std::string sValue = "";
         if (OGR_Fld_GetDefault(hFieldDefn) != nullptr)
             sValue = std::string(OGR_Fld_GetDefault(hFieldDefn));
-        else
-            sValue = "";
         list_fld_defn.push_back(sValue, "default");
 
         bValue = OGR_Fld_IsIgnored(hFieldDefn);
@@ -324,15 +315,23 @@ Rcpp::List GDALVector::getLayerDefn() const {
         OGRwkbGeometryType eType = OGR_GFld_GetType(hGeomFldDefn);
         list_geom_fld_defn.push_back(getWkbGeomString_(eType), "type");
 
-        OGRSpatialReferenceH hSRS = OGR_GFld_GetSpatialRef(hGeomFldDefn);
-        if (hSRS == nullptr)
-            Rcpp::stop("could not obtain geometry SRS");
-        char *pszSRS_WKT = nullptr;
-        if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE) {
-            Rcpp::stop("error exporting geometry SRS to WKT");
+        OGRSpatialReferenceH hSRS = nullptr;
+        hSRS = OGR_GFld_GetSpatialRef(hGeomFldDefn);
+        if (hSRS == nullptr) {
+            Rcpp::warning("could not obtain geometry field SRS");
+            list_geom_fld_defn.push_back(NA_STRING, "srs");
         }
-        sValue = std::string(pszSRS_WKT);
-        list_geom_fld_defn.push_back(sValue, "srs");
+        else {
+            char *pszSRS_WKT = nullptr;
+            if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE) {
+                Rcpp::warning("error exporting geometry SRS to WKT");
+                list_geom_fld_defn.push_back(NA_STRING, "srs");
+            }
+            else {
+                list_geom_fld_defn.push_back(std::string(pszSRS_WKT), "srs");
+            }
+            CPLFree(pszSRS_WKT);
+        }
 
         bValue = OGR_GFld_IsNullable(hGeomFldDefn);
         list_geom_fld_defn.push_back(bValue, "is_nullable");
@@ -346,10 +345,7 @@ Rcpp::List GDALVector::getLayerDefn() const {
         std::string geomFldName(OGR_GFld_GetNameRef(hGeomFldDefn));
         if (geomFldName == "")
             geomFldName = defaultGeomFldName;
-
         list_out.push_back(list_geom_fld_defn, geomFldName);
-
-        CPLFree(pszSRS_WKT);
     }
 
     return list_out;
@@ -362,7 +358,7 @@ void GDALVector::setAttributeFilter(std::string query) {
     if (query != "")
         query_in = query.c_str();
 
-    if (OGR_L_SetAttributeFilter(hLayer, query_in) != OGRERR_NONE)
+    if (OGR_L_SetAttributeFilter(m_hLayer, query_in) != OGRERR_NONE)
         Rcpp::stop("error setting filter, possibly in the query expression");
     else
         m_attr_filter = query;
@@ -374,13 +370,13 @@ void GDALVector::setSpatialFilterRect(Rcpp::NumericVector bbox) {
     if (Rcpp::any(Rcpp::is_na(bbox)))
         Rcpp::stop("'bbox' has one or more 'NA' values");
 
-    OGR_L_SetSpatialFilterRect(hLayer, bbox[0], bbox[1], bbox[2], bbox[3]);
+    OGR_L_SetSpatialFilterRect(m_hLayer, bbox[0], bbox[1], bbox[2], bbox[3]);
 }
 
 void GDALVector::clearSpatialFilter() {
     checkAccess_(GA_ReadOnly);
 
-    OGR_L_SetSpatialFilter(hLayer, nullptr);
+    OGR_L_SetSpatialFilter(m_hLayer, nullptr);
 }
 
 double GDALVector::getFeatureCount() {
@@ -390,7 +386,7 @@ double GDALVector::getFeatureCount() {
     // see: testCapability("FastFeatureCount")
     checkAccess_(GA_ReadOnly);
 
-    return static_cast<double>(OGR_L_GetFeatureCount(hLayer, true));
+    return static_cast<double>(OGR_L_GetFeatureCount(m_hLayer, true));
 }
 
 SEXP GDALVector::getNextFeature() {
@@ -409,9 +405,11 @@ SEXP GDALVector::getNextFeature() {
 }
 
 SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
-    // fid must be an R numeric vector of length 1
-    // i.e., a scalar but use NumericVector here since it can carry the class
-    // attribute for integer64
+    // fid must be an R numeric vector of length 1, i.e., a scalar but using
+    // NumericVector since it can carry the class attribute for integer64.
+    // Instead of wrapping OGR_L_GetFeature(), we use fetch() because it
+    // already builds the return data structure.
+
     checkAccess_(GA_ReadOnly);
 
     if (fid.size() != 1)
@@ -427,13 +425,13 @@ SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
     std::string orig_filter = m_attr_filter;
     OGRGeometryH hOrigFilterGeom = nullptr;
     OGRGeometryH hFilterGeom = nullptr;
-    hFilterGeom = OGR_L_GetSpatialFilter(hLayer);
+    hFilterGeom = OGR_L_GetSpatialFilter(m_hLayer);
     if (hFilterGeom != nullptr) {
         hOrigFilterGeom = OGR_G_Clone(hFilterGeom);
         hFilterGeom = nullptr;
     }
 
-    // filter based on FID
+    // filter on FID
     clearSpatialFilter();
     setAttributeFilter("FID = " + std::to_string(fid_in));
 
@@ -441,7 +439,7 @@ SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
 
     // restore original filters
     setAttributeFilter(orig_filter);
-    OGR_L_SetSpatialFilter(hLayer, hOrigFilterGeom);
+    OGR_L_SetSpatialFilter(m_hLayer, hOrigFilterGeom);
     if (hOrigFilterGeom != nullptr) {
         OGR_G_DestroyGeometry(hOrigFilterGeom);
         hOrigFilterGeom = nullptr;
@@ -461,35 +459,32 @@ SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
 void GDALVector::resetReading() {
     checkAccess_(GA_ReadOnly);
 
-    OGR_L_ResetReading(hLayer);
+    OGR_L_ResetReading(m_hLayer);
 }
 
 Rcpp::DataFrame GDALVector::fetch(double n) {
-    // Analog of DBI::dbFetch(), mostly following its specification:
+    // Analog of DBI::dbFetch(), generally following its specification:
     // https://dbi.r-dbi.org/reference/dbFetch.html#specification
-    // n should be passed as a whole number (integer or numeric). A value of
-    // Inf for the n argument is supported and also returns the full result.
 
     checkAccess_(GA_ReadOnly);
 
     OGRFeatureDefnH hFDefn = nullptr;
-    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
 
     bool fetch_all = true;
     size_t fetch_num = 0;
-    if (n == -1 || (n > 0 && std::isinf(n))) {
+    if (n == -1 || (std::isinf(n) && n > 0)) {
         resetReading();
-        fetch_num = OGR_L_GetFeatureCount(hLayer, true);
+        fetch_num = OGR_L_GetFeatureCount(m_hLayer, true);
     }
     else if (Rcpp::NumericVector::is_na(n)) {
-        fetch_num = OGR_L_GetFeatureCount(hLayer, true);
+        fetch_num = OGR_L_GetFeatureCount(m_hLayer, true);
     }
-    else if (n >= 0 && std::isfinite(n)) {
+    else if (n >= 0) {
         if (n > 9007199254740992)
             Rcpp::stop("'n' is out of range");
-
         fetch_all = false;
         fetch_num = static_cast<size_t>(std::trunc(n));
     }
@@ -501,8 +496,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     if (fetch_num == 0)
         return df;
 
-    OGRFeatureH hFeat = nullptr;
-    size_t row_num = 0;
     int nFields = OGR_FD_GetFieldCount(hFDefn);
     int nGeomFields = OGR_FD_GetGeomFieldCount(hFDefn);
     bool include_geom = true;
@@ -514,7 +507,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                EQUAL(returnGeomAs.c_str(), "WKT") ||
                EQUAL(returnGeomAs.c_str(), "WKT_ISO") ||
                EQUAL(returnGeomAs.c_str(), "TYPE_NAME"))) {
-        Rcpp::stop("unrecognized value of field 'returnGeomAs'");
+        Rcpp::stop("unsupported value of field 'returnGeomAs'");
     }
 
     OGRwkbByteOrder eOrder;
@@ -525,7 +518,10 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     else
         Rcpp::stop("invalid value of field 'wkbByteOrder'");
 
-    while ((hFeat = OGR_L_GetNextFeature(hLayer)) != nullptr) {
+    OGRFeatureH hFeat = nullptr;
+    size_t row_num = 0;
+
+    while ((hFeat = OGR_L_GetNextFeature(m_hLayer)) != nullptr) {
         const int64_t fid = static_cast<int64_t>(OGR_F_GetFID(hFeat));
         Rcpp::NumericVector fid_col = df[0];
         fid_col[row_num] = Rcpp::toInteger64(fid)[0];
@@ -613,7 +609,8 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 Rcpp::List col = df[i + 1];
                 if (has_value) {
                     int nDataSize = 0;
-                    GByte *pabyData = OGR_F_GetFieldAsBinary(hFeat, i, &nDataSize);
+                    GByte *pabyData = OGR_F_GetFieldAsBinary(hFeat, i,
+                                                             &nDataSize);
                     if (nDataSize > 0) {
                         Rcpp::RawVector blob(nDataSize);
                         std::memcpy(&blob[0], pabyData, nDataSize);
@@ -708,7 +705,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
             }
             else {
-                // use string
                 if (has_value) {
                     Rcpp::CharacterVector col = df[i + 1];
                     col[row_num] = OGR_F_GetFieldAsString(hFeat, i);
@@ -784,9 +780,9 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 
     if (fetch_all) {
-        hFeat = OGR_L_GetNextFeature(hLayer);
+        hFeat = OGR_L_GetNextFeature(m_hLayer);
         if (hFeat != nullptr) {
-            Rcpp::Rcout << "getFeatureCount() reported " << row_num
+            Rcpp::Rcout << "getFeatureCount() reported: " << row_num
                     << std::endl;
             std::string msg =
                     "more features potentially available than reported by getFeatureCount()";
@@ -888,7 +884,7 @@ void GDALVector::layerIntersection(
     }
 
     OGRErr err = OGR_L_Intersection(
-                    hLayer,
+                    m_hLayer,
                     method_layer.getOGRLayerH_(),
                     result_layer.getOGRLayerH_(),
                     opt_list.data(),
@@ -916,7 +912,7 @@ void GDALVector::layerUnion(
     }
 
     OGRErr err = OGR_L_Union(
-                    hLayer,
+                    m_hLayer,
                     method_layer.getOGRLayerH_(),
                     result_layer.getOGRLayerH_(),
                     opt_list.data(),
@@ -944,7 +940,7 @@ void GDALVector::layerSymDifference(
     }
 
     OGRErr err = OGR_L_SymDifference(
-                    hLayer,
+                    m_hLayer,
                     method_layer.getOGRLayerH_(),
                     result_layer.getOGRLayerH_(),
                     opt_list.data(),
@@ -972,7 +968,7 @@ void GDALVector::layerIdentity(
     }
 
     OGRErr err = OGR_L_Identity(
-                    hLayer,
+                    m_hLayer,
                     method_layer.getOGRLayerH_(),
                     result_layer.getOGRLayerH_(),
                     opt_list.data(),
@@ -1000,7 +996,7 @@ void GDALVector::layerUpdate(
     }
 
     OGRErr err = OGR_L_Update(
-                    hLayer,
+                    m_hLayer,
                     method_layer.getOGRLayerH_(),
                     result_layer.getOGRLayerH_(),
                     opt_list.data(),
@@ -1028,7 +1024,7 @@ void GDALVector::layerClip(
     }
 
     OGRErr err = OGR_L_Clip(
-                    hLayer,
+                    m_hLayer,
                     method_layer.getOGRLayerH_(),
                     result_layer.getOGRLayerH_(),
                     opt_list.data(),
@@ -1056,7 +1052,7 @@ void GDALVector::layerErase(
     }
 
     OGRErr err = OGR_L_Erase(
-                    hLayer,
+                    m_hLayer,
                     method_layer.getOGRLayerH_(),
                     result_layer.getOGRLayerH_(),
                     opt_list.data(),
@@ -1068,12 +1064,12 @@ void GDALVector::layerErase(
 }
 
 void GDALVector::close() {
-    if (hDataset != nullptr) {
-        if (is_sql_in)
-            GDALDatasetReleaseResultSet(hDataset, hLayer);
-        GDALReleaseDataset(hDataset);
-        hDataset = nullptr;
-        hLayer = nullptr;
+    if (m_hDataset != nullptr) {
+        if (m_is_sql)
+            GDALDatasetReleaseResultSet(m_hDataset, m_hLayer);
+        GDALReleaseDataset(m_hDataset);
+        m_hDataset = nullptr;
+        m_hLayer = nullptr;
     }
 }
 
@@ -1085,20 +1081,20 @@ void GDALVector::checkAccess_(GDALAccess access_needed) const {
     if (!isOpen())
         Rcpp::stop("dataset is not open");
 
-    if (access_needed == GA_Update && eAccess == GA_ReadOnly)
+    if (access_needed == GA_Update && m_eAccess == GA_ReadOnly)
         Rcpp::stop("dataset is read-only");
 }
 
 OGRLayerH GDALVector::getOGRLayerH_() const {
     checkAccess_(GA_ReadOnly);
 
-    return hLayer;
+    return m_hLayer;
 }
 
 SEXP GDALVector::initDF_(R_xlen_t nrow) const {
-    // initialize a data frame with nrow rows for the layer definition
+    // initialize a data frame based on the layer definition
     OGRFeatureDefnH hFDefn = nullptr;
-    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
 
@@ -1107,7 +1103,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
     if (!EQUAL(returnGeomAs.c_str(), "NONE"))
         nGeomFields = OGR_FD_GetGeomFieldCount(hFDefn);
 
-    // construct the data frame as list and convert at return
+    // construct as list and convert to data frame at return
     Rcpp::List df(1 + nFields + nGeomFields);
     Rcpp::CharacterVector col_names(1 + nFields + nGeomFields);
 
@@ -1159,8 +1155,8 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
         }
         else if (fld_type == OFTDateTime) {
             Rcpp::NumericVector v(nrow, NA_REAL);
-            Rcpp::CharacterVector class_names = {"POSIXt", "POSIXct"};
-            v.attr("class") = class_names;
+            Rcpp::CharacterVector classes = {"POSIXt", "POSIXct"};
+            v.attr("class") = classes;
             v.attr("tzone") = "UTC";
             df[i + 1] = v;
             col_names[i + 1] = OGR_Fld_GetNameRef(hFieldDefn);
