@@ -17,8 +17,7 @@ DEFAULT_NODATA <- list(
     "Byte" = 255, "Int8" = -128,
     "UInt16" = 65535, "Int16" = -32767,
     "UInt32" = 4294967293, "Int32" = -2147483647,
-    "Float32" = -99999.0, "Float64" = -99999.0
-)
+    "Float32" = -99999.0, "Float64" = -99999.0)
 
 
 #' List of default DEM processing options
@@ -26,16 +25,15 @@ DEFAULT_NODATA <- list(
 #' These values are used in `dem_proc()` as the default processing options:
 #' \preformatted{
 #'     list(
-#'          hillshade =    c("-z", "1", "-s", "1", "-az", "315",
-#'                           "-alt", "45", "-alg", "Horn",
-#'                           "-combined", "-compute_edges"),
-#'          slope =        c("-s", "1", "-alg", "Horn", "-compute_edges"),
-#'          aspect =       c("-alg", "Horn", "-compute_edges"),
-#'          color_relief = character(),
-#'          TRI =          c("-alg", "Riley", "-compute_edges"),
-#'          TPI =          c("-compute_edges"),
-#'          roughness =    c("-compute_edges")
-#'          )
+#'          "hillshade" =    c("-z", "1", "-s", "1", "-az", "315",
+#'                             "-alt", "45", "-alg", "Horn",
+#'                             "-combined", "-compute_edges"),
+#'          "slope" =        c("-s", "1", "-alg", "Horn", "-compute_edges"),
+#'          "aspect" =       c("-alg", "Horn", "-compute_edges"),
+#'          "color-relief" = character(),
+#'          "TRI" =          c("-alg", "Riley", "-compute_edges"),
+#'          "TPI" =          c("-compute_edges"),
+#'          "roughness" =    c("-compute_edges"))
 #' }
 #' @seealso
 #' [dem_proc()]
@@ -44,16 +42,15 @@ DEFAULT_NODATA <- list(
 #' available command-line options for each processing mode
 #' @export
 DEFAULT_DEM_PROC <- list(
-    hillshade = c("-z", "1", "-s", "1", "-az", "315",
-                  "-alt", "45", "-alg", "Horn",
-                  "-combined", "-compute_edges"),
-    slope = c("-s", "1", "-alg", "Horn", "-compute_edges"),
-    aspect = c("-alg", "Horn", "-compute_edges"),
-    color_relief = character(),
-    TRI = c("-alg", "Riley", "-compute_edges"),
-    TPI = c("-compute_edges"),
-    roughness = c("-compute_edges")
-)
+    "hillshade" = c("-z", "1", "-s", "1", "-az", "315",
+                    "-alt", "45", "-alg", "Horn",
+                    "-combined", "-compute_edges"),
+    "slope" = c("-s", "1", "-alg", "Horn", "-compute_edges"),
+    "aspect" = c("-alg", "Horn", "-compute_edges"),
+    "color-relief" = character(),
+    "TRI" = c("-alg", "Riley", "-compute_edges"),
+    "TPI" = c("-compute_edges"),
+    "roughness" = c("-compute_edges"))
 
 
 .VRT_KERNEL_TEMPLATE <-
