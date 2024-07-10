@@ -191,6 +191,7 @@ class GDALRaster {
     std::string getPaletteInterp(int band) const;
     bool setColorTable(int band, const Rcpp::RObject& col_tbl,
                        std::string palette_interp);
+    bool clearColorTable(int band);
 
     SEXP getDefaultRAT(int band) const;
     bool setDefaultRAT(int band, const Rcpp::DataFrame& df);
