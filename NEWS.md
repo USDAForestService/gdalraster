@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9030 (dev)
+# gdalraster 1.11.1.9040 (dev)
+
+* add `GDALRaster$clearColorTable()`: clear the color table associated with a raster band (2024-07-10)
 
 * fix the mode name for `color-relief` in `DEFAULT_DEM_PROC` (`"color-relief"` instead of `"color_relief"`, fixes #428) (2024-07-09)
 
