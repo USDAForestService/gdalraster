@@ -140,6 +140,7 @@ ds$fillRaster(value, ivalue)
 ds$getColorTable(band)
 ds$getPaletteInterp(band)
 ds$setColorTable(band, col_tbl, palette_interp)
+ds$clearColorTable(band)
 
 ds$getDefaultRAT(band)
 ds$setDefaultRAT(band, df)
@@ -678,6 +679,11 @@ opaque).
 (see \code{$getPaletteInterp()} above).
 Returns logical \code{TRUE} on success or \code{FALSE} if the color table
 could not be set.
+
+\code{$clearColorTable(band)}
+Clears the raster color table for \code{band}.
+Returns logical \code{TRUE} on success or \code{FALSE} if the color table
+could not be cleared, e.g., if this action is not supported by the driver.
 
 \code{$getDefaultRAT(band)}
 Returns the Raster Attribute Table for \code{band} as a data frame,

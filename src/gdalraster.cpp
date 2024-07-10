@@ -1201,6 +1201,20 @@ bool GDALRaster::setColorTable(int band, const Rcpp::RObject& col_tbl,
     }
 }
 
+bool GDALRaster::clearColorTable(int band) {
+
+    checkAccess_(GA_Update);
+
+    GDALRasterBandH hBand = getBand_(band);
+    CPLErr err = GDALSetRasterColorTable(hBand, nullptr);
+    if (err == CE_Failure) {
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 SEXP GDALRaster::getDefaultRAT(int band) const {
     checkAccess_(GA_ReadOnly);
 
@@ -1659,6 +1673,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Get the palette interpretation")
     .method("setColorTable", &GDALRaster::setColorTable,
         "Set a color table for this band")
+    .method("clearColorTable", &GDALRaster::clearColorTable,
+        "Clear the color table for this band")
     .const_method("getDefaultRAT", &GDALRaster::getDefaultRAT,
         "Return default Raster Attribute Table as data frame")
     .method("setDefaultRAT", &GDALRaster::setDefaultRAT,
