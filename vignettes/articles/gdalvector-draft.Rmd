@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-05-14
+Last modified: 2024-07-11
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -84,16 +84,16 @@ This does not include definitions of several stand-alone functions that will pro
 ```cpp
 class GDALVector {
  private:
-    std::string dsn_in;
-    std::string layer_in;  // layer name or sql statement
-    bool is_sql_in;
-    Rcpp::CharacterVector open_options_in;
-    std::string spatial_filter_in;
-    std::string dialect_in;
-    GDALDatasetH hDataset;
-    GDALAccess eAccess;
-    OGRLayerH hLayer;
-    OGRFeatureDefnH hFDefn;
+    std::string m_dsn;
+    std::string m_layer_name;  // layer name or sql statement
+    bool m_is_sql;
+    Rcpp::CharacterVector m_open_options;
+    std::string m_spatial_filter;
+    std::string m_dialect;
+    GDALDatasetH m_hDataset;
+    GDALAccess m_eAccess;
+    OGRLayerH m_hLayer;
+    std::string m_attr_filter = "";
 
  public:
     GDALVector();
@@ -105,6 +105,11 @@ class GDALVector {
     GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
                Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                std::string spatial_filter, std::string dialect);
+
+    # read/write fields
+    std::string defaultGeomFldName = "geometry";
+    std::string returnGeomAs = "NONE";
+    std::string wkbByteOrder = "LSB";
 
 	void open(bool read_only);
 	bool isOpen() const;
@@ -128,15 +133,17 @@ class GDALVector {
 	std::string getSpatialFilter() const;
 	void clearSpatialFilter();
 
-	double getFeatureCount();
-	SEXP getNextFeature();
-	void resetReading();
-	SEXP getFeature(int64_t fid);
+    double getFeatureCount();
+    SEXP getNextFeature();
+    // fid must be a length-1 numeric vector, since numeric vector can carry
+    // the class attribute for integer64:
+    SEXP getFeature(Rcpp::NumericVector fid);
+    void resetReading();
+    
 	void setNextByIndex(int64_t fid);
 	void setIgnoredFields(Rcpp::CharacterVector fields);
 
-	Rcpp::DataFrame getFeatureSet(Rcpp::CharacterVector fields,
-	                              bool geom_column);
+	Rcpp::DataFrame fetch(double n);
 
     // initialize an empty feature as list:
     Rcpp::List initFeature();
@@ -771,6 +778,7 @@ This is a working list of potential issues and design questions that need furthe
 * add `GDALVector::getFeature()`: fetch a feature from its FID (2024-04-06)
 * add a `GDALVector` class constructor with `spatial_filter` and SQL `dialect` arguments (2024-04-28)
 * [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html) added in **gdalraster** dev; examples updated (2024-05-14)
+* update the draft class definition: Add read/write fields for per-object settings (`defaultGeomFldName`, `returnGeomAs` and `wkbByteOrder`). Rename method `getFeatureSet()` to `fetch()`, analog of `DBI::dbFetch()`, fetch the next n features from the layer and return them as a data frame. (2024-07-11)
 
 ## Contributors
 
