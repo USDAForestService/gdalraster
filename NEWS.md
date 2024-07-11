@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9040 (dev)
+# gdalraster 1.11.1.9050 (dev)
+
+* `plot_raster()`: default to no stretch when the input is an RGB Byte raster, addresses #429 (2024-07-10)
 
 * add `GDALRaster$clearColorTable()`: clear the color table associated with a raster band (2024-07-10)
 
