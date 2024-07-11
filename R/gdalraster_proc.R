@@ -137,6 +137,7 @@ DEFAULT_DEM_PROC <- list(
 #'   $bbox = c(xmin, ymin, xmax, ymax)
 #'   $dim = c(xsize, ysize, nbands)
 #'   $srs = <projection as WKT2 string>
+#'   $datatype = <character vector of data type name by band>
 #' }
 #' The WKT version used for the projection string can be overridden by setting
 #' the `OSR_WKT_FORMAT` configuration option. See [srs_to_wkt()] for a list of
@@ -228,13 +229,15 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
     i <- 1
     readByteAsRaw <- ds$readByteAsRaw
     if (as_raw) {
-      ds$readByteAsRaw <- TRUE
-      dtype <- ds$getDataTypeName(bands[1L])
-      if (!dtype == "Byte") {
-        warning(sprintf("'as_raw' set to 'TRUE' only affects read for band type 'Byte',  current data type: '%s'", dtype))
-      }
+        ds$readByteAsRaw <- TRUE
+        dtype <- ds$getDataTypeName(bands[1L])
+        if (!dtype == "Byte") {
+            warning(sprintf("'as_raw' set to 'TRUE' only affects read for band type 'Byte', current data type: '%s'", dtype))
+        }
     }
+    dtype <- character()
     for (b in bands) {
+        dtype <- c(dtype, ds$getDataTypeName(b))
         if (as_list) {
             r[[i]] <- ds$read(b, xoff, yoff, xsize, ysize,
                               out_xsize, out_ysize)
@@ -247,19 +250,20 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 
     ## restore the field, note that it may have had no impact
     ds$readByteAsRaw <- readByteAsRaw
+
     gt <- ds$getGeoTransform()
     ul_xy <- .apply_geotransform(gt, xoff, yoff)
     lr_xy <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))
     bb <- c(ul_xy[1], lr_xy[2], lr_xy[1], ul_xy[2])
-
-    # gis: a list with the raster bbox, dimensions, projection
+    # gis: a list with the bbox, dimensions, projection, nbands, datatype
     wkt_fmt_config <- get_config_option("OSR_WKT_FORMAT")
     if (wkt_fmt_config == "")
         set_config_option("OSR_WKT_FORMAT", "WKT2")
     attr(r, "gis") <- list(type = "raster",
                            bbox = bb,
                            dim = c(out_xsize, out_ysize, length(bands)),
-                           srs = ds$getProjectionRef())
+                           srs = ds$getProjectionRef(),
+                           datatype = dtype)
     set_config_option("OSR_WKT_FORMAT", wkt_fmt_config)
 
     return(r)
