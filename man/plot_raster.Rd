@@ -8,7 +8,7 @@ plot_raster(
   data,
   xsize = NULL,
   ysize = NULL,
-  nbands = 1,
+  nbands = NULL,
   max_pixels = 2.5e+07,
   col_tbl = NULL,
   maxColorValue = 1,
@@ -50,7 +50,9 @@ read (used for argument \code{out_ysize} in \code{GDALRaster$read()}). By defaul
 the entire raster will be read at full resolution.}
 
 \item{nbands}{The number of bands in \code{data}. Must be either 1 (grayscale) or
-3 (RGB). For RGB, \code{data} are interleaved by band.}
+3 (RGB). For RGB, \code{data} are interleaved by band. If \code{nbands} is \code{NULL} (the
+default), then \code{nbands = 3} is assumed if the input data contain 3 bands,
+otherwise band 1 is used.}
 
 \item{max_pixels}{The maximum number of pixels that the function will
 attempt to display (per band). An error is raised if \code{(xsize * ysize)}
@@ -134,6 +136,17 @@ The default is transparent (\code{"#00000000"}, the return value of
 }
 \description{
 \code{plot_raster()} displays raster data using base \code{graphics}.
+}
+\details{
+By default, contrast enhancement by stretch to min/max is applied when
+the input data are single-band grayscale with any raster data type, or
+three-band RGB with raster data type larger than Byte. The minimum/maximum
+of the input data are used by default (i.e., no outlier removal). No stretch
+is applied by default when the input is an RGB byte raster. These defaults
+can be overridden by specifying either the \code{minmax_def} argument
+(user-defined min/max per band), or the \code{minmax_pct_cut} argument (ignore
+outlier pixels based on a percentile range per band). These settings (and
+the \code{normalize} argument) are ignored if a color table is used.
 }
 \note{
 \code{plot_raster()} uses the function \code{graphics::rasterImage()} for plotting
