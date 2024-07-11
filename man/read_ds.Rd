@@ -80,6 +80,7 @@ The output object has attribute \code{gis}, a list containing:
   $bbox = c(xmin, ymin, xmax, ymax)
   $dim = c(xsize, ysize, nbands)
   $srs = <projection as WKT2 string>
+  $datatype = <character vector of data type name by band>
 }
 The WKT version used for the projection string can be overridden by setting
 the \code{OSR_WKT_FORMAT} configuration option. See \code{\link[=srs_to_wkt]{srs_to_wkt()}} for a list of

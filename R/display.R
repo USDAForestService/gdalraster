@@ -123,6 +123,17 @@
 #'
 #' `plot_raster()` displays raster data using base `graphics`.
 #'
+#' @details
+#' By default, contrast enhancement by stretch to min/max is applied when
+#' the input data are single-band grayscale with any raster data type, or
+#' three-band RGB with raster data type larger than Byte. The minimum/maximum
+#' of the input data are used by default (i.e., no outlier removal). No stretch
+#' is applied by default when the input is an RGB byte raster. These defaults
+#' can be overridden by specifying either the `minmax_def` argument
+#' (user-defined min/max per band), or the `minmax_pct_cut` argument (ignore
+#' outlier pixels based on a percentile range per band). These settings (and
+#' the `normalize` argument) are ignored if a color table is used.
+#'
 #' @param data Either a `GDALRaster` object from which data will be read, or
 #' a numeric vector of pixel values arranged in left to right, top to
 #' bottom order, or a list of band vectors. If input is vector or list,
@@ -137,7 +148,9 @@
 #' read (used for argument `out_ysize` in `GDALRaster$read()`). By default,
 #' the entire raster will be read at full resolution.
 #' @param nbands The number of bands in `data`. Must be either 1 (grayscale) or
-#' 3 (RGB). For RGB, `data` are interleaved by band.
+#' 3 (RGB). For RGB, `data` are interleaved by band. If `nbands` is `NULL` (the
+#' default), then `nbands = 3` is assumed if the input data contain 3 bands,
+#' otherwise band 1 is used.
 #' @param max_pixels The maximum number of pixels that the function will
 #' attempt to display (per band). An error is raised if `(xsize * ysize)`
 #' exceeds this value. Setting to `NULL` turns off this check.
@@ -270,7 +283,7 @@
 #'
 #' ds$close()
 #' @export
-plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
+plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
                         max_pixels=2.5e7, col_tbl=NULL, maxColorValue=1,
                         normalize=TRUE, minmax_def=NULL, minmax_pct_cut=NULL,
                         col_map_fn=NULL, xlim=NULL, ylim=NULL,
@@ -292,6 +305,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
         max_pixels <- Inf
 
     data_in <- NULL
+    is_byte_raster <- TRUE
 
     if (is(data, "Rcpp_GDALRaster")) {
         dm <- data$dim()
@@ -308,6 +322,18 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
 
         if ((out_xsize*out_ysize) > max_pixels)
             stop("'xsize * ysize' exceeds 'max_pixels'", call.=FALSE)
+
+        if (is.null(nbands)) {
+            if (data$getRasterCount() == 3)
+                nbands <- 3
+            else
+                nbands <- 1
+        }
+
+        for (b in 1:nbands) {
+            if (data$getDataTypeName(b) != "Byte")
+                is_byte_raster <- FALSE
+        }
 
         data_in <- read_ds(data, bands=1:nbands, xoff=0, yoff=0,
                            xsize=dm[1], ysize=dm[2],
@@ -344,15 +370,33 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
         if ((xsize*ysize) > max_pixels)
             stop("'xsize * ysize' exceeds 'max_pixels'", call.=FALSE)
 
-        nbands <- gis$dim[3]
-        if (is.list(data)) {
-            if (nbands != length(data)) {
-                stop("'length(data)' is not equal to 'gis' attribute 'dim[3]'",
-                     call.=FALSE)
+        if (is.null(nbands)) {
+            if (gis$dim[3] == 1)
+                nbands <- 1
+            else if (gis$dim[3] == 3)
+                nbands <- 3
+            else
+                stop("'nbands' must be 1 or 3", call.=FALSE)
+        } else {
+            if (nbands != gis$dim[3]) {
+                stop("'nbands' does not match the input data", call. = FALSE)
             }
         }
 
+        if (is.list(data)) {
+            if (nbands != length(data))
+                stop("'nbands' is not equal to 'length(data)'", call.=FALSE)
+        }
+
+        for (b in 1:nbands) {
+            if (gis$datatype[b] != "Byte")
+                is_byte_raster <- FALSE
+        }
+
     } else {
+        if (is.null(nbands))
+            stop("'nbands' cannot be determined from 'data'", call.=FALSE)
+
         if (is.null(xsize) || is.null(ysize))
             stop("'xsize' and 'ysize' of data must be specified", call.=FALSE)
 
@@ -365,11 +409,21 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=1,
             xlim <- c(0, xsize)
         if (is.null(ylim))
             ylim <- c(ysize, 0)
+
+        is_byte_raster <- FALSE  # unknown
+    }
+
+    if (nbands == 3 && is_byte_raster && normalize &&
+            is.null(minmax_def) && is.null(minmax_pct_cut)) {
+
+        # default to no stretch for RGB Byte raster
+        minmax_def <- c(0, 0, 0, 255, 255, 255)
     }
 
     if (typeof(data_in) == "raw") {
-      data_in <- as.integer(data_in)
+        data_in <- as.integer(data_in)
     }
+
     a <- array(data_in, dim = c(xsize, ysize, nbands))
     r <- .as_raster(a,
                     col_tbl=col_tbl,
