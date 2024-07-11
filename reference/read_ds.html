@@ -161,6 +161,7 @@ otherwise as type <code>double</code> (UInt32, Float32, Float64).</p>
   $bbox = c(xmin, ymin, xmax, ymax)
   $dim = c(xsize, ysize, nbands)
   $srs = &lt;projection as WKT2 string&gt;
+  $datatype = &lt;character vector of data type name by band&gt;
 </code></pre></div><p>The WKT version used for the projection string can be overridden by setting
 the <code>OSR_WKT_FORMAT</code> configuration option. See <code><a href="srs_to_wkt.html">srs_to_wkt()</a></code> for a list of
 supported values.</p>
@@ -197,7 +198,7 @@ approximately (xsize * ysize * number of bands * 4) for data read as
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 45903</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 185536 bytes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 185768 bytes</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># as a list of band vectors</span></span></span>
 <span class="r-in"><span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu">read_ds</span><span class="op">(</span><span class="va">ds</span>, bands<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">6</span>,<span class="fl">5</span>,<span class="fl">4</span><span class="op">)</span>, as_list<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -206,7 +207,7 @@ approximately (xsize * ysize * number of bands * 4) for data read as
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/length.html" class="external-link">length</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 185720 bytes</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 185952 bytes</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># gis attribute list</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">r</span>, <span class="st">"gis"</span><span class="op">)</span></span></span>
@@ -221,6 +222,9 @@ approximately (xsize * ysize * number of bands * 4) for data read as
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $srs</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "PROJCRS[\"NAD83 / UTM zone 12N\",BASEGEOGCRS[\"NAD83\",DATUM[\"North American Datum 1983\",ELLIPSOID[\"GRS 1980\",6378137,298.257222101,LENGTHUNIT[\"metre\",1]],ID[\"EPSG\",6269]],PRIMEM[\"Greenwich\",0,ANGLEUNIT[\"Degree\",0.0174532925199433]]],CONVERSION[\"UTM zone 12N\",METHOD[\"Transverse Mercator\",ID[\"EPSG\",9807]],PARAMETER[\"Latitude of natural origin\",0,ANGLEUNIT[\"Degree\",0.0174532925199433],ID[\"EPSG\",8801]],PARAMETER[\"Longitude of natural origin\",-111,ANGLEUNIT[\"Degree\",0.0174532925199433],ID[\"EPSG\",8802]],PARAMETER[\"Scale factor at natural origin\",0.9996,SCALEUNIT[\"unity\",1],ID[\"EPSG\",8805]],PARAMETER[\"False easting\",500000,LENGTHUNIT[\"metre\",1],ID[\"EPSG\",8806]],PARAMETER[\"False northing\",0,LENGTHUNIT[\"metre\",1],ID[\"EPSG\",8807]],ID[\"EPSG\",16012]],CS[Cartesian,2],AXIS[\"easting\",east,ORDER[1],LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]],AXIS[\"northing\",north,ORDER[2],LENGTHUNIT[\"metre\",1,ID[\"EPSG\",9001]]]]"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $datatype</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Int16" "Int16" "Int16"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>

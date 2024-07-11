@@ -58,7 +58,7 @@
 <span>  <span class="va">data</span>,</span>
 <span>  xsize <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  ysize <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  nbands <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>  nbands <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  max_pixels <span class="op">=</span> <span class="fl">2.5e+07</span>,</span>
 <span>  col_tbl <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  maxColorValue <span class="op">=</span> <span class="fl">1</span>,</span>
@@ -111,7 +111,9 @@ the entire raster will be read at full resolution.</p></dd>
 
 <dt id="arg-nbands">nbands<a class="anchor" aria-label="anchor" href="#arg-nbands"></a></dt>
 <dd><p>The number of bands in <code>data</code>. Must be either 1 (grayscale) or
-3 (RGB). For RGB, <code>data</code> are interleaved by band.</p></dd>
+3 (RGB). For RGB, <code>data</code> are interleaved by band. If <code>nbands</code> is <code>NULL</code> (the
+default), then <code>nbands = 3</code> is assumed if the input data contain 3 bands,
+otherwise band 1 is used.</p></dd>
 
 
 <dt id="arg-max-pixels">max_pixels<a class="anchor" aria-label="anchor" href="#arg-max-pixels"></a></dt>
@@ -236,6 +238,18 @@ The default is transparent (<code>"#00000000"</code>, the return value of
 <dd><p>Other parameters to be passed to <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot.default()</a></code>.</p></dd>
 
 </dl></div>
+    <div class="section level2">
+    <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
+    <p>By default, contrast enhancement by stretch to min/max is applied when
+the input data are single-band grayscale with any raster data type, or
+three-band RGB with raster data type larger than Byte. The minimum/maximum
+of the input data are used by default (i.e., no outlier removal). No stretch
+is applied by default when the input is an RGB byte raster. These defaults
+can be overridden by specifying either the <code>minmax_def</code> argument
+(user-defined min/max per band), or the <code>minmax_pct_cut</code> argument (ignore
+outlier pixels based on a percentile range per band). These settings (and
+the <code>normalize</code> argument) are ignored if a color table is used.</p>
+    </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p><code>plot_raster()</code> uses the function <code><a href="https://rdrr.io/r/graphics/rasterImage.html" class="external-link">graphics::rasterImage()</a></code> for plotting
