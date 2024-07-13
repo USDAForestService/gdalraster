@@ -341,22 +341,26 @@ implemented to properly release resources in case an object of class
 <span><span class="co"># copy to a temporary in-memory file that is writeable</span></span>
 <span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/vsimem/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/vsi_copy_file.html">vsi_copy_file</a></span><span class="op">(</span><span class="va">f</span>, <span class="va">dsn</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
 <span></span>
 <span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># object of class GDALVector</span></span>
 <span><span class="va">lyr</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x58a6a88edc80&gt; of class 'GDALVector' &lt;0x58a6a2fce150&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x58bb870345b0&gt; of class 'GDALVector' &lt;0x58bb8825b400&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 0 fields</span></span>
-<span><span class="co">#&gt;  list()</span></span>
-<span><span class="co">#&gt;  and 44 methods, of which 30 are  possibly relevant:</span></span>
-<span><span class="co">#&gt;    bbox, clearSpatialFilter, close, finalize, getDriverLongName,</span></span>
-<span><span class="co">#&gt;    getDriverShortName, getDsn, getFeatureCount, getFIDColumn, getFileList,</span></span>
-<span><span class="co">#&gt;    getGeometryColumn, getGeomType, getLayerDefn, getName, getNextFeature,</span></span>
-<span><span class="co">#&gt;    getSpatialRef, initialize, isOpen, layerClip, layerErase, layerIdentity,</span></span>
-<span><span class="co">#&gt;    layerIntersection, layerSymDifference, layerUnion, layerUpdate, open,</span></span>
-<span><span class="co">#&gt;    resetReading, setAttributeFilter, setSpatialFilterRect, testCapability</span></span>
+<span><span class="co">#&gt; Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 3 fields</span></span>
+<span><span class="co">#&gt;  $ defaultGeomFldName: chr "geometry"</span></span>
+<span><span class="co">#&gt;  $ returnGeomAs      : chr "NONE"</span></span>
+<span><span class="co">#&gt;  $ wkbByteOrder      : chr "LSB"</span></span>
+<span><span class="co">#&gt;  and 46 methods, of which 32 are  possibly relevant:</span></span>
+<span><span class="co">#&gt;    bbox, clearSpatialFilter, close, fetch, finalize, getDriverLongName,</span></span>
+<span><span class="co">#&gt;    getDriverShortName, getDsn, getFeature, getFeatureCount, getFIDColumn,</span></span>
+<span><span class="co">#&gt;    getFileList, getGeometryColumn, getGeomType, getLayerDefn, getName,</span></span>
+<span><span class="co">#&gt;    getNextFeature, getSpatialRef, initialize, isOpen, layerClip, layerErase,</span></span>
+<span><span class="co">#&gt;    layerIdentity, layerIntersection, layerSymDifference, layerUnion,</span></span>
+<span><span class="co">#&gt;    layerUpdate, open, resetReading, setAttributeFilter, setSpatialFilterRect,</span></span>
+<span><span class="co">#&gt;    testCapability</span></span>
 <span></span>
 <span><span class="co"># dataset info</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span>
@@ -370,7 +374,7 @@ implemented to properly release resources in case an object of class
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "mtbs_perims"</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getGeomType</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Multi Polygon"</span></span>
+<span><span class="co">#&gt; [1] "MULTIPOLYGON"</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getGeometryColumn</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "geom"</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFIDColumn</span><span class="op">(</span><span class="op">)</span></span>
@@ -408,14 +412,15 @@ implemented to properly release resources in case an object of class
 <span><span class="co"># feature class definition - a list of fields and their definitions</span></span>
 <span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getLayerDefn</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "event_id"     "incid_name"   "incid_type"   "map_id"       "burn_bnd_ac"</span></span>
+<span><span class="co">#&gt;  [1] "event_id"     "incid_name"   "incid_type"   "map_id"       "burn_bnd_ac" </span></span>
 <span><span class="co">#&gt;  [6] "burn_bnd_lat" "burn_bnd_lon" "ig_date"      "ig_year"      "geom"</span></span>
 <span></span>
 <span><span class="co"># each list element holds a field definition list</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 10</span></span>
-<span><span class="co">#&gt;  $ event_id    :List of 8</span></span>
+<span><span class="co">#&gt;  $ event_id    :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
+<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 254</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
@@ -423,8 +428,9 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
 <span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ incid_name  :List of 8</span></span>
+<span><span class="co">#&gt;  $ incid_name  :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
+<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 254</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
@@ -432,8 +438,9 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
 <span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ incid_type  :List of 8</span></span>
+<span><span class="co">#&gt;  $ incid_type  :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
+<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 254</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
@@ -441,8 +448,9 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
 <span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ map_id      :List of 8</span></span>
+<span><span class="co">#&gt;  $ map_id      :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTInteger64"</span></span>
+<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 0</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
@@ -450,8 +458,9 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
 <span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :List of 8</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTInteger64"</span></span>
+<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 0</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
@@ -459,8 +468,9 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
 <span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lat:List of 8</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lat:List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
+<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 10</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
@@ -468,8 +478,9 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
 <span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lon:List of 8</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lon:List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
+<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 10</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
@@ -477,8 +488,9 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
 <span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ ig_date     :List of 8</span></span>
-<span><span class="co">#&gt;   ..$ type       : chr "default (read as OFTString)"</span></span>
+<span><span class="co">#&gt;  $ ig_date     :List of 9</span></span>
+<span><span class="co">#&gt;   ..$ type       : chr "OFTDate"</span></span>
+<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 0</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
@@ -486,8 +498,9 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
 <span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ ig_year     :List of 8</span></span>
+<span><span class="co">#&gt;  $ ig_year     :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTInteger"</span></span>
+<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 0</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
@@ -496,7 +509,7 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ geom        :List of 5</span></span>
-<span><span class="co">#&gt;   ..$ type       : chr "Multi Polygon"</span></span>
+<span><span class="co">#&gt;   ..$ type       : chr "MULTIPOLYGON"</span></span>
 <span><span class="co">#&gt;   ..$ srs        : chr "PROJCS[\"NAD83 / Montana\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,2"| __truncated__</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
@@ -509,58 +522,61 @@ implemented to properly release resources in case an object of class
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># a list of field names and their values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 1</span></span>
+<span><span class="co">#&gt; List of 10</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 1 </span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4413411069519870807"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "POLECAT"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10015934</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 1093</span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10015934 </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 1093 </span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.132"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.696"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : chr "1987/08/07"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "1987-08-07"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 1987</span></span>
-<span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((503099.439579653 -12893.9672899192,503169.756694236 -12756.3721247327,502689.845907435 -12131.5"| __truncated__</span></span>
 <span></span>
 <span><span class="co"># attribute filter</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year = 2020"</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1</span></span>
 <span></span>
+<span><span class="co"># default value of read/write field 'returnGeomAs'</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span></span>
+<span><span class="co">#&gt; [1] "NONE"</span></span>
+<span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 61</span></span>
+<span><span class="co">#&gt; List of 10</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 61 </span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4438911082120200822"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "LONE STAR"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10020495</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3348</span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10020495 </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3348 </span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.4"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.782"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : chr "2020/08/22"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "2020-08-22"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 2020</span></span>
-<span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((496593.122306971 15506.8828590633,496491.761299067 15605.3612548792,496290.812130161 15388.0465"| __truncated__</span></span>
 <span></span>
 <span><span class="co"># NULL if no more features are available</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  NULL</span></span>
 <span></span>
-<span><span class="co"># reset reading to the start</span></span>
+<span><span class="co"># reset reading to the start and return geometry as WKT</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">resetReading</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKT"</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 61</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 61 </span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4438911082120200822"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "LONE STAR"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10020495</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3348</span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10020495 </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3348 </span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.4"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.782"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : chr "2020/08/22"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "2020-08-22"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 2020</span></span>
 <span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((496593.122306971 15506.8828590633,496491.761299067 15605.3612548792,496290.812130161 15388.0465"| __truncated__</span></span>
 <span></span>
@@ -570,20 +586,21 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt; [1] 61</span></span>
 <span></span>
 <span><span class="co"># spatial filter</span></span>
-<span><span class="co"># get the bounding box of the largest 1988 fire</span></span>
+<span><span class="co"># get the bounding box of the largest 1988 fire and use as spatial filter</span></span>
+<span><span class="co"># first set a temporary attribute filter to do the lookup</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year = 1988 ORDER BY burn_bnd_ac DESC"</span><span class="op">)</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 7</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 7 </span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4470811082119880722"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "NORTH FORK"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10014217</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 563527</span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10014217 </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 563527 </span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.678"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.716"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : chr "1988/07/22"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "1988-07-22"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 1988</span></span>
 <span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__</span></span>
 <span></span>
@@ -591,27 +608,130 @@ implemented to properly release resources in case an object of class
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">bbox</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 469685.97  11442.45 544069.63  85508.15</span></span>
 <span></span>
-<span><span class="co"># clear the attribute filter</span></span>
+<span><span class="co"># set spatial filter on the full layer</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">""</span><span class="op">)</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 61</span></span>
-<span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSpatialFilterRect</span><span class="op">(</span><span class="va">bbox</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 40</span></span>
 <span></span>
+<span><span class="co"># fetch n features at a time and return as a data frame</span></span>
+<span><span class="co"># analog of DBI::dbFetch() where the lyr object is a result set</span></span>
+<span><span class="co"># geometry can optionally be returned as NONE, WKT or WKB</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 'data.frame':    20 obs. of  11 variables:</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 38 7 32 25 6 40 36 8 ... </span></span>
+<span><span class="co">#&gt;  $ event_id    : chr  "MT4471311115120070627" "WY4470811082119880722" "MT4491211108020030820" "WY4433011103020000816" ...</span></span>
+<span><span class="co">#&gt;  $ incid_name  : chr  "MADISON ARM" "NORTH FORK" "RATHBONE" "SPRUCE COMPLEX (PLATEAU)" ...</span></span>
+<span><span class="co">#&gt;  $ incid_type  : chr  "Wildfire" "Wildfire" "Wildfire" "Wildfire" ...</span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 16113 10014217 13014 10014141 10014215 16428 15432 10014218 ... </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3564 563527 2701 2808 20422 2175 3745 95233 ... </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lat: chr  "44.713" "44.678" "44.912" "44.329" ...</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lon: chr  "-111.151" "-110.716" "-111.080" "-111.027" ...</span></span>
+<span><span class="co">#&gt;  $ ig_date     : Date, format: "2007-06-27" "1988-07-22" ...</span></span>
+<span><span class="co">#&gt;  $ ig_year     : int  2007 1988 2003 2000 1988 2007 2006 1988 1988 1988 ...</span></span>
+<span><span class="co">#&gt;  $ geom        : chr  "MULTIPOLYGON (((469685.969631834 54506.9481370259,470235.509134591 54383.4837249131,470939.42854159 53898.69574"| __truncated__ "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__ "MULTIPOLYGON (((475136.766856355 74053.2153491452,475188.847231864 74366.3342955356,475341.959781024 74368.4856"| __truncated__ "MULTIPOLYGON (((477992.723214764 8483.08443989834,477312.456870818 7630.95433906866,477088.305832492 6955.09786"| __truncated__ ...</span></span>
+<span></span>
+<span><span class="co"># the next 20 features</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 20</span></span>
+<span></span>
+<span><span class="co"># no features remaining</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span>  <span class="co"># 0-row data frame with columns typed</span></span>
+<span><span class="co">#&gt; 'data.frame':    0 obs. of  11 variables:</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64  </span></span>
+<span><span class="co">#&gt;  $ event_id    : chr </span></span>
+<span><span class="co">#&gt;  $ incid_name  : chr </span></span>
+<span><span class="co">#&gt;  $ incid_type  : chr </span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64  </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64  </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lat: chr </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lon: chr </span></span>
+<span><span class="co">#&gt;  $ ig_date     : 'Date' num(0) </span></span>
+<span><span class="co">#&gt;  $ ig_year     : int </span></span>
+<span><span class="co">#&gt;  $ geom        : chr</span></span>
+<span></span>
+<span><span class="co"># fetch all available features by passing n = -1, resets to first feature</span></span>
+<span><span class="co"># return geom as a list column of WKB raw vectors</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKB"</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 'data.frame':    40 obs. of  11 variables:</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 38 7 32 25 6 40 36 8 ... </span></span>
+<span><span class="co">#&gt;  $ event_id    : chr  "MT4471311115120070627" "WY4470811082119880722" "MT4491211108020030820" "WY4433011103020000816" ...</span></span>
+<span><span class="co">#&gt;  $ incid_name  : chr  "MADISON ARM" "NORTH FORK" "RATHBONE" "SPRUCE COMPLEX (PLATEAU)" ...</span></span>
+<span><span class="co">#&gt;  $ incid_type  : chr  "Wildfire" "Wildfire" "Wildfire" "Wildfire" ...</span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 16113 10014217 13014 10014141 10014215 16428 15432 10014218 ... </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3564 563527 2701 2808 20422 2175 3745 95233 ... </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lat: chr  "44.713" "44.678" "44.912" "44.329" ...</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lon: chr  "-111.151" "-110.716" "-111.080" "-111.027" ...</span></span>
+<span><span class="co">#&gt;  $ ig_date     : Date, format: "2007-06-27" "1988-07-22" ...</span></span>
+<span><span class="co">#&gt;  $ ig_year     : int  2007 1988 2003 2000 1988 2007 2006 1988 1988 1988 ...</span></span>
+<span><span class="co">#&gt;  $ geom        :List of 40</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
+<span></span>
+<span><span class="co"># parse WKB using the wk package</span></span>
+<span><span class="va">wk_obj</span> <span class="op">&lt;-</span> <span class="fu">wk</span><span class="fu">::</span><span class="fu">wkb</span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">geom</span>, crs <span class="op">=</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wk_obj</span><span class="op">)</span></span></code></pre></div>
+<p><img src="img/ynp_mtbs_wkb_plot_ex.png"><!-- --></p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">clearSpatialFilter</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 61</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span></code></pre></div>
-<p><sup>Created on 2024-04-06 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.0</a></sup></p>
+<span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
+<p><sup>Created on 2024-07-12 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
 </div>
 <div class="section level2">
 <h2 id="example-layer-geoprocessing">Example: layer geoprocessing<a class="anchor" aria-label="anchor" href="#example-layer-geoprocessing"></a>
 </h2>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## layer intersection example</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
@@ -624,18 +744,17 @@ implemented to properly release resources in case an object of class
 <span><span class="co"># largest 1988 fire (FID = 7 from the example above)</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getFeature</span><span class="op">(</span><span class="fl">7</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 7</span></span>
+<span><span class="co">#&gt; List of 10</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 7 </span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4470811082119880722"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "NORTH FORK"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10014217</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 563527</span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10014217 </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 563527 </span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.678"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.716"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : chr "1988/07/22"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "1988-07-22"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 1988</span></span>
-<span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__</span></span>
 <span></span>
 <span><span class="co"># get a second layer for 2000-2022 fires</span></span>
 <span><span class="co"># the layer argument can be a sql statement</span></span>
@@ -669,12 +788,12 @@ implemented to properly release resources in case an object of class
 <span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="va">lyr_out</span><span class="op">$</span><span class="fu">getLayerDefn</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># combined attributes</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "input_event_id"      "input_incid_name"    "input_incid_type"</span></span>
-<span><span class="co">#&gt;  [4] "input_map_id"        "input_burn_bnd_ac"   "input_burn_bnd_lat"</span></span>
-<span><span class="co">#&gt;  [7] "input_burn_bnd_lon"  "input_ig_date"       "input_ig_year"</span></span>
-<span><span class="co">#&gt; [10] "method_event_id"     "method_incid_name"   "method_incid_type"</span></span>
+<span><span class="co">#&gt;  [1] "input_event_id"      "input_incid_name"    "input_incid_type"   </span></span>
+<span><span class="co">#&gt;  [4] "input_map_id"        "input_burn_bnd_ac"   "input_burn_bnd_lat" </span></span>
+<span><span class="co">#&gt;  [7] "input_burn_bnd_lon"  "input_ig_date"       "input_ig_year"      </span></span>
+<span><span class="co">#&gt; [10] "method_event_id"     "method_incid_name"   "method_incid_type"  </span></span>
 <span><span class="co">#&gt; [13] "method_map_id"       "method_burn_bnd_ac"  "method_burn_bnd_lat"</span></span>
-<span><span class="co">#&gt; [16] "method_burn_bnd_lon" "method_ig_date"      "method_ig_year"</span></span>
+<span><span class="co">#&gt; [16] "method_burn_bnd_lon" "method_ig_date"      "method_ig_year"     </span></span>
 <span><span class="co">#&gt; [19] "geom"</span></span>
 <span></span>
 <span><span class="co"># we don't have vector plotting yet, so rasterize and use plot_raster()</span></span>
@@ -696,7 +815,7 @@ implemented to properly release resources in case an object of class
 <span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span>, col_map_fn <span class="op">=</span> <span class="va">ramp</span>, na_col <span class="op">=</span> <span class="st">"#d9d9d9"</span>,</span>
 <span>            main<span class="op">=</span><span class="st">"2000-2022 re-burn within the 1988 North Fork perimeter"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="img/ynp_mtbs_lyr_int_ex.png"><!-- --></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
@@ -704,15 +823,17 @@ implemented to properly release resources in case an object of class
 <span><span class="va">lyr_out</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">dsn_out</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">out_file</span><span class="op">)</span></span></code></pre></div>
-<p><sup>Created on 2024-05-14 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.0</a></sup></p>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">out_file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
+<p><sup>Created on 2024-07-12 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
 </div>
 <div class="section level2">
 <h2 id="example-worldcover-sentinel-2-composites">Example: WorldCover Sentinel-2 composites<a class="anchor" aria-label="anchor" href="#example-worldcover-sentinel-2-composites"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## WorldCover Sentinel-2 annual composites</span></span>
-<span><span class="co">## https://blog.vito.be/remotesensing/worldcover-annual-composites</span></span>
+<span><span class="co">## see: https://blog.vito.be/remotesensing/worldcover-annual-composites</span></span>
 <span><span class="co">## tile index lookup on remote filesystem and obtain raster data</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
@@ -726,7 +847,7 @@ implemented to properly release resources in case an object of class
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "worldcover_composites_grid_aws"</span></span>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getGeomType</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "Polygon"</span></span>
+<span><span class="co">#&gt; [1] "POLYGON"</span></span>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]"</span></span>
 <span></span>
@@ -747,9 +868,9 @@ implemented to properly release resources in case an object of class
 <span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getLayerDefn</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "tile"              "s1_vvvhratio_2020" "s1_vvvhratio_2021"</span></span>
-<span><span class="co">#&gt;  [4] "s2_rgbnir_2020"    "s2_rgbnir_2021"    "s2_ndvi_2020"</span></span>
-<span><span class="co">#&gt;  [7] "s2_ndvi_2021"      "s2_swir_2020"      "s2_swir_2021"</span></span>
-<span><span class="co">#&gt; [10] ""</span></span>
+<span><span class="co">#&gt;  [4] "s2_rgbnir_2020"    "s2_rgbnir_2021"    "s2_ndvi_2020"     </span></span>
+<span><span class="co">#&gt;  [7] "s2_ndvi_2021"      "s2_swir_2020"      "s2_swir_2021"     </span></span>
+<span><span class="co">#&gt; [10] "geometry"</span></span>
 <span></span>
 <span><span class="co"># AOI for the Fishhawk fire</span></span>
 <span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
@@ -758,18 +879,19 @@ implemented to properly release resources in case an object of class
 <span><span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"incid_name = 'FISHHAWK'"</span><span class="op">)</span></span>
 <span><span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1</span></span>
+<span><span class="va">lyr_ynp</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKT"</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 60</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 60 </span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4437710988020190902"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "FISHHAWK"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10016957</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 10775</span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10016957 </span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 10775 </span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.384"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-109.85"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : chr "2019/09/02"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "2019-09-02"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 2019</span></span>
 <span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((573530.585472236 9160.22088906913,573266.183153384 9415.42216938034,573137.427110327 9285.44517"| __truncated__</span></span>
 <span></span>
@@ -785,8 +907,8 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt; [1] 1</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ FID              :integer64 16615</span></span>
+<span><span class="co">#&gt; List of 10</span></span>
+<span><span class="co">#&gt;  $ FID              :integer64 16615 </span></span>
 <span><span class="co">#&gt;  $ tile             : chr "N44W110"</span></span>
 <span><span class="co">#&gt;  $ s1_vvvhratio_2020: chr "s3://esa-worldcover-s1/vvvhratio/2020/N44/ESA_WorldCover_10m_2020_v100_N44W110_S1VVVHratio.tif"</span></span>
 <span><span class="co">#&gt;  $ s1_vvvhratio_2021: chr "s3://esa-worldcover-s1/vvvhratio/2021/N44/ESA_WorldCover_10m_2021_v200_N44W110_S1VVVHratio.tif"</span></span>
@@ -796,7 +918,6 @@ implemented to properly release resources in case an object of class
 <span><span class="co">#&gt;  $ s2_ndvi_2021     : chr "s3://esa-worldcover-s2/ndvi/2021/N44/ESA_WorldCover_10m_2021_v200_N44W110_NDVI.tif"</span></span>
 <span><span class="co">#&gt;  $ s2_swir_2020     : chr "s3://esa-worldcover-s2/swir/2020/N44/ESA_WorldCover_10m_2020_v100_N44W110_SWIR.tif"</span></span>
 <span><span class="co">#&gt;  $ s2_swir_2021     : chr "s3://esa-worldcover-s2/swir/2021/N44/ESA_WorldCover_10m_2021_v200_N44W110_SWIR.tif"</span></span>
-<span><span class="co">#&gt;  $                  : chr "POLYGON ((-110 44,-110 45,-109 45,-109 44,-110 44))"</span></span>
 <span></span>
 <span><span class="co"># get the Sentinel-2 RGBNIR composite for this AOI</span></span>
 <span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"s3://"</span>, <span class="st">"/vsis3/"</span>, <span class="va">feat</span><span class="op">$</span><span class="va">s2_rgbnir_2021</span>, fixed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -821,24 +942,24 @@ implemented to properly release resources in case an object of class
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 12000 12000     4</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">""</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "algorithm_version=V2.0.0"</span></span>
-<span><span class="co">#&gt;  [2] "AREA_OR_POINT=Area"</span></span>
-<span><span class="co">#&gt;  [3] "bands=Band 1: B04 (Red), Band 2: B03 (Green), Band 3: B02 (Blue), Band 4: B08 (Infrared)"</span></span>
-<span><span class="co">#&gt;  [4] "copyright=ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium"</span></span>
-<span><span class="co">#&gt;  [5] "creation_time=2022-12-09 17:08:25.881589"</span></span>
+<span><span class="co">#&gt;  [1] "algorithm_version=V2.0.0"                                                                                                                                            </span></span>
+<span><span class="co">#&gt;  [2] "AREA_OR_POINT=Area"                                                                                                                                                  </span></span>
+<span><span class="co">#&gt;  [3] "bands=Band 1: B04 (Red), Band 2: B03 (Green), Band 3: B02 (Blue), Band 4: B08 (Infrared)"                                                                            </span></span>
+<span><span class="co">#&gt;  [4] "copyright=ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium"                                    </span></span>
+<span><span class="co">#&gt;  [5] "creation_time=2022-12-09 17:08:25.881589"                                                                                                                            </span></span>
 <span><span class="co">#&gt;  [6] "description=The ESA WorldCover Sentinel-2 median L2A (RGBNIR) composite is a color image made from images in Blue (B02), Green (B03), Red (B04) and Infrared (B08). "</span></span>
-<span><span class="co">#&gt;  [7] "license=CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/"</span></span>
-<span><span class="co">#&gt;  [8] "product_crs=EPSG:4326"</span></span>
-<span><span class="co">#&gt;  [9] "product_grid=1x1 degree tiling grid"</span></span>
-<span><span class="co">#&gt; [10] "product_tile=N44W110"</span></span>
-<span><span class="co">#&gt; [11] "product_type=Sentinel-2 median L2A (RGBNIR) composite"</span></span>
-<span><span class="co">#&gt; [12] "product_version=V2.0.0"</span></span>
-<span><span class="co">#&gt; [13] "reference=https://esa-worldcover.org"</span></span>
-<span><span class="co">#&gt; [14] "time_end=2021-12-31T23:59:59Z"</span></span>
-<span><span class="co">#&gt; [15] "time_start=2021-01-01T00:00:00Z"</span></span>
+<span><span class="co">#&gt;  [7] "license=CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/"                                                                                                    </span></span>
+<span><span class="co">#&gt;  [8] "product_crs=EPSG:4326"                                                                                                                                               </span></span>
+<span><span class="co">#&gt;  [9] "product_grid=1x1 degree tiling grid"                                                                                                                                 </span></span>
+<span><span class="co">#&gt; [10] "product_tile=N44W110"                                                                                                                                                </span></span>
+<span><span class="co">#&gt; [11] "product_type=Sentinel-2 median L2A (RGBNIR) composite"                                                                                                               </span></span>
+<span><span class="co">#&gt; [12] "product_version=V2.0.0"                                                                                                                                              </span></span>
+<span><span class="co">#&gt; [13] "reference=https://esa-worldcover.org"                                                                                                                                </span></span>
+<span><span class="co">#&gt; [14] "time_end=2021-12-31T23:59:59Z"                                                                                                                                       </span></span>
+<span><span class="co">#&gt; [15] "time_start=2021-01-01T00:00:00Z"                                                                                                                                     </span></span>
 <span><span class="co">#&gt; [16] "title=ESA WorldCover Sentinel-2 median L2A (RGBNIR) composite at 10m resolution for year 2021"</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "COMPRESSION=DEFLATE" "INTERLEAVE=PIXEL"    "LAYOUT=COG"</span></span>
+<span><span class="co">#&gt; [1] "COMPRESSION=DEFLATE" "INTERLEAVE=PIXEL"    "LAYOUT=COG"         </span></span>
 <span><span class="co">#&gt; [4] "PREDICTOR=2"</span></span>
 <span></span>
 <span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ds.html">read_ds</a></span><span class="op">(</span><span class="va">ds</span>, bands<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, out_xsize <span class="op">=</span> <span class="fl">800</span>, out_ysize <span class="op">=</span> <span class="fl">800</span><span class="op">)</span></span>
@@ -850,12 +971,12 @@ implemented to properly release resources in case an object of class
 <span>            ylab <span class="op">=</span> <span class="st">"latitude"</span>,</span>
 <span>            main <span class="op">=</span> <span class="va">txt</span><span class="op">)</span></span></code></pre></div>
 <p><img src="img/worldcov2021_N44W110_S2RGBNIR_ex.png"><!-- --></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><sup>Created on 2024-04-06 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.0</a></sup></p>
+<p><sup>Created on 2024-07-12 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
 </div>
 <div class="section level2">
 <h2 id="further-consideration-tbd">Further consideration / TBD<a class="anchor" aria-label="anchor" href="#further-consideration-tbd"></a>
@@ -863,22 +984,13 @@ implemented to properly release resources in case an object of class
 <p>This is a working list of potential issues and design questions that
 need further consideration, to be determined:</p>
 <ul>
-<li>handling of 64-bit integer: OGR FID currently is
-<code>GIntBig</code> and integer fields in vector data sources will
-commonly be <code>OFTInteger64</code>. These are now handled using
-<strong>RcppInt64</strong>, with <strong>bit64</strong> on the R side
-providing S3 class <code>integer64</code>.</li>
 <li>OGR’s Arrow C interface: Implement
 <code>GDALVector::getArrowStream()</code> (GDAL &gt;= 3.6) and
 <code>GDALVector::writeArrowBatch()</code> (GDAL &gt;= 3.8), supported
 on the R side with package <strong>nanoarrow</strong>.</li>
-<li>potential output vectors of GEOS or OGR pointers, WKB with support
-by <strong>wk</strong>
-</li>
-<li>OGR layer geoprocessing might be stand-alone functions instead of
-class methods in <code>GDALVector</code>. We would have more flexibility
-in terms of optional/argument defaults. Either way, we should add an
-option to create the output layer.</li>
+<li>OGR layer geoprocessing will be moved to stand-alone functions
+instead of class methods in <code>GDALVector</code>, to be implemented
+in an <code>ogr_proc()</code> interface.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -947,6 +1059,11 @@ per-object settings (<code>defaultGeomFldName</code>,
 <code>getFeatureSet()</code> to <code>fetch()</code>, analog of
 <code>DBI::dbFetch()</code>, fetch the next n features from the layer
 and return them as a data frame. (2024-07-11)</li>
+<li>update usage example for recent changes in gdalvector branch:
+<code>defaultGeomFldName</code>,
+<code>returnGeomAs = NONE|WKT|WKT_ISO|WKB|WKB_ISO</code>,
+<code>GDALVector::fetch()</code>, all OGR attribute field types now
+supported (2024-07-12)</li>
 </ul>
 </div>
 <div class="section level2">
