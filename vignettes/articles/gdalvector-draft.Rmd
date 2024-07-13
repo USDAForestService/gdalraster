@@ -220,22 +220,26 @@ f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 # copy to a temporary in-memory file that is writeable
 dsn <- paste0("/vsimem/", basename(f))
 vsi_copy_file(f, dsn)
+#> [1] 0
 
 lyr <- new(GDALVector, dsn, "mtbs_perims")
 
 # object of class GDALVector
 lyr
-#> C++ object <0x58a6a88edc80> of class 'GDALVector' <0x58a6a2fce150>
+#> C++ object <0x58bb870345b0> of class 'GDALVector' <0x58bb8825b400>
 str(lyr)
-#> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 0 fields
-#>  list()
-#>  and 44 methods, of which 30 are  possibly relevant:
-#>    bbox, clearSpatialFilter, close, finalize, getDriverLongName,
-#>    getDriverShortName, getDsn, getFeatureCount, getFIDColumn, getFileList,
-#>    getGeometryColumn, getGeomType, getLayerDefn, getName, getNextFeature,
-#>    getSpatialRef, initialize, isOpen, layerClip, layerErase, layerIdentity,
-#>    layerIntersection, layerSymDifference, layerUnion, layerUpdate, open,
-#>    resetReading, setAttributeFilter, setSpatialFilterRect, testCapability
+#> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 3 fields
+#>  $ defaultGeomFldName: chr "geometry"
+#>  $ returnGeomAs      : chr "NONE"
+#>  $ wkbByteOrder      : chr "LSB"
+#>  and 46 methods, of which 32 are  possibly relevant:
+#>    bbox, clearSpatialFilter, close, fetch, finalize, getDriverLongName,
+#>    getDriverShortName, getDsn, getFeature, getFeatureCount, getFIDColumn,
+#>    getFileList, getGeometryColumn, getGeomType, getLayerDefn, getName,
+#>    getNextFeature, getSpatialRef, initialize, isOpen, layerClip, layerErase,
+#>    layerIdentity, layerIntersection, layerSymDifference, layerUnion,
+#>    layerUpdate, open, resetReading, setAttributeFilter, setSpatialFilterRect,
+#>    testCapability
 
 # dataset info
 lyr$getDriverShortName()
@@ -249,7 +253,7 @@ lyr$getFileList()
 lyr$getName()
 #> [1] "mtbs_perims"
 lyr$getGeomType()
-#> [1] "Multi Polygon"
+#> [1] "MULTIPOLYGON"
 lyr$getGeometryColumn()
 #> [1] "geom"
 lyr$getFIDColumn()
@@ -287,14 +291,15 @@ lyr$testCapability("RandomWrite")
 # feature class definition - a list of fields and their definitions
 defn <- lyr$getLayerDefn()
 names(defn)
-#>  [1] "event_id"     "incid_name"   "incid_type"   "map_id"       "burn_bnd_ac"
+#>  [1] "event_id"     "incid_name"   "incid_type"   "map_id"       "burn_bnd_ac" 
 #>  [6] "burn_bnd_lat" "burn_bnd_lon" "ig_date"      "ig_year"      "geom"
 
 # each list element holds a field definition list
 str(defn)
 #> List of 10
-#>  $ event_id    :List of 8
+#>  $ event_id    :List of 9
 #>   ..$ type       : chr "OFTString"
+#>   ..$ subtype    : chr "OFSTNone"
 #>   ..$ width      : int 254
 #>   ..$ precision  : int 0
 #>   ..$ is_nullable: logi TRUE
@@ -302,8 +307,9 @@ str(defn)
 #>   ..$ default    : chr ""
 #>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
-#>  $ incid_name  :List of 8
+#>  $ incid_name  :List of 9
 #>   ..$ type       : chr "OFTString"
+#>   ..$ subtype    : chr "OFSTNone"
 #>   ..$ width      : int 254
 #>   ..$ precision  : int 0
 #>   ..$ is_nullable: logi TRUE
@@ -311,8 +317,9 @@ str(defn)
 #>   ..$ default    : chr ""
 #>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
-#>  $ incid_type  :List of 8
+#>  $ incid_type  :List of 9
 #>   ..$ type       : chr "OFTString"
+#>   ..$ subtype    : chr "OFSTNone"
 #>   ..$ width      : int 254
 #>   ..$ precision  : int 0
 #>   ..$ is_nullable: logi TRUE
@@ -320,8 +327,9 @@ str(defn)
 #>   ..$ default    : chr ""
 #>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
-#>  $ map_id      :List of 8
+#>  $ map_id      :List of 9
 #>   ..$ type       : chr "OFTInteger64"
+#>   ..$ subtype    : chr "OFSTNone"
 #>   ..$ width      : int 0
 #>   ..$ precision  : int 0
 #>   ..$ is_nullable: logi TRUE
@@ -329,8 +337,9 @@ str(defn)
 #>   ..$ default    : chr ""
 #>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
-#>  $ burn_bnd_ac :List of 8
+#>  $ burn_bnd_ac :List of 9
 #>   ..$ type       : chr "OFTInteger64"
+#>   ..$ subtype    : chr "OFSTNone"
 #>   ..$ width      : int 0
 #>   ..$ precision  : int 0
 #>   ..$ is_nullable: logi TRUE
@@ -338,8 +347,9 @@ str(defn)
 #>   ..$ default    : chr ""
 #>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
-#>  $ burn_bnd_lat:List of 8
+#>  $ burn_bnd_lat:List of 9
 #>   ..$ type       : chr "OFTString"
+#>   ..$ subtype    : chr "OFSTNone"
 #>   ..$ width      : int 10
 #>   ..$ precision  : int 0
 #>   ..$ is_nullable: logi TRUE
@@ -347,8 +357,9 @@ str(defn)
 #>   ..$ default    : chr ""
 #>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
-#>  $ burn_bnd_lon:List of 8
+#>  $ burn_bnd_lon:List of 9
 #>   ..$ type       : chr "OFTString"
+#>   ..$ subtype    : chr "OFSTNone"
 #>   ..$ width      : int 10
 #>   ..$ precision  : int 0
 #>   ..$ is_nullable: logi TRUE
@@ -356,8 +367,9 @@ str(defn)
 #>   ..$ default    : chr ""
 #>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
-#>  $ ig_date     :List of 8
-#>   ..$ type       : chr "default (read as OFTString)"
+#>  $ ig_date     :List of 9
+#>   ..$ type       : chr "OFTDate"
+#>   ..$ subtype    : chr "OFSTNone"
 #>   ..$ width      : int 0
 #>   ..$ precision  : int 0
 #>   ..$ is_nullable: logi TRUE
@@ -365,8 +377,9 @@ str(defn)
 #>   ..$ default    : chr ""
 #>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
-#>  $ ig_year     :List of 8
+#>  $ ig_year     :List of 9
 #>   ..$ type       : chr "OFTInteger"
+#>   ..$ subtype    : chr "OFSTNone"
 #>   ..$ width      : int 0
 #>   ..$ precision  : int 0
 #>   ..$ is_nullable: logi TRUE
@@ -375,7 +388,7 @@ str(defn)
 #>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
 #>  $ geom        :List of 5
-#>   ..$ type       : chr "Multi Polygon"
+#>   ..$ type       : chr "MULTIPOLYGON"
 #>   ..$ srs        : chr "PROJCS[\"NAD83 / Montana\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,2"| __truncated__
 #>   ..$ is_nullable: logi TRUE
 #>   ..$ is_ignored : logi FALSE
@@ -388,58 +401,61 @@ lyr$getFeatureCount()
 feat <- lyr$getNextFeature()
 # a list of field names and their values
 str(feat)
-#> List of 11
-#>  $ FID         :integer64 1
+#> List of 10
+#>  $ FID         :integer64 1 
 #>  $ event_id    : chr "WY4413411069519870807"
 #>  $ incid_name  : chr "POLECAT"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      :integer64 10015934
-#>  $ burn_bnd_ac :integer64 1093
+#>  $ map_id      :integer64 10015934 
+#>  $ burn_bnd_ac :integer64 1093 
 #>  $ burn_bnd_lat: chr "44.132"
 #>  $ burn_bnd_lon: chr "-110.696"
-#>  $ ig_date     : chr "1987/08/07"
+#>  $ ig_date     : Date[1:1], format: "1987-08-07"
 #>  $ ig_year     : int 1987
-#>  $ geom        : chr "MULTIPOLYGON (((503099.439579653 -12893.9672899192,503169.756694236 -12756.3721247327,502689.845907435 -12131.5"| __truncated__
 
 # attribute filter
 lyr$setAttributeFilter("ig_year = 2020")
 lyr$getFeatureCount()
 #> [1] 1
 
+# default value of read/write field 'returnGeomAs'
+lyr$returnGeomAs
+#> [1] "NONE"
+
 feat <- lyr$getNextFeature()
 str(feat)
-#> List of 11
-#>  $ FID         :integer64 61
+#> List of 10
+#>  $ FID         :integer64 61 
 #>  $ event_id    : chr "WY4438911082120200822"
 #>  $ incid_name  : chr "LONE STAR"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      :integer64 10020495
-#>  $ burn_bnd_ac :integer64 3348
+#>  $ map_id      :integer64 10020495 
+#>  $ burn_bnd_ac :integer64 3348 
 #>  $ burn_bnd_lat: chr "44.4"
 #>  $ burn_bnd_lon: chr "-110.782"
-#>  $ ig_date     : chr "2020/08/22"
+#>  $ ig_date     : Date[1:1], format: "2020-08-22"
 #>  $ ig_year     : int 2020
-#>  $ geom        : chr "MULTIPOLYGON (((496593.122306971 15506.8828590633,496491.761299067 15605.3612548792,496290.812130161 15388.0465"| __truncated__
 
 # NULL if no more features are available
 feat <- lyr$getNextFeature()
 str(feat)
 #>  NULL
 
-# reset reading to the start
+# reset reading to the start and return geometry as WKT
 lyr$resetReading()
+lyr$returnGeomAs <- "WKT"
 feat <- lyr$getNextFeature()
 str(feat)
 #> List of 11
-#>  $ FID         :integer64 61
+#>  $ FID         :integer64 61 
 #>  $ event_id    : chr "WY4438911082120200822"
 #>  $ incid_name  : chr "LONE STAR"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      :integer64 10020495
-#>  $ burn_bnd_ac :integer64 3348
+#>  $ map_id      :integer64 10020495 
+#>  $ burn_bnd_ac :integer64 3348 
 #>  $ burn_bnd_lat: chr "44.4"
 #>  $ burn_bnd_lon: chr "-110.782"
-#>  $ ig_date     : chr "2020/08/22"
+#>  $ ig_date     : Date[1:1], format: "2020-08-22"
 #>  $ ig_year     : int 2020
 #>  $ geom        : chr "MULTIPOLYGON (((496593.122306971 15506.8828590633,496491.761299067 15605.3612548792,496290.812130161 15388.0465"| __truncated__
 
@@ -449,20 +465,21 @@ lyr$getFeatureCount()
 #> [1] 61
 
 # spatial filter
-# get the bounding box of the largest 1988 fire
+# get the bounding box of the largest 1988 fire and use as spatial filter
+# first set a temporary attribute filter to do the lookup
 lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
 feat <- lyr$getNextFeature()
 str(feat)
 #> List of 11
-#>  $ FID         :integer64 7
+#>  $ FID         :integer64 7 
 #>  $ event_id    : chr "WY4470811082119880722"
 #>  $ incid_name  : chr "NORTH FORK"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      :integer64 10014217
-#>  $ burn_bnd_ac :integer64 563527
+#>  $ map_id      :integer64 10014217 
+#>  $ burn_bnd_ac :integer64 563527 
 #>  $ burn_bnd_lat: chr "44.678"
 #>  $ burn_bnd_lon: chr "-110.716"
-#>  $ ig_date     : chr "1988/07/22"
+#>  $ ig_date     : Date[1:1], format: "1988-07-22"
 #>  $ ig_year     : int 1988
 #>  $ geom        : chr "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__
 
@@ -470,14 +487,119 @@ bbox <- bbox_from_wkt(feat$geom)
 print(bbox)
 #> [1] 469685.97  11442.45 544069.63  85508.15
 
-# clear the attribute filter
+# set spatial filter on the full layer
 lyr$setAttributeFilter("")
-lyr$getFeatureCount()
-#> [1] 61
-
 lyr$setSpatialFilterRect(bbox)
 lyr$getFeatureCount()
 #> [1] 40
+
+# fetch n features at a time and return as a data frame
+# analog of DBI::dbFetch() where the lyr object is a result set
+# geometry can optionally be returned as NONE, WKT or WKB
+d <- lyr$fetch(20)
+str(d)
+#> 'data.frame':    20 obs. of  11 variables:
+#>  $ FID         :integer64 38 7 32 25 6 40 36 8 ... 
+#>  $ event_id    : chr  "MT4471311115120070627" "WY4470811082119880722" "MT4491211108020030820" "WY4433011103020000816" ...
+#>  $ incid_name  : chr  "MADISON ARM" "NORTH FORK" "RATHBONE" "SPRUCE COMPLEX (PLATEAU)" ...
+#>  $ incid_type  : chr  "Wildfire" "Wildfire" "Wildfire" "Wildfire" ...
+#>  $ map_id      :integer64 16113 10014217 13014 10014141 10014215 16428 15432 10014218 ... 
+#>  $ burn_bnd_ac :integer64 3564 563527 2701 2808 20422 2175 3745 95233 ... 
+#>  $ burn_bnd_lat: chr  "44.713" "44.678" "44.912" "44.329" ...
+#>  $ burn_bnd_lon: chr  "-111.151" "-110.716" "-111.080" "-111.027" ...
+#>  $ ig_date     : Date, format: "2007-06-27" "1988-07-22" ...
+#>  $ ig_year     : int  2007 1988 2003 2000 1988 2007 2006 1988 1988 1988 ...
+#>  $ geom        : chr  "MULTIPOLYGON (((469685.969631834 54506.9481370259,470235.509134591 54383.4837249131,470939.42854159 53898.69574"| __truncated__ "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__ "MULTIPOLYGON (((475136.766856355 74053.2153491452,475188.847231864 74366.3342955356,475341.959781024 74368.4856"| __truncated__ "MULTIPOLYGON (((477992.723214764 8483.08443989834,477312.456870818 7630.95433906866,477088.305832492 6955.09786"| __truncated__ ...
+
+# the next 20 features
+d <- lyr$fetch(20)
+nrow(d)
+#> [1] 20
+
+# no features remaining
+d <- lyr$fetch(20)
+nrow(d)
+#> [1] 0
+str(d)  # 0-row data frame with columns typed
+#> 'data.frame':    0 obs. of  11 variables:
+#>  $ FID         :integer64  
+#>  $ event_id    : chr 
+#>  $ incid_name  : chr 
+#>  $ incid_type  : chr 
+#>  $ map_id      :integer64  
+#>  $ burn_bnd_ac :integer64  
+#>  $ burn_bnd_lat: chr 
+#>  $ burn_bnd_lon: chr 
+#>  $ ig_date     : 'Date' num(0) 
+#>  $ ig_year     : int 
+#>  $ geom        : chr
+
+# fetch all available features by passing n = -1, resets to first feature
+# return geom as a list column of WKB raw vectors
+lyr$returnGeomAs <- "WKB"
+d <- lyr$fetch(-1)
+str(d)
+#> 'data.frame':    40 obs. of  11 variables:
+#>  $ FID         :integer64 38 7 32 25 6 40 36 8 ... 
+#>  $ event_id    : chr  "MT4471311115120070627" "WY4470811082119880722" "MT4491211108020030820" "WY4433011103020000816" ...
+#>  $ incid_name  : chr  "MADISON ARM" "NORTH FORK" "RATHBONE" "SPRUCE COMPLEX (PLATEAU)" ...
+#>  $ incid_type  : chr  "Wildfire" "Wildfire" "Wildfire" "Wildfire" ...
+#>  $ map_id      :integer64 16113 10014217 13014 10014141 10014215 16428 15432 10014218 ... 
+#>  $ burn_bnd_ac :integer64 3564 563527 2701 2808 20422 2175 3745 95233 ... 
+#>  $ burn_bnd_lat: chr  "44.713" "44.678" "44.912" "44.329" ...
+#>  $ burn_bnd_lon: chr  "-111.151" "-110.716" "-111.080" "-111.027" ...
+#>  $ ig_date     : Date, format: "2007-06-27" "1988-07-22" ...
+#>  $ ig_year     : int  2007 1988 2003 2000 1988 2007 2006 1988 1988 1988 ...
+#>  $ geom        :List of 40
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+#>   ..$ : raw  01 06 00 00 ...
+
+# parse WKB using the wk package
+wk_obj <- wk::wkb(d$geom, crs = lyr$getSpatialRef())
+plot(wk_obj)
+```
+
+![](img/ynp_mtbs_wkb_plot_ex.png)<!-- -->
+
+``` r
 
 lyr$clearSpatialFilter()
 lyr$getFeatureCount()
@@ -485,9 +607,10 @@ lyr$getFeatureCount()
 
 lyr$close()
 vsi_unlink(dsn)
+#> [1] 0
 ```
 
-<sup>Created on 2024-04-06 with [reprex v2.1.0](https://reprex.tidyverse.org)</sup>
+<sup>Created on 2024-07-12 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
 
 ## Example: layer geoprocessing
 
@@ -504,18 +627,17 @@ lyr <- new(GDALVector, dsn, "mtbs_perims")
 # largest 1988 fire (FID = 7 from the example above)
 feat <- lyr$getFeature(7)
 str(feat)
-#> List of 11
-#>  $ FID         :integer64 7
+#> List of 10
+#>  $ FID         :integer64 7 
 #>  $ event_id    : chr "WY4470811082119880722"
 #>  $ incid_name  : chr "NORTH FORK"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      :integer64 10014217
-#>  $ burn_bnd_ac :integer64 563527
+#>  $ map_id      :integer64 10014217 
+#>  $ burn_bnd_ac :integer64 563527 
 #>  $ burn_bnd_lat: chr "44.678"
 #>  $ burn_bnd_lon: chr "-110.716"
-#>  $ ig_date     : chr "1988/07/22"
+#>  $ ig_date     : Date[1:1], format: "1988-07-22"
 #>  $ ig_year     : int 1988
-#>  $ geom        : chr "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__
 
 # get a second layer for 2000-2022 fires
 # the layer argument can be a sql statement
@@ -549,12 +671,12 @@ lyr_out$getFeatureCount()
 defn <- lyr_out$getLayerDefn()
 # combined attributes
 names(defn)
-#>  [1] "input_event_id"      "input_incid_name"    "input_incid_type"
-#>  [4] "input_map_id"        "input_burn_bnd_ac"   "input_burn_bnd_lat"
-#>  [7] "input_burn_bnd_lon"  "input_ig_date"       "input_ig_year"
-#> [10] "method_event_id"     "method_incid_name"   "method_incid_type"
+#>  [1] "input_event_id"      "input_incid_name"    "input_incid_type"   
+#>  [4] "input_map_id"        "input_burn_bnd_ac"   "input_burn_bnd_lat" 
+#>  [7] "input_burn_bnd_lon"  "input_ig_date"       "input_ig_year"      
+#> [10] "method_event_id"     "method_incid_name"   "method_incid_type"  
 #> [13] "method_map_id"       "method_burn_bnd_ac"  "method_burn_bnd_lat"
-#> [16] "method_burn_bnd_lon" "method_ig_date"      "method_ig_year"
+#> [16] "method_burn_bnd_lon" "method_ig_date"      "method_ig_year"     
 #> [19] "geom"
 
 # we don't have vector plotting yet, so rasterize and use plot_raster()
@@ -587,16 +709,18 @@ lyr2$close()
 lyr_out$close()
 
 vsi_unlink(dsn_out)
+#> [1] 0
 vsi_unlink(out_file)
+#> [1] 0
 ```
 
-<sup>Created on 2024-05-14 with [reprex v2.1.0](https://reprex.tidyverse.org)</sup>
+<sup>Created on 2024-07-12 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
 
 ## Example: WorldCover Sentinel-2 composites
 
 ``` r
 ## WorldCover Sentinel-2 annual composites
-## https://blog.vito.be/remotesensing/worldcover-annual-composites
+## see: https://blog.vito.be/remotesensing/worldcover-annual-composites
 ## tile index lookup on remote filesystem and obtain raster data
 
 library(gdalraster)
@@ -610,7 +734,7 @@ lyr_tiles$getDriverShortName()
 lyr_tiles$getName()
 #> [1] "worldcover_composites_grid_aws"
 lyr_tiles$getGeomType()
-#> [1] "Polygon"
+#> [1] "POLYGON"
 lyr_tiles$getSpatialRef()
 #> [1] "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]"
 
@@ -631,9 +755,9 @@ lyr_tiles$bbox()
 defn <- lyr_tiles$getLayerDefn()
 names(defn)
 #>  [1] "tile"              "s1_vvvhratio_2020" "s1_vvvhratio_2021"
-#>  [4] "s2_rgbnir_2020"    "s2_rgbnir_2021"    "s2_ndvi_2020"
-#>  [7] "s2_ndvi_2021"      "s2_swir_2020"      "s2_swir_2021"
-#> [10] ""
+#>  [4] "s2_rgbnir_2020"    "s2_rgbnir_2021"    "s2_ndvi_2020"     
+#>  [7] "s2_ndvi_2021"      "s2_swir_2020"      "s2_swir_2021"     
+#> [10] "geometry"
 
 # AOI for the Fishhawk fire
 dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
@@ -642,18 +766,19 @@ lyr_ynp <- new(GDALVector, dsn, "mtbs_perims")
 lyr_ynp$setAttributeFilter("incid_name = 'FISHHAWK'")
 lyr_ynp$getFeatureCount()
 #> [1] 1
+lyr_ynp$returnGeomAs <- "WKT"
 feat <- lyr_ynp$getNextFeature()
 str(feat)
 #> List of 11
-#>  $ FID         :integer64 60
+#>  $ FID         :integer64 60 
 #>  $ event_id    : chr "WY4437710988020190902"
 #>  $ incid_name  : chr "FISHHAWK"
 #>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      :integer64 10016957
-#>  $ burn_bnd_ac :integer64 10775
+#>  $ map_id      :integer64 10016957 
+#>  $ burn_bnd_ac :integer64 10775 
 #>  $ burn_bnd_lat: chr "44.384"
 #>  $ burn_bnd_lon: chr "-109.85"
-#>  $ ig_date     : chr "2019/09/02"
+#>  $ ig_date     : Date[1:1], format: "2019-09-02"
 #>  $ ig_year     : int 2019
 #>  $ geom        : chr "MULTIPOLYGON (((573530.585472236 9160.22088906913,573266.183153384 9415.42216938034,573137.427110327 9285.44517"| __truncated__
 
@@ -669,8 +794,8 @@ lyr_tiles$getFeatureCount()
 #> [1] 1
 feat <- lyr_tiles$getNextFeature()
 str(feat)
-#> List of 11
-#>  $ FID              :integer64 16615
+#> List of 10
+#>  $ FID              :integer64 16615 
 #>  $ tile             : chr "N44W110"
 #>  $ s1_vvvhratio_2020: chr "s3://esa-worldcover-s1/vvvhratio/2020/N44/ESA_WorldCover_10m_2020_v100_N44W110_S1VVVHratio.tif"
 #>  $ s1_vvvhratio_2021: chr "s3://esa-worldcover-s1/vvvhratio/2021/N44/ESA_WorldCover_10m_2021_v200_N44W110_S1VVVHratio.tif"
@@ -680,7 +805,6 @@ str(feat)
 #>  $ s2_ndvi_2021     : chr "s3://esa-worldcover-s2/ndvi/2021/N44/ESA_WorldCover_10m_2021_v200_N44W110_NDVI.tif"
 #>  $ s2_swir_2020     : chr "s3://esa-worldcover-s2/swir/2020/N44/ESA_WorldCover_10m_2020_v100_N44W110_SWIR.tif"
 #>  $ s2_swir_2021     : chr "s3://esa-worldcover-s2/swir/2021/N44/ESA_WorldCover_10m_2021_v200_N44W110_SWIR.tif"
-#>  $                  : chr "POLYGON ((-110 44,-110 45,-109 45,-109 44,-110 44))"
 
 # get the Sentinel-2 RGBNIR composite for this AOI
 tif_file <- sub("s3://", "/vsis3/", feat$s2_rgbnir_2021, fixed = TRUE)
@@ -705,24 +829,24 @@ ds <- new(GDALRaster, tif_file)
 ds$dim()
 #> [1] 12000 12000     4
 ds$getMetadata(band=0, domain="")
-#>  [1] "algorithm_version=V2.0.0"
-#>  [2] "AREA_OR_POINT=Area"
-#>  [3] "bands=Band 1: B04 (Red), Band 2: B03 (Green), Band 3: B02 (Blue), Band 4: B08 (Infrared)"
-#>  [4] "copyright=ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium"
-#>  [5] "creation_time=2022-12-09 17:08:25.881589"
+#>  [1] "algorithm_version=V2.0.0"                                                                                                                                            
+#>  [2] "AREA_OR_POINT=Area"                                                                                                                                                  
+#>  [3] "bands=Band 1: B04 (Red), Band 2: B03 (Green), Band 3: B02 (Blue), Band 4: B08 (Infrared)"                                                                            
+#>  [4] "copyright=ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium"                                    
+#>  [5] "creation_time=2022-12-09 17:08:25.881589"                                                                                                                            
 #>  [6] "description=The ESA WorldCover Sentinel-2 median L2A (RGBNIR) composite is a color image made from images in Blue (B02), Green (B03), Red (B04) and Infrared (B08). "
-#>  [7] "license=CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/"
-#>  [8] "product_crs=EPSG:4326"
-#>  [9] "product_grid=1x1 degree tiling grid"
-#> [10] "product_tile=N44W110"
-#> [11] "product_type=Sentinel-2 median L2A (RGBNIR) composite"
-#> [12] "product_version=V2.0.0"
-#> [13] "reference=https://esa-worldcover.org"
-#> [14] "time_end=2021-12-31T23:59:59Z"
-#> [15] "time_start=2021-01-01T00:00:00Z"
+#>  [7] "license=CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/"                                                                                                    
+#>  [8] "product_crs=EPSG:4326"                                                                                                                                               
+#>  [9] "product_grid=1x1 degree tiling grid"                                                                                                                                 
+#> [10] "product_tile=N44W110"                                                                                                                                                
+#> [11] "product_type=Sentinel-2 median L2A (RGBNIR) composite"                                                                                                               
+#> [12] "product_version=V2.0.0"                                                                                                                                              
+#> [13] "reference=https://esa-worldcover.org"                                                                                                                                
+#> [14] "time_end=2021-12-31T23:59:59Z"                                                                                                                                       
+#> [15] "time_start=2021-01-01T00:00:00Z"                                                                                                                                     
 #> [16] "title=ESA WorldCover Sentinel-2 median L2A (RGBNIR) composite at 10m resolution for year 2021"
 ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
-#> [1] "COMPRESSION=DEFLATE" "INTERLEAVE=PIXEL"    "LAYOUT=COG"
+#> [1] "COMPRESSION=DEFLATE" "INTERLEAVE=PIXEL"    "LAYOUT=COG"         
 #> [4] "PREDICTOR=2"
 
 r <- read_ds(ds, bands=c(4,1,2), out_xsize = 800, out_ysize = 800)
@@ -744,16 +868,14 @@ lyr_ynp$close()
 lyr_tiles$close()
 ```
 
-<sup>Created on 2024-04-06 with [reprex v2.1.0](https://reprex.tidyverse.org)</sup>
+<sup>Created on 2024-07-12 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
 
 ## Further consideration / TBD
 
 This is a working list of potential issues and design questions that need further consideration, to be determined:
 
-* handling of 64-bit integer: OGR FID currently is `GIntBig` and integer fields in vector data sources will commonly be `OFTInteger64`. These are now handled using **RcppInt64**, with **bit64** on the R side providing S3 class `integer64`.
 * OGR's Arrow C interface: Implement `GDALVector::getArrowStream()` (GDAL >= 3.6) and `GDALVector::writeArrowBatch()` (GDAL >= 3.8), supported on the R side with package **nanoarrow**.
-* potential output vectors of GEOS or OGR pointers, WKB with support by **wk**
-* OGR layer geoprocessing might be stand-alone functions instead of class methods in `GDALVector`. We would have more flexibility in terms of optional/argument defaults. Either way, we should add an option to create the output layer.
+* OGR layer geoprocessing will be moved to stand-alone functions instead of class methods in `GDALVector`, to be implemented in an `ogr_proc()` interface.
 
 ## Document changelog
 
@@ -779,6 +901,7 @@ This is a working list of potential issues and design questions that need furthe
 * add a `GDALVector` class constructor with `spatial_filter` and SQL `dialect` arguments (2024-04-28)
 * [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html) added in **gdalraster** dev; examples updated (2024-05-14)
 * update the draft class definition: Add read/write fields for per-object settings (`defaultGeomFldName`, `returnGeomAs` and `wkbByteOrder`). Rename method `getFeatureSet()` to `fetch()`, analog of `DBI::dbFetch()`, fetch the next n features from the layer and return them as a data frame. (2024-07-11)
+* update usage example for recent changes in gdalvector branch: `defaultGeomFldName`, `returnGeomAs = NONE|WKT|WKT_ISO|WKB|WKB_ISO`, `GDALVector::fetch()`, all OGR attribute field types now supported (2024-07-12)
 
 ## Contributors
 
