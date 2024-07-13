@@ -79,7 +79,7 @@
     
     
 <p>Chris Toney (chris.toney at usda.gov)</p>
-<p>Last modified: 2024-07-11</p>
+<p>Last modified: 2024-07-12</p>
 <p>Comment/discussion: <a href="https://github.com/USDAForestService/gdalraster/issues/241" class="external-link uri">https://github.com/USDAForestService/gdalraster/issues/241</a></p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
@@ -126,11 +126,11 @@ operate on vector datasets: <code><a href="../reference/copyDatasetFiles.html">c
 <code><a href="../reference/deleteDataset.html">deleteDataset()</a></code>, <code><a href="../reference/renameDataset.html">renameDataset()</a></code> and
 <code><a href="../reference/addFilesInZip.html">addFilesInZip()</a></code> (supports SOZip)</li>
 <li>existing utility functions for managing vector data sources (added
-at <strong>gdalraster</strong> 1.10.0.9180 dev): <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html">ogr_manage</a>
+at <strong>gdalraster</strong> 1.11.0 release): <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html">ogr_manage</a>
 and <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html">ogr_define</a>
 </li>
 <li>existing wrappers <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> and <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code>
-from the GDAL Utils API (<strong>gdalraster</strong> 1.10.0 CRAN
+from the GDAL Utils API (<strong>gdalraster</strong> 1.10.0
 release)</li>
 <li>
 <code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code>: execute an SQL statement against the
@@ -173,9 +173,9 @@ $is_geom    : TRUE for geometry fields</code></pre>
 <p>An OGR Feature – as read by <code>GDALVector::getNextFeature()</code>
 or <code>GDALVector::getFeature()</code>, or as passed to write methods
 – is a list with the unique feature identifier (FID), attribute and
-geometry field names, and their values.
-<code>GDALVector::getFeatureSet()</code> will return a set of features
-as a data frame.</p>
+geometry field names, and their values. <code>GDALVector::fetch()</code>
+fetches the next n features from the layer and returms them as a data
+frame (analog of <a href="https://dbi.r-dbi.org/reference/dbFetch.html" class="external-link"><code>DBI::dbFetch()</code></a>).</p>
 <p>An OGR Geometry is represented in R as a character string containing
 OGC Well Known Text (WKT). Likewise, an OGR Spatial Reference, which
 encapsulates the definition of a projection and datum, is represented in
@@ -194,15 +194,6 @@ in:</p>
 have been implemented so far in the prototype (a subset of the draft
 class definition below):</p>
 <p><a href="https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h" class="external-link uri">https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h</a></p>
-<p>This does not include definitions of several stand-alone functions
-that will provide schema management. The existing definitions in
-<code>src/ogr_util.h</code> are a starting point for those. An
-<strong>Rcpp</strong> <code>.finalizer</code> function will be
-implemented to properly release resources in case an object of class
-<code>GDALVector</code> is garbage collected without an explicit call to
-<code><a href="https://rdrr.io/r/base/connections.html" class="external-link">close()</a></code>. Support for 64-bit integers requires
-<strong>bit64</strong> on the R side, with conversions in C++ using
-<strong>RcppInt64</strong>.</p>
 <div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="kw">class</span> GDALVector <span class="op">{</span></span>
 <span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a> <span class="kw">private</span><span class="op">:</span></span>
 <span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_dsn</span><span class="op">;</span></span>
