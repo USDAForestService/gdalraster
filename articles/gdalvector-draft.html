@@ -196,22 +196,41 @@ time, or the remaining features. <code>fetch()</code> can be called
 multiple times (forward paging). Fetching zero features is also possible
 to retrieve the structure of the result set as a data frame.</p>
 <p><strong>gdalraster</strong> returns OGR field types as corresponding
-native R types (<code>NA</code> for OGR NULL values): *
-<code>OFTInteger</code>: <code>integer</code> (<code>OFSTBoolean</code>
-subtype as <code>logical</code>) * <code>OFTIntegerList</code>: vector
-of <code>integer</code> (list column in data frames) *
+native R types (<code>NA</code> for OGR NULL values):</p>
+<ul>
+<li>
+<code>OFTInteger</code>: <code>integer</code>
+(<code>OFSTBoolean</code> subtype as <code>logical</code>)</li>
+<li>
+<code>OFTIntegerList</code>: vector of <code>integer</code> (list
+column in data frames)</li>
+<li>
 <code>OFTInteger64</code>: <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code>
-(<code>OFSTBoolean</code> subtype as <code>logical</code>) *
-<code>OFTInteger64List</code>: vector of <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code>
-(list column in data frames) * <code>OFTReal</code>:
-<code>numeric</code> * <code>OFTRealList</code>: vector of
-<code>numeric</code> (list column in data frames) *
-<code>OFTString</code>: <code>character</code> string *
+(<code>OFSTBoolean</code> subtype as <code>logical</code>)</li>
+<li>
+<code>OFTInteger64List</code>: vector of
+<code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> (list column in data frames)</li>
+<li>
+<code>OFTReal</code>: <code>numeric</code>
+</li>
+<li>
+<code>OFTRealList</code>: vector of <code>numeric</code> (list
+column in data frames)</li>
+<li>
+<code>OFTString</code>: <code>character</code> string</li>
+<li>
 <code>OFTStringList</code>: vector of <code>character</code> strings
-(list column in data frames) * <code>OFTDate</code>: <code>Date</code> *
-<code>OFTDateTime</code>: <code>POSIXct</code> (millisecond accuracy and
-adjustment for time zone flag if present) * <code>OFTBinary</code>:
-<code>raw</code> vector (list column in data frames)</p>
+(list column in data frames)</li>
+<li>
+<code>OFTDate</code>: <code>Date</code>
+</li>
+<li>
+<code>OFTDateTime</code>: <code>POSIXct</code> (millisecond accuracy
+and adjustment for time zone flag if present)</li>
+<li>
+<code>OFTBinary</code>: <code>raw</code> vector (list column in data
+frames)</li>
+</ul>
 </div>
 <div class="section level3">
 <h3 id="geometry">Geometry<a class="anchor" aria-label="anchor" href="#geometry"></a>
@@ -230,7 +249,7 @@ formats. Interoperability with <a href="https://github.com/r-spatial/sf" class="
 features is also straightforward (e.g., <code>sf::st_sf()</code>).</p>
 <p>Returning geometries is optional when retrieving features from a data
 store with <strong>gdalraster</strong>. Omitting the geometries can
-improve performance and memory utilization when only access to the
+improve performance and memory utilization when access only to the
 attributes is needed (currently the default). When geometries are
 included, they can be retrieved as either WKB or WKT (optionally as the
 ISO versions). WKB is compact and fast to parse, e.g., using the high
