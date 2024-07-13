@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-07-12
+Last modified: 2024-07-13
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -29,14 +29,20 @@ remotes::install_github("USDAForestService/gdalraster", ref = "gdalvector")
 
 Bindings will be implemented with **Rcpp** modules including `RCPP_EXPOSED_CLASS`. Exposing C++ classes directly in R provides a natural interface to the underlying object model.
 
-A  GDAL Dataset for vector is a file or database containing one or more OGR layers. A vector dataset is represented in R as a data source name (DSN), a character string that may be a filename, database connection string, URL, virtual file, etc. Management of datasets and their vector schemas will be done with:
+### Vector dataset
+
+A GDAL Dataset for vector is a file or database containing one or more OGR layers. A vector dataset is represented in R as a data source name (DSN), a character string that may be a filename, database connection string, URL, virtual file, etc. Management of datasets and their vector schemas will be done with:
 
 * existing management functions in **gdalraster** that operate on vector datasets: `copyDatasetFiles()`, `deleteDataset()`, `renameDataset()` and `addFilesInZip()` (supports SOZip)
-* existing utility functions for managing vector data sources (added at **gdalraster** 1.11.0 release): [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html)
-* existing wrappers `ogr2ogr()` and `ogrinfo()` from the GDAL Utils API (**gdalraster** 1.10.0 release)
+* existing utility functions for managing vector data sources (as of **gdalraster** 1.11.0): [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html)
+* existing wrappers `ogr2ogr()` and `ogrinfo()` from the GDAL Utils API (as of **gdalraster** 1.10.0)
 * `ogr_execute_sql()`: execute an SQL statement against the data store to edit data (a SQL `SELECT` statement can be used in the constructor for class `GDALVector` described below, to open a layer of features)
 
-OGR Layer class represents a layer of features within a data source. It will be modeled in R as class `GDALVector`, an exposed C++ class encapsulating an OGR Layer and the GDAL Dataset that owns it. A `GDALVector` object will persist an open connection to the dataset and expose methods for retrieving layer information, setting attribute and spatial filters, reading/writing features, and layer geoprocessing. A draft definition for class `GDALVector` is given below.
+### Vector layer
+
+The OGR Layer class represents a layer of features within a data source. It will be modeled in R as class `GDALVector`, an exposed C++ class encapsulating an OGR Layer and the GDAL Dataset that owns it. A `GDALVector` object will persist an open connection to the dataset, and expose methods for retrieving layer information, setting attribute and spatial filters, reading/writing features, and layer geoprocessing. A draft definition for class `GDALVector` is given below.
+
+### Feature class / field definitions
 
 All features in an OGR Layer share a common schema (feature class) modeled in GDAL as OGR Feature Definition. A feature class definition includes the set of attribute fields and their data types, the geometry field(s), and a feature class name (normally used as a layer name). The feature class definition is represented as a list in R, having as names the attribute/geometry field names, with each list element holding a field definition.
 
@@ -65,9 +71,32 @@ $is_ignored : whether ignored when retrieving features (logical scalar)
 $is_geom    : TRUE for geometry fields
 ```
 
-An OGR Feature &ndash; as read by `GDALVector::getNextFeature()` or `GDALVector::getFeature()`, or as passed to write methods &ndash; is a list with the unique feature identifier (FID), attribute and geometry field names, and their values. `GDALVector::fetch()` fetches the next n features from the layer and returms them as a data frame (analog of [`DBI::dbFetch()`](https://dbi.r-dbi.org/reference/dbFetch.html)).
+### Feature retrieval
 
-An OGR Geometry is represented in R as a character string containing OGC Well Known Text (WKT). Likewise, an OGR Spatial Reference, which encapsulates the definition of a projection and datum, is represented in R as WKT. **gdalraster** has existing functions for working with spatial reference systems as WKT (`srs_to_wkt()`, `srs_is_projected()`, etc.), and a set of geometry convenience functions also operating on WKT (GEOS via GDAL headers).
+An OGR Feature &ndash; as read by `GDALVector::getNextFeature()` or `GDALVector::getFeature()`, or as passed to write methods &ndash; is a list with the unique feature identifier (FID), the attribute and geometry field names, and their values.
+
+`GDALVector::fetch()` fetches the next `n` features from the layer and returns them as a data frame (analog of [`DBI::dbFetch()`](https://dbi.r-dbi.org/reference/dbFetch.html)). This allows retrieving the entire feature set (potentially with an attribute and/or spatial filter applied), one page of features at a time, or the remaining features. `fetch()` can be called multiple times (forward paging). Fetching zero features is also possible to retrieve the structure of the result set as a data frame.
+
+**gdalraster** returns OGR field types as corresponding native R types (`NA` for OGR NULL values):
+* `OFTInteger`: `integer` (`OFSTBoolean` subtype as `logical`)
+* `OFTIntegerList`: vector of `integer` (list column in data frames)
+* `OFTInteger64`: `bit64::integer64` (`OFSTBoolean` subtype as `logical`)
+* `OFTInteger64List`: vector of `bit64::integer64` (list column in data frames)
+* `OFTReal`: `numeric`
+* `OFTRealList`: vector of `numeric` (list column in data frames)
+* `OFTString`: `character` string
+* `OFTStringList`: vector of `character` strings (list column in data frames)
+* `OFTDate`: `Date`
+* `OFTDateTime`: `POSIXct` (millisecond accuracy and adjustment for time zone flag if present)
+* `OFTBinary`: `raw` vector (list column in data frames)
+
+### Geometry
+
+An OGR Geometry can be represented in R as either a character string containing OGC Well Known Text (WKT), or a raw vector of bytes containing Well Known Binary (WKB). An OGR Spatial Reference, which encapsulates the definition of a projection and datum, is represented in R as WKT. **gdalraster** has existing functions for working with spatial reference systems as WKT (`srs_to_wkt()`, `srs_is_projected()`, etc.), and a set of geometry convenience functions also operating on WKT (GEOS via GDAL headers).
+
+Package [wk](https://github.com/paleolimbot/wk) supports parsing WKB and WKT representation of geometries to and from R-native formats. Interoperability with [sf](https://github.com/r-spatial/sf) classes for simple features is also straightforward (e.g., `sf::st_sf()`).
+
+Returning geometries is optional when retrieving features from a data store with **gdalraster**. Omitting the geometries can improve performance and memory utilization when only access to the attributes is needed (currently the default). When geometries are included, they can be retrieved as either WKB or WKT (optionally as the ISO versions). WKB is compact and fast to parse, e.g., using the high performance functions provided by **wk**. The setting for geometry retrieval is per-object for class `GDALvector`, and can be changed back and forth as needed during the lifetime of the object.
 
 ## class GDALVector
 
@@ -104,11 +133,12 @@ class GDALVector {
                Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                std::string spatial_filter, std::string dialect);
 
-    # read/write fields
+    // read/write fields exported to R
     std::string defaultGeomFldName = "geometry";
     std::string returnGeomAs = "NONE";
     std::string wkbByteOrder = "LSB";
 
+    // public methods exported to R
 	void open(bool read_only);
 	bool isOpen() const;
 	std::string getDsn() const;
@@ -873,7 +903,7 @@ lyr_tiles$close()
 This is a working list of potential issues and design questions that need further consideration, to be determined:
 
 * OGR's Arrow C interface: Implement `GDALVector::getArrowStream()` (GDAL >= 3.6) and `GDALVector::writeArrowBatch()` (GDAL >= 3.8), supported on the R side with package **nanoarrow**.
-* OGR layer geoprocessing will be moved to stand-alone functions instead of class methods in `GDALVector`, to be implemented in an `ogr_proc()` interface.
+* OGR layer geoprocessing expected to be moved to stand-alone functions instead of class methods in `GDALVector`, to be implemented in an `ogr_proc()` interface.
 
 ## Document changelog
 
@@ -900,6 +930,7 @@ This is a working list of potential issues and design questions that need furthe
 * [ogr_manage](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html) and [ogr_define](https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html) added in **gdalraster** dev; examples updated (2024-05-14)
 * update the draft class definition: Add read/write fields for per-object settings (`defaultGeomFldName`, `returnGeomAs` and `wkbByteOrder`). Rename method `getFeatureSet()` to `fetch()`, analog of `DBI::dbFetch()`, fetch the next n features from the layer and return them as a data frame. (2024-07-11)
 * update usage example for recent changes in gdalvector branch: `defaultGeomFldName`, `returnGeomAs = NONE|WKT|WKT_ISO|WKB|WKB_ISO`, `GDALVector::fetch()`, all OGR attribute field types now supported (2024-07-12)
+* add sub-headings under the heading "Description of the interface", and add specifications under "Feature retrieval" and "Geometry" (2024-07-13)
 
 ## Contributors
 
