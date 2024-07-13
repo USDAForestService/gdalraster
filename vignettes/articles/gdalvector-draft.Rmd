@@ -78,6 +78,7 @@ An OGR Feature &ndash; as read by `GDALVector::getNextFeature()` or `GDALVector:
 `GDALVector::fetch()` fetches the next `n` features from the layer and returns them as a data frame (analog of [`DBI::dbFetch()`](https://dbi.r-dbi.org/reference/dbFetch.html)). This allows retrieving the entire feature set (potentially with an attribute and/or spatial filter applied), one page of features at a time, or the remaining features. `fetch()` can be called multiple times (forward paging). Fetching zero features is also possible to retrieve the structure of the result set as a data frame.
 
 **gdalraster** returns OGR field types as corresponding native R types (`NA` for OGR NULL values):
+
 * `OFTInteger`: `integer` (`OFSTBoolean` subtype as `logical`)
 * `OFTIntegerList`: vector of `integer` (list column in data frames)
 * `OFTInteger64`: `bit64::integer64` (`OFSTBoolean` subtype as `logical`)
@@ -96,7 +97,7 @@ An OGR Geometry can be represented in R as either a character string containing 
 
 Package [wk](https://github.com/paleolimbot/wk) supports parsing WKB and WKT representation of geometries to and from R-native formats. Interoperability with [sf](https://github.com/r-spatial/sf) classes for simple features is also straightforward (e.g., `sf::st_sf()`).
 
-Returning geometries is optional when retrieving features from a data store with **gdalraster**. Omitting the geometries can improve performance and memory utilization when only access to the attributes is needed (currently the default). When geometries are included, they can be retrieved as either WKB or WKT (optionally as the ISO versions). WKB is compact and fast to parse, e.g., using the high performance functions provided by **wk**. The setting for geometry retrieval is per-object for class `GDALvector`, and can be changed back and forth as needed during the lifetime of the object.
+Returning geometries is optional when retrieving features from a data store with **gdalraster**. Omitting the geometries can improve performance and memory utilization when access only to the attributes is needed (currently the default). When geometries are included, they can be retrieved as either WKB or WKT (optionally as the ISO versions). WKB is compact and fast to parse, e.g., using the high performance functions provided by **wk**. The setting for geometry retrieval is per-object for class `GDALvector`, and can be changed back and forth as needed during the lifetime of the object.
 
 ## class GDALVector
 
