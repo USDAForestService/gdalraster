@@ -195,18 +195,18 @@ attribute and/or spatial filter applied), one page of features at a
 time, or the remaining features. <code>fetch()</code> can be called
 multiple times (forward paging). Fetching zero features is also possible
 to retrieve the structure of the result set as a data frame.</p>
-<p><strong>gdalraster</strong> returns OGR field types as corresponding
-native R types (<code>NA</code> for OGR NULL values):</p>
+<p>OGR field types are returned as the corresponding native R types
+(<code>NA</code> for OGR NULL values):</p>
 <ul>
 <li>
-<code>OFTInteger</code>: <code>integer</code>
-(<code>OFSTBoolean</code> subtype as <code>logical</code>)</li>
+<code>OFTInteger</code>: <code>integer</code> (subtype
+<code>OFSTBoolean</code> as <code>logical</code>)</li>
 <li>
 <code>OFTIntegerList</code>: vector of <code>integer</code> (list
 column in data frames)</li>
 <li>
-<code>OFTInteger64</code>: <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code>
-(<code>OFSTBoolean</code> subtype as <code>logical</code>)</li>
+<code>OFTInteger64</code>: <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> (subtype
+<code>OFSTBoolean</code> as <code>logical</code>)</li>
 <li>
 <code>OFTInteger64List</code>: vector of
 <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> (list column in data frames)</li>
@@ -225,8 +225,8 @@ column in data frames)</li>
 <code>OFTDate</code>: <code>Date</code>
 </li>
 <li>
-<code>OFTDateTime</code>: <code>POSIXct</code> (millisecond accuracy
-and adjustment for time zone flag if present)</li>
+<code>OFTDateTime</code>: <code>POSIXct</code> (millisecond
+accuracy, adjustment for time zone flag if present)</li>
 <li>
 <code>OFTBinary</code>: <code>raw</code> vector (list column in data
 frames)</li>
@@ -255,7 +255,7 @@ included, they can be retrieved as either WKB or WKT (optionally as the
 ISO versions). WKB is compact and fast to parse, e.g., using the high
 performance functions provided by <strong>wk</strong>. The setting for
 geometry retrieval is per-object for class <code>GDALvector</code>, and
-can be changed back and forth as needed during the lifetime of the
+can be set back and forth as needed during the lifetime of the
 object.</p>
 </div>
 </div>
