@@ -176,6 +176,7 @@ reference:
   - SEEK_END
 
 figures:
+  dev: png
   bg: white
 
 authors:
