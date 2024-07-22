@@ -90,7 +90,7 @@ void GDALVector::open(bool read_only) {
              dsoo[i] = (char *) (m_open_options[i]);
         }
     }
-    dsoo.push_back(nullptr);
+    dsoo[m_open_options.size()] = nullptr;
 
     OGRGeometryH hGeom_filter = nullptr;
     if (m_spatial_filter != "") {
@@ -196,10 +196,52 @@ std::string GDALVector::getName() const {
     return OGR_L_GetName(m_hLayer);
 }
 
-bool GDALVector::testCapability(std::string capability) const {
+Rcpp::List GDALVector::testCapability() const {
     checkAccess_(GA_ReadOnly);
 
-    return OGR_L_TestCapability(m_hLayer, capability.c_str());
+    Rcpp::List capabilities = Rcpp::List::create(
+        Rcpp::Named("RandomRead") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCRandomRead)),
+        Rcpp::Named("SequentialWrite") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCSequentialWrite)),
+        Rcpp::Named("RandomWrite") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCRandomWrite)),
+#if GDAL_VERSION_NUM >= 3060000
+        Rcpp::Named("UpsertFeature") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCUpsertFeature)),
+#endif
+        Rcpp::Named("FastSpatialFilter") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCFastSpatialFilter)),
+        Rcpp::Named("FastFeatureCount") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCFastFeatureCount)),
+        Rcpp::Named("FastGetExtent") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCFastGetExtent)),
+        Rcpp::Named("FastSetNextByIndex") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCFastSetNextByIndex)),
+        Rcpp::Named("CreateField") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCCreateField)),
+        Rcpp::Named("CreateGeomField") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCCreateGeomField)),
+        Rcpp::Named("DeleteField") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCDeleteField)),
+        Rcpp::Named("ReorderFields") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCReorderFields)),
+        Rcpp::Named("AlterFieldDefn") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCAlterFieldDefn)),
+#if GDAL_VERSION_NUM >= 3060000
+        Rcpp::Named("AlterGeomFieldDefn") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCAlterGeomFieldDefn)),
+#endif
+        Rcpp::Named("DeleteFeature") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCDeleteFeature)),
+        Rcpp::Named("StringsAsUTF8") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCStringsAsUTF8)),
+        Rcpp::Named("Transactions") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCTransactions)),
+        Rcpp::Named("CurveGeometries") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCCurveGeometries)));
+
+    return capabilities;
 }
 
 std::string GDALVector::getFIDColumn() const {

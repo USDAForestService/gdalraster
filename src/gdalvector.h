@@ -56,7 +56,7 @@ class GDALVector {
     std::string getDriverLongName() const;
 
     std::string getName() const;
-    bool testCapability(std::string capability) const;
+    Rcpp::List testCapability() const;
     std::string getFIDColumn() const;
     std::string getGeomType() const;
     std::string getGeometryColumn() const;

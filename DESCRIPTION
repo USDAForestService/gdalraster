@@ -56,6 +56,7 @@ Imports:
     xml2
 LinkingTo: Rcpp, RcppInt64
 Suggests:
+    wk,
     gt,
     knitr,
     rmarkdown,
