@@ -79,7 +79,7 @@
     
     
 <p>Chris Toney (chris.toney at usda.gov)</p>
-<p>Last modified: 2024-07-13</p>
+<p>Last modified: 2024-07-21</p>
 <p>Comment/discussion: <a href="https://github.com/USDAForestService/gdalraster/issues/241" class="external-link uri">https://github.com/USDAForestService/gdalraster/issues/241</a></p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
@@ -307,7 +307,7 @@ class definition below):</p>
 <span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>    <span class="bu">std::</span>string getDriverLongName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
 <span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a></span>
 <span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>    <span class="bu">std::</span>string getName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>    <span class="dt">bool</span> testCapability<span class="op">(</span><span class="bu">std::</span>string capability<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>    Rcpp<span class="op">::</span>List testCapability<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
 <span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a>    <span class="bu">std::</span>string getFIDColumn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
 <span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a>    <span class="bu">std::</span>string getGeomType<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
 <span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>    <span class="bu">std::</span>string getGeometryColumn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
@@ -452,28 +452,66 @@ class definition below):</p>
 <span><span class="co">#&gt; [1] 469685.73 -12917.76 573531.72  96577.34</span></span>
 <span></span>
 <span><span class="co"># layer capabilities</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"RandomRead"</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; $RandomRead</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastSpatialFilter"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastFeatureCount"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastGetExtent"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"Transactions"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span></span>
-<span><span class="co"># the dataset was opened read-only:</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"SequentialWrite"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $SequentialWrite</span></span>
 <span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"RandomWrite"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $RandomWrite</span></span>
 <span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $UpsertFeature</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $FastSpatialFilter</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $FastFeatureCount</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $FastGetExtent</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $FastSetNextByIndex</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $CreateField</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $CreateGeomField</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $DeleteField</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $ReorderFields</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $AlterFieldDefn</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $AlterGeomFieldDefn</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $DeleteFeature</span></span>
+<span><span class="co">#&gt; [1] FALSE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $StringsAsUTF8</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $Transactions</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $CurveGeometries</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
 <span><span class="co"># re-open with write access</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"SequentialWrite"</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">SequentialWrite</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"RandomWrite"</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">RandomWrite</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
 <span><span class="co"># feature class definition - a list of fields and their definitions</span></span>
@@ -793,7 +831,7 @@ class definition below):</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p><sup>Created on 2024-07-12 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
+<p><sup>Created on 2024-07-21 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
 </div>
 <div class="section level2">
 <h2 id="example-layer-geoprocessing">Example: layer geoprocessing<a class="anchor" aria-label="anchor" href="#example-layer-geoprocessing"></a>
@@ -918,13 +956,13 @@ class definition below):</p>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]"</span></span>
 <span></span>
-<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"RandomRead"</span><span class="op">)</span></span>
+<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">RandomRead</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastSpatialFilter"</span><span class="op">)</span></span>
+<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">FastSpatialFilter</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastFeatureCount"</span><span class="op">)</span></span>
+<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">FastFeatureCount</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastGetExtent"</span><span class="op">)</span></span>
+<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">FastGetExtent</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
@@ -1043,7 +1081,7 @@ class definition below):</p>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><sup>Created on 2024-07-12 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
+<p><sup>Created on 2024-07-21 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
 </div>
 <div class="section level2">
 <h2 id="further-consideration-tbd">Further consideration / TBD<a class="anchor" aria-label="anchor" href="#further-consideration-tbd"></a>
@@ -1134,6 +1172,10 @@ supported (2024-07-12)</li>
 <li>add sub-headings under the heading “Description of the interface”,
 and add specifications under “Feature retrieval” and “Geometry”
 (2024-07-13)</li>
+<li>
+<code>GDALVector::testCapability()</code> returns a list of named
+capabilities with <code>TRUE</code>|<code>FALSE</code>, class method
+version of <code><a href="../reference/ogr_manage.html">ogr_layer_test_cap()</a></code> (2024-07-21)</li>
 </ul>
 </div>
 <div class="section level2">
