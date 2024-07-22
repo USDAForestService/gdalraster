@@ -14,12 +14,12 @@ test_that("class constructors work", {
     lyr$close()
 
     lyr <- new(GDALVector, dsn, "mtbs_perims", read_only = FALSE)
-    expect_true(lyr$testCapability("RandomWrite"))
+    expect_true(lyr$testCapability()$RandomWrite)
     lyr$close()
 
     lyr <- new(GDALVector, dsn, "mtbs_perims", read_only = TRUE,
                "LIST_ALL_TABLES=NO")
-    expect_false(lyr$testCapability("RandomWrite"))
+    expect_false(lyr$testCapability()$RandomWrite)
     lyr$close()
 
     bb <- c(469685.97, 11442.45, 544069.63, 85508.15)
