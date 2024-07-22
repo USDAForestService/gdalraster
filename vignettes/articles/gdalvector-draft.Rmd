@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-07-13
+Last modified: 2024-07-21
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -148,7 +148,7 @@ class GDALVector {
 	std::string getDriverLongName() const;
 
 	std::string getName() const;
-	bool testCapability(std::string capability) const;
+	Rcpp::List testCapability() const;
 	std::string getFIDColumn() const;
 	std::string getGeomType() const;
 	std::string getGeometryColumn() const;
@@ -293,28 +293,66 @@ lyr$bbox()
 #> [1] 469685.73 -12917.76 573531.72  96577.34
 
 # layer capabilities
-lyr$testCapability("RandomRead")
+lyr$testCapability()
+#> $RandomRead
 #> [1] TRUE
-lyr$testCapability("FastSpatialFilter")
-#> [1] TRUE
-lyr$testCapability("FastFeatureCount")
-#> [1] TRUE
-lyr$testCapability("FastGetExtent")
-#> [1] TRUE
-lyr$testCapability("Transactions")
-#> [1] TRUE
-
-# the dataset was opened read-only:
-lyr$testCapability("SequentialWrite")
+#> 
+#> $SequentialWrite
 #> [1] FALSE
-lyr$testCapability("RandomWrite")
+#> 
+#> $RandomWrite
 #> [1] FALSE
+#> 
+#> $UpsertFeature
+#> [1] FALSE
+#> 
+#> $FastSpatialFilter
+#> [1] TRUE
+#> 
+#> $FastFeatureCount
+#> [1] TRUE
+#> 
+#> $FastGetExtent
+#> [1] TRUE
+#> 
+#> $FastSetNextByIndex
+#> [1] TRUE
+#> 
+#> $CreateField
+#> [1] FALSE
+#> 
+#> $CreateGeomField
+#> [1] FALSE
+#> 
+#> $DeleteField
+#> [1] FALSE
+#> 
+#> $ReorderFields
+#> [1] FALSE
+#> 
+#> $AlterFieldDefn
+#> [1] FALSE
+#> 
+#> $AlterGeomFieldDefn
+#> [1] FALSE
+#> 
+#> $DeleteFeature
+#> [1] FALSE
+#> 
+#> $StringsAsUTF8
+#> [1] TRUE
+#> 
+#> $Transactions
+#> [1] TRUE
+#> 
+#> $CurveGeometries
+#> [1] TRUE
 
 # re-open with write access
 lyr$open(read_only = FALSE)
-lyr$testCapability("SequentialWrite")
+lyr$testCapability()$SequentialWrite
 #> [1] TRUE
-lyr$testCapability("RandomWrite")
+lyr$testCapability()$RandomWrite
 #> [1] TRUE
 
 # feature class definition - a list of fields and their definitions
@@ -639,7 +677,7 @@ vsi_unlink(dsn)
 #> [1] 0
 ```
 
-<sup>Created on 2024-07-12 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
+<sup>Created on 2024-07-21 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
 
 ## Example: layer geoprocessing
 
@@ -767,13 +805,13 @@ lyr_tiles$getGeomType()
 lyr_tiles$getSpatialRef()
 #> [1] "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]"
 
-lyr_tiles$testCapability("RandomRead")
+lyr_tiles$testCapability()$RandomRead
 #> [1] TRUE
-lyr_tiles$testCapability("FastSpatialFilter")
+lyr_tiles$testCapability()$FastSpatialFilter
 #> [1] TRUE
-lyr_tiles$testCapability("FastFeatureCount")
+lyr_tiles$testCapability()$FastFeatureCount
 #> [1] TRUE
-lyr_tiles$testCapability("FastGetExtent")
+lyr_tiles$testCapability()$FastGetExtent
 #> [1] TRUE
 
 lyr_tiles$getFeatureCount()
@@ -897,7 +935,7 @@ lyr_ynp$close()
 lyr_tiles$close()
 ```
 
-<sup>Created on 2024-07-12 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
+<sup>Created on 2024-07-21 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
 
 ## Further consideration / TBD
 
@@ -932,6 +970,7 @@ This is a working list of potential issues and design questions that need furthe
 * update the draft class definition: Add read/write fields for per-object settings (`defaultGeomFldName`, `returnGeomAs` and `wkbByteOrder`). Rename method `getFeatureSet()` to `fetch()`, analog of `DBI::dbFetch()`, fetch the next n features from the layer and return them as a data frame. (2024-07-11)
 * update usage example for recent changes in gdalvector branch: `defaultGeomFldName`, `returnGeomAs = NONE|WKT|WKT_ISO|WKB|WKB_ISO`, `GDALVector::fetch()`, all OGR attribute field types now supported (2024-07-12)
 * add sub-headings under the heading "Description of the interface", and add specifications under "Feature retrieval" and "Geometry" (2024-07-13)
+* `GDALVector::testCapability()` returns a list of named capabilities with `TRUE`|`FALSE`, class method version of `ogr_layer_test_cap()` (2024-07-21)
 
 ## Contributors
 
