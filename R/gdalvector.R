@@ -14,6 +14,13 @@
 #' See \url{https://gdal.org/api/index.html} for details of the GDAL
 #' Vector API.
 #'
+#' **Class `GDALVector` is currently under development**. An initial
+#' implemetation supporting read access was added in gdalraster 1.11.1.9100.
+#' A working document with draft specifications is available at:\cr
+#' \url{https://usdaforestservice.github.io/gdalraster/articles/gdalvector-draft.html}\cr
+#' and discussion thread/status updates at:\cr
+#' \url{https://github.com/USDAForestService/gdalraster/issues/241}.
+#'
 #' @param dsn Character string containing the data source name (DSN), usually a
 #' filename or database connection string.
 #' @param layer Character string containing the name of a layer within the
@@ -286,14 +293,16 @@
 #' Fetches the next `n` features from the layer and returns them as a data
 #' frame. This allows retrieving the entire set of features, one page of
 #' features at a time, or the remaining features (from the current cursor
-#' position).
+#' position). Returns a data frame with as many rows as features were fetched,
+#' and as many columns as attribute plus geometry fields in the result set,
+#' even if the result is a single value or has one or zero rows.
 #'
 #' This method is an analog of
 #' [`DBI::dbFetch()`](https://dbi.r-dbi.org/reference/dbFetch.html).
 #'
-#' The `n` parameter is the maximum number of features to retrieve per fetch
-#' given as a `numeric` value but assumed to be a whole number (will be
-#' truncated). Use `n = -1` or `n = Inf` to retrieve all pending features
+#' The `n` argument is the maximum number of features to retrieve per fetch
+#' given as `integer` or `numeric` but assumed to be a whole number (will
+#' be truncated). Use `n = -1` or `n = Inf` to retrieve all pending features
 #' (resets reading to the first feature).
 #' Otherwise, `$fetch()` can be called multiple times to perform forward paging
 #' from the current cursor position. Passing `n = NA` is also supported and
@@ -326,8 +335,8 @@
 #' returned as `character` strings when `returnGeomAs` is set to one of `WKT`,
 #' `WKT_ISO` or `TYPE_NAME`.
 #'
-#' Note that `$getFeatureCount()` is called internally when fetching all
-#' features or all remaining features (but not for a page of features).
+#' Note that `$getFeatureCount()` is called internally when fetching the full
+#' feature set or all remaining features (but not for a page of features).
 #'
 #' \code{$close()}\cr
 #' Closes the vector dataset (no return value, called for side effects).
