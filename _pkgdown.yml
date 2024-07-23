@@ -21,8 +21,9 @@ reference:
 
 - title: Exposed C++ classes
 - contents:
-  - CmbTable-class
   - GDALRaster-class
+  - GDALVector-class
+  - CmbTable-class
   - RunningStats-class
   - VSIFile-class
 
