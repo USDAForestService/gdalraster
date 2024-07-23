@@ -1,8 +1,8 @@
 # Tests for src/gdalvector.cpp
 test_that("class constructors work", {
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
-    dsn <- paste0("/vsimem/", basename(f))
-    vsi_copy_file(f, dsn)
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
 
     lyr <- new(GDALVector, dsn)
     expect_equal(lyr$getName(), "mtbs_perims")
@@ -37,5 +37,5 @@ test_that("class constructors work", {
     expect_equal(lyr$getFeatureCount(), 40)
     lyr$close()
 
-    vsi_unlink(dsn)
+    unlink(dsn)
 })
