@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9050</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9100</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -819,7 +819,7 @@ class definition below):</p>
 <span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
 <span></span>
 <span><span class="co"># parse WKB using the wk package</span></span>
-<span><span class="va">wk_obj</span> <span class="op">&lt;-</span> <span class="fu">wk</span><span class="fu">::</span><span class="fu">wkb</span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">geom</span>, crs <span class="op">=</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">wk_obj</span> <span class="op">&lt;-</span> <span class="fu">wk</span><span class="fu">::</span><span class="fu"><a href="https://paleolimbot.github.io/wk/reference/wkb.html" class="external-link">wkb</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">geom</span>, crs <span class="op">=</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wk_obj</span><span class="op">)</span></span></code></pre></div>
 <p><img src="img/ynp_mtbs_wkb_plot_ex.png"><!-- --></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
