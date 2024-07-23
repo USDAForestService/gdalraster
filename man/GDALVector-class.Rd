@@ -7,16 +7,15 @@
 \alias{GDALVector}
 \title{Class encapsulating a vector layer in a GDAL dataset}
 \arguments{
-\item{dsn}{Character string containing the data source name (DSN, usually a
-filename or database connection string). See the GDAL vector format
-descriptions at \url{https://gdal.org/drivers/vector/index.html}.}
+\item{dsn}{Character string containing the data source name (DSN), usually a
+filename or database connection string.}
 
-\item{layer}{Character string containing either the name of a layer within
-the data source, or an SQL SELECT statement to be executed against the data
-source that defines a layer via its result set.}
+\item{layer}{Character string containing the name of a layer within the
+data source. May also be given as an SQL SELECT statement to be executed
+against the data source, defining a layer as the result set.}
 
-\item{read_only}{Logical. \code{TRUE} to open the layer read-only (the default),
-or \code{FALSE} to open with write access.}
+\item{read_only}{Logical scalar. \code{TRUE} to open the layer read-only (the
+default), or \code{FALSE} to open with write access.}
 
 \item{open_options}{Optional character vector of \code{NAME=VALUE} pairs
 specifying dataset open options.}
@@ -27,9 +26,8 @@ Well Known Text (WKT) format which represents a spatial filter.}
 \item{dialect}{Optional character string to control the statement dialect
 when SQL is used to define the layer. By default, the OGR SQL engine will
 be used, except for RDBMS drivers that will use their dedicated SQL engine,
-unless \code{"OGRSQL"} is explicitly passed as the dialect. The \code{SQLITE}
-dialect can also be used
-(see \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}).}
+unless \code{"OGRSQL"} is explicitly passed as the dialect. The \code{"SQLITE"}
+dialect can also be used.}
 }
 \value{
 An object of class \code{GDALVector} which contains pointers to the
@@ -52,15 +50,16 @@ Vector API.
 
 \preformatted{
 ## Constructors
-# read-only by default:
-ds <- new(GDALVector, dsn)
-ds <- new(GDALVector, dsn, layer)
-# for update access:
-ds <- new(GDALVector, dsn, layer, read_only = FALSE)
-# to use dataset open options
-ds <- new(GDALVector, dsn, layer, read_only, open_options)
-# to specify a spatial filter and/or dialect
-ds <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)
+# for single-layer file formats such as shapefile
+lyr <- new(GDALVector, dsn)
+# specifying the layer name, or SQL statement defining the layer
+lyr <- new(GDALVector, dsn, layer)
+# for update access
+lyr <- new(GDALVector, dsn, layer, read_only = FALSE)
+# using dataset open options
+lyr <- new(GDALVector, dsn, layer, read_only, open_options)
+# setting a spatial filter and/or specifying the SQL dialect
+lyr <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)
 
 ## Read/write fields
 lyr$defaultGeomFldName
@@ -92,7 +91,6 @@ lyr$getFeatureCount()
 lyr$getNextFeature()
 lyr$getFeature(fid)
 lyr$resetReading()
-
 lyr$fetch(n)
 
 lyr$close()
@@ -104,8 +102,9 @@ lyr$close()
 \subsection{Constructors}{
 
 \code{new(GDALVector, dsn)}\cr
-If \code{layer} is omitted, the first layer by index is assumed, so this form
-of the constructor might be used for single-layer formats like shapefile.
+The first layer by index is assumed if the \code{layer} argument is omitted, so
+this form of the constructor might be used for single-layer formats like
+shapefile.
 
 \code{new(GDALVector, dsn, layer)}\cr
 Constructor specifying the name of a layer to open. The \code{layer} argument
@@ -113,13 +112,13 @@ may also be given as an SQL SELECT statement to define a layer as the result
 set.
 
 \code{new(GDALVector, dsn, layer, read_only)}\cr
-Specifies read/write access (\verb{read_only = \{TRUE|FALSE\})}.
+Constructor specifying read/write access (\verb{read_only = \{TRUE|FALSE\})}.
 The \code{layer} argument is required in this form of the constructor, but may be
 given as empty string (\code{""}), in which case the first layer by index will be
 assumed.
 
 \code{new(GDALVector, dsn, layer, read_only, open_options)}\cr
-Constructor to specify dataset open options as a character vector of
+Constructor specifying dataset open options as a character vector of
 \code{NAME=VALUE} pairs.
 
 \code{new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect))}\cr
@@ -138,11 +137,11 @@ Defaults to \code{"geometry"}.
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.
 Must be one of \code{WKT}, \code{WKT_ISO}, \code{WKB}, \code{WKB_ISO}, \code{TYPE_NAME} or
-\code{NONE} (the default). \code{WKB} is used for backward compatibility purposes.
-It exports the old-style 99-402 extended dimension (Z) WKB types for
-Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
-GeometryCollection. For other geometry types, it is equivalent to using
-\code{WKB_ISO} (see \url{https://libgeos.org/specifications/wkb/}).
+\code{NONE} (the default). \code{WKB}/\code{WKT} export old-style 99-402 extended
+dimension (Z) types for Point, LineString, Polygon, MultiPoint,
+MultiLineString, MultiPolygon and GeometryCollection. For other geometry
+types, it is equivalent to using \code{WKB_ISO}/\code{WKT_ISO}
+(see \url{https://libgeos.org/specifications/wkb/}).
 
 \code{$wkbByteOrder}\cr
 Character string specifying the byte order for WKB geometries.
@@ -186,7 +185,14 @@ Returns the layer name.
 \code{$testCapability()}\cr
 Tests whether the layer supports named capabilities based on the current
 read/write access. Returns a list of capabilities with values \code{TRUE} or
-\code{FALSE}. See \code{\link[=ogr_layer_test_cap]{ogr_layer_test_cap()}} for a list of the capabilities tested.
+\code{FALSE}. The returned list contains the following named elements:
+\code{RandomRead}, \code{SequentialWrite}, \code{RandomWrite}, \code{UpsertFeature},
+\code{FastSpatialFilter}, \code{FastFeatureCount}, \code{FastGetExtent},
+\code{FastSetNextByIndex}, \code{CreateField}, \code{CreateGeomField}, \code{DeleteField},
+\code{ReorderFields}, \code{AlterFieldDefn}, \code{AlterGeomFieldDefn}, \code{DeleteFeature},
+\code{StringsAsUTF8}, \code{Transactions}, \code{CurveGeometries}.
+(See the GDAL documentation for
+\href{https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc}{\code{OGR_L_TestCapability()}}.)
 
 \code{$getFIDColumn()}\cr
 Returns the name of the underlying database column being used as the FID
@@ -210,11 +216,11 @@ Returns a WKT string containing the spatial reference system for this layer.
 
 \code{$bbox()}\cr
 Returns a numeric vector of length four containing the bounding box
-(xmin, ymin, xmax, ymax) for this layer. Note that \code{bForce = true} is set in
+for this layer (xmin, ymin, xmax, ymax). Note that \code{bForce = true} is set in
 the underlying API call to \code{OGR_L_GetExtent()}, so the entire layer may be
 scanned to compute a minimum bounding rectangle (see \code{FastGetExtent} in the
 list returned by \verb{$testCapability()}). Depending on the format driver, a
-spatial filter may/may not be taken into account, so it is safer to call
+spatial filter may or may not be taken into account, so it is safer to call
 \verb{$bbox()} without setting a spatial filter.
 
 \code{$getLayerDefn()}\cr
@@ -230,14 +236,14 @@ Only features for which \code{query} evaluates as true will be returned.
 The query string should be in the format of an SQL WHERE clause, described
 in the \href{https://gdal.org/user/ogr_sql_dialect.html#where}{"WHERE"}
 section of the OGR SQL dialect documentation (e.g.,
-\code{"population > 1000000 and population < 5000000"}, where population is an
+\code{"population > 1000000 and population < 5000000"}, where \code{population} is an
 attribute in the layer).
 In some cases (RDBMS backed drivers, SQLite, GeoPackage) the native
 capabilities of the database may be used to to interpret the WHERE clause,
 in which case the capabilities will be broader than those of OGR SQL.
 Note that installing a query string will generally result in resetting the
 current reading position (as with \verb{$resetReading()} decribed below).
-The \code{query} parameter may be set to \code{""} (empty string) to clear the current
+The \code{query} parameter may be set to empty string (\code{""}) to clear the current
 attribute filter.
 
 \code{$setSpatialFilterRect(bbox)}\cr
@@ -245,9 +251,9 @@ Sets a new rectangular spatial filter. This method sets a rectangle to be
 used as a spatial filter when fetching features via the \verb{$getNextFeature()}
 or \verb{$fetch()} methods. Only features that geometrically intersect the given
 rectangle will be returned.
-The x/y values in \code{bbox} (a \code{numeric} vector of length four: xmin, ymin,
-xmax, ymax) should be in the same coordinate system as the layer as a whole
-(as returned by \verb{$getSpatialRef()}).
+\code{bbox} is a numeric vector of length four containing xmin, ymin, xmax, ymax
+in the same coordinate system as the layer as a whole (as returned by
+\verb{$getSpatialRef()}).
 
 \code{$clearSpatialFilter()}\cr
 Clears a spatial filter that was set with \verb{$setSpatialFilterRect()}.
@@ -258,11 +264,11 @@ Returns the number of features in the layer. For dynamic databases the count
 may not be exact. This method forces a count in the underlying API call
 (i.e., \code{bForce = TRUE} in the call to \code{OGR_L_GetFeatureCount()}). Note that
 some vector drivers will actually scan the entire layer once to count
-features. The \code{FastFeatureCount} capability in the list returned by
+features. The \code{FastFeatureCount} element in the list returned by
 \verb{$testCapability()} can be checked if this might be a concern.
-The returned count takes the spatial and/or attribute filters into account.
-Note that some driver implementations of this method may alter the read
-cursor of the layer.
+The number of features returned takes into account the spatial and/or
+attribute filters. Some driver implementations of this method may alter the
+read cursor of the layer.
 
 \code{$getNextFeature()}\cr
 Fetch the next available feature from this layer. Only features matching the
@@ -278,7 +284,7 @@ Returns a feature by its identifier. The value of \code{fid} must be a numeric
 scalar, optionally carrying the \code{bit64::integer64} class attribute.
 Success or failure of this operation is unaffected by any spatial or
 attribute filters that may be in effect.
-The \code{RandomRead} capability in the list returned by \verb{$testCapability()} can
+The \code{RandomRead} element in the list returned by \verb{$testCapability()} can
 be checked to establish if this layer supports efficient random access
 reading; however, the call should always work if the feature exists since a
 fallback implementation just scans all the features in the layer looking for
@@ -295,32 +301,38 @@ for that side effect.
 Fetches the next \code{n} features from the layer and returns them as a data
 frame. This allows retrieving the entire set of features, one page of
 features at a time, or the remaining features (from the current cursor
-position). This function is an analog of
+position).
+
+This method is an analog of
 \href{https://dbi.r-dbi.org/reference/dbFetch.html}{\code{DBI::dbFetch()}}.
+
 The \code{n} parameter is the maximum number of features to retrieve per fetch
-given as a \code{numeric} scalar (assumed to be a whole number, will be
+given as a \code{numeric} value but assumed to be a whole number (will be
 truncated). Use \code{n = -1} or \code{n = Inf} to retrieve all pending features
 (resets reading to the first feature).
-Otherwise, \code{fetch(n)} can be called multiple times to perform forward paging
+Otherwise, \verb{$fetch()} can be called multiple times to perform forward paging
 from the current cursor position. Passing \code{n = NA} is also supported and
 returns the remaining features.
 Fetching zero features is possible to retrieve the structure of the feature
 set as a data frame (columns fully typed).
+
 OGR field types are returned as the following R types (\code{NA} for OGR NULL
 values):
 \itemize{
-\item \code{OFTInteger}: \code{integer} (or \code{logical} for subtype \code{OFSTBoolean})
-\item \code{OFTIntegerList}: vector of \code{integer} (data frame list column)
-\item \code{OFTInteger64}: \code{bit64::integer64} (or \code{logical} for subtype \code{OFSTBoolean})
-\item \code{OFTInteger64List}: vector of \code{bit64::integer64} (data frame list column)
+\item \code{OFTInteger}: \code{integer}
+\item \code{OFTInteger} subtype \code{OFSTBoolean}: \code{logical}
+\item \code{OFTIntegerList}: vector of \code{integer} (list column)
+\item \code{OFTInteger64}: \code{bit64::integer64}
+\item \code{OFTInteger64} subtype \code{OFSTBoolean}: \code{logical}
+\item \code{OFTInteger64List}: vector of \code{bit64::integer64} (list column)
 \item \code{OFTReal}: \code{numeric}
-\item \code{OFTRealList}: vector of \code{numeric} (data frame list column)
+\item \code{OFTRealList}: vector of \code{numeric} (list column)
 \item \code{OFTString}: \code{character} string
-\item \code{OFTStringList}: vector of \code{character} strings (data frame list column)
+\item \code{OFTStringList}: vector of \code{character} strings (list column)
 \item \code{OFTDate}: \code{Date}
 \item \code{OFTDateTime}: \code{POSIXct} (millisecond accuracy and adjustment for time zone
 flag if present)
-\item \code{OFTBinary}: \code{raw} vector (data frame list column)
+\item \code{OFTBinary}: \code{raw} vector (list column, \code{NULL} entries for OGR NULL values)
 }
 
 Geomtries are not returned if the field \code{returnGeomAs} is set to \code{NONE}
@@ -328,8 +340,11 @@ Geomtries are not returned if the field \code{returnGeomAs} is set to \code{NONE
 performance and memory usage when access only to feature attributes is
 needed. Geometries are returned as \code{raw} vectors in a data frame list column
 when \code{returnGeomAs} is set to \code{WKB} or \code{WKB_ISO}. Otherwise, geometries are
-returned as \code{character} when \code{returnGeomAs} is set to one of \code{WKT},
+returned as \code{character} strings when \code{returnGeomAs} is set to one of \code{WKT},
 \code{WKT_ISO} or \code{TYPE_NAME}.
+
+Note that \verb{$getFeatureCount()} is called internally when fetching all
+features or all remaining features (but not for a page of features).
 
 \code{$close()}\cr
 Closes the vector dataset (no return value, called for side effects).
@@ -337,7 +352,7 @@ Calling \code{$close()} results in proper cleanup, and flushing of any
 pending writes.
 The \code{GDALVector} object is still available after calling \code{$close()}.
 The layer can be re-opened on the existing \code{dsn} with
-\code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
+\code{$open(read_only = {TRUE|FALSE})}.
 }
 }
 
@@ -376,12 +391,13 @@ lyr$open(read_only = FALSE)
 lyr$testCapability()$SequentialWrite
 lyr$testCapability()$RandomWrite
 
-# feature class definition - a list of fields and their definitions
+# feature class definition - a list of field names and their definitions
 defn <- lyr$getLayerDefn()
 names(defn)
-
-# each list element holds a field definition
 str(defn)
+
+# default value of the read/write field 'returnGeomAs'
+print(lyr$returnGeomAs)
 
 lyr$getFeatureCount()
 
@@ -390,31 +406,28 @@ feat <- lyr$getNextFeature()
 # a list of field names and their values
 str(feat)
 
-# attribute filter
+# set an attribute filter
 lyr$setAttributeFilter("ig_year = 2020")
 lyr$getFeatureCount()
 
-# the default value of read/write field 'returnGeomAs'
-lyr$returnGeomAs
-
 feat <- lyr$getNextFeature()
 str(feat)
 
-# NULL if no more features are available
+# NULL when no more features are available
 feat <- lyr$getNextFeature()
 str(feat)
 
-# reset reading to the start and return geometry as WKT
+# reset reading to the start and return geometries as WKT
 lyr$resetReading()
 lyr$returnGeomAs <- "WKT"
 feat <- lyr$getNextFeature()
 str(feat)
 
-# clear attribute filter
+# clear the attribute filter
 lyr$setAttributeFilter("")
 lyr$getFeatureCount()
 
-# spatial filter
+# set a spatial filter
 # get the bounding box of the largest 1988 fire and use as spatial filter
 # first set a temporary attribute filter to do the lookup
 lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
@@ -430,7 +443,6 @@ lyr$setSpatialFilterRect(bbox)
 lyr$getFeatureCount()
 
 # fetch in chunks and return as data frame
-# geometry can optionally be returned as NONE, WKT, WKB or TYPE_NAME
 d <- lyr$fetch(20)
 str(d)
 
@@ -443,7 +455,7 @@ d <- lyr$fetch(20)
 nrow(d)
 str(d) # 0-row data frame with columns typed
 
-# fetch all features, filtered spatially, and return geometries as WKB
+# fetch all pending features with geometries as WKB
 lyr$returnGeomAs <- "WKB"
 d <- lyr$fetch(-1)  # resets reading to the first feature
 str(d)
@@ -460,4 +472,10 @@ vsi_unlink(dsn)
 }
 \seealso{
 \link{ogr_define}, \link{ogr_manage}, \code{\link[=ogr2ogr]{ogr2ogr()}}, \code{\link[=ogrinfo]{ogrinfo()}}
+
+GDAL vector format descriptions:\cr
+\url{https://gdal.org/drivers/vector/index.html}
+
+GDAL-supported SQL dialects:\cr
+\url{https://gdal.org/user/ogr_sql_sqlite_dialect.html})
 }

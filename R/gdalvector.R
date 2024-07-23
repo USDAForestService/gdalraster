@@ -14,14 +14,13 @@
 #' See \url{https://gdal.org/api/index.html} for details of the GDAL
 #' Vector API.
 #'
-#' @param dsn Character string containing the data source name (DSN, usually a
-#' filename or database connection string). See the GDAL vector format
-#' descriptions at \url{https://gdal.org/drivers/vector/index.html}.
-#' @param layer Character string containing either the name of a layer within
-#' the data source, or an SQL SELECT statement to be executed against the data
-#' source that defines a layer via its result set.
-#' @param read_only Logical. `TRUE` to open the layer read-only (the default),
-#' or `FALSE` to open with write access.
+#' @param dsn Character string containing the data source name (DSN), usually a
+#' filename or database connection string.
+#' @param layer Character string containing the name of a layer within the
+#' data source. May also be given as an SQL SELECT statement to be executed
+#' against the data source, defining a layer as the result set.
+#' @param read_only Logical scalar. `TRUE` to open the layer read-only (the
+#' default), or `FALSE` to open with write access.
 #' @param open_options Optional character vector of `NAME=VALUE` pairs
 #' specifying dataset open options.
 #' @param spatial_filter Optional character string containing a geometry in
@@ -29,9 +28,8 @@
 #' @param dialect Optional character string to control the statement dialect
 #' when SQL is used to define the layer. By default, the OGR SQL engine will
 #' be used, except for RDBMS drivers that will use their dedicated SQL engine,
-#' unless `"OGRSQL"` is explicitly passed as the dialect. The `SQLITE`
-#' dialect can also be used
-#' (see \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}).
+#' unless `"OGRSQL"` is explicitly passed as the dialect. The `"SQLITE"`
+#' dialect can also be used.
 #' @returns An object of class `GDALVector` which contains pointers to the
 #' opened layer and the dataset that contains it, and methods that operate on
 #' the layer as described in Details. `GDALVector` is a C++ class exposed
@@ -42,15 +40,16 @@
 #' @section Usage (see Details):
 #' \preformatted{
 #' ## Constructors
-#' # read-only by default:
-#' ds <- new(GDALVector, dsn)
-#' ds <- new(GDALVector, dsn, layer)
-#' # for update access:
-#' ds <- new(GDALVector, dsn, layer, read_only = FALSE)
-#' # to use dataset open options
-#' ds <- new(GDALVector, dsn, layer, read_only, open_options)
-#' # to specify a spatial filter and/or dialect
-#' ds <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)
+#' # for single-layer file formats such as shapefile
+#' lyr <- new(GDALVector, dsn)
+#' # specifying the layer name, or SQL statement defining the layer
+#' lyr <- new(GDALVector, dsn, layer)
+#' # for update access
+#' lyr <- new(GDALVector, dsn, layer, read_only = FALSE)
+#' # using dataset open options
+#' lyr <- new(GDALVector, dsn, layer, read_only, open_options)
+#' # setting a spatial filter and/or specifying the SQL dialect
+#' lyr <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)
 #'
 #' ## Read/write fields
 #' lyr$defaultGeomFldName
@@ -82,7 +81,6 @@
 #' lyr$getNextFeature()
 #' lyr$getFeature(fid)
 #' lyr$resetReading()
-#'
 #' lyr$fetch(n)
 #'
 #' lyr$close()
@@ -91,8 +89,9 @@
 #' ## Constructors
 #'
 #' \code{new(GDALVector, dsn)}\cr
-#' If `layer` is omitted, the first layer by index is assumed, so this form
-#' of the constructor might be used for single-layer formats like shapefile.
+#' The first layer by index is assumed if the `layer` argument is omitted, so
+#' this form of the constructor might be used for single-layer formats like
+#' shapefile.
 #'
 #' \code{new(GDALVector, dsn, layer)}\cr
 #' Constructor specifying the name of a layer to open. The `layer` argument
@@ -100,13 +99,13 @@
 #' set.
 #'
 #' \code{new(GDALVector, dsn, layer, read_only)}\cr
-#' Specifies read/write access (`read_only = {TRUE|FALSE})`.
+#' Constructor specifying read/write access (`read_only = {TRUE|FALSE})`.
 #' The `layer` argument is required in this form of the constructor, but may be
 #' given as empty string (`""`), in which case the first layer by index will be
 #' assumed.
 #'
 #' \code{new(GDALVector, dsn, layer, read_only, open_options)}\cr
-#' Constructor to specify dataset open options as a character vector of
+#' Constructor specifying dataset open options as a character vector of
 #' `NAME=VALUE` pairs.
 #'
 #' \code{new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect))}\cr
@@ -124,11 +123,11 @@
 #' \code{$returnGeomAs}\cr
 #' Character string specifying the return format of feature geometries.
 #' Must be one of `WKT`, `WKT_ISO`, `WKB`, `WKB_ISO`, `TYPE_NAME` or
-#' `NONE` (the default). `WKB` is used for backward compatibility purposes.
-#' It exports the old-style 99-402 extended dimension (Z) WKB types for
-#' Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
-#' GeometryCollection. For other geometry types, it is equivalent to using
-#' `WKB_ISO` (see \url{https://libgeos.org/specifications/wkb/}).
+#' `NONE` (the default). `WKB`/`WKT` export old-style 99-402 extended
+#' dimension (Z) types for Point, LineString, Polygon, MultiPoint,
+#' MultiLineString, MultiPolygon and GeometryCollection. For other geometry
+#' types, it is equivalent to using `WKB_ISO`/`WKT_ISO`
+#' (see \url{https://libgeos.org/specifications/wkb/}).
 #'
 #' \code{$wkbByteOrder}\cr
 #' Character string specifying the byte order for WKB geometries.
@@ -171,7 +170,14 @@
 #' \code{$testCapability()}\cr
 #' Tests whether the layer supports named capabilities based on the current
 #' read/write access. Returns a list of capabilities with values `TRUE` or
-#' `FALSE`. See [`ogr_layer_test_cap()`] for a list of the capabilities tested.
+#' `FALSE`. The returned list contains the following named elements:
+#' `RandomRead`, `SequentialWrite`, `RandomWrite`, `UpsertFeature`,
+#' `FastSpatialFilter`, `FastFeatureCount`, `FastGetExtent`,
+#' `FastSetNextByIndex`, `CreateField`, `CreateGeomField`, `DeleteField`,
+#' `ReorderFields`, `AlterFieldDefn`, `AlterGeomFieldDefn`, `DeleteFeature`,
+#' `StringsAsUTF8`, `Transactions`, `CurveGeometries`.
+#' (See the GDAL documentation for
+#' [`OGR_L_TestCapability()`](https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).)
 #'
 #' \code{$getFIDColumn()}\cr
 #' Returns the name of the underlying database column being used as the FID
@@ -195,11 +201,11 @@
 #'
 #' \code{$bbox()}\cr
 #' Returns a numeric vector of length four containing the bounding box
-#' (xmin, ymin, xmax, ymax) for this layer. Note that `bForce = true` is set in
+#' for this layer (xmin, ymin, xmax, ymax). Note that `bForce = true` is set in
 #' the underlying API call to `OGR_L_GetExtent()`, so the entire layer may be
 #' scanned to compute a minimum bounding rectangle (see `FastGetExtent` in the
 #' list returned by `$testCapability()`). Depending on the format driver, a
-#' spatial filter may/may not be taken into account, so it is safer to call
+#' spatial filter may or may not be taken into account, so it is safer to call
 #' `$bbox()` without setting a spatial filter.
 #'
 #' \code{$getLayerDefn()}\cr
@@ -215,14 +221,14 @@
 #' The query string should be in the format of an SQL WHERE clause, described
 #' in the ["WHERE"](https://gdal.org/user/ogr_sql_dialect.html#where)
 #' section of the OGR SQL dialect documentation (e.g.,
-#' `"population > 1000000 and population < 5000000"`, where population is an
+#' `"population > 1000000 and population < 5000000"`, where `population` is an
 #' attribute in the layer).
 #' In some cases (RDBMS backed drivers, SQLite, GeoPackage) the native
 #' capabilities of the database may be used to to interpret the WHERE clause,
 #' in which case the capabilities will be broader than those of OGR SQL.
 #' Note that installing a query string will generally result in resetting the
 #' current reading position (as with `$resetReading()` decribed below).
-#' The `query` parameter may be set to `""` (empty string) to clear the current
+#' The `query` parameter may be set to empty string (`""`) to clear the current
 #' attribute filter.
 #'
 #' \code{$setSpatialFilterRect(bbox)}\cr
@@ -230,9 +236,9 @@
 #' used as a spatial filter when fetching features via the `$getNextFeature()`
 #' or `$fetch()` methods. Only features that geometrically intersect the given
 #' rectangle will be returned.
-#' The x/y values in `bbox` (a `numeric` vector of length four: xmin, ymin,
-#' xmax, ymax) should be in the same coordinate system as the layer as a whole
-#' (as returned by `$getSpatialRef()`).
+#' `bbox` is a numeric vector of length four containing xmin, ymin, xmax, ymax
+#' in the same coordinate system as the layer as a whole (as returned by
+#' `$getSpatialRef()`).
 #'
 #' \code{$clearSpatialFilter()}\cr
 #' Clears a spatial filter that was set with `$setSpatialFilterRect()`.
@@ -243,11 +249,11 @@
 #' may not be exact. This method forces a count in the underlying API call
 #' (i.e., `bForce = TRUE` in the call to `OGR_L_GetFeatureCount()`). Note that
 #' some vector drivers will actually scan the entire layer once to count
-#' features. The `FastFeatureCount` capability in the list returned by
+#' features. The `FastFeatureCount` element in the list returned by
 #' `$testCapability()` can be checked if this might be a concern.
-#' The returned count takes the spatial and/or attribute filters into account.
-#' Note that some driver implementations of this method may alter the read
-#' cursor of the layer.
+#' The number of features returned takes into account the spatial and/or
+#' attribute filters. Some driver implementations of this method may alter the
+#' read cursor of the layer.
 #'
 #' \code{$getNextFeature()}\cr
 #' Fetch the next available feature from this layer. Only features matching the
@@ -263,7 +269,7 @@
 #' scalar, optionally carrying the `bit64::integer64` class attribute.
 #' Success or failure of this operation is unaffected by any spatial or
 #' attribute filters that may be in effect.
-#' The `RandomRead` capability in the list returned by `$testCapability()` can
+#' The `RandomRead` element in the list returned by `$testCapability()` can
 #' be checked to establish if this layer supports efficient random access
 #' reading; however, the call should always work if the feature exists since a
 #' fallback implementation just scans all the features in the layer looking for
@@ -280,39 +286,48 @@
 #' Fetches the next `n` features from the layer and returns them as a data
 #' frame. This allows retrieving the entire set of features, one page of
 #' features at a time, or the remaining features (from the current cursor
-#' position). This function is an analog of
+#' position).
+#'
+#' This method is an analog of
 #' [`DBI::dbFetch()`](https://dbi.r-dbi.org/reference/dbFetch.html).
+#'
 #' The `n` parameter is the maximum number of features to retrieve per fetch
-#' given as a `numeric` scalar (assumed to be a whole number, will be
+#' given as a `numeric` value but assumed to be a whole number (will be
 #' truncated). Use `n = -1` or `n = Inf` to retrieve all pending features
 #' (resets reading to the first feature).
-#' Otherwise, `fetch(n)` can be called multiple times to perform forward paging
+#' Otherwise, `$fetch()` can be called multiple times to perform forward paging
 #' from the current cursor position. Passing `n = NA` is also supported and
 #' returns the remaining features.
 #' Fetching zero features is possible to retrieve the structure of the feature
 #' set as a data frame (columns fully typed).
+#'
 #' OGR field types are returned as the following R types (`NA` for OGR NULL
 #' values):
-#' * `OFTInteger`: `integer` (or `logical` for subtype `OFSTBoolean`)
-#' * `OFTIntegerList`: vector of `integer` (data frame list column)
-#' * `OFTInteger64`: `bit64::integer64` (or `logical` for subtype `OFSTBoolean`)
-#' * `OFTInteger64List`: vector of `bit64::integer64` (data frame list column)
+#' * `OFTInteger`: `integer`
+#' * `OFTInteger` subtype `OFSTBoolean`: `logical`
+#' * `OFTIntegerList`: vector of `integer` (list column)
+#' * `OFTInteger64`: `bit64::integer64`
+#' * `OFTInteger64` subtype `OFSTBoolean`: `logical`
+#' * `OFTInteger64List`: vector of `bit64::integer64` (list column)
 #' * `OFTReal`: `numeric`
-#' * `OFTRealList`: vector of `numeric` (data frame list column)
+#' * `OFTRealList`: vector of `numeric` (list column)
 #' * `OFTString`: `character` string
-#' * `OFTStringList`: vector of `character` strings (data frame list column)
+#' * `OFTStringList`: vector of `character` strings (list column)
 #' * `OFTDate`: `Date`
 #' * `OFTDateTime`: `POSIXct` (millisecond accuracy and adjustment for time zone
 #' flag if present)
-#' * `OFTBinary`: `raw` vector (data frame list column)
+#' * `OFTBinary`: `raw` vector (list column, `NULL` entries for OGR NULL values)
 #'
 #' Geomtries are not returned if the field `returnGeomAs` is set to `NONE`
 #' (currently the default). Omitting the geometries may be beneficial for
 #' performance and memory usage when access only to feature attributes is
 #' needed. Geometries are returned as `raw` vectors in a data frame list column
 #' when `returnGeomAs` is set to `WKB` or `WKB_ISO`. Otherwise, geometries are
-#' returned as `character` when `returnGeomAs` is set to one of `WKT`,
+#' returned as `character` strings when `returnGeomAs` is set to one of `WKT`,
 #' `WKT_ISO` or `TYPE_NAME`.
+#'
+#' Note that `$getFeatureCount()` is called internally when fetching all
+#' features or all remaining features (but not for a page of features).
 #'
 #' \code{$close()}\cr
 #' Closes the vector dataset (no return value, called for side effects).
@@ -320,10 +335,16 @@
 #' pending writes.
 #' The `GDALVector` object is still available after calling \code{$close()}.
 #' The layer can be re-opened on the existing \code{dsn} with
-#' \code{$open(read_only=TRUE)} or \code{$open(read_only=FALSE)}.
+#' \code{$open(read_only = {TRUE|FALSE})}.
 #'
 #' @seealso
 #' [ogr_define], [ogr_manage], [ogr2ogr()], [ogrinfo()]
+#'
+#' GDAL vector format descriptions:\cr
+#' \url{https://gdal.org/drivers/vector/index.html}
+#'
+#' GDAL-supported SQL dialects:\cr
+#' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html})
 #'
 #' @examples
 #' # MTBS fire perimeters in Yellowstone National Park 1984-2022
@@ -360,12 +381,13 @@
 #' lyr$testCapability()$SequentialWrite
 #' lyr$testCapability()$RandomWrite
 #'
-#' # feature class definition - a list of fields and their definitions
+#' # feature class definition - a list of field names and their definitions
 #' defn <- lyr$getLayerDefn()
 #' names(defn)
-#'
-#' # each list element holds a field definition
 #' str(defn)
+#'
+#' # default value of the read/write field 'returnGeomAs'
+#' print(lyr$returnGeomAs)
 #'
 #' lyr$getFeatureCount()
 #'
@@ -374,31 +396,28 @@
 #' # a list of field names and their values
 #' str(feat)
 #'
-#' # attribute filter
+#' # set an attribute filter
 #' lyr$setAttributeFilter("ig_year = 2020")
 #' lyr$getFeatureCount()
 #'
-#' # the default value of read/write field 'returnGeomAs'
-#' lyr$returnGeomAs
-#'
 #' feat <- lyr$getNextFeature()
 #' str(feat)
 #'
-#' # NULL if no more features are available
+#' # NULL when no more features are available
 #' feat <- lyr$getNextFeature()
 #' str(feat)
 #'
-#' # reset reading to the start and return geometry as WKT
+#' # reset reading to the start and return geometries as WKT
 #' lyr$resetReading()
 #' lyr$returnGeomAs <- "WKT"
 #' feat <- lyr$getNextFeature()
 #' str(feat)
 #'
-#' # clear attribute filter
+#' # clear the attribute filter
 #' lyr$setAttributeFilter("")
 #' lyr$getFeatureCount()
 #'
-#' # spatial filter
+#' # set a spatial filter
 #' # get the bounding box of the largest 1988 fire and use as spatial filter
 #' # first set a temporary attribute filter to do the lookup
 #' lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
@@ -414,7 +433,6 @@
 #' lyr$getFeatureCount()
 #'
 #' # fetch in chunks and return as data frame
-#' # geometry can optionally be returned as NONE, WKT, WKB or TYPE_NAME
 #' d <- lyr$fetch(20)
 #' str(d)
 #'
@@ -427,7 +445,7 @@
 #' nrow(d)
 #' str(d) # 0-row data frame with columns typed
 #'
-#' # fetch all features, filtered spatially, and return geometries as WKB
+#' # fetch all pending features with geometries as WKB
 #' lyr$returnGeomAs <- "WKB"
 #' d <- lyr$fetch(-1)  # resets reading to the first feature
 #' str(d)
