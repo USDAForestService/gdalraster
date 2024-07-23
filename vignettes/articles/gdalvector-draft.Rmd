@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-07-21
+Last modified: 2024-07-23
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -19,11 +19,10 @@ Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
 This document describes R bindings to the GDAL/OGR Vector API proposed for inclusion in package **gdalraster**, analogous to its existing raster support. A package providing low-level access to both the raster and vector APIs in GDAL should be of interest to developers creating higher level interfaces. For example, custom workflows that are I/O intensive may benefit from direct access to GDAL's I/O capabilities. R bindings to the vector API would support persistent connections to the data store, cursors with attribute and spatial filtering, transactions, feature-level insert/delete, update of attributes and geometries, and OGR facilities for geoprocessing. Calling signatures of a class-based interface will resemble the C++ and Python APIs provided by the GDAL project. It is intended that bindings in **gdalraster** should provide long-term API stability while tracking changes in GDAL.
 
-A proposed interface is described in terms of the [GDAL Vector Data Model](https://gdal.org/user/vector_data_model.html), along with a draft class definition for implementation via `RCPP_EXPOSED_CLASS`. A prototype of the bindings is in the `gdalvector` branch at <https://github.com/USDAForestService/gdalraster/tree/gdalvector>. The prototype bindings are currently undocumented. Code examples are included here to demonstrate usage and proof-of-concept. Installation of the development version of **gdalraster** containing the prototype vector bindings could be done with:
+A proposed interface is described in terms of the [GDAL Vector Data Model](https://gdal.org/user/vector_data_model.html), along with a draft class definition for implementation via `RCPP_EXPOSED_CLASS`.
 
-```{r, eval=FALSE}
-remotes::install_github("USDAForestService/gdalraster", ref = "gdalvector")
-```
+An initial implemetation supporting read access has been merged into the **gdalraster** main branch (as of v. 1.11.1.9100, 2024-07-23), with online documentation available at:
+<https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html>
 
 ## Description of the interface
 
@@ -971,6 +970,7 @@ This is a working list of potential issues and design questions that need furthe
 * update usage example for recent changes in gdalvector branch: `defaultGeomFldName`, `returnGeomAs = NONE|WKT|WKT_ISO|WKB|WKB_ISO`, `GDALVector::fetch()`, all OGR attribute field types now supported (2024-07-12)
 * add sub-headings under the heading "Description of the interface", and add specifications under "Feature retrieval" and "Geometry" (2024-07-13)
 * `GDALVector::testCapability()` returns a list of named capabilities with `TRUE`|`FALSE`, class method version of `ogr_layer_test_cap()` (2024-07-21)
+* branch gdalvector was merged into main (2024-07-23)
 
 ## Contributors
 
