@@ -45,6 +45,13 @@ and exposes methods for retrieving layer information, setting attribute and
 spatial filters, and reading/writing feature data.
 See \url{https://gdal.org/api/index.html} for details of the GDAL
 Vector API.
+
+\strong{Class \code{GDALVector} is currently under development}. An initial
+implemetation supporting read access was added in gdalraster 1.11.1.9100.
+A working document with draft specifications is available at:\cr
+\url{https://usdaforestservice.github.io/gdalraster/articles/gdalvector-draft.html}\cr
+and discussion thread/status updates at:\cr
+\url{https://github.com/USDAForestService/gdalraster/issues/241}.
 }
 \section{Usage (see Details)}{
 
@@ -301,14 +308,16 @@ for that side effect.
 Fetches the next \code{n} features from the layer and returns them as a data
 frame. This allows retrieving the entire set of features, one page of
 features at a time, or the remaining features (from the current cursor
-position).
+position). Returns a data frame with as many rows as features were fetched,
+and as many columns as attribute plus geometry fields in the result set,
+even if the result is a single value or has one or zero rows.
 
 This method is an analog of
 \href{https://dbi.r-dbi.org/reference/dbFetch.html}{\code{DBI::dbFetch()}}.
 
-The \code{n} parameter is the maximum number of features to retrieve per fetch
-given as a \code{numeric} value but assumed to be a whole number (will be
-truncated). Use \code{n = -1} or \code{n = Inf} to retrieve all pending features
+The \code{n} argument is the maximum number of features to retrieve per fetch
+given as \code{integer} or \code{numeric} but assumed to be a whole number (will
+be truncated). Use \code{n = -1} or \code{n = Inf} to retrieve all pending features
 (resets reading to the first feature).
 Otherwise, \verb{$fetch()} can be called multiple times to perform forward paging
 from the current cursor position. Passing \code{n = NA} is also supported and
@@ -343,8 +352,8 @@ when \code{returnGeomAs} is set to \code{WKB} or \code{WKB_ISO}. Otherwise, geom
 returned as \code{character} strings when \code{returnGeomAs} is set to one of \code{WKT},
 \code{WKT_ISO} or \code{TYPE_NAME}.
 
-Note that \verb{$getFeatureCount()} is called internally when fetching all
-features or all remaining features (but not for a page of features).
+Note that \verb{$getFeatureCount()} is called internally when fetching the full
+feature set or all remaining features (but not for a page of features).
 
 \code{$close()}\cr
 Closes the vector dataset (no return value, called for side effects).
