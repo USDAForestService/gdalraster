@@ -662,7 +662,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                     }
                 }
                 else {
-                    col[row_num] = Rcpp::RawVector::create();
+                    col[row_num] = R_NilValue;
                 }
             }
             else if (fld_type == OFTIntegerList) {
