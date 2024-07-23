@@ -1,6 +1,6 @@
 # gdalraster 1.11.1.9100 (dev)
 
-* add class `GDALVector`, initial implementation / WIP (2024-07-22)
+* add class [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html), initial implementation / WIP (2024-07-22)
 
 * `plot_raster()`: default to no stretch when the input is an RGB Byte raster, addresses #429 (2024-07-10)
 
