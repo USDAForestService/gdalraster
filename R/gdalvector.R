@@ -359,9 +359,9 @@
 #' # MTBS fire perimeters in Yellowstone National Park 1984-2022
 #' f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
 #'
-#' # copy to a temporary in-memory file that is writeable
-#' dsn <- file.path("/vsimem", basename(f))
-#' vsi_copy_file(f, dsn)
+#' # copy to a temporary file that is writeable
+#' dsn <- file.path(tempdir(), basename(f))
+#' file.copy(f, dsn)
 #'
 #' lyr <- new(GDALVector, dsn, "mtbs_perims")
 #'
@@ -467,7 +467,7 @@
 #' lyr$getFeatureCount()
 #'
 #' lyr$close()
-#' vsi_unlink(dsn)
+#' unlink(dsn)
 NULL
 
 Rcpp::loadModule("mod_GDALVector", TRUE)
