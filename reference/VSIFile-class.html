@@ -122,7 +122,7 @@ otherwise, <code>"r+"</code> to open an existing file), while <code>"w"</code> a
 allow sequential write only.</p>
     </div>
     <div class="section level2">
-    <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
+    <h2 id="usage-see-details-">Usage (see Details)<a class="anchor" aria-label="anchor" href="#usage-see-details-"></a></h2>
 
 
 <div class="sourceCode"><pre><code><span></span>
@@ -133,7 +133,7 @@ allow sequential write only.</p>
 <span><span class="co"># specifying access and options (both required):</span></span>
 <span><span class="va">vf</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">VSIFile</span>, <span class="va">filename</span>, <span class="va">access</span>, <span class="va">options</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## Methods (see Details)</span></span>
+<span><span class="co">## Methods</span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">seek</span><span class="op">(</span><span class="va">offset</span>, <span class="va">origin</span><span class="op">)</span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">tell</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">vf</span><span class="op">$</span><span class="fu">rewind</span><span class="op">(</span><span class="op">)</span></span>
@@ -155,20 +155,22 @@ allow sequential write only.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
 
 
-<p><code>new(VSIFile, filename)</code>
-Constructor. Returns an object of class <code>VSIFile</code>, or an error is raised
-if a file handle cannot be obtained.</p>
-<p><code>new(VSIFile, filename, access)</code>
+<div class="section">
+<h3 id="constructors">Constructors<a class="anchor" aria-label="anchor" href="#constructors"></a></h3>
+
+
+<p><code>new(VSIFile, filename)</code><br>
+Returns an object of class <code>VSIFile</code>, or an error is raised if a file
+handle cannot be obtained.</p>
+<p><code>new(VSIFile, filename, access)</code><br>
 Alternate constructor for passing <code>access</code> as a character string
 (e.g., <code>"r"</code>, <code>"r+"</code>, <code>"w"</code>, <code>"w+"</code>).
 Returns an object of class <code>VSIFile</code> with an open file handle, or an error
 is raised if a file handle cannot be obtained.</p>
-<p><code>new(VSIFile, filename, access, options)</code>
+<p><code>new(VSIFile, filename, access, options)</code><br>
 Alternate constructor for passing <code>access</code> as a character string, and
-<code>options</code> as a character vector of "NAME=VALUE" pairs (both arguments
-required, GDAL &gt;= 3.3 required for <code>options</code> support).
-Returns an object of class <code>VSIFile</code> with an open file handle, or an error
-is raised if a file handle cannot be obtained.</p>
+<code>options</code> as a character vector of "NAME=VALUE" pairs (all arguments
+required, GDAL &gt;= 3.3 required for <code>options</code> support).</p>
 <p>The <code>options</code> argument is highly file system dependent. Supported options
 as of GDAL 3.9 include:</p><ul><li><p>MIME headers such as Content-Type and Content-Encoding are supported for
 the /vsis3/, /vsigs/, /vsiaz/, /vsiadls/ file systems.</p></li>
@@ -179,7 +181,13 @@ unless YES is specified.</p></li>
 FILE_FLAG_WRITE_THROUGH flag to the <code>CreateFile()</code> function. In that mode,
 the data are written to the system cache but are flushed to disk without
 delay.</p></li>
-</ul><p><code>$seek(offset, origin)</code>
+</ul></div>
+
+<div class="section">
+<h3 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h3>
+
+
+<p><code>$seek(offset, origin)</code><br>
 Seek to a requested <code>offset</code> in the file.
 <code>offset</code> is given as a positive numeric scalar, optionally as
 <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> type.
@@ -189,32 +197,32 @@ can be passed unquoted. Note that <code>offset</code> is an unsigned type, so <c
 can only be used for positive seek. If negative seek is needed, use:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a>vf<span class="sc">$</span><span class="fu">seek</span>(vf<span class="sc">$</span><span class="fu">tell</span>() <span class="sc">+</span> negative_offset, SEEK_SET)</span></code></pre><p></p></div>
 <p>Returns <code>0</code> on success or <code>-1</code> on failure.</p>
-<p><code>$tell()</code>
+<p><code>$tell()</code><br>
 Returns the current file read/write offset in bytes from the beginning of
 the file. The return value is a numeric scalar carrying the <code>integer64</code>
 class attribute.</p>
-<p><code>$rewind()</code>
+<p><code>$rewind()</code><br>
 Rewind the file pointer to the beginning of the file. This is equivalent to
 <code>vf$seek(0, SEEK_SET)</code>. No return value, called for that side effect.</p>
-<p><code>$read(nbytes)</code>
+<p><code>$read(nbytes)</code><br>
 Read <code>nbytes</code> bytes from the file at the current offset. Returns a vector
 of R <code>raw</code> type, or <code>NULL</code> if the operation fails.</p>
-<p><code>$write(object)</code>
+<p><code>$write(object)</code><br>
 Write bytes to the file at the current offset. <code>object</code> is a <code>raw</code> vector.
 Returns the number of bytes successfully written, as numeric scalar
 carrying the <code>integer64</code> class attribute.
 See also base R <code><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">charToRaw()</a></code> / <code><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">rawToChar()</a></code>, convert to or from raw
 vectors, and <code><a href="https://rdrr.io/r/base/readBin.html" class="external-link">readBin()</a></code> / <code><a href="https://rdrr.io/r/base/readBin.html" class="external-link">writeBin()</a></code> which read binary data from or write
 binary data to a raw vector.</p>
-<p><code>$eof()</code>
+<p><code>$eof()</code><br>
 Test for end of file. Returns <code>TRUE</code> if an end-of-file condition occurred
 during the previous read operation. The end-of-file flag is cleared by a
 successful call to <code>$seek()</code>.</p>
-<p><code>$truncate(new_size)</code>
+<p><code>$truncate(new_size)</code><br>
 Truncate/expand the file to the specified <code>new_size</code>, given as a positive
 numeric scalar, optionally as <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> type.
 Returns <code>0</code> on success.</p>
-<p><code>$flush()</code>
+<p><code>$flush()</code><br>
 Flush pending writes to disk. For files in write or update mode and on
 file system types where it is applicable, all pending output on the file is
 flushed to the physical disk.
@@ -222,33 +230,35 @@ On Windows regular files, this method does nothing, unless the
 <code>VSI_FLUSH=YES</code> configuration option is set (and only when the file has not
 been opened with the <code>WRITE_THROUGH</code> option).
 Returns <code>0</code> on success or <code>-1</code> on error.</p>
-<p><code>$ingest(max_size)</code>
+<p><code>$ingest(max_size)</code><br>
 Ingest a file into memory. Read the whole content of the file into a <code>raw</code>
 vector.
 <code>max_size</code> is the maximum size of file allowed, given as a numeric scalar,
 optionally as <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> type. If no limit, set to a negative value.
 Returns a <code>raw</code> vector, or <code>NULL</code> if the operation fails.</p>
-<p><code>$close()</code>
+<p><code>$close()</code><br>
 Closes the file. The file should always be closed when I/O has been
 completed. Returns <code>0</code> on success or <code>-1</code> on error.</p>
-<p><code>$open()</code>
+<p><code>$open()</code><br>
 This method can be used to re-open the file after it has been closed, using
 the same <code>filename</code>, and same <code>options</code> if any are set. The file will be
 opened using <code>access</code> as currently set. The <code>$set_access()</code> method can be
 called to change the requested access while the file is closed.
 No return value. An error is raised if a file handle cannot be obtained.</p>
-<p><code>$get_filename()</code>
+<p><code>$get_filename()</code><br>
 Returns a character string containing the <code>filename</code> associated with this
 <code>VSIFile</code> object (the <code>filename</code> originally used to create the object).</p>
-<p><code>$get_access()</code>
+<p><code>$get_access()</code><br>
 Returns a character string containing the <code>access</code> as currently set on this
 <code>VSIFile</code> object.</p>
-<p><code>$set_access(access)</code>
+<p><code>$set_access(access)</code><br>
 Sets the requested read/write access on this <code>VSIFile</code> object, given as a
 character string (i.e., <code>"r"</code>, <code>"r+"</code>, <code>"w"</code>, <code>"w+"</code>). The access can be
 changed only while the <code>VSIFile</code> object is closed, and will apply when it is
 re-opened with a call to <code>$open()</code>.
 Returns <code>0</code> on success or <code>-1</code> on error.</p>
+</div>
+
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

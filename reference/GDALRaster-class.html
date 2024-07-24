@@ -121,7 +121,7 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <code>CUBICSPLINE</code>, <code>LANCZOS</code>, <code>AVERAGE</code> or <code>MODE</code> (see <code><a href="set_config_option.html">set_config_option()</a></code>).</p>
     </div>
     <div class="section level2">
-    <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
+    <h2 id="usage-see-details-">Usage (see Details)<a class="anchor" aria-label="anchor" href="#usage-see-details-"></a></h2>
 
 
 <div class="sourceCode"><pre><code><span></span>
@@ -135,12 +135,12 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <span><span class="co"># to open without shared mode:</span></span>
 <span><span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">filename</span>, <span class="va">read_only</span>, <span class="va">open_options</span>, shared <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## Read/write fields (see Details)</span></span>
+<span><span class="co">## Read/write fields</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="va">infoOptions</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="va">quiet</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="va">readByteAsRaw</span></span>
 <span></span>
-<span><span class="co">## Methods (see Details)</span></span>
+<span><span class="co">## Methods</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getFilename</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span><span class="va">read_only</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">isOpen</span><span class="op">(</span><span class="op">)</span></span>
@@ -154,6 +154,7 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getGeoTransform</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setGeoTransform</span><span class="op">(</span><span class="va">transform</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getProjection</span><span class="op">(</span><span class="op">)</span></span>
@@ -165,7 +166,6 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">apply_geotransform</span><span class="op">(</span><span class="va">col_row</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">get_pixel_line</span><span class="op">(</span><span class="va">xy</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getDescription</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setDescription</span><span class="op">(</span><span class="va">band</span>, <span class="va">desc</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
@@ -219,118 +219,133 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
 
 
+<div class="section">
+<h3 id="constructors">Constructors<a class="anchor" aria-label="anchor" href="#constructors"></a></h3>
 
-<p><code>new(GDALRaster, filename, read_only)</code>
-Constructor. Returns an object of class <code>GDALRaster</code>.
-<code>read_only</code> defaults to <code>TRUE</code> if not specified.</p>
-<p><code>new(GDALRaster, filename, read_only, open_options)</code>
+
+<p><code>new(GDALRaster, filename, read_only)</code><br>
+Returns an object of class <code>GDALRaster</code>. The <code>read_only</code> argument defaults
+to <code>TRUE</code> if not specified.</p>
+<p><code>new(GDALRaster, filename, read_only, open_options)</code><br>
 Alternate constructor for passing dataset <code>open_options</code>, a character
 vector of <code>NAME=VALUE</code> pairs.
 <code>read_only</code> is required for this form of the constructor, <code>TRUE</code> for
-read-only, or <code>FALSE</code> to open with write access.
+read-only access, or <code>FALSE</code> to open with write access.
 Returns an object of class <code>GDALRaster</code>.</p>
-<p><code>new(GDALRaster, filename, read_only, open_options, shared)</code>
+<p><code>new(GDALRaster, filename, read_only, open_options, shared)</code><br>
 Alternate constructor for specifying the <code>shared</code> mode for dataset opening.
-<code>shared</code> defaults to <code>TRUE</code> but can be set to <code>FALSE</code> with this constructor
-(see Note).
-All parameters are required with this form of the constructor, but
-<code>open_options</code> can be <code>NULL</code>.
-Returns an object of class <code>GDALRaster</code>.</p>
-<p><code>$infoOptions</code>
-Read/write field.
+The <code>shared</code> argument defaults to <code>TRUE</code> but can be set to <code>FALSE</code> with this
+constructor (see Note).
+All arguments are required with this form of the constructor, but
+<code>open_options</code> can be <code>NULL</code>. Returns an object of class <code>GDALRaster</code>.</p>
+</div>
+
+<div class="section">
+<h3 id="read-write-fields">Read/write fields<a class="anchor" aria-label="anchor" href="#read-write-fields"></a></h3>
+
+
+<p><code>$infoOptions</code><br>
 A character vector of command-line arguments to control the output of
 <code>$info()</code> and <code>$infoAsJSON()</code> (see below).
 Defaults to <code>character(0)</code>. Can be set to a vector of strings specifying
 arguments to the <code class="command">gdalinfo</code> command-line utility, e.g.,
 <code>c("-nomd", "-norat", "-noct")</code>.
 Restore the default by setting to empty string (<code>""</code>) or <code>character(0)</code>.</p>
-<p><code>$quiet</code>
-Read/write field.
+<p><code>$quiet</code><br>
 A logical value, <code>FALSE</code> by default. This field can be set to <code>TRUE</code> which
 will suppress various messages as well as progress reporting for potentially
 long-running processes such as building overviews and computation of
 statistics and histograms.</p>
-<p><code>$readByteAsRaw</code>
-Read/write field.
+<p><code>$readByteAsRaw</code><br>
 A logical value, <code>FALSE</code> by default. This field can be set to <code>TRUE</code> which
 will affect the data type returned by <code>$read()</code> and <code><a href="read_ds.html">read_ds()</a></code>. When the
-underlying band data type is 'Byte' and <code>readByteAsRaw</code> is <code>TRUE</code> the output
+underlying band data type is Byte and <code>readByteAsRaw</code> is <code>TRUE</code> the output
 type will be raw rather than integer. See also the <code>as_raw</code> argument to
 <code><a href="read_ds.html">read_ds()</a></code> to control this in a non-persistent setting. If the underlying
 band data type is not Byte this setting has no effect.</p>
-<p><code>$getFilename()</code>
+</div>
+
+<div class="section">
+<h3 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h3>
+
+
+<p><code>$getFilename()</code><br>
 Returns a character string containing the <code>filename</code> associated with this
 <code>GDALRaster</code> object (<code>filename</code> originally used to open the dataset).</p>
-<p><code>$open(read_only)</code>
+<p><code>$open(read_only)</code><br>
 (Re-)opens the raster dataset on the existing filename. Use this method to
 open a dataset that has been closed using <code>$close()</code>. May be used to
 re-open a dataset with a different read/write access (<code>read_only</code> set to
 <code>TRUE</code> or <code>FALSE</code>). The method will first close an open dataset, so it is
 not required to call <code>$close()</code> explicitly in this case.
 No return value, called for side effects.</p>
-<p><code>$isOpen()</code>
+<p><code>$isOpen()</code><br>
 Returns logical indicating whether the associated raster dataset is open.</p>
-<p><code>$getFileList()</code>
+<p><code>$getFileList()</code><br>
 Returns a character vector of files believed to be part of this dataset.
 If it returns an empty string (<code>""</code>) it means there is believed to be no
 local file system files associated with the dataset (e.g., a virtual file
 system). The returned filenames will normally be relative or absolute
 paths depending on the path used to originally open the dataset.</p>
-<p><code>$info()</code>
+<p><code>$info()</code><br>
 Prints various information about the raster dataset to the console (no
 return value, called for that side effect only).
 Equivalent to the output of the <code class="command">gdalinfo</code> command-line utility
 (<code class="command">gdalinfo filename</code>, if using the default <code>infoOptions</code>).
 See the field <code>$infoOptions</code> above for setting the arguments to <code>gdalinfo</code>.</p>
-<p><code>$infoAsJSON()</code>
+<p><code>$infoAsJSON()</code><br>
 Returns information about the raster dataset as a JSON-formatted string.
 Equivalent to the output of the <code class="command">gdalinfo</code> command-line utility
 (<code class="command">gdalinfo -json filename</code>, if using the default <code>infoOptions</code>).
 See the field <code>$infoOptions</code> above for setting the arguments to <code>gdalinfo</code>.</p>
-<p><code>$getDriverShortName()</code>
+<p><code>$getDriverShortName()</code><br>
 Returns the short name of the raster format driver.</p>
-<p><code>$getDriverLongName()</code>
+<p><code>$getDriverLongName()</code><br>
 Returns the long name of the raster format driver.</p>
-<p><code>$getRasterXSize()</code>
+<p><code>$getRasterXSize()</code><br>
 Returns the number of pixels along the x dimension.</p>
-<p><code>$getRasterYSize()</code>
+<p><code>$getRasterYSize()</code><br>
 Returns the number of pixels along the y dimension.</p>
-<p><code>$getGeoTransform()</code>
+<p><code>$getRasterCount()</code><br>
+Returns the number of raster bands on this dataset. For the methods
+described below that operate on individual bands, the <code>band</code>
+argument is the integer band number (1-based).</p>
+<p><code>$getGeoTransform()</code><br>
 Returns the affine transformation coefficients for transforming between
 pixel/line raster space (column/row) and projection coordinate space
 (geospatial x/y). The return value is a numeric vector of length six.
 See <a href="https://gdal.org/tutorials/geotransforms_tut.html" class="external-link">https://gdal.org/tutorials/geotransforms_tut.html</a>
 for details of the affine transformation. <em>With 1-based indexing
 in R</em>, the geotransform vector contains (in map units of the raster spatial
-reference system):</p><table class="table table"><tr><td>GT[1]</td><td>x-coordinate of upper-left corner of the upper-left pixel</td></tr><tr><td>GT[2]</td><td>x-component of pixel width</td></tr><tr><td>GT[3]</td><td>row rotation (zero for north-up raster)</td></tr><tr><td>GT[4]</td><td>y-coordinate of upper-left corner of the upper-left pixel</td></tr><tr><td>GT[5]</td><td>column rotation (zero for north-up raster)</td></tr><tr><td>GT[6]</td><td>y-component of pixel height (negative for north-up raster)</td></tr></table><p><code>$setGeoTransform(transform)</code>
+reference system):</p><table class="table table"><tr><td>GT[1]</td><td>x-coordinate of upper-left corner of the upper-left pixel</td></tr><tr><td>GT[2]</td><td>x-component of pixel width</td></tr><tr><td>GT[3]</td><td>row rotation (zero for north-up raster)</td></tr><tr><td>GT[4]</td><td>y-coordinate of upper-left corner of the upper-left pixel</td></tr><tr><td>GT[5]</td><td>column rotation (zero for north-up raster)</td></tr><tr><td>GT[6]</td><td>y-component of pixel height (negative for north-up raster)</td></tr></table><p><code>$setGeoTransform(transform)</code><br>
 Sets the affine transformation coefficients on this dataset.
 <code>transform</code> is a numeric vector of length six.
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the geotransform
 could not be set.</p>
-<p><code>$getProjection()</code>
+<p><code>$getProjection()</code><br>
 Returns the coordinate reference system of the raster as an OGC WKT
 format string. Equivalent to <code>ds$getProjectionRef()</code>.</p>
-<p><code>$getProjectionRef()</code>
+<p><code>$getProjectionRef()</code><br>
 Returns the coordinate reference system of the raster as an OGC WKT
 format string.
 An empty string is returned when a projection definition is not available.</p>
-<p><code>$setProjection(projection)</code>
+<p><code>$setProjection(projection)</code><br>
 Sets the projection reference for this dataset.
 <code>projection</code> is a string in OGC WKT format.
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the projection
 could not be set.</p>
-<p><code>$bbox()</code>
+<p><code>$bbox()</code><br>
 Returns a numeric vector of length four containing the bounding box
 (xmin, ymin, xmax, ymax) assuming this is a north-up raster.</p>
-<p><code>$res()</code>
+<p><code>$res()</code><br>
 Returns a numeric vector of length two containing the resolution
 (pixel width, pixel height as positive values) assuming this is a north-up
 raster.</p>
-<p><code>$dim()</code>
+<p><code>$dim()</code><br>
 Returns an integer vector of length three containing the raster dimensions.
-Equivalent to:
-<code>c(ds$getRasterXSize(), ds$getRasterYSize(), ds$getRasterCount())</code></p>
-<p><code>$apply_geotransform(col_row)</code>
+Equivalent to:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">c</span>(ds<span class="sc">$</span><span class="fu">getRasterXSize</span>(), ds<span class="sc">$</span><span class="fu">getRasterYSize</span>(), ds<span class="sc">$</span><span class="fu">getRasterCount</span>())</span></code></pre><p></p></div>
+<p><code>$apply_geotransform(col_row)</code><br>
 Applies geotransform coefficients to raster coordinates in pixel/line space
 (column/row), converting into georeferenced (x/y) coordinates.
 <code>col_row</code> is a numeric matrix of raster col/row coordinates (or two-column
@@ -338,25 +353,21 @@ data frame that will be coerced to numeric matrix).
 Returns a numeric matrix of geospatial x/y coordinates.
 See the stand-alone function of the same name (<code><a href="apply_geotransform.html">apply_geotransform()</a></code>) for
 more info and examples.</p>
-<p><code>$get_pixel_line(xy)</code>
+<p><code>$get_pixel_line(xy)</code><br>
 Converts geospatial coordinates to pixel/line (raster column/row numbers).
 <code>xy</code> is a numeric matrix of geospatial x,y coordinates in the same spatial
 reference system as the raster (or two-column data frame that will be
 coerced to numeric matrix). Returns an integer matrix of raster pixel/line.
 See the stand-alone function of the same name (<code><a href="get_pixel_line.html">get_pixel_line()</a></code>) for more
 info and examples.</p>
-<p><code>$getRasterCount()</code>
-Returns the number of raster bands on this dataset. For the methods
-described below that operate on individual bands, the <code>band</code>
-argument is the integer band number (1-based).</p>
-<p><code>$getDescription(band)</code>
+<p><code>$getDescription(band)</code><br>
 Returns a string containing the description for <code>band</code>. An empty
 string is returned if no description is set for the band.
 (Setting <code>band = 0</code> will return the dataset-level description.)</p>
-<p><code>$setDescription(band, desc)</code>
+<p><code>$setDescription(band, desc)</code><br>
 Sets a description for <code>band</code>. <code>desc</code> is the character string
 to set. No return value.</p>
-<p><code>$getBlockSize(band)</code>
+<p><code>$getBlockSize(band)</code><br>
 Returns an integer vector of length two (xsize, ysize) containing the
 "natural" block size of <code>band</code>. GDAL has a concept of the natural block
 size of rasters so that applications can organize data access efficiently
@@ -367,7 +378,7 @@ and block ysize is 1. However, for tiled images block size will typically
 be the tile size. Note that the X and Y block sizes don't have to divide
 the image size evenly, meaning that right and bottom edge blocks may be
 incomplete.</p>
-<p><code>$getActualBlockSize(band, xblockoff, yblockoff)</code>
+<p><code>$getActualBlockSize(band, xblockoff, yblockoff)</code><br>
 Returns an integer vector of length two (xvalid, yvalid) containing the
 actual block size for a given block offset in <code>band</code>. Handles partial
 blocks at the edges of the raster and returns the true number of pixels.
@@ -375,10 +386,10 @@ blocks at the edges of the raster and returns the true number of pixels.
 calculate the number of valid pixels, with zero indicating the left most
 block, 1 the next block, etc. <code>yblockoff</code> is likewise the vertical block
 offset, with zero indicating the top most block, 1 the next block, etc.</p>
-<p><code>$getOverviewCount(band)</code>
+<p><code>$getOverviewCount(band)</code><br>
 Returns the number of overview layers (a.k.a. pyramids) available for
 <code>band</code>.</p>
-<p><code>$buildOverviews(resampling, levels, bands)</code>
+<p><code>$buildOverviews(resampling, levels, bands)</code><br>
 Build one or more raster overview images using the specified downsampling
 algorithm.
 <code>resampling</code> is a character string, one of <code>AVERAGE</code>,
@@ -400,7 +411,7 @@ Since GDAL 3.6, <code>COMPRESS_OVERVIEW</code> is honoured when creating interna
 overviews of GTiff files. The <a href="https://gdal.org/programs/gdaladdo.html" class="external-link">GDAL documentation for <code>gdaladdo</code></a> command-line utility
 describes additional configuration for overview building.
 See also <code><a href="set_config_option.html">set_config_option()</a></code>. No return value, called for side effects.</p>
-<p><code>$getDataTypeName(band)</code>
+<p><code>$getDataTypeName(band)</code><br>
 Returns the name of the pixel data type for <code>band</code>. The possible data
 types are:</p><table class="table table"><tr><td>Unknown</td><td>Unknown or unspecified type</td></tr><tr><td>Byte</td><td>8-bit unsigned integer</td></tr><tr><td>Int8</td><td>8-bit signed integer (GDAL &gt;= 3.7)</td></tr><tr><td>UInt16</td><td>16-bit unsigned integer</td></tr><tr><td>Int16</td><td>16-bit signed integer</td></tr><tr><td>UInt32</td><td>32-bit unsigned integer</td></tr><tr><td>Int32</td><td>32-bit signed integer</td></tr><tr><td>UInt64</td><td>64-bit unsigned integer (GDAL &gt;= 3.5)</td></tr><tr><td>Int64</td><td>64-bit signed integer (GDAL &gt;= 3.5)</td></tr><tr><td>Float32</td><td>32-bit floating point</td></tr><tr><td>Float64</td><td>64-bit floating point</td></tr><tr><td>CInt16</td><td>Complex Int16</td></tr><tr><td>CInt32</td><td>Complex Int32</td></tr><tr><td>CFloat32</td><td>Complex Float32</td></tr><tr><td>CFloat64</td><td>Complex Float64</td></tr></table><p>Some raster formats including GeoTIFF ("GTiff") and Erdas Imagine .img
 ("HFA") support sub-byte data types. Rasters can be created with these
@@ -409,12 +420,12 @@ GTiff or n=1/2/4 for HFA. In these cases, <code>$getDataTypeName()</code> report
 the apparent type <code>"Byte"</code>. GTiff also supports n=9...15 (UInt16 type) and
 n=17...31 (UInt32 type), and n=16 is accepted for Float32 to generate
 half-precision floating point values.</p>
-<p><code>$getNoDataValue(band)</code>
+<p><code>$getNoDataValue(band)</code><br>
 Returns the nodata value for <code>band</code> if one exists.
 This is generally a special value defined to mark pixels that are not
 valid data. <code>NA</code> is returned if a nodata value is not defined for
 <code>band</code>. Not all raster formats support a designated nodata value.</p>
-<p><code>$setNoDataValue(band, nodata_value)</code>
+<p><code>$setNoDataValue(band, nodata_value)</code><br>
 Sets the nodata value for <code>band</code>.
 <code>nodata_value</code> is a numeric value to be defined as the nodata marker.
 Depending on the format, changing the nodata value may or may not have an
@@ -426,50 +437,50 @@ dataset, has no effect on the pixels whose values matched the previous
 nodata value.
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the nodata value
 could not be set.</p>
-<p><code>$deleteNoDataValue(band)</code>
+<p><code>$deleteNoDataValue(band)</code><br>
 Removes the nodata value for <code>band</code>.
 This affects only the definition of the nodata value for raster formats
 that support one (does not modify pixel values). No return value.
 An error is raised if the nodata value cannot be removed.</p>
-<p><code>$getUnitType(band)</code>
+<p><code>$getUnitType(band)</code><br>
 Returns the name of the unit type of the pixel values for <code>band</code>
 (e.g., "m" or "ft").
-An empty string <code>""</code> is returned if no units are available.</p>
-<p><code>$setUnitType(band, unit_type)</code>
+An empty string (<code>""</code>) is returned if no units are available.</p>
+<p><code>$setUnitType(band, unit_type)</code><br>
 Sets the name of the unit type of the pixel values for <code>band</code>.
 <code>unit_type</code> should be one of empty string <code>""</code> (the default indicating it is
 unknown), "m" indicating meters, or "ft" indicating feet, though other
 nonstandard values are allowed.
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the unit type
 could not be set.</p>
-<p><code>$getScale(band)</code>
+<p><code>$getScale(band)</code><br>
 Returns the pixel value scale (units value = (raw value * scale) + offset)
 for <code>band</code>.
 This value (in combination with the <code>$getOffset()</code> value) can be used to
 transform raw pixel values into the units returned by <code>$getUnitType()</code>.
 Returns <code>NA</code> if a scale value is not defined for this <code>band</code>.</p>
-<p><code>$setScale(band, scale)</code>
+<p><code>$setScale(band, scale)</code><br>
 Sets the pixel value scale (units value = (raw value * scale) + offset)
 for <code>band</code>. Many raster formats do not implement this method.
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the scale could
 not be set.</p>
-<p><code>$getOffset(band)</code>
+<p><code>$getOffset(band)</code><br>
 Returns the pixel value offset (units value = (raw value * scale) + offset)
 for <code>band</code>.
 This value (in combination with the <code>$getScale()</code> value) can be used to
 transform raw pixel values into the units returned by <code>$getUnitType()</code>.
 Returns <code>NA</code> if an offset value is not defined for this <code>band</code>.</p>
-<p><code>$setOffset(band, offset)</code>
+<p><code>$setOffset(band, offset)</code><br>
 Sets the pixel value offset (units value = (raw value * scale) + offset)
 for <code>band</code>. Many raster formats do not implement this method.
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the offset could
 not be set.</p>
-<p><code>$getRasterColorInterp(band)</code>
+<p><code>$getRasterColorInterp(band)</code><br>
 Returns a string describing the color interpretation for <code>band</code>.
-The color interpretation values and their meanings are:</p><table class="table table"><tr><td>Undefined</td><td>Undefined</td></tr><tr><td>Gray</td><td>Grayscale</td></tr><tr><td>Palette</td><td>Paletted (see associated color table)</td></tr><tr><td>Red</td><td>Red band of RGBA image</td></tr><tr><td>Green</td><td>Green band of RGBA image</td></tr><tr><td>Blue</td><td>Blue band of RGBA image</td></tr><tr><td>Alpha</td><td>Alpha (0=transparent, 255=opaque)</td></tr><tr><td>Hue</td><td>Hue band of HLS image</td></tr><tr><td>Saturation</td><td>Saturation band of HLS image</td></tr><tr><td>Lightness</td><td>Lightness band of HLS image</td></tr><tr><td>Cyan</td><td>Cyan band of CMYK image</td></tr><tr><td>Magenta</td><td>Magenta band of CMYK image</td></tr><tr><td>Yellow</td><td>Yellow band of CMYK image</td></tr><tr><td>Black</td><td>Black band of CMYK image</td></tr><tr><td>YCbCr_Y</td><td>Y Luminance</td></tr><tr><td>YCbCr_Cb</td><td>Cb Chroma</td></tr><tr><td>YCbCr_Cr</td><td>Cr Chroma</td></tr></table><p><code>$setRasterColorInterp(band, col_interp)</code>
+The color interpretation values and their meanings are:</p><table class="table table"><tr><td>Undefined</td><td>Undefined</td></tr><tr><td>Gray</td><td>Grayscale</td></tr><tr><td>Palette</td><td>Paletted (see associated color table)</td></tr><tr><td>Red</td><td>Red band of RGBA image</td></tr><tr><td>Green</td><td>Green band of RGBA image</td></tr><tr><td>Blue</td><td>Blue band of RGBA image</td></tr><tr><td>Alpha</td><td>Alpha (0=transparent, 255=opaque)</td></tr><tr><td>Hue</td><td>Hue band of HLS image</td></tr><tr><td>Saturation</td><td>Saturation band of HLS image</td></tr><tr><td>Lightness</td><td>Lightness band of HLS image</td></tr><tr><td>Cyan</td><td>Cyan band of CMYK image</td></tr><tr><td>Magenta</td><td>Magenta band of CMYK image</td></tr><tr><td>Yellow</td><td>Yellow band of CMYK image</td></tr><tr><td>Black</td><td>Black band of CMYK image</td></tr><tr><td>YCbCr_Y</td><td>Y Luminance</td></tr><tr><td>YCbCr_Cb</td><td>Cb Chroma</td></tr><tr><td>YCbCr_Cr</td><td>Cr Chroma</td></tr></table><p><code>$setRasterColorInterp(band, col_interp)</code><br>
 Sets the color interpretation for <code>band</code>. See above for the list of
 valid values for <code>col_interp</code> (passed as a string).</p>
-<p><code>$getMinMax(band, approx_ok)</code>
+<p><code>$getMinMax(band, approx_ok)</code><br>
 Returns a numeric vector of length two containing the min/max values for
 <code>band</code>. If <code>approx_ok</code> is <code>TRUE</code> and the raster format knows these
 values intrinsically then those values will be returned. If that doesn't
@@ -477,7 +488,7 @@ work, a subsample of blocks will be read to get an approximate min/max. If
 the band has a nodata value it will be excluded from the minimum and
 maximum. If <code>approx_ok</code> is <code>FALSE</code>, then all pixels will be read and
 used to compute an exact range.</p>
-<p><code>$getStatistics(band, approx_ok, force)</code>
+<p><code>$getStatistics(band, approx_ok, force)</code><br>
 Returns a numeric vector of length four containing the minimum, maximum,
 mean and standard deviation of pixel values in <code>band</code> (excluding
 nodata pixels). Some raster formats will cache statistics allowing fast
@@ -496,11 +507,10 @@ definitive <code>force</code>.)</p></li>
 without scanning the raster, typically by using pre-existing
 STATISTICS_xxx metadata items). <code>NA</code>s will be returned if statistics
 cannot be obtained quickly.</p></li>
-</ul><p><code>$clearStatistics()</code>
+</ul><p><code>$clearStatistics()</code><br>
 Clear statistics. Only implemented for now in PAM supported datasets
 (Persistable Auxiliary Metadata via .aux.xml file). GDAL &gt;= 3.2.</p>
-<p><code>$getHistogram(band, min, max, num_buckets, incl_out_of_range,
-  approx_ok)</code><br>
+<p><code>$getHistogram(band, min, max, num_buckets, incl_out_of_range, approx_ok)</code><br>
 Computes raster histogram for <code>band</code>. <code>min</code> is the lower bound of
 the histogram. <code>max</code> is the upper bound of the histogram.
 <code>num_buckets</code> is the number of buckets to use (bucket size is
@@ -511,7 +521,7 @@ be mapped into the last bucket, if <code>FALSE</code> out of range values are di
 <code>approx_ok</code> is a logical scalar: <code>TRUE</code> if an approximate histogram is
 OK (generally faster), or <code>FALSE</code> for an exactly computed histogram.
 Returns the histogram as a numeric vector of length <code>num_buckets</code>.</p>
-<p><code>$getDefaultHistogram(band, force)</code>
+<p><code>$getDefaultHistogram(band, force)</code><br>
 Returns a default raster histogram for <code>band</code>. In the GDAL API, this
 method is overridden by derived classes (such as GDALPamRasterBand,
 VRTDataset, HFADataset...) that may be able to fetch efficiently an already
@@ -522,34 +532,34 @@ histogram vector.
 Returns a list of length four containing named elements <code>$min</code> (lower
 bound), <code>$max</code> (upper bound), <code>$num_buckets</code> (number of buckets), and
 <code>$histogram</code> (a numeric vector of length <code>num_buckets</code>).</p>
-<p><code>$getMetadata(band, domain)</code>
+<p><code>$getMetadata(band, domain)</code><br>
 Returns a character vector of all metadata <code>name=value</code> pairs that exist in
-the specified <code>domain</code>, or <code>""</code> (empty string) if there are no
+the specified <code>domain</code>, or empty string (<code>""</code>) if there are no
 metadata items in <code>domain</code> (metadata in the context of the GDAL
 Raster Data Model: <a href="https://gdal.org/user/raster_data_model.html" class="external-link">https://gdal.org/user/raster_data_model.html</a>).
 Set <code>band = 0</code> to retrieve dataset-level metadata, or to an integer
 band number to retrieve band-level metadata.
 Set <code>domain = ""</code> (empty string) to retrieve metadata in the
 default domain.</p>
-<p><code>$getMetadataItem(band, mdi_name, domain)</code>
+<p><code>$getMetadataItem(band, mdi_name, domain)</code><br>
 Returns the value of a specific metadata item named <code>mdi_name</code> in the
-specified <code>domain</code>, or <code>""</code> (empty string) if no matching item
+specified <code>domain</code>, or empty string (<code>""</code>) if no matching item
 is found.
 Set <code>band = 0</code> to retrieve dataset-level metadata, or to an integer
 band number to retrieve band-level metadata.
 Set <code>domain = ""</code> (empty string) to retrieve an item in the
 default domain.</p>
-<p><code>$setMetadataItem(band, mdi_name, mdi_value, domain)</code>
+<p><code>$setMetadataItem(band, mdi_name, mdi_value, domain)</code><br>
 Sets the value (<code>mdi_value</code>) of a specific metadata item named
 <code>mdi_name</code> in the specified <code>domain</code>.
 Set <code>band = 0</code> to set dataset-level metadata, or to an integer
 band number to set band-level metadata.
 Set <code>domain = ""</code> (empty string) to set an item in the default domain.</p>
-<p><code>$getMetadataDomainList(band)</code>
-Returns a character vector of metadata domains or <code>""</code> (empty string).
+<p><code>$getMetadataDomainList(band)</code><br>
+Returns a character vector of metadata domains or empty string (<code>""</code>).
 Set <code>band = 0</code> to retrieve dataset-level domains, or to an integer
 band number to retrieve band-level domains.</p>
-<p><code>$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)</code>
+<p><code>$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)</code><br>
 Reads a region of raster data from <code>band</code>. The method takes care of
 pixel decimation / replication if the output size
 (<code>out_xsize * out_ysize</code>) is different than the size of the region
@@ -576,7 +586,7 @@ No rescaling of the data is performed (see <code>$getScale()</code> and
 <code>$getOffset()</code> above).
 An error is raised if the read operation fails. See also the setting
 <code>$readByteAsRaw</code> above.</p>
-<p><code>$write(band, xoff, yoff, xsize, ysize, rasterData)</code>
+<p><code>$write(band, xoff, yoff, xsize, ysize, rasterData)</code><br>
 Writes a region of raster data to <code>band</code>.
 <code>xoff</code> is the pixel (column) offset to the top left corner of the
 region of the band to be accessed (zero to start from the left side).
@@ -590,7 +600,7 @@ It is organized in left to right, top to bottom pixel order. <code>NA</code> in
 <code>rasterData</code> should be replaced with a suitable nodata value prior to
 writing (see <code>$getNoDataValue()</code> and <code>$setNoDataValue()</code> above).
 An error is raised if the operation fails (no return value).</p>
-<p><code>$getColorTable(band)</code>
+<p><code>$getColorTable(band)</code><br>
 Returns the color table associated with <code>band</code>, or <code>NULL</code> if
 there is no associated color table. The color table is returned as an
 integer matrix with five columns. To associate a color with a raster pixel,
@@ -601,12 +611,16 @@ Color Table</a>).
 Column 1 contains the pixel values. Interpretation of columns 2:5 depends
 on the value of <code>$getPaletteInterp()</code> (see below). For "RGB", columns 2:5
 contain red, green, blue, alpha as 0-255 integer values.</p>
-<p><code>$getPaletteInterp(band)</code>
+<p><code>$getPaletteInterp(band)</code><br>
 If <code>band</code> has an associated color table, this method returns a
 character string with the palette interpretation for columns 2:5 of the
 table. An empty string (<code>""</code>) is returned if <code>band</code> does not have
 an associated color table. The palette interpretation values and their
-meanings are:</p><table class="table table"><tr><td>Gray</td><td>column 2 contains grayscale values (columns 3:5 unused)</td></tr><tr><td>RGB</td><td>columns 2:5 contain red, green, blue, alpha</td></tr><tr><td>CMYK</td><td>columns 2:5 contain cyan, magenta, yellow, black</td></tr><tr><td>HLS</td><td>columns 2:4 contain hue, lightness, saturation (column 5 unused)</td></tr></table><p><code>$setColorTable(band, col_tbl, palette_interp)</code>
+meanings are:</p><ul><li><p>Gray: column 2 contains grayscale values (columns 3:5 unused)</p></li>
+<li><p>RGB: columns 2:5 contain red, green, blue, alpha</p></li>
+<li><p>CMYK: columns 2:5 contain cyan, magenta, yellow, black</p></li>
+<li><p>HLS: columns 2:4 contain hue, lightness, saturation (column 5 unused)</p></li>
+</ul><p><code>$setColorTable(band, col_tbl, palette_interp)</code><br>
 Sets the raster color table for <code>band</code>
 (see <a href="https://gdal.org/user/raster_data_model.html#color-table" class="external-link">GDAL
 Color Table</a>).
@@ -623,16 +637,16 @@ opaque).
 (see <code>$getPaletteInterp()</code> above).
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the color table
 could not be set.</p>
-<p><code>$clearColorTable(band)</code>
+<p><code>$clearColorTable(band)</code><br>
 Clears the raster color table for <code>band</code>.
 Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the color table
 could not be cleared, e.g., if this action is not supported by the driver.</p>
-<p><code>$getDefaultRAT(band)</code>
+<p><code>$getDefaultRAT(band)</code><br>
 Returns the Raster Attribute Table for <code>band</code> as a data frame,
 or <code>NULL</code> if there is no associated Raster Attribute Table. See the
 stand-alone function <code><a href="buildRAT.html">buildRAT()</a></code> for details of the Raster Attribute Table
 format.</p>
-<p><code>$setDefaultRAT(band, df)</code>
+<p><code>$setDefaultRAT(band, df)</code><br>
 Sets a default Raster Attribute Table for <code>band</code> from data frame <code>df</code>.
 The input data frame will be checked for attribute <code>"GDALRATTableType"</code>
 which can have values of <code>"thematic"</code> or <code>"athematic"</code> (for continuous data).
@@ -647,13 +661,13 @@ etc. The data frame will also be checked for attributes <code>"Row0Min"</code> a
 <code>"BinSize"</code> which can have numeric values that describe linear binning.
 See the stand-alone function <code><a href="buildRAT.html">buildRAT()</a></code> for details of the GDAL Raster
 Attribute Table format and its representation as data frame.</p>
-<p><code>$flushCache()</code>
+<p><code>$flushCache()</code><br>
 Flush all write cached data to disk. Any raster data written via GDAL calls,
 but buffered internally will be written to disk. Using this method does not
 preclude calling <code>$close()</code> to properly close the dataset and ensure that
 important data not addressed by <code>$flushCache()</code> is written in the file
 (see also <code>$open()</code> above). No return value, called for side effect.</p>
-<p><code>$getChecksum(band, xoff, yoff, xsize, ysize)</code>
+<p><code>$getChecksum(band, xoff, yoff, xsize, ysize)</code><br>
 Returns a 16-bit integer (0-65535) checksum from a region of raster data
 on <code>band</code>.
 Floating point data are converted to 32-bit integer so decimal portions of
@@ -664,7 +678,7 @@ components of complex bands influence the result.
 <em>Raster row/column offsets use 0-based indexing.</em>
 <code>xsize</code> is the width in pixels of the window to read.
 <code>ysize</code> is the height in pixels of the window to read.</p>
-<p><code>$close()</code>
+<p><code>$close()</code><br>
 Closes the GDAL dataset (no return value, called for side effects).
 Calling <code>$close()</code> results in proper cleanup, and flushing of any
 pending writes. Forgetting to close a dataset opened in update mode on some
@@ -672,12 +686,14 @@ formats such as GTiff could result in being unable to open it afterwards.
 The <code>GDALRaster</code> object is still available after calling <code>$close()</code>.
 The dataset can be re-opened on the existing <code>filename</code> with
 <code>$open(read_only=TRUE)</code> or <code>$open(read_only=FALSE)</code>.</p>
+</div>
+
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p>Package overview in <code><a href="gdalraster-package.html">help("gdalraster-package")</a></code></p>
 <p><code><a href="../articles/raster-api-tutorial.html">vignette("raster-api-tutorial")</a></code></p>
-<p><code><a href="read_ds.html">read_ds()</a></code> convenience wrapper for <code>GDALRaster$read()</code></p></div>
+<p><code><a href="read_ds.html">read_ds()</a></code> is a convenience wrapper for <code>GDALRaster$read()</code></p></div>
     </div>
 
     <div class="section level2">

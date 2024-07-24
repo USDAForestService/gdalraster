@@ -68,7 +68,7 @@ value. A unique ID is assigned to each unique combination of input values.</p>
 
 
 <dt id="arg-varnames">varNames<a class="anchor" aria-label="anchor" href="#arg-varnames"></a></dt>
-<dd><p>Character vector of names for the variables in the
+<dd><p>Optional character vector of names for the variables in the
 combination.</p></dd>
 
 </dl></div>
@@ -82,16 +82,16 @@ operate on the table as described in Details.
 Methods of the class are accessed in R using the <code>$</code> operator.</p>
     </div>
     <div class="section level2">
-    <h2 id="usage">Usage<a class="anchor" aria-label="anchor" href="#usage"></a></h2>
+    <h2 id="usage-see-details-">Usage (see Details)<a class="anchor" aria-label="anchor" href="#usage-see-details-"></a></h2>
 
 
 <div class="sourceCode"><pre><code><span></span>
 <span><span class="co">## Constructors</span></span>
 <span><span class="va">cmb</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">CmbTable</span>, <span class="va">keyLen</span><span class="op">)</span></span>
-<span><span class="co"># or, with variable names</span></span>
+<span><span class="co"># or, giving the variable names:</span></span>
 <span><span class="va">cmb</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">CmbTable</span>, <span class="va">keyLen</span>, <span class="va">varNames</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## Methods (see Details)</span></span>
+<span><span class="co">## Methods</span></span>
 <span><span class="va">cmb</span><span class="op">$</span><span class="fu">update</span><span class="op">(</span><span class="va">int_cmb</span>, <span class="va">incr</span><span class="op">)</span></span>
 <span><span class="va">cmb</span><span class="op">$</span><span class="fu">updateFromMatrix</span><span class="op">(</span><span class="va">int_cmbs</span>, <span class="va">incr</span><span class="op">)</span></span>
 <span><span class="va">cmb</span><span class="op">$</span><span class="fu">updateFromMatrixByRow</span><span class="op">(</span><span class="va">int_cmbs</span>, <span class="va">incr</span><span class="op">)</span></span>
@@ -103,14 +103,23 @@ Methods of the class are accessed in R using the <code>$</code> operator.</p>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
 
 
+<div class="section">
+<h3 id="constructors">Constructors<a class="anchor" aria-label="anchor" href="#constructors"></a></h3>
 
-<p><code>new(CmbTable, keyLen)</code>
-Constructor. Variable names will be assigned as <code>V1</code>, <code>V2</code>, ....
+
+<p><code>new(CmbTable, keyLen)</code><br>
+Default variable names will be assigned as <code>V1</code>, <code>V2</code>, ....
 Returns an object of class <code>CmbTable</code>.</p>
-<p><code>new(CmbTable, keyLen, varNames)</code>
+<p><code>new(CmbTable, keyLen, varNames)</code><br>
 Alternate constructor to specify variable names.
 Returns an object of class <code>CmbTable</code>.</p>
-<p><code>$update(int_cmb, incr)</code>
+</div>
+
+<div class="section">
+<h3 id="methods">Methods<a class="anchor" aria-label="anchor" href="#methods"></a></h3>
+
+
+<p><code>$update(int_cmb, incr)</code><br>
 Updates the hash table for the integer combination in the numeric vector
 <code>int_cmb</code> (coerced to integer by truncation).
 If this combination exists in the table, its count will be
@@ -118,7 +127,7 @@ incremented by <code>incr</code>. If the combination is not found in the table,
 it will be inserted with count set to <code>incr</code>.
 Returns the unique ID assigned to this combination.
 Combination IDs are sequential integers starting at <code>1</code>.</p>
-<p><code>$updateFromMatrix(int_cmbs, incr)</code>
+<p><code>$updateFromMatrix(int_cmbs, incr)</code><br>
 This method is the same as <code>$update()</code> but for a numeric matrix of
 integer combinations <code>int_cmbs</code> (coerced to integer by truncation).
 The matrix is arranged with each column vector forming an integer
@@ -130,7 +139,7 @@ The method calls <code>$update()</code> on each combination (each column of
 combinations, or inserting new combinations with count set to <code>incr</code>.
 Returns a numeric vector of length <code>ncol(int_cmbs)</code> containing the
 IDs assigned to the combinations.</p>
-<p><code>$updateFromMatrixByRow(int_cmbs, incr)</code>
+<p><code>$updateFromMatrixByRow(int_cmbs, incr)</code><br>
 This method is the same as <code>$updateFromMatrix()</code> above except the
 integer combinations are in rows of the matrix <code>int_cmbs</code> (columns
 are the variables).
@@ -139,17 +148,19 @@ The method calls <code>$update()</code> on each combination (each row of
 combinations, or inserting new combinations with count set to <code>incr</code>.
 Returns a numeric vector of length <code>nrow(int_cmbs)</code> containing the
 IDs assigned to the combinations.</p>
-<p><code>$asDataFrame()</code>
+<p><code>$asDataFrame()</code><br>
 Returns the <code>CmbTable</code> as a data frame with column <code>cmbid</code> containing
 the unique combination IDs, column <code>count</code> containing the counts of
 occurrences, and <code>keyLen</code> columns (with names from <code>varNames</code>) containing
 the integer values comprising each unique combination.</p>
-<p><code>$asMatrix()</code>
+<p><code>$asMatrix()</code><br>
 Returns the <code>CmbTable</code> as a matrix with column <code>1</code> (<code>cmbid</code>)
 containing the unique combination IDs, column <code>2</code> (<code>count</code>)
 containing the counts of occurrences, and columns <code>3:keyLen+2</code>
 (with names from <code>varNames</code>) containing the integer values comprising each
 unique combination.</p>
+</div>
+
     </div>
 
     <div class="section level2">

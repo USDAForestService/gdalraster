@@ -128,7 +128,7 @@ dialect can also be used.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An object of class <code>GDALVector</code> which contains pointers to the
-opened layer and the dataset that contains it, and methods that operate on
+opened layer and the dataset that owns it, and methods that operate on
 the layer as described in Details. <code>GDALVector</code> is a C++ class exposed
 directly to R (via <code>RCPP_EXPOSED_CLASS</code>). Fields and methods of the class
 are accessed using the <code>$</code> operator. The read/write fields are per-object
@@ -227,7 +227,7 @@ Defaults to <code>"geometry"</code>.</p>
 <p><code>$returnGeomAs</code><br>
 Character string specifying the return format of feature geometries.
 Must be one of <code>WKT</code>, <code>WKT_ISO</code>, <code>WKB</code>, <code>WKB_ISO</code>, <code>TYPE_NAME</code> or
-<code>NONE</code> (the default). <code>WKB</code>/<code>WKT</code> export old-style 99-402 extended
+<code>NONE</code> (the default). Using <code>WKB</code>/<code>WKT</code> exports as 99-402 extended
 dimension (Z) types for Point, LineString, Polygon, MultiPoint,
 MultiLineString, MultiPolygon and GeometryCollection. For other geometry
 types, it is equivalent to using <code>WKB_ISO</code>/<code>WKT_ISO</code>
@@ -440,7 +440,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55ee53119bc0&gt; of class 'GDALVector' &lt;0x55ee4c673400&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55ec963edbb0&gt; of class 'GDALVector' &lt;0x55ec8cad3760&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 3 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -461,7 +461,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmptyPQQZ/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpWZ8ayQ/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
