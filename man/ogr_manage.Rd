@@ -299,9 +299,10 @@ Returns a logical scalar, \code{TRUE} indicating success.
 \code{ogr_execute_sql()} executes an SQL statement against the data store.
 This function can be used to modify the schema or edit data using SQL
 (e.g., \verb{ALTER TABLE}, \verb{DROP TABLE}, \verb{CREATE INDEX}, \verb{DROP INDEX}, \code{INSERT},
-\code{UPDATE}, \code{DELETE}). Currently, this function does not return a result set
-for a \code{SELECT} statement. Returns \code{NULL} invisibly.
-Wrapper of \code{GDALDatasetExecuteSQL()} in the GDAL C API.
+\code{UPDATE}, \code{DELETE}), or to execute a query (i.e., \code{SELECT}).
+Returns \code{NULL} (invisibly) for statements that are in error, or that have no
+results set, or an object of class \code{GDALVector} representing a results set
+from the query. Wrapper of \code{GDALDatasetExecuteSQL()} in the GDAL API.
 }
 \note{
 The OGR SQL document linked under \strong{See Also} contains information on the
