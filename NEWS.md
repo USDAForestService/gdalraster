@@ -1,6 +1,10 @@
-# gdalraster 1.11.1.9100 (dev)
+# gdalraster 1.11.1.9110 (dev)
+
+* `ogr_execute_sql()`: now returns an object of class `GDALVector` for SQL SELECT statements (2024-07-24)
 
 * add class [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html), initial implementation / WIP (2024-07-22)
+
+* add package `wk` to Suggests (2024-07-22)
 
 * `plot_raster()`: default to no stretch when the input is an RGB Byte raster, addresses #429 (2024-07-10)
 

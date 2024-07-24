@@ -114,9 +114,10 @@
 #' `ogr_execute_sql()` executes an SQL statement against the data store.
 #' This function can be used to modify the schema or edit data using SQL
 #' (e.g., `ALTER TABLE`, `DROP TABLE`, `CREATE INDEX`, `DROP INDEX`, `INSERT`,
-#' `UPDATE`, `DELETE`). Currently, this function does not return a result set
-#' for a `SELECT` statement. Returns `NULL` invisibly.
-#' Wrapper of `GDALDatasetExecuteSQL()` in the GDAL C API.
+#' `UPDATE`, `DELETE`), or to execute a query (i.e., `SELECT`).
+#' Returns `NULL` (invisibly) for statements that are in error, or that have no
+#' results set, or an object of class `GDALVector` representing a results set
+#' from the query. Wrapper of `GDALDatasetExecuteSQL()` in the GDAL API.
 #'
 #' @param dsn Character string. The vector data source name, e.g., a filename
 #' or database connection string.
@@ -707,5 +708,11 @@ ogr_execute_sql <- function(dsn, sql, spatial_filter = NULL, dialect = NULL) {
         dialect <- ""
     }
 
-    return(.ogr_execute_sql(dsn, sql, spatial_filter, dialect))
+    if (startsWith(toupper(sql), "SELECT ")) {
+        return(new(GDALVector, dsn, sql, read_only = TRUE,
+                   open_options = NULL, spatial_filter = spatial_filter,
+                   dialect = dialect))
+    } else {
+        return(.ogr_execute_sql(dsn, sql, spatial_filter, dialect))
+    }
 }
