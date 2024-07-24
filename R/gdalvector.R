@@ -38,7 +38,7 @@
 #' unless `"OGRSQL"` is explicitly passed as the dialect. The `"SQLITE"`
 #' dialect can also be used.
 #' @returns An object of class `GDALVector` which contains pointers to the
-#' opened layer and the dataset that contains it, and methods that operate on
+#' opened layer and the dataset that owns it, and methods that operate on
 #' the layer as described in Details. `GDALVector` is a C++ class exposed
 #' directly to R (via `RCPP_EXPOSED_CLASS`). Fields and methods of the class
 #' are accessed using the `$` operator. The read/write fields are per-object
@@ -130,7 +130,7 @@
 #' \code{$returnGeomAs}\cr
 #' Character string specifying the return format of feature geometries.
 #' Must be one of `WKT`, `WKT_ISO`, `WKB`, `WKB_ISO`, `TYPE_NAME` or
-#' `NONE` (the default). `WKB`/`WKT` export old-style 99-402 extended
+#' `NONE` (the default). Using `WKB`/`WKT` exports as 99-402 extended
 #' dimension (Z) types for Point, LineString, Polygon, MultiPoint,
 #' MultiLineString, MultiPolygon and GeometryCollection. For other geometry
 #' types, it is equivalent to using `WKB_ISO`/`WKT_ISO`
