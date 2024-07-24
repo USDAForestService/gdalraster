@@ -15,7 +15,7 @@ fields, and edit data with SQL statements."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9100</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9110</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -372,9 +372,10 @@ Returns a logical scalar, <code>TRUE</code> indicating success.</p>
 <p><code>ogr_execute_sql()</code> executes an SQL statement against the data store.
 This function can be used to modify the schema or edit data using SQL
 (e.g., <code>ALTER TABLE</code>, <code>DROP TABLE</code>, <code>CREATE INDEX</code>, <code>DROP INDEX</code>, <code>INSERT</code>,
-<code>UPDATE</code>, <code>DELETE</code>). Currently, this function does not return a result set
-for a <code>SELECT</code> statement. Returns <code>NULL</code> invisibly.
-Wrapper of <code>GDALDatasetExecuteSQL()</code> in the GDAL C API.</p>
+<code>UPDATE</code>, <code>DELETE</code>), or to execute a query (i.e., <code>SELECT</code>).
+Returns <code>NULL</code> (invisibly) for statements that are in error, or that have no
+results set, or an object of class <code>GDALVector</code> representing a results set
+from the query. Wrapper of <code>GDALDatasetExecuteSQL()</code> in the GDAL API.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -501,7 +502,7 @@ dialects for details.</p>
 <span class="r-in"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"ALTER TABLE layer2 ADD field4 float"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">dsn</span>, <span class="va">sql</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpWZ8ayQ/test1.gpkg'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/Rtmp3gtLun/test1.gpkg'</span>
 <span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fld1_name"   "fld2_name"   "third_field" "field4"      "geom"       </span>
 <span class="r-in"><span></span></span>
@@ -540,12 +541,12 @@ dialects for details.</p>
 <span class="r-in"><span>  <span class="co"># ogrinfo(perims_shp, cl_arg = c("-sql", sql), read_only = FALSE)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpWZ8ayQ/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/Rtmp3gtLun/mtbs_perims.shp'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="va">sql</span>, dialect <span class="op">=</span> <span class="st">"SQLite"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpWZ8ayQ/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/Rtmp3gtLun/mtbs_perims.shp'</span>
 <span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "event_id"   "incid_name" "incid_type" "map_id"     "burn_bnd_a"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "burn_bnd_l" "burn_bnd_1" "ig_date"    "ig_year"    "burn_bnd_h"</span>

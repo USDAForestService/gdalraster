@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9100</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9110</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,10 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9100" id="gdalraster-11119100-dev">gdalraster 1.11.1.9100 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119100-dev"></a></h2>
-<ul><li><p>add class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a>, initial implementation / WIP (2024-07-22)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9110" id="gdalraster-11119110-dev">gdalraster 1.11.1.9110 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119110-dev"></a></h2>
+<ul><li><p><code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code>: now returns an object of class <code>GDALVector</code> for SQL SELECT statements (2024-07-24)</p></li>
+<li><p>add class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a>, initial implementation / WIP (2024-07-22)</p></li>
+<li><p>add package <code>wk</code> to Suggests (2024-07-22)</p></li>
 <li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code>: default to no stretch when the input is an RGB Byte raster, addresses <a href="https://github.com/USDAForestService/gdalraster/issues/429" class="external-link">#429</a> (2024-07-10)</p></li>
 <li><p>add <code>GDALRaster$clearColorTable()</code>: clear the color table associated with a raster band (2024-07-10)</p></li>
 <li><p>fix the mode name for <code>color-relief</code> in <code>DEFAULT_DEM_PROC</code> (<code>"color-relief"</code> instead of <code>"color_relief"</code>, fixes <a href="https://github.com/USDAForestService/gdalraster/issues/428" class="external-link">#428</a>) (2024-07-09)</p></li>
