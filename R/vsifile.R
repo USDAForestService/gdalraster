@@ -50,7 +50,7 @@ SEEK_END <- "SEEK_END"
 #' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed using the
 #' `$` operator.
 #'
-#' @section Usage:
+#' @section Usage (see Details):
 #' \preformatted{
 #' ## Constructors
 #' vf <- new(VSIFile, filename)
@@ -59,7 +59,7 @@ SEEK_END <- "SEEK_END"
 #' # specifying access and options (both required):
 #' vf <- new(VSIFile, filename, access, options)
 #'
-#' ## Methods (see Details)
+#' ## Methods
 #' vf$seek(offset, origin)
 #' vf$tell()
 #' vf$rewind()
@@ -77,22 +77,22 @@ SEEK_END <- "SEEK_END"
 #' vf$set_access(access)
 #' }
 #' @section Details:
-#' \code{new(VSIFile, filename)}
-#' Constructor. Returns an object of class `VSIFile`, or an error is raised
-#' if a file handle cannot be obtained.
+#' ## Constructors
 #'
-#' \code{new(VSIFile, filename, access)}
+#' \code{new(VSIFile, filename)}\cr
+#' Returns an object of class `VSIFile`, or an error is raised if a file
+#' handle cannot be obtained.
+#'
+#' \code{new(VSIFile, filename, access)}\cr
 #' Alternate constructor for passing `access` as a character string
 #' (e.g., `"r"`, `"r+"`, `"w"`, `"w+"`).
 #' Returns an object of class `VSIFile` with an open file handle, or an error
 #' is raised if a file handle cannot be obtained.
 #'
-#' \code{new(VSIFile, filename, access, options)}
+#' \code{new(VSIFile, filename, access, options)}\cr
 #' Alternate constructor for passing `access` as a character string, and
-#' `options` as a character vector of "NAME=VALUE" pairs (both arguments
+#' `options` as a character vector of "NAME=VALUE" pairs (all arguments
 #' required, GDAL >= 3.3 required for `options` support).
-#' Returns an object of class `VSIFile` with an open file handle, or an error
-#' is raised if a file handle cannot be obtained.
 #'
 #' The `options` argument is highly file system dependent. Supported options
 #' as of GDAL 3.9 include:
@@ -106,7 +106,9 @@ SEEK_END <- "SEEK_END"
 #' the data are written to the system cache but are flushed to disk without
 #' delay.
 #'
-#' \code{$seek(offset, origin)}
+#' ## Methods
+#'
+#' \code{$seek(offset, origin)}\cr
 #' Seek to a requested `offset` in the file.
 #' `offset` is given as a positive numeric scalar, optionally as
 #' `bit64::integer64` type.
@@ -119,20 +121,20 @@ SEEK_END <- "SEEK_END"
 #' ```
 #' Returns `0` on success or `-1` on failure.
 #'
-#' \code{$tell()}
+#' \code{$tell()}\cr
 #' Returns the current file read/write offset in bytes from the beginning of
 #' the file. The return value is a numeric scalar carrying the `integer64`
 #' class attribute.
 #'
-#' \code{$rewind()}
+#' \code{$rewind()}\cr
 #' Rewind the file pointer to the beginning of the file. This is equivalent to
 #' `vf$seek(0, SEEK_SET)`. No return value, called for that side effect.
 #'
-#' \code{$read(nbytes)}
+#' \code{$read(nbytes)}\cr
 #' Read `nbytes` bytes from the file at the current offset. Returns a vector
 #' of R `raw` type, or `NULL` if the operation fails.
 #'
-#' \code{$write(object)}
+#' \code{$write(object)}\cr
 #' Write bytes to the file at the current offset. `object` is a `raw` vector.
 #' Returns the number of bytes successfully written, as numeric scalar
 #' carrying the `integer64` class attribute.
@@ -140,17 +142,17 @@ SEEK_END <- "SEEK_END"
 #' vectors, and `readBin()` / `writeBin()` which read binary data from or write
 #' binary data to a raw vector.
 #'
-#' \code{$eof()}
+#' \code{$eof()}\cr
 #' Test for end of file. Returns `TRUE` if an end-of-file condition occurred
 #' during the previous read operation. The end-of-file flag is cleared by a
 #' successful call to `$seek()`.
 #'
-#' \code{$truncate(new_size)}
+#' \code{$truncate(new_size)}\cr
 #' Truncate/expand the file to the specified `new_size`, given as a positive
 #' numeric scalar, optionally as `bit64::integer64` type.
 #' Returns `0` on success.
 #'
-#' \code{$flush()}
+#' \code{$flush()}\cr
 #' Flush pending writes to disk. For files in write or update mode and on
 #' file system types where it is applicable, all pending output on the file is
 #' flushed to the physical disk.
@@ -159,33 +161,33 @@ SEEK_END <- "SEEK_END"
 #' been opened with the `WRITE_THROUGH` option).
 #' Returns `0` on success or `-1` on error.
 #'
-#' \code{$ingest(max_size)}
+#' \code{$ingest(max_size)}\cr
 #' Ingest a file into memory. Read the whole content of the file into a `raw`
 #' vector.
 #' `max_size` is the maximum size of file allowed, given as a numeric scalar,
 #' optionally as `bit64::integer64` type. If no limit, set to a negative value.
 #' Returns a `raw` vector, or `NULL` if the operation fails.
 #'
-#' \code{$close()}
+#' \code{$close()}\cr
 #' Closes the file. The file should always be closed when I/O has been
 #' completed. Returns `0` on success or `-1` on error.
 #'
-#' \code{$open()}
+#' \code{$open()}\cr
 #' This method can be used to re-open the file after it has been closed, using
 #' the same `filename`, and same `options` if any are set. The file will be
 #' opened using `access` as currently set. The `$set_access()` method can be
 #' called to change the requested access while the file is closed.
 #' No return value. An error is raised if a file handle cannot be obtained.
 #'
-#' \code{$get_filename()}
+#' \code{$get_filename()}\cr
 #' Returns a character string containing the `filename` associated with this
 #' `VSIFile` object (the `filename` originally used to create the object).
 #'
-#' \code{$get_access()}
+#' \code{$get_access()}\cr
 #' Returns a character string containing the `access` as currently set on this
 #' `VSIFile` object.
 #'
-#' \code{$set_access(access)}
+#' \code{$set_access(access)}\cr
 #' Sets the requested read/write access on this `VSIFile` object, given as a
 #' character string (i.e., `"r"`, `"r+"`, `"w"`, `"w+"`). The access can be
 #' changed only while the `VSIFile` object is closed, and will apply when it is

@@ -9,7 +9,7 @@
 \arguments{
 \item{keyLen}{The number of integer values comprising each combination.}
 
-\item{varNames}{Character vector of names for the variables in the
+\item{varNames}{Optional character vector of names for the variables in the
 combination.}
 }
 \value{
@@ -25,15 +25,15 @@ Methods of the class are accessed in R using the \code{$} operator.
 and the count of occurrences of each unique integer combination as the
 value. A unique ID is assigned to each unique combination of input values.
 }
-\section{Usage}{
+\section{Usage (see Details)}{
 
 \preformatted{
 ## Constructors
 cmb <- new(CmbTable, keyLen)
-# or, with variable names
+# or, giving the variable names:
 cmb <- new(CmbTable, keyLen, varNames)
 
-## Methods (see Details)
+## Methods
 cmb$update(int_cmb, incr)
 cmb$updateFromMatrix(int_cmbs, incr)
 cmb$updateFromMatrixByRow(int_cmbs, incr)
@@ -44,16 +44,20 @@ cmb$asMatrix()
 
 \section{Details}{
 
+\subsection{Constructors}{
 
-\code{new(CmbTable, keyLen)}
-Constructor. Variable names will be assigned as \code{V1}, \code{V2}, ....
+\code{new(CmbTable, keyLen)}\cr
+Default variable names will be assigned as \code{V1}, \code{V2}, ....
 Returns an object of class \code{CmbTable}.
 
-\code{new(CmbTable, keyLen, varNames)}
+\code{new(CmbTable, keyLen, varNames)}\cr
 Alternate constructor to specify variable names.
 Returns an object of class \code{CmbTable}.
+}
 
-\code{$update(int_cmb, incr)}
+\subsection{Methods}{
+
+\code{$update(int_cmb, incr)}\cr
 Updates the hash table for the integer combination in the numeric vector
 \code{int_cmb} (coerced to integer by truncation).
 If this combination exists in the table, its count will be
@@ -62,7 +66,7 @@ it will be inserted with count set to \code{incr}.
 Returns the unique ID assigned to this combination.
 Combination IDs are sequential integers starting at \code{1}.
 
-\code{$updateFromMatrix(int_cmbs, incr)}
+\code{$updateFromMatrix(int_cmbs, incr)}\cr
 This method is the same as \verb{$update()} but for a numeric matrix of
 integer combinations \code{int_cmbs} (coerced to integer by truncation).
 The matrix is arranged with each column vector forming an integer
@@ -75,7 +79,7 @@ combinations, or inserting new combinations with count set to \code{incr}.
 Returns a numeric vector of length \code{ncol(int_cmbs)} containing the
 IDs assigned to the combinations.
 
-\code{$updateFromMatrixByRow(int_cmbs, incr)}
+\code{$updateFromMatrixByRow(int_cmbs, incr)}\cr
 This method is the same as \verb{$updateFromMatrix()} above except the
 integer combinations are in rows of the matrix \code{int_cmbs} (columns
 are the variables).
@@ -85,18 +89,19 @@ combinations, or inserting new combinations with count set to \code{incr}.
 Returns a numeric vector of length \code{nrow(int_cmbs)} containing the
 IDs assigned to the combinations.
 
-\code{$asDataFrame()}
+\code{$asDataFrame()}\cr
 Returns the \code{CmbTable} as a data frame with column \code{cmbid} containing
 the unique combination IDs, column \code{count} containing the counts of
 occurrences, and \code{keyLen} columns (with names from \code{varNames}) containing
 the integer values comprising each unique combination.
 
-\code{$asMatrix()}
+\code{$asMatrix()}\cr
 Returns the \code{CmbTable} as a matrix with column \code{1} (\code{cmbid})
 containing the unique combination IDs, column \code{2} (\code{count})
 containing the counts of occurrences, and columns \code{3:keyLen+2}
 (with names from \code{varNames}) containing the integer values comprising each
 unique combination.
+}
 }
 
 \examples{

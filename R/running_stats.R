@@ -13,8 +13,8 @@
 #' stored in memory, so this class can be used to compute statistics for very
 #' large data streams.
 #'
-#' @param na_rm Logical scalar. `TRUE` to remove `NA` from the input data or
-#' `FALSE` to retain `NA` (defaults to `TRUE`).
+#' @param na_rm Logical scalar. `TRUE` to remove `NA` from the input data (the
+#' default) or `FALSE` to retain `NA`.
 #' @returns An object of class `RunningStats`. A `RunningStats` object
 #' maintains the current minimum, maximum, mean, variance, sum and count of
 #' values that have been read from the stream. It can be updated repeatedly
@@ -37,12 +37,12 @@
 #' The class method `GDALRaster$getStatistics()` is a GDAL API wrapper that
 #' computes statistics for a whole raster band.
 #'
-#' @section Usage:
+#' @section Usage (see Details):
 #' \preformatted{
 #' ## Constructor
 #' rs <- new(RunningStats, na_rm)
 #'
-#' ## Methods (see Details)
+#' ## Methods
 #' rs$update(newvalues)
 #' rs$get_count()
 #' rs$get_mean()
@@ -55,39 +55,43 @@
 #' }
 #'
 #' @section Details:
+#' ## Constructor
 #'
-#' \code{new(RunningStats, na_rm)}
-#' Constructor. Returns an object of class \code{RunningStats}.
+#' \code{new(RunningStats, na_rm)}\cr
+#' Returns an object of class \code{RunningStats}. The `na_rm` argument
+#' defaults to `TRUE` if omitted.
 #'
-#' \code{$update(newvalues)}
+#' ## Methods
+#'
+#' \code{$update(newvalues)}\cr
 #' Updates the `RunningStats` object with a numeric vector of `newvalues`
 #' (i.e., a chunk of values from the data stream). No return value, called
 #' for side effects.
 #'
-#' \code{$get_count()}
+#' \code{$get_count()}\cr
 #' Returns the count of values received from the data stream.
 #'
-#' \code{$get_mean()}
+#' \code{$get_mean()}\cr
 #' Returns the mean of values received from the data stream.
 #'
-#' \code{$get_min()}
+#' \code{$get_min()}\cr
 #' Returns the minimum value received from the data stream.
 #'
-#' \code{$get_max()}
+#' \code{$get_max()}\cr
 #' Returns the maximum value received from the data stream.
 #'
-#' \code{$get_sum()}
+#' \code{$get_sum()}\cr
 #' Returns the sum of values received from the data stream.
 #'
-#' \code{$get_var()}
+#' \code{$get_var()}\cr
 #' Returns the variance of values from the data stream
 #' (denominator n - 1).
 #'
-#' \code{$get_sd()}
+#' \code{$get_sd()}\cr
 #' Returns the standard deviation of values from the data stream
 #' (denominator n - 1).
 #'
-#' \code{$reset()}
+#' \code{$reset()}\cr
 #' Clears the \code{RunningStats} object to its initialized state (count = 0).
 #' No return value, called for side effects.
 #'

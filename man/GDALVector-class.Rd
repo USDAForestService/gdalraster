@@ -31,7 +31,7 @@ dialect can also be used.}
 }
 \value{
 An object of class \code{GDALVector} which contains pointers to the
-opened layer and the dataset that contains it, and methods that operate on
+opened layer and the dataset that owns it, and methods that operate on
 the layer as described in Details. \code{GDALVector} is a C++ class exposed
 directly to R (via \code{RCPP_EXPOSED_CLASS}). Fields and methods of the class
 are accessed using the \code{$} operator. The read/write fields are per-object
@@ -144,7 +144,7 @@ Defaults to \code{"geometry"}.
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.
 Must be one of \code{WKT}, \code{WKT_ISO}, \code{WKB}, \code{WKB_ISO}, \code{TYPE_NAME} or
-\code{NONE} (the default). \code{WKB}/\code{WKT} export old-style 99-402 extended
+\code{NONE} (the default). Using \code{WKB}/\code{WKT} exports as 99-402 extended
 dimension (Z) types for Point, LineString, Polygon, MultiPoint,
 MultiLineString, MultiPolygon and GeometryCollection. For other geometry
 types, it is equivalent to using \code{WKB_ISO}/\code{WKT_ISO}
