@@ -159,6 +159,23 @@ test_that("edit data using SQL works on shapefile", {
     deleteDataset(perims_shp)
 })
 
+test_that("ogr_execute_sql returns results set for SELECT", {
+    dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    sql <- "SELECT FID, * FROM mtbs_perims WHERE ig_year >= 2000 ORDER BY mtbs_perims.ig_year"
+    lyr <- ogr_execute_sql(dsn, sql)
+    expect_equal(lyr$getFeatureCount(), 40)
+    lyr$close()
+
+    sql <- "SELECT * FROM mtbs_perims"
+    lyr2 <- ogr_execute_sql(dsn, sql, spatial_filter = c(469685.97, 11442.45, 544069.63, 85508.15))
+    expect_equal(lyr2$getFeatureCount(), 40)
+    lyr2$close()
+
+    lyr3 <- ogr_execute_sql(dsn, sql)
+    expect_equal(lyr3$getFeatureCount(), 61)
+    lyr3$close()
+})
+
 test_that("GeoJSON layer and field names are correct", {
     dsn <- system.file("extdata/test.geojson", package="gdalraster")
     expect_true(ogr_ds_exists(dsn))
