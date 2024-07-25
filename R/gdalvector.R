@@ -204,7 +204,8 @@
 #' name of the first geometry column. For other columns, use `$getLayerDefn()`.
 #'
 #' \code{$getSpatialRef()}\cr
-#' Returns a WKT string containing the spatial reference system for this layer.
+#' Returns a WKT string containing the spatial reference system for this layer,
+#' or empty string (`""`) if no spatial reference exists.
 #'
 #' \code{$bbox()}\cr
 #' Returns a numeric vector of length four containing the bounding box
