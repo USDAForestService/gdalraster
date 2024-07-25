@@ -268,8 +268,9 @@ std::string GDALVector::getSpatialRef() const {
     checkAccess_(GA_ReadOnly);
 
     OGRSpatialReferenceH hSRS = OGR_L_GetSpatialRef(m_hLayer);
-    if (hSRS == nullptr)
-        Rcpp::stop("could not obtain spatial reference");
+    if (hSRS == nullptr) {
+        return "";
+    }
     char *pszSRS_WKT = nullptr;
     if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE)
         Rcpp::stop("error exporting SRS to WKT");

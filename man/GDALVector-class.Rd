@@ -219,7 +219,8 @@ For layers with multiple geometry fields, this method only returns the
 name of the first geometry column. For other columns, use \verb{$getLayerDefn()}.
 
 \code{$getSpatialRef()}\cr
-Returns a WKT string containing the spatial reference system for this layer.
+Returns a WKT string containing the spatial reference system for this layer,
+or empty string (\code{""}) if no spatial reference exists.
 
 \code{$bbox()}\cr
 Returns a numeric vector of length four containing the bounding box
