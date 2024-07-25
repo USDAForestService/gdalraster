@@ -909,7 +909,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 }
 
-void GDALVector::layerIntersection(
+bool GDALVector::layerIntersection(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
@@ -925,6 +925,7 @@ void GDALVector::layerIntersection(
         opt_list[options_in.size()] = nullptr;
     }
 
+    bool ret = false;
     OGRErr err = OGR_L_Intersection(
                     m_hLayer,
                     method_layer.getOGRLayerH_(),
@@ -933,11 +934,16 @@ void GDALVector::layerIntersection(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err != OGRERR_NONE)
-        Rcpp::stop("error during Intersection, or execution was interrupted");
+    if (err == OGRERR_NONE)
+        ret = true;
+    else if(!quiet)
+        Rcpp::Rcerr << "error during Intersection, or execution interrupted" <<
+                std::endl;
+
+    return ret;
 }
 
-void GDALVector::layerUnion(
+bool GDALVector::layerUnion(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
@@ -953,6 +959,7 @@ void GDALVector::layerUnion(
         opt_list[options_in.size()] = nullptr;
     }
 
+    bool ret = false;
     OGRErr err = OGR_L_Union(
                     m_hLayer,
                     method_layer.getOGRLayerH_(),
@@ -961,11 +968,16 @@ void GDALVector::layerUnion(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err != OGRERR_NONE)
-        Rcpp::stop("error during Union, or execution was interrupted");
+    if (err == OGRERR_NONE)
+        ret = true;
+    else if(!quiet)
+        Rcpp::Rcerr << "error during Union, or execution interrupted" <<
+                std::endl;
+
+    return ret;
 }
 
-void GDALVector::layerSymDifference(
+bool GDALVector::layerSymDifference(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
@@ -981,6 +993,7 @@ void GDALVector::layerSymDifference(
         opt_list[options_in.size()] = nullptr;
     }
 
+    bool ret = false;
     OGRErr err = OGR_L_SymDifference(
                     m_hLayer,
                     method_layer.getOGRLayerH_(),
@@ -989,11 +1002,16 @@ void GDALVector::layerSymDifference(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err != OGRERR_NONE)
-        Rcpp::stop("error during SymDifference, or execution was interrupted");
+    if (err == OGRERR_NONE)
+        ret = true;
+    else if(!quiet)
+        Rcpp::Rcerr << "error during SymDifference, or execution interrupted" <<
+                std::endl;
+
+    return ret;
 }
 
-void GDALVector::layerIdentity(
+bool GDALVector::layerIdentity(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
@@ -1009,6 +1027,7 @@ void GDALVector::layerIdentity(
         opt_list[options_in.size()] = nullptr;
     }
 
+    bool ret = false;
     OGRErr err = OGR_L_Identity(
                     m_hLayer,
                     method_layer.getOGRLayerH_(),
@@ -1017,11 +1036,16 @@ void GDALVector::layerIdentity(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err != OGRERR_NONE)
-        Rcpp::stop("error during Identity, or execution was interrupted");
+    if (err == OGRERR_NONE)
+        ret = true;
+    else if(!quiet)
+        Rcpp::Rcerr << "error during Identity, or execution interrupted" <<
+                std::endl;
+
+    return ret;
 }
 
-void GDALVector::layerUpdate(
+bool GDALVector::layerUpdate(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
@@ -1037,6 +1061,7 @@ void GDALVector::layerUpdate(
         opt_list[options_in.size()] = nullptr;
     }
 
+    bool ret = false;
     OGRErr err = OGR_L_Update(
                     m_hLayer,
                     method_layer.getOGRLayerH_(),
@@ -1045,11 +1070,16 @@ void GDALVector::layerUpdate(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err != OGRERR_NONE)
-        Rcpp::stop("error during Update, or execution was interrupted");
+    if (err == OGRERR_NONE)
+        ret = true;
+    else if(!quiet)
+        Rcpp::Rcerr << "error during Update, or execution interrupted" <<
+                std::endl;
+
+    return ret;
 }
 
-void GDALVector::layerClip(
+bool GDALVector::layerClip(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
@@ -1065,6 +1095,7 @@ void GDALVector::layerClip(
         opt_list[options_in.size()] = nullptr;
     }
 
+    bool ret = false;
     OGRErr err = OGR_L_Clip(
                     m_hLayer,
                     method_layer.getOGRLayerH_(),
@@ -1073,11 +1104,16 @@ void GDALVector::layerClip(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err != OGRERR_NONE)
-        Rcpp::stop("error during Clip, or execution was interrupted");
+    if (err == OGRERR_NONE)
+        ret = true;
+    else if(!quiet)
+        Rcpp::Rcerr << "error during Clip, or execution interrupted" <<
+                std::endl;
+
+    return ret;
 }
 
-void GDALVector::layerErase(
+bool GDALVector::layerErase(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
@@ -1093,6 +1129,7 @@ void GDALVector::layerErase(
         opt_list[options_in.size()] = nullptr;
     }
 
+    bool ret = false;
     OGRErr err = OGR_L_Erase(
                     m_hLayer,
                     method_layer.getOGRLayerH_(),
@@ -1101,8 +1138,13 @@ void GDALVector::layerErase(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err != OGRERR_NONE)
-        Rcpp::stop("error during Erase, or execution was interrupted");
+    if (err == OGRERR_NONE)
+        ret = true;
+    else if(!quiet)
+        Rcpp::Rcerr << "error during Erase, or execution interrupted" <<
+                std::endl;
+
+    return ret;
 }
 
 void GDALVector::close() {

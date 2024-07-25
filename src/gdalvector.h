@@ -77,37 +77,37 @@ class GDALVector {
 
     Rcpp::DataFrame fetch(double n);
 
-    void layerIntersection(
+    bool layerIntersection(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
             Rcpp::Nullable<Rcpp::CharacterVector> options);
-    void layerUnion(
+    bool layerUnion(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
             Rcpp::Nullable<Rcpp::CharacterVector> options);
-    void layerSymDifference(
+    bool layerSymDifference(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
             Rcpp::Nullable<Rcpp::CharacterVector> options);
-    void layerIdentity(
+    bool layerIdentity(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
             Rcpp::Nullable<Rcpp::CharacterVector> options);
-    void layerUpdate(
+    bool layerUpdate(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
             Rcpp::Nullable<Rcpp::CharacterVector> options);
-    void layerClip(
+    bool layerClip(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
             Rcpp::Nullable<Rcpp::CharacterVector> options);
-    void layerErase(
+    bool layerErase(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
