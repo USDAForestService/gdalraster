@@ -7,33 +7,32 @@
 #' `ogr_proc()` performs various geoprocessing operations on vector layers
 #' (intersection, union, clip, etc). It provides an inteface to the `OGRLayer`
 #' methods for these operations in the GDAL API (`OGRLayer::Intersection()`,
-#' etc). Inputs are given as objects of class `GDALVector`, which might have
+#' etc). Inputs are given as objects of class `GDALVector` which might have
 #' spatial and/or attribute filters applied.
 #' The output layer will be created, but output can optionally be appended to an
-#' existing layer, or written to an existing empty layer with custom schema
-#' defined.
-#' This function is basically an equivalent interface as the
+#' existing layer, or written to an empty layer that has a custom schema
+#' defined. The `ogr_proc()` interface is basically equivalent to the
 #' [`ogr_layer_algebra`](https://gdal.org/programs/ogr_layer_algebra.html#ogr-layer-algebra)
 #' utility in the GDAL Python bindings.
 #'
 #' @details
 #' Seven processing modes are available:
-#' * `Intersection`: Intersection of two layers. The output layer contains
-#' features whose geometries represent areas that are common between features
-#' in the input layer and in the method layer. The features in the output layer
-#' have attributes from both input and method layers.
-#' * `Union`: Union of two layers. The output layer contains features whose
-#' geometries represent areas that are in either in the input layer, in the
-#' method layer, or in both. The features in the output layer have attributes
-#' from both input and method layers. For features which represent areas that
-#' are only in the input or in the method layer the respective attributes have
+#' * `Intersection`: The output layer contains features whose geometries
+#' represent areas that are common between features in the input layer and in
+#' the method layer. The features in the output layer have attributes from
+#' both input and method layers.
+#' * `Union`: The output layer contains features whose geometries represent
+#' areas that are either in the input layer, in the method layer, or in
+#' both. The features in the output layer have attributes from both input and
+#' method layers. For features which represent areas that are only in the
+#' input or only in the method layer the respective attributes have undefined
+#' values.
+#' * `SymDifference`: The output layer contains features whose geometries
+#' represent areas that are in either in the input layer or in the method layer
+#' but not in both. The features in the output layer have attributes from both
+#' input and method layers. For features which represent areas that are only in
+#' the input or only in the method layer the respective attributes have
 #' undefined values.
-#' * `SymDifference`: Symmetrical difference of two layers. The output layer
-#' contains features whose geometries represent areas that are in either in the
-#' input layer or in the method layer but not in both. The features in the
-#' output layer have attributes from both input and method layers. For features
-#' which represent areas that are only in the input or in the method layer the
-#' respective attributes have undefined values.
 #' * `Identity`: Identify the features of the input layer with the ones from the
 #' method layer. The output layer contains features whose geometries represent
 #' areas that are in the input layer. The features in the output layer have
@@ -53,7 +52,7 @@
 #' [ogr_manage] interface can be used to create an empty layer with user-defined
 #' schema (e.g., [ogr_ds_create()], [ogr_layer_create()], [ogr_field_create()]).
 #' If the schema of the output layer is set by the user and contains fields that
-#' have the same name as a field in the input and in the method layer, then the
+#' have the same name as a field in both the input and method layers, then the
 #' attribute for an output feature will get the value from the feature of the
 #' method layer.
 #'
@@ -82,8 +81,12 @@
 #' only if the result output has an UNKNOWN geometry type. Applies to
 #' `Intersection`, `Union`, `Identity`.
 #'
+#' The input layers should have the same spatial reference system. No on-the-fly
+#' reprojection is done. When a default output layer is created by `ogr_proc()`,
+#' it will have the SRS of `input_lyr`.
+#'
 #' @param mode Character string specifying the operation to perform. One of
-#' `Union`, `Intersection`, `SymDifference`, `Identity`, `Update`, `Clip` or
+#' `Intersection`, `Union`, `SymDifference`, `Identity`, `Update`, `Clip` or
 #' `Erase` (see Details).
 #' @param input_lyr An object of class `GDALVector` to use as the input layer.
 #' For overlay operations, this is the first layer in the operation.
@@ -94,21 +97,21 @@
 #' @param out_dsn The destination vector filename or database connection string
 #' to which the output layer will be written.
 #' @param out_lyr_name Layer name where the output vector will be written. May
-#' be `NULL` (e.g., shapefile), but generally must be specified.
+#' be `NULL` (e.g., shapefile), but typically must be specified.
 #' @param out_geom_type Character string specifying the geometry type of the
 #' output layer. One of NONE, GEOMETRY, POINT, LINESTRING, POLYGON,
 #' GEOMETRYCOLLECTION, MULTIPOINT, MULTIPOLYGON, GEOMETRY25D, POINT25D,
 #' LINESTRING25D, POLYGON25D, GEOMETRYCOLLECTION25D, MULTIPOINT25D,
-#' MULTIPOLYGON25D.
+#' MULTIPOLYGON25D. Defaults to UNKNOWN if not specified.
 #' @param out_fmt GDAL short name of the output vector format. If unspecified,
-#' the function will attempt to guess the format from the filename/connection
-#' string.
+#' the function will attempt to guess the format from the value of `out_dsn`.
 #' @param dsco Optional character vector of format-specific creation options
 #' for `out_dsn` (`"NAME=VALUE"` pairs).
 #' @param lco Optional character vector of format-specific creation options
 #' for `out_layer` (`"NAME=VALUE"` pairs).
-#' @param mode_opt Character vector of NAME=VALUE pairs that specify processing
-#' options. Available options depend on the value of `mode` (see Details).
+#' @param mode_opt Optional character vector of `"NAME=VALUE"` pairs that
+#' specify processing options. Available options depend on the value of `mode`
+#' (see Details).
 #' @param overwrite Logical scalar. `TRUE` to overwrite the output layer if it
 #' already exists. Defaults to `FALSE`.
 #' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
@@ -123,6 +126,11 @@
 #' Logical `FALSE` is returned (invisibly) if an error occurs during processing.
 #'
 #' @note
+#' For best performance use the minimum amount of features in the method layer
+#' and copy it into a memory layer.
+#'
+#' The first geometry field is always used.
+#'
 #' The `Union` operation is a "GIS union" (not geometric union). It is
 #' equivalent, for example, to the Union Vector Overlay tool in
 #' [QGIS](https://www.qgis.org/).
@@ -286,6 +294,7 @@ ogr_proc <- function(mode,
     }
 
     if (ret && return_lyr_obj) {
+        out_lyr$open(read_only = TRUE)
         return(out_lyr)
     } else {
         out_lyr$close()

@@ -22,7 +22,7 @@ ogr_proc(
 }
 \arguments{
 \item{mode}{Character string specifying the operation to perform. One of
-\code{Union}, \code{Intersection}, \code{SymDifference}, \code{Identity}, \code{Update}, \code{Clip} or
+\code{Intersection}, \code{Union}, \code{SymDifference}, \code{Identity}, \code{Update}, \code{Clip} or
 \code{Erase} (see Details).}
 
 \item{input_lyr}{An object of class \code{GDALVector} to use as the input layer.
@@ -37,17 +37,16 @@ Intersection, SymDifference).}
 to which the output layer will be written.}
 
 \item{out_lyr_name}{Layer name where the output vector will be written. May
-be \code{NULL} (e.g., shapefile), but generally must be specified.}
+be \code{NULL} (e.g., shapefile), but typically must be specified.}
 
 \item{out_geom_type}{Character string specifying the geometry type of the
 output layer. One of NONE, GEOMETRY, POINT, LINESTRING, POLYGON,
 GEOMETRYCOLLECTION, MULTIPOINT, MULTIPOLYGON, GEOMETRY25D, POINT25D,
 LINESTRING25D, POLYGON25D, GEOMETRYCOLLECTION25D, MULTIPOINT25D,
-MULTIPOLYGON25D.}
+MULTIPOLYGON25D. Defaults to UNKNOWN if not specified.}
 
 \item{out_fmt}{GDAL short name of the output vector format. If unspecified,
-the function will attempt to guess the format from the filename/connection
-string.}
+the function will attempt to guess the format from the value of \code{out_dsn}.}
 
 \item{dsco}{Optional character vector of format-specific creation options
 for \code{out_dsn} (\code{"NAME=VALUE"} pairs).}
@@ -55,8 +54,9 @@ for \code{out_dsn} (\code{"NAME=VALUE"} pairs).}
 \item{lco}{Optional character vector of format-specific creation options
 for \code{out_layer} (\code{"NAME=VALUE"} pairs).}
 
-\item{mode_opt}{Character vector of NAME=VALUE pairs that specify processing
-options. Available options depend on the value of \code{mode} (see Details).}
+\item{mode_opt}{Optional character vector of \code{"NAME=VALUE"} pairs that
+specify processing options. Available options depend on the value of \code{mode}
+(see Details).}
 
 \item{overwrite}{Logical scalar. \code{TRUE} to overwrite the output layer if it
 already exists. Defaults to \code{FALSE}.}
@@ -78,34 +78,33 @@ Logical \code{FALSE} is returned (invisibly) if an error occurs during processin
 \code{ogr_proc()} performs various geoprocessing operations on vector layers
 (intersection, union, clip, etc). It provides an inteface to the \code{OGRLayer}
 methods for these operations in the GDAL API (\code{OGRLayer::Intersection()},
-etc). Inputs are given as objects of class \code{GDALVector}, which might have
+etc). Inputs are given as objects of class \code{GDALVector} which might have
 spatial and/or attribute filters applied.
 The output layer will be created, but output can optionally be appended to an
-existing layer, or written to an existing empty layer with custom schema
-defined.
-This function is basically an equivalent interface as the
+existing layer, or written to an empty layer that has a custom schema
+defined. The \code{ogr_proc()} interface is basically equivalent to the
 \href{https://gdal.org/programs/ogr_layer_algebra.html#ogr-layer-algebra}{\code{ogr_layer_algebra}}
 utility in the GDAL Python bindings.
 }
 \details{
 Seven processing modes are available:
 \itemize{
-\item \code{Intersection}: Intersection of two layers. The output layer contains
-features whose geometries represent areas that are common between features
-in the input layer and in the method layer. The features in the output layer
-have attributes from both input and method layers.
-\item \code{Union}: Union of two layers. The output layer contains features whose
-geometries represent areas that are in either in the input layer, in the
-method layer, or in both. The features in the output layer have attributes
-from both input and method layers. For features which represent areas that
-are only in the input or in the method layer the respective attributes have
+\item \code{Intersection}: The output layer contains features whose geometries
+represent areas that are common between features in the input layer and in
+the method layer. The features in the output layer have attributes from
+both input and method layers.
+\item \code{Union}: The output layer contains features whose geometries represent
+areas that are either in the input layer, in the method layer, or in
+both. The features in the output layer have attributes from both input and
+method layers. For features which represent areas that are only in the
+input or only in the method layer the respective attributes have undefined
+values.
+\item \code{SymDifference}: The output layer contains features whose geometries
+represent areas that are in either in the input layer or in the method layer
+but not in both. The features in the output layer have attributes from both
+input and method layers. For features which represent areas that are only in
+the input or only in the method layer the respective attributes have
 undefined values.
-\item \code{SymDifference}: Symmetrical difference of two layers. The output layer
-contains features whose geometries represent areas that are in either in the
-input layer or in the method layer but not in both. The features in the
-output layer have attributes from both input and method layers. For features
-which represent areas that are only in the input or in the method layer the
-respective attributes have undefined values.
 \item \code{Identity}: Identify the features of the input layer with the ones from the
 method layer. The output layer contains features whose geometries represent
 areas that are in the input layer. The features in the output layer have
@@ -126,7 +125,7 @@ initialized to contain all fields in the input layer. The functions in the
 \link{ogr_manage} interface can be used to create an empty layer with user-defined
 schema (e.g., \code{\link[=ogr_ds_create]{ogr_ds_create()}}, \code{\link[=ogr_layer_create]{ogr_layer_create()}}, \code{\link[=ogr_field_create]{ogr_field_create()}}).
 If the schema of the output layer is set by the user and contains fields that
-have the same name as a field in the input and in the method layer, then the
+have the same name as a field in both the input and method layers, then the
 attribute for an output feature will get the value from the feature of the
 method layer.
 
@@ -156,8 +155,17 @@ layer. The default is YES, to add features with lower dimension geometry, but
 only if the result output has an UNKNOWN geometry type. Applies to
 \code{Intersection}, \code{Union}, \code{Identity}.
 }
+
+The input layers should have the same spatial reference system. No on-the-fly
+reprojection is done. When a default output layer is created by \code{ogr_proc()},
+it will have the SRS of \code{input_lyr}.
 }
 \note{
+For best performance use the minimum amount of features in the method layer
+and copy it into a memory layer.
+
+The first geometry field is always used.
+
 The \code{Union} operation is a "GIS union" (not geometric union). It is
 equivalent, for example, to the Union Vector Overlay tool in
 \href{https://www.qgis.org/}{QGIS}.
