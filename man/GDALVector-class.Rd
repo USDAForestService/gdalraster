@@ -47,7 +47,7 @@ See \url{https://gdal.org/api/index.html} for details of the GDAL
 Vector API.
 
 \strong{Class \code{GDALVector} is currently under development}. An initial
-implemetation supporting read access was added in gdalraster 1.11.1.9100.
+implementation supporting read access was added in gdalraster 1.11.1.9100.
 A working document with draft specifications is available at:\cr
 \url{https://usdaforestservice.github.io/gdalraster/articles/gdalvector-draft.html}\cr
 and discussion thread/status updates at:\cr
@@ -250,7 +250,7 @@ In some cases (RDBMS backed drivers, SQLite, GeoPackage) the native
 capabilities of the database may be used to to interpret the WHERE clause,
 in which case the capabilities will be broader than those of OGR SQL.
 Note that installing a query string will generally result in resetting the
-current reading position (as with \verb{$resetReading()} decribed below).
+current reading position (as with \verb{$resetReading()} described below).
 The \code{query} parameter may be set to empty string (\code{""}) to clear the current
 attribute filter.
 
