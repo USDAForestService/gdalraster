@@ -177,7 +177,10 @@ and copy into a memory layer.
 }
 \examples{
 # MTBS fire perimeters for Yellowstone National Park 1984-2022
-dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+# work with a copy
+dsn <- file.path(tempdir(), "ynp_fires_1984_2022.gpkg")
+file.copy(f, dsn)
 
 # a layer filtered to fires since year 2000
 lyr <- new(GDALVector, dsn, "mtbs_perims")
@@ -198,8 +201,7 @@ lyr_out <- ogr_proc(mode = "Intersection",
                     method_lyr = lyr2,
                     out_dsn = tempfile(fileext = ".gpkg"),
                     out_lyr_name = "north_fork_reburned",
-                    out_geom_type = "MULTIPOLYGON",
-                    mode_opt = "PROMOTE_TO_MULTI=YES")
+                    out_geom_type = "MULTIPOLYGON")
 
 # the output layer has attributes of both the input and the method layers
 lyr_out$returnGeomAs <- "TYPE_NAME"
