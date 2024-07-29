@@ -179,17 +179,20 @@ and copy into a memory layer.
 # MTBS fire perimeters for Yellowstone National Park 1984-2022
 dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 
-# a layer filtered to fires during 2000-2020
+# a layer filtered to fires since year 2000
 lyr <- new(GDALVector, dsn, "mtbs_perims")
 lyr$setAttributeFilter("ig_year >= 2000")
 lyr$getFeatureCount()
 
 # a second layer for the 1988 North Fork fire perimeter
-lyr2 <- new(GDALVector, dsn, "mtbs_perims")
-lyr2$setAttributeFilter("incid_name = 'NORTH FORK'")
+sql <- paste0(
+    "SELECT incid_name, ig_year, geom ",
+    "FROM mtbs_perims ",
+    "WHERE incid_name = 'NORTH FORK'")
+lyr2 <- new(GDALVector, dsn, sql)
 lyr2$getFeatureCount()
 
-# intersect to obtain areas re-burned during 2000-2020
+# intersect to obtain areas re-burned since 2000
 lyr_out <- ogr_proc(mode = "Intersection",
                     input_lyr = lyr,
                     method_lyr = lyr2,
