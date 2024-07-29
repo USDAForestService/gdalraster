@@ -177,10 +177,11 @@ and copy into a memory layer.
 }
 \examples{
 # MTBS fire perimeters for Yellowstone National Park 1984-2022
-f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
-# work with a copy
-dsn <- file.path(tempdir(), "ynp_fires_1984_2022.gpkg")
-file.copy(f, dsn)
+dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+
+# optional performance related settings
+set_config_option("SQLITE_USE_OGR_VFS", "YES")
+set_config_option("OGR_SQLITE_JOURNAL", "MEMORY")
 
 # a layer filtered to fires since year 2000
 lyr <- new(GDALVector, dsn, "mtbs_perims")
@@ -203,7 +204,7 @@ lyr_out <- ogr_proc(mode = "Intersection",
                     out_lyr_name = "north_fork_reburned",
                     out_geom_type = "MULTIPOLYGON")
 
-# the output layer has attributes of both the input and the method layers
+# the output layer has attributes of both the input and method layers
 lyr_out$returnGeomAs <- "TYPE_NAME"
 d <- lyr_out$fetch(-1)
 print(d)
@@ -213,6 +214,9 @@ lyr$close()
 lyr2$close()
 lyr_out$close()
 lyr_out$getDsn() |> unlink()
+
+set_config_option("SQLITE_USE_OGR_VFS", "")
+set_config_option("OGR_SQLITE_JOURNAL", "")
 }
 \seealso{
 \code{\link[=GDALVector]{GDALVector-class}}, \code{\link{ogr_define}},
