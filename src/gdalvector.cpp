@@ -934,11 +934,14 @@ bool GDALVector::layerIntersection(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err == OGRERR_NONE)
+    if (err == OGRERR_NONE) {
         ret = true;
-    else if(!quiet)
+    }
+    else if(!quiet) {
         Rcpp::Rcerr << "error during Intersection, or execution interrupted" <<
                 std::endl;
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+    }
 
     return ret;
 }
@@ -968,11 +971,14 @@ bool GDALVector::layerUnion(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err == OGRERR_NONE)
+    if (err == OGRERR_NONE) {
         ret = true;
-    else if(!quiet)
+    }
+    else if(!quiet) {
         Rcpp::Rcerr << "error during Union, or execution interrupted" <<
                 std::endl;
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+    }
 
     return ret;
 }
@@ -1002,11 +1008,14 @@ bool GDALVector::layerSymDifference(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err == OGRERR_NONE)
+    if (err == OGRERR_NONE) {
         ret = true;
-    else if(!quiet)
+    }
+    else if(!quiet) {
         Rcpp::Rcerr << "error during SymDifference, or execution interrupted" <<
                 std::endl;
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+    }
 
     return ret;
 }
@@ -1036,11 +1045,14 @@ bool GDALVector::layerIdentity(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err == OGRERR_NONE)
+    if (err == OGRERR_NONE) {
         ret = true;
-    else if(!quiet)
+    }
+    else if(!quiet) {
         Rcpp::Rcerr << "error during Identity, or execution interrupted" <<
                 std::endl;
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+    }
 
     return ret;
 }
@@ -1070,11 +1082,14 @@ bool GDALVector::layerUpdate(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err == OGRERR_NONE)
+    if (err == OGRERR_NONE) {
         ret = true;
-    else if(!quiet)
+    }
+    else if(!quiet) {
         Rcpp::Rcerr << "error during Update, or execution interrupted" <<
                 std::endl;
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+    }
 
     return ret;
 }
@@ -1104,11 +1119,14 @@ bool GDALVector::layerClip(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err == OGRERR_NONE)
+    if (err == OGRERR_NONE) {
         ret = true;
-    else if(!quiet)
+    }
+    else if(!quiet) {
         Rcpp::Rcerr << "error during Clip, or execution interrupted" <<
                 std::endl;
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+    }
 
     return ret;
 }
@@ -1138,11 +1156,14 @@ bool GDALVector::layerErase(
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
 
-    if (err == OGRERR_NONE)
+    if (err == OGRERR_NONE) {
         ret = true;
-    else if(!quiet)
+    }
+    else if(!quiet) {
         Rcpp::Rcerr << "error during Erase, or execution interrupted" <<
                 std::endl;
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+    }
 
     return ret;
 }
