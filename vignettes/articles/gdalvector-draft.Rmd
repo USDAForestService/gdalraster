@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-07-23
+Last modified: 2024-07-30
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -688,99 +688,68 @@ library(gdalraster)
 
 # MTBS fires in Yellowstone National Park 1984-2022
 dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
-lyr <- new(GDALVector, dsn, "mtbs_perims")
 
-# largest 1988 fire (FID = 7 from the example above)
-feat <- lyr$getFeature(7)
-str(feat)
-#> List of 10
-#>  $ FID         :integer64 7 
-#>  $ event_id    : chr "WY4470811082119880722"
-#>  $ incid_name  : chr "NORTH FORK"
-#>  $ incid_type  : chr "Wildfire"
-#>  $ map_id      :integer64 10014217 
-#>  $ burn_bnd_ac :integer64 563527 
-#>  $ burn_bnd_lat: chr "44.678"
-#>  $ burn_bnd_lon: chr "-110.716"
-#>  $ ig_date     : Date[1:1], format: "1988-07-22"
-#>  $ ig_year     : int 1988
-
-# get a second layer for 2000-2022 fires
-# the layer argument can be a sql statement
-sql <- "SELECT FID, * FROM mtbs_perims WHERE ig_year >= 2000 ORDER BY mtbs_perims.ig_year"
-lyr2 <- new(GDALVector, dsn, sql)
-lyr2$getFeatureCount()
+# layer filtered to fires since year 2000
+lyr1 <- new(GDALVector, dsn, "mtbs_perims")
+lyr1$setAttributeFilter("ig_year >= 2000")
+lyr1$getFeatureCount()
 #> [1] 40
 
-# create an output layer using a temporary in-memory dataset
-dsn_out <- "/vsimem/lyr_proc_tmp.gpkg"
-srs <- lyr$getSpatialRef()
-ogr_ds_create("GPKG", dsn_out, "result_layer",
-              geom_type = "Polygon",
-              srs = srs)
-#> [1] TRUE
-ogr_ds_exists(dsn_out, with_update = TRUE)
-#> [1] TRUE
-ogr_layer_exists(dsn_out, "result_layer")
-#> [1] TRUE
+# second layer for the 1988 North Fork fire perimeter
+sql <- paste0("SELECT incid_name, ig_year, geom ",
+              "FROM mtbs_perims ",
+              "WHERE incid_name = 'NORTH FORK'")
+lyr2 <- new(GDALVector, dsn, sql)
+lyr2$getFeatureCount()
+#> [1] 1
 
-lyr_out <- new(GDALVector, dsn_out, "result_layer", read_only = FALSE)
-lyr_out$getFeatureCount()
-#> [1] 0
+# intersect to obtain areas re-burned since 2000
+tmp_dsn <- tempfile(fileext = ".gpkg")
+opt <- c("INPUT_PREFIX=layer1_",
+         "METHOD_PREFIX=layer2_",
+         "PROMOTE_TO_MULTI=YES")
 
-# intersection of lyr and lyr2, with result in lyr_out
-lyr$layerIntersection(lyr2, lyr_out, quiet = FALSE, options = NULL)
+lyr_out <- ogr_proc(mode = "Intersection", 
+                    input_lyr = lyr1,
+                    method_lyr = lyr2, 
+                    out_dsn = tmp_dsn,
+                    out_lyr_name = "north_fork_reburned",
+                    out_geom_type = "MULTIPOLYGON",
+                    mode_opt = opt)
 #> 0...10...20...30...40...50...60...70...80...90...100 - done.
 
-lyr_out$getFeatureCount()
-#> [1] 86
-defn <- lyr_out$getLayerDefn()
-# combined attributes
-names(defn)
-#>  [1] "input_event_id"      "input_incid_name"    "input_incid_type"   
-#>  [4] "input_map_id"        "input_burn_bnd_ac"   "input_burn_bnd_lat" 
-#>  [7] "input_burn_bnd_lon"  "input_ig_date"       "input_ig_year"      
-#> [10] "method_event_id"     "method_incid_name"   "method_incid_type"  
-#> [13] "method_map_id"       "method_burn_bnd_ac"  "method_burn_bnd_lat"
-#> [16] "method_burn_bnd_lon" "method_ig_date"      "method_ig_year"     
-#> [19] "geom"
+# result layer has attributes of the input and the method layers
+lyr_out$returnGeomAs <- "TYPE_NAME"
+d <- lyr_out$fetch(-1)
+print(d)
+#>   FID       layer1_event_id layer1_incid_name layer1_incid_type layer1_map_id
+#> 1   1 WY4484611038620100914          ANTELOPE          Wildfire      10013735
+#> 2   2 WY4466711063920120810            CYGNET          Wildfire          1961
+#> 3   3 WY4474311097820160809             MAPLE          Wildfire      10005020
+#> 4   4 WY4492611093820160805              FAWN          Wildfire      10005117
+#> 5   5 WY4457911058620160826           CENTRAL          Wildfire      10014143
+#>   layer1_burn_bnd_ac layer1_burn_bnd_lat layer1_burn_bnd_lon layer1_ig_date
+#> 1               4888              44.839            -110.368     2010-09-14
+#> 2               3188              44.682            -110.622     2012-08-10
+#> 3             103193              44.731            -110.982     2016-08-09
+#> 4               3161              44.936            -110.913     2016-08-05
+#> 5               2340              44.595            -110.574     2016-08-26
+#>   layer1_ig_year layer2_incid_name layer2_ig_year         geom
+#> 1           2010        NORTH FORK           1988 MULTIPOLYGON
+#> 2           2012        NORTH FORK           1988 MULTIPOLYGON
+#> 3           2016        NORTH FORK           1988 MULTIPOLYGON
+#> 4           2016        NORTH FORK           1988 MULTIPOLYGON
+#> 5           2016        NORTH FORK           1988 MULTIPOLYGON
 
-# we don't have vector plotting yet, so rasterize and use plot_raster()
-out_file <- "/vsimem/result_layer.tif"
-rasterize(src_dsn = dsn_out,
-          dstfile = out_file,
-          layer = "result_layer",
-          burn_attr = "method_ig_year",
-          tr = c(90,90),
-          tap = TRUE,
-          dtName = "Int16",
-          dstnodata = -9999,
-          init = -9999)
-#> 0...10...20...30...40...50...60...70...80...90...100 - done.
-
-ds <- new(GDALRaster, out_file)
-pal <- scales::viridis_pal(end = 0.8, direction = -1)(6)
-ramp <- scales::colour_ramp(pal)
-plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",
-            main="2000-2022 re-burn within the 1988 North Fork perimeter")
-```
-
-![](img/ynp_mtbs_lyr_int_ex.png)<!-- -->
-
-``` r
-
-ds$close()
-lyr$close()
+# clean up
+lyr1$close()
 lyr2$close()
 lyr_out$close()
-
-vsi_unlink(dsn_out)
-#> [1] 0
-vsi_unlink(out_file)
-#> [1] 0
+deleteDataset(tmp_dsn)
+#> [1] TRUE
 ```
 
-<sup>Created on 2024-07-12 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
+<sup>Created on 2024-07-30 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
 
 ## Example: WorldCover Sentinel-2 composites
 
@@ -971,6 +940,7 @@ This is a working list of potential issues and design questions that need furthe
 * add sub-headings under the heading "Description of the interface", and add specifications under "Feature retrieval" and "Geometry" (2024-07-13)
 * `GDALVector::testCapability()` returns a list of named capabilities with `TRUE`|`FALSE`, class method version of `ogr_layer_test_cap()` (2024-07-21)
 * branch gdalvector was merged into main (2024-07-23)
+* added `ogr_proc()`, interface to GDAL OGR facilities for vector geoprocessing; updated "Example: layer geoprocessing" (2024-07-30)
 
 ## Contributors
 
