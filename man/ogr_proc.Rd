@@ -176,47 +176,45 @@ For best performance use the minimum amount of features in the method layer
 and copy into a memory layer.
 }
 \examples{
-# MTBS fire perimeters for Yellowstone National Park 1984-2022
+# MTBS fires in Yellowstone National Park 1984-2022
 dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 
-# optional performance related settings
-set_config_option("SQLITE_USE_OGR_VFS", "YES")
-set_config_option("OGR_SQLITE_JOURNAL", "MEMORY")
+# layer filtered to fires since year 2000
+lyr1 <- new(GDALVector, dsn, "mtbs_perims")
+lyr1$setAttributeFilter("ig_year >= 2000")
+lyr1$getFeatureCount()
 
-# a layer filtered to fires since year 2000
-lyr <- new(GDALVector, dsn, "mtbs_perims")
-lyr$setAttributeFilter("ig_year >= 2000")
-lyr$getFeatureCount()
-
-# a second layer for the 1988 North Fork fire perimeter
-sql <- paste0(
-    "SELECT incid_name, ig_year, geom ",
-    "FROM mtbs_perims ",
-    "WHERE incid_name = 'NORTH FORK'")
+# second layer for the 1988 North Fork fire perimeter
+sql <- paste0("SELECT incid_name, ig_year, geom ",
+              "FROM mtbs_perims ",
+              "WHERE incid_name = 'NORTH FORK'")
 lyr2 <- new(GDALVector, dsn, sql)
 lyr2$getFeatureCount()
 
 # intersect to obtain areas re-burned since 2000
-lyr_out <- ogr_proc(mode = "Intersection",
-                    input_lyr = lyr,
-                    method_lyr = lyr2,
-                    out_dsn = tempfile(fileext = ".gpkg"),
-                    out_lyr_name = "north_fork_reburned",
-                    out_geom_type = "MULTIPOLYGON")
+tmp_dsn <- tempfile(fileext = ".gpkg")
+opt <- c("INPUT_PREFIX=layer1_",
+         "METHOD_PREFIX=layer2_",
+         "PROMOTE_TO_MULTI=YES")
 
-# the output layer has attributes of both the input and method layers
+lyr_out <- ogr_proc(mode = "Intersection",
+                    input_lyr = lyr1,
+                    method_lyr = lyr2,
+                    out_dsn = tmp_dsn,
+                    out_lyr_name = "north_fork_reburned",
+                    out_geom_type = "MULTIPOLYGON",
+                    mode_opt = opt)
+
+# result layer has attributes of the input and the method layers
 lyr_out$returnGeomAs <- "TYPE_NAME"
 d <- lyr_out$fetch(-1)
 print(d)
 
 # clean up
-lyr$close()
+lyr1$close()
 lyr2$close()
 lyr_out$close()
-lyr_out$getDsn() |> unlink()
-
-set_config_option("SQLITE_USE_OGR_VFS", "")
-set_config_option("OGR_SQLITE_JOURNAL", "")
+unlink(tmp_dsn)
 }
 \seealso{
 \code{\link[=GDALVector]{GDALVector-class}}, \code{\link{ogr_define}},
