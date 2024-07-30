@@ -110,8 +110,61 @@ test_that("ogr_proc works", {
     lyr_out$close()
     rm(lyr_out)
 
+    # erase
+    test_lyr_name <- "erase_test"
+    expect_no_error(lyr_out <- ogr_proc(mode = "Erase",
+                                        input_lyr = lyr,
+                                        method_lyr = lyr2,
+                                        out_dsn = dsn_tmp,
+                                        out_lyr_name = test_lyr_name,
+                                        out_geom_type = "MULTIPOLYGON",
+                                        mode_opt = opt))
 
+    expect_equal(lyr_out$getFeatureCount(), 40)
+    lyr_out$close()
+    rm(lyr_out)
 
+    # clip
+    test_lyr_name <- "clip_test"
+    expect_no_error(lyr_out <- ogr_proc(mode = "Clip",
+                                        input_lyr = lyr,
+                                        method_lyr = lyr2,
+                                        out_dsn = dsn_tmp,
+                                        out_lyr_name = test_lyr_name,
+                                        out_geom_type = "MULTIPOLYGON",
+                                        mode_opt = opt))
+
+    expect_equal(lyr_out$getFeatureCount(), 5)
+    lyr_out$close()
+    rm(lyr_out)
+
+    # identity
+    test_lyr_name <- "identity_test"
+    expect_no_error(lyr_out <- ogr_proc(mode = "Identity",
+                                        input_lyr = lyr,
+                                        method_lyr = lyr2,
+                                        out_dsn = dsn_tmp,
+                                        out_lyr_name = test_lyr_name,
+                                        out_geom_type = "MULTIPOLYGON",
+                                        mode_opt = opt))
+
+    expect_equal(lyr_out$getFeatureCount(), 45)
+    lyr_out$close()
+    rm(lyr_out)
+
+    # update
+    test_lyr_name <- "update_test"
+    expect_no_error(lyr_out <- ogr_proc(mode = "Update",
+                                        input_lyr = lyr,
+                                        method_lyr = lyr2,
+                                        out_dsn = dsn_tmp,
+                                        out_lyr_name = test_lyr_name,
+                                        out_geom_type = "MULTIPOLYGON",
+                                        mode_opt = "PROMOTE_TO_MULTI=YES"))
+
+    expect_equal(lyr_out$getFeatureCount(), 41)
+    lyr_out$close()
+    rm(lyr_out)
 
     # shapefile output
     shp_tmp <- tempfile(fileext = ".shp")
@@ -156,5 +209,6 @@ test_that("ogr_proc works", {
 
     lyr$close()
     lyr2$close()
-    unlink(dsn_tmp)
+    deleteDataset(dsn_tmp)
+    deleteDataset(shp_tmp)
 })
