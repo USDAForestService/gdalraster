@@ -79,7 +79,7 @@
     
     
 <p>Chris Toney (chris.toney at usda.gov)</p>
-<p>Last modified: 2024-07-23</p>
+<p>Last modified: 2024-07-30</p>
 <p>Comment/discussion: <a href="https://github.com/USDAForestService/gdalraster/issues/241" class="external-link uri">https://github.com/USDAForestService/gdalraster/issues/241</a></p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
@@ -840,99 +840,71 @@ class definition below):</p>
 <span></span>
 <span><span class="co"># MTBS fires in Yellowstone National Park 1984-2022</span></span>
 <span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
-<span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># largest 1988 fire (FID = 7 from the example above)</span></span>
-<span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getFeature</span><span class="op">(</span><span class="fl">7</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 10</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 7 </span></span>
-<span><span class="co">#&gt;  $ event_id    : chr "WY4470811082119880722"</span></span>
-<span><span class="co">#&gt;  $ incid_name  : chr "NORTH FORK"</span></span>
-<span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10014217 </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 563527 </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.678"</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.716"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "1988-07-22"</span></span>
-<span><span class="co">#&gt;  $ ig_year     : int 1988</span></span>
-<span></span>
-<span><span class="co"># get a second layer for 2000-2022 fires</span></span>
-<span><span class="co"># the layer argument can be a sql statement</span></span>
-<span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT FID, * FROM mtbs_perims WHERE ig_year &gt;= 2000 ORDER BY mtbs_perims.ig_year"</span></span>
-<span><span class="va">lyr2</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="va">sql</span><span class="op">)</span></span>
-<span><span class="va">lyr2</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># layer filtered to fires since year 2000</span></span>
+<span><span class="va">lyr1</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span>
+<span><span class="va">lyr1</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year &gt;= 2000"</span><span class="op">)</span></span>
+<span><span class="va">lyr1</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 40</span></span>
 <span></span>
-<span><span class="co"># create an output layer using a temporary in-memory dataset</span></span>
-<span><span class="va">dsn_out</span> <span class="op">&lt;-</span> <span class="st">"/vsimem/lyr_proc_tmp.gpkg"</span></span>
-<span><span class="va">srs</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/ogr_manage.html">ogr_ds_create</a></span><span class="op">(</span><span class="st">"GPKG"</span>, <span class="va">dsn_out</span>, <span class="st">"result_layer"</span>,</span>
-<span>              geom_type <span class="op">=</span> <span class="st">"Polygon"</span>,</span>
-<span>              srs <span class="op">=</span> <span class="va">srs</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu"><a href="../reference/ogr_manage.html">ogr_ds_exists</a></span><span class="op">(</span><span class="va">dsn_out</span>, with_update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="fu"><a href="../reference/ogr_manage.html">ogr_layer_exists</a></span><span class="op">(</span><span class="va">dsn_out</span>, <span class="st">"result_layer"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="co"># second layer for the 1988 North Fork fire perimeter</span></span>
+<span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"SELECT incid_name, ig_year, geom "</span>,</span>
+<span>              <span class="st">"FROM mtbs_perims "</span>,</span>
+<span>              <span class="st">"WHERE incid_name = 'NORTH FORK'"</span><span class="op">)</span></span>
+<span><span class="va">lyr2</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="va">sql</span><span class="op">)</span></span>
+<span><span class="va">lyr2</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 1</span></span>
 <span></span>
-<span><span class="va">lyr_out</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn_out</span>, <span class="st">"result_layer"</span>, read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">lyr_out</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
+<span><span class="co"># intersect to obtain areas re-burned since 2000</span></span>
+<span><span class="va">tmp_dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".gpkg"</span><span class="op">)</span></span>
+<span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INPUT_PREFIX=layer1_"</span>,</span>
+<span>         <span class="st">"METHOD_PREFIX=layer2_"</span>,</span>
+<span>         <span class="st">"PROMOTE_TO_MULTI=YES"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># intersection of lyr and lyr2, with result in lyr_out</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">layerIntersection</span><span class="op">(</span><span class="va">lyr2</span>, <span class="va">lyr_out</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span>, options <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span><span class="va">lyr_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ogr_proc.html">ogr_proc</a></span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"Intersection"</span>, </span>
+<span>                    input_lyr <span class="op">=</span> <span class="va">lyr1</span>,</span>
+<span>                    method_lyr <span class="op">=</span> <span class="va">lyr2</span>, </span>
+<span>                    out_dsn <span class="op">=</span> <span class="va">tmp_dsn</span>,</span>
+<span>                    out_lyr_name <span class="op">=</span> <span class="st">"north_fork_reburned"</span>,</span>
+<span>                    out_geom_type <span class="op">=</span> <span class="st">"MULTIPOLYGON"</span>,</span>
+<span>                    mode_opt <span class="op">=</span> <span class="va">opt</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span></span>
-<span><span class="va">lyr_out</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 86</span></span>
-<span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="va">lyr_out</span><span class="op">$</span><span class="fu">getLayerDefn</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co"># combined attributes</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "input_event_id"      "input_incid_name"    "input_incid_type"   </span></span>
-<span><span class="co">#&gt;  [4] "input_map_id"        "input_burn_bnd_ac"   "input_burn_bnd_lat" </span></span>
-<span><span class="co">#&gt;  [7] "input_burn_bnd_lon"  "input_ig_date"       "input_ig_year"      </span></span>
-<span><span class="co">#&gt; [10] "method_event_id"     "method_incid_name"   "method_incid_type"  </span></span>
-<span><span class="co">#&gt; [13] "method_map_id"       "method_burn_bnd_ac"  "method_burn_bnd_lat"</span></span>
-<span><span class="co">#&gt; [16] "method_burn_bnd_lon" "method_ig_date"      "method_ig_year"     </span></span>
-<span><span class="co">#&gt; [19] "geom"</span></span>
+<span><span class="co"># result layer has attributes of the input and the method layers</span></span>
+<span><span class="va">lyr_out</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"TYPE_NAME"</span></span>
+<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr_out</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
+<span><span class="co">#&gt;   FID       layer1_event_id layer1_incid_name layer1_incid_type layer1_map_id</span></span>
+<span><span class="co">#&gt; 1   1 WY4484611038620100914          ANTELOPE          Wildfire      10013735</span></span>
+<span><span class="co">#&gt; 2   2 WY4466711063920120810            CYGNET          Wildfire          1961</span></span>
+<span><span class="co">#&gt; 3   3 WY4474311097820160809             MAPLE          Wildfire      10005020</span></span>
+<span><span class="co">#&gt; 4   4 WY4492611093820160805              FAWN          Wildfire      10005117</span></span>
+<span><span class="co">#&gt; 5   5 WY4457911058620160826           CENTRAL          Wildfire      10014143</span></span>
+<span><span class="co">#&gt;   layer1_burn_bnd_ac layer1_burn_bnd_lat layer1_burn_bnd_lon layer1_ig_date</span></span>
+<span><span class="co">#&gt; 1               4888              44.839            -110.368     2010-09-14</span></span>
+<span><span class="co">#&gt; 2               3188              44.682            -110.622     2012-08-10</span></span>
+<span><span class="co">#&gt; 3             103193              44.731            -110.982     2016-08-09</span></span>
+<span><span class="co">#&gt; 4               3161              44.936            -110.913     2016-08-05</span></span>
+<span><span class="co">#&gt; 5               2340              44.595            -110.574     2016-08-26</span></span>
+<span><span class="co">#&gt;   layer1_ig_year layer2_incid_name layer2_ig_year         geom</span></span>
+<span><span class="co">#&gt; 1           2010        NORTH FORK           1988 MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; 2           2012        NORTH FORK           1988 MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; 3           2016        NORTH FORK           1988 MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; 4           2016        NORTH FORK           1988 MULTIPOLYGON</span></span>
+<span><span class="co">#&gt; 5           2016        NORTH FORK           1988 MULTIPOLYGON</span></span>
 <span></span>
-<span><span class="co"># we don't have vector plotting yet, so rasterize and use plot_raster()</span></span>
-<span><span class="va">out_file</span> <span class="op">&lt;-</span> <span class="st">"/vsimem/result_layer.tif"</span></span>
-<span><span class="fu"><a href="../reference/rasterize.html">rasterize</a></span><span class="op">(</span>src_dsn <span class="op">=</span> <span class="va">dsn_out</span>,</span>
-<span>          dstfile <span class="op">=</span> <span class="va">out_file</span>,</span>
-<span>          layer <span class="op">=</span> <span class="st">"result_layer"</span>,</span>
-<span>          burn_attr <span class="op">=</span> <span class="st">"method_ig_year"</span>,</span>
-<span>          tr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">90</span>,<span class="fl">90</span><span class="op">)</span>,</span>
-<span>          tap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
-<span>          dtName <span class="op">=</span> <span class="st">"Int16"</span>,</span>
-<span>          dstnodata <span class="op">=</span> <span class="op">-</span><span class="fl">9999</span>,</span>
-<span>          init <span class="op">=</span> <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
-<span></span>
-<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">out_file</span><span class="op">)</span></span>
-<span><span class="va">pal</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pal_viridis.html" class="external-link">viridis_pal</a></span><span class="op">(</span>end <span class="op">=</span> <span class="fl">0.8</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
-<span><span class="va">ramp</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/colour_ramp.html" class="external-link">colour_ramp</a></span><span class="op">(</span><span class="va">pal</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span>, col_map_fn <span class="op">=</span> <span class="va">ramp</span>, na_col <span class="op">=</span> <span class="st">"#d9d9d9"</span>,</span>
-<span>            main<span class="op">=</span><span class="st">"2000-2022 re-burn within the 1988 North Fork perimeter"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="img/ynp_mtbs_lyr_int_ex.png"><!-- --></p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># clean up</span></span>
+<span><span class="va">lyr1</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr2</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr_out</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">dsn_out</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
-<span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">out_file</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p><sup>Created on 2024-07-12 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
+<span><span class="fu"><a href="../reference/deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">tmp_dsn</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
+<p><sup>Created on 2024-07-30 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
 </div>
 <div class="section level2">
 <h2 id="example-worldcover-sentinel-2-composites">Example: WorldCover Sentinel-2 composites<a class="anchor" aria-label="anchor" href="#example-worldcover-sentinel-2-composites"></a>
 </h2>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## WorldCover Sentinel-2 annual composites</span></span>
 <span><span class="co">## see: https://blog.vito.be/remotesensing/worldcover-annual-composites</span></span>
 <span><span class="co">## tile index lookup on remote filesystem and obtain raster data</span></span>
@@ -1072,7 +1044,7 @@ class definition below):</p>
 <span>            ylab <span class="op">=</span> <span class="st">"latitude"</span>,</span>
 <span>            main <span class="op">=</span> <span class="va">txt</span><span class="op">)</span></span></code></pre></div>
 <p><img src="img/worldcov2021_N44W110_S2RGBNIR_ex.png"><!-- --></p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
@@ -1173,6 +1145,9 @@ and add specifications under “Feature retrieval” and “Geometry”
 capabilities with <code>TRUE</code>|<code>FALSE</code>, class method
 version of <code><a href="../reference/ogr_manage.html">ogr_layer_test_cap()</a></code> (2024-07-21)</li>
 <li>branch gdalvector was merged into main (2024-07-23)</li>
+<li>added <code><a href="../reference/ogr_proc.html">ogr_proc()</a></code>, interface to GDAL OGR facilities for
+vector geoprocessing; updated “Example: layer geoprocessing”
+(2024-07-30)</li>
 </ul>
 </div>
 <div class="section level2">
