@@ -126,6 +126,7 @@ reference:
   - ogr_def_field
   - ogr_def_geom_field
   - ogr_def_layer
+  - ogr_proc
 - subtitle: Virtual file systems
 - contents:
   - vsi_clear_path_options

@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9110 (dev)
+# gdalraster 1.11.1.9120 (dev)
+
+* add `ogr_proc()`: GDAL OGR facilities for vector geoprocessing (2024-07-28)
 
 * `ogr_execute_sql()`: now returns an object of class `GDALVector` for SQL SELECT statements (2024-07-24)
 

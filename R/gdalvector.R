@@ -15,7 +15,7 @@
 #' Vector API.
 #'
 #' **Class `GDALVector` is currently under development**. An initial
-#' implemetation supporting read access was added in gdalraster 1.11.1.9100.
+#' implementation supporting read access was added in gdalraster 1.11.1.9100.
 #' A working document with draft specifications is available at:\cr
 #' \url{https://usdaforestservice.github.io/gdalraster/articles/gdalvector-draft.html}\cr
 #' and discussion thread/status updates at:\cr
@@ -235,7 +235,7 @@
 #' capabilities of the database may be used to to interpret the WHERE clause,
 #' in which case the capabilities will be broader than those of OGR SQL.
 #' Note that installing a query string will generally result in resetting the
-#' current reading position (as with `$resetReading()` decribed below).
+#' current reading position (as with `$resetReading()` described below).
 #' The `query` parameter may be set to empty string (`""`) to clear the current
 #' attribute filter.
 #'
