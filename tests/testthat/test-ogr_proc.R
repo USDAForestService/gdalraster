@@ -9,6 +9,10 @@ test_that("ogr_proc works", {
 
     dsn_tmp <- tempfile(fileext = ".gpkg")
 
+    opt <- c("INPUT_PREFIX=input_",
+             "METHOD_PREFIX=method_",
+             "PROMOTE_TO_MULTI=YES")
+
     # intersection
     test_lyr_name <- "intersect_test"
 
@@ -18,7 +22,7 @@ test_that("ogr_proc works", {
                                         out_dsn = dsn_tmp,
                                         out_lyr_name = test_lyr_name,
                                         out_geom_type = "MULTIPOLYGON",
-                                        mode_opt = "PROMOTE_TO_MULTI=YES"))
+                                        mode_opt = opt))
 
     expect_true(is(lyr_out, "Rcpp_GDALVector"))
     expect_equal(lyr_out$getGeomType(), "MULTIPOLYGON")
@@ -46,7 +50,7 @@ test_that("ogr_proc works", {
                                         out_dsn = dsn_tmp,
                                         out_lyr_name = test_lyr_name,
                                         out_geom_type = "MULTIPOLYGON",
-                                        mode_opt = "PROMOTE_TO_MULTI=YES"))
+                                        mode_opt = opt))
 
     lyr_out$returnGeomAs <- "WKT"
     d <- lyr_out$fetch(-1)
@@ -65,7 +69,7 @@ test_that("ogr_proc works", {
                                         out_dsn = dsn_tmp,
                                         out_lyr_name = test_lyr_name,
                                         out_geom_type = "MULTIPOLYGON",
-                                        mode_opt = "PROMOTE_TO_MULTI=YES",
+                                        mode_opt = opt,
                                         overwrite = TRUE))
 
     lyr_out$returnGeomAs <- "WKT"
@@ -86,7 +90,7 @@ test_that("ogr_proc works", {
                                         out_dsn = dsn_tmp,
                                         out_lyr_name = test_lyr_name,
                                         out_geom_type = "MULTIPOLYGON",
-                                        mode_opt = "PROMOTE_TO_MULTI=YES"))
+                                        mode_opt = opt))
 
     expect_equal(lyr_out$getFeatureCount(), 46)
     lyr_out$close()
@@ -100,7 +104,7 @@ test_that("ogr_proc works", {
                                         out_dsn = dsn_tmp,
                                         out_lyr_name = test_lyr_name,
                                         out_geom_type = "MULTIPOLYGON",
-                                        mode_opt = "PROMOTE_TO_MULTI=YES"))
+                                        mode_opt = opt))
 
     expect_equal(lyr_out$getFeatureCount(), 41)
     lyr_out$close()
@@ -116,7 +120,7 @@ test_that("ogr_proc works", {
                                         method_lyr = lyr2,
                                         out_dsn = shp_tmp,
                                         out_geom_type = "MULTIPOLYGON",
-                                        mode_opt = "PROMOTE_TO_MULTI=YES"))
+                                        mode_opt = opt))
 
     # SHPT_POLYGON shapefiles, reported as layers of type wkbPolygon
     expect_equal(lyr_out$getGeomType(), "POLYGON")
@@ -137,7 +141,7 @@ test_that("ogr_proc works", {
                                         method_lyr = lyr2,
                                         out_dsn = shp_tmp,
                                         out_geom_type = "MULTIPOLYGON",
-                                        mode_opt = "PROMOTE_TO_MULTI=YES",
+                                        mode_opt = opt,
                                         overwrite = TRUE))
 
     lyr_out$returnGeomAs <- "WKT"
