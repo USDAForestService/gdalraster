@@ -94,7 +94,7 @@ void GDALVector::open(bool read_only) {
 
     OGRGeometryH hGeom_filter = nullptr;
     if (m_spatial_filter != "") {
-        char* pszWKT = (char*) m_spatial_filter.c_str();
+        char *pszWKT = (char *) m_spatial_filter.c_str();
         if (OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom_filter) !=
                 OGRERR_NONE) {
             if (hGeom_filter != nullptr)
@@ -114,7 +114,7 @@ void GDALVector::open(bool read_only) {
     if (m_hDataset == nullptr)
         Rcpp::stop("open dataset failed");
 
-    const char* pszDialect = m_dialect.c_str();
+    const char *pszDialect = m_dialect.c_str();
 
     if (m_layer_name == "") {
         m_is_sql = false;
@@ -397,7 +397,7 @@ Rcpp::List GDALVector::getLayerDefn() const {
 void GDALVector::setAttributeFilter(std::string query) {
     checkAccess_(GA_ReadOnly);
 
-    const char* query_in = nullptr;
+    const char *query_in = nullptr;
     if (query != "")
         query_in = query.c_str();
 
@@ -407,6 +407,32 @@ void GDALVector::setAttributeFilter(std::string query) {
         m_attr_filter = query;
 }
 
+std::string GDALVector::getAttributeFilter() const {
+    checkAccess_(GA_ReadOnly);
+
+    return(m_attr_filter);
+}
+
+void GDALVector::setSpatialFilter(std::string wkt) {
+    checkAccess_(GA_ReadOnly);
+
+    OGRGeometryH hFilterGeom = nullptr;
+    if (wkt != "") {
+        char *pszWKT = (char *) wkt.c_str();
+        if (OGR_G_CreateFromWkt(&pszWKT, nullptr, &hFilterGeom) !=
+                OGRERR_NONE) {
+            if (hFilterGeom != nullptr)
+                OGR_G_DestroyGeometry(hFilterGeom);
+            Rcpp::stop("failed to create geometry from 'wkt'");
+        }
+    }
+
+    OGR_L_SetSpatialFilter(m_hLayer, hFilterGeom);
+
+    if (hFilterGeom != nullptr)
+        OGR_G_DestroyGeometry(hFilterGeom);
+}
+
 void GDALVector::setSpatialFilterRect(Rcpp::NumericVector bbox) {
     checkAccess_(GA_ReadOnly);
 
@@ -414,6 +440,23 @@ void GDALVector::setSpatialFilterRect(Rcpp::NumericVector bbox) {
         Rcpp::stop("'bbox' has one or more 'NA' values");
 
     OGR_L_SetSpatialFilterRect(m_hLayer, bbox[0], bbox[1], bbox[2], bbox[3]);
+}
+
+std::string GDALVector::getSpatialFilter() const {
+    checkAccess_(GA_ReadOnly);
+
+    OGRGeometryH hFilterGeom = nullptr;
+    hFilterGeom = OGR_L_GetSpatialFilter(m_hLayer);
+    if (hFilterGeom != nullptr) {
+        char *pszWKT = nullptr;
+        OGR_G_ExportToWkt(hFilterGeom, &pszWKT);
+        std::string wkt(pszWKT);
+        CPLFree(pszWKT);
+        return wkt;
+    }
+    else {
+        return "";
+    }
 }
 
 void GDALVector::clearSpatialFilter() {
@@ -789,7 +832,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                     Rcpp::CharacterVector col = df[nFields + 1 + i];
                     OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
                     if (hGeom != nullptr) {
-                        char* pszWKT;
+                        char *pszWKT;
                         if (EQUAL(returnGeomAs.c_str(), "WKT"))
                             OGR_G_ExportToWkt(hGeom, &pszWKT);
                         else if (EQUAL(returnGeomAs.c_str(), "WKT_ISO"))
@@ -1369,8 +1412,14 @@ RCPP_MODULE(mod_GDALVector) {
         "Fetch the schema information for this layer")
     .method("setAttributeFilter", &GDALVector::setAttributeFilter,
         "Set a new attribute query")
+    .const_method("getAttributeFilter", &GDALVector::getAttributeFilter,
+        "Get the attribute filter string (or empty string if not set")
+    .method("setSpatialFilter", &GDALVector::setSpatialFilter,
+        "Set a new spatial filter from a geometry in WKT format")
     .method("setSpatialFilterRect", &GDALVector::setSpatialFilterRect,
         "Set a new rectangular spatial filter")
+    .const_method("getSpatialFilter", &GDALVector::getSpatialFilter,
+        "Return the current spatial filter of this layer as WKT")
     .method("clearSpatialFilter", &GDALVector::clearSpatialFilter,
         "Clear the current spatial filter")
     .method("getFeatureCount", &GDALVector::getFeatureCount,
