@@ -8,7 +8,7 @@ articles:
   raster-api-tutorial: raster-api-tutorial.html
   raster-attribute-tables: raster-attribute-tables.html
   articles/raster-display: raster-display.html
-last_built: 2024-07-31T04:36Z
+last_built: 2024-07-31T06:15Z
 urls:
   reference: https://usdaforestservice.github.io/gdalraster/reference
   article: https://usdaforestservice.github.io/gdalraster/articles
