@@ -40,12 +40,10 @@
 #' have attributes from both the input and method layers.
 #' * `Update`: The update method creates a layer which adds features into the
 #' input layer from the method layer, possibly cutting features in the input
-#' layer. The result layer contains features whose geometries represent areas
-#' that are either in the input layer or in the method layer. The features in
-#' the result layer have areas of the features of the method layer or those
-#' areas of the features of the input layer that are not covered by the method
-#' layer. The features of the result layer get their attributes from the input
-#' layer. By default the output layer has attributes only from the input layer.
+#' layer. The features in the output layer have areas of the features of the
+#' method layer or those areas of the features of the input layer that are not
+#' covered by the method layer. The features of the output layer get their
+#' attributes from the input layer.
 #' * `Clip`: The clip method creates a layer which has features from the input
 #' layer clipped to the areas of the features in the method layer. By default
 #' the output layer has attributes of the input layer.
