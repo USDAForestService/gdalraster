@@ -65,6 +65,7 @@ class GDALVector {
     Rcpp::List getLayerDefn() const;
 
     void setAttributeFilter(std::string query);
+    std::string getAttributeFilter() const;
     void setSpatialFilterRect(Rcpp::NumericVector bbox);
     void clearSpatialFilter();
 

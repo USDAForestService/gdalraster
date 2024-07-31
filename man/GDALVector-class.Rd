@@ -91,6 +91,7 @@ lyr$bbox()
 lyr$getLayerDefn()
 
 lyr$setAttributeFilter(query)
+lyr$getAttributeFilter()
 lyr$setSpatialFilterRect(bbox)
 lyr$clearSpatialFilter()
 
@@ -253,6 +254,10 @@ Note that installing a query string will generally result in resetting the
 current reading position (as with \verb{$resetReading()} described below).
 The \code{query} parameter may be set to empty string (\code{""}) to clear the current
 attribute filter.
+
+\code{getAttributeFilter()}\cr
+Returns the attribute query string currently in use, or empty string (\code{""})
+if an attribute filter is not set.
 
 \code{$setSpatialFilterRect(bbox)}\cr
 Sets a new rectangular spatial filter. This method sets a rectangle to be

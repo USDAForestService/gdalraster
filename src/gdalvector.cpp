@@ -407,6 +407,12 @@ void GDALVector::setAttributeFilter(std::string query) {
         m_attr_filter = query;
 }
 
+std::string GDALVector::getAttributeFilter() const {
+    checkAccess_(GA_ReadOnly);
+
+    return(m_attr_filter);
+}
+
 void GDALVector::setSpatialFilterRect(Rcpp::NumericVector bbox) {
     checkAccess_(GA_ReadOnly);
 
@@ -1369,6 +1375,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Fetch the schema information for this layer")
     .method("setAttributeFilter", &GDALVector::setAttributeFilter,
         "Set a new attribute query")
+    .const_method("getAttributeFilter", &GDALVector::getAttributeFilter,
+        "Get the attribute filter string (or empty string if not set")
     .method("setSpatialFilterRect", &GDALVector::setSpatialFilterRect,
         "Set a new rectangular spatial filter")
     .method("clearSpatialFilter", &GDALVector::clearSpatialFilter,
