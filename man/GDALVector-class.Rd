@@ -92,7 +92,9 @@ lyr$getLayerDefn()
 
 lyr$setAttributeFilter(query)
 lyr$getAttributeFilter()
+lyr$setSpatialFilter(wkt)
 lyr$setSpatialFilterRect(bbox)
+lyr$getSpatialFilter()
 lyr$clearSpatialFilter()
 
 lyr$getFeatureCount()
@@ -259,6 +261,19 @@ attribute filter.
 Returns the attribute query string currently in use, or empty string (\code{""})
 if an attribute filter is not set.
 
+\code{$setSpatialFilter(wkt)}\cr
+Sets a new spatial filter from a geometry in WKT format. This method sets
+the geometry to be used as a spatial filter when fetching features via the
+\verb{$getNextFeature()} or \verb{$fetch()} methods. Only features that geometrically
+intersect the filter geometry will be returned. Currently this test may be
+inaccurately implemented (depending on the vector format driver), but it is
+guaranteed that all features whose envelope overlaps the envelope of the
+spatial filter will be returned. This can result in more shapes being
+returned that should strictly be the case.
+\code{wkt} is a character string containing a WKT geometry in the same coordinate
+system as the layer. An empty string (\code{""}) may be passed indicating that
+the current spatial filter should be cleared, but no new one instituted.
+
 \code{$setSpatialFilterRect(bbox)}\cr
 Sets a new rectangular spatial filter. This method sets a rectangle to be
 used as a spatial filter when fetching features via the \verb{$getNextFeature()}
@@ -267,6 +282,10 @@ rectangle will be returned.
 \code{bbox} is a numeric vector of length four containing xmin, ymin, xmax, ymax
 in the same coordinate system as the layer as a whole (as returned by
 \verb{$getSpatialRef()}).
+
+\code{$getSpatialFilter()}\cr
+Returns the current spatial filter geometry as a WKT string, or empty string
+(\code{""}) if a spatial filter is not set.
 
 \code{$clearSpatialFilter()}\cr
 Clears a spatial filter that was set with \verb{$setSpatialFilterRect()}.
