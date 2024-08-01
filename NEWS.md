@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9120 (dev)
+# gdalraster 1.11.1.9130 (dev)
+
+* add GDALVector class methods: `getAttributeFilter()`, `setSpatialFilter()`, `getSpatialFilter()` (2024-07-30) 
 
 * add `ogr_proc()`: GDAL OGR facilities for vector geoprocessing (2024-07-28)
 
