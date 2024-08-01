@@ -4,15 +4,16 @@
 #' GDAL OGR facilities for vector geoprocessing
 #'
 #' @description
-#' `ogr_proc()` performs various geoprocessing operations on vector layers
-#' (intersection, union, clip, etc). It provides an interface to the GDAL API
-#' methods for these operations (`OGRLayer::Intersection()`, etc).
+#' `ogr_proc()` performs GIS overlay operations on vector layers
+#' (\url{https://en.wikipedia.org/wiki/Vector_overlay}). It provides
+#' an interface to the GDAL API methods for these operations
+#' (`OGRLayer::Intersection()`, `OGRLayer::Union()`, etc).
 #' Inputs are given as objects of class [`GDALVector`][GDALVector], which
 #' may have spatial and/or attribute filters applied.
 #' The output layer will be created if it does not exist, but output can also
 #' be appended to an existing layer, or written to an existing empty layer that
 #' has a custom schema defined.
-#' The `ogr_proc()` interface is basically a port of the
+#' `ogr_proc()` is basically a port of the
 #' [`ogr_layer_algebra`](https://gdal.org/programs/ogr_layer_algebra.html#ogr-layer-algebra)
 #' utility in the GDAL Python bindings.
 #'
@@ -180,7 +181,7 @@
 #'                     out_geom_type = "MULTIPOLYGON",
 #'                     mode_opt = opt)
 #'
-#' # result layer has attributes of the input and the method layers
+#' # the output layer has attributes of both the input and method layers
 #' lyr_out$returnGeomAs <- "TYPE_NAME"
 #' d <- lyr_out$fetch(-1)
 #' print(d)
