@@ -516,6 +516,26 @@ SEXP GDALVector::getNextFeature() {
     }
 }
 
+void GDALVector::setNextByIndex(double i) {
+    checkAccess_(GA_ReadOnly);
+
+    GIntBig index_in = 0;
+    if (i < 0 || Rcpp::NumericVector::is_na(i) || std::isnan(i)) {
+        Rcpp::stop("'i' must be a whole number >= 0");
+    }
+    else if (std::isinf(i) || i >= 9007199254740992) {
+        Rcpp::stop("'i' is out of range");
+    }
+    else {
+        index_in = static_cast<GIntBig>(std::trunc(i));
+    }
+
+    if (OGR_L_SetNextByIndex(m_hLayer, index_in) != OGRERR_NONE) {
+        // Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        Rcpp::stop("failed to set cursor position by index");
+    }
+}
+
 SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
     // fid must be an R numeric vector of length 1, i.e., a scalar but using
     // NumericVector since it can carry the class attribute for integer64.
@@ -595,7 +615,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         fetch_num = OGR_L_GetFeatureCount(m_hLayer, true);
     }
     else if (n >= 0) {
-        if (n > 9007199254740992)
+        if (n >= 9007199254740992)
             Rcpp::stop("'n' is out of range");
         fetch_all = false;
         fetch_num = static_cast<size_t>(std::trunc(n));
@@ -1520,6 +1540,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Fetch the feature count in this layer")
     .method("getNextFeature", &GDALVector::getNextFeature,
         "Fetch the next available feature from this layer")
+    .method("setNextByIndex", &GDALVector::setNextByIndex,
+        "Move read cursor to the i'th feature")
     .method("getFeature", &GDALVector::getFeature,
         "Fetch a feature by its identifier")
     .method("resetReading", &GDALVector::resetReading,

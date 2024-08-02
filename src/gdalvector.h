@@ -75,6 +75,7 @@ class GDALVector {
 
     double getFeatureCount();
     SEXP getNextFeature();
+    void setNextByIndex(double i);
     // fid must be a length-1 numeric vector, since numeric vector can carry
     // the class attribute for integer64:
     SEXP getFeature(Rcpp::NumericVector fid);
