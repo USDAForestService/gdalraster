@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9140</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9150</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -184,6 +184,7 @@ settings which can be changed as needed during the lifetime of the object.</p>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">setNextByIndex</span><span class="op">(</span><span class="va">i</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeature</span><span class="op">(</span><span class="va">fid</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">resetReading</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
@@ -376,7 +377,7 @@ may not be exact. This method forces a count in the underlying API call
 (i.e., <code>bForce = TRUE</code> in the call to <code>OGR_L_GetFeatureCount()</code>). Note that
 some vector drivers will actually scan the entire layer once to count
 features. The <code>FastFeatureCount</code> element in the list returned by
-<code>$testCapability()</code> can be checked if this might be a concern.
+the <code>$testCapability()</code> method can be checked if this might be a concern.
 The number of features returned takes into account the spatial and/or
 attribute filters. Some driver implementations of this method may alter the
 read cursor of the layer.</p>
@@ -388,6 +389,21 @@ The <code>$resetReading()</code> method can be used to start at the beginning ag
 Returns a list with the unique feature identifier (FID), the attribute and
 geometry field names, and their values. <code>NULL</code> is returned if no more
 features are available.</p>
+<p><code>$setNextByIndex(i)</code><br>
+Moves the read cursor to the <code>i</code>th feature in the current result set
+(with 0-based indexing).
+This method allows positioning of a layer such that a call to
+<code>$getNextFeature()</code> or <code>fetch()</code> will read the requested feature(s), where
+<code>i</code> is an absolute index into the current result set. So, setting <code>i = 3</code>
+would mean the next feature read with <code>$getNextFeature()</code> would have been
+the 4th feature read if sequential reading took place from the beginning of
+the layer, including accounting for spatial and attribute filters.
+This method is not implemented efficiently by all vector format drivers. The
+default implementation simply resets reading to the beginning and then calls
+<code>GetNextFeature()</code> <code>i</code> times.
+To determine if fast seeking is available on the current layer, check
+the <code>FastSetNextByIndex</code> element in the list returned by the
+<code>$testCapability()</code> method. No return value, called for side effect.</p>
 <p><code>$getFeature(fid)</code><br>
 Returns a feature by its identifier. The value of <code>fid</code> must be a numeric
 scalar, optionally carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class attribute.
@@ -477,20 +493,20 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55dcb6135fe0&gt; of class 'GDALVector' &lt;0x55dcaf3de160&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x5583d76f2ac0&gt; of class 'GDALVector' &lt;0x5583d229b880&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 3 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "NONE"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 50 methods, of which 36 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 51 methods, of which 37 are  possibly relevant:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    bbox, clearSpatialFilter, close, fetch, finalize, getAttributeFilter,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getDriverLongName, getDriverShortName, getDsn, getFIDColumn, getFeature,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getFeatureCount, getFileList, getGeomType, getGeometryColumn, getLayerDefn,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getName, getNextFeature, getSpatialFilter, getSpatialRef, initialize,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    isOpen, layerClip, layerErase, layerIdentity, layerIntersection,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    layerSymDifference, layerUnion, layerUpdate, open, resetReading,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setAttributeFilter, setIgnoredFields, setSpatialFilter,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setAttributeFilter, setIgnoredFields, setNextByIndex, setSpatialFilter,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilterRect, testCapability</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># dataset info</span></span></span>
@@ -499,7 +515,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpRaJC8s/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp2BPIbW/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
