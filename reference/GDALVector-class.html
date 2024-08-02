@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9130</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9140</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -175,6 +175,8 @@ settings which can be changed as needed during the lifetime of the object.</p>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="va">query</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getAttributeFilter</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">setIgnoredFields</span><span class="op">(</span><span class="va">fields</span><span class="op">)</span></span>
+<span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSpatialFilter</span><span class="op">(</span><span class="va">wkt</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSpatialFilterRect</span><span class="op">(</span><span class="va">bbox</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialFilter</span><span class="op">(</span><span class="op">)</span></span>
@@ -326,9 +328,22 @@ Note that installing a query string will generally result in resetting the
 current reading position (as with <code>$resetReading()</code> described below).
 The <code>query</code> parameter may be set to empty string (<code>""</code>) to clear the current
 attribute filter.</p>
-<p><code>getAttributeFilter()</code><br>
+<p><code>$getAttributeFilter()</code><br>
 Returns the attribute query string currently in use, or empty string (<code>""</code>)
 if an attribute filter is not set.</p>
+<p><code>$setIgnoredFields(fields)</code><br>
+Set which fields can be omitted when retrieving features from the layer.
+The <code>fields</code> argument is a character vector of field names.
+If the format driver supports this functionality (testable using
+<code>$testCapability()$IgnoreFields</code>), it will not fetch the specified fields
+in subsequent calls to <code>$getFeature()</code> / <code>$getNextFeature()</code> / <code>$fetch()</code>,
+and thus save some processing time and/or bandwidth. Besides field names of
+the layer, the following special fields can be passed: <code>"OGR_GEOMETRY"</code> to
+ignore geometry and <code>"OGR_STYLE"</code> to ignore layer style. By default, no
+fields are ignored. Note that fields that are used in an attribute filter
+should generally not be set as ignored fields, as most drivers (such as
+those relying on the OGR SQL engine) will be unable to correctly evaluate
+the attribute filter. No return value, called for side effects.</p>
 <p><code>$setSpatialFilter(wkt)</code><br>
 Sets a new spatial filter from a geometry in WKT format. This method sets
 the geometry to be used as a spatial filter when fetching features via the
@@ -462,20 +477,21 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x564279b7ebc0&gt; of class 'GDALVector' &lt;0x56426de9c720&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x5567b59fdd90&gt; of class 'GDALVector' &lt;0x5567abe2a700&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 3 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "NONE"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 49 methods, of which 35 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 50 methods, of which 36 are  possibly relevant:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    bbox, clearSpatialFilter, close, fetch, finalize, getAttributeFilter,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getDriverLongName, getDriverShortName, getDsn, getFIDColumn, getFeature,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getFeatureCount, getFileList, getGeomType, getGeometryColumn, getLayerDefn,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getName, getNextFeature, getSpatialFilter, getSpatialRef, initialize,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    isOpen, layerClip, layerErase, layerIdentity, layerIntersection,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    layerSymDifference, layerUnion, layerUpdate, open, resetReading,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setAttributeFilter, setSpatialFilter, setSpatialFilterRect, testCapability</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setAttributeFilter, setIgnoredFields, setSpatialFilter,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilterRect, testCapability</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># dataset info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -483,7 +499,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpPMSvRi/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpSJjOf9/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -536,6 +552,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $AlterFieldDefn</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $IgnoreFields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $DeleteFeature</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
