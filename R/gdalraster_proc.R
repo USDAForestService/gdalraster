@@ -1575,7 +1575,7 @@ polygonize <- function(raster_file,
         }
         if (!deleted) {
             if (.ogr_ds_layer_count(out_dsn) == 1) {
-                if (utils::file_test("-f", out_dsn))
+                if (vsi_stat(out_dsn, "type") == "file")
                     deleted <- deleteDataset(out_dsn)
             }
         }
