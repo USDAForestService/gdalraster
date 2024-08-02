@@ -232,6 +232,8 @@ Rcpp::List GDALVector::testCapability() const {
         Rcpp::Named("AlterGeomFieldDefn") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCAlterGeomFieldDefn)),
 #endif
+        Rcpp::Named("IgnoreFields") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCIgnoreFields)),
         Rcpp::Named("DeleteFeature") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCDeleteFeature)),
         Rcpp::Named("StringsAsUTF8") = static_cast<bool>(
@@ -413,6 +415,30 @@ std::string GDALVector::getAttributeFilter() const {
     return(m_attr_filter);
 }
 
+void GDALVector::setIgnoredFields(Rcpp::CharacterVector fields) {
+    checkAccess_(GA_ReadOnly);
+
+    if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields))
+        Rcpp::stop("this layer does not have ignored fields capability");
+
+    if (fields.size() == 1 && EQUAL(fields[0], "")) {
+        OGR_L_SetIgnoredFields(m_hLayer, nullptr);
+        return;
+    }
+    else {
+        std::vector<const char *> fields_in(fields.size() + 1);
+        if (fields.size() > 0) {
+            for (R_xlen_t i = 0; i < fields.size(); ++i) {
+                fields_in[i] = (const char *) (fields[i]);
+            }
+        }
+        fields_in[fields.size()] = nullptr;
+
+        if (OGR_L_SetIgnoredFields(m_hLayer, fields_in.data()) != OGRERR_NONE)
+            Rcpp::stop("not all field names could be resolved");
+    }
+}
+
 void GDALVector::setSpatialFilter(std::string wkt) {
     checkAccess_(GA_ReadOnly);
 
@@ -551,7 +577,7 @@ void GDALVector::resetReading() {
 Rcpp::DataFrame GDALVector::fetch(double n) {
     // Analog of DBI::dbFetch(), generally following its specification:
     // https://dbi.r-dbi.org/reference/dbFetch.html#specification
-
+    // this method must be kept consistent with initDF_()
     checkAccess_(GA_ReadOnly);
 
     OGRFeatureDefnH hFDefn = nullptr;
@@ -608,14 +634,21 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     size_t row_num = 0;
 
     while ((hFeat = OGR_L_GetNextFeature(m_hLayer)) != nullptr) {
+        size_t col_num = 0;
+
         const int64_t fid = static_cast<int64_t>(OGR_F_GetFID(hFeat));
-        Rcpp::NumericVector fid_col = df[0];
+        Rcpp::NumericVector fid_col = df[col_num];
         fid_col[row_num] = Rcpp::toInteger64(fid)[0];
 
         for (int i = 0; i < nFields; ++i) {
             OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
             if (hFieldDefn == nullptr)
                 Rcpp::stop("could not obtain field definition");
+
+            if (OGR_Fld_IsIgnored(hFieldDefn))
+                continue;
+
+            col_num += 1;
 
             bool has_value = true;
             if (!OGR_F_IsFieldSet(hFeat, i) || OGR_F_IsFieldNull(hFeat, i))
@@ -626,11 +659,11 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
             if (fld_type == OFTInteger && has_value) {
                 OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
                 if (fld_subtype == OFSTBoolean) {
-                    Rcpp::LogicalVector col = df[i + 1];
+                    Rcpp::LogicalVector col = df[col_num];
                     col[row_num] = OGR_F_GetFieldAsInteger(hFeat, i);
                 }
                 else {
-                    Rcpp::IntegerVector col = df[i + 1];
+                    Rcpp::IntegerVector col = df[col_num];
                     col[row_num] = OGR_F_GetFieldAsInteger(hFeat, i);
                 }
             }
@@ -640,22 +673,22 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
                 OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
                 if (fld_subtype == OFSTBoolean) {
-                    Rcpp::LogicalVector col = df[i + 1];
+                    Rcpp::LogicalVector col = df[col_num];
                     col[row_num] = Rcpp::toInteger64(value)[0];
                 }
                 else {
-                    Rcpp::NumericVector col = df[i + 1];
+                    Rcpp::NumericVector col = df[col_num];
                     col[row_num] = Rcpp::toInteger64(value)[0];
                 }
             }
             else if (fld_type == OFTReal && has_value) {
-                Rcpp::NumericVector col = df[i + 1];
+                Rcpp::NumericVector col = df[col_num];
                 col[row_num] = OGR_F_GetFieldAsDouble(hFeat, i);
             }
             else if ((fld_type == OFTDate || fld_type == OFTDateTime)
                      && has_value) {
 
-                Rcpp::NumericVector col = df[i + 1];
+                Rcpp::NumericVector col = df[col_num];
                 int yr, mo, day, hr, min, tzflag = 0;
                 float sec = 0;
                 if (OGR_F_GetFieldAsDateTimeEx(hFeat, i, &yr, &mo, &day,
@@ -691,7 +724,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
             }
             else if (fld_type == OFTBinary) {
-                Rcpp::List col = df[i + 1];
+                Rcpp::List col = df[col_num];
                 if (has_value) {
                     int nDataSize = 0;
                     GByte *pabyData = OGR_F_GetFieldAsBinary(hFeat, i,
@@ -710,7 +743,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
             }
             else if (fld_type == OFTIntegerList) {
-                Rcpp::List col = df[i + 1];
+                Rcpp::List col = df[col_num];
                 if (has_value) {
                     int nCount = 0;
                     const int *panValue = OGR_F_GetFieldAsIntegerList(hFeat, i,
@@ -728,7 +761,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
             }
             else if (fld_type == OFTInteger64List) {
-                Rcpp::List col = df[i + 1];
+                Rcpp::List col = df[col_num];
                 if (has_value) {
                     int nCount = 0;
                     const int64_t *panValue = reinterpret_cast<const int64_t *>(
@@ -751,7 +784,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
             }
             else if (fld_type == OFTRealList) {
-                Rcpp::List col = df[i + 1];
+                Rcpp::List col = df[col_num];
                 if (has_value) {
                     int nCount = 0;
                     const double *padfValue =
@@ -770,7 +803,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
             }
             else if (fld_type == OFTStringList) {
-                Rcpp::List col = df[i + 1];
+                Rcpp::List col = df[col_num];
                 if (has_value) {
                     char **papszValue = OGR_F_GetFieldAsStringList(hFeat, i);
                     int nCount = 0;
@@ -791,7 +824,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
             }
             else {
                 if (has_value) {
-                    Rcpp::CharacterVector col = df[i + 1];
+                    Rcpp::CharacterVector col = df[col_num];
                     col[row_num] = OGR_F_GetFieldAsString(hFeat, i);
                 }
             }
@@ -803,6 +836,11 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                         OGR_F_GetGeomFieldDefnRef(hFeat, i);
                 if (hGeomFldDefn == nullptr)
                     Rcpp::stop("could not obtain geometry field def");
+
+                if (OGR_GFld_IsIgnored(hGeomFldDefn))
+                    continue;
+
+                col_num += 1;
 
                 if (STARTS_WITH_CI(returnGeomAs.c_str(), "WKB")) {
                     OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
@@ -819,17 +857,17 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                             else if (EQUAL(returnGeomAs.c_str(), "WKB_ISO"))
                                 OGR_G_ExportToIsoWkb(hGeom, eOrder, &wkb[0]);
 
-                            Rcpp::List col = df[nFields + 1 + i];
+                            Rcpp::List col = df[col_num];
                             col[row_num] = wkb;
                         }
                         else {
-                            Rcpp::List col = df[nFields + 1 + i];
+                            Rcpp::List col = df[col_num];
                             col[row_num] = Rcpp::RawVector::create();
                         }
                     }
                 }
                 else if (STARTS_WITH_CI(returnGeomAs.c_str(), "WKT")) {
-                    Rcpp::CharacterVector col = df[nFields + 1 + i];
+                    Rcpp::CharacterVector col = df[col_num];
                     OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
                     if (hGeom != nullptr) {
                         char *pszWKT;
@@ -847,7 +885,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
                 else if (EQUAL(returnGeomAs.c_str(), "TYPE_NAME")) {
                     OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
-                    Rcpp::CharacterVector col = df[nFields + 1 + i];
+                    Rcpp::CharacterVector col = df[col_num];
                     if (hGeom != nullptr)
                         col[row_num] = OGR_G_GetGeometryName(hGeom);
                     else
@@ -887,24 +925,30 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         // calls to fetch(n), so the data generally should not be large enough
         // for this to be a problem.
         Rcpp::DataFrame df_trunc = initDF_(row_num);
+        size_t col_num = 0;
 
-        Rcpp::NumericVector fid_col = df[0];
+        Rcpp::NumericVector fid_col = df[col_num];
         Rcpp::NumericVector fid_col_trunc = df_trunc[0];
         std::copy_n(fid_col.cbegin(), row_num, fid_col_trunc.begin());
 
         for (int i = 0; i < OGR_FD_GetFieldCount(hFDefn); ++i) {
             OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
+            if (OGR_Fld_IsIgnored(hFieldDefn))
+                continue;
+
+            col_num += 1;
+
             OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
 
             if (fld_type == OFTInteger) {
                 OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
                 if (fld_subtype == OFSTBoolean) {
-                    Rcpp::LogicalVector col = df[i + 1];
+                    Rcpp::LogicalVector col = df[col_num];
                     Rcpp::LogicalVector col_trunc = df_trunc[i + 1];
                     std::copy_n(col.cbegin(), row_num, col_trunc.begin());
                 }
                 else {
-                    Rcpp::IntegerVector col = df[i + 1];
+                    Rcpp::IntegerVector col = df[col_num];
                     Rcpp::IntegerVector col_trunc = df_trunc[i + 1];
                     std::copy_n(col.cbegin(), row_num, col_trunc.begin());
                 }
@@ -912,7 +956,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
             else if (fld_type == OFTInteger64 || fld_type == OFTReal ||
                      fld_type == OFTDate || fld_type == OFTDateTime) {
 
-                Rcpp::NumericVector col = df[i + 1];
+                Rcpp::NumericVector col = df[col_num];
                 Rcpp::NumericVector col_trunc = df_trunc[i + 1];
                 std::copy_n(col.cbegin(), row_num, col_trunc.begin());
             }
@@ -920,13 +964,13 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                      fld_type == OFTInteger64List || fld_type == OFTRealList ||
                      fld_type == OFTStringList) {
 
-                Rcpp::List col = df[i + 1];
+                Rcpp::List col = df[col_num];
                 Rcpp::List col_trunc = df_trunc[i + 1];
                 for (size_t n = 0; n < row_num; ++n)
                     col_trunc[n] = col[n];
             }
             else {
-                Rcpp::CharacterVector col = df[i + 1];
+                Rcpp::CharacterVector col = df[col_num];
                 Rcpp::CharacterVector col_trunc = df_trunc[i + 1];
                 std::copy_n(col.cbegin(), row_num, col_trunc.begin());
             }
@@ -934,15 +978,23 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
         if (include_geom) {
             for (int i = 0; i < nGeomFields; ++i) {
+                OGRGeomFieldDefnH hGeomFldDefn =
+                        OGR_F_GetGeomFieldDefnRef(hFeat, i);
+
+                if (OGR_GFld_IsIgnored(hGeomFldDefn))
+                    continue;
+
+                col_num += 1;
+
                 if (STARTS_WITH_CI(returnGeomAs.c_str(), "WKB")) {
-                    Rcpp::List col = df[nFields + i + 1];
-                    Rcpp::List col_trunc = df_trunc[nFields + i + 1];
+                    Rcpp::List col = df[col_num];
+                    Rcpp::List col_trunc = df_trunc[col_num];
                     for (size_t n = 0; n < row_num; ++n)
                         col_trunc[n] = col[n];
                 }
                 else {
-                    Rcpp::CharacterVector col = df[nFields + i + 1];
-                    Rcpp::CharacterVector col_trunc = df_trunc[nFields + i + 1];
+                    Rcpp::CharacterVector col = df[col_num];
+                    Rcpp::CharacterVector col_trunc = df_trunc[col_num];
                     std::copy_n(col.cbegin(), row_num, col_trunc.begin());
                 }
             }
@@ -1241,22 +1293,48 @@ OGRLayerH GDALVector::getOGRLayerH_() const {
 
 SEXP GDALVector::initDF_(R_xlen_t nrow) const {
     // initialize a data frame based on the layer definition
+    // this mthod must be kept consistent with fetch()
+
     OGRFeatureDefnH hFDefn = nullptr;
     hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
 
     int nFields = OGR_FD_GetFieldCount(hFDefn);
+    int nIgnoredFields = 0;
+    for (int i = 0; i < nFields; ++i) {
+        OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
+        if (hFieldDefn == nullptr)
+            Rcpp::stop("could not obtain field definition");
+
+        if (OGR_Fld_IsIgnored(hFieldDefn))
+            nIgnoredFields += 1;
+    }
+
     int nGeomFields = 0;
-    if (!EQUAL(returnGeomAs.c_str(), "NONE"))
+    int nIgnoredGeomFields = 0;
+    if (!EQUAL(returnGeomAs.c_str(), "NONE")) {
         nGeomFields = OGR_FD_GetGeomFieldCount(hFDefn);
+        for (int i = 0; i < nGeomFields; ++i) {
+            OGRGeomFieldDefnH hGeomFldDefn = OGR_FD_GetGeomFieldDefn(hFDefn, i);
+            if (hGeomFldDefn == nullptr)
+                Rcpp::stop("could not obtain geometry field def");
+
+            if (OGR_GFld_IsIgnored(hGeomFldDefn))
+                nIgnoredGeomFields += 1;
+        }
+    }
 
     // construct as list and convert to data frame at return
-    Rcpp::List df(1 + nFields + nGeomFields);
-    Rcpp::CharacterVector col_names(1 + nFields + nGeomFields);
+    int nOutCols = (1 + nFields - nIgnoredFields + nGeomFields -
+                    nIgnoredGeomFields);
+    Rcpp::List df(nOutCols);
+    Rcpp::CharacterVector col_names(nOutCols);
+
+    size_t col_num = 0;
 
     std::vector<int64_t> fid(nrow, NA_INTEGER64);
-    df[0] = Rcpp::wrap(fid);
+    df[col_num] = Rcpp::wrap(fid);
     col_names[0] = "FID";
 
     for (int i = 0; i < nFields; ++i) {
@@ -1264,64 +1342,71 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
         if (hFieldDefn == nullptr)
             Rcpp::stop("could not obtain field definition");
 
+        if (OGR_Fld_IsIgnored(hFieldDefn))
+            continue;
+
+        col_num += 1;
+        if (static_cast<int>(col_num) == nOutCols)
+            Rcpp::stop("indexing the output columns failed");
+
         OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
 
         if (fld_type == OFTInteger) {
             OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
             if (fld_subtype == OFSTBoolean) {
                 Rcpp::LogicalVector v(nrow, NA_LOGICAL);
-                df[i + 1] = v;
+                df[col_num] = v;
             }
             else {
                 Rcpp::IntegerVector v(nrow, NA_INTEGER);
-                df[i + 1] = v;
+                df[col_num] = v;
             }
-            col_names[i + 1] = OGR_Fld_GetNameRef(hFieldDefn);
+            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
         }
         else if (fld_type == OFTInteger64) {
             OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
             if (fld_subtype == OFSTBoolean) {
                 Rcpp::LogicalVector v(nrow, NA_LOGICAL);
-                df[i + 1] = v;
+                df[col_num] = v;
             }
             else {
                 std::vector<int64_t> v(nrow, NA_INTEGER64);
-                df[i + 1] = Rcpp::wrap(v);
+                df[col_num] = Rcpp::wrap(v);
             }
-            col_names[i + 1] = OGR_Fld_GetNameRef(hFieldDefn);
+            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
         }
         else if (fld_type == OFTReal) {
             Rcpp::NumericVector v(nrow, NA_REAL);
-            df[i + 1] = v;
-            col_names[i + 1] = OGR_Fld_GetNameRef(hFieldDefn);
+            df[col_num] = v;
+            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
         }
         else if (fld_type == OFTDate) {
             Rcpp::NumericVector v(nrow, NA_REAL);
             v.attr("class") = "Date";
-            df[i + 1] = v;
-            col_names[i + 1] = OGR_Fld_GetNameRef(hFieldDefn);
+            df[col_num] = v;
+            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
         }
         else if (fld_type == OFTDateTime) {
             Rcpp::NumericVector v(nrow, NA_REAL);
             Rcpp::CharacterVector classes = {"POSIXt", "POSIXct"};
             v.attr("class") = classes;
             v.attr("tzone") = "UTC";
-            df[i + 1] = v;
-            col_names[i + 1] = OGR_Fld_GetNameRef(hFieldDefn);
+            df[col_num] = v;
+            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
         }
         else if (fld_type == OFTBinary || fld_type == OFTIntegerList ||
                  fld_type == OFTInteger64List || fld_type == OFTRealList ||
                  fld_type == OFTStringList) {
 
             Rcpp::List v(nrow);
-            df[i + 1] = v;
-            col_names[i + 1] = OGR_Fld_GetNameRef(hFieldDefn);
+            df[col_num] = v;
+            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
         }
         else {
             // use string
             Rcpp::CharacterVector v(nrow, NA_STRING);
-            df[i + 1] = v;
-            col_names[i + 1] = OGR_Fld_GetNameRef(hFieldDefn);
+            df[col_num] = v;
+            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
         }
     }
 
@@ -1330,20 +1415,27 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
         if (hGeomFldDefn == nullptr)
             Rcpp::stop("could not obtain geometry field def");
 
+        if (OGR_GFld_IsIgnored(hGeomFldDefn))
+            continue;
+
+        col_num += 1;
+        if (static_cast<int>(col_num) == nOutCols)
+            Rcpp::stop("indexing the output columns failed");
+
         if (STARTS_WITH_CI(returnGeomAs.c_str(), "WKB")) {
             Rcpp::List v(nrow);
-            df[i + 1 + nFields] = v;
+            df[col_num] = v;
         }
         else {
             Rcpp::CharacterVector v(nrow, NA_STRING);
-            df[i + 1 + nFields] = v;
+            df[col_num] = v;
         }
 
         std::string geomFldName(OGR_GFld_GetNameRef(hGeomFldDefn));
         if (geomFldName == "")
             geomFldName = defaultGeomFldName;
 
-        col_names[i + 1 + nFields] = geomFldName;
+        col_names[col_num] = geomFldName;
     }
 
     df.names() = col_names;
@@ -1414,6 +1506,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Set a new attribute query")
     .const_method("getAttributeFilter", &GDALVector::getAttributeFilter,
         "Get the attribute filter string (or empty string if not set")
+    .method("setIgnoredFields", &GDALVector::setIgnoredFields,
+        "Set which fields can be omitted when retrieving features")
     .method("setSpatialFilter", &GDALVector::setSpatialFilter,
         "Set a new spatial filter from a geometry in WKT format")
     .method("setSpatialFilterRect", &GDALVector::setSpatialFilterRect,

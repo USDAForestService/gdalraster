@@ -70,8 +70,8 @@
 #' `RandomRead`, `SequentialWrite`, `RandomWrite`, `UpsertFeature`,
 #' `FastSpatialFilter`, `FastFeatureCount`, `FastGetExtent`,
 #' `FastSetNextByIndex`, `CreateField`, `CreateGeomField`, `DeleteField`,
-#' `ReorderFields`, `AlterFieldDefn`, `AlterGeomFieldDefn`, `DeleteFeature`,
-#' `StringsAsUTF8`, `Transactions`, `CurveGeometries`.
+#' `ReorderFields`, `AlterFieldDefn`, `AlterGeomFieldDefn`, `IgnoreFields`,
+#' `DeleteFeature`, `StringsAsUTF8`, `Transactions`, `CurveGeometries`.
 #' See the GDAL documentation for
 #' [`OGR_L_TestCapability()`](https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).
 #'
