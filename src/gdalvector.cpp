@@ -1335,7 +1335,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
 
     std::vector<int64_t> fid(nrow, NA_INTEGER64);
     df[col_num] = Rcpp::wrap(fid);
-    col_names[0] = "FID";
+    col_names[col_num] = "FID";
 
     for (int i = 0; i < nFields; ++i) {
         OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
