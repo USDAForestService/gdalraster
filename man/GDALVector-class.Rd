@@ -101,6 +101,7 @@ lyr$clearSpatialFilter()
 
 lyr$getFeatureCount()
 lyr$getNextFeature()
+lyr$setNextByIndex(i)
 lyr$getFeature(fid)
 lyr$resetReading()
 lyr$fetch(n)
@@ -313,7 +314,7 @@ may not be exact. This method forces a count in the underlying API call
 (i.e., \code{bForce = TRUE} in the call to \code{OGR_L_GetFeatureCount()}). Note that
 some vector drivers will actually scan the entire layer once to count
 features. The \code{FastFeatureCount} element in the list returned by
-\verb{$testCapability()} can be checked if this might be a concern.
+the \verb{$testCapability()} method can be checked if this might be a concern.
 The number of features returned takes into account the spatial and/or
 attribute filters. Some driver implementations of this method may alter the
 read cursor of the layer.
@@ -326,6 +327,22 @@ The \verb{$resetReading()} method can be used to start at the beginning again.
 Returns a list with the unique feature identifier (FID), the attribute and
 geometry field names, and their values. \code{NULL} is returned if no more
 features are available.
+
+\code{$setNextByIndex(i)}\cr
+Moves the read cursor to the \code{i}th feature in the current result set
+(with 0-based indexing).
+This method allows positioning of a layer such that a call to
+\verb{$getNextFeature()} or \code{fetch()} will read the requested feature(s), where
+\code{i} is an absolute index into the current result set. So, setting \code{i = 3}
+would mean the next feature read with \verb{$getNextFeature()} would have been
+the 4th feature read if sequential reading took place from the beginning of
+the layer, including accounting for spatial and attribute filters.
+This method is not implemented efficiently by all vector format drivers. The
+default implementation simply resets reading to the beginning and then calls
+\code{GetNextFeature()} \code{i} times.
+To determine if fast seeking is available on the current layer, check
+the \code{FastSetNextByIndex} element in the list returned by the
+\verb{$testCapability()} method. No return value, called for side effect.
 
 \code{$getFeature(fid)}\cr
 Returns a feature by its identifier. The value of \code{fid} must be a numeric

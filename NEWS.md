@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9140 (dev)
+# gdalraster 1.11.1.9150 (dev)
+
+* add `GDALVector::setNextByIndex()`: move the read cursor to the `i`th feature in the current result set (2024-08-02)
 
 * add `GDALVector::setIgnoredFields()`: set which fields can be omitted when retrieving features from the layer (2024-08-01)
 

@@ -82,3 +82,35 @@ test_that("setting ignored fields works", {
     lyr$close()
     unlink(dsn)
 })
+
+test_that("cursor positioning works correctly", {
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    lyr <- new(GDALVector, dsn)
+
+    expect_equal(lyr$getFeatureCount(), 61)
+    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(1))
+    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(2))
+    lyr$resetReading()
+    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(1))
+    lyr$setNextByIndex(3)
+    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(4))
+    lyr$setNextByIndex(3.5)
+    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(4))
+    lyr$setNextByIndex(0)
+    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(1))
+    expect_equal(lyr$getFeature(10)$FID, bit64::as.integer64(10))
+    lyr$setNextByIndex(61)
+    expect_true(is.null(lyr$getNextFeature()))
+
+    expect_error(lyr$setNextByIndex(NA))
+    expect_error(lyr$setNextByIndex(-1))
+    expect_error(lyr$setNextByIndex(Inf))
+    expect_error(lyr$setNextByIndex(9007199254740993))
+
+    lyr$close()
+
+    unlink(dsn)
+})
