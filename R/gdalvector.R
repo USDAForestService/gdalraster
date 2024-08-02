@@ -253,7 +253,7 @@
 #' The `fields` argument is a character vector of field names.
 #' If the format driver supports this functionality (testable using
 #' `$testCapability()$IgnoreFields`), it will not fetch the specified fields
-#' in subsequent calls to `$GetFeature()` / `$getNextFeature()` / `$fetch()`,
+#' in subsequent calls to `$getFeature()` / `$getNextFeature()` / `$fetch()`,
 #' and thus save some processing time and/or bandwidth. Besides field names of
 #' the layer, the following special fields can be passed: `"OGR_GEOMETRY"` to
 #' ignore geometry and `"OGR_STYLE"` to ignore layer style. By default, no
