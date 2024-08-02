@@ -255,8 +255,8 @@ cannot be found. The returned list contains the following named elements:
 \code{RandomRead}, \code{SequentialWrite}, \code{RandomWrite}, \code{UpsertFeature},
 \code{FastSpatialFilter}, \code{FastFeatureCount}, \code{FastGetExtent},
 \code{FastSetNextByIndex}, \code{CreateField}, \code{CreateGeomField}, \code{DeleteField},
-\code{ReorderFields}, \code{AlterFieldDefn}, \code{AlterGeomFieldDefn}, \code{DeleteFeature},
-\code{StringsAsUTF8}, \code{Transactions}, \code{CurveGeometries}.
+\code{ReorderFields}, \code{AlterFieldDefn}, \code{AlterGeomFieldDefn}, \code{IgnoreFields},
+\code{DeleteFeature}, \code{StringsAsUTF8}, \code{Transactions}, \code{CurveGeometries}.
 See the GDAL documentation for
 \href{https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc}{\code{OGR_L_TestCapability()}}.
 

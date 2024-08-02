@@ -12,6 +12,7 @@
 #include "ogr_srs_api.h"
 
 #include "gdalraster.h"
+#include "gdalvector.h"
 #include "ogr_util.h"
 
 
@@ -374,50 +375,13 @@ SEXP ogr_layer_test_cap(std::string dsn, std::string layer,
 
     if (hDS == nullptr || hLayer == nullptr)
         return R_NilValue;
+    else
+        GDALReleaseDataset(hDS);
 
-    Rcpp::List cap = Rcpp::List::create(
-        Rcpp::Named("RandomRead") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCRandomRead)),
-        Rcpp::Named("SequentialWrite") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCSequentialWrite)),
-        Rcpp::Named("RandomWrite") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCRandomWrite)),
-#if GDAL_VERSION_NUM >= 3060000
-        Rcpp::Named("UpsertFeature") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCUpsertFeature)),
-#endif
-        Rcpp::Named("FastSpatialFilter") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCFastSpatialFilter)),
-        Rcpp::Named("FastFeatureCount") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCFastFeatureCount)),
-        Rcpp::Named("FastGetExtent") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCFastGetExtent)),
-        Rcpp::Named("FastSetNextByIndex") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCFastSetNextByIndex)),
-        Rcpp::Named("CreateField") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCCreateField)),
-        Rcpp::Named("CreateGeomField") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCCreateGeomField)),
-        Rcpp::Named("DeleteField") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCDeleteField)),
-        Rcpp::Named("ReorderFields") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCReorderFields)),
-        Rcpp::Named("AlterFieldDefn") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCAlterFieldDefn)),
-#if GDAL_VERSION_NUM >= 3060000
-        Rcpp::Named("AlterGeomFieldDefn") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCAlterGeomFieldDefn)),
-#endif
-        Rcpp::Named("DeleteFeature") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCDeleteFeature)),
-        Rcpp::Named("StringsAsUTF8") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCStringsAsUTF8)),
-        Rcpp::Named("Transactions") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCTransactions)),
-        Rcpp::Named("CurveGeometries") = static_cast<bool>(
-            OGR_L_TestCapability(hLayer, OLCCurveGeometries)));
+    GDALVector lyr = GDALVector(dsn_in.c_str(), layer, !with_update);
+    Rcpp::List cap = lyr.testCapability();
+    lyr.close();
 
-    GDALReleaseDataset(hDS);
     return cap;
 }
 

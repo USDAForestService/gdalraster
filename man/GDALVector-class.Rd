@@ -92,6 +92,8 @@ lyr$getLayerDefn()
 
 lyr$setAttributeFilter(query)
 lyr$getAttributeFilter()
+lyr$setIgnoredFields(fields)
+
 lyr$setSpatialFilter(wkt)
 lyr$setSpatialFilterRect(bbox)
 lyr$getSpatialFilter()
@@ -257,9 +259,23 @@ current reading position (as with \verb{$resetReading()} described below).
 The \code{query} parameter may be set to empty string (\code{""}) to clear the current
 attribute filter.
 
-\code{getAttributeFilter()}\cr
+\code{$getAttributeFilter()}\cr
 Returns the attribute query string currently in use, or empty string (\code{""})
 if an attribute filter is not set.
+
+\code{$setIgnoredFields(fields)}\cr
+Set which fields can be omitted when retrieving features from the layer.
+The \code{fields} argument is a character vector of field names.
+If the format driver supports this functionality (testable using
+\verb{$testCapability()$IgnoreFields}), it will not fetch the specified fields
+in subsequent calls to \verb{$getFeature()} / \verb{$getNextFeature()} / \verb{$fetch()},
+and thus save some processing time and/or bandwidth. Besides field names of
+the layer, the following special fields can be passed: \code{"OGR_GEOMETRY"} to
+ignore geometry and \code{"OGR_STYLE"} to ignore layer style. By default, no
+fields are ignored. Note that fields that are used in an attribute filter
+should generally not be set as ignored fields, as most drivers (such as
+those relying on the OGR SQL engine) will be unable to correctly evaluate
+the attribute filter. No return value, called for side effects.
 
 \code{$setSpatialFilter(wkt)}\cr
 Sets a new spatial filter from a geometry in WKT format. This method sets

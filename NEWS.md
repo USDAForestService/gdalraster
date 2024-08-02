@@ -1,6 +1,8 @@
-# gdalraster 1.11.1.9130 (dev)
+# gdalraster 1.11.1.9140 (dev)
 
-* add GDALVector class methods: `getAttributeFilter()`, `setSpatialFilter()`, `getSpatialFilter()` (2024-07-30) 
+* add `GDALVector::setIgnoredFields()`: set which fields can be omitted when retrieving features from the layer (2024-08-01)
+
+* add GDALVector class methods: `getAttributeFilter()`, `setSpatialFilter()`, `getSpatialFilter()` (2024-07-30)
 
 * add `ogr_proc()`: GDAL OGR facilities for vector geoprocessing (2024-07-28)
 
