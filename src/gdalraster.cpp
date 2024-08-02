@@ -148,7 +148,7 @@ void GDALRaster::open(bool read_only) {
             dsoo[i] = (char *) (open_options_in[i]);
         }
     }
-    dsoo.push_back(nullptr);
+    dsoo[open_options_in.size()] = nullptr;
 
     unsigned int nOpenFlags = GDAL_OF_RASTER;
     if (read_only) {
