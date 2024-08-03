@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9150 (dev)
+# gdalraster 1.11.1.9160 (dev)
+
+* add `featureTemplate` as a read-only field in class `GDALVector` (2024-08-03)
 
 * add `GDALVector::setNextByIndex()`: move the read cursor to the `i`th feature in the current result set (2024-08-02)
 
