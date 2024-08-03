@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9150</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9160</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -151,6 +151,9 @@ settings which can be changed as needed during the lifetime of the object.</p>
 <span><span class="co"># setting a spatial filter and/or specifying the SQL dialect</span></span>
 <span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="va">layer</span>, <span class="va">read_only</span>, <span class="va">open_options</span>, <span class="va">spatial_filter</span>, <span class="va">dialect</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co">## Read-only fields</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="va">featureTemplate</span></span>
+<span></span>
 <span><span class="co">## Read/write fields</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">defaultGeomFldName</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span></span>
@@ -220,6 +223,22 @@ Constructor specifying dataset open options as a character vector of
 Constructor to specify a spatial filter and/or SQL dialect. All arguments
 are required in this form of the constructor, but <code>open_options</code> may be
 <code>NULL</code>, and <code>spatial_filter</code> or <code>dialect</code> may be an empty string (<code>""</code>).</p>
+</div>
+
+<div class="section">
+<h3 id="read-only-fields">Read-only fields<a class="anchor" aria-label="anchor" href="#read-only-fields"></a></h3>
+
+
+<p><code>$featureTemplate</code><br>
+A list of the attribute and geometry field names, with <code>NA</code> values equivalent
+to OGR NULL values. The list elements are fully typed with the corresponding
+missing value types assigned (<code>NA_integer_</code>, <code>NA_real_</code>, <code>NA_character_</code>,
+etc.). The <code>featureTemplate</code> is useful to initialize a new empty feature,
+to which field and geometry values can be assigned, for use with the
+<code>$createFeature()</code> method (create and write a new feature within the layer).
+Note that geometry fields are initialized as <code>character</code> type in the
+template, but may be set either to a <code>character</code> string specifying a
+geometry in WKT format, or to a <code>raw</code> vector containing a geometry as WKB.</p>
 </div>
 
 <div class="section">
@@ -493,10 +512,22 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x5583d76f2ac0&gt; of class 'GDALVector' &lt;0x5583d229b880&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x562ef6491f50&gt; of class 'GDALVector' &lt;0x562eeb3a7cf0&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 3 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 4 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ featureTemplate   :List of 11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ FID         :integer64 NA </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_id    : chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ incid_name  : chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ incid_type  : chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ map_id      :integer64 NA </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ burn_bnd_ac :integer64 NA </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ burn_bnd_lat: chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ burn_bnd_lon: chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ig_date     : Date[1:1], format: NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ig_year     : int NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom        : chr NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "NONE"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  and 51 methods, of which 37 are  possibly relevant:</span>
@@ -515,7 +546,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp2BPIbW/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp58u5x0/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
