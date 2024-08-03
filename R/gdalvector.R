@@ -99,6 +99,8 @@
 #' lyr$resetReading()
 #' lyr$fetch(n)
 #'
+#' lyr$deleteFeature(fid)
+#'
 #' lyr$close()
 #' }
 #' @section Details:
@@ -411,6 +413,15 @@
 #'
 #' Note that `$getFeatureCount()` is called internally when fetching the full
 #' feature set or all remaining features (but not for a page of features).
+#'
+#' \code{$deleteFeature(fid)}\cr
+#' Delete feature from layer. The feature with the indicated feature ID is
+#' deleted from the layer if supported by the format driver. The value of `fid`
+#' must be a numeric scalar, optionally carrying the `bit64::integer64` class
+#' attribute (should be a whole number, will be truncated). The `DeleteFeature`
+#' element in the list returned by `$testCapability()` can be checked to
+#' establish if this layer has delete feature capability. Returns logical
+#' `TRUE` if the operation succeeds, or `FALSE` on failure.
 #'
 #' \code{$close()}\cr
 #' Closes the vector dataset (no return value, called for side effects).

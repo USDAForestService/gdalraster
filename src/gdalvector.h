@@ -88,6 +88,8 @@ class GDALVector {
 
     Rcpp::DataFrame fetch(double n);
 
+    bool deleteFeature(Rcpp::NumericVector fid);
+
     bool layerIntersection(
             GDALVector method_layer,
             GDALVector result_layer,
