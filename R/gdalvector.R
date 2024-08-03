@@ -58,6 +58,9 @@
 #' # setting a spatial filter and/or specifying the SQL dialect
 #' lyr <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)
 #'
+#' ## Read-only fields
+#' lyr$featureTemplate
+#'
 #' ## Read/write fields
 #' lyr$defaultGeomFldName
 #' lyr$returnGeomAs
@@ -125,6 +128,16 @@
 #' Constructor to specify a spatial filter and/or SQL dialect. All arguments
 #' are required in this form of the constructor, but `open_options` may be
 #' `NULL`, and `spatial_filter` or `dialect` may be an empty string (`""`).
+#'
+#' ## Read-only fields
+#'
+#' \code{$featureTemplate}\cr
+#' A list of the attribute and geometry field names, and `NA` values equivalent
+#' to OGR NULL values. The list elements are fully typed with the corresponding
+#' missing value types assigned (‘NA_integer_’, ‘NA_real_’, ‘NA_character_’,
+#' etc.). The `featureTemplate` is useful to initialize a new empty feature,
+#' to which field and geometry values can be assigned, for use with the
+#' `$createFeature()` method (create and write a new feature within the layer).
 #'
 #' ## Read/write fields
 #'

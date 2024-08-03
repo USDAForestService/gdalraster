@@ -44,10 +44,15 @@ class GDALVector {
                Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                std::string spatial_filter, std::string dialect);
 
+    // read-only fields
+    Rcpp::List featureTemplate;
+
+    // read/write fields
     std::string defaultGeomFldName = "geometry";
     std::string returnGeomAs = "NONE";
     std::string wkbByteOrder = "LSB";
 
+    // public methods
     void open(bool read_only);
     bool isOpen() const;
     std::string getDsn() const;
@@ -124,6 +129,7 @@ class GDALVector {
     // methods for internal use not exported to R
     void checkAccess_(GDALAccess access_needed) const;
     OGRLayerH getOGRLayerH_() const;
+    void setFeatureTemplate_();
     SEXP initDF_(R_xlen_t nrow) const;
 };
 
