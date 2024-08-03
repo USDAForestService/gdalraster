@@ -109,6 +109,8 @@ lyr$getFeature(fid)
 lyr$resetReading()
 lyr$fetch(n)
 
+lyr$deleteFeature(fid)
+
 lyr$close()
 }
 }
@@ -429,6 +431,15 @@ returned as \code{character} strings when \code{returnGeomAs} is set to one of \
 
 Note that \verb{$getFeatureCount()} is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).
+
+\code{$deleteFeature(fid)}\cr
+Delete feature from layer. The feature with the indicated feature ID is
+deleted from the layer if supported by the format driver. The value of \code{fid}
+must be a numeric scalar, optionally carrying the \code{bit64::integer64} class
+attribute (should be a whole number, will be truncated). The \code{DeleteFeature}
+element in the list returned by \verb{$testCapability()} can be checked to
+establish if this layer has delete feature capability. Returns logical
+\code{TRUE} if the operation succeeds, or \code{FALSE} on failure.
 
 \code{$close()}\cr
 Closes the vector dataset (no return value, called for side effects).

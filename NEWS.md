@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9160 (dev)
+# gdalraster 1.11.1.9161 (dev)
+
+* add `GDALVector::deleteFeature()`: delete feature from layer (2024-08-03)
 
 * add `featureTemplate` as a read-only field in class `GDALVector` (2024-08-03)
 

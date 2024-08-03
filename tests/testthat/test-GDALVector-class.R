@@ -46,7 +46,7 @@ test_that("setting ignored fields works", {
     dsn <- file.path(tempdir(), basename(f))
     file.copy(f, dsn, overwrite = TRUE)
 
-    lyr <- new(GDALVector, dsn)
+    lyr <- new(GDALVector, dsn, "mtbs_perims")
     expect_true(lyr$testCapability()$IgnoreFields)
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
@@ -89,7 +89,7 @@ test_that("cursor positioning works correctly", {
     dsn <- file.path(tempdir(), basename(f))
     file.copy(f, dsn, overwrite = TRUE)
 
-    lyr <- new(GDALVector, dsn)
+    lyr <- new(GDALVector, dsn, "mtbs_perims")
 
     expect_equal(lyr$getFeatureCount(), 61)
     expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(1))
@@ -110,6 +110,25 @@ test_that("cursor positioning works correctly", {
     expect_error(lyr$setNextByIndex(-1))
     expect_error(lyr$setNextByIndex(Inf))
     expect_error(lyr$setNextByIndex(9007199254740993))
+
+    lyr$close()
+
+    unlink(dsn)
+})
+
+test_that("delete feature works", {
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    lyr <- new(GDALVector, dsn, "mtbs_perims", read_only = FALSE)
+    num_feat <- lyr$getFeatureCount()
+    expect_true(lyr$deleteFeature(1))
+
+    lyr$open(read_only = TRUE)
+    expect_equal(lyr$getFeatureCount(), num_feat - 1)
+    expect_false(lyr$deleteFeature(2))
+    expect_equal(lyr$getFeatureCount(), num_feat - 1)
 
     lyr$close()
 

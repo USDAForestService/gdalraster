@@ -1025,6 +1025,39 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 }
 
+bool GDALVector::deleteFeature(Rcpp::NumericVector fid) {
+    // fid must be an R numeric vector of length 1, i.e., a scalar but using
+    // NumericVector since it can carry the class attribute for integer64.
+
+    if (m_eAccess == GA_ReadOnly) {
+        Rcpp::Rcerr << "cannot delete, the layer was opened read-only" <<
+                std::endl;
+        return false;
+    }
+    else if (!OGR_L_TestCapability(m_hLayer, OLCDeleteFeature)) {
+        Rcpp::Rcerr << "the layer does not have delete feature capability" <<
+                std::endl;
+        return false;
+    }
+
+    if (fid.size() != 1)
+        Rcpp::stop("'fid' must be a length-1 numeric vector (integer64)");
+
+    int64_t fid_in = -1;
+    if (Rcpp::isInteger64(fid))
+        fid_in = Rcpp::fromInteger64(fid[0]);
+    else
+        fid_in = static_cast<int64_t>(fid[0]);
+
+    if (OGR_L_DeleteFeature(m_hLayer, fid_in) != OGRERR_NONE) {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 bool GDALVector::layerIntersection(
         GDALVector method_layer,
         GDALVector result_layer,
@@ -1592,6 +1625,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Reset feature reading to start on the first feature")
     .method("fetch", &GDALVector::fetch,
         "Fetch a set features as a data frame")
+    .method("deleteFeature", &GDALVector::deleteFeature,
+        "Delete feature from layer")
     .method("layerIntersection", &GDALVector::layerIntersection,
         "Intersection of this layer with a method layer")
     .method("layerUnion", &GDALVector::layerUnion,
