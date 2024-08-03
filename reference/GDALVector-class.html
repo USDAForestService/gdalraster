@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9160</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9161</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -191,6 +191,8 @@ settings which can be changed as needed during the lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeature</span><span class="op">(</span><span class="va">fid</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">resetReading</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">deleteFeature</span><span class="op">(</span><span class="va">fid</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 
@@ -481,6 +483,14 @@ returned as <code>character</code> strings when <code>returnGeomAs</code> is set
 <code>WKT_ISO</code> or <code>TYPE_NAME</code>.</p>
 <p>Note that <code>$getFeatureCount()</code> is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).</p>
+<p><code>$deleteFeature(fid)</code><br>
+Delete feature from layer. The feature with the indicated feature ID is
+deleted from the layer if supported by the format driver. The value of <code>fid</code>
+must be a numeric scalar, optionally carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class
+attribute (should be a whole number, will be truncated). The <code>DeleteFeature</code>
+element in the list returned by <code>$testCapability()</code> can be checked to
+establish if this layer has delete feature capability. Returns logical
+<code>TRUE</code> if the operation succeeds, or <code>FALSE</code> on failure.</p>
 <p><code>$close()</code><br>
 Closes the vector dataset (no return value, called for side effects).
 Calling <code>$close()</code> results in proper cleanup, and flushing of any
@@ -512,7 +522,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x562ef6491f50&gt; of class 'GDALVector' &lt;0x562eeb3a7cf0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x564ba17f68d0&gt; of class 'GDALVector' &lt;0x564b9e3fe780&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 4 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -530,15 +540,15 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom        : chr NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "NONE"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 51 methods, of which 37 are  possibly relevant:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    bbox, clearSpatialFilter, close, fetch, finalize, getAttributeFilter,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getDriverLongName, getDriverShortName, getDsn, getFIDColumn, getFeature,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getFeatureCount, getFileList, getGeomType, getGeometryColumn, getLayerDefn,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getName, getNextFeature, getSpatialFilter, getSpatialRef, initialize,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    isOpen, layerClip, layerErase, layerIdentity, layerIntersection,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerSymDifference, layerUnion, layerUpdate, open, resetReading,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setAttributeFilter, setIgnoredFields, setNextByIndex, setSpatialFilter,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilterRect, testCapability</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 52 methods, of which 38 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    bbox, clearSpatialFilter, close, deleteFeature, fetch, finalize,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getAttributeFilter, getDriverLongName, getDriverShortName, getDsn,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getFIDColumn, getFeature, getFeatureCount, getFileList, getGeomType,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getGeometryColumn, getLayerDefn, getName, getNextFeature, getSpatialFilter,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getSpatialRef, initialize, isOpen, layerClip, layerErase, layerIdentity,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerIntersection, layerSymDifference, layerUnion, layerUpdate, open,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    resetReading, setAttributeFilter, setIgnoredFields, setNextByIndex,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilter, setSpatialFilterRect, testCapability</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># dataset info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -546,7 +556,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp58u5x0/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp8ImrtO/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
