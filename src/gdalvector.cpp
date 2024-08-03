@@ -65,6 +65,7 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 
     m_dsn = Rcpp::as<std::string>(check_gdal_filename(dsn));
     open(read_only);
+    setFeatureTemplate_();
 }
 
 void GDALVector::open(bool read_only) {
@@ -1311,6 +1312,46 @@ OGRLayerH GDALVector::getOGRLayerH_() const {
     return m_hLayer;
 }
 
+void GDALVector::setFeatureTemplate_() {
+    std::string orig_geom_as = returnGeomAs;
+    returnGeomAs = "WKT";
+
+    Rcpp::DataFrame feat_template = initDF_(1);
+    // as list
+    feat_template.attr("class") = R_NilValue;
+    feat_template.attr("row.names") = R_NilValue;
+
+    // set null values for the list columns if any
+    OGRFeatureDefnH hFDefn = nullptr;
+    hFDefn = OGR_L_GetLayerDefn(m_hLayer);
+    if (hFDefn == nullptr)
+        Rcpp::stop("failed to get layer definition");
+
+    int nFields = OGR_FD_GetFieldCount(hFDefn);
+    for (int i = 0; i < nFields; ++i) {
+        OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
+        if (hFieldDefn == nullptr)
+            Rcpp::stop("could not obtain field definition");
+
+        OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+
+        // the first element in feat_template is FID so [i + 1]
+        if (fld_type == OFTBinary)
+            feat_template[i + 1] = Rcpp::RawVector::create();
+        else if (fld_type == OFTIntegerList)
+            feat_template[i + 1] = NA_INTEGER;
+        else if (fld_type == OFTInteger64List)
+            feat_template[i + 1] = NA_INTEGER64;
+        else if (fld_type == OFTRealList)
+            feat_template[i + 1] = NA_REAL;
+        else if (fld_type == OFTStringList)
+            feat_template[i + 1] = NA_STRING;
+    }
+
+    featureTemplate = feat_template;
+    returnGeomAs = orig_geom_as;
+}
+
 SEXP GDALVector::initDF_(R_xlen_t nrow) const {
     // initialize a data frame based on the layer definition
     // this mthod must be kept consistent with fetch()
@@ -1487,6 +1528,9 @@ RCPP_MODULE(mod_GDALVector) {
                  Rcpp::Nullable<Rcpp::CharacterVector>, std::string,
                  std::string>
         ("Usage: new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)")
+
+    // exposed read-only fields
+    .field_readonly("featureTemplate", &GDALVector::featureTemplate)
 
     // exposed read/write fields
     .field("defaultGeomFldName", &GDALVector::defaultGeomFldName)
