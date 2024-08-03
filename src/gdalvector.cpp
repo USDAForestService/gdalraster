@@ -1313,12 +1313,13 @@ OGRLayerH GDALVector::getOGRLayerH_() const {
 }
 
 void GDALVector::setFeatureTemplate_() {
-    std::string orig = returnGeomAs;
+    std::string orig_geom_as = returnGeomAs;
     returnGeomAs = "WKT";
 
-    Rcpp::DataFrame null_feat = initDF_(1);
-    null_feat.attr("class") = R_NilValue;
-    null_feat.attr("row.names") = R_NilValue;
+    Rcpp::DataFrame feat_template = initDF_(1);
+    // as list
+    feat_template.attr("class") = R_NilValue;
+    feat_template.attr("row.names") = R_NilValue;
 
     // set null values for the list columns if any
     OGRFeatureDefnH hFDefn = nullptr;
@@ -1334,21 +1335,21 @@ void GDALVector::setFeatureTemplate_() {
 
         OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
 
-        // the first element in null_feat is FID so [i + 1]
+        // the first element in feat_template is FID so [i + 1]
         if (fld_type == OFTBinary)
-            null_feat[i + 1] = Rcpp::RawVector::create();
+            feat_template[i + 1] = Rcpp::RawVector::create();
         else if (fld_type == OFTIntegerList)
-            null_feat[i + 1] = NA_INTEGER;
+            feat_template[i + 1] = NA_INTEGER;
         else if (fld_type == OFTInteger64List)
-            null_feat[i + 1] = NA_INTEGER64;
+            feat_template[i + 1] = NA_INTEGER64;
         else if (fld_type == OFTRealList)
-            null_feat[i + 1] = NA_REAL;
+            feat_template[i + 1] = NA_REAL;
         else if (fld_type == OFTStringList)
-            null_feat[i + 1] = NA_STRING;
+            feat_template[i + 1] = NA_STRING;
     }
 
-    featureTemplate = null_feat;
-    returnGeomAs = orig;
+    featureTemplate = feat_template;
+    returnGeomAs = orig_geom_as;
 }
 
 SEXP GDALVector::initDF_(R_xlen_t nrow) const {

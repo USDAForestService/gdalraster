@@ -52,7 +52,7 @@ class GDALVector {
     std::string returnGeomAs = "NONE";
     std::string wkbByteOrder = "LSB";
 
-    // public methods
+    // exported methods
     void open(bool read_only);
     bool isOpen() const;
     std::string getDsn() const;

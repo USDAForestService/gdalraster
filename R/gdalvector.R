@@ -132,12 +132,15 @@
 #' ## Read-only fields
 #'
 #' \code{$featureTemplate}\cr
-#' A list of the attribute and geometry field names, and `NA` values equivalent
+#' A list of the attribute and geometry field names, with `NA` values equivalent
 #' to OGR NULL values. The list elements are fully typed with the corresponding
 #' missing value types assigned (‘NA_integer_’, ‘NA_real_’, ‘NA_character_’,
 #' etc.). The `featureTemplate` is useful to initialize a new empty feature,
 #' to which field and geometry values can be assigned, for use with the
 #' `$createFeature()` method (create and write a new feature within the layer).
+#' Note that geometry fields are initialized as `character` type in the
+#' template, but may be set either to a `character` string specifying a
+#' geometry in WKT format, or to a `raw` vector containing a geometry as WKB.
 #'
 #' ## Read/write fields
 #'
