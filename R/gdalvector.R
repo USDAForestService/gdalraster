@@ -134,7 +134,7 @@
 #' \code{$featureTemplate}\cr
 #' A list of the attribute and geometry field names, with `NA` values equivalent
 #' to OGR NULL values. The list elements are fully typed with the corresponding
-#' missing value types assigned (‘NA_integer_’, ‘NA_real_’, ‘NA_character_’,
+#' missing value types assigned (`NA_integer_`, `NA_real_`, `NA_character_`,
 #' etc.). The `featureTemplate` is useful to initialize a new empty feature,
 #' to which field and geometry values can be assigned, for use with the
 #' `$createFeature()` method (create and write a new feature within the layer).
