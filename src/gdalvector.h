@@ -90,6 +90,10 @@ class GDALVector {
 
     bool deleteFeature(Rcpp::NumericVector fid);
 
+    bool startTransaction(bool force);
+    bool commitTransaction();
+    bool rollbackTransaction();
+
     bool layerIntersection(
             GDALVector method_layer,
             GDALVector result_layer,

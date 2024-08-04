@@ -239,8 +239,6 @@ Rcpp::List GDALVector::testCapability() const {
             OGR_L_TestCapability(m_hLayer, OLCDeleteFeature)),
         Rcpp::Named("StringsAsUTF8") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCStringsAsUTF8)),
-        Rcpp::Named("Transactions") = static_cast<bool>(
-            OGR_L_TestCapability(m_hLayer, OLCTransactions)),
         Rcpp::Named("CurveGeometries") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCCurveGeometries)));
 
@@ -404,10 +402,13 @@ void GDALVector::setAttributeFilter(std::string query) {
     if (query != "")
         query_in = query.c_str();
 
-    if (OGR_L_SetAttributeFilter(m_hLayer, query_in) != OGRERR_NONE)
-        Rcpp::stop("error setting filter, possibly in the query expression");
-    else
+    if (OGR_L_SetAttributeFilter(m_hLayer, query_in) != OGRERR_NONE) {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        Rcpp::stop("error setting attribute filter");
+    }
+    else {
         m_attr_filter = query;
+    }
 }
 
 std::string GDALVector::getAttributeFilter() const {
@@ -532,7 +533,7 @@ void GDALVector::setNextByIndex(double i) {
     }
 
     if (OGR_L_SetNextByIndex(m_hLayer, index_in) != OGRERR_NONE) {
-        // Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         Rcpp::stop("failed to set cursor position by index");
     }
 }
@@ -1050,6 +1051,59 @@ bool GDALVector::deleteFeature(Rcpp::NumericVector fid) {
         fid_in = static_cast<int64_t>(fid[0]);
 
     if (OGR_L_DeleteFeature(m_hLayer, fid_in) != OGRERR_NONE) {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+bool GDALVector::startTransaction(bool force) {
+    checkAccess_(GA_ReadOnly);
+
+    if (!force) {
+        if (!GDALDatasetTestCapability(m_hDataset, ODsCTransactions)) {
+            Rcpp::Rcerr << "the dataset does not have (efficient) transactions capability"
+                    << std::endl;
+            return false;
+        }
+    }
+    else {
+        if (!GDALDatasetTestCapability(m_hDataset, ODsCTransactions) &&
+            !GDALDatasetTestCapability(m_hDataset, ODsCEmulatedTransactions)) {
+
+            Rcpp::Rcerr << "the dataset does not have transactions capability"
+                    << std::endl;
+            return false;
+        }
+    }
+
+    if (GDALDatasetStartTransaction(m_hDataset, force) != OGRERR_NONE) {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+bool GDALVector::commitTransaction() {
+    checkAccess_(GA_ReadOnly);
+
+    if (GDALDatasetCommitTransaction(m_hDataset) != OGRERR_NONE) {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+bool GDALVector::rollbackTransaction() {
+    checkAccess_(GA_ReadOnly);
+
+    if (GDALDatasetRollbackTransaction(m_hDataset) != OGRERR_NONE) {
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         return false;
     }
@@ -1627,6 +1681,12 @@ RCPP_MODULE(mod_GDALVector) {
         "Fetch a set features as a data frame")
     .method("deleteFeature", &GDALVector::deleteFeature,
         "Delete feature from layer")
+    .method("startTransaction", &GDALVector::startTransaction,
+        "Create a transaction on the dataset")
+    .method("commitTransaction", &GDALVector::commitTransaction,
+        "Commit a transaction")
+    .method("rollbackTransaction", &GDALVector::rollbackTransaction,
+        "Roll back a transaction")
     .method("layerIntersection", &GDALVector::layerIntersection,
         "Intersection of this layer with a method layer")
     .method("layerUnion", &GDALVector::layerUnion,
