@@ -423,7 +423,7 @@ void GDALVector::setIgnoredFields(Rcpp::CharacterVector fields) {
     if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields))
         Rcpp::stop("this layer does not have ignored fields capability");
 
-    if (fields.size() == 1 && EQUAL(fields[0], "")) {
+    if (fields.size() == 0 || (fields.size() == 1 && EQUAL(fields[0], ""))) {
         OGR_L_SetIgnoredFields(m_hLayer, nullptr);
         return;
     }
@@ -566,15 +566,23 @@ SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
     }
 
     // filter on FID
-    clearSpatialFilter();
-    setAttributeFilter("FID = " + std::to_string(fid_in));
+    if (hOrigFilterGeom != nullptr)
+        clearSpatialFilter();
+    std::string fid_name = "FID";
+    if (EQUAL(m_dialect.c_str(), "SQLITE"))
+        fid_name = "rowid";
+    else if (getFIDColumn() != "")
+        fid_name = getFIDColumn();
+    setAttributeFilter(fid_name + " = " + std::to_string(fid_in));
 
     Rcpp::DataFrame df = fetch(1);
 
-    // restore original filters
-    setAttributeFilter(orig_filter);
-    OGR_L_SetSpatialFilter(m_hLayer, hOrigFilterGeom);
+    // restore original if used
+    if (orig_filter != "") {
+        setAttributeFilter(orig_filter);
+    }
     if (hOrigFilterGeom != nullptr) {
+        OGR_L_SetSpatialFilter(m_hLayer, hOrigFilterGeom);
         OGR_G_DestroyGeometry(hOrigFilterGeom);
         hOrigFilterGeom = nullptr;
     }
