@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9161</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9170</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -131,8 +131,10 @@ dialect can also be used.</p></dd>
 opened layer and the dataset that owns it, and methods that operate on
 the layer as described in Details. <code>GDALVector</code> is a C++ class exposed
 directly to R (via <code>RCPP_EXPOSED_CLASS</code>). Fields and methods of the class
-are accessed using the <code>$</code> operator. The read/write fields are per-object
-settings which can be changed as needed during the lifetime of the object.</p>
+are accessed using the <code>$</code> operator. Note that all arguments to exposed
+class methods are required (but do not have to be named). The read/write
+fields are per-object settings which can be changed as needed during the
+lifetime of the object.</p>
     </div>
     <div class="section level2">
     <h2 id="usage-see-details-">Usage (see Details)<a class="anchor" aria-label="anchor" href="#usage-see-details-"></a></h2>
@@ -193,6 +195,10 @@ settings which can be changed as needed during the lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">deleteFeature</span><span class="op">(</span><span class="va">fid</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">startTransaction</span><span class="op">(</span><span class="va">force</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">commitTransaction</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">rollbackTransaction</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 
@@ -484,13 +490,48 @@ returned as <code>character</code> strings when <code>returnGeomAs</code> is set
 <p>Note that <code>$getFeatureCount()</code> is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).</p>
 <p><code>$deleteFeature(fid)</code><br>
-Delete feature from layer. The feature with the indicated feature ID is
-deleted from the layer if supported by the format driver. The value of <code>fid</code>
-must be a numeric scalar, optionally carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class
-attribute (should be a whole number, will be truncated). The <code>DeleteFeature</code>
-element in the list returned by <code>$testCapability()</code> can be checked to
-establish if this layer has delete feature capability. Returns logical
-<code>TRUE</code> if the operation succeeds, or <code>FALSE</code> on failure.</p>
+Deletes a feature from the layer. The feature with the indicated feature ID
+is deleted from the layer if supported by the format driver. The value of
+<code>fid</code> must be a numeric scalar, optionally carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code>
+class attribute (should be a whole number, will be truncated).
+The <code>DeleteFeature</code> element in the list returned by <code>$testCapability()</code> can
+be checked to establish if this layer has delete feature capability. Returns
+logical <code>TRUE</code> if the operation succeeds, or <code>FALSE</code> on failure.</p>
+<p><code>$startTransaction(force)</code><br>
+Creates a transaction if supported by the vector data source. The <code>force</code>
+argument is a logical value. If <code>force = FALSE</code>, only "efficient"
+transactions will be attempted. Some drivers may offer an emulation of
+transactions, but sometimes with significant overhead, in which case the
+user must explicitly allow for such an emulation by setting <code>force =TRUE</code>.
+The function <code><a href="ogr_manage.html">ogr_ds_test_cap()</a></code> can be used to determine whether a vector
+data source supports efficient or emulated transactions.</p>
+<p>All changes done after the start of the transaction are definitely applied
+in the data source if <code>$commitTransaction()</code> is called. They can be canceled
+by calling <code>rollbackTransaction()</code> instead.
+Nested transactions are not supported. Transactions are implemented at the
+dataset level, so multiple <code>GDALVector</code> objects using the same data source
+should not have transactions active at the same time.</p>
+<p>In case <code>$startTransaction()</code> fails, neither <code>$commitTransaction()</code> nor
+<code>$rollbackTransaction()</code> should be called.
+If an error occurs after a successful <code>$startTransaction()</code>, the whole
+transaction may or may not be implicitly canceled, depending on the format
+driver (e.g., the PostGIS driver will cancel it, SQLite/GPKG will not). In
+any case, in the event of an error, an explicit call to
+<code>rollbackTransaction()</code> should be done to keep things balanced.</p>
+<p>Returns logical <code>TRUE</code> if the transaction is created, or <code>FALSE</code> on failure.</p>
+<p><code>$commitTransaction()</code><br>
+Commits a transaction if supported by the vector data source.
+Returns a logical value, <code>TRUE</code> if the transaction is successfully committed.
+Returns <code>FALSE</code> if no transaction is active, or the rollback fails, or if the
+data source does not support transactions.
+Depending on the format driver, this may or may not abort layer sequential
+reading that may be active.</p>
+<p><code>$rollbackTransaction()</code><br>
+Rolls back a data source to its state before the start of the current
+transaction, if transactions are supported by the data source.
+Returns a logical value, <code>TRUE</code> if the transaction is successfully rolled
+back. Returns <code>FALSE</code> if no transaction is active, or the rollback fails,
+or if the data source does not support transactions.</p>
 <p><code>$close()</code><br>
 Closes the vector dataset (no return value, called for side effects).
 Calling <code>$close()</code> results in proper cleanup, and flushing of any
@@ -522,7 +563,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x564ba17f68d0&gt; of class 'GDALVector' &lt;0x564b9e3fe780&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x563ceff67b00&gt; of class 'GDALVector' &lt;0x563ce6592f10&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 4 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -540,15 +581,16 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom        : chr NA</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "NONE"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 52 methods, of which 38 are  possibly relevant:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    bbox, clearSpatialFilter, close, deleteFeature, fetch, finalize,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getAttributeFilter, getDriverLongName, getDriverShortName, getDsn,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 55 methods, of which 41 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    bbox, clearSpatialFilter, close, commitTransaction, deleteFeature, fetch,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    finalize, getAttributeFilter, getDriverLongName, getDriverShortName, getDsn,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getFIDColumn, getFeature, getFeatureCount, getFileList, getGeomType,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getGeometryColumn, getLayerDefn, getName, getNextFeature, getSpatialFilter,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getSpatialRef, initialize, isOpen, layerClip, layerErase, layerIdentity,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    layerIntersection, layerSymDifference, layerUnion, layerUpdate, open,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    resetReading, setAttributeFilter, setIgnoredFields, setNextByIndex,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilter, setSpatialFilterRect, testCapability</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    resetReading, rollbackTransaction, setAttributeFilter, setIgnoredFields,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setNextByIndex, setSpatialFilter, setSpatialFilterRect, startTransaction,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    testCapability</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># dataset info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -556,7 +598,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp8ImrtO/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpGWGQIG/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -617,9 +659,6 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $StringsAsUTF8</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> $Transactions</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CurveGeometries</span>
