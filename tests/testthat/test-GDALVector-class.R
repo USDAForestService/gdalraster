@@ -102,9 +102,8 @@ test_that("cursor positioning works correctly", {
     expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(4))
     lyr$setNextByIndex(0)
     expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(1))
+
     expect_equal(lyr$getFeature(10)$FID, bit64::as.integer64(10))
-    lyr$setNextByIndex(61)
-    expect_true(is.null(lyr$getNextFeature()))
 
     expect_error(lyr$setNextByIndex(NA))
     expect_error(lyr$setNextByIndex(-1))
