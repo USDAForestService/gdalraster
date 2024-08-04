@@ -34,8 +34,10 @@ An object of class \code{GDALVector} which contains pointers to the
 opened layer and the dataset that owns it, and methods that operate on
 the layer as described in Details. \code{GDALVector} is a C++ class exposed
 directly to R (via \code{RCPP_EXPOSED_CLASS}). Fields and methods of the class
-are accessed using the \code{$} operator. The read/write fields are per-object
-settings which can be changed as needed during the lifetime of the object.
+are accessed using the \code{$} operator. Note that all arguments to exposed
+class methods are required (but do not have to be named). The read/write
+fields are per-object settings which can be changed as needed during the
+lifetime of the object.
 }
 \description{
 \code{GDALVector} provides an interface for accessing a vector layer in a GDAL
@@ -110,6 +112,10 @@ lyr$resetReading()
 lyr$fetch(n)
 
 lyr$deleteFeature(fid)
+
+lyr$startTransaction(force)
+lyr$commitTransaction()
+lyr$rollbackTransaction()
 
 lyr$close()
 }
@@ -433,13 +439,54 @@ Note that \verb{$getFeatureCount()} is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).
 
 \code{$deleteFeature(fid)}\cr
-Delete feature from layer. The feature with the indicated feature ID is
-deleted from the layer if supported by the format driver. The value of \code{fid}
-must be a numeric scalar, optionally carrying the \code{bit64::integer64} class
-attribute (should be a whole number, will be truncated). The \code{DeleteFeature}
-element in the list returned by \verb{$testCapability()} can be checked to
-establish if this layer has delete feature capability. Returns logical
-\code{TRUE} if the operation succeeds, or \code{FALSE} on failure.
+Deletes a feature from the layer. The feature with the indicated feature ID
+is deleted from the layer if supported by the format driver. The value of
+\code{fid} must be a numeric scalar, optionally carrying the \code{bit64::integer64}
+class attribute (should be a whole number, will be truncated).
+The \code{DeleteFeature} element in the list returned by \verb{$testCapability()} can
+be checked to establish if this layer has delete feature capability. Returns
+logical \code{TRUE} if the operation succeeds, or \code{FALSE} on failure.
+
+\code{$startTransaction(force)}\cr
+Creates a transaction if supported by the vector data source. The \code{force}
+argument is a logical value. If \code{force = FALSE}, only "efficient"
+transactions will be attempted. Some drivers may offer an emulation of
+transactions, but sometimes with significant overhead, in which case the
+user must explicitly allow for such an emulation by setting \code{force =TRUE}.
+The function \code{ogr_ds_test_cap()} can be used to determine whether a vector
+data source supports efficient or emulated transactions.
+
+All changes done after the start of the transaction are definitely applied
+in the data source if \verb{$commitTransaction()} is called. They can be canceled
+by calling \code{rollbackTransaction()} instead.
+Nested transactions are not supported. Transactions are implemented at the
+dataset level, so multiple \code{GDALVector} objects using the same data source
+should not have transactions active at the same time.
+
+In case \verb{$startTransaction()} fails, neither \verb{$commitTransaction()} nor
+\verb{$rollbackTransaction()} should be called.
+If an error occurs after a successful \verb{$startTransaction()}, the whole
+transaction may or may not be implicitly canceled, depending on the format
+driver (e.g., the PostGIS driver will cancel it, SQLite/GPKG will not). In
+any case, in the event of an error, an explicit call to
+\code{rollbackTransaction()} should be done to keep things balanced.
+
+Returns logical \code{TRUE} if the transaction is created, or \code{FALSE} on failure.
+
+\code{$commitTransaction()}\cr
+Commits a transaction if supported by the vector data source.
+Returns a logical value, \code{TRUE} if the transaction is successfully committed.
+Returns \code{FALSE} if no transaction is active, or the rollback fails, or if the
+data source does not support transactions.
+Depending on the format driver, this may or may not abort layer sequential
+reading that may be active.
+
+\code{$rollbackTransaction()}\cr
+Rolls back a data source to its state before the start of the current
+transaction, if transactions are supported by the data source.
+Returns a logical value, \code{TRUE} if the transaction is successfully rolled
+back. Returns \code{FALSE} if no transaction is active, or the rollback fails,
+or if the data source does not support transactions.
 
 \code{$close()}\cr
 Closes the vector dataset (no return value, called for side effects).

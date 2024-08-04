@@ -130,6 +130,22 @@ test_that("delete feature works", {
     expect_false(lyr$deleteFeature(2))
     expect_equal(lyr$getFeatureCount(), num_feat - 1)
 
+    # transaction
+    lyr$open(read_only = FALSE)
+    num_feat <- lyr$getFeatureCount()
+
+    expect_false(lyr$commitTransaction())
+    expect_false(lyr$rollbackTransaction())
+
+    expect_true(lyr$startTransaction(force = FALSE))
+    lyr$deleteFeature(10)
+    expect_true(lyr$commitTransaction())
+    expect_equal(lyr$getFeatureCount(), num_feat - 1)
+    lyr$startTransaction(force = FALSE)
+    lyr$deleteFeature(11)
+    expect_true(lyr$rollbackTransaction())
+    expect_equal(lyr$getFeatureCount(), num_feat - 1)
+
     lyr$close()
 
     unlink(dsn)

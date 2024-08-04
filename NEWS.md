@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9161 (dev)
+# gdalraster 1.11.1.9170 (dev)
+
+* add transactions support in class `GDALVector` (`$startTransaction()`, `$commitTransaction()`, `$rollbackTransaction()`) (2024-08-03)
 
 * add `GDALVector::deleteFeature()`: delete feature from layer (2024-08-03)
 
