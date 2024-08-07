@@ -496,6 +496,9 @@ double GDALRaster::getNoDataValue(int band) const {
 bool GDALRaster::setNoDataValue(int band, double nodata_value) {
     checkAccess_(GA_Update);
 
+    if (!std::isfinite(nodata_value))
+        return false;
+
     GDALRasterBandH hBand = getBand_(band);
     if (GDALSetRasterNoDataValue(hBand, nodata_value) == CE_Failure) {
         if (!quiet)
@@ -561,6 +564,9 @@ double GDALRaster::getScale(int band) const {
 bool GDALRaster::setScale(int band, double scale) {
     checkAccess_(GA_ReadOnly);
 
+    if (!std::isfinite(scale))
+        return false;
+
     GDALRasterBandH hBand = getBand_(band);
     if (GDALSetRasterScale(hBand, scale) == CE_Failure) {
         if (!quiet)
@@ -595,6 +601,9 @@ double GDALRaster::getOffset(int band) const {
 
 bool GDALRaster::setOffset(int band, double offset) {
     checkAccess_(GA_ReadOnly);
+
+    if (!std::isfinite(offset))
+        return false;
 
     GDALRasterBandH hBand = getBand_(band);
     if (GDALSetRasterOffset(hBand, offset) == CE_Failure) {
