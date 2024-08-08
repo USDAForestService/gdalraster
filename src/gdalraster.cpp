@@ -821,51 +821,95 @@ Rcpp::CharacterVector GDALRaster::getMetadata(int band,
     }
 }
 
+bool GDALRaster::setMetadata(int band, const Rcpp::CharacterVector metadata,
+                             std::string domain) {
+
+    checkAccess_(GA_ReadOnly);
+
+    const char* domain_in = nullptr;
+    if (domain != "")
+        domain_in = domain.c_str();
+
+    std::vector<const char *> metadata_in(metadata.size() + 1);
+    if (metadata.size() > 0) {
+        for (R_xlen_t i = 0; i < metadata.size(); ++i) {
+            metadata_in[i] = (const char *) (metadata[i]);
+        }
+    }
+    metadata_in[metadata.size()] = nullptr;
+
+    CPLErr err = CE_None;
+    if (band == 0) {
+        err = GDALSetMetadata(hDataset, metadata_in.data(), domain_in);
+    }
+    else {
+        GDALRasterBandH hBand = getBand_(band);
+        err = GDALSetMetadata(hBand, metadata_in.data(), domain_in);
+    }
+
+    if (err != CE_None) {
+        if (!quiet)
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 std::string GDALRaster::getMetadataItem(int band, std::string mdi_name,
                                         std::string domain) const {
 
     checkAccess_(GA_ReadOnly);
 
-    const char* domain_ = nullptr;
+    const char* domain_in = nullptr;
     if (domain != "")
-        domain_ = domain.c_str();
+        domain_in = domain.c_str();
 
     std::string mdi = "";
 
     if (band == 0) {
-        if (GDALGetMetadataItem(hDataset, mdi_name.c_str(), domain_) != nullptr)
+        if (GDALGetMetadataItem(hDataset, mdi_name.c_str(), domain_in) != nullptr)
             mdi += std::string(
-                    GDALGetMetadataItem(hDataset, mdi_name.c_str(), domain_) );
+                    GDALGetMetadataItem(hDataset, mdi_name.c_str(), domain_in) );
     }
     else {
         GDALRasterBandH hBand = getBand_(band);
-        if (GDALGetMetadataItem(hBand, mdi_name.c_str(), domain_) != nullptr)
+        if (GDALGetMetadataItem(hBand, mdi_name.c_str(), domain_in) != nullptr)
             mdi += std::string(
-                    GDALGetMetadataItem(hBand, mdi_name.c_str(), domain_) );
+                    GDALGetMetadataItem(hBand, mdi_name.c_str(), domain_in) );
     }
 
     return mdi;
 }
 
-void GDALRaster::setMetadataItem(int band, std::string mdi_name,
+bool GDALRaster::setMetadataItem(int band, std::string mdi_name,
                                  std::string mdi_value, std::string domain) {
 
     checkAccess_(GA_ReadOnly);
 
-    const char* domain_ = nullptr;
+    const char* domain_in = nullptr;
     if (domain != "")
-        domain_ = domain.c_str();
+        domain_in = domain.c_str();
 
+    CPLErr err = CE_None;
     if (band == 0) {
-        if (GDALSetMetadataItem(hDataset, mdi_name.c_str(), mdi_value.c_str(),
-                                domain_) != CE_None)
-            Rcpp::stop("failed to set metadata item");
+        err = GDALSetMetadataItem(hDataset, mdi_name.c_str(), mdi_value.c_str(),
+                                  domain_in);
     }
     else {
         GDALRasterBandH hBand = getBand_(band);
-        if (GDALSetMetadataItem(hBand, mdi_name.c_str(), mdi_value.c_str(),
-                                domain_) != CE_None)
-            Rcpp::stop("failed to set metadata item");
+        err = GDALSetMetadataItem(hBand, mdi_name.c_str(), mdi_value.c_str(),
+                                  domain_in);
+    }
+
+    if (err != CE_None) {
+        if (!quiet)
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        return false;
+    }
+    else {
+        return true;
     }
 }
 
@@ -1663,7 +1707,9 @@ RCPP_MODULE(mod_GDALRaster) {
     .const_method("getDefaultHistogram", &GDALRaster::getDefaultHistogram,
         "Fetch default raster histogram for this band")
     .const_method("getMetadata", &GDALRaster::getMetadata,
-        "Return a list of metadata item=value for a domain")
+        "Return a list of metadata name=value for a domain")
+    .method("setMetadata", &GDALRaster::setMetadata,
+        "Set metadata from a list of name=value")
     .const_method("getMetadataItem", &GDALRaster::getMetadataItem,
         "Return the value of a metadata item")
     .method("setMetadataItem", &GDALRaster::setMetadataItem,
