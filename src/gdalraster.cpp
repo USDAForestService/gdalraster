@@ -80,7 +80,7 @@ std::string getGFU_string_(GDALRATFieldUsage gfu) {
 GDALRaster::GDALRaster() :
             fname_in(""),
             open_options_in(Rcpp::CharacterVector::create()),
-            shared_in(true),
+            shared_in(false),
             hDataset(nullptr),
             eAccess(GA_ReadOnly) {}
 
@@ -1592,6 +1592,14 @@ GDALDatasetH GDALRaster::getGDALDatasetH_() const {
     checkAccess_(GA_ReadOnly);
 
     return hDataset;
+}
+
+void GDALRaster::setGDALDatasetH_(GDALDatasetH hDs, bool with_update) {
+    hDataset = hDs;
+    if (with_update)
+        eAccess = GA_Update;
+    else
+        eAccess = GA_ReadOnly;
 }
 
 // ****************************************************************************

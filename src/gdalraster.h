@@ -211,6 +211,7 @@ class GDALRaster {
     bool hasInt64_() const;
     void warnInt64_() const;
     GDALDatasetH getGDALDatasetH_() const;
+    void setGDALDatasetH_(GDALDatasetH hDs, bool with_update);
 };
 
 RCPP_EXPOSED_CLASS(GDALRaster)
@@ -232,9 +233,9 @@ void cpl_http_cleanup();
 
 Rcpp::CharacterVector check_gdal_filename(Rcpp::CharacterVector filename);
 
-bool create(std::string format, Rcpp::CharacterVector dst_filename,
-            int xsize, int ysize, int nbands, std::string dataType,
-            Rcpp::Nullable<Rcpp::CharacterVector> options);
+GDALRaster create(std::string format, Rcpp::CharacterVector dst_filename,
+                  int xsize, int ysize, int nbands, std::string dataType,
+                  Rcpp::Nullable<Rcpp::CharacterVector> options);
 bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
                 Rcpp::CharacterVector src_filename, bool strict,
                 Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
