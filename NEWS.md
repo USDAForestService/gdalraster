@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9170 (dev)
+# gdalraster 1.11.1.9180 (dev)
+
+* add `GDALRaster::setMetadata()`: set dataset or band-level metadata from a character vector of NAME=VALUE pairs (instead of per metadata item with the existing `$setMetadataItem()`) (2024-08-07)
 
 * add transactions support in class `GDALVector` (`$startTransaction()`, `$commitTransaction()`, `$rollbackTransaction()`) (2024-08-03)
 

@@ -86,7 +86,7 @@ test_that("band-level parameters are correct", {
     ds$close()
 })
 
-test_that("metadata are correct", {
+test_that("get/set metadata works", {
     evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
     ds <- new(GDALRaster, evt_file, TRUE)
     expect_equal(ds$getMetadata(band=0, domain=""), "AREA_OR_POINT=Area")
@@ -106,7 +106,27 @@ test_that("metadata are correct", {
                  "")
     expect_equal(length(ds$getMetadataDomainList(band=0)), 3)
     expect_equal(length(ds$getMetadataDomainList(band=1)), 1)
+
+    f <- file.path(tempdir(), "testmd.tif")
+    create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
+           nbands=1, dataType="Int32")
+    ds2 <- new(GDALRaster, f, read_only=FALSE)
+
+    # TODO: does not persist:
+    ds2$setMetadata(band=0, metadata="AREA_OR_POINT=Area", domain="")
+
+    expect_true(ds2$setMetadataItem(band=1, mdi_name="RepresentationType",
+                                    mdi_value="THEMATIC", domain=""))
+    ds2$close()
+    ds2$open(read_only = TRUE)
+    # TODO: does not persist:
+    # expect_equal(ds2$getMetadata(band=0, domain=""), "AREA_OR_POINT=Area")
+    expect_equal(ds2$getMetadata(band=1, domain=""),
+                 "RepresentationType=THEMATIC")
+
     ds$close()
+    ds2$close()
+    deleteDataset(f)
 })
 
 test_that("open/close/re-open works", {

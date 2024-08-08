@@ -173,9 +173,11 @@ class GDALRaster {
     Rcpp::List getDefaultHistogram(int band, bool force) const;
 
     Rcpp::CharacterVector getMetadata(int band, std::string domain) const;
+    bool setMetadata(int band, const Rcpp::CharacterVector metadata,
+                     std::string domain);
     std::string getMetadataItem(int band, std::string mdi_name,
                                 std::string domain) const;
-    void setMetadataItem(int band, std::string mdi_name, std::string mdi_value,
+    bool setMetadataItem(int band, std::string mdi_name, std::string mdi_value,
                          std::string domain);
     Rcpp::CharacterVector getMetadataDomainList(int band) const;
 

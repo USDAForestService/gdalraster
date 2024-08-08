@@ -99,6 +99,7 @@
 #' ds$getDefaultHistogram(band, force)
 #'
 #' ds$getMetadata(band, domain)
+#' ds$setMetadata(band, metadata, domain)
 #' ds$getMetadataItem(band, mdi_name, domain)
 #' ds$setMetadataItem(band, mdi_name, mdi_value, domain)
 #' ds$getMetadataDomainList(band)
@@ -530,7 +531,7 @@
 #'`$histogram` (a numeric vector of length `num_buckets`).
 #'
 #' \code{$getMetadata(band, domain)}\cr
-#' Returns a character vector of all metadata `name=value` pairs that exist in
+#' Returns a character vector of all metadata `NAME=VALUE` pairs that exist in
 #' the specified \code{domain}, or empty string (`""`) if there are no
 #' metadata items in \code{domain} (metadata in the context of the GDAL
 #' Raster Data Model: \url{https://gdal.org/user/raster_data_model.html}).
@@ -538,6 +539,15 @@
 #' band number to retrieve band-level metadata.
 #' Set \code{domain = ""} (empty string) to retrieve metadata in the
 #' default domain.
+#'
+#' \code{$setMetadata(band, metadata, domain)}\cr
+#' Sets metadata in the specified \code{domain}. The \code{metadata} argument
+#' is given as a character vector of `NAME=VALUE` pairs.
+#' Pass \code{band = 0} to set dataset-level metadata, or pass an integer
+#' band number to set band-level metadata.
+#' Use \code{domain = ""} (empty string) to set an item in the default domain.
+#' Returns logical \code{TRUE} on success or \code{FALSE} if metadata could
+#' not be set.
 #'
 #' \code{$getMetadataItem(band, mdi_name, domain)}\cr
 #' Returns the value of a specific metadata item named \code{mdi_name} in the
@@ -551,9 +561,11 @@
 #' \code{$setMetadataItem(band, mdi_name, mdi_value, domain)}\cr
 #' Sets the value (\code{mdi_value}) of a specific metadata item named
 #' \code{mdi_name} in the specified \code{domain}.
-#' Set \code{band = 0} to set dataset-level metadata, or to an integer
+#' Pass \code{band = 0} to set dataset-level metadata, or pass an integer
 #' band number to set band-level metadata.
-#' Set \code{domain = ""} (empty string) to set an item in the default domain.
+#' Use \code{domain = ""} (empty string) to set an item in the default domain.
+#' Returns logical \code{TRUE} on success or \code{FALSE} if metadata could
+#' not be set.
 #'
 #' \code{$getMetadataDomainList(band)}\cr
 #' Returns a character vector of metadata domains or empty string (`""`).
