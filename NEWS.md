@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9190 (dev)
+# gdalraster 1.11.1.9200 (dev)
+
+* add `GDALRaster::addBand()`: add a band to a dataset if the underlying format supports this action, e.g., `MEM` and `VRT` (2024-08-09)
 
 * `createCopy()`: add argument `return_obj`, `TRUE` to return an object of class `GDALRaster` for the created dataset; an object of class `GDALRaster` can be given for argument `src_filename` to specify the source dataset (2024-08-07)
 

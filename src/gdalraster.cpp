@@ -321,6 +321,37 @@ int GDALRaster::getRasterCount() const {
     return GDALGetRasterCount(hDataset);
 }
 
+bool GDALRaster::addBand(std::string dataType,
+                         Rcpp::Nullable<Rcpp::CharacterVector> options) {
+
+    checkAccess_(GA_Update);
+
+    GDALDataType dt = GDALGetDataTypeByName(dataType.c_str());
+    if (dt == GDT_Unknown)
+        Rcpp::stop("'dataType' is unknown");
+
+    std::vector<const char *> opt_list = {nullptr};
+    if (options.isNotNull()) {
+        Rcpp::CharacterVector options_in(options);
+        opt_list.resize(options_in.size() + 1);
+        for (R_xlen_t i = 0; i < options_in.size(); ++i) {
+            opt_list[i] = (const char *) options_in[i];
+        }
+        opt_list[options_in.size()] = nullptr;
+    }
+
+    CPLErr err = CE_None;
+    err = GDALAddBand(hDataset, dt, opt_list.data());
+    if (err != CE_None) {
+        if (!quiet)
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 std::string GDALRaster::getProjection() const {
     return getProjectionRef();
 }
@@ -1653,6 +1684,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Set the affine transformation coefficients for this dataset")
     .const_method("getRasterCount", &GDALRaster::getRasterCount,
         "Return the number of raster bands on this dataset")
+    .method("addBand", &GDALRaster::addBand,
+        "Add a new band if the underlying format supports this action")
     .const_method("getProjection", &GDALRaster::getProjection,
         "Return the projection (equivalent to getProjectionRef)")
     .const_method("getProjectionRef", &GDALRaster::getProjectionRef,

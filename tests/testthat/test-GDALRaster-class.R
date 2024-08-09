@@ -456,3 +456,15 @@ test_that("get/set default RAT works", {
     deleteDataset(f)
 })
 
+test_that("add band works", {
+    ds <- create(format="MEM", dst_filename="", xsize=20, ysize=10,
+                 nbands=1, dataType="Byte", return_obj = TRUE)
+
+    ds$setProjection(epsg_to_wkt(4326))
+    ds$setGeoTransform(c(-180, 18, 0, 90, 0, -18))
+    ds$fillRaster(1, 255, 0)
+    expect_true(ds$addBand("Byte", NULL))
+    expect_no_error(ds$fillRaster(2, 255, 0))
+
+    ds$close()
+})
