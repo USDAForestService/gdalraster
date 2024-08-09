@@ -92,11 +92,16 @@ ds$getDriverLongName()
 ds$getRasterXSize()
 ds$getRasterYSize()
 ds$getRasterCount()
+
+ds$addBand(dataType, options)
+
 ds$getGeoTransform()
 ds$setGeoTransform(transform)
+
 ds$getProjection()
 ds$getProjectionRef()
 ds$setProjection(projection)
+
 ds$bbox()
 ds$res()
 ds$dim()
@@ -255,6 +260,17 @@ Returns the number of pixels along the y dimension.
 Returns the number of raster bands on this dataset. For the methods
 described below that operate on individual bands, the \code{band}
 argument is the integer band number (1-based).
+
+\code{$addBand(dataType, options)}\cr
+Adds a band to a dataset if the underlying format supports this action.
+Most formats do not, but \code{"MEM"} and \code{"VRT"} are notable exceptions
+that support adding bands. The added band will always be the last band.
+\code{dataType} is a character string containing the data type name
+(e.g., \code{"Byte"}, \code{"Int16"}, \code{"UInt16"}, \code{"Int32"}, \code{"Float32"}, etc).
+The \code{options} argument is a character vector of NAME=VALUE option strings.
+Supported options are format specific. Note that the \code{options} argument is
+required but may be given as \code{NULL}. Returns logical \code{TRUE} on success
+or \code{FALSE} if a band could not be added.
 
 \code{$getGeoTransform()}\cr
 Returns the affine transformation coefficients for transforming between

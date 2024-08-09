@@ -9,7 +9,7 @@
 #' @param xsize Integer width of raster in pixels.
 #' @param ysize Integer height of raster in pixels.
 #' @param nbands Integer number of bands.
-#' @param dataType Character data type name.
+#' @param dataType Character string containing the data type name.
 #' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 #' @param options Optional list of format-specific creation options in a
 #' vector of `"NAME=VALUE"` pairs
@@ -24,6 +24,10 @@
 #' \code{TRUE}, output written to `dst_filename`). An error is raised if the
 #' operation fails. An object of class [`GDALRaster`][GDALRaster] opened on the
 #' output dataset will be returned if `return_obj = TRUE`.
+#' @note
+#' `dst_filename` may be an empty string (`""`) with `format = "MEM"` and
+#' `return_obj = TRUE` to create an In-memory Raster
+#' (\url{https://gdal.org/drivers/raster/mem.html}).
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()],
 #' [getCreationOptions()]
@@ -91,6 +95,10 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
 #' \code{TRUE}, output written to `dst_filename`). An error is raised if the
 #' operation fails. An object of class [`GDALRaster`][GDALRaster] opened on the
 #' output dataset will be returned if `return_obj = TRUE`.
+#' @note
+#' `dst_filename` may be an empty string (`""`) with `format = "MEM"` and
+#' `return_obj = TRUE` to create an In-memory Raster
+#' (\url{https://gdal.org/drivers/raster/mem.html}).
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()],
 #' [getCreationOptions()], [translate()]

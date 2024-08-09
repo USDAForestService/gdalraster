@@ -26,7 +26,7 @@ create(
 
 \item{nbands}{Integer number of bands.}
 
-\item{dataType}{Character data type name.
+\item{dataType}{Character string containing the data type name.
 (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).}
 
 \item{options}{Optional list of format-specific creation options in a
@@ -48,6 +48,11 @@ output dataset will be returned if \code{return_obj = TRUE}.
 }
 \description{
 \code{create()} makes an empty raster in the specified format.
+}
+\note{
+\code{dst_filename} may be an empty string (\code{""}) with \code{format = "MEM"} and
+\code{return_obj = TRUE} to create an In-memory Raster
+(\url{https://gdal.org/drivers/raster/mem.html}).
 }
 \examples{
 new_file <- file.path(tempdir(), "newdata.tif")

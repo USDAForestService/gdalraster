@@ -128,6 +128,8 @@ class GDALRaster {
     std::vector<double> getGeoTransform() const;
     bool setGeoTransform(std::vector<double> transform);
     int getRasterCount() const;
+    bool addBand(std::string dataType,
+                 Rcpp::Nullable<Rcpp::CharacterVector> options);
 
     std::string getProjection() const;
     std::string getProjectionRef() const;
