@@ -455,44 +455,12 @@ void cpl_http_cleanup() {
 //'
 //' `create()` makes an empty raster in the specified format.
 //'
-//' @param format Raster format short name (e.g., "GTiff").
-//' @param dst_filename Filename to create.
-//' @param xsize Integer width of raster in pixels.
-//' @param ysize Integer height of raster in pixels.
-//' @param nbands Integer number of bands.
-//' @param dataType Character data type name.
-//' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
-//' @param options Optional list of format-specific creation options in a
-//' vector of `"NAME=VALUE"` pairs
-//' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW
-//' compression during creation of a GTiff file).
-//' The APPEND_SUBDATASET=YES option can be
-//' specified to avoid prior destruction of existing dataset.
-//' @returns Logical indicating success (invisible \code{TRUE}).
-//' An error is raised if the operation fails.
-//' @seealso
-//' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()],
-//' [getCreationOptions()]
-//' @examples
-//' new_file <- file.path(tempdir(), "newdata.tif")
-//' create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
-//'        nbands=1, dataType="Int16")
-//' ds <- new(GDALRaster, new_file, read_only=FALSE)
-//' ## EPSG:26912 - NAD83 / UTM zone 12N
-//' ds$setProjection(epsg_to_wkt(26912))
-//' gt <- c(323476.1, 30, 0, 5105082.0, 0, -30)
-//' ds$setGeoTransform(gt)
-//' ds$setNoDataValue(band = 1, -9999)
-//' ds$fillRaster(band = 1, -9999, 0)
-//' ## ...
-//' ## close the dataset when done
-//' ds$close()
-//'
-//' deleteDataset(new_file)
-// [[Rcpp::export(invisible = true)]]
-bool create(std::string format, Rcpp::CharacterVector dst_filename,
-        int xsize, int ysize, int nbands, std::string dataType,
-        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+//' Called from and documented in R/gdal_create.R
+//' @noRd
+// [[Rcpp::export(name = ".create")]]
+GDALRaster create(std::string format, Rcpp::CharacterVector dst_filename,
+                  int xsize, int ysize, int nbands, std::string dataType,
+                  Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
 
     GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
     if (hDriver == nullptr)
@@ -525,8 +493,10 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
     if (hDstDS == nullptr)
         Rcpp::stop("create() failed");
 
-    GDALClose(hDstDS);
-    return true;
+    GDALRaster ds = GDALRaster();
+    ds.setFilename(dst_filename_in);
+    ds.setGDALDatasetH_(hDstDS, true);
+    return ds;
 }
 
 
@@ -536,45 +506,11 @@ bool create(std::string format, Rcpp::CharacterVector dst_filename,
 //' The extent, cell size, number of bands, data type, projection, and
 //' geotransform are all copied from the source raster.
 //'
-//' @param format Format short name for the output raster
-//' (e.g., "GTiff" or "HFA").
-//' @param dst_filename Filename to create.
-//' @param src_filename Filename of source raster.
-//' @param strict Logical. TRUE if the copy must be strictly equivalent,
-//' or more normally FALSE indicating that the copy may adapt as needed for
-//' the output format.
-//' @param options Optional list of format-specific creation options in a
-//' vector of `"NAME=VALUE"` pairs
-//' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
-//' compression during creation of a GTiff file).
-//' The APPEND_SUBDATASET=YES option can be
-//' specified to avoid prior destruction of existing dataset.
-//' @param quiet Logical scalar. If `TRUE`, a progress bar will be not be
-//' displayed. Defaults to `FALSE`.
-//' @returns Logical indicating success (invisible \code{TRUE}).
-//' An error is raised if the operation fails.
-//' @seealso
-//' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()],
-//' [getCreationOptions()], [translate()]
-//' @examples
-//' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-//' tif_file <- file.path(tempdir(), "storml_lndscp.tif")
-//' opt <- c("COMPRESS=LZW")
-//' createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
-//'            options=opt)
-//' file.size(lcp_file)
-//' file.size(tif_file)
-//' ds <- new(GDALRaster, tif_file, read_only=FALSE)
-//' ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
-//' for (band in 1:ds$getRasterCount())
-//'     ds$setNoDataValue(band, -9999)
-//' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
-//' ds$close()
-//'
-//' deleteDataset(tif_file)
-// [[Rcpp::export(invisible = true)]]
-bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
-        Rcpp::CharacterVector src_filename, bool strict = false,
+//' Called from and documented in R/gdal_create.R
+//' @noRd
+// [[Rcpp::export(name = ".createCopy")]]
+GDALRaster createCopy(std::string format, Rcpp::CharacterVector dst_filename,
+        GDALRaster src_ds, bool strict = false,
         Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
         bool quiet = false) {
 
@@ -586,12 +522,10 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
     if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATECOPY, FALSE))
         Rcpp::stop("driver does not support createCopy");
 
-    std::string src_filename_in;
-    src_filename_in = Rcpp::as<std::string>(check_gdal_filename(src_filename));
     std::string dst_filename_in;
     dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
-    GDALDatasetH hSrcDS = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
+    GDALDatasetH hSrcDS = src_ds.getGDALDatasetH_();
     if (hSrcDS == nullptr)
         Rcpp::stop("open source raster failed");
 
@@ -610,12 +544,13 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
                             opt_list.data(),
                             quiet ? nullptr : GDALTermProgressR, nullptr);
 
-    GDALClose(hSrcDS);
     if (hDstDS == nullptr)
         Rcpp::stop("createCopy() failed");
 
-    GDALClose(hDstDS);
-    return true;
+    GDALRaster ds = GDALRaster();
+    ds.setFilename(dst_filename_in);
+    ds.setGDALDatasetH_(hDstDS, true);
+    return ds;
 }
 
 
@@ -1028,17 +963,17 @@ Rcpp::DataFrame combine(Rcpp::CharacterVector src_files,
     }
 
     if (out_raster) {
-        if (create(fmt, dst_filename, ncols, nrows, 1, dataType, options)) {
-            dst_ds = GDALRaster(dst_filename, false);
-            if (!dst_ds.setGeoTransform(gt))
-                Rcpp::warning("failed to set output geotransform");
-            if (!dst_ds.setProjection(srs))
-                Rcpp::warning("failed to set output projection");
-        } else {
-            for (std::size_t i = 0; i < nrasters; ++i)
-                src_ds[i].close();
-            Rcpp::stop("failed to create output raster");
-        }
+        dst_ds = create(fmt, dst_filename, ncols, nrows, 1, dataType, options);
+        // dst_ds = GDALRaster(dst_filename, false);
+        if (!dst_ds.setGeoTransform(gt))
+            Rcpp::warning("failed to set output geotransform");
+        if (!dst_ds.setProjection(srs))
+            Rcpp::warning("failed to set output projection");
+        // } else {
+        //     for (std::size_t i = 0; i < nrasters; ++i)
+        //         src_ds[i].close();
+        //     Rcpp::stop("failed to create output raster");
+        // }
     }
 
     CmbTable tbl(nrasters, var_names);

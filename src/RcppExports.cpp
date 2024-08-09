@@ -165,7 +165,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // create
-bool create(std::string format, Rcpp::CharacterVector dst_filename, int xsize, int ysize, int nbands, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
+GDALRaster create(std::string format, Rcpp::CharacterVector dst_filename, int xsize, int ysize, int nbands, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options);
 RcppExport SEXP _gdalraster_create(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -182,18 +182,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // createCopy
-bool createCopy(std::string format, Rcpp::CharacterVector dst_filename, Rcpp::CharacterVector src_filename, bool strict, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
-RcppExport SEXP _gdalraster_createCopy(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP src_filenameSEXP, SEXP strictSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
+GDALRaster createCopy(std::string format, Rcpp::CharacterVector dst_filename, GDALRaster src_ds, bool strict, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+RcppExport SEXP _gdalraster_createCopy(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP src_dsSEXP, SEXP strictSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< GDALRaster >::type src_ds(src_dsSEXP);
     Rcpp::traits::input_parameter< bool >::type strict(strictSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(createCopy(format, dst_filename, src_filename, strict, options, quiet));
+    rcpp_result_gen = Rcpp::wrap(createCopy(format, dst_filename, src_ds, strict, options, quiet));
     return rcpp_result_gen;
 END_RCPP
 }

@@ -80,7 +80,7 @@ std::string getGFU_string_(GDALRATFieldUsage gfu) {
 GDALRaster::GDALRaster() :
             fname_in(""),
             open_options_in(Rcpp::CharacterVector::create()),
-            shared_in(true),
+            shared_in(false),
             hDataset(nullptr),
             eAccess(GA_ReadOnly) {}
 
@@ -131,6 +131,7 @@ std::string GDALRaster::getFilename() const {
 }
 
 void GDALRaster::setFilename(std::string filename) {
+    // TODO: update logic for whether this is allowed
     if (fname_in == "" && filename != "" && hDataset == nullptr)
         fname_in = Rcpp::as<std::string>(check_gdal_filename(filename));
 }
@@ -1592,6 +1593,14 @@ GDALDatasetH GDALRaster::getGDALDatasetH_() const {
     checkAccess_(GA_ReadOnly);
 
     return hDataset;
+}
+
+void GDALRaster::setGDALDatasetH_(GDALDatasetH hDs, bool with_update) {
+    hDataset = hDs;
+    if (with_update)
+        eAccess = GA_Update;
+    else
+        eAccess = GA_ReadOnly;
 }
 
 // ****************************************************************************

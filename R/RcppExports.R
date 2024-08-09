@@ -288,42 +288,10 @@ http_enabled <- function() {
 #'
 #' `create()` makes an empty raster in the specified format.
 #'
-#' @param format Raster format short name (e.g., "GTiff").
-#' @param dst_filename Filename to create.
-#' @param xsize Integer width of raster in pixels.
-#' @param ysize Integer height of raster in pixels.
-#' @param nbands Integer number of bands.
-#' @param dataType Character data type name.
-#' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
-#' @param options Optional list of format-specific creation options in a
-#' vector of `"NAME=VALUE"` pairs
-#' (e.g., \code{options = c("COMPRESS=LZW")} to set LZW
-#' compression during creation of a GTiff file).
-#' The APPEND_SUBDATASET=YES option can be
-#' specified to avoid prior destruction of existing dataset.
-#' @returns Logical indicating success (invisible \code{TRUE}).
-#' An error is raised if the operation fails.
-#' @seealso
-#' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()],
-#' [getCreationOptions()]
-#' @examples
-#' new_file <- file.path(tempdir(), "newdata.tif")
-#' create(format="GTiff", dst_filename=new_file, xsize=143, ysize=107,
-#'        nbands=1, dataType="Int16")
-#' ds <- new(GDALRaster, new_file, read_only=FALSE)
-#' ## EPSG:26912 - NAD83 / UTM zone 12N
-#' ds$setProjection(epsg_to_wkt(26912))
-#' gt <- c(323476.1, 30, 0, 5105082.0, 0, -30)
-#' ds$setGeoTransform(gt)
-#' ds$setNoDataValue(band = 1, -9999)
-#' ds$fillRaster(band = 1, -9999, 0)
-#' ## ...
-#' ## close the dataset when done
-#' ds$close()
-#'
-#' deleteDataset(new_file)
-create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options = NULL) {
-    invisible(.Call(`_gdalraster_create`, format, dst_filename, xsize, ysize, nbands, dataType, options))
+#' Called from and documented in R/gdal_create.R
+#' @noRd
+.create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options = NULL) {
+    .Call(`_gdalraster_create`, format, dst_filename, xsize, ysize, nbands, dataType, options)
 }
 
 #' Create a copy of a raster
@@ -332,44 +300,10 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options
 #' The extent, cell size, number of bands, data type, projection, and
 #' geotransform are all copied from the source raster.
 #'
-#' @param format Format short name for the output raster
-#' (e.g., "GTiff" or "HFA").
-#' @param dst_filename Filename to create.
-#' @param src_filename Filename of source raster.
-#' @param strict Logical. TRUE if the copy must be strictly equivalent,
-#' or more normally FALSE indicating that the copy may adapt as needed for
-#' the output format.
-#' @param options Optional list of format-specific creation options in a
-#' vector of `"NAME=VALUE"` pairs
-#' (e.g., \code{options = c("COMPRESS=LZW")} to set \code{LZW}
-#' compression during creation of a GTiff file).
-#' The APPEND_SUBDATASET=YES option can be
-#' specified to avoid prior destruction of existing dataset.
-#' @param quiet Logical scalar. If `TRUE`, a progress bar will be not be
-#' displayed. Defaults to `FALSE`.
-#' @returns Logical indicating success (invisible \code{TRUE}).
-#' An error is raised if the operation fails.
-#' @seealso
-#' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()],
-#' [getCreationOptions()], [translate()]
-#' @examples
-#' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-#' tif_file <- file.path(tempdir(), "storml_lndscp.tif")
-#' opt <- c("COMPRESS=LZW")
-#' createCopy(format="GTiff", dst_filename=tif_file, src_filename=lcp_file,
-#'            options=opt)
-#' file.size(lcp_file)
-#' file.size(tif_file)
-#' ds <- new(GDALRaster, tif_file, read_only=FALSE)
-#' ds$getMetadata(band=0, domain="IMAGE_STRUCTURE")
-#' for (band in 1:ds$getRasterCount())
-#'     ds$setNoDataValue(band, -9999)
-#' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
-#' ds$close()
-#'
-#' deleteDataset(tif_file)
-createCopy <- function(format, dst_filename, src_filename, strict = FALSE, options = NULL, quiet = FALSE) {
-    invisible(.Call(`_gdalraster_createCopy`, format, dst_filename, src_filename, strict, options, quiet))
+#' Called from and documented in R/gdal_create.R
+#' @noRd
+.createCopy <- function(format, dst_filename, src_ds, strict = FALSE, options = NULL, quiet = FALSE) {
+    .Call(`_gdalraster_createCopy`, format, dst_filename, src_ds, strict, options, quiet)
 }
 
 #' Apply geotransform - internal wrapper of GDALApplyGeoTransform()

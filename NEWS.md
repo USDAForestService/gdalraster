@@ -1,4 +1,8 @@
-# gdalraster 1.11.1.9180 (dev)
+# gdalraster 1.11.1.9190 (dev)
+
+* `createCopy()`: add argument `return_obj`, `TRUE` to return an object of class `GDALRaster` for the created dataset; an object of class `GDALRaster` can be given for argument `src_filename` to specify the source dataset (2024-08-07)
+
+* `create()`: add argument `return_obj`, `TRUE` to return an object of class `GDALRaster` for the created dataset (2024-08-07)
 
 * add `GDALRaster::setMetadata()`: set dataset or band-level metadata from a character vector of NAME=VALUE pairs (instead of per metadata item with the existing `$setMetadataItem()`) (2024-08-07)
 
@@ -36,7 +40,7 @@
 
 * add `vsi_get_signed_url()`: return a signed URL for a supplied VSI filename, wrapper of `VSIGetSignedURL()` in the GDAL API (2024-06-20)
 
-* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`
 
 # gdalraster 1.11.1
 
