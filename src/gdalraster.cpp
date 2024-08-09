@@ -131,6 +131,7 @@ std::string GDALRaster::getFilename() const {
 }
 
 void GDALRaster::setFilename(std::string filename) {
+    // TODO: update logic for whether this is allowed
     if (fname_in == "" && filename != "" && hDataset == nullptr)
         fname_in = Rcpp::as<std::string>(check_gdal_filename(filename));
 }
