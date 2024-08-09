@@ -111,7 +111,7 @@
 #'
 #' ds$read(band, xoff, yoff, xsize, ysize, out_xsize, out_ysize)
 #' ds$write(band, xoff, yoff, xsize, ysize, rasterData)
-#' ds$fillRaster(value, ivalue)
+#' ds$fillRaster(band, value, ivalue)
 #'
 #' ds$getColorTable(band)
 #' ds$getPaletteInterp(band)
@@ -630,6 +630,16 @@
 #' \code{rasterData} should be replaced with a suitable nodata value prior to
 #' writing (see \code{$getNoDataValue()} and \code{$setNoDataValue()} above).
 #' An error is raised if the operation fails (no return value).
+#'
+#' \code{$fillRaster(band, value, ivalue)}\cr
+#' Fills `band` with a constant value. GDAL makes no guarantees about what
+#' values the pixels in newly created files are set to, so this method can be
+#' used to clear a band to a specified "default" value. The fill `value` is
+#' passed as `numeric`, but this will be converted to the underlying raster
+#' data type before writing to the file. The `ivalue` argument allows setting
+#' the imaginary component of a complex value. Note that `ivalue` is a required
+#' argument but can be set to `0` for real data types. No return value. An
+#' error is raised if the operation fails.
 #'
 #' \code{$getColorTable(band)}\cr
 #' Returns the color table associated with \code{band}, or \code{NULL} if
