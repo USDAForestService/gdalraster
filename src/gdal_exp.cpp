@@ -473,7 +473,9 @@ GDALRaster create(std::string format, Rcpp::CharacterVector dst_filename,
     std::string dst_filename_in;
     dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
-    GDALDataType dt = GDALGetDataTypeByName(dataType.c_str() );
+    GDALDataType dt = GDALGetDataTypeByName(dataType.c_str());
+    if (dt == GDT_Unknown)
+        Rcpp::stop("'dataType' is unknown");
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
