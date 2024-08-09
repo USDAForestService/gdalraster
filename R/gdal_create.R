@@ -71,7 +71,8 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
 #' @param format Format short name for the output raster
 #' (e.g., "GTiff" or "HFA").
 #' @param dst_filename Filename to create.
-#' @param src_filename Filename of source raster.
+#' @param src_filename Filename of source raster, or object of class
+#' `GDALRaster`.
 #' @param strict Logical. TRUE if the copy must be strictly equivalent,
 #' or more normally FALSE indicating that the copy may adapt as needed for
 #' the output format.
