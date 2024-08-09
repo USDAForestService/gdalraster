@@ -163,17 +163,14 @@ The table of GDAL [raster format drivers](https://gdal.org/drivers/raster/index.
 
 ```{r}
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
+tif_file <- file.path(tempdir(), "storml_lndscp.tif")
 ds <- createCopy(format = "GTiff",
                  dst_filename = tif_file,
                  src_filename = lcp_file,
                  options = "COMPRESS=LZW",
                  return_obj = TRUE)
 
-file.size(lcp_file)
-file.size(tif_file)
-
-# band=0 for dataset-level metadata:
+# band = 0 for dataset-level metadata:
 ds$getMetadata(band = 0, domain = "IMAGE_STRUCTURE")
 
 # set nodata value for all bands
@@ -183,6 +180,9 @@ for (band in 1:ds$getRasterCount())
 # band 2 of an LCP file is slope degrees
 ds$getStatistics(band = 2, approx_ok = FALSE, force = TRUE)
 ds$close()
+
+vsi_stat(lcp_file, "size")
+vsi_stat(tif_file, "size")
 ```
 
 Information about format specific creation options can be obtained with the function `getCreationOptions()`. By default, this function lists all available creation options for a format. Output can also be filtered to specific options:
@@ -198,7 +198,7 @@ getCreationOptions("GTiff", "SPARSE_OK")
 `create()` can be used to create a new raster dataset manually. This function can also take a list of creation options as described above for `createCopy()`, but the raster size, number of bands and band type must be provided explicitly:
 
 ```{r}
-new_file <- paste0(tempdir(), "/", "newdata.tif")
+new_file <- file.path(tempdir(), "newdata.tif")
 ds <- create(format = "GTiff",
              dst_filename = new_file,
              xsize = 143,
