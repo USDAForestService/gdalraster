@@ -42,7 +42,7 @@
 
 * add `vsi_get_signed_url()`: return a signed URL for a supplied VSI filename, wrapper of `VSIGetSignedURL()` in the GDAL API (2024-06-20)
 
-* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`
+* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`; document `$fillRaster()` method in `GDALRaster-class`
 
 # gdalraster 1.11.1
 
