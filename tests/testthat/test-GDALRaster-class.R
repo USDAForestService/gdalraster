@@ -107,20 +107,22 @@ test_that("get/set metadata works", {
     expect_equal(length(ds$getMetadataDomainList(band=0)), 3)
     expect_equal(length(ds$getMetadataDomainList(band=1)), 1)
 
-    f <- file.path(tempdir(), "testmd.tif")
-    create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
-           nbands=1, dataType="Int32")
-    ds2 <- new(GDALRaster, f, read_only=FALSE)
+    f <- tempfile(fileext = ".tif")
+    ds2 <- create(format="GTiff", dst_filename=f, xsize=10, ysize=10,
+                  nbands=1, dataType="Int32", return_obj = TRUE)
 
-    # TODO: does not persist:
-    ds2$setMetadata(band=0, metadata="AREA_OR_POINT=Area", domain="")
+    srs <- ds$getProjection()
+    ds2$setProjection(srs)
+    gt <- ds$getGeoTransform()
+    ds2$setGeoTransform(gt)
+    md <- ds$getMetadata(band=0, domain="")
+    expect_true(ds2$setMetadata(band=0, metadata=md, domain=""))
 
     expect_true(ds2$setMetadataItem(band=1, mdi_name="RepresentationType",
                                     mdi_value="THEMATIC", domain=""))
     ds2$close()
     ds2$open(read_only = TRUE)
-    # TODO: does not persist:
-    # expect_equal(ds2$getMetadata(band=0, domain=""), "AREA_OR_POINT=Area")
+    expect_equal(ds2$getMetadata(band=0, domain=""), "AREA_OR_POINT=Area")
     expect_equal(ds2$getMetadata(band=1, domain=""),
                  "RepresentationType=THEMATIC")
 
