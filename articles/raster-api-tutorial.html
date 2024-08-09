@@ -111,7 +111,7 @@ and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x55bdf5354ef0&gt; of class 'GDALRaster' &lt;0x55bdf697ed30&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x5567260259a0&gt; of class 'GDALRaster' &lt;0x556725922ce0&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 3 fields</span></span>
 <span><span class="co">#&gt;  $ infoOptions  : chr(0) </span></span>
@@ -361,7 +361,7 @@ raw format without support for compression or nodata values) to
 LZW-compressed GeoTiff:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
-<span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_lndscp.tif"</span><span class="op">)</span></span>
+<span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"storml_lndscp.tif"</span><span class="op">)</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createCopy.html">createCopy</a></span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
 <span>                 dst_filename <span class="op">=</span> <span class="va">tif_file</span>,</span>
 <span>                 src_filename <span class="op">=</span> <span class="va">lcp_file</span>,</span>
@@ -369,12 +369,7 @@ LZW-compressed GeoTiff:</p>
 <span>                 return_obj <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">lcp_file</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 252132</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tif_file</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 5116</span></span>
-<span></span>
-<span><span class="co"># band=0 for dataset-level metadata:</span></span>
+<span><span class="co"># band = 0 for dataset-level metadata:</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">0</span>, domain <span class="op">=</span> <span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "COMPRESSION=LZW"  "INTERLEAVE=PIXEL"</span></span>
 <span></span>
@@ -386,7 +381,14 @@ LZW-compressed GeoTiff:</p>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">2</span>, approx_ok <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt; [1]  0.00000 54.00000 22.93012 12.51330</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="../reference/vsi_stat.html">vsi_stat</a></span><span class="op">(</span><span class="va">lcp_file</span>, <span class="st">"size"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; integer64</span></span>
+<span><span class="co">#&gt; [1] 252132</span></span>
+<span><span class="fu"><a href="../reference/vsi_stat.html">vsi_stat</a></span><span class="op">(</span><span class="va">tif_file</span>, <span class="st">"size"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; integer64</span></span>
+<span><span class="co">#&gt; [1] 113942</span></span></code></pre></div>
 <p>Information about format specific creation options can be obtained
 with the function <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>. By default, this
 function lists all available creation options for a format. Output can
@@ -419,7 +421,7 @@ manually. This function can also take a list of creation options as
 described above for <code><a href="../reference/createCopy.html">createCopy()</a></code>, but the raster size,
 number of bands and band type must be provided explicitly:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"newdata.tif"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"newdata.tif"</span><span class="op">)</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create.html">create</a></span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
 <span>             dst_filename <span class="op">=</span> <span class="va">new_file</span>,</span>
 <span>             xsize <span class="op">=</span> <span class="fl">143</span>,</span>
