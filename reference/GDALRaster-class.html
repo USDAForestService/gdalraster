@@ -204,7 +204,7 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">read</span><span class="op">(</span><span class="va">band</span>, <span class="va">xoff</span>, <span class="va">yoff</span>, <span class="va">xsize</span>, <span class="va">ysize</span>, <span class="va">out_xsize</span>, <span class="va">out_ysize</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">write</span><span class="op">(</span><span class="va">band</span>, <span class="va">xoff</span>, <span class="va">yoff</span>, <span class="va">xsize</span>, <span class="va">ysize</span>, <span class="va">rasterData</span><span class="op">)</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">fillRaster</span><span class="op">(</span><span class="va">value</span>, <span class="va">ivalue</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">fillRaster</span><span class="op">(</span><span class="va">band</span>, <span class="va">value</span>, <span class="va">ivalue</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getColorTable</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getPaletteInterp</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
@@ -626,6 +626,15 @@ It is organized in left to right, top to bottom pixel order. <code>NA</code> in
 <code>rasterData</code> should be replaced with a suitable nodata value prior to
 writing (see <code>$getNoDataValue()</code> and <code>$setNoDataValue()</code> above).
 An error is raised if the operation fails (no return value).</p>
+<p><code>$fillRaster(band, value, ivalue)</code><br>
+Fills <code>band</code> with a constant value. GDAL makes no guarantees about what
+values the pixels in newly created files are set to, so this method can be
+used to clear a band to a specified "default" value. The fill <code>value</code> is
+passed as <code>numeric</code>, but this will be converted to the underlying raster
+data type before writing to the file. The <code>ivalue</code> argument allows setting
+the imaginary component of a complex value. Note that <code>ivalue</code> is a required
+argument but can be set to <code>0</code> for real data types. No return value. An
+error is raised if the operation fails.</p>
 <p><code>$getColorTable(band)</code><br>
 Returns the color table associated with <code>band</code>, or <code>NULL</code> if
 there is no associated color table. The color table is returned as an
