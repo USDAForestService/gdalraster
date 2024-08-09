@@ -11,7 +11,7 @@ geotransform are all copied from the source raster."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9180</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9190</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,7 +48,7 @@ geotransform are all copied from the source raster."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Create a copy of a raster</h1>
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/R/RcppExports.R" class="external-link"><code>R/RcppExports.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/R/gdal_create.R" class="external-link"><code>R/gdal_create.R</code></a></small>
       <div class="d-none name"><code>createCopy.Rd</code></div>
     </div>
 
@@ -66,7 +66,8 @@ geotransform are all copied from the source raster.</p>
 <span>  <span class="va">src_filename</span>,</span>
 <span>  strict <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  options <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  return_obj <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span></code></pre></div>
     </div>
 
@@ -106,11 +107,19 @@ specified to avoid prior destruction of existing dataset.</p></dd>
 <dd><p>Logical scalar. If <code>TRUE</code>, a progress bar will be not be
 displayed. Defaults to <code>FALSE</code>.</p></dd>
 
+
+<dt id="arg-return-obj">return_obj<a class="anchor" aria-label="anchor" href="#arg-return-obj"></a></dt>
+<dd><p>Logical scalar. If <code>TRUE</code>, an object of class
+<code><a href="GDALRaster-class.html">GDALRaster</a></code> opened on the newly created dataset will be
+returned, otherwise returns a logical value. Defaults to <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Logical indicating success (invisible <code>TRUE</code>).
-An error is raised if the operation fails.</p>
+    <p>By default, returns a logical value indicating success (invisible
+<code>TRUE</code>, output written to <code>dst_filename</code>). An error is raised if the
+operation fails. An object of class <code><a href="GDALRaster-class.html">GDALRaster</a></code> opened on the
+output dataset will be returned if <code>return_obj = TRUE</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -122,20 +131,17 @@ An error is raised if the operation fails.</p>
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"storml_lndscp.tif"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">createCopy</span><span class="op">(</span>format<span class="op">=</span><span class="st">"GTiff"</span>, dst_filename<span class="op">=</span><span class="va">tif_file</span>, src_filename<span class="op">=</span><span class="va">lcp_file</span>,</span></span>
-<span class="r-in"><span>           options<span class="op">=</span><span class="va">opt</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">createCopy</span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>,</span></span>
+<span class="r-in"><span>                 dst_filename <span class="op">=</span> <span class="va">tif_file</span>,</span></span>
+<span class="r-in"><span>                 src_filename <span class="op">=</span> <span class="va">lcp_file</span>,</span></span>
+<span class="r-in"><span>                 options <span class="op">=</span> <span class="st">"COMPRESS=LZW"</span>,</span></span>
+<span class="r-in"><span>                 return_obj <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">lcp_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 252132</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tif_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 108510</span>
-<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tif_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">0</span>, domain <span class="op">=</span> <span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "COMPRESSION=LZW"  "INTERLEAVE=PIXEL"</span>
 <span class="r-in"><span><span class="kw">for</span> <span class="op">(</span><span class="va">band</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterCount</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>    <span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span><span class="va">band</span>, <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, approx_ok <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2438.0000 3046.0000 2675.9713  133.0185</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>

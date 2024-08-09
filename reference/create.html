@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9180</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9190</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -44,7 +44,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Create a new uninitialized raster</h1>
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/R/RcppExports.R" class="external-link"><code>R/RcppExports.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/R/gdal_create.R" class="external-link"><code>R/gdal_create.R</code></a></small>
       <div class="d-none name"><code>create.Rd</code></div>
     </div>
 
@@ -54,7 +54,16 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create</span><span class="op">(</span><span class="va">format</span>, <span class="va">dst_filename</span>, <span class="va">xsize</span>, <span class="va">ysize</span>, <span class="va">nbands</span>, <span class="va">dataType</span>, options <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">create</span><span class="op">(</span></span>
+<span>  <span class="va">format</span>,</span>
+<span>  <span class="va">dst_filename</span>,</span>
+<span>  <span class="va">xsize</span>,</span>
+<span>  <span class="va">ysize</span>,</span>
+<span>  <span class="va">nbands</span>,</span>
+<span>  <span class="va">dataType</span>,</span>
+<span>  options <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return_obj <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -94,11 +103,19 @@ compression during creation of a GTiff file).
 The APPEND_SUBDATASET=YES option can be
 specified to avoid prior destruction of existing dataset.</p></dd>
 
+
+<dt id="arg-return-obj">return_obj<a class="anchor" aria-label="anchor" href="#arg-return-obj"></a></dt>
+<dd><p>Logical scalar. If <code>TRUE</code>, an object of class
+<code><a href="GDALRaster-class.html">GDALRaster</a></code> opened on the newly created dataset will be
+returned, otherwise returns a logical value. Defaults to <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Logical indicating success (invisible <code>TRUE</code>).
-An error is raised if the operation fails.</p>
+    <p>By default, returns a logical value indicating success (invisible
+<code>TRUE</code>, output written to <code>dst_filename</code>). An error is raised if the
+operation fails. An object of class <code><a href="GDALRaster-class.html">GDALRaster</a></code> opened on the
+output dataset will be returned if <code>return_obj = TRUE</code>.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -109,9 +126,13 @@ An error is raised if the operation fails.</p>
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"newdata.tif"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">create</span><span class="op">(</span>format<span class="op">=</span><span class="st">"GTiff"</span>, dst_filename<span class="op">=</span><span class="va">new_file</span>, xsize<span class="op">=</span><span class="fl">143</span>, ysize<span class="op">=</span><span class="fl">107</span>,</span></span>
-<span class="r-in"><span>       nbands<span class="op">=</span><span class="fl">1</span>, dataType<span class="op">=</span><span class="st">"Int16"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">new_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">create</span><span class="op">(</span>format<span class="op">=</span><span class="st">"GTiff"</span>,</span></span>
+<span class="r-in"><span>             dst_filename <span class="op">=</span> <span class="va">new_file</span>,</span></span>
+<span class="r-in"><span>             xsize <span class="op">=</span> <span class="fl">143</span>,</span></span>
+<span class="r-in"><span>             ysize <span class="op">=</span> <span class="fl">107</span>,</span></span>
+<span class="r-in"><span>             nbands <span class="op">=</span> <span class="fl">1</span>,</span></span>
+<span class="r-in"><span>             dataType <span class="op">=</span> <span class="st">"Int16"</span>,</span></span>
+<span class="r-in"><span>             return_obj<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## EPSG:26912 - NAD83 / UTM zone 12N</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">setProjection</span><span class="op">(</span><span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
