@@ -9,7 +9,7 @@
 #' @param xsize Integer width of raster in pixels.
 #' @param ysize Integer height of raster in pixels.
 #' @param nbands Integer number of bands.
-#' @param dataType Character data type name.
+#' @param dataType Character string containing the data type name.
 #' (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).
 #' @param options Optional list of format-specific creation options in a
 #' vector of `"NAME=VALUE"` pairs
