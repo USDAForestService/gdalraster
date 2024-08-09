@@ -20,7 +20,8 @@ createCopy(
 
 \item{dst_filename}{Filename to create.}
 
-\item{src_filename}{Filename of source raster.}
+\item{src_filename}{Filename of source raster, or object of class
+\code{GDALRaster}.}
 
 \item{strict}{Logical. TRUE if the copy must be strictly equivalent,
 or more normally FALSE indicating that the copy may adapt as needed for
