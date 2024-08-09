@@ -11,7 +11,7 @@ geotransform are all copied from the source raster."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9190</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9200</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,6 +121,12 @@ returned, otherwise returns a logical value. Defaults to <code>FALSE</code>.</p>
 <code>TRUE</code>, output written to <code>dst_filename</code>). An error is raised if the
 operation fails. An object of class <code><a href="GDALRaster-class.html">GDALRaster</a></code> opened on the
 output dataset will be returned if <code>return_obj = TRUE</code>.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p><code>dst_filename</code> may be an empty string (<code>""</code>) with <code>format = "MEM"</code> and
+<code>return_obj = TRUE</code> to create an In-memory Raster
+(<a href="https://gdal.org/drivers/raster/mem.html" class="external-link">https://gdal.org/drivers/raster/mem.html</a>).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

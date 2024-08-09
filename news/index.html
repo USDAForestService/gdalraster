@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9190</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9200</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9190" id="gdalraster-11119190-dev">gdalraster 1.11.1.9190 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119190-dev"></a></h2>
-<ul><li><p><code><a href="../reference/createCopy.html">createCopy()</a></code>: add argument <code>return_obj</code>, <code>TRUE</code> to return an object of class <code>GDALRaster</code> for the created dataset; an object of class <code>GDALRaster</code> can be given for argument <code>src_filename</code> to specify the source dataset (2024-08-07)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9200" id="gdalraster-11119200-dev">gdalraster 1.11.1.9200 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119200-dev"></a></h2>
+<ul><li><p>add <code>GDALRaster::addBand()</code>: add a band to a dataset if the underlying format supports this action, e.g., <code>MEM</code> and <code>VRT</code> (2024-08-09)</p></li>
+<li><p><code><a href="../reference/createCopy.html">createCopy()</a></code>: add argument <code>return_obj</code>, <code>TRUE</code> to return an object of class <code>GDALRaster</code> for the created dataset; an object of class <code>GDALRaster</code> can be given for argument <code>src_filename</code> to specify the source dataset (2024-08-07)</p></li>
 <li><p><code><a href="../reference/create.html">create()</a></code>: add argument <code>return_obj</code>, <code>TRUE</code> to return an object of class <code>GDALRaster</code> for the created dataset (2024-08-07)</p></li>
 <li><p>add <code>GDALRaster::setMetadata()</code>: set dataset or band-level metadata from a character vector of NAME=VALUE pairs (instead of per metadata item with the existing <code>$setMetadataItem()</code>) (2024-08-07)</p></li>
 <li><p>add transactions support in class <code>GDALVector</code> (<code>$startTransaction()</code>, <code>$commitTransaction()</code>, <code>$rollbackTransaction()</code>) (2024-08-03)</p></li>
