@@ -52,6 +52,11 @@ output dataset will be returned if \code{return_obj = TRUE}.
 The extent, cell size, number of bands, data type, projection, and
 geotransform are all copied from the source raster.
 }
+\note{
+\code{dst_filename} may be an empty string (\code{""}) with \code{format = "MEM"} and
+\code{return_obj = TRUE} to create an In-memory Raster
+(\url{https://gdal.org/drivers/raster/mem.html}).
+}
 \examples{
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 tif_file <- file.path(tempdir(), "storml_lndscp.tif")

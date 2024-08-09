@@ -49,6 +49,11 @@ output dataset will be returned if \code{return_obj = TRUE}.
 \description{
 \code{create()} makes an empty raster in the specified format.
 }
+\note{
+\code{dst_filename} may be an empty string (\code{""}) with \code{format = "MEM"} and
+\code{return_obj = TRUE} to create an In-memory Raster
+(\url{https://gdal.org/drivers/raster/mem.html}).
+}
 \examples{
 new_file <- file.path(tempdir(), "newdata.tif")
 ds <- create(format="GTiff",

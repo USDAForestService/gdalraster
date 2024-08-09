@@ -24,6 +24,10 @@
 #' \code{TRUE}, output written to `dst_filename`). An error is raised if the
 #' operation fails. An object of class [`GDALRaster`][GDALRaster] opened on the
 #' output dataset will be returned if `return_obj = TRUE`.
+#' @note
+#' `dst_filename` may be an empty string (`""`) with `format = "MEM"` and
+#' `return_obj = TRUE` to create an In-memory Raster
+#' (\url{https://gdal.org/drivers/raster/mem.html}).
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [createCopy()], [rasterFromRaster()],
 #' [getCreationOptions()]
@@ -91,6 +95,10 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
 #' \code{TRUE}, output written to `dst_filename`). An error is raised if the
 #' operation fails. An object of class [`GDALRaster`][GDALRaster] opened on the
 #' output dataset will be returned if `return_obj = TRUE`.
+#' @note
+#' `dst_filename` may be an empty string (`""`) with `format = "MEM"` and
+#' `return_obj = TRUE` to create an In-memory Raster
+#' (\url{https://gdal.org/drivers/raster/mem.html}).
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [create()], [rasterFromRaster()],
 #' [getCreationOptions()], [translate()]
