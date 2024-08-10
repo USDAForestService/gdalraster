@@ -458,17 +458,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // warp
-bool warp(Rcpp::CharacterVector src_files, Rcpp::CharacterVector dst_filename, std::string t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet);
-RcppExport SEXP _gdalraster_warp(SEXP src_filesSEXP, SEXP dst_filenameSEXP, SEXP t_srsSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
+GDALRaster warp(const Rcpp::List& src_datasets, Rcpp::CharacterVector dst_filename, Rcpp::List dst_dataset, std::string t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet);
+RcppExport SEXP _gdalraster_warp(SEXP src_datasetsSEXP, SEXP dst_filenameSEXP, SEXP dst_datasetSEXP, SEXP t_srsSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_files(src_filesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type src_datasets(src_datasetsSEXP);
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type dst_dataset(dst_datasetSEXP);
     Rcpp::traits::input_parameter< std::string >::type t_srs(t_srsSEXP);
     Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(warp(src_files, dst_filename, t_srs, cl_arg, quiet));
+    rcpp_result_gen = Rcpp::wrap(warp(src_datasets, dst_filename, dst_dataset, t_srs, cl_arg, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1542,7 +1543,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_rasterize", (DL_FUNC) &_gdalraster_rasterize, 4},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 10},
     {"_gdalraster_translate", (DL_FUNC) &_gdalraster_translate, 4},
-    {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 5},
+    {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 6},
     {"_gdalraster_createColorRamp", (DL_FUNC) &_gdalraster_createColorRamp, 5},
     {"_gdalraster_bandCopyWholeRaster", (DL_FUNC) &_gdalraster_bandCopyWholeRaster, 6},
     {"_gdalraster_deleteDataset", (DL_FUNC) &_gdalraster_deleteDataset, 2},

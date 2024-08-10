@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9200 (dev)
+# gdalraster 1.11.1.9210 (dev)
+
+* `warp()`: source and destination rasters may be objects of class `GDALRaster` (2024-08-10)
 
 * add `GDALRaster::addBand()`: add a band to a dataset if the underlying format supports this action, e.g., `MEM` and `VRT` (2024-08-09)
 
