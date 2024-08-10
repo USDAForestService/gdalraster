@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9210 (dev)
+# gdalraster 1.11.1.9220 (dev)
+
+* `GDALRaster::setDescription()`: support `band = 0` to set the dataset-level description (2024-08-10)
 
 * `warp()`: source and destination rasters may be objects of class `GDALRaster` (#469) (2024-08-10)
 
