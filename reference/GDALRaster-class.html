@@ -13,7 +13,7 @@ details of the GDAL Raster API."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9210</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9220</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -379,10 +379,13 @@ info and examples.</p>
 <p><code>$getDescription(band)</code><br>
 Returns a string containing the description for <code>band</code>. An empty
 string is returned if no description is set for the band.
-(Setting <code>band = 0</code> will return the dataset-level description.)</p>
+Passing <code>band = 0</code> will return the dataset-level description.</p>
 <p><code>$setDescription(band, desc)</code><br>
 Sets a description for <code>band</code>. <code>desc</code> is the character string
-to set. No return value.</p>
+to set. No return value. (Passing <code>band = 0</code> can be used to set the
+dataset-level description. Note that the dataset description is generally
+the filename that was used to open the dataset. It usually should not be
+changed by calling this method on an existing dataset.)</p>
 <p><code>$getBlockSize(band)</code><br>
 Returns an integer vector of length two (xsize, ysize) containing the
 "natural" block size of <code>band</code>. GDAL has a concept of the natural block
