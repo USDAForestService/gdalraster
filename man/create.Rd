@@ -16,9 +16,10 @@ create(
 )
 }
 \arguments{
-\item{format}{Raster format short name (e.g., "GTiff").}
+\item{format}{Character string giving a raster format short name
+(e.g., \code{"GTiff"}).}
 
-\item{dst_filename}{Filename to create.}
+\item{dst_filename}{Character string giving the filename to create.}
 
 \item{xsize}{Integer width of raster in pixels.}
 
@@ -30,7 +31,7 @@ create(
 (e.g., common data types include Byte, Int16, UInt16, Int32, Float32).}
 
 \item{options}{Optional list of format-specific creation options in a
-vector of \code{"NAME=VALUE"} pairs
+character vector of \code{"NAME=VALUE"} pairs
 (e.g., \code{options = c("COMPRESS=LZW")} to set LZW
 compression during creation of a GTiff file).
 The APPEND_SUBDATASET=YES option can be
@@ -63,19 +64,24 @@ ds <- create(format="GTiff",
              nbands = 1,
              dataType = "Int16",
              return_obj=TRUE)
-## EPSG:26912 - NAD83 / UTM zone 12N
+
+# EPSG:26912 - NAD83 / UTM zone 12N
 ds$setProjection(epsg_to_wkt(26912))
-gt <- c(323476.1, 30, 0, 5105082.0, 0, -30)
+
+gt <- c(323476, 30, 0, 5105082, 0, -30)
 ds$setGeoTransform(gt)
+
 ds$setNoDataValue(band = 1, -9999)
 ds$fillRaster(band = 1, -9999, 0)
-## ...
+
+# ...
+
 ## close the dataset when done
 ds$close()
 
 deleteDataset(new_file)
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}},
-\code{\link[=getCreationOptions]{getCreationOptions()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=getCreationOptions]{getCreationOptions()}},
+\code{\link[=rasterFromRaster]{rasterFromRaster()}}
 }
