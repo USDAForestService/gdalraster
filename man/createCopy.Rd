@@ -15,17 +15,17 @@ createCopy(
 )
 }
 \arguments{
-\item{format}{Format short name for the output raster
-(e.g., "GTiff" or "HFA").}
+\item{format}{Character string giving the format short name for the
+output raster (e.g., \code{"GTiff"}).}
 
-\item{dst_filename}{Filename to create.}
+\item{dst_filename}{Character string giving the filename to create.}
 
-\item{src_filename}{Filename of source raster, or object of class
-\code{GDALRaster}.}
+\item{src_filename}{Either a character string giving the filename of the
+source raster, or object of class \code{GDALRaster} for the source.}
 
-\item{strict}{Logical. TRUE if the copy must be strictly equivalent,
-or more normally FALSE indicating that the copy may adapt as needed for
-the output format.}
+\item{strict}{Logical. \code{TRUE} if the copy must be strictly equivalent,
+or more normally \code{FALSE} (the default) indicating that the copy may adapt
+as needed for the output format.}
 
 \item{options}{Optional list of format-specific creation options in a
 vector of \code{"NAME=VALUE"} pairs
@@ -65,15 +65,18 @@ ds <- createCopy(format = "GTiff",
                  src_filename = lcp_file,
                  options = "COMPRESS=LZW",
                  return_obj = TRUE)
+
 ds$getMetadata(band = 0, domain = "IMAGE_STRUCTURE")
+
 for (band in 1:ds$getRasterCount())
     ds$setNoDataValue(band, -9999)
 ds$getStatistics(band = 1, approx_ok = FALSE, force = TRUE)
+
 ds$close()
 
 deleteDataset(tif_file)
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}},
-\code{\link[=getCreationOptions]{getCreationOptions()}}, \code{\link[=translate]{translate()}}
+\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=getCreationOptions]{getCreationOptions()}},
+\code{\link[=rasterFromRaster]{rasterFromRaster()}}, \code{\link[=translate]{translate()}}
 }

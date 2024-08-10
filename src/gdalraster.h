@@ -366,11 +366,12 @@ bool translate(Rcpp::CharacterVector src_filename,
                Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
                bool quiet);
 
-bool warp(Rcpp::CharacterVector src_files,
-          Rcpp::CharacterVector dst_filename,
-          std::string t_srs,
-          Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
-          bool quiet);
+GDALRaster warp(const Rcpp::List& src_datasets,
+                Rcpp::CharacterVector dst_filename,
+                Rcpp::List dst_dataset,
+                std::string t_srs,
+                Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+                bool quiet);
 
 Rcpp::IntegerMatrix createColorRamp(int start_index,
                                     Rcpp::IntegerVector start_color,
