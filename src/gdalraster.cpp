@@ -667,8 +667,13 @@ std::string GDALRaster::getDescription(int band) const {
 void GDALRaster::setDescription(int band, std::string desc) {
     checkAccess_(GA_ReadOnly);
 
-    GDALRasterBandH hBand = getBand_(band);
-    GDALSetDescription(hBand, desc.c_str());
+    if (band == 0) {
+        GDALSetDescription(hDataset, desc.c_str());
+    }
+    else {
+        GDALRasterBandH hBand = getBand_(band);
+        GDALSetDescription(hBand, desc.c_str());
+    }
 }
 
 std::string GDALRaster::getRasterColorInterp(int band) const {

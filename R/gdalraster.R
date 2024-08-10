@@ -311,11 +311,14 @@
 #' \code{$getDescription(band)}\cr
 #' Returns a string containing the description for \code{band}. An empty
 #' string is returned if no description is set for the band.
-#' (Setting `band = 0` will return the dataset-level description.)
+#' Passing `band = 0` will return the dataset-level description.
 #'
 #' \code{$setDescription(band, desc)}\cr
 #' Sets a description for \code{band}. \code{desc} is the character string
-#' to set. No return value.
+#' to set. No return value. (Passing `band = 0` can be used to set the
+#' dataset-level description. Note that the dataset description is generally
+#' the filename that was used to open the dataset. It usually should not be
+#' changed by calling this method on an existing dataset.)
 #'
 #' \code{$getBlockSize(band)}\cr
 #' Returns an integer vector of length two (xsize, ysize) containing the
