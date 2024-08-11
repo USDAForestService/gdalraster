@@ -395,11 +395,11 @@ inv_geotransform <- function(gt) {
 #' Create a virtual warped dataset automatically
 #'
 #' `autoCreateWarpedVRT()` creates a warped virtual dataset representing the
-#' input raster warped into the target coordinate system. The output virtual
+#' input raster warped into a target coordinate system. The output virtual
 #' dataset will be "north-up" in the target coordinate system. GDAL
 #' automatically determines the bounds and resolution of the output virtual
-#' file which should be large enough to include all the input raster.
-#' Wrapper of `GDALAutoCreateWarpedVRT()` in the GDAL Raster API.
+#' raster which should be large enough to include all the input raster.
+#' Wrapper of `GDALAutoCreateWarpedVRT()` in the GDAL Warper API.
 #'
 #' @param src_ds An object of class `GDALRaster` for the source dataset.
 #' @param dst_wkt WKT string specifying the coordinate system to convert to.
@@ -422,8 +422,8 @@ inv_geotransform <- function(gt) {
 #' @note
 #' The returned dataset will have no associated filename for itself. If you
 #' want to write the virtual dataset to a VRT file, use the
-#' `GDALRaster$setFilename()` method on the dataset to assign a filename
-#' before it is closed.
+#' `$setFilename()` method on the returned `GDALRaster` object to assign a
+#' filename before it is closed.
 #'
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
@@ -432,7 +432,7 @@ inv_geotransform <- function(gt) {
 #' ds2 <- autoCreateWarpedVRT(ds, epsg_to_wkt(5070), "Bilinear")
 #' ds2$info()
 #'
-#' # set a filename before closing to write the virtual dataset as a VRT file:
+#' ## set filename before close if a VRT file is needed for the virtual dataset
 #' # ds2$setFilename("/path/to/file.vrt")
 #'
 #' ds2$close()
