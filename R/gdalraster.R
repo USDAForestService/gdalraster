@@ -49,6 +49,7 @@
 #'
 #' ## Methods
 #' ds$getFilename()
+#' ds$setFilename(filename)
 #' ds$open(read_only)
 #' ds$isOpen()
 #' ds$getFileList()
@@ -176,7 +177,15 @@
 #'
 #' \code{$getFilename()}\cr
 #' Returns a character string containing the `filename` associated with this
-#' `GDALRaster` object (`filename` originally used to open the dataset).
+#' `GDALRaster` object (`filename` originally used to open the dataset). May
+#' be a regular filename, database connection string, URL, etc.
+#'
+#' \code{$setFilename(filename)}\cr
+#' Sets the `filename` if the underlying dataset does not already have an
+#' associated filename. Explicitly setting the filename is an advanced
+#' setting that should only be used when the user has determined that it is
+#' needed. Writing certain virtual datasets to file is one potential use case
+#' (e.g., a dataset returned by `autoCreateWarpedVRT()`).
 #'
 #' \code{$open(read_only)}\cr
 #' (Re-)opens the raster dataset on the existing filename. Use this method to
