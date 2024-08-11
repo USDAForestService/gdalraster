@@ -300,6 +300,11 @@ Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy,
 Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
                                       const GDALRaster* ds);
 
+GDALRaster autoCreateWarpedVRT(GDALRaster src_ds, std::string dst_wkt,
+                               std::string resample_alg,
+                               std::string src_wkt,
+                               double max_err, bool alpha_band);
+
 bool buildVRT(Rcpp::CharacterVector vrt_filename,
               Rcpp::CharacterVector input_rasters,
               Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,

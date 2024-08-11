@@ -269,6 +269,22 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// autoCreateWarpedVRT
+GDALRaster autoCreateWarpedVRT(GDALRaster src_ds, std::string dst_wkt, std::string resample_alg, std::string src_wkt, double max_err, bool alpha_band);
+RcppExport SEXP _gdalraster_autoCreateWarpedVRT(SEXP src_dsSEXP, SEXP dst_wktSEXP, SEXP resample_algSEXP, SEXP src_wktSEXP, SEXP max_errSEXP, SEXP alpha_bandSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< GDALRaster >::type src_ds(src_dsSEXP);
+    Rcpp::traits::input_parameter< std::string >::type dst_wkt(dst_wktSEXP);
+    Rcpp::traits::input_parameter< std::string >::type resample_alg(resample_algSEXP);
+    Rcpp::traits::input_parameter< std::string >::type src_wkt(src_wktSEXP);
+    Rcpp::traits::input_parameter< double >::type max_err(max_errSEXP);
+    Rcpp::traits::input_parameter< bool >::type alpha_band(alpha_bandSEXP);
+    rcpp_result_gen = Rcpp::wrap(autoCreateWarpedVRT(src_ds, dst_wkt, resample_alg, src_wkt, max_err, alpha_band));
+    return rcpp_result_gen;
+END_RCPP
+}
 // buildVRT
 bool buildVRT(Rcpp::CharacterVector vrt_filename, Rcpp::CharacterVector input_rasters, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet);
 RcppExport SEXP _gdalraster_buildVRT(SEXP vrt_filenameSEXP, SEXP input_rastersSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
@@ -1531,6 +1547,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
     {"_gdalraster_get_pixel_line_gt", (DL_FUNC) &_gdalraster_get_pixel_line_gt, 2},
     {"_gdalraster_get_pixel_line_ds", (DL_FUNC) &_gdalraster_get_pixel_line_ds, 2},
+    {"_gdalraster_autoCreateWarpedVRT", (DL_FUNC) &_gdalraster_autoCreateWarpedVRT, 6},
     {"_gdalraster_buildVRT", (DL_FUNC) &_gdalraster_buildVRT, 4},
     {"_gdalraster_combine", (DL_FUNC) &_gdalraster_combine, 8},
     {"_gdalraster_value_count", (DL_FUNC) &_gdalraster_value_count, 3},
