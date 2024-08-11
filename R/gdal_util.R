@@ -71,6 +71,26 @@
 #'   will be recorded in the output file. Use a value of `"None"` to ensure
 #'   that nodata is not defined. If this argument is not used then nodata
 #'   values will be copied from the source dataset.
+#'   * `-srcband <n>`\cr
+#'   (GDAL >= 3.7) Specify an input band number to warp (between 1 and the
+#'   number of bands of the source dataset). This option is used to warp a
+#'   subset of the input bands. All input bands are used when it is not
+#'   specified. This option may be repeated multiple times to select several
+#'   input bands. The order in which bands are specified will be the order in
+#'   which they appear in the output dataset (unless `-dstband` is specified).
+#'   The alpha band should not be specified in the list, as it will be
+#'   automatically retrieved (unless `-nosrcalpha` is specified).
+#'   * `-dstband <n>`\cr
+#'   (GDAL >= 3.7) Specify the output band number in which to warp. In
+#'   practice, this option is only useful when updating an existing dataset,
+#'   e.g to warp one band at at time. If `-srcband` is specified, there must be
+#'   as many occurrences of `-dstband` as there are of `-srcband`.\cr
+#'   If `-dstband` is not specified, then:\cr
+#'   `c("-dstband", "1", "-dstband", "2", ... "-dstband", "N")`\cr
+#'   is assumed where N is the number of input bands (implicitly, or specified
+#'   explicitly with `-srcband`). The alpha band should not be specified in the
+#'   list, as it will be automatically retrieved (unless `-nosrcalpha` is
+#'   specified).
 #'   * `-wm <memory_in_mb>`\cr
 #'   Set the amount of memory that the warp API is allowed to use for caching.
 #'   The value is interpreted as being in megabytes if the value is <10000.
@@ -107,8 +127,8 @@
 #'
 #' The documentation for [`gdalwarp`](https://gdal.org/programs/gdalwarp.html)
 #' describes additional command-line options related to spatial reference
-#' systems, source nodata values, alpha bands, polygon cutlines as mask
-#' including blending, and more.
+#' systems, alpha bands, masking with polygon cutlines including blending,
+#' and more.
 #'
 #' Mosaicing into an existing output file is supported if the output file
 #' already exists. The spatial extent of the existing file will not be
