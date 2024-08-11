@@ -810,9 +810,9 @@ Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
 }
 
 
-//' Create virtual warped dataset automatically
+//' Create a virtual warped dataset automatically
 //'
-//' `autoCreateWarpedVRT()` creates a warped virtual file representing the
+//' `autoCreateWarpedVRT()` creates a warped virtual dataset representing the
 //' input raster warped into the target coordinate system. The output virtual
 //' dataset will be "north-up" in the target coordinate system. GDAL
 //' automatically determines the bounds and resolution of the output virtual

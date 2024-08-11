@@ -2,7 +2,7 @@
 % Please edit documentation in R/RcppExports.R
 \name{autoCreateWarpedVRT}
 \alias{autoCreateWarpedVRT}
-\title{Create virtual warped dataset automatically}
+\title{Create a virtual warped dataset automatically}
 \usage{
 autoCreateWarpedVRT(
   src_ds,
@@ -39,7 +39,7 @@ An object of class \code{GDALRaster} for the new virtual dataset. An
 error is raised if the operation fails.
 }
 \description{
-\code{autoCreateWarpedVRT()} creates a warped virtual file representing the
+\code{autoCreateWarpedVRT()} creates a warped virtual dataset representing the
 input raster warped into the target coordinate system. The output virtual
 dataset will be "north-up" in the target coordinate system. GDAL
 automatically determines the bounds and resolution of the output virtual
