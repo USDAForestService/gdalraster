@@ -25,7 +25,9 @@
   \code{\link[=translate]{translate()}},
   \code{\link[=getCreationOptions]{getCreationOptions()}}
 
-  \item virtual raster: \code{\link[=buildVRT]{buildVRT()}},
+  \item virtual raster:
+  \code{\link[=autoCreateWarpedVRT]{autoCreateWarpedVRT()}},
+  \code{\link[=buildVRT]{buildVRT()}},
   \code{\link[=rasterToVRT]{rasterToVRT()}}
 
   \item reproject/resample/crop/mosaic: \code{\link[=warp]{warp()}}

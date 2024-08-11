@@ -37,6 +37,7 @@ reference:
   - translate
 - subtitle: Virtual raster
 - contents:
+  - autoCreateWarpedVRT
   - buildVRT
   - rasterToVRT
 - subtitle: Algorithms
