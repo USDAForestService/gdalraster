@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9220 (dev)
+# gdalraster 1.11.1.9230 (dev)
+
+* add `autoCreateWarpedVRT()`: create a warped virtual dataset representing the input raster warped into the target coordinate system, wrapper of `GDALAutoCreateWarpedVRT()` (2024-08-10)
 
 * `GDALRaster::setDescription()`: support `band = 0` to set the dataset-level description (2024-08-10)
 
