@@ -392,6 +392,55 @@ inv_geotransform <- function(gt) {
     .Call(`_gdalraster_get_pixel_line_ds`, xy, ds)
 }
 
+#' Create a virtual warped dataset automatically
+#'
+#' `autoCreateWarpedVRT()` creates a warped virtual dataset representing the
+#' input raster warped into the target coordinate system. The output virtual
+#' dataset will be "north-up" in the target coordinate system. GDAL
+#' automatically determines the bounds and resolution of the output virtual
+#' file which should be large enough to include all the input raster.
+#' Wrapper of `GDALAutoCreateWarpedVRT()` in the GDAL Raster API.
+#'
+#' @param src_ds An object of class `GDALRaster` for the source dataset.
+#' @param dst_wkt WKT string specifying the coordinate system to convert to.
+#' If empty string (`""`) no change of coordinate system will take place.
+#' @param resample_alg Character string specifying the sampling method to use.
+#' One of NearestNeighbour, Bilinear, Cubic, CubicSpline, Lanczos, Average,
+#' RMS or Mode.
+#' @param src_wkt WKT string specifying the coordinate system of the source
+#' raster. If empty string it will be read from the source raster (the
+#' default).
+#' @param max_err Numeric scalar specifying the maximum error measured in
+#' input pixels that is allowed in approximating the transformation (`0.0` for
+#' exact calculations, the default).
+#' @param alpha_band Logical scalar, `TRUE` to create an alpha band if the
+#' source dataset has none. Defaults to `FALSE`.
+#'
+#' @returns An object of class `GDALRaster` for the new virtual dataset. An
+#' error is raised if the operation fails.
+#'
+#' @note
+#' The returned dataset will have no associated filename for itself. If you
+#' want to write the virtual dataset to a VRT file, use the
+#' `GDALRaster$setFilename()` method on the dataset to assign a filename
+#' before it is closed.
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, elev_file)
+#'
+#' ds2 <- autoCreateWarpedVRT(ds, epsg_to_wkt(5070), "Bilinear")
+#' ds2$info()
+#'
+#' # set a filename before closing to write the virtual dataset as a VRT file:
+#' # ds2$setFilename("/path/to/file.vrt")
+#'
+#' ds2$close()
+#' ds$close()
+autoCreateWarpedVRT <- function(src_ds, dst_wkt, resample_alg, src_wkt = "", max_err = 0.0, alpha_band = FALSE) {
+    .Call(`_gdalraster_autoCreateWarpedVRT`, src_ds, dst_wkt, resample_alg, src_wkt, max_err, alpha_band)
+}
+
 #' Build a GDAL virtual raster from a list of datasets
 #'
 #' `buildVRT()` is a wrapper of the \command{gdalbuildvrt} command-line

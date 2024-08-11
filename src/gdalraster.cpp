@@ -131,9 +131,21 @@ std::string GDALRaster::getFilename() const {
 }
 
 void GDALRaster::setFilename(std::string filename) {
-    // TODO: update logic for whether this is allowed
-    if (fname_in == "" && filename != "" && hDataset == nullptr)
-        fname_in = Rcpp::as<std::string>(check_gdal_filename(filename));
+    if (hDataset != nullptr) {
+        if (fname_in == "" && getDescription(0) == "") {
+            fname_in = Rcpp::as<std::string>(check_gdal_filename(filename));
+            setDescription(0, fname_in);
+        }
+        else {
+            Rcpp::stop("the filename cannot be set on this object");
+        }
+    }
+    else {
+        if (fname_in == "")
+            fname_in = Rcpp::as<std::string>(check_gdal_filename(filename));
+        else
+            Rcpp::stop("the filename cannot be set on this object");
+    }
 }
 
 void GDALRaster::open(bool read_only) {

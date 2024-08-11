@@ -387,3 +387,25 @@ test_that("ogrinfo works", {
 
     vsi_unlink(src_mem)
 })
+
+test_that("autoCreateWarpedVRT works", {
+    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    ds <- new(GDALRaster, elev_file)
+
+    expect_no_error(ds2 <- autoCreateWarpedVRT(ds, epsg_to_wkt(5070),
+                                               "Bilinear"))
+    expect_equal(ds2$getProjection(), epsg_to_wkt(5070))
+    ds2$close()
+
+    # with creation of alpha band
+    expect_no_error(ds3 <- autoCreateWarpedVRT(ds, epsg_to_wkt(5070),
+                                               "Cubic", alpha_band = TRUE))
+    expect_equal(ds3$getRasterCount(), 2)
+    ds3$close()
+
+    # errors
+    expect_error(ds4 <- autoCreateWarpedVRT(ds, epsg_to_wkt(5070),
+                                            resample_alg = "invalid"))
+
+    ds$close()
+})

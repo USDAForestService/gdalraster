@@ -3,7 +3,7 @@
 #' Raster reprojection and mosaicing
 #'
 #' `warp()` is a wrapper of the \command{gdalwarp} command-line utility for
-#' raster rreprojection and warping
+#' raster reprojection and warping
 #' (see \url{https://gdal.org/programs/gdalwarp.html}).
 #' The function can reproject to any supported spatial reference system (SRS).
 #' It can also be used to crop, mosaic, resample, and optionally write output
