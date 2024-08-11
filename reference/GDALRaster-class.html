@@ -13,7 +13,7 @@ details of the GDAL Raster API."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9220</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9230</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -142,6 +142,7 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <span></span>
 <span><span class="co">## Methods</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getFilename</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setFilename</span><span class="op">(</span><span class="va">filename</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span><span class="va">read_only</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">isOpen</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span>
@@ -277,7 +278,14 @@ band data type is not Byte this setting has no effect.</p>
 
 <p><code>$getFilename()</code><br>
 Returns a character string containing the <code>filename</code> associated with this
-<code>GDALRaster</code> object (<code>filename</code> originally used to open the dataset).</p>
+<code>GDALRaster</code> object (<code>filename</code> originally used to open the dataset). May
+be a regular filename, database connection string, URL, etc.</p>
+<p><code>$setFilename(filename)</code><br>
+Sets the <code>filename</code> if the underlying dataset does not already have an
+associated filename. Explicitly setting the filename is an advanced
+setting that should only be used when the user has determined that it is
+needed. Writing certain virtual datasets to file is one potential use case
+(e.g., a dataset returned by <code><a href="autoCreateWarpedVRT.html">autoCreateWarpedVRT()</a></code>).</p>
 <p><code>$open(read_only)</code><br>
 (Re-)opens the raster dataset on the existing filename. Use this method to
 open a dataset that has been closed using <code>$close()</code>. May be used to

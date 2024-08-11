@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9220</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9230</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9220" id="gdalraster-11119220-dev">gdalraster 1.11.1.9220 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119220-dev"></a></h2>
-<ul><li><p><code>GDALRaster::setDescription()</code>: support <code>band = 0</code> to set the dataset-level description (2024-08-10)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9230" id="gdalraster-11119230-dev">gdalraster 1.11.1.9230 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119230-dev"></a></h2>
+<ul><li><p>add <code><a href="../reference/autoCreateWarpedVRT.html">autoCreateWarpedVRT()</a></code>: create a warped virtual dataset representing the input raster warped into the target coordinate system, wrapper of <code>GDALAutoCreateWarpedVRT()</code> (2024-08-10)</p></li>
+<li><p><code>GDALRaster::setDescription()</code>: support <code>band = 0</code> to set the dataset-level description (2024-08-10)</p></li>
 <li><p><code><a href="../reference/warp.html">warp()</a></code>: source and destination rasters may be objects of class <code>GDALRaster</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/469" class="external-link">#469</a>) (2024-08-10)</p></li>
 <li><p>add <code>GDALRaster::addBand()</code>: add a band to a dataset if the underlying format supports this action, e.g., <code>MEM</code> and <code>VRT</code> (2024-08-09)</p></li>
 <li><p><code><a href="../reference/createCopy.html">createCopy()</a></code>: add argument <code>return_obj</code>, <code>TRUE</code> to return an object of class <code>GDALRaster</code> for the created dataset; an object of class <code>GDALRaster</code> can be given for argument <code>src_filename</code> to specify the source dataset (2024-08-07)</p></li>
