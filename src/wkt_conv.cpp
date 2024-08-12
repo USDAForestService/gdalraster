@@ -259,6 +259,47 @@ SEXP srs_find_epsg(std::string srs, bool all_matches = false) {
     }
 }
 
+//' Return the spatial reference system name
+//'
+//' `srs_get_name()` accepts a spatial reference system definition
+//' in various text formats and returns the name.
+//' See [srs_to_wkt()] for a description of the possible input formats.
+//' Wrapper of `OSRGetName()` in the GDAL Spatial Reference System API.
+//'
+//' @param srs Character string containing an SRS definition in various
+//' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
+//' WGS84, etc).
+//'
+//' @return Character string containing the name, or empty string.
+//'
+//' @seealso
+//' [epsg_to_wkt()], [srs_find_epsg()], [srs_to_wkt()]
+//'
+//' @examples
+//' srs_get_name("EPSG:5070")
+// [[Rcpp::export]]
+std::string srs_get_name(std::string srs) {
+    if (srs == "")
+        return "";
+
+    const char *pszName = nullptr;
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    pszName = OSRGetName(hSRS);
+    std::string ret = "";
+    if (pszName != nullptr)
+        ret = pszName;
+
+    OSRDestroySpatialReference(hSRS);
+    return ret;
+}
+
 //' Check if WKT definition is a geographic coordinate system
 //'
 //' `srs_is_geographic()` will attempt to import the given WKT string as a

@@ -2429,6 +2429,28 @@ srs_find_epsg <- function(srs, all_matches = FALSE) {
     .Call(`_gdalraster_srs_find_epsg`, srs, all_matches)
 }
 
+#' Return the spatial reference system name
+#'
+#' `srs_get_name()` accepts a spatial reference system definition
+#' in various text formats and returns the name.
+#' See [srs_to_wkt()] for a description of the possible input formats.
+#' Wrapper of `OSRGetName()` in the GDAL Spatial Reference System API.
+#'
+#' @param srs Character string containing an SRS definition in various
+#' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
+#' WGS84, etc).
+#'
+#' @return Character string containing the name, or empty string.
+#'
+#' @seealso
+#' [epsg_to_wkt()], [srs_find_epsg()], [srs_to_wkt()]
+#'
+#' @examples
+#' srs_get_name("EPSG:5070")
+srs_get_name <- function(srs) {
+    .Call(`_gdalraster_srs_get_name`, srs)
+}
+
 #' Check if WKT definition is a geographic coordinate system
 #'
 #' `srs_is_geographic()` will attempt to import the given WKT string as a

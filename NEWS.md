@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9250 (dev)
+# gdalraster 1.11.1.9260 (dev)
+
+* add `srs_get_name()`: return the spatial reference system name (2024-08-12)
 
 * add `srs_find_epsg()`: try to identify a matching EPSG code for a given SRS definition (2024-08-11)
 

@@ -34,6 +34,8 @@ test_that("srs functions work", {
     df_matches <- srs_find_epsg("WGS84", all_matches = TRUE)
     expect_true(is.data.frame(df_matches))
 
+    expect_true(nzchar(srs_get_name("EPSG:5070")))
+
     # errors
     expect_error(epsg_to_wkt(-1))
     expect_equal(srs_to_wkt(""), "")
