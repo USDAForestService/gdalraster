@@ -244,7 +244,10 @@ SEXP srs_find_epsg(std::string srs, bool all_matches = false) {
     OSRFreeSRSArray(pahSRS);
     CPLFree(panConfidence);
 
-    if (!all_matches) {
+    if (nEntries == 0) {
+        return R_NilValue;
+    }
+    else if (!all_matches) {
         return Rcpp::wrap(identified_code);
     }
     else {
