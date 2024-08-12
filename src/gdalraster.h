@@ -366,7 +366,7 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
                  Rcpp::CharacterVector mask_filename , int mask_band,
                  Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
 
-bool translate(Rcpp::CharacterVector src_filename,
+bool translate(GDALRaster src_ds,
                Rcpp::CharacterVector dst_filename,
                Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
                bool quiet);
