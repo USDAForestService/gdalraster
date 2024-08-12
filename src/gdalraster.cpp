@@ -540,7 +540,7 @@ double GDALRaster::getNoDataValue(int band) const {
 bool GDALRaster::setNoDataValue(int band, double nodata_value) {
     checkAccess_(GA_Update);
 
-    if (!std::isfinite(nodata_value))
+    if (Rcpp::NumericVector::is_na(nodata_value))
         return false;
 
     GDALRasterBandH hBand = getBand_(band);
