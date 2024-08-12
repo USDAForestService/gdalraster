@@ -2396,6 +2396,39 @@ srs_to_wkt <- function(srs, pretty = FALSE) {
     .Call(`_gdalraster_srs_to_wkt`, srs, pretty)
 }
 
+#' Try to identify a matching EPSG code for a given SRS definition
+#'
+#' `srs_find_epsg()` accepts a spatial reference system definition
+#' in various text formats and tries to find a matching EPSG code.
+#' See [srs_to_wkt()] for a description of the possible input formats.
+#' This function is an interface to `OSRFindMatches()` in the GDAL Spatial
+#' Reference System API.
+#'
+#' @details
+#' Matching may be partial, or may fail. Returned entries will be sorted by
+#' decreasing match confidence (first entry has the highest match confidence).
+#'
+#' @param srs Character string containing an SRS definition in various
+#' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
+#' WGS84, etc).
+#' @param all_matches Logical scalar. `TRUE` to return all identified matches
+#' in a data frame with a confidence value (0-100) for each match. The default
+#' is `FALSE` which returns a character string in the form `"EPSG:####"` for
+#' the first match (highest confidence).
+#'
+#' @return Character string or data frame or `NULL` if matching failed.
+#'
+#' @seealso
+#' [epsg_to_wkt()], [srs_to_wkt()]
+#'
+#' @examples
+#' srs_find_epsg("WGS84")
+#'
+#' srs_find_epsg("WGS84", all_matches = TRUE)
+srs_find_epsg <- function(srs, all_matches = FALSE) {
+    .Call(`_gdalraster_srs_find_epsg`, srs, all_matches)
+}
+
 #' Check if WKT definition is a geographic coordinate system
 #'
 #' `srs_is_geographic()` will attempt to import the given WKT string as a

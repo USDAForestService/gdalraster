@@ -30,6 +30,10 @@ test_that("srs functions work", {
     expect_equal(srs_to_wkt("NAD83", pretty=TRUE),
                  epsg_to_wkt(4269, pretty=TRUE))
 
+    expect_equal(srs_find_epsg("WGS84"), "EPSG:4326")
+    df_matches <- srs_find_epsg("WGS84", all_matches = TRUE)
+    expect_true(is.data.frame(df_matches))
+
     # errors
     expect_error(epsg_to_wkt(-1))
     expect_equal(srs_to_wkt(""), "")

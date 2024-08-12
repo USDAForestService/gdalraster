@@ -161,6 +161,101 @@ std::string srs_to_wkt(std::string srs, bool pretty = false) {
     return wkt;
 }
 
+//' Try to identify a matching EPSG code for a given SRS definition
+//'
+//' `srs_find_epsg()` accepts a spatial reference system definition
+//' in various text formats and tries to find a matching EPSG code.
+//' See [srs_to_wkt()] for a description of the possible input formats.
+//' This function is an interface to `OSRFindMatches()` in the GDAL Spatial
+//' Reference System API.
+//'
+//' @details
+//' Matching may be partial, or may fail. Returned entries will be sorted by
+//' decreasing match confidence (first entry has the highest match confidence).
+//'
+//' @param srs Character string containing an SRS definition in various
+//' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
+//' WGS84, etc).
+//' @param all_matches Logical scalar. `TRUE` to return all identified matches
+//' in a data frame with a confidence value (0-100) for each match. The default
+//' is `FALSE` which returns a character string in the form `"EPSG:####"` for
+//' the first match (highest confidence).
+//'
+//' @return Character string or data frame or `NULL` if matching failed.
+//'
+//' @seealso
+//' [epsg_to_wkt()], [srs_to_wkt()]
+//'
+//' @examples
+//' srs_find_epsg("WGS84")
+//'
+//' srs_find_epsg("WGS84", all_matches = TRUE)
+// [[Rcpp::export]]
+SEXP srs_find_epsg(std::string srs, bool all_matches = false) {
+    if (srs == "")
+        return R_NilValue;
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    int nEntries = 0;
+    int *panConfidence = nullptr;
+    OGRSpatialReferenceH *pahSRS = nullptr;
+    OGRSpatialReference oSRS;
+    std::string identified_code = "";
+    Rcpp::CharacterVector authority_name = Rcpp::CharacterVector::create();
+    Rcpp::CharacterVector authority_code = Rcpp::CharacterVector::create();
+    Rcpp::IntegerVector confidence = Rcpp::IntegerVector::create();
+
+    pahSRS = OSRFindMatches(hSRS, nullptr, &nEntries, &panConfidence);
+    OSRDestroySpatialReference(hSRS);
+
+    if (pahSRS == nullptr)
+        return R_NilValue;
+
+    for (int i = 0; i < nEntries; i++) {
+        oSRS = *reinterpret_cast<OGRSpatialReference *>(pahSRS[i]);
+        const char *pszAuthorityName = oSRS.GetAuthorityName(nullptr);
+        const char *pszAuthorityCode = oSRS.GetAuthorityCode(nullptr);
+
+        if (!all_matches) {
+            if (panConfidence[i] != 100) {
+                Rcpp::Rcout << "confidence in this match: " <<
+                        panConfidence[i] << "%" << std::endl;
+            }
+            if (pszAuthorityName && pszAuthorityCode) {
+                identified_code = pszAuthorityName;
+                identified_code += ":";
+                identified_code += pszAuthorityCode;
+            }
+            break;
+        }
+
+        authority_name.push_back(pszAuthorityName);
+        authority_code.push_back(pszAuthorityCode);
+        confidence.push_back(panConfidence[i]);
+    }
+
+    OSRFreeSRSArray(pahSRS);
+    CPLFree(panConfidence);
+
+    if (!all_matches) {
+        return Rcpp::wrap(identified_code);
+    }
+    else {
+        Rcpp::DataFrame df_out = Rcpp::DataFrame::create();
+        df_out.push_back(authority_name, "authority_name");
+        df_out.push_back(authority_code, "authority_code");
+        df_out.push_back(confidence, "confidence");
+        return df_out;
+    }
+}
+
 //' Check if WKT definition is a geographic coordinate system
 //'
 //' `srs_is_geographic()` will attempt to import the given WKT string as a
