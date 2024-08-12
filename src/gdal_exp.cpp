@@ -2086,59 +2086,23 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //'
 //' `translate()` is a wrapper of the \command{gdal_translate} command-line
 //' utility (see \url{https://gdal.org/programs/gdal_translate.html}).
-//' The function can be used to convert raster data between different
-//' formats, potentially performing some operations like subsetting,
-//' resampling, and rescaling pixels in the process. Refer to the GDAL
-//' documentation at the URL above for a list of command-line arguments that
-//' can be passed in `cl_arg`.
 //'
-//' @param src_filename Character string. Filename of the source raster.
-//' @param dst_filename Character string. Filename of the output raster.
-//' @param cl_arg Optional character vector of command-line arguments for
-//' \code{gdal_translate} (see URL above).
-//' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
-//' displayed. Defaults to `FALSE`.
-//' @returns Logical indicating success (invisible \code{TRUE}).
-//' An error is raised if the operation fails.
+//' Called from and documented in R/gdal_util.R
 //'
-//' @seealso
-//' [`GDALRaster-class`][GDALRaster], [rasterFromRaster()], [warp()]
-//'
-//' [ogr2ogr()] for vector data
-//'
-//' @examples
-//' # convert the elevation raster to Erdas Imagine format and resample to 90m
-//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-//'
-//' # command-line arguments for gdal_translate
-//' args <- c("-tr", "90", "90", "-r", "average")
-//' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
-//'
-//' img_file <- file.path(tempdir(), "storml_elev_90m.img")
-//' translate(elev_file, img_file, args)
-//'
-//' ds <- new(GDALRaster, img_file)
-//' ds$getDriverLongName()
-//' ds$bbox()
-//' ds$res()
-//' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
-//' ds$close()
-//'
-//' deleteDataset(img_file)
-// [[Rcpp::export(invisible = true)]]
-bool translate(Rcpp::CharacterVector src_filename,
+//' @noRd
+// [[Rcpp::export(name = ".translate")]]
+bool translate(GDALRaster src_ds,
         Rcpp::CharacterVector dst_filename,
         Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
         bool quiet = false) {
 
-    std::string src_filename_in;
-    src_filename_in = Rcpp::as<std::string>(check_gdal_filename(src_filename));
+    bool ret = false;
+
     std::string dst_filename_in;
     dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
-    bool ret = false;
-    GDALDatasetH src_ds = GDALOpenShared(src_filename_in.c_str(), GA_ReadOnly);
-    if (src_ds == nullptr)
+    GDALDatasetH hSrcDS = src_ds.getGDALDatasetH_();
+    if (hSrcDS == nullptr)
         Rcpp::stop("open source raster failed");
 
     std::vector<char *> argv = {nullptr};
@@ -2153,12 +2117,14 @@ bool translate(Rcpp::CharacterVector src_filename,
 
     GDALTranslateOptions* psOptions = GDALTranslateOptionsNew(argv.data(),
                                                               nullptr);
+
     if (psOptions == nullptr)
         Rcpp::stop("translate failed (could not create options struct)");
+
     if (!quiet)
         GDALTranslateOptionsSetProgress(psOptions, GDALTermProgressR, nullptr);
 
-    GDALDatasetH hDstDS = GDALTranslate(dst_filename_in.c_str(), src_ds,
+    GDALDatasetH hDstDS = GDALTranslate(dst_filename_in.c_str(), hSrcDS,
                                         psOptions, nullptr);
 
     GDALTranslateOptionsFree(psOptions);
@@ -2167,10 +2133,6 @@ bool translate(Rcpp::CharacterVector src_filename,
         GDALClose(hDstDS);
         ret = true;
     }
-    GDALClose(src_ds);
-
-    if (!ret)
-        Rcpp::stop("translate raster failed");
 
     return ret;
 }
@@ -2184,9 +2146,10 @@ bool translate(Rcpp::CharacterVector src_filename,
 //'
 //' Called from and documented in R/gdal_util.R
 //'
-//' Destination raster is specified as either:
+//' Destination raster is specified here as either:
 //' dst_filename - the destination dataset path or ""
 //' dst_dataset - list of length 1 containg a GDALRaster object or empty list
+//'               (workaround for a nullable dataset argument)
 //'
 //' @noRd
 // [[Rcpp::export(name = ".warp")]]

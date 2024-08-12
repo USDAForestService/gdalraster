@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9230 (dev)
+# gdalraster 1.11.1.9240 (dev)
+
+* `translate()`: source raster can be a `GDALRaster` object (2024-08-11)
 
 * add `autoCreateWarpedVRT()`: create a warped virtual dataset representing the input raster warped into the target coordinate system, wrapper of `GDALAutoCreateWarpedVRT()` (2024-08-10)
 

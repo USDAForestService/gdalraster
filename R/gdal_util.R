@@ -1,4 +1,88 @@
-# R interface to GDAL utils via the wrapper functions in src/gdal_exp.cpp.
+# R interface to GDAL utils via the wrapper functions in src/gdal_exp.cpp
+
+
+#' Convert raster data between different formats
+#'
+#' `translate()` is a wrapper of the \command{gdal_translate} command-line
+#' utility (see \url{https://gdal.org/programs/gdal_translate.html}).
+#' The function can be used to convert raster data between different
+#' formats, potentially performing some operations like subsetting,
+#' resampling, and rescaling pixels in the process. Refer to the GDAL
+#' documentation at the URL above for a list of command-line arguments that
+#' can be passed in `cl_arg`.
+#'
+#' @param src_filename Either a character string giving the filename of the
+#' source raster, or an object of class `GDALRaster` for the source.
+#' @param dst_filename Character string. Filename of the output raster.
+#' @param cl_arg Optional character vector of command-line arguments for
+#' \code{gdal_translate} (see URL above).
+#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' displayed. Defaults to `FALSE`.
+#' @returns Logical indicating success (invisible \code{TRUE}).
+#' An error is raised if the operation fails.
+#'
+#' @seealso
+#' [`GDALRaster-class`][GDALRaster], [rasterFromRaster()], [warp()]
+#'
+#' [ogr2ogr()] for vector data
+#'
+#' @examples
+#' # convert the elevation raster to Erdas Imagine format and resample to 90m
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' img_file <- file.path(tempdir(), "storml_elev_90m.img")
+#'
+#' # command-line arguments for gdal_translate
+#' args <- c("-tr", "90", "90", "-r", "average")
+#' args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
+#'
+#' translate(elev_file, img_file, args)
+#'
+#' ds <- new(GDALRaster, img_file)
+#' ds$info()
+#'
+#' ds$close()
+#' deleteDataset(img_file)
+#' @export
+translate <- function(src_filename, dst_filename, cl_arg = NULL,
+                      quiet = FALSE) {
+
+    src_ds <- NULL
+    close_src_ds <- FALSE
+    if (is(src_filename, "Rcpp_GDALRaster")) {
+        src_ds <- src_filename
+        if (!src_ds$isOpen()) {
+            stop("source dataset is not open", call. = FALSE)
+        }
+    } else if (is.character(src_filename) && length(src_filename) == 1) {
+        src_ds <- new(GDALRaster, src_filename)
+        close_src_ds <- TRUE
+    } else {
+        stop("'src_filename' must be a character string or 'GDALRaster' object",
+             call. = FALSE)
+    }
+
+    if (!(is.character(dst_filename) && length(dst_filename) == 1))
+        stop("'dst_filename' must be a character string", call. = FALSE)
+
+    if (!is.null(cl_arg) && !is.character(cl_arg))
+        stop("'cl_arg' must be a character vector", call. = FALSE)
+
+    if (!is.null(quiet)) {
+        if (!(is.logical(quiet) && length(quiet) == 1))
+            stop("'quiet' must be a logical scalar", call. = FALSE)
+    }
+
+    ret <- .translate(src_ds, dst_filename, cl_arg, quiet)
+
+    if (close_src_ds)
+        src_ds$close()
+
+    if (!ret) {
+        stop("translate raster failed", call. = FALSE)
+    } else {
+        return(invisible(TRUE))
+    }
+}
 
 #' Raster reprojection and mosaicing
 #'
