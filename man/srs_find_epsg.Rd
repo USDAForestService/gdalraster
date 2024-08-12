@@ -12,12 +12,12 @@ formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
 WGS84, etc).}
 
 \item{all_matches}{Logical scalar. \code{TRUE} to return all identified matches
-in a data frame with a confidence value (0-100) for each match. The default
-is \code{FALSE} which returns a character string in the form \code{"EPSG:####"} for
-the first match (highest confidence).}
+in a data frame, including a confidence value (0-100) for each match. The
+default is \code{FALSE} which returns a character string in the form
+\code{"EPSG:<code>"} for the first match (highest confidence).}
 }
 \value{
-Character string or data frame or \code{NULL} if matching failed.
+Character string or data frame, or \code{NULL} if matching failed.
 }
 \description{
 \code{srs_find_epsg()} accepts a spatial reference system definition
