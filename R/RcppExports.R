@@ -2412,11 +2412,11 @@ srs_to_wkt <- function(srs, pretty = FALSE) {
 #' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
 #' WGS84, etc).
 #' @param all_matches Logical scalar. `TRUE` to return all identified matches
-#' in a data frame with a confidence value (0-100) for each match. The default
-#' is `FALSE` which returns a character string in the form `"EPSG:####"` for
-#' the first match (highest confidence).
+#' in a data frame, including a confidence value (0-100) for each match. The
+#' default is `FALSE` which returns a character string in the form
+#' `"EPSG:<code>"` for the first match (highest confidence).
 #'
-#' @return Character string or data frame or `NULL` if matching failed.
+#' @return Character string or data frame, or `NULL` if matching failed.
 #'
 #' @seealso
 #' [epsg_to_wkt()], [srs_to_wkt()]
