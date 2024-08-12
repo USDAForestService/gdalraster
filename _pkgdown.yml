@@ -73,6 +73,7 @@ reference:
 - contents:
   - epsg_to_wkt
   - srs_find_epsg
+  - srs_get_name
   - srs_is_geographic
   - srs_is_projected
   - srs_is_same

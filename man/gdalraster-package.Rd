@@ -58,6 +58,7 @@
   \code{\link[=epsg_to_wkt]{epsg_to_wkt()}},
   \code{\link[=srs_to_wkt]{srs_to_wkt()}},
   \code{\link[=srs_find_epsg]{srs_find_epsg()}},
+  \code{\link[=srs_get_name]{srs_get_name()}},
   \code{\link[=srs_is_geographic]{srs_is_geographic()}},
   \code{\link[=srs_is_projected]{srs_is_projected()}},
   \code{\link[=srs_is_same]{srs_is_same()}}
