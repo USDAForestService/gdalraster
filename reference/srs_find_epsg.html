@@ -81,14 +81,14 @@ WGS84, etc).</p></dd>
 
 <dt id="arg-all-matches">all_matches<a class="anchor" aria-label="anchor" href="#arg-all-matches"></a></dt>
 <dd><p>Logical scalar. <code>TRUE</code> to return all identified matches
-in a data frame with a confidence value (0-100) for each match. The default
-is <code>FALSE</code> which returns a character string in the form <code>"EPSG:####"</code> for
-the first match (highest confidence).</p></dd>
+in a data frame, including a confidence value (0-100) for each match. The
+default is <code>FALSE</code> which returns a character string in the form
+<code>"EPSG:&lt;code&gt;"</code> for the first match (highest confidence).</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Character string or data frame or <code>NULL</code> if matching failed.</p>
+    <p>Character string or data frame, or <code>NULL</code> if matching failed.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
