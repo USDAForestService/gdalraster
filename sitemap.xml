@@ -91,6 +91,7 @@
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/renameDataset.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/set_config_option.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/sieveFilter.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_find_epsg.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_geographic.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_projected.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_same.html</loc></url>
