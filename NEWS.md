@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9240 (dev)
+# gdalraster 1.11.1.9250 (dev)
+
+* add `srs_find_epsg()`: try to identify a matching EPSG code for a given SRS definition (2024-08-11)
 
 * `translate()`: source raster can be a `GDALRaster` object (2024-08-11)
 

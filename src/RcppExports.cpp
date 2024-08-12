@@ -1453,6 +1453,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// srs_find_epsg
+SEXP srs_find_epsg(std::string srs, bool all_matches);
+RcppExport SEXP _gdalraster_srs_find_epsg(SEXP srsSEXP, SEXP all_matchesSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
+    Rcpp::traits::input_parameter< bool >::type all_matches(all_matchesSEXP);
+    rcpp_result_gen = Rcpp::wrap(srs_find_epsg(srs, all_matches));
+    return rcpp_result_gen;
+END_RCPP
+}
 // srs_is_geographic
 bool srs_is_geographic(std::string srs);
 RcppExport SEXP _gdalraster_srs_is_geographic(SEXP srsSEXP) {
@@ -1639,6 +1651,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_transform_xy", (DL_FUNC) &_gdalraster_transform_xy, 3},
     {"_gdalraster_epsg_to_wkt", (DL_FUNC) &_gdalraster_epsg_to_wkt, 2},
     {"_gdalraster_srs_to_wkt", (DL_FUNC) &_gdalraster_srs_to_wkt, 2},
+    {"_gdalraster_srs_find_epsg", (DL_FUNC) &_gdalraster_srs_find_epsg, 2},
     {"_gdalraster_srs_is_geographic", (DL_FUNC) &_gdalraster_srs_is_geographic, 1},
     {"_gdalraster_srs_is_projected", (DL_FUNC) &_gdalraster_srs_is_projected, 1},
     {"_gdalraster_srs_is_same", (DL_FUNC) &_gdalraster_srs_is_same, 5},
