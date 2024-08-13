@@ -315,7 +315,7 @@ warp <- function(src_files,
         stop("'dst_filename' must be a character string or GDALRaster object",
              call. = FALSE)
     } else {
-        ds <- try(new(GDALRaster, dst_filename))
+        ds <- try(new(GDALRaster, dst_filename), silent = TRUE)
         if (is(ds, "Rcpp_GDALRaster") && t_srs == "") {
             t_srs <- ds$getProjection()
             ds$close()
