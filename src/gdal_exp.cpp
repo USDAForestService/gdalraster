@@ -522,8 +522,11 @@ GDALRaster createCopy(std::string format, Rcpp::CharacterVector dst_filename,
         Rcpp::stop("failed to get driver from format name");
 
     char **papszMetadata = GDALGetMetadata(hDriver, nullptr);
-    if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATECOPY, FALSE))
+    if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATECOPY, FALSE) &&
+        !CPLFetchBool(papszMetadata, GDAL_DCAP_CREATE, FALSE)) {
+
         Rcpp::stop("driver does not support createCopy");
+    }
 
     std::string dst_filename_in;
     dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
