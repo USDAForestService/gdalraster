@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9260 (dev)
+# gdalraster 1.11.1.9270 (dev)
+
+* `createCopy()`: fix the check of CreateCopy() availability from the driver by testing for GDAL_DCAP_CREATECOPY or GDAL_DCAP_CREATE, previously only tested for GDAL_DCAP_CREATECOPY (2024-08-12)
 
 * add `srs_get_name()`: return the spatial reference system name (2024-08-12)
 
