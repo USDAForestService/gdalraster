@@ -13,7 +13,7 @@ details of the GDAL Raster API."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9270</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9280</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -182,6 +182,7 @@ override the default resampling to one of <code>BILINEAR</code>, <code>CUBIC</co
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span><span class="va">band</span>, <span class="va">nodata_value</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">deleteNoDataValue</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMaskFlags</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getUnitType</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setUnitType</span><span class="op">(</span><span class="va">band</span>, <span class="va">unit_type</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getScale</span><span class="op">(</span><span class="va">band</span><span class="op">)</span></span>
@@ -469,7 +470,25 @@ Removes the nodata value for <code>band</code>.
 This affects only the definition of the nodata value for raster formats
 that support one (does not modify pixel values). No return value.
 An error is raised if the nodata value cannot be removed.</p>
-<p><code>$getUnitType(band)</code><br>
+<p><code>$getMaskFlags(band)</code><br>
+Returns the status flags of the mask band associated with <code>band</code>.
+Masks are represented as Byte bands with a value of zero indicating nodata
+and non-zero values indicating valid data. Normally the value <code>255</code> will be
+used for valid data pixels. GDAL supports external (.msk) mask bands, and
+normal Byte alpha (transparency) band as mask (any value other than <code>0</code> to
+be treated as valid data). But masks may not be regular raster bands on the
+datasource, such as an implied mask from a band nodata value or the
+<code>ALL_VALID</code> mask. See RFC 15: Band Masks for more details
+(<a href="https://gdal.org/development/rfc/rfc15_nodatabitmask.html" class="external-link">https://gdal.org/development/rfc/rfc15_nodatabitmask.html</a>.</p>
+<p>Returns a named list of GDAL mask flags and their logical values, with the
+following definitions:</p><ul><li><p><code>ALL_VALID</code>: There are no invalid pixels, all mask values will be <code>255</code>.
+When used this will normally be the only flag set.</p></li>
+<li><p><code>PER_DATASET</code>: The mask band is shared between all bands on the dataset.</p></li>
+<li><p><code>ALPHA</code>: The mask band is actually an alpha band and may have values other
+than <code>0</code> and <code>255</code>.</p></li>
+<li><p><code>NODATA</code>: Indicates the mask is actually being generated from nodata
+values (mutually exclusive of <code>ALPHA</code>).</p></li>
+</ul><p><code>$getUnitType(band)</code><br>
 Returns the name of the unit type of the pixel values for <code>band</code>
 (e.g., "m" or "ft").
 An empty string (<code>""</code>) is returned if no units are available.</p>

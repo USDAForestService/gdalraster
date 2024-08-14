@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9270</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9280</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -111,19 +111,19 @@ and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x56025db05a30&gt; of class 'GDALRaster' &lt;0x56025e0d6740&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x5570e36fd1d0&gt; of class 'GDALRaster' &lt;0x5570e32f65b0&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 3 fields</span></span>
 <span><span class="co">#&gt;  $ infoOptions  : chr(0) </span></span>
 <span><span class="co">#&gt;  $ quiet        : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ readByteAsRaw: logi FALSE</span></span>
-<span><span class="co">#&gt;  and 79 methods, of which 65 are  possibly relevant:</span></span>
+<span><span class="co">#&gt;  and 80 methods, of which 66 are  possibly relevant:</span></span>
 <span><span class="co">#&gt;    addBand, apply_geotransform, bbox, buildOverviews, clearColorTable,</span></span>
 <span><span class="co">#&gt;    clearStatistics, close, deleteNoDataValue, dim, fillRaster, finalize,</span></span>
 <span><span class="co">#&gt;    flushCache, get_pixel_line, getActualBlockSize, getBlockSize, getChecksum,</span></span>
 <span><span class="co">#&gt;    getColorTable, getDataTypeName, getDefaultHistogram, getDefaultRAT,</span></span>
 <span><span class="co">#&gt;    getDescription, getDriverLongName, getDriverShortName, getFileList,</span></span>
-<span><span class="co">#&gt;    getFilename, getGeoTransform, getHistogram, getMetadata,</span></span>
+<span><span class="co">#&gt;    getFilename, getGeoTransform, getHistogram, getMaskFlags, getMetadata,</span></span>
 <span><span class="co">#&gt;    getMetadataDomainList, getMetadataItem, getMinMax, getNoDataValue,</span></span>
 <span><span class="co">#&gt;    getOffset, getOverviewCount, getPaletteInterp, getProjection,</span></span>
 <span><span class="co">#&gt;    getProjectionRef, getRasterColorInterp, getRasterCount, getRasterXSize,</span></span>
