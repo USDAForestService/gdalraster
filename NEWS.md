@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9270 (dev)
+# gdalraster 1.11.1.9280 (dev)
+
+* add `GDALRaster::getMaskFlags()`: return the status flags of the mask band associated with a given band of the dataset (2024-08-14)
 
 * `createCopy()`: fix the check of CreateCopy() availability from the driver by testing for GDAL_DCAP_CREATECOPY or GDAL_DCAP_CREATE, previously only tested for GDAL_DCAP_CREATECOPY (2024-08-12)
 
