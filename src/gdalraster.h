@@ -152,6 +152,7 @@ class GDALRaster {
     double getNoDataValue(int band) const;
     bool setNoDataValue(int band, double nodata_value);
     void deleteNoDataValue(int band);
+    Rcpp::List getMaskFlags(int band) const;
     std::string getUnitType(int band) const;
     bool setUnitType(int band, std::string unit_type);
     bool hasScale(int band) const;

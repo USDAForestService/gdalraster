@@ -119,6 +119,7 @@ ds$getDataTypeName(band)
 ds$getNoDataValue(band)
 ds$setNoDataValue(band, nodata_value)
 ds$deleteNoDataValue(band)
+ds$getMaskFlags(band)
 ds$getUnitType(band)
 ds$setUnitType(band, unit_type)
 ds$getScale(band)
@@ -464,6 +465,29 @@ Removes the nodata value for \code{band}.
 This affects only the definition of the nodata value for raster formats
 that support one (does not modify pixel values). No return value.
 An error is raised if the nodata value cannot be removed.
+
+\code{$getMaskFlags(band)}\cr
+Returns the status flags of the mask band associated with \code{band}.
+Masks are represented as Byte bands with a value of zero indicating nodata
+and non-zero values indicating valid data. Normally the value \code{255} will be
+used for valid data pixels. GDAL supports external (.msk) mask bands, and
+normal Byte alpha (transparency) band as mask (any value other than \code{0} to
+be treated as valid data). But masks may not be regular raster bands on the
+datasource, such as an implied mask from a band nodata value or the
+\code{ALL_VALID} mask. See RFC 15: Band Masks for more details
+(\url{https://gdal.org/development/rfc/rfc15_nodatabitmask.html}.
+
+Returns a named list of GDAL mask flags and their logical values, with the
+following definitions:
+\itemize{
+\item \code{ALL_VALID}: There are no invalid pixels, all mask values will be \code{255}.
+When used this will normally be the only flag set.
+\item \code{PER_DATASET}: The mask band is shared between all bands on the dataset.
+\item \code{ALPHA}: The mask band is actually an alpha band and may have values other
+than \code{0} and \code{255}.
+\item \code{NODATA}: Indicates the mask is actually being generated from nodata
+values (mutually exclusive of \code{ALPHA}).
+}
 
 \code{$getUnitType(band)}\cr
 Returns the name of the unit type of the pixel values for \code{band}
