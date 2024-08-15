@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9280 (dev)
+# gdalraster 1.11.1.9290 (dev)
+
+* add `GDALRaster::getMaskBand()`: return the mask filename and band number associated with a given band of the dataset (2024-08-15)
 
 * add `GDALRaster::getMaskFlags()`: return the status flags of the mask band associated with a given band of the dataset (2024-08-14)
 

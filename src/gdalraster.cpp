@@ -594,6 +594,29 @@ Rcpp::List GDALRaster::getMaskFlags(int band) const {
     return list_out;
 }
 
+Rcpp::List GDALRaster::getMaskBand(int band) const {
+    checkAccess_(GA_ReadOnly);
+
+    GDALRasterBandH hBand = getBand_(band);
+
+    Rcpp::List list_out = Rcpp::List::create();
+
+    GDALRasterBandH hMaskBand = GDALGetMaskBand(hBand);
+    int band_number = 0;
+    if (hMaskBand != nullptr)
+        band_number = GDALGetBandNumber(hMaskBand);
+
+    std::string mask_file = "";
+    GDALDatasetH hMaskDS = GDALGetBandDataset(hMaskBand);
+    if (hMaskDS != nullptr)
+        mask_file = GDALGetDescription(hMaskDS);
+
+    list_out.push_back(mask_file, "MaskFile");
+    list_out.push_back(band_number, "BandNumber");
+
+    return list_out;
+}
+
 std::string GDALRaster::getUnitType(int band) const {
     checkAccess_(GA_ReadOnly);
 
@@ -1768,6 +1791,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Delete the nodata value for this band")
     .const_method("getMaskFlags", &GDALRaster::getMaskFlags,
         "Return the status flags of the mask band associated with this band")
+    .const_method("getMaskBand", &GDALRaster::getMaskBand,
+        "Return the mask filename and band number associated with this band")
     .const_method("getUnitType", &GDALRaster::getUnitType,
         "Get name of the raster value units (e.g., m or ft)")
     .method("setUnitType", &GDALRaster::setUnitType,

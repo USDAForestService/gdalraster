@@ -120,6 +120,7 @@ ds$getNoDataValue(band)
 ds$setNoDataValue(band, nodata_value)
 ds$deleteNoDataValue(band)
 ds$getMaskFlags(band)
+ds$getMaskBand(band)
 ds$getUnitType(band)
 ds$setUnitType(band, unit_type)
 ds$getScale(band)
@@ -488,6 +489,18 @@ than \code{0} and \code{255}.
 \item \code{NODATA}: Indicates the mask is actually being generated from nodata
 values (mutually exclusive of \code{ALPHA}).
 }
+
+\code{$getMaskBand(band)}\cr
+Returns the mask filename and band number associated with \code{band}.
+The return value is a named list with two elements. The \code{MaskFile} element
+gives the filename where the mask band is located, e.g., a file with the
+same name as the main dataset but suffixed with .msk in the case of a GDAL
+external mask file. \code{MaskFile} will be an empty string for the derived
+\code{ALL_VALID} and \code{NODATA} masks, which internally are freestanding bands not
+considered to be a part of a dataset. The \code{MaskBand} element gives the band
+number for a mask that is a regular alpha band in the main dataset or
+external mask file. \code{BandNumber} will be \code{0} for the \code{ALL_VALID} and \code{NODATA}
+masks.
 
 \code{$getUnitType(band)}\cr
 Returns the name of the unit type of the pixel values for \code{band}
