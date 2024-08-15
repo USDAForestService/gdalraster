@@ -185,6 +185,8 @@ vsi_stat(lcp_file, "size")
 vsi_stat(tif_file, "size")
 ```
 
+Note that the `createCopy()` method with `return_obj = TRUE` returns a writable dataset, and that it must be closed properly to complete writing and flushing the dataset to disk. `createCopy()` also has an optional `strict` argument that defaults to `FALSE` indicating that the call should proceed without a fatal error even if the destination dataset cannot be created to exactly match the input dataset. This might be because the output format does not support the pixel datatype of the input dataset, or because the destination cannot support writing georeferencing for instance.
+
 Information about format specific creation options can be obtained with the function `getCreationOptions()`. By default, this function lists all available creation options for a format. Output can also be filtered to specific options:
 
 ```{r}
