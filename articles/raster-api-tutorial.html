@@ -111,7 +111,7 @@ and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x563afebceb10&gt; of class 'GDALRaster' &lt;0x563afe483580&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x55f865166580&gt; of class 'GDALRaster' &lt;0x55f8648bcf00&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 3 fields</span></span>
 <span><span class="co">#&gt;  $ infoOptions  : chr(0) </span></span>
@@ -389,6 +389,16 @@ LZW-compressed GeoTiff:</p>
 <span><span class="fu"><a href="../reference/vsi_stat.html">vsi_stat</a></span><span class="op">(</span><span class="va">tif_file</span>, <span class="st">"size"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; integer64</span></span>
 <span><span class="co">#&gt; [1] 113942</span></span></code></pre></div>
+<p>Note that the <code><a href="../reference/createCopy.html">createCopy()</a></code> method with
+<code>return_obj = TRUE</code> returns a writable dataset, and that it
+must be closed properly to complete writing and flushing the dataset to
+disk. <code><a href="../reference/createCopy.html">createCopy()</a></code> also has an optional <code>strict</code>
+argument that defaults to <code>FALSE</code> indicating that the call
+should proceed without a fatal error even if the destination dataset
+cannot be created to exactly match the input dataset. This might be
+because the output format does not support the pixel datatype of the
+input dataset, or because the destination cannot support writing
+georeferencing for instance.</p>
 <p>Information about format specific creation options can be obtained
 with the function <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>. By default, this
 function lists all available creation options for a format. Output can
