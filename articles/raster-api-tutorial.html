@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9280</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9290</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -111,27 +111,27 @@ and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x5570e36fd1d0&gt; of class 'GDALRaster' &lt;0x5570e32f65b0&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x563afebceb10&gt; of class 'GDALRaster' &lt;0x563afe483580&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 3 fields</span></span>
 <span><span class="co">#&gt;  $ infoOptions  : chr(0) </span></span>
 <span><span class="co">#&gt;  $ quiet        : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ readByteAsRaw: logi FALSE</span></span>
-<span><span class="co">#&gt;  and 80 methods, of which 66 are  possibly relevant:</span></span>
+<span><span class="co">#&gt;  and 81 methods, of which 67 are  possibly relevant:</span></span>
 <span><span class="co">#&gt;    addBand, apply_geotransform, bbox, buildOverviews, clearColorTable,</span></span>
 <span><span class="co">#&gt;    clearStatistics, close, deleteNoDataValue, dim, fillRaster, finalize,</span></span>
 <span><span class="co">#&gt;    flushCache, get_pixel_line, getActualBlockSize, getBlockSize, getChecksum,</span></span>
 <span><span class="co">#&gt;    getColorTable, getDataTypeName, getDefaultHistogram, getDefaultRAT,</span></span>
 <span><span class="co">#&gt;    getDescription, getDriverLongName, getDriverShortName, getFileList,</span></span>
-<span><span class="co">#&gt;    getFilename, getGeoTransform, getHistogram, getMaskFlags, getMetadata,</span></span>
-<span><span class="co">#&gt;    getMetadataDomainList, getMetadataItem, getMinMax, getNoDataValue,</span></span>
-<span><span class="co">#&gt;    getOffset, getOverviewCount, getPaletteInterp, getProjection,</span></span>
-<span><span class="co">#&gt;    getProjectionRef, getRasterColorInterp, getRasterCount, getRasterXSize,</span></span>
-<span><span class="co">#&gt;    getRasterYSize, getScale, getStatistics, getUnitType, info, infoAsJSON,</span></span>
-<span><span class="co">#&gt;    initialize, isOpen, open, read, res, setColorTable, setDefaultRAT,</span></span>
-<span><span class="co">#&gt;    setDescription, setFilename, setGeoTransform, setMetadata, setMetadataItem,</span></span>
-<span><span class="co">#&gt;    setNoDataValue, setOffset, setProjection, setRasterColorInterp, setScale,</span></span>
-<span><span class="co">#&gt;    setUnitType, write</span></span></code></pre></div>
+<span><span class="co">#&gt;    getFilename, getGeoTransform, getHistogram, getMaskBand, getMaskFlags,</span></span>
+<span><span class="co">#&gt;    getMetadata, getMetadataDomainList, getMetadataItem, getMinMax,</span></span>
+<span><span class="co">#&gt;    getNoDataValue, getOffset, getOverviewCount, getPaletteInterp,</span></span>
+<span><span class="co">#&gt;    getProjection, getProjectionRef, getRasterColorInterp, getRasterCount,</span></span>
+<span><span class="co">#&gt;    getRasterXSize, getRasterYSize, getScale, getStatistics, getUnitType, info,</span></span>
+<span><span class="co">#&gt;    infoAsJSON, initialize, isOpen, open, read, res, setColorTable,</span></span>
+<span><span class="co">#&gt;    setDefaultRAT, setDescription, setFilename, setGeoTransform, setMetadata,</span></span>
+<span><span class="co">#&gt;    setMetadataItem, setNoDataValue, setOffset, setProjection,</span></span>
+<span><span class="co">#&gt;    setRasterColorInterp, setScale, setUnitType, write</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="getting-dataset-information">Getting dataset information<a class="anchor" aria-label="anchor" href="#getting-dataset-information"></a>

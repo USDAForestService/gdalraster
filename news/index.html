@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9280</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9290</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9280" id="gdalraster-11119280-dev">gdalraster 1.11.1.9280 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119280-dev"></a></h2>
-<ul><li><p>add <code>GDALRaster::getMaskFlags()</code>: return the status flags of the mask band associated with a given band of the dataset (2024-08-14)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9290" id="gdalraster-11119290-dev">gdalraster 1.11.1.9290 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119290-dev"></a></h2>
+<ul><li><p>add <code>GDALRaster::getMaskBand()</code>: return the mask filename and band number associated with a given band of the dataset (2024-08-15)</p></li>
+<li><p>add <code>GDALRaster::getMaskFlags()</code>: return the status flags of the mask band associated with a given band of the dataset (2024-08-14)</p></li>
 <li><p><code><a href="../reference/createCopy.html">createCopy()</a></code>: fix the check of CreateCopy() availability from the driver by testing for GDAL_DCAP_CREATECOPY or GDAL_DCAP_CREATE, previously only tested for GDAL_DCAP_CREATECOPY (2024-08-12)</p></li>
 <li><p>add <code><a href="../reference/srs_get_name.html">srs_get_name()</a></code>: return the spatial reference system name (2024-08-12)</p></li>
 <li><p>add <code><a href="../reference/srs_find_epsg.html">srs_find_epsg()</a></code>: try to identify a matching EPSG code for a given SRS definition (2024-08-11)</p></li>
