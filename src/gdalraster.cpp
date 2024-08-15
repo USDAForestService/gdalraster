@@ -11,8 +11,8 @@
 #include <complex>
 
 #include "gdal.h"
-#include "cpl_conv.h"
 #include "cpl_port.h"
+#include "cpl_conv.h"
 #include "cpl_string.h"
 #include "cpl_vsi.h"
 #include "gdal_alg.h"
