@@ -6,8 +6,8 @@
 #include <vector>
 
 #include "gdal.h"
-#include "cpl_error.h"
 #include "cpl_port.h"
+#include "cpl_error.h"
 #include "cpl_string.h"
 #include "ogr_srs_api.h"
 

@@ -6,6 +6,7 @@
 #include <Rcpp.h>
 #include <string>
 
+#include "cpl_port.h"
 #include "cpl_conv.h"
 #include "ogr_srs_api.h"
 #include "ogr_spatialref.h"

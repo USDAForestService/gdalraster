@@ -7,8 +7,8 @@
 #include <cstdlib>
 #include <vector>
 
-#include "cpl_conv.h"
 #include "cpl_port.h"
+#include "cpl_conv.h"
 #include "gdalraster.h"
 #include "vsifile.h"
 
