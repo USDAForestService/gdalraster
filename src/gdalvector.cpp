@@ -1401,10 +1401,29 @@ void GDALVector::checkAccess_(GDALAccess access_needed) const {
         Rcpp::stop("dataset is read-only");
 }
 
+GDALDatasetH GDALVector::getGDALDatasetH_() const {
+    checkAccess_(GA_ReadOnly);
+
+    return m_hDataset;
+}
+
+void GDALVector::setGDALDatasetH_(GDALDatasetH hDs, bool with_update) {
+    m_hDataset = hDs;
+    if (with_update)
+        m_eAccess = GA_Update;
+    else
+        m_eAccess = GA_ReadOnly;
+}
+
 OGRLayerH GDALVector::getOGRLayerH_() const {
     checkAccess_(GA_ReadOnly);
 
     return m_hLayer;
+}
+
+void GDALVector::setOGRLayerH_(OGRLayerH hLyr, std::string lyr_name) {
+    m_hLayer = hLyr;
+    m_layer_name = lyr_name;
 }
 
 void GDALVector::setFeatureTemplate_() {
@@ -1636,15 +1655,20 @@ RCPP_MODULE(mod_GDALVector) {
                  std::string>
         ("Usage: new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)")
 
-    // exposed read-only fields
+    // read-only fields
     .field_readonly("featureTemplate", &GDALVector::featureTemplate)
 
-    // exposed read/write fields
+    // undocumented read-only fields for internal use
+    .field_readonly("m_layer_name", &GDALVector::m_layer_name)
+    .field_readonly("m_is_sql", &GDALVector::m_is_sql)
+    .field_readonly("m_dialect", &GDALVector::m_dialect)
+
+    // read/write fields
     .field("defaultGeomFldName", &GDALVector::defaultGeomFldName)
     .field("returnGeomAs", &GDALVector::returnGeomAs)
     .field("wkbByteOrder", &GDALVector::wkbByteOrder)
 
-    // exposed member functions
+    // methods
     .const_method("getDsn", &GDALVector::getDsn,
         "Return the DSN")
     .const_method("isOpen", &GDALVector::isOpen,
