@@ -1058,7 +1058,14 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 
     if (GDALDataTypeIsComplex(eDT)) {
         // complex data types
-        std::vector<std::complex<double>> buf(out_xsize * out_ysize);
+
+        std::vector<std::complex<double>> buf{};
+        try {
+            buf.resize(static_cast<size_t>(out_xsize * out_ysize));
+        }
+        catch (const std::exception &) {
+            Rcpp::stop("failed to allocate memory for read");
+        }
 
         err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
                            buf.data(), out_xsize, out_ysize,
@@ -1081,7 +1088,14 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
             // use int32 buffer unless we are reading Byte as R raw type
 
             if (eDT == GDT_Byte && readByteAsRaw) {
-                std::vector<uint8_t> buf(out_xsize * out_ysize);
+                std::vector<uint8_t> buf{};
+                try {
+                    buf.resize(static_cast<size_t>(out_xsize * out_ysize));
+                }
+                catch (const std::exception &) {
+                    Rcpp::stop("failed to allocate memory for read");
+                }
+
                 err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
                                    buf.data(), out_xsize, out_ysize,
                                    GDT_Byte, 0, 0);
@@ -1093,7 +1107,14 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
                 return v;
             }
             else {
-                std::vector<GInt32> buf(out_xsize * out_ysize);
+                std::vector<int32_t> buf{};
+                try {
+                    buf.resize(static_cast<size_t>(out_xsize * out_ysize));
+                }
+                catch (const std::exception &) {
+                    Rcpp::stop("failed to allocate memory for read");
+                }
+
                 err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
                                 buf.data(), out_xsize, out_ysize,
                                 GDT_Int32, 0, 0);
@@ -1102,7 +1123,8 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
                     Rcpp::stop("read raster failed");
 
                 if (hasNoDataValue(band)) {
-                    GInt32 nodata_value = (GInt32) getNoDataValue(band);
+                    int32_t nodata_value = static_cast<int32_t>(
+                            getNoDataValue(band));
                     std::replace(buf.begin(), buf.end(), nodata_value,
                                  NA_INTEGER);
                 }
@@ -1118,7 +1140,13 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
             //  precision when > 9,007,199,254,740,992 (2^53). Support for
             //  Int64/UInt64 raster could potentially be added using {bit64}.)
 
-            std::vector<double> buf(out_xsize * out_ysize);
+            std::vector<double> buf{};
+            try {
+                buf.resize(static_cast<size_t>(out_xsize * out_ysize));
+            }
+            catch (const std::exception &) {
+                Rcpp::stop("failed to allocate memory for read");
+            }
 
             err = GDALRasterIO(hBand, GF_Read, xoff, yoff, xsize, ysize,
                                buf.data(), out_xsize, out_ysize,
@@ -1131,7 +1159,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
                 double nodata_value = getNoDataValue(band);
                 if (GDALDataTypeIsFloating(eDT)) {
                     for (double& val : buf) {
-                        if (CPLIsNan(val))
+                        if (std::isnan(val))
                             val = NA_REAL;
                         else if (ARE_REAL_EQUAL(val, nodata_value))
                             val = NA_REAL;
@@ -1143,7 +1171,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
             }
             else if (GDALDataTypeIsFloating(eDT)) {
                 for (double& val : buf) {
-                    if (CPLIsNan(val))
+                    if (std::isnan(val))
                         val = NA_REAL;
                 }
             }
