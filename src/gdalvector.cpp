@@ -20,12 +20,12 @@
 #include "ogr_util.h"
 
 GDALVector::GDALVector() :
-            m_dsn(""),
             m_layer_name(""),
             m_is_sql(false),
+            m_dialect(""),
+            m_dsn(""),
             m_open_options(Rcpp::CharacterVector::create()),
             m_spatial_filter(""),
-            m_dialect(""),
             m_hDataset(nullptr),
             m_eAccess(GA_ReadOnly),
             m_hLayer(nullptr) {}
@@ -55,10 +55,10 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
                        std::string spatial_filter, std::string dialect = "") :
 
             m_layer_name(layer),
+            m_dialect(dialect),
             m_open_options(open_options.isNotNull() ? open_options :
                            Rcpp::CharacterVector::create()),
             m_spatial_filter(spatial_filter),
-            m_dialect(dialect),
             m_hDataset(nullptr),
             m_eAccess(GA_ReadOnly),
             m_hLayer(nullptr) {
@@ -715,11 +715,10 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 Rcpp::NumericVector col = df[col_num];
                 col[row_num] = OGR_F_GetFieldAsDouble(hFeat, i);
             }
-            else if ((fld_type == OFTDate || fld_type == OFTDateTime)
-                     && has_value) {
+            else if ((fld_type == OFTDate || fld_type == OFTDateTime) &&
+                     has_value) {
 
-                Rcpp::NumericVector col = df[col_num];
-                int yr, mo, day, hr, min, tzflag = 0;
+                int yr = 0, mo = 0, day = 0, hr = 0, min = 0, tzflag = 0;
                 float sec = 0;
                 if (OGR_F_GetFieldAsDateTimeEx(hFeat, i, &yr, &mo, &day,
                                                &hr, &min, &sec, &tzflag)) {
@@ -733,12 +732,13 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                     brokendowntime.tm_sec = static_cast<int>(sec);
                     int64_t nUnixTime = CPLYMDHMSToUnixTime(&brokendowntime);
                     if (fld_type == OFTDate) {
+                        Rcpp::NumericVector col = df[col_num];
                         col[row_num] = static_cast<double>(nUnixTime / 86400);
                     }
                     else {
                         // OFTDateTime
                         if (tzflag > 1 && tzflag != 100) {
-                            // convert to GMT
+                            // convert to UTC
                             const int tzoffset = std::abs(tzflag - 100) * 15;
                             const int tzhour = tzoffset / 60;
                             const int tzmin = tzoffset - tzhour * 60;
@@ -748,6 +748,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                             else
                                 nUnixTime += offset_sec;
                         }
+                        Rcpp::NumericVector col = df[col_num];
                         col[row_num] = static_cast<double>(
                                 nUnixTime + std::fmod(sec, 1));
                     }
@@ -1401,10 +1402,29 @@ void GDALVector::checkAccess_(GDALAccess access_needed) const {
         Rcpp::stop("dataset is read-only");
 }
 
+GDALDatasetH GDALVector::getGDALDatasetH_() const {
+    checkAccess_(GA_ReadOnly);
+
+    return m_hDataset;
+}
+
+void GDALVector::setGDALDatasetH_(GDALDatasetH hDs, bool with_update) {
+    m_hDataset = hDs;
+    if (with_update)
+        m_eAccess = GA_Update;
+    else
+        m_eAccess = GA_ReadOnly;
+}
+
 OGRLayerH GDALVector::getOGRLayerH_() const {
     checkAccess_(GA_ReadOnly);
 
     return m_hLayer;
+}
+
+void GDALVector::setOGRLayerH_(OGRLayerH hLyr, std::string lyr_name) {
+    m_hLayer = hLyr;
+    m_layer_name = lyr_name;
 }
 
 void GDALVector::setFeatureTemplate_() {
@@ -1636,15 +1656,20 @@ RCPP_MODULE(mod_GDALVector) {
                  std::string>
         ("Usage: new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)")
 
-    // exposed read-only fields
+    // read-only fields
     .field_readonly("featureTemplate", &GDALVector::featureTemplate)
 
-    // exposed read/write fields
+    // undocumented read-only fields for internal use
+    .field_readonly("m_layer_name", &GDALVector::m_layer_name)
+    .field_readonly("m_is_sql", &GDALVector::m_is_sql)
+    .field_readonly("m_dialect", &GDALVector::m_dialect)
+
+    // read/write fields
     .field("defaultGeomFldName", &GDALVector::defaultGeomFldName)
     .field("returnGeomAs", &GDALVector::returnGeomAs)
     .field("wkbByteOrder", &GDALVector::wkbByteOrder)
 
-    // exposed member functions
+    // methods
     .const_method("getDsn", &GDALVector::getDsn,
         "Return the DSN")
     .const_method("isOpen", &GDALVector::isOpen,

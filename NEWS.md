@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9300 (dev)
+# gdalraster 1.11.1.9301 (dev)
+
+* (internal) class `GDALVector`: add get/set methods for the dataset and layer handles for internal use (2024-08-18)
 
 * (internal) try/catch if potentially large allocation of std::vector (2024-08-18)
 
