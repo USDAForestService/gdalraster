@@ -1489,7 +1489,13 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
 
     size_t col_num = 0;
 
-    std::vector<int64_t> fid(nrow, NA_INTEGER64);
+    std::vector<int64_t> fid{};
+    try {
+        fid.resize(nrow, NA_INTEGER64);
+    }
+    catch (const std::exception &) {
+        Rcpp::stop("failed to allocate memory for 'fid' column");
+    }
     df[col_num] = Rcpp::wrap(fid);
     col_names[col_num] = "FID";
 
@@ -1526,7 +1532,13 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
                 df[col_num] = v;
             }
             else {
-                std::vector<int64_t> v(nrow, NA_INTEGER64);
+                std::vector<int64_t> v{};
+                try {
+                    v.resize(nrow, NA_INTEGER64);
+                }
+                catch (const std::exception &) {
+                    Rcpp::stop("failed to allocate memory 'integer64' column");
+                }
                 df[col_num] = Rcpp::wrap(v);
             }
             col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
