@@ -32,13 +32,13 @@ class GDALVector {
                Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                std::string spatial_filter, std::string dialect);
 
-    // exposed read-only fields
-    Rcpp::List featureTemplate;
-
     // undocumented exposed read-only fields for internal use
     std::string m_layer_name;  // layer name or sql statement
     bool m_is_sql;
     std::string m_dialect;
+
+    // exposed read-only fields
+    Rcpp::List featureTemplate;
 
     // exposed read/write fields
     std::string defaultGeomFldName = "geometry";

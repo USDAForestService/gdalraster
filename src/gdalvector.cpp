@@ -20,12 +20,12 @@
 #include "ogr_util.h"
 
 GDALVector::GDALVector() :
-            m_dsn(""),
             m_layer_name(""),
             m_is_sql(false),
+            m_dialect(""),
+            m_dsn(""),
             m_open_options(Rcpp::CharacterVector::create()),
             m_spatial_filter(""),
-            m_dialect(""),
             m_hDataset(nullptr),
             m_eAccess(GA_ReadOnly),
             m_hLayer(nullptr) {}
@@ -55,10 +55,10 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
                        std::string spatial_filter, std::string dialect = "") :
 
             m_layer_name(layer),
+            m_dialect(dialect),
             m_open_options(open_options.isNotNull() ? open_options :
                            Rcpp::CharacterVector::create()),
             m_spatial_filter(spatial_filter),
-            m_dialect(dialect),
             m_hDataset(nullptr),
             m_eAccess(GA_ReadOnly),
             m_hLayer(nullptr) {
@@ -715,11 +715,10 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 Rcpp::NumericVector col = df[col_num];
                 col[row_num] = OGR_F_GetFieldAsDouble(hFeat, i);
             }
-            else if ((fld_type == OFTDate || fld_type == OFTDateTime)
-                     && has_value) {
+            else if ((fld_type == OFTDate || fld_type == OFTDateTime) &&
+                     has_value) {
 
-                Rcpp::NumericVector col = df[col_num];
-                int yr, mo, day, hr, min, tzflag = 0;
+                int yr = 0, mo = 0, day = 0, hr = 0, min = 0, tzflag = 0;
                 float sec = 0;
                 if (OGR_F_GetFieldAsDateTimeEx(hFeat, i, &yr, &mo, &day,
                                                &hr, &min, &sec, &tzflag)) {
@@ -733,12 +732,13 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                     brokendowntime.tm_sec = static_cast<int>(sec);
                     int64_t nUnixTime = CPLYMDHMSToUnixTime(&brokendowntime);
                     if (fld_type == OFTDate) {
+                        Rcpp::NumericVector col = df[col_num];
                         col[row_num] = static_cast<double>(nUnixTime / 86400);
                     }
                     else {
                         // OFTDateTime
                         if (tzflag > 1 && tzflag != 100) {
-                            // convert to GMT
+                            // convert to UTC
                             const int tzoffset = std::abs(tzflag - 100) * 15;
                             const int tzhour = tzoffset / 60;
                             const int tzmin = tzoffset - tzhour * 60;
@@ -748,6 +748,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                             else
                                 nUnixTime += offset_sec;
                         }
+                        Rcpp::NumericVector col = df[col_num];
                         col[row_num] = static_cast<double>(
                                 nUnixTime + std::fmod(sec, 1));
                     }
