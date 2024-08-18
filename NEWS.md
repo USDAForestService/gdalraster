@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9290 (dev)
+# gdalraster 1.11.1.9300 (dev)
+
+* (internal) try/catch if potentially large allocation of std::vector (2024-08-18)
 
 * add `GDALRaster::getMaskBand()`: return the mask filename and band number associated with a given band of the dataset (2024-08-15)
 
