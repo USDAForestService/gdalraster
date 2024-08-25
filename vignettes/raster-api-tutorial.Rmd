@@ -133,6 +133,12 @@ The values for `out_xsize` and `out_ysize` describe the size of the output buffe
 The stand-alone function `plot_raster()` uses base R `graphics` to display raster data read from an open dataset (with options to display a subwindow, to read a reduced resolution overview, or read from multiple bands for RGB data):
 
 ```{r fig.width=6, fig.height=4, dev="png"}
+#| fig.alt: >
+#|   A plot of pixel-level tree canopy cover (%) for an area of interest
+#|   called Storm Lake, which is used for several example datasets in package
+#|   gdalraster. The plot uses a color ramp from light to dark green
+#|   indicating low to high tree canopy cover. Pixels with zero tree canopy
+#|   cover are white.
 plot_raster(ds, legend = TRUE, main = "Storm Lake Tree Canopy Cover (%)")
 ```
 

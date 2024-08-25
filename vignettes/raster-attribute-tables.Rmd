@@ -85,6 +85,11 @@ An attribute table with RGB columns can be passed to `gdalraster::plot_raster()`
 
 ```{r fig.width=6, fig.height=4, dev="png"}
 bb <- ds$bbox()
+#| fig.alt: >
+#|   A plot of LANDFIRE Existing Vegetation Type (EVT) for an area of interest
+#|   named Storm Lake which is used for several example datasets in package
+#|   gdalraster. A color map has been to the pixels using color values provided
+#|   by LANDFIRE in the CSV attribute table for the EVT layer.
 plot_raster(data = ds,
             col_tbl = tbl[,c(1,6:8)],
             maxColorValue = 255,
@@ -111,6 +116,10 @@ QGIS since 3.30 includes [extensive support for Raster Attribute Tables](https:/
 For QGIS < 3.30, the **Raster Attribute Table Plugin** can be used to edit and display RATs for discrete rasters using the paletted/unique-values renderer (QGIS-style classification on arbitrary RAT columns). With the plugin enabled, "Open Attribute Table" can be selected after right-clicking a raster layer that has an associated RAT. For the LANDFIRE EVT layer as modified above, classifying on EVT_NAME generates the following display:
 
 ```{r, echo=FALSE, fig.cap="LANDFIRE EVT in the Raster Attribute Table QGIS Plugin", out.width = '90%'}
+#| fig.alt: >
+#|   A screen capture of the QGIS desktop application showing support for GDAL
+#|   raster attribute tables. The display of attribute tables in gdalraster is
+#|   modeled after that of QGIS, having a similar format by default.
 knitr::include_graphics("qgis_rat_classify.png")
 ```
 

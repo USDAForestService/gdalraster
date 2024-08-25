@@ -20,13 +20,23 @@ base_url <- "/vsicurl/https://raw.githubusercontent.com/usdaforestservice/gdalra
 ## Single-band grayscale or color ramp
 
 ```{r}
+#| fig.alt: >
+#|   A plot of an elevation raster for an area of interest around Mt. Hood,
+#|   Oregon, USA. Elevation is shown in grayscale with the lowest values dark
+#|   gray (minimum 553 m) and the highest values almost white (maximum 3421 m).
 f <- paste0(base_url, "lf_elev_220_mt_hood_utm.tif")
 ds <- new(GDALRaster, f)
 
 # gray
 plot_raster(ds, legend=TRUE, main="Mount Hood elevation (m)")
+```
 
-# color ramp
+```{r}
+#| fig.alt: >
+#|   A plot of an elevation raster for an area of interest around Mt. Hood,
+#|   Oregon, USA. A terrain color ramp is used with the lowest values green
+#|   (minimum 553 m), intermediate values yellow to orange, and the highest
+#|   values almost white (maximum 3421 m).
 elev_pal <- c("#00A60E","#63C600","#E6E600","#E9BD3B","#ECB176","#EFC2B3","#F2F2F2")
 ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
 
@@ -37,6 +47,10 @@ ds$close()
 ## RGB
 
 ```{r}
+#| fig.alt: >
+#|   A plot of a Landsat image for an area of interest around Mt. Hood,
+#|   Oregon, USA. The image is from July 2022. It is shown as a false color
+#|   composite of Landsat bands 7, 5 and 4 (SWIR).
 f <- paste0(base_url, "landsat_c2ard_sr_mt_hood_jul2022_utm.tif")
 ds <- new(GDALRaster, f)
 
@@ -54,6 +68,9 @@ plot_raster(r,
 ## Color table
 
 ```{r}
+#| fig.alt: >
+#|   A plot of LANDFIRE surface fuel classes for an area of interest around
+#|   Mt. Hood, Oregon, USA.
 f <- paste0(base_url, "lf_fbfm40_220_mt_hood_utm.tif")
 ds <- new(GDALRaster, f)
 dm <- ds$dim()
@@ -75,6 +92,12 @@ ds$close()
 ## Axis labels
 
 ```{r}
+#| fig.alt: >
+#|   A plot of the NASA Earth Observatory Blue Marble image from July 2004.
+#|   NASA's Blue Marble: Next Generation images show Earth in true color. The
+#|   images show how the surface would look to a human in space if our world
+#|   had no clouds and no atmosphere. NASA's Terra satellite collected these
+#|   images. There is one Blue Marble image for each month of the year 2004.
 f <- paste0(base_url, "bl_mrbl_ng_jul2004_rgb_720x360.tif")
 ds <- new(GDALRaster, f)
 srs_is_projected(ds$getProjectionRef())
