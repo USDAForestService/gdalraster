@@ -12,6 +12,8 @@
 status](https://www.r-pkg.org/badges/version/gdalraster)](https://CRAN.R-project.org/package=gdalraster)
 [![r-universe
 status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usdaforestservice.r-universe.dev/gdalraster)
+[![OpenSSF Best
+Practices](https://www.bestpractices.dev/projects/9382/badge)](https://www.bestpractices.dev/projects/9382)
 <!-- badges: end -->
 
 ## Overview
