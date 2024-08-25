@@ -95,15 +95,13 @@ use pixel values that have already been read into a vector.</p>
 <span></span>
 <span><span class="co"># gray</span></span>
 <span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend<span class="op">=</span><span class="cn">TRUE</span>, main<span class="op">=</span><span class="st">"Mount Hood elevation (m)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="raster-display_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
+<p><img src="raster-display_files/figure-html/unnamed-chunk-2-1.png" alt="A plot of an elevation raster for an area of interest around Mt. Hood, Oregon, USA. Elevation is shown in grayscale with the lowest values dark gray (minimum 553 m) and the highest values almost white (maximum 3421 m)." width="700"></p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
-<span><span class="co"># color ramp</span></span>
-<span><span class="va">elev_pal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#00A60E"</span>,<span class="st">"#63C600"</span>,<span class="st">"#E6E600"</span>,<span class="st">"#E9BD3B"</span>,<span class="st">"#ECB176"</span>,<span class="st">"#EFC2B3"</span>,<span class="st">"#F2F2F2"</span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="va">elev_pal</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"#00A60E"</span>,<span class="st">"#63C600"</span>,<span class="st">"#E6E600"</span>,<span class="st">"#E9BD3B"</span>,<span class="st">"#ECB176"</span>,<span class="st">"#EFC2B3"</span>,<span class="st">"#F2F2F2"</span><span class="op">)</span></span>
 <span><span class="va">ramp</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/colour_ramp.html" class="external-link">colour_ramp</a></span><span class="op">(</span><span class="va">elev_pal</span>, alpha<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend<span class="op">=</span><span class="cn">TRUE</span>, col_map_fn<span class="op">=</span><span class="va">ramp</span>, main<span class="op">=</span><span class="st">"Mount Hood elevation (m)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="raster-display_files/figure-html/unnamed-chunk-2-2.png" width="700"></p>
+<p><img src="raster-display_files/figure-html/unnamed-chunk-3-1.png" alt="A plot of an elevation raster for an area of interest around Mt. Hood, Oregon, USA. A terrain color ramp is used with the lowest values green (minimum 553 m), intermediate values yellow to orange, and the highest values almost white (maximum 3421 m)." width="700"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -123,7 +121,7 @@ use pixel values that have already been read into a vector.</p>
 <span>            minmax_def<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">7551</span>,<span class="fl">7679</span>,<span class="fl">7585</span>,<span class="fl">14842</span>,<span class="fl">24997</span>,<span class="fl">12451</span><span class="op">)</span>,</span>
 <span>            main<span class="op">=</span><span class="st">"Mount Hood July 2022 Landsat 7-5-4 (SWIR)"</span></span>
 <span>           <span class="op">)</span></span></code></pre></div>
-<p><img src="raster-display_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
+<p><img src="raster-display_files/figure-html/unnamed-chunk-4-1.png" alt="A plot of a Landsat image for an area of interest around Mt. Hood, Oregon, USA. The image is from July 2022. It is shown as a false color composite of Landsat bands 7, 5 and 4 (SWIR)." width="700"></p>
 </div>
 <div class="section level2">
 <h2 id="color-table">Color table<a class="anchor" aria-label="anchor" href="#color-table"></a>
@@ -152,7 +150,7 @@ use pixel values that have already been read into a vector.</p>
 <span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, xsize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="fl">2</span>, ysize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">/</span> <span class="fl">2</span>,</span>
 <span>            col_tbl<span class="op">=</span><span class="va">vat</span>, interpolate<span class="op">=</span><span class="cn">FALSE</span>,</span>
 <span>            main<span class="op">=</span><span class="st">"LANDFIRE surface fuel class (FBFM40)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="raster-display_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p><img src="raster-display_files/figure-html/unnamed-chunk-5-1.png" alt="A plot of LANDFIRE surface fuel classes for an area of interest around Mt. Hood, Oregon, USA." width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -171,7 +169,7 @@ use pixel values that have already been read into a vector.</p>
 <span>            xlab<span class="op">=</span><span class="st">"longitude"</span>, ylab<span class="op">=</span><span class="st">"latitude"</span>,</span>
 <span>            main<span class="op">=</span><span class="st">"NASA Earth Observatory Blue Marble July 2004"</span></span>
 <span>           <span class="op">)</span></span></code></pre></div>
-<p><img src="raster-display_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
+<p><img src="raster-display_files/figure-html/unnamed-chunk-6-1.png" alt="A plot of the NASA Earth Observatory Blue Marble image from July 2004. NASA's Blue Marble: Next Generation images show Earth in true color. The images show how the surface would look to a human in space if our world had no clouds and no atmosphere. NASA's Terra satellite collected these images. There is one Blue Marble image for each month of the year 2004." width="700"></p>
 </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside>

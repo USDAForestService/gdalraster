@@ -268,7 +268,7 @@ behavior:</p>
 <span>     xlab<span class="op">=</span><span class="st">"rows read"</span>, ylab<span class="op">=</span><span class="st">"cache in use (MB)"</span>, </span>
 <span>     col<span class="op">=</span><span class="st">"blue"</span>, lwd<span class="op">=</span><span class="fl">2</span>, xaxt<span class="op">=</span><span class="st">"n"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/axis.html" class="external-link">axis</a></span><span class="op">(</span><span class="fl">1</span>, at <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq</a></span><span class="op">(</span><span class="fl">0</span>, <span class="fl">1536</span>, by <span class="op">=</span> <span class="fl">128</span><span class="op">)</span>, las<span class="op">=</span><span class="fl">2</span><span class="op">)</span></span></code></pre>
-<p><img src="img/cache_use.png" width="75%"></p>
+<p><img src="img/cache_use.png" alt="A plot showing the relationship between memory used for the GDAL block cache and the number of rows read from a large test dataset that was read by row in top to bottom order. The test dataset is a tiled GeoTiff format with a block size of 128 x 128 pixels. The number of rows read is on the X axis, and MB of memory in use for the cache is on the Y axis. The plot shows a stair-step pattern of increasing memory used for the block cache as more rows are read until leveling off at 400 MB which is the configured maximum size of the cache in this case." width="75%"></p>
 <p>While the examples above focus on reading a tiled raster by row,
 similar considerations would apply to processing large row-oriented
 rasters in 2-D chunks.</p>

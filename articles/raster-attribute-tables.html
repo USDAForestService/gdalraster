@@ -247,6 +247,11 @@ RAT, for passing to <code>GDALRaster$setDefaultRAT()</code>):</p>
 <code>VALUE</code>, <code>R</code>, <code>G</code>, <code>B</code>):</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#| fig.alt: &gt;</span></span>
+<span><span class="co">#|   A plot of LANDFIRE Existing Vegetation Type (EVT) for an area of interest</span></span>
+<span><span class="co">#|   named Storm Lake which is used for several example datasets in package</span></span>
+<span><span class="co">#|   gdalraster. A color map has been to the pixels using color values provided</span></span>
+<span><span class="co">#|   by LANDFIRE in the CSV attribute table for the EVT layer.</span></span>
 <span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">ds</span>,</span>
 <span>            col_tbl <span class="op">=</span> <span class="va">tbl</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">6</span><span class="op">:</span><span class="fl">8</span><span class="op">)</span><span class="op">]</span>,</span>
 <span>            maxColorValue <span class="op">=</span> <span class="fl">255</span>,</span>
@@ -1010,7 +1015,7 @@ Attribute Table” can be selected after right-clicking a raster layer
 that has an associated RAT. For the LANDFIRE EVT layer as modified
 above, classifying on EVT_NAME generates the following display:</p>
 <div class="figure">
-<img src="qgis_rat_classify.png" alt="LANDFIRE EVT in the Raster Attribute Table QGIS Plugin" width="90%"><p class="caption">
+<img src="qgis_rat_classify.png" alt="A screen capture of the QGIS desktop application showing support for GDAL raster attribute tables. The display of attribute tables in gdalraster is modeled after that of QGIS, having a similar format by default." width="90%"><p class="caption">
 LANDFIRE EVT in the Raster Attribute Table QGIS Plugin
 </p>
 </div>

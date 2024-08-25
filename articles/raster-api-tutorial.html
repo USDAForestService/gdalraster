@@ -111,7 +111,7 @@ and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x562ab9c1cea0&gt; of class 'GDALRaster' &lt;0x562ab985b040&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x5596b2dfb0e0&gt; of class 'GDALRaster' &lt;0x5596b3fb5680&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 3 fields</span></span>
 <span><span class="co">#&gt;  $ infoOptions  : chr(0) </span></span>
@@ -302,7 +302,7 @@ overviews are available at suitable resolution.</p>
 overview, or read from multiple bands for RGB data):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span>, main <span class="op">=</span> <span class="st">"Storm Lake Tree Canopy Cover (%)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="raster-api-tutorial_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
+<p><img src="raster-api-tutorial_files/figure-html/unnamed-chunk-9-1.png" alt="A plot of pixel-level tree canopy cover (%) for an area of interest called Storm Lake, which is used for several example datasets in package gdalraster. The plot uses a color ramp from light to dark green indicating low to high tree canopy cover. Pixels with zero tree canopy cover are white." width="576"></p>
 </div>
 <div class="section level2">
 <h2 id="closing-the-dataset">Closing the dataset<a class="anchor" aria-label="anchor" href="#closing-the-dataset"></a>
