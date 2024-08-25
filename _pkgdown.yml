@@ -13,6 +13,8 @@ home:
   links:
   - text: Discussions
     href: https://github.com/USDAForestService/gdalraster/discussions
+  - text: Development practices
+    href: https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices
 
 reference:
 - title: Package overview

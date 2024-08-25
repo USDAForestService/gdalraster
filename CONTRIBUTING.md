@@ -4,14 +4,13 @@ We're glad you're thinking about contributing to this open source project of the
 
 ## Development practices
 
-[EditorConfig](https://editorconfig.org/) is in use in the development environment and a .editorconfig file is included in the repository. This will automatically tell popular code editors about the basic style settings like indentation, whitespaces and end-of-line markers for distinguished types of plain text files.
+[EditorConfig](https://editorconfig.org/) is in use in the development environment and a `.editorconfig` file is included in the repository. This will automatically tell popular code editors about the basic style settings like indentation, whitespaces and end-of-line markers for distinguished types of plain text files.
 
-[lintr](https://lintr.r-lib.org/) is in use in the development environment for static analysis of R code, and a .lintr file is included in the repository.
+[lintr](https://lintr.r-lib.org/) is in use in the development environment for static analysis of R code, and a `.lintr` file is included in the repository.
 
-[cppcheck](https://cppcheck.sourceforge.io/) is in use for static analysis of C++ code. **cppcheck** can be installed with various package managers (e.g., `sudo apt-get install cppcheck`), and may be used from the command-line. It is also integrated with many popular development tools including a [VSCode plugin](https://marketplace.visualstudio.com/items?itemName=NathanJ.cppcheck-plugin).
+[cppcheck](https://cppcheck.sourceforge.io/) is in use for static analysis of C++ code. **cppcheck** can be installed with various package managers (e.g., `sudo apt-get install cppcheck` on Ubuntu), and may be used from the command-line. It is also integrated with many popular development tools including as a [VSCode plugin](https://marketplace.visualstudio.com/items?itemName=NathanJ.cppcheck-plugin).
 
-
-All new functionality must include tests added to the automated test suite under `tests/testthat/`. Documentation for **testthat** is available at [https://testthat.r-lib.org/].
+All new functionality must include tests added to the automated test suite under `tests/testthat/`. Documentation for **testthat** is available at https://testthat.r-lib.org/.
 
 Dynamic analysis of C++ code with [Valgrind](https://valgrind.org/) and [Clang Address Sanitizer](https://clang.llvm.org/docs/MemorySanitizer.html) is done regularly during development, and before any new version release. These analyses are performed in GitHub Actions using the workflows provided by [rhub](https://github.com/r-hub/rhub/).
 
