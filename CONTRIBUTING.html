@@ -49,7 +49,15 @@
 
 <div id="welcome" class="section level1">
 
-<p>We’re glad you’re thinking about contributing to this open source project of the USDA Forest Service, Rocky Montain Research Station. If you’re unsure about anything, just ask – or submit the issue or pull request anyway. The worst that can happen is you’ll be politely asked to change something. We welcome all friendly contributions.</p>
+<p>We’re glad you’re thinking about contributing to this open source project of the USDA Forest Service, Rocky Montain Research Station. If you’re unsure about anything, just ask – or submit an issue or pull request anyway. The worst that can happen is you’ll be politely asked to change something. We welcome all friendly contributions.</p>
+<div class="section level2">
+<h2 id="development-practices">Development practices<a class="anchor" aria-label="anchor" href="#development-practices"></a></h2>
+<p><a href="https://editorconfig.org/" class="external-link">EditorConfig</a> is in use in the development environment and a .editorconfig file is included in the repository. This will automatically tell popular code editors about the basic style settings like indentation, whitespaces and end-of-line markers for distinguished types of plain text files.</p>
+<p><a href="https://lintr.r-lib.org/" class="external-link">lintr</a> is in use in the development environment for static analysis of R code, and a .lintr file is included in the repository.</p>
+<p><a href="https://cppcheck.sourceforge.io/" class="external-link">cppcheck</a> is in use for static analysis of C++ code. <strong>cppcheck</strong> can be installed with various package managers (e.g., <code>sudo apt-get install cppcheck</code>), and may be used from the command-line. It is also integrated with many popular development tools including a <a href="https://marketplace.visualstudio.com/items?itemName=NathanJ.cppcheck-plugin" class="external-link">VSCode plugin</a>.</p>
+<p>All new functionality must include tests added to the automated test suite under <code>tests/testthat/</code>. Documentation for <strong>testthat</strong> is available at [<a href="https://testthat.r-lib.org/" class="external-link uri">https://testthat.r-lib.org/</a>].</p>
+<p>Dynamic analysis of C++ code with <a href="https://valgrind.org/" class="external-link">Valgrind</a> and <a href="https://clang.llvm.org/docs/MemorySanitizer.html" class="external-link">Clang Address Sanitizer</a> is done regularly during development, and before any new version release. These analyses are performed in GitHub Actions using the workflows provided by <a href="https://github.com/r-hub/rhub/" class="external-link">rhub</a>.</p>
+</div>
 <div class="section level2">
 <h2 id="policies">Policies<a class="anchor" aria-label="anchor" href="#policies"></a></h2>
 <p>We want to ensure a welcoming environment for all of our projects. Our staff follow the General Services Administration (GSA)’s Technology Transformation Services (TTS) <a href="https://18f.gsa.gov/code-of-conduct/" class="external-link">Code of Conduct</a> and all contributors should do the same.</p>
