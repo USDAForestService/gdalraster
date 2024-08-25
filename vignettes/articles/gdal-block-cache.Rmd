@@ -163,6 +163,15 @@ plot(rows_read, cache_use, type="S",
 axis(1, at = seq(0, 1536, by = 128), las=2)
 ```
 ```{r out.width = '75%', echo = FALSE}
+#| fig.alt: >
+#|   A plot showing the relationship between memory used for the GDAL block
+#|   cache and the number of rows read from a large test dataset that was read
+#|   by row in top to bottom order. The test dataset is a tiled GeoTiff format
+#|   with a block size of 128 x 128 pixels. The number of rows read is on the
+#|   X axis, and MB of memory in use for the cache is on the Y axis. The plot
+#|   shows a stair-step pattern of increasing memory used for the block cache
+#|   as more rows are read until leveling off at 400 MB which is the configured
+#|   maximum size of the cache in this case.
 knitr::include_graphics("img/cache_use.png")
 ```
 
