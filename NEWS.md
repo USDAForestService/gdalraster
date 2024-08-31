@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9301 (dev)
+# gdalraster 1.11.1.9310 (dev)
+
+* (internal) pass by const reference in some srs and geom functions (2024-08-31)
 
 * (internal) class `GDALVector`: add get/set methods for the dataset and layer handles for internal use (2024-08-18)
 
