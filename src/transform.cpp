@@ -138,7 +138,7 @@ void setPROJEnableNetwork(int enabled) {
 //' inv_project(pts[,-1], epsg_to_wkt(26912), "NAD27")
 // [[Rcpp::export]]
 Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
-                                std::string srs,
+                                const std::string &srs,
                                 std::string well_known_gcs = "") {
 
     Rcpp::NumericMatrix pts_in;
@@ -232,8 +232,8 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 //'              srs_to = epsg_to_wkt(5070))
 // [[Rcpp::export]]
 Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
-                                std::string srs_from,
-                                std::string srs_to) {
+                                 const std::string &srs_from,
+                                 const std::string &srs_to) {
 
     Rcpp::NumericMatrix pts_in;
     if (Rcpp::is<Rcpp::DataFrame>(pts)) {
