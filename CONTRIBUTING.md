@@ -16,7 +16,9 @@ This project is released under [MIT license](https://cran.r-project.org/web/lice
 
 [lintr](https://lintr.r-lib.org/) is in use in the development environment for static analysis of R code, and a `.lintr` file is included in the repository.
 
-**cppcheck** is in use for static analysis of C++ code. It can be installed with various package managers, e.g., `sudo apt-get install cppcheck` on Debian/Ubuntu. Documentation, source code and a Windows installer are available on the [cppcheck website](https://cppcheck.sourceforge.io/). It can be used from the command-line and is also integrated with many popular development tools including as a [VSCode plugin](https://marketplace.visualstudio.com/items?itemName=NathanJ.cppcheck-plugin).
+[Cpplint](https://github.com/cpplint/cpplint) is in use in the development environment for C++ code style checking. A [VSCode plugin](https://marketplace.visualstudio.com/items?itemName=mine.cpplint) is available.
+
+**cppcheck** is also used for static analysis of C++ code. It can be installed with various package managers, e.g., `sudo apt-get install cppcheck` on Debian/Ubuntu. Documentation, source code and a Windows installer are available on the [cppcheck website](https://cppcheck.sourceforge.io/).
 
 All new functionality must include tests added to the automated test suite under `tests/testthat/`. Documentation for **testthat** is available at https://testthat.r-lib.org/.
 
