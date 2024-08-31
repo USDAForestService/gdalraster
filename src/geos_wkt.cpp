@@ -63,7 +63,7 @@ bool has_geos() {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_create")]]
-std::string g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
+std::string g_create(const Rcpp::NumericMatrix &xy, std::string geom_type) {
 // Create a geometry from a list of points (vertices).
 // Currently for POINT, MULTIPOINT, LINESTRING, POLYGON.
 // Only simple polygons composed of one ring are supported.
@@ -170,7 +170,8 @@ std::string g_create(Rcpp::NumericMatrix xy, std::string geom_type) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_add_geom")]]
-std::string g_add_geom(std::string sub_geom, std::string container) {
+std::string g_add_geom(const std::string &sub_geom,
+                       const std::string &container) {
 // Add a geometry to a geometry container.
 // LINEARRING (as POLYGON) to POLYGON, POINT to MULTIPOINT, LINESTRING to
 // MULTILINESTRING, or POLYGON to MULTIPOLYGON
@@ -236,7 +237,7 @@ std::string g_add_geom(std::string sub_geom, std::string container) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_is_valid")]]
-bool g_is_valid(std::string geom) {
+bool g_is_valid(const std::string &geom) {
 // Test if the geometry is valid.
 // This function is built on the GEOS library, check it for the definition
 // of the geometry operation. If OGR is built without the GEOS library,
@@ -261,7 +262,7 @@ bool g_is_valid(std::string geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_is_empty")]]
-bool g_is_empty(std::string geom) {
+bool g_is_empty(const std::string &geom) {
 // Test if the geometry is empty.
 
     OGRGeometryH hGeom = nullptr;
@@ -283,7 +284,7 @@ bool g_is_empty(std::string geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_name")]]
-std::string g_name(std::string geom) {
+std::string g_name(const std::string &geom) {
 // extract the geometry type name from a WKT geometry
 
     OGRGeometryH hGeom = nullptr;
@@ -309,7 +310,7 @@ std::string g_name(std::string geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_intersects")]]
-bool g_intersects(std::string this_geom, std::string other_geom) {
+bool g_intersects(const std::string &this_geom, const std::string &other_geom) {
 // Determines whether two geometries intersect. If GEOS is enabled, then this
 // is done in rigorous fashion otherwise TRUE is returned if the envelopes
 // (bounding boxes) of the two geometries overlap.
@@ -344,7 +345,7 @@ bool g_intersects(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_equals")]]
-bool g_equals(std::string this_geom, std::string other_geom) {
+bool g_equals(const std::string &this_geom, const std::string &other_geom) {
 // Returns TRUE if two geometries are equivalent.
 // This operation implements the SQL/MM ST_OrderingEquals() operation.
 // The comparison is done in a structural way, that is to say that the
@@ -383,7 +384,7 @@ bool g_equals(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_disjoint")]]
-bool g_disjoint(std::string this_geom, std::string other_geom) {
+bool g_disjoint(const std::string &this_geom, const std::string &other_geom) {
 // Tests if this geometry and the other geometry are disjoint.
 // Geometry validity is not checked. In case you are unsure of the validity
 // of the input geometries, call g_is_valid() before, otherwise the result
@@ -422,7 +423,7 @@ bool g_disjoint(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_touches")]]
-bool g_touches(std::string this_geom, std::string other_geom) {
+bool g_touches(const std::string &this_geom, const std::string &other_geom) {
 // Tests if this geometry and the other geometry are touching.
 // Geometry validity is not checked. In case you are unsure of the validity
 // of the input geometries, call g_is_valid() before, otherwise the result
@@ -461,7 +462,7 @@ bool g_touches(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_contains")]]
-bool g_contains(std::string this_geom, std::string other_geom) {
+bool g_contains(const std::string &this_geom, const std::string &other_geom) {
 // Tests if this geometry contains the other geometry.
 // Geometry validity is not checked. In case you are unsure of the validity
 // of the input geometries, call g_is_valid() before, otherwise the result
@@ -500,7 +501,7 @@ bool g_contains(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_within")]]
-bool g_within(std::string this_geom, std::string other_geom) {
+bool g_within(const std::string &this_geom, const std::string &other_geom) {
 // Tests if this geometry is within the other geometry.
 // Geometry validity is not checked. In case you are unsure of the validity
 // of the input geometries, call g_is_valid() before, otherwise the result
@@ -539,7 +540,7 @@ bool g_within(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_crosses")]]
-bool g_crosses(std::string this_geom, std::string other_geom) {
+bool g_crosses(const std::string &this_geom, const std::string &other_geom) {
 // Tests if this geometry and the other geometry are crossing.
 // Geometry validity is not checked. In case you are unsure of the validity
 // of the input geometries, call g_is_valid() before, otherwise the result
@@ -578,7 +579,7 @@ bool g_crosses(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_overlaps")]]
-bool g_overlaps(std::string this_geom, std::string other_geom) {
+bool g_overlaps(const std::string &this_geom, const std::string &other_geom) {
 // Tests if this geometry and the other geometry overlap, that is their
 // intersection has a non-zero area (they have some but not all points in
 // common).
@@ -623,7 +624,7 @@ bool g_overlaps(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_buffer")]]
-std::string g_buffer(std::string geom, double dist, int quad_segs = 30) {
+std::string g_buffer(const std::string &geom, double dist, int quad_segs = 30) {
 // Compute buffer of geometry.
 
 // Builds a new geometry containing the buffer region around the geometry on
@@ -674,7 +675,8 @@ std::string g_buffer(std::string geom, double dist, int quad_segs = 30) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_intersection")]]
-std::string g_intersection(std::string this_geom, std::string other_geom) {
+std::string g_intersection(const std::string &this_geom,
+                           const std::string &other_geom) {
 // Generates a new geometry which is the region of intersection of the two
 // geometries operated on. The g_intersects() function can be used to test
 // if two geometries intersect.
@@ -731,7 +733,8 @@ std::string g_intersection(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_union")]]
-std::string g_union(std::string this_geom, std::string other_geom) {
+std::string g_union(const std::string &this_geom,
+                    const std::string &other_geom) {
 // Generates a new geometry which is the region of union of the two
 // geometries operated on.
 // Geometry validity is not checked. In case you are unsure of the validity
@@ -787,7 +790,8 @@ std::string g_union(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_difference")]]
-std::string g_difference(std::string this_geom, std::string other_geom) {
+std::string g_difference(const std::string &this_geom,
+                         const std::string &other_geom) {
 // Generates a new geometry which is the region of this geometry with the
 // region of the other geometry removed.
 // Geometry validity is not checked. In case you are unsure of the validity
@@ -843,7 +847,8 @@ std::string g_difference(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_sym_difference")]]
-std::string g_sym_difference(std::string this_geom, std::string other_geom) {
+std::string g_sym_difference(const std::string &this_geom,
+                             const std::string &other_geom) {
 // Generates a new geometry which is the symmetric difference of this geometry
 // and the other geometry.
 // Geometry validity is not checked. In case you are unsure of the validity
@@ -903,7 +908,7 @@ std::string g_sym_difference(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_distance")]]
-double g_distance(std::string this_geom, std::string other_geom) {
+double g_distance(const std::string &this_geom, const std::string &other_geom) {
 // Returns the distance between the geometries or -1 if an error occurs.
 // Returns the shortest distance between the two geometries. The distance is
 // expressed into the same unit as the coordinates of the geometries.
@@ -942,7 +947,7 @@ double g_distance(std::string this_geom, std::string other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_length")]]
-double g_length(std::string geom) {
+double g_length(const std::string &geom) {
 // Computes the length for OGRCurve (LineString) or MultiCurve objects.
 // Undefined for all other geometry types (returns zero).
 
@@ -965,7 +970,7 @@ double g_length(std::string geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_area")]]
-double g_area(std::string geom) {
+double g_area(const std::string &geom) {
 // Computes the area for an OGRLinearRing, OGRPolygon or OGRMultiPolygon.
 // Undefined for all other geometry types (returns zero).
 
@@ -988,7 +993,7 @@ double g_area(std::string geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_centroid")]]
-Rcpp::NumericVector g_centroid(std::string geom) {
+Rcpp::NumericVector g_centroid(const std::string &geom) {
 // Returns a vector of ptX, ptY.
 // This method relates to the SFCOM ISurface::get_Centroid() method however
 // the current implementation based on GEOS can operate on other geometry
@@ -1038,9 +1043,9 @@ Rcpp::NumericVector g_centroid(std::string geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_transform")]]
-std::string g_transform(std::string geom, std::string srs_from,
-        std::string srs_to, bool wrap_date_line = false,
-        int date_line_offset = 10) {
+std::string g_transform(const std::string &geom, const std::string &srs_from,
+                        const std::string &srs_to, bool wrap_date_line = false,
+                        int date_line_offset = 10) {
 // Returns a transformed geometry as WKT
 // Apply arbitrary coordinate transformation to geometry.
 // This function will transform the coordinates of a geometry from their

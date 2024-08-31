@@ -17,35 +17,43 @@
 std::vector<int> getGEOSVersion();
 bool has_geos();  // GDAL built against GEOS is required at gdalraster 1.10
 
-std::string g_create(Rcpp::NumericMatrix xy, std::string geom_type);
-std::string g_add_geom(std::string sub_geom, std::string container);
-bool g_is_valid(std::string geom);
-bool g_is_empty(std::string geom);
-std::string g_name(std::string geom);
+std::string g_create(const Rcpp::NumericMatrix &xy, std::string geom_type);
+std::string g_add_geom(const std::string &sub_geom,
+                       const std::string &container);
+bool g_is_valid(const std::string &geom);
+bool g_is_empty(const std::string &geom);
+std::string g_name(const std::string &geom);
 
-bool g_intersects(std::string this_geom, std::string other_geom);
-bool g_equals(std::string this_geom, std::string other_geom);
-bool g_disjoint(std::string this_geom, std::string other_geom);
-bool g_touches(std::string this_geom, std::string other_geom);
-bool g_contains(std::string this_geom, std::string other_geom);
-bool g_within(std::string this_geom, std::string other_geom);
-bool g_crosses(std::string this_geom, std::string other_geom);
-bool g_overlaps(std::string this_geom, std::string other_geom);
+bool g_intersects(const std::string &this_geom, const std::string &other_geom);
+bool g_equals(const std::string &this_geom, const std::string &other_geom);
+bool g_disjoint(const std::string &this_geom, const std::string &other_geom);
+bool g_touches(const std::string &this_geom, const std::string &other_geom);
+bool g_contains(const std::string &this_geom, const std::string &other_geom);
+bool g_within(const std::string &this_geom, const std::string &other_geom);
+bool g_crosses(const std::string &this_geom, const std::string &other_geom);
+bool g_overlaps(const std::string &this_geom, const std::string &other_geom);
 
-std::string g_buffer(std::string geom, double dist, int quad_segs);
+std::string g_buffer(const std::string &geom, double dist, int quad_segs);
 
-std::string g_intersection(std::string this_geom, std::string other_geom);
-std::string g_union(std::string this_geom, std::string other_geom);
-std::string g_difference(std::string this_geom, std::string other_geom);
-std::string g_sym_difference(std::string this_geom, std::string other_geom);
+std::string g_intersection(const std::string &this_geom,
+                           const std::string &other_geom);
 
-double g_distance(std::string this_geom, std::string other_geom);
-double g_length(std::string geom);
-double g_area(std::string geom);
-Rcpp::NumericVector g_centroid(std::string geom);
+std::string g_union(const std::string &this_geom,
+                    const std::string &other_geom);
 
-std::string g_transform(std::string geom, std::string srs_from,
-                         std::string srs_to, bool wrap_date_line,
-                         int date_line_offset);
+std::string g_difference(const std::string &this_geom,
+                         const std::string &other_geom);
+
+std::string g_sym_difference(const std::string &this_geom,
+                             const std::string &other_geom);
+
+double g_distance(const std::string &this_geom, const std::string &other_geom);
+double g_length(const std::string &geom);
+double g_area(const std::string &geom);
+Rcpp::NumericVector g_centroid(const std::string &geom);
+
+std::string g_transform(const std::string &geom, const std::string &srs_from,
+                        const std::string &srs_to, bool wrap_date_line,
+                        int date_line_offset);
 
 #endif  // SRC_GEOS_WKT_H_
