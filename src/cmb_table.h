@@ -43,12 +43,6 @@ struct cmbHasher {
 };
 
 class CmbTable {
- private:
-    unsigned int key_len;
-    Rcpp::CharacterVector var_names_in;
-    double last_ID;
-    std::unordered_map<cmbKey, cmbData, cmbHasher> cmb_map;
-
  public:
     CmbTable();
     explicit CmbTable(unsigned int keyLen);
@@ -62,6 +56,12 @@ class CmbTable {
 
     Rcpp::DataFrame asDataFrame() const;
     Rcpp::NumericMatrix asMatrix() const;
+
+ private:
+    unsigned int m_key_len;
+    Rcpp::CharacterVector m_var_names;
+    double m_last_ID;
+    std::unordered_map<cmbKey, cmbData, cmbHasher> m_cmb_map;
 };
 
 RCPP_EXPOSED_CLASS(CmbTable)

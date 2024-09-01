@@ -88,13 +88,6 @@ const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
 #endif
 
 class GDALRaster {
- private:
-    std::string fname_in;
-    Rcpp::CharacterVector open_options_in;
-    bool shared_in;
-    GDALDatasetH  hDataset;
-    GDALAccess eAccess;
-
  public:
     GDALRaster();
     explicit GDALRaster(Rcpp::CharacterVector filename);
@@ -216,6 +209,13 @@ class GDALRaster {
     void warnInt64_() const;
     GDALDatasetH getGDALDatasetH_() const;
     void setGDALDatasetH_(GDALDatasetH hDs, bool with_update);
+
+ private:
+    std::string m_fname;
+    Rcpp::CharacterVector m_open_options;
+    bool m_shared;
+    GDALDatasetH m_hDataset;
+    GDALAccess m_eAccess;
 };
 
 RCPP_EXPOSED_CLASS(GDALRaster)
