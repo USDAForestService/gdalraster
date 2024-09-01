@@ -5,48 +5,48 @@
 #include "running_stats.h"
 
 RunningStats::RunningStats():
-    na_rm(true), count(0) {}
+    m_na_rm(true), m_count(0) {}
 
 RunningStats::RunningStats(bool na_rm):
-    na_rm(na_rm), count(0) {}
+    m_na_rm(na_rm), m_count(0) {}
 
 void RunningStats::update(const Rcpp::NumericVector& newvalues) {
     for (auto const& i : newvalues) {
-        if (na_rm) {
+        if (m_na_rm) {
             if (Rcpp::NumericVector::is_na(i))
                 continue;
         }
-        count += 1;
-        if (count == 1) {
-            mean = min = max = sum = i;
-            M2 = 0.0;
+        m_count += 1;
+        if (m_count == 1) {
+            m_mean = m_min = m_max = m_sum = i;
+            m_M2 = 0.0;
         }
         else {
-            const double delta = i - mean;
-            mean += (delta / count);
-            const double delta2 = i - mean;
-            M2 += (delta * delta2);
-            if (i < min)
-                min = i;
-            else if (i > max)
-                max = i;
-            sum += i;
+            const double delta = i - m_mean;
+            m_mean += (delta / m_count);
+            const double delta2 = i - m_mean;
+            m_M2 += (delta * delta2);
+            if (i < m_min)
+                m_min = i;
+            else if (i > m_max)
+                m_max = i;
+            m_sum += i;
         }
     }
 }
 
 void RunningStats::reset() {
-    count = 0;
+    m_count = 0;
 }
 
 double RunningStats::get_count() const {
     // return as double in R (no native int64)
-    return static_cast<double>(count);
+    return static_cast<double>(m_count);
 }
 
 double RunningStats::get_mean() const {
-    if (count > 0)
-        return mean;
+    if (m_count > 0)
+        return m_mean;
     else
         return NA_REAL;
 }
@@ -56,44 +56,44 @@ double RunningStats::get_mean() const {
 // ‘-Inf’ (in this order!) which ensures _transitivity_, e.g.,
 // ‘min(x1, min(x2)) == min(x1, x2)’."
 double RunningStats::get_min() const {
-    if (Rcpp::NumericVector::is_na(sum))
+    if (Rcpp::NumericVector::is_na(m_sum))
         return NA_REAL;
 
-    if (count > 0)
-        return min;
+    if (m_count > 0)
+        return m_min;
     else
         return R_PosInf;
 }
 
 double RunningStats::get_max() const {
-    if (Rcpp::NumericVector::is_na(sum))
+    if (Rcpp::NumericVector::is_na(m_sum))
         return NA_REAL;
 
-    if (count > 0)
-        return max;
+    if (m_count > 0)
+        return m_max;
     else
         return R_NegInf;
 }
 
 double RunningStats::get_sum() const {
-    if (count > 0)
-        return sum;
+    if (m_count > 0)
+        return m_sum;
     else
         return 0;
 }
 
 double RunningStats::get_var() const {
-    if (count < 2)
+    if (m_count < 2)
         return NA_REAL;
     else
-        return (M2 / (count-1));
+        return (m_M2 / (m_count - 1));
 }
 
 double RunningStats::get_sd() const {
-    if (count < 2)
+    if (m_count < 2)
         return NA_REAL;
     else
-        return sqrt(M2 / (count-1));
+        return sqrt(m_M2 / (m_count - 1));
 }
 
 RCPP_MODULE(mod_running_stats) {

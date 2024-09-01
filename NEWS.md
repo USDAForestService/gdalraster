@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9310 (dev)
+# gdalraster 1.11.1.9320 (dev)
+
+* (internal) use consistent naming convention for C++ class member variables (2024-08-31)
 
 * (internal) pass by const reference in some srs and geom functions (2024-08-31)
 

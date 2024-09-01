@@ -11,12 +11,6 @@
 #include <Rcpp.h>
 
 class RunningStats {
- private:
-    bool na_rm;
-    uint64_t count;
-    double mean, min, max, sum;
-    double M2;
-
  public:
     RunningStats();
     explicit RunningStats(bool na_rm);
@@ -32,6 +26,12 @@ class RunningStats {
     double get_sum() const;
     double get_var() const;
     double get_sd() const;
+
+ private:
+    bool m_na_rm;
+    uint64_t m_count;
+    double m_mean, m_min, m_max, m_sum;
+    double m_M2;
 };
 
 RCPP_EXPOSED_CLASS(RunningStats)

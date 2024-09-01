@@ -32,14 +32,9 @@
 
 #include "cpl_vsi.h"
 
-class VSIFile {
- private:
-    std::string filename_in;
-    std::string access_in;
-    Rcpp::CharacterVector options_in;
-    VSILFILE *fp;
-    const uint64_t VSI_L_OFFSET_MAX_R = 9223372036854775807;
+const uint64_t VSI_L_OFFSET_MAX_R = 9223372036854775807;
 
+class VSIFile {
  public:
     VSIFile();
     explicit VSIFile(Rcpp::CharacterVector filename);
@@ -62,6 +57,12 @@ class VSIFile {
     std::string get_filename() const;
     std::string get_access() const;
     int set_access(std::string access);
+
+ private:
+    std::string m_filename;
+    std::string m_access;
+    Rcpp::CharacterVector m_options;
+    VSILFILE *m_fp;
 };
 
 RCPP_EXPOSED_CLASS(VSIFile)
