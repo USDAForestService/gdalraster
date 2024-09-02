@@ -17,6 +17,7 @@
 #ifndef GDAL_H_INCLUDED
 typedef void *GDALDatasetH;
 typedef void *OGRLayerH;
+typedef void *OGRFeatureH;
 typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 #endif
 
@@ -133,6 +134,7 @@ class GDALVector {
     void setOGRLayerH_(OGRLayerH hLyr, std::string lyr_name);
     void setFeatureTemplate_();
     SEXP initDF_(R_xlen_t nrow) const;
+    OGRFeatureH OGRFeatureFromList_(Rcpp::List list_in) const;
 
  private:
     std::string m_dsn;

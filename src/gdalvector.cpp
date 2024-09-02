@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
+#include <map>
 
 #include "gdal.h"
 #include "cpl_port.h"
@@ -704,7 +705,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
                 if (fld_subtype == OFSTBoolean) {
                     Rcpp::LogicalVector col = df[col_num];
-                    col[row_num] = Rcpp::toInteger64(value)[0];
+                    col[row_num] = value;
                 }
                 else {
                     Rcpp::NumericVector col = df[col_num];
@@ -1630,6 +1631,152 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
     df.attr("class") = "data.frame";
     df.attr("row.names") = Rcpp::seq_len(nrow);
     return df;
+}
+
+OGRFeatureH GDALVector::OGRFeatureFromList_(Rcpp::List list_in) const {
+    Rcpp::CharacterVector names = list_in.names();
+    if (names.size() == 0)
+        Rcpp::stop("input must be a named list");
+
+    OGRFeatureDefnH hFDefn = nullptr;
+    hFDefn = OGR_L_GetLayerDefn(m_hLayer);
+    if (hFDefn == nullptr)
+        Rcpp::stop("failed to get layer definition");
+
+    OGRFeatureH hFeat = nullptr;
+    hFeat = OGR_F_Create(hFDefn);
+    if (hFeat == nullptr)
+        Rcpp::stop("failed to create feature object");
+
+    // int nFields = OGR_F_GetFieldCount(hFeat);
+    int nGeomFields = OGR_F_GetGeomFieldCount(hFeat);
+
+    std::map<R_xlen_t, int> map_flds;
+    std::map<R_xlen_t, int> map_geom_flds;
+
+    for (R_xlen_t i = 0; i < names.size(); ++i) {
+        int iField = OGR_F_GetFieldIndex(hFeat, names[i]);
+        if (iField != -1) {
+            map_flds.insert({i, iField});
+            continue;
+        }
+
+        if (EQUAL(names[i], "FID")) {
+            Rcpp::NumericVector fid_in = list_in[i];
+            int64_t fid = -1;
+            if (Rcpp::isInteger64(fid_in))
+                fid = Rcpp::fromInteger64(fid_in[0]);
+            else
+                fid = static_cast<int64_t>(Rcpp::as<double>(fid_in));
+            if (OGR_F_SetFID(hFeat, fid) != OGRERR_NONE) {
+                OGR_F_Destroy(hFeat);
+                Rcpp::Rcerr << "failed to set: " << names[i] << " = " << fid
+                        << std::endl;
+                Rcpp::stop("failed to set FID with the given input value");
+            }
+            continue;
+        }
+
+        int iGeomField = OGR_F_GetGeomFieldIndex(hFeat, names[i]);
+        if (iGeomField != -1) {
+            map_geom_flds.insert({i, iGeomField});
+            continue;
+        }
+
+        if (nGeomFields == 1 && (EQUAL(names[1], defaultGeomFldName.c_str()) ||
+                                 EQUAL(names[i], "_ogr_geometry_") ||
+                                 EQUAL(names[i], "geometry"))) {
+
+            map_geom_flds.insert({i, 0});
+            continue;
+        }
+
+        OGR_F_Destroy(hFeat);
+        Rcpp::Rcerr << "list element not matched: " << names[i] << std::endl;
+        Rcpp::stop("failed to map input field names to layer definition");
+    }
+
+    for (auto it = map_flds.begin(); it != map_flds.end(); ++it) {
+        R_xlen_t list_idx = it->first;
+        int fld_idx = it->second;
+
+        OGRFieldDefnH hFieldDefn = nullptr;
+        hFieldDefn = OGR_F_GetFieldDefnRef(hFeat, fld_idx);
+        if (hFieldDefn == nullptr)
+            Rcpp::stop("could not obtain field definition");
+
+        OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+
+        if (fld_type == OFTInteger) {
+            OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
+            if (fld_subtype == OFSTBoolean) {
+                Rcpp::LogicalVector v = list_in[list_idx];
+                if (!Rcpp::LogicalVector::is_na(v[0]))
+                    OGR_F_SetFieldInteger(hFeat, fld_idx, v[0]);
+            }
+            else {
+                Rcpp::IntegerVector v = list_in[list_idx];
+                if (!Rcpp::IntegerVector::is_na(v[0]))
+                    OGR_F_SetFieldInteger(hFeat, fld_idx, v[0]);
+            }
+        }
+        else if (fld_type == OFTInteger64) {
+            OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
+            if (fld_subtype == OFSTBoolean) {
+                Rcpp::LogicalVector v = list_in[list_idx];
+                if (!Rcpp::LogicalVector::is_na(v[0]))
+                    OGR_F_SetFieldInteger64(hFeat, fld_idx, v[0]);
+            }
+            else {
+                Rcpp::NumericVector v = list_in[list_idx];
+                int64_t value = NA_INTEGER64;
+                if (Rcpp::isInteger64(v))
+                    value = Rcpp::fromInteger64(v[0]);
+                else
+                    value = static_cast<int64_t>(v[0]);
+                if (!ISNA_INTEGER64(value))
+                    OGR_F_SetFieldInteger64(hFeat, fld_idx, value);
+            }
+        }
+        else if (fld_type == OFTReal) {
+            Rcpp::NumericVector v = list_in[list_idx];
+            if (!Rcpp::NumericVector::is_na(v[0]))
+                OGR_F_SetFieldDouble(hFeat, fld_idx, v[0]);
+        }
+        else if (fld_type == OFTString) {
+            Rcpp::CharacterVector v = list_in[list_idx];
+            if (!Rcpp::CharacterVector::is_na(v[0]))
+                OGR_F_SetFieldString(hFeat, fld_idx, v[0]);
+        }
+        else if (fld_type == OFTIntegerList) {
+            Rcpp::IntegerVector v = list_in[list_idx];
+            if (!Rcpp::all(Rcpp::is_na(v))) {
+                std::vector<int> v_ = Rcpp::as<std::vector<int>>(v);
+                OGR_F_SetFieldIntegerList(hFeat, fld_idx, v_.size(), v_.data());
+            }
+        }
+        else if (fld_type == OFTInteger64List) {
+            Rcpp::NumericVector v = list_in[list_idx];
+            if (Rcpp::isInteger64(v)) {
+                std::vector<int64_t> values = Rcpp::fromInteger64(v, false);
+                OGR_F_SetFieldInteger64List(hFeat, fld_idx, values.size(),
+                                            values.data());
+            }
+            else {
+                size_t len = v.size();
+                std::vector<GIntBig> values(len);
+                std::copy_n(v.cbegin(), len, values.begin());
+                OGR_F_SetFieldInteger64List(hFeat, fld_idx, values.size(),
+                                            values.data());
+            }
+        }
+
+
+
+
+    }
+
+    return hFeat;
 }
 
 // ****************************************************************************
