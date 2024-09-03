@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9320 (dev)
+# gdalraster 1.11.1.9330 (dev)
+
+* (internal) add header `src/gdal_vsi.h` and minor code cleanups in `src/gdal_vsi.cpp` (2024-09-02)
 
 * (internal) use consistent naming convention for C++ class member variables (2024-08-31)
 
