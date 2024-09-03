@@ -18,6 +18,7 @@
 #include "gdal_alg.h"
 #include "gdal_utils.h"
 
+#include "gdal_vsi.h"
 #include "gdalraster.h"
 
 // [[Rcpp::init]]

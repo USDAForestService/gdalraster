@@ -240,64 +240,47 @@ Rcpp::CharacterVector check_gdal_filename(Rcpp::CharacterVector filename);
 GDALRaster create(std::string format, Rcpp::CharacterVector dst_filename,
                   int xsize, int ysize, int nbands, std::string dataType,
                   Rcpp::Nullable<Rcpp::CharacterVector> options);
+
 GDALRaster createCopy(std::string format, Rcpp::CharacterVector dst_filename,
                       GDALRaster src_ds, bool strict,
                       Rcpp::Nullable<Rcpp::CharacterVector> options,
                       bool quiet);
+
 std::string getCreationOptions(std::string format);
+
 bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
                       Rcpp::CharacterVector old_filename,
                       std::string format);
+
 bool deleteDataset(Rcpp::CharacterVector filename, std::string format);
+
 bool renameDataset(Rcpp::CharacterVector new_filename,
                    Rcpp::CharacterVector old_filename,
                    std::string format);
+
 bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
                          Rcpp::CharacterVector dst_filename, int dst_band,
                          Rcpp::Nullable<Rcpp::CharacterVector> options,
                          bool quiet);
+
 bool addFileInZip(std::string zip_filename, bool overwrite,
                   std::string archive_filename, std::string in_filename,
                   Rcpp::Nullable<Rcpp::CharacterVector> options,
                   bool quiet);
-int vsi_copy_file(Rcpp::CharacterVector src_file,
-                  Rcpp::CharacterVector target_file,
-                  bool show_progess);
-void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix,
-                          bool quiet);
-Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
-                                   int max_files);
-bool vsi_sync(Rcpp::CharacterVector src,
-              Rcpp::CharacterVector target,
-              bool show_progess,
-              Rcpp::Nullable<Rcpp::CharacterVector> options);
-int vsi_mkdir(Rcpp::CharacterVector path, std::string mode, bool recursive);
-int vsi_rmdir(Rcpp::CharacterVector path, bool recursive);
-int vsi_unlink(Rcpp::CharacterVector filename);
-SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames);
-SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);
-int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath);
-std::string _vsi_get_fs_options(Rcpp::CharacterVector filename);
-Rcpp::CharacterVector vsi_get_fs_prefixes();
-bool vsi_supports_seq_write(Rcpp::CharacterVector filename,
-                            bool allow_local_tmpfile);
-bool vsi_supports_rnd_write(Rcpp::CharacterVector filename,
-                            bool allow_local_tmpfile);
-Rcpp::NumericVector vsi_get_disk_free_space(Rcpp::CharacterVector path);
-SEXP vsi_get_file_metadata(Rcpp::CharacterVector filename, std::string domain);
-SEXP vsi_get_actual_url(Rcpp::CharacterVector filename);
-SEXP vsi_get_signed_url(Rcpp::CharacterVector filename,
-                               Rcpp::Nullable<Rcpp::CharacterVector> options);
 
 Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt,
-                                       double pixel, double line);
+                                        double pixel, double line);
+
 Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row,
-        const std::vector<double> gt);
+                                          const std::vector<double> gt);
+
 Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject& col_row,
-        const GDALRaster* ds);
+                                          const GDALRaster* ds);
+
 Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
+
 Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy,
-                                       const std::vector<double> gt);
+                                      const std::vector<double> gt);
 
 Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
                                       const GDALRaster* ds);
