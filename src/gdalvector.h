@@ -126,6 +126,8 @@ class GDALVector {
 
     void close();
 
+    void OGRFeatureFromList_dumpReadble(Rcpp::List feat) const;
+
     // methods for internal use not exposed to R
     void checkAccess_(GDALAccess access_needed) const;
     GDALDatasetH getGDALDatasetH_() const;
