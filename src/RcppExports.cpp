@@ -718,14 +718,14 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// _vsi_get_fs_options
-std::string _vsi_get_fs_options(Rcpp::CharacterVector filename);
-RcppExport SEXP _gdalraster__vsi_get_fs_options(SEXP filenameSEXP) {
+// vsi_get_fs_options_
+std::string vsi_get_fs_options_(Rcpp::CharacterVector filename);
+RcppExport SEXP _gdalraster_vsi_get_fs_options_(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
-    rcpp_result_gen = Rcpp::wrap(_vsi_get_fs_options(filename));
+    rcpp_result_gen = Rcpp::wrap(vsi_get_fs_options_(filename));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1602,7 +1602,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_stat", (DL_FUNC) &_gdalraster_vsi_stat, 2},
     {"_gdalraster_vsi_rename", (DL_FUNC) &_gdalraster_vsi_rename, 2},
     {"_gdalraster_vsi_get_fs_prefixes", (DL_FUNC) &_gdalraster_vsi_get_fs_prefixes, 0},
-    {"_gdalraster__vsi_get_fs_options", (DL_FUNC) &_gdalraster__vsi_get_fs_options, 1},
+    {"_gdalraster_vsi_get_fs_options_", (DL_FUNC) &_gdalraster_vsi_get_fs_options_, 1},
     {"_gdalraster_vsi_supports_seq_write", (DL_FUNC) &_gdalraster_vsi_supports_seq_write, 2},
     {"_gdalraster_vsi_supports_rnd_write", (DL_FUNC) &_gdalraster_vsi_supports_rnd_write, 2},
     {"_gdalraster_vsi_get_disk_free_space", (DL_FUNC) &_gdalraster_vsi_get_disk_free_space, 1},

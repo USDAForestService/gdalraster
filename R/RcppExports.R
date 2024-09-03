@@ -1656,7 +1656,7 @@ vsi_get_fs_prefixes <- function() {
 #' Called from and documented in R/gdal_helpers.R
 #' @noRd
 .vsi_get_fs_options <- function(filename) {
-    .Call(`_gdalraster__vsi_get_fs_options`, filename)
+    .Call(`_gdalraster_vsi_get_fs_options_`, filename)
 }
 
 #' Return whether the filesystem supports sequential write
