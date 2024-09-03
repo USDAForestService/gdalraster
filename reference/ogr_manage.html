@@ -15,7 +15,7 @@ fields, and edit data with SQL statements."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9320</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9330</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -502,7 +502,7 @@ dialects for details.</p>
 <span class="r-in"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"ALTER TABLE layer2 ADD field4 float"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">dsn</span>, <span class="va">sql</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpQOMOKU/test1.gpkg'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpqW98F1/test1.gpkg'</span>
 <span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fld1_name"   "fld2_name"   "third_field" "field4"      "geom"       </span>
 <span class="r-in"><span></span></span>
@@ -541,12 +541,12 @@ dialects for details.</p>
 <span class="r-in"><span>  <span class="co"># ogrinfo(perims_shp, cl_arg = c("-sql", sql), read_only = FALSE)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpQOMOKU/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpqW98F1/mtbs_perims.shp'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="va">sql</span>, dialect <span class="op">=</span> <span class="st">"SQLite"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpQOMOKU/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpqW98F1/mtbs_perims.shp'</span>
 <span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "event_id"   "incid_name" "incid_type" "map_id"     "burn_bnd_a"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "burn_bnd_l" "burn_bnd_1" "ig_date"    "ig_year"    "burn_bnd_h"</span>

@@ -17,7 +17,7 @@ GDAL API."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9320</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9330</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -121,15 +121,15 @@ from the passed file name.</p>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">buildOverviews</span><span class="op">(</span><span class="st">"BILINEAR"</span>, levels <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">4</span>, <span class="fl">8</span><span class="op">)</span>, bands <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpQOMOKU/b5_tmp.tif"     "/tmp/RtmpQOMOKU/b5_tmp.tif.ovr"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpqW98F1/b5_tmp.tif"     "/tmp/RtmpqW98F1/b5_tmp.tif.ovr"</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">b5_tmp2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"b5_tmp_renamed.tif"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">renameDataset</span><span class="op">(</span><span class="va">b5_tmp2</span>, <span class="va">b5_tmp</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">b5_tmp2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpQOMOKU/b5_tmp_renamed.tif"    </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "/tmp/RtmpQOMOKU/b5_tmp_renamed.tif.ovr"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpqW98F1/b5_tmp_renamed.tif"    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [2] "/tmp/RtmpqW98F1/b5_tmp_renamed.tif.ovr"</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">b5_tmp2</span><span class="op">)</span></span></span>
