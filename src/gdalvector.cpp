@@ -20,22 +20,14 @@
 #include "gdalvector.h"
 #include "ogr_util.h"
 
-GDALVector::GDALVector() :
-            m_layer_name(""),
-            m_is_sql(false),
-            m_dialect(""),
-            m_dsn(""),
-            m_open_options(Rcpp::CharacterVector::create()),
-            m_spatial_filter(""),
-            m_hDataset(nullptr),
-            m_eAccess(GA_ReadOnly),
-            m_hLayer(nullptr) {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn) :
+
             GDALVector(dsn, "", true, Rcpp::CharacterVector::create(),
                        "", "") {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer) :
+
             GDALVector(dsn, layer, true, Rcpp::CharacterVector::create(),
                        "", "") {}
 
@@ -160,8 +152,7 @@ std::string GDALVector::getDsn() const {
 Rcpp::CharacterVector GDALVector::getFileList() const {
     checkAccess_(GA_ReadOnly);
 
-    char **papszFiles;
-    papszFiles = GDALGetFileList(m_hDataset);
+    char **papszFiles = GDALGetFileList(m_hDataset);
 
     int items = CSLCount(papszFiles);
     if (items > 0) {
@@ -303,13 +294,13 @@ Rcpp::NumericVector GDALVector::bbox() {
 Rcpp::List GDALVector::getLayerDefn() const {
     checkAccess_(GA_ReadOnly);
 
-    OGRFeatureDefnH hFDefn;
+    OGRFeatureDefnH hFDefn = nullptr;
     hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
 
     Rcpp::List list_out = Rcpp::List::create();
-    bool bValue;
+    bool bValue = false;
 
     // attribute fields
     // TODO(ctoney): add field domain name
@@ -389,14 +380,14 @@ Rcpp::List GDALVector::getLayerDefn() const {
 
         std::string geomFldName(OGR_GFld_GetNameRef(hGeomFldDefn));
         if (geomFldName == "")
-            geomFldName = defaultGeomFldName;
+            geomFldName = this->defaultGeomFldName;
         list_out.push_back(list_geom_fld_defn, geomFldName);
     }
 
     return list_out;
 }
 
-void GDALVector::setAttributeFilter(std::string query) {
+void GDALVector::setAttributeFilter(const std::string &query) {
     checkAccess_(GA_ReadOnly);
 
     const char *query_in = nullptr;
@@ -418,7 +409,7 @@ std::string GDALVector::getAttributeFilter() const {
     return(m_attr_filter);
 }
 
-void GDALVector::setIgnoredFields(Rcpp::CharacterVector fields) {
+void GDALVector::setIgnoredFields(const Rcpp::CharacterVector &fields) {
     checkAccess_(GA_ReadOnly);
 
     if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields))
@@ -442,7 +433,7 @@ void GDALVector::setIgnoredFields(Rcpp::CharacterVector fields) {
     }
 }
 
-void GDALVector::setSpatialFilter(std::string wkt) {
+void GDALVector::setSpatialFilter(const std::string &wkt) {
     checkAccess_(GA_ReadOnly);
 
     OGRGeometryH hFilterGeom = nullptr;
@@ -462,7 +453,7 @@ void GDALVector::setSpatialFilter(std::string wkt) {
         OGR_G_DestroyGeometry(hFilterGeom);
 }
 
-void GDALVector::setSpatialFilterRect(Rcpp::NumericVector bbox) {
+void GDALVector::setSpatialFilterRect(const Rcpp::NumericVector &bbox) {
     checkAccess_(GA_ReadOnly);
 
     if (Rcpp::any(Rcpp::is_na(bbox)))
@@ -550,7 +541,7 @@ SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
     if (fid.size() != 1)
         Rcpp::stop("'fid' must be a length-1 numeric vector (integer64)");
 
-    int64_t fid_in = -1;
+    int64_t fid_in = OGRNullFID;
     if (Rcpp::isInteger64(fid))
         fid_in = Rcpp::fromInteger64(fid[0]);
     else
@@ -642,21 +633,21 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     int nFields = OGR_FD_GetFieldCount(hFDefn);
     int nGeomFields = OGR_FD_GetGeomFieldCount(hFDefn);
     bool include_geom = true;
-    if (EQUAL(returnGeomAs.c_str(), "NONE")) {
+    if (EQUAL(this->returnGeomAs.c_str(), "NONE")) {
         include_geom = false;
     }
-    else if (!(EQUAL(returnGeomAs.c_str(), "WKB") ||
-               EQUAL(returnGeomAs.c_str(), "WKB_ISO") ||
-               EQUAL(returnGeomAs.c_str(), "WKT") ||
-               EQUAL(returnGeomAs.c_str(), "WKT_ISO") ||
-               EQUAL(returnGeomAs.c_str(), "TYPE_NAME"))) {
+    else if (!(EQUAL(this->returnGeomAs.c_str(), "WKB") ||
+               EQUAL(this->returnGeomAs.c_str(), "WKB_ISO") ||
+               EQUAL(this->returnGeomAs.c_str(), "WKT") ||
+               EQUAL(this->returnGeomAs.c_str(), "WKT_ISO") ||
+               EQUAL(this->returnGeomAs.c_str(), "TYPE_NAME"))) {
         Rcpp::stop("unsupported value of field 'returnGeomAs'");
     }
 
     OGRwkbByteOrder eOrder;
-    if (EQUAL(wkbByteOrder.c_str(), "LSB"))
+    if (EQUAL(this->wkbByteOrder.c_str(), "LSB"))
         eOrder = wkbNDR;
-    else if (EQUAL(wkbByteOrder.c_str(), "MSB"))
+    else if (EQUAL(this->wkbByteOrder.c_str(), "MSB"))
         eOrder = wkbXDR;
     else
         Rcpp::stop("invalid value of field 'wkbByteOrder'");
@@ -874,7 +865,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
                 col_num += 1;
 
-                if (STARTS_WITH_CI(returnGeomAs.c_str(), "WKB")) {
+                if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKB")) {
                     OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
                     if (hGeom != nullptr) {
 #if GDAL_VERSION_NUM >= 3030000
@@ -884,9 +875,9 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 #endif
                         if (nWKBSize) {
                             Rcpp::RawVector wkb(nWKBSize);
-                            if (EQUAL(returnGeomAs.c_str(), "WKB"))
+                            if (EQUAL(this->returnGeomAs.c_str(), "WKB"))
                                 OGR_G_ExportToWkb(hGeom, eOrder, &wkb[0]);
-                            else if (EQUAL(returnGeomAs.c_str(), "WKB_ISO"))
+                            else if (EQUAL(this->returnGeomAs.c_str(), "WKB_ISO"))
                                 OGR_G_ExportToIsoWkb(hGeom, eOrder, &wkb[0]);
 
                             Rcpp::List col = df[col_num];
@@ -898,14 +889,14 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                         }
                     }
                 }
-                else if (STARTS_WITH_CI(returnGeomAs.c_str(), "WKT")) {
+                else if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKT")) {
                     Rcpp::CharacterVector col = df[col_num];
                     OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
                     if (hGeom != nullptr) {
                         char *pszWKT;
-                        if (EQUAL(returnGeomAs.c_str(), "WKT"))
+                        if (EQUAL(this->returnGeomAs.c_str(), "WKT"))
                             OGR_G_ExportToWkt(hGeom, &pszWKT);
-                        else if (EQUAL(returnGeomAs.c_str(), "WKT_ISO"))
+                        else if (EQUAL(this->returnGeomAs.c_str(), "WKT_ISO"))
                             OGR_G_ExportToIsoWkt(hGeom, &pszWKT);
 
                         col[row_num] = pszWKT;
@@ -915,7 +906,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                         col[row_num] = NA_STRING;
                     }
                 }
-                else if (EQUAL(returnGeomAs.c_str(), "TYPE_NAME")) {
+                else if (EQUAL(this->returnGeomAs.c_str(), "TYPE_NAME")) {
                     OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
                     Rcpp::CharacterVector col = df[col_num];
                     if (hGeom != nullptr)
@@ -1018,7 +1009,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
                 col_num += 1;
 
-                if (STARTS_WITH_CI(returnGeomAs.c_str(), "WKB")) {
+                if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKB")) {
                     Rcpp::List col = df[col_num];
                     Rcpp::List col_trunc = df_trunc[col_num];
                     for (size_t n = 0; n < row_num; ++n)
@@ -1036,7 +1027,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 }
 
-SEXP GDALVector::createFeature(Rcpp::List feature) {
+SEXP GDALVector::createFeature(const Rcpp::List &feature) {
     checkAccess_(GA_Update);
 
     if (feature.size() == 0)
@@ -1076,7 +1067,7 @@ bool GDALVector::deleteFeature(Rcpp::NumericVector fid) {
     if (fid.size() != 1)
         Rcpp::stop("'fid' must be a length-1 numeric vector (integer64)");
 
-    int64_t fid_in = -1;
+    int64_t fid_in = OGRNullFID;
     if (Rcpp::isInteger64(fid))
         fid_in = Rcpp::fromInteger64(fid[0]);
     else
@@ -1413,7 +1404,7 @@ void GDALVector::close() {
     }
 }
 
-void GDALVector::OGRFeatureFromList_dumpReadble(Rcpp::List feat) const {
+void GDALVector::OGRFeatureFromList_dumpReadble(const Rcpp::List &feat) const {
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 8, 0)
     Rcpp::stop("'OGRFeatureFromList_dumpReadble()' requires GDAL >= 3.8");
 
@@ -1469,8 +1460,8 @@ void GDALVector::setOGRLayerH_(OGRLayerH hLyr, std::string lyr_name) {
 }
 
 void GDALVector::setFeatureTemplate_() {
-    std::string orig_geom_as = returnGeomAs;
-    returnGeomAs = "WKT";
+    std::string orig_geom_as(this->returnGeomAs);
+    this->returnGeomAs = "WKT";
 
     Rcpp::DataFrame feat_template = initDF_(1);
     // as list
@@ -1504,8 +1495,8 @@ void GDALVector::setFeatureTemplate_() {
             feat_template[i + 1] = NA_STRING;
     }
 
-    featureTemplate = feat_template;
-    returnGeomAs = orig_geom_as;
+    this->featureTemplate = feat_template;
+    this->returnGeomAs = orig_geom_as;
 }
 
 SEXP GDALVector::initDF_(R_xlen_t nrow) const {
@@ -1530,7 +1521,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
 
     int nGeomFields = 0;
     int nIgnoredGeomFields = 0;
-    if (!EQUAL(returnGeomAs.c_str(), "NONE")) {
+    if (!EQUAL(this->returnGeomAs.c_str(), "NONE")) {
         nGeomFields = OGR_FD_GetGeomFieldCount(hFDefn);
         for (int i = 0; i < nGeomFields; ++i) {
             OGRGeomFieldDefnH hGeomFldDefn = OGR_FD_GetGeomFieldDefn(hFDefn, i);
@@ -1651,7 +1642,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
         if (static_cast<int>(col_num) == nOutCols)
             Rcpp::stop("indexing the output columns failed");
 
-        if (STARTS_WITH_CI(returnGeomAs.c_str(), "WKB")) {
+        if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKB")) {
             Rcpp::List v(nrow);
             df[col_num] = v;
         }
@@ -1662,7 +1653,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
 
         std::string geomFldName(OGR_GFld_GetNameRef(hGeomFldDefn));
         if (geomFldName == "")
-            geomFldName = defaultGeomFldName;
+            geomFldName = this->defaultGeomFldName;
 
         col_names[col_num] = geomFldName;
     }
@@ -1673,7 +1664,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
     return df;
 }
 
-OGRFeatureH GDALVector::OGRFeatureFromList_(Rcpp::List list_in) const {
+OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
     // the returned feature must be destroyed with OGR_F_Destroy()
 
     Rcpp::CharacterVector names = list_in.names();
@@ -1693,8 +1684,8 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(Rcpp::List list_in) const {
     // int nFields = OGR_F_GetFieldCount(hFeat);
     int nGeomFields = OGR_F_GetGeomFieldCount(hFeat);
 
-    std::map<R_xlen_t, int> map_flds;
-    std::map<R_xlen_t, int> map_geom_flds;
+    std::map<R_xlen_t, int> map_flds{};
+    std::map<R_xlen_t, int> map_geom_flds{};
 
     // go over the list element names and map list index to field index
     for (R_xlen_t i = 0; i < names.size(); ++i) {
@@ -1736,9 +1727,10 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(Rcpp::List list_in) const {
         }
 
         // case of geometry column name is empty as with shapefiles etc.
-        if (nGeomFields == 1 && (EQUAL(names[1], defaultGeomFldName.c_str()) ||
-                                 EQUAL(names[i], "_ogr_geometry_") ||
-                                 EQUAL(names[i], "geometry"))) {
+        if (nGeomFields == 1 && (
+                EQUAL(names[1], this->defaultGeomFldName.c_str()) ||
+                EQUAL(names[i], "_ogr_geometry_") ||
+                EQUAL(names[i], "geometry"))) {
 
             map_geom_flds.insert({i, 0});
             continue;
@@ -2005,8 +1997,6 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(Rcpp::List list_in) const {
 RCPP_MODULE(mod_GDALVector) {
     Rcpp::class_<GDALVector>("GDALVector")
 
-    .constructor
-        ("Default constructor, only for allocations in std::vector")
     .constructor<Rcpp::CharacterVector>
         ("Usage: new(GDALVector, dsn)")
     .constructor<Rcpp::CharacterVector, std::string>

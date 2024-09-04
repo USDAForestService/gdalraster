@@ -23,7 +23,6 @@ typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 
 class GDALVector {
  public:
-    GDALVector();
     explicit GDALVector(Rcpp::CharacterVector dsn);
     GDALVector(Rcpp::CharacterVector dsn, std::string layer);
     GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only);
@@ -33,18 +32,18 @@ class GDALVector {
                Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                std::string spatial_filter, std::string dialect);
 
-    // undocumented exposed read-only fields for internal use
-    std::string m_layer_name;  // layer name or sql statement
-    bool m_is_sql;
-    std::string m_dialect;
+    // undocumented, exposed read-only fields for internal use
+    std::string m_layer_name {""};  // layer name or sql statement
+    bool m_is_sql {false};
+    std::string m_dialect {""};
 
     // exposed read-only fields
-    Rcpp::List featureTemplate;
+    Rcpp::List featureTemplate {};
 
     // exposed read/write fields
-    std::string defaultGeomFldName = "geometry";
-    std::string returnGeomAs = "NONE";
-    std::string wkbByteOrder = "LSB";
+    std::string defaultGeomFldName {"geometry"};
+    std::string returnGeomAs {"NONE"};
+    std::string wkbByteOrder {"LSB"};
 
     // exposed methods
     void open(bool read_only);
@@ -63,12 +62,12 @@ class GDALVector {
     Rcpp::NumericVector bbox();
     Rcpp::List getLayerDefn() const;
 
-    void setAttributeFilter(std::string query);
+    void setAttributeFilter(const std::string &query);
     std::string getAttributeFilter() const;
-    void setIgnoredFields(Rcpp::CharacterVector fields);
+    void setIgnoredFields(const Rcpp::CharacterVector &fields);
 
-    void setSpatialFilter(std::string wkt);
-    void setSpatialFilterRect(Rcpp::NumericVector bbox);
+    void setSpatialFilter(const std::string &wkt);
+    void setSpatialFilterRect(const Rcpp::NumericVector &bbox);
     std::string getSpatialFilter() const;
     void clearSpatialFilter();
 
@@ -82,7 +81,7 @@ class GDALVector {
 
     Rcpp::DataFrame fetch(double n);
 
-    SEXP createFeature(Rcpp::List feat);
+    SEXP createFeature(const Rcpp::List &feat);
     bool deleteFeature(Rcpp::NumericVector fid);
 
     bool startTransaction(bool force);
@@ -127,7 +126,7 @@ class GDALVector {
 
     void close();
 
-    void OGRFeatureFromList_dumpReadble(Rcpp::List feat) const;
+    void OGRFeatureFromList_dumpReadble(const Rcpp::List &feat) const;
 
     // methods for internal use not exposed to R
     void checkAccess_(GDALAccess access_needed) const;
@@ -137,16 +136,16 @@ class GDALVector {
     void setOGRLayerH_(OGRLayerH hLyr, std::string lyr_name);
     void setFeatureTemplate_();
     SEXP initDF_(R_xlen_t nrow) const;
-    OGRFeatureH OGRFeatureFromList_(Rcpp::List list_in) const;
+    OGRFeatureH OGRFeatureFromList_(const Rcpp::List &list_in) const;
 
  private:
-    std::string m_dsn;
-    Rcpp::CharacterVector m_open_options;
-    std::string m_attr_filter = "";
-    std::string m_spatial_filter;
-    GDALDatasetH m_hDataset;
-    GDALAccess m_eAccess;
-    OGRLayerH m_hLayer;
+    std::string m_dsn {""};
+    Rcpp::CharacterVector m_open_options {};
+    std::string m_attr_filter {""};
+    std::string m_spatial_filter {""};
+    GDALDatasetH m_hDataset {nullptr};
+    GDALAccess m_eAccess {GA_ReadOnly};
+    OGRLayerH m_hLayer {nullptr};
 };
 
 RCPP_EXPOSED_CLASS(GDALVector)
