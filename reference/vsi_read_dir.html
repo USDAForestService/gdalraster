@@ -17,7 +17,7 @@ in the GDAL Common Portability Library."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9330</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9340</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -116,17 +116,17 @@ then no truncation occurred. The <code>max_files</code> parameter is ignored whe
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># regular file system for illustration</span></span></span>
 <span class="r-in"><span><span class="va">data_dir</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">vsi_read_dir</span><span class="op">(</span><span class="va">data_dir</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "storml_tcc.tif"           "LF20_F40_220.csv"        </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "int64.tif"                "sr_b5_20200829.tif"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] "LF20_EVH_220.csv"         "storm_lake.lcp"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "."                        "storm_lake.prj"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "storml_evc.tif"           "sr_b6_20200829.tif"      </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "sr_b4_20200829.tif"       "test.geojson"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "LF20_EVC_220.csv"         "metadata.zip"            </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "storml_elev.tif"          "storml_evt.tif"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [17] ".."                       "ynp_fires_1984_2022.gpkg"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "LF20_EVT_220.csv"         "storml_pts.csv"          </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "storml_evh.tif"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "storml_evc.tif"           "LF20_EVH_220.csv"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3] "."                        "storml_pts.csv"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5] ".."                       "storml_evh.tif"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [7] "storml_evt.tif"           "test.geojson"            </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9] "sr_b4_20200829.tif"       "storml_tcc.tif"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11] "int64.tif"                "storml_elev.tif"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [13] "LF20_EVT_220.csv"         "sr_b5_20200829.tif"      </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [15] "metadata.zip"             "LF20_EVC_220.csv"        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [17] "ynp_fires_1984_2022.gpkg" "storm_lake.lcp"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [19] "LF20_F40_220.csv"         "storm_lake.prj"          </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [21] "sr_b6_20200829.tif"      </span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
