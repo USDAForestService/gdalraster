@@ -111,6 +111,7 @@ lyr$getFeature(fid)
 lyr$resetReading()
 lyr$fetch(n)
 
+lyr$createFeature(feature)
 lyr$deleteFeature(fid)
 
 lyr$startTransaction(force)
@@ -437,6 +438,21 @@ returned as \code{character} strings when \code{returnGeomAs} is set to one of \
 
 Note that \verb{$getFeatureCount()} is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).
+
+\code{$createFeature(feature)}\cr
+Creates and writes a new feature within the layer. The \code{feature} argument is
+a named list of fields and their values. A \code{GDALVector} object provides
+\verb{$featureTemplate} as a read-only variable set to such a list with values
+initialized to \code{NA} (which maps to OGR NULL).
+The passed feature is written to the layer as a new feature, rather than
+overwriting an existing one. If the feature has a FID other than
+\code{OGRNullFID} (i.e., \code{NA}, or omitted from the input \code{feature}), then the
+native implementation may use that as the feature id of the new feature,
+but not necessarily.
+Upon successful completion, returns the new FID (as \code{numeric} carrying the
+\code{bit64::integer64} class attribute), \code{NULL} is returned if feature creation
+did not succeed. To create a feature, but set it if it already exists see
+the \verb{$upsertFeature()} method.
 
 \code{$deleteFeature(fid)}\cr
 Deletes a feature from the layer. The feature with the indicated feature ID

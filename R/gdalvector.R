@@ -101,6 +101,7 @@
 #' lyr$resetReading()
 #' lyr$fetch(n)
 #'
+#' lyr$createFeature(feature)
 #' lyr$deleteFeature(fid)
 #'
 #' lyr$startTransaction(force)
@@ -419,6 +420,21 @@
 #'
 #' Note that `$getFeatureCount()` is called internally when fetching the full
 #' feature set or all remaining features (but not for a page of features).
+#'
+#' \code{$createFeature(feature)}\cr
+#' Creates and writes a new feature within the layer. The `feature` argument is
+#' a named list of fields and their values. A `GDALVector` object provides
+#' `$featureTemplate` as a read-only variable set to such a list with values
+#' initialized to `NA` (which maps to OGR NULL).
+#' The passed feature is written to the layer as a new feature, rather than
+#' overwriting an existing one. If the feature has a FID other than
+#' `OGRNullFID` (i.e., `NA`, or omitted from the input `feature`), then the
+#' native implementation may use that as the feature id of the new feature,
+#' but not necessarily.
+#' Upon successful completion, returns the new FID (as `numeric` carrying the
+#' `bit64::integer64` class attribute), `NULL` is returned if feature creation
+#' did not succeed. To create a feature, but set it if it already exists see
+#' the `$upsertFeature()` method.
 #'
 #' \code{$deleteFeature(fid)}\cr
 #' Deletes a feature from the layer. The feature with the indicated feature ID

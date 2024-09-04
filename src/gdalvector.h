@@ -82,6 +82,7 @@ class GDALVector {
 
     Rcpp::DataFrame fetch(double n);
 
+    SEXP createFeature(Rcpp::List feat);
     bool deleteFeature(Rcpp::NumericVector fid);
 
     bool startTransaction(bool force);

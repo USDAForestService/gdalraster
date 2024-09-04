@@ -1036,6 +1036,28 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 }
 
+SEXP GDALVector::createFeature(Rcpp::List feature) {
+    checkAccess_(GA_Update);
+
+    if (feature.size() == 0)
+        Rcpp::stop("input feature is empty");
+
+    OGRFeatureH hFeat = OGRFeatureFromList_(feature);
+    if (OGR_L_CreateFeature(m_hLayer, hFeat) != OGRERR_NONE) {
+        OGR_F_Destroy(hFeat);
+        return R_NilValue;
+    }
+    else {
+        std::vector<int64_t> fid(1);
+        fid[0] = OGR_F_GetFID(hFeat);
+        OGR_F_Destroy(hFeat);
+        if (fid[0] != OGRNullFID)
+            return Rcpp::wrap(fid);
+        else
+            return R_NilValue;
+    }
+}
+
 bool GDALVector::deleteFeature(Rcpp::NumericVector fid) {
     // fid must be an R numeric vector of length 1, i.e., a scalar but using
     // NumericVector since it can carry the class attribute for integer64.
@@ -1393,7 +1415,7 @@ void GDALVector::close() {
 
 void GDALVector::OGRFeatureFromList_dumpReadble(Rcpp::List feat) const {
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 8, 0)
-    Rcpp::stop("OGRFeatureFromList_dumpReadble() requires GDAL >= 3.8");
+    Rcpp::stop("'OGRFeatureFromList_dumpReadble()' requires GDAL >= 3.8");
 
 #else
     OGRFeatureH hFeat = OGRFeatureFromList_(feat);
@@ -1652,6 +1674,8 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
 }
 
 OGRFeatureH GDALVector::OGRFeatureFromList_(Rcpp::List list_in) const {
+    // the returned feature must be destroyed with OGR_F_Destroy()
+
     Rcpp::CharacterVector names = list_in.names();
     if (names.size() == 0)
         Rcpp::stop("input must be a named list");
@@ -1681,14 +1705,20 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(Rcpp::List list_in) const {
             continue;
         }
 
-        // set FID if one is given
+        // set FID if one is given and is not NA
         if (EQUAL(names[i], "FID")) {
             Rcpp::NumericVector fid_in = list_in[i];
             int64_t fid = -1;
-            if (Rcpp::isInteger64(fid_in))
+            if (Rcpp::isInteger64(fid_in)) {
                 fid = Rcpp::fromInteger64(fid_in[0]);
-            else
+                if (ISNA_INTEGER64(fid))
+                    continue;
+            }
+            else {
+                if (Rcpp::NumericVector::is_na(Rcpp::as<double>(fid_in)))
+                    continue;
                 fid = static_cast<int64_t>(Rcpp::as<double>(fid_in));
+            }
             if (OGR_F_SetFID(hFeat, fid) != OGRERR_NONE) {
                 OGR_F_Destroy(hFeat);
                 Rcpp::Rcerr << "failed to set: " << names[i] << " = " << fid
@@ -1705,7 +1735,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(Rcpp::List list_in) const {
             continue;
         }
 
-        // case of empty geometry column name like swith hapefiles etc.
+        // case of geometry column name is empty as with shapefiles etc.
         if (nGeomFields == 1 && (EQUAL(names[1], defaultGeomFldName.c_str()) ||
                                  EQUAL(names[i], "_ogr_geometry_") ||
                                  EQUAL(names[i], "geometry"))) {
@@ -1874,41 +1904,39 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(Rcpp::List list_in) const {
         R_xlen_t list_idx = it->first;
         int gfld_idx = it->second;
 
+        Rcpp::RObject robj;
+        bool is_raw = false;
         OGRErr err = OGRERR_NONE;
 
-        Rcpp::RObject robj = list_in[list_idx];
-        if (Rcpp::is<Rcpp::CharacterVector>(robj)) {
-            // wkt
-            Rcpp::CharacterVector v = list_in[list_idx];
-            if (v.size() > 0 && !Rcpp::CharacterVector::is_na(v[0])) {
-                OGRGeometryH hGeom = nullptr;
-                std::string wkt = Rcpp::as<std::string>(v[0]);
-                char *pszWKT = const_cast<char *>(wkt.c_str());
-                err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
-                if (err == OGRERR_NONE) {
-                    err = OGR_F_SetGeomFieldDirectly(hFeat, gfld_idx, hGeom);
-                    if (err != OGRERR_NONE) {
-                        OGR_F_Destroy(hFeat);
-                        Rcpp::stop("failed to set geometry");
-                    }
-                }
-                else if (err == OGRERR_NOT_ENOUGH_DATA) {
-                    OGR_F_Destroy(hFeat);
-                    Rcpp::stop("OGRERR_NOT_ENOUGH_DATA, failed to create geom");
-                }
-                else if (err == OGRERR_NOT_ENOUGH_DATA) {
-                    OGR_F_Destroy(hFeat);
-                    Rcpp::stop("OGRERR_UNSUPPORTED_GEOMETRY_TYPE");
-                }
-                else if (err == OGRERR_CORRUPT_DATA) {
-                    OGR_F_Destroy(hFeat);
-                    Rcpp::stop("OGRERR_CORRUPT_DATA, failed to create geom");
-                }
+        if (Rcpp::is<Rcpp::RawVector>(list_in[list_idx])) {
+            is_raw = true;
+            robj = list_in[list_idx];
+        }
+        else if (Rcpp::is<Rcpp::CharacterVector>(list_in[list_idx])) {
+           is_raw = false;
+           robj = list_in[list_idx];
+        }
+        else if (Rcpp::is<Rcpp::List>(list_in[list_idx])) {
+            Rcpp::List list_tmp = list_in[list_idx];
+            robj = list_tmp[0];
+            if (Rcpp::is<Rcpp::RawVector>(robj)) {
+                is_raw = true;
+            }
+            else if (Rcpp::is<Rcpp::CharacterVector>(robj)) {
+                is_raw = false;
+            }
+            else {
+                OGR_F_Destroy(hFeat);
+                Rcpp::stop("geometry field must be character, raw or list");
             }
         }
-        else if (Rcpp::is<Rcpp::RawVector>(robj)) {
-            // wkb
-            Rcpp::RawVector v = list_in[list_idx];
+        else {
+            OGR_F_Destroy(hFeat);
+            Rcpp::stop("geometry field must be character, raw or list");
+        }
+
+        if (is_raw) {
+            Rcpp::RawVector v(robj);
             if (v.size() > 0) {
                 OGRGeometryH hGeom = nullptr;
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
@@ -1939,8 +1967,33 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(Rcpp::List list_in) const {
             }
         }
         else {
-            OGR_F_Destroy(hFeat);
-            Rcpp::stop("geom field must be 'character' (WKT) or 'raw' (WKB)");
+            // wkt
+            Rcpp::CharacterVector v(robj);
+            if (v.size() > 0 && !Rcpp::CharacterVector::is_na(v[0])) {
+                OGRGeometryH hGeom = nullptr;
+                std::string wkt = Rcpp::as<std::string>(v[0]);
+                char *pszWKT = const_cast<char *>(wkt.c_str());
+                err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
+                if (err == OGRERR_NONE) {
+                    err = OGR_F_SetGeomFieldDirectly(hFeat, gfld_idx, hGeom);
+                    if (err != OGRERR_NONE) {
+                        OGR_F_Destroy(hFeat);
+                        Rcpp::stop("failed to set geometry");
+                    }
+                }
+                else if (err == OGRERR_NOT_ENOUGH_DATA) {
+                    OGR_F_Destroy(hFeat);
+                    Rcpp::stop("OGRERR_NOT_ENOUGH_DATA, failed to create geom");
+                }
+                else if (err == OGRERR_NOT_ENOUGH_DATA) {
+                    OGR_F_Destroy(hFeat);
+                    Rcpp::stop("OGRERR_UNSUPPORTED_GEOMETRY_TYPE");
+                }
+                else if (err == OGRERR_CORRUPT_DATA) {
+                    OGR_F_Destroy(hFeat);
+                    Rcpp::stop("OGRERR_CORRUPT_DATA, failed to create geom");
+                }
+            }
         }
     }
 
@@ -2039,6 +2092,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Reset feature reading to start on the first feature")
     .method("fetch", &GDALVector::fetch,
         "Fetch a set features as a data frame")
+    .method("createFeature", &GDALVector::createFeature,
+        "Create and write a new feature within the layer")
     .method("deleteFeature", &GDALVector::deleteFeature,
         "Delete feature from layer")
     .method("startTransaction", &GDALVector::startTransaction,
