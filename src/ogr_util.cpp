@@ -600,6 +600,50 @@ bool ogr_layer_create(std::string dsn, std::string layer,
         return false;
 }
 
+//' Rename a layer in a vector dataset
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_layer_rename")]]
+bool ogr_layer_rename(std::string dsn, std::string layer,
+                      std::string new_name) {
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 5, 0)
+    Rcpp::stop("ogr_layer_rename() requires GDAL >= 3.5");
+
+#else
+    std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
+    GDALDatasetH hDS = nullptr;
+    OGRLayerH  hLayer = nullptr;
+
+    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+                     nullptr, nullptr, nullptr);
+
+    if (hDS == nullptr)
+        return false;
+
+    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    if (hLayer == nullptr) {
+        Rcpp::Rcerr << "failed to access 'layer'\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    if (!OGR_L_TestCapability(hLayer, OLCRename)) {
+        Rcpp::Rcerr << "layer does not have Rename capability\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    bool ret = false;
+    if (OGR_L_Rename(hLayer, new_name.c_str()) == OGRERR_NONE)
+        ret = true;
+
+    GDALReleaseDataset(hDS);
+    return ret;
+
+#endif
+}
+
 //' Delete a layer in a vector dataset
 //'
 //' @noRd
@@ -990,7 +1034,7 @@ bool ogr_geom_field_create(std::string dsn, std::string layer,
 //' @noRd
 // [[Rcpp::export(name = ".ogr_field_rename")]]
 bool ogr_field_rename(std::string dsn, std::string layer,
-                       std::string fld_name, std::string new_name) {
+                      std::string fld_name, std::string new_name) {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;

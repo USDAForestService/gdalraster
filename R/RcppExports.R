@@ -2142,6 +2142,13 @@ has_geos <- function() {
     .Call(`_gdalraster_ogr_layer_create`, dsn, layer, layer_defn, geom_type, srs, options)
 }
 
+#' Rename a layer in a vector dataset
+#'
+#' @noRd
+.ogr_layer_rename <- function(dsn, layer, new_name) {
+    .Call(`_gdalraster_ogr_layer_rename`, dsn, layer, new_name)
+}
+
 #' Delete a layer in a vector dataset
 #'
 #' @noRd

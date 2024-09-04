@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9330 (dev)
+# gdalraster 1.11.1.9340 (dev)
+
+* add `ogr_layer_rename()`: rename an existing layer in a vector dataset (GDAL >= 3.5) (2024-09-04)
 
 * (internal) add header `src/gdal_vsi.h` and minor code cleanups in `src/gdal_vsi.cpp` (2024-09-02)
 

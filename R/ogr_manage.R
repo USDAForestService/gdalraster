@@ -71,7 +71,7 @@
 #' `FastSpatialFilter`, `FastFeatureCount`, `FastGetExtent`,
 #' `FastSetNextByIndex`, `CreateField`, `CreateGeomField`, `DeleteField`,
 #' `ReorderFields`, `AlterFieldDefn`, `AlterGeomFieldDefn`, `IgnoreFields`,
-#' `DeleteFeature`, `StringsAsUTF8`, `CurveGeometries`.
+#' `DeleteFeature`, `Rename`, `StringsAsUTF8`, `CurveGeometries`.
 #' See the GDAL documentation for
 #' [`OGR_L_TestCapability()`](https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).
 #'
@@ -85,6 +85,12 @@
 #'
 #' `ogr_layer_field_names()` returns a character vector of field names on a
 #' layer, or `NULL` if no fields are found.
+#'
+#' `ogr_layer_rename()` renames a layer in a vector dataset. This operation is
+#' implemented only by layers that expose the `Rename` capability (see
+#' `ogr_layer_test_cap()` above). This operation will fail if a layer with the
+#' new name already exists. Returns a logical scalar, `TRUE` indicating success.
+#' Requires GDAL >= 3.5.
 #'
 #' `ogr_layer_delete()` deletes an existing layer in a vector dataset.
 #' Returns a logical scalar, `TRUE` indicating success.
@@ -484,6 +490,19 @@ ogr_layer_field_names <- function(dsn, layer) {
         stop("'layer' must be a length-1 character vector", call. = FALSE)
 
     return(.ogr_layer_field_names(dsn, layer))
+}
+
+#' @name ogr_manage
+#' @export
+ogr_layer_rename <- function(dsn, layer, new_name) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(layer) && length(layer) == 1))
+        stop("'layer' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(new_name) && length(new_name) == 1))
+        stop("'new_name' must be a length-1 character vector", call. = FALSE)
+
+    return(.ogr_layer_rename(dsn, layer, new_name))
 }
 
 #' @name ogr_manage
