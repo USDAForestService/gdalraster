@@ -1237,6 +1237,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ogr_layer_rename
+bool ogr_layer_rename(std::string dsn, std::string layer, std::string new_name);
+RcppExport SEXP _gdalraster_ogr_layer_rename(SEXP dsnSEXP, SEXP layerSEXP, SEXP new_nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< std::string >::type dsn(dsnSEXP);
+    Rcpp::traits::input_parameter< std::string >::type layer(layerSEXP);
+    Rcpp::traits::input_parameter< std::string >::type new_name(new_nameSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogr_layer_rename(dsn, layer, new_name));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ogr_layer_delete
 bool ogr_layer_delete(std::string dsn, std::string layer);
 RcppExport SEXP _gdalraster_ogr_layer_delete(SEXP dsnSEXP, SEXP layerSEXP) {
@@ -1645,6 +1658,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_ogr_layer_exists", (DL_FUNC) &_gdalraster_ogr_layer_exists, 2},
     {"_gdalraster_ogr_layer_test_cap", (DL_FUNC) &_gdalraster_ogr_layer_test_cap, 3},
     {"_gdalraster_ogr_layer_create", (DL_FUNC) &_gdalraster_ogr_layer_create, 6},
+    {"_gdalraster_ogr_layer_rename", (DL_FUNC) &_gdalraster_ogr_layer_rename, 3},
     {"_gdalraster_ogr_layer_delete", (DL_FUNC) &_gdalraster_ogr_layer_delete, 2},
     {"_gdalraster_ogr_layer_field_names", (DL_FUNC) &_gdalraster_ogr_layer_field_names, 2},
     {"_gdalraster_ogr_field_index", (DL_FUNC) &_gdalraster_ogr_field_index, 3},

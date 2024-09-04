@@ -199,7 +199,7 @@ Rcpp::List GDALVector::testCapability() const {
             OGR_L_TestCapability(m_hLayer, OLCSequentialWrite)),
         Rcpp::Named("RandomWrite") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCRandomWrite)),
-#if GDAL_VERSION_NUM >= 3060000
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
         Rcpp::Named("UpsertFeature") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCUpsertFeature)),
 #endif
@@ -221,7 +221,7 @@ Rcpp::List GDALVector::testCapability() const {
             OGR_L_TestCapability(m_hLayer, OLCReorderFields)),
         Rcpp::Named("AlterFieldDefn") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCAlterFieldDefn)),
-#if GDAL_VERSION_NUM >= 3060000
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
         Rcpp::Named("AlterGeomFieldDefn") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCAlterGeomFieldDefn)),
 #endif
@@ -229,6 +229,10 @@ Rcpp::List GDALVector::testCapability() const {
             OGR_L_TestCapability(m_hLayer, OLCIgnoreFields)),
         Rcpp::Named("DeleteFeature") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCDeleteFeature)),
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 5, 0)
+        Rcpp::Named("Rename") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCRename)),
+#endif
         Rcpp::Named("StringsAsUTF8") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCStringsAsUTF8)),
         Rcpp::Named("CurveGeometries") = static_cast<bool>(
