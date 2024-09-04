@@ -83,11 +83,13 @@ test_that("OGR management utilities work", {
                    "geom"))
 
     # rename layer
-    expect_true(ogr_layer_test_cap(dsn, "test_layer3")$Rename)
-    expect_true(ogr_layer_rename(dsn, "test_layer3", "test_new_name"))
-    expect_equal(ogr_layer_field_names(dsn, "test_new_name"),
-                 c("field1", "field2", "field3", "field4", "field5", "field6",
-                   "geom"))
+    if (as.integer(gdal_version()[2]) >= 3050000) {
+        expect_true(ogr_layer_test_cap(dsn, "test_layer3")$Rename)
+        expect_true(ogr_layer_rename(dsn, "test_layer3", "test_new_name"))
+        expect_equal(ogr_layer_field_names(dsn, "test_new_name"),
+                     c("field1", "field2", "field3", "field4", "field5",
+                       "field6", "geom"))
+    }
 
     deleteDataset(dsn)
 
