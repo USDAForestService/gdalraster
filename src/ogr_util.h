@@ -174,6 +174,9 @@ bool ogr_layer_create(std::string dsn, std::string layer,
                        std::string geom_type, std::string srs,
                        Rcpp::Nullable<Rcpp::CharacterVector> options);
 
+bool ogr_layer_rename(std::string dsn, std::string layer,
+                      std::string new_name);
+
 bool ogr_layer_delete(std::string dsn, std::string layer);
 
 SEXP ogr_layer_field_names(std::string dsn, std::string layer);
@@ -202,6 +205,9 @@ bool ogr_geom_field_create(std::string dsn, std::string layer,
                            std::string fld_name, std::string geom_type,
                            std::string srs, bool is_nullable,
                            bool is_ignored);
+
+bool ogr_field_rename(std::string dsn, std::string layer,
+                      std::string fld_name, std::string new_name);
 
 bool ogr_field_delete(std::string dsn, std::string layer,
                       std::string fld_name);

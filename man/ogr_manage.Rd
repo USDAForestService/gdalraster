@@ -12,6 +12,7 @@
 \alias{ogr_layer_test_cap}
 \alias{ogr_layer_create}
 \alias{ogr_layer_field_names}
+\alias{ogr_layer_rename}
 \alias{ogr_layer_delete}
 \alias{ogr_field_index}
 \alias{ogr_field_create}
@@ -59,6 +60,8 @@ ogr_layer_create(
 )
 
 ogr_layer_field_names(dsn, layer)
+
+ogr_layer_rename(dsn, layer, new_name)
 
 ogr_layer_delete(dsn, layer)
 
@@ -144,6 +147,8 @@ for \code{layer} (\code{"NAME=VALUE"} pairs).}
 \item{overwrite}{Logical scalar. \code{TRUE} to overwrite \code{dsn} if it already
 exists when calling \code{ogr_ds_create()}. Default is \code{FALSE}.}
 
+\item{new_name}{Character string containing a new name to assign.}
+
 \item{fld_defn}{A field definition as list (see \code{\link[=ogr_def_field]{ogr_def_field()}}).
 Additional arguments in \code{ogr_field_create()} will be ignored if a \code{fld_defn}
 is given.}
@@ -173,8 +178,6 @@ string.}
 (see \code{\link[=ogr_def_geom_field]{ogr_def_geom_field()}}).
 Additional arguments in \code{ogr_geom_field_create()} will be ignored if a
 \code{geom_fld_defn} is given.}
-
-\item{new_name}{Character string containing a new name to assign.}
 
 \item{sql}{Character string containing an SQL statement (see Note).}
 
@@ -256,7 +259,7 @@ cannot be found. The returned list contains the following named elements:
 \code{FastSpatialFilter}, \code{FastFeatureCount}, \code{FastGetExtent},
 \code{FastSetNextByIndex}, \code{CreateField}, \code{CreateGeomField}, \code{DeleteField},
 \code{ReorderFields}, \code{AlterFieldDefn}, \code{AlterGeomFieldDefn}, \code{IgnoreFields},
-\code{DeleteFeature}, \code{StringsAsUTF8}, \code{CurveGeometries}.
+\code{DeleteFeature}, \code{Rename}, \code{StringsAsUTF8}, \code{CurveGeometries}.
 See the GDAL documentation for
 \href{https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc}{\code{OGR_L_TestCapability()}}.
 
@@ -270,6 +273,12 @@ Returns a logical scalar, \code{TRUE} indicating success.
 
 \code{ogr_layer_field_names()} returns a character vector of field names on a
 layer, or \code{NULL} if no fields are found.
+
+\code{ogr_layer_rename()} renames a layer in a vector dataset. This operation is
+implemented only by layers that expose the \code{Rename} capability (see
+\code{ogr_layer_test_cap()} above). This operation will fail if a layer with the
+new name already exists. Returns a logical scalar, \code{TRUE} indicating success.
+Requires GDAL >= 3.5.
 
 \code{ogr_layer_delete()} deletes an existing layer in a vector dataset.
 Returns a logical scalar, \code{TRUE} indicating success.
