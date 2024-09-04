@@ -15,6 +15,8 @@
 #include <cctype>
 #include <string>
 
+const int64_t MAX_INT_AS_R_NUMERIC = 9007199254740991;
+
 // as defined in the bit64 package src/integer64.h
 #define NA_INTEGER64 LLONG_MIN
 #define ISNA_INTEGER64(X)((X) == NA_INTEGER64)

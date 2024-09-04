@@ -517,7 +517,7 @@ void GDALVector::setNextByIndex(double i) {
     if (i < 0 || Rcpp::NumericVector::is_na(i) || std::isnan(i)) {
         Rcpp::stop("'i' must be a whole number >= 0");
     }
-    else if (std::isinf(i) || i >= 9007199254740992) {
+    else if (std::isinf(i) || i > MAX_INT_AS_R_NUMERIC) {
         Rcpp::stop("'i' is out of range");
     }
     else {
@@ -617,7 +617,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         fetch_num = OGR_L_GetFeatureCount(m_hLayer, true);
     }
     else if (n >= 0) {
-        if (n >= 9007199254740992)
+        if (n > MAX_INT_AS_R_NUMERIC)
             Rcpp::stop("'n' is out of range");
         fetch_all = false;
         fetch_num = static_cast<size_t>(std::trunc(n));
