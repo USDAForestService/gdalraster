@@ -530,7 +530,7 @@ void GDALVector::setNextByIndex(double i) {
     }
 }
 
-SEXP GDALVector::getFeature(Rcpp::NumericVector fid) {
+SEXP GDALVector::getFeature(const Rcpp::NumericVector &fid) {
     // fid must be an R numeric vector of length 1, i.e., a scalar but using
     // NumericVector since it can carry the class attribute for integer64.
     // Instead of wrapping OGR_L_GetFeature(), we use fetch() because it
@@ -1049,7 +1049,7 @@ SEXP GDALVector::createFeature(const Rcpp::List &feature) {
     }
 }
 
-bool GDALVector::deleteFeature(Rcpp::NumericVector fid) {
+bool GDALVector::deleteFeature(const Rcpp::NumericVector &fid) {
     // fid must be an R numeric vector of length 1, i.e., a scalar but using
     // NumericVector since it can carry the class attribute for integer64.
 
@@ -1139,7 +1139,7 @@ bool GDALVector::layerIntersection(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
-        Rcpp::Nullable<Rcpp::CharacterVector> options) {
+        const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
@@ -1176,7 +1176,7 @@ bool GDALVector::layerUnion(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
-        Rcpp::Nullable<Rcpp::CharacterVector> options) {
+        const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
@@ -1213,7 +1213,7 @@ bool GDALVector::layerSymDifference(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
-        Rcpp::Nullable<Rcpp::CharacterVector> options) {
+        const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
@@ -1250,7 +1250,7 @@ bool GDALVector::layerIdentity(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
-        Rcpp::Nullable<Rcpp::CharacterVector> options) {
+        const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
@@ -1287,7 +1287,7 @@ bool GDALVector::layerUpdate(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
-        Rcpp::Nullable<Rcpp::CharacterVector> options) {
+        const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
@@ -1324,7 +1324,7 @@ bool GDALVector::layerClip(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
-        Rcpp::Nullable<Rcpp::CharacterVector> options) {
+        const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
@@ -1361,7 +1361,7 @@ bool GDALVector::layerErase(
         GDALVector method_layer,
         GDALVector result_layer,
         bool quiet,
-        Rcpp::Nullable<Rcpp::CharacterVector> options) {
+        const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
     std::vector<char *> opt_list = {nullptr};
     if (options.isNotNull()) {
@@ -1440,7 +1440,7 @@ GDALDatasetH GDALVector::getGDALDatasetH_() const {
     return m_hDataset;
 }
 
-void GDALVector::setGDALDatasetH_(GDALDatasetH hDs, bool with_update) {
+void GDALVector::setGDALDatasetH_(const GDALDatasetH hDs, bool with_update) {
     m_hDataset = hDs;
     if (with_update)
         m_eAccess = GA_Update;
@@ -1454,7 +1454,8 @@ OGRLayerH GDALVector::getOGRLayerH_() const {
     return m_hLayer;
 }
 
-void GDALVector::setOGRLayerH_(OGRLayerH hLyr, std::string lyr_name) {
+void GDALVector::setOGRLayerH_(const OGRLayerH hLyr,
+                               const std::string &lyr_name) {
     m_hLayer = hLyr;
     m_layer_name = lyr_name;
 }

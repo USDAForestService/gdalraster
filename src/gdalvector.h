@@ -76,13 +76,13 @@ class GDALVector {
     void setNextByIndex(double i);
     // fid must be a length-1 numeric vector, since numeric vector can carry
     // the class attribute for integer64:
-    SEXP getFeature(Rcpp::NumericVector fid);
+    SEXP getFeature(const Rcpp::NumericVector &fid);
     void resetReading();
 
     Rcpp::DataFrame fetch(double n);
 
     SEXP createFeature(const Rcpp::List &feature);
-    bool deleteFeature(Rcpp::NumericVector fid);
+    bool deleteFeature(const Rcpp::NumericVector &fid);
 
     bool startTransaction(bool force);
     bool commitTransaction();
@@ -92,37 +92,37 @@ class GDALVector {
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
-            Rcpp::Nullable<Rcpp::CharacterVector> options);
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerUnion(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
-            Rcpp::Nullable<Rcpp::CharacterVector> options);
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerSymDifference(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
-            Rcpp::Nullable<Rcpp::CharacterVector> options);
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerIdentity(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
-            Rcpp::Nullable<Rcpp::CharacterVector> options);
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerUpdate(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
-            Rcpp::Nullable<Rcpp::CharacterVector> options);
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerClip(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
-            Rcpp::Nullable<Rcpp::CharacterVector> options);
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerErase(
             GDALVector method_layer,
             GDALVector result_layer,
             bool quiet,
-            Rcpp::Nullable<Rcpp::CharacterVector> options);
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
 
     void close();
 
@@ -131,9 +131,9 @@ class GDALVector {
     // methods for internal use not exposed to R
     void checkAccess_(GDALAccess access_needed) const;
     GDALDatasetH getGDALDatasetH_() const;
-    void setGDALDatasetH_(GDALDatasetH hDs, bool with_update);
+    void setGDALDatasetH_(const GDALDatasetH hDs, bool with_update);
     OGRLayerH getOGRLayerH_() const;
-    void setOGRLayerH_(OGRLayerH hLyr, std::string lyr_name);
+    void setOGRLayerH_(const OGRLayerH hLyr, const std::string &lyr_name);
     void setFeatureTemplate_();
     SEXP initDF_(R_xlen_t nrow) const;
     OGRFeatureH OGRFeatureFromList_(const Rcpp::List &list_in) const;
