@@ -491,7 +491,7 @@ See \verb{$setFeature()} above for a description of how omitted fields in the
 passed \code{feature} are processed.
 Upon successful completion, returns the new FID (as \code{numeric} carrying the
 \code{bit64::integer64} class attribute). \code{NULL} is returned if feature creation
-did not succeed.
+did not succeed. Requires GDAL >= 3.6.
 
 \code{$deleteFeature(fid)}\cr
 Deletes a feature from the layer. The feature with the indicated feature ID
