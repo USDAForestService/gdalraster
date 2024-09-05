@@ -1686,7 +1686,6 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
     if (hFeat == nullptr)
         Rcpp::stop("failed to create feature object");
 
-    // int nFields = OGR_F_GetFieldCount(hFeat);
     int nGeomFields = OGR_F_GetGeomFieldCount(hFeat);
 
     std::map<R_xlen_t, int> map_flds{};
@@ -1848,50 +1847,63 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         else if (fld_type == OFTTime) {
             Rcpp::warning("writing OFTTime field is currently unsupported");
         }
-        else if (fld_type == OFTIntegerList) {
-            Rcpp::IntegerVector v = list_in[list_idx];
-            if (v.size() > 0 && Rcpp::all(Rcpp::is_na(v)).is_false()) {
-                std::vector<int> values = Rcpp::as<std::vector<int>>(v);
-                OGR_F_SetFieldIntegerList(hFeat, fld_idx, values.size(),
-                                          values.data());
-            }
-        }
-        else if (fld_type == OFTInteger64List) {
-            Rcpp::NumericVector v = list_in[list_idx];
-            if (v.size() == 0)
-                continue;
-            if (Rcpp::isInteger64(v)) {
-                std::vector<int64_t> values = Rcpp::fromInteger64(v, false);
-                OGR_F_SetFieldInteger64List(hFeat, fld_idx, values.size(),
-                                            reinterpret_cast<const GInt64 *>(
-                                                values.data()));
+        else {
+            // the remaining types may originate in a data frame list column
+            // set up a generic RObject with the correct reference
+            Rcpp::RObject robj;
+            if (Rcpp::is<Rcpp::List>(list_in[list_idx])) {
+                Rcpp::List list_tmp = list_in[list_idx];
+                robj = list_tmp[0];
             }
             else {
-                std::vector<GIntBig> values(v.begin(), v.end());
-                OGR_F_SetFieldInteger64List(hFeat, fld_idx, values.size(),
+                robj = list_in[list_idx];
+            }
+
+            if (fld_type == OFTIntegerList) {
+                Rcpp::IntegerVector v(robj);
+                if (v.size() > 0 && Rcpp::all(Rcpp::is_na(v)).is_false()) {
+                    std::vector<int> values = Rcpp::as<std::vector<int>>(v);
+                    OGR_F_SetFieldIntegerList(hFeat, fld_idx, values.size(),
                                             values.data());
+                }
             }
-        }
-        else if (fld_type == OFTRealList) {
-            Rcpp::NumericVector v = list_in[list_idx];
-            if (v.size() > 0 && Rcpp::all(Rcpp::is_na(v)).is_false()) {
-                std::vector<double> values = Rcpp::as<std::vector<double>>(v);
-                OGR_F_SetFieldDoubleList(hFeat, fld_idx, values.size(),
-                                         values.data());
+            else if (fld_type == OFTInteger64List) {
+                Rcpp::NumericVector v(robj);
+                if (v.size() == 0)
+                    continue;
+                if (Rcpp::isInteger64(v)) {
+                    std::vector<int64_t> values = Rcpp::fromInteger64(v, false);
+                    OGR_F_SetFieldInteger64List(hFeat, fld_idx, values.size(),
+                                                reinterpret_cast<const GInt64 *>(
+                                                    values.data()));
+                }
+                else {
+                    std::vector<GIntBig> values(v.begin(), v.end());
+                    OGR_F_SetFieldInteger64List(hFeat, fld_idx, values.size(),
+                                                values.data());
+                }
             }
-        }
-        else if (fld_type == OFTStringList) {
-            Rcpp::CharacterVector v = list_in[list_idx];
-            if (v.size() > 0 && Rcpp::all(Rcpp::is_na(v)).is_false()) {
-                std::vector<const char *> values(v.begin(), v.end());
-                values.push_back(nullptr);
-                OGR_F_SetFieldStringList(hFeat, fld_idx, values.data());
+            else if (fld_type == OFTRealList) {
+                Rcpp::NumericVector v(robj);
+                if (v.size() > 0 && Rcpp::all(Rcpp::is_na(v)).is_false()) {
+                    std::vector<double> values = Rcpp::as<std::vector<double>>(v);
+                    OGR_F_SetFieldDoubleList(hFeat, fld_idx, values.size(),
+                                            values.data());
+                }
             }
-        }
-        else if (fld_type == OFTBinary) {
-            Rcpp::RawVector v = list_in[list_idx];
-            if (v.size() > 0) {
-                OGR_F_SetFieldBinary(hFeat, fld_idx, v.size(), &v[0]);
+            else if (fld_type == OFTStringList) {
+                Rcpp::CharacterVector v(robj);
+                if (v.size() > 0 && Rcpp::all(Rcpp::is_na(v)).is_false()) {
+                    std::vector<const char *> values(v.begin(), v.end());
+                    values.push_back(nullptr);
+                    OGR_F_SetFieldStringList(hFeat, fld_idx, values.data());
+                }
+            }
+            else if (fld_type == OFTBinary) {
+                Rcpp::RawVector v(robj);
+                if (v.size() > 0) {
+                    OGR_F_SetFieldBinary(hFeat, fld_idx, v.size(), &v[0]);
+                }
             }
         }
     }
@@ -1901,9 +1913,12 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         R_xlen_t list_idx = it->first;
         int gfld_idx = it->second;
 
+        OGRErr err = OGRERR_NONE;
+
+        // geometry fields may originate in a data frame list column
+        // set up a generic RObject with the correct reference
         Rcpp::RObject robj;
         bool is_raw = false;
-        OGRErr err = OGRERR_NONE;
 
         if (Rcpp::is<Rcpp::RawVector>(list_in[list_idx])) {
             is_raw = true;
@@ -1924,12 +1939,12 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
             }
             else {
                 OGR_F_Destroy(hFeat);
-                Rcpp::stop("geometry field must be character, raw or list");
+                Rcpp::stop("geometry must be 'raw' (WKB) or 'character' (WKT)");
             }
         }
         else {
             OGR_F_Destroy(hFeat);
-            Rcpp::stop("geometry field must be character, raw or list");
+            Rcpp::stop("geometry must be 'raw' (WKB) or 'character' (WKT)");
         }
 
         if (is_raw) {
