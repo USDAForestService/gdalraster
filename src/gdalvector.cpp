@@ -1043,7 +1043,7 @@ SEXP GDALVector::setFeature(const Rcpp::List &feature) {
         return R_NilValue;
     }
     else {
-        std::vector<int64_t> fid(1);
+        std::vector<int64_t> fid {OGRNullFID};
         fid[0] = OGR_F_GetFID(hFeat);
         OGR_F_Destroy(hFeat);
         if (fid[0] != OGRNullFID)
@@ -1065,7 +1065,7 @@ SEXP GDALVector::createFeature(const Rcpp::List &feature) {
         return R_NilValue;
     }
     else {
-        std::vector<int64_t> fid(1);
+        std::vector<int64_t> fid {OGRNullFID};
         fid[0] = OGR_F_GetFID(hFeat);
         OGR_F_Destroy(hFeat);
         if (fid[0] != OGRNullFID)
@@ -1073,6 +1073,32 @@ SEXP GDALVector::createFeature(const Rcpp::List &feature) {
         else
             return R_NilValue;
     }
+}
+
+SEXP GDALVector::upsertFeature(const Rcpp::List &feature) {
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 6, 0)
+    Rcpp::stop("'upsertFeature() requires GDAL >= 3.6");
+#else
+    checkAccess_(GA_Update);
+
+    if (feature.size() == 0)
+        Rcpp::stop("input feature is empty");
+
+    OGRFeatureH hFeat = OGRFeatureFromList_(feature);
+    if (OGR_L_UpsertFeature(m_hLayer, hFeat) != OGRERR_NONE) {
+        OGR_F_Destroy(hFeat);
+        return R_NilValue;
+    }
+    else {
+        std::vector<int64_t> fid {OGRNullFID};
+        fid[0] = OGR_F_GetFID(hFeat);
+        OGR_F_Destroy(hFeat);
+        if (fid[0] != OGRNullFID)
+            return Rcpp::wrap(fid);
+        else
+            return R_NilValue;
+    }
+#endif
 }
 
 bool GDALVector::deleteFeature(const Rcpp::NumericVector &fid) {
@@ -2162,6 +2188,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Rewrite/replace an existing feature within the layer")
     .method("createFeature", &GDALVector::createFeature,
         "Create and write a new feature within the layer")
+    .method("upsertFeature", &GDALVector::upsertFeature,
+        "Rewrite/replace an existing feature or create a new feature")
     .method("deleteFeature", &GDALVector::deleteFeature,
         "Delete feature from layer")
     .method("startTransaction", &GDALVector::startTransaction,

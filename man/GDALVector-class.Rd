@@ -113,6 +113,7 @@ lyr$fetch(n)
 
 lyr$setFeature(feature)
 lyr$createFeature(feature)
+lyr$upsertFeature(feature)
 lyr$deleteFeature(fid)
 
 lyr$startTransaction(force)
@@ -476,6 +477,21 @@ Upon successful completion, returns the new FID (as \code{numeric} carrying the
 \code{bit64::integer64} class attribute). \code{NULL} is returned if feature creation
 did not succeed. To create a feature, but set it if it already exists see
 the \verb{$upsertFeature()} method.
+
+\code{$upsertFeature(feature)}\cr
+Rewrites/replaces an existing feature or creates a new feature within the
+layer. This method will write a feature to the layer, based on the feature
+id within the input feature. The \code{feature} argument is a named list of
+fields and their values, and must include a \verb{$FID} element referencing the
+existing feature to rewrite. If the feature id doesn't exist a new feature
+will be written. Otherwise, the existing feature will be rewritten.
+The \verb{UpsertFeature)} element in the list returned by \verb{$testCapability()} can
+be checked to establish if this layer supports upsert writing.
+See \verb{$setFeature()} above for a description of how omitted fields in the
+passed \code{feature} are processed.
+Upon successful completion, returns the new FID (as \code{numeric} carrying the
+\code{bit64::integer64} class attribute). \code{NULL} is returned if feature creation
+did not succeed.
 
 \code{$deleteFeature(fid)}\cr
 Deletes a feature from the layer. The feature with the indicated feature ID
