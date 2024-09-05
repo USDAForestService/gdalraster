@@ -692,10 +692,20 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
 #' args <- c("-where", sql)
 #' ogr2ogr(src, ynp_filtered, src_layers = "mtbs_perims", cl_arg = args)
 #'
+#' # Dissolve features based on a shared attribute value
+#' if (has_spatialite()) {
+#'   ynp_dissolved <- file.path(tempdir(), "ynp_fires_dissolve.gpkg")
+#'   sql <- "SELECT ig_year, ST_Union(geom) AS geom FROM mtbs_perims GROUP BY ig_year"
+#'   args <- c("-sql", sql, "-dialect", "SQLITE")
+#'   args <- c(args, "-nlt", "MULTIPOLYGON", "-nln", "dissolved_on_year")
+#'   ogr2ogr(src, ynp_dissolved, cl_arg = args)
+#' }
+#'
 #' deleteDataset(shp_file)
 #' deleteDataset(ynp_wgs84)
 #' deleteDataset(ynp_clip)
 #' deleteDataset(ynp_filtered)
+#' deleteDataset(ynp_dissolved)
 ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL, open_options = NULL) {
     invisible(.Call(`_gdalraster_ogr2ogr`, src_dsn, dst_dsn, src_layers, cl_arg, open_options))
 }
