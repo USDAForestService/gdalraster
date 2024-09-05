@@ -111,6 +111,7 @@ lyr$getFeature(fid)
 lyr$resetReading()
 lyr$fetch(n)
 
+lyr$setFeature(feature)
 lyr$createFeature(feature)
 lyr$deleteFeature(fid)
 
@@ -439,6 +440,28 @@ returned as \code{character} strings when \code{returnGeomAs} is set to one of \
 Note that \verb{$getFeatureCount()} is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).
 
+\code{$setFeature(feature)}\cr
+Rewrites/replaces an existing feature. This method writes a feature based on
+the feature id within the input feature. The \code{feature} argument is a named
+list of fields and their values, and must include a \verb{$FID} element
+referencing the existing feature to rewrite. The \code{RandomWrite} element in
+the list returned by \verb{$testCapability()} can be checked to establish if this
+layer supports random access writing via \verb{$setFeature()}.
+The way omitted fields in the passed \code{feature} are processed is driver
+dependent:
+\itemize{
+\item SQL-based drivers which implement set feature through SQL UPDATE will skip
+unset fields, and thus the content of the existing feature will be
+preserved.
+\item The shapefile driver will write a NULL value in the DBF file.
+\item The GeoJSON driver will take into account unset fields to remove the
+corresponding JSON member.
+Upon successful completion, returns the FID of the feature that was set
+(as \code{numeric} carrying the \code{bit64::integer64} class attribute). \code{NULL} is
+returned if set feature did not succeed. To set a feature, but create it
+if it doesn't exist see the \verb{$upsertFeature()} method.
+}
+
 \code{$createFeature(feature)}\cr
 Creates and writes a new feature within the layer. The \code{feature} argument is
 a named list of fields and their values. A \code{GDALVector} object provides
@@ -450,7 +473,7 @@ overwriting an existing one. If the feature has a FID other than
 native implementation may use that as the feature id of the new feature,
 but not necessarily.
 Upon successful completion, returns the new FID (as \code{numeric} carrying the
-\code{bit64::integer64} class attribute), \code{NULL} is returned if feature creation
+\code{bit64::integer64} class attribute). \code{NULL} is returned if feature creation
 did not succeed. To create a feature, but set it if it already exists see
 the \verb{$upsertFeature()} method.
 

@@ -81,6 +81,7 @@ class GDALVector {
 
     Rcpp::DataFrame fetch(double n);
 
+    SEXP setFeature(const Rcpp::List &feature);
     SEXP createFeature(const Rcpp::List &feature);
     bool deleteFeature(const Rcpp::NumericVector &fid);
 
