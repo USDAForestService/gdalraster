@@ -1503,44 +1503,39 @@ bool footprint(Rcpp::CharacterVector src_filename,
 //' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 //'
 //' # Convert GeoPackage to Shapefile
-//' shp_file <- file.path(tempdir(), "ynp_fires.shp")
-//' ogr2ogr(src, shp_file, src_layers = "mtbs_perims")
+//' ynp_shp <- file.path(tempdir(), "ynp_fires.shp")
+//' ogr2ogr(src, ynp_shp, src_layers = "mtbs_perims")
 //'
 //' # Reproject to WGS84
-//' ynp_wgs84 <- file.path(tempdir(), "ynp_fires_wgs84.gpkg")
-//' args <- c("-t_srs", "EPSG:4326")
-//' ogr2ogr(src, ynp_wgs84, cl_arg = args)
+//' ynp_gpkg <- file.path(tempdir(), "ynp_fires.gpkg")
+//' args <- c("-t_srs", "EPSG:4326", "-nln", "fires_wgs84")
+//' ogr2ogr(src, ynp_gpkg, cl_arg = args)
 //'
 //' # Clip to a bounding box (xmin, ymin, xmax, ymax in the source SRS)
 //' # This will select features whose geometry intersects the bounding box.
 //' # The geometries themselves will not be clipped unless "-clipsrc" is
 //' # specified.
 //' # The source SRS can be overridden with "-spat_srs" "<srs_def>"
-//' ynp_clip <- file.path(tempdir(), "ynp_fires_aoi_clip.gpkg")
+//' # Using -update mode to write a new layer in the existing DSN
 //' bb <- c(469685.97, 11442.45, 544069.63, 85508.15)
-//' args <- c("-spat", bb)
-//' ogr2ogr(src, ynp_clip, cl_arg = args)
+//' args <- c("-update", "-nln", "fires_clip", "-spat", bb)
+//' ogr2ogr(src, ynp_gpkg, cl_arg = args)
 //'
 //' # Filter features by a -where clause
-//' ynp_filtered <- file.path(tempdir(), "ynp_fires_2000_2022.gpkg")
 //' sql <- "ig_year >= 2000 ORDER BY ig_year"
-//' args <- c("-where", sql)
-//' ogr2ogr(src, ynp_filtered, src_layers = "mtbs_perims", cl_arg = args)
+//' args <- c("-update", "-nln", "fires_2000-2020", "-where", sql)
+//' ogr2ogr(src, ynp_gpkg, src_layers = "mtbs_perims", cl_arg = args)
 //'
 //' # Dissolve features based on a shared attribute value
 //' if (has_spatialite()) {
-//'   ynp_dissolved <- file.path(tempdir(), "ynp_fires_dissolve.gpkg")
-//'   sql <- "SELECT ig_year, ST_Union(geom) AS geom FROM mtbs_perims GROUP BY ig_year"
-//'   args <- c("-sql", sql, "-dialect", "SQLITE")
-//'   args <- c(args, "-nlt", "MULTIPOLYGON", "-nln", "dissolved_on_year")
-//'   ogr2ogr(src, ynp_dissolved, cl_arg = args)
+//'     sql <- "SELECT ig_year, ST_Union(geom) AS geom FROM mtbs_perims GROUP BY ig_year"
+//'     args <- c("-update", "-sql", sql, "-dialect", "SQLITE")
+//'     args <- c(args, "-nlt", "MULTIPOLYGON", "-nln", "dissolved_on_year")
+//'     ogr2ogr(src, ynp_gpkg, cl_arg = args)
 //' }
 //'
-//' deleteDataset(shp_file)
-//' deleteDataset(ynp_wgs84)
-//' deleteDataset(ynp_clip)
-//' deleteDataset(ynp_filtered)
-//' deleteDataset(ynp_dissolved)
+//' deleteDataset(ynp_shp)
+//' deleteDataset(ynp_gpkg)
 // [[Rcpp::export(invisible = true)]]
 bool ogr2ogr(Rcpp::CharacterVector src_dsn,
         Rcpp::CharacterVector dst_dsn,
