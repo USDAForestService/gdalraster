@@ -697,15 +697,8 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 const int64_t value = static_cast<int64_t>(
                         OGR_F_GetFieldAsInteger64(hFeat, i));
 
-                OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
-                if (fld_subtype == OFSTBoolean) {
-                    Rcpp::LogicalVector col = df[col_num];
-                    col[row_num] = value;
-                }
-                else {
-                    Rcpp::NumericVector col = df[col_num];
-                    col[row_num] = Rcpp::toInteger64(value)[0];
-                }
+                Rcpp::NumericVector col = df[col_num];
+                col[row_num] = Rcpp::toInteger64(value)[0];
             }
             else if (fld_type == OFTReal && has_value) {
                 Rcpp::NumericVector col = df[col_num];
@@ -1631,21 +1624,14 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
             col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
         }
         else if (fld_type == OFTInteger64) {
-            OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
-            if (fld_subtype == OFSTBoolean) {
-                Rcpp::LogicalVector v(nrow, NA_LOGICAL);
-                df[col_num] = v;
+            std::vector<int64_t> v{};
+            try {
+                v.resize(nrow, NA_INTEGER64);
             }
-            else {
-                std::vector<int64_t> v{};
-                try {
-                    v.resize(nrow, NA_INTEGER64);
-                }
-                catch (const std::exception &) {
-                    Rcpp::stop("failed to allocate memory 'integer64' column");
-                }
-                df[col_num] = Rcpp::wrap(v);
+            catch (const std::exception &) {
+                Rcpp::stop("failed to allocate memory 'integer64' column");
             }
+            df[col_num] = Rcpp::wrap(v);
             col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
         }
         else if (fld_type == OFTReal) {
@@ -1823,28 +1809,18 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
             }
         }
         else if (fld_type == OFTInteger64) {
-            OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
-            if (fld_subtype == OFSTBoolean) {
-                Rcpp::LogicalVector v = list_in[list_idx];
-                if (v.size() == 0 || Rcpp::LogicalVector::is_na(v(0)))
-                    OGR_F_SetFieldNull(hFeat, fld_idx);
+            Rcpp::NumericVector v = list_in[list_idx];
+            int64_t value = NA_INTEGER64;
+            if (v.size() > 0) {
+                if (Rcpp::isInteger64(v))
+                    value = Rcpp::fromInteger64(v[0]);
                 else
-                    OGR_F_SetFieldInteger(hFeat, fld_idx, v[0]);
+                    value = static_cast<int64_t>(v[0]);
             }
-            else {
-                Rcpp::NumericVector v = list_in[list_idx];
-                int64_t value = NA_INTEGER64;
-                if (v.size() > 0) {
-                    if (Rcpp::isInteger64(v))
-                        value = Rcpp::fromInteger64(v[0]);
-                    else
-                        value = static_cast<int64_t>(v[0]);
-                }
-                if (v.size() > 0 && !ISNA_INTEGER64(value))
-                    OGR_F_SetFieldInteger64(hFeat, fld_idx, value);
-                else
-                    OGR_F_SetFieldNull(hFeat, fld_idx);
-            }
+            if (v.size() > 0 && !ISNA_INTEGER64(value))
+                OGR_F_SetFieldInteger64(hFeat, fld_idx, value);
+            else
+                OGR_F_SetFieldNull(hFeat, fld_idx);
         }
         else if (fld_type == OFTReal) {
             Rcpp::NumericVector v = list_in[list_idx];
