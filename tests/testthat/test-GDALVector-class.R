@@ -36,8 +36,8 @@ test_that("class constructors work", {
     lyr <- new(GDALVector, dsn, sql, read_only = TRUE, open_options = NULL,
                spatial_filter = bbox_to_wkt(bb), dialect = "")
     expect_equal(lyr$getFeatureCount(), 40)
-    lyr$close()
 
+    lyr$close()
     unlink(dsn)
 })
 
@@ -111,7 +111,6 @@ test_that("cursor positioning works correctly", {
     expect_error(lyr$setNextByIndex(9007199254740993))
 
     lyr$close()
-
     unlink(dsn)
 })
 
@@ -146,6 +145,117 @@ test_that("delete feature works", {
     expect_equal(lyr$getFeatureCount(), num_feat - 1)
 
     lyr$close()
+    unlink(dsn)
+})
 
+test_that("feature write methods work", {
+    # initial test set for feature write
+    # TODO: add tests for all OGR field types
+
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    lyr <- new(GDALVector, dsn, "mtbs_perims", read_only = FALSE)
+    start_count <- lyr$getFeatureCount()
+    lyr$returnGeomAs <- "WKB"
+
+    # create and write a new feature
+    # new feature is a modified copy of existing FID 1 with same geom
+    feat <- lyr$getNextFeature()
+    test1_orig_fid <- feat$FID
+    feat$FID <- NULL
+    feat$event_id <- "ZZ01"
+    feat$incid_name <- "TEST 1"
+    feat$map_id <- 999991
+    feat$ig_date <- as.Date("9999-01-01")
+    feat$ig_year <- 9999
+    test1_fid <- lyr$createFeature(feat)
+    expect_false(is.null(test1_fid))
+    expect_equal(lyr$getFeatureCount(), start_count + 1)
+
+    # edit an existing feature and set
+    feat <- NULL
+    feat <- lyr$getNextFeature()
+    feat$event_id <- "ZZ02"
+    feat$incid_name <- "TEST 2"
+    feat$map_id <- 999992
+    feat$ig_date <- as.Date("9999-01-02")
+    feat$ig_year <- 9999
+    test2_fid <- lyr$setFeature(feat)
+    expect_false(is.null(test2_fid))
+    expect_equal(lyr$getFeatureCount(), start_count + 1)
+
+    # edit an existing feature and upsert with existing FID
+    feat <- NULL
+    feat <- lyr$getNextFeature()
+    feat$event_id <- "ZZ03"
+    feat$incid_name <- "TEST 3"
+    feat$map_id <- 999993
+    feat$ig_date <- as.Date("9999-01-03")
+    feat$ig_year <- 9999
+    test3_fid <- lyr$upsertFeature(feat)
+    expect_false(is.null(test3_fid))
+    expect_equal(lyr$getFeatureCount(), start_count + 1)
+
+    # edit an existing feature and upsert with new non-existing FID
+    feat <- NULL
+    feat <- lyr$getNextFeature()
+    test4_orig_fid <- feat$FID
+    feat$FID <- bit64::as.integer64(9999999999999994)
+    feat$event_id <- "ZZ04"
+    feat$incid_name <- "TEST 4"
+    feat$map_id <- 999994
+    feat$ig_date <- as.Date("9999-01-04")
+    feat$ig_year <- 9999
+    test4_fid <- lyr$upsertFeature(feat)
+    expect_false(is.null(test4_fid))
+    expect_equal(lyr$getFeatureCount(), start_count + 2)
+
+    # read back
+    lyr$open(read_only = TRUE)
+    lyr$returnGeomAs <- "WKT"
+
+    test1_feat <- lyr$getFeature(test1_fid)
+    expect_false(is.null(test1_feat))
+    expect_equal(test1_feat$event_id, "ZZ01")
+    expect_equal(test1_feat$incid_name, "TEST 1")
+    expect_equal(test1_feat$map_id, bit64::as.integer64(999991))
+    expect_equal(test1_feat$ig_date, as.Date("9999-01-01"))
+    test1_orig_feat <- lyr$getFeature(test1_orig_fid)
+    geom_fld <- lyr$getGeometryColumn()
+    expect_true(g_equals(test1_feat[[geom_fld]], test1_orig_feat[[geom_fld]]))
+    test1_feat <- NULL
+
+    test2_feat <- lyr$getFeature(test2_fid)
+    expect_false(is.null(test2_feat))
+    expect_equal(test2_feat$event_id, "ZZ02")
+    expect_equal(test2_feat$incid_name, "TEST 2")
+    expect_equal(test2_feat$map_id, bit64::as.integer64(999992))
+    expect_equal(test2_feat$ig_date, as.Date("9999-01-02"))
+    expect_equal(test2_feat$ig_year, 9999)
+    test2_feat <- NULL
+
+    test3_feat <- lyr$getFeature(test3_fid)
+    expect_false(is.null(test3_feat))
+    expect_equal(test3_feat$event_id, "ZZ03")
+    expect_equal(test3_feat$incid_name, "TEST 3")
+    expect_equal(test3_feat$map_id, bit64::as.integer64(999993))
+    expect_equal(test3_feat$ig_date, as.Date("9999-01-03"))
+    expect_equal(test3_feat$ig_year, 9999)
+    test3_feat <- NULL
+
+    test4_feat <- lyr$getFeature(test4_fid)
+    expect_false(is.null(test4_feat))
+    expect_equal(test4_feat$event_id, "ZZ04")
+    expect_equal(test4_feat$incid_name, "TEST 4")
+    expect_equal(test4_feat$map_id, bit64::as.integer64(999994))
+    expect_equal(test4_feat$ig_date, as.Date("9999-01-04"))
+    test4_orig_feat <- lyr$getFeature(test4_orig_fid)
+    geom_fld <- lyr$getGeometryColumn()
+    expect_true(g_equals(test4_feat[[geom_fld]], test4_orig_feat[[geom_fld]]))
+    test4_feat <- NULL
+
+    lyr$close()
     unlink(dsn)
 })
