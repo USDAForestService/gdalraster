@@ -462,13 +462,13 @@
 #' Rewrites/replaces an existing feature or creates a new feature within the
 #' layer. This method will write a feature to the layer, based on the feature
 #' id within the input feature. The `feature` argument is a named list of
-#' fields and their values, and must include a `$FID` element referencing the
-#' existing feature to rewrite. If the feature id doesn't exist a new feature
-#' will be written. Otherwise, the existing feature will be rewritten.
+#' fields and their values, including a `$FID` element potentially referencing
+#' an existing feature to rewrite. If the feature id doesn't exist a new
+#' feature will be written. Otherwise, the existing feature will be rewritten.
 #' The `UpsertFeature)` element in the list returned by `$testCapability()` can
-#' be checked to establish if this layer supports upsert writing.
-#' See `$setFeature()` above for a description of how omitted fields in the
-#' passed `feature` are processed.
+#' be checked to determine if this layer supports upsert writing. See
+#' `$setFeature()` above for a description of how omitted fields in the passed
+#' `feature` are processed.
 #' Upon successful completion, returns the new FID (as `numeric` carrying the
 #' `bit64::integer64` class attribute). `NULL` is returned if feature creation
 #' did not succeed. Requires GDAL >= 3.6.
