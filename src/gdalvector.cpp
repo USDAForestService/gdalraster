@@ -677,7 +677,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
             col_num += 1;
 
             bool has_value = true;
-            if (!OGR_F_IsFieldSet(hFeat, i) || OGR_F_IsFieldNull(hFeat, i))
+            if (!OGR_F_IsFieldSetAndNotNull(hFeat, i))
                 has_value = false;
 
             OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
