@@ -75,10 +75,20 @@ sql <- "ig_year >= 2000 ORDER BY ig_year"
 args <- c("-where", sql)
 ogr2ogr(src, ynp_filtered, src_layers = "mtbs_perims", cl_arg = args)
 
+# Dissolve features based on a shared attribute value
+if (has_spatialite()) {
+  ynp_dissolved <- file.path(tempdir(), "ynp_fires_dissolve.gpkg")
+  sql <- "SELECT ig_year, ST_Union(geom) AS geom FROM mtbs_perims GROUP BY ig_year"
+  args <- c("-sql", sql, "-dialect", "SQLITE")
+  args <- c(args, "-nlt", "MULTIPOLYGON", "-nln", "dissolved_on_year")
+  ogr2ogr(src, ynp_dissolved, cl_arg = args)
+}
+
 deleteDataset(shp_file)
 deleteDataset(ynp_wgs84)
 deleteDataset(ynp_clip)
 deleteDataset(ynp_filtered)
+deleteDataset(ynp_dissolved)
 }
 \seealso{
 \code{\link[=ogrinfo]{ogrinfo()}}, the \link{ogr_manage} utilities
