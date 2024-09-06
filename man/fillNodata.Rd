@@ -68,6 +68,5 @@ fillNodata(mod_file, band=1)
 mod_tbl = buildRAT(mod_file)
 head(mod_tbl)
 mod_tbl[is.na(mod_tbl$VALUE),]
-
-deleteDataset(mod_file)
+\dontshow{deleteDataset(mod_file)}
 }

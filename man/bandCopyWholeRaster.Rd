@@ -61,8 +61,7 @@ bandCopyWholeRaster(b5_file, 1, dst_file, 5, options=opt)
 ds <- new(GDALRaster, dst_file)
 ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
 ds$close()
-
-deleteDataset(dst_file)
+\dontshow{deleteDataset(dst_file)}
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}},

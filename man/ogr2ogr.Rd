@@ -81,9 +81,8 @@ if (has_spatialite()) {
     args <- c(args, "-nlt", "MULTIPOLYGON", "-nln", "dissolved_on_year")
     ogr2ogr(src, ynp_gpkg, cl_arg = args)
 }
-
-deleteDataset(ynp_shp)
-deleteDataset(ynp_gpkg)
+\dontshow{deleteDataset(ynp_shp)}
+\dontshow{deleteDataset(ynp_gpkg)}
 }
 \seealso{
 \code{\link[=ogrinfo]{ogrinfo()}}, the \link{ogr_manage} utilities

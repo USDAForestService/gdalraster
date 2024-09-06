@@ -46,7 +46,7 @@ ds <- new(GDALRaster, img_file)
 ds$info()
 
 ds$close()
-deleteDataset(img_file)
+\dontshow{deleteDataset(img_file)}
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=rasterFromRaster]{rasterFromRaster()}}, \code{\link[=warp]{warp()}}

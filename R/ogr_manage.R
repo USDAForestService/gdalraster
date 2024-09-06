@@ -285,8 +285,7 @@
 #' if (as.integer(gdal_version()[2]) >= 3070000)
 #'   ogrinfo(dsn, "layer2")
 #'
-#' deleteDataset(dsn)
-#'
+#' \dontshow{deleteDataset(dsn)}
 #' # edit data using SQL
 #' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 #' perims_shp <- file.path(tempdir(), "mtbs_perims.shp")
@@ -310,8 +309,7 @@
 #' #   ogrinfo(perims_shp, "mtbs_perims")
 #' # or, for output incl. the feature data (omit the default "-so" arg):
 #' #   ogrinfo(perims_shp, "mtbs_perims", cl_arg = "-nomd")
-#'
-#' deleteDataset(perims_shp)
+#' \dontshow{deleteDataset(perims_shp)}
 #' @export
 ogr_ds_exists <- function(dsn, with_update = FALSE) {
     if (!(is.character(dsn) && length(dsn) == 1))
