@@ -41,7 +41,7 @@
 #' ds$info()
 #'
 #' ds$close()
-#' deleteDataset(img_file)
+#' \dontshow{deleteDataset(img_file)}
 #' @export
 translate <- function(src_filename, dst_filename, cl_arg = NULL,
                       quiet = FALSE) {
@@ -282,8 +282,7 @@ translate <- function(src_filename, dst_filename, cl_arg = NULL,
 #' ds$res()
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
-#'
-#' deleteDataset(alb83_file)
+#' \dontshow{deleteDataset(alb83_file)}
 #' @export
 warp <- function(src_files,
                  dst_filename,

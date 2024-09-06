@@ -401,8 +401,7 @@ ogr_layer_field_names(dsn, "layer2")
 if (as.integer(gdal_version()[2]) >= 3070000)
   ogrinfo(dsn, "layer2")
 
-deleteDataset(dsn)
-
+\dontshow{deleteDataset(dsn)}
 # edit data using SQL
 src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 perims_shp <- file.path(tempdir(), "mtbs_perims.shp")
@@ -426,8 +425,7 @@ ogr_layer_field_names(perims_shp, "mtbs_perims")
 #   ogrinfo(perims_shp, "mtbs_perims")
 # or, for output incl. the feature data (omit the default "-so" arg):
 #   ogrinfo(perims_shp, "mtbs_perims", cl_arg = "-nomd")
-
-deleteDataset(perims_shp)
+\dontshow{deleteDataset(perims_shp)}
 }
 \seealso{
 \code{\link[=gdal_formats]{gdal_formats()}}, \code{\link[=has_spatialite]{has_spatialite()}}, \code{\link[=ogr_def_field]{ogr_def_field()}}, \code{\link[=ogr_def_layer]{ogr_def_layer()}},

@@ -320,7 +320,7 @@ SEEK_END <- "SEEK_END"
 #' ds$getMetadataItem(band = 0, mdi_name = "DESCRIPTION", domain = "")
 #'
 #' ds$close()
-#' vsi_unlink(mem_file)
+#' \dontshow{vsi_unlink(mem_file)}
 NULL
 
 Rcpp::loadModule("mod_VSIFile", TRUE)

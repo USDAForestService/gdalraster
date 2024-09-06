@@ -160,8 +160,7 @@ ds <- new(GDALRaster, vrt_file)
 ds$res()
 ds$bbox()
 ds$close()
-vsi_unlink(vrt_file)
-
+\dontshow{vsi_unlink(vrt_file)}
 
 ## clip
 
@@ -184,9 +183,8 @@ ds_vrt <- new(GDALRaster, vrt_file)
 bbox_from_wkt(bnd)
 ds_vrt$bbox()
 ds_vrt$res()
-
 ds_vrt$close()
-vsi_unlink(vrt_file)
+\dontshow{vsi_unlink(vrt_file)}
 
 # src_align = FALSE
 vrt_file <- rasterToVRT(evt_file,
@@ -199,8 +197,8 @@ ds_vrt_noalign$bbox()
 ds_vrt_noalign$res()
 
 ds_vrt_noalign$close()
-vsi_unlink(vrt_file)
 ds_evt$close()
+\dontshow{vsi_unlink(vrt_file)}
 
 
 ## subset and pixel align two rasters
@@ -259,9 +257,9 @@ rs$get_var()
 rs$get_sd()
 
 ds_b5vrt$close()
-vsi_unlink(vrt_file)
 ds_lcp$close()
 ds_b5$close()
+\dontshow{vsi_unlink(vrt_file)}
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=buildVRT]{buildVRT()}}

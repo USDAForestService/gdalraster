@@ -491,8 +491,7 @@ autoCreateWarpedVRT <- function(src_ds, dst_wkt, resample_alg, src_wkt = "", max
 #' ds$getRasterCount()
 #' plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
 #' ds$close()
-#'
-#' vsi_unlink(vrt_file)
+#' \dontshow{vsi_unlink(vrt_file)}
 buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) {
     invisible(.Call(`_gdalraster_buildVRT`, vrt_filename, input_rasters, cl_arg, quiet))
 }
@@ -575,8 +574,7 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #' mod_tbl = buildRAT(mod_file)
 #' head(mod_tbl)
 #' mod_tbl[is.na(mod_tbl$VALUE),]
-#'
-#' deleteDataset(mod_file)
+#' \dontshow{deleteDataset(mod_file)}
 fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_iterations = 0L, quiet = FALSE) {
     invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations, quiet))
 }
@@ -623,8 +621,7 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
 #'   # command-line arguments for gdal_footprint
 #'   args <- c("-t_srs", "EPSG:4326")
 #'   footprint(evt_file, out_file, args)
-#'
-#'   deleteDataset(out_file)
+#'   \dontshow{deleteDataset(out_file)}
 #' }
 footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
     invisible(.Call(`_gdalraster_footprint`, src_filename, dst_filename, cl_arg))
@@ -698,9 +695,8 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
 #'     args <- c(args, "-nlt", "MULTIPOLYGON", "-nln", "dissolved_on_year")
 #'     ogr2ogr(src, ynp_gpkg, cl_arg = args)
 #' }
-#'
-#' deleteDataset(ynp_shp)
-#' deleteDataset(ynp_gpkg)
+#' \dontshow{deleteDataset(ynp_shp)}
+#' \dontshow{deleteDataset(ynp_gpkg)}
 ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL, open_options = NULL) {
     invisible(.Call(`_gdalraster_ogr2ogr`, src_dsn, dst_dsn, src_layers, cl_arg, open_options))
 }
@@ -772,8 +768,7 @@ ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL, open_opt
 #'   sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
 #'   args <- c("-dialect", "sqlite", "-sql", sql)
 #'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
-#'
-#'   vsi_unlink(src_mem)
+#'   \dontshow{vsi_unlink(src_mem)}
 #' }
 ogrinfo <- function(dsn, layers = NULL, cl_arg = as.character( c("-so", "-nomd")), open_options = NULL, read_only = TRUE, cout = TRUE) {
     invisible(.Call(`_gdalraster_ogrinfo`, dsn, layers, cl_arg, open_options, read_only, cout))
@@ -870,9 +865,8 @@ ogrinfo <- function(dsn, layers = NULL, cl_arg = as.character( c("-so", "-nomd")
 #'             connectedness = 8,
 #'             mask_filename = mask_file,
 #'             mask_band = 1)
-#'
-#' deleteDataset(mask_file)
-#' deleteDataset(evt_mmu_file)
+#' \dontshow{deleteDataset(mask_file)}
+#' \dontshow{deleteDataset(evt_mmu_file)}
 sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename = "", mask_band = 0L, options = NULL, quiet = FALSE) {
     invisible(.Call(`_gdalraster_sieveFilter`, src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename, mask_band, options, quiet))
 }
@@ -977,8 +971,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
 #'             main="Storm Lake Tree Canopy Cover (%)")
 #' ds_tcc$close()
-#'
-#' deleteDataset(tcc_file)
+#' \dontshow{deleteDataset(tcc_file)}
 createColorRamp <- function(start_index, start_color, end_index, end_color, palette_interp = "RGB") {
     .Call(`_gdalraster_createColorRamp`, start_index, start_color, end_index, end_color, palette_interp)
 }
@@ -1026,8 +1019,7 @@ createColorRamp <- function(start_index, start_color, end_index, end_color, pale
 #' ds <- new(GDALRaster, dst_file)
 #' ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
 #' ds$close()
-#'
-#' deleteDataset(dst_file)
+#' \dontshow{deleteDataset(dst_file)}
 bandCopyWholeRaster <- function(src_filename, src_band, dst_filename, dst_band, options = NULL, quiet = FALSE) {
     invisible(.Call(`_gdalraster_bandCopyWholeRaster`, src_filename, src_band, dst_filename, dst_band, options, quiet))
 }

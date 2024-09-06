@@ -194,7 +194,7 @@ nrow(tbl2)
 head(tbl2)
 
 ds$close()
-deleteDataset(f)
+\dontshow{deleteDataset(f)}
 
 # Display
 evt_gt <- displayRAT(tbl2, title = "Storm Lake EVT Raster Attribute Table")

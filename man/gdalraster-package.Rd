@@ -208,5 +208,9 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
   This enables the code to run regardless of where R is installed. Users will
   normally give file names as a regular full path or relative to the current
   working directory.
-}
 
+  Temporary files are created in some examples which have cleanup code wrapped
+  in \code{dontshow{}}. While the cleanup code is not shown in the
+  documentation, note that this code runs by default if examples are run with
+  \code{example()}.
+}

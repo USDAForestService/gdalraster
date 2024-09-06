@@ -343,7 +343,7 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
 #'
 #' ds_slp$close()
 #' ds_lcp$close()
-#' deleteDataset(slpp_file)
+#' \dontshow{deleteDataset(slpp_file)}
 #' @export
 rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
                              dtName=NULL, options=NULL, init=NULL,
@@ -530,8 +530,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds$res()
 #' ds$bbox()
 #' ds$close()
-#' vsi_unlink(vrt_file)
-#'
+#' \dontshow{vsi_unlink(vrt_file)}
 #'
 #' ## clip
 #'
@@ -554,9 +553,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' bbox_from_wkt(bnd)
 #' ds_vrt$bbox()
 #' ds_vrt$res()
-#'
 #' ds_vrt$close()
-#' vsi_unlink(vrt_file)
+#' \dontshow{vsi_unlink(vrt_file)}
 #'
 #' # src_align = FALSE
 #' vrt_file <- rasterToVRT(evt_file,
@@ -569,8 +567,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' ds_vrt_noalign$res()
 #'
 #' ds_vrt_noalign$close()
-#' vsi_unlink(vrt_file)
 #' ds_evt$close()
+#' \dontshow{vsi_unlink(vrt_file)}
 #'
 #'
 #' ## subset and pixel align two rasters
@@ -629,9 +627,9 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' rs$get_sd()
 #'
 #' ds_b5vrt$close()
-#' vsi_unlink(vrt_file)
 #' ds_lcp$close()
 #' ds_b5$close()
+#' \dontshow{vsi_unlink(vrt_file)}
 #' @export
 rasterToVRT <- function(srcfile,
                         relativeToVRT = FALSE,
@@ -911,7 +909,7 @@ rasterToVRT <- function(srcfile,
 #' # min, max, mean, sd
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
-#' deleteDataset(hi_file)
+#' \dontshow{deleteDataset(hi_file)}
 #'
 #'
 #' ## Calculate normalized difference vegetation index (NDVI)
@@ -932,7 +930,7 @@ rasterToVRT <- function(srcfile,
 #' ds <- new(GDALRaster, ndvi_file)
 #' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 #' ds$close()
-#' deleteDataset(ndvi_file)
+#' \dontshow{deleteDataset(ndvi_file)}
 #'
 #'
 #' ## Reclassify a variable by rule set
@@ -987,8 +985,7 @@ rasterToVRT <- function(srcfile,
 #'
 #' # if LCP file format is needed:
 #' # createCopy("LCP", "storml_edited.lcp", tif_file)
-#'
-#' deleteDataset(tif_file)
+#' \dontshow{deleteDataset(tif_file)}
 #' @export
 calc <- function(expr,
                  rasterfiles,
@@ -1300,7 +1297,7 @@ calc <- function(expr,
 #' ds <- new(GDALRaster, cmb_file)
 #' ds$info()
 #' ds$close()
-#' deleteDataset(cmb_file)
+#' \dontshow{deleteDataset(cmb_file)}
 #' @export
 combine <- function(rasterfiles, var.names=NULL, bands=NULL,
                     dstfile=NULL, fmt=NULL, dtName="UInt32",
@@ -1394,8 +1391,7 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' slp_file <- file.path(tempdir(), "storml_slp.tif")
 #' dem_proc("slope", elev_file, slp_file)
-#'
-#' deleteDataset(slp_file)
+#' \dontshow{deleteDataset(slp_file)}
 #' @export
 dem_proc <- function(mode,
                      srcfile,
@@ -1529,7 +1525,7 @@ dem_proc <- function(mode,
 #' polygonize(evt_file, dsn, layer, fld)
 #' set_config_option("SQLITE_USE_OGR_VFS", "")
 #' set_config_option("OGR_SQLITE_JOURNAL", "")
-#' deleteDataset(dsn)
+#' \dontshow{deleteDataset(dsn)}
 #' @export
 polygonize <- function(raster_file,
                        out_dsn,
@@ -1721,7 +1717,7 @@ polygonize <- function(raster_file,
 #'             main="YNP Fires 1984-2022 - Most Recent Burn Year")
 #'
 #' ds$close()
-#' deleteDataset(out_file)
+#' \dontshow{deleteDataset(out_file)}
 #' @export
 rasterize <- function(src_dsn,
                       dstfile,

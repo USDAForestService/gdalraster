@@ -138,7 +138,7 @@ set_config_option("OGR_SQLITE_JOURNAL", "MEMORY")
 polygonize(evt_file, dsn, layer, fld)
 set_config_option("SQLITE_USE_OGR_VFS", "")
 set_config_option("OGR_SQLITE_JOURNAL", "")
-deleteDataset(dsn)
+\dontshow{deleteDataset(dsn)}
 }
 \seealso{
 \code{\link[=rasterize]{rasterize()}}

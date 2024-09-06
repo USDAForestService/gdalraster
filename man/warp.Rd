@@ -208,8 +208,7 @@ ds$getProjectionRef()
 ds$res()
 ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 ds$close()
-
-deleteDataset(alb83_file)
+\dontshow{deleteDataset(alb83_file)}
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=srs_to_wkt]{srs_to_wkt()}}, \code{\link[=translate]{translate()}}

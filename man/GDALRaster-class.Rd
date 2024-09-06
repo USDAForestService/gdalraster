@@ -918,8 +918,7 @@ ds_new$getMetadataItem(band = 1, "STATISTICS_MEAN", "")
 
 ## close the dataset for proper cleanup
 ds_new$close()
-deleteDataset(new_file)
-
+\dontshow{deleteDataset(new_file)}
 \donttest{
 ## using a GDAL Virtual File System handler '/vsicurl/'
 ## see: https://gdal.org/user/virtual_file_systems.html

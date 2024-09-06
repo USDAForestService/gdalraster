@@ -115,8 +115,7 @@ if (as.integer(gdal_version()[2]) >= 3070000) {
   ds <- new(GDALRaster, lcp_in_zip)
   ds$info()
   ds$close()
-
-  vsi_unlink(zip_file)
+  \dontshow{vsi_unlink(zip_file)}
 }
 }
 \seealso{

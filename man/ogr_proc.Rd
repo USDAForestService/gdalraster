@@ -218,7 +218,7 @@ print(d)
 lyr1$close()
 lyr2$close()
 lyr_out$close()
-deleteDataset(tmp_dsn)
+\dontshow{deleteDataset(tmp_dsn)}
 }
 \seealso{
 \code{\link[=GDALVector]{GDALVector-class}}, \code{\link{ogr_define}},

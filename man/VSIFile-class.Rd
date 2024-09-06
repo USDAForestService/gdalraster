@@ -316,7 +316,7 @@ ds$getMetadata(band = 0, domain = "")
 ds$getMetadataItem(band = 0, mdi_name = "DESCRIPTION", domain = "")
 
 ds$close()
-vsi_unlink(mem_file)
+\dontshow{vsi_unlink(mem_file)}
 }
 \seealso{
 GDAL Virtual File Systems (compressed, network hosted, etc...):\cr
