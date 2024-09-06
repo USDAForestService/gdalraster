@@ -13,7 +13,7 @@ kernel filter. (See buildVRT() for virtual mosaicing.)"></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9341</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9342</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -294,9 +294,6 @@ Examples for both cases of <code>src_align</code> are given below.</p>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323476.1 5101842.0  327796.1 5105082.0</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">vrt_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## clip</span></span></span>
 <span class="r-in"><span></span></span>
@@ -323,10 +320,7 @@ Examples for both cases of <code>src_align</code> are given below.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1]  323776.1 5102862.0  326446.1 5104932.0</span>
 <span class="r-in"><span><span class="va">ds_vrt</span><span class="op">$</span><span class="fu">res</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 30 30</span>
-<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds_vrt</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">vrt_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># src_align = FALSE</span></span></span>
 <span class="r-in"><span><span class="va">vrt_file</span> <span class="op">&lt;-</span> <span class="fu">rasterToVRT</span><span class="op">(</span><span class="va">evt_file</span>,</span></span>
@@ -341,8 +335,6 @@ Examples for both cases of <code>src_align</code> are given below.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 30 30</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds_vrt_noalign</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">vrt_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span><span class="va">ds_evt</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span></span></span>
@@ -423,8 +415,6 @@ Examples for both cases of <code>src_align</code> are given below.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1102.23</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds_b5vrt</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">vrt_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-in"><span><span class="va">ds_lcp</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds_b5</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 </code></pre></div>

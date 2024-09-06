@@ -13,7 +13,7 @@ polygon."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9341</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9342</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -176,7 +176,7 @@ values are rounded to integers.</p>
 <span class="r-in"><span>                  var.names <span class="op">=</span> <span class="st">"EVT"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating from 1 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/Rtmp7pg0tk/rastcalc1d5b44a4de31.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/Rtmpguep89/rastcalc1d23545e6588.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># create a version of EVT with two-pixel minimum mapping unit</span></span></span>
 <span class="r-in"><span><span class="fu">sieveFilter</span><span class="op">(</span>src_filename <span class="op">=</span> <span class="va">evt_file</span>,</span></span>
@@ -188,11 +188,6 @@ values are rounded to integers.</p>
 <span class="r-in"><span>            mask_filename <span class="op">=</span> <span class="va">mask_file</span>,</span></span>
 <span class="r-in"><span>            mask_band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">mask_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">evt_mmu_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
