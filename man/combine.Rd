@@ -105,7 +105,7 @@ head(tbl)
 ds <- new(GDALRaster, cmb_file)
 ds$info()
 ds$close()
-deleteDataset(cmb_file)
+\dontshow{deleteDataset(cmb_file)}
 }
 \seealso{
 \code{\link[=CmbTable]{CmbTable-class}}, \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=calc]{calc()}},

@@ -84,8 +84,7 @@ if (as.integer(gdal_version()[2]) >= 3070000) {
   sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
   args <- c("-dialect", "sqlite", "-sql", sql)
   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
-
-  vsi_unlink(src_mem)
+  \dontshow{vsi_unlink(src_mem)}
 }
 }
 \seealso{

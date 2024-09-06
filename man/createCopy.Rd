@@ -73,8 +73,7 @@ for (band in 1:ds$getRasterCount())
 ds$getStatistics(band = 1, approx_ok = FALSE, force = TRUE)
 
 ds$close()
-
-deleteDataset(tif_file)
+\dontshow{deleteDataset(tif_file)}
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=getCreationOptions]{getCreationOptions()}},

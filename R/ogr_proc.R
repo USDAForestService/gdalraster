@@ -190,7 +190,7 @@
 #' lyr1$close()
 #' lyr2$close()
 #' lyr_out$close()
-#' deleteDataset(tmp_dsn)
+#' \dontshow{deleteDataset(tmp_dsn)}
 #' @export
 ogr_proc <- function(mode,
                      input_lyr,

@@ -54,10 +54,9 @@
 #'
 #' # ...
 #'
-#' ## close the dataset when done
+#' # close the dataset when done
 #' ds$close()
-#'
-#' deleteDataset(new_file)
+#' \dontshow{deleteDataset(new_file)}
 #' @export
 create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
                    options = NULL, return_obj = FALSE) {
@@ -125,8 +124,7 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
 #' ds$getStatistics(band = 1, approx_ok = FALSE, force = TRUE)
 #'
 #' ds$close()
-#'
-#' deleteDataset(tif_file)
+#' \dontshow{deleteDataset(tif_file)}
 #' @export
 createCopy <- function(format, dst_filename, src_filename, strict = FALSE,
                        options = NULL, quiet = FALSE, return_obj = FALSE) {

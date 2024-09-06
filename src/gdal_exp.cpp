@@ -968,8 +968,7 @@ GDALRaster autoCreateWarpedVRT(GDALRaster src_ds, std::string dst_wkt,
 //' ds$getRasterCount()
 //' plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
 //' ds$close()
-//'
-//' vsi_unlink(vrt_file)
+//' \dontshow{vsi_unlink(vrt_file)}
 // [[Rcpp::export(invisible = true)]]
 bool buildVRT(Rcpp::CharacterVector vrt_filename,
         Rcpp::CharacterVector input_rasters,
@@ -1309,8 +1308,7 @@ bool dem_proc(std::string mode,
 //' mod_tbl = buildRAT(mod_file)
 //' head(mod_tbl)
 //' mod_tbl[is.na(mod_tbl$VALUE),]
-//'
-//' deleteDataset(mod_file)
+//' \dontshow{deleteDataset(mod_file)}
 // [[Rcpp::export(invisible = true)]]
 bool fillNodata(Rcpp::CharacterVector filename, int band,
         Rcpp::CharacterVector mask_file = "",
@@ -1407,8 +1405,7 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 //'   # command-line arguments for gdal_footprint
 //'   args <- c("-t_srs", "EPSG:4326")
 //'   footprint(evt_file, out_file, args)
-//'
-//'   deleteDataset(out_file)
+//'   \dontshow{deleteDataset(out_file)}
 //' }
 // [[Rcpp::export(invisible = true)]]
 bool footprint(Rcpp::CharacterVector src_filename,
@@ -1533,9 +1530,8 @@ bool footprint(Rcpp::CharacterVector src_filename,
 //'     args <- c(args, "-nlt", "MULTIPOLYGON", "-nln", "dissolved_on_year")
 //'     ogr2ogr(src, ynp_gpkg, cl_arg = args)
 //' }
-//'
-//' deleteDataset(ynp_shp)
-//' deleteDataset(ynp_gpkg)
+//' \dontshow{deleteDataset(ynp_shp)}
+//' \dontshow{deleteDataset(ynp_gpkg)}
 // [[Rcpp::export(invisible = true)]]
 bool ogr2ogr(Rcpp::CharacterVector src_dsn,
         Rcpp::CharacterVector dst_dsn,
@@ -1676,8 +1672,7 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //'   sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
 //'   args <- c("-dialect", "sqlite", "-sql", sql)
 //'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
-//'
-//'   vsi_unlink(src_mem)
+//'   \dontshow{vsi_unlink(src_mem)}
 //' }
 // [[Rcpp::export(invisible = true)]]
 std::string ogrinfo(Rcpp::CharacterVector dsn,
@@ -1989,9 +1984,8 @@ bool rasterize(std::string src_dsn, std::string dst_filename,
 //'             connectedness = 8,
 //'             mask_filename = mask_file,
 //'             mask_band = 1)
-//'
-//' deleteDataset(mask_file)
-//' deleteDataset(evt_mmu_file)
+//' \dontshow{deleteDataset(mask_file)}
+//' \dontshow{deleteDataset(evt_mmu_file)}
 // [[Rcpp::export(invisible = true)]]
 bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
         Rcpp::CharacterVector dst_filename, int dst_band,
@@ -2316,8 +2310,7 @@ GDALRaster warp(const Rcpp::List& src_datasets,
 //' plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
 //'             main="Storm Lake Tree Canopy Cover (%)")
 //' ds_tcc$close()
-//'
-//' deleteDataset(tcc_file)
+//' \dontshow{deleteDataset(tcc_file)}
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix createColorRamp(int start_index,
         Rcpp::IntegerVector start_color,
@@ -2445,8 +2438,7 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //' ds <- new(GDALRaster, dst_file)
 //' ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
 //' ds$close()
-//'
-//' deleteDataset(dst_file)
+//' \dontshow{deleteDataset(dst_file)}
 // [[Rcpp::export(invisible = true)]]
 bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
         Rcpp::CharacterVector dst_filename, int dst_band,

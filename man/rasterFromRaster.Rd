@@ -92,7 +92,7 @@ ds_slp$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
 
 ds_slp$close()
 ds_lcp$close()
-deleteDataset(slpp_file)
+\dontshow{deleteDataset(slpp_file)}
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}},
