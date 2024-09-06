@@ -438,6 +438,7 @@
 #' * The shapefile driver will write a NULL value in the DBF file.
 #' * The GeoJSON driver will take into account unset fields to remove the
 #'   corresponding JSON member.
+#'
 #' Upon successful completion, returns the FID of the feature that was set
 #' (as `numeric` carrying the `bit64::integer64` class attribute). `NULL` is
 #' returned if set feature did not succeed. To set a feature, but create it
@@ -652,7 +653,7 @@
 #' lyr$getFeatureCount()
 #'
 #' lyr$close()
-#' unlink(dsn)
+#' \dontshow{unlink(dsn)}
 NULL
 
 Rcpp::loadModule("mod_GDALVector", TRUE)
