@@ -23,7 +23,7 @@ command-line arguments that can be passed in cl_arg."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9340</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9341</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -161,6 +161,15 @@ count" capability.</p>
 <span class="r-in"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-where"</span>, <span class="va">sql</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ogr2ogr</span><span class="op">(</span><span class="va">src</span>, <span class="va">ynp_filtered</span>, src_layers <span class="op">=</span> <span class="st">"mtbs_perims"</span>, cl_arg <span class="op">=</span> <span class="va">args</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Dissolve features based on a shared attribute value</span></span></span>
+<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="has_spatialite.html">has_spatialite</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
+<span class="r-in"><span>  <span class="va">ynp_dissolved</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"ynp_fires_dissolve.gpkg"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT ig_year, ST_Union(geom) AS geom FROM mtbs_perims GROUP BY ig_year"</span></span></span>
+<span class="r-in"><span>  <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-sql"</span>, <span class="va">sql</span>, <span class="st">"-dialect"</span>, <span class="st">"SQLITE"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">args</span>, <span class="st">"-nlt"</span>, <span class="st">"MULTIPOLYGON"</span>, <span class="st">"-nln"</span>, <span class="st">"dissolved_on_year"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">ogr2ogr</span><span class="op">(</span><span class="va">src</span>, <span class="va">ynp_dissolved</span>, cl_arg <span class="op">=</span> <span class="va">args</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">shp_file</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">ynp_wgs84</span><span class="op">)</span></span></span>
@@ -168,6 +177,8 @@ count" capability.</p>
 <span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">ynp_clip</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">ynp_filtered</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">ynp_dissolved</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 </code></pre></div>
     </div>
