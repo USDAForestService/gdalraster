@@ -186,31 +186,33 @@ test_that("feature write methods work", {
     expect_false(is.null(test2_fid))
     expect_equal(lyr$getFeatureCount(), start_count + 1)
 
-    # edit an existing feature and upsert with existing FID
-    feat <- NULL
-    feat <- lyr$getNextFeature()
-    feat$event_id <- "ZZ03"
-    feat$incid_name <- "TEST 3"
-    feat$map_id <- 999993
-    feat$ig_date <- as.Date("9999-01-03")
-    feat$ig_year <- 9999
-    test3_fid <- lyr$upsertFeature(feat)
-    expect_false(is.null(test3_fid))
-    expect_equal(lyr$getFeatureCount(), start_count + 1)
+    if(.gdal_version_num() > 3060000) {
+        # edit an existing feature and upsert with existing FID
+        feat <- NULL
+        feat <- lyr$getNextFeature()
+        feat$event_id <- "ZZ03"
+        feat$incid_name <- "TEST 3"
+        feat$map_id <- 999993
+        feat$ig_date <- as.Date("9999-01-03")
+        feat$ig_year <- 9999
+        test3_fid <- lyr$upsertFeature(feat)
+        expect_false(is.null(test3_fid))
+        expect_equal(lyr$getFeatureCount(), start_count + 1)
 
-    # edit an existing feature and upsert with new non-existing FID
-    feat <- NULL
-    feat <- lyr$getNextFeature()
-    test4_orig_fid <- feat$FID
-    feat$FID <- bit64::as.integer64(9999999999999994)
-    feat$event_id <- "ZZ04"
-    feat$incid_name <- "TEST 4"
-    feat$map_id <- 999994
-    feat$ig_date <- as.Date("9999-01-04")
-    feat$ig_year <- 9999
-    test4_fid <- lyr$upsertFeature(feat)
-    expect_false(is.null(test4_fid))
-    expect_equal(lyr$getFeatureCount(), start_count + 2)
+        # edit an existing feature and upsert with new non-existing FID
+        feat <- NULL
+        feat <- lyr$getNextFeature()
+        test4_orig_fid <- feat$FID
+        feat$FID <- bit64::as.integer64(9999999999999994)
+        feat$event_id <- "ZZ04"
+        feat$incid_name <- "TEST 4"
+        feat$map_id <- 999994
+        feat$ig_date <- as.Date("9999-01-04")
+        feat$ig_year <- 9999
+        test4_fid <- lyr$upsertFeature(feat)
+        expect_false(is.null(test4_fid))
+        expect_equal(lyr$getFeatureCount(), start_count + 2)
+    }
 
     # read back
     lyr$open(read_only = TRUE)
@@ -236,25 +238,27 @@ test_that("feature write methods work", {
     expect_equal(test2_feat$ig_year, 9999)
     test2_feat <- NULL
 
-    test3_feat <- lyr$getFeature(test3_fid)
-    expect_false(is.null(test3_feat))
-    expect_equal(test3_feat$event_id, "ZZ03")
-    expect_equal(test3_feat$incid_name, "TEST 3")
-    expect_equal(test3_feat$map_id, bit64::as.integer64(999993))
-    expect_equal(test3_feat$ig_date, as.Date("9999-01-03"))
-    expect_equal(test3_feat$ig_year, 9999)
-    test3_feat <- NULL
+    if(.gdal_version_num() > 3060000) {
+        test3_feat <- lyr$getFeature(test3_fid)
+        expect_false(is.null(test3_feat))
+        expect_equal(test3_feat$event_id, "ZZ03")
+        expect_equal(test3_feat$incid_name, "TEST 3")
+        expect_equal(test3_feat$map_id, bit64::as.integer64(999993))
+        expect_equal(test3_feat$ig_date, as.Date("9999-01-03"))
+        expect_equal(test3_feat$ig_year, 9999)
+        test3_feat <- NULL
 
-    test4_feat <- lyr$getFeature(test4_fid)
-    expect_false(is.null(test4_feat))
-    expect_equal(test4_feat$event_id, "ZZ04")
-    expect_equal(test4_feat$incid_name, "TEST 4")
-    expect_equal(test4_feat$map_id, bit64::as.integer64(999994))
-    expect_equal(test4_feat$ig_date, as.Date("9999-01-04"))
-    test4_orig_feat <- lyr$getFeature(test4_orig_fid)
-    geom_fld <- lyr$getGeometryColumn()
-    expect_true(g_equals(test4_feat[[geom_fld]], test4_orig_feat[[geom_fld]]))
-    test4_feat <- NULL
+        test4_feat <- lyr$getFeature(test4_fid)
+        expect_false(is.null(test4_feat))
+        expect_equal(test4_feat$event_id, "ZZ04")
+        expect_equal(test4_feat$incid_name, "TEST 4")
+        expect_equal(test4_feat$map_id, bit64::as.integer64(999994))
+        expect_equal(test4_feat$ig_date, as.Date("9999-01-04"))
+        test4_orig_feat <- lyr$getFeature(test4_orig_fid)
+        geom_fld <- lyr$getGeometryColumn()
+        expect_true(g_equals(test4_feat[[geom_fld]], test4_orig_feat[[geom_fld]]))
+        test4_feat <- NULL
+    }
 
     lyr$close()
     unlink(dsn)
