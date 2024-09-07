@@ -431,7 +431,7 @@ flag if present)
 \item \code{OFTBinary}: \code{raw} vector (list column, \code{NULL} entries for OGR NULL values)
 }
 
-Geomtries are not returned if the field \code{returnGeomAs} is set to \code{NONE}
+Geometries are not returned if the field \code{returnGeomAs} is set to \code{NONE}
 (currently the default). Omitting the geometries may be beneficial for
 performance and memory usage when access only to feature attributes is
 needed. Geometries are returned as \code{raw} vectors in a data frame list column
@@ -461,19 +461,21 @@ corresponding JSON member.
 }
 
 Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if setting the
-feature did not succeed. To set a feature, but create it if it doesn't exist
-see the \verb{$upsertFeature()} method.
+feature did not succeed. The FID of the last feature written to the layer
+may be obtained with the method \verb{$getLastWriteFID()} (see below). To set a
+feature, but create it if it doesn't exist see the \verb{$upsertFeature()} method.
 
 \code{$createFeature(feature)}\cr
 Creates and writes a new feature within the layer. The \code{feature} argument is
 a named list of fields and their values. A \code{GDALVector} object provides
-\verb{$featureTemplate} as a read-only variable set to such a list with values
-initialized to \code{NA} (which maps to OGR NULL).
+a read-only \verb{$featureTemplate} that is set to such a list with values
+initialized to \code{NA} (OGR NULL).
 The passed feature is written to the layer as a new feature, rather than
-overwriting an existing one. If the feature has a FID other than
-\code{OGRNullFID} (i.e., \code{NA}, or omitted from the input \code{feature}), then the
-native implementation may use that as the feature id of the new feature,
-but not necessarily.
+overwriting an existing one. If the feature has a \verb{$FID} element other than
+\code{NA}, then the vector format driver may use that as the feature id of the
+new feature, but not necessarily. The FID of the last feature written
+to the layer may be obtained with the method \verb{$getLastWriteFID()} (see
+below).
 Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if creating
 the feature did not succeed. To create a feature, but set it if it already
 exists see the \verb{$upsertFeature()} method.
@@ -482,10 +484,10 @@ exists see the \verb{$upsertFeature()} method.
 Rewrites/replaces an existing feature or creates a new feature within the
 layer. This method will write a feature to the layer, based on the feature
 id within the input feature. The \code{feature} argument is a named list of
-fields and their values, including a \verb{$FID} element potentially referencing
+fields and their values, potentially including a \verb{$FID} element referencing
 an existing feature to rewrite. If the feature id doesn't exist a new
 feature will be written. Otherwise, the existing feature will be rewritten.
-The \verb{UpsertFeature)} element in the list returned by \verb{$testCapability()} can
+The \code{UpsertFeature} element in the list returned by \verb{$testCapability()} can
 be checked to determine if this layer supports upsert writing. See
 \verb{$setFeature()} above for a description of how omitted fields in the passed
 \code{feature} are processed.
@@ -493,12 +495,13 @@ Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if upser
 the feature did not succeed. Requires GDAL >= 3.6.
 
 \code{$getLastWriteFID()}\cr
-Returns the FID of the last feature written (newly created or updated
+Returns the FID of the last feature written (either newly created or updated
 existing). \code{NULL} is returned if no features have been written in the layer.
 Note that OGRNullFID (\code{-1}) may be returned after writing a feature in some
-formats. This is the case if a FID has not been assigned yet, and does not
-indicate an error (e.g., formats that do not store a persistent FID and
-assign FIDs upon a sequential read operation).
+formats. This is the case if a FID has not been assigned yet, and generally
+does not indicate an error (e.g., formats that do not store a persistent FID
+and assign FIDs upon a sequential read operation). The returned FID is a
+numeric scalar carrying the \code{bit64::integer64} class attribute.
 
 \code{$deleteFeature(fid)}\cr
 Deletes a feature from the layer. The feature with the indicated feature ID
