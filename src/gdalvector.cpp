@@ -1893,17 +1893,16 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         }
         else if (fld_type == OFTDate) {
             Rcpp::NumericVector v = list_in[list_idx];
-            Rcpp::CharacterVector class_attr {};
-            if (v.hasAttribute("class"))
-                class_attr = Rcpp::wrap(v.attr("class"));
-            if (std::find(class_attr.begin(), class_attr.end(), "Date")
-                    == class_attr.end()) {
-
-                OGR_F_Destroy(hFeat);
-                Rcpp::stop("value for OGR date field must be of class 'Date'");
-            }
             if (v.size() == 0 || Rcpp::NumericVector::is_na(v[0])) {
                 OGR_F_SetFieldNull(hFeat, fld_idx);
+                continue;
+            }
+            Rcpp::CharacterVector attr{};
+            if (v.hasAttribute("class"))
+                attr = Rcpp::wrap(v.attr("class"));
+            if (std::find(attr.begin(), attr.end(), "Date") == attr.end()) {
+                OGR_F_Destroy(hFeat);
+                Rcpp::stop("value for OGR date field must be of class 'Date'");
             }
             else {
                 int64_t nUnixTime = v[0] * 86400;
@@ -1918,17 +1917,16 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         }
         else if (fld_type == OFTDateTime) {
             Rcpp::NumericVector v = list_in[list_idx];
-            Rcpp::CharacterVector class_attr {};
-            if (v.hasAttribute("class"))
-                class_attr = Rcpp::wrap(v.attr("class"));
-            if (std::find(class_attr.begin(), class_attr.end(), "POSIXct")
-                    == class_attr.end()) {
-
-                OGR_F_Destroy(hFeat);
-                Rcpp::stop("value for OGR datetime field must be of class 'POSIXct'");
-            }
             if (v.size() == 0 || Rcpp::NumericVector::is_na(v[0])) {
                 OGR_F_SetFieldNull(hFeat, fld_idx);
+                continue;
+            }
+            Rcpp::CharacterVector attr{};
+            if (v.hasAttribute("class"))
+                attr = Rcpp::wrap(v.attr("class"));
+            if (std::find(attr.begin(), attr.end(), "POSIXct") == attr.end()) {
+                OGR_F_Destroy(hFeat);
+                Rcpp::stop("value for OGR datetime field must be of class 'POSIXct'");
             }
             else {
                 int64_t nUnixTime = static_cast<int64_t>(v[0]);
