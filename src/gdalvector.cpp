@@ -514,6 +514,15 @@ SEXP GDALVector::getNextFeature() {
         // return as list
         df.attr("class") = R_NilValue;
         df.attr("row.names") = R_NilValue;
+
+        // unlist fields that originate in a data frame list column
+        for (R_xlen_t i = 0; i < df.size(); i++) {
+            if (Rcpp::is<Rcpp::List>(df[i])) {
+                Rcpp::List list_tmp = df[i];
+                df[i] = list_tmp[0];
+            }
+        }
+
         return df;
     }
 }
@@ -598,6 +607,15 @@ SEXP GDALVector::getFeature(const Rcpp::RObject &fid) {
         // return as list
         df.attr("class") = R_NilValue;
         df.attr("row.names") = R_NilValue;
+
+        // unlist fields that originate in a data frame list column
+        for (R_xlen_t i = 0; i < df.size(); i++) {
+            if (Rcpp::is<Rcpp::List>(df[i])) {
+                Rcpp::List list_tmp = df[i];
+                df[i] = list_tmp[0];
+            }
+        }
+
         return df;
     }
 }
@@ -1933,18 +1951,14 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         else {
             // the remaining types may originate in a data frame list column:
             //     set up a generic RObject with the correct reference
-            Rcpp::Rcout << "list idx: " << list_idx << std::endl;
             Rcpp::RObject robj;
-            if (Rcpp::is<Rcpp::IntegerVector>(list_in[list_idx]) ||
-                Rcpp::is<Rcpp::NumericVector>(list_in[list_idx]) ||
-                Rcpp::is<Rcpp::CharacterVector>(list_in[list_idx]) ||
-                Rcpp::is<Rcpp::RawVector>(list_in[list_idx])) {
-
-                robj = list_in[list_idx];
-            }
-            else {
+            if (Rcpp::is<Rcpp::List>(list_in[list_idx])) {
                 Rcpp::List list_tmp = list_in[list_idx];
                 robj = list_tmp[0];
+            }
+            else {
+                robj = list_in[list_idx];
+
             }
 
             if (fld_type == OFTIntegerList) {
