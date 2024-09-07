@@ -708,35 +708,62 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
             OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
 
-            if (fld_type == OFTInteger && has_value) {
-                OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
-                if (fld_subtype == OFSTBoolean) {
-                    Rcpp::LogicalVector col = df[col_num];
-                    col[row_num] = OGR_F_GetFieldAsInteger(hFeat, i);
-                }
-                else {
-                    Rcpp::IntegerVector col = df[col_num];
-                    col[row_num] = OGR_F_GetFieldAsInteger(hFeat, i);
-                }
-            }
-            else if (fld_type == OFTInteger64 && has_value) {
-                const int64_t value = static_cast<int64_t>(
-                        OGR_F_GetFieldAsInteger64(hFeat, i));
+            switch (fld_type) {
+                case OFTInteger:
+                {
+                    if (!has_value)
+                        continue;
 
-                Rcpp::NumericVector col = df[col_num];
-                col[row_num] = Rcpp::toInteger64(value)[0];
-            }
-            else if (fld_type == OFTReal && has_value) {
-                Rcpp::NumericVector col = df[col_num];
-                col[row_num] = OGR_F_GetFieldAsDouble(hFeat, i);
-            }
-            else if ((fld_type == OFTDate || fld_type == OFTDateTime) &&
-                     has_value) {
+                    OGRFieldSubType fld_subtype =
+                            OGR_Fld_GetSubType(hFieldDefn);
 
-                int yr = 0, mo = 0, day = 0, hr = 0, min = 0, tzflag = 0;
-                float sec = 0;
-                if (OGR_F_GetFieldAsDateTimeEx(hFeat, i, &yr, &mo, &day,
-                                               &hr, &min, &sec, &tzflag)) {
+                    if (fld_subtype == OFSTBoolean) {
+                        Rcpp::LogicalVector col = df[col_num];
+                        col[row_num] = OGR_F_GetFieldAsInteger(hFeat, i);
+                    }
+                    else {
+                        Rcpp::IntegerVector col = df[col_num];
+                        col[row_num] = OGR_F_GetFieldAsInteger(hFeat, i);
+                    }
+                }
+                break;
+
+                case OFTInteger64:
+                {
+                    if (!has_value)
+                        continue;
+
+                    const int64_t value = static_cast<int64_t>(
+                            OGR_F_GetFieldAsInteger64(hFeat, i));
+
+                    Rcpp::NumericVector col = df[col_num];
+                    col[row_num] = Rcpp::toInteger64(value)[0];
+                }
+                break;
+
+                case OFTReal:
+                {
+                    if (!has_value)
+                        continue;
+
+                    Rcpp::NumericVector col = df[col_num];
+                    col[row_num] = OGR_F_GetFieldAsDouble(hFeat, i);
+                }
+                break;
+
+                case OFTDate:
+                case OFTDateTime:
+                {
+                    if (!has_value)
+                        continue;
+
+                    int yr = 0, mo = 0, day = 0, hr = 0, min = 0, tzflag = 0;
+                    float sec = 0;
+                    if (!OGR_F_GetFieldAsDateTimeEx(hFeat, i, &yr, &mo,
+                                                    &day, &hr, &min, &sec,
+                                                    &tzflag)) {
+                        continue;
+                    }
 
                     struct tm brokendowntime;
                     brokendowntime.tm_year = yr - 1900;
@@ -746,6 +773,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                     brokendowntime.tm_min = min;
                     brokendowntime.tm_sec = static_cast<int>(sec);
                     int64_t nUnixTime = CPLYMDHMSToUnixTime(&brokendowntime);
+
                     if (fld_type == OFTDate) {
                         Rcpp::NumericVector col = df[col_num];
                         col[row_num] = static_cast<double>(nUnixTime / 86400);
@@ -768,111 +796,137 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                                 nUnixTime + std::fmod(sec, 1));
                     }
                 }
-            }
-            else if (fld_type == OFTBinary) {
-                Rcpp::List col = df[col_num];
-                if (has_value) {
-                    int nDataSize = 0;
-                    GByte *pabyData = OGR_F_GetFieldAsBinary(hFeat, i,
-                                                             &nDataSize);
-                    if (nDataSize > 0) {
-                        Rcpp::RawVector blob(nDataSize);
-                        std::memcpy(&blob[0], pabyData, nDataSize);
-                        col[row_num] = blob;
-                    }
-                    else {
-                        col[row_num] = Rcpp::RawVector::create();
-                    }
-                }
-                else {
-                    col[row_num] = R_NilValue;
-                }
-            }
-            else if (fld_type == OFTIntegerList) {
-                Rcpp::List col = df[col_num];
-                if (has_value) {
-                    int nCount = 0;
-                    const int *panValue = OGR_F_GetFieldAsIntegerList(hFeat, i,
-                                                                      &nCount);
-                    if (nCount > 0) {
-                        std::vector<int> v(panValue, panValue + nCount);
-                        col[row_num] = Rcpp::wrap(v);
-                    }
-                    else {
-                        col[row_num] = Rcpp::IntegerVector::create();
-                    }
-                }
-                else {
-                    col[row_num] = NA_INTEGER;
-                }
-            }
-            else if (fld_type == OFTInteger64List) {
-                Rcpp::List col = df[col_num];
-                if (has_value) {
-                    int nCount = 0;
-                    const int64_t *panValue = reinterpret_cast<const int64_t *>(
-                            OGR_F_GetFieldAsInteger64List(hFeat, i, &nCount));
+                break;
 
-                    if (nCount > 0) {
-                        std::vector<int64_t> v(panValue, panValue + nCount);
-                        col[row_num] = Rcpp::wrap(v);
+                case OFTBinary:
+                {
+                    Rcpp::List col = df[col_num];
+                    if (!has_value) {
+                        col[row_num] = R_NilValue;
                     }
                     else {
-                        Rcpp::NumericVector v = Rcpp::NumericVector::create();
-                        v.attr("class") = "integer64";
-                        col[row_num] = v;
-                    }
-                }
-                else {
-                    std::vector<int64_t> v(1);
-                    v[0] = NA_INTEGER64;
-                    col[row_num] = Rcpp::wrap(v);
-                }
-            }
-            else if (fld_type == OFTRealList) {
-                Rcpp::List col = df[col_num];
-                if (has_value) {
-                    int nCount = 0;
-                    const double *padfValue =
-                            OGR_F_GetFieldAsDoubleList(hFeat, i, &nCount);
+                        int nDataSize = 0;
+                        GByte *pabyData = OGR_F_GetFieldAsBinary(hFeat, i,
+                                                                 &nDataSize);
 
-                    if (nCount > 0) {
-                        std::vector<double> v(padfValue, padfValue + nCount);
-                        col[row_num] = Rcpp::wrap(v);
-                    }
-                    else {
-                        col[row_num] = Rcpp::NumericVector::create();
+                        if (nDataSize > 0) {
+                            Rcpp::RawVector blob(nDataSize);
+                            std::memcpy(&blob[0], pabyData, nDataSize);
+                            col[row_num] = blob;
+                        }
+                        else {
+                            col[row_num] = Rcpp::RawVector::create();
+                        }
                     }
                 }
-                else {
-                    col[row_num] = NA_REAL;
-                }
-            }
-            else if (fld_type == OFTStringList) {
-                Rcpp::List col = df[col_num];
-                if (has_value) {
-                    char **papszValue = OGR_F_GetFieldAsStringList(hFeat, i);
-                    int nCount = 0;
-                    nCount = CSLCount(papszValue);
-                    if (nCount > 0) {
-                        std::vector<std::string> v(papszValue,
-                                                   papszValue + nCount);
+                break;
 
+                case OFTIntegerList:
+                {
+                    Rcpp::List col = df[col_num];
+                    if (!has_value) {
+                        col[row_num] = NA_INTEGER;
+                    }
+                    else {
+                        int nCount = 0;
+                        const int *panValue =
+                                OGR_F_GetFieldAsIntegerList(hFeat, i, &nCount);
+
+                        if (nCount > 0) {
+                            std::vector<int> v(panValue, panValue + nCount);
+                            col[row_num] = Rcpp::wrap(v);
+                        }
+                        else {
+                            col[row_num] = Rcpp::IntegerVector::create();
+                        }
+                    }
+                }
+                break;
+
+                case OFTInteger64List:
+                {
+                    Rcpp::List col = df[col_num];
+                    if (!has_value) {
+                        std::vector<int64_t> v = {NA_INTEGER64};
                         col[row_num] = Rcpp::wrap(v);
                     }
                     else {
-                        col[row_num] = Rcpp::CharacterVector::create();
+                        int nCount = 0;
+                        const int64_t *panValue =
+                                reinterpret_cast<const int64_t *>(
+                                    OGR_F_GetFieldAsInteger64List(hFeat, i,
+                                                                  &nCount));
+
+                        if (nCount > 0) {
+                            std::vector<int64_t> v(panValue, panValue + nCount);
+                            col[row_num] = Rcpp::wrap(v);
+                        }
+                        else {
+                            Rcpp::NumericVector v = {};
+                            v.attr("class") = "integer64";
+                            col[row_num] = v;
+                        }
                     }
                 }
-                else {
-                    col[row_num] = NA_STRING;
+                break;
+
+                case OFTRealList:
+                {
+                    Rcpp::List col = df[col_num];
+                    if (!has_value) {
+                        col[row_num] = NA_REAL;
+                    }
+                    else {
+                        int nCount = 0;
+                        const double *padfValue =
+                                OGR_F_GetFieldAsDoubleList(hFeat, i, &nCount);
+
+                        if (nCount > 0) {
+                            std::vector<double> v(padfValue,
+                                                  padfValue + nCount);
+
+                            col[row_num] = Rcpp::wrap(v);
+                        }
+                        else {
+                            col[row_num] = Rcpp::NumericVector::create();
+                        }
+                    }
                 }
-            }
-            else {
-                if (has_value) {
-                    Rcpp::CharacterVector col = df[col_num];
-                    col[row_num] = OGR_F_GetFieldAsString(hFeat, i);
+                break;
+
+                case OFTStringList:
+                {
+                    Rcpp::List col = df[col_num];
+                    if (!has_value) {
+                        col[row_num] = NA_STRING;
+                    }
+                    else {
+                        char **papszValue =
+                                OGR_F_GetFieldAsStringList(hFeat, i);
+
+                        int nCount = 0;
+                        nCount = CSLCount(papszValue);
+                        if (nCount > 0) {
+                            std::vector<std::string> v(papszValue,
+                                                       papszValue + nCount);
+
+                            col[row_num] = Rcpp::wrap(v);
+                        }
+                        else {
+                            col[row_num] = Rcpp::CharacterVector::create();
+                        }
+                    }
                 }
+                break;
+
+                default:
+                {
+                    if (has_value) {
+                        Rcpp::CharacterVector col = df[col_num];
+                        col[row_num] = OGR_F_GetFieldAsString(hFeat, i);
+                    }
+                }
+                break;
             }
         }
 
@@ -890,32 +944,38 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
                 if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKB")) {
                     OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
-                    if (hGeom != nullptr) {
-#if GDAL_VERSION_NUM >= 3030000
-                        const int nWKBSize = OGR_G_WkbSizeEx(hGeom);
-#else
-                        const int nWKBSize = OGR_G_WkbSize(hGeom);
-#endif
-                        if (nWKBSize) {
-                            Rcpp::RawVector wkb(nWKBSize);
-                            if (EQUAL(this->returnGeomAs.c_str(), "WKB"))
-                                OGR_G_ExportToWkb(hGeom, eOrder, &wkb[0]);
-                            else if (EQUAL(this->returnGeomAs.c_str(), "WKB_ISO"))
-                                OGR_G_ExportToIsoWkb(hGeom, eOrder, &wkb[0]);
+                    if (hGeom == nullptr)
+                        continue;
 
-                            Rcpp::List col = df[col_num];
-                            col[row_num] = wkb;
-                        }
-                        else {
-                            Rcpp::List col = df[col_num];
-                            col[row_num] = Rcpp::RawVector::create();
-                        }
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
+                    const int nWKBSize = OGR_G_WkbSizeEx(hGeom);
+#else
+                    const int nWKBSize = OGR_G_WkbSize(hGeom);
+#endif
+                    if (nWKBSize) {
+                        Rcpp::RawVector wkb(nWKBSize);
+
+                        if (EQUAL(this->returnGeomAs.c_str(), "WKB"))
+                            OGR_G_ExportToWkb(hGeom, eOrder, &wkb[0]);
+                        else if (EQUAL(this->returnGeomAs.c_str(), "WKB_ISO"))
+                            OGR_G_ExportToIsoWkb(hGeom, eOrder, &wkb[0]);
+
+                        Rcpp::List col = df[col_num];
+                        col[row_num] = wkb;
+                    }
+                    else {
+                        Rcpp::List col = df[col_num];
+                        col[row_num] = Rcpp::RawVector::create();
                     }
                 }
+
                 else if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKT")) {
                     Rcpp::CharacterVector col = df[col_num];
                     OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
-                    if (hGeom != nullptr) {
+                    if (hGeom == nullptr) {
+                        col[row_num] = NA_STRING;
+                    }
+                    else {
                         char *pszWKT;
                         if (EQUAL(this->returnGeomAs.c_str(), "WKT"))
                             OGR_G_ExportToWkt(hGeom, &pszWKT);
@@ -925,10 +985,8 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                         col[row_num] = pszWKT;
                         CPLFree(pszWKT);
                     }
-                    else {
-                        col[row_num] = NA_STRING;
-                    }
                 }
+
                 else if (EQUAL(this->returnGeomAs.c_str(), "TYPE_NAME")) {
                     OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
                     Rcpp::CharacterVector col = df[col_num];
@@ -984,41 +1042,56 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
             col_num += 1;
 
-            OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+            switch (OGR_Fld_GetType(hFieldDefn)) {
+                case OFTInteger:
+                {
+                    OGRFieldSubType fld_subtype =
+                            OGR_Fld_GetSubType(hFieldDefn);
 
-            if (fld_type == OFTInteger) {
-                OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
-                if (fld_subtype == OFSTBoolean) {
-                    Rcpp::LogicalVector col = df[col_num];
-                    Rcpp::LogicalVector col_trunc = df_trunc[i + 1];
+                    if (fld_subtype == OFSTBoolean) {
+                        Rcpp::LogicalVector col = df[col_num];
+                        Rcpp::LogicalVector col_trunc = df_trunc[i + 1];
+                        std::copy_n(col.cbegin(), row_num, col_trunc.begin());
+                    }
+                    else {
+                        Rcpp::IntegerVector col = df[col_num];
+                        Rcpp::IntegerVector col_trunc = df_trunc[i + 1];
+                        std::copy_n(col.cbegin(), row_num, col_trunc.begin());
+                    }
+                }
+                break;
+
+                case OFTInteger64:
+                case OFTReal:
+                case OFTDate:
+                case OFTDateTime:
+                {
+                    Rcpp::NumericVector col = df[col_num];
+                    Rcpp::NumericVector col_trunc = df_trunc[i + 1];
                     std::copy_n(col.cbegin(), row_num, col_trunc.begin());
                 }
-                else {
-                    Rcpp::IntegerVector col = df[col_num];
-                    Rcpp::IntegerVector col_trunc = df_trunc[i + 1];
+                break;
+
+                case OFTBinary:
+                case OFTIntegerList:
+                case OFTInteger64List:
+                case OFTRealList:
+                case OFTStringList:
+                {
+                    Rcpp::List col = df[col_num];
+                    Rcpp::List col_trunc = df_trunc[i + 1];
+                    for (size_t n = 0; n < row_num; ++n)
+                        col_trunc[n] = col[n];
+                }
+                break;
+
+                default:
+                {
+                    Rcpp::CharacterVector col = df[col_num];
+                    Rcpp::CharacterVector col_trunc = df_trunc[i + 1];
                     std::copy_n(col.cbegin(), row_num, col_trunc.begin());
                 }
-            }
-            else if (fld_type == OFTInteger64 || fld_type == OFTReal ||
-                     fld_type == OFTDate || fld_type == OFTDateTime) {
-
-                Rcpp::NumericVector col = df[col_num];
-                Rcpp::NumericVector col_trunc = df_trunc[i + 1];
-                std::copy_n(col.cbegin(), row_num, col_trunc.begin());
-            }
-            else if (fld_type == OFTBinary || fld_type == OFTIntegerList ||
-                     fld_type == OFTInteger64List || fld_type == OFTRealList ||
-                     fld_type == OFTStringList) {
-
-                Rcpp::List col = df[col_num];
-                Rcpp::List col_trunc = df_trunc[i + 1];
-                for (size_t n = 0; n < row_num; ++n)
-                    col_trunc[n] = col[n];
-            }
-            else {
-                Rcpp::CharacterVector col = df[col_num];
-                Rcpp::CharacterVector col_trunc = df_trunc[i + 1];
-                std::copy_n(col.cbegin(), row_num, col_trunc.begin());
+                break;
             }
         }
 
@@ -1180,7 +1253,7 @@ bool GDALVector::startTransaction(bool force) {
 
     if (!force) {
         if (!GDALDatasetTestCapability(m_hDataset, ODsCTransactions)) {
-            Rcpp::Rcerr << "the dataset does not have (efficient) transactions capability"
+            Rcpp::Rcerr << "dataset does not have (efficient) transaction capability"
                     << std::endl;
             return false;
         }
@@ -1189,7 +1262,7 @@ bool GDALVector::startTransaction(bool force) {
         if (!GDALDatasetTestCapability(m_hDataset, ODsCTransactions) &&
             !GDALDatasetTestCapability(m_hDataset, ODsCEmulatedTransactions)) {
 
-            Rcpp::Rcerr << "the dataset does not have transactions capability"
+            Rcpp::Rcerr << "dataset does not have transaction capability"
                     << std::endl;
             return false;
         }
@@ -1500,6 +1573,8 @@ void GDALVector::close() {
 void GDALVector::OGRFeatureFromList_dumpReadble(
         const Rcpp::RObject &feat) const {
 
+    // undocumented method exposed in R, for diagnostic use
+
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 8, 0)
     Rcpp::stop("'OGRFeatureFromList_dumpReadble()' requires GDAL >= 3.8");
 
@@ -1664,63 +1739,84 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
         if (static_cast<int>(col_num) == nOutCols)
             Rcpp::stop("indexing the output columns failed");
 
-        OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+        switch (OGR_Fld_GetType(hFieldDefn)) {
+            case OFTInteger:
+            {
+                OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
+                if (fld_subtype == OFSTBoolean) {
+                    Rcpp::LogicalVector v(nrow, NA_LOGICAL);
+                    df[col_num] = v;
+                }
+                else {
+                    Rcpp::IntegerVector v(nrow, NA_INTEGER);
+                    df[col_num] = v;
+                }
+                col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
+            }
+            break;
 
-        if (fld_type == OFTInteger) {
-            OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
-            if (fld_subtype == OFSTBoolean) {
-                Rcpp::LogicalVector v(nrow, NA_LOGICAL);
-                df[col_num] = v;
+            case OFTInteger64:
+            {
+                std::vector<int64_t> v{};
+                try {
+                    v.resize(nrow, NA_INTEGER64);
+                }
+                catch (const std::exception &) {
+                    Rcpp::stop("failed to allocate memory 'integer64' column");
+                }
+                df[col_num] = Rcpp::wrap(v);
+                col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
             }
-            else {
-                Rcpp::IntegerVector v(nrow, NA_INTEGER);
-                df[col_num] = v;
-            }
-            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
-        }
-        else if (fld_type == OFTInteger64) {
-            std::vector<int64_t> v{};
-            try {
-                v.resize(nrow, NA_INTEGER64);
-            }
-            catch (const std::exception &) {
-                Rcpp::stop("failed to allocate memory 'integer64' column");
-            }
-            df[col_num] = Rcpp::wrap(v);
-            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
-        }
-        else if (fld_type == OFTReal) {
-            Rcpp::NumericVector v(nrow, NA_REAL);
-            df[col_num] = v;
-            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
-        }
-        else if (fld_type == OFTDate) {
-            Rcpp::NumericVector v(nrow, NA_REAL);
-            v.attr("class") = "Date";
-            df[col_num] = v;
-            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
-        }
-        else if (fld_type == OFTDateTime) {
-            Rcpp::NumericVector v(nrow, NA_REAL);
-            Rcpp::CharacterVector classes = {"POSIXct", "POSIXt"};
-            v.attr("class") = classes;
-            v.attr("tzone") = "UTC";
-            df[col_num] = v;
-            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
-        }
-        else if (fld_type == OFTBinary || fld_type == OFTIntegerList ||
-                 fld_type == OFTInteger64List || fld_type == OFTRealList ||
-                 fld_type == OFTStringList) {
+            break;
 
-            Rcpp::List v(nrow);
-            df[col_num] = v;
-            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
-        }
-        else {
-            // use string
-            Rcpp::CharacterVector v(nrow, NA_STRING);
-            df[col_num] = v;
-            col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
+            case OFTReal:
+            {
+                Rcpp::NumericVector v(nrow, NA_REAL);
+                df[col_num] = v;
+                col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
+            }
+            break;
+
+            case OFTDate:
+            {
+                Rcpp::NumericVector v(nrow, NA_REAL);
+                v.attr("class") = "Date";
+                df[col_num] = v;
+                col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
+            }
+            break;
+
+            case OFTDateTime:
+            {
+                Rcpp::NumericVector v(nrow, NA_REAL);
+                Rcpp::CharacterVector classes = {"POSIXct", "POSIXt"};
+                v.attr("class") = classes;
+                v.attr("tzone") = "UTC";
+                df[col_num] = v;
+                col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
+            }
+            break;
+
+            case OFTBinary:
+            case OFTIntegerList:
+            case OFTInteger64List:
+            case OFTRealList:
+            case OFTStringList:
+            {
+                Rcpp::List v(nrow);
+                df[col_num] = v;
+                col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
+            }
+            break;
+
+            default:
+            {
+                // use string
+                Rcpp::CharacterVector v(nrow, NA_STRING);
+                df[col_num] = v;
+                col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
+            }
+            break;
         }
     }
 
@@ -1845,6 +1941,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
             Rcpp::stop("could not obtain field definition");
 
         OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+
         switch (fld_type) {
             case OFTInteger:
             {
@@ -1965,7 +2062,8 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTTime:
             {
-                Rcpp::warning("write OFTTime is currently not supported");
+                // TODO(ctoney): is OFTTime just a character string from R?
+                Rcpp::warning("writing OFTTime is currently not supported");
             }
             break;
 
@@ -1978,7 +2076,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
                 else {
                     std::vector<int> values = Rcpp::as<std::vector<int>>(v);
                     OGR_F_SetFieldIntegerList(hFeat, fld_idx, values.size(),
-                                            values.data());
+                                              values.data());
                 }
             }
             break;
