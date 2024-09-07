@@ -546,7 +546,7 @@ SEXP GDALVector::getFeature(const Rcpp::RObject &fid) {
 
     checkAccess_(GA_ReadOnly);
 
-    if (fid.isNULL() || !Rcpp::is<Rcpp::NumericVector>)
+    if (fid.isNULL() || !Rcpp::is<Rcpp::NumericVector>(fid))
         return R_NilValue;
 
     Rcpp::NumericVector fid_(fid);
@@ -1132,7 +1132,7 @@ bool GDALVector::deleteFeature(const Rcpp::RObject &fid) {
         return false;
     }
 
-    if (fid.isNULL() || !Rcpp::is<Rcpp::NumericVector>)
+    if (fid.isNULL() || !Rcpp::is<Rcpp::NumericVector>(fid))
         return R_NilValue;
 
     Rcpp::NumericVector fid_(fid);
@@ -1684,7 +1684,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
         }
         else if (fld_type == OFTDateTime) {
             Rcpp::NumericVector v(nrow, NA_REAL);
-            Rcpp::CharacterVector classes = {"POSIXt", "POSIXct"};
+            Rcpp::CharacterVector classes = {"POSIXct", "POSIXt"};
             v.attr("class") = classes;
             v.attr("tzone") = "UTC";
             df[col_num] = v;
@@ -1875,10 +1875,12 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         }
         else if (fld_type == OFTDate) {
             Rcpp::NumericVector v = list_in[list_idx];
-            std::string class_attr = "";
+            Rcpp::CharacterVector class_attr {};
             if (v.hasAttribute("class"))
-                class_attr = Rcpp::as<std::string>(v.attr("class"));
-            if (!EQUAL(class_attr.c_str(), "Date")) {
+                class_attr = Rcpp::wrap(v.attr("class"));
+            if (std::find(class_attr.begin(), class_attr.end(), "Date")
+                    == class_attr.end()) {
+
                 OGR_F_Destroy(hFeat);
                 Rcpp::stop("value for OGR date field must be of class 'Date'");
             }
@@ -1898,10 +1900,12 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         }
         else if (fld_type == OFTDateTime) {
             Rcpp::NumericVector v = list_in[list_idx];
-            std::string class_attr = "";
+            Rcpp::CharacterVector class_attr {};
             if (v.hasAttribute("class"))
-                class_attr = Rcpp::as<std::string>(v.attr("class"));
-            if (!EQUAL(class_attr.c_str(), "POSIXct")) {
+                class_attr = Rcpp::wrap(v.attr("class"));
+            if (std::find(class_attr.begin(), class_attr.end(), "POSIXct")
+                    == class_attr.end()) {
+
                 OGR_F_Destroy(hFeat);
                 Rcpp::stop("value for OGR datetime field must be of class 'POSIXct'");
             }
@@ -1929,28 +1933,33 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         else {
             // the remaining types may originate in a data frame list column:
             //     set up a generic RObject with the correct reference
+            Rcpp::Rcout << "list idx: " << list_idx << std::endl;
             Rcpp::RObject robj;
-            if (Rcpp::is<Rcpp::List>(list_in[list_idx])) {
+            if (Rcpp::is<Rcpp::IntegerVector>(list_in[list_idx]) ||
+                Rcpp::is<Rcpp::NumericVector>(list_in[list_idx]) ||
+                Rcpp::is<Rcpp::CharacterVector>(list_in[list_idx]) ||
+                Rcpp::is<Rcpp::RawVector>(list_in[list_idx])) {
+
+                robj = list_in[list_idx];
+            }
+            else {
                 Rcpp::List list_tmp = list_in[list_idx];
                 robj = list_tmp[0];
             }
-            else {
-                robj = list_in[list_idx];
-            }
 
             if (fld_type == OFTIntegerList) {
-                Rcpp::IntegerVector v(robj);
+                Rcpp::IntegerVector v = Rcpp::as<Rcpp::IntegerVector>(robj);
                 if (v.size() == 0 || Rcpp::all(Rcpp::is_na(v)).is_true()) {
                     OGR_F_SetFieldNull(hFeat, fld_idx);
                 }
                 else {
                     std::vector<int> values = Rcpp::as<std::vector<int>>(v);
                     OGR_F_SetFieldIntegerList(hFeat, fld_idx, values.size(),
-                                            values.data());
+                                              values.data());
                 }
             }
             else if (fld_type == OFTInteger64List) {
-                Rcpp::NumericVector v(robj);
+                Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(robj);
                 if (v.size() == 0) {
                     OGR_F_SetFieldNull(hFeat, fld_idx);
                 }
@@ -1966,7 +1975,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
                 }
             }
             else if (fld_type == OFTRealList) {
-                Rcpp::NumericVector v(robj);
+                Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(robj);
                 if (v.size() == 0 || Rcpp::all(Rcpp::is_na(v)).is_true()) {
                     OGR_F_SetFieldNull(hFeat, fld_idx);
                 }
@@ -1979,7 +1988,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
                 }
             }
             else if (fld_type == OFTStringList) {
-                Rcpp::CharacterVector v(robj);
+                Rcpp::CharacterVector v = Rcpp::as<Rcpp::CharacterVector>(robj);
                 if (v.size() == 0 || Rcpp::all(Rcpp::is_na(v)).is_true()) {
                     OGR_F_SetFieldNull(hFeat, fld_idx);
                 }
@@ -1990,7 +1999,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
                 }
             }
             else if (fld_type == OFTBinary) {
-                Rcpp::RawVector v(robj);
+                Rcpp::RawVector v = Rcpp::as<Rcpp::RawVector>(robj);
                 if (v.size() == 0)
                     OGR_F_SetFieldNull(hFeat, fld_idx);
                 else
@@ -2043,7 +2052,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         }
 
         if (is_raw) {
-            Rcpp::RawVector v(robj);
+            Rcpp::RawVector v = Rcpp::as<Rcpp::RawVector>(robj);
             if (v.size() > 0) {
                 OGRGeometryH hGeom = nullptr;
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
@@ -2075,7 +2084,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         }
         else {
             // wkt
-            Rcpp::CharacterVector v(robj);
+            Rcpp::CharacterVector v = Rcpp::as<Rcpp::CharacterVector>(robj);
             if (v.size() > 0 && !Rcpp::CharacterVector::is_na(v[0])) {
                 OGRGeometryH hGeom = nullptr;
                 std::string wkt = Rcpp::as<std::string>(v[0]);
