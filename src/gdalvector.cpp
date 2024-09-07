@@ -1136,17 +1136,15 @@ SEXP GDALVector::setFeature(const Rcpp::RObject &feature) {
 
     OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
     if (OGR_L_SetFeature(m_hLayer, hFeat) != OGRERR_NONE) {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         OGR_F_Destroy(hFeat);
         return R_NilValue;
     }
     else {
-        std::vector<int64_t> fid {OGRNullFID};
+        std::vector<int64_t> fid = {OGRNullFID};
         fid[0] = OGR_F_GetFID(hFeat);
         OGR_F_Destroy(hFeat);
-        if (fid[0] != OGRNullFID)
-            return Rcpp::wrap(fid);
-        else
-            return R_NilValue;
+        return Rcpp::wrap(fid);
     }
 }
 
@@ -1163,17 +1161,15 @@ SEXP GDALVector::createFeature(const Rcpp::RObject &feature) {
 
     OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
     if (OGR_L_CreateFeature(m_hLayer, hFeat) != OGRERR_NONE) {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         OGR_F_Destroy(hFeat);
         return R_NilValue;
     }
     else {
-        std::vector<int64_t> fid {OGRNullFID};
+        std::vector<int64_t> fid = {OGRNullFID};
         fid[0] = OGR_F_GetFID(hFeat);
         OGR_F_Destroy(hFeat);
-        if (fid[0] != OGRNullFID)
-            return Rcpp::wrap(fid);
-        else
-            return R_NilValue;
+        return Rcpp::wrap(fid);
     }
 }
 
@@ -1193,17 +1189,15 @@ SEXP GDALVector::upsertFeature(const Rcpp::RObject &feature) {
 
     OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
     if (OGR_L_UpsertFeature(m_hLayer, hFeat) != OGRERR_NONE) {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         OGR_F_Destroy(hFeat);
         return R_NilValue;
     }
     else {
-        std::vector<int64_t> fid {OGRNullFID};
+        std::vector<int64_t> fid = {OGRNullFID};
         fid[0] = OGR_F_GetFID(hFeat);
         OGR_F_Destroy(hFeat);
-        if (fid[0] != OGRNullFID)
-            return Rcpp::wrap(fid);
-        else
-            return R_NilValue;
+        return Rcpp::wrap(fid);
     }
 #endif
 }
