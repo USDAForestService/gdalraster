@@ -457,11 +457,12 @@ preserved.
 \item The shapefile driver will write a NULL value in the DBF file.
 \item The GeoJSON driver will take into account unset fields to remove the
 corresponding JSON member.
+}
+
 Upon successful completion, returns the FID of the feature that was set
 (as \code{numeric} carrying the \code{bit64::integer64} class attribute). \code{NULL} is
 returned if set feature did not succeed. To set a feature, but create it
 if it doesn't exist see the \verb{$upsertFeature()} method.
-}
 
 \code{$createFeature(feature)}\cr
 Creates and writes a new feature within the layer. The \code{feature} argument is
@@ -482,13 +483,13 @@ the \verb{$upsertFeature()} method.
 Rewrites/replaces an existing feature or creates a new feature within the
 layer. This method will write a feature to the layer, based on the feature
 id within the input feature. The \code{feature} argument is a named list of
-fields and their values, and must include a \verb{$FID} element referencing the
-existing feature to rewrite. If the feature id doesn't exist a new feature
-will be written. Otherwise, the existing feature will be rewritten.
+fields and their values, including a \verb{$FID} element potentially referencing
+an existing feature to rewrite. If the feature id doesn't exist a new
+feature will be written. Otherwise, the existing feature will be rewritten.
 The \verb{UpsertFeature)} element in the list returned by \verb{$testCapability()} can
-be checked to establish if this layer supports upsert writing.
-See \verb{$setFeature()} above for a description of how omitted fields in the
-passed \code{feature} are processed.
+be checked to determine if this layer supports upsert writing. See
+\verb{$setFeature()} above for a description of how omitted fields in the passed
+\code{feature} are processed.
 Upon successful completion, returns the new FID (as \code{numeric} carrying the
 \code{bit64::integer64} class attribute). \code{NULL} is returned if feature creation
 did not succeed. Requires GDAL >= 3.6.
@@ -665,7 +666,7 @@ lyr$clearSpatialFilter()
 lyr$getFeatureCount()
 
 lyr$close()
-unlink(dsn)
+\dontshow{unlink(dsn)}
 }
 \seealso{
 \link{ogr_define}, \link{ogr_manage}, \code{\link[=ogr2ogr]{ogr2ogr()}}, \code{\link[=ogrinfo]{ogrinfo()}}
