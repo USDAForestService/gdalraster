@@ -168,8 +168,7 @@ test_that("feature write methods work", {
     feat$map_id <- 999991
     feat$ig_date <- as.Date("9999-01-01")
     feat$ig_year <- 9999
-    test1_fid <- lyr$createFeature(feat)
-    expect_false(is.null(test1_fid))
+    expect_true(lyr$createFeature(feat))
     expect_equal(lyr$getFeatureCount(), start_count + 1)
 
     # edit an existing feature and set
@@ -180,8 +179,7 @@ test_that("feature write methods work", {
     feat$map_id <- 999992
     feat$ig_date <- as.Date("9999-01-02")
     feat$ig_year <- 9999
-    test2_fid <- lyr$setFeature(feat)
-    expect_false(is.null(test2_fid))
+    expect_true(lyr$setFeature(feat))
     expect_equal(lyr$getFeatureCount(), start_count + 1)
 
     if(.gdal_version_num() > 3060000) {
@@ -193,8 +191,7 @@ test_that("feature write methods work", {
         feat$map_id <- 999993
         feat$ig_date <- as.Date("9999-01-03")
         feat$ig_year <- 9999
-        test3_fid <- lyr$upsertFeature(feat)
-        expect_false(is.null(test3_fid))
+        expect_true(lyr$upsertFeature(feat))
         expect_equal(lyr$getFeatureCount(), start_count + 1)
 
         # edit an existing feature and upsert with new non-existing FID
@@ -207,8 +204,7 @@ test_that("feature write methods work", {
         feat$map_id <- 999994
         feat$ig_date <- as.Date("9999-01-04")
         feat$ig_year <- 9999
-        test4_fid <- lyr$upsertFeature(feat)
-        expect_false(is.null(test4_fid))
+        expect_true(lyr$upsertFeature(feat))
         expect_equal(lyr$getFeatureCount(), start_count + 2)
     }
 
@@ -216,9 +212,9 @@ test_that("feature write methods work", {
     lyr$open(read_only = TRUE)
     lyr$returnGeomAs <- "WKT"
 
-    test1_feat <- lyr$getFeature(test1_fid)
+    lyr$setAttributeFilter("event_id = 'ZZ01'")
+    test1_feat <- lyr$getNextFeature()
     expect_false(is.null(test1_feat))
-    expect_equal(test1_feat$event_id, "ZZ01")
     expect_equal(test1_feat$incid_name, "TEST 1")
     expect_equal(test1_feat$map_id, bit64::as.integer64(999991))
     expect_equal(test1_feat$ig_date, as.Date("9999-01-01"))
@@ -227,9 +223,9 @@ test_that("feature write methods work", {
     expect_true(g_equals(test1_feat[[geom_fld]], test1_orig_feat[[geom_fld]]))
     test1_feat <- NULL
 
-    test2_feat <- lyr$getFeature(test2_fid)
+    lyr$setAttributeFilter("event_id = 'ZZ02'")
+    test2_feat <- lyr$getNextFeature()
     expect_false(is.null(test2_feat))
-    expect_equal(test2_feat$event_id, "ZZ02")
     expect_equal(test2_feat$incid_name, "TEST 2")
     expect_equal(test2_feat$map_id, bit64::as.integer64(999992))
     expect_equal(test2_feat$ig_date, as.Date("9999-01-02"))
@@ -237,18 +233,18 @@ test_that("feature write methods work", {
     test2_feat <- NULL
 
     if(.gdal_version_num() > 3060000) {
-        test3_feat <- lyr$getFeature(test3_fid)
+        lyr$setAttributeFilter("event_id = 'ZZ03'")
+        test3_feat <- lyr$getNextFeature()
         expect_false(is.null(test3_feat))
-        expect_equal(test3_feat$event_id, "ZZ03")
         expect_equal(test3_feat$incid_name, "TEST 3")
         expect_equal(test3_feat$map_id, bit64::as.integer64(999993))
         expect_equal(test3_feat$ig_date, as.Date("9999-01-03"))
         expect_equal(test3_feat$ig_year, 9999)
         test3_feat <- NULL
 
-        test4_feat <- lyr$getFeature(test4_fid)
+        lyr$setAttributeFilter("event_id = 'ZZ04'")
+        test4_feat <- lyr$getNextFeature()
         expect_false(is.null(test4_feat))
-        expect_equal(test4_feat$event_id, "ZZ04")
         expect_equal(test4_feat$incid_name, "TEST 4")
         expect_equal(test4_feat$map_id, bit64::as.integer64(999994))
         expect_equal(test4_feat$ig_date, as.Date("9999-01-04"))
@@ -294,11 +290,12 @@ test_that("feature write methods work", {
     feat1$binary_fld <- as.raw(c(1, 1, 1))
     feat1[[geom_fld]] <- "POINT (1 1)"
 
-    expect_no_error(test1_fid <- lyr$createFeature(feat1))
+    expect_true(lyr$createFeature(feat1))
+    test1_fid <- lyr$getLastWriteFID()
     expect_false(is.null(test1_fid))
 
-    test2_fid <- NULL
-    test2_fid <- lyr$createFeature(feat1)
+    expect_true(lyr$createFeature(feat1))
+    test2_fid <- lyr$getLastWriteFID()
     expect_false(is.null(test2_fid))
 
     lyr$open(read_only = TRUE)
@@ -319,7 +316,8 @@ test_that("feature write methods work", {
     feat2$binary_fld <- as.raw(c(2, 2, 2))
     feat2[[geom_fld]] <- "POINT (2 2)"
 
-    expect_equal(lyr$setFeature(feat2), test2_fid)
+    expect_true(lyr$setFeature(feat2))
+    expect_equal(lyr$getLastWriteFID(), test2_fid)
 
     lyr$open(read_only = TRUE)
     expect_equal(lyr$getFeatureCount(), 2)

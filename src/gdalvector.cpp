@@ -1123,7 +1123,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 }
 
-SEXP GDALVector::setFeature(const Rcpp::RObject &feature) {
+bool GDALVector::setFeature(const Rcpp::RObject &feature) {
     checkAccess_(GA_Update);
 
     if (feature.isNULL() || !Rcpp::is<Rcpp::List>(feature))
@@ -1135,20 +1135,20 @@ SEXP GDALVector::setFeature(const Rcpp::RObject &feature) {
         Rcpp::stop("input feature is empty");
 
     OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
-    if (OGR_L_SetFeature(m_hLayer, hFeat) != OGRERR_NONE) {
+    OGRErr err = OGR_L_SetFeature(m_hLayer, hFeat);
+     if (err != OGRERR_NONE) {
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         OGR_F_Destroy(hFeat);
-        return R_NilValue;
-    }
-    else {
-        std::vector<int64_t> fid = {OGRNullFID};
-        fid[0] = OGR_F_GetFID(hFeat);
+        return false;
+     }
+     else {
+        m_last_write_fid = OGR_F_GetFID(hFeat);
         OGR_F_Destroy(hFeat);
-        return Rcpp::wrap(fid);
-    }
+        return true;
+     }
 }
 
-SEXP GDALVector::createFeature(const Rcpp::RObject &feature) {
+bool GDALVector::createFeature(const Rcpp::RObject &feature) {
     checkAccess_(GA_Update);
 
     if (feature.isNULL() || !Rcpp::is<Rcpp::List>(feature))
@@ -1160,20 +1160,20 @@ SEXP GDALVector::createFeature(const Rcpp::RObject &feature) {
         Rcpp::stop("input feature is empty");
 
     OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
-    if (OGR_L_CreateFeature(m_hLayer, hFeat) != OGRERR_NONE) {
+    OGRErr err = OGR_L_CreateFeature(m_hLayer, hFeat);
+     if (err != OGRERR_NONE) {
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         OGR_F_Destroy(hFeat);
-        return R_NilValue;
-    }
-    else {
-        std::vector<int64_t> fid = {OGRNullFID};
-        fid[0] = OGR_F_GetFID(hFeat);
+        return false;
+     }
+     else {
+        m_last_write_fid = OGR_F_GetFID(hFeat);
         OGR_F_Destroy(hFeat);
-        return Rcpp::wrap(fid);
-    }
+        return true;
+     }
 }
 
-SEXP GDALVector::upsertFeature(const Rcpp::RObject &feature) {
+bool GDALVector::upsertFeature(const Rcpp::RObject &feature) {
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 6, 0)
     Rcpp::stop("'upsertFeature() requires GDAL >= 3.6");
 #else
@@ -1188,18 +1188,30 @@ SEXP GDALVector::upsertFeature(const Rcpp::RObject &feature) {
         Rcpp::stop("input feature is empty");
 
     OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
-    if (OGR_L_UpsertFeature(m_hLayer, hFeat) != OGRERR_NONE) {
+    OGRErr err = OGR_L_UpsertFeature(m_hLayer, hFeat);
+     if (err != OGRERR_NONE) {
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         OGR_F_Destroy(hFeat);
+        return false;
+     }
+     else {
+        m_last_write_fid = OGR_F_GetFID(hFeat);
+        OGR_F_Destroy(hFeat);
+        return true;
+     }
+#endif
+}
+
+SEXP GDALVector::getLastWriteFID() const {
+    checkAccess_(GA_ReadOnly);
+
+    if (m_last_write_fid == NA_INTEGER64) {
         return R_NilValue;
     }
     else {
-        std::vector<int64_t> fid = {OGRNullFID};
-        fid[0] = OGR_F_GetFID(hFeat);
-        OGR_F_Destroy(hFeat);
-        return Rcpp::wrap(fid);
+        std::vector<int64_t> last_fid = {m_last_write_fid};
+        return Rcpp::wrap(last_fid);
     }
-#endif
 }
 
 bool GDALVector::deleteFeature(const Rcpp::RObject &fid) {
@@ -2343,6 +2355,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Create and write a new feature within the layer")
     .method("upsertFeature", &GDALVector::upsertFeature,
         "Rewrite/replace an existing feature or create a new feature")
+    .method("getLastWriteFID", &GDALVector::getLastWriteFID,
+        "Return the FID of the last feature written, or NULL if no writes")
     .method("deleteFeature", &GDALVector::deleteFeature,
         "Delete feature from layer")
     .method("startTransaction", &GDALVector::startTransaction,

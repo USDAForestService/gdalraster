@@ -81,9 +81,10 @@ class GDALVector {
 
     Rcpp::DataFrame fetch(double n);
 
-    SEXP setFeature(const Rcpp::RObject &feature);
-    SEXP createFeature(const Rcpp::RObject &feature);
-    SEXP upsertFeature(const Rcpp::RObject &feature);
+    bool setFeature(const Rcpp::RObject &feature);
+    bool createFeature(const Rcpp::RObject &feature);
+    bool upsertFeature(const Rcpp::RObject &feature);
+    SEXP getLastWriteFID() const;
     bool deleteFeature(const Rcpp::RObject &fid);
 
     bool startTransaction(bool force);
@@ -148,6 +149,7 @@ class GDALVector {
     GDALDatasetH m_hDataset {nullptr};
     GDALAccess m_eAccess {GA_ReadOnly};
     OGRLayerH m_hLayer {nullptr};
+    int64_t m_last_write_fid {NA_INTEGER64};
 };
 
 RCPP_EXPOSED_CLASS(GDALVector)

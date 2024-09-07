@@ -114,6 +114,7 @@ lyr$fetch(n)
 lyr$setFeature(feature)
 lyr$createFeature(feature)
 lyr$upsertFeature(feature)
+lyr$getLastWriteFID()
 lyr$deleteFeature(fid)
 
 lyr$startTransaction(force)
@@ -459,10 +460,9 @@ preserved.
 corresponding JSON member.
 }
 
-Upon successful completion, returns the FID of the feature that was set
-(as \code{numeric} carrying the \code{bit64::integer64} class attribute). \code{NULL} is
-returned if set feature did not succeed. To set a feature, but create it
-if it doesn't exist see the \verb{$upsertFeature()} method.
+Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if setting the
+feature did not succeed. To set a feature, but create it if it doesn't exist
+see the \verb{$upsertFeature()} method.
 
 \code{$createFeature(feature)}\cr
 Creates and writes a new feature within the layer. The \code{feature} argument is
@@ -474,10 +474,9 @@ overwriting an existing one. If the feature has a FID other than
 \code{OGRNullFID} (i.e., \code{NA}, or omitted from the input \code{feature}), then the
 native implementation may use that as the feature id of the new feature,
 but not necessarily.
-Upon successful completion, returns the new FID (as \code{numeric} carrying the
-\code{bit64::integer64} class attribute). \code{NULL} is returned if feature creation
-did not succeed. To create a feature, but set it if it already exists see
-the \verb{$upsertFeature()} method.
+Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if creating
+the feature did not succeed. To create a feature, but set it if it already
+exists see the \verb{$upsertFeature()} method.
 
 \code{$upsertFeature(feature)}\cr
 Rewrites/replaces an existing feature or creates a new feature within the
@@ -490,9 +489,16 @@ The \verb{UpsertFeature)} element in the list returned by \verb{$testCapability(
 be checked to determine if this layer supports upsert writing. See
 \verb{$setFeature()} above for a description of how omitted fields in the passed
 \code{feature} are processed.
-Upon successful completion, returns the new FID (as \code{numeric} carrying the
-\code{bit64::integer64} class attribute). \code{NULL} is returned if feature creation
-did not succeed. Requires GDAL >= 3.6.
+Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if upserting
+the feature did not succeed. Requires GDAL >= 3.6.
+
+\code{$getLastWriteFID()}\cr
+Returns the FID of the last feature written (newly created or updated
+existing). \code{NULL} is returned if no features have been written in the layer.
+Note that OGRNullFID (\code{-1}) may be returned after writing a feature in some
+formats. This is the case if a FID has not been assigned yet, and does not
+indicate an error (e.g., formats that do not store a persistent FID and
+assign FIDs upon a sequential read operation).
 
 \code{$deleteFeature(fid)}\cr
 Deletes a feature from the layer. The feature with the indicated feature ID
