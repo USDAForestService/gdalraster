@@ -413,25 +413,23 @@ std::string GDALVector::getAttributeFilter() const {
     return(m_attr_filter);
 }
 
-void GDALVector::setIgnoredFields(const Rcpp::CharacterVector &fields) {
+void GDALVector::setIgnoredFields(const Rcpp::RObject &fields) {
     checkAccess_(GA_ReadOnly);
+
+    if (fields.isNULL() || !Rcpp::is<Rcpp::CharacterVector>(fields))
+        Rcpp::stop("'fields' must be a character vector");
+
+    Rcpp::CharacterVector fields_(fields);
+    std::vector<const char *> fields_in(fields_.begin(), fields_.end());
+    fields_in.push_back(nullptr);
 
     if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields))
         Rcpp::stop("this layer does not have ignored fields capability");
 
-    if (fields.size() == 0 || (fields.size() == 1 && EQUAL(fields[0], ""))) {
+    if (fields_in[0] == nullptr || EQUAL(fields_in[0], "")) {
         OGR_L_SetIgnoredFields(m_hLayer, nullptr);
-        return;
     }
     else {
-        std::vector<const char *> fields_in(fields.size() + 1);
-        if (fields.size() > 0) {
-            for (R_xlen_t i = 0; i < fields.size(); ++i) {
-                fields_in[i] = (const char *) (fields[i]);
-            }
-        }
-        fields_in[fields.size()] = nullptr;
-
         if (OGR_L_SetIgnoredFields(m_hLayer, fields_in.data()) != OGRERR_NONE)
             Rcpp::stop("not all field names could be resolved");
     }
@@ -457,13 +455,19 @@ void GDALVector::setSpatialFilter(const std::string &wkt) {
         OGR_G_DestroyGeometry(hFilterGeom);
 }
 
-void GDALVector::setSpatialFilterRect(const Rcpp::NumericVector &bbox) {
+void GDALVector::setSpatialFilterRect(const Rcpp::RObject &bbox) {
     checkAccess_(GA_ReadOnly);
 
-    if (Rcpp::any(Rcpp::is_na(bbox)))
+    if (bbox.isNULL() || !Rcpp::is<Rcpp::NumericVector>(bbox))
+        Rcpp::stop("'bbox' must be a numeric vector");
+
+    Rcpp::NumericVector bbox_in(bbox);
+
+    if (Rcpp::any(Rcpp::is_na(bbox_in)))
         Rcpp::stop("'bbox' has one or more 'NA' values");
 
-    OGR_L_SetSpatialFilterRect(m_hLayer, bbox[0], bbox[1], bbox[2], bbox[3]);
+    OGR_L_SetSpatialFilterRect(m_hLayer, bbox_in[0], bbox_in[1], bbox_in[2],
+                               bbox_in[3]);
 }
 
 std::string GDALVector::getSpatialFilter() const {
@@ -534,7 +538,7 @@ void GDALVector::setNextByIndex(double i) {
     }
 }
 
-SEXP GDALVector::getFeature(const Rcpp::NumericVector &fid) {
+SEXP GDALVector::getFeature(const Rcpp::RObject &fid) {
     // fid must be an R numeric vector of length 1, i.e., a scalar but using
     // NumericVector since it can carry the class attribute for integer64.
     // Instead of wrapping OGR_L_GetFeature(), we use fetch() because it
@@ -542,14 +546,18 @@ SEXP GDALVector::getFeature(const Rcpp::NumericVector &fid) {
 
     checkAccess_(GA_ReadOnly);
 
-    if (fid.size() != 1)
+    if (fid.isNULL() || !Rcpp::is<Rcpp::NumericVector>)
+        return R_NilValue;
+
+    Rcpp::NumericVector fid_(fid);
+    if (fid_.size() != 1)
         Rcpp::stop("'fid' must be a length-1 numeric vector (integer64)");
 
     int64_t fid_in = OGRNullFID;
-    if (Rcpp::isInteger64(fid))
-        fid_in = Rcpp::fromInteger64(fid[0]);
+    if (Rcpp::isInteger64(fid_))
+        fid_in = Rcpp::fromInteger64(fid_[0]);
     else
-        fid_in = static_cast<int64_t>(fid[0]);
+        fid_in = static_cast<int64_t>(fid_[0]);
 
     // save the current attribute and spatial filters
     std::string orig_filter = m_attr_filter;
@@ -1024,13 +1032,18 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 }
 
-SEXP GDALVector::setFeature(const Rcpp::List &feature) {
+SEXP GDALVector::setFeature(const Rcpp::RObject &feature) {
     checkAccess_(GA_Update);
 
-    if (feature.size() == 0)
+    if (feature.isNULL() || !Rcpp::is<Rcpp::List>(feature))
+        Rcpp::stop("'feature' must be a list object");
+
+    Rcpp::List feature_in(feature);
+
+    if (feature_in.size() == 0)
         Rcpp::stop("input feature is empty");
 
-    OGRFeatureH hFeat = OGRFeatureFromList_(feature);
+    OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
     if (OGR_L_SetFeature(m_hLayer, hFeat) != OGRERR_NONE) {
         OGR_F_Destroy(hFeat);
         return R_NilValue;
@@ -1046,13 +1059,18 @@ SEXP GDALVector::setFeature(const Rcpp::List &feature) {
     }
 }
 
-SEXP GDALVector::createFeature(const Rcpp::List &feature) {
+SEXP GDALVector::createFeature(const Rcpp::RObject &feature) {
     checkAccess_(GA_Update);
 
-    if (feature.size() == 0)
+    if (feature.isNULL() || !Rcpp::is<Rcpp::List>(feature))
+        Rcpp::stop("'feature' must be a list object");
+
+    Rcpp::List feature_in(feature);
+
+    if (feature_in.size() == 0)
         Rcpp::stop("input feature is empty");
 
-    OGRFeatureH hFeat = OGRFeatureFromList_(feature);
+    OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
     if (OGR_L_CreateFeature(m_hLayer, hFeat) != OGRERR_NONE) {
         OGR_F_Destroy(hFeat);
         return R_NilValue;
@@ -1068,16 +1086,21 @@ SEXP GDALVector::createFeature(const Rcpp::List &feature) {
     }
 }
 
-SEXP GDALVector::upsertFeature(const Rcpp::List &feature) {
+SEXP GDALVector::upsertFeature(const Rcpp::RObject &feature) {
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 6, 0)
     Rcpp::stop("'upsertFeature() requires GDAL >= 3.6");
 #else
     checkAccess_(GA_Update);
 
-    if (feature.size() == 0)
+    if (feature.isNULL() || !Rcpp::is<Rcpp::List>(feature))
+        Rcpp::stop("'feature' must be a list object");
+
+    Rcpp::List feature_in(feature);
+
+    if (feature_in.size() == 0)
         Rcpp::stop("input feature is empty");
 
-    OGRFeatureH hFeat = OGRFeatureFromList_(feature);
+    OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
     if (OGR_L_UpsertFeature(m_hLayer, hFeat) != OGRERR_NONE) {
         OGR_F_Destroy(hFeat);
         return R_NilValue;
@@ -1094,7 +1117,7 @@ SEXP GDALVector::upsertFeature(const Rcpp::List &feature) {
 #endif
 }
 
-bool GDALVector::deleteFeature(const Rcpp::NumericVector &fid) {
+bool GDALVector::deleteFeature(const Rcpp::RObject &fid) {
     // fid must be an R numeric vector of length 1, i.e., a scalar but using
     // NumericVector since it can carry the class attribute for integer64.
 
@@ -1109,14 +1132,21 @@ bool GDALVector::deleteFeature(const Rcpp::NumericVector &fid) {
         return false;
     }
 
-    if (fid.size() != 1)
+    if (fid.isNULL() || !Rcpp::is<Rcpp::NumericVector>)
+        return R_NilValue;
+
+    Rcpp::NumericVector fid_(fid);
+    if (fid_.size() != 1)
+        Rcpp::stop("'fid' must be a length-1 numeric vector (integer64)");
+
+    if (fid_.size() != 1)
         Rcpp::stop("'fid' must be a length-1 numeric vector (integer64)");
 
     int64_t fid_in = OGRNullFID;
-    if (Rcpp::isInteger64(fid))
-        fid_in = Rcpp::fromInteger64(fid[0]);
+    if (Rcpp::isInteger64(fid_))
+        fid_in = Rcpp::fromInteger64(fid_[0]);
     else
-        fid_in = static_cast<int64_t>(fid[0]);
+        fid_in = static_cast<int64_t>(fid_[0]);
 
     if (OGR_L_DeleteFeature(m_hLayer, fid_in) != OGRERR_NONE) {
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -1449,12 +1479,19 @@ void GDALVector::close() {
     }
 }
 
-void GDALVector::OGRFeatureFromList_dumpReadble(const Rcpp::List &feat) const {
+void GDALVector::OGRFeatureFromList_dumpReadble(
+        const Rcpp::RObject &feat) const {
+
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 8, 0)
     Rcpp::stop("'OGRFeatureFromList_dumpReadble()' requires GDAL >= 3.8");
 
 #else
-    OGRFeatureH hFeat = OGRFeatureFromList_(feat);
+    if (feat.isNULL() || !Rcpp::is<Rcpp::List>(feat))
+        Rcpp::stop("'feature' must be a list object");
+
+    Rcpp::List feat_in(feat);
+
+    OGRFeatureH hFeat = OGRFeatureFromList_(feat_in);
     if (hFeat == nullptr)
         Rcpp::stop("'OGRFeatureFromList_()' returned nullptr");
     std::vector<const char *> options = {"DISPLAY_GEOMETRY=SUMMARY", nullptr};

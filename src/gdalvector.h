@@ -64,10 +64,10 @@ class GDALVector {
 
     void setAttributeFilter(const std::string &query);
     std::string getAttributeFilter() const;
-    void setIgnoredFields(const Rcpp::CharacterVector &fields);
+    void setIgnoredFields(const Rcpp::RObject &fields);
 
     void setSpatialFilter(const std::string &wkt);
-    void setSpatialFilterRect(const Rcpp::NumericVector &bbox);
+    void setSpatialFilterRect(const Rcpp::RObject &bbox);
     std::string getSpatialFilter() const;
     void clearSpatialFilter();
 
@@ -76,15 +76,15 @@ class GDALVector {
     void setNextByIndex(double i);
     // fid must be a length-1 numeric vector, since numeric vector can carry
     // the class attribute for integer64:
-    SEXP getFeature(const Rcpp::NumericVector &fid);
+    SEXP getFeature(const Rcpp::RObject &fid);
     void resetReading();
 
     Rcpp::DataFrame fetch(double n);
 
-    SEXP setFeature(const Rcpp::List &feature);
-    SEXP createFeature(const Rcpp::List &feature);
-    SEXP upsertFeature(const Rcpp::List &feature);
-    bool deleteFeature(const Rcpp::NumericVector &fid);
+    SEXP setFeature(const Rcpp::RObject &feature);
+    SEXP createFeature(const Rcpp::RObject &feature);
+    SEXP upsertFeature(const Rcpp::RObject &feature);
+    bool deleteFeature(const Rcpp::RObject &fid);
 
     bool startTransaction(bool force);
     bool commitTransaction();
@@ -128,7 +128,7 @@ class GDALVector {
 
     void close();
 
-    void OGRFeatureFromList_dumpReadble(const Rcpp::List &feat) const;
+    void OGRFeatureFromList_dumpReadble(const Rcpp::RObject &feat) const;
 
     // methods for internal use not exposed to R
     void checkAccess_(GDALAccess access_needed) const;
