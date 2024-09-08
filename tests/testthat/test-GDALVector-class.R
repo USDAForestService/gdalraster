@@ -368,6 +368,7 @@ test_that("feature write methods work", {
 
     # close and re-open
     lyr$open(read_only = TRUE)
+    lyr$returnGeomAs <- "WKT"
 
     f <- lyr$getNextFeature()
     expect_equal(f$id, feat1$id)
@@ -382,5 +383,50 @@ test_that("feature write methods work", {
     deleteDataset(dsn3)
     rm(lyr)
     rm(dsn3)
+
+    ## test ESRI Shapefile for supported field types, Polygon geom, no SRS set
+    dsn4 <- tempfile(fileext = ".shp")
+
+    defn <- ogr_def_layer("Polygon")
+    defn$id <- ogr_def_field("OFTInteger")
+    defn$real_fld <- ogr_def_field("OFTReal")
+    defn$str_fld <- ogr_def_field("OFTString")
+    defn$date_fld <- ogr_def_field("OFTDate")
+
+    expect_true(ogr_ds_create("ESRI Shapefile", dsn4, "", layer_defn = defn,
+                              overwrite = TRUE))
+
+    lyr <- new(GDALVector, dsn4, "", read_only = FALSE)
+    expect_equal(lyr$getFeatureCount(), 0)
+
+    feat1 <- list()
+    feat1$id <- 100
+    feat1$real_fld <- 0.123
+    feat1$str_fld <- "test string"
+    feat1$date_fld <- as.Date("2100-01-01")
+    feat1$geometry <- "POLYGON ((0 0,0 10,10 10,0 0),(0.25 0.5,1 1,0.5 1,0.25 0.5))"
+
+    test1_fid <- NULL
+    expect_true(lyr$createFeature(feat1))
+    test1_fid <- lyr$getLastWriteFID()
+    expect_false(is.null(test1_fid))
+
+    # close and re-open
+    lyr$open(read_only = TRUE)
+    lyr$returnGeomAs <- "WKT"
+
+    f <- lyr$getNextFeature()
+
+    expect_equal(f$FID, test1_fid)
+    expect_equal(f$id, feat1$id)
+    expect_equal(f$real_fld, feat1$real_fld)
+    expect_equal(f$str_fld, feat1$str_fld)
+    expect_equal(f$date_fld, feat1$date_fld)
+    expect_true(g_equals(f$geometry, feat1$geometry))
+
+    lyr$close()
+    deleteDataset(dsn4)
+    rm(lyr)
+    rm(dsn4)
 
 })
