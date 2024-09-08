@@ -292,7 +292,7 @@ test_that("feature write methods work", {
     feat1$real_fld <- 1.1
     feat1$str_fld <- "string 1"
     feat1$date_fld <- as.Date("2000-01-01")
-    feat1$datetime_fld <- as.POSIXct("2000-01-01 13:01:01 GMT", tz = "UTC")
+    feat1$datetime_fld <- as.POSIXct("2000-01-01 13:01:01.123 GMT", tz = "UTC")
     feat1$binary_fld <- as.raw(c(1, 1, 1))
     feat1[[geom_fld]] <- "POINT (1 1)"
 
@@ -318,7 +318,7 @@ test_that("feature write methods work", {
     feat2$real_fld <- 2.2
     feat2$str_fld <- "string 2"
     feat2$date_fld <- as.Date("2000-01-02")
-    feat2$datetime_fld <- as.POSIXct("2000-01-02 14:02:02 GMT", tz = "UTC")
+    feat2$datetime_fld <- as.POSIXct("2000-01-02 14:02.234 GMT", tz = "UTC")
     feat2$binary_fld <- as.raw(c(2, 2, 2))
     feat2[[geom_fld]] <- "POINT (2 2)"
 
