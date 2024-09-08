@@ -149,7 +149,7 @@ test_that("delete feature works", {
 })
 
 test_that("feature write methods work", {
-    # tests on an existing data source with real data
+    ## tests on an existing data source with real data
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
     dsn <- file.path(tempdir(), basename(f))
     file.copy(f, dsn, overwrite = TRUE)
@@ -256,11 +256,11 @@ test_that("feature write methods work", {
     }
 
     lyr$close()
-    unlink(dsn)
+    deleteDataset(dsn)
     rm(dsn)
     rm(lyr)
 
-    # tests for field types supported by GPKG (does not inlcude list fields)
+    ## tests for field types supported by GPKG (does not inlcude list fields)
     dsn2 <- tempfile(fileext = ".gpkg")
     defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4326))
     defn$int_fld <- ogr_def_field("OFTInteger")
@@ -332,5 +332,55 @@ test_that("feature write methods work", {
     expect_equal(feat2_check, feat2)
 
     lyr$close()
-    unlink(dsn2)
+    deleteDataset(dsn2)
+    rm(lyr)
+    rm(dsn2)
+
+    ## tests for OGR list field types in CSV
+    dsn3 <- file.path(tempdir(), "test_list.csv")
+
+    defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4326))
+    defn$id <- ogr_def_field("OFTInteger")
+    defn$real_fld <- ogr_def_field("OFTReal")
+    defn$str_fld <- ogr_def_field("OFTString")
+    defn$int_list_fld <- ogr_def_field("OFTIntegerList", "JSonIntegerList")
+    defn$real_list_fld <- ogr_def_field("OFTRealList", "JSonRealList")
+    defn$str_list_fld <- ogr_def_field("OFTStringList", "JSonStringList")
+
+    lyr_opt <- c("GEOMETRY=AS_WKT", "CREATE_CSVT=YES")
+    expect_true(ogr_ds_create("CSV", dsn3, "test_list", layer_defn = defn,
+                              lco = lyr_opt, overwrite = TRUE))
+
+    lyr <- new(GDALVector, dsn3, "test_list", read_only = FALSE)
+
+    geom_fld <- lyr$getGeometryColumn()
+
+    feat1 <- list()
+    feat1$id <- 1
+    feat1$real_fld <- 1.1
+    feat1$str_fld <- "string 1"
+    feat1$int_list_fld <- c(1, 1, 1)
+    feat1$real_list_fld <- c(1.1, 1.1, 1.1)
+    feat1$str_list_fld <- c("str 1", "str 1", "str 1")
+    feat1[[geom_fld]] <- "POINT (1 1)"
+
+    expect_true(lyr$createFeature(feat1))
+
+    # close and re-open
+    lyr$open(read_only = TRUE)
+
+    f <- lyr$getNextFeature()
+    expect_equal(f$id, feat1$id)
+    expect_equal(f$real_fld, feat1$real_fld)
+    expect_equal(f$str_fld, feat1$str_fld)
+    expect_equal(f$int_list_fld, feat1$int_list_fld)
+    expect_equal(f$real_list_fld, feat1$real_list_fld)
+    expect_equal(f$str_list_fld, feat1$str_list_fld)
+    expect_true(g_equals(f$WKT, feat1[[geom_fld]]))
+
+    lyr$close()
+    deleteDataset(dsn3)
+    rm(lyr)
+    rm(dsn3)
+
 })
