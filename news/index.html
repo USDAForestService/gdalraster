@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9342</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9350</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9342" id="gdalraster-11119342-dev">gdalraster 1.11.1.9342 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119342-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/ogr_manage.html">ogr_layer_rename()</a></code>: rename an existing layer in a vector dataset (GDAL &gt;= 3.5) (2024-09-04)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9350" id="gdalraster-11119350-dev">gdalraster 1.11.1.9350 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119350-dev"></a></h2>
+<ul><li><p>fix input validation in <code><a href="../reference/ogr_define.html">ogr_def_geom_field()</a></code>: if <code>srs</code> is <code>NULL</code> set to empty string, avoids exception in <code><a href="../reference/ogr_manage.html">ogr_layer_create()</a></code> if no SRS is given when using a layer definition created with <code><a href="../reference/ogr_define.html">ogr_def_layer()</a></code> (2024-09-07)</p></li>
+<li><p>add <code><a href="../reference/ogr_manage.html">ogr_layer_rename()</a></code>: rename an existing layer in a vector dataset (GDAL &gt;= 3.5) (2024-09-04)</p></li>
 <li><p>(internal) add header <code>src/gdal_vsi.h</code> and minor code cleanups in <code>src/gdal_vsi.cpp</code> (2024-09-02)</p></li>
 <li><p>(internal) use consistent naming convention for C++ class member variables (2024-08-31)</p></li>
 <li><p>(internal) pass by const reference in some srs and geom functions (2024-08-31)</p></li>
