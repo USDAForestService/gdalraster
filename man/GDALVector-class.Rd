@@ -574,25 +574,25 @@ The layer can be re-opened on the existing \code{dsn} with
 }
 
 \examples{
-# MTBS fire perimeters in Yellowstone National Park 1984-2022
+## MTBS fire perimeters in Yellowstone National Park 1984-2022
 f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
 
-# copy to a temporary file that is writeable
+## copy to a temporary file that is writeable
 dsn <- file.path(tempdir(), basename(f))
 file.copy(f, dsn)
 
 lyr <- new(GDALVector, dsn, "mtbs_perims")
 
-# object of class GDALVector
+## object of class GDALVector
 lyr
 str(lyr)
 
-# dataset info
+## dataset info
 lyr$getDriverShortName()
 lyr$getDriverLongName()
 lyr$getFileList()
 
-# layer info
+## layer info
 lyr$getName()
 lyr$getGeomType()
 lyr$getGeometryColumn()
@@ -600,53 +600,53 @@ lyr$getFIDColumn()
 lyr$getSpatialRef()
 lyr$bbox()
 
-# layer capabilities
+## layer capabilities
 lyr$testCapability()
 
-# re-open with write access
+## re-open with write access
 lyr$open(read_only = FALSE)
 lyr$testCapability()$SequentialWrite
 lyr$testCapability()$RandomWrite
 
-# feature class definition - a list of field names and their definitions
+## feature class definition - a list of field names and their definitions
 defn <- lyr$getLayerDefn()
 names(defn)
 str(defn)
 
-# default value of the read/write field 'returnGeomAs'
+## default value of the read/write field 'returnGeomAs'
 lyr$returnGeomAs
 
 lyr$getFeatureCount()
 
-# sequential read cursor
+## sequential read cursor
 feat <- lyr$getNextFeature()
 # a list of field names and their values
 str(feat)
 
-# set an attribute filter
+## set an attribute filter
 lyr$setAttributeFilter("ig_year = 2020")
 lyr$getFeatureCount()
 
 feat <- lyr$getNextFeature()
 str(feat)
 
-# NULL when no more features are available
+## NULL when no more features are available
 feat <- lyr$getNextFeature()
 str(feat)
 
-# reset reading to the start and return geometries as WKT
+## reset reading to the start and return geometries as WKT
 lyr$resetReading()
 lyr$returnGeomAs <- "WKT"
 feat <- lyr$getNextFeature()
 str(feat)
 
-# clear the attribute filter
+## clear the attribute filter
 lyr$setAttributeFilter("")
 lyr$getFeatureCount()
 
-# set a spatial filter
-# get the bounding box of the largest 1988 fire and use as spatial filter
-# first set a temporary attribute filter to do the lookup
+## set a spatial filter
+## get the bounding box of the largest 1988 fire and use as spatial filter
+## first set a temporary attribute filter to do the lookup
 lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
 feat <- lyr$getNextFeature()
 str(feat)
@@ -654,30 +654,30 @@ str(feat)
 bbox <- bbox_from_wkt(feat$geom)
 print(bbox)
 
-# set spatial filter on the full layer
-lyr$setAttributeFilter("")
+## set spatial filter on the full layer
+lyr$setAttributeFilter("")  # clears
 lyr$setSpatialFilterRect(bbox)
 lyr$getFeatureCount()
 
-# fetch in chunks and return as data frame
+## fetch in chunks and return as data frame
 d <- lyr$fetch(20)
 str(d)
 
-# the next chunk
+## the next chunk
 d <- lyr$fetch(20)
 nrow(d)
 
-# no features remaining
+## no features remaining
 d <- lyr$fetch(20)
 nrow(d)
-str(d) # 0-row data frame with columns typed
+str(d)  # 0-row data frame with columns typed
 
-# fetch all pending features with geometries as WKB
+## fetch all pending features with geometries as WKB
 lyr$returnGeomAs <- "WKB"
 d <- lyr$fetch(-1)  # resets reading to the first feature
 str(d)
 
-# parse WKB using package wk
+## parse WKB using package wk
 wk_obj <- wk::wkb(d$geom, crs = lyr$getSpatialRef())
 plot(wk_obj)
 
@@ -686,6 +686,109 @@ lyr$getFeatureCount()
 
 lyr$close()
 \dontshow{unlink(dsn)}
+
+## simple example for feature write methods showing use of various data types
+## create and write to a new layer in a GeoPackage data source
+dsn2 <- tempfile(fileext = ".gpkg")
+
+## define a feature class
+defn <- ogr_def_layer("POINT", srs = epsg_to_wkt(4326))
+
+## add field definitions
+defn$unique_int <- ogr_def_field("OFTInteger", is_nullable = FALSE,
+                                 is_unique = TRUE)
+defn$bool_data <- ogr_def_field("OFTInteger", fld_subtype = "OFSTBoolean")
+defn$large_ints <- ogr_def_field("OFTInteger64")
+defn$doubles <- ogr_def_field("OFTReal")
+defn$strings <- ogr_def_field("OFTString", fld_width = 50)
+defn$dates <- ogr_def_field("OFTDate")
+defn$dt_modified <- ogr_def_field("OFTDateTime",
+                                  default_value = "CURRENT_TIMESTAMP")
+defn$blobs <- ogr_def_field("OFTBinary")
+
+ogr_ds_create("GPKG", dsn2, "test_layer", layer_defn = defn)
+
+lyr <- new(GDALVector, dsn2, "test_layer", read_only = FALSE)
+# lyr$getLayerDefn() |> str()
+
+## define a feature to write
+## the read-only field lyr$featureTemplate can be examined for structure
+## fields in the template are initialized to NA (= OGR NULL)
+lyr$featureTemplate |> str()
+
+## copy the template or make a new list
+feat1 <- list()
+## $FID is omitted since it is assigned when written (could also be NA)
+## $dt_modified is omitted since the datasource sets a default timestamp
+feat1$unique_int <- 1001
+feat1$bool_data <- TRUE
+## passing a string to as.integer64()
+## this value is too large to be represented exactly as R numeric (double)
+feat1$large_ints <- bit64::as.integer64("90071992547409910")
+feat1$doubles <- 1.234
+feat1$strings <- "A test string"
+feat1$dates <- as.Date("2024-01-01")
+feat1$blobs <- charToRaw("A binary object")
+feat1$geom <- "POINT (1 1)"  # can be a WKT string or raw vector of WKB
+
+## create as a new feature in the layer
+lyr$createFeature(feat1)
+
+## the assigned FID
+lyr$getLastWriteFID()
+
+## this fails due to the unique constraint
+lyr$createFeature(feat1)
+
+feat2 <- list()
+feat2$unique_int <- 1002
+feat2$bool_data <- FALSE
+feat2$large_ints <- bit64::as.integer64("90071992547409920")
+feat2$doubles <- 2.345
+feat2$strings <- "A test string 2"
+feat2$dates <- as.Date("2024-01-02")
+feat2$blobs <- charToRaw("A binary object 2")
+feat2$geom <- "POINT (2 2)"
+
+lyr$createFeature(feat2)
+lyr$getLastWriteFID()
+
+## close and re-open as a read-only layer
+lyr$open(read_only = TRUE)
+
+lyr$getFeatureCount()
+d <- lyr$fetch(-1)  # -1 for all features reading from start
+str(d)
+
+## edit an existing feature, e.g., feat <- lyr$getFeature(2)
+## here we copy a row of the data frame returned by lyr$fetch() above
+feat <- d[2,]
+str(feat)
+
+Sys.sleep(1)  # only to ensure a timestamp difference
+
+feat$bool_data <- TRUE
+feat$strings <- paste(feat$strings, "- edited")
+feat$dt_modified <- Sys.time()
+feat$geom <- "POINT (2.001 2.001)"
+
+lyr$open(read_only = FALSE)
+
+## lyr$setFeature() re-writes the feature identified by the $FID element
+## N.B., all fields are re-written:
+##   any fields omitted from the input feature, or set to NA, will be
+##   re-written as OGR NULL
+lyr$setFeature(feat)
+
+lyr$open(read_only = TRUE)
+lyr$getFeatureCount()
+
+lyr$returnGeomAs <- "WKT"
+d <- lyr$fetch(-1)
+str(d)
+
+lyr$close()
+\dontshow{unlink(dsn2)}
 }
 \seealso{
 \link{ogr_define}, \link{ogr_manage}, \code{\link[=ogr2ogr]{ogr2ogr()}}, \code{\link[=ogrinfo]{ogrinfo()}}
