@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9342 (dev)
+# gdalraster 1.11.1.9350 (dev)
+
+* fix input validation in `ogr_def_geom_field()`: if `srs` is `NULL` set to empty string, avoids exception in `ogr_layer_create()` if no SRS is given when using a layer definition created with `ogr_def_layer()` (2024-09-07)
 
 * add `ogr_layer_rename()`: rename an existing layer in a vector dataset (GDAL >= 3.5) (2024-09-04)
 
