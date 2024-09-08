@@ -164,12 +164,11 @@
 #'
 #' \code{$returnGeomAs}\cr
 #' Character string specifying the return format of feature geometries.
-#' Must be one of `WKT`, `WKT_ISO`, `WKB`, `WKB_ISO`, `TYPE_NAME` or
-#' `NONE` (the default). Using `WKB`/`WKT` exports as 99-402 extended
-#' dimension (Z) types for Point, LineString, Polygon, MultiPoint,
-#' MultiLineString, MultiPolygon and GeometryCollection. For other geometry
-#' types, it is equivalent to using `WKB_ISO`/`WKT_ISO`
-#' (see \url{https://libgeos.org/specifications/wkb/}).
+#' Must be one of `WKT`, `WKT_ISO`, `WKB` (the default), `WKB_ISO`, `TYPE_NAME`
+#' or `NONE`. Using `WKB`/`WKT` exports as 99-402 extended dimension (Z) types
+#' for Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
+#' and GeometryCollection. For other geometry types, it is equivalent to using
+#' `WKB_ISO`/`WKT_ISO` (see \url{https://libgeos.org/specifications/wkb/}).
 #'
 #' \code{$wkbByteOrder}\cr
 #' Character string specifying the byte order for WKB geometries.
@@ -414,13 +413,13 @@
 #' flag if present)
 #' * `OFTBinary`: `raw` vector (list column, `NULL` entries for OGR NULL values)
 #'
-#' Geometries are not returned if the field `returnGeomAs` is set to `NONE`
-#' (currently the default). Omitting the geometries may be beneficial for
-#' performance and memory usage when access only to feature attributes is
-#' needed. Geometries are returned as `raw` vectors in a data frame list column
-#' when `returnGeomAs` is set to `WKB` or `WKB_ISO`. Otherwise, geometries are
-#' returned as `character` strings when `returnGeomAs` is set to one of `WKT`,
-#' `WKT_ISO` or `TYPE_NAME`.
+#' Geometries are not returned if the field `returnGeomAs` is set to `NONE`.
+#' Omitting the geometries may be beneficial for performance and memory usage
+#' when access only to feature attributes is needed. Geometries are returned
+#' as `raw` vectors in a data frame list column when `returnGeomAs` is set to
+#' `WKB` (the default) or `WKB_ISO`. Otherwise, geometries are returned as
+#' `character` strings when `returnGeomAs` is set to one of `WKT`, `WKT_ISO` or
+#' `TYPE_NAME`.
 #'
 #' Note that `$getFeatureCount()` is called internally when fetching the full
 #' feature set or all remaining features (but not for a page of features).
@@ -602,7 +601,7 @@
 #' str(defn)
 #'
 #' # default value of the read/write field 'returnGeomAs'
-#' print(lyr$returnGeomAs)
+#' lyr$returnGeomAs
 #'
 #' lyr$getFeatureCount()
 #'

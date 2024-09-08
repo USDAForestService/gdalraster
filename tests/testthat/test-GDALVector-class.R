@@ -47,6 +47,7 @@ test_that("setting ignored fields works", {
     file.copy(f, dsn, overwrite = TRUE)
 
     lyr <- new(GDALVector, dsn, "mtbs_perims")
+    lyr$returnGeomAs <- "NONE"
     expect_true(lyr$testCapability()$IgnoreFields)
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
@@ -257,6 +258,7 @@ test_that("feature write methods work", {
     }
 
     # errors
+    # TODO: complete this
     lyr$open(read_only = FALSE)
     expect_error(lyr$createFeature(NULL))
     expect_error(lyr$setFeature(NULL))

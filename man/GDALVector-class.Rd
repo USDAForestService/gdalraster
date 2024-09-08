@@ -179,12 +179,11 @@ Defaults to \code{"geometry"}.
 
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.
-Must be one of \code{WKT}, \code{WKT_ISO}, \code{WKB}, \code{WKB_ISO}, \code{TYPE_NAME} or
-\code{NONE} (the default). Using \code{WKB}/\code{WKT} exports as 99-402 extended
-dimension (Z) types for Point, LineString, Polygon, MultiPoint,
-MultiLineString, MultiPolygon and GeometryCollection. For other geometry
-types, it is equivalent to using \code{WKB_ISO}/\code{WKT_ISO}
-(see \url{https://libgeos.org/specifications/wkb/}).
+Must be one of \code{WKT}, \code{WKT_ISO}, \code{WKB} (the default), \code{WKB_ISO}, \code{TYPE_NAME}
+or \code{NONE}. Using \code{WKB}/\code{WKT} exports as 99-402 extended dimension (Z) types
+for Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
+and GeometryCollection. For other geometry types, it is equivalent to using
+\code{WKB_ISO}/\code{WKT_ISO} (see \url{https://libgeos.org/specifications/wkb/}).
 
 \code{$wkbByteOrder}\cr
 Character string specifying the byte order for WKB geometries.
@@ -432,13 +431,13 @@ flag if present)
 \item \code{OFTBinary}: \code{raw} vector (list column, \code{NULL} entries for OGR NULL values)
 }
 
-Geometries are not returned if the field \code{returnGeomAs} is set to \code{NONE}
-(currently the default). Omitting the geometries may be beneficial for
-performance and memory usage when access only to feature attributes is
-needed. Geometries are returned as \code{raw} vectors in a data frame list column
-when \code{returnGeomAs} is set to \code{WKB} or \code{WKB_ISO}. Otherwise, geometries are
-returned as \code{character} strings when \code{returnGeomAs} is set to one of \code{WKT},
-\code{WKT_ISO} or \code{TYPE_NAME}.
+Geometries are not returned if the field \code{returnGeomAs} is set to \code{NONE}.
+Omitting the geometries may be beneficial for performance and memory usage
+when access only to feature attributes is needed. Geometries are returned
+as \code{raw} vectors in a data frame list column when \code{returnGeomAs} is set to
+\code{WKB} (the default) or \code{WKB_ISO}. Otherwise, geometries are returned as
+\code{character} strings when \code{returnGeomAs} is set to one of \code{WKT}, \code{WKT_ISO} or
+\code{TYPE_NAME}.
 
 Note that \verb{$getFeatureCount()} is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).
@@ -615,7 +614,7 @@ names(defn)
 str(defn)
 
 # default value of the read/write field 'returnGeomAs'
-print(lyr$returnGeomAs)
+lyr$returnGeomAs
 
 lyr$getFeatureCount()
 
