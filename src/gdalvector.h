@@ -139,7 +139,7 @@ class GDALVector {
     void setOGRLayerH_(const OGRLayerH hLyr, const std::string &lyr_name);
     void setFeatureTemplate_();
     SEXP initDF_(R_xlen_t nrow) const;
-    OGRFeatureH OGRFeatureFromList_(const Rcpp::List &list_in) const;
+    OGRFeatureH OGRFeatureFromList_(const Rcpp::RObject &feature) const;
 
  private:
     std::string m_dsn {""};

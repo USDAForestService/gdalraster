@@ -1126,15 +1126,9 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 bool GDALVector::setFeature(const Rcpp::RObject &feature) {
     checkAccess_(GA_Update);
 
-    if (feature.isNULL() || !Rcpp::is<Rcpp::List>(feature))
-        Rcpp::stop("'feature' must be a list object");
+    // input validation is done in OGRFeatureFromList_():
+    OGRFeatureH hFeat = OGRFeatureFromList_(feature);
 
-    Rcpp::List feature_in(feature);
-
-    if (feature_in.size() == 0)
-        Rcpp::stop("input feature is empty");
-
-    OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
     OGRErr err = OGR_L_SetFeature(m_hLayer, hFeat);
      if (err != OGRERR_NONE) {
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -1151,15 +1145,9 @@ bool GDALVector::setFeature(const Rcpp::RObject &feature) {
 bool GDALVector::createFeature(const Rcpp::RObject &feature) {
     checkAccess_(GA_Update);
 
-    if (feature.isNULL() || !Rcpp::is<Rcpp::List>(feature))
-        Rcpp::stop("'feature' must be a list object");
+    // input validation is done in OGRFeatureFromList_():
+    OGRFeatureH hFeat = OGRFeatureFromList_(feature);
 
-    Rcpp::List feature_in(feature);
-
-    if (feature_in.size() == 0)
-        Rcpp::stop("input feature is empty");
-
-    OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
     OGRErr err = OGR_L_CreateFeature(m_hLayer, hFeat);
      if (err != OGRERR_NONE) {
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -1179,15 +1167,9 @@ bool GDALVector::upsertFeature(const Rcpp::RObject &feature) {
 #else
     checkAccess_(GA_Update);
 
-    if (feature.isNULL() || !Rcpp::is<Rcpp::List>(feature))
-        Rcpp::stop("'feature' must be a list object");
+    // input validation is done in OGRFeatureFromList_():
+    OGRFeatureH hFeat = OGRFeatureFromList_(feature);
 
-    Rcpp::List feature_in(feature);
-
-    if (feature_in.size() == 0)
-        Rcpp::stop("input feature is empty");
-
-    OGRFeatureH hFeat = OGRFeatureFromList_(feature_in);
     OGRErr err = OGR_L_UpsertFeature(m_hLayer, hFeat);
      if (err != OGRERR_NONE) {
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -1577,20 +1559,17 @@ void GDALVector::close() {
 }
 
 void GDALVector::OGRFeatureFromList_dumpReadble(
-        const Rcpp::RObject &feat) const {
+                 const Rcpp::RObject &feat) const {
 
-    // undocumented method exposed in R, for diagnostic use
+    // undocumented method exposed in R for diagnostic use
 
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 8, 0)
     Rcpp::stop("'OGRFeatureFromList_dumpReadble()' requires GDAL >= 3.8");
 
 #else
-    if (feat.isNULL() || !Rcpp::is<Rcpp::List>(feat))
-        Rcpp::stop("'feature' must be a list object");
+    // input validation is done in OGRFeatureFromList_()
+    OGRFeatureH hFeat = OGRFeatureFromList_(feat);
 
-    Rcpp::List feat_in(feat);
-
-    OGRFeatureH hFeat = OGRFeatureFromList_(feat_in);
     if (hFeat == nullptr)
         Rcpp::stop("'OGRFeatureFromList_()' returned nullptr");
     std::vector<const char *> options = {"DISPLAY_GEOMETRY=SUMMARY", nullptr};
@@ -1860,8 +1839,21 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
     return df;
 }
 
-OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
+OGRFeatureH GDALVector::OGRFeatureFromList_(
+                        const Rcpp::RObject &feature) const {
+
     // the returned feature must be destroyed with OGR_F_Destroy()
+
+    if (feature.isNULL() || !Rcpp::is<Rcpp::List>(feature))
+        Rcpp::stop("input must be a list or 1-row data frame");
+
+    if (Rcpp::is<Rcpp::DataFrame>(feature)) {
+        Rcpp::DataFrame df(feature);
+        if (df.nrows() != 1)
+            Rcpp::stop("data frame input must have 1 row");
+    }
+
+    Rcpp::List list_in(feature);
 
     Rcpp::CharacterVector names = list_in.names();
     if (names.size() == 0)
@@ -1883,6 +1875,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
     std::map<R_xlen_t, int> map_geom_flds{};
 
     // go over the list element names and map list index to field index
+    // set FID here if given
     for (R_xlen_t i = 0; i < names.size(); ++i) {
         // attribute fields
         int iField = OGR_F_GetFieldIndex(hFeat, names[i]);
@@ -1893,7 +1886,15 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
         // set FID if one is given and is not NA
         if (EQUAL(names[i], "FID")) {
+            if (!Rcpp::is<Rcpp::NumericVector>(list_in[i])) {
+                OGR_F_Destroy(hFeat);
+                Rcpp::stop("FID must be a numeric value (integer64)");
+            }
             Rcpp::NumericVector fid_in = list_in[i];
+            if (fid_in.size() != 1) {
+                OGR_F_Destroy(hFeat);
+                Rcpp::stop("FID must be length-1 numeric (integer64)");
+            }
             int64_t fid = -1;
             if (Rcpp::isInteger64(fid_in)) {
                 fid = Rcpp::fromInteger64(fid_in[0]);
@@ -1925,7 +1926,8 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         if (nGeomFields == 1 && (
                 EQUAL(names[1], this->defaultGeomFldName.c_str()) ||
                 EQUAL(names[i], "_ogr_geometry_") ||
-                EQUAL(names[i], "geometry"))) {
+                EQUAL(names[i], "geometry") ||
+                EQUAL(names[i], "geom"))) {
 
             map_geom_flds.insert({i, 0});
             continue;
@@ -1951,6 +1953,13 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
         switch (fld_type) {
             case OFTInteger:
             {
+                if (!(Rcpp::is<Rcpp::NumericVector>(list_in[list_idx]) ||
+                      Rcpp::is<Rcpp::IntegerVector>(list_in[list_idx]) ||
+                      Rcpp::is<Rcpp::LogicalVector>(list_in[list_idx]))) {
+
+                        OGR_F_Destroy(hFeat);
+                        Rcpp::stop("OFTInteger requires compatible data type");
+                }
                 OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
                 if (fld_subtype == OFSTBoolean) {
                     Rcpp::LogicalVector v = list_in[list_idx];
@@ -1971,6 +1980,10 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTInteger64:
             {
+                if (!Rcpp::is<Rcpp::NumericVector>(list_in[list_idx])) {
+                        OGR_F_Destroy(hFeat);
+                        Rcpp::stop("OFTInteger64 requires a numeric value");
+                }
                 Rcpp::NumericVector v = list_in[list_idx];
                 int64_t value = NA_INTEGER64;
                 if (v.size() > 0) {
@@ -1988,6 +2001,10 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTReal:
             {
+                if (!Rcpp::is<Rcpp::NumericVector>(list_in[list_idx])) {
+                        OGR_F_Destroy(hFeat);
+                        Rcpp::stop("OFTReal requires a numeric value");
+                }
                 Rcpp::NumericVector v = list_in[list_idx];
                 if (v.size() == 0 || Rcpp::NumericVector::is_na(v(0)))
                     OGR_F_SetFieldNull(hFeat, fld_idx);
@@ -1998,6 +2015,10 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTString:
             {
+                if (!Rcpp::is<Rcpp::CharacterVector>(list_in[list_idx])) {
+                        OGR_F_Destroy(hFeat);
+                        Rcpp::stop("OFTString requires a character string");
+                }
                 Rcpp::CharacterVector v = list_in[list_idx];
                 if (v.size() == 0 || Rcpp::CharacterVector::is_na(v(0)))
                     OGR_F_SetFieldNull(hFeat, fld_idx);
@@ -2008,6 +2029,10 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTDate:
             {
+                if (!Rcpp::is<Rcpp::NumericVector>(list_in[list_idx])) {
+                        OGR_F_Destroy(hFeat);
+                        Rcpp::stop("OFTDate requires a numeric value (Date)");
+                }
                 Rcpp::NumericVector v = list_in[list_idx];
                 if (v.size() == 0 || Rcpp::NumericVector::is_na(v[0])) {
                     OGR_F_SetFieldNull(hFeat, fld_idx);
@@ -2035,6 +2060,10 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTDateTime:
             {
+                if (!Rcpp::is<Rcpp::NumericVector>(list_in[list_idx])) {
+                        OGR_F_Destroy(hFeat);
+                        Rcpp::stop("OFTDateTime requires a numeric value (POSIXct)");
+                }
                 Rcpp::NumericVector v = list_in[list_idx];
                 if (v.size() == 0 || Rcpp::NumericVector::is_na(v[0])) {
                     OGR_F_SetFieldNull(hFeat, fld_idx);
@@ -2068,14 +2097,40 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTTime:
             {
-                // TODO(ctoney): is OFTTime just a character string from R?
+                // TODO(ctoney): OFTTime as character string from R?
                 Rcpp::warning("writing OFTTime is currently not supported");
             }
             break;
 
             case OFTIntegerList:
             {
-                Rcpp::IntegerVector v = list_in[list_idx];
+                Rcpp::IntegerVector v;
+                bool type_mismatch = false;
+                if (Rcpp::is<Rcpp::NumericVector>(list_in[list_idx]) ||
+                    Rcpp::is<Rcpp::IntegerVector>(list_in[list_idx])||
+                    Rcpp::is<Rcpp::LogicalVector>(list_in[list_idx])) {
+
+                    v = list_in[list_idx];
+                }
+                else if (Rcpp::is<Rcpp::List>(list_in[list_idx])) {
+                    Rcpp::List list_tmp = list_in[list_idx];
+                    if (Rcpp::is<Rcpp::NumericVector>(list_in[list_idx]) ||
+                        Rcpp::is<Rcpp::IntegerVector>(list_in[list_idx])||
+                        Rcpp::is<Rcpp::LogicalVector>(list_in[list_idx])) {
+
+                        v = list_tmp[0];
+                    }
+                    else
+                        type_mismatch = true;
+                }
+                else {
+                    type_mismatch = true;
+                }
+                if (type_mismatch) {
+                    OGR_F_Destroy(hFeat);
+                    Rcpp::stop("OFTIntegerList requires compatible data type");
+                }
+
                 if (v.size() == 0 || Rcpp::all(Rcpp::is_na(v)).is_true()) {
                     OGR_F_SetFieldNull(hFeat, fld_idx);
                 }
@@ -2089,7 +2144,26 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTInteger64List:
             {
-                Rcpp::NumericVector v = list_in[list_idx];
+                Rcpp::NumericVector v;
+                bool type_mismatch = false;
+                if (Rcpp::is<Rcpp::NumericVector>(list_in[list_idx])) {
+                    v = list_in[list_idx];
+                }
+                else if (Rcpp::is<Rcpp::List>(list_in[list_idx])) {
+                    Rcpp::List list_tmp = list_in[list_idx];
+                    if (Rcpp::is<Rcpp::NumericVector>(list_tmp[0]))
+                        v = list_tmp[0];
+                    else
+                        type_mismatch = true;
+                }
+                else {
+                    type_mismatch = true;
+                }
+                if (type_mismatch) {
+                    OGR_F_Destroy(hFeat);
+                    Rcpp::stop("OFTInteger64List requires a numeric vector");
+                }
+
                 if (v.size() == 0) {
                     OGR_F_SetFieldNull(hFeat, fld_idx);
                 }
@@ -2108,7 +2182,26 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTRealList:
             {
-                Rcpp::NumericVector v = list_in[list_idx];
+                Rcpp::NumericVector v;
+                bool type_mismatch = false;
+                if (Rcpp::is<Rcpp::NumericVector>(list_in[list_idx])) {
+                    v = list_in[list_idx];
+                }
+                else if (Rcpp::is<Rcpp::List>(list_in[list_idx])) {
+                    Rcpp::List list_tmp = list_in[list_idx];
+                    if (Rcpp::is<Rcpp::NumericVector>(list_tmp[0]))
+                        v = list_tmp[0];
+                    else
+                        type_mismatch = true;
+                }
+                else {
+                    type_mismatch = true;
+                }
+                if (type_mismatch) {
+                    OGR_F_Destroy(hFeat);
+                    Rcpp::stop("OFTRealList requires a numeric vector");
+                }
+
                 if (v.size() == 0 || Rcpp::all(Rcpp::is_na(v)).is_true()) {
                     OGR_F_SetFieldNull(hFeat, fld_idx);
                 }
@@ -2124,7 +2217,26 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTStringList:
             {
-                Rcpp::CharacterVector v = list_in[list_idx];
+                Rcpp::CharacterVector v;
+                bool type_mismatch = false;
+                if (Rcpp::is<Rcpp::CharacterVector>(list_in[list_idx])) {
+                    v = list_in[list_idx];
+                }
+                else if (Rcpp::is<Rcpp::List>(list_in[list_idx])) {
+                    Rcpp::List list_tmp = list_in[list_idx];
+                    if (Rcpp::is<Rcpp::CharacterVector>(list_tmp[0]))
+                        v = list_tmp[0];
+                    else
+                        type_mismatch = true;
+                }
+                else {
+                    type_mismatch = true;
+                }
+                if (type_mismatch) {
+                    OGR_F_Destroy(hFeat);
+                    Rcpp::stop("OFTStringList requires a character vector");
+                }
+
                 if (v.size() == 0 || Rcpp::all(Rcpp::is_na(v)).is_true()) {
                     OGR_F_SetFieldNull(hFeat, fld_idx);
                 }
@@ -2138,7 +2250,26 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &list_in) const {
 
             case OFTBinary:
             {
-                Rcpp::RawVector v = list_in[list_idx];
+                Rcpp::RawVector v;
+                bool type_mismatch = false;
+                if (Rcpp::is<Rcpp::RawVector>(list_in[list_idx])) {
+                    v = list_in[list_idx];
+                }
+                else if (Rcpp::is<Rcpp::List>(list_in[list_idx])) {
+                    Rcpp::List list_tmp = list_in[list_idx];
+                    if (Rcpp::is<Rcpp::RawVector>(list_tmp[0]))
+                        v = list_tmp[0];
+                    else
+                        type_mismatch = true;
+                }
+                else {
+                    type_mismatch = true;
+                }
+                if (type_mismatch) {
+                    OGR_F_Destroy(hFeat);
+                    Rcpp::stop("OFTBinary requires a raw vector");
+                }
+
                 if (v.size() == 0)
                     OGR_F_SetFieldNull(hFeat, fld_idx);
                 else

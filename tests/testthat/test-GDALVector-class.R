@@ -255,6 +255,12 @@ test_that("feature write methods work", {
         test4_feat <- NULL
     }
 
+    # errors
+    lyr$open(read_only = FALSE)
+    expect_error(lyr$createFeature(NULL))
+    expect_error(lyr$setFeature(NULL))
+
+
     lyr$close()
     deleteDataset(dsn)
     rm(dsn)
