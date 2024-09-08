@@ -372,6 +372,8 @@ test_that("feature write methods work", {
 
     expect_true(lyr$createFeature(feat1))
 
+    expect_true(lyr$syncToDisk())
+
     # close and re-open
     lyr$open(read_only = TRUE)
     lyr$returnGeomAs <- "WKT"

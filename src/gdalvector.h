@@ -86,6 +86,7 @@ class GDALVector {
     bool upsertFeature(const Rcpp::RObject &feature);
     SEXP getLastWriteFID() const;
     bool deleteFeature(const Rcpp::RObject &fid);
+    bool syncToDisk() const;
 
     bool startTransaction(bool force);
     bool commitTransaction();

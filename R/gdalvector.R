@@ -106,6 +106,7 @@
 #' lyr$upsertFeature(feature)
 #' lyr$getLastWriteFID()
 #' lyr$deleteFeature(fid)
+#' lyr$syncToDisk()
 #'
 #' lyr$startTransaction(force)
 #' lyr$commitTransaction()
@@ -491,6 +492,16 @@
 #' The `DeleteFeature` element in the list returned by `$testCapability()` can
 #' be checked to establish if this layer has delete feature capability. Returns
 #' logical `TRUE` if the operation succeeds, or `FALSE` on failure.
+#'
+#' \code{$syncToDisk()}\cr
+#' Flushes pending changes to disk. This call is intended to force the layer to
+#' flush any pending writes to disk, and leave the disk file in a consistent
+#' state. It would not normally have any effect on read-only datasources. Some
+#' formats do not implement this method, and will still return no error. An
+#' error is only returned if an error occurs while attempting to flush to disk.
+#' In any event, you should always close any opened datasource with `$close()`
+#' which will ensure all data is correctly flushed. Returns logical `TRUE` if
+#' no error occurs (even if nothing is done) or `FALSE` on error.
 #'
 #' \code{$startTransaction(force)}\cr
 #' Creates a transaction if supported by the vector data source. The `force`

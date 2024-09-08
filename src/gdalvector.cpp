@@ -1236,6 +1236,16 @@ bool GDALVector::deleteFeature(const Rcpp::RObject &fid) {
     }
 }
 
+bool GDALVector::syncToDisk() const {
+    checkAccess_(GA_ReadOnly);
+
+    OGRErr err = OGR_L_SyncToDisk(m_hLayer);
+    if (err == OGRERR_NONE)
+        return true;
+    else
+        return false;
+}
+
 bool GDALVector::startTransaction(bool force) {
     checkAccess_(GA_ReadOnly);
 
@@ -2486,10 +2496,12 @@ RCPP_MODULE(mod_GDALVector) {
         "Create and write a new feature within the layer")
     .method("upsertFeature", &GDALVector::upsertFeature,
         "Rewrite/replace an existing feature or create a new feature")
-    .method("getLastWriteFID", &GDALVector::getLastWriteFID,
+    .const_method("getLastWriteFID", &GDALVector::getLastWriteFID,
         "Return the FID of the last feature written, or NULL if no writes")
     .method("deleteFeature", &GDALVector::deleteFeature,
         "Delete feature from layer")
+    .const_method("syncToDisk", &GDALVector::syncToDisk,
+        "Flush pending changes to disk")
     .method("startTransaction", &GDALVector::startTransaction,
         "Create a transaction on the dataset")
     .method("commitTransaction", &GDALVector::commitTransaction,

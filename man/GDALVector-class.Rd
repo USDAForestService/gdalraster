@@ -116,6 +116,7 @@ lyr$createFeature(feature)
 lyr$upsertFeature(feature)
 lyr$getLastWriteFID()
 lyr$deleteFeature(fid)
+lyr$syncToDisk()
 
 lyr$startTransaction(force)
 lyr$commitTransaction()
@@ -511,6 +512,16 @@ class attribute (should be a whole number, will be truncated).
 The \code{DeleteFeature} element in the list returned by \verb{$testCapability()} can
 be checked to establish if this layer has delete feature capability. Returns
 logical \code{TRUE} if the operation succeeds, or \code{FALSE} on failure.
+
+\code{$syncToDisk()}\cr
+Flushes pending changes to disk. This call is intended to force the layer to
+flush any pending writes to disk, and leave the disk file in a consistent
+state. It would not normally have any effect on read-only datasources. Some
+formats do not implement this method, and will still return no error. An
+error is only returned if an error occurs while attempting to flush to disk.
+In any event, you should always close any opened datasource with \verb{$close()}
+which will ensure all data is correctly flushed. Returns logical \code{TRUE} if
+no error occurs (even if nothing is done) or \code{FALSE} on error.
 
 \code{$startTransaction(force)}\cr
 Creates a transaction if supported by the vector data source. The \code{force}
