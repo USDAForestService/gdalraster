@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9350 (dev)
+# gdalraster 1.11.1.9400 (dev)
+
+* `GDALVector`: add class methods for writing features in a layer: `$createFeature()`, `$setFeature()`, `$upsertFeature()` (2024-09-08)
 
 * fix input validation in `ogr_def_geom_field()`: if `srs` is `NULL` set to empty string, avoids exception in `ogr_layer_create()` if no SRS is given when using a layer definition created with `ogr_def_layer()` (2024-09-07)
 
