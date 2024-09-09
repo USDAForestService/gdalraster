@@ -257,13 +257,6 @@ test_that("feature write methods work", {
         test4_feat <- NULL
     }
 
-    # errors
-    # TODO: complete this
-    lyr$open(read_only = FALSE)
-    expect_error(lyr$createFeature(NULL))
-    expect_error(lyr$setFeature(NULL))
-
-
     lyr$close()
     deleteDataset(dsn)
     rm(dsn)
@@ -341,6 +334,118 @@ test_that("feature write methods work", {
 
     feat2_check <- lyr$getFeature(test2_fid)
     expect_equal(feat2_check, feat2)
+
+    ## errors
+    lyr$open(read_only = FALSE)
+
+    # NULL
+    expect_error(lyr$createFeature(NULL))
+    expect_error(lyr$setFeature(NULL))
+
+    # not a list
+    feat <- c(1, 2)
+    expect_error(lyr$setFeature(feat))
+    feat <- c("1", "2")
+    expect_error(lyr$setFeature(feat))
+
+    # no element names
+    feat <- lyr$getFeature(1)
+    names(feat) <- NULL
+    expect_error(lyr$setFeature(feat))
+
+    # a name does not match the layer schema
+    feat <- lyr$getFeature(1)
+    feat$nonexistent_fld <- 1
+    expect_error(lyr$setFeature(feat))
+
+    feat <- lyr$getFeature(1)
+
+    # character for OFTInteger
+    orig <- feat$int_fld
+    feat$int_fld <- "1"
+    expect_error(lyr$setFeature(feat))
+    feat$int_fld <- orig
+
+    # character for OFTInteger64
+    orig <- feat$int64_fld
+    feat$int64_fld <- "1"
+    expect_error(lyr$setFeature(feat))
+    feat$int64_fld <- orig
+
+    # character for OFTReal
+    orig <- feat$real_fld
+    feat$real_fld <- "1"
+    expect_error(lyr$setFeature(feat))
+    feat$real_fld <- orig
+
+    # numeric for OFTString
+    orig <- feat$str_fld
+    feat$str_fld <- 1
+    expect_error(lyr$setFeature(feat))
+    feat$str_fld <- orig
+
+    # missing Date class for OFTDate
+    orig <- feat$date_fld
+    feat$date_fld <- as.numeric(as.Date("9999-01-04"))
+    expect_error(lyr$setFeature(feat))
+    feat$date_fld <- orig
+
+    # character string for OFTDate
+    orig <- feat$date_fld
+    feat$date_fld <- "2000-01-01"
+    expect_error(lyr$setFeature(feat))
+    feat$date_fld <- orig
+
+    # missing POSIXct class for OFTDateTime
+    orig <- feat$datetime_fld
+    feat$datetime_fld <- as.numeric(as.Date("9999-01-04"))
+    expect_error(lyr$setFeature(feat))
+    feat$datetime_fld <- orig
+
+    # character string for OFTDateTime
+    orig <- feat$datetime_fld
+    feat$datetime_fld <- "2000-01-02 14:02.234 GMT"
+    expect_error(lyr$setFeature(feat))
+    feat$datetime_fld <- orig
+
+    # other than raw vector for OFTBinary
+    orig <- feat$binary_fld
+    feat$binary_fld <- integer(10)
+    expect_error(lyr$setFeature(feat))
+    feat$binary_fld <- orig
+
+    orig <- feat$binary_fld
+    feat$binary_fld <- numeric(10)
+    expect_error(lyr$setFeature(feat))
+    feat$binary_fld <- orig
+
+    orig <- feat$binary_fld
+    feat$binary_fld <- character(10)
+    expect_error(lyr$setFeature(feat))
+    feat$binary_fld <- orig
+
+    # other than raw vector for OFTBinary, in list
+    orig <- feat$binary_fld
+    feat$binary_fld <- list(integer(10))
+    expect_error(lyr$setFeature(feat))
+    feat$binary_fld <- orig
+
+    # not character or raw vector for geom field
+    orig <- feat[[geom_fld]]
+    feat[[geom_fld]] <- integer(10)
+    expect_error(lyr$setFeature(feat))
+    feat[[geom_fld]] <- orig
+
+    # not character or raw vector for geom field, in list
+    orig <- feat[[geom_fld]]
+    feat[[geom_fld]] <- list(numeric(10))
+    expect_error(lyr$setFeature(feat))
+    feat[[geom_fld]] <- orig
+
+    # multi-row data frame
+    feat <- lyr$fetch(-1)
+    expect_equal(nrow(feat), 2)
+    expect_error(lyr$setFeature(feat))
 
     lyr$close()
     deleteDataset(dsn2)
