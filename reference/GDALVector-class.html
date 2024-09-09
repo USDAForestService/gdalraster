@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9350</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9400</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -194,7 +194,12 @@ lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">resetReading</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="va">n</span><span class="op">)</span></span>
 <span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">setFeature</span><span class="op">(</span><span class="va">feature</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">createFeature</span><span class="op">(</span><span class="va">feature</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">upsertFeature</span><span class="op">(</span><span class="va">feature</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">getLastWriteFID</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">deleteFeature</span><span class="op">(</span><span class="va">fid</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">syncToDisk</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">startTransaction</span><span class="op">(</span><span class="va">force</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">commitTransaction</span><span class="op">(</span><span class="op">)</span></span>
@@ -259,12 +264,11 @@ geometry column name in the source layer is empty, like with shapefiles etc.
 Defaults to <code>"geometry"</code>.</p>
 <p><code>$returnGeomAs</code><br>
 Character string specifying the return format of feature geometries.
-Must be one of <code>WKT</code>, <code>WKT_ISO</code>, <code>WKB</code>, <code>WKB_ISO</code>, <code>TYPE_NAME</code> or
-<code>NONE</code> (the default). Using <code>WKB</code>/<code>WKT</code> exports as 99-402 extended
-dimension (Z) types for Point, LineString, Polygon, MultiPoint,
-MultiLineString, MultiPolygon and GeometryCollection. For other geometry
-types, it is equivalent to using <code>WKB_ISO</code>/<code>WKT_ISO</code>
-(see <a href="https://libgeos.org/specifications/wkb/" class="external-link">https://libgeos.org/specifications/wkb/</a>).</p>
+Must be one of <code>WKT</code>, <code>WKT_ISO</code>, <code>WKB</code> (the default), <code>WKB_ISO</code>, <code>TYPE_NAME</code>
+or <code>NONE</code>. Using <code>WKB</code>/<code>WKT</code> exports as 99-402 extended dimension (Z) types
+for Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
+and GeometryCollection. For other geometry types, it is equivalent to using
+<code>WKB_ISO</code>/<code>WKT_ISO</code> (see <a href="https://libgeos.org/specifications/wkb/" class="external-link">https://libgeos.org/specifications/wkb/</a>).</p>
 <p><code>$wkbByteOrder</code><br>
 Character string specifying the byte order for WKB geometries.
 Must be either <code>LSB</code> (Least Significant Byte first, the default) or
@@ -480,15 +484,68 @@ values):</p><ul><li><p><code>OFTInteger</code>: <code>integer</code></p></li>
 <li><p><code>OFTDateTime</code>: <code>POSIXct</code> (millisecond accuracy and adjustment for time zone
 flag if present)</p></li>
 <li><p><code>OFTBinary</code>: <code>raw</code> vector (list column, <code>NULL</code> entries for OGR NULL values)</p></li>
-</ul><p>Geomtries are not returned if the field <code>returnGeomAs</code> is set to <code>NONE</code>
-(currently the default). Omitting the geometries may be beneficial for
-performance and memory usage when access only to feature attributes is
-needed. Geometries are returned as <code>raw</code> vectors in a data frame list column
-when <code>returnGeomAs</code> is set to <code>WKB</code> or <code>WKB_ISO</code>. Otherwise, geometries are
-returned as <code>character</code> strings when <code>returnGeomAs</code> is set to one of <code>WKT</code>,
-<code>WKT_ISO</code> or <code>TYPE_NAME</code>.</p>
+</ul><p>Geometries are not returned if the field <code>returnGeomAs</code> is set to <code>NONE</code>.
+Omitting the geometries may be beneficial for performance and memory usage
+when access only to feature attributes is needed. Geometries are returned
+as <code>raw</code> vectors in a data frame list column when <code>returnGeomAs</code> is set to
+<code>WKB</code> (the default) or <code>WKB_ISO</code>. Otherwise, geometries are returned as
+<code>character</code> strings when <code>returnGeomAs</code> is set to one of <code>WKT</code>, <code>WKT_ISO</code> or
+<code>TYPE_NAME</code>.</p>
 <p>Note that <code>$getFeatureCount()</code> is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).</p>
+<p><code>$setFeature(feature)</code><br>
+Rewrites/replaces an existing feature. This method writes a feature based on
+the feature id within the input feature. The <code>feature</code> argument is a named
+list of fields and their values, and must include a <code>$FID</code> element
+referencing the existing feature to rewrite. The <code>RandomWrite</code> element in
+the list returned by <code>$testCapability()</code> can be checked to establish if this
+layer supports random access writing via <code>$setFeature()</code>.
+The way omitted fields in the passed <code>feature</code> are processed is driver
+dependent:</p><ul><li><p>SQL-based drivers which implement set feature through SQL UPDATE will skip
+unset fields, and thus the content of the existing feature will be
+preserved.</p></li>
+<li><p>The shapefile driver will write a NULL value in the DBF file.</p></li>
+<li><p>The GeoJSON driver will take into account unset fields to remove the
+corresponding JSON member.</p></li>
+</ul><p>Returns logical <code>TRUE</code> upon successful completion, or <code>FALSE</code> if setting the
+feature did not succeed. The FID of the last feature written to the layer
+may be obtained with the method <code>$getLastWriteFID()</code> (see below). To set a
+feature, but create it if it doesn't exist see the <code>$upsertFeature()</code> method.</p>
+<p><code>$createFeature(feature)</code><br>
+Creates and writes a new feature within the layer. The <code>feature</code> argument is
+a named list of fields and their values. A <code>GDALVector</code> object provides
+a read-only <code>$featureTemplate</code> that is set to such a list with values
+initialized to <code>NA</code> (OGR NULL).
+The passed feature is written to the layer as a new feature, rather than
+overwriting an existing one. If the feature has a <code>$FID</code> element other than
+<code>NA</code>, then the vector format driver may use that as the feature id of the
+new feature, but not necessarily. The FID of the last feature written
+to the layer may be obtained with the method <code>$getLastWriteFID()</code> (see
+below).
+Returns logical <code>TRUE</code> upon successful completion, or <code>FALSE</code> if creating
+the feature did not succeed. To create a feature, but set it if it already
+exists see the <code>$upsertFeature()</code> method.</p>
+<p><code>$upsertFeature(feature)</code><br>
+Rewrites/replaces an existing feature or creates a new feature within the
+layer. This method will write a feature to the layer, based on the feature
+id within the input feature. The <code>feature</code> argument is a named list of
+fields and their values, potentially including a <code>$FID</code> element referencing
+an existing feature to rewrite. If the feature id doesn't exist a new
+feature will be written. Otherwise, the existing feature will be rewritten.
+The <code>UpsertFeature</code> element in the list returned by <code>$testCapability()</code> can
+be checked to determine if this layer supports upsert writing. See
+<code>$setFeature()</code> above for a description of how omitted fields in the passed
+<code>feature</code> are processed.
+Returns logical <code>TRUE</code> upon successful completion, or <code>FALSE</code> if upserting
+the feature did not succeed. Requires GDAL &gt;= 3.6.</p>
+<p><code>$getLastWriteFID()</code><br>
+Returns the FID of the last feature written (either newly created or updated
+existing). <code>NULL</code> is returned if no features have been written in the layer.
+Note that OGRNullFID (<code>-1</code>) may be returned after writing a feature in some
+formats. This is the case if a FID has not been assigned yet, and generally
+does not indicate an error (e.g., formats that do not store a persistent FID
+and assign FIDs upon a sequential read operation). The returned FID is a
+numeric scalar carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class attribute.</p>
 <p><code>$deleteFeature(fid)</code><br>
 Deletes a feature from the layer. The feature with the indicated feature ID
 is deleted from the layer if supported by the format driver. The value of
@@ -497,6 +554,15 @@ class attribute (should be a whole number, will be truncated).
 The <code>DeleteFeature</code> element in the list returned by <code>$testCapability()</code> can
 be checked to establish if this layer has delete feature capability. Returns
 logical <code>TRUE</code> if the operation succeeds, or <code>FALSE</code> on failure.</p>
+<p><code>$syncToDisk()</code><br>
+Flushes pending changes to disk. This call is intended to force the layer to
+flush any pending writes to disk, and leave the disk file in a consistent
+state. It would not normally have any effect on read-only datasources. Some
+formats do not implement this method, and will still return no error. An
+error is only returned if an error occurs while attempting to flush to disk.
+In any event, you should always close any opened datasource with <code>$close()</code>
+which will ensure all data is correctly flushed. Returns logical <code>TRUE</code> if
+no error occurs (even if nothing is done) or <code>FALSE</code> on error.</p>
 <p><code>$startTransaction(force)</code><br>
 Creates a transaction if supported by the vector data source. The <code>force</code>
 argument is a logical value. If <code>force = FALSE</code>, only "efficient"
@@ -551,19 +617,19 @@ The layer can be re-opened on the existing <code>dsn</code> with
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># MTBS fire perimeters in Yellowstone National Park 1984-2022</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## MTBS fire perimeters in Yellowstone National Park 1984-2022</span></span></span>
 <span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package <span class="op">=</span> <span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># copy to a temporary file that is writeable</span></span></span>
+<span class="r-in"><span><span class="co">## copy to a temporary file that is writeable</span></span></span>
 <span class="r-in"><span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span><span class="va">f</span>, <span class="va">dsn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># object of class GDALVector</span></span></span>
+<span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55f117fa5800&gt; of class 'GDALVector' &lt;0x55f116f3ce10&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x5601f3491c30&gt; of class 'GDALVector' &lt;0x5601e8ee8610&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 7 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -582,28 +648,30 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_dialect         : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_is_sql          : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_layer_name      : chr "mtbs_perims"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "NONE"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "WKB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 55 methods, of which 41 are  possibly relevant:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    bbox, clearSpatialFilter, close, commitTransaction, deleteFeature, fetch,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    finalize, getAttributeFilter, getDriverLongName, getDriverShortName, getDsn,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 61 methods, of which 47 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    OGRFeatureFromList_dumpReadble, bbox, clearSpatialFilter, close,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    commitTransaction, createFeature, deleteFeature, fetch, finalize,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getAttributeFilter, getDriverLongName, getDriverShortName, getDsn,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getFIDColumn, getFeature, getFeatureCount, getFileList, getGeomType,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getGeometryColumn, getLayerDefn, getName, getNextFeature, getSpatialFilter,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getSpatialRef, initialize, isOpen, layerClip, layerErase, layerIdentity,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerIntersection, layerSymDifference, layerUnion, layerUpdate, open,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    resetReading, rollbackTransaction, setAttributeFilter, setIgnoredFields,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setNextByIndex, setSpatialFilter, setSpatialFilterRect, startTransaction,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    testCapability</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getGeometryColumn, getLastWriteFID, getLayerDefn, getName, getNextFeature,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getSpatialFilter, getSpatialRef, initialize, isOpen, layerClip, layerErase,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerIdentity, layerIntersection, layerSymDifference, layerUnion,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerUpdate, open, resetReading, rollbackTransaction, setAttributeFilter,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setFeature, setIgnoredFields, setNextByIndex, setSpatialFilter,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilterRect, startTransaction, syncToDisk, testCapability,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    upsertFeature</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># dataset info</span></span></span>
+<span class="r-in"><span><span class="co">## dataset info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GPKG"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmppYPqhh/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpapiNzX/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># layer info</span></span></span>
+<span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mtbs_perims"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getGeomType</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -617,7 +685,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 469685.73 -12917.76 573531.72  96577.34</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># layer capabilities</span></span></span>
+<span class="r-in"><span><span class="co">## layer capabilities</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $RandomRead</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -668,14 +736,14 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># re-open with write access</span></span></span>
+<span class="r-in"><span><span class="co">## re-open with write access</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">SequentialWrite</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">RandomWrite</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># feature class definition - a list of field names and their definitions</span></span></span>
+<span class="r-in"><span><span class="co">## feature class definition - a list of field names and their definitions</span></span></span>
 <span class="r-in"><span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getLayerDefn</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "event_id"     "incid_name"   "incid_type"   "map_id"       "burn_bnd_ac" </span>
@@ -779,18 +847,18 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi TRUE</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># default value of the read/write field 'returnGeomAs'</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "NONE"</span>
+<span class="r-in"><span><span class="co">## default value of the read/write field 'returnGeomAs'</span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "WKB"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 61</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># sequential read cursor</span></span></span>
+<span class="r-in"><span><span class="co">## sequential read cursor</span></span></span>
 <span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># a list of field names and their values</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID         :integer64 1 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    : chr "WY4413411069519870807"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  : chr "POLECAT"</span>
@@ -801,15 +869,16 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon: chr "-110.696"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     : Date[1:1], format: "1987-08-07"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int 1987</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : raw [1:598] 01 06 00 00 ...</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># set an attribute filter</span></span></span>
+<span class="r-in"><span><span class="co">## set an attribute filter</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year = 2020"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 11</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID         :integer64 61 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    : chr "WY4438911082120200822"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  : chr "LONE STAR"</span>
@@ -820,13 +889,14 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon: chr "-110.782"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     : Date[1:1], format: "2020-08-22"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int 2020</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : raw [1:966] 01 06 00 00 ...</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># NULL when no more features are available</span></span></span>
+<span class="r-in"><span><span class="co">## NULL when no more features are available</span></span></span>
 <span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  NULL</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># reset reading to the start and return geometries as WKT</span></span></span>
+<span class="r-in"><span><span class="co">## reset reading to the start and return geometries as WKT</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">resetReading</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKT"</span></span></span>
 <span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -844,14 +914,14 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int 2020</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : chr "MULTIPOLYGON (((496593.122306971 15506.8828590633,496491.761299067 15605.3612548792,496290.812130161 15388.0465"| __truncated__</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># clear the attribute filter</span></span></span>
+<span class="r-in"><span><span class="co">## clear the attribute filter</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 61</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># set a spatial filter</span></span></span>
-<span class="r-in"><span><span class="co"># get the bounding box of the largest 1988 fire and use as spatial filter</span></span></span>
-<span class="r-in"><span><span class="co"># first set a temporary attribute filter to do the lookup</span></span></span>
+<span class="r-in"><span><span class="co">## set a spatial filter</span></span></span>
+<span class="r-in"><span><span class="co">## get the bounding box of the largest 1988 fire and use as spatial filter</span></span></span>
+<span class="r-in"><span><span class="co">## first set a temporary attribute filter to do the lookup</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year = 1988 ORDER BY burn_bnd_ac DESC"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
@@ -872,13 +942,13 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">bbox</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 469685.97  11442.45 544069.63  85508.15</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># set spatial filter on the full layer</span></span></span>
-<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">""</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## set spatial filter on the full layer</span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">""</span><span class="op">)</span>  <span class="co"># clears</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSpatialFilterRect</span><span class="op">(</span><span class="va">bbox</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 40</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># fetch in chunks and return as data frame</span></span></span>
+<span class="r-in"><span><span class="co">## fetch in chunks and return as data frame</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	20 obs. of  11 variables:</span>
@@ -894,16 +964,16 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int  2007 1988 2003 2000 1988 2007 2006 1988 1988 1988 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : chr  "MULTIPOLYGON (((469685.969631834 54506.9481370259,470235.509134591 54383.4837249131,470939.42854159 53898.69574"| __truncated__ "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__ "MULTIPOLYGON (((475136.766856355 74053.2153491452,475188.847231864 74366.3342955356,475341.959781024 74368.4856"| __truncated__ "MULTIPOLYGON (((477992.723214764 8483.08443989834,477312.456870818 7630.95433906866,477088.305832492 6955.09786"| __truncated__ ...</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># the next chunk</span></span></span>
+<span class="r-in"><span><span class="co">## the next chunk</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 20</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># no features remaining</span></span></span>
+<span class="r-in"><span><span class="co">## no features remaining</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span> <span class="co"># 0-row data frame with columns typed</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span>  <span class="co"># 0-row data frame with columns typed</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	0 obs. of  11 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID         :integer64  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    : chr </span>
@@ -917,7 +987,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : chr </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># fetch all pending features with geometries as WKB</span></span></span>
+<span class="r-in"><span><span class="co">## fetch all pending features with geometries as WKB</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKB"</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># resets reading to the first feature</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
@@ -974,7 +1044,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># parse WKB using package wk</span></span></span>
+<span class="r-in"><span><span class="co">## parse WKB using package wk</span></span></span>
 <span class="r-in"><span><span class="va">wk_obj</span> <span class="op">&lt;-</span> <span class="fu">wk</span><span class="fu">::</span><span class="fu"><a href="https://paleolimbot.github.io/wk/reference/wkb.html" class="external-link">wkb</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">geom</span>, crs <span class="op">=</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wk_obj</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="GDALVector-class-1.png" alt="" width="700" height="433"></span>
@@ -984,7 +1054,171 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 61</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## simple example for feature write methods showing use of various data types</span></span></span>
+<span class="r-in"><span><span class="co">## create and write to a new layer in a GeoPackage data source</span></span></span>
+<span class="r-in"><span><span class="va">dsn2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".gpkg"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## define a feature class</span></span></span>
+<span class="r-in"><span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_layer</a></span><span class="op">(</span><span class="st">"POINT"</span>, srs <span class="op">=</span> <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## add field definitions</span></span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">unique_int</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTInteger"</span>, is_nullable <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                                 is_unique <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">bool_data</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTInteger"</span>, fld_subtype <span class="op">=</span> <span class="st">"OFSTBoolean"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">large_ints</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTInteger64"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">doubles</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTReal"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">strings</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTString"</span>, fld_width <span class="op">=</span> <span class="fl">50</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTDate"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">dt_modified</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTDateTime"</span>,</span></span>
+<span class="r-in"><span>                                  default_value <span class="op">=</span> <span class="st">"CURRENT_TIMESTAMP"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">blobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTBinary"</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ogr_manage.html">ogr_ds_create</a></span><span class="op">(</span><span class="st">"GPKG"</span>, <span class="va">dsn2</span>, <span class="st">"test_layer"</span>, layer_defn <span class="op">=</span> <span class="va">defn</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn2</span>, <span class="st">"test_layer"</span>, read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co"># lyr$getLayerDefn() |&gt; str()</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## define a feature to write</span></span></span>
+<span class="r-in"><span><span class="co">## the read-only field lyr$featureTemplate can be examined for structure</span></span></span>
+<span class="r-in"><span><span class="co">## fields in the template are initialized to NA (= OGR NULL)</span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="va">featureTemplate</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> List of 10</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID        :integer64 NA </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ unique_int : int NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ bool_data  : logi NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ large_ints :integer64 NA </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date[1:1], format: NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct[1:1], format: NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      : raw(0) </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       : chr NA</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## copy the template or make a new list</span></span></span>
+<span class="r-in"><span><span class="va">feat1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="co">## $FID is omitted since it is assigned when written (could also be NA)</span></span></span>
+<span class="r-in"><span><span class="co">## $dt_modified is omitted since the datasource sets a default timestamp</span></span></span>
+<span class="r-in"><span><span class="va">feat1</span><span class="op">$</span><span class="va">unique_int</span> <span class="op">&lt;-</span> <span class="fl">1001</span></span></span>
+<span class="r-in"><span><span class="va">feat1</span><span class="op">$</span><span class="va">bool_data</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="co">## passing a string to as.integer64()</span></span></span>
+<span class="r-in"><span><span class="co">## this value is too large to be represented exactly as R numeric (double)</span></span></span>
+<span class="r-in"><span><span class="va">feat1</span><span class="op">$</span><span class="va">large_ints</span> <span class="op">&lt;-</span> <span class="fu">bit64</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bit64/man/as.integer64.character.html" class="external-link">as.integer64</a></span><span class="op">(</span><span class="st">"90071992547409910"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat1</span><span class="op">$</span><span class="va">doubles</span> <span class="op">&lt;-</span> <span class="fl">1.234</span></span></span>
+<span class="r-in"><span><span class="va">feat1</span><span class="op">$</span><span class="va">strings</span> <span class="op">&lt;-</span> <span class="st">"A test string"</span></span></span>
+<span class="r-in"><span><span class="va">feat1</span><span class="op">$</span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-01-01"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat1</span><span class="op">$</span><span class="va">blobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">charToRaw</a></span><span class="op">(</span><span class="st">"A binary object"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat1</span><span class="op">$</span><span class="va">geom</span> <span class="op">&lt;-</span> <span class="st">"POINT (1 1)"</span>  <span class="co"># can be a WKT string or raw vector of WKB</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## create as a new feature in the layer</span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">createFeature</span><span class="op">(</span><span class="va">feat1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## the assigned FID</span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getLastWriteFID</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## this fails due to the unique constraint</span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">createFeature</span><span class="op">(</span><span class="va">feat1</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">feat2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat2</span><span class="op">$</span><span class="va">unique_int</span> <span class="op">&lt;-</span> <span class="fl">1002</span></span></span>
+<span class="r-in"><span><span class="va">feat2</span><span class="op">$</span><span class="va">bool_data</span> <span class="op">&lt;-</span> <span class="cn">FALSE</span></span></span>
+<span class="r-in"><span><span class="va">feat2</span><span class="op">$</span><span class="va">large_ints</span> <span class="op">&lt;-</span> <span class="fu">bit64</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/bit64/man/as.integer64.character.html" class="external-link">as.integer64</a></span><span class="op">(</span><span class="st">"90071992547409920"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat2</span><span class="op">$</span><span class="va">doubles</span> <span class="op">&lt;-</span> <span class="fl">2.345</span></span></span>
+<span class="r-in"><span><span class="va">feat2</span><span class="op">$</span><span class="va">strings</span> <span class="op">&lt;-</span> <span class="st">"A test string 2"</span></span></span>
+<span class="r-in"><span><span class="va">feat2</span><span class="op">$</span><span class="va">dates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.Date.html" class="external-link">as.Date</a></span><span class="op">(</span><span class="st">"2024-01-02"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat2</span><span class="op">$</span><span class="va">blobs</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">charToRaw</a></span><span class="op">(</span><span class="st">"A binary object 2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat2</span><span class="op">$</span><span class="va">geom</span> <span class="op">&lt;-</span> <span class="st">"POINT (2 2)"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">createFeature</span><span class="op">(</span><span class="va">feat2</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getLastWriteFID</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## close and re-open as a read-only layer</span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># -1 for all features reading from start</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  10 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID        :integer64 1 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ unique_int : int  1001 1002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ bool_data  : logi  TRUE FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ large_ints :integer64 90071992547409910 90071992547409920 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-09 03:59:26" "2024-09-09 03:59:26"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 01 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 01 00 00 ...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## edit an existing feature, e.g., feat &lt;- lyr$getFeature(2)</span></span></span>
+<span class="r-in"><span><span class="co">## here we copy a row of the data frame returned by lyr$fetch() above</span></span></span>
+<span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">d</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	1 obs. of  10 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID        :integer64 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ unique_int : int 1002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ bool_data  : logi FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ large_ints :integer64 90071992547409920 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-09 03:59:26"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 01 00 00 ...</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># only to ensure a timestamp difference</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">feat</span><span class="op">$</span><span class="va">bool_data</span> <span class="op">&lt;-</span> <span class="cn">TRUE</span></span></span>
+<span class="r-in"><span><span class="va">feat</span><span class="op">$</span><span class="va">strings</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste</a></span><span class="op">(</span><span class="va">feat</span><span class="op">$</span><span class="va">strings</span>, <span class="st">"- edited"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat</span><span class="op">$</span><span class="va">dt_modified</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.time</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat</span><span class="op">$</span><span class="va">geom</span> <span class="op">&lt;-</span> <span class="st">"POINT (2.001 2.001)"</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co">## lyr$setFeature() re-writes the feature identified by the $FID element</span></span></span>
+<span class="r-in"><span><span class="co">## N.B., all fields are re-written:</span></span></span>
+<span class="r-in"><span><span class="co">##   any fields omitted from the input feature, or set to NA, will be</span></span></span>
+<span class="r-in"><span><span class="co">##   re-written as OGR NULL</span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setFeature</span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKT"</span></span></span>
+<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  10 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID        :integer64 1 2 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ unique_int : int  1001 1002</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ bool_data  : logi  TRUE TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ large_ints :integer64 90071992547409910 90071992547409920 </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-09 03:59:26" "2024-09-09 03:59:27"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       : chr  "POINT (1 1)" "POINT (2.001 2.001)"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
