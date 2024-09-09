@@ -111,7 +111,12 @@ lyr$getFeature(fid)
 lyr$resetReading()
 lyr$fetch(n)
 
+lyr$setFeature(feature)
+lyr$createFeature(feature)
+lyr$upsertFeature(feature)
+lyr$getLastWriteFID()
 lyr$deleteFeature(fid)
+lyr$syncToDisk()
 
 lyr$startTransaction(force)
 lyr$commitTransaction()
@@ -174,12 +179,11 @@ Defaults to \code{"geometry"}.
 
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.
-Must be one of \code{WKT}, \code{WKT_ISO}, \code{WKB}, \code{WKB_ISO}, \code{TYPE_NAME} or
-\code{NONE} (the default). Using \code{WKB}/\code{WKT} exports as 99-402 extended
-dimension (Z) types for Point, LineString, Polygon, MultiPoint,
-MultiLineString, MultiPolygon and GeometryCollection. For other geometry
-types, it is equivalent to using \code{WKB_ISO}/\code{WKT_ISO}
-(see \url{https://libgeos.org/specifications/wkb/}).
+Must be one of \code{WKT}, \code{WKT_ISO}, \code{WKB} (the default), \code{WKB_ISO}, \code{TYPE_NAME}
+or \code{NONE}. Using \code{WKB}/\code{WKT} exports as 99-402 extended dimension (Z) types
+for Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
+and GeometryCollection. For other geometry types, it is equivalent to using
+\code{WKB_ISO}/\code{WKT_ISO} (see \url{https://libgeos.org/specifications/wkb/}).
 
 \code{$wkbByteOrder}\cr
 Character string specifying the byte order for WKB geometries.
@@ -427,16 +431,77 @@ flag if present)
 \item \code{OFTBinary}: \code{raw} vector (list column, \code{NULL} entries for OGR NULL values)
 }
 
-Geomtries are not returned if the field \code{returnGeomAs} is set to \code{NONE}
-(currently the default). Omitting the geometries may be beneficial for
-performance and memory usage when access only to feature attributes is
-needed. Geometries are returned as \code{raw} vectors in a data frame list column
-when \code{returnGeomAs} is set to \code{WKB} or \code{WKB_ISO}. Otherwise, geometries are
-returned as \code{character} strings when \code{returnGeomAs} is set to one of \code{WKT},
-\code{WKT_ISO} or \code{TYPE_NAME}.
+Geometries are not returned if the field \code{returnGeomAs} is set to \code{NONE}.
+Omitting the geometries may be beneficial for performance and memory usage
+when access only to feature attributes is needed. Geometries are returned
+as \code{raw} vectors in a data frame list column when \code{returnGeomAs} is set to
+\code{WKB} (the default) or \code{WKB_ISO}. Otherwise, geometries are returned as
+\code{character} strings when \code{returnGeomAs} is set to one of \code{WKT}, \code{WKT_ISO} or
+\code{TYPE_NAME}.
 
 Note that \verb{$getFeatureCount()} is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).
+
+\code{$setFeature(feature)}\cr
+Rewrites/replaces an existing feature. This method writes a feature based on
+the feature id within the input feature. The \code{feature} argument is a named
+list of fields and their values, and must include a \verb{$FID} element
+referencing the existing feature to rewrite. The \code{RandomWrite} element in
+the list returned by \verb{$testCapability()} can be checked to establish if this
+layer supports random access writing via \verb{$setFeature()}.
+The way omitted fields in the passed \code{feature} are processed is driver
+dependent:
+\itemize{
+\item SQL-based drivers which implement set feature through SQL UPDATE will skip
+unset fields, and thus the content of the existing feature will be
+preserved.
+\item The shapefile driver will write a NULL value in the DBF file.
+\item The GeoJSON driver will take into account unset fields to remove the
+corresponding JSON member.
+}
+
+Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if setting the
+feature did not succeed. The FID of the last feature written to the layer
+may be obtained with the method \verb{$getLastWriteFID()} (see below). To set a
+feature, but create it if it doesn't exist see the \verb{$upsertFeature()} method.
+
+\code{$createFeature(feature)}\cr
+Creates and writes a new feature within the layer. The \code{feature} argument is
+a named list of fields and their values. A \code{GDALVector} object provides
+a read-only \verb{$featureTemplate} that is set to such a list with values
+initialized to \code{NA} (OGR NULL).
+The passed feature is written to the layer as a new feature, rather than
+overwriting an existing one. If the feature has a \verb{$FID} element other than
+\code{NA}, then the vector format driver may use that as the feature id of the
+new feature, but not necessarily. The FID of the last feature written
+to the layer may be obtained with the method \verb{$getLastWriteFID()} (see
+below).
+Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if creating
+the feature did not succeed. To create a feature, but set it if it already
+exists see the \verb{$upsertFeature()} method.
+
+\code{$upsertFeature(feature)}\cr
+Rewrites/replaces an existing feature or creates a new feature within the
+layer. This method will write a feature to the layer, based on the feature
+id within the input feature. The \code{feature} argument is a named list of
+fields and their values, potentially including a \verb{$FID} element referencing
+an existing feature to rewrite. If the feature id doesn't exist a new
+feature will be written. Otherwise, the existing feature will be rewritten.
+The \code{UpsertFeature} element in the list returned by \verb{$testCapability()} can
+be checked to determine if this layer supports upsert writing. See
+\verb{$setFeature()} above for a description of how omitted fields in the passed
+\code{feature} are processed.
+Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if upserting
+the feature did not succeed. Requires GDAL >= 3.6.
+
+\code{$getLastWriteFID()}\cr
+Returns the FID of the last feature written (either newly created or updated
+existing). \code{NULL} is returned if no features have been written in the layer.
+Note that OGRNullFID (\code{-1}) may be returned after writing a feature in some
+formats. This is the case if a FID has not been assigned yet, and generally
+does not indicate an error (e.g., formats that do not store a persistent FID
+and assign FIDs upon a sequential read operation). The returned FID is a
+numeric scalar carrying the \code{bit64::integer64} class attribute.
 
 \code{$deleteFeature(fid)}\cr
 Deletes a feature from the layer. The feature with the indicated feature ID
@@ -446,6 +511,16 @@ class attribute (should be a whole number, will be truncated).
 The \code{DeleteFeature} element in the list returned by \verb{$testCapability()} can
 be checked to establish if this layer has delete feature capability. Returns
 logical \code{TRUE} if the operation succeeds, or \code{FALSE} on failure.
+
+\code{$syncToDisk()}\cr
+Flushes pending changes to disk. This call is intended to force the layer to
+flush any pending writes to disk, and leave the disk file in a consistent
+state. It would not normally have any effect on read-only datasources. Some
+formats do not implement this method, and will still return no error. An
+error is only returned if an error occurs while attempting to flush to disk.
+In any event, you should always close any opened datasource with \verb{$close()}
+which will ensure all data is correctly flushed. Returns logical \code{TRUE} if
+no error occurs (even if nothing is done) or \code{FALSE} on error.
 
 \code{$startTransaction(force)}\cr
 Creates a transaction if supported by the vector data source. The \code{force}
@@ -499,25 +574,25 @@ The layer can be re-opened on the existing \code{dsn} with
 }
 
 \examples{
-# MTBS fire perimeters in Yellowstone National Park 1984-2022
+## MTBS fire perimeters in Yellowstone National Park 1984-2022
 f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
 
-# copy to a temporary file that is writeable
+## copy to a temporary file that is writeable
 dsn <- file.path(tempdir(), basename(f))
 file.copy(f, dsn)
 
 lyr <- new(GDALVector, dsn, "mtbs_perims")
 
-# object of class GDALVector
+## object of class GDALVector
 lyr
 str(lyr)
 
-# dataset info
+## dataset info
 lyr$getDriverShortName()
 lyr$getDriverLongName()
 lyr$getFileList()
 
-# layer info
+## layer info
 lyr$getName()
 lyr$getGeomType()
 lyr$getGeometryColumn()
@@ -525,53 +600,53 @@ lyr$getFIDColumn()
 lyr$getSpatialRef()
 lyr$bbox()
 
-# layer capabilities
+## layer capabilities
 lyr$testCapability()
 
-# re-open with write access
+## re-open with write access
 lyr$open(read_only = FALSE)
 lyr$testCapability()$SequentialWrite
 lyr$testCapability()$RandomWrite
 
-# feature class definition - a list of field names and their definitions
+## feature class definition - a list of field names and their definitions
 defn <- lyr$getLayerDefn()
 names(defn)
 str(defn)
 
-# default value of the read/write field 'returnGeomAs'
-print(lyr$returnGeomAs)
+## default value of the read/write field 'returnGeomAs'
+lyr$returnGeomAs
 
 lyr$getFeatureCount()
 
-# sequential read cursor
+## sequential read cursor
 feat <- lyr$getNextFeature()
 # a list of field names and their values
 str(feat)
 
-# set an attribute filter
+## set an attribute filter
 lyr$setAttributeFilter("ig_year = 2020")
 lyr$getFeatureCount()
 
 feat <- lyr$getNextFeature()
 str(feat)
 
-# NULL when no more features are available
+## NULL when no more features are available
 feat <- lyr$getNextFeature()
 str(feat)
 
-# reset reading to the start and return geometries as WKT
+## reset reading to the start and return geometries as WKT
 lyr$resetReading()
 lyr$returnGeomAs <- "WKT"
 feat <- lyr$getNextFeature()
 str(feat)
 
-# clear the attribute filter
+## clear the attribute filter
 lyr$setAttributeFilter("")
 lyr$getFeatureCount()
 
-# set a spatial filter
-# get the bounding box of the largest 1988 fire and use as spatial filter
-# first set a temporary attribute filter to do the lookup
+## set a spatial filter
+## get the bounding box of the largest 1988 fire and use as spatial filter
+## first set a temporary attribute filter to do the lookup
 lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
 feat <- lyr$getNextFeature()
 str(feat)
@@ -579,30 +654,30 @@ str(feat)
 bbox <- bbox_from_wkt(feat$geom)
 print(bbox)
 
-# set spatial filter on the full layer
-lyr$setAttributeFilter("")
+## set spatial filter on the full layer
+lyr$setAttributeFilter("")  # clears
 lyr$setSpatialFilterRect(bbox)
 lyr$getFeatureCount()
 
-# fetch in chunks and return as data frame
+## fetch in chunks and return as data frame
 d <- lyr$fetch(20)
 str(d)
 
-# the next chunk
+## the next chunk
 d <- lyr$fetch(20)
 nrow(d)
 
-# no features remaining
+## no features remaining
 d <- lyr$fetch(20)
 nrow(d)
-str(d) # 0-row data frame with columns typed
+str(d)  # 0-row data frame with columns typed
 
-# fetch all pending features with geometries as WKB
+## fetch all pending features with geometries as WKB
 lyr$returnGeomAs <- "WKB"
 d <- lyr$fetch(-1)  # resets reading to the first feature
 str(d)
 
-# parse WKB using package wk
+## parse WKB using package wk
 wk_obj <- wk::wkb(d$geom, crs = lyr$getSpatialRef())
 plot(wk_obj)
 
@@ -610,7 +685,110 @@ lyr$clearSpatialFilter()
 lyr$getFeatureCount()
 
 lyr$close()
-unlink(dsn)
+\dontshow{unlink(dsn)}
+
+## simple example for feature write methods showing use of various data types
+## create and write to a new layer in a GeoPackage data source
+dsn2 <- tempfile(fileext = ".gpkg")
+
+## define a feature class
+defn <- ogr_def_layer("POINT", srs = epsg_to_wkt(4326))
+
+## add field definitions
+defn$unique_int <- ogr_def_field("OFTInteger", is_nullable = FALSE,
+                                 is_unique = TRUE)
+defn$bool_data <- ogr_def_field("OFTInteger", fld_subtype = "OFSTBoolean")
+defn$large_ints <- ogr_def_field("OFTInteger64")
+defn$doubles <- ogr_def_field("OFTReal")
+defn$strings <- ogr_def_field("OFTString", fld_width = 50)
+defn$dates <- ogr_def_field("OFTDate")
+defn$dt_modified <- ogr_def_field("OFTDateTime",
+                                  default_value = "CURRENT_TIMESTAMP")
+defn$blobs <- ogr_def_field("OFTBinary")
+
+ogr_ds_create("GPKG", dsn2, "test_layer", layer_defn = defn)
+
+lyr <- new(GDALVector, dsn2, "test_layer", read_only = FALSE)
+# lyr$getLayerDefn() |> str()
+
+## define a feature to write
+## the read-only field lyr$featureTemplate can be examined for structure
+## fields in the template are initialized to NA (= OGR NULL)
+lyr$featureTemplate |> str()
+
+## copy the template or make a new list
+feat1 <- list()
+## $FID is omitted since it is assigned when written (could also be NA)
+## $dt_modified is omitted since the datasource sets a default timestamp
+feat1$unique_int <- 1001
+feat1$bool_data <- TRUE
+## passing a string to as.integer64()
+## this value is too large to be represented exactly as R numeric (double)
+feat1$large_ints <- bit64::as.integer64("90071992547409910")
+feat1$doubles <- 1.234
+feat1$strings <- "A test string"
+feat1$dates <- as.Date("2024-01-01")
+feat1$blobs <- charToRaw("A binary object")
+feat1$geom <- "POINT (1 1)"  # can be a WKT string or raw vector of WKB
+
+## create as a new feature in the layer
+lyr$createFeature(feat1)
+
+## the assigned FID
+lyr$getLastWriteFID()
+
+## this fails due to the unique constraint
+lyr$createFeature(feat1)
+
+feat2 <- list()
+feat2$unique_int <- 1002
+feat2$bool_data <- FALSE
+feat2$large_ints <- bit64::as.integer64("90071992547409920")
+feat2$doubles <- 2.345
+feat2$strings <- "A test string 2"
+feat2$dates <- as.Date("2024-01-02")
+feat2$blobs <- charToRaw("A binary object 2")
+feat2$geom <- "POINT (2 2)"
+
+lyr$createFeature(feat2)
+lyr$getLastWriteFID()
+
+## close and re-open as a read-only layer
+lyr$open(read_only = TRUE)
+
+lyr$getFeatureCount()
+d <- lyr$fetch(-1)  # -1 for all features reading from start
+str(d)
+
+## edit an existing feature, e.g., feat <- lyr$getFeature(2)
+## here we copy a row of the data frame returned by lyr$fetch() above
+feat <- d[2,]
+str(feat)
+
+Sys.sleep(1)  # only to ensure a timestamp difference
+
+feat$bool_data <- TRUE
+feat$strings <- paste(feat$strings, "- edited")
+feat$dt_modified <- Sys.time()
+feat$geom <- "POINT (2.001 2.001)"
+
+lyr$open(read_only = FALSE)
+
+## lyr$setFeature() re-writes the feature identified by the $FID element
+## N.B., all fields are re-written:
+##   any fields omitted from the input feature, or set to NA, will be
+##   re-written as OGR NULL
+lyr$setFeature(feat)
+
+lyr$open(read_only = TRUE)
+lyr$getFeatureCount()
+
+lyr$returnGeomAs <- "WKT"
+d <- lyr$fetch(-1)
+str(d)
+
+lyr$close()
+\dontshow{unlink(dsn2)}
 }
 \seealso{
 \link{ogr_define}, \link{ogr_manage}, \code{\link[=ogr2ogr]{ogr2ogr()}}, \code{\link[=ogrinfo]{ogrinfo()}}

@@ -36,8 +36,8 @@ test_that("class constructors work", {
     lyr <- new(GDALVector, dsn, sql, read_only = TRUE, open_options = NULL,
                spatial_filter = bbox_to_wkt(bb), dialect = "")
     expect_equal(lyr$getFeatureCount(), 40)
-    lyr$close()
 
+    lyr$close()
     unlink(dsn)
 })
 
@@ -47,6 +47,7 @@ test_that("setting ignored fields works", {
     file.copy(f, dsn, overwrite = TRUE)
 
     lyr <- new(GDALVector, dsn, "mtbs_perims")
+    lyr$returnGeomAs <- "NONE"
     expect_true(lyr$testCapability()$IgnoreFields)
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
@@ -111,7 +112,6 @@ test_that("cursor positioning works correctly", {
     expect_error(lyr$setNextByIndex(9007199254740993))
 
     lyr$close()
-
     unlink(dsn)
 })
 
@@ -146,6 +146,408 @@ test_that("delete feature works", {
     expect_equal(lyr$getFeatureCount(), num_feat - 1)
 
     lyr$close()
-
     unlink(dsn)
+})
+
+test_that("feature write methods work", {
+
+    ## tests on an existing data source with real data
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    lyr <- new(GDALVector, dsn, "mtbs_perims", read_only = FALSE)
+    start_count <- lyr$getFeatureCount()
+    lyr$returnGeomAs <- "WKB"
+
+    # create and write a new feature
+    # new feature is a modified copy of existing FID 1 with same geom
+    feat <- lyr$getNextFeature()
+    test1_orig_fid <- feat$FID
+    feat$FID <- NULL
+    feat$event_id <- "ZZ01"
+    feat$incid_name <- "TEST 1"
+    feat$map_id <- 999991
+    feat$ig_date <- as.Date("9999-01-01")
+    feat$ig_year <- 9999
+    expect_true(lyr$createFeature(feat))
+    expect_equal(lyr$getFeatureCount(), start_count + 1)
+
+    # edit an existing feature and set
+    feat <- NULL
+    feat <- lyr$getNextFeature()
+    feat$event_id <- "ZZ02"
+    feat$incid_name <- "TEST 2"
+    feat$map_id <- 999992
+    feat$ig_date <- as.Date("9999-01-02")
+    feat$ig_year <- 9999
+    expect_true(lyr$setFeature(feat))
+    expect_equal(lyr$getFeatureCount(), start_count + 1)
+
+    if(.gdal_version_num() > 3060000) {
+        # edit an existing feature and upsert with existing FID
+        feat <- NULL
+        feat <- lyr$getNextFeature()
+        feat$event_id <- "ZZ03"
+        feat$incid_name <- "TEST 3"
+        feat$map_id <- 999993
+        feat$ig_date <- as.Date("9999-01-03")
+        feat$ig_year <- 9999
+        expect_true(lyr$upsertFeature(feat))
+        expect_equal(lyr$getFeatureCount(), start_count + 1)
+
+        # edit an existing feature and upsert with new non-existing FID
+        feat <- NULL
+        feat <- lyr$getNextFeature()
+        test4_orig_fid <- feat$FID
+        feat$FID <- bit64::as.integer64(9999999999999994)
+        feat$event_id <- "ZZ04"
+        feat$incid_name <- "TEST 4"
+        feat$map_id <- 999994
+        feat$ig_date <- as.Date("9999-01-04")
+        feat$ig_year <- 9999
+        expect_true(lyr$upsertFeature(feat))
+        expect_equal(lyr$getFeatureCount(), start_count + 2)
+    }
+
+    # read back
+    lyr$open(read_only = TRUE)
+    lyr$returnGeomAs <- "WKT"
+
+    lyr$setAttributeFilter("event_id = 'ZZ01'")
+    test1_feat <- lyr$getNextFeature()
+    expect_false(is.null(test1_feat))
+    expect_equal(test1_feat$incid_name, "TEST 1")
+    expect_equal(test1_feat$map_id, bit64::as.integer64(999991))
+    expect_equal(test1_feat$ig_date, as.Date("9999-01-01"))
+    test1_orig_feat <- lyr$getFeature(test1_orig_fid)
+    geom_fld <- lyr$getGeometryColumn()
+    expect_true(g_equals(test1_feat[[geom_fld]], test1_orig_feat[[geom_fld]]))
+    test1_feat <- NULL
+
+    lyr$setAttributeFilter("event_id = 'ZZ02'")
+    test2_feat <- lyr$getNextFeature()
+    expect_false(is.null(test2_feat))
+    expect_equal(test2_feat$incid_name, "TEST 2")
+    expect_equal(test2_feat$map_id, bit64::as.integer64(999992))
+    expect_equal(test2_feat$ig_date, as.Date("9999-01-02"))
+    expect_equal(test2_feat$ig_year, 9999)
+    test2_feat <- NULL
+
+    if(.gdal_version_num() > 3060000) {
+        lyr$setAttributeFilter("event_id = 'ZZ03'")
+        test3_feat <- lyr$getNextFeature()
+        expect_false(is.null(test3_feat))
+        expect_equal(test3_feat$incid_name, "TEST 3")
+        expect_equal(test3_feat$map_id, bit64::as.integer64(999993))
+        expect_equal(test3_feat$ig_date, as.Date("9999-01-03"))
+        expect_equal(test3_feat$ig_year, 9999)
+        test3_feat <- NULL
+
+        lyr$setAttributeFilter("event_id = 'ZZ04'")
+        test4_feat <- lyr$getNextFeature()
+        expect_false(is.null(test4_feat))
+        expect_equal(test4_feat$incid_name, "TEST 4")
+        expect_equal(test4_feat$map_id, bit64::as.integer64(999994))
+        expect_equal(test4_feat$ig_date, as.Date("9999-01-04"))
+        test4_orig_feat <- lyr$getFeature(test4_orig_fid)
+        geom_fld <- lyr$getGeometryColumn()
+        expect_true(g_equals(test4_feat[[geom_fld]],
+                             test4_orig_feat[[geom_fld]]))
+        test4_feat <- NULL
+    }
+
+    lyr$close()
+    deleteDataset(dsn)
+    rm(dsn)
+    rm(lyr)
+
+
+    ## tests for field types supported by GPKG
+    ## (does not inlcude OGR list field types)
+    dsn2 <- tempfile(fileext = ".gpkg")
+    defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4326))
+    defn$int_fld <- ogr_def_field("OFTInteger")
+    defn$bool_fld <- ogr_def_field("OFTInteger", fld_subtype = "OFSTBoolean")
+    defn$int64_fld <- ogr_def_field("OFTInteger64")
+    defn$real_fld <- ogr_def_field("OFTReal")
+    defn$str_fld <- ogr_def_field("OFTString", fld_width = 100)
+    defn$date_fld <- ogr_def_field("OFTDate")
+    defn$datetime_fld <- ogr_def_field("OFTDateTime")
+    defn$binary_fld <- ogr_def_field("OFTBinary")
+
+    expect_true(ogr_ds_create("GPKG", dsn2, "test_layer", layer_defn = defn))
+
+    lyr <- new(GDALVector, dsn2, "test_layer", read_only = FALSE)
+    expect_equal(lyr$getFeatureCount(), 0)
+
+    geom_fld <- lyr$getGeometryColumn()
+
+    feat1 <- list()
+    feat1$int_fld <- 1
+    feat1$bool_fld <- TRUE
+    feat1$int64_fld <- bit64::as.integer64(11)
+    feat1$real_fld <- 1.1
+    feat1$str_fld <- "string 1"
+    feat1$date_fld <- as.Date("2000-01-01")
+    feat1$datetime_fld <- as.POSIXct("2000-01-01 13:01:01.123 GMT", tz = "UTC")
+    feat1$binary_fld <- as.raw(c(1, 1, 1))
+    feat1[[geom_fld]] <- "POINT (1 1)"
+
+    expect_true(lyr$createFeature(feat1))
+    test1_fid <- lyr$getLastWriteFID()
+    expect_false(is.null(test1_fid))
+
+    expect_true(lyr$createFeature(feat1))
+    test2_fid <- lyr$getLastWriteFID()
+    expect_false(is.null(test2_fid))
+
+    lyr$open(read_only = TRUE)
+    expect_equal(lyr$getFeatureCount(), 2)
+
+    lyr$open(read_only = FALSE)
+
+    # edit feature 2
+    feat2 <- list()
+    feat2$FID <- test2_fid
+    feat2$int_fld <- 2
+    feat2$bool_fld <- FALSE
+    feat2$int64_fld <- bit64::as.integer64(22)
+    feat2$real_fld <- 2.2
+    feat2$str_fld <- "string 2"
+    feat2$date_fld <- as.Date("2000-01-02")
+    feat2$datetime_fld <- as.POSIXct("2000-01-02 14:02.234 GMT", tz = "UTC")
+    feat2$binary_fld <- as.raw(c(2, 2, 2))
+    feat2[[geom_fld]] <- "POINT (2 2)"
+
+    expect_true(lyr$setFeature(feat2))
+    expect_equal(lyr$getLastWriteFID(), test2_fid)
+
+    lyr$open(read_only = TRUE)
+    expect_equal(lyr$getFeatureCount(), 2)
+
+    lyr$returnGeomAs <- "WKT"
+
+    feat1_check <- lyr$getFeature(test1_fid)
+    feat1_check$FID <- NULL
+    expect_equal(feat1_check, feat1)
+
+    feat2_check <- lyr$getFeature(test2_fid)
+    expect_equal(feat2_check, feat2)
+
+    ## errors
+    lyr$open(read_only = FALSE)
+
+    # NULL
+    expect_error(lyr$createFeature(NULL))
+    expect_error(lyr$setFeature(NULL))
+
+    # not a list
+    feat <- c(1, 2)
+    expect_error(lyr$setFeature(feat))
+    feat <- c("1", "2")
+    expect_error(lyr$setFeature(feat))
+
+    # no element names
+    feat <- lyr$getFeature(1)
+    names(feat) <- NULL
+    expect_error(lyr$setFeature(feat))
+
+    # a name does not match the layer schema
+    feat <- lyr$getFeature(1)
+    feat$nonexistent_fld <- 1
+    expect_error(lyr$setFeature(feat))
+
+    feat <- lyr$getFeature(1)
+
+    # character for OFTInteger
+    orig <- feat$int_fld
+    feat$int_fld <- "1"
+    expect_error(lyr$setFeature(feat))
+    feat$int_fld <- orig
+
+    # character for OFTInteger64
+    orig <- feat$int64_fld
+    feat$int64_fld <- "1"
+    expect_error(lyr$setFeature(feat))
+    feat$int64_fld <- orig
+
+    # character for OFTReal
+    orig <- feat$real_fld
+    feat$real_fld <- "1"
+    expect_error(lyr$setFeature(feat))
+    feat$real_fld <- orig
+
+    # numeric for OFTString
+    orig <- feat$str_fld
+    feat$str_fld <- 1
+    expect_error(lyr$setFeature(feat))
+    feat$str_fld <- orig
+
+    # missing Date class for OFTDate
+    orig <- feat$date_fld
+    feat$date_fld <- as.numeric(as.Date("9999-01-04"))
+    expect_error(lyr$setFeature(feat))
+    feat$date_fld <- orig
+
+    # character string for OFTDate
+    orig <- feat$date_fld
+    feat$date_fld <- "2000-01-01"
+    expect_error(lyr$setFeature(feat))
+    feat$date_fld <- orig
+
+    # missing POSIXct class for OFTDateTime
+    orig <- feat$datetime_fld
+    feat$datetime_fld <- as.numeric(as.Date("9999-01-04"))
+    expect_error(lyr$setFeature(feat))
+    feat$datetime_fld <- orig
+
+    # character string for OFTDateTime
+    orig <- feat$datetime_fld
+    feat$datetime_fld <- "2000-01-02 14:02.234 GMT"
+    expect_error(lyr$setFeature(feat))
+    feat$datetime_fld <- orig
+
+    # other than raw vector for OFTBinary
+    orig <- feat$binary_fld
+    feat$binary_fld <- integer(10)
+    expect_error(lyr$setFeature(feat))
+    feat$binary_fld <- orig
+
+    orig <- feat$binary_fld
+    feat$binary_fld <- numeric(10)
+    expect_error(lyr$setFeature(feat))
+    feat$binary_fld <- orig
+
+    orig <- feat$binary_fld
+    feat$binary_fld <- character(10)
+    expect_error(lyr$setFeature(feat))
+    feat$binary_fld <- orig
+
+    # other than raw vector for OFTBinary, in list
+    orig <- feat$binary_fld
+    feat$binary_fld <- list(integer(10))
+    expect_error(lyr$setFeature(feat))
+    feat$binary_fld <- orig
+
+    # not character or raw vector for geom field
+    orig <- feat[[geom_fld]]
+    feat[[geom_fld]] <- integer(10)
+    expect_error(lyr$setFeature(feat))
+    feat[[geom_fld]] <- orig
+
+    # not character or raw vector for geom field, in list
+    orig <- feat[[geom_fld]]
+    feat[[geom_fld]] <- list(numeric(10))
+    expect_error(lyr$setFeature(feat))
+    feat[[geom_fld]] <- orig
+
+    # multi-row data frame
+    feat <- lyr$fetch(-1)
+    expect_equal(nrow(feat), 2)
+    expect_error(lyr$setFeature(feat))
+
+    lyr$close()
+    deleteDataset(dsn2)
+    rm(lyr)
+    rm(dsn2)
+
+
+    ## tests for OGR list field types with the CSV driver
+    dsn3 <- file.path(tempdir(), "test_list.csv")
+
+    defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4326))
+    defn$id <- ogr_def_field("OFTInteger")
+    defn$real_fld <- ogr_def_field("OFTReal")
+    defn$str_fld <- ogr_def_field("OFTString")
+    defn$int_list_fld <- ogr_def_field("OFTIntegerList", "JSonIntegerList")
+    defn$real_list_fld <- ogr_def_field("OFTRealList", "JSonRealList")
+    defn$str_list_fld <- ogr_def_field("OFTStringList", "JSonStringList")
+
+    lyr_opt <- c("GEOMETRY=AS_WKT", "CREATE_CSVT=YES")
+    expect_true(ogr_ds_create("CSV", dsn3, "test_list", layer_defn = defn,
+                              lco = lyr_opt, overwrite = TRUE))
+
+    lyr <- new(GDALVector, dsn3, "test_list", read_only = FALSE)
+
+    geom_fld <- lyr$getGeometryColumn()
+
+    feat1 <- list()
+    feat1$id <- 1
+    feat1$real_fld <- 1.1
+    feat1$str_fld <- "string 1"
+    feat1$int_list_fld <- c(1, 1, 1)
+    feat1$real_list_fld <- c(1.1, 1.1, 1.1)
+    feat1$str_list_fld <- c("str 1", "str 1", "str 1")
+    feat1[[geom_fld]] <- "POINT (1 1)"
+
+    expect_true(lyr$createFeature(feat1))
+
+    expect_true(lyr$syncToDisk())
+
+    # close and re-open
+    lyr$open(read_only = TRUE)
+    lyr$returnGeomAs <- "WKT"
+
+    f <- lyr$getNextFeature()
+    expect_equal(f$id, feat1$id)
+    expect_equal(f$real_fld, feat1$real_fld)
+    expect_equal(f$str_fld, feat1$str_fld)
+    expect_equal(f$int_list_fld, feat1$int_list_fld)
+    expect_equal(f$real_list_fld, feat1$real_list_fld)
+    expect_equal(f$str_list_fld, feat1$str_list_fld)
+    # this fails with GDAL < 3.5 due to change in geom column naming?
+    # expect_true(g_equals(f$WKT, feat1[[geom_fld]]))
+
+    lyr$close()
+    deleteDataset(dsn3)
+    rm(lyr)
+    rm(dsn3)
+
+
+    ## test ESRI Shapefile for supported field types, Polygon geom, no SRS set
+    dsn4 <- tempfile(fileext = ".shp")
+
+    defn <- ogr_def_layer("Polygon")
+    defn$id <- ogr_def_field("OFTInteger")
+    defn$real_fld <- ogr_def_field("OFTReal")
+    defn$str_fld <- ogr_def_field("OFTString")
+    defn$date_fld <- ogr_def_field("OFTDate")
+
+    expect_true(ogr_ds_create("ESRI Shapefile", dsn4, "", layer_defn = defn,
+                              overwrite = TRUE))
+
+    lyr <- new(GDALVector, dsn4, "", read_only = FALSE)
+    expect_equal(lyr$getFeatureCount(), 0)
+
+    feat1 <- list()
+    feat1$id <- 100
+    feat1$real_fld <- 0.123
+    feat1$str_fld <- "test string"
+    feat1$date_fld <- as.Date("2100-01-01")
+    feat1$geometry <- "POLYGON ((0 0,0 10,10 10,0 0),(0.25 0.5,1 1,0.5 1,0.25 0.5))"
+
+    test1_fid <- NULL
+    expect_true(lyr$createFeature(feat1))
+    test1_fid <- lyr$getLastWriteFID()
+    expect_false(is.null(test1_fid))
+
+    # close and re-open
+    lyr$open(read_only = TRUE)
+    lyr$returnGeomAs <- "WKT"
+
+    f <- lyr$getNextFeature()
+
+    expect_equal(f$FID, test1_fid)
+    expect_equal(f$id, feat1$id)
+    expect_equal(f$real_fld, feat1$real_fld)
+    expect_equal(f$str_fld, feat1$str_fld)
+    expect_equal(f$date_fld, feat1$date_fld)
+    expect_true(g_equals(f$geometry, feat1$geometry))
+
+    lyr$close()
+    deleteDataset(dsn4)
+    rm(lyr)
+    rm(dsn4)
+
 })
