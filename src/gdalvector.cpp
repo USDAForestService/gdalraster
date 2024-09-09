@@ -938,10 +938,49 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 if (OGR_GFld_IsIgnored(hGeomFldDefn))
                     continue;
 
+                OGRGeometryH hGeom = nullptr;
+                bool destroy_geom = false;
+                OGRGeometryH hGeomRef = OGR_F_GetGeomFieldRef(hFeat, i);
+                if (hGeomRef && this->promoteToMulti) {
+                    OGRwkbGeometryType geom_type = OGR_GT_Flatten(
+                            OGR_G_GetGeometryType(hGeomRef));
+
+                    switch (geom_type) {
+                        case wkbPolygon:
+                        {
+                            hGeom = OGR_G_ForceToMultiPolygon(
+                                    OGR_G_Clone(hGeomRef));
+                            destroy_geom = true;
+                        }
+                        break;
+
+                        case wkbPoint:
+                        {
+                            hGeom = OGR_G_ForceToMultiPoint(
+                                    OGR_G_Clone(hGeomRef));
+                            destroy_geom = true;
+                        }
+                        break;
+
+                        case wkbLineString:
+                        {
+                            hGeom = OGR_G_ForceToMultiLineString(
+                                    OGR_G_Clone(hGeomRef));
+                            destroy_geom = true;
+                        }
+                        break;
+
+                        default:
+                            hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
+                    }
+                }
+                else {
+                    hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
+                }
+
                 col_num += 1;
 
                 if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKB")) {
-                    OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
                     if (hGeom == nullptr)
                         continue;
 
@@ -969,7 +1008,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
                 else if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKT")) {
                     Rcpp::CharacterVector col = df[col_num];
-                    OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
                     if (hGeom == nullptr) {
                         col[row_num] = NA_STRING;
                     }
@@ -986,13 +1024,15 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
 
                 else if (EQUAL(this->returnGeomAs.c_str(), "TYPE_NAME")) {
-                    OGRGeometryH hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
                     Rcpp::CharacterVector col = df[col_num];
                     if (hGeom != nullptr)
                         col[row_num] = OGR_G_GetGeometryName(hGeom);
                     else
                         col[row_num] = NA_STRING;
                 }
+
+                if (destroy_geom)
+                    OGR_G_DestroyGeometry(hGeom);
             }
         }
 
@@ -2433,6 +2473,7 @@ RCPP_MODULE(mod_GDALVector) {
 
     // read/write fields
     .field("defaultGeomFldName", &GDALVector::defaultGeomFldName)
+    .field("promoteToMulti", &GDALVector::promoteToMulti)
     .field("returnGeomAs", &GDALVector::returnGeomAs)
     .field("wkbByteOrder", &GDALVector::wkbByteOrder)
 
