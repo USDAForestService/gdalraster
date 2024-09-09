@@ -85,13 +85,16 @@ test_that("setting ignored fields works", {
     unlink(dsn)
 })
 
-test_that("cursor positioning works correctly", {
+test_that("read methods work correctly", {
+    # TODO: complete these tests
+
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
     dsn <- file.path(tempdir(), basename(f))
     file.copy(f, dsn, overwrite = TRUE)
 
     lyr <- new(GDALVector, dsn, "mtbs_perims")
 
+    # cursor positioning
     expect_equal(lyr$getFeatureCount(), 61)
     expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(1))
     expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(2))
@@ -113,6 +116,26 @@ test_that("cursor positioning works correctly", {
 
     lyr$close()
     unlink(dsn)
+    rm(lyr)
+    rm(dsn)
+
+    # promoteToMulti
+    dsn <- system.file("extdata/poly_multipoly.shp", package="gdalraster")
+    lyr <- new(GDALVector, dsn)
+    lyr$returnGeomAs <- "TYPE_NAME"
+    lyr$promoteToMulti <- FALSE
+    geom_fld <-lyr$defaultGeomFldName
+    d <- lyr$fetch(-1)
+    expect_true("POLYGON" %in% d[, geom_fld])
+    expect_true("MULTIPOLYGON" %in% d[, geom_fld])
+    lyr$promoteToMulti <- TRUE
+    d <- lyr$fetch(-1)
+    expect_false("POLYGON" %in% d[, geom_fld])
+    expected_geoms <- rep("MULTIPOLYGON", lyr$getFeatureCount())
+    expect_equal(d[, geom_fld], expected_geoms)
+
+    lyr$close()
+    rm(lyr)
 })
 
 test_that("delete feature works", {
