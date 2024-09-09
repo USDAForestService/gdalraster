@@ -590,10 +590,8 @@ SEXP GDALVector::getFeature(const Rcpp::RObject &fid) {
 
     Rcpp::DataFrame df = fetch(1);
 
-    // restore original if used
-    if (orig_filter != "") {
-        setAttributeFilter(orig_filter);
-    }
+    // restore originals
+    setAttributeFilter(orig_filter);
     if (hOrigFilterGeom != nullptr) {
         OGR_L_SetSpatialFilter(m_hLayer, hOrigFilterGeom);
         OGR_G_DestroyGeometry(hOrigFilterGeom);
@@ -1864,6 +1862,9 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
     }
 
     Rcpp::List list_in(feature);
+
+    if (!list_in.hasAttribute("names"))
+        Rcpp::stop("input must be a named list");
 
     Rcpp::CharacterVector names = list_in.names();
     if (names.size() == 0)
