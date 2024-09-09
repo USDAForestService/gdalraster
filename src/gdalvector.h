@@ -42,6 +42,7 @@ class GDALVector {
 
     // exposed read/write fields
     std::string defaultGeomFldName {"geometry"};
+    bool promoteToMulti {false};
     std::string returnGeomAs {"WKB"};
     std::string wkbByteOrder {"LSB"};
 

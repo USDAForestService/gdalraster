@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9400 (dev)
+# gdalraster 1.11.1.9401 (dev)
+
+* `GDALVector`: add read/write field `promoteToMulti` (2024-09-09)
 
 * `GDALVector`: add class methods for writing features in a layer: `$createFeature()`, `$setFeature()`, `$upsertFeature()` (2024-09-08)
 

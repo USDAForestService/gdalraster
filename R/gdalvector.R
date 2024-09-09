@@ -65,6 +65,7 @@
 #'
 #' ## Read/write fields
 #' lyr$defaultGeomFldName
+#' lyr$promoteToMulti
 #' lyr$returnGeomAs
 #' lyr$wkbByteOrder
 #'
@@ -161,6 +162,14 @@
 #' Character string specifying a name to use for returned columns when the
 #' geometry column name in the source layer is empty, like with shapefiles etc.
 #' Defaults to `"geometry"`.
+#'
+#' \code{$promoteToMulti}\cr
+#' A logical value specifying whether to automatically promote geometries from
+#' Polygon to MultiPolygon, Point to MultiPoint, or LineString to
+#' MultiLineString during read operations (i.e., with methods `$getFeature()`,
+#' `$getNextFeature()`, `$fetch()`). Defaults to `FALSE`. Setting to `TRUE` may
+#' be useful when reading from layers such as shapefiles that mix, e.g.,
+#' Polygons and MultiPolygons.
 #'
 #' \code{$returnGeomAs}\cr
 #' Character string specifying the return format of feature geometries.
