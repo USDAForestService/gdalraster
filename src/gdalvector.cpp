@@ -1031,26 +1031,25 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                         col[row_num] = NA_STRING;
                     }
                     else {
-                        if (gdal_version_num() < 3070000) {
-                            // fall back to geom type name
-                            col[row_num] = OGR_G_GetGeometryName(hGeom);
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 7, 0)
+                        // fall back to geom type name
+                        col[row_num] = OGR_G_GetGeometryName(hGeom);
+#else
+                        const auto poGeom = OGRGeometry::FromHandle(hGeom);
+                        std::vector<const char *> options =
+                                {"DISPLAY_GEOMETRY=SUMMARY", nullptr};
+
+                        CPLString s = poGeom->dumpReadable(nullptr,
+                                options.data());
+
+                        s.replaceAll('\n', ' ');
+                        col[row_num] = s.Trim();
+
+                        if (destroy_geom) {
+                            delete poGeom;
+                            destroy_geom = false;
                         }
-                        else {
-                            const auto poGeom = OGRGeometry::FromHandle(hGeom);
-                            std::vector<const char *> options =
-                                    {"DISPLAY_GEOMETRY=SUMMARY", nullptr};
-
-                            CPLString s = poGeom->dumpReadable(nullptr,
-                                    options.data());
-
-                            s.replaceAll('\n', ' ');
-                            col[row_num] = s.Trim();
-
-                            if (destroy_geom) {
-                                delete poGeom;
-                                destroy_geom = false;
-                            }
-                        }
+#endif
                     }
                 }
 
