@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9402 (dev)
+# gdalraster 1.11.1.9403 (dev)
+
+* (internal) `GDALVector`: use `$setIgnoredFields()` when `$returnGeomAs` is set to `NONE` (2024-09-09)
 
 * `GDALVector`: add a `SUMMARY` option for the per-object setting `$returnGeomAs` (2024-09-09)
 
