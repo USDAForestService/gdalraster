@@ -188,11 +188,12 @@ Polygons and MultiPolygons.
 
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.
-Must be one of \code{WKT}, \code{WKT_ISO}, \code{WKB} (the default), \code{WKB_ISO}, \code{TYPE_NAME}
-or \code{NONE}. Using \code{WKB}/\code{WKT} exports as 99-402 extended dimension (Z) types
-for Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
-and GeometryCollection. For other geometry types, it is equivalent to using
-\code{WKB_ISO}/\code{WKT_ISO} (see \url{https://libgeos.org/specifications/wkb/}).
+Must be one of \code{WKT}, \code{WKT_ISO}, \code{WKB} (the default), \code{WKB_ISO},
+\code{SUMMARY} (GDAL >= 3.7), \code{TYPE_NAME} or \code{NONE}. Using \code{WKB}/\code{WKT} exports as
+99-402 extended dimension (Z) types for Point, LineString, Polygon,
+MultiPoint, MultiLineString, MultiPolygon and GeometryCollection. For other
+geometry types, it is equivalent to using \code{WKB_ISO}/\code{WKT_ISO} (see
+\url{https://libgeos.org/specifications/wkb/}).
 
 \code{$wkbByteOrder}\cr
 Character string specifying the byte order for WKB geometries.

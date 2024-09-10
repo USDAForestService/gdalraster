@@ -1,6 +1,8 @@
-# gdalraster 1.11.1.9401 (dev)
+# gdalraster 1.11.1.9402 (dev)
 
-* `GDALVector`: add read/write field `promoteToMulti` (2024-09-09)
+* `GDALVector`: add a `SUMMARY` option for the per-object setting `$returnGeomAs` (2024-09-09)
+
+* `GDALVector`: add `$promoteToMulti` as a per-object setting (2024-09-09)
 
 * `GDALVector`: add class methods for writing features in a layer: `$createFeature()`, `$setFeature()`, `$upsertFeature()` (2024-09-08)
 

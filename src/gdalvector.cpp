@@ -14,6 +14,7 @@
 #include "cpl_port.h"
 #include "cpl_string.h"
 #include "cpl_time.h"
+#include "ogr_geometry.h"
 #include "ogr_srs_api.h"
 
 #include "gdalraster.h"
@@ -668,6 +669,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                EQUAL(this->returnGeomAs.c_str(), "WKB_ISO") ||
                EQUAL(this->returnGeomAs.c_str(), "WKT") ||
                EQUAL(this->returnGeomAs.c_str(), "WKT_ISO") ||
+               EQUAL(this->returnGeomAs.c_str(), "SUMMARY") ||
                EQUAL(this->returnGeomAs.c_str(), "TYPE_NAME"))) {
         Rcpp::stop("unsupported value of field 'returnGeomAs'");
     }
@@ -1020,6 +1022,35 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
                         col[row_num] = pszWKT;
                         CPLFree(pszWKT);
+                    }
+                }
+
+                else if (EQUAL(this->returnGeomAs.c_str(), "SUMMARY")) {
+                    Rcpp::CharacterVector col = df[col_num];
+                    if (hGeom == nullptr) {
+                        col[row_num] = NA_STRING;
+                    }
+                    else {
+                        if (gdal_version_num() < 3070000) {
+                            // fall back to geom type name
+                            col[row_num] = OGR_G_GetGeometryName(hGeom);
+                        }
+                        else {
+                            const auto poGeom = OGRGeometry::FromHandle(hGeom);
+                            std::vector<const char *> options =
+                                    {"DISPLAY_GEOMETRY=SUMMARY", nullptr};
+
+                            CPLString s = poGeom->dumpReadable(nullptr,
+                                    options.data());
+
+                            s.replaceAll('\n', ' ');
+                            col[row_num] = s.Trim();
+
+                            if (destroy_geom) {
+                                delete poGeom;
+                                destroy_geom = false;
+                            }
+                        }
                     }
                 }
 
