@@ -60,6 +60,7 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
     m_dsn = Rcpp::as<std::string>(check_gdal_filename(dsn));
     open(read_only);
     setFeatureTemplate_();
+    setFieldNames_();
 }
 
 void GDALVector::open(bool read_only) {
@@ -417,6 +418,12 @@ std::string GDALVector::getAttributeFilter() const {
 void GDALVector::setIgnoredFields(const Rcpp::RObject &fields) {
     checkAccess_(GA_ReadOnly);
 
+    if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields)) {
+        Rcpp::Rcerr << "this layer does not have ignored fields capability"
+                << std::endl;
+        return;
+    }
+
     if (fields.isNULL() || !Rcpp::is<Rcpp::CharacterVector>(fields))
         Rcpp::stop("'fields' must be a character vector");
 
@@ -424,15 +431,20 @@ void GDALVector::setIgnoredFields(const Rcpp::RObject &fields) {
     std::vector<const char *> fields_in(fields_.begin(), fields_.end());
     fields_in.push_back(nullptr);
 
-    if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields))
-        Rcpp::stop("this layer does not have ignored fields capability");
-
     if (fields_in[0] == nullptr || EQUAL(fields_in[0], "")) {
         OGR_L_SetIgnoredFields(m_hLayer, nullptr);
+        m_ignored_fields = Rcpp::CharacterVector::create();
     }
     else {
-        if (OGR_L_SetIgnoredFields(m_hLayer, fields_in.data()) != OGRERR_NONE)
-            Rcpp::stop("not all field names could be resolved");
+        if (OGR_L_SetIgnoredFields(m_hLayer, fields_in.data()) != OGRERR_NONE) {
+            Rcpp::Rcerr << "not all field names could be resolved"
+                << std::endl;
+            return;
+        }
+        else {
+            m_ignored_fields = Rcpp::clone(fields_);
+            return;
+        }
     }
 }
 
@@ -681,6 +693,17 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         eOrder = wkbXDR;
     else
         Rcpp::stop("invalid value of field 'wkbByteOrder'");
+
+    bool reset_ignored_fields = false;
+    Rcpp::CharacterVector orig_ignored_fields;
+    if (EQUAL(this->returnGeomAs.c_str(), "NONE") &&
+        OGR_L_TestCapability(m_hLayer, OLCIgnoreFields)) {
+
+        orig_ignored_fields = Rcpp::clone(m_ignored_fields);
+        m_ignored_fields.push_back("OGR_GEOMETRY");
+        setIgnoredFields(m_ignored_fields);
+        reset_ignored_fields = true;
+    }
 
     OGRFeatureH hFeat = nullptr;
     size_t row_num = 0;
@@ -1086,6 +1109,9 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
             hFeat = nullptr;
         }
     }
+
+    if (reset_ignored_fields)
+        setIgnoredFields(orig_ignored_fields);
 
     if (row_num == fetch_num) {
         return df;
@@ -1736,6 +1762,37 @@ void GDALVector::setFeatureTemplate_() {
 
     this->featureTemplate = feat_template;
     this->returnGeomAs = orig_geom_as;
+}
+
+void GDALVector::setFieldNames_() {
+    OGRFeatureDefnH hFDefn = nullptr;
+    hFDefn = OGR_L_GetLayerDefn(m_hLayer);
+    if (hFDefn == nullptr)
+        Rcpp::stop("failed to get layer definition");
+
+    // attribute fields
+    for (int iField = 0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
+        OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
+        if (hFieldDefn == nullptr)
+            Rcpp::stop("could not obtain field definition");
+
+        m_field_names.push_back(OGR_Fld_GetNameRef(hFieldDefn));
+    }
+
+    // geometry fields
+    for (int i = 0; i < OGR_FD_GetGeomFieldCount(hFDefn); ++i) {
+        OGRGeomFieldDefnH hGeomFldDefn =
+                OGR_FD_GetGeomFieldDefn(hFDefn, i);
+        if (hGeomFldDefn == nullptr)
+            Rcpp::stop("could not obtain geometry field definition");
+
+        std::string geom_fld_name(OGR_GFld_GetNameRef(hGeomFldDefn));
+        if (geom_fld_name == "")
+            geom_fld_name = "OGR_GEOMETRY";
+        m_field_names.push_back(geom_fld_name);
+    }
+
+    // m_field_names.push_back("OGR_STYLE");
 }
 
 SEXP GDALVector::initDF_(R_xlen_t nrow) const {

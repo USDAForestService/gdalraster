@@ -65,6 +65,12 @@ test_that("setting ignored fields works", {
     lyr$setIgnoredFields("")
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
+    # ignoring "OGR_GEOMETRY" is redundant with returnGeomAs "NONE"
+    # make sure we can repeat "OGR_GEOMETRY" in the ignore list
+    lyr$setIgnoredFields("OGR_GEOMETRY")
+    feat <- lyr$getNextFeature()
+    expect_length(feat, 10)
+    lyr$setIgnoredFields("")
 
     # geometry
     lyr$returnGeomAs <- "WKT"

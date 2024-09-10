@@ -140,6 +140,7 @@ class GDALVector {
     OGRLayerH getOGRLayerH_() const;
     void setOGRLayerH_(const OGRLayerH hLyr, const std::string &lyr_name);
     void setFeatureTemplate_();
+    void setFieldNames_();
     SEXP initDF_(R_xlen_t nrow) const;
     OGRFeatureH OGRFeatureFromList_(const Rcpp::RObject &feature) const;
 
@@ -148,6 +149,8 @@ class GDALVector {
     Rcpp::CharacterVector m_open_options {};
     std::string m_attr_filter {""};
     std::string m_spatial_filter {""};
+    Rcpp::CharacterVector m_field_names {};
+    Rcpp::CharacterVector m_ignored_fields {};
     GDALDatasetH m_hDataset {nullptr};
     GDALAccess m_eAccess {GA_ReadOnly};
     OGRLayerH m_hLayer {nullptr};
