@@ -173,11 +173,12 @@
 #'
 #' \code{$returnGeomAs}\cr
 #' Character string specifying the return format of feature geometries.
-#' Must be one of `WKT`, `WKT_ISO`, `WKB` (the default), `WKB_ISO`, `TYPE_NAME`
-#' or `NONE`. Using `WKB`/`WKT` exports as 99-402 extended dimension (Z) types
-#' for Point, LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon
-#' and GeometryCollection. For other geometry types, it is equivalent to using
-#' `WKB_ISO`/`WKT_ISO` (see \url{https://libgeos.org/specifications/wkb/}).
+#' Must be one of `WKT`, `WKT_ISO`, `WKB` (the default), `WKB_ISO`,
+#' `SUMMARY` (GDAL >= 3.7), `TYPE_NAME` or `NONE`. Using `WKB`/`WKT` exports as
+#' 99-402 extended dimension (Z) types for Point, LineString, Polygon,
+#' MultiPoint, MultiLineString, MultiPolygon and GeometryCollection. For other
+#' geometry types, it is equivalent to using `WKB_ISO`/`WKT_ISO` (see
+#' \url{https://libgeos.org/specifications/wkb/}).
 #'
 #' \code{$wkbByteOrder}\cr
 #' Character string specifying the byte order for WKB geometries.

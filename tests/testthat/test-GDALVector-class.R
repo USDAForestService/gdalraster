@@ -133,6 +133,35 @@ test_that("read methods work correctly", {
     expect_false("POLYGON" %in% d[, geom_fld])
     expected_geoms <- rep("MULTIPOLYGON", lyr$getFeatureCount())
     expect_equal(d[, geom_fld], expected_geoms)
+    # returnGeomAs
+    lyr$returnGeomAs <- "WKB"
+    f <- lyr$getFeature(1)
+    expect_true(is.raw(f[[geom_fld]]))
+    f <- NULL
+    lyr$returnGeomAs <- "WKB_ISO"
+    f <- lyr$getFeature(1)
+    expect_true(is.raw(f[[geom_fld]]))
+    f <- NULL
+    lyr$returnGeomAs <- "WKT"
+    f <- lyr$getFeature(1)
+    expect_true(is.character(f[[geom_fld]]))
+    f <- NULL
+    lyr$returnGeomAs <- "WKT_ISO"
+    f <- lyr$getFeature(1)
+    expect_true(is.character(f[[geom_fld]]))
+    f <- NULL
+    lyr$returnGeomAs <- "TYPE_NAME"
+    f <- lyr$getFeature(1)
+    expect_true(is.character(f[[geom_fld]]))
+    f <- NULL
+    lyr$returnGeomAs <- "SUMMARY"
+    f <- lyr$getFeature(1)
+    expect_true(is.character(f[[geom_fld]]))
+    f <- NULL
+    lyr$returnGeomAs <- "NONE"
+    f <- lyr$getFeature(1)
+    expect_true(is.null(f[[geom_fld]]))
+    f <- NULL
 
     lyr$close()
     rm(lyr)
