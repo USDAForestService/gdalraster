@@ -24,7 +24,7 @@
 #' returned, otherwise returns a logical value. Defaults to `FALSE`.
 #' @returns By default, returns a logical value indicating success (invisible
 #' \code{TRUE}, output written to `dst_filename`). An error is raised if the
-#' operation fails. An object of class [`GDALRaster`][GDALRaster] opened on the
+#' operation fails. An object of class [`GDALRaster`][GDALRaster] open on the
 #' output dataset will be returned if `return_obj = TRUE`.
 #' @note
 #' `dst_filename` may be an empty string (`""`) with `format = "MEM"` and
@@ -61,6 +61,12 @@
 create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
                    options = NULL, return_obj = FALSE) {
 
+    if (is.null(return_obj))
+        stop("'return_obj' must be a logical value", call. = FALSE)
+
+    if (!is.logical(return_obj) || length(return_obj) > 1)
+        stop("'return_obj' must be a logical scalar", call. = FALSE)
+
     ds <- .create(format, dst_filename, xsize, ysize, nbands, dataType, options)
 
     if (return_obj) {
@@ -96,10 +102,10 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
 #' displayed. Defaults to `FALSE`.
 #' @param return_obj Logical scalar. If `TRUE`, an object of class
 #' [`GDALRaster`][GDALRaster] opened on the newly created dataset will be
-#' returned, otherwise returns a logical value. Defaults to `FALSE`.
+#' returned. Defaults to `FALSE`.
 #' @returns By default, returns a logical value indicating success (invisible
 #' \code{TRUE}, output written to `dst_filename`). An error is raised if the
-#' operation fails. An object of class [`GDALRaster`][GDALRaster] opened on the
+#' operation fails. An object of class [`GDALRaster`][GDALRaster] open on the
 #' output dataset will be returned if `return_obj = TRUE`.
 #' @note
 #' `dst_filename` may be an empty string (`""`) with `format = "MEM"` and
@@ -140,6 +146,12 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE,
         stop("'src_filename' must be a character string or 'GDALRaster' object",
              call. = FALSE)
     }
+
+    if (is.null(return_obj))
+        stop("'return_obj' must be a logical value", call. = FALSE)
+
+    if (!is.logical(return_obj) || length(return_obj) > 1)
+        stop("'return_obj' must be a logical scalar", call. = FALSE)
 
     ds <- .createCopy(format, dst_filename, src_ds, strict, options, quiet)
 
