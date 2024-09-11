@@ -191,6 +191,12 @@ std::string GDALVector::getName() const {
     return OGR_L_GetName(m_hLayer);
 }
 
+Rcpp::CharacterVector GDALVector::getFieldNames() const {
+    checkAccess_(GA_ReadOnly);
+
+    return m_field_names;
+}
+
 Rcpp::List GDALVector::testCapability() const {
     checkAccess_(GA_ReadOnly);
 
@@ -419,7 +425,7 @@ void GDALVector::setIgnoredFields(const Rcpp::RObject &fields) {
     checkAccess_(GA_ReadOnly);
 
     if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields)) {
-        Rcpp::Rcerr << "this layer does not have ignored fields capability"
+        Rcpp::Rcerr << "this layer does not have IgnoreFields capability"
                 << std::endl;
         return;
     }
@@ -427,24 +433,73 @@ void GDALVector::setIgnoredFields(const Rcpp::RObject &fields) {
     if (fields.isNULL() || !Rcpp::is<Rcpp::CharacterVector>(fields))
         Rcpp::stop("'fields' must be a character vector");
 
-    Rcpp::CharacterVector fields_(fields);
-    std::vector<const char *> fields_in(fields_.begin(), fields_.end());
-    fields_in.push_back(nullptr);
+    Rcpp::CharacterVector fields_in(fields);
+    std::vector<const char *> oFields(fields_in.begin(), fields_in.end());
+    oFields.push_back(nullptr);
 
-    if (fields_in[0] == nullptr || EQUAL(fields_in[0], "")) {
+    if (oFields[0] == nullptr || EQUAL(oFields[0], "")) {
+        // reset to none
         OGR_L_SetIgnoredFields(m_hLayer, nullptr);
         m_ignored_fields = Rcpp::CharacterVector::create();
+        return;
     }
     else {
-        if (OGR_L_SetIgnoredFields(m_hLayer, fields_in.data()) != OGRERR_NONE) {
+        if (OGR_L_SetIgnoredFields(m_hLayer, oFields.data()) != OGRERR_NONE) {
             Rcpp::Rcerr << "not all field names could be resolved"
                 << std::endl;
-            return;
         }
         else {
-            m_ignored_fields = Rcpp::clone(fields_);
-            return;
+            m_ignored_fields = Rcpp::clone(fields_in);
         }
+        return;
+    }
+}
+
+void GDALVector::setSelectedFields(const Rcpp::RObject &fields) {
+    checkAccess_(GA_ReadOnly);
+
+    if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields)) {
+        Rcpp::Rcerr << "capability to ignore fields is needed to set selected"
+                << std::endl;
+        Rcpp::Rcerr << "this layer does not have IgnoreFields capability"
+                << std::endl;
+        return;
+    }
+
+    if (fields.isNULL() || !Rcpp::is<Rcpp::CharacterVector>(fields))
+        Rcpp::stop("'fields' must be a character vector");
+
+    Rcpp::CharacterVector fields_in(fields);
+    if (EQUAL(fields_in[0], "")) {
+        // reset to none
+        OGR_L_SetIgnoredFields(m_hLayer, nullptr);
+        m_ignored_fields = Rcpp::CharacterVector::create();
+        return;
+    }
+
+    // if special field "OGR_GEOMETRY" is used here, we need to replace with
+    // the geometry column name
+    for (auto& x : fields_in) {
+        if (EQUAL(x, "OGR_GEOMETRY"))
+            x = getGeometryColumn();
+    }
+
+    Rcpp::CharacterVector ignore_fields = Rcpp::setdiff(m_field_names,
+                                                        fields_in);
+
+    std::vector<const char *> oFields(ignore_fields.begin(),
+                                      ignore_fields.end());
+    oFields.push_back(nullptr);
+
+    // reset first
+    OGR_L_SetIgnoredFields(m_hLayer, nullptr);
+    OGRErr err = OGR_L_SetIgnoredFields(m_hLayer, oFields.data());
+    if (err != OGRERR_NONE) {
+        Rcpp::Rcerr << "not all field names could be resolved"
+                << std::endl;
+    }
+    else {
+        m_ignored_fields = Rcpp::clone(ignore_fields);
     }
 }
 
@@ -2579,6 +2634,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Return the long name of the format driver")
     .const_method("getName", &GDALVector::getName,
         "Return the layer name")
+    .const_method("getFieldNames", &GDALVector::getFieldNames,
+        "Return a character vector of the layer's field names")
     .const_method("testCapability", &GDALVector::testCapability,
         "Test if this layer supports the named capability")
     .const_method("getFIDColumn", &GDALVector::getFIDColumn,
@@ -2599,6 +2656,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Get the attribute filter string (or empty string if not set")
     .method("setIgnoredFields", &GDALVector::setIgnoredFields,
         "Set which fields can be omitted when retrieving features")
+    .method("setSelectedFields", &GDALVector::setSelectedFields,
+        "Set which fields to include when retrieving features")
     .method("setSpatialFilter", &GDALVector::setSpatialFilter,
         "Set a new spatial filter from a geometry in WKT format")
     .method("setSpatialFilterRect", &GDALVector::setSpatialFilterRect,

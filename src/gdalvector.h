@@ -55,6 +55,7 @@ class GDALVector {
     std::string getDriverLongName() const;
 
     std::string getName() const;
+    Rcpp::CharacterVector getFieldNames() const;
     Rcpp::List testCapability() const;
     std::string getFIDColumn() const;
     std::string getGeomType() const;
@@ -66,6 +67,7 @@ class GDALVector {
     void setAttributeFilter(const std::string &query);
     std::string getAttributeFilter() const;
     void setIgnoredFields(const Rcpp::RObject &fields);
+    void setSelectedFields(const Rcpp::RObject &fields);
 
     void setSpatialFilter(const std::string &wkt);
     void setSpatialFilterRect(const Rcpp::RObject &bbox);
