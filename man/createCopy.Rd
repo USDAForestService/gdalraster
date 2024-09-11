@@ -39,12 +39,12 @@ displayed. Defaults to \code{FALSE}.}
 
 \item{return_obj}{Logical scalar. If \code{TRUE}, an object of class
 \code{\link{GDALRaster}} opened on the newly created dataset will be
-returned, otherwise returns a logical value. Defaults to \code{FALSE}.}
+returned. Defaults to \code{FALSE}.}
 }
 \value{
 By default, returns a logical value indicating success (invisible
 \code{TRUE}, output written to \code{dst_filename}). An error is raised if the
-operation fails. An object of class \code{\link{GDALRaster}} opened on the
+operation fails. An object of class \code{\link{GDALRaster}} open on the
 output dataset will be returned if \code{return_obj = TRUE}.
 }
 \description{
