@@ -459,7 +459,7 @@ void GDALVector::setSelectedFields(const Rcpp::RObject &fields) {
     checkAccess_(GA_ReadOnly);
 
     if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields)) {
-        Rcpp::Rcout << "capability to ignore fields is needed to set selected"
+        Rcpp::Rcerr << "capability to ignore fields is needed to set selected"
                 << std::endl;
         Rcpp::Rcerr << "this layer does not have IgnoreFields capability"
                 << std::endl;
@@ -480,7 +480,7 @@ void GDALVector::setSelectedFields(const Rcpp::RObject &fields) {
     // if special field "OGR_GEOMETRY" is used here, we need to replace with
     // the geometry column name
     for (auto& x : fields_in) {
-        if (x == "OGR_GEOMETRY" || x == "ogr_geometry")
+        if (EQUAL(x, "OGR_GEOMETRY"))
             x = getGeometryColumn();
     }
 
