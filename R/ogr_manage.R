@@ -51,8 +51,11 @@
 #' The attribute fields and geometry field(s) to create can be specified as a
 #' feature class definition (`layer_defn` as list, see [ogr_define]), or
 #' alternatively, by giving the `geom_type` and `srs`, optionally along with
-#' one `fld_name` and `fld_type` to be created in the layer. Returns a logical
-#' scalar, `TRUE` indicating success.
+#' one `fld_name` and `fld_type` to be created in the layer.
+#' By default, returns logical `TRUE` indicating success (output written to
+#' `dst_filename`), or an object of class [`GDALVector`][GDALVector] for the
+#' output layer will be returned if `return_obj = TRUE`. An error is raised if
+#' the operation fails.
 #'
 #' `ogr_ds_layer_count()` returns the number of layers in a vector dataset.
 #'
@@ -81,7 +84,9 @@
 #' field names and their definitions (see [ogr_define]).
 #' (Note: use `ogr_ds_create()` to create single-layer formats such as "ESRI
 #' Shapefile", "FlatGeobuf", "GeoJSON", etc.)
-#' Returns a logical scalar, `TRUE` indicating success.
+#' By default, returns logical `TRUE` indicating success, or an object of class
+#' [`GDALVector`][GDALVector] will be returned if `return_obj = TRUE`.
+#' An error is raised if the operation fails.
 #'
 #' `ogr_layer_field_names()` returns a character vector of field names on a
 #' layer, or `NULL` if no fields are found.
@@ -189,6 +194,10 @@
 #' given. The `"SQLite"` dialect can also be used (see Note).
 #' @param overwrite Logical scalar. `TRUE` to overwrite `dsn` if it already
 #' exists when calling `ogr_ds_create()`. Default is `FALSE`.
+#' @param return_obj Logical scalar. If `TRUE`, an object of class
+#' [`GDALVector`][GDALVector] open on the newly created layer will be
+#' returned. Defaults to `FALSE`. Must be used with either the `layer` or
+#' `layer_defn` arguments.
 #'
 #' @note
 #' The OGR SQL document linked under **See Also** contains information on the
@@ -345,38 +354,89 @@ ogr_ds_test_cap <- function(dsn, with_update = TRUE) {
 ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
                           geom_type = NULL, srs = NULL, fld_name = NULL,
                           fld_type = NULL, dsco = NULL, lco = NULL,
-                          overwrite = FALSE) {
+                          overwrite = FALSE, return_obj = FALSE) {
 
+    # format
     if (!(is.character(format) && length(format) == 1))
         stop("'format' must be a length-1 character vector", call. = FALSE)
+    # dsn
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
     if (vsi_stat(dsn) && !overwrite)
-        stop("'dsn' exists and 'overwrite' is FALSE", call. = FALSE)
+        stop("'dsn' exists but 'overwrite' is `FALSE`", call. = FALSE)
+    # layer
     if (is.null(layer))
         layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
+    # layer_defn
+    if (!is.null(layer_defn)) {
+        if (!is.list(layer_defn) || is.data.frame(layer_defn)) {
+            stop("'layer_defn' must be a list object", call. = FALSE)
+        }
+    }
+    # geom_type
     if (is.null(geom_type))
         geom_type <- ""
     if (!(is.character(geom_type) && length(geom_type) == 1))
         stop("'geom_type' must be a length-1 character vector", call. = FALSE)
+    # srs
     if (is.null(srs))
         srs <- ""
+    if (!(is.character(srs) && length(srs) == 1))
+        stop("'srs' must be a length-1 character vector", call. = FALSE)
+    # fld_name
     if (is.null(fld_name))
         fld_name <- ""
+    if (!(is.character(fld_name) && length(fld_name) == 1))
+        stop("'fld_name' must be a length-1 character vector", call. = FALSE)
+    # fld_type
     if (is.null(fld_type))
         fld_type <- ""
+    if (!(is.character(fld_type) && length(fld_type) == 1))
+        stop("'fld_type' must be a length-1 character vector", call. = FALSE)
+    # dsco
+    if (!is.null(dsco)) {
+        if (!is.character(dsco))
+            stop("'dsco' must be a character vector", call. = FALSE)
+    }
+    # lco
+    if (!is.null(lco)) {
+        if (!is.character(lco))
+            stop("'lco' must be a character vector", call. = FALSE)
+    }
+    # overwrite
+    if (is.null(overwrite))
+        stop("'overwrite' must be a logical value", call. = FALSE)
+    if (!is.logical(overwrite) || length(overwrite) > 1)
+        stop("'overwrite' must be a logical scalar", call. = FALSE)
+    # return_obj
+    if (is.null(return_obj))
+        stop("'return_obj' must be a logical value", call. = FALSE)
+    if (!is.logical(return_obj) || length(return_obj) > 1)
+        stop("'return_obj' must be a logical scalar", call. = FALSE)
+    if (return_obj && layer == "" && is.null(layer_defn)) {
+        stop("'layer' or 'layer_defn' must be given with 'return_obj = TRUE'",
+             call. = FALSE)
+    }
 
     if (is.null(layer_defn)) {
-        return(.create_ogr(format, dsn, 0, 0, 0, "Unknown",
+        lyr <- .create_ogr(format, dsn, 0, 0, 0, "Unknown",
                            layer, geom_type, srs, fld_name, fld_type,
-                           dsco, lco, NULL))
+                           dsco, lco, NULL)
+
     } else {
-        return(.create_ogr(format, dsn, 0, 0, 0, "Unknown",
+        lyr <- .create_ogr(format, dsn, 0, 0, 0, "Unknown",
                            layer = layer, geom_type = "", srs = "",
                            fld_name = "", fld_type = "",
-                           dsco = dsco, lco = lco, layer_defn = layer_defn))
+                           dsco = dsco, lco = lco, layer_defn = layer_defn)
+    }
+
+    if (return_obj) {
+        return(lyr)
+    } else {
+        lyr$close()
+        return(TRUE)
     }
 }
 
@@ -423,8 +483,9 @@ ogr_layer_test_cap <- function(dsn, layer, with_update = TRUE) {
 #' @name ogr_manage
 #' @export
 ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
-                             srs = NULL, lco = NULL) {
+                             srs = NULL, lco = NULL, return_obj = FALSE) {
 
+    # dsn / layer
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
     if (!(is.character(layer) && length(layer) == 1))
@@ -433,11 +494,14 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
         stop("'dsn' does not exist, or no update access", call. = FALSE)
     if (ogr_layer_exists(dsn, layer))
         stop("'layer' already exists", call. = FALSE)
+    # layer_defn
+    if (!is.null(layer_defn)) {
+        if (!is.list(layer_defn) || is.data.frame(layer_defn)) {
+            stop("'layer_defn' must be a list object", call. = FALSE)
+        }
+    }
 
     if (!is.null(layer_defn)) {
-        if (!is.list(layer_defn))
-            stop("'layer_defn' must be a list", call. = FALSE)
-
         # using layer_defn so get geom_type and srs from the geom field defn
         has_geom_fld_defn <- FALSE
         for (nm in names(layer_defn)) {
@@ -463,20 +527,40 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
         }
     }
 
+    # geom_type
     if (is.null(geom_type)) {
-        message("geometry type not specified, using 'UNKNOWN'", call. = FALSE)
+        warning("geometry type not specified, using 'UNKNOWN'", call. = FALSE)
         geom_type <- "UNKNOWN"
     }
-
+    # srs
     if (is.null(srs))
         srs <- ""
+    if (!(is.character(srs) && length(srs) == 1))
+        stop("'srs' must be a length-1 character vector", call. = FALSE)
+    # lco
+    if (!is.null(lco)) {
+        if (!is.character(lco))
+            stop("'lco' must be a character vector", call. = FALSE)
+    }
+    # return_obj
+    if (is.null(return_obj))
+        stop("'return_obj' must be a logical value", call. = FALSE)
+    if (!is.logical(return_obj) || length(return_obj) > 1)
+        stop("'return_obj' must be a logical scalar", call. = FALSE)
 
-    return(.ogr_layer_create(dsn = dsn,
+    lyr <- .ogr_layer_create(dsn = dsn,
                              layer = layer,
                              layer_defn = layer_defn,
                              geom_type = geom_type,
                              srs = srs,
-                             options = lco))
+                             options = lco)
+
+    if (return_obj) {
+        return(lyr)
+    } else {
+        lyr$close()
+        return(TRUE)
+    }
 }
 
 #' @name ogr_manage

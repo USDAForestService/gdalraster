@@ -1151,7 +1151,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // create_ogr
-bool create_ogr(std::string format, std::string dst_filename, int xsize, int ysize, int nbands, std::string dataType, std::string layer, std::string geom_type, std::string srs, std::string fld_name, std::string fld_type, Rcpp::Nullable<Rcpp::CharacterVector> dsco, Rcpp::Nullable<Rcpp::CharacterVector> lco, Rcpp::Nullable<Rcpp::List> layer_defn);
+GDALVector create_ogr(std::string format, std::string dst_filename, int xsize, int ysize, int nbands, std::string dataType, std::string layer, std::string geom_type, std::string srs, std::string fld_name, std::string fld_type, Rcpp::Nullable<Rcpp::CharacterVector> dsco, Rcpp::Nullable<Rcpp::CharacterVector> lco, Rcpp::Nullable<Rcpp::List> layer_defn);
 RcppExport SEXP _gdalraster_create_ogr(SEXP formatSEXP, SEXP dst_filenameSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP, SEXP dataTypeSEXP, SEXP layerSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP fld_nameSEXP, SEXP fld_typeSEXP, SEXP dscoSEXP, SEXP lcoSEXP, SEXP layer_defnSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -1222,7 +1222,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // ogr_layer_create
-bool ogr_layer_create(std::string dsn, std::string layer, Rcpp::Nullable<Rcpp::List> layer_defn, std::string geom_type, std::string srs, Rcpp::Nullable<Rcpp::CharacterVector> options);
+GDALVector ogr_layer_create(std::string dsn, std::string layer, Rcpp::Nullable<Rcpp::List> layer_defn, std::string geom_type, std::string srs, Rcpp::Nullable<Rcpp::CharacterVector> options);
 RcppExport SEXP _gdalraster_ogr_layer_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP layer_defnSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

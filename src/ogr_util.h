@@ -10,6 +10,8 @@
 #include <string>
 #include "rcpp_util.h"
 
+#include "gdalvector.h"
+
 #ifdef GDAL_H_INCLUDED
 // map OGRwkbGeometryType enum to string names for use in R
 const std::map<std::string, OGRwkbGeometryType> MAP_OGR_GEOM_TYPE{
@@ -146,13 +148,14 @@ std::string ogr_ds_format(std::string dsn);
 
 SEXP ogr_ds_test_cap(std::string dsn, bool with_update);
 
-bool create_ogr(std::string format, std::string dst_filename,
-                int xsize, int ysize, int nbands, std::string dataType,
-                std::string layer, std::string geom_type, std::string srs,
-                std::string fld_name, std::string fld_type,
-                Rcpp::Nullable<Rcpp::CharacterVector> dsco,
-                Rcpp::Nullable<Rcpp::CharacterVector> lco,
-                Rcpp::Nullable<Rcpp::List> layer_defn);
+GDALVector create_ogr(std::string format, std::string dst_filename,
+                      int xsize, int ysize, int nbands, std::string dataType,
+                      std::string layer, std::string geom_type,
+                      std::string srs, std::string fld_name,
+                      std::string fld_type,
+                      Rcpp::Nullable<Rcpp::CharacterVector> dsco,
+                      Rcpp::Nullable<Rcpp::CharacterVector> lco,
+                      Rcpp::Nullable<Rcpp::List> layer_defn);
 
 int ogr_ds_layer_count(std::string dsn);
 
@@ -169,10 +172,10 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, std::string layer,
                        std::string geom_type, std::string srs,
                        Rcpp::Nullable<Rcpp::CharacterVector> options);
 
-bool ogr_layer_create(std::string dsn, std::string layer,
-                       Rcpp::Nullable<Rcpp::List> layer_defn,
-                       std::string geom_type, std::string srs,
-                       Rcpp::Nullable<Rcpp::CharacterVector> options);
+GDALVector ogr_layer_create(std::string dsn, std::string layer,
+                            Rcpp::Nullable<Rcpp::List> layer_defn,
+                            std::string geom_type, std::string srs,
+                            Rcpp::Nullable<Rcpp::CharacterVector> options);
 
 bool ogr_layer_rename(std::string dsn, std::string layer,
                       std::string new_name);

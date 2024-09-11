@@ -39,7 +39,8 @@ ogr_ds_create(
   fld_type = NULL,
   dsco = NULL,
   lco = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  return_obj = FALSE
 )
 
 ogr_ds_layer_count(dsn)
@@ -56,7 +57,8 @@ ogr_layer_create(
   layer_defn = NULL,
   geom_type = NULL,
   srs = NULL,
-  lco = NULL
+  lco = NULL,
+  return_obj = FALSE
 )
 
 ogr_layer_field_names(dsn, layer)
@@ -146,6 +148,11 @@ for \code{layer} (\code{"NAME=VALUE"} pairs).}
 
 \item{overwrite}{Logical scalar. \code{TRUE} to overwrite \code{dsn} if it already
 exists when calling \code{ogr_ds_create()}. Default is \code{FALSE}.}
+
+\item{return_obj}{Logical scalar. If \code{TRUE}, an object of class
+\code{\link{GDALVector}} open on the newly created layer will be
+returned. Defaults to \code{FALSE}. Must be used with either the \code{layer} or
+\code{layer_defn} arguments.}
 
 \item{new_name}{Character string containing a new name to assign.}
 
@@ -239,8 +246,11 @@ a layer, and optionally creating one or more fields on the layer.
 The attribute fields and geometry field(s) to create can be specified as a
 feature class definition (\code{layer_defn} as list, see \link{ogr_define}), or
 alternatively, by giving the \code{geom_type} and \code{srs}, optionally along with
-one \code{fld_name} and \code{fld_type} to be created in the layer. Returns a logical
-scalar, \code{TRUE} indicating success.
+one \code{fld_name} and \code{fld_type} to be created in the layer.
+By default, returns logical \code{TRUE} indicating success (output written to
+\code{dst_filename}), or an object of class \code{\link{GDALVector}} for the
+output layer will be returned if \code{return_obj = TRUE}. An error is raised if
+the operation fails.
 
 \code{ogr_ds_layer_count()} returns the number of layers in a vector dataset.
 
@@ -269,7 +279,9 @@ This function also accepts a feature class definition given as a list of
 field names and their definitions (see \link{ogr_define}).
 (Note: use \code{ogr_ds_create()} to create single-layer formats such as "ESRI
 Shapefile", "FlatGeobuf", "GeoJSON", etc.)
-Returns a logical scalar, \code{TRUE} indicating success.
+By default, returns logical \code{TRUE} indicating success, or an object of class
+\code{\link{GDALVector}} will be returned if \code{return_obj = TRUE}.
+An error is raised if the operation fails.
 
 \code{ogr_layer_field_names()} returns a character vector of field names on a
 layer, or \code{NULL} if no fields are found.
