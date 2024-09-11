@@ -41,12 +41,14 @@ test_that("class constructors work", {
     unlink(dsn)
 })
 
-test_that("setting ignored fields works", {
+test_that("set ignored/selected fields works", {
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
     dsn <- file.path(tempdir(), basename(f))
     file.copy(f, dsn, overwrite = TRUE)
 
     lyr <- new(GDALVector, dsn, "mtbs_perims")
+
+    # set ignored, no geom
     lyr$returnGeomAs <- "NONE"
     expect_true(lyr$testCapability()$IgnoreFields)
     feat <- lyr$getNextFeature()
@@ -65,15 +67,34 @@ test_that("setting ignored fields works", {
     lyr$setIgnoredFields("")
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
-    # ignoring "OGR_GEOMETRY" is redundant with returnGeomAs "NONE"
+
+    # set selected, no geom
+    # FID is always included, so expected number of fields is +1
+    lyr$returnGeomAs <- "NONE"
+    lyr$setSelectedFields("event_id")
+    feat <- lyr$getNextFeature()
+    expect_length(feat, 2)
+    expect_true(is.character(feat$event_id))
+    lyr$setSelectedFields("")
+    feat <- lyr$getNextFeature()
+    expect_length(feat, 10)
+    lyr$setSelectedFields(c("event_id", "map_id", "ig_year"))
+    feat <- lyr$getNextFeature()
+    expect_length(feat, 4)
+    lyr$setSelectedFields("")
+    feat <- lyr$getNextFeature()
+    expect_length(feat, 10)
+
+    # geometry
+    # ignoring "OGR_GEOMETRY" is redundant with returnGeomAs = "NONE"
     # make sure we can repeat "OGR_GEOMETRY" in the ignore list
+    lyr$returnGeomAs <- "NONE"
     lyr$setIgnoredFields("OGR_GEOMETRY")
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
-    lyr$setIgnoredFields("")
-
-    # geometry
+    expect_true(is.null(feat$geom))
     lyr$returnGeomAs <- "WKT"
+    lyr$setIgnoredFields("")
     feat <- lyr$getNextFeature()
     expect_length(feat, 11)
     lyr$setIgnoredFields("OGR_GEOMETRY")
@@ -86,6 +107,12 @@ test_that("setting ignored fields works", {
     lyr$setIgnoredFields("")
     feat <- lyr$getNextFeature()
     expect_length(feat, 11)
+    # selected
+    lyr$returnGeomAs <- "WKT"
+    lyr$setSelectedFields(c("event_id", "OGR_GEOMETRY"))
+    feat <- lyr$getNextFeature()
+    expect_length(feat, 3)
+    expect_false(is.null(feat$geom))
 
     lyr$close()
     unlink(dsn)
@@ -99,6 +126,11 @@ test_that("read methods work correctly", {
     file.copy(f, dsn, overwrite = TRUE)
 
     lyr <- new(GDALVector, dsn, "mtbs_perims")
+
+    field_names <- c("event_id", "incid_name", "incid_type", "map_id",
+                     "burn_bnd_ac", "burn_bnd_lat", "burn_bnd_lon",
+                     "ig_date", "ig_year", "geom")
+    expect_equal(lyr$getFieldNames(), field_names)
 
     # cursor positioning
     expect_equal(lyr$getFeatureCount(), 61)

@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9403 (dev)
+# gdalraster 1.11.1.9410 (dev)
+
+* `GDALVector`: add method `$setSelectedFields()`, alternative to `$setIgnoredFields()` (2024-09-10)
 
 * (internal) `GDALVector`: use `$setIgnoredFields()` when `$returnGeomAs` is set to `NONE` (2024-09-09)
 

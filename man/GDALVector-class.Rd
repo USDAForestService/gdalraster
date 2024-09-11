@@ -88,6 +88,7 @@ lyr$getDriverShortName()
 lyr$getDriverLongName()
 
 lyr$getName()
+lyr$getFieldNames()
 lyr$testCapability()
 lyr$getFIDColumn()
 lyr$getGeomType()
@@ -99,6 +100,7 @@ lyr$getLayerDefn()
 lyr$setAttributeFilter(query)
 lyr$getAttributeFilter()
 lyr$setIgnoredFields(fields)
+lyr$setSelectedFields(fields)
 
 lyr$setSpatialFilter(wkt)
 lyr$setSpatialFilterRect(bbox)
@@ -234,6 +236,9 @@ Returns the long name of the vector format driver.
 \code{$getName()}\cr
 Returns the layer name.
 
+#' \code{$getFieldNames()}\cr
+Returns a character vector of the layer's field names.
+
 \code{$testCapability()}\cr
 Tests whether the layer supports named capabilities based on the current
 read/write access. Returns a list of capabilities with values \code{TRUE} or
@@ -305,7 +310,8 @@ if an attribute filter is not set.
 
 \code{$setIgnoredFields(fields)}\cr
 Set which fields can be omitted when retrieving features from the layer.
-The \code{fields} argument is a character vector of field names.
+The \code{fields} argument is a character vector of field names. Passing an
+empty string (\code{""}) for \code{fields} will reset to no ignored fields.
 If the format driver supports this functionality (testable using
 \verb{$testCapability()$IgnoreFields}), it will not fetch the specified fields
 in subsequent calls to \verb{$getFeature()} / \verb{$getNextFeature()} / \verb{$fetch()},
@@ -316,6 +322,17 @@ fields are ignored. Note that fields that are used in an attribute filter
 should generally not be set as ignored fields, as most drivers (such as
 those relying on the OGR SQL engine) will be unable to correctly evaluate
 the attribute filter. No return value, called for side effects.
+
+\code{$setSelectedFields(fields)}\cr
+Set which fields will be included when retrieving features from the layer.
+The \code{fields} argument is a character vector of field names. Passing an
+empty string (\code{""}) for \code{fields} will reset to no ignored fields.
+See the \verb{$setIgnoredFields()} method above for more information. The data
+source must provide IgnoreFields capability in order to set selected
+fields. Note that geometry fields, if desired, must be specified when setting
+selected fields, either by including named geometry field(s) or the special
+field \code{"OGR_GEOMETRY"} in the \code{fields} argument.
+No return value, called for side effects.
 
 \code{$setSpatialFilter(wkt)}\cr
 Sets a new spatial filter from a geometry in WKT format. This method sets
