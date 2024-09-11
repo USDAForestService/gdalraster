@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9403</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9410</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -171,6 +171,7 @@ lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFieldNames</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFIDColumn</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getGeomType</span><span class="op">(</span><span class="op">)</span></span>
@@ -182,6 +183,7 @@ lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="va">query</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getAttributeFilter</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setIgnoredFields</span><span class="op">(</span><span class="va">fields</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSelectedFields</span><span class="op">(</span><span class="va">fields</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSpatialFilter</span><span class="op">(</span><span class="va">wkt</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSpatialFilterRect</span><span class="op">(</span><span class="va">bbox</span><span class="op">)</span></span>
@@ -312,6 +314,8 @@ Returns the short name of the vector format driver.</p>
 Returns the long name of the vector format driver.</p>
 <p><code>$getName()</code><br>
 Returns the layer name.</p>
+<p>#' <code>$getFieldNames()</code><br>
+Returns a character vector of the layer's field names.</p>
 <p><code>$testCapability()</code><br>
 Tests whether the layer supports named capabilities based on the current
 read/write access. Returns a list of capabilities with values <code>TRUE</code> or
@@ -374,7 +378,8 @@ Returns the attribute query string currently in use, or empty string (<code>""</
 if an attribute filter is not set.</p>
 <p><code>$setIgnoredFields(fields)</code><br>
 Set which fields can be omitted when retrieving features from the layer.
-The <code>fields</code> argument is a character vector of field names.
+The <code>fields</code> argument is a character vector of field names. Passing an
+empty string (<code>""</code>) for <code>fields</code> will reset to no ignored fields.
 If the format driver supports this functionality (testable using
 <code>$testCapability()$IgnoreFields</code>), it will not fetch the specified fields
 in subsequent calls to <code>$getFeature()</code> / <code>$getNextFeature()</code> / <code>$fetch()</code>,
@@ -385,6 +390,16 @@ fields are ignored. Note that fields that are used in an attribute filter
 should generally not be set as ignored fields, as most drivers (such as
 those relying on the OGR SQL engine) will be unable to correctly evaluate
 the attribute filter. No return value, called for side effects.</p>
+<p><code>$setSelectedFields(fields)</code><br>
+Set which fields will be included when retrieving features from the layer.
+The <code>fields</code> argument is a character vector of field names. Passing an
+empty string (<code>""</code>) for <code>fields</code> will reset to no ignored fields.
+See the <code>$setIgnoredFields()</code> method above for more information. The data
+source must provide IgnoreFields capability in order to set selected
+fields. Note that geometry fields, if desired, must be specified when setting
+selected fields, either by including named geometry field(s) or the special
+field <code>"OGR_GEOMETRY"</code> in the <code>fields</code> argument.
+No return value, called for side effects.</p>
 <p><code>$setSpatialFilter(wkt)</code><br>
 Sets a new spatial filter from a geometry in WKT format. This method sets
 the geometry to be used as a spatial filter when fetching features via the
@@ -638,7 +653,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55a70c23e000&gt; of class 'GDALVector' &lt;0x55a70238b720&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x559f80f08970&gt; of class 'GDALVector' &lt;0x559f7685ad70&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 8 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -660,18 +675,18 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ promoteToMulti    : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "WKB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 61 methods, of which 47 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 63 methods, of which 49 are  possibly relevant:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    OGRFeatureFromList_dumpReadble, bbox, clearSpatialFilter, close,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    commitTransaction, createFeature, deleteFeature, fetch, finalize,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getAttributeFilter, getDriverLongName, getDriverShortName, getDsn,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getFIDColumn, getFeature, getFeatureCount, getFileList, getGeomType,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getGeometryColumn, getLastWriteFID, getLayerDefn, getName, getNextFeature,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getSpatialFilter, getSpatialRef, initialize, isOpen, layerClip, layerErase,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerIdentity, layerIntersection, layerSymDifference, layerUnion,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerUpdate, open, resetReading, rollbackTransaction, setAttributeFilter,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setFeature, setIgnoredFields, setNextByIndex, setSpatialFilter,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilterRect, startTransaction, syncToDisk, testCapability,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    upsertFeature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getFIDColumn, getFeature, getFeatureCount, getFieldNames, getFileList,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getGeomType, getGeometryColumn, getLastWriteFID, getLayerDefn, getName,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getNextFeature, getSpatialFilter, getSpatialRef, initialize, isOpen,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerClip, layerErase, layerIdentity, layerIntersection, layerSymDifference,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerUnion, layerUpdate, open, resetReading, rollbackTransaction,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setAttributeFilter, setFeature, setIgnoredFields, setNextByIndex,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setSelectedFields, setSpatialFilter, setSpatialFilterRect, startTransaction,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    syncToDisk, testCapability, upsertFeature</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## dataset info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -679,7 +694,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmprS3Ajq/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpcBKSnw/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1165,7 +1180,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-10 06:18:22" "2024-09-10 06:18:22"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-11 23:06:23" "2024-09-11 23:06:23"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1185,7 +1200,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-10 06:18:22"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-11 23:06:23"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1222,7 +1237,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-10 06:18:22" "2024-09-10 06:18:23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-11 23:06:23" "2024-09-11 23:06:24"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
