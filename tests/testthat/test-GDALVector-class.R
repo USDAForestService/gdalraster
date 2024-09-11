@@ -640,4 +640,39 @@ test_that("feature write methods work", {
     rm(lyr)
     rm(dsn4)
 
+    ## test GeoJSON write, Point with SRS
+    dsn5 <- tempfile(fileext = ".geojson")
+
+    defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4322))
+    defn$real_field <- ogr_def_field("OFTReal")
+    defn$str_field <- ogr_def_field("OFTString")
+
+    expect_no_error(lyr <- ogr_ds_create("GeoJSON", dsn5, layer_defn = defn,
+                                         lco = "WRITE_BBOX=YES",
+                                         overwrite = TRUE, return_obj = TRUE))
+
+    feat1 <- list()
+    feat1$real_field <- 0.123
+    feat1$str_field <- "test string 1"
+    feat1$geometry <- "POINT (1 10)"
+    expect_true(lyr$createFeature(feat1))
+
+
+    feat2 <- list()
+    feat2$real_field <- 0.234
+    feat2$str_field <- "test string 2"
+    feat2$geometry <- "POINT (2 20)"
+    expect_true(lyr$createFeature(feat2))
+
+    # close and re-open
+    lyr$open(read_only = TRUE)
+
+    expect_equal(lyr$getFeatureCount(), 2)
+    expect_equal(lyr$bbox(), c(1, 10, 2, 20))
+    expect_true(srs_is_same(lyr$getSpatialRef(), epsg_to_wkt(4322)))
+
+    lyr$close()
+    deleteDataset(dsn5)
+    rm(lyr)
+    rm(dsn5)
 })
