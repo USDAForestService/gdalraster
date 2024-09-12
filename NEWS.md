@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9420 (dev)
+# gdalraster 1.11.1.9430 (dev)
+
+* remove `is_ignored` from feature class definition, potentially breaking change but assumed to be unused in feature class / field creation (2024-09-11)
 
 * add `return_obj` argument in `ogr_ds_create()` and `ogr_layer_create()`, `TRUE` to return a writable `GDALVector` object on the created layer (2024-09-11)
 
