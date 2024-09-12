@@ -14,16 +14,10 @@ ogr_def_field(
   fld_precision = NULL,
   is_nullable = NULL,
   is_unique = NULL,
-  is_ignored = NULL,
   default_value = NULL
 )
 
-ogr_def_geom_field(
-  geom_type,
-  srs = NULL,
-  is_nullable = NULL,
-  is_ignored = NULL
-)
+ogr_def_geom_field(geom_type, srs = NULL, is_nullable = NULL)
 
 ogr_def_layer(geom_type, geom_fld_name = "geometry", srs = NULL)
 }
@@ -45,9 +39,6 @@ Defaults to \code{TRUE}.}
 
 \item{is_unique}{Optional UNIQUE constraint on the field (logical scalar).
 Defaults to \code{FALSE}.}
-
-\item{is_ignored}{Whether field is ignored when retrieving features (logical
-scalar). Defaults to \code{FALSE}.}
 
 \item{default_value}{Optional default value for the field as a character
 string.}
@@ -91,7 +82,6 @@ $precision  : optional number of digits after the decimal point
 $is_nullable: optional NOT NULL constraint (logical scalar)
 $is_unique  : optional UNIQUE constraint (logical scalar)
 $default    : optional default value as character string
-$is_ignored : optionally ignored when retrieving features (logical scalar)
 $is_geom    : FALSE (the default) for attribute fields
 }\if{html}{\out{</div>}}
 
@@ -125,7 +115,6 @@ A geometry field definition is a list with named elements:
 \if{html}{\out{<div class="sourceCode">}}\preformatted{$type       : geom type ("Point", "Polygon", etc.)
 $srs        : optional spatial reference as WKT string
 $is_nullable: optional NOT NULL constraint (logical scalar)
-$is_ignored : optionally ignored when retrieving features (logical scalar)
 $is_geom    : TRUE (required) for geometry fields
 }\if{html}{\out{</div>}}
 

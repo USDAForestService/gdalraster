@@ -122,11 +122,10 @@ test_that("OGR management utilities work", {
 
     deleteDataset(dsn)
 
-    # create with two geom fields initially
-    # with geom2 nullable and ignored
+    # create with two geom fields initially with geom2 nullable
     dsn <- tempfile(fileext = "sqlite")
     defn$geom2 <- ogr_def_geom_field("Polygon", srs = epsg_to_wkt(4326),
-                                     is_nullable = TRUE, is_ignored = TRUE)
+                                     is_nullable = TRUE)
     expect_true(ogr_ds_create("SQLite", dsn, "layer1",
                               layer_defn = defn))
     expect_equal(ogr_layer_field_names(dsn, "layer1"),
