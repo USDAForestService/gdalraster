@@ -108,18 +108,6 @@ The header file can be referenced for the public class methods that have been im
 
 ```cpp
 class GDALVector {
- private:
-    std::string m_dsn;
-    std::string m_layer_name;  // layer name or sql statement
-    bool m_is_sql;
-    Rcpp::CharacterVector m_open_options;
-    std::string m_spatial_filter;
-    std::string m_dialect;
-    GDALDatasetH m_hDataset;
-    GDALAccess m_eAccess;
-    OGRLayerH m_hLayer;
-    std::string m_attr_filter = "";
-
  public:
     GDALVector();
     explicit GDALVector(Rcpp::CharacterVector dsn);
@@ -131,103 +119,132 @@ class GDALVector {
                Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                std::string spatial_filter, std::string dialect);
 
-    // read/write fields exported to R
-    std::string defaultGeomFldName = "geometry";
-    std::string returnGeomAs = "NONE";
-    std::string wkbByteOrder = "LSB";
+    // undocumented, exposed read-only fields for internal use
+    std::string m_layer_name {""};  // layer name or sql statement
+    bool m_is_sql {false};
+    std::string m_dialect {""};
 
-    // public methods exported to R
-	void open(bool read_only);
-	bool isOpen() const;
-	std::string getDsn() const;
-	Rcpp::CharacterVector getFileList() const;
-	std::string getDriverShortName() const;
-	std::string getDriverLongName() const;
+    // exposed read-only fields
+    Rcpp::List featureTemplate {};
 
-	std::string getName() const;
-	Rcpp::List testCapability() const;
-	std::string getFIDColumn() const;
-	std::string getGeomType() const;
-	std::string getGeometryColumn() const;
-	std::string getSpatialRef() const;
-	Rcpp::NumericVector bbox();
-	Rcpp::List getLayerDefn() const;
+    // exposed read/write fields
+    std::string defaultGeomFldName {"geometry"};
+    bool promoteToMulti {false};
+    std::string returnGeomAs {"WKB"};
+    std::string wkbByteOrder {"LSB"};
 
-	void setAttributeFilter(std::string query);
-	void setSpatialFilterRect(Rcpp::NumericVector bbox);
-	void setSpatialFilter(std::string wkt);
-	std::string getSpatialFilter() const;
-	void clearSpatialFilter();
+    // exposed methods
+    void open(bool read_only);
+    bool isOpen() const;
+    std::string getDsn() const;
+    Rcpp::CharacterVector getFileList() const;
+    std::string getDriverShortName() const;
+    std::string getDriverLongName() const;
+
+    std::string getName() const;
+    Rcpp::CharacterVector getFieldNames() const;
+    Rcpp::List testCapability() const;
+    std::string getFIDColumn() const;
+    std::string getGeomType() const;
+    std::string getGeometryColumn() const;
+    std::string getSpatialRef() const;
+    Rcpp::NumericVector bbox();
+    Rcpp::List getLayerDefn() const;
+
+    void setAttributeFilter(const std::string &query);
+    std::string getAttributeFilter() const;
+    void setIgnoredFields(const Rcpp::RObject &fields);
+    void setSelectedFields(const Rcpp::RObject &fields);
+
+    void setSpatialFilter(const std::string &wkt);
+    void setSpatialFilterRect(const Rcpp::RObject &bbox);
+    std::string getSpatialFilter() const;
+    void clearSpatialFilter();
 
     double getFeatureCount();
     SEXP getNextFeature();
+    void setNextByIndex(double i);
     // fid must be a length-1 numeric vector, since numeric vector can carry
     // the class attribute for integer64:
-    SEXP getFeature(Rcpp::NumericVector fid);
+    SEXP getFeature(const Rcpp::RObject &fid);
     void resetReading();
-    
-	void setNextByIndex(int64_t fid);
-	void setIgnoredFields(Rcpp::CharacterVector fields);
 
-	Rcpp::DataFrame fetch(double n);
+    Rcpp::DataFrame fetch(double n);
 
-    // initialize an empty feature as list:
-    Rcpp::List initFeature();
-	// the following return the FID of the affected feature if successful
-    // create and write a new feature within a layer:
-	int64_t createFeature(Rcpp::List feat);
-    // rewrite/replace an existing feature:
-	int64_t setFeature(Rcpp::List feat);
-    // rewrite/replace an existing feature or create a new feature:
-	int64_t upsertFeature(Rcpp::List feat);
-    // delete feature from layer:
-	int64_t deleteFeature(int64_t fid);
+    bool setFeature(const Rcpp::RObject &feature);
+    bool createFeature(const Rcpp::RObject &feature);
+    bool upsertFeature(const Rcpp::RObject &feature);
+    SEXP getLastWriteFID() const;
+    bool deleteFeature(const Rcpp::RObject &fid);
+    bool syncToDisk() const;
 
-	bool startTransaction(bool force);
-	bool commitTransaction();
-	bool rollbackTransaction();
+    bool startTransaction(bool force);
+    bool commitTransaction();
+    bool rollbackTransaction();
 
-	void layerIntersection(
-			GDALVector method_layer,
-			GDALVector result_layer,
-			bool quiet,
-			Rcpp::Nullable<Rcpp::CharacterVector> options);
-	void layerUnion(
-			GDALVector method_layer,
-			GDALVector result_layer,
-			bool quiet,
-			Rcpp::Nullable<Rcpp::CharacterVector> options);
-	void layerSymDifference(
-			GDALVector method_layer,
-			GDALVector result_layer,
-			bool quiet,
-			Rcpp::Nullable<Rcpp::CharacterVector> options);
-	void layerIdentity(
-			GDALVector method_layer,
-			GDALVector result_layer,
-			bool quiet,
-			Rcpp::Nullable<Rcpp::CharacterVector> options);
-	void layerUpdate(
-			GDALVector method_layer,
-			GDALVector result_layer,
-			bool quiet,
-			Rcpp::Nullable<Rcpp::CharacterVector> options);
-	void layerClip(
-			GDALVector method_layer,
-			GDALVector result_layer,
-			bool quiet,
-			Rcpp::Nullable<Rcpp::CharacterVector> options);
-	void layerErase(
-			GDALVector method_layer,
-			GDALVector result_layer,
-			bool quiet,
-			Rcpp::Nullable<Rcpp::CharacterVector> options);
+    bool layerIntersection(
+            GDALVector method_layer,
+            GDALVector result_layer,
+            bool quiet,
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
+    bool layerUnion(
+            GDALVector method_layer,
+            GDALVector result_layer,
+            bool quiet,
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
+    bool layerSymDifference(
+            GDALVector method_layer,
+            GDALVector result_layer,
+            bool quiet,
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
+    bool layerIdentity(
+            GDALVector method_layer,
+            GDALVector result_layer,
+            bool quiet,
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
+    bool layerUpdate(
+            GDALVector method_layer,
+            GDALVector result_layer,
+            bool quiet,
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
+    bool layerClip(
+            GDALVector method_layer,
+            GDALVector result_layer,
+            bool quiet,
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
+    bool layerErase(
+            GDALVector method_layer,
+            GDALVector result_layer,
+            bool quiet,
+            const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
 
-	void close();
+    void close();
 
-	// methods for internal use not exported to R
-	void _checkAccess(GDALAccess access_needed) const;
-	OGRLayerH _getOGRLayerH();
+    void OGRFeatureFromList_dumpReadble(const Rcpp::RObject &feat) const;
+
+    // methods for internal use not exposed to R
+    void checkAccess_(GDALAccess access_needed) const;
+    void setDsn_(std::string dsn);
+    GDALDatasetH getGDALDatasetH_() const;
+    void setGDALDatasetH_(const GDALDatasetH hDs, bool with_update);
+    OGRLayerH getOGRLayerH_() const;
+    void setOGRLayerH_(const OGRLayerH hLyr, const std::string &lyr_name);
+    void setFeatureTemplate_();
+    void setFieldNames_();
+    SEXP initDF_(R_xlen_t nrow) const;
+    OGRFeatureH OGRFeatureFromList_(const Rcpp::RObject &feature) const;
+
+ private:
+    std::string m_dsn {""};
+    Rcpp::CharacterVector m_open_options {};
+    std::string m_attr_filter {""};
+    std::string m_spatial_filter {""};
+    Rcpp::CharacterVector m_field_names {};
+    Rcpp::CharacterVector m_ignored_fields {};
+    GDALDatasetH m_hDataset {nullptr};
+    GDALAccess m_eAccess {GA_ReadOnly};
+    OGRLayerH m_hLayer {nullptr};
+    int64_t m_last_write_fid {NA_INTEGER64};
 };
 
 RCPP_EXPOSED_CLASS(GDALVector)
@@ -930,6 +947,8 @@ This is a working list of potential issues and design questions that need furthe
 * branch gdalvector was merged into main (2024-07-23)
 * added `ogr_proc()`, interface to GDAL OGR facilities for vector geoprocessing; updated "Example: layer geoprocessing" (2024-07-30)
 * removed `is_ignored` from feature class defintion, not needed for feature class / field creation (2024-09-11)
+* feature write methods were implemented in [#504](https://github.com/USDAForestService/gdalraster/pull/504): `$createFeature()`, `$setFeature()`, `$upsertFeature()`; documentation and examples in the (online reference)[https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html] (2024-09-11)
+* updated the `GDALVector` class declaration in the draft document (2024-09-11)
 
 ## Contributors
 
