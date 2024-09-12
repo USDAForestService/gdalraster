@@ -222,102 +222,93 @@
 #' dialects for details.
 #'
 #' @seealso
-#' [gdal_formats()], [has_spatialite()], [ogr_def_field()], [ogr_def_layer()],
-#' [ogrinfo()], [ogr2ogr()]
+#  [ogr_define] helper functions, [ogrinfo()], [ogr2ogr()]
 #'
 #' OGR SQL dialect and SQLite SQL dialect:\cr
 #' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
 #'
 #' @examples
+#' ## Create GeoPackage and manage schema
 #' dsn <- file.path(tempdir(), "test1.gpkg")
 #' ogr_ds_create("GPKG", dsn)
 #' ogr_ds_exists(dsn, with_update = TRUE)
-#' ogr_ds_layer_count(dsn)
+#' # dataset capabilities
 #' ogr_ds_test_cap(dsn)
-#' ogr_layer_exists(dsn, "layer1")
-#' if (ogr_ds_test_cap(dsn)$CreateLayer) {
-#'   opt <- c("GEOMETRY_NULLABLE=NO", "DESCRIPTION=test layer")
-#'   ogr_layer_create(dsn, "layer1", geom_type = "Polygon", srs = "EPSG:5070",
-#'                    lco = opt)
-#' }
-#' ogr_ds_layer_count(dsn)
-#' ogr_layer_exists(dsn, "layer1")
-#' ogr_ds_layer_names(dsn)
 #'
-#' ogr_layer_field_names(dsn, "layer1")
-#' ogr_field_index(dsn, "layer1", "field1")
-#' if (ogr_layer_test_cap(dsn, "layer1")$CreateField) {
-#'   ogr_field_create(dsn, "layer1", "field1",
-#'                    fld_type = "OFTInteger64",
-#'                    is_nullable = FALSE)
-#'   ogr_field_create(dsn, "layer1", "field2",
-#'                    fld_type = "OFTString")
-#' }
-#' ogr_field_index(dsn, "layer1", "field1")
-#' ogr_layer_field_names(dsn, "layer1")
+#' ogr_layer_create(dsn, layer = "layer1", geom_type = "Polygon",
+#'                  srs = "EPSG:5070")
+#'
+#' ogr_field_create(dsn, layer = "layer1",
+#'                  fld_name = "field1",
+#'                  fld_type = "OFTInteger64",
+#'                  is_nullable = FALSE)
+#' ogr_field_create(dsn, layer = "layer1",
+#'                  fld_name = "field2",
+#'                  fld_type = "OFTString")
+#'
+#' ogr_ds_layer_count(dsn)
+#' ogr_ds_layer_names(dsn)
+#' ogr_layer_field_names(dsn, layer = "layer1")
 #'
 #' # delete a field
 #' if (ogr_layer_test_cap(dsn, "layer1")$DeleteField) {
-#'   ogr_field_delete(dsn, "layer1", "field2")
+#'   ogr_field_delete(dsn, layer = "layer1", fld_name = "field2")
 #' }
+#'
 #' ogr_layer_field_names(dsn, "layer1")
 #'
-#' # define a feature class (layer definition)
+#' # define a feature class and create layer
 #' defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4326))
 #' # add the attribute fields
-#' defn$fld1_name <- ogr_def_field("OFTInteger64",
-#'                                 is_nullable = FALSE,
-#'                                 is_unique = TRUE)
-#' defn$fld2_name <- ogr_def_field("OFTString",
+#' defn$id_field <- ogr_def_field(fld_type = "OFTInteger64",
+#'                                is_nullable = FALSE,
+#'                                is_unique = TRUE)
+#' defn$str_field <- ogr_def_field(fld_type = "OFTString",
 #'                                 fld_width = 25,
 #'                                 is_nullable = FALSE,
 #'                                 default_value = "'a default string'")
-#' defn$third_field <- ogr_def_field("OFTReal",
-#'                                   default_value = "0.0")
+#' defn$numeric_field <- ogr_def_field(fld_type = "OFTReal",
+#'                                     default_value = "0.0")
 #'
-#' ogr_layer_create(dsn, "layer2", layer_defn = defn)
+#' ogr_layer_create(dsn, layer = "layer2", layer_defn = defn)
 #' ogr_ds_layer_names(dsn)
-#' ogr_layer_field_names(dsn, "layer2")
+#' ogr_layer_field_names(dsn, layer = "layer2")
 #'
 #' # add a field using SQL instead
-#' sql <- "ALTER TABLE layer2 ADD field4 float"
-#' ogr_execute_sql(dsn, sql)
-#' ogr_layer_field_names(dsn, "layer2")
+#' ogr_execute_sql(dsn, sql = "ALTER TABLE layer2 ADD field4 float")
 #'
 #' # rename a field
 #' if (ogr_layer_test_cap(dsn, "layer1")$AlterFieldDefn) {
-#'   ogr_field_rename(dsn, "layer2", "field4", "renamed_field")
+#'   ogr_field_rename(dsn, layer = "layer2",
+#'                    fld_name = "field4",
+#'                    new_name = "renamed_field")
 #' }
-#' ogr_layer_field_names(dsn, "layer2")
+#' ogr_layer_field_names(dsn, layer = "layer2")
 #'
 #' # GDAL >= 3.7
 #' if (as.integer(gdal_version()[2]) >= 3070000)
 #'   ogrinfo(dsn, "layer2")
 #'
 #' \dontshow{deleteDataset(dsn)}
-#' # edit data using SQL
+#' ## Edit data using SQL
 #' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 #' perims_shp <- file.path(tempdir(), "mtbs_perims.shp")
-#' ogr2ogr(src, perims_shp, src_layers = "mtbs_perims")
-#' ogr_ds_format(perims_shp)
-#' ogr_ds_layer_names(perims_shp)
-#' ogr_layer_field_names(perims_shp, "mtbs_perims")
+#' ogr2ogr(src_dsn = src, dst_dsn = perims_shp, src_layers = "mtbs_perims")
+#' ogr_ds_format(dsn = perims_shp)
+#' ogr_ds_layer_names(dsn = perims_shp)
+#' ogr_layer_field_names(dsn = perims_shp, layer = "mtbs_perims")
 #'
-#' if (ogr_layer_test_cap(perims_shp, "mtbs_perims")$CreateField) {
-#'   sql <- "ALTER TABLE mtbs_perims ADD burn_bnd_ha float"
-#'   ogr_execute_sql(perims_shp, sql)
-#'   # with GDAL >= 3.7, equivalent to:
-#'   # ogrinfo(perims_shp, cl_arg = c("-sql", sql), read_only = FALSE)
-#' }
+#' alt_tbl <- "ALTER TABLE mtbs_perims ADD burn_bnd_ha float"
+#' ogr_execute_sql(dsn = perims_shp, sql = alt_tbl)
 #'
-#' sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
-#' ogr_execute_sql(perims_shp, sql, dialect = "SQLite")
-#' ogr_layer_field_names(perims_shp, "mtbs_perims")
+#' upd <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
+#' ogr_execute_sql(dsn = perims_shp, sql = upd, dialect = "SQLite")
+#' ogr_layer_field_names(dsn = perims_shp, layer = "mtbs_perims")
 #'
 #' # if GDAL >= 3.7:
-#' #   ogrinfo(perims_shp, "mtbs_perims")
+#' #   ogrinfo(dsn = perims_shp, layer = "mtbs_perims")
 #' # or, for output incl. the feature data (omit the default "-so" arg):
-#' #   ogrinfo(perims_shp, "mtbs_perims", cl_arg = "-nomd")
+#' #   ogrinfo(dsn = perims_shp, layer = "mtbs_perims", cl_arg = "-nomd")
 #' \dontshow{deleteDataset(perims_shp)}
 #' @export
 ogr_ds_exists <- function(dsn, with_update = FALSE) {
