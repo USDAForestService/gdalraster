@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9430 (dev)
+# gdalraster 1.11.1.9431 (dev)
+
+* (internal) add src/transform.h, header for src/transform.cpp (2024-09-11)
 
 * remove `is_ignored` from feature class definition, potentially breaking change but assumed to be unused in feature class / field creation (2024-09-11)
 

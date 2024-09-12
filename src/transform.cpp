@@ -3,9 +3,7 @@
    Copyright (c) 2023-2024 gdalraster authors
 */
 
-#include <string>
-
-#include "rcpp_util.h"
+#include "transform.h"
 
 #include "ogr_core.h"
 #include "ogr_srs_api.h"
@@ -153,7 +151,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
         Rcpp::stop("'pts' must be a data frame or matrix");
     }
 
-    OGRSpatialReference oSourceSRS;
+    OGRSpatialReference oSourceSRS{};
     OGRSpatialReference *poLongLat = nullptr;
     OGRCoordinateTransformation *poCT = nullptr;
     OGRErr err;
@@ -161,6 +159,10 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     err = oSourceSRS.importFromWkt(srs.c_str());
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import SRS from WKT string");
+
+    // config option OGR_CT_FORCE_TRADITIONAL_GIS_ORDER=YES is set in gdal_init
+    // this should be redundant
+    oSourceSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     if (well_known_gcs == "") {
         poLongLat = oSourceSRS.CloneGeogCS();
@@ -247,13 +249,17 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
         Rcpp::stop("'pts' must be a data frame or matrix");
     }
 
-    OGRSpatialReference oSourceSRS, oDestSRS;
+    OGRSpatialReference oSourceSRS{}, oDestSRS{};
     OGRCoordinateTransformation *poCT = nullptr;
     OGRErr err;
 
     err = oSourceSRS.importFromWkt(srs_from.c_str());
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import source SRS from WKT string");
+
+    // config option OGR_CT_FORCE_TRADITIONAL_GIS_ORDER=YES is set in gdal_init
+    // this should be redundant
+    oSourceSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     err = oDestSRS.importFromWkt(srs_to.c_str());
     if (err != OGRERR_NONE)
