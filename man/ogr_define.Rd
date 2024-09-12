@@ -25,7 +25,7 @@ ogr_def_geom_field(
   is_ignored = NULL
 )
 
-ogr_def_layer(geom_type, geom_fld_name = "geom", srs = NULL)
+ogr_def_layer(geom_type, geom_fld_name = "geometry", srs = NULL)
 }
 \arguments{
 \item{fld_type}{Character string containing the name of a field data type

@@ -2,7 +2,7 @@ test_that("OGR management utilities work", {
     # these tests assume GDAL was built with libsqlite3 which is optional
     # this should be a safe assumption since PROJ requires libsqlite3
 
-    # GPKG
+    ## GPKG
     dsn <- tempfile(fileext = ".gpkg")
     expect_false(ogr_ds_exists(dsn))
     expect_true(ogr_ds_create("GPKG", dsn, "test_layer", geom_type = "POLYGON"))
@@ -93,7 +93,7 @@ test_that("OGR management utilities work", {
 
     deleteDataset(dsn)
 
-    # SQLite
+    ## SQLite
     dsn <- tempfile(fileext = "sqlite")
     defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4326))
     defn$field1 <- ogr_def_field("OFTInteger64",
@@ -133,6 +133,25 @@ test_that("OGR management utilities work", {
                  c("field1", "field2", "field3", "GEOMETRY", "geom2"))
 
     deleteDataset(dsn)
+})
+
+test_that("create Memory format works", {
+    defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4269))
+    defn$int_field <- ogr_def_field("OFTInteger")
+    defn$str_field <- ogr_def_field("OFTString")
+    defn$real_field <- ogr_def_field("OFTReal")
+    defn$dt_field <- ogr_def_field("OFTDateTime")
+
+    expect_no_error(lyr <- ogr_ds_create("Memory", "", "mem_layer",
+                                         layer_defn = defn,
+                                         lco = "WRITE_BBOX=YES",
+                                         overwrite = TRUE,
+                                         return_obj = TRUE))
+
+    expect_equal(lyr$getDriverShortName(), "Memory")
+    expect_equal(lyr$getFieldNames() |> length(), 5)
+
+    lyr$close()
 })
 
 test_that("edit data using SQL works on shapefile", {

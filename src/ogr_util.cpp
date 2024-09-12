@@ -12,7 +12,6 @@
 #include "ogr_srs_api.h"
 
 #include "gdalraster.h"
-#include "gdalvector.h"
 #include "ogr_util.h"
 
 
@@ -180,7 +179,7 @@ SEXP ogr_ds_test_cap(std::string dsn, bool with_update = true) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".create_ogr")]]
-bool create_ogr(std::string format, std::string dst_filename,
+GDALVector create_ogr(std::string format, std::string dst_filename,
         int xsize, int ysize, int nbands, std::string dataType,
         std::string layer, std::string geom_type,
         std::string srs = "", std::string fld_name = "",
@@ -225,16 +224,20 @@ bool create_ogr(std::string format, std::string dst_filename,
                         opt_list.data());
 
     if (hDstDS == nullptr)
-        return false;
+        Rcpp::stop("failed to create vector data source");
 
     if (layer == "" && layer_defn.isNull()) {
         GDALReleaseDataset(hDstDS);
-        return true;
+        GDALVector ds = GDALVector();
+        ds.setDsn_(dsn_in);
+        // return object has no dataset or layer in this case
+        // currently not be usable from R but that may change in the future
+        return ds;
     }
 
     if (!GDALDatasetTestCapability(hDstDS, ODsCCreateLayer)) {
         GDALReleaseDataset(hDstDS);
-        return false;
+        Rcpp::stop("data source does not have CreateLayer capability");
     }
 
     OGRLayerH  hLayer = nullptr;
@@ -263,12 +266,24 @@ bool create_ogr(std::string format, std::string dst_filename,
         }
     }
 
-    GDALReleaseDataset(hDstDS);
-
-    if (layer_ok && fld_ok)
-        return true;
-    else
-        return false;
+    if (!layer_ok) {
+        GDALReleaseDataset(hDstDS);
+        Rcpp::stop("layer creation failed");
+    }
+    else if (!fld_ok) {
+        // TODO(ctoney): make layer + field creation atomic
+        GDALReleaseDataset(hDstDS);
+        Rcpp::stop("the layer was created but field creation failed");
+    }
+    else {
+        GDALVector lyr = GDALVector();
+        lyr.setDsn_(dsn_in);
+        lyr.setGDALDatasetH_(hDstDS, true);
+        lyr.setOGRLayerH_(hLayer, layer);
+        lyr.setFeatureTemplate_();
+        lyr.setFieldNames_();
+        return lyr;
+    }
 }
 
 //' Get number of layers in a dataset
@@ -417,7 +432,7 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, std::string layer,
             }
         }
         if (!has_geom_fld_defn)
-            Rcpp::stop("'layer_defn' is missing a geometry field definition");
+            Rcpp::stop("'layer_defn' does not have a geometry field definition");
     }
 
     OGRwkbGeometryType eGeomType = getWkbGeomType_(geom_type_in);
@@ -569,7 +584,7 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, std::string layer,
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_create")]]
-bool ogr_layer_create(std::string dsn, std::string layer,
+GDALVector ogr_layer_create(std::string dsn, std::string layer,
         Rcpp::Nullable<Rcpp::List> layer_defn = R_NilValue,
         std::string geom_type = "UNKNOWN", std::string srs = "",
         Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
@@ -582,22 +597,28 @@ bool ogr_layer_create(std::string dsn, std::string layer,
                      nullptr, nullptr, nullptr);
 
     if (hDS == nullptr)
-        return false;
+        Rcpp::stop("failed to open 'dsn' for update");
 
     if (!GDALDatasetTestCapability(hDS, ODsCCreateLayer)) {
         GDALReleaseDataset(hDS);
-        Rcpp::Rcerr << "dataset does not have CreateLayer capability\n";
-        return false;
+        Rcpp::stop("the data source does not have CreateLayer capability");
     }
 
     hLayer = CreateLayer_(hDS, layer, layer_defn, geom_type, srs, options);
 
-    GDALReleaseDataset(hDS);
-
-    if (hLayer != nullptr)
-        return true;
-    else
-        return false;
+    if (hLayer == nullptr) {
+        GDALReleaseDataset(hDS);
+        Rcpp::stop("failed to create layer");
+    }
+    else {
+        GDALVector lyr = GDALVector();
+        lyr.setDsn_(dsn_in);
+        lyr.setGDALDatasetH_(hDS, true);
+        lyr.setOGRLayerH_(hLayer, layer);
+        lyr.setFeatureTemplate_();
+        lyr.setFieldNames_();
+        return lyr;
+    }
 }
 
 //' Rename a layer in a vector dataset

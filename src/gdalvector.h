@@ -15,14 +15,17 @@
 
 // Predeclare some GDAL types until the public header is included
 #ifndef GDAL_H_INCLUDED
+#ifndef SRC_GDALRASTER_H_
 typedef void *GDALDatasetH;
+typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
+#endif
 typedef void *OGRLayerH;
 typedef void *OGRFeatureH;
-typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 #endif
 
 class GDALVector {
  public:
+    GDALVector();
     explicit GDALVector(Rcpp::CharacterVector dsn);
     GDALVector(Rcpp::CharacterVector dsn, std::string layer);
     GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only);
@@ -137,6 +140,7 @@ class GDALVector {
 
     // methods for internal use not exposed to R
     void checkAccess_(GDALAccess access_needed) const;
+    void setDsn_(std::string dsn);
     GDALDatasetH getGDALDatasetH_() const;
     void setGDALDatasetH_(const GDALDatasetH hDs, bool with_update);
     OGRLayerH getOGRLayerH_() const;

@@ -39,7 +39,8 @@ ogr_ds_create(
   fld_type = NULL,
   dsco = NULL,
   lco = NULL,
-  overwrite = FALSE
+  overwrite = FALSE,
+  return_obj = FALSE
 )
 
 ogr_ds_layer_count(dsn)
@@ -56,7 +57,8 @@ ogr_layer_create(
   layer_defn = NULL,
   geom_type = NULL,
   srs = NULL,
-  lco = NULL
+  lco = NULL,
+  return_obj = FALSE
 )
 
 ogr_layer_field_names(dsn, layer)
@@ -146,6 +148,11 @@ for \code{layer} (\code{"NAME=VALUE"} pairs).}
 
 \item{overwrite}{Logical scalar. \code{TRUE} to overwrite \code{dsn} if it already
 exists when calling \code{ogr_ds_create()}. Default is \code{FALSE}.}
+
+\item{return_obj}{Logical scalar. If \code{TRUE}, an object of class
+\code{\link{GDALVector}} open on the newly created layer will be
+returned. Defaults to \code{FALSE}. Must be used with either the \code{layer} or
+\code{layer_defn} arguments.}
 
 \item{new_name}{Character string containing a new name to assign.}
 
@@ -239,8 +246,11 @@ a layer, and optionally creating one or more fields on the layer.
 The attribute fields and geometry field(s) to create can be specified as a
 feature class definition (\code{layer_defn} as list, see \link{ogr_define}), or
 alternatively, by giving the \code{geom_type} and \code{srs}, optionally along with
-one \code{fld_name} and \code{fld_type} to be created in the layer. Returns a logical
-scalar, \code{TRUE} indicating success.
+one \code{fld_name} and \code{fld_type} to be created in the layer.
+By default, returns logical \code{TRUE} indicating success (output written to
+\code{dst_filename}), or an object of class \code{\link{GDALVector}} for the
+output layer will be returned if \code{return_obj = TRUE}. An error is raised if
+the operation fails.
 
 \code{ogr_ds_layer_count()} returns the number of layers in a vector dataset.
 
@@ -269,7 +279,9 @@ This function also accepts a feature class definition given as a list of
 field names and their definitions (see \link{ogr_define}).
 (Note: use \code{ogr_ds_create()} to create single-layer formats such as "ESRI
 Shapefile", "FlatGeobuf", "GeoJSON", etc.)
-Returns a logical scalar, \code{TRUE} indicating success.
+By default, returns logical \code{TRUE} indicating success, or an object of class
+\code{\link{GDALVector}} will be returned if \code{return_obj = TRUE}.
+An error is raised if the operation fails.
 
 \code{ogr_layer_field_names()} returns a character vector of field names on a
 layer, or \code{NULL} if no fields are found.
@@ -336,101 +348,90 @@ dialect used. See the GDAL documentation for the "OGR SQL" and "SQLite"
 dialects for details.
 }
 \examples{
+## Create GeoPackage and manage schema
 dsn <- file.path(tempdir(), "test1.gpkg")
 ogr_ds_create("GPKG", dsn)
 ogr_ds_exists(dsn, with_update = TRUE)
-ogr_ds_layer_count(dsn)
+# dataset capabilities
 ogr_ds_test_cap(dsn)
-ogr_layer_exists(dsn, "layer1")
-if (ogr_ds_test_cap(dsn)$CreateLayer) {
-  opt <- c("GEOMETRY_NULLABLE=NO", "DESCRIPTION=test layer")
-  ogr_layer_create(dsn, "layer1", geom_type = "Polygon", srs = "EPSG:5070",
-                   lco = opt)
-}
-ogr_ds_layer_count(dsn)
-ogr_layer_exists(dsn, "layer1")
-ogr_ds_layer_names(dsn)
 
-ogr_layer_field_names(dsn, "layer1")
-ogr_field_index(dsn, "layer1", "field1")
-if (ogr_layer_test_cap(dsn, "layer1")$CreateField) {
-  ogr_field_create(dsn, "layer1", "field1",
-                   fld_type = "OFTInteger64",
-                   is_nullable = FALSE)
-  ogr_field_create(dsn, "layer1", "field2",
-                   fld_type = "OFTString")
-}
-ogr_field_index(dsn, "layer1", "field1")
-ogr_layer_field_names(dsn, "layer1")
+ogr_layer_create(dsn, layer = "layer1", geom_type = "Polygon",
+                 srs = "EPSG:5070")
+
+ogr_field_create(dsn, layer = "layer1",
+                 fld_name = "field1",
+                 fld_type = "OFTInteger64",
+                 is_nullable = FALSE)
+ogr_field_create(dsn, layer = "layer1",
+                 fld_name = "field2",
+                 fld_type = "OFTString")
+
+ogr_ds_layer_count(dsn)
+ogr_ds_layer_names(dsn)
+ogr_layer_field_names(dsn, layer = "layer1")
 
 # delete a field
 if (ogr_layer_test_cap(dsn, "layer1")$DeleteField) {
-  ogr_field_delete(dsn, "layer1", "field2")
+  ogr_field_delete(dsn, layer = "layer1", fld_name = "field2")
 }
+
 ogr_layer_field_names(dsn, "layer1")
 
-# define a feature class (layer definition)
+# define a feature class and create layer
 defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4326))
 # add the attribute fields
-defn$fld1_name <- ogr_def_field("OFTInteger64",
-                                is_nullable = FALSE,
-                                is_unique = TRUE)
-defn$fld2_name <- ogr_def_field("OFTString",
+defn$id_field <- ogr_def_field(fld_type = "OFTInteger64",
+                               is_nullable = FALSE,
+                               is_unique = TRUE)
+defn$str_field <- ogr_def_field(fld_type = "OFTString",
                                 fld_width = 25,
                                 is_nullable = FALSE,
                                 default_value = "'a default string'")
-defn$third_field <- ogr_def_field("OFTReal",
-                                  default_value = "0.0")
+defn$numeric_field <- ogr_def_field(fld_type = "OFTReal",
+                                    default_value = "0.0")
 
-ogr_layer_create(dsn, "layer2", layer_defn = defn)
+ogr_layer_create(dsn, layer = "layer2", layer_defn = defn)
 ogr_ds_layer_names(dsn)
-ogr_layer_field_names(dsn, "layer2")
+ogr_layer_field_names(dsn, layer = "layer2")
 
 # add a field using SQL instead
-sql <- "ALTER TABLE layer2 ADD field4 float"
-ogr_execute_sql(dsn, sql)
-ogr_layer_field_names(dsn, "layer2")
+ogr_execute_sql(dsn, sql = "ALTER TABLE layer2 ADD field4 float")
 
 # rename a field
 if (ogr_layer_test_cap(dsn, "layer1")$AlterFieldDefn) {
-  ogr_field_rename(dsn, "layer2", "field4", "renamed_field")
+  ogr_field_rename(dsn, layer = "layer2",
+                   fld_name = "field4",
+                   new_name = "renamed_field")
 }
-ogr_layer_field_names(dsn, "layer2")
+ogr_layer_field_names(dsn, layer = "layer2")
 
 # GDAL >= 3.7
 if (as.integer(gdal_version()[2]) >= 3070000)
   ogrinfo(dsn, "layer2")
 
 \dontshow{deleteDataset(dsn)}
-# edit data using SQL
+## Edit data using SQL
 src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 perims_shp <- file.path(tempdir(), "mtbs_perims.shp")
-ogr2ogr(src, perims_shp, src_layers = "mtbs_perims")
-ogr_ds_format(perims_shp)
-ogr_ds_layer_names(perims_shp)
-ogr_layer_field_names(perims_shp, "mtbs_perims")
+ogr2ogr(src_dsn = src, dst_dsn = perims_shp, src_layers = "mtbs_perims")
+ogr_ds_format(dsn = perims_shp)
+ogr_ds_layer_names(dsn = perims_shp)
+ogr_layer_field_names(dsn = perims_shp, layer = "mtbs_perims")
 
-if (ogr_layer_test_cap(perims_shp, "mtbs_perims")$CreateField) {
-  sql <- "ALTER TABLE mtbs_perims ADD burn_bnd_ha float"
-  ogr_execute_sql(perims_shp, sql)
-  # with GDAL >= 3.7, equivalent to:
-  # ogrinfo(perims_shp, cl_arg = c("-sql", sql), read_only = FALSE)
-}
+alt_tbl <- "ALTER TABLE mtbs_perims ADD burn_bnd_ha float"
+ogr_execute_sql(dsn = perims_shp, sql = alt_tbl)
 
-sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
-ogr_execute_sql(perims_shp, sql, dialect = "SQLite")
-ogr_layer_field_names(perims_shp, "mtbs_perims")
+upd <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
+ogr_execute_sql(dsn = perims_shp, sql = upd, dialect = "SQLite")
+ogr_layer_field_names(dsn = perims_shp, layer = "mtbs_perims")
 
 # if GDAL >= 3.7:
-#   ogrinfo(perims_shp, "mtbs_perims")
+#   ogrinfo(dsn = perims_shp, layer = "mtbs_perims")
 # or, for output incl. the feature data (omit the default "-so" arg):
-#   ogrinfo(perims_shp, "mtbs_perims", cl_arg = "-nomd")
+#   ogrinfo(dsn = perims_shp, layer = "mtbs_perims", cl_arg = "-nomd")
 \dontshow{deleteDataset(perims_shp)}
 }
 \seealso{
-\code{\link[=gdal_formats]{gdal_formats()}}, \code{\link[=has_spatialite]{has_spatialite()}}, \code{\link[=ogr_def_field]{ogr_def_field()}}, \code{\link[=ogr_def_layer]{ogr_def_layer()}},
-\code{\link[=ogrinfo]{ogrinfo()}}, \code{\link[=ogr2ogr]{ogr2ogr()}}
-
 OGR SQL dialect and SQLite SQL dialect:\cr
 \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
 }

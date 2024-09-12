@@ -22,6 +22,8 @@
 #include "ogr_util.h"
 
 
+GDALVector::GDALVector() {}
+
 GDALVector::GDALVector(Rcpp::CharacterVector dsn) :
 
             GDALVector(dsn, "", true, Rcpp::CharacterVector::create(),
@@ -1753,6 +1755,25 @@ void GDALVector::checkAccess_(GDALAccess access_needed) const {
         Rcpp::stop("dataset is read-only");
 }
 
+void GDALVector::setDsn_(std::string dsn) {
+    if (m_hDataset != nullptr) {
+        std::string desc(GDALGetDescription(m_hDataset));
+        if (m_dsn == "" && desc == "") {
+            m_dsn = Rcpp::as<std::string>(check_gdal_filename(dsn));
+            GDALSetDescription(m_hDataset, desc.c_str());
+        }
+        else {
+            Rcpp::stop("the DSN cannot be set on this object");
+        }
+    }
+    else {
+        if (m_dsn == "")
+            m_dsn = Rcpp::as<std::string>(check_gdal_filename(dsn));
+        else
+            Rcpp::stop("the DSN cannot be set on this object");
+    }
+}
+
 GDALDatasetH GDALVector::getGDALDatasetH_() const {
     checkAccess_(GA_ReadOnly);
 
@@ -1780,6 +1801,9 @@ void GDALVector::setOGRLayerH_(const OGRLayerH hLyr,
 }
 
 void GDALVector::setFeatureTemplate_() {
+    if (m_hLayer == nullptr)
+        return;
+
     std::string orig_geom_as(this->returnGeomAs);
     this->returnGeomAs = "WKT";
 
@@ -1820,6 +1844,9 @@ void GDALVector::setFeatureTemplate_() {
 }
 
 void GDALVector::setFieldNames_() {
+    if (m_hLayer == nullptr)
+        return;
+
     OGRFeatureDefnH hFDefn = nullptr;
     hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)

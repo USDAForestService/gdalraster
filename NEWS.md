@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9410 (dev)
+# gdalraster 1.11.1.9420 (dev)
+
+* add `return_obj` argument in `ogr_ds_create()` and `ogr_layer_create()`, `TRUE` to return a writable `GDALVector` object on the created layer (2024-09-11)
 
 * `GDALVector`: add method `$setSelectedFields()`, alternative to `$setIgnoredFields()` (2024-09-10)
 

@@ -262,7 +262,7 @@ ogr_def_geom_field <- function(geom_type, srs = NULL, is_nullable = NULL,
 
 #' @name ogr_define
 #' @export
-ogr_def_layer <- function(geom_type, geom_fld_name = "geom", srs = NULL) {
+ogr_def_layer <- function(geom_type, geom_fld_name = "geometry", srs = NULL) {
 
     defn <- list()
 
