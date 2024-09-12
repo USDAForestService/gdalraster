@@ -647,9 +647,11 @@ test_that("feature write methods work", {
     defn$real_field <- ogr_def_field("OFTReal")
     defn$str_field <- ogr_def_field("OFTString")
 
-    expect_no_error(lyr <- ogr_ds_create("GeoJSON", dsn5, layer_defn = defn,
+    expect_no_error(lyr <- ogr_ds_create("GeoJSON", dsn5, "test_layer",
+                                         layer_defn = defn,
                                          lco = "WRITE_BBOX=YES",
-                                         overwrite = TRUE, return_obj = TRUE))
+                                         overwrite = TRUE,
+                                         return_obj = TRUE))
 
     feat1 <- list()
     feat1$real_field <- 0.123
