@@ -15,7 +15,7 @@ fields, and edit data with SQL statements."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9410</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9420</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -83,7 +83,8 @@ fields, and edit data with SQL statements.</p>
 <span>  fld_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  dsco <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  lco <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span>  overwrite <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  return_obj <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">ogr_ds_layer_count</span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span>
@@ -100,7 +101,8 @@ fields, and edit data with SQL statements.</p>
 <span>  layer_defn <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  geom_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  srs <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  lco <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  lco <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  return_obj <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, <span class="va">layer</span><span class="op">)</span></span>
@@ -219,6 +221,13 @@ for <code>layer</code> (<code>"NAME=VALUE"</code> pairs).</p></dd>
 exists when calling <code>ogr_ds_create()</code>. Default is <code>FALSE</code>.</p></dd>
 
 
+<dt id="arg-return-obj">return_obj<a class="anchor" aria-label="anchor" href="#arg-return-obj"></a></dt>
+<dd><p>Logical scalar. If <code>TRUE</code>, an object of class
+<code><a href="GDALVector-class.html">GDALVector</a></code> open on the newly created layer will be
+returned. Defaults to <code>FALSE</code>. Must be used with either the <code>layer</code> or
+<code>layer_defn</code> arguments.</p></dd>
+
+
 <dt id="arg-new-name">new_name<a class="anchor" aria-label="anchor" href="#arg-new-name"></a></dt>
 <dd><p>Character string containing a new name to assign.</p></dd>
 
@@ -324,8 +333,11 @@ a layer, and optionally creating one or more fields on the layer.
 The attribute fields and geometry field(s) to create can be specified as a
 feature class definition (<code>layer_defn</code> as list, see <a href="ogr_define.html">ogr_define</a>), or
 alternatively, by giving the <code>geom_type</code> and <code>srs</code>, optionally along with
-one <code>fld_name</code> and <code>fld_type</code> to be created in the layer. Returns a logical
-scalar, <code>TRUE</code> indicating success.</p>
+one <code>fld_name</code> and <code>fld_type</code> to be created in the layer.
+By default, returns logical <code>TRUE</code> indicating success (output written to
+<code>dst_filename</code>), or an object of class <code><a href="GDALVector-class.html">GDALVector</a></code> for the
+output layer will be returned if <code>return_obj = TRUE</code>. An error is raised if
+the operation fails.</p>
 <p><code>ogr_ds_layer_count()</code> returns the number of layers in a vector dataset.</p>
 <p><code>ogr_ds_layer_names()</code> returns a character vector of layer names in a
 vector dataset, or <code>NULL</code> if no layers are found.</p>
@@ -349,7 +361,9 @@ This function also accepts a feature class definition given as a list of
 field names and their definitions (see <a href="ogr_define.html">ogr_define</a>).
 (Note: use <code>ogr_ds_create()</code> to create single-layer formats such as "ESRI
 Shapefile", "FlatGeobuf", "GeoJSON", etc.)
-Returns a logical scalar, <code>TRUE</code> indicating success.</p>
+By default, returns logical <code>TRUE</code> indicating success, or an object of class
+<code><a href="GDALVector-class.html">GDALVector</a></code> will be returned if <code>return_obj = TRUE</code>.
+An error is raised if the operation fails.</p>
 <p><code>ogr_layer_field_names()</code> returns a character vector of field names on a
 layer, or <code>NULL</code> if no fields are found.</p>
 <p><code>ogr_layer_rename()</code> renames a layer in a vector dataset. This operation is
@@ -406,20 +420,18 @@ dialects for details.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="gdal_formats.html">gdal_formats()</a></code>, <code><a href="has_spatialite.html">has_spatialite()</a></code>, <code><a href="ogr_define.html">ogr_def_field()</a></code>, <code><a href="ogr_define.html">ogr_def_layer()</a></code>,
-<code><a href="ogrinfo.html">ogrinfo()</a></code>, <code><a href="ogr2ogr.html">ogr2ogr()</a></code></p>
-<p>OGR SQL dialect and SQLite SQL dialect:<br><a href="https://gdal.org/user/ogr_sql_sqlite_dialect.html" class="external-link">https://gdal.org/user/ogr_sql_sqlite_dialect.html</a></p></div>
+    <div class="dont-index"><p>OGR SQL dialect and SQLite SQL dialect:<br><a href="https://gdal.org/user/ogr_sql_sqlite_dialect.html" class="external-link">https://gdal.org/user/ogr_sql_sqlite_dialect.html</a></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"test1.gpkg"</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Create GeoPackage and manage schema</span></span></span>
+<span class="r-in"><span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"test1.gpkg"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_ds_create</span><span class="op">(</span><span class="st">"GPKG"</span>, <span class="va">dsn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">ogr_ds_exists</span><span class="op">(</span><span class="va">dsn</span>, with_update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="fu">ogr_ds_layer_count</span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-in"><span><span class="co"># dataset capabilities</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_ds_test_cap</span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CreateLayer</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
@@ -445,121 +457,107 @@ dialects for details.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $RandomLayerWrite</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-in"><span><span class="fu">ogr_layer_exists</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">ogr_ds_test_cap</span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span><span class="op">$</span><span class="va">CreateLayer</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"GEOMETRY_NULLABLE=NO"</span>, <span class="st">"DESCRIPTION=test layer"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogr_layer_create</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span>, geom_type <span class="op">=</span> <span class="st">"Polygon"</span>, srs <span class="op">=</span> <span class="st">"EPSG:5070"</span>,</span></span>
-<span class="r-in"><span>                   lco <span class="op">=</span> <span class="va">opt</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">ogr_layer_create</span><span class="op">(</span><span class="va">dsn</span>, layer <span class="op">=</span> <span class="st">"layer1"</span>, geom_type <span class="op">=</span> <span class="st">"Polygon"</span>,</span></span>
+<span class="r-in"><span>                 srs <span class="op">=</span> <span class="st">"EPSG:5070"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="fu">ogr_field_create</span><span class="op">(</span><span class="va">dsn</span>, layer <span class="op">=</span> <span class="st">"layer1"</span>,</span></span>
+<span class="r-in"><span>                 fld_name <span class="op">=</span> <span class="st">"field1"</span>,</span></span>
+<span class="r-in"><span>                 fld_type <span class="op">=</span> <span class="st">"OFTInteger64"</span>,</span></span>
+<span class="r-in"><span>                 is_nullable <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span><span class="fu">ogr_field_create</span><span class="op">(</span><span class="va">dsn</span>, layer <span class="op">=</span> <span class="st">"layer1"</span>,</span></span>
+<span class="r-in"><span>                 fld_name <span class="op">=</span> <span class="st">"field2"</span>,</span></span>
+<span class="r-in"><span>                 fld_type <span class="op">=</span> <span class="st">"OFTString"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">ogr_ds_layer_count</span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
-<span class="r-in"><span><span class="fu">ogr_layer_exists</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">ogr_ds_layer_names</span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "layer1"</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "geom"</span>
-<span class="r-in"><span><span class="fu">ogr_field_index</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span>, <span class="st">"field1"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -1</span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">ogr_layer_test_cap</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span><span class="op">$</span><span class="va">CreateField</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogr_field_create</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span>, <span class="st">"field1"</span>,</span></span>
-<span class="r-in"><span>                   fld_type <span class="op">=</span> <span class="st">"OFTInteger64"</span>,</span></span>
-<span class="r-in"><span>                   is_nullable <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogr_field_create</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span>, <span class="st">"field2"</span>,</span></span>
-<span class="r-in"><span>                   fld_type <span class="op">=</span> <span class="st">"OFTString"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="fu">ogr_field_index</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span>, <span class="st">"field1"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, layer <span class="op">=</span> <span class="st">"layer1"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "field1" "field2" "geom"  </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># delete a field</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">ogr_layer_test_cap</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span><span class="op">$</span><span class="va">DeleteField</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogr_field_delete</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span>, <span class="st">"field2"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">ogr_field_delete</span><span class="op">(</span><span class="va">dsn</span>, layer <span class="op">=</span> <span class="st">"layer1"</span>, fld_name <span class="op">=</span> <span class="st">"field2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "field1" "geom"  </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># define a feature class (layer definition)</span></span></span>
+<span class="r-in"><span><span class="co"># define a feature class and create layer</span></span></span>
 <span class="r-in"><span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_layer</a></span><span class="op">(</span><span class="st">"Point"</span>, srs <span class="op">=</span> <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># add the attribute fields</span></span></span>
-<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">fld1_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTInteger64"</span>,</span></span>
-<span class="r-in"><span>                                is_nullable <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
-<span class="r-in"><span>                                is_unique <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">fld2_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTString"</span>,</span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">id_field</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span>fld_type <span class="op">=</span> <span class="st">"OFTInteger64"</span>,</span></span>
+<span class="r-in"><span>                               is_nullable <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
+<span class="r-in"><span>                               is_unique <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">str_field</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span>fld_type <span class="op">=</span> <span class="st">"OFTString"</span>,</span></span>
 <span class="r-in"><span>                                fld_width <span class="op">=</span> <span class="fl">25</span>,</span></span>
 <span class="r-in"><span>                                is_nullable <span class="op">=</span> <span class="cn">FALSE</span>,</span></span>
 <span class="r-in"><span>                                default_value <span class="op">=</span> <span class="st">"'a default string'"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">third_field</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span><span class="st">"OFTReal"</span>,</span></span>
-<span class="r-in"><span>                                  default_value <span class="op">=</span> <span class="st">"0.0"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">defn</span><span class="op">$</span><span class="va">numeric_field</span> <span class="op">&lt;-</span> <span class="fu"><a href="ogr_define.html">ogr_def_field</a></span><span class="op">(</span>fld_type <span class="op">=</span> <span class="st">"OFTReal"</span>,</span></span>
+<span class="r-in"><span>                                    default_value <span class="op">=</span> <span class="st">"0.0"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">ogr_layer_create</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span>, layer_defn <span class="op">=</span> <span class="va">defn</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ogr_layer_create</span><span class="op">(</span><span class="va">dsn</span>, layer <span class="op">=</span> <span class="st">"layer2"</span>, layer_defn <span class="op">=</span> <span class="va">defn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="fu">ogr_ds_layer_names</span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "layer1" "layer2"</span>
-<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fld1_name"   "fld2_name"   "third_field" "geom"       </span>
+<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, layer <span class="op">=</span> <span class="st">"layer2"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "id_field"      "str_field"     "numeric_field" "geom"         </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># add a field using SQL instead</span></span></span>
-<span class="r-in"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"ALTER TABLE layer2 ADD field4 float"</span></span></span>
-<span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">dsn</span>, <span class="va">sql</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">dsn</span>, sql <span class="op">=</span> <span class="st">"ALTER TABLE layer2 ADD field4 float"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpcBKSnw/test1.gpkg'</span>
-<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fld1_name"   "fld2_name"   "third_field" "field4"      "geom"       </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpAAovXH/test1.gpkg'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rename a field</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">ogr_layer_test_cap</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span><span class="op">$</span><span class="va">AlterFieldDefn</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogr_field_rename</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span>, <span class="st">"field4"</span>, <span class="st">"renamed_field"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu">ogr_field_rename</span><span class="op">(</span><span class="va">dsn</span>, layer <span class="op">=</span> <span class="st">"layer2"</span>,</span></span>
+<span class="r-in"><span>                   fld_name <span class="op">=</span> <span class="st">"field4"</span>,</span></span>
+<span class="r-in"><span>                   new_name <span class="op">=</span> <span class="st">"renamed_field"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "fld1_name"     "fld2_name"     "third_field"   "renamed_field"</span>
+<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">dsn</span>, layer <span class="op">=</span> <span class="st">"layer2"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "id_field"      "str_field"     "numeric_field" "renamed_field"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [5] "geom"         </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># GDAL &gt;= 3.7</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">3070000</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="ogrinfo.html">ogrinfo</a></span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># edit data using SQL</span></span></span>
+<span class="r-in"><span><span class="co">## Edit data using SQL</span></span></span>
 <span class="r-in"><span><span class="va">src</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">perims_shp</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"mtbs_perims.shp"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="ogr2ogr.html">ogr2ogr</a></span><span class="op">(</span><span class="va">src</span>, <span class="va">perims_shp</span>, src_layers <span class="op">=</span> <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">ogr_ds_format</span><span class="op">(</span><span class="va">perims_shp</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="ogr2ogr.html">ogr2ogr</a></span><span class="op">(</span>src_dsn <span class="op">=</span> <span class="va">src</span>, dst_dsn <span class="op">=</span> <span class="va">perims_shp</span>, src_layers <span class="op">=</span> <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ogr_ds_format</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ESRI Shapefile"</span>
-<span class="r-in"><span><span class="fu">ogr_ds_layer_names</span><span class="op">(</span><span class="va">perims_shp</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ogr_ds_layer_names</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "mtbs_perims"</span>
-<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, layer <span class="op">=</span> <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "event_id"   "incid_name" "incid_type" "map_id"     "burn_bnd_a"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "burn_bnd_l" "burn_bnd_1" "ig_date"    "ig_year"    ""          </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">ogr_layer_test_cap</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span><span class="op">$</span><span class="va">CreateField</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"ALTER TABLE mtbs_perims ADD burn_bnd_ha float"</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="va">sql</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="co"># with GDAL &gt;= 3.7, equivalent to:</span></span></span>
-<span class="r-in"><span>  <span class="co"># ogrinfo(perims_shp, cl_arg = c("-sql", sql), read_only = FALSE)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="va">alt_tbl</span> <span class="op">&lt;-</span> <span class="st">"ALTER TABLE mtbs_perims ADD burn_bnd_ha float"</span></span></span>
+<span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, sql <span class="op">=</span> <span class="va">alt_tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpcBKSnw/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpAAovXH/mtbs_perims.shp'</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"</span></span></span>
-<span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="va">sql</span>, dialect <span class="op">=</span> <span class="st">"SQLite"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">upd</span> <span class="op">&lt;-</span> <span class="st">"UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"</span></span></span>
+<span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, sql <span class="op">=</span> <span class="va">upd</span>, dialect <span class="op">=</span> <span class="st">"SQLite"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpcBKSnw/mtbs_perims.shp'</span>
-<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span><span class="va">perims_shp</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpAAovXH/mtbs_perims.shp'</span>
+<span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, layer <span class="op">=</span> <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "event_id"   "incid_name" "incid_type" "map_id"     "burn_bnd_a"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "burn_bnd_l" "burn_bnd_1" "ig_date"    "ig_year"    "burn_bnd_h"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [11] ""          </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># if GDAL &gt;= 3.7:</span></span></span>
-<span class="r-in"><span><span class="co">#   ogrinfo(perims_shp, "mtbs_perims")</span></span></span>
+<span class="r-in"><span><span class="co">#   ogrinfo(dsn = perims_shp, layer = "mtbs_perims")</span></span></span>
 <span class="r-in"><span><span class="co"># or, for output incl. the feature data (omit the default "-so" arg):</span></span></span>
-<span class="r-in"><span><span class="co">#   ogrinfo(perims_shp, "mtbs_perims", cl_arg = "-nomd")</span></span></span>
+<span class="r-in"><span><span class="co">#   ogrinfo(dsn = perims_shp, layer = "mtbs_perims", cl_arg = "-nomd")</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

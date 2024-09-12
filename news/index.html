@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9410</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9420</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9410" id="gdalraster-11119410-dev">gdalraster 1.11.1.9410 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119410-dev"></a></h2>
-<ul><li><p><code>GDALVector</code>: add method <code>$setSelectedFields()</code>, alternative to <code>$setIgnoredFields()</code> (2024-09-10)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9420" id="gdalraster-11119420-dev">gdalraster 1.11.1.9420 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119420-dev"></a></h2>
+<ul><li><p>add <code>return_obj</code> argument in <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code> and <code><a href="../reference/ogr_manage.html">ogr_layer_create()</a></code>, <code>TRUE</code> to return a writable <code>GDALVector</code> object on the created layer (2024-09-11)</p></li>
+<li><p><code>GDALVector</code>: add method <code>$setSelectedFields()</code>, alternative to <code>$setIgnoredFields()</code> (2024-09-10)</p></li>
 <li><p>(internal) <code>GDALVector</code>: use <code>$setIgnoredFields()</code> when <code>$returnGeomAs</code> is set to <code>NONE</code> (2024-09-09)</p></li>
 <li><p><code>GDALVector</code>: add a <code>SUMMARY</code> option for the per-object setting <code>$returnGeomAs</code> (2024-09-09)</p></li>
 <li><p><code>GDALVector</code>: add <code>$promoteToMulti</code> as a per-object setting (2024-09-09)</p></li>
