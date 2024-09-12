@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-07-30
+Last modified: 2024-09-11
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -55,7 +55,6 @@ $precision  : optional number of digits after the decimal point
 $is_nullable: optional NOT NULL constraint (logical scalar)
 $is_unique  : optional UNIQUE constraint (logical scalar)
 $default    : optional field default value as character string
-$is_ignored : whether ignored when retrieving features (logical scalar)
 $domain     : optional domain name
 $is_geom    : FALSE for attribute fields
 ```
@@ -66,7 +65,6 @@ A geometry field definition is a list with named elements:
 $type       : geom type ("Point", "Polygon", etc.)
 $srs        : optional spatial reference as WKT string
 $is_nullable: optional NOT NULL constraint (logical scalar)
-$is_ignored : whether ignored when retrieving features (logical scalar)
 $is_geom    : TRUE for geometry fields
 ```
 
@@ -371,7 +369,6 @@ str(defn)
 #>   ..$ is_nullable: logi TRUE
 #>   ..$ is_unique  : logi FALSE
 #>   ..$ default    : chr ""
-#>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
 #>  $ incid_name  :List of 9
 #>   ..$ type       : chr "OFTString"
@@ -381,7 +378,6 @@ str(defn)
 #>   ..$ is_nullable: logi TRUE
 #>   ..$ is_unique  : logi FALSE
 #>   ..$ default    : chr ""
-#>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
 #>  $ incid_type  :List of 9
 #>   ..$ type       : chr "OFTString"
@@ -391,7 +387,6 @@ str(defn)
 #>   ..$ is_nullable: logi TRUE
 #>   ..$ is_unique  : logi FALSE
 #>   ..$ default    : chr ""
-#>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
 #>  $ map_id      :List of 9
 #>   ..$ type       : chr "OFTInteger64"
@@ -401,7 +396,6 @@ str(defn)
 #>   ..$ is_nullable: logi TRUE
 #>   ..$ is_unique  : logi FALSE
 #>   ..$ default    : chr ""
-#>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
 #>  $ burn_bnd_ac :List of 9
 #>   ..$ type       : chr "OFTInteger64"
@@ -411,7 +405,6 @@ str(defn)
 #>   ..$ is_nullable: logi TRUE
 #>   ..$ is_unique  : logi FALSE
 #>   ..$ default    : chr ""
-#>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
 #>  $ burn_bnd_lat:List of 9
 #>   ..$ type       : chr "OFTString"
@@ -421,7 +414,6 @@ str(defn)
 #>   ..$ is_nullable: logi TRUE
 #>   ..$ is_unique  : logi FALSE
 #>   ..$ default    : chr ""
-#>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
 #>  $ burn_bnd_lon:List of 9
 #>   ..$ type       : chr "OFTString"
@@ -431,7 +423,6 @@ str(defn)
 #>   ..$ is_nullable: logi TRUE
 #>   ..$ is_unique  : logi FALSE
 #>   ..$ default    : chr ""
-#>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
 #>  $ ig_date     :List of 9
 #>   ..$ type       : chr "OFTDate"
@@ -441,7 +432,6 @@ str(defn)
 #>   ..$ is_nullable: logi TRUE
 #>   ..$ is_unique  : logi FALSE
 #>   ..$ default    : chr ""
-#>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
 #>  $ ig_year     :List of 9
 #>   ..$ type       : chr "OFTInteger"
@@ -451,13 +441,11 @@ str(defn)
 #>   ..$ is_nullable: logi TRUE
 #>   ..$ is_unique  : logi FALSE
 #>   ..$ default    : chr ""
-#>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi FALSE
 #>  $ geom        :List of 5
 #>   ..$ type       : chr "MULTIPOLYGON"
 #>   ..$ srs        : chr "PROJCS[\"NAD83 / Montana\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,2"| __truncated__
 #>   ..$ is_nullable: logi TRUE
-#>   ..$ is_ignored : logi FALSE
 #>   ..$ is_geom    : logi TRUE
 
 lyr$getFeatureCount()
@@ -941,6 +929,7 @@ This is a working list of potential issues and design questions that need furthe
 * `GDALVector::testCapability()` returns a list of named capabilities with `TRUE`|`FALSE`, class method version of `ogr_layer_test_cap()` (2024-07-21)
 * branch gdalvector was merged into main (2024-07-23)
 * added `ogr_proc()`, interface to GDAL OGR facilities for vector geoprocessing; updated "Example: layer geoprocessing" (2024-07-30)
+* removed `is_ignored` from feature class defintion, not needed for feature class / field creation (2024-09-11)
 
 ## Contributors
 

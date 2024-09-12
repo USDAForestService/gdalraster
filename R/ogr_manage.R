@@ -170,8 +170,6 @@
 #' after the decimal point.
 #' @param is_nullable Optional NOT NULL field constraint (logical scalar).
 #' Defaults to `TRUE`.
-#' @param is_ignored Whether field is ignored when retrieving features (logical
-#' scalar). Defaults to `FALSE`.
 #' @param is_unique Optional UNIQUE constraint on the field (logical scalar).
 #' Defaults to `FALSE`.
 #' @param default_value Optional default value for the field as a character
@@ -611,7 +609,6 @@ ogr_field_create <- function(dsn, layer, fld_name,
                              fld_width = 0L,
                              fld_precision = 0L,
                              is_nullable = TRUE,
-                             is_ignored = FALSE,
                              is_unique = FALSE,
                              default_value = "") {
 
@@ -661,11 +658,6 @@ ogr_field_create <- function(dsn, layer, fld_name,
         else
             is_nullable <- TRUE
 
-        if (!is.null(fld_defn$is_ignored))
-            is_ignored <- fld_defn$is_ignored
-        else
-            is_ignored <- FALSE
-
         if (!is.null(fld_defn$is_unique))
             is_unique <- fld_defn$is_unique
         else
@@ -678,8 +670,8 @@ ogr_field_create <- function(dsn, layer, fld_name,
     }
 
     return(.ogr_field_create(dsn, layer, fld_name, fld_type, fld_subtype,
-                             fld_width, fld_precision, is_nullable,
-                             is_ignored, is_unique, default_value))
+                             fld_width, fld_precision, is_nullable, is_unique,
+                             default_value))
 }
 
 #' @name ogr_manage
@@ -688,8 +680,7 @@ ogr_geom_field_create <- function(dsn, layer, fld_name,
                                   geom_fld_defn = NULL,
                                   geom_type = NULL,
                                   srs = NULL,
-                                  is_nullable = TRUE,
-                                  is_ignored = FALSE) {
+                                  is_nullable = TRUE) {
 
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
@@ -736,15 +727,10 @@ ogr_geom_field_create <- function(dsn, layer, fld_name,
             is_nullable <- geom_fld_defn$is_nullable
         else
             is_nullable <- TRUE
-
-        if (!is.null(geom_fld_defn$is_ignored))
-            is_ignored <- geom_fld_defn$is_ignored
-        else
-            is_ignored <- FALSE
     }
 
     return(.ogr_geom_field_create(dsn, layer, fld_name, geom_type, srs,
-                                  is_nullable, is_ignored))
+                                  is_nullable))
 }
 
 #' @name ogr_manage

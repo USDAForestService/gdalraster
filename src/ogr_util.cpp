@@ -471,7 +471,6 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, std::string layer,
                 int fld_width = 0;
                 int fld_precision = 0;
                 bool is_nullable = true;
-                bool is_ignored = false;
                 bool is_unique = false;
                 std::string default_value = "";
                 std::string srs = "";
@@ -507,10 +506,6 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, std::string layer,
                         is_nullable =
                                 Rcpp::is_true(Rcpp::all(fld_is_nullable));
                     }
-                    if (fld.containsElementNamed("is_ignored")) {
-                        Rcpp::LogicalVector fld_is_ignored = fld["is_ignored"];
-                        is_ignored = Rcpp::is_true(Rcpp::all(fld_is_ignored));
-                    }
                     if (fld.containsElementNamed("is_unique")) {
                         Rcpp::LogicalVector fld_is_unique = fld["is_unique"];
                         is_unique = Rcpp::is_true(Rcpp::all(fld_is_unique));
@@ -520,8 +515,7 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, std::string layer,
 
                     if (!CreateField_(hDS, hLayer, fld_name, fld_type,
                                       fld_subtype, fld_width, fld_precision,
-                                      is_nullable, is_ignored, is_unique,
-                                      default_value)) {
+                                      is_nullable, is_unique, default_value)) {
 
                         Rcpp::Rcerr << "failed to create field: " <<
                                 fld_name.c_str() << "\n";
@@ -558,13 +552,9 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, std::string layer,
                         is_nullable =
                                 Rcpp::is_true(Rcpp::all(fld_is_nullable));
                     }
-                    if (fld.containsElementNamed("is_ignored")) {
-                        Rcpp::LogicalVector fld_is_ignored = fld["is_ignored"];
-                        is_ignored = Rcpp::is_true(Rcpp::all(fld_is_ignored));
-                    }
 
                     if (!CreateGeomField_(hDS, hLayer, fld_name, eThisGeomType,
-                                          srs, is_nullable, is_ignored)) {
+                                          srs, is_nullable)) {
 
                         Rcpp::Rcerr << "failed to create geom field: " <<
                                 fld_name.c_str() << "\n";
@@ -808,7 +798,6 @@ bool CreateField_(GDALDatasetH hDS, OGRLayerH hLayer,
                   int fld_width = 0,
                   int fld_precision = 0,
                   bool is_nullable = true,
-                  bool is_ignored = false,
                   bool is_unique = false,
                   std::string default_value = "") {
 
@@ -839,9 +828,6 @@ bool CreateField_(GDALDatasetH hDS, OGRLayerH hLayer,
                 Rcpp::warning(
                     "not-null constraint is unsupported by the format driver");
         }
-
-        if (is_ignored)
-            OGR_Fld_SetIgnored(hFieldDefn, true);
 
         if (default_value != "") {
             if (CPLFetchBool(papszMD, GDAL_DCAP_DEFAULT_FIELDS, false))
@@ -880,7 +866,6 @@ bool ogr_field_create(std::string dsn, std::string layer,
                        int fld_width = 0,
                        int fld_precision = 0,
                        bool is_nullable = true,
-                       bool is_ignored = false,
                        bool is_unique = false,
                        std::string default_value = "") {
 
@@ -926,8 +911,8 @@ bool ogr_field_create(std::string dsn, std::string layer,
     }
 
     bool ret = CreateField_(hDS, hLayer, fld_name, fld_type, fld_subtype,
-                            fld_width, fld_precision, is_nullable, is_ignored,
-                            is_unique, default_value);
+                            fld_width, fld_precision, is_nullable, is_unique,
+                            default_value);
 
     GDALReleaseDataset(hDS);
     return ret;
@@ -938,8 +923,7 @@ bool CreateGeomField_(GDALDatasetH hDS, OGRLayerH hLayer,
                       std::string fld_name,
                       OGRwkbGeometryType eGeomType,
                       std::string srs = "",
-                      bool is_nullable = true,
-                      bool is_ignored = false) {
+                      bool is_nullable = true) {
 
     if (hDS == nullptr || hLayer == nullptr)
         return false;
@@ -969,9 +953,6 @@ bool CreateGeomField_(GDALDatasetH hDS, OGRLayerH hLayer,
                     "not-null constraint is unsupported by the format driver");
         }
 
-        if (is_ignored)
-            OGR_GFld_SetIgnored(hGeomFieldDefn, true);
-
         if (hSRS != nullptr)
             OGR_GFld_SetSpatialRef(hGeomFieldDefn, hSRS);
 
@@ -995,8 +976,7 @@ bool CreateGeomField_(GDALDatasetH hDS, OGRLayerH hLayer,
 bool ogr_geom_field_create(std::string dsn, std::string layer,
                             std::string fld_name, std::string geom_type,
                             std::string srs = "",
-                            bool is_nullable = true,
-                            bool is_ignored = false) {
+                            bool is_nullable = true) {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
@@ -1044,7 +1024,7 @@ bool ogr_geom_field_create(std::string dsn, std::string layer,
     }
 
     bool ret = CreateGeomField_(hDS, hLayer, fld_name, eGeomType, srs,
-                                is_nullable, is_ignored);
+                                is_nullable);
 
     GDALReleaseDataset(hDS);
     return ret;

@@ -1288,8 +1288,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ogr_field_create
-bool ogr_field_create(std::string dsn, std::string layer, std::string fld_name, std::string fld_type, std::string fld_subtype, int fld_width, int fld_precision, bool is_nullable, bool is_ignored, bool is_unique, std::string default_value);
-RcppExport SEXP _gdalraster_ogr_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP fld_typeSEXP, SEXP fld_subtypeSEXP, SEXP fld_widthSEXP, SEXP fld_precisionSEXP, SEXP is_nullableSEXP, SEXP is_ignoredSEXP, SEXP is_uniqueSEXP, SEXP default_valueSEXP) {
+bool ogr_field_create(std::string dsn, std::string layer, std::string fld_name, std::string fld_type, std::string fld_subtype, int fld_width, int fld_precision, bool is_nullable, bool is_unique, std::string default_value);
+RcppExport SEXP _gdalraster_ogr_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP fld_typeSEXP, SEXP fld_subtypeSEXP, SEXP fld_widthSEXP, SEXP fld_precisionSEXP, SEXP is_nullableSEXP, SEXP is_uniqueSEXP, SEXP default_valueSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1301,16 +1301,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type fld_width(fld_widthSEXP);
     Rcpp::traits::input_parameter< int >::type fld_precision(fld_precisionSEXP);
     Rcpp::traits::input_parameter< bool >::type is_nullable(is_nullableSEXP);
-    Rcpp::traits::input_parameter< bool >::type is_ignored(is_ignoredSEXP);
     Rcpp::traits::input_parameter< bool >::type is_unique(is_uniqueSEXP);
     Rcpp::traits::input_parameter< std::string >::type default_value(default_valueSEXP);
-    rcpp_result_gen = Rcpp::wrap(ogr_field_create(dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_ignored, is_unique, default_value));
+    rcpp_result_gen = Rcpp::wrap(ogr_field_create(dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_unique, default_value));
     return rcpp_result_gen;
 END_RCPP
 }
 // ogr_geom_field_create
-bool ogr_geom_field_create(std::string dsn, std::string layer, std::string fld_name, std::string geom_type, std::string srs, bool is_nullable, bool is_ignored);
-RcppExport SEXP _gdalraster_ogr_geom_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP is_nullableSEXP, SEXP is_ignoredSEXP) {
+bool ogr_geom_field_create(std::string dsn, std::string layer, std::string fld_name, std::string geom_type, std::string srs, bool is_nullable);
+RcppExport SEXP _gdalraster_ogr_geom_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP geom_typeSEXP, SEXP srsSEXP, SEXP is_nullableSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1320,8 +1319,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< std::string >::type geom_type(geom_typeSEXP);
     Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
     Rcpp::traits::input_parameter< bool >::type is_nullable(is_nullableSEXP);
-    Rcpp::traits::input_parameter< bool >::type is_ignored(is_ignoredSEXP);
-    rcpp_result_gen = Rcpp::wrap(ogr_geom_field_create(dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored));
+    rcpp_result_gen = Rcpp::wrap(ogr_geom_field_create(dsn, layer, fld_name, geom_type, srs, is_nullable));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1662,8 +1660,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_ogr_layer_delete", (DL_FUNC) &_gdalraster_ogr_layer_delete, 2},
     {"_gdalraster_ogr_layer_field_names", (DL_FUNC) &_gdalraster_ogr_layer_field_names, 2},
     {"_gdalraster_ogr_field_index", (DL_FUNC) &_gdalraster_ogr_field_index, 3},
-    {"_gdalraster_ogr_field_create", (DL_FUNC) &_gdalraster_ogr_field_create, 11},
-    {"_gdalraster_ogr_geom_field_create", (DL_FUNC) &_gdalraster_ogr_geom_field_create, 7},
+    {"_gdalraster_ogr_field_create", (DL_FUNC) &_gdalraster_ogr_field_create, 10},
+    {"_gdalraster_ogr_geom_field_create", (DL_FUNC) &_gdalraster_ogr_geom_field_create, 6},
     {"_gdalraster_ogr_field_rename", (DL_FUNC) &_gdalraster_ogr_field_rename, 4},
     {"_gdalraster_ogr_field_delete", (DL_FUNC) &_gdalraster_ogr_field_delete, 3},
     {"_gdalraster_ogr_execute_sql", (DL_FUNC) &_gdalraster_ogr_execute_sql, 4},

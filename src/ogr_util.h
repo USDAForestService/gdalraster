@@ -189,25 +189,23 @@ int ogr_field_index(std::string dsn, std::string layer, std::string fld_name);
 // internal CreateField
 bool CreateField_(GDALDatasetH hDS, OGRLayerH hLayer, std::string fld_name,
                   std::string fld_type, std::string fld_subtype, int fld_width,
-                  int fld_precision, bool is_nullable, bool is_ignored,
-                  bool is_unique, std::string default_value);
+                  int fld_precision, bool is_nullable, bool is_unique,
+                  std::string default_value);
 
 bool ogr_field_create(std::string dsn, std::string layer,
                       std::string fld_name, std::string fld_type,
                       std::string fld_subtype, int fld_width ,
                       int fld_precision, bool is_nullable,
-                      bool is_ignored, bool is_unique,
-                      std::string default_value);
+                      bool is_unique, std::string default_value);
 
 // internal CreateGeomField
 bool CreateGeomField_(GDALDatasetH hDS, OGRLayerH hLayer, std::string fld_name,
                       OGRwkbGeometryType eGeomType, std::string srs,
-                      bool is_nullable, bool is_ignored);
+                      bool is_nullable);
 
 bool ogr_geom_field_create(std::string dsn, std::string layer,
                            std::string fld_name, std::string geom_type,
-                           std::string srs, bool is_nullable,
-                           bool is_ignored);
+                           std::string srs, bool is_nullable);
 
 bool ogr_field_rename(std::string dsn, std::string layer,
                       std::string fld_name, std::string new_name);

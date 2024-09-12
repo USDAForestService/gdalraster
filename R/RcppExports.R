@@ -2170,15 +2170,15 @@ has_geos <- function() {
 #' Create a new field on layer
 #'
 #' @noRd
-.ogr_field_create <- function(dsn, layer, fld_name, fld_type, fld_subtype = "OFSTNone", fld_width = 0L, fld_precision = 0L, is_nullable = TRUE, is_ignored = FALSE, is_unique = FALSE, default_value = "") {
-    .Call(`_gdalraster_ogr_field_create`, dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_ignored, is_unique, default_value)
+.ogr_field_create <- function(dsn, layer, fld_name, fld_type, fld_subtype = "OFSTNone", fld_width = 0L, fld_precision = 0L, is_nullable = TRUE, is_unique = FALSE, default_value = "") {
+    .Call(`_gdalraster_ogr_field_create`, dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_unique, default_value)
 }
 
 #' Create a new geom field on layer
 #'
 #' @noRd
-.ogr_geom_field_create <- function(dsn, layer, fld_name, geom_type, srs = "", is_nullable = TRUE, is_ignored = FALSE) {
-    .Call(`_gdalraster_ogr_geom_field_create`, dsn, layer, fld_name, geom_type, srs, is_nullable, is_ignored)
+.ogr_geom_field_create <- function(dsn, layer, fld_name, geom_type, srs = "", is_nullable = TRUE) {
+    .Call(`_gdalraster_ogr_geom_field_create`, dsn, layer, fld_name, geom_type, srs, is_nullable)
 }
 
 #' Rename an attribute field on a vector layer

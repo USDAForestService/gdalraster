@@ -33,7 +33,6 @@
 #' $is_nullable: optional NOT NULL constraint (logical scalar)
 #' $is_unique  : optional UNIQUE constraint (logical scalar)
 #' $default    : optional default value as character string
-#' $is_ignored : optionally ignored when retrieving features (logical scalar)
 #' $is_geom    : FALSE (the default) for attribute fields
 #' ```
 #'
@@ -67,7 +66,6 @@
 #' $type       : geom type ("Point", "Polygon", etc.)
 #' $srs        : optional spatial reference as WKT string
 #' $is_nullable: optional NOT NULL constraint (logical scalar)
-#' $is_ignored : optionally ignored when retrieving features (logical scalar)
 #' $is_geom    : TRUE (required) for geometry fields
 #' ```
 #'
@@ -97,8 +95,6 @@
 #' after the decimal point.
 #' @param is_nullable Optional NOT NULL field constraint (logical scalar).
 #' Defaults to `TRUE`.
-#' @param is_ignored Whether field is ignored when retrieving features (logical
-#' scalar). Defaults to `FALSE`.
 #' @param is_unique Optional UNIQUE constraint on the field (logical scalar).
 #' Defaults to `FALSE`.
 #' @param default_value Optional default value for the field as a character
@@ -154,8 +150,7 @@
 #' @export
 ogr_def_field <- function(fld_type, fld_subtype = NULL, fld_width = NULL,
                           fld_precision = NULL, is_nullable = NULL,
-                          is_unique = NULL, is_ignored = NULL,
-                          default_value = NULL) {
+                          is_unique = NULL, default_value = NULL) {
 
     defn <- list()
 
@@ -200,13 +195,6 @@ ogr_def_field <- function(fld_type, fld_subtype = NULL, fld_width = NULL,
             defn$is_unique <- is_unique
     }
 
-    if (!is.null(is_ignored)) {
-        if (!(is.logical(is_ignored) && length(is_ignored) == 1))
-            stop("'is_ignored' must be a logical scalar", call. = FALSE)
-        else
-            defn$is_ignored <- is_ignored
-    }
-
     if (!is.null(default_value)) {
         if (!(is.character(default_value) && length(default_value) == 1))
             stop("'default_value' must be a length-1 character vector",
@@ -222,8 +210,7 @@ ogr_def_field <- function(fld_type, fld_subtype = NULL, fld_width = NULL,
 
 #' @name ogr_define
 #' @export
-ogr_def_geom_field <- function(geom_type, srs = NULL, is_nullable = NULL,
-                               is_ignored = NULL) {
+ogr_def_geom_field <- function(geom_type, srs = NULL, is_nullable = NULL) {
 
     defn <- list()
 
@@ -246,13 +233,6 @@ ogr_def_geom_field <- function(geom_type, srs = NULL, is_nullable = NULL,
             stop("'is_nullable' must be a logical scalar", call. = FALSE)
         else
             defn$is_nullable <- is_nullable
-    }
-
-    if (!is.null(is_ignored)) {
-        if (!(is.logical(is_ignored) && length(is_ignored) == 1))
-            stop("'is_ignored' must be a logical scalar", call. = FALSE)
-        else
-            defn$is_ignored <- is_ignored
     }
 
     defn$is_geom <- TRUE

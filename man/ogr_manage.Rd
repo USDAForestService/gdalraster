@@ -79,7 +79,6 @@ ogr_field_create(
   fld_width = 0L,
   fld_precision = 0L,
   is_nullable = TRUE,
-  is_ignored = FALSE,
   is_unique = FALSE,
   default_value = ""
 )
@@ -91,8 +90,7 @@ ogr_geom_field_create(
   geom_fld_defn = NULL,
   geom_type = NULL,
   srs = NULL,
-  is_nullable = TRUE,
-  is_ignored = FALSE
+  is_nullable = TRUE
 )
 
 ogr_field_rename(dsn, layer, fld_name, new_name)
@@ -171,9 +169,6 @@ after the decimal point.}
 
 \item{is_nullable}{Optional NOT NULL field constraint (logical scalar).
 Defaults to \code{TRUE}.}
-
-\item{is_ignored}{Whether field is ignored when retrieving features (logical
-scalar). Defaults to \code{FALSE}.}
 
 \item{is_unique}{Optional UNIQUE constraint on the field (logical scalar).
 Defaults to \code{FALSE}.}

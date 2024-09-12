@@ -345,9 +345,6 @@ Rcpp::List GDALVector::getLayerDefn() const {
             sValue = std::string(OGR_Fld_GetDefault(hFieldDefn));
         list_fld_defn.push_back(sValue, "default");
 
-        bValue = OGR_Fld_IsIgnored(hFieldDefn);
-        list_fld_defn.push_back(bValue, "is_ignored");
-
         bValue = false;
         list_fld_defn.push_back(bValue, "is_geom");
 
@@ -385,9 +382,6 @@ Rcpp::List GDALVector::getLayerDefn() const {
 
         bValue = OGR_GFld_IsNullable(hGeomFldDefn);
         list_geom_fld_defn.push_back(bValue, "is_nullable");
-
-        bValue = OGR_GFld_IsIgnored(hGeomFldDefn);
-        list_geom_fld_defn.push_back(bValue, "is_ignored");
 
         bValue = true;
         list_geom_fld_defn.push_back(bValue, "is_geom");
