@@ -264,129 +264,146 @@ have been implemented so far in the prototype (a subset of the draft
 class definition below):</p>
 <p><a href="https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h" class="external-link uri">https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h</a></p>
 <div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="kw">class</span> GDALVector <span class="op">{</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a> <span class="kw">private</span><span class="op">:</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_dsn</span><span class="op">;</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_layer_name</span><span class="op">;</span>  <span class="co">// layer name or sql statement</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    <span class="dt">bool</span> <span class="va">m_is_sql</span><span class="op">;</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector <span class="va">m_open_options</span><span class="op">;</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_spatial_filter</span><span class="op">;</span></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_dialect</span><span class="op">;</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>    GDALDatasetH <span class="va">m_hDataset</span><span class="op">;</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>    GDALAccess <span class="va">m_eAccess</span><span class="op">;</span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>    OGRLayerH <span class="va">m_hLayer</span><span class="op">;</span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_attr_filter</span> <span class="op">=</span> <span class="st">""</span><span class="op">;</span></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a> <span class="kw">public</span><span class="op">:</span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>    GDALVector<span class="op">();</span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>    <span class="kw">explicit</span> GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">);</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">);</span></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">);</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">,</span></span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>               Rcpp<span class="op">::</span>CharacterVector open_options<span class="op">);</span></span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">,</span></span>
-<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>               Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> open_options<span class="op">,</span></span>
-<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>               <span class="bu">std::</span>string spatial_filter<span class="op">,</span> <span class="bu">std::</span>string dialect<span class="op">);</span></span>
-<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a></span>
-<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>    <span class="co">// read/write fields exported to R</span></span>
-<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>    <span class="bu">std::</span>string defaultGeomFldName <span class="op">=</span> <span class="st">"geometry"</span><span class="op">;</span></span>
-<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>    <span class="bu">std::</span>string returnGeomAs <span class="op">=</span> <span class="st">"NONE"</span><span class="op">;</span></span>
-<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>    <span class="bu">std::</span>string wkbByteOrder <span class="op">=</span> <span class="st">"LSB"</span><span class="op">;</span></span>
-<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a></span>
-<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>    <span class="co">// public methods exported to R</span></span>
-<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>    <span class="dt">void</span> open<span class="op">(</span><span class="dt">bool</span> read_only<span class="op">);</span></span>
-<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>    <span class="dt">bool</span> isOpen<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>    <span class="bu">std::</span>string getDsn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector getFileList<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>    <span class="bu">std::</span>string getDriverShortName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>    <span class="bu">std::</span>string getDriverLongName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a></span>
-<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>    <span class="bu">std::</span>string getName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>    Rcpp<span class="op">::</span>List testCapability<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>    <span class="bu">std::</span>string getFIDColumn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a>    <span class="bu">std::</span>string getGeomType<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>    <span class="bu">std::</span>string getGeometryColumn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>    <span class="bu">std::</span>string getSpatialRef<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a>    Rcpp<span class="op">::</span>NumericVector bbox<span class="op">();</span></span>
-<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>    Rcpp<span class="op">::</span>List getLayerDefn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a></span>
-<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>    <span class="dt">void</span> setAttributeFilter<span class="op">(</span><span class="bu">std::</span>string query<span class="op">);</span></span>
-<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>    <span class="dt">void</span> setSpatialFilterRect<span class="op">(</span>Rcpp<span class="op">::</span>NumericVector bbox<span class="op">);</span></span>
-<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a>    <span class="dt">void</span> setSpatialFilter<span class="op">(</span><span class="bu">std::</span>string wkt<span class="op">);</span></span>
-<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>    <span class="bu">std::</span>string getSpatialFilter<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a>    <span class="dt">void</span> clearSpatialFilter<span class="op">();</span></span>
-<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a></span>
-<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a>    <span class="dt">double</span> getFeatureCount<span class="op">();</span></span>
-<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a>    SEXP getNextFeature<span class="op">();</span></span>
-<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>    <span class="co">// fid must be a length-1 numeric vector, since numeric vector can carry</span></span>
-<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a>    <span class="co">// the class attribute for integer64:</span></span>
-<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a>    SEXP getFeature<span class="op">(</span>Rcpp<span class="op">::</span>NumericVector fid<span class="op">);</span></span>
-<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>    <span class="dt">void</span> resetReading<span class="op">();</span></span>
-<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a>    </span>
-<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a>    <span class="dt">void</span> setNextByIndex<span class="op">(</span><span class="dt">int64_t</span> fid<span class="op">);</span></span>
-<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a>    <span class="dt">void</span> setIgnoredFields<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector fields<span class="op">);</span></span>
+<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a> <span class="kw">public</span><span class="op">:</span></span>
+<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    GDALVector<span class="op">();</span></span>
+<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="kw">explicit</span> GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">);</span></span>
+<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">);</span></span>
+<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">);</span></span>
+<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">,</span></span>
+<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>               Rcpp<span class="op">::</span>CharacterVector open_options<span class="op">);</span></span>
+<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">,</span></span>
+<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>               Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> open_options<span class="op">,</span></span>
+<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>               <span class="bu">std::</span>string spatial_filter<span class="op">,</span> <span class="bu">std::</span>string dialect<span class="op">);</span></span>
+<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>    <span class="co">// undocumented, exposed read-only fields for internal use</span></span>
+<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_layer_name</span> <span class="op">{</span><span class="st">""</span><span class="op">};</span>  <span class="co">// layer name or sql statement</span></span>
+<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>    <span class="dt">bool</span> <span class="va">m_is_sql</span> <span class="op">{</span><span class="kw">false</span><span class="op">};</span></span>
+<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_dialect</span> <span class="op">{</span><span class="st">""</span><span class="op">};</span></span>
+<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>    <span class="co">// exposed read-only fields</span></span>
+<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>    Rcpp<span class="op">::</span>List featureTemplate <span class="op">{};</span></span>
+<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a></span>
+<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>    <span class="co">// exposed read/write fields</span></span>
+<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>    <span class="bu">std::</span>string defaultGeomFldName <span class="op">{</span><span class="st">"geometry"</span><span class="op">};</span></span>
+<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a>    <span class="dt">bool</span> promoteToMulti <span class="op">{</span><span class="kw">false</span><span class="op">};</span></span>
+<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>    <span class="bu">std::</span>string returnGeomAs <span class="op">{</span><span class="st">"WKB"</span><span class="op">};</span></span>
+<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>    <span class="bu">std::</span>string wkbByteOrder <span class="op">{</span><span class="st">"LSB"</span><span class="op">};</span></span>
+<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a></span>
+<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>    <span class="co">// exposed methods</span></span>
+<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>    <span class="dt">void</span> open<span class="op">(</span><span class="dt">bool</span> read_only<span class="op">);</span></span>
+<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>    <span class="dt">bool</span> isOpen<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>    <span class="bu">std::</span>string getDsn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector getFileList<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>    <span class="bu">std::</span>string getDriverShortName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>    <span class="bu">std::</span>string getDriverLongName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a></span>
+<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>    <span class="bu">std::</span>string getName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector getFieldNames<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>    Rcpp<span class="op">::</span>List testCapability<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>    <span class="bu">std::</span>string getFIDColumn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>    <span class="bu">std::</span>string getGeomType<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>    <span class="bu">std::</span>string getGeometryColumn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a>    <span class="bu">std::</span>string getSpatialRef<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>    Rcpp<span class="op">::</span>NumericVector bbox<span class="op">();</span></span>
+<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>    Rcpp<span class="op">::</span>List getLayerDefn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a></span>
+<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>    <span class="dt">void</span> setAttributeFilter<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>query<span class="op">);</span></span>
+<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a>    <span class="bu">std::</span>string getAttributeFilter<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>    <span class="dt">void</span> setIgnoredFields<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>fields<span class="op">);</span></span>
+<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>    <span class="dt">void</span> setSelectedFields<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>fields<span class="op">);</span></span>
+<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a></span>
+<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>    <span class="dt">void</span> setSpatialFilter<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>wkt<span class="op">);</span></span>
+<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a>    <span class="dt">void</span> setSpatialFilterRect<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>bbox<span class="op">);</span></span>
+<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a>    <span class="bu">std::</span>string getSpatialFilter<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a>    <span class="dt">void</span> clearSpatialFilter<span class="op">();</span></span>
+<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a></span>
+<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>    <span class="dt">double</span> getFeatureCount<span class="op">();</span></span>
+<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a>    SEXP getNextFeature<span class="op">();</span></span>
+<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a>    <span class="dt">void</span> setNextByIndex<span class="op">(</span><span class="dt">double</span> i<span class="op">);</span></span>
+<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>    <span class="co">// fid must be a length-1 numeric vector, since numeric vector can carry</span></span>
+<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a>    <span class="co">// the class attribute for integer64:</span></span>
+<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a>    SEXP getFeature<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>fid<span class="op">);</span></span>
+<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a>    <span class="dt">void</span> resetReading<span class="op">();</span></span>
 <span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a></span>
 <span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a>    Rcpp<span class="op">::</span>DataFrame fetch<span class="op">(</span><span class="dt">double</span> n<span class="op">);</span></span>
 <span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a></span>
-<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a>    <span class="co">// initialize an empty feature as list:</span></span>
-<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a>    Rcpp<span class="op">::</span>List initFeature<span class="op">();</span></span>
-<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a>    <span class="co">// the following return the FID of the affected feature if successful</span></span>
-<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a>    <span class="co">// create and write a new feature within a layer:</span></span>
-<span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a>    <span class="dt">int64_t</span> createFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
-<span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a>    <span class="co">// rewrite/replace an existing feature:</span></span>
-<span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a>    <span class="dt">int64_t</span> setFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
-<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a>    <span class="co">// rewrite/replace an existing feature or create a new feature:</span></span>
-<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a>    <span class="dt">int64_t</span> upsertFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
-<span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a>    <span class="co">// delete feature from layer:</span></span>
-<span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a>    <span class="dt">int64_t</span> deleteFeature<span class="op">(</span><span class="dt">int64_t</span> fid<span class="op">);</span></span>
-<span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a></span>
-<span id="cb3-77"><a href="#cb3-77" tabindex="-1"></a>    <span class="dt">bool</span> startTransaction<span class="op">(</span><span class="dt">bool</span> force<span class="op">);</span></span>
-<span id="cb3-78"><a href="#cb3-78" tabindex="-1"></a>    <span class="dt">bool</span> commitTransaction<span class="op">();</span></span>
-<span id="cb3-79"><a href="#cb3-79" tabindex="-1"></a>    <span class="dt">bool</span> rollbackTransaction<span class="op">();</span></span>
-<span id="cb3-80"><a href="#cb3-80" tabindex="-1"></a></span>
-<span id="cb3-81"><a href="#cb3-81" tabindex="-1"></a>    <span class="dt">void</span> layerIntersection<span class="op">(</span></span>
+<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a>    <span class="dt">bool</span> setFeature<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>feature<span class="op">);</span></span>
+<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a>    <span class="dt">bool</span> createFeature<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>feature<span class="op">);</span></span>
+<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a>    <span class="dt">bool</span> upsertFeature<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>feature<span class="op">);</span></span>
+<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a>    SEXP getLastWriteFID<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a>    <span class="dt">bool</span> deleteFeature<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>fid<span class="op">);</span></span>
+<span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a>    <span class="dt">bool</span> syncToDisk<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a></span>
+<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a>    <span class="dt">bool</span> startTransaction<span class="op">(</span><span class="dt">bool</span> force<span class="op">);</span></span>
+<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a>    <span class="dt">bool</span> commitTransaction<span class="op">();</span></span>
+<span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a>    <span class="dt">bool</span> rollbackTransaction<span class="op">();</span></span>
+<span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a></span>
+<span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a>    <span class="dt">bool</span> layerIntersection<span class="op">(</span></span>
+<span id="cb3-77"><a href="#cb3-77" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb3-78"><a href="#cb3-78" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb3-79"><a href="#cb3-79" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb3-80"><a href="#cb3-80" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
+<span id="cb3-81"><a href="#cb3-81" tabindex="-1"></a>    <span class="dt">bool</span> layerUnion<span class="op">(</span></span>
 <span id="cb3-82"><a href="#cb3-82" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
 <span id="cb3-83"><a href="#cb3-83" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
 <span id="cb3-84"><a href="#cb3-84" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-85"><a href="#cb3-85" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb3-86"><a href="#cb3-86" tabindex="-1"></a>    <span class="dt">void</span> layerUnion<span class="op">(</span></span>
+<span id="cb3-85"><a href="#cb3-85" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
+<span id="cb3-86"><a href="#cb3-86" tabindex="-1"></a>    <span class="dt">bool</span> layerSymDifference<span class="op">(</span></span>
 <span id="cb3-87"><a href="#cb3-87" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
 <span id="cb3-88"><a href="#cb3-88" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
 <span id="cb3-89"><a href="#cb3-89" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-90"><a href="#cb3-90" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb3-91"><a href="#cb3-91" tabindex="-1"></a>    <span class="dt">void</span> layerSymDifference<span class="op">(</span></span>
+<span id="cb3-90"><a href="#cb3-90" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
+<span id="cb3-91"><a href="#cb3-91" tabindex="-1"></a>    <span class="dt">bool</span> layerIdentity<span class="op">(</span></span>
 <span id="cb3-92"><a href="#cb3-92" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
 <span id="cb3-93"><a href="#cb3-93" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
 <span id="cb3-94"><a href="#cb3-94" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-95"><a href="#cb3-95" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb3-96"><a href="#cb3-96" tabindex="-1"></a>    <span class="dt">void</span> layerIdentity<span class="op">(</span></span>
+<span id="cb3-95"><a href="#cb3-95" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
+<span id="cb3-96"><a href="#cb3-96" tabindex="-1"></a>    <span class="dt">bool</span> layerUpdate<span class="op">(</span></span>
 <span id="cb3-97"><a href="#cb3-97" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
 <span id="cb3-98"><a href="#cb3-98" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
 <span id="cb3-99"><a href="#cb3-99" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-100"><a href="#cb3-100" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb3-101"><a href="#cb3-101" tabindex="-1"></a>    <span class="dt">void</span> layerUpdate<span class="op">(</span></span>
+<span id="cb3-100"><a href="#cb3-100" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
+<span id="cb3-101"><a href="#cb3-101" tabindex="-1"></a>    <span class="dt">bool</span> layerClip<span class="op">(</span></span>
 <span id="cb3-102"><a href="#cb3-102" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
 <span id="cb3-103"><a href="#cb3-103" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
 <span id="cb3-104"><a href="#cb3-104" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-105"><a href="#cb3-105" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb3-106"><a href="#cb3-106" tabindex="-1"></a>    <span class="dt">void</span> layerClip<span class="op">(</span></span>
+<span id="cb3-105"><a href="#cb3-105" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
+<span id="cb3-106"><a href="#cb3-106" tabindex="-1"></a>    <span class="dt">bool</span> layerErase<span class="op">(</span></span>
 <span id="cb3-107"><a href="#cb3-107" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
 <span id="cb3-108"><a href="#cb3-108" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
 <span id="cb3-109"><a href="#cb3-109" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-110"><a href="#cb3-110" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb3-111"><a href="#cb3-111" tabindex="-1"></a>    <span class="dt">void</span> layerErase<span class="op">(</span></span>
-<span id="cb3-112"><a href="#cb3-112" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb3-113"><a href="#cb3-113" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb3-114"><a href="#cb3-114" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-115"><a href="#cb3-115" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
-<span id="cb3-116"><a href="#cb3-116" tabindex="-1"></a></span>
-<span id="cb3-117"><a href="#cb3-117" tabindex="-1"></a>    <span class="dt">void</span> close<span class="op">();</span></span>
-<span id="cb3-118"><a href="#cb3-118" tabindex="-1"></a></span>
-<span id="cb3-119"><a href="#cb3-119" tabindex="-1"></a>    <span class="co">// methods for internal use not exported to R</span></span>
-<span id="cb3-120"><a href="#cb3-120" tabindex="-1"></a>    <span class="dt">void</span> _checkAccess<span class="op">(</span>GDALAccess access_needed<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-121"><a href="#cb3-121" tabindex="-1"></a>    OGRLayerH _getOGRLayerH<span class="op">();</span></span>
-<span id="cb3-122"><a href="#cb3-122" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb3-123"><a href="#cb3-123" tabindex="-1"></a></span>
-<span id="cb3-124"><a href="#cb3-124" tabindex="-1"></a>RCPP_EXPOSED_CLASS<span class="op">(</span>GDALVector<span class="op">)</span></span></code></pre></div>
+<span id="cb3-110"><a href="#cb3-110" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
+<span id="cb3-111"><a href="#cb3-111" tabindex="-1"></a></span>
+<span id="cb3-112"><a href="#cb3-112" tabindex="-1"></a>    <span class="dt">void</span> close<span class="op">();</span></span>
+<span id="cb3-113"><a href="#cb3-113" tabindex="-1"></a></span>
+<span id="cb3-114"><a href="#cb3-114" tabindex="-1"></a>    <span class="dt">void</span> OGRFeatureFromList_dumpReadble<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>feat<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-115"><a href="#cb3-115" tabindex="-1"></a></span>
+<span id="cb3-116"><a href="#cb3-116" tabindex="-1"></a>    <span class="co">// methods for internal use not exposed to R</span></span>
+<span id="cb3-117"><a href="#cb3-117" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">checkAccess_</span><span class="op">(</span>GDALAccess access_needed<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-118"><a href="#cb3-118" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">setDsn_</span><span class="op">(</span><span class="bu">std::</span>string dsn<span class="op">);</span></span>
+<span id="cb3-119"><a href="#cb3-119" tabindex="-1"></a>    GDALDatasetH <span class="va">getGDALDatasetH_</span><span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-120"><a href="#cb3-120" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">setGDALDatasetH_</span><span class="op">(</span><span class="at">const</span> GDALDatasetH hDs<span class="op">,</span> <span class="dt">bool</span> with_update<span class="op">);</span></span>
+<span id="cb3-121"><a href="#cb3-121" tabindex="-1"></a>    OGRLayerH <span class="va">getOGRLayerH_</span><span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-122"><a href="#cb3-122" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">setOGRLayerH_</span><span class="op">(</span><span class="at">const</span> OGRLayerH hLyr<span class="op">,</span> <span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>lyr_name<span class="op">);</span></span>
+<span id="cb3-123"><a href="#cb3-123" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">setFeatureTemplate_</span><span class="op">();</span></span>
+<span id="cb3-124"><a href="#cb3-124" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">setFieldNames_</span><span class="op">();</span></span>
+<span id="cb3-125"><a href="#cb3-125" tabindex="-1"></a>    SEXP <span class="va">initDF_</span><span class="op">(</span><span class="dt">R_xlen_t</span> nrow<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-126"><a href="#cb3-126" tabindex="-1"></a>    OGRFeatureH OGRFeatureFromList_<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>feature<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb3-127"><a href="#cb3-127" tabindex="-1"></a></span>
+<span id="cb3-128"><a href="#cb3-128" tabindex="-1"></a> <span class="kw">private</span><span class="op">:</span></span>
+<span id="cb3-129"><a href="#cb3-129" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_dsn</span> <span class="op">{</span><span class="st">""</span><span class="op">};</span></span>
+<span id="cb3-130"><a href="#cb3-130" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector <span class="va">m_open_options</span> <span class="op">{};</span></span>
+<span id="cb3-131"><a href="#cb3-131" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_attr_filter</span> <span class="op">{</span><span class="st">""</span><span class="op">};</span></span>
+<span id="cb3-132"><a href="#cb3-132" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_spatial_filter</span> <span class="op">{</span><span class="st">""</span><span class="op">};</span></span>
+<span id="cb3-133"><a href="#cb3-133" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector <span class="va">m_field_names</span> <span class="op">{};</span></span>
+<span id="cb3-134"><a href="#cb3-134" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector <span class="va">m_ignored_fields</span> <span class="op">{};</span></span>
+<span id="cb3-135"><a href="#cb3-135" tabindex="-1"></a>    GDALDatasetH <span class="va">m_hDataset</span> <span class="op">{</span><span class="kw">nullptr</span><span class="op">};</span></span>
+<span id="cb3-136"><a href="#cb3-136" tabindex="-1"></a>    GDALAccess <span class="va">m_eAccess</span> <span class="op">{</span>GA_ReadOnly<span class="op">};</span></span>
+<span id="cb3-137"><a href="#cb3-137" tabindex="-1"></a>    OGRLayerH <span class="va">m_hLayer</span> <span class="op">{</span><span class="kw">nullptr</span><span class="op">};</span></span>
+<span id="cb3-138"><a href="#cb3-138" tabindex="-1"></a>    <span class="dt">int64_t</span> <span class="va">m_last_write_fid</span> <span class="op">{</span>NA_INTEGER64<span class="op">};</span></span>
+<span id="cb3-139"><a href="#cb3-139" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb3-140"><a href="#cb3-140" tabindex="-1"></a></span>
+<span id="cb3-141"><a href="#cb3-141" tabindex="-1"></a>RCPP_EXPOSED_CLASS<span class="op">(</span>GDALVector<span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example-usage-for-class-gdalvector">Example: usage for class GDALVector<a class="anchor" aria-label="anchor" href="#example-usage-for-class-gdalvector"></a>
@@ -1138,6 +1155,13 @@ vector geoprocessing; updated “Example: layer geoprocessing”
 (2024-07-30)</li>
 <li>removed <code>is_ignored</code> from feature class defintion, not
 needed for feature class / field creation (2024-09-11)</li>
+<li>feature write methods were implemented in <a href="https://github.com/USDAForestService/gdalraster/pull/504" class="external-link">#504</a>:
+<code>$createFeature()</code>, <code>$setFeature()</code>,
+<code>$upsertFeature()</code>; documentation and examples in the (online
+reference)[<a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html" class="uri">https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html</a>]
+(2024-09-11)</li>
+<li>updated the <code>GDALVector</code> class declaration in the draft
+document (2024-09-11)</li>
 </ul>
 </div>
 <div class="section level2">
