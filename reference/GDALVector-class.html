@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9420</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9430</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -653,7 +653,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x564792690770&gt; of class 'GDALVector' &lt;0x5647885b75f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55733f2456f0&gt; of class 'GDALVector' &lt;0x557336f9aa80&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 8 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -694,7 +694,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpAAovXH/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpxnJBWN/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -775,7 +775,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "burn_bnd_lat" "burn_bnd_lon" "ig_date"      "ig_year"      "geom"        </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    :List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    :List of 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTString"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 254</span>
@@ -783,9 +783,8 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  :List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  :List of 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTString"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 254</span>
@@ -793,9 +792,8 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_type  :List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_type  :List of 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTString"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 254</span>
@@ -803,9 +801,8 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ map_id      :List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ map_id      :List of 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTInteger64"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 0</span>
@@ -813,9 +810,8 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_ac :List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_ac :List of 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTInteger64"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 0</span>
@@ -823,9 +819,8 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lat:List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lat:List of 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTString"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 10</span>
@@ -833,9 +828,8 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon:List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon:List of 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTString"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 10</span>
@@ -843,9 +837,8 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     :List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     :List of 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTDate"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 0</span>
@@ -853,9 +846,8 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     :List of 9</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     :List of 8</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTInteger"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 0</span>
@@ -863,13 +855,11 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        :List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        :List of 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "MULTIPOLYGON"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ srs        : chr "PROJCS[\"NAD83 / Montana\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,2"| __truncated__</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_ignored : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## default value of the read/write field 'returnGeomAs'</span></span></span>
@@ -1180,7 +1170,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-12 02:40:43" "2024-09-12 02:40:43"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-12 03:49:23" "2024-09-12 03:49:23"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1200,7 +1190,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-12 02:40:43"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-12 03:49:23"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1237,7 +1227,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-12 02:40:43" "2024-09-12 02:40:44"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-12 03:49:23" "2024-09-12 03:49:24"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>

@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9420</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9430</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -79,7 +79,7 @@
     
     
 <p>Chris Toney (chris.toney at usda.gov)</p>
-<p>Last modified: 2024-07-30</p>
+<p>Last modified: 2024-09-11</p>
 <p>Comment/discussion: <a href="https://github.com/USDAForestService/gdalraster/issues/241" class="external-link uri">https://github.com/USDAForestService/gdalraster/issues/241</a></p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
@@ -167,14 +167,12 @@ $precision  : optional number of digits after the decimal point
 $is_nullable: optional NOT NULL constraint (logical scalar)
 $is_unique  : optional UNIQUE constraint (logical scalar)
 $default    : optional field default value as character string
-$is_ignored : whether ignored when retrieving features (logical scalar)
 $domain     : optional domain name
 $is_geom    : FALSE for attribute fields</code></pre>
 <p>A geometry field definition is a list with named elements:</p>
 <pre><code>$type       : geom type ("Point", "Polygon", etc.)
 $srs        : optional spatial reference as WKT string
 $is_nullable: optional NOT NULL constraint (logical scalar)
-$is_ignored : whether ignored when retrieving features (logical scalar)
 $is_geom    : TRUE for geometry fields</code></pre>
 </div>
 <div class="section level3">
@@ -527,7 +525,6 @@ class definition below):</p>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
-<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ incid_name  :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
@@ -537,7 +534,6 @@ class definition below):</p>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
-<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ incid_type  :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
@@ -547,7 +543,6 @@ class definition below):</p>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
-<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ map_id      :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTInteger64"</span></span>
@@ -557,7 +552,6 @@ class definition below):</p>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
-<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_ac :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTInteger64"</span></span>
@@ -567,7 +561,6 @@ class definition below):</p>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
-<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat:List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
@@ -577,7 +570,6 @@ class definition below):</p>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
-<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon:List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
@@ -587,7 +579,6 @@ class definition below):</p>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
-<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ ig_date     :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTDate"</span></span>
@@ -597,7 +588,6 @@ class definition below):</p>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
-<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ ig_year     :List of 9</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTInteger"</span></span>
@@ -607,13 +597,11 @@ class definition below):</p>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
-<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ geom        :List of 5</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "MULTIPOLYGON"</span></span>
 <span><span class="co">#&gt;   ..$ srs        : chr "PROJCS[\"NAD83 / Montana\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,2"| __truncated__</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
-<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi TRUE</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
@@ -1148,6 +1136,8 @@ version of <code><a href="../reference/ogr_manage.html">ogr_layer_test_cap()</a>
 <li>added <code><a href="../reference/ogr_proc.html">ogr_proc()</a></code>, interface to GDAL OGR facilities for
 vector geoprocessing; updated “Example: layer geoprocessing”
 (2024-07-30)</li>
+<li>removed <code>is_ignored</code> from feature class defintion, not
+needed for feature class / field creation (2024-09-11)</li>
 </ul>
 </div>
 <div class="section level2">
