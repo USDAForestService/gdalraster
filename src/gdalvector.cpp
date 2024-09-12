@@ -2560,7 +2560,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
                     OGR_F_Destroy(hFeat);
                     Rcpp::stop("OGRERR_NOT_ENOUGH_DATA, failed to create geom");
                 }
-                else if (err == OGRERR_NOT_ENOUGH_DATA) {
+                else if (err == OGRERR_UNSUPPORTED_GEOMETRY_TYPE) {
                     OGR_F_Destroy(hFeat);
                     Rcpp::stop("OGRERR_UNSUPPORTED_GEOMETRY_TYPE");
                 }
