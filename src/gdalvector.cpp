@@ -785,57 +785,67 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
             switch (fld_type) {
                 case OFTInteger:
                 {
-                    if (!has_value)
-                        continue;
-
                     OGRFieldSubType fld_subtype =
                             OGR_Fld_GetSubType(hFieldDefn);
 
                     if (fld_subtype == OFSTBoolean) {
                         Rcpp::LogicalVector col = df[col_num];
-                        col[row_num] = OGR_F_GetFieldAsInteger(hFeat, i);
+                        if (!has_value)
+                            col[row_num] = NA_LOGICAL;
+                        else
+                            col[row_num] = OGR_F_GetFieldAsInteger(hFeat, i);
                     }
                     else {
                         Rcpp::IntegerVector col = df[col_num];
-                        col[row_num] = OGR_F_GetFieldAsInteger(hFeat, i);
+                        if (!has_value)
+                            col[row_num] = NA_INTEGER;
+                        else
+                            col[row_num] = OGR_F_GetFieldAsInteger(hFeat, i);
                     }
                 }
                 break;
 
                 case OFTInteger64:
                 {
-                    if (!has_value)
-                        continue;
-
-                    const int64_t value = static_cast<int64_t>(
-                            OGR_F_GetFieldAsInteger64(hFeat, i));
-
                     Rcpp::NumericVector col = df[col_num];
-                    col[row_num] = Rcpp::toInteger64(value)[0];
+                    if (!has_value) {
+                        col[row_num] = NA_INTEGER64;
+                    }
+                    else {
+                        const int64_t value = static_cast<int64_t>(
+                                OGR_F_GetFieldAsInteger64(hFeat, i));
+
+                        col[row_num] = Rcpp::toInteger64(value)[0];
+                    }
                 }
                 break;
 
                 case OFTReal:
                 {
-                    if (!has_value)
-                        continue;
-
                     Rcpp::NumericVector col = df[col_num];
-                    col[row_num] = OGR_F_GetFieldAsDouble(hFeat, i);
+                    if (!has_value)
+                        col[row_num] = NA_REAL;
+                    else
+                        col[row_num] = OGR_F_GetFieldAsDouble(hFeat, i);
                 }
                 break;
 
                 case OFTDate:
                 case OFTDateTime:
                 {
-                    if (!has_value)
+                    Rcpp::NumericVector col = df[col_num];
+                    if (!has_value) {
+                        col[row_num] = NA_REAL;
                         continue;
+                    }
 
                     int yr = 0, mo = 0, day = 0, hr = 0, min = 0, tzflag = 0;
                     float sec = 0;
                     if (!OGR_F_GetFieldAsDateTimeEx(hFeat, i, &yr, &mo,
                                                     &day, &hr, &min, &sec,
                                                     &tzflag)) {
+
+                        col[row_num] = NA_REAL;
                         continue;
                     }
 
@@ -849,7 +859,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                     int64_t nUnixTime = CPLYMDHMSToUnixTime(&brokendowntime);
 
                     if (fld_type == OFTDate) {
-                        Rcpp::NumericVector col = df[col_num];
                         col[row_num] = static_cast<double>(nUnixTime / 86400);
                     }
                     else {
@@ -865,7 +874,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                             else
                                 nUnixTime += offset_sec;
                         }
-                        Rcpp::NumericVector col = df[col_num];
                         col[row_num] = static_cast<double>(
                                 nUnixTime + std::fmod(sec, 1));
                     }
@@ -995,10 +1003,11 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
                 default:
                 {
-                    if (has_value) {
-                        Rcpp::CharacterVector col = df[col_num];
+                    Rcpp::CharacterVector col = df[col_num];
+                    if (has_value)
                         col[row_num] = OGR_F_GetFieldAsString(hFeat, i);
-                    }
+                    else
+                        col[row_num] = NA_STRING;
                 }
                 break;
             }
@@ -1057,8 +1066,12 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 col_num += 1;
 
                 if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKB")) {
-                    if (hGeom == nullptr)
+                    Rcpp::List col = df[col_num];
+
+                    if (hGeom == nullptr) {
+                        col[row_num] = R_NilValue;
                         continue;
+                    }
 
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
                     const int nWKBSize = OGR_G_WkbSizeEx(hGeom);
@@ -1073,11 +1086,9 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                         else if (EQUAL(this->returnGeomAs.c_str(), "WKB_ISO"))
                             OGR_G_ExportToIsoWkb(hGeom, eOrder, &wkb[0]);
 
-                        Rcpp::List col = df[col_num];
                         col[row_num] = wkb;
                     }
                     else {
-                        Rcpp::List col = df[col_num];
                         col[row_num] = Rcpp::RawVector::create();
                     }
                 }
@@ -1940,11 +1951,11 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
             {
                 OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
                 if (fld_subtype == OFSTBoolean) {
-                    Rcpp::LogicalVector v(nrow, NA_LOGICAL);
+                    Rcpp::LogicalVector v = Rcpp::no_init(nrow);
                     df[col_num] = v;
                 }
                 else {
-                    Rcpp::IntegerVector v(nrow, NA_INTEGER);
+                    Rcpp::IntegerVector v = Rcpp::no_init(nrow);
                     df[col_num] = v;
                 }
                 col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
@@ -1967,7 +1978,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
 
             case OFTReal:
             {
-                Rcpp::NumericVector v(nrow, NA_REAL);
+                Rcpp::NumericVector v = Rcpp::no_init(nrow);
                 df[col_num] = v;
                 col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
             }
@@ -1975,7 +1986,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
 
             case OFTDate:
             {
-                Rcpp::NumericVector v(nrow, NA_REAL);
+                Rcpp::NumericVector v = Rcpp::no_init(nrow);
                 v.attr("class") = "Date";
                 df[col_num] = v;
                 col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
@@ -1984,7 +1995,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
 
             case OFTDateTime:
             {
-                Rcpp::NumericVector v(nrow, NA_REAL);
+                Rcpp::NumericVector v = Rcpp::no_init(nrow);
                 Rcpp::CharacterVector classes = {"POSIXct", "POSIXt"};
                 v.attr("class") = classes;
                 v.attr("tzone") = "UTC";
@@ -1999,7 +2010,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
             case OFTRealList:
             case OFTStringList:
             {
-                Rcpp::List v(nrow);
+                Rcpp::List v = Rcpp::no_init(nrow);
                 df[col_num] = v;
                 col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
             }
@@ -2008,7 +2019,7 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
             default:
             {
                 // use string
-                Rcpp::CharacterVector v(nrow, NA_STRING);
+                Rcpp::CharacterVector v = Rcpp::no_init(nrow);
                 df[col_num] = v;
                 col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
             }
@@ -2029,11 +2040,11 @@ SEXP GDALVector::initDF_(R_xlen_t nrow) const {
             Rcpp::stop("indexing the output columns failed");
 
         if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKB")) {
-            Rcpp::List v(nrow);
+            Rcpp::List v = Rcpp::no_init(nrow);
             df[col_num] = v;
         }
         else {
-            Rcpp::CharacterVector v(nrow, NA_STRING);
+            Rcpp::CharacterVector v = Rcpp::no_init(nrow);
             df[col_num] = v;
         }
 
