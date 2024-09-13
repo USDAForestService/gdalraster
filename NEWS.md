@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9431 (dev)
+# gdalraster 1.11.1.9432 (dev)
+
+* (internal) `GDALVector::initDF_()`: create the data frame vectors with `Rcpp::no_init()` (2024-09-12)
 
 * (internal) add src/transform.h, header for src/transform.cpp (2024-09-11)
 
