@@ -1961,6 +1961,26 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_wkb2wkt <- function(geom, as_iso = FALSE) {
+    .Call(`_gdalraster_g_wkb2wkt`, geom, as_iso)
+}
+
+#' @noRd
+.g_wkb_list2wkt <- function(geom, as_iso = FALSE) {
+    .Call(`_gdalraster_g_wkb_list2wkt`, geom, as_iso)
+}
+
+#' @noRd
+.g_wkt2wkb <- function(geom, as_iso = FALSE, byte_order = "LSB") {
+    .Call(`_gdalraster_g_wkt2wkb`, geom, as_iso, byte_order)
+}
+
+#' @noRd
+.g_wkt_vector2wkb <- function(geom, as_iso = FALSE, byte_order = "LSB") {
+    .Call(`_gdalraster_g_wkt_vector2wkb`, geom, as_iso, byte_order)
+}
+
+#' @noRd
 .g_create <- function(xy, geom_type) {
     .Call(`_gdalraster_g_create`, xy, geom_type)
 }

@@ -6,8 +6,8 @@
    Copyright (c) 2023-2024 gdalraster authors
 */
 
-#ifndef SRC_GEOS_WKT_H_
-#define SRC_GEOS_WKT_H_
+#ifndef SRC_GEOM_API_H_
+#define SRC_GEOM_API_H_
 
 #include <string>
 #include <vector>
@@ -17,9 +17,20 @@
 std::vector<int> getGEOSVersion();
 bool has_geos();  // GDAL built against GEOS is required at gdalraster 1.10
 
+std::string g_wkb2wkt(const Rcpp::RawVector &geom, bool as_iso);
+
+Rcpp::CharacterVector g_wkb_list2wkt(const Rcpp::List &geom, bool as_iso);
+
+Rcpp::RawVector g_wkt2wkb(const std::string &geom, bool as_iso,
+                          const std::string &byte_order);
+
+Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom, bool as_iso,
+                            const std::string &byte_order);
+
 std::string g_create(const Rcpp::NumericMatrix &xy, std::string geom_type);
 std::string g_add_geom(const std::string &sub_geom,
                        const std::string &container);
+
 bool g_is_valid(const std::string &geom);
 bool g_is_empty(const std::string &geom);
 std::string g_name(const std::string &geom);
@@ -56,4 +67,4 @@ std::string g_transform(const std::string &geom, const std::string &srs_from,
                         const std::string &srs_to, bool wrap_date_line,
                         int date_line_offset);
 
-#endif  // SRC_GEOS_WKT_H_
+#endif  // SRC_GEOM_API_H_

@@ -98,6 +98,7 @@ reference:
   - g_length
   - g_name
   - g_transform
+  - g_wk2wk
   - geos_version
   - has_geos
 - subtitle: Data management
