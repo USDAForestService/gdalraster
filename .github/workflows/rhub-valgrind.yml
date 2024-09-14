@@ -7,7 +7,7 @@ on:
     branches: [main, master]
   workflow_dispatch:
 
-name: Rhub-Valgrind
+name: rhub-valgrind
 
 permissions: read-all
 
@@ -27,7 +27,7 @@ jobs:
       R_KEEP_PKG_SOURCE: yes
 
     steps:
-      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+      - uses: actions/checkout@692973e3d937matrix.config.label129bcbf40652eb9f2f61becf3332 # v4.1.7
 
       - uses: r-lib/actions/setup-pandoc@e6be4b3706e0f39bc7a4cf4496a5f2c4cb840040 # v2.10.1
 
@@ -36,6 +36,6 @@ jobs:
           extra-packages: any::rcmdcheck
           needs: check
 
-      - uses: r-lib/actions/check-r-package@e6be4b3706e0f39bc7a4cf4496a5f2c4cb840040 # v2.10.1
+      - uses: r-hub/actions/run-check@6dfa5aa10532f35c73d10e7f0b10af8a1340de3e # v1.2.1
         with:
-          upload-snapshots: true
+          matrix.config.label: 'valgrind'
