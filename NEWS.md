@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9440 (dev)
+# gdalraster 1.11.1.9450 (dev)
+
+* remove the class field `GDALVector::featureTemplate` as not needed / not useful, and its removal fixes Valgrind errors (#520) (2024-09-14)
 
 * add `g_wk2wk()`: geometry WKB/WKT conversion (2024-09-13)
 

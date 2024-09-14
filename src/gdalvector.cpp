@@ -61,7 +61,6 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 
     m_dsn = Rcpp::as<std::string>(check_gdal_filename(dsn));
     open(read_only);
-    setFeatureTemplate_();
     setFieldNames_();
 }
 
@@ -691,7 +690,7 @@ void GDALVector::resetReading() {
 Rcpp::DataFrame GDALVector::fetch(double n) {
     // Analog of DBI::dbFetch(), generally following its specification:
     // https://dbi.r-dbi.org/reference/dbFetch.html#specification
-    // this method must be kept consistent with initDF_()
+    // this method must be kept consistent with createDF_()
     checkAccess_(GA_ReadOnly);
 
     OGRFeatureDefnH hFDefn = nullptr;
@@ -718,7 +717,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         Rcpp::stop("'n' is invalid");
     }
 
-    Rcpp::DataFrame df = initDF_(fetch_num);
+    Rcpp::DataFrame df = createDF_(fetch_num);
     if (fetch_num == 0)
         return df;
 
@@ -1184,7 +1183,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         // needed for the last page when paging through features with repeated
         // calls to fetch(n), so the data generally should not be large enough
         // for this to be a problem.
-        Rcpp::DataFrame df_trunc = initDF_(row_num);
+        Rcpp::DataFrame df_trunc = createDF_(row_num);
         size_t col_num = 0;
 
         Rcpp::NumericVector fid_col = df[col_num];
@@ -1805,49 +1804,6 @@ void GDALVector::setOGRLayerH_(const OGRLayerH hLyr,
     m_layer_name = lyr_name;
 }
 
-void GDALVector::setFeatureTemplate_() {
-    if (m_hLayer == nullptr)
-        return;
-
-    std::string orig_geom_as(this->returnGeomAs);
-    this->returnGeomAs = "WKT";
-
-    Rcpp::DataFrame feat_template = initDF_(1);
-    // as list
-    feat_template.attr("class") = R_NilValue;
-    feat_template.attr("row.names") = R_NilValue;
-
-    // set null values for the list columns if any
-    OGRFeatureDefnH hFDefn = nullptr;
-    hFDefn = OGR_L_GetLayerDefn(m_hLayer);
-    if (hFDefn == nullptr)
-        Rcpp::stop("failed to get layer definition");
-
-    int nFields = OGR_FD_GetFieldCount(hFDefn);
-    for (int i = 0; i < nFields; ++i) {
-        OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
-        if (hFieldDefn == nullptr)
-            Rcpp::stop("could not obtain field definition");
-
-        OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
-
-        // the first element in feat_template is FID so [i + 1]
-        if (fld_type == OFTBinary)
-            feat_template[i + 1] = Rcpp::RawVector::create();
-        else if (fld_type == OFTIntegerList)
-            feat_template[i + 1] = NA_INTEGER;
-        else if (fld_type == OFTInteger64List)
-            feat_template[i + 1] = NA_INTEGER64;
-        else if (fld_type == OFTRealList)
-            feat_template[i + 1] = NA_REAL;
-        else if (fld_type == OFTStringList)
-            feat_template[i + 1] = NA_STRING;
-    }
-
-    this->featureTemplate = feat_template;
-    this->returnGeomAs = orig_geom_as;
-}
-
 void GDALVector::setFieldNames_() {
     if (m_hLayer == nullptr)
         return;
@@ -1882,9 +1838,9 @@ void GDALVector::setFieldNames_() {
     // m_field_names.push_back("OGR_STYLE");
 }
 
-SEXP GDALVector::initDF_(R_xlen_t nrow) const {
-    // initialize a data frame based on the layer definition
-    // this mthod must be kept consistent with fetch()
+SEXP GDALVector::createDF_(R_xlen_t nrow) const {
+    // create a data frame based on the layer definition
+    // this method must be kept consistent with fetch()
 
     OGRFeatureDefnH hFDefn = nullptr;
     hFDefn = OGR_L_GetLayerDefn(m_hLayer);
@@ -2636,9 +2592,6 @@ RCPP_MODULE(mod_GDALVector) {
                  Rcpp::Nullable<Rcpp::CharacterVector>, std::string,
                  std::string>
         ("Usage: new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)")
-
-    // read-only fields
-    .field_readonly("featureTemplate", &GDALVector::featureTemplate)
 
     // undocumented read-only fields for internal use
     .field_readonly("m_layer_name", &GDALVector::m_layer_name)

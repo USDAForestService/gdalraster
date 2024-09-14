@@ -70,10 +70,7 @@ lyr <- new(GDALVector, dsn, layer, read_only, open_options)
 # setting a spatial filter and/or specifying the SQL dialect
 lyr <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)
 
-## Read-only fields
-lyr$featureTemplate
-
-## Read/write fields
+## Read/write fields (per-object settings)
 lyr$defaultGeomFldName
 lyr$promoteToMulti
 lyr$returnGeomAs
@@ -157,20 +154,6 @@ Constructor specifying dataset open options as a character vector of
 Constructor to specify a spatial filter and/or SQL dialect. All arguments
 are required in this form of the constructor, but \code{open_options} may be
 \code{NULL}, and \code{spatial_filter} or \code{dialect} may be an empty string (\code{""}).
-}
-
-\subsection{Read-only fields}{
-
-\code{$featureTemplate}\cr
-A list of the attribute and geometry field names, with \code{NA} values equivalent
-to OGR NULL values. The list elements are fully typed with the corresponding
-missing value types assigned (\code{NA_integer_}, \code{NA_real_}, \code{NA_character_},
-etc.). The \code{featureTemplate} is useful to initialize a new empty feature,
-to which field and geometry values can be assigned, for use with the
-\verb{$createFeature()} method (create and write a new feature within the layer).
-Note that geometry fields are initialized as \code{character} type in the
-template, but may be set either to a \code{character} string specifying a
-geometry in WKT format, or to a \code{raw} vector containing a geometry as WKB.
 }
 
 \subsection{Read/write fields}{
@@ -494,9 +477,7 @@ feature, but create it if it doesn't exist see the \verb{$upsertFeature()} metho
 
 \code{$createFeature(feature)}\cr
 Creates and writes a new feature within the layer. The \code{feature} argument is
-a named list of fields and their values. A \code{GDALVector} object provides
-a read-only \verb{$featureTemplate} that is set to such a list with values
-initialized to \code{NA} (OGR NULL).
+a named list of fields and their values.
 The passed feature is written to the layer as a new feature, rather than
 overwriting an existing one. If the feature has a \verb{$FID} element other than
 \code{NA}, then the vector format driver may use that as the feature id of the
@@ -739,11 +720,6 @@ lyr <- new(GDALVector, dsn2, "test_layer", read_only = FALSE)
 # lyr$getLayerDefn() |> str()
 
 ## define a feature to write
-## the read-only field lyr$featureTemplate can be examined for structure
-## fields in the template are initialized to NA (= OGR NULL)
-lyr$featureTemplate |> str()
-
-## copy the template or make a new list
 feat1 <- list()
 ## $FID is omitted since it is assigned when written (could also be NA)
 ## $dt_modified is omitted since the datasource sets a default timestamp

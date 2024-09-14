@@ -7,7 +7,6 @@ test_that("class constructors work", {
     lyr <- new(GDALVector, dsn)
     expect_equal(lyr$getName(), "mtbs_perims")
     expect_type(lyr$getFeature(1), "list")
-    expect_equal(length(lyr$getLayerDefn()) + 1, length(lyr$featureTemplate))
     lyr$close()
 
     lyr <- new(GDALVector, dsn, "mtbs_perims")

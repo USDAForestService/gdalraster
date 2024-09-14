@@ -280,7 +280,6 @@ GDALVector create_ogr(std::string format, std::string dst_filename,
         lyr.setDsn_(dsn_in);
         lyr.setGDALDatasetH_(hDstDS, true);
         lyr.setOGRLayerH_(hLayer, layer);
-        lyr.setFeatureTemplate_();
         lyr.setFieldNames_();
         return lyr;
     }
@@ -605,7 +604,6 @@ GDALVector ogr_layer_create(std::string dsn, std::string layer,
         lyr.setDsn_(dsn_in);
         lyr.setGDALDatasetH_(hDS, true);
         lyr.setOGRLayerH_(hLayer, layer);
-        lyr.setFeatureTemplate_();
         lyr.setFieldNames_();
         return lyr;
     }
