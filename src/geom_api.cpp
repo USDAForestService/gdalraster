@@ -5,14 +5,14 @@
    Copyright (c) 2023-2024 gdalraster authors
 */
 
+#include "geom_api.h"
+
 #include "cpl_port.h"
 #include "cpl_conv.h"
 #include "ogr_api.h"
 #include "ogr_geometry.h"
 #include "ogr_spatialref.h"
 #include "ogr_srs_api.h"
-
-#include "geos_wkt.h"
 
 //' get GEOS version
 //' @noRd
@@ -122,14 +122,18 @@ Rcpp::CharacterVector g_wkb_list2wkt(const Rcpp::List &geom,
     Rcpp::CharacterVector wkt = Rcpp::no_init(geom.size());
     for (R_xlen_t i = 0; i < geom.size(); ++i) {
         if (!Rcpp::is<Rcpp::RawVector>(geom[i])) {
+            Rcpp::warning("an input list element is not a raw vector");
             wkt[i] = NA_STRING;
         }
         else {
             Rcpp::RawVector v = Rcpp::as<Rcpp::RawVector>(geom[i]);
-            if (v.size() > 0)
+            if (v.size() > 0) {
                 wkt[i] = g_wkb2wkt(v, as_iso);
-            else
+            }
+            else {
+                Rcpp::warning("an input list element is a length-0 raw vector");
                 wkt[i] = "";
+            }
         }
     }
 
@@ -142,7 +146,7 @@ Rcpp::CharacterVector g_wkb_list2wkt(const Rcpp::List &geom,
 // [[Rcpp::export(name = ".g_wkt2wkb")]]
 Rcpp::RawVector g_wkt2wkb(const std::string &geom,
                           bool as_iso = false,
-                          std::string byte_order = "LSB") {
+                          const std::string &byte_order = "LSB") {
 
     if (geom.size() == 0)
         Rcpp::stop("'geom' is empty");
@@ -188,7 +192,7 @@ Rcpp::RawVector g_wkt2wkb(const std::string &geom,
 // [[Rcpp::export(name = ".g_wkt_vector2wkb")]]
 Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom,
                             bool as_iso = false,
-                            std::string byte_order = "LSB") {
+                            const std::string &byte_order = "LSB") {
 
     if (geom.size() == 0)
         Rcpp::stop("'geom' is empty");
@@ -196,6 +200,7 @@ Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom,
     Rcpp::List wkb = Rcpp::no_init(geom.size());
     for (R_xlen_t i = 0; i < geom.size(); ++i) {
         if (Rcpp::CharacterVector::is_na(geom[i]) || EQUAL(geom[i], "")) {
+            Rcpp::warning("an input vector element is NA or empty string");
             wkb[i] = Rcpp::RawVector::create();
         }
         else {

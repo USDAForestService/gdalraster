@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9432 (dev)
+# gdalraster 1.11.1.9440 (dev)
+
+* add `g_wk2wk()`: geometry WKB/WKT conversion (2024-09-13)
 
 * (internal) `GDALVector::initDF_()`: create the data frame vectors with `Rcpp::no_init()` (2024-09-12)
 

@@ -12,7 +12,7 @@
 #include "ogr_spatialref.h"
 #include "ogrsf_frmts.h"
 
-#include "geos_wkt.h"
+#include "geom_api.h"
 
 //' Convert spatial reference from EPSG code to OGC Well Known Text
 //'

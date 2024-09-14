@@ -1,5 +1,4 @@
-# Exported functions for the GEOS convenience library defined in
-# src/geos_wkt.h.
+# R interface for the GEOS functions defined in src/geom_api.h
 # Chris Toney <chris.toney at usda.gov>
 
 #' Get GEOS version
@@ -180,6 +179,91 @@ bbox_transform <- function(bbox, srs_from, srs_to) {
                g_transform(srs_from, srs_to) |>
                bbox_from_wkt())
 }
+
+#' Geometry WKB/WKT conversion
+#'
+#' `g_wk2wk()` converts geometries between Well Known Binary (WKB) and
+#' Well Known Text (WKT) formats. A geometry given as a raw vector of WKB will
+#' be converted to a WKT string, while a geometry given as a WKT string will be
+#' converted to a WKB raw vector. Input may also be a list of WKB raw vectors
+#' or a character vector of WKT strings.
+#'
+#' @param geom Either a raw vector of WKB or list of raw vectors to convert
+#' to WKT, or a character vector containing one or more WKT strings to
+#' convert to WKB.
+#' @param as_iso Logical scalar. `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT"
+#' (see Note).
+#' @param byte_order Character string specifying the byte order when converting
+#' to WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
+#' @return
+#' For input of a WKB raw vector or list of raw vectors, returns a character
+#' vector of WKT strings, with length of the returned vector equal to the
+#' number of input raw vectors. For input of a single WKT string, returns a raw
+#' vector of WKB. For input of a character vector containing more than one WKT
+#' string, returns a list of WKB raw vectors, with length of the returned list
+#' equal to the number of input strings.
+#'
+#' @note
+#' With `as_iso = FALSE` (the default), geometries are exported as extended
+#' dimension (Z) WKB/WKT for types Point, LineString, Polygon, MultiPoint,
+#' MultiLineString, MultiPolygon and GeometryCollection. For other geometry
+#' types, it is equivalent to ISO.
+#'
+#' When the return value is a list of WKB raw vectors, an element in the
+#' returned list will contain a raw vector of length `0` (`raw(0)`) if the
+#' corresponding input string was `NA` or empty (`""`).
+#'
+#' When input is a list of WKB raw vectors, a corresponding element in the
+#' returned character vector will be an empty string (`""`) if the input was
+#' a raw vector of length `0` (`raw(0)`). If an input list element is not a raw
+#' vector, then the corresponding element in the returned character vector will
+#' be `NA`.
+#'
+#' @seealso
+#' GEOS reference for geometry formats:\cr
+#' \url{https://libgeos.org/specifications/}
+#'
+#' @examples
+#' wkt <- "POINT (-114 47)"
+#' wkb <- g_wk2wk(wkt)
+#' print(wkb)
+#' g_wk2wk(wkb)
+#' @export
+g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    if (toupper(byte_order) != "LSB" && toupper(byte_order) != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+
+    if (is.character(geom)) {
+        if (length(geom) == 1) {
+            return(.g_wkt2wkb(geom, as_iso, byte_order))
+        } else {
+            return(.g_wkt_vector2wkb(geom, as_iso, byte_order))
+        }
+    } else if (is.raw(geom)) {
+        return(.g_wkb2wkt(geom, as_iso))
+    } else if (is.list(geom)) {
+        return(.g_wkb_list2wkt(geom, as_iso))
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+}
+
+
+
+
+
 
 #' Compute buffer of a WKT geometry
 #'
