@@ -70,6 +70,63 @@ test_that("class basic interface works", {
     expect_true(lyr$testCapability()$SequentialWrite)
     expect_true(lyr$testCapability()$RandomWrite)
 
+    expect_no_error(defn <- lyr$getLayerDefn())
+    fld_names <- c("event_id", "incid_name", "incid_type", "map_id",
+                   "burn_bnd_ac", "burn_bnd_lat", "burn_bnd_lon", "ig_date",
+                   "ig_year", "geom")
+    expect_equal(names(defn), fld_names)
+
+    expect_equal(lyr$returnGeomAs, "WKB")
+    expect_equal(lyr$getFeatureCount(), 61)
+    expect_no_error(feat <- lyr$getNextFeature())
+    expect_true(!is.null(feat))
+
+    # set an attribute filter
+    expect_no_error(lyr$setAttributeFilter("ig_year = 2020"))
+    expect_equal(lyr$getFeatureCount(), 1)
+    expect_no_error(feat <- lyr$getNextFeature())
+    expect_false(is.null(feat))
+    expect_no_error(feat <- lyr$getNextFeature())
+    expect_true(is.null(feat))
+    # reset reading to the start and return geometries as WKT
+    expect_no_error(lyr$resetReading())
+    lyr$returnGeomAs <- "WKT"
+    expect_false(is.null(lyr$getNextFeature()))
+    # clear the attribute filter
+    expect_no_error(lyr$setAttributeFilter(""))
+    expect_equal(lyr$getFeatureCount(), 61)
+
+    # set a spatial filter
+    #  get the bounding box of the largest 1988 fire and use as spatial filter
+    #  first set a temporary attribute filter to do the lookup
+    lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
+    feat <- lyr$getNextFeature()
+    bbox <- bbox_from_wkt(feat$geom)
+    expect_equal(bbox, c(469685.97, 11442.45, 544069.63, 85508.15))
+    # set spatial filter on the full layer
+    lyr$setAttributeFilter("")
+    expect_no_error(lyr$setSpatialFilterRect(bbox))
+    expect_equal(lyr$getFeatureCount(), 40)
+
+    # fetch in chunks and return as data frame
+    expect_no_error(d <- lyr$fetch(20))
+    expect_true(is.data.frame(d))
+    expect_equal(nrow(d), 20)
+    # the next chunk
+    expect_no_error(d <- lyr$fetch(20))
+    expect_true(is.data.frame(d))
+    expect_equal(nrow(d), 20)
+    # no features remaining
+    expect_no_error(d <- lyr$fetch(20))
+    expect_equal(nrow(d), 0)
+
+    # fetch all pending features with geometries as WKB
+    lyr$returnGeomAs <- "WKB"
+    expect_no_error(d <- lyr$fetch(-1))
+    expect_equal(nrow(d), 40)
+
+    expect_no_error(lyr$clearSpatialFilter())
+    expect_equal(lyr$getFeatureCount(), 61)
 
     lyr$close()
     unlink(dsn)
