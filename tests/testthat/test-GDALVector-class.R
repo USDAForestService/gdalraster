@@ -41,6 +41,40 @@ test_that("class constructors work", {
     unlink(dsn)
 })
 
+test_that("class basic interface works", {
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    lyr <- new(GDALVector, dsn, "mtbs_perims")
+
+    expect_true(is(lyr, "Rcpp_GDALVector"))
+    expect_output(str(lyr))
+
+    expect_equal(lyr$getDriverShortName(), "GPKG")
+    expect_equal(lyr$getDriverLongName(), "GeoPackage")
+    expect_length(lyr$getFileList(), 1)
+    expect_equal(lyr$getName(), "mtbs_perims")
+    expect_equal(lyr$getGeomType(), "MULTIPOLYGON")
+    expect_equal(lyr$getGeometryColumn(), "geom")
+    expect_equal(lyr$getFIDColumn(), "fid")
+    expect_true(lyr$getSpatialRef() |> srs_is_projected())
+    expect_equal(lyr$bbox(), c(469685.73, -12917.76, 573531.72, 96577.34))
+
+    expect_no_error(cap <- lyr$testCapability())
+    expect_true(cap$RandomRead)
+    expect_false(cap$SequentialWrite)
+    expect_false(cap$RandomWrite)
+    # re-open with write access
+    lyr$open(read_only = FALSE)
+    expect_true(lyr$testCapability()$SequentialWrite)
+    expect_true(lyr$testCapability()$RandomWrite)
+
+
+    lyr$close()
+    unlink(dsn)
+})
+
 test_that("set ignored/selected fields works", {
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
     dsn <- file.path(tempdir(), basename(f))
