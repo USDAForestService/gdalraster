@@ -11,7 +11,7 @@ knitr::opts_chunk$set(
 
 Chris Toney (chris.toney at usda.gov)
 
-Last modified: 2024-09-11
+Last modified: 2024-09-14
 
 Comment/discussion: <https://github.com/USDAForestService/gdalraster/issues/241>
 
@@ -124,9 +124,6 @@ class GDALVector {
     bool m_is_sql {false};
     std::string m_dialect {""};
 
-    // exposed read-only fields
-    Rcpp::List featureTemplate {};
-
     // exposed read/write fields
     std::string defaultGeomFldName {"geometry"};
     bool promoteToMulti {false};
@@ -229,7 +226,6 @@ class GDALVector {
     void setGDALDatasetH_(const GDALDatasetH hDs, bool with_update);
     OGRLayerH getOGRLayerH_() const;
     void setOGRLayerH_(const OGRLayerH hLyr, const std::string &lyr_name);
-    void setFeatureTemplate_();
     void setFieldNames_();
     SEXP initDF_(R_xlen_t nrow) const;
     OGRFeatureH OGRFeatureFromList_(const Rcpp::RObject &feature) const;
@@ -949,6 +945,7 @@ This is a working list of potential issues and design questions that need furthe
 * removed `is_ignored` from feature class defintion, not needed for feature class / field creation (2024-09-11)
 * feature write methods were implemented in [#504](https://github.com/USDAForestService/gdalraster/pull/504): `$createFeature()`, `$setFeature()`, `$upsertFeature()`; documentation and examples in the (online reference)[https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html] (2024-09-11)
 * updated the `GDALVector` class declaration in the draft document (2024-09-11)
+* remove the read-only field `GDALVector::featureTemplate` as not needed / not useful (2024-09-14)
 
 ## Contributors
 

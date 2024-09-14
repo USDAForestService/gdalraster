@@ -40,9 +40,6 @@ class GDALVector {
     bool m_is_sql {false};
     std::string m_dialect {""};
 
-    // exposed read-only fields
-    Rcpp::List featureTemplate {};
-
     // exposed read/write fields
     std::string defaultGeomFldName {"geometry"};
     bool promoteToMulti {false};
@@ -145,9 +142,8 @@ class GDALVector {
     void setGDALDatasetH_(const GDALDatasetH hDs, bool with_update);
     OGRLayerH getOGRLayerH_() const;
     void setOGRLayerH_(const OGRLayerH hLyr, const std::string &lyr_name);
-    void setFeatureTemplate_();
     void setFieldNames_();
-    SEXP initDF_(R_xlen_t nrow) const;
+    SEXP createDF_(R_xlen_t nrow) const;
     OGRFeatureH OGRFeatureFromList_(const Rcpp::RObject &feature) const;
 
  private:
