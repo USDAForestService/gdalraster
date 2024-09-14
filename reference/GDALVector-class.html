@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9440</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9450</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -153,10 +153,7 @@ lifetime of the object.</p>
 <span><span class="co"># setting a spatial filter and/or specifying the SQL dialect</span></span>
 <span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="va">layer</span>, <span class="va">read_only</span>, <span class="va">open_options</span>, <span class="va">spatial_filter</span>, <span class="va">dialect</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co">## Read-only fields</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="va">featureTemplate</span></span>
-<span></span>
-<span><span class="co">## Read/write fields</span></span>
+<span><span class="co">## Read/write fields (per-object settings)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">defaultGeomFldName</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">promoteToMulti</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span></span>
@@ -239,22 +236,6 @@ Constructor specifying dataset open options as a character vector of
 Constructor to specify a spatial filter and/or SQL dialect. All arguments
 are required in this form of the constructor, but <code>open_options</code> may be
 <code>NULL</code>, and <code>spatial_filter</code> or <code>dialect</code> may be an empty string (<code>""</code>).</p>
-</div>
-
-<div class="section">
-<h3 id="read-only-fields">Read-only fields<a class="anchor" aria-label="anchor" href="#read-only-fields"></a></h3>
-
-
-<p><code>$featureTemplate</code><br>
-A list of the attribute and geometry field names, with <code>NA</code> values equivalent
-to OGR NULL values. The list elements are fully typed with the corresponding
-missing value types assigned (<code>NA_integer_</code>, <code>NA_real_</code>, <code>NA_character_</code>,
-etc.). The <code>featureTemplate</code> is useful to initialize a new empty feature,
-to which field and geometry values can be assigned, for use with the
-<code>$createFeature()</code> method (create and write a new feature within the layer).
-Note that geometry fields are initialized as <code>character</code> type in the
-template, but may be set either to a <code>character</code> string specifying a
-geometry in WKT format, or to a <code>raw</code> vector containing a geometry as WKB.</p>
 </div>
 
 <div class="section">
@@ -537,9 +518,7 @@ may be obtained with the method <code>$getLastWriteFID()</code> (see below). To 
 feature, but create it if it doesn't exist see the <code>$upsertFeature()</code> method.</p>
 <p><code>$createFeature(feature)</code><br>
 Creates and writes a new feature within the layer. The <code>feature</code> argument is
-a named list of fields and their values. A <code>GDALVector</code> object provides
-a read-only <code>$featureTemplate</code> that is set to such a list with values
-initialized to <code>NA</code> (OGR NULL).
+a named list of fields and their values.
 The passed feature is written to the layer as a new feature, rather than
 overwriting an existing one. If the feature has a <code>$FID</code> element other than
 <code>NA</code>, then the vector format driver may use that as the feature id of the
@@ -653,22 +632,10 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55e94a6ad8e0&gt; of class 'GDALVector' &lt;0x55e942a68ce0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x561672d5d0f0&gt; of class 'GDALVector' &lt;0x56166df22730&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 8 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 7 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ featureTemplate   :List of 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ FID         :integer64 NA </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ event_id    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ incid_name  : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ incid_type  : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ map_id      :integer64 NA </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ burn_bnd_ac :integer64 NA </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ burn_bnd_lat: chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ burn_bnd_lon: chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ig_date     : Date[1:1], format: "1970-01-01"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ ig_year     : int 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom        : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_dialect         : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_is_sql          : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_layer_name      : chr "mtbs_perims"</span>
@@ -694,7 +661,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpR2kiga/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpbkuKXz/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1096,22 +1063,6 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="co"># lyr$getLayerDefn() |&gt; str()</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## define a feature to write</span></span></span>
-<span class="r-in"><span><span class="co">## the read-only field lyr$featureTemplate can be examined for structure</span></span></span>
-<span class="r-in"><span><span class="co">## fields in the template are initialized to NA (= OGR NULL)</span></span></span>
-<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="va">featureTemplate</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID        :integer64 NA </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ unique_int : int 0</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ bool_data  : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ large_ints :integer64 NA </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 4.67e-310</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr ""</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date[1:1], format: "1970-01-01"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct[1:1], format: "1970-01-01 00:00:02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      : raw(0) </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       : chr ""</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## copy the template or make a new list</span></span></span>
 <span class="r-in"><span><span class="va">feat1</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co">## $FID is omitted since it is assigned when written (could also be NA)</span></span></span>
 <span class="r-in"><span><span class="co">## $dt_modified is omitted since the datasource sets a default timestamp</span></span></span>
@@ -1170,7 +1121,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-14 20:26:56" "2024-09-14 20:26:56"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-14 22:06:14" "2024-09-14 22:06:14"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1190,7 +1141,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-14 20:26:56"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-14 22:06:14"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1227,7 +1178,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-14 20:26:56" "2024-09-14 20:26:57"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-14 22:06:14" "2024-09-14 22:06:15"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
