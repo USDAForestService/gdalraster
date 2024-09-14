@@ -841,6 +841,56 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// g_wkb2wkt
+std::string g_wkb2wkt(const Rcpp::RawVector& geom, bool as_iso);
+RcppExport SEXP _gdalraster_g_wkb2wkt(SEXP geomSEXP, SEXP as_isoSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RawVector& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_wkb2wkt(geom, as_iso));
+    return rcpp_result_gen;
+END_RCPP
+}
+// g_wkb_list2wkt
+Rcpp::CharacterVector g_wkb_list2wkt(const Rcpp::List& geom, bool as_iso);
+RcppExport SEXP _gdalraster_g_wkb_list2wkt(SEXP geomSEXP, SEXP as_isoSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_wkb_list2wkt(geom, as_iso));
+    return rcpp_result_gen;
+END_RCPP
+}
+// g_wkt2wkb
+Rcpp::RawVector g_wkt2wkb(const std::string& geom, bool as_iso, std::string byte_order);
+RcppExport SEXP _gdalraster_g_wkt2wkb(SEXP geomSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< std::string >::type byte_order(byte_orderSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_wkt2wkb(geom, as_iso, byte_order));
+    return rcpp_result_gen;
+END_RCPP
+}
+// g_wkt_vector2wkb
+Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector& geom, bool as_iso, std::string byte_order);
+RcppExport SEXP _gdalraster_g_wkt_vector2wkb(SEXP geomSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< std::string >::type byte_order(byte_orderSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_wkt_vector2wkb(geom, as_iso, byte_order));
+    return rcpp_result_gen;
+END_RCPP
+}
 // g_create
 std::string g_create(const Rcpp::NumericMatrix& xy, std::string geom_type);
 RcppExport SEXP _gdalraster_g_create(SEXP xySEXP, SEXP geom_typeSEXP) {
@@ -1624,6 +1674,10 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_get_signed_url", (DL_FUNC) &_gdalraster_vsi_get_signed_url, 2},
     {"_gdalraster_getGEOSVersion", (DL_FUNC) &_gdalraster_getGEOSVersion, 0},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
+    {"_gdalraster_g_wkb2wkt", (DL_FUNC) &_gdalraster_g_wkb2wkt, 2},
+    {"_gdalraster_g_wkb_list2wkt", (DL_FUNC) &_gdalraster_g_wkb_list2wkt, 2},
+    {"_gdalraster_g_wkt2wkb", (DL_FUNC) &_gdalraster_g_wkt2wkb, 3},
+    {"_gdalraster_g_wkt_vector2wkb", (DL_FUNC) &_gdalraster_g_wkt_vector2wkb, 3},
     {"_gdalraster_g_create", (DL_FUNC) &_gdalraster_g_create, 2},
     {"_gdalraster_g_add_geom", (DL_FUNC) &_gdalraster_g_add_geom, 2},
     {"_gdalraster_g_is_valid", (DL_FUNC) &_gdalraster_g_is_valid, 1},

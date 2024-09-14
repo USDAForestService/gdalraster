@@ -8,6 +8,7 @@
 #include "cpl_port.h"
 #include "cpl_conv.h"
 #include "ogr_api.h"
+#include "ogr_geometry.h"
 #include "ogr_spatialref.h"
 #include "ogr_srs_api.h"
 
@@ -60,6 +61,151 @@ bool has_geos() {
 
 // *** geometry factory ***
 
+// WKB raw vector to WKT string
+//
+//' @noRd
+// [[Rcpp::export(name = ".g_wkb2wkt")]]
+std::string g_wkb2wkt(const Rcpp::RawVector &geom, bool as_iso = false) {
+
+    if (geom.size() == 0)
+        return "";
+
+    OGRGeometryH hGeom = nullptr;
+    OGRErr err = OGRERR_NONE;
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
+    err = OGR_G_CreateFromWkb(&geom[0], nullptr, &hGeom,
+                              static_cast<int>(geom.size()));
+#else
+    err = OGR_G_CreateFromWkbEx(&geom[0], nullptr, &hGeom, geom.size());
+#endif
+    if (err == OGRERR_NOT_ENOUGH_DATA) {
+        Rcpp::stop("OGRERR_NOT_ENOUGH_DATA, failed to create geometry object");
+    }
+    else if (err == OGRERR_UNSUPPORTED_GEOMETRY_TYPE) {
+        Rcpp::stop("OGRERR_UNSUPPORTED_GEOMETRY_TYPE");
+    }
+    else if (err == OGRERR_CORRUPT_DATA) {
+        Rcpp::stop("OGRERR_CORRUPT_DATA, failed to create geometry object");
+    }
+    else if (err != OGRERR_NONE) {
+        Rcpp::stop("failed to create geometry object");
+    }
+
+    char *pszWKT_out = nullptr;
+    if (as_iso)
+        OGR_G_ExportToIsoWkt(hGeom, &pszWKT_out);
+    else
+        OGR_G_ExportToWkt(hGeom, &pszWKT_out);
+
+    std::string wkt_out = "";
+    if (pszWKT_out != nullptr) {
+        wkt_out = pszWKT_out;
+        CPLFree(pszWKT_out);
+    }
+
+    OGR_G_DestroyGeometry(hGeom);
+
+    return wkt_out;
+}
+
+// list of WKB raw vectors to character vector of WKT strings
+//
+//' @noRd
+// [[Rcpp::export(name = ".g_wkb_list2wkt")]]
+Rcpp::CharacterVector g_wkb_list2wkt(const Rcpp::List &geom,
+                                     bool as_iso = false) {
+
+    if (geom.size() == 0)
+        Rcpp::stop("'geom' is empty");
+
+    Rcpp::CharacterVector wkt = Rcpp::no_init(geom.size());
+    for (R_xlen_t i = 0; i < geom.size(); ++i) {
+        if (!Rcpp::is<Rcpp::RawVector>(geom[i])) {
+            wkt[i] = NA_STRING;
+        }
+        else {
+            Rcpp::RawVector v = Rcpp::as<Rcpp::RawVector>(geom[i]);
+            if (v.size() > 0)
+                wkt[i] = g_wkb2wkt(v, as_iso);
+            else
+                wkt[i] = "";
+        }
+    }
+
+    return wkt;
+}
+
+// WKT string to WKB raw vector
+//
+//' @noRd
+// [[Rcpp::export(name = ".g_wkt2wkb")]]
+Rcpp::RawVector g_wkt2wkb(const std::string &geom,
+                          bool as_iso = false,
+                          std::string byte_order = "LSB") {
+
+    if (geom.size() == 0)
+        Rcpp::stop("'geom' is empty");
+
+    OGRwkbByteOrder eOrder;
+    if (EQUAL(byte_order.c_str(), "LSB"))
+        eOrder = wkbNDR;
+    else if (EQUAL(byte_order.c_str(), "MSB"))
+        eOrder = wkbXDR;
+    else
+        Rcpp::stop("invalid 'byte_order'");
+
+    OGRGeometryH hGeom = nullptr;
+    OGRErr err = OGRERR_NONE;
+
+    char *pszWKT = const_cast<char *>(geom.c_str());
+    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
+    if (err != OGRERR_NONE || hGeom == nullptr) {
+        if (hGeom != nullptr)
+            OGR_G_DestroyGeometry(hGeom);
+        Rcpp::stop("failed to create geometry object from WKT string");
+    }
+
+    const int nWKBSize = OGR_G_WkbSize(hGeom);
+    if (!nWKBSize)
+        Rcpp::stop("failed to obtain WKB size of geometry object");
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+
+    if (as_iso)
+        OGR_G_ExportToIsoWkb(hGeom, eOrder, &wkb[0]);
+    else
+        OGR_G_ExportToWkb(hGeom, eOrder, &wkb[0]);
+
+    OGR_G_DestroyGeometry(hGeom);
+
+    return wkb;
+}
+
+// vector of WKT strings to list of WKB raw vectors
+//
+//' @noRd
+// [[Rcpp::export(name = ".g_wkt_vector2wkb")]]
+Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom,
+                            bool as_iso = false,
+                            std::string byte_order = "LSB") {
+
+    if (geom.size() == 0)
+        Rcpp::stop("'geom' is empty");
+
+    Rcpp::List wkb = Rcpp::no_init(geom.size());
+    for (R_xlen_t i = 0; i < geom.size(); ++i) {
+        if (Rcpp::CharacterVector::is_na(geom[i]) || EQUAL(geom[i], "")) {
+            wkb[i] = Rcpp::RawVector::create();
+        }
+        else {
+            wkb[i] = g_wkt2wkb(Rcpp::as<std::string>(geom[i]), as_iso,
+                               byte_order);
+        }
+    }
+
+    return wkb;
+}
 
 //' @noRd
 // [[Rcpp::export(name = ".g_create")]]

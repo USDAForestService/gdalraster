@@ -106,3 +106,48 @@ test_that("geos functions work on wkt geometries", {
     expect_error(.g_sym_difference("invalid WKT", bnd))
     expect_error(.g_sym_difference(bb, "invalid WKT"))
 })
+
+test_that("WKB/WKT conversion functions work", {
+    # test round trip on point and multipolygon
+    g1 <- "POINT (1 5)"
+    g2 <- "MULTIPOLYGON (((5 5,0 0,0 10,5 5)),((5 5,10 10,10 0,5 5)))"
+
+    expect_true(g_equals(g1, .g_wkt2wkb(g1) |> .g_wkb2wkt()))
+    expect_true(g_equals(g2, .g_wkt2wkb(g2) |> .g_wkb2wkt()))
+
+    # character vector of WKT strings to list of WKB raw vectors
+    wkb_list <- .g_wkt_vector2wkb(c(g1, g2))
+    expect_length(wkb_list, 2)
+    expect_true(is.raw(wkb_list[[1]]))
+    expect_true(is.raw(wkb_list[[2]]))
+
+    # list of WKB raw vectors to character vector of WKT strings
+    wkt_vec <- .g_wkb_list2wkt(wkb_list)
+    expect_length(wkt_vec, 2)
+    expect_true(is.character(wkt_vec))
+    expect_true(g_equals(wkt_vec[1], g1))
+    expect_true(g_equals(wkt_vec[2], g2))
+
+    # test with first element a length-0 raw vector
+    wkb_list[[1]] <- raw()
+    rm(wkt_vec)
+    wkt_vec <- .g_wkb_list2wkt(wkb_list)
+    expect_length(wkt_vec, 2)
+    expect_equal(wkt_vec[1], "")
+    expect_true(g_equals(wkt_vec[2], g2))
+
+    # test with first element not a raw vector
+    wkb_list[[1]] <- g1
+    rm(wkt_vec)
+    wkt_vec <- .g_wkb_list2wkt(wkb_list)
+    expect_length(wkt_vec, 2)
+    expect_true(is.na(wkt_vec[1]))
+    expect_true(g_equals(wkt_vec[2], g2))
+
+    # first element of wkt_vec is NA
+    rm(wkb_list)
+    wkb_list <- .g_wkt_vector2wkb(wkt_vec)
+    expect_length(wkb_list, 2)
+    expect_length(wkb_list[[1]], 0)  # length-0 raw vector for NA
+    expect_true(g_equals(wkb_list[[2]] |> .g_wkb2wkt(), g2))
+})
