@@ -1,0 +1,47 @@
+# Workflow derived from https://github.com/r-lib/actions/tree/v2/examples
+# Need help debugging build failures? Start at https://github.com/r-lib/actions#where-to-find-help
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+    branches: [main, master]
+  workflow_dispatch:
+
+name: Rhub-Valgrind
+
+permissions: read-all
+
+jobs:
+  R-CMD-check-valgrind:
+    runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/r-hub/containers/valgrind:latest
+
+    name: Valgrind
+
+    strategy:
+      fail-fast: false
+
+    env:
+      GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
+      R_KEEP_PKG_SOURCE: yes
+
+    steps:
+      - uses: actions/checkout@692973e3d937129bcbf40652eb9f2f61becf3332 # v4.1.7
+
+      - uses: r-lib/actions/setup-pandoc@e6be4b3706e0f39bc7a4cf4496a5f2c4cb840040 # v2.10.1
+
+      - uses: r-lib/actions/setup-r@e6be4b3706e0f39bc7a4cf4496a5f2c4cb840040 # v2.10.1
+        with:
+          r-version: devel
+          http-user-agent: release
+          use-public-rspm: true
+
+      - uses: r-lib/actions/setup-r-dependencies@e6be4b3706e0f39bc7a4cf4496a5f2c4cb840040 # v2.10.1
+        with:
+          extra-packages: any::rcmdcheck
+          needs: check
+
+      - uses: r-lib/actions/check-r-package@e6be4b3706e0f39bc7a4cf4496a5f2c4cb840040 # v2.10.1
+        with:
+          upload-snapshots: true
