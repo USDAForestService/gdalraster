@@ -31,12 +31,6 @@ jobs:
 
       - uses: r-lib/actions/setup-pandoc@e6be4b3706e0f39bc7a4cf4496a5f2c4cb840040 # v2.10.1
 
-      - uses: r-lib/actions/setup-r@e6be4b3706e0f39bc7a4cf4496a5f2c4cb840040 # v2.10.1
-        with:
-          r-version: devel
-          http-user-agent: release
-          use-public-rspm: true
-
       - uses: r-lib/actions/setup-r-dependencies@e6be4b3706e0f39bc7a4cf4496a5f2c4cb840040 # v2.10.1
         with:
           extra-packages: any::rcmdcheck
