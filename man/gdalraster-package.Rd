@@ -90,6 +90,7 @@
   \code{\link[=g_transform]{g_transform()}},
   \code{\link[=g_union]{g_union()}},
   \code{\link[=g_within]{g_within()}},
+  \code{\link[=g_wk2wk]{g_wk2wk()}},
   \code{\link[=geos_version]{geos_version()}}
 
   \item data management: \code{\link[=addFilesInZip]{addFilesInZip()}},
