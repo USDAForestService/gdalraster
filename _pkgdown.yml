@@ -96,6 +96,7 @@ reference:
   - g_is_empty
   - g_is_valid
   - g_length
+  - g_make_valid
   - g_name
   - g_transform
   - g_wk2wk

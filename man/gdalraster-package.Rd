@@ -83,6 +83,7 @@
   \code{\link[=g_is_empty]{g_is_empty()}},
   \code{\link[=g_is_valid]{g_is_valid()}},
   \code{\link[=g_length]{g_length()}},
+  \code{\link[=g_make_valid]{g_make_valid()}},
   \code{\link[=g_name]{g_name()}},
   \code{\link[=g_overlaps]{g_overlaps()}},
   \code{\link[=g_sym_difference]{g_sym_difference()}},

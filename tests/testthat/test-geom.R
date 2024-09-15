@@ -116,17 +116,17 @@ test_that("WKB/WKT conversion functions work", {
     g1 <- "POINT (1 5)"
     g2 <- "MULTIPOLYGON (((5 5,0 0,0 10,5 5)),((5 5,10 10,10 0,5 5)))"
 
-    expect_true(g_equals(g1, .g_wkt2wkb(g1) |> .g_wkb2wkt()))
-    expect_true(g_equals(g2, .g_wkt2wkb(g2) |> .g_wkb2wkt()))
+    expect_true(g_equals(g1, g_wk2wk(g1) |> g_wk2wk()))
+    expect_true(g_equals(g2, g_wk2wk(g2) |> g_wk2wk()))
 
     # character vector of WKT strings to list of WKB raw vectors
-    wkb_list <- .g_wkt_vector2wkb(c(g1, g2))
+    wkb_list <- g_wk2wk(c(g1, g2))
     expect_length(wkb_list, 2)
     expect_true(is.raw(wkb_list[[1]]))
     expect_true(is.raw(wkb_list[[2]]))
 
     # list of WKB raw vectors to character vector of WKT strings
-    wkt_vec <- .g_wkb_list2wkt(wkb_list)
+    wkt_vec <- g_wk2wk(wkb_list)
     expect_length(wkt_vec, 2)
     expect_true(is.character(wkt_vec))
     expect_true(g_equals(wkt_vec[1], g1))
@@ -135,7 +135,7 @@ test_that("WKB/WKT conversion functions work", {
     # test with first element a length-0 raw vector
     wkb_list[[1]] <- raw()
     rm(wkt_vec)
-    expect_warning(wkt_vec <- .g_wkb_list2wkt(wkb_list))
+    expect_warning(wkt_vec <- g_wk2wk(wkb_list))
     expect_length(wkt_vec, 2)
     expect_equal(wkt_vec[1], "")
     expect_true(g_equals(wkt_vec[2], g2))
@@ -143,17 +143,21 @@ test_that("WKB/WKT conversion functions work", {
     # test with first element not a raw vector
     wkb_list[[1]] <- g1
     rm(wkt_vec)
-    expect_warning(wkt_vec <- .g_wkb_list2wkt(wkb_list))
+    expect_warning(wkt_vec <- g_wk2wk(wkb_list))
     expect_length(wkt_vec, 2)
     expect_true(is.na(wkt_vec[1]))
     expect_true(g_equals(wkt_vec[2], g2))
 
     # first element of wkt_vec is NA
     rm(wkb_list)
-    expect_warning(wkb_list <- .g_wkt_vector2wkb(wkt_vec))
+    expect_warning(wkb_list <- g_wk2wk(wkt_vec))
     expect_length(wkb_list, 2)
-    expect_length(wkb_list[[1]], 0)  # length-0 raw vector for NA
-    expect_true(g_equals(wkb_list[[2]] |> .g_wkb2wkt(), g2))
+    expect_true(is.na(wkb_list[[1]]))
+    expect_true(g_equals(wkb_list[[2]] |> g_wk2wk(), g2))
+
+    # POINT EMPTY special case
+    wkt <- "POINT EMPTY"
+    expect_warning(wkb <- g_wk2wk(wkt))
 })
 
 
@@ -284,4 +288,49 @@ test_that("geometry measures are correct", {
     expect_equal(g_area(bbox_to_wkt(bb)), bb_area)
 
     expect_equal(g_centroid(bbox_to_wkt(bb)), c(325621.1, 5103477.0))
+})
+
+test_that("make valid geometry works", {
+    # test only with recent GDAL and GEOS
+    # these tests could give different results if used across a range of older
+    # GDAL/GEOS versions, and the STRUCTURE method requires GEOS >= 3.10
+    skip_if(.gdal_version_num() < 3080000 ||
+                geos_version()$major < 3 ||
+                (geos_version()$major == 3 && geos_version()$minor < 11))
+
+    # valid to valid
+    wkt1 <- "POINT (0 0)"
+    expect_no_error(wkb1 <- g_make_valid(wkt1))
+    expect_true(g_equals(g_wk2wk(wkb1), wkt1))
+
+    # invalid - error
+    wkt2 <- "LINESTRING (0 0)"
+    expect_warning(wkb2 <- g_make_valid(wkt2))
+    expect_true(is.na(wkb2))
+
+    # invalid to valid
+    wkt3 <- "POLYGON ((0 0,10 10,0 10,10 0,0 0))"
+    expect_no_error(wkb3 <- g_make_valid(wkt3))
+    expected_wkt3 <- "MULTIPOLYGON (((10 0,0 0,5 5,10 0)),((10 10,5 5,0 10,10 10)))"
+    expect_true(g_equals(g_wk2wk(wkb3), expected_wkt3))
+
+    # STRUCTURE method
+    wkt4 <- "POLYGON ((0 0,0 10,10 10,10 0,0 0),(5 5,15 10,15 0,5 5))"
+    expect_no_error(wkb4 <- g_make_valid(wkt4, method = "STRUCTURE"))
+    expected_wkt4 <- "POLYGON ((0 10,10 10,10.0 7.5,5 5,10.0 2.5,10 0,0 0,0 10))"
+    expect_true(g_equals(g_wk2wk(wkb4), expected_wkt4))
+
+    # vector of WKT input
+    wkt_vec <- c(wkt1, wkt2, wkt3, wkt4)
+    expect_warning(wkb_list <- g_make_valid(wkt_vec, method = "STRUCTURE"))
+    expect_equal(length(wkb_list), length(wkt_vec))
+    expect_true(is.na(wkb_list[[2]]))
+    expect_true(g_equals(g_wk2wk(wkb_list[[4]]), expected_wkt4))
+
+    # list of WKB input
+    rm(wkb_list)
+    expect_warning(wkb_list <- g_make_valid(g_wk2wk(wkt_vec), method = "STRUCTURE"))
+    expect_equal(length(wkb_list), length(wkt_vec))
+    expect_true(is.na(wkb_list[[2]]))
+    expect_true(g_equals(g_wk2wk(wkb_list[[4]]), expected_wkt4))
 })

@@ -211,8 +211,8 @@ bbox_transform <- function(bbox, srs_from, srs_to) {
 #' types, it is equivalent to ISO.
 #'
 #' When the return value is a list of WKB raw vectors, an element in the
-#' returned list will contain a raw vector of length `0` (`raw(0)`) if the
-#' corresponding input string was `NA` or empty (`""`).
+#' returned list will contain `NA` if the corresponding input string was `NA`
+#' or empty (`""`).
 #'
 #' When input is a list of WKB raw vectors, a corresponding element in the
 #' returned character vector will be an empty string (`""`) if the input was
@@ -241,7 +241,8 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
         byte_order <- "LSB"
     if (!is.character(byte_order) || length(byte_order) > 1)
         stop("'byte_order' must be a character string", call. = FALSE)
-    if (toupper(byte_order) != "LSB" && toupper(byte_order) != "MSB")
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
         stop("invalid 'byte_order'", call. = FALSE)
 
     if (is.character(geom)) {
@@ -259,11 +260,6 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
              call. = FALSE)
     }
 }
-
-
-
-
-
 
 #' Compute buffer of a WKT geometry
 #'
@@ -420,6 +416,130 @@ g_is_valid <- function(wkt) {
         stop("'wkt' must be a length-1 character vector", call. = FALSE)
 
     return(.g_is_valid(wkt))
+}
+
+#' Attempt to make invalid geometries valid
+#'
+#' `g_make_valid()` attempts to make an invalid geometry valid without losing
+#' vertices. Already-valid geometries are cloned without further intervention.
+#' Wrapper of `OGR_G_MakeValid()`/`OGR_G_MakeValidEx()` in the GDAL Vector C
+#' API.
+#'
+#' @details
+#' LINEWORK is the default method, which combines all rings into a set of noded
+#' lines and then extracts valid polygons from that linework. The STRUCTURE
+#' method (requires GEOS >= 3.10 and GDAL >= 3.4) first makes all rings valid,
+#' then merges shells and subtracts holes from shells to generate a valid
+#' result. Assumes that holes and shells are correctly categorized.
+#'
+#' KEEP_COLLAPSED only applies to the STRUCTURE method:
+#' * `FALSE` (the default): collapses are converted to empty geometries
+#' * `TRUE`: collapses are converted to a valid geometry of lower dimension
+#'
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param method Character string. One of `"LINEWORK"` (the default) or
+#' `"STRUCTURE"` (requires GEOS >= 3.10 and GDAL >= 3.4). See Details.
+#' @param keep_collapsed Logical, applies only to the STRUCTURE method.
+#' Defaults to `FALSE`. See Details.
+#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' format (the default), or `FALSE` to return as WKT.
+#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
+#' @param byte_order Character string specifying the byte order when output is
+#' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return
+#' A geometry as WKB raw vector or WKT string, or a list/character vector of
+#' geometries as WKB/WKT with length equal to `length(geom)`. `NA` is returned
+#' with a warning if an input geometry cannot be converted into an OGR
+#' geometry object, or if an error occurs in the call to MakeValid() in the
+#' underlying OGR API.
+#'
+#' @note
+#' This function is built on the GEOS >= 3.8 library, check it for the
+#' definition of the geometry operation. If OGR is built without GEOS >= 3.8,
+#' this function will return a clone of the input geometry if it is valid, or
+#' `NA` if it is invalid.
+#'
+#' @examples
+#' # requires GEOS >= 3.8, otherwise is only a validity test (see Note)
+#' geos_version()
+#'
+#' # valid
+#' wkt <- "POINT (0 0)"
+#' g_make_valid(wkt, as_wkb = FALSE)
+#'
+#' # invalid to valid
+#' wkt <- "POLYGON ((0 0,10 10,0 10,10 0,0 0))"
+#' g_make_valid(wkt, as_wkb = FALSE)
+#'
+#' # invalid - error
+#' wkt <- "LINESTRING (0 0)"
+#' g_make_valid(wkt)  # NA
+#' @export
+g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
+                         as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB",
+                         quiet = FALSE) {
+
+    # method
+    if (is.null(method))
+        method <- "LINEWORK"
+    if (!is.character(method) || length(method) > 1)
+        stop("'method' must be a character string", call. = FALSE)
+    # keep_collapsed
+    if (is.null(keep_collapsed))
+        keep_collapsed <- FALSE
+    if (!is.logical(keep_collapsed) || length(keep_collapsed) > 1)
+        stop("'keep_collapsed' must be a logical scalar", call. = FALSE)
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(geom)) {
+        wkb <- .g_make_valid(geom, method, keep_collapsed, as_iso,
+                             byte_order)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        wkb <- lapply(geom, .g_make_valid, method, keep_collapsed, as_iso,
+                      byte_order)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_make_valid(g_wk2wk(geom), method, keep_collapsed, as_iso,
+                                 byte_order)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_make_valid, method, keep_collapsed,
+                          as_iso, byte_order)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
 }
 
 #' Geometry binary predicates operating on WKT

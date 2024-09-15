@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9450 (dev)
+# gdalraster 1.11.1.9460 (dev)
+
+* add `g_make_valid()`: attempt to make invalid geometries valid, operating on input of WKB raw vector, list of WKB, or character vector of WKT strings (2024-09-15)
 
 * remove the class field `GDALVector::featureTemplate` as not needed / not useful, and its removal fixes Valgrind errors (#520) (2024-09-14)
 
