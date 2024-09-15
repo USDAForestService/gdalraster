@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom.R
 \name{g_make_valid}
 \alias{g_make_valid}
-\title{Attempt to make an invalid geometry valid}
+\title{Attempt to make invalid geometries valid}
 \usage{
 g_make_valid(
   geom,
@@ -10,7 +10,8 @@ g_make_valid(
   keep_collapsed = FALSE,
   as_wkb = TRUE,
   as_iso = FALSE,
-  byte_order = "LSB"
+  byte_order = "LSB",
+  quiet = FALSE
 )
 }
 \arguments{
@@ -20,22 +21,24 @@ character vector containing one or more WKT strings.}
 \item{method}{Character string. One of \code{"LINEWORK"} (the default) or
 \code{"STRUCTURE"} (requires GEOS >= 3.10 and GDAL >= 3.4). See Details.}
 
-\item{keep_collapsed}{Logical scalar. Only applies to the STRUCTURE method.
+\item{keep_collapsed}{Logical, applies only to the STRUCTURE method.
 Defaults to \code{FALSE}. See Details.}
 
-\item{as_wkb}{Logical scalar. \code{TRUE} to return the output geometry in WKB
+\item{as_wkb}{Logical, \code{TRUE} to return the output geometry in WKB
 format (the default), or \code{FALSE} to return as WKT.}
 
-\item{as_iso}{Logical scalar. \code{TRUE} to export as ISO WKB/WKT (ISO 13249
+\item{as_iso}{Logical, \code{TRUE} to export as ISO WKB/WKT (ISO 13249
 SQL/MM Part 3), or \code{FALSE} (the default) to export as "Extended WKB/WKT".}
 
 \item{byte_order}{Character string specifying the byte order when output is
 WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
 A geometry as WKB raw vector or WKT string, or a list/character vector of
 geometries as WKB/WKT with length equal to \code{length(geom)}. \code{NA} is returned
-(with a warning) if an input geometry cannot be converted into an OGR
+with a warning if an input geometry cannot be converted into an OGR
 geometry object, or if an error occurs in the call to MakeValid() in the
 underlying OGR API.
 }

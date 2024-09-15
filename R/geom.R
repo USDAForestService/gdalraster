@@ -418,7 +418,7 @@ g_is_valid <- function(wkt) {
     return(.g_is_valid(wkt))
 }
 
-#' Attempt to make an invalid geometry valid
+#' Attempt to make invalid geometries valid
 #'
 #' `g_make_valid()` attempts to make an invalid geometry valid without losing
 #' vertices. Already-valid geometries are cloned without further intervention.
@@ -432,26 +432,27 @@ g_is_valid <- function(wkt) {
 #' then merges shells and subtracts holes from shells to generate a valid
 #' result. Assumes that holes and shells are correctly categorized.
 #'
-#' KEEP_COLLAPSED (`TRUE`/`FALSE`) only applies to the STRUCTURE method:
-#' * `FALSE` (default): collapses are converted to empty geometries
+#' KEEP_COLLAPSED only applies to the STRUCTURE method:
+#' * `FALSE` (the default): collapses are converted to empty geometries
 #' * `TRUE`: collapses are converted to a valid geometry of lower dimension
 #'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
 #' @param method Character string. One of `"LINEWORK"` (the default) or
 #' `"STRUCTURE"` (requires GEOS >= 3.10 and GDAL >= 3.4). See Details.
-#' @param keep_collapsed Logical scalar. Only applies to the STRUCTURE method.
+#' @param keep_collapsed Logical, applies only to the STRUCTURE method.
 #' Defaults to `FALSE`. See Details.
-#' @param as_wkb Logical scalar. `TRUE` to return the output geometry in WKB
+#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
 #' format (the default), or `FALSE` to return as WKT.
-#' @param as_iso Logical scalar. `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
 #' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
 #' @param byte_order Character string specifying the byte order when output is
 #' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to `length(geom)`. `NA` is returned
-#' (with a warning) if an input geometry cannot be converted into an OGR
+#' with a warning if an input geometry cannot be converted into an OGR
 #' geometry object, or if an error occurs in the call to MakeValid() in the
 #' underlying OGR API.
 #'
@@ -478,7 +479,8 @@ g_is_valid <- function(wkt) {
 #' g_make_valid(wkt)  # NA
 #' @export
 g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
-                         as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB") {
+                         as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB",
+                         quiet = FALSE) {
 
     # method
     if (is.null(method))
@@ -508,6 +510,11 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
     byte_order <- toupper(byte_order)
     if (byte_order != "LSB" && byte_order != "MSB")
         stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
 
     wkb <- NULL
     if (is.raw(geom)) {

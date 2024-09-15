@@ -464,7 +464,8 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
                   const std::string &method = "LINEWORK",
                   bool keep_collapsed = false,
                   bool as_iso = false,
-                  const std::string &byte_order = "LSB") {
+                  const std::string &byte_order = "LSB",
+                  bool quiet = false) {
 
 // Attempts to make an invalid geometry valid without losing vertices.
 // Already-valid geometries are cloned without further intervention.
@@ -478,13 +479,18 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
     int geos_maj_ver = getGEOSVersion()[0];
     int geos_min_ver = getGEOSVersion()[1];
     bool geos_3_10_min = false;
+    std::string msg = "";
+
     if (geos_maj_ver > 3 || (geos_maj_ver == 3 && geos_min_ver >= 10)) {
         geos_3_10_min = true;
     }
     else if ((geos_maj_ver == 3 && geos_min_ver < 8) ||
              geos_maj_ver < 3) {
 
-        Rcpp::Rcerr << "g_make_valid() requires GEOS >= 3.8" << std::endl;
+        if (!quiet) {
+            msg = "GEOS < 3.8 detected: g_make_valid() requires GEOS >= 3.8";
+            Rcpp::warning(msg);
+        }
         // will return a clone of the input geometry if it is valid, or
         // NULL if it is invalid
     }
@@ -498,9 +504,10 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
     }
     else if (EQUAL(method.c_str(), "STRUCTURE")) {
         if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3,4,0) || !geos_3_10_min) {
-            Rcpp::Rcerr
-                << "STRUCTURE method requires GEOS >= 3.10 and GDAL >= 3.4"
-                << std::endl;
+            if (!quiet) {
+                msg = "STRUCTURE method requires GEOS >= 3.10 and GDAL >= 3.4";
+                Rcpp::warning(msg);
+            }
 
             opt.push_back("METHOD=LINEWORK");
         }
@@ -509,8 +516,10 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
         }
     }
     else {
-        Rcpp::Rcerr << "'method' not recognized, using LINEWORK"
-                << std::endl;
+        if (!quiet) {
+            msg = "value given for 'method' not recognized, using LINEWORK";
+            Rcpp::warning(msg);
+        }
 
         opt.push_back("METHOD=LINEWORK");
     }
@@ -526,7 +535,10 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
 
     OGRGeometryH hGeom = createGeomFromWkb(geom);
     if (hGeom == nullptr) {
-        Rcpp::warning("failed to create geometry object from WKB, NA returned");
+        if (!quiet) {
+            msg = "failed to create geometry object from WKB, NA returned";
+            Rcpp::warning(msg);
+        }
         return Rcpp::wrap(NA_LOGICAL);
     }
 
@@ -542,7 +554,9 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
 #endif
 
     if (hGeomValid == nullptr) {
-        Rcpp::warning("OGR MakeValid() gave NULL geometry, NA returned");
+        if (!quiet) {
+            Rcpp::warning("OGR MakeValid() gave NULL geometry, NA returned");
+        }
         return Rcpp::wrap(NA_LOGICAL);
     }
 
@@ -550,7 +564,9 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
     if (!nWKBSize) {
         OGR_G_DestroyGeometry(hGeom);
         OGR_G_DestroyGeometry(hGeomValid);
-        Rcpp::warning("failed to obtain WKB size of output geometry");
+        if (!quiet) {
+            Rcpp::warning("failed to obtain WKB size of output geometry");
+        }
         return Rcpp::wrap(NA_LOGICAL);
     }
 
@@ -559,7 +575,10 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
     OGR_G_DestroyGeometry(hGeom);
     OGR_G_DestroyGeometry(hGeomValid);
     if (!result) {
-        Rcpp::warning("failed to export WKB raw vector for output geometry");
+        if (!quiet) {
+            msg = "failed to export WKB raw vector for output geometry";
+            Rcpp::warning(msg);
+        }
         return Rcpp::wrap(NA_LOGICAL);
     }
 
