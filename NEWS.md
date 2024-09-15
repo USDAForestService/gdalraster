@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9460 (dev)
+# gdalraster 1.11.1.9461 (dev)
+
+* fix `GDALVector::setSpatialFilter()`: SRS was not set on the geometry before using it as the layer spatial filter, which could cause segfault (2024-09-15)
 
 * add `g_make_valid()`: attempt to make invalid geometries valid, operating on input of WKB raw vector, list of WKB, or character vector of WKT strings (2024-09-15)
 
