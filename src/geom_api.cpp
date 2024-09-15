@@ -554,6 +554,7 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
 #endif
 
     if (hGeomValid == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
             Rcpp::warning("OGR MakeValid() gave NULL geometry, NA returned");
         }

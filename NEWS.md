@@ -1,4 +1,4 @@
-# gdalraster 1.11.1.9461 (dev)
+# gdalraster 1.11.1.9462 (dev)
 
 * fix `GDALVector::setSpatialFilter()`: SRS was not set on the geometry before using it as the layer spatial filter, which could cause segfault (2024-09-15)
 
