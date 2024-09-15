@@ -4,21 +4,24 @@ test_that("class constructors work", {
     dsn <- file.path(tempdir(), basename(f))
     file.copy(f, dsn, overwrite = TRUE)
 
-    lyr <- new(GDALVector, dsn)
+    expect_no_error(lyr <- new(GDALVector, dsn))
+    expect_equal(normalizePath(lyr$getDsn()), normalizePath(dsn))
     expect_equal(lyr$getName(), "mtbs_perims")
     expect_type(lyr$getFeature(1), "list")
     lyr$close()
 
-    lyr <- new(GDALVector, dsn, "mtbs_perims")
+    expect_no_error(lyr <- new(GDALVector, dsn, "mtbs_perims"))
     expect_equal(lyr$bbox(), c(469685.73, -12917.76, 573531.72, 96577.34))
     lyr$close()
 
-    lyr <- new(GDALVector, dsn, "mtbs_perims", read_only = FALSE)
+    expect_no_error(lyr <- new(GDALVector, dsn, "mtbs_perims",
+                               read_only = FALSE))
     expect_true(lyr$testCapability()$RandomWrite)
     lyr$close()
 
-    lyr <- new(GDALVector, dsn, "mtbs_perims", read_only = TRUE,
-               "LIST_ALL_TABLES=NO")
+    # open option
+    expect_no_error(lyr <- new(GDALVector, dsn, "mtbs_perims", read_only = TRUE,
+                               "LIST_ALL_TABLES=NO"))
     expect_false(lyr$testCapability()$RandomWrite)
     lyr$close()
 
@@ -26,15 +29,24 @@ test_that("class constructors work", {
 
     # spatial filter with SQL layer
     sql <- "SELECT FID, * FROM mtbs_perims"
-    lyr <- new(GDALVector, dsn, sql, read_only = TRUE, open_options = NULL,
-               spatial_filter = bbox_to_wkt(bb))
+    expect_no_error(lyr <- new(GDALVector, dsn, sql, read_only = TRUE,
+                               open_options = NULL,
+                               spatial_filter = bbox_to_wkt(bb)))
     expect_equal(lyr$getFeatureCount(), 40)
     lyr$close()
 
     # add dialect
-    lyr <- new(GDALVector, dsn, sql, read_only = TRUE, open_options = NULL,
-               spatial_filter = bbox_to_wkt(bb), dialect = "")
+    expect_no_error(lyr <- new(GDALVector, dsn, sql, read_only = TRUE,
+                               open_options = NULL,
+                               spatial_filter = bbox_to_wkt(bb),
+                               dialect = ""))
     expect_equal(lyr$getFeatureCount(), 40)
+
+    # spatial filter error
+    expect_error(lyr <- new(GDALVector, dsn, sql, read_only = TRUE,
+                            open_options = NULL,
+                            spatial_filter = "invalid WKT",
+                            dialect = ""))
 
     lyr$close()
     unlink(dsn)
@@ -221,6 +233,23 @@ test_that("read methods work correctly", {
                      "burn_bnd_ac", "burn_bnd_lat", "burn_bnd_lon",
                      "ig_date", "ig_year", "geom")
     expect_equal(lyr$getFieldNames(), field_names)
+
+    # attribute filter
+    filter = "ig_year = 2020"
+    expect_no_error(lyr$setAttributeFilter(filter))
+    expect_equal(lyr$getFeatureCount(), 1)
+    expect_equal(lyr$getAttributeFilter(), filter)
+    # clear
+    expect_no_error(lyr$setAttributeFilter(""))
+
+    # spatial filter as WKT
+    bbox <- c(469685.97, 11442.45, 544069.63, 85508.15)
+    expect_no_error(lyr$setSpatialFilter(bbox_to_wkt(bbox)))
+    expect_equal(lyr$getFeatureCount(), 40)
+    expect_true(g_equals(lyr$getSpatialFilter(), bbox_to_wkt(bbox)))
+    # clear
+    expect_no_error(lyr$clearSpatialFilter())
+    expect_equal(lyr$getFeatureCount(), 61)
 
     # cursor positioning
     expect_equal(lyr$getFeatureCount(), 61)
