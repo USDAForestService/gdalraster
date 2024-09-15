@@ -39,9 +39,9 @@ std::string g_add_geom(const std::string &sub_geom,
                        const std::string &container);
 
 bool g_is_valid(const std::string &geom);
-Rcpp::RawVector g_make_valid(const Rcpp::RawVector &geom,
-                             const std::string &method, bool collapse,
-                             bool as_iso, const std::string &byte_order);
+SEXP g_make_valid(const Rcpp::RawVector &geom, const std::string &method,
+                  bool keep_collapsed, bool as_iso,
+                  const std::string &byte_order);
 
 bool g_is_empty(const std::string &geom);
 std::string g_name(const std::string &geom);

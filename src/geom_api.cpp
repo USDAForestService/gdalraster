@@ -209,6 +209,15 @@ Rcpp::RawVector g_wkt2wkb(const std::string &geom,
         Rcpp::stop("failed to create geometry object from WKT string");
     }
 
+    // special case for POINT EMPTY:
+    // gdal/ogr/ogrgeometry.cpp, line 3303 in OGRGeometry::exportToGEOS():
+    // #if (GEOS_VERSION_MAJOR == 3 && GEOS_VERSION_MINOR < 12)
+    // POINT EMPTY is exported to WKB as if it were POINT(0 0),
+    // so that particular case is necessary.
+    // (note: this appears to also be true with GEOS 3.12.1, CT 2024-09-14)
+    if (OGR_G_GetGeometryType(hGeom) == wkbPoint && OGR_G_IsEmpty(hGeom))
+        Rcpp::warning("POINT EMPTY is exported to WKB as if it were POINT(0 0)");
+
     const int nWKBSize = OGR_G_WkbSize(hGeom);
     if (!nWKBSize) {
         OGR_G_DestroyGeometry(hGeom);
@@ -451,11 +460,11 @@ bool g_is_valid(const std::string &geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_make_valid")]]
-Rcpp::RawVector g_make_valid(const Rcpp::RawVector &geom,
-                             const std::string &method = "LINEWORK",
-                             bool collapse = false,
-                             bool as_iso = false,
-                             const std::string &byte_order = "LSB") {
+SEXP g_make_valid(const Rcpp::RawVector &geom,
+                  const std::string &method = "LINEWORK",
+                  bool keep_collapsed = false,
+                  bool as_iso = false,
+                  const std::string &byte_order = "LSB") {
 
 // Attempts to make an invalid geometry valid without losing vertices.
 // Already-valid geometries are cloned without further intervention.
@@ -466,26 +475,93 @@ Rcpp::RawVector g_make_valid(const Rcpp::RawVector &geom,
 // this function will return a clone of the input geometry if it is valid, or
 // NULL if it is invalid
 
+    int geos_maj_ver = getGEOSVersion()[0];
+    int geos_min_ver = getGEOSVersion()[1];
+    bool geos_3_10_min = false;
+    if (geos_maj_ver > 3 || (geos_maj_ver == 3 && geos_min_ver >= 10)) {
+        geos_3_10_min = true;
+    }
+    else if ((geos_maj_ver == 3 && geos_min_ver < 8) ||
+             geos_maj_ver < 3) {
+
+        Rcpp::Rcerr << "g_make_valid() requires GEOS >= 3.8" << std::endl;
+        // will return a clone of the input geometry if it is valid, or
+        // NULL if it is invalid
+    }
+
+    // begin options
+    std::vector<const char *> opt{};
+
+    // method
+    if (EQUAL(method.c_str(), "LINEWORK")) {
+        opt.push_back("METHOD=LINEWORK");
+    }
+    else if (EQUAL(method.c_str(), "STRUCTURE")) {
+        if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3,4,0) || !geos_3_10_min) {
+            Rcpp::Rcerr
+                << "STRUCTURE method requires GEOS >= 3.10 and GDAL >= 3.4"
+                << std::endl;
+
+            opt.push_back("METHOD=LINEWORK");
+        }
+        else {
+            opt.push_back("METHOD=STRUCTURE");
+        }
+    }
+    else {
+        Rcpp::Rcerr << "'method' not recognized, using LINEWORK"
+                << std::endl;
+
+        opt.push_back("METHOD=LINEWORK");
+    }
+
+    // keep_collapsed
+    if (keep_collapsed)
+        opt.push_back("KEEP_COLLAPSED=YES");
+    else
+        opt.push_back("KEEP_COLLAPSED=NO");
+
+    opt.push_back(nullptr);
+    // end options
+
     OGRGeometryH hGeom = createGeomFromWkb(geom);
-    if (hGeom == nullptr)
-        Rcpp::stop("failed to create geometry object from WKB");
+    if (hGeom == nullptr) {
+        Rcpp::warning("failed to create geometry object from WKB, NA returned");
+        return Rcpp::wrap(NA_LOGICAL);
+    }
 
+    OGRGeometryH hGeomValid = nullptr;
 
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3,4,0)
+    if (geos_3_10_min)
+        hGeomValid = OGR_G_MakeValidEx(hGeom, opt.data());
+    else
+        hGeomValid = OGR_G_MakeValid(hGeom);
+#else
+    hGeomValid = OGR_G_MakeValid(hGeom);
+#endif
 
+    if (hGeomValid == nullptr) {
+        Rcpp::warning("OGR MakeValid() gave NULL geometry, NA returned");
+        return Rcpp::wrap(NA_LOGICAL);
+    }
 
-
-
-    const int nWKBSize = OGR_G_WkbSize(hGeom);
+    const int nWKBSize = OGR_G_WkbSize(hGeomValid);
     if (!nWKBSize) {
         OGR_G_DestroyGeometry(hGeom);
-        Rcpp::stop("failed to obtain WKB size of output geometry");
+        OGR_G_DestroyGeometry(hGeomValid);
+        Rcpp::warning("failed to obtain WKB size of output geometry");
+        return Rcpp::wrap(NA_LOGICAL);
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
-    bool result = exportGeomToWkb(hGeom, &wkb[0], as_iso, byte_order);
+    bool result = exportGeomToWkb(hGeomValid, &wkb[0], as_iso, byte_order);
     OGR_G_DestroyGeometry(hGeom);
-    if (!result)
-        Rcpp::stop("failed to export WKB raw vector for output geometry");
+    OGR_G_DestroyGeometry(hGeomValid);
+    if (!result) {
+        Rcpp::warning("failed to export WKB raw vector for output geometry");
+        return Rcpp::wrap(NA_LOGICAL);
+    }
 
     return wkb;
 }
