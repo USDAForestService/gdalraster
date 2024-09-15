@@ -502,9 +502,11 @@ void GDALVector::setSpatialFilter(const std::string &wkt) {
     checkAccess_(GA_ReadOnly);
 
     OGRGeometryH hFilterGeom = nullptr;
+    OGRSpatialReferenceH hSRS = OGR_L_GetSpatialRef(m_hLayer);
+
     if (wkt != "") {
         char *pszWKT = (char *) wkt.c_str();
-        if (OGR_G_CreateFromWkt(&pszWKT, nullptr, &hFilterGeom) !=
+        if (OGR_G_CreateFromWkt(&pszWKT, hSRS, &hFilterGeom) !=
                 OGRERR_NONE) {
             if (hFilterGeom != nullptr)
                 OGR_G_DestroyGeometry(hFilterGeom);
