@@ -15,7 +15,7 @@ or a character vector of WKT strings."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9450</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9460</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -106,8 +106,8 @@ dimension (Z) WKB/WKT for types Point, LineString, Polygon, MultiPoint,
 MultiLineString, MultiPolygon and GeometryCollection. For other geometry
 types, it is equivalent to ISO.</p>
 <p>When the return value is a list of WKB raw vectors, an element in the
-returned list will contain a raw vector of length <code>0</code> (<code>raw(0)</code>) if the
-corresponding input string was <code>NA</code> or empty (<code>""</code>).</p>
+returned list will contain <code>NA</code> if the corresponding input string was <code>NA</code>
+or empty (<code>""</code>).</p>
 <p>When input is a list of WKB raw vectors, a corresponding element in the
 returned character vector will be an empty string (<code>""</code>) if the input was
 a raw vector of length <code>0</code> (<code>raw(0)</code>). If an input list element is not a raw
