@@ -1996,6 +1996,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_make_valid <- function(geom, method = "LINEWORK", collapse = FALSE, as_iso = FALSE, byte_order = "LSB") {
+    .Call(`_gdalraster_g_make_valid`, geom, method, collapse, as_iso, byte_order)
+}
+
+#' @noRd
 .g_is_empty <- function(geom) {
     .Call(`_gdalraster_g_is_empty`, geom)
 }

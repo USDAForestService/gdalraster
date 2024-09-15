@@ -10,7 +10,6 @@
 #include "cpl_port.h"
 #include "cpl_conv.h"
 #include "ogr_api.h"
-#include "ogr_geometry.h"
 #include "ogr_spatialref.h"
 #include "ogr_srs_api.h"
 
@@ -61,6 +60,72 @@ bool has_geos() {
 
 // *** geometry factory ***
 
+// internal create OGRGeometryH from WKB raw vector
+OGRGeometryH createGeomFromWkb(const Rcpp::RawVector &wkb) {
+    OGRGeometryH hGeom = nullptr;
+    OGRErr err = OGRERR_NONE;
+    std::string msg = "unknown error";
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3,3,0)
+    err = OGR_G_CreateFromWkb(&wkb[0], nullptr, &hGeom,
+                              static_cast<int>(wkb.size()));
+#else
+    err = OGR_G_CreateFromWkbEx(&wkb[0], nullptr, &hGeom, wkb.size());
+#endif
+    if (err == OGRERR_NOT_ENOUGH_DATA) {
+        msg = "OGRERR_NOT_ENOUGH_DATA, failed to create geometry object";
+    }
+    else if (err == OGRERR_UNSUPPORTED_GEOMETRY_TYPE) {
+        msg = "OGRERR_UNSUPPORTED_GEOMETRY_TYPE";
+    }
+    else if (err == OGRERR_CORRUPT_DATA) {
+        msg = "OGRERR_CORRUPT_DATA, failed to create geometry object";
+    }
+    else if (err != OGRERR_NONE) {
+        msg = "failed to create geometry object";
+    }
+
+    if (err != OGRERR_NONE) {
+        if (hGeom != nullptr)
+            OGR_G_DestroyGeometry(hGeom);
+
+        Rcpp::stop(msg);
+    }
+
+    return hGeom;
+}
+
+// internal export OGRGeometryH to WKB raw vector
+bool exportGeomToWkb(OGRGeometryH hGeom, unsigned char *wkb, bool as_iso,
+                     const std::string &byte_order) {
+
+    if (hGeom == nullptr)
+        return Rcpp::RawVector::create();
+
+    OGRwkbByteOrder eOrder;
+    if (EQUAL(byte_order.c_str(), "LSB")) {
+        eOrder = wkbNDR;
+    }
+    else if (EQUAL(byte_order.c_str(), "MSB")) {
+        eOrder = wkbXDR;
+    }
+    else {
+        Rcpp::Rcerr << "invalid 'byte_order'" << std::endl;
+        return false;
+    }
+
+    OGRErr err = OGRERR_NONE;
+    if (as_iso)
+        err = OGR_G_ExportToIsoWkb(hGeom, eOrder, wkb);
+    else
+        err = OGR_G_ExportToWkb(hGeom, eOrder, wkb);
+
+    if (err != OGRERR_NONE)
+        return false;
+    else
+        return true;
+}
+
 // WKB raw vector to WKT string
 //
 //' @noRd
@@ -70,27 +135,9 @@ std::string g_wkb2wkt(const Rcpp::RawVector &geom, bool as_iso = false) {
     if (geom.size() == 0)
         return "";
 
-    OGRGeometryH hGeom = nullptr;
-    OGRErr err = OGRERR_NONE;
-
-#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
-    err = OGR_G_CreateFromWkb(&geom[0], nullptr, &hGeom,
-                              static_cast<int>(geom.size()));
-#else
-    err = OGR_G_CreateFromWkbEx(&geom[0], nullptr, &hGeom, geom.size());
-#endif
-    if (err == OGRERR_NOT_ENOUGH_DATA) {
-        Rcpp::stop("OGRERR_NOT_ENOUGH_DATA, failed to create geometry object");
-    }
-    else if (err == OGRERR_UNSUPPORTED_GEOMETRY_TYPE) {
-        Rcpp::stop("OGRERR_UNSUPPORTED_GEOMETRY_TYPE");
-    }
-    else if (err == OGRERR_CORRUPT_DATA) {
-        Rcpp::stop("OGRERR_CORRUPT_DATA, failed to create geometry object");
-    }
-    else if (err != OGRERR_NONE) {
-        Rcpp::stop("failed to create geometry object");
-    }
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    if (hGeom == nullptr)
+        Rcpp::stop("failed to create geometry object from WKB");
 
     char *pszWKT_out = nullptr;
     if (as_iso)
@@ -151,14 +198,6 @@ Rcpp::RawVector g_wkt2wkb(const std::string &geom,
     if (geom.size() == 0)
         Rcpp::stop("'geom' is empty");
 
-    OGRwkbByteOrder eOrder;
-    if (EQUAL(byte_order.c_str(), "LSB"))
-        eOrder = wkbNDR;
-    else if (EQUAL(byte_order.c_str(), "MSB"))
-        eOrder = wkbXDR;
-    else
-        Rcpp::stop("invalid 'byte_order'");
-
     OGRGeometryH hGeom = nullptr;
     OGRErr err = OGRERR_NONE;
 
@@ -171,17 +210,16 @@ Rcpp::RawVector g_wkt2wkb(const std::string &geom,
     }
 
     const int nWKBSize = OGR_G_WkbSize(hGeom);
-    if (!nWKBSize)
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
         Rcpp::stop("failed to obtain WKB size of geometry object");
+    }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
-
-    if (as_iso)
-        OGR_G_ExportToIsoWkb(hGeom, eOrder, &wkb[0]);
-    else
-        OGR_G_ExportToWkb(hGeom, eOrder, &wkb[0]);
-
+    bool result = exportGeomToWkb(hGeom, &wkb[0], as_iso, byte_order);
     OGR_G_DestroyGeometry(hGeom);
+    if (!result)
+        Rcpp::stop("failed to export WKB raw vector");
 
     return wkb;
 }
@@ -409,6 +447,47 @@ bool g_is_valid(const std::string &geom) {
     ret = OGR_G_IsValid(hGeom);
     OGR_G_DestroyGeometry(hGeom);
     return ret;
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_make_valid")]]
+Rcpp::RawVector g_make_valid(const Rcpp::RawVector &geom,
+                             const std::string &method = "LINEWORK",
+                             bool collapse = false,
+                             bool as_iso = false,
+                             const std::string &byte_order = "LSB") {
+
+// Attempts to make an invalid geometry valid without losing vertices.
+// Already-valid geometries are cloned without further intervention.
+// Running OGRGeometryFactory::removeLowerDimensionSubGeoms() as a
+// post-processing step is often desired.
+// This function is built on the GEOS >= 3.8 library, check it for the
+// definition of the geometry operation. If OGR is built without GEOS >= 3.8,
+// this function will return a clone of the input geometry if it is valid, or
+// NULL if it is invalid
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    if (hGeom == nullptr)
+        Rcpp::stop("failed to create geometry object from WKB");
+
+
+
+
+
+
+    const int nWKBSize = OGR_G_WkbSize(hGeom);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        Rcpp::stop("failed to obtain WKB size of output geometry");
+    }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hGeom, &wkb[0], as_iso, byte_order);
+    OGR_G_DestroyGeometry(hGeom);
+    if (!result)
+        Rcpp::stop("failed to export WKB raw vector for output geometry");
+
+    return wkb;
 }
 
 //' @noRd

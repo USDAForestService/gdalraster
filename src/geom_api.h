@@ -14,8 +14,15 @@
 
 #include <Rcpp.h>
 
+#include "ogr_geometry.h"
+
+
 std::vector<int> getGEOSVersion();
 bool has_geos();  // GDAL built against GEOS is required at gdalraster 1.10
+
+OGRGeometryH createGeomFromWkb(const Rcpp::RawVector &wkb);
+bool exportGeomToWkb(OGRGeometryH hGeom, unsigned char *wkb, bool as_iso,
+                     const std::string &byte_order);
 
 std::string g_wkb2wkt(const Rcpp::RawVector &geom, bool as_iso);
 
@@ -32,6 +39,10 @@ std::string g_add_geom(const std::string &sub_geom,
                        const std::string &container);
 
 bool g_is_valid(const std::string &geom);
+Rcpp::RawVector g_make_valid(const Rcpp::RawVector &geom,
+                             const std::string &method, bool collapse,
+                             bool as_iso, const std::string &byte_order);
+
 bool g_is_empty(const std::string &geom);
 std::string g_name(const std::string &geom);
 

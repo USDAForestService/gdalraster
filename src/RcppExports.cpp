@@ -926,6 +926,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// g_make_valid
+Rcpp::RawVector g_make_valid(const Rcpp::RawVector& geom, const std::string& method, bool collapse, bool as_iso, const std::string& byte_order);
+RcppExport SEXP _gdalraster_g_make_valid(SEXP geomSEXP, SEXP methodSEXP, SEXP collapseSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RawVector& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type method(methodSEXP);
+    Rcpp::traits::input_parameter< bool >::type collapse(collapseSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_make_valid(geom, method, collapse, as_iso, byte_order));
+    return rcpp_result_gen;
+END_RCPP
+}
 // g_is_empty
 bool g_is_empty(const std::string& geom);
 RcppExport SEXP _gdalraster_g_is_empty(SEXP geomSEXP) {
@@ -1681,6 +1696,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_create", (DL_FUNC) &_gdalraster_g_create, 2},
     {"_gdalraster_g_add_geom", (DL_FUNC) &_gdalraster_g_add_geom, 2},
     {"_gdalraster_g_is_valid", (DL_FUNC) &_gdalraster_g_is_valid, 1},
+    {"_gdalraster_g_make_valid", (DL_FUNC) &_gdalraster_g_make_valid, 5},
     {"_gdalraster_g_is_empty", (DL_FUNC) &_gdalraster_g_is_empty, 1},
     {"_gdalraster_g_name", (DL_FUNC) &_gdalraster_g_name, 1},
     {"_gdalraster_g_intersects", (DL_FUNC) &_gdalraster_g_intersects, 2},
