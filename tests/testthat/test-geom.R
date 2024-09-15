@@ -154,6 +154,10 @@ test_that("WKB/WKT conversion functions work", {
     expect_length(wkb_list, 2)
     expect_length(wkb_list[[1]], 0)  # length-0 raw vector for NA
     expect_true(g_equals(wkb_list[[2]] |> .g_wkb2wkt(), g2))
+
+    # POINT EMPTY special case
+    wkt <- "POINT EMPTY"
+    expect_warning(wkb <- g_wk2wk(wkt))
 })
 
 
