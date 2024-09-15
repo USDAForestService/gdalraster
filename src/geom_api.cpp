@@ -248,7 +248,7 @@ Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom,
     for (R_xlen_t i = 0; i < geom.size(); ++i) {
         if (Rcpp::CharacterVector::is_na(geom[i]) || EQUAL(geom[i], "")) {
             Rcpp::warning("an input vector element is NA or empty string");
-            wkb[i] = Rcpp::RawVector::create();
+            wkb[i] = NA_LOGICAL;
         }
         else {
             wkb[i] = g_wkt2wkb(Rcpp::as<std::string>(geom[i]), as_iso,

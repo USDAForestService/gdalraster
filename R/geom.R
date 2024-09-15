@@ -211,8 +211,8 @@ bbox_transform <- function(bbox, srs_from, srs_to) {
 #' types, it is equivalent to ISO.
 #'
 #' When the return value is a list of WKB raw vectors, an element in the
-#' returned list will contain a raw vector of length `0` (`raw(0)`) if the
-#' corresponding input string was `NA` or empty (`""`).
+#' returned list will contain `NA` if the corresponding input string was `NA`
+#' or empty (`""`).
 #'
 #' When input is a list of WKB raw vectors, a corresponding element in the
 #' returned character vector will be an empty string (`""`) if the input was
@@ -241,7 +241,8 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
         byte_order <- "LSB"
     if (!is.character(byte_order) || length(byte_order) > 1)
         stop("'byte_order' must be a character string", call. = FALSE)
-    if (toupper(byte_order) != "LSB" && toupper(byte_order) != "MSB")
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
         stop("invalid 'byte_order'", call. = FALSE)
 
     if (is.character(geom)) {
@@ -259,11 +260,6 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
              call. = FALSE)
     }
 }
-
-
-
-
-
 
 #' Compute buffer of a WKT geometry
 #'

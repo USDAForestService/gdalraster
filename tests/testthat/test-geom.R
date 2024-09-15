@@ -152,7 +152,7 @@ test_that("WKB/WKT conversion functions work", {
     rm(wkb_list)
     expect_warning(wkb_list <- .g_wkt_vector2wkb(wkt_vec))
     expect_length(wkb_list, 2)
-    expect_length(wkb_list[[1]], 0)  # length-0 raw vector for NA
+    expect_true(is.na(wkb_list[[1]]))
     expect_true(g_equals(wkb_list[[2]] |> .g_wkb2wkt(), g2))
 
     # POINT EMPTY special case
