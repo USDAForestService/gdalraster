@@ -55,9 +55,9 @@ method (requires GEOS >= 3.10 and GDAL >= 3.4) first makes all rings valid,
 then merges shells and subtracts holes from shells to generate a valid
 result. Assumes that holes and shells are correctly categorized.
 
-KEEP_COLLAPSED (\code{TRUE}/\code{FALSE}) only applies to the STRUCTURE method:
+KEEP_COLLAPSED only applies to the STRUCTURE method:
 \itemize{
-\item \code{FALSE} (default): collapses are converted to empty geometries
+\item \code{FALSE} (the default): collapses are converted to empty geometries
 \item \code{TRUE}: collapses are converted to a valid geometry of lower dimension
 }
 }
