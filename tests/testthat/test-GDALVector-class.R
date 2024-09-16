@@ -532,6 +532,7 @@ test_that("feature write methods work", {
     expect_true(lyr$setFeature(feat2))
     expect_equal(lyr$getLastWriteFID(), test2_fid)
 
+    # read back
     lyr$open(read_only = TRUE)
     expect_equal(lyr$getFeatureCount(), 2)
 
@@ -544,14 +545,149 @@ test_that("feature write methods work", {
     feat2_check <- lyr$getFeature(test2_fid)
     expect_equal(feat2_check, feat2)
 
-    ## errors
     lyr$open(read_only = FALSE)
 
-    # NULL
+    # NULL geometry
+    # as NA
+    feat3 <- list()
+    feat3$int_fld <- 3
+    feat3$bool_fld <- TRUE
+    feat3$int64_fld <- bit64::as.integer64(33)
+    feat3$real_fld <- 3.3
+    feat3$str_fld <- "string 3"
+    feat3$date_fld <- as.Date("2000-01-03")
+    feat3$datetime_fld <- as.POSIXct("2000-01-03 13:01:01.123 GMT", tz = "UTC")
+    feat3$binary_fld <- as.raw(c(3, 3, 3))
+    feat3[[geom_fld]] <- NA
+
+    expect_true(lyr$createFeature(feat3))
+    test3_fid <- lyr$getLastWriteFID()
+    expect_false(is.null(test3_fid))
+
+    # as NULL
+    feat4 <- list()
+    feat4$int_fld <- 4
+    feat4$bool_fld <- TRUE
+    feat4$int64_fld <- bit64::as.integer64(44)
+    feat4$real_fld <- 4.4
+    feat4$str_fld <- "string 4"
+    feat4$date_fld <- as.Date("2000-01-04")
+    feat4$datetime_fld <- as.POSIXct("2000-01-04 13:01:01.123 GMT", tz = "UTC")
+    feat4$binary_fld <- as.raw(c(4, 4, 4))
+    feat4[[geom_fld]] <- list(NULL)
+
+    expect_true(lyr$createFeature(feat4))
+    test4_fid <- lyr$getLastWriteFID()
+    expect_false(is.null(test4_fid))
+
+    # read back
+    lyr$open(read_only = TRUE)
+    expect_equal(lyr$getFeatureCount(), 4)
+
+    lyr$returnGeomAs <- "WKB"
+
+    feat3_check <- lyr$getFeature(test3_fid)
+    expect_true(is.null(feat3_check[[geom_fld]]))
+
+    feat4_check <- lyr$getFeature(test4_fid)
+    expect_true(is.null(feat4_check[[geom_fld]]))
+
+    lyr$open(read_only = FALSE)
+
+    # NULL attribute fields
+    # as NA
+    feat5 <- list()
+    feat5$int_fld <- NA
+    feat5$bool_fld <- NA
+    feat5$int64_fld <- NA
+    feat5$real_fld <- NA
+    feat5$str_fld <- NA
+    feat5$date_fld <- NA
+    feat5$datetime_fld <- NA
+    feat5$binary_fld <- NA
+    feat5[[geom_fld]] <- "POINT (5 5)"
+
+    expect_true(lyr$createFeature(feat5))
+    test5_fid <- lyr$getLastWriteFID()
+    expect_false(is.null(test5_fid))
+
+    # as typed NA
+    feat6 <- list()
+    feat6$int_fld <- NA_integer_
+    feat6$bool_fld <- NA
+    feat6$int64_fld <- bit64::NA_integer64_
+    feat6$real_fld <- NA_real_
+    feat6$str_fld <- NA_character_
+    feat6$date_fld <- NA_real_
+    feat6$datetime_fld <- NA_real_
+    feat6$binary_fld <- raw(0)
+    feat6[[geom_fld]] <- "POINT (6 6)"
+
+    expect_true(lyr$createFeature(feat6))
+    test6_fid <- lyr$getLastWriteFID()
+    expect_false(is.null(test6_fid))
+
+    # as NULL
+    feat7 <- list()
+    feat7$int_fld <- list(NULL)
+    feat7$bool_fld <- list(NULL)
+    feat7$int64_fld <- list(NULL)
+    feat7$real_fld <- list(NULL)
+    feat7$str_fld <- list(NULL)
+    feat7$date_fld <- list(NULL)
+    feat7$datetime_fld <- list(NULL)
+    feat7$binary_fld <- list(NULL)
+    feat7[[geom_fld]] <- "POINT (7 7)"
+
+    expect_true(lyr$createFeature(feat7))
+    test7_fid <- lyr$getLastWriteFID()
+    expect_false(is.null(test7_fid))
+
+    # read back
+    lyr$open(read_only = TRUE)
+    lyr$returnGeomAs <- "WKT"
+
+    feat5_check <- lyr$getFeature(test5_fid)
+    expect_true(is.na(feat5_check$int_fld ))
+    expect_true(is.na(feat5_check$bool_fld))
+    expect_true(bit64::is.na.integer64(feat5_check$int64_fld))
+    expect_true(is.na(feat5_check$real_fld))
+    expect_true(is.na(feat5_check$str_fld))
+    expect_true(is.na(feat5_check$date_fld))
+    expect_true(is.na(feat5_check$datetime_fld))
+    expect_true(is.null(feat5_check$binary_fld))
+    expect_equal(feat5_check[[geom_fld]], "POINT (5 5)")
+
+    feat6_check <- lyr$getFeature(test6_fid)
+    expect_true(is.na(feat6_check$int_fld ))
+    expect_true(is.na(feat6_check$bool_fld))
+    expect_true(bit64::is.na.integer64(feat6_check$int64_fld))
+    expect_true(is.na(feat6_check$real_fld))
+    expect_true(is.na(feat6_check$str_fld))
+    expect_true(is.na(feat6_check$date_fld))
+    expect_true(is.na(feat6_check$datetime_fld))
+    expect_true(is.null(feat6_check$binary_fld))
+    expect_equal(feat6_check[[geom_fld]], "POINT (6 6)")
+
+    feat7_check <- lyr$getFeature(test7_fid)
+    expect_true(is.na(feat7_check$int_fld ))
+    expect_true(is.na(feat7_check$bool_fld))
+    expect_true(bit64::is.na.integer64(feat7_check$int64_fld))
+    expect_true(is.na(feat7_check$real_fld))
+    expect_true(is.na(feat7_check$str_fld))
+    expect_true(is.na(feat7_check$date_fld))
+    expect_true(is.na(feat7_check$datetime_fld))
+    expect_true(is.null(feat7_check$binary_fld))
+    expect_equal(feat7_check[[geom_fld]], "POINT (7 7)")
+
+    ## test input errors
+    lyr$open(read_only = FALSE)
+
+    # NULL feature
     expect_error(lyr$createFeature(NULL))
     expect_error(lyr$setFeature(NULL))
 
-    # not a list
+    # feature not a list
     feat <- c(1, 2)
     expect_error(lyr$setFeature(feat))
     feat <- c("1", "2")
@@ -566,7 +702,7 @@ test_that("feature write methods work", {
     feat <- lyr$getFeature(1)
     feat$nonexistent_fld <- 1
     expect_error(lyr$setFeature(feat))
-
+5
     feat <- lyr$getFeature(1)
 
     # character for OFTInteger
@@ -653,7 +789,7 @@ test_that("feature write methods work", {
 
     # multi-row data frame
     feat <- lyr$fetch(-1)
-    expect_equal(nrow(feat), 2)
+    expect_true(nrow(feat) > 1)
     expect_error(lyr$setFeature(feat))
 
     lyr$close()
