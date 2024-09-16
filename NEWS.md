@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9462 (dev)
+# gdalraster 1.11.1.9470 (dev)
+
+* `GDALVector`: improve `NULL` handling in feature write methods (`NA`, `NULL` and empty vector (e.g., `raw(0)`) map to OGR NULL) (2024-09-15)
 
 * fix `GDALVector::setSpatialFilter()`: SRS was not set on the geometry before using it as the layer spatial filter, which could cause segfault (2024-09-15)
 
