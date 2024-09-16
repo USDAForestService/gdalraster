@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9462</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9470</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9462" id="gdalraster-11119462-dev">gdalraster 1.11.1.9462 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119462-dev"></a></h2>
-<ul><li><p>fix <code>GDALVector::setSpatialFilter()</code>: SRS was not set on the geometry before using it as the layer spatial filter, which could cause segfault (2024-09-15)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9470" id="gdalraster-11119470-dev">gdalraster 1.11.1.9470 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119470-dev"></a></h2>
+<ul><li><p><code>GDALVector</code>: improve <code>NULL</code> handling in feature write methods (<code>NA</code>, <code>NULL</code> and empty vector (e.g., <code>raw(0)</code>) map to OGR NULL) (2024-09-15)</p></li>
+<li><p>fix <code>GDALVector::setSpatialFilter()</code>: SRS was not set on the geometry before using it as the layer spatial filter, which could cause segfault (2024-09-15)</p></li>
 <li><p>add <code><a href="../reference/g_make_valid.html">g_make_valid()</a></code>: attempt to make invalid geometries valid, operating on input of WKB raw vector, list of WKB, or character vector of WKT strings (2024-09-15)</p></li>
 <li><p>remove the class field <code>GDALVector::featureTemplate</code> as not needed / not useful, and its removal fixes Valgrind errors (<a href="https://github.com/USDAForestService/gdalraster/issues/520" class="external-link">#520</a>) (2024-09-14)</p></li>
 <li><p>add <code><a href="../reference/g_wk2wk.html">g_wk2wk()</a></code>: geometry WKB/WKT conversion (2024-09-13)</p></li>
