@@ -841,23 +841,26 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                         continue;
                     }
 
-                    int yr = 0, mo = 0, day = 0, hr = 0, min = 0, tzflag = 0;
-                    float sec = 0;
-                    if (!OGR_F_GetFieldAsDateTimeEx(hFeat, i, &yr, &mo,
-                                                    &day, &hr, &min, &sec,
-                                                    &tzflag)) {
+                    int nYr = 0, nMo = 0, nDay = 0, nHr = 0, nMin = 0,
+                        nTZflag = 0;
+
+                    float fSec = 0;
+
+                    if (!OGR_F_GetFieldAsDateTimeEx(hFeat, i, &nYr, &nMo,
+                                                    &nDay, &nHr, &nMin, &fSec,
+                                                    &nTZflag)) {
 
                         col[row_num] = NA_REAL;
                         continue;
                     }
 
                     struct tm brokendowntime;
-                    brokendowntime.tm_year = yr - 1900;
-                    brokendowntime.tm_mon = mo - 1;
-                    brokendowntime.tm_mday = day;
-                    brokendowntime.tm_hour = hr;
-                    brokendowntime.tm_min = min;
-                    brokendowntime.tm_sec = static_cast<int>(sec);
+                    brokendowntime.tm_year = nYr - 1900;
+                    brokendowntime.tm_mon = nMo - 1;
+                    brokendowntime.tm_mday = nDay;
+                    brokendowntime.tm_hour = nHr;
+                    brokendowntime.tm_min = nMin;
+                    brokendowntime.tm_sec = static_cast<int>(fSec);
                     int64_t nUnixTime = CPLYMDHMSToUnixTime(&brokendowntime);
 
                     if (fld_type == OFTDate) {
@@ -865,19 +868,19 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                     }
                     else {
                         // OFTDateTime
-                        if (tzflag > 1 && tzflag != 100) {
+                        if (nTZflag > 1 && nTZflag != 100) {
                             // convert to UTC
-                            const int tzoffset = std::abs(tzflag - 100) * 15;
+                            const int tzoffset = std::abs(nTZflag - 100) * 15;
                             const int tzhour = tzoffset / 60;
                             const int tzmin = tzoffset - tzhour * 60;
                             const int offset_sec = tzhour * 3600 + tzmin * 60;
-                            if (tzflag >= 100)
+                            if (nTZflag >= 100)
                                 nUnixTime -= offset_sec;
                             else
                                 nUnixTime += offset_sec;
                         }
                         col[row_num] = static_cast<double>(
-                                nUnixTime + std::fmod(sec, 1));
+                                nUnixTime + std::fmod(fSec, 1));
                     }
                 }
                 break;
@@ -2363,14 +2366,12 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
                     }
                 }
 
-                int nYear = 0, nMonth = 0, nDay = 0, nHour = 0, nMin = 0,
-                    nSec = 0;
+                int nYr = 0, nMo = 0, nDay = 0, nHr = 0, nMin = 0, nSec = 0;
+                if (std::sscanf(v[0], "%02d:%02d:%02d",
+                                &nHr, &nMin, &nSec) == 3) {
 
-                if (std::sscanf(v[0], "%02d:%02d:%02d", &nHour, &nMin,
-                                &nSec) == 3) {
-
-                    OGR_F_SetFieldDateTime(hFeat, fld_idx, nYear, nMonth, nDay,
-                                           nHour, nMin, nSec, 0);
+                    OGR_F_SetFieldDateTime(hFeat, fld_idx, nYr, nMo, nDay,
+                                           nHr, nMin, nSec, 0);
                 }
                 else {
                     OGR_F_Destroy(hFeat);
