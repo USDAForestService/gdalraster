@@ -428,16 +428,16 @@ values):
 \item \code{OFTInteger}: \code{integer}
 \item \code{OFTInteger} subtype \code{OFSTBoolean}: \code{logical}
 \item \code{OFTIntegerList}: vector of \code{integer} (list column)
-\item \code{OFTInteger64}: \code{bit64::integer64}
+\item \code{OFTInteger64}: \code{numeric} carrying \code{"integer64"} class attribute \{bit64\}
 \item \code{OFTInteger64} subtype \code{OFSTBoolean}: \code{logical}
 \item \code{OFTInteger64List}: vector of \code{bit64::integer64} (list column)
 \item \code{OFTReal}: \code{numeric}
 \item \code{OFTRealList}: vector of \code{numeric} (list column)
 \item \code{OFTString}: \code{character} string
 \item \code{OFTStringList}: vector of \code{character} strings (list column)
-\item \code{OFTDate}: \code{Date}
-\item \code{OFTDateTime}: \code{POSIXct} (millisecond accuracy and adjustment for time zone
-flag if present)
+\item \code{OFTDate}: class \code{"Date"} (\code{numeric})
+\item \code{OFTDateTime}: class \code{"POSIXct"} (\code{numeric}, millisecond accuracy)
+\item \code{OFTTime}: \code{character} string (\code{"HH:MM:SS"})
 \item \code{OFTBinary}: \code{raw} vector (list column, \code{NULL} entries for OGR NULL values)
 }
 

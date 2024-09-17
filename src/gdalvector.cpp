@@ -5,6 +5,7 @@
    Copyright (c) 2023-2024 gdalraster authors
 */
 
+#include <cstdio>
 #include <algorithm>
 #include <cmath>
 #include <cstdint>
@@ -2074,12 +2075,12 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
 
             if (!Rcpp::is<Rcpp::NumericVector>(list_in[i])) {
                 OGR_F_Destroy(hFeat);
-                Rcpp::stop("FID must be a `numeric` value (integer64)");
+                Rcpp::stop("FID must be a `numeric` value (may be `integer64`)");
             }
             Rcpp::NumericVector fid_in = list_in[i];
             if (fid_in.size() != 1) {
                 OGR_F_Destroy(hFeat);
-                Rcpp::stop("FID must be length-1 `numeric` (integer64)");
+                Rcpp::stop("FID must be length-1 `numeric` (may be `integer64`)");
             }
             int64_t fid = OGRNullFID;
             if (Rcpp::isInteger64(fid_in)) {
@@ -2268,7 +2269,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
             {
                 if (!Rcpp::is<Rcpp::NumericVector>(list_in[list_idx])) {
                         OGR_F_Destroy(hFeat);
-                        Rcpp::stop("OFTDate requires a `numeric value` (Date)");
+                        Rcpp::stop("OFTDate requires a `numeric` value (Date)");
                 }
                 Rcpp::NumericVector v = list_in[list_idx];
                 if (v.size() == 0 || Rcpp::NumericVector::is_na(v[0])) {
@@ -2286,7 +2287,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
                     attr = Rcpp::wrap(v.attr("class"));
                 if (std::find(attr.begin(), attr.end(), "Date") == attr.end()) {
                     OGR_F_Destroy(hFeat);
-                    Rcpp::stop("value for OGR date must be of class 'Date'");
+                    Rcpp::stop("value for OFTDate must be of class 'Date'");
                 }
                 else {
                     int64_t nUnixTime = v[0] * 86400;
@@ -2325,7 +2326,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
                         attr.end()) {
 
                     OGR_F_Destroy(hFeat);
-                    Rcpp::stop("value for OGR datetime must be of class 'POSIXct'");
+                    Rcpp::stop("value for OFTDateTime must be of class 'POSIXct'");
                 }
                 else {
                     int64_t nUnixTime = static_cast<int64_t>(v[0]);
@@ -2346,8 +2347,35 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
 
             case OFTTime:
             {
-                // TODO(ctoney): OFTTime as character string from R?
-                Rcpp::warning("writing OFTTime is currently not supported");
+                if (!Rcpp::is<Rcpp::CharacterVector>(list_in[list_idx])) {
+                        OGR_F_Destroy(hFeat);
+                        Rcpp::stop("OFTTime requires a `character` string");
+                }
+                Rcpp::CharacterVector v = list_in[list_idx];
+                if (v.size() == 0 || Rcpp::CharacterVector::is_na(v[0])) {
+                    if (OGR_Fld_IsNullable(hFieldDefn)) {
+                        OGR_F_SetFieldNull(hFeat, fld_idx);
+                        continue;
+                    }
+                    else {
+                        OGR_F_Destroy(hFeat);
+                        Rcpp::stop(msg_not_nullable);
+                    }
+                }
+
+                int nYear = 0, nMonth = 0, nDay = 0, nHour = 0, nMin = 0,
+                    nSec = 0;
+
+                if (std::sscanf(v[0], "%02d:%02d:%02d", &nHour, &nMin,
+                                &nSec) == 3) {
+
+                    OGR_F_SetFieldDateTime(hFeat, fld_idx, nYear, nMonth, nDay,
+                                           nHour, nMin, nSec, 0);
+                }
+                else {
+                    OGR_F_Destroy(hFeat);
+                    Rcpp::stop("value for OFTTime requires format 'HH:MM:SS'");
+                }
             }
             break;
 

@@ -483,6 +483,7 @@ test_that("feature write methods work", {
     defn$str_fld <- ogr_def_field("OFTString", fld_width = 100)
     defn$date_fld <- ogr_def_field("OFTDate")
     defn$datetime_fld <- ogr_def_field("OFTDateTime")
+    defn$time_fld <- ogr_def_field("OFTTime")
     defn$binary_fld <- ogr_def_field("OFTBinary")
 
     expect_true(ogr_ds_create("GPKG", dsn2, "test_layer", layer_defn = defn))
@@ -500,6 +501,7 @@ test_that("feature write methods work", {
     feat1$str_fld <- "string 1"
     feat1$date_fld <- as.Date("2000-01-01")
     feat1$datetime_fld <- as.POSIXct("2000-01-01 13:01:01.123 GMT", tz = "UTC")
+    feat1$time_fld <- "01:02:03"
     feat1$binary_fld <- as.raw(c(1, 1, 1))
     feat1[[geom_fld]] <- "POINT (1 1)"
 
@@ -526,6 +528,7 @@ test_that("feature write methods work", {
     feat2$str_fld <- "string 2"
     feat2$date_fld <- as.Date("2000-01-02")
     feat2$datetime_fld <- as.POSIXct("2000-01-02 14:02.234 GMT", tz = "UTC")
+    feat2$time_fld <- "02:03:04"
     feat2$binary_fld <- as.raw(c(2, 2, 2))
     feat2[[geom_fld]] <- "POINT (2 2)"
 
@@ -557,6 +560,7 @@ test_that("feature write methods work", {
     feat3$str_fld <- "string 3"
     feat3$date_fld <- as.Date("2000-01-03")
     feat3$datetime_fld <- as.POSIXct("2000-01-03 13:01:01.123 GMT", tz = "UTC")
+    feat3$time_fld <- "03:04:05"
     feat3$binary_fld <- as.raw(c(3, 3, 3))
     feat3[[geom_fld]] <- NA
 
@@ -573,6 +577,7 @@ test_that("feature write methods work", {
     feat4$str_fld <- "string 4"
     feat4$date_fld <- as.Date("2000-01-04")
     feat4$datetime_fld <- as.POSIXct("2000-01-04 13:01:01.123 GMT", tz = "UTC")
+    feat4$time_fld <- "04:05:06"
     feat4$binary_fld <- as.raw(c(4, 4, 4))
     feat4[[geom_fld]] <- list(NULL)
 
@@ -604,6 +609,7 @@ test_that("feature write methods work", {
     feat5$str_fld <- NA
     feat5$date_fld <- NA
     feat5$datetime_fld <- NA
+    feat5$time_fld <- NA
     feat5$binary_fld <- NA
     feat5[[geom_fld]] <- "POINT (5 5)"
 
@@ -620,6 +626,7 @@ test_that("feature write methods work", {
     feat6$str_fld <- NA_character_
     feat6$date_fld <- NA_real_
     feat6$datetime_fld <- NA_real_
+    feat6$time_fld <- NA_character_
     feat6$binary_fld <- raw(0)
     feat6[[geom_fld]] <- "POINT (6 6)"
 
@@ -636,6 +643,7 @@ test_that("feature write methods work", {
     feat7$str_fld <- list(NULL)
     feat7$date_fld <- list(NULL)
     feat7$datetime_fld <- list(NULL)
+    feat7$time_fld <- list(NULL)
     feat7$binary_fld <- list(NULL)
     feat7[[geom_fld]] <- "POINT (7 7)"
 

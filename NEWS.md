@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9470 (dev)
+# gdalraster 1.11.1.9480 (dev)
+
+* `GDALVector`: support writing OFTTime fields from string input `"HH:MM:SS"` (2024-09-16)
 
 * `GDALVector`: improve `NULL` handling in feature write methods (`NA`, `NULL` and empty vector (e.g., `raw(0)`) map to OGR NULL) (2024-09-15)
 

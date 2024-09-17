@@ -412,16 +412,16 @@
 #' * `OFTInteger`: `integer`
 #' * `OFTInteger` subtype `OFSTBoolean`: `logical`
 #' * `OFTIntegerList`: vector of `integer` (list column)
-#' * `OFTInteger64`: `bit64::integer64`
+#' * `OFTInteger64`: `numeric` carrying `"integer64"` class attribute \{bit64\}
 #' * `OFTInteger64` subtype `OFSTBoolean`: `logical`
 #' * `OFTInteger64List`: vector of `bit64::integer64` (list column)
 #' * `OFTReal`: `numeric`
 #' * `OFTRealList`: vector of `numeric` (list column)
 #' * `OFTString`: `character` string
 #' * `OFTStringList`: vector of `character` strings (list column)
-#' * `OFTDate`: `Date`
-#' * `OFTDateTime`: `POSIXct` (millisecond accuracy and adjustment for time zone
-#' flag if present)
+#' * `OFTDate`: class `"Date"` (`numeric`)
+#' * `OFTDateTime`: class `"POSIXct"` (`numeric`, millisecond accuracy)
+#' * `OFTTime`: `character` string (`"HH:MM:SS"`)
 #' * `OFTBinary`: `raw` vector (list column, `NULL` entries for OGR NULL values)
 #'
 #' Geometries are not returned if the field `returnGeomAs` is set to `NONE`.
