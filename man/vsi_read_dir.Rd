@@ -4,7 +4,7 @@
 \alias{vsi_read_dir}
 \title{Read names in a directory}
 \usage{
-vsi_read_dir(path, max_files = 0L, recursive = FALSE)
+vsi_read_dir(path, max_files = 0L, recursive = FALSE, all_files = FALSE)
 }
 \arguments{
 \item{path}{Character string. The relative or absolute path of a
@@ -15,11 +15,18 @@ stop, or 0 for no limit (see Note). Ignored if \code{recursive = TRUE}.}
 
 \item{recursive}{Logical scalar. \code{TRUE} to read the directory and its
 subdirectories. Defaults to \code{FALSE}.}
+
+\item{all_files}{Logical scalar. If ‘FALSE’ (the default), only the names
+of visible files are returned (following Unix-style visibility, that is
+files whose name does not start with a dot). If ‘TRUE’, all file names
+will be returned.}
 }
 \value{
 A character vector containing the names of files and directories
-in the directory given by \code{path}. An empty string (\code{""}) is returned if
-\code{path} does not exist.
+in the directory given by \code{path}. The listing is in alphabetical order, and
+does not include the special entries '.' and '..' even if they are present
+in the directory. An empty string (\code{""}) is returned if \code{path} does not
+exist.
 }
 \description{
 \code{vsi_read_dir()} abstracts access to directory contents. It returns a
