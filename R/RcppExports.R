@@ -1270,6 +1270,10 @@ vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet = TRUE
 #' stop, or 0 for no limit (see Note). Ignored if `recursive = TRUE`.
 #' @param recursive Logical scalar. `TRUE` to read the directory and its
 #' subdirectories. Defaults to `FALSE`.
+#' @param all_files Logical scalar. If ‘FALSE’ (the default), only the names
+#' of visible files are returned (following Unix-style visibility, that is
+#' files whose name does not start with a dot). If ‘TRUE’, all file names
+#' will be returned.
 #' @returns A character vector containing the names of files and directories
 #' in the directory given by `path`. An empty string (`""`) is returned if
 #' `path` does not exist.
@@ -1289,8 +1293,8 @@ vsi_curl_clear_cache <- function(partial = FALSE, file_prefix = "", quiet = TRUE
 #' # regular file system for illustration
 #' data_dir <- system.file("extdata", package="gdalraster")
 #' vsi_read_dir(data_dir)
-vsi_read_dir <- function(path, max_files = 0L, recursive = FALSE) {
-    .Call(`_gdalraster_vsi_read_dir`, path, max_files, recursive)
+vsi_read_dir <- function(path, max_files = 0L, recursive = FALSE, all_files = FALSE) {
+    .Call(`_gdalraster_vsi_read_dir`, path, max_files, recursive, all_files)
 }
 
 #' Synchronize a source file/directory with a target file/directory

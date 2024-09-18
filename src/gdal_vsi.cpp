@@ -3,6 +3,8 @@
    Copyright (c) 2023-2024 gdalraster authors
 */
 
+#include <algorithm>
+
 #include "gdal.h"
 #include "cpl_port.h"
 #include "cpl_string.h"
@@ -10,6 +12,7 @@
 
 #include "gdalraster.h"
 #include "gdal_vsi.h"
+
 
 //' Copy a source file to a target filename
 //'
@@ -150,6 +153,10 @@ void vsi_curl_clear_cache(bool partial = false,
 //' stop, or 0 for no limit (see Note). Ignored if `recursive = TRUE`.
 //' @param recursive Logical scalar. `TRUE` to read the directory and its
 //' subdirectories. Defaults to `FALSE`.
+//' @param all_files Logical scalar. If ‘FALSE’ (the default), only the names
+//' of visible files are returned (following Unix-style visibility, that is
+//' files whose name does not start with a dot). If ‘TRUE’, all file names
+//' will be returned.
 //' @returns A character vector containing the names of files and directories
 //' in the directory given by `path`. An empty string (`""`) is returned if
 //' `path` does not exist.
@@ -172,7 +179,8 @@ void vsi_curl_clear_cache(bool partial = false,
 // [[Rcpp::export()]]
 Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
                                    int max_files = 0,
-                                   bool recursive = false) {
+                                   bool recursive = false,
+                                   bool all_files = false) {
 
     std::string path_in = Rcpp::as<std::string>(check_gdal_filename(path));
 
@@ -186,8 +194,12 @@ Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
     if (nItems > 0) {
         std::vector<std::string> files{};
         for (int i=0; i < nItems; ++i) {
-            if (!EQUAL(papszFiles[i], ".") && !EQUAL(papszFiles[i], ".."))
+            if (!all_files && STARTS_WITH(papszFiles[i], "."))
+                continue;
+            if (!EQUAL(papszFiles[i], ".") && !EQUAL(papszFiles[i], "..")) {
                 files.push_back(papszFiles[i]);
+            }
+            std::sort(files.begin(), files.end());
         }
         CSLDestroy(papszFiles);
         return Rcpp::wrap(files);

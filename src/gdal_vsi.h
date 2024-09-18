@@ -16,9 +16,8 @@ int vsi_copy_file(Rcpp::CharacterVector src_file,
 void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix,
                           bool quiet);
 
-Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
-                                   int max_files,
-                                   bool recursive);
+Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path, int max_files,
+                                   bool recursive, bool all_files);
 
 bool vsi_sync(Rcpp::CharacterVector src,
               Rcpp::CharacterVector target,
