@@ -184,12 +184,13 @@ Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path,
 
     int nItems = CSLCount(papszFiles);
     if (nItems > 0) {
-        Rcpp::CharacterVector files(nItems);
+        std::vector<std::string> files{};
         for (int i=0; i < nItems; ++i) {
-            files(i) = papszFiles[i];
+            if (!EQUAL(papszFiles[i], ".") && !EQUAL(papszFiles[i], ".."))
+                files.push_back(papszFiles[i]);
         }
         CSLDestroy(papszFiles);
-        return files;
+        return Rcpp::wrap(files);
     }
     else {
         CSLDestroy(papszFiles);
