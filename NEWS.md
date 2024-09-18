@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9480 (dev)
+# gdalraster 1.11.1.9481 (dev)
+
+* `vsi_read_dir()`: omit `"."` and `".."` from the listing (behavior change) (2024-09-17)
 
 * `GDALVector`: support writing OFTTime fields from string input `"HH:MM:SS"` (2024-09-16)
 
