@@ -1460,6 +1460,86 @@ bool GDALVector::rollbackTransaction() {
     }
 }
 
+Rcpp::CharacterVector GDALVector::getMetadata() const {
+
+    checkAccess_(GA_ReadOnly);
+
+    char **papszMD = nullptr;
+    papszMD = GDALGetMetadata(m_hLayer, nullptr);
+
+    int items = CSLCount(papszMD);
+    if (items > 0) {
+        Rcpp::CharacterVector md(items);
+        for (int i=0; i < items; ++i) {
+            md(i) = papszMD[i];
+        }
+        return md;
+    }
+    else {
+        return "";
+    }
+}
+
+bool GDALVector::setMetadata(const Rcpp::CharacterVector metadata) {
+
+    checkAccess_(GA_ReadOnly);
+
+    std::vector<const char *> metadata_in(metadata.size() + 1);
+    if (metadata.size() > 0) {
+        for (R_xlen_t i = 0; i < metadata.size(); ++i) {
+            metadata_in[i] = (const char *) (metadata[i]);
+        }
+    }
+    metadata_in[metadata.size()] = nullptr;
+
+    OGRErr err = GDALSetMetadata(m_hLayer, metadata_in.data(), nullptr);
+
+    // TODO: support quiet as object-level field setting
+    bool quiet = false;
+    if (err != CE_None) {
+        if (!quiet)
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+std::string GDALVector::getMetadataItem(std::string mdi_name) const {
+
+    checkAccess_(GA_ReadOnly);
+
+    std::string mdi = "";
+
+    if (GDALGetMetadataItem(m_hLayer, mdi_name.c_str(), nullptr) != nullptr) {
+        mdi += std::string(GDALGetMetadataItem(m_hLayer, mdi_name.c_str(),
+                                               nullptr));
+    }
+
+    return mdi;
+}
+
+bool GDALVector::setMetadataItem(std::string mdi_name, std::string mdi_value) {
+
+    checkAccess_(GA_ReadOnly);
+
+    CPLErr err = CE_None;
+    err = GDALSetMetadataItem(m_hDataset, mdi_name.c_str(), mdi_value.c_str(),
+                              nullptr);
+
+    // TODO: support quiet as object-level field setting
+    bool quiet = false;
+    if (err != CE_None) {
+        if (!quiet)
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
 bool GDALVector::layerIntersection(
         GDALVector method_layer,
         GDALVector result_layer,
@@ -2850,6 +2930,14 @@ RCPP_MODULE(mod_GDALVector) {
         "Commit a transaction")
     .method("rollbackTransaction", &GDALVector::rollbackTransaction,
         "Roll back a transaction")
+    .const_method("getMetadata", &GDALVector::getMetadata,
+        "Return a list of metadata name=value")
+    .method("setMetadata", &GDALVector::setMetadata,
+        "Set metadata from a list of name=value")
+    .const_method("getMetadataItem", &GDALVector::getMetadataItem,
+        "Return the value of a metadata item")
+    .method("setMetadataItem", &GDALVector::setMetadataItem,
+        "Set metadata item name=value")
     .method("layerIntersection", &GDALVector::layerIntersection,
         "Intersection of this layer with a method layer")
     .method("layerUnion", &GDALVector::layerUnion,

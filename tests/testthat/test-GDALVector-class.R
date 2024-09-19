@@ -941,3 +941,34 @@ test_that("feature write methods work", {
     rm(lyr)
     rm(dsn5)
 })
+
+test_that("get/set metadata works", {
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    lyr <- new(GDALVector, dsn, "mtbs_perims", read_only = FALSE)
+
+    expect_no_error(lyr$getMetadata())
+    expect_equal(lyr$getMetadataItem(mdi_name = "DESCRIPTION"),
+                 "MTBS fire perims 1984-2022 clipped to YNP bbox")
+
+    # write metadata
+    md <- c("TEST_ITEM_1=test 1 string", "TEST_ITEM_2=test 2 string")
+    expect_true(lyr$setMetadata(md))
+
+    # close and re-open
+    lyr$open(read_only = TRUE)
+    expect_equal(lyr$getMetadataItem(mdi_name = "TEST_ITEM_2"), "test 2 string")
+
+    # write a single item
+    lyr$open(read_only = FALSE)
+    expect_true(lyr$setMetadataItem("TEST_ITEM_3", "test 3 string"))
+
+    # close and re-open
+    lyr$open(read_only = TRUE)
+    expect_equal(lyr$getMetadataItem(mdi_name = "TEST_ITEM_3"), "test 3 string")
+
+    lyr$close()
+    deleteDataset(dsn)
+})
