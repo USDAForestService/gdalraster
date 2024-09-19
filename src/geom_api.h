@@ -44,7 +44,7 @@ SEXP g_make_valid(const Rcpp::RawVector &geom, const std::string &method,
                   const std::string &byte_order, bool quiet);
 
 SEXP g_is_empty(const Rcpp::RawVector &geom, bool quiet);
-std::string g_name(const std::string &geom);
+SEXP g_name(const Rcpp::RawVector &geom, bool quiet);
 
 bool g_intersects(const std::string &this_geom, const std::string &other_geom);
 bool g_equals(const std::string &this_geom, const std::string &other_geom);

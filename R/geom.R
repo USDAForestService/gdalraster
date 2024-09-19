@@ -360,8 +360,12 @@ g_transform <- function(wkt, srs_from, srs_to, wrap_date_line = FALSE,
 #' `g_name()` returns the name for this geometry type in well known text
 #' format.
 #'
-#' @param wkt Character. OGC WKT string for a simple feature geometry.
-#' @return WKT name for this geometry type.
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return character vector of the same length as the number of input
+#' geometries in `geom`, containing the WKT names for the corresponding
+#' geometies.
 #'
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
@@ -369,11 +373,30 @@ g_transform <- function(wkt, srs_from, srs_to, wrap_date_line = FALSE,
 #' bbox_to_wkt(ds$bbox()) |> g_name()
 #' ds$close()
 #' @export
-g_name <- function(wkt) {
-    if (!(is.character(wkt) && length(wkt) == 1))
-        stop("'wkt' must be a length-1 character vector", call. = FALSE)
+g_name <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
 
-    return(.g_name(wkt))
+    ret <- NULL
+    if (is.raw(geom)) {
+        ret <- .g_name(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_name, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_name(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_name, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' Test if a geometry is empty

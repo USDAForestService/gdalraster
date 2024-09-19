@@ -2012,8 +2012,8 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_name <- function(geom) {
-    .Call(`_gdalraster_g_name`, geom)
+.g_name <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_name`, geom, quiet)
 }
 
 #' @noRd
