@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9481</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9482</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -67,13 +67,15 @@ x/y coordinates.</p></dd>
 
 
 <dt id="arg-srs-from">srs_from<a class="anchor" aria-label="anchor" href="#arg-srs-from"></a></dt>
-<dd><p>Character string in OGC WKT format specifying the
-spatial reference system for <code>pts</code>.</p></dd>
+<dd><p>Character string specifying the spatial reference system
+for <code>pts</code>. May be in WKT format or any of the formats supported by
+<code><a href="srs_to_wkt.html">srs_to_wkt()</a></code>.</p></dd>
 
 
 <dt id="arg-srs-to">srs_to<a class="anchor" aria-label="anchor" href="#arg-srs-to"></a></dt>
-<dd><p>Character string in OGC WKT format specifying the output
-spatial reference system.</p></dd>
+<dd><p>Character string specifying the output spatial reference
+system. May be in WKT format or any of the formats supported by
+<code><a href="srs_to_wkt.html">srs_to_wkt()</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -86,40 +88,6 @@ specified by <code>srs_to</code>.</p>
     <div class="dont-index"><p><code><a href="epsg_to_wkt.html">epsg_to_wkt()</a></code>, <code><a href="srs_to_wkt.html">srs_to_wkt()</a></code>, <code><a href="inv_project.html">inv_project()</a></code></p></div>
     </div>
 
-    <div class="section level2">
-    <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">pt_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_pts.csv"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">pts</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="va">pt_file</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">pts</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    id   xcoord  ycoord</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 324650.9 5103344</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2 324171.0 5103034</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3 323533.4 5103329</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4 325220.0 5103508</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5 325703.1 5102377</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6 326297.8 5103924</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7 325520.4 5104146</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8 326247.7 5102506</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9 327711.7 5104476</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10 324181.7 5103901</span>
-<span class="r-in"><span><span class="co">## id, x, y in NAD83 / UTM zone 12N</span></span></span>
-<span class="r-in"><span><span class="co">## transform to NAD83 / CONUS Albers</span></span></span>
-<span class="r-in"><span><span class="fu">transform_xy</span><span class="op">(</span>pts <span class="op">=</span> <span class="va">pts</span><span class="op">[</span>,<span class="op">-</span><span class="fl">1</span><span class="op">]</span>,</span></span>
-<span class="r-in"><span>             srs_from <span class="op">=</span> <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span>,</span></span>
-<span class="r-in"><span>             srs_to <span class="op">=</span> <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">5070</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]    [,2]</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] -1330885 2684892</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] -1331408 2684660</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,] -1331994 2685048</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,] -1330297 2684967</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,] -1329991 2683777</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [6,] -1329167 2685212</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [7,] -1329903 2685550</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -1329432 2683821</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] -1327683 2685541</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -1331265 2685514</span>
-</code></pre></div>
-    </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
     </nav></aside></div>
 
@@ -129,7 +97,7 @@ specified by <code>srs_to</code>.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.1.</p>
 </div>
 
     </footer></div>
