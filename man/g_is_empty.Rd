@@ -4,14 +4,18 @@
 \alias{g_is_empty}
 \title{Test if a geometry is empty}
 \usage{
-g_is_empty(wkt)
+g_is_empty(geom, quiet = FALSE)
 }
 \arguments{
-\item{wkt}{Character. OGC WKT string for a simple feature geometry.}
+\item{geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-logical scalar. \code{TRUE} if the geometry has no points, otherwise
-\code{FALSE}.
+logical vector of the same length as the number of input
+geometries in \code{geom}, containing \code{TRUE} for the corresponding geometies
+that are empty or \code{FALSE} for non-empty geometries.
 }
 \description{
 \code{g_is_empty()} tests whether a geometry has no points.

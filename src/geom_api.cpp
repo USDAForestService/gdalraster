@@ -435,27 +435,27 @@ std::string g_add_geom(const std::string &sub_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_is_valid")]]
-bool g_is_valid(const std::string &geom) {
+SEXP g_is_valid(const Rcpp::RawVector &geom, bool quiet = false) {
 // Test if the geometry is valid.
 // This function is built on the GEOS library, check it for the definition
 // of the geometry operation. If OGR is built without the GEOS library,
 // this function will always return FALSE.
 
-    OGRGeometryH hGeom = nullptr;
-    OGRErr err = OGRERR_NONE;
-    char *pszWKT = const_cast<char *>(geom.c_str());
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    std::string msg = "";
 
-    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
-    if (err != OGRERR_NONE || hGeom == nullptr) {
-        if (hGeom != nullptr)
-            OGR_G_DestroyGeometry(hGeom);
-        Rcpp::stop("failed to create geometry object from WKT string");
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            msg = "failed to create geometry object from WKB, NA returned";
+            Rcpp::warning(msg);
+        }
+        return Rcpp::wrap(NA_LOGICAL);
     }
 
     bool ret = false;
     ret = OGR_G_IsValid(hGeom);
     OGR_G_DestroyGeometry(hGeom);
-    return ret;
+    return Rcpp::wrap(ret);
 }
 
 //' @noRd
@@ -588,24 +588,24 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_is_empty")]]
-bool g_is_empty(const std::string &geom) {
+SEXP g_is_empty(const Rcpp::RawVector &geom, bool quiet = false) {
 // Test if the geometry is empty.
 
-    OGRGeometryH hGeom = nullptr;
-    OGRErr err = OGRERR_NONE;
-    char *pszWKT = const_cast<char *>(geom.c_str());
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    std::string msg = "";
 
-    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
-    if (err != OGRERR_NONE || hGeom == nullptr) {
-        if (hGeom != nullptr)
-            OGR_G_DestroyGeometry(hGeom);
-        Rcpp::stop("failed to create geometry object from WKT string");
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            msg = "failed to create geometry object from WKB, NA returned";
+            Rcpp::warning(msg);
+        }
+        return Rcpp::wrap(NA_LOGICAL);
     }
 
     bool ret = false;
     ret = OGR_G_IsEmpty(hGeom);
     OGR_G_DestroyGeometry(hGeom);
-    return ret;
+    return Rcpp::wrap(ret);
 }
 
 //' @noRd

@@ -1997,8 +1997,8 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_is_valid <- function(geom) {
-    .Call(`_gdalraster_g_is_valid`, geom)
+.g_is_valid <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_is_valid`, geom, quiet)
 }
 
 #' @noRd
@@ -2007,8 +2007,8 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_is_empty <- function(geom) {
-    .Call(`_gdalraster_g_is_empty`, geom)
+.g_is_empty <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_is_empty`, geom, quiet)
 }
 
 #' @noRd

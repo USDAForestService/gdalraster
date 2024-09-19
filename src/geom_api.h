@@ -38,12 +38,12 @@ std::string g_create(const Rcpp::NumericMatrix &xy, std::string geom_type);
 std::string g_add_geom(const std::string &sub_geom,
                        const std::string &container);
 
-bool g_is_valid(const std::string &geom);
+SEXP g_is_valid(const Rcpp::RawVector &geom, bool quiet);
 SEXP g_make_valid(const Rcpp::RawVector &geom, const std::string &method,
                   bool keep_collapsed, bool as_iso,
                   const std::string &byte_order, bool quiet);
 
-bool g_is_empty(const std::string &geom);
+SEXP g_is_empty(const Rcpp::RawVector &geom, bool quiet);
 std::string g_name(const std::string &geom);
 
 bool g_intersects(const std::string &this_geom, const std::string &other_geom);
