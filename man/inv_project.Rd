@@ -10,8 +10,9 @@ inv_project(pts, srs, well_known_gcs = "")
 \item{pts}{A two-column data frame or numeric matrix containing geospatial
 x/y coordinates.}
 
-\item{srs}{Character string in OGC WKT format specifying the projected
-spatial reference system for \code{pts}.}
+\item{srs}{Character string specifying the projected spatial reference
+system for \code{pts}. May be in WKT format or any of the formats supported by
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}.}
 
 \item{well_known_gcs}{Optional character string containing a supported
 well known name of a geographic coordinate system (see Details for
@@ -51,8 +52,7 @@ pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 ## id, x, y in NAD83 / UTM zone 12N
 pts <- read.csv(pt_file)
 print(pts)
-inv_project(pts[,-1], epsg_to_wkt(26912))
-inv_project(pts[,-1], epsg_to_wkt(26912), "NAD27")
+inv_project(pts[,-1], "EPSG:26912")
 }
 \seealso{
 \code{\link[=transform_xy]{transform_xy()}}

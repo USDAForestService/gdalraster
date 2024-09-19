@@ -120,8 +120,9 @@ void setPROJEnableNetwork(int enabled) {
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
 //' x/y coordinates.
-//' @param srs Character string in OGC WKT format specifying the projected
-//' spatial reference system for `pts`.
+//' @param srs Character string specifying the projected spatial reference
+//' system for `pts`. May be in WKT format or any of the formats supported by
+//' [srs_to_wkt()].
 //' @param well_known_gcs Optional character string containing a supported
 //' well known name of a geographic coordinate system (see Details for
 //' supported values).
@@ -134,8 +135,7 @@ void setPROJEnableNetwork(int enabled) {
 //' ## id, x, y in NAD83 / UTM zone 12N
 //' pts <- read.csv(pt_file)
 //' print(pts)
-//' inv_project(pts[,-1], epsg_to_wkt(26912))
-//' inv_project(pts[,-1], epsg_to_wkt(26912), "NAD27")
+//' inv_project(pts[,-1], "EPSG:26912")
 // [[Rcpp::export]]
 Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
                                 const std::string &srs,
@@ -153,12 +153,14 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
         Rcpp::stop("'pts' must be a data frame or matrix");
     }
 
+    std::string srs_in = srs_to_wkt(srs, false);
+
     OGRSpatialReference oSourceSRS{};
     OGRSpatialReference *poLongLat = nullptr;
     OGRCoordinateTransformation *poCT = nullptr;
     OGRErr err;
 
-    err = oSourceSRS.importFromWkt(srs.c_str());
+    err = oSourceSRS.importFromWkt(srs_in.c_str());
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import SRS from WKT string");
 

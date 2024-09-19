@@ -2292,8 +2292,9 @@ has_geos <- function() {
 #'
 #' @param pts A two-column data frame or numeric matrix containing geospatial
 #' x/y coordinates.
-#' @param srs Character string in OGC WKT format specifying the projected
-#' spatial reference system for `pts`.
+#' @param srs Character string specifying the projected spatial reference
+#' system for `pts`. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
 #' @param well_known_gcs Optional character string containing a supported
 #' well known name of a geographic coordinate system (see Details for
 #' supported values).
@@ -2306,8 +2307,7 @@ has_geos <- function() {
 #' ## id, x, y in NAD83 / UTM zone 12N
 #' pts <- read.csv(pt_file)
 #' print(pts)
-#' inv_project(pts[,-1], epsg_to_wkt(26912))
-#' inv_project(pts[,-1], epsg_to_wkt(26912), "NAD27")
+#' inv_project(pts[,-1], "EPSG:26912")
 inv_project <- function(pts, srs, well_known_gcs = "") {
     .Call(`_gdalraster_inv_project`, pts, srs, well_known_gcs)
 }
