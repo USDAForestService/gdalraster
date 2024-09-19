@@ -235,7 +235,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 //' print(pts)
 //' ## id, x, y in NAD83 / UTM zone 12N
 //' ## transform to NAD83 / CONUS Albers
-//' transform_xy(pts = pts[, -1], srs_from = "EPSG:26912, srs_to = "EPSG:5070")
+//' transform_xy(pts = pts[, -1], srs_from = "EPSG:26912", srs_to = "EPSG:5070")
 // [[Rcpp::export]]
 Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
                                  const std::string &srs_from,

@@ -25,6 +25,14 @@ specified by \code{srs_to}.
 \description{
 \code{transform_xy()} transforms geospatial x/y coordinates to a new projection.
 }
+\examples{
+pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
+pts <- read.csv(pt_file)
+print(pts)
+## id, x, y in NAD83 / UTM zone 12N
+## transform to NAD83 / CONUS Albers
+transform_xy(pts = pts[, -1], srs_from = "EPSG:26912", srs_to = "EPSG:5070")
+}
 \seealso{
 \code{\link[=epsg_to_wkt]{epsg_to_wkt()}}, \code{\link[=srs_to_wkt]{srs_to_wkt()}}, \code{\link[=inv_project]{inv_project()}}
 }
