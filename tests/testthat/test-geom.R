@@ -81,9 +81,9 @@ test_that("geos internal functions work on wkt geometries", {
     expect_error(.g_overlaps("invalid WKT", bnd))
     expect_error(.g_overlaps(bb, "invalid WKT"))
 
-    expect_equal(round(bbox_from_wkt(.g_buffer(bnd, 100))),
+    expect_equal(round(bbox_from_wkt(g_buffer(bnd, 100, as_wkb = FALSE))),
                  round(c(323694.2, 5102785.8, 326520.0, 5105029.4)))
-    expect_error(.g_buffer("invalid WKT", 100))
+    expect_error(g_buffer("invalid WKT", 100))
 
     expect_equal(round(.g_area(bnd)), 4039645)
     expect_equal(.g_area(.g_intersection(bb, bnd)), .g_area(bnd))
@@ -273,7 +273,7 @@ test_that("geometry binary predicates/ops return correct values", {
 test_that("g_buffer returns correct values", {
     pt <- "POINT (0 0)"
     expect_error(g_buffer(wkt = "invalid WKT", dist = 10))
-    bb <- bbox_from_wkt(g_buffer(wkt = pt, dist = 10))
+    bb <- bbox_from_wkt(g_buffer(pt, dist = 10, as_wkb = FALSE))
     expect_equal(bb, c(-10, -10,  10,  10))
 })
 

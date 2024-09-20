@@ -1065,15 +1065,18 @@ BEGIN_RCPP
 END_RCPP
 }
 // g_buffer
-std::string g_buffer(const std::string& geom, double dist, int quad_segs);
-RcppExport SEXP _gdalraster_g_buffer(SEXP geomSEXP, SEXP distSEXP, SEXP quad_segsSEXP) {
+SEXP g_buffer(const Rcpp::RawVector& geom, double dist, int quad_segs, bool as_iso, const std::string& byte_order, bool quiet);
+RcppExport SEXP _gdalraster_g_buffer(SEXP geomSEXP, SEXP distSEXP, SEXP quad_segsSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::string& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RawVector& >::type geom(geomSEXP);
     Rcpp::traits::input_parameter< double >::type dist(distSEXP);
     Rcpp::traits::input_parameter< int >::type quad_segs(quad_segsSEXP);
-    rcpp_result_gen = Rcpp::wrap(g_buffer(geom, dist, quad_segs));
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_buffer(geom, dist, quad_segs, as_iso, byte_order, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1712,7 +1715,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_within", (DL_FUNC) &_gdalraster_g_within, 2},
     {"_gdalraster_g_crosses", (DL_FUNC) &_gdalraster_g_crosses, 2},
     {"_gdalraster_g_overlaps", (DL_FUNC) &_gdalraster_g_overlaps, 2},
-    {"_gdalraster_g_buffer", (DL_FUNC) &_gdalraster_g_buffer, 3},
+    {"_gdalraster_g_buffer", (DL_FUNC) &_gdalraster_g_buffer, 6},
     {"_gdalraster_g_intersection", (DL_FUNC) &_gdalraster_g_intersection, 2},
     {"_gdalraster_g_union", (DL_FUNC) &_gdalraster_g_union, 2},
     {"_gdalraster_g_difference", (DL_FUNC) &_gdalraster_g_difference, 2},

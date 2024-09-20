@@ -4,17 +4,25 @@
 \alias{g_buffer}
 \title{Compute buffer of a WKT geometry}
 \usage{
-g_buffer(wkt, dist, quad_segs = 30L)
+g_buffer(
+  geom,
+  dist,
+  quad_segs = 30L,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
+)
 }
 \arguments{
-\item{wkt}{Character. OGC WKT string for a simple feature 2D geometry.}
-
 \item{dist}{Numeric buffer distance in units of the \code{wkt} geometry.}
 
 \item{quad_segs}{Integer number of segments used to define a 90 degree
 curve (quadrant of a circle). Large values result in large numbers of
 vertices in the resulting buffer geometry while small numbers reduce the
 accuracy of the result.}
+
+\item{wkt}{Character. OGC WKT string for a simple feature 2D geometry.}
 }
 \value{
 Character string for an OGC WKT polygon.

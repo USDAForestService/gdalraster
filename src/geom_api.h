@@ -55,7 +55,8 @@ bool g_within(const std::string &this_geom, const std::string &other_geom);
 bool g_crosses(const std::string &this_geom, const std::string &other_geom);
 bool g_overlaps(const std::string &this_geom, const std::string &other_geom);
 
-std::string g_buffer(const std::string &geom, double dist, int quad_segs);
+SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs,
+              bool as_iso, const std::string &byte_order, bool quiet);
 
 std::string g_intersection(const std::string &this_geom,
                            const std::string &other_geom);

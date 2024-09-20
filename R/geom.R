@@ -281,11 +281,56 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' @examples
 #' g_buffer(wkt = "POINT (0 0)", dist = 10)
 #' @export
-g_buffer <- function(wkt, dist, quad_segs = 30L) {
-    if (!(is.character(wkt) && length(wkt) == 1))
-        stop("'wkt' must be a length-1 character vector", call. = FALSE)
+g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
+                     as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
 
-    return(.g_buffer(wkt, dist, quad_segs))
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(geom)) {
+        wkb <- .g_buffer(geom, dist, quad_segs, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        wkb <- lapply(geom, .g_buffer, dist, quad_segs, as_iso,
+                      byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_buffer(g_wk2wk(geom), dist, quad_segs, as_iso,
+                             byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_buffer, dist, quad_segs,
+                          as_iso, byte_order, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
 }
 
 #' Apply a coordinate transformation to a WKT geometry
@@ -585,7 +630,7 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
     wkb <- NULL
     if (is.raw(geom)) {
         wkb <- .g_make_valid(geom, method, keep_collapsed, as_iso,
-                             byte_order)
+                             byte_order, quiet)
     } else if (is.list(geom) && is.raw(geom[[1]])) {
         wkb <- lapply(geom, .g_make_valid, method, keep_collapsed, as_iso,
                       byte_order, quiet)
