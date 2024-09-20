@@ -63,6 +63,7 @@
 #' ## Read/write fields (per-object settings)
 #' lyr$defaultGeomFldName
 #' lyr$promoteToMulti
+#' lyr$quiet
 #' lyr$returnGeomAs
 #' lyr$wkbByteOrder
 #'
@@ -160,6 +161,10 @@
 #' `$getNextFeature()`, `$fetch()`). Defaults to `FALSE`. Setting to `TRUE` may
 #' be useful when reading from layers such as shapefiles that mix, e.g.,
 #' Polygons and MultiPolygons.
+#'
+#' \code{$quiet}\cr
+#' A logical value, `FALSE` by default. Set to `TRUE` to suppress various
+#' messages and warnings.
 #'
 #' \code{$returnGeomAs}\cr
 #' Character string specifying the return format of feature geometries.
