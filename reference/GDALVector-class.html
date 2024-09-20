@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9484</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9490</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -156,6 +156,7 @@ lifetime of the object.</p>
 <span><span class="co">## Read/write fields (per-object settings)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">defaultGeomFldName</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">promoteToMulti</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="va">quiet</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">wkbByteOrder</span></span>
 <span></span>
@@ -257,6 +258,9 @@ MultiLineString during read operations (i.e., with methods <code>$getFeature()</
 <code>$getNextFeature()</code>, <code>$fetch()</code>). Defaults to <code>FALSE</code>. Setting to <code>TRUE</code> may
 be useful when reading from layers such as shapefiles that mix, e.g.,
 Polygons and MultiPolygons.</p>
+<p><code>$quiet</code><br>
+A logical value, <code>FALSE</code> by default. Set to <code>TRUE</code> to suppress various
+messages and warnings.</p>
 <p><code>$returnGeomAs</code><br>
 Character string specifying the return format of feature geometries.
 Must be one of <code>WKT</code>, <code>WKT_ISO</code>, <code>WKB</code> (the default), <code>WKB_ISO</code>,
@@ -647,14 +651,15 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x559e8c11f2e0&gt; of class 'GDALVector' &lt;0x559e8721ce80&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x564dcde67d90&gt; of class 'GDALVector' &lt;0x564dca008aa0&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 7 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 8 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_dialect         : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_is_sql          : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_layer_name      : chr "mtbs_perims"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ promoteToMulti    : logi FALSE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ quiet             : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "WKB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  and 66 methods, of which 52 are  possibly relevant:</span>
@@ -677,7 +682,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpnEVWev/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp43Fwck/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1137,7 +1142,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 05:23:30" "2024-09-20 05:23:30"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 15:51:51" "2024-09-20 15:51:51"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1157,7 +1162,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 05:23:30"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 15:51:51"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1194,7 +1199,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 05:23:30" "2024-09-20 05:23:31"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 15:51:51" "2024-09-20 15:51:52"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
