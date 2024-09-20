@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9482</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9483</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9482" id="gdalraster-11119482-dev">gdalraster 1.11.1.9482 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119482-dev"></a></h2>
-<ul><li><p><code><a href="../reference/transform_xy.html">transform_xy()</a></code> and <code><a href="../reference/inv_project.html">inv_project()</a></code>: accept SRS arguments in any format supported by <code><a href="../reference/srs_to_wkt.html">srs_to_wkt()</a></code> (previously required SRS arguments in WKT format) (2024-09-19)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9483" id="gdalraster-11119483-dev">gdalraster 1.11.1.9483 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119483-dev"></a></h2>
+<ul><li><p><code>GDALVector</code>: add get/set metadata methods for layer-level metadata if the format supports it (2024-09-19)</p></li>
+<li><p><code><a href="../reference/transform_xy.html">transform_xy()</a></code> and <code><a href="../reference/inv_project.html">inv_project()</a></code>: accept SRS arguments in any format supported by <code><a href="../reference/srs_to_wkt.html">srs_to_wkt()</a></code> (previously required SRS arguments in WKT format) (2024-09-19)</p></li>
 <li><p><code><a href="../reference/vsi_read_dir.html">vsi_read_dir()</a></code>: omit <code>"."</code> and <code>".."</code> from the listing (behavior change); add argument <code>all_files</code>, <code>TRUE</code> to include hidden files; sort the listing alphabetically (2024-09-17)</p></li>
 <li><p><code>GDALVector</code>: support writing OFTTime fields from string input <code>"HH:MM:SS"</code> (2024-09-16)</p></li>
 <li><p><code>GDALVector</code>: improve <code>NULL</code> handling in feature write methods (<code>NA</code>, <code>NULL</code> and empty vector (e.g., <code>raw(0)</code>) map to OGR NULL) (2024-09-15)</p></li>

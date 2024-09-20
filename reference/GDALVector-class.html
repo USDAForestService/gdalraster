@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9482</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9483</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -204,6 +204,11 @@ lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">startTransaction</span><span class="op">(</span><span class="va">force</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">commitTransaction</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">rollbackTransaction</span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setMetadata</span><span class="op">(</span><span class="va">metadata</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span><span class="va">mdi_name</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setMetadataItem</span><span class="op">(</span><span class="va">mdi_name</span>, <span class="va">mdi_value</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 
@@ -601,6 +606,17 @@ transaction, if transactions are supported by the data source.
 Returns a logical value, <code>TRUE</code> if the transaction is successfully rolled
 back. Returns <code>FALSE</code> if no transaction is active, or the rollback fails,
 or if the data source does not support transactions.</p>
+<p><code>$getMetadata()</code><br>
+Returns a character vector of all metadata <code>NAME=VALUE</code> pairs for the
+layer or empty string (<code>""</code>) if there are no metadata items.</p>
+<p><code>$setMetadata(metadata)</code><br>
+Sets metadata on the layer if the format supports it. The <code>metadata</code>
+argument is given as a character vector of <code>NAME=VALUE</code> pairs.
+Returns logical <code>TRUE</code> on success or <code>FALSE</code> if metadata could
+not be set.</p>
+<p><code>$getMetadataItem(mdi_name)</code><br>
+Returns the value of a specific metadata item named <code>mdi_name</code>, or empty
+string (<code>""</code>) if no matching item is found.</p>
 <p><code>$close()</code><br>
 Closes the vector dataset (no return value, called for side effects).
 Calling <code>$close()</code> results in proper cleanup, and flushing of any
@@ -632,7 +648,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x5611265a1f90&gt; of class 'GDALVector' &lt;0x561121fea4f0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x557d450425c0&gt; of class 'GDALVector' &lt;0x557d40633db0&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 7 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -642,18 +658,19 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ promoteToMulti    : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "WKB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 63 methods, of which 49 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 66 methods, of which 52 are  possibly relevant:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    OGRFeatureFromList_dumpReadble, bbox, clearSpatialFilter, close,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    commitTransaction, createFeature, deleteFeature, fetch, finalize,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getAttributeFilter, getDriverLongName, getDriverShortName, getDsn,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getFIDColumn, getFeature, getFeatureCount, getFieldNames, getFileList,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getGeomType, getGeometryColumn, getLastWriteFID, getLayerDefn, getName,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getNextFeature, getSpatialFilter, getSpatialRef, initialize, isOpen,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerClip, layerErase, layerIdentity, layerIntersection, layerSymDifference,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerUnion, layerUpdate, open, resetReading, rollbackTransaction,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setAttributeFilter, setFeature, setIgnoredFields, setNextByIndex,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setSelectedFields, setSpatialFilter, setSpatialFilterRect, startTransaction,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    syncToDisk, testCapability, upsertFeature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getGeomType, getGeometryColumn, getLastWriteFID, getLayerDefn, getMetadata,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getMetadataItem, getName, getNextFeature, getSpatialFilter, getSpatialRef,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    initialize, isOpen, layerClip, layerErase, layerIdentity, layerIntersection,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerSymDifference, layerUnion, layerUpdate, open, resetReading,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    rollbackTransaction, setAttributeFilter, setFeature, setIgnoredFields,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setMetadata, setNextByIndex, setSelectedFields, setSpatialFilter,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilterRect, startTransaction, syncToDisk, testCapability,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    upsertFeature</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## dataset info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -661,7 +678,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmprDo376/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpoRyRVd/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1121,7 +1138,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-19 23:07:36" "2024-09-19 23:07:36"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 02:09:00" "2024-09-20 02:09:00"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1141,7 +1158,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-19 23:07:36"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 02:09:00"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1178,7 +1195,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-19 23:07:36" "2024-09-19 23:07:37"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 02:09:00" "2024-09-20 02:09:01"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
