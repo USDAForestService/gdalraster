@@ -115,7 +115,6 @@
 #' ds$getMetadata()
 #' ds$setMetadata(metadata)
 #' ds$getMetadataItem(mdi_name)
-#' ds$setMetadataItem(mdi_name, mdi_value)
 #'
 #' lyr$close()
 #' }
