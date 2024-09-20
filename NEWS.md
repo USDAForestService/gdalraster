@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9483 (dev)
+# gdalraster 1.11.1.9484 (dev)
+
+* the `layer` argument may be `NULL` or empty string in certain `ogr_manage` functions, defaulting to the first layer by index (mainly convenience for single-layer formats) (2024-09-19)
 
 * `GDALVector`: add get/set metadata methods for layer-level metadata if the format supports it (2024-09-19)
 

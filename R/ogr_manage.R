@@ -89,7 +89,8 @@
 #' An error is raised if the operation fails.
 #'
 #' `ogr_layer_field_names()` returns a character vector of field names on a
-#' layer, or `NULL` if no fields are found.
+#' layer, or `NULL` if no fields are found. The first layer by index is opened
+#' if `NULL` is given for the `layer` argument.
 #'
 #' `ogr_layer_rename()` renames a layer in a vector dataset. This operation is
 #' implemented only by layers that expose the `Rename` capability (see
@@ -138,6 +139,9 @@
 #' Examples of some common output formats include: `"GPKG"`, `"FlatGeobuf"`,
 #' `"ESRI Shapefile"`, `"SQLite"`.
 #' @param layer Character string for a layer name in a vector dataset.
+#' The `layer` argument may be given as empty string (`""`) in which case the
+#' first layer by index will be opened (except with `ogr_layer_delete()` and
+#' `ogr_layer_rename()` for which a layer name nust be specified).
 #' @param layer_defn A feature class definition for `layer` as a list of
 #' zero or more attribute field definitions, and at least one geometry field
 #' definition (see [ogr_define]).
@@ -460,9 +464,11 @@ ogr_layer_exists <- function(dsn, layer) {
 
 #' @name ogr_manage
 #' @export
-ogr_layer_test_cap <- function(dsn, layer, with_update = TRUE) {
+ogr_layer_test_cap <- function(dsn, layer = NULL, with_update = TRUE) {
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (is.null(layer))
+        layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
 
@@ -554,11 +560,14 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
 
 #' @name ogr_manage
 #' @export
-ogr_layer_field_names <- function(dsn, layer) {
+ogr_layer_field_names <- function(dsn, layer = NULL) {
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (is.null(layer))
+        layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
+
 
     return(.ogr_layer_field_names(dsn, layer))
 }
