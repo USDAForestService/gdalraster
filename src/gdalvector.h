@@ -95,6 +95,10 @@ class GDALVector {
     bool commitTransaction();
     bool rollbackTransaction();
 
+    Rcpp::CharacterVector getMetadata() const;
+    bool setMetadata(const Rcpp::CharacterVector metadata);
+    std::string getMetadataItem(std::string mdi_name) const;
+
     bool layerIntersection(
             GDALVector method_layer,
             GDALVector result_layer,
