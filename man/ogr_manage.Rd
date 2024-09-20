@@ -49,7 +49,7 @@ ogr_ds_layer_names(dsn)
 
 ogr_layer_exists(dsn, layer)
 
-ogr_layer_test_cap(dsn, layer, with_update = TRUE)
+ogr_layer_test_cap(dsn, layer = NULL, with_update = TRUE)
 
 ogr_layer_create(
   dsn,
@@ -61,7 +61,7 @@ ogr_layer_create(
   return_obj = FALSE
 )
 
-ogr_layer_field_names(dsn, layer)
+ogr_layer_field_names(dsn, layer = NULL)
 
 ogr_layer_rename(dsn, layer, new_name)
 
@@ -110,7 +110,10 @@ opening the dataset, or \code{FALSE} to open read-only.}
 Examples of some common output formats include: \code{"GPKG"}, \code{"FlatGeobuf"},
 \code{"ESRI Shapefile"}, \code{"SQLite"}.}
 
-\item{layer}{Character string for a layer name in a vector dataset.}
+\item{layer}{Character string for a layer name in a vector dataset.
+The \code{layer} argument may be given as empty string (\code{""}) in which case the
+first layer by index will be opened (except with \code{ogr_layer_delete()} and
+\code{ogr_layer_rename()} for which a layer name nust be specified).}
 
 \item{layer_defn}{A feature class definition for \code{layer} as a list of
 zero or more attribute field definitions, and at least one geometry field
@@ -279,7 +282,8 @@ By default, returns logical \code{TRUE} indicating success, or an object of clas
 An error is raised if the operation fails.
 
 \code{ogr_layer_field_names()} returns a character vector of field names on a
-layer, or \code{NULL} if no fields are found.
+layer, or \code{NULL} if no fields are found. The first layer by index is opened
+if \code{NULL} is given for the \code{layer} argument.
 
 \code{ogr_layer_rename()} renames a layer in a vector dataset. This operation is
 implemented only by layers that expose the \code{Rename} capability (see

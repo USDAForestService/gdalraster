@@ -132,6 +132,12 @@ test_that("OGR management utilities work", {
                  c("field1", "field2", "field3", "GEOMETRY", "geom2"))
 
     deleteDataset(dsn)
+
+    # single-layer format, layer argument may be NULL or ""
+    dsn <- system.file("extdata/poly_multipoly.shp", package="gdalraster")
+    expect_equal(ogr_layer_field_names(dsn),
+                 c("Event_ID", "Map_ID", "Ig_Date",  ""))
+
 })
 
 test_that("create Memory format works", {
