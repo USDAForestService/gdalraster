@@ -959,15 +959,8 @@ test_that("get/set metadata works", {
 
     # close and re-open
     lyr$open(read_only = TRUE)
+    expect_equal(lyr$getMetadataItem(mdi_name = "TEST_ITEM_1"), "test 1 string")
     expect_equal(lyr$getMetadataItem(mdi_name = "TEST_ITEM_2"), "test 2 string")
-
-    # write a single item
-    lyr$open(read_only = FALSE)
-    expect_true(lyr$setMetadataItem("TEST_ITEM_3", "test 3 string"))
-
-    # close and re-open
-    lyr$open(read_only = TRUE)
-    expect_equal(lyr$getMetadataItem(mdi_name = "TEST_ITEM_3"), "test 3 string")
 
     lyr$close()
     deleteDataset(dsn)

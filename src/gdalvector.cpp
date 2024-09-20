@@ -1520,26 +1520,6 @@ std::string GDALVector::getMetadataItem(std::string mdi_name) const {
     return mdi;
 }
 
-bool GDALVector::setMetadataItem(std::string mdi_name, std::string mdi_value) {
-
-    checkAccess_(GA_ReadOnly);
-
-    CPLErr err = CE_None;
-    err = GDALSetMetadataItem(m_hDataset, mdi_name.c_str(), mdi_value.c_str(),
-                              nullptr);
-
-    // TODO: support quiet as object-level field setting
-    bool quiet = false;
-    if (err != CE_None) {
-        if (!quiet)
-            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
-        return false;
-    }
-    else {
-        return true;
-    }
-}
-
 bool GDALVector::layerIntersection(
         GDALVector method_layer,
         GDALVector result_layer,
@@ -2936,8 +2916,6 @@ RCPP_MODULE(mod_GDALVector) {
         "Set metadata from a list of name=value")
     .const_method("getMetadataItem", &GDALVector::getMetadataItem,
         "Return the value of a metadata item")
-    .method("setMetadataItem", &GDALVector::setMetadataItem,
-        "Set metadata item name=value")
     .method("layerIntersection", &GDALVector::layerIntersection,
         "Intersection of this layer with a method layer")
     .method("layerUnion", &GDALVector::layerUnion,
