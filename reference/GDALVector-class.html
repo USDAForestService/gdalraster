@@ -208,7 +208,6 @@ lifetime of the object.</p>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setMetadata</span><span class="op">(</span><span class="va">metadata</span><span class="op">)</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span><span class="va">mdi_name</span><span class="op">)</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">setMetadataItem</span><span class="op">(</span><span class="va">mdi_name</span>, <span class="va">mdi_value</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 
@@ -648,7 +647,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55a18ce35dc0&gt; of class 'GDALVector' &lt;0x55a18867dbe0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x559e8c11f2e0&gt; of class 'GDALVector' &lt;0x559e8721ce80&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 7 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -678,7 +677,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpLqB6cI/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpnEVWev/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1138,7 +1137,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 04:11:22" "2024-09-20 04:11:22"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 05:23:30" "2024-09-20 05:23:30"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1158,7 +1157,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 04:11:22"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 05:23:30"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1195,7 +1194,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 04:11:22" "2024-09-20 04:11:23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-20 05:23:30" "2024-09-20 05:23:31"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
