@@ -384,7 +384,11 @@ SEXP ogr_layer_test_cap(std::string dsn, std::string layer,
     else
         hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR,
                          nullptr, nullptr, nullptr);
-    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+
+    if (layer == "")
+        hLayer = GDALDatasetGetLayer(hDS, 0);
+    else
+        hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     CPLPopErrorHandler();
 
     if (hDS == nullptr || hLayer == nullptr)
@@ -711,7 +715,10 @@ SEXP ogr_layer_field_names(std::string dsn, std::string layer) {
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
     if (hDS == nullptr)
         return R_NilValue;
-    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    if (layer == "")
+        hLayer = GDALDatasetGetLayer(hDS, 0);
+    else
+        hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     CPLPopErrorHandler();
 
     if (hLayer == nullptr) {
@@ -771,7 +778,10 @@ int ogr_field_index(std::string dsn, std::string layer,
     hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
     if (hDS == nullptr)
         return -1;
-    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    if (layer == "")
+        hLayer = GDALDatasetGetLayer(hDS, 0);
+    else
+        hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     CPLPopErrorHandler();
 
     if (hLayer == nullptr) {
@@ -880,7 +890,10 @@ bool ogr_field_create(std::string dsn, std::string layer,
     if (hDS == nullptr)
         return false;
 
-    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    if (layer == "")
+        hLayer = GDALDatasetGetLayer(hDS, 0);
+    else
+        hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     CPLPopErrorHandler();
 
     if (hLayer == nullptr) {
@@ -993,7 +1006,10 @@ bool ogr_geom_field_create(std::string dsn, std::string layer,
     if (hDS == nullptr)
         return false;
 
-    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    if (layer == "")
+        hLayer = GDALDatasetGetLayer(hDS, 0);
+    else
+        hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     CPLPopErrorHandler();
 
     if (hLayer == nullptr) {
@@ -1045,7 +1061,10 @@ bool ogr_field_rename(std::string dsn, std::string layer,
     }
 
     OGRLayerH  hLayer = nullptr;
-    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    if (layer == "")
+        hLayer = GDALDatasetGetLayer(hDS, 0);
+    else
+        hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     if (hLayer == nullptr) {
         Rcpp::Rcerr << "failed to access 'layer'\n";
         GDALReleaseDataset(hDS);
@@ -1114,7 +1133,10 @@ bool ogr_field_delete(std::string dsn, std::string layer,
     }
 
     OGRLayerH  hLayer = nullptr;
-    hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    if (layer == "")
+        hLayer = GDALDatasetGetLayer(hDS, 0);
+    else
+        hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
     if (hLayer == nullptr) {
         Rcpp::Rcerr << "failed to access 'layer'\n";
         GDALReleaseDataset(hDS);
