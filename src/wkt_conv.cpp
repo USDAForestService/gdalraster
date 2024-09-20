@@ -3,8 +3,7 @@
    Copyright (c) 2023-2024 gdalraster authors
 */
 
-#include <Rcpp.h>
-#include <string>
+#include "wkt_conv.h"
 
 #include "cpl_port.h"
 #include "cpl_conv.h"

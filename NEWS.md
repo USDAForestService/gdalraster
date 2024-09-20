@@ -1,4 +1,8 @@
-# gdalraster 1.11.1.9481 (dev)
+# gdalraster 1.11.1.9483 (dev)
+
+* `GDALVector`: add get/set metadata methods for layer-level metadata if the format supports it (2024-09-19)
+
+* `transform_xy()` and `inv_project()`: accept SRS arguments in any format supported by `srs_to_wkt()` (previously required SRS arguments in WKT format) (2024-09-19)
 
 * `vsi_read_dir()`: omit `"."` and `".."` from the listing (behavior change); add argument `all_files`, `TRUE` to include hidden files; sort the listing alphabetically (2024-09-17)
 

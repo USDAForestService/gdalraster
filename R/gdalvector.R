@@ -112,6 +112,11 @@
 #' lyr$commitTransaction()
 #' lyr$rollbackTransaction()
 #'
+#' ds$getMetadata()
+#' ds$setMetadata(metadata)
+#' ds$getMetadataItem(mdi_name)
+#' ds$setMetadataItem(mdi_name, mdi_value)
+#'
 #' lyr$close()
 #' }
 #' @section Details:
@@ -551,6 +556,20 @@
 #' Returns a logical value, `TRUE` if the transaction is successfully rolled
 #' back. Returns `FALSE` if no transaction is active, or the rollback fails,
 #' or if the data source does not support transactions.
+#'
+#' \code{$getMetadata()}\cr
+#' Returns a character vector of all metadata `NAME=VALUE` pairs for the
+#' layer or empty string (`""`) if there are no metadata items.
+#'
+#' \code{$setMetadata(metadata)}\cr
+#' Sets metadata on the layer if the format supports it. The \code{metadata}
+#' argument is given as a character vector of `NAME=VALUE` pairs.
+#' Returns logical \code{TRUE} on success or \code{FALSE} if metadata could
+#' not be set.
+#'
+#' \code{$getMetadataItem(mdi_name)}\cr
+#' Returns the value of a specific metadata item named \code{mdi_name}, or empty
+#' string (`""`) if no matching item is found.
 #'
 #' \code{$close()}\cr
 #' Closes the vector dataset (no return value, called for side effects).
