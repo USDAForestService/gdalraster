@@ -73,6 +73,7 @@ lyr <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dial
 ## Read/write fields (per-object settings)
 lyr$defaultGeomFldName
 lyr$promoteToMulti
+lyr$quiet
 lyr$returnGeomAs
 lyr$wkbByteOrder
 
@@ -174,6 +175,10 @@ MultiLineString during read operations (i.e., with methods \verb{$getFeature()},
 \verb{$getNextFeature()}, \verb{$fetch()}). Defaults to \code{FALSE}. Setting to \code{TRUE} may
 be useful when reading from layers such as shapefiles that mix, e.g.,
 Polygons and MultiPolygons.
+
+\code{$quiet}\cr
+A logical value, \code{FALSE} by default. Set to \code{TRUE} to suppress various
+messages and warnings.
 
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.
