@@ -267,19 +267,29 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' the geometry on which it is invoked. The buffer is a polygon containing
 #' the region within the buffer distance of the original geometry.
 #'
-#' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
 #' @param dist Numeric buffer distance in units of the `wkt` geometry.
 #' @param quad_segs Integer number of segments used to define a 90 degree
 #' curve (quadrant of a circle). Large values result in large numbers of
 #' vertices in the resulting buffer geometry while small numbers reduce the
 #' accuracy of the result.
-#' @return Character string for an OGC WKT polygon.
-#'
-#' @seealso
-#' [bbox_from_wkt()], [bbox_to_wkt()]
+#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' format (the default), or `FALSE` to return as WKT.
+#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
+#' @param byte_order Character string specifying the byte order when output is
+#' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return
+#' A polygon as WKB raw vector or WKT string, or a list/character vector of
+#' polygons as WKB/WKT with length equal to `length(geom)`. `NA` is returned
+#' with a warning if an input geometry cannot be converted into an OGR
+#' geometry object, or if an error occurs in the call to Buffer() in the
+#' underlying OGR API.
 #'
 #' @examples
-#' g_buffer(wkt = "POINT (0 0)", dist = 10)
+#' g_buffer("POINT (0 0)", dist = 10, as_wkb = FALSE)
 #' @export
 g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
                      as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
