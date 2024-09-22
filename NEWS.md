@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9490 (dev)
+# gdalraster 1.11.1.9491 (dev)
+
+* update `g_is_valid()`, `g_is_empty()`, `g_name()` and `g_buffer()` to the new style geometry API: the OGR GEOS wrappers now operate on input of WKB raw vector, list of WKB, or character vector of WKT strings, with return as either WKB raw vector (or list of) / WKT character string (vector of) (2024-09-22)
 
 * add `GDALVector::quiet`: exposed read/write field to optionally suppress warnings etc. (2024-09-20)
 
