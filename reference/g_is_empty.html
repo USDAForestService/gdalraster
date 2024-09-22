@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9490</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9491</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -54,21 +54,27 @@
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">g_is_empty</span><span class="op">(</span><span class="va">wkt</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">g_is_empty</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-wkt">wkt<a class="anchor" aria-label="anchor" href="#arg-wkt"></a></dt>
-<dd><p>Character. OGC WKT string for a simple feature geometry.</p></dd>
+<dl><dt id="arg-geom">geom<a class="anchor" aria-label="anchor" href="#arg-geom"></a></dt>
+<dd><p>Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.</p></dd>
+
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p>Logical, <code>TRUE</code> to suppress warnings. Defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>logical scalar. <code>TRUE</code> if the geometry has no points, otherwise
-<code>FALSE</code>.</p>
+    <p>logical vector of the same length as the number of input
+geometries in <code>geom</code>, containing <code>TRUE</code> for the corresponding geometies
+that are empty or <code>FALSE</code> for non-empty geometries.</p>
     </div>
 
     <div class="section level2">

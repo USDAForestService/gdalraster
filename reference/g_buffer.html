@@ -11,7 +11,7 @@ the region within the buffer distance of the original geometry."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9490</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9491</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -60,15 +60,24 @@ the region within the buffer distance of the original geometry.</p>
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">g_buffer</span><span class="op">(</span><span class="va">wkt</span>, <span class="va">dist</span>, quad_segs <span class="op">=</span> <span class="fl">30L</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">g_buffer</span><span class="op">(</span></span>
+<span>  <span class="va">geom</span>,</span>
+<span>  <span class="va">dist</span>,</span>
+<span>  quad_segs <span class="op">=</span> <span class="fl">30L</span>,</span>
+<span>  as_wkb <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as_iso <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  byte_order <span class="op">=</span> <span class="st">"LSB"</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-wkt">wkt<a class="anchor" aria-label="anchor" href="#arg-wkt"></a></dt>
-<dd><p>Character. OGC WKT string for a simple feature 2D geometry.</p></dd>
+<dl><dt id="arg-geom">geom<a class="anchor" aria-label="anchor" href="#arg-geom"></a></dt>
+<dd><p>Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.</p></dd>
 
 
 <dt id="arg-dist">dist<a class="anchor" aria-label="anchor" href="#arg-dist"></a></dt>
@@ -81,19 +90,38 @@ curve (quadrant of a circle). Large values result in large numbers of
 vertices in the resulting buffer geometry while small numbers reduce the
 accuracy of the result.</p></dd>
 
+
+<dt id="arg-as-wkb">as_wkb<a class="anchor" aria-label="anchor" href="#arg-as-wkb"></a></dt>
+<dd><p>Logical, <code>TRUE</code> to return the output geometry in WKB
+format (the default), or <code>FALSE</code> to return as WKT.</p></dd>
+
+
+<dt id="arg-as-iso">as_iso<a class="anchor" aria-label="anchor" href="#arg-as-iso"></a></dt>
+<dd><p>Logical, <code>TRUE</code> to export as ISO WKB/WKT (ISO 13249
+SQL/MM Part 3), or <code>FALSE</code> (the default) to export as "Extended WKB/WKT".</p></dd>
+
+
+<dt id="arg-byte-order">byte_order<a class="anchor" aria-label="anchor" href="#arg-byte-order"></a></dt>
+<dd><p>Character string specifying the byte order when output is
+WKB. One of <code>"LSB"</code> (the default) or <code>"MSB"</code> (uncommon).</p></dd>
+
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p>Logical, <code>TRUE</code> to suppress warnings. Defaults to <code>FALSE</code>.</p></dd>
+
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Character string for an OGC WKT polygon.</p>
-    </div>
-    <div class="section level2">
-    <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="bbox_from_wkt.html">bbox_from_wkt()</a></code>, <code><a href="bbox_to_wkt.html">bbox_to_wkt()</a></code></p></div>
+    <p>A polygon as WKB raw vector or WKT string, or a list/character vector of
+polygons as WKB/WKT with length equal to <code>length(geom)</code>. <code>NA</code> is returned
+with a warning if an input geometry cannot be converted into an OGR
+geometry object, or if an error occurs in the call to Buffer() in the
+underlying OGR API.</p>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">g_buffer</span><span class="op">(</span>wkt <span class="op">=</span> <span class="st">"POINT (0 0)"</span>, dist <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="fu">g_buffer</span><span class="op">(</span><span class="st">"POINT (0 0)"</span>, dist <span class="op">=</span> <span class="fl">10</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "POLYGON ((10 0,9.98629534754574 -0.523359562429438,9.94521895368273 -1.04528463267653,9.87688340595138 -1.56434465040231,9.78147600733806 -2.07911690817759,9.65925826289068 -2.58819045102521,9.51056516295153 -3.09016994374947,9.33580426497202 -3.583679495453,9.13545457642601 -4.067366430758,8.91006524188368 -4.53990499739547,8.66025403784439 -5,8.38670567945424 -5.44639035015027,8.09016994374947 -5.87785252292473,7.77145961456971 -6.29320391049837,7.43144825477394 -6.69130606358858,7.07106781186548 -7.07106781186547,6.69130606358858 -7.43144825477394,6.29320391049838 -7.77145961456971,5.87785252292473 -8.09016994374947,5.44639035015027 -8.38670567945424,5.0 -8.66025403784439,4.53990499739547 -8.91006524188368,4.067366430758 -9.13545457642601,3.583679495453 -9.33580426497202,3.09016994374947 -9.51056516295153,2.58819045102521 -9.65925826289068,2.07911690817759 -9.78147600733806,1.56434465040231 -9.87688340595138,1.04528463267654 -9.94521895368273,0.52335956242944 -9.98629534754574,0.0 -10,-0.523359562429436 -9.98629534754574,-1.04528463267653 -9.94521895368273,-1.56434465040231 -9.87688340595138,-2.07911690817759 -9.78147600733806,-2.58819045102521 -9.65925826289068,-3.09016994374947 -9.51056516295154,-3.583679495453 -9.33580426497202,-4.067366430758 -9.13545457642601,-4.53990499739547 -8.91006524188368,-5 -8.66025403784439,-5.44639035015027 -8.38670567945424,-5.87785252292473 -8.09016994374947,-6.29320391049837 -7.77145961456971,-6.69130606358858 -7.43144825477394,-7.07106781186547 -7.07106781186548,-7.43144825477394 -6.69130606358858,-7.77145961456971 -6.29320391049838,-8.09016994374947 -5.87785252292473,-8.38670567945424 -5.44639035015027,-8.66025403784439 -5,-8.91006524188368 -4.53990499739547,-9.13545457642601 -4.067366430758,-9.33580426497202 -3.58367949545301,-9.51056516295153 -3.09016994374947,-9.65925826289068 -2.58819045102521,-9.78147600733806 -2.0791169081776,-9.87688340595138 -1.56434465040231,-9.94521895368273 -1.04528463267654,-9.98629534754574 -0.523359562429442,-10 -0.0,-9.98629534754574 0.523359562429436,-9.94521895368273 1.04528463267653,-9.87688340595138 1.56434465040231,-9.78147600733806 2.07911690817759,-9.65925826289068 2.5881904510252,-9.51056516295154 3.09016994374947,-9.33580426497202 3.583679495453,-9.13545457642601 4.067366430758,-8.91006524188368 4.53990499739547,-8.66025403784439 5.0,-8.38670567945424 5.44639035015027,-8.09016994374948 5.87785252292473,-7.77145961456971 6.29320391049837,-7.43144825477395 6.69130606358858,-7.07106781186548 7.07106781186547,-6.69130606358858 7.43144825477394,-6.29320391049838 7.77145961456971,-5.87785252292473 8.09016994374947,-5.44639035015028 8.38670567945424,-5 8.66025403784438,-4.53990499739547 8.91006524188368,-4.06736643075801 9.135454576426,-3.58367949545301 9.33580426497202,-3.09016994374948 9.51056516295153,-2.58819045102522 9.65925826289068,-2.0791169081776 9.78147600733806,-1.56434465040231 9.87688340595138,-1.04528463267654 9.94521895368273,-0.523359562429443 9.98629534754574,-0.0 10.0,0.523359562429431 9.98629534754574,1.04528463267653 9.94521895368273,1.56434465040231 9.87688340595138,2.07911690817759 9.78147600733806,2.5881904510252 9.65925826289068,3.09016994374947 9.51056516295154,3.583679495453 9.33580426497202,4.067366430758 9.13545457642601,4.53990499739547 8.91006524188368,4.99999999999999 8.66025403784439,5.44639035015027 8.38670567945424,5.87785252292473 8.09016994374948,6.29320391049837 7.77145961456971,6.69130606358858 7.43144825477395,7.07106781186547 7.07106781186548,7.43144825477394 6.69130606358859,7.77145961456971 6.29320391049838,8.09016994374947 5.87785252292473,8.38670567945424 5.44639035015028,8.66025403784438 5.0,8.91006524188368 4.53990499739547,9.135454576426 4.06736643075801,9.33580426497202 3.58367949545301,9.51056516295153 3.09016994374948,9.65925826289068 2.58819045102522,9.78147600733806 2.0791169081776,9.87688340595138 1.56434465040231,9.94521895368273 1.04528463267654,9.98629534754574 0.523359562429444,10 0))"</span>
 </code></pre></div>
     </div>

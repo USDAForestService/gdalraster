@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9490</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9491</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9490" id="gdalraster-11119490-dev">gdalraster 1.11.1.9490 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119490-dev"></a></h2>
-<ul><li><p>add <code>GDALVector::quiet</code>: exposed read/write field to optionally suppress warnings etc. (2024-09-20)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9491" id="gdalraster-11119491-dev">gdalraster 1.11.1.9491 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119491-dev"></a></h2>
+<ul><li><p>update <code><a href="../reference/g_is_valid.html">g_is_valid()</a></code>, <code><a href="../reference/g_is_empty.html">g_is_empty()</a></code>, <code><a href="../reference/g_name.html">g_name()</a></code> and <code><a href="../reference/g_buffer.html">g_buffer()</a></code> to the new style geometry API: the OGR GEOS wrappers now operate on input of WKB raw vector, list of WKB, or character vector of WKT strings, with return as either WKB raw vector (or list of) / WKT character string (vector of) (2024-09-22)</p></li>
+<li><p>add <code>GDALVector::quiet</code>: exposed read/write field to optionally suppress warnings etc. (2024-09-20)</p></li>
 <li><p>the <code>layer</code> argument may be <code>NULL</code> or empty string in certain <code>ogr_manage</code> functions, defaulting to the first layer by index (mainly convenience for single-layer formats) (2024-09-19)</p></li>
 <li><p><code>GDALVector</code>: add get/set metadata methods for layer-level metadata if the format supports it (2024-09-19)</p></li>
 <li><p><code><a href="../reference/transform_xy.html">transform_xy()</a></code> and <code><a href="../reference/inv_project.html">inv_project()</a></code>: accept SRS arguments in any format supported by <code><a href="../reference/srs_to_wkt.html">srs_to_wkt()</a></code> (previously required SRS arguments in WKT format) (2024-09-19)</p></li>
