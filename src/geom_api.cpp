@@ -977,10 +977,7 @@ SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
         return Rcpp::wrap(NA_LOGICAL);
     }
 
-    OGRGeometryH hBufferGeom = nullptr;
-    OGRErr err = OGRERR_NONE;
-
-    hBufferGeom = OGR_G_Buffer(hGeom, dist, quad_segs);
+    OGRGeometryH hBufferGeom = OGR_G_Buffer(hGeom, dist, quad_segs);
 
     if (hBufferGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
