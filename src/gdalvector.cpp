@@ -583,7 +583,7 @@ SEXP GDALVector::getNextFeature() {
         return R_NilValue;
     }
     else {
-        // return as list with OGRFeature class attribute
+        // return as list with S3 class attribute "OGRFeature"
         df.attr("class") = R_NilValue;
         df.attr("row.names") = R_NilValue;
         df.attr("class") = Rcpp::CharacterVector{"OGRFeature", "list"};
@@ -675,7 +675,7 @@ SEXP GDALVector::getFeature(const Rcpp::RObject &fid) {
         return R_NilValue;
     }
     else {
-        // return as list with OGRFeature class attribute
+        // return as list with S3 class attribute "OGRFeature"
         df.attr("class") = R_NilValue;
         df.attr("row.names") = R_NilValue;
         df.attr("class") = Rcpp::CharacterVector{"OGRFeature", "list"};
@@ -1960,6 +1960,7 @@ void GDALVector::setFieldNames_() {
         m_field_names.push_back(geom_fld_name);
     }
 
+    // TODO
     // m_field_names.push_back("OGR_STYLE");
 }
 
@@ -2140,6 +2141,31 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
     df.names() = col_names;
     df.attr("row.names") = Rcpp::seq_len(nrow);
     return df;
+}
+
+void GDALVector::attachGISattributes_(Rcpp::List ogr_feat_obj,
+                                      const std::string &geom_col,
+                                      const std::string &geom_format,
+                                      const std::string &geom_type,
+                                      const std::string &geom_srs) const {
+
+    /* ************************************************************************
+    'ogr_feat_obj' is expected to be one of:
+        Rcpp::DataFrame (for S3 class "OGRFeature.set")
+        Rcpp::List (for S3 class "OGRFeature")
+
+    currently called from fetch(), but GIS attributes are also included via
+    fetch() in getFeature() and getNextFeature()
+    ************************************************************************ */
+
+    Rcpp::List gis = Rcpp::List::create(
+        Rcpp::Named("type") = "vector",
+        Rcpp::Named("geom_col_name") = geom_col,
+        Rcpp::Named("geom_format") = geom_format,
+        Rcpp::Named("geom_type") = geom_type,
+        Rcpp::Named("srs") = geom_srs);
+
+    ogr_feat_obj.attr("gis") = gis;
 }
 
 OGRFeatureH GDALVector::OGRFeatureFromList_(
@@ -2859,24 +2885,6 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
     return hFeat;
 }
 
-void GDALVector::attachGISattributes_(Rcpp::List ogr_feat_obj,
-                                      const std::string &geom_col,
-                                      const std::string &geom_format,
-                                      const std::string &geom_type,
-                                      const std::string &geom_srs) const {
-    // ogr_feat_obj is one of:
-    //   Rcpp::List (S3 class "OGRFeature")
-    //   Rcpp::DataFrame (S3 class "OGRFeature.set")
-
-    Rcpp::List gis = Rcpp::List::create(
-        Rcpp::Named("type") = "vector",
-        Rcpp::Named("geom_col_name") = geom_col,
-        Rcpp::Named("geom_format") = geom_format,
-        Rcpp::Named("geom_type") = geom_type,
-        Rcpp::Named("srs") = geom_srs);
-
-    ogr_feat_obj.attr("gis") = gis;
-}
 
 // ****************************************************************************
 
