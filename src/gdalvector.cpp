@@ -365,13 +365,15 @@ Rcpp::List GDALVector::getLayerDefn() const {
         OGRSpatialReferenceH hSRS = nullptr;
         hSRS = OGR_GFld_GetSpatialRef(hGeomFldDefn);
         if (hSRS == nullptr) {
-            Rcpp::warning("could not obtain geometry field SRS");
+            if (!quiet)
+                Rcpp::warning("could not obtain geometry field SRS");
             list_geom_fld_defn.push_back(NA_STRING, "srs");
         }
         else {
             char *pszSRS_WKT = nullptr;
             if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE) {
-                Rcpp::warning("error exporting geometry SRS to WKT");
+                 if (!quiet)
+                    Rcpp::warning("error exporting geometry SRS to WKT");
                 list_geom_fld_defn.push_back(NA_STRING, "srs");
             }
             else {
@@ -421,8 +423,10 @@ void GDALVector::setIgnoredFields(const Rcpp::RObject &fields) {
     checkAccess_(GA_ReadOnly);
 
     if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields)) {
-        Rcpp::Rcerr << "this layer does not have IgnoreFields capability"
-                << std::endl;
+         if (!quiet) {
+            Rcpp::Rcerr << "this layer does not have IgnoreFields capability"
+                    << std::endl;
+         }
         return;
     }
 
@@ -441,8 +445,10 @@ void GDALVector::setIgnoredFields(const Rcpp::RObject &fields) {
     }
     else {
         if (OGR_L_SetIgnoredFields(m_hLayer, oFields.data()) != OGRERR_NONE) {
-            Rcpp::Rcerr << "not all field names could be resolved"
-                << std::endl;
+             if (!quiet) {
+                Rcpp::Rcerr << "not all field names could be resolved"
+                    << std::endl;
+             }
         }
         else {
             m_ignored_fields = Rcpp::clone(fields_in);
@@ -1173,7 +1179,8 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                     << std::endl;
             std::string msg =
                     "more features potentially available than reported by `getFeatureCount()`";
-            Rcpp::warning(msg);
+            if (!quiet)
+                Rcpp::warning(msg);
             OGR_F_Destroy(hFeat);
             hFeat = nullptr;
         }
@@ -1364,13 +1371,17 @@ bool GDALVector::deleteFeature(const Rcpp::RObject &fid) {
     // NumericVector since it can carry the class attribute for integer64.
 
     if (m_eAccess == GA_ReadOnly) {
-        Rcpp::Rcerr << "cannot delete, the layer was opened read-only" <<
-                std::endl;
+         if (!quiet) {
+            Rcpp::Rcerr << "cannot delete, the layer was opened read-only" <<
+                    std::endl;
+         }
         return false;
     }
     else if (!OGR_L_TestCapability(m_hLayer, OLCDeleteFeature)) {
-        Rcpp::Rcerr << "the layer does not have delete feature capability" <<
-                std::endl;
+         if (!quiet) {
+            Rcpp::Rcerr << "the layer does not have delete feature capability" <<
+                    std::endl;
+         }
         return false;
     }
 
@@ -1391,7 +1402,8 @@ bool GDALVector::deleteFeature(const Rcpp::RObject &fid) {
         fid_in = static_cast<int64_t>(fid_[0]);
 
     if (OGR_L_DeleteFeature(m_hLayer, fid_in) != OGRERR_NONE) {
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+         if (!quiet)
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         return false;
     }
     else {
@@ -1414,8 +1426,10 @@ bool GDALVector::startTransaction(bool force) {
 
     if (!force) {
         if (!GDALDatasetTestCapability(m_hDataset, ODsCTransactions)) {
-            Rcpp::Rcerr << "dataset does not have (efficient) transaction capability"
-                    << std::endl;
+            if (!quiet) {
+                Rcpp::Rcerr << "dataset does not have (efficient) transaction capability"
+                        << std::endl;
+             }
             return false;
         }
     }
@@ -1423,14 +1437,17 @@ bool GDALVector::startTransaction(bool force) {
         if (!GDALDatasetTestCapability(m_hDataset, ODsCTransactions) &&
             !GDALDatasetTestCapability(m_hDataset, ODsCEmulatedTransactions)) {
 
-            Rcpp::Rcerr << "dataset does not have transaction capability"
-                    << std::endl;
+             if (!quiet) {
+                Rcpp::Rcerr << "dataset does not have transaction capability"
+                        << std::endl;
+             }
             return false;
         }
     }
 
     if (GDALDatasetStartTransaction(m_hDataset, force) != OGRERR_NONE) {
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+         if (!quiet)
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         return false;
     }
     else {
@@ -1442,7 +1459,8 @@ bool GDALVector::commitTransaction() {
     checkAccess_(GA_ReadOnly);
 
     if (GDALDatasetCommitTransaction(m_hDataset) != OGRERR_NONE) {
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        if (!quiet)
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         return false;
     }
     else {
@@ -1454,12 +1472,71 @@ bool GDALVector::rollbackTransaction() {
     checkAccess_(GA_ReadOnly);
 
     if (GDALDatasetRollbackTransaction(m_hDataset) != OGRERR_NONE) {
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        if (!quiet)
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         return false;
     }
     else {
         return true;
     }
+}
+
+Rcpp::CharacterVector GDALVector::getMetadata() const {
+
+    checkAccess_(GA_ReadOnly);
+
+    char **papszMD = nullptr;
+    papszMD = GDALGetMetadata(m_hLayer, nullptr);
+
+    int items = CSLCount(papszMD);
+    if (items > 0) {
+        Rcpp::CharacterVector md(items);
+        for (int i=0; i < items; ++i) {
+            md(i) = papszMD[i];
+        }
+        return md;
+    }
+    else {
+        return "";
+    }
+}
+
+bool GDALVector::setMetadata(const Rcpp::CharacterVector metadata) {
+
+    checkAccess_(GA_ReadOnly);
+
+    std::vector<const char *> metadata_in(metadata.size() + 1);
+    if (metadata.size() > 0) {
+        for (R_xlen_t i = 0; i < metadata.size(); ++i) {
+            metadata_in[i] = (const char *) (metadata[i]);
+        }
+    }
+    metadata_in[metadata.size()] = nullptr;
+
+    OGRErr err = GDALSetMetadata(m_hLayer, metadata_in.data(), nullptr);
+
+    if (err != CE_None) {
+        if (!quiet)
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        return false;
+    }
+    else {
+        return true;
+    }
+}
+
+std::string GDALVector::getMetadataItem(std::string mdi_name) const {
+
+    checkAccess_(GA_ReadOnly);
+
+    std::string mdi = "";
+
+    if (GDALGetMetadataItem(m_hLayer, mdi_name.c_str(), nullptr) != nullptr) {
+        mdi += std::string(GDALGetMetadataItem(m_hLayer, mdi_name.c_str(),
+                                               nullptr));
+    }
+
+    return mdi;
 }
 
 bool GDALVector::layerIntersection(
@@ -1490,7 +1567,7 @@ bool GDALVector::layerIntersection(
     if (err == OGRERR_NONE) {
         ret = true;
     }
-    else if(!quiet) {
+    else if (!quiet) {
         Rcpp::Rcerr << "error during Intersection, or execution interrupted" <<
                 std::endl;
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -1527,7 +1604,7 @@ bool GDALVector::layerUnion(
     if (err == OGRERR_NONE) {
         ret = true;
     }
-    else if(!quiet) {
+    else if (!quiet) {
         Rcpp::Rcerr << "error during Union, or execution interrupted" <<
                 std::endl;
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -1564,7 +1641,7 @@ bool GDALVector::layerSymDifference(
     if (err == OGRERR_NONE) {
         ret = true;
     }
-    else if(!quiet) {
+    else if (!quiet) {
         Rcpp::Rcerr << "error during SymDifference, or execution interrupted" <<
                 std::endl;
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -1601,7 +1678,7 @@ bool GDALVector::layerIdentity(
     if (err == OGRERR_NONE) {
         ret = true;
     }
-    else if(!quiet) {
+    else if (!quiet) {
         Rcpp::Rcerr << "error during Identity, or execution interrupted" <<
                 std::endl;
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -1638,7 +1715,7 @@ bool GDALVector::layerUpdate(
     if (err == OGRERR_NONE) {
         ret = true;
     }
-    else if(!quiet) {
+    else if (!quiet) {
         Rcpp::Rcerr << "error during Update, or execution interrupted" <<
                 std::endl;
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -1675,7 +1752,7 @@ bool GDALVector::layerClip(
     if (err == OGRERR_NONE) {
         ret = true;
     }
-    else if(!quiet) {
+    else if (!quiet) {
         Rcpp::Rcerr << "error during Clip, or execution interrupted" <<
                 std::endl;
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -1712,7 +1789,7 @@ bool GDALVector::layerErase(
     if (err == OGRERR_NONE) {
         ret = true;
     }
-    else if(!quiet) {
+    else if (!quiet) {
         Rcpp::Rcerr << "error during Erase, or execution interrupted" <<
                 std::endl;
         Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
@@ -2789,6 +2866,7 @@ RCPP_MODULE(mod_GDALVector) {
     // read/write fields
     .field("defaultGeomFldName", &GDALVector::defaultGeomFldName)
     .field("promoteToMulti", &GDALVector::promoteToMulti)
+    .field("quiet", &GDALVector::quiet)
     .field("returnGeomAs", &GDALVector::returnGeomAs)
     .field("wkbByteOrder", &GDALVector::wkbByteOrder)
 
@@ -2869,6 +2947,12 @@ RCPP_MODULE(mod_GDALVector) {
         "Commit a transaction")
     .method("rollbackTransaction", &GDALVector::rollbackTransaction,
         "Roll back a transaction")
+    .const_method("getMetadata", &GDALVector::getMetadata,
+        "Return a list of metadata name=value")
+    .method("setMetadata", &GDALVector::setMetadata,
+        "Set metadata from a list of name=value")
+    .const_method("getMetadataItem", &GDALVector::getMetadataItem,
+        "Return the value of a metadata item")
     .method("layerIntersection", &GDALVector::layerIntersection,
         "Intersection of this layer with a method layer")
     .method("layerUnion", &GDALVector::layerUnion,

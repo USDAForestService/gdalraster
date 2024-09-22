@@ -43,6 +43,7 @@ class GDALVector {
     // exposed read/write fields
     std::string defaultGeomFldName {"geometry"};
     bool promoteToMulti {false};
+    bool quiet {false};
     std::string returnGeomAs {"WKB"};
     std::string wkbByteOrder {"LSB"};
 
@@ -94,6 +95,10 @@ class GDALVector {
     bool startTransaction(bool force);
     bool commitTransaction();
     bool rollbackTransaction();
+
+    Rcpp::CharacterVector getMetadata() const;
+    bool setMetadata(const Rcpp::CharacterVector metadata);
+    std::string getMetadataItem(std::string mdi_name) const;
 
     bool layerIntersection(
             GDALVector method_layer,

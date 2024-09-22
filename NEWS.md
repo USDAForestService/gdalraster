@@ -1,4 +1,10 @@
-# gdalraster 1.11.1.9482 (dev)
+# gdalraster 1.11.1.9490 (dev)
+
+* add `GDALVector::quiet`: exposed read/write field to optionally suppress warnings etc. (2024-09-20)
+
+* the `layer` argument may be `NULL` or empty string in certain `ogr_manage` functions, defaulting to the first layer by index (mainly convenience for single-layer formats) (2024-09-19)
+
+* `GDALVector`: add get/set metadata methods for layer-level metadata if the format supports it (2024-09-19)
 
 * `transform_xy()` and `inv_project()`: accept SRS arguments in any format supported by `srs_to_wkt()` (previously required SRS arguments in WKT format) (2024-09-19)
 

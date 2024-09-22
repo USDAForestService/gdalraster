@@ -2335,7 +2335,7 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #' print(pts)
 #' ## id, x, y in NAD83 / UTM zone 12N
 #' ## transform to NAD83 / CONUS Albers
-#' transform_xy(pts = pts[, -1], srs_from = "EPSG:26912, srs_to = "EPSG:5070")
+#' transform_xy(pts = pts[, -1], srs_from = "EPSG:26912", srs_to = "EPSG:5070")
 transform_xy <- function(pts, srs_from, srs_to) {
     .Call(`_gdalraster_transform_xy`, pts, srs_from, srs_to)
 }

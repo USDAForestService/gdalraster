@@ -73,6 +73,7 @@ lyr <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dial
 ## Read/write fields (per-object settings)
 lyr$defaultGeomFldName
 lyr$promoteToMulti
+lyr$quiet
 lyr$returnGeomAs
 lyr$wkbByteOrder
 
@@ -122,6 +123,10 @@ lyr$startTransaction(force)
 lyr$commitTransaction()
 lyr$rollbackTransaction()
 
+ds$getMetadata()
+ds$setMetadata(metadata)
+ds$getMetadataItem(mdi_name)
+
 lyr$close()
 }
 }
@@ -170,6 +175,10 @@ MultiLineString during read operations (i.e., with methods \verb{$getFeature()},
 \verb{$getNextFeature()}, \verb{$fetch()}). Defaults to \code{FALSE}. Setting to \code{TRUE} may
 be useful when reading from layers such as shapefiles that mix, e.g.,
 Polygons and MultiPolygons.
+
+\code{$quiet}\cr
+A logical value, \code{FALSE} by default. Set to \code{TRUE} to suppress various
+messages and warnings.
 
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.
@@ -570,6 +579,20 @@ transaction, if transactions are supported by the data source.
 Returns a logical value, \code{TRUE} if the transaction is successfully rolled
 back. Returns \code{FALSE} if no transaction is active, or the rollback fails,
 or if the data source does not support transactions.
+
+\code{$getMetadata()}\cr
+Returns a character vector of all metadata \code{NAME=VALUE} pairs for the
+layer or empty string (\code{""}) if there are no metadata items.
+
+\code{$setMetadata(metadata)}\cr
+Sets metadata on the layer if the format supports it. The \code{metadata}
+argument is given as a character vector of \code{NAME=VALUE} pairs.
+Returns logical \code{TRUE} on success or \code{FALSE} if metadata could
+not be set.
+
+\code{$getMetadataItem(mdi_name)}\cr
+Returns the value of a specific metadata item named \code{mdi_name}, or empty
+string (\code{""}) if no matching item is found.
 
 \code{$close()}\cr
 Closes the vector dataset (no return value, called for side effects).
