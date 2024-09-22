@@ -577,9 +577,10 @@ SEXP GDALVector::getNextFeature() {
         return R_NilValue;
     }
     else {
-        // return as list
+        // return as list with GDALVector.feature class attribute
         df.attr("class") = R_NilValue;
         df.attr("row.names") = R_NilValue;
+        df.attr("class") = Rcpp::CharacterVector{"GDALVector.feature", "list"};
 
         // unlist fields that originate in a data frame list column
         for (R_xlen_t i = 0; i < df.size(); i++) {
@@ -668,9 +669,10 @@ SEXP GDALVector::getFeature(const Rcpp::RObject &fid) {
         return R_NilValue;
     }
     else {
-        // return as list
+        // return as list with GDALVector.feature class attribute
         df.attr("class") = R_NilValue;
         df.attr("row.names") = R_NilValue;
+        df.attr("class") = Rcpp::CharacterVector{"GDALVector.feature", "list"};
 
         // unlist fields that originate in a data frame list column
         for (R_xlen_t i = 0; i < df.size(); i++) {
@@ -2018,8 +2020,11 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
     }
 
     df.names() = col_names;
-    df.attr("class") = "data.frame";
+    df.attr("class") =
+            Rcpp::CharacterVector{"GDALVector.feature", "data.frame"};
+
     df.attr("row.names") = Rcpp::seq_len(nrow);
+    attachGISattributes_(df);
     return df;
 }
 
@@ -2738,6 +2743,20 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
     }
 
     return hFeat;
+}
+
+void GDALVector::attachGISattributes_(Rcpp::List feature_set) const {
+    std::string geomFldName(OGR_L_GetGeometryColumn(m_hLayer));
+    if (geomFldName == "")
+        geomFldName = this->defaultGeomFldName;
+
+    Rcpp::List gis = Rcpp::List::create(
+        Rcpp::Named("type") = "vector",
+        Rcpp::Named("geometry_type") = getGeomType(),
+        Rcpp::Named("geometry_col_name") = geomFldName,
+        Rcpp::Named("srs") = getSpatialRef());
+
+    feature_set.attr("gis") = gis;
 }
 
 // ****************************************************************************
