@@ -435,27 +435,27 @@ std::string g_add_geom(const std::string &sub_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_is_valid")]]
-bool g_is_valid(const std::string &geom) {
+SEXP g_is_valid(const Rcpp::RawVector &geom, bool quiet = false) {
 // Test if the geometry is valid.
 // This function is built on the GEOS library, check it for the definition
 // of the geometry operation. If OGR is built without the GEOS library,
 // this function will always return FALSE.
 
-    OGRGeometryH hGeom = nullptr;
-    OGRErr err = OGRERR_NONE;
-    char *pszWKT = const_cast<char *>(geom.c_str());
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    std::string msg = "";
 
-    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
-    if (err != OGRERR_NONE || hGeom == nullptr) {
-        if (hGeom != nullptr)
-            OGR_G_DestroyGeometry(hGeom);
-        Rcpp::stop("failed to create geometry object from WKT string");
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            msg = "failed to create geometry object from WKB, NA returned";
+            Rcpp::warning(msg);
+        }
+        return Rcpp::wrap(NA_LOGICAL);
     }
 
     bool ret = false;
     ret = OGR_G_IsValid(hGeom);
     OGR_G_DestroyGeometry(hGeom);
-    return ret;
+    return Rcpp::wrap(ret);
 }
 
 //' @noRd
@@ -588,46 +588,46 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_is_empty")]]
-bool g_is_empty(const std::string &geom) {
+SEXP g_is_empty(const Rcpp::RawVector &geom, bool quiet = false) {
 // Test if the geometry is empty.
 
-    OGRGeometryH hGeom = nullptr;
-    OGRErr err = OGRERR_NONE;
-    char *pszWKT = const_cast<char *>(geom.c_str());
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    std::string msg = "";
 
-    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
-    if (err != OGRERR_NONE || hGeom == nullptr) {
-        if (hGeom != nullptr)
-            OGR_G_DestroyGeometry(hGeom);
-        Rcpp::stop("failed to create geometry object from WKT string");
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            msg = "failed to create geometry object from WKB, NA returned";
+            Rcpp::warning(msg);
+        }
+        return Rcpp::wrap(NA_LOGICAL);
     }
 
     bool ret = false;
     ret = OGR_G_IsEmpty(hGeom);
     OGR_G_DestroyGeometry(hGeom);
-    return ret;
+    return Rcpp::wrap(ret);
 }
 
 //' @noRd
 // [[Rcpp::export(name = ".g_name")]]
-std::string g_name(const std::string &geom) {
+SEXP g_name(const Rcpp::RawVector &geom, bool quiet = false) {
 // extract the geometry type name from a WKT geometry
 
-    OGRGeometryH hGeom = nullptr;
-    OGRErr err = OGRERR_NONE;
-    char *pszWKT = const_cast<char *>(geom.c_str());
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    std::string msg = "";
 
-    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
-    if (err != OGRERR_NONE || hGeom == nullptr) {
-        if (hGeom != nullptr)
-            OGR_G_DestroyGeometry(hGeom);
-        Rcpp::stop("failed to create geometry object from WKT string");
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            msg = "failed to create geometry object from WKB, NA returned";
+            Rcpp::warning(msg);
+        }
+        return Rcpp::wrap(NA_STRING);
     }
 
     std::string ret = "";
     ret = OGR_G_GetGeometryName(hGeom);
     OGR_G_DestroyGeometry(hGeom);
-    return ret;
+    return Rcpp::wrap(ret);
 }
 
 
@@ -950,7 +950,9 @@ bool g_overlaps(const std::string &this_geom, const std::string &other_geom) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_buffer")]]
-std::string g_buffer(const std::string &geom, double dist, int quad_segs = 30) {
+SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
+              bool as_iso = false, const std::string &byte_order = "LSB",
+              bool quiet = false) {
 // Compute buffer of geometry.
 
 // Builds a new geometry containing the buffer region around the geometry on
@@ -964,35 +966,50 @@ std::string g_buffer(const std::string &geom, double dist, int quad_segs = 30) {
 // numbers of vertices in the resulting buffer geometry while small numbers
 // reduce the accuracy of the result.
 
-    OGRGeometryH hGeom = nullptr;
-    OGRGeometryH hBufferGeom = nullptr;
-    OGRErr err = OGRERR_NONE;
-    char *pszWKT = const_cast<char *>(geom.c_str());
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    std::string msg = "";
 
-    err = OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeom);
-    if (err != OGRERR_NONE || hGeom == nullptr) {
-        if (hGeom != nullptr)
-            OGR_G_DestroyGeometry(hGeom);
-        Rcpp::stop("failed to create geometry object from WKT string");
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            msg = "failed to create geometry object from WKB, NA returned";
+            Rcpp::warning(msg);
+        }
+        return Rcpp::wrap(NA_LOGICAL);
     }
 
-    hBufferGeom = OGR_G_Buffer(hGeom, dist, quad_segs);
+    OGRGeometryH hBufferGeom = OGR_G_Buffer(hGeom, dist, quad_segs);
+
     if (hBufferGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
-        Rcpp::stop("failed to create buffer geometry");
+        if (!quiet) {
+            Rcpp::warning("OGR_G_Buffer() gave NULL geometry, NA returned");
+        }
+        return Rcpp::wrap(NA_LOGICAL);
     }
 
-    char *pszWKT_out = nullptr;
-    OGR_G_ExportToWkt(hBufferGeom, &pszWKT_out);
-    std::string wkt_out = "";
-    if (pszWKT_out != nullptr) {
-        wkt_out = pszWKT_out;
-        CPLFree(pszWKT_out);
+    const int nWKBSize = OGR_G_WkbSize(hBufferGeom);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        OGR_G_DestroyGeometry(hBufferGeom);
+        if (!quiet) {
+            Rcpp::warning("failed to obtain WKB size of output geometry");
+        }
+        return Rcpp::wrap(NA_LOGICAL);
     }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hBufferGeom, &wkb[0], as_iso, byte_order);
     OGR_G_DestroyGeometry(hGeom);
     OGR_G_DestroyGeometry(hBufferGeom);
+    if (!result) {
+        if (!quiet) {
+            msg = "failed to export WKB raw vector for output geometry";
+            Rcpp::warning(msg);
+        }
+        return Rcpp::wrap(NA_LOGICAL);
+    }
 
-    return wkt_out;
+    return wkb;
 }
 
 

@@ -1997,8 +1997,8 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_is_valid <- function(geom) {
-    .Call(`_gdalraster_g_is_valid`, geom)
+.g_is_valid <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_is_valid`, geom, quiet)
 }
 
 #' @noRd
@@ -2007,13 +2007,13 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_is_empty <- function(geom) {
-    .Call(`_gdalraster_g_is_empty`, geom)
+.g_is_empty <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_is_empty`, geom, quiet)
 }
 
 #' @noRd
-.g_name <- function(geom) {
-    .Call(`_gdalraster_g_name`, geom)
+.g_name <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_name`, geom, quiet)
 }
 
 #' @noRd
@@ -2057,8 +2057,8 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_buffer <- function(geom, dist, quad_segs = 30L) {
-    .Call(`_gdalraster_g_buffer`, geom, dist, quad_segs)
+.g_buffer <- function(geom, dist, quad_segs = 30L, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_buffer`, geom, dist, quad_segs, as_iso, byte_order, quiet)
 }
 
 #' @noRd

@@ -4,22 +4,25 @@
 \alias{g_is_valid}
 \title{Test if a geometry is valid}
 \usage{
-g_is_valid(wkt)
+g_is_valid(geom, quiet = FALSE)
 }
 \arguments{
-\item{wkt}{Character. OGC WKT string for a simple feature geometry.}
+\item{geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-logical scalar. \code{TRUE} if the geometry is valid, otherwise
-\code{FALSE}.
+logical vector of the same length as the number of input
+geometries in \code{geom}, containing \code{TRUE} for the corresponding geometies
+that are valid or \code{FALSE} for invalid geometries.
 }
 \description{
 \code{g_is_valid()} tests whether a geometry is valid.
 }
 \examples{
 g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
-g_is_valid(g1)
-
-g2 <- "POLYGON ((0 0, 10 10, 10 0, 0 1))"
-g_is_valid(g2)
+g2 <- "POLYGON ((0 0, 10 10, 10 0))"
+g3 <- "POLYGON ((0 0, 10 10, 10 0, 0 1))"
+g_is_valid(c(g1, g2, g3))
 }
