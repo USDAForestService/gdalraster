@@ -150,7 +150,11 @@ class GDALVector {
     void setFieldNames_();
     SEXP createDF_(R_xlen_t nrow) const;
     OGRFeatureH OGRFeatureFromList_(const Rcpp::RObject &feature) const;
-    void attachGISattributes_(Rcpp::List feature_set) const;
+    void attachGISattributes_(Rcpp::List ogr_feat_obj,
+                              const std::string &geom_col,
+                              const std::string &geom_format,
+                              const std::string &geom_type,
+                              const std::string &geom_srs) const;
 
  private:
     std::string m_dsn {""};
