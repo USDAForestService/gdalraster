@@ -4,13 +4,18 @@
 \alias{g_name}
 \title{Extract the geometry type name from a WKT geometry}
 \usage{
-g_name(wkt)
+g_name(geom, quiet = FALSE)
 }
 \arguments{
-\item{wkt}{Character. OGC WKT string for a simple feature geometry.}
+\item{geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-WKT name for this geometry type.
+character vector of the same length as the number of input
+geometries in \code{geom}, containing the WKT names for the corresponding
+geometies.
 }
 \description{
 \code{g_name()} returns the name for this geometry type in well known text

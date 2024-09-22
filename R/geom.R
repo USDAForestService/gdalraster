@@ -267,25 +267,80 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' the geometry on which it is invoked. The buffer is a polygon containing
 #' the region within the buffer distance of the original geometry.
 #'
-#' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
 #' @param dist Numeric buffer distance in units of the `wkt` geometry.
 #' @param quad_segs Integer number of segments used to define a 90 degree
 #' curve (quadrant of a circle). Large values result in large numbers of
 #' vertices in the resulting buffer geometry while small numbers reduce the
 #' accuracy of the result.
-#' @return Character string for an OGC WKT polygon.
-#'
-#' @seealso
-#' [bbox_from_wkt()], [bbox_to_wkt()]
+#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' format (the default), or `FALSE` to return as WKT.
+#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
+#' @param byte_order Character string specifying the byte order when output is
+#' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return
+#' A polygon as WKB raw vector or WKT string, or a list/character vector of
+#' polygons as WKB/WKT with length equal to `length(geom)`. `NA` is returned
+#' with a warning if an input geometry cannot be converted into an OGR
+#' geometry object, or if an error occurs in the call to Buffer() in the
+#' underlying OGR API.
 #'
 #' @examples
-#' g_buffer(wkt = "POINT (0 0)", dist = 10)
+#' g_buffer("POINT (0 0)", dist = 10, as_wkb = FALSE)
 #' @export
-g_buffer <- function(wkt, dist, quad_segs = 30L) {
-    if (!(is.character(wkt) && length(wkt) == 1))
-        stop("'wkt' must be a length-1 character vector", call. = FALSE)
+g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
+                     as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
 
-    return(.g_buffer(wkt, dist, quad_segs))
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(geom)) {
+        wkb <- .g_buffer(geom, dist, quad_segs, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        wkb <- lapply(geom, .g_buffer, dist, quad_segs, as_iso,
+                      byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_buffer(g_wk2wk(geom), dist, quad_segs, as_iso,
+                             byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_buffer, dist, quad_segs,
+                          as_iso, byte_order, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
 }
 
 #' Apply a coordinate transformation to a WKT geometry
@@ -360,8 +415,12 @@ g_transform <- function(wkt, srs_from, srs_to, wrap_date_line = FALSE,
 #' `g_name()` returns the name for this geometry type in well known text
 #' format.
 #'
-#' @param wkt Character. OGC WKT string for a simple feature geometry.
-#' @return WKT name for this geometry type.
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return character vector of the same length as the number of input
+#' geometries in `geom`, containing the WKT names for the corresponding
+#' geometies.
 #'
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
@@ -369,53 +428,115 @@ g_transform <- function(wkt, srs_from, srs_to, wrap_date_line = FALSE,
 #' bbox_to_wkt(ds$bbox()) |> g_name()
 #' ds$close()
 #' @export
-g_name <- function(wkt) {
-    if (!(is.character(wkt) && length(wkt) == 1))
-        stop("'wkt' must be a length-1 character vector", call. = FALSE)
+g_name <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
 
-    return(.g_name(wkt))
+    ret <- NULL
+    if (is.raw(geom)) {
+        ret <- .g_name(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_name, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_name(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_name, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' Test if a geometry is empty
 #'
 #' `g_is_empty()` tests whether a geometry has no points.
 #'
-#' @param wkt Character. OGC WKT string for a simple feature geometry.
-#' @return logical scalar. `TRUE` if the geometry has no points, otherwise
-#' `FALSE`.
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return logical vector of the same length as the number of input
+#' geometries in `geom`, containing `TRUE` for the corresponding geometies
+#' that are empty or `FALSE` for non-empty geometries.
 #'
 #' @examples
 #' g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
 #' g2 <- "POLYGON ((5 1, 9 5, 9 1, 5 1))"
 #' g_difference(g2, g1) |> g_is_empty()
 #' @export
-g_is_empty <- function(wkt) {
-    if (!(is.character(wkt) && length(wkt) == 1))
-        stop("'wkt' must be a length-1 character vector", call. = FALSE)
+g_is_empty <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
 
-    return(.g_is_empty(wkt))
+    ret <- NULL
+    if (is.raw(geom)) {
+        ret <- .g_is_empty(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_is_empty, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_is_empty(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_is_empty, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' Test if a geometry is valid
 #'
 #' `g_is_valid()` tests whether a geometry is valid.
 #'
-#' @param wkt Character. OGC WKT string for a simple feature geometry.
-#' @return logical scalar. `TRUE` if the geometry is valid, otherwise
-#' `FALSE`.
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return logical vector of the same length as the number of input
+#' geometries in `geom`, containing `TRUE` for the corresponding geometies
+#' that are valid or `FALSE` for invalid geometries.
 #'
 #' @examples
 #' g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
-#' g_is_valid(g1)
-#'
-#' g2 <- "POLYGON ((0 0, 10 10, 10 0, 0 1))"
-#' g_is_valid(g2)
+#' g2 <- "POLYGON ((0 0, 10 10, 10 0))"
+#' g3 <- "POLYGON ((0 0, 10 10, 10 0, 0 1))"
+#' g_is_valid(c(g1, g2, g3))
 #' @export
-g_is_valid <- function(wkt) {
-    if (!(is.character(wkt) && length(wkt) == 1))
-        stop("'wkt' must be a length-1 character vector", call. = FALSE)
+g_is_valid <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
 
-    return(.g_is_valid(wkt))
+    ret <- NULL
+    if (is.raw(geom)) {
+        ret <- .g_is_valid(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_is_valid, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_is_valid(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_is_valid, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' Attempt to make invalid geometries valid
@@ -519,17 +640,17 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
     wkb <- NULL
     if (is.raw(geom)) {
         wkb <- .g_make_valid(geom, method, keep_collapsed, as_iso,
-                             byte_order)
+                             byte_order, quiet)
     } else if (is.list(geom) && is.raw(geom[[1]])) {
         wkb <- lapply(geom, .g_make_valid, method, keep_collapsed, as_iso,
-                      byte_order)
+                      byte_order, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
             wkb <- .g_make_valid(g_wk2wk(geom), method, keep_collapsed, as_iso,
-                                 byte_order)
+                                 byte_order, quiet)
         } else {
             wkb <- lapply(g_wk2wk(geom), .g_make_valid, method, keep_collapsed,
-                          as_iso, byte_order)
+                          as_iso, byte_order, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",

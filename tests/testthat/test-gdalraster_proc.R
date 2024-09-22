@@ -289,7 +289,7 @@ test_that("rasterToVRT works", {
 
     # subwindow outside raster extent
     expect_error(rasterToVRT(evt_file,
-                             subwindow = bbox_from_wkt(.g_buffer(bnd, 10000)),
+                             subwindow = bbox_from_wkt(g_buffer(bnd, 10000)),
                              src_align=TRUE))
 
     ## subset and pixel align two rasters

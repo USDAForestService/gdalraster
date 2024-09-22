@@ -11,12 +11,12 @@ test_that("geos internal functions work on wkt geometries", {
     bad_bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
     5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5,
     325298.1 5104929.4))"
-    expect_false(.g_is_valid(bad_bnd))
+    expect_false(g_is_valid(bad_bnd))
 
     bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
     5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5,
     325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
-    expect_true(.g_is_valid(bnd))
+    expect_true(g_is_valid(bnd))
 
     x <- c(324467.3, 323909.4, 323794.2)
     y <- c(5104814.2, 5104365.4, 5103455.8)
@@ -81,9 +81,9 @@ test_that("geos internal functions work on wkt geometries", {
     expect_error(.g_overlaps("invalid WKT", bnd))
     expect_error(.g_overlaps(bb, "invalid WKT"))
 
-    expect_equal(round(bbox_from_wkt(.g_buffer(bnd, 100))),
+    expect_equal(round(bbox_from_wkt(g_buffer(bnd, 100, as_wkb = FALSE))),
                  round(c(323694.2, 5102785.8, 326520.0, 5105029.4)))
-    expect_error(.g_buffer("invalid WKT", 100))
+    expect_error(g_buffer("invalid WKT", 100))
 
     expect_equal(round(.g_area(bnd)), 4039645)
     expect_equal(.g_area(.g_intersection(bb, bnd)), .g_area(bnd))
@@ -273,7 +273,7 @@ test_that("geometry binary predicates/ops return correct values", {
 test_that("g_buffer returns correct values", {
     pt <- "POINT (0 0)"
     expect_error(g_buffer(wkt = "invalid WKT", dist = 10))
-    bb <- bbox_from_wkt(g_buffer(wkt = pt, dist = 10))
+    bb <- bbox_from_wkt(g_buffer(pt, dist = 10, as_wkb = FALSE))
     expect_equal(bb, c(-10, -10,  10,  10))
 })
 
