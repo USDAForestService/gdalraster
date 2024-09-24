@@ -583,10 +583,11 @@ SEXP GDALVector::getNextFeature() {
         return R_NilValue;
     }
     else {
-        // return as list with S3 class attribute "OGRFeature"
+        // return as list potentially with S3 class attribute "OGRFeature"
         df.attr("class") = R_NilValue;
         df.attr("row.names") = R_NilValue;
-        df.attr("class") = Rcpp::CharacterVector{"OGRFeature", "list"};
+        if (df.hasAttribute("gis"))
+            df.attr("class") = Rcpp::CharacterVector{"OGRFeature", "list"};
 
         // unlist fields that originate in a data frame list column
         for (R_xlen_t i = 0; i < df.size(); i++) {
@@ -675,10 +676,11 @@ SEXP GDALVector::getFeature(const Rcpp::RObject &fid) {
         return R_NilValue;
     }
     else {
-        // return as list with S3 class attribute "OGRFeature"
+        // return as list potentially with S3 class attribute "OGRFeature"
         df.attr("class") = R_NilValue;
         df.attr("row.names") = R_NilValue;
-        df.attr("class") = Rcpp::CharacterVector{"OGRFeature", "list"};
+        if (df.hasAttribute("gis"))
+            df.attr("class") = Rcpp::CharacterVector{"OGRFeature", "list"};
 
         // unlist fields that originate in a data frame list column
         for (R_xlen_t i = 0; i < df.size(); i++) {
@@ -728,21 +730,16 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         Rcpp::stop("'n' is invalid");
     }
 
-    Rcpp::DataFrame df = createDF_(fetch_num);
-    if (fetch_num == 0)
-        return df;
-
     int nFields = OGR_FD_GetFieldCount(hFDefn);
     int nGeomFields = OGR_FD_GetGeomFieldCount(hFDefn);
     bool include_geom = true;
-    std::string geom_column = "";  // first if multiple, for gis attributes
-    std::string geom_format = "unspecified";   // WKB/WKT for gis attributes
-    std::string geom_type = "UNKNOWN";  // for gis attributes
-    std::string geom_srs = "";  // for gis attributes
+    Rcpp::CharacterVector geom_column{};  // column name(s) for gis attributes
+    Rcpp::CharacterVector geom_col_type{};  // geom type(s) for gis attributes
+    Rcpp::CharacterVector geom_col_srs{};  // SRS for gis attributes
+    std::string geom_format{};   // WKB/WKT/SUMMARY/TYPE_NAME
 
     if (EQUAL(this->returnGeomAs.c_str(), "NONE")) {
         include_geom = false;
-        geom_format = "NONE";
     }
     else if (!(EQUAL(this->returnGeomAs.c_str(), "WKB") ||
                EQUAL(this->returnGeomAs.c_str(), "WKB_ISO") ||
@@ -770,6 +767,59 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         m_ignored_fields.push_back("OGR_GEOMETRY");
         setIgnoredFields(m_ignored_fields);
         reset_ignored_fields = true;
+    }
+
+    Rcpp::DataFrame df = createDF_(fetch_num);
+
+    if (include_geom) {
+        // get gis attributes
+        geom_format = this->returnGeomAs;
+
+        for (int i = 0; i < nGeomFields; ++i) {
+            OGRGeomFieldDefnH hGeomFldDefn = OGR_FD_GetGeomFieldDefn(hFDefn, i);
+            if (hGeomFldDefn == nullptr)
+                Rcpp::stop("could not obtain geometry field definition");
+
+            if (OGR_GFld_IsIgnored(hGeomFldDefn))
+                continue;
+
+            if (EQUAL(OGR_GFld_GetNameRef(hGeomFldDefn), ""))
+                geom_column.push_back(this->defaultGeomFldName);
+            else
+                geom_column.push_back(OGR_GFld_GetNameRef(hGeomFldDefn));
+
+            OGRwkbGeometryType eType = OGR_GFld_GetType(hGeomFldDefn);
+            geom_col_type.push_back(getWkbGeomString_(eType));
+
+            OGRSpatialReferenceH hSRS =
+                    OGR_GFld_GetSpatialRef(hGeomFldDefn);
+
+            if (hSRS != nullptr) {
+                char *pszSRS_WKT = nullptr;
+                if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE) {
+                    if (!quiet)
+                        Rcpp::warning("error exporting geometry SRS to WKT");
+                }
+                else {
+                    geom_col_srs.push_back(pszSRS_WKT);
+                }
+                CPLFree(pszSRS_WKT);
+            }
+            else {
+                 geom_col_srs.push_back("");
+            }
+        }
+
+    df.attr("class") = Rcpp::CharacterVector{"OGRFeature.set", "data.frame"};
+    attachGISattributes_(df, geom_column, geom_col_type, geom_col_srs,
+                         geom_format);
+    }
+
+    if (fetch_num == 0) {
+        if (reset_ignored_fields)
+            setIgnoredFields(orig_ignored_fields);
+
+        return df;
     }
 
     OGRFeatureH hFeat = nullptr;
@@ -1037,34 +1087,10 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 OGRGeomFieldDefnH hGeomFldDefn =
                         OGR_F_GetGeomFieldDefnRef(hFeat, i);
                 if (hGeomFldDefn == nullptr)
-                    Rcpp::stop("could not obtain geometry field def");
+                    Rcpp::stop("could not obtain geometry field definition");
 
                 if (OGR_GFld_IsIgnored(hGeomFldDefn))
                     continue;
-
-                if (i == 0) {
-                    geom_column = OGR_GFld_GetNameRef(hGeomFldDefn);
-                    if (geom_column == "")
-                        geom_column = this->defaultGeomFldName;
-
-                    OGRwkbGeometryType eType = OGR_GFld_GetType(hGeomFldDefn);
-                    geom_type = getWkbGeomString_(eType);
-
-                    OGRSpatialReferenceH hSRS =
-                            OGR_GFld_GetSpatialRef(hGeomFldDefn);
-
-                    if (hSRS != nullptr) {
-                        char *pszSRS_WKT = nullptr;
-                        if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE) {
-                            if (!quiet)
-                                Rcpp::warning("error exporting geometry SRS to WKT");
-                        }
-                        else {
-                            geom_srs = pszSRS_WKT;
-                        }
-                        CPLFree(pszSRS_WKT);
-                    }
-                }
 
                 OGRGeometryH hGeom = nullptr;
                 bool destroy_geom = false;
@@ -1109,7 +1135,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 col_num += 1;
 
                 if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKB")) {
-                    geom_format = "WKB";
                     Rcpp::List col = df[col_num];
 
                     if (hGeom == nullptr) {
@@ -1138,7 +1163,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
 
                 else if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKT")) {
-                    geom_format = "WKT";
                     Rcpp::CharacterVector col = df[col_num];
                     if (hGeom == nullptr) {
                         col[row_num] = NA_STRING;
@@ -1156,7 +1180,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
 
                 else if (EQUAL(this->returnGeomAs.c_str(), "SUMMARY")) {
-                    geom_format = "SUMMARY";
                     Rcpp::CharacterVector col = df[col_num];
                     if (hGeom == nullptr) {
                         col[row_num] = NA_STRING;
@@ -1185,7 +1208,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
 
                 else if (EQUAL(this->returnGeomAs.c_str(), "TYPE_NAME")) {
-                    geom_format = "TYPE_NAME";
                     Rcpp::CharacterVector col = df[col_num];
                     if (hGeom != nullptr)
                         col[row_num] = OGR_G_GetGeometryName(hGeom);
@@ -1224,9 +1246,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         setIgnoredFields(orig_ignored_fields);
 
     if (row_num == fetch_num) {
-        attachGISattributes_(df, geom_column, geom_format, geom_type,
-                             geom_srs);
-
         return df;
     }
     else {
@@ -1325,9 +1344,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 }
             }
         }
-
-        attachGISattributes_(df_trunc, geom_column, geom_format, geom_type,
-                             geom_srs);
 
         return df_trunc;
     }
@@ -2137,17 +2153,17 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
         col_names[col_num] = geomFldName;
     }
 
-    df.attr("class") = Rcpp::CharacterVector{"OGRFeature.set", "data.frame"};
+    df.attr("class") = "data.frame";
     df.names() = col_names;
     df.attr("row.names") = Rcpp::seq_len(nrow);
     return df;
 }
 
 void GDALVector::attachGISattributes_(Rcpp::List ogr_feat_obj,
-                                      const std::string &geom_col,
-                                      const std::string &geom_format,
-                                      const std::string &geom_type,
-                                      const std::string &geom_srs) const {
+        const Rcpp::CharacterVector &geom_col,
+        const Rcpp::CharacterVector &geom_col_type,
+        const Rcpp::CharacterVector &geom_col_srs,
+        const std::string &geom_format) const {
 
     /* ************************************************************************
     'ogr_feat_obj' is expected to be one of:
@@ -2161,9 +2177,9 @@ void GDALVector::attachGISattributes_(Rcpp::List ogr_feat_obj,
     Rcpp::List gis = Rcpp::List::create(
         Rcpp::Named("type") = "vector",
         Rcpp::Named("geom_col_name") = geom_col,
-        Rcpp::Named("geom_format") = geom_format,
-        Rcpp::Named("geom_type") = geom_type,
-        Rcpp::Named("srs") = geom_srs);
+        Rcpp::Named("geom_col_type") = geom_col_type,
+        Rcpp::Named("geom_col_srs") = geom_col_srs,
+        Rcpp::Named("geom_format") = geom_format);
 
     ogr_feat_obj.attr("gis") = gis;
 }
