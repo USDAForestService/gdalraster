@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9491 (dev)
+# gdalraster 1.11.1.9492 (dev)
+
+* add `g_summary()`: obtain text summaries of WKB/WKT geometries (GDAL >= 3.7) (2024-09-24)
 
 * update `g_is_valid()`, `g_is_empty()`, `g_name()` and `g_buffer()` to the new style geometry API: the OGR GEOS wrappers now operate on input of WKB raw vector, list of WKB, or character vector of WKT strings, with return as either WKB raw vector (or list of) / WKT character string (vector of) (2024-09-22)
 

@@ -2017,6 +2017,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_summary <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_summary`, geom, quiet)
+}
+
+#' @noRd
 .g_intersects <- function(this_geom, other_geom) {
     .Call(`_gdalraster_g_intersects`, this_geom, other_geom)
 }

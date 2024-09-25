@@ -98,6 +98,7 @@ reference:
   - g_length
   - g_make_valid
   - g_name
+  - g_summary
   - g_transform
   - g_wk2wk
   - geos_version

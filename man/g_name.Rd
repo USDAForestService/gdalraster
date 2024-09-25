@@ -2,7 +2,7 @@
 % Please edit documentation in R/geom.R
 \name{g_name}
 \alias{g_name}
-\title{Extract the geometry type name from a WKT geometry}
+\title{Extract geometry type names from WKB/WKT geometries}
 \usage{
 g_name(geom, quiet = FALSE)
 }
@@ -18,8 +18,7 @@ geometries in \code{geom}, containing the WKT names for the corresponding
 geometies.
 }
 \description{
-\code{g_name()} returns the name for this geometry type in well known text
-format.
+\code{g_name()} returns geometry type names in well known text format.
 }
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")

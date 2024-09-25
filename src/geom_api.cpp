@@ -9,6 +9,7 @@
 
 #include "cpl_port.h"
 #include "cpl_conv.h"
+#include "cpl_string.h"
 #include "ogr_api.h"
 #include "ogr_spatialref.h"
 #include "ogr_srs_api.h"
@@ -611,7 +612,7 @@ SEXP g_is_empty(const Rcpp::RawVector &geom, bool quiet = false) {
 //' @noRd
 // [[Rcpp::export(name = ".g_name")]]
 SEXP g_name(const Rcpp::RawVector &geom, bool quiet = false) {
-// extract the geometry type name from a WKT geometry
+// extract the geometry type name from a WKB/WKT geometry
 
     OGRGeometryH hGeom = createGeomFromWkb(geom);
     std::string msg = "";
@@ -628,6 +629,36 @@ SEXP g_name(const Rcpp::RawVector &geom, bool quiet = false) {
     ret = OGR_G_GetGeometryName(hGeom);
     OGR_G_DestroyGeometry(hGeom);
     return Rcpp::wrap(ret);
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_summary")]]
+SEXP g_summary(const Rcpp::RawVector &geom, bool quiet = false) {
+// "dump readable" summary of a WKB/WKT geometry
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 7, 0)
+    Rcpp::stop("`g_summary()` requires GDAL >= 3.7");
+#else
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    std::string msg = "";
+
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            msg = "failed to create geometry object from WKB, NA returned";
+            Rcpp::warning(msg);
+        }
+        return Rcpp::wrap(NA_STRING);
+    }
+
+    const auto poGeom = OGRGeometry::FromHandle(hGeom);
+    std::vector<const char *> options = {"DISPLAY_GEOMETRY=SUMMARY", nullptr};
+    CPLString s = poGeom->dumpReadable(nullptr, options.data());
+    s.replaceAll('\n', ' ');
+    std::string ret = s.Trim();
+    delete poGeom;
+    return Rcpp::wrap(ret);
+
+#endif
 }
 
 

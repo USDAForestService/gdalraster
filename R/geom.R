@@ -410,10 +410,9 @@ g_transform <- function(wkt, srs_from, srs_to, wrap_date_line = FALSE,
                         date_line_offset))
 }
 
-#' Extract the geometry type name from a WKT geometry
+#' Extract geometry type names from WKB/WKT geometries
 #'
-#' `g_name()` returns the name for this geometry type in well known text
-#' format.
+#' `g_name()` returns geometry type names in well known text format.
 #'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
@@ -445,6 +444,58 @@ g_name <- function(geom, quiet = FALSE) {
             ret <- .g_name(g_wk2wk(geom), quiet)
         } else {
             ret <- sapply(g_wk2wk(geom), .g_name, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' Obtain text summaries of WKB/WKT geometries
+#'
+#' `g_summary()` returns text summaries of WKB/WKT geometries.
+#' Requires GDAL >= 3.7.
+#'
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return character vector of the same length as the number of input
+#' geometries in `geom`, containing summaries for the corresponding geometies.
+#'
+#' @examples
+#' # Requires GDAL >= 3.7
+#' if (as.integer(gdal_version()[2]) >= 3080000) {
+#'   f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
+#'   lyr <- new(GDALVector, f, "mtbs_perims")
+#'
+#'   feat <- lyr$getNextFeature()
+#'   g_summary(feat$geom)
+#'
+#'   feat_set <- lyr$fetch(5)
+#'   g_summary(feat_set$geom)
+#'
+#'   lyr$close()
+#' }
+#' @export
+g_summary <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(geom)) {
+        ret <- .g_summary(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_summary, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_summary(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_summary, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
