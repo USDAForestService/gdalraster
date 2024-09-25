@@ -53,6 +53,7 @@ Imports:
     stats,
     tools,
     utils,
+    wk,
     xml2
 LinkingTo: Rcpp, RcppInt64
 Suggests:
@@ -60,8 +61,7 @@ Suggests:
     knitr,
     rmarkdown,
     scales,
-    testthat (>= 3.0.0),
-    wk
+    testthat (>= 3.0.0)
 NeedsCompilation: yes
 SystemRequirements: GDAL (>= 3.1.0, built against GEOS), PROJ, libxml2
 Encoding: UTF-8
