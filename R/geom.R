@@ -465,16 +465,19 @@ g_name <- function(geom, quiet = FALSE) {
 #' geometries in `geom`, containing summaries for the corresponding geometies.
 #'
 #' @examples
-#' f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
-#' lyr <- new(GDALVector, f, "mtbs_perims")
+#' # Requires GDAL >= 3.7
+#' if (as.integer(gdal_version()[2]) >= 3080000) {
+#'   f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
+#'   lyr <- new(GDALVector, f, "mtbs_perims")
 #'
-#' feat <- lyr$getNextFeature()
-#' g_summary(feat$geom)
+#'   feat <- lyr$getNextFeature()
+#'   g_summary(feat$geom)
 #'
-#' feat_set <- lyr$fetch(5)
-#' g_summary(feat_set$geom)
+#'   feat_set <- lyr$fetch(5)
+#'   g_summary(feat_set$geom)
 #'
-#' lyr$close()
+#'   lyr$close()
+#' }
 #' @export
 g_summary <- function(geom, quiet = FALSE) {
     # quiet

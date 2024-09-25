@@ -225,6 +225,9 @@ test_that("geometry properties are correct", {
     bb <- c(323476.1, 5101872.0,  327766.1, 5105082.0)
     expect_equal(bbox_to_wkt(bb) |> g_name(), "POLYGON")
 
+
+    skip_if(.gdal_version_num() < 3070000 )
+
     g <- "MULTIPOLYGON (((10 0,0 0,5 5,10 0)),((10 10,5 5,0 10,10 10)))"
     expect_summary <- "MULTIPOLYGON : 2 geometries: POLYGON : 4 points POLYGON : 4 points"
     expect_equal(g_summary(g), expect_summary)
