@@ -1,9 +1,18 @@
+#' Print an `OGRFeature` object
+#'
+#' @param x An `OGRFeature` object.
+#' @param ... Optional arguments passed to `base::print()`.
+#' @return The input, invisibly.
 #' @export
+#' @method print OGRFeature
 print.OGRFeature <- function(x, ...) {
     geom_col_name <- attr(x, "gis")$geom_col_name
     geom_format <- toupper(attr(x, "gis")$geom_format)
 
-    cat("OGR feature\n")
+    if (geom_format == "NONE")
+        cat("OGR feature (attributes)\n")
+    else
+        cat("OGR feature\n")
 
     if (geom_format == "WKB" || geom_format == "WKB_ISO") {
         y <- unclass(x)
@@ -12,6 +21,7 @@ print.OGRFeature <- function(x, ...) {
                 wkb <- x[[geom_col_name[i]]]
                 geom_name <- g_name(wkb)
             } else if (is.raw(x[[geom_col_name[i]]][[1]])) {
+                # in case of nested list, i.e., from a data frame list column
                 wkb <- x[[geom_col_name[i]]][[1]]
                 geom_name <- g_name(wkb)
             } else {
@@ -50,12 +60,21 @@ print.OGRFeature <- function(x, ...) {
     return(invisible(x))
 }
 
+#' Print an `OGRFeature.set`
+#'
+#' @param x An `OGRFeature.set`.
+#' @param ... Optional arguments passed to `base::print.data.frame()`.
+#' @return The input, invisibly.
 #' @export
+#' @method print OGRFeature.set
 print.OGRFeature.set <- function(x, ...) {
     geom_col_name <- attr(x, "gis")$geom_col_name
     geom_format <- toupper(attr(x, "gis")$geom_format)
 
-    cat("OGR feature set\n")
+    if (geom_format == "NONE")
+        cat("OGR feature set (attribute table)\n")
+    else
+        cat("OGR feature set\n")
 
     if (nrow(x) == 0) {
         print.data.frame(x[seq_along(x)], right = FALSE, ...)
