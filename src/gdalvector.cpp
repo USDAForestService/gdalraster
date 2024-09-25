@@ -736,7 +736,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     Rcpp::CharacterVector geom_column{};  // column name(s) for gis attributes
     Rcpp::CharacterVector geom_col_type{};  // geom type(s) for gis attributes
     Rcpp::CharacterVector geom_col_srs{};  // SRS for gis attributes
-    std::string geom_format{};   // WKB/WKT/SUMMARY/TYPE_NAME
+    std::string geom_format{};   // WKB/WKT/NONE
 
     if (EQUAL(this->returnGeomAs.c_str(), "NONE")) {
         include_geom = false;
@@ -809,11 +809,16 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                  geom_col_srs.push_back("");
             }
         }
+    }
+    else {
+        geom_column = "";
+        geom_col_type = "";
+        geom_col_srs = "";
+        geom_format = "NONE";
+    }
 
-    df.attr("class") = Rcpp::CharacterVector{"OGRFeature.set", "data.frame"};
     attachGISattributes_(df, geom_column, geom_col_type, geom_col_srs,
                          geom_format);
-    }
 
     if (fetch_num == 0) {
         if (reset_ignored_fields)
@@ -2153,7 +2158,7 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
         col_names[col_num] = geomFldName;
     }
 
-    df.attr("class") = "data.frame";
+    df.attr("class") = Rcpp::CharacterVector{"OGRFeature.set", "data.frame"};
     df.names() = col_names;
     df.attr("row.names") = Rcpp::seq_len(nrow);
     return df;
