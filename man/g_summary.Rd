@@ -22,7 +22,7 @@ Requires GDAL >= 3.7.
 }
 \examples{
 # Requires GDAL >= 3.7
-if (as.integer(gdal_version()[2]) >= 3080000) {
+if (as.integer(gdal_version()[2]) >= 3070000) {
   f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
   lyr <- new(GDALVector, f, "mtbs_perims")
 
