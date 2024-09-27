@@ -6,7 +6,7 @@
 #' @export
 #' @method print OGRFeature
 print.OGRFeature <- function(x, ...) {
-    geom_col_name <- attr(x, "gis")$geom_col_name
+    geom_column <- attr(x, "gis")$geom_column
     geom_format <- toupper(attr(x, "gis")$geom_format)
 
     if (geom_format == "NONE")
@@ -16,20 +16,20 @@ print.OGRFeature <- function(x, ...) {
 
     if (geom_format == "WKB" || geom_format == "WKB_ISO") {
         y <- unclass(x)
-        for (i in seq_along(geom_col_name)) {
-            if (is.raw(x[[geom_col_name[i]]])) {
-                wkb <- x[[geom_col_name[i]]]
+        for (i in seq_along(geom_column)) {
+            if (is.raw(x[[geom_column[i]]])) {
+                wkb <- x[[geom_column[i]]]
                 geom_name <- g_name(wkb)
-            } else if (is.raw(x[[geom_col_name[i]]][[1]])) {
+            } else if (is.raw(x[[geom_column[i]]][[1]])) {
                 # in case of nested list, i.e., from a data frame list column
-                wkb <- x[[geom_col_name[i]]][[1]]
+                wkb <- x[[geom_column[i]]][[1]]
                 geom_name <- g_name(wkb)
             } else {
                 wkb <- "error"
                 geom_name <- "unknown"
             }
             wkb_starts_with <- paste(wkb[1:4], collapse = " ")
-            y[[geom_col_name[i]]] <- paste0(geom_format,
+            y[[geom_column[i]]] <- paste0(geom_format,
                                             " ",
                                             geom_name,
                                             ": ",
@@ -42,10 +42,10 @@ print.OGRFeature <- function(x, ...) {
 
     } else if (geom_format == "WKT" || geom_format == "WKT_ISO") {
         y <- unclass(x)
-        for (i in seq_along(geom_col_name)) {
-            wkt <- x[[geom_col_name[i]]]
+        for (i in seq_along(geom_column)) {
+            wkt <- x[[geom_column[i]]]
             wkt_starts_with <- substring(wkt, 1, 28)
-            y[[geom_col_name[i]]] <- paste0(geom_format,
+            y[[geom_column[i]]] <- paste0(geom_format,
                                             ": chr \"",
                                             wkt_starts_with,
                                             " ...\"")
@@ -57,18 +57,18 @@ print.OGRFeature <- function(x, ...) {
         print(x[seq_along(x)], quote = FALSE, ...)
     }
 
-    return(invisible(x))
+    invisible(x)
 }
 
-#' Print an `OGRFeature.set`
+#' Print an `OGRFeatureSet`
 #'
-#' @param x An `OGRFeature.set`.
+#' @param x An `OGRFeatureSet`.
 #' @param ... Optional arguments passed to `base::print.data.frame()`.
 #' @return The input, invisibly.
 #' @export
-#' @method print OGRFeature.set
-print.OGRFeature.set <- function(x, ...) {
-    geom_col_name <- attr(x, "gis")$geom_col_name
+#' @method print OGRFeatureSet
+print.OGRFeatureSet <- function(x, ...) {
+    geom_column <- attr(x, "gis")$geom_column
     geom_format <- toupper(attr(x, "gis")$geom_format)
 
     if (geom_format == "NONE")
@@ -81,25 +81,25 @@ print.OGRFeature.set <- function(x, ...) {
 
     } else if (geom_format == "WKB" || geom_format == "WKB_ISO") {
         y <- x
-        for (i in seq_along(geom_col_name)) {
-            geom_name <- g_name(x[, geom_col_name[i]])
-            wkb_starts_with <- sapply(x[, geom_col_name[i]],
+        for (i in seq_along(geom_column)) {
+            geom_name <- g_name(x[, geom_column[i]])
+            wkb_starts_with <- sapply(x[, geom_column[i]],
                                       function(g) paste(g[1:4], collapse = " "))
 
             geom_col_print <- paste0(geom_format, " ",
                                      geom_name, ": ", "raw ",
                                      wkb_starts_with, " ...")
-            y[geom_col_name[i]] <- geom_col_print
+            y[geom_column[i]] <- geom_col_print
         }
         attr(y, "gis") <- NULL
         print.data.frame(y, ...)
 
     } else if (geom_format == "WKT" || geom_format == "WKT_ISO") {
         y <- x
-        for (i in seq_along(geom_col_name)) {
-            wkt <- x[[geom_col_name[i]]]
+        for (i in seq_along(geom_column)) {
+            wkt <- x[[geom_column[i]]]
             wkt_starts_with <- substring(wkt, 1, 28)
-            y[geom_col_name[i]] <- paste0(geom_format, ": chr \"",
+            y[geom_column[i]] <- paste0(geom_format, ": chr \"",
                                           wkt_starts_with, " ...\"")
         }
         attr(y, "gis") <- NULL
@@ -109,5 +109,53 @@ print.OGRFeature.set <- function(x, ...) {
         print.data.frame(x[seq_along(x)], right = FALSE, ...)
     }
 
-    return(invisible(x))
+    invisible(x)
+}
+
+#' Plot the geometry of an `OGRFeature` object
+#'
+#' @param x An `OGRFeature` object.
+#' @param ... Optional arguments passed to `wk::wk_plot()`.
+#' @return The input, invisibly.
+#' @export
+#' @method plot OGRFeature
+plot.OGRFeature <- function(x, ...) {
+    geom_format <- toupper(attr(x, "gis")$geom_format)
+    if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO"))
+        stop("no geometry column")
+
+    geom_column <- attr(x, "gis")$geom_column[1]
+    srs <- attr(x, "gis")$geom_col_srs[1]
+    if (startsWith(geom_format, "WKB"))
+        wk_obj <- wk::wkb(list(x[[geom_column]]), crs = srs)
+    else
+        wk_obj <- wk::wkt(x[[geom_column]], crs = srs)
+
+    wk::wk_plot(wk_obj, ...)
+
+    invisible(x)
+}
+
+#' Plot the geometry column of an `OGRFeatureSet`
+#'
+#' @param x An `OGRFeatureSet`.
+#' @param ... Optional arguments passed to `wk::wk_plot()`.
+#' @return The input, invisibly.
+#' @export
+#' @method plot OGRFeatureSet
+plot.OGRFeatureSet <- function(x, ...) {
+    geom_format <- toupper(attr(x, "gis")$geom_format)
+    if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO"))
+        stop("no geometry column")
+
+    geom_column <- attr(x, "gis")$geom_column[1]
+    srs <- attr(x, "gis")$geom_col_srs[1]
+    if (startsWith(geom_format, "WKB"))
+        wk_obj <- wk::wkb(x[[geom_column]], crs = srs)
+    else
+        wk_obj <- wk::wkt(x[[geom_column]], crs = srs)
+
+    wk::wk_plot(wk_obj, ...)
+
+    invisible(x)
 }
