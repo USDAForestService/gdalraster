@@ -2158,7 +2158,7 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
         col_names[col_num] = geomFldName;
     }
 
-    df.attr("class") = Rcpp::CharacterVector{"OGRFeature.set", "data.frame"};
+    df.attr("class") = Rcpp::CharacterVector{"OGRFeatureSet", "data.frame"};
     df.names() = col_names;
     df.attr("row.names") = Rcpp::seq_len(nrow);
     return df;
@@ -2172,7 +2172,7 @@ void GDALVector::attachGISattributes_(Rcpp::List ogr_feat_obj,
 
     /* ************************************************************************
     'ogr_feat_obj' is expected to be one of:
-        Rcpp::DataFrame (for S3 class "OGRFeature.set")
+        Rcpp::DataFrame (for S3 class "OGRFeatureSet")
         Rcpp::List (for S3 class "OGRFeature")
 
     currently called from fetch(), but GIS attributes are also included via
@@ -2181,7 +2181,7 @@ void GDALVector::attachGISattributes_(Rcpp::List ogr_feat_obj,
 
     Rcpp::List gis = Rcpp::List::create(
         Rcpp::Named("type") = "vector",
-        Rcpp::Named("geom_col_name") = geom_col,
+        Rcpp::Named("geom_column") = geom_col,
         Rcpp::Named("geom_col_type") = geom_col_type,
         Rcpp::Named("geom_col_srs") = geom_col_srs,
         Rcpp::Named("geom_format") = geom_format);
