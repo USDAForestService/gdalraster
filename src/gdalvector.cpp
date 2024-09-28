@@ -1329,7 +1329,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         if (include_geom) {
             for (int i = 0; i < nGeomFields; ++i) {
                 OGRGeomFieldDefnH hGeomFldDefn =
-                        OGR_F_GetGeomFieldDefnRef(hFeat, i);
+                        OGR_FD_GetGeomFieldDefn(hFDefn, i);
 
                 if (OGR_GFld_IsIgnored(hGeomFldDefn))
                     continue;
@@ -1350,6 +1350,8 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
             }
         }
 
+        attachGISattributes_(df_trunc, geom_column, geom_col_type, geom_col_srs,
+                             geom_format);
         return df_trunc;
     }
 }
