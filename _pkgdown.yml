@@ -135,6 +135,10 @@ reference:
   - ogr_def_geom_field
   - ogr_def_layer
   - ogr_proc
+  - plot.OGRFeature
+  - plot.OGRFeatureSet
+  - print.OGRFeature
+  - print.OGRFeatureSet
 - subtitle: Virtual file systems
 - contents:
   - vsi_clear_path_options
