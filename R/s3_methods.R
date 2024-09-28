@@ -29,13 +29,9 @@ print.OGRFeature <- function(x, ...) {
                 geom_name <- "unknown"
             }
             wkb_starts_with <- paste(wkb[1:4], collapse = " ")
-            y[[geom_column[i]]] <- paste0(geom_format,
-                                            " ",
-                                            geom_name,
-                                            ": ",
-                                            "raw ",
-                                            wkb_starts_with,
-                                            " ...")
+            y[[geom_column[i]]] <- paste0(geom_format, " ",
+                                          geom_name, ": raw ",
+                                          wkb_starts_with, " ...")
         }
         attr(y, "gis") <- NULL
         print(y, quote = FALSE, ...)
@@ -45,10 +41,8 @@ print.OGRFeature <- function(x, ...) {
         for (i in seq_along(geom_column)) {
             wkt <- x[[geom_column[i]]]
             wkt_starts_with <- substring(wkt, 1, 28)
-            y[[geom_column[i]]] <- paste0(geom_format,
-                                            ": chr \"",
-                                            wkt_starts_with,
-                                            " ...\"")
+            y[[geom_column[i]]] <- paste0(geom_format, ": chr \"",
+                                          wkt_starts_with, " ...\"")
         }
         attr(y, "gis") <- NULL
         print(y, quote = FALSE, ...)
@@ -100,7 +94,7 @@ print.OGRFeatureSet <- function(x, ...) {
             wkt <- x[[geom_column[i]]]
             wkt_starts_with <- substring(wkt, 1, 28)
             y[geom_column[i]] <- paste0(geom_format, ": chr \"",
-                                          wkt_starts_with, " ...\"")
+                                        wkt_starts_with, " ...\"")
         }
         attr(y, "gis") <- NULL
         print.data.frame(y, ...)
