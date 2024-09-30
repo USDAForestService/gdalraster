@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9492</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9500</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9492" id="gdalraster-11119492-dev">gdalraster 1.11.1.9492 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119492-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/g_summary.html">g_summary()</a></code>: obtain text summaries of WKB/WKT geometries (GDAL &gt;= 3.7) (2024-09-24)</p></li>
+<h2 class="pkg-version" data-toc-text="1.11.1.9500" id="gdalraster-11119500-dev">gdalraster 1.11.1.9500 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119500-dev"></a></h2>
+<ul><li><p>add minimal S3 classes <code>OGRFeature</code> and <code>OGRFeatureSet</code> with methods for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> (2024-09-28)</p></li>
+<li><p>add <code><a href="../reference/g_summary.html">g_summary()</a></code>: obtain text summaries of WKB/WKT geometries (GDAL &gt;= 3.7) (2024-09-24)</p></li>
 <li><p>update <code><a href="../reference/g_is_valid.html">g_is_valid()</a></code>, <code><a href="../reference/g_is_empty.html">g_is_empty()</a></code>, <code><a href="../reference/g_name.html">g_name()</a></code> and <code><a href="../reference/g_buffer.html">g_buffer()</a></code> to the new style geometry API: the OGR GEOS wrappers now operate on input of WKB raw vector, list of WKB, or character vector of WKT strings, with return as either WKB raw vector (or list of) / WKT character string (vector of) (2024-09-22)</p></li>
 <li><p>add <code>GDALVector::quiet</code>: exposed read/write field to optionally suppress warnings etc. (2024-09-20)</p></li>
 <li><p>the <code>layer</code> argument may be <code>NULL</code> or empty string in certain <code>ogr_manage</code> functions, defaulting to the first layer by index (mainly convenience for single-layer formats) (2024-09-19)</p></li>

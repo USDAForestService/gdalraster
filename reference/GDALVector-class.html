@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9492</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9500</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -263,12 +263,11 @@ A logical value, <code>FALSE</code> by default. Set to <code>TRUE</code> to supp
 messages and warnings.</p>
 <p><code>$returnGeomAs</code><br>
 Character string specifying the return format of feature geometries.
-Must be one of <code>WKT</code>, <code>WKT_ISO</code>, <code>WKB</code> (the default), <code>WKB_ISO</code>,
-<code>SUMMARY</code> (GDAL &gt;= 3.7), <code>TYPE_NAME</code> or <code>NONE</code>. Using <code>WKB</code>/<code>WKT</code> exports as
-99-402 extended dimension (Z) types for Point, LineString, Polygon,
-MultiPoint, MultiLineString, MultiPolygon and GeometryCollection. For other
-geometry types, it is equivalent to using <code>WKB_ISO</code>/<code>WKT_ISO</code> (see
-<a href="https://libgeos.org/specifications/wkb/" class="external-link">https://libgeos.org/specifications/wkb/</a>).</p>
+Must be one of <code>WKB</code> (the default), <code>WKB_ISO</code>, <code>WKT</code>, <code>WKT_ISO</code> or <code>NONE</code>.
+Using <code>WKB</code>/<code>WKT</code> exports as 99-402 extended dimension (Z) types for Point,
+LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
+GeometryCollection. For other geometry types, it is equivalent to using
+<code>WKB_ISO</code>/<code>WKT_ISO</code> (see <a href="https://libgeos.org/specifications/wkb/" class="external-link">https://libgeos.org/specifications/wkb/</a>).</p>
 <p><code>$wkbByteOrder</code><br>
 Character string specifying the byte order for WKB geometries.
 Must be either <code>LSB</code> (Least Significant Byte first, the default) or
@@ -303,7 +302,7 @@ Returns the short name of the vector format driver.</p>
 Returns the long name of the vector format driver.</p>
 <p><code>$getName()</code><br>
 Returns the layer name.</p>
-<p>#' <code>$getFieldNames()</code><br>
+<p><code>$getFieldNames()</code><br>
 Returns a character vector of the layer's field names.</p>
 <p><code>$testCapability()</code><br>
 Tests whether the layer supports named capabilities based on the current
@@ -431,8 +430,9 @@ current spatial and/or attribute filter (if defined) will be returned.
 This method implements sequential access to the features of a layer.
 The <code>$resetReading()</code> method can be used to start at the beginning again.
 Returns a list with the unique feature identifier (FID), the attribute and
-geometry field names, and their values. <code>NULL</code> is returned if no more
-features are available.</p>
+geometry field names, and their values. The returned list carries the
+<code>OGRFeature</code> class attribute with S3 methods for for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>.
+<code>NULL</code> is returned if no more features are available.</p>
 <p><code>$setNextByIndex(i)</code><br>
 Moves the read cursor to the <code>i</code>th feature in the current result set
 (with 0-based indexing).
@@ -470,7 +470,9 @@ frame. This allows retrieving the entire set of features, one page of
 features at a time, or the remaining features (from the current cursor
 position). Returns a data frame with as many rows as features were fetched,
 and as many columns as attribute plus geometry fields in the result set,
-even if the result is a single value or has one or zero rows.</p>
+even if the result is a single value or has one or zero rows.
+The returned data frame carries the <code>OGRFeatureSet</code> class attribute with S3
+methods for for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>.</p>
 <p>This method is an analog of
 <a href="https://dbi.r-dbi.org/reference/dbFetch.html" class="external-link"><code>DBI::dbFetch()</code></a>.</p>
 <p>The <code>n</code> argument is the maximum number of features to retrieve per fetch
@@ -501,9 +503,8 @@ values):</p><ul><li><p><code>OFTInteger</code>: <code>integer</code></p></li>
 Omitting the geometries may be beneficial for performance and memory usage
 when access only to feature attributes is needed. Geometries are returned
 as <code>raw</code> vectors in a data frame list column when <code>returnGeomAs</code> is set to
-<code>WKB</code> (the default) or <code>WKB_ISO</code>. Otherwise, geometries are returned as
-<code>character</code> strings when <code>returnGeomAs</code> is set to one of <code>WKT</code>, <code>WKT_ISO</code> or
-<code>TYPE_NAME</code>.</p>
+<code>WKB</code> (the default) or <code>WKB_ISO</code>, or as <code>character</code> strings when
+<code>returnGeomAs</code> is set to one of <code>WKT</code> or <code>WKT_ISO</code>.</p>
 <p>Note that <code>$getFeatureCount()</code> is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).</p>
 <p><code>$setFeature(feature)</code><br>
@@ -651,7 +652,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55d1312043e0&gt; of class 'GDALVector' &lt;0x55d1284eb570&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x555e5ad13dc0&gt; of class 'GDALVector' &lt;0x555e5909a6e0&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 8 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -682,7 +683,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpavP04U/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpFv476o/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -859,20 +860,45 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## sequential read cursor</span></span></span>
 <span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="co"># a list of field names and their values</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID         :integer64 1 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    : chr "WY4413411069519870807"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  : chr "POLECAT"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_type  : chr "Wildfire"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ map_id      :integer64 10015934 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_ac :integer64 1093 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lat: chr "44.132"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon: chr "-110.696"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     : Date[1:1], format: "1987-08-07"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int 1987</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : raw [1:598] 01 06 00 00 ...</span>
+<span class="r-in"><span><span class="co"># a list of field names and their values, with class attribute `OGRFeature`</span></span></span>
+<span class="r-in"><span><span class="va">feat</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OGR feature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FID</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $event_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] WY4413411069519870807</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $incid_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] POLECAT</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $incid_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Wildfire</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $map_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10015934</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $burn_bnd_ac</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1093</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $burn_bnd_lat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 44.132</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $burn_bnd_lon</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -110.696</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ig_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1987-08-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ig_year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1987</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $geom</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] WKB MULTIPOLYGON: raw 01 06 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## set an attribute filter</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year = 2020"</span><span class="op">)</span></span></span>
@@ -880,42 +906,53 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID         :integer64 61 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    : chr "WY4438911082120200822"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  : chr "LONE STAR"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_type  : chr "Wildfire"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ map_id      :integer64 10020495 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_ac :integer64 3348 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lat: chr "44.4"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon: chr "-110.782"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     : Date[1:1], format: "2020-08-22"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int 2020</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : raw [1:966] 01 06 00 00 ...</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="GDALVector-class-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## NULL when no more features are available</span></span></span>
-<span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  NULL</span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## reset reading to the start and return geometries as WKT</span></span></span>
+<span class="r-in"><span><span class="co">## reset reading to the start</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">resetReading</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKT"</span></span></span>
-<span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID         :integer64 61 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    : chr "WY4438911082120200822"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  : chr "LONE STAR"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_type  : chr "Wildfire"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ map_id      :integer64 10020495 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_ac :integer64 3348 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lat: chr "44.4"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon: chr "-110.782"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     : Date[1:1], format: "2020-08-22"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int 2020</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : chr "MULTIPOLYGON (((496593.122306971 15506.8828590633,496491.761299067 15605.3612548792,496290.812130161 15388.0465"| __truncated__</span>
+<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OGR feature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FID</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 61</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $event_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] WY4438911082120200822</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $incid_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] LONE STAR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $incid_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Wildfire</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $map_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10020495</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $burn_bnd_ac</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 3348</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $burn_bnd_lat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 44.4</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $burn_bnd_lon</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -110.782</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ig_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020-08-22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ig_year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2020</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $geom</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] WKB MULTIPOLYGON: raw 01 06 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## clear the attribute filter</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">""</span><span class="op">)</span></span></span>
@@ -927,23 +964,46 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="co">## first set a temporary attribute filter to do the lookup</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year = 1988 ORDER BY burn_bnd_ac DESC"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> List of 11</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID         :integer64 7 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    : chr "WY4470811082119880722"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  : chr "NORTH FORK"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_type  : chr "Wildfire"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ map_id      :integer64 10014217 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_ac :integer64 563527 </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lat: chr "44.678"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon: chr "-110.716"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     : Date[1:1], format: "1988-07-22"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int 1988</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : chr "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__</span>
+<span class="r-in"><span><span class="va">feat</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OGR feature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FID</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 7</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $event_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] WY4470811082119880722</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $incid_name</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] NORTH FORK</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $incid_type</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] Wildfire</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $map_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 10014217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $burn_bnd_ac</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 563527</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $burn_bnd_lat</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 44.678</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $burn_bnd_lon</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] -110.716</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ig_date</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1988-07-22</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $ig_year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1988</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $geom</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] WKB MULTIPOLYGON: raw 01 06 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">bbox</span> <span class="op">&lt;-</span> <span class="fu"><a href="bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="va">feat</span><span class="op">$</span><span class="va">geom</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">bbox</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 469685.97  11442.45 544069.63  85508.15</span>
+<span class="r-in"><span><span class="va">bbox</span> <span class="op">&lt;-</span> <span class="fu"><a href="g_wk2wk.html">g_wk2wk</a></span><span class="op">(</span><span class="va">feat</span><span class="op">$</span><span class="va">geom</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## set spatial filter on the full layer</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">""</span><span class="op">)</span>  <span class="co"># clears</span></span></span>
@@ -951,33 +1011,45 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 40</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## fetch in chunks and return as data frame</span></span></span>
-<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	20 obs. of  11 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID         :integer64 38 7 32 25 6 40 36 8 ... </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    : chr  "MT4471311115120070627" "WY4470811082119880722" "MT4491211108020030820" "WY4433011103020000816" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  : chr  "MADISON ARM" "NORTH FORK" "RATHBONE" "SPRUCE COMPLEX (PLATEAU)" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_type  : chr  "Wildfire" "Wildfire" "Wildfire" "Wildfire" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ map_id      :integer64 16113 10014217 13014 10014141 10014215 16428 15432 10014218 ... </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_ac :integer64 3564 563527 2701 2808 20422 2175 3745 95233 ... </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lat: chr  "44.713" "44.678" "44.912" "44.329" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon: chr  "-111.151" "-110.716" "-111.080" "-111.027" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     : Date, format: "2007-06-27" "1988-07-22" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int  2007 1988 2003 2000 1988 2007 2006 1988 1988 1988 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : chr  "MULTIPOLYGON (((469685.969631834 54506.9481370259,470235.509134591 54383.4837249131,470939.42854159 53898.69574"| __truncated__ "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__ "MULTIPOLYGON (((475136.766856355 74053.2153491452,475188.847231864 74366.3342955356,475341.959781024 74368.4856"| __truncated__ "MULTIPOLYGON (((477992.723214764 8483.08443989834,477312.456870818 7630.95433906866,477088.305832492 6955.09786"| __truncated__ ...</span>
+<span class="r-in"><span><span class="co">## fetch in chunks and return as data frame (class `OGRFeatureSet`)</span></span></span>
+<span class="r-in"><span><span class="va">feat_set</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">feat_set</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OGR feature set</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   FID              event_id               incid_name        incid_type   map_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1  38 MT4471311115120070627              MADISON ARM          Wildfire    16113</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   7 WY4470811082119880722               NORTH FORK          Wildfire 10014217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3  32 MT4491211108020030820                 RATHBONE          Wildfire    13014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4  25 WY4433011103020000816 SPRUCE COMPLEX (PLATEAU)          Wildfire 10014141</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   6 WY4499211096519880625                      FAN Wildland Fire Use 10014215</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6  40 MT4502711102920070720                      OWL          Wildfire    16428</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   burn_bnd_ac burn_bnd_lat burn_bnd_lon    ig_date ig_year</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1        3564       44.713     -111.151 2007-06-27    2007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2      563527       44.678     -110.716 1988-07-22    1988</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3        2701       44.912     -111.080 2003-08-20    2003</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4        2808       44.329     -111.027 2000-08-16    2000</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5       20422       44.994     -110.976 1988-06-25    1988</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6        2175       45.027     -111.029 2007-07-20    2007</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                                    geom</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 WKB MULTIPOLYGON: raw 01 06 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 WKB MULTIPOLYGON: raw 01 06 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 WKB MULTIPOLYGON: raw 01 06 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 WKB MULTIPOLYGON: raw 01 06 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 WKB MULTIPOLYGON: raw 01 06 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6 WKB MULTIPOLYGON: raw 01 06 00 00 ...</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">feat_set</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="GDALVector-class-2.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## the next chunk</span></span></span>
-<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat_set</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">feat_set</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 20</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## no features remaining</span></span></span>
-<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">feat_set</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">feat_set</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span>  <span class="co"># 0-row data frame with columns typed</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	0 obs. of  11 variables:</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat_set</span><span class="op">)</span>  <span class="co"># 0-row data frame with columns typed</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Classes ‘OGRFeatureSet’ and 'data.frame':	0 obs. of  11 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID         :integer64  </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    : chr </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  : chr </span>
@@ -988,69 +1060,20 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon: chr </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     : 'Date' num(0) </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : chr </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        : list()</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "gis")=List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type         : chr "vector"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_column  : chr "geom"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_col_type: chr "MULTIPOLYGON"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_col_srs : chr "PROJCS[\"NAD83 / Montana\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,2"| __truncated__</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_format  : chr "WKB"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## fetch all pending features with geometries as WKB</span></span></span>
-<span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKB"</span></span></span>
-<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># resets reading to the first feature</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	40 obs. of  11 variables:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID         :integer64 38 7 32 25 6 40 36 8 ... </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    : chr  "MT4471311115120070627" "WY4470811082119880722" "MT4491211108020030820" "WY4433011103020000816" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  : chr  "MADISON ARM" "NORTH FORK" "RATHBONE" "SPRUCE COMPLEX (PLATEAU)" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_type  : chr  "Wildfire" "Wildfire" "Wildfire" "Wildfire" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ map_id      :integer64 16113 10014217 13014 10014141 10014215 16428 15432 10014218 ... </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_ac :integer64 3564 563527 2701 2808 20422 2175 3745 95233 ... </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lat: chr  "44.713" "44.678" "44.912" "44.329" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon: chr  "-111.151" "-110.716" "-111.080" "-111.027" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     : Date, format: "2007-06-27" "1988-07-22" ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     : int  2007 1988 2003 2000 1988 2007 2006 1988 1988 1988 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        :List of 40</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 06 00 00 ...</span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co">## parse WKB using package wk</span></span></span>
-<span class="r-in"><span><span class="va">wk_obj</span> <span class="op">&lt;-</span> <span class="fu">wk</span><span class="fu">::</span><span class="fu"><a href="https://paleolimbot.github.io/wk/reference/wkb.html" class="external-link">wkb</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">geom</span>, crs <span class="op">=</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wk_obj</span><span class="op">)</span></span></span>
-<span class="r-plt img"><img src="GDALVector-class-1.png" alt="" width="700" height="433"></span>
+<span class="r-in"><span><span class="co">## fetch all pending features</span></span></span>
+<span class="r-in"><span><span class="va">feat_set</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># resets reading to the first feature</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">feat_set</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 40</span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">feat_set</span><span class="op">)</span></span></span>
+<span class="r-plt img"><img src="GDALVector-class-3.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">clearSpatialFilter</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1132,9 +1155,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
-<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># -1 for all features reading from start</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  10 variables:</span>
+<span class="r-in"><span><span class="va">feat_set</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># -1 for all features reading from start</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat_set</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Classes ‘OGRFeatureSet’ and 'data.frame':	2 obs. of  10 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID        :integer64 1 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ unique_int : int  1001 1002</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ bool_data  : logi  TRUE FALSE</span>
@@ -1142,19 +1165,25 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-26 10:04:12" "2024-09-26 10:04:12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-30 21:42:20" "2024-09-30 21:42:20"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 01 00 00 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 01 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "gis")=List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type         : chr "vector"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_column  : chr "geom"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_col_type: chr "POINT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_col_srs : chr "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AU"| __truncated__</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_format  : chr "WKB"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## edit an existing feature, e.g., feat &lt;- lyr$getFeature(2)</span></span></span>
 <span class="r-in"><span><span class="co">## here we copy a row of the data frame returned by lyr$fetch() above</span></span></span>
-<span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">d</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span></span></span>
+<span class="r-in"><span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">feat_set</span><span class="op">[</span><span class="fl">2</span>,<span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	1 obs. of  10 variables:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Classes ‘OGRFeatureSet’ and 'data.frame':	1 obs. of  10 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID        :integer64 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ unique_int : int 1002</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ bool_data  : logi FALSE</span>
@@ -1162,11 +1191,17 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-26 10:04:12"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-30 21:42:20"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  01 01 00 00 ...</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "gis")=List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type         : chr "vector"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_column  : chr "geom"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_col_type: chr "POINT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_col_srs : chr "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AU"| __truncated__</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_format  : chr "WKB"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/Sys.sleep.html" class="external-link">Sys.sleep</a></span><span class="op">(</span><span class="fl">1</span><span class="op">)</span>  <span class="co"># only to ensure a timestamp difference</span></span></span>
 <span class="r-in"><span></span></span>
@@ -1189,9 +1224,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 2</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKT"</span></span></span>
-<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 'data.frame':	2 obs. of  10 variables:</span>
+<span class="r-in"><span><span class="va">feat_set</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat_set</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Classes ‘OGRFeatureSet’ and 'data.frame':	2 obs. of  10 variables:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ FID        :integer64 1 2 </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ unique_int : int  1001 1002</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ bool_data  : logi  TRUE TRUE</span>
@@ -1199,11 +1234,17 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-26 10:04:12" "2024-09-26 10:04:13"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-30 21:42:20" "2024-09-30 21:42:21"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       : chr  "POINT (1 1)" "POINT (2.001 2.001)"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  - attr(*, "gis")=List of 5</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type         : chr "vector"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_column  : chr "geom"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_col_type: chr "POINT"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_col_srs : chr "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AU"| __truncated__</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ geom_format  : chr "WKT"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 </code></pre></div>

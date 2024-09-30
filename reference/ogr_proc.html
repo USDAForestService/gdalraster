@@ -29,7 +29,7 @@ utility in the GDAL Python bindings."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9492</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9500</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -315,24 +315,25 @@ and copy into a memory layer.</p>
 <span class="r-in"><span><span class="va">lyr_out</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"TYPE_NAME"</span></span></span>
 <span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr_out</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   FID       layer1_event_id layer1_incid_name layer1_incid_type layer1_map_id</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 WY4484611038620100914          ANTELOPE          Wildfire      10013735</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2 WY4466711063920120810            CYGNET          Wildfire          1961</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3 WY4474311097820160809             MAPLE          Wildfire      10005020</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4 WY4492611093820160805              FAWN          Wildfire      10005117</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5 WY4457911058620160826           CENTRAL          Wildfire      10014143</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> OGR feature set</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   FID layer1_event_id       layer1_incid_name layer1_incid_type layer1_map_id</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 1   WY4484611038620100914 ANTELOPE          Wildfire          10013735     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2   WY4466711063920120810 CYGNET            Wildfire          1961         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 3   WY4474311097820160809 MAPLE             Wildfire          10005020     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 4   WY4492611093820160805 FAWN              Wildfire          10005117     </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 5   WY4457911058620160826 CENTRAL           Wildfire          10014143     </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   layer1_burn_bnd_ac layer1_burn_bnd_lat layer1_burn_bnd_lon layer1_ig_date</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1               4888              44.839            -110.368     2010-09-14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2               3188              44.682            -110.622     2012-08-10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3             103193              44.731            -110.982     2016-08-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4               3161              44.936            -110.913     2016-08-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5               2340              44.595            -110.574     2016-08-26</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   layer1_ig_year layer2_incid_name layer2_ig_year         geom</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1           2010        NORTH FORK           1988 MULTIPOLYGON</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2           2012        NORTH FORK           1988 MULTIPOLYGON</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3           2016        NORTH FORK           1988 MULTIPOLYGON</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4           2016        NORTH FORK           1988 MULTIPOLYGON</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5           2016        NORTH FORK           1988 MULTIPOLYGON</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 4888               44.839              -110.368            2010-09-14    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 3188               44.682              -110.622            2012-08-10    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 103193             44.731              -110.982            2016-08-09    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 3161               44.936              -110.913            2016-08-05    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2340               44.595              -110.574            2016-08-26    </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   layer1_ig_year layer2_incid_name layer2_ig_year geom        </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1 2010           NORTH FORK        1988           MULTIPOLYGON</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2 2012           NORTH FORK        1988           MULTIPOLYGON</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3 2016           NORTH FORK        1988           MULTIPOLYGON</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4 2016           NORTH FORK        1988           MULTIPOLYGON</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5 2016           NORTH FORK        1988           MULTIPOLYGON</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># clean up</span></span></span>
 <span class="r-in"><span><span class="va">lyr1</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
