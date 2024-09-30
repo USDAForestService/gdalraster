@@ -142,13 +142,21 @@ class GDALVector {
 
     // methods for internal use not exposed to R
     void checkAccess_(GDALAccess access_needed) const;
+
     void setDsn_(std::string dsn);
     GDALDatasetH getGDALDatasetH_() const;
     void setGDALDatasetH_(const GDALDatasetH hDs, bool with_update);
     OGRLayerH getOGRLayerH_() const;
     void setOGRLayerH_(const OGRLayerH hLyr, const std::string &lyr_name);
     void setFieldNames_();
+
     SEXP createDF_(R_xlen_t nrow) const;
+    void attachGISattributes_(Rcpp::List ogr_feat_obj,
+                              const Rcpp::CharacterVector &geom_col,
+                              const Rcpp::CharacterVector &geom_col_type,
+                              const Rcpp::CharacterVector &geom_col_srs,
+                              const std::string &geom_format) const;
+
     OGRFeatureH OGRFeatureFromList_(const Rcpp::RObject &feature) const;
 
  private:

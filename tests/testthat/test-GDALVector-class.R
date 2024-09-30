@@ -216,6 +216,17 @@ test_that("set ignored/selected fields works", {
     expect_length(feat, 3)
     expect_false(is.null(feat$geom))
 
+    # test fetch past end with ignored fields does not crash
+    # https://github.com/USDAForestService/gdalraster/issues/539
+    lyr$returnGeomAs <- "WKB"
+    lyr$setSelectedFields(c("incid_name", "ig_year", "OGR_GEOMETRY"))
+    lyr$setAttributeFilter("ig_year >= 2018")
+    expect_equal(lyr$getFeatureCount(), 3)
+    expect_s3_class(lyr$getNextFeature(), "OGRFeature")
+    expect_s3_class(lyr$getNextFeature(), "OGRFeature")
+    expect_s3_class(lyr$getNextFeature(), "OGRFeature")
+    expect_true(is.null(lyr$getNextFeature()))
+
     lyr$close()
     unlink(dsn)
 })
@@ -543,9 +554,13 @@ test_that("feature write methods work", {
 
     feat1_check <- lyr$getFeature(test1_fid)
     feat1_check$FID <- NULL
+    class(feat1_check) <- "list"
+    attr(feat1_check, "gis") <- NULL
     expect_equal(feat1_check, feat1)
 
     feat2_check <- lyr$getFeature(test2_fid)
+    class(feat2_check) <- "list"
+    attr(feat2_check, "gis") <- NULL
     expect_equal(feat2_check, feat2)
 
     lyr$open(read_only = FALSE)

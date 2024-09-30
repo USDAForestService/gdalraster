@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 1.11.1.9492
+Version: 1.11.1.9500
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),
@@ -53,6 +53,7 @@ Imports:
     stats,
     tools,
     utils,
+    wk,
     xml2
 LinkingTo: Rcpp, RcppInt64
 Suggests:
@@ -60,8 +61,7 @@ Suggests:
     knitr,
     rmarkdown,
     scales,
-    testthat (>= 3.0.0),
-    wk
+    testthat (>= 3.0.0)
 NeedsCompilation: yes
 SystemRequirements: GDAL (>= 3.1.0, built against GEOS), PROJ, libxml2
 Encoding: UTF-8

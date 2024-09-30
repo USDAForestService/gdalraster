@@ -182,12 +182,11 @@ messages and warnings.
 
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.
-Must be one of \code{WKT}, \code{WKT_ISO}, \code{WKB} (the default), \code{WKB_ISO},
-\code{SUMMARY} (GDAL >= 3.7), \code{TYPE_NAME} or \code{NONE}. Using \code{WKB}/\code{WKT} exports as
-99-402 extended dimension (Z) types for Point, LineString, Polygon,
-MultiPoint, MultiLineString, MultiPolygon and GeometryCollection. For other
-geometry types, it is equivalent to using \code{WKB_ISO}/\code{WKT_ISO} (see
-\url{https://libgeos.org/specifications/wkb/}).
+Must be one of \code{WKB} (the default), \code{WKB_ISO}, \code{WKT}, \code{WKT_ISO} or \code{NONE}.
+Using \code{WKB}/\code{WKT} exports as 99-402 extended dimension (Z) types for Point,
+LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
+GeometryCollection. For other geometry types, it is equivalent to using
+\code{WKB_ISO}/\code{WKT_ISO} (see \url{https://libgeos.org/specifications/wkb/}).
 
 \code{$wkbByteOrder}\cr
 Character string specifying the byte order for WKB geometries.
@@ -228,7 +227,7 @@ Returns the long name of the vector format driver.
 \code{$getName()}\cr
 Returns the layer name.
 
-#' \code{$getFieldNames()}\cr
+\code{$getFieldNames()}\cr
 Returns a character vector of the layer's field names.
 
 \code{$testCapability()}\cr
@@ -373,8 +372,9 @@ current spatial and/or attribute filter (if defined) will be returned.
 This method implements sequential access to the features of a layer.
 The \verb{$resetReading()} method can be used to start at the beginning again.
 Returns a list with the unique feature identifier (FID), the attribute and
-geometry field names, and their values. \code{NULL} is returned if no more
-features are available.
+geometry field names, and their values. The returned list carries the
+\code{OGRFeature} class attribute with S3 methods for for \code{print()} and \code{plot()}.
+\code{NULL} is returned if no more features are available.
 
 \code{$setNextByIndex(i)}\cr
 Moves the read cursor to the \code{i}th feature in the current result set
@@ -417,6 +417,8 @@ features at a time, or the remaining features (from the current cursor
 position). Returns a data frame with as many rows as features were fetched,
 and as many columns as attribute plus geometry fields in the result set,
 even if the result is a single value or has one or zero rows.
+The returned data frame carries the \code{OGRFeatureSet} class attribute with S3
+methods for for \code{print()} and \code{plot()}.
 
 This method is an analog of
 \href{https://dbi.r-dbi.org/reference/dbFetch.html}{\code{DBI::dbFetch()}}.
@@ -454,9 +456,8 @@ Geometries are not returned if the field \code{returnGeomAs} is set to \code{NON
 Omitting the geometries may be beneficial for performance and memory usage
 when access only to feature attributes is needed. Geometries are returned
 as \code{raw} vectors in a data frame list column when \code{returnGeomAs} is set to
-\code{WKB} (the default) or \code{WKB_ISO}. Otherwise, geometries are returned as
-\code{character} strings when \code{returnGeomAs} is set to one of \code{WKT}, \code{WKT_ISO} or
-\code{TYPE_NAME}.
+\code{WKB} (the default) or \code{WKB_ISO}, or as \code{character} strings when
+\code{returnGeomAs} is set to one of \code{WKT} or \code{WKT_ISO}.
 
 Note that \verb{$getFeatureCount()} is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).
@@ -651,25 +652,22 @@ lyr$getFeatureCount()
 
 ## sequential read cursor
 feat <- lyr$getNextFeature()
-# a list of field names and their values
-str(feat)
+# a list of field names and their values, with class attribute `OGRFeature`
+feat
 
 ## set an attribute filter
 lyr$setAttributeFilter("ig_year = 2020")
 lyr$getFeatureCount()
 
 feat <- lyr$getNextFeature()
-str(feat)
+plot(feat)
 
 ## NULL when no more features are available
-feat <- lyr$getNextFeature()
-str(feat)
+lyr$getNextFeature()
 
-## reset reading to the start and return geometries as WKT
+## reset reading to the start
 lyr$resetReading()
-lyr$returnGeomAs <- "WKT"
-feat <- lyr$getNextFeature()
-str(feat)
+lyr$getNextFeature()
 
 ## clear the attribute filter
 lyr$setAttributeFilter("")
@@ -680,37 +678,33 @@ lyr$getFeatureCount()
 ## first set a temporary attribute filter to do the lookup
 lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
 feat <- lyr$getNextFeature()
-str(feat)
+feat
 
-bbox <- bbox_from_wkt(feat$geom)
-print(bbox)
+bbox <- g_wk2wk(feat$geom) |> bbox_from_wkt()
 
 ## set spatial filter on the full layer
 lyr$setAttributeFilter("")  # clears
 lyr$setSpatialFilterRect(bbox)
 lyr$getFeatureCount()
 
-## fetch in chunks and return as data frame
-d <- lyr$fetch(20)
-str(d)
+## fetch in chunks and return as data frame (class `OGRFeatureSet`)
+feat_set <- lyr$fetch(20)
+head(feat_set)
+plot(feat_set)
 
 ## the next chunk
-d <- lyr$fetch(20)
-nrow(d)
+feat_set <- lyr$fetch(20)
+nrow(feat_set)
 
 ## no features remaining
-d <- lyr$fetch(20)
-nrow(d)
-str(d)  # 0-row data frame with columns typed
+feat_set <- lyr$fetch(20)
+nrow(feat_set)
+str(feat_set)  # 0-row data frame with columns typed
 
-## fetch all pending features with geometries as WKB
-lyr$returnGeomAs <- "WKB"
-d <- lyr$fetch(-1)  # resets reading to the first feature
-str(d)
-
-## parse WKB using package wk
-wk_obj <- wk::wkb(d$geom, crs = lyr$getSpatialRef())
-plot(wk_obj)
+## fetch all pending features
+feat_set <- lyr$fetch(-1)  # resets reading to the first feature
+nrow(feat_set)
+plot(feat_set)
 
 lyr$clearSpatialFilter()
 lyr$getFeatureCount()
@@ -783,12 +777,12 @@ lyr$getLastWriteFID()
 lyr$open(read_only = TRUE)
 
 lyr$getFeatureCount()
-d <- lyr$fetch(-1)  # -1 for all features reading from start
-str(d)
+feat_set <- lyr$fetch(-1)  # -1 for all features reading from start
+str(feat_set)
 
 ## edit an existing feature, e.g., feat <- lyr$getFeature(2)
 ## here we copy a row of the data frame returned by lyr$fetch() above
-feat <- d[2,]
+feat <- feat_set[2,]
 str(feat)
 
 Sys.sleep(1)  # only to ensure a timestamp difference
@@ -810,8 +804,8 @@ lyr$open(read_only = TRUE)
 lyr$getFeatureCount()
 
 lyr$returnGeomAs <- "WKT"
-d <- lyr$fetch(-1)
-str(d)
+feat_set <- lyr$fetch(-1)
+str(feat_set)
 
 lyr$close()
 \dontshow{unlink(dsn2)}

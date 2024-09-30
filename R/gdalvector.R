@@ -168,12 +168,11 @@
 #'
 #' \code{$returnGeomAs}\cr
 #' Character string specifying the return format of feature geometries.
-#' Must be one of `WKT`, `WKT_ISO`, `WKB` (the default), `WKB_ISO`,
-#' `SUMMARY` (GDAL >= 3.7), `TYPE_NAME` or `NONE`. Using `WKB`/`WKT` exports as
-#' 99-402 extended dimension (Z) types for Point, LineString, Polygon,
-#' MultiPoint, MultiLineString, MultiPolygon and GeometryCollection. For other
-#' geometry types, it is equivalent to using `WKB_ISO`/`WKT_ISO` (see
-#' \url{https://libgeos.org/specifications/wkb/}).
+#' Must be one of `WKB` (the default), `WKB_ISO`, `WKT`, `WKT_ISO` or `NONE`.
+#' Using `WKB`/`WKT` exports as 99-402 extended dimension (Z) types for Point,
+#' LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
+#' GeometryCollection. For other geometry types, it is equivalent to using
+#' `WKB_ISO`/`WKT_ISO` (see \url{https://libgeos.org/specifications/wkb/}).
 #'
 #' \code{$wkbByteOrder}\cr
 #' Character string specifying the byte order for WKB geometries.
@@ -213,7 +212,7 @@
 #' \code{$getName()}\cr
 #' Returns the layer name.
 #'
-#' #' \code{$getFieldNames()}\cr
+#' \code{$getFieldNames()}\cr
 #' Returns a character vector of the layer's field names.
 #'
 #' \code{$testCapability()}\cr
@@ -358,8 +357,9 @@
 #' This method implements sequential access to the features of a layer.
 #' The `$resetReading()` method can be used to start at the beginning again.
 #' Returns a list with the unique feature identifier (FID), the attribute and
-#' geometry field names, and their values. `NULL` is returned if no more
-#' features are available.
+#' geometry field names, and their values. The returned list carries the
+#' `OGRFeature` class attribute with S3 methods for for `print()` and `plot()`.
+#' `NULL` is returned if no more features are available.
 #'
 #' \code{$setNextByIndex(i)}\cr
 #' Moves the read cursor to the `i`th feature in the current result set
@@ -402,6 +402,8 @@
 #' position). Returns a data frame with as many rows as features were fetched,
 #' and as many columns as attribute plus geometry fields in the result set,
 #' even if the result is a single value or has one or zero rows.
+#' The returned data frame carries the `OGRFeatureSet` class attribute with S3
+#' methods for for `print()` and `plot()`.
 #'
 #' This method is an analog of
 #' [`DBI::dbFetch()`](https://dbi.r-dbi.org/reference/dbFetch.html).
@@ -437,9 +439,8 @@
 #' Omitting the geometries may be beneficial for performance and memory usage
 #' when access only to feature attributes is needed. Geometries are returned
 #' as `raw` vectors in a data frame list column when `returnGeomAs` is set to
-#' `WKB` (the default) or `WKB_ISO`. Otherwise, geometries are returned as
-#' `character` strings when `returnGeomAs` is set to one of `WKT`, `WKT_ISO` or
-#' `TYPE_NAME`.
+#' `WKB` (the default) or `WKB_ISO`, or as `character` strings when
+#' `returnGeomAs` is set to one of `WKT` or `WKT_ISO`.
 #'
 #' Note that `$getFeatureCount()` is called internally when fetching the full
 #' feature set or all remaining features (but not for a page of features).
@@ -639,25 +640,22 @@
 #'
 #' ## sequential read cursor
 #' feat <- lyr$getNextFeature()
-#' # a list of field names and their values
-#' str(feat)
+#' # a list of field names and their values, with class attribute `OGRFeature`
+#' feat
 #'
 #' ## set an attribute filter
 #' lyr$setAttributeFilter("ig_year = 2020")
 #' lyr$getFeatureCount()
 #'
 #' feat <- lyr$getNextFeature()
-#' str(feat)
+#' plot(feat)
 #'
 #' ## NULL when no more features are available
-#' feat <- lyr$getNextFeature()
-#' str(feat)
+#' lyr$getNextFeature()
 #'
-#' ## reset reading to the start and return geometries as WKT
+#' ## reset reading to the start
 #' lyr$resetReading()
-#' lyr$returnGeomAs <- "WKT"
-#' feat <- lyr$getNextFeature()
-#' str(feat)
+#' lyr$getNextFeature()
 #'
 #' ## clear the attribute filter
 #' lyr$setAttributeFilter("")
@@ -668,37 +666,33 @@
 #' ## first set a temporary attribute filter to do the lookup
 #' lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
 #' feat <- lyr$getNextFeature()
-#' str(feat)
+#' feat
 #'
-#' bbox <- bbox_from_wkt(feat$geom)
-#' print(bbox)
+#' bbox <- g_wk2wk(feat$geom) |> bbox_from_wkt()
 #'
 #' ## set spatial filter on the full layer
 #' lyr$setAttributeFilter("")  # clears
 #' lyr$setSpatialFilterRect(bbox)
 #' lyr$getFeatureCount()
 #'
-#' ## fetch in chunks and return as data frame
-#' d <- lyr$fetch(20)
-#' str(d)
+#' ## fetch in chunks and return as data frame (class `OGRFeatureSet`)
+#' feat_set <- lyr$fetch(20)
+#' head(feat_set)
+#' plot(feat_set)
 #'
 #' ## the next chunk
-#' d <- lyr$fetch(20)
-#' nrow(d)
+#' feat_set <- lyr$fetch(20)
+#' nrow(feat_set)
 #'
 #' ## no features remaining
-#' d <- lyr$fetch(20)
-#' nrow(d)
-#' str(d)  # 0-row data frame with columns typed
+#' feat_set <- lyr$fetch(20)
+#' nrow(feat_set)
+#' str(feat_set)  # 0-row data frame with columns typed
 #'
-#' ## fetch all pending features with geometries as WKB
-#' lyr$returnGeomAs <- "WKB"
-#' d <- lyr$fetch(-1)  # resets reading to the first feature
-#' str(d)
-#'
-#' ## parse WKB using package wk
-#' wk_obj <- wk::wkb(d$geom, crs = lyr$getSpatialRef())
-#' plot(wk_obj)
+#' ## fetch all pending features
+#' feat_set <- lyr$fetch(-1)  # resets reading to the first feature
+#' nrow(feat_set)
+#' plot(feat_set)
 #'
 #' lyr$clearSpatialFilter()
 #' lyr$getFeatureCount()
@@ -771,12 +765,12 @@
 #' lyr$open(read_only = TRUE)
 #'
 #' lyr$getFeatureCount()
-#' d <- lyr$fetch(-1)  # -1 for all features reading from start
-#' str(d)
+#' feat_set <- lyr$fetch(-1)  # -1 for all features reading from start
+#' str(feat_set)
 #'
 #' ## edit an existing feature, e.g., feat <- lyr$getFeature(2)
 #' ## here we copy a row of the data frame returned by lyr$fetch() above
-#' feat <- d[2,]
+#' feat <- feat_set[2,]
 #' str(feat)
 #'
 #' Sys.sleep(1)  # only to ensure a timestamp difference
@@ -798,8 +792,8 @@
 #' lyr$getFeatureCount()
 #'
 #' lyr$returnGeomAs <- "WKT"
-#' d <- lyr$fetch(-1)
-#' str(d)
+#' feat_set <- lyr$fetch(-1)
+#' str(feat_set)
 #'
 #' lyr$close()
 #' \dontshow{unlink(dsn2)}
