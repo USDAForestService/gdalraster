@@ -1260,6 +1260,12 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         // calls to fetch(n), so the data generally should not be large enough
         // for this to be a problem.
         Rcpp::DataFrame df_trunc = createDF_(row_num);
+        attachGISattributes_(df_trunc, geom_column, geom_col_type, geom_col_srs,
+                             geom_format);
+
+        if (row_num == 0)
+            return df_trunc;
+
         size_t col_num = 0;
 
         Rcpp::NumericVector fid_col = df[col_num];
@@ -1350,8 +1356,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
             }
         }
 
-        attachGISattributes_(df_trunc, geom_column, geom_col_type, geom_col_srs,
-                             geom_format);
         return df_trunc;
     }
 }
