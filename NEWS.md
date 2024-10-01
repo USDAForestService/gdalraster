@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9500 (dev)
+# gdalraster 1.11.1.9501 (dev)
+
+* ensure `geom_format` is set to `"NONE"` in gis attributes for `OGRFeature` and `OGRFeatureSet` if no geometry column is present (2024-09-30)
 
 * add minimal S3 classes `OGRFeature` and `OGRFeatureSet` with methods for `print()` and `plot()` (2024-09-28)
 
