@@ -746,7 +746,8 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                EQUAL(this->returnGeomAs.c_str(), "WKT") ||
                EQUAL(this->returnGeomAs.c_str(), "WKT_ISO") ||
                EQUAL(this->returnGeomAs.c_str(), "SUMMARY") ||
-               EQUAL(this->returnGeomAs.c_str(), "TYPE_NAME"))) {
+               EQUAL(this->returnGeomAs.c_str(), "TYPE_NAME") ||
+               EQUAL(this->returnGeomAs.c_str(), "BBOX"))) {
         Rcpp::stop("unsupported value of object field 'returnGeomAs'");
     }
 
@@ -1220,6 +1221,23 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                         col[row_num] = NA_STRING;
                 }
 
+                else if (EQUAL(this->returnGeomAs.c_str(), "BBOX")) {
+                  Rcpp::List col = df[col_num];
+                  if (hGeom != nullptr) {
+                    const auto poGeom = OGRGeometry::FromHandle(hGeom);
+                    OGREnvelope  envelope;
+                    OGR_G_GetEnvelope(poGeom, &envelope);
+                    col[row_num] = Rcpp::NumericVector::create(envelope.MinX, envelope.MinY, envelope.MaxX, envelope.MaxY);
+                    if (destroy_geom) {
+                      delete poGeom;
+                      destroy_geom = false;
+                    }
+                  } else {
+                    // NULL would make more sense, but we want to do.call(rbind, x$geom) to get a table of bbox
+                    col[row_num] = Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+                  }
+
+                }
                 if (destroy_geom)
                     OGR_G_DestroyGeometry(hGeom);
             }
@@ -2148,7 +2166,8 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
         if (static_cast<int>(col_num) == nOutCols)
             Rcpp::stop("indexing the output columns failed");
 
-        if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKB")) {
+        if (STARTS_WITH_CI(this->returnGeomAs.c_str(), "WKB") ||
+             STARTS_WITH_CI(this->returnGeomAs.c_str(), "BBOX")) {
             Rcpp::List v = Rcpp::no_init(nrow);
             df[col_num] = v;
         }
