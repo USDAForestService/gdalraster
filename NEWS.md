@@ -1,5 +1,7 @@
 # gdalraster 1.11.1.9500 (dev)
 
+* `GDALVector`: add a `BBOX` option for the per-object setting `$returnGeomAs` (2024-10-03)
+
 * add minimal S3 classes `OGRFeature` and `OGRFeatureSet` with methods for `print()` and `plot()` (2024-09-28)
 
 * add `g_summary()`: obtain text summaries of WKB/WKT geometries (GDAL >= 3.7) (2024-09-24)

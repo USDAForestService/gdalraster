@@ -176,7 +176,7 @@
 #' `WKB_ISO`/`WKT_ISO` (see \url{https://libgeos.org/specifications/wkb/}).
 #' Using `BBOX` exports as a list of numeric vectors, each of length 4 with values
 #' `xmin, ymin, xmax, ymax`. If an empty geometry is encountered these values will
-#' `NA_real_` in the corresponding location.
+#' be `NA_real_` in the corresponding location.
 #' Using `NONE` will result in no geometry value being present in the feature
 #' returned.
 #'

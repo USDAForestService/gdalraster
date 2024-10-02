@@ -1224,16 +1224,15 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 else if (EQUAL(this->returnGeomAs.c_str(), "BBOX")) {
                   Rcpp::List col = df[col_num];
                   if (hGeom != nullptr) {
-                    const auto poGeom = OGRGeometry::FromHandle(hGeom);
                     OGREnvelope  envelope;
-                    OGR_G_GetEnvelope(poGeom, &envelope);
+                    OGR_G_GetEnvelope(hGeom, &envelope);
                     col[row_num] = Rcpp::NumericVector::create(envelope.MinX, envelope.MinY, envelope.MaxX, envelope.MaxY);
                     if (destroy_geom) {
-                      delete poGeom;
+                      OGR_G_DestroyGeometry(hGeom);
                       destroy_geom = false;
                     }
                   } else {
-                    // NULL would make more sense, but we want to do.call(rbind, x$geom) to get a table of bbox
+                    // do.call(rbind, x$geom) to get a table of bbox, so we use NA not NULL
                     col[row_num] = Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL, NA_REAL);
                   }
 
