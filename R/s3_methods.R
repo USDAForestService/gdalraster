@@ -120,15 +120,19 @@ plot.OGRFeature <- function(x, ...) {
         geom_column <- attr(x, "gis")$geom_column[1]
 
     geom_format <- toupper(attr(x, "gis")$geom_format)
-    if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO"))
+    if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO", "BBOX"))
         stop("no supported geometry format for plot")
 
     srs <- attr(x, "gis")$geom_col_srs[1]
 
-    if (startsWith(geom_format, "WKB"))
+    if (geom_format == "BBOX") {
+        bb <- x[[geom_column]]
+        wk_obj <- wk::rct(bb[1], bb[2], bb[3], bb[4], crs = srs)
+    } else if (startsWith(geom_format, "WKB")) {
         wk_obj <- wk::wkb(list(x[[geom_column]]), crs = srs)
-    else
+    } else {
         wk_obj <- wk::wkt(x[[geom_column]], crs = srs)
+    }
 
     wk::wk_plot(wk_obj, ...)
 
@@ -149,15 +153,19 @@ plot.OGRFeatureSet <- function(x, ...) {
         geom_column <- attr(x, "gis")$geom_column[1]
 
     geom_format <- toupper(attr(x, "gis")$geom_format)
-    if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO"))
+    if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO", "BBOX"))
         stop("no supported geometry format for plot")
 
     srs <- attr(x, "gis")$geom_col_srs[1]
 
-    if (startsWith(geom_format, "WKB"))
+    if (geom_format == "BBOX") {
+        wk_obj <- matrix(unlist(x[[geom_column]]), ncol = 4, byrow = TRUE) |>
+            wk::as_rct()
+    } else if (startsWith(geom_format, "WKB")) {
         wk_obj <- wk::wkb(x[[geom_column]], crs = srs)
-    else
+    } else {
         wk_obj <- wk::wkt(x[[geom_column]], crs = srs)
+    }
 
     wk::wk_plot(wk_obj, ...)
 

@@ -26,6 +26,12 @@ test_that("plot.OGRFeature / plot.OGRFeatureSet work", {
     feat_set <- lyr$fetch(3)
     expect_identical(plot(feat_set), feat_set)
 
+    lyr$returnGeomAs <- "BBOX"
+    feat <- lyr$getNextFeature()
+    expect_identical(plot(feat), feat)
+    feat_set <- lyr$fetch(3)
+    expect_identical(plot(feat_set), feat_set)
+
     lyr$close()
 })
 
@@ -52,6 +58,12 @@ test_that("print.OGRFeature / print.OGRFeatureSet work", {
     expect_identical(print(feat_set), feat_set)
 
     lyr$returnGeomAs <- "WKT_ISO"
+    feat <- lyr$getNextFeature()
+    expect_identical(print(feat), feat)
+    feat_set <- lyr$fetch(3)
+    expect_identical(print(feat_set), feat_set)
+
+    lyr$returnGeomAs <- "BBOX"
     feat <- lyr$getNextFeature()
     expect_identical(print(feat), feat)
     feat_set <- lyr$fetch(3)
