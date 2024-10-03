@@ -182,11 +182,17 @@ messages and warnings.
 
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.
-Must be one of \code{WKB} (the default), \code{WKB_ISO}, \code{WKT}, \code{WKT_ISO} or \code{NONE}.
+Must be one of \code{WKB} (the default), \code{WKB_ISO}, \code{WKT}, \code{WKT_ISO}, \code{BBOX}, or
+\code{NONE}.
 Using \code{WKB}/\code{WKT} exports as 99-402 extended dimension (Z) types for Point,
 LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
 GeometryCollection. For other geometry types, it is equivalent to using
 \code{WKB_ISO}/\code{WKT_ISO} (see \url{https://libgeos.org/specifications/wkb/}).
+Using \code{BBOX} exports as a list of numeric vectors, each of length 4 with values
+\verb{xmin, ymin, xmax, ymax}. If an empty geometry is encountered these values will
+be \code{NA_real_} in the corresponding location.
+Using \code{NONE} will result in no geometry value being present in the feature
+returned.
 
 \code{$wkbByteOrder}\cr
 Character string specifying the byte order for WKB geometries.

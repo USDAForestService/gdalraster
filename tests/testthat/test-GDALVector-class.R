@@ -330,7 +330,11 @@ test_that("read methods work correctly", {
     f <- lyr$getFeature(1)
     expect_true(is.null(f[[geom_fld]]))
     f <- NULL
-
+    lyr$returnGeomAs <- "BBOX"
+    f <- lyr$getFeature(1)
+    expect_true(is.numeric(f[[geom_fld]]))
+    expect_true(all(diff(f[[geom_fld]])[c(1, 3)] > 0))
+    f <- NULL
     lyr$close()
     rm(lyr)
 })
