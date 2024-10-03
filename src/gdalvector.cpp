@@ -772,7 +772,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 
     Rcpp::DataFrame df = createDF_(fetch_num);
 
-    if (include_geom) {
+    if (include_geom && nGeomFields > 0) {
         // get gis attributes
         geom_format = this->returnGeomAs;
 
@@ -812,9 +812,6 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         }
     }
     else {
-        geom_column = "";
-        geom_col_type = "";
-        geom_col_srs = "";
         geom_format = "NONE";
     }
 

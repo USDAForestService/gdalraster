@@ -1,4 +1,4 @@
-# gdalraster 1.11.1.9500 (dev)
+# gdalraster 1.11.1.9501 (dev)
 
 * `GDALVector`: add a `BBOX` option for the per-object setting `$returnGeomAs` (2024-10-03)
 

@@ -9,7 +9,7 @@ print.OGRFeature <- function(x, ...) {
     geom_column <- attr(x, "gis")$geom_column
     geom_format <- toupper(attr(x, "gis")$geom_format)
 
-    if (geom_format == "NONE")
+    if (geom_format == "NONE" || length(geom_column) == 0)
         cat("OGR feature (attributes)\n")
     else
         cat("OGR feature\n")
@@ -65,7 +65,7 @@ print.OGRFeatureSet <- function(x, ...) {
     geom_column <- attr(x, "gis")$geom_column
     geom_format <- toupper(attr(x, "gis")$geom_format)
 
-    if (geom_format == "NONE")
+    if (geom_format == "NONE" || length(geom_column) == 0)
         cat("OGR feature set (attribute table)\n")
     else
         cat("OGR feature set\n")
@@ -114,16 +114,25 @@ print.OGRFeatureSet <- function(x, ...) {
 #' @export
 #' @method plot OGRFeature
 plot.OGRFeature <- function(x, ...) {
-    geom_format <- toupper(attr(x, "gis")$geom_format)
-    if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO"))
+    if (length(attr(x, "gis")$geom_column) == 0)
         stop("no geometry column")
-
-    geom_column <- attr(x, "gis")$geom_column[1]
-    srs <- attr(x, "gis")$geom_col_srs[1]
-    if (startsWith(geom_format, "WKB"))
-        wk_obj <- wk::wkb(list(x[[geom_column]]), crs = srs)
     else
+        geom_column <- attr(x, "gis")$geom_column[1]
+
+    geom_format <- toupper(attr(x, "gis")$geom_format)
+    if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO", "BBOX"))
+        stop("no supported geometry format for plot")
+
+    srs <- attr(x, "gis")$geom_col_srs[1]
+
+    if (geom_format == "BBOX") {
+        bb <- x[[geom_column]]
+        wk_obj <- wk::rct(bb[1], bb[2], bb[3], bb[4], crs = srs)
+    } else if (startsWith(geom_format, "WKB")) {
+        wk_obj <- wk::wkb(list(x[[geom_column]]), crs = srs)
+    } else {
         wk_obj <- wk::wkt(x[[geom_column]], crs = srs)
+    }
 
     wk::wk_plot(wk_obj, ...)
 
@@ -138,16 +147,25 @@ plot.OGRFeature <- function(x, ...) {
 #' @export
 #' @method plot OGRFeatureSet
 plot.OGRFeatureSet <- function(x, ...) {
-    geom_format <- toupper(attr(x, "gis")$geom_format)
-    if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO"))
+    if (length(attr(x, "gis")$geom_column) == 0)
         stop("no geometry column")
-
-    geom_column <- attr(x, "gis")$geom_column[1]
-    srs <- attr(x, "gis")$geom_col_srs[1]
-    if (startsWith(geom_format, "WKB"))
-        wk_obj <- wk::wkb(x[[geom_column]], crs = srs)
     else
+        geom_column <- attr(x, "gis")$geom_column[1]
+
+    geom_format <- toupper(attr(x, "gis")$geom_format)
+    if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO", "BBOX"))
+        stop("no supported geometry format for plot")
+
+    srs <- attr(x, "gis")$geom_col_srs[1]
+
+    if (geom_format == "BBOX") {
+        wk_obj <- matrix(unlist(x[[geom_column]]), ncol = 4, byrow = TRUE) |>
+            wk::as_rct()
+    } else if (startsWith(geom_format, "WKB")) {
+        wk_obj <- wk::wkb(x[[geom_column]], crs = srs)
+    } else {
         wk_obj <- wk::wkt(x[[geom_column]], crs = srs)
+    }
 
     wk::wk_plot(wk_obj, ...)
 
