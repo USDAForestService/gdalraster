@@ -263,11 +263,17 @@ A logical value, <code>FALSE</code> by default. Set to <code>TRUE</code> to supp
 messages and warnings.</p>
 <p><code>$returnGeomAs</code><br>
 Character string specifying the return format of feature geometries.
-Must be one of <code>WKB</code> (the default), <code>WKB_ISO</code>, <code>WKT</code>, <code>WKT_ISO</code> or <code>NONE</code>.
+Must be one of <code>WKB</code> (the default), <code>WKB_ISO</code>, <code>WKT</code>, <code>WKT_ISO</code>, <code>BBOX</code>, or
+<code>NONE</code>.
 Using <code>WKB</code>/<code>WKT</code> exports as 99-402 extended dimension (Z) types for Point,
 LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
 GeometryCollection. For other geometry types, it is equivalent to using
-<code>WKB_ISO</code>/<code>WKT_ISO</code> (see <a href="https://libgeos.org/specifications/wkb/" class="external-link">https://libgeos.org/specifications/wkb/</a>).</p>
+<code>WKB_ISO</code>/<code>WKT_ISO</code> (see <a href="https://libgeos.org/specifications/wkb/" class="external-link">https://libgeos.org/specifications/wkb/</a>).
+Using <code>BBOX</code> exports as a list of numeric vectors, each of length 4 with values
+<code>xmin, ymin, xmax, ymax</code>. If an empty geometry is encountered these values will
+be <code>NA_real_</code> in the corresponding location.
+Using <code>NONE</code> will result in no geometry value being present in the feature
+returned.</p>
 <p><code>$wkbByteOrder</code><br>
 Character string specifying the byte order for WKB geometries.
 Must be either <code>LSB</code> (Least Significant Byte first, the default) or
@@ -652,7 +658,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x555e5ad13dc0&gt; of class 'GDALVector' &lt;0x555e5909a6e0&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x563216eff060&gt; of class 'GDALVector' &lt;0x563214193f10&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 8 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -683,7 +689,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpFv476o/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpcuBG9a/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1165,7 +1171,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-30 21:42:20" "2024-09-30 21:42:20"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-10-03 02:22:42" "2024-10-03 02:22:42"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1191,7 +1197,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-30 21:42:20"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-10-03 02:22:42"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1234,7 +1240,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-09-30 21:42:20" "2024-09-30 21:42:21"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2024-10-03 02:22:42" "2024-10-03 02:22:43"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
