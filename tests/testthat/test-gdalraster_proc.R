@@ -433,3 +433,86 @@ test_that("rasterize runs without error", {
     expect_true(res)
     deleteDataset(out_file)
 })
+
+test_that("pixel_extract wrapper returns correct data", {
+    # the C++ class method GDALRaster::pixel_extract() is tested in
+    # test-GDALRaster-class.R
+
+    pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
+    pts <- read.csv(pt_file)
+    raster_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+
+    # single pixel extract
+    extr <- pixel_extract(raster_file, pts[-1])
+    colnames(extr) <- NULL
+    dim(extr) <- NULL
+    expected_values <- c(2648, 2865, 2717, 2560, 2916,
+                         2633, 2548, 2801, 2475, 2822)
+    expect_equal(extr, expected_values)
+
+    # as a GDALRaster object
+    ds <- new(GDALRaster, raster_file)
+    extr_ds <- pixel_extract(ds, pts[-1])
+    colnames(extr_ds) <- NULL
+    dim(extr_ds) <- NULL
+    expect_equal(extr_ds, expected_values)
+    # with missing values in the input
+    pts_na <- rbind(pts, c(11, NA_real_, NA_real_))
+    extr_na <- pixel_extract(ds, pts_na[-1])
+    colnames(extr_na) <- NULL
+    dim(extr_na) <- NULL
+    expect_na <- c(expected_values, NA_real_)
+    expect_equal(extr_na, expect_na)
+    ds$close()
+
+    # interpolated values
+    extr_bilinear <- pixel_extract(raster_file, pts[-1], interp = "bilinear")
+    colnames(extr_bilinear) <- NULL
+    dim(extr_bilinear) <- NULL
+    expected_values <- c(2649.217, 2881.799, 2716.290, 2558.797, 2920.404,
+                         2629.495, 2548.250, 2810.543, 2478.609, 2819.776)
+    expect_equal(extr_bilinear, expected_values, tolerance = 1e-4)
+
+    # kernel values
+    extr_3x3 <- pixel_extract(raster_file, pts[-1], krnl_dim = 3)
+    colnames(extr_3x3) <- NULL
+    dimnames(extr_3x3) <- NULL
+    expected_values <- c(
+        2660,     2654, 2651,     2652, 2648, 2646,     2653, 2647, 2645,
+        2924,     2895, 2901,     2893, 2865, 2869,     2863, 2838, 2841,
+        NA_real_, 2709, 2704, NA_real_, 2717, 2717, NA_real_, 2725, 2728,
+        2554,     2558, 2562,     2557, 2560, 2564,     2559, 2562, 2566,
+        2932,     2920, 2908,     2927, 2916, 2903,     2923, 2911, 2899,
+        2633,     2642, 2650,     2627, 2633, 2640,     2619, 2624, 2630,
+        2548,     2548, 2550,     2549, 2548, 2550,     2550, 2548, 2550,
+        2785,     2777, 2776,     2807, 2801, 2803,     2833, 2825, 2827,
+        2489,     2482, 2475,     2479, 2475, 2470,     2474, 2471, 2468,
+        2832,     2810, 2789,     2839, 2822, 2800,     2833, 2811, 2788)
+    expected_values <- matrix(expected_values, nrow = 10, ncol = 9,
+                              byrow = TRUE)
+    expect_equal(extr_3x3, expected_values)
+
+    # transform the xy
+    ds$open(read_only = TRUE)
+    pts_nad83 <- transform_xy(pts[-1], ds$getProjection(), "NAD83")
+    extr <- pixel_extract(raster_file, pts_nad83, xy_srs = "NAD83")
+    colnames(extr) <- NULL
+    dim(extr) <- NULL
+    expected_values <- c(2648, 2865, 2717, 2560, 2916,
+                         2633, 2548, 2801, 2475, 2822)
+    expect_equal(extr, expected_values)
+    ds$close()
+
+
+    # input validation
+    expect_error(pixel_extract(ds, pts[-1]))  # ds closed
+    expect_error(pixel_extract(NULL, pts[-1]))
+    expect_error(pixel_extract(raster_file))
+    expect_error(pixel_extract(raster_file, as.character(pts[-1])))
+    expect_error(pixel_extract(raster_file, pts))  # more than two columns
+    pts[, 2] <- as.character(pts[, 1])
+    expect_error(pixel_extract(raster_file, pts[-1]))
+    expect_error(pixel_extract(raster_file, pts[-1], bands = "1"))
+    expect_error(pixel_extract(raster_file, pts[-1], interp = 2))
+    expect_error(pixel_extract(raster_file, pts[-1], krnl_dim = c(1, 1, 1)))
+})

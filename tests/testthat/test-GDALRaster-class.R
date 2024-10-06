@@ -487,3 +487,316 @@ test_that("add band works", {
 
     ds$close()
 })
+
+test_that("pixel extract internal class method returns correct data", {
+    # Several of these tests were adapted from:
+    #    gdal/autotest/gcore/interpolateatpoint.py
+    #    Copyright (c) 2024, Javier Jimenez Shaw <j1@jimenezshaw.com>
+    #    SPDX-License-Identifier: MIT
+
+    ## basic tests, 1 point
+    f <- system.file("extdata/byte.tif", package="gdalraster")
+    ds <- new(GDALRaster, f)
+    # GDALRaster::pixel_extract() accepts geospatial xy
+    # convert grid xy (10, 12) to geospatial xy
+    geo_xy <- ds$apply_geotransform(matrix(c(10 ,12), ncol = 2))
+    # geo_xy
+    #>        [,1]    [,2]
+    #> [1,] 441320 3750600
+
+    extr_nearest <- ds$pixel_extract(xy = geo_xy,
+                                     bands = 1,
+                                     interp_method = "near",
+                                     krnl_dim = 1,
+                                     xy_srs = "")
+
+    expect_equal(extr_nearest[1], 173)
+
+    # as vector of x, y
+    geo_xy <- c(441320, 3750600)
+    extr_nearest <- ds$pixel_extract(xy = geo_xy,
+                                     bands = 1,
+                                     interp_method = "near",
+                                     krnl_dim = 1,
+                                     xy_srs = "")
+
+    expect_equal(extr_nearest[1], 173)
+
+    # as data frame
+    geo_xy <- data.frame(geo_xy[1], geo_xy[2])
+    extr_nearest <- ds$pixel_extract(xy = geo_xy,
+                                     bands = 1,
+                                     interp_method = "near",
+                                     krnl_dim = 1,
+                                     xy_srs = "")
+
+    expect_equal(extr_nearest[1], 173)
+
+    # krnl_dim ignored with bilinear but a required arg for the internal method
+    extr_bilinear <- ds$pixel_extract(xy = geo_xy,
+                                      bands = 1,
+                                      interp_method = "bilinear",
+                                      krnl_dim = 2,
+                                      xy_srs = "")
+
+    expect_equal(extr_bilinear[1], 139.75, tolerance = 1e-6)
+
+    # errors
+    expect_error(ds$pixel_extract(xy = 441320,
+                                  bands = 1,
+                                  interp_method = "near",
+                                  krnl_dim = 1,
+                                  xy_srs = ""))
+    expect_error(ds$pixel_extract(xy = matrix(numeric(), nrow = 0),
+                                  bands = 1,
+                                  interp_method = "near",
+                                  krnl_dim = 1,
+                                  xy_srs = ""))
+    expect_error(ds$pixel_extract(xy = geo_xy,
+                                  bands = 1,
+                                  interp_method = "invalid",
+                                  krnl_dim = 1,
+                                  xy_srs = ""))
+    # only  one band at a time supported for NxN kernel extract
+    expect_error(ds$pixel_extract(xy = geo_xy,
+                                  bands = c(1, 2),
+                                  interp_method = "near",
+                                  krnl_dim = 3,
+                                  xy_srs = ""))
+    # three columns
+    geo_xy$new_variable <- 0
+    expect_error(ds$pixel_extract(geo_xy,
+                                  bands = 1,
+                                  interp_method = "near",
+                                  krnl_dim = 1,
+                                  xy_srs = ""))
+
+    # out of range
+    geo_xy <- matrix(c(10000000, 3750600), ncol = 2)
+    expect_warning(extr_bilinear <- ds$pixel_extract(xy = geo_xy,
+                                                     bands = 1,
+                                                     interp_method = "bilinear",
+                                                     krnl_dim = 2,
+                                                     xy_srs = ""))
+
+    expect_true(is.na(extr_bilinear[1]))
+
+    geo_xy <- matrix(c(441320, 10000000), ncol = 2)
+    expect_warning(extr_bilinear <- ds$pixel_extract(xy = geo_xy,
+                                                     bands = 1,
+                                                     interp_method = "bilinear",
+                                                     krnl_dim = 2,
+                                                     xy_srs = ""))
+
+    expect_true(is.na(extr_bilinear[1]))
+
+    ds$close()
+
+
+    ## bilinear interpolation - 2 bands
+    ds <- create(format="MEM", dst_filename="", xsize=2, ysize=2,
+                 nbands=2, dataType="Float32", return_obj=TRUE)
+
+    # band 1
+    raster_data_1 <- c(10.5, 1.3, 2.4, 3.8)
+    ds$write(band = 1, xoff = 0, yoff = 0, xsize = 2, ysize = 2, raster_data_1)
+    # also with negative - band 2
+    raster_data_2 <- c(10.5, 1.3, -2.4, 3.8)
+    ds$write(band = 2, xoff = 0, yoff = 0, xsize = 2, ysize = 2, raster_data_2)
+
+    geo_xy <- matrix(c(1, -1), ncol = 2)
+    # bands = 0 for all bands
+    # krnl_dim ignored with bilinear but a required arg for the internal method
+    # warning for no geotransform in this case
+    expect_warning(extr_bilinear <- ds$pixel_extract(xy = geo_xy,
+                                                     bands = 0,
+                                                     interp_method = "bilinear",
+                                                     krnl_dim = 2,
+                                                     xy_srs = ""))
+
+    expect_true(is.matrix(extr_bilinear))
+    expect_equal(dim(extr_bilinear), c(1, 2))
+    expect_equal(colnames(extr_bilinear), c("b1", "b2"))
+    colnames(extr_bilinear) <- NULL
+    expect_equal(extr_bilinear[1, 1], sum(raster_data_1) / 4, tolerance = 1e-6)
+    expect_equal(extr_bilinear[1, 2], sum(raster_data_2) / 4, tolerance = 1e-6)
+
+    ds$close()
+
+
+    ## bilinear - several points
+    ds <- create(format="MEM", dst_filename="", xsize=3, ysize=2,
+                 nbands=1, dataType="Float32", return_obj=TRUE)
+
+    raster_data <- c(10.5, 1.3, 0.5,
+                     2.4, 3.8, -1.0)
+    ds$write(band = 1, xoff = 0, yoff = 0, xsize = 3, ysize = 2, raster_data)
+
+    geo_xy <- matrix(c(0.5, 1.5, 2, -0.5, -1.5, -1), nrow = 3, ncol = 2)
+    # krnl_dim ignored with bilinear but a required arg for the internal method
+    ds$quiet <- TRUE
+    expect_no_warning(
+        extr_bilinear <- ds$pixel_extract(xy = geo_xy,
+                                          bands = 1,
+                                          interp_method = "bilinear",
+                                          krnl_dim = 2,
+                                          xy_srs = "")
+    )
+
+    expect_true(is.matrix(extr_bilinear))
+    expect_equal(dim(extr_bilinear), c(3, 1))
+    expect_equal(colnames(extr_bilinear), "b1")
+    colnames(extr_bilinear) <- NULL
+    expect_equal(extr_bilinear[1, 1], 10.5, tolerance = 1e-6)
+    expect_equal(extr_bilinear[2, 1], 3.8, tolerance = 1e-6)
+    expect_equal(extr_bilinear[3, 1], (1.3 + 0.5 + 3.8 - 1) / 4, tolerance = 1e-6)
+
+    ds$close()
+})
+
+test_that("pixel extract interpolate near borders", {
+    # Bilinear interp along the edge pixels should match results from
+    # GDALRasterInterpolateAtPoint(), as described in
+    # https://github.com/OSGeo/gdal/pull/10506.
+    # It is currently implemented differently in gdalraster (i.e., not
+    # generalized beyond bilinear, but not dependent on GDAL >= 3.10), but we
+    # check using tests adapted from:
+    #    gdal/autotest/gcore/interpolateatpoint.py
+    #    Copyright (c) 2024, Javier Jimenez Shaw <j1@jimenezshaw.com>
+    #    SPDX-License-Identifier: MIT
+
+    ds <- create(format="MEM", dst_filename="", xsize=6, ysize=5,
+                 nbands=1, dataType="Float32", return_obj=TRUE)
+
+    raster_data <- c(1, 2, 4, 4, 5, 6,
+                     9, 8, 7, 6, 3, 4,
+                     4, 7, 6, 2, 1, 3,
+                     7, 8, 9, 6, 2, 1,
+                     2, 5, 2, 1, 7, 8)
+
+    ds$write(band = 1, xoff = 0, yoff = 0, xsize = 6, ysize = 5, raster_data)
+
+    ds$quiet <- TRUE
+
+    geo_xy <- matrix(c(0, 0), ncol = 2)
+    extr_bilinear <- ds$pixel_extract(geo_xy, 1, "bilinear", 2, "")
+    expect_equal(extr_bilinear[1], 1.0, tolerance = 1e-6)
+
+    geo_xy <- matrix(c(1, 0), ncol = 2)
+    extr_bilinear <- ds$pixel_extract(geo_xy, 1, "bilinear", 2,"")
+    expect_equal(extr_bilinear[1], 1.5, tolerance = 1e-6)
+
+    geo_xy <- matrix(c(0, -1), ncol = 2)
+    extr_bilinear <- ds$pixel_extract(geo_xy, 1, "bilinear", 2, "")
+    expect_equal(extr_bilinear[1], 5.0, tolerance = 1e-6)
+
+    geo_xy <- matrix(c(0, -2), ncol = 2)
+    extr_bilinear <- ds$pixel_extract(geo_xy, 1, "bilinear", 2, "")
+    expect_equal(extr_bilinear[1], 6.5, tolerance = 1e-6)
+
+    geo_xy <- matrix(c(6, 0), ncol = 2)
+    extr_bilinear <- ds$pixel_extract(geo_xy, 1, "bilinear", 2, "")
+    expect_equal(extr_bilinear[1], 6.0, tolerance = 1e-6)
+
+    geo_xy <- matrix(c(3, -5), ncol = 2)
+    extr_bilinear <- ds$pixel_extract(geo_xy, 1, "bilinear", 2, "")
+    expect_equal(extr_bilinear[1], 1.5, tolerance = 1e-6)
+
+    geo_xy <- matrix(c(3, -4.6), ncol = 2)
+    extr_bilinear <- ds$pixel_extract(geo_xy, 1, "bilinear", 2, "")
+    expect_equal(extr_bilinear[1], 1.5, tolerance = 1e-6)
+
+    ds$close()
+})
+
+test_that("pixel extract internal class method - all pixels in a kernel", {
+    ds <- create(format="MEM", dst_filename="", xsize=6, ysize=5,
+                 nbands=1, dataType="Float32", return_obj=TRUE)
+
+    raster_data <- c(1, 2, 4, 4, 5, 6,
+                     9, 8, 7, 6, 3, 4,
+                     4, 7, 6, 2, 1, 3,
+                     7, 8, 9, 6, 2, 1,
+                     2, 5, 2, 1, 7, 8)
+
+    ds$write(band = 1, xoff = 0, yoff = 0, xsize = 6, ysize = 5, raster_data)
+
+    ds$quiet <- TRUE
+
+    geo_xy <- matrix(c(1.5, -1.5), ncol = 2)
+    extr_krnl <- ds$pixel_extract(geo_xy, 1, "near", 3, "")
+    expected_names <- c("b1_p1", "b1_p2", "b1_p3", "b1_p4", "b1_p5", "b1_p6",
+                        "b1_p7", "b1_p8", "b1_p9")
+    expected_values <- c(1, 2, 4, 9, 8, 7, 4, 7, 6)
+    expect_true(is.matrix(extr_krnl))
+    expect_equal(dim(extr_krnl), c(1, 9))
+    expect_equal(colnames(extr_krnl), expected_names)
+    colnames(extr_krnl) <- NULL
+    dim(extr_krnl) <- NULL
+    expect_equal(extr_krnl, expected_values)
+
+    geo_xy <- matrix(c(4.6, -3.5), ncol = 2)
+    extr_krnl <- ds$pixel_extract(geo_xy, 1, "near", 3, "")
+    expected_values <- c(2, 1, 3, 6, 2, 1, 1, 7, 8)
+    colnames(extr_krnl) <- NULL
+    dim(extr_krnl) <- NULL
+    expect_equal(extr_krnl, expected_values)
+
+    # portion of kernel outside the raster extent
+    # note that the public wrapper in gdalraster_proc.R handles this case
+    # with additional tests in test-gdalraster_proc.R
+    geo_xy <- matrix(c(0, 0), ncol = 2)
+    extr_krnl <- ds$pixel_extract(geo_xy, 1, "near", 3, "")
+    colnames(extr_krnl) <- NULL
+    expect_true(all(is.na(extr_krnl)))
+
+    geo_xy <- matrix(c(5, -3.5), ncol = 2)
+    extr_krnl <- ds$pixel_extract(geo_xy, 1, "near", 3, "")
+    colnames(extr_krnl) <- NULL
+    expect_true(all(is.na(extr_krnl)))
+
+    ds$close()
+})
+
+test_that("pixel extract cubic/cublicspline interpolation", {
+    # Requires GDAL >= 3.10
+    # Tests adapted from:
+    #    gdal/autotest/gcore/interpolateatpoint.py
+    #    Copyright (c) 2024, Javier Jimenez Shaw <j1@jimenezshaw.com>
+    #    SPDX-License-Identifier: MIT
+
+    skip_if(.gdal_version_num() < 3100000)
+
+    ds <- create(format="MEM", dst_filename="", xsize=4, ysize=4,
+                 nbands=1, dataType="Float32", return_obj=TRUE)
+
+    raster_data <- c(1.0, 2.0, 1.5, -0.3,
+                     1.0, 2.0, 1.5, -0.3,
+                     1.0, 2.0, 1.5, -0.3,
+                     1.0, 2.0, 1.5, -0.3)
+
+    ds$write(band = 1, xoff = 0, yoff = 0, xsize = 4, ysize = 4, raster_data)
+
+    ds$quiet <- TRUE
+
+    geo_xy <- matrix(c(1.5, -1.5), ncol = 2)
+    extr_cubicspline <- ds$pixel_extract(geo_xy, 1, "cubicspline", 4, "")
+    expect_equal(extr_cubicspline[1], 1.75, tolerance = 1e-6)
+
+    extr_cubic <- ds$pixel_extract(geo_xy, 1, "cubic", 4, "")
+    expect_equal(extr_cubic[1], 2.0, tolerance = 1e-6)
+
+    geo_xy <- matrix(c(2.0, -2.0), ncol = 2)
+    extr_cubicspline <- ds$pixel_extract(geo_xy, 1, "cubicspline", 4, "")
+    expect_equal(extr_cubicspline[1], 1.6916666, tolerance = 1e-6)
+
+    extr_cubic <- ds$pixel_extract(geo_xy, 1, "cubic", 4, "")
+    expect_equal(extr_cubic[1], 1.925, tolerance = 1e-6)
+
+    # cubic may exceed the highest value
+    geo_xy <- matrix(c(1.6, -1.5), ncol = 2)
+    extr_cubic <- ds$pixel_extract(geo_xy, 1, "cubic", 4, "")
+    expect_equal(extr_cubic[1], 2.0166, tolerance = 1e-6)
+
+    ds$close()
+})

@@ -20,6 +20,7 @@
 #include "gdal_utils.h"
 
 #include "gdal_vsi.h"
+#include "transform.h"
 #include "gdalraster.h"
 
 // [[Rcpp::init]]
@@ -310,7 +311,9 @@ std::vector<double> GDALRaster::getGeoTransform() const {
     // returned by GDALGetGeoTransform() even when CE_Failure:
     std::vector<double> gt = {0, 1, 0, 0, 0, 1};
 
-    if (GDALGetGeoTransform(m_hDataset, gt.data()) == CE_Failure)
+    CPLErr err = CE_None;
+    err = GDALGetGeoTransform(m_hDataset, gt.data());
+    if (!quiet && err == CE_Failure)
         Rcpp::warning("failed to get geotransform, default returned");
 
     return gt;
@@ -487,6 +490,342 @@ Rcpp::IntegerMatrix GDALRaster::get_pixel_line(const Rcpp::RObject& xy) const {
     checkAccess_(GA_ReadOnly);
 
     return get_pixel_line_ds(xy, this);
+}
+
+Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject& xy,
+                                              Rcpp::IntegerVector bands,
+                                              std::string interp,
+                                              int krnl_dim,
+                                              std::string xy_srs) const {
+
+    /*
+       *************************************************************************
+       undocumented method with public wrapper in R/gdalraster_proc.R
+
+       extract pixel values at point locations
+       xy:          geospatial xy coordinates in the same projection as the
+                    raster, a 2-column data frame or matrix
+       bands:       band number(s), or 0 to extract from all bands
+       interp:      one of "nearest", "bilinear" (2x2 kernel),
+                    "cubic" (4x4 kernel) or "cubicspline" (4x4 kernel)
+       krnl_dim:    1 for single-pixel extract at xy (with
+                    interp = "nearest"), or the size of a square kernel to
+                    extract all pixels, e.g., krnl_dim = 3 to return the values
+                    of the 9 pixels in a 3x3 kernel centered on the pixel
+                    containing xy
+                    ignored if interp is not "nearest" (will use the kernel
+                    implied by the given interpolation method)
+       xy_srs:      character string specifying the spatial reference system
+                    for xy. May be in WKT format or any of the formats
+                    supported by srs_to_wkt().
+       *************************************************************************
+    */
+
+    checkAccess_(GA_ReadOnly);
+
+    Rcpp::NumericMatrix xy_in;
+    if (Rcpp::is<Rcpp::NumericVector>(xy) ||
+        Rcpp::is<Rcpp::IntegerVector>(xy)) {
+
+        if (!Rf_isMatrix(xy)) {
+            Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(xy);
+            if (v.size() != 2)
+                Rcpp::stop("'xy' must be a two-column data frame or matrix");
+
+            xy_in = Rcpp::NumericMatrix(1, 2, v.begin());
+        }
+        else {
+            xy_in = Rcpp::as<Rcpp::NumericMatrix>(xy);
+        }
+    }
+    else if (Rcpp::is<Rcpp::DataFrame>(xy)) {
+        xy_in = df_to_matrix_(xy);
+    }
+    else {
+        Rcpp::stop("'xy' must be a two-column data frame or matrix");
+    }
+
+    if (xy_srs != "")
+        xy_in = transform_xy(xy_in, xy_srs, this->getProjection());
+
+    R_xlen_t num_pts = 0;
+    if (xy_in.nrow() == 0)
+        Rcpp::stop("input matrix is empty");
+    else
+        num_pts = xy_in.nrow();
+
+    if (xy_in.ncol() != 2)
+        Rcpp::stop("input matrix must have 2 columns");
+
+    Rcpp::IntegerVector bands_in;
+    if (bands[0] == 0)
+        bands_in = Rcpp::seq(1, getRasterCount());
+    else
+        bands_in = bands;
+    R_xlen_t num_bands = bands_in.size();
+
+    Rcpp::CharacterVector band_names = Rcpp::CharacterVector::create();
+    for (auto& b : bands_in) {
+        GDALRasterBandH hBand = GDALGetRasterBand(m_hDataset, b);
+        if (hBand == nullptr)
+            Rcpp::stop("failed to access the requested band");
+        GDALDataType eDT = GDALGetRasterDataType(hBand);
+        if (GDALDataTypeIsComplex(eDT)) {
+            Rcpp::stop("complex data types currently unsupported for extract");
+        }
+        std::string nm = std::string("b") + std::to_string(b);
+        band_names.push_back(nm);
+    }
+
+    GDALRIOResampleAlg eResampleAlg;
+    if (EQUAL(interp.c_str(), "nearest") ||
+        EQUAL(interp.c_str(), "near")) {
+
+        eResampleAlg = GRIORA_NearestNeighbour;
+    }
+    else if (EQUAL(interp.c_str(), "bilinear")) {
+        eResampleAlg = GRIORA_Bilinear;
+    }
+    else if (EQUAL(interp.c_str(), "cubic")) {
+        if (!GDALCheckVersion(3, 10, nullptr))
+            Rcpp::stop("'cubic' interpolation requires GDAL >= 3.10");
+
+        eResampleAlg = GRIORA_Cubic;
+    }
+    else if (EQUAL(interp.c_str(), "cubicspline")) {
+        if (!GDALCheckVersion(3, 10, nullptr))
+            Rcpp::stop("'cubicspline' interpolation requires GDAL >= 3.10");
+
+        eResampleAlg = GRIORA_CubicSpline;
+    }
+    else {
+        Rcpp::stop("'interp' is invalid");
+    }
+
+    if (krnl_dim < 1)
+        Rcpp::stop("'krnl_dim' must be a positive number");
+
+    if (eResampleAlg == GRIORA_NearestNeighbour &&
+        krnl_dim > 1 && num_bands > 1) {
+
+        Rcpp::stop(
+            "one band must be specified to extract pixel values for kernel");
+    }
+
+    Rcpp::NumericVector inv_gt = inv_geotransform(getGeoTransform());
+    if (Rcpp::any(Rcpp::is_na(inv_gt)))
+        Rcpp::stop("failed to get inverse geotransform");
+
+    int krnl_size = krnl_dim * krnl_dim;
+    int raster_xsize = getRasterXSize();
+    int raster_ysize = getRasterYSize();
+
+    GDALProgressFunc pfnProgress = GDALTermProgressR;
+    uint64_t pts_outside = 0;
+
+    Rcpp::NumericMatrix values;
+    if (krnl_dim == 1 || eResampleAlg != GRIORA_NearestNeighbour) {
+        values = Rcpp::no_init(num_pts, num_bands);
+        Rcpp::colnames(values) = band_names;
+    }
+    else {
+        // for returning individual pixel values within the kernel
+        Rcpp::CharacterVector col_names{};
+        values = Rcpp::no_init(num_pts, krnl_size);
+        for (int i = 0; i < krnl_size; ++i) {
+            col_names.push_back(
+                    std::string(band_names[0]) + "_p" + std::to_string(i + 1));
+        }
+        Rcpp::colnames(values) = col_names;
+    }
+
+    for (R_xlen_t band_idx = 0; band_idx < num_bands; ++band_idx) {
+        if (!quiet) {
+            Rcpp::Rcout << "extracting from band " << bands_in[band_idx]
+                    << "...\n";
+
+            pfnProgress(0, nullptr, nullptr);
+        }
+
+        for (R_xlen_t row_idx = 0; row_idx < num_pts; ++row_idx) {
+            // row_idx refers to rows of the input and output matrices
+
+            double geo_x = xy_in(row_idx, 0);
+            double geo_y = xy_in(row_idx, 1);
+            if (Rcpp::NumericVector::is_na(geo_x) ||
+                Rcpp::NumericVector::is_na(geo_y)) {
+
+                values.row(row_idx) = Rcpp::NumericVector(values.ncol(),
+                                                          NA_REAL);
+                continue;
+            }
+
+            double grid_x = inv_gt[0] + inv_gt[1] * geo_x + inv_gt[2] * geo_y;
+            double grid_y = inv_gt[3] + inv_gt[4] * geo_x + inv_gt[5] * geo_y;
+            if (grid_x < 0 || grid_x > raster_xsize ||
+                grid_y < 0 || grid_y > raster_ysize) {
+
+                if (band_idx == 0)
+                    pts_outside += 1;
+
+                values.row(row_idx) = Rcpp::NumericVector(values.ncol(),
+                                                          NA_REAL);
+                continue;
+            }
+
+            if (eResampleAlg == GRIORA_NearestNeighbour && krnl_dim == 1) {
+                int x_off = static_cast<int>(std::floor(grid_x));
+                int y_off = static_cast<int>(std::floor(grid_y));
+
+                Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(
+                                                read(bands_in[band_idx],
+                                                     x_off, y_off,
+                                                     1, 1, 1, 1));
+
+                values(row_idx, band_idx) = v[0];
+            }
+            else if (eResampleAlg == GRIORA_Bilinear) {
+                int x_off = static_cast<int>(std::floor(grid_x - 0.5));
+                int y_off = static_cast<int>(std::floor(grid_y - 0.5));
+
+                // allow the 2x2 kernel to be outside the extent by one
+                // pixel dimension and handle the border cases
+                if (x_off < -1 || x_off + 2 > raster_xsize + 1 ||
+                    y_off < -1 || y_off + 2 > raster_ysize + 1) {
+
+                    if (band_idx == 0)
+                        pts_outside += 1;
+
+                    values(row_idx, band_idx) = NA_REAL;
+                    continue;
+                }
+
+                // x_off and y_off might be at most one pixel outside the extent
+                int read_xsize = 2;
+                if (x_off < 0) {
+                    x_off = 0;
+                    read_xsize = 1;
+                }
+                else if (x_off + 2 > raster_xsize) {
+                    x_off = raster_xsize - 1;
+                    read_xsize = 1;
+                }
+                int read_ysize = 2;
+                if (y_off < 0) {
+                    y_off = 0;
+                    read_ysize = 1;
+                }
+                else if (y_off + 2 > raster_ysize) {
+                    y_off = raster_ysize - 1;
+                    read_ysize = 1;
+                }
+
+                Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(
+                                                read(bands_in[band_idx],
+                                                     x_off, y_off,
+                                                     read_xsize, read_ysize,
+                                                     read_xsize, read_ysize));
+
+                if (Rcpp::any(Rcpp::is_na(v))) {
+                    values(row_idx, band_idx) = NA_REAL;
+                    continue;
+                }
+
+                if (v.size() == 4) {
+                    // convert to unit square coordinates for the 2x2 kernel
+                    // the center of the lower left pixel in the kernel is 0,0
+                    double x = grid_x - (x_off + 0.5);
+                    double y = (y_off + 1.5) - grid_y;
+
+                    // pixels in v are left to right, top to bottom
+                    // pixel values in the square:
+                    // 0,0: v[2]
+                    // 1,0: v[3]
+                    // 0,1: v[0]
+                    // 1,1: v[1]
+                    values(row_idx, band_idx) = (v[2] * (1.0 - x) * (1.0 - y) +
+                                                 v[3] * x * (1.0 - y) +
+                                                 v[0] * (1.0 - x) * y +
+                                                 v[1] * x * y);
+                }
+                else if (read_xsize == 2 && read_ysize == 1) {
+                    // linear interp along x
+                    double t = grid_x - (x_off + 0.5);
+                    values(row_idx, band_idx) = v[0] + t * (v[1] - v[0]);
+                }
+                else if (read_xsize == 1 && read_ysize == 2) {
+                    // linear interp along y
+                    double t = (y_off + 1.5) - grid_y;
+                    values(row_idx, band_idx) = v[0] + t * (v[1] - v[0]);
+                }
+                else if (v.size() == 1) {
+                    // corner pixel, return its value
+                    values(row_idx, band_idx) = v[0];
+                }
+            }
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 10, 0)
+            else if (eResampleAlg == GRIORA_Cubic ||
+                     eResampleAlg == GRIORA_CubicSpline) {
+
+                double dfRealValue = NA_REAL;
+                double dfImagValue = NA_REAL;
+                CPLErr err = CE_None;
+                GDALRasterBandH hBand = getBand_(bands_in[band_idx]);
+
+                err = GDALRasterInterpolateAtPoint(hBand, grid_x, grid_y,
+                                                   eResampleAlg,
+                                                   &dfRealValue, &dfImagValue);
+
+                if (err != CE_None)
+                    values(row_idx, band_idx) = NA_REAL;
+                else
+                    values(row_idx, band_idx) = dfRealValue;
+            }
+#endif
+            else {
+                // all pixel values in kernel
+                int x_off = static_cast<int>(
+                        std::floor(grid_x - ((krnl_dim / 2.0) - 0.5)));
+
+                int y_off = static_cast<int>(
+                        std::floor(grid_y - ((krnl_dim / 2.0) - 0.5)));
+
+                // is any portion of the kernel outside the raster extent?
+                // the wrapper in R/gdalraster_proc.R avoids this as long
+                // as the point itself is inside, by reading through a VRT
+                // that extends the bounds
+                if (x_off < 0 || x_off + krnl_dim > raster_xsize ||
+                    y_off < 0 || y_off + krnl_dim > raster_ysize) {
+
+                    if (band_idx == 0)
+                        pts_outside += 1;
+
+                    values.row(row_idx) = Rcpp::NumericVector(krnl_size,
+                                                              NA_REAL);
+                    continue;
+                }
+
+                values.row(row_idx) = Rcpp::as<Rcpp::NumericVector>(
+                                            read(bands_in[band_idx],
+                                                 x_off, y_off,
+                                                 krnl_dim, krnl_dim,
+                                                 krnl_dim, krnl_dim));
+            }
+
+            if (!quiet) {
+                pfnProgress((row_idx + 1.0) / num_pts, nullptr, nullptr);
+            }
+        }
+    }
+
+    if (!quiet && pts_outside > 0) {
+        std::string msg =
+                "point(s) were outside the raster extent, NA returned";
+
+        Rcpp::warning(std::to_string(pts_outside) + " " + msg);
+    }
+
+    return values;
 }
 
 std::vector<int> GDALRaster::getBlockSize(int band) const {
@@ -1847,6 +2186,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Apply geotransform (raster column/row to geospatial x/y)")
     .const_method("get_pixel_line", &GDALRaster::get_pixel_line,
         "Convert geospatial coordinates to pixel/line")
+    .const_method("pixel_extract", &GDALRaster::pixel_extract,
+        "Extract pixel values at geospatial xy locations")
     .const_method("getBlockSize", &GDALRaster::getBlockSize,
         "Retrieve the actual block size for a given block offset")
     .const_method("getActualBlockSize", &GDALRaster::getActualBlockSize,

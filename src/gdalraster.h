@@ -133,6 +133,11 @@ class GDALRaster {
     std::vector<int> dim() const;
     Rcpp::NumericMatrix apply_geotransform(const Rcpp::RObject& col_row) const;
     Rcpp::IntegerMatrix get_pixel_line(const Rcpp::RObject& xy) const;
+    Rcpp::NumericMatrix pixel_extract(const Rcpp::RObject& xy,
+                                      Rcpp::IntegerVector bands,
+                                      std::string interp_method,
+                                      int krnl_dim,
+                                      std::string xy_srs) const;
 
     std::vector<int> getBlockSize(int band) const;
     std::vector<int> getActualBlockSize(int band, int xblockoff,
@@ -234,6 +239,9 @@ void pop_error_handler();
 bool has_spatialite();
 bool http_enabled();
 void cpl_http_cleanup();
+std::string cpl_get_filename(Rcpp::CharacterVector full_filename);
+std::string cpl_get_basename(Rcpp::CharacterVector full_filename);
+std::string cpl_get_extension(Rcpp::CharacterVector full_filename);
 
 Rcpp::CharacterVector check_gdal_filename(Rcpp::CharacterVector filename);
 

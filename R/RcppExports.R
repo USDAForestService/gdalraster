@@ -280,6 +280,21 @@ http_enabled <- function() {
 }
 
 #' @noRd
+.cpl_get_filename <- function(full_filename) {
+    .Call(`_gdalraster_cpl_get_filename`, full_filename)
+}
+
+#' @noRd
+.cpl_get_basename <- function(full_filename) {
+    .Call(`_gdalraster_cpl_get_basename`, full_filename)
+}
+
+#' @noRd
+.cpl_get_extension <- function(full_filename) {
+    .Call(`_gdalraster_cpl_get_extension`, full_filename)
+}
+
+#' @noRd
 .cpl_http_cleanup <- function() {
     invisible(.Call(`_gdalraster_cpl_http_cleanup`))
 }

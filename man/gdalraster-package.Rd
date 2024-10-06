@@ -48,7 +48,8 @@
   \item geotransform conversion:
   \code{\link[=apply_geotransform]{apply_geotransform()}},
   \code{\link[=get_pixel_line]{get_pixel_line()}},
-  \code{\link[=inv_geotransform]{inv_geotransform()}}
+  \code{\link[=inv_geotransform]{inv_geotransform()}},
+  \code{\link[=pixel_extract]{pixel_extract()}}
 
   \item coordinate transformation:
   \code{\link[=transform_xy]{transform_xy()}},
