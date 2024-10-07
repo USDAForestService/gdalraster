@@ -59,6 +59,7 @@ LinkingTo: Rcpp, RcppInt64
 Suggests:
     gt,
     knitr,
+    nanoarrow,
     rmarkdown,
     scales,
     testthat (>= 3.0.0)

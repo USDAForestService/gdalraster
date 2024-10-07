@@ -13,15 +13,20 @@
 
 #include "rcpp_util.h"
 
+#if __has_include("ogr_recordbatch.h")  // for Arrow structs (GDAL >= 3.6)
+    #include "ogr_recordbatch.h"
+#endif
+
 // Predeclare some GDAL types until the public header is included
 #ifndef GDAL_H_INCLUDED
-#ifndef SRC_GDALRASTER_H_
-typedef void *GDALDatasetH;
-typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
+    #ifndef SRC_GDALRASTER_H_
+        typedef void *GDALDatasetH;
+        typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
+    #endif
+    typedef void *OGRLayerH;
+    typedef void *OGRFeatureH;
 #endif
-typedef void *OGRLayerH;
-typedef void *OGRFeatureH;
-#endif
+
 
 class GDALVector {
  public:
@@ -41,6 +46,7 @@ class GDALVector {
     std::string m_dialect {""};
 
     // exposed read/write fields
+    Rcpp::CharacterVector arrowStreamOptions {""};
     std::string defaultGeomColName {"geometry"};
     bool promoteToMulti {false};
     bool quiet {false};
@@ -86,6 +92,8 @@ class GDALVector {
     void resetReading();
 
     Rcpp::DataFrame fetch(double n);
+
+    bool getArrowStream(Rcpp::RObject stream_xptr);
 
     bool setFeature(const Rcpp::RObject &feature);
     bool createFeature(const Rcpp::RObject &feature);
@@ -161,6 +169,23 @@ class GDALVector {
 
     OGRFeatureH OGRFeatureFromList_(const Rcpp::RObject &feature) const;
 
+#if __has_include("ogr_recordbatch.h")
+    int arrow_get_schema(struct ArrowSchema* out);
+    int arrow_get_next(struct ArrowArray* out);
+    const char* arrow_get_last_error();
+    void arrow_release();
+    static int arrow_get_schema_wrap(struct ArrowArrayStream* stream,
+                                     struct ArrowSchema* out);
+
+    static int arrow_get_next_wrap(struct ArrowArrayStream* stream,
+                                   struct ArrowArray* out);
+
+    static const char* arrow_get_last_error_wrap(
+                            struct ArrowArrayStream* stream);
+
+    static void arrow_release_wrap(struct ArrowArrayStream* stream);
+#endif
+
  private:
     std::string m_dsn {""};
     Rcpp::CharacterVector m_open_options {};
@@ -172,6 +197,9 @@ class GDALVector {
     GDALAccess m_eAccess {GA_ReadOnly};
     OGRLayerH m_hLayer {nullptr};
     int64_t m_last_write_fid {NA_INTEGER64};
+#if __has_include("ogr_recordbatch.h")
+    struct ArrowArrayStream m_stream;
+#endif
 };
 
 RCPP_EXPOSED_CLASS(GDALVector)

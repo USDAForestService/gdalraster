@@ -1591,6 +1591,66 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 }
 
+bool GDALVector::getArrowStream(Rcpp::RObject stream_xptr) {
+    /*
+    Exposes an Arrow C stream to be consumed by {nanoarrow}
+    Implementation adapted from GDALStreamWrapper by Dewey Dunnington in:
+    https://github.com/r-spatial/sf/blob/main/src/gdal_read_stream.cpp
+    */
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 6, 0)
+    Rcpp::stop("getArrowStream() requires GDAL >= 3.6");
+
+#else
+    checkAccess_(GA_ReadOnly);
+
+    if (stream_xptr.isNULL()) {
+        if (!quiet) {
+            Rcpp::Rcerr << "'stream_xptr' is NULL" << std::endl;
+        }
+        return false;
+    }
+
+    if (!stream_xptr.inherits("nanoarrow_array_stream")) {
+        if (!quiet) {
+            Rcpp::Rcerr <<
+                "'stream_xptr' must be a nanoarrow_array_stream object" <<
+                std::endl;
+        }
+        return false;
+    }
+
+    // member variable arrowStreamOptions (Rcpp exposed field)
+    std::vector<char *> opt{};
+    if (arrowStreamOptions.size() > 0) {
+        for (R_xlen_t i = 0; i < arrowStreamOptions.size(); ++i) {
+            if (!EQUAL(arrowStreamOptions[i], ""))
+                opt.push_back((char *) (arrowStreamOptions[i]));
+        }
+    }
+    opt.push_back(nullptr);
+
+    if (!OGR_L_GetArrowStream(m_hLayer, &m_stream, opt.data())) {
+        if (!quiet) {
+            Rcpp::Rcerr << "OGR_L_GetArrowStream() failed: " <<
+                CPLGetLastErrorMsg() << std::endl;
+        }
+        return false;
+    }
+
+    auto stream_out = reinterpret_cast<struct ArrowArrayStream*>(
+            R_ExternalPtrAddr(stream_xptr));
+
+    stream_out->get_schema = &arrow_get_schema_wrap;
+    stream_out->get_next = &arrow_get_next_wrap;
+    stream_out->get_last_error = &arrow_get_last_error_wrap;
+    stream_out->release = &arrow_release_wrap;
+    stream_out->private_data = this;
+
+    return true;
+#endif
+}
+
 bool GDALVector::setFeature(const Rcpp::RObject &feature) {
     checkAccess_(GA_Update);
 
@@ -3159,6 +3219,51 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
     return hFeat;
 }
 
+// Arrow callbacks
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
+int GDALVector::arrow_get_schema(struct ArrowSchema* out) {
+    return m_stream.get_schema(&m_stream, out);
+}
+
+int GDALVector::arrow_get_next(struct ArrowArray* out) {
+    return m_stream.get_next(&m_stream, out);
+}
+
+const char* GDALVector::arrow_get_last_error() {
+    return m_stream.get_last_error(&m_stream);
+}
+
+void GDALVector::arrow_release() {
+    m_stream.release(&m_stream);
+}
+
+int GDALVector::arrow_get_schema_wrap(struct ArrowArrayStream* stream,
+                                      struct ArrowSchema* out) {
+
+    return reinterpret_cast<GDALVector*>(
+            stream->private_data)->arrow_get_schema(out);
+}
+
+int GDALVector::arrow_get_next_wrap(struct ArrowArrayStream* stream,
+                                    struct ArrowArray* out) {
+
+    return reinterpret_cast<GDALVector*>(
+            stream->private_data)->arrow_get_next(out);
+}
+
+const char* GDALVector::arrow_get_last_error_wrap(
+        struct ArrowArrayStream* stream) {
+
+    return reinterpret_cast<GDALVector*>(
+            stream->private_data)->arrow_get_last_error();
+}
+
+void GDALVector::arrow_release_wrap(struct ArrowArrayStream* stream) {
+
+    reinterpret_cast<GDALVector*>(stream->private_data)->arrow_release();
+    stream->release = nullptr;
+}
+#endif
 
 // ****************************************************************************
 
@@ -3188,6 +3293,7 @@ RCPP_MODULE(mod_GDALVector) {
     .field_readonly("m_dialect", &GDALVector::m_dialect)
 
     // read/write fields
+    .field("arrowStreamOptions", &GDALVector::arrowStreamOptions)
     .field("defaultGeomColName", &GDALVector::defaultGeomColName)
     .field("promoteToMulti", &GDALVector::promoteToMulti)
     .field("quiet", &GDALVector::quiet)
@@ -3281,6 +3387,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Set metadata from a list of name=value")
     .const_method("getMetadataItem", &GDALVector::getMetadataItem,
         "Return the value of a metadata item")
+    .method("getArrowStream", &GDALVector::getArrowStream,
+        "Expose an Arrow C stream on the layer")
     .method("layerIntersection", &GDALVector::layerIntersection,
         "Intersection of this layer with a method layer")
     .method("layerUnion", &GDALVector::layerUnion,

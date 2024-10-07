@@ -1090,3 +1090,46 @@ test_that("info() prints output to the console", {
 
     unlink(dsn)
 })
+
+test_that("ArrowArrayStream is readable", {
+    skip_if(.gdal_version_num() < 3060000)
+
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    lyr <- new(GDALVector, dsn, "mtbs_perims")
+
+    stream <- nanoarrow::nanoarrow_allocate_array_stream()
+    expect_true(lyr$getArrowStream(stream))
+
+    schema <- stream$get_schema()
+    expect_equal(class(schema), "nanoarrow_schema")
+    expect_equal(length(schema$children), 11)
+
+    batch <- stream$get_next()
+    expect_equal(class(batch), "nanoarrow_array")
+    expect_equal(batch$children$fid$length, 61)
+
+    expect_no_error(stream$release())
+
+    # with options
+    lyr$arrowStreamOptions <- "INCLUDE_FID=NO"
+    stream <- nanoarrow::nanoarrow_allocate_array_stream()
+    expect_true(lyr$getArrowStream(stream))
+
+    schema <- stream$get_schema()
+    expect_equal(length(schema$children), 10)
+    expect_true(is.null(schema$children$fid))
+    expect_no_error(stream$release())
+
+    # null
+    expect_false(lyr$getArrowStream(NULL))
+
+    # wrong object type:
+    arrobj <-nanoarrow::nanoarrow_allocate_array()
+    expect_false(lyr$getArrowStream(arrobj))
+
+    lyr$close()
+    deleteDataset(dsn)
+})
