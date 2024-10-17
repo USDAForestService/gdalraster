@@ -72,7 +72,7 @@ test_that("VSIFile works", {
     # write to an in-memory file
     lcp_size <- vsi_stat(lcp_file, "size")
     mem_file <- "/vsimem/storml_copy.lcp"
-    vf <- new(VSIFile, mem_file, "w")
+    vf <- new(VSIFile, mem_file, "w+")
     expect_equal(vf$write(bytes), bit64::as.integer64(lcp_size))
     expect_equal(vf$flush(), 0)
     expect_equal(vf$tell(), bit64::as.integer64(lcp_size))
@@ -135,7 +135,7 @@ test_that("VSIFile works", {
 
     # re-open and test eof
     expect_equal(vf$get_filename(), mem_file)
-    expect_equal(vf$get_access(), "w")
+    expect_equal(vf$get_access(), "w+")
     expect_equal(vf$set_access("r+"), 0)
     expect_no_error(vf$open())
     vf$seek(0, SEEK_END)
