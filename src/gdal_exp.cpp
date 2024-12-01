@@ -2710,6 +2710,98 @@ bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
 }
 
 
+//' Identify the GDAL driver that can open a dataset
+//'
+//' `identifyDriver()` will try to identify the driver that can open the passed
+//' file name by invoking the Identify method of each registered GDALDriver in
+//' turn. The short name of the first driver that successfully identifies the
+//' file name will be returned as a character string. If all drivers fail then
+//' `NULL` is returned.
+//' Wrapper of `GDALIdentifyDriverEx()` in the GDAL C API.
+//'
+//' @note
+//' In order to reduce the need for such searches to touch the file system
+//' machinery of the operating system, it is possible to give an optional list
+//' of files. This is the list of all files at the same level in the file
+//' system as the target file, including the target file. The filenames should
+//' not include any path components. If the target object does not have
+//' filesystem semantics then the file list should be `NULL`.
+//'
+//' At least one of the `raster` or `vector` arguments must be `TRUE`.
+//'
+//' @param filename Character string containing the name of the file to access.
+//' This may not refer to a physical file, but instead contain information for
+//' the driver on how to access a dataset (e.g., connection string, URL, etc.)
+//' @param raster Logical value indicating whether to include raster format
+//' drivers in the search, `TRUE` by default. May be set to `FALSE` to include
+//' only vector drivers.
+//' @param vector Logical value indicating whether to include vector format
+//' drivers in the search, `TRUE` by default. May be set to `FALSE` to include
+//' only raster drivers.
+//' @param allowed_drivers Optional character vector of driver short names
+//' that must be considered. Set to `NULL` to consider all candidate drivers
+//' (the default).
+//' @param file_list Optional character vector of filenames, including those
+//' that are auxiliary to the main filename (see Note). May contain the input
+//' `filename` but this is not required. Defaults to `NULL`.
+//' @returns A character string with the short name of the first driver that
+//' successfully identifies the input file name, or `NULL` on failure.
+//'
+//' @seealso
+//' [gdal_formats()]
+//'
+//' @examples
+//' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+//'
+//' identifyDriver(src) |> gdal_formats()
+// [[Rcpp::export(name = "identifyDriver")]]
+SEXP identifyDriver(Rcpp::CharacterVector filename,
+        bool raster = true, bool vector = true,
+        Rcpp::Nullable<Rcpp::CharacterVector> allowed_drivers = R_NilValue,
+        Rcpp::Nullable<Rcpp::CharacterVector> file_list = R_NilValue) {
+
+    std::string filename_in;
+    filename_in = Rcpp::as<std::string>(check_gdal_filename(filename));
+
+    unsigned int nIdentifyFlags = GDAL_OF_ALL;
+    if (!raster && !vector)
+        return R_NilValue;
+    else if (!raster)
+        nIdentifyFlags = GDAL_OF_VECTOR;
+    else if (!vector)
+        nIdentifyFlags = GDAL_OF_RASTER;
+
+    std::vector<const char *> papszAllowedDrivers;
+    if (allowed_drivers.isNotNull()) {
+        Rcpp::CharacterVector allowed_drivers_in(allowed_drivers);
+        for (R_xlen_t i = 0; i < allowed_drivers_in.size(); ++i) {
+            papszAllowedDrivers.push_back((const char *) allowed_drivers_in[i]);
+        }
+    }
+    papszAllowedDrivers.push_back(nullptr);
+
+    std::vector<const char *> papszFileList;
+    if (file_list.isNotNull()) {
+        Rcpp::CharacterVector file_list_in(file_list);
+        for (R_xlen_t i = 0; i < file_list_in.size(); ++i) {
+            papszFileList.push_back((const char *) file_list_in[i]);
+        }
+    }
+    papszFileList.push_back(nullptr);
+
+    GDALDriverH hDriver = GDALIdentifyDriverEx(
+            filename_in.c_str(),
+            nIdentifyFlags,
+            allowed_drivers.isNull() ? nullptr : papszAllowedDrivers.data(),
+            file_list.isNull() ? nullptr : papszFileList.data());
+
+    if (hDriver == nullptr)
+        return R_NilValue;
+    else
+        return Rcpp::wrap(GDALGetDriverShortName(hDriver));
+}
+
+
 //' Return the list of creation options of a GDAL driver as XML string
 //'
 //' Called from and documented in R/gdal_helpers.R

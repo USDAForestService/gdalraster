@@ -558,6 +558,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// identifyDriver
+SEXP identifyDriver(Rcpp::CharacterVector filename, bool raster, bool vector, Rcpp::Nullable<Rcpp::CharacterVector> allowed_drivers, Rcpp::Nullable<Rcpp::CharacterVector> file_list);
+RcppExport SEXP _gdalraster_identifyDriver(SEXP filenameSEXP, SEXP rasterSEXP, SEXP vectorSEXP, SEXP allowed_driversSEXP, SEXP file_listSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< bool >::type raster(rasterSEXP);
+    Rcpp::traits::input_parameter< bool >::type vector(vectorSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type allowed_drivers(allowed_driversSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type file_list(file_listSEXP);
+    rcpp_result_gen = Rcpp::wrap(identifyDriver(filename, raster, vector, allowed_drivers, file_list));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getCreationOptions
 std::string getCreationOptions(std::string format);
 RcppExport SEXP _gdalraster_getCreationOptions(SEXP formatSEXP) {
@@ -1685,6 +1700,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_deleteDataset", (DL_FUNC) &_gdalraster_deleteDataset, 2},
     {"_gdalraster_renameDataset", (DL_FUNC) &_gdalraster_renameDataset, 3},
     {"_gdalraster_copyDatasetFiles", (DL_FUNC) &_gdalraster_copyDatasetFiles, 3},
+    {"_gdalraster_identifyDriver", (DL_FUNC) &_gdalraster_identifyDriver, 5},
     {"_gdalraster_getCreationOptions", (DL_FUNC) &_gdalraster_getCreationOptions, 1},
     {"_gdalraster_addFileInZip", (DL_FUNC) &_gdalraster_addFileInZip, 6},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},

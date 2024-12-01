@@ -109,6 +109,7 @@ reference:
   - bandCopyWholeRaster
   - copyDatasetFiles
   - deleteDataset
+  - identifyDriver
   - renameDataset
 - subtitle: OGR vector utilities
 - contents:
