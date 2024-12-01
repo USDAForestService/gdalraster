@@ -255,7 +255,7 @@ SEEK_END <- "SEEK_END"
 #'
 #' # write to a VSI in-memory file
 #' mem_file <- "/vsimem/storml_copy.lcp"
-#' vf <- new(VSIFile, mem_file, "w")
+#' vf <- new(VSIFile, mem_file, "w+")
 #' vf$write(bytes)
 #'
 #' vf$tell()
