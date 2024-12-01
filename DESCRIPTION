@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 1.11.1.9501
+Version: 1.11.1.9510
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),
