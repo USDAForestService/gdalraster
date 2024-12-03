@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9501 (dev)
+# gdalraster 1.11.1.9510 (dev)
+
+* add `identifyDriver()`: identify the format driver that can open a dataset, wrapper of `GDALIdentifyDriverEx()` in the GDAL C API (2024-11-30)
 
 * `GDALVector`: add a `BBOX` option for the per-object setting `$returnGeomAs` (2024-10-03)
 
