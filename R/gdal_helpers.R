@@ -467,3 +467,62 @@ dump_open_datasets <- function() {
     writeLines(out)
     return(nopen)
 }
+
+#' Obtain information about a GDAL raster or vector dataset
+#'
+#'
+inspectDataset <- function(filename, ...) {
+    # TODO: test with '/home/ctoney/code/spatial/ctoney/temp/small_world_and_byte.gpkg'
+
+    if (!is.character(filename))
+        stop("'filename' must be a character string", call. = FALSE)
+
+    filename_in <- .check_gdal_filename(filename)
+    fmt <- identifyDriver(filename = filename_in, ...)
+    if (is.null(fmt))
+        return(NULL)
+
+    out <- list()
+    out$format <- fmt
+    fmt_info <- gdal_formats(fmt)
+
+    out$supports_raster <- fmt_info$raster
+    out$contains_raster <- FALSE
+    if (out$supports_raster) {
+        ds <- try(new(GDALRaster, filename_in), silent = TRUE)
+        if (is(ds, "Rcpp_GDALRaster"))
+            out$contains_raster <- TRUE
+    }
+
+    out$supports_subdatasets <- fmt_info$subdatasets
+    out$contains_subdatasets <- FALSE
+    out$subdataset_names <- character(0)
+    if (out$contains_raster) {
+        md <- ds$getMetadata(band = 0, domain = "SUBDATASETS")
+        if (length(md) > 1) {
+            out$contains_subdatasets <- TRUE
+            for (i in seq_along(md)) {
+                mdi <- strsplit(md[i], "=", fixed = FALSE)
+                if (grepl("_NAME", mdi[[1]][1], ignore.case = TRUE)) {
+                    out$subdataset_names <- c(out$subdataset_names, mdi[[1]][2])
+                }
+            }
+        }
+    }
+
+    if (out$supports_raster && is(ds, "Rcpp_GDALRaster")) {
+        ds$close()
+    }
+
+    out$supports_vector <- fmt_info$vector
+    out$contains_vector <- FALSE
+    out$layer_names <- character(0)
+    if (out$supports_vector) {
+        if (ogr_ds_layer_count(filename_in) > 0) {
+            out$contains_vector <- TRUE
+            out$layer_names <- ogr_ds_layer_names(filename_in)
+        }
+    }
+
+    return(out)
+}
