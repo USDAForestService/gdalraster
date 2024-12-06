@@ -1,4 +1,6 @@
-# gdalraster 1.11.1.9510 (dev)
+# gdalraster 1.11.1.9515 (dev)
+
+* add `inspectDataset()`: obtain information about a GDAL raster or vector dataset (2024-12-05)
 
 * add `identifyDriver()`: identify the format driver that can open a dataset, wrapper of `GDALIdentifyDriverEx()` in the GDAL C API (2024-11-30)
 

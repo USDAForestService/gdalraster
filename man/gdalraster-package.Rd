@@ -97,10 +97,11 @@
 
   \item data management: \code{\link[=addFilesInZip]{addFilesInZip()}},
   \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},
-  \code{\link[=deleteDataset]{deleteDataset()}},\cr
+  \code{\link[=deleteDataset]{deleteDataset()}},
   \code{\link[=renameDataset]{renameDataset()}},
   \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}},
-  \code{\link[=identifyDriver]{identifyDriver()}}
+  \code{\link[=identifyDriver]{identifyDriver()}},
+  \code{\link[=inspectDataset]{inspectDataset()}}
 
   \item OGR vector utilities:
   \code{\link[=ogr2ogr]{ogr2ogr()}},
