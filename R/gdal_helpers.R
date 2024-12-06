@@ -470,10 +470,47 @@ dump_open_datasets <- function() {
 
 #' Obtain information about a GDAL raster or vector dataset
 #'
+#' `inspectDataset()` returns information about the format and content
+#' of a dataset. The function first calls `identifyDriver()`, and then opens
+#' the dataset as raster and/or vector to obtain information about its content.
+#' The return value is a list with named elements.
 #'
+#' @param filename Character string containing the name of the file to access.
+#' This may not refer to a physical file, but instead contain information for
+#' the driver on how to access a dataset (e.g., connection string, URL, etc.)
+#' @param ... Additional arguments passed to `indentify Driver()`.
+#'
+#' @returns
+#' A list with the following named elements:
+#' * `$format`: character string, the format short name
+#' * `$supports_raster`: logical, `TRUE` if the format supports raster data
+#' * `$contains_raster`: logical, `TRUE` if this is a raster dataset or the
+#' source contains raster subdatasets
+#' * `$supports_subdatasets`: logical, `TRUE` if the format supports raster
+#' subdatasets
+#' * `$contains_subdatasets`: logical, `TRUE` if the source contains subdatasets
+#' * `$subdataset_names`: character vector containing the subdataset names, or
+#' empty vector if subdatasets are not supported or not present
+#' * `$supports_vector`: logical, `TRUE` if the format supports vector data
+#' * `$contains_vector`: logical, `TRUE` if the source contains one or more
+#' vector layers
+#' * `$layer_names`: character vector containing the vector layer names, or
+#' empty vector if the format does not support vector or the source does not
+#' contain any vector layers
+#'
+#'@note
+#' Subdataset names are the character strings that can be used to
+#' instantiate `GDALRaster` objects.
+#' See https://gdal.org/en/latest/user/raster_data_model.html#subdatasets-domain.
+#'
+#' @seealso
+#' [gdal_formats()], [identifyDriver()]
+#'
+#' @examples
+#' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#'
+#' inspectDataset(src)
 inspectDataset <- function(filename, ...) {
-    # TODO: test with '/home/ctoney/code/spatial/ctoney/temp/small_world_and_byte.gpkg'
-
     if (!is.character(filename))
         stop("'filename' must be a character string", call. = FALSE)
 
