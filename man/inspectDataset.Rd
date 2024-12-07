@@ -11,7 +11,7 @@ inspectDataset(filename, ...)
 This may not refer to a physical file, but instead contain information for
 the driver on how to access a dataset (e.g., connection string, URL, etc.)}
 
-\item{...}{Additional arguments passed to \verb{indentify Driver()}.}
+\item{...}{Additional arguments passed to \code{identifyDriver()}.}
 }
 \value{
 A list with the following named elements:
