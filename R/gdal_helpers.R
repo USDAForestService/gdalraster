@@ -478,7 +478,7 @@ dump_open_datasets <- function() {
 #' @param filename Character string containing the name of the file to access.
 #' This may not refer to a physical file, but instead contain information for
 #' the driver on how to access a dataset (e.g., connection string, URL, etc.)
-#' @param ... Additional arguments passed to `indentify Driver()`.
+#' @param ... Additional arguments passed to `identifyDriver()`.
 #'
 #' @returns
 #' A list with the following named elements:
