@@ -110,6 +110,7 @@ reference:
   - copyDatasetFiles
   - deleteDataset
   - identifyDriver
+  - inspectDataset
   - renameDataset
 - subtitle: OGR vector utilities
 - contents:

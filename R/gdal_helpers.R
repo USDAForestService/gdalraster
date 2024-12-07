@@ -467,3 +467,100 @@ dump_open_datasets <- function() {
     writeLines(out)
     return(nopen)
 }
+
+#' Obtain information about a GDAL raster or vector dataset
+#'
+#' `inspectDataset()` returns information about the format and content
+#' of a dataset. The function first calls `identifyDriver()`, and then opens
+#' the dataset as raster and/or vector to obtain information about its content.
+#' The return value is a list with named elements.
+#'
+#' @param filename Character string containing the name of the file to access.
+#' This may not refer to a physical file, but instead contain information for
+#' the driver on how to access a dataset (e.g., connection string, URL, etc.)
+#' @param ... Additional arguments passed to `identifyDriver()`.
+#'
+#' @returns
+#' A list with the following named elements:
+#' * `$format`: character string, the format short name
+#' * `$supports_raster`: logical, `TRUE` if the format supports raster data
+#' * `$contains_raster`: logical, `TRUE` if this is a raster dataset or the
+#' source contains raster subdatasets
+#' * `$supports_subdatasets`: logical, `TRUE` if the format supports raster
+#' subdatasets
+#' * `$contains_subdatasets`: logical, `TRUE` if the source contains subdatasets
+#' * `$subdataset_names`: character vector containing the subdataset names, or
+#' empty vector if subdatasets are not supported or not present
+#' * `$supports_vector`: logical, `TRUE` if the format supports vector data
+#' * `$contains_vector`: logical, `TRUE` if the source contains one or more
+#' vector layers
+#' * `$layer_names`: character vector containing the vector layer names, or
+#' empty vector if the format does not support vector or the source does not
+#' contain any vector layers
+#'
+#'@note
+#' Subdataset names are the character strings that can be used to
+#' instantiate `GDALRaster` objects.
+#' See https://gdal.org/en/latest/user/raster_data_model.html#subdatasets-domain.
+#'
+#' @seealso
+#' [gdal_formats()], [identifyDriver()]
+#'
+#' @examples
+#' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#'
+#' inspectDataset(src)
+inspectDataset <- function(filename, ...) {
+    if (!is.character(filename))
+        stop("'filename' must be a character string", call. = FALSE)
+
+    filename_in <- .check_gdal_filename(filename)
+    fmt <- identifyDriver(filename = filename_in, ...)
+    if (is.null(fmt))
+        return(NULL)
+
+    out <- list()
+    out$format <- fmt
+    fmt_info <- gdal_formats(fmt)
+
+    out$supports_raster <- fmt_info$raster
+    out$contains_raster <- FALSE
+    if (out$supports_raster) {
+        ds <- try(new(GDALRaster, filename_in), silent = TRUE)
+        if (is(ds, "Rcpp_GDALRaster"))
+            out$contains_raster <- TRUE
+    }
+
+    out$supports_subdatasets <- fmt_info$subdatasets
+    out$contains_subdatasets <- FALSE
+    out$subdataset_names <- character(0)
+    if (out$contains_raster) {
+        md <- ds$getMetadata(band = 0, domain = "SUBDATASETS")
+        if (length(md) > 1) {
+            out$contains_subdatasets <- TRUE
+            Encoding(md) <- "UTF-8"
+            for (i in seq_along(md)) {
+                mdi <- strsplit(md[i], "=", fixed = TRUE)
+                if (grepl("_NAME", mdi[[1]][1], ignore.case = TRUE)) {
+                    out$subdataset_names <- c(out$subdataset_names, mdi[[1]][2])
+                }
+            }
+        }
+    }
+
+    if (out$supports_raster && is(ds, "Rcpp_GDALRaster")) {
+        ds$close()
+    }
+
+    out$supports_vector <- fmt_info$vector
+    out$contains_vector <- FALSE
+    out$layer_names <- character(0)
+    if (out$supports_vector) {
+        if (ogr_ds_layer_count(filename_in) > 0) {
+            out$contains_vector <- TRUE
+            out$layer_names <- ogr_ds_layer_names(filename_in)
+        }
+    }
+
+    return(out)
+}
