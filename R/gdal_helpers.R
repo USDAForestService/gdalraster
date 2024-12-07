@@ -538,8 +538,9 @@ inspectDataset <- function(filename, ...) {
         md <- ds$getMetadata(band = 0, domain = "SUBDATASETS")
         if (length(md) > 1) {
             out$contains_subdatasets <- TRUE
+            Encoding(md) <- "UTF-8"
             for (i in seq_along(md)) {
-                mdi <- strsplit(md[i], "=", fixed = FALSE)
+                mdi <- strsplit(md[i], "=", fixed = TRUE)
                 if (grepl("_NAME", mdi[[1]][1], ignore.case = TRUE)) {
                     out$subdataset_names <- c(out$subdataset_names, mdi[[1]][2])
                 }
