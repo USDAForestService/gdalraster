@@ -583,8 +583,10 @@ bool createCopy(std::string format, Rcpp::CharacterVector dst_filename,
         Rcpp::stop("failed to get driver from format name");
 
     char **papszMetadata = GDALGetMetadata(hDriver, nullptr);
-    if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATECOPY, FALSE))
+    if (!CPLFetchBool(papszMetadata, GDAL_DCAP_CREATECOPY, FALSE) &&
+        !CPLFetchBool(papszMetadata, GDAL_DCAP_CREATE, FALSE)) {
         Rcpp::stop("driver does not support createCopy");
+    }
 
     std::string src_filename_in;
     src_filename_in = Rcpp::as<std::string>(check_gdal_filename(src_filename));
