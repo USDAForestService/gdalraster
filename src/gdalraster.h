@@ -243,6 +243,10 @@ bool deleteDataset(Rcpp::CharacterVector filename, std::string format);
 bool renameDataset(Rcpp::CharacterVector new_filename,
                    Rcpp::CharacterVector old_filename,
                    std::string format);
+SEXP identifyDriver(Rcpp::CharacterVector filename,
+                    bool raster, bool vector,
+                    Rcpp::Nullable<Rcpp::CharacterVector> allowed_drivers,
+                    Rcpp::Nullable<Rcpp::CharacterVector> file_list);
 bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
                          Rcpp::CharacterVector dst_filename, int dst_band,
                          Rcpp::Nullable<Rcpp::CharacterVector> options,

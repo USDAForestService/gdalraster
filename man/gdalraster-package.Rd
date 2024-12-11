@@ -92,7 +92,8 @@
   \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},
   \code{\link[=deleteDataset]{deleteDataset()}},\cr
   \code{\link[=renameDataset]{renameDataset()}},
-  \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}}
+  \code{\link[=bandCopyWholeRaster]{bandCopyWholeRaster()}},
+  \code{\link[=identifyDriver]{identifyDriver()}}
 
   \item OGR vector utilities:
   \code{\link[=ogr2ogr]{ogr2ogr()}},

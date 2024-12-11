@@ -414,3 +414,15 @@ test_that("ogrinfo works", {
 
     vsi_unlink(src_mem)
 })
+
+test_that("identifyDriver works", {
+    src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+
+    expect_equal(identifyDriver(src), "GPKG")
+    expect_equal(identifyDriver(src, raster = FALSE), "GPKG")
+    expect_equal(identifyDriver(src, vector = FALSE), "GPKG")
+    expect_equal(identifyDriver(src), "GPKG")
+    expect_equal(identifyDriver(src, allowed_drivers = c("GPKG", "GTiff")), "GPKG")
+    expect_true(is.null(identifyDriver(src, allowed_drivers = c("GTiff", "GeoJSON"))))
+    expect_equal(identifyDriver(src, file_list = "ynp_fires_1984_2022.gpkg"), "GPKG")
+})

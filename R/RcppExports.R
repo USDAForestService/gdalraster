@@ -1376,6 +1376,54 @@ copyDatasetFiles <- function(new_filename, old_filename, format = "") {
     .Call(`_gdalraster_copyDatasetFiles`, new_filename, old_filename, format)
 }
 
+#' Identify the GDAL driver that can open a dataset
+#'
+#' `identifyDriver()` will try to identify the driver that can open the passed
+#' file name by invoking the Identify method of each registered GDALDriver in
+#' turn. The short name of the first driver that successfully identifies the
+#' file name will be returned as a character string. If all drivers fail then
+#' `NULL` is returned.
+#' Wrapper of `GDALIdentifyDriverEx()` in the GDAL C API.
+#'
+#' @note
+#' In order to reduce the need for such searches to touch the file system
+#' machinery of the operating system, it is possible to give an optional list
+#' of files. This is the list of all files at the same level in the file
+#' system as the target file, including the target file. The filenames should
+#' not include any path components. If the target object does not have
+#' filesystem semantics then the file list should be `NULL`.
+#'
+#' At least one of the `raster` or `vector` arguments must be `TRUE`.
+#'
+#' @param filename Character string containing the name of the file to access.
+#' This may not refer to a physical file, but instead contain information for
+#' the driver on how to access a dataset (e.g., connection string, URL, etc.)
+#' @param raster Logical value indicating whether to include raster format
+#' drivers in the search, `TRUE` by default. May be set to `FALSE` to include
+#' only vector drivers.
+#' @param vector Logical value indicating whether to include vector format
+#' drivers in the search, `TRUE` by default. May be set to `FALSE` to include
+#' only raster drivers.
+#' @param allowed_drivers Optional character vector of driver short names
+#' that must be considered. Set to `NULL` to consider all candidate drivers
+#' (the default).
+#' @param file_list Optional character vector of filenames, including those
+#' that are auxiliary to the main filename (see Note). May contain the input
+#' `filename` but this is not required. Defaults to `NULL`.
+#' @returns A character string with the short name of the first driver that
+#' successfully identifies the input file name, or `NULL` on failure.
+#'
+#' @seealso
+#' [gdal_formats()]
+#'
+#' @examples
+#' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#'
+#' identifyDriver(src) |> gdal_formats()
+identifyDriver <- function(filename, raster = TRUE, vector = TRUE, allowed_drivers = NULL, file_list = NULL) {
+    .Call(`_gdalraster_identifyDriver`, filename, raster, vector, allowed_drivers, file_list)
+}
+
 #' Return the list of creation options of a GDAL driver as XML string
 #'
 #' Called from and documented in R/gdal_helpers.R
