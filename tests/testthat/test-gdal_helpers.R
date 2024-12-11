@@ -35,3 +35,55 @@ test_that("dump_open_datasets works", {
     expect_true(dump_open_datasets() > 0)
     ds$close()
 })
+
+test_that("inspectDataset works", {
+    # GPKG with subdatasets
+    # https://download.osgeo.org/gdal/data/geopackage/small_world_and_byte.gpkg
+    src <-  system.file("extdata/small_world_and_byte.gpkg", package="gdalraster")
+    dsinfo <- inspectDataset(src)
+    expect_equal(dsinfo$format, "GPKG")
+    expect_true(dsinfo$supports_raster)
+    expect_true(dsinfo$contains_raster)
+    expect_true(dsinfo$supports_subdatasets)
+    expect_true(dsinfo$contains_subdatasets)
+    expect_no_error(ds <- new(GDALRaster, dsinfo$subdataset_names[1]))
+    expect_no_error(ds$close())
+    expect_no_error(ds <- new(GDALRaster, dsinfo$subdataset_names[2]))
+    expect_no_error(ds$close())
+    expect_true(dsinfo$supports_vector)
+    expect_false(dsinfo$contains_vector)
+    expect_vector(dsinfo$layer_names, ptype = character(), size = 0)
+
+    # GPKG with vector
+    src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    dsinfo <- inspectDataset(src)
+    expect_false(dsinfo$contains_raster)
+    expect_false(dsinfo$contains_subdatasets)
+    expect_vector(dsinfo$subdataset_names, ptype = character(), size = 0)
+    expect_true(dsinfo$contains_vector)
+    expect_equal(dsinfo$layer_names, "mtbs_perims")
+
+    # shapefile
+    src <- system.file("extdata/poly_multipoly.shp", package="gdalraster")
+    dsinfo <- inspectDataset(src)
+    expect_equal(dsinfo$format, "ESRI Shapefile")
+    expect_false(dsinfo$supports_raster)
+    expect_false(dsinfo$contains_raster)
+    expect_false(dsinfo$supports_subdatasets)
+    expect_false(dsinfo$contains_subdatasets)
+    expect_true(dsinfo$supports_vector)
+    expect_true(dsinfo$contains_vector)
+    expect_vector(dsinfo$layer_names, ptype = character(), size = 1)
+
+    # GTiff
+    src <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    dsinfo <- inspectDataset(src)
+    expect_equal(dsinfo$format, "GTiff")
+    expect_true(dsinfo$supports_raster)
+    expect_true(dsinfo$contains_raster)
+    expect_true(dsinfo$supports_subdatasets)
+    expect_false(dsinfo$contains_subdatasets)
+    expect_false(dsinfo$supports_vector)
+    expect_false(dsinfo$contains_vector)
+    expect_vector(dsinfo$layer_names, ptype = character(), size = 0)
+})
