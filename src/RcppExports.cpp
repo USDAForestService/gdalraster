@@ -1363,27 +1363,27 @@ BEGIN_RCPP
 END_RCPP
 }
 // inv_project
-Rcpp::NumericMatrix inv_project(const Rcpp::RObject& pts, std::string srs, std::string well_known_gcs);
+Rcpp::NumericMatrix inv_project(const Rcpp::RObject& pts, const std::string& srs, std::string well_known_gcs);
 RcppExport SEXP _gdalraster_inv_project(SEXP ptsSEXP, SEXP srsSEXP, SEXP well_known_gcsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type pts(ptsSEXP);
-    Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
     Rcpp::traits::input_parameter< std::string >::type well_known_gcs(well_known_gcsSEXP);
     rcpp_result_gen = Rcpp::wrap(inv_project(pts, srs, well_known_gcs));
     return rcpp_result_gen;
 END_RCPP
 }
 // transform_xy
-Rcpp::NumericMatrix transform_xy(const Rcpp::RObject& pts, std::string srs_from, std::string srs_to);
+Rcpp::NumericMatrix transform_xy(const Rcpp::RObject& pts, const std::string& srs_from, const std::string& srs_to);
 RcppExport SEXP _gdalraster_transform_xy(SEXP ptsSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type pts(ptsSEXP);
-    Rcpp::traits::input_parameter< std::string >::type srs_from(srs_fromSEXP);
-    Rcpp::traits::input_parameter< std::string >::type srs_to(srs_toSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type srs_from(srs_fromSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type srs_to(srs_toSEXP);
     rcpp_result_gen = Rcpp::wrap(transform_xy(pts, srs_from, srs_to));
     return rcpp_result_gen;
 END_RCPP
@@ -1401,47 +1401,47 @@ BEGIN_RCPP
 END_RCPP
 }
 // srs_to_wkt
-std::string srs_to_wkt(std::string srs, bool pretty);
+std::string srs_to_wkt(const std::string& srs, bool pretty);
 RcppExport SEXP _gdalraster_srs_to_wkt(SEXP srsSEXP, SEXP prettySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
     Rcpp::traits::input_parameter< bool >::type pretty(prettySEXP);
     rcpp_result_gen = Rcpp::wrap(srs_to_wkt(srs, pretty));
     return rcpp_result_gen;
 END_RCPP
 }
 // srs_is_geographic
-bool srs_is_geographic(std::string srs);
+bool srs_is_geographic(const std::string& srs);
 RcppExport SEXP _gdalraster_srs_is_geographic(SEXP srsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
     rcpp_result_gen = Rcpp::wrap(srs_is_geographic(srs));
     return rcpp_result_gen;
 END_RCPP
 }
 // srs_is_projected
-bool srs_is_projected(std::string srs);
+bool srs_is_projected(const std::string& srs);
 RcppExport SEXP _gdalraster_srs_is_projected(SEXP srsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type srs(srsSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
     rcpp_result_gen = Rcpp::wrap(srs_is_projected(srs));
     return rcpp_result_gen;
 END_RCPP
 }
 // srs_is_same
-bool srs_is_same(std::string srs1, std::string srs2, std::string criterion, bool ignore_axis_mapping, bool ignore_coord_epoch);
+bool srs_is_same(const std::string& srs1, const std::string& srs2, std::string criterion, bool ignore_axis_mapping, bool ignore_coord_epoch);
 RcppExport SEXP _gdalraster_srs_is_same(SEXP srs1SEXP, SEXP srs2SEXP, SEXP criterionSEXP, SEXP ignore_axis_mappingSEXP, SEXP ignore_coord_epochSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type srs1(srs1SEXP);
-    Rcpp::traits::input_parameter< std::string >::type srs2(srs2SEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type srs1(srs1SEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type srs2(srs2SEXP);
     Rcpp::traits::input_parameter< std::string >::type criterion(criterionSEXP);
     Rcpp::traits::input_parameter< bool >::type ignore_axis_mapping(ignore_axis_mappingSEXP);
     Rcpp::traits::input_parameter< bool >::type ignore_coord_epoch(ignore_coord_epochSEXP);
@@ -1450,12 +1450,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // bbox_from_wkt
-Rcpp::NumericVector bbox_from_wkt(std::string wkt, double extend_x, double extend_y);
+Rcpp::NumericVector bbox_from_wkt(const std::string& wkt, double extend_x, double extend_y);
 RcppExport SEXP _gdalraster_bbox_from_wkt(SEXP wktSEXP, SEXP extend_xSEXP, SEXP extend_ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type wkt(wktSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type wkt(wktSEXP);
     Rcpp::traits::input_parameter< double >::type extend_x(extend_xSEXP);
     Rcpp::traits::input_parameter< double >::type extend_y(extend_ySEXP);
     rcpp_result_gen = Rcpp::wrap(bbox_from_wkt(wkt, extend_x, extend_y));
@@ -1463,12 +1463,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // bbox_to_wkt
-Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox, double extend_x, double extend_y);
+Rcpp::String bbox_to_wkt(const Rcpp::NumericVector& bbox, double extend_x, double extend_y);
 RcppExport SEXP _gdalraster_bbox_to_wkt(SEXP bboxSEXP, SEXP extend_xSEXP, SEXP extend_ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::NumericVector >::type bbox(bboxSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bbox(bboxSEXP);
     Rcpp::traits::input_parameter< double >::type extend_x(extend_xSEXP);
     Rcpp::traits::input_parameter< double >::type extend_y(extend_ySEXP);
     rcpp_result_gen = Rcpp::wrap(bbox_to_wkt(bbox, extend_x, extend_y));

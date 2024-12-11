@@ -10,11 +10,13 @@ transform_xy(pts, srs_from, srs_to)
 \item{pts}{A two-column data frame or numeric matrix containing geospatial
 x/y coordinates.}
 
-\item{srs_from}{Character string in OGC WKT format specifying the
-spatial reference system for \code{pts}.}
+\item{srs_from}{Character string specifying the spatial reference system
+for \code{pts}. May be in WKT format or any of the formats supported by
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}.}
 
-\item{srs_to}{Character string in OGC WKT format specifying the output
-spatial reference system.}
+\item{srs_to}{Character string specifying the output spatial reference
+system. May be in WKT format or any of the formats supported by
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}.}
 }
 \value{
 Numeric array of geospatial x/y coordinates in the projection
@@ -29,9 +31,7 @@ pts <- read.csv(pt_file)
 print(pts)
 ## id, x, y in NAD83 / UTM zone 12N
 ## transform to NAD83 / CONUS Albers
-transform_xy(pts = pts[,-1],
-             srs_from = epsg_to_wkt(26912),
-             srs_to = epsg_to_wkt(5070))
+transform_xy(pts = pts[, -1], srs_from = "EPSG:26912", srs_to = "EPSG:5070")
 }
 \seealso{
 \code{\link[=epsg_to_wkt]{epsg_to_wkt()}}, \code{\link[=srs_to_wkt]{srs_to_wkt()}}, \code{\link[=inv_project]{inv_project()}}

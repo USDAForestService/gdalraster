@@ -3,13 +3,13 @@
    Copyright (c) 2023-2024 gdalraster authors
 */
 
-#include <string>
-
-#include "rcpp_util.h"
+#include "transform.h"
 
 #include "ogr_core.h"
 #include "ogr_srs_api.h"
 #include "ogr_spatialref.h"
+
+#include "wkt_conv.h"
 
 //' get PROJ version
 //' @noRd
@@ -120,8 +120,9 @@ void setPROJEnableNetwork(int enabled) {
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
 //' x/y coordinates.
-//' @param srs Character string in OGC WKT format specifying the projected
-//' spatial reference system for `pts`.
+//' @param srs Character string specifying the projected spatial reference
+//' system for `pts`. May be in WKT format or any of the formats supported by
+//' [srs_to_wkt()].
 //' @param well_known_gcs Optional character string containing a supported
 //' well known name of a geographic coordinate system (see Details for
 //' supported values).
@@ -134,11 +135,10 @@ void setPROJEnableNetwork(int enabled) {
 //' ## id, x, y in NAD83 / UTM zone 12N
 //' pts <- read.csv(pt_file)
 //' print(pts)
-//' inv_project(pts[,-1], epsg_to_wkt(26912))
-//' inv_project(pts[,-1], epsg_to_wkt(26912), "NAD27")
+//' inv_project(pts[,-1], "EPSG:26912")
 // [[Rcpp::export]]
 Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
-                                std::string srs,
+                                const std::string &srs,
                                 std::string well_known_gcs = "") {
 
     Rcpp::NumericMatrix pts_in;
@@ -153,14 +153,20 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
         Rcpp::stop("'pts' must be a data frame or matrix");
     }
 
-    OGRSpatialReference oSourceSRS;
+    std::string srs_in = srs_to_wkt(srs, false);
+
+    OGRSpatialReference oSourceSRS{};
     OGRSpatialReference *poLongLat = nullptr;
     OGRCoordinateTransformation *poCT = nullptr;
     OGRErr err;
 
-    err = oSourceSRS.importFromWkt(srs.c_str());
+    err = oSourceSRS.importFromWkt(srs_in.c_str());
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import SRS from WKT string");
+
+    // config option OGR_CT_FORCE_TRADITIONAL_GIS_ORDER=YES is set in gdal_init
+    // this should be redundant
+    oSourceSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     if (well_known_gcs == "") {
         poLongLat = oSourceSRS.CloneGeogCS();
@@ -212,10 +218,12 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
 //' x/y coordinates.
-//' @param srs_from Character string in OGC WKT format specifying the
-//' spatial reference system for `pts`.
-//' @param srs_to Character string in OGC WKT format specifying the output
-//' spatial reference system.
+//' @param srs_from Character string specifying the spatial reference system
+//' for `pts`. May be in WKT format or any of the formats supported by
+//' [srs_to_wkt()].
+//' @param srs_to Character string specifying the output spatial reference
+//' system. May be in WKT format or any of the formats supported by
+//' [srs_to_wkt()].
 //' @returns Numeric array of geospatial x/y coordinates in the projection
 //' specified by `srs_to`.
 //'
@@ -227,13 +235,11 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 //' print(pts)
 //' ## id, x, y in NAD83 / UTM zone 12N
 //' ## transform to NAD83 / CONUS Albers
-//' transform_xy(pts = pts[,-1],
-//'              srs_from = epsg_to_wkt(26912),
-//'              srs_to = epsg_to_wkt(5070))
+//' transform_xy(pts = pts[, -1], srs_from = "EPSG:26912", srs_to = "EPSG:5070")
 // [[Rcpp::export]]
 Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
-                                std::string srs_from,
-                                std::string srs_to) {
+                                 const std::string &srs_from,
+                                 const std::string &srs_to) {
 
     Rcpp::NumericMatrix pts_in;
     if (Rcpp::is<Rcpp::DataFrame>(pts)) {
@@ -247,15 +253,22 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
         Rcpp::stop("'pts' must be a data frame or matrix");
     }
 
-    OGRSpatialReference oSourceSRS, oDestSRS;
+    std::string srs_from_in = srs_to_wkt(srs_from, false);
+    std::string srs_to_in = srs_to_wkt(srs_to, false);
+
+    OGRSpatialReference oSourceSRS{}, oDestSRS{};
     OGRCoordinateTransformation *poCT = nullptr;
     OGRErr err;
 
-    err = oSourceSRS.importFromWkt(srs_from.c_str());
+    err = oSourceSRS.importFromWkt(srs_from_in.c_str());
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import source SRS from WKT string");
 
-    err = oDestSRS.importFromWkt(srs_to.c_str());
+    // config option OGR_CT_FORCE_TRADITIONAL_GIS_ORDER=YES is set in gdal_init
+    // this should be redundant
+    oSourceSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
+
+    err = oDestSRS.importFromWkt(srs_to_in.c_str());
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import destination SRS from WKT string");
 
@@ -282,4 +295,3 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     return ret;
 }
-

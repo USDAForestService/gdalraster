@@ -2380,8 +2380,9 @@ has_geos <- function() {
 #'
 #' @param pts A two-column data frame or numeric matrix containing geospatial
 #' x/y coordinates.
-#' @param srs Character string in OGC WKT format specifying the projected
-#' spatial reference system for `pts`.
+#' @param srs Character string specifying the projected spatial reference
+#' system for `pts`. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
 #' @param well_known_gcs Optional character string containing a supported
 #' well known name of a geographic coordinate system (see Details for
 #' supported values).
@@ -2394,8 +2395,7 @@ has_geos <- function() {
 #' ## id, x, y in NAD83 / UTM zone 12N
 #' pts <- read.csv(pt_file)
 #' print(pts)
-#' inv_project(pts[,-1], epsg_to_wkt(26912))
-#' inv_project(pts[,-1], epsg_to_wkt(26912), "NAD27")
+#' inv_project(pts[,-1], "EPSG:26912")
 inv_project <- function(pts, srs, well_known_gcs = "") {
     .Call(`_gdalraster_inv_project`, pts, srs, well_known_gcs)
 }
@@ -2406,10 +2406,12 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #'
 #' @param pts A two-column data frame or numeric matrix containing geospatial
 #' x/y coordinates.
-#' @param srs_from Character string in OGC WKT format specifying the
-#' spatial reference system for `pts`.
-#' @param srs_to Character string in OGC WKT format specifying the output
-#' spatial reference system.
+#' @param srs_from Character string specifying the spatial reference system
+#' for `pts`. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
+#' @param srs_to Character string specifying the output spatial reference
+#' system. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
 #' @returns Numeric array of geospatial x/y coordinates in the projection
 #' specified by `srs_to`.
 #'
@@ -2421,9 +2423,7 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #' print(pts)
 #' ## id, x, y in NAD83 / UTM zone 12N
 #' ## transform to NAD83 / CONUS Albers
-#' transform_xy(pts = pts[,-1],
-#'              srs_from = epsg_to_wkt(26912),
-#'              srs_to = epsg_to_wkt(5070))
+#' transform_xy(pts = pts[, -1], srs_from = "EPSG:26912", srs_to = "EPSG:5070")
 transform_xy <- function(pts, srs_from, srs_to) {
     .Call(`_gdalraster_transform_xy`, pts, srs_from, srs_to)
 }

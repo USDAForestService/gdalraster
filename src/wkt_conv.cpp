@@ -3,9 +3,9 @@
    Copyright (c) 2023-2024 gdalraster authors
 */
 
-#include <Rcpp.h>
-#include <string>
+#include "wkt_conv.h"
 
+#include "cpl_port.h"
 #include "cpl_conv.h"
 #include "ogr_srs_api.h"
 #include "ogr_spatialref.h"
@@ -128,7 +128,7 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
 //' writeLines(srs_to_wkt("NAD83", pretty=TRUE))
 //' set_config_option("OSR_WKT_FORMAT", "")
 // [[Rcpp::export]]
-std::string srs_to_wkt(std::string srs, bool pretty = false) {
+std::string srs_to_wkt(const std::string &srs, bool pretty = false) {
     if (srs == "")
         return "";
 
@@ -178,7 +178,7 @@ std::string srs_to_wkt(std::string srs, bool pretty = false) {
 //' srs_is_geographic(epsg_to_wkt(5070))
 //' srs_is_geographic(srs_to_wkt("WGS84"))
 // [[Rcpp::export]]
-bool srs_is_geographic(std::string srs) {
+bool srs_is_geographic(const std::string &srs) {
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     char* pszWKT;
     pszWKT = (char*) srs.c_str();
@@ -211,7 +211,7 @@ bool srs_is_geographic(std::string srs) {
 //' srs_is_projected(epsg_to_wkt(5070))
 //' srs_is_projected(srs_to_wkt("WGS84"))
 // [[Rcpp::export]]
-bool srs_is_projected(std::string srs) {
+bool srs_is_projected(const std::string &srs) {
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     char* pszWKT;
     pszWKT = (char*) srs.c_str();
@@ -257,7 +257,7 @@ bool srs_is_projected(std::string srs) {
 //' srs_is_same(ds$getProjectionRef(), epsg_to_wkt(5070))
 //' ds$close()
 // [[Rcpp::export]]
-bool srs_is_same(std::string srs1, std::string srs2,
+bool srs_is_same(const std::string &srs1, const std::string &srs2,
         std::string criterion = "",
         bool ignore_axis_mapping = false,
         bool ignore_coord_epoch = false) {
@@ -343,7 +343,7 @@ bool srs_is_same(std::string srs1, std::string srs2,
 //' 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
 //' bbox_from_wkt(bnd, 100, 100)
 // [[Rcpp::export]]
-Rcpp::NumericVector bbox_from_wkt(std::string wkt,
+Rcpp::NumericVector bbox_from_wkt(const std::string &wkt,
         double extend_x = 0, double extend_y = 0) {
 
     OGRGeometryH hGeometry = nullptr;
@@ -397,7 +397,7 @@ Rcpp::NumericVector bbox_from_wkt(std::string wkt,
 //' bbox_to_wkt(ds$bbox())
 //' ds$close()
 // [[Rcpp::export]]
-Rcpp::String bbox_to_wkt(Rcpp::NumericVector bbox,
+Rcpp::String bbox_to_wkt(const Rcpp::NumericVector &bbox,
         double extend_x = 0, double extend_y = 0) {
 
     if (bbox.size() != 4)
