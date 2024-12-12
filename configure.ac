@@ -10,7 +10,7 @@
 # 2024-03-12: restore proj_include_path and proj_lib_path
 # 2024-03-17: rework GEOS test, include <ogr_api.h> in initial gdal_test.cpp
 
-AC_INIT([gdalraster],[1.11.1],[chris.toney@usda.gov])
+AC_INIT([gdalraster],[1.12.0],[chris.toney@usda.gov])
 AC_LANG(C++)
 
 # find R home and set CC/CFLAGS
