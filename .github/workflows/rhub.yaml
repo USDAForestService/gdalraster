@@ -35,7 +35,7 @@ jobs:
 
     steps:
     # NO NEED TO CHECKOUT HERE
-    - uses: r-hub/actions/setup@3b17e9ca05ba372c5a89cfbe5f837573028efa96 # v1.4.3
+    - uses: r-hub/actions/setup@1607aa150e4d33e2b4a2005c214c27dff7b792e9 # v1.5.0
       with:
         config: ${{ github.event.inputs.config }}
       id: rhub-setup
@@ -53,16 +53,16 @@ jobs:
       image: ${{ matrix.config.container }}
 
     steps:
-      - uses: r-hub/actions/checkout@3b17e9ca05ba372c5a89cfbe5f837573028efa96 # v1.4.3
-      - uses: r-hub/actions/platform-info@3b17e9ca05ba372c5a89cfbe5f837573028efa96 # v1.4.3
+      - uses: r-hub/actions/checkout@1607aa150e4d33e2b4a2005c214c27dff7b792e9 # v1.5.0
+      - uses: r-hub/actions/platform-info@1607aa150e4d33e2b4a2005c214c27dff7b792e9 # v1.5.0
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-      - uses: r-hub/actions/setup-deps@3b17e9ca05ba372c5a89cfbe5f837573028efa96 # v1.4.3
+      - uses: r-hub/actions/setup-deps@1607aa150e4d33e2b4a2005c214c27dff7b792e9 # v1.5.0
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-      - uses: r-hub/actions/run-check@3b17e9ca05ba372c5a89cfbe5f837573028efa96 # v1.4.3
+      - uses: r-hub/actions/run-check@1607aa150e4d33e2b4a2005c214c27dff7b792e9 # v1.5.0
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
@@ -78,20 +78,20 @@ jobs:
         config: ${{ fromJson(needs.setup.outputs.platforms) }}
 
     steps:
-      - uses: r-hub/actions/checkout@3b17e9ca05ba372c5a89cfbe5f837573028efa96 # v1.4.3
-      - uses: r-hub/actions/setup-r@3b17e9ca05ba372c5a89cfbe5f837573028efa96 # v1.4.3
+      - uses: r-hub/actions/checkout@1607aa150e4d33e2b4a2005c214c27dff7b792e9 # v1.5.0
+      - uses: r-hub/actions/setup-r@1607aa150e4d33e2b4a2005c214c27dff7b792e9 # v1.5.0
         with:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
-      - uses: r-hub/actions/platform-info@3b17e9ca05ba372c5a89cfbe5f837573028efa96 # v1.4.3
+      - uses: r-hub/actions/platform-info@1607aa150e4d33e2b4a2005c214c27dff7b792e9 # v1.5.0
         with:
           token: ${{ secrets.RHUB_TOKEN }}
           job-config: ${{ matrix.config.job-config }}
-      - uses: r-hub/actions/setup-deps@3b17e9ca05ba372c5a89cfbe5f837573028efa96 # v1.4.3
+      - uses: r-hub/actions/setup-deps@1607aa150e4d33e2b4a2005c214c27dff7b792e9 # v1.5.0
         with:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
-      - uses: r-hub/actions/run-check@3b17e9ca05ba372c5a89cfbe5f837573028efa96 # v1.4.3
+      - uses: r-hub/actions/run-check@1607aa150e4d33e2b4a2005c214c27dff7b792e9 # v1.5.0
         with:
           job-config: ${{ matrix.config.job-config }}
           token: ${{ secrets.RHUB_TOKEN }}
