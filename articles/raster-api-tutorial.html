@@ -95,7 +95,7 @@ specified, or <code>read_only = FALSE</code> to open with update
 access):</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
-<span><span class="co">#&gt; GDAL 3.4.1, released 2021/12/27, GEOS 3.10.2, PROJ 8.2.1</span></span>
+<span><span class="co">#&gt; GDAL 3.8.4, released 2024/02/08, GEOS 3.12.1, PROJ 9.4.0</span></span>
 <span></span>
 <span><span class="va">tcc_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_tcc.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tcc_file</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
@@ -111,7 +111,7 @@ and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x564846515c40&gt; of class 'GDALRaster' &lt;0x56484388a870&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x5569f581de50&gt; of class 'GDALRaster' &lt;0x5569f0b949a0&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 3 fields</span></span>
 <span><span class="co">#&gt;  $ infoOptions  : chr(0) </span></span>
@@ -418,6 +418,9 @@ also be filtered to specific options:</p>
 <span><span class="co">#&gt;  [9] &lt;Value&gt;LZMA&lt;/Value&gt;</span></span>
 <span><span class="co">#&gt; [10] &lt;Value&gt;ZSTD&lt;/Value&gt;</span></span>
 <span><span class="co">#&gt; [11] &lt;Value&gt;WEBP&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt; [12] &lt;Value&gt;LERC&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt; [13] &lt;Value&gt;LERC_DEFLATE&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt; [14] &lt;Value&gt;LERC_ZSTD&lt;/Value&gt;</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"SPARSE_OK"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; {xml_node}</span></span>
