@@ -1,3 +1,26 @@
+# gdalraster 1.12.0
+
+## Features / enhancements
+
+* add `inspectDataset()`: obtain information about a GDAL raster or vector dataset (#552)
+* add `identifyDriver()`: identify the driver that can open a given filename, connection string, etc. (#553)
+* `transform_xy()` and `inv_project()`: accept the SRS arguments in any format supported by `srs_to_wkt()`
+* `vsi_read_dir()`: add the `recursive` argument (#426); omit "." and ".." from the output directory listing; add the `all_files` argument, `TRUE` to include hidden files; sort the directory listing alphabetically
+
+## Bug fixes
+
+* fix the mode name for `"color-relief"` in `DEFAULT_DEM_PROC` (#430)
+* fix a unit test for class `VSIFile`: create file with "w+" access for read/write (#546)
+* `ogr_def_geom_field()`: fix input validation for the `srs` argument (#507)
+* `createCopy()`: check the driver for GDAL_DCAP_CREATE capability as well as GDAL_DCAP_CREATECOPY (#479)
+* `plot_raster()`: default to no stretch when the input is an RGB Byte raster (#435)
+
+## Documentation
+
+* fix an example for class `VSIFile` that needs "w+" access instead of "w"
+* fix missing double quote in `transform_xy()` examples
+* document the `fillRaster()` method in class `GDALRaster`
+
 # gdalraster 1.11.1
 
 * fix test in test-ogr_manage.R: the test for GeoJSON layer did not need to check existence using `with_update = TRUE` on a file in extdata (#410)
