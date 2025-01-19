@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Draft Bindings to the GDAL/OGR Vector API • gdalraster</title>
-<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -16,11 +16,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,14 +48,6 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/USDAForestService/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
-  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
-<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
-    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
-    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
-  </ul>
-</li>
       </ul>
 </div>
 
@@ -72,14 +64,14 @@
       <h1>Draft Bindings to the GDAL/OGR Vector API</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/vignettes/articles/gdalvector-draft.Rmd" class="external-link"><code>vignettes/articles/gdalvector-draft.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/v.1.12.0/vignettes/articles/gdalvector-draft.Rmd" class="external-link"><code>vignettes/articles/gdalvector-draft.Rmd</code></a></small>
       <div class="d-none name"><code>gdalvector-draft.Rmd</code></div>
     </div>
 
     
     
 <p>Chris Toney (chris.toney at usda.gov)</p>
-<p>Last modified: 2024-09-14</p>
+<p>Last modified: 2024-05-14</p>
 <p>Comment/discussion: <a href="https://github.com/USDAForestService/gdalraster/issues/241" class="external-link uri">https://github.com/USDAForestService/gdalraster/issues/241</a></p>
 <div class="section level2">
 <h2 id="summary">Summary<a class="anchor" aria-label="anchor" href="#summary"></a>
@@ -100,10 +92,14 @@ APIs provided by the GDAL project. It is intended that bindings in
 tracking changes in GDAL.</p>
 <p>A proposed interface is described in terms of the <a href="https://gdal.org/user/vector_data_model.html" class="external-link">GDAL Vector Data
 Model</a>, along with a draft class definition for implementation via
-<code>RCPP_EXPOSED_CLASS</code>.</p>
-<p>An initial implemetation supporting read access has been merged into
-the <strong>gdalraster</strong> main branch (as of v. 1.11.1.9100,
-2024-07-23), with online documentation available at: <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html" class="uri">https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html</a></p>
+<code>RCPP_EXPOSED_CLASS</code>. A prototype of the bindings is in the
+<code>gdalvector</code> branch at <a href="https://github.com/USDAForestService/gdalraster/tree/gdalvector" class="external-link uri">https://github.com/USDAForestService/gdalraster/tree/gdalvector</a>.
+The prototype bindings are currently undocumented. Code examples are
+included here to demonstrate usage and proof-of-concept. Installation of
+the development version of <strong>gdalraster</strong> containing the
+prototype vector bindings could be done with:</p>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span>, ref <span class="op">=</span> <span class="st">"gdalvector"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="description-of-the-interface">Description of the interface<a class="anchor" aria-label="anchor" href="#description-of-the-interface"></a>
@@ -111,9 +107,6 @@ the <strong>gdalraster</strong> main branch (as of v. 1.11.1.9100,
 <p>Bindings will be implemented with <strong>Rcpp</strong> modules
 including <code>RCPP_EXPOSED_CLASS</code>. Exposing C++ classes directly
 in R provides a natural interface to the underlying object model.</p>
-<div class="section level3">
-<h3 id="vector-dataset">Vector dataset<a class="anchor" aria-label="anchor" href="#vector-dataset"></a>
-</h3>
 <p>A GDAL Dataset for vector is a file or database containing one or
 more OGR layers. A vector dataset is represented in R as a data source
 name (DSN), a character string that may be a filename, database
@@ -124,34 +117,27 @@ their vector schemas will be done with:</p>
 operate on vector datasets: <code><a href="../reference/copyDatasetFiles.html">copyDatasetFiles()</a></code>,
 <code><a href="../reference/deleteDataset.html">deleteDataset()</a></code>, <code><a href="../reference/renameDataset.html">renameDataset()</a></code> and
 <code><a href="../reference/addFilesInZip.html">addFilesInZip()</a></code> (supports SOZip)</li>
-<li>existing utility functions for managing vector data sources (as of
-<strong>gdalraster</strong> 1.11.0): <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html">ogr_manage</a>
+<li>existing utility functions for managing vector data sources (added
+at <strong>gdalraster</strong> 1.10.0.9180 dev): <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html">ogr_manage</a>
 and <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html">ogr_define</a>
 </li>
 <li>existing wrappers <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> and <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code>
-from the GDAL Utils API (as of <strong>gdalraster</strong> 1.10.0)</li>
+from the GDAL Utils API (<strong>gdalraster</strong> 1.10.0 CRAN
+release)</li>
 <li>
 <code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code>: execute an SQL statement against the
 data store to edit data (a SQL <code>SELECT</code> statement can be used
 in the constructor for class <code>GDALVector</code> described below, to
 open a layer of features)</li>
 </ul>
-</div>
-<div class="section level3">
-<h3 id="vector-layer">Vector layer<a class="anchor" aria-label="anchor" href="#vector-layer"></a>
-</h3>
-<p>The OGR Layer class represents a layer of features within a data
-source. It will be modeled in R as class <code>GDALVector</code>, an
-exposed C++ class encapsulating an OGR Layer and the GDAL Dataset that
-owns it. A <code>GDALVector</code> object will persist an open
-connection to the dataset, and expose methods for retrieving layer
-information, setting attribute and spatial filters, reading/writing
-features, and layer geoprocessing. A draft definition for class
-<code>GDALVector</code> is given below.</p>
-</div>
-<div class="section level3">
-<h3 id="feature-class-field-definitions">Feature class / field definitions<a class="anchor" aria-label="anchor" href="#feature-class-field-definitions"></a>
-</h3>
+<p>OGR Layer class represents a layer of features within a data source.
+It will be modeled in R as class <code>GDALVector</code>, an exposed C++
+class encapsulating an OGR Layer and the GDAL Dataset that owns it. A
+<code>GDALVector</code> object will persist an open connection to the
+dataset and expose methods for retrieving layer information, setting
+attribute and spatial filters, reading/writing features, and layer
+geoprocessing. A draft definition for class <code>GDALVector</code> is
+given below.</p>
 <p>All features in an OGR Layer share a common schema (feature class)
 modeled in GDAL as OGR Feature Definition. A feature class definition
 includes the set of attribute fields and their data types, the geometry
@@ -167,91 +153,28 @@ $precision  : optional number of digits after the decimal point
 $is_nullable: optional NOT NULL constraint (logical scalar)
 $is_unique  : optional UNIQUE constraint (logical scalar)
 $default    : optional field default value as character string
+$is_ignored : whether ignored when retrieving features (logical scalar)
 $domain     : optional domain name
 $is_geom    : FALSE for attribute fields</code></pre>
 <p>A geometry field definition is a list with named elements:</p>
 <pre><code>$type       : geom type ("Point", "Polygon", etc.)
 $srs        : optional spatial reference as WKT string
 $is_nullable: optional NOT NULL constraint (logical scalar)
+$is_ignored : whether ignored when retrieving features (logical scalar)
 $is_geom    : TRUE for geometry fields</code></pre>
-</div>
-<div class="section level3">
-<h3 id="feature-retrieval">Feature retrieval<a class="anchor" aria-label="anchor" href="#feature-retrieval"></a>
-</h3>
 <p>An OGR Feature – as read by <code>GDALVector::getNextFeature()</code>
 or <code>GDALVector::getFeature()</code>, or as passed to write methods
-– is a list with the unique feature identifier (FID), the attribute and
-geometry field names, and their values.</p>
-<p><code>GDALVector::fetch()</code> fetches the next <code>n</code>
-features from the layer and returns them as a data frame (analog of <a href="https://dbi.r-dbi.org/reference/dbFetch.html" class="external-link"><code>DBI::dbFetch()</code></a>).
-This allows retrieving the entire feature set (potentially with an
-attribute and/or spatial filter applied), one page of features at a
-time, or the remaining features. <code>fetch()</code> can be called
-multiple times (forward paging). Fetching zero features is also possible
-to retrieve the structure of the result set as a data frame.</p>
-<p>OGR field types are returned as the corresponding native R types
-(<code>NA</code> for OGR NULL values):</p>
-<ul>
-<li>
-<code>OFTInteger</code>: <code>integer</code> (subtype
-<code>OFSTBoolean</code> as <code>logical</code>)</li>
-<li>
-<code>OFTIntegerList</code>: vector of <code>integer</code> (list
-column in data frames)</li>
-<li>
-<code>OFTInteger64</code>: <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> (subtype
-<code>OFSTBoolean</code> as <code>logical</code>)</li>
-<li>
-<code>OFTInteger64List</code>: vector of
-<code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> (list column in data frames)</li>
-<li>
-<code>OFTReal</code>: <code>numeric</code>
-</li>
-<li>
-<code>OFTRealList</code>: vector of <code>numeric</code> (list
-column in data frames)</li>
-<li>
-<code>OFTString</code>: <code>character</code> string</li>
-<li>
-<code>OFTStringList</code>: vector of <code>character</code> strings
-(list column in data frames)</li>
-<li>
-<code>OFTDate</code>: <code>Date</code>
-</li>
-<li>
-<code>OFTDateTime</code>: <code>POSIXct</code> (millisecond
-accuracy, adjustment for time zone flag if present)</li>
-<li>
-<code>OFTBinary</code>: <code>raw</code> vector (list column in data
-frames)</li>
-</ul>
-</div>
-<div class="section level3">
-<h3 id="geometry">Geometry<a class="anchor" aria-label="anchor" href="#geometry"></a>
-</h3>
-<p>An OGR Geometry can be represented in R as either a character string
-containing OGC Well Known Text (WKT), or a raw vector of bytes
-containing Well Known Binary (WKB). An OGR Spatial Reference, which
+– is a list with the unique feature identifier (FID), attribute and
+geometry field names, and their values.
+<code>GDALVector::getFeatureSet()</code> will return a set of features
+as a data frame.</p>
+<p>An OGR Geometry is represented in R as a character string containing
+OGC Well Known Text (WKT). Likewise, an OGR Spatial Reference, which
 encapsulates the definition of a projection and datum, is represented in
 R as WKT. <strong>gdalraster</strong> has existing functions for working
 with spatial reference systems as WKT (<code><a href="../reference/srs_to_wkt.html">srs_to_wkt()</a></code>,
 <code><a href="../reference/srs_is_projected.html">srs_is_projected()</a></code>, etc.), and a set of geometry
 convenience functions also operating on WKT (GEOS via GDAL headers).</p>
-<p>Package <a href="https://github.com/paleolimbot/wk" class="external-link">wk</a> supports
-parsing WKB and WKT representation of geometries to and from R-native
-formats. Interoperability with <a href="https://github.com/r-spatial/sf" class="external-link">sf</a> classes for simple
-features is also straightforward (e.g., <code>sf::st_sf()</code>).</p>
-<p>Returning geometries is optional when retrieving features from a data
-store with <strong>gdalraster</strong>. Omitting the geometries can
-improve performance and memory utilization when access only to the
-attributes is needed (currently the default). When geometries are
-included, they can be retrieved as either WKB or WKT (optionally as the
-ISO versions). WKB is compact and fast to parse, e.g., using the high
-performance functions provided by <strong>wk</strong>. The setting for
-geometry retrieval is per-object for class <code>GDALvector</code>, and
-can be set back and forth as needed during the lifetime of the
-object.</p>
-</div>
 </div>
 <div class="section level2">
 <h2 id="class-gdalvector">class GDALVector<a class="anchor" aria-label="anchor" href="#class-gdalvector"></a>
@@ -263,148 +186,136 @@ in:</p>
 have been implemented so far in the prototype (a subset of the draft
 class definition below):</p>
 <p><a href="https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h" class="external-link uri">https://github.com/USDAForestService/gdalraster/blob/gdalvector/src/gdalvector.h</a></p>
-<div class="sourceCode" id="cb3"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb3-1"><a href="#cb3-1" tabindex="-1"></a><span class="kw">class</span> GDALVector <span class="op">{</span></span>
-<span id="cb3-2"><a href="#cb3-2" tabindex="-1"></a> <span class="kw">public</span><span class="op">:</span></span>
-<span id="cb3-3"><a href="#cb3-3" tabindex="-1"></a>    GDALVector<span class="op">();</span></span>
-<span id="cb3-4"><a href="#cb3-4" tabindex="-1"></a>    <span class="kw">explicit</span> GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">);</span></span>
-<span id="cb3-5"><a href="#cb3-5" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">);</span></span>
-<span id="cb3-6"><a href="#cb3-6" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">);</span></span>
-<span id="cb3-7"><a href="#cb3-7" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">,</span></span>
-<span id="cb3-8"><a href="#cb3-8" tabindex="-1"></a>               Rcpp<span class="op">::</span>CharacterVector open_options<span class="op">);</span></span>
-<span id="cb3-9"><a href="#cb3-9" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">,</span></span>
-<span id="cb3-10"><a href="#cb3-10" tabindex="-1"></a>               Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> open_options<span class="op">,</span></span>
-<span id="cb3-11"><a href="#cb3-11" tabindex="-1"></a>               <span class="bu">std::</span>string spatial_filter<span class="op">,</span> <span class="bu">std::</span>string dialect<span class="op">);</span></span>
-<span id="cb3-12"><a href="#cb3-12" tabindex="-1"></a></span>
-<span id="cb3-13"><a href="#cb3-13" tabindex="-1"></a>    <span class="co">// undocumented, exposed read-only fields for internal use</span></span>
-<span id="cb3-14"><a href="#cb3-14" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_layer_name</span> <span class="op">{</span><span class="st">""</span><span class="op">};</span>  <span class="co">// layer name or sql statement</span></span>
-<span id="cb3-15"><a href="#cb3-15" tabindex="-1"></a>    <span class="dt">bool</span> <span class="va">m_is_sql</span> <span class="op">{</span><span class="kw">false</span><span class="op">};</span></span>
-<span id="cb3-16"><a href="#cb3-16" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_dialect</span> <span class="op">{</span><span class="st">""</span><span class="op">};</span></span>
-<span id="cb3-17"><a href="#cb3-17" tabindex="-1"></a></span>
-<span id="cb3-18"><a href="#cb3-18" tabindex="-1"></a>    <span class="co">// exposed read/write fields</span></span>
-<span id="cb3-19"><a href="#cb3-19" tabindex="-1"></a>    <span class="bu">std::</span>string defaultGeomFldName <span class="op">{</span><span class="st">"geometry"</span><span class="op">};</span></span>
-<span id="cb3-20"><a href="#cb3-20" tabindex="-1"></a>    <span class="dt">bool</span> promoteToMulti <span class="op">{</span><span class="kw">false</span><span class="op">};</span></span>
-<span id="cb3-21"><a href="#cb3-21" tabindex="-1"></a>    <span class="bu">std::</span>string returnGeomAs <span class="op">{</span><span class="st">"WKB"</span><span class="op">};</span></span>
-<span id="cb3-22"><a href="#cb3-22" tabindex="-1"></a>    <span class="bu">std::</span>string wkbByteOrder <span class="op">{</span><span class="st">"LSB"</span><span class="op">};</span></span>
-<span id="cb3-23"><a href="#cb3-23" tabindex="-1"></a></span>
-<span id="cb3-24"><a href="#cb3-24" tabindex="-1"></a>    <span class="co">// exposed methods</span></span>
-<span id="cb3-25"><a href="#cb3-25" tabindex="-1"></a>    <span class="dt">void</span> open<span class="op">(</span><span class="dt">bool</span> read_only<span class="op">);</span></span>
-<span id="cb3-26"><a href="#cb3-26" tabindex="-1"></a>    <span class="dt">bool</span> isOpen<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-27"><a href="#cb3-27" tabindex="-1"></a>    <span class="bu">std::</span>string getDsn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-28"><a href="#cb3-28" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector getFileList<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-29"><a href="#cb3-29" tabindex="-1"></a>    <span class="bu">std::</span>string getDriverShortName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-30"><a href="#cb3-30" tabindex="-1"></a>    <span class="bu">std::</span>string getDriverLongName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-31"><a href="#cb3-31" tabindex="-1"></a></span>
-<span id="cb3-32"><a href="#cb3-32" tabindex="-1"></a>    <span class="bu">std::</span>string getName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-33"><a href="#cb3-33" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector getFieldNames<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-34"><a href="#cb3-34" tabindex="-1"></a>    Rcpp<span class="op">::</span>List testCapability<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-35"><a href="#cb3-35" tabindex="-1"></a>    <span class="bu">std::</span>string getFIDColumn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-36"><a href="#cb3-36" tabindex="-1"></a>    <span class="bu">std::</span>string getGeomType<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-37"><a href="#cb3-37" tabindex="-1"></a>    <span class="bu">std::</span>string getGeometryColumn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-38"><a href="#cb3-38" tabindex="-1"></a>    <span class="bu">std::</span>string getSpatialRef<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-39"><a href="#cb3-39" tabindex="-1"></a>    Rcpp<span class="op">::</span>NumericVector bbox<span class="op">();</span></span>
-<span id="cb3-40"><a href="#cb3-40" tabindex="-1"></a>    Rcpp<span class="op">::</span>List getLayerDefn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-41"><a href="#cb3-41" tabindex="-1"></a></span>
-<span id="cb3-42"><a href="#cb3-42" tabindex="-1"></a>    <span class="dt">void</span> setAttributeFilter<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>query<span class="op">);</span></span>
-<span id="cb3-43"><a href="#cb3-43" tabindex="-1"></a>    <span class="bu">std::</span>string getAttributeFilter<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-44"><a href="#cb3-44" tabindex="-1"></a>    <span class="dt">void</span> setIgnoredFields<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>fields<span class="op">);</span></span>
-<span id="cb3-45"><a href="#cb3-45" tabindex="-1"></a>    <span class="dt">void</span> setSelectedFields<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>fields<span class="op">);</span></span>
-<span id="cb3-46"><a href="#cb3-46" tabindex="-1"></a></span>
-<span id="cb3-47"><a href="#cb3-47" tabindex="-1"></a>    <span class="dt">void</span> setSpatialFilter<span class="op">(</span><span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>wkt<span class="op">);</span></span>
-<span id="cb3-48"><a href="#cb3-48" tabindex="-1"></a>    <span class="dt">void</span> setSpatialFilterRect<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>bbox<span class="op">);</span></span>
-<span id="cb3-49"><a href="#cb3-49" tabindex="-1"></a>    <span class="bu">std::</span>string getSpatialFilter<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-50"><a href="#cb3-50" tabindex="-1"></a>    <span class="dt">void</span> clearSpatialFilter<span class="op">();</span></span>
-<span id="cb3-51"><a href="#cb3-51" tabindex="-1"></a></span>
-<span id="cb3-52"><a href="#cb3-52" tabindex="-1"></a>    <span class="dt">double</span> getFeatureCount<span class="op">();</span></span>
-<span id="cb3-53"><a href="#cb3-53" tabindex="-1"></a>    SEXP getNextFeature<span class="op">();</span></span>
-<span id="cb3-54"><a href="#cb3-54" tabindex="-1"></a>    <span class="dt">void</span> setNextByIndex<span class="op">(</span><span class="dt">double</span> i<span class="op">);</span></span>
-<span id="cb3-55"><a href="#cb3-55" tabindex="-1"></a>    <span class="co">// fid must be a length-1 numeric vector, since numeric vector can carry</span></span>
-<span id="cb3-56"><a href="#cb3-56" tabindex="-1"></a>    <span class="co">// the class attribute for integer64:</span></span>
-<span id="cb3-57"><a href="#cb3-57" tabindex="-1"></a>    SEXP getFeature<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>fid<span class="op">);</span></span>
-<span id="cb3-58"><a href="#cb3-58" tabindex="-1"></a>    <span class="dt">void</span> resetReading<span class="op">();</span></span>
-<span id="cb3-59"><a href="#cb3-59" tabindex="-1"></a></span>
-<span id="cb3-60"><a href="#cb3-60" tabindex="-1"></a>    Rcpp<span class="op">::</span>DataFrame fetch<span class="op">(</span><span class="dt">double</span> n<span class="op">);</span></span>
-<span id="cb3-61"><a href="#cb3-61" tabindex="-1"></a></span>
-<span id="cb3-62"><a href="#cb3-62" tabindex="-1"></a>    <span class="dt">bool</span> setFeature<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>feature<span class="op">);</span></span>
-<span id="cb3-63"><a href="#cb3-63" tabindex="-1"></a>    <span class="dt">bool</span> createFeature<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>feature<span class="op">);</span></span>
-<span id="cb3-64"><a href="#cb3-64" tabindex="-1"></a>    <span class="dt">bool</span> upsertFeature<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>feature<span class="op">);</span></span>
-<span id="cb3-65"><a href="#cb3-65" tabindex="-1"></a>    SEXP getLastWriteFID<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-66"><a href="#cb3-66" tabindex="-1"></a>    <span class="dt">bool</span> deleteFeature<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>fid<span class="op">);</span></span>
-<span id="cb3-67"><a href="#cb3-67" tabindex="-1"></a>    <span class="dt">bool</span> syncToDisk<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-68"><a href="#cb3-68" tabindex="-1"></a></span>
-<span id="cb3-69"><a href="#cb3-69" tabindex="-1"></a>    <span class="dt">bool</span> startTransaction<span class="op">(</span><span class="dt">bool</span> force<span class="op">);</span></span>
-<span id="cb3-70"><a href="#cb3-70" tabindex="-1"></a>    <span class="dt">bool</span> commitTransaction<span class="op">();</span></span>
-<span id="cb3-71"><a href="#cb3-71" tabindex="-1"></a>    <span class="dt">bool</span> rollbackTransaction<span class="op">();</span></span>
-<span id="cb3-72"><a href="#cb3-72" tabindex="-1"></a></span>
-<span id="cb3-73"><a href="#cb3-73" tabindex="-1"></a>    <span class="dt">bool</span> layerIntersection<span class="op">(</span></span>
-<span id="cb3-74"><a href="#cb3-74" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb3-75"><a href="#cb3-75" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb3-76"><a href="#cb3-76" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-77"><a href="#cb3-77" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
-<span id="cb3-78"><a href="#cb3-78" tabindex="-1"></a>    <span class="dt">bool</span> layerUnion<span class="op">(</span></span>
-<span id="cb3-79"><a href="#cb3-79" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb3-80"><a href="#cb3-80" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb3-81"><a href="#cb3-81" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-82"><a href="#cb3-82" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
-<span id="cb3-83"><a href="#cb3-83" tabindex="-1"></a>    <span class="dt">bool</span> layerSymDifference<span class="op">(</span></span>
-<span id="cb3-84"><a href="#cb3-84" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb3-85"><a href="#cb3-85" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb3-86"><a href="#cb3-86" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-87"><a href="#cb3-87" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
-<span id="cb3-88"><a href="#cb3-88" tabindex="-1"></a>    <span class="dt">bool</span> layerIdentity<span class="op">(</span></span>
-<span id="cb3-89"><a href="#cb3-89" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb3-90"><a href="#cb3-90" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb3-91"><a href="#cb3-91" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-92"><a href="#cb3-92" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
-<span id="cb3-93"><a href="#cb3-93" tabindex="-1"></a>    <span class="dt">bool</span> layerUpdate<span class="op">(</span></span>
-<span id="cb3-94"><a href="#cb3-94" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb3-95"><a href="#cb3-95" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb3-96"><a href="#cb3-96" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-97"><a href="#cb3-97" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
-<span id="cb3-98"><a href="#cb3-98" tabindex="-1"></a>    <span class="dt">bool</span> layerClip<span class="op">(</span></span>
-<span id="cb3-99"><a href="#cb3-99" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb3-100"><a href="#cb3-100" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb3-101"><a href="#cb3-101" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-102"><a href="#cb3-102" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
-<span id="cb3-103"><a href="#cb3-103" tabindex="-1"></a>    <span class="dt">bool</span> layerErase<span class="op">(</span></span>
-<span id="cb3-104"><a href="#cb3-104" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
-<span id="cb3-105"><a href="#cb3-105" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
-<span id="cb3-106"><a href="#cb3-106" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
-<span id="cb3-107"><a href="#cb3-107" tabindex="-1"></a>            <span class="at">const</span> Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span><span class="at">const</span> Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> <span class="op">&amp;</span>options<span class="op">);</span></span>
-<span id="cb3-108"><a href="#cb3-108" tabindex="-1"></a></span>
-<span id="cb3-109"><a href="#cb3-109" tabindex="-1"></a>    <span class="dt">void</span> close<span class="op">();</span></span>
-<span id="cb3-110"><a href="#cb3-110" tabindex="-1"></a></span>
-<span id="cb3-111"><a href="#cb3-111" tabindex="-1"></a>    <span class="dt">void</span> OGRFeatureFromList_dumpReadble<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>feat<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-112"><a href="#cb3-112" tabindex="-1"></a></span>
-<span id="cb3-113"><a href="#cb3-113" tabindex="-1"></a>    <span class="co">// methods for internal use not exposed to R</span></span>
-<span id="cb3-114"><a href="#cb3-114" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">checkAccess_</span><span class="op">(</span>GDALAccess access_needed<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-115"><a href="#cb3-115" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">setDsn_</span><span class="op">(</span><span class="bu">std::</span>string dsn<span class="op">);</span></span>
-<span id="cb3-116"><a href="#cb3-116" tabindex="-1"></a>    GDALDatasetH <span class="va">getGDALDatasetH_</span><span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-117"><a href="#cb3-117" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">setGDALDatasetH_</span><span class="op">(</span><span class="at">const</span> GDALDatasetH hDs<span class="op">,</span> <span class="dt">bool</span> with_update<span class="op">);</span></span>
-<span id="cb3-118"><a href="#cb3-118" tabindex="-1"></a>    OGRLayerH <span class="va">getOGRLayerH_</span><span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-119"><a href="#cb3-119" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">setOGRLayerH_</span><span class="op">(</span><span class="at">const</span> OGRLayerH hLyr<span class="op">,</span> <span class="at">const</span> <span class="bu">std::</span>string <span class="op">&amp;</span>lyr_name<span class="op">);</span></span>
-<span id="cb3-120"><a href="#cb3-120" tabindex="-1"></a>    <span class="dt">void</span> <span class="va">setFieldNames_</span><span class="op">();</span></span>
-<span id="cb3-121"><a href="#cb3-121" tabindex="-1"></a>    SEXP <span class="va">initDF_</span><span class="op">(</span><span class="dt">R_xlen_t</span> nrow<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-122"><a href="#cb3-122" tabindex="-1"></a>    OGRFeatureH OGRFeatureFromList_<span class="op">(</span><span class="at">const</span> Rcpp<span class="op">::</span>RObject <span class="op">&amp;</span>feature<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
-<span id="cb3-123"><a href="#cb3-123" tabindex="-1"></a></span>
-<span id="cb3-124"><a href="#cb3-124" tabindex="-1"></a> <span class="kw">private</span><span class="op">:</span></span>
-<span id="cb3-125"><a href="#cb3-125" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_dsn</span> <span class="op">{</span><span class="st">""</span><span class="op">};</span></span>
-<span id="cb3-126"><a href="#cb3-126" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector <span class="va">m_open_options</span> <span class="op">{};</span></span>
-<span id="cb3-127"><a href="#cb3-127" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_attr_filter</span> <span class="op">{</span><span class="st">""</span><span class="op">};</span></span>
-<span id="cb3-128"><a href="#cb3-128" tabindex="-1"></a>    <span class="bu">std::</span>string <span class="va">m_spatial_filter</span> <span class="op">{</span><span class="st">""</span><span class="op">};</span></span>
-<span id="cb3-129"><a href="#cb3-129" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector <span class="va">m_field_names</span> <span class="op">{};</span></span>
-<span id="cb3-130"><a href="#cb3-130" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector <span class="va">m_ignored_fields</span> <span class="op">{};</span></span>
-<span id="cb3-131"><a href="#cb3-131" tabindex="-1"></a>    GDALDatasetH <span class="va">m_hDataset</span> <span class="op">{</span><span class="kw">nullptr</span><span class="op">};</span></span>
-<span id="cb3-132"><a href="#cb3-132" tabindex="-1"></a>    GDALAccess <span class="va">m_eAccess</span> <span class="op">{</span>GA_ReadOnly<span class="op">};</span></span>
-<span id="cb3-133"><a href="#cb3-133" tabindex="-1"></a>    OGRLayerH <span class="va">m_hLayer</span> <span class="op">{</span><span class="kw">nullptr</span><span class="op">};</span></span>
-<span id="cb3-134"><a href="#cb3-134" tabindex="-1"></a>    <span class="dt">int64_t</span> <span class="va">m_last_write_fid</span> <span class="op">{</span>NA_INTEGER64<span class="op">};</span></span>
-<span id="cb3-135"><a href="#cb3-135" tabindex="-1"></a><span class="op">};</span></span>
-<span id="cb3-136"><a href="#cb3-136" tabindex="-1"></a></span>
-<span id="cb3-137"><a href="#cb3-137" tabindex="-1"></a>RCPP_EXPOSED_CLASS<span class="op">(</span>GDALVector<span class="op">)</span></span></code></pre></div>
+<p>This does not include definitions of several stand-alone functions
+that will provide schema management. The existing definitions in
+<code>src/ogr_util.h</code> are a starting point for those. An
+<strong>Rcpp</strong> <code>.finalizer</code> function will be
+implemented to properly release resources in case an object of class
+<code>GDALVector</code> is garbage collected without an explicit call to
+<code><a href="https://rdrr.io/r/base/connections.html" class="external-link">close()</a></code>. Support for 64-bit integers requires
+<strong>bit64</strong> on the R side, with conversions in C++ using
+<strong>RcppInt64</strong>.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a><span class="kw">class</span> GDALVector <span class="op">{</span></span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a> <span class="kw">private</span><span class="op">:</span></span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>    <span class="bu">std::</span>string dsn_in<span class="op">;</span></span>
+<span id="cb4-4"><a href="#cb4-4" tabindex="-1"></a>    <span class="bu">std::</span>string layer_in<span class="op">;</span>  <span class="co">// layer name or sql statement</span></span>
+<span id="cb4-5"><a href="#cb4-5" tabindex="-1"></a>    <span class="dt">bool</span> is_sql_in<span class="op">;</span></span>
+<span id="cb4-6"><a href="#cb4-6" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector open_options_in<span class="op">;</span></span>
+<span id="cb4-7"><a href="#cb4-7" tabindex="-1"></a>    <span class="bu">std::</span>string spatial_filter_in<span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" tabindex="-1"></a>    <span class="bu">std::</span>string dialect_in<span class="op">;</span></span>
+<span id="cb4-9"><a href="#cb4-9" tabindex="-1"></a>    GDALDatasetH hDataset<span class="op">;</span></span>
+<span id="cb4-10"><a href="#cb4-10" tabindex="-1"></a>    GDALAccess eAccess<span class="op">;</span></span>
+<span id="cb4-11"><a href="#cb4-11" tabindex="-1"></a>    OGRLayerH hLayer<span class="op">;</span></span>
+<span id="cb4-12"><a href="#cb4-12" tabindex="-1"></a>    OGRFeatureDefnH hFDefn<span class="op">;</span></span>
+<span id="cb4-13"><a href="#cb4-13" tabindex="-1"></a></span>
+<span id="cb4-14"><a href="#cb4-14" tabindex="-1"></a> <span class="kw">public</span><span class="op">:</span></span>
+<span id="cb4-15"><a href="#cb4-15" tabindex="-1"></a>    GDALVector<span class="op">();</span></span>
+<span id="cb4-16"><a href="#cb4-16" tabindex="-1"></a>    <span class="kw">explicit</span> GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">);</span></span>
+<span id="cb4-17"><a href="#cb4-17" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">);</span></span>
+<span id="cb4-18"><a href="#cb4-18" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">);</span></span>
+<span id="cb4-19"><a href="#cb4-19" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">,</span></span>
+<span id="cb4-20"><a href="#cb4-20" tabindex="-1"></a>               Rcpp<span class="op">::</span>CharacterVector open_options<span class="op">);</span></span>
+<span id="cb4-21"><a href="#cb4-21" tabindex="-1"></a>    GDALVector<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector dsn<span class="op">,</span> <span class="bu">std::</span>string layer<span class="op">,</span> <span class="dt">bool</span> read_only<span class="op">,</span></span>
+<span id="cb4-22"><a href="#cb4-22" tabindex="-1"></a>               Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> open_options<span class="op">,</span></span>
+<span id="cb4-23"><a href="#cb4-23" tabindex="-1"></a>               <span class="bu">std::</span>string spatial_filter<span class="op">,</span> <span class="bu">std::</span>string dialect<span class="op">);</span></span>
+<span id="cb4-24"><a href="#cb4-24" tabindex="-1"></a></span>
+<span id="cb4-25"><a href="#cb4-25" tabindex="-1"></a>    <span class="dt">void</span> open<span class="op">(</span><span class="dt">bool</span> read_only<span class="op">);</span></span>
+<span id="cb4-26"><a href="#cb4-26" tabindex="-1"></a>    <span class="dt">bool</span> isOpen<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-27"><a href="#cb4-27" tabindex="-1"></a>    <span class="bu">std::</span>string getDsn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-28"><a href="#cb4-28" tabindex="-1"></a>    Rcpp<span class="op">::</span>CharacterVector getFileList<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-29"><a href="#cb4-29" tabindex="-1"></a>    <span class="bu">std::</span>string getDriverShortName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-30"><a href="#cb4-30" tabindex="-1"></a>    <span class="bu">std::</span>string getDriverLongName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-31"><a href="#cb4-31" tabindex="-1"></a></span>
+<span id="cb4-32"><a href="#cb4-32" tabindex="-1"></a>    <span class="bu">std::</span>string getName<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-33"><a href="#cb4-33" tabindex="-1"></a>    <span class="dt">bool</span> testCapability<span class="op">(</span><span class="bu">std::</span>string capability<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-34"><a href="#cb4-34" tabindex="-1"></a>    <span class="bu">std::</span>string getFIDColumn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-35"><a href="#cb4-35" tabindex="-1"></a>    <span class="bu">std::</span>string getGeomType<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-36"><a href="#cb4-36" tabindex="-1"></a>    <span class="bu">std::</span>string getGeometryColumn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-37"><a href="#cb4-37" tabindex="-1"></a>    <span class="bu">std::</span>string getSpatialRef<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-38"><a href="#cb4-38" tabindex="-1"></a>    Rcpp<span class="op">::</span>NumericVector bbox<span class="op">();</span></span>
+<span id="cb4-39"><a href="#cb4-39" tabindex="-1"></a>    Rcpp<span class="op">::</span>List getLayerDefn<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-40"><a href="#cb4-40" tabindex="-1"></a></span>
+<span id="cb4-41"><a href="#cb4-41" tabindex="-1"></a>    <span class="dt">void</span> setAttributeFilter<span class="op">(</span><span class="bu">std::</span>string query<span class="op">);</span></span>
+<span id="cb4-42"><a href="#cb4-42" tabindex="-1"></a>    <span class="dt">void</span> setSpatialFilterRect<span class="op">(</span>Rcpp<span class="op">::</span>NumericVector bbox<span class="op">);</span></span>
+<span id="cb4-43"><a href="#cb4-43" tabindex="-1"></a>    <span class="dt">void</span> setSpatialFilter<span class="op">(</span><span class="bu">std::</span>string wkt<span class="op">);</span></span>
+<span id="cb4-44"><a href="#cb4-44" tabindex="-1"></a>    <span class="bu">std::</span>string getSpatialFilter<span class="op">()</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-45"><a href="#cb4-45" tabindex="-1"></a>    <span class="dt">void</span> clearSpatialFilter<span class="op">();</span></span>
+<span id="cb4-46"><a href="#cb4-46" tabindex="-1"></a></span>
+<span id="cb4-47"><a href="#cb4-47" tabindex="-1"></a>    <span class="dt">double</span> getFeatureCount<span class="op">();</span></span>
+<span id="cb4-48"><a href="#cb4-48" tabindex="-1"></a>    SEXP getNextFeature<span class="op">();</span></span>
+<span id="cb4-49"><a href="#cb4-49" tabindex="-1"></a>    <span class="dt">void</span> resetReading<span class="op">();</span></span>
+<span id="cb4-50"><a href="#cb4-50" tabindex="-1"></a>    SEXP getFeature<span class="op">(</span><span class="dt">int64_t</span> fid<span class="op">);</span></span>
+<span id="cb4-51"><a href="#cb4-51" tabindex="-1"></a>    <span class="dt">void</span> setNextByIndex<span class="op">(</span><span class="dt">int64_t</span> fid<span class="op">);</span></span>
+<span id="cb4-52"><a href="#cb4-52" tabindex="-1"></a>    <span class="dt">void</span> setIgnoredFields<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector fields<span class="op">);</span></span>
+<span id="cb4-53"><a href="#cb4-53" tabindex="-1"></a></span>
+<span id="cb4-54"><a href="#cb4-54" tabindex="-1"></a>    Rcpp<span class="op">::</span>DataFrame getFeatureSet<span class="op">(</span>Rcpp<span class="op">::</span>CharacterVector fields<span class="op">,</span></span>
+<span id="cb4-55"><a href="#cb4-55" tabindex="-1"></a>                                  <span class="dt">bool</span> geom_column<span class="op">);</span></span>
+<span id="cb4-56"><a href="#cb4-56" tabindex="-1"></a></span>
+<span id="cb4-57"><a href="#cb4-57" tabindex="-1"></a>    <span class="co">// initialize an empty feature as list:</span></span>
+<span id="cb4-58"><a href="#cb4-58" tabindex="-1"></a>    Rcpp<span class="op">::</span>List initFeature<span class="op">();</span></span>
+<span id="cb4-59"><a href="#cb4-59" tabindex="-1"></a>    <span class="co">// the following return the FID of the affected feature if successful</span></span>
+<span id="cb4-60"><a href="#cb4-60" tabindex="-1"></a>    <span class="co">// create and write a new feature within a layer:</span></span>
+<span id="cb4-61"><a href="#cb4-61" tabindex="-1"></a>    <span class="dt">int64_t</span> createFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
+<span id="cb4-62"><a href="#cb4-62" tabindex="-1"></a>    <span class="co">// rewrite/replace an existing feature:</span></span>
+<span id="cb4-63"><a href="#cb4-63" tabindex="-1"></a>    <span class="dt">int64_t</span> setFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
+<span id="cb4-64"><a href="#cb4-64" tabindex="-1"></a>    <span class="co">// rewrite/replace an existing feature or create a new feature:</span></span>
+<span id="cb4-65"><a href="#cb4-65" tabindex="-1"></a>    <span class="dt">int64_t</span> upsertFeature<span class="op">(</span>Rcpp<span class="op">::</span>List feat<span class="op">);</span></span>
+<span id="cb4-66"><a href="#cb4-66" tabindex="-1"></a>    <span class="co">// delete feature from layer:</span></span>
+<span id="cb4-67"><a href="#cb4-67" tabindex="-1"></a>    <span class="dt">int64_t</span> deleteFeature<span class="op">(</span><span class="dt">int64_t</span> fid<span class="op">);</span></span>
+<span id="cb4-68"><a href="#cb4-68" tabindex="-1"></a></span>
+<span id="cb4-69"><a href="#cb4-69" tabindex="-1"></a>    <span class="dt">bool</span> startTransaction<span class="op">(</span><span class="dt">bool</span> force<span class="op">);</span></span>
+<span id="cb4-70"><a href="#cb4-70" tabindex="-1"></a>    <span class="dt">bool</span> commitTransaction<span class="op">();</span></span>
+<span id="cb4-71"><a href="#cb4-71" tabindex="-1"></a>    <span class="dt">bool</span> rollbackTransaction<span class="op">();</span></span>
+<span id="cb4-72"><a href="#cb4-72" tabindex="-1"></a></span>
+<span id="cb4-73"><a href="#cb4-73" tabindex="-1"></a>    <span class="dt">void</span> layerIntersection<span class="op">(</span></span>
+<span id="cb4-74"><a href="#cb4-74" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-75"><a href="#cb4-75" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-76"><a href="#cb4-76" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-77"><a href="#cb4-77" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-78"><a href="#cb4-78" tabindex="-1"></a>    <span class="dt">void</span> layerUnion<span class="op">(</span></span>
+<span id="cb4-79"><a href="#cb4-79" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-80"><a href="#cb4-80" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-81"><a href="#cb4-81" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-82"><a href="#cb4-82" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-83"><a href="#cb4-83" tabindex="-1"></a>    <span class="dt">void</span> layerSymDifference<span class="op">(</span></span>
+<span id="cb4-84"><a href="#cb4-84" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-85"><a href="#cb4-85" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-86"><a href="#cb4-86" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-87"><a href="#cb4-87" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-88"><a href="#cb4-88" tabindex="-1"></a>    <span class="dt">void</span> layerIdentity<span class="op">(</span></span>
+<span id="cb4-89"><a href="#cb4-89" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-90"><a href="#cb4-90" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-91"><a href="#cb4-91" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-92"><a href="#cb4-92" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-93"><a href="#cb4-93" tabindex="-1"></a>    <span class="dt">void</span> layerUpdate<span class="op">(</span></span>
+<span id="cb4-94"><a href="#cb4-94" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-95"><a href="#cb4-95" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-96"><a href="#cb4-96" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-97"><a href="#cb4-97" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-98"><a href="#cb4-98" tabindex="-1"></a>    <span class="dt">void</span> layerClip<span class="op">(</span></span>
+<span id="cb4-99"><a href="#cb4-99" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-100"><a href="#cb4-100" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-101"><a href="#cb4-101" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-102"><a href="#cb4-102" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-103"><a href="#cb4-103" tabindex="-1"></a>    <span class="dt">void</span> layerErase<span class="op">(</span></span>
+<span id="cb4-104"><a href="#cb4-104" tabindex="-1"></a>            GDALVector method_layer<span class="op">,</span></span>
+<span id="cb4-105"><a href="#cb4-105" tabindex="-1"></a>            GDALVector result_layer<span class="op">,</span></span>
+<span id="cb4-106"><a href="#cb4-106" tabindex="-1"></a>            <span class="dt">bool</span> quiet<span class="op">,</span></span>
+<span id="cb4-107"><a href="#cb4-107" tabindex="-1"></a>            Rcpp<span class="op">::</span>Nullable<span class="op">&lt;</span>Rcpp<span class="op">::</span>CharacterVector<span class="op">&gt;</span> options<span class="op">);</span></span>
+<span id="cb4-108"><a href="#cb4-108" tabindex="-1"></a></span>
+<span id="cb4-109"><a href="#cb4-109" tabindex="-1"></a>    <span class="dt">void</span> close<span class="op">();</span></span>
+<span id="cb4-110"><a href="#cb4-110" tabindex="-1"></a></span>
+<span id="cb4-111"><a href="#cb4-111" tabindex="-1"></a>    <span class="co">// methods for internal use not exported to R</span></span>
+<span id="cb4-112"><a href="#cb4-112" tabindex="-1"></a>    <span class="dt">void</span> _checkAccess<span class="op">(</span>GDALAccess access_needed<span class="op">)</span> <span class="at">const</span><span class="op">;</span></span>
+<span id="cb4-113"><a href="#cb4-113" tabindex="-1"></a>    OGRLayerH _getOGRLayerH<span class="op">();</span></span>
+<span id="cb4-114"><a href="#cb4-114" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb4-115"><a href="#cb4-115" tabindex="-1"></a></span>
+<span id="cb4-116"><a href="#cb4-116" tabindex="-1"></a>RCPP_EXPOSED_CLASS<span class="op">(</span>GDALVector<span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="example-usage-for-class-gdalvector">Example: usage for class GDALVector<a class="anchor" aria-label="anchor" href="#example-usage-for-class-gdalvector"></a>
 </h2>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## usage for GDALVector class</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
@@ -415,26 +326,22 @@ class definition below):</p>
 <span><span class="co"># copy to a temporary in-memory file that is writeable</span></span>
 <span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/vsimem/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">f</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/vsi_copy_file.html">vsi_copy_file</a></span><span class="op">(</span><span class="va">f</span>, <span class="va">dsn</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
 <span></span>
 <span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># object of class GDALVector</span></span>
 <span><span class="va">lyr</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x58bb870345b0&gt; of class 'GDALVector' &lt;0x58bb8825b400&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x58a6a88edc80&gt; of class 'GDALVector' &lt;0x58a6a2fce150&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 3 fields</span></span>
-<span><span class="co">#&gt;  $ defaultGeomFldName: chr "geometry"</span></span>
-<span><span class="co">#&gt;  $ returnGeomAs      : chr "NONE"</span></span>
-<span><span class="co">#&gt;  $ wkbByteOrder      : chr "LSB"</span></span>
-<span><span class="co">#&gt;  and 46 methods, of which 32 are  possibly relevant:</span></span>
-<span><span class="co">#&gt;    bbox, clearSpatialFilter, close, fetch, finalize, getDriverLongName,</span></span>
-<span><span class="co">#&gt;    getDriverShortName, getDsn, getFeature, getFeatureCount, getFIDColumn,</span></span>
-<span><span class="co">#&gt;    getFileList, getGeometryColumn, getGeomType, getLayerDefn, getName,</span></span>
-<span><span class="co">#&gt;    getNextFeature, getSpatialRef, initialize, isOpen, layerClip, layerErase,</span></span>
-<span><span class="co">#&gt;    layerIdentity, layerIntersection, layerSymDifference, layerUnion,</span></span>
-<span><span class="co">#&gt;    layerUpdate, open, resetReading, setAttributeFilter, setSpatialFilterRect,</span></span>
-<span><span class="co">#&gt;    testCapability</span></span>
+<span><span class="co">#&gt; Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 0 fields</span></span>
+<span><span class="co">#&gt;  list()</span></span>
+<span><span class="co">#&gt;  and 44 methods, of which 30 are  possibly relevant:</span></span>
+<span><span class="co">#&gt;    bbox, clearSpatialFilter, close, finalize, getDriverLongName,</span></span>
+<span><span class="co">#&gt;    getDriverShortName, getDsn, getFeatureCount, getFIDColumn, getFileList,</span></span>
+<span><span class="co">#&gt;    getGeometryColumn, getGeomType, getLayerDefn, getName, getNextFeature,</span></span>
+<span><span class="co">#&gt;    getSpatialRef, initialize, isOpen, layerClip, layerErase, layerIdentity,</span></span>
+<span><span class="co">#&gt;    layerIntersection, layerSymDifference, layerUnion, layerUpdate, open,</span></span>
+<span><span class="co">#&gt;    resetReading, setAttributeFilter, setSpatialFilterRect, testCapability</span></span>
 <span></span>
 <span><span class="co"># dataset info</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span>
@@ -448,7 +355,7 @@ class definition below):</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "mtbs_perims"</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getGeomType</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "MULTIPOLYGON"</span></span>
+<span><span class="co">#&gt; [1] "Multi Polygon"</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getGeometryColumn</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "geom"</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFIDColumn</span><span class="op">(</span><span class="op">)</span></span>
@@ -459,162 +366,125 @@ class definition below):</p>
 <span><span class="co">#&gt; [1] 469685.73 -12917.76 573531.72  96577.34</span></span>
 <span></span>
 <span><span class="co"># layer capabilities</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; $RandomRead</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"RandomRead"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $SequentialWrite</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $RandomWrite</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $UpsertFeature</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $FastSpatialFilter</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastSpatialFilter"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $FastFeatureCount</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastFeatureCount"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $FastGetExtent</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastGetExtent"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $FastSetNextByIndex</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"Transactions"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $CreateField</span></span>
+<span></span>
+<span><span class="co"># the dataset was opened read-only:</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"SequentialWrite"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $CreateGeomField</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"RandomWrite"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $DeleteField</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $ReorderFields</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $AlterFieldDefn</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $AlterGeomFieldDefn</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $DeleteFeature</span></span>
-<span><span class="co">#&gt; [1] FALSE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $StringsAsUTF8</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $Transactions</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; $CurveGeometries</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
 <span><span class="co"># re-open with write access</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">SequentialWrite</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"SequentialWrite"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">RandomWrite</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"RandomWrite"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
 <span><span class="co"># feature class definition - a list of fields and their definitions</span></span>
 <span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getLayerDefn</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "event_id"     "incid_name"   "incid_type"   "map_id"       "burn_bnd_ac" </span></span>
+<span><span class="co">#&gt;  [1] "event_id"     "incid_name"   "incid_type"   "map_id"       "burn_bnd_ac"</span></span>
 <span><span class="co">#&gt;  [6] "burn_bnd_lat" "burn_bnd_lon" "ig_date"      "ig_year"      "geom"</span></span>
 <span></span>
 <span><span class="co"># each list element holds a field definition list</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 10</span></span>
-<span><span class="co">#&gt;  $ event_id    :List of 9</span></span>
+<span><span class="co">#&gt;  $ event_id    :List of 8</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
-<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 254</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
+<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ incid_name  :List of 9</span></span>
+<span><span class="co">#&gt;  $ incid_name  :List of 8</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
-<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 254</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
+<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ incid_type  :List of 9</span></span>
+<span><span class="co">#&gt;  $ incid_type  :List of 8</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
-<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 254</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
+<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ map_id      :List of 9</span></span>
+<span><span class="co">#&gt;  $ map_id      :List of 8</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTInteger64"</span></span>
-<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 0</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
+<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :List of 9</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :List of 8</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTInteger64"</span></span>
-<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 0</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
+<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lat:List of 9</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lat:List of 8</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
-<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 10</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
+<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lon:List of 9</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lon:List of 8</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTString"</span></span>
-<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 10</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
+<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ ig_date     :List of 9</span></span>
-<span><span class="co">#&gt;   ..$ type       : chr "OFTDate"</span></span>
-<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
+<span><span class="co">#&gt;  $ ig_date     :List of 8</span></span>
+<span><span class="co">#&gt;   ..$ type       : chr "default (read as OFTString)"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 0</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
+<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
-<span><span class="co">#&gt;  $ ig_year     :List of 9</span></span>
+<span><span class="co">#&gt;  $ ig_year     :List of 8</span></span>
 <span><span class="co">#&gt;   ..$ type       : chr "OFTInteger"</span></span>
-<span><span class="co">#&gt;   ..$ subtype    : chr "OFSTNone"</span></span>
 <span><span class="co">#&gt;   ..$ width      : int 0</span></span>
 <span><span class="co">#&gt;   ..$ precision  : int 0</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
 <span><span class="co">#&gt;   ..$ is_unique  : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ default    : chr ""</span></span>
+<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ geom        :List of 5</span></span>
-<span><span class="co">#&gt;   ..$ type       : chr "MULTIPOLYGON"</span></span>
+<span><span class="co">#&gt;   ..$ type       : chr "Multi Polygon"</span></span>
 <span><span class="co">#&gt;   ..$ srs        : chr "PROJCS[\"NAD83 / Montana\",GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,2"| __truncated__</span></span>
 <span><span class="co">#&gt;   ..$ is_nullable: logi TRUE</span></span>
+<span><span class="co">#&gt;   ..$ is_ignored : logi FALSE</span></span>
 <span><span class="co">#&gt;   ..$ is_geom    : logi TRUE</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
@@ -624,61 +494,58 @@ class definition below):</p>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># a list of field names and their values</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 10</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 1 </span></span>
+<span><span class="co">#&gt; List of 11</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 1</span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4413411069519870807"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "POLECAT"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10015934 </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 1093 </span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10015934</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 1093</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.132"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.696"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "1987-08-07"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : chr "1987/08/07"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 1987</span></span>
+<span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((503099.439579653 -12893.9672899192,503169.756694236 -12756.3721247327,502689.845907435 -12131.5"| __truncated__</span></span>
 <span></span>
 <span><span class="co"># attribute filter</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year = 2020"</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1</span></span>
 <span></span>
-<span><span class="co"># default value of read/write field 'returnGeomAs'</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span></span>
-<span><span class="co">#&gt; [1] "NONE"</span></span>
-<span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 10</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 61 </span></span>
+<span><span class="co">#&gt; List of 11</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 61</span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4438911082120200822"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "LONE STAR"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10020495 </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3348 </span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10020495</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3348</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.4"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.782"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "2020-08-22"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : chr "2020/08/22"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 2020</span></span>
+<span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((496593.122306971 15506.8828590633,496491.761299067 15605.3612548792,496290.812130161 15388.0465"| __truncated__</span></span>
 <span></span>
 <span><span class="co"># NULL if no more features are available</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  NULL</span></span>
 <span></span>
-<span><span class="co"># reset reading to the start and return geometry as WKT</span></span>
+<span><span class="co"># reset reading to the start</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">resetReading</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKT"</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 61 </span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 61</span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4438911082120200822"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "LONE STAR"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10020495 </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3348 </span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10020495</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3348</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.4"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.782"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "2020-08-22"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : chr "2020/08/22"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 2020</span></span>
 <span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((496593.122306971 15506.8828590633,496491.761299067 15605.3612548792,496290.812130161 15388.0465"| __truncated__</span></span>
 <span></span>
@@ -688,21 +555,20 @@ class definition below):</p>
 <span><span class="co">#&gt; [1] 61</span></span>
 <span></span>
 <span><span class="co"># spatial filter</span></span>
-<span><span class="co"># get the bounding box of the largest 1988 fire and use as spatial filter</span></span>
-<span><span class="co"># first set a temporary attribute filter to do the lookup</span></span>
+<span><span class="co"># get the bounding box of the largest 1988 fire</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year = 1988 ORDER BY burn_bnd_ac DESC"</span><span class="op">)</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 7 </span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 7</span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4470811082119880722"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "NORTH FORK"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10014217 </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 563527 </span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10014217</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 563527</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.678"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.716"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "1988-07-22"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : chr "1988/07/22"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 1988</span></span>
 <span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__</span></span>
 <span></span>
@@ -710,125 +576,22 @@ class definition below):</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">bbox</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 469685.97  11442.45 544069.63  85508.15</span></span>
 <span></span>
-<span><span class="co"># set spatial filter on the full layer</span></span>
+<span><span class="co"># clear the attribute filter</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">""</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 61</span></span>
+<span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSpatialFilterRect</span><span class="op">(</span><span class="va">bbox</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 40</span></span>
 <span></span>
-<span><span class="co"># fetch n features at a time and return as a data frame</span></span>
-<span><span class="co"># analog of DBI::dbFetch() where the lyr object is a result set</span></span>
-<span><span class="co"># geometry can optionally be returned as NONE, WKT or WKB</span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 'data.frame':    20 obs. of  11 variables:</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 38 7 32 25 6 40 36 8 ... </span></span>
-<span><span class="co">#&gt;  $ event_id    : chr  "MT4471311115120070627" "WY4470811082119880722" "MT4491211108020030820" "WY4433011103020000816" ...</span></span>
-<span><span class="co">#&gt;  $ incid_name  : chr  "MADISON ARM" "NORTH FORK" "RATHBONE" "SPRUCE COMPLEX (PLATEAU)" ...</span></span>
-<span><span class="co">#&gt;  $ incid_type  : chr  "Wildfire" "Wildfire" "Wildfire" "Wildfire" ...</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 16113 10014217 13014 10014141 10014215 16428 15432 10014218 ... </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3564 563527 2701 2808 20422 2175 3745 95233 ... </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lat: chr  "44.713" "44.678" "44.912" "44.329" ...</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lon: chr  "-111.151" "-110.716" "-111.080" "-111.027" ...</span></span>
-<span><span class="co">#&gt;  $ ig_date     : Date, format: "2007-06-27" "1988-07-22" ...</span></span>
-<span><span class="co">#&gt;  $ ig_year     : int  2007 1988 2003 2000 1988 2007 2006 1988 1988 1988 ...</span></span>
-<span><span class="co">#&gt;  $ geom        : chr  "MULTIPOLYGON (((469685.969631834 54506.9481370259,470235.509134591 54383.4837249131,470939.42854159 53898.69574"| __truncated__ "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__ "MULTIPOLYGON (((475136.766856355 74053.2153491452,475188.847231864 74366.3342955356,475341.959781024 74368.4856"| __truncated__ "MULTIPOLYGON (((477992.723214764 8483.08443989834,477312.456870818 7630.95433906866,477088.305832492 6955.09786"| __truncated__ ...</span></span>
-<span></span>
-<span><span class="co"># the next 20 features</span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 20</span></span>
-<span></span>
-<span><span class="co"># no features remaining</span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">20</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span>  <span class="co"># 0-row data frame with columns typed</span></span>
-<span><span class="co">#&gt; 'data.frame':    0 obs. of  11 variables:</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64  </span></span>
-<span><span class="co">#&gt;  $ event_id    : chr </span></span>
-<span><span class="co">#&gt;  $ incid_name  : chr </span></span>
-<span><span class="co">#&gt;  $ incid_type  : chr </span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64  </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64  </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lat: chr </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lon: chr </span></span>
-<span><span class="co">#&gt;  $ ig_date     : 'Date' num(0) </span></span>
-<span><span class="co">#&gt;  $ ig_year     : int </span></span>
-<span><span class="co">#&gt;  $ geom        : chr</span></span>
-<span></span>
-<span><span class="co"># fetch all available features by passing n = -1, resets to first feature</span></span>
-<span><span class="co"># return geom as a list column of WKB raw vectors</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKB"</span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 'data.frame':    40 obs. of  11 variables:</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 38 7 32 25 6 40 36 8 ... </span></span>
-<span><span class="co">#&gt;  $ event_id    : chr  "MT4471311115120070627" "WY4470811082119880722" "MT4491211108020030820" "WY4433011103020000816" ...</span></span>
-<span><span class="co">#&gt;  $ incid_name  : chr  "MADISON ARM" "NORTH FORK" "RATHBONE" "SPRUCE COMPLEX (PLATEAU)" ...</span></span>
-<span><span class="co">#&gt;  $ incid_type  : chr  "Wildfire" "Wildfire" "Wildfire" "Wildfire" ...</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 16113 10014217 13014 10014141 10014215 16428 15432 10014218 ... </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 3564 563527 2701 2808 20422 2175 3745 95233 ... </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lat: chr  "44.713" "44.678" "44.912" "44.329" ...</span></span>
-<span><span class="co">#&gt;  $ burn_bnd_lon: chr  "-111.151" "-110.716" "-111.080" "-111.027" ...</span></span>
-<span><span class="co">#&gt;  $ ig_date     : Date, format: "2007-06-27" "1988-07-22" ...</span></span>
-<span><span class="co">#&gt;  $ ig_year     : int  2007 1988 2003 2000 1988 2007 2006 1988 1988 1988 ...</span></span>
-<span><span class="co">#&gt;  $ geom        :List of 40</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span><span class="co">#&gt;   ..$ : raw  01 06 00 00 ...</span></span>
-<span></span>
-<span><span class="co"># parse WKB using the wk package</span></span>
-<span><span class="va">wk_obj</span> <span class="op">&lt;-</span> <span class="fu">wk</span><span class="fu">::</span><span class="fu"><a href="https://paleolimbot.github.io/wk/reference/wkb.html" class="external-link">wkb</a></span><span class="op">(</span><span class="va">d</span><span class="op">$</span><span class="va">geom</span>, crs <span class="op">=</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">wk_obj</span><span class="op">)</span></span></code></pre></div>
-<p><img src="img%2Fynp_mtbs_wkb_plot_ex.png"><!-- --></p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">clearSpatialFilter</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 61</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 0</span></span></code></pre></div>
-<p><sup>Created on 2024-07-21 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
+<span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">dsn</span><span class="op">)</span></span></code></pre></div>
+<p><sup>Created on 2024-04-06 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.0</a></sup></p>
 </div>
 <div class="section level2">
 <h2 id="example-layer-geoprocessing">Example: layer geoprocessing<a class="anchor" aria-label="anchor" href="#example-layer-geoprocessing"></a>
@@ -841,73 +604,100 @@ class definition below):</p>
 <span></span>
 <span><span class="co"># MTBS fires in Yellowstone National Park 1984-2022</span></span>
 <span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
+<span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># layer filtered to fires since year 2000</span></span>
-<span><span class="va">lyr1</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span>
-<span><span class="va">lyr1</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year &gt;= 2000"</span><span class="op">)</span></span>
-<span><span class="va">lyr1</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 40</span></span>
+<span><span class="co"># largest 1988 fire (FID = 7 from the example above)</span></span>
+<span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getFeature</span><span class="op">(</span><span class="fl">7</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
+<span><span class="co">#&gt; List of 11</span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 7</span></span>
+<span><span class="co">#&gt;  $ event_id    : chr "WY4470811082119880722"</span></span>
+<span><span class="co">#&gt;  $ incid_name  : chr "NORTH FORK"</span></span>
+<span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10014217</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 563527</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.678"</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_lon: chr "-110.716"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : chr "1988/07/22"</span></span>
+<span><span class="co">#&gt;  $ ig_year     : int 1988</span></span>
+<span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((469685.969312071 29526.2354109807,469918.933844832 29654.3220754602,470030.299119989 29518.7441"| __truncated__</span></span>
 <span></span>
-<span><span class="co"># second layer for the 1988 North Fork fire perimeter</span></span>
-<span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"SELECT incid_name, ig_year, geom "</span>,</span>
-<span>              <span class="st">"FROM mtbs_perims "</span>,</span>
-<span>              <span class="st">"WHERE incid_name = 'NORTH FORK'"</span><span class="op">)</span></span>
+<span><span class="co"># get a second layer for 2000-2022 fires</span></span>
+<span><span class="co"># the layer argument can be a sql statement</span></span>
+<span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT FID, * FROM mtbs_perims WHERE ig_year &gt;= 2000 ORDER BY mtbs_perims.ig_year"</span></span>
 <span><span class="va">lyr2</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="va">sql</span><span class="op">)</span></span>
 <span><span class="va">lyr2</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] 1</span></span>
+<span><span class="co">#&gt; [1] 40</span></span>
 <span></span>
-<span><span class="co"># intersect to obtain areas re-burned since 2000</span></span>
-<span><span class="va">tmp_dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".gpkg"</span><span class="op">)</span></span>
-<span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INPUT_PREFIX=layer1_"</span>,</span>
-<span>         <span class="st">"METHOD_PREFIX=layer2_"</span>,</span>
-<span>         <span class="st">"PROMOTE_TO_MULTI=YES"</span><span class="op">)</span></span>
+<span><span class="co"># create an output layer using a temporary in-memory dataset</span></span>
+<span><span class="va">dsn_out</span> <span class="op">&lt;-</span> <span class="st">"/vsimem/lyr_proc_tmp.gpkg"</span></span>
+<span><span class="va">srs</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/ogr_manage.html">ogr_ds_create</a></span><span class="op">(</span><span class="st">"GPKG"</span>, <span class="va">dsn_out</span>, <span class="st">"result_layer"</span>,</span>
+<span>              geom_type <span class="op">=</span> <span class="st">"Polygon"</span>,</span>
+<span>              srs <span class="op">=</span> <span class="va">srs</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="fu"><a href="../reference/ogr_manage.html">ogr_ds_exists</a></span><span class="op">(</span><span class="va">dsn_out</span>, with_update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="fu"><a href="../reference/ogr_manage.html">ogr_layer_exists</a></span><span class="op">(</span><span class="va">dsn_out</span>, <span class="st">"result_layer"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
-<span><span class="va">lyr_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ogr_proc.html">ogr_proc</a></span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"Intersection"</span>, </span>
-<span>                    input_lyr <span class="op">=</span> <span class="va">lyr1</span>,</span>
-<span>                    method_lyr <span class="op">=</span> <span class="va">lyr2</span>, </span>
-<span>                    out_dsn <span class="op">=</span> <span class="va">tmp_dsn</span>,</span>
-<span>                    out_lyr_name <span class="op">=</span> <span class="st">"north_fork_reburned"</span>,</span>
-<span>                    out_geom_type <span class="op">=</span> <span class="st">"MULTIPOLYGON"</span>,</span>
-<span>                    mode_opt <span class="op">=</span> <span class="va">opt</span><span class="op">)</span></span>
+<span><span class="va">lyr_out</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn_out</span>, <span class="st">"result_layer"</span>, read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span><span class="va">lyr_out</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 0</span></span>
+<span></span>
+<span><span class="co"># intersection of lyr and lyr2, with result in lyr_out</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">layerIntersection</span><span class="op">(</span><span class="va">lyr2</span>, <span class="va">lyr_out</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span>, options <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span></span>
-<span><span class="co"># result layer has attributes of the input and the method layers</span></span>
-<span><span class="va">lyr_out</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"TYPE_NAME"</span></span>
-<span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr_out</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
-<span><span class="co">#&gt;   FID       layer1_event_id layer1_incid_name layer1_incid_type layer1_map_id</span></span>
-<span><span class="co">#&gt; 1   1 WY4484611038620100914          ANTELOPE          Wildfire      10013735</span></span>
-<span><span class="co">#&gt; 2   2 WY4466711063920120810            CYGNET          Wildfire          1961</span></span>
-<span><span class="co">#&gt; 3   3 WY4474311097820160809             MAPLE          Wildfire      10005020</span></span>
-<span><span class="co">#&gt; 4   4 WY4492611093820160805              FAWN          Wildfire      10005117</span></span>
-<span><span class="co">#&gt; 5   5 WY4457911058620160826           CENTRAL          Wildfire      10014143</span></span>
-<span><span class="co">#&gt;   layer1_burn_bnd_ac layer1_burn_bnd_lat layer1_burn_bnd_lon layer1_ig_date</span></span>
-<span><span class="co">#&gt; 1               4888              44.839            -110.368     2010-09-14</span></span>
-<span><span class="co">#&gt; 2               3188              44.682            -110.622     2012-08-10</span></span>
-<span><span class="co">#&gt; 3             103193              44.731            -110.982     2016-08-09</span></span>
-<span><span class="co">#&gt; 4               3161              44.936            -110.913     2016-08-05</span></span>
-<span><span class="co">#&gt; 5               2340              44.595            -110.574     2016-08-26</span></span>
-<span><span class="co">#&gt;   layer1_ig_year layer2_incid_name layer2_ig_year         geom</span></span>
-<span><span class="co">#&gt; 1           2010        NORTH FORK           1988 MULTIPOLYGON</span></span>
-<span><span class="co">#&gt; 2           2012        NORTH FORK           1988 MULTIPOLYGON</span></span>
-<span><span class="co">#&gt; 3           2016        NORTH FORK           1988 MULTIPOLYGON</span></span>
-<span><span class="co">#&gt; 4           2016        NORTH FORK           1988 MULTIPOLYGON</span></span>
-<span><span class="co">#&gt; 5           2016        NORTH FORK           1988 MULTIPOLYGON</span></span>
+<span><span class="va">lyr_out</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 86</span></span>
+<span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="va">lyr_out</span><span class="op">$</span><span class="fu">getLayerDefn</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># combined attributes</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span>
+<span><span class="co">#&gt;  [1] "input_event_id"      "input_incid_name"    "input_incid_type"</span></span>
+<span><span class="co">#&gt;  [4] "input_map_id"        "input_burn_bnd_ac"   "input_burn_bnd_lat"</span></span>
+<span><span class="co">#&gt;  [7] "input_burn_bnd_lon"  "input_ig_date"       "input_ig_year"</span></span>
+<span><span class="co">#&gt; [10] "method_event_id"     "method_incid_name"   "method_incid_type"</span></span>
+<span><span class="co">#&gt; [13] "method_map_id"       "method_burn_bnd_ac"  "method_burn_bnd_lat"</span></span>
+<span><span class="co">#&gt; [16] "method_burn_bnd_lon" "method_ig_date"      "method_ig_year"</span></span>
+<span><span class="co">#&gt; [19] "geom"</span></span>
 <span></span>
-<span><span class="co"># clean up</span></span>
-<span><span class="va">lyr1</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co"># we don't have vector plotting yet, so rasterize and use plot_raster()</span></span>
+<span><span class="va">out_file</span> <span class="op">&lt;-</span> <span class="st">"/vsimem/result_layer.tif"</span></span>
+<span><span class="fu"><a href="../reference/rasterize.html">rasterize</a></span><span class="op">(</span>src_dsn <span class="op">=</span> <span class="va">dsn_out</span>,</span>
+<span>          dstfile <span class="op">=</span> <span class="va">out_file</span>,</span>
+<span>          layer <span class="op">=</span> <span class="st">"result_layer"</span>,</span>
+<span>          burn_attr <span class="op">=</span> <span class="st">"method_ig_year"</span>,</span>
+<span>          tr <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">90</span>,<span class="fl">90</span><span class="op">)</span>,</span>
+<span>          tap <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>          dtName <span class="op">=</span> <span class="st">"Int16"</span>,</span>
+<span>          dstnodata <span class="op">=</span> <span class="op">-</span><span class="fl">9999</span>,</span>
+<span>          init <span class="op">=</span> <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
+<span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">out_file</span><span class="op">)</span></span>
+<span><span class="va">pal</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/pal_viridis.html" class="external-link">viridis_pal</a></span><span class="op">(</span>end <span class="op">=</span> <span class="fl">0.8</span>, direction <span class="op">=</span> <span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">(</span><span class="fl">6</span><span class="op">)</span></span>
+<span><span class="va">ramp</span> <span class="op">&lt;-</span> <span class="fu">scales</span><span class="fu">::</span><span class="fu"><a href="https://scales.r-lib.org/reference/colour_ramp.html" class="external-link">colour_ramp</a></span><span class="op">(</span><span class="va">pal</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span>, col_map_fn <span class="op">=</span> <span class="va">ramp</span>, na_col <span class="op">=</span> <span class="st">"#d9d9d9"</span>,</span>
+<span>            main<span class="op">=</span><span class="st">"2000-2022 re-burn within the 1988 North Fork perimeter"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="img%2Fynp_mtbs_lyr_int_ex.png"><!-- --></p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr2</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr_out</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="fu"><a href="../reference/deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">tmp_dsn</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span></code></pre></div>
-<p><sup>Created on 2024-07-30 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
+<span></span>
+<span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">dsn_out</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">out_file</span><span class="op">)</span></span></code></pre></div>
+<p><sup>Created on 2024-05-14 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.0</a></sup></p>
 </div>
 <div class="section level2">
 <h2 id="example-worldcover-sentinel-2-composites">Example: WorldCover Sentinel-2 composites<a class="anchor" aria-label="anchor" href="#example-worldcover-sentinel-2-composites"></a>
 </h2>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## WorldCover Sentinel-2 annual composites</span></span>
-<span><span class="co">## see: https://blog.vito.be/remotesensing/worldcover-annual-composites</span></span>
+<span><span class="co">## https://blog.vito.be/remotesensing/worldcover-annual-composites</span></span>
 <span><span class="co">## tile index lookup on remote filesystem and obtain raster data</span></span>
 <span></span>
 <span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
@@ -921,17 +711,17 @@ class definition below):</p>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "worldcover_composites_grid_aws"</span></span>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getGeomType</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "POLYGON"</span></span>
+<span><span class="co">#&gt; [1] "Polygon"</span></span>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "GEOGCS[\"WGS 84\",DATUM[\"WGS_1984\",SPHEROID[\"WGS 84\",6378137,298.257223563,AUTHORITY[\"EPSG\",\"7030\"]],AUTHORITY[\"EPSG\",\"6326\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4326\"]]"</span></span>
 <span></span>
-<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">RandomRead</span></span>
+<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"RandomRead"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">FastSpatialFilter</span></span>
+<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastSpatialFilter"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">FastFeatureCount</span></span>
+<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastFeatureCount"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">FastGetExtent</span></span>
+<span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="st">"FastGetExtent"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
@@ -942,9 +732,9 @@ class definition below):</p>
 <span><span class="va">defn</span> <span class="op">&lt;-</span> <span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getLayerDefn</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span>
 <span><span class="co">#&gt;  [1] "tile"              "s1_vvvhratio_2020" "s1_vvvhratio_2021"</span></span>
-<span><span class="co">#&gt;  [4] "s2_rgbnir_2020"    "s2_rgbnir_2021"    "s2_ndvi_2020"     </span></span>
-<span><span class="co">#&gt;  [7] "s2_ndvi_2021"      "s2_swir_2020"      "s2_swir_2021"     </span></span>
-<span><span class="co">#&gt; [10] "geometry"</span></span>
+<span><span class="co">#&gt;  [4] "s2_rgbnir_2020"    "s2_rgbnir_2021"    "s2_ndvi_2020"</span></span>
+<span><span class="co">#&gt;  [7] "s2_ndvi_2021"      "s2_swir_2020"      "s2_swir_2021"</span></span>
+<span><span class="co">#&gt; [10] ""</span></span>
 <span></span>
 <span><span class="co"># AOI for the Fishhawk fire</span></span>
 <span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
@@ -953,19 +743,18 @@ class definition below):</p>
 <span><span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"incid_name = 'FISHHAWK'"</span><span class="op">)</span></span>
 <span><span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 1</span></span>
-<span><span class="va">lyr_ynp</span><span class="op">$</span><span class="va">returnGeomAs</span> <span class="op">&lt;-</span> <span class="st">"WKT"</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
 <span><span class="co">#&gt; List of 11</span></span>
-<span><span class="co">#&gt;  $ FID         :integer64 60 </span></span>
+<span><span class="co">#&gt;  $ FID         :integer64 60</span></span>
 <span><span class="co">#&gt;  $ event_id    : chr "WY4437710988020190902"</span></span>
 <span><span class="co">#&gt;  $ incid_name  : chr "FISHHAWK"</span></span>
 <span><span class="co">#&gt;  $ incid_type  : chr "Wildfire"</span></span>
-<span><span class="co">#&gt;  $ map_id      :integer64 10016957 </span></span>
-<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 10775 </span></span>
+<span><span class="co">#&gt;  $ map_id      :integer64 10016957</span></span>
+<span><span class="co">#&gt;  $ burn_bnd_ac :integer64 10775</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lat: chr "44.384"</span></span>
 <span><span class="co">#&gt;  $ burn_bnd_lon: chr "-109.85"</span></span>
-<span><span class="co">#&gt;  $ ig_date     : Date[1:1], format: "2019-09-02"</span></span>
+<span><span class="co">#&gt;  $ ig_date     : chr "2019/09/02"</span></span>
 <span><span class="co">#&gt;  $ ig_year     : int 2019</span></span>
 <span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((573530.585472236 9160.22088906913,573266.183153384 9415.42216938034,573137.427110327 9285.44517"| __truncated__</span></span>
 <span></span>
@@ -981,8 +770,8 @@ class definition below):</p>
 <span><span class="co">#&gt; [1] 1</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
-<span><span class="co">#&gt; List of 10</span></span>
-<span><span class="co">#&gt;  $ FID              :integer64 16615 </span></span>
+<span><span class="co">#&gt; List of 11</span></span>
+<span><span class="co">#&gt;  $ FID              :integer64 16615</span></span>
 <span><span class="co">#&gt;  $ tile             : chr "N44W110"</span></span>
 <span><span class="co">#&gt;  $ s1_vvvhratio_2020: chr "s3://esa-worldcover-s1/vvvhratio/2020/N44/ESA_WorldCover_10m_2020_v100_N44W110_S1VVVHratio.tif"</span></span>
 <span><span class="co">#&gt;  $ s1_vvvhratio_2021: chr "s3://esa-worldcover-s1/vvvhratio/2021/N44/ESA_WorldCover_10m_2021_v200_N44W110_S1VVVHratio.tif"</span></span>
@@ -992,6 +781,7 @@ class definition below):</p>
 <span><span class="co">#&gt;  $ s2_ndvi_2021     : chr "s3://esa-worldcover-s2/ndvi/2021/N44/ESA_WorldCover_10m_2021_v200_N44W110_NDVI.tif"</span></span>
 <span><span class="co">#&gt;  $ s2_swir_2020     : chr "s3://esa-worldcover-s2/swir/2020/N44/ESA_WorldCover_10m_2020_v100_N44W110_SWIR.tif"</span></span>
 <span><span class="co">#&gt;  $ s2_swir_2021     : chr "s3://esa-worldcover-s2/swir/2021/N44/ESA_WorldCover_10m_2021_v200_N44W110_SWIR.tif"</span></span>
+<span><span class="co">#&gt;  $                  : chr "POLYGON ((-110 44,-110 45,-109 45,-109 44,-110 44))"</span></span>
 <span></span>
 <span><span class="co"># get the Sentinel-2 RGBNIR composite for this AOI</span></span>
 <span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">"s3://"</span>, <span class="st">"/vsis3/"</span>, <span class="va">feat</span><span class="op">$</span><span class="va">s2_rgbnir_2021</span>, fixed <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
@@ -1016,24 +806,24 @@ class definition below):</p>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">dim</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 12000 12000     4</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">""</span><span class="op">)</span></span>
-<span><span class="co">#&gt;  [1] "algorithm_version=V2.0.0"                                                                                                                                            </span></span>
-<span><span class="co">#&gt;  [2] "AREA_OR_POINT=Area"                                                                                                                                                  </span></span>
-<span><span class="co">#&gt;  [3] "bands=Band 1: B04 (Red), Band 2: B03 (Green), Band 3: B02 (Blue), Band 4: B08 (Infrared)"                                                                            </span></span>
-<span><span class="co">#&gt;  [4] "copyright=ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium"                                    </span></span>
-<span><span class="co">#&gt;  [5] "creation_time=2022-12-09 17:08:25.881589"                                                                                                                            </span></span>
+<span><span class="co">#&gt;  [1] "algorithm_version=V2.0.0"</span></span>
+<span><span class="co">#&gt;  [2] "AREA_OR_POINT=Area"</span></span>
+<span><span class="co">#&gt;  [3] "bands=Band 1: B04 (Red), Band 2: B03 (Green), Band 3: B02 (Blue), Band 4: B08 (Infrared)"</span></span>
+<span><span class="co">#&gt;  [4] "copyright=ESA WorldCover project 2021 / Contains modified Copernicus Sentinel data (2021) processed by ESA WorldCover consortium"</span></span>
+<span><span class="co">#&gt;  [5] "creation_time=2022-12-09 17:08:25.881589"</span></span>
 <span><span class="co">#&gt;  [6] "description=The ESA WorldCover Sentinel-2 median L2A (RGBNIR) composite is a color image made from images in Blue (B02), Green (B03), Red (B04) and Infrared (B08). "</span></span>
-<span><span class="co">#&gt;  [7] "license=CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/"                                                                                                    </span></span>
-<span><span class="co">#&gt;  [8] "product_crs=EPSG:4326"                                                                                                                                               </span></span>
-<span><span class="co">#&gt;  [9] "product_grid=1x1 degree tiling grid"                                                                                                                                 </span></span>
-<span><span class="co">#&gt; [10] "product_tile=N44W110"                                                                                                                                                </span></span>
-<span><span class="co">#&gt; [11] "product_type=Sentinel-2 median L2A (RGBNIR) composite"                                                                                                               </span></span>
-<span><span class="co">#&gt; [12] "product_version=V2.0.0"                                                                                                                                              </span></span>
-<span><span class="co">#&gt; [13] "reference=https://esa-worldcover.org"                                                                                                                                </span></span>
-<span><span class="co">#&gt; [14] "time_end=2021-12-31T23:59:59Z"                                                                                                                                       </span></span>
-<span><span class="co">#&gt; [15] "time_start=2021-01-01T00:00:00Z"                                                                                                                                     </span></span>
+<span><span class="co">#&gt;  [7] "license=CC-BY 4.0 - https://creativecommons.org/licenses/by/4.0/"</span></span>
+<span><span class="co">#&gt;  [8] "product_crs=EPSG:4326"</span></span>
+<span><span class="co">#&gt;  [9] "product_grid=1x1 degree tiling grid"</span></span>
+<span><span class="co">#&gt; [10] "product_tile=N44W110"</span></span>
+<span><span class="co">#&gt; [11] "product_type=Sentinel-2 median L2A (RGBNIR) composite"</span></span>
+<span><span class="co">#&gt; [12] "product_version=V2.0.0"</span></span>
+<span><span class="co">#&gt; [13] "reference=https://esa-worldcover.org"</span></span>
+<span><span class="co">#&gt; [14] "time_end=2021-12-31T23:59:59Z"</span></span>
+<span><span class="co">#&gt; [15] "time_start=2021-01-01T00:00:00Z"</span></span>
 <span><span class="co">#&gt; [16] "title=ESA WorldCover Sentinel-2 median L2A (RGBNIR) composite at 10m resolution for year 2021"</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] "COMPRESSION=DEFLATE" "INTERLEAVE=PIXEL"    "LAYOUT=COG"         </span></span>
+<span><span class="co">#&gt; [1] "COMPRESSION=DEFLATE" "INTERLEAVE=PIXEL"    "LAYOUT=COG"</span></span>
 <span><span class="co">#&gt; [4] "PREDICTOR=2"</span></span>
 <span></span>
 <span><span class="va">r</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/read_ds.html">read_ds</a></span><span class="op">(</span><span class="va">ds</span>, bands<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">4</span>,<span class="fl">1</span>,<span class="fl">2</span><span class="op">)</span>, out_xsize <span class="op">=</span> <span class="fl">800</span>, out_ysize <span class="op">=</span> <span class="fl">800</span><span class="op">)</span></span>
@@ -1045,12 +835,12 @@ class definition below):</p>
 <span>            ylab <span class="op">=</span> <span class="st">"latitude"</span>,</span>
 <span>            main <span class="op">=</span> <span class="va">txt</span><span class="op">)</span></span></code></pre></div>
 <p><img src="img%2Fworldcov2021_N44W110_S2RGBNIR_ex.png"><!-- --></p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr_tiles</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<p><sup>Created on 2024-07-21 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
+<p><sup>Created on 2024-04-06 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.0</a></sup></p>
 </div>
 <div class="section level2">
 <h2 id="further-consideration-tbd">Further consideration / TBD<a class="anchor" aria-label="anchor" href="#further-consideration-tbd"></a>
@@ -1058,13 +848,22 @@ class definition below):</p>
 <p>This is a working list of potential issues and design questions that
 need further consideration, to be determined:</p>
 <ul>
+<li>handling of 64-bit integer: OGR FID currently is
+<code>GIntBig</code> and integer fields in vector data sources will
+commonly be <code>OFTInteger64</code>. These are now handled using
+<strong>RcppInt64</strong>, with <strong>bit64</strong> on the R side
+providing S3 class <code>integer64</code>.</li>
 <li>OGR’s Arrow C interface: Implement
 <code>GDALVector::getArrowStream()</code> (GDAL &gt;= 3.6) and
 <code>GDALVector::writeArrowBatch()</code> (GDAL &gt;= 3.8), supported
 on the R side with package <strong>nanoarrow</strong>.</li>
-<li>OGR layer geoprocessing expected to be moved to stand-alone
-functions instead of class methods in <code>GDALVector</code>, to be
-implemented in an <code><a href="../reference/ogr_proc.html">ogr_proc()</a></code> interface.</li>
+<li>potential output vectors of GEOS or OGR pointers, WKB with support
+by <strong>wk</strong>
+</li>
+<li>OGR layer geoprocessing might be stand-alone functions instead of
+class methods in <code>GDALVector</code>. We would have more flexibility
+in terms of optional/argument defaults. Either way, we should add an
+option to create the output layer.</li>
 </ul>
 </div>
 <div class="section level2">
@@ -1127,39 +926,6 @@ FID (2024-04-06)</li>
 and <a href="https://usdaforestservice.github.io/gdalraster/reference/ogr_define.html">ogr_define</a>
 added in <strong>gdalraster</strong> dev; examples updated
 (2024-05-14)</li>
-<li>update the draft class definition: Add read/write fields for
-per-object settings (<code>defaultGeomFldName</code>,
-<code>returnGeomAs</code> and <code>wkbByteOrder</code>). Rename method
-<code>getFeatureSet()</code> to <code>fetch()</code>, analog of
-<code>DBI::dbFetch()</code>, fetch the next n features from the layer
-and return them as a data frame. (2024-07-11)</li>
-<li>update usage example for recent changes in gdalvector branch:
-<code>defaultGeomFldName</code>,
-<code>returnGeomAs = NONE|WKT|WKT_ISO|WKB|WKB_ISO</code>,
-<code>GDALVector::fetch()</code>, all OGR attribute field types now
-supported (2024-07-12)</li>
-<li>add sub-headings under the heading “Description of the interface”,
-and add specifications under “Feature retrieval” and “Geometry”
-(2024-07-13)</li>
-<li>
-<code>GDALVector::testCapability()</code> returns a list of named
-capabilities with <code>TRUE</code>|<code>FALSE</code>, class method
-version of <code><a href="../reference/ogr_manage.html">ogr_layer_test_cap()</a></code> (2024-07-21)</li>
-<li>branch gdalvector was merged into main (2024-07-23)</li>
-<li>added <code><a href="../reference/ogr_proc.html">ogr_proc()</a></code>, interface to GDAL OGR facilities for
-vector geoprocessing; updated “Example: layer geoprocessing”
-(2024-07-30)</li>
-<li>removed <code>is_ignored</code> from feature class defintion, not
-needed for feature class / field creation (2024-09-11)</li>
-<li>feature write methods were implemented in <a href="https://github.com/USDAForestService/gdalraster/pull/504" class="external-link">#504</a>:
-<code>$createFeature()</code>, <code>$setFeature()</code>,
-<code>$upsertFeature()</code>; documentation and examples in the (online
-reference)[<a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html" class="uri">https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html</a>]
-(2024-09-11)</li>
-<li>updated the <code>GDALVector</code> class declaration in the draft
-document (2024-09-11)</li>
-<li>remove the read-only field <code>GDALVector::featureTemplate</code>
-as not needed / not useful (2024-09-14)</li>
 </ul>
 </div>
 <div class="section level2">

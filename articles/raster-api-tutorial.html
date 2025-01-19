@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>Raster API Tutorial • gdalraster</title>
-<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -16,11 +16,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,14 +48,6 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/USDAForestService/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
-<li class="nav-item dropdown">
-  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
-  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
-<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
-    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
-    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
-  </ul>
-</li>
       </ul>
 </div>
 
@@ -72,16 +64,17 @@
       <h1>Raster API Tutorial</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/vignettes/raster-api-tutorial.Rmd" class="external-link"><code>vignettes/raster-api-tutorial.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/v.1.12.0/vignettes/raster-api-tutorial.Rmd" class="external-link"><code>vignettes/raster-api-tutorial.Rmd</code></a></small>
       <div class="d-none name"><code>raster-api-tutorial.Rmd</code></div>
     </div>
 
     
     
 <p><strong>gdalraster</strong> provides bindings to the Raster API of
-the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Using the API natively enables fast
-and scalable raster I/O from R. This vignette is an R port of the <a href="https://gdal.org/tutorials/raster_api_tut.html" class="external-link">GDAL Raster API
-tutorial</a> for C++, C and Python, (c) 1998-2024 <a href="https://github.com/warmerdam" class="external-link">Frank Warmerdam</a>, <a href="https://github.com/rouault" class="external-link">Even Rouault</a>, and <a href="https://github.com/OSGeo/gdal/graphs/contributors" class="external-link">others</a> (<a href="https://gdal.org/license.html" class="external-link">MIT license</a>).</p>
+the Geospatial Data Abstraction Library (<a href="https://gdal.org/en/stable/" class="external-link">GDAL</a>). Using the API natively
+enables fast and scalable raster I/O from R. This vignette is an R port
+of the <a href="https://gdal.org/en/stable/tutorials/raster_api_tut.html" class="external-link">GDAL
+Raster API tutorial</a> for C++, C and Python, (c) 1998-2024 <a href="https://github.com/warmerdam" class="external-link">Frank Warmerdam</a>, <a href="https://github.com/rouault" class="external-link">Even Rouault</a>, and <a href="https://github.com/OSGeo/gdal/graphs/contributors" class="external-link">others</a> (<a href="https://gdal.org/en/stable/license.html" class="external-link">MIT license</a>).</p>
 <div class="section level2">
 <h2 id="opening-a-raster-dataset">Opening a raster dataset<a class="anchor" aria-label="anchor" href="#opening-a-raster-dataset"></a>
 </h2>
@@ -98,7 +91,7 @@ access):</p>
 <span><span class="co">#&gt; GDAL 3.8.4, released 2024/02/08, GEOS 3.12.1, PROJ 9.4.0</span></span>
 <span></span>
 <span><span class="va">tcc_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_tcc.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
-<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tcc_file</span>, read_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tcc_file</span>, read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p>An error is returned if the dataset cannot be opened (and creation of
 the <code>GDALRaster</code> object fails). Also, note that
 <code>filename</code> may not actually be the name of a physical file
@@ -111,38 +104,37 @@ and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x5633ad53f440&gt; of class 'GDALRaster' &lt;0x5633a7d679a0&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x55bf5f048150&gt; of class 'GDALRaster' &lt;0x55bf5efcfc50&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 3 fields</span></span>
 <span><span class="co">#&gt;  $ infoOptions  : chr(0) </span></span>
 <span><span class="co">#&gt;  $ quiet        : logi FALSE</span></span>
 <span><span class="co">#&gt;  $ readByteAsRaw: logi FALSE</span></span>
-<span><span class="co">#&gt;  and 81 methods, of which 67 are  possibly relevant:</span></span>
-<span><span class="co">#&gt;    addBand, apply_geotransform, bbox, buildOverviews, clearColorTable,</span></span>
-<span><span class="co">#&gt;    clearStatistics, close, deleteNoDataValue, dim, fillRaster, finalize,</span></span>
-<span><span class="co">#&gt;    flushCache, get_pixel_line, getActualBlockSize, getBlockSize, getChecksum,</span></span>
-<span><span class="co">#&gt;    getColorTable, getDataTypeName, getDefaultHistogram, getDefaultRAT,</span></span>
-<span><span class="co">#&gt;    getDescription, getDriverLongName, getDriverShortName, getFileList,</span></span>
-<span><span class="co">#&gt;    getFilename, getGeoTransform, getHistogram, getMaskBand, getMaskFlags,</span></span>
-<span><span class="co">#&gt;    getMetadata, getMetadataDomainList, getMetadataItem, getMinMax,</span></span>
-<span><span class="co">#&gt;    getNoDataValue, getOffset, getOverviewCount, getPaletteInterp,</span></span>
-<span><span class="co">#&gt;    getProjection, getProjectionRef, getRasterColorInterp, getRasterCount,</span></span>
-<span><span class="co">#&gt;    getRasterXSize, getRasterYSize, getScale, getStatistics, getUnitType, info,</span></span>
-<span><span class="co">#&gt;    infoAsJSON, initialize, isOpen, open, read, res, setColorTable,</span></span>
-<span><span class="co">#&gt;    setDefaultRAT, setDescription, setFilename, setGeoTransform, setMetadata,</span></span>
+<span><span class="co">#&gt;  and 76 methods, of which 62 are  possibly relevant:</span></span>
+<span><span class="co">#&gt;    apply_geotransform, bbox, buildOverviews, clearStatistics, close,</span></span>
+<span><span class="co">#&gt;    deleteNoDataValue, dim, fillRaster, finalize, flushCache, get_pixel_line,</span></span>
+<span><span class="co">#&gt;    getActualBlockSize, getBlockSize, getChecksum, getColorTable,</span></span>
+<span><span class="co">#&gt;    getDataTypeName, getDefaultHistogram, getDefaultRAT, getDescription,</span></span>
+<span><span class="co">#&gt;    getDriverLongName, getDriverShortName, getFileList, getFilename,</span></span>
+<span><span class="co">#&gt;    getGeoTransform, getHistogram, getMetadata, getMetadataDomainList,</span></span>
+<span><span class="co">#&gt;    getMetadataItem, getMinMax, getNoDataValue, getOffset, getOverviewCount,</span></span>
+<span><span class="co">#&gt;    getPaletteInterp, getProjection, getProjectionRef, getRasterColorInterp,</span></span>
+<span><span class="co">#&gt;    getRasterCount, getRasterXSize, getRasterYSize, getScale, getStatistics,</span></span>
+<span><span class="co">#&gt;    getUnitType, info, infoAsJSON, initialize, isOpen, open, read, res,</span></span>
+<span><span class="co">#&gt;    setColorTable, setDefaultRAT, setDescription, setFilename, setGeoTransform,</span></span>
 <span><span class="co">#&gt;    setMetadataItem, setNoDataValue, setOffset, setProjection,</span></span>
 <span><span class="co">#&gt;    setRasterColorInterp, setScale, setUnitType, write</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="getting-dataset-information">Getting dataset information<a class="anchor" aria-label="anchor" href="#getting-dataset-information"></a>
 </h2>
-<p>As described in the <a href="https://gdal.org/user/raster_data_model.html" class="external-link">GDAL Raster Data
-Model</a>, a GDAL dataset contains a list of raster bands, all
-pertaining to the same area and having the same resolution. It also has
-metadata, a coordinate system, a georeferencing transform, size of
+<p>As described in the <a href="https://gdal.org/en/stable/user/raster_data_model.html" class="external-link">GDAL
+Raster Data Model</a>, a GDAL dataset contains a list of raster bands,
+all pertaining to the same area and having the same resolution. It also
+has metadata, a coordinate system, a georeferencing transform, size of
 raster and various other information.</p>
 <p>In the particular but common case of a “north up” raster without any
-rotation or shearing, the georeferencing transform (see <a href="https://gdal.org/tutorials/geotransforms_tut.html" class="external-link">Geotransform
+rotation or shearing, the georeferencing transform (see <a href="https://gdal.org/en/stable/tutorials/geotransforms_tut.html" class="external-link">Geotransform
 Tutorial</a>) takes the following form <em>with 1-based indexing in
 R</em>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -207,28 +199,28 @@ of the dataset (numbered 1 through <code>ds$getRasterCount()</code>) by
 specifying a <code>band</code> number as the first argument:</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># block size</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getBlockSize</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 143  57</span></span>
 <span></span>
 <span><span class="co"># data type</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getDataTypeName</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "Byte"</span></span>
 <span></span>
 <span><span class="co"># nodata value</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getNoDataValue</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 255</span></span>
 <span></span>
 <span><span class="co"># min, max, mean, sd of pixel values in the band</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, approx_ok <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt; [1]  0.00000 71.00000 23.69950 23.17744</span></span>
 <span></span>
 <span><span class="co"># does this band have overviews? (aka "pyramids")</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getOverviewCount</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 0</span></span>
 <span></span>
 <span><span class="co"># does this band have a color table?</span></span>
-<span><span class="va">col_tbl</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getColorTable</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span>
+<span><span class="va">col_tbl</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getColorTable</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span>
 <span><span class="kw">if</span> <span class="op">(</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NULL.html" class="external-link">is.null</a></span><span class="op">(</span><span class="va">col_tbl</span><span class="op">)</span><span class="op">)</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">col_tbl</span><span class="op">)</span></span>
 <span><span class="co">#&gt;      value red green blue alpha</span></span>
@@ -301,8 +293,8 @@ overviews are available at suitable resolution.</p>
 (with options to display a subwindow, to read a reduced resolution
 overview, or read from multiple bands for RGB data):</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span>, main <span class="op">=</span> <span class="st">"Storm Lake Tree Canopy Cover (%)"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="raster-api-tutorial_files/figure-html/unnamed-chunk-9-1.png" alt="A plot of pixel-level tree canopy cover (%) for an area of interest called Storm Lake, which is used for several example datasets in package gdalraster. The plot uses a color ramp from light to dark green indicating low to high tree canopy cover. Pixels with zero tree canopy cover are white." width="576"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend<span class="op">=</span><span class="cn">TRUE</span>, main<span class="op">=</span><span class="st">"Storm Lake Tree Canopy Cover (%)"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="raster-api-tutorial_files/figure-html/unnamed-chunk-9-1.png" width="576"></p>
 </div>
 <div class="section level2">
 <h2 id="closing-the-dataset">Closing the dataset<a class="anchor" aria-label="anchor" href="#closing-the-dataset"></a>
@@ -343,10 +335,10 @@ configured raster formats along with the following read/write flags:</p>
 <code><a href="../reference/create.html">create()</a></code>
 </li>
 </ul>
-<p>The table of GDAL <a href="https://gdal.org/drivers/raster/index.html" class="external-link">raster format
-drivers</a> can also be consulted to determine if a particular driver
-supports Create or CreateCopy methods. Note that a number of drivers are
-read-only and do not support either creation method.</p>
+<p>The table of GDAL <a href="https://gdal.org/en/stable/drivers/raster/index.html" class="external-link">raster
+format drivers</a> can also be consulted to determine if a particular
+driver supports Create or CreateCopy methods. Note that a number of
+drivers are read-only and do not support either creation method.</p>
 </div>
 <div class="section level2">
 <h2 id="using-createcopy">Using createCopy()<a class="anchor" aria-label="anchor" href="#using-createcopy"></a>
@@ -361,16 +353,23 @@ raw format without support for compression or nodata values) to
 LZW-compressed GeoTiff:</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">lcp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storm_lake.lcp"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span>
-<span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"storml_lndscp.tif"</span><span class="op">)</span></span>
-<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/createCopy.html">createCopy</a></span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
-<span>                 dst_filename <span class="op">=</span> <span class="va">tif_file</span>,</span>
-<span>                 src_filename <span class="op">=</span> <span class="va">lcp_file</span>,</span>
-<span>                 options <span class="op">=</span> <span class="st">"COMPRESS=LZW"</span>,</span>
-<span>                 return_obj <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">tif_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"storml_lndscp.tif"</span><span class="op">)</span></span>
+<span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"COMPRESS=LZW"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/createCopy.html">createCopy</a></span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
+<span>           dst_filename <span class="op">=</span> <span class="va">tif_file</span>,</span>
+<span>           src_filename <span class="op">=</span> <span class="va">lcp_file</span>,</span>
+<span>           options <span class="op">=</span> <span class="va">opt</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span></span>
-<span><span class="co"># band = 0 for dataset-level metadata:</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">0</span>, domain <span class="op">=</span> <span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">lcp_file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 252132</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/file.info.html" class="external-link">file.size</a></span><span class="op">(</span><span class="va">tif_file</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] 108510</span></span>
+<span></span>
+<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tif_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># band=0 for dataset-level metadata:</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span>band<span class="op">=</span><span class="fl">0</span>, domain<span class="op">=</span><span class="st">"IMAGE_STRUCTURE"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "COMPRESSION=LZW"  "INTERLEAVE=PIXEL"</span></span>
 <span></span>
 <span><span class="co"># set nodata value for all bands</span></span>
@@ -378,27 +377,10 @@ LZW-compressed GeoTiff:</p>
 <span>  <span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span><span class="va">band</span>, <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># band 2 of an LCP file is slope degrees</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">2</span>, approx_ok <span class="op">=</span> <span class="cn">FALSE</span>, force <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">2</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt; [1]  0.00000 54.00000 22.93012 12.51330</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
-<span></span>
-<span><span class="fu"><a href="../reference/vsi_stat.html">vsi_stat</a></span><span class="op">(</span><span class="va">lcp_file</span>, <span class="st">"size"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; integer64</span></span>
-<span><span class="co">#&gt; [1] 252132</span></span>
-<span><span class="fu"><a href="../reference/vsi_stat.html">vsi_stat</a></span><span class="op">(</span><span class="va">tif_file</span>, <span class="st">"size"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; integer64</span></span>
-<span><span class="co">#&gt; [1] 113942</span></span></code></pre></div>
-<p>Note that the <code><a href="../reference/createCopy.html">createCopy()</a></code> method with
-<code>return_obj = TRUE</code> returns a writable dataset, and that it
-must be closed properly to complete writing and flushing the dataset to
-disk. <code><a href="../reference/createCopy.html">createCopy()</a></code> also has an optional <code>strict</code>
-argument that defaults to <code>FALSE</code> indicating that the call
-should proceed without a fatal error even if the destination dataset
-cannot be created to exactly match the input dataset. This might be
-because the output format does not support the pixel datatype of the
-input dataset, or because the destination cannot support writing
-georeferencing for instance.</p>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <p>Information about format specific creation options can be obtained
 with the function <code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>. By default, this
 function lists all available creation options for a format. Output can
@@ -434,20 +416,21 @@ manually. This function can also take a list of creation options as
 described above for <code><a href="../reference/createCopy.html">createCopy()</a></code>, but the raster size,
 number of bands and band type must be provided explicitly:</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"newdata.tif"</span><span class="op">)</span></span>
-<span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/create.html">create</a></span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
-<span>             dst_filename <span class="op">=</span> <span class="va">new_file</span>,</span>
-<span>             xsize <span class="op">=</span> <span class="fl">143</span>,</span>
-<span>             ysize <span class="op">=</span> <span class="fl">107</span>,</span>
-<span>             nbands <span class="op">=</span> <span class="fl">1</span>, </span>
-<span>             dataType <span class="op">=</span> <span class="st">"Int16"</span>,</span>
-<span>             return_obj <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">new_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"/"</span>, <span class="st">"newdata.tif"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/create.html">create</a></span><span class="op">(</span>format <span class="op">=</span> <span class="st">"GTiff"</span>,</span>
+<span>       dst_filename <span class="op">=</span> <span class="va">new_file</span>,</span>
+<span>       xsize <span class="op">=</span> <span class="fl">143</span>,</span>
+<span>       ysize <span class="op">=</span> <span class="fl">107</span>,</span>
+<span>       nbands <span class="op">=</span> <span class="fl">1</span>,</span>
+<span>       dataType <span class="op">=</span> <span class="st">"Int16"</span><span class="op">)</span></span></code></pre></div>
 <p>Once the dataset is successfully created, all appropriate metadata
 and raster data must be written to the file. What this includes will
 vary according to usage, but a simple case with a projection,
 geotransform and raster data is covered here:</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># EPSG:26912 - NAD83 / UTM zone 12N</span></span>
+<code class="sourceCode R"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">new_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># EPSG:26912 - NAD83 / UTM zone 12N</span></span>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setProjection</span><span class="op">(</span><span class="fu"><a href="../reference/epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
@@ -455,9 +438,9 @@ geotransform and raster data is covered here:</p>
 <span><span class="va">ds</span><span class="op">$</span><span class="fu">setGeoTransform</span><span class="op">(</span><span class="va">gt</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">setNoDataValue</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">9999</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">fillRaster</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, <span class="op">-</span><span class="fl">9999</span>, <span class="fl">0</span><span class="op">)</span></span>
+<span><span class="va">ds</span><span class="op">$</span><span class="fu">fillRaster</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="op">-</span><span class="fl">9999</span>, <span class="fl">0</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># ...</span></span>
 <span></span>
