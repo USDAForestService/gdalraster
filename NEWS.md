@@ -1,6 +1,6 @@
 # gdalraster 1.12.0.9001 (dev)
 
-* `GDALVector::createDF_()`: avoid clang-asan undefined-behavior error from `RcppInt64::wrap()` when called on a `std::vector` of size 0 (2025-01-19)
+* `GDALVector::createDF_()`: avoid clang-asan undefined-behavior error from `RcppInt64::wrap()` when called on a `std::vector<int64_t>` of size `0` (2025-01-19)
 
 * `GDALVector`: add a `BBOX` option for the per-object setting `$returnGeomAs` (2024-10-03)
 
