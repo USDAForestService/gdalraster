@@ -5,12 +5,12 @@
 <meta charset="utf-8">
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<title>R Bindings to the GDAL Raster API • gdalraster</title>
-<script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<title>R Bindings to GDAL • gdalraster</title>
+<script src="lightswitch.js"></script><script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
-<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="R Bindings to the GDAL Raster API">
+<script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="R Bindings to GDAL">
 <meta name="description" content="Interface to the Raster API of the Geospatial Data Abstraction Library (GDAL, &lt;https://gdal.org&gt;). Bindings are implemented in an exposed C++ class encapsulating a GDALDataset and its raster band objects, along with several stand-alone functions. These support manual creation of uninitialized datasets, creation from existing raster as template, read/set dataset parameters, low level I/O, color tables, raster attribute tables, virtual raster (VRT), and gdalwarp wrapper for reprojection and mosaicing. Includes GDAL algorithms (dem_proc(), polygonize(), rasterize(), etc.), and functions for coordinate transformation and spatial reference systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project. Includes raster calc() to evaluate a given R expression on a layer or stack of layers, with pixel x/y available as variables in the expression; and raster combine() to identify and count unique pixel combinations across multiple input layers, with optional output of the pixel-level combination IDs. Provides raster display using base graphics. Bindings to a subset of the OGR API are also included for managing vector data sources. Bindings to a subset of the Virtual Systems Interface (VSI) are also included to support operations on GDAL virtual file systems. These are general utility functions that abstract file system operations on URLs, cloud storage services, Zip/GZip/7z/RAR archives, and in-memory files. gdalraster may be useful in applications that need scalable, low-level I/O, or prefer a direct GDAL API.">
 <meta property="og:description" content="Interface to the Raster API of the Geospatial Data Abstraction Library (GDAL, &lt;https://gdal.org&gt;). Bindings are implemented in an exposed C++ class encapsulating a GDALDataset and its raster band objects, along with several stand-alone functions. These support manual creation of uninitialized datasets, creation from existing raster as template, read/set dataset parameters, low level I/O, color tables, raster attribute tables, virtual raster (VRT), and gdalwarp wrapper for reprojection and mosaicing. Includes GDAL algorithms (dem_proc(), polygonize(), rasterize(), etc.), and functions for coordinate transformation and spatial reference systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project. Includes raster calc() to evaluate a given R expression on a layer or stack of layers, with pixel x/y available as variables in the expression; and raster combine() to identify and count unique pixel combinations across multiple input layers, with optional output of the pixel-level combination IDs. Provides raster display using base graphics. Bindings to a subset of the OGR API are also included for managing vector data sources. Bindings to a subset of the Virtual Systems Interface (VSI) are also included to support operations on GDAL virtual file systems. These are general utility functions that abstract file system operations on URLs, cloud storage services, Zip/GZip/7z/RAR archives, and in-memory files. gdalraster may be useful in applications that need scalable, low-level I/O, or prefer a direct GDAL API.">
 </head>
@@ -18,11 +18,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,6 +50,14 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/USDAForestService/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
       </ul>
 </div>
 
@@ -65,7 +73,7 @@
 <div class="section level2">
 <h2 id="overview">Overview<a class="anchor" aria-label="anchor" href="#overview"></a>
 </h2>
-<p><strong>gdalraster</strong> is an R interface to the <a href="https://gdal.org/en/stable/api/raster_c_api.html" class="external-link">Raster API</a> of the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Bindings to a subset of the GDAL <a href="https://gdal.org/en/stable/api/vector_c_api.html" class="external-link">Vector API</a> are included to provide utilities for managing vector data sources. Bindings to the GDAL Virtual Systems Interface (<a href="https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h" class="external-link">VSI</a>) support file system operations and binary I/O on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project.</p>
+<p><strong>gdalraster</strong> is an R interface to the <a href="https://gdal.org/api/raster_c_api.html" class="external-link">Raster API</a> of the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Bindings to a subset of the GDAL <a href="https://gdal.org/api/vector_c_api.html" class="external-link">Vector API</a> are included to provide utilities for managing vector data sources. Bindings to the GDAL Virtual Systems Interface (<a href="https://gdal.org/api/cpl.html#cpl-vsi-h" class="external-link">VSI</a>) support file system operations and binary I/O on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project.</p>
 <p>Bindings to GDAL are implemented in the exposed C++ class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html"><code>GDALRaster</code></a> along with several <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions">stand-alone functions</a>, supporting:</p>
 <ul>
 <li>manual creation of uninitialized raster datasets</li>
@@ -188,6 +196,7 @@
 <li><a href="https://github.com/USDAForestService/gdalraster/" class="external-link">Browse source code</a></li>
 <li><a href="https://github.com/USDAForestService/gdalraster/issues" class="external-link">Report a bug</a></li>
 <li><a href="https://github.com/USDAForestService/gdalraster/discussions" class="external-link">Discussions</a></li>
+<li><a href="https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices">Development practices</a></li>
 </ul>
 </div>
 

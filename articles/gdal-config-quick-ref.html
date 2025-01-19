@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>GDAL Config Quick Reference • gdalraster</title>
-<script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+<script src="../lightswitch.js"></script><script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
 <script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
@@ -16,11 +16,11 @@
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
-    <nav class="navbar navbar-expand-lg fixed-top bg-light" data-bs-theme="light" aria-label="Site navigation"><div class="container">
+    <nav class="navbar navbar-expand-lg fixed-top " aria-label="Site navigation"><div class="container">
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,6 +48,14 @@
  <input class="form-control" type="search" name="search-input" id="search-input" autocomplete="off" aria-label="Search site" placeholder="Search for" data-search-index="../search.json">
 </form></li>
 <li class="nav-item"><a class="external-link nav-link" href="https://github.com/USDAForestService/gdalraster/" aria-label="GitHub"><span class="fa fab fa-github fa-lg"></span></a></li>
+<li class="nav-item dropdown">
+  <button class="nav-link dropdown-toggle" type="button" id="dropdown-lightswitch" data-bs-toggle="dropdown" aria-expanded="false" aria-haspopup="true" aria-label="Light switch"><span class="fa fa-sun"></span></button>
+  <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="dropdown-lightswitch">
+<li><button class="dropdown-item" data-bs-theme-value="light"><span class="fa fa-sun"></span> Light</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="dark"><span class="fa fa-moon"></span> Dark</button></li>
+    <li><button class="dropdown-item" data-bs-theme-value="auto"><span class="fa fa-adjust"></span> Auto</button></li>
+  </ul>
+</li>
       </ul>
 </div>
 
@@ -64,7 +72,7 @@
       <h1>GDAL Config Quick Reference</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/v.1.12.0/vignettes/gdal-config-quick-ref.Rmd" class="external-link"><code>vignettes/gdal-config-quick-ref.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/vignettes/gdal-config-quick-ref.Rmd" class="external-link"><code>vignettes/gdal-config-quick-ref.Rmd</code></a></small>
       <div class="d-none name"><code>gdal-config-quick-ref.Rmd</code></div>
     </div>
 
@@ -78,7 +86,7 @@ set. They are used to alter the default behavior of certain raster
 format drivers, and in some cases the GDAL core. A large number of
 configuration options are available. An overall discussion along with
 full list of available options and where they apply is in the GDAL
-documentation at <a href="https://gdal.org/en/stable/user/configoptions.html" class="external-link uri">https://gdal.org/en/stable/user/configoptions.html</a>.</p>
+documentation at <a href="https://gdal.org/user/configoptions.html" class="external-link uri">https://gdal.org/user/configoptions.html</a>.</p>
 <p>This quick reference covers a small subset of configuration options
 that may be useful in common scenarios, with links to topic-specific
 documentation provided by the GDAL project. Options can be set from R
@@ -96,7 +104,7 @@ string) will unset a value previously set by
 <div class="section level2">
 <h2 id="general-options">General options<a class="anchor" aria-label="anchor" href="#general-options"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/user/configoptions.html#general-options" class="external-link uri">https://gdal.org/en/stable/user/configoptions.html#general-options</a></p>
+<p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#general-options" class="external-link uri">https://gdal.org/user/configoptions.html#general-options</a></p>
 <p><strong><code>GDAL_RASTERIO_RESAMPLING</code></strong></p>
 <p>The <code>$read()</code> method of a <code>GDALRaster</code> object
 will perform automatic resampling if the specified output size
@@ -118,7 +126,7 @@ directory. This can be changed with:</p>
 <div class="section level2">
 <h2 id="performance-and-caching">Performance and caching<a class="anchor" aria-label="anchor" href="#performance-and-caching"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/user/configoptions.html#performance-and-caching" class="external-link uri">https://gdal.org/en/stable/user/configoptions.html#performance-and-caching</a></p>
+<p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#performance-and-caching" class="external-link uri">https://gdal.org/user/configoptions.html#performance-and-caching</a></p>
 <p><strong><code>GDAL_NUM_THREADS</code></strong></p>
 <p>Sets the number of worker threads to be used by GDAL operations that
 support multithreading. This affects several different parts of GDAL
@@ -146,7 +154,7 @@ the <code>GDALProxyPool</code> mechanism (used by VRT for example) is
 performance with VRT mosaics made of numerous underlying raster files.
 Note: on Linux systems, the number of file handles that can be opened by
 a process is generally limited to <code>1024</code>. This is currently
-clamped between <code>2</code> and <code>1000</code>. Also note that <a href="https://gdal.org/en/stable/drivers/raster/vrt.html#performance-considerations" class="external-link"><code>gdalwarp</code>
+clamped between <code>2</code> and <code>1000</code>. Also note that <a href="https://gdal.org/drivers/raster/vrt.html#performance-considerations" class="external-link"><code>gdalwarp</code>
 increases the pool size to <code>450</code></a>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># default is 100</span></span>
@@ -156,7 +164,7 @@ increases the pool size to <code>450</code></a>:</p>
 inserting data which is significantly faster than <code>INSERT</code>.
 This can increase performance substantially when using
 <code><a href="../reference/polygonize.html">gdalraster::polygonize()</a></code> to write polygons to PostGIS
-vector. See also <a href="https://gdal.org/en/stable/drivers/vector/pg.html#configuration-options" class="external-link">GDAL
+vector. See also <a href="https://gdal.org/drivers/vector/pg.html#configuration-options" class="external-link">GDAL
 configuration options for PostgreSQL</a>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use COPY for inserting to PostGIS</span></span>
@@ -170,7 +178,7 @@ concurrent edits may lead to database corruption. This setting may
 increase performance substantially when using
 <code><a href="../reference/polygonize.html">gdalraster::polygonize()</a></code> to write polygons to a vector
 layer in these formats. Additional configuration and performance hints
-for SQLite databases are in the driver documentation at: <a href="https://gdal.org/en/stable/drivers/vector/sqlite.html#configuration-options" class="external-link uri">https://gdal.org/en/stable/drivers/vector/sqlite.html#configuration-options</a>.</p>
+for SQLite databases are in the driver documentation at: <a href="https://gdal.org/drivers/vector/sqlite.html#configuration-options" class="external-link uri">https://gdal.org/drivers/vector/sqlite.html#configuration-options</a>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SQLite: GPKG (.gpkg) and Spatialite (.sqlite)</span></span>
 <span><span class="co"># enable extra buffering/caching by the GDAL/OGR I/O layer</span></span>
@@ -213,7 +221,7 @@ layer in GeoPackage (.gpkg) or Spatialite (.sqlite) formats (see
 <div class="section level2">
 <h2 id="networking">Networking<a class="anchor" aria-label="anchor" href="#networking"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/user/configoptions.html#networking-options" class="external-link uri">https://gdal.org/en/stable/user/configoptions.html#networking-options</a></p>
+<p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#networking-options" class="external-link uri">https://gdal.org/user/configoptions.html#networking-options</a></p>
 <p><strong><code>CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE</code></strong></p>
 <p>Whether to use a local temporary file to support random writes in
 certain virtual file systems. The temporary file will be located in
@@ -225,7 +233,7 @@ certain virtual file systems. The temporary file will be located in
 <div class="section level2">
 <h2 id="proj">PROJ<a class="anchor" aria-label="anchor" href="#proj"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/user/configoptions.html#proj-options" class="external-link uri">https://gdal.org/en/stable/user/configoptions.html#proj-options</a></p>
+<p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#proj-options" class="external-link uri">https://gdal.org/user/configoptions.html#proj-options</a></p>
 <p><strong><code>OSR_DEFAULT_AXIS_MAPPING_STRATEGY</code></strong></p>
 <p>This option can be set to either <code>TRADITIONAL_GIS_ORDER</code>
 or <code>AUTHORITY_COMPLIANT</code>. GDAL &gt;= 3.5 defaults to
@@ -242,7 +250,7 @@ definition to Well Known Text is WKT 1. This can be overridden with:</p>
 <div class="section level2">
 <h2 id="warp">Warp<a class="anchor" aria-label="anchor" href="#warp"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/programs/gdalwarp.html#memory-usage" class="external-link uri">https://gdal.org/en/stable/programs/gdalwarp.html#memory-usage</a></p>
+<p>GDAL doc: <a href="https://gdal.org/programs/gdalwarp.html#memory-usage" class="external-link uri">https://gdal.org/programs/gdalwarp.html#memory-usage</a></p>
 <p>The <a href="#performance-and-caching">performance and caching</a>
 topic above generally applies to processing with
 <code><a href="../reference/warp.html">gdalraster::warp()</a></code> (reproject/resample/crop/mosaic).</p>
@@ -263,7 +271,7 @@ in <code>cl_arg</code> with
 <code>c("-wo", "NUM_THREADS=&lt;value&gt;")</code> greater than 1, which
 is equivalent to setting the <code>GDAL_NUM_THREADS</code> configuration
 option as shown above.</p>
-<p>This option can be combined with the <a href="https://gdal.org/en/stable/programs/gdalwarp.html#cmdoption-gdalwarp-multi" class="external-link"><code>-multi</code>
+<p>This option can be combined with the <a href="https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-multi" class="external-link"><code>-multi</code>
 command-line argument</a> passed to <code><a href="../reference/warp.html">warp()</a></code> in
 <code>cl_arg</code>. With <code>-multi</code>, two threads will be used
 to process chunks of the raster and perform input/output operation
@@ -277,10 +285,10 @@ above.</p>
 <div class="section level2">
 <h2 id="geotiff">GeoTIFF<a class="anchor" aria-label="anchor" href="#geotiff"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/drivers/raster/gtiff.html#configuration-options" class="external-link uri">https://gdal.org/en/stable/drivers/raster/gtiff.html#configuration-options</a></p>
+<p>GDAL doc: <a href="https://gdal.org/drivers/raster/gtiff.html#configuration-options" class="external-link uri">https://gdal.org/drivers/raster/gtiff.html#configuration-options</a></p>
 <p>The behavior of the GTiff driver is highly configurable, including
 with respect to overview creation. For full discussion, see the link
-above and also the documentation for the <a href="https://gdal.org/en/stable/programs/gdaladdo.html" class="external-link"><code>gdaladdo</code></a>
+above and also the documentation for the <a href="https://gdal.org/programs/gdaladdo.html" class="external-link"><code>gdaladdo</code></a>
 command-line utility.</p>
 <p><strong><code>GDAL_NUM_THREADS</code></strong></p>
 <p>The GTiff driver supports multi-threaded compression (default is
@@ -317,7 +325,7 @@ floating-point data.</p>
 <div class="section level2">
 <h2 id="httphttps">HTTP/HTTPS<a class="anchor" aria-label="anchor" href="#httphttps"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/user/configoptions.html#networking-options" class="external-link">/vsicurl/</a>
+<p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#networking-options" class="external-link">/vsicurl/</a>
 (HTTP/HTTPS random access)</p>
 <p><strong><code>GDAL_HTTP_CONNECTTIMEOUT</code></strong></p>
 <p>Maximum delay for connection to be established before being
@@ -358,7 +366,7 @@ global LRU cache can be modified with:</p>
 <div class="section level2">
 <h2 id="aws-s3-buckets">AWS S3 buckets<a class="anchor" aria-label="anchor" href="#aws-s3-buckets"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsis3-aws-s3-files" class="external-link">/vsis3/</a>
+<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsis3-aws-s3-files" class="external-link">/vsis3/</a>
 (AWS S3 file system handler)</p>
 <p><strong><code>AWS_NO_SIGN_REQUEST</code></strong></p>
 <p>Request signing can be disabled for public buckets that do not
@@ -366,10 +374,8 @@ require an AWS account:</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># public bucket no AWS account required</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_NO_SIGN_REQUEST"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
-<p><strong><code>AWS_ACCESS_KEY_ID</code></strong>
-<strong><code>AWS_SECRET_ACCESS_KEY</code></strong>
-<strong><code>AWS_SESSION_TOKEN</code></strong>
-<strong><code>AWS_REQUEST_PAYER</code></strong></p>
+<p><strong><code>AWS_ACCESS_KEY_ID</code></strong><br><strong><code>AWS_SECRET_ACCESS_KEY</code></strong>
+<strong><code>AWS_SESSION_TOKEN</code></strong><br><strong><code>AWS_REQUEST_PAYER</code></strong></p>
 <p>If authentication is required, configure credentials with:</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AWS_ACCESS_KEY_ID"</span>, <span class="st">"&lt;value&gt;"</span><span class="op">)</span> <span class="co"># key ID</span></span>
@@ -388,13 +394,13 @@ require an AWS account:</p>
 <div class="section level2">
 <h2 id="google-cloud-storage">Google Cloud Storage<a class="anchor" aria-label="anchor" href="#google-cloud-storage"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsigs-google-cloud-storage-files" class="external-link">/vsigs/</a>
+<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsigs-google-cloud-storage-files" class="external-link">/vsigs/</a>
 (Google Cloud Storage files)</p>
 </div>
 <div class="section level2">
 <h2 id="microsoft-azure-blob">Microsoft Azure Blob<a class="anchor" aria-label="anchor" href="#microsoft-azure-blob"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files" class="external-link">/vsiaz/</a>
+<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files" class="external-link">/vsiaz/</a>
 (Microsoft Azure Blob files)</p>
 <p>Recognized filenames are of the form
 <code>/vsiaz/container/key</code>, where <code>container</code> is the
@@ -411,19 +417,52 @@ administrative interface, containing both the account name and a secret
 key.</p>
 <div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AZURE_STORAGE_CONNECTION_STRING"</span>, <span class="st">"&lt;my_connection_string&gt;"</span><span class="op">)</span></span></code></pre></div>
-<p>Several other authentication methods are possible for Azure. See the
-GDAL documentation for details.</p>
+<p><strong><code>AZURE_STORAGE_ACCOUNT</code></strong><br><strong><code>AZURE_STORAGE_ACCESS_TOKEN</code></strong><br><strong><code>AZURE_STORAGE_ACCESS_KEY</code></strong><br><strong><code>AZURE_STORAGE_SAS_TOKEN</code></strong></p>
+<p>Whereas an Azure connection string contains both the account name and
+key, the storage account name might be set using
+<code>AZURE_STORAGE_ACCOUNT</code> along with one of:</p>
+<ul>
+<li>
+<code>AZURE_STORAGE_ACCESS_TOKEN</code>: value obtained using
+Microsoft Authentication Library (MSAL)</li>
+<li>
+<code>AZURE_STORAGE_ACCESS_KEY</code>: value is the secret key
+associated with <code>AZURE_STORAGE_ACCOUNT</code>
+</li>
+<li>
+<code>AZURE_STORAGE_SAS_TOKEN</code>: value is a Shared Access
+Signature</li>
+<li>
+<code>AZURE_NO_SIGN_REQUEST=YES</code> to disable request
+signing</li>
+</ul>
+<p>The <code>AZURE_STORAGE_SAS_TOKEN</code> is used, for example, with
+Microsoft Planetary Computer as documented at: <a href="https://planetarycomputer.microsoft.com/docs/concepts/sas/" class="external-link uri">https://planetarycomputer.microsoft.com/docs/concepts/sas/</a></p>
+<p>SAS token can be requested via API with the <code>token</code>
+endpoint:
+<code>https://planetarycomputer.microsoft.com/api/sas/v1/token/{collection_id}</code>
+or
+<code>https://planetarycomputer.microsoft.com/api/sas/v1/token/{storage_account}/{container}</code></p>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># e.g., Planetary Computer access to STAC items as geoparquet datasets</span></span>
+<span><span class="co"># https://planetarycomputer.microsoft.com/docs/quickstarts/stac-geoparquet/</span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AZURE_STORAGE_ACCOUNT"</span>, <span class="st">"pcstacitems"</span><span class="op">)</span></span>
+<span><span class="co"># SAS token is the value of "token" in the JSON returned by:</span></span>
+<span><span class="co"># https://planetarycomputer.microsoft.com/api/sas/v1/token/pcstacitems/items</span></span>
+<span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"AZURE_STORAGE_SAS_TOKEN"</span>, <span class="st">"&lt;token&gt;"</span><span class="op">)</span></span></code></pre></div>
+<p>Other authentication methods are possible for Azure. See the GDAL
+documentation for details.</p>
 </div>
 <div class="section level2">
 <h2 id="microsoft-azure-data-lake">Microsoft Azure Data Lake<a class="anchor" aria-label="anchor" href="#microsoft-azure-data-lake"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsiadls-microsoft-azure-data-lake-storage-gen2" class="external-link">/vsiadls/</a>
+<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsiadls-microsoft-azure-data-lake-storage-gen2" class="external-link">/vsiadls/</a>
 (Microsoft Azure Data Lake Storage Gen2)</p>
 </div>
 <div class="section level2">
 <h2 id="sozip">SOZip<a class="anchor" aria-label="anchor" href="#sozip"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsizip-zip-archives" class="external-link">/vsizip/</a>
+<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives" class="external-link">/vsizip/</a>
 (Seek-Optimized ZIP files, GDAL &gt;= 3.7)</p>
 <p>The function <code><a href="../reference/addFilesInZip.html">gdalraster::addFilesInZip()</a></code> can be used to
 create new or append to existing ZIP files, potentially using the seek
@@ -441,7 +480,7 @@ that this option also affects several other parts of GDAL.</p>
 optimization should be enabled. If <code>AUTO</code>, SOZip will be
 enabled for uncompressed files larger than
 <code>CPL_SOZIP_MIN_FILE_SIZE</code>.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SOZip optimization defaults to AUTO</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"CPL_SOZIP_ENABLED"</span>, <span class="st">"YES"</span><span class="op">)</span></span></code></pre></div>
 <p><strong><code>CPL_SOZIP_MIN_FILE_SIZE</code></strong></p>
@@ -450,7 +489,7 @@ SOZip to be automatically enabled. Specified in bytes, or
 <code>K</code>, <code>M</code> or <code>G</code> suffix can be used
 respectively to specify a value in kilobytes, megabytes or
 gigabytes.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SOZip minimum file size</span></span>
 <span><span class="fu"><a href="../reference/set_config_option.html">set_config_option</a></span><span class="op">(</span><span class="st">"CPL_SOZIP_MIN_FILE_SIZE"</span>, <span class="st">"100K"</span><span class="op">)</span></span></code></pre></div>
 </div>
