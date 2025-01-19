@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.11.1.9515</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9000</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,34 +48,26 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.11.1.9515" id="gdalraster-11119515-dev">gdalraster 1.11.1.9515 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11119515-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/inspectDataset.html">inspectDataset()</a></code>: obtain information about a GDAL raster or vector dataset (2024-12-05)</p></li>
-<li><p>add <code><a href="../reference/identifyDriver.html">identifyDriver()</a></code>: identify the format driver that can open a dataset, wrapper of <code>GDALIdentifyDriverEx()</code> in the GDAL C API (2024-11-30)</p></li>
-<li><p><code>GDALVector</code>: add a <code>BBOX</code> option for the per-object setting <code>$returnGeomAs</code> (2024-10-03)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9000" id="gdalraster-11209000-dev">gdalraster 1.12.0.9000 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209000-dev"></a></h2>
+<ul><li><p><code>GDALVector</code>: add a <code>BBOX</code> option for the per-object setting <code>$returnGeomAs</code> (2024-10-03)</p></li>
 <li><p>add minimal S3 classes <code>OGRFeature</code> and <code>OGRFeatureSet</code> with methods for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> (2024-09-28)</p></li>
 <li><p>add <code><a href="../reference/g_summary.html">g_summary()</a></code>: obtain text summaries of WKB/WKT geometries (GDAL &gt;= 3.7) (2024-09-24)</p></li>
 <li><p>update <code><a href="../reference/g_is_valid.html">g_is_valid()</a></code>, <code><a href="../reference/g_is_empty.html">g_is_empty()</a></code>, <code><a href="../reference/g_name.html">g_name()</a></code> and <code><a href="../reference/g_buffer.html">g_buffer()</a></code> to the new style geometry API: the OGR GEOS wrappers now operate on input of WKB raw vector, list of WKB, or character vector of WKT strings, with return as either WKB raw vector (or list of) / WKT character string (vector of) (2024-09-22)</p></li>
 <li><p>add <code>GDALVector::quiet</code>: exposed read/write field to optionally suppress warnings etc. (2024-09-20)</p></li>
 <li><p>the <code>layer</code> argument may be <code>NULL</code> or empty string in certain <code>ogr_manage</code> functions, defaulting to the first layer by index (mainly convenience for single-layer formats) (2024-09-19)</p></li>
 <li><p><code>GDALVector</code>: add get/set metadata methods for layer-level metadata if the format supports it (2024-09-19)</p></li>
-<li><p><code><a href="../reference/transform_xy.html">transform_xy()</a></code> and <code><a href="../reference/inv_project.html">inv_project()</a></code>: accept SRS arguments in any format supported by <code><a href="../reference/srs_to_wkt.html">srs_to_wkt()</a></code> (previously required SRS arguments in WKT format) (2024-09-19)</p></li>
-<li><p><code><a href="../reference/vsi_read_dir.html">vsi_read_dir()</a></code>: omit <code>"."</code> and <code>".."</code> from the listing (behavior change); add argument <code>all_files</code>, <code>TRUE</code> to include hidden files; sort the listing alphabetically (2024-09-17)</p></li>
 <li><p><code>GDALVector</code>: support writing OFTTime fields from string input <code>"HH:MM:SS"</code> (2024-09-16)</p></li>
 <li><p><code>GDALVector</code>: improve <code>NULL</code> handling in feature write methods (<code>NA</code>, <code>NULL</code> and empty vector (e.g., <code>raw(0)</code>) map to OGR NULL) (2024-09-15)</p></li>
 <li><p>fix <code>GDALVector::setSpatialFilter()</code>: SRS was not set on the geometry before using it as the layer spatial filter, which could cause segfault (2024-09-15)</p></li>
 <li><p>add <code><a href="../reference/g_make_valid.html">g_make_valid()</a></code>: attempt to make invalid geometries valid, operating on input of WKB raw vector, list of WKB, or character vector of WKT strings (2024-09-15)</p></li>
 <li><p>remove the class field <code>GDALVector::featureTemplate</code> as not needed / not useful, and its removal fixes Valgrind errors (<a href="https://github.com/USDAForestService/gdalraster/issues/520" class="external-link">#520</a>) (2024-09-14)</p></li>
 <li><p>add <code><a href="../reference/g_wk2wk.html">g_wk2wk()</a></code>: geometry WKB/WKT conversion (2024-09-13)</p></li>
-<li><p>(internal) <code>GDALVector::initDF_()</code>: create the data frame vectors with <code>Rcpp::no_init()</code> (2024-09-12)</p></li>
-<li><p>(internal) add src/transform.h, header for src/transform.cpp (2024-09-11)</p></li>
 <li><p>remove <code>is_ignored</code> from feature class definition, potentially breaking change but assumed to be unused in feature class / field creation (2024-09-11)</p></li>
 <li><p>add <code>return_obj</code> argument in <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code> and <code><a href="../reference/ogr_manage.html">ogr_layer_create()</a></code>, <code>TRUE</code> to return a writable <code>GDALVector</code> object on the created layer (2024-09-11)</p></li>
 <li><p><code>GDALVector</code>: add method <code>$setSelectedFields()</code>, alternative to <code>$setIgnoredFields()</code> (2024-09-10)</p></li>
-<li><p>(internal) <code>GDALVector</code>: use <code>$setIgnoredFields()</code> when <code>$returnGeomAs</code> is set to <code>NONE</code> (2024-09-09)</p></li>
 <li><p><code>GDALVector</code>: add a <code>SUMMARY</code> option for the per-object setting <code>$returnGeomAs</code> (2024-09-09)</p></li>
 <li><p><code>GDALVector</code>: add <code>$promoteToMulti</code> as a per-object setting (2024-09-09)</p></li>
 <li><p><code>GDALVector</code>: add class methods for writing features in a layer: <code>$createFeature()</code>, <code>$setFeature()</code>, <code>$upsertFeature()</code> (2024-09-08)</p></li>
-<li><p>fix input validation in <code><a href="../reference/ogr_define.html">ogr_def_geom_field()</a></code>: if <code>srs</code> is <code>NULL</code> set to empty string, avoids exception in <code><a href="../reference/ogr_manage.html">ogr_layer_create()</a></code> if no SRS is given when using a layer definition created with <code><a href="../reference/ogr_define.html">ogr_def_layer()</a></code> (2024-09-07)</p></li>
 <li><p>add <code><a href="../reference/ogr_manage.html">ogr_layer_rename()</a></code>: rename an existing layer in a vector dataset (GDAL &gt;= 3.5) (2024-09-04)</p></li>
 <li><p>(internal) add header <code>src/gdal_vsi.h</code> and minor code cleanups in <code>src/gdal_vsi.cpp</code> (2024-09-02)</p></li>
 <li><p>(internal) use consistent naming convention for C++ class member variables (2024-08-31)</p></li>
@@ -84,7 +76,6 @@
 <li><p>(internal) try/catch if potentially large allocation of std::vector (2024-08-18)</p></li>
 <li><p>add <code>GDALRaster::getMaskBand()</code>: return the mask filename and band number associated with a given band of the dataset (2024-08-15)</p></li>
 <li><p>add <code>GDALRaster::getMaskFlags()</code>: return the status flags of the mask band associated with a given band of the dataset (2024-08-14)</p></li>
-<li><p><code><a href="../reference/createCopy.html">createCopy()</a></code>: fix the check of CreateCopy() availability from the driver by testing for GDAL_DCAP_CREATECOPY or GDAL_DCAP_CREATE, previously only tested for GDAL_DCAP_CREATECOPY (2024-08-12)</p></li>
 <li><p>add <code><a href="../reference/srs_get_name.html">srs_get_name()</a></code>: return the spatial reference system name (2024-08-12)</p></li>
 <li><p>add <code><a href="../reference/srs_find_epsg.html">srs_find_epsg()</a></code>: try to identify a matching EPSG code for a given SRS definition (2024-08-11)</p></li>
 <li><p><code><a href="../reference/translate.html">translate()</a></code>: source raster can be a <code>GDALRaster</code> object (2024-08-11)</p></li>
@@ -105,15 +96,43 @@
 <li><p><code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code>: now returns an object of class <code>GDALVector</code> for SQL SELECT statements (2024-07-24)</p></li>
 <li><p>add class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a>, initial implementation / WIP (2024-07-22)</p></li>
 <li><p>add package <code>wk</code> to Suggests (2024-07-22)</p></li>
-<li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code>: default to no stretch when the input is an RGB Byte raster, addresses <a href="https://github.com/USDAForestService/gdalraster/issues/429" class="external-link">#429</a> (2024-07-10)</p></li>
 <li><p>add <code>GDALRaster$clearColorTable()</code>: clear the color table associated with a raster band (2024-07-10)</p></li>
-<li><p>fix the mode name for <code>color-relief</code> in <code>DEFAULT_DEM_PROC</code> (<code>"color-relief"</code> instead of <code>"color_relief"</code>, fixes <a href="https://github.com/USDAForestService/gdalraster/issues/428" class="external-link">#428</a>) (2024-07-09)</p></li>
-<li><p><code><a href="../reference/vsi_read_dir.html">vsi_read_dir()</a></code>: add parameter <code>recursive</code>, <code>TRUE</code> to read the list of entries in the directory and subdirectories (2024-07-01)</p></li>
 <li><p>avoid data copy in <code>GDALRaster::getDefaultRAT()</code> for better performance in the case of large attribute tables (2024-06-24)</p></li>
 <li><p>add <code><a href="../reference/vsi_get_actual_url.html">vsi_get_actual_url()</a></code>: return the actual URL of a supplied VSI filename, wrapper of <code>VSIGetActualURL()</code> in the GDAL API (2024-06-20)</p></li>
 <li><p>add <code><a href="../reference/vsi_get_signed_url.html">vsi_get_signed_url()</a></code>: return a signed URL for a supplied VSI filename, wrapper of <code>VSIGetSignedURL()</code> in the GDAL API (2024-06-20)</p></li>
-<li><p>Documentation: additions to the section on Azure (/vsiaz/) in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>; update <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a> to use argument <code>return_obj</code> with <code><a href="../reference/create.html">create()</a></code> and <code><a href="../reference/createCopy.html">createCopy()</a></code>; document <code>$fillRaster()</code> method in <code>GDALRaster-class</code>; add the <code>-srcband</code> and <code>-dstband</code> command-line options in the documentation for <code><a href="../reference/warp.html">warp()</a></code>; add <a href="https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices">Development practices</a> in CONTRIBUTING.md; add the OpenSSF best practices badge in README; add <code>fig.alt</code> text to articles for web accessibility; add the OpenSSF Scorecard badge in README; add example in <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> for dissolve features based on an attribute value; cleanup code that removes temp files in the examples is wrapped in <code>\dontshow{}</code>; fix example for <code>VSIFile-class</code> that needs w+ access</p></li>
+<li><p>Documentation: additions to the section on Azure (/vsiaz/) in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>; update <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a> to use argument <code>return_obj</code> with <code><a href="../reference/create.html">create()</a></code> and <code><a href="../reference/createCopy.html">createCopy()</a></code>; add the <code>-srcband</code> and <code>-dstband</code> command-line options in the documentation for <code><a href="../reference/warp.html">warp()</a></code>; add <a href="https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices">Development practices</a> in CONTRIBUTING.md; add the OpenSSF best practices badge in README; add <code>fig.alt</code> text to articles for web accessibility; add the OpenSSF Scorecard badge in README; add example in <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> for dissolve features based on an attribute value; code that cleans up temp files in the examples is wrapped in <code>\dontshow{}</code></p></li>
 </ul></div>
+    <div class="section level2">
+<h2 class="pkg-version" data-toc-text="1.12.0" id="gdalraster-1120">gdalraster 1.12.0<a class="anchor" aria-label="anchor" href="#gdalraster-1120"></a></h2>
+<div class="section level3">
+<h3 id="features--enhancements-1-12-0">Features / enhancements<a class="anchor" aria-label="anchor" href="#features--enhancements-1-12-0"></a></h3>
+<ul><li>add <code><a href="../reference/inspectDataset.html">inspectDataset()</a></code>: obtain information about a GDAL raster or vector dataset (<a href="https://github.com/USDAForestService/gdalraster/issues/552" class="external-link">#552</a>)</li>
+<li>add <code><a href="../reference/identifyDriver.html">identifyDriver()</a></code>: identify the driver that can open a given filename, connection string, etc. (<a href="https://github.com/USDAForestService/gdalraster/issues/553" class="external-link">#553</a>)</li>
+<li>
+<code><a href="../reference/transform_xy.html">transform_xy()</a></code> and <code><a href="../reference/inv_project.html">inv_project()</a></code>: accept the SRS arguments in any format supported by <code><a href="../reference/srs_to_wkt.html">srs_to_wkt()</a></code>
+</li>
+<li>
+<code><a href="../reference/vsi_read_dir.html">vsi_read_dir()</a></code>: add the <code>recursive</code> argument (<a href="https://github.com/USDAForestService/gdalraster/issues/426" class="external-link">#426</a>); omit “.” and “..” from the output directory listing; add the <code>all_files</code> argument, <code>TRUE</code> to include hidden files; sort the directory listing alphabetically</li>
+</ul></div>
+<div class="section level3">
+<h3 id="bug-fixes-1-12-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-1-12-0"></a></h3>
+<ul><li>fix the mode name for <code>"color-relief"</code> in <code>DEFAULT_DEM_PROC</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/430" class="external-link">#430</a>)</li>
+<li>fix a unit test for class <code>VSIFile</code>: create file with “w+” access for read/write (<a href="https://github.com/USDAForestService/gdalraster/issues/546" class="external-link">#546</a>)</li>
+<li>
+<code><a href="../reference/ogr_define.html">ogr_def_geom_field()</a></code>: fix input validation for the <code>srs</code> argument (<a href="https://github.com/USDAForestService/gdalraster/issues/507" class="external-link">#507</a>)</li>
+<li>
+<code><a href="../reference/createCopy.html">createCopy()</a></code>: check the driver for GDAL_DCAP_CREATE capability as well as GDAL_DCAP_CREATECOPY (<a href="https://github.com/USDAForestService/gdalraster/issues/479" class="external-link">#479</a>)</li>
+<li>
+<code><a href="../reference/plot_raster.html">plot_raster()</a></code>: default to no stretch when the input is an RGB Byte raster (<a href="https://github.com/USDAForestService/gdalraster/issues/435" class="external-link">#435</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-1-12-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-12-0"></a></h3>
+<ul><li>fix an example for class <code>VSIFile</code> that needs “w+” access instead of “w”</li>
+<li>fix missing double quote in <code><a href="../reference/transform_xy.html">transform_xy()</a></code> examples</li>
+<li>document the <code>fillRaster()</code> method in class <code>GDALRaster</code>
+</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.11.1" id="gdalraster-1111">gdalraster 1.11.1<a class="anchor" aria-label="anchor" href="#gdalraster-1111"></a></h2><p class="text-muted">CRAN release: 2024-06-13</p>
 <ul><li><p>fix test in test-ogr_manage.R: the test for GeoJSON layer did not need to check existence using <code>with_update = TRUE</code> on a file in extdata (<a href="https://github.com/USDAForestService/gdalraster/issues/410" class="external-link">#410</a>)</p></li>
