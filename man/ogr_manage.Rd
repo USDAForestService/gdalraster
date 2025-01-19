@@ -198,7 +198,7 @@ These functions are complementary to \code{ogrinfo()} and \code{ogr2ogr()} for
 vector data management. They are also intended to support vector I/O in a
 future release of gdalraster. Bindings to OGR wrap portions of the GDAL
 Vector API (ogr_core.h and ogr_api.h,
-\url{https://gdal.org/api/vector_c_api.html}).
+\url{https://gdal.org/en/stable/api/vector_c_api.html}).
 
 \code{ogr_ds_exists()} tests whether a vector dataset can be opened from the
 given data source name (DSN), potentially testing for update access.
@@ -258,7 +258,7 @@ cannot be found. The returned list contains the following named elements:
 \code{ReorderFields}, \code{AlterFieldDefn}, \code{AlterGeomFieldDefn}, \code{DeleteFeature},
 \code{StringsAsUTF8}, \code{Transactions}, \code{CurveGeometries}.
 See the GDAL documentation for
-\href{https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc}{\code{OGR_L_TestCapability()}}.
+\href{https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc}{\code{OGR_L_TestCapability()}}.
 
 \code{ogr_layer_create()} creates a new layer in an existing vector data source,
 with a specified geometry type and spatial reference definition.
@@ -315,7 +315,7 @@ functions. The GDAL document for SQLite dialect has detailed information.
 
 Other SQL dialects may also be present for some vector formats.
 For example, the \code{"INDIRECT_SQLITE"} dialect might potentially be used with
-GeoPackage format (\url{https://gdal.org/drivers/vector/gpkg.html#sql}).
+GeoPackage format (\url{https://gdal.org/en/stable/drivers/vector/gpkg.html#sql}).
 
 The function \code{\link[=ogrinfo]{ogrinfo()}} can also be used to edit data with SQL statements
 (GDAL >= 3.7).
@@ -424,5 +424,5 @@ deleteDataset(perims_shp)
 \code{\link[=ogrinfo]{ogrinfo()}}, \code{\link[=ogr2ogr]{ogr2ogr()}}
 
 OGR SQL dialect and SQLite SQL dialect:\cr
-\url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
+\url{https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html}
 }

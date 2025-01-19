@@ -8,7 +8,7 @@
 #' @description
 #' `GDALRaster` provides an interface for accessing a raster dataset via GDAL
 #' and calling methods on the underlying `GDALDataset`, `GDALDriver` and
-#' `GDALRasterBand` objects. See \url{https://gdal.org/api/index.html} for
+#' `GDALRasterBand` objects. See \url{https://gdal.org/en/stable/api/index.html} for
 #' details of the GDAL Raster API.
 #'
 #' @param filename Character string containing the file name of a raster
@@ -17,7 +17,7 @@
 #' contain format-specific information on how to access a dataset such
 #' as database connection string, URL, /vsiPREFIX/, etc. (see GDAL
 #' raster format descriptions:
-#' \url{https://gdal.org/drivers/raster/index.html}).
+#' \url{https://gdal.org/en/stable/drivers/raster/index.html}).
 #' @param read_only Logical. `TRUE` to open the dataset read-only (the default),
 #' or `FALSE` to open with write access.
 #' @param open_options Optional character vector of `NAME=VALUE` pairs
@@ -217,7 +217,7 @@
 #' Returns the affine transformation coefficients for transforming between
 #' pixel/line raster space (column/row) and projection coordinate space
 #' (geospatial x/y). The return value is a numeric vector of length six.
-#' See \url{https://gdal.org/tutorials/geotransforms_tut.html}
+#' See \url{https://gdal.org/en/stable/tutorials/geotransforms_tut.html}
 #' for details of the affine transformation. \emph{With 1-based indexing
 #' in R}, the geotransform vector contains (in map units of the raster spatial
 #' reference system):
@@ -341,7 +341,7 @@
 #' (e.g., `set_config_option("COMPRESS_OVERVIEW", "LZW")`).
 #' Since GDAL 3.6, `COMPRESS_OVERVIEW` is honoured when creating internal
 #' overviews of GTiff files. The [GDAL documentation for
-#' `gdaladdo`](https://gdal.org/programs/gdaladdo.html) command-line utility
+#' `gdaladdo`](https://gdal.org/en/stable/programs/gdaladdo.html) command-line utility
 #' describes additional configuration for overview building.
 #' See also [set_config_option()]. No return value, called for side effects.
 #'
@@ -530,7 +530,7 @@
 #' Returns a character vector of all metadata `name=value` pairs that exist in
 #' the specified \code{domain}, or \code{""} (empty string) if there are no
 #' metadata items in \code{domain} (metadata in the context of the GDAL
-#' Raster Data Model: \url{https://gdal.org/user/raster_data_model.html}).
+#' Raster Data Model: \url{https://gdal.org/en/stable/user/raster_data_model.html}).
 #' Set \code{band = 0} to retrieve dataset-level metadata, or to an integer
 #' band number to retrieve band-level metadata.
 #' Set \code{domain = ""} (empty string) to retrieve metadata in the
@@ -616,7 +616,7 @@
 #' integer matrix with five columns. To associate a color with a raster pixel,
 #' the pixel value is used as a subscript into the color table. This means that
 #' the colors are always applied starting at zero and ascending
-#' (see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL
+#' (see \href{https://gdal.org/en/stable/user/raster_data_model.html#color-table}{GDAL
 #' Color Table}).
 #' Column 1 contains the pixel values. Interpretation of columns 2:5 depends
 #' on the value of `$getPaletteInterp()` (see below). For "RGB", columns 2:5
@@ -637,7 +637,7 @@
 #'
 #' \code{$setColorTable(band, col_tbl, palette_interp)}
 #' Sets the raster color table for \code{band}
-#' (see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL
+#' (see \href{https://gdal.org/en/stable/user/raster_data_model.html#color-table}{GDAL
 #' Color Table}).
 #' \code{col_tbl} is an integer matrix or data frame with either four or five
 #' columns (see \code{$getColorTable()} above). Column 1 contains the pixel
@@ -765,7 +765,7 @@
 #' ds$getNoDataValue(band = 1)
 #'
 #' ## LCP driver reports several dataset- and band-level metadata
-#' ## see the format description at https://gdal.org/drivers/raster/lcp.html
+#' ## see the format description at https://gdal.org/en/stable/drivers/raster/lcp.html
 #' ## set band = 0 to retrieve dataset-level metadata
 #' ## set domain = "" (empty string) for the default metadata domain
 #' ds$getMetadata(band = 0, domain = "")
@@ -826,7 +826,7 @@
 #'
 #' \donttest{
 #' ## using a GDAL Virtual File System handler '/vsicurl/'
-#' ## see: https://gdal.org/user/virtual_file_systems.html
+#' ## see: https://gdal.org/en/stable/user/virtual_file_systems.html
 #' url <- "/vsicurl/https://raw.githubusercontent.com/"
 #' url <- paste0(url, "usdaforestservice/gdalraster/main/sample-data/")
 #' url <- paste0(url, "lf_elev_220_mt_hood_utm.tif")

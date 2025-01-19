@@ -106,7 +106,7 @@ ds$close()
 
 ## Using in QGIS
 
-QGIS since 3.30 includes [extensive support for Raster Attribute Tables](https://qgis.org/en/site/forusers/visualchangelog330/index.html#feature-raster-attribute-tables-rat-suppport).
+QGIS since 3.30 includes [extensive support for Raster Attribute Tables](https://qgis.org/project/visual-changelogs/visualchangelog330/#feature-raster-attribute-tables-rat-support).
 
 For QGIS < 3.30, the **Raster Attribute Table Plugin** can be used to edit and display RATs for discrete rasters using the paletted/unique-values renderer (QGIS-style classification on arbitrary RAT columns). With the plugin enabled, "Open Attribute Table" can be selected after right-clicking a raster layer that has an associated RAT. For the LANDFIRE EVT layer as modified above, classifying on EVT_NAME generates the following display:
 
@@ -118,7 +118,7 @@ knitr::include_graphics("qgis_rat_classify.png")
 
 * Documentation for [`gdalraster::buildRAT()`](https://usdaforestservice.github.io/gdalraster/reference/buildRAT.html)
 
-* [GDALRasterAttributeTable Class Reference](https://gdal.org/doxygen/classGDALRasterAttributeTable.html)
+* [GDALRasterAttributeTable Class Reference](https://gdal.org/en/stable/doxygen/classGDALRasterAttributeTable.html)
 
 * [Raster Attribute Table QGIS GUI](https://github.com/qgis/QGIS/pull/50687) (since QGIS 3.30; examples for different use cases and workflows)
 

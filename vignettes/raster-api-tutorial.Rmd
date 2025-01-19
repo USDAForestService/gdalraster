@@ -14,7 +14,7 @@ knitr::opts_chunk$set(
 )
 ```
 
-**gdalraster** provides bindings to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/)). Using the API natively enables fast and scalable raster I/O from R. This vignette is an R port of the [GDAL Raster API tutorial](https://gdal.org/tutorials/raster_api_tut.html) for C++, C and Python, (c) 1998-2024 [Frank Warmerdam](https://github.com/warmerdam), [Even Rouault](https://github.com/rouault), and [others](https://github.com/OSGeo/gdal/graphs/contributors) ([MIT license](https://gdal.org/license.html)).
+**gdalraster** provides bindings to the Raster API of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/en/stable/)). Using the API natively enables fast and scalable raster I/O from R. This vignette is an R port of the [GDAL Raster API tutorial](https://gdal.org/en/stable/tutorials/raster_api_tut.html) for C++, C and Python, (c) 1998-2024 [Frank Warmerdam](https://github.com/warmerdam), [Even Rouault](https://github.com/rouault), and [others](https://github.com/OSGeo/gdal/graphs/contributors) ([MIT license](https://gdal.org/en/stable/license.html)).
 
 ## Opening a raster dataset
 
@@ -38,9 +38,9 @@ str(ds)
 
 ## Getting dataset information
 
-As described in the [GDAL Raster Data Model](https://gdal.org/user/raster_data_model.html), a GDAL dataset contains a list of raster bands, all pertaining to the same area and having the same resolution. It also has metadata, a coordinate system, a georeferencing transform, size of raster and various other information.
+As described in the [GDAL Raster Data Model](https://gdal.org/en/stable/user/raster_data_model.html), a GDAL dataset contains a list of raster bands, all pertaining to the same area and having the same resolution. It also has metadata, a coordinate system, a georeferencing transform, size of raster and various other information.
 
-In the particular but common case of a "north up" raster without any rotation or shearing, the georeferencing transform (see [Geotransform Tutorial](https://gdal.org/tutorials/geotransforms_tut.html)) takes the following form *with 1-based indexing in R*:
+In the particular but common case of a "north up" raster without any rotation or shearing, the georeferencing transform (see [Geotransform Tutorial](https://gdal.org/en/stable/tutorials/geotransforms_tut.html)) takes the following form *with 1-based indexing in R*:
 
 ```{r}
 gt <- ds$getGeoTransform()
@@ -113,7 +113,7 @@ if (!is.null(col_tbl))
 ```{r}
 # read the first row of pixel values
 ncols <- ds$getRasterXSize()
-rowdata <- ds$read(band = 1, 
+rowdata <- ds$read(band = 1,
                    xoff = 0,
                    yoff = 0,
                    xsize = ncols,
@@ -155,7 +155,7 @@ The function `gdal_formats()` lists all currently configured raster formats alon
 * `rw`  - read/write, supports `createCopy()`
 * `rw+` - read/write/update, supports `create()`
 
-The table of GDAL [raster format drivers](https://gdal.org/drivers/raster/index.html) can also be consulted to determine if a particular driver supports Create or CreateCopy methods. Note that a number of drivers are read-only and do not support either creation method. 
+The table of GDAL [raster format drivers](https://gdal.org/en/stable/drivers/raster/index.html) can also be consulted to determine if a particular driver supports Create or CreateCopy methods. Note that a number of drivers are read-only and do not support either creation method.
 
 ## Using createCopy()
 
@@ -167,7 +167,7 @@ tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
 opt <- c("COMPRESS=LZW")
 createCopy(format = "GTiff",
            dst_filename = tif_file,
-           src_filename = lcp_file, 
+           src_filename = lcp_file,
            options = opt)
 
 file.size(lcp_file)
@@ -205,7 +205,7 @@ create(format = "GTiff",
        dst_filename = new_file,
        xsize = 143,
        ysize = 107,
-       nbands = 1, 
+       nbands = 1,
        dataType = "Int16")
 ```
 

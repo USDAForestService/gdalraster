@@ -42,7 +42,7 @@ The return value is a list with named elements.
 \note{
 Subdataset names are the character strings that can be used to
 instantiate \code{GDALRaster} objects.
-See https://gdal.org/en/latest/user/raster_data_model.html#subdatasets-domain.
+See https://gdal.org/en/stable/en/latest/user/raster_data_model.html#subdatasets-domain.
 }
 \examples{
 src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")

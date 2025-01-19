@@ -9,7 +9,7 @@
 \arguments{
 \item{filename}{Character string containing the filename to open. It may be
 a file in a regular local filesystem, or a filename with a GDAL /vsiPREFIX/
-(see \url{https://gdal.org/user/virtual_file_systems.html}).}
+(see \url{https://gdal.org/en/stable/user/virtual_file_systems.html}).}
 
 \item{access}{Character string containing the access requested (i.e., \code{"r"},
 \code{"r+"}, \code{"w"}, \verb{"w+}). Defaults to \code{"r"}. Binary access is always implied
@@ -35,7 +35,7 @@ Details. \code{VSIFile} is a C++ class exposed directly to R (via
 \description{
 \code{VSIFile} provides bindings to the GDAL VSIVirtualHandle API. Encapsulates a
 \code{VSIVirtualHandle}
-(\url{https://gdal.org/api/cpl_cpp.html#_CPPv416VSIVirtualHandle}).
+(\url{https://gdal.org/en/stable/api/cpl_cpp.html#_CPPv416VSIVirtualHandle}).
 This API abstracts binary file I/O across "regular" file systems, URLs,
 cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
 It provides analogs of several Standard C file I/O functions, allowing
@@ -215,7 +215,7 @@ Returns \code{0} on success or \code{-1} on error.
 
 \examples{
 # The examples make use of the FARSITE LCP format specification at:
-# https://gdal.org/drivers/raster/lcp.html
+# https://gdal.org/en/stable/drivers/raster/lcp.html
 # An LCP file is a raw format with a 7,316-byte header. The format
 # specification gives byte offets and data types for fields in the header.
 
@@ -317,7 +317,7 @@ vsi_unlink(mem_file)
 \seealso{
 GDAL Virtual File Systems (compressed, network hosted, etc...):\cr
 /vsimem, /vsizip, /vsitar, /vsicurl, ...\cr
-\url{https://gdal.org/user/virtual_file_systems.html}
+\url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 
 \code{\link[=vsi_copy_file]{vsi_copy_file()}}, \code{\link[=vsi_read_dir]{vsi_read_dir()}}, \code{\link[=vsi_stat]{vsi_stat()}}, \code{\link[=vsi_unlink]{vsi_unlink()}}
 }

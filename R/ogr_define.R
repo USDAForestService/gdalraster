@@ -78,7 +78,7 @@
 #' Common types include: `Point`, `LineString`, `Polygon`, `MultiPoint`,
 #' `MultiLineString`, `MultiPolygon`. See the GDAL documentation for a list
 #' of all supported geometry types:\cr
-#' \url{https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType}
+#' \url{https://gdal.org/en/stable/api/vector_c_api.html#_CPPv418OGRwkbGeometryType}
 #'
 #' Format drivers may or may not support not-null constraints on attribute and
 #' geometry fields. If they support creating fields with not-null constraints,
@@ -114,8 +114,8 @@
 #' The feature id (FID) is a special property of a feature and not treated as
 #' an attribute of the feature. Additional information is given in the GDAL
 #' documentation for the
-#' [OGR SQL](https://gdal.org/user/ogr_sql_dialect.html#feature-id-fid) and
-#' [SQLite](https://gdal.org/user/sql_sqlite_dialect.html#feature-id-fid)
+#' [OGR SQL](https://gdal.org/en/stable/user/ogr_sql_dialect.html#feature-id-fid) and
+#' [SQLite](https://gdal.org/en/stable/user/sql_sqlite_dialect.html#feature-id-fid)
 #' SQL dialects. Implications for SQL statements and result sets may depend
 #' on the dialect used.
 #'

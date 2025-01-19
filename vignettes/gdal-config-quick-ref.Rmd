@@ -18,7 +18,7 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-Configuration options are essentially global variables the user can set. They are used to alter the default behavior of certain raster format drivers, and in some cases the GDAL core. A large number of configuration options are available. An overall discussion along with full list of available options and where they apply is in the GDAL documentation at https://gdal.org/user/configoptions.html.
+Configuration options are essentially global variables the user can set. They are used to alter the default behavior of certain raster format drivers, and in some cases the GDAL core. A large number of configuration options are available. An overall discussion along with full list of available options and where they apply is in the GDAL documentation at https://gdal.org/en/stable/user/configoptions.html.
 
 This quick reference covers a small subset of configuration options that may be useful in common scenarios, with links to topic-specific documentation provided by the GDAL project. Options can be set from R with `gdalraster::set_config_option()`. Note that specific usage is context dependent. Passing `value = ""` (empty string) will unset a value previously set by `set_config_option()`:
 
@@ -32,7 +32,7 @@ set_config_option("GDAL_NUM_THREADS", "")
 
 ## General options
 
-GDAL doc: https://gdal.org/user/configoptions.html#general-options
+GDAL doc: https://gdal.org/en/stable/user/configoptions.html#general-options
 
 **`GDAL_RASTERIO_RESAMPLING`**
 
@@ -53,7 +53,7 @@ set_config_option("CPL_TMPDIR", "<dirname>") # tmpdir to use
 
 ## Performance and caching
 
-GDAL doc: https://gdal.org/user/configoptions.html#performance-and-caching
+GDAL doc: https://gdal.org/en/stable/user/configoptions.html#performance-and-caching
 
 **`GDAL_NUM_THREADS`**
 
@@ -73,7 +73,7 @@ set_config_option("GDAL_CACHEMAX", "10%")
 
 **`GDAL_MAX_DATASET_POOL_SIZE`**
 
-The default number of datasets that can be opened simultaneously by the `GDALProxyPool` mechanism (used by VRT for example) is `100`. This can be increased to get better random I/O performance with VRT mosaics made of numerous underlying raster files. Note: on Linux systems, the number of file handles that can be opened by a process is generally limited to `1024`. This is currently clamped between `2` and `1000`. Also note that [`gdalwarp` increases the pool size to `450`](https://gdal.org/drivers/raster/vrt.html#performance-considerations):
+The default number of datasets that can be opened simultaneously by the `GDALProxyPool` mechanism (used by VRT for example) is `100`. This can be increased to get better random I/O performance with VRT mosaics made of numerous underlying raster files. Note: on Linux systems, the number of file handles that can be opened by a process is generally limited to `1024`. This is currently clamped between `2` and `1000`. Also note that [`gdalwarp` increases the pool size to `450`](https://gdal.org/en/stable/drivers/raster/vrt.html#performance-considerations):
 
 ```r
 # default is 100
@@ -82,7 +82,7 @@ set_config_option("GDAL_MAX_DATASET_POOL_SIZE", "450")
 
 **`PG_USE_COPY`**
 
-This configures PostgreSQL/PostGIS to use `COPY` for inserting data which is significantly faster than `INSERT`. This can increase performance substantially when using `gdalraster::polygonize()` to write polygons to PostGIS vector. See also [GDAL configuration options for PostgreSQL](https://gdal.org/drivers/vector/pg.html#configuration-options).
+This configures PostgreSQL/PostGIS to use `COPY` for inserting data which is significantly faster than `INSERT`. This can increase performance substantially when using `gdalraster::polygonize()` to write polygons to PostGIS vector. See also [GDAL configuration options for PostgreSQL](https://gdal.org/en/stable/drivers/vector/pg.html#configuration-options).
 
 ```r
 # use COPY for inserting to PostGIS
@@ -91,7 +91,7 @@ set_config_option("PG_USE_COPY", "YES")
 
 **`SQLITE_USE_OGR_VFS`**
 
-For the SQLite-based formats GeoPackage (.gpkg) and Spatialite (.sqlite), setting `SQLITE_USE_OGR_VFS` enables extra buffering/caching by the GDAL/OGR I/O layer and can speed up I/O. Be aware that no file locking will occur if this option is activated, so concurrent edits may lead to database corruption. This setting may increase performance substantially when using `gdalraster::polygonize()` to write polygons to a vector layer in these formats. Additional configuration and performance hints for SQLite databases are in the driver documentation at: https://gdal.org/drivers/vector/sqlite.html#configuration-options.
+For the SQLite-based formats GeoPackage (.gpkg) and Spatialite (.sqlite), setting `SQLITE_USE_OGR_VFS` enables extra buffering/caching by the GDAL/OGR I/O layer and can speed up I/O. Be aware that no file locking will occur if this option is activated, so concurrent edits may lead to database corruption. This setting may increase performance substantially when using `gdalraster::polygonize()` to write polygons to a vector layer in these formats. Additional configuration and performance hints for SQLite databases are in the driver documentation at: https://gdal.org/en/stable/drivers/vector/sqlite.html#configuration-options.
 
 ```r
 # SQLite: GPKG (.gpkg) and Spatialite (.sqlite)
@@ -120,7 +120,7 @@ set_config_option("OGR_SQLITE_JOURNAL", "MEMORY")
 
 ## Networking
 
-GDAL doc: https://gdal.org/user/configoptions.html#networking-options
+GDAL doc: https://gdal.org/en/stable/user/configoptions.html#networking-options
 
 **`CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE`**
 
@@ -133,7 +133,7 @@ set_config_option("CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE", "YES")
 
 ## PROJ
 
-GDAL doc: https://gdal.org/user/configoptions.html#proj-options
+GDAL doc: https://gdal.org/en/stable/user/configoptions.html#proj-options
 
 **`OSR_DEFAULT_AXIS_MAPPING_STRATEGY`**
 
@@ -150,7 +150,7 @@ set_config_option("OSR_WKT_FORMAT", "WKT2")
 
 ## Warp
 
-GDAL doc: https://gdal.org/programs/gdalwarp.html#memory-usage
+GDAL doc: https://gdal.org/en/stable/programs/gdalwarp.html#memory-usage
 
 The [performance and caching](#performance-and-caching) topic above generally applies to processing with `gdalraster::warp()` (reproject/resample/crop/mosaic).
 
@@ -167,7 +167,7 @@ Increasing the memory available to `warp()` may also increase performance (i.e.,
 
 Multithreading could also be enabled by including a GDAL warp option in `cl_arg` with `c("-wo", "NUM_THREADS=<value>")` greater than 1, which is equivalent to setting the `GDAL_NUM_THREADS` configuration option as shown above.
 
-This option can be combined with the [`-multi` command-line argument](https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-multi) passed to `warp()` in `cl_arg`. With `-multi`, two threads will be used to process chunks of the raster and perform input/output operation simultaneously, whereas the `GDAL_NUM_THREADS` configuration option affects computation separately.
+This option can be combined with the [`-multi` command-line argument](https://gdal.org/en/stable/programs/gdalwarp.html#cmdoption-gdalwarp-multi) passed to `warp()` in `cl_arg`. With `-multi`, two threads will be used to process chunks of the raster and perform input/output operation simultaneously, whereas the `GDAL_NUM_THREADS` configuration option affects computation separately.
 
 **`GDAL_CACHEMAX`**
 
@@ -175,9 +175,9 @@ Increasing the size of the I/O block cache may also help. This can be done by se
 
 ## GeoTIFF
 
-GDAL doc: https://gdal.org/drivers/raster/gtiff.html#configuration-options
+GDAL doc: https://gdal.org/en/stable/drivers/raster/gtiff.html#configuration-options
 
-The behavior of the GTiff driver is highly configurable, including with respect to overview creation. For full discussion, see the link above and also the documentation for the [`gdaladdo`](https://gdal.org/programs/gdaladdo.html) command-line utility.
+The behavior of the GTiff driver is highly configurable, including with respect to overview creation. For full discussion, see the link above and also the documentation for the [`gdaladdo`](https://gdal.org/en/stable/programs/gdaladdo.html) command-line utility.
 
 **`GDAL_NUM_THREADS`**
 
@@ -210,7 +210,7 @@ set_config_option("PREDICTOR_OVERVIEW", "2")
 
 ## HTTP/HTTPS
 
-GDAL doc: [/vsicurl/](https://gdal.org/user/configoptions.html#networking-options) (HTTP/HTTPS random access)
+GDAL doc: [/vsicurl/](https://gdal.org/en/stable/user/configoptions.html#networking-options) (HTTP/HTTPS random access)
 
 **`GDAL_HTTP_CONNECTTIMEOUT`**
 
@@ -252,7 +252,7 @@ set_config_option("CPL_VSIL_CURL_CACHE_SIZE", "<bytes>")
 
 ## AWS S3 buckets
 
-GDAL doc: [/vsis3/](https://gdal.org/user/virtual_file_systems.html#vsis3-aws-s3-files) (AWS S3 file system handler)
+GDAL doc: [/vsis3/](https://gdal.org/en/stable/user/virtual_file_systems.html#vsis3-aws-s3-files) (AWS S3 file system handler)
 
 **`AWS_NO_SIGN_REQUEST`**
 
@@ -290,11 +290,11 @@ set_config_option("AWS_REGION", "us-west-2")
 
 ## Google Cloud Storage
 
-GDAL doc: [/vsigs/](https://gdal.org/user/virtual_file_systems.html#vsigs-google-cloud-storage-files) (Google Cloud Storage files)
+GDAL doc: [/vsigs/](https://gdal.org/en/stable/user/virtual_file_systems.html#vsigs-google-cloud-storage-files) (Google Cloud Storage files)
 
 ## Microsoft Azure Blob
 
-GDAL doc: [/vsiaz/](https://gdal.org/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files) (Microsoft Azure Blob files)
+GDAL doc: [/vsiaz/](https://gdal.org/en/stable/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files) (Microsoft Azure Blob files)
 
 Recognized filenames are of the form `/vsiaz/container/key`, where `container` is the name of the container and `key` is the object "key", i.e. a filename potentially containing subdirectories.
 
@@ -319,11 +319,11 @@ Several other authentication methods are possible for Azure. See the GDAL docume
 
 ## Microsoft Azure Data Lake
 
-GDAL doc: [/vsiadls/](https://gdal.org/user/virtual_file_systems.html#vsiadls-microsoft-azure-data-lake-storage-gen2) (Microsoft Azure Data Lake Storage Gen2)
+GDAL doc: [/vsiadls/](https://gdal.org/en/stable/user/virtual_file_systems.html#vsiadls-microsoft-azure-data-lake-storage-gen2) (Microsoft Azure Data Lake Storage Gen2)
 
 ## SOZip
 
-GDAL doc: [/vsizip/](https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives) (Seek-Optimized ZIP files, GDAL >= 3.7)
+GDAL doc: [/vsizip/](https://gdal.org/en/stable/user/virtual_file_systems.html#vsizip-zip-archives) (Seek-Optimized ZIP files, GDAL >= 3.7)
 
 The function `gdalraster::addFilesInZip()` can be used to create new or append to existing ZIP files, potentially using the seek optimization extension. Function arguments are available for the options below, or the configuration options can be set to change the default behavior.
 

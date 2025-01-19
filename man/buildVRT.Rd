@@ -25,7 +25,7 @@ An error is raised if the operation fails.
 \code{buildVRT()} is a wrapper of the \command{gdalbuildvrt} command-line
 utility for building a VRT (Virtual Dataset) that is a mosaic of the list
 of input GDAL datasets
-(see \url{https://gdal.org/programs/gdalbuildvrt.html}).
+(see \url{https://gdal.org/en/stable/programs/gdalbuildvrt.html}).
 }
 \details{
 Several command-line options are described in the GDAL documentation at the

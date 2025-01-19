@@ -110,7 +110,7 @@ An error is raised if the operation fails.
 the band(s) of a raster dataset. Vectors are read from any GDAL
 OGR-supported vector format.
 This function is a wrapper for the \command{gdal_rasterize} command-line
-utility (\url{https://gdal.org/programs/gdal_rasterize.html}).
+utility (\url{https://gdal.org/en/stable/programs/gdal_rasterize.html}).
 }
 \note{
 The function creates a new target raster when any of the \code{fmt}, \code{dstnodata},

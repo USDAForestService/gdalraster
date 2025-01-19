@@ -23,7 +23,7 @@ An error is raised if the operation fails.
 }
 \description{
 \code{translate()} is a wrapper of the \command{gdal_translate} command-line
-utility (see \url{https://gdal.org/programs/gdal_translate.html}).
+utility (see \url{https://gdal.org/en/stable/programs/gdal_translate.html}).
 The function can be used to convert raster data between different
 formats, potentially performing some operations like subsetting,
 resampling, and rescaling pixels in the process. Refer to the GDAL

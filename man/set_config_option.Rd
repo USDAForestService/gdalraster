@@ -22,7 +22,7 @@ Configuration options are essentially global variables the user can set.
 They are used to alter the default behavior of certain raster format
 drivers, and in some cases the GDAL core. For a full description and
 listing of available options see
-\url{https://gdal.org/user/configoptions.html}.
+\url{https://gdal.org/en/stable/user/configoptions.html}.
 }
 \examples{
 set_config_option("GDAL_CACHEMAX", "10\%")
