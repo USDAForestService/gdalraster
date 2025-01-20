@@ -113,9 +113,9 @@
 #' lyr$commitTransaction()
 #' lyr$rollbackTransaction()
 #'
-#' ds$getMetadata()
-#' ds$setMetadata(metadata)
-#' ds$getMetadataItem(mdi_name)
+#' lyr$getMetadata()
+#' lyr$setMetadata(metadata)
+#' lyr$getMetadataItem(mdi_name)
 #'
 #' lyr$close()
 #' }
@@ -368,14 +368,14 @@
 #' `NULL` is returned if no more features are available.
 #'
 #' \code{$setNextByIndex(i)}\cr
-#' Moves the read cursor to the `i`th feature in the current result set
+#' Moves the read cursor to feature `i` in the current result set
 #' (with 0-based indexing).
 #' This method allows positioning of a layer such that a call to
-#' `$getNextFeature()` or `fetch()` will read the requested feature(s), where
+#' `$getNextFeature()` or `$fetch()` will read the requested feature(s), where
 #' `i` is an absolute index into the current result set. So, setting `i = 3`
 #' would mean the next feature read with `$getNextFeature()` would have been
-#' the 4th feature read if sequential reading took place from the beginning of
-#' the layer, including accounting for spatial and attribute filters.
+#' the fourth feature read if sequential reading took place from the beginning
+#' of the layer, including accounting for spatial and attribute filters.
 #' This method is not implemented efficiently by all vector format drivers. The
 #' default implementation simply resets reading to the beginning and then calls
 #' `GetNextFeature()` `i` times.

@@ -16,9 +16,9 @@ stop, or 0 for no limit (see Note). Ignored if \code{recursive = TRUE}.}
 \item{recursive}{Logical scalar. \code{TRUE} to read the directory and its
 subdirectories. Defaults to \code{FALSE}.}
 
-\item{all_files}{Logical scalar. If ‘FALSE’ (the default), only the names
+\item{all_files}{Logical scalar. If \code{FALSE} (the default), only the names
 of visible files are returned (following Unix-style visibility, that is
-files whose name does not start with a dot). If ‘TRUE’, all file names
+files whose name does not start with a dot). If \code{TRUE}, all file names
 will be returned.}
 }
 \value{
