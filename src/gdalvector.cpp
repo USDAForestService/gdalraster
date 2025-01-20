@@ -2047,14 +2047,22 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
 
     size_t col_num = 0;
 
-    std::vector<int64_t> fid{};
-    try {
-        fid.resize(nrow, NA_INTEGER64);
+    // FID column
+    if (nrow > 0) {
+        std::vector<int64_t> fid{};
+        try {
+            fid.resize(nrow, NA_INTEGER64);
+        }
+        catch (const std::exception &) {
+            Rcpp::stop("failed to allocate memory for 'fid' column");
+        }
+        df[col_num] = Rcpp::wrap(fid);
     }
-    catch (const std::exception &) {
-        Rcpp::stop("failed to allocate memory for 'fid' column");
+    else {
+        Rcpp::NumericVector fid(0);
+        fid.attr("class") = "integer64";
+        df[col_num] = fid;
     }
-    df[col_num] = Rcpp::wrap(fid);
     col_names[col_num] = "FID";
 
     for (int i = 0; i < nFields; ++i) {
@@ -2087,14 +2095,21 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
 
             case OFTInteger64:
             {
-                std::vector<int64_t> v{};
-                try {
-                    v.resize(nrow, NA_INTEGER64);
+                if (nrow > 0) {
+                    std::vector<int64_t> v{};
+                    try {
+                        v.resize(nrow, NA_INTEGER64);
+                    }
+                    catch (const std::exception &) {
+                        Rcpp::stop("failed to allocate integer64 column");
+                    }
+                    df[col_num] = Rcpp::wrap(v);
                 }
-                catch (const std::exception &) {
-                    Rcpp::stop("failed to allocate `integer64` column");
+                else {
+                    Rcpp::NumericVector v(0);
+                    v.attr("class") = "integer64";
+                    df[col_num] = v;
                 }
-                df[col_num] = Rcpp::wrap(v);
                 col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
             }
             break;
