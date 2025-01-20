@@ -206,9 +206,9 @@ lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">commitTransaction</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">rollbackTransaction</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">setMetadata</span><span class="op">(</span><span class="va">metadata</span><span class="op">)</span></span>
-<span><span class="va">ds</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span><span class="va">mdi_name</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">getMetadata</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">setMetadata</span><span class="op">(</span><span class="va">metadata</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">getMetadataItem</span><span class="op">(</span><span class="va">mdi_name</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 
@@ -440,14 +440,14 @@ geometry field names, and their values. The returned list carries the
 <code>OGRFeature</code> class attribute with S3 methods for for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>.
 <code>NULL</code> is returned if no more features are available.</p>
 <p><code>$setNextByIndex(i)</code><br>
-Moves the read cursor to the <code>i</code>th feature in the current result set
+Moves the read cursor to feature <code>i</code> in the current result set
 (with 0-based indexing).
 This method allows positioning of a layer such that a call to
-<code>$getNextFeature()</code> or <code>fetch()</code> will read the requested feature(s), where
+<code>$getNextFeature()</code> or <code>$fetch()</code> will read the requested feature(s), where
 <code>i</code> is an absolute index into the current result set. So, setting <code>i = 3</code>
 would mean the next feature read with <code>$getNextFeature()</code> would have been
-the 4th feature read if sequential reading took place from the beginning of
-the layer, including accounting for spatial and attribute filters.
+the fourth feature read if sequential reading took place from the beginning
+of the layer, including accounting for spatial and attribute filters.
 This method is not implemented efficiently by all vector format drivers. The
 default implementation simply resets reading to the beginning and then calls
 <code>GetNextFeature()</code> <code>i</code> times.
@@ -658,7 +658,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55b801b1dc00&gt; of class 'GDALVector' &lt;0x55b7fb607240&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x556d8f8a5c20&gt; of class 'GDALVector' &lt;0x556d86166980&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 8 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -689,7 +689,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp5LsYkJ/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp1nVdsM/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1180,7 +1180,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-20 00:04:03" "2025-01-20 00:04:03"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-20 23:04:02" "2025-01-20 23:04:02"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1206,7 +1206,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-20 00:04:03"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-20 23:04:02"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1249,7 +1249,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-20 00:04:03" "2025-01-20 00:04:04"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-20 23:04:02" "2025-01-20 23:04:03"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
