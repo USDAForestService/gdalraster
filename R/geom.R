@@ -419,7 +419,7 @@ g_transform <- function(wkt, srs_from, srs_to, wrap_date_line = FALSE,
 #' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return character vector of the same length as the number of input
 #' geometries in `geom`, containing the WKT names for the corresponding
-#' geometies.
+#' geometries.
 #'
 #' @examples
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
@@ -462,7 +462,7 @@ g_name <- function(geom, quiet = FALSE) {
 #' character vector containing one or more WKT strings.
 #' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return character vector of the same length as the number of input
-#' geometries in `geom`, containing summaries for the corresponding geometies.
+#' geometries in `geom`, containing summaries for the corresponding geometries.
 #'
 #' @examples
 #' # Requires GDAL >= 3.7
@@ -513,7 +513,7 @@ g_summary <- function(geom, quiet = FALSE) {
 #' character vector containing one or more WKT strings.
 #' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return logical vector of the same length as the number of input
-#' geometries in `geom`, containing `TRUE` for the corresponding geometies
+#' geometries in `geom`, containing `TRUE` for the corresponding geometries
 #' that are empty or `FALSE` for non-empty geometries.
 #'
 #' @examples
@@ -555,7 +555,7 @@ g_is_empty <- function(geom, quiet = FALSE) {
 #' character vector containing one or more WKT strings.
 #' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return logical vector of the same length as the number of input
-#' geometries in `geom`, containing `TRUE` for the corresponding geometies
+#' geometries in `geom`, containing `TRUE` for the corresponding geometries
 #' that are valid or `FALSE` for invalid geometries.
 #'
 #' @examples

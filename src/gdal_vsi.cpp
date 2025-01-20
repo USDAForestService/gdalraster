@@ -153,9 +153,9 @@ void vsi_curl_clear_cache(bool partial = false,
 //' stop, or 0 for no limit (see Note). Ignored if `recursive = TRUE`.
 //' @param recursive Logical scalar. `TRUE` to read the directory and its
 //' subdirectories. Defaults to `FALSE`.
-//' @param all_files Logical scalar. If ‘FALSE’ (the default), only the names
+//' @param all_files Logical scalar. If `FALSE` (the default), only the names
 //' of visible files are returned (following Unix-style visibility, that is
-//' files whose name does not start with a dot). If ‘TRUE’, all file names
+//' files whose name does not start with a dot). If `TRUE`, all file names
 //' will be returned.
 //' @returns A character vector containing the names of files and directories
 //' in the directory given by `path`. The listing is in alphabetical order, and

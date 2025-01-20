@@ -113,7 +113,7 @@ Examples of some common output formats include: \code{"GPKG"}, \code{"FlatGeobuf
 \item{layer}{Character string for a layer name in a vector dataset.
 The \code{layer} argument may be given as empty string (\code{""}) in which case the
 first layer by index will be opened (except with \code{ogr_layer_delete()} and
-\code{ogr_layer_rename()} for which a layer name nust be specified).}
+\code{ogr_layer_rename()} for which a layer name must be specified).}
 
 \item{layer_defn}{A feature class definition for \code{layer} as a list of
 zero or more attribute field definitions, and at least one geometry field

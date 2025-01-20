@@ -15,7 +15,7 @@ character vector containing one or more WKT strings.}
 \value{
 character vector of the same length as the number of input
 geometries in \code{geom}, containing the WKT names for the corresponding
-geometies.
+geometries.
 }
 \description{
 \code{g_name()} returns geometry type names in well known text format.

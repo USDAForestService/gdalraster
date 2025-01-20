@@ -14,7 +14,7 @@ character vector containing one or more WKT strings.}
 }
 \value{
 character vector of the same length as the number of input
-geometries in \code{geom}, containing summaries for the corresponding geometies.
+geometries in \code{geom}, containing summaries for the corresponding geometries.
 }
 \description{
 \code{g_summary()} returns text summaries of WKB/WKT geometries.

@@ -14,7 +14,7 @@ character vector containing one or more WKT strings.}
 }
 \value{
 logical vector of the same length as the number of input
-geometries in \code{geom}, containing \code{TRUE} for the corresponding geometies
+geometries in \code{geom}, containing \code{TRUE} for the corresponding geometries
 that are empty or \code{FALSE} for non-empty geometries.
 }
 \description{
