@@ -141,7 +141,7 @@
 #' @param layer Character string for a layer name in a vector dataset.
 #' The `layer` argument may be given as empty string (`""`) in which case the
 #' first layer by index will be opened (except with `ogr_layer_delete()` and
-#' `ogr_layer_rename()` for which a layer name nust be specified).
+#' `ogr_layer_rename()` for which a layer name must be specified).
 #' @param layer_defn A feature class definition for `layer` as a list of
 #' zero or more attribute field definitions, and at least one geometry field
 #' definition (see [ogr_define]).
