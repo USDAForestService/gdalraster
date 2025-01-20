@@ -317,7 +317,6 @@ Rcpp::List GDALVector::getLayerDefn() const {
     bool bValue = false;
 
     // attribute fields
-    // TODO(ctoney): add field domain name
     for (int iField = 0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
         Rcpp::List list_fld_defn = Rcpp::List::create();
         OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
@@ -344,6 +343,10 @@ Rcpp::List GDALVector::getLayerDefn() const {
         if (OGR_Fld_GetDefault(hFieldDefn) != nullptr)
             sValue = std::string(OGR_Fld_GetDefault(hFieldDefn));
         list_fld_defn.push_back(sValue, "default");
+
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 3, 0)
+        list_fld_defn.push_back(OGR_Fld_GetDomainName(hFieldDefn), "domain");
+#endif
 
         bValue = false;
         list_fld_defn.push_back(bValue, "is_geom");
