@@ -31,7 +31,7 @@ https://github.com/USDAForestService/gdalraster/issues/241."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -177,6 +177,7 @@ lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getLayerDefn</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFieldDomain</span><span class="op">(</span><span class="va">domain_name</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="va">query</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getAttributeFilter</span><span class="op">(</span><span class="op">)</span></span>
@@ -351,6 +352,16 @@ Returns a list containing the OGR feature class definition for this layer
 (a.k.a. layer definition). The list contains zero or more attribute field
 definitions, along with one or more geometry field definitions.
 See <a href="ogr_define.html">ogr_define</a> for details of the field and feature class definitions.</p>
+<p><code>$getFieldDomain(domain_name)</code><br>
+Returns a list containing specifications of the OGR field domain with the
+passed <code>domain_name</code>, or <code>NULL</code> if <code>domain_name</code> is not found.
+Some formats support the use of field domains that describe the valid values
+that can be stored in a given attribute field, e.g., coded values that are
+present in a specified enumeration, values constrained to a specified
+range, or values that must match a specified pattern.
+See
+<a href="https://gdal.org/en/stable/user/vector_data_model.html#field-domains" class="external-link">https://gdal.org/en/stable/user/vector_data_model.html#field-domains</a>.
+Requires GDAL &gt;= 3.3.</p>
 <p><code>$setAttributeFilter(query)</code><br>
 Sets an attribute query string to be used when fetching features via the
 <code>$getNextFeature()</code> or <code>$fetch()</code> methods.
@@ -658,7 +669,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x556d8f8a5c20&gt; of class 'GDALVector' &lt;0x556d86166980&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x56145eece490&gt; of class 'GDALVector' &lt;0x56145aea5b60&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 8 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -669,19 +680,19 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ quiet             : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "WKB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 66 methods, of which 52 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 67 methods, of which 53 are  possibly relevant:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    OGRFeatureFromList_dumpReadble, bbox, clearSpatialFilter, close,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    commitTransaction, createFeature, deleteFeature, fetch, finalize,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getAttributeFilter, getDriverLongName, getDriverShortName, getDsn,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getFIDColumn, getFeature, getFeatureCount, getFieldNames, getFileList,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getGeomType, getGeometryColumn, getLastWriteFID, getLayerDefn, getMetadata,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getMetadataItem, getName, getNextFeature, getSpatialFilter, getSpatialRef,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    initialize, isOpen, layerClip, layerErase, layerIdentity, layerIntersection,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerSymDifference, layerUnion, layerUpdate, open, resetReading,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    rollbackTransaction, setAttributeFilter, setFeature, setIgnoredFields,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setMetadata, setNextByIndex, setSelectedFields, setSpatialFilter,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilterRect, startTransaction, syncToDisk, testCapability,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    upsertFeature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getFIDColumn, getFeature, getFeatureCount, getFieldDomain, getFieldNames,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getFileList, getGeomType, getGeometryColumn, getLastWriteFID, getLayerDefn,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getMetadata, getMetadataItem, getName, getNextFeature, getSpatialFilter,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getSpatialRef, initialize, isOpen, layerClip, layerErase, layerIdentity,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerIntersection, layerSymDifference, layerUnion, layerUpdate, open,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    resetReading, rollbackTransaction, setAttributeFilter, setFeature,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setIgnoredFields, setMetadata, setNextByIndex, setSelectedFields,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilter, setSpatialFilterRect, startTransaction, syncToDisk,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    testCapability, upsertFeature</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## dataset info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -689,7 +700,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp1nVdsM/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpKD8wqP/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -779,7 +790,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "burn_bnd_lat" "burn_bnd_lon" "ig_date"      "ig_year"      "geom"        </span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">defn</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> List of 10</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    :List of 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ event_id    :List of 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTString"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 254</span>
@@ -787,8 +798,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ domain     : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  :List of 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_name  :List of 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTString"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 254</span>
@@ -796,8 +808,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ domain     : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_type  :List of 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ incid_type  :List of 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTString"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 254</span>
@@ -805,8 +818,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ domain     : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ map_id      :List of 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ map_id      :List of 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTInteger64"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 0</span>
@@ -814,8 +828,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ domain     : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_ac :List of 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_ac :List of 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTInteger64"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 0</span>
@@ -823,8 +838,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ domain     : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lat:List of 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lat:List of 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTString"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 10</span>
@@ -832,8 +848,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ domain     : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon:List of 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ burn_bnd_lon:List of 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTString"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 10</span>
@@ -841,8 +858,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ domain     : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     :List of 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_date     :List of 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTDate"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 0</span>
@@ -850,8 +868,9 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ domain     : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     :List of 8</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ ig_year     :List of 9</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "OFTInteger"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ subtype    : chr "OFSTNone"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ width      : int 0</span>
@@ -859,6 +878,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_nullable: logi TRUE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_unique  : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ default    : chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ domain     : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ is_geom    : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom        :List of 4</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ type       : chr "MULTIPOLYGON"</span>
@@ -1180,7 +1200,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-20 23:04:02" "2025-01-20 23:04:02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-21 06:21:08" "2025-01-21 06:21:08"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1206,7 +1226,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-20 23:04:02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-21 06:21:08"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1249,7 +1269,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-20 23:04:02" "2025-01-20 23:04:03"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-21 06:21:08" "2025-01-21 06:21:09"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>

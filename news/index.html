@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9001</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9002</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9001" id="gdalraster-11209001-dev">gdalraster 1.12.0.9001 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209001-dev"></a></h2>
-<ul><li><p><code>GDALVector::createDF_()</code>: avoid clang-asan undefined-behavior error from <code>RcppInt64::wrap()</code> when called on a <code>std::vector&lt;int64_t&gt;</code> of size <code>0</code> (2025-01-19)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9002" id="gdalraster-11209002-dev">gdalraster 1.12.0.9002 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209002-dev"></a></h2>
+<ul><li><p>add <code>GDALVector::getFieldDomain()</code>: accepts the name of an OGR field domain associated with the dataset and returns a list containing the domain specifications (GDAL &gt;= 3.3) (2025-01-20)</p></li>
+<li><p><code>GDALVector::createDF_()</code>: avoid clang-asan undefined-behavior error from <code>RcppInt64::wrap()</code> when called on a <code>std::vector&lt;int64_t&gt;</code> of size <code>0</code> (2025-01-19)</p></li>
 <li><p><code>GDALVector</code>: add a <code>BBOX</code> option for the per-object setting <code>$returnGeomAs</code> (2024-10-03)</p></li>
 <li><p>add minimal S3 classes <code>OGRFeature</code> and <code>OGRFeatureSet</code> with methods for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> (2024-09-28)</p></li>
 <li><p>add <code><a href="../reference/g_summary.html">g_summary()</a></code>: obtain text summaries of WKB/WKT geometries (GDAL &gt;= 3.7) (2024-09-24)</p></li>
