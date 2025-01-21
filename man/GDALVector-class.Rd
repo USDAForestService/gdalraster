@@ -94,6 +94,7 @@ lyr$getGeometryColumn()
 lyr$getSpatialRef()
 lyr$bbox()
 lyr$getLayerDefn()
+lyr$getFieldDomain(domain_name)
 
 lyr$setAttributeFilter(query)
 lyr$getAttributeFilter()
@@ -123,9 +124,9 @@ lyr$startTransaction(force)
 lyr$commitTransaction()
 lyr$rollbackTransaction()
 
-ds$getMetadata()
-ds$setMetadata(metadata)
-ds$getMetadataItem(mdi_name)
+lyr$getMetadata()
+lyr$setMetadata(metadata)
+lyr$getMetadataItem(mdi_name)
 
 lyr$close()
 }
@@ -284,6 +285,17 @@ Returns a list containing the OGR feature class definition for this layer
 definitions, along with one or more geometry field definitions.
 See \link{ogr_define} for details of the field and feature class definitions.
 
+\code{$getFieldDomain(domain_name)}\cr
+Returns a list containing specifications of the OGR field domain with the
+passed \code{domain_name}, or \code{NULL} if \code{domain_name} is not found.
+Some formats support the use of field domains that describe the valid values
+that can be stored in a given attribute field, e.g., coded values that are
+present in a specified enumeration, values constrained to a specified
+range, or values that must match a specified pattern.
+See
+\url{https://gdal.org/en/stable/user/vector_data_model.html#field-domains}.
+Requires GDAL >= 3.3.
+
 \code{$setAttributeFilter(query)}\cr
 Sets an attribute query string to be used when fetching features via the
 \verb{$getNextFeature()} or \verb{$fetch()} methods.
@@ -383,14 +395,14 @@ geometry field names, and their values. The returned list carries the
 \code{NULL} is returned if no more features are available.
 
 \code{$setNextByIndex(i)}\cr
-Moves the read cursor to the \code{i}th feature in the current result set
+Moves the read cursor to feature \code{i} in the current result set
 (with 0-based indexing).
 This method allows positioning of a layer such that a call to
-\verb{$getNextFeature()} or \code{fetch()} will read the requested feature(s), where
+\verb{$getNextFeature()} or \verb{$fetch()} will read the requested feature(s), where
 \code{i} is an absolute index into the current result set. So, setting \code{i = 3}
 would mean the next feature read with \verb{$getNextFeature()} would have been
-the 4th feature read if sequential reading took place from the beginning of
-the layer, including accounting for spatial and attribute filters.
+the fourth feature read if sequential reading took place from the beginning
+of the layer, including accounting for spatial and attribute filters.
 This method is not implemented efficiently by all vector format drivers. The
 default implementation simply resets reading to the beginning and then calls
 \code{GetNextFeature()} \code{i} times.

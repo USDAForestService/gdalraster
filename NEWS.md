@@ -1,8 +1,8 @@
-# gdalraster 1.11.1.9515 (dev)
+# gdalraster 1.12.0.9002 (dev)
 
-* add `inspectDataset()`: obtain information about a GDAL raster or vector dataset (2024-12-05)
+* add `GDALVector::getFieldDomain()`: accepts the name of an OGR field domain associated with the dataset and returns a list containing the domain specifications (GDAL >= 3.3) (2025-01-20)
 
-* add `identifyDriver()`: identify the format driver that can open a dataset, wrapper of `GDALIdentifyDriverEx()` in the GDAL C API (2024-11-30)
+* `GDALVector::createDF_()`: avoid clang-asan undefined-behavior error from `RcppInt64::wrap()` when called on a `std::vector<int64_t>` of size `0` (2025-01-19)
 
 * `GDALVector`: add a `BBOX` option for the per-object setting `$returnGeomAs` (2024-10-03)
 
@@ -18,10 +18,6 @@
 
 * `GDALVector`: add get/set metadata methods for layer-level metadata if the format supports it (2024-09-19)
 
-* `transform_xy()` and `inv_project()`: accept SRS arguments in any format supported by `srs_to_wkt()` (previously required SRS arguments in WKT format) (2024-09-19)
-
-* `vsi_read_dir()`: omit `"."` and `".."` from the listing (behavior change); add argument `all_files`, `TRUE` to include hidden files; sort the listing alphabetically (2024-09-17)
-
 * `GDALVector`: support writing OFTTime fields from string input `"HH:MM:SS"` (2024-09-16)
 
 * `GDALVector`: improve `NULL` handling in feature write methods (`NA`, `NULL` and empty vector (e.g., `raw(0)`) map to OGR NULL) (2024-09-15)
@@ -34,25 +30,17 @@
 
 * add `g_wk2wk()`: geometry WKB/WKT conversion (2024-09-13)
 
-* (internal) `GDALVector::initDF_()`: create the data frame vectors with `Rcpp::no_init()` (2024-09-12)
-
-* (internal) add src/transform.h, header for src/transform.cpp (2024-09-11)
-
 * remove `is_ignored` from feature class definition, potentially breaking change but assumed to be unused in feature class / field creation (2024-09-11)
 
 * add `return_obj` argument in `ogr_ds_create()` and `ogr_layer_create()`, `TRUE` to return a writable `GDALVector` object on the created layer (2024-09-11)
 
 * `GDALVector`: add method `$setSelectedFields()`, alternative to `$setIgnoredFields()` (2024-09-10)
 
-* (internal) `GDALVector`: use `$setIgnoredFields()` when `$returnGeomAs` is set to `NONE` (2024-09-09)
-
 * `GDALVector`: add a `SUMMARY` option for the per-object setting `$returnGeomAs` (2024-09-09)
 
 * `GDALVector`: add `$promoteToMulti` as a per-object setting (2024-09-09)
 
 * `GDALVector`: add class methods for writing features in a layer: `$createFeature()`, `$setFeature()`, `$upsertFeature()` (2024-09-08)
-
-* fix input validation in `ogr_def_geom_field()`: if `srs` is `NULL` set to empty string, avoids exception in `ogr_layer_create()` if no SRS is given when using a layer definition created with `ogr_def_layer()` (2024-09-07)
 
 * add `ogr_layer_rename()`: rename an existing layer in a vector dataset (GDAL >= 3.5) (2024-09-04)
 
@@ -69,8 +57,6 @@
 * add `GDALRaster::getMaskBand()`: return the mask filename and band number associated with a given band of the dataset (2024-08-15)
 
 * add `GDALRaster::getMaskFlags()`: return the status flags of the mask band associated with a given band of the dataset (2024-08-14)
-
-* `createCopy()`: fix the check of CreateCopy() availability from the driver by testing for GDAL_DCAP_CREATECOPY or GDAL_DCAP_CREATE, previously only tested for GDAL_DCAP_CREATECOPY (2024-08-12)
 
 * add `srs_get_name()`: return the spatial reference system name (2024-08-12)
 
@@ -112,13 +98,7 @@
 
 * add package `wk` to Suggests (2024-07-22)
 
-* `plot_raster()`: default to no stretch when the input is an RGB Byte raster, addresses #429 (2024-07-10)
-
 * add `GDALRaster$clearColorTable()`: clear the color table associated with a raster band (2024-07-10)
-
-* fix the mode name for `color-relief` in `DEFAULT_DEM_PROC` (`"color-relief"` instead of `"color_relief"`, fixes #428) (2024-07-09)
-
-* `vsi_read_dir()`: add parameter `recursive`, `TRUE` to read the list of entries in the directory and subdirectories (2024-07-01)
 
 * avoid data copy in `GDALRaster::getDefaultRAT()` for better performance in the case of large attribute tables (2024-06-24)
 
@@ -126,7 +106,30 @@
 
 * add `vsi_get_signed_url()`: return a signed URL for a supplied VSI filename, wrapper of `VSIGetSignedURL()` in the GDAL API (2024-06-20)
 
-* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`; document `$fillRaster()` method in `GDALRaster-class`; add the `-srcband` and `-dstband` command-line options in the documentation for `warp()`; add [Development practices](https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices) in CONTRIBUTING.md; add the OpenSSF best practices badge in README; add `fig.alt` text to articles for web accessibility; add the OpenSSF Scorecard badge in README; add example in `ogr2ogr()` for dissolve features based on an attribute value; cleanup code that removes temp files in the examples is wrapped in `\dontshow{}`; fix example for `VSIFile-class` that needs w+ access
+* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`; add the `-srcband` and `-dstband` command-line options in the documentation for `warp()`; add [Development practices](https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices) in CONTRIBUTING.md; add the OpenSSF best practices badge in README; add `fig.alt` text to articles for web accessibility; add the OpenSSF Scorecard badge in README; add example in `ogr2ogr()` for dissolve features based on an attribute value; code that cleans up temp files in the examples is wrapped in `\dontshow{}`
+
+# gdalraster 1.12.0
+
+## Features / enhancements
+
+* add `inspectDataset()`: obtain information about a GDAL raster or vector dataset (#552)
+* add `identifyDriver()`: identify the driver that can open a given filename, connection string, etc. (#553)
+* `transform_xy()` and `inv_project()`: accept the SRS arguments in any format supported by `srs_to_wkt()`
+* `vsi_read_dir()`: add the `recursive` argument (#426); omit "." and ".." from the output directory listing; add the `all_files` argument, `TRUE` to include hidden files; sort the directory listing alphabetically
+
+## Bug fixes
+
+* fix the mode name for `"color-relief"` in `DEFAULT_DEM_PROC` (#430)
+* fix a unit test for class `VSIFile`: create file with "w+" access for read/write (#546)
+* `ogr_def_geom_field()`: fix input validation for the `srs` argument (#507)
+* `createCopy()`: check the driver for GDAL_DCAP_CREATE capability as well as GDAL_DCAP_CREATECOPY (#479)
+* `plot_raster()`: default to no stretch when the input is an RGB Byte raster (#435)
+
+## Documentation
+
+* fix an example for class `VSIFile` that needs "w+" access instead of "w"
+* fix missing double quote in `transform_xy()` examples
+* document the `fillRaster()` method in class `GDALRaster`
 
 # gdalraster 1.11.1
 

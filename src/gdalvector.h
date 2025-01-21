@@ -64,6 +64,7 @@ class GDALVector {
     std::string getSpatialRef() const;
     Rcpp::NumericVector bbox();
     Rcpp::List getLayerDefn() const;
+    SEXP getFieldDomain(std::string domain_name) const;
 
     void setAttributeFilter(const std::string &query);
     std::string getAttributeFilter() const;

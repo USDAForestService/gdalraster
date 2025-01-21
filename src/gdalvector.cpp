@@ -317,7 +317,6 @@ Rcpp::List GDALVector::getLayerDefn() const {
     bool bValue = false;
 
     // attribute fields
-    // TODO(ctoney): add field domain name
     for (int iField = 0; iField < OGR_FD_GetFieldCount(hFDefn); ++iField) {
         Rcpp::List list_fld_defn = Rcpp::List::create();
         OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
@@ -344,6 +343,10 @@ Rcpp::List GDALVector::getLayerDefn() const {
         if (OGR_Fld_GetDefault(hFieldDefn) != nullptr)
             sValue = std::string(OGR_Fld_GetDefault(hFieldDefn));
         list_fld_defn.push_back(sValue, "default");
+
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 3, 0)
+        list_fld_defn.push_back(OGR_Fld_GetDomainName(hFieldDefn), "domain");
+#endif
 
         bValue = false;
         list_fld_defn.push_back(bValue, "is_geom");
@@ -395,6 +398,191 @@ Rcpp::List GDALVector::getLayerDefn() const {
     }
 
     return list_out;
+}
+
+SEXP GDALVector::getFieldDomain(std::string domain_name) const {
+/*
+ * The code for this method was adapted from ReportFieldDomain() in
+ * gdal/apps/ogrinfo_lib.cpp:
+ *
+ * Copyright (c) 1999, Frank Warmerdam
+ * Copyright (c) 2008-2013, Even Rouault <even dot rouault at spatialys.com>
+ *
+ * SPDX-License-Identifier: MIT
+ */
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
+    Rcpp::stop("getFieldDomain() requires GDAL >= 3.3.0");
+#else
+    checkAccess_(GA_ReadOnly);
+
+    OGRFieldDomainH hDomain = nullptr;
+    hDomain = GDALDatasetGetFieldDomain(m_hDataset, domain_name.c_str());
+    if (hDomain == nullptr)
+        return R_NilValue;
+
+    Rcpp::List list_out = Rcpp::List::create();
+
+    list_out.push_back(OGR_FldDomain_GetDescription(hDomain), "description");
+
+    const char *pszType = "";
+    switch (OGR_FldDomain_GetDomainType(hDomain)) {
+        case OFDT_CODED:
+            pszType = "coded";
+            break;
+        case OFDT_RANGE:
+            pszType = "range";
+            break;
+        case OFDT_GLOB:
+            pszType = "glob";
+            break;
+    }
+    list_out.push_back(pszType, "domain_type");
+
+    list_out.push_back(
+            OGR_GetFieldTypeName(OGR_FldDomain_GetFieldType(hDomain)),
+            "field_type");
+
+    list_out.push_back(
+            OGR_GetFieldSubTypeName(OGR_FldDomain_GetFieldSubType(hDomain)),
+            "field_subtype");
+
+    const char *pszSplitPolicy = "";
+    switch (OGR_FldDomain_GetSplitPolicy(hDomain)) {
+        case OFDSP_DEFAULT_VALUE:
+            pszSplitPolicy = "default value";
+            break;
+        case OFDSP_DUPLICATE:
+            pszSplitPolicy = "duplicate";
+            break;
+        case OFDSP_GEOMETRY_RATIO:
+            pszSplitPolicy = "geometry ratio";
+            break;
+    }
+    list_out.push_back(pszSplitPolicy, "split_policy");
+
+    const char *pszMergePolicy = "";
+    switch (OGR_FldDomain_GetMergePolicy(hDomain)) {
+        case OFDMP_DEFAULT_VALUE:
+            pszMergePolicy = "default value";
+            break;
+        case OFDMP_SUM:
+            pszMergePolicy = "sum";
+            break;
+        case OFDMP_GEOMETRY_WEIGHTED:
+            pszMergePolicy = "geometry weighted";
+            break;
+    }
+    list_out.push_back(pszMergePolicy, "merge_policy");
+
+    switch (OGR_FldDomain_GetDomainType(hDomain)) {
+        case OFDT_CODED:
+        {
+            const OGRCodedValue *enumeration =
+                    OGR_CodedFldDomain_GetEnumeration(hDomain);
+
+            if (enumeration == nullptr) {
+                list_out.push_back(R_NilValue, "coded_values");
+                break;
+            }
+
+            std::map<std::string, std::string> code_value_map{};
+
+            for (int i = 0; enumeration[i].pszCode != nullptr; ++i) {
+                if (enumeration[i].pszValue) {
+                    code_value_map[std::string(enumeration[i].pszCode)] =
+                            std::string(enumeration[i].pszValue);
+                }
+                else {
+                    code_value_map[std::string(enumeration[i].pszCode)] = "";
+                }
+            }
+
+            list_out.push_back(Rcpp::wrap(code_value_map), "coded_values");
+            break;
+        }
+
+        case OFDT_RANGE:
+        {
+            bool bMinIsIncluded = false;
+            const OGRField *sMin =
+                    OGR_RangeFldDomain_GetMin(hDomain, &bMinIsIncluded);
+
+            bool bMaxIsIncluded = false;
+            const OGRField *sMax =
+                    OGR_RangeFldDomain_GetMax(hDomain, &bMaxIsIncluded);
+
+            if (OGR_FldDomain_GetFieldType(hDomain) == OFTInteger) {
+                if (!OGR_RawField_IsUnset(sMin)) {
+                    list_out.push_back(sMin->Integer, "min_value");
+                    list_out.push_back(bMinIsIncluded, "min_value_included");
+                }
+                if (!OGR_RawField_IsUnset(sMax)) {
+                    list_out.push_back(sMax->Integer, "max_value");
+                    list_out.push_back(bMaxIsIncluded, "max_value_included");
+                }
+            }
+            else if (OGR_FldDomain_GetFieldType(hDomain) == OFTInteger64) {
+                if (!OGR_RawField_IsUnset(sMin)) {
+                    list_out.push_back(Rcpp::toInteger64(sMin->Integer64),
+                                       "min_value");
+                    list_out.push_back(bMinIsIncluded, "min_value_included");
+                }
+                if (!OGR_RawField_IsUnset(sMax)) {
+                    list_out.push_back(Rcpp::toInteger64(sMax->Integer64),
+                                       "max_value");
+                    list_out.push_back(bMaxIsIncluded, "max_value_included");
+                }
+            }
+            else if (OGR_FldDomain_GetFieldType(hDomain) == OFTReal) {
+                if (!OGR_RawField_IsUnset(sMin)) {
+                    list_out.push_back(sMin->Real, "min_value");
+                    list_out.push_back(bMinIsIncluded, "min_value_included");
+                }
+                if (!OGR_RawField_IsUnset(sMax)) {
+                    list_out.push_back(sMax->Real, "max_value");
+                    list_out.push_back(bMaxIsIncluded, "max_value_included");
+                }
+            }
+            else if (OGR_FldDomain_GetFieldType(hDomain) == OFTDateTime) {
+                if (!OGR_RawField_IsUnset(sMin)) {
+                    const char *pszVal = CPLSPrintf(
+                        "%04d-%02d-%02dT%02d:%02d:%02d", sMin->Date.Year,
+                        sMin->Date.Month, sMin->Date.Day, sMin->Date.Hour,
+                        sMin->Date.Minute,
+                        static_cast<int>(sMin->Date.Second + 0.5));
+
+                    list_out.push_back(pszVal, "min_value");
+                    list_out.push_back(bMinIsIncluded, "min_value_included");
+                }
+                if (!OGR_RawField_IsUnset(sMax)) {
+                    const char *pszVal = CPLSPrintf(
+                        "%04d-%02d-%02dT%02d:%02d:%02d", sMax->Date.Year,
+                        sMax->Date.Month, sMax->Date.Day, sMax->Date.Hour,
+                        sMax->Date.Minute,
+                        static_cast<int>(sMax->Date.Second + 0.5));
+
+                    list_out.push_back(pszVal, "max_value");
+                    list_out.push_back(bMaxIsIncluded, "max_value_included");
+                }
+            }
+            break;
+        }
+
+        case OFDT_GLOB:
+        {
+            const char *pszGlob = nullptr;
+            pszGlob = OGR_GlobFldDomain_GetGlob(hDomain);
+            if (pszGlob)
+                list_out.push_back(pszGlob, "glob");
+            else
+                list_out.push_back(R_NilValue, "glob");
+            break;
+        }
+    }
+
+    return list_out;
+#endif
 }
 
 void GDALVector::setAttributeFilter(const std::string &query) {
@@ -2047,14 +2235,22 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
 
     size_t col_num = 0;
 
-    std::vector<int64_t> fid{};
-    try {
-        fid.resize(nrow, NA_INTEGER64);
+    // FID column
+    if (nrow > 0) {
+        std::vector<int64_t> fid{};
+        try {
+            fid.resize(nrow, NA_INTEGER64);
+        }
+        catch (const std::exception &) {
+            Rcpp::stop("failed to allocate memory for 'fid' column");
+        }
+        df[col_num] = Rcpp::wrap(fid);
     }
-    catch (const std::exception &) {
-        Rcpp::stop("failed to allocate memory for 'fid' column");
+    else {
+        Rcpp::NumericVector fid(0);
+        fid.attr("class") = "integer64";
+        df[col_num] = fid;
     }
-    df[col_num] = Rcpp::wrap(fid);
     col_names[col_num] = "FID";
 
     for (int i = 0; i < nFields; ++i) {
@@ -2087,14 +2283,21 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
 
             case OFTInteger64:
             {
-                std::vector<int64_t> v{};
-                try {
-                    v.resize(nrow, NA_INTEGER64);
+                if (nrow > 0) {
+                    std::vector<int64_t> v{};
+                    try {
+                        v.resize(nrow, NA_INTEGER64);
+                    }
+                    catch (const std::exception &) {
+                        Rcpp::stop("failed to allocate integer64 column");
+                    }
+                    df[col_num] = Rcpp::wrap(v);
                 }
-                catch (const std::exception &) {
-                    Rcpp::stop("failed to allocate `integer64` column");
+                else {
+                    Rcpp::NumericVector v(0);
+                    v.attr("class") = "integer64";
+                    df[col_num] = v;
                 }
-                df[col_num] = Rcpp::wrap(v);
                 col_names[col_num] = OGR_Fld_GetNameRef(hFieldDefn);
             }
             break;
@@ -2993,6 +3196,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Return the bounding box (xmin, ymin, xmax, ymax)")
     .const_method("getLayerDefn", &GDALVector::getLayerDefn,
         "Fetch the schema information for this layer")
+    .const_method("getFieldDomain", &GDALVector::getFieldDomain,
+        "Get field domain specifications for the passed domain name")
     .method("setAttributeFilter", &GDALVector::setAttributeFilter,
         "Set a new attribute query")
     .const_method("getAttributeFilter", &GDALVector::getAttributeFilter,
