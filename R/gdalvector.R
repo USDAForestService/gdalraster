@@ -84,6 +84,7 @@
 #' lyr$getSpatialRef()
 #' lyr$bbox()
 #' lyr$getLayerDefn()
+#' lyr$getFieldDomain(domain_name)
 #'
 #' lyr$setAttributeFilter(query)
 #' lyr$getAttributeFilter()
@@ -268,6 +269,17 @@
 #' (a.k.a. layer definition). The list contains zero or more attribute field
 #' definitions, along with one or more geometry field definitions.
 #' See [ogr_define] for details of the field and feature class definitions.
+#'
+#' \code{$getFieldDomain(domain_name)}\cr
+#' Returns a list containing specifications of the OGR field domain with the
+#' passed `domain_name`, or `NULL` if `domain_name` is not found.
+#' Some formats support the use of field domains that describe the valid values
+#' that can be stored in a given attribute field, e.g., coded values that are
+#' present in a specified enumeration, values constrained to a specified
+#' range, or values that must match a specified pattern.
+#' See
+#' \url{https://gdal.org/en/stable/user/vector_data_model.html#field-domains}.
+#' Requires GDAL >= 3.3.
 #'
 #' \code{$setAttributeFilter(query)}\cr
 #' Sets an attribute query string to be used when fetching features via the

@@ -984,3 +984,88 @@ test_that("get/set metadata works", {
     lyr$close()
     deleteDataset(dsn)
 })
+
+test_that("field domain specifications are returned correctly", {
+    skip_if(.gdal_version_num() < 3030000)
+
+    f <- system.file("extdata/domains.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    lyr <- new(GDALVector, dsn)
+
+    # integer range domain
+    fld_dom <- lyr$getFieldDomain("range_domain_int")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$domain_type, "range")
+    expect_equal(fld_dom$field_type, "Integer")
+    expect_equal(fld_dom$split_policy, "default value")
+    expect_equal(fld_dom$merge_policy, "default value")
+    expect_equal(fld_dom$min_value, 1)
+    expect_true(fld_dom$min_value_included)
+    expect_equal(fld_dom$max_value, 2)
+    expect_false(fld_dom$max_value_included)
+    rm(fld_dom)
+
+    # integer64 range domain
+    fld_dom <- lyr$getFieldDomain("range_domain_int64")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$domain_type, "range")
+    expect_equal(fld_dom$field_type, "Integer64")
+    expect_equal(fld_dom$split_policy, "default value")
+    expect_equal(fld_dom$merge_policy, "default value")
+    expect_equal(fld_dom$min_value, bit64::as.integer64(-1234567890123))
+    expect_false(fld_dom$min_value_included)
+    expect_equal(fld_dom$max_value, bit64::as.integer64(1234567890123))
+    expect_true(fld_dom$max_value_included)
+    rm(fld_dom)
+
+    # real range domain
+    fld_dom <- lyr$getFieldDomain("range_domain_real")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$domain_type, "range")
+    expect_equal(fld_dom$field_type, "Real")
+    expect_equal(fld_dom$split_policy, "default value")
+    expect_equal(fld_dom$merge_policy, "default value")
+    expect_equal(fld_dom$min_value, 1.5)
+    expect_true(fld_dom$min_value_included)
+    expect_equal(fld_dom$max_value, 2.5)
+    expect_true(fld_dom$max_value_included)
+    rm(fld_dom)
+
+    # real range domain inf
+    fld_dom <- lyr$getFieldDomain("range_domain_real_inf")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$domain_type, "range")
+    expect_equal(fld_dom$field_type, "Real")
+    expect_equal(fld_dom$split_policy, "default value")
+    expect_equal(fld_dom$merge_policy, "default value")
+    expect_true(is.null(fld_dom$min_value))
+    expect_true(is.null(fld_dom$mxn_value))
+    rm(fld_dom)
+
+    # coded values domain
+    fld_dom <- lyr$getFieldDomain("enum_domain")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$domain_type, "coded")
+    expect_equal(fld_dom$field_type, "Integer")
+    expect_equal(fld_dom$split_policy, "default value")
+    expect_equal(fld_dom$merge_policy, "default value")
+    expect_vector(fld_dom$coded_values, character(), size = 2)
+    expect_equal(fld_dom$coded_values[["1"]], "one")
+    expect_equal(fld_dom$coded_values[["2"]], "")
+    rm(fld_dom)
+
+    # glob domain
+    fld_dom <- lyr$getFieldDomain("glob_domain")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$domain_type, "glob")
+    expect_equal(fld_dom$field_type, "String")
+    expect_equal(fld_dom$split_policy, "default value")
+    expect_equal(fld_dom$merge_policy, "default value")
+    expect_equal(fld_dom$glob, "*")
+    rm(fld_dom)
+
+    lyr$close()
+    deleteDataset(dsn)
+})
