@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9001 (dev)
+# gdalraster 1.12.0.9002 (dev)
+
+* add `GDALVector::getFieldDomain()`: accepts the name of an OGR field domain associated with the dataset and returns a list containing the domain specifications (GDAL >= 3.3) (2025-01-20)
 
 * `GDALVector::createDF_()`: avoid clang-asan undefined-behavior error from `RcppInt64::wrap()` when called on a `std::vector<int64_t>` of size `0` (2025-01-19)
 
