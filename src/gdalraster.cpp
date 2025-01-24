@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <utility>
 
 #include "gdal.h"
 #include "cpl_port.h"
@@ -306,7 +307,9 @@ int GDALRaster::getRasterYSize() const {
 std::vector<double> GDALRaster::getGeoTransform() const {
     checkAccess_(GA_ReadOnly);
 
-    std::vector<double> gt(6);
+    // returned by GDALGetGeoTransform() even when CE_Failure:
+    std::vector<double> gt = {0, 1, 0, 0, 0, 1};
+
     if (GDALGetGeoTransform(m_hDataset, gt.data()) == CE_Failure)
         Rcpp::warning("failed to get geotransform, default returned");
 
@@ -406,9 +409,14 @@ std::vector<double> GDALRaster::bbox() const {
 
     std::vector<double> gt = getGeoTransform();
     double xmin = gt[0];
-    double xmax = xmin + gt[1] * getRasterXSize();
+    double xmax = gt[0] + gt[1] * getRasterXSize();
     double ymax = gt[3];
-    double ymin = ymax + gt[5] * getRasterYSize();
+    double ymin = gt[3] + gt[5] * getRasterYSize();
+    if (gt[5] > 0) {
+        // south-up
+        std::swap(ymin, ymax);
+    }
+
     std::vector<double> ret = {xmin, ymin, xmax, ymax};
     return ret;
 }
@@ -417,9 +425,17 @@ std::vector<double> GDALRaster::res() const {
     checkAccess_(GA_ReadOnly);
 
     std::vector<double> gt = getGeoTransform();
-    double pixel_width = gt[1];
-    double pixel_height = std::fabs(gt[5]);
-    std::vector<double> ret = {pixel_width, pixel_height};
+    std::vector<double> ret = {NA_REAL, NA_REAL};
+
+    if (gt[2] == 0.0 && gt[4] == 0.0) {
+        ret[0] = gt[1];
+        ret[1] = std::fabs(gt[5]);
+    }
+    else {
+        if (!quiet)
+            Rcpp::warning("rotated raster unsupported by res(), NA returned");
+    }
+
     return ret;
 }
 
