@@ -288,15 +288,17 @@
 #'
 #' \code{$bbox()}\cr
 #' Returns a numeric vector of length four containing the bounding box
-#' (xmin, ymin, xmax, ymax) assuming this is a north-up raster.
+#' (xmin, ymin, xmax, ymax).
 #'
 #' \code{$res()}\cr
 #' Returns a numeric vector of length two containing the resolution
-#' (pixel width, pixel height as positive values) assuming this is a north-up
-#' raster.
+#' (pixel width, pixel height as positive values) for a non-rotated raster.
+#' A warning is emitted and `NA` values returned if the raster has a rotated
+#' geotransform (see `$getGeoTransform()` above).
 #'
 #' \code{$dim()}\cr
-#' Returns an integer vector of length three containing the raster dimensions.
+#' Returns an integer vector of length three containing the raster dimensions
+#' (xsize, ysize, number of bands).
 #' Equivalent to:
 #' ```
 #' c(ds$getRasterXSize(), ds$getRasterYSize(), ds$getRasterCount())
