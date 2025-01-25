@@ -196,7 +196,7 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
 }
 \note{
   Documentation for \code{GDALRaster-class} and several wrapper functions
-  borrows from the GDAL API documentation, (c) 1998-2024, Frank Warmerdam,
+  borrows from the GDAL API documentation, (c) 1998-2025, Frank Warmerdam,
   Even Rouault, and others, \href{https://gdal.org/license.html}{MIT license}.
 
   Sample datasets included with the package are used in examples throughout
