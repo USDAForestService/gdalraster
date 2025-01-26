@@ -34,50 +34,90 @@ Rcpp::RawVector g_wkt2wkb(const std::string &geom, bool as_iso,
 Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom, bool as_iso,
                             const std::string &byte_order);
 
-std::string g_create(const Rcpp::NumericMatrix &xy, std::string geom_type);
-std::string g_add_geom(const std::string &sub_geom,
-                       const std::string &container);
+Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
+                         bool as_iso, const std::string &byte_order);
 
-SEXP g_is_valid(const Rcpp::RawVector &geom, bool quiet);
+Rcpp::RawVector g_add_geom(const Rcpp::RawVector &sub_geom,
+                           const Rcpp::RawVector &container,
+                           bool as_iso, const std::string &byte_order);
+
+Rcpp::LogicalVector g_is_valid(const Rcpp::RawVector &geom, bool quiet);
 SEXP g_make_valid(const Rcpp::RawVector &geom, const std::string &method,
                   bool keep_collapsed, bool as_iso,
                   const std::string &byte_order, bool quiet);
 
-SEXP g_is_empty(const Rcpp::RawVector &geom, bool quiet);
+Rcpp::LogicalVector g_is_empty(const Rcpp::RawVector &geom, bool quiet);
 SEXP g_name(const Rcpp::RawVector &geom, bool quiet);
 SEXP g_summary(const Rcpp::RawVector &geom, bool quiet);
+Rcpp::NumericVector g_envelope(const Rcpp::RawVector &geom,
+                               bool quiet);
 
-bool g_intersects(const std::string &this_geom, const std::string &other_geom);
-bool g_equals(const std::string &this_geom, const std::string &other_geom);
-bool g_disjoint(const std::string &this_geom, const std::string &other_geom);
-bool g_touches(const std::string &this_geom, const std::string &other_geom);
-bool g_contains(const std::string &this_geom, const std::string &other_geom);
-bool g_within(const std::string &this_geom, const std::string &other_geom);
-bool g_crosses(const std::string &this_geom, const std::string &other_geom);
-bool g_overlaps(const std::string &this_geom, const std::string &other_geom);
+Rcpp::LogicalVector g_intersects(const Rcpp::RawVector &this_geom,
+                                 const Rcpp::RawVector &other_geom,
+                                 bool quiet);
+
+Rcpp::LogicalVector g_equals(const Rcpp::RawVector &this_geom,
+                             const Rcpp::RawVector &other_geom,
+                             bool quiet);
+
+Rcpp::LogicalVector g_disjoint(const Rcpp::RawVector &this_geom,
+                               const Rcpp::RawVector &other_geom,
+                               bool quiet);
+
+Rcpp::LogicalVector g_touches(const Rcpp::RawVector &this_geom,
+                              const Rcpp::RawVector &other_geom,
+                              bool quiet);
+
+Rcpp::LogicalVector g_contains(const Rcpp::RawVector &this_geom,
+                               const Rcpp::RawVector &other_geom,
+                               bool quiet);
+
+Rcpp::LogicalVector g_within(const Rcpp::RawVector &this_geom,
+                             const Rcpp::RawVector &other_geom,
+                             bool quiet);
+
+Rcpp::LogicalVector g_crosses(const Rcpp::RawVector &this_geom,
+                              const Rcpp::RawVector &other_geom,
+                              bool quiet);
+
+Rcpp::LogicalVector g_overlaps(const Rcpp::RawVector &this_geom,
+                               const Rcpp::RawVector &other_geom,
+                               bool quiet);
 
 SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs,
               bool as_iso, const std::string &byte_order, bool quiet);
 
-std::string g_intersection(const std::string &this_geom,
-                           const std::string &other_geom);
+SEXP g_intersection(const Rcpp::RawVector &this_geom,
+                    const Rcpp::RawVector &other_geom,
+                    bool as_iso, const std::string &byte_order,
+                    bool quiet);
 
-std::string g_union(const std::string &this_geom,
-                    const std::string &other_geom);
+SEXP g_union(const Rcpp::RawVector &this_geom,
+             const Rcpp::RawVector &other_geom,
+             bool as_iso, const std::string &byte_order,
+             bool quiet);
 
-std::string g_difference(const std::string &this_geom,
-                         const std::string &other_geom);
+SEXP g_difference(const Rcpp::RawVector &this_geom,
+                  const Rcpp::RawVector &other_geom,
+                  bool as_iso, const std::string &byte_order,
+                  bool quiet);
 
-std::string g_sym_difference(const std::string &this_geom,
-                             const std::string &other_geom);
+SEXP g_sym_difference(const Rcpp::RawVector &this_geom,
+                      const Rcpp::RawVector &other_geom,
+                      bool as_iso, const std::string &byte_order,
+                      bool quiet);
 
-double g_distance(const std::string &this_geom, const std::string &other_geom);
-double g_length(const std::string &geom);
-double g_area(const std::string &geom);
-Rcpp::NumericVector g_centroid(const std::string &geom);
+double g_distance(const Rcpp::RawVector &this_geom,
+                  const Rcpp::RawVector &other_geom,
+                  bool quiet);
 
-std::string g_transform(const std::string &geom, const std::string &srs_from,
-                        const std::string &srs_to, bool wrap_date_line,
-                        int date_line_offset);
+double g_length(const Rcpp::RawVector &geom, bool quiet);
+double g_area(const Rcpp::RawVector &geom, bool quiet);
+Rcpp::NumericVector g_centroid(const Rcpp::RawVector &geom, bool quiet);
+
+SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
+                 const std::string &srs_to, bool wrap_date_line,
+                 int date_line_offset, bool as_iso,
+                 const std::string &byte_order, bool quiet);
 
 #endif  // SRC_GEOM_API_H_

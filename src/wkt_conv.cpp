@@ -514,7 +514,6 @@ Rcpp::NumericVector bbox_from_wkt(const std::string &wkt,
 //' Convert a bounding box to POLYGON in OGC WKT format
 //'
 //' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
-//' Requires GDAL built with the GEOS library.
 //'
 //' @param bbox Numeric vector of length four containing xmin, ymin,
 //' xmax, ymax.
@@ -536,8 +535,8 @@ Rcpp::NumericVector bbox_from_wkt(const std::string &wkt,
 //' bbox_to_wkt(ds$bbox())
 //' ds$close()
 // [[Rcpp::export]]
-Rcpp::String bbox_to_wkt(const Rcpp::NumericVector &bbox,
-        double extend_x = 0, double extend_y = 0) {
+std::string bbox_to_wkt(const Rcpp::NumericVector &bbox,
+                        double extend_x = 0, double extend_y = 0) {
 
     if (bbox.size() != 4)
         Rcpp::stop("invalid bounding box");
@@ -555,5 +554,6 @@ Rcpp::String bbox_to_wkt(const Rcpp::NumericVector &bbox,
     poly_xy.row(3) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(3));
     poly_xy.row(4) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(1));
 
-    return g_create(poly_xy, "POLYGON");
+    Rcpp::RawVector wkb = g_create("POLYGON", poly_xy, false, "LSB");
+    return g_wkb2wkt(wkb, false);
 }

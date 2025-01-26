@@ -80,6 +80,7 @@ reference:
   - srs_is_projected
   - srs_is_same
   - srs_to_wkt
+  - transform_bounds
 - subtitle: Geometry
 - contents:
   - bbox_from_wkt
@@ -93,6 +94,8 @@ reference:
   - g_buffer
   - g_centroid
   - g_distance
+  - g_envelope
+  - g_factory
   - g_is_empty
   - g_is_valid
   - g_length

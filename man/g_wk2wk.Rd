@@ -52,7 +52,7 @@ be \code{NA}.
 \examples{
 wkt <- "POINT (-114 47)"
 wkb <- g_wk2wk(wkt)
-print(wkb)
+str(wkb)
 g_wk2wk(wkb)
 }
 \seealso{

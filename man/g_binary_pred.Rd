@@ -10,34 +10,41 @@
 \alias{g_crosses}
 \alias{g_overlaps}
 \alias{g_equals}
-\title{Geometry binary predicates operating on WKT}
+\title{Geometry binary predicates operating on WKB or WKT}
 \usage{
-g_intersects(this_geom, other_geom)
+g_intersects(this_geom, other_geom, quiet = FALSE)
 
-g_disjoint(this_geom, other_geom)
+g_disjoint(this_geom, other_geom, quiet = FALSE)
 
-g_touches(this_geom, other_geom)
+g_touches(this_geom, other_geom, quiet = FALSE)
 
-g_contains(this_geom, other_geom)
+g_contains(this_geom, other_geom, quiet = FALSE)
 
-g_within(this_geom, other_geom)
+g_within(this_geom, other_geom, quiet = FALSE)
 
-g_crosses(this_geom, other_geom)
+g_crosses(this_geom, other_geom, quiet = FALSE)
 
-g_overlaps(this_geom, other_geom)
+g_overlaps(this_geom, other_geom, quiet = FALSE)
 
-g_equals(this_geom, other_geom)
+g_equals(this_geom, other_geom, quiet = FALSE)
 }
 \arguments{
-\item{this_geom}{Character. OGC WKT string for a simple feature geometry.}
+\item{this_geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.}
 
-\item{other_geom}{Character. OGC WKT string for a simple feature geometry.}
+\item{other_geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings. Must contain the same
+number of geometries as \code{this_geom}.}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-Logical scalar
+Logical vector with length equal to the number of input geometry
+pairs.
 }
 \description{
-These functions implement tests for pairs of geometries in OGC WKT format.
+These functions implement tests for pairs of geometries in OGC WKB or
+WKT format.
 }
 \details{
 These functions use the GEOS library via GDAL headers.
@@ -68,6 +75,9 @@ representation is equal. Note: this must be distinguished from equality in
 a spatial way."
 }
 \note{
+\code{this_geom} and \code{other_geom} are assumed to be in the same coordinate
+reference system.
+
 Geometry validity is not checked. In case you are unsure of the validity
 of the input geometries, call \code{g_is_valid()} before, otherwise the result
 might be wrong.

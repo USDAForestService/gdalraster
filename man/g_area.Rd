@@ -4,13 +4,17 @@
 \alias{g_area}
 \title{Compute the area of a geometry}
 \usage{
-g_area(wkt)
+g_area(geom, quiet = FALSE)
 }
 \arguments{
-\item{wkt}{Character. OGC WKT string for a simple feature geometry.}
+\item{geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-Numeric scalar. Area of the geometry or \code{0}.
+Numeric vector of length equal to the number of input geometries.
+Area or '0' if undefined.
 }
 \description{
 \code{g_area()} computes the area for a \code{LinearRing}, \code{Polygon} or

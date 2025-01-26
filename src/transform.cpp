@@ -9,6 +9,7 @@
 #include "ogr_srs_api.h"
 #include "ogr_spatialref.h"
 
+#include "gdalraster.h"
 #include "wkt_conv.h"
 
 //' get PROJ version
@@ -170,8 +171,6 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import SRS from WKT string");
 
-    // config option OGR_CT_FORCE_TRADITIONAL_GIS_ORDER=YES is set in gdal_init
-    // this should be redundant
     oSourceSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     if (well_known_gcs == "") {
@@ -267,14 +266,12 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     OGRSpatialReference oSourceSRS{}, oDestSRS{};
     OGRCoordinateTransformation *poCT = nullptr;
-    OGRErr err;
+    OGRErr err = OGRERR_NONE;
 
     err = oSourceSRS.importFromWkt(srs_from_in.c_str());
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import source SRS from WKT string");
 
-    // config option OGR_CT_FORCE_TRADITIONAL_GIS_ORDER=YES is set in gdal_init
-    // this should be redundant
     oSourceSRS.SetAxisMappingStrategy(OAMS_TRADITIONAL_GIS_ORDER);
 
     err = oDestSRS.importFromWkt(srs_to_in.c_str());
@@ -305,3 +302,142 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     return ret;
 }
 
+//' Transform boundary
+//'
+//' `transform_bounds()` transforms a bounding box, densifying the edges to
+//' account for nonlinear transformations along these edges and extracting
+//' the outermost bounds. Wrapper of `OCTTransformBounds()` in the GDAL Spatial
+//' Reference System API. Requires GDAL >= 3.4.
+//'
+//' @details
+//' If the destination CRS is geographic, the first axis is longitude, and
+//' `xmax < xmin` then the bounds crossed the antimeridian. In this scenario
+//' there are two polygons, one on each side of the antimeridian. The first
+//' polygon should be constructed with `(xmin, ymin, 180, ymax)` and the second
+//' with `(-180, ymin, xmax, ymax)`.
+//'
+//' If the destination CRS is geographic, the first axis is latitude, and
+//' `ymax < ymin` then the bounds crossed the antimeridian. In this scenario
+//' there are two polygons, one on each side of the antimeridian. The first
+//' polygon should be constructed with `(ymin, xmin, ymax, 180)` and the second
+//' with `(ymin, -180, ymax, xmax)`.
+//'
+//' @param bbox Numeric vector of length four containing the input bounding
+//' box (xmin, ymin, xmax, ymax).
+//' @param srs_from Character string specifying the spatial reference system
+//' for `pts`. May be in WKT format or any of the formats supported by
+//' [srs_to_wkt()].
+//' @param srs_to Character string specifying the output spatial reference
+//' system. May be in WKT format or any of the formats supported by
+//' [srs_to_wkt()].
+//' @param densify_pts Integer value giving the number of points to use to
+//' densify the bounding polygon in the transformation. Recommended to use `21`
+//' (the default).
+//' @param traditional_gis_order Logical value, `TRUE` to use traditional GIS
+//' order of axis mapping (the default) or `FALSE` to use authority compliant
+//' axis order (see Note).
+//' @returns Numeric vector of length four containing the bounding box in the
+//' output spatial reference system (xmin, ymin, xmax, ymax).
+//'
+//' @seealso
+//' [srs_to_wkt()]
+//'
+//' @note
+//' `traditional_gis_order = TRUE` (the default) means that for geographic CRS
+//' with lat/long order, the data will still be long/lat ordered. Similarly for
+//' a projected CRS with northing/easting order, the data will still be
+//' easting/northing ordered (GDAL's OAMS_TRADITIONAL_GIS_ORDER).
+//'
+//' `traditional_gis_order = FALSE` means that the data axis will be identical
+//'  to the CRS axis (GDAL's OAMS_AUTHORITY_COMPLIANT).
+//'
+//' See
+//' \url{https://gdal.org/en/stable/tutorials/osr_api_tut.html#crs-and-axis-order}.
+//'
+//' @examples
+//' bb <- c(-1405880.71737, -1371213.76254, 5405880.71737, 5371213.76254)
+//'
+//' # traditional GIS axis ordering by  default (lon, lat)
+//' transform_bounds(bb, "EPSG:32761", "EPSG:4326")
+//'
+//' # authority compliant axis ordering
+//' transform_bounds(bb, "EPSG:32761", "EPSG:4326",
+//'                  traditional_gis_order = FALSE)
+// [[Rcpp::export]]
+Rcpp::NumericVector transform_bounds(const Rcpp::NumericVector &bbox,
+                                     const std::string &srs_from,
+                                     const std::string &srs_to,
+                                     int densify_pts = 21,
+                                     bool traditional_gis_order = true) {
+
+    if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3,4,0))
+        Rcpp::stop("transform_bounds() requires GDAL >= 3.4");
+
+    if (bbox.size() != 4)
+        Rcpp::stop("'bbox' must be a numeric vector of length 4");
+
+    std::string srs_from_in = srs_to_wkt(srs_from, false);
+    std::string srs_to_in = srs_to_wkt(srs_to, false);
+
+    OGRSpatialReferenceH hSRS_from = OSRNewSpatialReference(nullptr);
+    OGRSpatialReferenceH hSRS_to = OSRNewSpatialReference(nullptr);
+
+    char *pszWKT1 = (char*) srs_from_in.c_str();
+    if (OSRImportFromWkt(hSRS_from, &pszWKT1) != OGRERR_NONE) {
+        if (hSRS_from != nullptr)
+            OSRDestroySpatialReference(hSRS_from);
+        if (hSRS_to != nullptr)
+            OSRDestroySpatialReference(hSRS_to);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    char *pszWKT2 = (char*) srs_to_in.c_str();
+    if (OSRImportFromWkt(hSRS_to, &pszWKT2) != OGRERR_NONE) {
+        if (hSRS_from != nullptr)
+            OSRDestroySpatialReference(hSRS_from);
+        if (hSRS_to != nullptr)
+            OSRDestroySpatialReference(hSRS_to);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    std::string save_opt =
+            get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
+
+    if (traditional_gis_order) {
+        OSRSetAxisMappingStrategy(hSRS_from, OAMS_TRADITIONAL_GIS_ORDER);
+        OSRSetAxisMappingStrategy(hSRS_to, OAMS_TRADITIONAL_GIS_ORDER);
+    }
+    else {
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "NO");
+        OSRSetAxisMappingStrategy(hSRS_from, OAMS_AUTHORITY_COMPLIANT);
+        OSRSetAxisMappingStrategy(hSRS_to, OAMS_AUTHORITY_COMPLIANT);
+    }
+
+    OGRCoordinateTransformationH hCT = nullptr;
+    hCT = OCTNewCoordinateTransformation(hSRS_from, hSRS_to);
+    if (hCT == nullptr) {
+        if (hSRS_from != nullptr)
+            OSRDestroySpatialReference(hSRS_from);
+        if (hSRS_to != nullptr)
+            OSRDestroySpatialReference(hSRS_to);
+        Rcpp::stop("failed to create coordinate transformer");
+    }
+
+    double out_xmin, out_ymin, out_xmax, out_ymax;
+    out_xmin = out_ymin = out_xmax = out_ymax = NA_REAL;
+
+    int res = OCTTransformBounds(hCT, bbox[0], bbox[1], bbox[2], bbox[3],
+                                 &out_xmin, &out_ymin, &out_xmax, &out_ymax,
+                                 densify_pts);
+
+    OCTDestroyCoordinateTransformation(hCT);
+    OSRDestroySpatialReference(hSRS_from);
+    OSRDestroySpatialReference(hSRS_to);
+
+    set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
+
+    if (!res)
+        Rcpp::stop("error returned by OCTTransformBounds()");
+
+    return Rcpp::NumericVector::create(out_xmin, out_ymin, out_xmax, out_ymax);
+}
