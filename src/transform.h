@@ -19,7 +19,7 @@ void setPROJEnableNetwork(int enabled);
 
 Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
                                 const std::string &srs,
-                                std::string well_known_gcs);
+                                const std::string &well_known_gcs);
 
 Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
                                  const std::string &srs_from,
