@@ -139,7 +139,7 @@ void setPROJEnableNetwork(int enabled) {
 // [[Rcpp::export]]
 Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
                                 const std::string &srs,
-                                std::string well_known_gcs = "") {
+                                const std::string &well_known_gcs = "") {
 
     Rcpp::NumericMatrix pts_in;
     if (Rcpp::is<Rcpp::DataFrame>(pts)) {
@@ -158,7 +158,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     OGRSpatialReference oSourceSRS{};
     OGRSpatialReference *poLongLat = nullptr;
     OGRCoordinateTransformation *poCT = nullptr;
-    OGRErr err;
+    OGRErr err = OGRERR_NONE;
 
     err = oSourceSRS.importFromWkt(srs_in.c_str());
     if (err != OGRERR_NONE)
@@ -177,7 +177,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
         poLongLat = new OGRSpatialReference();
         err = poLongLat->SetWellKnownGeogCS(well_known_gcs.c_str());
         if (err == OGRERR_FAILURE) {
-            delete poLongLat;
+            poLongLat->Release();
             Rcpp::stop("failed to set well known GCS");
         }
     }
@@ -185,8 +185,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 
     poCT = OGRCreateCoordinateTransformation(&oSourceSRS, poLongLat);
     if (poCT == nullptr) {
-        if (poLongLat != nullptr)
-            poLongLat->Release();
+        poLongLat->Release();
         Rcpp::stop("failed to create coordinate transformer");
     }
 
@@ -196,8 +195,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
     if (!poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data())) {
         OGRCoordinateTransformation::DestroyCT(poCT);
-        if (poLongLat != nullptr)
-            poLongLat->Release();
+        poLongLat->Release();
         Rcpp::stop("coordinate transformation failed");
     }
 
@@ -206,8 +204,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
 
     OGRCoordinateTransformation::DestroyCT(poCT);
-    if (poLongLat != nullptr)
-        poLongLat->Release();
+    poLongLat->Release();
 
     return ret;
 }
