@@ -153,6 +153,12 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
         Rcpp::stop("'pts' must be a data frame or matrix");
     }
 
+    if (pts_in.nrow() == 0)
+        Rcpp::stop("input matrix is empty");
+
+    if (pts_in.ncol() != 2)
+        Rcpp::stop("input matrix must have 2 columns");
+
     std::string srs_in = srs_to_wkt(srs, false);
 
     OGRSpatialReference oSourceSRS{};
@@ -249,6 +255,12 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     else {
         Rcpp::stop("'pts' must be a data frame or matrix");
     }
+
+    if (pts_in.nrow() == 0)
+        Rcpp::stop("input matrix is empty");
+
+    if (pts_in.ncol() != 2)
+        Rcpp::stop("input matrix must have 2 columns");
 
     std::string srs_from_in = srs_to_wkt(srs_from, false);
     std::string srs_to_in = srs_to_wkt(srs_to, false);
