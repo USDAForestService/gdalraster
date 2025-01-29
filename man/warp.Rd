@@ -32,7 +32,7 @@ An error is raised if the operation fails.
 \description{
 \code{warp()} is a wrapper of the \command{gdalwarp} command-line utility for
 raster reprojection and warping
-(see \url{https://gdal.org/programs/gdalwarp.html}).
+(see \url{https://gdal.org/en/stable/programs/gdalwarp.html}).
 The function can reproject to any supported spatial reference system (SRS).
 It can also be used to crop, mosaic, resample, and optionally write output
 to a different raster format. See Details for a list of commonly used
@@ -71,7 +71,7 @@ with a low quality resampling method, and the warping is done using a
 higher quality resampling method).
 \item \verb{-wo <NAME>=<VALUE>}\cr
 Set a warp option as described in the GDAL documentation for
-\href{https://gdal.org/api/gdalwarp_cpp.html#_CPPv415GDALWarpOptions}{\code{GDALWarpOptions}}
+\href{https://gdal.org/en/stable/api/gdalwarp_cpp.html#_CPPv415GDALWarpOptions}{\code{GDALWarpOptions}}
 Multiple \code{-wo} may be given. See also \code{-multi} below.
 \item \verb{-ot <type>}\cr
 Force the output raster bands to have a specific data type supported by
@@ -143,7 +143,7 @@ Set one or more format specific creation options for the output dataset.
 For example, the GeoTIFF driver supports creation options to control
 compression, and whether the file should be tiled.
 \code{\link[=getCreationOptions]{getCreationOptions()}} can be used to look up available creation options,
-but the GDAL \href{https://gdal.org/drivers/raster/index.html}{Raster drivers}
+but the GDAL \href{https://gdal.org/en/stable/drivers/raster/index.html}{Raster drivers}
 documentation is the definitive reference for format specific options.
 Multiple \code{-co} may be given, e.g.,
 \preformatted{ c("-co", "COMPRESS=LZW", "-co", "BIGTIFF=YES") }
@@ -154,7 +154,7 @@ is not specified and the output file already exists, it will be updated
 in place.
 }
 
-The documentation for \href{https://gdal.org/programs/gdalwarp.html}{\code{gdalwarp}}
+The documentation for \href{https://gdal.org/en/stable/programs/gdalwarp.html}{\code{gdalwarp}}
 describes additional command-line options related to spatial reference
 systems, alpha bands, masking with polygon cutlines including blending,
 and more.

@@ -66,5 +66,5 @@ vsi_stat(url_file, "size")
 }
 \seealso{
 GDAL Virtual File Systems:\cr
-\url{https://gdal.org/user/virtual_file_systems.html}
+\url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 }

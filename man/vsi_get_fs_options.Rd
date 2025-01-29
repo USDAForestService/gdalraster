@@ -34,5 +34,5 @@ vsi_get_fs_options("/vsizip/", as_list = FALSE)
 \seealso{
 \code{\link[=set_config_option]{set_config_option()}}, \code{\link[=vsi_get_fs_prefixes]{vsi_get_fs_prefixes()}}
 
-\url{https://gdal.org/user/virtual_file_systems.html}
+\url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 }

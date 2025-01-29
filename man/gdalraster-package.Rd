@@ -8,7 +8,7 @@
   \code{gdalraster} is an interface to the Geospatial Data Abstraction
   Library (GDAL) for low level raster I/O. Calling signatures resemble those
   of the native C, C++ and Python APIs provided by the GDAL project.
-  See \url{https://gdal.org/api/} for details of the GDAL Raster API.
+  See \url{https://gdal.org/en/stable/api/} for details of the GDAL Raster API.
 }
 \details{
   Core functionality is contained in class \code{GDALRaster} and several
@@ -183,21 +183,22 @@ Maintainer: Chris Toney <chris.toney at usda.gov>
 }
 \seealso{
   GDAL Raster Data Model:\cr
-  \url{https://gdal.org/user/raster_data_model.html}
+  \url{https://gdal.org/en/stable/user/raster_data_model.html}
 
   Raster format descriptions:\cr
-  \url{https://gdal.org/drivers/raster/index.html}
+  \url{https://gdal.org/en/stable/drivers/raster/index.html}
 
   Geotransform tutorial:\cr
-  \url{https://gdal.org/tutorials/geotransforms_tut.html}
+  \url{https://gdal.org/en/stable/tutorials/geotransforms_tut.html}
 
   GDAL Virtual File Systems:\cr
-  \url{https://gdal.org/user/virtual_file_systems.html}
+  \url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 }
 \note{
   Documentation for \code{GDALRaster-class} and several wrapper functions
   borrows from the GDAL API documentation, (c) 1998-2025, Frank Warmerdam,
-  Even Rouault, and others, \href{https://gdal.org/license.html}{MIT license}.
+  Even Rouault, and others,
+  \href{https://gdal.org/en/stable/license.html}{MIT license}.
 
   Sample datasets included with the package are used in examples throughout
   the documentation. The sample data include

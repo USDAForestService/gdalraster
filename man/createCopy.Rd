@@ -55,7 +55,7 @@ geotransform are all copied from the source raster.
 \note{
 \code{dst_filename} may be an empty string (\code{""}) with \code{format = "MEM"} and
 \code{return_obj = TRUE} to create an In-memory Raster
-(\url{https://gdal.org/drivers/raster/mem.html}).
+(\url{https://gdal.org/en/stable/drivers/raster/mem.html}).
 }
 \examples{
 lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")

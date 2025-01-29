@@ -87,7 +87,7 @@ The output layer will be created if it does not exist, but output can also
 be appended to an existing layer, or written to an existing empty layer that
 has a custom schema defined.
 \code{ogr_proc()} is basically a port of the
-\href{https://gdal.org/programs/ogr_layer_algebra.html#ogr-layer-algebra}{\code{ogr_layer_algebra}}
+\href{https://gdal.org/en/stable/programs/ogr_layer_algebra.html#ogr-layer-algebra}{\code{ogr_layer_algebra}}
 utility in the GDAL Python bindings.
 }
 \details{

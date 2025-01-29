@@ -19,7 +19,7 @@
 //' `vsi_copy_file()` is a wrapper for `VSICopyFile()` in the GDAL Common
 //' Portability Library. The GDAL VSI functions allow virtualization of disk
 //' I/O so that non file data sources can be made to appear as files.
-//' See \url{https://gdal.org/user/virtual_file_systems.html}.
+//' See \url{https://gdal.org/en/stable/user/virtual_file_systems.html}.
 //' Requires GDAL >= 3.7.
 //'
 //' @details
@@ -562,7 +562,7 @@ SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames) {
 //'
 //' @seealso
 //' GDAL Virtual File Systems:\cr
-//' \url{https://gdal.org/user/virtual_file_systems.html}
+//' \url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 //'
 //' @examples
 //' data_dir <- system.file("extdata", package="gdalraster")
@@ -688,7 +688,7 @@ int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath) {
 //' @seealso
 //' [vsi_get_fs_options()]
 //'
-//' \url{https://gdal.org/user/virtual_file_systems.html}
+//' \url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 //'
 //' @examples
 //' vsi_get_fs_prefixes()

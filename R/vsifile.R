@@ -22,7 +22,7 @@ SEEK_END <- "SEEK_END"
 #' @description
 #' `VSIFile` provides bindings to the GDAL VSIVirtualHandle API. Encapsulates a
 #' `VSIVirtualHandle`
-#' (\url{https://gdal.org/api/cpl_cpp.html#_CPPv416VSIVirtualHandle}).
+#' (\url{https://gdal.org/en/stable/api/cpl_cpp.html#_CPPv416VSIVirtualHandle}).
 #' This API abstracts binary file I/O across "regular" file systems, URLs,
 #' cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
 #' It provides analogs of several Standard C file I/O functions, allowing
@@ -31,7 +31,7 @@ SEEK_END <- "SEEK_END"
 #'
 #' @param filename Character string containing the filename to open. It may be
 #' a file in a regular local filesystem, or a filename with a GDAL /vsiPREFIX/
-#' (see \url{https://gdal.org/user/virtual_file_systems.html}).
+#' (see \url{https://gdal.org/en/stable/user/virtual_file_systems.html}).
 #' @param access Character string containing the access requested (i.e., `"r"`,
 #' `"r+"`, `"w"`, `"w+`). Defaults to `"r"`. Binary access is always implied
 #' and the "b" does not need to be included in `access`.
@@ -217,13 +217,13 @@ SEEK_END <- "SEEK_END"
 #' @seealso
 #' GDAL Virtual File Systems (compressed, network hosted, etc...):\cr
 #' /vsimem, /vsizip, /vsitar, /vsicurl, ...\cr
-#' \url{https://gdal.org/user/virtual_file_systems.html}
+#' \url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 #'
 #' [vsi_copy_file()], [vsi_read_dir()], [vsi_stat()], [vsi_unlink()]
 #'
 #' @examples
 #' # The examples make use of the FARSITE LCP format specification at:
-#' # https://gdal.org/drivers/raster/lcp.html
+#' # https://gdal.org/en/stable/drivers/raster/lcp.html
 #' # An LCP file is a raw format with a 7,316-byte header. The format
 #' # specification gives byte offets and data types for fields in the header.
 #'

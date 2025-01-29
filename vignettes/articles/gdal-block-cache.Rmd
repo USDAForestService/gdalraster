@@ -82,7 +82,7 @@ ds2$getBlockSize(band=1)
 ds2$close()
 ```
 
-This creates a "striped" tif with raster blocks arranged for row-level access (`TILED=NO` is the default creation option for the [GTiff format driver](https://gdal.org/drivers/raster/gtiff.html#creation-issues)). The resulting file is larger at 10.6 GB vs. 6.8 GB, since compression is not efficient for strips vs. tiles. Substituting the new file (`f2`) in the test above gives the following time to read all pixels by row:
+This creates a "striped" tif with raster blocks arranged for row-level access (`TILED=NO` is the default creation option for the [GTiff format driver](https://gdal.org/en/stable/drivers/raster/gtiff.html#creation-issues)). The resulting file is larger at 10.6 GB vs. 6.8 GB, since compression is not efficient for strips vs. tiles. Substituting the new file (`f2`) in the test above gives the following time to read all pixels by row:
 
 ```
 ## Test 2
@@ -230,8 +230,8 @@ ds$close()
 
 ## See also
 
-* [RFC 26: GDAL Block Cache Improvements](https://gdal.org/development/rfc/rfc26_blockcache.html)
-* [Configuration options for GDAL](https://gdal.org/user/configoptions.html)
-* [Performance optimization for GDAL Warp](https://gdal.org/tutorials/warp_tut.html#performance-optimization)
-* [GDALRasterBlock Class Reference](https://gdal.org/doxygen/classGDALRasterBlock.html)
+* [RFC 26: GDAL Block Cache Improvements](https://gdal.org/en/stable/development/rfc/rfc26_blockcache.html)
+* [Configuration options for GDAL](https://gdal.org/en/stable/user/configoptions.html)
+* [Performance optimization for GDAL Warp](https://gdal.org/en/stable/tutorials/warp_tut.html#performance-optimization)
+* [GDALRasterBlock Class Reference](https://gdal.org/en/stable/doxygen/classGDALRasterBlock.html)
 * [gcore/gdalrasterblock.cpp](https://github.com/OSGeo/gdal/blob/97f0c0b35c7ca5f17bdd74312bee2a0afa4d2199/gcore/gdalrasterblock.cpp)

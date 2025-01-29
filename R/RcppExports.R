@@ -38,7 +38,7 @@ gdal_version <- function() {
 #'
 #' @note
 #' Virtual I/O refers to operations on GDAL Virtual File Systems. See
-#' \url{https://gdal.org/user/virtual_file_systems.html#virtual-file-systems}.
+#' \url{https://gdal.org/en/stable/user/virtual_file_systems.html#virtual-file-systems}.
 #'
 #' @examples
 #' nrow(gdal_formats())
@@ -56,7 +56,7 @@ gdal_formats <- function(format = "") {
 #' They are used to alter the default behavior of certain raster format
 #' drivers, and in some cases the GDAL core. For a full description and
 #' listing of available options see
-#' \url{https://gdal.org/user/configoptions.html}.
+#' \url{https://gdal.org/en/stable/user/configoptions.html}.
 #'
 #' @param key Character name of a configuration option.
 #' @returns Character. The value of a (key, value) option previously set with
@@ -82,7 +82,7 @@ get_config_option <- function(key) {
 #' They are used to alter the default behavior of certain raster format
 #' drivers, and in some cases the GDAL core. For a full description and
 #' listing of available options see
-#' \url{https://gdal.org/user/configoptions.html}.
+#' \url{https://gdal.org/en/stable/user/configoptions.html}.
 #'
 #' @param key Character name of a configuration option.
 #' @param value Character value to set for the option.
@@ -258,7 +258,7 @@ get_usable_physical_ram <- function() {
 #' [ogrinfo()], [ogr_execute_sql()]
 #'
 #' OGR SQL dialect and SQLITE SQL dialect:\cr
-#' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
+#' \url{https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html}
 #'
 #' @examples
 #' has_spatialite()
@@ -446,7 +446,7 @@ autoCreateWarpedVRT <- function(src_ds, dst_wkt, resample_alg, src_wkt = "", max
 #' `buildVRT()` is a wrapper of the \command{gdalbuildvrt} command-line
 #' utility for building a VRT (Virtual Dataset) that is a mosaic of the list
 #' of input GDAL datasets
-#' (see \url{https://gdal.org/programs/gdalbuildvrt.html}).
+#' (see \url{https://gdal.org/en/stable/programs/gdalbuildvrt.html}).
 #'
 #' @details
 #' Several command-line options are described in the GDAL documentation at the
@@ -582,7 +582,7 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
 #' Compute footprint of a raster
 #'
 #' `footprint()` is a wrapper of the \command{gdal_footprint} command-line
-#' utility (see \url{https://gdal.org/programs/gdal_footprint.html}).
+#' utility (see \url{https://gdal.org/en/stable/programs/gdal_footprint.html}).
 #' The function can be used to compute the footprint of a raster file, taking
 #' into account nodata values (or more generally the mask band attached to
 #' the raster bands), and generating polygons/multipolygons corresponding to
@@ -630,7 +630,7 @@ footprint <- function(src_filename, dst_filename, cl_arg = NULL) {
 #' Convert vector data between different formats
 #'
 #' `ogr2ogr()` is a wrapper of the \command{ogr2ogr} command-line
-#' utility (see \url{https://gdal.org/programs/ogr2ogr.html}).
+#' utility (see \url{https://gdal.org/en/stable/programs/ogr2ogr.html}).
 #' This function can be used to convert simple features data between file
 #' formats. It can also perform various operations during the process, such
 #' as spatial or attribute selection, reducing the set of attributes, setting
@@ -704,7 +704,7 @@ ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL, open_opt
 #' Retrieve information about a vector data source
 #'
 #' `ogrinfo()` is a wrapper of the \command{ogrinfo} command-line
-#' utility (see \url{https://gdal.org/programs/ogrinfo.html}).
+#' utility (see \url{https://gdal.org/en/stable/programs/ogrinfo.html}).
 #' This function lists information about an OGR-supported data source.
 #' It is also possible to edit data with SQL statements.
 #' Refer to the GDAL documentation at the URL above for a description of
@@ -874,7 +874,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' Convert raster data between different formats
 #'
 #' `translate()` is a wrapper of the \command{gdal_translate} command-line
-#' utility (see \url{https://gdal.org/programs/gdal_translate.html}).
+#' utility (see \url{https://gdal.org/en/stable/programs/gdal_translate.html}).
 #'
 #' Called from and documented in R/gdal_util.R
 #'
@@ -887,7 +887,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #'
 #' `warp()` is a wrapper of the \command{gdalwarp} command-line utility for
 #' raster mosaicing, reprojection and warping
-#' (see \url{https://gdal.org/programs/gdalwarp.html}).
+#' (see \url{https://gdal.org/en/stable/programs/gdalwarp.html}).
 #'
 #' Called from and documented in R/gdal_util.R
 #'
@@ -923,7 +923,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #' A color entry value to end the ramp (e.g., RGB values).
 #' @param palette_interp One of "Gray", "RGB" (the default), "CMYK" or "HLS"
 #' describing interpretation of `start_color` and `end_color` values
-#' (see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL
+#' (see \href{https://gdal.org/en/stable/user/raster_data_model.html#color-table}{GDAL
 #' Color Table}).
 #' @returns Integer matrix with five columns containing the color ramp from
 #' `start_index` to `end_index`, with raster index values in column 1 and
@@ -1230,7 +1230,7 @@ identifyDriver <- function(filename, raster = TRUE, vector = TRUE, allowed_drive
 #' `vsi_copy_file()` is a wrapper for `VSICopyFile()` in the GDAL Common
 #' Portability Library. The GDAL VSI functions allow virtualization of disk
 #' I/O so that non file data sources can be made to appear as files.
-#' See \url{https://gdal.org/user/virtual_file_systems.html}.
+#' See \url{https://gdal.org/en/stable/user/virtual_file_systems.html}.
 #' Requires GDAL >= 3.7.
 #'
 #' @details
@@ -1618,7 +1618,7 @@ vsi_unlink_batch <- function(filenames) {
 #'
 #' @seealso
 #' GDAL Virtual File Systems:\cr
-#' \url{https://gdal.org/user/virtual_file_systems.html}
+#' \url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 #'
 #' @examples
 #' data_dir <- system.file("extdata", package="gdalraster")
@@ -1693,7 +1693,7 @@ vsi_rename <- function(oldpath, newpath) {
 #' @seealso
 #' [vsi_get_fs_options()]
 #'
-#' \url{https://gdal.org/user/virtual_file_systems.html}
+#' \url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 #'
 #' @examples
 #' vsi_get_fs_prefixes()

@@ -25,7 +25,7 @@ A color entry value to end the ramp (e.g., RGB values).}
 
 \item{palette_interp}{One of "Gray", "RGB" (the default), "CMYK" or "HLS"
 describing interpretation of \code{start_color} and \code{end_color} values
-(see \href{https://gdal.org/user/raster_data_model.html#color-table}{GDAL
+(see \href{https://gdal.org/en/stable/user/raster_data_model.html#color-table}{GDAL
 Color Table}).}
 }
 \value{

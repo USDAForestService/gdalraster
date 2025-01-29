@@ -11,7 +11,7 @@
 #' An object of class `GDALVector` persists an open connection to the dataset,
 #' and exposes methods for retrieving layer information, setting attribute and
 #' spatial filters, and reading/writing feature data.
-#' See \url{https://gdal.org/api/index.html} for details of the GDAL
+#' See \url{https://gdal.org/en/stable/api/index.html} for details of the GDAL
 #' Vector API.
 #'
 #' **Class `GDALVector` is currently under development**. An initial
@@ -232,7 +232,7 @@
 #' `ReorderFields`, `AlterFieldDefn`, `AlterGeomFieldDefn`, `DeleteFeature`,
 #' `StringsAsUTF8`, `Transactions`, `CurveGeometries`.
 #' (See the GDAL documentation for
-#' [`OGR_L_TestCapability()`](https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).)
+#' [`OGR_L_TestCapability()`](https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).)
 #'
 #' \code{$getFIDColumn()}\cr
 #' Returns the name of the underlying database column being used as the FID
@@ -286,7 +286,7 @@
 #' `$getNextFeature()` or `$fetch()` methods.
 #' Only features for which `query` evaluates as true will be returned.
 #' The query string should be in the format of an SQL WHERE clause, described
-#' in the ["WHERE"](https://gdal.org/user/ogr_sql_dialect.html#where)
+#' in the ["WHERE"](https://gdal.org/en/stable/user/ogr_sql_dialect.html#where)
 #' section of the OGR SQL dialect documentation (e.g.,
 #' `"population > 1000000 and population < 5000000"`, where `population` is an
 #' attribute in the layer).
@@ -606,10 +606,10 @@
 #' [ogr_define], [ogr_manage], [ogr2ogr()], [ogrinfo()]
 #'
 #' GDAL vector format descriptions:\cr
-#' \url{https://gdal.org/drivers/vector/index.html}
+#' \url{https://gdal.org/en/stable/drivers/vector/index.html}
 #'
 #' GDAL-supported SQL dialects:\cr
-#' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html})
+#' \url{https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html})
 #'
 #' @examples
 #' ## MTBS fire perimeters in Yellowstone National Park 1984-2022
