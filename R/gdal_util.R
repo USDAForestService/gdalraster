@@ -4,7 +4,7 @@
 #' Convert raster data between different formats
 #'
 #' `translate()` is a wrapper of the \command{gdal_translate} command-line
-#' utility (see \url{https://gdal.org/programs/gdal_translate.html}).
+#' utility (see \url{https://gdal.org/en/stable/programs/gdal_translate.html}).
 #' The function can be used to convert raster data between different
 #' formats, potentially performing some operations like subsetting,
 #' resampling, and rescaling pixels in the process. Refer to the GDAL
@@ -88,7 +88,7 @@ translate <- function(src_filename, dst_filename, cl_arg = NULL,
 #'
 #' `warp()` is a wrapper of the \command{gdalwarp} command-line utility for
 #' raster reprojection and warping
-#' (see \url{https://gdal.org/programs/gdalwarp.html}).
+#' (see \url{https://gdal.org/en/stable/programs/gdalwarp.html}).
 #' The function can reproject to any supported spatial reference system (SRS).
 #' It can also be used to crop, mosaic, resample, and optionally write output
 #' to a different raster format. See Details for a list of commonly used
@@ -127,7 +127,7 @@ translate <- function(src_filename, dst_filename, cl_arg = NULL,
 #'   higher quality resampling method).
 #'   * `-wo <NAME>=<VALUE>`\cr
 #'   Set a warp option as described in the GDAL documentation for
-#'   [`GDALWarpOptions`](https://gdal.org/api/gdalwarp_cpp.html#_CPPv415GDALWarpOptions)
+#'   [`GDALWarpOptions`](https://gdal.org/en/stable/api/gdalwarp_cpp.html#_CPPv415GDALWarpOptions)
 #'   Multiple `-wo` may be given. See also `-multi` below.
 #'   * `-ot <type>`\cr
 #'   Force the output raster bands to have a specific data type supported by
@@ -199,7 +199,7 @@ translate <- function(src_filename, dst_filename, cl_arg = NULL,
 #'   For example, the GeoTIFF driver supports creation options to control
 #'   compression, and whether the file should be tiled.
 #'   [getCreationOptions()] can be used to look up available creation options,
-#'   but the GDAL [Raster drivers](https://gdal.org/drivers/raster/index.html)
+#'   but the GDAL [Raster drivers](https://gdal.org/en/stable/drivers/raster/index.html)
 #'   documentation is the definitive reference for format specific options.
 #'   Multiple `-co` may be given, e.g.,
 #'   \preformatted{ c("-co", "COMPRESS=LZW", "-co", "BIGTIFF=YES") }
@@ -209,7 +209,7 @@ translate <- function(src_filename, dst_filename, cl_arg = NULL,
 #'   is not specified and the output file already exists, it will be updated
 #'   in place.
 #'
-#' The documentation for [`gdalwarp`](https://gdal.org/programs/gdalwarp.html)
+#' The documentation for [`gdalwarp`](https://gdal.org/en/stable/programs/gdalwarp.html)
 #' describes additional command-line options related to spatial reference
 #' systems, alpha bands, masking with polygon cutlines including blending,
 #' and more.

@@ -29,7 +29,7 @@
 #' @note
 #' `dst_filename` may be an empty string (`""`) with `format = "MEM"` and
 #' `return_obj = TRUE` to create an In-memory Raster
-#' (\url{https://gdal.org/drivers/raster/mem.html}).
+#' (\url{https://gdal.org/en/stable/drivers/raster/mem.html}).
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [createCopy()], [getCreationOptions()],
 #' [rasterFromRaster()]
@@ -110,7 +110,7 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
 #' @note
 #' `dst_filename` may be an empty string (`""`) with `format = "MEM"` and
 #' `return_obj = TRUE` to create an In-memory Raster
-#' (\url{https://gdal.org/drivers/raster/mem.html}).
+#' (\url{https://gdal.org/en/stable/drivers/raster/mem.html}).
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [create()], [getCreationOptions()],
 #' [rasterFromRaster()], [translate()]

@@ -21,5 +21,5 @@ vsi_get_fs_prefixes()
 \seealso{
 \code{\link[=vsi_get_fs_options]{vsi_get_fs_options()}}
 
-\url{https://gdal.org/user/virtual_file_systems.html}
+\url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 }

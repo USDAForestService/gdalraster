@@ -38,7 +38,7 @@ DEFAULT_NODATA <- list(
 #' @seealso
 #' [dem_proc()]
 #'
-#' \url{https://gdal.org/programs/gdaldem.html} for a description of all
+#' \url{https://gdal.org/en/stable/programs/gdaldem.html} for a description of all
 #' available command-line options for each processing mode
 #' @export
 DEFAULT_DEM_PROC <- list(
@@ -414,7 +414,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' elements of the XML schema describe how the source data will be read, along
 #' with algorithms potentially applied and so forth. Documentation of the XML
 #' format for .vrt is at:
-#' \url{https://gdal.org/drivers/raster/vrt.html}.
+#' \url{https://gdal.org/en/stable/drivers/raster/vrt.html}.
 #'
 #' Since .vrt is a small plain-text file it is fast to write and requires
 #' little storage space. Read performance is not degraded for certain simple
@@ -1365,7 +1365,7 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 #' @description
 #' `dem_proc()` generates DEM derivatives from an input elevation raster. This
 #' function is a wrapper for the \command{gdaldem} command-line utility.
-#' See \url{https://gdal.org/programs/gdaldem.html} for details.
+#' See \url{https://gdal.org/en/stable/programs/gdaldem.html} for details.
 #'
 #' @param mode Character. Name of the DEM processing mode. One of hillshade,
 #' slope, aspect, color-relief, TRI, TPI or roughness.
@@ -1383,7 +1383,7 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 #' @note
 #' Band 1 of the source elevation raster is read by default, but this can be
 #' changed by including a `-b` command-line argument in `mode_options`.
-#' See the \href{https://gdal.org/programs/gdaldem.html}{documentation for
+#' See the \href{https://gdal.org/en/stable/programs/gdaldem.html}{documentation for
 #' `gdaldem`} for a description of all available options for each processing
 #' mode.
 #'
@@ -1423,7 +1423,7 @@ dem_proc <- function(mode,
 #' exist, otherwise it will try to append to an existing one.
 #' This function is a wrapper of `GDALPolygonize` in the GDAL Algorithms API.
 #' It provides essentially the same functionality as the `gdal_polygonize.py`
-#' command-line program (\url{https://gdal.org/programs/gdal_polygonize.html}).
+#' command-line program (\url{https://gdal.org/en/stable/programs/gdal_polygonize.html}).
 #'
 #' @details
 #' Polygon features will be created on the output layer, with polygon
@@ -1627,7 +1627,7 @@ polygonize <- function(raster_file,
 #' the band(s) of a raster dataset. Vectors are read from any GDAL
 #' OGR-supported vector format.
 #' This function is a wrapper for the \command{gdal_rasterize} command-line
-#' utility (\url{https://gdal.org/programs/gdal_rasterize.html}).
+#' utility (\url{https://gdal.org/en/stable/programs/gdal_rasterize.html}).
 #'
 #' @param src_dsn Data source name for the input vector layer (filename or
 #' connection string).

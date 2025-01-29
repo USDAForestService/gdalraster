@@ -9,7 +9,7 @@
 #' in the GDAL Common Portability Library, but optionally creates a new ZIP
 #' file first (with `CPLCreateZip()`). It provides a subset of functionality
 #' in the GDAL `sozip` command-line utility
-#' (\url{https://gdal.org/programs/sozip.html}). Requires GDAL >= 3.7.
+#' (\url{https://gdal.org/en/stable/programs/sozip.html}). Requires GDAL >= 3.7.
 #'
 #' @details
 #' A Seek-Optimized ZIP file (SOZip) contains one or more compressed files
@@ -83,7 +83,7 @@
 #'   print(unzip(zip_file, list=TRUE))
 #'
 #'   # Open with GDAL using Virtual File System handler '/vsizip/'
-#'   # see: https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives
+#'   # see: https://gdal.org/en/stable/user/virtual_file_systems.html#vsizip-zip-archives
 #'   lcp_in_zip <- file.path("/vsizip", zip_file, "storm_lake.lcp")
 #'   print("SOZip metadata:")
 #'   print(vsi_get_file_metadata(lcp_in_zip, domain="ZIP"))
@@ -280,7 +280,7 @@ getCreationOptions <- function(format, filter=NULL) {
 #' @seealso
 #' [set_config_option()], [vsi_get_fs_prefixes()]
 #'
-#' \url{https://gdal.org/user/virtual_file_systems.html}
+#' \url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 #'
 #' @examples
 #' vsi_get_fs_options("/vsimem/")
@@ -501,7 +501,7 @@ dump_open_datasets <- function() {
 #'@note
 #' Subdataset names are the character strings that can be used to
 #' instantiate `GDALRaster` objects.
-#' See https://gdal.org/en/latest/user/raster_data_model.html#subdatasets-domain.
+#' See https://gdal.org/en/stable/en/latest/user/raster_data_model.html#subdatasets-domain.
 #'
 #' @seealso
 #' [gdal_formats()], [identifyDriver()]

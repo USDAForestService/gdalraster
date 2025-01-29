@@ -23,7 +23,7 @@ formats, with information about the capabilities of each format driver.
 }
 \note{
 Virtual I/O refers to operations on GDAL Virtual File Systems. See
-\url{https://gdal.org/user/virtual_file_systems.html#virtual-file-systems}.
+\url{https://gdal.org/en/stable/user/virtual_file_systems.html#virtual-file-systems}.
 }
 \examples{
 nrow(gdal_formats())

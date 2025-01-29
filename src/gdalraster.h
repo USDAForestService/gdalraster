@@ -1,5 +1,5 @@
 /* R interface to the GDAL C API for raster
-   https://gdal.org/api/raster_c_api.html
+   https://gdal.org/en/stable/api/raster_c_api.html
 
    Chris Toney <chris.toney at usda.gov>
    Copyright (c) 2023-2024 gdalraster authors

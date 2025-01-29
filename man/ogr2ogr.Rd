@@ -33,7 +33,7 @@ An error is raised if the operation fails.
 }
 \description{
 \code{ogr2ogr()} is a wrapper of the \command{ogr2ogr} command-line
-utility (see \url{https://gdal.org/programs/ogr2ogr.html}).
+utility (see \url{https://gdal.org/en/stable/programs/ogr2ogr.html}).
 This function can be used to convert simple features data between file
 formats. It can also perform various operations during the process, such
 as spatial or attribute selection, reducing the set of attributes, setting
