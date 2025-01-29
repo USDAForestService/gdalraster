@@ -79,9 +79,10 @@
     
     
 <p><strong>gdalraster</strong> provides bindings to the Raster API of
-the Geospatial Data Abstraction Library (<a href="https://gdal.org/" class="external-link">GDAL</a>). Using the API natively enables fast
-and scalable raster I/O from R. This vignette is an R port of the <a href="https://gdal.org/tutorials/raster_api_tut.html" class="external-link">GDAL Raster API
-tutorial</a> for C++, C and Python, (c) 1998-2025 <a href="https://github.com/warmerdam" class="external-link">Frank Warmerdam</a>, <a href="https://github.com/rouault" class="external-link">Even Rouault</a>, and <a href="https://github.com/OSGeo/gdal/graphs/contributors" class="external-link">others</a> (<a href="https://gdal.org/license.html" class="external-link">MIT license</a>).</p>
+the Geospatial Data Abstraction Library (<a href="https://gdal.org/en/stable/" class="external-link">GDAL</a>). Using the API natively
+enables fast and scalable raster I/O from R. This vignette is an R port
+of the <a href="https://gdal.org/en/stable/tutorials/raster_api_tut.html" class="external-link">GDAL
+Raster API tutorial</a> for C++, C and Python, (c) 1998-2025 <a href="https://github.com/warmerdam" class="external-link">Frank Warmerdam</a>, <a href="https://github.com/rouault" class="external-link">Even Rouault</a>, and <a href="https://github.com/OSGeo/gdal/graphs/contributors" class="external-link">others</a> (<a href="https://gdal.org/en/stable/license.html" class="external-link">MIT license</a>).</p>
 <div class="section level2">
 <h2 id="opening-a-raster-dataset">Opening a raster dataset<a class="anchor" aria-label="anchor" href="#opening-a-raster-dataset"></a>
 </h2>
@@ -111,7 +112,7 @@ and its associated raster band objects. Methods of the class are
 accessed in R using the <code>$</code> operator:</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span></span>
-<span><span class="co">#&gt; C++ object &lt;0x55e7cfd02b00&gt; of class 'GDALRaster' &lt;0x55e7c89952d0&gt;</span></span>
+<span><span class="co">#&gt; C++ object &lt;0x55be291b21b0&gt; of class 'GDALRaster' &lt;0x55be220f62d0&gt;</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">ds</span><span class="op">)</span></span>
 <span><span class="co">#&gt; Reference class 'Rcpp_GDALRaster' [package "gdalraster"] with 3 fields</span></span>
 <span><span class="co">#&gt;  $ infoOptions  : chr(0) </span></span>
@@ -136,13 +137,13 @@ accessed in R using the <code>$</code> operator:</p>
 <div class="section level2">
 <h2 id="getting-dataset-information">Getting dataset information<a class="anchor" aria-label="anchor" href="#getting-dataset-information"></a>
 </h2>
-<p>As described in the <a href="https://gdal.org/user/raster_data_model.html" class="external-link">GDAL Raster Data
-Model</a>, a GDAL dataset contains a list of raster bands, all
-pertaining to the same area and having the same resolution. It also has
-metadata, a coordinate system, a georeferencing transform, size of
+<p>As described in the <a href="https://gdal.org/en/stable/user/raster_data_model.html" class="external-link">GDAL
+Raster Data Model</a>, a GDAL dataset contains a list of raster bands,
+all pertaining to the same area and having the same resolution. It also
+has metadata, a coordinate system, a georeferencing transform, size of
 raster and various other information.</p>
 <p>In the particular but common case of a “north up” raster without any
-rotation or shearing, the georeferencing transform (see <a href="https://gdal.org/tutorials/geotransforms_tut.html" class="external-link">Geotransform
+rotation or shearing, the georeferencing transform (see <a href="https://gdal.org/en/stable/tutorials/geotransforms_tut.html" class="external-link">Geotransform
 Tutorial</a>) takes the following form <em>with 1-based indexing in
 R</em>:</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
@@ -343,10 +344,10 @@ configured raster formats along with the following read/write flags:</p>
 <code><a href="../reference/create.html">create()</a></code>
 </li>
 </ul>
-<p>The table of GDAL <a href="https://gdal.org/drivers/raster/index.html" class="external-link">raster format
-drivers</a> can also be consulted to determine if a particular driver
-supports Create or CreateCopy methods. Note that a number of drivers are
-read-only and do not support either creation method.</p>
+<p>The table of GDAL <a href="https://gdal.org/en/stable/drivers/raster/index.html" class="external-link">raster
+format drivers</a> can also be consulted to determine if a particular
+driver supports Create or CreateCopy methods. Note that a number of
+drivers are read-only and do not support either creation method.</p>
 </div>
 <div class="section level2">
 <h2 id="using-createcopy">Using createCopy()<a class="anchor" aria-label="anchor" href="#using-createcopy"></a>

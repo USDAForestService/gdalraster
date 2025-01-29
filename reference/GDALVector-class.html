@@ -4,7 +4,7 @@ dataset and calling methods on the underlying OGRLayer object.
 An object of class GDALVector persists an open connection to the dataset,
 and exposes methods for retrieving layer information, setting attribute and
 spatial filters, and reading/writing feature data.
-See https://gdal.org/api/index.html for details of the GDAL
+See https://gdal.org/en/stable/api/index.html for details of the GDAL
 Vector API.
 Class GDALVector is currently under development. An initial
 implementation supporting read access was added in gdalraster 1.11.1.9100.
@@ -16,7 +16,7 @@ dataset and calling methods on the underlying OGRLayer object.
 An object of class GDALVector persists an open connection to the dataset,
 and exposes methods for retrieving layer information, setting attribute and
 spatial filters, and reading/writing feature data.
-See https://gdal.org/api/index.html for details of the GDAL
+See https://gdal.org/en/stable/api/index.html for details of the GDAL
 Vector API.
 Class GDALVector is currently under development. An initial
 implementation supporting read access was added in gdalraster 1.11.1.9100.
@@ -78,7 +78,7 @@ dataset and calling methods on the underlying <code>OGRLayer</code> object.
 An object of class <code>GDALVector</code> persists an open connection to the dataset,
 and exposes methods for retrieving layer information, setting attribute and
 spatial filters, and reading/writing feature data.
-See <a href="https://gdal.org/api/index.html" class="external-link">https://gdal.org/api/index.html</a> for details of the GDAL
+See <a href="https://gdal.org/en/stable/api/index.html" class="external-link">https://gdal.org/en/stable/api/index.html</a> for details of the GDAL
 Vector API.</p>
 <p><strong>Class <code>GDALVector</code> is currently under development</strong>. An initial
 implementation supporting read access was added in gdalraster 1.11.1.9100.
@@ -321,7 +321,7 @@ read/write access. Returns a list of capabilities with values <code>TRUE</code> 
 <code>ReorderFields</code>, <code>AlterFieldDefn</code>, <code>AlterGeomFieldDefn</code>, <code>DeleteFeature</code>,
 <code>StringsAsUTF8</code>, <code>Transactions</code>, <code>CurveGeometries</code>.
 (See the GDAL documentation for
-<a href="https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc" class="external-link"><code>OGR_L_TestCapability()</code></a>.)</p>
+<a href="https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc" class="external-link"><code>OGR_L_TestCapability()</code></a>.)</p>
 <p><code>$getFIDColumn()</code><br>
 Returns the name of the underlying database column being used as the FID
 column, or empty string (<code>""</code>) if not supported.</p>
@@ -367,7 +367,7 @@ Sets an attribute query string to be used when fetching features via the
 <code>$getNextFeature()</code> or <code>$fetch()</code> methods.
 Only features for which <code>query</code> evaluates as true will be returned.
 The query string should be in the format of an SQL WHERE clause, described
-in the <a href="https://gdal.org/user/ogr_sql_dialect.html#where" class="external-link">"WHERE"</a>
+in the <a href="https://gdal.org/en/stable/user/ogr_sql_dialect.html#where" class="external-link">"WHERE"</a>
 section of the OGR SQL dialect documentation (e.g.,
 <code>"population &gt; 1000000 and population &lt; 5000000"</code>, where <code>population</code> is an
 attribute in the layer).
@@ -651,8 +651,8 @@ The layer can be re-opened on the existing <code>dsn</code> with
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><a href="ogr_define.html">ogr_define</a>, <a href="ogr_manage.html">ogr_manage</a>, <code><a href="ogr2ogr.html">ogr2ogr()</a></code>, <code><a href="ogrinfo.html">ogrinfo()</a></code></p>
-<p>GDAL vector format descriptions:<br><a href="https://gdal.org/drivers/vector/index.html" class="external-link">https://gdal.org/drivers/vector/index.html</a></p>
-<p>GDAL-supported SQL dialects:<br><a href="https://gdal.org/user/ogr_sql_sqlite_dialect.html" class="external-link">https://gdal.org/user/ogr_sql_sqlite_dialect.html</a>)</p></div>
+<p>GDAL vector format descriptions:<br><a href="https://gdal.org/en/stable/drivers/vector/index.html" class="external-link">https://gdal.org/en/stable/drivers/vector/index.html</a></p>
+<p>GDAL-supported SQL dialects:<br><a href="https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html" class="external-link">https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html</a>)</p></div>
     </div>
 
     <div class="section level2">
@@ -669,7 +669,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55cd53ba0260&gt; of class 'GDALVector' &lt;0x55cd50a8ab60&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55e2cb0f0e50&gt; of class 'GDALVector' &lt;0x55e2c09a3e00&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 8 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomFldName: chr "geometry"</span>
@@ -700,7 +700,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp9q1w7S/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp8iYKfU/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1200,7 +1200,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-29 06:07:56" "2025-01-29 06:07:56"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-29 22:03:24" "2025-01-29 22:03:24"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1226,7 +1226,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-29 06:07:56"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-29 22:03:24"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1269,7 +1269,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-29 06:07:56" "2025-01-29 06:07:57"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-01-29 22:03:24" "2025-01-29 22:03:25"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>

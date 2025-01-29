@@ -166,7 +166,7 @@ projection, and geotransform are all copied from the source raster:</p>
 <span><span class="va">ds2</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre>
 <p>This creates a “striped” tif with raster blocks arranged for
 row-level access (<code>TILED=NO</code> is the default creation option
-for the <a href="https://gdal.org/drivers/raster/gtiff.html#creation-issues" class="external-link">GTiff
+for the <a href="https://gdal.org/en/stable/drivers/raster/gtiff.html#creation-issues" class="external-link">GTiff
 format driver</a>). The resulting file is larger at 10.6 GB vs. 6.8 GB,
 since compression is not efficient for strips vs. tiles. Substituting
 the new file (<code>f2</code>) in the test above gives the following
@@ -341,13 +341,13 @@ disabled:</p>
 <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a>
 </h2>
 <ul>
-<li><a href="https://gdal.org/development/rfc/rfc26_blockcache.html" class="external-link">RFC
+<li><a href="https://gdal.org/en/stable/development/rfc/rfc26_blockcache.html" class="external-link">RFC
 26: GDAL Block Cache Improvements</a></li>
-<li><a href="https://gdal.org/user/configoptions.html" class="external-link">Configuration
+<li><a href="https://gdal.org/en/stable/user/configoptions.html" class="external-link">Configuration
 options for GDAL</a></li>
-<li><a href="https://gdal.org/tutorials/warp_tut.html#performance-optimization" class="external-link">Performance
+<li><a href="https://gdal.org/en/stable/tutorials/warp_tut.html#performance-optimization" class="external-link">Performance
 optimization for GDAL Warp</a></li>
-<li><a href="https://gdal.org/doxygen/classGDALRasterBlock.html" class="external-link">GDALRasterBlock
+<li><a href="https://gdal.org/en/stable/doxygen/classGDALRasterBlock.html" class="external-link">GDALRasterBlock
 Class Reference</a></li>
 <li><a href="https://github.com/OSGeo/gdal/blob/97f0c0b35c7ca5f17bdd74312bee2a0afa4d2199/gcore/gdalrasterblock.cpp" class="external-link">gcore/gdalrasterblock.cpp</a></li>
 </ul>

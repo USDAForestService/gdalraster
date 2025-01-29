@@ -86,7 +86,7 @@ set. They are used to alter the default behavior of certain raster
 format drivers, and in some cases the GDAL core. A large number of
 configuration options are available. An overall discussion along with
 full list of available options and where they apply is in the GDAL
-documentation at <a href="https://gdal.org/user/configoptions.html" class="external-link uri">https://gdal.org/user/configoptions.html</a>.</p>
+documentation at <a href="https://gdal.org/en/stable/user/configoptions.html" class="external-link uri">https://gdal.org/en/stable/user/configoptions.html</a>.</p>
 <p>This quick reference covers a small subset of configuration options
 that may be useful in common scenarios, with links to topic-specific
 documentation provided by the GDAL project. Options can be set from R
@@ -104,7 +104,7 @@ string) will unset a value previously set by
 <div class="section level2">
 <h2 id="general-options">General options<a class="anchor" aria-label="anchor" href="#general-options"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#general-options" class="external-link uri">https://gdal.org/user/configoptions.html#general-options</a></p>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/user/configoptions.html#general-options" class="external-link uri">https://gdal.org/en/stable/user/configoptions.html#general-options</a></p>
 <p><strong><code>GDAL_RASTERIO_RESAMPLING</code></strong></p>
 <p>The <code>$read()</code> method of a <code>GDALRaster</code> object
 will perform automatic resampling if the specified output size
@@ -126,7 +126,7 @@ directory. This can be changed with:</p>
 <div class="section level2">
 <h2 id="performance-and-caching">Performance and caching<a class="anchor" aria-label="anchor" href="#performance-and-caching"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#performance-and-caching" class="external-link uri">https://gdal.org/user/configoptions.html#performance-and-caching</a></p>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/user/configoptions.html#performance-and-caching" class="external-link uri">https://gdal.org/en/stable/user/configoptions.html#performance-and-caching</a></p>
 <p><strong><code>GDAL_NUM_THREADS</code></strong></p>
 <p>Sets the number of worker threads to be used by GDAL operations that
 support multithreading. This affects several different parts of GDAL
@@ -154,7 +154,7 @@ the <code>GDALProxyPool</code> mechanism (used by VRT for example) is
 performance with VRT mosaics made of numerous underlying raster files.
 Note: on Linux systems, the number of file handles that can be opened by
 a process is generally limited to <code>1024</code>. This is currently
-clamped between <code>2</code> and <code>1000</code>. Also note that <a href="https://gdal.org/drivers/raster/vrt.html#performance-considerations" class="external-link"><code>gdalwarp</code>
+clamped between <code>2</code> and <code>1000</code>. Also note that <a href="https://gdal.org/en/stable/drivers/raster/vrt.html#performance-considerations" class="external-link"><code>gdalwarp</code>
 increases the pool size to <code>450</code></a>:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># default is 100</span></span>
@@ -164,7 +164,7 @@ increases the pool size to <code>450</code></a>:</p>
 inserting data which is significantly faster than <code>INSERT</code>.
 This can increase performance substantially when using
 <code><a href="../reference/polygonize.html">gdalraster::polygonize()</a></code> to write polygons to PostGIS
-vector. See also <a href="https://gdal.org/drivers/vector/pg.html#configuration-options" class="external-link">GDAL
+vector. See also <a href="https://gdal.org/en/stable/drivers/vector/pg.html#configuration-options" class="external-link">GDAL
 configuration options for PostgreSQL</a>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># use COPY for inserting to PostGIS</span></span>
@@ -178,7 +178,7 @@ concurrent edits may lead to database corruption. This setting may
 increase performance substantially when using
 <code><a href="../reference/polygonize.html">gdalraster::polygonize()</a></code> to write polygons to a vector
 layer in these formats. Additional configuration and performance hints
-for SQLite databases are in the driver documentation at: <a href="https://gdal.org/drivers/vector/sqlite.html#configuration-options" class="external-link uri">https://gdal.org/drivers/vector/sqlite.html#configuration-options</a>.</p>
+for SQLite databases are in the driver documentation at: <a href="https://gdal.org/en/stable/drivers/vector/sqlite.html#configuration-options" class="external-link uri">https://gdal.org/en/stable/drivers/vector/sqlite.html#configuration-options</a>.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SQLite: GPKG (.gpkg) and Spatialite (.sqlite)</span></span>
 <span><span class="co"># enable extra buffering/caching by the GDAL/OGR I/O layer</span></span>
@@ -221,7 +221,7 @@ layer in GeoPackage (.gpkg) or Spatialite (.sqlite) formats (see
 <div class="section level2">
 <h2 id="networking">Networking<a class="anchor" aria-label="anchor" href="#networking"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#networking-options" class="external-link uri">https://gdal.org/user/configoptions.html#networking-options</a></p>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/user/configoptions.html#networking-options" class="external-link uri">https://gdal.org/en/stable/user/configoptions.html#networking-options</a></p>
 <p><strong><code>CPL_VSIL_USE_TEMP_FILE_FOR_RANDOM_WRITE</code></strong></p>
 <p>Whether to use a local temporary file to support random writes in
 certain virtual file systems. The temporary file will be located in
@@ -233,7 +233,7 @@ certain virtual file systems. The temporary file will be located in
 <div class="section level2">
 <h2 id="proj">PROJ<a class="anchor" aria-label="anchor" href="#proj"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#proj-options" class="external-link uri">https://gdal.org/user/configoptions.html#proj-options</a></p>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/user/configoptions.html#proj-options" class="external-link uri">https://gdal.org/en/stable/user/configoptions.html#proj-options</a></p>
 <p><strong><code>OSR_DEFAULT_AXIS_MAPPING_STRATEGY</code></strong></p>
 <p>This option can be set to either <code>TRADITIONAL_GIS_ORDER</code>
 or <code>AUTHORITY_COMPLIANT</code>. GDAL &gt;= 3.5 defaults to
@@ -250,7 +250,7 @@ definition to Well Known Text is WKT 1. This can be overridden with:</p>
 <div class="section level2">
 <h2 id="warp">Warp<a class="anchor" aria-label="anchor" href="#warp"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/programs/gdalwarp.html#memory-usage" class="external-link uri">https://gdal.org/programs/gdalwarp.html#memory-usage</a></p>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/programs/gdalwarp.html#memory-usage" class="external-link uri">https://gdal.org/en/stable/programs/gdalwarp.html#memory-usage</a></p>
 <p>The <a href="#performance-and-caching">performance and caching</a>
 topic above generally applies to processing with
 <code><a href="../reference/warp.html">gdalraster::warp()</a></code> (reproject/resample/crop/mosaic).</p>
@@ -271,7 +271,7 @@ in <code>cl_arg</code> with
 <code>c("-wo", "NUM_THREADS=&lt;value&gt;")</code> greater than 1, which
 is equivalent to setting the <code>GDAL_NUM_THREADS</code> configuration
 option as shown above.</p>
-<p>This option can be combined with the <a href="https://gdal.org/programs/gdalwarp.html#cmdoption-gdalwarp-multi" class="external-link"><code>-multi</code>
+<p>This option can be combined with the <a href="https://gdal.org/en/stable/programs/gdalwarp.html#cmdoption-gdalwarp-multi" class="external-link"><code>-multi</code>
 command-line argument</a> passed to <code><a href="../reference/warp.html">warp()</a></code> in
 <code>cl_arg</code>. With <code>-multi</code>, two threads will be used
 to process chunks of the raster and perform input/output operation
@@ -285,10 +285,10 @@ above.</p>
 <div class="section level2">
 <h2 id="geotiff">GeoTIFF<a class="anchor" aria-label="anchor" href="#geotiff"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/drivers/raster/gtiff.html#configuration-options" class="external-link uri">https://gdal.org/drivers/raster/gtiff.html#configuration-options</a></p>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/drivers/raster/gtiff.html#configuration-options" class="external-link uri">https://gdal.org/en/stable/drivers/raster/gtiff.html#configuration-options</a></p>
 <p>The behavior of the GTiff driver is highly configurable, including
 with respect to overview creation. For full discussion, see the link
-above and also the documentation for the <a href="https://gdal.org/programs/gdaladdo.html" class="external-link"><code>gdaladdo</code></a>
+above and also the documentation for the <a href="https://gdal.org/en/stable/programs/gdaladdo.html" class="external-link"><code>gdaladdo</code></a>
 command-line utility.</p>
 <p><strong><code>GDAL_NUM_THREADS</code></strong></p>
 <p>The GTiff driver supports multi-threaded compression (default is
@@ -325,7 +325,7 @@ floating-point data.</p>
 <div class="section level2">
 <h2 id="httphttps">HTTP/HTTPS<a class="anchor" aria-label="anchor" href="#httphttps"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/user/configoptions.html#networking-options" class="external-link">/vsicurl/</a>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/user/configoptions.html#networking-options" class="external-link">/vsicurl/</a>
 (HTTP/HTTPS random access)</p>
 <p><strong><code>GDAL_HTTP_CONNECTTIMEOUT</code></strong></p>
 <p>Maximum delay for connection to be established before being
@@ -366,7 +366,7 @@ global LRU cache can be modified with:</p>
 <div class="section level2">
 <h2 id="aws-s3-buckets">AWS S3 buckets<a class="anchor" aria-label="anchor" href="#aws-s3-buckets"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsis3-aws-s3-files" class="external-link">/vsis3/</a>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsis3-aws-s3-files" class="external-link">/vsis3/</a>
 (AWS S3 file system handler)</p>
 <p><strong><code>AWS_NO_SIGN_REQUEST</code></strong></p>
 <p>Request signing can be disabled for public buckets that do not
@@ -394,13 +394,13 @@ require an AWS account:</p>
 <div class="section level2">
 <h2 id="google-cloud-storage">Google Cloud Storage<a class="anchor" aria-label="anchor" href="#google-cloud-storage"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsigs-google-cloud-storage-files" class="external-link">/vsigs/</a>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsigs-google-cloud-storage-files" class="external-link">/vsigs/</a>
 (Google Cloud Storage files)</p>
 </div>
 <div class="section level2">
 <h2 id="microsoft-azure-blob">Microsoft Azure Blob<a class="anchor" aria-label="anchor" href="#microsoft-azure-blob"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files" class="external-link">/vsiaz/</a>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsiaz-microsoft-azure-blob-files" class="external-link">/vsiaz/</a>
 (Microsoft Azure Blob files)</p>
 <p>Recognized filenames are of the form
 <code>/vsiaz/container/key</code>, where <code>container</code> is the
@@ -456,13 +456,13 @@ documentation for details.</p>
 <div class="section level2">
 <h2 id="microsoft-azure-data-lake">Microsoft Azure Data Lake<a class="anchor" aria-label="anchor" href="#microsoft-azure-data-lake"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsiadls-microsoft-azure-data-lake-storage-gen2" class="external-link">/vsiadls/</a>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsiadls-microsoft-azure-data-lake-storage-gen2" class="external-link">/vsiadls/</a>
 (Microsoft Azure Data Lake Storage Gen2)</p>
 </div>
 <div class="section level2">
 <h2 id="sozip">SOZip<a class="anchor" aria-label="anchor" href="#sozip"></a>
 </h2>
-<p>GDAL doc: <a href="https://gdal.org/user/virtual_file_systems.html#vsizip-zip-archives" class="external-link">/vsizip/</a>
+<p>GDAL doc: <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsizip-zip-archives" class="external-link">/vsizip/</a>
 (Seek-Optimized ZIP files, GDAL &gt;= 3.7)</p>
 <p>The function <code><a href="../reference/addFilesInZip.html">gdalraster::addFilesInZip()</a></code> can be used to
 create new or append to existing ZIP files, potentially using the seek

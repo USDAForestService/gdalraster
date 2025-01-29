@@ -201,7 +201,7 @@ more than one geometry column per table (e.g., PostGIS).</p>
 <p>Geometry types are specified as a character string containing OGC WKT.
 Common types include: <code>Point</code>, <code>LineString</code>, <code>Polygon</code>, <code>MultiPoint</code>,
 <code>MultiLineString</code>, <code>MultiPolygon</code>. See the GDAL documentation for a list
-of all supported geometry types:<br><a href="https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType" class="external-link">https://gdal.org/api/vector_c_api.html#_CPPv418OGRwkbGeometryType</a></p>
+of all supported geometry types:<br><a href="https://gdal.org/en/stable/api/vector_c_api.html#_CPPv418OGRwkbGeometryType" class="external-link">https://gdal.org/en/stable/api/vector_c_api.html#_CPPv418OGRwkbGeometryType</a></p>
 <p>Format drivers may or may not support not-null constraints on attribute and
 geometry fields. If they support creating fields with not-null constraints,
 this is generally before creating any features to the layer. In some cases,
@@ -214,8 +214,8 @@ example, GeoPackage format has a layer creation option
     <p>The feature id (FID) is a special property of a feature and not treated as
 an attribute of the feature. Additional information is given in the GDAL
 documentation for the
-<a href="https://gdal.org/user/ogr_sql_dialect.html#feature-id-fid" class="external-link">OGR SQL</a> and
-<a href="https://gdal.org/user/sql_sqlite_dialect.html#feature-id-fid" class="external-link">SQLite</a>
+<a href="https://gdal.org/en/stable/user/ogr_sql_dialect.html#feature-id-fid" class="external-link">OGR SQL</a> and
+<a href="https://gdal.org/en/stable/user/sql_sqlite_dialect.html#feature-id-fid" class="external-link">SQLite</a>
 SQL dialects. Implications for SQL statements and result sets may depend
 on the dialect used.</p>
 <p>Some vector formats do not support schema definition prior to creating

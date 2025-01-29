@@ -298,7 +298,7 @@ given. The <code>"SQLite"</code> dialect can also be used (see Note).</p></dd>
 vector data management. They are also intended to support vector I/O in a
 future release of gdalraster. Bindings to OGR wrap portions of the GDAL
 Vector API (ogr_core.h and ogr_api.h,
-<a href="https://gdal.org/api/vector_c_api.html" class="external-link">https://gdal.org/api/vector_c_api.html</a>).</p>
+<a href="https://gdal.org/en/stable/api/vector_c_api.html" class="external-link">https://gdal.org/en/stable/api/vector_c_api.html</a>).</p>
 <p><code>ogr_ds_exists()</code> tests whether a vector dataset can be opened from the
 given data source name (DSN), potentially testing for update access.
 Returns a logical scalar.</p>
@@ -350,7 +350,7 @@ cannot be found. The returned list contains the following named elements:
 <code>ReorderFields</code>, <code>AlterFieldDefn</code>, <code>AlterGeomFieldDefn</code>, <code>IgnoreFields</code>,
 <code>DeleteFeature</code>, <code>Rename</code>, <code>StringsAsUTF8</code>, <code>CurveGeometries</code>.
 See the GDAL documentation for
-<a href="https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc" class="external-link"><code>OGR_L_TestCapability()</code></a>.</p>
+<a href="https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc" class="external-link"><code>OGR_L_TestCapability()</code></a>.</p>
 <p><code>ogr_layer_create()</code> creates a new layer in an existing vector data source,
 with a specified geometry type and spatial reference definition.
 This function also accepts a feature class definition given as a list of
@@ -407,7 +407,7 @@ SQLite, and preferably also with Spatialite support to benefit from spatial
 functions. The GDAL document for SQLite dialect has detailed information.</p>
 <p>Other SQL dialects may also be present for some vector formats.
 For example, the <code>"INDIRECT_SQLITE"</code> dialect might potentially be used with
-GeoPackage format (<a href="https://gdal.org/drivers/vector/gpkg.html#sql" class="external-link">https://gdal.org/drivers/vector/gpkg.html#sql</a>).</p>
+GeoPackage format (<a href="https://gdal.org/en/stable/drivers/vector/gpkg.html#sql" class="external-link">https://gdal.org/en/stable/drivers/vector/gpkg.html#sql</a>).</p>
 <p>The function <code><a href="ogrinfo.html">ogrinfo()</a></code> can also be used to edit data with SQL statements
 (GDAL &gt;= 3.7).</p>
 <p>The name of the geometry column of a layer is empty (<code>""</code>) with some formats
@@ -417,7 +417,7 @@ dialects for details.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p>OGR SQL dialect and SQLite SQL dialect:<br><a href="https://gdal.org/user/ogr_sql_sqlite_dialect.html" class="external-link">https://gdal.org/user/ogr_sql_sqlite_dialect.html</a></p></div>
+    <div class="dont-index"><p>OGR SQL dialect and SQLite SQL dialect:<br><a href="https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html" class="external-link">https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html</a></p></div>
     </div>
 
     <div class="section level2">
@@ -508,7 +508,7 @@ dialects for details.</p>
 <span class="r-in"><span><span class="co"># add a field using SQL instead</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">dsn</span>, sql <span class="op">=</span> <span class="st">"ALTER TABLE layer2 ADD field4 float"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/Rtmp9q1w7S/test1.gpkg'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/Rtmp8iYKfU/test1.gpkg'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rename a field</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">ogr_layer_test_cap</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span><span class="op">$</span><span class="va">AlterFieldDefn</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -524,7 +524,7 @@ dialects for details.</p>
 <span class="r-in"><span><span class="co"># GDAL &gt;= 3.7</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">3070000</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="ogrinfo.html">ogrinfo</a></span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/tmp/Rtmp9q1w7S/test1.gpkg'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/tmp/Rtmp8iYKfU/test1.gpkg'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       using driver `GPKG' successful.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Layer name: layer2</span>
@@ -572,12 +572,12 @@ dialects for details.</p>
 <span class="r-in"><span><span class="va">alt_tbl</span> <span class="op">&lt;-</span> <span class="st">"ALTER TABLE mtbs_perims ADD burn_bnd_ha float"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, sql <span class="op">=</span> <span class="va">alt_tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/Rtmp9q1w7S/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/Rtmp8iYKfU/mtbs_perims.shp'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">upd</span> <span class="op">&lt;-</span> <span class="st">"UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, sql <span class="op">=</span> <span class="va">upd</span>, dialect <span class="op">=</span> <span class="st">"SQLite"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/Rtmp9q1w7S/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/Rtmp8iYKfU/mtbs_perims.shp'</span>
 <span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, layer <span class="op">=</span> <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "event_id"   "incid_name" "incid_type" "map_id"     "burn_bnd_a"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "burn_bnd_l" "burn_bnd_1" "ig_date"    "ig_year"    "burn_bnd_h"</span>
