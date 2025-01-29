@@ -37,12 +37,12 @@ An error is raised if the operation fails.
 \description{
 \code{dem_proc()} generates DEM derivatives from an input elevation raster. This
 function is a wrapper for the \command{gdaldem} command-line utility.
-See \url{https://gdal.org/programs/gdaldem.html} for details.
+See \url{https://gdal.org/en/stable/programs/gdaldem.html} for details.
 }
 \note{
 Band 1 of the source elevation raster is read by default, but this can be
 changed by including a \code{-b} command-line argument in \code{mode_options}.
-See the \href{https://gdal.org/programs/gdaldem.html}{documentation for
+See the \href{https://gdal.org/en/stable/programs/gdaldem.html}{documentation for
 \code{gdaldem}} for a description of all available options for each processing
 mode.
 }

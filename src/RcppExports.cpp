@@ -1515,14 +1515,14 @@ BEGIN_RCPP
 END_RCPP
 }
 // inv_project
-Rcpp::NumericMatrix inv_project(const Rcpp::RObject& pts, const std::string& srs, std::string well_known_gcs);
+Rcpp::NumericMatrix inv_project(const Rcpp::RObject& pts, const std::string& srs, const std::string& well_known_gcs);
 RcppExport SEXP _gdalraster_inv_project(SEXP ptsSEXP, SEXP srsSEXP, SEXP well_known_gcsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type pts(ptsSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
-    Rcpp::traits::input_parameter< std::string >::type well_known_gcs(well_known_gcsSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type well_known_gcs(well_known_gcsSEXP);
     rcpp_result_gen = Rcpp::wrap(inv_project(pts, srs, well_known_gcs));
     return rcpp_result_gen;
 END_RCPP

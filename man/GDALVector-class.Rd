@@ -45,7 +45,7 @@ dataset and calling methods on the underlying \code{OGRLayer} object.
 An object of class \code{GDALVector} persists an open connection to the dataset,
 and exposes methods for retrieving layer information, setting attribute and
 spatial filters, and reading/writing feature data.
-See \url{https://gdal.org/api/index.html} for details of the GDAL
+See \url{https://gdal.org/en/stable/api/index.html} for details of the GDAL
 Vector API.
 
 \strong{Class \code{GDALVector} is currently under development}. An initial
@@ -247,7 +247,7 @@ read/write access. Returns a list of capabilities with values \code{TRUE} or
 \code{ReorderFields}, \code{AlterFieldDefn}, \code{AlterGeomFieldDefn}, \code{DeleteFeature},
 \code{StringsAsUTF8}, \code{Transactions}, \code{CurveGeometries}.
 (See the GDAL documentation for
-\href{https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc}{\code{OGR_L_TestCapability()}}.)
+\href{https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc}{\code{OGR_L_TestCapability()}}.)
 
 \code{$getFIDColumn()}\cr
 Returns the name of the underlying database column being used as the FID
@@ -301,7 +301,7 @@ Sets an attribute query string to be used when fetching features via the
 \verb{$getNextFeature()} or \verb{$fetch()} methods.
 Only features for which \code{query} evaluates as true will be returned.
 The query string should be in the format of an SQL WHERE clause, described
-in the \href{https://gdal.org/user/ogr_sql_dialect.html#where}{"WHERE"}
+in the \href{https://gdal.org/en/stable/user/ogr_sql_dialect.html#where}{"WHERE"}
 section of the OGR SQL dialect documentation (e.g.,
 \code{"population > 1000000 and population < 5000000"}, where \code{population} is an
 attribute in the layer).
@@ -832,8 +832,8 @@ lyr$close()
 \link{ogr_define}, \link{ogr_manage}, \code{\link[=ogr2ogr]{ogr2ogr()}}, \code{\link[=ogrinfo]{ogrinfo()}}
 
 GDAL vector format descriptions:\cr
-\url{https://gdal.org/drivers/vector/index.html}
+\url{https://gdal.org/en/stable/drivers/vector/index.html}
 
 GDAL-supported SQL dialects:\cr
-\url{https://gdal.org/user/ogr_sql_sqlite_dialect.html})
+\url{https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html})
 }

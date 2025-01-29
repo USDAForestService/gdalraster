@@ -38,7 +38,7 @@ vector dataset, or empty string (\code{""}) in case of error.
 }
 \description{
 \code{ogrinfo()} is a wrapper of the \command{ogrinfo} command-line
-utility (see \url{https://gdal.org/programs/ogrinfo.html}).
+utility (see \url{https://gdal.org/en/stable/programs/ogrinfo.html}).
 This function lists information about an OGR-supported data source.
 It is also possible to edit data with SQL statements.
 Refer to the GDAL documentation at the URL above for a description of

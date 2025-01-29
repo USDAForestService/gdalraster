@@ -14,7 +14,7 @@
 #' be appended to an existing layer, or written to an existing empty layer that
 #' has a custom schema defined.
 #' `ogr_proc()` is basically a port of the
-#' [`ogr_layer_algebra`](https://gdal.org/programs/ogr_layer_algebra.html#ogr-layer-algebra)
+#' [`ogr_layer_algebra`](https://gdal.org/en/stable/programs/ogr_layer_algebra.html#ogr-layer-algebra)
 #' utility in the GDAL Python bindings.
 #'
 #' @details

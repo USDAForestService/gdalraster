@@ -41,5 +41,5 @@ has_spatialite()
 \code{\link[=ogrinfo]{ogrinfo()}}, \code{\link[=ogr_execute_sql]{ogr_execute_sql()}}
 
 OGR SQL dialect and SQLITE SQL dialect:\cr
-\url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
+\url{https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html}
 }

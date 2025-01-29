@@ -15,7 +15,7 @@
 #' vector data management. They are also intended to support vector I/O in a
 #' future release of gdalraster. Bindings to OGR wrap portions of the GDAL
 #' Vector API (ogr_core.h and ogr_api.h,
-#' \url{https://gdal.org/api/vector_c_api.html}).
+#' \url{https://gdal.org/en/stable/api/vector_c_api.html}).
 #'
 #' `ogr_ds_exists()` tests whether a vector dataset can be opened from the
 #' given data source name (DSN), potentially testing for update access.
@@ -76,7 +76,7 @@
 #' `ReorderFields`, `AlterFieldDefn`, `AlterGeomFieldDefn`, `IgnoreFields`,
 #' `DeleteFeature`, `Rename`, `StringsAsUTF8`, `CurveGeometries`.
 #' See the GDAL documentation for
-#' [`OGR_L_TestCapability()`](https://gdal.org/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).
+#' [`OGR_L_TestCapability()`](https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc).
 #'
 #' `ogr_layer_create()` creates a new layer in an existing vector data source,
 #' with a specified geometry type and spatial reference definition.
@@ -213,7 +213,7 @@
 #'
 #' Other SQL dialects may also be present for some vector formats.
 #' For example, the `"INDIRECT_SQLITE"` dialect might potentially be used with
-#' GeoPackage format (\url{https://gdal.org/drivers/vector/gpkg.html#sql}).
+#' GeoPackage format (\url{https://gdal.org/en/stable/drivers/vector/gpkg.html#sql}).
 #'
 #' The function [ogrinfo()] can also be used to edit data with SQL statements
 #' (GDAL >= 3.7).
@@ -227,7 +227,7 @@
 #  [ogr_define] helper functions, [ogrinfo()], [ogr2ogr()]
 #'
 #' OGR SQL dialect and SQLite SQL dialect:\cr
-#' \url{https://gdal.org/user/ogr_sql_sqlite_dialect.html}
+#' \url{https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html}
 #'
 #' @examples
 #' ## Create GeoPackage and manage schema

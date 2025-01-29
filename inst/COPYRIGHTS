@@ -1,12 +1,12 @@
 =====GDAL API documentation ===================================================
 Much of the documentation for class 'GDALRaster' and several GDAL wrapper
-functions was copied from the GDAL API documentation at: https://gdal.org/api/.
+functions was copied from the GDAL API documentation at: https://gdal.org/en/stable/api/.
 
 The package vignette is an R port of the GDAL Raster API Tutorial at:
-https://gdal.org/tutorials/raster_api_tut.html.
+https://gdal.org/en/stable/tutorials/raster_api_tut.html.
 
-Copyright 1998-2024 Frank Warmerdam, Even Rouault, and others.
-https://gdal.org/license.html
+Copyright 1998-2025 Frank Warmerdam, Even Rouault, and others.
+https://gdal.org/en/stable/license.html
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the “Software”), to deal
