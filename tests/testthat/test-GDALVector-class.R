@@ -374,6 +374,7 @@ test_that("delete feature works", {
 })
 
 test_that("feature write methods work", {
+    library(bit64)
 
     ## tests on an existing data source with real data
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
@@ -677,7 +678,7 @@ test_that("feature write methods work", {
     feat5_check <- lyr$getFeature(test5_fid)
     expect_true(is.na(feat5_check$int_fld ))
     expect_true(is.na(feat5_check$bool_fld))
-    expect_true(bit64::is.na.integer64(feat5_check$int64_fld))
+    expect_true(is.na(feat5_check$int64_fld))
     expect_true(is.na(feat5_check$real_fld))
     expect_true(is.na(feat5_check$str_fld))
     expect_true(is.na(feat5_check$date_fld))
@@ -688,7 +689,7 @@ test_that("feature write methods work", {
     feat6_check <- lyr$getFeature(test6_fid)
     expect_true(is.na(feat6_check$int_fld ))
     expect_true(is.na(feat6_check$bool_fld))
-    expect_true(bit64::is.na.integer64(feat6_check$int64_fld))
+    expect_true(is.na(feat6_check$int64_fld))
     expect_true(is.na(feat6_check$real_fld))
     expect_true(is.na(feat6_check$str_fld))
     expect_true(is.na(feat6_check$date_fld))
@@ -699,7 +700,7 @@ test_that("feature write methods work", {
     feat7_check <- lyr$getFeature(test7_fid)
     expect_true(is.na(feat7_check$int_fld ))
     expect_true(is.na(feat7_check$bool_fld))
-    expect_true(bit64::is.na.integer64(feat7_check$int64_fld))
+    expect_true(is.na(feat7_check$int64_fld))
     expect_true(is.na(feat7_check$real_fld))
     expect_true(is.na(feat7_check$str_fld))
     expect_true(is.na(feat7_check$date_fld))
