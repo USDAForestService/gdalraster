@@ -152,3 +152,9 @@ test_that("get URL functions work", {
     opt <- "EXPIRATION_DELAY=604800"
     expect_null(vsi_get_signed_url("/vsimem/test.tif", opt))
 })
+
+test_that("vsi_is_local works", {
+    skip_if(as.integer(gdal_version()[2]) < 3060000)
+
+    expect_true(vsi_is_local("/vsimem/test-mem-file.tif"))
+})

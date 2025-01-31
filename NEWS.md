@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9002 (dev)
+# gdalraster 1.12.0.9010 (dev)
+
+* add `vsi_is_local()`: returns whether the file/filesystem is "local",  wrapper of `VSIIsLocal()` (2025-01-31)
 
 * add `GDALVector::getFieldDomain()`: accepts the name of an OGR field domain associated with the dataset and returns a list containing the domain specifications (GDAL >= 3.3) (2025-01-20)
 

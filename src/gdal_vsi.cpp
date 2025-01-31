@@ -1122,3 +1122,37 @@ SEXP vsi_get_signed_url(Rcpp::CharacterVector filename,
         return R_NilValue;
     }
 }
+
+//' Returns if the file/filesystem is "local".
+//'
+//' `vsi_is_local()` returns whether the file/filesystem is "local".
+//' Wrapper for `VSIIsLocal()` in the GDAL API. Requires GDAL >= 3.6.
+//'
+//' @param filename Character string. The path of the filesystem object to be
+//' tested.
+//' @returns Logical scalar. `TRUE` if if the input file path is local.
+//'
+//' @note
+//' The concept of local is mostly by opposition with a network / remote file
+//' system whose access time can be long.
+//'
+//' /vsimem/ is considered to be a local file system, although a
+//' non-persistent one.
+//'
+//' @examples
+//' # Requires GDAL >= 3.6
+//' if (as.integer(gdal_version()[2]) >= 3060000)
+//'   print(vsi_is_local("/vsimem/test-mem-file.tif"))
+// [[Rcpp::export()]]
+bool vsi_is_local(Rcpp::CharacterVector filename) {
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 6, 0)
+    Rcpp::stop("vsi_is_local() requires GDAL >= 3.6");
+
+#else
+    std::string filename_in = Rcpp::as<std::string>(
+            check_gdal_filename(filename));
+
+    return VSIIsLocal(filename_in.c_str());
+#endif
+}
