@@ -118,6 +118,7 @@
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_options.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_fs_prefixes.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_get_signed_url.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_is_local.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_mkdir.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_read_dir.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_rename.html</loc></url>
