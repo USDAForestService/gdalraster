@@ -374,8 +374,6 @@ test_that("delete feature works", {
 })
 
 test_that("feature write methods work", {
-    library(bit64)
-
     ## tests on an existing data source with real data
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
     dsn <- file.path(tempdir(), basename(f))
