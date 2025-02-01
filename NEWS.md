@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9010 (dev)
+# gdalraster 1.12.0.9011 (dev)
+
+* (internal) validate input columns in the data frame-to-matrix internal C++ functions (2025-02-01)
 
 * add `vsi_is_local()`: returns whether the file/filesystem is "local",  wrapper of `VSIIsLocal()` (2025-01-31)
 
