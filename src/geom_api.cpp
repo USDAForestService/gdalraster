@@ -392,6 +392,7 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
             }
 
             OGR_G_DestroyGeometry(hGeom);
+            hGeom = nullptr;
 
             if (err != OGRERR_NONE) {
                 if (hGeom_out != nullptr)
@@ -459,23 +460,25 @@ Rcpp::RawVector g_add_geom(const Rcpp::RawVector &sub_geom,
         EQUAL(OGR_G_GetGeometryName(hSubGeom), "POLYGON")) {
         // interpret sub_geom as one linearring
 
-        OGRGeometryH hRing = OGR_G_GetGeometryRef(hSubGeom, 0);
+        OGRGeometryH hRing = nullptr;
+        hRing = OGR_G_GetGeometryRef(hSubGeom, 0);
         err = OGR_G_AddGeometry(hGeom, hRing);
+        OGR_G_DestroyGeometry(hSubGeom);
+        hSubGeom = nullptr;
         if (err != OGRERR_NONE) {
             if (hGeom != nullptr)
                 OGR_G_DestroyGeometry(hGeom);
-            if (hSubGeom != nullptr)
-                OGR_G_DestroyGeometry(hSubGeom);
+
             Rcpp::stop("failed to add 'sub_geom' to 'container'");
         }
     }
     else {
-        err = OGR_G_AddGeometryDirectly(hGeom, hSubGeom);
+        err = OGR_G_AddGeometry(hGeom, hSubGeom);
+        OGR_G_DestroyGeometry(hSubGeom);
+        hSubGeom = nullptr;
         if (err != OGRERR_NONE || hGeom == nullptr) {
             if (hGeom != nullptr)
                 OGR_G_DestroyGeometry(hGeom);
-            else
-                OGR_G_DestroyGeometry(hSubGeom);
 
             Rcpp::stop("failed to add 'sub_geom' to 'container'");
         }
