@@ -311,8 +311,9 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
 #' georeferenced (x/y) coordinates. Wrapper of `GDALApplyGeoTransform()` in
 #' the GDAL API, operating on matrix input.
 #'
-#' @param col_row Numeric matrix of raster column/row (pixel/line) coordinates
-#' (or two-column data frame that will be coerced to numeric matrix).
+#' @param col_row Numeric matrix of raster column, row (pixel/line) coordinates
+#' (or two-column data frame that will be coerced to numeric matrix, or a
+#' vector of column, row for one coordinate).
 #' @param gt Either a numeric vector of length six containing the affine
 #' geotransform for the raster, or an object of class `GDALRaster` from
 #' which the geotransform will be obtained.
@@ -347,11 +348,16 @@ vsi_get_fs_options <- function(filename, as_list = TRUE) {
 #'
 #' ds$close()
 apply_geotransform <- function(col_row, gt) {
-    if (!(is.matrix(col_row) || is.data.frame(col_row)))
+    if (!(is.vector(col_row) || is.matrix(col_row) || is.data.frame(col_row)))
         stop("'col_row' must be a data frame or numeric matrix", call. = FALSE)
 
-    if (ncol(col_row) != 2)
+    if ((is.matrix(col_row) || is.data.frame(col_row)) && ncol(col_row) != 2)
         stop("'col_row' must have 2 columns", call. = FALSE)
+    else if (is.vector(col_row) && length(col_row) != 2)
+        stop("'col_row' as vector must have length 2", call. = FALSE)
+
+    if ((is.vector(col_row) || is.matrix(col_row)) && !is.numeric(col_row))
+        stop("'col_row' must be numeric", call. = FALSE)
 
     if (is(gt, "Rcpp_GDALRaster")) {
         return(.apply_geotransform_ds(col_row, gt))
@@ -370,9 +376,9 @@ apply_geotransform <- function(col_row, gt) {
 #' The upper left corner pixel is the raster origin (0,0) with column, row
 #' increasing left to right, top to bottom.
 #'
-#' @param xy Numeric matrix of geospatial x,y coordinates in the same spatial
+#' @param xy Numeric matrix of geospatial x, y coordinates in the same spatial
 #' reference system as \code{gt} (or two-column data frame that will be coerced
-#' to numeric matrix).
+#' to numeric matrix, or a vector x, y for one coordinate).
 #' @param gt Either a numeric vector of length six containing the affine
 #' geotransform for the raster, or an object of class `GDALRaster` from
 #' which the geotransform will be obtained (see Note).
@@ -413,11 +419,16 @@ apply_geotransform <- function(col_row, gt) {
 #'
 #' ds$close()
 get_pixel_line <- function(xy, gt) {
-    if (!(is.matrix(xy) || is.data.frame(xy)))
+    if (!(is.vector(xy) || is.matrix(xy) || is.data.frame(xy)))
         stop("'xy' must be a data frame or numeric matrix", call. = FALSE)
 
-    if (ncol(xy) != 2)
+    if ((is.matrix(xy) || is.data.frame(xy)) && ncol(xy) != 2)
         stop("'xy' must have 2 columns", call. = FALSE)
+    else if (is.vector(xy) && length(xy) != 2)
+        stop("'xy' as vector must have length 2", call. = FALSE)
+
+    if ((is.vector(xy) || is.matrix(xy)) && !is.numeric(xy))
+        stop("'xy' must be numeric", call. = FALSE)
 
     if (is(gt, "Rcpp_GDALRaster")) {
         return(.get_pixel_line_ds(xy, gt))
