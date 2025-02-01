@@ -1,3 +1,5 @@
+# apply_geotransform() and get_pixel_line() tests are in test-gdal_exp.R
+
 test_that("addFilesInZip works", {
     # requires GDAL >= 3.7
     skip_if(as.integer(gdal_version()[2]) < 3070000)

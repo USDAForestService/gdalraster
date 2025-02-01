@@ -577,7 +577,7 @@ GDALRaster createCopy(std::string format, Rcpp::CharacterVector dst_filename,
 //' @noRd
 // [[Rcpp::export(name = ".apply_geotransform")]]
 Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt,
-        double pixel, double line) {
+                                        double pixel, double line) {
 
     double geo_x, geo_y;
     GDALApplyGeoTransform((double *) (gt.data()), pixel, line, &geo_x, &geo_y);
@@ -593,17 +593,7 @@ Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt,
 Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row,
         const std::vector<double> gt) {
 
-    Rcpp::NumericMatrix col_row_in;
-    if (Rcpp::is<Rcpp::DataFrame>(col_row)) {
-        col_row_in = df_to_matrix_(col_row);
-    }
-    else if (Rcpp::is<Rcpp::NumericVector>(col_row)) {
-        if (Rf_isMatrix(col_row))
-            col_row_in = Rcpp::as<Rcpp::NumericMatrix>(col_row);
-    }
-    else {
-        Rcpp::stop("'col_row' must be a two-column data frame or matrix");
-    }
+    Rcpp::NumericMatrix col_row_in = xy_robject_to_matrix_(col_row);
 
     if (col_row_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
@@ -626,17 +616,7 @@ Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row,
 Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject& col_row,
         const GDALRaster* ds) {
 
-    Rcpp::NumericMatrix col_row_in;
-    if (Rcpp::is<Rcpp::DataFrame>(col_row)) {
-        col_row_in = df_to_matrix_(col_row);
-    }
-    else if (Rcpp::is<Rcpp::NumericVector>(col_row)) {
-        if (Rf_isMatrix(col_row))
-            col_row_in = Rcpp::as<Rcpp::NumericMatrix>(col_row);
-    }
-    else {
-        Rcpp::stop("'col_row' must be a two-column data frame or matrix");
-    }
+    Rcpp::NumericMatrix col_row_in = xy_robject_to_matrix_(col_row);
 
     if (col_row_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
@@ -720,17 +700,7 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy,
         const std::vector<double> gt) {
 
-    Rcpp::NumericMatrix xy_in;
-    if (Rcpp::is<Rcpp::DataFrame>(xy)) {
-        xy_in = df_to_matrix_(xy);
-    }
-    else if (Rcpp::is<Rcpp::NumericVector>(xy)) {
-        if (Rf_isMatrix(xy))
-            xy_in = Rcpp::as<Rcpp::NumericMatrix>(xy);
-    }
-    else {
-        Rcpp::stop("'xy' must be a two-column data frame or matrix");
-    }
+    Rcpp::NumericMatrix xy_in = xy_robject_to_matrix_(xy);
 
     if (xy_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
@@ -762,17 +732,7 @@ Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy,
 Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
         const GDALRaster* ds) {
 
-    Rcpp::NumericMatrix xy_in;
-    if (Rcpp::is<Rcpp::DataFrame>(xy)) {
-        xy_in = df_to_matrix_(xy);
-    }
-    else if (Rcpp::is<Rcpp::NumericVector>(xy)) {
-        if (Rf_isMatrix(xy))
-            xy_in = Rcpp::as<Rcpp::NumericMatrix>(xy);
-    }
-    else {
-        Rcpp::stop("'xy' must be a two-column data frame or matrix");
-    }
+    Rcpp::NumericMatrix xy_in = xy_robject_to_matrix_(xy);
 
     if (xy_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");

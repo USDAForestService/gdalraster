@@ -119,7 +119,7 @@ void setPROJEnableNetwork(int enabled) {
 //' names above.
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
-//' x/y coordinates.
+//' x, y coordinates (or vector of x, y for one point).
 //' @param srs Character string specifying the projected spatial reference
 //' system for `pts`. May be in WKT format or any of the formats supported by
 //' [srs_to_wkt()].
@@ -141,17 +141,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
                                 const std::string &srs,
                                 const std::string &well_known_gcs = "") {
 
-    Rcpp::NumericMatrix pts_in;
-    if (Rcpp::is<Rcpp::DataFrame>(pts)) {
-        pts_in = df_to_matrix_(pts);
-    }
-    else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
-        if (Rf_isMatrix(pts))
-            pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
-    }
-    else {
-        Rcpp::stop("'pts' must be a data frame or matrix");
-    }
+    Rcpp::NumericMatrix pts_in = xy_robject_to_matrix_(pts);
 
     if (pts_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
@@ -220,7 +210,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 //' `transform_xy()` transforms geospatial x/y coordinates to a new projection.
 //'
 //' @param pts A two-column data frame or numeric matrix containing geospatial
-//' x/y coordinates.
+//' x, y coordinates (or vector of x, y for one point).
 //' @param srs_from Character string specifying the spatial reference system
 //' for `pts`. May be in WKT format or any of the formats supported by
 //' [srs_to_wkt()].
@@ -244,17 +234,7 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
                                  const std::string &srs_from,
                                  const std::string &srs_to) {
 
-    Rcpp::NumericMatrix pts_in;
-    if (Rcpp::is<Rcpp::DataFrame>(pts)) {
-        pts_in = df_to_matrix_(pts);
-    }
-    else if (Rcpp::is<Rcpp::NumericVector>(pts)) {
-        if (Rf_isMatrix(pts))
-            pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
-    }
-    else {
-        Rcpp::stop("'pts' must be a data frame or matrix");
-    }
+    Rcpp::NumericMatrix pts_in = xy_robject_to_matrix_(pts);
 
     if (pts_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");

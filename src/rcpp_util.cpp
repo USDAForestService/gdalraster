@@ -41,6 +41,35 @@ Rcpp::IntegerMatrix df_to_int_matrix_(const Rcpp::DataFrame& df) {
     return m;
 }
 
+//' convert allowed xy inputs to numeric matrix
+//' @noRd
+Rcpp::NumericMatrix xy_robject_to_matrix_(const Rcpp::RObject& xy) {
+    Rcpp::NumericMatrix xy_ret;
+
+    if (Rcpp::is<Rcpp::NumericVector>(xy) ||
+        Rcpp::is<Rcpp::IntegerVector>(xy)) {
+
+        if (!Rf_isMatrix(xy)) {
+            Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(xy);
+            if (v.size() != 2)
+                Rcpp::stop("coordinate input as vector must have length 2");
+
+            xy_ret = Rcpp::NumericMatrix(1, 2, v.begin());
+        }
+        else {
+            xy_ret = Rcpp::as<Rcpp::NumericMatrix>(xy);
+        }
+    }
+    else if (Rcpp::is<Rcpp::DataFrame>(xy)) {
+        xy_ret = df_to_matrix_(xy);
+    }
+    else {
+        Rcpp::stop("coordinates must be in a two-column data frame or matrix");
+    }
+
+    return xy_ret;
+}
+
 //' wrapper for base R path.expand()
 //' @noRd
 Rcpp::CharacterVector path_expand_(Rcpp::CharacterVector path) {
