@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9010</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9011</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9010" id="gdalraster-11209010-dev">gdalraster 1.12.0.9010 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209010-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/vsi_is_local.html">vsi_is_local()</a></code>: returns whether the file/filesystem is “local”, wrapper of <code>VSIIsLocal()</code> (2025-01-31)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9011" id="gdalraster-11209011-dev">gdalraster 1.12.0.9011 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209011-dev"></a></h2>
+<ul><li><p>(internal) validate input columns in the data frame-to-matrix internal C++ functions (2025-02-01)</p></li>
+<li><p>add <code><a href="../reference/vsi_is_local.html">vsi_is_local()</a></code>: returns whether the file/filesystem is “local”, wrapper of <code>VSIIsLocal()</code> (2025-01-31)</p></li>
 <li><p>add <code>GDALVector::getFieldDomain()</code>: accepts the name of an OGR field domain associated with the dataset and returns a list containing the domain specifications (GDAL &gt;= 3.3) (2025-01-20)</p></li>
 <li><p><code>GDALVector::createDF_()</code>: avoid clang-asan undefined-behavior error from <code>RcppInt64::wrap()</code> when called on a <code>std::vector&lt;int64_t&gt;</code> of size <code>0</code> (2025-01-19)</p></li>
 <li><p><code>GDALVector</code>: add a <code>BBOX</code> option for the per-object setting <code>$returnGeomAs</code> (2024-10-03)</p></li>
