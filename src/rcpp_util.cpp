@@ -10,7 +10,15 @@
 Rcpp::NumericMatrix df_to_matrix_(const Rcpp::DataFrame& df) {
     Rcpp::NumericMatrix m(df.nrows(), df.size());
     for (R_xlen_t i=0; i < df.size(); ++i) {
-        m.column(i) = Rcpp::NumericVector(df[i]);
+        if (Rcpp::is<Rcpp::NumericVector>(df[i]) ||
+            Rcpp::is<Rcpp::IntegerVector>(df[i]) ||
+            Rcpp::is<Rcpp::LogicalVector>(df[i])) {
+
+            m.column(i) = Rcpp::NumericVector(df[i]);
+        }
+        else {
+            Rcpp::stop("data frame columns must be numeric");
+        }
     }
     return m;
 }
@@ -20,7 +28,15 @@ Rcpp::NumericMatrix df_to_matrix_(const Rcpp::DataFrame& df) {
 Rcpp::IntegerMatrix df_to_int_matrix_(const Rcpp::DataFrame& df) {
     Rcpp::IntegerMatrix m(df.nrows(), df.size());
     for (R_xlen_t i=0; i < df.size(); ++i) {
-        m.column(i) = Rcpp::IntegerVector(df[i]);
+        if (Rcpp::is<Rcpp::NumericVector>(df[i]) ||
+            Rcpp::is<Rcpp::IntegerVector>(df[i]) ||
+            Rcpp::is<Rcpp::LogicalVector>(df[i])) {
+
+            m.column(i) = Rcpp::IntegerVector(df[i]);
+        }
+        else {
+            Rcpp::stop("data frame columns must be numeric");
+        }
     }
     return m;
 }
