@@ -44,5 +44,7 @@ SEXP vsi_get_actual_url(Rcpp::CharacterVector filename);
 SEXP vsi_get_signed_url(Rcpp::CharacterVector filename,
                         Rcpp::Nullable<Rcpp::CharacterVector> options);
 
+bool vsi_is_local(Rcpp::CharacterVector filename);
+
 
 #endif  // SRC_GDAL_VSI_H_

@@ -152,6 +152,7 @@ reference:
   - vsi_get_fs_options
   - vsi_get_fs_prefixes
   - vsi_get_signed_url
+  - vsi_is_local
   - vsi_mkdir
   - vsi_read_dir
   - vsi_rename
