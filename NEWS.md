@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9011 (dev)
+# gdalraster 1.12.0.9012 (dev)
+
+* accept one (x, y) as a vector in functions that expect matrix or data frame input (`transform_xy()`, `inverse_proj()`, `apply_geotransform()`, `get_pixel_line()`) (2025-02-01)
 
 * (internal) validate input columns in the data frame-to-matrix internal C++ functions (2025-02-01)
 
