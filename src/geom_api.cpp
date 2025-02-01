@@ -384,17 +384,18 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
             if (save_opt == nullptr)
                 CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING", "NO");
 
-            OGRErr err = OGR_G_AddGeometryDirectly(hGeom_out, hGeom);
+            OGRErr err = OGR_G_AddGeometry(hGeom_out, hGeom);
 
-            if (save_opt == nullptr)
+            if (save_opt == nullptr) {
                 CPLSetConfigOption("OGR_GEOMETRY_ACCEPT_UNCLOSED_RING",
                                    nullptr);
+            }
+
+            OGR_G_DestroyGeometry(hGeom);
 
             if (err != OGRERR_NONE) {
                 if (hGeom_out != nullptr)
                     OGR_G_DestroyGeometry(hGeom_out);
-                else
-                    OGR_G_DestroyGeometry(hGeom);
 
                 Rcpp::stop(
                     "failed to create polygon geometry (unclosed ring?)");
