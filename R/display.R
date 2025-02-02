@@ -285,6 +285,17 @@
 #'             main="Storm Lake LANDFIRE EVC")
 #'
 #' ds$close()
+#'
+#' ## Apply a pixel function
+#' f <- system.file("extdata/complex.tif", package="gdalraster")
+#' ds <- new(GDALRaster, f)
+#' ds$getDataTypeName(band = 1)  # complex floating point
+#'
+#' ramp <- colour_ramp(pal_viridis(option = "plasma")(6), alpha = FALSE)
+#'
+#' plot_raster(ds, pixel_fn = Arg, col_map_fn = ramp)
+#'
+#' ds$close()
 #' @export
 plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
                         max_pixels=2.5e7, col_tbl=NULL, maxColorValue=1,

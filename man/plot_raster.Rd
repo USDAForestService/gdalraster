@@ -221,6 +221,17 @@ plot_raster(ds, col_tbl=vat, interpolate=FALSE,
             main="Storm Lake LANDFIRE EVC")
 
 ds$close()
+
+## Apply a pixel function
+f <- system.file("extdata/complex.tif", package="gdalraster")
+ds <- new(GDALRaster, f)
+ds$getDataTypeName(band = 1)  # complex floating point
+
+ramp <- colour_ramp(pal_viridis(option = "plasma")(6), alpha = FALSE)
+
+plot_raster(ds, pixel_fn = Arg, col_map_fn = ramp)
+
+ds$close()
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster$read()}}, \code{\link[=read_ds]{read_ds()}}, \code{\link[=set_config_option]{set_config_option()}}
