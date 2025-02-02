@@ -181,6 +181,9 @@
 #' `grDevices::gray` for single-band data or `grDevices::rgb` for 3-band).
 #' Ignored if `col_tbl` is used. Set `normalize` to `FALSE` if using a color
 #' map function that operates on raw pixel values.
+#' @param pixel_fn An optional function that will be applied to the input
+#' pixel data. Must accept vector input and return a numeric vector of the same
+#' length as its input.
 #' @param xlim Numeric vector of length two giving the x coordinate range.
 #' If `data` is a `GDALRaster` object, the default is the raster xmin, xmax in
 #' georeferenced coordinates, otherwise the default uses pixel/line
@@ -286,7 +289,7 @@
 plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
                         max_pixels=2.5e7, col_tbl=NULL, maxColorValue=1,
                         normalize=TRUE, minmax_def=NULL, minmax_pct_cut=NULL,
-                        col_map_fn=NULL, xlim=NULL, ylim=NULL,
+                        col_map_fn=NULL, pixel_fn=NULL, xlim=NULL, ylim=NULL,
                         interpolate=TRUE, asp=1, axes=TRUE, main="",
                         xlab="x", ylab="y", xaxs="i", yaxs="i",
                         legend=FALSE, digits=2, na_col=rgb(0,0,0,0), ...) {
@@ -303,6 +306,16 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
 
     if (is.null(max_pixels))
         max_pixels <- Inf
+
+    if (!is.null(col_map_fn)) {
+        if (!is.function(col_map_fn))
+            stop("'col_map_fn' must be a function", call. = FALSE)
+    }
+
+    if (!is.null(pixel_fn)) {
+        if (!is.function(pixel_fn))
+            stop("'pixel_fn' must be a function", call. = FALSE)
+    }
 
     data_in <- NULL
     is_byte_raster <- TRUE
@@ -422,6 +435,15 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
 
     if (typeof(data_in) == "raw") {
         data_in <- as.integer(data_in)
+    }
+
+    if (!is.null(pixel_fn)) {
+        data_in <- pixel_fn(data_in)
+    }
+
+    if (typeof(data_in) == "complex") {
+        stop("use the 'pixel_fn' argument to plot complex data types",
+             call. = FALSE)
     }
 
     a <- array(data_in, dim = c(xsize, ysize, nbands))

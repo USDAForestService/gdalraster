@@ -16,6 +16,7 @@ plot_raster(
   minmax_def = NULL,
   minmax_pct_cut = NULL,
   col_map_fn = NULL,
+  pixel_fn = NULL,
   xlim = NULL,
   ylim = NULL,
   interpolate = TRUE,
@@ -90,6 +91,10 @@ the percentiles to use (e.g., \code{c(2, 98)}). Applied per band. Ignored if
 \code{grDevices::gray} for single-band data or \code{grDevices::rgb} for 3-band).
 Ignored if \code{col_tbl} is used. Set \code{normalize} to \code{FALSE} if using a color
 map function that operates on raw pixel values.}
+
+\item{pixel_fn}{An optional function that will be applied to the input
+pixel data. Must accept vector input and return a numeric vector of the same
+length as its input.}
 
 \item{xlim}{Numeric vector of length two giving the x coordinate range.
 If \code{data} is a \code{GDALRaster} object, the default is the raster xmin, xmax in
