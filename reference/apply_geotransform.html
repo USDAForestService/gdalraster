@@ -139,7 +139,6 @@ object of class <code>GDALRaster</code>. See Note for <code><a href="get_pixel_l
 <span class="r-in"><span><span class="co"># bounds checking</span></span></span>
 <span class="r-in"><span><span class="va">col_row</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/cbind.html" class="external-link">rbind</a></span><span class="op">(</span><span class="va">col_row</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="fu">getRasterXSize</span><span class="op">(</span><span class="op">)</span>, <span class="va">ds</span><span class="op">$</span><span class="fu">getRasterYSize</span><span class="op">(</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">apply_geotransform</span><span class="op">(</span><span class="va">col_row</span><span class="op">)</span></span></span>
-<span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>1 coordinates(s) were outside the raster extent, NA returned</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>           [,1]    [,2]</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,] 327400.6 5103613</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [2,] 327496.1 5102774</span>
@@ -151,7 +150,7 @@ object of class <code>GDALRaster</code>. See Note for <code><a href="get_pixel_l
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] 324053.8 5104705</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] 326294.6 5103557</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10,] 326500.8 5103283</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [11,]       NA      NA</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [11,] 327766.1 5101872</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 </code></pre></div>
