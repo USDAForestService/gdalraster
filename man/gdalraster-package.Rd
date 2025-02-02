@@ -65,14 +65,9 @@
   \code{\link[=transform_xy]{transform_xy()}},
   \code{\link[=inv_project]{inv_project()}}
 
-  \item spatial reference convenience functions:
-  \code{\link[=epsg_to_wkt]{epsg_to_wkt()}},
-  \code{\link[=srs_to_wkt]{srs_to_wkt()}},
-  \code{\link[=srs_find_epsg]{srs_find_epsg()}},
-  \code{\link[=srs_get_name]{srs_get_name()}},
-  \code{\link[=srs_is_geographic]{srs_is_geographic()}},
-  \code{\link[=srs_is_projected]{srs_is_projected()}},
-  \code{\link[=srs_is_same]{srs_is_same()}},
+  \item spatial reference functions:
+  \code{\link[=srs_convert]{srs_convert}},
+  \code{\link[=srs_query]{srs_query}},
   \code{\link[=transform_bounds]{transform_bounds()}}
 
   \item geometry convenience functions:

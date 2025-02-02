@@ -2327,6 +2327,61 @@ has_geos <- function() {
     .Call(`_gdalraster_g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset, as_iso, byte_order, quiet)
 }
 
+#' Get the bounding box of a geometry specified in OGC WKT format
+#'
+#' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry
+#' (e.g., LINE, POLYGON, MULTIPOLYGON).
+#'
+#' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
+#' @param extend_x Numeric scalar. Distance to extend the output bounding box
+#' in both directions along the x-axis
+#' (results in `xmin = bbox[1] - extend_x`, `xmax = bbox[3] + extend_x`).
+#' @param extend_y Numeric scalar. Distance to extend the output bounding box
+#' in both directions along the y-axis
+#' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
+#' @return Numeric vector of length four containing the xmin, ymin,
+#' xmax, ymax of the geometry specified by `wkt` (possibly extended by values
+#' in `extend_x`, `extend_y`).
+#'
+#' @seealso
+#' [bbox_to_wkt()]
+#'
+#' @examples
+#' bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
+#' 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5,
+#' 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
+#' bbox_from_wkt(bnd, 100, 100)
+bbox_from_wkt <- function(wkt, extend_x = 0, extend_y = 0) {
+    .Call(`_gdalraster_bbox_from_wkt`, wkt, extend_x, extend_y)
+}
+
+#' Convert a bounding box to POLYGON in OGC WKT format
+#'
+#' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
+#'
+#' @param bbox Numeric vector of length four containing xmin, ymin,
+#' xmax, ymax.
+#' @param extend_x Numeric scalar. Distance in units of `bbox` to extend the
+#' rectangle in both directions along the x-axis
+#' (results in `xmin = bbox[1] - extend_x`, `xmax = bbox[3] + extend_x`).
+#' @param extend_y Numeric scalar. Distance in units of `bbox` to extend the
+#' rectangle in both directions along the y-axis
+#' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
+#' @return Character string for an OGC WKT polygon.
+#' `NA` is returned if GDAL was built without the GEOS library.
+#'
+#' @seealso
+#' [bbox_from_wkt()], [g_buffer()]
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, elev_file, read_only=TRUE)
+#' bbox_to_wkt(ds$bbox())
+#' ds$close()
+bbox_to_wkt <- function(bbox, extend_x = 0, extend_y = 0) {
+    .Call(`_gdalraster_bbox_to_wkt`, bbox, extend_x, extend_y)
+}
+
 #' Does vector dataset exist
 #'
 #' @noRd
@@ -2452,6 +2507,332 @@ has_geos <- function() {
 #' @noRd
 .ogr_execute_sql <- function(dsn, sql, spatial_filter = "", dialect = "") {
     invisible(.Call(`_gdalraster_ogr_execute_sql`, dsn, sql, spatial_filter, dialect))
+}
+
+#' Convert spatial reference definitions to OGC Well Known Text
+#'
+#' These functions convert various spatial reference formats to Well Known
+#' Text (WKT).
+#'
+#' @name srs_convert
+#'
+#' @details
+#' `epsg_to_wkt()` exports the spatial reference for an EPSG code to
+#' WKT format.
+#' Wrapper for `OSRImportFromEPSG()` in the GDAL Spatial Reference System API
+#' with output to WKT.
+#'
+#' `srs_to_wkt()` converts a spatial reference system (SRS) definition
+#' in various text formats to WKT. The function will examine the input SRS,
+#' try to deduce the format, and then export it to WKT.
+#' Wrapper for `OSRSetFromUserInput()` in the GDAL Spatial Reference System
+#' API with output to WKT.
+#'
+#' The input SRS may take the following forms:
+#'   * WKT - to convert WKT versions (see below)
+#'   * EPSG:n - EPSG code n
+#'   * AUTO:proj_id,unit_id,lon0,lat0 - WMS auto projections
+#'   * urn:ogc:def:crs:EPSG::n - OGC URNs
+#'   * PROJ.4 definitions
+#'   * filename - file to read for WKT, XML or PROJ.4 definition
+#'   * well known name such as NAD27, NAD83, WGS84 or WGS72
+#'   * IGNF:xxxx, ESRI:xxxx - definitions from the PROJ database
+#'   * PROJJSON (PROJ >= 6.2)
+#'
+#' `srs_to_wkt()` is intended to be flexible, but by its nature it is
+#' imprecise as it must guess information about the format intended.
+#' [epsg_to_wkt()] could be used instead for EPSG codes.
+#'
+#' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
+#' The WKT version can be overridden by using the OSR_WKT_FORMAT
+#' configuration option (see [set_config_option()]).
+#' Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL,
+#' WKT1_ESRI, WKT2_2015, WKT2_2018, WKT2, DEFAULT.
+#' If SFSQL, a WKT1 string without AXIS, TOWGS84, AUTHORITY or
+#' EXTENSION node is returned. If WKT1_SIMPLE, a WKT1 string without
+#' AXIS, AUTHORITY or EXTENSION node is returned. WKT1 is an alias of
+#' WKT1_GDAL. WKT2 will default to the latest revision implemented
+#' (currently WKT2_2018). WKT2_2019 can be used as an alias of
+#' WKT2_2018 since GDAL 3.2
+#'
+#' @param epsg Integer EPSG code.
+#' @param srs Character string containing an SRS definition in various
+#' formats (see Details).
+#' @param pretty Logical. `TRUE` to return a nicely formatted WKT string
+#' for display to a person. `FALSE` for a regular WKT string (the default).
+#' @return Character string containing OGC WKT.
+#'
+#' @seealso
+#' [srs_query]
+#'
+#' @examples
+#' epsg_to_wkt(5070)
+#' writeLines(epsg_to_wkt(5070, pretty=TRUE))
+#'
+#' srs_to_wkt("NAD83")
+#' writeLines(srs_to_wkt("NAD83", pretty=TRUE))
+#' set_config_option("OSR_WKT_FORMAT", "WKT2")
+#' writeLines(srs_to_wkt("NAD83", pretty=TRUE))
+#' set_config_option("OSR_WKT_FORMAT", "")
+epsg_to_wkt <- function(epsg, pretty = FALSE) {
+    .Call(`_gdalraster_epsg_to_wkt`, epsg, pretty)
+}
+
+#' @rdname srs_convert
+srs_to_wkt <- function(srs, pretty = FALSE) {
+    .Call(`_gdalraster_srs_to_wkt`, srs, pretty)
+}
+
+#' Obtain information about a spatial reference system
+#'
+#' Bindings to a subset of the GDAL Spatial Reference System API
+#' (\url{https://gdal.org/en/stable/api/ogr_srs_api.html}).
+#' These functions return various information about a spatial reference
+#' system passed as text in any of the formats supported by [srs_to_wkt()].
+#'
+#' @name srs_query
+#'
+#' @details
+#' `srs_find_epsg()` tries to find a matching EPSG code.
+#' Matching may be partial, or may fail. If `all_matches = TRUE`, returns a
+#' a data frame with entries sorted by decreasing match confidence (first
+#' entry has the highest match confidence); the default is `FALSE` which
+#' returns a character string in the form "EPSG:<code>" for the first match
+#' (highest confidence). Wrapper of `OSRFindMatches()` in the GDAL SRS API.
+#'
+#' `srs_get_name()` returns the SRS name.
+#' Wrapper of `OSRGetName()` in the GDAL API.
+#'
+#' `srs_is_geographic()` returns `TRUE`  if the root is a GEOGCS node.
+#' Wrapper of `OSRIsGeographic()` in the GDAL API.
+#'
+#' `srs_is_derived_gcs()` returns `TRUE` if the SRS is a derived geographic
+#' coordinate system (for example a rotated long/lat grid).
+#' Wrapper of `OSRIsDerivedGeographic()` in the GDAL API.
+#'
+#' `srs_is_local()` returns `TRUE` if the SRS is a local coordinate system
+#' (the root is a LOCAL_CS node).
+#' Wrapper of `OSRIsLocal()` in the GDAL API.
+#'
+#' `srs_is_projected()` returns `TRUE` if the SRS contains a PROJCS node
+#' indicating a it is a projected coordinate system.
+#' Wrapper of `OSRIsProjected()` in the GDAL API.
+#'
+#' `srs_is_compound()` returns `TRUE` if the SRS is compound.
+#' Wrapper of `OSRIsCompound()` in the GDAL API.
+#'
+#' `srs_is_geocentric()` returns `TRUE` if the SRS is a geocentric coordinate
+#' system.
+#' Wrapper of `OSRIsGeocentric()` in the GDAL API.
+#'
+#' `srs_is_vertical()` returns `TRUE` if the SRS is a vertical coordinate
+#' system.
+#' Wrapper of `OSRIsVertical()` in the GDAL API.
+#'
+#' `srs_is_dynamic()` returns `TRUE` if the SRS is is a dynamic coordinate
+#' system (relies on a dynamic datum, i.e., a datum that is not plate-fixed).
+#' Wrapper of `OSRIsDynamic()` in the GDAL API. Requires GDAL >= 3.4.
+#'
+#' `srs_is_same()` returns `TRUE` if two spatial references describe
+#' the same system.
+#' Wrapper of `OSRIsSame()` in the GDAL API.
+#'
+#' `srs_get_angular_units()` fetches the angular geographic coordinate system
+#' units. Returns a list of length two: the first element contains the unit
+#' name as a character string, and the second element contains a numeric value
+#' to multiply by angular distances to transform them to radians.
+#' Wrapper of `OSRGetAngularUnits()` in the GDAL API.
+#'
+#' `srs_get_linear_units()` fetches the linear projection units.
+#' Returns a list of length two: the first element contains the unit
+#' name as a character string, and the second element contains a numeric value
+#' to multiply by linear distances to transform them to meters.
+#' If no units are available, values of "Meters" and 1.0 will be assumed.
+#' Wrapper of `OSRGetLinearUnits()` in the GDAL API.
+#'
+#' `srs_get_coord_epoch()` returns the coordinate epoch, as decimal year
+#' (e.g. 2021.3), or `0` if not set or not relevant.
+#' Wrapper of `OSRGetCoordinateEpoch()` in the GDAL API. Requires GDAL >= 3.4.
+#'
+#' `srs_get_utm_zone()` returns the UTM zone number or zero if `srs` isn't a
+#' UTM definition. A positive value indicates northern hemisphere; a negative
+#' value is in the southern hemisphere.
+#' Wrapper of `OSRGetUTMZone()` in the GDAL API.
+#'
+#' `srs_get_axis_mapping_strategy()` returns the data axis to CRS axis mapping
+#' strategy as a character string, one of:
+#' * `OAMS_TRADITIONAL_GIS_ORDER`: for geographic CRS with lat/long order, the
+#' data will still be long/lat ordered. Similarly for a projected CRS with
+#' northing/easting order, the data will still be easting/northing ordered.
+#' * `OAMS_AUTHORITY_COMPLIANT`: the data axis will be identical to the CRS
+#' axis.
+#' * `OAMS_CUSTOM`: the data axis are customly defined
+#'
+#' @param srs Character string containing an SRS definition in various
+#' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
+#' WGS84, etc., see [srs_to_wkt()]).
+#' @param srs_other Character string containing an SRS definition in various
+#' formats(see above).
+#' @param criterion Character string. One of `STRICT`, `EQUIVALENT`,
+#' `EQUIVALENT_EXCEPT_AXIS_ORDER_GEOGCRS`.
+#' Defaults to `EQUIVALENT_EXCEPT_AXIS_ORDER_GEOGCRS`.
+#' @param ignore_axis_mapping Logical scalar. If `TRUE`, sets
+#' `IGNORE_DATA_AXIS_TO_SRS_AXIS_MAPPING=YES` in the call to `OSRIsSameEx()`
+#' in the GDAL Spatial Reference System API. Defaults to `NO`.
+#' @param ignore_coord_epoch Logical scalar. If `TRUE`, sets
+#' `IGNORE_COORDINATE_EPOCH=YES` in the call to `OSRIsSameEx()`
+#' in the GDAL Spatial Reference System API. Defaults to `NO`.
+#' @param all_matches Logical scalar. `TRUE` to return all identified matches
+#' in a data frame, including a confidence value (0-100) for each match. The
+#' default is `FALSE` which returns a character string in the form
+#' `"EPSG:<code>"` for the first match (highest confidence).
+#'
+#' @seealso
+#' [srs_convert]
+#'
+#' @examples
+#' wkt <- 'PROJCS["ETRS89 / UTM zone 32N (N-E)",
+#'         GEOGCS["ETRS89",
+#'             DATUM["European_Terrestrial_Reference_System_1989",
+#'                 SPHEROID["GRS 1980",6378137,298.257222101,
+#'                     AUTHORITY["EPSG","7019"]],
+#'                 TOWGS84[0,0,0,0,0,0,0],
+#'                 AUTHORITY["EPSG","6258"]],
+#'             PRIMEM["Greenwich",0,
+#'                 AUTHORITY["EPSG","8901"]],
+#'             UNIT["degree",0.0174532925199433,
+#'                 AUTHORITY["EPSG","9122"]],
+#'             AUTHORITY["EPSG","4258"]],
+#'         PROJECTION["Transverse_Mercator"],
+#'         PARAMETER["latitude_of_origin",0],
+#'         PARAMETER["central_meridian",9],
+#'         PARAMETER["scale_factor",0.9996],
+#'         PARAMETER["false_easting",500000],
+#'         PARAMETER["false_northing",0],
+#'         UNIT["metre",1,
+#'             AUTHORITY["EPSG","9001"]],
+#'         AXIS["Northing",NORTH],
+#'         AXIS["Easting",EAST]]'
+#'
+#' srs_find_epsg(wkt)
+#'
+#' srs_find_epsg(wkt, all_matches = TRUE)
+#'
+#' srs_get_name("EPSG:5070")
+#'
+#' srs_is_geographic("EPSG:5070")
+#' srs_is_geographic("EPSG:4326")
+#'
+#' srs_is_derived_gcs("WGS84")
+#'
+#' srs_is_projected("EPSG:5070")
+#' srs_is_projected("EPSG:4326")
+#'
+#' srs_is_compound("EPSG:4326")
+#'
+#' srs_is_geocentric("EPSG:7789")
+#'
+#' srs_is_vertical("EPSG:5705")
+#'
+#' f <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, f)
+#'
+#' ds$getProjection() |> srs_is_projected()
+#' ds$getProjection() |> srs_get_utm_zone()
+#' ds$getProjection() |> srs_get_angular_units()
+#' ds$getProjection() |> srs_get_linear_units()
+#' ds$getProjection() |> srs_get_axis_mapping_strategy()
+#'
+#' ds$getProjection() |> srs_is_same("EPSG:26912")
+#' ds$getProjection() |> srs_is_same("NAD83")
+#'
+#' ds$close()
+#'
+#' # Requires GDAL >= 3.4
+#' if (as.integer(gdal_version()[2]) >= 3040000) {
+#'   if (srs_is_dynamic("WGS84"))
+#'     print("WGS84 is dynamic")
+#'
+#'   if (!srs_is_dynamic("NAD83"))
+#'     print("NAD83 is not dynamic")
+#' }
+srs_get_name <- function(srs) {
+    .Call(`_gdalraster_srs_get_name`, srs)
+}
+
+#' @rdname srs_query
+srs_find_epsg <- function(srs, all_matches = FALSE) {
+    .Call(`_gdalraster_srs_find_epsg`, srs, all_matches)
+}
+
+#' @rdname srs_query
+srs_is_geographic <- function(srs) {
+    .Call(`_gdalraster_srs_is_geographic`, srs)
+}
+
+#' @rdname srs_query
+srs_is_derived_gcs <- function(srs) {
+    .Call(`_gdalraster_srs_is_derived_gcs`, srs)
+}
+
+#' @rdname srs_query
+srs_is_local <- function(srs) {
+    .Call(`_gdalraster_srs_is_local`, srs)
+}
+
+#' @rdname srs_query
+srs_is_projected <- function(srs) {
+    .Call(`_gdalraster_srs_is_projected`, srs)
+}
+
+#' @rdname srs_query
+srs_is_compound <- function(srs) {
+    .Call(`_gdalraster_srs_is_compound`, srs)
+}
+
+#' @rdname srs_query
+srs_is_geocentric <- function(srs) {
+    .Call(`_gdalraster_srs_is_geocentric`, srs)
+}
+
+#' @rdname srs_query
+srs_is_vertical <- function(srs) {
+    .Call(`_gdalraster_srs_is_vertical`, srs)
+}
+
+#' @rdname srs_query
+srs_is_dynamic <- function(srs) {
+    .Call(`_gdalraster_srs_is_dynamic`, srs)
+}
+
+#' @rdname srs_query
+srs_is_same <- function(srs, srs_other, criterion = "", ignore_axis_mapping = FALSE, ignore_coord_epoch = FALSE) {
+    .Call(`_gdalraster_srs_is_same`, srs, srs_other, criterion, ignore_axis_mapping, ignore_coord_epoch)
+}
+
+#' @rdname srs_query
+srs_get_angular_units <- function(srs) {
+    .Call(`_gdalraster_srs_get_angular_units`, srs)
+}
+
+#' @rdname srs_query
+srs_get_linear_units <- function(srs) {
+    .Call(`_gdalraster_srs_get_linear_units`, srs)
+}
+
+#' @rdname srs_query
+srs_get_coord_epoch <- function(srs) {
+    .Call(`_gdalraster_srs_get_coord_epoch`, srs)
+}
+
+#' @rdname srs_query
+srs_get_utm_zone <- function(srs) {
+    .Call(`_gdalraster_srs_get_utm_zone`, srs)
+}
+
+#' @rdname srs_query
+srs_get_axis_mapping_strategy <- function(srs) {
+    .Call(`_gdalraster_srs_get_axis_mapping_strategy`, srs)
 }
 
 #' get PROJ version
@@ -2624,279 +3005,5 @@ transform_xy <- function(pts, srs_from, srs_to) {
 #'                  traditional_gis_order = FALSE)
 transform_bounds <- function(bbox, srs_from, srs_to, densify_pts = 21L, traditional_gis_order = TRUE) {
     .Call(`_gdalraster_transform_bounds`, bbox, srs_from, srs_to, densify_pts, traditional_gis_order)
-}
-
-#' Convert spatial reference from EPSG code to OGC Well Known Text
-#'
-#' `epsg_to_wkt()` exports the spatial reference for an EPSG code to
-#' WKT format.
-#'
-#' @details
-#' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
-#' The WKT version can be overridden by using the OSR_WKT_FORMAT
-#' configuration option (see [set_config_option()]).
-#' Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL,
-#' WKT1_ESRI, WKT2_2015, WKT2_2018, WKT2, DEFAULT.
-#' If SFSQL, a WKT1 string without AXIS, TOWGS84, AUTHORITY or
-#' EXTENSION node is returned. If WKT1_SIMPLE, a WKT1 string without
-#' AXIS, AUTHORITY or EXTENSION node is returned. WKT1 is an alias of
-#' WKT1_GDAL. WKT2 will default to the latest revision implemented
-#' (currently WKT2_2018). WKT2_2019 can be used as an alias of
-#' WKT2_2018 since GDAL 3.2
-#'
-#' @param epsg Integer EPSG code.
-#' @param pretty Logical. `TRUE` to return a nicely formatted WKT string
-#' for display to a person. `FALSE` for a regular WKT string (the default).
-#' @return Character string containing OGC WKT.
-#'
-#' @seealso
-#' [srs_to_wkt()]
-#'
-#' @examples
-#' epsg_to_wkt(5070)
-#' writeLines(epsg_to_wkt(5070, pretty=TRUE))
-#' set_config_option("OSR_WKT_FORMAT", "WKT2")
-#' writeLines(epsg_to_wkt(5070, pretty=TRUE))
-#' set_config_option("OSR_WKT_FORMAT", "")
-epsg_to_wkt <- function(epsg, pretty = FALSE) {
-    .Call(`_gdalraster_epsg_to_wkt`, epsg, pretty)
-}
-
-#' Convert various spatial reference formats to Well Known Text
-#'
-#' `srs_to_wkt()` converts a spatial reference system (SRS) definition
-#' in various text formats to WKT. The function will examine the input SRS,
-#' try to deduce the format, and then export it to WKT.
-#'
-#' @details
-#' This is a wrapper for `OSRSetFromUserInput()` in the GDAL Spatial
-#' Reference System C API with output to WKT.
-#' The input SRS may take the following forms:
-#'   * WKT - to convert WKT versions (see below)
-#'   * EPSG:n - EPSG code n
-#'   * AUTO:proj_id,unit_id,lon0,lat0 - WMS auto projections
-#'   * urn:ogc:def:crs:EPSG::n - OGC URNs
-#'   * PROJ.4 definitions
-#'   * filename - file to read for WKT, XML or PROJ.4 definition
-#'   * well known name such as NAD27, NAD83, WGS84 or WGS72
-#'   * IGNF:xxxx, ESRI:xxxx - definitions from the PROJ database
-#'   * PROJJSON (PROJ >= 6.2)
-#'
-#' This function is intended to be flexible, but by its nature it is
-#' imprecise as it must guess information about the format intended.
-#' [epsg_to_wkt()] could be used instead for EPSG codes.
-#'
-#' As of GDAL 3.0, the default format for WKT export is OGC WKT 1.
-#' The WKT version can be overridden by using the OSR_WKT_FORMAT
-#' configuration option (see [set_config_option()]).
-#' Valid values are one of: SFSQL, WKT1_SIMPLE, WKT1, WKT1_GDAL,
-#' WKT1_ESRI, WKT2_2015, WKT2_2018, WKT2, DEFAULT.
-#' If SFSQL, a WKT1 string without AXIS, TOWGS84, AUTHORITY or
-#' EXTENSION node is returned. If WKT1_SIMPLE, a WKT1 string without
-#' AXIS, AUTHORITY or EXTENSION node is returned. WKT1 is an alias of
-#' WKT1_GDAL. WKT2 will default to the latest revision implemented
-#' (currently WKT2_2018). WKT2_2019 can be used as an alias of
-#' WKT2_2018 since GDAL 3.2
-#'
-#' @param srs Character string containing an SRS definition in various
-#' formats (see Details).
-#' @param pretty Logical. `TRUE` to return a nicely formatted WKT string
-#' for display to a person. `FALSE` for a regular WKT string (the default).
-#' @return Character string containing OGC WKT.
-#'
-#' @seealso
-#' [epsg_to_wkt()]
-#'
-#' @examples
-#' srs_to_wkt("NAD83")
-#' writeLines(srs_to_wkt("NAD83", pretty=TRUE))
-#' set_config_option("OSR_WKT_FORMAT", "WKT2")
-#' writeLines(srs_to_wkt("NAD83", pretty=TRUE))
-#' set_config_option("OSR_WKT_FORMAT", "")
-srs_to_wkt <- function(srs, pretty = FALSE) {
-    .Call(`_gdalraster_srs_to_wkt`, srs, pretty)
-}
-
-#' Try to identify a matching EPSG code for a given SRS definition
-#'
-#' `srs_find_epsg()` accepts a spatial reference system definition
-#' in various text formats and tries to find a matching EPSG code.
-#' See [srs_to_wkt()] for a description of the possible input formats.
-#' This function is an interface to `OSRFindMatches()` in the GDAL Spatial
-#' Reference System API.
-#'
-#' @details
-#' Matching may be partial, or may fail. Returned entries will be sorted by
-#' decreasing match confidence (first entry has the highest match confidence).
-#'
-#' @param srs Character string containing an SRS definition in various
-#' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
-#' WGS84, etc).
-#' @param all_matches Logical scalar. `TRUE` to return all identified matches
-#' in a data frame, including a confidence value (0-100) for each match. The
-#' default is `FALSE` which returns a character string in the form
-#' `"EPSG:<code>"` for the first match (highest confidence).
-#'
-#' @return Character string or data frame, or `NULL` if matching failed.
-#'
-#' @seealso
-#' [epsg_to_wkt()], [srs_to_wkt()]
-#'
-#' @examples
-#' srs_find_epsg("WGS84")
-#'
-#' srs_find_epsg("WGS84", all_matches = TRUE)
-srs_find_epsg <- function(srs, all_matches = FALSE) {
-    .Call(`_gdalraster_srs_find_epsg`, srs, all_matches)
-}
-
-#' Return the spatial reference system name
-#'
-#' `srs_get_name()` accepts a spatial reference system definition
-#' in various text formats and returns the name.
-#' See [srs_to_wkt()] for a description of the possible input formats.
-#' Wrapper of `OSRGetName()` in the GDAL Spatial Reference System API.
-#'
-#' @param srs Character string containing an SRS definition in various
-#' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,
-#' WGS84, etc).
-#'
-#' @return Character string containing the name, or empty string.
-#'
-#' @seealso
-#' [epsg_to_wkt()], [srs_find_epsg()], [srs_to_wkt()]
-#'
-#' @examples
-#' srs_get_name("EPSG:5070")
-srs_get_name <- function(srs) {
-    .Call(`_gdalraster_srs_get_name`, srs)
-}
-
-#' Check if WKT definition is a geographic coordinate system
-#'
-#' `srs_is_geographic()` will attempt to import the given WKT string as a
-#' spatial reference system, and returns `TRUE`  if the root is a
-#' GEOGCS node. This is a wrapper for `OSRIsGeographic()` in the GDAL Spatial
-#' Reference System C API.
-#'
-#' @param srs Character OGC WKT string for a spatial reference system
-#' @return Logical. `TRUE` if `srs` is geographic, otherwise `FALSE`
-#'
-#' @seealso
-#' [srs_is_projected()], [srs_is_same()]
-#'
-#' @examples
-#' srs_is_geographic(epsg_to_wkt(5070))
-#' srs_is_geographic(srs_to_wkt("WGS84"))
-srs_is_geographic <- function(srs) {
-    .Call(`_gdalraster_srs_is_geographic`, srs)
-}
-
-#' Check if WKT definition is a projected coordinate system
-#'
-#' `srs_is_projected()` will attempt to import the given WKT string as a
-#' spatial reference system (SRS), and returns `TRUE` if the SRS contains a
-#' PROJCS node indicating a it is a projected coordinate system. This is a
-#' wrapper for `OSRIsProjected()` in the GDAL Spatial Reference System C API.
-#'
-#' @param srs Character OGC WKT string for a spatial reference system
-#' @return Logical. `TRUE` if `srs` is projected, otherwise `FALSE`
-#'
-#' @seealso
-#' [srs_is_geographic()], [srs_is_same()]
-#'
-#' @examples
-#' srs_is_projected(epsg_to_wkt(5070))
-#' srs_is_projected(srs_to_wkt("WGS84"))
-srs_is_projected <- function(srs) {
-    .Call(`_gdalraster_srs_is_projected`, srs)
-}
-
-#' Do these two spatial references describe the same system?
-#'
-#' `srs_is_same()` returns `TRUE` if these two spatial references describe
-#' the same system. This is a wrapper for `OSRIsSame()` in the GDAL Spatial
-#' Reference System C API.
-#'
-#' @param srs1 Character string. OGC WKT for a spatial reference system.
-#' @param srs2 Character string. OGC WKT for a spatial reference system.
-#' @param criterion Character string. One of `STRICT`, `EQUIVALENT`,
-#' `EQUIVALENT_EXCEPT_AXIS_ORDER_GEOGCRS`.
-#' Defaults to `EQUIVALENT_EXCEPT_AXIS_ORDER_GEOGCRS`.
-#' @param ignore_axis_mapping Logical scalar. If `TRUE`, sets
-#' `IGNORE_DATA_AXIS_TO_SRS_AXIS_MAPPING=YES` in the call to `OSRIsSameEx()`
-#' in the GDAL Spatial Reference System API. Defaults to `NO`.
-#' @param ignore_coord_epoch Logical scalar. If `TRUE`, sets
-#' `IGNORE_COORDINATE_EPOCH=YES` in the call to `OSRIsSameEx()`
-#' in the GDAL Spatial Reference System API. Defaults to `NO`.
-#' @return Logical. `TRUE` if these two spatial references describe the same
-#' system, otherwise `FALSE`.
-#'
-#' @seealso
-#' [srs_is_geographic()], [srs_is_projected()]
-#'
-#' @examples
-#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' ds <- new(GDALRaster, elev_file, TRUE)
-#' srs_is_same(ds$getProjectionRef(), epsg_to_wkt(26912))
-#' srs_is_same(ds$getProjectionRef(), epsg_to_wkt(5070))
-#' ds$close()
-srs_is_same <- function(srs1, srs2, criterion = "", ignore_axis_mapping = FALSE, ignore_coord_epoch = FALSE) {
-    .Call(`_gdalraster_srs_is_same`, srs1, srs2, criterion, ignore_axis_mapping, ignore_coord_epoch)
-}
-
-#' Get the bounding box of a geometry specified in OGC WKT format
-#'
-#' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry
-#' (e.g., LINE, POLYGON, MULTIPOLYGON).
-#'
-#' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
-#' @param extend_x Numeric scalar. Distance to extend the output bounding box
-#' in both directions along the x-axis
-#' (results in `xmin = bbox[1] - extend_x`, `xmax = bbox[3] + extend_x`).
-#' @param extend_y Numeric scalar. Distance to extend the output bounding box
-#' in both directions along the y-axis
-#' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
-#' @return Numeric vector of length four containing the xmin, ymin,
-#' xmax, ymax of the geometry specified by `wkt` (possibly extended by values
-#' in `extend_x`, `extend_y`).
-#'
-#' @seealso
-#' [bbox_to_wkt()]
-#'
-#' @examples
-#' bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
-#' 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5,
-#' 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
-#' bbox_from_wkt(bnd, 100, 100)
-bbox_from_wkt <- function(wkt, extend_x = 0, extend_y = 0) {
-    .Call(`_gdalraster_bbox_from_wkt`, wkt, extend_x, extend_y)
-}
-
-#' Convert a bounding box to POLYGON in OGC WKT format
-#'
-#' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
-#'
-#' @param bbox Numeric vector of length four containing xmin, ymin,
-#' xmax, ymax.
-#' @param extend_x Numeric scalar. Distance in units of `bbox` to extend the
-#' rectangle in both directions along the x-axis
-#' (results in `xmin = bbox[1] - extend_x`, `xmax = bbox[3] + extend_x`).
-#' @param extend_y Numeric scalar. Distance in units of `bbox` to extend the
-#' rectangle in both directions along the y-axis
-#' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
-#' @return Character string for an OGC WKT polygon.
-#' `NA` is returned if GDAL was built without the GEOS library.
-#'
-#' @seealso
-#' [bbox_from_wkt()], [g_buffer()]
-#'
-#' @examples
-#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' ds <- new(GDALRaster, elev_file, read_only=TRUE)
-#' bbox_to_wkt(ds$bbox())
-#' ds$close()
-bbox_to_wkt <- function(bbox, extend_x = 0, extend_y = 0) {
-    .Call(`_gdalraster_bbox_to_wkt`, bbox, extend_x, extend_y)
 }
 

@@ -366,6 +366,21 @@ test_that("WKB/WKT conversion functions work", {
     expect_warning(wkb <- g_wk2wk(wkt))
 })
 
+test_that("bbox functions work", {
+    skip_if_not(has_geos())
+
+    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    ds <- new(GDALRaster, elev_file, read_only=TRUE)
+    bb <- ds$bbox()
+    ds$close()
+
+    expect_equal(bbox_from_wkt("invalid WKT"), rep(NA_real_, 4))
+    bb_wkt <- bbox_to_wkt(bb)
+    expect_true(startsWith(bb_wkt, "POLYGON"))
+    expect_equal(bbox_from_wkt(bb_wkt), bb)
+    expect_error(bbox_to_wkt(c(0, 1)))
+})
+
 test_that("bbox intersect/union return correct values", {
     bbox_list <-list()
     elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")

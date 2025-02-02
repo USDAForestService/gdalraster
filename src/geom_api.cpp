@@ -15,7 +15,8 @@
 #include "ogr_spatialref.h"
 #include "ogr_srs_api.h"
 
-#include "wkt_conv.h"
+#include "srs_api.h"
+
 
 //' get GEOS version
 //' @noRd
@@ -1778,3 +1779,102 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
     return wkb;
 }
 
+//' Get the bounding box of a geometry specified in OGC WKT format
+//'
+//' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry
+//' (e.g., LINE, POLYGON, MULTIPOLYGON).
+//'
+//' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
+//' @param extend_x Numeric scalar. Distance to extend the output bounding box
+//' in both directions along the x-axis
+//' (results in `xmin = bbox[1] - extend_x`, `xmax = bbox[3] + extend_x`).
+//' @param extend_y Numeric scalar. Distance to extend the output bounding box
+//' in both directions along the y-axis
+//' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
+//' @return Numeric vector of length four containing the xmin, ymin,
+//' xmax, ymax of the geometry specified by `wkt` (possibly extended by values
+//' in `extend_x`, `extend_y`).
+//'
+//' @seealso
+//' [bbox_to_wkt()]
+//'
+//' @examples
+//' bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
+//' 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5,
+//' 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
+//' bbox_from_wkt(bnd, 100, 100)
+// [[Rcpp::export]]
+Rcpp::NumericVector bbox_from_wkt(const std::string &wkt,
+        double extend_x = 0, double extend_y = 0) {
+
+    OGRGeometryH hGeometry = nullptr;
+    char* pszWKT;
+    pszWKT = (char*) wkt.c_str();
+
+    if (OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeometry) != OGRERR_NONE) {
+        if (hGeometry != nullptr)
+            OGR_G_DestroyGeometry(hGeometry);
+        Rcpp::Rcerr << "failed to create geometry object from WKT string\n";
+        Rcpp::NumericVector ret(4, NA_REAL);
+        return ret;
+    }
+
+    OGREnvelope sBbox;
+    OGR_G_GetEnvelope(hGeometry, &sBbox);
+    Rcpp::NumericVector bbox = {
+        sBbox.MinX - extend_x,
+        sBbox.MinY - extend_y,
+        sBbox.MaxX + extend_x,
+        sBbox.MaxY + extend_y
+    };
+
+    OGR_G_DestroyGeometry(hGeometry);
+
+    return bbox;
+}
+
+//' Convert a bounding box to POLYGON in OGC WKT format
+//'
+//' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
+//'
+//' @param bbox Numeric vector of length four containing xmin, ymin,
+//' xmax, ymax.
+//' @param extend_x Numeric scalar. Distance in units of `bbox` to extend the
+//' rectangle in both directions along the x-axis
+//' (results in `xmin = bbox[1] - extend_x`, `xmax = bbox[3] + extend_x`).
+//' @param extend_y Numeric scalar. Distance in units of `bbox` to extend the
+//' rectangle in both directions along the y-axis
+//' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
+//' @return Character string for an OGC WKT polygon.
+//' `NA` is returned if GDAL was built without the GEOS library.
+//'
+//' @seealso
+//' [bbox_from_wkt()], [g_buffer()]
+//'
+//' @examples
+//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+//' ds <- new(GDALRaster, elev_file, read_only=TRUE)
+//' bbox_to_wkt(ds$bbox())
+//' ds$close()
+// [[Rcpp::export]]
+Rcpp::String bbox_to_wkt(const Rcpp::NumericVector &bbox,
+        double extend_x = 0, double extend_y = 0) {
+
+    if (bbox.size() != 4)
+        Rcpp::stop("invalid bounding box");
+
+    Rcpp::NumericVector bbox_in = Rcpp::clone(bbox);
+    bbox_in[0] -= extend_x;
+    bbox_in[1] -= extend_y;
+    bbox_in[2] += extend_x;
+    bbox_in[3] += extend_y;
+
+    Rcpp::NumericMatrix poly_xy(5, 2);
+    poly_xy.row(0) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(1));
+    poly_xy.row(1) = Rcpp::NumericVector::create(bbox_in(2), bbox_in(1));
+    poly_xy.row(2) = Rcpp::NumericVector::create(bbox_in(2), bbox_in(3));
+    poly_xy.row(3) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(3));
+    poly_xy.row(4) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(1));
+
+    return g_wkb2wkt(g_create("POLYGON", poly_xy));
+}
