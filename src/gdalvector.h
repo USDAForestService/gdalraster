@@ -41,7 +41,7 @@ class GDALVector {
     std::string m_dialect {""};
 
     // exposed read/write fields
-    std::string defaultGeomFldName {"geometry"};
+    std::string defaultGeomColName {"geometry"};
     bool promoteToMulti {false};
     bool quiet {false};
     std::string returnGeomAs {"WKB"};
