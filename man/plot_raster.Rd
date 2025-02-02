@@ -178,15 +178,16 @@ set_config_option("GDAL_RASTERIO_RESAMPLING", "BILINEAR")
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 ds <- new(GDALRaster, elev_file)
 
+# all other arguments are optional when passing a GDALRaster object
 # grayscale
-plot_raster(ds, legend=TRUE, main="Storm Lake elevation (m)")
+plot_raster(ds, legend = TRUE, main = "Storm Lake elevation (m)")
 
 # color ramp from user-defined palette
 elev_pal <- c("#00A60E","#63C600","#E6E600","#E9BD3B",
               "#ECB176","#EFC2B3","#F2F2F2")
-ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
-plot_raster(ds, col_map_fn=ramp, legend=TRUE,
-            main="Storm Lake elevation (m)")
+ramp <- scales::colour_ramp(elev_pal, alpha = FALSE)
+plot_raster(ds, col_map_fn = ramp, legend = TRUE,
+            main = "Storm Lake elevation (m)")
 
 ds$close()
 
@@ -196,16 +197,15 @@ b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
 band_files <- c(b6_file, b5_file, b4_file)
 
-r <- vector("integer")
-for (f in band_files) {
-  ds <- new(GDALRaster, f)
-  dm <- ds$dim()
-  r <- c(r, read_ds(ds))
-  ds$close()
-}
+vrt_file <- file.path(tempdir(), "storml_b6_b5_b4.vrt")
+buildVRT(vrt_file, band_files, cl_arg = "-separate")
 
-plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
-            main="Landsat 6-5-4 (vegetative analysis)")
+ds <- new(GDALRaster, vrt_file)
+
+plot_raster(ds, main = "Landsat 6-5-4 (vegetative analysis)")
+
+ds$close()
+\dontshow{vsi_unlink(vrt_file)}
 
 ## LANDFIRE Existing Vegetation Cover (EVC) with color map
 evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
@@ -214,11 +214,11 @@ evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
 evc_csv <- system.file("extdata/LF20_EVC_220.csv", package="gdalraster")
 vat <- read.csv(evc_csv)
 head(vat)
-vat <- vat[,c(1,6:8)]
+vat <- vat[, c(1, 6:8)]
 
 ds <- new(GDALRaster, evc_file)
-plot_raster(ds, col_tbl=vat, interpolate=FALSE,
-            main="Storm Lake LANDFIRE EVC")
+plot_raster(ds, col_tbl = vat, interpolate = FALSE,
+            main = "Storm Lake LANDFIRE EVC")
 
 ds$close()
 
@@ -230,7 +230,8 @@ ds$getDataTypeName(band = 1)  # complex floating point
 ramp <- scales::colour_ramp(scales::pal_viridis(option = "plasma")(6),
                             alpha = FALSE)
 
-plot_raster(ds, pixel_fn = Arg, col_map_fn = ramp)
+plot_raster(ds, pixel_fn = Arg, col_map_fn = ramp, interpolate = FALSE,
+            legend = TRUE, main = "Arg(complex.tif)")
 
 ds$close()
 }
