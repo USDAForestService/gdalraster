@@ -355,7 +355,8 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
         if (nbands==1 && is.null(col_tbl) && is.null(col_map_fn)) {
             # check for a built-in color table
             if (!is.null(data$getColorTable(band=1)) &&
-                    data$getPaletteInterp(band=1)=="RGB") {
+                data$getPaletteInterp(band=1)=="RGB") {
+
                 col_tbl <- data$getColorTable(band=1)
                 maxColorValue <- 255
             }
@@ -442,7 +443,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
     }
 
     if (typeof(data_in) == "complex") {
-        stop("use the 'pixel_fn' argument to plot complex data types",
+        stop("specify 'pixel_fn' when plotting complex data types",
              call. = FALSE)
     }
 
