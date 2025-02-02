@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9012</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9020</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9012" id="gdalraster-11209012-dev">gdalraster 1.12.0.9012 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209012-dev"></a></h2>
-<ul><li><p>accept one (x, y) as a vector in functions that expect matrix or data frame input (<code><a href="../reference/transform_xy.html">transform_xy()</a></code>, <code>inverse_proj()</code>, <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code>, <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code>) (2025-02-01)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9020" id="gdalraster-11209020-dev">gdalraster 1.12.0.9020 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209020-dev"></a></h2>
+<ul><li><p><code>GDALVector-class</code>: rename the writable field <code>$defaultGeomFldName</code> to <code>$defaultGeomColName</code> (2025-02-01)</p></li>
+<li><p>accept one (x, y) as a vector in functions that expect matrix or data frame input (<code><a href="../reference/transform_xy.html">transform_xy()</a></code>, <code>inverse_proj()</code>, <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code>, <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code>) (2025-02-01)</p></li>
 <li><p>(internal) validate input columns in the data frame-to-matrix internal C++ functions (2025-02-01)</p></li>
 <li><p>add <code><a href="../reference/vsi_is_local.html">vsi_is_local()</a></code>: returns whether the file/filesystem is “local”, wrapper of <code>VSIIsLocal()</code> (2025-01-31)</p></li>
 <li><p>add <code>GDALVector::getFieldDomain()</code>: accepts the name of an OGR field domain associated with the dataset and returns a list containing the domain specifications (GDAL &gt;= 3.3) (2025-01-20)</p></li>
