@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9012 (dev)
+# gdalraster 1.12.0.9020 (dev)
+
+* `GDALVector-class`: rename the writeable field `$defaultGeomFldName` to `$defaultGeomColName` (2025-02-01)
 
 * accept one (x, y) as a vector in functions that expect matrix or data frame input (`transform_xy()`, `inverse_proj()`, `apply_geotransform()`, `get_pixel_line()`) (2025-02-01)
 

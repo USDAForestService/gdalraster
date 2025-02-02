@@ -292,7 +292,7 @@ test_that("read methods work correctly", {
     lyr <- new(GDALVector, dsn)
     lyr$returnGeomAs <- "TYPE_NAME"
     lyr$promoteToMulti <- FALSE
-    geom_fld <-lyr$defaultGeomFldName
+    geom_fld <-lyr$defaultGeomColName
     d <- lyr$fetch(-1)
     expect_true("POLYGON" %in% d[, geom_fld])
     expect_true("MULTIPOLYGON" %in% d[, geom_fld])
