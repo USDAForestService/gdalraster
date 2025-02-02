@@ -626,8 +626,8 @@ Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject& col_row,
     uint64_t num_outside = 0;
     for (R_xlen_t i = 0; i < col_row_in.nrow(); ++i) {
         if (col_row_in(i, 0) < 0 || col_row_in(i, 1) < 0 ||
-                col_row_in(i, 0) >= ds->getRasterXSize() ||
-                col_row_in(i, 1) >= ds->getRasterYSize()) {
+                col_row_in(i, 0) > ds->getRasterXSize() ||
+                col_row_in(i, 1) > ds->getRasterYSize()) {
 
             num_outside += 1;
             xy(i, 0) = NA_REAL;
