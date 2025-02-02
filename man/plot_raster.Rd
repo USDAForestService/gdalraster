@@ -227,7 +227,8 @@ f <- system.file("extdata/complex.tif", package="gdalraster")
 ds <- new(GDALRaster, f)
 ds$getDataTypeName(band = 1)  # complex floating point
 
-ramp <- colour_ramp(pal_viridis(option = "plasma")(6), alpha = FALSE)
+ramp <- scales::colour_ramp(scales::pal_viridis(option = "plasma")(6),
+                            alpha = FALSE)
 
 plot_raster(ds, pixel_fn = Arg, col_map_fn = ramp)
 
