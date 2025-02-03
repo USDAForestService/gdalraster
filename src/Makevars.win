@@ -21,14 +21,14 @@ else
   PKG_LIBS = $(shell pkg-config --libs gdal)
 endif
 
-	
+
 all: clean winlibs
 
 winlibs:
 	cp -r "$(R_TOOLS_SOFT)/share/gdal" ../inst/
 	cp -r "$(R_TOOLS_SOFT)/share/proj" ../inst/
 
-CXX_STD = CXX
+CXX_STD = CXX17
 
 clean:
 	rm -f $(SHLIB) $(OBJECTS)
