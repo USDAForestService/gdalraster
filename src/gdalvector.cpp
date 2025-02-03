@@ -393,7 +393,7 @@ Rcpp::List GDALVector::getLayerDefn() const {
 
         std::string geomFldName(OGR_GFld_GetNameRef(hGeomFldDefn));
         if (geomFldName == "")
-            geomFldName = this->defaultGeomFldName;
+            geomFldName = this->defaultGeomColName;
         list_out.push_back(list_geom_fld_defn, geomFldName);
     }
 
@@ -973,7 +973,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 continue;
 
             if (EQUAL(OGR_GFld_GetNameRef(hGeomFldDefn), ""))
-                geom_column.push_back(this->defaultGeomFldName);
+                geom_column.push_back(this->defaultGeomColName);
             else
                 geom_column.push_back(OGR_GFld_GetNameRef(hGeomFldDefn));
 
@@ -1340,12 +1340,10 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
 #endif
                     if (nWKBSize) {
                         Rcpp::RawVector wkb(nWKBSize);
-
-                        if (EQUAL(this->returnGeomAs.c_str(), "WKB"))
-                            OGR_G_ExportToWkb(hGeom, eOrder, &wkb[0]);
-                        else if (EQUAL(this->returnGeomAs.c_str(), "WKB_ISO"))
+                        if (EQUAL(this->returnGeomAs.c_str(), "WKB_ISO"))
                             OGR_G_ExportToIsoWkb(hGeom, eOrder, &wkb[0]);
-
+                        else
+                            OGR_G_ExportToWkb(hGeom, eOrder, &wkb[0]);
                         col[row_num] = wkb;
                     }
                     else {
@@ -1359,12 +1357,11 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                         col[row_num] = NA_STRING;
                     }
                     else {
-                        char *pszWKT;
-                        if (EQUAL(this->returnGeomAs.c_str(), "WKT"))
-                            OGR_G_ExportToWkt(hGeom, &pszWKT);
-                        else if (EQUAL(this->returnGeomAs.c_str(), "WKT_ISO"))
+                        char *pszWKT = nullptr;
+                        if (EQUAL(this->returnGeomAs.c_str(), "WKT_ISO"))
                             OGR_G_ExportToIsoWkt(hGeom, &pszWKT);
-
+                        else
+                            OGR_G_ExportToWkt(hGeom, &pszWKT);
                         col[row_num] = pszWKT;
                         CPLFree(pszWKT);
                     }
@@ -1385,7 +1382,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                                 {"DISPLAY_GEOMETRY=SUMMARY", nullptr};
 
                         CPLString s = poGeom->dumpReadable(nullptr,
-                                options.data());
+                                                           options.data());
 
                         s.replaceAll('\n', ' ');
                         col[row_num] = s.Trim();
@@ -1411,14 +1408,21 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                   if (hGeom != nullptr) {
                     OGREnvelope  envelope;
                     OGR_G_GetEnvelope(hGeom, &envelope);
-                    col[row_num] = Rcpp::NumericVector::create(envelope.MinX, envelope.MinY, envelope.MaxX, envelope.MaxY);
+                    col[row_num] = Rcpp::NumericVector::create(envelope.MinX,
+                                                               envelope.MinY,
+                                                               envelope.MaxX,
+                                                               envelope.MaxY);
                     if (destroy_geom) {
                       OGR_G_DestroyGeometry(hGeom);
                       destroy_geom = false;
                     }
                   } else {
-                    // do.call(rbind, x$geom) to get a table of bbox, so we use NA not NULL
-                    col[row_num] = Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+                    // do.call(rbind, x$geom) to get a table of bbox,
+                    // so we use NA not NULL
+                    col[row_num] = Rcpp::NumericVector::create(NA_REAL,
+                                                               NA_REAL,
+                                                               NA_REAL,
+                                                               NA_REAL);
                   }
 
                 }
@@ -2377,7 +2381,7 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
 
         std::string geomFldName(OGR_GFld_GetNameRef(hGeomFldDefn));
         if (geomFldName == "")
-            geomFldName = this->defaultGeomFldName;
+            geomFldName = this->defaultGeomColName;
 
         col_names[col_num] = geomFldName;
     }
@@ -2505,7 +2509,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
 
         // case of geometry column name is empty as with shapefiles etc.
         if (nGeomFields == 1 && (
-                EQUAL(names[1], this->defaultGeomFldName.c_str()) ||
+                EQUAL(names[1], this->defaultGeomColName.c_str()) ||
                 EQUAL(names[i], "_ogr_geometry_") ||
                 EQUAL(names[i], "geometry") ||
                 EQUAL(names[i], "geom"))) {
@@ -3159,7 +3163,7 @@ RCPP_MODULE(mod_GDALVector) {
     .field_readonly("m_dialect", &GDALVector::m_dialect)
 
     // read/write fields
-    .field("defaultGeomFldName", &GDALVector::defaultGeomFldName)
+    .field("defaultGeomColName", &GDALVector::defaultGeomColName)
     .field("promoteToMulti", &GDALVector::promoteToMulti)
     .field("quiet", &GDALVector::quiet)
     .field("returnGeomAs", &GDALVector::returnGeomAs)

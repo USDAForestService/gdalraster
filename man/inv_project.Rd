@@ -8,7 +8,7 @@ inv_project(pts, srs, well_known_gcs = "")
 }
 \arguments{
 \item{pts}{A two-column data frame or numeric matrix containing geospatial
-x/y coordinates.}
+x, y coordinates (or vector of x, y for one point).}
 
 \item{srs}{Character string specifying the projected spatial reference
 system for \code{pts}. May be in WKT format or any of the formats supported by

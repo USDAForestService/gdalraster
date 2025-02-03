@@ -2373,7 +2373,7 @@ has_geos <- function() {
 #' names above.
 #'
 #' @param pts A two-column data frame or numeric matrix containing geospatial
-#' x/y coordinates.
+#' x, y coordinates (or vector of x, y for one point).
 #' @param srs Character string specifying the projected spatial reference
 #' system for `pts`. May be in WKT format or any of the formats supported by
 #' [srs_to_wkt()].
@@ -2399,7 +2399,7 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #' `transform_xy()` transforms geospatial x/y coordinates to a new projection.
 #'
 #' @param pts A two-column data frame or numeric matrix containing geospatial
-#' x/y coordinates.
+#' x, y coordinates (or vector of x, y for one point).
 #' @param srs_from Character string specifying the spatial reference system
 #' for `pts`. May be in WKT format or any of the formats supported by
 #' [srs_to_wkt()].

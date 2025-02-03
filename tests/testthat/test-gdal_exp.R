@@ -74,8 +74,16 @@ test_that("createCopy writes correct output", {
     ds$close()
 })
 
+test_that("internal apply_geotransform gives correct result", {
+    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    ds <- new(GDALRaster, elev_file, read_only=TRUE)
+    gt <- ds$getGeoTransform()
+    ds$close()
+    expect_equal(.apply_geotransform(gt, 1, 1), c(323506.1, 5105052.0))
+})
+
 test_that("apply_geotransform gives correct results", {
-    raster_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
+    raster_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
     ds <- new(GDALRaster, raster_file)
 
     # compute some raster coordinates in column/row space
@@ -93,13 +101,18 @@ test_that("apply_geotransform gives correct results", {
     dimnames(xy_expected) <- NULL
 
     gt <- ds$getGeoTransform()
-    expect_equal(apply_geotransform(col_row, gt), xy_expected, tolerance = 1)
+    expect_equal(apply_geotransform(col_row, gt), xy_expected, tolerance = 0.1)
 
     # or, using the class method
-    expect_equal(ds$apply_geotransform(col_row), xy_expected,  tolerance = 1)
+    expect_equal(ds$apply_geotransform(col_row), xy_expected, tolerance = 0.1)
 
     expect_equal(ds$apply_geotransform(col_row) |> ds$get_pixel_line(),
                  trunc(col_row))
+
+    # one coordinate as vector input
+    res <- ds$apply_geotransform(c(col_coords[1], row_coords[1]))
+    dim(res) <- NULL
+    expect_equal(res, xy_expected[1, ], tolerance = 0.1)
 
     ds$close()
 })
@@ -115,20 +128,20 @@ test_that("get_pixel_line gives correct results", {
     res <- get_pixel_line(as.matrix(pts[, -1]), gt)
     expect_equal(as.vector(res), pix_line)
 
+    # or, using the class method and data frame input
+    res <- ds$get_pixel_line(pts[, -1])
+    expect_equal(as.vector(res), pix_line)
+
     pts[11, ] <- c(11, 323318, 5105104)
     expect_warning(res2 <- ds$get_pixel_line(pts[, -1]))
     res <- rbind(res, c(NA, NA))
     expect_equal(res2, res)
 
-    ds$close()
-})
+    # one coordinate as vector input
+    res <- get_pixel_line(c(pts[1, 2], pts[1, 3]), gt)  # col 2 x, col 3 y
+    expect_equal(as.vector(res), c(pix_line[1], pix_line[11]))
 
-test_that("_apply_geotransform gives correct result", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-    ds <- new(GDALRaster, elev_file, read_only=TRUE)
-    gt <- ds$getGeoTransform()
     ds$close()
-    expect_equal(.apply_geotransform(gt, 1, 1), c(323506.1, 5105052.0))
 })
 
 test_that("fillNodata writes correct output", {

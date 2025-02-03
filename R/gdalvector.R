@@ -61,7 +61,7 @@
 #' lyr <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)
 #'
 #' ## Read/write fields (per-object settings)
-#' lyr$defaultGeomFldName
+#' lyr$defaultGeomColName
 #' lyr$promoteToMulti
 #' lyr$quiet
 #' lyr$returnGeomAs
@@ -150,7 +150,7 @@
 #'
 #' ## Read/write fields
 #'
-#' \code{$defaultGeomFldName}\cr
+#' \code{$defaultGeomColName}\cr
 #' Character string specifying a name to use for returned columns when the
 #' geometry column name in the source layer is empty, like with shapefiles etc.
 #' Defaults to `"geometry"`.

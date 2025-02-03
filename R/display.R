@@ -181,6 +181,9 @@
 #' `grDevices::gray` for single-band data or `grDevices::rgb` for 3-band).
 #' Ignored if `col_tbl` is used. Set `normalize` to `FALSE` if using a color
 #' map function that operates on raw pixel values.
+#' @param pixel_fn An optional function that will be applied to the input
+#' pixel data. Must accept vector input and return a numeric vector of the same
+#' length as its input.
 #' @param xlim Numeric vector of length two giving the x coordinate range.
 #' If `data` is a `GDALRaster` object, the default is the raster xmin, xmax in
 #' georeferenced coordinates, otherwise the default uses pixel/line
@@ -239,15 +242,16 @@
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' ds <- new(GDALRaster, elev_file)
 #'
+#' # all other arguments are optional when passing a GDALRaster object
 #' # grayscale
-#' plot_raster(ds, legend=TRUE, main="Storm Lake elevation (m)")
+#' plot_raster(ds, legend = TRUE, main = "Storm Lake elevation (m)")
 #'
 #' # color ramp from user-defined palette
 #' elev_pal <- c("#00A60E","#63C600","#E6E600","#E9BD3B",
 #'               "#ECB176","#EFC2B3","#F2F2F2")
-#' ramp <- scales::colour_ramp(elev_pal, alpha=FALSE)
-#' plot_raster(ds, col_map_fn=ramp, legend=TRUE,
-#'             main="Storm Lake elevation (m)")
+#' ramp <- scales::colour_ramp(elev_pal, alpha = FALSE)
+#' plot_raster(ds, col_map_fn = ramp, legend = TRUE,
+#'             main = "Storm Lake elevation (m)")
 #'
 #' ds$close()
 #'
@@ -257,16 +261,15 @@
 #' b6_file <- system.file("extdata/sr_b6_20200829.tif", package="gdalraster")
 #' band_files <- c(b6_file, b5_file, b4_file)
 #'
-#' r <- vector("integer")
-#' for (f in band_files) {
-#'   ds <- new(GDALRaster, f)
-#'   dm <- ds$dim()
-#'   r <- c(r, read_ds(ds))
-#'   ds$close()
-#' }
+#' vrt_file <- file.path(tempdir(), "storml_b6_b5_b4.vrt")
+#' buildVRT(vrt_file, band_files, cl_arg = "-separate")
 #'
-#' plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
-#'             main="Landsat 6-5-4 (vegetative analysis)")
+#' ds <- new(GDALRaster, vrt_file)
+#'
+#' plot_raster(ds, main = "Landsat 6-5-4 (vegetative analysis)")
+#'
+#' ds$close()
+#' \dontshow{vsi_unlink(vrt_file)}
 #'
 #' ## LANDFIRE Existing Vegetation Cover (EVC) with color map
 #' evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
@@ -275,18 +278,31 @@
 #' evc_csv <- system.file("extdata/LF20_EVC_220.csv", package="gdalraster")
 #' vat <- read.csv(evc_csv)
 #' head(vat)
-#' vat <- vat[,c(1,6:8)]
+#' vat <- vat[, c(1, 6:8)]
 #'
 #' ds <- new(GDALRaster, evc_file)
-#' plot_raster(ds, col_tbl=vat, interpolate=FALSE,
-#'             main="Storm Lake LANDFIRE EVC")
+#' plot_raster(ds, col_tbl = vat, interpolate = FALSE,
+#'             main = "Storm Lake LANDFIRE EVC")
+#'
+#' ds$close()
+#'
+#' ## Apply a pixel function
+#' f <- system.file("extdata/complex.tif", package="gdalraster")
+#' ds <- new(GDALRaster, f)
+#' ds$getDataTypeName(band = 1)  # complex floating point
+#'
+#' ramp <- scales::colour_ramp(scales::pal_viridis(option = "plasma")(6),
+#'                             alpha = FALSE)
+#'
+#' plot_raster(ds, pixel_fn = Arg, col_map_fn = ramp, interpolate = FALSE,
+#'             legend = TRUE, main = "Arg(complex.tif)")
 #'
 #' ds$close()
 #' @export
 plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
                         max_pixels=2.5e7, col_tbl=NULL, maxColorValue=1,
                         normalize=TRUE, minmax_def=NULL, minmax_pct_cut=NULL,
-                        col_map_fn=NULL, xlim=NULL, ylim=NULL,
+                        col_map_fn=NULL, pixel_fn=NULL, xlim=NULL, ylim=NULL,
                         interpolate=TRUE, asp=1, axes=TRUE, main="",
                         xlab="x", ylab="y", xaxs="i", yaxs="i",
                         legend=FALSE, digits=2, na_col=rgb(0,0,0,0), ...) {
@@ -303,6 +319,16 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
 
     if (is.null(max_pixels))
         max_pixels <- Inf
+
+    if (!is.null(col_map_fn)) {
+        if (!is.function(col_map_fn))
+            stop("'col_map_fn' must be a function", call. = FALSE)
+    }
+
+    if (!is.null(pixel_fn)) {
+        if (!is.function(pixel_fn))
+            stop("'pixel_fn' must be a function", call. = FALSE)
+    }
 
     data_in <- NULL
     is_byte_raster <- TRUE
@@ -342,7 +368,8 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
         if (nbands==1 && is.null(col_tbl) && is.null(col_map_fn)) {
             # check for a built-in color table
             if (!is.null(data$getColorTable(band=1)) &&
-                    data$getPaletteInterp(band=1)=="RGB") {
+                data$getPaletteInterp(band=1)=="RGB") {
+
                 col_tbl <- data$getColorTable(band=1)
                 maxColorValue <- 255
             }
@@ -403,7 +430,10 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
         if ((xsize*ysize) > max_pixels)
             stop("'xsize * ysize' exceeds 'max_pixels'", call.=FALSE)
 
-        data_in <- data
+        if (is.list(data))
+            data_in <- unlist(data, use.names=FALSE)
+        else
+            data_in <- data
 
         if (is.null(xlim))
             xlim <- c(0, xsize)
@@ -422,6 +452,15 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
 
     if (typeof(data_in) == "raw") {
         data_in <- as.integer(data_in)
+    }
+
+    if (!is.null(pixel_fn)) {
+        data_in <- pixel_fn(data_in)
+    }
+
+    if (typeof(data_in) == "complex") {
+        stop("specify 'pixel_fn' when plotting complex data types",
+             call. = FALSE)
     }
 
     a <- array(data_in, dim = c(xsize, ysize, nbands))
