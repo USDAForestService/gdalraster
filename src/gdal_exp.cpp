@@ -789,19 +789,18 @@ Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v,
     if (xsize < 1 || ysize < 1 || nbands < 1)
         Rcpp::stop("invalid raster dimensions");
 
-    Rcpp::NumericVector out = Rcpp::clone(v);
+    Rcpp::NumericVector out(v.size());
 
     const size_t num_pixels = xsize * ysize;
     for (int b = 0; b < nbands; ++b) {
         const size_t band_offset = b * num_pixels;
-        for (int line = 0; line < ysize / 2; ++line) {
+        for (int line = 0; line < ysize; ++line) {
             const size_t line_offset = band_offset + (line * xsize);
             const size_t dst_offset = band_offset + num_pixels -
                                       ((line + 1) * xsize);
 
-            std::swap_ranges(out.begin() + line_offset,
-                             out.begin() + line_offset + xsize - 1,
-                             out.begin() + dst_offset);
+            std::copy_n(v.cbegin() + line_offset, xsize,
+                        out.begin() + dst_offset);
         }
     }
 
