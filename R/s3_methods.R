@@ -114,12 +114,18 @@ print.OGRFeatureSet <- function(x, ...) {
 #' @export
 #' @method plot OGRFeature
 plot.OGRFeature <- function(x, ...) {
+    geom_column <- NULL
     if (length(attr(x, "gis")$geom_column) == 0)
         stop("no geometry column")
     else
         geom_column <- attr(x, "gis")$geom_column[1]
 
-    geom_format <- toupper(attr(x, "gis")$geom_format)
+    geom_format <- ""
+    if (length(attr(x, "gis")$geom_format) == 0)
+        stop("missing geometry format")
+    else
+        geom_format <- toupper(attr(x, "gis")$geom_format)
+
     if (!geom_format %in% c("WKB", "WKB_ISO", "WKT", "WKT_ISO", "BBOX"))
         stop("no supported geometry format for plot")
 

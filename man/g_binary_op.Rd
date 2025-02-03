@@ -6,27 +6,74 @@
 \alias{g_union}
 \alias{g_difference}
 \alias{g_sym_difference}
-\title{Binary operations on WKT geometries}
+\title{Binary operations on WKB or WKT geometries}
 \usage{
-g_intersection(this_geom, other_geom)
+g_intersection(
+  this_geom,
+  other_geom,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
+)
 
-g_union(this_geom, other_geom)
+g_union(
+  this_geom,
+  other_geom,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
+)
 
-g_difference(this_geom, other_geom)
+g_difference(
+  this_geom,
+  other_geom,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
+)
 
-g_sym_difference(this_geom, other_geom)
+g_sym_difference(
+  this_geom,
+  other_geom,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
+)
 }
 \arguments{
-\item{this_geom}{Character. OGC WKT string for a simple feature geometry.}
+\item{this_geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.}
 
-\item{other_geom}{Character. OGC WKT string for a simple feature geometry.}
+\item{other_geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings. Must contain the same
+number of geometries as \code{this_geom}.}
+
+\item{as_wkb}{Logical, \code{TRUE} to return the output geometry in WKB
+format (the default), or \code{FALSE} to return as WKT.}
+
+\item{as_iso}{Logical, \code{TRUE} to export as ISO WKB/WKT (ISO 13249
+SQL/MM Part 3), or \code{FALSE} (the default) to export as "Extended WKB/WKT".}
+
+\item{byte_order}{Character string specifying the byte order when output is
+WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-Character string. The resulting geometry as OGC WKT.
+A geometry as WKB raw vector or WKT string, or a list/character vector of
+geometries as WKB/WKT with length equal to the number of input geometry
+pairs.
+\code{NA} is returned with a warning if an input geometry cannot be converted
+into an OGR geometry object, or if an error occurs in the call to the
+underlying OGR API function.
 }
 \description{
-These functions implement operations on pairs of geometries in OGC WKT
-format.
+These functions implement operations on pairs of geometries in OGC WKB
+or WKT format.
 }
 \details{
 These functions use the GEOS library via GDAL headers.
@@ -46,6 +93,9 @@ difference of this geometry and the other geometry (union minus
 intersection).
 }
 \note{
+\code{this_geom} and \code{other_geom} are assumed to be in the same coordinate
+reference system.
+
 Geometry validity is not checked. In case you are unsure of the validity
 of the input geometries, call \code{g_is_valid()} before, otherwise the result
 might be wrong.

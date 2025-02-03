@@ -4,13 +4,17 @@
 \alias{g_length}
 \title{Compute the length of a geometry}
 \usage{
-g_length(wkt)
+g_length(geom, quiet = FALSE)
 }
 \arguments{
-\item{wkt}{Character. OGC WKT string for a simple feature geometry.}
+\item{geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-Numeric scalar. Length of the geometry or \code{0}.
+Numeric vector of length equal to the number of input geometries.
+Length or '0' if undefined.
 }
 \description{
 \code{g_length()} computes the length for \code{LineString} or \code{MultiCurve} objects.

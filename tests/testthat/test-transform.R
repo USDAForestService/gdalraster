@@ -71,3 +71,32 @@ test_that("transform/inv_project give correct results", {
                              srs = epsg_to_wkt(26912),
                              well_known_gcs = "invalid"))
 })
+
+test_that("transform_bounds gives correct results", {
+    skip_if(.gdal_version_num() < 3040000)
+
+    # south pole
+    bb <- c(-1405880.717371, -1371213.762543, 5405880.717371, 5371213.762543)
+    res <- transform_bounds(bb, "EPSG:32761", "EPSG:4326",
+                            traditional_gis_order = FALSE)
+    expected <- c(-90.0, -180.0, -48.65641, 180.0)
+    expect_equal(res, expected, tolerance = 1e-4)
+    # lon/lat axis ordering by default
+    res <- transform_bounds(bb, "EPSG:32761", "EPSG:4326")
+    expected <- c(-180.0, -90.0, 180.0, -48.65641)
+    expect_equal(res, expected, tolerance = 1e-4)
+
+    # antimeridian, normalized axis ordering
+    bb <- c(160.6, -55.95, -171.2, -25.88)
+    res <- transform_bounds(bb, "EPSG:4167", "EPSG:3851")
+    expected <- c(1722483.900174921, 5228058.6143420935,
+                  4624385.494808555, 8692574.544944234)
+    expect_equal(res, expected, tolerance = 1e-4)
+    # authority compliant axis ordering
+    bb <- c(-55.95, 160.6, -25.88, -171.2)
+    res <- transform_bounds(bb, "EPSG:4167", "EPSG:3851",
+                            traditional_gis_order = FALSE)
+    expected <- c(5228058.6143420935, 1722483.900174921,
+                  8692574.544944234, 4624385.494808555)
+    expect_equal(res, expected, tolerance = 1e-4)
+})

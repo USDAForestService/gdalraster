@@ -4,15 +4,21 @@
 \alias{g_distance}
 \title{Compute the distance between two geometries}
 \usage{
-g_distance(this_geom, other_geom)
+g_distance(this_geom, other_geom, quiet = FALSE)
 }
 \arguments{
-\item{this_geom}{Character. OGC WKT string for a simple feature geometry.}
+\item{this_geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.}
 
-\item{other_geom}{Character. OGC WKT string for a simple feature geometry.}
+\item{other_geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings. Must contain the same
+number of geometries as \code{this_geom}.}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-Numeric. Distance or '-1' if an error occurs.
+Numeric vector of length equal to the number of input geometry
+pairs. Distance or '-1' if an error occurs.
 }
 \description{
 \code{g_distance()} returns the distance between two geometries or \code{-1} if an
@@ -21,6 +27,9 @@ The distance is expressed into the same unit as the coordinates of the
 geometries.
 }
 \note{
+\code{this_geom} and \code{other_geom} are assumed to be in the same coordinate
+reference system.
+
 Geometry validity is not checked. In case you are unsure of the validity
 of the input geometries, call \code{g_is_valid()} before, otherwise the result
 might be wrong.

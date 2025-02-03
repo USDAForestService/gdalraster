@@ -25,6 +25,11 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
                                  const std::string &srs_from,
                                  const std::string &srs_to);
 
+Rcpp::NumericVector transform_bounds(const Rcpp::NumericVector &bbox,
+                                     const std::string &srs_from,
+                                     const std::string &srs_to,
+                                     int densify_pts,
+                                     bool traditional_gis_order);
 
 #endif  // SRC_TRANSFORM_H_
 

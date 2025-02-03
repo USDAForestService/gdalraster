@@ -22,8 +22,8 @@ bool srs_is_same(const std::string &srs1, const std::string &srs2,
 Rcpp::NumericVector bbox_from_wkt(const std::string &wkt,
                                   double extend_x, double extend_y);
 
-Rcpp::String bbox_to_wkt(const Rcpp::NumericVector &bbox,
-                         double extend_x, double extend_y);
+std::string bbox_to_wkt(const Rcpp::NumericVector &bbox,
+                        double extend_x, double extend_y);
 
 
 

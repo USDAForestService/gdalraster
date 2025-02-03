@@ -4,16 +4,22 @@
 \alias{g_centroid}
 \title{Compute the centroid of a geometry}
 \usage{
-g_centroid(wkt)
+g_centroid(geom, quiet = FALSE)
 }
 \arguments{
-\item{wkt}{Character. OGC WKT string for a simple feature geometry.}
+\item{geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-Numeric vector of length 2 containing the centroid (X, Y).
+Either a numeric vector of length 2 containing the centroid (X, Y),
+or a two-column numeric matrix (X, Y) with number of rows equal to the
+number of input geometries.
 }
 \description{
-\code{g_centroid()} returns a vector of point X, point Y.
+\code{g_centroid()} returns a vector of point X, point Y, or a matrix of points
+for multiple input geometries.
 }
 \details{
 The GDAL documentation states "This method relates to the SFCOM
