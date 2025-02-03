@@ -2065,13 +2065,13 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_create <- function(xy, geom_type) {
-    .Call(`_gdalraster_g_create`, xy, geom_type)
+.g_create <- function(geom_type, pts, as_iso = FALSE, byte_order = "LSB") {
+    .Call(`_gdalraster_g_create`, geom_type, pts, as_iso, byte_order)
 }
 
 #' @noRd
-.g_add_geom <- function(sub_geom, container) {
-    .Call(`_gdalraster_g_add_geom`, sub_geom, container)
+.g_add_geom <- function(sub_geom, container, as_iso = FALSE, byte_order = "LSB") {
+    .Call(`_gdalraster_g_add_geom`, sub_geom, container, as_iso, byte_order)
 }
 
 #' @noRd
@@ -2100,43 +2100,48 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_intersects <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_intersects`, this_geom, other_geom)
+.g_envelope <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_envelope`, geom, quiet)
 }
 
 #' @noRd
-.g_equals <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_equals`, this_geom, other_geom)
+.g_intersects <- function(this_geom, other_geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_intersects`, this_geom, other_geom, quiet)
 }
 
 #' @noRd
-.g_disjoint <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_disjoint`, this_geom, other_geom)
+.g_equals <- function(this_geom, other_geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_equals`, this_geom, other_geom, quiet)
 }
 
 #' @noRd
-.g_touches <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_touches`, this_geom, other_geom)
+.g_disjoint <- function(this_geom, other_geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_disjoint`, this_geom, other_geom, quiet)
 }
 
 #' @noRd
-.g_contains <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_contains`, this_geom, other_geom)
+.g_touches <- function(this_geom, other_geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_touches`, this_geom, other_geom, quiet)
 }
 
 #' @noRd
-.g_within <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_within`, this_geom, other_geom)
+.g_contains <- function(this_geom, other_geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_contains`, this_geom, other_geom, quiet)
 }
 
 #' @noRd
-.g_crosses <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_crosses`, this_geom, other_geom)
+.g_within <- function(this_geom, other_geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_within`, this_geom, other_geom, quiet)
 }
 
 #' @noRd
-.g_overlaps <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_overlaps`, this_geom, other_geom)
+.g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_crosses`, this_geom, other_geom, quiet)
+}
+
+#' @noRd
+.g_overlaps <- function(this_geom, other_geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_overlaps`, this_geom, other_geom, quiet)
 }
 
 #' @noRd
@@ -2145,48 +2150,48 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_intersection <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_intersection`, this_geom, other_geom)
+.g_intersection <- function(this_geom, other_geom, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_intersection`, this_geom, other_geom, as_iso, byte_order, quiet)
 }
 
 #' @noRd
-.g_union <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_union`, this_geom, other_geom)
+.g_union <- function(this_geom, other_geom, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_union`, this_geom, other_geom, as_iso, byte_order, quiet)
 }
 
 #' @noRd
-.g_difference <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_difference`, this_geom, other_geom)
+.g_difference <- function(this_geom, other_geom, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_difference`, this_geom, other_geom, as_iso, byte_order, quiet)
 }
 
 #' @noRd
-.g_sym_difference <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_sym_difference`, this_geom, other_geom)
+.g_sym_difference <- function(this_geom, other_geom, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_sym_difference`, this_geom, other_geom, as_iso, byte_order, quiet)
 }
 
 #' @noRd
-.g_distance <- function(this_geom, other_geom) {
-    .Call(`_gdalraster_g_distance`, this_geom, other_geom)
+.g_distance <- function(this_geom, other_geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_distance`, this_geom, other_geom, quiet)
 }
 
 #' @noRd
-.g_length <- function(geom) {
-    .Call(`_gdalraster_g_length`, geom)
+.g_length <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_length`, geom, quiet)
 }
 
 #' @noRd
-.g_area <- function(geom) {
-    .Call(`_gdalraster_g_area`, geom)
+.g_area <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_area`, geom, quiet)
 }
 
 #' @noRd
-.g_centroid <- function(geom) {
-    .Call(`_gdalraster_g_centroid`, geom)
+.g_centroid <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_centroid`, geom, quiet)
 }
 
 #' @noRd
-.g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE, date_line_offset = 10L) {
-    .Call(`_gdalraster_g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset)
+.g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE, date_line_offset = 10L, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset, as_iso, byte_order, quiet)
 }
 
 #' Does vector dataset exist
@@ -2421,6 +2426,71 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #' transform_xy(pts = pts[, -1], srs_from = "EPSG:26912", srs_to = "EPSG:5070")
 transform_xy <- function(pts, srs_from, srs_to) {
     .Call(`_gdalraster_transform_xy`, pts, srs_from, srs_to)
+}
+
+#' Transform boundary
+#'
+#' `transform_bounds()` transforms a bounding box, densifying the edges to
+#' account for nonlinear transformations along these edges and extracting
+#' the outermost bounds. Wrapper of `OCTTransformBounds()` in the GDAL Spatial
+#' Reference System API. Requires GDAL >= 3.4.
+#'
+#' @details
+#' If the destination CRS is geographic, the first axis is longitude, and
+#' `xmax < xmin` then the bounds crossed the antimeridian. In this scenario
+#' there are two polygons, one on each side of the antimeridian. The first
+#' polygon should be constructed with `(xmin, ymin, 180, ymax)` and the second
+#' with `(-180, ymin, xmax, ymax)`.
+#'
+#' If the destination CRS is geographic, the first axis is latitude, and
+#' `ymax < ymin` then the bounds crossed the antimeridian. In this scenario
+#' there are two polygons, one on each side of the antimeridian. The first
+#' polygon should be constructed with `(ymin, xmin, ymax, 180)` and the second
+#' with `(ymin, -180, ymax, xmax)`.
+#'
+#' @param bbox Numeric vector of length four containing the input bounding
+#' box (xmin, ymin, xmax, ymax).
+#' @param srs_from Character string specifying the spatial reference system
+#' for `pts`. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
+#' @param srs_to Character string specifying the output spatial reference
+#' system. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
+#' @param densify_pts Integer value giving the number of points to use to
+#' densify the bounding polygon in the transformation. Recommended to use `21`
+#' (the default).
+#' @param traditional_gis_order Logical value, `TRUE` to use traditional GIS
+#' order of axis mapping (the default) or `FALSE` to use authority compliant
+#' axis order (see Note).
+#' @returns Numeric vector of length four containing the bounding box in the
+#' output spatial reference system (xmin, ymin, xmax, ymax).
+#'
+#' @seealso
+#' [srs_to_wkt()]
+#'
+#' @note
+#' `traditional_gis_order = TRUE` (the default) means that for geographic CRS
+#' with lat/long order, the data will still be long/lat ordered. Similarly for
+#' a projected CRS with northing/easting order, the data will still be
+#' easting/northing ordered (GDAL's OAMS_TRADITIONAL_GIS_ORDER).
+#'
+#' `traditional_gis_order = FALSE` means that the data axis will be identical
+#'  to the CRS axis (GDAL's OAMS_AUTHORITY_COMPLIANT).
+#'
+#' See
+#' \url{https://gdal.org/en/stable/tutorials/osr_api_tut.html#crs-and-axis-order}.
+#'
+#' @examples
+#' bb <- c(-1405880.71737, -1371213.76254, 5405880.71737, 5371213.76254)
+#'
+#' # traditional GIS axis ordering by  default (lon, lat)
+#' transform_bounds(bb, "EPSG:32761", "EPSG:4326")
+#'
+#' # authority compliant axis ordering
+#' transform_bounds(bb, "EPSG:32761", "EPSG:4326",
+#'                  traditional_gis_order = FALSE)
+transform_bounds <- function(bbox, srs_from, srs_to, densify_pts = 21L, traditional_gis_order = TRUE) {
+    .Call(`_gdalraster_transform_bounds`, bbox, srs_from, srs_to, densify_pts, traditional_gis_order)
 }
 
 #' Convert spatial reference from EPSG code to OGC Well Known Text
@@ -2673,7 +2743,6 @@ bbox_from_wkt <- function(wkt, extend_x = 0, extend_y = 0) {
 #' Convert a bounding box to POLYGON in OGC WKT format
 #'
 #' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
-#' Requires GDAL built with the GEOS library.
 #'
 #' @param bbox Numeric vector of length four containing xmin, ymin,
 #' xmax, ymax.

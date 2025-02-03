@@ -4,24 +4,41 @@
 \alias{bbox_transform}
 \title{Transform a bounding box to a different projection}
 \usage{
-bbox_transform(bbox, srs_from, srs_to)
+bbox_transform(bbox, srs_from, srs_to, use_transform_bounds = TRUE)
 }
 \arguments{
 \item{bbox}{Numeric vector of length four containing a bounding box
 (xmin, ymin, xmax, ymax) to transform.}
 
-\item{srs_from}{Character string in OGC WKT format specifying the
-spatial reference system for \code{bbox}.}
+\item{srs_from}{Character string specifying the spatial reference system
+for \code{pts}. May be in WKT format or any of the formats supported by
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}.}
 
-\item{srs_to}{Character string in OGC WKT format specifying the target
-spatial reference system.}
+\item{srs_to}{Character string specifying the output spatial reference
+system. May be in WKT format or any of the formats supported by
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}.}
+
+\item{use_transform_bounds}{Logical value, \code{TRUE} to use
+\code{transform_bounds()} (the default, requires GDAL >= 3.4). If \code{FALSE},
+transformation is done with \code{g_transform()}.}
 }
 \value{
 Numeric vector of length four containing a transformed bounding box
 (xmin, ymin, xmax, ymax).
 }
 \description{
-\code{bbox_transform()} is a convenience function for:
+\code{bbox_transform()} is a convenience function to transform the coordinates
+of a boundary from their current spatial reference system to a new target
+spatial reference system.
+}
+\details{
+With \code{use_transform_bounds = TRUE} (the default) this function returns:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{# requires GDAL >= 3.4
+transform_bounds(bbox, srs_from, srs_to)
+}\if{html}{\out{</div>}}
+
+With \code{use_transform_bounds = FALSE}, this function returns:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{bbox_to_wkt(bbox) |>
   g_transform(srs_from, srs_to) |>
@@ -29,12 +46,18 @@ Numeric vector of length four containing a transformed bounding box
 }\if{html}{\out{</div>}}
 }
 \examples{
-elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-ds <- new(GDALRaster, elev_file)
-ds$bbox()
-bbox_transform(ds$bbox(), ds$getProjection(), epsg_to_wkt(4326))
-ds$close()
+bb <- c(-1405880.72, -1371213.76, 5405880.72, 5371213.76)
+
+# the default assumes GDAL >= 3.4
+if (as.integer(gdal_version()[2]) >= 3040000) {
+  bb_wgs84 <- bbox_transform(bb, "EPSG:32661", "EPSG:4326")
+} else {
+  bb_wgs84 <- bbox_transform(bb, "EPSG:32661", "EPSG:4326",
+                             use_transform_bounds = FALSE)
+}
+
+print(bb_wgs84)
 }
 \seealso{
-\code{\link[=g_transform]{g_transform()}}, \code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=bbox_to_wkt]{bbox_to_wkt()}}
+\code{\link[=bbox_from_wkt]{bbox_from_wkt()}}, \code{\link[=g_transform]{g_transform()}}, \code{\link[=transform_bounds]{transform_bounds()}}
 }

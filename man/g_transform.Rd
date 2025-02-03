@@ -2,24 +2,31 @@
 % Please edit documentation in R/geom.R
 \name{g_transform}
 \alias{g_transform}
-\title{Apply a coordinate transformation to a WKT geometry}
+\title{Apply a coordinate transformation to a WKB/WKT geometry}
 \usage{
 g_transform(
-  wkt,
+  geom,
   srs_from,
   srs_to,
   wrap_date_line = FALSE,
-  date_line_offset = 10L
+  date_line_offset = 10L,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
 )
 }
 \arguments{
-\item{wkt}{Character. OGC WKT string for a simple feature geometry.}
+\item{geom}{Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.}
 
-\item{srs_from}{Character string in OGC WKT format specifying the
-spatial reference system for the geometry given by \code{wkt}.}
+\item{srs_from}{Character string specifying the spatial reference system
+for \code{pts}. May be in WKT format or any of the formats supported by
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}.}
 
-\item{srs_to}{Character string in OGC WKT format specifying the target
-spatial reference system.}
+\item{srs_to}{Character string specifying the output spatial reference
+system. May be in WKT format or any of the formats supported by
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}.}
 
 \item{wrap_date_line}{Logical scalar. \code{TRUE} to correct geometries that
 incorrectly go from a longitude on a side of the antimeridian to the other
@@ -27,9 +34,24 @@ side. Defaults to \code{FALSE}.}
 
 \item{date_line_offset}{Integer scalar. Longitude gap in degree. Defaults
 to \code{10}.}
+
+\item{as_wkb}{Logical, \code{TRUE} to return the output geometry in WKB
+format (the default), or \code{FALSE} to return as WKT.}
+
+\item{as_iso}{Logical, \code{TRUE} to export as ISO WKB/WKT (ISO 13249
+SQL/MM Part 3), or \code{FALSE} (the default) to export as "Extended WKB/WKT".}
+
+\item{byte_order}{Character string specifying the byte order when output is
+WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
+
+\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-Character string for a transformed OGC WKT geometry.
+A geometry as WKB raw vector or WKT string, or a list/character vector of
+geometries as WKB/WKT with length equal to the number of input geometries.
+\code{NA} is returned with a warning if an input geometry cannot be converted
+into an OGR geometry object, or if an error occurs in the call to the
+underlying OGR API.
 }
 \description{
 \code{g_transform()} will transform the coordinates of a geometry from their
@@ -58,7 +80,7 @@ ds <- new(GDALRaster, elev_file)
 
 # the convenience function bbox_transform() does this:
 bbox_to_wkt(ds$bbox()) |>
-  g_transform(ds$getProjection(), epsg_to_wkt(4326)) |>
+  g_transform(ds$getProjection(), epsg_to_wkt(4326), as_wkb = FALSE) |>
   bbox_from_wkt()
 
 ds$close()

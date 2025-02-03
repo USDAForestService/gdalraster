@@ -24,7 +24,6 @@ Character string for an OGC WKT polygon.
 }
 \description{
 \code{bbox_to_wkt()} returns a WKT POLYGON string for the given bounding box.
-Requires GDAL built with the GEOS library.
 }
 \examples{
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")

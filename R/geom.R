@@ -95,10 +95,12 @@ bbox_intersect <- function(x, as_wkt = FALSE) {
     while (i <= n) {
         if (is.character(x)) {
             ds <- new(GDALRaster, x[i], read_only=TRUE)
-            this_bbox <- g_intersection(this_bbox, bbox_to_wkt(ds$bbox()))
+            this_bbox <- g_intersection(this_bbox, bbox_to_wkt(ds$bbox()),
+                                        as_wkb = FALSE)
             ds$close()
         } else {
-            this_bbox <- g_intersection(this_bbox, bbox_to_wkt(x[[i]]))
+            this_bbox <- g_intersection(this_bbox, bbox_to_wkt(x[[i]]),
+                                        as_wkb = FALSE)
         }
         i <- i + 1
     }
@@ -129,10 +131,10 @@ bbox_union <- function(x, as_wkt = FALSE) {
     while (i <= n) {
         if (is.character(x)) {
             ds <- new(GDALRaster, x[i], read_only=TRUE)
-            this_bbox <- g_union(this_bbox, bbox_to_wkt(ds$bbox()))
+            this_bbox <- g_union(this_bbox, bbox_to_wkt(ds$bbox()), as_wkb = FALSE)
             ds$close()
         } else {
-            this_bbox <- g_union(this_bbox, bbox_to_wkt(x[[i]]))
+            this_bbox <- g_union(this_bbox, bbox_to_wkt(x[[i]]), as_wkb = FALSE)
         }
         i <- i + 1
     }
@@ -145,7 +147,18 @@ bbox_union <- function(x, as_wkt = FALSE) {
 
 #' Transform a bounding box to a different projection
 #'
-#' `bbox_transform()` is a convenience function for:
+#' `bbox_transform()` is a convenience function to transform the coordinates
+#' of a boundary from their current spatial reference system to a new target
+#' spatial reference system.
+#'
+#' @details
+#' With `use_transform_bounds = TRUE` (the default) this function returns:
+#' ```
+#' # requires GDAL >= 3.4
+#' transform_bounds(bbox, srs_from, srs_to)
+#' ```
+#'
+#' With `use_transform_bounds = FALSE`, this function returns:
 #' ```
 #' bbox_to_wkt(bbox) |>
 #'   g_transform(srs_from, srs_to) |>
@@ -154,30 +167,53 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #'
 #' @param bbox Numeric vector of length four containing a bounding box
 #' (xmin, ymin, xmax, ymax) to transform.
-#' @param srs_from Character string in OGC WKT format specifying the
-#' spatial reference system for `bbox`.
-#' @param srs_to Character string in OGC WKT format specifying the target
-#' spatial reference system.
+#' @param srs_from Character string specifying the spatial reference system
+#' for `pts`. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
+#' @param srs_to Character string specifying the output spatial reference
+#' system. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
+#' @param use_transform_bounds Logical value, `TRUE` to use
+#' `transform_bounds()` (the default, requires GDAL >= 3.4). If `FALSE`,
+#' transformation is done with `g_transform()`.
 #' @return Numeric vector of length four containing a transformed bounding box
 #' (xmin, ymin, xmax, ymax).
 #'
 #' @seealso
-#' [g_transform()], [bbox_from_wkt()], [bbox_to_wkt()]
+#' [bbox_from_wkt()], [g_transform()], [transform_bounds()]
 #'
 #' @examples
-#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' ds <- new(GDALRaster, elev_file)
-#' ds$bbox()
-#' bbox_transform(ds$bbox(), ds$getProjection(), epsg_to_wkt(4326))
-#' ds$close()
+#' bb <- c(-1405880.72, -1371213.76, 5405880.72, 5371213.76)
+#'
+#' # the default assumes GDAL >= 3.4
+#' if (as.integer(gdal_version()[2]) >= 3040000) {
+#'   bb_wgs84 <- bbox_transform(bb, "EPSG:32661", "EPSG:4326")
+#' } else {
+#'   bb_wgs84 <- bbox_transform(bb, "EPSG:32661", "EPSG:4326",
+#'                              use_transform_bounds = FALSE)
+#' }
+#'
+#' print(bb_wgs84)
 #' @export
-bbox_transform <- function(bbox, srs_from, srs_to) {
+bbox_transform <- function(bbox, srs_from, srs_to,
+                           use_transform_bounds = TRUE) {
+
     if (!(is.numeric(bbox) && length(bbox) == 4))
         stop("'bbox' must be a length-4 numeric vector", call. = FALSE)
+    if (!(is.character(srs_from) && length(srs_from) == 1))
+        stop("'srs_from' must be a character string", call. = FALSE)
+    if (!(is.character(srs_to) && length(srs_to) == 1))
+        stop("'srs_from' must be a character string", call. = FALSE)
 
-    return(bbox_to_wkt(bbox) |>
-               g_transform(srs_from, srs_to) |>
-               bbox_from_wkt())
+    if (use_transform_bounds) {
+        return(transform_bounds(bbox, srs_from, srs_to))
+    } else {
+        return(
+            bbox_to_wkt(bbox) |>
+                g_transform(srs_from, srs_to, as_wkb = FALSE) |>
+                bbox_from_wkt()
+        )
+    }
 }
 
 #' Geometry WKB/WKT conversion
@@ -227,7 +263,7 @@ bbox_transform <- function(bbox, srs_from, srs_to) {
 #' @examples
 #' wkt <- "POINT (-114 47)"
 #' wkb <- g_wk2wk(wkt)
-#' print(wkb)
+#' str(wkb)
 #' g_wk2wk(wkb)
 #' @export
 g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
@@ -261,38 +297,129 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
     }
 }
 
-#' Compute buffer of a WKT geometry
+#' Create WKB/WKT geometries from vertices, and add sub-geometries
 #'
-#' `g_buffer()` builds a new geometry containing the buffer region around
-#' the geometry on which it is invoked. The buffer is a polygon containing
-#' the region within the buffer distance of the original geometry.
+#' These functions create WKB/WKT geometries from input vertices, and build
+#' container geometry types from sub-geometries.,
+#' @name g_factory
+#' @details
+#' These functions use the GEOS library via GDAL headers.
 #'
-#' @param geom Either a raw vector of WKB or list of raw vectors, or a
-#' character vector containing one or more WKT strings.
-#' @param dist Numeric buffer distance in units of the `wkt` geometry.
-#' @param quad_segs Integer number of segments used to define a 90 degree
-#' curve (quadrant of a circle). Large values result in large numbers of
-#' vertices in the resulting buffer geometry while small numbers reduce the
-#' accuracy of the result.
+#' `g_create()` creates a geometry object from the given point(s) and returns
+#' a raw vector of WKB (the default) or a character string of WKT. Currently,
+#' supports simple 2D geometry types Point, MultiPoint, LineString, and
+#' Polygon.
+#'
+#' `g_add_geom()` adds a geometry to a geometry container, e.g.,
+#' POLYGON to POLYGON (to add an interior ring), POINT to MULTIPOINT,
+#' LINESTRING to MULTILINESTRING, POLYGON to MULTIPOLYGON.
+#'
+#' @param geom_type Character string. One of `"POINT"`, `"MULTIPOINT"`,
+#' `"LINESTRING"`, `"POLYGON"` (see Note).
+#' @param pts Numeric matrix of points (x, y), or `NULL` to create an empty
+#' geometry. Rings for polygon geometries should be closed.
 #' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
-#' format (the default), or `FALSE` to return as WKT.
+#' format (the default), or `FALSE` to return a WKT string.
 #' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
 #' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
 #' @param byte_order Character string specifying the byte order when output is
 #' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @param sub_geom Either a raw vector of WKB or a character string of WKT.
+#' @param container Either a raw vector of WKB or a character string of WKT.
 #' @return
-#' A polygon as WKB raw vector or WKT string, or a list/character vector of
-#' polygons as WKB/WKT with length equal to `length(geom)`. `NA` is returned
-#' with a warning if an input geometry cannot be converted into an OGR
-#' geometry object, or if an error occurs in the call to Buffer() in the
-#' underlying OGR API.
+#' A geometry as WKB raw vector by default, or a WKT string if
+#' `as_wkb = FALSE`.
+#'
+#' @note
+#' A POLYGON can be created for a single ring which will be the
+#' exterior ring. Additional POLYGONs can be created and added to an
+#' existing POLYGON with [g_add_geom()]. These will become interior rings.
+#' Alternatively, an empty polygon can be created with
+#' `g_create("POLYGON", NULL)`, followed by creation and addition of
+#' POLYGONs. In that case, the first added POLYGON will be the exterior
+#' ring. The next ones will be the interior rings.
 #'
 #' @examples
-#' g_buffer("POINT (0 0)", dist = 10, as_wkb = FALSE)
+#' # raw vector of WKB by default
+#' g_create("POINT", c(1, 2))
+#'
+#' # as_wkb = FALSE
+#' g_create("POINT", c(1, 2), as_wkb = FALSE)
+#'
+#' # or convert
+#' g_create("POINT", c(1, 2)) |> g_wk2wk()
+#'
+#' g_create("POINT", c(1, 2), as_wkb = FALSE) |> g_wk2wk()
+#'
+#' # create multipoint from a matrix of points
+#' x <- c(9, 1)
+#' y <- c(1, 9)
+#' pts <- cbind(x, y)
+#' mult_pt1 <- g_create("MULTIPOINT", pts)
+#' is.raw(mult_pt1)
+#' g_wk2wk(mult_pt1)
+#'
+#' # create an empty container and add subgeometries
+#' mult_pt2 <- g_create("MULTIPOINT")
+#' mult_pt2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mult_pt2)
+#' mult_pt2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mult_pt2)
+#' is.raw(mult_pt2)
+#' g_wk2wk(mult_pt2)
 #' @export
-g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
-                     as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
+                     byte_order = "LSB") {
+
+    # geom_type
+    if (!(is.character(geom_type) && length(geom_type) == 1))
+        stop("'geom_type' must be a character string", call. = FALSE)
+    # pts
+    if (!(is.numeric(pts) || is.null(pts)))
+        stop("'pts' must be given in a numeric matrix of x, y", call. = FALSE)
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+
+    wkb <- .g_create(geom_type, pts, as_iso, byte_order)
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' @name g_factory
+#' @export
+g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
+                       byte_order = "LSB") {
+
+    if (is.character(sub_geom))
+        sub_geom <- g_wk2wk(sub_geom)
+    if (!is.raw(sub_geom)) {
+        stop("'sub_geom' must be a raw vector or character string",
+             call. = FALSE)
+    }
+
+    if (is.character(container))
+        container <- g_wk2wk(container)
+    if (!is.raw(container)) {
+        stop("'container' must be a raw vector or character string",
+             call. = FALSE)
+    }
 
     # as_wkb
     if (is.null(as_wkb))
@@ -312,102 +439,14 @@ g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
     byte_order <- toupper(byte_order)
     if (byte_order != "LSB" && byte_order != "MSB")
         stop("invalid 'byte_order'", call. = FALSE)
-    # quiet
-    if (is.null(quiet))
-        quiet <- FALSE
-    if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
 
-    wkb <- NULL
-    if (is.raw(geom)) {
-        wkb <- .g_buffer(geom, dist, quad_segs, as_iso, byte_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
-        wkb <- lapply(geom, .g_buffer, dist, quad_segs, as_iso,
-                      byte_order, quiet)
-    } else if (is.character(geom)) {
-        if (length(geom) == 1) {
-            wkb <- .g_buffer(g_wk2wk(geom), dist, quad_segs, as_iso,
-                             byte_order, quiet)
-        } else {
-            wkb <- lapply(g_wk2wk(geom), .g_buffer, dist, quad_segs,
-                          as_iso, byte_order, quiet)
-        }
-    } else {
-        stop("'geom' must be a character vector, raw vector, or list",
-             call. = FALSE)
-    }
+    wkb <- .g_add_geom(sub_geom, container, as_iso, byte_order)
 
     if (as_wkb)
         return(wkb)
     else
         return(g_wk2wk(wkb, as_iso))
-}
 
-#' Apply a coordinate transformation to a WKT geometry
-#'
-#' `g_transform()` will transform the coordinates of a geometry from their
-#' current spatial reference system to a new target spatial reference system.
-#' Normally this means reprojecting the vectors, but it could include datum
-#' shifts, and changes of units.
-#'
-#' @param wkt Character. OGC WKT string for a simple feature geometry.
-#' @param srs_from Character string in OGC WKT format specifying the
-#' spatial reference system for the geometry given by `wkt`.
-#' @param srs_to Character string in OGC WKT format specifying the target
-#' spatial reference system.
-#' @param wrap_date_line Logical scalar. `TRUE` to correct geometries that
-#' incorrectly go from a longitude on a side of the antimeridian to the other
-#' side. Defaults to `FALSE`.
-#' @param date_line_offset Integer scalar. Longitude gap in degree. Defaults
-#' to `10`.
-#' @return Character string for a transformed OGC WKT geometry.
-#'
-#' @note
-#' This function uses the `OGR_GeomTransformer_Create()` and
-#' `OGR_GeomTransformer_Transform()` functions in the GDAL API: "This is an
-#' enhanced version of `OGR_G_Transform()`. When reprojecting geometries from
-#' a Polar Stereographic projection or a projection naturally crossing the
-#' antimeridian (like UTM Zone 60) to a geographic CRS, it will cut geometries
-#' along the antimeridian. So a `LineString` might be returned as a
-#' `MultiLineString`."
-#'
-#' The `wrap_date_line = TRUE` option might be specified for circumstances to
-#' correct geometries that incorrectly go from a longitude on a side of the
-#' antimeridian to the other side, e.g., `LINESTRING (-179 0,179 0)` will be
-#' transformed to `MULTILINESTRING ((-179 0,-180 0),(180 0,179 0))`. For that
-#' use case, `srs_to` might be the same as `srs_from`.
-#'
-#' @seealso
-#' [bbox_transform()]
-#'
-#' @examples
-#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' ds <- new(GDALRaster, elev_file)
-#'
-#' # the convenience function bbox_transform() does this:
-#' bbox_to_wkt(ds$bbox()) |>
-#'   g_transform(ds$getProjection(), epsg_to_wkt(4326)) |>
-#'   bbox_from_wkt()
-#'
-#' ds$close()
-#'
-#' # correct geometries that incorrectly go from a longitude on a side of the
-#' # antimeridian to the other side
-#' geom <- "LINESTRING (-179 0,179 0)"
-#' srs <- epsg_to_wkt(4326)
-#' g_transform(geom, srs, srs, wrap_date_line = TRUE)
-#' @export
-g_transform <- function(wkt, srs_from, srs_to, wrap_date_line = FALSE,
-                        date_line_offset = 10L) {
-    if (!(is.character(wkt) && length(wkt) == 1))
-        stop("'wkt' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(srs_from) && length(srs_from) == 1))
-        stop("'srs_from' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(srs_to) && length(srs_to) == 1))
-        stop("'srs_to' must be a length-1 character vector", call. = FALSE)
-
-    return(.g_transform(wkt, srs_from, srs_to, wrap_date_line,
-                        date_line_offset))
 }
 
 #' Extract geometry type names from WKB/WKT geometries
@@ -714,9 +753,53 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
         return(g_wk2wk(wkb, as_iso))
 }
 
-#' Geometry binary predicates operating on WKT
+#' Obtain the bounding envelope for input geometries
 #'
-#' These functions implement tests for pairs of geometries in OGC WKT format.
+#' `g_envelope()` computes and returns the bounding envelope(s) for the input
+#' geometries. Wrapper of `OGR_G_GetEnvelope()` in GDAL OGRGeometry.
+#'
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return Either a numeric vector of length 4 containing the envelope
+#' `(xmin, xmax, ymin, ymax)`, or a four-column numeric matrix with number of
+#' rows equal to the number of input geometries and column names
+#' `("xmin", "xmax", "ymin", "ymax")`.
+#' @export
+g_envelope <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- 0
+    if (is.raw(geom)) {
+        ret <- .g_envelope(geom, quiet)
+        names(ret) <- c("xmin", "xmax", "ymin", "ymax")
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- t(sapply(geom, .g_envelope, quiet))
+        colnames(ret) <- c("xmin", "xmax", "ymin", "ymax")
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_envelope(g_wk2wk(geom), quiet)
+            names(ret) <- c("xmin", "xmax", "ymin", "ymax")
+        } else {
+            ret <- t(sapply(g_wk2wk(geom), .g_envelope, quiet))
+            colnames(ret) <- c("xmin", "xmax", "ymin", "ymax")
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' Geometry binary predicates operating on WKB or WKT
+#'
+#' These functions implement tests for pairs of geometries in OGC WKB or
+#' WKT format.
 #' @name g_binary_pred
 #' @details
 #' These functions use the GEOS library via GDAL headers.
@@ -746,109 +829,412 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
 #' representation is equal. Note: this must be distinguished from equality in
 #' a spatial way."
 #'
-#' @param this_geom Character. OGC WKT string for a simple feature geometry.
-#' @param other_geom Character. OGC WKT string for a simple feature geometry.
-#' @return Logical scalar
+#' @param this_geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param other_geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings. Must contain the same
+#' number of geometries as `this_geom`.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return Logical vector with length equal to the number of input geometry
+#' pairs.
 #'
 #' @seealso
 #' \url{https://en.wikipedia.org/wiki/DE-9IM}
 #'
-#'
 #' @note
+#' `this_geom` and `other_geom` are assumed to be in the same coordinate
+#' reference system.
+#'
 #' Geometry validity is not checked. In case you are unsure of the validity
 #' of the input geometries, call `g_is_valid()` before, otherwise the result
 #' might be wrong.
 #' @export
-g_intersects <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_intersects <- function(this_geom, other_geom, quiet = FALSE) {
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
 
-    return(.g_intersects(this_geom, other_geom))
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        ret <- .g_intersects(this_geom, other_geom, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        ret <- rep(NA, length(this_geom))
+        for (i in seq_along(this_geom)) {
+            ret[i] <- .g_intersects(this_geom[[i]], other_geom[[i]], quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' @name g_binary_pred
 #' @export
-g_disjoint <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_disjoint <- function(this_geom, other_geom, quiet = FALSE) {
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
 
-    return(.g_disjoint(this_geom, other_geom))
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        ret <- .g_disjoint(this_geom, other_geom, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        ret <- rep(NA, length(this_geom))
+        for (i in seq_along(this_geom)) {
+            ret[i] <- .g_disjoint(this_geom[[i]], other_geom[[i]], quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' @name g_binary_pred
 #' @export
-g_touches <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_touches <- function(this_geom, other_geom, quiet = FALSE) {
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
 
-    return(.g_touches(this_geom, other_geom))
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        ret <- .g_touches(this_geom, other_geom, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        ret <- rep(NA, length(this_geom))
+        for (i in seq_along(this_geom)) {
+            ret[i] <- .g_touches(this_geom[[i]], other_geom[[i]], quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' @name g_binary_pred
 #' @export
-g_contains <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_contains <- function(this_geom, other_geom, quiet = FALSE) {
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
 
-    return(.g_contains(this_geom, other_geom))
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        ret <- .g_contains(this_geom, other_geom, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        ret <- rep(NA, length(this_geom))
+        for (i in seq_along(this_geom)) {
+            ret[i] <- .g_contains(this_geom[[i]], other_geom[[i]], quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' @name g_binary_pred
 #' @export
-g_within <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_within <- function(this_geom, other_geom, quiet = FALSE) {
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
 
-    return(.g_within(this_geom, other_geom))
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        ret <- .g_within(this_geom, other_geom, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        ret <- rep(NA, length(this_geom))
+        for (i in seq_along(this_geom)) {
+            ret[i] <- .g_within(this_geom[[i]], other_geom[[i]], quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' @name g_binary_pred
 #' @export
-g_crosses <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
 
-    return(.g_crosses(this_geom, other_geom))
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        ret <- .g_crosses(this_geom, other_geom, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        ret <- rep(NA, length(this_geom))
+        for (i in seq_along(this_geom)) {
+            ret[i] <- .g_crosses(this_geom[[i]], other_geom[[i]], quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' @name g_binary_pred
 #' @export
-g_overlaps <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_overlaps <- function(this_geom, other_geom, quiet = FALSE) {
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
 
-    return(.g_overlaps(this_geom, other_geom))
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        ret <- .g_overlaps(this_geom, other_geom, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        ret <- rep(NA, length(this_geom))
+        for (i in seq_along(this_geom)) {
+            ret[i] <- .g_overlaps(this_geom[[i]], other_geom[[i]], quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' @name g_binary_pred
 #' @export
-g_equals <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_equals <- function(this_geom, other_geom, quiet = FALSE) {
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
 
-    return(.g_equals(this_geom, other_geom))
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        ret <- .g_equals(this_geom, other_geom, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        ret <- rep(NA, length(this_geom))
+        for (i in seq_along(this_geom)) {
+            ret[i] <- .g_equals(this_geom[[i]], other_geom[[i]], quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
-#' Binary operations on WKT geometries
+#' Binary operations on WKB or WKT geometries
 #'
-#' These functions implement operations on pairs of geometries in OGC WKT
-#' format.
+#' These functions implement operations on pairs of geometries in OGC WKB
+#' or WKT format.
 #' @name g_binary_op
 #' @details
 #' These functions use the GEOS library via GDAL headers.
@@ -867,11 +1253,30 @@ g_equals <- function(this_geom, other_geom) {
 #' difference of this geometry and the other geometry (union minus
 #' intersection).
 #'
-#' @param this_geom Character. OGC WKT string for a simple feature geometry.
-#' @param other_geom Character. OGC WKT string for a simple feature geometry.
-#' @return Character string. The resulting geometry as OGC WKT.
+#' @param this_geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param other_geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings. Must contain the same
+#' number of geometries as `this_geom`.
+#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' format (the default), or `FALSE` to return as WKT.
+#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
+#' @param byte_order Character string specifying the byte order when output is
+#' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return
+#' A geometry as WKB raw vector or WKT string, or a list/character vector of
+#' geometries as WKB/WKT with length equal to the number of input geometry
+#' pairs.
+#' `NA` is returned with a warning if an input geometry cannot be converted
+#' into an OGR geometry object, or if an error occurs in the call to the
+#' underlying OGR API function.
 #'
 #' @note
+#' `this_geom` and `other_geom` are assumed to be in the same coordinate
+#' reference system.
+#'
 #' Geometry validity is not checked. In case you are unsure of the validity
 #' of the input geometries, call `g_is_valid()` before, otherwise the result
 #' might be wrong.
@@ -898,46 +1303,302 @@ g_equals <- function(this_geom, other_geom) {
 #' g4 <- g_union(g1, g2)
 #' g_difference(g4, g3) |> g_area()
 #' @export
-g_intersection <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_intersection <- function(this_geom, other_geom, as_wkb = TRUE,
+                           as_iso = FALSE, byte_order = "LSB",
+                           quiet = FALSE) {
 
-    return(.g_intersection(this_geom, other_geom))
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
+
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        wkb <- .g_intersection(this_geom, other_geom, as_iso,
+                               byte_order, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        wkb <- list()
+        for (i in seq_along(this_geom)) {
+            wkb[i] <- .g_intersection(this_geom[[i]], other_geom[[i]], as_iso,
+                                      byte_order, quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
 }
 
 #' @name g_binary_op
 #' @export
-g_union <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_union <- function(this_geom, other_geom, as_wkb = TRUE,
+                    as_iso = FALSE, byte_order = "LSB",
+                    quiet = FALSE) {
 
-    return(.g_union(this_geom, other_geom))
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
+
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        wkb <- .g_union(this_geom, other_geom, as_iso,
+                        byte_order, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        wkb <- list()
+        for (i in seq_along(this_geom)) {
+            wkb[i] <- .g_union(this_geom[[i]], other_geom[[i]], as_iso,
+                               byte_order, quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
 }
 
 #' @name g_binary_op
 #' @export
-g_difference <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_difference <- function(this_geom, other_geom, as_wkb = TRUE,
+                         as_iso = FALSE, byte_order = "LSB",
+                         quiet = FALSE) {
 
-    return(.g_difference(this_geom, other_geom))
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
+
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        wkb <- .g_difference(this_geom, other_geom, as_iso,
+                             byte_order, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        wkb <- list()
+        for (i in seq_along(this_geom)) {
+            wkb[i] <- .g_difference(this_geom[[i]], other_geom[[i]], as_iso,
+                                    byte_order, quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
 }
 
 #' @name g_binary_op
 #' @export
-g_sym_difference <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
+                         as_iso = FALSE, byte_order = "LSB",
+                         quiet = FALSE) {
 
-    return(.g_sym_difference(this_geom, other_geom))
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
+
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        wkb <- .g_sym_difference(this_geom, other_geom, as_iso,
+                                 byte_order, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        wkb <- list()
+        for (i in seq_along(this_geom)) {
+            wkb[i] <- .g_sym_difference(this_geom[[i]], other_geom[[i]], as_iso,
+                                        byte_order, quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
 }
 
 #' Compute the distance between two geometries
@@ -947,11 +1608,19 @@ g_sym_difference <- function(this_geom, other_geom) {
 #' The distance is expressed into the same unit as the coordinates of the
 #' geometries.
 #'
-#' @param this_geom Character. OGC WKT string for a simple feature geometry.
-#' @param other_geom Character. OGC WKT string for a simple feature geometry.
-#' @return Numeric. Distance or '-1' if an error occurs.
+#' @param this_geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param other_geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings. Must contain the same
+#' number of geometries as `this_geom`.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return Numeric vector of length equal to the number of input geometry
+#' pairs. Distance or '-1' if an error occurs.
 #'
 #' @note
+#' `this_geom` and `other_geom` are assumed to be in the same coordinate
+#' reference system.
+#'
 #' Geometry validity is not checked. In case you are unsure of the validity
 #' of the input geometries, call `g_is_valid()` before, otherwise the result
 #' might be wrong.
@@ -959,13 +1628,50 @@ g_sym_difference <- function(this_geom, other_geom) {
 #' @examples
 #' g_distance("POINT (0 0)", "POINT (5 12)")
 #' @export
-g_distance <- function(this_geom, other_geom) {
-    if (!(is.character(this_geom) && length(this_geom) == 1))
-        stop("'this_geom' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(other_geom) && length(other_geom) == 1))
-        stop("'other_geom' must be a length-1 character vector", call. = FALSE)
+g_distance <- function(this_geom, other_geom, quiet = FALSE) {
+    if (is.character(this_geom))
+        this_geom <- g_wk2wk(this_geom)
+    if (!(is.raw(this_geom) || (is.list(this_geom) &&
+                                is.raw(this_geom[[1]])))) {
 
-    return(.g_distance(this_geom, other_geom))
+        stop("'this_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- -1
+    if (is.raw(this_geom) && is.raw(other_geom)) {
+        ret <- .g_distance(this_geom, other_geom, quiet)
+    } else if (is.list(this_geom) && is.list(other_geom)) {
+        if (length(this_geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        ret <- rep(-1, length(this_geom))
+        for (i in seq_along(this_geom)) {
+            ret[i] <- .g_distance(this_geom[[i]], other_geom[[i]], quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' Compute the length of a geometry
@@ -973,17 +1679,39 @@ g_distance <- function(this_geom, other_geom) {
 #' `g_length()` computes the length for `LineString` or `MultiCurve` objects.
 #' Undefined for all other geometry types (returns zero).
 #'
-#' @param wkt Character. OGC WKT string for a simple feature geometry.
-#' @return Numeric scalar. Length of the geometry or `0`.
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return Numeric vector of length equal to the number of input geometries.
+#' Length or '0' if undefined.
 #'
 #' @examples
 #' g_length("LINESTRING (0 0, 3 4)")
 #' @export
-g_length <- function(wkt) {
-    if (!(is.character(wkt) && length(wkt) == 1))
-        stop("'wkt' must be a length-1 character vector", call. = FALSE)
+g_length <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
 
-    return(.g_length(wkt))
+    ret <- 0
+    if (is.raw(geom)) {
+        ret <- .g_length(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_length, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_length(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_length, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' Compute the area of a geometry
@@ -991,23 +1719,46 @@ g_length <- function(wkt) {
 #' `g_area()` computes the area for a `LinearRing`, `Polygon` or
 #' `MultiPolygon`. Undefined for all other geometry types (returns zero).
 #'
-#' @param wkt Character. OGC WKT string for a simple feature geometry.
-#' @return Numeric scalar. Area of the geometry or `0`.
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return Numeric vector of length equal to the number of input geometries.
+#' Area or '0' if undefined.
 #'
 #' @note
 #' `LinearRing` is a non-standard geometry type, used in GDAL just for geometry
 #' creation.
 #' @export
-g_area <- function(wkt) {
-    if (!(is.character(wkt) && length(wkt) == 1))
-        stop("'wkt' must be a length-1 character vector", call. = FALSE)
+g_area <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
 
-    return(.g_area(wkt))
+    ret <- 0
+    if (is.raw(geom)) {
+        ret <- .g_area(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_area, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_area(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_area, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
 }
 
 #' Compute the centroid of a geometry
 #'
-#' `g_centroid()` returns a vector of point X, point Y.
+#' `g_centroid()` returns a vector of point X, point Y, or a matrix of points
+#' for multiple input geometries.
 #'
 #' @details
 #' The GDAL documentation states "This method relates to the SFCOM
@@ -1017,12 +1768,246 @@ g_area <- function(wkt) {
 #' operation for surfaces (polygons). SQL/MM-Part 3 defines the operation for
 #' surfaces and multisurfaces (multipolygons)."
 #'
-#' @param wkt Character. OGC WKT string for a simple feature geometry.
-#' @return Numeric vector of length 2 containing the centroid (X, Y).
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return Either a numeric vector of length 2 containing the centroid (X, Y),
+#' or a two-column numeric matrix (X, Y) with number of rows equal to the
+#' number of input geometries.
 #' @export
-g_centroid <- function(wkt) {
-    if (!(is.character(wkt) && length(wkt) == 1))
-        stop("'wkt' must be a length-1 character vector", call. = FALSE)
+g_centroid <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
 
-    return(.g_centroid(wkt))
+    ret <- 0
+    if (is.raw(geom)) {
+        ret <- .g_centroid(geom, quiet)
+        names(ret) <- c("x", "y")
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- t(sapply(geom, .g_centroid, quiet))
+        colnames(ret) <- c("x", "y")
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_centroid(g_wk2wk(geom), quiet)
+            names(ret) <- c("x", "y")
+        } else {
+            ret <- t(sapply(g_wk2wk(geom), .g_centroid, quiet))
+            colnames(ret) <- c("x", "y")
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' Compute buffer of a WKB/WKT geometry
+#'
+#' `g_buffer()` builds a new geometry containing the buffer region around
+#' the geometry on which it is invoked. The buffer is a polygon containing
+#' the region within the buffer distance of the original geometry.
+#'
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param dist Numeric buffer distance in units of the `wkt` geometry.
+#' @param quad_segs Integer number of segments used to define a 90 degree
+#' curve (quadrant of a circle). Large values result in large numbers of
+#' vertices in the resulting buffer geometry while small numbers reduce the
+#' accuracy of the result.
+#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' format (the default), or `FALSE` to return as WKT.
+#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
+#' @param byte_order Character string specifying the byte order when output is
+#' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return
+#' A polygon as WKB raw vector or WKT string, or a list/character vector of
+#' polygons as WKB/WKT with length equal to the number of input geometries.
+#' `NA` is returned with a warning if an input geometry cannot be converted
+#' into an OGR geometry object, or if an error occurs in the call to Buffer()
+#' in the underlying OGR API.
+#'
+#' @examples
+#' g_buffer("POINT (0 0)", dist = 10, as_wkb = FALSE)
+#' @export
+g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
+                     as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(geom)) {
+        wkb <- .g_buffer(geom, dist, quad_segs, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        wkb <- lapply(geom, .g_buffer, dist, quad_segs, as_iso,
+                      byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_buffer(g_wk2wk(geom), dist, quad_segs, as_iso,
+                             byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_buffer, dist, quad_segs,
+                          as_iso, byte_order, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' Apply a coordinate transformation to a WKB/WKT geometry
+#'
+#' `g_transform()` will transform the coordinates of a geometry from their
+#' current spatial reference system to a new target spatial reference system.
+#' Normally this means reprojecting the vectors, but it could include datum
+#' shifts, and changes of units.
+#'
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param srs_from Character string specifying the spatial reference system
+#' for `pts`. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
+#' @param srs_to Character string specifying the output spatial reference
+#' system. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
+#' @param wrap_date_line Logical scalar. `TRUE` to correct geometries that
+#' incorrectly go from a longitude on a side of the antimeridian to the other
+#' side. Defaults to `FALSE`.
+#' @param date_line_offset Integer scalar. Longitude gap in degree. Defaults
+#' to `10`.
+#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' format (the default), or `FALSE` to return as WKT.
+#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
+#' @param byte_order Character string specifying the byte order when output is
+#' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
+#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return
+#' A geometry as WKB raw vector or WKT string, or a list/character vector of
+#' geometries as WKB/WKT with length equal to the number of input geometries.
+#' `NA` is returned with a warning if an input geometry cannot be converted
+#' into an OGR geometry object, or if an error occurs in the call to the
+#' underlying OGR API.
+#'
+#' @note
+#' This function uses the `OGR_GeomTransformer_Create()` and
+#' `OGR_GeomTransformer_Transform()` functions in the GDAL API: "This is an
+#' enhanced version of `OGR_G_Transform()`. When reprojecting geometries from
+#' a Polar Stereographic projection or a projection naturally crossing the
+#' antimeridian (like UTM Zone 60) to a geographic CRS, it will cut geometries
+#' along the antimeridian. So a `LineString` might be returned as a
+#' `MultiLineString`."
+#'
+#' The `wrap_date_line = TRUE` option might be specified for circumstances to
+#' correct geometries that incorrectly go from a longitude on a side of the
+#' antimeridian to the other side, e.g., `LINESTRING (-179 0,179 0)` will be
+#' transformed to `MULTILINESTRING ((-179 0,-180 0),(180 0,179 0))`. For that
+#' use case, `srs_to` might be the same as `srs_from`.
+#'
+#' @seealso
+#' [bbox_transform()]
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, elev_file)
+#'
+#' # the convenience function bbox_transform() does this:
+#' bbox_to_wkt(ds$bbox()) |>
+#'   g_transform(ds$getProjection(), epsg_to_wkt(4326), as_wkb = FALSE) |>
+#'   bbox_from_wkt()
+#'
+#' ds$close()
+#'
+#' # correct geometries that incorrectly go from a longitude on a side of the
+#' # antimeridian to the other side
+#' geom <- "LINESTRING (-179 0,179 0)"
+#' srs <- epsg_to_wkt(4326)
+#' g_transform(geom, srs, srs, wrap_date_line = TRUE)
+#' @export
+g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE,
+                        date_line_offset = 10L, as_wkb = TRUE,
+                        as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a logical scalar", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(geom)) {
+        wkb <- .g_transform(geom, srs_from, srs_to, wrap_date_line,
+                            date_line_offset, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        wkb <- lapply(geom, .g_transform, srs_from, srs_to, wrap_date_line,
+                      date_line_offset, as_iso, byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_transform(g_wk2wk(geom), srs_from, srs_to,
+                                wrap_date_line, date_line_offset, as_iso,
+                                byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_transform, srs_from, srs_to,
+                          wrap_date_line, date_line_offset, as_iso, byte_order,
+                          quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
 }

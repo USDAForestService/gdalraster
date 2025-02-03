@@ -1,4 +1,8 @@
-# gdalraster 1.12.0.9100 (dev)
+# gdalraster 1.12.0.9110 (dev)
+
+* updated geometry interface to support the vector API in gdalraster 2.0, changes to existing functions and adds `g_wk2wk()`, `g_create()`, `g_add_geom()`, `transform_bounds()` (#572) (2025-02-03)
+
+* (internal) fix uninitialized variable in class `GDALVector`, compiler warning on macos (2025-02-03)
 
 * C++17 is now a system requirement (2025-02-02)
 

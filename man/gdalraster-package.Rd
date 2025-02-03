@@ -61,7 +61,8 @@
   \code{\link[=srs_get_name]{srs_get_name()}},
   \code{\link[=srs_is_geographic]{srs_is_geographic()}},
   \code{\link[=srs_is_projected]{srs_is_projected()}},
-  \code{\link[=srs_is_same]{srs_is_same()}}
+  \code{\link[=srs_is_same]{srs_is_same()}},
+  \code{\link[=transform_bounds]{transform_bounds()}}
 
   \item geometry convenience functions:
   \code{\link[=bbox_from_wkt]{bbox_from_wkt()}},
@@ -77,6 +78,7 @@
   \code{\link[=g_difference]{g_difference()}},
   \code{\link[=g_disjoint]{g_disjoint()}},
   \code{\link[=g_distance]{g_distance()}},
+  \code{\link[=g_envelope]{g_envelope()}},
   \code{\link[=g_equals]{g_equals()}},
   \code{\link[=g_intersection]{g_intersection()}},
   \code{\link[=g_intersects]{g_intersects()}},
