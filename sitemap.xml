@@ -51,6 +51,8 @@
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_buffer.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_centroid.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_distance.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_envelope.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_factory.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_is_empty.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_is_valid.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/g_length.html</loc></url>
@@ -106,6 +108,7 @@
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_projected.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_is_same.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_to_wkt.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/transform_bounds.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/transform_xy.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/translate.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/vsi_clear_path_options.html</loc></url>

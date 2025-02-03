@@ -57,20 +57,26 @@ MultiPolygon. Undefined for all other geometry types (returns zero)."></head><bo
 
     <div class="section level2">
     <h2 id="ref-usage">Usage<a class="anchor" aria-label="anchor" href="#ref-usage"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">g_area</span><span class="op">(</span><span class="va">wkt</span><span class="op">)</span></span></code></pre></div>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span><span class="fu">g_area</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
     <h2 id="arguments">Arguments<a class="anchor" aria-label="anchor" href="#arguments"></a></h2>
 
 
-<dl><dt id="arg-wkt">wkt<a class="anchor" aria-label="anchor" href="#arg-wkt"></a></dt>
-<dd><p>Character. OGC WKT string for a simple feature geometry.</p></dd>
+<dl><dt id="arg-geom">geom<a class="anchor" aria-label="anchor" href="#arg-geom"></a></dt>
+<dd><p>Either a raw vector of WKB or list of raw vectors, or a
+character vector containing one or more WKT strings.</p></dd>
+
+
+<dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
+<dd><p>Logical, <code>TRUE</code> to suppress warnings. Defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>Numeric scalar. Area of the geometry or <code>0</code>.</p>
+    <p>Numeric vector of length equal to the number of input geometries.
+Area or '0' if undefined.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
