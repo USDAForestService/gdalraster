@@ -40,8 +40,9 @@ public:
   // Multidimensional API specific methods
   std::vector<std::string> getArrayNames() const;
   std::string getRootGroupName() const;
-  
-    
+
+  std::vector<std::string> getDimensionNames(std::string variable) const;
+
   // methods for internal use not exported to R
   void checkAccess_(GDALAccess access_needed) const;
   GDALGroup* getRootGroup() const;

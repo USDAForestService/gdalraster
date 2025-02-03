@@ -132,9 +132,31 @@ void GDALMultiDimRaster::open(bool read_only) {
     Rcpp::stop("open multidim raster failed");
   
   hRootGroup = GDALDatasetGetRootGroup(m_hDataset);
-
+  GDALReleaseDataset(m_hDataset); 
 }
 
+std::vector<std::string> GDALMultiDimRaster::getDimensionNames(std::string variable) const {
+  GDALMDArrayH hVar = GDALGroupOpenMDArray(hRootGroup, variable.c_str(), NULL);
+  GDALGroupRelease(hRootGroup);
+  
+  GDALDimensionH* dims; 
+  size_t nDimCount;
+  size_t* panCount;
+  size_t i;
+  size_t nValues;
+  dims = GDALMDArrayGetDimensions(hVar, &nDimCount);
+  panCount = (size_t*)CPLMalloc(nDimCount * sizeof(size_t));
+  nValues = 1;
+  std::vector<std::string> dimnames; 
+  for( i = 0; i < nDimCount; i++ )
+  {
+    dimnames.push_back(std::string(GDALDimensionGetName(dims[i]))); 
+    panCount[i] = GDALDimensionGetSize(dims[i]);
+    nValues *= panCount[i];
+  }
+  GDALReleaseDimensions(dims, nDimCount);
+  return dimnames; 
+}
 // copied from the GDALRaster implementation for now with no flushCache or vsi_curl_clear_cache
 void GDALMultiDimRaster::close() {
   // make sure caches are flushed when access was GA_Update:
@@ -333,6 +355,9 @@ RCPP_MODULE(mod_GDALMultiDimRaster) {
   "Fetch files forming dataset")
   .const_method("getArrayNames", &GDALMultiDimRaster::getArrayNames,
   "Fetch names of arrays in the root group")
+  
+  .const_method("getDimensionNames", &GDALMultiDimRaster::getDimensionNames,
+  "Fetch names of dimensions of the given variable 'getDimensionNames(<varname>)'")
   
   .const_method("getDriverShortName", &GDALMultiDimRaster::getDriverShortName,
   "Return the short name of the format driver")
