@@ -137,25 +137,33 @@ void GDALMultiDimRaster::open(bool read_only) {
 
 std::vector<std::string> GDALMultiDimRaster::getDimensionNames(std::string variable) const {
   GDALMDArrayH hVar = GDALGroupOpenMDArray(hRootGroup, variable.c_str(), NULL);
-  GDALGroupRelease(hRootGroup);
-  
+
   GDALDimensionH* dims; 
   size_t nDimCount;
-  size_t* panCount;
   size_t i;
-  size_t nValues;
   dims = GDALMDArrayGetDimensions(hVar, &nDimCount);
-  panCount = (size_t*)CPLMalloc(nDimCount * sizeof(size_t));
-  nValues = 1;
   std::vector<std::string> dimnames; 
   for( i = 0; i < nDimCount; i++ )
   {
     dimnames.push_back(std::string(GDALDimensionGetName(dims[i]))); 
-    panCount[i] = GDALDimensionGetSize(dims[i]);
-    nValues *= panCount[i];
   }
   GDALReleaseDimensions(dims, nDimCount);
   return dimnames; 
+}
+std::vector<size_t> GDALMultiDimRaster::getDimensionSizes(std::string variable) const {
+  GDALMDArrayH hVar = GDALGroupOpenMDArray(hRootGroup, variable.c_str(), NULL);
+  
+  GDALDimensionH* dims; 
+  size_t nDimCount;
+  size_t i;
+  dims = GDALMDArrayGetDimensions(hVar, &nDimCount);
+  std::vector<size_t> dimsizes; 
+  for( i = 0; i < nDimCount; i++ )
+  {
+    dimsizes.push_back(GDALDimensionGetSize(dims[i])); 
+  }
+  GDALReleaseDimensions(dims, nDimCount);
+  return dimsizes; 
 }
 // copied from the GDALRaster implementation for now with no flushCache or vsi_curl_clear_cache
 void GDALMultiDimRaster::close() {
@@ -358,6 +366,8 @@ RCPP_MODULE(mod_GDALMultiDimRaster) {
   
   .const_method("getDimensionNames", &GDALMultiDimRaster::getDimensionNames,
   "Fetch names of dimensions of the given variable 'getDimensionNames(<varname>)'")
+  .const_method("getDimensionSizes", &GDALMultiDimRaster::getDimensionSizes,
+  "Fetch sizes of dimensions of the given variable 'getDimensionSizes(<varname>)'")
   
   .const_method("getDriverShortName", &GDALMultiDimRaster::getDriverShortName,
   "Return the short name of the format driver")
