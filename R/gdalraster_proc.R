@@ -252,9 +252,18 @@ read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
     ds$readByteAsRaw <- readByteAsRaw
 
     gt <- ds$getGeoTransform()
-    ul_xy <- .apply_geotransform(gt, xoff, yoff)
-    lr_xy <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))
-    bb <- c(ul_xy[1], lr_xy[2], lr_xy[1], ul_xy[2])
+    ulx <- .apply_geotransform(gt, xoff, yoff)[1]
+    uly <- .apply_geotransform(gt, xoff, yoff)[2]
+    urx <- .apply_geotransform(gt, (xoff + xsize), yoff)[1]
+    ury <- .apply_geotransform(gt, (xoff + xsize), yoff)[2]
+    lrx <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))[1]
+    lry <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))[2]
+    llx <- .apply_geotransform(gt, xoff, (yoff + ysize))[1]
+    lly <- .apply_geotransform(gt, xoff, (yoff + ysize))[2]
+    corners_x <- c(ulx, urx, lrx, llx)
+    corners_y <- c(uly, ury, lry, lly)
+    bb <- c(min(corners_x), min(corners_y), max(corners_x), max(corners_y))
+
     # gis: a list with the bbox, dimensions, projection, nbands, datatype
     wkt_fmt_config <- get_config_option("OSR_WKT_FORMAT")
     if (wkt_fmt_config == "")
