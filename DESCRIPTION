@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to the 'Geospatial Data Abstraction Library' Raster API
-Version: 1.12.0.9021
+Version: 1.12.0.9100
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),
@@ -63,7 +63,7 @@ Suggests:
     scales,
     testthat (>= 3.0.0)
 NeedsCompilation: yes
-SystemRequirements: GDAL (>= 3.1.0, built against GEOS), PROJ, libxml2
+SystemRequirements: C++17, GDAL (>= 3.1.0, built against GEOS), PROJ, libxml2
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2

@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9021 (dev)
+# gdalraster 1.12.0.9100 (dev)
+
+* C++17 is now a system requirement (2025-02-02)
 
 * `plot_raster()`: add argument `pixel_fn` to specify a function that will be applied to the input data for plotting, and handle input raster with complex data type (#582) (2025-02-02)
 
