@@ -1,0 +1,1 @@
+Rcpp::loadModule("mod_GDALMultiDimRaster", TRUE)
