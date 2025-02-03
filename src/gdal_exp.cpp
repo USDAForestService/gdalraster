@@ -789,6 +789,9 @@ Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v,
     if (xsize < 1 || ysize < 1 || nbands < 1)
         Rcpp::stop("invalid raster dimensions");
 
+    if (v.size() != xsize * ysize * nbands)
+        Rcpp::stop("invalid raster dimensions");
+
     Rcpp::NumericVector out(v.size());
 
     const size_t num_pixels = xsize * ysize;
