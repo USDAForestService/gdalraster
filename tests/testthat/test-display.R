@@ -15,14 +15,14 @@ test_that("plot_raster works", {
     ds$close()
     r <- vector("integer")
     for (f in band_files) {
-      ds <- new(GDALRaster, f, read_only=TRUE)
-      r <- c(r, read_ds(ds))
-      ds$close()
+        ds <- new(GDALRaster, f, read_only=TRUE)
+        r <- c(r, read_ds(ds))
+        ds$close()
     }
     expect_silent(plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
-                    minmax_def=c(7551,7679,7585,14842,24997,12451)))
+                              minmax_def=c(7551,7679,7585,14842,24997,12451)))
     expect_silent(plot_raster(r, xsize=dm[1], ysize=dm[2], nbands=3,
-                    minmax_pct_cut=c(2,98)))
+                              minmax_pct_cut=c(2,98)))
 
     # color table
     evc_file <- system.file("extdata/storml_evc.tif", package="gdalraster")
@@ -30,7 +30,7 @@ test_that("plot_raster works", {
     vat <- read.csv(evc_vat)
     vat <- vat[,c(1,6:8)]
     ds <- new(GDALRaster, evc_file, read_only=TRUE)
-    #dm <- ds$dim()
+    # dm <- ds$dim()
     r <- read_ds(ds)
     ds$close()
     expect_silent(plot_raster(r, col_tbl=vat, interpolate=FALSE))
@@ -45,5 +45,13 @@ test_that("plot_raster works", {
     tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
     ds <- new(GDALRaster, tcc_file, read_only=TRUE)
     expect_silent(plot_raster(ds, legend=TRUE))
+    ds$close()
+
+    # complex data type
+    f <- system.file("extdata/complex.tif", package="gdalraster")
+    ds <- new(GDALRaster, f)
+    expect_error(plot_raster(ds))
+    # with pixel function
+    expect_silent(plot_raster(ds, pixel_fn = Arg, interpolate = FALSE))
     ds$close()
 })

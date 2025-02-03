@@ -323,7 +323,8 @@ bool GDALRaster::setGeoTransform(std::vector<double> transform) {
         Rcpp::stop("setGeoTransform() requires a numeric vector of length 6");
 
     if (GDALSetGeoTransform(m_hDataset, transform.data()) == CE_Failure) {
-        Rcpp::Rcerr << "set geotransform failed\n";
+        if (!quiet)
+            Rcpp::Rcerr << "set geotransform failed\n";
         return false;
     }
     else {
@@ -380,7 +381,8 @@ std::string GDALRaster::getProjectionRef() const {
         return srs;
     }
     else {
-        Rcpp::Rcerr << "failed to get projection ref\n";
+        if (!quiet)
+            Rcpp::Rcerr << "failed to get projection ref\n";
         return "";
     }
 }
@@ -1419,7 +1421,8 @@ bool GDALRaster::setColorTable(int band, const Rcpp::RObject& col_tbl,
     CPLErr err = GDALSetRasterColorTable(hBand, hColTbl);
     GDALDestroyColorTable(hColTbl);
     if (err == CE_Failure) {
-        Rcpp::Rcerr << "failed to set color table\n";
+        if (!quiet)
+            Rcpp::Rcerr << "failed to set color table\n";
         return false;
     }
     else {
@@ -1653,7 +1656,8 @@ bool GDALRaster::setDefaultRAT(int band, const Rcpp::DataFrame& df) {
     GDALDestroyRasterAttributeTable(hRAT);
 
     if (nCol_added == 0 || err == CE_Failure) {
-        Rcpp::Rcerr << "could not set raster attribute table\n";
+        if (!quiet)
+            Rcpp::Rcerr << "could not set raster attribute table\n";
         return false;
     }
     else {

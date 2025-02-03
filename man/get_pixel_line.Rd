@@ -7,9 +7,9 @@
 get_pixel_line(xy, gt)
 }
 \arguments{
-\item{xy}{Numeric matrix of geospatial x,y coordinates in the same spatial
+\item{xy}{Numeric matrix of geospatial x, y coordinates in the same spatial
 reference system as \code{gt} (or two-column data frame that will be coerced
-to numeric matrix).}
+to numeric matrix, or a vector x, y for one coordinate).}
 
 \item{gt}{Either a numeric vector of length six containing the affine
 geotransform for the raster, or an object of class \code{GDALRaster} from

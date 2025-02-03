@@ -393,7 +393,7 @@ Rcpp::List GDALVector::getLayerDefn() const {
 
         std::string geomFldName(OGR_GFld_GetNameRef(hGeomFldDefn));
         if (geomFldName == "")
-            geomFldName = this->defaultGeomFldName;
+            geomFldName = this->defaultGeomColName;
         list_out.push_back(list_geom_fld_defn, geomFldName);
     }
 
@@ -973,7 +973,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 continue;
 
             if (EQUAL(OGR_GFld_GetNameRef(hGeomFldDefn), ""))
-                geom_column.push_back(this->defaultGeomFldName);
+                geom_column.push_back(this->defaultGeomColName);
             else
                 geom_column.push_back(OGR_GFld_GetNameRef(hGeomFldDefn));
 
@@ -2377,7 +2377,7 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
 
         std::string geomFldName(OGR_GFld_GetNameRef(hGeomFldDefn));
         if (geomFldName == "")
-            geomFldName = this->defaultGeomFldName;
+            geomFldName = this->defaultGeomColName;
 
         col_names[col_num] = geomFldName;
     }
@@ -2505,7 +2505,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
 
         // case of geometry column name is empty as with shapefiles etc.
         if (nGeomFields == 1 && (
-                EQUAL(names[1], this->defaultGeomFldName.c_str()) ||
+                EQUAL(names[1], this->defaultGeomColName.c_str()) ||
                 EQUAL(names[i], "_ogr_geometry_") ||
                 EQUAL(names[i], "geometry") ||
                 EQUAL(names[i], "geom"))) {
@@ -3159,7 +3159,7 @@ RCPP_MODULE(mod_GDALVector) {
     .field_readonly("m_dialect", &GDALVector::m_dialect)
 
     // read/write fields
-    .field("defaultGeomFldName", &GDALVector::defaultGeomFldName)
+    .field("defaultGeomColName", &GDALVector::defaultGeomColName)
     .field("promoteToMulti", &GDALVector::promoteToMulti)
     .field("quiet", &GDALVector::quiet)
     .field("returnGeomAs", &GDALVector::returnGeomAs)

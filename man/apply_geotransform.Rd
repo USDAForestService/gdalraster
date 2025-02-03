@@ -7,8 +7,9 @@
 apply_geotransform(col_row, gt)
 }
 \arguments{
-\item{col_row}{Numeric matrix of raster column/row (pixel/line) coordinates
-(or two-column data frame that will be coerced to numeric matrix).}
+\item{col_row}{Numeric matrix of raster column, row (pixel/line) coordinates
+(or two-column data frame that will be coerced to numeric matrix, or a
+vector of column, row for one coordinate).}
 
 \item{gt}{Either a numeric vector of length six containing the affine
 geotransform for the raster, or an object of class \code{GDALRaster} from

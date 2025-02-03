@@ -1,4 +1,12 @@
-# gdalraster 1.12.0.9010 (dev)
+# gdalraster 1.12.0.9021 (dev)
+
+* `plot_rasster()`: add argument `pixel_fn` to specify a function that will be applied to the input data for plotting, and handle input raster with complex data type (#582) (2025-02-02)
+
+* `GDALVector-class`: rename the writable field `$defaultGeomFldName` to `$defaultGeomColName` (2025-02-01)
+
+* accept one (x, y) as a vector in functions that expect matrix or data frame input (`transform_xy()`, `inverse_proj()`, `apply_geotransform()`, `get_pixel_line()`) (2025-02-01)
+
+* (internal) validate input columns in the data frame-to-matrix internal C++ functions (2025-02-01)
 
 * add `vsi_is_local()`: returns whether the file/filesystem is "local",  wrapper of `VSIIsLocal()` (2025-01-31)
 
