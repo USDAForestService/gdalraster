@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9100</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9101</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9100" id="gdalraster-11209100-dev">gdalraster 1.12.0.9100 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209100-dev"></a></h2>
-<ul><li><p>C++17 is now a system requirement (2025-02-02)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9101" id="gdalraster-11209101-dev">gdalraster 1.12.0.9101 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209101-dev"></a></h2>
+<ul><li><p>(internal) fix uninitialized variable in class <code>GDALVector</code>, compiler warning on macos (2025-02-03)</p></li>
+<li><p>C++17 is now a system requirement (2025-02-02)</p></li>
 <li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code>: add argument <code>pixel_fn</code> to specify a function that will be applied to the input data for plotting, and handle input raster with complex data type (<a href="https://github.com/USDAForestService/gdalraster/issues/582" class="external-link">#582</a>) (2025-02-02)</p></li>
 <li><p><code>GDALVector-class</code>: rename the writable field <code>$defaultGeomFldName</code> to <code>$defaultGeomColName</code> (2025-02-01)</p></li>
 <li><p>accept one (x, y) as a vector in functions that expect matrix or data frame input (<code><a href="../reference/transform_xy.html">transform_xy()</a></code>, <code>inverse_proj()</code>, <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code>, <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code>) (2025-02-01)</p></li>
