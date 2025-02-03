@@ -269,6 +269,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// flip_vertical
+Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v, int xsize, int ysize, int nbands);
+RcppExport SEXP _gdalraster_flip_vertical(SEXP vSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type v(vSEXP);
+    Rcpp::traits::input_parameter< int >::type xsize(xsizeSEXP);
+    Rcpp::traits::input_parameter< int >::type ysize(ysizeSEXP);
+    Rcpp::traits::input_parameter< int >::type nbands(nbandsSEXP);
+    rcpp_result_gen = Rcpp::wrap(flip_vertical(v, xsize, ysize, nbands));
+    return rcpp_result_gen;
+END_RCPP
+}
 // autoCreateWarpedVRT
 GDALRaster autoCreateWarpedVRT(GDALRaster src_ds, std::string dst_wkt, std::string resample_alg, std::string src_wkt, double max_err, bool alpha_band);
 RcppExport SEXP _gdalraster_autoCreateWarpedVRT(SEXP src_dsSEXP, SEXP dst_wktSEXP, SEXP resample_algSEXP, SEXP src_wktSEXP, SEXP max_errSEXP, SEXP alpha_bandSEXP) {
@@ -1692,6 +1706,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
     {"_gdalraster_get_pixel_line_gt", (DL_FUNC) &_gdalraster_get_pixel_line_gt, 2},
     {"_gdalraster_get_pixel_line_ds", (DL_FUNC) &_gdalraster_get_pixel_line_ds, 2},
+    {"_gdalraster_flip_vertical", (DL_FUNC) &_gdalraster_flip_vertical, 4},
     {"_gdalraster_autoCreateWarpedVRT", (DL_FUNC) &_gdalraster_autoCreateWarpedVRT, 6},
     {"_gdalraster_buildVRT", (DL_FUNC) &_gdalraster_buildVRT, 4},
     {"_gdalraster_combine", (DL_FUNC) &_gdalraster_combine, 8},

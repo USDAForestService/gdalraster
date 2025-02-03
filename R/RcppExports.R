@@ -392,6 +392,12 @@ inv_geotransform <- function(gt) {
     .Call(`_gdalraster_get_pixel_line_ds`, xy, ds)
 }
 
+#' Flip raster data vertically
+#' @noRd
+.flip_vertical <- function(v, xsize, ysize, nbands) {
+    .Call(`_gdalraster_flip_vertical`, v, xsize, ysize, nbands)
+}
+
 #' Create a virtual warped dataset automatically
 #'
 #' `autoCreateWarpedVRT()` creates a warped virtual dataset representing the
