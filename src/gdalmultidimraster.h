@@ -36,23 +36,27 @@ public:
   std::string getDriverShortName() const;
   std::string getDriverLongName() const;
   Rcpp::CharacterVector getFileList() const;
+
+  // Multidimensional API specific methods
+  std::vector<std::string> getArrayNames() const;
+  std::string getRootGroupName() const;
   
+    
   // methods for internal use not exported to R
   void checkAccess_(GDALAccess access_needed) const;
-  
-  
-  // Multidimensional API specific methods
   GDALGroup* getRootGroup() const;
-  std::vector<std::string> getArrayNames() const;
   GDALMDArray* getArray(const std::string& arrayName) const;
-  
+  GDALGroupH hRootGroup;
+
+    
 private:
  // GDALDataset* dataset;
   GDALDatasetH m_hDataset;
   std::string m_fname;
   Rcpp::CharacterVector m_open_options;
   bool m_shared;
- 
+  
+
   GDALAccess m_eAccess;
 };
 

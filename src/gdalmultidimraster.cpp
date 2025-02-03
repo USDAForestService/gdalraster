@@ -130,6 +130,9 @@ void GDALMultiDimRaster::open(bool read_only) {
   
   if (m_hDataset == nullptr)
     Rcpp::stop("open multidim raster failed");
+  
+  hRootGroup = GDALDatasetGetRootGroup(m_hDataset);
+
 }
 
 // copied from the GDALRaster implementation for now with no flushCache or vsi_curl_clear_cache
@@ -229,6 +232,35 @@ std::string GDALMultiDimRaster::getDriverLongName() const {
   return GDALGetDriverLongName(hDriver);
 }
 
+
+std::string GDALMultiDimRaster::getRootGroupName() const {
+  checkAccess_(GA_ReadOnly);
+  
+  return GDALGroupGetName(hRootGroup);  
+}
+
+
+std::vector<std::string> GDALMultiDimRaster::getArrayNames() const {
+  std::vector<std::string> arrayNames;
+  if (!m_hDataset) {
+    return arrayNames;
+  }
+
+ // auto rootGroup = getRootGroup();
+  if (!hRootGroup) {
+    return arrayNames;
+  }
+  char **papszArrays = GDALGroupGetMDArrayNames(hRootGroup, nullptr);
+  int n_items = CSLCount(papszArrays);
+  for (int i=0; i < n_items; ++i) {
+    arrayNames.push_back(std::string(papszArrays[i]));
+  }
+  CSLDestroy(papszArrays);
+  return arrayNames;
+}
+
+
+
 // ****************************************************************************
 // class methods for internal use not exposed in R
 // ****************************************************************************
@@ -248,24 +280,7 @@ void GDALMultiDimRaster::checkAccess_(GDALAccess access_needed) const {
 //   return m_hDataset->GetRootGroup();
 // }
 
-// std::vector<std::string> GDALMultiDimRaster::getArrayNames() const {
-//   std::vector<std::string> arrayNames;
-//   if (!m_hDataset) {
-//     return arrayNames;
-//   }
-//   
-//   auto rootGroup = getRootGroup();
-//   if (!rootGroup) {
-//     return arrayNames;
-//   }
-//   
-//   auto arrays = rootGroup->GetMDArrayNames();
-//   for (const char* name : arrays) {
-//     arrayNames.push_back(std::string(name));
-//   }
-//   
-//   return arrayNames;
-// }
+
 
 // GDALMDArray* GDALMultiDimRaster::getArray(const std::string& arrayName) const {
 //   if (!dataset) {
@@ -316,10 +331,16 @@ RCPP_MODULE(mod_GDALMultiDimRaster) {
   
   .const_method("getFileList", &GDALMultiDimRaster::getFileList,
   "Fetch files forming dataset")
+  .const_method("getArrayNames", &GDALMultiDimRaster::getArrayNames,
+  "Fetch names of arrays in the root group")
+  
   .const_method("getDriverShortName", &GDALMultiDimRaster::getDriverShortName,
   "Return the short name of the format driver")
   .const_method("getDriverLongName", &GDALMultiDimRaster::getDriverLongName,
   "Return the long name of the format driver")
+  
+  .const_method("getRootGroupName", &GDALMultiDimRaster::getRootGroupName,
+  "Return the root group name")
   
   .const_method("getDescription", &GDALMultiDimRaster::getDescription,
   "Return object description for a multdim raster")
