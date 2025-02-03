@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9100 (dev)
+# gdalraster 1.12.0.9101 (dev)
+
+* (internal) fix uninitialized variable in class `GDALVector`, compiler warning on macos (2025-02-03)
 
 * C++17 is now a system requirement (2025-02-02)
 
