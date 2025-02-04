@@ -332,6 +332,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
 
     data_in <- NULL
     is_byte_raster <- TRUE
+    south_up <- FALSE
 
     if (is(data, "Rcpp_GDALRaster")) {
         dm <- data$dim()
@@ -377,9 +378,14 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
 
         gt <- data$getGeoTransform()
         if (is.null(xlim))
-            xlim <- c(gt[1L], gt[1L] + gt[2L] * dm[1L])
-        if (is.null(ylim))
-            ylim <- c(gt[4L] + gt[6L] * dm[2L], gt[4L])
+            xlim <- c(gt[1], gt[1] + gt[2] * dm[1])
+        if (is.null(ylim)) {
+            ylim <- c(gt[4] + gt[6] * dm[2], gt[4])
+            if (gt[6] > 0) {
+                south_up <- TRUE
+                ylim <- rev(ylim)
+            }
+        }
 
     } else if (!is.null(attr(data, "gis"))) {
         gis <- attr(data, "gis")
@@ -462,6 +468,9 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
         stop("specify 'pixel_fn' when plotting complex data types",
              call. = FALSE)
     }
+
+    if (south_up)
+        data_in <- .flip_vertical(data_in, xsize, ysize, nbands)
 
     a <- array(data_in, dim = c(xsize, ysize, nbands))
     r <- .as_raster(a,

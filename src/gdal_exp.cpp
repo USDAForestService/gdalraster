@@ -773,6 +773,44 @@ Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
 }
 
 
+//' Flip raster data vertically
+//' @noRd
+// [[Rcpp::export(name = ".flip_vertical")]]
+Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v,
+                                  int xsize, int ysize, int nbands) {
+
+    // input pixels are interleaved by band
+    // each band contains a vector of xsize * ysize pixel values
+    // reverses the order of the rows in each band
+
+    if (v.size() == 0)
+        Rcpp::stop("the input vector is empty");
+
+    if (xsize < 1 || ysize < 1 || nbands < 1)
+        Rcpp::stop("invalid raster dimensions");
+
+    if (v.size() != xsize * ysize * nbands)
+        Rcpp::stop("invalid raster dimensions");
+
+    Rcpp::NumericVector out(v.size());
+
+    const size_t num_pixels = xsize * ysize;
+    for (int b = 0; b < nbands; ++b) {
+        const size_t band_offset = b * num_pixels;
+        for (int line = 0; line < ysize; ++line) {
+            const size_t line_offset = band_offset + (line * xsize);
+            const size_t dst_offset = band_offset + num_pixels -
+                                      ((line + 1) * xsize);
+
+            std::copy_n(v.cbegin() + line_offset, xsize,
+                        out.begin() + dst_offset);
+        }
+    }
+
+    return out;
+}
+
+
 //' Create a virtual warped dataset automatically
 //'
 //' `autoCreateWarpedVRT()` creates a warped virtual dataset representing the

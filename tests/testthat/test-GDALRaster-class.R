@@ -33,12 +33,9 @@ test_that("infoAsJSON() returns string output", {
 })
 
 test_that("dataset parameters are correct", {
-    lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
-    ds <- new(GDALRaster, lcp_file)
-    expect_length(ds$getFileList(), 2)
-    ds$close()
     evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
     ds <- new(GDALRaster, evt_file)
+    expect_length(ds$getFileList(), 1)
     expect_equal(ds$getDriverShortName(), "GTiff")
     expect_equal(ds$getDriverLongName(), "GeoTIFF")
     expect_equal(ds$getRasterXSize(), 143)
@@ -69,6 +66,19 @@ test_that("dataset parameters are correct", {
     ds_ns <- new(GDALRaster, elev_file, TRUE, NULL, FALSE)
     expect_equal(ds_ns$getDriverShortName(), "GTiff")
     ds_ns$close()
+
+    # south-up raster bbox()
+    f <- system.file("extdata/south-up.tif", package="gdalraster")
+    ds <- new(GDALRaster, f)
+    expect_equal(ds$bbox(), c(-119.55, 36.55, -118.43, 37.45), tolerance = 1e-6)
+    ds$close()
+
+    # rotated raster res()
+    f <- system.file("extdata/geomatrix.tif", package="gdalraster")
+    ds <- new(GDALRaster, f)
+    expect_warning(cellsize <- ds$res())
+    expect_equal(cellsize, c(NA_real_, NA_real_))
+    ds$close()
 })
 
 test_that("band-level parameters are correct", {

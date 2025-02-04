@@ -290,6 +290,9 @@ Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy,
 Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
                                       const GDALRaster* ds);
 
+Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v,
+                                  int xsize, int ysize, int nbands);
+
 GDALRaster autoCreateWarpedVRT(GDALRaster src_ds, std::string dst_wkt,
                                std::string resample_alg,
                                std::string src_wkt,

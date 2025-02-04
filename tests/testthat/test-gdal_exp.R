@@ -425,3 +425,12 @@ test_that("identifyDriver works", {
     expect_true(is.null(identifyDriver(src, allowed_drivers = c("GTiff", "GeoJSON"))))
     expect_equal(identifyDriver(src, file_list = "ynp_fires_1984_2022.gpkg"), "GPKG")
 })
+
+test_that("flip_vertical works", {
+    v <- seq_len(9)
+    v_flip <- .flip_vertical(v, 3, 3, 1)
+    expect_equal(v_flip, c(7, 8, 9, 4, 5, 6, 1, 2, 3))
+
+    expect_error(.flip_vertical(v, 5, 5, 1))
+    expect_error(.flip_vertical(v, -3, -3, 1))
+})
