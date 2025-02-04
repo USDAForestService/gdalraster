@@ -50,7 +50,8 @@ public:
   GDALMDArray* getArray(const std::string& arrayName) const;
   GDALGroupH hRootGroup;
 
-    
+  std::vector<double> getCoordinateValues(std::string variable) const; 
+  
 private:
  // GDALDataset* dataset;
   GDALDatasetH m_hDataset;

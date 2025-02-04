@@ -163,7 +163,65 @@ std::vector<size_t> GDALMultiDimRaster::getDimensionSizes(std::string variable) 
     dimsizes.push_back(GDALDimensionGetSize(dims[i])); 
   }
   GDALReleaseDimensions(dims, nDimCount);
+  GDALMDArrayRelease(hVar);
   return dimsizes; 
+}
+
+std::vector<double> GDALMultiDimRaster::getCoordinateValues(std::string variable) const {
+  double* padfValues;
+  GDALExtendedDataTypeH hDT;
+  GDALMDArrayH hVar = GDALGroupOpenMDArray(hRootGroup, variable.c_str(), NULL);
+  GDALDimensionH* dims;
+  size_t nDimCount;
+  size_t size;
+  size_t i; 
+  dims = GDALMDArrayGetDimensions(hVar, &nDimCount);
+  
+  if (nDimCount > 1) {
+    GDALReleaseDimensions(dims, nDimCount);
+    
+    GDALExtendedDataTypeRelease(hDT);
+    GDALMDArrayRelease(hVar);
+    Rcpp::stop("can only get coordinate values for 1D variables"); 
+  }
+  size = GDALDimensionGetSize(dims[0]); 
+  GDALReleaseDimensions(dims, nDimCount);
+  //return std::vector<double>(1.0); 
+  padfValues = (double*)VSIMalloc2(size, sizeof(double));
+  if( !padfValues )
+  {
+    Rcpp::stop("could not allocate coordinate vector"); 
+  }
+   
+  //size_t panCount;
+  GUInt64* panOffset;
+  size_t * panCount; 
+  panOffset = (GUInt64*)CPLCalloc(nDimCount, sizeof(GUInt64));
+  
+  panCount = (size_t*)CPLMalloc(nDimCount * sizeof(size_t));
+  panCount[0] = size; 
+  hDT = GDALExtendedDataTypeCreate(GDT_Float64);
+  GDALMDArrayRead(hVar,
+                panOffset,
+                panCount,
+                NULL, /* step: defaults to 1,1,1 */
+                NULL, /* stride: default to row-major convention */
+                hDT,
+                padfValues,
+                NULL, /* array start. Omitted */
+                0 /* array size in bytes. Omitted */);
+  GDALExtendedDataTypeRelease(hDT);
+  GDALMDArrayRelease(hVar);
+  CPLFree(panOffset);
+  CPLFree(panCount);
+  
+  std::vector<double> out(size); 
+  for (i = 0; i < size; i++) {
+    out[i] = padfValues[i]; 
+  }
+  VSIFree(padfValues);
+  return out; 
+
 }
 // copied from the GDALRaster implementation for now with no flushCache or vsi_curl_clear_cache
 void GDALMultiDimRaster::close() {
@@ -368,6 +426,9 @@ RCPP_MODULE(mod_GDALMultiDimRaster) {
   "Fetch names of dimensions of the given variable 'getDimensionNames(<varname>)'")
   .const_method("getDimensionSizes", &GDALMultiDimRaster::getDimensionSizes,
   "Fetch sizes of dimensions of the given variable 'getDimensionSizes(<varname>)'")
+  
+  .const_method("getCoordinateValues", &GDALMultiDimRaster::getCoordinateValues,
+  "Fetch values of a given 1D variable 'getCoordinateValues(<varname>)'")
   
   .const_method("getDriverShortName", &GDALMultiDimRaster::getDriverShortName,
   "Return the short name of the format driver")
