@@ -362,13 +362,15 @@ Returns logical <code>TRUE</code> on success or <code>FALSE</code> if the projec
 could not be set.</p>
 <p><code>$bbox()</code><br>
 Returns a numeric vector of length four containing the bounding box
-(xmin, ymin, xmax, ymax) assuming this is a north-up raster.</p>
+(xmin, ymin, xmax, ymax).</p>
 <p><code>$res()</code><br>
 Returns a numeric vector of length two containing the resolution
-(pixel width, pixel height as positive values) assuming this is a north-up
-raster.</p>
+(pixel width, pixel height as positive values) for a non-rotated raster.
+A warning is emitted and <code>NA</code> values returned if the raster has a rotated
+geotransform (see <code>$getGeoTransform()</code> above).</p>
 <p><code>$dim()</code><br>
-Returns an integer vector of length three containing the raster dimensions.
+Returns an integer vector of length three containing the raster dimensions
+(xsize, ysize, number of bands).
 Equivalent to:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">c</span>(ds<span class="sc">$</span><span class="fu">getRasterXSize</span>(), ds<span class="sc">$</span><span class="fu">getRasterYSize</span>(), ds<span class="sc">$</span><span class="fu">getRasterCount</span>())</span></code></pre><p></p></div>
 <p><code>$apply_geotransform(col_row)</code><br>
