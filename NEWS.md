@@ -1,6 +1,8 @@
-# gdalraster 1.12.0.9110 (dev)
+# gdalraster 1.12.0.9120 (dev)
 
-* updated geometry interface to support the vector API in gdalraster 2.0, changes to existing functions and adds `g_wk2wk()`, `g_create()`, `g_add_geom()`, `transform_bounds()` (#572) (2025-02-03)
+* improve `GDALRaster::bbox()` and `GDALRaster::res()` to handle south-up / rotated raster, with related fixes in `read_ds()` and `plot_raster()` (#569) (2025-02-03)
+
+* update the geometry interface to support the vector API in gdalraster 2.0, with changes to existing functions and add `g_wk2wk()`, `g_create()`, `g_add_geom()`, `transform_bounds()` (#572) (2025-02-03)
 
 * (internal) fix uninitialized variable in class `GDALVector`, compiler warning on macos (2025-02-03)
 
