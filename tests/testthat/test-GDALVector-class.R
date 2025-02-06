@@ -1082,5 +1082,11 @@ test_that("info() prints output to the console", {
     expect_output(lyr$info())
     lyr$close()
 
+    # default layer first by index
+    lyr <- new(GDALVector, dsn)
+    expect_no_warning(lyr$info())
+    expect_output(lyr$info())
+    lyr$close()
+
     unlink(dsn)
 })
