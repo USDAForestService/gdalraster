@@ -165,6 +165,7 @@ lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">isOpen</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDsn</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">info</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -303,6 +304,12 @@ If it returns an empty string (<code>""</code>) it means there is believed to be
 local file system files associated with the dataset (e.g., a virtual file
 system). The returned filenames will normally be relative or absolute
 paths depending on the path used to originally open the dataset.</p>
+<p><code>$info()</code><br>
+Prints information about the vector layer to the console (no
+return value, called for that side effect only).
+For non-SQL DSN/layer, calls <code><a href="ogrinfo.html">ogrinfo()</a></code> passing the command options
+<code>cl_arg = c("-so", "-nomd")</code>. For layers open with a SQL statement,
+prints the DSN and SQL.</p>
 <p><code>$getDriverShortName()</code><br>
 Returns the short name of the vector format driver.</p>
 <p><code>$getDriverLongName()</code><br>
@@ -669,7 +676,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## object of class GDALVector</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x55725ed543f0&gt; of class 'GDALVector' &lt;0x55725f1cc260&gt;</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> C++ object &lt;0x560de084b260&gt; of class 'GDALVector' &lt;0x560dd6720c00&gt;</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 8 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomColName: chr "geometry"</span>
@@ -680,19 +687,19 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ quiet             : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "WKB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 67 methods, of which 53 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 68 methods, of which 54 are  possibly relevant:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    OGRFeatureFromList_dumpReadble, bbox, clearSpatialFilter, close,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    commitTransaction, createFeature, deleteFeature, fetch, finalize,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getAttributeFilter, getDriverLongName, getDriverShortName, getDsn,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getFIDColumn, getFeature, getFeatureCount, getFieldDomain, getFieldNames,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getFileList, getGeomType, getGeometryColumn, getLastWriteFID, getLayerDefn,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getMetadata, getMetadataItem, getName, getNextFeature, getSpatialFilter,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getSpatialRef, initialize, isOpen, layerClip, layerErase, layerIdentity,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerIntersection, layerSymDifference, layerUnion, layerUpdate, open,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    resetReading, rollbackTransaction, setAttributeFilter, setFeature,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setIgnoredFields, setMetadata, setNextByIndex, setSelectedFields,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilter, setSpatialFilterRect, startTransaction, syncToDisk,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    testCapability, upsertFeature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getSpatialRef, info, initialize, isOpen, layerClip, layerErase,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerIdentity, layerIntersection, layerSymDifference, layerUnion,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerUpdate, open, resetReading, rollbackTransaction, setAttributeFilter,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setFeature, setIgnoredFields, setMetadata, setNextByIndex,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setSelectedFields, setSpatialFilter, setSpatialFilterRect, startTransaction,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    syncToDisk, testCapability, upsertFeature</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## dataset info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -700,7 +707,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpZWKRdq/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmprnQ9EH/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1200,7 +1207,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-02-04 00:15:36" "2025-02-04 00:15:36"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-02-06 05:41:47" "2025-02-06 05:41:47"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1226,7 +1233,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-02-04 00:15:36"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-02-06 05:41:47"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1269,7 +1276,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-02-04 00:15:36" "2025-02-04 00:15:37"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-02-06 05:41:47" "2025-02-06 05:41:48"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
