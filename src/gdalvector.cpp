@@ -173,6 +173,26 @@ Rcpp::CharacterVector GDALVector::getFileList() const {
     }
 }
 
+void GDALVector::info() const {
+    checkAccess_(GA_ReadOnly);
+
+    if (m_is_sql) {
+        Rcpp::Rcout << "DSN: " << m_dsn << std::endl;
+        Rcpp::Rcout << "layer: \"" << m_layer_name << "\"" << std::endl;
+    }
+    else {
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 7, 0)
+        Rcpp::Rcout << ogrinfo(m_dsn, Rcpp::wrap(m_layer_name),
+                               Rcpp::CharacterVector::create("-so", "-nomd"),
+                               m_open_options, true, false);
+#else
+        Rcpp::Rcout << "ogrinfo() requires GDAL >= 3.7" << std::endl;
+        Rcpp::Rcout << "DSN: " << m_dsn << std::endl;
+        Rcpp::Rcout << "layer: " << m_layer_name << std::endl;
+#endif
+    }
+}
+
 std::string GDALVector::getDriverShortName() const {
     checkAccess_(GA_ReadOnly);
 
@@ -3178,6 +3198,8 @@ RCPP_MODULE(mod_GDALVector) {
         "(Re-)open the dataset on the existing DSN and layer")
     .const_method("getFileList", &GDALVector::getFileList,
         "Fetch files forming dataset")
+    .const_method("info", &GDALVector::info,
+        "Print information about the vector layer")
     .const_method("getDriverShortName", &GDALVector::getDriverShortName,
          "Return the short name of the format driver")
     .const_method("getDriverLongName", &GDALVector::getDriverLongName,

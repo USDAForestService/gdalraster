@@ -1068,3 +1068,19 @@ test_that("field domain specifications are returned correctly", {
     lyr$close()
     deleteDataset(dsn)
 })
+
+test_that("info() prints output to the console", {
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn)
+
+    lyr <- new(GDALVector, dsn, "mtbs_perims")
+    expect_output(lyr$info())
+    lyr$close()
+
+    lyr <- new(GDALVector, dsn, "SELECT * FROM mtbs_perims LIMIT 10")
+    expect_output(lyr$info())
+    lyr$close()
+
+    unlink(dsn)
+})
