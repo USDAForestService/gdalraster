@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9120 (dev)
+# gdalraster 1.12.0.9121 (dev)
+
+* add `GDALVector::info()`: print information about the vector layer to the console (2025-02-05)
 
 * improve `GDALRaster::bbox()` and `GDALRaster::res()` to handle south-up / rotated raster, with related fixes in `read_ds()` and `plot_raster()` (#569) (2025-02-03)
 
