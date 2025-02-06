@@ -848,6 +848,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// mdimtranslate
+bool mdimtranslate(GDALMultiDimRaster src_ds, Rcpp::CharacterVector dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet);
+RcppExport SEXP _gdalraster_mdimtranslate(SEXP src_dsSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< GDALMultiDimRaster >::type src_ds(src_dsSEXP);
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(mdimtranslate(src_ds, dst_filename, cl_arg, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getGEOSVersion
 std::vector<int> getGEOSVersion();
 RcppExport SEXP _gdalraster_getGEOSVersion() {
@@ -1736,6 +1750,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_get_actual_url", (DL_FUNC) &_gdalraster_vsi_get_actual_url, 1},
     {"_gdalraster_vsi_get_signed_url", (DL_FUNC) &_gdalraster_vsi_get_signed_url, 2},
     {"_gdalraster_vsi_is_local", (DL_FUNC) &_gdalraster_vsi_is_local, 1},
+    {"_gdalraster_mdimtranslate", (DL_FUNC) &_gdalraster_mdimtranslate, 4},
     {"_gdalraster_getGEOSVersion", (DL_FUNC) &_gdalraster_getGEOSVersion, 0},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster_g_wkb2wkt", (DL_FUNC) &_gdalraster_g_wkb2wkt, 2},

@@ -2005,6 +2005,13 @@ vsi_is_local <- function(filename) {
     .Call(`_gdalraster_vsi_is_local`, filename)
 }
 
+#' Convert multidim raster data between different formats
+NULL
+
+.mdimtranslate <- function(src_ds, dst_filename, cl_arg = NULL, quiet = FALSE) {
+    .Call(`_gdalraster_mdimtranslate`, src_ds, dst_filename, cl_arg, quiet)
+}
+
 #' @noRd
 NULL
 

@@ -3,5 +3,5 @@
 
 #include "gdalraster.h"
 #include "gdalvector.h"
-
+#include "gdalmultidimraster.h"
 #endif  // SRC_GDALRASTER_TYPES_H_

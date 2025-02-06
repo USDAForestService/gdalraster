@@ -1,7 +1,18 @@
-#ifndef SRC_GDALMULTIDIMRASTER_H
-#define SRC_GDALMULTIDIMRASTER_H
+#ifndef SRC_GDALMULTIDIMRASTER_H_
+#define SRC_GDALMULTIDIMRASTER_H_
 
-#include "gdal_priv.h"
+// Predeclare some GDAL types until the public header is included
+#ifndef GDAL_H_INCLUDED
+#ifndef SRC_GDALRASTER_H_
+#ifndef SRC_GDALVECTOR_H_
+typedef void *GDALDatasetH;
+typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
+#endif
+#endif
+class GDALGroup; 
+typedef void *GDALMDArray; 
+typedef struct GDALGroupHS *GDALGroupH;
+#endif
 
 #include "rcpp_util.h"
 
@@ -49,7 +60,7 @@ public:
   GDALGroup* getRootGroup() const;
   GDALMDArray* getArray(const std::string& arrayName) const;
   GDALGroupH hRootGroup;
-
+  GDALDatasetH getGDALDatasetH_() const;
   std::vector<double> getCoordinateValues(std::string variable) const; 
   
 private:
@@ -65,4 +76,12 @@ private:
 
 RCPP_EXPOSED_CLASS(GDALMultiDimRaster)
   
-#endif // SRC_GDALMULTIDIMRASTER_H
+  
+bool mdimtranslate(GDALMultiDimRaster src_ds,
+                   Rcpp::CharacterVector dst_filename,
+                                          Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+                                          bool quiet); 
+
+
+
+#endif // SRC_GDALMULTIDIMRASTER_H_
