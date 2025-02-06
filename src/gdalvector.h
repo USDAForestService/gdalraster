@@ -2,7 +2,7 @@
    a layer of features in a GDALDataset. https://gdal.org/en/stable/api/vector_c_api.html
 
    Chris Toney <chris.toney at usda.gov>
-   Copyright (c) 2023-2024 gdalraster authors
+   Copyright (c) 2023-2025 gdalraster authors
 */
 
 #ifndef SRC_GDALVECTOR_H_
@@ -52,6 +52,7 @@ class GDALVector {
     bool isOpen() const;
     std::string getDsn() const;
     Rcpp::CharacterVector getFileList() const;
+    void info() const;
     std::string getDriverShortName() const;
     std::string getDriverLongName() const;
 

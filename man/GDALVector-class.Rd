@@ -82,6 +82,7 @@ lyr$open(read_only)
 lyr$isOpen()
 lyr$getDsn()
 lyr$getFileList()
+lyr$info()
 lyr$getDriverShortName()
 lyr$getDriverLongName()
 
@@ -224,6 +225,13 @@ If it returns an empty string (\code{""}) it means there is believed to be no
 local file system files associated with the dataset (e.g., a virtual file
 system). The returned filenames will normally be relative or absolute
 paths depending on the path used to originally open the dataset.
+
+\code{$info()}\cr
+Prints information about the vector layer to the console (no
+return value, called for that side effect only).
+For non-SQL DSN/layer, calls \code{\link[=ogrinfo]{ogrinfo()}} passing the command options
+\code{cl_arg = c("-so", "-nomd")}. For layers open with a SQL statement,
+prints the DSN and SQL.
 
 \code{$getDriverShortName()}\cr
 Returns the short name of the vector format driver.
