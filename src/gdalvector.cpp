@@ -138,6 +138,11 @@ void GDALVector::open(bool read_only) {
         OGR_L_ResetReading(m_hLayer);
     }
 
+    if (m_layer_name == "") {
+        // default layer first by index was opened
+        m_layer_name = OGR_L_GetName(m_hLayer);
+    }
+
     if (hGeom_filter != nullptr)
         OGR_G_DestroyGeometry(hGeom_filter);
 }
