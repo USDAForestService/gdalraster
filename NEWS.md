@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9121 (dev)
+# gdalraster 1.12.0.9130 (dev)
+
+* handle `NA` in the input coordinates to `transform_xy()`, `inv_project()`, `transform_bounds()`, `apply_geotransform()` and `get_pixel_line()` (#592) (2025-02-07)
 
 * add `GDALVector::info()`: print information about the vector layer to the console (2025-02-05)
 
