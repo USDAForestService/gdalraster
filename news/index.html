@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9121</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9130</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9121" id="gdalraster-11209121-dev">gdalraster 1.12.0.9121 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209121-dev"></a></h2>
-<ul><li><p>add <code>GDALVector::info()</code>: print information about the vector layer to the console (2025-02-05)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9130" id="gdalraster-11209130-dev">gdalraster 1.12.0.9130 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209130-dev"></a></h2>
+<ul><li><p>handle <code>NA</code> in the input coordinates to <code><a href="../reference/transform_xy.html">transform_xy()</a></code>, <code><a href="../reference/inv_project.html">inv_project()</a></code>, <code><a href="../reference/transform_bounds.html">transform_bounds()</a></code>, <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code> and <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/592" class="external-link">#592</a>) (2025-02-07)</p></li>
+<li><p>add <code>GDALVector::info()</code>: print information about the vector layer to the console (2025-02-05)</p></li>
 <li><p>improve <code>GDALRaster::bbox()</code> and <code>GDALRaster::res()</code> to handle south-up / rotated raster, with related fixes in <code><a href="../reference/read_ds.html">read_ds()</a></code> and <code><a href="../reference/plot_raster.html">plot_raster()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/569" class="external-link">#569</a>) (2025-02-03)</p></li>
 <li><p>update the geometry interface to support the vector API in gdalraster 2.0, with changes to existing functions and add <code><a href="../reference/g_wk2wk.html">g_wk2wk()</a></code>, <code><a href="../reference/g_factory.html">g_create()</a></code>, <code><a href="../reference/g_factory.html">g_add_geom()</a></code>, <code><a href="../reference/transform_bounds.html">transform_bounds()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/572" class="external-link">#572</a>) (2025-02-03)</p></li>
 <li><p>(internal) fix uninitialized variable in class <code>GDALVector</code>, compiler warning on macos (2025-02-03)</p></li>
