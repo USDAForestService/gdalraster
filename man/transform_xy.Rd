@@ -19,7 +19,7 @@ system. May be in WKT format or any of the formats supported by
 \code{\link[=srs_to_wkt]{srs_to_wkt()}}.}
 }
 \value{
-Numeric array of geospatial x/y coordinates in the projection
+Numeric matrix of geospatial (x, y) coordinates in the projection
 specified by \code{srs_to}.
 }
 \description{

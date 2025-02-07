@@ -591,21 +591,30 @@ Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt,
 //' @noRd
 // [[Rcpp::export(name = ".apply_geotransform_gt")]]
 Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row,
-        const std::vector<double> gt) {
+    const std::vector<double> gt) {
 
-    Rcpp::NumericMatrix col_row_in = xy_robject_to_matrix_(col_row);
+Rcpp::NumericMatrix col_row_in = xy_robject_to_matrix_(col_row);
 
-    if (col_row_in.nrow() == 0)
-        Rcpp::stop("input matrix is empty");
+if (col_row_in.nrow() == 0)
+    Rcpp::stop("input matrix is empty");
 
-    Rcpp::NumericMatrix xy(col_row_in.nrow(), 2);
-    for (R_xlen_t i = 0; i < col_row_in.nrow(); ++i) {
+Rcpp::LogicalVector na_in = Rcpp::is_na(col_row_in.column(0)) |
+                            Rcpp::is_na(col_row_in.column(1));
+
+Rcpp::NumericMatrix xy = Rcpp::no_init(col_row_in.nrow(), 2);
+for (R_xlen_t i = 0; i < col_row_in.nrow(); ++i) {
+    if (na_in[i]) {
+        xy(i, 0) = NA_REAL;
+        xy(i, 1) = NA_REAL;
+    }
+    else {
         GDALApplyGeoTransform((double *) (gt.data()),
                               col_row_in(i, 0), col_row_in(i, 1),
                               &xy(i, 0), &xy(i, 1));
     }
+}
 
-    return xy;
+return xy;
 }
 
 
@@ -621,13 +630,20 @@ Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject& col_row,
     if (col_row_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
 
+    Rcpp::LogicalVector na_in = Rcpp::is_na(col_row_in.column(0)) |
+                                Rcpp::is_na(col_row_in.column(1));
+
     std::vector<double> gt = ds->getGeoTransform();
-    Rcpp::NumericMatrix xy(col_row_in.nrow(), 2);
+    Rcpp::NumericMatrix xy = Rcpp::no_init(col_row_in.nrow(), 2);
     uint64_t num_outside = 0;
     for (R_xlen_t i = 0; i < col_row_in.nrow(); ++i) {
-        if (col_row_in(i, 0) < 0 || col_row_in(i, 1) < 0 ||
-                col_row_in(i, 0) > ds->getRasterXSize() ||
-                col_row_in(i, 1) > ds->getRasterYSize()) {
+        if (na_in[i]) {
+            xy(i, 0) = NA_REAL;
+            xy(i, 1) = NA_REAL;
+        }
+        else if (col_row_in(i, 0) < 0 || col_row_in(i, 1) < 0 ||
+                 col_row_in(i, 0) > ds->getRasterXSize() ||
+                 col_row_in(i, 1) > ds->getRasterYSize()) {
 
             num_outside += 1;
             xy(i, 0) = NA_REAL;
@@ -705,21 +721,30 @@ Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy,
     if (xy_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
 
+    Rcpp::LogicalVector na_in = Rcpp::is_na(xy_in.column(0)) |
+                                Rcpp::is_na(xy_in.column(1));
+
     Rcpp::NumericVector inv_gt = inv_geotransform(gt);
     if (Rcpp::any(Rcpp::is_na(inv_gt)))
         Rcpp::stop("could not get inverse geotransform");
-    Rcpp::IntegerMatrix pixel_line(xy_in.nrow(), 2);
+    Rcpp::IntegerMatrix pixel_line = Rcpp::no_init(xy_in.nrow(), 2);
     for (R_xlen_t i = 0; i < xy_in.nrow(); ++i) {
-        double geo_x = xy_in(i, 0);
-        double geo_y = xy_in(i, 1);
-        // column
-        pixel_line(i, 0) = static_cast<int>(std::floor(inv_gt[0] +
-                                            inv_gt[1] * geo_x +
-                                            inv_gt[2] * geo_y));
-        // row
-        pixel_line(i, 1) = static_cast<int>(std::floor(inv_gt[3] +
-                                            inv_gt[4] * geo_x +
-                                            inv_gt[5] * geo_y));
+        if (na_in[i]) {
+            pixel_line(i, 0) = NA_INTEGER;
+            pixel_line(i, 1) = NA_INTEGER;
+        }
+        else {
+            double geo_x = xy_in(i, 0);
+            double geo_y = xy_in(i, 1);
+            // column
+            pixel_line(i, 0) = static_cast<int>(std::floor(inv_gt[0] +
+                                                inv_gt[1] * geo_x +
+                                                inv_gt[2] * geo_y));
+            // row
+            pixel_line(i, 1) = static_cast<int>(std::floor(inv_gt[3] +
+                                                inv_gt[4] * geo_x +
+                                                inv_gt[5] * geo_y));
+        }
     }
     return pixel_line;
 }
@@ -737,31 +762,40 @@ Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
     if (xy_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
 
+    Rcpp::LogicalVector na_in = Rcpp::is_na(xy_in.column(0)) |
+                                Rcpp::is_na(xy_in.column(1));
+
     std::vector<double> gt = ds->getGeoTransform();
     Rcpp::NumericVector inv_gt = inv_geotransform(gt);
     if (Rcpp::any(Rcpp::is_na(inv_gt)))
         Rcpp::stop("could not get inverse geotransform");
-    Rcpp::IntegerMatrix pixel_line(xy_in.nrow(), 2);
+    Rcpp::IntegerMatrix pixel_line = Rcpp::no_init(xy_in.nrow(), 2);
     uint64_t num_outside = 0;
     for (R_xlen_t i = 0; i < xy_in.nrow(); ++i) {
-        double geo_x = xy_in(i, 0);
-        double geo_y = xy_in(i, 1);
-        // column
-        pixel_line(i, 0) = static_cast<int>(std::floor(inv_gt[0] +
-                                            inv_gt[1] * geo_x +
-                                            inv_gt[2] * geo_y));
-        // row
-        pixel_line(i, 1) = static_cast<int>(std::floor(inv_gt[3] +
-                                            inv_gt[4] * geo_x +
-                                            inv_gt[5] * geo_y));
-
-        if (pixel_line(i, 0) < 0 || pixel_line(i, 1) < 0 ||
-                pixel_line(i, 0) >= ds->getRasterXSize() ||
-                pixel_line(i, 1) >= ds->getRasterYSize()) {
-
-            num_outside += 1;
+        if (na_in[i]) {
             pixel_line(i, 0) = NA_INTEGER;
             pixel_line(i, 1) = NA_INTEGER;
+        }
+        else {
+            double geo_x = xy_in(i, 0);
+            double geo_y = xy_in(i, 1);
+            // column
+            pixel_line(i, 0) = static_cast<int>(std::floor(inv_gt[0] +
+                                                inv_gt[1] * geo_x +
+                                                inv_gt[2] * geo_y));
+            // row
+            pixel_line(i, 1) = static_cast<int>(std::floor(inv_gt[3] +
+                                                inv_gt[4] * geo_x +
+                                                inv_gt[5] * geo_y));
+
+            if (pixel_line(i, 0) < 0 || pixel_line(i, 1) < 0 ||
+                    pixel_line(i, 0) >= ds->getRasterXSize() ||
+                    pixel_line(i, 1) >= ds->getRasterYSize()) {
+
+                num_outside += 1;
+                pixel_line(i, 0) = NA_INTEGER;
+                pixel_line(i, 1) = NA_INTEGER;
+            }
         }
     }
 

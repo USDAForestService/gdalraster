@@ -114,6 +114,13 @@ test_that("apply_geotransform gives correct results", {
     dim(res) <- NULL
     expect_equal(res, xy_expected[1, ], tolerance = 0.1)
 
+    # NA input
+    res <- ds$apply_geotransform(c(NA, NA))
+    expect_true(all(is.na(res)))
+
+    res <- apply_geotransform(c(NA, NA), gt)
+    expect_true(all(is.na(res)))
+
     ds$close()
 })
 
@@ -140,6 +147,13 @@ test_that("get_pixel_line gives correct results", {
     # one coordinate as vector input
     res <- get_pixel_line(c(pts[1, 2], pts[1, 3]), gt)  # col 2 x, col 3 y
     expect_equal(as.vector(res), c(pix_line[1], pix_line[11]))
+
+    # NA input
+    res <- get_pixel_line(c(NA, NA), gt)
+    expect_true(all(is.na(res)))
+
+    res <- ds$get_pixel_line(c(NA, NA))
+    expect_true(all(is.na(res)))
 
     ds$close()
 })

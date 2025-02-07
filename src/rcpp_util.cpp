@@ -8,7 +8,7 @@
 //' convert data frame to numeric matrix in Rcpp
 //' @noRd
 Rcpp::NumericMatrix df_to_matrix_(const Rcpp::DataFrame& df) {
-    Rcpp::NumericMatrix m(df.nrows(), df.size());
+    Rcpp::NumericMatrix m = Rcpp::no_init(df.nrows(), df.size());
     for (R_xlen_t i=0; i < df.size(); ++i) {
         if (Rcpp::is<Rcpp::NumericVector>(df[i]) ||
             Rcpp::is<Rcpp::IntegerVector>(df[i]) ||
@@ -26,7 +26,7 @@ Rcpp::NumericMatrix df_to_matrix_(const Rcpp::DataFrame& df) {
 //' convert data frame to integer matrix in Rcpp
 //' @noRd
 Rcpp::IntegerMatrix df_to_int_matrix_(const Rcpp::DataFrame& df) {
-    Rcpp::IntegerMatrix m(df.nrows(), df.size());
+    Rcpp::IntegerMatrix m = Rcpp::no_init(df.nrows(), df.size());
     for (R_xlen_t i=0; i < df.size(); ++i) {
         if (Rcpp::is<Rcpp::NumericVector>(df[i]) ||
             Rcpp::is<Rcpp::IntegerVector>(df[i]) ||
@@ -47,7 +47,8 @@ Rcpp::NumericMatrix xy_robject_to_matrix_(const Rcpp::RObject& xy) {
     Rcpp::NumericMatrix xy_ret;
 
     if (Rcpp::is<Rcpp::NumericVector>(xy) ||
-        Rcpp::is<Rcpp::IntegerVector>(xy)) {
+        Rcpp::is<Rcpp::IntegerVector>(xy) ||
+        Rcpp::is<Rcpp::LogicalVector>(xy)) {
 
         if (!Rf_isMatrix(xy)) {
             Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(xy);
