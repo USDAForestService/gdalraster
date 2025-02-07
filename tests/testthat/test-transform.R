@@ -19,6 +19,15 @@ test_that("transform/inv_project give correct results", {
                             srs_to = epsg_to_wkt(5070))
     expect_equal(as.vector(xy_test), xy_alb83, tolerance=0.1)
 
+    # with NA
+    pts[11, ] <- c(11, NA, NA)
+    xy_test <- transform_xy(pts = pts[,-1],
+                            srs_from = epsg_to_wkt(26912),
+                            srs_to = epsg_to_wkt(5070))
+    expect_equal(as.vector(xy_test[1:10, ]), xy_alb83, tolerance=0.1)
+    expect_true(is.na(xy_test[11, 1]) && is.na(xy_test[11, 2]))
+    pts <- pts[-11, ]
+
     # as vector for one point
     xy_test <- transform_xy(pts = c(pts[1, 2], pts[1, 3]),
                             srs_from = epsg_to_wkt(26912),
@@ -33,6 +42,14 @@ test_that("transform/inv_project give correct results", {
     expect_error(transform_xy(pts = pts[,-1],
                               srs_from = epsg_to_wkt(26912),
                               srs_to = "invalid"))
+    # transform error
+    pts[11, ] <- c(11, Inf, Inf)
+    expect_warning(xy_test <- transform_xy(pts = pts[,-1],
+                                           srs_from = epsg_to_wkt(26912),
+                                           srs_to = epsg_to_wkt(5070)))
+    expect_equal(as.vector(xy_test[1:10, ]), xy_alb83, tolerance=0.1)
+    expect_true(is.na(xy_test[11, 1]) && is.na(xy_test[11, 2]))
+    pts <- pts[-11, ]
 
     xy_wgs84 <- c(-113.26707, -113.27315, -113.28150, -113.25978, -113.25312,
                   -113.24600, -113.25613, -113.24613, -113.22794, -113.27334,
@@ -57,11 +74,15 @@ test_that("transform/inv_project give correct results", {
     expect_equal(as.vector(inv_test), c(xy_wgs84[1], xy_wgs84[11]),
                  tolerance=0.001)
 
+    # return NA for NA input:
+    # https://github.com/USDAForestService/gdalraster/issues/587
+    expect_no_error(ret <- inv_project(pts = c(NA, NA),
+                                       srs = epsg_to_wkt(26912),
+                                       well_known_gcs = "WGS84"))
+    expect_true(all(is.na(ret)))
+
     # errors
     expect_error(inv_project(pts = as.vector(pts[,-1]),
-                             srs = epsg_to_wkt(26912),
-                             well_known_gcs = "WGS84"))
-    expect_error(inv_project(pts = matrix(data = NA, nrow = 1, ncol = 2),
                              srs = epsg_to_wkt(26912),
                              well_known_gcs = "WGS84"))
     expect_error(inv_project(pts = as.matrix(pts[,-1]),
@@ -70,6 +91,14 @@ test_that("transform/inv_project give correct results", {
     expect_error(inv_project(pts = as.matrix(pts[,-1]),
                              srs = epsg_to_wkt(26912),
                              well_known_gcs = "invalid"))
+    # transform error
+    pts[11, ] <- c(11, Inf, Inf)
+    expect_warning(inv_test <- inv_project(pts = pts[,-1],
+                                           srs = epsg_to_wkt(26912),
+                                           well_known_gcs = "WGS84"))
+    expect_equal(as.vector(inv_test[1:10, ]), xy_wgs84, tolerance=0.001)
+    expect_true(is.na(inv_test[11, 1]) && is.na(inv_test[11, 2]))
+    pts <- pts[-11, ]
 })
 
 test_that("transform_bounds gives correct results", {

@@ -2386,7 +2386,7 @@ has_geos <- function() {
 #' @param well_known_gcs Optional character string containing a supported
 #' well known name of a geographic coordinate system (see Details for
 #' supported values).
-#' @returns Numeric array of longitude, latitude. An error is raised if the
+#' @returns Numeric matrix of longitude, latitude. An error is raised if the
 #' transformation cannot be performed.
 #' @seealso
 #' [transform_xy()]
@@ -2412,7 +2412,7 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #' @param srs_to Character string specifying the output spatial reference
 #' system. May be in WKT format or any of the formats supported by
 #' [srs_to_wkt()].
-#' @returns Numeric array of geospatial x/y coordinates in the projection
+#' @returns Numeric matrix of geospatial (x, y) coordinates in the projection
 #' specified by `srs_to`.
 #'
 #' @seealso

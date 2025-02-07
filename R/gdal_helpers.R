@@ -356,7 +356,8 @@ apply_geotransform <- function(col_row, gt) {
     else if (is.vector(col_row) && length(col_row) != 2)
         stop("'col_row' as vector must have length 2", call. = FALSE)
 
-    if ((is.vector(col_row) || is.matrix(col_row)) && !is.numeric(col_row))
+    # allow for c(NA, NA) which is logical type, NA input should return NA out
+    if ((is.vector(xy) || is.matrix(xy)) && !is.numeric(xy) && !is.logical(xy))
         stop("'col_row' must be numeric", call. = FALSE)
 
     if (is(gt, "Rcpp_GDALRaster")) {
@@ -427,7 +428,8 @@ get_pixel_line <- function(xy, gt) {
     else if (is.vector(xy) && length(xy) != 2)
         stop("'xy' as vector must have length 2", call. = FALSE)
 
-    if ((is.vector(xy) || is.matrix(xy)) && !is.numeric(xy))
+    # allow for c(NA, NA) which is logical type, NA input should return NA out
+    if ((is.vector(xy) || is.matrix(xy)) && !is.numeric(xy) && !is.logical(xy))
         stop("'xy' must be numeric", call. = FALSE)
 
     if (is(gt, "Rcpp_GDALRaster")) {

@@ -19,7 +19,7 @@ well known name of a geographic coordinate system (see Details for
 supported values).}
 }
 \value{
-Numeric array of longitude, latitude. An error is raised if the
+Numeric matrix of longitude, latitude. An error is raised if the
 transformation cannot be performed.
 }
 \description{

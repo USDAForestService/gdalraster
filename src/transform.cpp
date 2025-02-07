@@ -127,7 +127,7 @@ void setPROJEnableNetwork(int enabled) {
 //' @param well_known_gcs Optional character string containing a supported
 //' well known name of a geographic coordinate system (see Details for
 //' supported values).
-//' @returns Numeric array of longitude, latitude. An error is raised if the
+//' @returns Numeric matrix of longitude, latitude. An error is raised if the
 //' transformation cannot be performed.
 //' @seealso
 //' [transform_xy()]
@@ -147,6 +147,8 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     if (pts_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
 
+    // currently (x, y)
+    // could support 3-column and 4-column with m and t values in the future
     if (pts_in.ncol() != 2)
         Rcpp::stop("input matrix must have 2 columns");
 
@@ -188,18 +190,44 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
     std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
-    if (!poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data())) {
-        OGRCoordinateTransformation::DestroyCT(poCT);
-        poLongLat->Release();
-        Rcpp::stop("coordinate transformation failed");
-    }
+    std::vector<int> success(pts_in.size());
 
-    Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
-    ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
-    ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
+    int res = poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data(),
+                              nullptr, nullptr, success.data());
 
     OGRCoordinateTransformation::DestroyCT(poCT);
     poLongLat->Release();
+
+    if (!res &&
+        std::find(success.begin(), success.end(), TRUE) == success.end()) {
+
+        Rcpp::stop("transformation failed");
+    }
+
+    Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
+    Rcpp::NumericVector ret_x = Rcpp::wrap(xbuf);
+    Rcpp::NumericVector ret_y = Rcpp::wrap(ybuf);
+    size_t num_err = 0;
+    for (R_xlen_t i = 0; i < na_in.size(); ++i) {
+        if (na_in[i] == TRUE) {
+            ret_x[i] = NA_REAL;
+            ret_y[i] = NA_REAL;
+        }
+        else if (!success[i]) {
+            num_err += 1;
+            ret_x[i] = NA_REAL;
+            ret_y[i] = NA_REAL;
+        }
+    }
+
+    Rcpp::NumericMatrix ret = Rcpp::no_init(pts_in.nrow(), 2);
+    ret.column(0) = ret_x;
+    ret.column(1) = ret_y;
+
+    if (num_err > 0) {
+        Rcpp::warning(std::to_string(num_err) +
+                      " point(s) had transform errors, NA returned");
+    }
 
     return ret;
 }
@@ -216,7 +244,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 //' @param srs_to Character string specifying the output spatial reference
 //' system. May be in WKT format or any of the formats supported by
 //' [srs_to_wkt()].
-//' @returns Numeric array of geospatial x/y coordinates in the projection
+//' @returns Numeric matrix of geospatial (x, y) coordinates in the projection
 //' specified by `srs_to`.
 //'
 //' @seealso
@@ -238,6 +266,8 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     if (pts_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
 
+    // currently (x, y)
+    // could support 3-column and 4-column for m and t values in the future
     if (pts_in.ncol() != 2)
         Rcpp::stop("input matrix must have 2 columns");
 
@@ -268,16 +298,43 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
     std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
-    if (!poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data())) {
-        OGRCoordinateTransformation::DestroyCT(poCT);
-        Rcpp::stop("coordinate transformation failed");
-    }
+    std::vector<int> success(pts_in.size());
 
-    Rcpp::NumericMatrix ret(pts_in.nrow(), 2);
-    ret.column(0) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(xbuf));
-    ret.column(1) = Rcpp::as<Rcpp::NumericVector>(Rcpp::wrap(ybuf));
+    int res = poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data(),
+                              nullptr, nullptr, success.data());
 
     OGRCoordinateTransformation::DestroyCT(poCT);
+
+    if (!res &&
+        std::find(success.begin(), success.end(), TRUE) == success.end()) {
+
+        Rcpp::stop("transformation failed");
+    }
+
+    Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
+    Rcpp::NumericVector ret_x = Rcpp::wrap(xbuf);
+    Rcpp::NumericVector ret_y = Rcpp::wrap(ybuf);
+    size_t num_err = 0;
+    for (R_xlen_t i = 0; i < na_in.size(); ++i) {
+        if (na_in[i] == TRUE) {
+            ret_x[i] = NA_REAL;
+            ret_y[i] = NA_REAL;
+        }
+        else if (!success[i]) {
+            num_err += 1;
+            ret_x[i] = NA_REAL;
+            ret_y[i] = NA_REAL;
+        }
+    }
+
+    Rcpp::NumericMatrix ret = Rcpp::no_init(pts_in.nrow(), 2);
+    ret.column(0) = ret_x;
+    ret.column(1) = ret_y;
+
+    if (num_err > 0) {
+        Rcpp::warning(std::to_string(num_err) +
+                      " point(s) had transform errors, NA returned");
+    }
 
     return ret;
 }
@@ -350,11 +407,16 @@ Rcpp::NumericVector transform_bounds(const Rcpp::NumericVector &bbox,
                                      int densify_pts = 21,
                                      bool traditional_gis_order = true) {
 
-    if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3,4,0))
+    if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 4, 0))
         Rcpp::stop("transform_bounds() requires GDAL >= 3.4");
 
     if (bbox.size() != 4)
         Rcpp::stop("'bbox' must be a numeric vector of length 4");
+
+    if (Rcpp::any(Rcpp::is_na(bbox))) {
+        Rcpp::warning("'bbox' has one or more 'NA' values");
+        Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+    }
 
     std::string srs_from_in = srs_to_wkt(srs_from, false);
     std::string srs_to_in = srs_to_wkt(srs_to, false);
