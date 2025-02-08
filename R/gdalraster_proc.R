@@ -1576,26 +1576,24 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
         # use MEM dataset if possible
         dm <- ds$dim()
         num_pixels <- dm[1] * dm[2] * dm[3]
-        dt_size <- 4
+        bytes_per_pixel <- 1
         for (b in seq_len(ds$getRasterCount())) {
-            if (!(ds$getDataTypeName(b) %in%
-                      c("Int8", "Byte", "Int16", "UInt16", "Int32"))) {
-
-                dt_size <- 8
+            if (dt_size(ds$getDataTypeName(b)) > bytes_per_pixel) {
+                bytes_per_pixel <- dt_size(ds$getDataTypeName(b))
             }
         }
-        raw_size <- num_pixels * dt_size
+        raw_size <- num_pixels * bytes_per_pixel
         if ((raw_size / 1000 / 1000) < max_ram) {
+            if (!ds$quiet) {
+                message("copying to MEM dataset...")
+            }
             ds_mem <- try(createCopy("MEM", "", f_in, return_obj = TRUE),
                           silent = ds$quiet)
             if (!is(ds_mem, "Rcpp_GDALRaster")) {
                 if (!ds$quiet) {
-                    message("copy to MEM dataset failed")
+                    message("copy to MEM failed")
                 }
             } else {
-                if (!ds$quiet) {
-                    message("using MEM dataset")
-                }
                 use_mem <- TRUE
             }
         } else {
