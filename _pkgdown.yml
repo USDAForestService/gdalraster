@@ -62,6 +62,9 @@ reference:
   - buildRAT
   - createColorRamp
   - displayRAT
+- subtitle: Raster data types
+- contents:
+  - dt_conv
 - subtitle: Geotransform conversion
 - contents:
   - apply_geotransform
