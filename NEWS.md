@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9130 (dev)
+# gdalraster 1.12.0.9140 (dev)
+
+* add helper functions for GDAL raster data types (#593) (2025-02-08)
 
 * handle `NA` in the input coordinates to `transform_xy()`, `inv_project()`, `transform_bounds()`, `apply_geotransform()` and `get_pixel_line()` (#592) (2025-02-07)
 

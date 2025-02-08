@@ -51,6 +51,17 @@
   \code{\link[=inv_geotransform]{inv_geotransform()}},
   \code{\link[=pixel_extract]{pixel_extract()}}
 
+  \item data type convenience functions:
+  \code{\link[=dt_size]{dt_size()}},
+  \code{\link[=dt_is_complex]{dt_is_complex()}},
+  \code{\link[=dt_is_integer]{dt_is_integer()}},
+  \code{\link[=dt_is_floating]{dt_is_floating()}},
+  \code{\link[=dt_is_signed]{dt_is_signed()}},
+  \code{\link[=dt_union]{dt_union()}},
+  \code{\link[=dt_union_with_value]{dt_union_with_value()}},
+  \code{\link[=dt_find]{dt_find()}},
+  \code{\link[=dt_find_for_value]{dt_find_for_value()}}
+
   \item coordinate transformation:
   \code{\link[=transform_xy]{transform_xy()}},
   \code{\link[=inv_project]{inv_project()}}
