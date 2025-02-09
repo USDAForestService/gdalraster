@@ -63,12 +63,12 @@
 
   \item coordinate transformation:
   \code{\link[=transform_xy]{transform_xy()}},
-  \code{\link[=inv_project]{inv_project()}}
+  \code{\link[=inv_project]{inv_project()}},
+  \code{\link[=transform_bounds]{transform_bounds()}}
 
   \item spatial reference functions:
   \code{\link[=srs_convert]{srs_convert}},
-  \code{\link[=srs_query]{srs_query}},
-  \code{\link[=transform_bounds]{transform_bounds()}}
+  \code{\link[=srs_query]{srs_query}}
 
   \item geometry convenience functions:
   \code{\link[=bbox_from_wkt]{bbox_from_wkt()}},
@@ -80,6 +80,7 @@
   \code{\link[=g_buffer]{g_buffer()}},
   \code{\link[=g_centroid]{g_centroid()}},
   \code{\link[=g_contains]{g_contains()}},
+  \code{\link[=g_coords]{g_coords()}},
   \code{\link[=g_crosses]{g_crosses()}},
   \code{\link[=g_difference]{g_difference()}},
   \code{\link[=g_disjoint]{g_disjoint()}},

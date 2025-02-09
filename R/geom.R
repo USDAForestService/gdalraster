@@ -2011,3 +2011,41 @@ g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE,
     else
         return(g_wk2wk(wkb, as_iso))
 }
+
+#' Extract coordinate values from geometries
+#'
+#' `g_coords()` extracts coordinate values (vertices) from the input geometries
+#' and returns a data frame with coordinates as columns.
+#'
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @return A data frame as returned by `wk::wk_coords()`: columns `feature_id`
+#' (the index of the feature from the input), `part_id` (an arbitrary integer
+#' identifying the point, line, or polygon from whence it came), `ring_id` (an
+#' arbitrary integer identifying individual rings within polygons), and one
+#' column per coordinate (`x`, `y`, and/or `z` and/or `m`).
+#' @examples
+#' dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#' lyr <- new(GDALVector, dsn)
+#' d <- lyr$fetch(10)
+#'
+#' vertices <- g_coords(d$geom)
+#' head(vertices)
+#'
+#' lyr$close()
+#' @export
+g_coords <- function(geom) {
+    geom_in <- NULL
+    if (is.raw(geom)) {
+        geom_in <- wk::wkb(list(geom))
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        geom_in <- wk::wkb(geom)
+    } else if (is.character(geom)) {
+        geom_in <- wk::wkt(geom)
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(wk::wk_coords(geom_in))
+}

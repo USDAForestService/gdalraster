@@ -91,6 +91,7 @@ reference:
   - g_binary_pred
   - g_buffer
   - g_centroid
+  - g_coords
   - g_distance
   - g_envelope
   - g_factory
