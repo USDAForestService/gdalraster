@@ -99,6 +99,29 @@ test_that("transform/inv_project give correct results", {
     expect_equal(as.vector(inv_test[1:10, ]), xy_wgs84, tolerance=0.001)
     expect_true(is.na(inv_test[11, 1]) && is.na(inv_test[11, 2]))
     pts <- pts[-11, ]
+
+    # with xyz/xyzt 3 or 4 column input
+    # lon/lat to UTM zone 11N (EPSG:32611)
+    m_xyz <- matrix(c(-117.5, 32.0, 0.0, -117.5, 32.0, 10.0),
+                    ncol = 3, byrow = TRUE)
+
+    res <- transform_xy(m_xyz, "WGS84", "EPSG:32611")
+    expect_equal(nrow(res), 2)
+    expect_equal(ncol(res), 3)
+    expect_equal(res[2, 1], 452772.1, tolerance = 0.01)
+    expect_equal(res[2, 2], 3540545, tolerance = 0.01)
+    expect_equal(res[2, 3], 10)
+
+    m_xyzt <- matrix(c(-117.5, 32.0, 0.0, 2000, -117.5, 32.0, 10.0, 2000),
+                     ncol = 4, byrow = TRUE)
+
+    res <- transform_xy(m_xyzt, "WGS84", "EPSG:32611")
+    expect_equal(nrow(res), 2)
+    expect_equal(ncol(res), 4)
+    expect_equal(res[2, 1], 452772.1, tolerance = 0.01)
+    expect_equal(res[2, 2], 3540545, tolerance = 0.01)
+    expect_equal(res[2, 3], 10)
+    expect_equal(res[2, 4], 2000)
 })
 
 test_that("transform_bounds gives correct results", {

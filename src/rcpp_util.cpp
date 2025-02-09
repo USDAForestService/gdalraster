@@ -52,10 +52,10 @@ Rcpp::NumericMatrix xy_robject_to_matrix_(const Rcpp::RObject& xy) {
 
         if (!Rf_isMatrix(xy)) {
             Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(xy);
-            if (v.size() != 2)
-                Rcpp::stop("coordinate input as vector must have length 2");
+            if (v.size() < 2 || v.size() > 4)
+                Rcpp::stop("input as vector must have one xy, xyz, or xyzm");
 
-            xy_ret = Rcpp::NumericMatrix(1, 2, v.begin());
+            xy_ret = Rcpp::NumericMatrix(1, v.size(), v.begin());
         }
         else {
             xy_ret = Rcpp::as<Rcpp::NumericMatrix>(xy);
@@ -65,7 +65,7 @@ Rcpp::NumericMatrix xy_robject_to_matrix_(const Rcpp::RObject& xy) {
         xy_ret = df_to_matrix_(xy);
     }
     else {
-        Rcpp::stop("coordinates must be in a two-column data frame or matrix");
+        Rcpp::stop("coordinates must be in a vector, matrix or data frame");
     }
 
     return xy_ret;
