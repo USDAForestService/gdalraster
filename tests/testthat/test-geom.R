@@ -646,6 +646,17 @@ test_that("g_coords returns a data frame of vertices", {
     xy <- g_coords(pts_wkb)
     expect_equal(xy$x, c(0, 3, 0))
     expect_equal(xy$y, c(3, 4, 0))
+    # one WKB raw vector not in a list
+    expect_true(is.raw(pts_wkb[[1]]))
+    xy <- g_coords(pts_wkb[[1]])
+    expect_equal(xy$x, 0)
+    expect_equal(xy$y, 3)
+    # WKT input
+    pts_wkt <- g_wk2wk(pts_wkb)
+    expect_true(is.character(pts_wkt) && length(pts_wkt) == 3)
+    xy <- g_coords(pts_wkt)
+    expect_equal(xy$x, c(0, 3, 0))
+    expect_equal(xy$y, c(3, 4, 0))
 
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
     dsn <- file.path(tempdir(), basename(f))
