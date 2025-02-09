@@ -8,7 +8,7 @@
 #' data types, or find the smallest data type able to support specified
 #' requirements.
 #'
-#' @name dt_conv
+#' @name data_type_helpers
 #'
 #' @details
 #' `dt_size()` returns the data type size in bytes by default, optionally in
@@ -94,42 +94,42 @@ dt_size <- function(dt, as_bytes = TRUE) {
     .Call(`_gdalraster_dt_size`, dt, as_bytes)
 }
 
-#' @rdname dt_conv
+#' @rdname data_type_helpers
 dt_is_complex <- function(dt) {
     .Call(`_gdalraster_dt_is_complex`, dt)
 }
 
-#' @rdname dt_conv
+#' @rdname data_type_helpers
 dt_is_integer <- function(dt) {
     .Call(`_gdalraster_dt_is_integer`, dt)
 }
 
-#' @rdname dt_conv
+#' @rdname data_type_helpers
 dt_is_floating <- function(dt) {
     .Call(`_gdalraster_dt_is_floating`, dt)
 }
 
-#' @rdname dt_conv
+#' @rdname data_type_helpers
 dt_is_signed <- function(dt) {
     .Call(`_gdalraster_dt_is_signed`, dt)
 }
 
-#' @rdname dt_conv
+#' @rdname data_type_helpers
 dt_union <- function(dt, dt_other) {
     .Call(`_gdalraster_dt_union`, dt, dt_other)
 }
 
-#' @rdname dt_conv
+#' @rdname data_type_helpers
 dt_union_with_value <- function(dt, value, is_complex = FALSE) {
     .Call(`_gdalraster_dt_union_with_value`, dt, value, is_complex)
 }
 
-#' @rdname dt_conv
+#' @rdname data_type_helpers
 dt_find <- function(bits, is_signed, is_floating, is_complex = FALSE) {
     .Call(`_gdalraster_dt_find`, bits, is_signed, is_floating, is_complex)
 }
 
-#' @rdname dt_conv
+#' @rdname data_type_helpers
 dt_find_for_value <- function(value, is_complex = FALSE) {
     .Call(`_gdalraster_dt_find_for_value`, value, is_complex)
 }
