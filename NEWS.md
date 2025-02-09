@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9151 (dev)
+# gdalraster 1.12.0.9152 (dev)
+
+* add `g_coords()`: extract coordinate values from geometries (2025-02-09)
 
 * improve and expand bindings to a subset of the GDAL Spatial Reference System API (#584) (2025-02-08)
 
