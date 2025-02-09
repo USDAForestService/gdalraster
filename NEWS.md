@@ -1,4 +1,4 @@
-# gdalraster 1.12.0.9150 (dev)
+# gdalraster 1.12.0.9151 (dev)
 
 * improve and expand bindings to a subset of the GDAL Spatial Reference System API (#584) (2025-02-08)
 
