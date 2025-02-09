@@ -10,7 +10,7 @@
 #include "ogr_spatialref.h"
 
 #include "gdalraster.h"
-#include "wkt_conv.h"
+#include "srs_api.h"
 
 //' get PROJ version
 //' @noRd
