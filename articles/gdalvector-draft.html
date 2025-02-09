@@ -234,8 +234,8 @@ containing OGC Well Known Text (WKT), or a raw vector of bytes
 containing Well Known Binary (WKB). An OGR Spatial Reference, which
 encapsulates the definition of a projection and datum, is represented in
 R as WKT. <strong>gdalraster</strong> has existing functions for working
-with spatial reference systems as WKT (<code><a href="../reference/srs_to_wkt.html">srs_to_wkt()</a></code>,
-<code><a href="../reference/srs_is_projected.html">srs_is_projected()</a></code>, etc.), and a set of geometry
+with spatial reference systems as WKT (<code><a href="../reference/srs_convert.html">srs_to_wkt()</a></code>,
+<code><a href="../reference/srs_query.html">srs_is_projected()</a></code>, etc.), and a set of geometry
 convenience functions also operating on WKT (GEOS via GDAL headers).</p>
 <p>Package <a href="https://github.com/paleolimbot/wk" class="external-link">wk</a> supports
 parsing WKB and WKT representation of geometries to and from R-native
@@ -970,7 +970,7 @@ class definition below):</p>
 <span><span class="co">#&gt;  $ geom        : chr "MULTIPOLYGON (((573530.585472236 9160.22088906913,573266.183153384 9415.42216938034,573137.427110327 9285.44517"| __truncated__</span></span>
 <span></span>
 <span><span class="co"># get the feature bbox in WGS84</span></span>
-<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/g_transform.html">g_transform</a></span><span class="op">(</span><span class="va">feat</span><span class="op">$</span><span class="va">geom</span>, <span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="../reference/epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
+<span><span class="va">bb</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/g_transform.html">g_transform</a></span><span class="op">(</span><span class="va">feat</span><span class="op">$</span><span class="va">geom</span>, <span class="va">lyr_ynp</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="../reference/srs_convert.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="../reference/bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">bb</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] -109.89753   44.32714 -109.83172   44.44030</span></span>

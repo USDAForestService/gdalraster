@@ -88,13 +88,13 @@ character vector containing one or more WKT strings.</p></dd>
 <dt id="arg-srs-from">srs_from<a class="anchor" aria-label="anchor" href="#arg-srs-from"></a></dt>
 <dd><p>Character string specifying the spatial reference system
 for <code>pts</code>. May be in WKT format or any of the formats supported by
-<code><a href="srs_to_wkt.html">srs_to_wkt()</a></code>.</p></dd>
+<code><a href="srs_convert.html">srs_to_wkt()</a></code>.</p></dd>
 
 
 <dt id="arg-srs-to">srs_to<a class="anchor" aria-label="anchor" href="#arg-srs-to"></a></dt>
 <dd><p>Character string specifying the output spatial reference
 system. May be in WKT format or any of the formats supported by
-<code><a href="srs_to_wkt.html">srs_to_wkt()</a></code>.</p></dd>
+<code><a href="srs_convert.html">srs_to_wkt()</a></code>.</p></dd>
 
 
 <dt id="arg-wrap-date-line">wrap_date_line<a class="anchor" aria-label="anchor" href="#arg-wrap-date-line"></a></dt>
@@ -162,7 +162,7 @@ use case, <code>srs_to</code> might be the same as <code>srs_from</code>.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the convenience function bbox_transform() does this:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="bbox_to_wkt.html">bbox_to_wkt</a></span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="fu">bbox</span><span class="op">(</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
-<span class="r-in"><span>  <span class="fu">g_transform</span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="fu">getProjection</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
+<span class="r-in"><span>  <span class="fu">g_transform</span><span class="op">(</span><span class="va">ds</span><span class="op">$</span><span class="fu">getProjection</span><span class="op">(</span><span class="op">)</span>, <span class="fu"><a href="srs_convert.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span> <span class="op">|&gt;</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="bbox_from_wkt.html">bbox_from_wkt</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] -113.28289   46.04764 -113.22629   46.07760</span>
 <span class="r-in"><span></span></span>
@@ -171,7 +171,7 @@ use case, <code>srs_to</code> might be the same as <code>srs_from</code>.</p>
 <span class="r-in"><span><span class="co"># correct geometries that incorrectly go from a longitude on a side of the</span></span></span>
 <span class="r-in"><span><span class="co"># antimeridian to the other side</span></span></span>
 <span class="r-in"><span><span class="va">geom</span> <span class="op">&lt;-</span> <span class="st">"LINESTRING (-179 0,179 0)"</span></span></span>
-<span class="r-in"><span><span class="va">srs</span> <span class="op">&lt;-</span> <span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">srs</span> <span class="op">&lt;-</span> <span class="fu"><a href="srs_convert.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">4326</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="fu">g_transform</span><span class="op">(</span><span class="va">geom</span>, <span class="va">srs</span>, <span class="va">srs</span>, wrap_date_line <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] 01 05 00 00 00 02 00 00 00 01 02 00 00 00 02 00 00 00 00 00 00 00 00 60 66</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [26] c0 00 00 00 00 00 00 00 00 00 00 00 00 00 80 66 c0 00 00 00 00 00 00 00 00</span>

@@ -90,8 +90,8 @@
 <li><p>(internal) try/catch if potentially large allocation of std::vector (2024-08-18)</p></li>
 <li><p>add <code>GDALRaster::getMaskBand()</code>: return the mask filename and band number associated with a given band of the dataset (2024-08-15)</p></li>
 <li><p>add <code>GDALRaster::getMaskFlags()</code>: return the status flags of the mask band associated with a given band of the dataset (2024-08-14)</p></li>
-<li><p>add <code><a href="../reference/srs_get_name.html">srs_get_name()</a></code>: return the spatial reference system name (2024-08-12)</p></li>
-<li><p>add <code><a href="../reference/srs_find_epsg.html">srs_find_epsg()</a></code>: try to identify a matching EPSG code for a given SRS definition (2024-08-11)</p></li>
+<li><p>add <code><a href="../reference/srs_query.html">srs_get_name()</a></code>: return the spatial reference system name (2024-08-12)</p></li>
+<li><p>add <code><a href="../reference/srs_query.html">srs_find_epsg()</a></code>: try to identify a matching EPSG code for a given SRS definition (2024-08-11)</p></li>
 <li><p><code><a href="../reference/translate.html">translate()</a></code>: source raster can be a <code>GDALRaster</code> object (2024-08-11)</p></li>
 <li><p>add <code><a href="../reference/autoCreateWarpedVRT.html">autoCreateWarpedVRT()</a></code>: create a warped virtual dataset representing the input raster warped into the target coordinate system, wrapper of <code>GDALAutoCreateWarpedVRT()</code> (2024-08-10)</p></li>
 <li><p><code>GDALRaster::setDescription()</code>: support <code>band = 0</code> to set the dataset-level description (2024-08-10)</p></li>
@@ -123,7 +123,7 @@
 <ul><li>add <code><a href="../reference/inspectDataset.html">inspectDataset()</a></code>: obtain information about a GDAL raster or vector dataset (<a href="https://github.com/USDAForestService/gdalraster/issues/552" class="external-link">#552</a>)</li>
 <li>add <code><a href="../reference/identifyDriver.html">identifyDriver()</a></code>: identify the driver that can open a given filename, connection string, etc. (<a href="https://github.com/USDAForestService/gdalraster/issues/553" class="external-link">#553</a>)</li>
 <li>
-<code><a href="../reference/transform_xy.html">transform_xy()</a></code> and <code><a href="../reference/inv_project.html">inv_project()</a></code>: accept the SRS arguments in any format supported by <code><a href="../reference/srs_to_wkt.html">srs_to_wkt()</a></code>
+<code><a href="../reference/transform_xy.html">transform_xy()</a></code> and <code><a href="../reference/inv_project.html">inv_project()</a></code>: accept the SRS arguments in any format supported by <code><a href="../reference/srs_convert.html">srs_to_wkt()</a></code>
 </li>
 <li>
 <code><a href="../reference/vsi_read_dir.html">vsi_read_dir()</a></code>: add the <code>recursive</code> argument (<a href="https://github.com/USDAForestService/gdalraster/issues/426" class="external-link">#426</a>); omit “.” and “..” from the output directory listing; add the <code>all_files</code> argument, <code>TRUE</code> to include hidden files; sort the directory listing alphabetically</li>
@@ -352,7 +352,7 @@
 <li>
 <code><a href="../reference/plot_raster.html">plot_raster()</a></code>: accept pixel data in list form (band vectors as list elements), and make use of <code>gis</code> attribute if present (thanks to input from <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a> <a href="https://github.com/USDAForestService/gdalraster/issues/185" class="external-link">#185</a>)</li>
 <li>
-<code><a href="../reference/srs_is_same.html">srs_is_same()</a></code>: add arguments for <code>criterion</code>, <code>ignore_axis_mapping</code> and <code>ignore_coord_epoch</code>
+<code><a href="../reference/srs_query.html">srs_is_same()</a></code>: add arguments for <code>criterion</code>, <code>ignore_axis_mapping</code> and <code>ignore_coord_epoch</code>
 </li>
 </ul></div>
 <div class="section level3">
@@ -569,7 +569,7 @@
 <li><p>fix: check for GEOS availability in bbox geometry functions</p></li>
 <li><p>fix: wrong array dimensions in <code>read()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/5" class="external-link">#5</a>). Starting at v. 1.2.0, <code>read()</code> will return vector instead of matrix which better matches the concept of a native GDAL-like interface (thanks to Michael Sumner).</p></li>
 <li><p>add: <code><a href="../reference/has_geos.html">has_geos()</a></code> exported to R</p></li>
-<li><p>add: <code><a href="../reference/srs_is_same.html">srs_is_same()</a></code> - wrapper for OSRIsSame() in the GDAL Spatial Reference System C API</p></li>
+<li><p>add: <code><a href="../reference/srs_query.html">srs_is_same()</a></code> - wrapper for OSRIsSame() in the GDAL Spatial Reference System C API</p></li>
 <li><p>documentation - minor edits throughout to improve clarity</p></li>
 </ul></div>
     <div class="section level2">

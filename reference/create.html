@@ -142,7 +142,7 @@ output dataset will be returned if <code>return_obj = TRUE</code>.</p>
 <span class="r-in"><span>             return_obj<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># EPSG:26912 - NAD83 / UTM zone 12N</span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">setProjection</span><span class="op">(</span><span class="fu"><a href="epsg_to_wkt.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">setProjection</span><span class="op">(</span><span class="fu"><a href="srs_convert.html">epsg_to_wkt</a></span><span class="op">(</span><span class="fl">26912</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">gt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">323476</span>, <span class="fl">30</span>, <span class="fl">0</span>, <span class="fl">5105082</span>, <span class="fl">0</span>, <span class="op">-</span><span class="fl">30</span><span class="op">)</span></span></span>
