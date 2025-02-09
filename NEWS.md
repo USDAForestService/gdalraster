@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9140 (dev)
+# gdalraster 1.12.0.9150 (dev)
+
+* improve and expand bindings to a subset of the GDAL Spatial Reference System API (#584) (2025-02-08)
 
 * add helper functions for GDAL raster data types (#593) (2025-02-08)
 
