@@ -17,7 +17,7 @@
 //' data types, or find the smallest data type able to support specified
 //' requirements.
 //'
-//' @name dt_conv
+//' @name data_type_helpers
 //'
 //' @details
 //' `dt_size()` returns the data type size in bytes by default, optionally in
@@ -108,35 +108,35 @@ int dt_size(std::string dt, bool as_bytes = true) {
         return GDALGetDataTypeSizeBits(eDT);
 }
 
-//' @rdname dt_conv
+//' @rdname data_type_helpers
 // [[Rcpp::export]]
 bool dt_is_complex(std::string dt) {
     GDALDataType eDT = GDALGetDataTypeByName(dt.c_str());
     return static_cast<bool>(GDALDataTypeIsComplex(eDT));
 }
 
-//' @rdname dt_conv
+//' @rdname data_type_helpers
 // [[Rcpp::export]]
 bool dt_is_integer(std::string dt) {
     GDALDataType eDT = GDALGetDataTypeByName(dt.c_str());
     return static_cast<bool>(GDALDataTypeIsInteger(eDT));
 }
 
-//' @rdname dt_conv
+//' @rdname data_type_helpers
 // [[Rcpp::export]]
 bool dt_is_floating(std::string dt) {
     GDALDataType eDT = GDALGetDataTypeByName(dt.c_str());
     return static_cast<bool>(GDALDataTypeIsFloating(eDT));
 }
 
-//' @rdname dt_conv
+//' @rdname data_type_helpers
 // [[Rcpp::export]]
 bool dt_is_signed(std::string dt) {
     GDALDataType eDT = GDALGetDataTypeByName(dt.c_str());
     return static_cast<bool>(GDALDataTypeIsSigned(eDT));
 }
 
-//' @rdname dt_conv
+//' @rdname data_type_helpers
 // [[Rcpp::export]]
 std::string dt_union(std::string dt, std::string dt_other) {
     GDALDataType eDT1 = GDALGetDataTypeByName(dt.c_str());
@@ -145,7 +145,7 @@ std::string dt_union(std::string dt, std::string dt_other) {
     return GDALGetDataTypeName(eDT_out);
 }
 
-//' @rdname dt_conv
+//' @rdname data_type_helpers
 // [[Rcpp::export]]
 std::string dt_union_with_value(std::string dt, double value,
                                 bool is_complex = false) {
@@ -155,7 +155,7 @@ std::string dt_union_with_value(std::string dt, double value,
     return GDALGetDataTypeName(eDT_out);
 }
 
-//' @rdname dt_conv
+//' @rdname data_type_helpers
 // [[Rcpp::export]]
 std::string dt_find(int bits, bool is_signed, bool is_floating,
                     bool is_complex = false) {
@@ -166,7 +166,7 @@ std::string dt_find(int bits, bool is_signed, bool is_floating,
     return GDALGetDataTypeName(eDT_out);
 }
 
-//' @rdname dt_conv
+//' @rdname data_type_helpers
 // [[Rcpp::export]]
 std::string dt_find_for_value(double value, bool is_complex = false) {
     GDALDataType eDT_out = GDALFindDataTypeForValue(value, is_complex);

@@ -64,7 +64,7 @@ reference:
   - displayRAT
 - subtitle: Raster data types
 - contents:
-  - dt_conv
+  - data_type_helpers
 - subtitle: Geotransform conversion
 - contents:
   - apply_geotransform
@@ -74,11 +74,11 @@ reference:
 - contents:
   - inv_project
   - transform_xy
+  - transform_bounds
 - subtitle: Spatial reference systems
 - contents:
   - srs_convert
   - srs_query
-  - transform_bounds
 - subtitle: Geometry
 - contents:
   - bbox_from_wkt
