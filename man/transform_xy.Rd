@@ -7,8 +7,10 @@
 transform_xy(pts, srs_from, srs_to)
 }
 \arguments{
-\item{pts}{A two-column data frame or numeric matrix containing geospatial
-x, y coordinates (or vector of x, y for one point).}
+\item{pts}{A data frame or numeric matrix containing geospatial point
+coordinates. The number of columns must be either two (x, y), three
+(x, y, z) or four (x, y, z, t).
+May be also be given as a vector for one point (xy, xyz, or xyzt).}
 
 \item{srs_from}{Character string specifying the spatial reference system
 for \code{pts}. May be in WKT format or any of the formats supported by
@@ -23,16 +25,24 @@ Numeric matrix of geospatial (x, y) coordinates in the projection
 specified by \code{srs_to}.
 }
 \description{
-\code{transform_xy()} transforms geospatial x/y coordinates to a new projection.
+\code{transform_xy()} transforms geospatial x, y coordinates to a new
+projection. The input points may optionally have z vertices (x, y, z) or
+time values (x, y, z, t).
+Wrapper for \code{OGRCoordinateTransformation::Transform()} in the GDAL Spatial
+Reference SYstem C++ API.
+}
+\note{
+\code{transform_xy()} uses traditional GIS order for the input and output xy
+(i.e., longitude/latitude ordered for geographic coordinates).
 }
 \examples{
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 pts <- read.csv(pt_file)
 print(pts)
-## id, x, y in NAD83 / UTM zone 12N
-## transform to NAD83 / CONUS Albers
+# id, x, y in NAD83 / UTM zone 12N
+# transform to NAD83 / CONUS Albers
 transform_xy(pts = pts[, -1], srs_from = "EPSG:26912", srs_to = "EPSG:5070")
 }
 \seealso{
-\code{\link[=epsg_to_wkt]{epsg_to_wkt()}}, \code{\link[=srs_to_wkt]{srs_to_wkt()}}, \code{\link[=inv_project]{inv_project()}}
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}, \code{\link[=inv_project]{inv_project()}}
 }

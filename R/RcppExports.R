@@ -2906,7 +2906,7 @@ srs_get_axis_mapping_strategy <- function(srs) {
 #' [transform_xy()]
 #' @examples
 #' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
-#' ## id, x, y in NAD83 / UTM zone 12N
+#' # id, x, y in NAD83 / UTM zone 12N
 #' pts <- read.csv(pt_file)
 #' print(pts)
 #' inv_project(pts[,-1], "EPSG:26912")
@@ -2916,10 +2916,16 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 
 #' Transform geospatial x/y coordinates
 #'
-#' `transform_xy()` transforms geospatial x/y coordinates to a new projection.
+#' `transform_xy()` transforms geospatial x, y coordinates to a new
+#' projection. The input points may optionally have z vertices (x, y, z) or
+#' time values (x, y, z, t).
+#' Wrapper for `OGRCoordinateTransformation::Transform()` in the GDAL Spatial
+#' Reference SYstem C++ API.
 #'
-#' @param pts A two-column data frame or numeric matrix containing geospatial
-#' x, y coordinates (or vector of x, y for one point).
+#' @param pts A data frame or numeric matrix containing geospatial point
+#' coordinates. The number of columns must be either two (x, y), three
+#' (x, y, z) or four (x, y, z, t).
+#' May be also be given as a vector for one point (xy, xyz, or xyzt).
 #' @param srs_from Character string specifying the spatial reference system
 #' for `pts`. May be in WKT format or any of the formats supported by
 #' [srs_to_wkt()].
@@ -2929,14 +2935,18 @@ inv_project <- function(pts, srs, well_known_gcs = "") {
 #' @returns Numeric matrix of geospatial (x, y) coordinates in the projection
 #' specified by `srs_to`.
 #'
+#' @note
+#' `transform_xy()` uses traditional GIS order for the input and output xy
+#' (i.e., longitude/latitude ordered for geographic coordinates).
+#'
 #' @seealso
-#' [epsg_to_wkt()], [srs_to_wkt()], [inv_project()]
+#' [srs_to_wkt()], [inv_project()]
 #' @examples
 #' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 #' pts <- read.csv(pt_file)
 #' print(pts)
-#' ## id, x, y in NAD83 / UTM zone 12N
-#' ## transform to NAD83 / CONUS Albers
+#' # id, x, y in NAD83 / UTM zone 12N
+#' # transform to NAD83 / CONUS Albers
 #' transform_xy(pts = pts[, -1], srs_from = "EPSG:26912", srs_to = "EPSG:5070")
 transform_xy <- function(pts, srs_from, srs_to) {
     .Call(`_gdalraster_transform_xy`, pts, srs_from, srs_to)

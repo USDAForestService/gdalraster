@@ -49,7 +49,7 @@ names above.
 }
 \examples{
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
-## id, x, y in NAD83 / UTM zone 12N
+# id, x, y in NAD83 / UTM zone 12N
 pts <- read.csv(pt_file)
 print(pts)
 inv_project(pts[,-1], "EPSG:26912")
