@@ -1,6 +1,6 @@
-# gdalraster 1.12.0.9153 (dev)
+# gdalraster 1.12.0.9154 (dev)
 
-* `transform_xy()`: support input points with z vertices (three column xyz) or time values (four column xyzt) (2025-02-09)
+* `transform_xy()` / `inv_project()`: support input points with z vertices (three column xyz) or time values (four column xyzt); optionally accept input of point geometries as character vector of WKT strings, WKB raw vector, or list of raw vectors (2025-02-09)
 
 * add `g_coords()`: extract coordinate values from geometries (2025-02-09)
 
