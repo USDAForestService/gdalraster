@@ -52,7 +52,7 @@ Reference SYstem C++ API."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Transform geospatial x/y coordinates</h1>
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/R/RcppExports.R" class="external-link"><code>R/RcppExports.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/R/transform.R" class="external-link"><code>R/transform.R</code></a></small>
       <div class="d-none name"><code>transform_xy.Rd</code></div>
     </div>
 
@@ -75,9 +75,10 @@ Reference SYstem C++ API.</p>
 
 <dl><dt id="arg-pts">pts<a class="anchor" aria-label="anchor" href="#arg-pts"></a></dt>
 <dd><p>A data frame or numeric matrix containing geospatial point
-coordinates. The number of columns must be either two (x, y), three
-(x, y, z) or four (x, y, z, t).
-May be also be given as a vector for one point (xy, xyz, or xyzt).</p></dd>
+coordinates, or point geometries as a list of WKB raw vectors or character
+vector of WKT strings. If data frame or matrix, the number of columns must
+be either two (x, y), three (x, y, z) or four (x, y, z, t).
+May be also be given as a numeric vector for one point (xy, xyz, or xyzt).</p></dd>
 
 
 <dt id="arg-srs-from">srs_from<a class="anchor" aria-label="anchor" href="#arg-srs-from"></a></dt>
@@ -95,7 +96,7 @@ system. May be in WKT format or any of the formats supported by
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Numeric matrix of geospatial (x, y) coordinates in the projection
-specified by <code>srs_to</code>.</p>
+specified by <code>srs_to</code> (potentially also with z, or z and t columns).</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
