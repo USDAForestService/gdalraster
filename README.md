@@ -149,8 +149,8 @@ PROJ and all other dependent libraries that are needed to compile
 **gdalraster**. Note that CRAN releases periodic revisions to RTools
 that often include updates to the libraries as new versions become
 available.
-[Release 6335](https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html)
-of RTools 4.4 contains GDAL 3.9.3, GEOS 3.12.2 and PROJ 9.4.1.
+[Release 6414](https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html)
+of RTools 4.4 contains GDAL 3.10.1, GEOS 3.13.0 and PROJ 9.5.1.
 
 With RTools installed:
 
