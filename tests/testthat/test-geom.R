@@ -47,7 +47,10 @@ test_that("geom functions work on wkb/wkt geometries", {
 
     line_xy <- matrix(c(324171, 327711.7, 5103034.3, 5104475.9),
                       nrow=2, ncol=2)
-    expect_error(g_create("POINT", line_xy))
+    # expect_error(g_create("POINT", line_xy))
+    # now returns multiple POINT geoms:
+    expect_equal(length(g_create("POINT", line_xy)), 2)
+    expect_equal(g_create("POINT", line_xy) |> g_name(), c("POINT", "POINT"))
     line <- g_create("LINESTRING", line_xy, as_wkb = FALSE)
 
     # set up vector of WKT, WKB raw vector, and list of WKB raw vectors

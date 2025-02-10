@@ -307,8 +307,11 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #'
 #' `g_create()` creates a geometry object from the given point(s) and returns
 #' a raw vector of WKB (the default) or a character string of WKT. Currently,
-#' supports simple 2D geometry types Point, MultiPoint, LineString, and
-#' Polygon.
+#' supports Point, MultiPoint, LineString, and Polygon. If multiple input
+#' points are given for creating Point type, then multiple geometries will be
+#' returned as a list of WKB raw vectors, or character vector of WKT strings
+#' (if `as_wkb = FALSE`). Otherwise, a single geometry is created from the
+#' input points.
 #'
 #' `g_add_geom()` adds a geometry to a geometry container, e.g.,
 #' POLYGON to POLYGON (to add an interior ring), POINT to MULTIPOINT,
@@ -331,7 +334,8 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' @param container Either a raw vector of WKB or a character string of WKT.
 #' @return
 #' A geometry as WKB raw vector by default, or a WKT string if
-#' `as_wkb = FALSE`.
+#' `as_wkb = FALSE`. In the case of multiple input points for creating Point
+#' geometry type, a list of WKB raw vectors or character vector of WKT strings.
 #'
 #' @note
 #' A POLYGON can be created for a single ring which will be the
@@ -358,14 +362,15 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' y <- c(1, 9)
 #' z <- c(0, 10)
 #' pts <- cbind(x, y, z)
-#' mult_pt1 <- g_create("MULTIPOINT", pts)
-#' g_wk2wk(mult_pt1)
+#' mp <- g_create("MULTIPOINT", pts)
+#' g_wk2wk(mp)
+#' g_wk2wk(mp, as_iso = TRUE)
 #'
 #' # create an empty container and add subgeometries
-#' mult_pt2 <- g_create("MULTIPOINT")
-#' mult_pt2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mult_pt2)
-#' mult_pt2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mult_pt2)
-#' g_wk2wk(mult_pt2)
+#' mp2 <- g_create("MULTIPOINT")
+#' mp2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mp2)
+#' mp2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mp2)
+#' g_wk2wk(mp2)
 #'
 #' # plot WKT strings or a list of WKB raw vectors with wk::wk_plot()
 #' pts <- c(0, 0, 3, 0, 3, 4, 0, 0)
@@ -380,18 +385,18 @@ g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
     if (!(is.character(geom_type) && length(geom_type) == 1))
         stop("'geom_type' must be a character string", call. = FALSE)
     # pts
-    if (!(is.numeric(pts) || is.null(pts)))
-        stop("'pts' must be given in a numeric matrix of x, y", call. = FALSE)
+    if (!(is.numeric(pts) || is.data.frame(pts) || is.null(pts)))
+        stop("'pts' must be a numeric matrix of xy[zm]", call. = FALSE)
     # as_wkb
     if (is.null(as_wkb))
-        as_wkb <- TRUE
+        as_wkb <- TRU
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+        stop("'as_wkb' must be a logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -401,7 +406,17 @@ g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
     if (byte_order != "LSB" && byte_order != "MSB")
         stop("invalid 'byte_order'", call. = FALSE)
 
-    wkb <- .g_create(geom_type, pts, as_iso, byte_order)
+    wkb <- NULL
+    if (toupper(geom_type) == "POINT" && (is.matrix(pts) ||
+        is.data.frame(pts))) {
+
+        wkb <- lapply(seq_len(nrow(pts)),
+                      function(i) {
+                          .g_create("POINT", pts[i, ], as_iso, byte_order)
+                      })
+    } else {
+        wkb <- .g_create(geom_type, pts, as_iso, byte_order)
+    }
 
     if (as_wkb)
         return(wkb)

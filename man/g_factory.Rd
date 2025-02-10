@@ -47,7 +47,8 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 }
 \value{
 A geometry as WKB raw vector by default, or a WKT string if
-\code{as_wkb = FALSE}.
+\code{as_wkb = FALSE}. In the case of multiple input points for creating Point
+geometry type, a list of WKB raw vectors or character vector of WKT strings.
 }
 \description{
 These functions create WKB/WKT geometries from input vertices, and build
@@ -58,8 +59,11 @@ These functions use the GEOS library via GDAL headers.
 
 \code{g_create()} creates a geometry object from the given point(s) and returns
 a raw vector of WKB (the default) or a character string of WKT. Currently,
-supports simple 2D geometry types Point, MultiPoint, LineString, and
-Polygon.
+supports Point, MultiPoint, LineString, and Polygon. If multiple input
+points are given for creating Point type, then multiple geometries will be
+returned as a list of WKB raw vectors, or character vector of WKT strings
+(if \code{as_wkb = FALSE}). Otherwise, a single geometry is created from the
+input points.
 
 \code{g_add_geom()} adds a geometry to a geometry container, e.g.,
 POLYGON to POLYGON (to add an interior ring), POINT to MULTIPOINT,
@@ -90,14 +94,15 @@ x <- c(9, 1)
 y <- c(1, 9)
 z <- c(0, 10)
 pts <- cbind(x, y, z)
-mult_pt1 <- g_create("MULTIPOINT", pts)
-g_wk2wk(mult_pt1)
+mp <- g_create("MULTIPOINT", pts)
+g_wk2wk(mp)
+g_wk2wk(mp, as_iso = TRUE)
 
 # create an empty container and add subgeometries
-mult_pt2 <- g_create("MULTIPOINT")
-mult_pt2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mult_pt2)
-mult_pt2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mult_pt2)
-g_wk2wk(mult_pt2)
+mp2 <- g_create("MULTIPOINT")
+mp2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mp2)
+mp2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mp2)
+g_wk2wk(mp2)
 
 # plot WKT strings or a list of WKB raw vectors with wk::wk_plot()
 pts <- c(0, 0, 3, 0, 3, 4, 0, 0)
