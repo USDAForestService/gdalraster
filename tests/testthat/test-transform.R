@@ -35,6 +35,19 @@ test_that("transform/inv_project give correct results", {
     expect_equal(as.vector(xy_test), c(xy_alb83[1], xy_alb83[11]),
                  tolerance=0.1)
 
+    # as WKB/WKT geometries
+    m <- as.matrix(pts[, -1])
+    pts_wkb <- lapply(seq_len(nrow(m)), function(i) g_create("POINT", m[i, ]))
+    pts_wkt <- g_wk2wk(pts_wkb)
+    xy_test <- transform_xy(pts = pts_wkb,
+                            srs_from = epsg_to_wkt(26912),
+                            srs_to = epsg_to_wkt(5070))
+    expect_equal(as.vector(xy_test), xy_alb83, tolerance=0.1)
+    xy_test <- transform_xy(pts = pts_wkt,
+                            srs_from = epsg_to_wkt(26912),
+                            srs_to = epsg_to_wkt(5070))
+    expect_equal(as.vector(xy_test), xy_alb83, tolerance=0.1)
+
     # errors
     expect_error(transform_xy(pts = pts[,-1],
                               srs_from = "invalid",
@@ -51,6 +64,13 @@ test_that("transform/inv_project give correct results", {
     expect_true(is.na(xy_test[11, 1]) && is.na(xy_test[11, 2]))
     pts <- pts[-11, ]
 
+    # invalid geometry type
+    g <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
+    expect_error(transform_xy(pts = g,
+                              srs_from = epsg_to_wkt(26912),
+                              srs_to = epsg_to_wkt(5070)))
+
+    # inv_project
     xy_wgs84 <- c(-113.26707, -113.27315, -113.28150, -113.25978, -113.25312,
                   -113.24600, -113.25613, -113.24613, -113.22794, -113.27334,
                   46.06118, 46.05827, 46.06076, 46.06280, 46.05276, 46.06682,
@@ -73,6 +93,16 @@ test_that("transform/inv_project give correct results", {
                             well_known_gcs = "WGS84")
     expect_equal(as.vector(inv_test), c(xy_wgs84[1], xy_wgs84[11]),
                  tolerance=0.001)
+
+    # as WKB/WKT geometries
+    inv_test <- inv_project(pts = pts_wkb,
+                            srs = epsg_to_wkt(26912),
+                            well_known_gcs = "WGS84")
+    expect_equal(as.vector(inv_test), xy_wgs84, tolerance = 0.001)
+    inv_test <- inv_project(pts = pts_wkt,
+                            srs = epsg_to_wkt(26912),
+                            well_known_gcs = "WGS84")
+    expect_equal(as.vector(inv_test), xy_wgs84, tolerance = 0.001)
 
     # return NA for NA input:
     # https://github.com/USDAForestService/gdalraster/issues/587
@@ -100,6 +130,12 @@ test_that("transform/inv_project give correct results", {
     expect_true(is.na(inv_test[11, 1]) && is.na(inv_test[11, 2]))
     pts <- pts[-11, ]
 
+    # invalid geom type
+    g <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
+    expect_error(inv_project(pts = g,
+                             srs = epsg_to_wkt(26912),
+                             well_known_gcs = "WGS84"))
+
     # with xyz/xyzt 3 or 4 column input
     # lon/lat to UTM zone 11N (EPSG:32611)
     m_xyz <- matrix(c(-117.5, 32.0, 0.0, -117.5, 32.0, 10.0),
@@ -112,6 +148,17 @@ test_that("transform/inv_project give correct results", {
     expect_equal(res[2, 2], 3540545, tolerance = 0.01)
     expect_equal(res[2, 3], 10)
 
+    # inverse
+    m_xyz <- matrix(c(452772.1, 3540545, 0.0, 452772.1, 3540545, 10.0),
+                    ncol = 3, byrow = TRUE)
+    res <- inv_project(m_xyz, "EPSG:32611", "WGS84")
+    expect_equal(nrow(res), 2)
+    expect_equal(ncol(res), 3)
+    expect_equal(res[2, 1], -117.5, tolerance = 0.1)
+    expect_equal(res[2, 2], 32.0, tolerance = 0.1)
+    expect_equal(res[2, 3], 10)
+
+    # with time values
     m_xyzt <- matrix(c(-117.5, 32.0, 0.0, 2000, -117.5, 32.0, 10.0, 2000),
                      ncol = 4, byrow = TRUE)
 
@@ -120,6 +167,17 @@ test_that("transform/inv_project give correct results", {
     expect_equal(ncol(res), 4)
     expect_equal(res[2, 1], 452772.1, tolerance = 0.01)
     expect_equal(res[2, 2], 3540545, tolerance = 0.01)
+    expect_equal(res[2, 3], 10)
+    expect_equal(res[2, 4], 2000)
+
+    # inverse
+    m_xyzt <- matrix(c(452772.1, 3540545, 0.0, 2000, 452772.1, 3540545, 10.0, 2000),
+                     ncol = 4, byrow = TRUE)
+    res <- inv_project(m_xyzt, "EPSG:32611", "WGS84")
+    expect_equal(nrow(res), 2)
+    expect_equal(ncol(res), 4)
+    expect_equal(res[2, 1], -117.5, tolerance = 0.1)
+    expect_equal(res[2, 2], 32.0, tolerance = 0.1)
     expect_equal(res[2, 3], 10)
     expect_equal(res[2, 4], 2000)
 })

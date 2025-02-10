@@ -44,6 +44,9 @@ Rcpp::IntegerMatrix df_to_int_matrix_(const Rcpp::DataFrame& df) {
 //' convert allowed xy inputs to numeric matrix
 //' @noRd
 Rcpp::NumericMatrix xy_robject_to_matrix_(const Rcpp::RObject& xy) {
+    if (xy.isNULL())
+        Rcpp::stop("NULL was given for the input coordinates");
+
     Rcpp::NumericMatrix xy_ret;
 
     if (Rcpp::is<Rcpp::NumericVector>(xy) ||
