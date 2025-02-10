@@ -273,19 +273,69 @@ test_that("g_factory functions work", {
     pts <-matrix(pts, ncol = 2, byrow = TRUE)
     line1 <- g_create("LINESTRING", pts)
     expect_true(g_intersects(line1, poly1))
+    # xyz
+    pts <- c(9, 1, 0, 12, 4, 10)
+    pts <-matrix(pts, ncol = 3, byrow = TRUE)
+    line2 <- g_create("LINESTRING", pts)
+    coords <- g_coords(line2)
+    expect_equal(coords$x, pts[, 1])
+    expect_equal(coords$y, pts[, 2])
+    expect_equal(coords$z, pts[, 3])
+    # xyzm
+    pts <- c(9, 1, 0, 2000, 12, 4, 10, 2000)
+    pts <-matrix(pts, ncol = 4, byrow = TRUE)
+    line3 <- g_create("LINESTRING", pts)
+    coords <- g_coords(line3)
+    expect_equal(coords$x, pts[, 1])
+    expect_equal(coords$y, pts[, 2])
+    expect_equal(coords$z, pts[, 3])
+    expect_equal(coords$m, pts[, 4])
 
     # point
     pt1 <- g_create("POINT", c(9, 1))
     expect_true(g_within(pt1, poly1))
     pt2 <- g_create("POINT", c(1, 9))
     expect_false(g_within(pt2, poly1))
+    # xyz
+    pt3 <- g_create("POINT", c(1, 9, 0))
+    coords <- g_coords(pt3)
+    expect_equal(coords$x, 1)
+    expect_equal(coords$y, 9)
+    expect_equal(coords$z, 0)
+    # xyzm
+    pt4 <- g_create("POINT", c(1, 9, 0, 2000))
+    coords <- g_coords(pt4)
+    expect_equal(coords$x, 1)
+    expect_equal(coords$y, 9)
+    expect_equal(coords$z, 0)
+    expect_equal(coords$m, 2000)
 
     # multipoint
     pts <- c(9, 1, 1, 9)
     pts <-matrix(pts, ncol = 2, byrow = TRUE)
     mult_pt1 <- g_create("MULTIPOINT", pts)
     expect_false(g_within(mult_pt1, poly1))
-
+    # multipoint xyz
+    x <- c(9, 1)
+    y <- c(1, 9)
+    z <- c(0, 10)
+    pts <- cbind(x, y, z)
+    mult_pt_xyz <- g_create("MULTIPOINT", pts)
+    expect_equal(g_name(mult_pt_xyz), "MULTIPOINT")
+    coords <- g_coords(mult_pt_xyz)
+    expect_equal(coords$x, x)
+    expect_equal(coords$y, y)
+    expect_equal(coords$z, z)
+    # multipoint xyzm
+    m <- c(2000, 2000)
+    pts <- cbind(x, y, z, m)
+    mult_pt_xyzm <- g_create("MULTIPOINT", pts)
+    expect_equal(g_name(mult_pt_xyzm), "MULTIPOINT")
+    coords <- g_coords(mult_pt_xyzm)
+    expect_equal(coords$x, x)
+    expect_equal(coords$y, y)
+    expect_equal(coords$z, z)
+    expect_equal(coords$m, m)
 
     ## add subgeometry to container
     # create empty multipoint and add geoms

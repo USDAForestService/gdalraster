@@ -269,41 +269,32 @@ Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom,
 Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
                          bool as_iso = false,
                          const std::string &byte_order = "LSB") {
-// Create a geometry from a list of points (vertices).
+// Create a geometry from a list of points (vertices as xy, xyz or xyzm).
 // Currently for POINT, MULTIPOINT, LINESTRING, LINEARRING, POLYGON
 // Only simple polygons composed of one ring are supported
 // See also g_add_geom(), e.g., add LINEARRING (interior ring) to POLYGON.
 
-    OGRGeometryH hGeom = nullptr;
-    OGRGeometryH hGeom_out = nullptr;
+    Rcpp::NumericMatrix pts_in(0, 2);
+    if (!pts.isNULL())
+        pts_in = xy_robject_to_matrix_(pts);
 
-    Rcpp::NumericMatrix pts_in(0, 2);  // only xy for now
-    if (Rcpp::is<Rcpp::NumericVector>(pts) ||
-        Rcpp::is<Rcpp::IntegerVector>(pts)) {
+    if (pts_in.ncol() < 2 || pts_in.ncol() > 4)
+        Rcpp::stop("input matrix must have 2, 3 or 4 columns");
 
-        if (!Rf_isMatrix(pts)) {
-            Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(pts);
-            if (v.size() != 2)
-                Rcpp::stop("'pts' must be a two-column data frame or matrix");
-
-            pts_in = Rcpp::NumericMatrix(1, 2, v.begin());
-        }
-        else {
-            pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
-        }
+    bool has_z = false;
+    bool has_m = false;
+    if (pts_in.ncol() == 3) {
+        has_z = true;
     }
-    else if (Rcpp::is<Rcpp::DataFrame>(pts)) {
-        pts_in = df_to_matrix_(pts);
+    else if (pts_in.ncol() == 4) {
+        has_z = true;
+        has_m = true;
     }
-    else if (!pts.isNULL()) {
-        Rcpp::stop("'pts' must be a two-column data frame or matrix");
-    }
-
-    // only xy for now
-    if (pts_in.ncol() != 2)
-        Rcpp::stop("input matrix must have 2 columns");
 
     R_xlen_t nPts = pts_in.nrow();
+
+    OGRGeometryH hGeom = nullptr;
+    OGRGeometryH hGeom_out = nullptr;
 
     if (EQUAL(geom_type.c_str(), "POINT")) {
         geom_type = "POINT";
@@ -337,8 +328,17 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
             OGR_G_DestroyGeometry(hGeom);
             Rcpp::stop("invalid number of points for geometry type");
         }
-
-        OGR_G_SetPoint_2D(hGeom, 0, pts_in(0, 0), pts_in(0, 1));
+        if (has_m) {
+            OGR_G_SetPointZM(hGeom, 0, pts_in(0, 0), pts_in(0, 1),
+                             pts_in(0, 2), pts_in(0, 3));
+        }
+        else if (has_z) {
+            OGR_G_SetPoint(hGeom, 0, pts_in(0, 0), pts_in(0, 1),
+                           pts_in(0, 2));
+        }
+        else {
+            OGR_G_SetPoint_2D(hGeom, 0, pts_in(0, 0), pts_in(0, 1));
+        }
     }
     else if (nPts > 0) {
         if (geom_type == "POINT") {
@@ -351,9 +351,19 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
         }
 
         if (geom_type == "MULTIPOINT") {
-            for (R_xlen_t i=0; i < nPts; ++i) {
+            for (R_xlen_t i = 0; i < nPts; ++i) {
                 OGRGeometryH hPt = OGR_G_CreateGeometry(wkbPoint);
-                OGR_G_SetPoint_2D(hPt, 0, pts_in(i, 0), pts_in(i, 1));
+                if (has_m) {
+                    OGR_G_SetPointZM(hPt, 0, pts_in(i, 0), pts_in(i, 1),
+                                     pts_in(i, 2), pts_in(i, 3));
+                }
+                else if (has_z) {
+                    OGR_G_SetPoint(hPt, 0, pts_in(i, 0), pts_in(i, 1),
+                                   pts_in(i, 2));
+                }
+                else {
+                    OGR_G_SetPoint_2D(hPt, 0, pts_in(i, 0), pts_in(i, 1));
+                }
                 OGRErr err = OGR_G_AddGeometryDirectly(hGeom, hPt);
                 if (err != OGRERR_NONE) {
                     if (hGeom != nullptr)
@@ -364,8 +374,18 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
         }
         else {
             OGR_G_SetPointCount(hGeom, static_cast<int>(nPts));
-            for (R_xlen_t i=0; i < nPts; ++i) {
-                OGR_G_SetPoint_2D(hGeom, i, pts_in(i, 0), pts_in(i, 1));
+            for (R_xlen_t i = 0; i < nPts; ++i) {
+                if (has_m) {
+                    OGR_G_SetPointZM(hGeom, i, pts_in(i, 0), pts_in(i, 1),
+                                     pts_in(i, 2), pts_in(i, 3));
+                }
+                else if (has_z) {
+                    OGR_G_SetPoint(hGeom, i, pts_in(i, 0), pts_in(i, 1),
+                                   pts_in(i, 2));
+                }
+                else {
+                    OGR_G_SetPoint_2D(hGeom, i, pts_in(i, 0), pts_in(i, 1));
+                }
             }
         }
     }

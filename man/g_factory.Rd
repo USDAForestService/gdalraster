@@ -26,8 +26,11 @@ g_add_geom(
 \item{geom_type}{Character string. One of \code{"POINT"}, \code{"MULTIPOINT"},
 \code{"LINESTRING"}, \code{"POLYGON"} (see Note).}
 
-\item{pts}{Numeric matrix of points (x, y), or \code{NULL} to create an empty
-geometry. Rings for polygon geometries should be closed.}
+\item{pts}{Numeric matrix of points (x, y, z, m), or \code{NULL} to create an
+empty geometry. The points can be given as (x, y), (x, y, z) or
+(x, y, z, m), so the input must have two, three or four columns.
+Data frame input will be coerced to numeric matrix. Rings for polygon
+geometries should be closed.}
 
 \item{as_wkb}{Logical, \code{TRUE} to return the output geometry in WKB
 format (the default), or \code{FALSE} to return a WKT string.}
@@ -75,26 +78,30 @@ ring. The next ones will be the interior rings.
 # raw vector of WKB by default
 g_create("POINT", c(1, 2))
 
-# as_wkb = FALSE
+# as WKT
 g_create("POINT", c(1, 2), as_wkb = FALSE)
 
-# or convert
+# or convert in either direction
 g_create("POINT", c(1, 2)) |> g_wk2wk()
-
 g_create("POINT", c(1, 2), as_wkb = FALSE) |> g_wk2wk()
 
-# create multipoint from a matrix of points
+# create multipoint from a matrix of xyz points
 x <- c(9, 1)
 y <- c(1, 9)
-pts <- cbind(x, y)
+z <- c(0, 10)
+pts <- cbind(x, y, z)
 mult_pt1 <- g_create("MULTIPOINT", pts)
-is.raw(mult_pt1)
 g_wk2wk(mult_pt1)
 
 # create an empty container and add subgeometries
 mult_pt2 <- g_create("MULTIPOINT")
 mult_pt2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mult_pt2)
 mult_pt2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mult_pt2)
-is.raw(mult_pt2)
 g_wk2wk(mult_pt2)
+
+# plot WKT strings or a list of WKB raw vectors with wk::wk_plot()
+pts <- c(0, 0, 3, 0, 3, 4, 0, 0)
+m <- matrix(pts, ncol = 2, byrow = TRUE)
+g <- g_create("POLYGON", m, as_wkb = FALSE)
+wk::wkt(g) |> wk::wk_plot()
 }
