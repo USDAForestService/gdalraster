@@ -104,7 +104,8 @@
 #' lyr$getFeature(fid)
 #' lyr$resetReading()
 #' lyr$fetch(n)
-#' lyr$getArrowStream(stream_xptr)
+#'
+#' lyr$getArrowStream()
 #'
 #' lyr$setFeature(feature)
 #' lyr$createFeature(feature)
@@ -489,13 +490,12 @@
 #' Note that `$getFeatureCount()` is called internally when fetching the full
 #' feature set or all remaining features (but not for a page of features).
 #'
-#' \code{$getArrowStream(stream_xptr)}\cr
-#' Get an Arrow C stream (GDAL >= 3.6). `stream_xptr` must be a
-#' nanoarrow_array_stream external pointer as returned by
-#' `nanoarrow::nanoarrow_allocate_array_stream()`.
+#' \code{$getArrowStream()}\cr
+#' Returns a nanoarrow_array_stream object exposing an Arrow C stream on the
+#' layer (requires GDAL >= 3.6).
 #' The writable field `$arrowStreamOptions` can be used to set options before
-#' calling this method (see above).
-#' Returns logical `TRUE` upon success or `FALSE` on failure.
+#' calling this method (see above). An error is raised if an array stream
+#' on the layer cannot be obtained.
 #' Generally, only one ArrowArrayStream can be active at a time on a given
 #' layer (that is the last active one must be explicitly released before a next
 #' one is asked). Changing attribute or spatial filters, ignored columns,
@@ -860,12 +860,13 @@
 #'
 #' lyr$close()
 #'
-#' # Arrow array stream to be consumed by {nanoarrow}
+#' # Arrow array stream exposed as a nanoarrow_array_stream object
 #' # requires GDAL >= 3.6
-#' if (as.integer(gdal_version()[2]) >= 3060000) {
+#' if (as.integer(gdal_version()[2]) >= 3060000 &&
+#'     requireNamespace("nanoarrow")) {
+#'
 #'   lyr <- new(GDALVector, dsn)
-#'   stream = nanoarrow::nanoarrow_allocate_array_stream()
-#'   lyr$getArrowStream(stream)
+#'   stream <- lyr$getArrowStream()
 #'
 #'   stream$get_schema() |> print()
 #'

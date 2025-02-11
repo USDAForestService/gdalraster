@@ -22,6 +22,8 @@
 #include "gdalvector.h"
 #include "ogr_util.h"
 
+#include "nanoarrow/r.h"
+
 
 GDALVector::GDALVector() {}
 
@@ -1591,7 +1593,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 }
 
-bool GDALVector::getArrowStream(Rcpp::RObject stream_xptr) {
+SEXP GDALVector::getArrowStream() {
     /*
     Exposes an Arrow C stream to be consumed by {nanoarrow}
     Implementation adapted from GDALStreamWrapper by Dewey Dunnington in:
@@ -1604,42 +1606,24 @@ bool GDALVector::getArrowStream(Rcpp::RObject stream_xptr) {
 #else
     checkAccess_(GA_ReadOnly);
 
-    if (stream_xptr.isNULL()) {
-        if (!quiet) {
-            Rcpp::Rcerr << "'stream_xptr' is NULL" << std::endl;
-        }
-        return false;
-    }
-
-    if (!stream_xptr.inherits("nanoarrow_array_stream")) {
-        if (!quiet) {
-            Rcpp::Rcerr <<
-                "'stream_xptr' must be a nanoarrow_array_stream object" <<
-                std::endl;
-        }
-        return false;
-    }
-
-    // member variable arrowStreamOptions (Rcpp exposed field)
     std::vector<char *> opt{};
-    if (arrowStreamOptions.size() > 0) {
-        for (R_xlen_t i = 0; i < arrowStreamOptions.size(); ++i) {
-            if (!EQUAL(arrowStreamOptions[i], ""))
-                opt.push_back((char *) (arrowStreamOptions[i]));
+    if (this->arrowStreamOptions.size() > 0) {
+        for (R_xlen_t i = 0; i < this->arrowStreamOptions.size(); ++i) {
+            if (!EQUAL(this->arrowStreamOptions[i], ""))
+                opt.push_back((char *) (this->arrowStreamOptions[i]));
         }
     }
     opt.push_back(nullptr);
 
     if (!OGR_L_GetArrowStream(m_hLayer, &m_stream, opt.data())) {
-        if (!quiet) {
-            Rcpp::Rcerr << "OGR_L_GetArrowStream() failed: " <<
-                CPLGetLastErrorMsg() << std::endl;
-        }
-        return false;
+        Rcpp::stop("OGR_L_GetArrowStream() failed: " +
+            std::string(CPLGetLastErrorMsg()));
     }
 
+    SEXP stream_out_xptr = nanoarrow_array_stream_owning_xptr();
+
     auto stream_out = reinterpret_cast<struct ArrowArrayStream*>(
-            R_ExternalPtrAddr(stream_xptr));
+            R_ExternalPtrAddr(stream_out_xptr));
 
     stream_out->get_schema = &arrow_get_schema_wrap;
     stream_out->get_next = &arrow_get_next_wrap;
@@ -1647,7 +1631,7 @@ bool GDALVector::getArrowStream(Rcpp::RObject stream_xptr) {
     stream_out->release = &arrow_release_wrap;
     stream_out->private_data = this;
 
-    return true;
+    return stream_out_xptr;
 #endif
 }
 

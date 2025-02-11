@@ -1093,6 +1093,7 @@ test_that("info() prints output to the console", {
 
 test_that("ArrowArrayStream is readable", {
     skip_if(.gdal_version_num() < 3060000)
+    skip_if_not_installed("nanoarrow")
 
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
     dsn <- file.path(tempdir(), basename(f))
@@ -1100,35 +1101,27 @@ test_that("ArrowArrayStream is readable", {
 
     lyr <- new(GDALVector, dsn, "mtbs_perims")
 
-    stream <- nanoarrow::nanoarrow_allocate_array_stream()
-    expect_true(lyr$getArrowStream(stream))
+    expect_no_error(stream <- lyr$getArrowStream())
+    expect_s3_class(stream, "nanoarrow_array_stream")
 
     schema <- stream$get_schema()
-    expect_equal(class(schema), "nanoarrow_schema")
+    expect_s3_class(schema, "nanoarrow_schema")
     expect_equal(length(schema$children), 11)
 
     batch <- stream$get_next()
-    expect_equal(class(batch), "nanoarrow_array")
+    expect_s3_class(batch, "nanoarrow_array")
     expect_equal(batch$children$fid$length, 61)
 
     expect_no_error(stream$release())
 
     # with options
     lyr$arrowStreamOptions <- "INCLUDE_FID=NO"
-    stream <- nanoarrow::nanoarrow_allocate_array_stream()
-    expect_true(lyr$getArrowStream(stream))
+    expect_no_error(stream2 <- lyr$getArrowStream())
 
-    schema <- stream$get_schema()
-    expect_equal(length(schema$children), 10)
-    expect_true(is.null(schema$children$fid))
-    expect_no_error(stream$release())
-
-    # null
-    expect_false(lyr$getArrowStream(NULL))
-
-    # wrong object type:
-    arrobj <-nanoarrow::nanoarrow_allocate_array()
-    expect_false(lyr$getArrowStream(arrobj))
+    schema2 <- stream2$get_schema()
+    expect_equal(length(schema2$children), 10)
+    expect_true(is.null(schema2$children$fid))
+    expect_no_error(stream2$release())
 
     lyr$close()
     deleteDataset(dsn)

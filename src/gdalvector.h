@@ -93,7 +93,7 @@ class GDALVector {
 
     Rcpp::DataFrame fetch(double n);
 
-    bool getArrowStream(Rcpp::RObject stream_xptr);
+    SEXP getArrowStream();
 
     bool setFeature(const Rcpp::RObject &feature);
     bool createFeature(const Rcpp::RObject &feature);
