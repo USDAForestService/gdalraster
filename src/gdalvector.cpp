@@ -150,6 +150,7 @@ void GDALVector::open(bool read_only) {
     }
 
 #if __has_include("ogr_recordbatch.h")
+    // initialize the release callback since it will be checked at closing
     m_stream.release = nullptr;
 #endif
 
@@ -2213,6 +2214,8 @@ void GDALVector::checkAccess_(GDALAccess access_needed) const {
 }
 
 void GDALVector::setDsn_(std::string dsn) {
+    // consider not raising any errors here since this is for internal use and
+    // these conditions should not apply
     if (m_hDataset != nullptr) {
         std::string desc(GDALGetDescription(m_hDataset));
         if (m_dsn == "" && desc == "") {
@@ -2229,6 +2232,10 @@ void GDALVector::setDsn_(std::string dsn) {
         else
             Rcpp::stop("the DSN cannot be set on this object");
     }
+#if __has_include("ogr_recordbatch.h")
+    // initialize the release callback since it will be checked at closing
+    m_stream.release = nullptr;
+#endif
 }
 
 GDALDatasetH GDALVector::getGDALDatasetH_() const {
@@ -2256,6 +2263,7 @@ void GDALVector::setOGRLayerH_(const OGRLayerH hLyr,
     m_hLayer = hLyr;
     m_layer_name = lyr_name;
 #if __has_include("ogr_recordbatch.h")
+    // initialize the release callback since it will be checked at closing
     m_stream.release = nullptr;
 #endif
 }
