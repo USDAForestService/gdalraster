@@ -94,6 +94,7 @@ class GDALVector {
     Rcpp::DataFrame fetch(double n);
 
     SEXP getArrowStream();
+    void releaseArrowStream();
 
     bool setFeature(const Rcpp::RObject &feature);
     bool createFeature(const Rcpp::RObject &feature);
@@ -199,6 +200,7 @@ class GDALVector {
     int64_t m_last_write_fid {NA_INTEGER64};
 #if __has_include("ogr_recordbatch.h")
     struct ArrowArrayStream m_stream;
+    SEXP m_stream_xptr = nullptr;
 #endif
 };
 

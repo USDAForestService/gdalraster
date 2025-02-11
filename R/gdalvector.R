@@ -106,6 +106,7 @@
 #' lyr$fetch(n)
 #'
 #' lyr$getArrowStream()
+#' lyr$releaseArrowStream()
 #'
 #' lyr$setFeature(feature)
 #' lyr$createFeature(feature)
@@ -511,6 +512,10 @@
 #' method as soon as you can after consuming a stream is recommended in the
 #' nanoarrow documentation.
 #'
+#' \code{$releaseArrowStream()}\cr
+#' Releases the Arrow C stream returned by `$getArrowStream()` and clears the
+#' nanoarrow_array_stream object. No return value.
+#'
 #' \code{$setFeature(feature)}\cr
 #' Rewrites/replaces an existing feature. This method writes a feature based on
 #' the feature id within the input feature. The `feature` argument is a named
@@ -869,6 +874,7 @@
 #'
 #'   lyr <- new(GDALVector, dsn)
 #'   stream <- lyr$getArrowStream()
+#'   print(stream)
 #'
 #'   stream$get_schema() |> print()
 #'
@@ -878,7 +884,7 @@
 #'   d <- as.data.frame(batch)
 #'   head(d) |> print()
 #'
-#'   # the geometry column is a list column of WKB raw vectors
+#'   # the geometry column is a list column of WKB raw vectors, e.g.,
 #'   g_area(d$geom) |> print()
 #'
 #'   # the last batch is NULL

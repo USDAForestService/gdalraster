@@ -145,6 +145,10 @@ void GDALVector::open(bool read_only) {
         m_layer_name = OGR_L_GetName(m_hLayer);
     }
 
+#if __has_include("ogr_recordbatch.h")
+    m_stream.release = nullptr;
+#endif
+
     if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 8, 0)) {
         // override the default to ensure CRS from GDAL is propagated to Arrow
         this->arrowStreamOptions = {"GEOMETRY_METADATA_ENCODING=GEOARROW"};
@@ -1625,18 +1629,32 @@ SEXP GDALVector::getArrowStream() {
             std::string(CPLGetLastErrorMsg()));
     }
 
-    SEXP stream_out_xptr = nanoarrow_array_stream_owning_xptr();
+    m_stream_xptr = nanoarrow_array_stream_owning_xptr();
 
-    auto stream_out = reinterpret_cast<struct ArrowArrayStream*>(
-            R_ExternalPtrAddr(stream_out_xptr));
+    auto stream_tmp = reinterpret_cast<struct ArrowArrayStream*>(
+            R_ExternalPtrAddr(m_stream_xptr));
 
-    stream_out->get_schema = &arrow_get_schema_wrap;
-    stream_out->get_next = &arrow_get_next_wrap;
-    stream_out->get_last_error = &arrow_get_last_error_wrap;
-    stream_out->release = &arrow_release_wrap;
-    stream_out->private_data = this;
+    stream_tmp->get_schema = &arrow_get_schema_wrap;
+    stream_tmp->get_next = &arrow_get_next_wrap;
+    stream_tmp->get_last_error = &arrow_get_last_error_wrap;
+    stream_tmp->release = &arrow_release_wrap;
+    stream_tmp->private_data = this;
 
-    return stream_out_xptr;
+    return m_stream_xptr;
+#endif
+}
+
+void GDALVector::releaseArrowStream() {
+    checkAccess_(GA_ReadOnly);
+
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
+    if (m_stream.release != nullptr) {
+        m_stream.release(&m_stream);
+        m_stream.release = nullptr;
+    }
+    if (m_stream_xptr != nullptr) {
+        R_ClearExternalPtr(m_stream_xptr);
+    }
 #endif
 }
 
@@ -3222,10 +3240,6 @@ const char* GDALVector::arrow_get_last_error() {
     return m_stream.get_last_error(&m_stream);
 }
 
-void GDALVector::arrow_release() {
-    m_stream.release(&m_stream);
-}
-
 int GDALVector::arrow_get_schema_wrap(struct ArrowArrayStream* stream,
                                       struct ArrowSchema* out) {
 
@@ -3248,9 +3262,7 @@ const char* GDALVector::arrow_get_last_error_wrap(
 }
 
 void GDALVector::arrow_release_wrap(struct ArrowArrayStream* stream) {
-
-    reinterpret_cast<GDALVector*>(stream->private_data)->arrow_release();
-    stream->release = nullptr;
+    reinterpret_cast<GDALVector*>(stream->private_data)->releaseArrowStream();
 }
 #endif
 
@@ -3352,6 +3364,10 @@ RCPP_MODULE(mod_GDALVector) {
         "Reset feature reading to start on the first feature")
     .method("fetch", &GDALVector::fetch,
         "Fetch a set features as a data frame")
+    .method("getArrowStream", &GDALVector::getArrowStream,
+        "Expose an Arrow C stream on the layer")
+    .method("releaseArrowStream", &GDALVector::releaseArrowStream,
+        "Release the Arrow C stream on the layer")
     .method("setFeature", &GDALVector::setFeature,
         "Rewrite/replace an existing feature within the layer")
     .method("createFeature", &GDALVector::createFeature,
@@ -3376,8 +3392,6 @@ RCPP_MODULE(mod_GDALVector) {
         "Set metadata from a list of name=value")
     .const_method("getMetadataItem", &GDALVector::getMetadataItem,
         "Return the value of a metadata item")
-    .method("getArrowStream", &GDALVector::getArrowStream,
-        "Expose an Arrow C stream on the layer")
     .method("layerIntersection", &GDALVector::layerIntersection,
         "Intersection of this layer with a method layer")
     .method("layerUnion", &GDALVector::layerUnion,
