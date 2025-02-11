@@ -67,6 +67,10 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
     setFieldNames_();
 }
 
+GDALVector::~GDALVector() {
+    releaseArrowStream();
+}
+
 void GDALVector::open(bool read_only) {
     if (m_dsn == "")
         Rcpp::stop("DSN is not set");
@@ -1645,17 +1649,15 @@ SEXP GDALVector::getArrowStream() {
 }
 
 void GDALVector::releaseArrowStream() {
-    checkAccess_(GA_ReadOnly);
-
-#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
-    if (m_stream.release != nullptr) {
-        m_stream.release(&m_stream);
-        m_stream.release = nullptr;
+    if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)) {
+        if (m_stream.release != nullptr) {
+            m_stream.release(&m_stream);
+            m_stream.release = nullptr;
+        }
+        if (m_stream_xptr != nullptr) {
+            R_ClearExternalPtr(m_stream_xptr);
+        }
     }
-    if (m_stream_xptr != nullptr) {
-        R_ClearExternalPtr(m_stream_xptr);
-    }
-#endif
 }
 
 bool GDALVector::setFeature(const Rcpp::RObject &feature) {
@@ -2164,6 +2166,7 @@ bool GDALVector::layerErase(
 }
 
 void GDALVector::close() {
+    releaseArrowStream();
     if (m_hDataset != nullptr) {
         if (m_is_sql)
             GDALDatasetReleaseResultSet(m_hDataset, m_hLayer);
@@ -2252,6 +2255,9 @@ void GDALVector::setOGRLayerH_(const OGRLayerH hLyr,
                                const std::string &lyr_name) {
     m_hLayer = hLyr;
     m_layer_name = lyr_name;
+#if __has_include("ogr_recordbatch.h")
+    m_stream.release = nullptr;
+#endif
 }
 
 void GDALVector::setFieldNames_() {

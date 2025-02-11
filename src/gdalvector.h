@@ -39,6 +39,7 @@ class GDALVector {
     GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
                Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                std::string spatial_filter, std::string dialect);
+    ~GDALVector();
 
     // undocumented, exposed read-only fields for internal use
     std::string m_layer_name {""};  // layer name or sql statement
@@ -174,7 +175,6 @@ class GDALVector {
     int arrow_get_schema(struct ArrowSchema* out);
     int arrow_get_next(struct ArrowArray* out);
     const char* arrow_get_last_error();
-    void arrow_release();
     static int arrow_get_schema_wrap(struct ArrowArrayStream* stream,
                                      struct ArrowSchema* out);
 
@@ -182,7 +182,7 @@ class GDALVector {
                                    struct ArrowArray* out);
 
     static const char* arrow_get_last_error_wrap(
-                            struct ArrowArrayStream* stream);
+                                   struct ArrowArrayStream* stream);
 
     static void arrow_release_wrap(struct ArrowArrayStream* stream);
 #endif
