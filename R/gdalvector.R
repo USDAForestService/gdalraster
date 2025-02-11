@@ -164,7 +164,9 @@
 #' * INCLUDE_FID=YES/NO. Defaults to YES.
 #' * TIMEZONE=unknown/UTC/(+|:)HH:MM or any other value supported by
 #' Arrow (GDAL >= 3.8).
-#' * GEOMETRY_METADATA_ENCODING=OGC/GEOARROW (GDAL >= 3.8). The default is OGC.
+#' * GEOMETRY_METADATA_ENCODING=OGC/GEOARROW (GDAL >= 3.8). This will be set
+#' to GEOARROW by default on newly instantiated `GDALVector` objects (if not
+#' specified, the GDAL default is OGC).
 #' * GEOMETRY_ENCODING=WKB (Arrow/Parquet drivers). To force a fallback to the
 #' generic implementation when the native geometry encoding is not WKB.
 #' Otherwise the geometry will be returned with its native Arrow encoding
@@ -886,6 +888,13 @@
 #'   stream$release()
 #'
 #'   lyr$close()
+#'
+#'   # alternatively,
+#'   # library(geoarrow)
+#'   #
+#'   # lyr <- new(GDALVector, dsn)
+#'   # lyr$getArrowStream() |> sf::st_as_sf()
+#'   # ...
 #' }
 #' \dontshow{unlink(dsn)}
 #' \dontshow{unlink(dsn2)}

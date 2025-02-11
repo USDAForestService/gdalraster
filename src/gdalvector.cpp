@@ -145,6 +145,11 @@ void GDALVector::open(bool read_only) {
         m_layer_name = OGR_L_GetName(m_hLayer);
     }
 
+    if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 8, 0)) {
+        // override the default to ensure CRS from GDAL is propagated to Arrow
+        this->arrowStreamOptions = {"GEOMETRY_METADATA_ENCODING=GEOARROW"};
+    }
+
     if (hGeom_filter != nullptr)
         OGR_G_DestroyGeometry(hGeom_filter);
 }
