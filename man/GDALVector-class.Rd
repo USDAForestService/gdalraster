@@ -533,7 +533,9 @@ nanoarrow documentation.
 
 \code{$releaseArrowStream()}\cr
 Releases the Arrow C stream returned by \verb{$getArrowStream()} and clears the
-nanoarrow_array_stream object. No return value.
+nanoarrow_array_stream object (if GDAL >= 3.6, otherwise does nothing).
+This is equivalent to calling the \verb{$release()} method on the
+nanoarrow_array_stream object. No return value, called for side effects.
 
 \code{$setFeature(feature)}\cr
 Rewrites/replaces an existing feature. This method writes a feature based on
@@ -908,13 +910,6 @@ if (as.integer(gdal_version()[2]) >= 3060000 &&
   stream$release()
 
   lyr$close()
-
-  # alternatively,
-  # library(geoarrow)
-  #
-  # lyr <- new(GDALVector, dsn)
-  # lyr$getArrowStream() |> sf::st_as_sf()
-  # ...
 }
 \dontshow{unlink(dsn)}
 \dontshow{unlink(dsn2)}
