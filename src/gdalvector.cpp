@@ -1650,15 +1650,16 @@ SEXP GDALVector::getArrowStream() {
 }
 
 void GDALVector::releaseArrowStream() {
-    if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)) {
-        if (m_stream.release != nullptr) {
-            m_stream.release(&m_stream);
-            m_stream.release = nullptr;
-        }
-        if (m_stream_xptr != nullptr) {
-            R_ClearExternalPtr(m_stream_xptr);
-        }
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
+    if (m_stream.release) {
+        m_stream.release(&m_stream);
+        m_stream.release = nullptr;
     }
+    if (m_stream_xptr) {
+        R_ClearExternalPtr(m_stream_xptr);
+    }
+#endif
+    return;
 }
 
 bool GDALVector::setFeature(const Rcpp::RObject &feature) {
