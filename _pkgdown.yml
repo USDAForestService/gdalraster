@@ -70,6 +70,7 @@ reference:
   - apply_geotransform
   - get_pixel_line
   - inv_geotransform
+  - pixel_extract
 - subtitle: Coordinate transformation
 - contents:
   - inv_project

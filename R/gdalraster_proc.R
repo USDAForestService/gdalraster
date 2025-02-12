@@ -1421,6 +1421,283 @@ dem_proc <- function(mode,
 }
 
 
+#' Extract pixel values at geospatial point locations
+#'
+#' @description
+#' `pixel_extract()` returns raster pixel values for a set of geospatial
+#' point locations. The coordinates are given as a two-column matrix of (x, y)
+#' values in the same spatial reference system as the input raster.
+#' Values are extracted from all bands of the raster by default, or specific
+#' band numbers may be given. An optional interpolation method may be specified
+#' for bilinear (2 x 2 kernel), cubic convolution (4 x 4 kernel, GDAL >= 3.10),
+#' or cubic spline (4 x 4 kernel, GDAL >= 3.10). Alternatively, an optional
+#' kernel dimension may be given to extract values of the individual pixels
+#' within an N x N kernel centered on the pixel containing the point location.
+#' If `xy_srs` is given, the function will atempt to transform the input points
+#' to the projection of the raster with a call to `transform_xy()`.
+#'
+#' @param raster Either a character string giving the filename of a raster, or
+#' an object of class `GDALRaster` for the source dataset.
+#' @param xy A two-column numeric matrix or two-column data frame of geospatial
+#' (x, y) coordinates, or vector (x, y) for a single point, in the same spatial
+#' reference system as `raster`.
+#' @param bands Optional numeric vector of band numbers. All bands in `raster`
+#' will be processed by default if not specified.
+#' @param interp Optional character string specifying an interpolation method.
+#' Must be one of `"bilinear"`, `"cubic"`, `"cubicspline"`, or `"nearest"` (the
+#' default if not specified, i.e., no interpolation).
+#' GDAL >= 3.10 is required for `"cubic"` and `"cubicspline"`.
+#' @param krnl_dim Optional integer value specifying the dimension of an N x N
+#' kernel for which all individual pixel values will be returned. Only
+#' supported when extracting from a single raster band. Ignored if `interp` is
+#' specified as other than `"nearest"` (i.e., will always use the kernel implied
+#' by the interpolation method).
+#' @param xy_srs Optional character string specifying the spatial reference
+#' system for `xy`. May be in WKT format or any of the formats supported by
+#' [srs_to_wkt()].
+#' @param max_ram Numeric value giving the maximum amount of RAM (in MB) to
+#' use for potentially copying a remote raster into memory for processing
+#' (see Note). Defaults to 300 MB. Set to zero to disable potential copy of
+#' remote files into memory.
+#' @returns A numeric matrix of pixel values with number of rows equal to the
+#' number of rows in `xy`, and number of columns equal to the number of
+#' `bands`, or if `krnl_dim = N` is used, number of columns equal to `N * N`.
+#' Named columns indicate the band number, e.g., `"b1"`. If `krnl_dim` is used,
+#' named columns indicate band number and pixel, e.g., `"b1_p1"`, `"b1_p2"`,
+#' ..., `"b1_p9"` if `krnl_dim = 3`. Pixels are in left-to-right, top-to-bottom
+#' order in the kernel.
+#'
+#' @note
+#' Depending on the number of input points, extracting from a raster on a
+#' remote filesystem may require a large number of HTTP range requests which
+#' may be slow (i.e., URLs/remote VSI filesystems). In that case, it may be
+#' faster to copy the raster into memory first (either as MEM format or to a
+#' /vsimem filesystem).
+#' `pixel_extract()` will attempt to automate that process if the total size
+#' of file(s) that would be copied does not exceed the threshold given by
+#' `max_ram`, and `length(xy) > 1`.
+#'
+#' For alternative workflows that involve copying to local storage, the data
+#' management functions (e.g., [copyDatasetFiles()]) and the VSI filesystem
+#' functions (e.g., [vsi_is_local()], [vsi_stat()], [vsi_copy_file()]) may be
+#' of interest.
+#'
+#' @examples
+#' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
+#' # id, x, y in NAD83 / UTM zone 12N, same as the raster
+#' pts <- read.csv(pt_file)
+#' print(pts)
+#'
+#' raster_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#'
+#' pixel_extract(raster_file, pts[-1])
+#'
+#' # or as GDALRaster object
+#' ds <- new(GDALRaster, raster_file)
+#' pixel_extract(ds, pts[-1])
+#'
+#' # interpolated values
+#' pixel_extract(raster_file, pts[-1], interp = "bilinear")
+#'
+#' # individual pixel values within a kernel
+#' pixel_extract(raster_file, pts[-1], krnl_dim = 3)
+#'
+#' # lont/lat xy
+#' pts_wgs84 <- transform_xy(pts[-1], srs_from = ds$getProjection(),
+#'                           srs_to = "WGS84")
+#'
+#' # transform the input xy
+#' pixel_extract(ds, xy = pts_wgs84, xy_srs = "WGS84")
+#'
+#' ds$close()
+pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
+                          krnl_dim = NULL, xy_srs = NULL, max_ram = 300) {
+
+    ds <- NULL
+    close_ds <- FALSE
+    if (is(raster, "Rcpp_GDALRaster")) {
+        ds <- raster
+        if (!ds$isOpen()) {
+            stop("raster dataset is not open", call. = FALSE)
+        }
+    } else if (is.character(raster) && length(raster) == 1) {
+        ds <- new(GDALRaster, raster)
+        close_ds <- TRUE
+    } else {
+        stop("'raster' must be a character string or GDALRaster object",
+             call. = FALSE)
+    }
+
+    if (missing(xy) || is.null(xy))
+        stop("'xy' is required", call. = FALSE)
+
+    if (is.data.frame(xy)) {
+        if (ncol(xy) !=2 || !is.numeric(xy[, 1]) || !is.numeric(xy[, 2])) {
+            stop("'xy' must be a two-column data frame or matrix",
+                 call. = FALSE)
+        }
+    } else if (!is.numeric(xy)) {
+        stop("'xy' must be a numeric", call. = FALSE)
+    }
+
+    if (is.null(bands))
+        bands <- 0
+    else if (!is.numeric(bands))
+        stop("'bands' must be a numeric vector", call. = FALSE)
+
+    if (is.null(interp))
+        interp <- "nearest"
+    else if (!is.character(interp) || length(interp) > 1)
+        stop("'interp' must be a character string", call. = FALSE)
+
+    if (is.null(krnl_dim))
+        krnl_dim <- 1L
+    else if (!is.numeric(krnl_dim) || length(krnl_dim) > 1)
+        stop("'krnl_dim' must be a numeric scalar", call. = FALSE)
+
+    if (is.null(xy_srs))
+        xy_srs <- ""
+    else if (!is.character(interp) || length(interp) > 1)
+        stop("'xy_srs' must be a character string", call. = FALSE)
+
+    if (is.null(max_ram))
+        max_ram <- 0
+    else if (!is.numeric(max_ram) || length(max_ram) > 1)
+        stop("'max_ram' must be a numeric scalar", call. = FALSE)
+
+    # potentially copy to memory
+    use_mem <- FALSE
+    ds_mem <- NULL
+    mem_dir <- ""
+    f_mem <- ""
+    f_in <- ds$getDescription(band = 0)
+    if (max_ram > 0 && length(xy) > 1 && !vsi_is_local(f_in)) {
+
+        # use MEM dataset if possible
+        dm <- ds$dim()
+        num_pixels <- dm[1] * dm[2] * dm[3]
+        bytes_per_pixel <- 1
+        for (b in seq_len(ds$getRasterCount())) {
+            if (dt_size(ds$getDataTypeName(b)) > bytes_per_pixel) {
+                bytes_per_pixel <- dt_size(ds$getDataTypeName(b))
+            }
+        }
+        raw_size <- num_pixels * bytes_per_pixel
+        if ((raw_size / 1000 / 1000) < max_ram) {
+            if (!ds$quiet) {
+                message("copying to MEM dataset...")
+            }
+            ds_mem <- try(createCopy("MEM", "", f_in, return_obj = TRUE),
+                          silent = ds$quiet)
+            if (!is(ds_mem, "Rcpp_GDALRaster")) {
+                if (!ds$quiet) {
+                    message("copy to MEM failed")
+                }
+            } else {
+                use_mem <- TRUE
+            }
+        } else {
+
+            # try copying to /vsimem instead
+            f_size <- 0
+            for (f in ds$getFileList()) {
+                this_f_size <- vsi_stat(f, "size")
+                if (this_f_size == -1) {
+                    f_size <- -1
+                    if (!ds$quiet) {
+                        message("failed to get file size")
+                    }
+                    break
+                }
+                f_size <- f_size + this_f_size
+            }
+            if (f_size > 0 && (f_size / 1000 / 1000) < max_ram) {
+                f_nopath <- .cpl_get_filename(f_in)
+                mem_dir <- file.path("/vsimem", tempdir() |> .cpl_get_basename())
+                f_mem <- file.path(mem_dir, f_nopath)
+                if (!ds$quiet) {
+                    message("copying remote file(s) to /vsimem for processing...")
+                }
+
+                res <- copyDatasetFiles(new_filename = f_mem, old_filename = f_in)
+
+                if (!res) {
+                    if (!ds$quiet) {
+                        message("copy to /vsimem failed")
+                    }
+                    vsi_rmdir(mem_dir, recursive = TRUE)
+                } else {
+                    ds_mem <- try(new(GDALRaster, f_mem), silent = TRUE)
+                    if (!is(ds_mem, "Rcpp_GDALRaster")) {
+                        if (!ds$quiet) {
+                            message("open /vsimem failed")
+                        }
+                        vsi_rmdir(mem_dir, recursive = TRUE)
+                    } else {
+                        message("copy completed")
+                        use_mem <- TRUE
+                    }
+                }
+            }
+        }
+
+        if (!ds$quiet && !use_mem) {
+            message("not using in-memory raster, processing remote file...")
+        }
+    }
+
+    if (krnl_dim > 1 && (tolower(interp) == "nearest" ||
+                         tolower(interp) == "near")) {
+
+        # extend with VRT to handle krnl_dim > 1 along raster edges
+        bb <- ds$bbox()
+        res <- ds$res()
+        xmin <- bb[1] - krnl_dim * res[1]
+        ymin <- bb[2] - krnl_dim * res[2]
+        xmax <- bb[3] + krnl_dim * res[1]
+        ymax <- bb[4] + krnl_dim * res[2]
+
+        args <- c("-of", "VRT", "-ot", "Float64", "-dstnodata", "NaN")
+        args <- c(args, "-te", xmin, ymin, xmax, ymax)
+        args <- c(args, "-tr", res[1], res[2])
+        args <- c(args, "-ovr", "NONE")
+
+        vrt_file <- tempfile(fileext = ".vrt")
+
+        if (use_mem)
+            warp(ds_mem, vrt_file, t_srs = "", cl_arg = args, quiet = TRUE)
+        else
+            warp(ds, vrt_file, t_srs = "", cl_arg = args, quiet = TRUE)
+
+        ds_vrt <- new(GDALRaster, vrt_file)
+        ret <- ds_vrt$pixel_extract(xy, bands, interp, krnl_dim, xy_srs)
+
+        ds_vrt$close()
+        vsi_unlink(vrt_file)
+
+    } else {
+        if (use_mem)
+            ret <- ds_mem$pixel_extract(xy, bands, interp, krnl_dim, xy_srs)
+        else
+            ret <- ds$pixel_extract(xy, bands, interp, krnl_dim, xy_srs)
+    }
+
+    if (use_mem) {
+        if (is(ds_mem, "Rcpp_GDALRaster"))
+            ds_mem$close()
+        if (f_mem != "")
+            res <- deleteDataset(f_mem)
+        if (mem_dir != "")
+            vsi_rmdir(mem_dir, recursive = TRUE)
+    }
+
+    if (close_ds)
+        ds$close()
+
+    return(ret)
+}
+
+
 #' Create a polygon feature layer from raster data
 #'
 #' @description

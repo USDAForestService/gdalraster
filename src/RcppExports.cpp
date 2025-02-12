@@ -262,6 +262,39 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// cpl_get_filename
+std::string cpl_get_filename(Rcpp::CharacterVector full_filename);
+RcppExport SEXP _gdalraster_cpl_get_filename(SEXP full_filenameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type full_filename(full_filenameSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpl_get_filename(full_filename));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpl_get_basename
+std::string cpl_get_basename(Rcpp::CharacterVector full_filename);
+RcppExport SEXP _gdalraster_cpl_get_basename(SEXP full_filenameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type full_filename(full_filenameSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpl_get_basename(full_filename));
+    return rcpp_result_gen;
+END_RCPP
+}
+// cpl_get_extension
+std::string cpl_get_extension(Rcpp::CharacterVector full_filename);
+RcppExport SEXP _gdalraster_cpl_get_extension(SEXP full_filenameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type full_filename(full_filenameSEXP);
+    rcpp_result_gen = Rcpp::wrap(cpl_get_extension(full_filename));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cpl_http_cleanup
 void cpl_http_cleanup();
 RcppExport SEXP _gdalraster_cpl_http_cleanup() {
@@ -1992,6 +2025,9 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_get_usable_physical_ram", (DL_FUNC) &_gdalraster_get_usable_physical_ram, 0},
     {"_gdalraster_has_spatialite", (DL_FUNC) &_gdalraster_has_spatialite, 0},
     {"_gdalraster_http_enabled", (DL_FUNC) &_gdalraster_http_enabled, 0},
+    {"_gdalraster_cpl_get_filename", (DL_FUNC) &_gdalraster_cpl_get_filename, 1},
+    {"_gdalraster_cpl_get_basename", (DL_FUNC) &_gdalraster_cpl_get_basename, 1},
+    {"_gdalraster_cpl_get_extension", (DL_FUNC) &_gdalraster_cpl_get_extension, 1},
     {"_gdalraster_cpl_http_cleanup", (DL_FUNC) &_gdalraster_cpl_http_cleanup, 0},
     {"_gdalraster_create", (DL_FUNC) &_gdalraster_create, 7},
     {"_gdalraster_createCopy", (DL_FUNC) &_gdalraster_createCopy, 6},

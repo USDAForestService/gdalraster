@@ -446,6 +446,36 @@ bool http_enabled() {
 
 
 //' @noRd
+// [[Rcpp::export(name = ".cpl_get_filename")]]
+std::string cpl_get_filename(Rcpp::CharacterVector full_filename) {
+    std::string filename_in = Rcpp::as<std::string>(
+            check_gdal_filename(full_filename));
+
+    return std::string(CPLGetFilename(filename_in.c_str()));
+}
+
+
+//' @noRd
+// [[Rcpp::export(name = ".cpl_get_basename")]]
+std::string cpl_get_basename(Rcpp::CharacterVector full_filename) {
+    std::string filename_in = Rcpp::as<std::string>(
+            check_gdal_filename(full_filename));
+
+    return std::string(CPLGetBasename(filename_in.c_str()));
+}
+
+
+//' @noRd
+// [[Rcpp::export(name = ".cpl_get_extension")]]
+std::string cpl_get_extension(Rcpp::CharacterVector full_filename) {
+    std::string filename_in = Rcpp::as<std::string>(
+            check_gdal_filename(full_filename));
+
+    return std::string(CPLGetExtension(filename_in.c_str()));
+}
+
+
+//' @noRd
 // [[Rcpp::export(name = ".cpl_http_cleanup")]]
 void cpl_http_cleanup() {
     CPLHTTPCleanup();
