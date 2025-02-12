@@ -307,8 +307,11 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #'
 #' `g_create()` creates a geometry object from the given point(s) and returns
 #' a raw vector of WKB (the default) or a character string of WKT. Currently,
-#' supports simple 2D geometry types Point, MultiPoint, LineString, and
-#' Polygon.
+#' supports Point, MultiPoint, LineString, and Polygon. If multiple input
+#' points are given for creating Point type, then multiple geometries will be
+#' returned as a list of WKB raw vectors, or character vector of WKT strings
+#' (if `as_wkb = FALSE`). Otherwise, a single geometry is created from the
+#' input points.
 #'
 #' `g_add_geom()` adds a geometry to a geometry container, e.g.,
 #' POLYGON to POLYGON (to add an interior ring), POINT to MULTIPOINT,
@@ -316,8 +319,11 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #'
 #' @param geom_type Character string. One of `"POINT"`, `"MULTIPOINT"`,
 #' `"LINESTRING"`, `"POLYGON"` (see Note).
-#' @param pts Numeric matrix of points (x, y), or `NULL` to create an empty
-#' geometry. Rings for polygon geometries should be closed.
+#' @param pts Numeric matrix of points (x, y, z, m), or `NULL` to create an
+#' empty geometry. The points can be given as (x, y), (x, y, z) or
+#' (x, y, z, m), so the input must have two, three or four columns.
+#' Data frame input will be coerced to numeric matrix. Rings for polygon
+#' geometries should be closed.
 #' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
 #' format (the default), or `FALSE` to return a WKT string.
 #' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
@@ -328,7 +334,8 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' @param container Either a raw vector of WKB or a character string of WKT.
 #' @return
 #' A geometry as WKB raw vector by default, or a WKT string if
-#' `as_wkb = FALSE`.
+#' `as_wkb = FALSE`. In the case of multiple input points for creating Point
+#' geometry type, a list of WKB raw vectors or character vector of WKT strings.
 #'
 #' @note
 #' A POLYGON can be created for a single ring which will be the
@@ -343,28 +350,33 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' # raw vector of WKB by default
 #' g_create("POINT", c(1, 2))
 #'
-#' # as_wkb = FALSE
+#' # as WKT
 #' g_create("POINT", c(1, 2), as_wkb = FALSE)
 #'
-#' # or convert
+#' # or convert in either direction
 #' g_create("POINT", c(1, 2)) |> g_wk2wk()
-#'
 #' g_create("POINT", c(1, 2), as_wkb = FALSE) |> g_wk2wk()
 #'
-#' # create multipoint from a matrix of points
+#' # create multipoint from a matrix of xyz points
 #' x <- c(9, 1)
 #' y <- c(1, 9)
-#' pts <- cbind(x, y)
-#' mult_pt1 <- g_create("MULTIPOINT", pts)
-#' is.raw(mult_pt1)
-#' g_wk2wk(mult_pt1)
+#' z <- c(0, 10)
+#' pts <- cbind(x, y, z)
+#' mp <- g_create("MULTIPOINT", pts)
+#' g_wk2wk(mp)
+#' g_wk2wk(mp, as_iso = TRUE)
 #'
 #' # create an empty container and add subgeometries
-#' mult_pt2 <- g_create("MULTIPOINT")
-#' mult_pt2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mult_pt2)
-#' mult_pt2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mult_pt2)
-#' is.raw(mult_pt2)
-#' g_wk2wk(mult_pt2)
+#' mp2 <- g_create("MULTIPOINT")
+#' mp2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mp2)
+#' mp2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mp2)
+#' g_wk2wk(mp2)
+#'
+#' # plot WKT strings or a list of WKB raw vectors with wk::wk_plot()
+#' pts <- c(0, 0, 3, 0, 3, 4, 0, 0)
+#' m <- matrix(pts, ncol = 2, byrow = TRUE)
+#' g <- g_create("POLYGON", m, as_wkb = FALSE)
+#' wk::wkt(g) |> wk::wk_plot()
 #' @export
 g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
                      byte_order = "LSB") {
@@ -373,18 +385,18 @@ g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
     if (!(is.character(geom_type) && length(geom_type) == 1))
         stop("'geom_type' must be a character string", call. = FALSE)
     # pts
-    if (!(is.numeric(pts) || is.null(pts)))
-        stop("'pts' must be given in a numeric matrix of x, y", call. = FALSE)
+    if (!(is.numeric(pts) || is.data.frame(pts) || is.null(pts)))
+        stop("'pts' must be a numeric matrix of xy[zm]", call. = FALSE)
     # as_wkb
     if (is.null(as_wkb))
-        as_wkb <- TRUE
+        as_wkb <- TRU
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+        stop("'as_wkb' must be a logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -394,7 +406,17 @@ g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
     if (byte_order != "LSB" && byte_order != "MSB")
         stop("invalid 'byte_order'", call. = FALSE)
 
-    wkb <- .g_create(geom_type, pts, as_iso, byte_order)
+    wkb <- NULL
+    if (toupper(geom_type) == "POINT" && (is.matrix(pts) ||
+        is.data.frame(pts))) {
+
+        wkb <- lapply(seq_len(nrow(pts)),
+                      function(i) {
+                          .g_create("POINT", pts[i, ], as_iso, byte_order)
+                      })
+    } else {
+        wkb <- .g_create(geom_type, pts, as_iso, byte_order)
+    }
 
     if (as_wkb)
         return(wkb)
@@ -2010,4 +2032,42 @@ g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE,
         return(wkb)
     else
         return(g_wk2wk(wkb, as_iso))
+}
+
+#' Extract coordinate values from geometries
+#'
+#' `g_coords()` extracts coordinate values (vertices) from the input geometries
+#' and returns a data frame with coordinates as columns.
+#'
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @return A data frame as returned by `wk::wk_coords()`: columns `feature_id`
+#' (the index of the feature from the input), `part_id` (an arbitrary integer
+#' identifying the point, line, or polygon from whence it came), `ring_id` (an
+#' arbitrary integer identifying individual rings within polygons), and one
+#' column per coordinate (`x`, `y`, and/or `z` and/or `m`).
+#' @examples
+#' dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#' lyr <- new(GDALVector, dsn)
+#' d <- lyr$fetch(10)
+#'
+#' vertices <- g_coords(d$geom)
+#' head(vertices)
+#'
+#' lyr$close()
+#' @export
+g_coords <- function(geom) {
+    geom_in <- NULL
+    if (is.raw(geom)) {
+        geom_in <- wk::wkb(list(geom))
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        geom_in <- wk::wkb(geom)
+    } else if (is.character(geom)) {
+        geom_in <- wk::wkt(geom)
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(wk::wk_coords(geom_in))
 }

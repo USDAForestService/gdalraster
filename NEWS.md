@@ -1,4 +1,12 @@
-# gdalraster 1.12.0.9140 (dev)
+# gdalraster 1.12.0.9156 (dev)
+
+* `g_create()`: support input points with Z/M; support output of multiple POINT geoms from multiple xy input (optionally, instead of a single MULTIPOINT) (2025-02-09)
+
+* `transform_xy()` / `inv_project()`: support input points with z vertices (three column xyz) or time values (four column xyzt); optionally accept input of point geometries as character vector of WKT strings, WKB raw vector, or list of raw vectors (2025-02-09)
+
+* add `g_coords()`: extract coordinate values from geometries (2025-02-09)
+
+* improve and expand bindings to a subset of the GDAL Spatial Reference System API (#584) (2025-02-08)
 
 * add helper functions for GDAL raster data types (#593) (2025-02-08)
 

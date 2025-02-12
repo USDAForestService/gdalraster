@@ -64,7 +64,7 @@ reference:
   - displayRAT
 - subtitle: Raster data types
 - contents:
-  - dt_conv
+  - data_type_helpers
 - subtitle: Geotransform conversion
 - contents:
   - apply_geotransform
@@ -75,16 +75,11 @@ reference:
 - contents:
   - inv_project
   - transform_xy
+  - transform_bounds
 - subtitle: Spatial reference systems
 - contents:
-  - epsg_to_wkt
-  - srs_find_epsg
-  - srs_get_name
-  - srs_is_geographic
-  - srs_is_projected
-  - srs_is_same
-  - srs_to_wkt
-  - transform_bounds
+  - srs_convert
+  - srs_query
 - subtitle: Geometry
 - contents:
   - bbox_from_wkt
@@ -97,6 +92,7 @@ reference:
   - g_binary_pred
   - g_buffer
   - g_centroid
+  - g_coords
   - g_distance
   - g_envelope
   - g_factory

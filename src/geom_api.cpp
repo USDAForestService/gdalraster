@@ -15,7 +15,8 @@
 #include "ogr_spatialref.h"
 #include "ogr_srs_api.h"
 
-#include "wkt_conv.h"
+#include "srs_api.h"
+
 
 //' get GEOS version
 //' @noRd
@@ -268,41 +269,32 @@ Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom,
 Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
                          bool as_iso = false,
                          const std::string &byte_order = "LSB") {
-// Create a geometry from a list of points (vertices).
+// Create a geometry from a list of points (vertices as xy, xyz or xyzm).
 // Currently for POINT, MULTIPOINT, LINESTRING, LINEARRING, POLYGON
 // Only simple polygons composed of one ring are supported
 // See also g_add_geom(), e.g., add LINEARRING (interior ring) to POLYGON.
 
-    OGRGeometryH hGeom = nullptr;
-    OGRGeometryH hGeom_out = nullptr;
+    Rcpp::NumericMatrix pts_in(0, 2);
+    if (!pts.isNULL())
+        pts_in = xy_robject_to_matrix_(pts);
 
-    Rcpp::NumericMatrix pts_in(0, 2);  // only xy for now
-    if (Rcpp::is<Rcpp::NumericVector>(pts) ||
-        Rcpp::is<Rcpp::IntegerVector>(pts)) {
+    if (pts_in.ncol() < 2 || pts_in.ncol() > 4)
+        Rcpp::stop("input matrix must have 2, 3 or 4 columns");
 
-        if (!Rf_isMatrix(pts)) {
-            Rcpp::NumericVector v = Rcpp::as<Rcpp::NumericVector>(pts);
-            if (v.size() != 2)
-                Rcpp::stop("'pts' must be a two-column data frame or matrix");
-
-            pts_in = Rcpp::NumericMatrix(1, 2, v.begin());
-        }
-        else {
-            pts_in = Rcpp::as<Rcpp::NumericMatrix>(pts);
-        }
+    bool has_z = false;
+    bool has_m = false;
+    if (pts_in.ncol() == 3) {
+        has_z = true;
     }
-    else if (Rcpp::is<Rcpp::DataFrame>(pts)) {
-        pts_in = df_to_matrix_(pts);
+    else if (pts_in.ncol() == 4) {
+        has_z = true;
+        has_m = true;
     }
-    else if (!pts.isNULL()) {
-        Rcpp::stop("'pts' must be a two-column data frame or matrix");
-    }
-
-    // only xy for now
-    if (pts_in.ncol() != 2)
-        Rcpp::stop("input matrix must have 2 columns");
 
     R_xlen_t nPts = pts_in.nrow();
+
+    OGRGeometryH hGeom = nullptr;
+    OGRGeometryH hGeom_out = nullptr;
 
     if (EQUAL(geom_type.c_str(), "POINT")) {
         geom_type = "POINT";
@@ -336,8 +328,17 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
             OGR_G_DestroyGeometry(hGeom);
             Rcpp::stop("invalid number of points for geometry type");
         }
-
-        OGR_G_SetPoint_2D(hGeom, 0, pts_in(0, 0), pts_in(0, 1));
+        if (has_m) {
+            OGR_G_SetPointZM(hGeom, 0, pts_in(0, 0), pts_in(0, 1),
+                             pts_in(0, 2), pts_in(0, 3));
+        }
+        else if (has_z) {
+            OGR_G_SetPoint(hGeom, 0, pts_in(0, 0), pts_in(0, 1),
+                           pts_in(0, 2));
+        }
+        else {
+            OGR_G_SetPoint_2D(hGeom, 0, pts_in(0, 0), pts_in(0, 1));
+        }
     }
     else if (nPts > 0) {
         if (geom_type == "POINT") {
@@ -350,9 +351,19 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
         }
 
         if (geom_type == "MULTIPOINT") {
-            for (R_xlen_t i=0; i < nPts; ++i) {
+            for (R_xlen_t i = 0; i < nPts; ++i) {
                 OGRGeometryH hPt = OGR_G_CreateGeometry(wkbPoint);
-                OGR_G_SetPoint_2D(hPt, 0, pts_in(i, 0), pts_in(i, 1));
+                if (has_m) {
+                    OGR_G_SetPointZM(hPt, 0, pts_in(i, 0), pts_in(i, 1),
+                                     pts_in(i, 2), pts_in(i, 3));
+                }
+                else if (has_z) {
+                    OGR_G_SetPoint(hPt, 0, pts_in(i, 0), pts_in(i, 1),
+                                   pts_in(i, 2));
+                }
+                else {
+                    OGR_G_SetPoint_2D(hPt, 0, pts_in(i, 0), pts_in(i, 1));
+                }
                 OGRErr err = OGR_G_AddGeometryDirectly(hGeom, hPt);
                 if (err != OGRERR_NONE) {
                     if (hGeom != nullptr)
@@ -363,8 +374,18 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
         }
         else {
             OGR_G_SetPointCount(hGeom, static_cast<int>(nPts));
-            for (R_xlen_t i=0; i < nPts; ++i) {
-                OGR_G_SetPoint_2D(hGeom, i, pts_in(i, 0), pts_in(i, 1));
+            for (R_xlen_t i = 0; i < nPts; ++i) {
+                if (has_m) {
+                    OGR_G_SetPointZM(hGeom, i, pts_in(i, 0), pts_in(i, 1),
+                                     pts_in(i, 2), pts_in(i, 3));
+                }
+                else if (has_z) {
+                    OGR_G_SetPoint(hGeom, i, pts_in(i, 0), pts_in(i, 1),
+                                   pts_in(i, 2));
+                }
+                else {
+                    OGR_G_SetPoint_2D(hGeom, i, pts_in(i, 0), pts_in(i, 1));
+                }
             }
         }
     }
@@ -1778,3 +1799,102 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
     return wkb;
 }
 
+//' Get the bounding box of a geometry specified in OGC WKT format
+//'
+//' `bbox_from_wkt()` returns the bounding box of a WKT 2D geometry
+//' (e.g., LINE, POLYGON, MULTIPOLYGON).
+//'
+//' @param wkt Character. OGC WKT string for a simple feature 2D geometry.
+//' @param extend_x Numeric scalar. Distance to extend the output bounding box
+//' in both directions along the x-axis
+//' (results in `xmin = bbox[1] - extend_x`, `xmax = bbox[3] + extend_x`).
+//' @param extend_y Numeric scalar. Distance to extend the output bounding box
+//' in both directions along the y-axis
+//' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
+//' @return Numeric vector of length four containing the xmin, ymin,
+//' xmax, ymax of the geometry specified by `wkt` (possibly extended by values
+//' in `extend_x`, `extend_y`).
+//'
+//' @seealso
+//' [bbox_to_wkt()]
+//'
+//' @examples
+//' bnd <- "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
+//' 5103455.8, 324970.7 5102885.8, 326420.0 5103595.3, 326389.6 5104747.5,
+//' 325298.1 5104929.4, 325298.1 5104929.4, 324467.3 5104814.2))"
+//' bbox_from_wkt(bnd, 100, 100)
+// [[Rcpp::export]]
+Rcpp::NumericVector bbox_from_wkt(const std::string &wkt,
+        double extend_x = 0, double extend_y = 0) {
+
+    OGRGeometryH hGeometry = nullptr;
+    char* pszWKT;
+    pszWKT = (char*) wkt.c_str();
+
+    if (OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeometry) != OGRERR_NONE) {
+        if (hGeometry != nullptr)
+            OGR_G_DestroyGeometry(hGeometry);
+        Rcpp::Rcerr << "failed to create geometry object from WKT string\n";
+        Rcpp::NumericVector ret(4, NA_REAL);
+        return ret;
+    }
+
+    OGREnvelope sBbox;
+    OGR_G_GetEnvelope(hGeometry, &sBbox);
+    Rcpp::NumericVector bbox = {
+        sBbox.MinX - extend_x,
+        sBbox.MinY - extend_y,
+        sBbox.MaxX + extend_x,
+        sBbox.MaxY + extend_y
+    };
+
+    OGR_G_DestroyGeometry(hGeometry);
+
+    return bbox;
+}
+
+//' Convert a bounding box to POLYGON in OGC WKT format
+//'
+//' `bbox_to_wkt()` returns a WKT POLYGON string for the given bounding box.
+//'
+//' @param bbox Numeric vector of length four containing xmin, ymin,
+//' xmax, ymax.
+//' @param extend_x Numeric scalar. Distance in units of `bbox` to extend the
+//' rectangle in both directions along the x-axis
+//' (results in `xmin = bbox[1] - extend_x`, `xmax = bbox[3] + extend_x`).
+//' @param extend_y Numeric scalar. Distance in units of `bbox` to extend the
+//' rectangle in both directions along the y-axis
+//' (results in `ymin = bbox[2] - extend_y`, `ymax = bbox[4] + extend_y`).
+//' @return Character string for an OGC WKT polygon.
+//' `NA` is returned if GDAL was built without the GEOS library.
+//'
+//' @seealso
+//' [bbox_from_wkt()], [g_buffer()]
+//'
+//' @examples
+//' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+//' ds <- new(GDALRaster, elev_file, read_only=TRUE)
+//' bbox_to_wkt(ds$bbox())
+//' ds$close()
+// [[Rcpp::export]]
+Rcpp::String bbox_to_wkt(const Rcpp::NumericVector &bbox,
+        double extend_x = 0, double extend_y = 0) {
+
+    if (bbox.size() != 4)
+        Rcpp::stop("invalid bounding box");
+
+    Rcpp::NumericVector bbox_in = Rcpp::clone(bbox);
+    bbox_in[0] -= extend_x;
+    bbox_in[1] -= extend_y;
+    bbox_in[2] += extend_x;
+    bbox_in[3] += extend_y;
+
+    Rcpp::NumericMatrix poly_xy(5, 2);
+    poly_xy.row(0) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(1));
+    poly_xy.row(1) = Rcpp::NumericVector::create(bbox_in(2), bbox_in(1));
+    poly_xy.row(2) = Rcpp::NumericVector::create(bbox_in(2), bbox_in(3));
+    poly_xy.row(3) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(3));
+    poly_xy.row(4) = Rcpp::NumericVector::create(bbox_in(0), bbox_in(1));
+
+    return g_wkb2wkt(g_create("POLYGON", poly_xy));
+}
