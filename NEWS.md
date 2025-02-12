@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9156 (dev)
+# gdalraster 1.12.0.9160 (dev)
+
+* add `pixel_extract()`: extract pixel values at geospatial point locations (#570) (2025-02-12)
 
 * `g_create()`: support input points with Z/M; support output of multiple POINT geoms from multiple xy input (optionally, instead of a single MULTIPOINT) (2025-02-09)
 
