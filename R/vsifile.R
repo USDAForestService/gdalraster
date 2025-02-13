@@ -329,8 +329,8 @@ Rcpp::loadModule("mod_VSIFile", TRUE)
 
 setMethod("show", "Rcpp_VSIFile", function(object) {
     cat("C++ object of class VSIFile\n",
-        "  Filename: ", object$get_filename(), "\n",
-        "  Access: ", object$get_access(), "\n",
+        " Filename : ", object$get_filename(), "\n",
+        " Access   : ", object$get_access(), "\n",
         sep = ""
     )
 })

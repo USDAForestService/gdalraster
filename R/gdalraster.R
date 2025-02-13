@@ -929,10 +929,15 @@ NULL
 Rcpp::loadModule("mod_GDALRaster", TRUE)
 
 setMethod("show", "Rcpp_GDALRaster", function(object) {
+    crs_name <- .get_crs_name(object)
+
     cat("C++ object of class GDALRaster\n",
-        "  Driver: ", object$getDriverLongName()," (", object$getDriverShortName(), ")\n",
-        "  DSN:    ", object$getDescription(band = 0), "\n",
-        "  Size:   ", object$dim()[1], ", ", object$dim()[2], ", ", object$dim()[3], "\n",
+        " Driver : ", object$getDriverLongName()," (", object$getDriverShortName(), ")\n",
+        " DSN    : ", object$getDescription(band = 0), "\n",
+        " Dim    : ", object$dim() |> paste(collapse = ", "), "\n",
+        " CRS    : ", crs_name, "\n",
+        " Res    : ", object$res() |> paste(collapse = ", "), "\n",
+        " Bbox   : ", object$bbox() |> paste(collapse = ", "), "\n",
         sep = ""
     )
 })
