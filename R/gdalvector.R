@@ -828,10 +828,14 @@ NULL
 Rcpp::loadModule("mod_GDALVector", TRUE)
 
 setMethod("show", "Rcpp_GDALVector", function(object) {
+    crs_name <- .get_crs_name(object)
+
     cat("C++ object of class GDALVector\n",
-        "  Driver: ", object$getDriverLongName()," (", object$getDriverShortName(), ")\n",
-        "  DSN:    ", object$getDsn(), "\n",
-        "  Layer:  ", object$getName(), "\n",
+        " Driver : ", object$getDriverLongName()," (", object$getDriverShortName(), ")\n",
+        " DSN    : ", object$getDsn(), "\n",
+        " Layer  : ", object$getName(), "\n",
+        " CRS    : ", crs_name, "\n",
+        " Geom   : ", object$getGeomType(), "\n",
         sep = ""
     )
 })
