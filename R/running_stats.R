@@ -41,7 +41,6 @@
 #' \preformatted{
 #' ## Constructor
 #' rs <- new(RunningStats, na_rm)
-#' rs
 #'
 #' ## Methods
 #' rs$update(newvalues)
@@ -98,8 +97,9 @@
 #'
 #' @examples
 #' set.seed(42)
-#'
 #' rs <- new(RunningStats, na_rm=TRUE)
+#' rs
+#'
 #' chunk <- runif(1000)
 #' rs$update(chunk)
 #' object.size(rs)
