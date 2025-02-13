@@ -57,7 +57,8 @@ order in the kernel.
 \description{
 \code{pixel_extract()} returns raster pixel values for a set of geospatial
 point locations. The coordinates are given as a two-column matrix of (x, y)
-values in the same spatial reference system as the input raster.
+values in the same spatial reference system as the input raster (unless
+\code{xy_srs} is specified).
 Values are extracted from all bands of the raster by default, or specific
 band numbers may be given. An optional interpolation method may be specified
 for bilinear (2 x 2 kernel), cubic convolution (4 x 4 kernel, GDAL >= 3.10),
@@ -75,7 +76,7 @@ faster to copy the raster into memory first (either as MEM format or to a
 /vsimem filesystem).
 \code{pixel_extract()} will attempt to automate that process if the total size
 of file(s) that would be copied does not exceed the threshold given by
-\code{max_ram}, and \code{length(xy) > 1}.
+\code{max_ram}, and \code{length(xy) > 1} (requires GDAL >= 3.6).
 
 For alternative workflows that involve copying to local storage, the data
 management functions (e.g., \code{\link[=copyDatasetFiles]{copyDatasetFiles()}}) and the VSI filesystem
