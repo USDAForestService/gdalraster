@@ -629,8 +629,8 @@
 #'
 #' lyr <- new(GDALVector, dsn, "mtbs_perims")
 #'
-#' ## object of class GDALVector
 #' lyr
+#'
 #' str(lyr)
 #'
 #' ## dataset info
@@ -826,3 +826,12 @@
 NULL
 
 Rcpp::loadModule("mod_GDALVector", TRUE)
+
+setMethod("show", "Rcpp_GDALVector", function(object) {
+    cat("C++ object of class GDALVector\n",
+        "  Driver: ", object$getDriverLongName()," (", object$getDriverShortName(), ")\n",
+        "  DSN:    ", object$getDsn(), "\n",
+        "  Layer:  ", object$getName(), "\n",
+        sep = ""
+    )
+})

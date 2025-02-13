@@ -5,6 +5,7 @@ test_that("VSIFile works", {
     # default constructor, no file
     expect_no_error(vf <- new(VSIFile))
     expect_true(is(vf, "Rcpp_VSIFile"))
+    expect_output(show(vf))
     expect_equal(vf$close(), -1)
     # filename
     expect_no_error(vf <- new(VSIFile, lcp_file))
