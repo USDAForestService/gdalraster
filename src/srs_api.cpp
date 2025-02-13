@@ -591,6 +591,7 @@ bool srs_is_same(const std::string &srs, const std::string &srs_other,
     OGRSpatialReferenceH hSRS2 = OSRNewSpatialReference(nullptr);
     if (OSRSetFromUserInput(hSRS2, srs_other.c_str()) != OGRERR_NONE) {
         if (hSRS2 != nullptr)
+            OSRDestroySpatialReference(hSRS1);
             OSRDestroySpatialReference(hSRS2);
         Rcpp::stop("error importing SRS from user input");
     }
