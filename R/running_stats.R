@@ -137,3 +137,10 @@
 NULL
 
 Rcpp::loadModule("mod_running_stats", TRUE)
+
+setMethod("show", "Rcpp_RunningStats", function(object) {
+    cat("C++ object of class RunningStats\n",
+        "  Number of values: ", object$get_count(), "\n",
+        sep = ""
+    )
+})

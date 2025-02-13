@@ -926,3 +926,12 @@
 NULL
 
 Rcpp::loadModule("mod_GDALRaster", TRUE)
+
+setMethod("show", "Rcpp_GDALRaster", function(object) {
+    cat("C++ object of class GDALRaster\n",
+        "  Driver: ", object$getDriverLongName()," (", object$getDriverShortName(), ")\n",
+        "  DSN:    ", object$getDescription(band = 0), "\n",
+        "  Size:   ", object$dim()[1], ", ", object$dim()[2], ", ", object$dim()[3], "\n",
+        sep = ""
+    )
+})

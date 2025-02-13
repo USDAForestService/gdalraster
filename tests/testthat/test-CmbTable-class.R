@@ -2,6 +2,7 @@ test_that("CmbTable works", {
     m <- matrix(c(1,2,3,1,2,3,4,5,6,1,3,2,4,5,6,1,1,1), 6, 3, byrow=TRUE)
     colnames(m) <- c("v1","v2","v3")
     cmb <- new(CmbTable, 3, colnames(m))
+    expect_output(show(cmb))
     cmb$updateFromMatrixByRow(m, 1)
     cmb$update(c(4,5,6), 1)
     cmb$update(c(1,3,5), 1)
