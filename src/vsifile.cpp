@@ -37,7 +37,8 @@ VSIFile::VSIFile(Rcpp::CharacterVector filename, std::string access,
 }
 
 VSIFile::~VSIFile() {
-    close();
+    if (m_fp)
+        VSIFCloseL(m_fp);
 }
 
 void VSIFile::open() {
