@@ -1,4 +1,4 @@
-# gdalraster 1.12.0.9160 (dev)
+# gdalraster 1.12.0.9161 (dev)
 
 * add `pixel_extract()`: extract pixel values at geospatial point locations (#570) (2025-02-12)
 
