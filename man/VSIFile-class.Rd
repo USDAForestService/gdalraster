@@ -241,6 +241,8 @@ is_lcp <- function(bytes) {
 }
 
 vf <- new(VSIFile, lcp_file)
+vf
+
 vf$read(12) |> is_lcp()
 
 vf$tell()
