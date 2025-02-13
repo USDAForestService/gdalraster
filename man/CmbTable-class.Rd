@@ -108,9 +108,13 @@ unique combination.
 m <- matrix(c(1,2,3,1,2,3,4,5,6,1,3,2,4,5,6,1,1,1), 3, 6, byrow=FALSE)
 rownames(m) <- c("layer1", "layer2", "layer3")
 print(m)
+
 cmb <- new(CmbTable, 3, rownames(m))
+cmb
+
 cmb$updateFromMatrix(m, 1)
 cmb$asDataFrame()
+
 cmb$update(c(4,5,6), 1)
 cmb$update(c(1,3,5), 1)
 cmb$asDataFrame()
@@ -121,8 +125,6 @@ colnames(m) <- c("V1", "V2", "V3")
 print(m)
 
 cmb <- new(CmbTable, 3)
-cmb
-
 cmb$updateFromMatrixByRow(m, 1)
 cmb$asDataFrame()
 
