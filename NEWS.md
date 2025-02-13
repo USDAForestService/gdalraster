@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9161 (dev)
+# gdalraster 1.12.0.9170 (dev)
+
+* add S4 `show()` methods for the Rcpp exposed classes (2025-02-12)
 
 * add `pixel_extract()`: extract pixel values at geospatial point locations (#570) (2025-02-12)
 
