@@ -818,6 +818,7 @@
 #' @examples
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds <- new(GDALRaster, lcp_file)
+#' ds
 #'
 #' ## print information about the dataset to the console
 #' ds$info()

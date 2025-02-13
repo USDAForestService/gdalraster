@@ -41,6 +41,7 @@
 #' \preformatted{
 #' ## Constructor
 #' rs <- new(RunningStats, na_rm)
+#' rs
 #'
 #' ## Methods
 #' rs$update(newvalues)
