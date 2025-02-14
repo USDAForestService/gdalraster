@@ -134,6 +134,37 @@ dt_find_for_value <- function(value, is_complex = FALSE) {
     .Call(`_gdalraster_dt_find_for_value`, value, is_complex)
 }
 
+#' Create a new uninitialized raster
+#'
+#' `create()` makes an empty raster in the specified format.
+#'
+#' Called from and documented in R/gdal_create.R
+#' @noRd
+NULL
+
+#' Create a copy of a raster
+#'
+#' `createCopy()` copies a raster dataset, optionally changing the format.
+#' The extent, cell size, number of bands, data type, projection, and
+#' geotransform are all copied from the source raster.
+#'
+#' Called from and documented in R/gdal_create.R
+#' @noRd
+NULL
+
+#' Create a virtual warped dataset automatically
+#'
+#' `autoCreateWarpedVRT()` creates a warped virtual dataset representing the
+#' input raster warped into a target coordinate system. The output virtual
+#' dataset will be "north-up" in the target coordinate system. GDAL
+#' automatically determines the bounds and resolution of the output virtual
+#' raster which should be large enough to include all the input raster.
+#' Wrapper of `GDALAutoCreateWarpedVRT()` in the GDAL Warper API.
+#'
+#' Called from and documented in R/gdal_util.R
+#' @noRd
+NULL
+
 #' Get GDAL version
 #'
 #' `gdal_version()` returns runtime version information.
@@ -432,28 +463,6 @@ http_enabled <- function() {
     invisible(.Call(`_gdalraster_cpl_http_cleanup`))
 }
 
-#' Create a new uninitialized raster
-#'
-#' `create()` makes an empty raster in the specified format.
-#'
-#' Called from and documented in R/gdal_create.R
-#' @noRd
-.create <- function(format, dst_filename, xsize, ysize, nbands, dataType, options = NULL) {
-    .Call(`_gdalraster_create`, format, dst_filename, xsize, ysize, nbands, dataType, options)
-}
-
-#' Create a copy of a raster
-#'
-#' `createCopy()` copies a raster dataset, optionally changing the format.
-#' The extent, cell size, number of bands, data type, projection, and
-#' geotransform are all copied from the source raster.
-#'
-#' Called from and documented in R/gdal_create.R
-#' @noRd
-.createCopy <- function(format, dst_filename, src_ds, strict = FALSE, options = NULL, quiet = FALSE) {
-    .Call(`_gdalraster_createCopy`, format, dst_filename, src_ds, strict, options, quiet)
-}
-
 #' Apply geotransform - internal wrapper of GDALApplyGeoTransform()
 #'
 #' `apply_geotransform_()` applies geotransform coefficients to a raster
@@ -546,55 +555,6 @@ inv_geotransform <- function(gt) {
     .Call(`_gdalraster_flip_vertical`, v, xsize, ysize, nbands)
 }
 
-#' Create a virtual warped dataset automatically
-#'
-#' `autoCreateWarpedVRT()` creates a warped virtual dataset representing the
-#' input raster warped into a target coordinate system. The output virtual
-#' dataset will be "north-up" in the target coordinate system. GDAL
-#' automatically determines the bounds and resolution of the output virtual
-#' raster which should be large enough to include all the input raster.
-#' Wrapper of `GDALAutoCreateWarpedVRT()` in the GDAL Warper API.
-#'
-#' @param src_ds An object of class `GDALRaster` for the source dataset.
-#' @param dst_wkt WKT string specifying the coordinate system to convert to.
-#' If empty string (`""`) no change of coordinate system will take place.
-#' @param resample_alg Character string specifying the sampling method to use.
-#' One of NearestNeighbour, Bilinear, Cubic, CubicSpline, Lanczos, Average,
-#' RMS or Mode.
-#' @param src_wkt WKT string specifying the coordinate system of the source
-#' raster. If empty string it will be read from the source raster (the
-#' default).
-#' @param max_err Numeric scalar specifying the maximum error measured in
-#' input pixels that is allowed in approximating the transformation (`0.0` for
-#' exact calculations, the default).
-#' @param alpha_band Logical scalar, `TRUE` to create an alpha band if the
-#' source dataset has none. Defaults to `FALSE`.
-#'
-#' @returns An object of class `GDALRaster` for the new virtual dataset. An
-#' error is raised if the operation fails.
-#'
-#' @note
-#' The returned dataset will have no associated filename for itself. If you
-#' want to write the virtual dataset to a VRT file, use the
-#' `$setFilename()` method on the returned `GDALRaster` object to assign a
-#' filename before it is closed.
-#'
-#' @examples
-#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' ds <- new(GDALRaster, elev_file)
-#'
-#' ds2 <- autoCreateWarpedVRT(ds, epsg_to_wkt(5070), "Bilinear")
-#' ds2$info()
-#'
-#' ## set filename before close if a VRT file is needed for the virtual dataset
-#' # ds2$setFilename("/path/to/file.vrt")
-#'
-#' ds2$close()
-#' ds$close()
-autoCreateWarpedVRT <- function(src_ds, dst_wkt, resample_alg, src_wkt = "", max_err = 0.0, alpha_band = FALSE) {
-    .Call(`_gdalraster_autoCreateWarpedVRT`, src_ds, dst_wkt, resample_alg, src_wkt, max_err, alpha_band)
-}
-
 #' Build a GDAL virtual raster from a list of datasets
 #'
 #' `buildVRT()` is a wrapper of the \command{gdalbuildvrt} command-line
@@ -662,7 +622,7 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #'
 #' Called from and documented in R/gdalraster_proc.R
 #' @noRd
-.combine <- function(src_files, var_names, bands, dst_filename = "", fmt = "", dataType = "UInt32", options = NULL, quiet = FALSE) {
+.combine <- function(src_files, var_names, bands, dst_filename, fmt, dataType, options, quiet) {
     .Call(`_gdalraster_combine`, src_files, var_names, bands, dst_filename, fmt, dataType, options, quiet)
 }
 
@@ -1051,7 +1011,7 @@ sieveFilter <- function(src_filename, src_band, dst_filename, dst_band, size_thr
 #'               (workaround for a nullable dataset argument)
 #'
 #' @noRd
-.warp <- function(src_datasets, dst_filename, dst_dataset, t_srs = "", cl_arg = NULL, quiet = FALSE) {
+.warp <- function(src_datasets, dst_filename, dst_dataset, t_srs, cl_arg, quiet) {
     .Call(`_gdalraster_warp`, src_datasets, dst_filename, dst_dataset, t_srs, cl_arg, quiet)
 }
 
