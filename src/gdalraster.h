@@ -97,6 +97,7 @@ class GDALRaster {
     GDALRaster(Rcpp::CharacterVector filename, bool read_only,
                Rcpp::Nullable<Rcpp::CharacterVector> open_options,
                bool shared);
+    ~GDALRaster();
 
     // read/write fields exposed to R
     Rcpp::CharacterVector infoOptions = Rcpp::CharacterVector::create();
@@ -245,14 +246,17 @@ std::string cpl_get_extension(Rcpp::CharacterVector full_filename);
 
 Rcpp::CharacterVector check_gdal_filename(Rcpp::CharacterVector filename);
 
-GDALRaster create(std::string format, Rcpp::CharacterVector dst_filename,
-                  int xsize, int ysize, int nbands, std::string dataType,
-                  Rcpp::Nullable<Rcpp::CharacterVector> options);
+GDALRaster *create(const std::string &format,
+                   const Rcpp::CharacterVector &dst_filename,
+                   int xsize, int ysize, int nbands,
+                   const std::string &dataType,
+                   const Rcpp::Nullable<Rcpp::CharacterVector> &options);
 
-GDALRaster createCopy(std::string format, Rcpp::CharacterVector dst_filename,
-                      GDALRaster src_ds, bool strict,
-                      Rcpp::Nullable<Rcpp::CharacterVector> options,
-                      bool quiet);
+GDALRaster *createCopy(const std::string &format,
+                       const Rcpp::CharacterVector &dst_filename,
+                       const GDALRaster* const &src_ds, bool strict,
+                       const Rcpp::Nullable<Rcpp::CharacterVector> &options,
+                       bool quiet);
 
 std::string getCreationOptions(std::string format);
 
@@ -288,7 +292,7 @@ Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row,
                                           const std::vector<double> gt);
 
 Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject& col_row,
-                                          const GDALRaster* ds);
+                                          const GDALRaster* const &ds);
 
 Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
 
@@ -296,15 +300,17 @@ Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy,
                                       const std::vector<double> gt);
 
 Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
-                                      const GDALRaster* ds);
+                                      const GDALRaster* const &ds);
 
 Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v,
                                   int xsize, int ysize, int nbands);
 
-GDALRaster autoCreateWarpedVRT(GDALRaster src_ds, std::string dst_wkt,
-                               std::string resample_alg,
-                               std::string src_wkt,
-                               double max_err, bool alpha_band);
+GDALRaster *autoCreateWarpedVRT(const GDALRaster* const &src_ds,
+                                const std::string &dst_wkt,
+                                const std::string &resample_alg,
+                                const std::string &src_wkt,
+                                double max_err, bool alpha_band,
+                                bool reserved1, bool reserved2);
 
 bool buildVRT(Rcpp::CharacterVector vrt_filename,
               Rcpp::CharacterVector input_rasters,
@@ -320,7 +326,7 @@ Rcpp::DataFrame combine(Rcpp::CharacterVector src_files,
                         Rcpp::Nullable<Rcpp::CharacterVector> options,
                         bool quiet);
 
-Rcpp::DataFrame value_count(const GDALRaster& src_ds, int band,
+Rcpp::DataFrame value_count(const GDALRaster* const &src_ds, int band,
                             bool quiet);
 
 bool dem_proc(std::string mode,
@@ -367,17 +373,17 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
                  Rcpp::CharacterVector mask_filename , int mask_band,
                  Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
 
-bool translate(GDALRaster src_ds,
+bool translate(const GDALRaster* const &ds,
                Rcpp::CharacterVector dst_filename,
                Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
                bool quiet);
 
-GDALRaster warp(const Rcpp::List& src_datasets,
-                Rcpp::CharacterVector dst_filename,
-                Rcpp::List dst_dataset,
-                std::string t_srs,
-                Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
-                bool quiet);
+bool warp(const Rcpp::List& src_datasets,
+          Rcpp::CharacterVector dst_filename,
+          Rcpp::List dst_dataset,
+          std::string t_srs,
+          Rcpp::Nullable<Rcpp::CharacterVector> cl_arg,
+          bool quiet);
 
 Rcpp::IntegerMatrix createColorRamp(int start_index,
                                     Rcpp::IntegerVector start_color,

@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9170 (dev)
+# gdalraster 1.12.0.9180 (dev)
+
+* (internal) implement `create()`, `createCopy()`, `autoCreateWarpedVRT()` as object factories (2025-02-14)
 
 * add S4 `show()` methods for the Rcpp exposed classes (2025-02-12)
 
