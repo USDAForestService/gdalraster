@@ -361,12 +361,9 @@ warp <- function(src_files,
     }
 
     if (!is.null(dst_ds)) {
-        # output to GDALRaster object
-        ds <- .warp(src_datasets, "", list(dst_ds), t_srs, cl_arg, quiet)
+        ret <- .warp(src_datasets, "", list(dst_ds), t_srs, cl_arg, quiet)
     } else {
-        # output to filename
-        ds <- .warp(src_datasets, dst_filename, list(), t_srs, cl_arg, quiet)
-        ds$close()
+        ret <- .warp(src_datasets, dst_filename, list(), t_srs, cl_arg, quiet)
     }
 
     if (close_datasets) {
@@ -375,5 +372,99 @@ warp <- function(src_files,
         }
     }
 
-    return(invisible(TRUE))
+    if (!ret) {
+        stop("warp raster failed", call. = FALSE)
+    } else {
+        return(invisible(TRUE))
+    }
+}
+
+#' Create a virtual warped dataset automatically
+#'
+#' `autoCreateWarpedVRT()` creates a warped virtual dataset representing the
+#' input raster warped into a target coordinate system. The output virtual
+#' dataset will be "north-up" in the target coordinate system. GDAL
+#' automatically determines the bounds and resolution of the output virtual
+#' raster which should be large enough to include all the input raster.
+#' Wrapper of `GDALAutoCreateWarpedVRT()` in the GDAL Warper API.
+#'
+#' @param src_ds An object of class `GDALRaster` for the source dataset.
+#' @param dst_wkt WKT string specifying the coordinate system to convert to.
+#' If empty string (`""`) no change of coordinate system will take place.
+#' @param resample_alg Character string specifying the sampling method to use.
+#' One of NearestNeighbour, Bilinear, Cubic, CubicSpline, Lanczos, Average,
+#' RMS or Mode.
+#' @param src_wkt WKT string specifying the coordinate system of the source
+#' raster. If empty string it will be read from the source raster (the
+#' default).
+#' @param max_err Numeric scalar specifying the maximum error measured in
+#' input pixels that is allowed in approximating the transformation (`0.0` for
+#' exact calculations, the default).
+#' @param alpha_band Logical scalar, `TRUE` to create an alpha band if the
+#' source dataset has none. Defaults to `FALSE`.
+#'
+#' @returns An object of class `GDALRaster` for the new virtual dataset. An
+#' error is raised if the operation fails.
+#'
+#' @note
+#' The returned dataset will have no associated filename for itself. If you
+#' want to write the virtual dataset to a VRT file, use the
+#' `$setFilename()` method on the returned `GDALRaster` object to assign a
+#' filename before it is closed.
+#'
+#' @examples
+#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ds <- new(GDALRaster, elev_file)
+#'
+#' ds2 <- autoCreateWarpedVRT(ds, epsg_to_wkt(5070), "Bilinear")
+#' ds2$info()
+#'
+#' ## set filename before close if a VRT file is needed for the virtual dataset
+#' # ds2$setFilename("/path/to/file.vrt")
+#'
+#' ds2$close()
+#' ds$close()
+#' @export
+autoCreateWarpedVRT <- function(src_ds, dst_wkt, resample_alg, src_wkt = "",
+                                max_err = 0.0, alpha_band = FALSE) {
+
+    if (is(src_ds, "Rcpp_GDALRaster")) {
+        if (!src_ds$isOpen()) {
+            stop("source dataset is not open", call. = FALSE)
+        }
+    } else {
+        stop("'src_ds' must be a 'GDALRaster' object",
+             call. = FALSE)
+    }
+
+    if (is.null(dst_wkt))
+        stop("'dst_wkt' cannot be NULL", call. = FALSE)
+    if (!(is.character(dst_wkt) && length(dst_wkt) == 1))
+        stop("'dst_wkt' must be a character string", call. = FALSE)
+
+    if (is.null(resample_alg))
+        stop("'resample_alg' cannot be NULL", call. = FALSE)
+    if (!(is.character(resample_alg) && length(resample_alg) == 1))
+        stop("'resample_alg' must be a character string", call. = FALSE)
+
+    if (is.null(src_wkt))
+        stop("'src_wkt' cannot be NULL", call. = FALSE)
+    if (!(is.character(src_wkt) && length(src_wkt) == 1))
+        stop("'src_wkt' must be a character string", call. = FALSE)
+
+    if (is.null(max_err))
+        stop("'max_err' cannot be NULL", call. = FALSE)
+    if (!(is.numeric(max_err) && length(max_err) == 1))
+        stop("'max_err' must be a numeric value", call. = FALSE)
+
+    if (is.null(alpha_band))
+        stop("'alpha_band' cannot be NULL", call. = FALSE)
+    if (!(is.logical(alpha_band) && length(alpha_band) == 1))
+        stop("'alpha_band' must be a logical value", call. = FALSE)
+
+    # signature for autoCreateWarpedVRT() object factory
+    ds <- new(GDALRaster, src_ds, dst_wkt, resample_alg, src_wkt, max_err,
+              alpha_band, TRUE, TRUE)
+
+    return(ds);
 }

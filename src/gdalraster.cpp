@@ -129,6 +129,11 @@ GDALRaster::GDALRaster(Rcpp::CharacterVector filename, bool read_only,
         warnInt64_();
 }
 
+GDALRaster::~GDALRaster() {
+    if (m_hDataset)
+        GDALClose(m_hDataset);
+}
+
 std::string GDALRaster::getFilename() const {
     return m_fname;
 }
@@ -2133,6 +2138,21 @@ RCPP_MODULE(mod_GDALRaster) {
         ("Usage: new(GDALRaster, filename, read_only, open_options)")
     .constructor<Rcpp::CharacterVector, bool, Rcpp::Nullable<Rcpp::CharacterVector>, bool>
         ("Usage: new(GDALRaster, filename, read_only, open_options, shared)")
+
+    // createCopy() object factory with 6 parameters
+    .factory<const std::string&, const Rcpp::CharacterVector&,
+             const GDALRaster* const&, bool,
+             const Rcpp::Nullable<Rcpp::CharacterVector>&, bool>
+             (createCopy)
+    // create() object factory with 7 parameters
+    .factory<const std::string&, const Rcpp::CharacterVector&,
+             int, int, int, const std::string&,
+             const Rcpp::Nullable<Rcpp::CharacterVector>&>
+             (create)
+    // autoCreateWarpedVRT() object factory with 8 parameters
+    .factory<const GDALRaster* const&, const std::string&, const std::string&,
+             const std::string&, double, bool, bool, bool>
+             (autoCreateWarpedVRT)
 
     // exposed read/write fields
     .field("infoOptions", &GDALRaster::infoOptions)
