@@ -120,4 +120,10 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
                  int date_line_offset, bool as_iso,
                  const std::string &byte_order, bool quiet);
 
+Rcpp::NumericVector bbox_from_wkt(const std::string &wkt,
+                                  double extend_x, double extend_y);
+
+Rcpp::String bbox_to_wkt(const Rcpp::NumericVector &bbox,
+                         double extend_x, double extend_y);
+
 #endif  // SRC_GEOM_API_H_

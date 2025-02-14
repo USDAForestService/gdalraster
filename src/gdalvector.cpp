@@ -25,7 +25,14 @@
 #include "nanoarrow/r.h"
 
 
-GDALVector::GDALVector() {}
+GDALVector::GDALVector() :
+            m_layer_name(""),
+            m_dialect(""),
+            m_open_options(Rcpp::CharacterVector::create()),
+            m_spatial_filter(""),
+            m_hDataset(nullptr),
+            m_eAccess(GA_ReadOnly),
+            m_hLayer(nullptr) {}
 
 GDALVector::GDALVector(Rcpp::CharacterVector dsn) :
 
@@ -3286,6 +3293,8 @@ void GDALVector::arrow_release_wrap(struct ArrowArrayStream* stream) {
 RCPP_MODULE(mod_GDALVector) {
     Rcpp::class_<GDALVector>("GDALVector")
 
+    .constructor
+        ("Default constructor, no dataset opened")
     .constructor<Rcpp::CharacterVector>
         ("Usage: new(GDALVector, dsn)")
     .constructor<Rcpp::CharacterVector, std::string>

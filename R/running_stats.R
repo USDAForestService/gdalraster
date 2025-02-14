@@ -97,8 +97,9 @@
 #'
 #' @examples
 #' set.seed(42)
-#'
 #' rs <- new(RunningStats, na_rm=TRUE)
+#' rs
+#'
 #' chunk <- runif(1000)
 #' rs$update(chunk)
 #' object.size(rs)
@@ -137,3 +138,10 @@
 NULL
 
 Rcpp::loadModule("mod_running_stats", TRUE)
+
+setMethod("show", "Rcpp_RunningStats", function(object) {
+    cat("C++ object of class RunningStats\n",
+        "  Number of values: ", object$get_count(), "\n",
+        sep = ""
+    )
+})

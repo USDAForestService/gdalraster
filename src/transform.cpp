@@ -10,7 +10,7 @@
 #include "ogr_spatialref.h"
 
 #include "gdalraster.h"
-#include "wkt_conv.h"
+#include "srs_api.h"
 
 //' get PROJ version
 //' @noRd
@@ -95,49 +95,9 @@ void setPROJEnableNetwork(int enabled) {
 
 //' Inverse project geospatial x/y coordinates to longitude/latitude
 //'
-//' `inv_project()` transforms geospatial x/y coordinates to
-//' longitude/latitude in the same geographic coordinate system used by the
-//' given projected spatial reference system. The output long/lat can
-//' optionally be set to a specific geographic coordinate system by specifying
-//' a well known name (see Details).
-//'
-//' @details
-//' By default, the geographic coordinate system of the projection specified
-//' by `srs` will be used. If a specific geographic coordinate system is
-//' desired, then `well_known_gcs` can be set to one of the values below:
-//' \tabular{rl}{
-//'  EPSG:n \tab where n is the code of a geographic coordinate system\cr
-//'  WGS84  \tab same as EPSG:4326\cr
-//'  WGS72  \tab same as EPSG:4322\cr
-//'  NAD83  \tab same as EPSG:4269\cr
-//'  NAD27  \tab same as EPSG:4267\cr
-//'  CRS84  \tab same as WGS84\cr
-//'  CRS72  \tab same as WGS72\cr
-//'  CRS27  \tab same as NAD27
-//' }
-//' The returned array will always be in longitude, latitude order
-//' (traditional GIS order) regardless of the axis order defined for the
-//' names above.
-//'
-//' @param pts A two-column data frame or numeric matrix containing geospatial
-//' x, y coordinates (or vector of x, y for one point).
-//' @param srs Character string specifying the projected spatial reference
-//' system for `pts`. May be in WKT format or any of the formats supported by
-//' [srs_to_wkt()].
-//' @param well_known_gcs Optional character string containing a supported
-//' well known name of a geographic coordinate system (see Details for
-//' supported values).
-//' @returns Numeric matrix of longitude, latitude. An error is raised if the
-//' transformation cannot be performed.
-//' @seealso
-//' [transform_xy()]
-//' @examples
-//' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
-//' ## id, x, y in NAD83 / UTM zone 12N
-//' pts <- read.csv(pt_file)
-//' print(pts)
-//' inv_project(pts[,-1], "EPSG:26912")
-// [[Rcpp::export]]
+//' public wrapper in R/transform.R
+//' @noRd
+// [[Rcpp::export(name = ".inv_project")]]
 Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
                                 const std::string &srs,
                                 const std::string &well_known_gcs = "") {
@@ -147,10 +107,18 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     if (pts_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
 
-    // currently (x, y)
-    // could support 3-column and 4-column with m and t values in the future
-    if (pts_in.ncol() != 2)
-        Rcpp::stop("input matrix must have 2 columns");
+    if (pts_in.ncol() < 2 || pts_in.ncol() > 4)
+        Rcpp::stop("input matrix must have 2, 3 or 4 columns");
+
+    bool has_z = false;
+    bool has_t = false;
+    if (pts_in.ncol() == 3) {
+        has_z = true;
+    }
+    else if (pts_in.ncol() == 4) {
+        has_z = true;
+        has_t = true;
+    }
 
     std::string srs_in = srs_to_wkt(srs, false);
 
@@ -188,12 +156,27 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 
     Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
     Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
+    Rcpp::NumericVector z{};
+    if (has_z)
+        z = pts_in(Rcpp::_ , 2);
+    Rcpp::NumericVector t{};
+    if (has_t)
+        t = pts_in(Rcpp::_ , 3);
     std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
+    std::vector<double> zbuf{};
+    if (has_z)
+        zbuf = Rcpp::as<std::vector<double>>(z);
+    std::vector<double> tbuf{};
+    if (has_t)
+        tbuf = Rcpp::as<std::vector<double>>(t);
+
     std::vector<int> success(pts_in.size());
 
     int res = poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data(),
-                              nullptr, nullptr, success.data());
+                              has_z ? zbuf.data() : nullptr,
+                              has_t ? tbuf.data() : nullptr,
+                              success.data());
 
     OGRCoordinateTransformation::DestroyCT(poCT);
     poLongLat->Release();
@@ -205,24 +188,40 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     }
 
     Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
+    if (has_z)
+        na_in = na_in | Rcpp::is_na(z);
+    if (has_t)
+        na_in = na_in | Rcpp::is_na(t);
     Rcpp::NumericVector ret_x = Rcpp::wrap(xbuf);
     Rcpp::NumericVector ret_y = Rcpp::wrap(ybuf);
+    Rcpp::NumericVector ret_z{};
+    if (has_z)
+        ret_z = Rcpp::wrap(zbuf);
+    Rcpp::NumericVector ret_t{};
+    if (has_t)
+        ret_t = Rcpp::wrap(tbuf);
     size_t num_err = 0;
     for (R_xlen_t i = 0; i < na_in.size(); ++i) {
-        if (na_in[i] == TRUE) {
+        if (na_in[i] == TRUE || !success[i]) {
             ret_x[i] = NA_REAL;
             ret_y[i] = NA_REAL;
-        }
-        else if (!success[i]) {
-            num_err += 1;
-            ret_x[i] = NA_REAL;
-            ret_y[i] = NA_REAL;
+            if (has_z)
+                ret_z[i] = NA_REAL;
+            if (has_t)
+                ret_t[i] = NA_REAL;
+
+            if (na_in[i] != TRUE && !success[i])
+                num_err += 1;
         }
     }
 
-    Rcpp::NumericMatrix ret = Rcpp::no_init(pts_in.nrow(), 2);
+    Rcpp::NumericMatrix ret = Rcpp::no_init(pts_in.nrow(), pts_in.ncol());
     ret.column(0) = ret_x;
     ret.column(1) = ret_y;
+    if (has_z)
+        ret.column(2) = ret_z;
+    if (has_t)
+        ret.column(3) = ret_t;
 
     if (num_err > 0) {
         Rcpp::warning(std::to_string(num_err) +
@@ -234,29 +233,9 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 
 //' Transform geospatial x/y coordinates
 //'
-//' `transform_xy()` transforms geospatial x/y coordinates to a new projection.
-//'
-//' @param pts A two-column data frame or numeric matrix containing geospatial
-//' x, y coordinates (or vector of x, y for one point).
-//' @param srs_from Character string specifying the spatial reference system
-//' for `pts`. May be in WKT format or any of the formats supported by
-//' [srs_to_wkt()].
-//' @param srs_to Character string specifying the output spatial reference
-//' system. May be in WKT format or any of the formats supported by
-//' [srs_to_wkt()].
-//' @returns Numeric matrix of geospatial (x, y) coordinates in the projection
-//' specified by `srs_to`.
-//'
-//' @seealso
-//' [epsg_to_wkt()], [srs_to_wkt()], [inv_project()]
-//' @examples
-//' pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
-//' pts <- read.csv(pt_file)
-//' print(pts)
-//' ## id, x, y in NAD83 / UTM zone 12N
-//' ## transform to NAD83 / CONUS Albers
-//' transform_xy(pts = pts[, -1], srs_from = "EPSG:26912", srs_to = "EPSG:5070")
-// [[Rcpp::export]]
+//' public wrapper in R/transform.R
+//' @noRd
+// [[Rcpp::export(name = ".transform_xy")]]
 Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
                                  const std::string &srs_from,
                                  const std::string &srs_to) {
@@ -266,10 +245,18 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     if (pts_in.nrow() == 0)
         Rcpp::stop("input matrix is empty");
 
-    // currently (x, y)
-    // could support 3-column and 4-column for m and t values in the future
-    if (pts_in.ncol() != 2)
-        Rcpp::stop("input matrix must have 2 columns");
+    if (pts_in.ncol() < 2 || pts_in.ncol() > 4)
+        Rcpp::stop("input matrix must have 2, 3 or 4 columns");
+
+    bool has_z = false;
+    bool has_t = false;
+    if (pts_in.ncol() == 3) {
+        has_z = true;
+    }
+    else if (pts_in.ncol() == 4) {
+        has_z = true;
+        has_t = true;
+    }
 
     std::string srs_from_in = srs_to_wkt(srs_from, false);
     std::string srs_to_in = srs_to_wkt(srs_to, false);
@@ -296,12 +283,27 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     Rcpp::NumericVector x = pts_in(Rcpp::_ , 0);
     Rcpp::NumericVector y = pts_in(Rcpp::_ , 1);
+    Rcpp::NumericVector z{};
+    if (has_z)
+        z = pts_in(Rcpp::_ , 2);
+    Rcpp::NumericVector t{};
+    if (has_t)
+        t = pts_in(Rcpp::_ , 3);
     std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
+    std::vector<double> zbuf{};
+    if (has_z)
+        zbuf = Rcpp::as<std::vector<double>>(z);
+    std::vector<double> tbuf{};
+    if (has_t)
+        tbuf = Rcpp::as<std::vector<double>>(t);
+
     std::vector<int> success(pts_in.size());
 
     int res = poCT->Transform(pts_in.nrow(), xbuf.data(), ybuf.data(),
-                              nullptr, nullptr, success.data());
+                              has_z ? zbuf.data() : nullptr,
+                              has_t ? tbuf.data() : nullptr,
+                              success.data());
 
     OGRCoordinateTransformation::DestroyCT(poCT);
 
@@ -312,24 +314,40 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     }
 
     Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
+    if (has_z)
+        na_in = na_in | Rcpp::is_na(z);
+    if (has_t)
+        na_in = na_in | Rcpp::is_na(t);
     Rcpp::NumericVector ret_x = Rcpp::wrap(xbuf);
     Rcpp::NumericVector ret_y = Rcpp::wrap(ybuf);
+    Rcpp::NumericVector ret_z{};
+    if (has_z)
+        ret_z = Rcpp::wrap(zbuf);
+    Rcpp::NumericVector ret_t{};
+    if (has_t)
+        ret_t = Rcpp::wrap(tbuf);
     size_t num_err = 0;
     for (R_xlen_t i = 0; i < na_in.size(); ++i) {
-        if (na_in[i] == TRUE) {
+        if (na_in[i] == TRUE || !success[i]) {
             ret_x[i] = NA_REAL;
             ret_y[i] = NA_REAL;
-        }
-        else if (!success[i]) {
-            num_err += 1;
-            ret_x[i] = NA_REAL;
-            ret_y[i] = NA_REAL;
+            if (has_z)
+                ret_z[i] = NA_REAL;
+            if (has_t)
+                ret_t[i] = NA_REAL;
+
+            if (na_in[i] != TRUE && !success[i])
+                num_err += 1;
         }
     }
 
-    Rcpp::NumericMatrix ret = Rcpp::no_init(pts_in.nrow(), 2);
+    Rcpp::NumericMatrix ret = Rcpp::no_init(pts_in.nrow(), pts_in.ncol());
     ret.column(0) = ret_x;
     ret.column(1) = ret_y;
+    if (has_z)
+        ret.column(2) = ret_z;
+    if (has_t)
+        ret.column(3) = ret_t;
 
     if (num_err > 0) {
         Rcpp::warning(std::to_string(num_err) +

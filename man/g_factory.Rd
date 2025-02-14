@@ -26,8 +26,11 @@ g_add_geom(
 \item{geom_type}{Character string. One of \code{"POINT"}, \code{"MULTIPOINT"},
 \code{"LINESTRING"}, \code{"POLYGON"} (see Note).}
 
-\item{pts}{Numeric matrix of points (x, y), or \code{NULL} to create an empty
-geometry. Rings for polygon geometries should be closed.}
+\item{pts}{Numeric matrix of points (x, y, z, m), or \code{NULL} to create an
+empty geometry. The points can be given as (x, y), (x, y, z) or
+(x, y, z, m), so the input must have two, three or four columns.
+Data frame input will be coerced to numeric matrix. Rings for polygon
+geometries should be closed.}
 
 \item{as_wkb}{Logical, \code{TRUE} to return the output geometry in WKB
 format (the default), or \code{FALSE} to return a WKT string.}
@@ -44,7 +47,8 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 }
 \value{
 A geometry as WKB raw vector by default, or a WKT string if
-\code{as_wkb = FALSE}.
+\code{as_wkb = FALSE}. In the case of multiple input points for creating Point
+geometry type, a list of WKB raw vectors or character vector of WKT strings.
 }
 \description{
 These functions create WKB/WKT geometries from input vertices, and build
@@ -55,8 +59,11 @@ These functions use the GEOS library via GDAL headers.
 
 \code{g_create()} creates a geometry object from the given point(s) and returns
 a raw vector of WKB (the default) or a character string of WKT. Currently,
-supports simple 2D geometry types Point, MultiPoint, LineString, and
-Polygon.
+supports Point, MultiPoint, LineString, and Polygon. If multiple input
+points are given for creating Point type, then multiple geometries will be
+returned as a list of WKB raw vectors, or character vector of WKT strings
+(if \code{as_wkb = FALSE}). Otherwise, a single geometry is created from the
+input points.
 
 \code{g_add_geom()} adds a geometry to a geometry container, e.g.,
 POLYGON to POLYGON (to add an interior ring), POINT to MULTIPOINT,
@@ -75,26 +82,31 @@ ring. The next ones will be the interior rings.
 # raw vector of WKB by default
 g_create("POINT", c(1, 2))
 
-# as_wkb = FALSE
+# as WKT
 g_create("POINT", c(1, 2), as_wkb = FALSE)
 
-# or convert
+# or convert in either direction
 g_create("POINT", c(1, 2)) |> g_wk2wk()
-
 g_create("POINT", c(1, 2), as_wkb = FALSE) |> g_wk2wk()
 
-# create multipoint from a matrix of points
+# create multipoint from a matrix of xyz points
 x <- c(9, 1)
 y <- c(1, 9)
-pts <- cbind(x, y)
-mult_pt1 <- g_create("MULTIPOINT", pts)
-is.raw(mult_pt1)
-g_wk2wk(mult_pt1)
+z <- c(0, 10)
+pts <- cbind(x, y, z)
+mp <- g_create("MULTIPOINT", pts)
+g_wk2wk(mp)
+g_wk2wk(mp, as_iso = TRUE)
 
 # create an empty container and add subgeometries
-mult_pt2 <- g_create("MULTIPOINT")
-mult_pt2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mult_pt2)
-mult_pt2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mult_pt2)
-is.raw(mult_pt2)
-g_wk2wk(mult_pt2)
+mp2 <- g_create("MULTIPOINT")
+mp2 <- g_create("POINT", c(11, 2)) |> g_add_geom(mp2)
+mp2 <- g_create("POINT", c(12, 3)) |> g_add_geom(mp2)
+g_wk2wk(mp2)
+
+# plot WKT strings or a list of WKB raw vectors with wk::wk_plot()
+pts <- c(0, 0, 3, 0, 3, 4, 0, 0)
+m <- matrix(pts, ncol = 2, byrow = TRUE)
+g <- g_create("POLYGON", m, as_wkb = FALSE)
+wk::wkt(g) |> wk::wk_plot()
 }

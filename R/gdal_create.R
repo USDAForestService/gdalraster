@@ -67,7 +67,9 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
     if (!is.logical(return_obj) || length(return_obj) > 1)
         stop("'return_obj' must be a logical scalar", call. = FALSE)
 
-    ds <- .create(format, dst_filename, xsize, ysize, nbands, dataType, options)
+    # signature for create() object factory
+    ds <- new(GDALRaster, format, dst_filename, xsize, ysize, nbands, dataType,
+              options)
 
     if (return_obj) {
         return(ds)
@@ -153,7 +155,8 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE,
     if (!is.logical(return_obj) || length(return_obj) > 1)
         stop("'return_obj' must be a logical scalar", call. = FALSE)
 
-    ds <- .createCopy(format, dst_filename, src_ds, strict, options, quiet)
+    # signature for createCopy() object factory
+    ds <- new(GDALRaster, format, dst_filename, src_ds, strict, options, quiet)
 
     if (return_obj) {
         return(ds)

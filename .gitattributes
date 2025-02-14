@@ -14,7 +14,9 @@ configure.ac text eol=lf
 *.json linguist-documentation
 *.Rd linguist-documentation
 R/gdalraster.R linguist-documentation
+R/gdalvector.R linguist-documentation
 R/cmb_table.R linguist-documentation
 R/running_stats.R linguist-documentation
+R/vsifile.R linguist-documentation
 # Exclude from stats
 configure.ac linguist-vendored

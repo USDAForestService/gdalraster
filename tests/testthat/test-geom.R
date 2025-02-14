@@ -47,7 +47,10 @@ test_that("geom functions work on wkb/wkt geometries", {
 
     line_xy <- matrix(c(324171, 327711.7, 5103034.3, 5104475.9),
                       nrow=2, ncol=2)
-    expect_error(g_create("POINT", line_xy))
+    # expect_error(g_create("POINT", line_xy))
+    # now returns multiple POINT geoms:
+    expect_equal(length(g_create("POINT", line_xy)), 2)
+    expect_equal(g_create("POINT", line_xy) |> g_name(), c("POINT", "POINT"))
     line <- g_create("LINESTRING", line_xy, as_wkb = FALSE)
 
     # set up vector of WKT, WKB raw vector, and list of WKB raw vectors
@@ -273,19 +276,69 @@ test_that("g_factory functions work", {
     pts <-matrix(pts, ncol = 2, byrow = TRUE)
     line1 <- g_create("LINESTRING", pts)
     expect_true(g_intersects(line1, poly1))
+    # xyz
+    pts <- c(9, 1, 0, 12, 4, 10)
+    pts <-matrix(pts, ncol = 3, byrow = TRUE)
+    line2 <- g_create("LINESTRING", pts)
+    coords <- g_coords(line2)
+    expect_equal(coords$x, pts[, 1])
+    expect_equal(coords$y, pts[, 2])
+    expect_equal(coords$z, pts[, 3])
+    # xyzm
+    pts <- c(9, 1, 0, 2000, 12, 4, 10, 2000)
+    pts <-matrix(pts, ncol = 4, byrow = TRUE)
+    line3 <- g_create("LINESTRING", pts)
+    coords <- g_coords(line3)
+    expect_equal(coords$x, pts[, 1])
+    expect_equal(coords$y, pts[, 2])
+    expect_equal(coords$z, pts[, 3])
+    expect_equal(coords$m, pts[, 4])
 
     # point
     pt1 <- g_create("POINT", c(9, 1))
     expect_true(g_within(pt1, poly1))
     pt2 <- g_create("POINT", c(1, 9))
     expect_false(g_within(pt2, poly1))
+    # xyz
+    pt3 <- g_create("POINT", c(1, 9, 0))
+    coords <- g_coords(pt3)
+    expect_equal(coords$x, 1)
+    expect_equal(coords$y, 9)
+    expect_equal(coords$z, 0)
+    # xyzm
+    pt4 <- g_create("POINT", c(1, 9, 0, 2000))
+    coords <- g_coords(pt4)
+    expect_equal(coords$x, 1)
+    expect_equal(coords$y, 9)
+    expect_equal(coords$z, 0)
+    expect_equal(coords$m, 2000)
 
     # multipoint
     pts <- c(9, 1, 1, 9)
     pts <-matrix(pts, ncol = 2, byrow = TRUE)
     mult_pt1 <- g_create("MULTIPOINT", pts)
     expect_false(g_within(mult_pt1, poly1))
-
+    # multipoint xyz
+    x <- c(9, 1)
+    y <- c(1, 9)
+    z <- c(0, 10)
+    pts <- cbind(x, y, z)
+    mult_pt_xyz <- g_create("MULTIPOINT", pts)
+    expect_equal(g_name(mult_pt_xyz), "MULTIPOINT")
+    coords <- g_coords(mult_pt_xyz)
+    expect_equal(coords$x, x)
+    expect_equal(coords$y, y)
+    expect_equal(coords$z, z)
+    # multipoint xyzm
+    m <- c(2000, 2000)
+    pts <- cbind(x, y, z, m)
+    mult_pt_xyzm <- g_create("MULTIPOINT", pts)
+    expect_equal(g_name(mult_pt_xyzm), "MULTIPOINT")
+    coords <- g_coords(mult_pt_xyzm)
+    expect_equal(coords$x, x)
+    expect_equal(coords$y, y)
+    expect_equal(coords$z, z)
+    expect_equal(coords$m, m)
 
     ## add subgeometry to container
     # create empty multipoint and add geoms
@@ -364,6 +417,21 @@ test_that("WKB/WKT conversion functions work", {
     # POINT EMPTY special case
     wkt <- "POINT EMPTY"
     expect_warning(wkb <- g_wk2wk(wkt))
+})
+
+test_that("bbox functions work", {
+    skip_if_not(has_geos())
+
+    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    ds <- new(GDALRaster, elev_file, read_only=TRUE)
+    bb <- ds$bbox()
+    ds$close()
+
+    expect_equal(bbox_from_wkt("invalid WKT"), rep(NA_real_, 4))
+    bb_wkt <- bbox_to_wkt(bb)
+    expect_true(startsWith(bb_wkt, "POLYGON"))
+    expect_equal(bbox_from_wkt(bb_wkt), bb)
+    expect_error(bbox_to_wkt(c(0, 1)))
 })
 
 test_that("bbox intersect/union return correct values", {
@@ -622,4 +690,35 @@ test_that("make_valid works", {
     expect_equal(length(wkb_list), length(wkt_vec))
     expect_true(is.na(wkb_list[[2]]))
     expect_true(g_equals(g_wk2wk(wkb_list[[4]]), expected_wkt4))
+})
+
+test_that("g_coords returns a data frame of vertices", {
+    m <- matrix(c(0, 3, 3, 4, 0, 0), ncol = 2, byrow = TRUE)
+    pts_wkb <- lapply(seq_len(nrow(m)), function(i) g_create("POINT", m[i, ]))
+    expect_true(is.list(pts_wkb) && length(pts_wkb) == 3)
+    xy <- g_coords(pts_wkb)
+    expect_equal(xy$x, c(0, 3, 0))
+    expect_equal(xy$y, c(3, 4, 0))
+    # one WKB raw vector not in a list
+    expect_true(is.raw(pts_wkb[[1]]))
+    xy <- g_coords(pts_wkb[[1]])
+    expect_equal(xy$x, 0)
+    expect_equal(xy$y, 3)
+    # WKT input
+    pts_wkt <- g_wk2wk(pts_wkb)
+    expect_true(is.character(pts_wkt) && length(pts_wkt) == 3)
+    xy <- g_coords(pts_wkt)
+    expect_equal(xy$x, c(0, 3, 0))
+    expect_equal(xy$y, c(3, 4, 0))
+
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn)
+    lyr <- new(GDALVector, dsn, "mtbs_perims")
+    d <- lyr$fetch(1)
+    vertices <- g_coords(d$geom)
+    expect_true(is.data.frame(vertices))
+    expect_equal(nrow(vertices), 36)
+    lyr$close()
+    unlink(dsn)
 })

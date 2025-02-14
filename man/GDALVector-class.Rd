@@ -690,8 +690,8 @@ file.copy(f, dsn)
 
 lyr <- new(GDALVector, dsn, "mtbs_perims")
 
-## object of class GDALVector
 lyr
+
 str(lyr)
 
 ## dataset info
