@@ -113,38 +113,38 @@ class GDALVector {
     std::string getMetadataItem(std::string mdi_name) const;
 
     bool layerIntersection(
-            GDALVector method_layer,
-            GDALVector result_layer,
+            GDALVector* const &method_layer,
+            GDALVector* const &result_layer,
             bool quiet,
             const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerUnion(
-            GDALVector method_layer,
-            GDALVector result_layer,
+            GDALVector* const &method_layer,
+            GDALVector* const &result_layer,
             bool quiet,
             const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerSymDifference(
-            GDALVector method_layer,
-            GDALVector result_layer,
+            GDALVector* const &method_layer,
+            GDALVector* const &result_layer,
             bool quiet,
             const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerIdentity(
-            GDALVector method_layer,
-            GDALVector result_layer,
+            GDALVector* const &method_layer,
+            GDALVector* const &result_layer,
             bool quiet,
             const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerUpdate(
-            GDALVector method_layer,
-            GDALVector result_layer,
+            GDALVector* const &method_layer,
+            GDALVector* const &result_layer,
             bool quiet,
             const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerClip(
-            GDALVector method_layer,
-            GDALVector result_layer,
+            GDALVector* const &method_layer,
+            GDALVector* const &result_layer,
             bool quiet,
             const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
     bool layerErase(
-            GDALVector method_layer,
-            GDALVector result_layer,
+            GDALVector* const &method_layer,
+            GDALVector* const &result_layer,
             bool quiet,
             const Rcpp::Nullable<const Rcpp::CharacterVector> &options);
 

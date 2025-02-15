@@ -414,15 +414,15 @@ ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
     }
 
     if (is.null(layer_defn)) {
-        lyr <- .create_ogr(format, dsn, 0, 0, 0, "Unknown",
-                           layer, geom_type, srs, fld_name, fld_type,
-                           dsco, lco, NULL)
+        # signature for create_ogr() object factory
+        lyr <- new(GDALVector, format, dsn, layer, geom_type, srs, fld_name,
+                   fld_type, dsco, lco, NULL)
 
     } else {
-        lyr <- .create_ogr(format, dsn, 0, 0, 0, "Unknown",
-                           layer = layer, geom_type = "", srs = "",
-                           fld_name = "", fld_type = "",
-                           dsco = dsco, lco = lco, layer_defn = layer_defn)
+        # signature for create_ogr() object factory
+        lyr <- new(GDALVector, format, dsn, layer = layer, geom_type = "",
+                   srs = "", fld_name = "", fld_type = "", dsco = dsco,
+                   lco = lco, layer_defn = layer_defn)
     }
 
     if (return_obj) {
@@ -543,12 +543,8 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
     if (!is.logical(return_obj) || length(return_obj) > 1)
         stop("'return_obj' must be a logical scalar", call. = FALSE)
 
-    lyr <- .ogr_layer_create(dsn = dsn,
-                             layer = layer,
-                             layer_defn = layer_defn,
-                             geom_type = geom_type,
-                             srs = srs,
-                             options = lco)
+    # signature for ogr_layer_create() object factory
+    lyr <- new(GDALVector, dsn, layer, layer_defn, geom_type, srs, lco, TRUE)
 
     if (return_obj) {
         return(lyr)
