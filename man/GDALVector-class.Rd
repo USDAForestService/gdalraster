@@ -78,6 +78,9 @@ lyr$quiet
 lyr$returnGeomAs
 lyr$wkbByteOrder
 
+## Read-only fields
+lyr$stream
+
 ## Methods
 lyr$open(read_only)
 lyr$isOpen()
@@ -224,6 +227,14 @@ returned.
 Character string specifying the byte order for WKB geometries.
 Must be either \code{LSB} (Least Significant Byte first, the default) or
 \code{MSB} (Most Significant Byte first).
+}
+
+\subsection{Read-only fields}{
+
+\code{$stream}\cr
+A nanoarrow_array_stream object if an Arrow stream on the layer has been
+activated with a call to \verb{$getArrowStream()} (see below, requires
+GDAL >= 3.6). \code{NULL} if an Arrow stream is not active.
 }
 
 \subsection{Methods}{
@@ -513,29 +524,33 @@ Note that \verb{$getFeatureCount()} is called internally when fetching the full
 feature set or all remaining features (but not for a page of features).
 
 \code{$getArrowStream()}\cr
-Returns a nanoarrow_array_stream object exposing an Arrow C stream on the
-layer (requires GDAL >= 3.6).
+Allocates a nanoarrow_array_stream object exposing an Arrow C stream on the
+layer (requires GDAL >= 3.6). If an array stream is successfully activated,
+the stream object will be available via the \verb{$stream} field.
+No return value, called for that side effect only. An error is raised if an
+array stream on the layer cannot be activated.
 The writable field \verb{$arrowStreamOptions} can be used to set options before
-calling this method (see above). An error is raised if an array stream
-on the layer cannot be obtained.
-Generally, only one ArrowArrayStream can be active at a time on a given
-layer (that is the last active one must be explicitly released before a next
+calling this method (see above).
+Only one ArrowArrayStream can be active at a time on a given layer
+(that is the last active one must be explicitly released before a next
 one is asked). Changing attribute or spatial filters, ignored columns,
 modifying the schema or using \verb{$resetReading()}/\verb{$getNextFeature()} while
 using an ArrowArrayStream is strongly discouraged and may lead to unexpected
 results. As a rule of thumb, no OGRLayer methods that affect the state of a
-layer should be called on the layer while an ArrowArrayStream on it is
-active. Methods available on the stream object are: \verb{$get_schema()},
-\verb{$get_next()}, \code{get_last_error()} and \verb{$release()} (see Examples).
+layer should be called while an ArrowArrayStream on the layer is
+active. Methods available on the stream object are: \verb{$stream$get_schema()},
+\verb{$stream$get_next()}, and \verb{$stream$release()} (see Examples).
 The stream should be released once reading is complete. Calling the release
 method as soon as you can after consuming a stream is recommended in the
 nanoarrow documentation.
 
 \code{$releaseArrowStream()}\cr
-Releases the Arrow C stream returned by \verb{$getArrowStream()} and clears the
-nanoarrow_array_stream object (if GDAL >= 3.6, otherwise does nothing).
-This is equivalent to calling the \verb{$release()} method on the
-nanoarrow_array_stream object. No return value, called for side effects.
+Releases the Arrow C stream activated by \verb{$getArrowStream()} and clears the
+nanoarrow_array_stream object (GDAL >= 3.6, otherwise does nothing).
+This is equivalent to calling the release method on the
+nanoarrow_array_stream object via \verb{$stream$release()}. This method is safe
+to call if an Arrow stream is not currently active in which case it does
+nothing. No return value, called for side effects.
 
 \code{$setFeature(feature)}\cr
 Rewrites/replaces an existing feature. This method writes a feature based on
@@ -885,29 +900,25 @@ lyr$close()
 
 # Arrow array stream exposed as a nanoarrow_array_stream object
 # requires GDAL >= 3.6
-if (as.integer(gdal_version()[2]) >= 3060000 &&
-    requireNamespace("nanoarrow")) {
+if (as.integer(gdal_version()[2]) >= 3060000) {
 
   lyr <- new(GDALVector, dsn)
-  stream <- lyr$getArrowStream()
-  print(stream)
+  lyr$getArrowStream()
+  print(lyr$stream)
 
-  stream$get_schema() |> print()
+  lyr$stream$get_schema() |> print()
 
-  batch <- stream$get_next()
+  batch <- lyr$stream$get_next()
 
   options(nanoarrow.warn_unregistered_extension = FALSE)
   d <- as.data.frame(batch)
   head(d) |> print()
 
-  # the geometry column is a list column of WKB raw vectors, e.g.,
-  g_area(d$geom) |> print()
-
   # the last batch is NULL
-  stream$get_next()
+  lyr$stream$get_next()
 
   # release the stream when finished
-  stream$release()
+  lyr$stream$release()
 
   lyr$close()
 }
