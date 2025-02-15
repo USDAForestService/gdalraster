@@ -389,7 +389,7 @@ g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
         stop("'pts' must be a numeric matrix of xy[zm]", call. = FALSE)
     # as_wkb
     if (is.null(as_wkb))
-        as_wkb <- TRU
+        as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
         stop("'as_wkb' must be a logical value", call. = FALSE)
     # as_iso
