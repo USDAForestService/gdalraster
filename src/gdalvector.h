@@ -42,22 +42,17 @@ class GDALVector {
     ~GDALVector();
 
     // undocumented, exposed read-only fields for internal use
-    std::string m_layer_name = "";  // layer name or sql statement
-    bool m_is_sql = false;
-    std::string m_dialect = "";
-
-    // exposed read-only fields
-#if __has_include("ogr_recordbatch.h")
-    SEXP stream = R_NilValue;
-#endif
+    std::string m_layer_name {""};  // layer name or sql statement
+    bool m_is_sql {false};
+    std::string m_dialect {""};
 
     // exposed read/write fields
-    Rcpp::CharacterVector arrowStreamOptions = {""};
-    std::string defaultGeomColName = "geometry";
-    bool promoteToMulti = false;
-    bool quiet = false;
-    std::string returnGeomAs = "WKB";
-    std::string wkbByteOrder = "LSB";
+    Rcpp::CharacterVector arrowStreamOptions {""};
+    std::string defaultGeomColName {"geometry"};
+    bool promoteToMulti {false};
+    bool quiet {false};
+    std::string returnGeomAs {"WKB"};
+    std::string wkbByteOrder {"LSB"};
 
     // exposed methods
     void open(bool read_only);
@@ -99,7 +94,7 @@ class GDALVector {
 
     Rcpp::DataFrame fetch(double n);
 
-    void getArrowStream();
+    SEXP getArrowStream();
     void releaseArrowStream();
 
     bool setFeature(const Rcpp::RObject &feature);
@@ -193,18 +188,19 @@ class GDALVector {
 #endif
 
  private:
-    std::string m_dsn = "";
+    std::string m_dsn {""};
     Rcpp::CharacterVector m_open_options {};
-    std::string m_attr_filter = "";
-    std::string m_spatial_filter = "";
+    std::string m_attr_filter {""};
+    std::string m_spatial_filter {""};
     Rcpp::CharacterVector m_field_names {};
     Rcpp::CharacterVector m_ignored_fields {};
-    GDALDatasetH m_hDataset = nullptr;
-    GDALAccess m_eAccess = GA_ReadOnly;
-    OGRLayerH m_hLayer = nullptr;
-    int64_t m_last_write_fid = NA_INTEGER64;
+    GDALDatasetH m_hDataset {nullptr};
+    GDALAccess m_eAccess {GA_ReadOnly};
+    OGRLayerH m_hLayer {nullptr};
+    int64_t m_last_write_fid {NA_INTEGER64};
 #if __has_include("ogr_recordbatch.h")
     struct ArrowArrayStream m_stream;
+    SEXP m_stream_xptr = nullptr;
 #endif
 };
 

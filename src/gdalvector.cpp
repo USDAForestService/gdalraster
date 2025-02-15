@@ -1614,7 +1614,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 }
 
-void GDALVector::getArrowStream() {
+SEXP GDALVector::getArrowStream() {
     /*
     Exposes an Arrow C stream to be consumed by {nanoarrow}
     Implementation adapted from GDALStreamWrapper by Dewey Dunnington in:
@@ -1626,9 +1626,6 @@ void GDALVector::getArrowStream() {
 
 #else
     checkAccess_(GA_ReadOnly);
-
-    if (m_stream.release)
-        Rcpp::stop("an Arrow Stream is already active");
 
     std::vector<char *> opt{};
     if (this->arrowStreamOptions.size() > 0) {
@@ -1644,10 +1641,10 @@ void GDALVector::getArrowStream() {
             std::string(CPLGetLastErrorMsg()));
     }
 
-    this->stream = nanoarrow_array_stream_owning_xptr();
+    m_stream_xptr = nanoarrow_array_stream_owning_xptr();
 
     auto stream_tmp = reinterpret_cast<struct ArrowArrayStream*>(
-            R_ExternalPtrAddr(this->stream));
+            R_ExternalPtrAddr(m_stream_xptr));
 
     stream_tmp->get_schema = &arrow_get_schema_wrap;
     stream_tmp->get_next = &arrow_get_next_wrap;
@@ -1655,8 +1652,7 @@ void GDALVector::getArrowStream() {
     stream_tmp->release = &arrow_release_wrap;
     stream_tmp->private_data = this;
 
-    if (!quiet)
-        Rcpp::Rcout << "Arrow stream active in field '$stream'" << std::endl;
+    return m_stream_xptr;
 #endif
 }
 
@@ -1666,9 +1662,8 @@ void GDALVector::releaseArrowStream() {
         m_stream.release(&m_stream);
         m_stream.release = nullptr;
     }
-    if (this->stream && this->stream != R_NilValue) {
-        R_ClearExternalPtr(this->stream);
-        this->stream = R_NilValue;
+    if (m_stream_xptr) {
+        R_ClearExternalPtr(m_stream_xptr);
     }
 #endif
     return;
@@ -3321,11 +3316,6 @@ RCPP_MODULE(mod_GDALVector) {
     .field_readonly("m_layer_name", &GDALVector::m_layer_name)
     .field_readonly("m_is_sql", &GDALVector::m_is_sql)
     .field_readonly("m_dialect", &GDALVector::m_dialect)
-
-    // read-only fields
-#if __has_include("ogr_recordbatch.h")
-    .field_readonly("stream", &GDALVector::stream)
-#endif
 
     // read/write fields
     .field("arrowStreamOptions", &GDALVector::arrowStreamOptions)
