@@ -146,10 +146,10 @@ in the GDAL Spatial Reference System API. Defaults to <code>NO</code>.</p></dd>
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p><code>srs_find_epsg()</code> tries to find a matching EPSG code.
 Matching may be partial, or may fail. If <code>all_matches = TRUE</code>, returns a
-a data frame with entries sorted by decreasing match confidence (first
+data frame with entries sorted by decreasing match confidence (first
 entry has the highest match confidence); the default is <code>FALSE</code> which
-returns a character string in the form "EPSG:<code>" for the first match
-(highest confidence). Wrapper of <code>OSRFindMatches()</code> in the GDAL SRS API.</code></p>
+returns a character string in the form "EPSG:####" for the first match
+(highest confidence). Wrapper of <code>OSRFindMatches()</code> in the GDAL SRS API.</p>
 <p><code>srs_get_name()</code> returns the SRS name.
 Wrapper of <code>OSRGetName()</code> in the GDAL API.</p>
 <p><code>srs_is_geographic()</code> returns <code>TRUE</code>  if the root is a GEOGCS node.
@@ -201,7 +201,7 @@ data will still be long/lat ordered. Similarly for a projected CRS with
 northing/easting order, the data will still be easting/northing ordered.</p></li>
 <li><p><code>OAMS_AUTHORITY_COMPLIANT</code>: the data axis will be identical to the CRS
 axis.</p></li>
-<li><p><code>OAMS_CUSTOM</code>: the data axis are customly defined</p></li>
+<li><p><code>OAMS_CUSTOM</code>: custom-defined data axis</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
