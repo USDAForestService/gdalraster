@@ -1641,32 +1641,44 @@ SEXP GDALVector::getArrowStream() {
             std::string(CPLGetLastErrorMsg()));
     }
 
-    m_stream_xptr = nanoarrow_array_stream_owning_xptr();
+    m_stream_xptrs.push_back(nanoarrow_array_stream_owning_xptr());
+    size_t i = m_stream_xptrs.size() - 1;
 
-    auto stream_tmp = reinterpret_cast<struct ArrowArrayStream*>(
-            R_ExternalPtrAddr(m_stream_xptr));
+    auto stream_out = reinterpret_cast<struct ArrowArrayStream*>(
+        R_ExternalPtrAddr(m_stream_xptrs[i]));
 
-    stream_tmp->get_schema = &arrow_get_schema_wrap;
-    stream_tmp->get_next = &arrow_get_next_wrap;
-    stream_tmp->get_last_error = &arrow_get_last_error_wrap;
-    stream_tmp->release = &arrow_release_wrap;
-    stream_tmp->private_data = this;
+    stream_out->get_schema = &arrow_get_schema_wrap;
+    stream_out->get_next = &arrow_get_next_wrap;
+    stream_out->get_last_error = &arrow_get_last_error_wrap;
+    stream_out->release = &arrow_release_wrap;
+    stream_out->private_data = this;
 
-    return m_stream_xptr;
+    return m_stream_xptrs[i];
 #endif
 }
 
 void GDALVector::releaseArrowStream() {
 #if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
+
     if (m_stream.release) {
         m_stream.release(&m_stream);
         m_stream.release = nullptr;
+
+        if (m_stream_xptrs.empty()) {
+            // should not be possible here
+            return;
+        }
+
+        size_t i = m_stream_xptrs.size() - 1;
+        if (R_ExternalPtrAddr(m_stream_xptrs[i])) {
+            auto stream_out = reinterpret_cast<struct ArrowArrayStream*>(
+                R_ExternalPtrAddr(m_stream_xptrs[i]));
+
+            stream_out->release = nullptr;
+        }
     }
-    if (m_stream_xptr) {
-        R_ClearExternalPtr(m_stream_xptr);
-    }
+
 #endif
-    return;
 }
 
 bool GDALVector::setFeature(const Rcpp::RObject &feature) {

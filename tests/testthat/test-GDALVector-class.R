@@ -1124,5 +1124,38 @@ test_that("ArrowArrayStream is readable", {
     expect_no_error(stream2$release())
 
     lyr$close()
+
+    deleteDataset(dsn)
+})
+
+test_that("nanoarrow_array_stream implicit release works", {
+    skip_if(.gdal_version_num() < 3060000)
+    skip_if_not_installed("nanoarrow")
+
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    lyr <- new(GDALVector, dsn, "mtbs_perims")
+
+    # dataset/layer closed without explicit release
+    lyr$open(read_only = TRUE)
+    expect_no_error(stream3 <- lyr$getArrowStream())
+    expect_s3_class(stream3, "nanoarrow_array_stream")
+    lyr$close()
+    expect_error(stream3$get_next())
+
+    # stream garbage collected without explicit release
+    lyr$open(read_only = TRUE)
+    expect_no_error(stream3 <- lyr$getArrowStream())
+    expect_s3_class(stream3, "nanoarrow_array_stream")
+    rm(stream3)
+    gc()
+    # released implicitly so a new stream should be available
+    expect_no_error(stream4 <- lyr$getArrowStream())
+    expect_s3_class(stream4, "nanoarrow_array_stream")
+
+    lyr$close()
+
     deleteDataset(dsn)
 })
