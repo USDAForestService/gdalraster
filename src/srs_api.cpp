@@ -159,9 +159,9 @@ std::string srs_to_wkt(const std::string &srs, bool pretty = false) {
 //' @details
 //' `srs_find_epsg()` tries to find a matching EPSG code.
 //' Matching may be partial, or may fail. If `all_matches = TRUE`, returns a
-//' a data frame with entries sorted by decreasing match confidence (first
+//' data frame with entries sorted by decreasing match confidence (first
 //' entry has the highest match confidence); the default is `FALSE` which
-//' returns a character string in the form "EPSG:<code>" for the first match
+//' returns a character string in the form "EPSG:####" for the first match
 //' (highest confidence). Wrapper of `OSRFindMatches()` in the GDAL SRS API.
 //'
 //' `srs_get_name()` returns the SRS name.
@@ -230,7 +230,7 @@ std::string srs_to_wkt(const std::string &srs, bool pretty = false) {
 //' northing/easting order, the data will still be easting/northing ordered.
 //' * `OAMS_AUTHORITY_COMPLIANT`: the data axis will be identical to the CRS
 //' axis.
-//' * `OAMS_CUSTOM`: the data axis are customly defined
+//' * `OAMS_CUSTOM`: custom-defined data axis
 //'
 //' @param srs Character string containing an SRS definition in various
 //' formats (e.g., WKT, PROJ.4 string, well known name such as NAD27, NAD83,

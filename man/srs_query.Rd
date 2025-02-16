@@ -92,9 +92,9 @@ system passed as text in any of the formats supported by \code{\link[=srs_to_wkt
 \details{
 \code{srs_find_epsg()} tries to find a matching EPSG code.
 Matching may be partial, or may fail. If \code{all_matches = TRUE}, returns a
-a data frame with entries sorted by decreasing match confidence (first
+data frame with entries sorted by decreasing match confidence (first
 entry has the highest match confidence); the default is \code{FALSE} which
-returns a character string in the form "EPSG:\if{html}{\out{<code>}}" for the first match
+returns a character string in the form "EPSG:####" for the first match
 (highest confidence). Wrapper of \code{OSRFindMatches()} in the GDAL SRS API.
 
 \code{srs_get_name()} returns the SRS name.
@@ -164,7 +164,7 @@ data will still be long/lat ordered. Similarly for a projected CRS with
 northing/easting order, the data will still be easting/northing ordered.
 \item \code{OAMS_AUTHORITY_COMPLIANT}: the data axis will be identical to the CRS
 axis.
-\item \code{OAMS_CUSTOM}: the data axis are customly defined
+\item \code{OAMS_CUSTOM}: custom-defined data axis
 }
 }
 \examples{
