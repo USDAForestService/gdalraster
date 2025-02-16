@@ -1434,7 +1434,7 @@ dem_proc <- function(mode,
 #' or cubic spline (4 x 4 kernel, GDAL >= 3.10). Alternatively, an optional
 #' kernel dimension may be given to extract values of the individual pixels
 #' within an N x N kernel centered on the pixel containing the point location.
-#' If `xy_srs` is given, the function will atempt to transform the input points
+#' If `xy_srs` is given, the function will attempt to transform the input points
 #' to the projection of the raster with a call to `transform_xy()`.
 #'
 #' @param raster Either a character string giving the filename of a raster, or

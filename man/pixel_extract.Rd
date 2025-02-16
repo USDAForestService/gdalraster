@@ -65,7 +65,7 @@ for bilinear (2 x 2 kernel), cubic convolution (4 x 4 kernel, GDAL >= 3.10),
 or cubic spline (4 x 4 kernel, GDAL >= 3.10). Alternatively, an optional
 kernel dimension may be given to extract values of the individual pixels
 within an N x N kernel centered on the pixel containing the point location.
-If \code{xy_srs} is given, the function will atempt to transform the input points
+If \code{xy_srs} is given, the function will attempt to transform the input points
 to the projection of the raster with a call to \code{transform_xy()}.
 }
 \note{
