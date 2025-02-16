@@ -156,7 +156,7 @@ intersection).</p>
     <p><code>this_geom</code> and <code>other_geom</code> are assumed to be in the same coordinate
 reference system.</p>
 <p>Geometry validity is not checked. In case you are unsure of the validity
-of the input geometries, call <code><a href="g_is_valid.html">g_is_valid()</a></code> before, otherwise the result
+of the input geometries, call <code><a href="g_query.html">g_is_valid()</a></code> before, otherwise the result
 might be wrong.</p>
     </div>
 
@@ -180,12 +180,12 @@ might be wrong.</p>
 <span class="r-in"><span><span class="fu"><a href="g_binary_pred.html">g_contains</a></span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span>  <span class="co"># FALSE</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">g_sym_difference</span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="g_area.html">g_area</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">g_sym_difference</span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="g_measures.html">g_area</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 14834452</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">g3</span> <span class="op">&lt;-</span> <span class="fu">g_intersection</span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">g4</span> <span class="op">&lt;-</span> <span class="fu">g_union</span><span class="op">(</span><span class="va">g1</span>, <span class="va">g2</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">g_difference</span><span class="op">(</span><span class="va">g4</span>, <span class="va">g3</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="g_area.html">g_area</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">g_difference</span><span class="op">(</span><span class="va">g4</span>, <span class="va">g3</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="g_measures.html">g_area</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 14834452</span>
 </code></pre></div>
     </div>
