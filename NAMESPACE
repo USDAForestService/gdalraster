@@ -1,5 +1,5 @@
 useDynLib(gdalraster, .registration=TRUE)
-import(bit64, graphics, methods, Rcpp, wk, xml2)
+import(bit64, graphics, methods, nanoarrow, Rcpp, wk, xml2)
 importFrom("grDevices", "as.raster", "dev.capabilities", "gray", "rgb")
 importFrom("stats", "quantile")
 importFrom("tools", "file_path_sans_ext")
