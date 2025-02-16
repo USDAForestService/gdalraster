@@ -49,13 +49,14 @@ Imports:
     graphics,
     grDevices,
     methods,
+    nanoarrow,
     Rcpp (>= 1.0.7),
     stats,
     tools,
     utils,
     wk,
     xml2
-LinkingTo: Rcpp, RcppInt64
+LinkingTo: nanoarrow, Rcpp, RcppInt64
 Suggests:
     gt,
     knitr,
