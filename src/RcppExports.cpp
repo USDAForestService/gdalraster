@@ -12,80 +12,80 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // dt_size
-int dt_size(std::string dt, bool as_bytes);
+int dt_size(const std::string& dt, bool as_bytes);
 RcppExport SEXP _gdalraster_dt_size(SEXP dtSEXP, SEXP as_bytesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dt(dtSEXP);
     Rcpp::traits::input_parameter< bool >::type as_bytes(as_bytesSEXP);
     rcpp_result_gen = Rcpp::wrap(dt_size(dt, as_bytes));
     return rcpp_result_gen;
 END_RCPP
 }
 // dt_is_complex
-bool dt_is_complex(std::string dt);
+bool dt_is_complex(const std::string& dt);
 RcppExport SEXP _gdalraster_dt_is_complex(SEXP dtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dt(dtSEXP);
     rcpp_result_gen = Rcpp::wrap(dt_is_complex(dt));
     return rcpp_result_gen;
 END_RCPP
 }
 // dt_is_integer
-bool dt_is_integer(std::string dt);
+bool dt_is_integer(const std::string& dt);
 RcppExport SEXP _gdalraster_dt_is_integer(SEXP dtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dt(dtSEXP);
     rcpp_result_gen = Rcpp::wrap(dt_is_integer(dt));
     return rcpp_result_gen;
 END_RCPP
 }
 // dt_is_floating
-bool dt_is_floating(std::string dt);
+bool dt_is_floating(const std::string& dt);
 RcppExport SEXP _gdalraster_dt_is_floating(SEXP dtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dt(dtSEXP);
     rcpp_result_gen = Rcpp::wrap(dt_is_floating(dt));
     return rcpp_result_gen;
 END_RCPP
 }
 // dt_is_signed
-bool dt_is_signed(std::string dt);
+bool dt_is_signed(const std::string& dt);
 RcppExport SEXP _gdalraster_dt_is_signed(SEXP dtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dt(dtSEXP);
     rcpp_result_gen = Rcpp::wrap(dt_is_signed(dt));
     return rcpp_result_gen;
 END_RCPP
 }
 // dt_union
-std::string dt_union(std::string dt, std::string dt_other);
+std::string dt_union(const std::string& dt, const std::string& dt_other);
 RcppExport SEXP _gdalraster_dt_union(SEXP dtSEXP, SEXP dt_otherSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type dt(dtSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dt_other(dt_otherSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dt_other(dt_otherSEXP);
     rcpp_result_gen = Rcpp::wrap(dt_union(dt, dt_other));
     return rcpp_result_gen;
 END_RCPP
 }
 // dt_union_with_value
-std::string dt_union_with_value(std::string dt, double value, bool is_complex);
+std::string dt_union_with_value(const std::string& dt, double value, bool is_complex);
 RcppExport SEXP _gdalraster_dt_union_with_value(SEXP dtSEXP, SEXP valueSEXP, SEXP is_complexSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type dt(dtSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dt(dtSEXP);
     Rcpp::traits::input_parameter< double >::type value(valueSEXP);
     Rcpp::traits::input_parameter< bool >::type is_complex(is_complexSEXP);
     rcpp_result_gen = Rcpp::wrap(dt_union_with_value(dt, value, is_complex));
