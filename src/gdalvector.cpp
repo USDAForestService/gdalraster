@@ -72,6 +72,10 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
     setFieldNames_();
 }
 
+GDALVector::~GDALVector() {
+    close();
+}
+
 void GDALVector::open(bool read_only) {
     if (m_dsn == "")
         Rcpp::stop("DSN is not set");
