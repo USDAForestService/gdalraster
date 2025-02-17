@@ -76,6 +76,7 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 
 GDALVector::~GDALVector() {
     releaseArrowStream();
+    close();
 }
 
 void GDALVector::open(bool read_only) {
