@@ -100,7 +100,7 @@
 //' dt_find_for_value(NaN)
 //' dt_find_for_value(.Machine$integer.max)
 // [[Rcpp::export]]
-int dt_size(std::string dt, bool as_bytes = true) {
+int dt_size(const std::string &dt, bool as_bytes = true) {
     GDALDataType eDT = GDALGetDataTypeByName(dt.c_str());
     if (as_bytes)
         return GDALGetDataTypeSizeBytes(eDT);
@@ -110,35 +110,35 @@ int dt_size(std::string dt, bool as_bytes = true) {
 
 //' @rdname data_type_helpers
 // [[Rcpp::export]]
-bool dt_is_complex(std::string dt) {
+bool dt_is_complex(const std::string &dt) {
     GDALDataType eDT = GDALGetDataTypeByName(dt.c_str());
     return static_cast<bool>(GDALDataTypeIsComplex(eDT));
 }
 
 //' @rdname data_type_helpers
 // [[Rcpp::export]]
-bool dt_is_integer(std::string dt) {
+bool dt_is_integer(const std::string &dt) {
     GDALDataType eDT = GDALGetDataTypeByName(dt.c_str());
     return static_cast<bool>(GDALDataTypeIsInteger(eDT));
 }
 
 //' @rdname data_type_helpers
 // [[Rcpp::export]]
-bool dt_is_floating(std::string dt) {
+bool dt_is_floating(const std::string &dt) {
     GDALDataType eDT = GDALGetDataTypeByName(dt.c_str());
     return static_cast<bool>(GDALDataTypeIsFloating(eDT));
 }
 
 //' @rdname data_type_helpers
 // [[Rcpp::export]]
-bool dt_is_signed(std::string dt) {
+bool dt_is_signed(const std::string &dt) {
     GDALDataType eDT = GDALGetDataTypeByName(dt.c_str());
     return static_cast<bool>(GDALDataTypeIsSigned(eDT));
 }
 
 //' @rdname data_type_helpers
 // [[Rcpp::export]]
-std::string dt_union(std::string dt, std::string dt_other) {
+std::string dt_union(const std::string &dt, const std::string &dt_other) {
     GDALDataType eDT1 = GDALGetDataTypeByName(dt.c_str());
     GDALDataType eDT2 = GDALGetDataTypeByName(dt_other.c_str());
     GDALDataType eDT_out = GDALDataTypeUnion(eDT1, eDT2);
@@ -147,7 +147,7 @@ std::string dt_union(std::string dt, std::string dt_other) {
 
 //' @rdname data_type_helpers
 // [[Rcpp::export]]
-std::string dt_union_with_value(std::string dt, double value,
+std::string dt_union_with_value(const std::string &dt, double value,
                                 bool is_complex = false) {
 
     GDALDataType eDT = GDALGetDataTypeByName(dt.c_str());
