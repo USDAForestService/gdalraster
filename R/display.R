@@ -335,7 +335,7 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
     south_up <- FALSE
 
     if (is(data, "Rcpp_GDALRaster")) {
-        dm <- data$dim()
+        dm <- as.numeric(data$dim()) ## prevent integer overflow
 
         if (is.null(xsize))
             xsize <- out_xsize <- dm[1]
