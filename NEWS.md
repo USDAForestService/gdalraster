@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9181 (dev)
+# gdalraster 1.12.0.9182 (dev)
+
+* fix `plot_raster()` to avoid integer overflow (#613 thanks to @mdsumner) (2025-02-18)
 
 * (internal) implement `create()`, `createCopy()`, `autoCreateWarpedVRT()` as object factories (2025-02-14)
 
