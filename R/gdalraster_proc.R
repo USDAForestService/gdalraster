@@ -122,7 +122,7 @@ DEFAULT_DEM_PROC <- list(
 #' `GDALRaster` object. By default, it attempts to read the full raster
 #' extent from all bands at full resolution. `read_ds()` is sometimes more
 #' convenient than `GDALRaster$read()`, e.g., to read specific multiple bands
-#' for display with [plot_raster()], or simply for the argument defaults to
+#' for display with [plot_raster()], or simply for the default arguments that
 #' read an entire raster into memory (see Note).
 #'
 #' @details
@@ -163,16 +163,15 @@ DEFAULT_DEM_PROC <- list(
 #' band.
 #' @param as_raw Logical. If `TRUE` and the underlying data type is Byte,
 #' return output as R's raw vector type. This maps to the setting
-#' `$readByteAsRaw` on the `GDALRaster` object, which is used to temporarily
-#' update that field in this function. To control this behaviour in a
-#' persistent way on a data set see \code{$readByteAsRaw} in
-#' [`GDALRaster-class`][GDALRaster].
-#' @returns If `as_list = FALSE` (the default), a `numeric` or `complex` vector
-#' containing the values that were read. It is organized in left to right, top
-#' to bottom pixel order, interleaved by band.
+#' `$readByteAsRaw` on the `GDALRaster` object, which will be temporarily
+#' updated in this function. To control this behaviour in a persistent way on
+#' a dataset see \code{$readByteAsRaw} in [`GDALRaster-class`][GDALRaster].
+#' @returns If `as_list = FALSE` (the default), a vector of `raw`, `integer`,
+#' `double` or `complex` containing the values that were read. It is organized
+#' in left to right, top to bottom pixel order, interleaved by band.
 #' If `as_list = TRUE`, a list with number of elements equal to the number of
-#' bands read. Each element contains a `numeric` or `complex` vector
-#' containing the pixel data read for the band.
+#' bands read. Each element contains a vector of `raw`, `integer`, `double` or
+#' `complex` containing the pixel values that were read for the band.
 #'
 #' @note
 #' There is small overhead in calling `read_ds()` compared with
@@ -183,9 +182,9 @@ DEFAULT_DEM_PROC <- list(
 #'
 #' By default, this function will attempt to read the full raster into memory.
 #' It generally should not be called on large raster datasets using the default
-#' argument values. The memory size in bytes of the returned vector will be
-#' approximately (xsize * ysize * number of bands * 4) for data read as
-#' `integer`, and (xsize * ysize * number of bands * 8) for data read as
+#' argument values. The memory size in bytes of the returned vector will be,
+#' e.g., (xsize * ysize * number of bands * 4) for data read as
+#' `integer`, or (xsize * ysize * number of bands * 8) for data read as
 #' `double` (plus small object overhead for the vector).
 #'
 #' @seealso
@@ -208,60 +207,116 @@ DEFAULT_DEM_PROC <- list(
 #' length(r)
 #' object.size(r)
 #'
-#' # gis attribute list
+#' # gis attributes
 #' attr(r, "gis")
 #'
 #' ds$close()
 #' @export
-read_ds <- function(ds, bands=NULL, xoff=0, yoff=0,
-                    xsize=ds$getRasterXSize(), ysize=ds$getRasterYSize(),
-                    out_xsize=xsize, out_ysize=ysize,
-                    as_list=FALSE, as_raw = FALSE) {
+read_ds <- function(ds, bands = NULL, xoff = 0, yoff = 0,
+                    xsize = ds$getRasterXSize(), ysize = ds$getRasterYSize(),
+                    out_xsize = xsize, out_ysize = ysize,
+                    as_list = FALSE, as_raw = FALSE) {
 
-    if (is.null(bands))
+    if (!is(ds, "Rcpp_GDALRaster")) {
+        stop("'ds' must be an object of class GDALRaster", call. = FALSE)
+    }
+    if (is.null(bands)) {
         bands <- seq_len(ds$getRasterCount())
+    } else if (!is.numeric(bands)) {
+        stop("'bands' must be a numeric vector", call. = FALSE)
+    }
+    if (is.null(xoff) || !(is.numeric(xoff) && length(xoff) == 1)) {
+        stop("'xoff' must be a numeric value", call. = FALSE)
+    }
+    if (is.null(yoff) || !(is.numeric(yoff) && length(yoff) == 1)) {
+        stop("'yoff' must be a numeric value", call. = FALSE)
+    }
+    if (is.null(xsize) || !(is.numeric(xsize) && length(xsize) == 1)) {
+        stop("'xsize' must be a numeric value", call. = FALSE)
+    }
+    if (is.null(ysize) || !(is.numeric(ysize) && length(ysize) == 1)) {
+        stop("'ysize' must be a numeric value", call. = FALSE)
+    }
+    if (is.null(out_xsize) ||
+        !(is.numeric(out_xsize) && length(out_xsize) == 1)) {
 
-    if (as_list)
+        stop("'out_xsize' must be a numeric value", call. = FALSE)
+    }
+    if (is.null(out_ysize) ||
+        !(is.numeric(out_ysize) && length(out_ysize) == 1)) {
+
+        stop("'out_ysize' must be a numeric value", call. = FALSE)
+    }
+    if (is.null(as_list)) {
+        as_list <- FALSE
+    } else if (!(is.logical(as_list) && length(as_list) == 1)) {
+        stop("'as_list' must be a logical value", call. = FALSE)
+    }
+    if (is.null(as_raw)) {
+        as_raw <- FALSE
+    } else if (!(is.logical(as_raw) && length(as_raw) == 1)) {
+        stop("'as_raw' must be a logical value", call. = FALSE)
+    }
+
+    # get the unioned data type across all bands
+    dtype <- "Byte"
+    for (b in bands) {
+        dtype <- dt_union(dtype, ds$getDataTypeName(b))
+    }
+
+    if (as_list) {
         r <- list()
-    else
-        r <- NULL
-
-    i <- 1
-    readByteAsRaw <- ds$readByteAsRaw
-    if (as_raw) {
-        ds$readByteAsRaw <- TRUE
-        dtype <- ds$getDataTypeName(bands[1L])
-        if (!dtype == "Byte") {
-            warning(sprintf("'as_raw' set to 'TRUE' only affects read for band type 'Byte', current data type: '%s'", dtype))
+    } else {
+        # pre-allocate the output vector
+        dtype_size <- dt_size(dtype)
+        if (as_raw && dtype == "Byte") {
+            r <- raw(out_xsize * out_ysize * length(bands))
+        } else if (dt_is_complex(dtype)) {
+            r <- complex(out_xsize * out_ysize * length(bands))
+        } else if (dt_is_floating(dtype) || dtype_size > 4) {
+            r <- numeric(out_xsize * out_ysize * length(bands))
+        } else if (dtype_size == 4 && !dt_is_signed(dtype)) {
+            r <- numeric(out_xsize * out_ysize * length(bands))
+        } else {
+            r <- integer(out_xsize * out_ysize * length(bands))
         }
     }
+
+    readByteAsRaw <- ds$readByteAsRaw
+    if (as_raw) {
+        if (dtype != "Byte") {
+            warning(sprintf("'as_raw' set to 'TRUE' only affects read for band type 'Byte', current data type: '%s'", dtype))
+        } else {
+            ds$readByteAsRaw <- TRUE
+        }
+    }
+
     dtype <- character()
+    i <- 1
     for (b in bands) {
         dtype <- c(dtype, ds$getDataTypeName(b))
         if (as_list) {
             r[[i]] <- ds$read(b, xoff, yoff, xsize, ysize,
                               out_xsize, out_ysize)
-            i <- i + 1
         } else {
-            r <- c(r, ds$read(b, xoff, yoff, xsize, ysize,
-                              out_xsize, out_ysize))
+            i_begin <- 1 + (i - 1) * out_xsize * out_ysize
+            i_end <- i_begin + out_xsize * out_ysize - 1
+            r[i_begin:i_end] <- ds$read(b, xoff, yoff, xsize, ysize,
+                                        out_xsize, out_ysize)
         }
+        i <- i + 1
     }
 
     ## restore the field, note that it may have had no impact
     ds$readByteAsRaw <- readByteAsRaw
 
     gt <- ds$getGeoTransform()
-    ulx <- .apply_geotransform(gt, xoff, yoff)[1]
-    uly <- .apply_geotransform(gt, xoff, yoff)[2]
-    urx <- .apply_geotransform(gt, (xoff + xsize), yoff)[1]
-    ury <- .apply_geotransform(gt, (xoff + xsize), yoff)[2]
-    lrx <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))[1]
-    lry <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))[2]
-    llx <- .apply_geotransform(gt, xoff, (yoff + ysize))[1]
-    lly <- .apply_geotransform(gt, xoff, (yoff + ysize))[2]
-    corners_x <- c(ulx, urx, lrx, llx)
-    corners_y <- c(uly, ury, lry, lly)
+    ulxy <- .apply_geotransform(gt, xoff, yoff)
+    urxy <- .apply_geotransform(gt, (xoff + xsize), yoff)
+    lrxy <- .apply_geotransform(gt, (xoff + xsize), (yoff + ysize))
+    llxy <- .apply_geotransform(gt, xoff, (yoff + ysize))
+    corners_x <- c(ulxy[1], urxy[1], lrxy[1], llxy[1])
+    corners_y <- c(ulxy[2], urxy[2], lrxy[2], llxy[2])
     bb <- c(min(corners_x), min(corners_y), max(corners_x), max(corners_y))
 
     # gis: a list with the bbox, dimensions, projection, nbands, datatype
