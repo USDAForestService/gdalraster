@@ -284,10 +284,10 @@ read_ds <- function(ds, bands = NULL, xoff = 0, yoff = 0,
 
     readByteAsRaw <- ds$readByteAsRaw
     if (as_raw) {
+        ds$readByteAsRaw <- TRUE
         if (dtype != "Byte") {
-            warning(sprintf("'as_raw' set to 'TRUE' only affects read for band type 'Byte', current data type: '%s'", dtype))
-        } else {
-            ds$readByteAsRaw <- TRUE
+            warning("'as_raw = TRUE' only affects read for band type 'Byte'",
+                    call. = FALSE)
         }
     }
 
