@@ -3,12 +3,12 @@
 GDALRaster object. By default, it attempts to read the full raster
 extent from all bands at full resolution. read_ds() is sometimes more
 convenient than GDALRaster$read(), e.g., to read specific multiple bands
-for display with plot_raster(), or simply for the argument defaults to
+for display with plot_raster(), or simply for the default arguments that
 read an entire raster into memory (see Note)."><meta property="og:description" content="read_ds() will read from a raster dataset that is already open in a
 GDALRaster object. By default, it attempts to read the full raster
 extent from all bands at full resolution. read_ds() is sometimes more
 convenient than GDALRaster$read(), e.g., to read specific multiple bands
-for display with plot_raster(), or simply for the argument defaults to
+for display with plot_raster(), or simply for the default arguments that
 read an entire raster into memory (see Note)."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
@@ -63,7 +63,7 @@ read an entire raster into memory (see Note)."></head><body>
 <code>GDALRaster</code> object. By default, it attempts to read the full raster
 extent from all bands at full resolution. <code>read_ds()</code> is sometimes more
 convenient than <code>GDALRaster$read()</code>, e.g., to read specific multiple bands
-for display with <code><a href="plot_raster.html">plot_raster()</a></code>, or simply for the argument defaults to
+for display with <code><a href="plot_raster.html">plot_raster()</a></code>, or simply for the default arguments that
 read an entire raster into memory (see Note).</p>
     </div>
 
@@ -135,20 +135,19 @@ band.</p></dd>
 <dt id="arg-as-raw">as_raw<a class="anchor" aria-label="anchor" href="#arg-as-raw"></a></dt>
 <dd><p>Logical. If <code>TRUE</code> and the underlying data type is Byte,
 return output as R's raw vector type. This maps to the setting
-<code>$readByteAsRaw</code> on the <code>GDALRaster</code> object, which is used to temporarily
-update that field in this function. To control this behaviour in a
-persistent way on a data set see <code>$readByteAsRaw</code> in
-<code><a href="GDALRaster-class.html">GDALRaster-class</a></code>.</p></dd>
+<code>$readByteAsRaw</code> on the <code>GDALRaster</code> object, which will be temporarily
+updated in this function. To control this behaviour in a persistent way on
+a dataset see <code>$readByteAsRaw</code> in <code><a href="GDALRaster-class.html">GDALRaster-class</a></code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>If <code>as_list = FALSE</code> (the default), a <code>numeric</code> or <code>complex</code> vector
-containing the values that were read. It is organized in left to right, top
-to bottom pixel order, interleaved by band.
+    <p>If <code>as_list = FALSE</code> (the default), a vector of <code>raw</code>, <code>integer</code>,
+<code>double</code> or <code>complex</code> containing the values that were read. It is organized
+in left to right, top to bottom pixel order, interleaved by band.
 If <code>as_list = TRUE</code>, a list with number of elements equal to the number of
-bands read. Each element contains a <code>numeric</code> or <code>complex</code> vector
-containing the pixel data read for the band.</p>
+bands read. Each element contains a vector of <code>raw</code>, <code>integer</code>, <code>double</code> or
+<code>complex</code> containing the pixel values that were read for the band.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -175,9 +174,9 @@ a large raster in many chunks, it will be optimal performance-wise to call
 <code>GDALRaster$read()</code> directly.</p>
 <p>By default, this function will attempt to read the full raster into memory.
 It generally should not be called on large raster datasets using the default
-argument values. The memory size in bytes of the returned vector will be
-approximately (xsize * ysize * number of bands * 4) for data read as
-<code>integer</code>, and (xsize * ysize * number of bands * 8) for data read as
+argument values. The memory size in bytes of the returned vector will be,
+e.g., (xsize * ysize * number of bands * 4) for data read as
+<code>integer</code>, or (xsize * ysize * number of bands * 8) for data read as
 <code>double</code> (plus small object overhead for the vector).</p>
     </div>
     <div class="section level2">
@@ -209,7 +208,7 @@ approximately (xsize * ysize * number of bands * 4) for data read as
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/object.size.html" class="external-link">object.size</a></span><span class="op">(</span><span class="va">r</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 185944 bytes</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># gis attribute list</span></span></span>
+<span class="r-in"><span><span class="co"># gis attributes</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/attr.html" class="external-link">attr</a></span><span class="op">(</span><span class="va">r</span>, <span class="st">"gis"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $type</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "raster"</span>
