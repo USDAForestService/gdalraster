@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9182 (dev)
+# gdalraster 1.12.0.9183 (dev)
+
+* `read_ds()`: pre-allocate the output vector based on the size of the unioned data type across all bands (2025-02-18)
 
 * fix `plot_raster()` to avoid integer overflow (#613 thanks to @mdsumner) (2025-02-18)
 
