@@ -298,16 +298,18 @@ std::string GDALRaster::getDriverLongName() const {
     return GDALGetDriverLongName(hDriver);
 }
 
-int GDALRaster::getRasterXSize() const {
+double GDALRaster::getRasterXSize() const {
     checkAccess_(GA_ReadOnly);
 
-    return GDALGetRasterXSize(m_hDataset);
+    // return as R numeric (double) to avoid integer overflow when multiplying
+    return static_cast<double>(GDALGetRasterXSize(m_hDataset));
 }
 
-int GDALRaster::getRasterYSize() const {
+double GDALRaster::getRasterYSize() const {
     checkAccess_(GA_ReadOnly);
 
-    return GDALGetRasterYSize(m_hDataset);
+    // return as R numeric (double) to avoid integer overflow when multiplying
+    return static_cast<double>(GDALGetRasterYSize(m_hDataset));
 }
 
 std::vector<double> GDALRaster::getGeoTransform() const {
@@ -474,12 +476,12 @@ std::vector<double> GDALRaster::res() const {
     return ret;
 }
 
-std::vector<int> GDALRaster::dim() const {
+std::vector<double> GDALRaster::dim() const {
     checkAccess_(GA_ReadOnly);
 
-    std::vector<int> ret = {getRasterXSize(),
-                            getRasterYSize(),
-                            getRasterCount()};
+    // return as R numeric (double) to avoid integer overflow when multiplying
+    std::vector<double> ret = {getRasterXSize(), getRasterYSize(),
+                               static_cast<double>(getRasterCount())};
     return ret;
 }
 
@@ -622,8 +624,8 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject& xy,
         Rcpp::stop("failed to get inverse geotransform");
 
     int krnl_size = krnl_dim * krnl_dim;
-    int raster_xsize = getRasterXSize();
-    int raster_ysize = getRasterYSize();
+    int raster_xsize = GDALGetRasterXSize(m_hDataset);
+    int raster_ysize = GDALGetRasterYSize(m_hDataset);
 
     GDALProgressFunc pfnProgress = GDALTermProgressR;
     uint64_t pts_outside = 0;
@@ -1449,7 +1451,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 
         std::vector<std::complex<double>> buf{};
         try {
-            buf.resize(static_cast<size_t>(out_xsize * out_ysize));
+            buf.resize(static_cast<size_t>(out_xsize) * out_ysize);
         }
         catch (const std::exception &) {
             Rcpp::stop("failed to allocate memory for read");
@@ -1478,7 +1480,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
             if (eDT == GDT_Byte && readByteAsRaw) {
                 std::vector<uint8_t> buf{};
                 try {
-                    buf.resize(static_cast<size_t>(out_xsize * out_ysize));
+                    buf.resize(static_cast<size_t>(out_xsize) * out_ysize);
                 }
                 catch (const std::exception &) {
                     Rcpp::stop("failed to allocate memory for read");
@@ -1497,7 +1499,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
             else {
                 std::vector<int32_t> buf{};
                 try {
-                    buf.resize(static_cast<size_t>(out_xsize * out_ysize));
+                    buf.resize(static_cast<size_t>(out_xsize) * out_ysize);
                 }
                 catch (const std::exception &) {
                     Rcpp::stop("failed to allocate memory for read");
@@ -1530,7 +1532,7 @@ SEXP GDALRaster::read(int band, int xoff, int yoff, int xsize, int ysize,
 
             std::vector<double> buf{};
             try {
-                buf.resize(static_cast<size_t>(out_xsize * out_ysize));
+                buf.resize(static_cast<size_t>(out_xsize) * out_ysize);
             }
             catch (const std::exception &) {
                 Rcpp::stop("failed to allocate memory for read");
@@ -1587,7 +1589,7 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
         // real data types
         eBufType = GDT_Float64;
         std::vector<double> buf_ = Rcpp::as<std::vector<double>>(rasterData);
-        if (buf_.size() != ((std::size_t) (xsize * ysize)))
+        if (buf_.size() != static_cast<size_t>(xsize) * ysize)
             Rcpp::stop("size of input data is not the same as region size");
         err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
                            buf_.data(), xsize, ysize, eBufType, 0, 0);
@@ -1597,7 +1599,7 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
         eBufType = GDT_CFloat64;
         std::vector<std::complex<double>> buf_ =
             Rcpp::as<std::vector<std::complex<double>>>(rasterData);
-        if (buf_.size() != ((std::size_t) (xsize * ysize)))
+        if (buf_.size() != static_cast<size_t>(xsize) * ysize)
             Rcpp::stop("size of input data is not the same as region size");
         err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
                            buf_.data(), xsize, ysize, eBufType, 0, 0);
@@ -1606,7 +1608,7 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
         // Byte data type
         eBufType = GDT_Byte;
         std::vector<uint8_t> buf_ = Rcpp::as<std::vector<uint8_t>>(rasterData);
-        if (buf_.size() != ((std::size_t) (xsize * ysize)))
+        if (buf_.size() != static_cast<size_t>(xsize) * ysize)
         Rcpp::stop("size of input data is not the same as region size");
         err = GDALRasterIO(hBand, GF_Write, xoff, yoff, xsize, ysize,
                             buf_.data(), xsize, ysize, eBufType, 0, 0);
