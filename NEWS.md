@@ -1,4 +1,8 @@
-# gdalraster 1.12.0.9183 (dev)
+# gdalraster 1.12.0.9185 (dev)
+
+* `GDALVector::info()`: enable full info output on a vector layer opened via SQL statement (#615 thanks to @mdsumner) (2025-02-21)
+
+* `pixel_extract()`: fix the check for GDAL >= 3.10 when cubic or cubicspline interpolation is requested (2025-02-21)
 
 * `read_ds()`: pre-allocate the output vector based on the size of the unioned data type across all bands (2025-02-18)
 
