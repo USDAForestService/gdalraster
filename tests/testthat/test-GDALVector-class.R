@@ -1079,7 +1079,7 @@ test_that("info() prints output to the console", {
     lyr$close()
 
     lyr <- new(GDALVector, dsn, "SELECT * FROM mtbs_perims LIMIT 10")
-    expect_output(lyr$info())
+    expect_output(lyr$info(), "Feature Count: 10")
     lyr$close()
 
     # default layer first by index
