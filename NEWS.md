@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9185 (dev)
+# gdalraster 1.12.0.9186 (dev)
+
+* fix potential integer overflow when multiplying raster dimensions in R without explicit `as.numeric()` (#620 thanks to @mdsumner) (2025-02-21)
 
 * `GDALVector::info()`: enable full info output on a vector layer opened via SQL statement (#615 thanks to @mdsumner) (2025-02-21)
 
