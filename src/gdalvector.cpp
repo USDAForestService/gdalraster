@@ -186,23 +186,25 @@ Rcpp::CharacterVector GDALVector::getFileList() const {
 }
 
 void GDALVector::info() const {
-    checkAccess_(GA_ReadOnly);
-
-    if (m_is_sql) {
-        Rcpp::Rcout << "DSN: " << m_dsn << std::endl;
-        Rcpp::Rcout << "layer: \"" << m_layer_name << "\"" << std::endl;
-    }
-    else {
+  checkAccess_(GA_ReadOnly);
+  
+  
 #if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 7, 0)
-        Rcpp::Rcout << ogrinfo(m_dsn, Rcpp::wrap(m_layer_name),
-                               Rcpp::CharacterVector::create("-so", "-nomd"),
-                               m_open_options, true, false);
+  if (m_is_sql) {
+    Rcpp::Rcout << ogrinfo(m_dsn, R_NilValue,
+                           Rcpp::CharacterVector::create("-so", "-nomd", "-sql", m_layer_name),
+                           m_open_options, true, false);
+  }
+  else {
+    Rcpp::Rcout << ogrinfo(m_dsn, Rcpp::wrap(m_layer_name),
+                           Rcpp::CharacterVector::create("-so", "-nomd"),
+                           m_open_options, true, false);
 #else
-        Rcpp::Rcout << "ogrinfo() requires GDAL >= 3.7" << std::endl;
-        Rcpp::Rcout << "DSN: " << m_dsn << std::endl;
-        Rcpp::Rcout << "layer: " << m_layer_name << std::endl;
+    Rcpp::Rcout << "ogrinfo() requires GDAL >= 3.7" << std::endl;
+    Rcpp::Rcout << "DSN: " << m_dsn << std::endl;
+    Rcpp::Rcout << "layer: " << m_layer_name << std::endl;
 #endif
-    }
+  }
 }
 
 std::string GDALVector::getDriverShortName() const {
