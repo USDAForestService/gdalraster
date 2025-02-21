@@ -232,7 +232,7 @@ return value, called for that side effect only).
 For non-SQL DSN/layer, calls \code{\link[=ogrinfo]{ogrinfo()}} passing the command options
 \code{cl_arg = c("-so", "-nomd")}, and for layers open with a SQL statement,
 calls \code{\link[=ogrinfo]{ogrinfo()}} passing the command options
-\verb{cl_arg = c("-so", "-nomd", "-sql", <layer>)}.
+\verb{cl_arg = c("-so", "-nomd", "-sql", <statement>)}.
 
 \code{$getDriverShortName()}\cr
 Returns the short name of the vector format driver.
