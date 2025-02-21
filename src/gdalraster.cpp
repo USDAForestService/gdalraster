@@ -592,13 +592,13 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject& xy,
         eResampleAlg = GRIORA_Bilinear;
     }
     else if (EQUAL(interp.c_str(), "cubic")) {
-        if (!GDALCheckVersion(3, 10, nullptr))
+        if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 10, 0))
             Rcpp::stop("'cubic' interpolation requires GDAL >= 3.10");
 
         eResampleAlg = GRIORA_Cubic;
     }
     else if (EQUAL(interp.c_str(), "cubicspline")) {
-        if (!GDALCheckVersion(3, 10, nullptr))
+        if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 10, 0))
             Rcpp::stop("'cubicspline' interpolation requires GDAL >= 3.10");
 
         eResampleAlg = GRIORA_CubicSpline;
