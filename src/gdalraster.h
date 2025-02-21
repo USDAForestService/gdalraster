@@ -117,8 +117,8 @@ class GDALRaster {
     std::string getDriverShortName() const;
     std::string getDriverLongName() const;
 
-    int getRasterXSize() const;
-    int getRasterYSize() const;
+    double getRasterXSize() const;
+    double getRasterYSize() const;
     std::vector<double> getGeoTransform() const;
     bool setGeoTransform(std::vector<double> transform);
     int getRasterCount() const;
@@ -131,7 +131,7 @@ class GDALRaster {
 
     std::vector<double> bbox() const;
     std::vector<double> res() const;
-    std::vector<int> dim() const;
+    std::vector<double> dim() const;
     Rcpp::NumericMatrix apply_geotransform(const Rcpp::RObject& col_row) const;
     Rcpp::IntegerMatrix get_pixel_line(const Rcpp::RObject& xy) const;
     Rcpp::NumericMatrix pixel_extract(const Rcpp::RObject& xy,

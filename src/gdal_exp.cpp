@@ -861,13 +861,15 @@ Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v,
 
     Rcpp::NumericVector out(v.size());
 
-    const size_t num_pixels = xsize * ysize;
+    const size_t num_pixels = static_cast<size_t>(xsize) * ysize;
     for (int b = 0; b < nbands; ++b) {
         const size_t band_offset = b * num_pixels;
         for (int line = 0; line < ysize; ++line) {
-            const size_t line_offset = band_offset + (line * xsize);
+            const size_t line_offset = band_offset +
+                                       line * static_cast<size_t>(xsize);
+
             const size_t dst_offset = band_offset + num_pixels -
-                                      ((line + 1) * xsize);
+                                      ((line + 1) * static_cast<size_t>(xsize));
 
             std::copy_n(v.cbegin() + line_offset, xsize,
                         out.begin() + dst_offset);
@@ -1094,8 +1096,8 @@ Rcpp::DataFrame combine(Rcpp::CharacterVector src_files,
         src_ds[i] = std::make_unique<GDALRaster>(std::string(src_files[i]));
         // use the first raster as reference
         if (i == 0) {
-            nrows = src_ds[i]->getRasterYSize();
-            ncols = src_ds[i]->getRasterXSize();
+            nrows = static_cast<int>(src_ds[i]->getRasterYSize());
+            ncols = static_cast<int>(src_ds[i]->getRasterXSize());
             gt = src_ds[i]->getGeoTransform();
             srs = src_ds[i]->getProjectionRef();
         }
@@ -1163,8 +1165,8 @@ Rcpp::DataFrame combine(Rcpp::CharacterVector src_files,
 Rcpp::DataFrame value_count(const GDALRaster* const &src_ds, int band = 1,
                             bool quiet = false) {
 
-    int nrows = src_ds->getRasterYSize();
-    int ncols = src_ds->getRasterXSize();
+    int nrows = static_cast<int>(src_ds->getRasterYSize());
+    int ncols = static_cast<int>(src_ds->getRasterXSize());
     GDALProgressFunc pfnProgress = nullptr;
     void *pProgressData = nullptr;
     if (!quiet)
