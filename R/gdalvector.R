@@ -216,8 +216,8 @@
 #' return value, called for that side effect only).
 #' For non-SQL DSN/layer, calls [ogrinfo()] passing the command options
 #' `cl_arg = c("-so", "-nomd")`, and for layers open with a SQL statement,
-#' calls [ogrinfo()] passing the command options 
-#' `cl_arg = c("-so", "-nomd", "-sql", <statement>)`. 
+#' calls [ogrinfo()] passing the command options
+#' `cl_arg = c("-so", "-nomd", "-sql", <statement>)`.
 #'
 #' \code{$getDriverShortName()}\cr
 #' Returns the short name of the vector format driver.
@@ -829,12 +829,20 @@ NULL
 Rcpp::loadModule("mod_GDALVector", TRUE)
 
 setMethod("show", "Rcpp_GDALVector", function(object) {
+    if (object$m_is_sql) {
+        # the API call to OGR_L_GetName() returns only "SELECT" for SQL layer
+        # so get SQL statement used to open the layer instead
+        lyr_name <- object$m_layer_name
+    } else {
+        lyr_name <- object$getName()
+    }
+
     crs_name <- .get_crs_name(object)
 
     cat("C++ object of class GDALVector\n",
         " Driver : ", object$getDriverLongName()," (", object$getDriverShortName(), ")\n",
         " DSN    : ", object$getDsn(), "\n",
-        " Layer  : ", object$getName(), "\n",
+        " Layer  : ", lyr_name, "\n",
         " CRS    : ", crs_name, "\n",
         " Geom   : ", object$getGeomType(), "\n",
         sep = ""

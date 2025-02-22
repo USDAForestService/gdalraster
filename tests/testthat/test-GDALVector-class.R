@@ -60,7 +60,7 @@ test_that("class basic interface works", {
     lyr <- new(GDALVector, dsn, "mtbs_perims")
 
     expect_true(is(lyr, "Rcpp_GDALVector"))
-    expect_output(show(lyr))
+    expect_output(show(lyr), "MULTIPOLYGON")
 
     expect_equal(lyr$getDriverShortName(), "GPKG")
     expect_equal(lyr$getDriverLongName(), "GeoPackage")
@@ -140,6 +140,14 @@ test_that("class basic interface works", {
     expect_equal(lyr$getFeatureCount(), 61)
 
     lyr$close()
+
+    # SQL layer
+    sql_lyr <- new(GDALVector, dsn, "SELECT * FROM mtbs_perims LIMIT 10")
+    expect_true(is(sql_lyr, "Rcpp_GDALVector"))
+    expect_output(show(sql_lyr), "LIMIT 10")
+    expect_equal(sql_lyr$getFeatureCount(), 10)
+    sql_lyr$close()
+
     unlink(dsn)
 })
 
