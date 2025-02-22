@@ -1079,7 +1079,12 @@ test_that("info() prints output to the console", {
     lyr$close()
 
     lyr <- new(GDALVector, dsn, "SELECT * FROM mtbs_perims LIMIT 10")
-    expect_output(lyr$info(), "Feature Count: 10")
+    if (.gdal_version_num() >= 3070000) {
+        expect_output(lyr$info(), "Feature Count: 10")
+    } else {
+        # we only get the fallback minimal info
+        expect_output(lyr$info(), "Layer")
+    }
     lyr$close()
 
     # default layer first by index
