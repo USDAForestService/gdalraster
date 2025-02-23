@@ -76,6 +76,7 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
 
 GDALVector::~GDALVector() {
     releaseArrowStream();
+    close();
 }
 
 void GDALVector::open(bool read_only) {
@@ -1933,8 +1934,8 @@ std::string GDALVector::getMetadataItem(std::string mdi_name) const {
 }
 
 bool GDALVector::layerIntersection(
-        GDALVector method_layer,
-        GDALVector result_layer,
+        GDALVector* const &method_layer,
+        GDALVector* const &result_layer,
         bool quiet,
         const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
@@ -1951,8 +1952,8 @@ bool GDALVector::layerIntersection(
     bool ret = false;
     OGRErr err = OGR_L_Intersection(
                     m_hLayer,
-                    method_layer.getOGRLayerH_(),
-                    result_layer.getOGRLayerH_(),
+                    method_layer->getOGRLayerH_(),
+                    result_layer->getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -1970,8 +1971,8 @@ bool GDALVector::layerIntersection(
 }
 
 bool GDALVector::layerUnion(
-        GDALVector method_layer,
-        GDALVector result_layer,
+        GDALVector* const &method_layer,
+        GDALVector* const &result_layer,
         bool quiet,
         const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
@@ -1988,8 +1989,8 @@ bool GDALVector::layerUnion(
     bool ret = false;
     OGRErr err = OGR_L_Union(
                     m_hLayer,
-                    method_layer.getOGRLayerH_(),
-                    result_layer.getOGRLayerH_(),
+                    method_layer->getOGRLayerH_(),
+                    result_layer->getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -2007,8 +2008,8 @@ bool GDALVector::layerUnion(
 }
 
 bool GDALVector::layerSymDifference(
-        GDALVector method_layer,
-        GDALVector result_layer,
+        GDALVector* const &method_layer,
+        GDALVector* const &result_layer,
         bool quiet,
         const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
@@ -2025,8 +2026,8 @@ bool GDALVector::layerSymDifference(
     bool ret = false;
     OGRErr err = OGR_L_SymDifference(
                     m_hLayer,
-                    method_layer.getOGRLayerH_(),
-                    result_layer.getOGRLayerH_(),
+                    method_layer->getOGRLayerH_(),
+                    result_layer->getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -2044,8 +2045,8 @@ bool GDALVector::layerSymDifference(
 }
 
 bool GDALVector::layerIdentity(
-        GDALVector method_layer,
-        GDALVector result_layer,
+        GDALVector* const &method_layer,
+        GDALVector* const &result_layer,
         bool quiet,
         const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
@@ -2062,8 +2063,8 @@ bool GDALVector::layerIdentity(
     bool ret = false;
     OGRErr err = OGR_L_Identity(
                     m_hLayer,
-                    method_layer.getOGRLayerH_(),
-                    result_layer.getOGRLayerH_(),
+                    method_layer->getOGRLayerH_(),
+                    result_layer->getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -2081,8 +2082,8 @@ bool GDALVector::layerIdentity(
 }
 
 bool GDALVector::layerUpdate(
-        GDALVector method_layer,
-        GDALVector result_layer,
+        GDALVector* const &method_layer,
+        GDALVector* const &result_layer,
         bool quiet,
         const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
@@ -2099,8 +2100,8 @@ bool GDALVector::layerUpdate(
     bool ret = false;
     OGRErr err = OGR_L_Update(
                     m_hLayer,
-                    method_layer.getOGRLayerH_(),
-                    result_layer.getOGRLayerH_(),
+                    method_layer->getOGRLayerH_(),
+                    result_layer->getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -2118,8 +2119,8 @@ bool GDALVector::layerUpdate(
 }
 
 bool GDALVector::layerClip(
-        GDALVector method_layer,
-        GDALVector result_layer,
+        GDALVector* const &method_layer,
+        GDALVector* const &result_layer,
         bool quiet,
         const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
@@ -2136,8 +2137,8 @@ bool GDALVector::layerClip(
     bool ret = false;
     OGRErr err = OGR_L_Clip(
                     m_hLayer,
-                    method_layer.getOGRLayerH_(),
-                    result_layer.getOGRLayerH_(),
+                    method_layer->getOGRLayerH_(),
+                    result_layer->getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -2155,8 +2156,8 @@ bool GDALVector::layerClip(
 }
 
 bool GDALVector::layerErase(
-        GDALVector method_layer,
-        GDALVector result_layer,
+        GDALVector* const &method_layer,
+        GDALVector* const &result_layer,
         bool quiet,
         const Rcpp::Nullable<const Rcpp::CharacterVector> &options) {
 
@@ -2173,8 +2174,8 @@ bool GDALVector::layerErase(
     bool ret = false;
     OGRErr err = OGR_L_Erase(
                     m_hLayer,
-                    method_layer.getOGRLayerH_(),
-                    result_layer.getOGRLayerH_(),
+                    method_layer->getOGRLayerH_(),
+                    result_layer->getOGRLayerH_(),
                     opt_list.data(),
                     quiet ? nullptr : GDALTermProgressR,
                     nullptr);
@@ -3352,6 +3353,20 @@ RCPP_MODULE(mod_GDALVector) {
                  Rcpp::Nullable<Rcpp::CharacterVector>, std::string,
                  std::string>
         ("Usage: new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)")
+
+    // create_ogr() object factory with 10 parameters
+    .factory<const std::string&, const std::string&, const std::string&,
+             const std::string&, const std::string&, const std::string&,
+             const std::string&, const Rcpp::Nullable<Rcpp::CharacterVector>&,
+             const Rcpp::Nullable<Rcpp::CharacterVector>&,
+             const Rcpp::Nullable<Rcpp::List>&>
+             (create_ogr)
+    // ogr_layer_create() object factory with 7 parameters
+    .factory<const std::string&, const std::string&,
+             const Rcpp::Nullable<Rcpp::List>&,
+             const std::string&, const std::string&,
+             const Rcpp::Nullable<Rcpp::CharacterVector>&, bool>
+             (ogr_layer_create)
 
     // undocumented read-only fields for internal use
     .field_readonly("m_layer_name", &GDALVector::m_layer_name)

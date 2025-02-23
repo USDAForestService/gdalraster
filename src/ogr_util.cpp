@@ -15,7 +15,7 @@
 #include "ogr_util.h"
 
 
-OGRwkbGeometryType getWkbGeomType_(std::string geom_type) {
+OGRwkbGeometryType getWkbGeomType_(const std::string &geom_type) {
     std::string geom_type_in = str_toupper_(geom_type);
     if (auto it = MAP_OGR_GEOM_TYPE.find(geom_type_in);
         it != MAP_OGR_GEOM_TYPE.end()) {
@@ -37,7 +37,7 @@ std::string getWkbGeomString_(OGRwkbGeometryType eType) {
     return "UNKNOWN";
 }
 
-OGRFieldType getOFT_(std::string fld_type) {
+OGRFieldType getOFT_(const std::string &fld_type) {
     if (auto it = MAP_OGR_FLD_TYPE.find(fld_type);
         it != MAP_OGR_FLD_TYPE.end()) {
 
@@ -59,7 +59,7 @@ std::string getOFTString_(OGRFieldType eType) {
     return "";
 }
 
-OGRFieldSubType getOFTSubtype_(std::string fld_subtype) {
+OGRFieldSubType getOFTSubtype_(const std::string &fld_subtype) {
     if (auto it = MAP_OGR_FLD_SUBTYPE.find(fld_subtype);
         it != MAP_OGR_FLD_SUBTYPE.end()) {
 
@@ -84,8 +84,11 @@ std::string getOFTSubtypeString_(OGRFieldSubType eType) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_ds_exists")]]
-bool ogr_ds_exists(std::string dsn, bool with_update = false) {
-    std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
+bool ogr_ds_exists(const std::string &dsn, bool with_update = false) {
+
+    const std::string &dsn_in = Rcpp::as<std::string>(
+        check_gdal_filename(dsn));
+
     GDALDatasetH hDS = nullptr;
 
     CPLPushErrorHandler(CPLQuietErrorHandler);
@@ -110,8 +113,10 @@ bool ogr_ds_exists(std::string dsn, bool with_update = false) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_ds_format")]]
-std::string ogr_ds_format(std::string dsn) {
+std::string ogr_ds_format(const std::string &dsn) {
+
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
+
     GDALDatasetH hDS = nullptr;
     std::string fmt = "";
 
@@ -135,7 +140,8 @@ std::string ogr_ds_format(std::string dsn) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_ds_test_cap")]]
-SEXP ogr_ds_test_cap(std::string dsn, bool with_update = true) {
+SEXP ogr_ds_test_cap(const std::string &dsn, bool with_update = true) {
+
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
 
@@ -174,19 +180,24 @@ SEXP ogr_ds_test_cap(std::string dsn, bool with_update = true) {
     return cap;
 }
 
-//' Create a vector dataset. Optionally create a layer in the dataset.
-//' A field is also created optionally (name and type only).
-//'
-//' @noRd
-// [[Rcpp::export(name = ".create_ogr")]]
-GDALVector create_ogr(std::string format, std::string dst_filename,
-        int xsize, int ysize, int nbands, std::string dataType,
-        std::string layer, std::string geom_type,
-        std::string srs = "", std::string fld_name = "",
-        std::string fld_type = "OFTInteger",
-        Rcpp::Nullable<Rcpp::CharacterVector> dsco = R_NilValue,
-        Rcpp::Nullable<Rcpp::CharacterVector> lco = R_NilValue,
-        Rcpp::Nullable<Rcpp::List> layer_defn = R_NilValue) {
+// Create a vector dataset. Optionally create a layer in the dataset.
+// A field is also created optionally (name and type only).
+//
+// Implemented as a GDALVector object factory registered in
+// RCPP_MODULE(mod_GDALVector), see src/gdalvector.cpp.
+// Unique function signature based on number of parameters.
+// Called in R with `lyr <- new(GDALVector, ...)` giving all 10 parameters,
+// as in R/ogr_manage.R.
+GDALVector *create_ogr(const std::string &format,
+                       const std::string &dst_filename,
+                       const std::string &layer,
+                       const std::string &geom_type,
+                       const std::string &srs,
+                       const std::string &fld_name,
+                       const std::string &fld_type ,
+                       const Rcpp::Nullable<Rcpp::CharacterVector> &dsco,
+                       const Rcpp::Nullable<Rcpp::CharacterVector> &lco,
+                       const Rcpp::Nullable<Rcpp::List> &layer_defn) {
 
     GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
     if (hDriver == nullptr)
@@ -206,8 +217,6 @@ GDALVector create_ogr(std::string format, std::string dst_filename,
     if (fld_type != "")
         fld_oft = getOFT_(fld_type);
 
-    GDALDataType dt = GDALGetDataTypeByName(dataType.c_str());
-
     std::vector<char *> opt_list = {nullptr};
     if (dsco.isNotNull()) {
         Rcpp::CharacterVector dsco_in(dsco);
@@ -220,7 +229,7 @@ GDALVector create_ogr(std::string format, std::string dst_filename,
 
     GDALDatasetH hDstDS = nullptr;
     hDstDS = GDALCreate(hDriver, dsn_in.c_str(),
-                        xsize, ysize, nbands, dt,
+                        0, 0, 0, GDT_Unknown,
                         opt_list.data());
 
     if (hDstDS == nullptr)
@@ -228,10 +237,10 @@ GDALVector create_ogr(std::string format, std::string dst_filename,
 
     if (layer == "" && layer_defn.isNull()) {
         GDALReleaseDataset(hDstDS);
-        GDALVector ds = GDALVector();
-        ds.setDsn_(dsn_in);
-        // return object has no dataset or layer in this case
-        // currently not be usable from R but that may change in the future
+        GDALVector *ds = new GDALVector;
+        ds->setDsn_(dsn_in);
+        // for internal use, return object has no dataset or layer in this case
+        // currently would not be usable from R, but could change in the future
         return ds;
     }
 
@@ -276,11 +285,11 @@ GDALVector create_ogr(std::string format, std::string dst_filename,
         Rcpp::stop("the layer was created but field creation failed");
     }
     else {
-        GDALVector lyr = GDALVector();
-        lyr.setDsn_(dsn_in);
-        lyr.setGDALDatasetH_(hDstDS, true);
-        lyr.setOGRLayerH_(hLayer, layer);
-        lyr.setFieldNames_();
+        GDALVector *lyr = new GDALVector;
+        lyr->setDsn_(dsn_in);
+        lyr->setGDALDatasetH_(hDstDS, true);
+        lyr->setOGRLayerH_(hLayer, layer);
+        lyr->setFieldNames_();
         return lyr;
     }
 }
@@ -289,7 +298,8 @@ GDALVector create_ogr(std::string format, std::string dst_filename,
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_ds_layer_count")]]
-int ogr_ds_layer_count(std::string dsn) {
+int ogr_ds_layer_count(const std::string &dsn) {
+
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
 
@@ -309,7 +319,8 @@ int ogr_ds_layer_count(std::string dsn) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_ds_layer_names")]]
-SEXP ogr_ds_layer_names(std::string dsn) {
+SEXP ogr_ds_layer_names(const std::string &dsn) {
+
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
 
@@ -346,7 +357,8 @@ SEXP ogr_ds_layer_names(std::string dsn) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_exists")]]
-bool ogr_layer_exists(std::string dsn, std::string layer) {
+bool ogr_layer_exists(const std::string &dsn, const std::string &layer) {
+
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
     OGRLayerH hLayer = nullptr;
@@ -370,8 +382,8 @@ bool ogr_layer_exists(std::string dsn, std::string layer) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_test_cap")]]
-SEXP ogr_layer_test_cap(std::string dsn, std::string layer,
-                         bool with_update = true) {
+SEXP ogr_layer_test_cap(const std::string &dsn, const std::string &layer,
+                        bool with_update = true) {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
@@ -404,10 +416,11 @@ SEXP ogr_layer_test_cap(std::string dsn, std::string layer,
 }
 
 // Internal wrapper of GDALDatasetCreateLayer()
-OGRLayerH CreateLayer_(GDALDatasetH hDS, std::string layer,
-        Rcpp::Nullable<Rcpp::List> layer_defn = R_NilValue,
-        std::string geom_type = "UNKNOWN", std::string srs = "",
-        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+OGRLayerH CreateLayer_(GDALDatasetH hDS, const std::string &layer,
+                       Rcpp::Nullable<Rcpp::List> layer_defn,
+                       const std::string &geom_type,
+                       const std::string &srs,
+                       Rcpp::Nullable<Rcpp::CharacterVector> options) {
 
     if (hDS == nullptr)
         return nullptr;
@@ -573,14 +586,19 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, std::string layer,
     return hLayer;
 }
 
-//' Create a layer in a vector dataset
-//'
-//' @noRd
-// [[Rcpp::export(name = ".ogr_layer_create")]]
-GDALVector ogr_layer_create(std::string dsn, std::string layer,
-        Rcpp::Nullable<Rcpp::List> layer_defn = R_NilValue,
-        std::string geom_type = "UNKNOWN", std::string srs = "",
-        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue) {
+// Create a layer in a vector dataset
+//
+// Implemented as a GDALVector object factory registered in
+// RCPP_MODULE(mod_GDALVector), see src/gdalvector.cpp.
+// Unique function signature based on number of parameters.
+// Called in R with `lyr <- new(GDALVector, ...)` giving all 7 parameters,
+// as in R/ogr_manage.R (param `reserved1` currently ignored).
+GDALVector *ogr_layer_create(
+        const std::string &dsn, const std::string &layer,
+        const Rcpp::Nullable<Rcpp::List> &layer_defn,
+        const std::string &geom_type, const std::string &srs,
+        const Rcpp::Nullable<Rcpp::CharacterVector> &options,
+        bool reserved1) {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
@@ -604,11 +622,11 @@ GDALVector ogr_layer_create(std::string dsn, std::string layer,
         Rcpp::stop("failed to create layer");
     }
     else {
-        GDALVector lyr = GDALVector();
-        lyr.setDsn_(dsn_in);
-        lyr.setGDALDatasetH_(hDS, true);
-        lyr.setOGRLayerH_(hLayer, layer);
-        lyr.setFieldNames_();
+        GDALVector *lyr = new GDALVector;
+        lyr->setDsn_(dsn_in);
+        lyr->setGDALDatasetH_(hDS, true);
+        lyr->setOGRLayerH_(hLayer, layer);
+        lyr->setFieldNames_();
         return lyr;
     }
 }
@@ -617,8 +635,8 @@ GDALVector ogr_layer_create(std::string dsn, std::string layer,
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_rename")]]
-bool ogr_layer_rename(std::string dsn, std::string layer,
-                      std::string new_name) {
+bool ogr_layer_rename(const std::string &dsn, const std::string &layer,
+                      const std::string &new_name) {
 
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 5, 0)
     Rcpp::stop("ogr_layer_rename() requires GDAL >= 3.5");
@@ -661,7 +679,8 @@ bool ogr_layer_rename(std::string dsn, std::string layer,
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_delete")]]
-bool ogr_layer_delete(std::string dsn, std::string layer) {
+bool ogr_layer_delete(const std::string &dsn, const std::string &layer) {
+
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
     OGRLayerH  hLayer = nullptr;
@@ -705,7 +724,8 @@ bool ogr_layer_delete(std::string dsn, std::string layer) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_layer_field_names")]]
-SEXP ogr_layer_field_names(std::string dsn, std::string layer) {
+SEXP ogr_layer_field_names(const std::string &dsn, const std::string &layer) {
+
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
     OGRLayerH hLayer = nullptr;
@@ -765,8 +785,8 @@ SEXP ogr_layer_field_names(std::string dsn, std::string layer) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_field_index")]]
-int ogr_field_index(std::string dsn, std::string layer,
-                     std::string fld_name) {
+int ogr_field_index(const std::string &dsn, const std::string &layer,
+                    const std::string &fld_name) {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
@@ -801,13 +821,13 @@ int ogr_field_index(std::string dsn, std::string layer,
 
 // Internal wrapper of OGR_L_CreateField()
 bool CreateField_(GDALDatasetH hDS, OGRLayerH hLayer,
-                  std::string fld_name, std::string fld_type,
-                  std::string fld_subtype = "OFSTNone",
+                  const std::string &fld_name, const std::string &fld_type,
+                  const std::string &fld_subtype = "OFSTNone",
                   int fld_width = 0,
                   int fld_precision = 0,
                   bool is_nullable = true,
                   bool is_unique = false,
-                  std::string default_value = "") {
+                  const std::string &default_value = "") {
 
     if (hDS == nullptr || hLayer == nullptr)
         return false;
@@ -868,14 +888,14 @@ bool CreateField_(GDALDatasetH hDS, OGRLayerH hLayer,
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_field_create")]]
-bool ogr_field_create(std::string dsn, std::string layer,
-                       std::string fld_name, std::string fld_type,
-                       std::string fld_subtype = "OFSTNone",
-                       int fld_width = 0,
-                       int fld_precision = 0,
-                       bool is_nullable = true,
-                       bool is_unique = false,
-                       std::string default_value = "") {
+bool ogr_field_create(const std::string &dsn, const std::string &layer,
+                      const std::string &fld_name, const std::string &fld_type,
+                      const std::string &fld_subtype = "OFSTNone",
+                      int fld_width = 0,
+                      int fld_precision = 0,
+                      bool is_nullable = true,
+                      bool is_unique = false,
+                      const std::string &default_value = "") {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
@@ -931,9 +951,9 @@ bool ogr_field_create(std::string dsn, std::string layer,
 
 // Internal wrapper of OGR_L_CreateGeomField()
 bool CreateGeomField_(GDALDatasetH hDS, OGRLayerH hLayer,
-                      std::string fld_name,
+                      const std::string &fld_name,
                       OGRwkbGeometryType eGeomType,
-                      std::string srs = "",
+                      const std::string &srs = "",
                       bool is_nullable = true) {
 
     if (hDS == nullptr || hLayer == nullptr)
@@ -984,10 +1004,11 @@ bool CreateGeomField_(GDALDatasetH hDS, OGRLayerH hLayer,
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_geom_field_create")]]
-bool ogr_geom_field_create(std::string dsn, std::string layer,
-                            std::string fld_name, std::string geom_type,
-                            std::string srs = "",
-                            bool is_nullable = true) {
+bool ogr_geom_field_create(const std::string &dsn, const std::string &layer,
+                           const std::string &fld_name,
+                           const std::string &geom_type,
+                           const std::string &srs = "",
+                           bool is_nullable = true) {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
@@ -1048,8 +1069,9 @@ bool ogr_geom_field_create(std::string dsn, std::string layer,
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_field_rename")]]
-bool ogr_field_rename(std::string dsn, std::string layer,
-                      std::string fld_name, std::string new_name) {
+bool ogr_field_rename(const std::string &dsn, const std::string &layer,
+                      const std::string &fld_name,
+                      const std::string &new_name) {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
@@ -1120,8 +1142,8 @@ bool ogr_field_rename(std::string dsn, std::string layer,
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_field_delete")]]
-bool ogr_field_delete(std::string dsn, std::string layer,
-                       std::string fld_name) {
+bool ogr_field_delete(const std::string &dsn, const std::string &layer,
+                      const std::string &fld_name) {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
@@ -1177,9 +1199,9 @@ bool ogr_field_delete(std::string dsn, std::string layer,
 //'
 //' @noRd
 // [[Rcpp::export(name = ".ogr_execute_sql", invisible = true)]]
-SEXP ogr_execute_sql(std::string dsn, std::string sql,
-                      std::string spatial_filter = "",
-                      std::string dialect = "") {
+SEXP ogr_execute_sql(const std::string &dsn, const std::string &sql,
+                     const std::string &spatial_filter = "",
+                     const std::string &dialect = "") {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;

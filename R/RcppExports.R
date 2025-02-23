@@ -2378,14 +2378,6 @@ bbox_to_wkt <- function(bbox, extend_x = 0, extend_y = 0) {
     .Call(`_gdalraster_ogr_ds_test_cap`, dsn, with_update)
 }
 
-#' Create a vector dataset. Optionally create a layer in the dataset.
-#' A field is also created optionally (name and type only).
-#'
-#' @noRd
-.create_ogr <- function(format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs = "", fld_name = "", fld_type = "OFTInteger", dsco = NULL, lco = NULL, layer_defn = NULL) {
-    .Call(`_gdalraster_create_ogr`, format, dst_filename, xsize, ysize, nbands, dataType, layer, geom_type, srs, fld_name, fld_type, dsco, lco, layer_defn)
-}
-
 #' Get number of layers in a dataset
 #'
 #' @noRd
@@ -2412,13 +2404,6 @@ bbox_to_wkt <- function(bbox, extend_x = 0, extend_y = 0) {
 #' @noRd
 .ogr_layer_test_cap <- function(dsn, layer, with_update = TRUE) {
     .Call(`_gdalraster_ogr_layer_test_cap`, dsn, layer, with_update)
-}
-
-#' Create a layer in a vector dataset
-#'
-#' @noRd
-.ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = "UNKNOWN", srs = "", options = NULL) {
-    .Call(`_gdalraster_ogr_layer_create`, dsn, layer, layer_defn, geom_type, srs, options)
 }
 
 #' Rename a layer in a vector dataset
