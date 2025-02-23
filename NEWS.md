@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9200 (dev)
+# gdalraster 1.12.0.9210 (dev)
+
+* (internal) implement `ogr_ds_create()` and `ogr_layer_create()` as `GDALVector` object factories (#609) (2025-02-22)
 
 * add `GDALVector::getArrowStream()`: expose an Arrow C stream on a layer via nanoarrow_array_stream object (#591) (2025-02-22)
 
