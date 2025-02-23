@@ -61,6 +61,7 @@
 #' lyr <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)
 #'
 #' ## Read/write fields (per-object settings)
+#' lyr$arrowStreamOptions
 #' lyr$defaultGeomColName
 #' lyr$promoteToMulti
 #' lyr$quiet
@@ -103,6 +104,9 @@
 #' lyr$getFeature(fid)
 #' lyr$resetReading()
 #' lyr$fetch(n)
+#'
+#' lyr$getArrowStream()
+#' lyr$releaseArrowStream()
 #'
 #' lyr$setFeature(feature)
 #' lyr$createFeature(feature)
@@ -150,6 +154,24 @@
 #' `NULL`, and `spatial_filter` or `dialect` may be an empty string (`""`).
 #'
 #' ## Read/write fields
+#'
+#' \code{$arrowStreamOptions}\cr
+#' Character vector of `"NAME=VALUE"` pairs giving options used by the
+#' `$getArrowStream()` method (see below). The available options may be
+#' driver and GDAL version specific. Options available as of GDAL 3.8 are
+#' listed below. For more information about options for Arrow stream, see
+#' the GDAL API documentation for
+#' [OGR_L_GetArrowStream()](https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_GetArrowStream9OGRLayerHP16ArrowArrayStreamPPc).
+#' * INCLUDE_FID=YES/NO. Defaults to YES.
+#' * TIMEZONE=unknown/UTC/(+|:)HH:MM or any other value supported by
+#' Arrow (GDAL >= 3.8).
+#' * GEOMETRY_METADATA_ENCODING=OGC/GEOARROW (GDAL >= 3.8). This will be set
+#' to GEOARROW by default on newly instantiated `GDALVector` objects (if not
+#' specified, the GDAL default is OGC).
+#' * GEOMETRY_ENCODING=WKB (Arrow/Parquet drivers). To force a fallback to the
+#' generic implementation when the native geometry encoding is not WKB.
+#' Otherwise the geometry will be returned with its native Arrow encoding
+#' (possibly using GeoArrow encoding).
 #'
 #' \code{$defaultGeomColName}\cr
 #' Character string specifying a name to use for returned columns when the
@@ -472,6 +494,31 @@
 #' Note that `$getFeatureCount()` is called internally when fetching the full
 #' feature set or all remaining features (but not for a page of features).
 #'
+#' \code{$getArrowStream()}\cr
+#' Returns a nanoarrow_array_stream object exposing an Arrow C stream on the
+#' layer (requires GDAL >= 3.6).
+#' The writable field `$arrowStreamOptions` can be used to set options before
+#' calling this method (see above). An error is raised if an array stream
+#' on the layer cannot be obtained.
+#' Generally, only one ArrowArrayStream can be active at a time on a given
+#' layer (that is the last active one must be explicitly released before a next
+#' one is asked). Changing attribute or spatial filters, ignored columns,
+#' modifying the schema or using `$resetReading()`/`$getNextFeature()` while
+#' using an ArrowArrayStream is strongly discouraged and may lead to unexpected
+#' results. As a rule of thumb, no OGRLayer methods that affect the state of a
+#' layer should be called on the layer while an ArrowArrayStream on it is
+#' active. Methods available on the stream object are: `$get_schema()`,
+#' `$get_next()`, `get_last_error()` and `$release()` (see Examples).
+#' The stream should be released once reading is complete. Calling the release
+#' method as soon as you can after consuming a stream is recommended in the
+#' nanoarrow documentation.
+#'
+#' \code{$releaseArrowStream()}\cr
+#' Releases the Arrow C stream returned by `$getArrowStream()` and clears the
+#' nanoarrow_array_stream object (if GDAL >= 3.6, otherwise does nothing).
+#' This is equivalent to calling the `$release()` method on the
+#' nanoarrow_array_stream object. No return value, called for side effects.
+#'
 #' \code{$setFeature(feature)}\cr
 #' Rewrites/replaces an existing feature. This method writes a feature based on
 #' the feature id within the input feature. The `feature` argument is a named
@@ -725,7 +772,6 @@
 #' lyr$getFeatureCount()
 #'
 #' lyr$close()
-#' \dontshow{unlink(dsn)}
 #'
 #' ## simple example for feature write methods showing use of various data types
 #' ## create and write to a new layer in a GeoPackage data source
@@ -823,6 +869,36 @@
 #' str(feat_set)
 #'
 #' lyr$close()
+#'
+#' # Arrow array stream exposed as a nanoarrow_array_stream object
+#' # requires GDAL >= 3.6
+#' if (as.integer(gdal_version()[2]) >= 3060000 &&
+#'     requireNamespace("nanoarrow")) {
+#'
+#'   lyr <- new(GDALVector, dsn)
+#'   stream <- lyr$getArrowStream()
+#'   print(stream)
+#'
+#'   stream$get_schema() |> print()
+#'
+#'   batch <- stream$get_next()
+#'
+#'   options(nanoarrow.warn_unregistered_extension = FALSE)
+#'   d <- as.data.frame(batch)
+#'   head(d) |> print()
+#'
+#'   # the geometry column is a list column of WKB raw vectors, e.g.,
+#'   g_area(d$geom) |> print()
+#'
+#'   # the last batch is NULL
+#'   stream$get_next()
+#'
+#'   # release the stream when finished
+#'   stream$release()
+#'
+#'   lyr$close()
+#' }
+#' \dontshow{unlink(dsn)}
 #' \dontshow{unlink(dsn2)}
 NULL
 

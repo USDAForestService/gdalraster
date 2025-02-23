@@ -22,6 +22,8 @@
 #include "gdalvector.h"
 #include "ogr_util.h"
 
+#include "nanoarrow/r.h"
+
 
 GDALVector::GDALVector() :
             m_layer_name(""),
@@ -70,6 +72,10 @@ GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
     m_dsn = Rcpp::as<std::string>(check_gdal_filename(dsn));
     open(read_only);
     setFieldNames_();
+}
+
+GDALVector::~GDALVector() {
+    releaseArrowStream();
 }
 
 void GDALVector::open(bool read_only) {
@@ -148,6 +154,16 @@ void GDALVector::open(bool read_only) {
     if (m_layer_name == "") {
         // default layer first by index was opened
         m_layer_name = OGR_L_GetName(m_hLayer);
+    }
+
+#if __has_include("ogr_recordbatch.h")
+    // initialize the release callback since it will be checked at closing
+    m_stream.release = nullptr;
+#endif
+
+    if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 8, 0)) {
+        // override the default to ensure CRS from GDAL is propagated to Arrow
+        this->arrowStreamOptions = {"GEOMETRY_METADATA_ENCODING=GEOARROW"};
     }
 
     if (hGeom_filter != nullptr)
@@ -1603,6 +1619,73 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     }
 }
 
+SEXP GDALVector::getArrowStream() {
+    /*
+    Exposes an Arrow C stream to be consumed by {nanoarrow}
+    Implementation adapted from GDALStreamWrapper by Dewey Dunnington in:
+    https://github.com/r-spatial/sf/blob/main/src/gdal_read_stream.cpp
+    */
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 6, 0)
+    Rcpp::stop("getArrowStream() requires GDAL >= 3.6");
+
+#else
+    checkAccess_(GA_ReadOnly);
+
+    std::vector<char *> opt{};
+    if (this->arrowStreamOptions.size() > 0) {
+        for (R_xlen_t i = 0; i < this->arrowStreamOptions.size(); ++i) {
+            if (!EQUAL(this->arrowStreamOptions[i], ""))
+                opt.push_back((char *) (this->arrowStreamOptions[i]));
+        }
+    }
+    opt.push_back(nullptr);
+
+    if (!OGR_L_GetArrowStream(m_hLayer, &m_stream, opt.data())) {
+        Rcpp::stop("OGR_L_GetArrowStream() failed: " +
+            std::string(CPLGetLastErrorMsg()));
+    }
+
+    m_stream_xptrs.push_back(nanoarrow_array_stream_owning_xptr());
+    size_t i = m_stream_xptrs.size() - 1;
+
+    auto stream_out = reinterpret_cast<struct ArrowArrayStream*>(
+        R_ExternalPtrAddr(m_stream_xptrs[i]));
+
+    stream_out->get_schema = &arrow_get_schema_wrap;
+    stream_out->get_next = &arrow_get_next_wrap;
+    stream_out->get_last_error = &arrow_get_last_error_wrap;
+    stream_out->release = &arrow_release_wrap;
+    stream_out->private_data = this;
+
+    return m_stream_xptrs[i];
+#endif
+}
+
+void GDALVector::releaseArrowStream() {
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
+
+    if (m_stream.release) {
+        m_stream.release(&m_stream);
+        m_stream.release = nullptr;
+
+        if (m_stream_xptrs.empty()) {
+            // should not be possible here
+            return;
+        }
+
+        size_t i = m_stream_xptrs.size() - 1;
+        if (R_ExternalPtrAddr(m_stream_xptrs[i])) {
+            auto stream_out = reinterpret_cast<struct ArrowArrayStream*>(
+                R_ExternalPtrAddr(m_stream_xptrs[i]));
+
+            stream_out->release = nullptr;
+        }
+    }
+
+#endif
+}
+
 bool GDALVector::setFeature(const Rcpp::RObject &feature) {
     checkAccess_(GA_Update);
 
@@ -2109,6 +2192,7 @@ bool GDALVector::layerErase(
 }
 
 void GDALVector::close() {
+    releaseArrowStream();
     if (m_hDataset != nullptr) {
         if (m_is_sql)
             GDALDatasetReleaseResultSet(m_hDataset, m_hLayer);
@@ -2179,6 +2263,8 @@ void GDALVector::checkAccess_(GDALAccess access_needed) const {
 }
 
 void GDALVector::setDsn_(std::string dsn) {
+    // consider not raising any errors here since this is for internal use and
+    // these conditions should not apply
     if (m_hDataset != nullptr) {
         std::string desc(GDALGetDescription(m_hDataset));
         if (m_dsn == "" && desc == "") {
@@ -2195,6 +2281,10 @@ void GDALVector::setDsn_(std::string dsn) {
         else
             Rcpp::stop("the DSN cannot be set on this object");
     }
+#if __has_include("ogr_recordbatch.h")
+    // initialize the release callback since it will be checked at closing
+    m_stream.release = nullptr;
+#endif
 }
 
 GDALDatasetH GDALVector::getGDALDatasetH_() const {
@@ -2221,6 +2311,10 @@ void GDALVector::setOGRLayerH_(const OGRLayerH hLyr,
                                const std::string &lyr_name) {
     m_hLayer = hLyr;
     m_layer_name = lyr_name;
+#if __has_include("ogr_recordbatch.h")
+    // initialize the release callback since it will be checked at closing
+    m_stream.release = nullptr;
+#endif
 }
 
 void GDALVector::setFieldNames_() {
@@ -3195,6 +3289,45 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(
     return hFeat;
 }
 
+// Arrow callbacks
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
+int GDALVector::arrow_get_schema(struct ArrowSchema* out) {
+    return m_stream.get_schema(&m_stream, out);
+}
+
+int GDALVector::arrow_get_next(struct ArrowArray* out) {
+    return m_stream.get_next(&m_stream, out);
+}
+
+const char* GDALVector::arrow_get_last_error() {
+    return m_stream.get_last_error(&m_stream);
+}
+
+int GDALVector::arrow_get_schema_wrap(struct ArrowArrayStream* stream,
+                                      struct ArrowSchema* out) {
+
+    return reinterpret_cast<GDALVector*>(
+            stream->private_data)->arrow_get_schema(out);
+}
+
+int GDALVector::arrow_get_next_wrap(struct ArrowArrayStream* stream,
+                                    struct ArrowArray* out) {
+
+    return reinterpret_cast<GDALVector*>(
+            stream->private_data)->arrow_get_next(out);
+}
+
+const char* GDALVector::arrow_get_last_error_wrap(
+        struct ArrowArrayStream* stream) {
+
+    return reinterpret_cast<GDALVector*>(
+            stream->private_data)->arrow_get_last_error();
+}
+
+void GDALVector::arrow_release_wrap(struct ArrowArrayStream* stream) {
+    reinterpret_cast<GDALVector*>(stream->private_data)->releaseArrowStream();
+}
+#endif
 
 // ****************************************************************************
 
@@ -3226,6 +3359,7 @@ RCPP_MODULE(mod_GDALVector) {
     .field_readonly("m_dialect", &GDALVector::m_dialect)
 
     // read/write fields
+    .field("arrowStreamOptions", &GDALVector::arrowStreamOptions)
     .field("defaultGeomColName", &GDALVector::defaultGeomColName)
     .field("promoteToMulti", &GDALVector::promoteToMulti)
     .field("quiet", &GDALVector::quiet)
@@ -3295,6 +3429,10 @@ RCPP_MODULE(mod_GDALVector) {
         "Reset feature reading to start on the first feature")
     .method("fetch", &GDALVector::fetch,
         "Fetch a set features as a data frame")
+    .method("getArrowStream", &GDALVector::getArrowStream,
+        "Expose an Arrow C stream on the layer")
+    .method("releaseArrowStream", &GDALVector::releaseArrowStream,
+        "Release the Arrow C stream on the layer")
     .method("setFeature", &GDALVector::setFeature,
         "Rewrite/replace an existing feature within the layer")
     .method("createFeature", &GDALVector::createFeature,
