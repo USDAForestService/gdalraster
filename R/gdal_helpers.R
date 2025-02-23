@@ -2,19 +2,13 @@
 # Chris Toney <chris.toney at usda.gov>
 
 #' @noRd
-.get_crs_name <- function(object) {
+.get_crs_name <- function(wkt) {
     # name of form "<srs name> [(EPSG:####[, confidence ##])]"
     # include EPSG code if confidence > 50
     # include the confidence value if < 100
 
-    crs <- ""
-    if (is(object, "Rcpp_GDALRaster")) {
-        crs <- object$getProjection()
-    } else if (is(object, "Rcpp_GDALVector")) {
-        crs <- object$getSpatialRef()
-    }
-    crs_name <- srs_get_name(crs)
-    epsg <- srs_find_epsg(crs, all_matches = TRUE)
+    crs_name <- srs_get_name(wkt)
+    epsg <- srs_find_epsg(wkt, all_matches = TRUE)
     if (!is.null(epsg)) {
         if (nrow(epsg) >= 1 && epsg$confidence[1] > 50) {
             crs_name <- paste0(crs_name, " (", epsg$authority_name[1], ":",
@@ -26,6 +20,7 @@
             crs_name <- paste0(crs_name, ")")
         }
     }
+    return(crs_name)
 }
 
 #' Create/append to a potentially Seek-Optimized ZIP file (SOZip)

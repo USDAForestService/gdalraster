@@ -58,6 +58,8 @@ class VSIFile {
     std::string get_access() const;
     int set_access(std::string access);
 
+    void show() const;
+
  private:
     std::string m_filename;
     std::string m_access;

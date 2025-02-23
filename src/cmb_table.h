@@ -57,6 +57,8 @@ class CmbTable {
     Rcpp::DataFrame asDataFrame() const;
     Rcpp::NumericMatrix asMatrix() const;
 
+    void show() const;
+
  private:
     unsigned int m_key_len;
     Rcpp::CharacterVector m_var_names;

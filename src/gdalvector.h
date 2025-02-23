@@ -142,6 +142,8 @@ class GDALVector {
 
     void OGRFeatureFromList_dumpReadble(const Rcpp::RObject &feat) const;
 
+    void show() const;
+
     // methods for internal use not exposed to R
     void checkAccess_(GDALAccess access_needed) const;
 

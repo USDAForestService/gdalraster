@@ -2050,6 +2050,28 @@ void GDALRaster::close() {
     m_hDataset = nullptr;
 }
 
+void GDALRaster::show() const {
+    Rcpp::Environment pkg = Rcpp::Environment::namespace_env("gdalraster");
+    Rcpp::Function fn = pkg[".get_crs_name"];
+    std::string crs_name = Rcpp::as<std::string>(fn(getProjection()));
+
+    Rcpp::Rcout << "C++ object of class GDALRaster" << std::endl;
+    Rcpp::Rcout << " Driver : " << getDriverLongName() << " (" <<
+                                   getDriverShortName() << ")" << std::endl;
+    Rcpp::Rcout << " DSN    : " << getDescription(0) << std::endl;
+    Rcpp::Rcout << " Dim    : " << std::to_string(getRasterXSize()) << ", " <<
+                                   std::to_string(getRasterYSize()) << ", " <<
+                                   std::to_string(getRasterCount()) <<
+                                   std::endl;
+    Rcpp::Rcout << " CRS    : " << crs_name << std::endl;
+    Rcpp::Rcout << " Res    : " << std::to_string(res()[0]) << ", " <<
+                                   std::to_string(res()[1]) << std::endl;
+    Rcpp::Rcout << " Bbox   : " << std::to_string(bbox()[0]) << ", " <<
+                                   std::to_string(bbox()[1]) << ", " <<
+                                   std::to_string(bbox()[2]) << ", " <<
+                                   std::to_string(bbox()[3]) << std::endl;
+}
+
 // ****************************************************************************
 // class methods for internal use not exposed in R
 // ****************************************************************************
@@ -2294,6 +2316,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Compute checksum for raster region")
     .method("close", &GDALRaster::close,
         "Close the GDAL dataset for proper cleanup")
+    .const_method("show", &GDALRaster::show,
+        "S4 show()")
 
     ;
 }

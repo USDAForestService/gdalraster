@@ -2142,6 +2142,30 @@ void GDALVector::OGRFeatureFromList_dumpReadble(
 #endif
 }
 
+void GDALVector::show() const {
+    std::string lyr_name = "";
+    if (m_is_sql) {
+        // the API call to OGR_L_GetName() returns only "SELECT" for SQL layer
+        // instead get SQL statement used to open the layer
+        lyr_name = m_layer_name;
+    }
+    else {
+        lyr_name = getName();
+    }
+
+    Rcpp::Environment pkg = Rcpp::Environment::namespace_env("gdalraster");
+    Rcpp::Function fn = pkg[".get_crs_name"];
+    std::string crs_name = Rcpp::as<std::string>(fn(getSpatialRef()));
+
+    Rcpp::Rcout << "C++ object of class GDALVector" << std::endl;
+    Rcpp::Rcout << " Driver : " << getDriverLongName() << " (" <<
+                                   getDriverShortName() << ")" << std::endl;
+    Rcpp::Rcout << " DSN    : " << getDsn() << std::endl;
+    Rcpp::Rcout << " Layer  : " << lyr_name << std::endl;
+    Rcpp::Rcout << " CRS    : " << crs_name << std::endl;
+    Rcpp::Rcout << " Geom   : " << getGeomType() << std::endl;
+}
+
 // ****************************************************************************
 // class methods for internal use not exposed in R
 // ****************************************************************************
@@ -3314,6 +3338,8 @@ RCPP_MODULE(mod_GDALVector) {
     .const_method("OGRFeatureFromList_dumpReadble",
         &GDALVector::OGRFeatureFromList_dumpReadble,
         "Create an OGRFeature from list and dump to console in readable form")
+    .const_method("show", &GDALVector::show,
+        "S4 show()")
 
     ;
 }
