@@ -1,4 +1,4 @@
-# gdalraster 1.12.0.9186 (dev)
+# gdalraster 1.12.0.9190 (dev)
 
 * fix potential integer overflow when multiplying raster dimensions in R without explicit `as.numeric()` (#620 thanks to @mdsumner) (2025-02-21)
 
