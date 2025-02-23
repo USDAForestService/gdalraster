@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9210 (dev)
+# gdalraster 1.12.0.9220 (dev)
+
+* (internal) various C++ code linting throughout (#624) (2025-02-23)
 
 * (internal) implement `ogr_ds_create()` and `ogr_layer_create()` as `GDALVector` object factories (#609) (2025-02-22)
 
