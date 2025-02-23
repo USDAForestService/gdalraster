@@ -31,14 +31,16 @@
 class GDALVector {
  public:
     GDALVector();
-    explicit GDALVector(Rcpp::CharacterVector dsn);
-    GDALVector(Rcpp::CharacterVector dsn, std::string layer);
-    GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only);
-    GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
-               Rcpp::CharacterVector open_options);
-    GDALVector(Rcpp::CharacterVector dsn, std::string layer, bool read_only,
-               Rcpp::Nullable<Rcpp::CharacterVector> open_options,
-               std::string spatial_filter, std::string dialect);
+    explicit GDALVector(const Rcpp::CharacterVector &dsn);
+    GDALVector(const Rcpp::CharacterVector &dsn, const std::string &layer);
+    GDALVector(const Rcpp::CharacterVector &dsn, const std::string &layer,
+               bool read_only);
+    GDALVector(const Rcpp::CharacterVector &dsn, const std::string &layer,
+               bool read_only, const Rcpp::CharacterVector &open_options);
+    GDALVector(const Rcpp::CharacterVector &dsn, const std::string &layer,
+               bool read_only,
+               const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
+               const std::string &spatial_filter, const std::string &dialect);
     ~GDALVector();
 
     // undocumented, exposed read-only fields for internal use
@@ -72,7 +74,7 @@ class GDALVector {
     std::string getSpatialRef() const;
     Rcpp::NumericVector bbox();
     Rcpp::List getLayerDefn() const;
-    SEXP getFieldDomain(std::string domain_name) const;
+    SEXP getFieldDomain(const std::string &domain_name) const;
 
     void setAttributeFilter(const std::string &query);
     std::string getAttributeFilter() const;
@@ -109,8 +111,8 @@ class GDALVector {
     bool rollbackTransaction();
 
     Rcpp::CharacterVector getMetadata() const;
-    bool setMetadata(const Rcpp::CharacterVector metadata);
-    std::string getMetadataItem(std::string mdi_name) const;
+    bool setMetadata(const Rcpp::CharacterVector &metadata);
+    std::string getMetadataItem(const std::string &mdi_name) const;
 
     bool layerIntersection(
             GDALVector* const &method_layer,
@@ -157,15 +159,15 @@ class GDALVector {
     // methods for internal use not exposed to R
     void checkAccess_(GDALAccess access_needed) const;
 
-    void setDsn_(std::string dsn);
+    void setDsn_(const std::string &dsn);
     GDALDatasetH getGDALDatasetH_() const;
-    void setGDALDatasetH_(const GDALDatasetH hDs, bool with_update);
+    void setGDALDatasetH_(GDALDatasetH hDs, bool with_update);
     OGRLayerH getOGRLayerH_() const;
-    void setOGRLayerH_(const OGRLayerH hLyr, const std::string &lyr_name);
+    void setOGRLayerH_(OGRLayerH hLyr, const std::string &lyr_name);
     void setFieldNames_();
 
     SEXP createDF_(R_xlen_t nrow) const;
-    void attachGISattributes_(Rcpp::List ogr_feat_obj,
+    void attachGISattributes_(Rcpp::List *ogr_feat_obj,
                               const Rcpp::CharacterVector &geom_col,
                               const Rcpp::CharacterVector &geom_col_type,
                               const Rcpp::CharacterVector &geom_col_srs,

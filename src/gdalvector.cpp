@@ -26,44 +26,53 @@
 
 
 GDALVector::GDALVector() :
-            m_layer_name(""),
-            m_dialect(""),
-            m_open_options(Rcpp::CharacterVector::create()),
-            m_spatial_filter(""),
-            m_hDataset(nullptr),
-            m_eAccess(GA_ReadOnly),
-            m_hLayer(nullptr) {}
+            m_open_options(Rcpp::CharacterVector::create()) {
 
-GDALVector::GDALVector(Rcpp::CharacterVector dsn) :
+    // undocumented default constructor with no arguments currently not
+    // intended for for user code
+#if __has_include("ogr_recordbatch.h")
+    // initialize the release callback since it will be checked at closing
+    m_stream.release = nullptr;
+#endif
+}
+
+GDALVector::GDALVector(const Rcpp::CharacterVector &dsn) :
 
             GDALVector(dsn, "", true, Rcpp::CharacterVector::create(),
                        "", "") {}
 
-GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer) :
+GDALVector::GDALVector(const Rcpp::CharacterVector &dsn,
+                       const std::string &layer) :
 
             GDALVector(dsn, layer, true, Rcpp::CharacterVector::create(),
                        "", "") {}
 
-GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
+GDALVector::GDALVector(const Rcpp::CharacterVector &dsn,
+                       const std::string &layer,
                        bool read_only) :
 
             GDALVector(dsn, layer, read_only, Rcpp::CharacterVector::create(),
                        "", "") {}
 
-GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
-                       bool read_only, Rcpp::CharacterVector open_options) :
+GDALVector::GDALVector(const Rcpp::CharacterVector &dsn,
+                       const std::string &layer,
+                       bool read_only,
+                       const Rcpp::CharacterVector &open_options) :
 
             GDALVector(dsn, layer, read_only, open_options, "", "") {}
 
-GDALVector::GDALVector(Rcpp::CharacterVector dsn, std::string layer,
+GDALVector::GDALVector(const Rcpp::CharacterVector &dsn,
+                       const std::string &layer,
                        bool read_only,
-                       Rcpp::Nullable<Rcpp::CharacterVector> open_options,
-                       std::string spatial_filter, std::string dialect = "") :
+                       const Rcpp::Nullable<Rcpp::CharacterVector>
+                           &open_options,
+                       const std::string &spatial_filter,
+                       const std::string &dialect = "") :
 
             m_layer_name(layer),
             m_dialect(dialect),
-            m_open_options(open_options.isNotNull() ? open_options :
-                           Rcpp::CharacterVector::create()),
+            m_open_options(open_options.isNotNull() ?
+                           open_options : Rcpp::CharacterVector::create()),
             m_spatial_filter(spatial_filter),
             m_hDataset(nullptr),
             m_eAccess(GA_ReadOnly),
@@ -454,7 +463,7 @@ Rcpp::List GDALVector::getLayerDefn() const {
     return list_out;
 }
 
-SEXP GDALVector::getFieldDomain(std::string domain_name) const {
+SEXP GDALVector::getFieldDomain(const std::string &domain_name) const {
 /*
  * The code for this method was adapted from ReportFieldDomain() in
  * gdal/apps/ogrinfo_lib.cpp:
@@ -1057,7 +1066,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         geom_format = "NONE";
     }
 
-    attachGISattributes_(df, geom_column, geom_col_type, geom_col_srs,
+    attachGISattributes_(&df, geom_column, geom_col_type, geom_col_srs,
                          geom_format);
 
     if (fetch_num == 0) {
@@ -1520,7 +1529,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         // calls to fetch(n), so the data generally should not be large enough
         // for this to be a problem.
         Rcpp::DataFrame df_trunc = createDF_(row_num);
-        attachGISattributes_(df_trunc, geom_column, geom_col_type, geom_col_srs,
+        attachGISattributes_(&df_trunc, geom_column, geom_col_type, geom_col_srs,
                              geom_format);
 
         if (row_num == 0)
@@ -1895,7 +1904,7 @@ Rcpp::CharacterVector GDALVector::getMetadata() const {
     }
 }
 
-bool GDALVector::setMetadata(const Rcpp::CharacterVector metadata) {
+bool GDALVector::setMetadata(const Rcpp::CharacterVector &metadata) {
 
     checkAccess_(GA_ReadOnly);
 
@@ -1919,7 +1928,7 @@ bool GDALVector::setMetadata(const Rcpp::CharacterVector metadata) {
     }
 }
 
-std::string GDALVector::getMetadataItem(std::string mdi_name) const {
+std::string GDALVector::getMetadataItem(const std::string &mdi_name) const {
 
     checkAccess_(GA_ReadOnly);
 
@@ -2263,7 +2272,7 @@ void GDALVector::checkAccess_(GDALAccess access_needed) const {
         Rcpp::stop("dataset is read-only");
 }
 
-void GDALVector::setDsn_(std::string dsn) {
+void GDALVector::setDsn_(const std::string &dsn) {
     // consider not raising any errors here since this is for internal use and
     // these conditions should not apply
     if (m_hDataset != nullptr) {
@@ -2283,7 +2292,7 @@ void GDALVector::setDsn_(std::string dsn) {
             Rcpp::stop("the DSN cannot be set on this object");
     }
 #if __has_include("ogr_recordbatch.h")
-    // initialize the release callback since it will be checked at closing
+    // ensure release callback initialized since it will be checked at closing
     m_stream.release = nullptr;
 #endif
 }
@@ -2294,7 +2303,7 @@ GDALDatasetH GDALVector::getGDALDatasetH_() const {
     return m_hDataset;
 }
 
-void GDALVector::setGDALDatasetH_(const GDALDatasetH hDs, bool with_update) {
+void GDALVector::setGDALDatasetH_(GDALDatasetH hDs, bool with_update) {
     m_hDataset = hDs;
     if (with_update)
         m_eAccess = GA_Update;
@@ -2308,12 +2317,11 @@ OGRLayerH GDALVector::getOGRLayerH_() const {
     return m_hLayer;
 }
 
-void GDALVector::setOGRLayerH_(const OGRLayerH hLyr,
-                               const std::string &lyr_name) {
+void GDALVector::setOGRLayerH_(OGRLayerH hLyr, const std::string &lyr_name) {
     m_hLayer = hLyr;
     m_layer_name = lyr_name;
 #if __has_include("ogr_recordbatch.h")
-    // initialize the release callback since it will be checked at closing
+    // ensure release callback initialized since it will be checked at closing
     m_stream.release = nullptr;
 #endif
 }
@@ -2548,7 +2556,7 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
     return df;
 }
 
-void GDALVector::attachGISattributes_(Rcpp::List ogr_feat_obj,
+void GDALVector::attachGISattributes_(Rcpp::List *ogr_feat_obj,
         const Rcpp::CharacterVector &geom_col,
         const Rcpp::CharacterVector &geom_col_type,
         const Rcpp::CharacterVector &geom_col_srs,
@@ -2570,7 +2578,7 @@ void GDALVector::attachGISattributes_(Rcpp::List ogr_feat_obj,
         Rcpp::Named("geom_col_srs") = geom_col_srs,
         Rcpp::Named("geom_format") = geom_format);
 
-    ogr_feat_obj.attr("gis") = gis;
+    ogr_feat_obj->attr("gis") = gis;
 }
 
 OGRFeatureH GDALVector::OGRFeatureFromList_(

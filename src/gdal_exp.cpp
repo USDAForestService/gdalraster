@@ -81,7 +81,7 @@ int gdal_version_num() {
 //'
 //' gdal_formats("GPKG")
 // [[Rcpp::export]]
-Rcpp::DataFrame gdal_formats(std::string format = "") {
+Rcpp::DataFrame gdal_formats(const std::string &format = "") {
 
     Rcpp::CharacterVector short_name = Rcpp::CharacterVector::create();
     Rcpp::CharacterVector long_name = Rcpp::CharacterVector::create();
@@ -91,17 +91,19 @@ Rcpp::DataFrame gdal_formats(std::string format = "") {
     Rcpp::LogicalVector virtual_io = Rcpp::LogicalVector::create();
     Rcpp::LogicalVector subdatasets = Rcpp::LogicalVector::create();
 
-    for (int i=0; i < GDALGetDriverCount(); ++i) {
+    for (int i = 0; i < GDALGetDriverCount(); ++i) {
         GDALDriverH hDriver = GDALGetDriver(i);
         char **papszMD = GDALGetMetadata(hDriver, nullptr);
         std::string rw = "";
 
-        if (format != "" &&
-                !EQUAL(format.c_str(), GDALGetDriverShortName(hDriver)))
+        if (format != "" && !EQUAL(format.c_str(),
+                                   GDALGetDriverShortName(hDriver))) {
+
             continue;
+        }
 
         if (CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ||
-                CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false)) {
+            CPLFetchBool(papszMD, GDAL_DCAP_VECTOR, false)) {
 
             CPLFetchBool(papszMD, GDAL_DCAP_RASTER, false) ?
                     raster_fmt.push_back(true) : raster_fmt.push_back(false);
@@ -169,7 +171,7 @@ Rcpp::DataFrame gdal_formats(std::string format = "") {
 //' ## this option is set during initialization of the gdalraster package
 //' get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER")
 // [[Rcpp::export]]
-std::string get_config_option(std::string key) {
+std::string get_config_option(const std::string &key) {
     const char* default_ = "";
     std::string ret(CPLGetConfigOption(key.c_str(), default_));
     return ret;
@@ -202,7 +204,7 @@ std::string get_config_option(std::string key) {
 //' ## unset:
 //' set_config_option("GDAL_CACHEMAX", "")
 // [[Rcpp::export]]
-void set_config_option(std::string key, std::string value) {
+void set_config_option(const std::string &key, const std::string &value) {
     const char* value_ = nullptr;
     if (value != "")
         value_ = value.c_str();
@@ -233,7 +235,7 @@ int get_cache_used() {
 
 //' @noRd
 // [[Rcpp::export(name = ".dump_open_datasets")]]
-int dump_open_datasets(std::string outfile) {
+int dump_open_datasets(const std::string &outfile) {
     FILE* fp = std::fopen(outfile.c_str(), "w");
     if (!fp)
         return -1;
@@ -274,7 +276,7 @@ int dump_open_datasets(std::string outfile) {
 //' # ...
 //' pop_error_handler()
 // [[Rcpp::export]]
-void push_error_handler(std::string handler) {
+void push_error_handler(const std::string &handler) {
     if (EQUAL(handler.c_str(), "quiet"))
         CPLPushErrorHandler(CPLQuietErrorHandler);
     else if (EQUAL(handler.c_str(), "logging"))
@@ -316,7 +318,9 @@ void pop_error_handler() {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".check_gdal_filename")]]
-Rcpp::CharacterVector check_gdal_filename(Rcpp::CharacterVector filename) {
+Rcpp::CharacterVector check_gdal_filename(
+        const Rcpp::CharacterVector &filename) {
+
     /*
     We use Rcpp::CharacterVector since it may have marked encoding when needed.
     Rcpp::String may drop encoding or have issues with encoding on Windows:
@@ -416,13 +420,14 @@ Rcpp::NumericVector get_usable_physical_ram() {
 //' has_spatialite()
 // [[Rcpp::export]]
 bool has_spatialite() {
-    GDALDriverH hDriver = GDALGetDriverByName("SQLite");
+    GDALDriverH hDriver = nullptr;
+    hDriver = GDALGetDriverByName("SQLite");
     if (hDriver == nullptr)
         return false;
 
-    const char *pszCO = GDALGetMetadataItem(hDriver,
-                                            GDAL_DMD_CREATIONOPTIONLIST,
-                                            nullptr);
+    const char *pszCO = nullptr;
+    pszCO = GDALGetMetadataItem(hDriver, GDAL_DMD_CREATIONOPTIONLIST,
+                                nullptr);
 
     if (pszCO == nullptr || std::strstr(pszCO, "SPATIALITE") == nullptr)
         return false;
@@ -448,7 +453,7 @@ bool http_enabled() {
 
 //' @noRd
 // [[Rcpp::export(name = ".cpl_get_filename")]]
-std::string cpl_get_filename(Rcpp::CharacterVector full_filename) {
+std::string cpl_get_filename(const Rcpp::CharacterVector &full_filename) {
     std::string filename_in = Rcpp::as<std::string>(
             check_gdal_filename(full_filename));
 
@@ -458,7 +463,7 @@ std::string cpl_get_filename(Rcpp::CharacterVector full_filename) {
 
 //' @noRd
 // [[Rcpp::export(name = ".cpl_get_basename")]]
-std::string cpl_get_basename(Rcpp::CharacterVector full_filename) {
+std::string cpl_get_basename(const Rcpp::CharacterVector &full_filename) {
     std::string filename_in = Rcpp::as<std::string>(
             check_gdal_filename(full_filename));
 
@@ -468,7 +473,7 @@ std::string cpl_get_basename(Rcpp::CharacterVector full_filename) {
 
 //' @noRd
 // [[Rcpp::export(name = ".cpl_get_extension")]]
-std::string cpl_get_extension(Rcpp::CharacterVector full_filename) {
+std::string cpl_get_extension(const Rcpp::CharacterVector &full_filename) {
     std::string filename_in = Rcpp::as<std::string>(
             check_gdal_filename(full_filename));
 
@@ -483,19 +488,23 @@ void cpl_http_cleanup() {
 }
 
 
-//' Create a new uninitialized raster
-//'
-//' `create()` makes an empty raster in the specified format.
-//'
-//' Called from and documented in R/gdal_create.R
-//' @noRd
+// Create a new uninitialized raster
+//
+// `create()` makes an empty raster in the specified format.
+//
+// Implemented as a GDALRaster object factory registered in
+// RCPP_MODULE(mod_GDALRaster), see src/gdalraster.cpp.
+// Unique function signature based on number of parameters.
+// Called in R with `ds <- new(GDALRaster, ...)` giving all 7 parameters,
+// as in R/gdal_create.R.
 GDALRaster *create(const std::string &format,
                    const Rcpp::CharacterVector &dst_filename,
                    int xsize, int ysize, int nbands,
                    const std::string &dataType,
                    const Rcpp::Nullable<Rcpp::CharacterVector> &options) {
 
-    GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
+    GDALDriverH hDriver = nullptr;
+    hDriver = GDALGetDriverByName(format.c_str());
     if (hDriver == nullptr)
         Rcpp::stop("failed to get driver for the specified format");
 
@@ -506,7 +515,8 @@ GDALRaster *create(const std::string &format,
     std::string dst_filename_in =
         Rcpp::as<std::string>(check_gdal_filename(dst_filename));
 
-    GDALDataType dt = GDALGetDataTypeByName(dataType.c_str());
+    GDALDataType dt = GDT_Unknown;
+    dt = GDALGetDataTypeByName(dataType.c_str());
     if (dt == GDT_Unknown)
         Rcpp::stop("'dataType' is unknown");
 
@@ -528,28 +538,37 @@ GDALRaster *create(const std::string &format,
     if (hDstDS == nullptr)
         Rcpp::stop("create() failed");
 
-    GDALRaster *ds = new GDALRaster;
+    GDALRaster *ds = nullptr;
+    ds = new GDALRaster();
+    if (ds == nullptr) {
+        GDALClose(hDstDS);
+        Rcpp::stop("create() failed");
+    }
     ds->setFilename(dst_filename_in);
     ds->setGDALDatasetH_(hDstDS, true);
     return ds;
 }
 
 
-//' Create a copy of a raster
-//'
-//' `createCopy()` copies a raster dataset, optionally changing the format.
-//' The extent, cell size, number of bands, data type, projection, and
-//' geotransform are all copied from the source raster.
-//'
-//' Called from and documented in R/gdal_create.R
-//' @noRd
+// Create a copy of a raster
+//
+// `createCopy()` copies a raster dataset, optionally changing the format.
+// The extent, cell size, number of bands, data type, projection, and
+// geotransform are all copied from the source raster.
+//
+// Implemented as a GDALRaster object factory registered in
+// RCPP_MODULE(mod_GDALRaster), see src/gdalraster.cpp.
+// Unique function signature based on number of parameters.
+// Called in R with `ds <- new(GDALRaster, ...)` giving all 6 parameters,
+// as in R/gdal_create.R.
 GDALRaster *createCopy(const std::string &format,
                        const Rcpp::CharacterVector &dst_filename,
                        const GDALRaster* const &src_ds, bool strict,
                        const Rcpp::Nullable<Rcpp::CharacterVector> &options,
                        bool quiet) {
 
-    GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
+    GDALDriverH hDriver = nullptr;
+    hDriver = GDALGetDriverByName(format.c_str());
     if (hDriver == nullptr)
         Rcpp::stop("failed to get driver from format name");
 
@@ -562,6 +581,9 @@ GDALRaster *createCopy(const std::string &format,
 
     std::string dst_filename_in =
         Rcpp::as<std::string>(check_gdal_filename(dst_filename));
+
+    if (!src_ds)
+        Rcpp::stop("open source raster failed");
 
     GDALDatasetH hSrcDS = src_ds->getGDALDatasetH_();
     if (hSrcDS == nullptr)
@@ -586,7 +608,12 @@ GDALRaster *createCopy(const std::string &format,
     if (hDstDS == nullptr)
         Rcpp::stop("createCopy() failed");
 
-    GDALRaster *ds = new GDALRaster;
+    GDALRaster *ds = nullptr;
+    ds = new GDALRaster();
+    if (ds == nullptr) {
+        GDALClose(hDstDS);
+        Rcpp::stop("create() failed");
+    }
     ds->setFilename(dst_filename_in);
     ds->setGDALDatasetH_(hDstDS, true);
     return ds;
@@ -609,10 +636,11 @@ GDALRaster *createCopy(const std::string &format,
 //' [inv_geotransform()]
 //' @noRd
 // [[Rcpp::export(name = ".apply_geotransform")]]
-Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt,
+Rcpp::NumericVector apply_geotransform_(const std::vector<double> &gt,
                                         double pixel, double line) {
 
-    double geo_x, geo_y;
+    double geo_x = 0;
+    double geo_y = 0;
     GDALApplyGeoTransform((double *) (gt.data()), pixel, line, &geo_x, &geo_y);
     Rcpp::NumericVector geo_xy = {geo_x, geo_y};
     return geo_xy;
@@ -623,31 +651,31 @@ Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt,
 //' input as geotransform vector, no bounds checking on col/row
 //' @noRd
 // [[Rcpp::export(name = ".apply_geotransform_gt")]]
-Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row,
-    const std::vector<double> gt) {
+Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject &col_row,
+                                          const std::vector<double> &gt) {
 
-Rcpp::NumericMatrix col_row_in = xy_robject_to_matrix_(col_row);
+    Rcpp::NumericMatrix col_row_in = xy_robject_to_matrix_(col_row);
 
-if (col_row_in.nrow() == 0)
-    Rcpp::stop("input matrix is empty");
+    if (col_row_in.nrow() == 0)
+        Rcpp::stop("input matrix is empty");
 
-Rcpp::LogicalVector na_in = Rcpp::is_na(col_row_in.column(0)) |
-                            Rcpp::is_na(col_row_in.column(1));
+    Rcpp::LogicalVector na_in = Rcpp::is_na(col_row_in.column(0)) |
+                                Rcpp::is_na(col_row_in.column(1));
 
-Rcpp::NumericMatrix xy = Rcpp::no_init(col_row_in.nrow(), 2);
-for (R_xlen_t i = 0; i < col_row_in.nrow(); ++i) {
-    if (na_in[i]) {
-        xy(i, 0) = NA_REAL;
-        xy(i, 1) = NA_REAL;
+    Rcpp::NumericMatrix xy = Rcpp::no_init(col_row_in.nrow(), 2);
+    for (R_xlen_t i = 0; i < col_row_in.nrow(); ++i) {
+        if (na_in[i]) {
+            xy(i, 0) = NA_REAL;
+            xy(i, 1) = NA_REAL;
+        }
+        else {
+            GDALApplyGeoTransform((double *) (gt.data()),
+                                  col_row_in(i, 0), col_row_in(i, 1),
+                                  &xy(i, 0), &xy(i, 1));
+        }
     }
-    else {
-        GDALApplyGeoTransform((double *) (gt.data()),
-                              col_row_in(i, 0), col_row_in(i, 1),
-                              &xy(i, 0), &xy(i, 1));
-    }
-}
 
-return xy;
+    return xy;
 }
 
 
@@ -655,7 +683,7 @@ return xy;
 //' alternate version for GDALRaster input, with bounds checking
 //' @noRd
 // [[Rcpp::export(name = ".apply_geotransform_ds")]]
-Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject& col_row,
+Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject &col_row,
                                           const GDALRaster* const &ds) {
 
     Rcpp::NumericMatrix col_row_in = xy_robject_to_matrix_(col_row);
@@ -733,7 +761,7 @@ Rcpp::NumericMatrix apply_geotransform_ds(const Rcpp::RObject& col_row,
 //'
 //' ## get_pixel_line() applies this conversion
 // [[Rcpp::export]]
-Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
+Rcpp::NumericVector inv_geotransform(const std::vector<double> &gt) {
     std::vector<double> gt_inv(6);
     if (GDALInvGeoTransform((double *) (gt.data()), gt_inv.data()))
         return Rcpp::wrap(gt_inv);
@@ -746,8 +774,8 @@ Rcpp::NumericVector inv_geotransform(const std::vector<double> gt) {
 //' input is gt vector, no bounds checking done on output
 //' @noRd
 // [[Rcpp::export(name = ".get_pixel_line_gt")]]
-Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy,
-        const std::vector<double> gt) {
+Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject &xy,
+        const std::vector<double> &gt) {
 
     Rcpp::NumericMatrix xy_in = xy_robject_to_matrix_(xy);
 
@@ -843,7 +871,7 @@ Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
 //' Flip raster data vertically
 //' @noRd
 // [[Rcpp::export(name = ".flip_vertical")]]
-Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v,
+Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector &v,
                                   int xsize, int ysize, int nbands) {
 
     // input pixels are interleaved by band
@@ -880,17 +908,20 @@ Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v,
 }
 
 
-//' Create a virtual warped dataset automatically
-//'
-//' `autoCreateWarpedVRT()` creates a warped virtual dataset representing the
-//' input raster warped into a target coordinate system. The output virtual
-//' dataset will be "north-up" in the target coordinate system. GDAL
-//' automatically determines the bounds and resolution of the output virtual
-//' raster which should be large enough to include all the input raster.
-//' Wrapper of `GDALAutoCreateWarpedVRT()` in the GDAL Warper API.
-//'
-//' Called from and documented in R/gdal_util.R
-//' @noRd
+// Create a virtual warped dataset automatically
+//
+// `autoCreateWarpedVRT()` creates a warped virtual dataset representing the
+// input raster warped into a target coordinate system. The output virtual
+// dataset will be "north-up" in the target coordinate system. GDAL
+// automatically determines the bounds and resolution of the output virtual
+// raster which should be large enough to include all the input raster.
+// Wrapper of `GDALAutoCreateWarpedVRT()` in the GDAL Warper API.
+//
+// Implemented as a GDALRaster object factory registered in
+// RCPP_MODULE(mod_GDALRaster), see src/gdalraster.cpp.
+// Unique function signature based on number of parameters.
+// Called in R with `ds <- new(GDALRaster, ...)` giving all 8 parameters,
+// as in R/gdal_create.R.
 GDALRaster *autoCreateWarpedVRT(const GDALRaster* const &src_ds,
                                 const std::string &dst_wkt,
                                 const std::string &resample_alg,
@@ -1005,10 +1036,10 @@ GDALRaster *autoCreateWarpedVRT(const GDALRaster* const &src_ds,
 //' ds$close()
 //' \dontshow{vsi_unlink(vrt_file)}
 // [[Rcpp::export(invisible = true)]]
-bool buildVRT(Rcpp::CharacterVector vrt_filename,
-        Rcpp::CharacterVector input_rasters,
-        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-        bool quiet = false) {
+bool buildVRT(const Rcpp::CharacterVector &vrt_filename,
+              const Rcpp::CharacterVector &input_rasters,
+              const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg = R_NilValue,
+              bool quiet = false) {
 
     std::string vrt_filename_in =
         Rcpp::as<std::string>(check_gdal_filename(vrt_filename));
@@ -1068,10 +1099,13 @@ bool buildVRT(Rcpp::CharacterVector vrt_filename,
 //' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".combine")]]
-Rcpp::DataFrame combine(Rcpp::CharacterVector src_files,
-        Rcpp::CharacterVector var_names, std::vector<int> bands,
-        std::string dst_filename, std::string fmt, std::string dataType,
-        Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet) {
+Rcpp::DataFrame combine(const Rcpp::CharacterVector &src_files,
+                        const Rcpp::CharacterVector &var_names,
+                        const std::vector<int> &bands,
+                        const std::string &dst_filename,
+                        const std::string &fmt, const std::string &dataType,
+                        const Rcpp::Nullable<Rcpp::CharacterVector> &options,
+                        bool quiet) {
 
     R_xlen_t nrasters = src_files.size();
     std::vector<std::unique_ptr<GDALRaster>> src_ds(nrasters);
@@ -1234,11 +1268,11 @@ Rcpp::DataFrame value_count(const GDALRaster* const &src_ds, int band = 1,
 //' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".dem_proc")]]
-bool dem_proc(std::string mode,
-              Rcpp::CharacterVector src_filename,
-              Rcpp::CharacterVector dst_filename,
-              Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-              Rcpp::Nullable<Rcpp::String> col_file = R_NilValue,
+bool dem_proc(const std::string &mode,
+              const Rcpp::CharacterVector &src_filename,
+              const Rcpp::CharacterVector &dst_filename,
+              const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg = R_NilValue,
+              const Rcpp::Nullable<Rcpp::String> &col_file = R_NilValue,
               bool quiet = false) {
 
     std::string src_filename_in;
@@ -1338,10 +1372,10 @@ bool dem_proc(std::string mode,
 //' mod_tbl[is.na(mod_tbl$VALUE),]
 //' \dontshow{deleteDataset(mod_file)}
 // [[Rcpp::export(invisible = true)]]
-bool fillNodata(Rcpp::CharacterVector filename, int band,
-        Rcpp::CharacterVector mask_file = "",
-        double max_dist = 100, int smooth_iterations = 0,
-        bool quiet = false) {
+bool fillNodata(const Rcpp::CharacterVector &filename, int band,
+                const Rcpp::CharacterVector &mask_file = "",
+                double max_dist = 100, int smooth_iterations = 0,
+                bool quiet = false) {
 
     GDALDatasetH hDS = nullptr;
     GDALRasterBandH hBand = nullptr;
@@ -1436,9 +1470,10 @@ bool fillNodata(Rcpp::CharacterVector filename, int band,
 //'   \dontshow{deleteDataset(out_file)}
 //' }
 // [[Rcpp::export(invisible = true)]]
-bool footprint(Rcpp::CharacterVector src_filename,
-        Rcpp::CharacterVector dst_filename,
-        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue) {
+bool footprint(const Rcpp::CharacterVector &src_filename,
+               const Rcpp::CharacterVector &dst_filename,
+               const Rcpp::Nullable<Rcpp::CharacterVector>
+                        &cl_arg = R_NilValue) {
 
 #if GDAL_VERSION_NUM < 3080000
     Rcpp::stop("footprint() requires GDAL >= 3.8");
@@ -1561,11 +1596,13 @@ bool footprint(Rcpp::CharacterVector src_filename,
 //' \dontshow{deleteDataset(ynp_shp)}
 //' \dontshow{deleteDataset(ynp_gpkg)}
 // [[Rcpp::export(invisible = true)]]
-bool ogr2ogr(Rcpp::CharacterVector src_dsn,
-        Rcpp::CharacterVector dst_dsn,
-        Rcpp::Nullable<Rcpp::CharacterVector> src_layers = R_NilValue,
-        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-        Rcpp::Nullable<Rcpp::CharacterVector> open_options = R_NilValue) {
+bool ogr2ogr(const Rcpp::CharacterVector &src_dsn,
+             const Rcpp::CharacterVector &dst_dsn,
+             const Rcpp::Nullable<Rcpp::CharacterVector> &src_layers =
+                    R_NilValue,
+             const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg = R_NilValue,
+             const Rcpp::Nullable<Rcpp::CharacterVector> &open_options =
+                    R_NilValue) {
 
     std::string src_dsn_in;
     src_dsn_in = Rcpp::as<std::string>(check_gdal_filename(src_dsn));
@@ -1703,17 +1740,18 @@ bool ogr2ogr(Rcpp::CharacterVector src_dsn,
 //'   \dontshow{vsi_unlink(src_mem)}
 //' }
 // [[Rcpp::export(invisible = true)]]
-std::string ogrinfo(Rcpp::CharacterVector dsn,
-        Rcpp::Nullable<Rcpp::CharacterVector> layers = R_NilValue,
-        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg =
-                Rcpp::CharacterVector::create("-so", "-nomd"),
-        Rcpp::Nullable<Rcpp::CharacterVector> open_options = R_NilValue,
-        bool read_only = true,
-        bool cout = true) {
+std::string ogrinfo(const Rcpp::CharacterVector &dsn,
+                    const Rcpp::Nullable<Rcpp::CharacterVector> &layers =
+                            R_NilValue,
+                    const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg =
+                            Rcpp::CharacterVector::create("-so", "-nomd"),
+                    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options =
+                            R_NilValue,
+                    bool read_only = true,
+                    bool cout = true) {
 
 #if GDAL_VERSION_NUM < 3070000
     Rcpp::stop("ogrinfo() requires GDAL >= 3.7");
-
 #else
     std::string dsn_in;
     dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
@@ -1797,11 +1835,12 @@ std::string ogrinfo(Rcpp::CharacterVector dsn,
 //' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".polygonize")]]
-bool polygonize(Rcpp::CharacterVector src_filename, int src_band,
-        Rcpp::CharacterVector out_dsn,
-        std::string out_layer, std::string fld_name,
-        Rcpp::CharacterVector mask_file = "", bool nomask = false,
-        int connectedness = 4, bool quiet = false) {
+bool polygonize(const Rcpp::CharacterVector &src_filename, int src_band,
+                const Rcpp::CharacterVector &out_dsn,
+                const std::string &out_layer, const std::string &fld_name,
+                const Rcpp::CharacterVector &mask_file = "",
+                bool nomask = false, int connectedness = 4,
+                bool quiet = false) {
 
     GDALDatasetH hSrcDS = nullptr;
     GDALRasterBandH hSrcBand = nullptr;
@@ -1901,8 +1940,8 @@ bool polygonize(Rcpp::CharacterVector src_filename, int src_band,
 //' Called from and documented in R/gdalraster_proc.R
 //' @noRd
 // [[Rcpp::export(name = ".rasterize")]]
-bool rasterize(std::string src_dsn, std::string dst_filename,
-        Rcpp::CharacterVector cl_arg, bool quiet = false) {
+bool rasterize(const std::string &src_dsn, const std::string &dst_filename,
+               const Rcpp::CharacterVector &cl_arg, bool quiet = false) {
 
     GDALDatasetH hSrcDS = nullptr;
     hSrcDS = GDALOpenEx(src_dsn.c_str(), GDAL_OF_VECTOR,
@@ -2016,12 +2055,14 @@ bool rasterize(std::string src_dsn, std::string dst_filename,
 //' \dontshow{deleteDataset(mask_file)}
 //' \dontshow{deleteDataset(evt_mmu_file)}
 // [[Rcpp::export(invisible = true)]]
-bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
-        Rcpp::CharacterVector dst_filename, int dst_band,
-        int size_threshold, int connectedness,
-        Rcpp::CharacterVector mask_filename = "", int mask_band = 0,
-        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
-        bool quiet = false) {
+bool sieveFilter(const Rcpp::CharacterVector &src_filename, int src_band,
+                 const Rcpp::CharacterVector &dst_filename, int dst_band,
+                 int size_threshold, int connectedness,
+                 const Rcpp::CharacterVector &mask_filename = "",
+                 int mask_band = 0,
+                 const Rcpp::Nullable<Rcpp::CharacterVector> &options =
+                        R_NilValue,
+                 bool quiet = false) {
 
     GDALDatasetH hSrcDS = nullptr;
     GDALRasterBandH hSrcBand = nullptr;
@@ -2123,14 +2164,17 @@ bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band,
 //' @noRd
 // [[Rcpp::export(name = ".translate")]]
 bool translate(const GDALRaster* const &src_ds,
-        Rcpp::CharacterVector dst_filename,
-        Rcpp::Nullable<Rcpp::CharacterVector> cl_arg = R_NilValue,
-        bool quiet = false) {
+               const Rcpp::CharacterVector &dst_filename,
+               const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg = R_NilValue,
+               bool quiet = false) {
 
     bool ret = false;
 
     std::string dst_filename_in;
     dst_filename_in = Rcpp::as<std::string>(check_gdal_filename(dst_filename));
+
+    if (!src_ds)
+        Rcpp::stop("open source raster failed");
 
     GDALDatasetH hSrcDS = src_ds->getGDALDatasetH_();
     if (hSrcDS == nullptr)
@@ -2146,8 +2190,8 @@ bool translate(const GDALRaster* const &src_ds,
         argv[cl_arg_in.size()] = nullptr;
     }
 
-    GDALTranslateOptions* psOptions = GDALTranslateOptionsNew(argv.data(),
-                                                              nullptr);
+    GDALTranslateOptions *psOptions = nullptr;
+    psOptions = GDALTranslateOptionsNew(argv.data(), nullptr);
 
     if (psOptions == nullptr)
         Rcpp::stop("translate failed (could not create options struct)");
@@ -2184,9 +2228,10 @@ bool translate(const GDALRaster* const &src_ds,
 //'
 //' @noRd
 // [[Rcpp::export(name = ".warp")]]
-bool warp(const Rcpp::List& src_datasets, Rcpp::CharacterVector dst_filename,
-          Rcpp::List dst_dataset, std::string t_srs,
-          Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet) {
+bool warp(const Rcpp::List &src_datasets,
+          const Rcpp::CharacterVector &dst_filename,
+          Rcpp::List dst_dataset, const std::string &t_srs,
+          const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg, bool quiet) {
 
     bool ret = false;
     std::string dst_filename_in = Rcpp::as<std::string>(
@@ -2202,6 +2247,12 @@ bool warp(const Rcpp::List& src_datasets, Rcpp::CharacterVector dst_filename,
         Rcpp::stop("destination raster is 'nullptr'");
 
     std::vector<GDALDatasetH> src_hDS(src_datasets.size());
+
+    for (R_xlen_t i = 0; i < src_datasets.size(); ++i) {
+        GDALRaster *ds = src_datasets[i];
+        if (!ds)
+            Rcpp::stop("open source raster failed");
+    }
 
     for (R_xlen_t i = 0; i < src_datasets.size(); ++i) {
         GDALRaster *ds = src_datasets[i];
@@ -2233,7 +2284,8 @@ bool warp(const Rcpp::List& src_datasets, Rcpp::CharacterVector dst_filename,
     }
     argv.push_back(nullptr);
 
-    GDALWarpAppOptions* psOptions = GDALWarpAppOptionsNew(argv.data(), nullptr);
+    GDALWarpAppOptions* psOptions = nullptr;
+    psOptions = GDALWarpAppOptionsNew(argv.data(), nullptr);
     if (psOptions == nullptr)
         Rcpp::stop("warp raster failed (could not create options struct)");
 
@@ -2338,10 +2390,13 @@ bool warp(const Rcpp::List& src_datasets, Rcpp::CharacterVector dst_filename,
 //' \dontshow{deleteDataset(tcc_file)}
 // [[Rcpp::export]]
 Rcpp::IntegerMatrix createColorRamp(int start_index,
-        Rcpp::IntegerVector start_color,
-        int end_index,
-        Rcpp::IntegerVector end_color,
-        std::string palette_interp = "RGB") {
+                                    const Rcpp::IntegerVector &start_color,
+                                    int end_index,
+                                    const Rcpp::IntegerVector &end_color,
+                                    const std::string &palette_interp = "RGB") {
+
+    Rcpp::IntegerVector start_color_in = Rcpp::clone(start_color);
+    Rcpp::IntegerVector end_color_in = Rcpp::clone(end_color);
 
     if (end_index <= start_index)
         Rcpp::stop("'end_index' must be greater than 'start_index'");
@@ -2351,9 +2406,9 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
         Rcpp::stop("length of 'end_color' must be 3 or 4");
 
     if (start_color.size() == 3)
-        start_color.push_back(255);
+        start_color_in.push_back(255);
     if (end_color.size() == 3)
-        end_color.push_back(255);
+        end_color_in.push_back(255);
 
     GDALPaletteInterp gpi;
     if (palette_interp ==  "Gray" || palette_interp == "gray")
@@ -2372,15 +2427,15 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
         Rcpp::stop("could not create GDAL color table");
 
     const GDALColorEntry colStart = {
-            static_cast<short>(start_color(0)),
-            static_cast<short>(start_color(1)),
-            static_cast<short>(start_color(2)),
-            static_cast<short>(start_color(3)) };
+            static_cast<short>(start_color_in(0)),
+            static_cast<short>(start_color_in(1)),
+            static_cast<short>(start_color_in(2)),
+            static_cast<short>(start_color_in(3)) };
     const GDALColorEntry colEnd = {
-            static_cast<short>(end_color(0)),
-            static_cast<short>(end_color(1)),
-            static_cast<short>(end_color(2)),
-            static_cast<short>(end_color(3)) };
+            static_cast<short>(end_color_in(0)),
+            static_cast<short>(end_color_in(1)),
+            static_cast<short>(end_color_in(2)),
+            static_cast<short>(end_color_in(3)) };
 
     GDALCreateColorRamp(hColTbl, start_index, &colStart, end_index, &colEnd);
 
@@ -2465,10 +2520,13 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //' ds$close()
 //' \dontshow{deleteDataset(dst_file)}
 // [[Rcpp::export(invisible = true)]]
-bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
-        Rcpp::CharacterVector dst_filename, int dst_band,
-        Rcpp::Nullable<Rcpp::CharacterVector> options = R_NilValue,
-        bool quiet = false) {
+bool bandCopyWholeRaster(const Rcpp::CharacterVector &src_filename,
+                         int src_band,
+                         const Rcpp::CharacterVector &dst_filename,
+                         int dst_band,
+                         const Rcpp::Nullable<Rcpp::CharacterVector>
+                                &options = R_NilValue,
+                         bool quiet = false) {
 
     GDALDatasetH hSrcDS = nullptr;
     GDALRasterBandH hSrcBand = nullptr;
@@ -2569,12 +2627,13 @@ bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band,
 //' deleteDataset(b5_tmp)
 //' file.exists(files)
 // [[Rcpp::export]]
-bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
+bool deleteDataset(const Rcpp::CharacterVector &filename,
+                   const std::string &format = "") {
 
     std::string filename_in;
     filename_in = Rcpp::as<std::string>(check_gdal_filename(filename));
 
-    GDALDriverH hDriver;
+    GDALDriverH hDriver = nullptr;
     if (format == "") {
         hDriver = GDALIdentifyDriver(filename_in.c_str(), nullptr);
         if (hDriver == nullptr)
@@ -2639,16 +2698,16 @@ bool deleteDataset(Rcpp::CharacterVector filename, std::string format = "") {
 //'
 //' deleteDataset(b5_tmp2)
 // [[Rcpp::export]]
-bool renameDataset(Rcpp::CharacterVector new_filename,
-        Rcpp::CharacterVector old_filename,
-        std::string format = "") {
+bool renameDataset(const Rcpp::CharacterVector &new_filename,
+                   const Rcpp::CharacterVector &old_filename,
+                   const std::string &format = "") {
 
     std::string new_filename_in;
     new_filename_in = Rcpp::as<std::string>(check_gdal_filename(new_filename));
     std::string old_filename_in;
     old_filename_in = Rcpp::as<std::string>(check_gdal_filename(old_filename));
 
-    GDALDriverH hDriver;
+    GDALDriverH hDriver = nullptr;
     if (format == "") {
         hDriver = GDALIdentifyDriver(old_filename_in.c_str(), nullptr);
         if (hDriver == nullptr)
@@ -2706,16 +2765,16 @@ bool renameDataset(Rcpp::CharacterVector new_filename,
 //'
 //' deleteDataset(lcp_tmp)
 // [[Rcpp::export]]
-bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
-        Rcpp::CharacterVector old_filename,
-        std::string format = "") {
+bool copyDatasetFiles(const Rcpp::CharacterVector &new_filename,
+                      const Rcpp::CharacterVector &old_filename,
+                      const std::string &format = "") {
 
     std::string new_filename_in;
     new_filename_in = Rcpp::as<std::string>(check_gdal_filename(new_filename));
     std::string old_filename_in;
     old_filename_in = Rcpp::as<std::string>(check_gdal_filename(old_filename));
 
-    GDALDriverH hDriver;
+    GDALDriverH hDriver = nullptr;
     if (format == "") {
         hDriver = GDALIdentifyDriver(old_filename_in.c_str(), nullptr);
         if (hDriver == nullptr)
@@ -2780,10 +2839,12 @@ bool copyDatasetFiles(Rcpp::CharacterVector new_filename,
 //'
 //' identifyDriver(src) |> gdal_formats()
 // [[Rcpp::export(name = "identifyDriver")]]
-SEXP identifyDriver(Rcpp::CharacterVector filename,
-        bool raster = true, bool vector = true,
-        Rcpp::Nullable<Rcpp::CharacterVector> allowed_drivers = R_NilValue,
-        Rcpp::Nullable<Rcpp::CharacterVector> file_list = R_NilValue) {
+SEXP identifyDriver(const Rcpp::CharacterVector &filename,
+                    bool raster = true, bool vector = true,
+                    const Rcpp::Nullable<Rcpp::CharacterVector>
+                            &allowed_drivers = R_NilValue,
+                    const Rcpp::Nullable<Rcpp::CharacterVector>
+                            &file_list = R_NilValue) {
 
     std::string filename_in;
     filename_in = Rcpp::as<std::string>(check_gdal_filename(filename));
@@ -2832,9 +2893,10 @@ SEXP identifyDriver(Rcpp::CharacterVector filename,
 //' Called from and documented in R/gdal_helpers.R
 //' @noRd
 // [[Rcpp::export(name = ".getCreationOptions")]]
-std::string getCreationOptions(std::string format) {
+std::string getCreationOptions(const std::string &format) {
 
-    GDALDriverH hDriver = GDALGetDriverByName(format.c_str());
+    GDALDriverH hDriver = nullptr;
+    hDriver = GDALGetDriverByName(format.c_str());
     if (hDriver == nullptr)
         Rcpp::stop("failed to get driver from format name");
 
@@ -2847,19 +2909,20 @@ std::string getCreationOptions(std::string format) {
 //'
 //' @noRd
 // [[Rcpp::export(name = ".addFileInZip")]]
-bool addFileInZip(std::string zip_filename, bool overwrite,
-        std::string archive_filename, std::string in_filename,
-        Rcpp::Nullable<Rcpp::CharacterVector> options,
-        bool quiet) {
+bool addFileInZip(const std::string &zip_filename, bool overwrite,
+                  const std::string &archive_filename,
+                  const std::string &in_filename,
+                  const Rcpp::Nullable<Rcpp::CharacterVector> &options,
+                  bool quiet) {
 
 #if GDAL_VERSION_NUM < 3070000
     Rcpp::stop("addFileInZip() requires GDAL >= 3.7");
 
 #else
     bool ret = false;
-    std::vector<char *> opt_zip_create;
     VSIStatBufL buf;
 
+    std::vector<char *> opt_zip_create;
     if (overwrite) {
         VSIUnlink(zip_filename.c_str());
     } else {

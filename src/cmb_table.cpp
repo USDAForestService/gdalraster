@@ -3,8 +3,7 @@ Chris Toney <chris.toney at usda.gov> */
 
 #include "cmb_table.h"
 
-CmbTable::CmbTable() :
-    m_key_len(1), m_var_names({"V1"}), m_last_ID(0)  {}
+CmbTable::CmbTable() {}
 
 CmbTable::CmbTable(unsigned int keyLen) :
     m_key_len(keyLen), m_last_ID(0)  {
@@ -15,14 +14,14 @@ CmbTable::CmbTable(unsigned int keyLen) :
     }
 }
 
-CmbTable::CmbTable(unsigned int keyLen, Rcpp::CharacterVector varNames) :
+CmbTable::CmbTable(unsigned int keyLen, const Rcpp::CharacterVector &varNames) :
     m_key_len(keyLen), m_var_names(varNames), m_last_ID(0)  {
 
     if (m_key_len != m_var_names.size())
         Rcpp::stop("'keyLen' must equal 'length(varNames)'");
 }
 
-double CmbTable::update(const Rcpp::IntegerVector& int_cmb, double incr) {
+double CmbTable::update(const Rcpp::IntegerVector &int_cmb, double incr) {
     // Increment count for existing int_cmb
     // or insert new int_cmb with count = incr.
 
@@ -38,7 +37,7 @@ double CmbTable::update(const Rcpp::IntegerVector& int_cmb, double incr) {
 }
 
 Rcpp::NumericVector CmbTable::updateFromMatrix(
-        const Rcpp::IntegerMatrix& int_cmbs,
+        const Rcpp::IntegerMatrix &int_cmbs,
         double incr) {
 
     // int combinations (int_cmbs) are columns of a matrix (nrow = m_key_len).
@@ -56,7 +55,7 @@ Rcpp::NumericVector CmbTable::updateFromMatrix(
 }
 
 Rcpp::NumericVector CmbTable::updateFromMatrixByRow(
-        const Rcpp::IntegerMatrix& int_cmbs,
+        const Rcpp::IntegerMatrix &int_cmbs,
         double incr) {
 
     // int combinations (int_cmbs) are rows of a matrix (ncol = m_key_len).
@@ -80,7 +79,7 @@ Rcpp::DataFrame CmbTable::asDataFrame() const {
     cmbKey key;
     cmbData cmbdat;
 
-    for (unsigned int n=0; n < m_key_len; ++n) {
+    for (unsigned int n = 0; n < m_key_len; ++n) {
         aVec[n] = Rcpp::IntegerVector(m_cmb_map.size());
     }
     std::size_t this_idx = 0;
@@ -89,7 +88,7 @@ Rcpp::DataFrame CmbTable::asDataFrame() const {
         cmbdat = iter->second;
         dvCmbID[this_idx] = cmbdat.ID;
         dvCmbCount[this_idx] = cmbdat.count;
-        for (unsigned int var=0; var < m_key_len; ++var) {
+        for (unsigned int var = 0; var < m_key_len; ++var) {
             aVec[var][this_idx] = key.cmb[var];
         }
         ++this_idx;
@@ -116,7 +115,7 @@ Rcpp::NumericMatrix CmbTable::asMatrix() const {
         cmbdat = iter->second;
         m_out(this_idx, 0) = cmbdat.ID;
         m_out(this_idx, 1) = cmbdat.count;
-        for (unsigned int var=0; var < m_key_len; ++var) {
+        for (unsigned int var = 0; var < m_key_len; ++var) {
             m_out(this_idx, var+2) = key.cmb[var];
         }
         ++this_idx;

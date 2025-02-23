@@ -139,34 +139,34 @@ BEGIN_RCPP
 END_RCPP
 }
 // gdal_formats
-Rcpp::DataFrame gdal_formats(std::string format);
+Rcpp::DataFrame gdal_formats(const std::string& format);
 RcppExport SEXP _gdalraster_gdal_formats(SEXP formatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type format(formatSEXP);
     rcpp_result_gen = Rcpp::wrap(gdal_formats(format));
     return rcpp_result_gen;
 END_RCPP
 }
 // get_config_option
-std::string get_config_option(std::string key);
+std::string get_config_option(const std::string& key);
 RcppExport SEXP _gdalraster_get_config_option(SEXP keySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type key(keySEXP);
     rcpp_result_gen = Rcpp::wrap(get_config_option(key));
     return rcpp_result_gen;
 END_RCPP
 }
 // set_config_option
-void set_config_option(std::string key, std::string value);
+void set_config_option(const std::string& key, const std::string& value);
 RcppExport SEXP _gdalraster_set_config_option(SEXP keySEXP, SEXP valueSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type key(keySEXP);
-    Rcpp::traits::input_parameter< std::string >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type value(valueSEXP);
     set_config_option(key, value);
     return R_NilValue;
 END_RCPP
@@ -182,22 +182,22 @@ BEGIN_RCPP
 END_RCPP
 }
 // dump_open_datasets
-int dump_open_datasets(std::string outfile);
+int dump_open_datasets(const std::string& outfile);
 RcppExport SEXP _gdalraster_dump_open_datasets(SEXP outfileSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type outfile(outfileSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type outfile(outfileSEXP);
     rcpp_result_gen = Rcpp::wrap(dump_open_datasets(outfile));
     return rcpp_result_gen;
 END_RCPP
 }
 // push_error_handler
-void push_error_handler(std::string handler);
+void push_error_handler(const std::string& handler);
 RcppExport SEXP _gdalraster_push_error_handler(SEXP handlerSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type handler(handlerSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type handler(handlerSEXP);
     push_error_handler(handler);
     return R_NilValue;
 END_RCPP
@@ -212,12 +212,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // check_gdal_filename
-Rcpp::CharacterVector check_gdal_filename(Rcpp::CharacterVector filename);
+Rcpp::CharacterVector check_gdal_filename(const Rcpp::CharacterVector& filename);
 RcppExport SEXP _gdalraster_check_gdal_filename(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
     rcpp_result_gen = Rcpp::wrap(check_gdal_filename(filename));
     return rcpp_result_gen;
 END_RCPP
@@ -263,34 +263,34 @@ BEGIN_RCPP
 END_RCPP
 }
 // cpl_get_filename
-std::string cpl_get_filename(Rcpp::CharacterVector full_filename);
+std::string cpl_get_filename(const Rcpp::CharacterVector& full_filename);
 RcppExport SEXP _gdalraster_cpl_get_filename(SEXP full_filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type full_filename(full_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type full_filename(full_filenameSEXP);
     rcpp_result_gen = Rcpp::wrap(cpl_get_filename(full_filename));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpl_get_basename
-std::string cpl_get_basename(Rcpp::CharacterVector full_filename);
+std::string cpl_get_basename(const Rcpp::CharacterVector& full_filename);
 RcppExport SEXP _gdalraster_cpl_get_basename(SEXP full_filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type full_filename(full_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type full_filename(full_filenameSEXP);
     rcpp_result_gen = Rcpp::wrap(cpl_get_basename(full_filename));
     return rcpp_result_gen;
 END_RCPP
 }
 // cpl_get_extension
-std::string cpl_get_extension(Rcpp::CharacterVector full_filename);
+std::string cpl_get_extension(const Rcpp::CharacterVector& full_filename);
 RcppExport SEXP _gdalraster_cpl_get_extension(SEXP full_filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type full_filename(full_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type full_filename(full_filenameSEXP);
     rcpp_result_gen = Rcpp::wrap(cpl_get_extension(full_filename));
     return rcpp_result_gen;
 END_RCPP
@@ -305,12 +305,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // apply_geotransform_
-Rcpp::NumericVector apply_geotransform_(const std::vector<double> gt, double pixel, double line);
+Rcpp::NumericVector apply_geotransform_(const std::vector<double>& gt, double pixel, double line);
 RcppExport SEXP _gdalraster_apply_geotransform_(SEXP gtSEXP, SEXP pixelSEXP, SEXP lineSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type gt(gtSEXP);
     Rcpp::traits::input_parameter< double >::type pixel(pixelSEXP);
     Rcpp::traits::input_parameter< double >::type line(lineSEXP);
     rcpp_result_gen = Rcpp::wrap(apply_geotransform_(gt, pixel, line));
@@ -318,13 +318,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // apply_geotransform_gt
-Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row, const std::vector<double> gt);
+Rcpp::NumericMatrix apply_geotransform_gt(const Rcpp::RObject& col_row, const std::vector<double>& gt);
 RcppExport SEXP _gdalraster_apply_geotransform_gt(SEXP col_rowSEXP, SEXP gtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type col_row(col_rowSEXP);
-    Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type gt(gtSEXP);
     rcpp_result_gen = Rcpp::wrap(apply_geotransform_gt(col_row, gt));
     return rcpp_result_gen;
 END_RCPP
@@ -342,24 +342,24 @@ BEGIN_RCPP
 END_RCPP
 }
 // inv_geotransform
-Rcpp::NumericVector inv_geotransform(const std::vector<double> gt);
+Rcpp::NumericVector inv_geotransform(const std::vector<double>& gt);
 RcppExport SEXP _gdalraster_inv_geotransform(SEXP gtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type gt(gtSEXP);
     rcpp_result_gen = Rcpp::wrap(inv_geotransform(gt));
     return rcpp_result_gen;
 END_RCPP
 }
 // get_pixel_line_gt
-Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy, const std::vector<double> gt);
+Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject& xy, const std::vector<double>& gt);
 RcppExport SEXP _gdalraster_get_pixel_line_gt(SEXP xySEXP, SEXP gtSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type xy(xySEXP);
-    Rcpp::traits::input_parameter< const std::vector<double> >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type gt(gtSEXP);
     rcpp_result_gen = Rcpp::wrap(get_pixel_line_gt(xy, gt));
     return rcpp_result_gen;
 END_RCPP
@@ -391,32 +391,32 @@ BEGIN_RCPP
 END_RCPP
 }
 // buildVRT
-bool buildVRT(Rcpp::CharacterVector vrt_filename, Rcpp::CharacterVector input_rasters, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet);
+bool buildVRT(const Rcpp::CharacterVector& vrt_filename, const Rcpp::CharacterVector& input_rasters, const Rcpp::Nullable<Rcpp::CharacterVector>& cl_arg, bool quiet);
 RcppExport SEXP _gdalraster_buildVRT(SEXP vrt_filenameSEXP, SEXP input_rastersSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type vrt_filename(vrt_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type input_rasters(input_rastersSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type vrt_filename(vrt_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type input_rasters(input_rastersSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(buildVRT(vrt_filename, input_rasters, cl_arg, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // combine
-Rcpp::DataFrame combine(Rcpp::CharacterVector src_files, Rcpp::CharacterVector var_names, std::vector<int> bands, std::string dst_filename, std::string fmt, std::string dataType, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+Rcpp::DataFrame combine(const Rcpp::CharacterVector& src_files, const Rcpp::CharacterVector& var_names, const std::vector<int>& bands, const std::string& dst_filename, const std::string& fmt, const std::string& dataType, const Rcpp::Nullable<Rcpp::CharacterVector>& options, bool quiet);
 RcppExport SEXP _gdalraster_combine(SEXP src_filesSEXP, SEXP var_namesSEXP, SEXP bandsSEXP, SEXP dst_filenameSEXP, SEXP fmtSEXP, SEXP dataTypeSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_files(src_filesSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type var_names(var_namesSEXP);
-    Rcpp::traits::input_parameter< std::vector<int> >::type bands(bandsSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type fmt(fmtSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dataType(dataTypeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type src_files(src_filesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type var_names(var_namesSEXP);
+    Rcpp::traits::input_parameter< const std::vector<int>& >::type bands(bandsSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type fmt(fmtSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dataType(dataTypeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type options(optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(combine(src_files, var_names, bands, dst_filename, fmt, dataType, options, quiet));
     return rcpp_result_gen;
@@ -436,30 +436,30 @@ BEGIN_RCPP
 END_RCPP
 }
 // dem_proc
-bool dem_proc(std::string mode, Rcpp::CharacterVector src_filename, Rcpp::CharacterVector dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::String> col_file, bool quiet);
+bool dem_proc(const std::string& mode, const Rcpp::CharacterVector& src_filename, const Rcpp::CharacterVector& dst_filename, const Rcpp::Nullable<Rcpp::CharacterVector>& cl_arg, const Rcpp::Nullable<Rcpp::String>& col_file, bool quiet);
 RcppExport SEXP _gdalraster_dem_proc(SEXP modeSEXP, SEXP src_filenameSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP col_fileSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type mode(modeSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_filename(src_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::String> >::type col_file(col_fileSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type mode(modeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::String>& >::type col_file(col_fileSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(dem_proc(mode, src_filename, dst_filename, cl_arg, col_file, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // fillNodata
-bool fillNodata(Rcpp::CharacterVector filename, int band, Rcpp::CharacterVector mask_file, double max_dist, int smooth_iterations, bool quiet);
+bool fillNodata(const Rcpp::CharacterVector& filename, int band, const Rcpp::CharacterVector& mask_file, double max_dist, int smooth_iterations, bool quiet);
 RcppExport SEXP _gdalraster_fillNodata(SEXP filenameSEXP, SEXP bandSEXP, SEXP mask_fileSEXP, SEXP max_distSEXP, SEXP smooth_iterationsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< int >::type band(bandSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type mask_file(mask_fileSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type mask_file(mask_fileSEXP);
     Rcpp::traits::input_parameter< double >::type max_dist(max_distSEXP);
     Rcpp::traits::input_parameter< int >::type smooth_iterations(smooth_iterationsSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
@@ -468,43 +468,43 @@ BEGIN_RCPP
 END_RCPP
 }
 // footprint
-bool footprint(Rcpp::CharacterVector src_filename, Rcpp::CharacterVector dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg);
+bool footprint(const Rcpp::CharacterVector& src_filename, const Rcpp::CharacterVector& dst_filename, const Rcpp::Nullable<Rcpp::CharacterVector>& cl_arg);
 RcppExport SEXP _gdalraster_footprint(SEXP src_filenameSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_filename(src_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type cl_arg(cl_argSEXP);
     rcpp_result_gen = Rcpp::wrap(footprint(src_filename, dst_filename, cl_arg));
     return rcpp_result_gen;
 END_RCPP
 }
 // ogr2ogr
-bool ogr2ogr(Rcpp::CharacterVector src_dsn, Rcpp::CharacterVector dst_dsn, Rcpp::Nullable<Rcpp::CharacterVector> src_layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::CharacterVector> open_options);
+bool ogr2ogr(const Rcpp::CharacterVector& src_dsn, const Rcpp::CharacterVector& dst_dsn, const Rcpp::Nullable<Rcpp::CharacterVector>& src_layers, const Rcpp::Nullable<Rcpp::CharacterVector>& cl_arg, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options);
 RcppExport SEXP _gdalraster_ogr2ogr(SEXP src_dsnSEXP, SEXP dst_dsnSEXP, SEXP src_layersSEXP, SEXP cl_argSEXP, SEXP open_optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_dsn(src_dsnSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_dsn(dst_dsnSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type src_layers(src_layersSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type open_options(open_optionsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type src_dsn(src_dsnSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type dst_dsn(dst_dsnSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type src_layers(src_layersSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type open_options(open_optionsSEXP);
     rcpp_result_gen = Rcpp::wrap(ogr2ogr(src_dsn, dst_dsn, src_layers, cl_arg, open_options));
     return rcpp_result_gen;
 END_RCPP
 }
 // ogrinfo
-std::string ogrinfo(Rcpp::CharacterVector dsn, Rcpp::Nullable<Rcpp::CharacterVector> layers, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, Rcpp::Nullable<Rcpp::CharacterVector> open_options, bool read_only, bool cout);
+std::string ogrinfo(const Rcpp::CharacterVector& dsn, const Rcpp::Nullable<Rcpp::CharacterVector>& layers, const Rcpp::Nullable<Rcpp::CharacterVector>& cl_arg, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options, bool read_only, bool cout);
 RcppExport SEXP _gdalraster_ogrinfo(SEXP dsnSEXP, SEXP layersSEXP, SEXP cl_argSEXP, SEXP open_optionsSEXP, SEXP read_onlySEXP, SEXP coutSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dsn(dsnSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type layers(layersSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type open_options(open_optionsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type dsn(dsnSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type layers(layersSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type open_options(open_optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type read_only(read_onlySEXP);
     Rcpp::traits::input_parameter< bool >::type cout(coutSEXP);
     rcpp_result_gen = Rcpp::wrap(ogrinfo(dsn, layers, cl_arg, open_options, read_only, cout));
@@ -512,17 +512,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // polygonize
-bool polygonize(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector out_dsn, std::string out_layer, std::string fld_name, Rcpp::CharacterVector mask_file, bool nomask, int connectedness, bool quiet);
+bool polygonize(const Rcpp::CharacterVector& src_filename, int src_band, const Rcpp::CharacterVector& out_dsn, const std::string& out_layer, const std::string& fld_name, const Rcpp::CharacterVector& mask_file, bool nomask, int connectedness, bool quiet);
 RcppExport SEXP _gdalraster_polygonize(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP out_dsnSEXP, SEXP out_layerSEXP, SEXP fld_nameSEXP, SEXP mask_fileSEXP, SEXP nomaskSEXP, SEXP connectednessSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type src_filename(src_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type src_band(src_bandSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type out_dsn(out_dsnSEXP);
-    Rcpp::traits::input_parameter< std::string >::type out_layer(out_layerSEXP);
-    Rcpp::traits::input_parameter< std::string >::type fld_name(fld_nameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type mask_file(mask_fileSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type out_dsn(out_dsnSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type out_layer(out_layerSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type fld_name(fld_nameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type mask_file(mask_fileSEXP);
     Rcpp::traits::input_parameter< bool >::type nomask(nomaskSEXP);
     Rcpp::traits::input_parameter< int >::type connectedness(connectednessSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
@@ -531,212 +531,212 @@ BEGIN_RCPP
 END_RCPP
 }
 // rasterize
-bool rasterize(std::string src_dsn, std::string dst_filename, Rcpp::CharacterVector cl_arg, bool quiet);
+bool rasterize(const std::string& src_dsn, const std::string& dst_filename, const Rcpp::CharacterVector& cl_arg, bool quiet);
 RcppExport SEXP _gdalraster_rasterize(SEXP src_dsnSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type src_dsn(src_dsnSEXP);
-    Rcpp::traits::input_parameter< std::string >::type dst_filename(dst_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type src_dsn(src_dsnSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(rasterize(src_dsn, dst_filename, cl_arg, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // sieveFilter
-bool sieveFilter(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector dst_filename, int dst_band, int size_threshold, int connectedness, Rcpp::CharacterVector mask_filename, int mask_band, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+bool sieveFilter(const Rcpp::CharacterVector& src_filename, int src_band, const Rcpp::CharacterVector& dst_filename, int dst_band, int size_threshold, int connectedness, const Rcpp::CharacterVector& mask_filename, int mask_band, const Rcpp::Nullable<Rcpp::CharacterVector>& options, bool quiet);
 RcppExport SEXP _gdalraster_sieveFilter(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP dst_filenameSEXP, SEXP dst_bandSEXP, SEXP size_thresholdSEXP, SEXP connectednessSEXP, SEXP mask_filenameSEXP, SEXP mask_bandSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type src_filename(src_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type src_band(src_bandSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type dst_band(dst_bandSEXP);
     Rcpp::traits::input_parameter< int >::type size_threshold(size_thresholdSEXP);
     Rcpp::traits::input_parameter< int >::type connectedness(connectednessSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type mask_filename(mask_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type mask_filename(mask_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type mask_band(mask_bandSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type options(optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(sieveFilter(src_filename, src_band, dst_filename, dst_band, size_threshold, connectedness, mask_filename, mask_band, options, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // translate
-bool translate(const GDALRaster* const& src_ds, Rcpp::CharacterVector dst_filename, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet);
+bool translate(const GDALRaster* const& src_ds, const Rcpp::CharacterVector& dst_filename, const Rcpp::Nullable<Rcpp::CharacterVector>& cl_arg, bool quiet);
 RcppExport SEXP _gdalraster_translate(SEXP src_dsSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const GDALRaster* const& >::type src_ds(src_dsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(translate(src_ds, dst_filename, cl_arg, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // warp
-bool warp(const Rcpp::List& src_datasets, Rcpp::CharacterVector dst_filename, Rcpp::List dst_dataset, std::string t_srs, Rcpp::Nullable<Rcpp::CharacterVector> cl_arg, bool quiet);
+bool warp(const Rcpp::List& src_datasets, const Rcpp::CharacterVector& dst_filename, Rcpp::List dst_dataset, const std::string& t_srs, const Rcpp::Nullable<Rcpp::CharacterVector>& cl_arg, bool quiet);
 RcppExport SEXP _gdalraster_warp(SEXP src_datasetsSEXP, SEXP dst_filenameSEXP, SEXP dst_datasetSEXP, SEXP t_srsSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::List& >::type src_datasets(src_datasetsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< Rcpp::List >::type dst_dataset(dst_datasetSEXP);
-    Rcpp::traits::input_parameter< std::string >::type t_srs(t_srsSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type cl_arg(cl_argSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type t_srs(t_srsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(warp(src_datasets, dst_filename, dst_dataset, t_srs, cl_arg, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // createColorRamp
-Rcpp::IntegerMatrix createColorRamp(int start_index, Rcpp::IntegerVector start_color, int end_index, Rcpp::IntegerVector end_color, std::string palette_interp);
+Rcpp::IntegerMatrix createColorRamp(int start_index, const Rcpp::IntegerVector& start_color, int end_index, const Rcpp::IntegerVector& end_color, const std::string& palette_interp);
 RcppExport SEXP _gdalraster_createColorRamp(SEXP start_indexSEXP, SEXP start_colorSEXP, SEXP end_indexSEXP, SEXP end_colorSEXP, SEXP palette_interpSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type start_index(start_indexSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type start_color(start_colorSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type start_color(start_colorSEXP);
     Rcpp::traits::input_parameter< int >::type end_index(end_indexSEXP);
-    Rcpp::traits::input_parameter< Rcpp::IntegerVector >::type end_color(end_colorSEXP);
-    Rcpp::traits::input_parameter< std::string >::type palette_interp(palette_interpSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::IntegerVector& >::type end_color(end_colorSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type palette_interp(palette_interpSEXP);
     rcpp_result_gen = Rcpp::wrap(createColorRamp(start_index, start_color, end_index, end_color, palette_interp));
     return rcpp_result_gen;
 END_RCPP
 }
 // bandCopyWholeRaster
-bool bandCopyWholeRaster(Rcpp::CharacterVector src_filename, int src_band, Rcpp::CharacterVector dst_filename, int dst_band, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+bool bandCopyWholeRaster(const Rcpp::CharacterVector& src_filename, int src_band, const Rcpp::CharacterVector& dst_filename, int dst_band, const Rcpp::Nullable<Rcpp::CharacterVector>& options, bool quiet);
 RcppExport SEXP _gdalraster_bandCopyWholeRaster(SEXP src_filenameSEXP, SEXP src_bandSEXP, SEXP dst_filenameSEXP, SEXP dst_bandSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_filename(src_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type src_filename(src_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type src_band(src_bandSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type dst_filename(dst_filenameSEXP);
     Rcpp::traits::input_parameter< int >::type dst_band(dst_bandSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type options(optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(bandCopyWholeRaster(src_filename, src_band, dst_filename, dst_band, options, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // deleteDataset
-bool deleteDataset(Rcpp::CharacterVector filename, std::string format);
+bool deleteDataset(const Rcpp::CharacterVector& filename, const std::string& format);
 RcppExport SEXP _gdalraster_deleteDataset(SEXP filenameSEXP, SEXP formatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type format(formatSEXP);
     rcpp_result_gen = Rcpp::wrap(deleteDataset(filename, format));
     return rcpp_result_gen;
 END_RCPP
 }
 // renameDataset
-bool renameDataset(Rcpp::CharacterVector new_filename, Rcpp::CharacterVector old_filename, std::string format);
+bool renameDataset(const Rcpp::CharacterVector& new_filename, const Rcpp::CharacterVector& old_filename, const std::string& format);
 RcppExport SEXP _gdalraster_renameDataset(SEXP new_filenameSEXP, SEXP old_filenameSEXP, SEXP formatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type new_filename(new_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type old_filename(old_filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type new_filename(new_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type old_filename(old_filenameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type format(formatSEXP);
     rcpp_result_gen = Rcpp::wrap(renameDataset(new_filename, old_filename, format));
     return rcpp_result_gen;
 END_RCPP
 }
 // copyDatasetFiles
-bool copyDatasetFiles(Rcpp::CharacterVector new_filename, Rcpp::CharacterVector old_filename, std::string format);
+bool copyDatasetFiles(const Rcpp::CharacterVector& new_filename, const Rcpp::CharacterVector& old_filename, const std::string& format);
 RcppExport SEXP _gdalraster_copyDatasetFiles(SEXP new_filenameSEXP, SEXP old_filenameSEXP, SEXP formatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type new_filename(new_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type old_filename(old_filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type new_filename(new_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type old_filename(old_filenameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type format(formatSEXP);
     rcpp_result_gen = Rcpp::wrap(copyDatasetFiles(new_filename, old_filename, format));
     return rcpp_result_gen;
 END_RCPP
 }
 // identifyDriver
-SEXP identifyDriver(Rcpp::CharacterVector filename, bool raster, bool vector, Rcpp::Nullable<Rcpp::CharacterVector> allowed_drivers, Rcpp::Nullable<Rcpp::CharacterVector> file_list);
+SEXP identifyDriver(const Rcpp::CharacterVector& filename, bool raster, bool vector, const Rcpp::Nullable<Rcpp::CharacterVector>& allowed_drivers, const Rcpp::Nullable<Rcpp::CharacterVector>& file_list);
 RcppExport SEXP _gdalraster_identifyDriver(SEXP filenameSEXP, SEXP rasterSEXP, SEXP vectorSEXP, SEXP allowed_driversSEXP, SEXP file_listSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< bool >::type raster(rasterSEXP);
     Rcpp::traits::input_parameter< bool >::type vector(vectorSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type allowed_drivers(allowed_driversSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type file_list(file_listSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type allowed_drivers(allowed_driversSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type file_list(file_listSEXP);
     rcpp_result_gen = Rcpp::wrap(identifyDriver(filename, raster, vector, allowed_drivers, file_list));
     return rcpp_result_gen;
 END_RCPP
 }
 // getCreationOptions
-std::string getCreationOptions(std::string format);
+std::string getCreationOptions(const std::string& format);
 RcppExport SEXP _gdalraster_getCreationOptions(SEXP formatSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type format(formatSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type format(formatSEXP);
     rcpp_result_gen = Rcpp::wrap(getCreationOptions(format));
     return rcpp_result_gen;
 END_RCPP
 }
 // addFileInZip
-bool addFileInZip(std::string zip_filename, bool overwrite, std::string archive_filename, std::string in_filename, Rcpp::Nullable<Rcpp::CharacterVector> options, bool quiet);
+bool addFileInZip(const std::string& zip_filename, bool overwrite, const std::string& archive_filename, const std::string& in_filename, const Rcpp::Nullable<Rcpp::CharacterVector>& options, bool quiet);
 RcppExport SEXP _gdalraster_addFileInZip(SEXP zip_filenameSEXP, SEXP overwriteSEXP, SEXP archive_filenameSEXP, SEXP in_filenameSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type zip_filename(zip_filenameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type zip_filename(zip_filenameSEXP);
     Rcpp::traits::input_parameter< bool >::type overwrite(overwriteSEXP);
-    Rcpp::traits::input_parameter< std::string >::type archive_filename(archive_filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type in_filename(in_filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type archive_filename(archive_filenameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type in_filename(in_filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type options(optionsSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     rcpp_result_gen = Rcpp::wrap(addFileInZip(zip_filename, overwrite, archive_filename, in_filename, options, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_copy_file
-int vsi_copy_file(Rcpp::CharacterVector src_file, Rcpp::CharacterVector target_file, bool show_progress);
+int vsi_copy_file(const Rcpp::CharacterVector& src_file, const Rcpp::CharacterVector& target_file, bool show_progress);
 RcppExport SEXP _gdalraster_vsi_copy_file(SEXP src_fileSEXP, SEXP target_fileSEXP, SEXP show_progressSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src_file(src_fileSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type target_file(target_fileSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type src_file(src_fileSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type target_file(target_fileSEXP);
     Rcpp::traits::input_parameter< bool >::type show_progress(show_progressSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_copy_file(src_file, target_file, show_progress));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_curl_clear_cache
-void vsi_curl_clear_cache(bool partial, Rcpp::CharacterVector file_prefix, bool quiet);
+void vsi_curl_clear_cache(bool partial, const Rcpp::CharacterVector& file_prefix, bool quiet);
 RcppExport SEXP _gdalraster_vsi_curl_clear_cache(SEXP partialSEXP, SEXP file_prefixSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< bool >::type partial(partialSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type file_prefix(file_prefixSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type file_prefix(file_prefixSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
     vsi_curl_clear_cache(partial, file_prefix, quiet);
     return R_NilValue;
 END_RCPP
 }
 // vsi_read_dir
-Rcpp::CharacterVector vsi_read_dir(Rcpp::CharacterVector path, int max_files, bool recursive, bool all_files);
+Rcpp::CharacterVector vsi_read_dir(const Rcpp::CharacterVector& path, int max_files, bool recursive, bool all_files);
 RcppExport SEXP _gdalraster_vsi_read_dir(SEXP pathSEXP, SEXP max_filesSEXP, SEXP recursiveSEXP, SEXP all_filesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type path(pathSEXP);
     Rcpp::traits::input_parameter< int >::type max_files(max_filesSEXP);
     Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
     Rcpp::traits::input_parameter< bool >::type all_files(all_filesSEXP);
@@ -745,86 +745,86 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_sync
-bool vsi_sync(Rcpp::CharacterVector src, Rcpp::CharacterVector target, bool show_progress, Rcpp::Nullable<Rcpp::CharacterVector> options);
+bool vsi_sync(const Rcpp::CharacterVector& src, const Rcpp::CharacterVector& target, bool show_progress, const Rcpp::Nullable<Rcpp::CharacterVector>& options);
 RcppExport SEXP _gdalraster_vsi_sync(SEXP srcSEXP, SEXP targetSEXP, SEXP show_progressSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type src(srcSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type target(targetSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type src(srcSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type target(targetSEXP);
     Rcpp::traits::input_parameter< bool >::type show_progress(show_progressSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type options(optionsSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_sync(src, target, show_progress, options));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_mkdir
-int vsi_mkdir(Rcpp::CharacterVector path, std::string mode, bool recursive);
+int vsi_mkdir(const Rcpp::CharacterVector& path, const std::string& mode, bool recursive);
 RcppExport SEXP _gdalraster_vsi_mkdir(SEXP pathSEXP, SEXP modeSEXP, SEXP recursiveSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path(pathSEXP);
-    Rcpp::traits::input_parameter< std::string >::type mode(modeSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type mode(modeSEXP);
     Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_mkdir(path, mode, recursive));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_rmdir
-int vsi_rmdir(Rcpp::CharacterVector path, bool recursive);
+int vsi_rmdir(const Rcpp::CharacterVector& path, bool recursive);
 RcppExport SEXP _gdalraster_vsi_rmdir(SEXP pathSEXP, SEXP recursiveSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type path(pathSEXP);
     Rcpp::traits::input_parameter< bool >::type recursive(recursiveSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_rmdir(path, recursive));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_unlink
-int vsi_unlink(Rcpp::CharacterVector filename);
+int vsi_unlink(const Rcpp::CharacterVector& filename);
 RcppExport SEXP _gdalraster_vsi_unlink(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_unlink(filename));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_unlink_batch
-SEXP vsi_unlink_batch(Rcpp::CharacterVector filenames);
+SEXP vsi_unlink_batch(const Rcpp::CharacterVector& filenames);
 RcppExport SEXP _gdalraster_vsi_unlink_batch(SEXP filenamesSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filenames(filenamesSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filenames(filenamesSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_unlink_batch(filenames));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_stat
-SEXP vsi_stat(Rcpp::CharacterVector filename, std::string info);
+SEXP vsi_stat(const Rcpp::CharacterVector& filename, const std::string& info);
 RcppExport SEXP _gdalraster_vsi_stat(SEXP filenameSEXP, SEXP infoSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type info(infoSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type info(infoSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_stat(filename, info));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_rename
-int vsi_rename(Rcpp::CharacterVector oldpath, Rcpp::CharacterVector newpath);
+int vsi_rename(const Rcpp::CharacterVector& oldpath, const Rcpp::CharacterVector& newpath);
 RcppExport SEXP _gdalraster_vsi_rename(SEXP oldpathSEXP, SEXP newpathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type oldpath(oldpathSEXP);
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type newpath(newpathSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type oldpath(oldpathSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type newpath(newpathSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_rename(oldpath, newpath));
     return rcpp_result_gen;
 END_RCPP
@@ -840,115 +840,115 @@ BEGIN_RCPP
 END_RCPP
 }
 // vsi_get_fs_options_
-std::string vsi_get_fs_options_(Rcpp::CharacterVector filename);
+std::string vsi_get_fs_options_(const Rcpp::CharacterVector& filename);
 RcppExport SEXP _gdalraster_vsi_get_fs_options_(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_get_fs_options_(filename));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_supports_seq_write
-bool vsi_supports_seq_write(Rcpp::CharacterVector filename, bool allow_local_tmpfile);
+bool vsi_supports_seq_write(const Rcpp::CharacterVector& filename, bool allow_local_tmpfile);
 RcppExport SEXP _gdalraster_vsi_supports_seq_write(SEXP filenameSEXP, SEXP allow_local_tmpfileSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< bool >::type allow_local_tmpfile(allow_local_tmpfileSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_supports_seq_write(filename, allow_local_tmpfile));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_supports_rnd_write
-bool vsi_supports_rnd_write(Rcpp::CharacterVector filename, bool allow_local_tmpfile);
+bool vsi_supports_rnd_write(const Rcpp::CharacterVector& filename, bool allow_local_tmpfile);
 RcppExport SEXP _gdalraster_vsi_supports_rnd_write(SEXP filenameSEXP, SEXP allow_local_tmpfileSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
     Rcpp::traits::input_parameter< bool >::type allow_local_tmpfile(allow_local_tmpfileSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_supports_rnd_write(filename, allow_local_tmpfile));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_get_disk_free_space
-Rcpp::NumericVector vsi_get_disk_free_space(Rcpp::CharacterVector path);
+Rcpp::NumericVector vsi_get_disk_free_space(const Rcpp::CharacterVector& path);
 RcppExport SEXP _gdalraster_vsi_get_disk_free_space(SEXP pathSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type path(pathSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_get_disk_free_space(path));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_set_path_option
-void vsi_set_path_option(Rcpp::CharacterVector path_prefix, std::string key, std::string value);
+void vsi_set_path_option(const Rcpp::CharacterVector& path_prefix, const std::string& key, const std::string& value);
 RcppExport SEXP _gdalraster_vsi_set_path_option(SEXP path_prefixSEXP, SEXP keySEXP, SEXP valueSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path_prefix(path_prefixSEXP);
-    Rcpp::traits::input_parameter< std::string >::type key(keySEXP);
-    Rcpp::traits::input_parameter< std::string >::type value(valueSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type path_prefix(path_prefixSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type key(keySEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type value(valueSEXP);
     vsi_set_path_option(path_prefix, key, value);
     return R_NilValue;
 END_RCPP
 }
 // vsi_clear_path_options
-void vsi_clear_path_options(Rcpp::CharacterVector path_prefix);
+void vsi_clear_path_options(const Rcpp::CharacterVector& path_prefix);
 RcppExport SEXP _gdalraster_vsi_clear_path_options(SEXP path_prefixSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type path_prefix(path_prefixSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type path_prefix(path_prefixSEXP);
     vsi_clear_path_options(path_prefix);
     return R_NilValue;
 END_RCPP
 }
 // vsi_get_file_metadata
-SEXP vsi_get_file_metadata(Rcpp::CharacterVector filename, std::string domain);
+SEXP vsi_get_file_metadata(const Rcpp::CharacterVector& filename, const std::string& domain);
 RcppExport SEXP _gdalraster_vsi_get_file_metadata(SEXP filenameSEXP, SEXP domainSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< std::string >::type domain(domainSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type domain(domainSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_get_file_metadata(filename, domain));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_get_actual_url
-SEXP vsi_get_actual_url(Rcpp::CharacterVector filename);
+SEXP vsi_get_actual_url(const Rcpp::CharacterVector& filename);
 RcppExport SEXP _gdalraster_vsi_get_actual_url(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_get_actual_url(filename));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_get_signed_url
-SEXP vsi_get_signed_url(Rcpp::CharacterVector filename, Rcpp::Nullable<Rcpp::CharacterVector> options);
+SEXP vsi_get_signed_url(const Rcpp::CharacterVector& filename, const Rcpp::Nullable<Rcpp::CharacterVector>& options);
 RcppExport SEXP _gdalraster_vsi_get_signed_url(SEXP filenameSEXP, SEXP optionsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
-    Rcpp::traits::input_parameter< Rcpp::Nullable<Rcpp::CharacterVector> >::type options(optionsSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::Nullable<Rcpp::CharacterVector>& >::type options(optionsSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_get_signed_url(filename, options));
     return rcpp_result_gen;
 END_RCPP
 }
 // vsi_is_local
-bool vsi_is_local(Rcpp::CharacterVector filename);
+bool vsi_is_local(const Rcpp::CharacterVector& filename);
 RcppExport SEXP _gdalraster_vsi_is_local(SEXP filenameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::CharacterVector >::type filename(filenameSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type filename(filenameSEXP);
     rcpp_result_gen = Rcpp::wrap(vsi_is_local(filename));
     return rcpp_result_gen;
 END_RCPP
