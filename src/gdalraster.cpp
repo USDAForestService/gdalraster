@@ -2051,6 +2051,9 @@ void GDALRaster::close() {
 }
 
 void GDALRaster::show() const {
+    int xsize = static_cast<int>(getRasterXSize());
+    int ysize = static_cast<int>(getRasterYSize());
+
     Rcpp::Environment pkg = Rcpp::Environment::namespace_env("gdalraster");
     Rcpp::Function fn = pkg[".get_crs_name"];
     std::string crs_name = Rcpp::as<std::string>(fn(getProjection()));
@@ -2059,8 +2062,8 @@ void GDALRaster::show() const {
     Rcpp::Rcout << " Driver : " << getDriverLongName() << " (" <<
                                    getDriverShortName() << ")" << std::endl;
     Rcpp::Rcout << " DSN    : " << getDescription(0) << std::endl;
-    Rcpp::Rcout << " Dim    : " << std::to_string(getRasterXSize()) << ", " <<
-                                   std::to_string(getRasterYSize()) << ", " <<
+    Rcpp::Rcout << " Dim    : " << std::to_string(xsize) << ", " <<
+                                   std::to_string(ysize) << ", " <<
                                    std::to_string(getRasterCount()) <<
                                    std::endl;
     Rcpp::Rcout << " CRS    : " << crs_name << std::endl;
