@@ -130,6 +130,16 @@ Rcpp::NumericMatrix CmbTable::asMatrix() const {
     return m_out;
 }
 
+void CmbTable::show() const {
+    std::string out = "cmbid count";
+    for (const auto& s : m_var_names) {
+        out += (" " + s);
+    }
+
+    Rcpp::Rcout << "C++ object of class CmbTable" << std::endl;
+    Rcpp::Rcout << " Columns: " << out << std::endl;
+}
+
 RCPP_MODULE(mod_cmb_table) {
     Rcpp::class_<CmbTable>("CmbTable")
 
@@ -150,6 +160,8 @@ RCPP_MODULE(mod_cmb_table) {
         "Returns a dataframe containing the combinations table")
     .const_method("asMatrix", &CmbTable::asMatrix,
         "Returns a matrix containing the combinations table")
+    .const_method("show", &CmbTable::show,
+        "S4 show()")
     ;
 }
 

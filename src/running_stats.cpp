@@ -96,6 +96,11 @@ double RunningStats::get_sd() const {
         return sqrt(m_M2 / (m_count - 1));
 }
 
+void RunningStats::show() const {
+    Rcpp::Rcout << "C++ object of class RunningStats" << std::endl;
+    Rcpp::Rcout << " Number of values: " << get_count() << std::endl;
+}
+
 RCPP_MODULE(mod_running_stats) {
     Rcpp::class_<RunningStats>("RunningStats")
 
@@ -123,6 +128,8 @@ RCPP_MODULE(mod_running_stats) {
         "Return the variance of the values currently in the stream")
     .const_method("get_sd", &RunningStats::get_sd,
         "Return standard deviation of the values currently in the stream")
+    .const_method("show", &RunningStats::show,
+        "S4 show()")
     ;
 }
 

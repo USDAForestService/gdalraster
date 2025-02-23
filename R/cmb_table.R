@@ -123,10 +123,3 @@
 NULL
 
 Rcpp::loadModule("mod_cmb_table", TRUE)
-
-setMethod("show", "Rcpp_CmbTable", function(object) {
-    cat("C++ object of class CmbTable\n",
-        "  Columns:", names(object$asDataFrame()), "\n",
-        sep = " "
-    )
-})

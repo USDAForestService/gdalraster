@@ -271,6 +271,12 @@ int VSIFile::set_access(std::string access) {
     }
 }
 
+void VSIFile::show() const {
+    Rcpp::Rcout << "C++ object of class VSIFile" << std::endl;
+    Rcpp::Rcout << " Filename : " << get_filename() << std::endl;
+    Rcpp::Rcout << " Access   : " << get_access() << std::endl;
+}
+
 RCPP_MODULE(mod_VSIFile) {
     Rcpp::class_<VSIFile>("VSIFile")
 
@@ -312,6 +318,8 @@ RCPP_MODULE(mod_VSIFile) {
         "Return the access")
     .method("set_access", &VSIFile::set_access,
         "Set the access if the file is closed")
+    .const_method("show", &VSIFile::show,
+        "S4 show()")
 
     ;
 }
