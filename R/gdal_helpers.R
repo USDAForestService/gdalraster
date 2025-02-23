@@ -1,6 +1,28 @@
 # Miscellaneous helper functions for working with the GDAL API
 # Chris Toney <chris.toney at usda.gov>
 
+#' @noRd
+.get_crs_name <- function(wkt) {
+    # name of form "<srs name> [(EPSG:####[, confidence ##])]"
+    # include EPSG code if confidence > 50
+    # include the confidence value if < 100
+
+    crs_name <- srs_get_name(wkt)
+    epsg <- srs_find_epsg(wkt, all_matches = TRUE)
+    if (!is.null(epsg)) {
+        if (nrow(epsg) >= 1 && epsg$confidence[1] > 50) {
+            crs_name <- paste0(crs_name, " (", epsg$authority_name[1], ":",
+                               epsg$authority_code[1])
+            if (epsg$confidence[1] < 100) {
+                crs_name <- paste0(crs_name, ", confidence ",
+                                   epsg$confidence[1])
+            }
+            crs_name <- paste0(crs_name, ")")
+        }
+    }
+    return(crs_name)
+}
+
 #' Create/append to a potentially Seek-Optimized ZIP file (SOZip)
 #'
 #' `addFilesInZip()` will create new or open existing ZIP file, and

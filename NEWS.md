@@ -1,4 +1,14 @@
-# gdalraster 1.12.0.9180 (dev)
+# gdalraster 1.12.0.9190 (dev)
+
+* fix potential integer overflow when multiplying raster dimensions in R without explicit `as.numeric()` (#620 thanks to @mdsumner) (2025-02-21)
+
+* `GDALVector::info()`: enable full info output on a vector layer opened via SQL statement (#615 thanks to @mdsumner) (2025-02-21)
+
+* `pixel_extract()`: fix the check for GDAL >= 3.10 when cubic or cubicspline interpolation is requested (thanks to @mdsumner) (2025-02-21)
+
+* `read_ds()`: pre-allocate the output vector based on the size of the unioned data type across all bands (2025-02-18)
+
+* fix `plot_raster()` to avoid integer overflow (#613 thanks to @mdsumner) (2025-02-18)
 
 * (internal) implement `create()`, `createCopy()`, `autoCreateWarpedVRT()` as object factories (2025-02-14)
 
@@ -144,7 +154,7 @@
 
 * add `vsi_get_signed_url()`: return a signed URL for a supplied VSI filename, wrapper of `VSIGetSignedURL()` in the GDAL API (2024-06-20)
 
-* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`; add the `-srcband` and `-dstband` command-line options in the documentation for `warp()`; add [Development practices](https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices) in CONTRIBUTING.md; add the OpenSSF best practices badge in README; add `fig.alt` text to articles for web accessibility; add the OpenSSF Scorecard badge in README; add example in `ogr2ogr()` for dissolve features based on an attribute value; code that cleans up temp files in the examples is wrapped in `\dontshow{}`
+* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`; add the `-srcband` and `-dstband` command-line options in the documentation for `warp()`; add [Development practices](https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices) in CONTRIBUTING.md; add the OpenSSF best practices badge in README; add `fig.alt` text to articles for web accessibility; add the OpenSSF Scorecard badge in README; add example in `ogr2ogr()` for dissolve features based on an attribute value; code that cleans up temp files in the examples is wrapped in `\dontshow{}`; minor updates for `g_transform()`
 
 # gdalraster 1.12.0
 

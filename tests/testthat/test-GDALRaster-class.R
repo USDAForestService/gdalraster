@@ -3,7 +3,7 @@ test_that("info() prints output to the console", {
     evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
     ds <- new(GDALRaster, evt_file, TRUE)
     # check S4 show here also
-    expect_output(show(ds))
+    expect_output(show(ds), "Bbox")
     expect_output(ds$info())
     # with args
     ds$infoOptions <- c("-nomd", "-norat", "-noct")
@@ -801,4 +801,22 @@ test_that("pixel extract cubic/cublicspline interpolation", {
     expect_equal(extr_cubic[1], 2.0166, tolerance = 1e-6)
 
     ds$close()
+})
+
+test_that("raster dimensions multiply without int overflow", {
+    f <- "/vsimem/file.tif"
+    ds <- create("GTiff", f, 86400, 43200, nbands = 1, dataType = "Byte",
+                 options = c("SPARSE_OK=YES"), return_obj = TRUE)
+
+    dm <- ds$dim()
+    expect_no_warning(dm[1] * dm[2])  # no warning for NAs produced by overflow
+    expect_equal(dm[1] * dm[2], 3732480000)
+
+    xsize <- ds$getRasterXSize()
+    ysize <- ds$getRasterYSize()
+    expect_no_warning(xsize * ysize)
+    expect_equal(xsize * ysize, 3732480000)
+
+    ds$close()
+    vsi_unlink(f)
 })

@@ -52,7 +52,7 @@ geometry type, a list of WKB raw vectors or character vector of WKT strings.
 }
 \description{
 These functions create WKB/WKT geometries from input vertices, and build
-container geometry types from sub-geometries.,
+container geometry types from sub-geometries.
 }
 \details{
 These functions use the GEOS library via GDAL headers.

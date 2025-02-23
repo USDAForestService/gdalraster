@@ -300,7 +300,7 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' Create WKB/WKT geometries from vertices, and add sub-geometries
 #'
 #' These functions create WKB/WKT geometries from input vertices, and build
-#' container geometry types from sub-geometries.,
+#' container geometry types from sub-geometries.
 #' @name g_factory
 #' @details
 #' These functions use the GEOS library via GDAL headers.
@@ -389,7 +389,7 @@ g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
         stop("'pts' must be a numeric matrix of xy[zm]", call. = FALSE)
     # as_wkb
     if (is.null(as_wkb))
-        as_wkb <- TRU
+        as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
         stop("'as_wkb' must be a logical value", call. = FALSE)
     # as_iso
@@ -471,22 +471,60 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 
 }
 
-#' Extract geometry type names from WKB/WKT geometries
+#' Obtain information about WKB/WKT geometries
 #'
-#' `g_name()` returns geometry type names in well known text format.
+#' These functions return information about WKB/WKT geometries. The input
+#' geometries may be given as a single raw vector of WKB, a list of WKB raw
+#' vectors, or a character vector containing one or more WKT strings.
+#' @name g_query
+#' @details
+#' `g_is_empty()` tests whether a geometry has no points. Returns a logical
+#' vector of the same length as the number of input geometries containing
+#' `TRUE` for the corresponding geometries that are empty or `FALSE` for
+#' non-empty geometries.
+#'
+#' `g_is_valid()` tests whether a geometry is valid. Returns a logical vector
+#' of the same length as the number of input geometries containing `TRUE` for
+#' the corresponding geometries that are valid or `FALSE` for invalid
+#' geometries.
+#'
+#' `g_name()` returns geometry type names in a character vector of the same
+#' length as the number of input geometries.
+#'
+#' `g_summary()` returns text summaries of WKB/WKT geometries in a
+#' character vector of the same length as the number of input
+#' geometries. Requires GDAL >= 3.7.
 #'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
 #' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return character vector of the same length as the number of input
-#' geometries in `geom`, containing the WKT names for the corresponding
-#' geometries.
 #'
 #' @examples
-#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' ds <- new(GDALRaster, elev_file)
-#' bbox_to_wkt(ds$bbox()) |> g_name()
-#' ds$close()
+#' g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
+#' g2 <- "POLYGON ((5 1, 9 5, 9 1, 5 1))"
+#' g_difference(g2, g1) |> g_is_empty()
+#'
+#' g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
+#' g2 <- "POLYGON ((0 0, 10 10, 10 0))"
+#' g3 <- "POLYGON ((0 0, 10 10, 10 0, 0 1))"
+#' g_is_valid(c(g1, g2, g3))
+#'
+#' f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
+#' lyr <- new(GDALVector, f, "mtbs_perims")
+#'
+#' feat <- lyr$getNextFeature()
+#' g_name(feat$geom)
+#'
+#' # g_summary() requires GDAL >= 3.7
+#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#'   feat <- lyr$getNextFeature()
+#'   g_summary(feat$geom) |> print()
+#'
+#'   feat_set <- lyr$fetch(5)
+#'   g_summary(feat_set$geom) |> print()
+#' }
+#'
+#' lyr$close()
 #' @export
 g_name <- function(geom, quiet = FALSE) {
     # quiet
@@ -514,31 +552,7 @@ g_name <- function(geom, quiet = FALSE) {
     return(ret)
 }
 
-#' Obtain text summaries of WKB/WKT geometries
-#'
-#' `g_summary()` returns text summaries of WKB/WKT geometries.
-#' Requires GDAL >= 3.7.
-#'
-#' @param geom Either a raw vector of WKB or list of raw vectors, or a
-#' character vector containing one or more WKT strings.
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return character vector of the same length as the number of input
-#' geometries in `geom`, containing summaries for the corresponding geometries.
-#'
-#' @examples
-#' # Requires GDAL >= 3.7
-#' if (as.integer(gdal_version()[2]) >= 3070000) {
-#'   f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
-#'   lyr <- new(GDALVector, f, "mtbs_perims")
-#'
-#'   feat <- lyr$getNextFeature()
-#'   g_summary(feat$geom)
-#'
-#'   feat_set <- lyr$fetch(5)
-#'   g_summary(feat_set$geom)
-#'
-#'   lyr$close()
-#' }
+#' @name g_query
 #' @export
 g_summary <- function(geom, quiet = FALSE) {
     # quiet
@@ -566,21 +580,7 @@ g_summary <- function(geom, quiet = FALSE) {
     return(ret)
 }
 
-#' Test if a geometry is empty
-#'
-#' `g_is_empty()` tests whether a geometry has no points.
-#'
-#' @param geom Either a raw vector of WKB or list of raw vectors, or a
-#' character vector containing one or more WKT strings.
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return logical vector of the same length as the number of input
-#' geometries in `geom`, containing `TRUE` for the corresponding geometries
-#' that are empty or `FALSE` for non-empty geometries.
-#'
-#' @examples
-#' g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
-#' g2 <- "POLYGON ((5 1, 9 5, 9 1, 5 1))"
-#' g_difference(g2, g1) |> g_is_empty()
+#' @name g_query
 #' @export
 g_is_empty <- function(geom, quiet = FALSE) {
     # quiet
@@ -608,22 +608,7 @@ g_is_empty <- function(geom, quiet = FALSE) {
     return(ret)
 }
 
-#' Test if a geometry is valid
-#'
-#' `g_is_valid()` tests whether a geometry is valid.
-#'
-#' @param geom Either a raw vector of WKB or list of raw vectors, or a
-#' character vector containing one or more WKT strings.
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return logical vector of the same length as the number of input
-#' geometries in `geom`, containing `TRUE` for the corresponding geometries
-#' that are valid or `FALSE` for invalid geometries.
-#'
-#' @examples
-#' g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
-#' g2 <- "POLYGON ((0 0, 10 10, 10 0))"
-#' g3 <- "POLYGON ((0 0, 10 10, 10 0, 0 1))"
-#' g_is_valid(c(g1, g2, g3))
+#' @name g_query
 #' @export
 g_is_valid <- function(geom, quiet = FALSE) {
     # quiet
@@ -1623,133 +1608,79 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
         return(g_wk2wk(wkb, as_iso))
 }
 
-#' Compute the distance between two geometries
+#' Compute measurements for WKB/WKT geometries
+#'
+#' These functions compute measurements for geometries. The input
+#' geometries may be given as a single raw vector of WKB, a list of WKB raw
+#' vectors, or a character vector containing one or more WKT strings.
+#' @name g_measures
+#' @details
+#' These functions use the GEOS library via GDAL headers.
+#'
+#' `g_area()` computes the area for a `Polygon` or `MultiPolygon`. Undefined
+#' for all other geometry types (returns zero). Returns a numeric vector,
+#' having length equal to the number of input geometries, containing
+#' computed area or '0' if undefined.
+#'
+#' `g_centroid()` returns a numeric vector of length 2 containing the centroid
+#' (X, Y), or a two-column numeric matrix (X, Y) with number of rows equal to
+#' the number of input geometries.
+#' The GDAL documentation states "This method relates to the SFCOM
+#' `ISurface::get_Centroid()` method however the current implementation based
+#' on GEOS can operate on other geometry types such as multipoint, linestring,
+#' geometrycollection such as multipolygons. OGC SF SQL 1.1 defines the
+#' operation for surfaces (polygons). SQL/MM-Part 3 defines the operation for
+#' surfaces and multisurfaces (multipolygons)."
 #'
 #' `g_distance()` returns the distance between two geometries or `-1` if an
 #' error occurs. Returns the shortest distance between the two geometries.
 #' The distance is expressed into the same unit as the coordinates of the
-#' geometries.
+#' geometries. Returns a numeric vector, having length equal to the number of
+#' input geometry pairs, containing computed distance or '-1' if an error
+#' occurs.
 #'
-#' @param this_geom Either a raw vector of WKB or list of raw vectors, or a
+#' `g_length()` computes the length for `LineString` or `MultiCurve` objects.
+#' Undefined for all other geometry types (returns zero). Returns a numeric
+#' vector, having length equal to the number of input geometries, containing
+#' computed length or '0' if undefined.
+#'
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
 #' @param other_geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings. Must contain the same
-#' number of geometries as `this_geom`.
+#' number of geometries as `geom`.
 #' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return Numeric vector of length equal to the number of input geometry
-#' pairs. Distance or '-1' if an error occurs.
 #'
 #' @note
-#' `this_geom` and `other_geom` are assumed to be in the same coordinate
-#' reference system.
+#' For `g_distance()`, `geom` and `other_geom` must contain the same number of
+#' geometries (i.e., operates pair-wise on the inputs with no recycling), and
+#' are assumed to be in the same coordinate reference system.
 #'
 #' Geometry validity is not checked. In case you are unsure of the validity
 #' of the input geometries, call `g_is_valid()` before, otherwise the result
 #' might be wrong.
 #'
 #' @examples
+#' g_area("POLYGON ((0 0, 10 10, 10 0, 0 0))")
+#'
+#' g_centroid("POLYGON ((0 0, 10 10, 10 0, 0 0))")
+#'
 #' g_distance("POINT (0 0)", "POINT (5 12)")
-#' @export
-g_distance <- function(this_geom, other_geom, quiet = FALSE) {
-    if (is.character(this_geom))
-        this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
-
-        stop("'this_geom' must be raw vector or character",
-             call. = FALSE)
-    }
-
-    if (is.character(other_geom))
-        other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
-
-        stop("'other_geom' must be raw vector or character",
-             call. = FALSE)
-    }
-
-    if (is.null(quiet))
-        quiet <- FALSE
-    if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
-
-    ret <- -1
-    if (is.raw(this_geom) && is.raw(other_geom)) {
-        ret <- .g_distance(this_geom, other_geom, quiet)
-    } else if (is.list(this_geom) && is.list(other_geom)) {
-        if (length(this_geom) != length(other_geom)) {
-            stop("inputs must contain an equal number of geometries",
-                 call. = FALSE)
-        }
-
-        ret <- rep(-1, length(this_geom))
-        for (i in seq_along(this_geom)) {
-            ret[i] <- .g_distance(this_geom[[i]], other_geom[[i]], quiet)
-        }
-
-    } else {
-        stop("inputs must contain an equal number of geometries",
-             call. = FALSE)
-    }
-
-    return(ret)
-}
-
-#' Compute the length of a geometry
 #'
-#' `g_length()` computes the length for `LineString` or `MultiCurve` objects.
-#' Undefined for all other geometry types (returns zero).
-#'
-#' @param geom Either a raw vector of WKB or list of raw vectors, or a
-#' character vector containing one or more WKT strings.
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return Numeric vector of length equal to the number of input geometries.
-#' Length or '0' if undefined.
-#'
-#' @examples
 #' g_length("LINESTRING (0 0, 3 4)")
-#' @export
-g_length <- function(geom, quiet = FALSE) {
-    # quiet
-    if (is.null(quiet))
-        quiet <- FALSE
-    if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
-
-    ret <- 0
-    if (is.raw(geom)) {
-        ret <- .g_length(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
-        ret <- sapply(geom, .g_length, quiet)
-    } else if (is.character(geom)) {
-        if (length(geom) == 1) {
-            ret <- .g_length(g_wk2wk(geom), quiet)
-        } else {
-            ret <- sapply(g_wk2wk(geom), .g_length, quiet)
-        }
-    } else {
-        stop("'geom' must be a character vector, raw vector, or list",
-             call. = FALSE)
-    }
-
-    return(ret)
-}
-
-#' Compute the area of a geometry
 #'
-#' `g_area()` computes the area for a `LinearRing`, `Polygon` or
-#' `MultiPolygon`. Undefined for all other geometry types (returns zero).
+#' f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
+#' lyr <- new(GDALVector, f, "mtbs_perims")
 #'
-#' @param geom Either a raw vector of WKB or list of raw vectors, or a
-#' character vector containing one or more WKT strings.
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return Numeric vector of length equal to the number of input geometries.
-#' Area or '0' if undefined.
+#' # read all features into a data frame
+#' feat_set <- lyr$fetch(-1)
+#' head(feat_set)
 #'
-#' @note
-#' `LinearRing` is a non-standard geometry type, used in GDAL just for geometry
-#' creation.
+#' g_area(feat_set$geom) |> head()
+#'
+#' g_centroid(feat_set$geom) |> head()
+#'
+#' lyr$close()
 #' @export
 g_area <- function(geom, quiet = FALSE) {
     # quiet
@@ -1777,25 +1708,7 @@ g_area <- function(geom, quiet = FALSE) {
     return(ret)
 }
 
-#' Compute the centroid of a geometry
-#'
-#' `g_centroid()` returns a vector of point X, point Y, or a matrix of points
-#' for multiple input geometries.
-#'
-#' @details
-#' The GDAL documentation states "This method relates to the SFCOM
-#' `ISurface::get_Centroid()` method however the current implementation based
-#' on GEOS can operate on other geometry types such as multipoint, linestring,
-#' geometrycollection such as multipolygons. OGC SF SQL 1.1 defines the
-#' operation for surfaces (polygons). SQL/MM-Part 3 defines the operation for
-#' surfaces and multisurfaces (multipolygons)."
-#'
-#' @param geom Either a raw vector of WKB or list of raw vectors, or a
-#' character vector containing one or more WKT strings.
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return Either a numeric vector of length 2 containing the centroid (X, Y),
-#' or a two-column numeric matrix (X, Y) with number of rows equal to the
-#' number of input geometries.
+#' @name g_measures
 #' @export
 g_centroid <- function(geom, quiet = FALSE) {
     # quiet
@@ -1818,6 +1731,80 @@ g_centroid <- function(geom, quiet = FALSE) {
         } else {
             ret <- t(sapply(g_wk2wk(geom), .g_centroid, quiet))
             colnames(ret) <- c("x", "y")
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' @name g_measures
+#' @export
+g_distance <- function(geom, other_geom, quiet = FALSE) {
+    if (is.character(geom))
+        geom <- g_wk2wk(geom)
+    if (!(is.raw(geom) || (is.list(geom) && is.raw(geom[[1]])))) {
+        stop("'geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.character(other_geom))
+        other_geom <- g_wk2wk(other_geom)
+    if (!(is.raw(other_geom) || (is.list(other_geom) &&
+                                 is.raw(other_geom[[1]])))) {
+
+        stop("'other_geom' must be raw vector or character",
+             call. = FALSE)
+    }
+
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- -1
+    if (is.raw(geom) && is.raw(other_geom)) {
+        ret <- .g_distance(geom, other_geom, quiet)
+    } else if (is.list(geom) && is.list(other_geom)) {
+        if (length(geom) != length(other_geom)) {
+            stop("inputs must contain an equal number of geometries",
+                 call. = FALSE)
+        }
+
+        ret <- rep(-1, length(geom))
+        for (i in seq_along(geom)) {
+            ret[i] <- .g_distance(geom[[i]], other_geom[[i]], quiet)
+        }
+
+    } else {
+        stop("inputs must contain an equal number of geometries",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' @name g_measures
+#' @export
+g_length <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- 0
+    if (is.raw(geom)) {
+        ret <- .g_length(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_length, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_length(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_length, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
@@ -1959,24 +1946,16 @@ g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
 #' use case, `srs_to` might be the same as `srs_from`.
 #'
 #' @seealso
-#' [bbox_transform()]
+#' [bbox_transform()], [transform_bounds()]
 #'
 #' @examples
-#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-#' ds <- new(GDALRaster, elev_file)
-#'
-#' # the convenience function bbox_transform() does this:
-#' bbox_to_wkt(ds$bbox()) |>
-#'   g_transform(ds$getProjection(), epsg_to_wkt(4326), as_wkb = FALSE) |>
-#'   bbox_from_wkt()
-#'
-#' ds$close()
+#' pt <- "POINT (-114.0 47.0)"
+#' g_transform(pt, "WGS84", "EPSG:5070", as_wkb = FALSE)
 #'
 #' # correct geometries that incorrectly go from a longitude on a side of the
 #' # antimeridian to the other side
 #' geom <- "LINESTRING (-179 0,179 0)"
-#' srs <- epsg_to_wkt(4326)
-#' g_transform(geom, srs, srs, wrap_date_line = TRUE)
+#' g_transform(geom, "WGS84", "WGS84", wrap_date_line = TRUE, as_wkb = FALSE)
 #' @export
 g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE,
                         date_line_offset = 10L, as_wkb = TRUE,

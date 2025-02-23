@@ -60,7 +60,7 @@ test_that("class basic interface works", {
     lyr <- new(GDALVector, dsn, "mtbs_perims")
 
     expect_true(is(lyr, "Rcpp_GDALVector"))
-    expect_output(show(lyr))
+    expect_output(show(lyr), "MULTIPOLYGON")
 
     expect_equal(lyr$getDriverShortName(), "GPKG")
     expect_equal(lyr$getDriverLongName(), "GeoPackage")
@@ -140,6 +140,14 @@ test_that("class basic interface works", {
     expect_equal(lyr$getFeatureCount(), 61)
 
     lyr$close()
+
+    # SQL layer
+    sql_lyr <- new(GDALVector, dsn, "SELECT * FROM mtbs_perims LIMIT 10")
+    expect_true(is(sql_lyr, "Rcpp_GDALVector"))
+    expect_output(show(sql_lyr), "LIMIT 10")
+    expect_equal(sql_lyr$getFeatureCount(), 10)
+    sql_lyr$close()
+
     unlink(dsn)
 })
 
@@ -1079,7 +1087,12 @@ test_that("info() prints output to the console", {
     lyr$close()
 
     lyr <- new(GDALVector, dsn, "SELECT * FROM mtbs_perims LIMIT 10")
-    expect_output(lyr$info())
+    if (.gdal_version_num() >= 3070000) {
+        expect_output(lyr$info(), "Feature Count: 10")
+    } else {
+        # we only get the fallback minimal info
+        expect_output(lyr$info(), "Layer")
+    }
     lyr$close()
 
     # default layer first by index

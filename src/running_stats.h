@@ -27,6 +27,8 @@ class RunningStats {
     double get_var() const;
     double get_sd() const;
 
+    void show() const;
+
  private:
     bool m_na_rm;
     uint64_t m_count;

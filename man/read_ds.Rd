@@ -47,25 +47,24 @@ band.}
 
 \item{as_raw}{Logical. If \code{TRUE} and the underlying data type is Byte,
 return output as R's raw vector type. This maps to the setting
-\verb{$readByteAsRaw} on the \code{GDALRaster} object, which is used to temporarily
-update that field in this function. To control this behaviour in a
-persistent way on a data set see \code{$readByteAsRaw} in
-\code{\link[=GDALRaster]{GDALRaster-class}}.}
+\verb{$readByteAsRaw} on the \code{GDALRaster} object, which will be temporarily
+updated in this function. To control this behaviour in a persistent way on
+a dataset see \code{$readByteAsRaw} in \code{\link[=GDALRaster]{GDALRaster-class}}.}
 }
 \value{
-If \code{as_list = FALSE} (the default), a \code{numeric} or \code{complex} vector
-containing the values that were read. It is organized in left to right, top
-to bottom pixel order, interleaved by band.
+If \code{as_list = FALSE} (the default), a vector of \code{raw}, \code{integer},
+\code{double} or \code{complex} containing the values that were read. It is organized
+in left to right, top to bottom pixel order, interleaved by band.
 If \code{as_list = TRUE}, a list with number of elements equal to the number of
-bands read. Each element contains a \code{numeric} or \code{complex} vector
-containing the pixel data read for the band.
+bands read. Each element contains a vector of \code{raw}, \code{integer}, \code{double} or
+\code{complex} containing the pixel values that were read for the band.
 }
 \description{
 \code{read_ds()} will read from a raster dataset that is already open in a
 \code{GDALRaster} object. By default, it attempts to read the full raster
 extent from all bands at full resolution. \code{read_ds()} is sometimes more
 convenient than \code{GDALRaster$read()}, e.g., to read specific multiple bands
-for display with \code{\link[=plot_raster]{plot_raster()}}, or simply for the argument defaults to
+for display with \code{\link[=plot_raster]{plot_raster()}}, or simply for the default arguments that
 read an entire raster into memory (see Note).
 }
 \details{
@@ -95,9 +94,9 @@ a large raster in many chunks, it will be optimal performance-wise to call
 
 By default, this function will attempt to read the full raster into memory.
 It generally should not be called on large raster datasets using the default
-argument values. The memory size in bytes of the returned vector will be
-approximately (xsize * ysize * number of bands * 4) for data read as
-\code{integer}, and (xsize * ysize * number of bands * 8) for data read as
+argument values. The memory size in bytes of the returned vector will be,
+e.g., (xsize * ysize * number of bands * 4) for data read as
+\code{integer}, or (xsize * ysize * number of bands * 8) for data read as
 \code{double} (plus small object overhead for the vector).
 }
 \examples{
@@ -117,7 +116,7 @@ typeof(r)
 length(r)
 object.size(r)
 
-# gis attribute list
+# gis attributes
 attr(r, "gis")
 
 ds$close()

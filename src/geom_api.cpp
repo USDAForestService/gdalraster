@@ -1690,7 +1690,7 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
                  const std::string &srs_to, bool wrap_date_line = false,
                  int date_line_offset = 10, bool as_iso = false,
                  const std::string &byte_order = "LSB", bool quiet = false) {
-// Returns a transformed geometry as WKT
+// Returns a transformed geometry as WKB
 // Apply arbitrary coordinate transformation to geometry.
 // This function will transform the coordinates of a geometry from their
 // current spatial reference system to a new target spatial reference system.
