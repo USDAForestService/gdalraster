@@ -134,37 +134,6 @@ dt_find_for_value <- function(value, is_complex = FALSE) {
     .Call(`_gdalraster_dt_find_for_value`, value, is_complex)
 }
 
-#' Create a new uninitialized raster
-#'
-#' `create()` makes an empty raster in the specified format.
-#'
-#' Called from and documented in R/gdal_create.R
-#' @noRd
-NULL
-
-#' Create a copy of a raster
-#'
-#' `createCopy()` copies a raster dataset, optionally changing the format.
-#' The extent, cell size, number of bands, data type, projection, and
-#' geotransform are all copied from the source raster.
-#'
-#' Called from and documented in R/gdal_create.R
-#' @noRd
-NULL
-
-#' Create a virtual warped dataset automatically
-#'
-#' `autoCreateWarpedVRT()` creates a warped virtual dataset representing the
-#' input raster warped into a target coordinate system. The output virtual
-#' dataset will be "north-up" in the target coordinate system. GDAL
-#' automatically determines the bounds and resolution of the output virtual
-#' raster which should be large enough to include all the input raster.
-#' Wrapper of `GDALAutoCreateWarpedVRT()` in the GDAL Warper API.
-#'
-#' Called from and documented in R/gdal_util.R
-#' @noRd
-NULL
-
 #' Get GDAL version
 #'
 #' `gdal_version()` returns runtime version information.

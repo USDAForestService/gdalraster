@@ -50,6 +50,11 @@ test_that("class constructors work", {
 
     lyr$close()
     unlink(dsn)
+
+    # default construstrctor with no arguments should not error
+    expect_no_error(lyr <- new(GDALVector))
+    rm(lyr)
+    gc()
 })
 
 test_that("class basic interface works", {
