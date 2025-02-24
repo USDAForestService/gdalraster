@@ -2247,7 +2247,7 @@ void GDALVector::show() const {
         lyr_name = getName();
     }
 
-    Rcpp::Environment pkg = Rcpp::Environment("package:gdalraster");
+    Rcpp::Environment pkg = Rcpp::Environment::namespace_env("gdalraster");
     Rcpp::Function fn = pkg[".get_crs_name"];
     std::string crs_name = Rcpp::as<std::string>(fn(getSpatialRef()));
 

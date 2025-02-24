@@ -2058,7 +2058,7 @@ void GDALRaster::show() const {
     int xsize = static_cast<int>(getRasterXSize());
     int ysize = static_cast<int>(getRasterYSize());
 
-    Rcpp::Environment pkg = Rcpp::Environment("package:gdalraster");
+    Rcpp::Environment pkg = Rcpp::Environment::namespace_env("gdalraster");
     Rcpp::Function fn = pkg[".get_crs_name"];
     std::string crs_name = Rcpp::as<std::string>(fn(getProjection()));
 
