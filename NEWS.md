@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9221 (dev)
+# gdalraster 1.12.0.9222 (dev)
+
+* `GDALVector::getArrowStream()`: default to `GEOMETRY_METADATA_ENCODING=OGC` instead of `GEOARROW` for now, i.e., use the GDAL default unless specified otherwise (2023-02-23)
 
 * (internal) various C++ code linting throughout (#624) (2025-02-23)
 
