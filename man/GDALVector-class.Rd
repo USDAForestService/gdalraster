@@ -180,9 +180,8 @@ the GDAL API documentation for
 \item INCLUDE_FID=YES/NO. Defaults to YES.
 \item TIMEZONE=unknown/UTC/(+|:)HH:MM or any other value supported by
 Arrow (GDAL >= 3.8).
-\item GEOMETRY_METADATA_ENCODING=OGC/GEOARROW (GDAL >= 3.8). This will be set
-to GEOARROW by default on newly instantiated \code{GDALVector} objects (if not
-specified, the GDAL default is OGC).
+\item GEOMETRY_METADATA_ENCODING=OGC/GEOARROW (GDAL >= 3.8). The GDAL default is
+OGC if not specified.
 \item GEOMETRY_ENCODING=WKB (Arrow/Parquet drivers). To force a fallback to the
 generic implementation when the native geometry encoding is not WKB.
 Otherwise the geometry will be returned with its native Arrow encoding
@@ -527,7 +526,7 @@ using an ArrowArrayStream is strongly discouraged and may lead to unexpected
 results. As a rule of thumb, no OGRLayer methods that affect the state of a
 layer should be called on the layer while an ArrowArrayStream on it is
 active. Methods available on the stream object are: \verb{$get_schema()},
-\verb{$get_next()}, \code{get_last_error()} and \verb{$release()} (see Examples).
+\verb{$get_next()} and \verb{$release()} (see Examples).
 The stream should be released once reading is complete. Calling the release
 method as soon as you can after consuming a stream is recommended in the
 nanoarrow documentation.
@@ -884,28 +883,34 @@ str(feat_set)
 
 lyr$close()
 
-# Arrow array stream exposed as a nanoarrow_array_stream object
-# requires GDAL >= 3.6
-if (as.integer(gdal_version()[2]) >= 3060000 &&
-    requireNamespace("nanoarrow")) {
+## Arrow array stream exposed as a nanoarrow_array_stream object
+## requires GDAL >= 3.6
+if (as.integer(gdal_version()[2]) >= 3060000) {
 
-  lyr <- new(GDALVector, dsn)
+  sql <- "SELECT incid_name, geom from mtbs_perims LIMIT 5"
+  lyr <- new(GDALVector, dsn, sql)
+
   stream <- lyr$getArrowStream()
   print(stream)
 
   stream$get_schema() |> print()
 
   batch <- stream$get_next()
+  str(batch) |> print()
 
+  # disable warning for the example that can be safely ignored here
   options(nanoarrow.warn_unregistered_extension = FALSE)
+
   d <- as.data.frame(batch)
   head(d) |> print()
 
   # the geometry column is a list column of WKB raw vectors, e.g.,
-  g_area(d$geom) |> print()
+  g_summary(d$geom) |> print()
+
+  g_centroid(d$geom) |> print()
 
   # the last batch is NULL
-  stream$get_next()
+  stream$get_next() |> print()
 
   # release the stream when finished
   stream$release()

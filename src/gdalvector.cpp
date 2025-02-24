@@ -25,11 +25,10 @@
 #include "nanoarrow/r.h"
 
 
-GDALVector::GDALVector() :
-            m_open_options(Rcpp::CharacterVector::create()) {
+GDALVector::GDALVector() : m_open_options(Rcpp::CharacterVector::create()) {
+    // undocumented default constructor with no arguments
+    // currently not intended for user code
 
-    // undocumented default constructor with no arguments currently not
-    // intended for for user code
 #if __has_include("ogr_recordbatch.h")
     // initialize the release callback since it will be checked at closing
     m_stream.release = nullptr;
@@ -171,10 +170,11 @@ void GDALVector::open(bool read_only) {
     m_stream.release = nullptr;
 #endif
 
-    if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 8, 0)) {
-        // override the default to ensure CRS from GDAL is propagated to Arrow
-        this->arrowStreamOptions = {"GEOMETRY_METADATA_ENCODING=GEOARROW"};
-    }
+    // potentially enable this in the future for geoarrow
+    // if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 8, 0)) {
+    //     // override the default to ensure CRS from GDAL is propagated to Arrow
+    //     this->arrowStreamOptions = {"GEOMETRY_METADATA_ENCODING=GEOARROW"};
+    // }
 
     if (hGeom_filter != nullptr)
         OGR_G_DestroyGeometry(hGeom_filter);
