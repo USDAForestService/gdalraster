@@ -49,12 +49,13 @@ class GDALVector {
     std::string m_dialect {""};
 
     // exposed read/write fields
-    Rcpp::CharacterVector arrowStreamOptions {""};
     std::string defaultGeomColName {"geometry"};
     bool promoteToMulti {false};
-    bool quiet {false};
+    bool convertToLinear {false};
     std::string returnGeomAs {"WKB"};
     std::string wkbByteOrder {"LSB"};
+    Rcpp::CharacterVector arrowStreamOptions {""};
+    bool quiet {false};
 
     // exposed methods
     void open(bool read_only);

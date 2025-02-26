@@ -1347,39 +1347,51 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                     continue;
 
                 OGRGeometryH hGeom = nullptr;
+                OGRwkbGeometryType geom_type = wkbUnknown;
                 bool destroy_geom = false;
                 OGRGeometryH hGeomRef = OGR_F_GetGeomFieldRef(hFeat, i);
-                if (hGeomRef && this->promoteToMulti) {
-                    OGRwkbGeometryType geom_type = OGR_GT_Flatten(
-                            OGR_G_GetGeometryType(hGeomRef));
 
-                    switch (geom_type) {
-                        case wkbPolygon:
-                        {
-                            hGeom = OGR_G_ForceToMultiPolygon(
-                                    OGR_G_Clone(hGeomRef));
+                if (hGeomRef && (this->promoteToMulti ||
+                                 this->convertToLinear)) {
+
+                    geom_type = OGR_GT_GetLinear(OGR_G_GetGeometryType(hGeomRef));
+
+                    if (this->convertToLinear && !this->promoteToMulti) {
+                            hGeom = OGR_G_ForceTo(OGR_G_Clone(hGeomRef),
+                                                  geom_type, nullptr);
                             destroy_geom = true;
-                        }
-                        break;
+                    }
+                    else {
+                        geom_type = OGR_GT_Flatten(geom_type);
 
-                        case wkbPoint:
-                        {
-                            hGeom = OGR_G_ForceToMultiPoint(
-                                    OGR_G_Clone(hGeomRef));
-                            destroy_geom = true;
-                        }
-                        break;
+                        switch (geom_type) {
+                            case wkbPolygon:
+                            {
+                                hGeom = OGR_G_ForceToMultiPolygon(
+                                        OGR_G_Clone(hGeomRef));
+                                destroy_geom = true;
+                            }
+                            break;
 
-                        case wkbLineString:
-                        {
-                            hGeom = OGR_G_ForceToMultiLineString(
-                                    OGR_G_Clone(hGeomRef));
-                            destroy_geom = true;
-                        }
-                        break;
+                            case wkbPoint:
+                            {
+                                hGeom = OGR_G_ForceToMultiPoint(
+                                        OGR_G_Clone(hGeomRef));
+                                destroy_geom = true;
+                            }
+                            break;
 
-                        default:
-                            hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
+                            case wkbLineString:
+                            {
+                                hGeom = OGR_G_ForceToMultiLineString(
+                                        OGR_G_Clone(hGeomRef));
+                                destroy_geom = true;
+                            }
+                            break;
+
+                            default:
+                                hGeom = OGR_F_GetGeomFieldRef(hFeat, i);
+                        }
                     }
                 }
                 else {
@@ -3382,12 +3394,13 @@ RCPP_MODULE(mod_GDALVector) {
     .field_readonly("m_dialect", &GDALVector::m_dialect)
 
     // read/write fields
-    .field("arrowStreamOptions", &GDALVector::arrowStreamOptions)
     .field("defaultGeomColName", &GDALVector::defaultGeomColName)
     .field("promoteToMulti", &GDALVector::promoteToMulti)
-    .field("quiet", &GDALVector::quiet)
+    .field("convertToLinear", &GDALVector::convertToLinear)
     .field("returnGeomAs", &GDALVector::returnGeomAs)
     .field("wkbByteOrder", &GDALVector::wkbByteOrder)
+    .field("arrowStreamOptions", &GDALVector::arrowStreamOptions)
+    .field("quiet", &GDALVector::quiet)
 
     // methods
     .const_method("getDsn", &GDALVector::getDsn,
