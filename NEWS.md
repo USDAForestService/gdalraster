@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9223 (dev)
+# gdalraster 1.12.0.9224 (dev)
+
+* (internal) fix test in configure.ac for GDAL >= 3.1.0 (2025-02-26)
 
 * `GDALVector::getArrowStream()`: default to `GEOMETRY_METADATA_ENCODING=OGC` instead of `GEOARROW` for now, i.e., use the GDAL default unless specified otherwise (2023-02-23)
 

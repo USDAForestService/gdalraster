@@ -9,6 +9,7 @@
 # 2024-03-03: test that GEOS is available to GDAL (required at gdalraster 1.10)
 # 2024-03-12: restore proj_include_path and proj_lib_path
 # 2024-03-17: rework GEOS test, include <ogr_api.h> in initial gdal_test.cpp
+# 2025-02-26: fix test for GDAL >= 3.1.0
 
 AC_INIT([gdalraster],[1.12.0.9000],[chris.toney@usda.gov])
 AC_LANG(C++)
