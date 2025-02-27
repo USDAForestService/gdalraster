@@ -1101,10 +1101,39 @@ test_that("info() prints output to the console", {
     # default layer first by index
     lyr <- new(GDALVector, dsn)
     expect_no_warning(lyr$info())
-    expect_output(lyr$info())
+    expect_output(lyr$info(), "Feature Count: 61")
     lyr$close()
 
     unlink(dsn)
+
+    skip_if_not(.gdal_version_num() >= 3070000)
+
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn)
+
+    lyr <- new(GDALVector, dsn, "mtbs_perims")
+    lyr$setAttributeFilter("ig_year = 2020")
+    expect_output(lyr$info(), "Feature Count: 1")
+    lyr$setAttributeFilter("")
+    expect_output(lyr$info(), "Feature Count: 61")
+
+    lyr$resetReading()
+    lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
+    feat <- lyr$getNextFeature()
+    bbox <- g_wk2wk(feat$geom) |> bbox_from_wkt()
+    lyr$setAttributeFilter("")
+    lyr$setSpatialFilterRect(bbox)
+    expect_output(lyr$info(), "Feature Count: 40")
+
+    lyr$close()
+    unlink(dsn)
+
+    dsn <- system.file("extdata/poly_multipoly.shp", package="gdalraster")
+    sql <- "SELECT 1 As ID, ST_Union(geometry) As geom FROM poly_multipoly GROUP BY ID"
+    lyr <- new(GDALVector, dsn, sql, TRUE, NULL, "", "SQLite")
+    expect_output(lyr$info(), "Feature Count: 1")
+    lyr$close()
 })
 
 test_that("ArrowArrayStream is readable", {
