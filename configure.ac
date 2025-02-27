@@ -108,7 +108,10 @@ AC_MSG_CHECKING([GDAL version >= 3.1.0])
 GDAL_MAJ_VER=`echo $GDAL_VERSION | cut -d "." -f1`
 GDAL_MIN_VER=`echo $GDAL_VERSION | cut -d "." -f2`
 GDAL_PATCH_VER=`echo $GDAL_VERSION | cut -d "." -f3`
-if test ${GDAL_MAJ_VER} -lt 3 && test ${GDAL_MIN_VER} lt 1; then
+if test ${GDAL_MAJ_VER} -lt 3; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([gdalraster is not compatible with GDAL versions below 3.1.0])
+elif test ${GDAL_MAJ_VER} -eq 3 && test ${GDAL_MIN_VER} -lt 1; then
   AC_MSG_RESULT(no)
   AC_MSG_ERROR([gdalraster is not compatible with GDAL versions below 3.1.0])
 else

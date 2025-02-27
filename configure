@@ -2352,7 +2352,11 @@ printf %s "checking GDAL version >= 3.1.0... " >&6; }
 GDAL_MAJ_VER=`echo $GDAL_VERSION | cut -d "." -f1`
 GDAL_MIN_VER=`echo $GDAL_VERSION | cut -d "." -f2`
 GDAL_PATCH_VER=`echo $GDAL_VERSION | cut -d "." -f3`
-if test ${GDAL_MAJ_VER} -lt 3 && test ${GDAL_MIN_VER} lt 1; then
+if test ${GDAL_MAJ_VER} -lt 3; then
+  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
+printf "%s\n" "no" >&6; }
+  as_fn_error $? "gdalraster is not compatible with GDAL versions below 3.1.0" "$LINENO" 5
+elif test ${GDAL_MAJ_VER} -eq 3 && test ${GDAL_MIN_VER} -lt 1; then
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
 printf "%s\n" "no" >&6; }
   as_fn_error $? "gdalraster is not compatible with GDAL versions below 3.1.0" "$LINENO" 5
