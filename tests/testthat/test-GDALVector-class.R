@@ -1100,8 +1100,12 @@ test_that("info() prints output to the console", {
 
     # default layer first by index
     lyr <- new(GDALVector, dsn)
-    expect_no_warning(lyr$info())
-    expect_output(lyr$info(), "Feature Count: 61")
+    if (.gdal_version_num() >= 3070000) {
+        expect_output(lyr$info(), "Feature Count: 61")
+    } else {
+        # we only get the fallback minimal info
+        expect_output(lyr$info(), "Layer")
+    }
     lyr$close()
 
     unlink(dsn)
