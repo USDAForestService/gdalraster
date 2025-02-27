@@ -72,9 +72,9 @@ lyr <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dial
 
 ## Read/write fields (per-object settings)
 lyr$defaultGeomColName
+lyr$returnGeomAs
 lyr$promoteToMulti
 lyr$convertToLinear
-lyr$returnGeomAs
 lyr$wkbByteOrder
 lyr$arrowStreamOptions
 lyr$quiet
@@ -175,27 +175,6 @@ Character string specifying a name to use for returned columns when the
 geometry column name in the source layer is empty, like with shapefiles etc.
 Defaults to \code{"geometry"}.
 
-\code{$promoteToMulti}\cr
-A logical value specifying whether to automatically promote geometries from
-Polygon to MultiPolygon, Point to MultiPoint, or LineString to
-MultiLineString during read operations (i.e., with methods \verb{$getFeature()},
-\verb{$getNextFeature()}, \verb{$fetch()}). Defaults to \code{FALSE}. Setting to \code{TRUE} may
-be useful when reading from layers such as shapefiles that mix, e.g.,
-Polygons and MultiPolygons.
-
-\code{$convertToLinear}\cr
-A logical value specifying whether to convert non-linear geometry types into
-linear geometry types by approximating them (i.e., during read operations
-with methods \verb{$getFeature()}, \verb{$getNextFeature()}, \verb{$fetch()}). Defaults to
-\code{FALSE}. If set to `TRUE, handled conversions are:
-\itemize{
-\item wkbCurvePolygon -> wkbPolygon
-\item wkbCircularString -> wkbLineString
-\item wkbCompoundCurve -> wkbLineString
-\item wkbMultiSurface -> wkbMultiPolygon
-\item wkbMultiCurve -> wkbMultiLineString
-}
-
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.
 Must be one of \code{WKB} (the default), \code{WKB_ISO}, \code{WKT}, \code{WKT_ISO}, \code{BBOX}, or
@@ -209,6 +188,27 @@ values \verb{xmin, ymin, xmax, ymax}. If an empty geometry is encountered these
 values will be \code{NA_real_} in the corresponding location.
 Using \code{NONE} will result in no geometry value being present in the feature
 returned.
+
+\code{$promoteToMulti}\cr
+A logical value specifying whether to automatically promote geometries from
+Polygon to MultiPolygon, Point to MultiPoint, or LineString to
+MultiLineString during read operations (i.e., with methods \verb{$getFeature()},
+\verb{$getNextFeature()}, \verb{$fetch()}). Defaults to \code{FALSE}. Setting to \code{TRUE} may
+be useful when reading from layers such as shapefiles that mix, e.g.,
+Polygons and MultiPolygons.
+
+\code{$convertToLinear}\cr
+A logical value specifying whether to convert non-linear geometry types into
+linear geometry types by approximating them (i.e., during read operations
+with methods \verb{$getFeature()}, \verb{$getNextFeature()}, \verb{$fetch()}). Defaults to
+\code{FALSE}. If set to \code{TRUE}, handled conversions are:
+\itemize{
+\item wkbCurvePolygon -> wkbPolygon
+\item wkbCircularString -> wkbLineString
+\item wkbCompoundCurve -> wkbLineString
+\item wkbMultiSurface -> wkbMultiPolygon
+\item wkbMultiCurve -> wkbMultiLineString
+}
 
 \code{$wkbByteOrder}\cr
 Character string specifying the byte order for WKB geometries.

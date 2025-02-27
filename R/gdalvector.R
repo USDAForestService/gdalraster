@@ -62,9 +62,9 @@
 #'
 #' ## Read/write fields (per-object settings)
 #' lyr$defaultGeomColName
+#' lyr$returnGeomAs
 #' lyr$promoteToMulti
 #' lyr$convertToLinear
-#' lyr$returnGeomAs
 #' lyr$wkbByteOrder
 #' lyr$arrowStreamOptions
 #' lyr$quiet
@@ -161,25 +161,6 @@
 #' geometry column name in the source layer is empty, like with shapefiles etc.
 #' Defaults to `"geometry"`.
 #'
-#' \code{$promoteToMulti}\cr
-#' A logical value specifying whether to automatically promote geometries from
-#' Polygon to MultiPolygon, Point to MultiPoint, or LineString to
-#' MultiLineString during read operations (i.e., with methods `$getFeature()`,
-#' `$getNextFeature()`, `$fetch()`). Defaults to `FALSE`. Setting to `TRUE` may
-#' be useful when reading from layers such as shapefiles that mix, e.g.,
-#' Polygons and MultiPolygons.
-#'
-#' \code{$convertToLinear}\cr
-#' A logical value specifying whether to convert non-linear geometry types into
-#' linear geometry types by approximating them (i.e., during read operations
-#' with methods `$getFeature()`, `$getNextFeature()`, `$fetch()`). Defaults to
-#' `FALSE`. If set to `TRUE, handled conversions are:
-#' * wkbCurvePolygon -> wkbPolygon
-#' * wkbCircularString -> wkbLineString
-#' * wkbCompoundCurve -> wkbLineString
-#' * wkbMultiSurface -> wkbMultiPolygon
-#' * wkbMultiCurve -> wkbMultiLineString
-#'
 #' \code{$returnGeomAs}\cr
 #' Character string specifying the return format of feature geometries.
 #' Must be one of `WKB` (the default), `WKB_ISO`, `WKT`, `WKT_ISO`, `BBOX`, or
@@ -193,6 +174,25 @@
 #' values will be `NA_real_` in the corresponding location.
 #' Using `NONE` will result in no geometry value being present in the feature
 #' returned.
+#'
+#' \code{$promoteToMulti}\cr
+#' A logical value specifying whether to automatically promote geometries from
+#' Polygon to MultiPolygon, Point to MultiPoint, or LineString to
+#' MultiLineString during read operations (i.e., with methods `$getFeature()`,
+#' `$getNextFeature()`, `$fetch()`). Defaults to `FALSE`. Setting to `TRUE` may
+#' be useful when reading from layers such as shapefiles that mix, e.g.,
+#' Polygons and MultiPolygons.
+#'
+#' \code{$convertToLinear}\cr
+#' A logical value specifying whether to convert non-linear geometry types into
+#' linear geometry types by approximating them (i.e., during read operations
+#' with methods `$getFeature()`, `$getNextFeature()`, `$fetch()`). Defaults to
+#' `FALSE`. If set to `TRUE`, handled conversions are:
+#' * wkbCurvePolygon -> wkbPolygon
+#' * wkbCircularString -> wkbLineString
+#' * wkbCompoundCurve -> wkbLineString
+#' * wkbMultiSurface -> wkbMultiPolygon
+#' * wkbMultiCurve -> wkbMultiLineString
 #'
 #' \code{$wkbByteOrder}\cr
 #' Character string specifying the byte order for WKB geometries.
