@@ -891,7 +891,7 @@
 #'   head(d) |> print()
 #'
 #'   # the geometry column is a list column of WKB raw vectors, e.g.,
-#'   g_summary(d$geom) |> print()
+#'   g_name(d$geom) |> print()
 #'
 #'   g_centroid(d$geom) |> print()
 #'
