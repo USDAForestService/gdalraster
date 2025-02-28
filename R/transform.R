@@ -7,7 +7,7 @@
 #' projection. The input points may optionally have z vertices (x, y, z) or
 #' time values (x, y, z, t).
 #' Wrapper for `OGRCoordinateTransformation::Transform()` in the GDAL Spatial
-#' Reference SYstem C++ API.
+#' Reference System C++ API.
 #'
 #' @param pts A data frame or numeric matrix containing geospatial point
 #' coordinates, or point geometries as a list of WKB raw vectors or character
@@ -26,6 +26,10 @@
 #' @note
 #' `transform_xy()` uses traditional GIS order for the input and output xy
 #' (i.e., longitude/latitude ordered for geographic coordinates).
+#'
+#' Input points that contain missing values (`NA`) will be assigned `NA` in
+#' the output. Any input points that fail to transform with the GDAL API call
+#' will be assigned `NA` in the ouput with a warning issued in that case.
 #'
 #' @seealso
 #' [srs_to_wkt()], [inv_project()]
@@ -117,8 +121,13 @@ transform_xy <- function(pts, srs_from, srs_to) {
 #' well known name of a geographic coordinate system (see Details for
 #' supported values).
 #' @returns Numeric matrix of longitude, latitude (potentially also with z,
-#' or z and t columns). An error is raised if the transformation cannot be
-#' performed.
+#' or z and t columns).
+#'
+#' @note
+#' Input points that contain missing values (`NA`) will be assigned `NA` in
+#' the output. Any input points that fail to transform with the GDAL API call
+#' will be assigned `NA` in the ouput with a warning issued in that case.
+#'
 #' @seealso
 #' [transform_xy()]
 #' @examples

@@ -30,11 +30,15 @@ specified by \code{srs_to} (potentially also with z, or z and t columns).
 projection. The input points may optionally have z vertices (x, y, z) or
 time values (x, y, z, t).
 Wrapper for \code{OGRCoordinateTransformation::Transform()} in the GDAL Spatial
-Reference SYstem C++ API.
+Reference System C++ API.
 }
 \note{
 \code{transform_xy()} uses traditional GIS order for the input and output xy
 (i.e., longitude/latitude ordered for geographic coordinates).
+
+Input points that contain missing values (\code{NA}) will be assigned \code{NA} in
+the output. Any input points that fail to transform with the GDAL API call
+will be assigned \code{NA} in the ouput with a warning issued in that case.
 }
 \examples{
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
