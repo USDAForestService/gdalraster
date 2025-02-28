@@ -36,9 +36,9 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: r-lib/actions/setup-pandoc@473c68190595b311a74f208fba61a8d8c0d4c247 # v2.11.1
+      - uses: r-lib/actions/setup-pandoc@14a7e741c1cb130261263aa1593718ba42cf443b # v2.11.2
 
-      - uses: r-lib/actions/setup-r@473c68190595b311a74f208fba61a8d8c0d4c247 # v2.11.1
+      - uses: r-lib/actions/setup-r@14a7e741c1cb130261263aa1593718ba42cf443b # v2.11.2
         with:
           r-version: ${{ matrix.config.r }}
           http-user-agent: ${{ matrix.config.http-user-agent }}
@@ -48,11 +48,11 @@ jobs:
         if: runner.os == 'macOS'
         run: brew install gdal proj
 
-      - uses: r-lib/actions/setup-r-dependencies@473c68190595b311a74f208fba61a8d8c0d4c247 # v2.11.1
+      - uses: r-lib/actions/setup-r-dependencies@14a7e741c1cb130261263aa1593718ba42cf443b # v2.11.2
         with:
           extra-packages: any::rcmdcheck
           needs: check
 
-      - uses: r-lib/actions/check-r-package@473c68190595b311a74f208fba61a8d8c0d4c247 # v2.11.1
+      - uses: r-lib/actions/check-r-package@14a7e741c1cb130261263aa1593718ba42cf443b # v2.11.2
         with:
           upload-snapshots: true
