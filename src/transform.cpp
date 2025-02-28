@@ -181,10 +181,16 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     OGRCoordinateTransformation::DestroyCT(poCT);
     poLongLat->Release();
 
-    if (!res &&
-        std::find(success.begin(), success.end(), TRUE) == success.end()) {
+    // Potentially uncomment this in the future due to behavior change at
+    // GDAL 3.11 (https://github.com/OSGeo/gdal/pull/11819):
+    // if (!res &&
+    //     std::find(success.begin(), success.end(), TRUE) == success.end()) {
 
-        Rcpp::stop("transformation failed");
+    //     Rcpp::stop("transformation failed");
+    // }
+    if (!res) {
+        Rcpp::Rcerr << "OGRCoordinateTransformation::Transform() returned FALSE"
+            << std::endl;
     }
 
     Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
@@ -307,10 +313,16 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     OGRCoordinateTransformation::DestroyCT(poCT);
 
-    if (!res &&
-        std::find(success.begin(), success.end(), TRUE) == success.end()) {
+    // Potentially uncomment this in the future due to behavior change at
+    // GDAL 3.11 (https://github.com/OSGeo/gdal/pull/11819):
+    // if (!res &&
+    //     std::find(success.begin(), success.end(), TRUE) == success.end()) {
 
-        Rcpp::stop("transformation failed");
+    //     Rcpp::stop("transformation failed");
+    // }
+    if (!res) {
+        Rcpp::Rcerr << "OGRCoordinateTransformation::Transform() returned FALSE"
+            << std::endl;
     }
 
     Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
