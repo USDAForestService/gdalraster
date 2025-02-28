@@ -23,8 +23,7 @@ supported values).}
 }
 \value{
 Numeric matrix of longitude, latitude (potentially also with z,
-or z and t columns). An error is raised if the transformation cannot be
-performed.
+or z and t columns).
 }
 \description{
 \code{inv_project()} transforms geospatial x/y coordinates to
@@ -50,6 +49,11 @@ CRS27  \tab same as NAD27
 The coordinates returned by \code{inv_project()}will always be in longitude,
 latitude order (traditional GIS order) regardless of the axis order defined
 for the GCS names above.
+}
+\note{
+Input points that contain missing values (\code{NA}) will be assigned \code{NA} in
+the output. Any input points that fail to transform with the GDAL API call
+will be assigned \code{NA} in the ouput with a warning issued in that case.
 }
 \examples{
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
