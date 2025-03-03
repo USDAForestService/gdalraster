@@ -589,33 +589,39 @@ exists see the \verb{$upsertFeature()} method.
 
 \code{$batchCreateFeature(feature_set)}\cr
 Batch version of \verb{$createFeature()}. Creates and writes a batch of new
-features within the layer from data frame input given in the \code{feature_set}
-argument. Column names in the data frame must match field names of the
-layer and have compatible data types (see specifications above for the
-\verb{$fetch()} method). Returns a logical vector of length equal to the number
-of input features (rows of the data frame), with \code{TRUE} indicating success
-for the feature at that row index, or \code{FALSE} if feature creation failed.
-It is recommended to use transactions for batch creation of features in a
-layer (see \verb{$startTransaction()} below). This will generally have large
+features within the layer from input passed as a data frame in the
+\code{feature_set} argument. Column names in the data frame must match field
+names of the layer and have compatible data types. The specifications
+listed above under the \verb{$fetch()} method generally apply to input data
+types for writing, but integers may be passed as 'numeric', and
+the 'integer64' class attribute is not strictly required on 'numeric'
+input if it is not needed for the data being passed to an OFTInteger64
+field.
+Returns a logical vector of length equal to the number of input features
+(rows of the data frame), with \code{TRUE} indicating success for the feature at
+that row index, or \code{FALSE} if writing the feature failed.
+It is recommended to use transactions when batch writing features to a
+layer (see \verb{$startTransaction()} below). This will generally give large
 performance benefit with data sources that provide efficient transaction
-support (e.g., RDBMS-based sources such as GeoPackage and PostGIS). Also,
-the vector returned by \verb{$batchCreateFeature()} can be checked, and the
-transaction optionally committed or rolled back based on results of the
+support (e.g., RDBMS-based sources such as GeoPackage and PostGIS). In
+addition, the return value of \verb{$batchCreateFeature()} can be checked, and
+the transaction optionally committed or rolled back based on results of the
 operation across the full set of input features.
 
 \code{$upsertFeature(feature)}\cr
 Rewrites/replaces an existing feature or creates a new feature within the
 layer. This method will write a feature to the layer, based on the feature
 id within the input feature. The \code{feature} argument is a named list of
-fields and their values, potentially including a \verb{$FID} element referencing
-an existing feature to rewrite. If the feature id doesn't exist a new
-feature will be written. Otherwise, the existing feature will be rewritten.
+fields and their values (might be one row of a data frame), potentially
+including a \verb{$FID} element referencing an existing feature to rewrite. If
+the feature id doesn't exist a new feature will be written. Otherwise, the
+existing feature will be rewritten.
 The \code{UpsertFeature} element in the list returned by \verb{$testCapability()} can
 be checked to determine if this layer supports upsert writing. See
 \verb{$setFeature()} above for a description of how omitted fields in the passed
 \code{feature} are processed.
-Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if upserting
-the feature did not succeed. Requires GDAL >= 3.6.
+Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if upsert did
+not succeed. Requires GDAL >= 3.6.
 
 \code{$getLastWriteFID()}\cr
 Returns the FID of the last feature written (either newly created or updated
