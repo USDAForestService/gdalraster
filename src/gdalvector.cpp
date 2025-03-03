@@ -300,6 +300,12 @@ Rcpp::List GDALVector::testCapability() const {
             OGR_L_TestCapability(m_hLayer, OLCFastGetExtent)),
         Rcpp::Named("FastSetNextByIndex") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCFastSetNextByIndex)),
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
+        Rcpp::Named("FastGetArrowStream") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCFastGetArrowStream)),
+        Rcpp::Named("FastWriteArrowBatch") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCFastWriteArrowBatch)),
+#endif
         Rcpp::Named("CreateField") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCCreateField)),
         Rcpp::Named("CreateGeomField") = static_cast<bool>(
