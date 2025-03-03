@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9224 (dev)
+# gdalraster 1.12.0.9225 (dev)
+
+* `GDALVector::testCapability()`: add `FastGetArrowStream` and `FastWriteArrowBatch` in the returned list of layer capabilities (#638) (2025-03-03)
 
 * (internal) fix test in configure.ac for GDAL >= 3.1.0 (2025-02-26)
 
