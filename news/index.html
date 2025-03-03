@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9224</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9225</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9224" id="gdalraster-11209224-dev">gdalraster 1.12.0.9224 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209224-dev"></a></h2>
-<ul><li><p>(internal) fix test in configure.ac for GDAL &gt;= 3.1.0 (2025-02-26)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9225" id="gdalraster-11209225-dev">gdalraster 1.12.0.9225 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209225-dev"></a></h2>
+<ul><li><p><code>GDALVector::testCapability()</code>: add <code>FastGetArrowStream</code> and <code>FastWriteArrowBatch</code> in the returned list of layer capabilities (<a href="https://github.com/USDAForestService/gdalraster/issues/638" class="external-link">#638</a>) (2025-03-03)</p></li>
+<li><p>(internal) fix test in configure.ac for GDAL &gt;= 3.1.0 (2025-02-26)</p></li>
 <li><p><code>GDALVector::getArrowStream()</code>: default to <code>GEOMETRY_METADATA_ENCODING=OGC</code> instead of <code>GEOARROW</code> for now, i.e., use the GDAL default unless specified otherwise (2023-02-23)</p></li>
 <li><p>(internal) various C++ code linting throughout (<a href="https://github.com/USDAForestService/gdalraster/issues/624" class="external-link">#624</a>) (2025-02-23)</p></li>
 <li><p>(internal) implement <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code> and <code><a href="../reference/ogr_manage.html">ogr_layer_create()</a></code> as <code>GDALVector</code> object factories (<a href="https://github.com/USDAForestService/gdalraster/issues/609" class="external-link">#609</a>) (2025-02-22)</p></li>
