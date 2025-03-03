@@ -344,9 +344,12 @@ read/write access. Returns a list of capabilities with values <code>TRUE</code> 
 <code>FALSE</code>. The returned list contains the following named elements:
 <code>RandomRead</code>, <code>SequentialWrite</code>, <code>RandomWrite</code>, <code>UpsertFeature</code>,
 <code>FastSpatialFilter</code>, <code>FastFeatureCount</code>, <code>FastGetExtent</code>,
-<code>FastSetNextByIndex</code>, <code>CreateField</code>, <code>CreateGeomField</code>, <code>DeleteField</code>,
-<code>ReorderFields</code>, <code>AlterFieldDefn</code>, <code>AlterGeomFieldDefn</code>, <code>DeleteFeature</code>,
-<code>StringsAsUTF8</code>, <code>Transactions</code>, <code>CurveGeometries</code>.
+<code>FastSetNextByIndex</code>, <code>FastGetArrowStream</code>, <code>FastWriteArrowBatch</code>,
+<code>CreateField</code>, <code>CreateGeomField</code>, <code>DeleteField</code>, <code>ReorderFields</code>,
+<code>AlterFieldDefn</code>, <code>AlterGeomFieldDefn</code>, <code>DeleteFeature</code>, <code>StringsAsUTF8</code>,
+<code>Transactions</code>, <code>CurveGeometries</code>.
+Note that some layer capabilities are GDAL version dependent and may not
+be listed if not supported by the GDAL version currently in use.
 (See the GDAL documentation for
 <a href="https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc" class="external-link"><code>OGR_L_TestCapability()</code></a>.)</p>
 <p><code>$getFIDColumn()</code><br>
@@ -558,17 +561,24 @@ The writable field <code>$arrowStreamOptions</code> can be used to set options b
 calling this method (see above). An error is raised if an array stream
 on the layer cannot be obtained.
 Generally, only one ArrowArrayStream can be active at a time on a given
-layer (that is the last active one must be explicitly released before a next
+layer (i.e., the last active one must be explicitly released before a next
 one is asked). Changing attribute or spatial filters, ignored columns,
 modifying the schema or using <code>$resetReading()</code>/<code>$getNextFeature()</code> while
 using an ArrowArrayStream is strongly discouraged and may lead to unexpected
 results. As a rule of thumb, no OGRLayer methods that affect the state of a
 layer should be called on the layer while an ArrowArrayStream on it is
 active. Methods available on the stream object are: <code>$get_schema()</code>,
-<code>$get_next()</code> and <code>$release()</code> (see Examples).
-The stream should be released once reading is complete. Calling the release
-method as soon as you can after consuming a stream is recommended in the
-nanoarrow documentation.</p>
+<code>$get_next()</code> and <code>$release()</code> (see Examples).</p>
+<p>The stream should be released once reading is complete. Calling the release
+method as soon as you can after consuming a stream is recommended by the
+<span class="pkg">nanoarrow</span> documentation.</p>
+<p>See also the <code>$testCapability()</code> method above to check whether the format
+driver provides a specialized implementation (<code>FastGetArrowStream</code>), as
+opposed to the (slower) default implementation. Note however that
+specialized implementations may fallback to the default when attribute or
+spatlal filters are in use.
+(See the GDAL documentation for
+<a href="https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_GetArrowStream9OGRLayerHP16ArrowArrayStreamPPc" class="external-link"><code>OGR_L_GetArrowStream()</code></a>.)</p>
 <p><code>$releaseArrowStream()</code><br>
 Releases the Arrow C stream returned by <code>$getArrowStream()</code> and clears the
 nanoarrow_array_stream object (if GDAL &gt;= 3.6, otherwise does nothing).
@@ -720,7 +730,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C++ object of class GDALVector</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Driver : GeoPackage (GPKG)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/RtmpGx3S5e/ynp_fires_1984_2022.gpkg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/Rtmp8qWtN1/ynp_fires_1984_2022.gpkg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Layer  : mtbs_perims</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  CRS    : NAD83 / Montana (EPSG:32100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Geom   : MULTIPOLYGON</span>
@@ -757,7 +767,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpGx3S5e/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp8qWtN1/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -798,6 +808,12 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $FastSetNextByIndex</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FastGetArrowStream</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> $FastWriteArrowBatch</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $CreateField</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
@@ -1257,7 +1273,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-01 13:35:22" "2025-03-01 13:35:22"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 16:28:49" "2025-03-03 16:28:49"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1283,7 +1299,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-01 13:35:22"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 16:28:49"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1326,7 +1342,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-01 13:35:22" "2025-03-01 13:35:23"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 16:28:49" "2025-03-03 16:28:50"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
