@@ -8,6 +8,7 @@
 #ifndef SRC_GDALVECTOR_H_
 #define SRC_GDALVECTOR_H_
 
+#include <map>
 #include <string>
 #include <vector>
 
@@ -27,6 +28,8 @@
     typedef void *OGRFeatureH;
 #endif
 
+// value for marking FID when used along with regular attribute field indexes
+const int FID_MARKER = -999;
 
 class GDALVector {
  public:
@@ -100,9 +103,10 @@ class GDALVector {
     SEXP getArrowStream();
     void releaseArrowStream();
 
-    bool setFeature(const Rcpp::RObject &feature);
-    bool createFeature(const Rcpp::RObject &feature);
-    bool upsertFeature(const Rcpp::RObject &feature);
+    bool setFeature(const Rcpp::List &feature);
+    bool createFeature(const Rcpp::List &feature);
+    Rcpp::LogicalVector batchCreateFeature(const Rcpp::DataFrame &feature_set);
+    bool upsertFeature(const Rcpp::List &feature);
     SEXP getLastWriteFID() const;
     bool deleteFeature(const Rcpp::RObject &fid);
     bool syncToDisk() const;
@@ -153,7 +157,7 @@ class GDALVector {
 
     void close();
 
-    void OGRFeatureFromList_dumpReadble(const Rcpp::RObject &feat) const;
+    void OGRFeatureFromList_dumpReadble(const Rcpp::List &feat) const;
 
     void show() const;
 
@@ -174,7 +178,13 @@ class GDALVector {
                               const Rcpp::CharacterVector &geom_col_srs,
                               const std::string &geom_format) const;
 
-    OGRFeatureH OGRFeatureFromList_(const Rcpp::RObject &feature) const;
+    std::vector<std::map<R_xlen_t, int>> validateFeatInput_(
+            const Rcpp::List &feature) const;
+
+    OGRFeatureH OGRFeatureFromList_(
+            const Rcpp::List &feature, R_xlen_t row_idx,
+            const std::map<R_xlen_t, int> &map_flds,
+            const std::map<R_xlen_t, int> &map_geom_flds) const;
 
 #if __has_include("ogr_recordbatch.h")
     int arrow_get_schema(struct ArrowSchema* out);

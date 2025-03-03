@@ -1,4 +1,8 @@
-# gdalraster 1.12.0.9224 (dev)
+# gdalraster 1.12.0.9230 (dev)
+
+* add `GDALVector::batchCreateFeature()`: write a batch of features to a layer from data frame input (#639) (2025-03-03)
+
+* `GDALVector::testCapability()`: add `FastGetArrowStream` and `FastWriteArrowBatch` in the returned list of layer capabilities (#638) (2025-03-03)
 
 * (internal) fix test in configure.ac for GDAL >= 3.1.0 (2025-02-26)
 

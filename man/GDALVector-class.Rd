@@ -121,6 +121,7 @@ lyr$releaseArrowStream()
 
 lyr$setFeature(feature)
 lyr$createFeature(feature)
+lyr$batchCreateFeature(feature_set)
 lyr$upsertFeature(feature)
 lyr$getLastWriteFID()
 lyr$deleteFeature(fid)
@@ -250,7 +251,7 @@ not required to call \code{$close()} explicitly in this case.
 No return value, called for side effects.
 
 \code{$isOpen()}\cr
-Returns a \code{logical} scalar indicating whether the vector dataset is open.
+Returns a \code{logical} value indicating whether the vector dataset is open.
 
 \code{$getDsn()}\cr
 Returns a character string containing the \code{dsn} associated with this
@@ -461,7 +462,7 @@ the \code{FastSetNextByIndex} element in the list returned by the
 
 \code{$getFeature(fid)}\cr
 Returns a feature by its identifier. The value of \code{fid} must be a numeric
-scalar, optionally carrying the \code{bit64::integer64} class attribute.
+value, optionally carrying the \code{bit64::integer64} class attribute.
 Success or failure of this operation is unaffected by any spatial or
 attribute filters that may be in effect.
 The \code{RandomRead} element in the list returned by \verb{$testCapability()} can
@@ -588,30 +589,53 @@ feature, but create it if it doesn't exist see the \verb{$upsertFeature()} metho
 
 \code{$createFeature(feature)}\cr
 Creates and writes a new feature within the layer. The \code{feature} argument is
-a named list of fields and their values.
+a named list of fields and their values (might be one row of a data frame).
 The passed feature is written to the layer as a new feature, rather than
-overwriting an existing one. If the feature has a \verb{$FID} element other than
-\code{NA}, then the vector format driver may use that as the feature id of the
-new feature, but not necessarily. The FID of the last feature written
-to the layer may be obtained with the method \verb{$getLastWriteFID()} (see
-below).
+overwriting an existing one. If the feature has a \verb{$FID} element with other
+than \code{NA} (i.e., a numeric value, optionally carrying the \code{bit64::integer64}
+class attribute and assumed to be a whole number), then the format
+driver may use that as the feature id of the new feature, but not
+necessarily. The FID of the last feature written to the layer may be
+obtained with the method \verb{$getLastWriteFID()} (see below).
 Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if creating
 the feature did not succeed. To create a feature, but set it if it already
 exists see the \verb{$upsertFeature()} method.
+
+\code{$batchCreateFeature(feature_set)}\cr
+Batch version of \verb{$createFeature()}. Creates and writes a batch of new
+features within the layer from input passed as a data frame in the
+\code{feature_set} argument. Column names in the data frame must match field
+names of the layer and have compatible data types. The specifications
+listed above under the \verb{$fetch()} method generally apply to input data
+types for writing, but integers may be passed as 'numeric', and
+the 'integer64' class attribute is not strictly required on 'numeric'
+input if it is not needed for the data being passed to an OFTInteger64
+field.
+Returns a logical vector of length equal to the number of input features
+(rows of the data frame), with \code{TRUE} indicating success for the feature at
+that row index, or \code{FALSE} if writing the feature failed.
+It is recommended to use transactions when batch writing features to a
+layer (see \verb{$startTransaction()} below). This will generally give large
+performance benefit with data sources that provide efficient transaction
+support (e.g., RDBMS-based sources such as GeoPackage and PostGIS). In
+addition, the return value of \verb{$batchCreateFeature()} can be checked, and
+the transaction optionally committed or rolled back based on results of the
+operation across the full set of input features.
 
 \code{$upsertFeature(feature)}\cr
 Rewrites/replaces an existing feature or creates a new feature within the
 layer. This method will write a feature to the layer, based on the feature
 id within the input feature. The \code{feature} argument is a named list of
-fields and their values, potentially including a \verb{$FID} element referencing
-an existing feature to rewrite. If the feature id doesn't exist a new
-feature will be written. Otherwise, the existing feature will be rewritten.
+fields and their values (might be one row of a data frame), potentially
+including a \verb{$FID} element referencing an existing feature to rewrite. If
+the feature id doesn't exist a new feature will be written. Otherwise, the
+existing feature will be rewritten.
 The \code{UpsertFeature} element in the list returned by \verb{$testCapability()} can
 be checked to determine if this layer supports upsert writing. See
 \verb{$setFeature()} above for a description of how omitted fields in the passed
 \code{feature} are processed.
-Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if upserting
-the feature did not succeed. Requires GDAL >= 3.6.
+Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if upsert did
+not succeed. Requires GDAL >= 3.6.
 
 \code{$getLastWriteFID()}\cr
 Returns the FID of the last feature written (either newly created or updated
@@ -620,12 +644,12 @@ Note that OGRNullFID (\code{-1}) may be returned after writing a feature in some
 formats. This is the case if a FID has not been assigned yet, and generally
 does not indicate an error (e.g., formats that do not store a persistent FID
 and assign FIDs upon a sequential read operation). The returned FID is a
-numeric scalar carrying the \code{bit64::integer64} class attribute.
+numeric value carrying the \code{bit64::integer64} class attribute.
 
 \code{$deleteFeature(fid)}\cr
 Deletes a feature from the layer. The feature with the indicated feature ID
 is deleted from the layer if supported by the format driver. The value of
-\code{fid} must be a numeric scalar, optionally carrying the \code{bit64::integer64}
+\code{fid} must be a numeric value, optionally carrying the \code{bit64::integer64}
 class attribute (should be a whole number, will be truncated).
 The \code{DeleteFeature} element in the list returned by \verb{$testCapability()} can
 be checked to establish if this layer has delete feature capability. Returns
