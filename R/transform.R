@@ -136,7 +136,7 @@ transform_xy <- function(pts, srs_from, srs_to) {
 #' pts <- read.csv(pt_file)
 #' print(pts)
 #' inv_project(pts[,-1], "EPSG:26912")
-#' #' @export
+#' @export
 inv_project <- function(pts, srs, well_known_gcs = NULL) {
     if (missing(srs) || is.null(srs))
         stop("'srs' is required", call. = FALSE)

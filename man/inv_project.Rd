@@ -61,7 +61,6 @@ pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
 pts <- read.csv(pt_file)
 print(pts)
 inv_project(pts[,-1], "EPSG:26912")
-#' @export
 }
 \seealso{
 \code{\link[=transform_xy]{transform_xy()}}
