@@ -9,6 +9,7 @@
 # 2024-03-03: test that GEOS is available to GDAL (required at gdalraster 1.10)
 # 2024-03-12: restore proj_include_path and proj_lib_path
 # 2024-03-17: rework GEOS test, include <ogr_api.h> in initial gdal_test.cpp
+# 2025-02-26: fix test for GDAL >= 3.1.0
 
 AC_INIT([gdalraster],[1.12.0.9000],[chris.toney@usda.gov])
 AC_LANG(C++)
@@ -108,7 +109,10 @@ AC_MSG_CHECKING([GDAL version >= 3.1.0])
 GDAL_MAJ_VER=`echo $GDAL_VERSION | cut -d "." -f1`
 GDAL_MIN_VER=`echo $GDAL_VERSION | cut -d "." -f2`
 GDAL_PATCH_VER=`echo $GDAL_VERSION | cut -d "." -f3`
-if test ${GDAL_MAJ_VER} -lt 3 && test ${GDAL_MIN_VER} lt 1; then
+if test ${GDAL_MAJ_VER} -lt 3; then
+  AC_MSG_RESULT(no)
+  AC_MSG_ERROR([gdalraster is not compatible with GDAL versions below 3.1.0])
+elif test ${GDAL_MAJ_VER} -eq 3 && test ${GDAL_MIN_VER} -lt 1; then
   AC_MSG_RESULT(no)
   AC_MSG_ERROR([gdalraster is not compatible with GDAL versions below 3.1.0])
 else

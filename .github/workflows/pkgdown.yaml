@@ -27,13 +27,13 @@ jobs:
     steps:
       - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683 # v4.2.2
 
-      - uses: r-lib/actions/setup-pandoc@473c68190595b311a74f208fba61a8d8c0d4c247 # v2.11.1
+      - uses: r-lib/actions/setup-pandoc@14a7e741c1cb130261263aa1593718ba42cf443b # v2.11.2
 
-      - uses: r-lib/actions/setup-r@473c68190595b311a74f208fba61a8d8c0d4c247 # v2.11.1
+      - uses: r-lib/actions/setup-r@14a7e741c1cb130261263aa1593718ba42cf443b # v2.11.2
         with:
           use-public-rspm: true
 
-      - uses: r-lib/actions/setup-r-dependencies@473c68190595b311a74f208fba61a8d8c0d4c247 # v2.11.1
+      - uses: r-lib/actions/setup-r-dependencies@14a7e741c1cb130261263aa1593718ba42cf443b # v2.11.2
         with:
           extra-packages: any::pkgdown, local::.
           needs: website
@@ -44,7 +44,7 @@ jobs:
 
       - name: Deploy to GitHub pages 🚀
         if: github.event_name != 'pull_request'
-        uses: JamesIves/github-pages-deploy-action@ba1486788b0490a235422264426c45848eac35c6 # v4.4.1
+        uses: JamesIves/github-pages-deploy-action@6c2d9db40f9296374acc17b90404b6e8864128c8 # v4.7.3
         with:
           clean: false
           branch: gh-pages

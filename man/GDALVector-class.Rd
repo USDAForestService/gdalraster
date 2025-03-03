@@ -289,9 +289,12 @@ read/write access. Returns a list of capabilities with values \code{TRUE} or
 \code{FALSE}. The returned list contains the following named elements:
 \code{RandomRead}, \code{SequentialWrite}, \code{RandomWrite}, \code{UpsertFeature},
 \code{FastSpatialFilter}, \code{FastFeatureCount}, \code{FastGetExtent},
-\code{FastSetNextByIndex}, \code{CreateField}, \code{CreateGeomField}, \code{DeleteField},
-\code{ReorderFields}, \code{AlterFieldDefn}, \code{AlterGeomFieldDefn}, \code{DeleteFeature},
-\code{StringsAsUTF8}, \code{Transactions}, \code{CurveGeometries}.
+\code{FastSetNextByIndex}, \code{FastGetArrowStream}, \code{FastWriteArrowBatch},
+\code{CreateField}, \code{CreateGeomField}, \code{DeleteField}, \code{ReorderFields},
+\code{AlterFieldDefn}, \code{AlterGeomFieldDefn}, \code{DeleteFeature}, \code{StringsAsUTF8},
+\code{Transactions}, \code{CurveGeometries}.
+Note that some layer capabilities are GDAL version dependent and may not
+be listed if not supported by the GDAL version currently in use.
 (See the GDAL documentation for
 \href{https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_TestCapability9OGRLayerHPKc}{\code{OGR_L_TestCapability()}}.)
 
@@ -533,7 +536,7 @@ The writable field \verb{$arrowStreamOptions} can be used to set options before
 calling this method (see above). An error is raised if an array stream
 on the layer cannot be obtained.
 Generally, only one ArrowArrayStream can be active at a time on a given
-layer (that is the last active one must be explicitly released before a next
+layer (i.e., the last active one must be explicitly released before a next
 one is asked). Changing attribute or spatial filters, ignored columns,
 modifying the schema or using \verb{$resetReading()}/\verb{$getNextFeature()} while
 using an ArrowArrayStream is strongly discouraged and may lead to unexpected
@@ -541,9 +544,18 @@ results. As a rule of thumb, no OGRLayer methods that affect the state of a
 layer should be called on the layer while an ArrowArrayStream on it is
 active. Methods available on the stream object are: \verb{$get_schema()},
 \verb{$get_next()} and \verb{$release()} (see Examples).
+
 The stream should be released once reading is complete. Calling the release
-method as soon as you can after consuming a stream is recommended in the
-nanoarrow documentation.
+method as soon as you can after consuming a stream is recommended by the
+\pkg{nanoarrow} documentation.
+
+See also the \verb{$testCapability()} method above to check whether the format
+driver provides a specialized implementation (\code{FastGetArrowStream}), as
+opposed to the (slower) default implementation. Note however that
+specialized implementations may fallback to the default when attribute or
+spatlal filters are in use.
+(See the GDAL documentation for
+\href{https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_GetArrowStream9OGRLayerHP16ArrowArrayStreamPPc}{\code{OGR_L_GetArrowStream()}}.)
 
 \code{$releaseArrowStream()}\cr
 Releases the Arrow C stream returned by \verb{$getArrowStream()} and clears the
@@ -919,7 +931,7 @@ if (as.integer(gdal_version()[2]) >= 3060000) {
   head(d) |> print()
 
   # the geometry column is a list column of WKB raw vectors, e.g.,
-  g_summary(d$geom) |> print()
+  g_name(d$geom) |> print()
 
   g_centroid(d$geom) |> print()
 

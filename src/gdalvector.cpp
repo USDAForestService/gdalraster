@@ -20,6 +20,7 @@
 
 #include "gdalraster.h"
 #include "gdalvector.h"
+#include "geom_api.h"
 #include "ogr_util.h"
 
 #include "nanoarrow/r.h"
@@ -215,16 +216,31 @@ void GDALVector::info() const {
     checkAccess_(GA_ReadOnly);
 
     if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 7, 0)) {
+        Rcpp::CharacterVector cl_arg = {"-so", "-nomd"};
+        if (getSpatialFilter() != "") {
+            cl_arg.push_back("-spat");
+            Rcpp::NumericVector bb = bbox_from_wkt(getSpatialFilter(), 0, 0);
+            cl_arg.push_back(std::to_string(bb[0]));
+            cl_arg.push_back(std::to_string(bb[1]));
+            cl_arg.push_back(std::to_string(bb[2]));
+            cl_arg.push_back(std::to_string(bb[3]));
+        }
+        if (m_attr_filter != "") {
+            cl_arg.push_back("-where");
+            cl_arg.push_back(m_attr_filter);
+        }
+        if (m_dialect != "") {
+            cl_arg.push_back("-dialect");
+            cl_arg.push_back(m_dialect);
+        }
         if (m_is_sql) {
-            Rcpp::Rcout << ogrinfo(m_dsn, R_NilValue,
-                                   Rcpp::CharacterVector::create(
-                                        "-so", "-nomd", "-sql", m_layer_name),
-                                   m_open_options, true, false);
+            cl_arg.push_back("-sql");
+            cl_arg.push_back(m_layer_name);
+            Rcpp::Rcout << ogrinfo(m_dsn, R_NilValue, cl_arg, m_open_options,
+                                   true, false);
         }
         else {
-            Rcpp::Rcout << ogrinfo(m_dsn, Rcpp::wrap(m_layer_name),
-                                   Rcpp::CharacterVector::create(
-                                        "-so", "-nomd"),
+            Rcpp::Rcout << ogrinfo(m_dsn, Rcpp::wrap(m_layer_name), cl_arg,
                                    m_open_options, true, false);
         }
     }
@@ -284,6 +300,12 @@ Rcpp::List GDALVector::testCapability() const {
             OGR_L_TestCapability(m_hLayer, OLCFastGetExtent)),
         Rcpp::Named("FastSetNextByIndex") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCFastSetNextByIndex)),
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
+        Rcpp::Named("FastGetArrowStream") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCFastGetArrowStream)),
+        Rcpp::Named("FastWriteArrowBatch") = static_cast<bool>(
+            OGR_L_TestCapability(m_hLayer, OLCFastWriteArrowBatch)),
+#endif
         Rcpp::Named("CreateField") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCCreateField)),
         Rcpp::Named("CreateGeomField") = static_cast<bool>(
