@@ -203,6 +203,7 @@ lifetime of the object.</p>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setFeature</span><span class="op">(</span><span class="va">feature</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">createFeature</span><span class="op">(</span><span class="va">feature</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">batchCreateFeature</span><span class="op">(</span><span class="va">feature_set</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">upsertFeature</span><span class="op">(</span><span class="va">feature</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getLastWriteFID</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">deleteFeature</span><span class="op">(</span><span class="va">fid</span><span class="op">)</span></span>
@@ -313,7 +314,7 @@ re-open a layer with a different read/write access (<code>read_only</code> set t
 not required to call <code>$close()</code> explicitly in this case.
 No return value, called for side effects.</p>
 <p><code>$isOpen()</code><br>
-Returns a <code>logical</code> scalar indicating whether the vector dataset is open.</p>
+Returns a <code>logical</code> value indicating whether the vector dataset is open.</p>
 <p><code>$getDsn()</code><br>
 Returns a character string containing the <code>dsn</code> associated with this
 <code>GDALVector</code> object (<code>dsn</code> originally used to open the layer).</p>
@@ -497,7 +498,7 @@ the <code>FastSetNextByIndex</code> element in the list returned by the
 <code>$testCapability()</code> method. No return value, called for side effect.</p>
 <p><code>$getFeature(fid)</code><br>
 Returns a feature by its identifier. The value of <code>fid</code> must be a numeric
-scalar, optionally carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class attribute.
+value, optionally carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class attribute.
 Success or failure of this operation is unaffected by any spatial or
 attribute filters that may be in effect.
 The <code>RandomRead</code> element in the list returned by <code>$testCapability()</code> can
@@ -604,29 +605,51 @@ may be obtained with the method <code>$getLastWriteFID()</code> (see below). To 
 feature, but create it if it doesn't exist see the <code>$upsertFeature()</code> method.</p>
 <p><code>$createFeature(feature)</code><br>
 Creates and writes a new feature within the layer. The <code>feature</code> argument is
-a named list of fields and their values.
+a named list of fields and their values (might be one row of a data frame).
 The passed feature is written to the layer as a new feature, rather than
-overwriting an existing one. If the feature has a <code>$FID</code> element other than
-<code>NA</code>, then the vector format driver may use that as the feature id of the
-new feature, but not necessarily. The FID of the last feature written
-to the layer may be obtained with the method <code>$getLastWriteFID()</code> (see
-below).
+overwriting an existing one. If the feature has a <code>$FID</code> element with other
+than <code>NA</code> (i.e., a numeric value, optionally carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code>
+class attribute and assumed to be a whole number), then the format
+driver may use that as the feature id of the new feature, but not
+necessarily. The FID of the last feature written to the layer may be
+obtained with the method <code>$getLastWriteFID()</code> (see below).
 Returns logical <code>TRUE</code> upon successful completion, or <code>FALSE</code> if creating
 the feature did not succeed. To create a feature, but set it if it already
 exists see the <code>$upsertFeature()</code> method.</p>
+<p><code>$batchCreateFeature(feature_set)</code><br>
+Batch version of <code>$createFeature()</code>. Creates and writes a batch of new
+features within the layer from input passed as a data frame in the
+<code>feature_set</code> argument. Column names in the data frame must match field
+names of the layer and have compatible data types. The specifications
+listed above under the <code>$fetch()</code> method generally apply to input data
+types for writing, but integers may be passed as 'numeric', and
+the 'integer64' class attribute is not strictly required on 'numeric'
+input if it is not needed for the data being passed to an OFTInteger64
+field.
+Returns a logical vector of length equal to the number of input features
+(rows of the data frame), with <code>TRUE</code> indicating success for the feature at
+that row index, or <code>FALSE</code> if writing the feature failed.
+It is recommended to use transactions when batch writing features to a
+layer (see <code>$startTransaction()</code> below). This will generally give large
+performance benefit with data sources that provide efficient transaction
+support (e.g., RDBMS-based sources such as GeoPackage and PostGIS). In
+addition, the return value of <code>$batchCreateFeature()</code> can be checked, and
+the transaction optionally committed or rolled back based on results of the
+operation across the full set of input features.</p>
 <p><code>$upsertFeature(feature)</code><br>
 Rewrites/replaces an existing feature or creates a new feature within the
 layer. This method will write a feature to the layer, based on the feature
 id within the input feature. The <code>feature</code> argument is a named list of
-fields and their values, potentially including a <code>$FID</code> element referencing
-an existing feature to rewrite. If the feature id doesn't exist a new
-feature will be written. Otherwise, the existing feature will be rewritten.
+fields and their values (might be one row of a data frame), potentially
+including a <code>$FID</code> element referencing an existing feature to rewrite. If
+the feature id doesn't exist a new feature will be written. Otherwise, the
+existing feature will be rewritten.
 The <code>UpsertFeature</code> element in the list returned by <code>$testCapability()</code> can
 be checked to determine if this layer supports upsert writing. See
 <code>$setFeature()</code> above for a description of how omitted fields in the passed
 <code>feature</code> are processed.
-Returns logical <code>TRUE</code> upon successful completion, or <code>FALSE</code> if upserting
-the feature did not succeed. Requires GDAL &gt;= 3.6.</p>
+Returns logical <code>TRUE</code> upon successful completion, or <code>FALSE</code> if upsert did
+not succeed. Requires GDAL &gt;= 3.6.</p>
 <p><code>$getLastWriteFID()</code><br>
 Returns the FID of the last feature written (either newly created or updated
 existing). <code>NULL</code> is returned if no features have been written in the layer.
@@ -634,11 +657,11 @@ Note that OGRNullFID (<code>-1</code>) may be returned after writing a feature i
 formats. This is the case if a FID has not been assigned yet, and generally
 does not indicate an error (e.g., formats that do not store a persistent FID
 and assign FIDs upon a sequential read operation). The returned FID is a
-numeric scalar carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class attribute.</p>
+numeric value carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class attribute.</p>
 <p><code>$deleteFeature(fid)</code><br>
 Deletes a feature from the layer. The feature with the indicated feature ID
 is deleted from the layer if supported by the format driver. The value of
-<code>fid</code> must be a numeric scalar, optionally carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code>
+<code>fid</code> must be a numeric value, optionally carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code>
 class attribute (should be a whole number, will be truncated).
 The <code>DeleteFeature</code> element in the list returned by <code>$testCapability()</code> can
 be checked to establish if this layer has delete feature capability. Returns
@@ -730,7 +753,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C++ object of class GDALVector</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Driver : GeoPackage (GPKG)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/Rtmpn3rIWl/ynp_fires_1984_2022.gpkg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/Rtmpkkri2X/ynp_fires_1984_2022.gpkg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Layer  : mtbs_perims</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  CRS    : NAD83 / Montana (EPSG:32100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Geom   : MULTIPOLYGON</span>
@@ -746,15 +769,15 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ quiet             : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "WKB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 71 methods, of which 57 are  possibly relevant:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    OGRFeatureFromList_dumpReadble, bbox, clearSpatialFilter, close,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    commitTransaction, createFeature, deleteFeature, fetch, finalize,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getArrowStream, getAttributeFilter, getDriverLongName, getDriverShortName,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getDsn, getFIDColumn, getFeature, getFeatureCount, getFieldDomain,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getFieldNames, getFileList, getGeomType, getGeometryColumn, getLastWriteFID,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getLayerDefn, getMetadata, getMetadataItem, getName, getNextFeature,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getSpatialFilter, getSpatialRef, info, initialize, isOpen, layerClip,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerErase, layerIdentity, layerIntersection, layerSymDifference,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 72 methods, of which 58 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    OGRFeatureFromList_dumpReadble, batchCreateFeature, bbox,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    clearSpatialFilter, close, commitTransaction, createFeature, deleteFeature,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    fetch, finalize, getArrowStream, getAttributeFilter, getDriverLongName,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getDriverShortName, getDsn, getFIDColumn, getFeature, getFeatureCount,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getFieldDomain, getFieldNames, getFileList, getGeomType, getGeometryColumn,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getLastWriteFID, getLayerDefn, getMetadata, getMetadataItem, getName,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getNextFeature, getSpatialFilter, getSpatialRef, info, initialize, isOpen,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerClip, layerErase, layerIdentity, layerIntersection, layerSymDifference,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    layerUnion, layerUpdate, open, releaseArrowStream, resetReading,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    rollbackTransaction, setAttributeFilter, setFeature, setIgnoredFields,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    setMetadata, setNextByIndex, setSelectedFields, setSpatialFilter,</span>
@@ -767,7 +790,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmpn3rIWl/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmpkkri2X/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1273,7 +1296,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 17:32:14" "2025-03-03 17:32:14"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 22:18:16" "2025-03-03 22:18:16"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1299,7 +1322,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 17:32:14"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 22:18:16"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1342,7 +1365,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 17:32:14" "2025-03-03 17:32:15"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 22:18:16" "2025-03-03 22:18:17"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
