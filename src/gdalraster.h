@@ -229,6 +229,7 @@ class GDALRaster {
     GDALAccess m_eAccess {GA_ReadOnly};
 };
 
+// cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(GDALRaster)
 
 Rcpp::CharacterVector gdal_version();
