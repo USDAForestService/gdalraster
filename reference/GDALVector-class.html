@@ -154,12 +154,13 @@ lifetime of the object.</p>
 <span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="va">layer</span>, <span class="va">read_only</span>, <span class="va">open_options</span>, <span class="va">spatial_filter</span>, <span class="va">dialect</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co">## Read/write fields (per-object settings)</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="va">arrowStreamOptions</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">defaultGeomColName</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="va">promoteToMulti</span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="va">quiet</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="va">promoteToMulti</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="va">convertToLinear</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">wkbByteOrder</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="va">arrowStreamOptions</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="va">quiet</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">transactionsForce</span></span>
 <span></span>
 <span><span class="co">## Methods</span></span>
@@ -255,6 +256,43 @@ are required in this form of the constructor, but <code>open_options</code> may 
 <h3 id="read-write-fields">Read/write fields<a class="anchor" aria-label="anchor" href="#read-write-fields"></a></h3>
 
 
+<p><code>$defaultGeomColName</code><br>
+Character string specifying a name to use for returned columns when the
+geometry column name in the source layer is empty, like with shapefiles etc.
+Defaults to <code>"geometry"</code>.</p>
+<p><code>$returnGeomAs</code><br>
+Character string specifying the return format of feature geometries.
+Must be one of <code>WKB</code> (the default), <code>WKB_ISO</code>, <code>WKT</code>, <code>WKT_ISO</code>, <code>BBOX</code>, or
+<code>NONE</code>.
+Using <code>WKB</code>/<code>WKT</code> exports as 99-402 extended dimension (Z) types for Point,
+LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
+GeometryCollection. For other geometry types, it is equivalent to using
+<code>WKB_ISO</code>/<code>WKT_ISO</code> (see <a href="https://libgeos.org/specifications/wkb/" class="external-link">https://libgeos.org/specifications/wkb/</a>).
+Using <code>BBOX</code> exports as a list of numeric vectors, each of length 4 with
+values <code>xmin, ymin, xmax, ymax</code>. If an empty geometry is encountered these
+values will be <code>NA_real_</code> in the corresponding location.
+Using <code>NONE</code> will result in no geometry value being present in the feature
+returned.</p>
+<p><code>$promoteToMulti</code><br>
+A logical value specifying whether to automatically promote geometries from
+Polygon to MultiPolygon, Point to MultiPoint, or LineString to
+MultiLineString during read operations (i.e., with methods <code>$getFeature()</code>,
+<code>$getNextFeature()</code>, <code>$fetch()</code>). Defaults to <code>FALSE</code>. Setting to <code>TRUE</code> may
+be useful when reading from layers such as shapefiles that mix, e.g.,
+Polygons and MultiPolygons.</p>
+<p><code>$convertToLinear</code><br>
+A logical value specifying whether to convert non-linear geometry types into
+linear geometry types by approximating them (i.e., during read operations
+with methods <code>$getFeature()</code>, <code>$getNextFeature()</code>, <code>$fetch()</code>). Defaults to
+<code>FALSE</code>. If set to <code>TRUE</code>, handled conversions are:</p><ul><li><p>wkbCurvePolygon -&gt; wkbPolygon</p></li>
+<li><p>wkbCircularString -&gt; wkbLineString</p></li>
+<li><p>wkbCompoundCurve -&gt; wkbLineString</p></li>
+<li><p>wkbMultiSurface -&gt; wkbMultiPolygon</p></li>
+<li><p>wkbMultiCurve -&gt; wkbMultiLineString</p></li>
+</ul><p><code>$wkbByteOrder</code><br>
+Character string specifying the byte order for WKB geometries.
+Must be either <code>LSB</code> (Least Significant Byte first, the default) or
+<code>MSB</code> (Most Significant Byte first).</p>
 <p><code>$arrowStreamOptions</code><br>
 Character vector of <code>"NAME=VALUE"</code> pairs giving options used by the
 <code>$getArrowStream()</code> method (see below). The available options may be
@@ -270,37 +308,9 @@ OGC if not specified.</p></li>
 generic implementation when the native geometry encoding is not WKB.
 Otherwise the geometry will be returned with its native Arrow encoding
 (possibly using GeoArrow encoding).</p></li>
-</ul><p><code>$defaultGeomColName</code><br>
-Character string specifying a name to use for returned columns when the
-geometry column name in the source layer is empty, like with shapefiles etc.
-Defaults to <code>"geometry"</code>.</p>
-<p><code>$promoteToMulti</code><br>
-A logical value specifying whether to automatically promote geometries from
-Polygon to MultiPolygon, Point to MultiPoint, or LineString to
-MultiLineString during read operations (i.e., with methods <code>$getFeature()</code>,
-<code>$getNextFeature()</code>, <code>$fetch()</code>). Defaults to <code>FALSE</code>. Setting to <code>TRUE</code> may
-be useful when reading from layers such as shapefiles that mix, e.g.,
-Polygons and MultiPolygons.</p>
-<p><code>$quiet</code><br>
+</ul><p><code>$quiet</code><br>
 A logical value, <code>FALSE</code> by default. Set to <code>TRUE</code> to suppress various
 messages and warnings.</p>
-<p><code>$returnGeomAs</code><br>
-Character string specifying the return format of feature geometries.
-Must be one of <code>WKB</code> (the default), <code>WKB_ISO</code>, <code>WKT</code>, <code>WKT_ISO</code>, <code>BBOX</code>, or
-<code>NONE</code>.
-Using <code>WKB</code>/<code>WKT</code> exports as 99-402 extended dimension (Z) types for Point,
-LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
-GeometryCollection. For other geometry types, it is equivalent to using
-<code>WKB_ISO</code>/<code>WKT_ISO</code> (see <a href="https://libgeos.org/specifications/wkb/" class="external-link">https://libgeos.org/specifications/wkb/</a>).
-Using <code>BBOX</code> exports as a list of numeric vectors, each of length 4 with values
-<code>xmin, ymin, xmax, ymax</code>. If an empty geometry is encountered these values will
-be <code>NA_real_</code> in the corresponding location.
-Using <code>NONE</code> will result in no geometry value being present in the feature
-returned.</p>
-<p><code>$wkbByteOrder</code><br>
-Character string specifying the byte order for WKB geometries.
-Must be either <code>LSB</code> (Least Significant Byte first, the default) or
-<code>MSB</code> (Most Significant Byte first).</p>
 <p><code>$transactionsForce</code><br>
 A logical value, <code>FALSE</code> by default. Affects the behavior of attempted
 transactions on the layer (see the <code>$startTransaction()</code> method below).
@@ -761,14 +771,15 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C++ object of class GDALVector</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Driver : GeoPackage (GPKG)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/RtmpseY5D0/ynp_fires_1984_2022.gpkg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/RtmpRCxyjM/ynp_fires_1984_2022.gpkg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Layer  : mtbs_perims</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  CRS    : NAD83 / Montana (EPSG:32100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Geom   : MULTIPOLYGON</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 10 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 11 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ arrowStreamOptions: chr ""</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ convertToLinear   : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomColName: chr "geometry"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_dialect         : chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_is_sql          : logi FALSE</span>
@@ -799,7 +810,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpseY5D0/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpRCxyjM/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1305,7 +1316,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-04 14:43:13" "2025-03-04 14:43:13"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-04 17:22:25" "2025-03-04 17:22:25"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1331,7 +1342,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-04 14:43:13"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-04 17:22:25"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1374,7 +1385,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-04 14:43:13" "2025-03-04 14:43:14"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-04 17:22:25" "2025-03-04 17:22:26"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
