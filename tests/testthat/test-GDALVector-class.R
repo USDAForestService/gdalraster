@@ -348,6 +348,19 @@ test_that("read methods work correctly", {
     f <- NULL
     lyr$close()
     rm(lyr)
+
+    # convertToLinear
+    dsn <- system.file("extdata/multisurface.zip", package="gdalraster")
+    dsn <- file.path("/vsizip", dsn, "multisurface.gpkg")
+    lyr <- new(GDALVector, dsn, "multisurface_test")
+    g1 <- lyr$fetch(-1)
+    expect_equal(g_name(g1$geom), rep("MULTISURFACE", 5))
+    lyr$convertToLinear <- TRUE
+    g2 <- lyr$fetch(-1)
+    expect_equal(g_name(g2$geom), rep("MULTIPOLYGON", 5))
+    diff <- g_difference(g1$geom, g2$geom)
+    expect_true(all(g_is_empty(diff)))
+    lyr$close()
 })
 
 test_that("delete feature works", {
