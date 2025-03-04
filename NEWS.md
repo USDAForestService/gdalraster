@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9231 (dev)
+# gdalraster 1.12.0.9232 (dev)
+
+* fix geometry binary op functions (`g_intersection()`, etc.): fix indexing of the output list when both inputs are list (#641) (2025-03-03)
 
 * add the writable field `GDALVector::transactionsForce` defaulted to `FALSE` (#640) (2025-03-03)
 
