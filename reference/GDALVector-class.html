@@ -160,6 +160,7 @@ lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">quiet</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">returnGeomAs</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="va">wkbByteOrder</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="va">transactionsForce</span></span>
 <span></span>
 <span><span class="co">## Methods</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span><span class="va">read_only</span><span class="op">)</span></span>
@@ -209,7 +210,7 @@ lifetime of the object.</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">deleteFeature</span><span class="op">(</span><span class="va">fid</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">syncToDisk</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">lyr</span><span class="op">$</span><span class="fu">startTransaction</span><span class="op">(</span><span class="va">force</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">startTransaction</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">commitTransaction</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">rollbackTransaction</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
@@ -300,6 +301,13 @@ returned.</p>
 Character string specifying the byte order for WKB geometries.
 Must be either <code>LSB</code> (Least Significant Byte first, the default) or
 <code>MSB</code> (Most Significant Byte first).</p>
+<p><code>$transactionsForce</code><br>
+A logical value, <code>FALSE</code> by default. Affects the behavior of attempted
+transactions on the layer (see the <code>$startTransaction()</code> method below).
+By default, only "efficient" transactions will be attempted. Some drivers
+may offer an emulation of transactions, but sometimes with significant
+overhead, in which case the user must explicitly allow for such an
+emulation by first setting <code>$transactionsForce &lt;- TRUE</code>.</p>
 </div>
 
 <div class="section">
@@ -675,14 +683,14 @@ error is only returned if an error occurs while attempting to flush to disk.
 In any event, you should always close any opened datasource with <code>$close()</code>
 which will ensure all data is correctly flushed. Returns logical <code>TRUE</code> if
 no error occurs (even if nothing is done) or <code>FALSE</code> on error.</p>
-<p><code>$startTransaction(force)</code><br>
-Creates a transaction if supported by the vector data source. The <code>force</code>
-argument is a logical value. If <code>force = FALSE</code>, only "efficient"
-transactions will be attempted. Some drivers may offer an emulation of
-transactions, but sometimes with significant overhead, in which case the
-user must explicitly allow for such an emulation by setting <code>force =TRUE</code>.
-The function <code><a href="ogr_manage.html">ogr_ds_test_cap()</a></code> can be used to determine whether a vector
-data source supports efficient or emulated transactions.</p>
+<p><code>$startTransaction()</code><br>
+Creates a transaction if supported by the vector data source. By default,
+only "efficient" transactions will be attempted. See the writable field
+<code>$transactionsForce</code> above, which must be set to <code>TRUE</code> to allow for
+emulated transactions. These are supported by some drivers but with
+potentially significant overhead. The function <code><a href="ogr_manage.html">ogr_ds_test_cap()</a></code> can be
+used to determine whether a vector data source supports efficient or
+emulated transactions.</p>
 <p>All changes done after the start of the transaction are definitely applied
 in the data source if <code>$commitTransaction()</code> is called. They can be canceled
 by calling <code>rollbackTransaction()</code> instead.
@@ -753,13 +761,13 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C++ object of class GDALVector</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Driver : GeoPackage (GPKG)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/RtmpNqphun/ynp_fires_1984_2022.gpkg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/RtmpP3hSYl/ynp_fires_1984_2022.gpkg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Layer  : mtbs_perims</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  CRS    : NAD83 / Montana (EPSG:32100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Geom   : MULTIPOLYGON</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">lyr</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 9 fields</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> Reference class 'Rcpp_GDALVector' [package "gdalraster"] with 10 fields</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ arrowStreamOptions: chr ""</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ defaultGeomColName: chr "geometry"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ m_dialect         : chr ""</span>
@@ -768,6 +776,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ promoteToMulti    : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ quiet             : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "WKB"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ transactionsForce : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  and 72 methods, of which 58 are  possibly relevant:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    OGRFeatureFromList_dumpReadble, batchCreateFeature, bbox,</span>
@@ -790,7 +799,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpNqphun/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpP3hSYl/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1296,7 +1305,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 22:23:27" "2025-03-03 22:23:27"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-04 01:19:11" "2025-03-04 01:19:11"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1322,7 +1331,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 22:23:27"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-04 01:19:11"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1365,7 +1374,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-03 22:23:27" "2025-03-03 22:23:28"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-04 01:19:11" "2025-03-04 01:19:12"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
