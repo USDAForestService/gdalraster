@@ -620,6 +620,29 @@ test_that("geometry binary predicates/ops return correct values", {
                  tolerance = 0.01)
     expect_true(g_difference(bnd, bb, as_wkb = FALSE) |> g_is_empty())
     expect_false(g_difference(bnd_overlaps, bb, as_wkb = FALSE) |> g_is_empty())
+
+    # binary ops on list input
+    g1 <- g_wk2wk("POLYGON ((0 0, 10 10, 10 0, 0 0))")
+    g2 <- g_wk2wk("POLYGON ((0 0, 5 5, 5 0, 0 0))")
+    g3 <- g_wk2wk("POLYGON ((100 100, 110 110, 110 100, 100 100))")
+    g_list1 <- list(g1, g1)
+    g_list2 <- list(g2, g3)
+
+    res <- g_intersection(g_list1, g_list2)
+    expect_true(g_equals(res[[1]], "POLYGON ((5 5,5 0,0 0,5 5))"))
+    expect_true(g_is_empty(res[[2]]))
+
+    res <- g_union(g_list1, g_list2)
+    expect_true(g_equals(res[[1]], "POLYGON ((5 5,10 10,10 0,5 0,0 0,5 5))"))
+    expect_false(g_is_empty(res[[2]]))
+
+    res <- g_difference(g_list1, g_list2)
+    expect_true(g_equals(res[[1]], "POLYGON ((10 10,10 0,5 0,5 5,10 10))"))
+    expect_false(g_is_empty(res[[2]]))
+
+    res <- g_sym_difference(g_list1, g_list2)
+    expect_true(g_equals(res[[1]], "POLYGON ((10 10,10 0,5 0,5 5,10 10))"))
+    expect_equal(g_name(res[[2]]), "MULTIPOLYGON")
 })
 
 test_that("g_buffer returns correct values", {

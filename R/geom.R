@@ -1368,8 +1368,8 @@ g_intersection <- function(this_geom, other_geom, as_wkb = TRUE,
 
         wkb <- list()
         for (i in seq_along(this_geom)) {
-            wkb[i] <- .g_intersection(this_geom[[i]], other_geom[[i]], as_iso,
-                                      byte_order, quiet)
+            wkb[[i]] <- .g_intersection(this_geom[[i]], other_geom[[i]], as_iso,
+                                        byte_order, quiet)
         }
 
     } else {
@@ -1443,8 +1443,8 @@ g_union <- function(this_geom, other_geom, as_wkb = TRUE,
 
         wkb <- list()
         for (i in seq_along(this_geom)) {
-            wkb[i] <- .g_union(this_geom[[i]], other_geom[[i]], as_iso,
-                               byte_order, quiet)
+            wkb[[i]] <- .g_union(this_geom[[i]], other_geom[[i]], as_iso,
+                                 byte_order, quiet)
         }
 
     } else {
@@ -1518,8 +1518,8 @@ g_difference <- function(this_geom, other_geom, as_wkb = TRUE,
 
         wkb <- list()
         for (i in seq_along(this_geom)) {
-            wkb[i] <- .g_difference(this_geom[[i]], other_geom[[i]], as_iso,
-                                    byte_order, quiet)
+            wkb[[i]] <- .g_difference(this_geom[[i]], other_geom[[i]], as_iso,
+                                      byte_order, quiet)
         }
 
     } else {
@@ -1593,8 +1593,8 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
 
         wkb <- list()
         for (i in seq_along(this_geom)) {
-            wkb[i] <- .g_sym_difference(this_geom[[i]], other_geom[[i]], as_iso,
-                                        byte_order, quiet)
+            wkb[[i]] <- .g_sym_difference(this_geom[[i]], other_geom[[i]], as_iso,
+                                          byte_order, quiet)
         }
 
     } else {
