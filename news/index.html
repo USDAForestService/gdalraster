@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9230</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9231</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9230" id="gdalraster-11209230-dev">gdalraster 1.12.0.9230 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209230-dev"></a></h2>
-<ul><li><p>add <code>GDALVector::batchCreateFeature()</code>: write a batch of features to a layer from data frame input (<a href="https://github.com/USDAForestService/gdalraster/issues/639" class="external-link">#639</a>) (2025-03-03)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9231" id="gdalraster-11209231-dev">gdalraster 1.12.0.9231 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209231-dev"></a></h2>
+<ul><li><p>add the writable field <code>GDALVector::transactionsForce</code> defaulted to <code>FALSE</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/640" class="external-link">#640</a>) (2025-03-03)</p></li>
+<li><p>add <code>GDALVector::batchCreateFeature()</code>: write a batch of features to a layer from data frame input (<a href="https://github.com/USDAForestService/gdalraster/issues/639" class="external-link">#639</a>) (2025-03-03)</p></li>
 <li><p><code>GDALVector::testCapability()</code>: add <code>FastGetArrowStream</code> and <code>FastWriteArrowBatch</code> in the returned list of layer capabilities (<a href="https://github.com/USDAForestService/gdalraster/issues/638" class="external-link">#638</a>) (2025-03-03)</p></li>
 <li><p>(internal) fix test in configure.ac for GDAL &gt;= 3.1.0 (2025-02-26)</p></li>
 <li><p><code>GDALVector::getArrowStream()</code>: default to <code>GEOMETRY_METADATA_ENCODING=OGC</code> instead of <code>GEOARROW</code> for now, i.e., use the GDAL default unless specified otherwise (2023-02-23)</p></li>
