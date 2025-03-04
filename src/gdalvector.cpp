@@ -1925,8 +1925,10 @@ bool GDALVector::syncToDisk() const {
         return false;
 }
 
-bool GDALVector::startTransaction(bool force) {
+bool GDALVector::startTransaction() {
     checkAccess_(GA_ReadOnly);
+
+    bool force = this->transactionsForce;
 
     if (!force) {
         if (!GDALDatasetTestCapability(m_hDataset, ODsCTransactions)) {
@@ -1944,7 +1946,7 @@ bool GDALVector::startTransaction(bool force) {
 
              if (!quiet) {
                 Rcpp::Rcerr << "dataset does not have transaction capability"
-                        << std::endl;
+                    << std::endl;
              }
             return false;
         }
@@ -3809,6 +3811,7 @@ RCPP_MODULE(mod_GDALVector) {
     .field("quiet", &GDALVector::quiet)
     .field("returnGeomAs", &GDALVector::returnGeomAs)
     .field("wkbByteOrder", &GDALVector::wkbByteOrder)
+    .field("transactionsForce", &GDALVector::transactionsForce)
 
     // methods
     .const_method("getDsn", &GDALVector::getDsn,

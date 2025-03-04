@@ -58,6 +58,7 @@ class GDALVector {
     bool quiet {false};
     std::string returnGeomAs {"WKB"};
     std::string wkbByteOrder {"LSB"};
+    bool transactionsForce {false};
 
     // exposed methods
     void open(bool read_only);
@@ -110,7 +111,7 @@ class GDALVector {
     bool deleteFeature(const Rcpp::RObject &fid);
     bool syncToDisk() const;
 
-    bool startTransaction(bool force);
+    bool startTransaction();
     bool commitTransaction();
     bool rollbackTransaction();
 
