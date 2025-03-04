@@ -36,6 +36,7 @@ class RunningStats {
     double m_M2;
 };
 
+// cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(RunningStats)
 
 #endif  // SRC_RUNNING_STATS_H_

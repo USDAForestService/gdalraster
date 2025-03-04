@@ -219,6 +219,7 @@ class GDALVector {
 #endif
 };
 
+// cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(GDALVector)
 
 #endif  // SRC_GDALVECTOR_H_
