@@ -1,4 +1,7 @@
-# gdalraster 1.12.0.9232 (dev)
+# gdalraster 1.12.0.9233 (dev)
+
+* `GDALVector`: add per-object setting `convertToLinear`, whether to convert non-linear geometry types into
+linear geometry types by potentially approximating them (#629) (2025-03-04)
 
 * fix geometry binary op functions (`g_intersection()`, etc.): fix indexing of the output list when both inputs are list (#641) (2025-03-03)
 
