@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9230 (dev)
+# gdalraster 1.12.0.9231 (dev)
+
+* add the writable field `GDALVector::transactionsForce` defaulted to `FALSE` (#640) (2025-03-03)
 
 * add `GDALVector::batchCreateFeature()`: write a batch of features to a layer from data frame input (#639) (2025-03-03)
 

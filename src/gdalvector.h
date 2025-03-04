@@ -59,6 +59,7 @@ class GDALVector {
     std::string wkbByteOrder {"LSB"};
     Rcpp::CharacterVector arrowStreamOptions {""};
     bool quiet {false};
+    bool transactionsForce {false};
 
     // exposed methods
     void open(bool read_only);
@@ -111,7 +112,7 @@ class GDALVector {
     bool deleteFeature(const Rcpp::RObject &fid);
     bool syncToDisk() const;
 
-    bool startTransaction(bool force);
+    bool startTransaction();
     bool commitTransaction();
     bool rollbackTransaction();
 

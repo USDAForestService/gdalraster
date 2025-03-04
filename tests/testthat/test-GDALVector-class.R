@@ -371,11 +371,11 @@ test_that("delete feature works", {
     expect_false(lyr$commitTransaction())
     expect_false(lyr$rollbackTransaction())
 
-    expect_true(lyr$startTransaction(force = FALSE))
+    expect_true(lyr$startTransaction())
     lyr$deleteFeature(10)
     expect_true(lyr$commitTransaction())
     expect_equal(lyr$getFeatureCount(), num_feat - 1)
-    lyr$startTransaction(force = FALSE)
+    lyr$startTransaction()
     lyr$deleteFeature(11)
     expect_true(lyr$rollbackTransaction())
     expect_equal(lyr$getFeatureCount(), num_feat - 1)

@@ -68,6 +68,7 @@
 #' lyr$wkbByteOrder
 #' lyr$arrowStreamOptions
 #' lyr$quiet
+#' lyr$transactionsForce
 #'
 #' ## Methods
 #' lyr$open(read_only)
@@ -117,7 +118,7 @@
 #' lyr$deleteFeature(fid)
 #' lyr$syncToDisk()
 #'
-#' lyr$startTransaction(force)
+#' lyr$startTransaction()
 #' lyr$commitTransaction()
 #' lyr$rollbackTransaction()
 #'
@@ -220,6 +221,14 @@
 #' \code{$quiet}\cr
 #' A logical value, `FALSE` by default. Set to `TRUE` to suppress various
 #' messages and warnings.
+#'
+#' \code{$transactionsForce}\cr
+#' A logical value, `FALSE` by default. Affects the behavior of attempted
+#' transactions on the layer (see the `$startTransaction()` method below).
+#' By default, only "efficient" transactions will be attempted. Some drivers
+#' may offer an emulation of transactions, but sometimes with significant
+#' overhead, in which case the user must explicitly allow for such an
+#' emulation by first setting `$transactionsForce <- TRUE`.
 #'
 #' ## Methods
 #'
@@ -642,14 +651,14 @@
 #' which will ensure all data is correctly flushed. Returns logical `TRUE` if
 #' no error occurs (even if nothing is done) or `FALSE` on error.
 #'
-#' \code{$startTransaction(force)}\cr
-#' Creates a transaction if supported by the vector data source. The `force`
-#' argument is a logical value. If `force = FALSE`, only "efficient"
-#' transactions will be attempted. Some drivers may offer an emulation of
-#' transactions, but sometimes with significant overhead, in which case the
-#' user must explicitly allow for such an emulation by setting `force =TRUE`.
-#' The function `ogr_ds_test_cap()` can be used to determine whether a vector
-#' data source supports efficient or emulated transactions.
+#' \code{$startTransaction()}\cr
+#' Creates a transaction if supported by the vector data source. By default,
+#' only "efficient" transactions will be attempted. See the writable field
+#' `$transactionsForce` above, which must be set to `TRUE` to allow for
+#' emulated transactions. These are supported by some drivers but with
+#' potentially significant overhead. The function `ogr_ds_test_cap()` can be
+#' used to determine whether a vector data source supports efficient or
+#' emulated transactions.
 #'
 #' All changes done after the start of the transaction are definitely applied
 #' in the data source if `$commitTransaction()` is called. They can be canceled
