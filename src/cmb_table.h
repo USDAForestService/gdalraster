@@ -66,6 +66,7 @@ class CmbTable {
     std::unordered_map<cmbKey, cmbData, cmbHasher> m_cmb_map {};
 };
 
+// cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(CmbTable)
 
 #endif  // SRC_CMB_TABLE_H_

@@ -52,12 +52,13 @@ class GDALVector {
     std::string m_dialect {""};
 
     // exposed read/write fields
-    Rcpp::CharacterVector arrowStreamOptions {""};
     std::string defaultGeomColName {"geometry"};
     bool promoteToMulti {false};
-    bool quiet {false};
+    bool convertToLinear {false};
     std::string returnGeomAs {"WKB"};
     std::string wkbByteOrder {"LSB"};
+    Rcpp::CharacterVector arrowStreamOptions {""};
+    bool quiet {false};
     bool transactionsForce {false};
 
     // exposed methods
@@ -219,6 +220,7 @@ class GDALVector {
 #endif
 };
 
+// cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(GDALVector)
 
 #endif  // SRC_GDALVECTOR_H_

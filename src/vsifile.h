@@ -67,6 +67,7 @@ class VSIFile {
     VSILFILE *m_fp;
 };
 
+// cppcheck-suppress unknownMacro
 RCPP_EXPOSED_CLASS(VSIFile)
 
 #endif  // SRC_VSIFILE_H_

@@ -71,12 +71,13 @@ lyr <- new(GDALVector, dsn, layer, read_only, open_options)
 lyr <- new(GDALVector, dsn, layer, read_only, open_options, spatial_filter, dialect)
 
 ## Read/write fields (per-object settings)
-lyr$arrowStreamOptions
 lyr$defaultGeomColName
-lyr$promoteToMulti
-lyr$quiet
 lyr$returnGeomAs
+lyr$promoteToMulti
+lyr$convertToLinear
 lyr$wkbByteOrder
+lyr$arrowStreamOptions
+lyr$quiet
 lyr$transactionsForce
 
 ## Methods
@@ -171,6 +172,51 @@ are required in this form of the constructor, but \code{open_options} may be
 
 \subsection{Read/write fields}{
 
+\code{$defaultGeomColName}\cr
+Character string specifying a name to use for returned columns when the
+geometry column name in the source layer is empty, like with shapefiles etc.
+Defaults to \code{"geometry"}.
+
+\code{$returnGeomAs}\cr
+Character string specifying the return format of feature geometries.
+Must be one of \code{WKB} (the default), \code{WKB_ISO}, \code{WKT}, \code{WKT_ISO}, \code{BBOX}, or
+\code{NONE}.
+Using \code{WKB}/\code{WKT} exports as 99-402 extended dimension (Z) types for Point,
+LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
+GeometryCollection. For other geometry types, it is equivalent to using
+\code{WKB_ISO}/\code{WKT_ISO} (see \url{https://libgeos.org/specifications/wkb/}).
+Using \code{BBOX} exports as a list of numeric vectors, each of length 4 with
+values \verb{xmin, ymin, xmax, ymax}. If an empty geometry is encountered these
+values will be \code{NA_real_} in the corresponding location.
+Using \code{NONE} will result in no geometry value being present in the feature
+returned.
+
+\code{$promoteToMulti}\cr
+A logical value specifying whether to automatically promote geometries from
+Polygon to MultiPolygon, Point to MultiPoint, or LineString to
+MultiLineString during read operations (i.e., with methods \verb{$getFeature()},
+\verb{$getNextFeature()}, \verb{$fetch()}). Defaults to \code{FALSE}. Setting to \code{TRUE} may
+be useful when reading from layers such as shapefiles that mix, e.g.,
+Polygons and MultiPolygons.
+
+\code{$convertToLinear}\cr
+A logical value specifying whether to convert non-linear geometry types into
+linear geometry types by approximating them (i.e., during read operations
+with methods \verb{$getFeature()}, \verb{$getNextFeature()}, \verb{$fetch()}). Defaults to
+\code{FALSE}. If set to \code{TRUE}, handled conversions are:
+\itemize{
+\item wkbCurvePolygon -> wkbPolygon
+\item wkbCircularString -> wkbLineString
+\item wkbCompoundCurve -> wkbLineString
+\item wkbMultiSurface -> wkbMultiPolygon
+\item wkbMultiCurve -> wkbMultiLineString
+}
+
+\code{$wkbByteOrder}\cr
+Character string specifying the byte order for WKB geometries.
+Must be either \code{LSB} (Least Significant Byte first, the default) or
+\code{MSB} (Most Significant Byte first).
+
 \code{$arrowStreamOptions}\cr
 Character vector of \code{"NAME=VALUE"} pairs giving options used by the
 \verb{$getArrowStream()} method (see below). The available options may be
@@ -190,41 +236,9 @@ Otherwise the geometry will be returned with its native Arrow encoding
 (possibly using GeoArrow encoding).
 }
 
-\code{$defaultGeomColName}\cr
-Character string specifying a name to use for returned columns when the
-geometry column name in the source layer is empty, like with shapefiles etc.
-Defaults to \code{"geometry"}.
-
-\code{$promoteToMulti}\cr
-A logical value specifying whether to automatically promote geometries from
-Polygon to MultiPolygon, Point to MultiPoint, or LineString to
-MultiLineString during read operations (i.e., with methods \verb{$getFeature()},
-\verb{$getNextFeature()}, \verb{$fetch()}). Defaults to \code{FALSE}. Setting to \code{TRUE} may
-be useful when reading from layers such as shapefiles that mix, e.g.,
-Polygons and MultiPolygons.
-
 \code{$quiet}\cr
 A logical value, \code{FALSE} by default. Set to \code{TRUE} to suppress various
 messages and warnings.
-
-\code{$returnGeomAs}\cr
-Character string specifying the return format of feature geometries.
-Must be one of \code{WKB} (the default), \code{WKB_ISO}, \code{WKT}, \code{WKT_ISO}, \code{BBOX}, or
-\code{NONE}.
-Using \code{WKB}/\code{WKT} exports as 99-402 extended dimension (Z) types for Point,
-LineString, Polygon, MultiPoint, MultiLineString, MultiPolygon and
-GeometryCollection. For other geometry types, it is equivalent to using
-\code{WKB_ISO}/\code{WKT_ISO} (see \url{https://libgeos.org/specifications/wkb/}).
-Using \code{BBOX} exports as a list of numeric vectors, each of length 4 with values
-\verb{xmin, ymin, xmax, ymax}. If an empty geometry is encountered these values will
-be \code{NA_real_} in the corresponding location.
-Using \code{NONE} will result in no geometry value being present in the feature
-returned.
-
-\code{$wkbByteOrder}\cr
-Character string specifying the byte order for WKB geometries.
-Must be either \code{LSB} (Least Significant Byte first, the default) or
-\code{MSB} (Most Significant Byte first).
 
 \code{$transactionsForce}\cr
 A logical value, \code{FALSE} by default. Affects the behavior of attempted
