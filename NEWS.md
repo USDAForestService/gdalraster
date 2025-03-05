@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9233 (dev)
+# gdalraster 1.12.0.9234 (dev)
+
+* Account for possible `convertToLinear` and/or `promoteToMulti` in the GIS attributes attached to vector read outputs (#645) (2025-03-05)
 
 * `GDALVector`: add per-object setting `convertToLinear`, whether to convert non-linear geometry types into
 linear geometry types by potentially approximating them (#629) (2025-03-04)
