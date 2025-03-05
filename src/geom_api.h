@@ -126,4 +126,8 @@ Rcpp::NumericVector bbox_from_wkt(const std::string &wkt,
 Rcpp::String bbox_to_wkt(const Rcpp::NumericVector &bbox,
                          double extend_x, double extend_y);
 
+OGRwkbGeometryType getTargetGeomType(OGRwkbGeometryType geom_type,
+                                     bool convert_to_linear,
+                                     bool promote_to_multi);
+
 #endif  // SRC_GEOM_API_H_
