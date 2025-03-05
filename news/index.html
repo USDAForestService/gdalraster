@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9233</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9234</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9233" id="gdalraster-11209233-dev">gdalraster 1.12.0.9233 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209233-dev"></a></h2>
-<ul><li><p><code>GDALVector</code>: add per-object setting <code>convertToLinear</code>, whether to convert non-linear geometry types into linear geometry types by potentially approximating them (<a href="https://github.com/USDAForestService/gdalraster/issues/629" class="external-link">#629</a>) (2025-03-04)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9234" id="gdalraster-11209234-dev">gdalraster 1.12.0.9234 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209234-dev"></a></h2>
+<ul><li><p>Account for possible <code>convertToLinear</code> and/or <code>promoteToMulti</code> in the GIS attributes attached to vector read outputs (<a href="https://github.com/USDAForestService/gdalraster/issues/645" class="external-link">#645</a>) (2025-03-05)</p></li>
+<li><p><code>GDALVector</code>: add per-object setting <code>convertToLinear</code>, whether to convert non-linear geometry types into linear geometry types by potentially approximating them (<a href="https://github.com/USDAForestService/gdalraster/issues/629" class="external-link">#629</a>) (2025-03-04)</p></li>
 <li><p>fix geometry binary op functions (<code><a href="../reference/g_binary_op.html">g_intersection()</a></code>, etc.): fix indexing of the output list when both inputs are list (<a href="https://github.com/USDAForestService/gdalraster/issues/641" class="external-link">#641</a>) (2025-03-03)</p></li>
 <li><p>add the writable field <code>GDALVector::transactionsForce</code> defaulted to <code>FALSE</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/640" class="external-link">#640</a>) (2025-03-03)</p></li>
 <li><p>add <code>GDALVector::batchCreateFeature()</code>: write a batch of features to a layer from data frame input (<a href="https://github.com/USDAForestService/gdalraster/issues/639" class="external-link">#639</a>) (2025-03-03)</p></li>
