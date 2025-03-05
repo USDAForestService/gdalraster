@@ -1898,3 +1898,28 @@ Rcpp::String bbox_to_wkt(const Rcpp::NumericVector &bbox,
 
     return g_wkb2wkt(g_create("POLYGON", poly_xy));
 }
+
+// helper function for geom type conversions
+OGRwkbGeometryType getTargetGeomType(OGRwkbGeometryType geom_type,
+                                     bool convert_to_linear,
+                                     bool promote_to_multi) {
+
+    OGRwkbGeometryType out_type = geom_type;
+
+    if (convert_to_linear || (convert_to_linear && promote_to_multi)) {
+        out_type = OGR_GT_GetLinear(out_type);
+    }
+
+    if (promote_to_multi || (convert_to_linear && promote_to_multi)) {
+        if (out_type == wkbTriangle || out_type == wkbTIN ||
+            out_type == wkbPolyhedralSurface) {
+
+            out_type = wkbMultiPolygon;
+        }
+        else if (!OGR_GT_IsSubClassOf(out_type, wkbGeometryCollection)) {
+            out_type = OGR_GT_GetCollection(out_type);
+        }
+    }
+
+    return out_type;
+}

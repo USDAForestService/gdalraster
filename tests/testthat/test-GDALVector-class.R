@@ -312,6 +312,9 @@ test_that("read methods work correctly", {
     expect_false("POLYGON" %in% d[, geom_fld])
     expected_geoms <- rep("MULTIPOLYGON", lyr$getFeatureCount())
     expect_equal(d[, geom_fld], expected_geoms)
+    expect_equal(attr(d, "gis")$geom_col_type, "MULTIPOLYGON")
+    rm(d)
+
     # returnGeomAs
     lyr$returnGeomAs <- "WKB"
     f <- lyr$getFeature(1)
@@ -354,9 +357,11 @@ test_that("read methods work correctly", {
     dsn <- file.path("/vsizip", dsn, "multisurface.gpkg")
     lyr <- new(GDALVector, dsn, "multisurface_test")
     g1 <- lyr$fetch(-1)
+    expect_equal(attr(g1, "gis")$geom_col_type, "MULTISURFACE")
     expect_equal(g_name(g1$geom), rep("MULTISURFACE", 5))
     lyr$convertToLinear <- TRUE
     g2 <- lyr$fetch(-1)
+    expect_equal(attr(g2, "gis")$geom_col_type, "MULTIPOLYGON")
     expect_equal(g_name(g2$geom), rep("MULTIPOLYGON", 5))
     diff <- g_difference(g1$geom, g2$geom)
     expect_true(all(g_is_empty(diff)))
