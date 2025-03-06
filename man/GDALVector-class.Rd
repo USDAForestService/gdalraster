@@ -43,17 +43,12 @@ lifetime of the object.
 \code{GDALVector} provides an interface for accessing a vector layer in a GDAL
 dataset and calling methods on the underlying \code{OGRLayer} object.
 An object of class \code{GDALVector} persists an open connection to the dataset,
-and exposes methods for retrieving layer information, setting attribute and
-spatial filters, and reading/writing feature data.
-See \url{https://gdal.org/en/stable/api/index.html} for details of the GDAL
-Vector API.
-
-\strong{Class \code{GDALVector} is currently under development}. An initial
-implementation supporting read access was added in gdalraster 1.11.1.9100.
-A working document with draft specifications is available at:\cr
-\url{https://usdaforestservice.github.io/gdalraster/articles/gdalvector-draft.html}\cr
-and discussion thread/status updates at:\cr
-\url{https://github.com/USDAForestService/gdalraster/issues/241}.
+and exposes methods that retrieve layer information, set attribute and
+spatial filters, read feature data via traversal by traditional row-based
+cursor including a direct analog of \code{DBI::dbFetch()}, read via
+column-oriented Arrow Array stream, write new features in a layer,
+edit/overwrite existing features, upsert, and delete. Supports transactions
+providing the option to rollback uncommitted data modifications.
 }
 \section{Usage (see Details)}{
 
@@ -986,5 +981,8 @@ GDAL vector format descriptions:\cr
 \url{https://gdal.org/en/stable/drivers/vector/index.html}
 
 GDAL-supported SQL dialects:\cr
-\url{https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html})
+\url{https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html}
+
+GDAL Vector API documentation:\cr
+\url{https://gdal.org/en/stable/api/index.html}
 }
