@@ -37,8 +37,9 @@ Reference System C++ API.
 (i.e., longitude/latitude ordered for geographic coordinates).
 
 Input points that contain missing values (\code{NA}) will be assigned \code{NA} in
-the output. Any input points that fail to transform with the GDAL API call
-will be assigned \code{NA} in the ouput with a warning issued in that case.
+the output and a warning emitted. Input points that fail to transform
+with the GDAL API call will also be assigned \code{NA} in the ouput with a
+specific warning indicating that case.
 }
 \examples{
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")

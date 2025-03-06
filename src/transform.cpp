@@ -162,6 +162,17 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     Rcpp::NumericVector t{};
     if (has_t)
         t = pts_in(Rcpp::_ , 3);
+
+    Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
+    if (has_z)
+        na_in = na_in | Rcpp::is_na(z);
+    if (has_t)
+        na_in = na_in | Rcpp::is_na(t);
+
+    if (Rcpp::is_true(Rcpp::all(na_in))) {
+        Rcpp::stop("all input points have one or more missing values");
+    }
+
     std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
     std::vector<double> zbuf{};
@@ -181,23 +192,17 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     OGRCoordinateTransformation::DestroyCT(poCT);
     poLongLat->Release();
 
-    // Potentially uncomment this in the future due to behavior change at
-    // GDAL 3.11 (https://github.com/OSGeo/gdal/pull/11819):
-    // if (!res &&
-    //     std::find(success.begin(), success.end(), TRUE) == success.end()) {
+    // behavior change at GDAL 3.11 (https://github.com/OSGeo/gdal/pull/11819)
+    // if FALSE returned, we know at least one or more points failed so it's
+    // probably worth checking them all at this point
+    if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 11, 0)) {
+        if (!res &&
+            std::find(success.begin(), success.end(), TRUE) == success.end()) {
 
-    //     Rcpp::stop("transformation failed");
-    // }
-    if (!res) {
-        Rcpp::Rcerr << "OGRCoordinateTransformation::Transform() returned FALSE"
-            << std::endl;
+            Rcpp::stop("transformation failed for all points");
+        }
     }
 
-    Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
-    if (has_z)
-        na_in = na_in | Rcpp::is_na(z);
-    if (has_t)
-        na_in = na_in | Rcpp::is_na(t);
     Rcpp::NumericVector ret_x = Rcpp::wrap(xbuf);
     Rcpp::NumericVector ret_y = Rcpp::wrap(ybuf);
     Rcpp::NumericVector ret_z{};
@@ -207,6 +212,7 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
     if (has_t)
         ret_t = Rcpp::wrap(tbuf);
     size_t num_err = 0;
+    size_t num_na = 0;
     for (R_xlen_t i = 0; i < na_in.size(); ++i) {
         if (na_in[i] == TRUE || !success[i]) {
             ret_x[i] = NA_REAL;
@@ -218,6 +224,8 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 
             if (na_in[i] != TRUE && !success[i])
                 num_err += 1;
+            else
+                num_na += 1;
         }
     }
 
@@ -231,7 +239,12 @@ Rcpp::NumericMatrix inv_project(const Rcpp::RObject &pts,
 
     if (num_err > 0) {
         Rcpp::warning(std::to_string(num_err) +
-                      " point(s) had transform errors, NA returned");
+            " point(s) failed to transform, NA returned in that case");
+    }
+
+    if (num_na > 0) {
+        Rcpp::warning(std::to_string(num_na) +
+            " point(s) had missing values, NA returned in that case");
     }
 
     return ret;
@@ -295,6 +308,17 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     Rcpp::NumericVector t{};
     if (has_t)
         t = pts_in(Rcpp::_ , 3);
+
+    Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
+    if (has_z)
+        na_in = na_in | Rcpp::is_na(z);
+    if (has_t)
+        na_in = na_in | Rcpp::is_na(t);
+
+    if (Rcpp::is_true(Rcpp::all(na_in))) {
+        Rcpp::stop("all input points have one or more missing values");
+    }
+
     std::vector<double> xbuf = Rcpp::as<std::vector<double>>(x);
     std::vector<double> ybuf = Rcpp::as<std::vector<double>>(y);
     std::vector<double> zbuf{};
@@ -313,23 +337,17 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     OGRCoordinateTransformation::DestroyCT(poCT);
 
-    // Potentially uncomment this in the future due to behavior change at
-    // GDAL 3.11 (https://github.com/OSGeo/gdal/pull/11819):
-    // if (!res &&
-    //     std::find(success.begin(), success.end(), TRUE) == success.end()) {
+    // behavior change at GDAL 3.11 (https://github.com/OSGeo/gdal/pull/11819)
+    // if FALSE returned, we know at least one or more points failed so it's
+    // probably worth checking them all at this point
+    if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 11, 0)) {
+        if (!res &&
+            std::find(success.begin(), success.end(), TRUE) == success.end()) {
 
-    //     Rcpp::stop("transformation failed");
-    // }
-    if (!res) {
-        Rcpp::Rcerr << "OGRCoordinateTransformation::Transform() returned FALSE"
-            << std::endl;
+            Rcpp::stop("transformation failed for all points");
+        }
     }
 
-    Rcpp::LogicalVector na_in = Rcpp::is_na(x) | Rcpp::is_na(y);
-    if (has_z)
-        na_in = na_in | Rcpp::is_na(z);
-    if (has_t)
-        na_in = na_in | Rcpp::is_na(t);
     Rcpp::NumericVector ret_x = Rcpp::wrap(xbuf);
     Rcpp::NumericVector ret_y = Rcpp::wrap(ybuf);
     Rcpp::NumericVector ret_z{};
@@ -339,6 +357,7 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
     if (has_t)
         ret_t = Rcpp::wrap(tbuf);
     size_t num_err = 0;
+    size_t num_na = 0;
     for (R_xlen_t i = 0; i < na_in.size(); ++i) {
         if (na_in[i] == TRUE || !success[i]) {
             ret_x[i] = NA_REAL;
@@ -350,6 +369,8 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
             if (na_in[i] != TRUE && !success[i])
                 num_err += 1;
+            else
+                num_na += 1;
         }
     }
 
@@ -363,7 +384,12 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 
     if (num_err > 0) {
         Rcpp::warning(std::to_string(num_err) +
-                      " point(s) had transform errors, NA returned");
+            " point(s) failed to transform, NA returned in that case");
+    }
+
+    if (num_na > 0) {
+        Rcpp::warning(std::to_string(num_na) +
+            " point(s) had missing values, NA returned in that case");
     }
 
     return ret;

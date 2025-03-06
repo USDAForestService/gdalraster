@@ -22,9 +22,9 @@ test_that("transform/inv_project give correct results", {
 
     # with NA
     pts[11, ] <- c(11, NA, NA)
-    xy_test <- transform_xy(pts = pts[,-1],
-                            srs_from = epsg_to_wkt(26912),
-                            srs_to = epsg_to_wkt(5070))
+    expect_warning(xy_test <- transform_xy(pts = pts[,-1],
+                                           srs_from = epsg_to_wkt(26912),
+                                           srs_to = epsg_to_wkt(5070)))
     expect_equal(as.vector(xy_test[1:10, ]), xy_alb83, tolerance=0.1)
     expect_true(is.na(xy_test[11, 1]) && is.na(xy_test[11, 2]))
     pts <- pts[-11, ]

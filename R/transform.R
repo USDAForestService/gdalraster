@@ -28,8 +28,9 @@
 #' (i.e., longitude/latitude ordered for geographic coordinates).
 #'
 #' Input points that contain missing values (`NA`) will be assigned `NA` in
-#' the output. Any input points that fail to transform with the GDAL API call
-#' will be assigned `NA` in the ouput with a warning issued in that case.
+#' the output and a warning emitted. Input points that fail to transform
+#' with the GDAL API call will also be assigned `NA` in the ouput with a
+#' specific warning indicating that case.
 #'
 #' @seealso
 #' [srs_to_wkt()], [inv_project()]
@@ -125,8 +126,9 @@ transform_xy <- function(pts, srs_from, srs_to) {
 #'
 #' @note
 #' Input points that contain missing values (`NA`) will be assigned `NA` in
-#' the output. Any input points that fail to transform with the GDAL API call
-#' will be assigned `NA` in the ouput with a warning issued in that case.
+#' the output and a warning emitted. Input points that fail to transform
+#' with the GDAL API call will also be assigned `NA` in the ouput with a
+#' specific warning indicating that case.
 #'
 #' @seealso
 #' [transform_xy()]
