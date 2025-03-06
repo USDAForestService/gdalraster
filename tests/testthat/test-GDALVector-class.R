@@ -1206,6 +1206,8 @@ test_that("info() prints output to the console", {
     lyr$close()
     unlink(dsn)
 
+    skip_if_not(has_spatialite())
+
     dsn <- system.file("extdata/poly_multipoly.shp", package="gdalraster")
     sql <- "SELECT 1 As ID, ST_Union(geometry) As geom FROM poly_multipoly GROUP BY ID"
     lyr <- new(GDALVector, dsn, sql, TRUE, NULL, "", "SQLite")
