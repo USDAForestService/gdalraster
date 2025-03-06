@@ -1,4 +1,4 @@
-# gdalraster 1.12.0.9234 (dev)
+# gdalraster 1.12.0.9235 (dev)
 
 * Account for possible `convertToLinear` and/or `promoteToMulti` in the GIS attributes attached to vector read outputs (#645) (2025-03-05)
 
