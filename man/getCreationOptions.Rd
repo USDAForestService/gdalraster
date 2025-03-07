@@ -2,32 +2,60 @@
 % Please edit documentation in R/gdal_helpers.R
 \name{getCreationOptions}
 \alias{getCreationOptions}
-\title{Return the list of creation options of a GDAL driver}
+\title{Return the list of creation options for a GDAL driver}
 \usage{
 getCreationOptions(format, filter = NULL)
 }
 \arguments{
-\item{format}{Raster format short name (e.g., "GTiff").}
+\item{format}{Format short name (e.g., \code{"GTiff"}).}
 
-\item{filter}{Optional character vector of creation option names. Controls
-only the amount of information printed to the console.
-By default, information for all creation options is printed. Can be set to
-empty string \code{""} to disable printing information to the console.}
+\item{filter}{Optional character vector of creation option names.}
 }
 \value{
-Invisibly, an XML string that describes the full list of creation
-options or empty string \code{""} (full output of
-\code{GDALGetDriverCreationOptionList()} in the GDAL API).
+A named list with names matching the creation option names, and
+each element a named list with elements \verb{$type}, \verb{$description}, \verb{$default}
+and \verb{$values} (see Details).
 }
 \description{
 \code{getCreationOptions()} returns the list of creation options supported by a
-GDAL format driver as an XML string (invisibly).
-Wrapper for \code{GDALGetDriverCreationOptionList()} in the GDAL API.
-Information about the available creation options is also printed to the
-console by default.
+GDAL format driver.
+This function is a wrapper of \code{GDALGetDriverCreationOptionList()} in the
+GDAL API, parsing its XML output into a named list.
+}
+\details{
+The output is a nested list with names matching the creation option names.
+The information for each creation option is a named list with the following
+elements:
+\itemize{
+\item \verb{$type}: a character string describing the data type, e.g., \code{"int"},
+\code{"float"}, \code{"string"}. The type \code{"string-select"} denotes a list of allowed
+string values which are returned as a character vector in the \verb{$values}
+element (see below).
+\item \verb{$description}: a character string describing the option, or \code{NA} if no
+description is provided by the GDAL driver.
+\item \verb{$default}: the default value of the option as either a character string
+or numeric value, or \code{NA} if no description is provided by the GDAL driver.
+\item \verb{$values}: a character vector of allowed string values for the creation
+option if \verb{$type} is \code{"string-select"}, otherwise \code{NULL} if the option is
+not a \code{"string-select"} type.
+}
 }
 \examples{
-getCreationOptions("GTiff", filter="COMPRESS")
+opt <- getCreationOptions("GTiff", "COMPRESS")
+names(opt)
+
+(opt$COMPRESS$type == "string-select")  # TRUE
+opt$COMPRESS$values
+
+all_opt <- getCreationOptions("GTiff")
+names(all_opt)
+
+# $description and $default will be NA if no value is provided by the driver
+# $values will be NULL if the option is not a 'string-select' type
+
+all_opt$PREDICTOR
+
+all_opt$BIGTIFF
 }
 \seealso{
 \code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}
