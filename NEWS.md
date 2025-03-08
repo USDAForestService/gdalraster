@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9235 (dev)
+# gdalraster 1.12.0.9236 (dev)
+
+* geom api: add `g_is_3D()` and `g_is_measured()` (#650) (2025-03-07)
 
 * Account for possible `convertToLinear` and/or `promoteToMulti` in the GIS attributes attached to vector read outputs (#645) (2025-03-05)
 
