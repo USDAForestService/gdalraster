@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9237</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9238</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9237" id="gdalraster-11209237-dev">gdalraster 1.12.0.9237 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209237-dev"></a></h2>
-<ul><li><p>geom api: add <code><a href="../reference/g_query.html">g_is_3D()</a></code> and <code><a href="../reference/g_query.html">g_is_measured()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/650" class="external-link">#650</a>) (2025-03-07)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9238" id="gdalraster-11209238-dev">gdalraster 1.12.0.9238 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209238-dev"></a></h2>
+<ul><li><p>(internal) [Valgrind] Fix memory leak in <code>validateFeatInput_()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/652" class="external-link">#652</a>) (2025-03-07)</p></li>
+<li><p>geom api: add <code><a href="../reference/g_query.html">g_is_3D()</a></code> and <code><a href="../reference/g_query.html">g_is_measured()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/650" class="external-link">#650</a>) (2025-03-07)</p></li>
 <li><p>Account for possible <code>convertToLinear</code> and/or <code>promoteToMulti</code> in the GIS attributes attached to vector read outputs (<a href="https://github.com/USDAForestService/gdalraster/issues/645" class="external-link">#645</a>) (2025-03-05)</p></li>
 <li><p><code>GDALVector</code>: add per-object setting <code>convertToLinear</code>, whether to convert non-linear geometry types into linear geometry types by potentially approximating them (<a href="https://github.com/USDAForestService/gdalraster/issues/629" class="external-link">#629</a>) (2025-03-04)</p></li>
 <li><p>fix geometry binary op functions (<code><a href="../reference/g_binary_op.html">g_intersection()</a></code>, etc.): fix indexing of the output list when both inputs are list (<a href="https://github.com/USDAForestService/gdalraster/issues/641" class="external-link">#641</a>) (2025-03-03)</p></li>
