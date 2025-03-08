@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9237 (dev)
+# gdalraster 1.12.0.9238 (dev)
+
+* (internal) [Valgrind] Fix memory leak in `validateFeatInput_()` (#652) (2025-03-07)
 
 * geom api: add `g_is_3D()` and `g_is_measured()` (#650) (2025-03-07)
 
