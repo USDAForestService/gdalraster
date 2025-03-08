@@ -1,6 +1,7 @@
 # Tests for src/transform.cpp
 
 test_that("transform/inv_project give correct results", {
+    ## transform_xy
     pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
     pts <- read.csv(pt_file)
     xy_alb83 <- c(-1330885, -1331408, -1331994, -1330297, -1329991, -1329167,
@@ -21,9 +22,9 @@ test_that("transform/inv_project give correct results", {
 
     # with NA
     pts[11, ] <- c(11, NA, NA)
-    xy_test <- transform_xy(pts = pts[,-1],
-                            srs_from = epsg_to_wkt(26912),
-                            srs_to = epsg_to_wkt(5070))
+    expect_warning(xy_test <- transform_xy(pts = pts[,-1],
+                                           srs_from = epsg_to_wkt(26912),
+                                           srs_to = epsg_to_wkt(5070)))
     expect_equal(as.vector(xy_test[1:10, ]), xy_alb83, tolerance=0.1)
     expect_true(is.na(xy_test[11, 1]) && is.na(xy_test[11, 2]))
     pts <- pts[-11, ]
@@ -70,7 +71,8 @@ test_that("transform/inv_project give correct results", {
                               srs_from = epsg_to_wkt(26912),
                               srs_to = epsg_to_wkt(5070)))
 
-    # inv_project
+
+    ## inv_project
     xy_wgs84 <- c(-113.26707, -113.27315, -113.28150, -113.25978, -113.25312,
                   -113.24600, -113.25613, -113.24613, -113.22794, -113.27334,
                   46.06118, 46.05827, 46.06076, 46.06280, 46.05276, 46.06682,
@@ -104,12 +106,16 @@ test_that("transform/inv_project give correct results", {
                             well_known_gcs = "WGS84")
     expect_equal(as.vector(inv_test), xy_wgs84, tolerance = 0.001)
 
-    # return NA for NA input:
-    # https://github.com/USDAForestService/gdalraster/issues/587
-    expect_no_error(ret <- inv_project(pts = c(NA, NA),
-                                       srs = epsg_to_wkt(26912),
-                                       well_known_gcs = "WGS84"))
-    expect_true(all(is.na(ret)))
+    # warnings
+    expect_warning(inv_project(pts = c(Inf, Inf),
+                               srs = epsg_to_wkt(26912),
+                               well_known_gcs = "WGS84"))
+    expect_warning(ret <- inv_project(matrix(c(Inf, -1330885, Inf, 2684892),
+                                             ncol = 2),
+                                      srs = epsg_to_wkt(26912),
+                                      well_known_gcs = "WGS84"))
+    expect_false(all(is.na(ret)))
+    expect_true(any(is.na(ret)))
 
     # errors
     expect_error(inv_project(pts = as.vector(pts[,-1]),
@@ -136,7 +142,8 @@ test_that("transform/inv_project give correct results", {
                              srs = epsg_to_wkt(26912),
                              well_known_gcs = "WGS84"))
 
-    # with xyz/xyzt 3 or 4 column input
+
+    ## with xyz/xyzt 3 or 4 column input
     # lon/lat to UTM zone 11N (EPSG:32611)
     m_xyz <- matrix(c(-117.5, 32.0, 0.0, -117.5, 32.0, 10.0),
                     ncol = 3, byrow = TRUE)
