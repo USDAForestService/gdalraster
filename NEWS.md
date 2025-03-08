@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9239 (dev)
+# gdalraster 1.12.0.9240 (dev)
+
+* `transform_xy()` / `inv_project()`: account for behavior change at GDAL 3.11 (#631) (2025-03-08)
 
 * geom api: support GeometryCollection in `g_create()` (#653) (2025-03-08)
 
