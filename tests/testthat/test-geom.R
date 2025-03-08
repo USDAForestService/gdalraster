@@ -340,6 +340,10 @@ test_that("g_factory functions work", {
     expect_equal(coords$z, z)
     expect_equal(coords$m, m)
 
+    # geometry collection
+    g_coll <- g_create("GEOMETRYCOLLECTION")
+    expect_equal(g_wk2wk(g_coll), "GEOMETRYCOLLECTION EMPTY")
+
     ## add subgeometry to container
     # create empty multipoint and add geoms
     mult_pt2 <- g_create("MULTIPOINT")
@@ -347,7 +351,12 @@ test_that("g_factory functions work", {
                                            mult_pt2))
     expect_no_error(mult_pt2 <- g_add_geom(g_create("POINT", c(1, 9)),
                                            mult_pt2))
-    expect_true(g_equals(mult_pt1, mult_pt2))
+    expect_true(g_equals(mult_pt1, mult_pt2))  # mult_pt1 from above
+
+    pt <- g_create("POINT", c(1, 2))
+    expect_no_error(g_coll <- g_add_geom(pt, g_coll))  # g_coll from above
+    expect_no_error(g_coll <- g_add_geom(mult_pt2, g_coll))
+    expect_true(g_is_valid(g_coll))
 
     # polygon to polygon (add inner ring)
     container <- "POLYGON((0 0,0 10,10 10,0 0),(0.25 0.5,1 1.1,0.5 1,0.25 0.5))"

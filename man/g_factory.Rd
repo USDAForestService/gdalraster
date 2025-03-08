@@ -23,8 +23,9 @@ g_add_geom(
 )
 }
 \arguments{
-\item{geom_type}{Character string. One of \code{"POINT"}, \code{"MULTIPOINT"},
-\code{"LINESTRING"}, \code{"POLYGON"} (see Note).}
+\item{geom_type}{Character string (case-insensitive), one of \code{"POINT"},
+\code{"MULTIPOINT"}, \code{"LINESTRING"}, \code{"POLYGON"} (see Note) or
+\code{"GEOMETRYCOLLECTION"}.}
 
 \item{pts}{Numeric matrix of points (x, y, z, m), or \code{NULL} to create an
 empty geometry. The points can be given as (x, y), (x, y, z) or
@@ -43,12 +44,14 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 
 \item{sub_geom}{Either a raw vector of WKB or a character string of WKT.}
 
-\item{container}{Either a raw vector of WKB or a character string of WKT.}
+\item{container}{Either a raw vector of WKB or a character string of WKT for
+a container geometry type.}
 }
 \value{
 A geometry as WKB raw vector by default, or a WKT string if
 \code{as_wkb = FALSE}. In the case of multiple input points for creating Point
-geometry type, a list of WKB raw vectors or character vector of WKT strings.
+geometry type, a list of WKB raw vectors or character vector of WKT strings
+will be returned.
 }
 \description{
 These functions create WKB/WKT geometries from input vertices, and build
@@ -58,25 +61,33 @@ container geometry types from sub-geometries.
 These functions use the GEOS library via GDAL headers.
 
 \code{g_create()} creates a geometry object from the given point(s) and returns
-a raw vector of WKB (the default) or a character string of WKT. Currently,
-supports Point, MultiPoint, LineString, and Polygon. If multiple input
-points are given for creating Point type, then multiple geometries will be
-returned as a list of WKB raw vectors, or character vector of WKT strings
-(if \code{as_wkb = FALSE}). Otherwise, a single geometry is created from the
-input points.
+a raw vector of WKB (the default) or a character string of WKT. Currently
+supports creating Point, MultiPoint, LineString, Polygon, and
+GeomteryCollection.
+If multiple input points are given for creating Point type, then multiple
+geometries will be returned as a list of WKB raw vectors, or character
+vector of WKT strings (if \code{as_wkb = FALSE}). Otherwise, a single geometry
+is created from the input points. Only an empty GeometryCollection can be
+created with this function, for subsequent use with \code{g_add_geom()}.
 
 \code{g_add_geom()} adds a geometry to a geometry container, e.g.,
-POLYGON to POLYGON (to add an interior ring), POINT to MULTIPOINT,
-LINESTRING to MULTILINESTRING, POLYGON to MULTIPOLYGON.
+Polygon to Polygon (to add an interior ring), Point to MultiPoint,
+LineString to MultiLineString, Polygon to MultiPolygon, or mixed
+geometry types to a GeometryCollection. Returns a new geometry, i.e,
+the container geometry is not modified.
 }
 \note{
 A POLYGON can be created for a single ring which will be the
 exterior ring. Additional POLYGONs can be created and added to an
-existing POLYGON with \code{\link[=g_add_geom]{g_add_geom()}}. These will become interior rings.
-Alternatively, an empty polygon can be created with
-\code{g_create("POLYGON", NULL)}, followed by creation and addition of
-POLYGONs. In that case, the first added POLYGON will be the exterior
-ring. The next ones will be the interior rings.
+existing POLYGON with \code{g_add_geom()}. These will become interior rings.
+Alternatively, an empty polygon can be created with \code{g_create("POLYGON")},
+followed by creation and addition of POLYGONs as subgeometries. In that
+case, the first added POLYGON will be the exterior ring. The next ones will
+be the interior rings.
+
+Only an empty GeometryCollection can be created with \code{g_create()}, which
+can then be used as a container with \code{g_add_geom()}. If given, input points
+will be ignored by \code{g_create()} if \code{geom_type = "GEOMETRYCOLLECTION"}.
 }
 \examples{
 # raw vector of WKB by default

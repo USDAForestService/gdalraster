@@ -270,8 +270,9 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
                          bool as_iso = false,
                          const std::string &byte_order = "LSB") {
 // Create a geometry from a list of points (vertices as xy, xyz or xyzm).
-// Currently for POINT, MULTIPOINT, LINESTRING, LINEARRING, POLYGON
-// Only simple polygons composed of one ring are supported
+// Currently for POINT, MULTIPOINT, LINESTRING, LINEARRING, POLYGON, and
+// creating empty GEOMETRYCOLLECTION for subsequent g_add_geom().
+// Only simple polygons composed of one ring are supported.
 // See also g_add_geom(), e.g., add LINEARRING (interior ring) to POLYGON.
 
     Rcpp::NumericMatrix pts_in(0, 2);
@@ -295,26 +296,31 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
 
     OGRGeometryH hGeom = nullptr;
     OGRGeometryH hGeom_out = nullptr;
+    OGRwkbGeometryType eType = wkbUnknown;
 
     if (EQUAL(geom_type.c_str(), "POINT")) {
-        geom_type = "POINT";
+        eType = wkbPoint;
         hGeom = OGR_G_CreateGeometry(wkbPoint);
     }
     else if (EQUAL(geom_type.c_str(), "MULTIPOINT")) {
-        geom_type = "MULTIPOINT";
+        eType = wkbMultiPoint;
         hGeom = OGR_G_CreateGeometry(wkbMultiPoint);
     }
     else if (EQUAL(geom_type.c_str(), "LINESTRING")) {
-        geom_type = "LINESTRING";
+        eType = wkbLineString;
         hGeom = OGR_G_CreateGeometry(wkbLineString);
     }
     else if (EQUAL(geom_type.c_str(), "LINEARRING")) {
-        geom_type = "LINEARRING";
+        eType = wkbLinearRing;
         hGeom = OGR_G_CreateGeometry(wkbLinearRing);
     }
     else if (EQUAL(geom_type.c_str(), "POLYGON")) {
-        geom_type = "POLYGON";
+        eType = wkbPolygon;
         hGeom = OGR_G_CreateGeometry(wkbLinearRing);
+    }
+    else if (EQUAL(geom_type.c_str(), "GEOMETRYCOLLECTION")) {
+        eType = wkbGeometryCollection;
+        hGeom = OGR_G_CreateGeometry(wkbGeometryCollection);
     }
     else {
         Rcpp::stop("geometry type not supported");
@@ -323,8 +329,13 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
     if (hGeom == nullptr)
         Rcpp::stop("failed to create geometry object");
 
-    if (nPts == 1) {
-        if (geom_type != "POINT" && geom_type != "MULTIPOINT") {
+    if (eType == wkbGeometryCollection && nPts > 0) {
+        Rcpp::Rcerr << "g_create() only creates an empty geometry collection, "
+            << "ignoring input points" << std::endl;
+    }
+
+    if (nPts == 1 && eType != wkbGeometryCollection) {
+        if (eType != wkbPoint && eType != wkbMultiPoint) {
             OGR_G_DestroyGeometry(hGeom);
             Rcpp::stop("invalid number of points for geometry type");
         }
@@ -340,17 +351,17 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
             OGR_G_SetPoint_2D(hGeom, 0, pts_in(0, 0), pts_in(0, 1));
         }
     }
-    else if (nPts > 0) {
-        if (geom_type == "POINT") {
+    else if (nPts > 0 && eType != wkbGeometryCollection) {
+        if (eType == wkbPoint) {
             OGR_G_DestroyGeometry(hGeom);
             Rcpp::stop("point geometry cannot have more than one xy");
         }
-        if ((geom_type == "POLYGON" || geom_type == "LINEARRING") && nPts < 4) {
+        if ((eType == wkbPolygon || eType == wkbLinearRing) && nPts < 4) {
             OGR_G_DestroyGeometry(hGeom);
             Rcpp::stop("polygon/linearring must have at least four points");
         }
 
-        if (geom_type == "MULTIPOINT") {
+        if (eType == wkbMultiPoint) {
             for (R_xlen_t i = 0; i < nPts; ++i) {
                 OGRGeometryH hPt = OGR_G_CreateGeometry(wkbPoint);
                 if (has_m) {
@@ -390,7 +401,7 @@ Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
         }
     }
 
-    if (geom_type != "POLYGON") {
+    if (eType != wkbPolygon) {
         hGeom_out = hGeom;
     }
     else {
