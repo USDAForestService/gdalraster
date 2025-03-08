@@ -2757,8 +2757,10 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
 
         OGRFieldDefnH hFieldDefn = nullptr;
         hFieldDefn = OGR_F_GetFieldDefnRef(hFeat, fld_idx);
-        if (hFieldDefn == nullptr)
+        if (hFieldDefn == nullptr) {
+            OGR_F_Destroy(hFeat);
             Rcpp::stop("could not obtain field definition");
+        }
 
         OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
         std::string msg_not_nullable =
@@ -2991,6 +2993,7 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
         }
     }
 
+    OGR_F_Destroy(hFeat);
     std::vector<std::map<R_xlen_t, int>> ret = {map_flds, map_geom_flds};
     return ret;
 }
