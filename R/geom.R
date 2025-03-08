@@ -484,12 +484,16 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 #' non-empty geometries.
 #'
 #' `g_is_valid()` tests whether a geometry is valid. Returns a logical vector
-#' of the same length as the number of input geometries containing `TRUE` for
-#' the corresponding geometries that are valid or `FALSE` for invalid
-#' geometries.
+#' analogous to the above for `g_is_empty()`.
 #'
-#' `g_name()` returns geometry type names in a character vector of the same
-#' length as the number of input geometries.
+#' `g_is_3D()` checks whether a geometry has Z coordinates. Returns a logical
+#' vector analogous to the above for `g_is_empty()`.
+#'
+#' `g_is_measured()` checks whether a geometry is measured (has M values).
+#' Returns a logical vector analogous to the above for `g_is_empty()`.
+#'
+#' `g_name()` returns the WKT type names of the input geometries in a character
+#' vector of the same length as the number of input geometries.
 #'
 #' `g_summary()` returns text summaries of WKB/WKT geometries in a
 #' character vector of the same length as the number of input
@@ -509,6 +513,17 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 #' g3 <- "POLYGON ((0 0, 10 10, 10 0, 0 1))"
 #' g_is_valid(c(g1, g2, g3))
 #'
+#' g_is_3D(g1)
+#' g_is_measured(g1)
+#'
+#' pt_xyz <- g_create("POINT", c(1, 9, 100))
+#' g_is_3D(pt_xyz)
+#' g_is_measured(pt_xyz)
+#'
+#' pt_xyzm <- g_create("POINT", c(1, 9, 100, 2000))
+#' g_is_3D(pt_xyzm)
+#' g_is_measured(pt_xyzm)
+#'
 #' f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
 #' lyr <- new(GDALVector, f, "mtbs_perims")
 #'
@@ -525,62 +540,6 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 #' }
 #'
 #' lyr$close()
-#' @export
-g_name <- function(geom, quiet = FALSE) {
-    # quiet
-    if (is.null(quiet))
-        quiet <- FALSE
-    if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
-
-    ret <- NULL
-    if (is.raw(geom)) {
-        ret <- .g_name(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
-        ret <- sapply(geom, .g_name, quiet)
-    } else if (is.character(geom)) {
-        if (length(geom) == 1) {
-            ret <- .g_name(g_wk2wk(geom), quiet)
-        } else {
-            ret <- sapply(g_wk2wk(geom), .g_name, quiet)
-        }
-    } else {
-        stop("'geom' must be a character vector, raw vector, or list",
-             call. = FALSE)
-    }
-
-    return(ret)
-}
-
-#' @name g_query
-#' @export
-g_summary <- function(geom, quiet = FALSE) {
-    # quiet
-    if (is.null(quiet))
-        quiet <- FALSE
-    if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
-
-    ret <- NULL
-    if (is.raw(geom)) {
-        ret <- .g_summary(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
-        ret <- sapply(geom, .g_summary, quiet)
-    } else if (is.character(geom)) {
-        if (length(geom) == 1) {
-            ret <- .g_summary(g_wk2wk(geom), quiet)
-        } else {
-            ret <- sapply(g_wk2wk(geom), .g_summary, quiet)
-        }
-    } else {
-        stop("'geom' must be a character vector, raw vector, or list",
-             call. = FALSE)
-    }
-
-    return(ret)
-}
-
-#' @name g_query
 #' @export
 g_is_empty <- function(geom, quiet = FALSE) {
     # quiet
@@ -627,6 +586,118 @@ g_is_valid <- function(geom, quiet = FALSE) {
             ret <- .g_is_valid(g_wk2wk(geom), quiet)
         } else {
             ret <- sapply(g_wk2wk(geom), .g_is_valid, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' @name g_query
+#' @export
+g_is_3D <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(geom)) {
+        ret <- .g_is_3D(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_is_3D, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_is_3D(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_is_3D, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' @name g_query
+#' @export
+g_is_measured <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(geom)) {
+        ret <- .g_is_measured(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_is_measured, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_is_measured(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_is_measured, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' @name g_query
+#' @export
+g_name <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(geom)) {
+        ret <- .g_name(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_name, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_name(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_name, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' @name g_query
+#' @export
+g_summary <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical scalar", call. = FALSE)
+
+    ret <- NULL
+    if (is.raw(geom)) {
+        ret <- .g_summary(geom, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        ret <- sapply(geom, .g_summary, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_summary(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_summary, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",

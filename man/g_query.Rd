@@ -2,19 +2,25 @@
 % Please edit documentation in R/geom.R
 \name{g_query}
 \alias{g_query}
-\alias{g_name}
-\alias{g_summary}
 \alias{g_is_empty}
 \alias{g_is_valid}
+\alias{g_is_3D}
+\alias{g_is_measured}
+\alias{g_name}
+\alias{g_summary}
 \title{Obtain information about WKB/WKT geometries}
 \usage{
-g_name(geom, quiet = FALSE)
-
-g_summary(geom, quiet = FALSE)
-
 g_is_empty(geom, quiet = FALSE)
 
 g_is_valid(geom, quiet = FALSE)
+
+g_is_3D(geom, quiet = FALSE)
+
+g_is_measured(geom, quiet = FALSE)
+
+g_name(geom, quiet = FALSE)
+
+g_summary(geom, quiet = FALSE)
 }
 \arguments{
 \item{geom}{Either a raw vector of WKB or list of raw vectors, or a
@@ -34,12 +40,16 @@ vector of the same length as the number of input geometries containing
 non-empty geometries.
 
 \code{g_is_valid()} tests whether a geometry is valid. Returns a logical vector
-of the same length as the number of input geometries containing \code{TRUE} for
-the corresponding geometries that are valid or \code{FALSE} for invalid
-geometries.
+analogous to the above for \code{g_is_empty()}.
 
-\code{g_name()} returns geometry type names in a character vector of the same
-length as the number of input geometries.
+\code{g_is_3D()} checks whether a geometry has Z coordinates. Returns a logical
+vector analogous to the above for \code{g_is_empty()}.
+
+\code{g_is_measured()} checks whether a geometry is measured (has M values).
+Returns a logical vector analogous to the above for \code{g_is_empty()}.
+
+\code{g_name()} returns the WKT type names of the input geometries in a character
+vector of the same length as the number of input geometries.
 
 \code{g_summary()} returns text summaries of WKB/WKT geometries in a
 character vector of the same length as the number of input
@@ -54,6 +64,17 @@ g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
 g2 <- "POLYGON ((0 0, 10 10, 10 0))"
 g3 <- "POLYGON ((0 0, 10 10, 10 0, 0 1))"
 g_is_valid(c(g1, g2, g3))
+
+g_is_3D(g1)
+g_is_measured(g1)
+
+pt_xyz <- g_create("POINT", c(1, 9, 100))
+g_is_3D(pt_xyz)
+g_is_measured(pt_xyz)
+
+pt_xyzm <- g_create("POINT", c(1, 9, 100, 2000))
+g_is_3D(pt_xyzm)
+g_is_measured(pt_xyzm)
 
 f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
 lyr <- new(GDALVector, f, "mtbs_perims")
