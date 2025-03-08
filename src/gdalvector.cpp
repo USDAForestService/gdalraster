@@ -302,6 +302,8 @@ Rcpp::List GDALVector::testCapability() const {
 #if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 6, 0)
         Rcpp::Named("FastGetArrowStream") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCFastGetArrowStream)),
+#endif
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 8, 0)
         Rcpp::Named("FastWriteArrowBatch") = static_cast<bool>(
             OGR_L_TestCapability(m_hLayer, OLCFastWriteArrowBatch)),
 #endif
