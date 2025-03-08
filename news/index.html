@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9239</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9240</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9239" id="gdalraster-11209239-dev">gdalraster 1.12.0.9239 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209239-dev"></a></h2>
-<ul><li><p>geom api: support GeometryCollection in <code><a href="../reference/g_factory.html">g_create()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/653" class="external-link">#653</a>) (2025-03-08)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9240" id="gdalraster-11209240-dev">gdalraster 1.12.0.9240 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209240-dev"></a></h2>
+<ul><li><p><code><a href="../reference/transform_xy.html">transform_xy()</a></code> / <code><a href="../reference/inv_project.html">inv_project()</a></code>: account for behavior change at GDAL 3.11 (<a href="https://github.com/USDAForestService/gdalraster/issues/631" class="external-link">#631</a>) (2025-03-08)</p></li>
+<li><p>geom api: support GeometryCollection in <code><a href="../reference/g_factory.html">g_create()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/653" class="external-link">#653</a>) (2025-03-08)</p></li>
 <li><p>(internal) [Valgrind] Fix memory leak in <code>validateFeatInput_()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/652" class="external-link">#652</a>) (2025-03-07)</p></li>
 <li><p>geom api: add <code><a href="../reference/g_query.html">g_is_3D()</a></code> and <code><a href="../reference/g_query.html">g_is_measured()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/650" class="external-link">#650</a>) (2025-03-07)</p></li>
 <li><p>Account for possible <code>convertToLinear</code> and/or <code>promoteToMulti</code> in the GIS attributes attached to vector read outputs (<a href="https://github.com/USDAForestService/gdalraster/issues/645" class="external-link">#645</a>) (2025-03-05)</p></li>
