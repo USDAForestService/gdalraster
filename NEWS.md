@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9238 (dev)
+# gdalraster 1.12.0.9239 (dev)
+
+* geom api: support GeometryCollection in `g_create()` (#653) (2025-03-08)
 
 * (internal) [Valgrind] Fix memory leak in `validateFeatInput_()` (#652) (2025-03-07)
 
