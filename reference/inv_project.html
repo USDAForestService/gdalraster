@@ -96,8 +96,7 @@ supported values).</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Numeric matrix of longitude, latitude (potentially also with z,
-or z and t columns). An error is raised if the transformation cannot be
-performed.</p>
+or z and t columns).</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -106,6 +105,13 @@ by <code>srs</code> will be used. If a specific geographic coordinate system is
 desired, then <code>well_known_gcs</code> can be set to one of the values below:</p><table class="table table"><tr><td>EPSG:n</td><td>where n is the code of a geographic coordinate system</td></tr><tr><td>WGS84</td><td>same as EPSG:4326</td></tr><tr><td>WGS72</td><td>same as EPSG:4322</td></tr><tr><td>NAD83</td><td>same as EPSG:4269</td></tr><tr><td>NAD27</td><td>same as EPSG:4267</td></tr><tr><td>CRS84</td><td>same as WGS84</td></tr><tr><td>CRS72</td><td>same as WGS72</td></tr><tr><td>CRS27</td><td>same as NAD27</td></tr></table><p>The coordinates returned by <code>inv_project()</code>will always be in longitude,
 latitude order (traditional GIS order) regardless of the axis order defined
 for the GCS names above.</p>
+    </div>
+    <div class="section level2">
+    <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
+    <p>Input points that contain missing values (<code>NA</code>) will be assigned <code>NA</code> in
+the output and a warning emitted. Input points that fail to transform
+with the GDAL API call will also be assigned <code>NA</code> in the ouput with a
+specific warning indicating that case.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -141,7 +147,6 @@ for the GCS names above.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [8,] -113.2461 46.05405</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [9,] -113.2279 46.07214</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [10,] -113.2733 46.06607</span>
-<span class="r-in"><span><span class="co">#' @export</span></span></span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

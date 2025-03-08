@@ -3,11 +3,11 @@
 projection. The input points may optionally have z vertices (x, y, z) or
 time values (x, y, z, t).
 Wrapper for OGRCoordinateTransformation::Transform() in the GDAL Spatial
-Reference SYstem C++ API."><meta property="og:description" content="transform_xy() transforms geospatial x, y coordinates to a new
+Reference System C++ API."><meta property="og:description" content="transform_xy() transforms geospatial x, y coordinates to a new
 projection. The input points may optionally have z vertices (x, y, z) or
 time values (x, y, z, t).
 Wrapper for OGRCoordinateTransformation::Transform() in the GDAL Spatial
-Reference SYstem C++ API."></head><body>
+Reference System C++ API."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -61,7 +61,7 @@ Reference SYstem C++ API."></head><body>
 projection. The input points may optionally have z vertices (x, y, z) or
 time values (x, y, z, t).
 Wrapper for <code>OGRCoordinateTransformation::Transform()</code> in the GDAL Spatial
-Reference SYstem C++ API.</p>
+Reference System C++ API.</p>
     </div>
 
     <div class="section level2">
@@ -102,6 +102,10 @@ specified by <code>srs_to</code> (potentially also with z, or z and t columns).<
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
     <p><code>transform_xy()</code> uses traditional GIS order for the input and output xy
 (i.e., longitude/latitude ordered for geographic coordinates).</p>
+<p>Input points that contain missing values (<code>NA</code>) will be assigned <code>NA</code> in
+the output and a warning emitted. Input points that fail to transform
+with the GDAL API call will also be assigned <code>NA</code> in the ouput with a
+specific warning indicating that case.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
