@@ -67,41 +67,26 @@
   \code{\link[=inv_project]{inv_project()}},
   \code{\link[=transform_bounds]{transform_bounds()}}
 
-  \item spatial reference functions:
+  \item spatial reference systems:
   \code{\link[=srs_convert]{srs_convert}},
   \code{\link[=srs_query]{srs_query}}
 
-  \item geometry convenience functions:
+  \item geometry API:
   \code{\link[=bbox_from_wkt]{bbox_from_wkt()}},
   \code{\link[=bbox_to_wkt]{bbox_to_wkt()}},
   \code{\link[=bbox_intersect]{bbox_intersect()}},
   \code{\link[=bbox_union]{bbox_union()}},
   \code{\link[=bbox_transform]{bbox_transform()}},
-  \code{\link[=g_area]{g_area()}},
+  \code{\link[=g_factory]{g_factory}},
+  \code{\link[=g_query]{g_query}},
+  \code{\link[=g_binary_pred]{g_binary_pred}},
+  \code{\link[=g_binary_op]{g_binary_op}},
+  \code{\link[=g_measures]{g_measures}},
   \code{\link[=g_buffer]{g_buffer()}},
-  \code{\link[=g_centroid]{g_centroid()}},
-  \code{\link[=g_contains]{g_contains()}},
   \code{\link[=g_coords]{g_coords()}},
-  \code{\link[=g_crosses]{g_crosses()}},
-  \code{\link[=g_difference]{g_difference()}},
-  \code{\link[=g_disjoint]{g_disjoint()}},
-  \code{\link[=g_distance]{g_distance()}},
   \code{\link[=g_envelope]{g_envelope()}},
-  \code{\link[=g_equals]{g_equals()}},
-  \code{\link[=g_intersection]{g_intersection()}},
-  \code{\link[=g_intersects]{g_intersects()}},
-  \code{\link[=g_is_empty]{g_is_empty()}},
-  \code{\link[=g_is_valid]{g_is_valid()}},
-  \code{\link[=g_length]{g_length()}},
   \code{\link[=g_make_valid]{g_make_valid()}},
-  \code{\link[=g_name]{g_name()}},
-  \code{\link[=g_overlaps]{g_overlaps()}},
-  \code{\link[=g_summary]{g_summary()}},
-  \code{\link[=g_sym_difference]{g_sym_difference()}},
-  \code{\link[=g_touches]{g_touches()}},
   \code{\link[=g_transform]{g_transform()}},
-  \code{\link[=g_union]{g_union()}},
-  \code{\link[=g_within]{g_within()}},
   \code{\link[=g_wk2wk]{g_wk2wk()}},
   \code{\link[=geos_version]{geos_version()}}
 

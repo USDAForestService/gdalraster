@@ -545,6 +545,20 @@ test_that("geometry properties are correct", {
     expect_equal(g_is_empty(wkt_vec), expected_value)
     expect_equal(g_is_empty(wkb_list), expected_value)
 
+    # 3D/measured
+    # 2D
+    pt1 <- g_create("POINT", c(1, 9))
+    expect_false(g_is_3D(pt1))
+    expect_false(g_is_measured(pt1))
+    # xyz
+    pt2 <- g_create("POINT", c(1, 9, 0))
+    expect_true(g_is_3D(pt2))
+    expect_false(g_is_measured(pt2))
+    # xyzm
+    pt3 <- g_create("POINT", c(1, 9, 0, 2000))
+    expect_true(g_is_3D(pt3))
+    expect_true(g_is_measured(pt3))
+
     # g_envelope
     bb1_2 <- c(0, 0, 10, 10)
     bb3 <- c(0, 0, 0, 0)

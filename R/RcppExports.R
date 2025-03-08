@@ -2167,6 +2167,16 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_is_3D <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_is_3D`, geom, quiet)
+}
+
+#' @noRd
+.g_is_measured <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_is_measured`, geom, quiet)
+}
+
+#' @noRd
 .g_name <- function(geom, quiet = FALSE) {
     .Call(`_gdalraster_g_name`, geom, quiet)
 }

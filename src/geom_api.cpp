@@ -707,6 +707,56 @@ Rcpp::LogicalVector g_is_empty(const Rcpp::RawVector &geom,
 }
 
 //' @noRd
+// [[Rcpp::export(name = ".g_is_3D")]]
+Rcpp::LogicalVector g_is_3D(const Rcpp::RawVector &geom,
+                               bool quiet = false) {
+// See if the geometry has Z coordinates.
+
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return NA_LOGICAL;
+    }
+
+    bool ret = false;
+    ret = OGR_G_Is3D(hGeom);
+    OGR_G_DestroyGeometry(hGeom);
+    return ret;
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_is_measured")]]
+Rcpp::LogicalVector g_is_measured(const Rcpp::RawVector &geom,
+                               bool quiet = false) {
+// See if the geometry is measured (M values).
+
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return NA_LOGICAL;
+    }
+
+    bool ret = false;
+    ret = OGR_G_IsMeasured(hGeom);
+    OGR_G_DestroyGeometry(hGeom);
+    return ret;
+}
+
+//' @noRd
 // [[Rcpp::export(name = ".g_name")]]
 SEXP g_name(const Rcpp::RawVector &geom, bool quiet = false) {
 // extract the geometry type name from a WKB/WKT geometry
