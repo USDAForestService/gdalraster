@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9240 (dev)
+# gdalraster 1.12.0.9250 (dev)
+
+* `ogr_proc()`: rename argument `return_lyr_obj` to `return_obj`, to be consistent with other functions that optionally return a `GDALVector` or `GDALRaster` object (`ogr_proc()` is not in a release version yet so not designated as a breaking change) (2025-03-09)
 
 * `transform_xy()` / `inv_project()`: account for behavior change at GDAL 3.11 (#631) (2025-03-08)
 
@@ -185,7 +187,7 @@ linear geometry types by potentially approximating them (#629) (2025-03-04)
 
 * add `vsi_get_signed_url()`: return a signed URL for a supplied VSI filename, wrapper of `VSIGetSignedURL()` in the GDAL API (2024-06-20)
 
-* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`; add the `-srcband` and `-dstband` command-line options in the documentation for `warp()`; add [Development practices](https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices) in CONTRIBUTING.md; add the OpenSSF best practices badge in README; add `fig.alt` text to articles for web accessibility; add the OpenSSF Scorecard badge in README; add example in `ogr2ogr()` for dissolve features based on an attribute value; code that cleans up temp files in the examples is wrapped in `\dontshow{}`; minor updates for `g_transform()`
+* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`; add the `-srcband` and `-dstband` command-line options in the documentation for `warp()`; add [Development practices](https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices) in CONTRIBUTING.md; add the OpenSSF best practices badge in README; add `fig.alt` text to articles for web accessibility; add the OpenSSF Scorecard badge in README; add example in `ogr2ogr()` for dissolve features based on an attribute value; code that cleans up temp files in the examples is wrapped in `\dontshow{}`; minor updates for `g_transform()`; update descriptions for the C++ exposed classes and emphasize lack of named argument support; restructure and edit `ogr_define`
 
 # gdalraster 1.12.0
 
