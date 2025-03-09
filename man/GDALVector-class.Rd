@@ -30,25 +30,30 @@ unless \code{"OGRSQL"} is explicitly passed as the dialect. The \code{"SQLITE"}
 dialect can also be used.}
 }
 \value{
-An object of class \code{GDALVector} which contains pointers to the
-opened layer and the dataset that owns it, and methods that operate on
-the layer as described in Details. \code{GDALVector} is a C++ class exposed
-directly to R (via \code{RCPP_EXPOSED_CLASS}). Fields and methods of the class
-are accessed using the \code{$} operator. Note that all arguments to exposed
-class methods are required (but do not have to be named). The read/write
-fields are per-object settings which can be changed as needed during the
-lifetime of the object.
+An object of class \code{GDALVector}, which contains pointers to the
+opened layer and the GDAL dataset that owns it. Class methods that operate
+on the layer are described in Details, along with a set of writable fields
+for per-object settings. Values may be assigned to the class fields as
+needed during the lifetime of the object (i.e., by regular \verb{<-} or \code{=}
+assignment).
 }
 \description{
 \code{GDALVector} provides an interface for accessing a vector layer in a GDAL
 dataset and calling methods on the underlying \code{OGRLayer} object.
 An object of class \code{GDALVector} persists an open connection to the dataset,
-and exposes methods that retrieve layer information, set attribute and
-spatial filters, read feature data via traversal by traditional row-based
-cursor including a direct analog of \code{DBI::dbFetch()}, read via
-column-oriented Arrow Array stream, write new features in a layer,
-edit/overwrite existing features, upsert, and delete. Supports transactions
-providing the option to rollback uncommitted data modifications.
+and exposes methods to: retrieve layer information, set attribute and
+spatial filters, traverse and read feature data by traditional row-based
+cursor (including an analog of \code{DBI::dbFetch()}), read via column-oriented
+Arrow Array stream, write new features in a layer, edit/overwrite existing
+features, upsert, and delete features, and perform data manipulation within
+transactions.
+
+\code{GDALVector} is a C++ class exposed directly to R (via \code{RCPP_EXPOSED_CLASS}).
+Fields and methods of the class are accessed using the \code{$} operator. \strong{Note
+that all arguments to class methods are required and must be given in the
+order documented.} Most \code{GDALVector} methods take zero or one argument, so
+this is usually not an issue. Class constructors are the main exception.
+Naming the arguments is optional but may be preferred for readability.
 }
 \section{Usage (see Details)}{
 
@@ -558,7 +563,7 @@ See also the \verb{$testCapability()} method above to check whether the format
 driver provides a specialized implementation (\code{FastGetArrowStream}), as
 opposed to the (slower) default implementation. Note however that
 specialized implementations may fallback to the default when attribute or
-spatlal filters are in use.
+spatial filters are in use.
 (See the GDAL documentation for
 \href{https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_GetArrowStream9OGRLayerHP16ArrowArrayStreamPPc}{\code{OGR_L_GetArrowStream()}}.)
 
