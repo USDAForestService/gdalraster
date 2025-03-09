@@ -124,22 +124,22 @@
 #' @param mode_opt Optional character vector of `"NAME=VALUE"` pairs that
 #' specify processing options. Available options depend on the value of `mode`
 #' (see Details).
-#' @param overwrite Logical scalar. `TRUE` to overwrite the output layer if it
+#' @param overwrite Logical value. `TRUE` to overwrite the output layer if it
 #' already exists. Defaults to `FALSE`.
-#' @param quiet Logical scalar. If `TRUE`, a progress bar will not be
+#' @param quiet Logical value. If `TRUE`, a progress bar will not be
 #' displayed. Defaults to `FALSE`.
-#' @param return_lyr_obj Logical scalar. If `TRUE` (the default), an object of
+#' @param return_obj Logical value. If `TRUE` (the default), an object of
 #' class [`GDALVector`][GDALVector] opened on the output layer will be returned,
-#' otherwise returns a logical value.
+#' otherwise the function returns a logical value.
 #'
 #' @returns Upon successful completion, an object of class
 #' [`GDALVector`][GDALVector] is returned by default (if
-#' `return_lyr_obj = TRUE`), or logical `TRUE` is returned (invisibly) if
-#' `return_lyr_obj = FALSE`.
+#' `return_obj = TRUE`), or logical `TRUE` is returned (invisibly) if
+#' `return_obj = FALSE`.
 #' Logical `FALSE` is returned (invisibly) if an error occurs during processing.
 #'
 #' @note
-#' The first geometry field is always used.
+#' The first geometry field on a layer is always used.
 #'
 #' For best performance use the minimum amount of features in the method layer
 #' and copy into a memory layer.
@@ -161,9 +161,8 @@
 #' lyr1$getFeatureCount()
 #'
 #' # second layer for the 1988 North Fork fire perimeter
-#' sql <- paste0("SELECT incid_name, ig_year, geom ",
-#'               "FROM mtbs_perims ",
-#'               "WHERE incid_name = 'NORTH FORK'")
+#' sql <- "SELECT incid_name, ig_year, geom FROM mtbs_perims
+#'         WHERE incid_name = 'NORTH FORK'"
 #' lyr2 <- new(GDALVector, dsn, sql)
 #' lyr2$getFeatureCount()
 #'
@@ -182,7 +181,6 @@
 #'                     mode_opt = opt)
 #'
 #' # the output layer has attributes of both the input and method layers
-#' lyr_out$returnGeomAs <- "TYPE_NAME"
 #' d <- lyr_out$fetch(-1)
 #' print(d)
 #'
@@ -204,7 +202,7 @@ ogr_proc <- function(mode,
                      mode_opt = NULL,
                      overwrite = FALSE,
                      quiet = FALSE,
-                     return_lyr_obj = TRUE) {
+                     return_obj = TRUE) {
 
     if (is(input_lyr, "Rcpp_GDALVector")) {
         if (!input_lyr$isOpen()) {
@@ -344,7 +342,7 @@ ogr_proc <- function(mode,
         stop("invalid 'mode'", call. = FALSE)
     }
 
-    if (ret && return_lyr_obj) {
+    if (ret && return_obj) {
         out_lyr$open(read_only = TRUE)
         return(out_lyr)
     } else {
