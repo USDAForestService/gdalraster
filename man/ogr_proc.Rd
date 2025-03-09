@@ -17,7 +17,7 @@ ogr_proc(
   mode_opt = NULL,
   overwrite = FALSE,
   quiet = FALSE,
-  return_lyr_obj = TRUE
+  return_obj = TRUE
 )
 }
 \arguments{
@@ -59,21 +59,21 @@ for \code{out_layer} (\code{"NAME=VALUE"} pairs).}
 specify processing options. Available options depend on the value of \code{mode}
 (see Details).}
 
-\item{overwrite}{Logical scalar. \code{TRUE} to overwrite the output layer if it
+\item{overwrite}{Logical value. \code{TRUE} to overwrite the output layer if it
 already exists. Defaults to \code{FALSE}.}
 
-\item{quiet}{Logical scalar. If \code{TRUE}, a progress bar will not be
+\item{quiet}{Logical value. If \code{TRUE}, a progress bar will not be
 displayed. Defaults to \code{FALSE}.}
 
-\item{return_lyr_obj}{Logical scalar. If \code{TRUE} (the default), an object of
+\item{return_obj}{Logical value. If \code{TRUE} (the default), an object of
 class \code{\link{GDALVector}} opened on the output layer will be returned,
-otherwise returns a logical value.}
+otherwise the function returns a logical value.}
 }
 \value{
 Upon successful completion, an object of class
 \code{\link{GDALVector}} is returned by default (if
-\code{return_lyr_obj = TRUE}), or logical \code{TRUE} is returned (invisibly) if
-\code{return_lyr_obj = FALSE}.
+\code{return_obj = TRUE}), or logical \code{TRUE} is returned (invisibly) if
+\code{return_obj = FALSE}.
 Logical \code{FALSE} is returned (invisibly) if an error occurs during processing.
 }
 \description{
@@ -174,7 +174,7 @@ on-the-fly reprojection is done. When an output layer is created it will have
 the SRS of \code{input_lyr}.
 }
 \note{
-The first geometry field is always used.
+The first geometry field on a layer is always used.
 
 For best performance use the minimum amount of features in the method layer
 and copy into a memory layer.
@@ -189,9 +189,8 @@ lyr1$setAttributeFilter("ig_year >= 2000")
 lyr1$getFeatureCount()
 
 # second layer for the 1988 North Fork fire perimeter
-sql <- paste0("SELECT incid_name, ig_year, geom ",
-              "FROM mtbs_perims ",
-              "WHERE incid_name = 'NORTH FORK'")
+sql <- "SELECT incid_name, ig_year, geom FROM mtbs_perims
+        WHERE incid_name = 'NORTH FORK'"
 lyr2 <- new(GDALVector, dsn, sql)
 lyr2$getFeatureCount()
 
@@ -210,7 +209,6 @@ lyr_out <- ogr_proc(mode = "Intersection",
                     mode_opt = opt)
 
 # the output layer has attributes of both the input and method layers
-lyr_out$returnGeomAs <- "TYPE_NAME"
 d <- lyr_out$fetch(-1)
 print(d)
 
