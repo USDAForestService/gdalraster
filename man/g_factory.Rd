@@ -63,7 +63,7 @@ These functions use the GEOS library via GDAL headers.
 \code{g_create()} creates a geometry object from the given point(s) and returns
 a raw vector of WKB (the default) or a character string of WKT. Currently
 supports creating Point, MultiPoint, LineString, Polygon, and
-GeomteryCollection.
+GeometryCollection.
 If multiple input points are given for creating Point type, then multiple
 geometries will be returned as a list of WKB raw vectors, or character
 vector of WKT strings (if \code{as_wkb = FALSE}). Otherwise, a single geometry
