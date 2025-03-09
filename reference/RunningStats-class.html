@@ -4,12 +4,18 @@ Mean and variance are calculated with Welford's online algorithm
 (https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance).
 The min, max, sum and count are also tracked. The input data values are not
 stored in memory, so this class can be used to compute statistics for very
-large data streams."><meta property="og:description" content="RunningStats computes summary statistics on a data stream efficiently.
+large data streams.
+RunningStats is a C++ class exposed directly to R (via
+RCPP_EXPOSED_CLASS). Methods of the class are accessed using the $
+operator."><meta property="og:description" content="RunningStats computes summary statistics on a data stream efficiently.
 Mean and variance are calculated with Welford's online algorithm
 (https://en.wikipedia.org/wiki/Algorithms_for_calculating_variance).
 The min, max, sum and count are also tracked. The input data values are not
 stored in memory, so this class can be used to compute statistics for very
-large data streams."></head><body>
+large data streams.
+RunningStats is a C++ class exposed directly to R (via
+RCPP_EXPOSED_CLASS). Methods of the class are accessed using the $
+operator."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -65,6 +71,9 @@ Mean and variance are calculated with Welford's online algorithm
 The min, max, sum and count are also tracked. The input data values are not
 stored in memory, so this class can be used to compute statistics for very
 large data streams.</p>
+<p><code>RunningStats</code> is a C++ class exposed directly to R (via
+<code>RCPP_EXPOSED_CLASS</code>). Methods of the class are accessed using the <code>$</code>
+operator.</p>
     </div>
 
 
@@ -83,11 +92,8 @@ default) or <code>FALSE</code> to retain <code>NA</code>.</p></dd>
 maintains the current minimum, maximum, mean, variance, sum and count of
 values that have been read from the stream. It can be updated repeatedly
 with new values (i.e., chunks of data read from the input stream), but its
-memory footprint is negligible. Class methods for updating with new values
-and retrieving current values of statistics are described in Details.
-<code>RunningStats</code> is a C++ class exposed directly to R (via
-<code>RCPP_EXPOSED_CLASS</code>). Methods of the class are accessed in R using the <code>$</code>
-operator.</p>
+memory footprint is negligible. Class methods for updating with new values,
+and retrieving the current values of statistics, are described in Details.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>

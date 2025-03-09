@@ -6,14 +6,18 @@ This API abstracts binary file I/O across "regular" file systems, URLs,
 cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
 It provides analogs of several Standard C file I/O functions, allowing
 virtualization of disk I/O so that non-file data sources can be made to
-appear as files.'><meta property="og:description" content='VSIFile provides bindings to the GDAL VSIVirtualHandle API. Encapsulates a
+appear as files.
+VSIFile is a C++ class exposed directly to R (via RCPP_EXPOSED_CLASS).
+Methods of the class are accessed using the $ operator.'><meta property="og:description" content='VSIFile provides bindings to the GDAL VSIVirtualHandle API. Encapsulates a
 VSIVirtualHandle
 (https://gdal.org/en/stable/api/cpl_cpp.html#_CPPv416VSIVirtualHandle).
 This API abstracts binary file I/O across "regular" file systems, URLs,
 cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
 It provides analogs of several Standard C file I/O functions, allowing
 virtualization of disk I/O so that non-file data sources can be made to
-appear as files.'></head><body>
+appear as files.
+VSIFile is a C++ class exposed directly to R (via RCPP_EXPOSED_CLASS).
+Methods of the class are accessed using the $ operator.'></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -71,6 +75,8 @@ cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
 It provides analogs of several Standard C file I/O functions, allowing
 virtualization of disk I/O so that non-file data sources can be made to
 appear as files.</p>
+<p><code>VSIFile</code> is a C++ class exposed directly to R (via <code>RCPP_EXPOSED_CLASS</code>).
+Methods of the class are accessed using the <code>$</code> operator.</p>
     </div>
 
 
@@ -99,9 +105,7 @@ filesystem-dependent options (GDAL &gt;= 3.3, see Details).</p></dd>
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>An object of class <code>VSIFile</code> which contains a pointer to a
 <code>VSIVirtualHandle</code>, and methods that operate on the file as described in
-Details. <code>VSIFile</code> is a C++ class exposed directly to R (via
-<code>RCPP_EXPOSED_CLASS</code>). Methods of the class are accessed using the
-<code>$</code> operator.</p>
+Details.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
