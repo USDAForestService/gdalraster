@@ -2,11 +2,13 @@
 % Please edit documentation in R/ogr_define.R
 \name{ogr_define}
 \alias{ogr_define}
+\alias{ogr_def_layer}
 \alias{ogr_def_field}
 \alias{ogr_def_geom_field}
-\alias{ogr_def_layer}
 \title{OGR feature class definition for vector data}
 \usage{
+ogr_def_layer(geom_type, geom_fld_name = "geometry", srs = NULL)
+
 ogr_def_field(
   fld_type,
   fld_subtype = NULL,
@@ -18,69 +20,69 @@ ogr_def_field(
 )
 
 ogr_def_geom_field(geom_type, srs = NULL, is_nullable = NULL)
-
-ogr_def_layer(geom_type, geom_fld_name = "geometry", srs = NULL)
 }
 \arguments{
-\item{fld_type}{Character string containing the name of a field data type
-(e.g., \code{OFTInteger}, \code{OFTReal}, \code{OFTString}).}
-
-\item{fld_subtype}{Character string containing the name of a field subtype.
-One of  \code{OFSTNone} (the default), \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32},
-\code{OFSTJSON}, \code{OFSTUUID}.}
-
-\item{fld_width}{Optional integer scalar specifying max number of characters.}
-
-\item{fld_precision}{Optional integer scalar specifying number of digits
-after the decimal point.}
-
-\item{is_nullable}{Optional NOT NULL field constraint (logical scalar).
-Defaults to \code{TRUE}.}
-
-\item{is_unique}{Optional UNIQUE constraint on the field (logical scalar).
-Defaults to \code{FALSE}.}
-
-\item{default_value}{Optional default value for the field as a character
-string.}
-
 \item{geom_type}{Character string specifying a geometry type (see Details).}
+
+\item{geom_fld_name}{Character string specifying a geometry field name
+Defaults to \code{"geometry"}.}
 
 \item{srs}{Character string containing a spatial reference system definition
 as OGC WKT or other well-known format (e.g., the input formats usable with
 \code{\link[=srs_to_wkt]{srs_to_wkt()}}).}
 
-\item{geom_fld_name}{Character string specifying a geometry field name
-Defaults to \code{"geometry"}.}
+\item{fld_type}{Character string containing the name of a field data type
+(e.g., \code{OFTInteger}, \code{OFTInteger64}, \code{OFTReal}, \code{OFTString}).}
+
+\item{fld_subtype}{Character string containing the name of a field subtype.
+One of  \code{OFSTNone} (the default), \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32},
+\code{OFSTJSON}, \code{OFSTUUID}.}
+
+\item{fld_width}{Optional integer value specifying max number of characters.}
+
+\item{fld_precision}{Optional integer value specifying number of digits
+after the decimal point.}
+
+\item{is_nullable}{Optional NOT NULL field constraint (logical value).
+Defaults to \code{TRUE}.}
+
+\item{is_unique}{Optional UNIQUE constraint on the field (logical value).
+Defaults to \code{FALSE}.}
+
+\item{default_value}{Optional default value for the field as a character
+string.}
 }
 \description{
 This topic contains documentation and helper functions for defining an
 OGR feature class.
+A named list containing zero or more attribute field definitions, along with
+one or more geometry field definitions, comprise an OGR feature class
+definition (a.k.a. layer definition). \code{ogr_def_layer()} initializes such a
+list with a geometry type and (optionally) a spatial reference system.
+Attribute fields may then be added to the layer definition.
 \code{ogr_def_field()} creates an attribute field definition, a list
-containing the field data type and potentially other optional field
+containing the field's data type and potentially other optional field
 properties.
-\code{ogr_def_geom_field()} similarly creates a geometry field definition.
-A list containing zero or more attribute field definitions, along with one
-or more geometry field definitions, comprise an OGR feature class definition
-(a.k.a. layer definition). \code{ogr_def_layer()} initializes such a list with a
-geometry field. Attribute fields can be added to a feature class definition
-with calls to \code{ogr_def_field()} as in the examples.
+\code{ogr_def_geom_field()} similarly creates a geometry field definition. This
+might be used with certain vector formats that support multiple geometry
+columns (e.g., PostGIS).
 }
 \details{
 All features in an OGR Layer share a common schema (feature class), modeled
-in GDAL as OGR Feature Definition. The feature class definition includes the
-set of attribute fields and their data types and the geometry field(s).
-In R, a feature class definition is represented as a list, having as names
-the attribute/geometry field names, with each list element holding a field
-definition.
+in GDAL by its \code{OGRFeatureDefn} class. A feature class definition includes
+the set of attribute fields and their data types and the geometry field(s).
+In R, a feature class definition is represented as a named list, with names
+being the attribute/geometry field names, and each list element holding an
+attribute or geometry field definition.
 
-An attribute field definition is a list with named elements:
+The definition for an attribute field is a named list with elements:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{$type       : OGR Field Type ("OFTReal", "OFTString" etc.)
 $subtype    : optional ("OFSTBoolean", ...)
 $width      : optional max number of characters
 $precision  : optional number of digits after the decimal point
-$is_nullable: optional NOT NULL constraint (logical scalar)
-$is_unique  : optional UNIQUE constraint (logical scalar)
+$is_nullable: optional NOT NULL constraint (logical value)
+$is_unique  : optional UNIQUE constraint (logical value)
 $default    : optional default value as character string
 $is_geom    : FALSE (the default) for attribute fields
 }\if{html}{\out{</div>}}
@@ -110,16 +112,17 @@ or a driver-specific expression (that might be ignored by other drivers).
 For a datetime literal value, format should be
 \code{"'YYYY/MM/DD HH:MM:SS[.sss]'"} (considered as UTC time).
 
-A geometry field definition is a list with named elements:
+The definition for a geometry field is a named list with elements:
 
 \if{html}{\out{<div class="sourceCode">}}\preformatted{$type       : geom type ("Point", "Polygon", etc.)
 $srs        : optional spatial reference as WKT string
-$is_nullable: optional NOT NULL constraint (logical scalar)
+$is_nullable: optional NOT NULL constraint (logical value)
 $is_geom    : TRUE (required) for geometry fields
 }\if{html}{\out{</div>}}
 
 Typically, there is one geometry field on a layer, but some formats support
-more than one geometry column per table (e.g., PostGIS).
+more than one geometry column per table (e.g., "PostgreSQL / PostGIS" and
+"SQLite / Spatialite RDBMS").
 
 Geometry types are specified as a character string containing OGC WKT.
 Common types include: \code{Point}, \code{LineString}, \code{Polygon}, \code{MultiPoint},
@@ -151,21 +154,30 @@ it require all \emph{Feature} objects in a collection to have geometry of the
 same type (\url{https://geojson.org/}).
 }
 \examples{
+# create a SQLite data source, with SpatiaLite extensions if available
 dsn <- file.path(tempdir(), "test.sqlite")
 opt <- NULL
-if (has_spatialite())
+if (has_spatialite()) {
   opt <- "SPATIALITE=YES"
+}
+
+# This creates an empty data source. Note that we could also create a layer
+# at the same time in this function call, but for this example we do that
+# separately, to show creation of a layer on an existing data source.
 ogr_ds_create("SQLite", dsn, dsco = opt)
 
 # define a layer
-defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4326))
-defn$fld1_int64 <- ogr_def_field("OFTInteger64")
-defn$fld2_string <- ogr_def_field("OFTString")
+defn <- ogr_def_layer("Point", srs = "EPSG:4326")
+defn$my_id <- ogr_def_field("OFTInteger64")
+defn$my_description <- ogr_def_field("OFTString")
 
-if (ogr_ds_test_cap(dsn)$CreateLayer)
-  ogr_layer_create(dsn, "layer1", layer_defn = defn)
+# create a layer in the existing data source
+ogr_ds_test_cap(dsn)$CreateLayer  # TRUE
+
+ogr_layer_create(dsn, "layer1", layer_defn = defn)
 
 ogr_ds_layer_names(dsn)
+
 ogr_layer_field_names(dsn, "layer1")
 
 deleteDataset(dsn)
