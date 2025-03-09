@@ -29,6 +29,9 @@ SEEK_END <- "SEEK_END"
 #' virtualization of disk I/O so that non-file data sources can be made to
 #' appear as files.
 #'
+#' `VSIFile` is a C++ class exposed directly to R (via `RCPP_EXPOSED_CLASS`).
+#' Methods of the class are accessed using the `$` operator.
+#'
 #' @param filename Character string containing the filename to open. It may be
 #' a file in a regular local filesystem, or a filename with a GDAL /vsiPREFIX/
 #' (see \url{https://gdal.org/en/stable/user/virtual_file_systems.html}).
@@ -46,9 +49,7 @@ SEEK_END <- "SEEK_END"
 #' filesystem-dependent options (GDAL >= 3.3, see Details).
 #' @returns An object of class `VSIFile` which contains a pointer to a
 #' `VSIVirtualHandle`, and methods that operate on the file as described in
-#' Details. `VSIFile` is a C++ class exposed directly to R (via
-#' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed using the
-#' `$` operator.
+#' Details.
 #'
 #' @section Usage (see Details):
 #' \preformatted{

@@ -10,15 +10,19 @@
 #' and the count of occurrences of each unique integer combination as the
 #' value. A unique ID is assigned to each unique combination of input values.
 #'
+#' `CmbTable` is a C++ class exposed directly to R (via `RCPP_EXPOSED_CLASS`).
+#' Methods of the class are accessed using the `$` operator. **Note that all
+#' arguments to class methods are required and must be given in the
+#' order documented.** Naming the arguments is optional but may be preferred
+#' for readability.
+#'
 #' @param keyLen The number of integer values comprising each combination.
 #' @param varNames Optional character vector of names for the variables in the
 #' combination.
 #' @returns An object of class `CmbTable`. Contains a hash table having a
-#' vector of `keyLen` integers as the key and the count of occurrences of
-#' each unique integer combination as the value, along with methods that
-#' operate on the table as described in Details.
-#' `CmbTable` is a C++ class exposed directly to R (via `RCPP_EXPOSED_CLASS`).
-#' Methods of the class are accessed in R using the `$` operator.
+#' vector of `keyLen` integers as the key, and the count of occurrences of each
+#' unique integer combination as the value. Class methods that operate on the
+#' hash table are described in Details.
 #'
 #' @section Usage (see Details):
 #' \preformatted{

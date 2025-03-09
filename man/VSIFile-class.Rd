@@ -28,9 +28,7 @@ filesystem-dependent options (GDAL >= 3.3, see Details).}
 \value{
 An object of class \code{VSIFile} which contains a pointer to a
 \code{VSIVirtualHandle}, and methods that operate on the file as described in
-Details. \code{VSIFile} is a C++ class exposed directly to R (via
-\code{RCPP_EXPOSED_CLASS}). Methods of the class are accessed using the
-\code{$} operator.
+Details.
 }
 \description{
 \code{VSIFile} provides bindings to the GDAL VSIVirtualHandle API. Encapsulates a
@@ -41,6 +39,9 @@ cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
 It provides analogs of several Standard C file I/O functions, allowing
 virtualization of disk I/O so that non-file data sources can be made to
 appear as files.
+
+\code{VSIFile} is a C++ class exposed directly to R (via \code{RCPP_EXPOSED_CLASS}).
+Methods of the class are accessed using the \code{$} operator.
 }
 \note{
 File offsets are given as R \code{numeric} (i.e., \code{double} type), optionally

@@ -14,16 +14,20 @@ combination.}
 }
 \value{
 An object of class \code{CmbTable}. Contains a hash table having a
-vector of \code{keyLen} integers as the key and the count of occurrences of
-each unique integer combination as the value, along with methods that
-operate on the table as described in Details.
-\code{CmbTable} is a C++ class exposed directly to R (via \code{RCPP_EXPOSED_CLASS}).
-Methods of the class are accessed in R using the \code{$} operator.
+vector of \code{keyLen} integers as the key, and the count of occurrences of each
+unique integer combination as the value. Class methods that operate on the
+hash table are described in Details.
 }
 \description{
 \code{CmbTable} implements a hash table having a vector of integers as the key,
 and the count of occurrences of each unique integer combination as the
 value. A unique ID is assigned to each unique combination of input values.
+
+\code{CmbTable} is a C++ class exposed directly to R (via \code{RCPP_EXPOSED_CLASS}).
+Methods of the class are accessed using the \code{$} operator. \strong{Note that all
+arguments to class methods are required and must be given in the
+order documented.} Naming the arguments is optional but may be preferred
+for readability.
 }
 \section{Usage (see Details)}{
 

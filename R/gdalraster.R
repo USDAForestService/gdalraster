@@ -11,6 +11,12 @@
 #' `GDALRasterBand` objects. See \url{https://gdal.org/en/stable/api/index.html} for
 #' details of the GDAL Raster API.
 #'
+#' `GDALRaster` is a C++ class exposed directly to R (via `RCPP_EXPOSED_CLASS`).
+#' Fields and methods of the class are accessed using the `$` operator. **Note
+#' that all arguments to class methods are required and must be given in the
+#' order documented.** Naming the arguments is optional but may be preferred
+#' for readability.
+#'
 #' @param filename Character string containing the file name of a raster
 #' dataset to open, as full path or relative to the current working directory.
 #' In some cases, `filename` may not refer to a local file system, but instead
@@ -24,11 +30,12 @@
 #' specifying dataset open options.
 #' @param shared Logical. `FALSE` to open the dataset without using shared
 #' mode. Default is `TRUE` (see Note).
-#' @returns An object of class `GDALRaster` which contains a pointer to the
-#' opened dataset, and methods that operate on the dataset as described in
-#' Details. `GDALRaster` is a C++ class exposed directly to R (via
-#' `RCPP_EXPOSED_CLASS`). Fields and methods of the class are accessed using
-#' the `$` operator. The read/write fields can be used for per-object settings.
+#' @returns An object of class `GDALRaster`, which contains a pointer to the
+#' opened dataset.
+#' Class methods that operate on the dataset are described in Details, along
+#' with a set of writable fields for per-object settings. Values may be
+#' assigned to the class fields as needed during the lifetime of the object
+#' (i.e., by regular `<-` or `=` assignment).
 #'
 #' @section Usage (see Details):
 #' \preformatted{
@@ -37,12 +44,12 @@
 #' ds <- new(GDALRaster, filename)
 #' # for update access:
 #' ds <- new(GDALRaster, filename, read_only = FALSE)
-#' # to use dataset open options:
+#' # to specify dataset open options:
 #' ds <- new(GDALRaster, filename, read_only = TRUE|FALSE, open_options)
-#' # to open without shared mode:
+#' # to open without using shared mode:
 #' new(GDALRaster, filename, read_only, open_options, shared = FALSE)
 #'
-#' ## Read/write fields
+#' ## Read/write fields (per-object settings)
 #' ds$infoOptions
 #' ds$quiet
 #' ds$readByteAsRaw
