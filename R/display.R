@@ -340,12 +340,12 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
         if (is.null(xsize))
             xsize <- out_xsize <- dm[1]
         else
-            out_xsize <- xsize
+            out_xsize <- trunc(xsize)
 
         if (is.null(ysize))
             ysize <- out_ysize <- dm[2]
         else
-            out_ysize <- ysize
+            out_ysize <- trunc(ysize)
 
         if ((out_xsize*out_ysize) > max_pixels)
             stop("'xsize * ysize' exceeds 'max_pixels'", call.=FALSE)
