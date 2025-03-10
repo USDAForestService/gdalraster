@@ -149,9 +149,7 @@ use pixel values that have already been read into a vector.</p>
 <span><span class="co"># read at reduced resolution for display</span></span>
 <span><span class="fu"><a href="../reference/plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, xsize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span> <span class="op">/</span> <span class="fl">2</span>, ysize<span class="op">=</span><span class="va">dm</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span> <span class="op">/</span> <span class="fl">2</span>,</span>
 <span>            col_tbl<span class="op">=</span><span class="va">vat</span>, interpolate<span class="op">=</span><span class="cn">FALSE</span>,</span>
-<span>            main<span class="op">=</span><span class="st">"LANDFIRE surface fuel class (FBFM40)"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; Warning in r[i_begin:i_end] &lt;- ds$read(b, xoff, yoff, xsize, ysize, out_xsize,</span></span>
-<span><span class="co">#&gt; : number of items to replace is not a multiple of replacement length</span></span></code></pre></div>
+<span>            main<span class="op">=</span><span class="st">"LANDFIRE surface fuel class (FBFM40)"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="raster-display_files/figure-html/unnamed-chunk-5-1.png" alt="A plot of LANDFIRE surface fuel classes for an area of interest around Mt. Hood, Oregon, USA." width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
