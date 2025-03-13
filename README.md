@@ -20,70 +20,74 @@ Scorecard](https://api.scorecard.dev/projects/github.com/USDAForestService/gdalr
 
 ## Overview
 
-**gdalraster** is an R interface to the [Raster
-API](https://gdal.org/en/stable/api/raster_c_api.html) of the Geospatial Data
-Abstraction Library ([GDAL](https://gdal.org/en/stable/)). Bindings to a subset of
-the GDAL [Vector API](https://gdal.org/en/stable/api/vector_c_api.html) are
-included to provide utilities for managing vector data sources. Bindings
-to the GDAL Virtual Systems Interface
-([VSI](https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h)) support file system
-operations and binary I/O on URLs, cloud storage services,
-Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems.
-Calling signatures resemble the native C, C++ and Python APIs provided
-by the GDAL project.
+**gdalraster** is an R interface to the
+[Raster](https://gdal.org/en/stable/en/stable/api/raster_c_api.html) and
+[Vector](https://gdal.org/en/stable/api/vector_c_api.html) APIs of the
+Geospatial Data Abstraction Library
+([GDAL](https://gdal.org/en/stable/)).
 
-Bindings to GDAL are implemented in the exposed C++ class
+API-level bindings are implemented in the exposed C++ classes
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
+and
+[`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html),
 along with several [stand-alone
-functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions),
-supporting:
+functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions).
+Bindings to the GDAL Virtual Systems Interface
+([VSI](https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h)) are also
+included to support file system operations and binary I/O on URLs, cloud
+storage services, Zip/GZip/7z/RAR, and in-memory files, as well as
+regular file systems. Calling signatures resemble the native C, C++ and
+Python APIs provided by the GDAL project.
 
-  - manual creation of uninitialized raster datasets
-  - creation from existing raster as template
-  - read/set raster dataset parameters and metadata
-  - low-level I/O
-  - build/read/set color tables and raster attribute tables
-  - virtual raster (VRT) for virtual cropping, resampling, kernel
-    filtering, mosaicing
-  - `gdalwarp` wrapper for reproject/resample/crop/mosaic
-  - coordinate transformation
-  - spatial reference systems
-  - GDAL algorithms (`dem_proc()`, `polygonize()`, `rasterize()`,
-    [`...`](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms))
-  - OGR vector utilities (`ogrinfo()`, `ogr2ogr()`,
-    [`ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
-    interface)
-  - copy files/move/rename/delete raster and vector datasets
-  - create/append to Seek-Optimized ZIP
-    ([SOZip](https://github.com/sozip/sozip-spec))
-  - abstraction of file system operations on URLs and cloud storage
-  - Standard C binary file I/O through VSI (class
-    [`VSIFile`](https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html))
+- manual creation of uninitialized raster and vector datasets
+- read/set parameters and metadata for raster bands and vector layers
+- low-level I/O
+- build/read/set color tables and raster attribute tables
+- virtual raster (VRT) for virtual cropping, resampling, kernel
+  filtering, mosaicing
+- `gdalwarp` wrapper for reproject/resample/crop/mosaic
+- coordinate transformation
+- spatial reference systems
+- geometry operations on raw vectors of WKB, or WKT strings
+- GDAL algorithms (`dem_proc()`, `polygonize()`, `rasterize()`,
+  [`...`](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms))
+- OGR vector utilities (`ogrinfo()`, `ogr2ogr()`,
+  [`ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
+  interface)
+- OGR facilities for vector geoprocessing (`ogr_proc()`)
+- raster and vector dataset management (copy files/move/rename/delete)
+- create/append to Seek-Optimized ZIP
+  ([SOZip](https://github.com/sozip/sozip-spec))
+- abstraction of [file system
+  operations](https://usdaforestservice.github.io/gdalraster/reference/index.html#virtual-file-systems)
+  on URLs, cloud storage, in-memory files, etc.
+- Standard C binary file I/O through VSI (class
+  [`VSIFile`](https://usdaforestservice.github.io/gdalraster/reference/VSIFile-class.html))
 
 Additional functionality includes:
 
-  - class
-    [`RunningStats`](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html)
-    calculates mean and variance in one pass, and tracks the min, max,
-    sum, and count (i.e., summary statistics on a data stream). The
-    input data values are not stored in memory, so this class can be
-    used to compute statistics for very large data streams.
-  - class
-    [`CmbTable`](https://usdaforestservice.github.io/gdalraster/reference/CmbTable-class.html)
-    identifies and counts unique combinations of integer values using a
-    hash table.
-  - [`combine()`](https://usdaforestservice.github.io/gdalraster/reference/combine.html)
-    overlays multiple rasters so that a unique ID is assigned to each
-    unique combination of input values. Pixel counts for each unique
-    combination are obtained, and combination IDs are optionally written
-    to an output raster.
-  - [`calc()`](https://usdaforestservice.github.io/gdalraster/reference/calc.html)
-    evaluates an R expression for each pixel in a raster layer or stack
-    of layers. Individual pixel coordinates are available as variables
-    in the R expression, as either x/y in the raster projected
-    coordinate system or inverse projected longitude/latitude.
-  - [`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html)
-    displays raster data using base R graphics.
+- class
+  [`RunningStats`](https://usdaforestservice.github.io/gdalraster/reference/RunningStats-class.html)
+  calculates mean and variance in one pass, and tracks the min, max,
+  sum, and count (i.e., summary statistics on a data stream). The input
+  data values are not stored in memory, so this class can be used to
+  compute statistics for very large data streams.
+- class
+  [`CmbTable`](https://usdaforestservice.github.io/gdalraster/reference/CmbTable-class.html)
+  identifies and counts unique combinations of integer values using a
+  hash table.
+- [`combine()`](https://usdaforestservice.github.io/gdalraster/reference/combine.html)
+  overlays multiple rasters so that a unique ID is assigned to each
+  unique combination of input values. Pixel counts for each unique
+  combination are obtained, and combination IDs are optionally written
+  to an output raster.
+- [`calc()`](https://usdaforestservice.github.io/gdalraster/reference/calc.html)
+  evaluates an R expression for each pixel in a raster layer or stack of
+  layers. Individual pixel coordinates are available as variables in the
+  R expression, as either x/y in the raster projected coordinate system
+  or inverse projected longitude/latitude.
+- [`plot_raster()`](https://usdaforestservice.github.io/gdalraster/reference/plot_raster.html)
+  displays raster data using base R graphics.
 
 **gdalraster** may be useful in applications that need scalable,
 low-level I/O, or prefer a direct GDAL API. Comprehensive
@@ -148,8 +152,8 @@ install from source on Windows. RTools since version 4.2 includes GDAL,
 PROJ and all other dependent libraries that are needed to compile
 **gdalraster**. Note that CRAN releases periodic revisions to RTools
 that often include updates to the libraries as new versions become
-available.
-[Release 6414](https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html)
+available. [Release
+6459](https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html)
 of RTools 4.4 contains GDAL 3.10.1, GEOS 3.13.0 and PROJ 9.5.1.
 
 With RTools installed:
@@ -180,7 +184,7 @@ installation with installation of binaries from CRAN.
 [R-universe](https://usdaforestservice.r-universe.dev/gdalraster)
 provides pre-compiled binary packages for Windows and macOS that track
 the development version of **gdalraster**. New packages are built
-usually within \~1 hour of the most recent commit.
+usually within ~1 hour of the most recent commit.
 
 ``` r
 # Install the development version from r-universe
@@ -189,15 +193,15 @@ install.packages("gdalraster", repos = c("https://usdaforestservice.r-universe.d
 
 ## Documentation
 
-  - [Reference
-    Manual](https://usdaforestservice.github.io/gdalraster/reference/)
-  - [Raster API
-    Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
-  - [Raster Attribute
-    Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
-  - [Raster
-    Display](https://usdaforestservice.github.io/gdalraster/articles/raster-display.html)
-  - [GDAL Block
-    Caching](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
-  - [GDAL Config Quick
-    Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+- [Reference
+  Manual](https://usdaforestservice.github.io/gdalraster/reference/)
+- [Raster API
+  Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
+- [Raster Attribute
+  Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
+- [Raster
+  Display](https://usdaforestservice.github.io/gdalraster/articles/raster-display.html)
+- [GDAL Block
+  Caching](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
+- [GDAL Config Quick
+  Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
