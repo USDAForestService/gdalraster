@@ -16,11 +16,11 @@ This project is released under [MIT license](https://cran.r-project.org/web/lice
 
 [lintr](https://lintr.r-lib.org/) is in use in the development environment for static analysis of R code, and a `.lintr` file is included in the repository.
 
-[Cpplint](https://github.com/cpplint/cpplint) is in use in the development environment for C++ code style checking. A [VSCode plugin](https://marketplace.visualstudio.com/items?itemName=mine.cpplint) is available.
+[Cpplint](https://github.com/cpplint/cpplint) is in use in the development environment for C++ code style checking.
 
 **cppcheck** is also used for static analysis of C++ code. It can be installed with various package managers, e.g., `sudo apt-get install cppcheck` on Debian/Ubuntu. Documentation, source code and a Windows installer are available on the [cppcheck website](https://cppcheck.sourceforge.io/).
 
 All new functionality must include tests added to the automated test suite under `tests/testthat/`. Documentation for **testthat** is available at https://testthat.r-lib.org/.
 
-Dynamic analysis of C++ code using [Valgrind](https://valgrind.org/) and [Clang Address Sanitizer](https://clang.llvm.org/docs/MemorySanitizer.html) is done regularly during development, and before any new version release. These analyses are performed in GitHub Actions using the workflows provided by [rhub](https://github.com/r-hub/rhub/).
+Dynamic analysis of C++ code using [Valgrind](https://valgrind.org/), [Clang AddressSanitizer](https://clang.llvm.org/docs/AddressSanitizer.html) and [Clang UndefinedBehaviorSanitizer](https://clang.llvm.org/docs/UndefinedBehaviorSanitizer.html) is done regularly during development, and before any new version release. These analyses are performed in GitHub Actions using the workflows provided by [rhub](https://github.com/r-hub/rhub/).
 
