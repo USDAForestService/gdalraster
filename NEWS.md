@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9250 (dev)
+# gdalraster 1.12.0.9251 (dev)
+
+* (internal) code linting for cppcheck style in geom_api.cpp and srs_api.cpp (#658) (2025-03-12)
 
 * `ogr_proc()`: rename argument `return_lyr_obj` to `return_obj`, to be consistent with other functions that optionally return a `GDALVector` or `GDALRaster` object (`ogr_proc()` is not in a release version yet so not designated as a breaking change) (2025-03-09)
 
