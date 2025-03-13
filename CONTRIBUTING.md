@@ -1,10 +1,6 @@
 # Welcome
 
-We're glad you're thinking about contributing to this open source project of the USDA Forest Service, Rocky Montain Research Station. If you're unsure about anything, just ask -- or submit an issue or pull request anyway. The worst that can happen is you'll be politely asked to change something. We welcome all friendly contributions.
-
-## Policies
-
-We want to ensure a welcoming environment for all of our projects. Our staff follow the General Services Administration (GSA)’s Technology Transformation Services (TTS) [Code of Conduct](https://18f.gsa.gov/code-of-conduct/) and all contributors should do the same.
+We're glad you're thinking about contributing to this open source project of the USDA Forest Service, Rocky Montain Research Station. We want to ensure a welcoming environment. If you're unsure about anything, just ask -- or submit an issue or pull request anyway. The worst that can happen is you'll be politely asked to change something. We welcome all friendly contributions.
 
 ## Public domain
 
