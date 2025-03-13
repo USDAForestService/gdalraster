@@ -34,8 +34,9 @@ Rcpp::RawVector g_wkt2wkb(const std::string &geom, bool as_iso,
 Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom, bool as_iso,
                             const std::string &byte_order);
 
-Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
-                         bool as_iso, const std::string &byte_order);
+Rcpp::RawVector g_create(const std::string &geom_type,
+                         const Rcpp::RObject &pts, bool as_iso,
+                         const std::string &byte_order);
 
 Rcpp::RawVector g_add_geom(const Rcpp::RawVector &sub_geom,
                            const Rcpp::RawVector &container,

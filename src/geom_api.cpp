@@ -266,8 +266,8 @@ Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_create")]]
-Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject &pts,
-                         bool as_iso = false,
+Rcpp::RawVector g_create(const std::string &geom_type,
+                         const Rcpp::RObject &pts, bool as_iso = false,
                          const std::string &byte_order = "LSB") {
 // Create a geometry from a list of points (vertices as xy, xyz or xyzm).
 // Currently for POINT, MULTIPOINT, LINESTRING, LINEARRING, POLYGON, and
@@ -1791,11 +1791,11 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
         Rcpp::stop("failed to create coordinate transformer");
 
     std::vector<char *> options;
-    std::string offset;
+    std::string dl_offset = "DATELINEOFFSET=";
     if (wrap_date_line) {
         options.push_back(const_cast<char *>("WRAPDATELINE=YES"));
-        offset = "DATELINEOFFSET=" + std::to_string(date_line_offset);
-        options.push_back(const_cast<char *>(offset.c_str()));
+        dl_offset += std::to_string(date_line_offset);
+        options.push_back(const_cast<char *>(dl_offset.c_str()));
     }
     options.push_back(nullptr);
 
@@ -1889,8 +1889,8 @@ Rcpp::NumericVector bbox_from_wkt(const std::string &wkt,
         double extend_x = 0, double extend_y = 0) {
 
     OGRGeometryH hGeometry = nullptr;
-    char* pszWKT;
-    pszWKT = (char*) wkt.c_str();
+    char *pszWKT = nullptr;
+    pszWKT = const_cast<char *>(wkt.c_str());
 
     if (OGR_G_CreateFromWkt(&pszWKT, nullptr, &hGeometry) != OGRERR_NONE) {
         if (hGeometry != nullptr)
@@ -1967,11 +1967,11 @@ OGRwkbGeometryType getTargetGeomType(OGRwkbGeometryType geom_type,
 
     OGRwkbGeometryType out_type = geom_type;
 
-    if (convert_to_linear || (convert_to_linear && promote_to_multi)) {
+    if (convert_to_linear) {
         out_type = OGR_GT_GetLinear(out_type);
     }
 
-    if (promote_to_multi || (convert_to_linear && promote_to_multi)) {
+    if (promote_to_multi) {
         if (out_type == wkbTriangle || out_type == wkbTIN ||
             out_type == wkbPolyhedralSurface) {
 

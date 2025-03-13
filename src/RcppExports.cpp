@@ -1024,12 +1024,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // g_create
-Rcpp::RawVector g_create(std::string geom_type, const Rcpp::RObject& pts, bool as_iso, const std::string& byte_order);
+Rcpp::RawVector g_create(const std::string& geom_type, const Rcpp::RObject& pts, bool as_iso, const std::string& byte_order);
 RcppExport SEXP _gdalraster_g_create(SEXP geom_typeSEXP, SEXP ptsSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::string >::type geom_type(geom_typeSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type geom_type(geom_typeSEXP);
     Rcpp::traits::input_parameter< const Rcpp::RObject& >::type pts(ptsSEXP);
     Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
