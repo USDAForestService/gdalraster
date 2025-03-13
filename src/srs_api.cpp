@@ -603,7 +603,7 @@ bool srs_is_same(const std::string &srs, const std::string &srs_other,
 
     if (criterion != "") {
         criterion = "CRITERION=" + criterion;
-        opt_list.push_back((char *) criterion.c_str());
+        opt_list.push_back(const_cast<char *>(criterion.c_str()));
     }
 
     if (ignore_axis_mapping) {
@@ -612,7 +612,7 @@ bool srs_is_same(const std::string &srs, const std::string &srs_other,
     else {
         str_axis = "IGNORE_DATA_AXIS_TO_SRS_AXIS_MAPPING=NO";
     }
-    opt_list.push_back((char *) str_axis.c_str());
+    opt_list.push_back(const_cast<char *>(str_axis.c_str()));
 
     if (ignore_coord_epoch) {
         str_epoch = "IGNORE_COORDINATE_EPOCH=YES";
@@ -620,7 +620,7 @@ bool srs_is_same(const std::string &srs, const std::string &srs_other,
     else {
         str_epoch = "IGNORE_COORDINATE_EPOCH=NO";
     }
-    opt_list.push_back((char *) str_epoch.c_str());
+    opt_list.push_back(const_cast<char *>(str_epoch.c_str()));
 
     opt_list.push_back(nullptr);
 
