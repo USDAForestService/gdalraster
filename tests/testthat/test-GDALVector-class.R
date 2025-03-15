@@ -984,9 +984,28 @@ test_that("feature write methods work", {
     expect_true(srs_is_same(lyr$getSpatialRef(), epsg_to_wkt(4322)))
 
     lyr$close()
-    deleteDataset(dsn5)
+    unlink(dsn5)
     rm(lyr)
     rm(dsn5)
+
+    ## test GeoJSON write, geom only, no SRS
+    dsn6 <- tempfile(fileext = ".geojson")
+    lyr <- ogr_ds_create("GeoJSON", dsn6, "box", geom_type = "POLYGON",
+                         return_obj = TRUE)
+    pts <-  matrix(c(0.25, 0.25, 0.75, 0.25, 0.75, 0.75, 0.25, 0.75,
+                     0.25, 0.25), ncol = 2, byrow = TRUE)
+    feat <- list()
+    feat$geometry <- g_create("POLYGON", pts)
+    expect_true(lyr$createFeature(feat))
+    lyr$open(read_only = TRUE)
+    expect_equal(lyr$getFeatureCount(), 1)
+    feat_chk <- lyr$getNextFeature()
+    expect_true(g_equals(feat$geometry, feat_chk$geometry))
+
+    lyr$close()
+    unlink(dsn6)
+    rm(lyr)
+    rm(dsn6)
 })
 
 test_that("feature batch writing works", {
