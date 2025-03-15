@@ -432,6 +432,34 @@ test_that("rasterize runs without error", {
                      add_options = "-q")
     expect_true(res)
     deleteDataset(out_file)
+
+    # update existing raster in-place
+    # create the vector layer
+    dsn <- tempfile(fileext = ".geojson")
+    lyr <- ogr_ds_create("GeoJSON", dsn, "OGRGeoJSON", geom_type = "POLYGON",
+                         return_obj = TRUE)
+    pts <-  matrix(c(0.25, 0.25, 0.75, 0.25, 0.75, 0.75, 0.25, 0.75, 0.25, 0.25),
+                   ncol = 2, byrow = TRUE)
+    feat <- list()
+    feat$geometry <- g_create("POLYGON", pts)
+    lyr$createFeature(feat)
+    lyr$close()
+    # create the destination raster
+    ds <- create("GTiff", "/vsimem/test.tif", xsize = 100, ysize = 100,
+                 nbands = 1, dataType = "Byte", options = "COMPRESS=DEFLATE",
+                 return_obj = TRUE)
+    ds$setGeoTransform(c(0.0, 0.01, 0.0, 1.0, 0.0, -0.01))
+    ds$setProjection(epsg_to_wkt(4326))
+    ds$fillRaster(1, 0, 0)
+    # update the destination pixels in-place
+    res <- rasterize(dsn, ds, burn_value = 1)
+    expect_true(res)
+    r <- read_ds(ds)
+    expect_equal(sum(r), 2500)
+
+    unlink(dsn)
+    ds$close()
+    vsi_unlink("/vsimem/test.tif")
 })
 
 test_that("pixel_extract wrapper returns correct data", {

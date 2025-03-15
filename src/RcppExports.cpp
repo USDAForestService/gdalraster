@@ -531,16 +531,17 @@ BEGIN_RCPP
 END_RCPP
 }
 // rasterize
-bool rasterize(const std::string& src_dsn, const std::string& dst_filename, const Rcpp::CharacterVector& cl_arg, bool quiet);
-RcppExport SEXP _gdalraster_rasterize(SEXP src_dsnSEXP, SEXP dst_filenameSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
+bool rasterize(const std::string& src_dsn, const std::string& dst_filename, Rcpp::List dst_dataset, const Rcpp::CharacterVector& cl_arg, bool quiet);
+RcppExport SEXP _gdalraster_rasterize(SEXP src_dsnSEXP, SEXP dst_filenameSEXP, SEXP dst_datasetSEXP, SEXP cl_argSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type src_dsn(src_dsnSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type dst_filename(dst_filenameSEXP);
+    Rcpp::traits::input_parameter< Rcpp::List >::type dst_dataset(dst_datasetSEXP);
     Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type cl_arg(cl_argSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(rasterize(src_dsn, dst_filename, cl_arg, quiet));
+    rcpp_result_gen = Rcpp::wrap(rasterize(src_dsn, dst_filename, dst_dataset, cl_arg, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1980,7 +1981,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_ogr2ogr", (DL_FUNC) &_gdalraster_ogr2ogr, 5},
     {"_gdalraster_ogrinfo", (DL_FUNC) &_gdalraster_ogrinfo, 6},
     {"_gdalraster_polygonize", (DL_FUNC) &_gdalraster_polygonize, 9},
-    {"_gdalraster_rasterize", (DL_FUNC) &_gdalraster_rasterize, 4},
+    {"_gdalraster_rasterize", (DL_FUNC) &_gdalraster_rasterize, 5},
     {"_gdalraster_sieveFilter", (DL_FUNC) &_gdalraster_sieveFilter, 10},
     {"_gdalraster_translate", (DL_FUNC) &_gdalraster_translate, 4},
     {"_gdalraster_warp", (DL_FUNC) &_gdalraster_warp, 6},

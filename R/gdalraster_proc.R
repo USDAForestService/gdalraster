@@ -1974,9 +1974,12 @@ polygonize <- function(raster_file,
 #'
 #' @param src_dsn Data source name for the input vector layer (filename or
 #' connection string).
-#' @param dstfile Filename of the output raster. Must support update mode
-#' access. This file will be created (or overwritten if it already exists -
-#' see Note).
+#' @param dstfile Either a character string giving the filename of the
+#' output raster dataset, or an object of class `GDALRaster` for the output.
+#' Must support update mode access. If given as a filename, this file will
+#' be created (or overwritten if it already exists - see Note).
+#' If given as a `GDALRaster` object for an existing dataset, then the affected
+#' pixels are updated in-place (object must be open with write access).
 #' @param band Numeric vector. The band(s) to burn values into (for existing
 #' `dstfile`). The default is to burn into band 1. Not used when creating a
 #' new raster.
@@ -2029,11 +2032,16 @@ polygonize <- function(raster_file,
 #' An error is raised if the operation fails.
 #'
 #' @note
-#' The function creates a new target raster when any of the `fmt`, `dstnodata`,
-#' `init`, `co`, `te`, `tr`, `tap`, `ts`, or `dtName` arguments are used. The
-#' resolution or size must be specified using the `tr` or `ts` argument for all
-#' new rasters. The target raster will be overwritten if it already exists and
-#' any of these creation-related options are used.
+#' `rasterize()` creates a new target raster when `dstfile` is given as a
+#' filename (character string). In that case, some combination of the `fmt`,
+#' `dstnodata`, `init`, `co`, `te`, `tr`, `tap`, `ts`, and `dtName` arguments
+#' will be used. The resolution or size must be specified using either the `tr`
+#' or `ts` argument for all new rasters. The target raster will be overwritten
+#' if it already exists and any of these creation-related options are used.
+#' 
+#' To update an existing raster in-place, an object of class `GDALRaster` may
+#' be given for the `dstfile` argument. The `GDALRaster` object should be open
+#' for write access.
 #'
 #' @seealso
 #' [polygonize()]
@@ -2086,7 +2094,19 @@ rasterize <- function(src_dsn,
                       quiet = FALSE) {
 
     src_dsn <- .check_gdal_filename(src_dsn)
-    dstfile <- .check_gdal_filename(dstfile)
+
+    dst_ds <- NULL
+    if (is(dstfile, "Rcpp_GDALRaster")) {
+        dst_ds <- dstfile
+        if (!dst_ds$isOpen()) {
+            stop("destination dataset is not open", call. = FALSE)
+        }
+    } else if (!(is.character(dstfile) && length(dstfile) == 1)) {
+        stop("'dstfile' must be a character string or GDALRaster object",
+             call. = FALSE)
+    } else {
+        dstfile <- .check_gdal_filename(dstfile)
+    }
 
     argv <- character(0)
 
@@ -2223,5 +2243,11 @@ rasterize <- function(src_dsn,
             argv <- c(argv, add_options)
     }
 
-    return(invisible(.rasterize(src_dsn, dstfile, argv, quiet)))
+    if (!is.null(dst_ds)) {
+        ret <- .rasterize(src_dsn, "", list(dst_ds), argv, quiet)
+    } else {
+        ret <- .rasterize(src_dsn, dstfile, list(), argv, quiet)
+    }
+
+    return(invisible(ret))
 }
