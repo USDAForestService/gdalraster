@@ -32,7 +32,8 @@
 }
 
 .onAttach <- function(libname, pkgname) {
-    msg <- gdal_version()[1]
+    gdal_date <- as.character(as.Date(gdal_version()[3], format = "%Y%m%d"))
+    msg <- paste0("GDAL ", gdal_version()[4], " (released ", gdal_date, ")")
     if (!is.na(geos_version()$name))
         geos_ver <- geos_version()$name
     else
