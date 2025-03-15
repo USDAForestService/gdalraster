@@ -1716,6 +1716,9 @@ bool GDALVector::setFeature(const Rcpp::List &feature) {
     std::vector<std::map<R_xlen_t, int>> fld_maps =
             validateFeatInput_(feature);
 
+    if (fld_maps.size() != 2)
+        Rcpp::stop("failed to obtain field index mappings");
+
     OGRFeatureH hFeat = OGRFeatureFromList_(feature, 0, fld_maps[0],
                                             fld_maps[1]);
 
@@ -1746,6 +1749,9 @@ bool GDALVector::createFeature(const Rcpp::List &feature) {
 
     std::vector<std::map<R_xlen_t, int>> fld_maps =
             validateFeatInput_(feature);
+    
+    if (fld_maps.size() != 2)
+        Rcpp::stop("failed to obtain field index mappings");
 
     OGRFeatureH hFeat = OGRFeatureFromList_(feature, 0, fld_maps[0],
                                             fld_maps[1]);
@@ -1773,6 +1779,9 @@ Rcpp::LogicalVector GDALVector::batchCreateFeature(
 
     std::vector<std::map<R_xlen_t, int>> fld_maps =
             validateFeatInput_(feature_set);
+
+    if (fld_maps.size() != 2)
+        Rcpp::stop("failed to obtain field index mappings");
 
     R_xlen_t num_rows = feature_set.nrows();
     Rcpp::LogicalVector out = Rcpp::no_init(num_rows);
@@ -1823,6 +1832,9 @@ bool GDALVector::upsertFeature(const Rcpp::List &feature) {
 
     std::vector<std::map<R_xlen_t, int>> fld_maps =
             validateFeatInput_(feature);
+
+    if (fld_maps.size() != 2)
+        Rcpp::stop("failed to obtain field index mappings");
 
     OGRFeatureH hFeat = OGRFeatureFromList_(feature, 0, fld_maps[0],
                                             fld_maps[1]);
@@ -2688,7 +2700,7 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
     Rcpp::CharacterVector names = feature.names();
     if (names.size() == 0)
         Rcpp::stop("names vector is empty");
-
+    
     OGRFeatureDefnH hFDefn = nullptr;
     hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)
@@ -2698,11 +2710,11 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
     hFeat = OGR_F_Create(hFDefn);
     if (hFeat == nullptr)
         Rcpp::stop("failed to create OGRFeature object");
-
+    
     int nGeomFields = OGR_F_GetGeomFieldCount(hFeat);
 
-    std::map<R_xlen_t, int> map_flds{};
-    std::map<R_xlen_t, int> map_geom_flds{};
+    std::map<R_xlen_t, int> map_flds;
+    std::map<R_xlen_t, int> map_geom_flds;
 
     // go over the list element names and map list index to field index
     for (R_xlen_t i = 0; i < names.size(); ++i) {
@@ -2733,7 +2745,7 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
 
         // case of geometry column name is empty as with shapefiles etc.
         if (nGeomFields == 1 && (
-                EQUAL(names[1], this->defaultGeomColName.c_str()) ||
+                EQUAL(names[i], this->defaultGeomColName.c_str()) ||
                 EQUAL(names[i], "_ogr_geometry_") ||
                 EQUAL(names[i], "geometry") ||
                 EQUAL(names[i], "geom"))) {
@@ -2748,7 +2760,7 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
     }
 
     // check attribute fields
-    for (auto it = map_flds.begin(); it != map_flds.end(); ++it) {
+    for (auto it = map_flds.cbegin(); it != map_flds.cend(); ++it) {
         R_xlen_t col_idx = it->first;
         int fld_idx = it->second;
 
@@ -3017,7 +3029,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
     // set FID if one is given and is not NA
     bool has_fid = false;
     R_xlen_t fid_col = 0;
-    for (auto it = map_flds.begin(); it != map_flds.end(); ++it) {
+    for (auto it = map_flds.cbegin(); it != map_flds.cend(); ++it) {
         if (it->second == FID_MARKER) {
             has_fid = true;
             fid_col = it->first;
@@ -3053,7 +3065,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
             "`NA` or 0-length value given but field is not nullable";
 
     // set attribute fields
-    for (auto it = map_flds.begin(); it != map_flds.end(); ++it) {
+    for (auto it = map_flds.cbegin(); it != map_flds.cend(); ++it) {
         R_xlen_t col_idx = it->first;
         int fld_idx = it->second;
 
@@ -3300,7 +3312,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
 
             case OFTIntegerList:
             {
-                Rcpp::IntegerVector iv {};
+                Rcpp::IntegerVector iv;
                 if (Rcpp::is<Rcpp::NumericVector>(feature[col_idx]) ||
                     Rcpp::is<Rcpp::IntegerVector>(feature[col_idx]) ||
                     Rcpp::is<Rcpp::LogicalVector>(feature[col_idx])) {
@@ -3349,7 +3361,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
 
             case OFTInteger64List:
             {
-                Rcpp::NumericVector nv {};
+                Rcpp::NumericVector nv;
                 if (Rcpp::is<Rcpp::NumericVector>(feature[col_idx])) {
                     nv = feature[col_idx];
                 }
@@ -3396,7 +3408,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
 
             case OFTRealList:
             {
-                Rcpp::NumericVector nv {};
+                Rcpp::NumericVector nv;
                 if (Rcpp::is<Rcpp::NumericVector>(feature[col_idx])) {
                     nv = feature[col_idx];
                 }
@@ -3440,7 +3452,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
 
             case OFTStringList:
             {
-                Rcpp::CharacterVector cv {};
+                Rcpp::CharacterVector cv;
                 if (Rcpp::is<Rcpp::CharacterVector>(feature[col_idx])) {
                     cv = feature[col_idx];
                 }
@@ -3482,7 +3494,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
 
             case OFTBinary:
             {
-                Rcpp::RawVector rv {};
+                Rcpp::RawVector rv;
                 if (Rcpp::is<Rcpp::RawVector>(feature[col_idx])) {
                     rv = feature[col_idx];
                 }
@@ -3529,13 +3541,13 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
     }
 
     // set geom fields
-    for (auto it = map_geom_flds.begin(); it != map_geom_flds.end(); ++it) {
+    for (auto it = map_geom_flds.cbegin(); it != map_geom_flds.cend(); ++it) {
         R_xlen_t col_idx = it->first;
         int gfld_idx = it->second;
 
         // geometry fields may originate in a data frame list column
         // set up a generic RObject with the correct reference
-        Rcpp::RObject robj {};
+        Rcpp::RObject robj;
         bool have_geom = false;
         bool is_raw = false;
 
