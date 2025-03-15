@@ -377,7 +377,8 @@ bool polygonize(const Rcpp::CharacterVector &src_filename, int src_band,
                 int connectedness, bool quiet);
 
 bool rasterize(const std::string &src_dsn, const std::string &dst_filename,
-               const Rcpp::CharacterVector &cl_arg, bool quiet);
+               Rcpp::List dst_dataset, const Rcpp::CharacterVector &cl_arg,
+               bool quiet);
 
 bool sieveFilter(const Rcpp::CharacterVector &src_filename, int src_band,
                  const Rcpp::CharacterVector &dst_filename, int dst_band,

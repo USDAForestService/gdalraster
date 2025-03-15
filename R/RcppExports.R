@@ -869,8 +869,8 @@ ogrinfo <- function(dsn, layers = NULL, cl_arg = as.character( c("-so", "-nomd")
 #'
 #' Called from and documented in R/gdalraster_proc.R
 #' @noRd
-.rasterize <- function(src_dsn, dst_filename, cl_arg, quiet = FALSE) {
-    .Call(`_gdalraster_rasterize`, src_dsn, dst_filename, cl_arg, quiet)
+.rasterize <- function(src_dsn, dst_filename, dst_dataset, cl_arg, quiet = FALSE) {
+    .Call(`_gdalraster_rasterize`, src_dsn, dst_filename, dst_dataset, cl_arg, quiet)
 }
 
 #' Remove small raster polygons
