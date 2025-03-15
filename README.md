@@ -40,12 +40,15 @@ regular file systems. Calling signatures resemble the native C, C++ and
 Python APIs provided by the GDAL project.
 
 - manual creation of uninitialized raster and vector datasets
+- vector layer creation and schema management
 - read/set parameters and metadata for raster bands and vector layers
 - low-level I/O
 - build/read/set color tables and raster attribute tables
 - virtual raster (VRT) for virtual cropping, resampling, kernel
   filtering, mosaicing
-- `gdalwarp` wrapper for reproject/resample/crop/mosaic
+- [`gdalwarp`
+  wrapper](https://usdaforestservice.github.io/gdalraster/reference/warp.html)
+  for reproject/resample/crop/mosaic
 - coordinate transformation
 - spatial reference systems
 - geometry operations on raw vectors of WKB, or WKT strings
@@ -54,7 +57,8 @@ Python APIs provided by the GDAL project.
 - OGR vector utilities (`ogrinfo()`, `ogr2ogr()`,
   [`ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
   interface)
-- OGR facilities for vector geoprocessing (`ogr_proc()`)
+- OGR facilities for vector geoprocessing
+  ([`ogr_proc()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.html))
 - raster and vector dataset management (copy files/move/rename/delete)
 - create/append to Seek-Optimized ZIP
   ([SOZip](https://github.com/sozip/sozip-spec))
@@ -109,10 +113,10 @@ do not require any separate installation of external libraries for GDAL.
 #### Linux
 
 GDAL \>= 3.1.0 built with GEOS is required, but a more recent GDAL
-version is recommended, e.g., \>= 3.6.4. GDAL as of version 3.9 requires
-PROJ \>= 6.3.1, but a more recent version of PROJ is also recommended.
-PROJ requires sqlite3, and libxml2 is required for the imported R
-package **xml2**.
+version is recommended (e.g., \>= 3.6.4). GDAL as of version 3.9
+requires PROJ \>= 6.3.1, but a more recent version of PROJ is also
+recommended. PROJ requires sqlite3, and libxml2 is required for the
+imported R package **xml2**.
 
 On Ubuntu, recent versions of geospatial libraries can be installed from
 the [ubuntugis-unstable
@@ -184,7 +188,7 @@ installation with installation of binaries from CRAN.
 [R-universe](https://usdaforestservice.r-universe.dev/gdalraster)
 provides pre-compiled binary packages for Windows and macOS that track
 the development version of **gdalraster**. New packages are built
-usually within ~1 hour of the most recent commit.
+usually within ~1 hour of the most recent commit in branch ‘main’.
 
 ``` r
 # Install the development version from r-universe
