@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9251 (dev)
+# gdalraster 1.12.0.9252 (dev)
+
+* fix bug in `GDALVector` write that could segfault with an input feature having zero attribute fields and one geometry field that uses the default geometry column name, e.g., a GeoJSON or shapefile layer with geometry only and no attribute fields (#659) (2025-03-14)
 
 * (internal) code linting for cppcheck style in geom_api.cpp and srs_api.cpp (#658) (2025-03-12)
 
