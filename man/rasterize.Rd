@@ -31,9 +31,12 @@ rasterize(
 \item{src_dsn}{Data source name for the input vector layer (filename or
 connection string).}
 
-\item{dstfile}{Filename of the output raster. Must support update mode
-access. This file will be created (or overwritten if it already exists -
-see Note).}
+\item{dstfile}{Either a character string giving the filename of the
+output raster dataset, or an object of class \code{GDALRaster} for the output.
+Must support update mode access. If given as a filename, this file will
+be created (or overwritten if it already exists - see Note).
+If given as a \code{GDALRaster} object for an existing dataset, then the affected
+pixels are updated in-place (object must be open with write access).}
 
 \item{band}{Numeric vector. The band(s) to burn values into (for existing
 \code{dstfile}). The default is to burn into band 1. Not used when creating a
@@ -113,11 +116,16 @@ This function is a wrapper for the \command{gdal_rasterize} command-line
 utility (\url{https://gdal.org/en/stable/programs/gdal_rasterize.html}).
 }
 \note{
-The function creates a new target raster when any of the \code{fmt}, \code{dstnodata},
-\code{init}, \code{co}, \code{te}, \code{tr}, \code{tap}, \code{ts}, or \code{dtName} arguments are used. The
-resolution or size must be specified using the \code{tr} or \code{ts} argument for all
-new rasters. The target raster will be overwritten if it already exists and
-any of these creation-related options are used.
+\code{rasterize()} creates a new target raster when \code{dstfile} is given as a
+filename (character string). In that case, some combination of the \code{fmt},
+\code{dstnodata}, \code{init}, \code{co}, \code{te}, \code{tr}, \code{tap}, \code{ts}, and \code{dtName} arguments
+will be used. The resolution or size must be specified using either the \code{tr}
+or \code{ts} argument for all new rasters. The target raster will be overwritten
+if it already exists and any of these creation-related options are used.
+
+To update an existing raster in-place, an object of class \code{GDALRaster} may
+be given for the \code{dstfile} argument. The \code{GDALRaster} object should be open
+for write access.
 }
 \examples{
 # MTBS fire perimeters for Yellowstone National Park 1984-2022
