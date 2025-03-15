@@ -15,7 +15,7 @@ utility (https://gdal.org/en/stable/programs/gdal_rasterize.html)."></head><body
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9252</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9253</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -100,9 +100,12 @@ connection string).</p></dd>
 
 
 <dt id="arg-dstfile">dstfile<a class="anchor" aria-label="anchor" href="#arg-dstfile"></a></dt>
-<dd><p>Filename of the output raster. Must support update mode
-access. This file will be created (or overwritten if it already exists -
-see Note).</p></dd>
+<dd><p>Either a character string giving the filename of the
+output raster dataset, or an object of class <code>GDALRaster</code> for the output.
+Must support update mode access. If given as a filename, this file will
+be created (or overwritten if it already exists - see Note).
+If given as a <code>GDALRaster</code> object for an existing dataset, then the affected
+pixels are updated in-place (object must be open with write access).</p></dd>
 
 
 <dt id="arg-band">band<a class="anchor" aria-label="anchor" href="#arg-band"></a></dt>
@@ -214,11 +217,15 @@ An error is raised if the operation fails.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>The function creates a new target raster when any of the <code>fmt</code>, <code>dstnodata</code>,
-<code>init</code>, <code>co</code>, <code>te</code>, <code>tr</code>, <code>tap</code>, <code>ts</code>, or <code>dtName</code> arguments are used. The
-resolution or size must be specified using the <code>tr</code> or <code>ts</code> argument for all
-new rasters. The target raster will be overwritten if it already exists and
-any of these creation-related options are used.</p>
+    <p><code>rasterize()</code> creates a new target raster when <code>dstfile</code> is given as a
+filename (character string). In that case, some combination of the <code>fmt</code>,
+<code>dstnodata</code>, <code>init</code>, <code>co</code>, <code>te</code>, <code>tr</code>, <code>tap</code>, <code>ts</code>, and <code>dtName</code> arguments
+will be used. The resolution or size must be specified using either the <code>tr</code>
+or <code>ts</code> argument for all new rasters. The target raster will be overwritten
+if it already exists and any of these creation-related options are used.</p>
+<p>To update an existing raster in-place, an object of class <code>GDALRaster</code> may
+be given for the <code>dstfile</code> argument. The <code>GDALRaster</code> object should be open
+for write access.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
