@@ -233,54 +233,105 @@ addFilesInZip <- function(
 }
 
 
-#' Return the list of creation options of a GDAL driver
+#' Return the list of creation options for a GDAL driver
 #'
 #' `getCreationOptions()` returns the list of creation options supported by a
-#' GDAL format driver as an XML string (invisibly).
-#' Wrapper for `GDALGetDriverCreationOptionList()` in the GDAL API.
-#' Information about the available creation options is also printed to the
-#' console by default.
-#'
-#' @param format Raster format short name (e.g., "GTiff").
-#' @param filter Optional character vector of creation option names. Controls
-#' only the amount of information printed to the console.
-#' By default, information for all creation options is printed. Can be set to
-#' empty string `""` to disable printing information to the console.
-#' @returns Invisibly, an XML string that describes the full list of creation
-#' options or empty string `""` (full output of
-#' `GDALGetDriverCreationOptionList()` in the GDAL API).
+#' GDAL format driver.
+#' This function is a wrapper of `GDALGetDriverCreationOptionList()` in the
+#' GDAL API, parsing its XML output into a named list.
+#' 
+#' @details 
+#' The output is a nested list with names matching the creation option names.
+#' The information for each creation option is a named list with the following
+#' elements:
+#' * `$type`: a character string describing the data type, e.g., `"int"`,
+#' `"float"`, `"string"`. The type `"string-select"` denotes a list of allowed
+#' string values which are returned as a character vector in the `$values`
+#' element (see below).
+#' * `$description`: a character string describing the option, or `NA` if no
+#' description is provided by the GDAL driver.
+#' * `$default`: the default value of the option as either a character string
+#' or numeric value, or `NA` if no description is provided by the GDAL driver.
+#' * `$values`: a character vector of allowed string values for the creation
+#' option if `$type` is `"string-select"`, otherwise `NULL` if the option is
+#' not a `"string-select"` type.
+#' 
+#' @param format Format short name (e.g., `"GTiff"`).
+#' @param filter Optional character vector of creation option names.
+#' @returns A named list with names matching the creation option names, and
+#' each element a named list with elements `$type`, `$description`, `$default`
+#' and `$values` (see Details).
 #'
 #' @seealso
 #' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()]
 #'
 #' @examples
-#' getCreationOptions("GTiff", filter="COMPRESS")
+#' opt <- getCreationOptions("GTiff", "COMPRESS")
+#' names(opt)
+#' 
+#' (opt$COMPRESS$type == "string-select")  # TRUE
+#' opt$COMPRESS$values
+#' 
+#' all_opt <- getCreationOptions("GTiff")
+#' names(all_opt)
+#' 
+#' # $description and $default will be NA if no value is provided by the driver
+#' # $values will be NULL if the option is not a 'string-select' type
+#' 
+#' all_opt$PREDICTOR
+#' 
+#' all_opt$BIGTIFF
 #' @export
-getCreationOptions <- function(format, filter=NULL) {
+getCreationOptions <- function(format, filter = NULL) {
 
     if (!is.character(format) || length(format) > 1)
         stop("'format' must be a character string", call. = FALSE)
 
-    if (is.null(filter))
+    if (is.null(filter) || filter == "") {
         filter <- "_all_"
-
-    if (filter[1] == "")
-        return(invisible(.getCreationOptions(format)))
+    } else {
+        filter <- toupper(filter)
+    }
 
     if (.getCreationOptions(format) == "") {
         message("no creation options found for ", format)
-        return(invisible(.getCreationOptions(format)))
+        return(NULL)
     }
 
-    x <- xml2::read_xml(.getCreationOptions(format))
-    opt_list <- xml2::xml_find_all(x, xpath = "//Option")
-    for (n in seq_along(opt_list)) {
-        if (filter[1] == "_all_" ||
-                xml2::xml_attr(opt_list[[n]], "name") %in% filter) {
-            print(opt_list[[n]])
+    xml <- xml2::read_xml(.getCreationOptions(format))
+    el <- xml2::xml_children(xml)
+    out <- list()
+    if (length(el) == 0) {
+        return(NULL)
+    } else {
+        for (i in seq_along(el)) {
+            a <- xml_attrs(el[[i]])
+            if (filter[1] == "_all_" || toupper(a["name"]) %in% filter) {
+                type_name <- unname(a["type"])
+                str_values <- xml_children(el[[i]]) |> as_list() |> unlist()
+                default_val <- unname(a["default"])
+                if (toupper(type_name) %in% c("INT", "INTEGER", "UNSIGNED INT",
+                                              "FLOAT")) {
+                    default_val <- as.numeric(default_val)
+                }
+                
+                out[[unname(a["name"])]] <- list(
+                    type = type_name,
+                    description = unname(a["description"]),
+                    default = default_val,
+                    values = str_values)
+                    # these might be uncommented in the future:
+                    # Currently the XML returned by GDAL does not include the
+                    # min/max attributes even though they are populated in the
+                    # driver code that builds the XML string.
+                    # (https://github.com/OSGeo/gdal/issues/11967)
+                    # min = as.numeric(unname(a["min"])),
+                    # max = as.numeric(unname(a["max"])))
+            }
         }
     }
-    return(invisible(.getCreationOptions(format)))
+
+    return(out)
 }
 
 

@@ -24,10 +24,18 @@ test_that("addFilesInZip works", {
 })
 
 test_that("getCreationOptions works", {
-    expect_no_error(getCreationOptions("GTiff"))
-    expect_output(x <- getCreationOptions("GTiff", filter="COMPRESS"))
-    expect_type(x, "character")
-    expect_message(getCreationOptions("AIG"))
+    opt <- getCreationOptions("GTiff", "COMPRESS")
+    expect_true(is.list(opt))
+    expect_equal(names(opt), "COMPRESS")
+    expect_equal(opt$COMPRESS$type, "string-select")
+    expect_vector(opt$COMPRESS$values, ptype = character())
+    all_opt <- getCreationOptions("GTiff")
+    expect_true(is.list(all_opt))
+    expect_true(length(names(all_opt)) > 10)
+    expect_true(is.list(all_opt$TILED))
+    expect_error(getCreationOptions("invalid format name"))
+    expect_error(getCreationOptions(NA))
+
 })
 
 test_that("dump_open_datasets works", {
