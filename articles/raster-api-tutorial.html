@@ -412,26 +412,34 @@ function lists all available creation options for a format. Output can
 also be filtered to specific options:</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"COMPRESS"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="COMPRESS" type="string-select"&gt;</span></span>
-<span><span class="co">#&gt;  [1] &lt;Value&gt;NONE&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt;  [2] &lt;Value&gt;LZW&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt;  [3] &lt;Value&gt;PACKBITS&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt;  [4] &lt;Value&gt;JPEG&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt;  [5] &lt;Value&gt;CCITTRLE&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt;  [6] &lt;Value&gt;CCITTFAX3&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt;  [7] &lt;Value&gt;CCITTFAX4&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt;  [8] &lt;Value&gt;DEFLATE&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt;  [9] &lt;Value&gt;LZMA&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt; [10] &lt;Value&gt;ZSTD&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt; [11] &lt;Value&gt;WEBP&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt; [12] &lt;Value&gt;LERC&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt; [13] &lt;Value&gt;LERC_DEFLATE&lt;/Value&gt;</span></span>
-<span><span class="co">#&gt; [14] &lt;Value&gt;LERC_ZSTD&lt;/Value&gt;</span></span>
+<span><span class="co">#&gt; $COMPRESS</span></span>
+<span><span class="co">#&gt; $COMPRESS$type</span></span>
+<span><span class="co">#&gt; [1] "string-select"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $COMPRESS$description</span></span>
+<span><span class="co">#&gt; [1] NA</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $COMPRESS$default</span></span>
+<span><span class="co">#&gt; [1] NA</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $COMPRESS$values</span></span>
+<span><span class="co">#&gt;  [1] "NONE"         "LZW"          "PACKBITS"     "JPEG"         "CCITTRLE"    </span></span>
+<span><span class="co">#&gt;  [6] "CCITTFAX3"    "CCITTFAX4"    "DEFLATE"      "LZMA"         "ZSTD"        </span></span>
+<span><span class="co">#&gt; [11] "WEBP"         "LERC"         "LERC_DEFLATE" "LERC_ZSTD"</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/getCreationOptions.html">getCreationOptions</a></span><span class="op">(</span><span class="st">"GTiff"</span>, <span class="st">"SPARSE_OK"</span><span class="op">)</span></span>
-<span><span class="co">#&gt; {xml_node}</span></span>
-<span><span class="co">#&gt; &lt;Option name="SPARSE_OK" type="boolean" description="Should empty blocks be omitted on disk?" default="FALSE"&gt;</span></span></code></pre></div>
+<span><span class="co">#&gt; $SPARSE_OK</span></span>
+<span><span class="co">#&gt; $SPARSE_OK$type</span></span>
+<span><span class="co">#&gt; [1] "boolean"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $SPARSE_OK$description</span></span>
+<span><span class="co">#&gt; [1] "Should empty blocks be omitted on disk?"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $SPARSE_OK$default</span></span>
+<span><span class="co">#&gt; [1] "FALSE"</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; $SPARSE_OK$values</span></span>
+<span><span class="co">#&gt; NULL</span></span></code></pre></div>
 </div>
 <div class="section level2">
 <h2 id="using-create">Using create()<a class="anchor" aria-label="anchor" href="#using-create"></a>
