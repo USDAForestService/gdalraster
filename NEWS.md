@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9253 (dev)
+# gdalraster 1.12.0.9254 (dev)
+
+* `getCreationOptions()`: change the return value to a named list of options with their information (#662) (2025-03-16) 
 
 * `rasterize()`: support passing a `GDALRaster` object for in-place updating (#660) (2025-03-15) 
 
