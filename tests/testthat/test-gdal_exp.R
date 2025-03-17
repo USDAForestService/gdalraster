@@ -448,3 +448,9 @@ test_that("flip_vertical works", {
     expect_error(.flip_vertical(v, 5, 5, 1))
     expect_error(.flip_vertical(v, -3, -3, 1))
 })
+
+test_that("validateCreationOptions works", {
+    expect_true(validateCreationOptions("GTiff", c("COMPRESS=LZW",
+                                                   "TILED=YES")))
+    expect_false(validateCreationOptions("GTiff", "COMPRESS=invalid"))
+})

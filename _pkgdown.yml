@@ -35,6 +35,7 @@ reference:
   - create
   - createCopy
   - getCreationOptions
+  - validateCreationOptions
   - rasterFromRaster
   - translate
 - subtitle: Virtual raster

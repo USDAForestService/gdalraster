@@ -266,6 +266,8 @@ GDALRaster *createCopy(const std::string &format,
                        bool quiet);
 
 std::string getCreationOptions(const std::string &format);
+bool validateCreationOptions(const std::string &format,
+                             const Rcpp::CharacterVector &options);
 
 bool copyDatasetFiles(const Rcpp::CharacterVector &new_filename,
                       const Rcpp::CharacterVector &old_filename,
