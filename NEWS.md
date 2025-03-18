@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9254 (dev)
+# gdalraster 1.12.0.9255 (dev)
+
+* add `validateCreationOptions()`, validate the list of creation options that are handled by a driver (#663) (2025-03-17)
 
 * `getCreationOptions()`: change the return value to a named list of options with their information (#662) (2025-03-16) 
 
