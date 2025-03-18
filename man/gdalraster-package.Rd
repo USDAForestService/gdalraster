@@ -23,7 +23,8 @@
   \code{\link[=createCopy]{createCopy()}},
   \code{\link[=rasterFromRaster]{rasterFromRaster()}},
   \code{\link[=translate]{translate()}},
-  \code{\link[=getCreationOptions]{getCreationOptions()}}
+  \code{\link[=getCreationOptions]{getCreationOptions()}},
+  \code{\link[=validateCreationOptions]{validateCreationOptions()}}
 
   \item virtual raster:
   \code{\link[=autoCreateWarpedVRT]{autoCreateWarpedVRT()}},

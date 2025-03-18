@@ -690,6 +690,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// validateCreationOptions
+bool validateCreationOptions(const std::string& format, const Rcpp::CharacterVector& options);
+RcppExport SEXP _gdalraster_validateCreationOptions(SEXP formatSEXP, SEXP optionsSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type format(formatSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::CharacterVector& >::type options(optionsSEXP);
+    rcpp_result_gen = Rcpp::wrap(validateCreationOptions(format, options));
+    return rcpp_result_gen;
+END_RCPP
+}
 // addFileInZip
 bool addFileInZip(const std::string& zip_filename, bool overwrite, const std::string& archive_filename, const std::string& in_filename, const Rcpp::Nullable<Rcpp::CharacterVector>& options, bool quiet);
 RcppExport SEXP _gdalraster_addFileInZip(SEXP zip_filenameSEXP, SEXP overwriteSEXP, SEXP archive_filenameSEXP, SEXP in_filenameSEXP, SEXP optionsSEXP, SEXP quietSEXP) {
@@ -1992,6 +2004,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_copyDatasetFiles", (DL_FUNC) &_gdalraster_copyDatasetFiles, 3},
     {"_gdalraster_identifyDriver", (DL_FUNC) &_gdalraster_identifyDriver, 5},
     {"_gdalraster_getCreationOptions", (DL_FUNC) &_gdalraster_getCreationOptions, 1},
+    {"_gdalraster_validateCreationOptions", (DL_FUNC) &_gdalraster_validateCreationOptions, 2},
     {"_gdalraster_addFileInZip", (DL_FUNC) &_gdalraster_addFileInZip, 6},
     {"_gdalraster_vsi_copy_file", (DL_FUNC) &_gdalraster_vsi_copy_file, 3},
     {"_gdalraster_vsi_curl_clear_cache", (DL_FUNC) &_gdalraster_vsi_curl_clear_cache, 3},
