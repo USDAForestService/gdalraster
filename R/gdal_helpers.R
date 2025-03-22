@@ -239,8 +239,8 @@ addFilesInZip <- function(
 #' GDAL format driver.
 #' This function is a wrapper of `GDALGetDriverCreationOptionList()` in the
 #' GDAL API, parsing its XML output into a named list.
-#' 
-#' @details 
+#'
+#' @details
 #' The output is a nested list with names matching the creation option names.
 #' The information for each creation option is a named list with the following
 #' elements:
@@ -255,7 +255,13 @@ addFilesInZip <- function(
 #' * `$values`: a character vector of allowed string values for the creation
 #' option if `$type` is `"string-select"`, otherwise `NULL` if the option is
 #' not a `"string-select"` type.
-#' 
+#' * `$min`: (GDAL >= 3.11) the minimum value of the valid range for the
+#' option, or `NA` if not provided by the GDAL driver or the option is not a
+#' numeric type.
+#' * `$max`: (GDAL >= 3.11) the maximum value of the valid range for the
+#' option, or `NA` if not provided by the GDAL driver or the option is not a
+#' numeric type.
+#'
 #' @param format Format short name (e.g., `"GTiff"`).
 #' @param filter Optional character vector of creation option names.
 #' @returns A named list with names matching the creation option names, and
@@ -263,23 +269,24 @@ addFilesInZip <- function(
 #' and `$values` (see Details).
 #'
 #' @seealso
-#' [`GDALRaster-class`][GDALRaster], [create()], [createCopy()]
+#' [create()], [createCopy()], [translate()], [validateCreationOptions()],
+#' [warp()]
 #'
 #' @examples
 #' opt <- getCreationOptions("GTiff", "COMPRESS")
 #' names(opt)
-#' 
+#'
 #' (opt$COMPRESS$type == "string-select")  # TRUE
 #' opt$COMPRESS$values
-#' 
+#'
 #' all_opt <- getCreationOptions("GTiff")
 #' names(all_opt)
-#' 
+#'
 #' # $description and $default will be NA if no value is provided by the driver
 #' # $values will be NULL if the option is not a 'string-select' type
-#' 
+#'
 #' all_opt$PREDICTOR
-#' 
+#'
 #' all_opt$BIGTIFF
 #' @export
 getCreationOptions <- function(format, filter = NULL) {
@@ -314,19 +321,26 @@ getCreationOptions <- function(format, filter = NULL) {
                                               "FLOAT")) {
                     default_val <- as.numeric(default_val)
                 }
-                
-                out[[unname(a["name"])]] <- list(
-                    type = type_name,
-                    description = unname(a["description"]),
-                    default = default_val,
-                    values = str_values)
-                    # these might be uncommented in the future:
-                    # Currently the XML returned by GDAL does not include the
-                    # min/max attributes even though they are populated in the
-                    # driver code that builds the XML string.
-                    # (https://github.com/OSGeo/gdal/issues/11967)
-                    # min = as.numeric(unname(a["min"])),
-                    # max = as.numeric(unname(a["max"])))
+
+                # The XML returned by GDAL < 3.11 does not include the
+                # min/max attributes even though they are populated in the
+                # driver code that builds the XML string.
+                # (https://github.com/OSGeo/gdal/issues/11967)
+                if (.gdal_version_num() < 3110000) {
+                    out[[unname(a["name"])]] <- list(
+                        type = type_name,
+                        description = unname(a["description"]),
+                        default = default_val,
+                        values = str_values)
+                } else {
+                    out[[unname(a["name"])]] <- list(
+                        type = type_name,
+                        description = unname(a["description"]),
+                        default = default_val,
+                        values = str_values,
+                        min = as.numeric(unname(a["min"])),
+                        max = as.numeric(unname(a["max"])))
+                }
             }
         }
     }
