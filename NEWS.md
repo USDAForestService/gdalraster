@@ -1,10 +1,12 @@
-# gdalraster 1.12.0.9255 (dev)
+# gdalraster 1.12.0.9256 (dev)
+
+* `getCreationOptions()`: include `$min` and `$max` in the returned list if GDAL >= 3.11 (2025-03-22)
 
 * add `validateCreationOptions()`, validate the list of creation options that are handled by a driver (#663) (2025-03-17)
 
-* `getCreationOptions()`: change the return value to a named list of options with their information (#662) (2025-03-16) 
+* `getCreationOptions()`: change the return value to a named list of options with their information (#662) (2025-03-16)
 
-* `rasterize()`: support passing a `GDALRaster` object for in-place updating (#660) (2025-03-15) 
+* `rasterize()`: support passing a `GDALRaster` object for in-place updating (#660) (2025-03-15)
 
 * fix bug in `GDALVector` write that could segfault with an input feature having zero attribute fields and one geometry field that uses the default geometry column name, e.g., a GeoJSON or shapefile layer with geometry only and no attribute fields (#659) (2025-03-14)
 
