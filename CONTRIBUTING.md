@@ -8,13 +8,13 @@ This project is released under [MIT license](https://cran.r-project.org/web/lice
 
 ## Development practices
 
-[EditorConfig](https://editorconfig.org/) is in use in the development environment and a `.editorconfig` file is included in the repository. This will automatically tell popular code editors about the basic style settings like indentation, whitespaces and end-of-line markers for distinguished types of plain text files.
+[EditorConfig](https://editorconfig.org/) is in use in the development environment and a `.editorconfig` file is included in the repository. This will automatically tell popular code editors about the basic style settings like indentation, whitespaces and end-of-line markers for distinguished types of plain text files. (EditorConfig may need to be installed, e.g., on Debian/Ubuntu with `sudo apt install editorconfig`. See the main EditorConfig link above for a list available plugins for various editors and IDEs, e.g., [EditorConfig for VS Code](https://marketplace.visualstudio.com/items?itemName=EditorConfig.EditorConfig).)
 
 [lintr](https://lintr.r-lib.org/) is in use in the development environment for static analysis of R code, and a `.lintr` file is included in the repository.
 
 [Cpplint](https://github.com/cpplint/cpplint) is in use in the development environment for C++ code style checking.
 
-**cppcheck** is also used for static analysis of C++ code. It can be installed with various package managers, e.g., `sudo apt-get install cppcheck` on Debian/Ubuntu. Documentation, source code and a Windows installer are available on the [cppcheck website](https://cppcheck.sourceforge.io/).
+**cppcheck** is also used for static analysis of C++ code. It can be installed with various package managers, e.g., `sudo apt install cppcheck` on Debian/Ubuntu. Documentation, source code and a Windows installer are available on the [cppcheck website](https://cppcheck.sourceforge.io/).
 
 All new functionality must include tests added to the automated test suite under `tests/testthat/`. Documentation for **testthat** is available at https://testthat.r-lib.org/.
 
