@@ -99,10 +99,17 @@ or numeric value, or <code>NA</code> if no description is provided by the GDAL d
 <li><p><code>$values</code>: a character vector of allowed string values for the creation
 option if <code>$type</code> is <code>"string-select"</code>, otherwise <code>NULL</code> if the option is
 not a <code>"string-select"</code> type.</p></li>
+<li><p><code>$min</code>: (GDAL &gt;= 3.11) the minimum value of the valid range for the
+option, or <code>NA</code> if not provided by the GDAL driver or the option is not a
+numeric type.</p></li>
+<li><p><code>$max</code>: (GDAL &gt;= 3.11) the maximum value of the valid range for the
+option, or <code>NA</code> if not provided by the GDAL driver or the option is not a
+numeric type.</p></li>
 </ul></div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="GDALRaster-class.html">GDALRaster-class</a></code>, <code><a href="create.html">create()</a></code>, <code><a href="createCopy.html">createCopy()</a></code></p></div>
+    <div class="dont-index"><p><code><a href="create.html">create()</a></code>, <code><a href="createCopy.html">createCopy()</a></code>, <code><a href="translate.html">translate()</a></code>, <code><a href="validateCreationOptions.html">validateCreationOptions()</a></code>,
+<code><a href="warp.html">warp()</a></code></p></div>
     </div>
 
     <div class="section level2">
