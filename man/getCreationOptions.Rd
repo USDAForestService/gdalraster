@@ -38,6 +38,12 @@ or numeric value, or \code{NA} if no description is provided by the GDAL driver.
 \item \verb{$values}: a character vector of allowed string values for the creation
 option if \verb{$type} is \code{"string-select"}, otherwise \code{NULL} if the option is
 not a \code{"string-select"} type.
+\item \verb{$min}: (GDAL >= 3.11) the minimum value of the valid range for the
+option, or \code{NA} if not provided by the GDAL driver or the option is not a
+numeric type.
+\item \verb{$max}: (GDAL >= 3.11) the maximum value of the valid range for the
+option, or \code{NA} if not provided by the GDAL driver or the option is not a
+numeric type.
 }
 }
 \examples{
@@ -58,5 +64,6 @@ all_opt$PREDICTOR
 all_opt$BIGTIFF
 }
 \seealso{
-\code{\link[=GDALRaster]{GDALRaster-class}}, \code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}
+\code{\link[=create]{create()}}, \code{\link[=createCopy]{createCopy()}}, \code{\link[=translate]{translate()}}, \code{\link[=validateCreationOptions]{validateCreationOptions()}},
+\code{\link[=warp]{warp()}}
 }
