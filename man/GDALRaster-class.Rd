@@ -115,6 +115,7 @@ ds$res()
 ds$dim()
 ds$apply_geotransform(col_row)
 ds$get_pixel_line(xy)
+ds$get_block_indexing(band)
 
 ds$getDescription(band)
 ds$setDescription(band, desc)
@@ -363,6 +364,20 @@ coerced to numeric matrix). Returns an integer matrix of raster pixel/line.
 See the stand-alone function of the same name (\code{\link[=get_pixel_line]{get_pixel_line()}}) for more
 info and examples.
 
+\code{$get_block_indexing(band)}\cr
+Helper method returning a numeric matrix with named columns: \code{xblockoff},
+\code{yblockoff}, \code{xoff}, \code{yoff}, \code{xsize}, \code{ysize}, \code{xmin}, \code{xmax}, \code{ymin},
+\code{ymax}. For the meanings of these names, refer to the following class
+methods below: \verb{$getBlockSize()}, \verb{$getActualBlockSize} and \verb{$read()}.
+All offsets are zero-based. The columns \code{xmin}, \code{xmax}, \code{ymin} and
+\code{ymax} give the extent of each block in geospatial coordinates.
+This method provides indexing values for the block layout of the given
+\code{band} number. The returned matrix has number of rows equal to the number
+of blocks comprising the band, with blocks ordered left to right, top
+to bottom. The \code{xoff}/\code{yoff} values are pixel offsets to the start of a
+block. The \code{xsize}/\code{ysize} values give the actual block sizes accounting
+for potentially incomplete blocks along the right and bottom edges.
+
 \code{$getDescription(band)}\cr
 Returns a string containing the description for \code{band}. An empty
 string is returned if no description is set for the band.
@@ -391,7 +406,7 @@ incomplete.
 Returns an integer vector of length two (xvalid, yvalid) containing the
 actual block size for a given block offset in \code{band}. Handles partial
 blocks at the edges of the raster and returns the true number of pixels.
-\code{xblockoff} is an integer scalar, the horizontal block offset for which to
+\code{xblockoff} is an integer value, the horizontal block offset for which to
 calculate the number of valid pixels, with zero indicating the left most
 block, 1 the next block, etc. \code{yblockoff} is likewise the vertical block
 offset, with zero indicating the top most block, 1 the next block, etc.

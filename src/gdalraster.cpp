@@ -838,6 +838,51 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
     return values;
 }
 
+Rcpp::NumericMatrix GDALRaster::get_block_indexing(int band) const {
+    checkAccess_(GA_ReadOnly);
+
+    double dfRasterXSize = getRasterXSize();
+    double dfRasterYSize = getRasterYSize();
+    GDALRasterBandH hBand = getBand_(band);
+    int nBlockXSize = -1;
+    int nBlockYSize = -1;
+    GDALGetBlockSize(hBand, &nBlockXSize, &nBlockYSize);
+    int num_blocks_x = static_cast<int>(std::ceil(dfRasterXSize / nBlockXSize));
+    int num_blocks_y = static_cast<int>(std::ceil(dfRasterYSize / nBlockYSize));
+    R_xlen_t num_blocks = num_blocks_x * num_blocks_y;
+    std::vector<double> gt = getGeoTransform();
+
+    Rcpp::NumericMatrix blocks = Rcpp::no_init(num_blocks, 10);
+    Rcpp::colnames(blocks) = Rcpp::CharacterVector::create(
+                                "xblockoff", "yblockoff", "xoff", "yoff",
+                                "xsize", "ysize", "xmin", "xmax", "ymin",
+                                "ymax");
+
+    R_xlen_t i = 0;
+    for (int y = 0; y < num_blocks_y; ++y) {
+        for (int x = 0; x < num_blocks_x; ++x) {
+            double this_xoff = x * nBlockXSize;
+            double this_yoff = y * nBlockYSize;
+            std::vector<int> this_size = getActualBlockSize(band, x, y);
+            std::vector<double> this_bbox = bbox_grid_to_geo_(
+                                                gt,
+                                                this_xoff,
+                                                this_xoff + this_size[0],
+                                                this_yoff,
+                                                this_yoff + this_size[1]);
+
+            blocks.row(i) = Rcpp::NumericVector::create(
+                                            x, y, this_xoff, this_yoff,
+                                            this_size[0], this_size[1],
+                                            this_bbox[0], this_bbox[2],
+                                            this_bbox[1], this_bbox[3]);
+            i += 1;
+        }
+    }
+
+    return blocks;
+}
+
 std::vector<int> GDALRaster::getBlockSize(int band) const {
     checkAccess_(GA_ReadOnly);
 
@@ -2239,6 +2284,8 @@ RCPP_MODULE(mod_GDALRaster) {
         "Convert geospatial coordinates to pixel/line")
     .const_method("pixel_extract", &GDALRaster::pixel_extract,
         "Extract pixel values at geospatial xy locations")
+    .const_method("get_block_indexing", &GDALRaster::get_block_indexing,
+        "Return a matrix of block x/y, raster x/y offset, block x/y size")
     .const_method("getBlockSize", &GDALRaster::getBlockSize,
         "Retrieve the actual block size for a given block offset")
     .const_method("getActualBlockSize", &GDALRaster::getActualBlockSize,

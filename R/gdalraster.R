@@ -85,6 +85,7 @@
 #' ds$dim()
 #' ds$apply_geotransform(col_row)
 #' ds$get_pixel_line(xy)
+#' ds$get_block_indexing(band)
 #'
 #' ds$getDescription(band)
 #' ds$setDescription(band, desc)
@@ -328,6 +329,20 @@
 #' See the stand-alone function of the same name ([get_pixel_line()]) for more
 #' info and examples.
 #'
+#' \code{$get_block_indexing(band)}\cr
+#' Helper method returning a numeric matrix with named columns: `xblockoff`,
+#' `yblockoff`, `xoff`, `yoff`, `xsize`, `ysize`, `xmin`, `xmax`, `ymin`,
+#' `ymax`. For the meanings of these names, refer to the following class
+#' methods below: `$getBlockSize()`, `$getActualBlockSize` and `$read()`.
+#' All offsets are zero-based. The columns `xmin`, `xmax`, `ymin` and
+#' `ymax` give the extent of each block in geospatial coordinates.
+#' This method provides indexing values for the block layout of the given
+#' `band` number. The returned matrix has number of rows equal to the number
+#' of blocks comprising the band, with blocks ordered left to right, top
+#' to bottom. The `xoff`/`yoff` values are pixel offsets to the start of a
+#' block. The `xsize`/`ysize` values give the actual block sizes accounting
+#' for potentially incomplete blocks along the right and bottom edges.
+#'
 #' \code{$getDescription(band)}\cr
 #' Returns a string containing the description for \code{band}. An empty
 #' string is returned if no description is set for the band.
@@ -356,7 +371,7 @@
 #' Returns an integer vector of length two (xvalid, yvalid) containing the
 #' actual block size for a given block offset in \code{band}. Handles partial
 #' blocks at the edges of the raster and returns the true number of pixels.
-#' `xblockoff` is an integer scalar, the horizontal block offset for which to
+#' `xblockoff` is an integer value, the horizontal block offset for which to
 #' calculate the number of valid pixels, with zero indicating the left most
 #' block, 1 the next block, etc. `yblockoff` is likewise the vertical block
 #' offset, with zero indicating the top most block, 1 the next block, etc.
