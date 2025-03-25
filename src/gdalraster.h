@@ -141,6 +141,7 @@ class GDALRaster {
                                       int krnl_dim,
                                       const std::string &xy_srs) const;
 
+    Rcpp::NumericMatrix get_block_indexing(int band) const;
     std::vector<int> getBlockSize(int band) const;
     std::vector<int> getActualBlockSize(int band, int xblockoff,
                                         int yblockoff) const;
@@ -315,6 +316,10 @@ Rcpp::IntegerMatrix get_pixel_line_gt(const Rcpp::RObject &xy,
 
 Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject &xy,
                                       const GDALRaster* const &ds);
+
+std::vector<double> bbox_grid_to_geo_(const std::vector<double> &gt,
+                                      double grid_xmin, double grid_xmax,
+                                      double grid_ymin, double grid_ymax);
 
 Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector &v,
                                   int xsize, int ysize, int nbands);

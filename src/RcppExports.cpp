@@ -376,6 +376,21 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// bbox_grid_to_geo_
+std::vector<double> bbox_grid_to_geo_(const std::vector<double>& gt, double grid_xmin, double grid_xmax, double grid_ymin, double grid_ymax);
+RcppExport SEXP _gdalraster_bbox_grid_to_geo_(SEXP gtSEXP, SEXP grid_xminSEXP, SEXP grid_xmaxSEXP, SEXP grid_yminSEXP, SEXP grid_ymaxSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<double>& >::type gt(gtSEXP);
+    Rcpp::traits::input_parameter< double >::type grid_xmin(grid_xminSEXP);
+    Rcpp::traits::input_parameter< double >::type grid_xmax(grid_xmaxSEXP);
+    Rcpp::traits::input_parameter< double >::type grid_ymin(grid_yminSEXP);
+    Rcpp::traits::input_parameter< double >::type grid_ymax(grid_ymaxSEXP);
+    rcpp_result_gen = Rcpp::wrap(bbox_grid_to_geo_(gt, grid_xmin, grid_xmax, grid_ymin, grid_ymax));
+    return rcpp_result_gen;
+END_RCPP
+}
 // flip_vertical
 Rcpp::NumericVector flip_vertical(const Rcpp::NumericVector& v, int xsize, int ysize, int nbands);
 RcppExport SEXP _gdalraster_flip_vertical(SEXP vSEXP, SEXP xsizeSEXP, SEXP ysizeSEXP, SEXP nbandsSEXP) {
@@ -1983,6 +1998,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_inv_geotransform", (DL_FUNC) &_gdalraster_inv_geotransform, 1},
     {"_gdalraster_get_pixel_line_gt", (DL_FUNC) &_gdalraster_get_pixel_line_gt, 2},
     {"_gdalraster_get_pixel_line_ds", (DL_FUNC) &_gdalraster_get_pixel_line_ds, 2},
+    {"_gdalraster_bbox_grid_to_geo_", (DL_FUNC) &_gdalraster_bbox_grid_to_geo_, 5},
     {"_gdalraster_flip_vertical", (DL_FUNC) &_gdalraster_flip_vertical, 4},
     {"_gdalraster_buildVRT", (DL_FUNC) &_gdalraster_buildVRT, 4},
     {"_gdalraster_combine", (DL_FUNC) &_gdalraster_combine, 8},

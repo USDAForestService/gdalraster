@@ -868,6 +868,44 @@ Rcpp::IntegerMatrix get_pixel_line_ds(const Rcpp::RObject& xy,
 }
 
 
+//' Returns bbox geospatial x,y coordinates (xmin, ymin, xmax, ymax) from
+//' inpouts of geotransform vector and the grid pixel/line extent
+//' @noRd
+// [[Rcpp::export(name = ".bbox_grid_to_geo")]]
+std::vector<double> bbox_grid_to_geo_(const std::vector<double> &gt,
+                                      double grid_xmin, double grid_xmax,
+                                      double grid_ymin, double grid_ymax) {
+
+    // {ul, ll, ur, lr}
+    Rcpp::NumericVector corners_x = {NA_REAL, NA_REAL, NA_REAL, NA_REAL};
+    Rcpp::NumericVector corners_y = {NA_REAL, NA_REAL, NA_REAL, NA_REAL};
+
+    // ul
+    corners_x[0] = gt[0] + gt[1] * grid_xmin + gt[2] * grid_ymax;
+    corners_y[0] = gt[3] + gt[4] * grid_xmin + gt[5] * grid_ymax;
+
+    // ll
+    corners_x[1] = gt[0] + gt[1] * grid_xmin + gt[2] * grid_ymin;
+    corners_y[1] = gt[3] + gt[4] * grid_xmin + gt[5] * grid_ymin;
+
+    // ur
+    corners_x[2] = gt[0] + gt[1] * grid_xmax + gt[2] * grid_ymax;
+    corners_y[2] = gt[3] + gt[4] * grid_xmax + gt[5] * grid_ymax;
+
+    // lr
+    corners_x[3] = gt[0] + gt[1] * grid_xmax + gt[2] * grid_ymin;
+    corners_y[3] = gt[3] + gt[4] * grid_xmax + gt[5] * grid_ymin;
+
+    double xmin = Rcpp::min(corners_x);
+    double xmax = Rcpp::max(corners_x);
+    double ymin = Rcpp::min(corners_y);
+    double ymax = Rcpp::max(corners_y);
+
+    std::vector<double> ret = {xmin, ymin, xmax, ymax};
+    return ret;
+}
+
+
 //' Flip raster data vertically
 //' @noRd
 // [[Rcpp::export(name = ".flip_vertical")]]

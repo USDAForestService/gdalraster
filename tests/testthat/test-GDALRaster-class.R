@@ -820,3 +820,37 @@ test_that("raster dimensions multiply without int overflow", {
     ds$close()
     vsi_unlink(f)
 })
+
+test_that("get block indexing works", {
+    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    ds <- new(GDALRaster, elev_file)
+
+    values_expected <- read_ds(ds)
+    attributes(values_expected) <- NULL
+
+    blocks <- ds$get_block_indexing(1)
+    values <- integer()
+    for (i in seq_len(nrow(blocks))) {
+        values <- c(values, ds$read(1, blocks[i, "xoff"], blocks[i, "yoff"],
+                                    blocks[i, "xsize"], blocks[i, "ysize"],
+                                    blocks[i, "xsize"], blocks[i, "ysize"]))
+    }
+    expect_equal(values, values_expected)
+
+    ds$close()
+
+    f <- tempfile(fileext = ".tif")
+    opt <- c("TILED=YES", "BLOCKXSIZE=128", "BLOCKYSIZE=128", "COMPRESS=LZW")
+    ds2 <- create(format = "GTiff", dst_filename = f, xsize = 671, ysize = 528,
+                  nbands = 1, dataType = "Byte", options = opt,
+                  return_obj = TRUE)
+    ds2$setGeoTransform(c(0.0, 5.0, 0.0, 5.0, 0.0, -5.0))
+    blocks <- ds2$get_block_indexing(1)
+    expect_equal(nrow(blocks), 30)
+    colnames(blocks) <- NULL
+    expect_equal(blocks[1, ], c(0, 0, 0, 0, 128, 128, 0, 640, -635, 5))
+    expect_equal(blocks[30, ], c(5, 4, 640, 512, 31, 16, 3200, 3355, -2635, -2555))
+
+    ds2$close()
+    deleteDataset(f)
+})
