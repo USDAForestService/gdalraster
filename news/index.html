@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9256</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9260</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9256" id="gdalraster-11209256-dev">gdalraster 1.12.0.9256 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209256-dev"></a></h2>
-<ul><li><p><code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>: include <code>$min</code> and <code>$max</code> in the returned list if GDAL &gt;= 3.11 (2025-03-22)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9260" id="gdalraster-11209260-dev">gdalraster 1.12.0.9260 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209260-dev"></a></h2>
+<ul><li><p>add <code>GDALRaster::get_block_indexing()</code>: helper method to get indexing values for the block layout (<a href="https://github.com/USDAForestService/gdalraster/issues/667" class="external-link">#667</a>) (2025-03-25)</p></li>
+<li><p><code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>: include <code>$min</code> and <code>$max</code> in the returned list if GDAL &gt;= 3.11 (2025-03-22)</p></li>
 <li><p>add <code><a href="../reference/validateCreationOptions.html">validateCreationOptions()</a></code>, validate the list of creation options that are handled by a driver (<a href="https://github.com/USDAForestService/gdalraster/issues/663" class="external-link">#663</a>) (2025-03-17)</p></li>
 <li><p><code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>: change the return value to a named list of options with their information (<a href="https://github.com/USDAForestService/gdalraster/issues/662" class="external-link">#662</a>) (2025-03-16)</p></li>
 <li><p><code><a href="../reference/rasterize.html">rasterize()</a></code>: support passing a <code>GDALRaster</code> object for in-place updating (<a href="https://github.com/USDAForestService/gdalraster/issues/660" class="external-link">#660</a>) (2025-03-15)</p></li>
