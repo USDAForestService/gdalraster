@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9256 (dev)
+# gdalraster 1.12.0.9260 (dev)
+
+* add `GDALRaster::get_block_indexing()`: helper method to get indexing values for the block layout (#667) (2025-03-25)
 
 * `getCreationOptions()`: include `$min` and `$max` in the returned list if GDAL >= 3.11 (2025-03-22)
 
