@@ -66,7 +66,11 @@ vectors, or a character vector containing one or more WKT strings.</p>
 <span></span>
 <span><span class="fu">g_distance</span><span class="op">(</span><span class="va">geom</span>, <span class="va">other_geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">g_length</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">g_length</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">g_geodesic_area</span><span class="op">(</span><span class="va">geom</span>, <span class="va">srs</span>, traditional_gis_order <span class="op">=</span> <span class="cn">TRUE</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">g_geodesic_length</span><span class="op">(</span><span class="va">geom</span>, <span class="va">srs</span>, traditional_gis_order <span class="op">=</span> <span class="cn">TRUE</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -86,6 +90,20 @@ character vector containing one or more WKT strings.</p></dd>
 <dd><p>Either a raw vector of WKB or list of raw vectors, or a
 character vector containing one or more WKT strings. Must contain the same
 number of geometries as <code>geom</code>.</p></dd>
+
+
+<dt id="arg-srs">srs<a class="anchor" aria-label="anchor" href="#arg-srs"></a></dt>
+<dd><p>Character string specifying the spatial reference system
+for <code>geom</code>. May be in WKT format or any of the formats supported by
+<code><a href="srs_convert.html">srs_to_wkt()</a></code>.</p></dd>
+
+
+<dt id="arg-traditional-gis-order">traditional_gis_order<a class="anchor" aria-label="anchor" href="#arg-traditional-gis-order"></a></dt>
+<dd><p>Logical value, <code>TRUE</code> to use traditional GIS
+order of axis mapping (the default) or <code>FALSE</code> to use authority compliant
+axis order. By default, input <code>geom</code> vertices are assumed to
+be in longitude/latitude order if <code>srs</code> is a geographic coordinate system.
+This can be overridden by setting <code>traditional_gis_order = FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -114,6 +132,28 @@ occurs.</p>
 Undefined for all other geometry types (returns zero). Returns a numeric
 vector, having length equal to the number of input geometries, containing
 computed length or '0' if undefined.</p>
+<p><code>g_geodesic_area()</code> computes geometry area, considered as a surface on the
+underlying ellipsoid of the SRS attached to the geometry. The returned area
+will always be in square meters, and assumes that polygon edges describe
+geodesic lines on the ellipsoid. If the geometry SRS is not a geographic
+one, geometries are reprojected to the underlying geographic SRS.
+By default, input geometry vertices are assumed to be in longitude/latitude
+order if using a geographic coordinate system. This can be overridden with
+the <code>traditional_gis_order</code> argument.
+Returns the area in square meters, or <code>NA</code> in case of error (unsupported
+geometry type, no SRS attached, etc.)
+Requires GDAL &gt;= 3.9.</p>
+<p><code>g_geodesic_length()</code> computes the length of the curve, considered as a
+geodesic line on the underlying ellipsoid of the SRS attached to the
+geometry. The returned length will always be in meters. If the geometry SRS
+is not a geographic one, geometries are reprojected to the underlying
+geographic SRS.
+By default, input geometry vertices are assumed to be in longitude/latitude
+order if using a geographic coordinate system. This can be overridden with
+the <code>traditional_gis_order</code> argument.
+Returns the length in meters, or <code>NA</code> in case of error (unsupported geometry
+type, no SRS attached, etc.)
+Requires GDAL &gt;= 3.10.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
