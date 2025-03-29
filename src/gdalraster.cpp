@@ -424,41 +424,8 @@ std::vector<double> GDALRaster::bbox() const {
 
     std::vector<double> gt = getGeoTransform();
 
-    // {ul, ll, ur, lr}
-    Rcpp::NumericVector corners_x = {NA_REAL, NA_REAL, NA_REAL, NA_REAL};
-    Rcpp::NumericVector corners_y = {NA_REAL, NA_REAL, NA_REAL, NA_REAL};
-
-    // ul
-    double grid_x = 0.0;
-    double grid_y = 0.0;
-    corners_x[0] = gt[0] + gt[1] * grid_x + gt[2] * grid_y;
-    corners_y[0] = gt[3] + gt[4] * grid_x + gt[5] * grid_y;
-
-    // ll
-    grid_x = 0.0;
-    grid_y = GDALGetRasterYSize(m_hDataset);
-    corners_x[1] = gt[0] + gt[1] * grid_x + gt[2] * grid_y;
-    corners_y[1] = gt[3] + gt[4] * grid_x + gt[5] * grid_y;
-
-    // ur
-    grid_x = GDALGetRasterXSize(m_hDataset);
-    grid_y = 0.0;
-    corners_x[2] = gt[0] + gt[1] * grid_x + gt[2] * grid_y;
-    corners_y[2] = gt[3] + gt[4] * grid_x + gt[5] * grid_y;
-
-    // lr
-    grid_x = GDALGetRasterXSize(m_hDataset);
-    grid_y = GDALGetRasterYSize(m_hDataset);
-    corners_x[3] = gt[0] + gt[1] * grid_x + gt[2] * grid_y;
-    corners_y[3] = gt[3] + gt[4] * grid_x + gt[5] * grid_y;
-
-    double xmin = Rcpp::min(corners_x);
-    double xmax = Rcpp::max(corners_x);
-    double ymin = Rcpp::min(corners_y);
-    double ymax = Rcpp::max(corners_y);
-
-    std::vector<double> ret = {xmin, ymin, xmax, ymax};
-    return ret;
+    return bbox_grid_to_geo_(gt, 0.0, GDALGetRasterXSize(m_hDataset),
+                             0.0, GDALGetRasterYSize(m_hDataset));
 }
 
 std::vector<double> GDALRaster::res() const {
