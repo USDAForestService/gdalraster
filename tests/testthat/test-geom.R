@@ -812,6 +812,19 @@ test_that("swap xy works", {
     g_swapped <- g_swap_xy(g, as_wkb = FALSE)
     g_expect <- "GEOMETRYCOLLECTION (POINT (2 1),LINESTRING (2 1,3 2),POLYGON ((0 0,1 0,1 1,0 0)))"
     expect_equal(g_swapped, g_expect)
+    # wkb input
+    g_swapped <- g_swap_xy(g_wk2wk(g), as_wkb = FALSE)
+    expect_equal(g_swapped, g_expect)
+    # vector/list input
+    g1 <- "POINT(1 2)"
+    g2 <- "POINT(2 3)"
+    g_expect <- c("POINT (2 1)", "POINT (3 2)")
+    # character vector of wkt input
+    g_swapped <- g_swap_xy(c(g1, g2), as_wkb = FALSE)
+    expect_equal(g_swapped, g_expect)
+    # list of wkb input
+    g_swapped <- g_swap_xy(g_wk2wk(c(g1, g2)), as_wkb = FALSE)
+    expect_equal(g_swapped, g_expect)
 })
 
 test_that("g_coords returns a data frame of vertices", {
