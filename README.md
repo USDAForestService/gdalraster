@@ -21,7 +21,7 @@ Scorecard](https://api.scorecard.dev/projects/github.com/USDAForestService/gdalr
 ## Overview
 
 **gdalraster** is an R interface to the
-[Raster](https://gdal.org/en/stable/en/stable/api/raster_c_api.html) and
+[Raster](https://gdal.org/en/stable/api/raster_c_api.html) and
 [Vector](https://gdal.org/en/stable/api/vector_c_api.html) APIs of the
 Geospatial Data Abstraction Library
 ([GDAL](https://gdal.org/en/stable/)).
@@ -37,7 +37,7 @@ Bindings to the GDAL Virtual Systems Interface
 included to support file system operations and binary I/O on URLs, cloud
 storage services, Zip/GZip/7z/RAR, and in-memory files, as well as
 regular file systems. Calling signatures resemble the native C, C++ and
-Python APIs provided by the GDAL project.
+Python APIs provided by the GDAL project. Supports:
 
 - manual creation of uninitialized raster and vector datasets
 - vector layer creation and schema management

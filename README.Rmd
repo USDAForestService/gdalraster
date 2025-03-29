@@ -27,9 +27,9 @@ knitr::opts_chunk$set(
 
 ## Overview
 
-**gdalraster** is an R interface to the [Raster](https://gdal.org/en/stable/en/stable/api/raster_c_api.html) and [Vector](https://gdal.org/en/stable/api/vector_c_api.html) APIs of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/en/stable/)).
+**gdalraster** is an R interface to the [Raster](https://gdal.org/en/stable/api/raster_c_api.html) and [Vector](https://gdal.org/en/stable/api/vector_c_api.html) APIs of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/en/stable/)).
 
-API-level bindings are implemented in the exposed C++ classes [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html) and [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html), along with several [stand-alone functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions). Bindings to the GDAL Virtual Systems Interface ([VSI](https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h)) are also included to support file system operations and binary I/O on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project.
+API-level bindings are implemented in the exposed C++ classes [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html) and [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html), along with several [stand-alone functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions). Bindings to the GDAL Virtual Systems Interface ([VSI](https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h)) are also included to support file system operations and binary I/O on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project. Supports:
 
 * manual creation of uninitialized raster and vector datasets
 * vector layer creation and schema management
