@@ -124,7 +124,7 @@ Rcpp::NumericVector g_centroid(const Rcpp::RawVector &geom, bool quiet);
 
 SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
                  const std::string &srs_to, bool wrap_date_line,
-                 int date_line_offset, bool as_iso,
+                 int date_line_offset, bool traditional_gis_order, bool as_iso,
                  const std::string &byte_order, bool quiet);
 
 Rcpp::NumericVector bbox_from_wkt(const std::string &wkt,

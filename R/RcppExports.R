@@ -2310,12 +2310,12 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_geodesic_area <- function(geom, srs, traditional_gis_order, quiet) {
+.g_geodesic_area <- function(geom, srs, traditional_gis_order = TRUE, quiet = FALSE) {
     .Call(`_gdalraster_g_geodesic_area`, geom, srs, traditional_gis_order, quiet)
 }
 
 #' @noRd
-.g_geodesic_length <- function(geom, srs, traditional_gis_order, quiet) {
+.g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE, quiet = FALSE) {
     .Call(`_gdalraster_g_geodesic_length`, geom, srs, traditional_gis_order, quiet)
 }
 
@@ -2325,8 +2325,8 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE, date_line_offset = 10L, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
-    .Call(`_gdalraster_g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset, as_iso, byte_order, quiet)
+.g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE, date_line_offset = 10L, traditional_gis_order = TRUE, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_transform`, geom, srs_from, srs_to, wrap_date_line, date_line_offset, traditional_gis_order, as_iso, byte_order, quiet)
 }
 
 #' Get the bounding box of a geometry specified in OGC WKT format

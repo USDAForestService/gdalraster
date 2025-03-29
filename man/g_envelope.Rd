@@ -10,7 +10,7 @@ g_envelope(geom, quiet = FALSE)
 \item{geom}{Either a raw vector of WKB or list of raw vectors, or a
 character vector containing one or more WKT strings.}
 
-\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
+\item{quiet}{Logical value, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
 Either a numeric vector of length 4 containing the envelope

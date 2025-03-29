@@ -1437,8 +1437,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // g_transform
-SEXP g_transform(const Rcpp::RawVector& geom, const std::string& srs_from, const std::string& srs_to, bool wrap_date_line, int date_line_offset, bool as_iso, const std::string& byte_order, bool quiet);
-RcppExport SEXP _gdalraster_g_transform(SEXP geomSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP, SEXP wrap_date_lineSEXP, SEXP date_line_offsetSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
+SEXP g_transform(const Rcpp::RawVector& geom, const std::string& srs_from, const std::string& srs_to, bool wrap_date_line, int date_line_offset, bool traditional_gis_order, bool as_iso, const std::string& byte_order, bool quiet);
+RcppExport SEXP _gdalraster_g_transform(SEXP geomSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP, SEXP wrap_date_lineSEXP, SEXP date_line_offsetSEXP, SEXP traditional_gis_orderSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1447,10 +1447,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string& >::type srs_to(srs_toSEXP);
     Rcpp::traits::input_parameter< bool >::type wrap_date_line(wrap_date_lineSEXP);
     Rcpp::traits::input_parameter< int >::type date_line_offset(date_line_offsetSEXP);
+    Rcpp::traits::input_parameter< bool >::type traditional_gis_order(traditional_gis_orderSEXP);
     Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(g_transform(geom, srs_from, srs_to, wrap_date_line, date_line_offset, as_iso, byte_order, quiet));
+    rcpp_result_gen = Rcpp::wrap(g_transform(geom, srs_from, srs_to, wrap_date_line, date_line_offset, traditional_gis_order, as_iso, byte_order, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2106,7 +2107,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_geodesic_area", (DL_FUNC) &_gdalraster_g_geodesic_area, 4},
     {"_gdalraster_g_geodesic_length", (DL_FUNC) &_gdalraster_g_geodesic_length, 4},
     {"_gdalraster_g_centroid", (DL_FUNC) &_gdalraster_g_centroid, 2},
-    {"_gdalraster_g_transform", (DL_FUNC) &_gdalraster_g_transform, 8},
+    {"_gdalraster_g_transform", (DL_FUNC) &_gdalraster_g_transform, 9},
     {"_gdalraster_bbox_from_wkt", (DL_FUNC) &_gdalraster_bbox_from_wkt, 3},
     {"_gdalraster_bbox_to_wkt", (DL_FUNC) &_gdalraster_bbox_to_wkt, 3},
     {"_gdalraster_ogr_ds_exists", (DL_FUNC) &_gdalraster_ogr_ds_exists, 2},

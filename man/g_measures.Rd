@@ -26,7 +26,7 @@ g_geodesic_length(geom, srs, traditional_gis_order = TRUE, quiet = FALSE)
 \item{geom}{Either a raw vector of WKB or list of raw vectors, or a
 character vector containing one or more WKT strings.}
 
-\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
+\item{quiet}{Logical value, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 
 \item{other_geom}{Either a raw vector of WKB or list of raw vectors, or a
 character vector containing one or more WKT strings. Must contain the same

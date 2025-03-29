@@ -52,16 +52,16 @@ character vector containing one or more WKT strings.}
 character vector containing one or more WKT strings. Must contain the same
 number of geometries as \code{this_geom}.}
 
-\item{as_wkb}{Logical, \code{TRUE} to return the output geometry in WKB
+\item{as_wkb}{Logical value, \code{TRUE} to return the output geometry in WKB
 format (the default), or \code{FALSE} to return as WKT.}
 
-\item{as_iso}{Logical, \code{TRUE} to export as ISO WKB/WKT (ISO 13249
+\item{as_iso}{Logical value, \code{TRUE} to export as ISO WKB/WKT (ISO 13249
 SQL/MM Part 3), or \code{FALSE} (the default) to export as "Extended WKB/WKT".}
 
 \item{byte_order}{Character string specifying the byte order when output is
 WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 
-\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
+\item{quiet}{Logical value, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
 A geometry as WKB raw vector or WKT string, or a list/character vector of
