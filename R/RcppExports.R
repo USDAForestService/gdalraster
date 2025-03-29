@@ -2310,6 +2310,16 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_geodesic_area <- function(geom, srs, traditional_gis_order, quiet) {
+    .Call(`_gdalraster_g_geodesic_area`, geom, srs, traditional_gis_order, quiet)
+}
+
+#' @noRd
+.g_geodesic_length <- function(geom, srs, traditional_gis_order, quiet) {
+    .Call(`_gdalraster_g_geodesic_length`, geom, srs, traditional_gis_order, quiet)
+}
+
+#' @noRd
 .g_centroid <- function(geom, quiet = FALSE) {
     .Call(`_gdalraster_g_centroid`, geom, quiet)
 }

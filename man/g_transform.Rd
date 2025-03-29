@@ -21,7 +21,7 @@ g_transform(
 character vector containing one or more WKT strings.}
 
 \item{srs_from}{Character string specifying the spatial reference system
-for \code{pts}. May be in WKT format or any of the formats supported by
+for \code{geom}. May be in WKT format or any of the formats supported by
 \code{\link[=srs_to_wkt]{srs_to_wkt()}}.}
 
 \item{srs_to}{Character string specifying the output spatial reference
