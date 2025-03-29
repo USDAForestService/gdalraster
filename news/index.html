@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9270</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9271</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9270" id="gdalraster-11209270-dev">gdalraster 1.12.0.9270 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209270-dev"></a></h2>
-<ul><li><p>geom api: add <code><a href="../reference/g_measures.html">g_geodesic_area()</a></code> and <code><a href="../reference/g_measures.html">g_geodesic_length()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/671" class="external-link">#671</a>) (2025-03-29)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9271" id="gdalraster-11209271-dev">gdalraster 1.12.0.9271 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209271-dev"></a></h2>
+<ul><li><p><code><a href="../reference/g_transform.html">g_transform()</a></code>: add argument <code>traditional_gis_order</code> with default <code>TRUE</code>, to support authority compliant order for geometries using geographic coordinates (<a href="https://github.com/USDAForestService/gdalraster/issues/672" class="external-link">#672</a>) (2025-03-29)</p></li>
+<li><p>geom api: add <code><a href="../reference/g_measures.html">g_geodesic_area()</a></code> and <code><a href="../reference/g_measures.html">g_geodesic_length()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/671" class="external-link">#671</a>) (2025-03-29)</p></li>
 <li><p>add <code>GDALRaster::get_block_indexing()</code>: helper method to get indexing values for the block layout (<a href="https://github.com/USDAForestService/gdalraster/issues/667" class="external-link">#667</a>) (2025-03-25)</p></li>
 <li><p><code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>: include <code>$min</code> and <code>$max</code> in the returned list if GDAL &gt;= 3.11 (2025-03-22)</p></li>
 <li><p>add <code><a href="../reference/validateCreationOptions.html">validateCreationOptions()</a></code>, validate the list of creation options that are handled by a driver (<a href="https://github.com/USDAForestService/gdalraster/issues/663" class="external-link">#663</a>) (2025-03-17)</p></li>
