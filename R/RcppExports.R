@@ -519,7 +519,7 @@ inv_geotransform <- function(gt) {
 }
 
 #' Returns bbox geospatial x,y coordinates (xmin, ymin, xmax, ymax) from
-#' inpouts of geotransform vector and the grid pixel/line extent
+#' inputs of geotransform vector and the grid pixel/line extent
 #' @noRd
 .bbox_grid_to_geo <- function(gt, grid_xmin, grid_xmax, grid_ymin, grid_ymax) {
     .Call(`_gdalraster_bbox_grid_to_geo_`, gt, grid_xmin, grid_xmax, grid_ymin, grid_ymax)
