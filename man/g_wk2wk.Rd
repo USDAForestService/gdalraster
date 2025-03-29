@@ -11,7 +11,7 @@ g_wk2wk(geom, as_iso = FALSE, byte_order = "LSB")
 to WKT, or a character vector containing one or more WKT strings to
 convert to WKB.}
 
-\item{as_iso}{Logical scalar. \code{TRUE} to export as ISO WKB/WKT (ISO 13249
+\item{as_iso}{Logical value, \code{TRUE} to export as ISO WKB/WKT (ISO 13249
 SQL/MM Part 3), or \code{FALSE} (the default) to export as "Extended WKB/WKT"
 (see Note).}
 

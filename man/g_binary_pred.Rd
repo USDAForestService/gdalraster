@@ -36,7 +36,7 @@ character vector containing one or more WKT strings.}
 character vector containing one or more WKT strings. Must contain the same
 number of geometries as \code{this_geom}.}
 
-\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
+\item{quiet}{Logical value, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
 Logical vector with length equal to the number of input geometry

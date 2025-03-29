@@ -33,10 +33,10 @@ empty geometry. The points can be given as (x, y), (x, y, z) or
 Data frame input will be coerced to numeric matrix. Rings for polygon
 geometries should be closed.}
 
-\item{as_wkb}{Logical, \code{TRUE} to return the output geometry in WKB
+\item{as_wkb}{Logical value, \code{TRUE} to return the output geometry in WKB
 format (the default), or \code{FALSE} to return a WKT string.}
 
-\item{as_iso}{Logical, \code{TRUE} to export as ISO WKB/WKT (ISO 13249
+\item{as_iso}{Logical value, \code{TRUE} to export as ISO WKB/WKT (ISO 13249
 SQL/MM Part 3), or \code{FALSE} (the default) to export as "Extended WKB/WKT".}
 
 \item{byte_order}{Character string specifying the byte order when output is

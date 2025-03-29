@@ -26,7 +26,7 @@ g_summary(geom, quiet = FALSE)
 \item{geom}{Either a raw vector of WKB or list of raw vectors, or a
 character vector containing one or more WKT strings.}
 
-\item{quiet}{Logical, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
+\item{quiet}{Logical value, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \description{
 These functions return information about WKB/WKT geometries. The input

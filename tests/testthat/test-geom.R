@@ -691,6 +691,8 @@ test_that("geometry measures are correct", {
 })
 
 test_that("geodesic measures are correct", {
+    # tests based on gdal/autotest/ogr/ogr_geom.py
+    # https://github.com/OSGeo/gdal/blob/28e94e2f52893d4206830011d75efe1783f1b7c1/autotest/ogr/ogr_geom.py
     skip_if(.gdal_version_num() < 3090000)
 
     ## geodesic area
@@ -716,6 +718,12 @@ test_that("geodesic measures are correct", {
     # For comparison: cartesian area in UTM
     a <- g_area(g2)
     expect_equal(a, 4065070548.465351, tolerance = 1e4)
+    # start with lat/lon order
+    g <- "POLYGON((49 2,49 3,48 3,49 2))"
+    g2 <- g_transform(g, "EPSG:4326", "EPSG:32631",
+                      traditional_gis_order = FALSE)
+    a <- g_geodesic_area(g2, "EPSG:32631")
+    expect_equal(a, 4068384291.8911743, tolerance = 1e4)
 
 
     skip_if(.gdal_version_num() < 3100000)
@@ -743,6 +751,12 @@ test_that("geodesic measures are correct", {
     # For comparison: cartesian length in UTM
     l <- g_length(g2)
     expect_equal(l, 317763.15996565996, tolerance = 1e4)
+    # start with lat/lon order
+    g <- "POLYGON((49 2,49 3,48 3,49 2))"
+    g2 <- g_transform(g, "EPSG:4326", "EPSG:32631",
+                      traditional_gis_order = FALSE)
+    l <- g_geodesic_length(g2, "EPSG:32631")
+    expect_equal(l, 317885.78639964823, tolerance = 1e4)
 })
 
 test_that("make_valid works", {

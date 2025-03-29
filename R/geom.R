@@ -131,7 +131,8 @@ bbox_union <- function(x, as_wkt = FALSE) {
     while (i <= n) {
         if (is.character(x)) {
             ds <- new(GDALRaster, x[i], read_only=TRUE)
-            this_bbox <- g_union(this_bbox, bbox_to_wkt(ds$bbox()), as_wkb = FALSE)
+            this_bbox <- g_union(this_bbox, bbox_to_wkt(ds$bbox()),
+                                 as_wkb = FALSE)
             ds$close()
         } else {
             this_bbox <- g_union(this_bbox, bbox_to_wkt(x[[i]]), as_wkb = FALSE)
@@ -227,7 +228,7 @@ bbox_transform <- function(bbox, srs_from, srs_to,
 #' @param geom Either a raw vector of WKB or list of raw vectors to convert
 #' to WKT, or a character vector containing one or more WKT strings to
 #' convert to WKB.
-#' @param as_iso Logical scalar. `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
 #' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT"
 #' (see Note).
 #' @param byte_order Character string specifying the byte order when converting
@@ -271,7 +272,7 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -329,9 +330,9 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
 #' (x, y, z, m), so the input must have two, three or four columns.
 #' Data frame input will be coerced to numeric matrix. Rings for polygon
 #' geometries should be closed.
-#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' @param as_wkb Logical value, `TRUE` to return the output geometry in WKB
 #' format (the default), or `FALSE` to return a WKT string.
-#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
 #' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
 #' @param byte_order Character string specifying the byte order when output is
 #' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
@@ -402,12 +403,12 @@ g_create <- function(geom_type, pts = NULL, as_wkb = TRUE, as_iso = FALSE,
     if (is.null(as_wkb))
         as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical value", call. = FALSE)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical value", call. = FALSE)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -458,12 +459,12 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
     if (is.null(as_wkb))
         as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -512,7 +513,7 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 #'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #'
 #' @examples
 #' g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
@@ -557,7 +558,7 @@ g_is_empty <- function(geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(geom)) {
@@ -585,7 +586,7 @@ g_is_valid <- function(geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(geom)) {
@@ -613,7 +614,7 @@ g_is_3D <- function(geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(geom)) {
@@ -641,7 +642,7 @@ g_is_measured <- function(geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(geom)) {
@@ -669,7 +670,7 @@ g_name <- function(geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(geom)) {
@@ -697,7 +698,7 @@ g_summary <- function(geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(geom)) {
@@ -740,15 +741,15 @@ g_summary <- function(geom, quiet = FALSE) {
 #' character vector containing one or more WKT strings.
 #' @param method Character string. One of `"LINEWORK"` (the default) or
 #' `"STRUCTURE"` (requires GEOS >= 3.10 and GDAL >= 3.4). See Details.
-#' @param keep_collapsed Logical, applies only to the STRUCTURE method.
+#' @param keep_collapsed Logical value, applies only to the STRUCTURE method.
 #' Defaults to `FALSE`. See Details.
-#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' @param as_wkb Logical value, `TRUE` to return the output geometry in WKB
 #' format (the default), or `FALSE` to return as WKT.
-#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
 #' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
 #' @param byte_order Character string specifying the byte order when output is
 #' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to `length(geom)`. `NA` is returned
@@ -791,17 +792,17 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
     if (is.null(keep_collapsed))
         keep_collapsed <- FALSE
     if (!is.logical(keep_collapsed) || length(keep_collapsed) > 1)
-        stop("'keep_collapsed' must be a logical scalar", call. = FALSE)
+        stop("'keep_collapsed' must be a single logical value", call. = FALSE)
     # as_wkb
     if (is.null(as_wkb))
         as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -814,7 +815,7 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
     if (is.raw(geom)) {
@@ -849,7 +850,7 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
 #'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return Either a numeric vector of length 4 containing the envelope
 #' `(xmin, xmax, ymin, ymax)`, or a four-column numeric matrix with number of
 #' rows equal to the number of input geometries and column names
@@ -860,7 +861,7 @@ g_envelope <- function(geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- 0
     if (is.raw(geom)) {
@@ -923,7 +924,7 @@ g_envelope <- function(geom, quiet = FALSE) {
 #' @param other_geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings. Must contain the same
 #' number of geometries as `this_geom`.
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return Logical vector with length equal to the number of input geometry
 #' pairs.
 #'
@@ -960,7 +961,7 @@ g_intersects <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1008,7 +1009,7 @@ g_disjoint <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1056,7 +1057,7 @@ g_touches <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1104,7 +1105,7 @@ g_contains <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1152,7 +1153,7 @@ g_within <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1200,7 +1201,7 @@ g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1248,7 +1249,7 @@ g_overlaps <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1296,7 +1297,7 @@ g_equals <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1347,13 +1348,13 @@ g_equals <- function(this_geom, other_geom, quiet = FALSE) {
 #' @param other_geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings. Must contain the same
 #' number of geometries as `this_geom`.
-#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' @param as_wkb Logical value, `TRUE` to return the output geometry in WKB
 #' format (the default), or `FALSE` to return as WKT.
-#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
 #' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
 #' @param byte_order Character string specifying the byte order when output is
 #' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to the number of input geometry
@@ -1418,12 +1419,12 @@ g_intersection <- function(this_geom, other_geom, as_wkb = TRUE,
     if (is.null(as_wkb))
         as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -1436,7 +1437,7 @@ g_intersection <- function(this_geom, other_geom, as_wkb = TRUE,
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1493,12 +1494,12 @@ g_union <- function(this_geom, other_geom, as_wkb = TRUE,
     if (is.null(as_wkb))
         as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -1511,7 +1512,7 @@ g_union <- function(this_geom, other_geom, as_wkb = TRUE,
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1568,12 +1569,12 @@ g_difference <- function(this_geom, other_geom, as_wkb = TRUE,
     if (is.null(as_wkb))
         as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -1586,7 +1587,7 @@ g_difference <- function(this_geom, other_geom, as_wkb = TRUE,
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1643,12 +1644,12 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
     if (is.null(as_wkb))
         as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -1661,7 +1662,7 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
     if (is.raw(this_geom) && is.raw(other_geom)) {
@@ -1675,8 +1676,8 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
 
         wkb <- list()
         for (i in seq_along(this_geom)) {
-            wkb[[i]] <- .g_sym_difference(this_geom[[i]], other_geom[[i]], as_iso,
-                                          byte_order, quiet)
+            wkb[[i]] <- .g_sym_difference(this_geom[[i]], other_geom[[i]],
+                                          as_iso, byte_order, quiet)
         }
 
     } else {
@@ -1763,7 +1764,7 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
 #' axis order. By default, input `geom` vertices are assumed to
 #' be in longitude/latitude order if `srs` is a geographic coordinate system.
 #' This can be overridden by setting `traditional_gis_order = FALSE`.
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #'
 #' @note
 #' For `g_distance()`, `geom` and `other_geom` must contain the same number of
@@ -1800,7 +1801,7 @@ g_area <- function(geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- 0
     if (is.raw(geom)) {
@@ -1827,7 +1828,7 @@ g_centroid <- function(geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- 0
     if (is.raw(geom)) {
@@ -1874,7 +1875,7 @@ g_distance <- function(geom, other_geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- -1
     if (is.raw(geom) && is.raw(other_geom)) {
@@ -1904,7 +1905,7 @@ g_length <- function(geom, quiet = FALSE) {
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- 0
     if (is.raw(geom)) {
@@ -1941,7 +1942,7 @@ g_geodesic_area <- function(geom, srs, traditional_gis_order = TRUE,
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- -1.0
     if (is.raw(geom)) {
@@ -1981,7 +1982,7 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- -1.0
     if (is.raw(geom)) {
@@ -2018,13 +2019,13 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' curve (quadrant of a circle). Large values result in large numbers of
 #' vertices in the resulting buffer geometry while small numbers reduce the
 #' accuracy of the result.
-#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' @param as_wkb Logical value, `TRUE` to return the output geometry in WKB
 #' format (the default), or `FALSE` to return as WKT.
-#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
 #' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
 #' @param byte_order Character string specifying the byte order when output is
 #' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return
 #' A polygon as WKB raw vector or WKT string, or a list/character vector of
 #' polygons as WKB/WKT with length equal to the number of input geometries.
@@ -2042,12 +2043,12 @@ g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
     if (is.null(as_wkb))
         as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -2060,7 +2061,7 @@ g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
     if (is.raw(geom)) {
@@ -2102,18 +2103,22 @@ g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
 #' @param srs_to Character string specifying the output spatial reference
 #' system. May be in WKT format or any of the formats supported by
 #' [srs_to_wkt()].
-#' @param wrap_date_line Logical scalar. `TRUE` to correct geometries that
+#' @param wrap_date_line Logical value, `TRUE` to correct geometries that
 #' incorrectly go from a longitude on a side of the antimeridian to the other
 #' side. Defaults to `FALSE`.
-#' @param date_line_offset Integer scalar. Longitude gap in degree. Defaults
-#' to `10`.
-#' @param as_wkb Logical, `TRUE` to return the output geometry in WKB
+#' @param date_line_offset Integer longitude gap in degree. Defaults to `10L`.
+#' @param traditional_gis_order Logical value, `TRUE` to use traditional GIS
+#' order of axis mapping (the default) or `FALSE` to use authority compliant
+#' axis order. By default, input `geom` vertices are assumed to
+#' be in longitude/latitude order if `srs_from` is a geographic coordinate
+#' system. This can be overridden by setting `traditional_gis_order = FALSE`.
+#' @param as_wkb Logical value, `TRUE` to return the output geometry in WKB
 #' format (the default), or `FALSE` to return as WKT.
-#' @param as_iso Logical, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
 #' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
 #' @param byte_order Character string specifying the byte order when output is
 #' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
-#' @param quiet Logical, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to the number of input geometries.
@@ -2149,23 +2154,42 @@ g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
 #' g_transform(geom, "WGS84", "WGS84", wrap_date_line = TRUE, as_wkb = FALSE)
 #' @export
 g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE,
-                        date_line_offset = 10L, as_wkb = TRUE,
-                        as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
-
+                        date_line_offset = 10L, traditional_gis_order = TRUE,
+                        as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB",
+                        quiet = FALSE) {
+    # srs_from
     if (!(is.character(srs_from) && length(srs_from) == 1))
         stop("'srs_from' must be a character string", call. = FALSE)
+    # srs_to
     if (!(is.character(srs_to) && length(srs_to) == 1))
         stop("'srs_to' must be a character string", call. = FALSE)
+    # wrap_date_line
+    if (!(is.logical(wrap_date_line) &&
+          length(wrap_date_line) == 1)) {
+
+        stop("'wrap_date_line' must be a single logical value",
+             call. = FALSE)
+    }
+    # date_line_offset
+    if (!(is.numeric(date_line_offset) && length(date_line_offset) == 1))
+        stop("'date_line_offset' must be an integer value", call. = FALSE)
+    # traditional_gis_order
+    if (!(is.logical(traditional_gis_order) &&
+          length(traditional_gis_order) == 1)) {
+
+        stop("'traditional_gis_order' must be a single logical value",
+             call. = FALSE)
+    }
     # as_wkb
     if (is.null(as_wkb))
         as_wkb <- TRUE
     if (!is.logical(as_wkb) || length(as_wkb) > 1)
-        stop("'as_wkb' must be a logical scalar", call. = FALSE)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
     # as_iso
     if (is.null(as_iso))
         as_iso <- FALSE
     if (!is.logical(as_iso) || length(as_iso) > 1)
-        stop("'as_iso' must be a logical scalar", call. = FALSE)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
     # byte_order
     if (is.null(byte_order))
         byte_order <- "LSB"
@@ -2178,24 +2202,27 @@ g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE,
     if (is.null(quiet))
         quiet <- FALSE
     if (!is.logical(quiet) || length(quiet) > 1)
-        stop("'quiet' must be a logical scalar", call. = FALSE)
+        stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
     if (is.raw(geom)) {
         wkb <- .g_transform(geom, srs_from, srs_to, wrap_date_line,
-                            date_line_offset, as_iso, byte_order, quiet)
+                            date_line_offset, traditional_gis_order, as_iso,
+                            byte_order, quiet)
     } else if (is.list(geom) && is.raw(geom[[1]])) {
         wkb <- lapply(geom, .g_transform, srs_from, srs_to, wrap_date_line,
-                      date_line_offset, as_iso, byte_order, quiet)
+                      date_line_offset, traditional_gis_order, as_iso,
+                      byte_order, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
             wkb <- .g_transform(g_wk2wk(geom), srs_from, srs_to,
-                                wrap_date_line, date_line_offset, as_iso,
-                                byte_order, quiet)
+                                wrap_date_line, date_line_offset,
+                                traditional_gis_order, as_iso, byte_order,
+                                quiet)
         } else {
             wkb <- lapply(g_wk2wk(geom), .g_transform, srs_from, srs_to,
-                          wrap_date_line, date_line_offset, as_iso, byte_order,
-                          quiet)
+                          wrap_date_line, date_line_offset,
+                          traditional_gis_order, as_iso, byte_order, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",

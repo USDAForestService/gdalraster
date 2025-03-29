@@ -1688,7 +1688,7 @@ double g_area(const Rcpp::RawVector &geom, bool quiet = false) {
 //' @noRd
 // [[Rcpp::export(name = ".g_geodesic_area")]]
 double g_geodesic_area(const Rcpp::RawVector &geom, const std::string &srs,
-                       bool traditional_gis_order, bool quiet) {
+                       bool traditional_gis_order = true, bool quiet = false) {
 // Compute geometry area, considered as a surface on the underlying ellipsoid
 // of the SRS attached to the geometry.
 // The returned area will always be in square meters, and assumes that polygon
@@ -1699,13 +1699,16 @@ double g_geodesic_area(const Rcpp::RawVector &geom, const std::string &srs,
     Rcpp::stop("g_geodesic_area() requires GDAL >= 3.9");
 
 #else
-    OSRAxisMappingStrategy strategy = OAMS_TRADITIONAL_GIS_ORDER;
-    std::string save_opt =
-        get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
 
-    if (!traditional_gis_order) {
-        strategy = OAMS_AUTHORITY_COMPLIANT;
-        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "NO");
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return NA_REAL;
     }
 
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
@@ -1716,21 +1719,15 @@ double g_geodesic_area(const Rcpp::RawVector &geom, const std::string &srs,
         Rcpp::stop("error importing SRS from user input");
     }
 
-    OSRSetAxisMappingStrategy(hSRS, strategy);
+    OSRAxisMappingStrategy strategy = OAMS_TRADITIONAL_GIS_ORDER;
+    std::string save_opt =
+        get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
-
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
-
-    if (hGeom == nullptr) {
-        if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
-        }
-        return NA_REAL;
+    if (!traditional_gis_order) {
+        strategy = OAMS_AUTHORITY_COMPLIANT;
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "NO");
     }
-
+    OSRSetAxisMappingStrategy(hSRS, strategy);
     OGR_G_AssignSpatialReference(hGeom, hSRS);
 
     double ret = -1.0;
@@ -1749,7 +1746,8 @@ double g_geodesic_area(const Rcpp::RawVector &geom, const std::string &srs,
 //' @noRd
 // [[Rcpp::export(name = ".g_geodesic_length")]]
 double g_geodesic_length(const Rcpp::RawVector &geom, const std::string &srs,
-                         bool traditional_gis_order, bool quiet) {
+                         bool traditional_gis_order = true,
+                         bool quiet = false) {
 // Get the length of the curve, considered as a geodesic line on the underlying
 // ellipsoid of the SRS attached to the geometry.
 // The returned length will always be in meters.
@@ -1759,13 +1757,16 @@ double g_geodesic_length(const Rcpp::RawVector &geom, const std::string &srs,
     Rcpp::stop("g_geodesic_length() requires GDAL >= 3.10");
 
 #else
-    OSRAxisMappingStrategy strategy = OAMS_TRADITIONAL_GIS_ORDER;
-    std::string save_opt =
-        get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
 
-    if (!traditional_gis_order) {
-        strategy = OAMS_AUTHORITY_COMPLIANT;
-        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "NO");
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return NA_REAL;
     }
 
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
@@ -1776,21 +1777,15 @@ double g_geodesic_length(const Rcpp::RawVector &geom, const std::string &srs,
         Rcpp::stop("error importing SRS from user input");
     }
 
-    OSRSetAxisMappingStrategy(hSRS, strategy);
+    OSRAxisMappingStrategy strategy = OAMS_TRADITIONAL_GIS_ORDER;
+    std::string save_opt =
+        get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
-
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
-
-    if (hGeom == nullptr) {
-        if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
-        }
-        return NA_REAL;
+    if (!traditional_gis_order) {
+        strategy = OAMS_AUTHORITY_COMPLIANT;
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "NO");
     }
-
+    OSRSetAxisMappingStrategy(hSRS, strategy);
     OGR_G_AssignSpatialReference(hGeom, hSRS);
 
     double ret = -1.0;
@@ -1871,8 +1866,9 @@ Rcpp::NumericVector g_centroid(const Rcpp::RawVector &geom,
 // [[Rcpp::export(name = ".g_transform")]]
 SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
                  const std::string &srs_to, bool wrap_date_line = false,
-                 int date_line_offset = 10, bool as_iso = false,
-                 const std::string &byte_order = "LSB", bool quiet = false) {
+                 int date_line_offset = 10, bool traditional_gis_order = true,
+                 bool as_iso = false, const std::string &byte_order = "LSB",
+                 bool quiet = false) {
 // Returns a transformed geometry as WKB
 // Apply arbitrary coordinate transformation to geometry.
 // This function will transform the coordinates of a geometry from their
@@ -1892,6 +1888,19 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
 // Zone 60) to a geographic CRS, it will cut geometries along the antimeridian.
 // So a LineString might be returned as a MultiLineString.
 
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
     OGRSpatialReference oSourceSRS, oDestSRS;
     OGRCoordinateTransformation *poCT = nullptr;
     OGRGeomTransformerH hGeomTransformer = nullptr;
@@ -1908,9 +1917,22 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
     if (err != OGRERR_NONE)
         Rcpp::stop("failed to import destination SRS");
 
+    OSRAxisMappingStrategy strategy = OAMS_TRADITIONAL_GIS_ORDER;
+    std::string save_opt =
+        get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
+
+    if (!traditional_gis_order) {
+        strategy = OAMS_AUTHORITY_COMPLIANT;
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "NO");
+    }
+    oSourceSRS.SetAxisMappingStrategy(strategy);
+    oDestSRS.SetAxisMappingStrategy(strategy);
+
     poCT = OGRCreateCoordinateTransformation(&oSourceSRS, &oDestSRS);
-    if (poCT == nullptr)
+    if (poCT == nullptr) {
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
         Rcpp::stop("failed to create coordinate transformer");
+    }
 
     std::vector<char *> options;
     std::string dl_offset = "DATELINEOFFSET=";
@@ -1925,20 +1947,8 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
             OGRCoordinateTransformation::ToHandle(poCT), options.data());
     if (hGeomTransformer == nullptr) {
         OGRCoordinateTransformation::DestroyCT(poCT);
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
         Rcpp::stop("failed to create geometry transformer, NA returned");
-    }
-
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
-
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
-
-    if (hGeom == nullptr) {
-        if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
-        }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     OGRGeometryH hGeom2 = nullptr;
@@ -1947,6 +1957,7 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
         OGRCoordinateTransformation::DestroyCT(poCT);
         OGR_GeomTransformer_Destroy(hGeomTransformer);
         OGR_G_DestroyGeometry(hGeom);
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
         if (!quiet) {
             Rcpp::warning(
                     "transformation failed, NA returned");
@@ -1956,6 +1967,8 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
 
     OGRCoordinateTransformation::DestroyCT(poCT);
     OGR_GeomTransformer_Destroy(hGeomTransformer);
+    if (!traditional_gis_order)
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
 
     const int nWKBSize = OGR_G_WkbSize(hGeom2);
     if (!nWKBSize) {
