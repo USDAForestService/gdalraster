@@ -15,6 +15,7 @@
 #include "ogr_spatialref.h"
 #include "ogr_srs_api.h"
 
+#include "gdalraster.h"
 #include "srs_api.h"
 
 
@@ -1682,6 +1683,127 @@ double g_area(const Rcpp::RawVector &geom, bool quiet = false) {
     ret = OGR_G_Area(hGeom);
     OGR_G_DestroyGeometry(hGeom);
     return ret;
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_geodesic_area")]]
+double g_geodesic_area(const Rcpp::RawVector &geom, const std::string &srs,
+                       bool traditional_gis_order, bool quiet) {
+// Compute geometry area, considered as a surface on the underlying ellipsoid
+// of the SRS attached to the geometry.
+// The returned area will always be in square meters, and assumes that polygon
+// edges describe geodesic lines on the ellipsoid.
+// Requires GDAL >= 3.9
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 9, 0)
+    Rcpp::stop("g_geodesic_area() requires GDAL >= 3.9");
+
+#else
+    OSRAxisMappingStrategy strategy = OAMS_TRADITIONAL_GIS_ORDER;
+    std::string save_opt =
+        get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
+
+    if (!traditional_gis_order) {
+        strategy = OAMS_AUTHORITY_COMPLIANT;
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "NO");
+    }
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    OSRSetAxisMappingStrategy(hSRS, strategy);
+
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return NA_REAL;
+    }
+
+    OGR_G_AssignSpatialReference(hGeom, hSRS);
+
+    double ret = -1.0;
+    ret = OGR_G_GeodesicArea(hGeom);
+    OGR_G_DestroyGeometry(hGeom);
+    if (!traditional_gis_order)
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
+
+    if (ret < 0)
+        return NA_REAL;
+    else
+        return ret;
+#endif
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_geodesic_length")]]
+double g_geodesic_length(const Rcpp::RawVector &geom, const std::string &srs,
+                         bool traditional_gis_order, bool quiet) {
+// Get the length of the curve, considered as a geodesic line on the underlying
+// ellipsoid of the SRS attached to the geometry.
+// The returned length will always be in meters.
+// Requires GDAL >= 3.10
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 10, 0)
+    Rcpp::stop("g_geodesic_length() requires GDAL >= 3.10");
+
+#else
+    OSRAxisMappingStrategy strategy = OAMS_TRADITIONAL_GIS_ORDER;
+    std::string save_opt =
+        get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
+
+    if (!traditional_gis_order) {
+        strategy = OAMS_AUTHORITY_COMPLIANT;
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", "NO");
+    }
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    OSRSetAxisMappingStrategy(hSRS, strategy);
+
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return NA_REAL;
+    }
+
+    OGR_G_AssignSpatialReference(hGeom, hSRS);
+
+    double ret = -1.0;
+    ret = OGR_G_GeodesicLength(hGeom);
+    OGR_G_DestroyGeometry(hGeom);
+    if (!traditional_gis_order)
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
+
+    if (ret < 0)
+        return NA_REAL;
+    else
+        return ret;
+#endif
 }
 
 //' @noRd

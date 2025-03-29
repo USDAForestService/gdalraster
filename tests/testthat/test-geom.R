@@ -690,6 +690,61 @@ test_that("geometry measures are correct", {
     expect_equal(res, c(325621.1, 5103477.0))
 })
 
+test_that("geodesic measures are correct", {
+    skip_if(.gdal_version_num() < 3090000)
+
+    ## geodesic area
+    # lon/lat order (traditional_gis_order = TRUE by default)
+    g <- "POLYGON((2 49,3 49,3 48,2 49))"
+    a <- g_geodesic_area(g, "EPSG:4326")
+    expect_equal(a, 4068384291.8911743, tolerance = 1e4)
+
+    g <- "POLYGON((2 89,3 89,3 88,2 89))"
+    a <- g_geodesic_area(g, "EPSG:4326")
+    expect_equal(a, 108860488.12023926, tolerance = 1e4)
+
+    # lat/lon order
+    g <- "POLYGON((49 2,49 3,48 3,49 2))"
+    a <- g_geodesic_area(g, "EPSG:4326", traditional_gis_order = FALSE)
+    expect_equal(a, 4068384291.8911743, tolerance = 1e4)
+
+    # projected srs
+    g <- "POLYGON((2 49,3 49,3 48,2 49))"
+    g2 <- g_transform(g, "EPSG:4326", "EPSG:32631")
+    a <- g_geodesic_area(g2, "EPSG:32631")
+    expect_equal(a, 4068384291.8911743, tolerance = 1e4)
+    # For comparison: cartesian area in UTM
+    a <- g_area(g2)
+    expect_equal(a, 4065070548.465351, tolerance = 1e4)
+
+
+    skip_if(.gdal_version_num() < 3100000)
+
+    ## geodesic length
+    # lon/lat order (traditional_gis_order = TRUE by default)
+    g <- "LINESTRING(2 49,3 49)"
+    l <- g_geodesic_length(g, "EPSG:4326")
+    expect_equal(l, 73171.26435678436, tolerance = 1e4)
+
+    g <- "POLYGON((2 49,3 49,3 48,2 49))"
+    l <- g_geodesic_length(g, "EPSG:4326")
+    expect_equal(l, 317885.78639964823, tolerance = 1e4)
+
+    # lat/lon order
+    g <- "LINESTRING(49 3,48 3)"
+    l <- g_geodesic_length(g, "EPSG:4326", traditional_gis_order = FALSE)
+    expect_equal(l, 111200.0367623785, tolerance = 1e4)
+
+    # projected srs
+    g <- "POLYGON((2 49,3 49,3 48,2 49))"
+    g2 <- g_transform(g, "EPSG:4326", "EPSG:32631")
+    l <- g_geodesic_length(g2, "EPSG:32631")
+    expect_equal(l, 317885.78639964823, tolerance = 1e4)
+    # For comparison: cartesian length in UTM
+    l <- g_length(g2)
+    expect_equal(l, 317763.15996565996, tolerance = 1e4)
+})
+
 test_that("make_valid works", {
     # test only with recent GDAL and GEOS
     # these tests could give different results if used across a range of older

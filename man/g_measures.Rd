@@ -6,6 +6,8 @@
 \alias{g_centroid}
 \alias{g_distance}
 \alias{g_length}
+\alias{g_geodesic_area}
+\alias{g_geodesic_length}
 \title{Compute measurements for WKB/WKT geometries}
 \usage{
 g_area(geom, quiet = FALSE)
@@ -15,6 +17,10 @@ g_centroid(geom, quiet = FALSE)
 g_distance(geom, other_geom, quiet = FALSE)
 
 g_length(geom, quiet = FALSE)
+
+g_geodesic_area(geom, srs, traditional_gis_order = TRUE, quiet = FALSE)
+
+g_geodesic_length(geom, srs, traditional_gis_order = TRUE, quiet = FALSE)
 }
 \arguments{
 \item{geom}{Either a raw vector of WKB or list of raw vectors, or a
@@ -25,6 +31,16 @@ character vector containing one or more WKT strings.}
 \item{other_geom}{Either a raw vector of WKB or list of raw vectors, or a
 character vector containing one or more WKT strings. Must contain the same
 number of geometries as \code{geom}.}
+
+\item{srs}{Character string specifying the spatial reference system
+for \code{geom}. May be in WKT format or any of the formats supported by
+\code{\link[=srs_to_wkt]{srs_to_wkt()}}.}
+
+\item{traditional_gis_order}{Logical value, \code{TRUE} to use traditional GIS
+order of axis mapping (the default) or \code{FALSE} to use authority compliant
+axis order. By default, input \code{geom} vertices are assumed to
+be in longitude/latitude order if \code{srs} is a geographic coordinate system.
+This can be overridden by setting \code{traditional_gis_order = FALSE}.}
 }
 \description{
 These functions compute measurements for geometries. The input
@@ -60,6 +76,30 @@ occurs.
 Undefined for all other geometry types (returns zero). Returns a numeric
 vector, having length equal to the number of input geometries, containing
 computed length or '0' if undefined.
+
+\code{g_geodesic_area()} computes geometry area, considered as a surface on the
+underlying ellipsoid of the SRS attached to the geometry. The returned area
+will always be in square meters, and assumes that polygon edges describe
+geodesic lines on the ellipsoid. If the geometry SRS is not a geographic
+one, geometries are reprojected to the underlying geographic SRS.
+By default, input geometry vertices are assumed to be in longitude/latitude
+order if using a geographic coordinate system. This can be overridden with
+the \code{traditional_gis_order} argument.
+Returns the area in square meters, or \code{NA} in case of error (unsupported
+geometry type, no SRS attached, etc.)
+Requires GDAL >= 3.9.
+
+\code{g_geodesic_length()} computes the length of the curve, considered as a
+geodesic line on the underlying ellipsoid of the SRS attached to the
+geometry. The returned length will always be in meters. If the geometry SRS
+is not a geographic one, geometries are reprojected to the underlying
+geographic SRS.
+By default, input geometry vertices are assumed to be in longitude/latitude
+order if using a geographic coordinate system. This can be overridden with
+the \code{traditional_gis_order} argument.
+Returns the length in meters, or \code{NA} in case of error (unsupported geometry
+type, no SRS attached, etc.)
+Requires GDAL >= 3.10.
 }
 \note{
 For \code{g_distance()}, \code{geom} and \code{other_geom} must contain the same number of
