@@ -69,6 +69,7 @@ shifts, and changes of units.</p>
 <span>  <span class="va">srs_to</span>,</span>
 <span>  wrap_date_line <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  date_line_offset <span class="op">=</span> <span class="fl">10L</span>,</span>
+<span>  traditional_gis_order <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  as_wkb <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>  as_iso <span class="op">=</span> <span class="cn">FALSE</span>,</span>
 <span>  byte_order <span class="op">=</span> <span class="st">"LSB"</span>,</span>
@@ -98,23 +99,30 @@ system. May be in WKT format or any of the formats supported by
 
 
 <dt id="arg-wrap-date-line">wrap_date_line<a class="anchor" aria-label="anchor" href="#arg-wrap-date-line"></a></dt>
-<dd><p>Logical scalar. <code>TRUE</code> to correct geometries that
+<dd><p>Logical value, <code>TRUE</code> to correct geometries that
 incorrectly go from a longitude on a side of the antimeridian to the other
 side. Defaults to <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-date-line-offset">date_line_offset<a class="anchor" aria-label="anchor" href="#arg-date-line-offset"></a></dt>
-<dd><p>Integer scalar. Longitude gap in degree. Defaults
-to <code>10</code>.</p></dd>
+<dd><p>Integer longitude gap in degree. Defaults to <code>10L</code>.</p></dd>
+
+
+<dt id="arg-traditional-gis-order">traditional_gis_order<a class="anchor" aria-label="anchor" href="#arg-traditional-gis-order"></a></dt>
+<dd><p>Logical value, <code>TRUE</code> to use traditional GIS
+order of axis mapping (the default) or <code>FALSE</code> to use authority compliant
+axis order. By default, input <code>geom</code> vertices are assumed to
+be in longitude/latitude order if <code>srs_from</code> is a geographic coordinate
+system. This can be overridden by setting <code>traditional_gis_order = FALSE</code>.</p></dd>
 
 
 <dt id="arg-as-wkb">as_wkb<a class="anchor" aria-label="anchor" href="#arg-as-wkb"></a></dt>
-<dd><p>Logical, <code>TRUE</code> to return the output geometry in WKB
+<dd><p>Logical value, <code>TRUE</code> to return the output geometry in WKB
 format (the default), or <code>FALSE</code> to return as WKT.</p></dd>
 
 
 <dt id="arg-as-iso">as_iso<a class="anchor" aria-label="anchor" href="#arg-as-iso"></a></dt>
-<dd><p>Logical, <code>TRUE</code> to export as ISO WKB/WKT (ISO 13249
+<dd><p>Logical value, <code>TRUE</code> to export as ISO WKB/WKT (ISO 13249
 SQL/MM Part 3), or <code>FALSE</code> (the default) to export as "Extended WKB/WKT".</p></dd>
 
 
@@ -124,7 +132,7 @@ WKB. One of <code>"LSB"</code> (the default) or <code>"MSB"</code> (uncommon).</
 
 
 <dt id="arg-quiet">quiet<a class="anchor" aria-label="anchor" href="#arg-quiet"></a></dt>
-<dd><p>Logical, <code>TRUE</code> to suppress warnings. Defaults to <code>FALSE</code>.</p></dd>
+<dd><p>Logical value, <code>TRUE</code> to suppress warnings. Defaults to <code>FALSE</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
