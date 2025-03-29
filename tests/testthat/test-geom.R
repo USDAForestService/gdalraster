@@ -807,6 +807,13 @@ test_that("make_valid works", {
     expect_true(g_equals(g_wk2wk(wkb_list[[4]]), expected_wkt4))
 })
 
+test_that("swap xy works", {
+    g <- "GEOMETRYCOLLECTION(POINT(1 2),LINESTRING(1 2,2 3),POLYGON((0 0,0 1,1 1,0 0)))"
+    g_swapped <- g_swap_xy(g, as_wkb = FALSE)
+    g_expect <- "GEOMETRYCOLLECTION (POINT (2 1),LINESTRING (2 1,3 2),POLYGON ((0 0,1 0,1 1,0 0)))"
+    expect_equal(g_swapped, g_expect)
+})
+
 test_that("g_coords returns a data frame of vertices", {
     m <- matrix(c(0, 3, 3, 4, 0, 0), ncol = 2, byrow = TRUE)
     pts_wkb <- lapply(seq_len(nrow(m)), function(i) g_create("POINT", m[i, ]))

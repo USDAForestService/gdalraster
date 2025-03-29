@@ -38,15 +38,13 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 \value{
 A geometry as WKB raw vector or WKT string, or a list/character vector of
 geometries as WKB/WKT with length equal to \code{length(geom)}. \code{NA} is returned
-with a warning if an input geometry cannot be converted into an OGR
-geometry object, or if an error occurs in the call to MakeValid() in the
-underlying OGR API.
+with a warning if WKB input cannot be converted into an OGR geometry object,
+or if an error occurs in the call to MakeValid() in the underlying OGR API.
 }
 \description{
 \code{g_make_valid()} attempts to make an invalid geometry valid without losing
 vertices. Already-valid geometries are cloned without further intervention.
-Wrapper of \code{OGR_G_MakeValid()}/\code{OGR_G_MakeValidEx()} in the GDAL Vector C
-API.
+Wrapper of \code{OGR_G_MakeValid()}/\code{OGR_G_MakeValidEx()} in the GDAL API.
 }
 \details{
 LINEWORK is the default method, which combines all rings into a set of noded

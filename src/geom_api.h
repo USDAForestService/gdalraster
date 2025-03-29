@@ -47,6 +47,9 @@ SEXP g_make_valid(const Rcpp::RawVector &geom, const std::string &method,
                   bool keep_collapsed, bool as_iso,
                   const std::string &byte_order, bool quiet);
 
+SEXP g_swap_xy(const Rcpp::RawVector &geom, bool as_iso,
+               const std::string &byte_order, bool quiet);
+
 Rcpp::LogicalVector g_is_empty(const Rcpp::RawVector &geom, bool quiet);
 Rcpp::LogicalVector g_is_3D(const Rcpp::RawVector &geom, bool quiet);
 Rcpp::LogicalVector g_is_measured(const Rcpp::RawVector &geom, bool quiet);
