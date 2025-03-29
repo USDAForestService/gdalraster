@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9270 (dev)
+# gdalraster 1.12.0.9271 (dev)
+
+* `g_transform()`: add argument `traditional_gis_order` with default `TRUE`, to support authority compliant order for geometries using geographic coordinates (#672) (2025-03-29)
 
 * geom api: add `g_geodesic_area()` and `g_geodesic_length()` (#671) (2025-03-29)
 
