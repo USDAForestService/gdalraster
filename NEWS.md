@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9260 (dev)
+# gdalraster 1.12.0.9270 (dev)
+
+* geom api: add `g_geodesic_area()` and `g_geodesic_length()` (#671) (2025-03-29)
 
 * add `GDALRaster::get_block_indexing()`: helper method to get indexing values for the block layout (#667) (2025-03-25)
 
