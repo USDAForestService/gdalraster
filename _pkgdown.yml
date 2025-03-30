@@ -102,6 +102,7 @@ reference:
   - g_length
   - g_make_valid
   - g_name
+  - g_simplify
   - g_summary
   - g_swap_xy
   - g_transform

@@ -2,7 +2,7 @@
    Called via GDAL ogr headers, requires GDAL built against GEOS.
 
    Chris Toney <chris.toney at usda.gov>
-   Copyright (c) 2023-2024 gdalraster authors
+   Copyright (c) 2023-2025 gdalraster authors
 */
 
 #include "rcpp_util.h"
@@ -1274,7 +1274,6 @@ SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
         Rcpp::stop("'geom' is empty");
 
     OGRGeometryH hGeom = createGeomFromWkb(geom);
-
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
@@ -1307,6 +1306,92 @@ SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
     bool result = exportGeomToWkb(hBufferGeom, &wkb[0], as_iso, byte_order);
     OGR_G_DestroyGeometry(hGeom);
     OGR_G_DestroyGeometry(hBufferGeom);
+    if (!result) {
+        if (!quiet) {
+           Rcpp::warning(
+                    "failed to export WKB raw vector for output geometry");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    return wkb;
+}
+
+//' @noRd
+// [[Rcpp::export(name = ".g_simplify")]]
+SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
+                bool preserve_topology = true, bool as_iso = false,
+                const std::string &byte_order = "LSB", bool quiet = false) {
+// Compute a simplified geometry. By default (preserve_topology = TRUE),
+// simplify the geometry while preserving topology.
+//
+// GEOS definitions:
+// (https://libgeos.org/doxygen/classgeos_1_1simplify_1_1TopologyPreservingSimplifier.html)
+// Simplifies a geometry, ensuring that the result is a valid geometry having
+// the same dimension and number of components as the input. The simplification
+// uses a maximum distance difference algorithm similar to the one used in the
+// Douglas-Peucker algorithm. In particular, if the input is an areal geometry
+// (Polygon or MultiPolygon), the result has the same number of shells and
+// holes (rings) as the input, in the same order. The result rings touch at no
+// more than the number of touching point in the input (although they may touch
+// at fewer points).
+// If preserve_topology = FALSE:
+// (https://libgeos.org/doxygen/classgeos_1_1simplify_1_1DouglasPeuckerSimplifier.html)
+// Simplifies a Geometry using the standard Douglas-Peucker algorithm. Ensures
+// that any polygonal geometries returned are valid. Simple lines are not
+// guaranteed to remain simple after simplification. Note that in general D-P
+// does not preserve topology - e.g. polygons can be split, collapse to lines
+// or disappear, holes can be created or disappear, and lines can cross. To
+// simplify geometry while preserving topology use TopologyPreservingSimplifier.
+// (However, using D-P is significantly faster).
+//
+// PostGIS notes:
+// https://postgis.net/docs/ST_SimplifyPreserveTopology.html
+// The simplification tolerance is a distance value, in the units of the input
+// SRS. Simplification removes vertices which are within the tolerance distance
+// of the simplified linework, as long as topology is preserved.
+// This function does not preserve boundaries shared between polygons.
+
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    OGRGeometryH hSimplifiedGeom = nullptr;
+    if (preserve_topology)
+        hSimplifiedGeom = OGR_G_SimplifyPreserveTopology(hGeom, tolerance);
+    else
+        hSimplifiedGeom = OGR_G_Simplify(hGeom, tolerance);
+
+    if (hSimplifiedGeom == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
+        if (!quiet) {
+            Rcpp::warning("OGR API call gave NULL geometry, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    const int nWKBSize = OGR_G_WkbSize(hSimplifiedGeom);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        OGR_G_DestroyGeometry(hSimplifiedGeom);
+        if (!quiet) {
+            Rcpp::warning("failed to obtain WKB size of output geometry");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hSimplifiedGeom, &wkb[0], as_iso, byte_order);
+    OGR_G_DestroyGeometry(hGeom);
+    OGR_G_DestroyGeometry(hSimplifiedGeom);
     if (!result) {
         if (!quiet) {
            Rcpp::warning(

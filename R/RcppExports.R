@@ -2280,6 +2280,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_simplify <- function(geom, tolerance, preserve_topology = TRUE, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_simplify`, geom, tolerance, preserve_topology, as_iso, byte_order, quiet)
+}
+
+#' @noRd
 .g_intersection <- function(this_geom, other_geom, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
     .Call(`_gdalraster_g_intersection`, this_geom, other_geom, as_iso, byte_order, quiet)
 }
