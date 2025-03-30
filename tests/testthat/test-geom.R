@@ -675,6 +675,29 @@ test_that("g_buffer returns correct values", {
     expect_equal(bb, c(-10, -10,  10,  10))
 })
 
+test_that("g_simplify returns correct values", {
+    g1 <- "LINESTRING(0 0,1 0,10 0)"
+    g_simp <- g_simplify(g1, tolerance = 5, as_wkb = FALSE)
+    g_expect <- "LINESTRING (0 0,10 0)"
+    expect_equal(g_simp, g_expect)
+    # wkb input
+    g_simp <- g_simplify(g_wk2wk(g1), tolerance = 5, as_wkb = FALSE)
+    expect_equal(g_simp, g_expect)
+    # preserve_topology = FALSE
+    g_simp <- g_simplify(g1, tolerance = 5, preserve_topology = FALSE,
+                         as_wkb = FALSE)
+    expect_equal(g_simp, g_expect)
+    # vector/list input
+    g_expect <- rep(g_expect, 2)
+    g2 <- "LINESTRING(0 0,1 1,10 0)"
+    # character vector of wkt input
+    g_simp <- g_simplify(c(g1, g2), tolerance = 5, as_wkb = FALSE)
+    expect_equal(g_simp, g_expect)
+    # list of wkb input
+    g_simp <- g_simplify(g_wk2wk(c(g1, g2)), tolerance = 5, as_wkb = FALSE)
+    expect_equal(g_simp, g_expect)
+})
+
 test_that("geometry measures are correct", {
     expect_equal(g_distance("POINT (0 0)", "POINT (5 12)"), 13)
 

@@ -3,7 +3,7 @@
    For spatial predicate definitions: https://en.wikipedia.org/wiki/DE-9IM
 
    Chris Toney <chris.toney at usda.gov>
-   Copyright (c) 2023-2024 gdalraster authors
+   Copyright (c) 2023-2025 gdalraster authors
 */
 
 #ifndef SRC_GEOM_API_H_
@@ -92,6 +92,10 @@ Rcpp::LogicalVector g_overlaps(const Rcpp::RawVector &this_geom,
 
 SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs,
               bool as_iso, const std::string &byte_order, bool quiet);
+
+SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
+                bool preserve_topology, bool as_iso,
+                const std::string &byte_order, bool quiet);
 
 SEXP g_intersection(const Rcpp::RawVector &this_geom,
                     const Rcpp::RawVector &other_geom,
