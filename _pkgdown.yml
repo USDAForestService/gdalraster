@@ -103,6 +103,7 @@ reference:
   - g_make_valid
   - g_name
   - g_summary
+  - g_swap_xy
   - g_transform
   - g_wk2wk
   - geos_version

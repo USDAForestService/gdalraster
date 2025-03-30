@@ -87,6 +87,7 @@
   \code{\link[=g_coords]{g_coords()}},
   \code{\link[=g_envelope]{g_envelope()}},
   \code{\link[=g_make_valid]{g_make_valid()}},
+  \code{\link[=g_swap_xy]{g_swap_xy()}},
   \code{\link[=g_transform]{g_transform()}},
   \code{\link[=g_wk2wk]{g_wk2wk()}},
   \code{\link[=geos_version]{geos_version()}}

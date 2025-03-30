@@ -723,8 +723,7 @@ g_summary <- function(geom, quiet = FALSE) {
 #'
 #' `g_make_valid()` attempts to make an invalid geometry valid without losing
 #' vertices. Already-valid geometries are cloned without further intervention.
-#' Wrapper of `OGR_G_MakeValid()`/`OGR_G_MakeValidEx()` in the GDAL Vector C
-#' API.
+#' Wrapper of `OGR_G_MakeValid()`/`OGR_G_MakeValidEx()` in the GDAL API.
 #'
 #' @details
 #' LINEWORK is the default method, which combines all rings into a set of noded
@@ -753,9 +752,8 @@ g_summary <- function(geom, quiet = FALSE) {
 #' @return
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to `length(geom)`. `NA` is returned
-#' with a warning if an input geometry cannot be converted into an OGR
-#' geometry object, or if an error occurs in the call to MakeValid() in the
-#' underlying OGR API.
+#' with a warning if WKB input cannot be converted into an OGR geometry object,
+#' or if an error occurs in the call to MakeValid() in the underlying OGR API.
 #'
 #' @note
 #' This function is built on the GEOS >= 3.8 library, check it for the
@@ -831,6 +829,81 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
         } else {
             wkb <- lapply(g_wk2wk(geom), .g_make_valid, method, keep_collapsed,
                           as_iso, byte_order, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' Swap geometry x and y coordinates
+#'
+#' `g_swap_xy()` swaps x and y coordinates of the input geometry.
+#' Wrapper of `OGR_G_SwapXY()` in the GDAL API.
+#'
+#' @param geom Either a raw vector of WKB or list of raw vectors, or a
+#' character vector containing one or more WKT strings.
+#' @param as_wkb Logical value, `TRUE` to return the output geometry in WKB
+#' format (the default), or `FALSE` to return as WKT.
+#' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
+#' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
+#' @param byte_order Character string specifying the byte order when output is
+#' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
+#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
+#' @return
+#' A geometry as WKB raw vector or WKT string, or a list/character vector of
+#' geometries as WKB/WKT with length equal to `length(geom)`. `NA` is returned
+#' with a warning if WKB input cannot be converted into an OGR geometry object.
+#'
+#' @examples
+#' g <- "GEOMETRYCOLLECTION(POINT(1 2),
+#'                          LINESTRING(1 2,2 3),
+#'                          POLYGON((0 0,0 1,1 1,0 0)))"
+#'
+#' g_swap_xy(g, as_wkb = FALSE)
+#' @export
+g_swap_xy <- function(geom, as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB",
+                      quiet = FALSE) {
+
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(geom)) {
+        wkb <- .g_swap_xy(geom, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        wkb <- lapply(geom, .g_swap_xy, as_iso, byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_swap_xy(g_wk2wk(geom), as_iso, byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_swap_xy, as_iso, byte_order, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
@@ -1359,7 +1432,7 @@ g_equals <- function(this_geom, other_geom, quiet = FALSE) {
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to the number of input geometry
 #' pairs.
-#' `NA` is returned with a warning if an input geometry cannot be converted
+#' `NA` is returned with a warning if WKB input cannot be converted
 #' into an OGR geometry object, or if an error occurs in the call to the
 #' underlying OGR API function.
 #'
@@ -2029,9 +2102,9 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' @return
 #' A polygon as WKB raw vector or WKT string, or a list/character vector of
 #' polygons as WKB/WKT with length equal to the number of input geometries.
-#' `NA` is returned with a warning if an input geometry cannot be converted
-#' into an OGR geometry object, or if an error occurs in the call to Buffer()
-#' in the underlying OGR API.
+#' `NA` is returned with a warning if WKB input cannot be converted into an
+#' OGR geometry object, or if an error occurs in the call to Buffer() in the
+#' underlying OGR API.
 #'
 #' @examples
 #' g_buffer("POINT (0 0)", dist = 10, as_wkb = FALSE)
@@ -2122,9 +2195,9 @@ g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
 #' @return
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to the number of input geometries.
-#' `NA` is returned with a warning if an input geometry cannot be converted
-#' into an OGR geometry object, or if an error occurs in the call to the
-#' underlying OGR API.
+#' `NA` is returned with a warning if WKB input cannot be converted into an
+#' OGR geometry object, or if an error occurs in the call to the underlying
+#' OGR API.
 #'
 #' @note
 #' This function uses the `OGR_GeomTransformer_Create()` and

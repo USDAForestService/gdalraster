@@ -67,7 +67,7 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 A geometry as WKB raw vector or WKT string, or a list/character vector of
 geometries as WKB/WKT with length equal to the number of input geometry
 pairs.
-\code{NA} is returned with a warning if an input geometry cannot be converted
+\code{NA} is returned with a warning if WKB input cannot be converted
 into an OGR geometry object, or if an error occurs in the call to the
 underlying OGR API function.
 }

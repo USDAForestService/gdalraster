@@ -2200,6 +2200,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_swap_xy <- function(geom, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_swap_xy`, geom, as_iso, byte_order, quiet)
+}
+
+#' @noRd
 .g_is_empty <- function(geom, quiet = FALSE) {
     .Call(`_gdalraster_g_is_empty`, geom, quiet)
 }

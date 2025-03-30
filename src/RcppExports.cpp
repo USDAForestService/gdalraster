@@ -1107,6 +1107,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// g_swap_xy
+SEXP g_swap_xy(const Rcpp::RawVector& geom, bool as_iso, const std::string& byte_order, bool quiet);
+RcppExport SEXP _gdalraster_g_swap_xy(SEXP geomSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RawVector& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_swap_xy(geom, as_iso, byte_order, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // g_is_empty
 Rcpp::LogicalVector g_is_empty(const Rcpp::RawVector& geom, bool quiet);
 RcppExport SEXP _gdalraster_g_is_empty(SEXP geomSEXP, SEXP quietSEXP) {
@@ -2082,6 +2096,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_add_geom", (DL_FUNC) &_gdalraster_g_add_geom, 4},
     {"_gdalraster_g_is_valid", (DL_FUNC) &_gdalraster_g_is_valid, 2},
     {"_gdalraster_g_make_valid", (DL_FUNC) &_gdalraster_g_make_valid, 6},
+    {"_gdalraster_g_swap_xy", (DL_FUNC) &_gdalraster_g_swap_xy, 4},
     {"_gdalraster_g_is_empty", (DL_FUNC) &_gdalraster_g_is_empty, 2},
     {"_gdalraster_g_is_3D", (DL_FUNC) &_gdalraster_g_is_3D, 2},
     {"_gdalraster_g_is_measured", (DL_FUNC) &_gdalraster_g_is_measured, 2},

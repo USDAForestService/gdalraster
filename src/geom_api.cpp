@@ -694,6 +694,58 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
 }
 
 //' @noRd
+// [[Rcpp::export(name = ".g_swap_xy")]]
+SEXP g_swap_xy(const Rcpp::RawVector &geom, bool as_iso = false,
+               const std::string &byte_order = "LSB",
+               bool quiet = false) {
+// Swap x and y coordinates.
+
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    OGR_G_SwapXY(hGeom);
+
+    if (hGeom == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
+        if (!quiet) {
+            Rcpp::warning("OGR_G_SwapXY() gave NULL geometry, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    const int nWKBSize = OGR_G_WkbSize(hGeom);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        if (!quiet) {
+            Rcpp::warning("failed to obtain WKB size of output geometry");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hGeom, &wkb[0], as_iso, byte_order);
+    OGR_G_DestroyGeometry(hGeom);
+    if (!result) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to export WKB raw vector for output geometry");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    return wkb;
+}
+
+//' @noRd
 // [[Rcpp::export(name = ".g_is_empty")]]
 Rcpp::LogicalVector g_is_empty(const Rcpp::RawVector &geom,
                                bool quiet = false) {

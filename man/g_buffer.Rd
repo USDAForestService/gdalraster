@@ -39,9 +39,9 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 \value{
 A polygon as WKB raw vector or WKT string, or a list/character vector of
 polygons as WKB/WKT with length equal to the number of input geometries.
-\code{NA} is returned with a warning if an input geometry cannot be converted
-into an OGR geometry object, or if an error occurs in the call to Buffer()
-in the underlying OGR API.
+\code{NA} is returned with a warning if WKB input cannot be converted into an
+OGR geometry object, or if an error occurs in the call to Buffer() in the
+underlying OGR API.
 }
 \description{
 \code{g_buffer()} builds a new geometry containing the buffer region around
