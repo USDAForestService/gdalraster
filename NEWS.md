@@ -1,4 +1,4 @@
-# gdalraster 1.12.0.9272 (dev)
+# gdalraster 1.12.0.9273 (dev)
 
 * geom api: add `g_swap_xy()` (#673) (2025-03-29)
 
