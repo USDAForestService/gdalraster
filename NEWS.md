@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9273 (dev)
+# gdalraster 1.12.0.9274 (dev)
+
+* geom api: add `g_simplify()`, simplify WKB/WKT geometries, optionally preserving topology (#675) (2025-03-30)
 
 * geom api: add `g_swap_xy()` (#673) (2025-03-29)
 
