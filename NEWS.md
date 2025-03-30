@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9271 (dev)
+# gdalraster 1.12.0.9272 (dev)
+
+* Geom API: add `g_swap_xy()` (#673) (2025-03-29)
 
 * `g_transform()`: add argument `traditional_gis_order` with default `TRUE`, to support authority compliant order for geometries using geographic coordinates (#672) (2025-03-29)
 
