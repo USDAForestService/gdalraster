@@ -193,6 +193,7 @@ assignment).</p>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getAttributeFilter</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setIgnoredFields</span><span class="op">(</span><span class="va">fields</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSelectedFields</span><span class="op">(</span><span class="va">fields</span><span class="op">)</span></span>
+<span><span class="va">lyr</span><span class="op">$</span><span class="fu">getIgnoredFields</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSpatialFilter</span><span class="op">(</span><span class="va">wkt</span><span class="op">)</span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">setSpatialFilterRect</span><span class="op">(</span><span class="va">bbox</span><span class="op">)</span></span>
@@ -460,6 +461,10 @@ fields. Note that geometry fields, if desired, must be specified when setting
 selected fields, either by including named geometry field(s) or the special
 field <code>"OGR_GEOMETRY"</code> in the <code>fields</code> argument.
 No return value, called for side effects.</p>
+<p><code>$getIgnoredFields()</code><br>
+Returns a character vector containing the list of currently ignored fields,
+or an empty vector (<code>character(0)</code>) if no fields are currently set to
+ignored (or if the format driver does not support ignored fields).</p>
 <p><code>$setSpatialFilter(wkt)</code><br>
 Sets a new spatial filter from a geometry in WKT format. This method sets
 the geometry to be used as a spatial filter when fetching features via the
@@ -778,7 +783,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C++ object of class GDALVector</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Driver : GeoPackage (GPKG)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/Rtmp0c0lOc/ynp_fires_1984_2022.gpkg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/RtmpZKwko9/ynp_fires_1984_2022.gpkg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Layer  : mtbs_perims</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  CRS    : NAD83 / Montana (EPSG:32100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Geom   : MULTIPOLYGON</span>
@@ -796,20 +801,20 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ returnGeomAs      : chr "WKB"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ transactionsForce : logi FALSE</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ wkbByteOrder      : chr "LSB"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  and 72 methods, of which 58 are  possibly relevant:</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  and 73 methods, of which 59 are  possibly relevant:</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    OGRFeatureFromList_dumpReadble, batchCreateFeature, bbox,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    clearSpatialFilter, close, commitTransaction, createFeature, deleteFeature,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    fetch, finalize, getArrowStream, getAttributeFilter, getDriverLongName,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getDriverShortName, getDsn, getFIDColumn, getFeature, getFeatureCount,</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    getFieldDomain, getFieldNames, getFileList, getGeomType, getGeometryColumn,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getLastWriteFID, getLayerDefn, getMetadata, getMetadataItem, getName,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    getNextFeature, getSpatialFilter, getSpatialRef, info, initialize, isOpen,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerClip, layerErase, layerIdentity, layerIntersection, layerSymDifference,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    layerUnion, layerUpdate, open, releaseArrowStream, resetReading,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    rollbackTransaction, setAttributeFilter, setFeature, setIgnoredFields,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setMetadata, setNextByIndex, setSelectedFields, setSpatialFilter,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    setSpatialFilterRect, show#envRefClass, startTransaction, syncToDisk,</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>    testCapability, upsertFeature</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getIgnoredFields, getLastWriteFID, getLayerDefn, getMetadata,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    getMetadataItem, getName, getNextFeature, getSpatialFilter, getSpatialRef,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    info, initialize, isOpen, layerClip, layerErase, layerIdentity,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    layerIntersection, layerSymDifference, layerUnion, layerUpdate, open,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    releaseArrowStream, resetReading, rollbackTransaction, setAttributeFilter,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setFeature, setIgnoredFields, setMetadata, setNextByIndex,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    setSelectedFields, setSpatialFilter, setSpatialFilterRect, show#envRefClass,</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>    startTransaction, syncToDisk, testCapability, upsertFeature</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## dataset info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverShortName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -817,7 +822,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp0c0lOc/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpZKwko9/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1323,7 +1328,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-30 20:19:38" "2025-03-30 20:19:38"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-31 23:11:38" "2025-03-31 23:11:38"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1349,7 +1354,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-30 20:19:38"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-31 23:11:38"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1392,7 +1397,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-30 20:19:38" "2025-03-30 20:19:39"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-03-31 23:11:38" "2025-03-31 23:11:39"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
