@@ -25,7 +25,8 @@
 #include "nanoarrow/r.h"
 
 
-GDALVector::GDALVector() : m_open_options(Rcpp::CharacterVector::create()) {
+GDALVector::GDALVector() : m_open_options(Rcpp::CharacterVector::create()),
+                           m_ignored_fields(Rcpp::CharacterVector::create()) {
     // undocumented default constructor with no arguments
     // currently not intended for user code
 
@@ -73,6 +74,7 @@ GDALVector::GDALVector(const Rcpp::CharacterVector &dsn,
             m_open_options(open_options.isNotNull() ?
                            open_options : Rcpp::CharacterVector::create()),
             m_spatial_filter(spatial_filter),
+            m_ignored_fields(Rcpp::CharacterVector::create()),
             m_hDataset(nullptr),
             m_eAccess(GA_ReadOnly),
             m_hLayer(nullptr) {
@@ -755,9 +757,12 @@ void GDALVector::setSelectedFields(const Rcpp::RObject &fields) {
 
     // if special field "OGR_GEOMETRY" is used here, we need to replace with
     // the geometry column name
-    for (auto& x : fields_in) {
-        if (EQUAL(x, "OGR_GEOMETRY"))
-            x = getGeometryColumn();
+    if (getGeometryColumn() != "") {
+        for (auto& x : fields_in) {
+            if (EQUAL(x, "OGR_GEOMETRY")) {
+                x = getGeometryColumn();
+            }
+        }
     }
 
     Rcpp::CharacterVector ignore_fields = Rcpp::setdiff(m_field_names,
@@ -777,6 +782,20 @@ void GDALVector::setSelectedFields(const Rcpp::RObject &fields) {
     else {
         m_ignored_fields = Rcpp::clone(ignore_fields);
     }
+}
+
+Rcpp::CharacterVector GDALVector::getIgnoredFields() const {
+    checkAccess_(GA_ReadOnly);
+
+    if (!OGR_L_TestCapability(m_hLayer, OLCIgnoreFields)) {
+         if (!quiet) {
+            Rcpp::Rcerr << "this layer does not have IgnoreFields capability"
+                    << std::endl;
+         }
+        return Rcpp::CharacterVector::create();
+    }
+
+    return Rcpp::clone(m_ignored_fields);
 }
 
 void GDALVector::setSpatialFilter(const std::string &wkt) {
@@ -1749,7 +1768,7 @@ bool GDALVector::createFeature(const Rcpp::List &feature) {
 
     std::vector<std::map<R_xlen_t, int>> fld_maps =
             validateFeatInput_(feature);
-    
+
     if (fld_maps.size() != 2)
         Rcpp::stop("failed to obtain field index mappings");
 
@@ -2700,7 +2719,7 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
     Rcpp::CharacterVector names = feature.names();
     if (names.size() == 0)
         Rcpp::stop("names vector is empty");
-    
+
     OGRFeatureDefnH hFDefn = nullptr;
     hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)
@@ -2710,7 +2729,7 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
     hFeat = OGR_F_Create(hFDefn);
     if (hFeat == nullptr)
         Rcpp::stop("failed to create OGRFeature object");
-    
+
     int nGeomFields = OGR_F_GetGeomFieldCount(hFeat);
 
     std::map<R_xlen_t, int> map_flds;
@@ -3859,6 +3878,8 @@ RCPP_MODULE(mod_GDALVector) {
         "Set which fields can be omitted when retrieving features")
     .method("setSelectedFields", &GDALVector::setSelectedFields,
         "Set which fields to include when retrieving features")
+    .const_method("getIgnoredFields", &GDALVector::getIgnoredFields,
+        "Get the list of ignored fields in a character vector (may be empty)")
     .method("setSpatialFilter", &GDALVector::setSpatialFilter,
         "Set a new spatial filter from a geometry in WKT format")
     .method("setSpatialFilterRect", &GDALVector::setSpatialFilterRect,

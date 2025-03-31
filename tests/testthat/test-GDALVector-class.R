@@ -162,6 +162,7 @@ test_that("set ignored/selected fields works", {
     lyr <- new(GDALVector, dsn, "mtbs_perims")
 
     # set ignored, no geom
+    expect_vector(lyr$getIgnoredFields(), ptype = character(), size = 0)
     lyr$returnGeomAs <- "NONE"
     expect_true(lyr$testCapability()$IgnoreFields)
     feat <- lyr$getNextFeature()
@@ -171,12 +172,15 @@ test_that("set ignored/selected fields works", {
     expect_length(feat, 9)
     expect_true(is.null(feat$event_id))
     expect_false(is.null(feat$incid_name))
+    expect_equal(lyr$getIgnoredFields(), "event_id")
     lyr$setIgnoredFields("")
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
+    expect_vector(lyr$getIgnoredFields(), ptype = character(), size = 0)
     lyr$setIgnoredFields(c("event_id", "map_id", "ig_year"))
     feat <- lyr$getNextFeature()
     expect_length(feat, 7)
+    expect_equal(lyr$getIgnoredFields(), c("event_id", "map_id", "ig_year"))
     lyr$setIgnoredFields("")
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
@@ -188,6 +192,7 @@ test_that("set ignored/selected fields works", {
     feat <- lyr$getNextFeature()
     expect_length(feat, 2)
     expect_true(is.character(feat$event_id))
+    expect_true(length(lyr$getIgnoredFields()) > 1)
     lyr$setSelectedFields("")
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
@@ -197,12 +202,14 @@ test_that("set ignored/selected fields works", {
     lyr$setSelectedFields("")
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
+    expect_true(length(lyr$getIgnoredFields()) == 0)
 
     # geometry
     # ignoring "OGR_GEOMETRY" is redundant with returnGeomAs = "NONE"
     # make sure we can repeat "OGR_GEOMETRY" in the ignore list
     lyr$returnGeomAs <- "NONE"
     lyr$setIgnoredFields("OGR_GEOMETRY")
+    expect_equal(lyr$getIgnoredFields(), "OGR_GEOMETRY")
     feat <- lyr$getNextFeature()
     expect_length(feat, 10)
     expect_true(is.null(feat$geom))
@@ -215,9 +222,11 @@ test_that("set ignored/selected fields works", {
     expect_length(feat, 10)
     expect_true(is.null(feat$geom))
     lyr$setIgnoredFields(c("event_id", "OGR_GEOMETRY"))
+    expect_equal(lyr$getIgnoredFields(), c("event_id", "OGR_GEOMETRY"))
     feat <- lyr$getNextFeature()
     expect_length(feat, 9)
     lyr$setIgnoredFields("")
+    expect_true(length(lyr$getIgnoredFields()) == 0)
     feat <- lyr$getNextFeature()
     expect_length(feat, 11)
     # selected
@@ -226,6 +235,7 @@ test_that("set ignored/selected fields works", {
     feat <- lyr$getNextFeature()
     expect_length(feat, 3)
     expect_false(is.null(feat$geom))
+    expect_true(length(lyr$getIgnoredFields()) > 1)
 
     # test fetch past end with ignored fields does not crash
     # https://github.com/USDAForestService/gdalraster/issues/539
