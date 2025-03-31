@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9274 (dev)
+# gdalraster 1.12.0.9275 (dev)
+
+* add `GDALVector::getIgnoredFields()` (#676) (2025-03-31)
 
 * geom api: add `g_simplify()`, simplify WKB/WKT geometries, optionally preserving topology (#675) (2025-03-30)
 
