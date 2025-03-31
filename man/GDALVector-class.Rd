@@ -104,6 +104,7 @@ lyr$setAttributeFilter(query)
 lyr$getAttributeFilter()
 lyr$setIgnoredFields(fields)
 lyr$setSelectedFields(fields)
+lyr$getIgnoredFields()
 
 lyr$setSpatialFilter(wkt)
 lyr$setSpatialFilterRect(bbox)
@@ -401,6 +402,11 @@ fields. Note that geometry fields, if desired, must be specified when setting
 selected fields, either by including named geometry field(s) or the special
 field \code{"OGR_GEOMETRY"} in the \code{fields} argument.
 No return value, called for side effects.
+
+\code{$getIgnoredFields()}\cr
+Returns a character vector containing the list of currently ignored fields,
+or an empty vector (\code{character(0)}) if no fields are currently set to
+ignored (or if the format driver does not support ignored fields).
 
 \code{$setSpatialFilter(wkt)}\cr
 Sets a new spatial filter from a geometry in WKT format. This method sets

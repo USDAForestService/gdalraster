@@ -85,6 +85,7 @@ class GDALVector {
     std::string getAttributeFilter() const;
     void setIgnoredFields(const Rcpp::RObject &fields);
     void setSelectedFields(const Rcpp::RObject &fields);
+    Rcpp::CharacterVector getIgnoredFields() const;
 
     void setSpatialFilter(const std::string &wkt);
     void setSpatialFilterRect(const Rcpp::RObject &bbox);
