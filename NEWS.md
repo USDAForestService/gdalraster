@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9275 (dev)
+# gdalraster 1.12.0.9276 (dev)
+
+* fix `VSIFile::read()`: the `nbytes` argument should accept values carrying the integer64 class attribute (fix #677 thanks to @mdsumner) (2025-03-31)
 
 * add `GDALVector::getIgnoredFields()` (#676) (2025-03-31)
 
