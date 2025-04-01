@@ -47,7 +47,7 @@ class VSIFile {
     int seek(Rcpp::NumericVector offset, std::string origin);
     Rcpp::NumericVector tell() const;
     void rewind();
-    SEXP read(std::size_t nbytes);
+    SEXP read(Rcpp::NumericVector nbytes);
     Rcpp::NumericVector write(const Rcpp::RawVector& object);
     bool eof() const;
     int truncate(Rcpp::NumericVector offset);

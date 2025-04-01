@@ -25,7 +25,7 @@ test_that("VSIFile works", {
     # filename, w access
     expect_no_error(vf <- new(VSIFile, tmp_file, "w"))
     vf$seek(0, SEEK_END)
-    expect_equal(vf$tell(), bit64::as.integer64(0))
+    expect_equal(vf$tell(), as.integer64(0))
     expect_equal(vf$close(), 0)
     vsi_unlink(tmp_file)
     # testing options depends on GDAL version, and needs internet access
@@ -59,10 +59,10 @@ test_that("VSIFile works", {
     bytes <- vf$read(12)
     expect_vector(bytes, ptype = raw(), size = 12)
     expect_true(is_lcp(bytes))
-    expect_equal(vf$tell(), bit64::as.integer64(12))
+    expect_equal(vf$tell(), as.integer64(12))
     expect_false(vf$eof())
     expect_silent(vf$rewind())
-    expect_equal(vf$tell(), bit64::as.integer64(0))
+    expect_equal(vf$tell(), as.integer64(0))
 
     bytes <- vf$ingest(-1)
     expect_vector(bytes, raw())
@@ -74,13 +74,13 @@ test_that("VSIFile works", {
     lcp_size <- vsi_stat(lcp_file, "size")
     mem_file <- "/vsimem/storml_copy.lcp"
     vf <- new(VSIFile, mem_file, "w+")
-    expect_equal(vf$write(bytes), bit64::as.integer64(lcp_size))
+    expect_equal(vf$write(bytes), as.integer64(lcp_size))
     expect_equal(vf$flush(), 0)
-    expect_equal(vf$tell(), bit64::as.integer64(lcp_size))
+    expect_equal(vf$tell(), as.integer64(lcp_size))
     expect_equal(vf$seek(0, SEEK_SET), 0)
-    expect_equal(vf$tell(), bit64::as.integer64(0))
+    expect_equal(vf$tell(), as.integer64(0))
     expect_equal(vf$seek(0, SEEK_END), 0)
-    expect_equal(vf$tell(), bit64::as.integer64(lcp_size))
+    expect_equal(vf$tell(), as.integer64(lcp_size))
     vf$rewind()
     expect_true(is_lcp(vf$read(12)))
 
@@ -92,7 +92,7 @@ test_that("VSIFile works", {
     # latitude -99 out of range
     bytes <- writeBin(-99L, raw())
     # giving offset as integer64 type
-    vf$seek(bit64::as.integer64(8), SEEK_SET)
+    vf$seek(as.integer64(8), SEEK_SET)
     vf$write(bytes)
     vf$rewind()
     expect_false(is_lcp(vf$read(12)))
@@ -114,7 +114,8 @@ test_that("VSIFile works", {
 
     # read the Description field
     vf$seek(6804, SEEK_SET)
-    bytes <- vf$read(512)
+    # read should accept integer64 input
+    bytes <- vf$read(as.integer64(512))
     expect_equal(rawToChar(bytes), "LCP file created by GDAL.")
 
     # edit the Description
@@ -123,7 +124,7 @@ test_that("VSIFile works", {
                   "Beaverhead-Deerlodge National Forest, Montana.")
 
     vf$seek(6804, SEEK_SET)
-    expect_equal(vf$write(charToRaw(desc)), bit64::as.integer64(nchar(desc)))
+    expect_equal(vf$write(charToRaw(desc)), as.integer64(nchar(desc)))
     vf$close()
 
     # be sure it works as a raster dataset
@@ -140,14 +141,14 @@ test_that("VSIFile works", {
     expect_equal(vf$set_access("r+"), 0)
     expect_no_error(vf$open())
     vf$seek(0, SEEK_END)
-    expect_equal(vf$tell(), bit64::as.integer64(lcp_size))
+    expect_equal(vf$tell(), as.integer64(lcp_size))
     expect_true(is.null(vf$read(1)))
     expect_true(vf$eof())
     vf$seek(0, SEEK_SET)
     expect_false(vf$eof())
 
     # expand the file, giving new_size as integer64 type
-    lcp_size_x2 <- bit64::as.integer64(lcp_size * 2)
+    lcp_size_x2 <- as.integer64(lcp_size * 2)
     expect_equal(vf$truncate(lcp_size_x2), 0)
     vf$close()
     expect_equal(as.integer(vsi_stat(mem_file, "size")),
@@ -187,8 +188,8 @@ test_that("VSIFile works", {
     expect_error(vf$seek(0, "invalid_origin"))
     expect_true(is.null((vf$read(0))))
     expect_error(vf$truncate(-1))
-    expect_error(vf$truncate(bit64::as.integer64(-1)))
-    expect_true(is.null(vf$ingest(bit64::as.integer64(1))))
+    expect_error(vf$truncate(as.integer64(-1)))
+    expect_true(is.null(vf$ingest(as.integer64(1))))
     expect_equal(vf$set_access("r"), -1)
     expect_no_error(vf$close())
     expect_equal(vf$set_access("string_too_long"), -1)

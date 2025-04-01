@@ -127,16 +127,37 @@ void VSIFile::rewind() {
     return;
 }
 
-SEXP VSIFile::read(std::size_t nbytes) {
+SEXP VSIFile::read(Rcpp::NumericVector nbytes) {
     if (m_fp == nullptr)
         Rcpp::stop("the file is not open");
 
-    if (nbytes <= 0)
+    if (nbytes.size() != 1)
+        Rcpp::stop("'nbytes' must be a length-1 numeric vector");
+    else if (nbytes[0] <= 0)
         return R_NilValue;
 
-    GByte *buf = static_cast<GByte *>(CPLMalloc(nbytes));
+    size_t nbytes_in = 0;
+
+    if (Rcpp::isInteger64(nbytes)) {
+        int64_t tmp = Rcpp::fromInteger64(nbytes[0]);
+        if (static_cast<uint64_t>(tmp) > SIZE_MAX)
+            Rcpp::stop("'nbytes' is out of range");
+        else
+            nbytes_in = static_cast<size_t>(tmp);
+    }
+    else {
+        if (nbytes[0] > SIZE_MAX)
+            Rcpp::stop("'nbytes' is out of range");
+        else
+            nbytes_in = static_cast<size_t>(nbytes[0]);
+    }
+
+    if (nbytes_in == 0)
+        return R_NilValue;
+
+    GByte *buf = static_cast<GByte *>(CPLMalloc(nbytes_in));
     size_t nRead = 0;
-    nRead = VSIFReadL(buf, 1, nbytes, m_fp);
+    nRead = VSIFReadL(buf, 1, nbytes_in, m_fp);
     if (nRead == 0) {
         VSIFree(buf);
         return R_NilValue;
