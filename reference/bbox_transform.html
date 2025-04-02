@@ -100,10 +100,14 @@ transformation is done with <code><a href="g_transform.html">g_transform()</a></
     <p>With <code>use_transform_bounds = TRUE</code> (the default) this function returns:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="co"># requires GDAL &gt;= 3.4</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="fu">transform_bounds</span>(bbox, srs_from, srs_to)</span></code></pre><p></p></div>
+<p>See Details for <code><a href="transform_bounds.html">transform_bounds()</a></code> for cases where the bounds crossed the
+antimeridian.</p>
 <p>With <code>use_transform_bounds = FALSE</code>, this function returns:</p>
 <p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="fu">bbox_to_wkt</span>(bbox) <span class="sc">|&gt;</span></span>
 <span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a>  <span class="fu">g_transform</span>(srs_from, srs_to) <span class="sc">|&gt;</span></span>
 <span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a>  <span class="fu">bbox_from_wkt</span>()</span></code></pre><p></p></div>
+<p>See the Note for <code><a href="g_transform.html">g_transform()</a></code> for cases where the bounds crossed the
+antimeridian.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>

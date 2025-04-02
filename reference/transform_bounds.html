@@ -112,7 +112,8 @@ output spatial reference system (xmin, ymin, xmax, ymax).</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>If the destination CRS is geographic, the first axis is longitude, and
+    <p>The following refer to the <em>output</em> values <code>xmin</code>, <code>ymin</code>, <code>xmax</code>, <code>ymax</code>:</p>
+<p>If the destination CRS is geographic, the first axis is longitude, and
 <code>xmax &lt; xmin</code> then the bounds crossed the antimeridian. In this scenario
 there are two polygons, one on each side of the antimeridian. The first
 polygon should be constructed with <code>(xmin, ymin, 180, ymax)</code> and the second
