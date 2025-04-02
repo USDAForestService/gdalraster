@@ -159,12 +159,18 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' transform_bounds(bbox, srs_from, srs_to)
 #' ```
 #'
+#' See Details for [transform_bounds()] for cases where the bounds crossed the
+#' antimeridian.
+#'
 #' With `use_transform_bounds = FALSE`, this function returns:
 #' ```
 #' bbox_to_wkt(bbox) |>
 #'   g_transform(srs_from, srs_to) |>
 #'   bbox_from_wkt()
 #' ```
+#'
+#' See the Note for [g_transform()] for cases where the bounds crossed the
+#' antimeridian.
 #'
 #' @param bbox Numeric vector of length four containing a bounding box
 #' (xmin, ymin, xmax, ymax) to transform.
