@@ -120,8 +120,8 @@ reference:
   - renameDataset
 - subtitle: OGR vector utilities
 - contents:
-  - ogr2ogr
   - ogrinfo
+  - ogr2ogr
   - ogr_ds_exists
   - ogr_ds_format
   - ogr_ds_test_cap
@@ -143,6 +143,7 @@ reference:
   - ogr_def_geom_field
   - ogr_def_layer
   - ogr_proc
+  - ogr_reproject
   - plot.OGRFeature
   - plot.OGRFeatureSet
   - print.OGRFeature
