@@ -2887,6 +2887,8 @@ srs_get_axis_mapping_strategy <- function(srs) {
 #' Reference System API. Requires GDAL >= 3.4.
 #'
 #' @details
+#' The following refer to the *output* values `xmin`, `ymin`, `xmax`, `ymax`:
+#'
 #' If the destination CRS is geographic, the first axis is longitude, and
 #' `xmax < xmin` then the bounds crossed the antimeridian. In this scenario
 #' there are two polygons, one on each side of the antimeridian. The first

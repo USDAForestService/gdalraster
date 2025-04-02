@@ -43,6 +43,8 @@ the outermost bounds. Wrapper of \code{OCTTransformBounds()} in the GDAL Spatial
 Reference System API. Requires GDAL >= 3.4.
 }
 \details{
+The following refer to the \emph{output} values \code{xmin}, \code{ymin}, \code{xmax}, \code{ymax}:
+
 If the destination CRS is geographic, the first axis is longitude, and
 \code{xmax < xmin} then the bounds crossed the antimeridian. In this scenario
 there are two polygons, one on each side of the antimeridian. The first
