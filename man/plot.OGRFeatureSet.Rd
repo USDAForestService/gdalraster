@@ -9,6 +9,10 @@
 \arguments{
 \item{x}{An \code{OGRFeatureSet}.}
 
+\item{xlab}{Title for the x axis.}
+
+\item{ylab}{Title for the y axis.}
+
 \item{...}{Optional arguments passed to \code{wk::wk_plot()}.}
 }
 \value{

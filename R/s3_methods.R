@@ -109,6 +109,8 @@ print.OGRFeatureSet <- function(x, ...) {
 #' Plot the geometry of an `OGRFeature` object
 #'
 #' @param x An `OGRFeature` object.
+#' @param xlab Title for the x axis.
+#' @param ylab Title for the y axis.
 #' @param ... Optional arguments passed to `wk::wk_plot()`.
 #' @return The input, invisibly.
 #' @export
@@ -148,6 +150,8 @@ plot.OGRFeature <- function(x, xlab = "x", ylab = "y", ...) {
 #' Plot the geometry column of an `OGRFeatureSet`
 #'
 #' @param x An `OGRFeatureSet`.
+#' @param xlab Title for the x axis.
+#' @param ylab Title for the y axis.
 #' @param ... Optional arguments passed to `wk::wk_plot()`.
 #' @return The input, invisibly.
 #' @export
