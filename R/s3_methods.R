@@ -109,11 +109,13 @@ print.OGRFeatureSet <- function(x, ...) {
 #' Plot the geometry of an `OGRFeature` object
 #'
 #' @param x An `OGRFeature` object.
+#' @param xlab Title for the x axis.
+#' @param ylab Title for the y axis.
 #' @param ... Optional arguments passed to `wk::wk_plot()`.
 #' @return The input, invisibly.
 #' @export
 #' @method plot OGRFeature
-plot.OGRFeature <- function(x, ...) {
+plot.OGRFeature <- function(x, xlab = "x", ylab = "y", ...) {
     geom_column <- NULL
     if (length(attr(x, "gis")$geom_column) == 0)
         stop("no geometry column")
@@ -140,7 +142,7 @@ plot.OGRFeature <- function(x, ...) {
         wk_obj <- wk::wkt(x[[geom_column]], crs = srs)
     }
 
-    wk::wk_plot(wk_obj, ...)
+    wk::wk_plot(wk_obj, ..., xlab = xlab, ylab = ylab)
 
     invisible(x)
 }
@@ -148,11 +150,13 @@ plot.OGRFeature <- function(x, ...) {
 #' Plot the geometry column of an `OGRFeatureSet`
 #'
 #' @param x An `OGRFeatureSet`.
+#' @param xlab Title for the x axis.
+#' @param ylab Title for the y axis.
 #' @param ... Optional arguments passed to `wk::wk_plot()`.
 #' @return The input, invisibly.
 #' @export
 #' @method plot OGRFeatureSet
-plot.OGRFeatureSet <- function(x, ...) {
+plot.OGRFeatureSet <- function(x, xlab = "x", ylab = "y", ...) {
     if (length(attr(x, "gis")$geom_column) == 0)
         stop("no geometry column")
     else
@@ -173,7 +177,7 @@ plot.OGRFeatureSet <- function(x, ...) {
         wk_obj <- wk::wkt(x[[geom_column]], crs = srs)
     }
 
-    wk::wk_plot(wk_obj, ...)
+    wk::wk_plot(wk_obj, ..., xlab = xlab, ylab = ylab)
 
     invisible(x)
 }
