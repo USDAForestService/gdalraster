@@ -100,6 +100,11 @@ DEFAULT_DEM_PROC <- list(
     if (endsWith(tolower(file), ".fgb")) {
         return("FlatGeobuf")
     }
+    if (endsWith(tolower(file), ".geojson") ||
+        endsWith(tolower(file), ".json")) {
+
+        return("GeoJSON")
+    }
     return(NULL)
 }
 
@@ -2038,7 +2043,7 @@ polygonize <- function(raster_file,
 #' will be used. The resolution or size must be specified using either the `tr`
 #' or `ts` argument for all new rasters. The target raster will be overwritten
 #' if it already exists and any of these creation-related options are used.
-#' 
+#'
 #' To update an existing raster in-place, an object of class `GDALRaster` may
 #' be given for the `dstfile` argument. The `GDALRaster` object should be open
 #' for write access.

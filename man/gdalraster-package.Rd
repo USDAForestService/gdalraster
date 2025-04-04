@@ -102,8 +102,9 @@
   \code{\link[=inspectDataset]{inspectDataset()}}
 
   \item OGR vector utilities:
-  \code{\link[=ogr2ogr]{ogr2ogr()}},
   \code{\link[=ogrinfo]{ogrinfo()}},
+  \code{\link[=ogr2ogr]{ogr2ogr()}},
+  \code{\link[=ogr_reproject]{ogr_reproject()}},
   \code{\link[=ogr_manage]{ogr_manage}},
   \code{\link[=ogr_define]{ogr_define}}
 

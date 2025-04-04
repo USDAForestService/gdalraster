@@ -1695,6 +1695,9 @@ bool ogr2ogr(const Rcpp::CharacterVector &src_dsn,
         GDALReleaseDataset(hDstDS);
         ret = true;
     }
+    else {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+    }
 
     GDALReleaseDataset(src_ds[0]);
 
