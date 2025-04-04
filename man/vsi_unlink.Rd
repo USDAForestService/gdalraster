@@ -20,13 +20,12 @@ It is a wrapper for \code{VSIUnlink()} in the GDAL Common Portability Library.
 Analog of the POSIX \code{unlink()} function.
 }
 \examples{
-# regular file system for illustration
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-tmp_file <- file.path(tempdir(), "tmp.tif")
-file.copy(elev_file,  tmp_file)
-vsi_stat(tmp_file)
-vsi_unlink(tmp_file)
-vsi_stat(tmp_file)
+mem_file <- file.path("/vsimem", "tmp.tif")
+copyDatasetFiles(mem_file, elev_file)
+vsi_read_dir("/vsimem")
+vsi_unlink(mem_file)
+vsi_read_dir("/vsimem")
 }
 \seealso{
 \code{\link[=deleteDataset]{deleteDataset()}}, \code{\link[=vsi_rmdir]{vsi_rmdir()}}, \code{\link[=vsi_unlink_batch]{vsi_unlink_batch()}}

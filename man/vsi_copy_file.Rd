@@ -47,7 +47,7 @@ tmp_file <- "/vsimem/elev_temp.tif"
 # Requires GDAL >= 3.7
 if (as.integer(gdal_version()[2]) >= 3070000) {
   result <- vsi_copy_file(elev_file, tmp_file)
-  print(result)
+  (result == 0)
   print(vsi_stat(tmp_file, "size"))
 
   vsi_unlink(tmp_file)
