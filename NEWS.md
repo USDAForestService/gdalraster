@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9280 (dev)
+# gdalraster 1.12.0.9281 (dev)
+
+* add default xy labels in S3 methods `plot.OGRFeature` and `plot.OGRFeatureSet` (#685) (2025-04-03)
 
 * add `ogr_reproject()`: reproject a vector layer (#684) (2025-04-03)
 
