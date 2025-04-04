@@ -4,7 +4,7 @@
 \alias{plot.OGRFeatureSet}
 \title{Plot the geometry column of an \code{OGRFeatureSet}}
 \usage{
-\method{plot}{OGRFeatureSet}(x, ...)
+\method{plot}{OGRFeatureSet}(x, xlab = "x", ylab = "y", ...)
 }
 \arguments{
 \item{x}{An \code{OGRFeatureSet}.}

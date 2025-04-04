@@ -4,7 +4,7 @@
 \alias{plot.OGRFeature}
 \title{Plot the geometry of an \code{OGRFeature} object}
 \usage{
-\method{plot}{OGRFeature}(x, ...)
+\method{plot}{OGRFeature}(x, xlab = "x", ylab = "y", ...)
 }
 \arguments{
 \item{x}{An \code{OGRFeature} object.}
