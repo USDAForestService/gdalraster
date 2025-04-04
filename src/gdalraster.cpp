@@ -643,8 +643,14 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
 
             double grid_x = inv_gt[0] + inv_gt[1] * geo_x + inv_gt[2] * geo_y;
             double grid_y = inv_gt[3] + inv_gt[4] * geo_x + inv_gt[5] * geo_y;
-            if (grid_x < 0 || grid_x > raster_xsize ||
-                grid_y < 0 || grid_y > raster_ysize) {
+
+            // allow input coordinates exactly on the bottom or right edges
+            // match behavior in: https://github.com/OSGeo/gdal/pull/12087
+
+            if ((grid_x < 0 || grid_x > static_cast<double>(raster_xsize) ||
+                 grid_y < 0 || grid_y > static_cast<double>(raster_ysize)) &&
+                !(ARE_REAL_EQUAL(grid_x, static_cast<double>(raster_xsize)) ||
+                  ARE_REAL_EQUAL(grid_y, static_cast<double>(raster_ysize)))) {
 
                 if (band_idx == 0)
                     pts_outside += 1;
@@ -655,6 +661,11 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
             }
 
             if (eResampleAlg == GRIORA_NearestNeighbour && krnl_dim == 1) {
+                if (ARE_REAL_EQUAL(grid_x, static_cast<double>(raster_xsize)))
+                    grid_x -= 0.25;
+                if (ARE_REAL_EQUAL(grid_y, static_cast<double>(raster_ysize)))
+                    grid_y -= 0.25;
+
                 int x_off = static_cast<int>(std::floor(grid_x));
                 int y_off = static_cast<int>(std::floor(grid_y));
 
