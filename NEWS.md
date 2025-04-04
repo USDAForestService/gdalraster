@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9276 (dev)
+# gdalraster 1.12.0.9280 (dev)
+
+* add `ogr_reproject()`: reproject a vector layer (#684) (2025-04-03)
 
 * fix `VSIFile::read()`: the `nbytes` argument should accept values carrying the integer64 class attribute (fix #677 thanks to @mdsumner) (2025-03-31)
 
