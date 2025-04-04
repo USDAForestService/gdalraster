@@ -88,17 +88,16 @@ Analog of the POSIX <code><a href="https://rdrr.io/r/base/unlink.html" class="ex
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># regular file system for illustration</span></span></span>
-<span class="r-in"><span><span class="va">elev_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_elev.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">tmp_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"tmp.tif"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span><span class="va">elev_file</span>,  <span class="va">tmp_file</span><span class="op">)</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">elev_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/storml_elev.tif"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">mem_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"/vsimem"</span>, <span class="st">"tmp.tif"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="copyDatasetFiles.html">copyDatasetFiles</a></span><span class="op">(</span><span class="va">mem_file</span>, <span class="va">elev_file</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="fu"><a href="vsi_stat.html">vsi_stat</a></span><span class="op">(</span><span class="va">tmp_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="fu">vsi_unlink</span><span class="op">(</span><span class="va">tmp_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="vsi_read_dir.html">vsi_read_dir</a></span><span class="op">(</span><span class="st">"/vsimem"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ogr2sqlite" "tmp.tif"   </span>
+<span class="r-in"><span><span class="fu">vsi_unlink</span><span class="op">(</span><span class="va">mem_file</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
-<span class="r-in"><span><span class="fu"><a href="vsi_stat.html">vsi_stat</a></span><span class="op">(</span><span class="va">tmp_file</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] FALSE</span>
+<span class="r-in"><span><span class="fu"><a href="vsi_read_dir.html">vsi_read_dir</a></span><span class="op">(</span><span class="st">"/vsimem"</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ogr2sqlite"</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

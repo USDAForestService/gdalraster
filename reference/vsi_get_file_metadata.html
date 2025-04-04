@@ -107,37 +107,33 @@ particular if a file is SOZIP-enabled (<code>SOZIP_VALID=YES</code>).</p></li>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
-    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># create an SOZip-enabled file and validate</span></span></span>
+    <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># validate an SOZip-enabled file</span></span></span>
 <span class="r-in"><span><span class="co"># Requires GDAL &gt;= 3.7</span></span></span>
-<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_features.zip"</span>, package <span class="op">=</span> <span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">3070000</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="va">zip_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext<span class="op">=</span><span class="st">".zip"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="addFilesInZip.html">addFilesInZip</a></span><span class="op">(</span><span class="va">zip_file</span>, <span class="va">f</span>, full_paths<span class="op">=</span><span class="cn">FALSE</span>, sozip_enabled<span class="op">=</span><span class="st">"YES"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">zip_vsi</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"/vsizip"</span>, <span class="va">zip_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">zf</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"/vsizip"</span>, <span class="va">f</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"Files in zip archive:"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="vsi_read_dir.html">vsi_read_dir</a></span><span class="op">(</span><span class="va">zip_vsi</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"SOZip metadata:"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">vsi_get_file_metadata</span><span class="op">(</span><span class="va">zip_vsi</span>, domain<span class="op">=</span><span class="st">"ZIP"</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">zip_file</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="vsi_read_dir.html">vsi_read_dir</a></span><span class="op">(</span><span class="va">zf</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="st">"SOZip metadata for ynp_features.gpkg:"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="va">zf_gpkg</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="va">zf</span>, <span class="st">"ynp_features.gpkg"</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu">vsi_get_file_metadata</span><span class="op">(</span><span class="va">zf_gpkg</span>, domain<span class="op">=</span><span class="st">"ZIP"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> adding /home/runner/work/_temp/Library/gdalraster/extdata/ynp_fires_1984_2022.gpkg ...</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Files in zip archive:"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ynp_fires_1984_2022.gpkg"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOZip metadata:"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "ab67_ynp_bnd_metadata.html" "readme_ynp_features.txt"   </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [3] "ynp_features.gpkg"         </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "SOZip metadata for ynp_features.gpkg:"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $START_DATA_OFFSET</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "54"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "47"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $COMPRESSION_METHOD</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "8 (DEFLATE)"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $COMPRESSED_SIZE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "164729"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "392854"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $UNCOMPRESSED_SIZE</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "307200"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "1175552"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $SOZIP_FOUND</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "YES"</span>
@@ -152,12 +148,11 @@ particular if a file is SOZIP-enabled (<code>SOZIP_VALID=YES</code>).</p></li>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "32768"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $SOZIP_START_DATA_OFFSET</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "164848"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "392959"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> $SOZIP_VALID</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "YES"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>

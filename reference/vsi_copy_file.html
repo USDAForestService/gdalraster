@@ -118,12 +118,11 @@ described for the function <code><a href="addFilesInZip.html">addFilesInZip()</a
 <span class="r-in"><span><span class="co"># Requires GDAL &gt;= 3.7</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/integer.html" class="external-link">as.integer</a></span><span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version</a></span><span class="op">(</span><span class="op">)</span><span class="op">[</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fl">3070000</span><span class="op">)</span> <span class="op">{</span></span></span>
 <span class="r-in"><span>  <span class="va">result</span> <span class="op">&lt;-</span> <span class="fu">vsi_copy_file</span><span class="op">(</span><span class="va">elev_file</span>, <span class="va">tmp_file</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></span>
+<span class="r-in"><span>  <span class="op">(</span><span class="va">result</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="fu"><a href="vsi_stat.html">vsi_stat</a></span><span class="op">(</span><span class="va">tmp_file</span>, <span class="st">"size"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">tmp_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> integer64</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 31152</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
