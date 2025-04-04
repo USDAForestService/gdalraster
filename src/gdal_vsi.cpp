@@ -52,7 +52,7 @@
 //' # Requires GDAL >= 3.7
 //' if (as.integer(gdal_version()[2]) >= 3070000) {
 //'   result <- vsi_copy_file(elev_file, tmp_file)
-//'   print(result)
+//'   (result == 0)
 //'   print(vsi_stat(tmp_file, "size"))
 //'
 //'   vsi_unlink(tmp_file)
@@ -460,13 +460,12 @@ int vsi_rmdir(const Rcpp::CharacterVector &path, bool recursive = false) {
 //' [deleteDataset()], [vsi_rmdir()], [vsi_unlink_batch()]
 //'
 //' @examples
-//' # regular file system for illustration
 //' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-//' tmp_file <- file.path(tempdir(), "tmp.tif")
-//' file.copy(elev_file,  tmp_file)
-//' vsi_stat(tmp_file)
-//' vsi_unlink(tmp_file)
-//' vsi_stat(tmp_file)
+//' mem_file <- file.path("/vsimem", "tmp.tif")
+//' copyDatasetFiles(mem_file, elev_file)
+//' vsi_read_dir("/vsimem")
+//' vsi_unlink(mem_file)
+//' vsi_read_dir("/vsimem")
 // [[Rcpp::export()]]
 int vsi_unlink(const Rcpp::CharacterVector &filename) {
 
@@ -501,9 +500,9 @@ int vsi_unlink(const Rcpp::CharacterVector &filename) {
 //' tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
 //'
 //' tmp_elev <- file.path(tempdir(), "tmp_elev.tif")
-//' file.copy(elev_file,  tmp_elev)
+//' file.copy(elev_file, tmp_elev)
 //' tmp_tcc <- file.path(tempdir(), "tmp_tcc.tif")
-//' file.copy(tcc_file,  tmp_tcc)
+//' file.copy(tcc_file, tmp_tcc)
 //' vsi_unlink_batch(c(tmp_elev, tmp_tcc))
 // [[Rcpp::export()]]
 SEXP vsi_unlink_batch(const Rcpp::CharacterVector &filenames) {
@@ -591,6 +590,10 @@ SEXP vsi_unlink_batch(const Rcpp::CharacterVector &filenames) {
 //' base_url <- "https://raw.githubusercontent.com/usdaforestservice/"
 //' f <- "gdalraster/main/sample-data/landsat_c2ard_sr_mt_hood_jul2022_utm.tif"
 //' url_file <- paste0("/vsicurl/", base_url, f)
+//'
+//' # try to be CRAN-compliant for the example:
+//' set_config_option("GDAL_HTTP_CONNECTTIMEOUT", "10")
+//' set_config_option("GDAL_HTTP_TIMEOUT", "10")
 //'
 //' vsi_stat(url_file)
 //' vsi_stat(url_file, "type")
@@ -969,20 +972,17 @@ void vsi_clear_path_options(const Rcpp::CharacterVector &path_prefix) {
 //' [vsi_stat()], [addFilesInZip()]
 //'
 //' @examples
-//' # create an SOZip-enabled file and validate
+//' # validate an SOZip-enabled file
 //' # Requires GDAL >= 3.7
-//' f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+//' f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
 //'
 //' if (as.integer(gdal_version()[2]) >= 3070000) {
-//'   zip_file <- tempfile(fileext=".zip")
-//'   addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
-//'   zip_vsi <- file.path("/vsizip", zip_file)
+//'   zf <- file.path("/vsizip", f)
 //'   print("Files in zip archive:")
-//'   print(vsi_read_dir(zip_vsi))
-//'   print("SOZip metadata:")
-//'   print(vsi_get_file_metadata(zip_vsi, domain="ZIP"))
-//'
-//'   vsi_unlink(zip_file)
+//'   print(vsi_read_dir(zf))
+//'   print("SOZip metadata for ynp_features.gpkg:")
+//'   zf_gpkg <- file.path(zf, "ynp_features.gpkg")
+//'   print(vsi_get_file_metadata(zf_gpkg, domain="ZIP"))
 //' }
 // [[Rcpp::export()]]
 SEXP vsi_get_file_metadata(const Rcpp::CharacterVector &filename,

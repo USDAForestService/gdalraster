@@ -41,20 +41,17 @@ particular if a file is SOZIP-enabled (\code{SOZIP_VALID=YES}).
 }
 }
 \examples{
-# create an SOZip-enabled file and validate
+# validate an SOZip-enabled file
 # Requires GDAL >= 3.7
-f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
 
 if (as.integer(gdal_version()[2]) >= 3070000) {
-  zip_file <- tempfile(fileext=".zip")
-  addFilesInZip(zip_file, f, full_paths=FALSE, sozip_enabled="YES")
-  zip_vsi <- file.path("/vsizip", zip_file)
+  zf <- file.path("/vsizip", f)
   print("Files in zip archive:")
-  print(vsi_read_dir(zip_vsi))
-  print("SOZip metadata:")
-  print(vsi_get_file_metadata(zip_vsi, domain="ZIP"))
-
-  vsi_unlink(zip_file)
+  print(vsi_read_dir(zf))
+  print("SOZip metadata for ynp_features.gpkg:")
+  zf_gpkg <- file.path(zf, "ynp_features.gpkg")
+  print(vsi_get_file_metadata(zf_gpkg, domain="ZIP"))
 }
 }
 \seealso{

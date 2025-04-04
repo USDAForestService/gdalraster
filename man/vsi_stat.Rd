@@ -60,6 +60,10 @@ base_url <- "https://raw.githubusercontent.com/usdaforestservice/"
 f <- "gdalraster/main/sample-data/landsat_c2ard_sr_mt_hood_jul2022_utm.tif"
 url_file <- paste0("/vsicurl/", base_url, f)
 
+# try to be CRAN-compliant for the example:
+set_config_option("GDAL_HTTP_CONNECTTIMEOUT", "10")
+set_config_option("GDAL_HTTP_TIMEOUT", "10")
+
 vsi_stat(url_file)
 vsi_stat(url_file, "type")
 vsi_stat(url_file, "size")
