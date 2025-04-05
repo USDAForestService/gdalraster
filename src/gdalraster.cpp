@@ -186,6 +186,8 @@ void GDALRaster::open(bool read_only) {
     if (m_shared)
         nOpenFlags |= GDAL_OF_SHARED;
 
+    nOpenFlags |= GDAL_OF_VERBOSE_ERROR;
+
     m_hDataset = GDALOpenEx(m_fname.c_str(), nOpenFlags, nullptr,
                             dsoo.data(), nullptr);
 
@@ -410,8 +412,10 @@ bool GDALRaster::setProjection(const std::string &projection) {
     }
 
     if (GDALSetProjection(m_hDataset, projection.c_str()) == CE_Failure) {
-        if (!quiet)
+        if (!quiet) {
+            Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
             Rcpp::Rcerr << "set projection failed\n";
+        }
         return false;
     }
     else {
@@ -910,8 +914,10 @@ void GDALRaster::buildOverviews(const std::string &resampling,
                                     quiet ? nullptr : GDALTermProgressR,
                                     nullptr);
 
-    if (err == CE_Failure)
+    if (err == CE_Failure) {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         Rcpp::stop("build overviews failed");
+    }
 }
 
 std::string GDALRaster::getDataTypeName(int band) const {
@@ -1633,8 +1639,10 @@ void GDALRaster::write(int band, int xoff, int yoff, int xsize, int ysize,
         Rcpp::stop("data must be a vector of 'numeric' or 'complex' or 'raw'");
     }
 
-    if (err == CE_Failure)
+    if (err == CE_Failure) {
+        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         Rcpp::stop("write to raster failed");
+    }
 }
 
 void GDALRaster::fillRaster(int band, double value, double ivalue) {

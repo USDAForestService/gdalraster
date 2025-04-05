@@ -131,6 +131,8 @@ void GDALVector::open(bool read_only) {
     else
         nOpenFlags |= GDAL_OF_UPDATE;
 
+    nOpenFlags |= GDAL_OF_VERBOSE_ERROR;
+
     m_hDataset = GDALOpenEx(m_dsn.c_str(), nOpenFlags, nullptr,
                             dsoo.data(), nullptr);
     if (m_hDataset == nullptr)
