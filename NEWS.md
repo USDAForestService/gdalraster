@@ -1,6 +1,8 @@
-# gdalraster 1.12.0.9281 (dev)
+# gdalraster 1.12.0.9282 (dev)
 
-* add default xy labels in S3 methods `plot.OGRFeature` and `plot.OGRFeatureSet` (#685) (2025-04-03)
+* add more error messages from GDAL in a few places, mainly verbose message when opening a dataset fails (#688) (2025-04-05)
+
+* add default xy axis labels in S3 methods `plot.OGRFeature` and `plot.OGRFeatureSet` (#685) (2025-04-03)
 
 * add `ogr_reproject()`: reproject a vector layer (#684) (2025-04-03)
 
