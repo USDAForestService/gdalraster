@@ -1,4 +1,13 @@
 # Tests for src/gdalraster.cpp
+test_that("class constructors work as expected", {
+    # TODO
+    # ...
+
+    # not recognized as being in a supported file format
+    f <- system.file("extdata/doctype.xml", package="gdalraster")
+    expect_error(ds <- new(GDALRaster, f))
+})
+
 test_that("info() prints output to the console", {
     evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
     ds <- new(GDALRaster, evt_file, TRUE)

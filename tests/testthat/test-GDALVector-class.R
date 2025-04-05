@@ -53,6 +53,10 @@ test_that("class constructors work", {
 
     # default construstrctor with no arguments should not error
     expect_no_error(lyr <- new(GDALVector))
+
+    # not recognized as being in a supported file format
+    f <- system.file("extdata/doctype.xml", package="gdalraster")
+    expect_error(lyr <- new(GDALVector, f))
 })
 
 test_that("class basic interface works", {
