@@ -776,7 +776,7 @@ test_that("pixel extract cubic/cublicspline interpolation", {
     #    Copyright (c) 2024, Javier Jimenez Shaw <j1@jimenezshaw.com>
     #    SPDX-License-Identifier: MIT
 
-    skip_if(.gdal_version_num() < 3100000)
+    skip_if(gdal_version_num() < 3100000)
 
     ds <- create(format="MEM", dst_filename="", xsize=4, ysize=4,
                  nbands=1, dataType="Float32", return_obj=TRUE)

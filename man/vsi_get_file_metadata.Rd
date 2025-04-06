@@ -45,7 +45,7 @@ particular if a file is SOZIP-enabled (\code{SOZIP_VALID=YES}).
 # Requires GDAL >= 3.7
 f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
 
-if (as.integer(gdal_version()[2]) >= 3070000) {
+if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
   zf <- file.path("/vsizip", f)
   print("Files in zip archive:")
   print(vsi_read_dir(zf))

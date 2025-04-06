@@ -2,12 +2,15 @@
 % Please edit documentation in R/RcppExports.R
 \name{gdal_version}
 \alias{gdal_version}
+\alias{gdal_version_num}
 \title{Get GDAL version}
 \usage{
 gdal_version()
+
+gdal_version_num()
 }
 \value{
-Character vector of length four containing:
+\code{gdal_version()} returns a character vector of length four containing:
 \itemize{
 \item "–version" - one line version message, e.g., “GDAL 3.6.3, released
 2023/03/12”
@@ -16,10 +19,16 @@ GDAL 3.6.3.0
 \item "GDAL_RELEASE_DATE" - formatted as a string, e.g., “20230312”
 \item "GDAL_RELEASE_NAME" - e.g., “3.6.3”
 }
+
+\code{gdal_version_num()} returns \code{as.integer(gdal_version()[2])}
 }
 \description{
-\code{gdal_version()} returns runtime version information.
+\code{gdal_version()} returns a caharacter vector of GDAL runtime version
+information. \code{gdal_version_num()} returns only the full version number
+(\code{gdal_version()[2]}) as an integer value.
 }
 \examples{
 gdal_version()
+
+gdal_version_num()
 }

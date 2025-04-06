@@ -190,7 +190,7 @@ test_that("transform/inv_project give correct results", {
 })
 
 test_that("transform_bounds gives correct results", {
-    skip_if(.gdal_version_num() < 3040000)
+    skip_if(gdal_version_num() < 3040000)
 
     # south pole
     bb <- c(-1405880.717371, -1371213.762543, 5405880.717371, 5371213.762543)

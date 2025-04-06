@@ -175,6 +175,7 @@ reference:
 - contents:
   - gdal_formats
   - gdal_version
+  - gdal_compute_version
   - get_cache_used
   - get_config_option
   - set_config_option

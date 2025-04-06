@@ -47,7 +47,7 @@ evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
 out_file <- file.path(tempdir(), "storml.geojson")
 
 # Requires GDAL >= 3.8
-if (as.integer(gdal_version()[2]) >= 3080000) {
+if (gdal_version_num() >= gdal_compute_version(3, 8, 0)) {
   # command-line arguments for gdal_footprint
   args <- c("-t_srs", "EPSG:4326")
   footprint(evt_file, out_file, args)

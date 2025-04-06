@@ -136,23 +136,32 @@ dt_find_for_value <- function(value, is_complex = FALSE) {
 
 #' Get GDAL version
 #'
-#' `gdal_version()` returns runtime version information.
+#' `gdal_version()` returns a caharacter vector of GDAL runtime version
+#' information. `gdal_version_num()` returns only the full version number
+#' (`gdal_version()[2]`) as an integer value.
 #'
-#' @returns Character vector of length four containing:
+#' @name gdal_version
+#'
+#' @returns
+#' `gdal_version()` returns a character vector of length four containing:
 #'   * "–version" - one line version message, e.g., “GDAL 3.6.3, released
 #'   2023/03/12”
 #'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “3060300” for
 #'   GDAL 3.6.3.0
 #'   * "GDAL_RELEASE_DATE" - formatted as a string, e.g., “20230312”
 #'   * "GDAL_RELEASE_NAME" - e.g., “3.6.3”
+#'
+#' `gdal_version_num()` returns `as.integer(gdal_version()[2])`
 #' @examples
 #' gdal_version()
+#'
+#' gdal_version_num()
 gdal_version <- function() {
     .Call(`_gdalraster_gdal_version`)
 }
 
-#' @noRd
-.gdal_version_num <- function() {
+#' @rdname gdal_version
+gdal_version_num <- function() {
     .Call(`_gdalraster_gdal_version_num`)
 }
 
@@ -707,7 +716,7 @@ fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_it
 #' out_file <- file.path(tempdir(), "storml.geojson")
 #'
 #' # Requires GDAL >= 3.8
-#' if (as.integer(gdal_version()[2]) >= 3080000) {
+#' if (gdal_version_num() >= gdal_compute_version(3, 8, 0)) {
 #'   # command-line arguments for gdal_footprint
 #'   args <- c("-t_srs", "EPSG:4326")
 #'   footprint(evt_file, out_file, args)
@@ -829,7 +838,7 @@ ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL, open_opt
 #' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 #'
 #' # Requires GDAL >= 3.7
-#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
 #'   # Get the names of the layers in a GeoPackage file.
 #'   ogrinfo(src)
 #'
@@ -1382,7 +1391,7 @@ validateCreationOptions <- function(format, options) {
 #' tmp_file <- "/vsimem/elev_temp.tif"
 #'
 #' # Requires GDAL >= 3.7
-#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
 #'   result <- vsi_copy_file(elev_file, tmp_file)
 #'   (result == 0)
 #'   print(vsi_stat(tmp_file, "size"))
@@ -1856,7 +1865,7 @@ vsi_get_fs_prefixes <- function() {
 #'
 #' @examples
 #' # Requires GDAL >= 3.6
-#' if (as.integer(gdal_version()[2]) >= 3060000)
+#' if (gdal_version_num() >= gdal_compute_version(3, 6, 0))
 #'   vsi_supports_seq_write("/vsimem/test-mem-file.gpkg", TRUE)
 vsi_supports_seq_write <- function(filename, allow_local_tmpfile) {
     .Call(`_gdalraster_vsi_supports_seq_write`, filename, allow_local_tmpfile)
@@ -1884,7 +1893,7 @@ vsi_supports_seq_write <- function(filename, allow_local_tmpfile) {
 #'
 #' @examples
 #' # Requires GDAL >= 3.6
-#' if (as.integer(gdal_version()[2]) >= 3060000)
+#' if (gdal_version_num() >= gdal_compute_version(3, 6, 0))
 #'   vsi_supports_rnd_write("/vsimem/test-mem-file.gpkg", TRUE)
 vsi_supports_rnd_write <- function(filename, allow_local_tmpfile) {
     .Call(`_gdalraster_vsi_supports_rnd_write`, filename, allow_local_tmpfile)
@@ -2006,7 +2015,7 @@ vsi_clear_path_options <- function(path_prefix) {
 #' # Requires GDAL >= 3.7
 #' f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
 #'
-#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
 #'   zf <- file.path("/vsizip", f)
 #'   print("Files in zip archive:")
 #'   print(vsi_read_dir(zf))
@@ -2120,7 +2129,7 @@ vsi_get_signed_url <- function(filename, options = NULL) {
 #'
 #' @examples
 #' # Requires GDAL >= 3.6
-#' if (as.integer(gdal_version()[2]) >= 3060000)
+#' if (gdal_version_num() >= gdal_compute_version(3, 6, 0))
 #'   print(vsi_is_local("/vsimem/test-mem-file.tif"))
 vsi_is_local <- function(filename) {
     .Call(`_gdalraster_vsi_is_local`, filename)
@@ -2746,7 +2755,7 @@ srs_to_wkt <- function(srs, pretty = FALSE) {
 #' ds$close()
 #'
 #' # Requires GDAL >= 3.4
-#' if (as.integer(gdal_version()[2]) >= 3040000) {
+#' if (gdal_version_num() >= gdal_compute_version(3, 4, 0)) {
 #'   if (srs_is_dynamic("WGS84"))
 #'     print("WGS84 is dynamic")
 #'

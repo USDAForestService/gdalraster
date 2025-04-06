@@ -131,7 +131,8 @@
   \code{\link[=vsi_unlink_batch]{vsi_unlink_batch()}}
 
   \item GDAL configuration:
-  \code{\link[=gdal_version]{gdal_version()}},
+  \code{\link[=gdal_version]{gdal_version}},
+  \code{\link[=gdal_compute_version]{gdal_compute_version()}},
   \code{\link[=gdal_formats]{gdal_formats()}},
   \code{\link[=get_cache_used]{get_cache_used()}},
   \code{\link[=get_config_option]{get_config_option()}},

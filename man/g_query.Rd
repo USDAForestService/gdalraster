@@ -83,7 +83,7 @@ feat <- lyr$getNextFeature()
 g_name(feat$geom)
 
 # g_summary() requires GDAL >= 3.7
-if (as.integer(gdal_version()[2]) >= 3070000) {
+if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
   feat <- lyr$getNextFeature()
   g_summary(feat$geom) |> print()
 

@@ -193,7 +193,7 @@ bbox_union <- function(x, as_wkt = FALSE) {
 #' bb <- c(-1405880.72, -1371213.76, 5405880.72, 5371213.76)
 #'
 #' # the default assumes GDAL >= 3.4
-#' if (as.integer(gdal_version()[2]) >= 3040000) {
+#' if (gdal_version_num() >= gdal_compute_version(3, 4, 0)) {
 #'   bb_wgs84 <- bbox_transform(bb, "EPSG:32661", "EPSG:4326")
 #' } else {
 #'   bb_wgs84 <- bbox_transform(bb, "EPSG:32661", "EPSG:4326",
@@ -555,7 +555,7 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 #' g_name(feat$geom)
 #'
 #' # g_summary() requires GDAL >= 3.7
-#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
 #'   feat <- lyr$getNextFeature()
 #'   g_summary(feat$geom) |> print()
 #'

@@ -2,5 +2,6 @@ linters: linters_with_defaults(
   indentation_linter(4),
   infix_spaces_linter = NULL,
   object_name_linter = NULL,
-  commas_linter = NULL)
+  commas_linter = NULL,
+  return_linter = NULL)
 encoding: "UTF-8"

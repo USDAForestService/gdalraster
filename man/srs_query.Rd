@@ -226,7 +226,7 @@ ds$getProjection() |> srs_is_same("NAD83")
 ds$close()
 
 # Requires GDAL >= 3.4
-if (as.integer(gdal_version()[2]) >= 3040000) {
+if (gdal_version_num() >= gdal_compute_version(3, 4, 0)) {
   if (srs_is_dynamic("WGS84"))
     print("WGS84 is dynamic")
 

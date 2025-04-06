@@ -55,7 +55,7 @@ metadata strings.
 src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 
 # Requires GDAL >= 3.7
-if (as.integer(gdal_version()[2]) >= 3070000) {
+if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
   # Get the names of the layers in a GeoPackage file.
   ogrinfo(src)
 

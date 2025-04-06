@@ -82,7 +82,7 @@ test_that("srs functions work", {
 
 
     # dynamic srs GDAL >= 3.4
-    skip_if(.gdal_version_num() < 3040000)
+    skip_if(gdal_version_num() < 3040000)
 
     expect_true(srs_is_dynamic("EPSG:4326"))
     expect_false(srs_is_dynamic("EPSG:4171"))

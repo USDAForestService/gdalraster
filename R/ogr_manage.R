@@ -288,7 +288,7 @@
 #' ogr_layer_field_names(dsn, layer = "layer2")
 #'
 #' # GDAL >= 3.7
-#' if (as.integer(gdal_version()[2]) >= 3070000)
+#' if (gdal_version_num() >= gdal_compute_version(3, 7, 0))
 #'   ogrinfo(dsn, "layer2")
 #'
 #' \dontshow{deleteDataset(dsn)}

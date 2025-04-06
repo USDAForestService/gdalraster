@@ -24,7 +24,7 @@ test_that("geom functions work on wkb/wkt geometries", {
     pt_xy <- cbind(x, y)
     expect_error(g_create("POLYGON", pt_xy))
 
-    if (.gdal_version_num() >= 3050000) {
+    if (gdal_version_num() >= 3050000) {
         # OGR_GEOMETRY_ACCEPT_UNCLOSED_RING config option added at 3.5.0
         x <- c(324467.3, 323909.4, 323794.2, 324970.7)
         y <- c(5104814.2, 5104365.4, 5103455.8, 5102885.8)
@@ -516,7 +516,7 @@ test_that("g_transform / bbox_transform return correct values", {
                  tolerance = 1e-4)
 
     # bbox_transform
-    skip_if(.gdal_version_num() < 3040000)
+    skip_if(gdal_version_num() < 3040000)
 
     bb <- c(-1405880.71737131, -1371213.7625429356,
             5405880.71737131, 5371213.762542935)
@@ -589,7 +589,7 @@ test_that("geometry properties are correct", {
     expect_equal(res, bb_mat)
 
 
-    skip_if(.gdal_version_num() < 3070000 )
+    skip_if(gdal_version_num() < 3070000 )
 
     g <- "MULTIPOLYGON (((10 0,0 0,5 5,10 0)),((10 10,5 5,0 10,10 10)))"
     expected_value <-
@@ -716,7 +716,7 @@ test_that("geometry measures are correct", {
 test_that("geodesic measures are correct", {
     # tests based on gdal/autotest/ogr/ogr_geom.py
     # https://github.com/OSGeo/gdal/blob/28e94e2f52893d4206830011d75efe1783f1b7c1/autotest/ogr/ogr_geom.py
-    skip_if(.gdal_version_num() < 3090000)
+    skip_if(gdal_version_num() < 3090000)
 
     ## geodesic area
     # lon/lat order (traditional_gis_order = TRUE by default)
@@ -749,7 +749,7 @@ test_that("geodesic measures are correct", {
     expect_equal(a, 4068384291.8911743, tolerance = 1e4)
 
 
-    skip_if(.gdal_version_num() < 3100000)
+    skip_if(gdal_version_num() < 3100000)
 
     ## geodesic length
     # lon/lat order (traditional_gis_order = TRUE by default)
@@ -786,7 +786,7 @@ test_that("make_valid works", {
     # test only with recent GDAL and GEOS
     # these tests could give different results if used across a range of older
     # GDAL/GEOS versions, and the STRUCTURE method requires GEOS >= 3.10
-    skip_if(.gdal_version_num() < 3080000 ||
+    skip_if(gdal_version_num() < 3080000 ||
                 geos_version()$major < 3 ||
                 (geos_version()$major == 3 && geos_version()$minor < 11))
 

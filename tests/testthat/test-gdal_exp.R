@@ -326,7 +326,7 @@ test_that("buildVRT works", {
 })
 
 test_that("footprint runs without error", {
-    skip_if(.gdal_version_num() < 3080000)
+    skip_if(gdal_version_num() < 3080000)
 
     evt_file <- system.file("extdata/storml_evt.tif", package="gdalraster")
     args <- c("-t_srs", "EPSG:4326")
@@ -384,7 +384,7 @@ test_that("ogr2ogr works", {
 })
 
 test_that("ogrinfo works", {
-    skip_if(.gdal_version_num() < 3070000)
+    skip_if(gdal_version_num() < 3070000)
 
     src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 

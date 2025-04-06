@@ -937,7 +937,7 @@
 #'
 #' ## Arrow array stream exposed as a nanoarrow_array_stream object
 #' ## requires GDAL >= 3.6
-#' if (as.integer(gdal_version()[2]) >= 3060000) {
+#' if (gdal_version_num() >= gdal_compute_version(3, 6, 0)) {
 #'
 #'   sql <- "SELECT incid_name, geom from mtbs_perims LIMIT 5"
 #'   lyr <- new(GDALVector, dsn, sql)
