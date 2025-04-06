@@ -1,5 +1,12 @@
 # apply_geotransform() and get_pixel_line() tests are in test-gdal_exp.R
 
+test_that("gdal_compute_version works", {
+    expect_equal(gdal_compute_version(3, 7, 0), 3070000L)
+    expect_error(gdal_compute_version("3", 7, 0))
+    expect_error(gdal_compute_version(3, "7", 0))
+    expect_error(gdal_compute_version(3, 7, NULL))
+})
+
 test_that("addFilesInZip works", {
     # requires GDAL >= 3.7
     skip_if(as.integer(gdal_version()[2]) < 3070000)

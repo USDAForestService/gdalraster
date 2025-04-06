@@ -50,7 +50,7 @@
 //' tmp_file <- "/vsimem/elev_temp.tif"
 //'
 //' # Requires GDAL >= 3.7
-//' if (as.integer(gdal_version()[2]) >= 3070000) {
+//' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
 //'   result <- vsi_copy_file(elev_file, tmp_file)
 //'   (result == 0)
 //'   print(vsi_stat(tmp_file, "size"))
@@ -759,7 +759,7 @@ std::string vsi_get_fs_options_(const Rcpp::CharacterVector &filename) {
 //'
 //' @examples
 //' # Requires GDAL >= 3.6
-//' if (as.integer(gdal_version()[2]) >= 3060000)
+//' if (gdal_version_num() >= gdal_compute_version(3, 6, 0))
 //'   vsi_supports_seq_write("/vsimem/test-mem-file.gpkg", TRUE)
 // [[Rcpp::export()]]
 bool vsi_supports_seq_write(const Rcpp::CharacterVector &filename,
@@ -803,7 +803,7 @@ bool vsi_supports_seq_write(const Rcpp::CharacterVector &filename,
 //'
 //' @examples
 //' # Requires GDAL >= 3.6
-//' if (as.integer(gdal_version()[2]) >= 3060000)
+//' if (gdal_version_num() >= gdal_compute_version(3, 6, 0))
 //'   vsi_supports_rnd_write("/vsimem/test-mem-file.gpkg", TRUE)
 // [[Rcpp::export()]]
 bool vsi_supports_rnd_write(const Rcpp::CharacterVector &filename,
@@ -976,7 +976,7 @@ void vsi_clear_path_options(const Rcpp::CharacterVector &path_prefix) {
 //' # Requires GDAL >= 3.7
 //' f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
 //'
-//' if (as.integer(gdal_version()[2]) >= 3070000) {
+//' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
 //'   zf <- file.path("/vsizip", f)
 //'   print("Files in zip archive:")
 //'   print(vsi_read_dir(zf))
@@ -1153,7 +1153,7 @@ SEXP vsi_get_signed_url(const Rcpp::CharacterVector &filename,
 //'
 //' @examples
 //' # Requires GDAL >= 3.6
-//' if (as.integer(gdal_version()[2]) >= 3060000)
+//' if (gdal_version_num() >= gdal_compute_version(3, 6, 0))
 //'   print(vsi_is_local("/vsimem/test-mem-file.tif"))
 // [[Rcpp::export()]]
 bool vsi_is_local(const Rcpp::CharacterVector &filename) {

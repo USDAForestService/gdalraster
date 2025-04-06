@@ -26,6 +26,6 @@ non-persistent one.
 }
 \examples{
 # Requires GDAL >= 3.6
-if (as.integer(gdal_version()[2]) >= 3060000)
+if (gdal_version_num() >= gdal_compute_version(3, 6, 0))
   print(vsi_is_local("/vsimem/test-mem-file.tif"))
 }

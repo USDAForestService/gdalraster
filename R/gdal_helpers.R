@@ -23,6 +23,46 @@
     return(crs_name)
 }
 
+
+#' Compute a GDAL integer version number from major, minor, revision
+#'
+#' `gdal_compute_version()` computes a full integer version number
+#' (GDAL_VERSION_NUM) from individual components (major, minor, revision).
+#' Convenience function for checking a GDAL version requirement using
+#' `gdal_version_num()`.
+#'
+#' @param maj Numeric value, major version component (coerced to integer by
+#' truncation).
+#' @param min Numeric value, min version component (coerced to integer by
+#' truncation).
+#' @param rev Numeric value, revision version component (coerced to integer by
+#' truncation).
+#' @returns Integer version number compatible with `gdal_version_num()`.
+#'
+#' @seealso
+#' [gdal_version_num()]
+#'
+#' @examples
+#' (gdal_version_num() >= gdal_compute_version(3, 7, 0))
+#' @export
+gdal_compute_version <- function(maj, min, rev) {
+    if (!is.numeric(maj) || length(maj) != 1)
+        stop("'maj' must be a single numeric value", call. = FALSE)
+    else
+        maj <- as.integer(maj)
+    if (!is.numeric(min) || length(min) != 1)
+        stop("'min' must be a single numeric value", call. = FALSE)
+    else
+        min <- as.integer(min)
+    if (!is.numeric(rev) || length(rev) != 1)
+        stop("'rev' must be a single numeric value", call. = FALSE)
+    else
+        rev <- as.integer(rev)
+
+    return(as.integer(maj * 1000000 + min * 10000 + rev * 100))
+}
+
+
 #' Create/append to a potentially Seek-Optimized ZIP file (SOZip)
 #'
 #' `addFilesInZip()` will create new or open existing ZIP file, and
@@ -97,7 +137,7 @@
 #' zip_file <- file.path(tempdir(), "storml_lcp.zip")
 #'
 #' # Requires GDAL >= 3.7
-#' if (as.integer(gdal_version()[2]) >= 3070000) {
+#' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
 #'   addFilesInZip(zip_file, lcp_file, full_paths=FALSE, sozip_enabled="YES",
 #'                 num_threads=1)
 #'
@@ -128,7 +168,7 @@ addFilesInZip <- function(
         content_type = NULL,
         quiet = FALSE) {
 
-    if (as.integer(gdal_version()[2]) < 3070000)
+    if (gdal_version_num() < gdal_compute_version(3, 7, 0))
         stop("addFilesInZip() requires GDAL >= 3.7", call. = FALSE)
 
     if (!is.character(zip_file) || length(zip_file) > 1)
@@ -326,7 +366,7 @@ getCreationOptions <- function(format, filter = NULL) {
                 # min/max attributes even though they are populated in the
                 # driver code that builds the XML string.
                 # (https://github.com/OSGeo/gdal/issues/11967)
-                if (.gdal_version_num() < 3110000) {
+                if (gdal_version_num() < 3110000) {
                     out[[unname(a["name"])]] <- list(
                         type = type_name,
                         description = unname(a["description"]),

@@ -45,7 +45,7 @@ elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 tmp_file <- "/vsimem/elev_temp.tif"
 
 # Requires GDAL >= 3.7
-if (as.integer(gdal_version()[2]) >= 3070000) {
+if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
   result <- vsi_copy_file(elev_file, tmp_file)
   (result == 0)
   print(vsi_stat(tmp_file, "size"))
