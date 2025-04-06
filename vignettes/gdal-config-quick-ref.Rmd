@@ -51,21 +51,6 @@ By default, temporary files are written into the current working directory. This
 set_config_option("CPL_TMPDIR", "<dirname>")  # tmpdir to use
 ```
 
-**`CPL_DEBUG`**
-
-Useful for troublehooting. May be set to `"ON"`, `"OFF"` or specific prefixes. If it is `"ON"`, all debug messages are reported to the console. If it is `"OFF"` or unset no debug messages are reported. If it is set to a particular value, then only debug messages with that "type" value will be reported. E.g., debug messages from the GeoPackage driver are reported with type "GPKG" (seen in the message).
-
-```{r}
-set_config_option("CPL_DEBUG", "ON")  # enable debug messages
-
-f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
-ynp_dsn <- file.path("/vsizip", f, "ynp_features.gpkg")
-(bnd <- new(GDALVector, ynp_dsn, "ynp_bnd"))
-
-bnd$close()
-set_config_option("CPL_DEBUG", "")
-```
-
 ## Performance and caching
 
 GDAL doc: https://gdal.org/en/stable/user/configoptions.html#performance-and-caching
@@ -263,15 +248,6 @@ A global least-recently-used cache of 16 MB shared among all downloaded content 
 ```r
 # size in bytes defaults to 16 MB
 set_config_option("CPL_VSIL_CURL_CACHE_SIZE", "<bytes>")
-```
-
-**`CPL_CURL_VERBOSE`**
-
-Set to `"YES"` for the curl library to display verbose information about its operations. Very useful for libcurl and/or protocol debugging and understanding.
-
-```r
-# enable messages from libcurl (YES|NO)
-set_config_option("CPL_CURL_VERBOSE", "YES")
 ```
 
 ## AWS S3 buckets
