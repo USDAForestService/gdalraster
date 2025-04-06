@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9283</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9285</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9283" id="gdalraster-11209283-dev">gdalraster 1.12.0.9283 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209283-dev"></a></h2>
-<ul><li><p>add more error messages from GDAL in a few places, mainly verbose message when opening a dataset fails (<a href="https://github.com/USDAForestService/gdalraster/issues/688" class="external-link">#688</a>) (2025-04-05)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9285" id="gdalraster-11209285-dev">gdalraster 1.12.0.9285 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209285-dev"></a></h2>
+<ul><li><p>expose <code><a href="../reference/gdal_version.html">gdal_version_num()</a></code> (previously internal/undocumented) and add <code><a href="../reference/gdal_compute_version.html">gdal_compute_version()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/689" class="external-link">#689</a>) (2025-04-06)</p></li>
+<li><p>add more error messages from GDAL in a few places, mainly verbose message when opening a dataset fails (<a href="https://github.com/USDAForestService/gdalraster/issues/688" class="external-link">#688</a>) (2025-04-05)</p></li>
 <li><p>add default xy axis labels in S3 methods <code>plot.OGRFeature</code> and <code>plot.OGRFeatureSet</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/685" class="external-link">#685</a>) (2025-04-03)</p></li>
 <li><p>add <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code>: reproject a vector layer (<a href="https://github.com/USDAForestService/gdalraster/issues/684" class="external-link">#684</a>) (2025-04-03)</p></li>
 <li><p>fix <code>VSIFile::read()</code>: the <code>nbytes</code> argument should accept values carrying the integer64 class attribute (fix <a href="https://github.com/USDAForestService/gdalraster/issues/677" class="external-link">#677</a> thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-03-31)</p></li>
