@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9283 (dev)
+# gdalraster 1.12.0.9285 (dev)
+
+* expose `gdal_version_num()` (previously internal/undocumented) and add `gdal_compute_version()` (#689) (2025-04-06)
 
 * add more error messages from GDAL in a few places, mainly verbose message when opening a dataset fails (#688) (2025-04-05)
 
