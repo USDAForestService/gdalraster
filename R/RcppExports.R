@@ -832,43 +832,33 @@ ogr2ogr <- function(src_dsn, dst_dsn, src_layers = NULL, cl_arg = NULL, open_opt
 #' metadata strings.
 #'
 #' @seealso
-#' [ogr2ogr()], the [ogr_manage] utilities
+#' [ogr2ogr()], [ogr_manage]
 #'
-#' @examples
+#' @examplesIf gdal_version_num() >= gdal_compute_version(3, 7, 0)
 #' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 #'
-#' # Requires GDAL >= 3.7
-#' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
-#'   # Get the names of the layers in a GeoPackage file.
-#'   ogrinfo(src)
+#' # Get the names of the layers in a GeoPackage file
+#' ogrinfo(src)
 #'
-#'   # Summary of a layer
-#'   ogrinfo(src, "mtbs_perims")
+#' # Summary of a layer
+#' ogrinfo(src, "mtbs_perims")
 #'
-#'   # JSON format
-#'   args <- c("-json", "-nomd")
-#'   json <- ogrinfo(src, "mtbs_perims", args, cout = FALSE)
-#'   #info <- jsonlite::fromJSON(json)
+#' # Query an attribute to restrict the output of the features in a layer
+#' args <- c("-ro", "-nomd", "-where", "ig_year = 2020")
+#' ogrinfo(src, "mtbs_perims", args)
 #'
-#'   # Query an attribute to restrict the output of the features in a layer
-#'   args <- c("-ro", "-nomd", "-where", "ig_year = 2020")
-#'   ogrinfo(src, "mtbs_perims", args)
+#' # Copy to a temporary in-memory file that is writeable
+#' src_mem <- paste0("/vsimem/", basename(src))
+#' vsi_copy_file(src, src_mem)
 #'
-#'   # Copy to a temporary in-memory file that is writeable
-#'   src_mem <- paste0("/vsimem/", basename(src))
-#'   vsi_copy_file(src, src_mem)
-#'   print(src_mem)
+#' # Add a column to a layer
+#' args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
+#' ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
 #'
-#'   # Add a column to a layer
-#'   args <- c("-sql", "ALTER TABLE mtbs_perims ADD burn_bnd_ha float")
-#'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
-#'
-#'   # Update values of the column with SQL and specify a dialect
-#'   sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
-#'   args <- c("-dialect", "sqlite", "-sql", sql)
-#'   ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
-#'   \dontshow{vsi_unlink(src_mem)}
-#' }
+#' # Update values of the column with SQL and specify a dialect
+#' sql <- "UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"
+#' args <- c("-dialect", "sqlite", "-sql", sql)
+#' ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
 ogrinfo <- function(dsn, layers = NULL, cl_arg = as.character( c("-so", "-nomd")), open_options = NULL, read_only = TRUE, cout = TRUE) {
     invisible(.Call(`_gdalraster_ogrinfo`, dsn, layers, cl_arg, open_options, read_only, cout))
 }
