@@ -130,48 +130,21 @@ metadata strings.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
-    <div class="dont-index"><p><code><a href="ogr2ogr.html">ogr2ogr()</a></code>, the <a href="ogr_manage.html">ogr_manage</a> utilities</p></div>
+    <div class="dont-index"><p><code><a href="ogr2ogr.html">ogr2ogr()</a></code>, <a href="ogr_manage.html">ogr_manage</a></p></div>
     </div>
 
     <div class="section level2">
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="va">src</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># Requires GDAL &gt;= 3.7</span></span></span>
-<span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version_num</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="gdal_compute_version.html">gdal_compute_version</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">7</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span> <span class="op">{</span></span></span>
-<span class="r-in"><span>  <span class="co"># Get the names of the layers in a GeoPackage file.</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Summary of a layer</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># JSON format</span></span></span>
-<span class="r-in"><span>  <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-json"</span>, <span class="st">"-nomd"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="va">json</span> <span class="op">&lt;-</span> <span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src</span>, <span class="st">"mtbs_perims"</span>, <span class="va">args</span>, cout <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="co">#info &lt;- jsonlite::fromJSON(json)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Query an attribute to restrict the output of the features in a layer</span></span></span>
-<span class="r-in"><span>  <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-ro"</span>, <span class="st">"-nomd"</span>, <span class="st">"-where"</span>, <span class="st">"ig_year = 2020"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src</span>, <span class="st">"mtbs_perims"</span>, <span class="va">args</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Copy to a temporary in-memory file that is writeable</span></span></span>
-<span class="r-in"><span>  <span class="va">src_mem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/vsimem/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">src</span><span class="op">)</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="vsi_copy_file.html">vsi_copy_file</a></span><span class="op">(</span><span class="va">src</span>, <span class="va">src_mem</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">src_mem</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Add a column to a layer</span></span></span>
-<span class="r-in"><span>  <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-sql"</span>, <span class="st">"ALTER TABLE mtbs_perims ADD burn_bnd_ha float"</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src_mem</span>, cl_arg <span class="op">=</span> <span class="va">args</span>, read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span></span></span>
-<span class="r-in"><span>  <span class="co"># Update values of the column with SQL and specify a dialect</span></span></span>
-<span class="r-in"><span>  <span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"</span></span></span>
-<span class="r-in"><span>  <span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-dialect"</span>, <span class="st">"sqlite"</span>, <span class="st">"-sql"</span>, <span class="va">sql</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src_mem</span>, cl_arg <span class="op">=</span> <span class="va">args</span>, read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span>  <span class="fu">DONTSHOW</span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="vsi_unlink.html">vsi_unlink</a></span><span class="op">(</span><span class="va">src_mem</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="op">}</span></span></span>
+<span class="r-in"><span><span class="co"># Get the names of the layers in a GeoPackage file</span></span></span>
+<span class="r-in"><span><span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/home/runner/work/_temp/Library/gdalraster/extdata/ynp_fires_1984_2022.gpkg'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       using driver `GPKG' successful.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1: mtbs_perims (Multi Polygon)</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Summary of a layer</span></span></span>
+<span class="r-in"><span><span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/home/runner/work/_temp/Library/gdalraster/extdata/ynp_fires_1984_2022.gpkg'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       using driver `GPKG' successful.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -233,6 +206,10 @@ metadata strings.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> burn_bnd_lon: String (10.0)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ig_date: Date</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ig_year: Integer (0.0)</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Query an attribute to restrict the output of the features in a layer</span></span></span>
+<span class="r-in"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-ro"</span>, <span class="st">"-nomd"</span>, <span class="st">"-where"</span>, <span class="st">"ig_year = 2020"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src</span>, <span class="st">"mtbs_perims"</span>, <span class="va">args</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/home/runner/work/_temp/Library/gdalraster/extdata/ynp_fires_1984_2022.gpkg'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       using driver `GPKG' successful.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
@@ -306,9 +283,22 @@ metadata strings.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ig_year (Integer) = 2020</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   MULTIPOLYGON (((496593.122306971 15506.8828590633,496491.761299067 15605.3612548792,496290.812130161 15388.0465179707,496283.32058496 15550.7644680398,495884.310957458 15387.7693642235,495381.498326246 15486.6808036345,494602.564947774 16084.5219875909,494585.357018058 16645.0572271436,495449.965836048 17082.648614691,495525.640892666 17349.0599324865,496097.733732823 17561.7347277213,496257.076620071 17855.1480298667,496528.929476077 17642.2200632185,496381.989621625 18210.3014108741,496658.623671105 18438.1622229537,496910.765693779 18401.6123902032,497124.005995667 18641.1244857657,497385.057088859 18431.8151440043,497742.662074771 18486.7201558508,498208.745156148 18684.677772214,498121.821253373 18790.2831039076,498326.37319691 19018.3598994669,498728.212799118 18905.4308658479,498920.731848098 19218.8393941772,499304.507662952 19088.0477058364,499719.773581338 19427.3696509425,499951.447535602 19280.5161594677,500309.224626601 19407.1241777105,500350.581048002 19515.2429516582,500076.319969425 19635.6901072339,500585.91703226 19670.8582722843,500834.488053378 19367.7099358598,501033.423276492 19380.0736723167,500824.027693014 19222.9522488669,501072.354115678 19104.0152762244,501094.913433901 18907.5622339096,500627.002229506 18832.1354026641,499946.728772314 18292.1207493556,499222.789246595 18426.7059182243,498360.994034972 17933.0977969646,499077.730444483 17521.134480303,499293.084153096 17745.599510172,499800.921713803 17647.4449673673,499785.561166901 17281.9472585942,500335.380841845 17251.0600839751,500381.818490701 16812.2886367497,499899.5387543 16765.5825321997,499579.392382428 16152.9342602384,499429.399837531 16121.8098907012,499265.572201365 16590.287674071,499028.649451778 16664.7644176055,498928.284642745 16318.141684453,498664.147923921 16184.1267454724,498679.339316004 15930.3618365987,498015.351459606 15310.80515169,497110.236344284 15635.150719899,496862.739246991 15529.0560671027,496817.793936327 15701.9140384736,496593.122306971 15506.8828590633)))</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/vsimem/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Copy to a temporary in-memory file that is writeable</span></span></span>
+<span class="r-in"><span><span class="va">src_mem</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"/vsimem/"</span>, <span class="fu"><a href="https://rdrr.io/r/base/basename.html" class="external-link">basename</a></span><span class="op">(</span><span class="va">src</span><span class="op">)</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="vsi_copy_file.html">vsi_copy_file</a></span><span class="op">(</span><span class="va">src</span>, <span class="va">src_mem</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 0</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Add a column to a layer</span></span></span>
+<span class="r-in"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-sql"</span>, <span class="st">"ALTER TABLE mtbs_perims ADD burn_bnd_ha float"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src_mem</span>, cl_arg <span class="op">=</span> <span class="va">args</span>, read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/vsimem/ynp_fires_1984_2022.gpkg'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       using driver `GPKG' successful.</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="co"># Update values of the column with SQL and specify a dialect</span></span></span>
+<span class="r-in"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"</span></span></span>
+<span class="r-in"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"-dialect"</span>, <span class="st">"sqlite"</span>, <span class="st">"-sql"</span>, <span class="va">sql</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">ogrinfo</span><span class="op">(</span><span class="va">src_mem</span>, cl_arg <span class="op">=</span> <span class="va">args</span>, read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/vsimem/ynp_fires_1984_2022.gpkg'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       using driver `GPKG' successful.</span>
 </code></pre></div>
