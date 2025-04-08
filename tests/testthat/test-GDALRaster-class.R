@@ -533,6 +533,27 @@ test_that("pixel extract internal class method returns correct data", {
 
     expect_equal(extr_nearest[1], 173)
 
+    # point exactly on right edge
+    # see https://github.com/OSGeo/gdal/pull/12087
+    bb <- ds$bbox()
+    extr_nearest <- ds$pixel_extract(xy = c(bb[3], (bb[2] + 200)),
+                                     bands = 1,
+                                     interp_method = "near",
+                                     krnl_dim = 1,
+                                     xy_srs = "")
+
+    expect_equal(extr_nearest[1], 132)
+
+    # exactly bottom right corner
+    bb <- ds$bbox()
+    extr_nearest <- ds$pixel_extract(xy = c(bb[3], bb[2]),
+                                     bands = 1,
+                                     interp_method = "near",
+                                     krnl_dim = 1,
+                                     xy_srs = "")
+
+    expect_equal(extr_nearest[1], 107)
+
     # as data frame
     geo_xy <- data.frame(geo_xy[1], geo_xy[2])
     extr_nearest <- ds$pixel_extract(xy = geo_xy,
@@ -568,7 +589,7 @@ test_that("pixel extract internal class method returns correct data", {
                                   interp_method = "invalid",
                                   krnl_dim = 1,
                                   xy_srs = ""))
-    # only  one band at a time supported for NxN kernel extract
+    # only one band at a time supported for NxN kernel extract
     expect_error(ds$pixel_extract(xy = geo_xy,
                                   bands = c(1, 2),
                                   interp_method = "near",

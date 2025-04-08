@@ -491,6 +491,13 @@ test_that("pixel_extract wrapper returns correct data", {
     dim(extr_na) <- NULL
     expect_na <- c(expected_values, NA_real_)
     expect_equal(extr_na, expect_na)
+    # with NaN in the input
+    pts_nan <- rbind(pts, c(11, NaN, NaN))
+    extr_nan <- pixel_extract(ds, pts_na[-1])
+    colnames(extr_nan) <- NULL
+    dim(extr_nan) <- NULL
+    expect_nan <- c(expected_values, NA_real_)
+    expect_equal(extr_nan, expect_nan)
     ds$close()
 
     # interpolated values
