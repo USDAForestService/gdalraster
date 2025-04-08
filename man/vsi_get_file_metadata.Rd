@@ -41,18 +41,19 @@ particular if a file is SOZIP-enabled (\code{SOZIP_VALID=YES}).
 }
 }
 \examples{
+\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 # validate an SOZip-enabled file
 # Requires GDAL >= 3.7
 f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
 
-if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
-  zf <- file.path("/vsizip", f)
-  print("Files in zip archive:")
-  print(vsi_read_dir(zf))
-  print("SOZip metadata for ynp_features.gpkg:")
-  zf_gpkg <- file.path(zf, "ynp_features.gpkg")
-  print(vsi_get_file_metadata(zf_gpkg, domain="ZIP"))
-}
+zf <- file.path("/vsizip", f)
+# files in zip archive
+vsi_read_dir(zf)
+
+# SOZip metadata for ynp_features.gpkg
+zf_gpkg <- file.path(zf, "ynp_features.gpkg")
+vsi_get_file_metadata(zf_gpkg, domain = "ZIP")
+\dontshow{\}) # examplesIf}
 }
 \seealso{
 \code{\link[=vsi_stat]{vsi_stat()}}, \code{\link[=addFilesInZip]{addFilesInZip()}}
