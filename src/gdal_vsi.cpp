@@ -971,19 +971,18 @@ void vsi_clear_path_options(const Rcpp::CharacterVector &path_prefix) {
 //' @seealso
 //' [vsi_stat()], [addFilesInZip()]
 //'
-//' @examples
+//' @examplesIf gdal_version_num() >= gdal_compute_version(3, 7, 0)
 //' # validate an SOZip-enabled file
 //' # Requires GDAL >= 3.7
 //' f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
 //'
-//' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
-//'   zf <- file.path("/vsizip", f)
-//'   print("Files in zip archive:")
-//'   print(vsi_read_dir(zf))
-//'   print("SOZip metadata for ynp_features.gpkg:")
-//'   zf_gpkg <- file.path(zf, "ynp_features.gpkg")
-//'   print(vsi_get_file_metadata(zf_gpkg, domain="ZIP"))
-//' }
+//' zf <- file.path("/vsizip", f)
+//' # files in zip archive
+//' vsi_read_dir(zf)
+//'
+//' # SOZip metadata for ynp_features.gpkg
+//' zf_gpkg <- file.path(zf, "ynp_features.gpkg")
+//' vsi_get_file_metadata(zf_gpkg, domain = "ZIP")
 // [[Rcpp::export()]]
 SEXP vsi_get_file_metadata(const Rcpp::CharacterVector &filename,
                            const std::string &domain) {

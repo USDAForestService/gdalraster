@@ -45,9 +45,10 @@ instantiate \code{GDALRaster} objects.
 See https://gdal.org/en/stable/en/latest/user/raster_data_model.html#subdatasets-domain.
 }
 \examples{
-src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
+ynp_dsn <- file.path("/vsizip", f, "ynp_features.gpkg")
 
-inspectDataset(src)
+inspectDataset(ynp_dsn)
 }
 \seealso{
 \code{\link[=gdal_formats]{gdal_formats()}}, \code{\link[=identifyDriver]{identifyDriver()}}

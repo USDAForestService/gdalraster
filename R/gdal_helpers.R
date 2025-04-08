@@ -647,9 +647,10 @@ dump_open_datasets <- function() {
 #' [gdal_formats()], [identifyDriver()]
 #'
 #' @examples
-#' src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#' f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
+#' ynp_dsn <- file.path("/vsizip", f, "ynp_features.gpkg")
 #'
-#' inspectDataset(src)
+#' inspectDataset(ynp_dsn)
 inspectDataset <- function(filename, ...) {
     if (!is.character(filename))
         stop("'filename' must be a character string", call. = FALSE)
