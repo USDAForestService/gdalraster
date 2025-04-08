@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9285 (dev)
+# gdalraster 1.12.0.9286 (dev)
+
+* add two raster subdatasets to the sample file inst/extdata/ynp_features.zip/ynp_features.gpkg, and update examples for `inspectDataset()` and `vsi_get_file_metadata()` (#691) (2025-04-07)
 
 * expose `gdal_version_num()` (previously internal/undocumented) and add `gdal_compute_version()` (#689) (2025-04-06)
 
