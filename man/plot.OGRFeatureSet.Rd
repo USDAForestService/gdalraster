@@ -4,7 +4,7 @@
 \alias{plot.OGRFeatureSet}
 \title{Plot the geometry column of an \code{OGRFeatureSet}}
 \usage{
-\method{plot}{OGRFeatureSet}(x, xlab = "x", ylab = "y", ...)
+\method{plot}{OGRFeatureSet}(x, xlab = "x", ylab = "y", main = "", ...)
 }
 \arguments{
 \item{x}{An \code{OGRFeatureSet}.}
@@ -12,6 +12,8 @@
 \item{xlab}{Title for the x axis.}
 
 \item{ylab}{Title for the y axis.}
+
+\item{main}{The main title (on top).}
 
 \item{...}{Optional arguments passed to \code{wk::wk_plot()}.}
 }
