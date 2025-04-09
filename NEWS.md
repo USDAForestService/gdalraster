@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9287 (dev)
+# gdalraster 1.12.0.9288 (dev)
+
+* add argument `main` to the S3 plot methods for `OGRFeature` and `OGRFeatureSet` (#692) (2025-04-08)
 
 * fix `GDALRaster::pixel_extract()` for points exactly on the right or bottom edges of the raster (#687) (2025-04-08)
 
