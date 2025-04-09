@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9286 (dev)
+# gdalraster 1.12.0.9287 (dev)
+
+* fix `GDALRaster::pixel_extract()` for points exactly on the right or bottom edges of the raster (#687) (2025-04-08)
 
 * add two raster subdatasets to the sample file inst/extdata/ynp_features.zip/ynp_features.gpkg, and update examples for `inspectDataset()` and `vsi_get_file_metadata()` (#691) (2025-04-07)
 
