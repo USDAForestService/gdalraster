@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9287</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9288</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9287" id="gdalraster-11209287-dev">gdalraster 1.12.0.9287 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209287-dev"></a></h2>
-<ul><li><p>fix <code>GDALRaster::pixel_extract()</code> for points exactly on the right or bottom edges of the raster (<a href="https://github.com/USDAForestService/gdalraster/issues/687" class="external-link">#687</a>) (2025-04-08)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9288" id="gdalraster-11209288-dev">gdalraster 1.12.0.9288 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209288-dev"></a></h2>
+<ul><li><p>add argument <code>main</code> to the S3 plot methods for <code>OGRFeature</code> and <code>OGRFeatureSet</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/692" class="external-link">#692</a>) (2025-04-08)</p></li>
+<li><p>fix <code>GDALRaster::pixel_extract()</code> for points exactly on the right or bottom edges of the raster (<a href="https://github.com/USDAForestService/gdalraster/issues/687" class="external-link">#687</a>) (2025-04-08)</p></li>
 <li><p>add two raster subdatasets to the sample file inst/extdata/ynp_features.zip/ynp_features.gpkg, and update examples for <code><a href="../reference/inspectDataset.html">inspectDataset()</a></code> and <code><a href="../reference/vsi_get_file_metadata.html">vsi_get_file_metadata()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/691" class="external-link">#691</a>) (2025-04-07)</p></li>
 <li><p>expose <code><a href="../reference/gdal_version.html">gdal_version_num()</a></code> (previously internal/undocumented) and add <code><a href="../reference/gdal_compute_version.html">gdal_compute_version()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/689" class="external-link">#689</a>) (2025-04-06)</p></li>
 <li><p>add more error messages from GDAL in a few places, mainly verbose message when opening a dataset fails (<a href="https://github.com/USDAForestService/gdalraster/issues/688" class="external-link">#688</a>) (2025-04-05)</p></li>
