@@ -2906,7 +2906,7 @@ SEXP identifyDriver(const Rcpp::CharacterVector &filename,
     std::string filename_in;
     filename_in = Rcpp::as<std::string>(check_gdal_filename(filename));
 
-    unsigned int nIdentifyFlags = GDAL_OF_ALL;
+    unsigned int nIdentifyFlags = GDAL_OF_RASTER | GDAL_OF_VECTOR;
     if (!raster && !vector)
         return R_NilValue;
     else if (!raster)

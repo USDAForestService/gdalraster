@@ -434,10 +434,14 @@ test_that("identifyDriver works", {
     expect_equal(identifyDriver(src), "GPKG")
     expect_equal(identifyDriver(src, raster = FALSE), "GPKG")
     expect_equal(identifyDriver(src, vector = FALSE), "GPKG")
-    expect_equal(identifyDriver(src), "GPKG")
     expect_equal(identifyDriver(src, allowed_drivers = c("GPKG", "GTiff")), "GPKG")
     expect_true(is.null(identifyDriver(src, allowed_drivers = c("GTiff", "GeoJSON"))))
     expect_equal(identifyDriver(src, file_list = "ynp_fires_1984_2022.gpkg"), "GPKG")
+
+    # PostGISRaster vs. PostgreSQL
+    dsn <- "PG:dbname='testdb', host='127.0.0.1' port='5444' user='user' password='pwd'"
+    expect_equal(identifyDriver(dsn), "PostGISRaster")
+    expect_equal(identifyDriver(dsn, raster = FALSE), "PostgreSQL")
 })
 
 test_that("flip_vertical works", {

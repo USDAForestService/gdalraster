@@ -643,6 +643,10 @@ dump_open_datasets <- function() {
 #' instantiate `GDALRaster` objects.
 #' See https://gdal.org/en/stable/en/latest/user/raster_data_model.html#subdatasets-domain.
 #'
+#' PostgreSQL / PostGISRaster are handled as a special case. If additional
+#' arguments `raster` or `vector` are not given for `identifyDriver()`, then
+#' `raster = FALSE` is assumed.
+#'
 #' @seealso
 #' [gdal_formats()], [identifyDriver()]
 #'
@@ -657,12 +661,36 @@ inspectDataset <- function(filename, ...) {
 
     filename_in <- .check_gdal_filename(filename)
     fmt <- identifyDriver(filename = filename_in, ...)
-    if (is.null(fmt))
+    if (is.null(fmt)) {
+        warning("failed to identify a format driver", call. = FALSE)
         return(NULL)
+    }
+
+    if (!hasArg("raster") && !hasArg("vector")) {
+        # check for possibly two different drivers
+        fmt_rast <- identifyDriver(filename = filename_in, vector = FALSE, ...)
+        fmt_vect <- identifyDriver(filename = filename_in, raster = FALSE, ...)
+        if (!is.null(fmt_rast) && !is.null(fmt_vect)) {
+            if (fmt_rast != fmt_vect) {
+                if (fmt_vect == "PostgreSQL") {
+                    # for PostGISRaster / PostgreSQL, assume vector is intended
+                    fmt <- fmt_vect
+                } else {
+                    message("identified separate raster and vector drivers: ",
+                            fmt_rast, ", ", fmt_vect)
+                    stop("need additional arguments for `identifyDriver()`",
+                         call. = FALSE)
+                }
+            }
+        }
+    }
 
     out <- list()
     out$format <- fmt
     fmt_info <- gdal_formats(fmt)
+    if (nrow(fmt_info) == 0) {
+        stop("failed to obtain format information", call. = FALSE)
+    }
 
     out$supports_raster <- fmt_info$raster
     out$contains_raster <- FALSE
