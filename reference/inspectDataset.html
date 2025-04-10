@@ -103,6 +103,9 @@ contain any vector layers</p></li>
     <p>Subdataset names are the character strings that can be used to
 instantiate <code>GDALRaster</code> objects.
 See https://gdal.org/en/stable/en/latest/user/raster_data_model.html#subdatasets-domain.</p>
+<p>PostgreSQL / PostGISRaster are handled as a special case. If additional
+arguments <code>raster</code> or <code>vector</code> are not given for <code><a href="identifyDriver.html">identifyDriver()</a></code>, then
+<code>raster = FALSE</code> is assumed.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
