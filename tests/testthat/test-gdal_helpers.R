@@ -103,4 +103,29 @@ test_that("inspectDataset works", {
     expect_false(dsinfo$supports_vector)
     expect_false(dsinfo$contains_vector)
     expect_vector(dsinfo$layer_names, ptype = character(), size = 0)
+
+    # PostGISRaster / PostgreSQL
+    dsn <- "PG:dbname='testdb', host='127.0.0.1' port='5444' user='user'
+            password='pwd'"
+    dsinfo <- inspectDataset(dsn)
+    expect_equal(dsinfo$format, "PostgreSQL")
+    expect_false(dsinfo$supports_raster)
+    expect_false(dsinfo$contains_raster)
+    expect_false(dsinfo$supports_subdatasets)
+    expect_false(dsinfo$contains_subdatasets)
+    expect_true(dsinfo$supports_vector)
+    expect_false(dsinfo$contains_vector)
+    expect_vector(dsinfo$layer_names, ptype = character(), size = 0)
+
+    dsn <- "PG:dbname='testdb', host='127.0.0.1' port='5444' table='raster_tbl'
+            column='raster_col' user='user' password='pwd'"
+    dsinfo <- inspectDataset(dsn, vector = FALSE)
+    expect_equal(dsinfo$format, "PostGISRaster")
+    expect_true(dsinfo$supports_raster)
+    expect_false(dsinfo$contains_raster)
+    expect_true(dsinfo$supports_subdatasets)
+    expect_false(dsinfo$contains_subdatasets)
+    expect_false(dsinfo$supports_vector)
+    expect_false(dsinfo$contains_vector)
+    expect_vector(dsinfo$layer_names, ptype = character(), size = 0)
 })

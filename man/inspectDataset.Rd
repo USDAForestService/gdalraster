@@ -43,6 +43,10 @@ The return value is a list with named elements.
 Subdataset names are the character strings that can be used to
 instantiate \code{GDALRaster} objects.
 See https://gdal.org/en/stable/en/latest/user/raster_data_model.html#subdatasets-domain.
+
+PostgreSQL / PostGISRaster are handled as a special case. If additional
+arguments \code{raster} or \code{vector} are not given for \code{identifyDriver()}, then
+\code{raster = FALSE} is assumed.
 }
 \examples{
 f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
