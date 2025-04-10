@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9288 (dev)
+# gdalraster 1.12.0.9289 (dev)
+
+* `inspectDataset()`: handle case of separate raster and vector drivers identified when specific flag was not given (#693) (2025-04-09)
 
 * add argument `main` to the S3 plot methods for `OGRFeature` and `OGRFeatureSet` (#692) (2025-04-08)
 
