@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9290 (dev)
+# gdalraster 1.12.0.9291 (dev)
+
+* add `get_cache_max()` and `set_cache_max()`, get/set maximum memory size available for the GDAL block cache (#695) (2025-04-12)
 
 * `get_cache_used()`: change return value to R numeric carrying the integer64 class attribute and add argument `units` defaulting to MB (#694) (2025-04-12)
 
