@@ -64,6 +64,7 @@
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/gdalraster-package.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/geos_version.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/getCreationOptions.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/get_cache_max.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/get_cache_used.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/get_config_option.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/get_num_cpus.html</loc></url>
@@ -100,6 +101,7 @@
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/rasterize.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/read_ds.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/renameDataset.html</loc></url>
+<url><loc>https://usdaforestservice.github.io/gdalraster/reference/set_cache_max.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/set_config_option.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/sieveFilter.html</loc></url>
 <url><loc>https://usdaforestservice.github.io/gdalraster/reference/srs_convert.html</loc></url>
