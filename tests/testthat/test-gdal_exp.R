@@ -31,6 +31,29 @@ test_that("get/set_config_option work", {
 
 test_that("get_cache_used returns integer64", {
     expect_s3_class(get_cache_used(), "integer64")
+    expect_s3_class(get_cache_used("GB"), "integer64")
+    expect_s3_class(get_cache_used("KB"), "integer64")
+    expect_s3_class(get_cache_used(""), "integer64")
+    expect_s3_class(get_cache_used("bytes"), "integer64")
+    expect_error(get_cache_used("MiB"))
+})
+
+test_that("get_cache_max returns integer64", {
+    expect_s3_class(get_cache_max(), "integer64")
+    expect_s3_class(get_cache_max("GB"), "integer64")
+    expect_s3_class(get_cache_max("KB"), "integer64")
+    expect_s3_class(get_cache_max(""), "integer64")
+    expect_s3_class(get_cache_max("bytes"), "integer64")
+    expect_error(get_cache_max("MiB"))
+})
+
+test_that("set_cache_max works", {
+    cachemax <- get_cache_max("bytes")
+    set_cache_max(1e8)
+    expect_equal(get_cache_max("bytes"), as.integer64(1e8))
+    # reset to original
+    set_cache_max(cachemax)
+    expect_equal(get_cache_max("bytes"), cachemax)
 })
 
 test_that("get_num_cpus returns integer", {
