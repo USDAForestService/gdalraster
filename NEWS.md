@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9289 (dev)
+# gdalraster 1.12.0.9290 (dev)
+
+* `get_cache_used()`: change return value to R numeric carrying the integer64 class attribute and add argument `units` defaulting to MB (#694) (2025-04-12)
 
 * `inspectDataset()`: handle case of separate raster and vector drivers identified when specific flag was not given (#693) (2025-04-09)
 
