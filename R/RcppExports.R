@@ -249,18 +249,22 @@ set_config_option <- function(key, value) {
 #' Get the size of memory in use by the GDAL block cache
 #'
 #' `get_cache_used()` returns the amount of memory currently in use for
-#' GDAL block caching. This a wrapper for `GDALGetCacheUsed64()` with return
-#' value as MB.
+#' GDAL block caching. Wrapper of `GDALGetCacheUsed64()` with return
+#' value in MB by default.
 #'
-#' @returns Integer. Amount of cache memory in use in MB.
+#' @param units Character string specifying units for the return value. One of
+#' `"MB"` (the default), `"GB"`, `"KB"` or `"bytes"` (values of `"byte"`,
+#' `"B"` and empty string `""` are also recognized to mean bytes).
+#' @returns Numeric value carrying the `integer64` class attribute. Amount of
+#' cache memory in use in the requested units.
 #'
 #' @seealso
 #' [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
 #'
 #' @examples
 #' get_cache_used()
-get_cache_used <- function() {
-    .Call(`_gdalraster_get_cache_used`)
+get_cache_used <- function(units = "MB") {
+    .Call(`_gdalraster_get_cache_used`, units)
 }
 
 #' @noRd

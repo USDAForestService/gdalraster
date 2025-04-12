@@ -225,10 +225,14 @@ void set_config_option(const std::string &key, const std::string &value) {
 //' Get the size of memory in use by the GDAL block cache
 //'
 //' `get_cache_used()` returns the amount of memory currently in use for
-//' GDAL block caching. This a wrapper for `GDALGetCacheUsed64()` with return
-//' value as MB.
+//' GDAL block caching. Wrapper of `GDALGetCacheUsed64()` with return
+//' value in MB by default.
 //'
-//' @returns Integer. Amount of cache memory in use in MB.
+//' @param units Character string specifying units for the return value. One of
+//' `"MB"` (the default), `"GB"`, `"KB"` or `"bytes"` (values of `"byte"`,
+//' `"B"` and empty string `""` are also recognized to mean bytes).
+//' @returns Numeric value carrying the `integer64` class attribute. Amount of
+//' cache memory in use in the requested units.
 //'
 //' @seealso
 //' [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
@@ -236,9 +240,29 @@ void set_config_option(const std::string &key, const std::string &value) {
 //' @examples
 //' get_cache_used()
 // [[Rcpp::export]]
-int get_cache_used() {
-    GIntBig nCacheUsed = GDALGetCacheUsed64();
-    return static_cast<int>(nCacheUsed / (1000 * 1000));
+Rcpp::NumericVector get_cache_used(std::string units = "MB") {
+    int64_t nCacheUsed = static_cast<int64_t>(GDALGetCacheUsed64());
+    std::vector<int64_t> ret = {-1};
+
+    if (EQUAL(units.c_str(), "MB")) {
+        ret[0] = nCacheUsed / (1000 * 1000);
+    }
+    else if (EQUAL(units.c_str(), "GB")) {
+        ret[0] = nCacheUsed / (1000 * 1000 * 1000);
+    }
+    else if (EQUAL(units.c_str(), "KB")) {
+        ret[0] = nCacheUsed / (1000);
+    }
+    else if (EQUAL(units.c_str(), "") || EQUAL(units.c_str(), "B") ||
+             EQUAL(units.c_str(), "bytes") || EQUAL(units.c_str(), "byte")) {
+
+        ret[0] = nCacheUsed;
+    }
+    else {
+        Rcpp::stop("invalid value for 'units'");
+    }
+
+    return Rcpp::wrap(ret);
 }
 
 

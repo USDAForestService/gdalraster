@@ -172,12 +172,13 @@ BEGIN_RCPP
 END_RCPP
 }
 // get_cache_used
-int get_cache_used();
-RcppExport SEXP _gdalraster_get_cache_used() {
+Rcpp::NumericVector get_cache_used(std::string units);
+RcppExport SEXP _gdalraster_get_cache_used(SEXP unitsSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    rcpp_result_gen = Rcpp::wrap(get_cache_used());
+    Rcpp::traits::input_parameter< std::string >::type units(unitsSEXP);
+    rcpp_result_gen = Rcpp::wrap(get_cache_used(units));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2038,7 +2039,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_gdal_formats", (DL_FUNC) &_gdalraster_gdal_formats, 1},
     {"_gdalraster_get_config_option", (DL_FUNC) &_gdalraster_get_config_option, 1},
     {"_gdalraster_set_config_option", (DL_FUNC) &_gdalraster_set_config_option, 2},
-    {"_gdalraster_get_cache_used", (DL_FUNC) &_gdalraster_get_cache_used, 0},
+    {"_gdalraster_get_cache_used", (DL_FUNC) &_gdalraster_get_cache_used, 1},
     {"_gdalraster_dump_open_datasets", (DL_FUNC) &_gdalraster_dump_open_datasets, 1},
     {"_gdalraster_push_error_handler", (DL_FUNC) &_gdalraster_push_error_handler, 1},
     {"_gdalraster_pop_error_handler", (DL_FUNC) &_gdalraster_pop_error_handler, 0},
