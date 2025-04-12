@@ -135,6 +135,8 @@
   \code{\link[=gdal_compute_version]{gdal_compute_version()}},
   \code{\link[=gdal_formats]{gdal_formats()}},
   \code{\link[=get_cache_used]{get_cache_used()}},
+  \code{\link[=get_cache_max]{get_cache_max()}},
+  \code{\link[=set_cache_max]{set_cache_max()}},
   \code{\link[=get_config_option]{get_config_option()}},
   \code{\link[=set_config_option]{set_config_option()}},
   \code{\link[=get_num_cpus]{get_num_cpus()}},

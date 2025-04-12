@@ -246,6 +246,46 @@ set_config_option <- function(key, value) {
     invisible(.Call(`_gdalraster_set_config_option`, key, value))
 }
 
+#' Get the maximum memory size available for the GDAL block cache
+#'
+#' `get_cache_max()` returns the maximum amount of memory available to the
+#' GDALRasterBlock caching system for caching raster read/write data. Wrapper
+#' of `GDALGetCacheMax64()` with return value in MB by default.
+#'
+#' @details
+#' The first time this function is called, it will read the `GDAL_CACHEMAX`
+#' configuration option to initialize the maximum cache memory. The value of
+#' the configuration option can be expressed as x% of the usable physical RAM
+#' (which may potentially be used by other processes). Otherwise it is
+#' expected to be a value in MB.
+#' As of GDAL 3.10, the default value, if `GDAL_CACHEMAX` has not been set
+#' explicitly, is 5% of usable physical RAM.
+#'
+#' @param units Character string specifying units for the return value. One of
+#' `"MB"` (the default), `"GB"`, `"KB"` or `"bytes"` (values of `"byte"`,
+#' `"B"` and empty string `""` are also recognized to mean bytes).
+#' @returns A numeric value carrying the `integer64` class attribute. Maximum
+#' cache memory available in the requested units.
+#'
+#' @note
+#' The value of the `GDAL_CACHEMAX` configuration option is only consulted the
+#' first time the cache size is requested (i.e., it must be set as a
+#' configuration option prior to any raster I/O during the current session).
+#' To change this value programmatically during operation of the program it is
+#' better to use [set_cache_max()] (in which case, always given in bytes).
+#'
+#' @seealso
+#' [GDAL_CACHEMAX configuration option](https://gdal.org/en/stable/user/configoptions.html#performance-and-caching)
+#'
+#' [get_config_option()], [set_config_option()], [get_usable_physical_ram()],
+#' [get_cache_used()], [set_cache_max()]
+#'
+#' @examples
+#' get_cache_max()
+get_cache_max <- function(units = "MB") {
+    .Call(`_gdalraster_get_cache_max`, units)
+}
+
 #' Get the size of memory in use by the GDAL block cache
 #'
 #' `get_cache_used()` returns the amount of memory currently in use for
@@ -255,16 +295,52 @@ set_config_option <- function(key, value) {
 #' @param units Character string specifying units for the return value. One of
 #' `"MB"` (the default), `"GB"`, `"KB"` or `"bytes"` (values of `"byte"`,
 #' `"B"` and empty string `""` are also recognized to mean bytes).
-#' @returns Numeric value carrying the `integer64` class attribute. Amount of
-#' cache memory in use in the requested units.
+#' @returns A numeric value carrying the `integer64` class attribute. Amount
+#' of the available cache memory currently in use in the requested units.
 #'
 #' @seealso
 #' [GDAL Block Cache](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
+#'
+#' [get_cache_max()], [set_cache_max()]
 #'
 #' @examples
 #' get_cache_used()
 get_cache_used <- function(units = "MB") {
     .Call(`_gdalraster_get_cache_used`, units)
+}
+
+#' Set the maximum memory size for the GDAL block cache
+#'
+#' `set_cache_max()` sets the maximum amount of memory that GDAL is permitted
+#' to use for GDALRasterBlock caching.
+#' *The unit of the value to set is bytes.* Wrapper of `GDALSetCacheMax64()`.
+#'
+#' @param nbytes A numeric value optionally carrying the `integer64` class
+#' attribute (assumed to be a whole number, will be coerced to integer by
+#' truncation). Specifies the new cache size in bytes (maximum number of bytes
+#' for caching).
+#' @returns No return value, called for side effects.
+#'
+#' @note
+#' **This function will not make any attempt to check the consistency of the
+#' passed value with the effective capabilities of the OS.**
+#'
+#' It is recommended to consult the documentation for `get_cache_max()` and
+#' `get_cache_used()` before using this function.
+#'
+#' [get_cache_max()], [get_cache_used()]
+#'
+#' @examples
+#' (cachemax <- get_cache_max("bytes"))
+#'
+#' set_cache_max(1e8)
+#' get_cache_max()  # returns in MB by default
+#'
+#' # reset to original
+#' set_cache_max(cachemax)
+#' get_cache_max()
+set_cache_max <- function(nbytes) {
+    invisible(.Call(`_gdalraster_set_cache_max`, nbytes))
 }
 
 #' @noRd

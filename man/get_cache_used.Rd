@@ -12,8 +12,8 @@ get_cache_used(units = "MB")
 \code{"B"} and empty string \code{""} are also recognized to mean bytes).}
 }
 \value{
-Numeric value carrying the \code{integer64} class attribute. Amount of
-cache memory in use in the requested units.
+A numeric value carrying the \code{integer64} class attribute. Amount
+of the available cache memory currently in use in the requested units.
 }
 \description{
 \code{get_cache_used()} returns the amount of memory currently in use for
@@ -25,4 +25,6 @@ get_cache_used()
 }
 \seealso{
 \href{https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html}{GDAL Block Cache}
+
+\code{\link[=get_cache_max]{get_cache_max()}}, \code{\link[=set_cache_max]{set_cache_max()}}
 }
