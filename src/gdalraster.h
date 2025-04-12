@@ -238,7 +238,7 @@ int gdal_version_num();
 Rcpp::DataFrame gdal_formats(const std::string &fmt);
 std::string get_config_option(const std::string &key);
 void set_config_option(const std::string &key, const std::string &value);
-int get_cache_used();
+Rcpp::NumericVector get_cache_used(std::string units);
 int dump_open_datasets(const std::string &outfile);
 int get_num_cpus();
 Rcpp::NumericVector get_usable_physical_ram();

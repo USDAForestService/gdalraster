@@ -29,8 +29,8 @@ test_that("get/set_config_option work", {
     set_config_option("GDAL_CACHEMAX", co)
 })
 
-test_that("get_cache_used returns integer", {
-    expect_type(get_cache_used(), "integer")
+test_that("get_cache_used returns integer64", {
+    expect_s3_class(get_cache_used(), "integer64")
 })
 
 test_that("get_num_cpus returns integer", {
