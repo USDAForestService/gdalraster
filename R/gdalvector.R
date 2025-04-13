@@ -210,6 +210,8 @@
 #' the GDAL API documentation for
 #' [OGR_L_GetArrowStream()](https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_GetArrowStream9OGRLayerHP16ArrowArrayStreamPPc).
 #' * INCLUDE_FID=YES/NO. Defaults to YES.
+#' * MAX_FEATURES_IN_BATCH=integer. Maximum number of features to retrieve in
+#' an ArrowArray batch. Defaults to 65536.
 #' * TIMEZONE=unknown/UTC/(+|:)HH:MM or any other value supported by
 #' Arrow (GDAL >= 3.8).
 #' * GEOMETRY_METADATA_ENCODING=OGC/GEOARROW (GDAL >= 3.8). The GDAL default is
