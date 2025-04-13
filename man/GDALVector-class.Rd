@@ -227,6 +227,8 @@ the GDAL API documentation for
 \href{https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_GetArrowStream9OGRLayerHP16ArrowArrayStreamPPc}{OGR_L_GetArrowStream()}.
 \itemize{
 \item INCLUDE_FID=YES/NO. Defaults to YES.
+\item MAX_FEATURES_IN_BATCH=integer. Maximum number of features to retrieve in
+an ArrowArray batch. Defaults to 65536.
 \item TIMEZONE=unknown/UTC/(+|:)HH:MM or any other value supported by
 Arrow (GDAL >= 3.8).
 \item GEOMETRY_METADATA_ENCODING=OGC/GEOARROW (GDAL >= 3.8). The GDAL default is
