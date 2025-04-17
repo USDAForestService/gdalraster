@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9291 (dev)
+# gdalraster 1.12.0.9295 (dev)
+
+* fix input validation in `GDALVector::validateFeatInput_()` for OFTInteger64 allowed types (#699) (2025-04-17)
 
 * add `get_cache_max()` and `set_cache_max()`, get/set maximum memory size available for the GDAL block cache (#695) (2025-04-12)
 
