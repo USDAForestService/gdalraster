@@ -2834,10 +2834,13 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
 
             case OFTInteger64:
             {
-                if (!Rcpp::is<Rcpp::NumericVector>(feature[col_idx])) {
+                if (!(Rcpp::is<Rcpp::NumericVector>(feature[col_idx]) ||
+                      Rcpp::is<Rcpp::IntegerVector>(feature[col_idx]) ||
+                      Rcpp::is<Rcpp::LogicalVector>(feature[col_idx]))) {
+
                     OGR_F_Destroy(hFeat);
                     Rcpp::stop(
-                        "OFTInteger64 field requires 'numeric' data (may be 'integer64')");
+                        "OFTInteger64 field requires a compatible data type");
                 }
             }
             break;
