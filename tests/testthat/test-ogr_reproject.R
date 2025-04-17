@@ -62,7 +62,7 @@ test_that("ogr_reproject works", {
     ## SQL layer with output to GeoJSON WGS84
     out_json <- tempfile(fileext = ".geojson")
     on.exit(unlink(out_json))
-    sql <- "SELECT objectid, poiname, geom FROM points_of_interest
+    sql <- "SELECT poiname, geom FROM points_of_interest
             WHERE poitype = 'Ranger Station'"
     # nln required for SQL layer
     expect_error(lyr <- ogr_reproject(ynp_dsn, sql,
@@ -77,8 +77,7 @@ test_that("ogr_reproject works", {
     lyr$close()
     # with dialect
     if (has_spatialite()) {
-        sql <- "SELECT objectid, poiname, ST_X(geometry) as x,
-                    ST_Y(geometry) as y
+        sql <- "SELECT poiname, ST_X(geometry) as x, ST_Y(geometry) as y
                 FROM ynp_ranger_stations"
         # reading back from the GeoJSON file, no change in coordinate system
         expect_no_error(lyr <- ogr_reproject(out_json, sql,
