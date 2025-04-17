@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9291</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">1.12.0.9295</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -48,8 +48,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9291" id="gdalraster-11209291-dev">gdalraster 1.12.0.9291 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209291-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/get_cache_max.html">get_cache_max()</a></code> and <code><a href="../reference/set_cache_max.html">set_cache_max()</a></code>, get/set maximum memory size available for the GDAL block cache (<a href="https://github.com/USDAForestService/gdalraster/issues/695" class="external-link">#695</a>) (2025-04-12)</p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9295" id="gdalraster-11209295-dev">gdalraster 1.12.0.9295 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209295-dev"></a></h2>
+<ul><li><p>fix input validation in <code>GDALVector::validateFeatInput_()</code> for OFTInteger64 allowed types (<a href="https://github.com/USDAForestService/gdalraster/issues/699" class="external-link">#699</a>) (2025-04-17)</p></li>
+<li><p>add <code><a href="../reference/get_cache_max.html">get_cache_max()</a></code> and <code><a href="../reference/set_cache_max.html">set_cache_max()</a></code>, get/set maximum memory size available for the GDAL block cache (<a href="https://github.com/USDAForestService/gdalraster/issues/695" class="external-link">#695</a>) (2025-04-12)</p></li>
 <li><p><code><a href="../reference/get_cache_used.html">get_cache_used()</a></code>: change return value to R numeric carrying the integer64 class attribute and add argument <code>units</code> defaulting to MB (<a href="https://github.com/USDAForestService/gdalraster/issues/694" class="external-link">#694</a>) (2025-04-12)</p></li>
 <li><p><code><a href="../reference/inspectDataset.html">inspectDataset()</a></code>: handle case of separate raster and vector drivers identified when specific flag was not given (<a href="https://github.com/USDAForestService/gdalraster/issues/693" class="external-link">#693</a>) (2025-04-09)</p></li>
 <li><p>add argument <code>main</code> to the S3 plot methods for <code>OGRFeature</code> and <code>OGRFeatureSet</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/692" class="external-link">#692</a>) (2025-04-08)</p></li>
