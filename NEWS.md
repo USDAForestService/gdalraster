@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9295 (dev)
+# gdalraster 1.12.0.9296 (dev)
+
+* fix test for `inv_project()` with GDAL >= 3.11 (#700) (2025-04-20)
 
 * fix input validation in `GDALVector::validateFeatInput_()` for OFTInteger64 allowed types (#699) (2025-04-17)
 
