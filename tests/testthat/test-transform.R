@@ -107,9 +107,12 @@ test_that("transform/inv_project give correct results", {
     expect_equal(as.vector(inv_test), xy_wgs84, tolerance = 0.001)
 
     # warnings
-    expect_warning(inv_project(pts = c(Inf, Inf),
-                               srs = epsg_to_wkt(26912),
-                               well_known_gcs = "WGS84"))
+    if (gdal_version_num() < gdal_compute_version(3, 11, 0)) {
+        # behavior change at GDAL 3.11 https://github.com/OSGeo/gdal/pull/11819
+        expect_warning(inv_project(pts = c(Inf, Inf),
+                                   srs = epsg_to_wkt(26912),
+                                   well_known_gcs = "WGS84"))
+    }
     expect_warning(ret <- inv_project(matrix(c(Inf, -1330885, Inf, 2684892),
                                              ncol = 2),
                                       srs = epsg_to_wkt(26912),
@@ -118,6 +121,12 @@ test_that("transform/inv_project give correct results", {
     expect_true(any(is.na(ret)))
 
     # errors
+    if (gdal_version_num() >= gdal_compute_version(3, 11, 0)) {
+        # behavior change at GDAL 3.11 https://github.com/OSGeo/gdal/pull/11819
+        expect_error(inv_project(pts = c(Inf, Inf),
+                                 srs = epsg_to_wkt(26912),
+                                 well_known_gcs = "WGS84"))
+    }
     expect_error(inv_project(pts = as.vector(pts[,-1]),
                              srs = epsg_to_wkt(26912),
                              well_known_gcs = "WGS84"))
