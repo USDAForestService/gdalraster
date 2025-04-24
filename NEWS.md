@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9296 (dev)
+# gdalraster 1.12.0.9297 (dev)
+
+* change default geometry column name to 'geom' (as used in class `GDALVector` and helper function `ogr_def_layer()`, previously was 'geometry') (#701) (2025-04-24)
 
 * fix test for `inv_project()` with GDAL >= 3.11 (#700) (2025-04-20)
 
