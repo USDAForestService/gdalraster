@@ -90,7 +90,7 @@
 #'
 #' @param geom_type Character string specifying a geometry type (see Details).
 #' @param geom_fld_name Character string specifying a geometry field name
-#' Defaults to `"geometry"`.
+#' Defaults to `"geom"`.
 #' @param srs Character string containing a spatial reference system definition
 #' as OGC WKT or other well-known format (e.g., the input formats usable with
 #' [srs_to_wkt()]).
@@ -160,7 +160,7 @@
 #'
 #' deleteDataset(dsn)
 #' @export
-ogr_def_layer <- function(geom_type, geom_fld_name = "geometry", srs = NULL) {
+ogr_def_layer <- function(geom_type, geom_fld_name = "geom", srs = NULL) {
 
     defn <- list()
 

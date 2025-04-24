@@ -72,8 +72,8 @@ test_that("ogr_reproject works", {
                                          nln = "ynp_ranger_stations"))
     expect_equal(lyr$getFeatureCount(), 14)
     feat <- lyr$getNextFeature()
-    expect_equal(g_coords(feat$geometry)[1, "x"], -110.7005, tolerance = 1e-3)
-    expect_equal(g_coords(feat$geometry)[1, "y"], 44.97703, tolerance = 1e-3)
+    expect_equal(g_coords(feat$geom)[1, "x"], -110.7005, tolerance = 1e-3)
+    expect_equal(g_coords(feat$geom)[1, "y"], 44.97703, tolerance = 1e-3)
     lyr$close()
     # with dialect
     if (has_spatialite()) {

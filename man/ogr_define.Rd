@@ -7,7 +7,7 @@
 \alias{ogr_def_geom_field}
 \title{OGR feature class definition for vector data}
 \usage{
-ogr_def_layer(geom_type, geom_fld_name = "geometry", srs = NULL)
+ogr_def_layer(geom_type, geom_fld_name = "geom", srs = NULL)
 
 ogr_def_field(
   fld_type,
@@ -25,7 +25,7 @@ ogr_def_geom_field(geom_type, srs = NULL, is_nullable = NULL)
 \item{geom_type}{Character string specifying a geometry type (see Details).}
 
 \item{geom_fld_name}{Character string specifying a geometry field name
-Defaults to \code{"geometry"}.}
+Defaults to \code{"geom"}.}
 
 \item{srs}{Character string containing a spatial reference system definition
 as OGC WKT or other well-known format (e.g., the input formats usable with
