@@ -162,7 +162,7 @@
 #' \code{$defaultGeomColName}\cr
 #' Character string specifying a name to use for returned columns when the
 #' geometry column name in the source layer is empty, like with shapefiles etc.
-#' Defaults to `"geometry"`.
+#' Defaults to `"geom"`.
 #'
 #' \code{$returnGeomAs}\cr
 #' Character string specifying the return format of feature geometries.

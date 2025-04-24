@@ -176,7 +176,7 @@ are required in this form of the constructor, but \code{open_options} may be
 \code{$defaultGeomColName}\cr
 Character string specifying a name to use for returned columns when the
 geometry column name in the source layer is empty, like with shapefiles etc.
-Defaults to \code{"geometry"}.
+Defaults to \code{"geom"}.
 
 \code{$returnGeomAs}\cr
 Character string specifying the return format of feature geometries.

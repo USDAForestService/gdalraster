@@ -182,7 +182,7 @@ test_that("ogr_proc works", {
     d <- lyr_out$fetch(-1)
     expect_equal(nrow(d), 5)
     expect_equal(ncol(d), 20)
-    expect_equal(sum(sapply(d$geometry, g_area)), 223994493)
+    expect_equal(sum(sapply(d$geom, g_area)), 223994493)
 
     lyr_out$close()
     rm(lyr_out)
@@ -201,7 +201,7 @@ test_that("ogr_proc works", {
     d <- lyr_out$fetch(-1)
     expect_equal(nrow(d), 5)
     expect_equal(ncol(d), 20)
-    expect_equal(sum(sapply(d$geometry, g_area)), 223994493)
+    expect_equal(sum(sapply(d$geom, g_area)), 223994493)
 
     lyr_out$close()
     rm(lyr_out)

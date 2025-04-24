@@ -939,7 +939,7 @@ test_that("feature write methods work", {
     feat1$real_fld <- 0.123
     feat1$str_fld <- "test string"
     feat1$date_fld <- as.Date("2100-01-01")
-    feat1$geometry <- "POLYGON ((0 0,0 10,10 10,0 0),(0.25 0.5,1 1,0.5 1,0.25 0.5))"
+    feat1$geom <- "POLYGON ((0 0,0 10,10 10,0 0),(0.25 0.5,1 1,0.5 1,0.25 0.5))"
 
     test1_fid <- NULL
     expect_true(lyr$createFeature(feat1))
@@ -957,7 +957,7 @@ test_that("feature write methods work", {
     expect_equal(f$real_fld, feat1$real_fld)
     expect_equal(f$str_fld, feat1$str_fld)
     expect_equal(f$date_fld, feat1$date_fld)
-    expect_true(g_equals(f$geometry, feat1$geometry))
+    expect_true(g_equals(f$geom, feat1$geom))
 
     lyr$close()
     deleteDataset(dsn4)
@@ -980,14 +980,14 @@ test_that("feature write methods work", {
     feat1 <- list()
     feat1$real_field <- 0.123
     feat1$str_field <- "test string 1"
-    feat1$geometry <- "POINT (1 10)"
+    feat1$geom <- "POINT (1 10)"
     expect_true(lyr$createFeature(feat1))
 
 
     feat2 <- list()
     feat2$real_field <- 0.234
     feat2$str_field <- "test string 2"
-    feat2$geometry <- "POINT (2 20)"
+    feat2$geom <- "POINT (2 20)"
     expect_true(lyr$createFeature(feat2))
 
     # close and re-open
@@ -1009,12 +1009,12 @@ test_that("feature write methods work", {
     pts <-  matrix(c(0.25, 0.25, 0.75, 0.25, 0.75, 0.75, 0.25, 0.75,
                      0.25, 0.25), ncol = 2, byrow = TRUE)
     feat <- list()
-    feat$geometry <- g_create("POLYGON", pts)
+    feat$geom <- g_create("POLYGON", pts)
     expect_true(lyr$createFeature(feat))
     lyr$open(read_only = TRUE)
     expect_equal(lyr$getFeatureCount(), 1)
     feat_chk <- lyr$getNextFeature()
-    expect_true(g_equals(feat$geometry, feat_chk$geometry))
+    expect_true(g_equals(feat$geom, feat_chk$geom))
 
     lyr$close()
     unlink(dsn6)
