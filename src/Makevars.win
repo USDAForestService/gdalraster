@@ -1,8 +1,3 @@
-PKG_CPPFLAGS = \
-	-DHAVE_PROJ_H
-
-TARGET = lib$(subst gcc,,$(COMPILED_BY))$(R_ARCH)
-
 ifeq (,$(shell pkg-config --version 2>/dev/null))
   LIBSHARPYUV = $(or $(and $(wildcard $(R_TOOLS_SOFT)/lib/libsharpyuv.a),-lsharpyuv),)
 
