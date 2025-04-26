@@ -10,6 +10,7 @@
 # 2024-03-12: restore proj_include_path and proj_lib_path
 # 2024-03-17: rework GEOS test, include <ogr_api.h> in initial gdal_test.cpp
 # 2025-02-26: fix test for GDAL >= 3.1.0
+# 2025-04-25: drop PROJ include directory and libs since we require GDAL >= 3.1
 
 AC_INIT([gdalraster],[1.12.0.9000],[chris.toney@usda.gov])
 AC_LANG(C++)
@@ -281,54 +282,14 @@ AC_MSG_NOTICE([Copy data for:])
   fi
 fi
 
-#
-# PROJ include dir
-#
-
-AC_ARG_WITH([proj-include],
-    AS_HELP_STRING([--with-proj-include=DIR],[location of proj header files]),
-    [proj_include_path=$withval])
-if test [ -n "$proj_include_path" ] ; then
-   AC_SUBST([PROJ_CPPFLAGS],["-I${proj_include_path}"])
-else
-  if test "${proj_config_ok}" = yes; then
-    PROJ_INCLUDE_PATH=`${PROJ_CONFIG} --cflags`
-    AC_SUBST([PROJ_CPPFLAGS],["${PROJ_INCLUDE_PATH}"])
-  fi
-fi
-
-#
-# PROJ libs
-#
-
-AC_ARG_WITH([proj-lib],
-    AS_HELP_STRING([--with-proj-lib=LIB_PATH],[the location of proj libraries]),
-               [proj_lib_path=$withval])
-if test [ -n "$proj_lib_path" ] ; then
-    AC_SUBST([PROJ_LIBS], ["-L${proj_lib_path} ${INPKG_LIBS} -lproj"])
-else
-  if test "${proj_config_ok}" = yes; then
-    if test `uname` = "Darwin"; then
-      PROJ_LIB_PATH=`${PROJ_CONFIG} --libs --static`
-    else
-      PROJ_LIB_PATH=`${PROJ_CONFIG} --libs`
-    fi
-    PROJ_LIBS="${PROJ_LIB_PATH}"
-    proj_version=`${PROJ_CONFIG} --modversion`
-    AC_MSG_NOTICE([PROJ: ${proj_version}])
-  else
-    PROJ_LIBS="-lproj"
-  fi
-fi
-
-AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${PROJ_CPPFLAGS} ${GDAL_CPPFLAGS}"])
-AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS} ${PROJ_LIBS}"])
+AC_SUBST([PKG_CPPFLAGS], ["${INPKG_CPPFLAGS} ${GDAL_CPPFLAGS}"])
+AC_SUBST([PKG_LIBS], ["${INPKG_LIBS} ${GDAL_LIBS}"])
 if test "${NEED_DEPS}" = yes; then
    AC_SUBST([PKG_LIBS], ["${PKG_LIBS} ${GDAL_DEP_LIBS}"])
 fi
 
 CPPFLAGS="${INCPPFLAGS} ${PKG_CPPFLAGS}"
-LIBS="${LIBS} ${PROJ_LIBS}"
+LIBS="${LIBS}"
 
 #
 # test whether PROJ is available to gdal:
@@ -350,21 +311,6 @@ int main(int argc, char *argv[]) {
 }
 _EOCONF]
 
-AC_MSG_CHECKING(GDAL: checking whether PROJ is available for linking:)
-AC_LINK_IFELSE(
-   [AC_LANG_SOURCE([`cat gdal_proj.cpp`])],
-   gdal_has_proj=yes,
-   gdal_has_proj=no
-)
-if test "${gdal_has_proj}" = no; then
-  AC_MSG_RESULT(no)
-  rm -f gdal_proj.cpp
-  AC_MSG_NOTICE([Install failure: compilation and/or linkage problems.])
-  AC_MSG_ERROR([cannot link projection code])
-else
-  AC_MSG_RESULT(yes)
-fi
-
 AC_MSG_CHECKING(GDAL: checking whether PROJ is available at runtime:)
 AC_RUN_IFELSE(
    [AC_LANG_SOURCE([`cat gdal_proj.cpp`])],
@@ -381,7 +327,6 @@ elif test "${gdal_has_proj}" = cross_compiling; then
 else
   AC_MSG_RESULT(yes)
 fi
-
 
 AC_MSG_NOTICE([Package CPP flags: ${PKG_CPPFLAGS}])
 AC_MSG_NOTICE([Package LIBS: ${PKG_LIBS}])
