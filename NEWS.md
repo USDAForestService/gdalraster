@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9297 (dev)
+# gdalraster 1.12.0.9300 (dev)
+
+* configure: remove configuration of PROJ include directory and libs, not needed with GDAL >= 3.0 and gdalraster only uses PROJ via GDAL headers (#702) (2025-04-25)
 
 * change default geometry column name to 'geom' (as used in class `GDALVector` and helper function `ogr_def_layer()`, previously was 'geometry') (#701) (2025-04-24)
 
