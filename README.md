@@ -170,7 +170,9 @@ remotes::install_github("USDAForestService/gdalraster")
 
 GDAL can be installed with Homebrew:
 
-    brew install pkg-config gdal
+    brew install gdal
+
+then
 
 ``` r
 # Install the development version from GitHub
