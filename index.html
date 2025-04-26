@@ -121,11 +121,11 @@
 <div class="section level4">
 <h4 id="linux">Linux<a class="anchor" aria-label="anchor" href="#linux"></a>
 </h4>
-<p>GDAL &gt;= 3.1.0 built with GEOS is required, but a more recent GDAL version is recommended (e.g., &gt;= 3.6.4). GDAL as of version 3.9 requires PROJ &gt;= 6.3.1, but a more recent version of PROJ is also recommended. PROJ requires sqlite3, and libxml2 is required for the imported R package <strong>xml2</strong>.</p>
-<p>On Ubuntu, recent versions of geospatial libraries can be installed from the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable" class="external-link">ubuntugis-unstable PPA</a> with the following commands:</p>
+<p>GDAL &gt;= 3.1.0 built with GEOS is required, but a more recent version is recommended.</p>
+<p>On Ubuntu, recent versions of geospatial libraries can be installed from the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable" class="external-link">ubuntugis-unstable PPA</a> with the following commands. Note that libxml2 is required for the R package <strong>xml2</strong> which is a dependency, so we go ahead and install it here as well:</p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>sudo add<span class="sc">-</span>apt<span class="sc">-</span>repository ppa<span class="sc">:</span>ubuntugis<span class="sc">/</span>ubuntugis<span class="sc">-</span>unstable</span>
 <span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>sudo apt update</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>sudo apt install libgdal<span class="sc">-</span>dev libgeos<span class="sc">-</span>dev libproj<span class="sc">-</span>dev libsqlite3<span class="sc">-</span>dev libxml2<span class="sc">-</span>dev</span></code></pre></div>
+<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>sudo apt install libgdal<span class="sc">-</span>dev libgeos<span class="sc">-</span>dev libxml2<span class="sc">-</span>dev</span></code></pre></div>
 <p>The versions in ubuntugis-unstable generally work well and are more up-to-date, but less recent versions in the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa" class="external-link">ubuntugis-stable PPA</a> could be used instead.</p>
 <p>Package <strong>sf</strong> provides helpful <a href="https://github.com/r-spatial/sf#linux" class="external-link">instructions</a> for installing the geospatial libraries on other Linux distributions.</p>
 <p>With the dependent libraries available on the system, install from CRAN:</p>
@@ -138,7 +138,7 @@
 <div class="section level4">
 <h4 id="windows">Windows<a class="anchor" aria-label="anchor" href="#windows"></a>
 </h4>
-<p><a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a> is needed to install from source on Windows. RTools since version 4.2 includes GDAL, PROJ and all other dependent libraries that are needed to compile <strong>gdalraster</strong>. Note that CRAN releases periodic revisions to RTools that often include updates to the libraries as new versions become available. <a href="https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html" class="external-link">Release 6459</a> of RTools 4.4 contains GDAL 3.10.1, GEOS 3.13.0 and PROJ 9.5.1.</p>
+<p><a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a> is needed to install from source on Windows. RTools since version 4.2 includes GDAL and all other dependent libraries that are needed to compile <strong>gdalraster</strong>. Note that CRAN releases periodic revisions to RTools that often include updates to the libraries as new versions become available. <a href="https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html" class="external-link">Release 6459</a> of RTools 4.4 contains GDAL 3.10.1, GEOS 3.13.0 and PROJ 9.5.1.</p>
 <p>With RTools installed:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
@@ -147,13 +147,13 @@
 <div class="section level4">
 <h4 id="macos">macOS<a class="anchor" aria-label="anchor" href="#macos"></a>
 </h4>
-<p>GDAL and PROJ can be installed with Homebrew:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>brew install pkg<span class="sc">-</span>config gdal proj</span></code></pre></div>
-<p>Then <code>configure.args</code> may be needed:</p>
+<p>GDAL can be installed with Homebrew:</p>
+<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>brew install gdal</span></code></pre></div>
+<p>then</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
-<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span>, configure.args <span class="op">=</span> <span class="st">"--with-proj-lib=$(brew --prefix)/lib/"</span><span class="op">)</span></span></code></pre></div>
-<p>Caution seems warranted on macOS with regard to mixing a source installation with installation of binaries from CRAN.</p>
+<span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
+<p>Caution is warranted on macOS with regard to mixing a source installation with installation of binaries from CRAN. Consider installing the development version from R-universe instead.</p>
 </div>
 </div>
 <div class="section level3">
