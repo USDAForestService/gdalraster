@@ -649,8 +649,6 @@ ac_includes_default="\
 ac_header_cxx_list=
 ac_subst_vars='LTLIBOBJS
 LIBOBJS
-PROJ_LIBS
-PROJ_CPPFLAGS
 OBJEXT
 EXEEXT
 ac_ct_CXX
@@ -707,8 +705,6 @@ enable_option_checking
 with_gdal_config
 with_data_copy
 with_proj_data
-with_proj_include
-with_proj_lib
 '
       ac_precious_vars='build_alias
 host_alias
@@ -1341,9 +1337,6 @@ Optional Packages:
   --with-data-copy=yes/no local copy of data directories in package, default
                           no
   --with-proj-data=DIR    location of PROJ data directory
-  --with-proj-include=DIR location of proj header files
-  --with-proj-lib=LIB_PATH
-                          the location of proj libraries
 
 Some influential environment variables:
   CXX         C++ compiler command
@@ -2922,11 +2915,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++11 features" >&5
 printf %s "checking for $CXX option to enable C++11 features... " >&6; }
-if test ${ac_cv_prog_cxx_11+y}
+if test ${ac_cv_prog_cxx_cxx11+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_11=no
+  ac_cv_prog_cxx_cxx11=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -2968,11 +2961,11 @@ if test x$ac_prog_cxx_stdcxx = xno
 then :
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking for $CXX option to enable C++98 features" >&5
 printf %s "checking for $CXX option to enable C++98 features... " >&6; }
-if test ${ac_cv_prog_cxx_98+y}
+if test ${ac_cv_prog_cxx_cxx98+y}
 then :
   printf %s "(cached) " >&6
 else $as_nop
-  ac_cv_prog_cxx_98=no
+  ac_cv_prog_cxx_cxx98=no
 ac_save_CXX=$CXX
 cat confdefs.h - <<_ACEOF >conftest.$ac_ext
 /* end confdefs.h.  */
@@ -3256,61 +3249,9 @@ printf "%s\n" "$as_me:   GDAL: ${GDAL_DATADIR}" >&6;}
   fi
 fi
 
-#
-# PROJ include dir
-#
+PKG_CPPFLAGS="${INPKG_CPPFLAGS} ${GDAL_CPPFLAGS}"
 
-
-# Check whether --with-proj-include was given.
-if test ${with_proj_include+y}
-then :
-  withval=$with_proj_include; proj_include_path=$withval
-fi
-
-if test  -n "$proj_include_path"  ; then
-   PROJ_CPPFLAGS="-I${proj_include_path}"
-
-else
-  if test "${proj_config_ok}" = yes; then
-    PROJ_INCLUDE_PATH=`${PROJ_CONFIG} --cflags`
-    PROJ_CPPFLAGS="${PROJ_INCLUDE_PATH}"
-
-  fi
-fi
-
-#
-# PROJ libs
-#
-
-
-# Check whether --with-proj-lib was given.
-if test ${with_proj_lib+y}
-then :
-  withval=$with_proj_lib; proj_lib_path=$withval
-fi
-
-if test  -n "$proj_lib_path"  ; then
-    PROJ_LIBS="-L${proj_lib_path} ${INPKG_LIBS} -lproj"
-
-else
-  if test "${proj_config_ok}" = yes; then
-    if test `uname` = "Darwin"; then
-      PROJ_LIB_PATH=`${PROJ_CONFIG} --libs --static`
-    else
-      PROJ_LIB_PATH=`${PROJ_CONFIG} --libs`
-    fi
-    PROJ_LIBS="${PROJ_LIB_PATH}"
-    proj_version=`${PROJ_CONFIG} --modversion`
-    { printf "%s\n" "$as_me:${as_lineno-$LINENO}: PROJ: ${proj_version}" >&5
-printf "%s\n" "$as_me: PROJ: ${proj_version}" >&6;}
-  else
-    PROJ_LIBS="-lproj"
-  fi
-fi
-
-PKG_CPPFLAGS="${INPKG_CPPFLAGS} ${PROJ_CPPFLAGS} ${GDAL_CPPFLAGS}"
-
-PKG_LIBS="${INPKG_LIBS} ${GDAL_LIBS} ${PROJ_LIBS}"
+PKG_LIBS="${INPKG_LIBS} ${GDAL_LIBS}"
 
 if test "${NEED_DEPS}" = yes; then
    PKG_LIBS="${PKG_LIBS} ${GDAL_DEP_LIBS}"
@@ -3318,7 +3259,7 @@ if test "${NEED_DEPS}" = yes; then
 fi
 
 CPPFLAGS="${INCPPFLAGS} ${PKG_CPPFLAGS}"
-LIBS="${LIBS} ${PROJ_LIBS}"
+LIBS="${LIBS}"
 
 #
 # test whether PROJ is available to gdal:
@@ -3339,33 +3280,6 @@ int main(int argc, char *argv[]) {
   return(ct == NULL); // signals PROJ is not available via GDAL
 }
 _EOCONF
-
-{ printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking GDAL: checking whether PROJ is available for linking:" >&5
-printf %s "checking GDAL: checking whether PROJ is available for linking:... " >&6; }
-cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-`cat gdal_proj.cpp`
-_ACEOF
-if ac_fn_cxx_try_link "$LINENO"
-then :
-  gdal_has_proj=yes
-else $as_nop
-  gdal_has_proj=no
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.beam \
-    conftest$ac_exeext conftest.$ac_ext
-if test "${gdal_has_proj}" = no; then
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: no" >&5
-printf "%s\n" "no" >&6; }
-  rm -f gdal_proj.cpp
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Install failure: compilation and/or linkage problems." >&5
-printf "%s\n" "$as_me: Install failure: compilation and/or linkage problems." >&6;}
-  as_fn_error $? "cannot link projection code" "$LINENO" 5
-else
-  { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
-printf "%s\n" "yes" >&6; }
-fi
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: checking GDAL: checking whether PROJ is available at runtime:" >&5
 printf %s "checking GDAL: checking whether PROJ is available at runtime:... " >&6; }
@@ -3400,7 +3314,6 @@ else
   { printf "%s\n" "$as_me:${as_lineno-$LINENO}: result: yes" >&5
 printf "%s\n" "yes" >&6; }
 fi
-
 
 { printf "%s\n" "$as_me:${as_lineno-$LINENO}: Package CPP flags: ${PKG_CPPFLAGS}" >&5
 printf "%s\n" "$as_me: Package CPP flags: ${PKG_CPPFLAGS}" >&6;}

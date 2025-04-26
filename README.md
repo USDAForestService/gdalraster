@@ -112,20 +112,19 @@ do not require any separate installation of external libraries for GDAL.
 
 #### Linux
 
-GDAL \>= 3.1.0 built with GEOS is required, but a more recent GDAL
-version is recommended (e.g., \>= 3.6.4). GDAL as of version 3.9
-requires PROJ \>= 6.3.1, but a more recent version of PROJ is also
-recommended. PROJ requires sqlite3, and libxml2 is required for the
-imported R package **xml2**.
+GDAL \>= 3.1.0 built with GEOS is required, but a more recent version is
+recommended.
 
 On Ubuntu, recent versions of geospatial libraries can be installed from
 the [ubuntugis-unstable
 PPA](https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable)
-with the following commands:
+with the following commands. Note that libxml2 is required for the R
+package **xml2** which is a dependency, so we go ahead and install it
+here as well:
 
     sudo add-apt-repository ppa:ubuntugis/ubuntugis-unstable
     sudo apt update
-    sudo apt install libgdal-dev libgeos-dev libproj-dev libsqlite3-dev libxml2-dev
+    sudo apt install libgdal-dev libgeos-dev libxml2-dev
 
 The versions in ubuntugis-unstable generally work well and are more
 up-to-date, but less recent versions in the [ubuntugis-stable
@@ -152,8 +151,8 @@ remotes::install_github("USDAForestService/gdalraster")
 #### Windows
 
 [RTools](https://cran.r-project.org/bin/windows/Rtools/) is needed to
-install from source on Windows. RTools since version 4.2 includes GDAL,
-PROJ and all other dependent libraries that are needed to compile
+install from source on Windows. RTools since version 4.2 includes GDAL
+and all other dependent libraries that are needed to compile
 **gdalraster**. Note that CRAN releases periodic revisions to RTools
 that often include updates to the libraries as new versions become
 available. [Release
@@ -169,19 +168,18 @@ remotes::install_github("USDAForestService/gdalraster")
 
 #### macOS
 
-GDAL and PROJ can be installed with Homebrew:
+GDAL can be installed with Homebrew:
 
-    brew install pkg-config gdal proj
-
-Then `configure.args` may be needed:
+    brew install pkg-config gdal
 
 ``` r
 # Install the development version from GitHub
-remotes::install_github("USDAForestService/gdalraster", configure.args = "--with-proj-lib=$(brew --prefix)/lib/")
+remotes::install_github("USDAForestService/gdalraster")
 ```
 
-Caution seems warranted on macOS with regard to mixing a source
-installation with installation of binaries from CRAN.
+Caution is warranted on macOS with regard to mixing a source
+installation with installation of binaries from CRAN. Consider
+installing the development version from R-universe instead.
 
 ### From R-universe
 
