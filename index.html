@@ -139,7 +139,7 @@
 <div class="section level4">
 <h4 id="windows">Windows<a class="anchor" aria-label="anchor" href="#windows"></a>
 </h4>
-<p><a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a> is needed to install from source on Windows. RTools since version 4.2 includes GDAL and all other dependent libraries that are needed to compile <strong>gdalraster</strong>. Note that CRAN releases periodic revisions to RTools that often include updates to the libraries as new versions become available. <a href="https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html" class="external-link">Release 6459</a> of RTools 4.4 contains GDAL 3.10.1, GEOS 3.13.0 and PROJ 9.5.1.</p>
+<p><a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a> is needed to install from source on Windows. RTools since version 4.2 includes GDAL and all other dependent libraries that are needed to compile <strong>gdalraster</strong>. Note that CRAN releases periodic revisions to RTools that often include updates to the libraries as new versions become available. <a href="https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html" class="external-link">Release 6536</a> of RTools 4.5 contains GDAL 3.10.2, GEOS 3.13.1 and PROJ 9.5.1.</p>
 <p>With RTools installed:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
@@ -160,7 +160,7 @@
 <div class="section level3">
 <h3 id="from-r-universe">From R-universe<a class="anchor" aria-label="anchor" href="#from-r-universe"></a>
 </h3>
-<p><a href="https://usdaforestservice.r-universe.dev/gdalraster" class="external-link">R-universe</a> provides pre-compiled binary packages for Windows and macOS that track the development version of <strong>gdalraster</strong>. New packages are built usually within ~1 hour of the most recent commit in branch ‘main’.</p>
+<p><a href="https://usdaforestservice.r-universe.dev/gdalraster" class="external-link">R-universe</a> provides pre-compiled binary packages for Windows and macOS that track the development version of <strong>gdalraster</strong>. New packages are built usually within ~1 hour of the most recent commit in branch <code>main</code>.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from r-universe</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://usdaforestservice.r-universe.dev"</span>, <span class="st">"https://cran.r-project.org"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>

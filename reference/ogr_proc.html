@@ -186,10 +186,9 @@ otherwise the function returns a logical value.</p></dd>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>Upon successful completion, an object of class
-<code><a href="GDALVector-class.html">GDALVector</a></code> is returned by default (if
-<code>return_obj = TRUE</code>), or logical <code>TRUE</code> is returned (invisibly) if
-<code>return_obj = FALSE</code>.
-Logical <code>FALSE</code> is returned (invisibly) if an error occurs during processing.</p>
+<code><a href="GDALVector-class.html">GDALVector</a></code> is returned by default (<code>return_obj = TRUE</code>), or
+logical <code>TRUE</code> is returned if <code>return_obj = FALSE</code>.
+Logical <code>FALSE</code> is returned if an error occurs during processing.</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
@@ -283,11 +282,11 @@ and copy into a memory layer.</p>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co"># MTBS fires in Yellowstone National Park 1984-2022</span></span></span>
 <span class="r-in"><span><span class="va">dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package<span class="op">=</span><span class="st">"gdalraster"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># layer filtered to fires since year 2000</span></span></span>
+<span class="r-in"><span><span class="co"># layer filtered to fires after 1988</span></span></span>
 <span class="r-in"><span><span class="va">lyr1</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">lyr1</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year &gt;= 2000"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">lyr1</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"ig_year &gt; 1988"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">lyr1</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 40</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] 46</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># second layer for the 1988 North Fork fire perimeter</span></span></span>
 <span class="r-in"><span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT incid_name, ig_year, geom FROM mtbs_perims</span></span></span>
@@ -296,7 +295,7 @@ and copy into a memory layer.</p>
 <span class="r-in"><span><span class="va">lyr2</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 1</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="co"># intersect to obtain areas re-burned since 2000</span></span></span>
+<span class="r-in"><span><span class="co"># intersect to obtain areas in the North Fork perimeter that have re-burned</span></span></span>
 <span class="r-in"><span><span class="va">tmp_dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".gpkg"</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">opt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"INPUT_PREFIX=layer1_"</span>,</span></span>
 <span class="r-in"><span>         <span class="st">"METHOD_PREFIX=layer2_"</span>,</span></span>
@@ -312,8 +311,7 @@ and copy into a memory layer.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># the output layer has attributes of both the input and method layers</span></span></span>
-<span class="r-in"><span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr_out</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/print.html" class="external-link">print</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="op">(</span><span class="va">d</span> <span class="op">&lt;-</span> <span class="va">lyr_out</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="op">-</span><span class="fl">1</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> OGR feature set</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   FID       layer1_event_id layer1_incid_name layer1_incid_type layer1_map_id</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   1 WY4484611038620100914          ANTELOPE          Wildfire      10013735</span>

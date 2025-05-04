@@ -1056,7 +1056,7 @@ advertise the <code>FastGetArrowStream</code> layer capability.</p>
 stream by batch (returning a <code>nanoarrow_array</code> object). The
 default batch size for an OGR array stream is 65,536 features, but can
 be configured on a per-object basis by assigning a value to the
-<code>GDALVector</code> writeable field <code>$arrowStreamOptions</code>
+<code>GDALVector</code> writable field <code>$arrowStreamOptions</code>
 (as a character vector of “NAME=VALUE” pairs).
 <strong>nanoarrow</strong> provides S3 methods for
 <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> to import a <code>nanoarrow_array</code>
@@ -1450,7 +1450,7 @@ compatible data types.</p>
 better performance when writing into RDBMS drivers that have native
 transaction support (e.g., PostgreSQL / PostGIS, GPKG, SQLite). Grouping
 many features per transaction (e.g., 100,000 or more) can improve
-performance substatially. Using transactions also provides a mechanism
+performance substantially. Using transactions also provides a mechanism
 to rollback a group of data modifications that fails to complete or
 generates errors.</p>
 <p>The example below compares the relative performance of writing a
@@ -1495,7 +1495,7 @@ grouping in a transaction, measuring time elapsed.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">batchCreateFeature</span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.257   0.008   2.265</span></span>
+<span><span class="co">#&gt;   2.273   0.007   2.280</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1524,7 +1524,7 @@ and the layer is checked for the expected output.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.031   0.010   1.042</span></span>
+<span><span class="co">#&gt;   1.041   0.007   1.049</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1537,22 +1537,22 @@ and the layer is checked for the expected output.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;   FID               pt_desc         create_time                           geom</span></span>
-<span><span class="co">#&gt; 1   1 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 2   2 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 3   3 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 4   4 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 5   5 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 6   6 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 1   1 random points batch 1 2025-05-04 16:51:04 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 2   2 random points batch 1 2025-05-04 16:51:04 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 3   3 random points batch 1 2025-05-04 16:51:04 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 4   4 random points batch 1 2025-05-04 16:51:04 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 5   5 random points batch 1 2025-05-04 16:51:04 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 6   6 random points batch 1 2025-05-04 16:51:04 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;           FID               pt_desc         create_time</span></span>
-<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-05-04 05:45:23</span></span>
-<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-05-04 05:45:23</span></span>
-<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-05-04 05:45:23</span></span>
-<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-05-04 05:45:23</span></span>
-<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-05-04 05:45:23</span></span>
-<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-05-04 05:45:23</span></span>
+<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-05-04 16:51:07</span></span>
+<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-05-04 16:51:07</span></span>
+<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-05-04 16:51:07</span></span>
+<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-05-04 16:51:07</span></span>
+<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-05-04 16:51:07</span></span>
+<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-05-04 16:51:07</span></span>
 <span><span class="co">#&gt;                                  geom</span></span>
 <span><span class="co">#&gt; 199995 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span><span class="co">#&gt; 199996 WKB POINT: raw 01 01 00 00 ...</span></span>
