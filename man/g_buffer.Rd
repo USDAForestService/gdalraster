@@ -47,7 +47,7 @@ OGR API.
 \code{g_buffer()} builds a new geometry containing the buffer region around
 the geometry on which it is invoked. The buffer is a polygon containing
 the region within the buffer distance of the original geometry.
-Wrapper of \code{OGR_G_Buffer()}in the GDL API (GEOS via GDAL headers).
+Wrapper of \code{OGR_G_Buffer()}in the GDAL API (GEOS via GDAL headers).
 }
 \examples{
 g_buffer("POINT (0 0)", dist = 10, as_wkb = FALSE)

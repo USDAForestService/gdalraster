@@ -28,7 +28,7 @@
 
 //' Get GDAL version
 //'
-//' `gdal_version()` returns a caharacter vector of GDAL runtime version
+//' `gdal_version()` returns a character vector of GDAL runtime version
 //' information. `gdal_version_num()` returns only the full version number
 //' (`gdal_version()[2]`) as an integer value.
 //'

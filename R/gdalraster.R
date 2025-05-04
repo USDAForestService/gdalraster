@@ -398,7 +398,7 @@
 #' `COMPRESS_OVERVIEW` configuration option. All compression methods supported
 #' by the GTiff driver are available
 #' (e.g., `set_config_option("COMPRESS_OVERVIEW", "LZW")`).
-#' Since GDAL 3.6, `COMPRESS_OVERVIEW` is honoured when creating internal
+#' Since GDAL 3.6, `COMPRESS_OVERVIEW` is honored when creating internal
 #' overviews of GTiff files. The [GDAL documentation for
 #' `gdaladdo`](https://gdal.org/en/stable/programs/gdaladdo.html) command-line utility
 #' describes additional configuration for overview building.

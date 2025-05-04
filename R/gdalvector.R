@@ -742,9 +742,7 @@
 #' dsn <- file.path(tempdir(), basename(f))
 #' file.copy(f, dsn)
 #'
-#' lyr <- new(GDALVector, dsn, "mtbs_perims")
-#'
-#' lyr
+#' (lyr <- new(GDALVector, dsn, "mtbs_perims"))
 #'
 #' str(lyr)
 #'
@@ -780,9 +778,8 @@
 #' lyr$getFeatureCount()
 #'
 #' ## sequential read cursor
-#' feat <- lyr$getNextFeature()
-#' # a list of field names and their values, with class attribute `OGRFeature`
-#' feat
+#' # a single feature returned as a named list of fields and their values:
+#' (feat <- lyr$getNextFeature())
 #'
 #' ## set an attribute filter
 #' lyr$setAttributeFilter("ig_year = 2020")
@@ -806,13 +803,12 @@
 #' ## get the bounding box of the largest 1988 fire and use as spatial filter
 #' ## first set a temporary attribute filter to do the lookup
 #' lyr$setAttributeFilter("ig_year = 1988 ORDER BY burn_bnd_ac DESC")
-#' feat <- lyr$getNextFeature()
-#' feat
+#' (feat <- lyr$getNextFeature())
 #'
 #' bbox <- g_wk2wk(feat$geom) |> bbox_from_wkt()
 #'
 #' ## set spatial filter on the full layer
-#' lyr$setAttributeFilter("")  # clears
+#' lyr$setAttributeFilter("")  # clears the attribute filter
 #' lyr$setSpatialFilterRect(bbox)
 #' lyr$getFeatureCount()
 #'
@@ -828,9 +824,9 @@
 #' ## no features remaining
 #' feat_set <- lyr$fetch(20)
 #' nrow(feat_set)
-#' str(feat_set)  # 0-row data frame with columns typed
+#' str(feat_set)  # 0-row data frame with columns fully typed
 #'
-#' ## fetch all pending features
+#' ## or, fetch all pending features from the beginning
 #' feat_set <- lyr$fetch(-1)  # resets reading to the first feature
 #' nrow(feat_set)
 #' plot(feat_set)
@@ -840,7 +836,7 @@
 #'
 #' lyr$close()
 #'
-#' ## simple example for feature write methods showing use of various data types
+#' ## simple example of feature write methods showing use of various data types
 #' ## create and write to a new layer in a GeoPackage data source
 #' dsn2 <- tempfile(fileext = ".gpkg")
 #'
@@ -859,33 +855,33 @@
 #'                                   default_value = "CURRENT_TIMESTAMP")
 #' defn$blobs <- ogr_def_field("OFTBinary")
 #'
-#' ogr_ds_create("GPKG", dsn2, "test_layer", layer_defn = defn)
+#' lyr <- ogr_ds_create("GPKG", dsn2, "test_layer", layer_defn = defn,
+#'                      return_obj = TRUE)
 #'
-#' lyr <- new(GDALVector, dsn2, "test_layer", read_only = FALSE)
 #' # lyr$getLayerDefn() |> str()
 #'
 #' ## define a feature to write
 #' feat1 <- list()
-#' ## $FID is omitted since it is assigned when written (could also be NA)
-#' ## $dt_modified is omitted since the datasource sets a default timestamp
+#' # $FID is omitted since it is assigned when written (could also be NA)
+#' # $dt_modified is omitted since a default timestamp is defined on the field
 #' feat1$unique_int <- 1001
 #' feat1$bool_data <- TRUE
-#' ## passing a string to as.integer64()
-#' ## this value is too large to be represented exactly as R numeric (double)
+#' # pass a string to as.integer64() since the value is too large to be
+#' # represented exactly as an R numeric value (i.e., double)
 #' feat1$large_ints <- bit64::as.integer64("90071992547409910")
 #' feat1$doubles <- 1.234
 #' feat1$strings <- "A test string"
-#' feat1$dates <- as.Date("2024-01-01")
+#' feat1$dates <- as.Date("2025-01-01")
 #' feat1$blobs <- charToRaw("A binary object")
 #' feat1$geom <- "POINT (1 1)"  # can be a WKT string or raw vector of WKB
 #'
 #' ## create as a new feature in the layer
 #' lyr$createFeature(feat1)
 #'
-#' ## the assigned FID
+#' ## get the assigned FID
 #' lyr$getLastWriteFID()
 #'
-#' ## this fails due to the unique constraint
+#' ## attempt to re-write the same feature fails due to the unique constraint
 #' lyr$createFeature(feat1)
 #'
 #' feat2 <- list()
@@ -905,7 +901,7 @@
 #' lyr$open(read_only = TRUE)
 #'
 #' lyr$getFeatureCount()
-#' feat_set <- lyr$fetch(-1)  # -1 for all features reading from start
+#' feat_set <- lyr$fetch(-1)  # -1 to fetch all features from the beginning
 #' str(feat_set)
 #'
 #' ## edit an existing feature, e.g., feat <- lyr$getFeature(2)
@@ -913,7 +909,7 @@
 #' feat <- feat_set[2,]
 #' str(feat)
 #'
-#' Sys.sleep(1)  # only to ensure a timestamp difference
+#' Sys.sleep(1)  # to ensure a timestamp difference
 #'
 #' feat$bool_data <- TRUE
 #' feat$strings <- paste(feat$strings, "- edited")
@@ -923,9 +919,6 @@
 #' lyr$open(read_only = FALSE)
 #'
 #' ## lyr$setFeature() re-writes the feature identified by the $FID element
-#' ## N.B., all fields are re-written:
-#' ##   any fields omitted from the input feature, or set to NA, will be
-#' ##   re-written as OGR NULL
 #' lyr$setFeature(feat)
 #'
 #' lyr$open(read_only = TRUE)
@@ -945,22 +938,15 @@
 #'   lyr <- new(GDALVector, dsn, sql)
 #'
 #'   stream <- lyr$getArrowStream()
-#'   print(stream)
-#'
-#'   stream$get_schema() |> print()
-#'
 #'   batch <- stream$get_next()
-#'   str(batch) |> print()
 #'
-#'   # disable warning for the example that can be safely ignored here
+#'   # disable a warning for the example that can be safely ignored here
 #'   options(nanoarrow.warn_unregistered_extension = FALSE)
 #'
 #'   d <- as.data.frame(batch)
 #'   head(d) |> print()
 #'
-#'   # the geometry column is a list column of WKB raw vectors, e.g.,
-#'   g_name(d$geom) |> print()
-#'
+#'   # the geometry column is a list column of WKB raw vectors
 #'   g_centroid(d$geom) |> print()
 #'
 #'   # the last batch is NULL

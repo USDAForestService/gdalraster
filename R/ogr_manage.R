@@ -12,8 +12,7 @@
 #' @name ogr_manage
 #' @details
 #' These functions are complementary to `ogrinfo()` and `ogr2ogr()` for
-#' vector data management. They are also intended to support vector I/O in a
-#' future release of gdalraster. Bindings to OGR wrap portions of the GDAL
+#' vector data management. Bindings to OGR wrap portions of the GDAL
 #' Vector API (ogr_core.h and ogr_api.h,
 #' \url{https://gdal.org/en/stable/api/vector_c_api.html}).
 #'
@@ -224,7 +223,7 @@
 #' dialects for details.
 #'
 #' @seealso
-#  [ogr_define] helper functions, [ogrinfo()], [ogr2ogr()]
+#  [ogr_define], [ogrinfo()], [ogr2ogr()]
 #'
 #' OGR SQL dialect and SQLite SQL dialect:\cr
 #' \url{https://gdal.org/en/stable/user/ogr_sql_sqlite_dialect.html}

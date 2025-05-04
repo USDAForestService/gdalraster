@@ -29,7 +29,7 @@
 #'
 #' Input points that contain missing values (`NA`) will be assigned `NA` in
 #' the output and a warning emitted. Input points that fail to transform
-#' with the GDAL API call will also be assigned `NA` in the ouput with a
+#' with the GDAL API call will also be assigned `NA` in the output with a
 #' specific warning indicating that case.
 #'
 #' @seealso
@@ -127,7 +127,7 @@ transform_xy <- function(pts, srs_from, srs_to) {
 #' @note
 #' Input points that contain missing values (`NA`) will be assigned `NA` in
 #' the output and a warning emitted. Input points that fail to transform
-#' with the GDAL API call will also be assigned `NA` in the ouput with a
+#' with the GDAL API call will also be assigned `NA` in the output with a
 #' specific warning indicating that case.
 #'
 #' @seealso

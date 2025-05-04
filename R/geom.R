@@ -2096,7 +2096,7 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' `g_buffer()` builds a new geometry containing the buffer region around
 #' the geometry on which it is invoked. The buffer is a polygon containing
 #' the region within the buffer distance of the original geometry.
-#' Wrapper of `OGR_G_Buffer()`in the GDL API (GEOS via GDAL headers).
+#' Wrapper of `OGR_G_Buffer()`in the GDAL API (GEOS via GDAL headers).
 #'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.

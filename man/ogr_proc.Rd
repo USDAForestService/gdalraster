@@ -71,10 +71,9 @@ otherwise the function returns a logical value.}
 }
 \value{
 Upon successful completion, an object of class
-\code{\link{GDALVector}} is returned by default (if
-\code{return_obj = TRUE}), or logical \code{TRUE} is returned (invisibly) if
-\code{return_obj = FALSE}.
-Logical \code{FALSE} is returned (invisibly) if an error occurs during processing.
+\code{\link{GDALVector}} is returned by default (\code{return_obj = TRUE}), or
+logical \code{TRUE} is returned if \code{return_obj = FALSE}.
+Logical \code{FALSE} is returned if an error occurs during processing.
 }
 \description{
 \code{ogr_proc()} performs GIS overlay operations on vector layers
@@ -183,9 +182,9 @@ and copy into a memory layer.
 # MTBS fires in Yellowstone National Park 1984-2022
 dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 
-# layer filtered to fires since year 2000
+# layer filtered to fires after 1988
 lyr1 <- new(GDALVector, dsn, "mtbs_perims")
-lyr1$setAttributeFilter("ig_year >= 2000")
+lyr1$setAttributeFilter("ig_year > 1988")
 lyr1$getFeatureCount()
 
 # second layer for the 1988 North Fork fire perimeter
@@ -194,7 +193,7 @@ sql <- "SELECT incid_name, ig_year, geom FROM mtbs_perims
 lyr2 <- new(GDALVector, dsn, sql)
 lyr2$getFeatureCount()
 
-# intersect to obtain areas re-burned since 2000
+# intersect to obtain areas in the North Fork perimeter that have re-burned
 tmp_dsn <- tempfile(fileext = ".gpkg")
 opt <- c("INPUT_PREFIX=layer1_",
          "METHOD_PREFIX=layer2_",
@@ -209,8 +208,7 @@ lyr_out <- ogr_proc(mode = "Intersection",
                     mode_opt = opt)
 
 # the output layer has attributes of both the input and method layers
-d <- lyr_out$fetch(-1)
-print(d)
+(d <- lyr_out$fetch(-1))
 
 # clean up
 lyr1$close()

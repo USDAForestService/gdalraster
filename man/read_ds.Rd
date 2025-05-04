@@ -48,7 +48,7 @@ band.}
 \item{as_raw}{Logical. If \code{TRUE} and the underlying data type is Byte,
 return output as R's raw vector type. This maps to the setting
 \verb{$readByteAsRaw} on the \code{GDALRaster} object, which will be temporarily
-updated in this function. To control this behaviour in a persistent way on
+updated in this function. To control this behavior in a persistent way on
 a dataset see \code{$readByteAsRaw} in \code{\link[=GDALRaster]{GDALRaster-class}}.}
 }
 \value{

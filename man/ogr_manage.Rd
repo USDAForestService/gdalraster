@@ -203,8 +203,7 @@ fields, and edit data with SQL statements.
 }
 \details{
 These functions are complementary to \code{ogrinfo()} and \code{ogr2ogr()} for
-vector data management. They are also intended to support vector I/O in a
-future release of gdalraster. Bindings to OGR wrap portions of the GDAL
+vector data management. Bindings to OGR wrap portions of the GDAL
 Vector API (ogr_core.h and ogr_api.h,
 \url{https://gdal.org/en/stable/api/vector_c_api.html}).
 

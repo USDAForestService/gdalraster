@@ -169,7 +169,7 @@ DEFAULT_DEM_PROC <- list(
 #' @param as_raw Logical. If `TRUE` and the underlying data type is Byte,
 #' return output as R's raw vector type. This maps to the setting
 #' `$readByteAsRaw` on the `GDALRaster` object, which will be temporarily
-#' updated in this function. To control this behaviour in a persistent way on
+#' updated in this function. To control this behavior in a persistent way on
 #' a dataset see \code{$readByteAsRaw} in [`GDALRaster-class`][GDALRaster].
 #' @returns If `as_list = FALSE` (the default), a vector of `raw`, `integer`,
 #' `double` or `complex` containing the values that were read. It is organized
