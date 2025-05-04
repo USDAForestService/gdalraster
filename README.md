@@ -156,8 +156,8 @@ and all other dependent libraries that are needed to compile
 **gdalraster**. Note that CRAN releases periodic revisions to RTools
 that often include updates to the libraries as new versions become
 available. [Release
-6459](https://cran.r-project.org/bin/windows/Rtools/rtools44/rtools.html)
-of RTools 4.4 contains GDAL 3.10.1, GEOS 3.13.0 and PROJ 9.5.1.
+6536](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html)
+of RTools 4.5 contains GDAL 3.10.2, GEOS 3.13.1 and PROJ 9.5.1.
 
 With RTools installed:
 
@@ -188,7 +188,7 @@ installing the development version from R-universe instead.
 [R-universe](https://usdaforestservice.r-universe.dev/gdalraster)
 provides pre-compiled binary packages for Windows and macOS that track
 the development version of **gdalraster**. New packages are built
-usually within ~1 hour of the most recent commit in branch ‘main’.
+usually within ~1 hour of the most recent commit in branch `main`.
 
 ``` r
 # Install the development version from r-universe

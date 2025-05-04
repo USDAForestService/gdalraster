@@ -451,7 +451,7 @@ poi$close()
 
 It is also possible to retrieve features in a column-oriented memory layout using the Arrow C Stream interface in OGR (requires GDAL >= 3.6). Performance advantages can be substantial with vector format drivers that provide specialized implementations (e.g., Parquet, FlatGeoBuf, GeoPackage). Drivers with specialized implementations advertise the `FastGetArrowStream` layer capability.
 
-The `$getArrowStream()` method of class `GDALVector` exposes an ArrowArrayStream on the layer as a `nanoarrow_array_stream` object. Note that the `nanoarrow_array_stream` object has a `$get_next()` method which allows accessing features in the stream by batch (returning a `nanoarrow_array` object). The default batch size for an OGR array stream is 65,536 features, but can be configured on a per-object basis by assigning a value to the `GDALVector` writeable field `$arrowStreamOptions` (as a character vector of "NAME=VALUE" pairs). **nanoarrow** provides S3 methods for `as.data.frame()` to import a `nanoarrow_array` (one batch at a time), or the `nanoarrow_array_stream` itself (pulling all batches in the stream).
+The `$getArrowStream()` method of class `GDALVector` exposes an ArrowArrayStream on the layer as a `nanoarrow_array_stream` object. Note that the `nanoarrow_array_stream` object has a `$get_next()` method which allows accessing features in the stream by batch (returning a `nanoarrow_array` object). The default batch size for an OGR array stream is 65,536 features, but can be configured on a per-object basis by assigning a value to the `GDALVector` writable field `$arrowStreamOptions` (as a character vector of "NAME=VALUE" pairs). **nanoarrow** provides S3 methods for `as.data.frame()` to import a `nanoarrow_array` (one batch at a time), or the `nanoarrow_array_stream` itself (pulling all batches in the stream).
 
 ```{r eval=gdal_3_6_0_min, warning=FALSE}
 # Expose an ArrowArrayStream (requires GDAL >= 3.6)
@@ -637,7 +637,7 @@ poi$close()
 
 The `$batchCreateFeature()`method of a `GDALVector` object is batch version of `$createFeature()`. It creates and writes a batch of new features within the layer from input given as a data frame. Column names in the data frame must match field names of the layer and have compatible data types.
 
-Operations that write batches of features should use transactions for better performance when writing into RDBMS drivers that have native transaction support (e.g., PostgreSQL / PostGIS, GPKG, SQLite). Grouping many features per transaction (e.g., 100,000 or more) can improve performance substatially. Using transactions also provides a mechanism to rollback a group of data modifications that fails to complete or generates errors.
+Operations that write batches of features should use transactions for better performance when writing into RDBMS drivers that have native transaction support (e.g., PostgreSQL / PostGIS, GPKG, SQLite). Grouping many features per transaction (e.g., 100,000 or more) can improve performance substantially. Using transactions also provides a mechanism to rollback a group of data modifications that fails to complete or generates errors.
 
 The example below compares the relative performance of writing a batch of features to a GeoPackage layer with and without a transaction. We create a new POINT layer in the existing GPKG (`mtbs_dsn`), and write batches of features at random point locations within the YNP bounding box.
 

@@ -53,7 +53,7 @@ for the GCS names above.
 \note{
 Input points that contain missing values (\code{NA}) will be assigned \code{NA} in
 the output and a warning emitted. Input points that fail to transform
-with the GDAL API call will also be assigned \code{NA} in the ouput with a
+with the GDAL API call will also be assigned \code{NA} in the output with a
 specific warning indicating that case.
 }
 \examples{

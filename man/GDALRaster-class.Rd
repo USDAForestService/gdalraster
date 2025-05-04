@@ -433,7 +433,7 @@ External overviews created in GTiff format may be compressed using the
 \code{COMPRESS_OVERVIEW} configuration option. All compression methods supported
 by the GTiff driver are available
 (e.g., \code{set_config_option("COMPRESS_OVERVIEW", "LZW")}).
-Since GDAL 3.6, \code{COMPRESS_OVERVIEW} is honoured when creating internal
+Since GDAL 3.6, \code{COMPRESS_OVERVIEW} is honored when creating internal
 overviews of GTiff files. The \href{https://gdal.org/en/stable/programs/gdaladdo.html}{GDAL documentation for \code{gdaladdo}} command-line utility
 describes additional configuration for overview building.
 See also \code{\link[=set_config_option]{set_config_option()}}. No return value, called for side effects.

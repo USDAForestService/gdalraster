@@ -133,10 +133,9 @@
 #' otherwise the function returns a logical value.
 #'
 #' @returns Upon successful completion, an object of class
-#' [`GDALVector`][GDALVector] is returned by default (if
-#' `return_obj = TRUE`), or logical `TRUE` is returned (invisibly) if
-#' `return_obj = FALSE`.
-#' Logical `FALSE` is returned (invisibly) if an error occurs during processing.
+#' [`GDALVector`][GDALVector] is returned by default (`return_obj = TRUE`), or
+#' logical `TRUE` is returned if `return_obj = FALSE`.
+#' Logical `FALSE` is returned if an error occurs during processing.
 #'
 #' @note
 #' The first geometry field on a layer is always used.
@@ -155,9 +154,9 @@
 #' # MTBS fires in Yellowstone National Park 1984-2022
 #' dsn <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 #'
-#' # layer filtered to fires since year 2000
+#' # layer filtered to fires after 1988
 #' lyr1 <- new(GDALVector, dsn, "mtbs_perims")
-#' lyr1$setAttributeFilter("ig_year >= 2000")
+#' lyr1$setAttributeFilter("ig_year > 1988")
 #' lyr1$getFeatureCount()
 #'
 #' # second layer for the 1988 North Fork fire perimeter
@@ -166,7 +165,7 @@
 #' lyr2 <- new(GDALVector, dsn, sql)
 #' lyr2$getFeatureCount()
 #'
-#' # intersect to obtain areas re-burned since 2000
+#' # intersect to obtain areas in the North Fork perimeter that have re-burned
 #' tmp_dsn <- tempfile(fileext = ".gpkg")
 #' opt <- c("INPUT_PREFIX=layer1_",
 #'          "METHOD_PREFIX=layer2_",
@@ -181,8 +180,7 @@
 #'                     mode_opt = opt)
 #'
 #' # the output layer has attributes of both the input and method layers
-#' d <- lyr_out$fetch(-1)
-#' print(d)
+#' (d <- lyr_out$fetch(-1))
 #'
 #' # clean up
 #' lyr1$close()

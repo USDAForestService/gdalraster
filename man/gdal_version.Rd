@@ -23,7 +23,7 @@ GDAL 3.6.3.0
 \code{gdal_version_num()} returns \code{as.integer(gdal_version()[2])}
 }
 \description{
-\code{gdal_version()} returns a caharacter vector of GDAL runtime version
+\code{gdal_version()} returns a character vector of GDAL runtime version
 information. \code{gdal_version_num()} returns only the full version number
 (\code{gdal_version()[2]}) as an integer value.
 }
