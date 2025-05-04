@@ -91,7 +91,7 @@ usage of the API in <strong>gdalraster</strong>.</p>
 <p>The prefix <a href="https://gdal.org/en/stable/faq.html#what-is-this-ogr-stuff" class="external-link">OGR</a>
 is used in GDAL with class names, command-line utilities, etc., that
 refer to vector-specific components of the library. In
-<strong>gdalraster</strong>, OGR will be used throughout the
+<strong>gdalraster</strong>, “ogr” will be used throughout the
 documentation and as a prefix on function names, consistent with the
 style of the source library. There is also a certain amount of
 unification of the raster and vector APIs in GDAL. In
@@ -110,7 +110,7 @@ existing R packages such as <strong>sf</strong> and
 <strong>terra</strong> that primarily implement higher-level analytical
 data models. <strong>gdalraster</strong> is primarily focused on
 API-level bindings, attempting to expose most of the underlying C++
-library to R. More direct access to GDAL’s I/O capabilities may benefit
+library in R. More direct access to GDAL’s I/O capabilities may benefit
 workflows that deal with source data provided on a continuum ranging
 from local storage and in-memory formats to database servers and cloud
 systems, often involving various compression formats, SQL dialects, etc.
@@ -119,8 +119,8 @@ interest to R developers creating higher-level interfaces, where the
 analytical data models may not have been designed with their use cases
 in mind. API bindings facilitate code translation and reuse which can
 benefit hybrid environments where GDAL is used from multiple languages.
-Long-term stability of bindings at the library level is highly desirable
-in production scenarios, and is a major goal for the package. It is
+Long-term stability of bindings at the library level is desirable in
+production scenarios, and is a major goal for the package. It is
 intended that <strong>gdalraster</strong> should complement and
 interoperate within R’s extensive and evolving spatial ecosystem.</p>
 </div>
@@ -133,9 +133,9 @@ extended text on specific topics.</p>
 <div class="section level3">
 <h3 id="core-bindings">Core bindings<a class="anchor" aria-label="anchor" href="#core-bindings"></a>
 </h3>
-<p>Core functionality for vector is provided by an exposed C++ class
+<p>Core functionality for vector is provided by the exposed C++ class
 <code>GDALVector</code>, along with a set of stand-along functions with
-the <code>ogr_</code> prefix.</p>
+<code>ogr_</code> prefix.</p>
 <div class="section level4">
 <h4 id="class-gdalvector">Class <code>GDALVector</code><a class="anchor" aria-label="anchor" href="#class-gdalvector"></a>
 </h4>
@@ -148,10 +148,10 @@ connection to the dataset, and exposes methods to:</p>
 <li>set attribute and spatial filters</li>
 <li>set ignored fields/selected fields</li>
 <li>traverse and read feature data by traditional row-based cursor</li>
-<li>fetch the full feature set and return as data frame</li>
+<li>fetch the full feature set and return as a data frame</li>
 <li>fetch progressively in batches of <code>n</code> features at a
 time</li>
-<li>read via column-oriented Arrow ArrayStream</li>
+<li>read via column-oriented ArrowArrayStream</li>
 <li>write new features in a layer</li>
 <li>upsert</li>
 <li>edit/overwrite existing features</li>
@@ -194,12 +194,12 @@ required for creating a new vector dataset, or a new layer within an
 existing dataset, using <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code> /
 <code><a href="../reference/ogr_manage.html">ogr_layer_create()</a></code>.</p>
 <p>OGR facilities for vector geoprocessing are available in
-<code><a href="../reference/ogr_proc.html">ogr_proc()</a></code>. This function performs the following GIS
+<code><a href="../reference/ogr_proc.html">ogr_proc()</a></code>. This function can perform the following GIS
 overlay operations: Intersection, Union, SymDifference, Identity,
 Update, Clip and Erase (<a href="https://en.wikipedia.org/wiki/Vector_overlay" class="external-link uri">https://en.wikipedia.org/wiki/Vector_overlay</a>).
 <code><a href="../reference/ogr_proc.html">ogr_proc()</a></code> is basically an R port of the command-line
 utility <a href="https://gdal.org/en/stable/programs/ogr_layer_algebra.html#ogr-layer-algebra" class="external-link"><code>ogr_layer_algebra</code></a>
-which is included in the GDAL Python bindings. Both of these are
+included in the GDAL Python bindings. In both cases, these are
 interfaces to library functions in the OGR C++ API.</p>
 <p><code><a href="../reference/ogrinfo.html">ogrinfo()</a></code> and <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code>, provide R wrappers
 of the GDAL command-line utilities <a href="https://gdal.org/en/stable/programs/ogrinfo.html" class="external-link"><code>ogrinfo</code></a>
@@ -210,7 +210,7 @@ obtaining information about an OGR-supported data source, converting
 vector data between file formats, and potentially editing data with SQL
 statements. <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> is a convenience wrapper around
 <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> for reprojecting vector layers with a user
-friendly interface and comprehensive documentation.</p>
+friendly interface.</p>
 </div>
 </div>
 <div class="section level3">
@@ -222,7 +222,7 @@ friendly interface and comprehensive documentation.</p>
 <p>Bindings to a subset of GDAL’s Spatial Reference System API are
 provided by a set of stand-alone <code>srs_*()</code> functions. These
 support conversion of spatial reference definitions in various formats
-to OGC Well Known Text (WKT) representation (e.g., EPSG codes, well
+to OGC Well Known Text (WKT) representation (e.g., from EPSG codes, well
 known names such as NAD27, NAD83, WGS84, etc., PROJ.4 definitions,
 PROJJSON, and others, as well as between different versions of OGC WKT,
 see <code><a href="../reference/srs_convert.html">?srs_convert</a></code>). Functions under the
@@ -283,8 +283,8 @@ etc.)</p>
 <h4 id="general-data-management">General data management<a class="anchor" aria-label="anchor" href="#general-data-management"></a>
 </h4>
 <p>Existing data management functions that operate on both raster and
-vector data sources include <code><a href="../reference/addFilesInZip.html">addFilesInZip()</a></code> (create/append
-to a potentially <a href="https://github.com/sozip/sozip-spec" class="external-link">Seek-Optimized ZIP</a> file),
+vector data sources include <code><a href="../reference/addFilesInZip.html">addFilesInZip()</a></code> (supporting
+create/append to a potentially <a href="https://github.com/sozip/sozip-spec" class="external-link">Seek-Optimized ZIP</a> file),
 <code><a href="../reference/deleteDataset.html">deleteDataset()</a></code>, <code><a href="../reference/identifyDriver.html">identifyDriver()</a></code> and
 <code><a href="../reference/inspectDataset.html">inspectDataset()</a></code>.</p>
 </div>
@@ -349,26 +349,28 @@ be in effect).</p>
 class interfaces for R objects containing the returned feature data. A
 single feature as returned by
 <code>$getFeature()</code>/<code>$getNextFeature()</code> is a list
-carrying the <code>"OGRFeature"</code> class attribute. A data frame
-returned by <code>$fetch()</code> carries the
+object carrying the <code>"OGRFeature"</code> class attribute. A data
+frame returned by <code>$fetch()</code> carries the
 <code>"OGRFeatureSet"</code> class attribute. S3 methods are provided
 for the <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> generics as a
 convenience for examining output. Otherwise, there are currently no S3
-classes for geometries, no concept of “sticky” geometry as implemented
-in package <strong>sf</strong>, and no automatic propagation of geometry
-coordinate reference systems.</p>
+classes for geometries or geometry columns, no concept of “sticky”
+geometry as implemented in package <strong>sf</strong>, and no automatic
+propagation of coordinate reference systems. S3 interfaces may expand in
+future versions, but <strong>gdalraster</strong> leans toward minimalism
+and the use of simple, lightweight objects for holding raw data.</p>
 </div>
 <div class="section level3">
 <h3 id="interoperability">Interoperability<a class="anchor" aria-label="anchor" href="#interoperability"></a>
 </h3>
 <p>The <code>$fetch()</code> method of a <code>GDALVector</code> object
-returns geometries in a list column of WKB raw vectors by default, and
-the Geometry API functions (<code>g_*()</code>) also operate on lists of
-WKB by default. WKB representation of geometries is compact and
-performant, and seamlessly integrates with the parsing, conversion,
+returns geometries in a list column of WKB raw vectors by default. The
+Geometry API functions (<code>g_*()</code>) also operate by default on
+lists of WKB raw vectors. Representation of geometries as WKB is compact
+and performant, and seamlessly integrates with the parsing, conversion,
 manipulation and plotting functions in <a href="https://paleolimbot.github.io/wk/" class="external-link">package <strong>wk</strong></a>
-(a <strong>gdalraster</strong> dependency for vector plotting and
-currently used for <code><a href="../reference/g_coords.html">gdalraster::g_coords()</a></code>).</p>
+(a <strong>gdalraster</strong> dependency for vector plotting, and
+currently used for <code><a href="../reference/g_coords.html">g_coords()</a></code>).</p>
 <p>The <code>$getArrowStream()</code> method of a
 <code>GDALVector</code> object allows retrieving data in a
 column-oriented memory format. It exposes an ArrowArrayStream on a layer
@@ -396,7 +398,7 @@ no subsequent transformation of geometries has been performed).</p>
 <p>OGR field types are returned as the following R data types. R
 currently lacks a native 64-bit integer type. Support for 64-bit integer
 values in R is provided by the <a href="https://CRAN.R-project.org/package=bit64" class="external-link"><strong>bit64</strong>
-package</a> (<code>numeric</code> values carrying the
+package</a> (represented as <code>numeric</code> values carrying the
 <code>"integer64"</code> class attribute). OGR NULL values are returned
 as type-specific <code>NA</code> (i.e., <code>NA</code>,
 <code>NA_integer_</code>, <code>NA_integer64_</code>,
@@ -461,8 +463,8 @@ the web version at <a href="https://bit64.r-lib.org/reference/bit64-package.html
 <div class="section level2">
 <h2 id="code-examples">Code examples<a class="anchor" aria-label="anchor" href="#code-examples"></a>
 </h2>
-<p>Note that parentheses around statements are used throughout the
-examples only as a shortcut to display the assigned values. The
+<p>Parentheses around statements are used throughout the examples only
+as a shortcut to display the assigned values. The
 <code><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file()</a></code> command is only used to obtain the path to
 the package sample files; it would not be needed in typical usage.</p>
 <div class="section level3">
@@ -659,10 +661,10 @@ command-line utility included with GDAL.</p>
 that is writable, and make several modifications. The <a href="https://gdal.org/en/stable/user/virtual_file_systems.html#vsimem-in-memory-files" class="external-link">/vsimem/</a>
 file handler allows a block of memory to be treated as files. It is
 useful for temporary storage and is generally fast to access. The code
-below also demonstrates testing capabilities at the dataset or layer
-level before attempting to perform modifications. This will not be
-needed in all cases but might be used in code that is required to handle
-input datasets in a general way.</p>
+below also demonstrates testing certain defined capabilities of the
+dataset or layer before attempting to perform modifications. This will
+not be needed in all cases but might be used in code that is required to
+handle input datasets in a general way.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># copy ynp_features.gpkg from the zip file to an in-memory file</span></span>
 <span><span class="va">mem_gpkg</span> <span class="op">&lt;-</span> <span class="st">"/vsimem/tmp/ynp_features.gpkg"</span></span>
@@ -750,8 +752,8 @@ geothermal features.</p>
 <span><span class="co">#&gt; [5] "geom"</span></span></code></pre></div>
 <p>To read back from the modified data source we need to instantiate
 objects of class <code>GDALVector</code>. More detail on working with
-<code>GDALVector</code> objects is given in the examples below for data
-retrieval. For now, note that the function
+<code>GDALVector</code> objects is given in the examples further below
+for data retrieval. For now, note that the function
 <code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code> returns an object of class
 <code>GDALVector</code> for SQL statements that return a result set.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
@@ -759,7 +761,16 @@ retrieval. For now, note that the function
 <span><span class="va">sql</span> <span class="op">&lt;-</span> <span class="st">"SELECT poi_name, geom</span></span>
 <span><span class="st">          FROM points_of_interest</span></span>
 <span><span class="st">            WHERE is_geothermal = TRUE"</span></span>
-<span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ogr_manage.html">ogr_execute_sql</a></span><span class="op">(</span><span class="va">mem_gpkg</span>, <span class="va">sql</span><span class="op">)</span></span>
+<span><span class="op">(</span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ogr_manage.html">ogr_execute_sql</a></span><span class="op">(</span><span class="va">mem_gpkg</span>, <span class="va">sql</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="co">#&gt; C++ object of class GDALVector</span></span>
+<span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
+<span><span class="co">#&gt;  DSN    : /vsimem/tmp/ynp_features.gpkg</span></span>
+<span><span class="co">#&gt;  Layer  : SELECT poi_name, geom</span></span>
+<span><span class="co">#&gt;           FROM points_of_interest</span></span>
+<span><span class="co">#&gt;             WHERE is_geothermal = TRUE</span></span>
+<span><span class="co">#&gt;  CRS    : NAD83 (EPSG:4269)</span></span>
+<span><span class="co">#&gt;  Geom   : POINT</span></span>
+<span></span>
 <span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFeatureCount</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] 187</span></span>
 <span></span>
@@ -775,7 +786,8 @@ retrieval. For now, note that the function
 <span><span class="co">#&gt; 5   4         Mortar Geyser WKB POINT: raw 01 01 00 00 ...</span></span>
 <span><span class="co">#&gt; 6   5 Black Dragons Caldron WKB POINT: raw 01 01 00 00 ...</span></span>
 <span></span>
-<span><span class="co"># plot the park boundary, this layer contains a single polygon feature</span></span>
+<span><span class="co"># plot the park boundary</span></span>
+<span><span class="co"># the layer contains a single polygon feature which is piped directly to plot()</span></span>
 <span><span class="va"><a href="../reference/GDALVector-class.html">GDALVector</a></span><span class="op">$</span><span class="fu">new</span><span class="op">(</span><span class="va">mem_gpkg</span>, <span class="st">"ynp_bnd"</span><span class="op">)</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>  <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span>col <span class="op">=</span> <span class="st">"wheat"</span>, xlab <span class="op">=</span> <span class="st">"longitude"</span>, ylab <span class="op">=</span> <span class="st">"latitude"</span>,</span>
 <span>       main <span class="op">=</span> <span class="st">"YNP Geothermal Features"</span><span class="op">)</span></span>
@@ -798,14 +810,14 @@ delete the temporary in-memory file.</p>
 <h3 id="traditional-row-based-data-retrieval">Traditional row-based data retrieval<a class="anchor" aria-label="anchor" href="#traditional-row-based-data-retrieval"></a>
 </h3>
 <p>These examples will use the original sample dataset for YNP features.
-The DSN is formed with the /viszip/ prefix and full path to
+The DSN is formed with the /viszip/ prefix, and full path to the file
 ynp_features.gpkg contained in the zip archive. An object of class
 <code>GDALVector</code> is generated with a call to <code>new()</code>.
 From the examples above, we know that the GeoPackage contains three
-vector layers, so we also pass a layer name argument to the object
+vector layers, so we also pass a layer name argument to the class
 constructor.</p>
 <p>Note that if the layer argument is omitted, the constructor will
-attempt to open the first layer by index. This abbreviated form of the
+attempt to open the first layer by index. The abbreviated form of the
 constructor would generally be used for convenience only with
 single-layer file formats (e.g., ESRI Shapefile, FlatGeoBuf), or with a
 GeoPackage file known to contain only a single layer.</p>
@@ -894,8 +906,7 @@ their values, and moves the cursor forward one row. It will return
 <code>NULL</code> when no features are left.</p>
 <p>The park boundary layer contains a single polygon feature. The list
 object returned for an individual feature carries the
-<code>"OGRFeature"</code> class attribute providing S3 methods for
-<code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code>.</p>
+<code>"OGRFeature"</code> class attribute.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">bnd_feat</span> <span class="op">&lt;-</span> <span class="va">bnd</span><span class="op">$</span><span class="fu">getNextFeature</span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/str.html" class="external-link">str</a></span><span class="op">(</span><span class="va">bnd_feat</span><span class="op">)</span></span>
@@ -925,15 +936,15 @@ with a call to <code>$resetReading()</code>.</p>
 <div class="section level3">
 <h3 id="fetch-all-features-or-progressively-in-batches">Fetch all features or progressively in batches<a class="anchor" aria-label="anchor" href="#fetch-all-features-or-progressively-in-batches"></a>
 </h3>
-<p>Class <code>GDALVector</code> also provides <code>$fetch()</code> to
-retrieve the next <code>n</code> features from the layer and return them
-as a data frame (analog of [<code>DBI::dbFetch()</code>]). The
-<code>$fetch()</code> method can be used to get the entire feature set
-for a layer, one batch of features at a time, or the remaining features
-from the current cursor position. Fetching zero features is also
-possible to retrieve the structure of the layer as a 0-row data frame
-with fully typed columns. As with <code>$getNextFeature()</code>, only
-forward paging is supported.</p>
+<p>Class <code>GDALVector</code> also provides the <code>$fetch()</code>
+method to retrieve the next <code>n</code> features from the layer and
+return them as a data frame (analog of <code>DBI::dbFetch()</code>).
+<code>$fetch()</code> can be used to get the entire feature set for a
+layer, one batch of features at a time, or the remaining features from
+the current cursor position. Fetching zero features is also possible to
+retrieve the structure of the layer as a 0-row data frame with fully
+typed columns. As with <code>$getNextFeature()</code>, only forward
+paging is supported.</p>
 <p>Passing <code>n = -1</code> or <code>n = Inf</code> will retrieve all
 features from the beginning (with an automatic call to
 <code>$resetReading()</code>). Passing <code>n = NA</code> is supported
@@ -1001,11 +1012,11 @@ returned by <code>$fetch()</code> carries the
 <p>Fetching in batches may be advantageous when dealing with large
 datasets, especially when reading over a network. Also, note that
 <code>$getFeatureCount()</code> is called internally when fetching the
-full feature set but not for a page of features. Some vector drivers
-will actually scan the entire layer once to count features. The
-<code>FastFeatureCount</code> element in the list returned by the
-<code>$testCapability()</code> method can be checked if this might be a
-concern.</p>
+full feature set but not for a batch of <code>n</code> features. Some
+vector drivers will actually scan the entire layer once to count
+features. The <code>FastFeatureCount</code> element in the list returned
+by the <code>$testCapability()</code> method can be checked if this
+might be a concern.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">poi</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">ynp_dsn</span>, <span class="st">"points_of_interest"</span><span class="op">)</span></span>
 <span></span>
@@ -1013,9 +1024,10 @@ concern.</p>
 <span><span class="co">#&gt; [1] 1399</span></span>
 <span></span>
 <span><span class="co"># read progressively in batches</span></span>
+<span><span class="va">batch_size</span> <span class="op">&lt;-</span> <span class="fl">500</span></span>
 <span><span class="va">batch</span> <span class="op">&lt;-</span> <span class="fl">0</span></span>
 <span><span class="kw">while</span> <span class="op">(</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op">{</span></span>
-<span>    <span class="va">poi_featset</span> <span class="op">&lt;-</span> <span class="va">poi</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="fl">500</span><span class="op">)</span></span>
+<span>    <span class="va">poi_featset</span> <span class="op">&lt;-</span> <span class="va">poi</span><span class="op">$</span><span class="fu">fetch</span><span class="op">(</span><span class="va">batch_size</span><span class="op">)</span></span>
 <span>    <span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">poi_featset</span><span class="op">)</span> <span class="op">==</span> <span class="fl">0</span><span class="op">)</span> <span class="kw">break</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"batch"</span>, <span class="va">batch</span> <span class="op">&lt;-</span> <span class="va">batch</span> <span class="op">+</span> <span class="fl">1</span>, <span class="st">":"</span>, <span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">poi_featset</span><span class="op">)</span>, <span class="st">"features\n"</span><span class="op">)</span></span>
 <span>    <span class="co"># process batch</span></span>
@@ -1045,11 +1057,11 @@ stream by batch (returning a <code>nanoarrow_array</code> object). The
 default batch size for an OGR array stream is 65,536 features, but can
 be configured on a per-object basis by assigning a value to the
 <code>GDALVector</code> writeable field <code>$arrowStreamOptions</code>
-(a character vector of “NAME=VALUE” pairs). <strong>nanoarrow</strong>
-provides S3 methods for <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> to import a
-<code>nanoarrow_array</code> (one batch at a time), or the
-<code>nanoarrow_array_stream</code> itself (pulling all batches in the
-stream).</p>
+(as a character vector of “NAME=VALUE” pairs).
+<strong>nanoarrow</strong> provides S3 methods for
+<code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> to import a <code>nanoarrow_array</code>
+(one batch at a time), or the <code>nanoarrow_array_stream</code> itself
+(pulling all batches in the stream).</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Expose an ArrowArrayStream (requires GDAL &gt;= 3.6)</span></span>
 <span></span>
@@ -1109,6 +1121,7 @@ stream).</p>
 <span>                        srs_from <span class="op">=</span> <span class="va">roads</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span>,</span>
 <span>                        srs_to <span class="op">=</span> <span class="st">"EPSG:26912"</span><span class="op">)</span></span>
 <span></span>
+<span><span class="co"># add a column with road lengths in meters</span></span>
 <span><span class="va">d</span><span class="op">$</span><span class="va">rdlength</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/g_measures.html">g_length</a></span><span class="op">(</span><span class="va">geom_utm</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d</span><span class="op">)</span></span>
 <span><span class="co">#&gt;                 rdname opentopubl</span></span>
@@ -1141,12 +1154,13 @@ stream).</p>
 <p>The following example introduces another sample dataset which
 contains fire perimeters for Yellowstone National Park from the
 Monitoring Trends in Burn Severity (MTBS) project. Here we set up a
-temporary writable copy of ynp_fires_1984_2022.gpkg (in memory), and use
-it as a data source to perform further processing.</p>
-<p>The MTBS layer uses a projected coordinate system, while the layers
-in the “YNP features” dataset used above are in geographic coordinates.
-We use the <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> function to project layers from
-ynp_features.gpkg to match the coordinate system of the MTBS layer.</p>
+temporary, writable copy of the dataset ynp_fires_1984_2022.gpkg (in
+memory), and use it as a data source to perform further processing.</p>
+<p>The MTBS layer uses a projected coordinate system, while layers of
+the “YNP features” dataset used in the examples above are in geographic
+coordinates. The <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> function is used to
+project layers in geographic coordinates from ynp_features.gpkg to match
+the coordinate system of the MTBS layer.</p>
 <div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># MTBS fire perimeters in Yellowstone National Park 1984-2022</span></span>
 <span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package <span class="op">=</span> <span class="st">"gdalraster"</span><span class="op">)</span></span>
@@ -1163,7 +1177,7 @@ ynp_features.gpkg to match the coordinate system of the MTBS layer.</p>
 <span><span class="co">#&gt;  CRS    : NAD83 / Montana (EPSG:32100)</span></span>
 <span><span class="co">#&gt;  Geom   : MULTIPOLYGON</span></span>
 <span></span>
-<span><span class="va">srs_mtsp</span> <span class="op">&lt;-</span> <span class="va">fires</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">srs_mtsp</span> <span class="op">&lt;-</span> <span class="va">fires</span><span class="op">$</span><span class="fu">getSpatialRef</span><span class="op">(</span><span class="op">)</span>  <span class="co"># Montana state plane metric definition</span></span>
 <span></span>
 <span><span class="co"># reproject the boundary in ynp_features.gpkg to match the MTBS layer,</span></span>
 <span><span class="co"># returning a GDALVector object on the output layer by default</span></span>
@@ -1245,8 +1259,10 @@ object creates and writes a new feature within the layer. The
 (which could be be one row of a data frame). The passed feature is
 written to the layer as a new feature, rather than overwriting an
 existing one.</p>
+<p>Here we add the centroid of the YNP boundary as a point of
+interest.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># add the YNP centroid as a point of interest</span></span>
+<code class="sourceCode R"><span><span class="co"># create a feature object for the YNP centroid as a point of interest</span></span>
 <span><span class="op">(</span><span class="va">bnd_centroid_xy</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/g_measures.html">g_centroid</a></span><span class="op">(</span><span class="va">bnd_feat</span><span class="op">$</span><span class="va">geom</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt;         x         y </span></span>
 <span><span class="co">#&gt; 516788.22  39216.35</span></span>
@@ -1258,12 +1274,12 @@ existing one.</p>
 <span><span class="va">feat</span><span class="op">$</span><span class="va">editdate</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Sys.time.html" class="external-link">Sys.Date</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">feat</span><span class="op">$</span><span class="va">geom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/g_factory.html">g_create</a></span><span class="op">(</span><span class="st">"POINT"</span>, <span class="va">bnd_centroid_xy</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># re-open the points_of_interest layer with update access</span></span>
+<span><span class="co"># re-open the "points_of_interest" layer with update access</span></span>
 <span><span class="va">poi</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>read_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span><span class="va">poi</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">SequentialWrite</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
-<span><span class="co"># create and write the new feature</span></span>
+<span><span class="co"># create and write the new feature on the layer</span></span>
 <span><span class="va">poi</span><span class="op">$</span><span class="fu">createFeature</span><span class="op">(</span><span class="va">feat</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
@@ -1317,7 +1333,7 @@ will be preserved.</li>
 corresponding JSON member.</li>
 </ul>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># rewrite a point_of_interest feature to update the feature name</span></span>
+<code class="sourceCode R"><span><span class="co"># rewrite a feature in the "point_of_interest" layer updating the feature name</span></span>
 <span><span class="co"># verify the layer has random write capability</span></span>
 <span><span class="va">poi</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">RandomWrite</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1378,12 +1394,18 @@ corresponding JSON member.</li>
 <div class="section level3">
 <h3 id="delete-a-feature">Delete a feature<a class="anchor" aria-label="anchor" href="#delete-a-feature"></a>
 </h3>
+<p>The <code>$deleteFeature()</code> method of a <code>GDALVector</code>
+object deletes the feature with the indicated feature ID if supported by
+the format driver. The value of <code>fid</code> must be a single
+numeric value, optionally carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code>
+class attribute.</p>
 <div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># delete the YNP centroid feature the was created above</span></span>
+<code class="sourceCode R"><span><span class="co"># delete the "YNP centroid" feature that was created above</span></span>
 <span><span class="co"># verify the layer has delete feature capability</span></span>
 <span><span class="va">poi</span><span class="op">$</span><span class="fu">testCapability</span><span class="op">(</span><span class="op">)</span><span class="op">$</span><span class="va">DeleteFeature</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
+<span><span class="co"># the feature ID was obtained above as: fid &lt;- poi$getLastWriteFID()</span></span>
 <span><span class="va">poi</span><span class="op">$</span><span class="fu">getFeature</span><span class="op">(</span><span class="va">fid</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature</span></span>
 <span><span class="co">#&gt; $FID</span></span>
@@ -1421,8 +1443,8 @@ corresponding JSON member.</li>
 <p>The <code>$batchCreateFeature()</code>method of a
 <code>GDALVector</code> object is batch version of
 <code>$createFeature()</code>. It creates and writes a batch of new
-features within the layer from input passed as a data frame. Column
-names in the data frame must match field names of the layer and have
+features within the layer from input given as a data frame. Column names
+in the data frame must match field names of the layer and have
 compatible data types.</p>
 <p>Operations that write batches of features should use transactions for
 better performance when writing into RDBMS drivers that have native
@@ -1437,11 +1459,11 @@ We create a new POINT layer in the existing GPKG
 (<code>mtbs_dsn</code>), and write batches of features at random point
 locations within the YNP bounding box.</p>
 <p>By default, the GeoPackage driver automatically creates a column
-named <code>fid</code> to use for the OGR FID (primary key in the SQLite
-database). This can be configured with the <code>FID=value</code> layer
-creation option. Note that FID (feature id) is a special property of a
-feature and not treated as an attribute, so we do not specify it in the
-layer definition.</p>
+named <code>fid</code> to use for the OGR feature ID (primary key in the
+SQLite database). This can be configured with the <code>FID=value</code>
+layer creation option. Note that the FID is a special property of a
+feature and not treated as an attribute of a feature, so it is not
+specified in the layer definition.</p>
 <div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># create a layer definition for random_points</span></span>
 <span><span class="co"># the spatial ref was obtained above as: srs_mtsp &lt;- fires$getSpatialRef()</span></span>
@@ -1473,7 +1495,7 @@ grouping in a transaction, measuring time elapsed.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">batchCreateFeature</span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.489   0.007   2.497</span></span>
+<span><span class="co">#&gt;   2.257   0.008   2.265</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1502,7 +1524,7 @@ and the layer is checked for the expected output.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.068   0.008   1.076</span></span>
+<span><span class="co">#&gt;   1.031   0.010   1.042</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1515,22 +1537,22 @@ and the layer is checked for the expected output.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;   FID               pt_desc         create_time                           geom</span></span>
-<span><span class="co">#&gt; 1   1 random points batch 1 2025-05-04 01:30:17 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 2   2 random points batch 1 2025-05-04 01:30:17 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 3   3 random points batch 1 2025-05-04 01:30:17 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 4   4 random points batch 1 2025-05-04 01:30:17 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 5   5 random points batch 1 2025-05-04 01:30:17 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 6   6 random points batch 1 2025-05-04 01:30:17 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 1   1 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 2   2 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 3   3 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 4   4 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 5   5 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 6   6 random points batch 1 2025-05-04 05:45:20 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;           FID               pt_desc         create_time</span></span>
-<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-05-04 01:30:20</span></span>
-<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-05-04 01:30:20</span></span>
-<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-05-04 01:30:20</span></span>
-<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-05-04 01:30:20</span></span>
-<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-05-04 01:30:20</span></span>
-<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-05-04 01:30:20</span></span>
+<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-05-04 05:45:23</span></span>
+<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-05-04 05:45:23</span></span>
+<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-05-04 05:45:23</span></span>
+<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-05-04 05:45:23</span></span>
+<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-05-04 05:45:23</span></span>
+<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-05-04 05:45:23</span></span>
 <span><span class="co">#&gt;                                  geom</span></span>
 <span><span class="co">#&gt; 199995 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span><span class="co">#&gt; 199996 WKB POINT: raw 01 01 00 00 ...</span></span>
@@ -1567,21 +1589,21 @@ for write access on the layer (i.e., an object of class
 one or more features have been written to the layer.</p>
 <p>Here we generate a GeoJSON string containing a single polygon feature
 that defines a rectangular area of interest around the Maple Fire
-boundary. This format is supported for input by some data distribution
-systems to define a download box (e.g., <a href="https://www.mrlc.gov/viewer/" class="external-link">NLCD</a> and <a href="https://www.landfire.gov/viewer/" class="external-link">LANDFIRE</a>). For this case we
-need the coordinates in Web Mercator projection (EPSG 3857).</p>
+boundary. This GeoJSON format is supported for input by some data
+distribution systems to define a download box (e.g., <a href="https://www.mrlc.gov/viewer/" class="external-link">NLCD</a> and <a href="https://www.landfire.gov/viewer/" class="external-link">LANDFIRE</a>). For this case we
+need coordinates in Web Mercator projection (EPSG 3857).</p>
 <div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># write the Maple Fire AOI bounding box as GeoJSON in EPSG 3857</span></span>
 <span><span class="va">json_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"maple_fire_aoi.geojson"</span><span class="op">)</span></span>
 <span></span>
-<span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ogr_manage.html">ogr_ds_create</a></span><span class="op">(</span><span class="st">"GeoJSON"</span>, <span class="va">json_file</span>, <span class="st">"maple_fire_aoi"</span>,</span>
+<span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ogr_manage.html">ogr_ds_create</a></span><span class="op">(</span><span class="st">"GeoJSON"</span>, <span class="va">json_file</span>, layer <span class="op">=</span> <span class="st">"maple_fire_aoi"</span>,</span>
 <span>                     geom_type <span class="op">=</span> <span class="st">"POLYGON"</span>, srs <span class="op">=</span> <span class="st">"EPSG:3857"</span>,</span>
 <span>                     fld_name <span class="op">=</span> <span class="st">"id"</span>, fld_type <span class="op">=</span> <span class="st">"OFTString"</span>,</span>
 <span>                     overwrite <span class="op">=</span> <span class="cn">TRUE</span>, return_obj <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="co"># The Maple Fire polygon feature and spatial reference were obtained above in</span></span>
+<span><span class="co"># The Maple Fire feature object and spatial reference were obtained above in</span></span>
 <span><span class="co"># the section on "Reproject vector layers".</span></span>
-<span><span class="co"># We extend the minimum bounding box by 500 m in each direction.</span></span>
+<span><span class="co"># Here we extend the minimum bounding box by 500 m in each direction.</span></span>
 <span><span class="va">feat</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="va">feat</span><span class="op">$</span><span class="va">id</span> <span class="op">&lt;-</span> <span class="st">"dataDownloadBox"</span></span>
 <span><span class="va">feat</span><span class="op">$</span><span class="va">geom</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/g_transform.html">g_transform</a></span><span class="op">(</span><span class="va">maple_fire</span><span class="op">$</span><span class="va">geom</span>, srs_from <span class="op">=</span> <span class="va">srs_mtsp</span>,</span>
