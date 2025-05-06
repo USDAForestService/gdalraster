@@ -695,7 +695,9 @@ inspectDataset <- function(filename, ...) {
     out$supports_raster <- fmt_info$raster
     out$contains_raster <- FALSE
     if (out$supports_raster) {
+        push_error_handler("quiet")
         ds <- try(new(GDALRaster, filename_in), silent = TRUE)
+        pop_error_handler()
         if (is(ds, "Rcpp_GDALRaster"))
             out$contains_raster <- TRUE
     }
