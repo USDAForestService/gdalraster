@@ -1,4 +1,6 @@
-# gdalraster 1.12.0.9300 (dev)
+# gdalraster 1.12.0.9301 (dev)
+
+* `inspectDataset()` and `warp()`: wrap checks of raster dataset open in quiet error handler to suppress unnecessary error message from GDAL (#709) (2025-05-06)
 
 * configure: remove configuration of PROJ include directory and libs, not needed with GDAL >= 3.0 and gdalraster only uses PROJ via GDAL headers (#702) (2025-04-25)
 
