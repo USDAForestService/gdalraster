@@ -9,7 +9,7 @@ articles:
   raster-attribute-tables: raster-attribute-tables.html
   articles/raster-display: raster-display.html
   vector-api-overview: vector-api-overview.html
-last_built: 2025-05-04T16:49Z
+last_built: 2025-05-06T22:22Z
 urls:
   reference: https://usdaforestservice.github.io/gdalraster/reference
   article: https://usdaforestservice.github.io/gdalraster/articles
