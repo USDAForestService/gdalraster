@@ -316,7 +316,7 @@ ogr_layer_field_names(mem_gpkg, "points_of_interest")
 
 To read back from the modified data source we need to instantiate objects of class `GDALVector`. More detail on working with `GDALVector` objects is given in the examples further below for data retrieval. For now, note that the function `ogr_execute_sql()` returns an object of class `GDALVector` for SQL statements that return a result set.
 
-```{r}
+```{r fig.alt = "A plot of the Yellowstone National Park (YNP) boundary in geographic coordinate system showing point locations of geothermal features. The YNP boundary polygon has background R color 'wheat'. The locations of geothermal features are solid circles with R color 'steelblue1. The x-axis label is 'longitude' and the y-axis label is 'latitude'. The plot title is 'YNP Geothermal Features."}
 # read and display the geothermal features
 sql <- "SELECT poi_name, geom
           FROM points_of_interest
@@ -335,7 +335,6 @@ GDALVector$new(mem_gpkg, "ynp_bnd")$getNextFeature() |>
   plot(col = "wheat", xlab = "longitude", ylab = "latitude",
        main = "YNP Geothermal Features")
 
-# add point locations of the geothermal features
 plot(feat_set, pch = 19, col = "steelblue1", add = TRUE)
 ```
 
@@ -404,7 +403,7 @@ Note that it is possible to set an attribute filter and/or spatial filter prior 
 
 The `layer` argument in the constructor for `GDALVector` can also be given as a SQL SELECT statement. Here we read from the roads layer selecting only the publicly accessible roads. We call `$fetch()` with `n = -1` to read from the beginning and retrieve all available features. The data frame returned by `$fetch()` carries the `"OGRFeatureSet"` class attribute providing S3 methods for `print()` and `plot()`.
 
-```{r}
+```{r fig.alt = "A plot of the Yellowstone National Park (YNP) boundary in geographic coordinate system showing public roads as LineString features. The YNP boundary polygon has background R color 'wheat', and the road features are shown as double-width lines with R color 'slategray'. The x-axis label is 'longitude' and the y-axis label is 'latitude'. The plot title is 'YNP Public Roads'."}
 # SQL layer for public roads
 sql <- "SELECT rdname, opentopubl, geom FROM roads WHERE opentopubl = 'Yes'"
 (roads <- new(GDALVector, ynp_dsn, sql))
@@ -505,7 +504,7 @@ The following example introduces another sample dataset which contains fire peri
 
 The MTBS layer uses a projected coordinate system, while layers of the "YNP features" dataset used in the examples above are in geographic coordinates. The `ogr_reproject()` function is used to project layers in geographic coordinates from ynp_features.gpkg to match the coordinate system of the MTBS layer.
 
-```{r}
+```{r fig.alt = "A plot of the Yellowstone National Park (YNP) boundary in a projected coordinate system showing the perimeter of the 2016 Maple Fire, along with three points of interest located within the fire polygon. The YNP boundary polygon has background R color 'wheat'. The Maple Fire perimeter is shown as a filled polygon in R color 'orangered'. The three points of interest are shown as filled square symbols in R color 'royalblue'. The x-axis label is 'x' and the y-axis label is 'y'. The plot is untitled."}
 # MTBS fire perimeters in Yellowstone National Park 1984-2022
 f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
 
@@ -557,7 +556,7 @@ The `$createFeature()` method of `GDALVector` object creates and writes a new fe
 
 Here we add the centroid of the YNP boundary as a point of interest.
 
-```{r}
+```{r fig.alt = "A plot of the Yellowstone National Park (YNP) boundary in a projected coordinate system showing the centroid of the park boundary polygon as a single point. The YNP boundary polygon has background R color 'wheat'. The centroid point is shown as an R 'circle plus' symbol, a circle with a plus sign inside resembling crosshairs. The x-axis label is 'x' and the y-axis label is 'y'. The plot is untitled."}
 # create a feature object for the YNP centroid as a point of interest
 (bnd_centroid_xy <- g_centroid(bnd_feat$geom))
 
@@ -755,7 +754,7 @@ Inputs are given as objects of class `GDALVector`, which may have spatial and/or
 
 Here we generate a layer of areas within the 1988 North Fork fire perimeter that have subsequently re-burned (as of 2022). The output layer contains features whose geometries represent areas that are common between features in the input layer and in the method layer. The features in the output layer have attributes from both the input and method layers.
 
-```{r}
+```{r fig.alt = "A plot of the 1988 North Fork fire perimeter showing areas within the North Fork burn scar that have subsequently re-burned as of 2022. The North Fork fire is shown as an unfilled polygon with black outline. Areas within the North Fork polygon that have re-burned are shown as filled polygons in R color 'orangered'. The x-axis label is 'x' and the y-axis label is 'y'. The plot title is '1988 North Fork fire perimeter showing re-burned areas in red'."}
 # layer filtered to fires after 1988
 lyr1 <- new(GDALVector, mtbs_dsn, "mtbs_perims")
 lyr1$setAttributeFilter("ig_year > 1988")
