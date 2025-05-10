@@ -1,249 +1,139 @@
-# gdalraster 1.12.0.9301 (dev)
-
-* `inspectDataset()` and `warp()`: wrap checks of raster dataset open in quiet error handler to suppress unnecessary error message from GDAL (#709) (2025-05-06)
-
-* configure: remove configuration of PROJ include directory and libs, not needed with GDAL >= 3.0 and gdalraster only uses PROJ via GDAL headers (#702) (2025-04-25)
-
-* change default geometry column name to 'geom' (as used in class `GDALVector` and helper function `ogr_def_layer()`, previously was 'geometry') (#701) (2025-04-24)
-
-* fix test for `inv_project()` with GDAL >= 3.11 (#700) (2025-04-20)
-
-* fix input validation in `GDALVector::validateFeatInput_()` for OFTInteger64 allowed types (#699) (2025-04-17)
-
-* add `get_cache_max()` and `set_cache_max()`, get/set maximum memory size available for the GDAL block cache (#695) (2025-04-12)
-
-* `get_cache_used()`: change return value to R numeric carrying the integer64 class attribute and add argument `units` defaulting to MB (#694) (2025-04-12)
-
-* `inspectDataset()`: handle case of separate raster and vector drivers identified when specific flag was not given (#693) (2025-04-09)
-
-* add argument `main` to the S3 plot methods for `OGRFeature` and `OGRFeatureSet` (#692) (2025-04-08)
-
-* fix `GDALRaster::pixel_extract()` for points exactly on the right or bottom edges of the raster (#687) (2025-04-08)
-
-* add two raster subdatasets to the sample file inst/extdata/ynp_features.zip/ynp_features.gpkg, and update examples for `inspectDataset()` and `vsi_get_file_metadata()` (#691) (2025-04-07)
-
-* expose `gdal_version_num()` (previously internal/undocumented) and add `gdal_compute_version()` (#689) (2025-04-06)
-
-* add more error messages from GDAL in a few places, mainly verbose message when opening a dataset fails (#688) (2025-04-05)
-
-* add default xy axis labels in S3 methods `plot.OGRFeature` and `plot.OGRFeatureSet` (#685) (2025-04-03)
-
-* add `ogr_reproject()`: reproject a vector layer (#684) (2025-04-03)
-
-* fix `VSIFile::read()`: the `nbytes` argument should accept values carrying the integer64 class attribute (fix #677 thanks to @mdsumner) (2025-03-31)
-
-* add `GDALVector::getIgnoredFields()` (#676) (2025-03-31)
-
-* geom api: add `g_simplify()`, simplify WKB/WKT geometries, optionally preserving topology (#675) (2025-03-30)
-
-* geom api: add `g_swap_xy()` (#673) (2025-03-29)
-
-* `g_transform()`: add argument `traditional_gis_order` with default `TRUE`, to support authority compliant order for geometries using geographic coordinates (#672) (2025-03-29)
-
-* geom api: add `g_geodesic_area()` and `g_geodesic_length()` (#671) (2025-03-29)
-
-* add `GDALRaster::get_block_indexing()`: helper method to get indexing values for the block layout (#667) (2025-03-25)
-
-* `getCreationOptions()`: include `$min` and `$max` in the returned list if GDAL >= 3.11 (2025-03-22)
-
-* add `validateCreationOptions()`, validate the list of creation options that are handled by a driver (#663) (2025-03-17)
-
-* `getCreationOptions()`: change the return value to a named list of options with their information (#662) (2025-03-16)
-
-* `rasterize()`: support passing a `GDALRaster` object for in-place updating (#660) (2025-03-15)
-
-* fix bug in `GDALVector` write that could segfault with an input feature having zero attribute fields and one geometry field that uses the default geometry column name, e.g., a GeoJSON or shapefile layer with geometry only and no attribute fields (#659) (2025-03-14)
-
-* (internal) code linting for cppcheck style in geom_api.cpp and srs_api.cpp (#658) (2025-03-12)
-
-* `ogr_proc()`: rename argument `return_lyr_obj` to `return_obj`, to be consistent with other functions that optionally return a `GDALVector` or `GDALRaster` object (`ogr_proc()` is not in a release version yet so not designated as a breaking change) (2025-03-09)
-
-* `transform_xy()` / `inv_project()`: account for behavior change at GDAL 3.11 (#631) (2025-03-08)
-
-* geom api: support GeometryCollection in `g_create()` (#653) (2025-03-08)
-
-* (internal) [Valgrind] Fix memory leak in `validateFeatInput_()` (#652) (2025-03-07)
-
-* geom api: add `g_is_3D()` and `g_is_measured()` (#650) (2025-03-07)
-
-* Account for possible `convertToLinear` and/or `promoteToMulti` in the GIS attributes attached to vector read outputs (#645) (2025-03-05)
-
-* `GDALVector`: add per-object setting `convertToLinear`, whether to convert non-linear geometry types into
-linear geometry types by potentially approximating them (#629) (2025-03-04)
-
-* fix geometry binary op functions (`g_intersection()`, etc.): fix indexing of the output list when both inputs are list (#641) (2025-03-03)
-
-* add the writable field `GDALVector::transactionsForce` defaulted to `FALSE` (#640) (2025-03-03)
-
-* add `GDALVector::batchCreateFeature()`: write a batch of features to a layer from data frame input (#639) (2025-03-03)
-
-* `GDALVector::testCapability()`: add `FastGetArrowStream` and `FastWriteArrowBatch` in the returned list of layer capabilities (#638) (2025-03-03)
-
-* (internal) fix test in configure.ac for GDAL >= 3.1.0 (2025-02-26)
-
-* `GDALVector::getArrowStream()`: default to `GEOMETRY_METADATA_ENCODING=OGC` instead of `GEOARROW` for now, i.e., use the GDAL default unless specified otherwise (2023-02-23)
-
-* (internal) various C++ code linting throughout (#624) (2025-02-23)
-
-* (internal) implement `ogr_ds_create()` and `ogr_layer_create()` as `GDALVector` object factories (#609) (2025-02-22)
-
-* add `GDALVector::getArrowStream()`: expose an Arrow C stream on a layer via nanoarrow_array_stream object (#591) (2025-02-22)
-
-* fix potential integer overflow when multiplying raster dimensions in R without explicit `as.numeric()` (#620 thanks to @mdsumner) (2025-02-21)
-
-* `GDALVector::info()`: enable full info output on a vector layer opened via SQL statement (#615 thanks to @mdsumner) (2025-02-21)
-
-* `pixel_extract()`: fix the check for GDAL >= 3.10 when cubic or cubicspline interpolation is requested (thanks to @mdsumner) (2025-02-21)
-
-* `read_ds()`: pre-allocate the output vector based on the size of the unioned data type across all bands (2025-02-18)
-
-* fix `plot_raster()` to avoid integer overflow (#613 thanks to @mdsumner) (2025-02-18)
-
-* (internal) implement `create()`, `createCopy()`, `autoCreateWarpedVRT()` as object factories (2025-02-14)
-
-* add S4 `show()` methods for the Rcpp exposed classes (2025-02-12)
-
-* add `pixel_extract()`: extract pixel values at geospatial point locations (#570) (2025-02-12)
-
-* `g_create()`: support input points with Z/M; support output of multiple POINT geoms from multiple xy input (optionally, instead of a single MULTIPOINT) (2025-02-09)
-
-* `transform_xy()` / `inv_project()`: support input points with z vertices (three column xyz) or time values (four column xyzt); optionally accept input of point geometries as character vector of WKT strings, WKB raw vector, or list of raw vectors (2025-02-09)
-
-* add `g_coords()`: extract coordinate values from geometries (2025-02-09)
-
-* improve and expand bindings to a subset of the GDAL Spatial Reference System API (#584) (2025-02-08)
-
-* add helper functions for GDAL raster data types (#593) (2025-02-08)
-
-* handle `NA` in the input coordinates to `transform_xy()`, `inv_project()`, `transform_bounds()`, `apply_geotransform()` and `get_pixel_line()` (#592) (2025-02-07)
-
-* add `GDALVector::info()`: print information about the vector layer to the console (2025-02-05)
-
-* improve `GDALRaster::bbox()` and `GDALRaster::res()` to handle south-up / rotated raster, with related fixes in `read_ds()` and `plot_raster()` (#569) (2025-02-03)
-
-* update the geometry interface to support the vector API in gdalraster 2.0, with changes to existing functions and add `g_wk2wk()`, `g_create()`, `g_add_geom()`, `transform_bounds()` (#572) (2025-02-03)
-
-* (internal) fix uninitialized variable in class `GDALVector`, compiler warning on macos (2025-02-03)
-
-* C++17 is now a system requirement (2025-02-02)
-
-* `plot_raster()`: add argument `pixel_fn` to specify a function that will be applied to the input data for plotting, and handle input raster with complex data type (#582) (2025-02-02)
-
-* `GDALVector-class`: rename the writable field `$defaultGeomFldName` to `$defaultGeomColName` (2025-02-01)
-
-* accept one (x, y) as a vector in functions that expect matrix or data frame input (`transform_xy()`, `inverse_proj()`, `apply_geotransform()`, `get_pixel_line()`) (2025-02-01)
-
-* (internal) validate input columns in the data frame-to-matrix internal C++ functions (2025-02-01)
-
-* add `vsi_is_local()`: returns whether the file/filesystem is "local",  wrapper of `VSIIsLocal()` (2025-01-31)
-
-* add `GDALVector::getFieldDomain()`: accepts the name of an OGR field domain associated with the dataset and returns a list containing the domain specifications (GDAL >= 3.3) (2025-01-20)
-
-* `GDALVector::createDF_()`: avoid clang-asan undefined-behavior error from `RcppInt64::wrap()` when called on a `std::vector<int64_t>` of size `0` (2025-01-19)
-
-* `GDALVector`: add a `BBOX` option for the per-object setting `$returnGeomAs` (2024-10-03)
-
-* add minimal S3 classes `OGRFeature` and `OGRFeatureSet` with methods for `print()` and `plot()` (2024-09-28)
-
-* add `g_summary()`: obtain text summaries of WKB/WKT geometries (GDAL >= 3.7) (2024-09-24)
-
-* update `g_is_valid()`, `g_is_empty()`, `g_name()` and `g_buffer()` to the new style geometry API: the OGR GEOS wrappers now operate on input of WKB raw vector, list of WKB, or character vector of WKT strings, with return as either WKB raw vector (or list of) / WKT character string (vector of) (2024-09-22)
-
-* add `GDALVector::quiet`: exposed read/write field to optionally suppress warnings etc. (2024-09-20)
-
-* the `layer` argument may be `NULL` or empty string in certain `ogr_manage` functions, defaulting to the first layer by index (mainly convenience for single-layer formats) (2024-09-19)
-
-* `GDALVector`: add get/set metadata methods for layer-level metadata if the format supports it (2024-09-19)
-
-* `GDALVector`: support writing OFTTime fields from string input `"HH:MM:SS"` (2024-09-16)
-
-* `GDALVector`: improve `NULL` handling in feature write methods (`NA`, `NULL` and empty vector (e.g., `raw(0)`) map to OGR NULL) (2024-09-15)
-
-* fix `GDALVector::setSpatialFilter()`: SRS was not set on the geometry before using it as the layer spatial filter, which could cause segfault (2024-09-15)
-
-* add `g_make_valid()`: attempt to make invalid geometries valid, operating on input of WKB raw vector, list of WKB, or character vector of WKT strings (2024-09-15)
-
-* remove the class field `GDALVector::featureTemplate` as not needed / not useful, and its removal fixes Valgrind errors (#520) (2024-09-14)
-
-* add `g_wk2wk()`: geometry WKB/WKT conversion (2024-09-13)
-
-* remove `is_ignored` from feature class definition, potentially breaking change but assumed to be unused in feature class / field creation (2024-09-11)
-
-* add `return_obj` argument in `ogr_ds_create()` and `ogr_layer_create()`, `TRUE` to return a writable `GDALVector` object on the created layer (2024-09-11)
-
-* `GDALVector`: add method `$setSelectedFields()`, alternative to `$setIgnoredFields()` (2024-09-10)
-
-* `GDALVector`: add a `SUMMARY` option for the per-object setting `$returnGeomAs` (2024-09-09)
-
-* `GDALVector`: add `$promoteToMulti` as a per-object setting (2024-09-09)
-
-* `GDALVector`: add class methods for writing features in a layer: `$createFeature()`, `$setFeature()`, `$upsertFeature()` (2024-09-08)
-
-* add `ogr_layer_rename()`: rename an existing layer in a vector dataset (GDAL >= 3.5) (2024-09-04)
-
-* (internal) add header `src/gdal_vsi.h` and minor code cleanups in `src/gdal_vsi.cpp` (2024-09-02)
-
-* (internal) use consistent naming convention for C++ class member variables (2024-08-31)
-
-* (internal) pass by const reference in some srs and geom functions (2024-08-31)
-
-* (internal) class `GDALVector`: add get/set methods for the dataset and layer handles for internal use (2024-08-18)
-
-* (internal) try/catch if potentially large allocation of std::vector (2024-08-18)
-
-* add `GDALRaster::getMaskBand()`: return the mask filename and band number associated with a given band of the dataset (2024-08-15)
-
-* add `GDALRaster::getMaskFlags()`: return the status flags of the mask band associated with a given band of the dataset (2024-08-14)
-
-* add `srs_get_name()`: return the spatial reference system name (2024-08-12)
-
-* add `srs_find_epsg()`: try to identify a matching EPSG code for a given SRS definition (2024-08-11)
-
-* `translate()`: source raster can be a `GDALRaster` object (2024-08-11)
-
-* add `autoCreateWarpedVRT()`: create a warped virtual dataset representing the input raster warped into the target coordinate system, wrapper of `GDALAutoCreateWarpedVRT()` (2024-08-10)
-
-* `GDALRaster::setDescription()`: support `band = 0` to set the dataset-level description (2024-08-10)
-
-* `warp()`: source and destination rasters may be objects of class `GDALRaster` (#469) (2024-08-10)
-
-* add `GDALRaster::addBand()`: add a band to a dataset if the underlying format supports this action, e.g., `MEM` and `VRT` (2024-08-09)
-
-* `createCopy()`: add argument `return_obj`, `TRUE` to return an object of class `GDALRaster` for the created dataset; an object of class `GDALRaster` can be given for argument `src_filename` to specify the source dataset (2024-08-07)
-
-* `create()`: add argument `return_obj`, `TRUE` to return an object of class `GDALRaster` for the created dataset (2024-08-07)
-
-* add `GDALRaster::setMetadata()`: set dataset or band-level metadata from a character vector of NAME=VALUE pairs (instead of per metadata item with the existing `$setMetadataItem()`) (2024-08-07)
-
-* add transactions support in class `GDALVector` (`$startTransaction()`, `$commitTransaction()`, `$rollbackTransaction()`) (2024-08-03)
-
-* add `GDALVector::deleteFeature()`: delete feature from layer (2024-08-03)
-
-* add `featureTemplate` as a read-only field in class `GDALVector` (2024-08-03)
-
-* add `GDALVector::setNextByIndex()`: move the read cursor to the `i`th feature in the current result set (2024-08-02)
-
-* add `GDALVector::setIgnoredFields()`: set which fields can be omitted when retrieving features from the layer (2024-08-01)
-
-* add GDALVector class methods: `getAttributeFilter()`, `setSpatialFilter()`, `getSpatialFilter()` (2024-07-30)
-
-* add `ogr_proc()`: GDAL OGR facilities for vector geoprocessing (2024-07-28)
-
-* `ogr_execute_sql()`: now returns an object of class `GDALVector` for SQL SELECT statements (2024-07-24)
-
-* add class [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html), initial implementation / WIP (2024-07-22)
-
-* add package `wk` to Suggests (2024-07-22)
-
-* add `GDALRaster$clearColorTable()`: clear the color table associated with a raster band (2024-07-10)
-
-* avoid data copy in `GDALRaster::getDefaultRAT()` for better performance in the case of large attribute tables (2024-06-24)
-
-* add `vsi_get_actual_url()`: return the actual URL of a supplied VSI filename, wrapper of `VSIGetActualURL()` in the GDAL API (2024-06-20)
-
-* add `vsi_get_signed_url()`: return a signed URL for a supplied VSI filename, wrapper of `VSIGetSignedURL()` in the GDAL API (2024-06-20)
-
-* Documentation: additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html); update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`; add the `-srcband` and `-dstband` command-line options in the documentation for `warp()`; add [Development practices](https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices) in CONTRIBUTING.md; add the OpenSSF best practices badge in README; add `fig.alt` text to articles for web accessibility; add the OpenSSF Scorecard badge in README; add example in `ogr2ogr()` for dissolve features based on an attribute value; code that cleans up temp files in the examples is wrapped in `\dontshow{}`; minor updates for `g_transform()`; update descriptions for the C++ exposed classes and emphasize lack of named argument support; restructure and edit `ogr_define`
+# gdalraster 1.12.0.9301 (dev-2.0-beta)
+
+## Summary of main changes
+
+* add bindings to the GDAL Vector API, implemented in the exposed C++ class [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html) and several [`ogr_*()` stand-alone functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#ogr-vector-utilities)
+* enhance and expand [bindings to the Geometry API](https://usdaforestservice.github.io/gdalraster/reference/index.html#geometry), operating on raw vectors of WKB or WKT strings
+* enhance and expand [bindings to the Spatial Reference Systems API](https://usdaforestservice.github.io/gdalraster/reference/index.html#spatial-reference-systems)
+* add several new features and improvements to the Raster API and Virtual Systems Interface (VSI) API
+* add helper functions for working with GDAL raster data types (see `?data_type_helpers`)
+* add an S4 `show()` method for all Rcpp exposed classes
+* bug fixes, code linting and other internal improvements
+
+## Dependencies
+
+* package **nanoarrow** has been added to Imports and LinkingTo
+* package **wk** has been added to Imports
+* C++17 is now a System Requirement
+* PROJ is removed as a stand-alone external System Requirement since: 1) **gdalraster** as of 1.12 requires GDAL >= 3.1, 2) PROJ has been a GDAL build requirement since GDAL 3.0, and 3) **gdalraster** only uses PROJ via GDAL headers (i.e., there is no longer a requirement for linking to external libproj in this case)
+
+## Vector API bindings
+
+* add class [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html): encapsulates an `OGRLayer` and the `GDALDataset` that contains it, currently providing 48 user-facing methods for obtaining vector layer information and reading/writing feature data
+* support GDAL's Arrow C Stream interface for reading vector data by exposing an ArrowArrayStream on a layer as a `nanoarrow_array_stream_object` (GDAL >= 3.6) (#591)
+* add `ogr_reproject()`: reproject a vector layer
+* add `ogr_proc()`: GDAL/OGR facilities for vector geoprocessing
+* add `ogr_layer_rename()`: rename an existing layer in a vector dataset (GDAL >= 3.5)
+* `ogr_execute_sql()`: now returns an object of class `GDALVector` for SQL SELECT statements
+* add argument `return_obj` in `ogr_ds_create()` and `ogr_layer_create()`, `TRUE` to return a writable `GDALVector` object on the created layer
+* the `layer` argument may be `NULL` or empty string in certain `ogr_manage` functions, defaulting to the first layer by index (mainly convenience for single-layer formats)
+* remove `is_ignored` from feature class definition (certain `ogr_define` and `ogr_manage` functions): potentially breaking change but assumed to be unused in feature class / field creation (#513)
+
+## Geometry API
+
+* update the geometry interface to support the vector API in gdalraster 2.0, with changes to existing functions, and add `g_wk2wk()`, `g_create()`, `g_add_geom()`,  `g_envelope()`, and `transform_bounds()` (wrapper of `OCTTransformBounds()` in the GDAL Spatial Reference System API, requires GDAL >= 3.4) (#572)
+* update `g_is_valid()`, `g_is_empty()`, `g_name()` and `g_buffer()` to the new style Geometry API: the geometry wrapper functions now operate on input of WKB raw vector, list of WKB, or character vector of WKT strings, with return as either WKB raw vector (or list of) / WKT character string (vector of)
+* **breaking changes**: breaks some existing functions by renaming argument `wkt` to `geom`, and by returning WKB raw vector by default from functions that return geometries (`as_wkb = TRUE` by default).
+* add `g_make_valid()`: attempt to make invalid geometries valid, operating on input of WKB raw vector, list of WKB, or character vector of WKT strings
+* add `g_summary()`: obtain text summaries of WKB/WKT geometries (GDAL >= 3.7)
+* add `g_simplify()`, simplify WKB/WKT geometries, optionally preserving topology (#675)
+* add `g_swap_xy()`: swap x and y coordinates of the input geometry
+* `g_transform()`: add argument `traditional_gis_order` with default `TRUE`, to support authority compliant order for geometries using geographic coordinates (#672)
+* add `g_geodesic_area()` and `g_geodesic_length()` (#671)
+* add `g_is_3D()` and `g_is_measured()` (#650)
+* add `g_coords()`: extract coordinate values from geometries
+* `bbox_transform()`: add argument `use_transform_bounds` (`TRUE` by default but requires GDAL >= 3.4)
+
+## Spatial Reference Systems API
+
+* improve and expand bindings to a subset of the GDAL Spatial Reference System API (#584)
+* **breaking change** in `srs_is_same()`: argument `srs1` is renamed to `srs` and argument `srs2` to `srs_other`
+* functions that previously required input as a WKT string now accept SRS definitions in any of the formats supported by `srs_to_wkt()` (wrapper of `OSRSetFromUserInput()`)
+* the documentation is grouped under two topics, `?srs_convert` and `?srs_query`, and now includes the following functions:
+  * **`srs_convert`**: `epsg_to_wkt()` and `srs_to_wkt()`
+  * **`srs_query`**: `srs_find_epsg()`, `srs_get_name()`, `srs_is_geographic()`, `srs_is_derived_gcs()`, `srs_is_local()`, `srs_is_projected()`, `srs_is_compound()`, `srs_is_geocentric()`, `srs_is_vertical()`, `srs_is_dynamic()`, `srs_is_same()`, `srs_get_angular_units()`, `srs_get_linear_units()`, `srs_get_coord_epoch()`, `srs_get_utm_zone()`, `srs_get_axis_mapping_strategy()`
+
+## GDALRaster-class
+
+* add `$get_block_indexing()`: helper method to get indexing values for the block layout (#667)
+* add `$addBand()`: method to add a band to a dataset if the underlying format supports this action, e.g., `MEM` and `VRT`
+* add `$clearColorTable()`: method to clear the color table associated with a raster band
+* add `$getMaskBand()`: method to return the mask filename and band number associated with a given band of the dataset
+* add `$getMaskFlags()`: method to return the status flags of the mask band associated with a given band of the dataset
+* add `$setMetadata()`: method to set dataset or band-level metadata from a character vector of NAME=VALUE pairs (instead of per metadata item with the existing `$setMetadataItem()`)
+* `$setDescription()`: support `band = 0` to set the dataset-level description
+* improve methods `$bbox()` and `$res()` to handle south-up / rotated raster (with related fixes in `read_ds()` and `plot_raster()`) (#569)
+
+## GDAL VSI for operations on virtual file systems
+
+* fix class method `VSIFile$read()`: the `nbytes` argument should accept values carrying the `integer64` class attribute (fixes #677 thanks to @mdsumner)
+* add `vsi_get_actual_url()`: return the actual URL of a supplied VSI filename, wrapper of `VSIGetActualURL()` in the GDAL API
+* add `vsi_get_signed_url()`: return a signed URL for a supplied VSI filename, wrapper of `VSIGetSignedURL()` in the GDAL API
+* add `vsi_is_local()`: returns whether the file/filesystem is "local",  wrapper of `VSIIsLocal()` in the GDAL API
+
+## GDAL configuration
+
+* add `get_cache_max()` and `set_cache_max()`: get/set maximum memory size available for the GDAL block cache
+* `get_cache_used()`: change return value to R `numeric` type carrying the `integer64` class attribute, and add argument `units` defaulting to `"MB"`
+* expose `gdal_version_num()` (previously internal/undocumented): return the full version number as an `integer` value (convenience for `as.integer(gdal_version()[2])`)
+* add `gdal_compute_version()`:compute the integer version number (`GDAL_VERSION_NUM`) from individual components (major, minor, revision)
+
+## Other stand-alone functions
+
+* fix `plot_raster()` to avoid integer overflow (#613 thanks to @mdsumner)
+* add `pixel_extract()`: extract pixel values at geospatial point locations (#570)
+* add `autoCreateWarpedVRT()`: create a warped virtual dataset representing the input raster warped into the target coordinate system, wrapper of `GDALAutoCreateWarpedVRT()`
+* add `validateCreationOptions()`: validate the list of creation options that are handled by a driver (#663)
+* `getCreationOptions()`: change the return value to a named list of options with their information (#662)
+* `getCreationOptions()`: include `$min` and `$max` attributes in the returned list if GDAL >= 3.11
+* `create()`: add argument `return_obj`, `TRUE` to return an object of class `GDALRaster` for the created dataset
+* `createCopy()`: add argument `return_obj`, `TRUE` to return an object of class `GDALRaster` for the created dataset
+* `createCopy()`: an object of class `GDALRaster` can be given for argument `src_filename` to specify the source dataset
+* `warp()`: source and destination rasters may be given as objects of class `GDALRaster`
+* `translate()`: source raster can be given as a `GDALRaster` object
+* `inspectDataset()`: handle the case of separate raster and vector drivers identified when specific flag was not given (#693)
+* `rasterize()`: support passing a `GDALRaster` object for in-place updating (#660)
+* handle `NA` in the input coordinates to `transform_xy()`, `inv_project()`, `transform_bounds()`, `apply_geotransform()` and `get_pixel_line()` (#592)
+* accept one (x, y) as a vector in functions that expect matrix or data frame input (`transform_xy()`, `inverse_proj()`, `apply_geotransform()`, `get_pixel_line()`)
+* `transform_xy()` / `inv_project()`: support input points with z vertices (three column xyz) or time values (four column xyzt); optionally accept input of point geometries as character vector of WKT strings, WKB raw vector, or list of WKB raw vectors
+* `transform_xy()` / `inv_project()`: account for behavior change in the `Transform` methods of `OGRCoordinateTransformation` at GDAL 3.11 (#631)
+* `plot_raster()`: add argument `pixel_fn` to specify a function that will be applied to the input data for plotting, and handle input raster with complex data type (#582)
+* `inspectDataset()` and `warp()`: apply quiet error handler around code checks that are based on `try()` of raster dataset open (#709)
+
+## Internals
+
+* fix potential integer overflow when multiplying raster dimensions in R without explicit `as.numeric()` (#620 thanks to @mdsumner)
+* fix test in configure.ac for GDAL >= 3.1.0
+* configure: remove configuration of PROJ include directory and libs as no longer needed (#702)
+* implement `create()`, `createCopy()`, `autoCreateWarpedVRT()` as `GDALRaster` object factories (#606)
+* implement `ogr_ds_create()` and `ogr_layer_create()` as `GDALVector` object factories (#609)
+* code linting for `cppcheck` style in `src/geom_api.cpp` and `src/srs_api.cpp` (#658)
+* various C++ code linting throughout (#624)
+* add header `src/gdal_vsi.h` and minor code cleanups in `src/gdal_vsi.cpp`
+* renamed files: `src/wkt_conv.cpp` -> `src/srs_api.cpp`, `src/wkt_conv.h` -> `src/srs_api.h`, `tests/testthat/test-wkt_conv.R` -> `tests/testthat/test-srs_api.R`
+* use consistent naming convention for C++ class member variables
+* pass arguments by `const` reference in some srs and geom functions (2024-08-31)
+* try/catch if potentially large allocation of `std::vector` (#485)
+* replace `CPLIsNan()` with `std::isnan()` (#485)
+* `read_ds()`: pre-allocate the output vector based on the size of the unioned data type across all bands
+* validate input columns in the data frame-to-matrix internal C++ conversion functions
+
+## Documentation
+
+* add package vignette [Vector API Overview](https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html)
+* update descriptions for the C++ exposed classes and emphasize lack of named argument support in those cases (i.e., argument order matters, mainly of concern with object constructors)
+* update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use argument `return_obj` with `create()` and `createCopy()`
+* additions to the section on Azure (/vsiaz/) in [GDAL Config Quick Reference](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+* add the `-srcband` and `-dstband` command-line options in the documentation for `warp()`
+* add example in `ogr2ogr()` for dissolving features based on an attribute value
+* minor updates for `g_transform()`
+* restructure and edit `?ogr_define`
+* update examples for `inspectDataset()` and `vsi_get_file_metadata()` to use the new sample data file ynp_features.zip (#691)
+* add `fig.alt` text to articles for web accessibility
+* code that cleans up temp files in the examples is now wrapped in `\dontshow{}`
+* add [Development practices](https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices) in CONTRIBUTING.md
+* add the [OpenSSF best practices](https://www.bestpractices.dev/projects/9382) badge in README
+* add the [OpenSSF Scorecard](https://scorecard.dev/viewer/?uri=github.com/USDAForestService/gdalraster) badge in README
 
 # gdalraster 1.12.0
 
