@@ -49,130 +49,185 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="1.12.0.9301" id="gdalraster-11209301-dev">gdalraster 1.12.0.9301 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-11209301-dev"></a></h2>
-<ul><li><p><code><a href="../reference/inspectDataset.html">inspectDataset()</a></code> and <code><a href="../reference/warp.html">warp()</a></code>: wrap checks of raster dataset open in quiet error handler to suppress unnecessary error message from GDAL (<a href="https://github.com/USDAForestService/gdalraster/issues/709" class="external-link">#709</a>) (2025-05-06)</p></li>
-<li><p>configure: remove configuration of PROJ include directory and libs, not needed with GDAL &gt;= 3.0 and gdalraster only uses PROJ via GDAL headers (<a href="https://github.com/USDAForestService/gdalraster/issues/702" class="external-link">#702</a>) (2025-04-25)</p></li>
-<li><p>change default geometry column name to ‘geom’ (as used in class <code>GDALVector</code> and helper function <code><a href="../reference/ogr_define.html">ogr_def_layer()</a></code>, previously was ‘geometry’) (<a href="https://github.com/USDAForestService/gdalraster/issues/701" class="external-link">#701</a>) (2025-04-24)</p></li>
-<li><p>fix test for <code><a href="../reference/inv_project.html">inv_project()</a></code> with GDAL &gt;= 3.11 (<a href="https://github.com/USDAForestService/gdalraster/issues/700" class="external-link">#700</a>) (2025-04-20)</p></li>
-<li><p>fix input validation in <code>GDALVector::validateFeatInput_()</code> for OFTInteger64 allowed types (<a href="https://github.com/USDAForestService/gdalraster/issues/699" class="external-link">#699</a>) (2025-04-17)</p></li>
-<li><p>add <code><a href="../reference/get_cache_max.html">get_cache_max()</a></code> and <code><a href="../reference/set_cache_max.html">set_cache_max()</a></code>, get/set maximum memory size available for the GDAL block cache (<a href="https://github.com/USDAForestService/gdalraster/issues/695" class="external-link">#695</a>) (2025-04-12)</p></li>
-<li><p><code><a href="../reference/get_cache_used.html">get_cache_used()</a></code>: change return value to R numeric carrying the integer64 class attribute and add argument <code>units</code> defaulting to MB (<a href="https://github.com/USDAForestService/gdalraster/issues/694" class="external-link">#694</a>) (2025-04-12)</p></li>
-<li><p><code><a href="../reference/inspectDataset.html">inspectDataset()</a></code>: handle case of separate raster and vector drivers identified when specific flag was not given (<a href="https://github.com/USDAForestService/gdalraster/issues/693" class="external-link">#693</a>) (2025-04-09)</p></li>
-<li><p>add argument <code>main</code> to the S3 plot methods for <code>OGRFeature</code> and <code>OGRFeatureSet</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/692" class="external-link">#692</a>) (2025-04-08)</p></li>
-<li><p>fix <code>GDALRaster::pixel_extract()</code> for points exactly on the right or bottom edges of the raster (<a href="https://github.com/USDAForestService/gdalraster/issues/687" class="external-link">#687</a>) (2025-04-08)</p></li>
-<li><p>add two raster subdatasets to the sample file inst/extdata/ynp_features.zip/ynp_features.gpkg, and update examples for <code><a href="../reference/inspectDataset.html">inspectDataset()</a></code> and <code><a href="../reference/vsi_get_file_metadata.html">vsi_get_file_metadata()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/691" class="external-link">#691</a>) (2025-04-07)</p></li>
-<li><p>expose <code><a href="../reference/gdal_version.html">gdal_version_num()</a></code> (previously internal/undocumented) and add <code><a href="../reference/gdal_compute_version.html">gdal_compute_version()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/689" class="external-link">#689</a>) (2025-04-06)</p></li>
-<li><p>add more error messages from GDAL in a few places, mainly verbose message when opening a dataset fails (<a href="https://github.com/USDAForestService/gdalraster/issues/688" class="external-link">#688</a>) (2025-04-05)</p></li>
-<li><p>add default xy axis labels in S3 methods <code>plot.OGRFeature</code> and <code>plot.OGRFeatureSet</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/685" class="external-link">#685</a>) (2025-04-03)</p></li>
-<li><p>add <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code>: reproject a vector layer (<a href="https://github.com/USDAForestService/gdalraster/issues/684" class="external-link">#684</a>) (2025-04-03)</p></li>
-<li><p>fix <code>VSIFile::read()</code>: the <code>nbytes</code> argument should accept values carrying the integer64 class attribute (fix <a href="https://github.com/USDAForestService/gdalraster/issues/677" class="external-link">#677</a> thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-03-31)</p></li>
-<li><p>add <code>GDALVector::getIgnoredFields()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/676" class="external-link">#676</a>) (2025-03-31)</p></li>
-<li><p>geom api: add <code><a href="../reference/g_simplify.html">g_simplify()</a></code>, simplify WKB/WKT geometries, optionally preserving topology (<a href="https://github.com/USDAForestService/gdalraster/issues/675" class="external-link">#675</a>) (2025-03-30)</p></li>
-<li><p>geom api: add <code><a href="../reference/g_swap_xy.html">g_swap_xy()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/673" class="external-link">#673</a>) (2025-03-29)</p></li>
-<li><p><code><a href="../reference/g_transform.html">g_transform()</a></code>: add argument <code>traditional_gis_order</code> with default <code>TRUE</code>, to support authority compliant order for geometries using geographic coordinates (<a href="https://github.com/USDAForestService/gdalraster/issues/672" class="external-link">#672</a>) (2025-03-29)</p></li>
-<li><p>geom api: add <code><a href="../reference/g_measures.html">g_geodesic_area()</a></code> and <code><a href="../reference/g_measures.html">g_geodesic_length()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/671" class="external-link">#671</a>) (2025-03-29)</p></li>
-<li><p>add <code>GDALRaster::get_block_indexing()</code>: helper method to get indexing values for the block layout (<a href="https://github.com/USDAForestService/gdalraster/issues/667" class="external-link">#667</a>) (2025-03-25)</p></li>
-<li><p><code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>: include <code>$min</code> and <code>$max</code> in the returned list if GDAL &gt;= 3.11 (2025-03-22)</p></li>
-<li><p>add <code><a href="../reference/validateCreationOptions.html">validateCreationOptions()</a></code>, validate the list of creation options that are handled by a driver (<a href="https://github.com/USDAForestService/gdalraster/issues/663" class="external-link">#663</a>) (2025-03-17)</p></li>
-<li><p><code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>: change the return value to a named list of options with their information (<a href="https://github.com/USDAForestService/gdalraster/issues/662" class="external-link">#662</a>) (2025-03-16)</p></li>
-<li><p><code><a href="../reference/rasterize.html">rasterize()</a></code>: support passing a <code>GDALRaster</code> object for in-place updating (<a href="https://github.com/USDAForestService/gdalraster/issues/660" class="external-link">#660</a>) (2025-03-15)</p></li>
-<li><p>fix bug in <code>GDALVector</code> write that could segfault with an input feature having zero attribute fields and one geometry field that uses the default geometry column name, e.g., a GeoJSON or shapefile layer with geometry only and no attribute fields (<a href="https://github.com/USDAForestService/gdalraster/issues/659" class="external-link">#659</a>) (2025-03-14)</p></li>
-<li><p>(internal) code linting for cppcheck style in geom_api.cpp and srs_api.cpp (<a href="https://github.com/USDAForestService/gdalraster/issues/658" class="external-link">#658</a>) (2025-03-12)</p></li>
-<li><p><code><a href="../reference/ogr_proc.html">ogr_proc()</a></code>: rename argument <code>return_lyr_obj</code> to <code>return_obj</code>, to be consistent with other functions that optionally return a <code>GDALVector</code> or <code>GDALRaster</code> object (<code><a href="../reference/ogr_proc.html">ogr_proc()</a></code> is not in a release version yet so not designated as a breaking change) (2025-03-09)</p></li>
-<li><p><code><a href="../reference/transform_xy.html">transform_xy()</a></code> / <code><a href="../reference/inv_project.html">inv_project()</a></code>: account for behavior change at GDAL 3.11 (<a href="https://github.com/USDAForestService/gdalraster/issues/631" class="external-link">#631</a>) (2025-03-08)</p></li>
-<li><p>geom api: support GeometryCollection in <code><a href="../reference/g_factory.html">g_create()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/653" class="external-link">#653</a>) (2025-03-08)</p></li>
-<li><p>(internal) [Valgrind] Fix memory leak in <code>validateFeatInput_()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/652" class="external-link">#652</a>) (2025-03-07)</p></li>
-<li><p>geom api: add <code><a href="../reference/g_query.html">g_is_3D()</a></code> and <code><a href="../reference/g_query.html">g_is_measured()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/650" class="external-link">#650</a>) (2025-03-07)</p></li>
-<li><p>Account for possible <code>convertToLinear</code> and/or <code>promoteToMulti</code> in the GIS attributes attached to vector read outputs (<a href="https://github.com/USDAForestService/gdalraster/issues/645" class="external-link">#645</a>) (2025-03-05)</p></li>
-<li><p><code>GDALVector</code>: add per-object setting <code>convertToLinear</code>, whether to convert non-linear geometry types into linear geometry types by potentially approximating them (<a href="https://github.com/USDAForestService/gdalraster/issues/629" class="external-link">#629</a>) (2025-03-04)</p></li>
-<li><p>fix geometry binary op functions (<code><a href="../reference/g_binary_op.html">g_intersection()</a></code>, etc.): fix indexing of the output list when both inputs are list (<a href="https://github.com/USDAForestService/gdalraster/issues/641" class="external-link">#641</a>) (2025-03-03)</p></li>
-<li><p>add the writable field <code>GDALVector::transactionsForce</code> defaulted to <code>FALSE</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/640" class="external-link">#640</a>) (2025-03-03)</p></li>
-<li><p>add <code>GDALVector::batchCreateFeature()</code>: write a batch of features to a layer from data frame input (<a href="https://github.com/USDAForestService/gdalraster/issues/639" class="external-link">#639</a>) (2025-03-03)</p></li>
-<li><p><code>GDALVector::testCapability()</code>: add <code>FastGetArrowStream</code> and <code>FastWriteArrowBatch</code> in the returned list of layer capabilities (<a href="https://github.com/USDAForestService/gdalraster/issues/638" class="external-link">#638</a>) (2025-03-03)</p></li>
-<li><p>(internal) fix test in configure.ac for GDAL &gt;= 3.1.0 (2025-02-26)</p></li>
-<li><p><code>GDALVector::getArrowStream()</code>: default to <code>GEOMETRY_METADATA_ENCODING=OGC</code> instead of <code>GEOARROW</code> for now, i.e., use the GDAL default unless specified otherwise (2023-02-23)</p></li>
-<li><p>(internal) various C++ code linting throughout (<a href="https://github.com/USDAForestService/gdalraster/issues/624" class="external-link">#624</a>) (2025-02-23)</p></li>
-<li><p>(internal) implement <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code> and <code><a href="../reference/ogr_manage.html">ogr_layer_create()</a></code> as <code>GDALVector</code> object factories (<a href="https://github.com/USDAForestService/gdalraster/issues/609" class="external-link">#609</a>) (2025-02-22)</p></li>
-<li><p>add <code>GDALVector::getArrowStream()</code>: expose an Arrow C stream on a layer via nanoarrow_array_stream object (<a href="https://github.com/USDAForestService/gdalraster/issues/591" class="external-link">#591</a>) (2025-02-22)</p></li>
-<li><p>fix potential integer overflow when multiplying raster dimensions in R without explicit <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/620" class="external-link">#620</a> thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-02-21)</p></li>
-<li><p><code>GDALVector::info()</code>: enable full info output on a vector layer opened via SQL statement (<a href="https://github.com/USDAForestService/gdalraster/issues/615" class="external-link">#615</a> thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-02-21)</p></li>
-<li><p><code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: fix the check for GDAL &gt;= 3.10 when cubic or cubicspline interpolation is requested (thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-02-21)</p></li>
-<li><p><code><a href="../reference/read_ds.html">read_ds()</a></code>: pre-allocate the output vector based on the size of the unioned data type across all bands (2025-02-18)</p></li>
-<li><p>fix <code><a href="../reference/plot_raster.html">plot_raster()</a></code> to avoid integer overflow (<a href="https://github.com/USDAForestService/gdalraster/issues/613" class="external-link">#613</a> thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-02-18)</p></li>
-<li><p>(internal) implement <code><a href="../reference/create.html">create()</a></code>, <code><a href="../reference/createCopy.html">createCopy()</a></code>, <code><a href="../reference/autoCreateWarpedVRT.html">autoCreateWarpedVRT()</a></code> as object factories (2025-02-14)</p></li>
-<li><p>add S4 <code>show()</code> methods for the Rcpp exposed classes (2025-02-12)</p></li>
-<li><p>add <code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: extract pixel values at geospatial point locations (<a href="https://github.com/USDAForestService/gdalraster/issues/570" class="external-link">#570</a>) (2025-02-12)</p></li>
-<li><p><code><a href="../reference/g_factory.html">g_create()</a></code>: support input points with Z/M; support output of multiple POINT geoms from multiple xy input (optionally, instead of a single MULTIPOINT) (2025-02-09)</p></li>
-<li><p><code><a href="../reference/transform_xy.html">transform_xy()</a></code> / <code><a href="../reference/inv_project.html">inv_project()</a></code>: support input points with z vertices (three column xyz) or time values (four column xyzt); optionally accept input of point geometries as character vector of WKT strings, WKB raw vector, or list of raw vectors (2025-02-09)</p></li>
-<li><p>add <code><a href="../reference/g_coords.html">g_coords()</a></code>: extract coordinate values from geometries (2025-02-09)</p></li>
-<li><p>improve and expand bindings to a subset of the GDAL Spatial Reference System API (<a href="https://github.com/USDAForestService/gdalraster/issues/584" class="external-link">#584</a>) (2025-02-08)</p></li>
-<li><p>add helper functions for GDAL raster data types (<a href="https://github.com/USDAForestService/gdalraster/issues/593" class="external-link">#593</a>) (2025-02-08)</p></li>
-<li><p>handle <code>NA</code> in the input coordinates to <code><a href="../reference/transform_xy.html">transform_xy()</a></code>, <code><a href="../reference/inv_project.html">inv_project()</a></code>, <code><a href="../reference/transform_bounds.html">transform_bounds()</a></code>, <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code> and <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/592" class="external-link">#592</a>) (2025-02-07)</p></li>
-<li><p>add <code>GDALVector::info()</code>: print information about the vector layer to the console (2025-02-05)</p></li>
-<li><p>improve <code>GDALRaster::bbox()</code> and <code>GDALRaster::res()</code> to handle south-up / rotated raster, with related fixes in <code><a href="../reference/read_ds.html">read_ds()</a></code> and <code><a href="../reference/plot_raster.html">plot_raster()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/569" class="external-link">#569</a>) (2025-02-03)</p></li>
-<li><p>update the geometry interface to support the vector API in gdalraster 2.0, with changes to existing functions and add <code><a href="../reference/g_wk2wk.html">g_wk2wk()</a></code>, <code><a href="../reference/g_factory.html">g_create()</a></code>, <code><a href="../reference/g_factory.html">g_add_geom()</a></code>, <code><a href="../reference/transform_bounds.html">transform_bounds()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/572" class="external-link">#572</a>) (2025-02-03)</p></li>
-<li><p>(internal) fix uninitialized variable in class <code>GDALVector</code>, compiler warning on macos (2025-02-03)</p></li>
-<li><p>C++17 is now a system requirement (2025-02-02)</p></li>
-<li><p><code><a href="../reference/plot_raster.html">plot_raster()</a></code>: add argument <code>pixel_fn</code> to specify a function that will be applied to the input data for plotting, and handle input raster with complex data type (<a href="https://github.com/USDAForestService/gdalraster/issues/582" class="external-link">#582</a>) (2025-02-02)</p></li>
-<li><p><code>GDALVector-class</code>: rename the writable field <code>$defaultGeomFldName</code> to <code>$defaultGeomColName</code> (2025-02-01)</p></li>
-<li><p>accept one (x, y) as a vector in functions that expect matrix or data frame input (<code><a href="../reference/transform_xy.html">transform_xy()</a></code>, <code>inverse_proj()</code>, <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code>, <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code>) (2025-02-01)</p></li>
-<li><p>(internal) validate input columns in the data frame-to-matrix internal C++ functions (2025-02-01)</p></li>
-<li><p>add <code><a href="../reference/vsi_is_local.html">vsi_is_local()</a></code>: returns whether the file/filesystem is “local”, wrapper of <code>VSIIsLocal()</code> (2025-01-31)</p></li>
-<li><p>add <code>GDALVector::getFieldDomain()</code>: accepts the name of an OGR field domain associated with the dataset and returns a list containing the domain specifications (GDAL &gt;= 3.3) (2025-01-20)</p></li>
-<li><p><code>GDALVector::createDF_()</code>: avoid clang-asan undefined-behavior error from <code>RcppInt64::wrap()</code> when called on a <code>std::vector&lt;int64_t&gt;</code> of size <code>0</code> (2025-01-19)</p></li>
-<li><p><code>GDALVector</code>: add a <code>BBOX</code> option for the per-object setting <code>$returnGeomAs</code> (2024-10-03)</p></li>
-<li><p>add minimal S3 classes <code>OGRFeature</code> and <code>OGRFeatureSet</code> with methods for <code><a href="https://rdrr.io/r/base/print.html" class="external-link">print()</a></code> and <code><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot()</a></code> (2024-09-28)</p></li>
-<li><p>add <code><a href="../reference/g_query.html">g_summary()</a></code>: obtain text summaries of WKB/WKT geometries (GDAL &gt;= 3.7) (2024-09-24)</p></li>
-<li><p>update <code><a href="../reference/g_query.html">g_is_valid()</a></code>, <code><a href="../reference/g_query.html">g_is_empty()</a></code>, <code><a href="../reference/g_query.html">g_name()</a></code> and <code><a href="../reference/g_buffer.html">g_buffer()</a></code> to the new style geometry API: the OGR GEOS wrappers now operate on input of WKB raw vector, list of WKB, or character vector of WKT strings, with return as either WKB raw vector (or list of) / WKT character string (vector of) (2024-09-22)</p></li>
-<li><p>add <code>GDALVector::quiet</code>: exposed read/write field to optionally suppress warnings etc. (2024-09-20)</p></li>
-<li><p>the <code>layer</code> argument may be <code>NULL</code> or empty string in certain <code>ogr_manage</code> functions, defaulting to the first layer by index (mainly convenience for single-layer formats) (2024-09-19)</p></li>
-<li><p><code>GDALVector</code>: add get/set metadata methods for layer-level metadata if the format supports it (2024-09-19)</p></li>
-<li><p><code>GDALVector</code>: support writing OFTTime fields from string input <code>"HH:MM:SS"</code> (2024-09-16)</p></li>
-<li><p><code>GDALVector</code>: improve <code>NULL</code> handling in feature write methods (<code>NA</code>, <code>NULL</code> and empty vector (e.g., <code>raw(0)</code>) map to OGR NULL) (2024-09-15)</p></li>
-<li><p>fix <code>GDALVector::setSpatialFilter()</code>: SRS was not set on the geometry before using it as the layer spatial filter, which could cause segfault (2024-09-15)</p></li>
-<li><p>add <code><a href="../reference/g_make_valid.html">g_make_valid()</a></code>: attempt to make invalid geometries valid, operating on input of WKB raw vector, list of WKB, or character vector of WKT strings (2024-09-15)</p></li>
-<li><p>remove the class field <code>GDALVector::featureTemplate</code> as not needed / not useful, and its removal fixes Valgrind errors (<a href="https://github.com/USDAForestService/gdalraster/issues/520" class="external-link">#520</a>) (2024-09-14)</p></li>
-<li><p>add <code><a href="../reference/g_wk2wk.html">g_wk2wk()</a></code>: geometry WKB/WKT conversion (2024-09-13)</p></li>
-<li><p>remove <code>is_ignored</code> from feature class definition, potentially breaking change but assumed to be unused in feature class / field creation (2024-09-11)</p></li>
-<li><p>add <code>return_obj</code> argument in <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code> and <code><a href="../reference/ogr_manage.html">ogr_layer_create()</a></code>, <code>TRUE</code> to return a writable <code>GDALVector</code> object on the created layer (2024-09-11)</p></li>
-<li><p><code>GDALVector</code>: add method <code>$setSelectedFields()</code>, alternative to <code>$setIgnoredFields()</code> (2024-09-10)</p></li>
-<li><p><code>GDALVector</code>: add a <code>SUMMARY</code> option for the per-object setting <code>$returnGeomAs</code> (2024-09-09)</p></li>
-<li><p><code>GDALVector</code>: add <code>$promoteToMulti</code> as a per-object setting (2024-09-09)</p></li>
-<li><p><code>GDALVector</code>: add class methods for writing features in a layer: <code>$createFeature()</code>, <code>$setFeature()</code>, <code>$upsertFeature()</code> (2024-09-08)</p></li>
-<li><p>add <code><a href="../reference/ogr_manage.html">ogr_layer_rename()</a></code>: rename an existing layer in a vector dataset (GDAL &gt;= 3.5) (2024-09-04)</p></li>
-<li><p>(internal) add header <code>src/gdal_vsi.h</code> and minor code cleanups in <code>src/gdal_vsi.cpp</code> (2024-09-02)</p></li>
-<li><p>(internal) use consistent naming convention for C++ class member variables (2024-08-31)</p></li>
-<li><p>(internal) pass by const reference in some srs and geom functions (2024-08-31)</p></li>
-<li><p>(internal) class <code>GDALVector</code>: add get/set methods for the dataset and layer handles for internal use (2024-08-18)</p></li>
-<li><p>(internal) try/catch if potentially large allocation of std::vector (2024-08-18)</p></li>
-<li><p>add <code>GDALRaster::getMaskBand()</code>: return the mask filename and band number associated with a given band of the dataset (2024-08-15)</p></li>
-<li><p>add <code>GDALRaster::getMaskFlags()</code>: return the status flags of the mask band associated with a given band of the dataset (2024-08-14)</p></li>
-<li><p>add <code><a href="../reference/srs_query.html">srs_get_name()</a></code>: return the spatial reference system name (2024-08-12)</p></li>
-<li><p>add <code><a href="../reference/srs_query.html">srs_find_epsg()</a></code>: try to identify a matching EPSG code for a given SRS definition (2024-08-11)</p></li>
-<li><p><code><a href="../reference/translate.html">translate()</a></code>: source raster can be a <code>GDALRaster</code> object (2024-08-11)</p></li>
-<li><p>add <code><a href="../reference/autoCreateWarpedVRT.html">autoCreateWarpedVRT()</a></code>: create a warped virtual dataset representing the input raster warped into the target coordinate system, wrapper of <code>GDALAutoCreateWarpedVRT()</code> (2024-08-10)</p></li>
-<li><p><code>GDALRaster::setDescription()</code>: support <code>band = 0</code> to set the dataset-level description (2024-08-10)</p></li>
-<li><p><code><a href="../reference/warp.html">warp()</a></code>: source and destination rasters may be objects of class <code>GDALRaster</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/469" class="external-link">#469</a>) (2024-08-10)</p></li>
-<li><p>add <code>GDALRaster::addBand()</code>: add a band to a dataset if the underlying format supports this action, e.g., <code>MEM</code> and <code>VRT</code> (2024-08-09)</p></li>
-<li><p><code><a href="../reference/createCopy.html">createCopy()</a></code>: add argument <code>return_obj</code>, <code>TRUE</code> to return an object of class <code>GDALRaster</code> for the created dataset; an object of class <code>GDALRaster</code> can be given for argument <code>src_filename</code> to specify the source dataset (2024-08-07)</p></li>
-<li><p><code><a href="../reference/create.html">create()</a></code>: add argument <code>return_obj</code>, <code>TRUE</code> to return an object of class <code>GDALRaster</code> for the created dataset (2024-08-07)</p></li>
-<li><p>add <code>GDALRaster::setMetadata()</code>: set dataset or band-level metadata from a character vector of NAME=VALUE pairs (instead of per metadata item with the existing <code>$setMetadataItem()</code>) (2024-08-07)</p></li>
-<li><p>add transactions support in class <code>GDALVector</code> (<code>$startTransaction()</code>, <code>$commitTransaction()</code>, <code>$rollbackTransaction()</code>) (2024-08-03)</p></li>
-<li><p>add <code>GDALVector::deleteFeature()</code>: delete feature from layer (2024-08-03)</p></li>
-<li><p>add <code>featureTemplate</code> as a read-only field in class <code>GDALVector</code> (2024-08-03)</p></li>
-<li><p>add <code>GDALVector::setNextByIndex()</code>: move the read cursor to the <code>i</code>th feature in the current result set (2024-08-02)</p></li>
-<li><p>add <code>GDALVector::setIgnoredFields()</code>: set which fields can be omitted when retrieving features from the layer (2024-08-01)</p></li>
-<li><p>add GDALVector class methods: <code>getAttributeFilter()</code>, <code>setSpatialFilter()</code>, <code>getSpatialFilter()</code> (2024-07-30)</p></li>
-<li><p>add <code><a href="../reference/ogr_proc.html">ogr_proc()</a></code>: GDAL OGR facilities for vector geoprocessing (2024-07-28)</p></li>
-<li><p><code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code>: now returns an object of class <code>GDALVector</code> for SQL SELECT statements (2024-07-24)</p></li>
-<li><p>add class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a>, initial implementation / WIP (2024-07-22)</p></li>
-<li><p>add package <code>wk</code> to Suggests (2024-07-22)</p></li>
-<li><p>add <code>GDALRaster$clearColorTable()</code>: clear the color table associated with a raster band (2024-07-10)</p></li>
-<li><p>avoid data copy in <code>GDALRaster::getDefaultRAT()</code> for better performance in the case of large attribute tables (2024-06-24)</p></li>
-<li><p>add <code><a href="../reference/vsi_get_actual_url.html">vsi_get_actual_url()</a></code>: return the actual URL of a supplied VSI filename, wrapper of <code>VSIGetActualURL()</code> in the GDAL API (2024-06-20)</p></li>
-<li><p>add <code><a href="../reference/vsi_get_signed_url.html">vsi_get_signed_url()</a></code>: return a signed URL for a supplied VSI filename, wrapper of <code>VSIGetSignedURL()</code> in the GDAL API (2024-06-20)</p></li>
-<li><p>Documentation: additions to the section on Azure (/vsiaz/) in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>; update <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a> to use argument <code>return_obj</code> with <code><a href="../reference/create.html">create()</a></code> and <code><a href="../reference/createCopy.html">createCopy()</a></code>; add the <code>-srcband</code> and <code>-dstband</code> command-line options in the documentation for <code><a href="../reference/warp.html">warp()</a></code>; add <a href="https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices">Development practices</a> in CONTRIBUTING.md; add the OpenSSF best practices badge in README; add <code>fig.alt</code> text to articles for web accessibility; add the OpenSSF Scorecard badge in README; add example in <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> for dissolve features based on an attribute value; code that cleans up temp files in the examples is wrapped in <code>\dontshow{}</code>; minor updates for <code><a href="../reference/g_transform.html">g_transform()</a></code>; update descriptions for the C++ exposed classes and emphasize lack of named argument support; restructure and edit <code>ogr_define</code></p></li>
+<h2 class="pkg-version" data-toc-text="1.12.0.9301" id="gdalraster-11209301-dev-20-beta">gdalraster 1.12.0.9301 (dev-2.0-beta)<a class="anchor" aria-label="anchor" href="#gdalraster-11209301-dev-20-beta"></a></h2>
+<div class="section level3">
+<h3 id="summary-of-main-changes-1-12-0-9301">Summary of main changes<a class="anchor" aria-label="anchor" href="#summary-of-main-changes-1-12-0-9301"></a></h3>
+<ul><li>add bindings to the GDAL Vector API, implemented in the exposed C++ class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a> and several <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#ogr-vector-utilities"><code>ogr_*()</code> stand-alone functions</a>
+</li>
+<li>enhance and expand <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#geometry">bindings to the Geometry API</a>, operating on raw vectors of WKB or WKT strings</li>
+<li>enhance and expand <a href="https://usdaforestservice.github.io/gdalraster/reference/index.html#spatial-reference-systems">bindings to the Spatial Reference Systems API</a>
+</li>
+<li>add several new features and improvements to the Raster API and Virtual Systems Interface (VSI) API</li>
+<li>add helper functions for working with GDAL raster data types (see <code><a href="../reference/data_type_helpers.html">?data_type_helpers</a></code>)</li>
+<li>add an S4 <code>show()</code> method for all Rcpp exposed classes</li>
+<li>bug fixes, code linting and other internal improvements</li>
 </ul></div>
+<div class="section level3">
+<h3 id="dependencies-1-12-0-9301">Dependencies<a class="anchor" aria-label="anchor" href="#dependencies-1-12-0-9301"></a></h3>
+<ul><li>package <strong>nanoarrow</strong> has been added to Imports and LinkingTo</li>
+<li>package <strong>wk</strong> has been added to Imports</li>
+<li>C++17 is now a System Requirement</li>
+<li>PROJ is removed as a stand-alone external System Requirement since: 1) <strong>gdalraster</strong> as of 1.12 requires GDAL &gt;= 3.1, 2) PROJ has been a GDAL build requirement since GDAL 3.0, and 3) <strong>gdalraster</strong> only uses PROJ via GDAL headers (i.e., there is no longer a requirement for linking to external libproj in this case)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="vector-api-bindings-1-12-0-9301">Vector API bindings<a class="anchor" aria-label="anchor" href="#vector-api-bindings-1-12-0-9301"></a></h3>
+<ul><li>add class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a>: encapsulates an <code>OGRLayer</code> and the <code>GDALDataset</code> that contains it, currently providing 48 user-facing methods for obtaining vector layer information and reading/writing feature data</li>
+<li>support GDAL’s Arrow C Stream interface for reading vector data by exposing an ArrowArrayStream on a layer as a <code>nanoarrow_array_stream_object</code> (GDAL &gt;= 3.6) (<a href="https://github.com/USDAForestService/gdalraster/issues/591" class="external-link">#591</a>)</li>
+<li>add <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code>: reproject a vector layer</li>
+<li>add <code><a href="../reference/ogr_proc.html">ogr_proc()</a></code>: GDAL/OGR facilities for vector geoprocessing</li>
+<li>add <code><a href="../reference/ogr_manage.html">ogr_layer_rename()</a></code>: rename an existing layer in a vector dataset (GDAL &gt;= 3.5)</li>
+<li>
+<code><a href="../reference/ogr_manage.html">ogr_execute_sql()</a></code>: now returns an object of class <code>GDALVector</code> for SQL SELECT statements</li>
+<li>add argument <code>return_obj</code> in <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code> and <code><a href="../reference/ogr_manage.html">ogr_layer_create()</a></code>, <code>TRUE</code> to return a writable <code>GDALVector</code> object on the created layer</li>
+<li>the <code>layer</code> argument may be <code>NULL</code> or empty string in certain <code>ogr_manage</code> functions, defaulting to the first layer by index (mainly convenience for single-layer formats)</li>
+<li>remove <code>is_ignored</code> from feature class definition (certain <code>ogr_define</code> and <code>ogr_manage</code> functions): potentially breaking change but assumed to be unused in feature class / field creation (<a href="https://github.com/USDAForestService/gdalraster/issues/513" class="external-link">#513</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="geometry-api-1-12-0-9301">Geometry API<a class="anchor" aria-label="anchor" href="#geometry-api-1-12-0-9301"></a></h3>
+<ul><li>update the geometry interface to support the vector API in gdalraster 2.0, with changes to existing functions, and add <code><a href="../reference/g_wk2wk.html">g_wk2wk()</a></code>, <code><a href="../reference/g_factory.html">g_create()</a></code>, <code><a href="../reference/g_factory.html">g_add_geom()</a></code>, <code><a href="../reference/g_envelope.html">g_envelope()</a></code>, and <code><a href="../reference/transform_bounds.html">transform_bounds()</a></code> (wrapper of <code>OCTTransformBounds()</code> in the GDAL Spatial Reference System API, requires GDAL &gt;= 3.4) (<a href="https://github.com/USDAForestService/gdalraster/issues/572" class="external-link">#572</a>)</li>
+<li>update <code><a href="../reference/g_query.html">g_is_valid()</a></code>, <code><a href="../reference/g_query.html">g_is_empty()</a></code>, <code><a href="../reference/g_query.html">g_name()</a></code> and <code><a href="../reference/g_buffer.html">g_buffer()</a></code> to the new style Geometry API: the geometry wrapper functions now operate on input of WKB raw vector, list of WKB, or character vector of WKT strings, with return as either WKB raw vector (or list of) / WKT character string (vector of)</li>
+<li>
+<strong>breaking changes</strong>: breaks some existing functions by renaming argument <code>wkt</code> to <code>geom</code>, and by returning WKB raw vector by default from functions that return geometries (<code>as_wkb = TRUE</code> by default).</li>
+<li>add <code><a href="../reference/g_make_valid.html">g_make_valid()</a></code>: attempt to make invalid geometries valid, operating on input of WKB raw vector, list of WKB, or character vector of WKT strings</li>
+<li>add <code><a href="../reference/g_query.html">g_summary()</a></code>: obtain text summaries of WKB/WKT geometries (GDAL &gt;= 3.7)</li>
+<li>add <code><a href="../reference/g_simplify.html">g_simplify()</a></code>, simplify WKB/WKT geometries, optionally preserving topology (<a href="https://github.com/USDAForestService/gdalraster/issues/675" class="external-link">#675</a>)</li>
+<li>add <code><a href="../reference/g_swap_xy.html">g_swap_xy()</a></code>: swap x and y coordinates of the input geometry</li>
+<li>
+<code><a href="../reference/g_transform.html">g_transform()</a></code>: add argument <code>traditional_gis_order</code> with default <code>TRUE</code>, to support authority compliant order for geometries using geographic coordinates (<a href="https://github.com/USDAForestService/gdalraster/issues/672" class="external-link">#672</a>)</li>
+<li>add <code><a href="../reference/g_measures.html">g_geodesic_area()</a></code> and <code><a href="../reference/g_measures.html">g_geodesic_length()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/671" class="external-link">#671</a>)</li>
+<li>add <code><a href="../reference/g_query.html">g_is_3D()</a></code> and <code><a href="../reference/g_query.html">g_is_measured()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/650" class="external-link">#650</a>)</li>
+<li>add <code><a href="../reference/g_coords.html">g_coords()</a></code>: extract coordinate values from geometries</li>
+<li>
+<code><a href="../reference/bbox_transform.html">bbox_transform()</a></code>: add argument <code>use_transform_bounds</code> (<code>TRUE</code> by default but requires GDAL &gt;= 3.4)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="spatial-reference-systems-api-1-12-0-9301">Spatial Reference Systems API<a class="anchor" aria-label="anchor" href="#spatial-reference-systems-api-1-12-0-9301"></a></h3>
+<ul><li>improve and expand bindings to a subset of the GDAL Spatial Reference System API (<a href="https://github.com/USDAForestService/gdalraster/issues/584" class="external-link">#584</a>)</li>
+<li>
+<strong>breaking change</strong> in <code><a href="../reference/srs_query.html">srs_is_same()</a></code>: argument <code>srs1</code> is renamed to <code>srs</code> and argument <code>srs2</code> to <code>srs_other</code>
+</li>
+<li>functions that previously required input as a WKT string now accept SRS definitions in any of the formats supported by <code><a href="../reference/srs_convert.html">srs_to_wkt()</a></code> (wrapper of <code>OSRSetFromUserInput()</code>)</li>
+<li>the documentation is grouped under two topics, <code><a href="../reference/srs_convert.html">?srs_convert</a></code> and <code><a href="../reference/srs_query.html">?srs_query</a></code>, and now includes the following functions:
+<ul><li>
+<strong><code>srs_convert</code></strong>: <code><a href="../reference/srs_convert.html">epsg_to_wkt()</a></code> and <code><a href="../reference/srs_convert.html">srs_to_wkt()</a></code>
+</li>
+<li>
+<strong><code>srs_query</code></strong>: <code><a href="../reference/srs_query.html">srs_find_epsg()</a></code>, <code><a href="../reference/srs_query.html">srs_get_name()</a></code>, <code><a href="../reference/srs_query.html">srs_is_geographic()</a></code>, <code><a href="../reference/srs_query.html">srs_is_derived_gcs()</a></code>, <code><a href="../reference/srs_query.html">srs_is_local()</a></code>, <code><a href="../reference/srs_query.html">srs_is_projected()</a></code>, <code><a href="../reference/srs_query.html">srs_is_compound()</a></code>, <code><a href="../reference/srs_query.html">srs_is_geocentric()</a></code>, <code><a href="../reference/srs_query.html">srs_is_vertical()</a></code>, <code><a href="../reference/srs_query.html">srs_is_dynamic()</a></code>, <code><a href="../reference/srs_query.html">srs_is_same()</a></code>, <code><a href="../reference/srs_query.html">srs_get_angular_units()</a></code>, <code><a href="../reference/srs_query.html">srs_get_linear_units()</a></code>, <code><a href="../reference/srs_query.html">srs_get_coord_epoch()</a></code>, <code><a href="../reference/srs_query.html">srs_get_utm_zone()</a></code>, <code><a href="../reference/srs_query.html">srs_get_axis_mapping_strategy()</a></code>
+</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="gdalraster-class-1-12-0-9301">GDALRaster-class<a class="anchor" aria-label="anchor" href="#gdalraster-class-1-12-0-9301"></a></h3>
+<ul><li>add <code>$get_block_indexing()</code>: helper method to get indexing values for the block layout (<a href="https://github.com/USDAForestService/gdalraster/issues/667" class="external-link">#667</a>)</li>
+<li>add <code>$addBand()</code>: method to add a band to a dataset if the underlying format supports this action, e.g., <code>MEM</code> and <code>VRT</code>
+</li>
+<li>add <code>$clearColorTable()</code>: method to clear the color table associated with a raster band</li>
+<li>add <code>$getMaskBand()</code>: method to return the mask filename and band number associated with a given band of the dataset</li>
+<li>add <code>$getMaskFlags()</code>: method to return the status flags of the mask band associated with a given band of the dataset</li>
+<li>add <code>$setMetadata()</code>: method to set dataset or band-level metadata from a character vector of NAME=VALUE pairs (instead of per metadata item with the existing <code>$setMetadataItem()</code>)</li>
+<li>
+<code>$setDescription()</code>: support <code>band = 0</code> to set the dataset-level description</li>
+<li>improve methods <code>$bbox()</code> and <code>$res()</code> to handle south-up / rotated raster (with related fixes in <code><a href="../reference/read_ds.html">read_ds()</a></code> and <code><a href="../reference/plot_raster.html">plot_raster()</a></code>) (<a href="https://github.com/USDAForestService/gdalraster/issues/569" class="external-link">#569</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="gdal-vsi-for-operations-on-virtual-file-systems-1-12-0-9301">GDAL VSI for operations on virtual file systems<a class="anchor" aria-label="anchor" href="#gdal-vsi-for-operations-on-virtual-file-systems-1-12-0-9301"></a></h3>
+<ul><li>fix class method <code>VSIFile$read()</code>: the <code>nbytes</code> argument should accept values carrying the <code>integer64</code> class attribute (fixes <a href="https://github.com/USDAForestService/gdalraster/issues/677" class="external-link">#677</a> thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>)</li>
+<li>add <code><a href="../reference/vsi_get_actual_url.html">vsi_get_actual_url()</a></code>: return the actual URL of a supplied VSI filename, wrapper of <code>VSIGetActualURL()</code> in the GDAL API</li>
+<li>add <code><a href="../reference/vsi_get_signed_url.html">vsi_get_signed_url()</a></code>: return a signed URL for a supplied VSI filename, wrapper of <code>VSIGetSignedURL()</code> in the GDAL API</li>
+<li>add <code><a href="../reference/vsi_is_local.html">vsi_is_local()</a></code>: returns whether the file/filesystem is “local”, wrapper of <code>VSIIsLocal()</code> in the GDAL API</li>
+</ul></div>
+<div class="section level3">
+<h3 id="gdal-configuration-1-12-0-9301">GDAL configuration<a class="anchor" aria-label="anchor" href="#gdal-configuration-1-12-0-9301"></a></h3>
+<ul><li>add <code><a href="../reference/get_cache_max.html">get_cache_max()</a></code> and <code><a href="../reference/set_cache_max.html">set_cache_max()</a></code>: get/set maximum memory size available for the GDAL block cache</li>
+<li>
+<code><a href="../reference/get_cache_used.html">get_cache_used()</a></code>: change return value to R <code>numeric</code> type carrying the <code>integer64</code> class attribute, and add argument <code>units</code> defaulting to <code>"MB"</code>
+</li>
+<li>expose <code><a href="../reference/gdal_version.html">gdal_version_num()</a></code> (previously internal/undocumented): return the full version number as an <code>integer</code> value (convenience for <code>as.integer(gdal_version()[2])</code>)</li>
+<li>add <code><a href="../reference/gdal_compute_version.html">gdal_compute_version()</a></code>:compute the integer version number (<code>GDAL_VERSION_NUM</code>) from individual components (major, minor, revision)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="other-stand-alone-functions-1-12-0-9301">Other stand-alone functions<a class="anchor" aria-label="anchor" href="#other-stand-alone-functions-1-12-0-9301"></a></h3>
+<ul><li>fix <code><a href="../reference/plot_raster.html">plot_raster()</a></code> to avoid integer overflow (<a href="https://github.com/USDAForestService/gdalraster/issues/613" class="external-link">#613</a> thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>)</li>
+<li>add <code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: extract pixel values at geospatial point locations (<a href="https://github.com/USDAForestService/gdalraster/issues/570" class="external-link">#570</a>)</li>
+<li>add <code><a href="../reference/autoCreateWarpedVRT.html">autoCreateWarpedVRT()</a></code>: create a warped virtual dataset representing the input raster warped into the target coordinate system, wrapper of <code>GDALAutoCreateWarpedVRT()</code>
+</li>
+<li>add <code><a href="../reference/validateCreationOptions.html">validateCreationOptions()</a></code>: validate the list of creation options that are handled by a driver (<a href="https://github.com/USDAForestService/gdalraster/issues/663" class="external-link">#663</a>)</li>
+<li>
+<code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>: change the return value to a named list of options with their information (<a href="https://github.com/USDAForestService/gdalraster/issues/662" class="external-link">#662</a>)</li>
+<li>
+<code><a href="../reference/getCreationOptions.html">getCreationOptions()</a></code>: include <code>$min</code> and <code>$max</code> attributes in the returned list if GDAL &gt;= 3.11</li>
+<li>
+<code><a href="../reference/create.html">create()</a></code>: add argument <code>return_obj</code>, <code>TRUE</code> to return an object of class <code>GDALRaster</code> for the created dataset</li>
+<li>
+<code><a href="../reference/createCopy.html">createCopy()</a></code>: add argument <code>return_obj</code>, <code>TRUE</code> to return an object of class <code>GDALRaster</code> for the created dataset</li>
+<li>
+<code><a href="../reference/createCopy.html">createCopy()</a></code>: an object of class <code>GDALRaster</code> can be given for argument <code>src_filename</code> to specify the source dataset</li>
+<li>
+<code><a href="../reference/warp.html">warp()</a></code>: source and destination rasters may be given as objects of class <code>GDALRaster</code>
+</li>
+<li>
+<code><a href="../reference/translate.html">translate()</a></code>: source raster can be given as a <code>GDALRaster</code> object</li>
+<li>
+<code><a href="../reference/inspectDataset.html">inspectDataset()</a></code>: handle the case of separate raster and vector drivers identified when specific flag was not given (<a href="https://github.com/USDAForestService/gdalraster/issues/693" class="external-link">#693</a>)</li>
+<li>
+<code><a href="../reference/rasterize.html">rasterize()</a></code>: support passing a <code>GDALRaster</code> object for in-place updating (<a href="https://github.com/USDAForestService/gdalraster/issues/660" class="external-link">#660</a>)</li>
+<li>handle <code>NA</code> in the input coordinates to <code><a href="../reference/transform_xy.html">transform_xy()</a></code>, <code><a href="../reference/inv_project.html">inv_project()</a></code>, <code><a href="../reference/transform_bounds.html">transform_bounds()</a></code>, <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code> and <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/592" class="external-link">#592</a>)</li>
+<li>accept one (x, y) as a vector in functions that expect matrix or data frame input (<code><a href="../reference/transform_xy.html">transform_xy()</a></code>, <code>inverse_proj()</code>, <code><a href="../reference/apply_geotransform.html">apply_geotransform()</a></code>, <code><a href="../reference/get_pixel_line.html">get_pixel_line()</a></code>)</li>
+<li>
+<code><a href="../reference/transform_xy.html">transform_xy()</a></code> / <code><a href="../reference/inv_project.html">inv_project()</a></code>: support input points with z vertices (three column xyz) or time values (four column xyzt); optionally accept input of point geometries as character vector of WKT strings, WKB raw vector, or list of WKB raw vectors</li>
+<li>
+<code><a href="../reference/transform_xy.html">transform_xy()</a></code> / <code><a href="../reference/inv_project.html">inv_project()</a></code>: account for behavior change in the <code>Transform</code> methods of <code>OGRCoordinateTransformation</code> at GDAL 3.11 (<a href="https://github.com/USDAForestService/gdalraster/issues/631" class="external-link">#631</a>)</li>
+<li>
+<code><a href="../reference/plot_raster.html">plot_raster()</a></code>: add argument <code>pixel_fn</code> to specify a function that will be applied to the input data for plotting, and handle input raster with complex data type (<a href="https://github.com/USDAForestService/gdalraster/issues/582" class="external-link">#582</a>)</li>
+<li>
+<code><a href="../reference/inspectDataset.html">inspectDataset()</a></code> and <code><a href="../reference/warp.html">warp()</a></code>: apply quiet error handler around code checks that are based on <code><a href="https://rdrr.io/r/base/try.html" class="external-link">try()</a></code> of raster dataset open (<a href="https://github.com/USDAForestService/gdalraster/issues/709" class="external-link">#709</a>)</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internals-1-12-0-9301">Internals<a class="anchor" aria-label="anchor" href="#internals-1-12-0-9301"></a></h3>
+<ul><li>fix potential integer overflow when multiplying raster dimensions in R without explicit <code><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/620" class="external-link">#620</a> thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>)</li>
+<li>fix test in configure.ac for GDAL &gt;= 3.1.0</li>
+<li>configure: remove configuration of PROJ include directory and libs as no longer needed (<a href="https://github.com/USDAForestService/gdalraster/issues/702" class="external-link">#702</a>)</li>
+<li>implement <code><a href="../reference/create.html">create()</a></code>, <code><a href="../reference/createCopy.html">createCopy()</a></code>, <code><a href="../reference/autoCreateWarpedVRT.html">autoCreateWarpedVRT()</a></code> as <code>GDALRaster</code> object factories (<a href="https://github.com/USDAForestService/gdalraster/issues/606" class="external-link">#606</a>)</li>
+<li>implement <code><a href="../reference/ogr_manage.html">ogr_ds_create()</a></code> and <code><a href="../reference/ogr_manage.html">ogr_layer_create()</a></code> as <code>GDALVector</code> object factories (<a href="https://github.com/USDAForestService/gdalraster/issues/609" class="external-link">#609</a>)</li>
+<li>code linting for <code>cppcheck</code> style in <code>src/geom_api.cpp</code> and <code>src/srs_api.cpp</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/658" class="external-link">#658</a>)</li>
+<li>various C++ code linting throughout (<a href="https://github.com/USDAForestService/gdalraster/issues/624" class="external-link">#624</a>)</li>
+<li>add header <code>src/gdal_vsi.h</code> and minor code cleanups in <code>src/gdal_vsi.cpp</code>
+</li>
+<li>renamed files: <code>src/wkt_conv.cpp</code> -&gt; <code>src/srs_api.cpp</code>, <code>src/wkt_conv.h</code> -&gt; <code>src/srs_api.h</code>, <code>tests/testthat/test-wkt_conv.R</code> -&gt; <code>tests/testthat/test-srs_api.R</code>
+</li>
+<li>use consistent naming convention for C++ class member variables</li>
+<li>pass arguments by <code>const</code> reference in some srs and geom functions (2024-08-31)</li>
+<li>try/catch if potentially large allocation of <code>std::vector</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/485" class="external-link">#485</a>)</li>
+<li>replace <code>CPLIsNan()</code> with <code>std::isnan()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/485" class="external-link">#485</a>)</li>
+<li>
+<code><a href="../reference/read_ds.html">read_ds()</a></code>: pre-allocate the output vector based on the size of the unioned data type across all bands</li>
+<li>validate input columns in the data frame-to-matrix internal C++ conversion functions</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-1-12-0-9301">Documentation<a class="anchor" aria-label="anchor" href="#documentation-1-12-0-9301"></a></h3>
+<ul><li>add package vignette <a href="https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html">Vector API Overview</a>
+</li>
+<li>update descriptions for the C++ exposed classes and emphasize lack of named argument support in those cases (i.e., argument order matters, mainly of concern with object constructors)</li>
+<li>update <a href="https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html">Raster API Tutorial</a> to use argument <code>return_obj</code> with <code><a href="../reference/create.html">create()</a></code> and <code><a href="../reference/createCopy.html">createCopy()</a></code>
+</li>
+<li>additions to the section on Azure (/vsiaz/) in <a href="https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html">GDAL Config Quick Reference</a>
+</li>
+<li>add the <code>-srcband</code> and <code>-dstband</code> command-line options in the documentation for <code><a href="../reference/warp.html">warp()</a></code>
+</li>
+<li>add example in <code><a href="../reference/ogr2ogr.html">ogr2ogr()</a></code> for dissolving features based on an attribute value</li>
+<li>minor updates for <code><a href="../reference/g_transform.html">g_transform()</a></code>
+</li>
+<li>restructure and edit <code><a href="../reference/ogr_define.html">?ogr_define</a></code>
+</li>
+<li>update examples for <code><a href="../reference/inspectDataset.html">inspectDataset()</a></code> and <code><a href="../reference/vsi_get_file_metadata.html">vsi_get_file_metadata()</a></code> to use the new sample data file ynp_features.zip (<a href="https://github.com/USDAForestService/gdalraster/issues/691" class="external-link">#691</a>)</li>
+<li>add <code>fig.alt</code> text to articles for web accessibility</li>
+<li>code that cleans up temp files in the examples is now wrapped in <code>\dontshow{}</code>
+</li>
+<li>add <a href="https://usdaforestservice.github.io/gdalraster/CONTRIBUTING.html#development-practices">Development practices</a> in CONTRIBUTING.md</li>
+<li>add the <a href="https://www.bestpractices.dev/projects/9382" class="external-link">OpenSSF best practices</a> badge in README</li>
+<li>add the <a href="https://scorecard.dev/viewer/?uri=github.com/USDAForestService/gdalraster" class="external-link">OpenSSF Scorecard</a> badge in README</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="1.12.0" id="gdalraster-1120">gdalraster 1.12.0<a class="anchor" aria-label="anchor" href="#gdalraster-1120"></a></h2><p class="text-muted">CRAN release: 2025-01-19</p>
 <div class="section level3">
