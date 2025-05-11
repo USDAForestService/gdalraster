@@ -499,22 +499,25 @@
 #' Fetching zero features is possible to retrieve the structure of the feature
 #' set as a data frame (columns fully typed).
 #'
-#' OGR field types are returned as the following R types (`NA` for OGR NULL
-#' values):
-#' * `OFTInteger`: `integer`
-#' * `OFTInteger` subtype `OFSTBoolean`: `logical`
-#' * `OFTIntegerList`: vector of `integer` (list column)
-#' * `OFTInteger64`: `numeric` carrying `"integer64"` class attribute \{bit64\}
-#' * `OFTInteger64` subtype `OFSTBoolean`: `logical`
-#' * `OFTInteger64List`: vector of `bit64::integer64` (list column)
-#' * `OFTReal`: `numeric`
-#' * `OFTRealList`: vector of `numeric` (list column)
-#' * `OFTString`: `character` string
-#' * `OFTStringList`: vector of `character` strings (list column)
-#' * `OFTDate`: class `"Date"` (`numeric`)
-#' * `OFTDateTime`: class `"POSIXct"` (`numeric`, millisecond accuracy)
-#' * `OFTTime`: `character` string (`"HH:MM:SS"`)
-#' * `OFTBinary`: `raw` vector (list column, `NULL` entries for OGR NULL values)
+#' OGR field types are returned as the following R types (type-specific `NA`
+#' for OGR NULL values):
+#' * **OFTInteger**: `integer` value
+#' * **OFTInteger subtype OFSTBoolean**: `logical` value
+#' * **OFTIntegerList**: vector of `integer` (list column)
+#' * **OFTInteger64**: `numeric` value carrying the `"integer64"` class
+#' attribute
+#' * **OFTInteger64 subtype OFSTBoolean**: `logical` value
+#' * **OFTInteger64List**: vector of `bit64::integer64` (list column)
+#' * **OFTReal**: `numeric` value
+#' * **OFTRealList**: vector of `numeric` (list column)
+#' * **OFTString**: `character` string
+#' * **OFTStringList**: vector of `character` strings (list column)
+#' * **OFTDate**: `numeric` value of class `"Date"`
+#' * **OFTDateTime**: `numeric` value of class `"POSIXct"` (millisecond
+#' accuracy)
+#' * **OFTTime**: `character` string (`"HH:MM:SS"`)
+#' * **OFTBinary**: `raw` vector (list column, `NULL` entries for OGR NULL
+#' values)
 #'
 #' Geometries are not returned if the field `returnGeomAs` is set to `NONE`.
 #' Omitting the geometries may be beneficial for performance and memory usage

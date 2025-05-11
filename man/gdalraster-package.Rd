@@ -2,16 +2,19 @@
 \name{gdalraster-package}
 \alias{gdalraster}
 \alias{gdalraster-package}
-\title{Bindings to the GDAL Raster API
+\title{Bindings to the GDAL API
 }
 \description{
-  \code{gdalraster} is an interface to the Geospatial Data Abstraction
-  Library (GDAL) for low level raster I/O. Calling signatures resemble those
+  \pkg{gdalraster} is an interface to the Geospatial Data Abstraction
+  Library (GDAL) providing an R implementation of the GDAL Raster and Vector
+  Data Models. Bindings also include the GDAL Geometry API, Spatial Reference
+  Systems API, utilities and algorithms, methods for coordinate transformation,
+  and the Virtual Systems Interface (VSI) API. Calling signatures resemble those
   of the native C, C++ and Python APIs provided by the GDAL project.
-  See \url{https://gdal.org/en/stable/api/} for details of the GDAL Raster API.
+  See \url{https://gdal.org/en/stable/api/} for details of the GDAL API.
 }
 \details{
-  Core functionality is contained in class \code{GDALRaster} and several
+  Core raster functionality is contained in class \code{GDALRaster} and several
   related stand-alone functions:
   \itemize{
   \item \code{\link{GDALRaster-class}} is an exposed C++ class that allows
@@ -62,17 +65,31 @@
   \code{\link[=dt_union_with_value]{dt_union_with_value()}},
   \code{\link[=dt_find]{dt_find()}},
   \code{\link[=dt_find_for_value]{dt_find_for_value()}}
+  }
 
-  \item coordinate transformation:
-  \code{\link[=transform_xy]{transform_xy()}},
-  \code{\link[=inv_project]{inv_project()}},
-  \code{\link[=transform_bounds]{transform_bounds()}}
+  Core vector functionality is contained in class \code{GDALVector} and several
+  related stand-alone functions:
+  \itemize{
+  \item \code{\link{GDALVector-class}} is an exposed C++ class that allows
+  opening a vector dataset and calling methods on a specified \code{OGRLayer}
+  object that it contains (e.g., obtain layer information, set attribute and/or
+  spatial filters, read/write feature data).
 
-  \item spatial reference systems:
-  \code{\link[=srs_convert]{srs_convert}},
-  \code{\link[=srs_query]{srs_query}}
+  \item OGR vector utilities:
+  \code{\link[=ogrinfo]{ogrinfo()}},
+  \code{\link[=ogr2ogr]{ogr2ogr()}},
+  \code{\link[=ogr_reproject]{ogr_reproject()}},
+  \code{\link[=ogr_define]{ogr_define}},
+  \code{\link[=ogr_manage]{ogr_manage}},
+  \code{\link[=ogr_proc]{ogr_proc()}}
+  }
 
-  \item geometry API:
+  Bindings to the GDAL Geometry API, Spatial Reference Systems API, methods for
+  coordinate transformation, the Virtual Systems Interface (VSI) API, general
+  data management and system configuration are implemented in several
+  stand-alone functions:
+  \itemize{
+  \item Geometry API:
   \code{\link[=bbox_from_wkt]{bbox_from_wkt()}},
   \code{\link[=bbox_to_wkt]{bbox_to_wkt()}},
   \code{\link[=bbox_intersect]{bbox_intersect()}},
@@ -93,6 +110,15 @@
   \code{\link[=g_wk2wk]{g_wk2wk()}},
   \code{\link[=geos_version]{geos_version()}}
 
+  \item Spatial Reference Systems API:
+  \code{\link[=srs_convert]{srs_convert}},
+  \code{\link[=srs_query]{srs_query}}
+
+  \item coordinate transformation:
+  \code{\link[=transform_xy]{transform_xy()}},
+  \code{\link[=inv_project]{inv_project()}},
+  \code{\link[=transform_bounds]{transform_bounds()}}
+
   \item data management: \code{\link[=addFilesInZip]{addFilesInZip()}},
   \code{\link[=copyDatasetFiles]{copyDatasetFiles()}},
   \code{\link[=deleteDataset]{deleteDataset()}},
@@ -101,15 +127,8 @@
   \code{\link[=identifyDriver]{identifyDriver()}},
   \code{\link[=inspectDataset]{inspectDataset()}}
 
-  \item OGR vector utilities:
-  \code{\link[=ogrinfo]{ogrinfo()}},
-  \code{\link[=ogr2ogr]{ogr2ogr()}},
-  \code{\link[=ogr_reproject]{ogr_reproject()}},
-  \code{\link[=ogr_manage]{ogr_manage}},
-  \code{\link[=ogr_define]{ogr_define}}
-
-  \item virtual file systems:
-  \code{\link[=VSIFile-class]{VSIFile}},
+  \item Virtual Systems Interface API:
+  \code{\link{VSIFile-class}},
   \code{\link[=vsi_clear_path_options]{vsi_clear_path_options()}},
   \code{\link[=vsi_copy_file]{vsi_copy_file()}},
   \code{\link[=vsi_curl_clear_cache]{vsi_curl_clear_cache()}},
@@ -152,6 +171,7 @@
   \code{\link[=proj_search_paths]{proj_search_paths()}},
   \code{\link[=proj_networking]{proj_networking()}}
   }
+
   Additional functionality includes:
   \itemize{
   \item \code{\link{RunningStats-class}} calculates mean and variance in one
@@ -177,41 +197,63 @@
   }
 }
 \author{
-GDAL is by: Frank Warmerdam, Even Rouault and others\cr
-(see \url{https://github.com/OSGeo/gdal/graphs/contributors})
+  GDAL is by: Frank Warmerdam, Even Rouault and others\cr
+  (see \url{https://github.com/OSGeo/gdal/graphs/contributors})
 
-R interface/additional functionality: Chris Toney
+  R interface/additional functionality: Chris Toney
 
-Maintainer: Chris Toney <chris.toney at usda.gov>
+  Maintainer: Chris Toney <chris.toney at usda.gov>
 }
 \seealso{
   GDAL Raster Data Model:\cr
   \url{https://gdal.org/en/stable/user/raster_data_model.html}
 
-  Raster format descriptions:\cr
+  Raster driver descriptions:\cr
   \url{https://gdal.org/en/stable/drivers/raster/index.html}
 
   Geotransform tutorial:\cr
   \url{https://gdal.org/en/stable/tutorials/geotransforms_tut.html}
 
+  GDAL Vector Data Model:\cr
+  \url{https://gdal.org/en/stable/user/vector_data_model.html}
+
+  Vector driver descriptions:\cr
+  \url{https://gdal.org/en/stable/drivers/vector/index.html}
+
   GDAL Virtual File Systems:\cr
   \url{https://gdal.org/en/stable/user/virtual_file_systems.html}
 }
 \note{
-  Documentation for \code{GDALRaster-class} and several wrapper functions
-  borrows from the GDAL API documentation, (c) 1998-2025, Frank Warmerdam,
-  Even Rouault, and others,
+  Documentation for the API bindings borrows heavily from the GDAL
+  documentation, (c) 1998-2025, Frank Warmerdam, Even Rouault, and others,
   \href{https://gdal.org/en/stable/license.html}{MIT license}.
 
   Sample datasets included with the package are used in examples throughout
-  the documentation. The sample data include
-  \href{https://landfire.gov/}{LANDFIRE} raster layers describing terrain,
-  vegetation and wildland fuels (LF 2020 version),
-  Landsat C2 Analysis Ready Data from
-  \href{https://earthexplorer.usgs.gov/}{USGS Earth Explorer}, and
-  Monitoring Trends in Burn Severity (\href{https://www.mtbs.gov/}{MTBS})
-  fire perimeters from 1984-2022. Metadata for the sample datasets are in
-  inst/extdata/metadata.zip.
+  the documentation. The sample data sources include:
+  \itemize{
+  \item \href{https://landfire.gov/}{LANDFIRE} raster layers describing terrain,
+  vegetation and wildland fuels (LF 2020 version)
+
+  \item Landsat C2 Analysis Ready Data from
+  \href{https://earthexplorer.usgs.gov/}{USGS Earth Explorer}
+
+  \item Monitoring Trends in Burn Severity (\href{https://www.mtbs.gov/}{MTBS})
+  fire perimeters from 1984-2022
+
+  \item
+  \href{https://data.fs.usda.gov/geodata/rastergateway/treecanopycover/}{NLCD Tree Canopy Cover}
+  produced by USDA Forest Service
+
+  \item
+  \href{https://public-nps.opendata.arcgis.com/}{National Park Service Open Data}
+  vector layers for roads and points-of-interest
+
+  \item \href{https://msl.mt.gov/geoinfo/}{Montana State Library} boundary layer
+  for Yellowstone National Park
+  }
+
+  Metadata for these sample datasets are in inst/extdata/metadata.zip and
+  inst/extdata/ynp_features.zip.
 
   \code{system.file()} is used in the examples to access the sample datasets.
   This enables the code to run regardless of where R is installed. Users will

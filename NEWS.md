@@ -129,6 +129,7 @@
 
 ## Documentation
 
+* update the package Description
 * add package vignette [Vector API Overview](https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html)
 * update descriptions of the C++ exposed classes and emphasize lack of named argument support in those cases (i.e., argument order matters, mainly of concern with class constructors)
 * update [Raster API Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html) to use the argument `return_obj` with `create()` and `createCopy()`
