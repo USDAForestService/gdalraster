@@ -201,6 +201,8 @@ install.packages("gdalraster", repos = c("https://usdaforestservice.r-universe.d
   Manual](https://usdaforestservice.github.io/gdalraster/reference/)
 - [Raster API
   Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
+- [Vector API
+  Overview](https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html)
 - [Raster Attribute
   Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
 - [Raster
