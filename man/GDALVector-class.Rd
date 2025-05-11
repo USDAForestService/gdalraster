@@ -518,23 +518,26 @@ returns the remaining features.
 Fetching zero features is possible to retrieve the structure of the feature
 set as a data frame (columns fully typed).
 
-OGR field types are returned as the following R types (\code{NA} for OGR NULL
-values):
+OGR field types are returned as the following R types (type-specific \code{NA}
+for OGR NULL values):
 \itemize{
-\item \code{OFTInteger}: \code{integer}
-\item \code{OFTInteger} subtype \code{OFSTBoolean}: \code{logical}
-\item \code{OFTIntegerList}: vector of \code{integer} (list column)
-\item \code{OFTInteger64}: \code{numeric} carrying \code{"integer64"} class attribute \{bit64\}
-\item \code{OFTInteger64} subtype \code{OFSTBoolean}: \code{logical}
-\item \code{OFTInteger64List}: vector of \code{bit64::integer64} (list column)
-\item \code{OFTReal}: \code{numeric}
-\item \code{OFTRealList}: vector of \code{numeric} (list column)
-\item \code{OFTString}: \code{character} string
-\item \code{OFTStringList}: vector of \code{character} strings (list column)
-\item \code{OFTDate}: class \code{"Date"} (\code{numeric})
-\item \code{OFTDateTime}: class \code{"POSIXct"} (\code{numeric}, millisecond accuracy)
-\item \code{OFTTime}: \code{character} string (\code{"HH:MM:SS"})
-\item \code{OFTBinary}: \code{raw} vector (list column, \code{NULL} entries for OGR NULL values)
+\item \strong{OFTInteger}: \code{integer} value
+\item \strong{OFTInteger subtype OFSTBoolean}: \code{logical} value
+\item \strong{OFTIntegerList}: vector of \code{integer} (list column)
+\item \strong{OFTInteger64}: \code{numeric} value carrying the \code{"integer64"} class
+attribute
+\item \strong{OFTInteger64 subtype OFSTBoolean}: \code{logical} value
+\item \strong{OFTInteger64List}: vector of \code{bit64::integer64} (list column)
+\item \strong{OFTReal}: \code{numeric} value
+\item \strong{OFTRealList}: vector of \code{numeric} (list column)
+\item \strong{OFTString}: \code{character} string
+\item \strong{OFTStringList}: vector of \code{character} strings (list column)
+\item \strong{OFTDate}: \code{numeric} value of class \code{"Date"}
+\item \strong{OFTDateTime}: \code{numeric} value of class \code{"POSIXct"} (millisecond
+accuracy)
+\item \strong{OFTTime}: \code{character} string (\code{"HH:MM:SS"})
+\item \strong{OFTBinary}: \code{raw} vector (list column, \code{NULL} entries for OGR NULL
+values)
 }
 
 Geometries are not returned if the field \code{returnGeomAs} is set to \code{NONE}.
