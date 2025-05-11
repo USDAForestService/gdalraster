@@ -139,7 +139,7 @@ extended text on specific topics.</p>
 <div class="section level4">
 <h4 id="class-gdalvector">Class <code>GDALVector</code><a class="anchor" aria-label="anchor" href="#class-gdalvector"></a>
 </h4>
-<p><code>GDALVector</code> is a C++ class exposed in R via <a href="https://cran.r-project.org/web/packages/Rcpp/vignettes/Rcpp-modules.pdf" class="external-link"><strong>Rcpp</strong>
+<p><code>GDALVector</code> is a C++ class exposed in R via <a href="https://CRAN.R-project.org/package=Rcpp" class="external-link"><strong>Rcpp</strong>
 modules</a>. It encapsulates a single OGRLayer and the GDALDataset that
 contains it. An object of class <code>GDALVector</code> persists an open
 connection to the dataset, and exposes methods to:</p>
@@ -1494,7 +1494,7 @@ grouping in a transaction, measuring time elapsed.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">batchCreateFeature</span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.246   0.004   2.252</span></span>
+<span><span class="co">#&gt;   2.119   0.003   2.123</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1523,7 +1523,7 @@ and the layer is checked for the expected output.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.047   0.009   1.056</span></span>
+<span><span class="co">#&gt;   1.021   0.009   1.030</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1536,22 +1536,22 @@ and the layer is checked for the expected output.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;   FID               pt_desc         create_time                           geom</span></span>
-<span><span class="co">#&gt; 1   1 random points batch 1 2025-05-11 18:17:26 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 2   2 random points batch 1 2025-05-11 18:17:26 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 3   3 random points batch 1 2025-05-11 18:17:26 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 4   4 random points batch 1 2025-05-11 18:17:26 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 5   5 random points batch 1 2025-05-11 18:17:26 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 6   6 random points batch 1 2025-05-11 18:17:26 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 1   1 random points batch 1 2025-05-11 18:47:41 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 2   2 random points batch 1 2025-05-11 18:47:41 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 3   3 random points batch 1 2025-05-11 18:47:41 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 4   4 random points batch 1 2025-05-11 18:47:41 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 5   5 random points batch 1 2025-05-11 18:47:41 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 6   6 random points batch 1 2025-05-11 18:47:41 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;           FID               pt_desc         create_time</span></span>
-<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-05-11 18:17:29</span></span>
-<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-05-11 18:17:29</span></span>
-<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-05-11 18:17:29</span></span>
-<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-05-11 18:17:29</span></span>
-<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-05-11 18:17:29</span></span>
-<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-05-11 18:17:29</span></span>
+<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-05-11 18:47:43</span></span>
+<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-05-11 18:47:43</span></span>
+<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-05-11 18:47:43</span></span>
+<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-05-11 18:47:43</span></span>
+<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-05-11 18:47:43</span></span>
+<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-05-11 18:47:43</span></span>
 <span><span class="co">#&gt;                                  geom</span></span>
 <span><span class="co">#&gt; 199995 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span><span class="co">#&gt; 199996 WKB POINT: raw 01 01 00 00 ...</span></span>
