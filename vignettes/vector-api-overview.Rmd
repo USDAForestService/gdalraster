@@ -44,7 +44,7 @@ Core functionality for vector is provided by the exposed C++ class `GDALVector`,
 
 #### Class `GDALVector`
 
-`GDALVector` is a C++ class exposed in R via [**Rcpp** modules](https://cran.r-project.org/web/packages/Rcpp/vignettes/Rcpp-modules.pdf). It encapsulates a single OGRLayer and the GDALDataset that contains it. An object of class `GDALVector` persists an open connection to the dataset, and exposes methods to:
+`GDALVector` is a C++ class exposed in R via [**Rcpp** modules](https://CRAN.R-project.org/package=Rcpp). It encapsulates a single OGRLayer and the GDALDataset that contains it. An object of class `GDALVector` persists an open connection to the dataset, and exposes methods to:
 
 * retrieve layer information
 * set attribute and spatial filters
