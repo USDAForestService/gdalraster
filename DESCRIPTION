@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to 'GDAL'
-Version: 1.12.0.9301
+Version: 2.0.0
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),
@@ -28,22 +28,23 @@ Description: API bindings to the Geospatial Data Abstraction Library ('GDAL',
     'RunningStats' for computing summary statistics efficiently on large data
     streams. C++ stand-alone functions provide bindings to most 'GDAL' raster
     and vector utilities including 'OGR' facilities for vector geoprocessing,
-    several algorithms, the Geometry API ('GEOS' via 'GDAL'headers), the Spatial
-    Reference Systems API, and methods for coordinate transformation. Bindings
-    to the Virtual Systems Interface ('VSI') API implement standard file system
-    operations, abstracted for URLs, cloud storage services, Zip/GZip/7z/RAR,
-    in-memory files, as well as regular local file systems. This provides a
-    single interface for operating on file system objects that works the same
-    for any storage backend. A custom raster calculator evaluates a user-defined
-    R expression on a layer or stack of layers, with pixel x/y available as
-    variables in the expression. Raster 'combine()' identifies and counts unique
-    pixel combinations across multiple input layers, with optional raster output
-    of the pixel-level combination IDs. Basic plotting capability is provided
-    for raster and vector display. 'gdalraster' leans toward minimalism and the
-    use of simple, lightweight objects for holding raw data. Currently, only
-    minimal S3 class interface has been implemented for selected R objects that
-    contain spatial data. 'gdalraster' may be useful in applications that need
-    scalable, low-level I/O, or prefer a direct 'GDAL' API.
+    several algorithms, the Geometry API ('GEOS' via 'GDAL' headers), the
+    Spatial Reference Systems API, and methods for coordinate transformation.
+    Bindings to the Virtual Systems Interface ('VSI') API implement standard
+    file system operations, abstracted for URLs, cloud storage services,
+    'Zip'/'GZip'/'7z'/'RAR', in-memory files, as well as regular local file
+    systems. This provides a single interface for operating on file system
+    objects that works the same for any storage backend. A custom raster
+    calculator evaluates a user-defined R expression on a layer or stack of
+    layers, with pixel x/y available as variables in the expression. Raster
+    'combine()' identifies and counts unique pixel combinations across multiple
+    input layers, with optional raster output of the pixel-level combination
+    IDs. Basic plotting capability is provided for raster and vector display.
+    'gdalraster' leans toward minimalism and the use of simple, lightweight
+    objects for holding raw data. Currently, only minimal S3 class interfaces
+    have been implemented for selected R objects that contain spatial data.
+    'gdalraster' may be useful in applications that need scalable, low-level
+    I/O, or prefer a direct 'GDAL' API.
 License: MIT + file LICENSE
 Copyright: See file inst/COPYRIGHTS for details.
 URL: https://usdaforestservice.github.io/gdalraster/,

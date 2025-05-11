@@ -1,4 +1,4 @@
-# gdalraster 1.12.0.9301 (dev-2.0-beta)
+# gdalraster 2.0.0
 
 ## Summary of main changes
 
