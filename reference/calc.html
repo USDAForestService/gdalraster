@@ -69,7 +69,7 @@ Multiband output is supported as of gdalraster 1.11.0."></head><body>
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Raster calculation</h1>
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/v.2.0.0/R/gdalraster_proc.R" class="external-link"><code>R/gdalraster_proc.R</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/R/gdalraster_proc.R" class="external-link"><code>R/gdalraster_proc.R</code></a></small>
       <div class="d-none name"><code>calc.Rd</code></div>
     </div>
 
@@ -259,7 +259,7 @@ read from the return value of <code>expr</code>.</p>
 <span class="r-in"><span>                setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating from 1 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/Rtmpn9rF4T/rastcalc231739a60d9e.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/RtmpZo9TPz/rastcalc22ee5db2cc8.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">hi_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># min, max, mean, sd</span></span></span>
@@ -285,7 +285,7 @@ read from the return value of <code>expr</code>.</p>
 <span class="r-in"><span>                  setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/Rtmpn9rF4T/rastcalc2317317879dd.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/RtmpZo9TPz/rastcalc22ee646fd9cb.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">ndvi_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -357,7 +357,7 @@ read from the return value of <code>expr</code>.</p>
 <span class="r-in"><span>     write_mode <span class="op">=</span> <span class="st">"update"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/Rtmpn9rF4T/storml_lndscp.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/RtmpZo9TPz/storml_lndscp.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># verify the ouput</span></span></span>
 <span class="r-in"><span><span class="va">rasterfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">tif_file</span>, <span class="va">tif_file</span><span class="op">)</span></span></span>

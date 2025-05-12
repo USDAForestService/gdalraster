@@ -45,7 +45,7 @@
   <main id="main" class="col-md-9"><div class="page-header">
 
       <h1>Changelog</h1>
-      <small>Source: <a href="https://github.com/USDAForestService/gdalraster/blob/v.2.0.0/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
+      <small>Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/NEWS.md" class="external-link"><code>NEWS.md</code></a></small>
     </div>
 
     <div class="section level2">
@@ -78,7 +78,7 @@
 <div class="section level3">
 <h3 id="vector-api-bindings-2-0-0">Vector API bindings<a class="anchor" aria-label="anchor" href="#vector-api-bindings-2-0-0"></a></h3>
 <ul><li>add class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html"><code>GDALVector</code></a>: encapsulates an <code>OGRLayer</code> object and the <code>GDALDataset</code> that contains it, exposing 48 class methods for obtaining vector layer information, attribute and spatial filtering, and reading/writing feature data</li>
-<li>wrap GDAL’s Arrow C Stream interface for reading vector data by exposing an ArrowArrayStream on a layer as a <code>nanoarrow_array_stream_object</code> (GDAL &gt;= 3.6) (<a href="https://github.com/USDAForestService/gdalraster/issues/591" class="external-link">#591</a>)</li>
+<li>wrap GDAL’s Arrow C Stream interface for reading vector data by exposing an ArrowArrayStream on a layer as a <code>nanoarrow_array_stream</code> object (GDAL &gt;= 3.6) (<a href="https://github.com/USDAForestService/gdalraster/issues/591" class="external-link">#591</a>)</li>
 <li>add <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code>: reproject a vector layer (purpose-built wrapper of <code>GDALVectorTranslate()</code>)</li>
 <li>add <code><a href="../reference/ogr_proc.html">ogr_proc()</a></code>: interface to GDAL OGR facilities for vector geoprocessing</li>
 <li>add <code><a href="../reference/ogr_manage.html">ogr_layer_rename()</a></code>: rename an existing layer in a vector dataset (GDAL &gt;= 3.5)</li>
