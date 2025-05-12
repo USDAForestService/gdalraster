@@ -23,7 +23,7 @@
 ## Vector API bindings
 
 * add class [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html): encapsulates an `OGRLayer` object and the `GDALDataset` that contains it, exposing 48 class methods for obtaining vector layer information, attribute and spatial filtering, and reading/writing feature data
-* wrap GDAL's Arrow C Stream interface for reading vector data by exposing an ArrowArrayStream on a layer as a `nanoarrow_array_stream_object` (GDAL >= 3.6) (#591)
+* wrap GDAL's Arrow C Stream interface for reading vector data by exposing an ArrowArrayStream on a layer as a `nanoarrow_array_stream` object (GDAL >= 3.6) (#591)
 * add `ogr_reproject()`: reproject a vector layer (purpose-built wrapper of `GDALVectorTranslate()`)
 * add `ogr_proc()`: interface to GDAL OGR facilities for vector geoprocessing
 * add `ogr_layer_rename()`: rename an existing layer in a vector dataset (GDAL >= 3.5)
