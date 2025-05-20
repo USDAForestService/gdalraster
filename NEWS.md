@@ -1,3 +1,7 @@
+# gdalraster 2.0.0.9000 (dev)
+
+* (internal) `ogrinfo()` and `GDALRaster::infoAsJSON()` now use convenience class `CPLString` from the GDAL Common Portability Library for its `replaceAll()` method (2025-05-19)
+
 # gdalraster 2.0.0
 
 ## Summary of main changes

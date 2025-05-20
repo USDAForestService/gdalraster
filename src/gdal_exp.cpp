@@ -1982,7 +1982,7 @@ std::string ogrinfo(const Rcpp::CharacterVector &dsn,
         Rcpp::stop("ogrinfo() failed (could not create options struct)");
     }
 
-    std::string info_out = "";
+    CPLString info_out = "";
     char *pszInfo = GDALVectorInfo(src_ds, psOptions);
     if (pszInfo != nullptr)
         info_out = pszInfo;
@@ -1994,12 +1994,8 @@ std::string ogrinfo(const Rcpp::CharacterVector &dsn,
     if (cout)
         Rcpp::Rcout << info_out;
 
-    if (as_json) {
-        info_out.erase(std::remove(info_out.begin(),
-                                   info_out.end(),
-                                   '\n'),
-                       info_out.cend());
-    }
+    if (as_json)
+        info_out.replaceAll('\n', ' ');
 
     return info_out;
 

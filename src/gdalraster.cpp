@@ -253,17 +253,14 @@ std::string GDALRaster::infoAsJSON() const {
         Rcpp::stop("creation of GDALInfoOptions failed (check $infoOptions)");
 
     char *pszGDALInfoOutput = GDALInfo(m_hDataset, psOptions);
-    std::string out = "";
+    CPLString out = "";
     if (pszGDALInfoOutput != nullptr)
         out = pszGDALInfoOutput;
 
     GDALInfoOptionsFree(psOptions);
     CPLFree(pszGDALInfoOutput);
 
-    out.erase(std::remove(out.begin(),
-                          out.end(),
-                          '\n'),
-              out.cend());
+    out.replaceAll('\n', ' ');
 
     return out;
 }
