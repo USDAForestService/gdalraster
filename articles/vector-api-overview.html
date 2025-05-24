@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9000</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9001</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -1301,10 +1301,10 @@ interest.</p>
 <span><span class="co">#&gt; [1] Information</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $createdate</span></span>
-<span><span class="co">#&gt; [1] 2025-05-20</span></span>
+<span><span class="co">#&gt; [1] 2025-05-24</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $editdate</span></span>
-<span><span class="co">#&gt; [1] 2025-05-20</span></span>
+<span><span class="co">#&gt; [1] 2025-05-24</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $geom</span></span>
 <span><span class="co">#&gt; [1] WKB POINT: raw 01 01 00 00 ...</span></span>
@@ -1385,7 +1385,7 @@ corresponding JSON member.</li>
 <span><span class="co">#&gt; [1] 2016-02-03</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $editdate</span></span>
-<span><span class="co">#&gt; [1] 2025-05-20</span></span>
+<span><span class="co">#&gt; [1] 2025-05-24</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $geom</span></span>
 <span><span class="co">#&gt; [1] WKB POINT: raw 01 01 00 00 ...</span></span></code></pre></div>
@@ -1418,10 +1418,10 @@ class attribute.</p>
 <span><span class="co">#&gt; [1] Information</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $createdate</span></span>
-<span><span class="co">#&gt; [1] 2025-05-20</span></span>
+<span><span class="co">#&gt; [1] 2025-05-24</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $editdate</span></span>
-<span><span class="co">#&gt; [1] 2025-05-20</span></span>
+<span><span class="co">#&gt; [1] 2025-05-24</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $geom</span></span>
 <span><span class="co">#&gt; [1] WKB POINT: raw 01 01 00 00 ...</span></span>
@@ -1494,7 +1494,7 @@ grouping in a transaction, measuring time elapsed.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">batchCreateFeature</span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.098   0.005   2.103</span></span>
+<span><span class="co">#&gt;   2.152   0.004   2.156</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1523,7 +1523,7 @@ and the layer is checked for the expected output.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.027   0.007   1.034</span></span>
+<span><span class="co">#&gt;   1.031   0.007   1.038</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1536,22 +1536,22 @@ and the layer is checked for the expected output.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;   FID               pt_desc         create_time                           geom</span></span>
-<span><span class="co">#&gt; 1   1 random points batch 1 2025-05-20 05:15:05 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 2   2 random points batch 1 2025-05-20 05:15:05 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 3   3 random points batch 1 2025-05-20 05:15:05 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 4   4 random points batch 1 2025-05-20 05:15:05 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 5   5 random points batch 1 2025-05-20 05:15:05 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 6   6 random points batch 1 2025-05-20 05:15:05 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 1   1 random points batch 1 2025-05-24 00:31:39 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 2   2 random points batch 1 2025-05-24 00:31:39 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 3   3 random points batch 1 2025-05-24 00:31:39 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 4   4 random points batch 1 2025-05-24 00:31:39 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 5   5 random points batch 1 2025-05-24 00:31:39 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 6   6 random points batch 1 2025-05-24 00:31:39 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;           FID               pt_desc         create_time</span></span>
-<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-05-20 05:15:08</span></span>
-<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-05-20 05:15:08</span></span>
-<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-05-20 05:15:08</span></span>
-<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-05-20 05:15:08</span></span>
-<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-05-20 05:15:08</span></span>
-<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-05-20 05:15:08</span></span>
+<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-05-24 00:31:41</span></span>
+<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-05-24 00:31:41</span></span>
+<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-05-24 00:31:41</span></span>
+<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-05-24 00:31:41</span></span>
+<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-05-24 00:31:41</span></span>
+<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-05-24 00:31:41</span></span>
 <span><span class="co">#&gt;                                  geom</span></span>
 <span><span class="co">#&gt; 199995 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span><span class="co">#&gt; 199996 WKB POINT: raw 01 01 00 00 ...</span></span>
