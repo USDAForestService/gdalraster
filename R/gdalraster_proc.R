@@ -1618,7 +1618,7 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
 
     if (is.null(xy_srs))
         xy_srs <- ""
-    else if (!is.character(interp) || length(interp) > 1)
+    else if (!is.character(xy_srs) || length(xy_srs) > 1)
         stop("'xy_srs' must be a character string", call. = FALSE)
 
     if (is.null(max_ram))

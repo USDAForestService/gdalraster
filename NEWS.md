@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9000 (dev)
+# gdalraster 2.0.0.9001 (dev)
+
+* `pixel_extract()`: fix input validation for `xy_srs` (2025-05-23)
 
 * (internal) `ogrinfo()` and `GDALRaster::infoAsJSON()` now use convenience class `CPLString` from the GDAL Common Portability Library for its `replaceAll()` method (2025-05-19)
 
