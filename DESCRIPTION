@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to 'GDAL'
-Version: 2.0.0.9001
+Version: 2.0.0.9002
 Authors@R: c(
     person("Chris", "Toney", email = "chris.toney@usda.gov",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),

@@ -28,9 +28,6 @@
     typedef void *OGRFeatureH;
 #endif
 
-// value for marking FID when used along with regular attribute field indexes
-const int FID_MARKER = -999;
-
 class GDALVector {
  public:
     GDALVector();

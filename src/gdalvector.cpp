@@ -24,6 +24,8 @@
 
 #include "nanoarrow/r.h"
 
+// value for marking FID when used along with regular attribute field indexes
+constexpr int FID_MARKER = -999;
 
 GDALVector::GDALVector() : m_open_options(Rcpp::CharacterVector::create()),
                            m_ignored_fields(Rcpp::CharacterVector::create()) {
@@ -176,7 +178,7 @@ void GDALVector::open(bool read_only) {
 
     // potentially enable this in the future for geoarrow
     // if (GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 8, 0)) {
-    //     // override the default to ensure CRS from GDAL is propagated to Arrow
+    //     // override default to ensure CRS from GDAL is propagated to Arrow
     //     this->arrowStreamOptions = {"GEOMETRY_METADATA_ENCODING=GEOARROW"};
     // }
 
@@ -200,7 +202,7 @@ Rcpp::CharacterVector GDALVector::getFileList() const {
 
     char **papszFiles = GDALGetFileList(m_hDataset);
 
-    int items = CSLCount(papszFiles);
+    const int items = CSLCount(papszFiles);
     if (items > 0) {
         Rcpp::CharacterVector files(items);
         for (int i=0; i < items; ++i) {
@@ -1001,8 +1003,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
     // this method must be kept consistent with createDF_()
     checkAccess_(GA_ReadOnly);
 
-    OGRFeatureDefnH hFDefn = nullptr;
-    hFDefn = OGR_L_GetLayerDefn(m_hLayer);
+    const OGRFeatureDefnH hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
 
@@ -1025,8 +1026,8 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
         Rcpp::stop("'n' is invalid");
     }
 
-    int nFields = OGR_FD_GetFieldCount(hFDefn);
-    int nGeomFields = OGR_FD_GetGeomFieldCount(hFDefn);
+    const int nFields = OGR_FD_GetFieldCount(hFDefn);
+    const int nGeomFields = OGR_FD_GetGeomFieldCount(hFDefn);
     bool include_geom = true;
     Rcpp::CharacterVector geom_column{};  // column name(s) for gis attributes
     Rcpp::CharacterVector geom_col_type{};  // geom type(s) for gis attributes
@@ -1148,7 +1149,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
             if (!OGR_F_IsFieldSetAndNotNull(hFeat, i))
                 has_value = false;
 
-            OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+            const OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
 
             switch (fld_type) {
                 case OFTInteger:
@@ -1498,7 +1499,7 @@ Rcpp::DataFrame GDALVector::fetch(double n) {
                 else if (EQUAL(this->returnGeomAs.c_str(), "BBOX")) {
                   Rcpp::List col = df[col_num];
                   if (hGeom != nullptr) {
-                    OGREnvelope  envelope;
+                    OGREnvelope envelope;
                     OGR_G_GetEnvelope(hGeom, &envelope);
                     col[row_num] = Rcpp::NumericVector::create(envelope.MinX,
                                                                envelope.MinY,
@@ -1804,7 +1805,7 @@ Rcpp::LogicalVector GDALVector::batchCreateFeature(
     if (fld_maps.size() != 2)
         Rcpp::stop("failed to obtain field index mappings");
 
-    R_xlen_t num_rows = feature_set.nrows();
+    const R_xlen_t num_rows = feature_set.nrows();
     Rcpp::LogicalVector out = Rcpp::no_init(num_rows);
 
     GDALProgressFunc pfnProgress = nullptr;
@@ -2488,12 +2489,11 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
     // create a data frame based on the layer definition
     // this method must be kept consistent with fetch()
 
-    OGRFeatureDefnH hFDefn = nullptr;
-    hFDefn = OGR_L_GetLayerDefn(m_hLayer);
+    const OGRFeatureDefnH hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
 
-    int nFields = OGR_FD_GetFieldCount(hFDefn);
+    const int nFields = OGR_FD_GetFieldCount(hFDefn);
     int nIgnoredFields = 0;
     for (int i = 0; i < nFields; ++i) {
         OGRFieldDefnH hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, i);
@@ -2519,8 +2519,8 @@ SEXP GDALVector::createDF_(R_xlen_t nrow) const {
     }
 
     // construct as list and convert to data frame at return
-    int nOutCols = (1 + nFields - nIgnoredFields + nGeomFields -
-                    nIgnoredGeomFields);
+    const int nOutCols = (1 + nFields - nIgnoredFields + nGeomFields -
+                          nIgnoredGeomFields);
     Rcpp::List df(nOutCols);
     Rcpp::CharacterVector col_names(nOutCols);
 
@@ -2722,8 +2722,7 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
     if (names.size() == 0)
         Rcpp::stop("names vector is empty");
 
-    OGRFeatureDefnH hFDefn = nullptr;
-    hFDefn = OGR_L_GetLayerDefn(m_hLayer);
+    const OGRFeatureDefnH hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     if (hFDefn == nullptr)
         Rcpp::stop("failed to get layer definition");
 
@@ -2782,8 +2781,8 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
 
     // check attribute fields
     for (auto it = map_flds.cbegin(); it != map_flds.cend(); ++it) {
-        R_xlen_t col_idx = it->first;
-        int fld_idx = it->second;
+        const R_xlen_t col_idx = it->first;
+        const int fld_idx = it->second;
 
         if (fld_idx == FID_MARKER)
             continue;
@@ -2795,7 +2794,7 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
             Rcpp::stop("could not obtain field definition");
         }
 
-        OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+        const OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
         std::string msg_not_nullable =
                 "`NA` or empty value given but field is not nullable";
 
@@ -3047,7 +3046,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
 
     // The returned feature must be destroyed with OGR_F_Destroy().
 
-    OGRFeatureDefnH hFDefn = OGR_L_GetLayerDefn(m_hLayer);
+    const OGRFeatureDefnH hFDefn = OGR_L_GetLayerDefn(m_hLayer);
     OGRFeatureH hFeat = OGR_F_Create(hFDefn);
 
     // set FID if one is given and is not NA
@@ -3090,13 +3089,13 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
 
     // set attribute fields
     for (auto it = map_flds.cbegin(); it != map_flds.cend(); ++it) {
-        R_xlen_t col_idx = it->first;
-        int fld_idx = it->second;
+        const R_xlen_t col_idx = it->first;
+        const int fld_idx = it->second;
 
         if (fld_idx == FID_MARKER)
             continue;
 
-        OGRFieldDefnH hFieldDefn = OGR_F_GetFieldDefnRef(hFeat, fld_idx);
+        const OGRFieldDefnH hFieldDefn = OGR_F_GetFieldDefnRef(hFeat, fld_idx);
 
         // partial checks for NULL and NA in the input for this field
         bool set_field_null = false;
@@ -3128,12 +3127,14 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
             }
         }
 
-        OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
+        const OGRFieldType fld_type = OGR_Fld_GetType(hFieldDefn);
 
         switch (fld_type) {
             case OFTInteger:
             {
-                OGRFieldSubType fld_subtype = OGR_Fld_GetSubType(hFieldDefn);
+                const OGRFieldSubType fld_subtype =
+                    OGR_Fld_GetSubType(hFieldDefn);
+
                 if (fld_subtype == OFSTBoolean) {
                     Rcpp::LogicalVector lv = feature[col_idx];
                     // logical NA or 0-length has already been checked above
@@ -3279,7 +3280,7 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
                     }
                 }
                 else {
-                    int64_t nUnixTime = static_cast<int64_t>(nv[row_idx]);
+                    const int64_t nUnixTime = static_cast<int64_t>(nv[row_idx]);
                     struct tm brokendowntime;
                     CPLUnixTimeToYMDHMS(nUnixTime, &brokendowntime);
                     float sec = brokendowntime.tm_sec +
@@ -3566,8 +3567,8 @@ OGRFeatureH GDALVector::OGRFeatureFromList_(const Rcpp::List &feature,
 
     // set geom fields
     for (auto it = map_geom_flds.cbegin(); it != map_geom_flds.cend(); ++it) {
-        R_xlen_t col_idx = it->first;
-        int gfld_idx = it->second;
+        const R_xlen_t col_idx = it->first;
+        const int gfld_idx = it->second;
 
         // geometry fields may originate in a data frame list column
         // set up a generic RObject with the correct reference

@@ -12,6 +12,8 @@
 #include "gdalraster.h"
 #include "vsifile.h"
 
+constexpr uint64_t VSI_L_OFFSET_MAX_R = 9223372036854775807;
+
 VSIFile::VSIFile() :
             m_filename(""),
             m_access("r"),
