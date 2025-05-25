@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9001 (dev)
+# gdalraster 2.0.0.9002 (dev)
+
+* (internal) make variables `constexpr` or `const` in several places (2025-05-25)
 
 * `pixel_extract()`: fix input validation for `xy_srs` (2025-05-23)
 
