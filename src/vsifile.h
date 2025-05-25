@@ -32,8 +32,6 @@
 
 #include "cpl_vsi.h"
 
-const uint64_t VSI_L_OFFSET_MAX_R = 9223372036854775807;
-
 class VSIFile {
  public:
     VSIFile();
