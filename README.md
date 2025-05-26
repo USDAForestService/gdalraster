@@ -20,13 +20,11 @@ Scorecard](https://api.scorecard.dev/projects/github.com/USDAForestService/gdalr
 
 ## Overview
 
-**gdalraster** is an R interface to the
-[Raster](https://gdal.org/en/stable/api/raster_c_api.html) and
-[Vector](https://gdal.org/en/stable/api/vector_c_api.html) APIs of the
-Geospatial Data Abstraction Library
-([GDAL](https://gdal.org/en/stable/)).
+**gdalraster** is an R interface to the Raster and Vector
+[APIs](https://gdal.org/en/stable/api/index.html) of the Geospatial Data
+Abstraction Library ([GDAL](https://gdal.org/en/stable/)).
 
-API-level bindings are implemented in the exposed C++ classes
+API bindings are implemented in the exposed C++ classes
 [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html)
 and
 [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html),
@@ -37,7 +35,7 @@ Bindings to the GDAL Virtual Systems Interface
 included to support file system operations and binary I/O on URLs, cloud
 storage services, Zip/GZip/7z/RAR, and in-memory files, as well as
 regular file systems. Calling signatures resemble the native C, C++ and
-Python APIs provided by the GDAL project. Supports:
+Python APIs provided by the GDAL project. The package supports:
 
 - manual creation of uninitialized raster and vector datasets
 - vector layer creation and schema management
@@ -46,20 +44,26 @@ Python APIs provided by the GDAL project. Supports:
 - build/read/set color tables and raster attribute tables
 - virtual raster (VRT) for virtual cropping, resampling, kernel
   filtering, mosaicing
-- [`gdalwarp`
-  wrapper](https://usdaforestservice.github.io/gdalraster/reference/warp.html)
+- [wrapper of
+  `gdalwarp`](https://usdaforestservice.github.io/gdalraster/reference/warp.html)
   for reproject/resample/crop/mosaic
-- coordinate transformation
+- coordinate transformations
 - spatial reference systems
-- geometry operations on raw vectors of WKB, or WKT strings
-- GDAL algorithms (`dem_proc()`, `polygonize()`, `rasterize()`,
-  [`...`](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms))
-- OGR vector utilities (`ogrinfo()`, `ogr2ogr()`,
-  [`ogr_manage`](https://usdaforestservice.github.io/gdalraster/reference/ogr_manage.html)
-  interface)
-- OGR facilities for vector geoprocessing
-  ([`ogr_proc()`](https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.html))
-- raster and vector dataset management (copy files/move/rename/delete)
+- [geometry
+  API](https://usdaforestservice.github.io/gdalraster/reference/index.html#geometry)
+  operating on raw vectors of WKB or WKT strings
+- GDAL
+  [algorithms](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms)
+  (`dem_proc()`, `polygonize()`, `rasterize()`, …)
+- OGR [vector
+  utilities](https://usdaforestservice.github.io/gdalraster/reference/index.html#ogr-vector-utilities)
+  (`ogrinfo()`, `ogr2ogr()`, `ogr_reproject()`, `ogr_manage` interface)
+- GDAL facilities for [vector
+  geoprocessing](https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.html)
+  (`ogr_proc()`)
+- raster and vector [dataset
+  management](https://usdaforestservice.github.io/gdalraster/reference/index.html#data-management)
+  (inspect/copy files/rename/delete)
 - create/append to Seek-Optimized ZIP
   ([SOZip](https://github.com/sozip/sozip-spec))
 - abstraction of [file system
@@ -179,9 +183,9 @@ then
 remotes::install_github("USDAForestService/gdalraster")
 ```
 
-Caution is warranted on macOS with regard to mixing a source
-installation with installation of binaries from CRAN. Consider
-installing the development version from R-universe instead.
+It is not recommended to mix source installations and installation of
+macOS binaries from CRAN. Consider installing the development version
+from R-universe instead.
 
 ### From R-universe
 
@@ -211,3 +215,5 @@ install.packages("gdalraster", repos = c("https://usdaforestservice.r-universe.d
   Caching](https://usdaforestservice.github.io/gdalraster/articles/gdal-block-cache.html)
 - [GDAL Config Quick
   Ref](https://usdaforestservice.github.io/gdalraster/articles/gdal-config-quick-ref.html)
+- [Vector Read
+  Benchmarks](https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html)
