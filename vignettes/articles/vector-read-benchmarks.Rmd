@@ -38,7 +38,7 @@ Uses the class method `GDALVector$fetch()` in **gdalraster** for traditional row
 
 Uses the class method `GDALVector$getArrowStream()` in **gdalraster** to expose an Arrow C stream on the layer as a`nanoarrow_array_stream` object (external pointer to an ArrowArrayStream). Provides direct access to the stream object and retrieves features in a column-oriented memory layout. The required package **nanoarrow** provides S3 methods for `as.data.frame()` to import a `nanoarrow_array` (one batch at a time), or the `nanoarrow_array_stream` itself (pulling all batches in the stream).
 
-**bench_gdalraster_fetch_convert_to_sf.R**
+**bench_gdalraster_fetch_conv_to_sf.R**
 
 The same as bench_gdalraster_fetch.R (traditional row-level access) but with conversion to a classed **sf** data frame via `sf::st_sf()` included in the timing.
 
@@ -55,23 +55,26 @@ Uses `sf::read_sf()` with argument `use_stream = TRUE`: "use the experimental co
 ```{r, echo = FALSE}
 bench_program <- c("bench_gdalraster_fetch.R",
                    "bench_gdalraster_arrow_stream.R",
-                   "bench_gdalraster_fetch_convert_to_sf.R",
+                   "bench_gdalraster_fetch_conv_to_sf.R",
                    "bench_sf_read_sf.R",
                    "bench_sf_read_sf_use_stream.R")
 
 timing <- c(25.90, 5.90, 56.98, 176.56, 25.30)
 
-df_class <- c("OGRFeatureSet", "base data.frame", "sf (from OGRFeatureSet)",
+df_class <- c("OGRFeatureSet", "base data.frame", "sf",
               "sf (tibble)", "sf (tibble)")
 
 geom_col <- c("WKB raw vectors", "WKB raw vectors", "classed sfc",
               "classed sfc", "classed sfc")
 
-tbl <- data.frame(Bench_program = bench_program, Elapsed_time_seconds = timing,
-                  Data_frame_class = df_class, Geometry_list_column = geom_col)
+tbl <- data.frame(Bench_program = bench_program, Time_1s2 = timing,
+                  Data_frame_class = df_class, Geom_list_column = geom_col)
 
+col_names <- gsub("[_]", " ", names(tbl))
+col_names <- gsub("[1]", "(", col_names)
+col_names <- gsub("[2]", ")", col_names)
 cap <- "Read nz-building-outlines.gpkg (1.5 GB) and populate a data frame."
-knitr::kable(tbl, col.names = gsub("[_]", " ", names(tbl)), caption = cap)
+knitr::kable(tbl, col.names = col_names, caption = cap)
 ```
 
 ## Code
@@ -208,7 +211,7 @@ lyr$close()
 ```
 <sup>Created on 2025-05-25 with [reprex v2.1.1](https://reprex.tidyverse.org)</sup>
 
-### bench_gdalraster_fetch_convert_to_sf.R
+### bench_gdalraster_fetch_conv_to_sf.R
 
 ``` r
 library(gdalraster)
