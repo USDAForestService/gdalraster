@@ -24,7 +24,7 @@ Linux Ubuntu 24.04 (x86_64-pc-linux-gnu), R 4.5.0 (2025-04-11), GDAL 3.10.3 (202
 NZ Building Outlines, <https://data.linz.govt.nz/layer/101290-nz-building-outlines/>, from Land Information New Zealand: "This dataset provides current outlines of buildings within mainland New Zealand
 captured from the latest aerial imagery."
 
-Tests used the GeoPackage file nz-building-outlines.gpkg (1.5 GB). The layer contains 3.3 millions features, each with 13 attribute fields (2 fields of type Integer, 8 of type String, 3 of type DateTime) and polygon geometries.
+Tests used the GeoPackage file nz-building-outlines.gpkg (1.5 GB). The layer contains 3.3 million features, each with 13 attribute fields (2 fields of type Integer, 8 of type String, 3 of type DateTime) and polygon geometries.
 
 ## Benchmark programs
 
