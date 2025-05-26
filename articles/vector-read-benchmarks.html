@@ -83,23 +83,23 @@
 <p>Vector read benchmarks for R package
 <strong>gdalraster</strong><br>
 2025-05-25 (v. 1.0)</p>
-<p>Benchmark tests follow the format of benchmarks reported in GDAL <a href="https://gdal.org/en/stable/development/rfc/rfc86_column_oriented_api.html#benchmarks" class="external-link">RFC
+<p>Benchmark tests follow the format of benchmarks described in GDAL <a href="https://gdal.org/en/stable/development/rfc/rfc86_column_oriented_api.html#benchmarks" class="external-link">RFC
 86: Column-oriented read API for vector layers</a> using the same
 dataset. The timings here cannot be compared directly with the GDAL
-timings due to hardware differences (the hardware used for the GDAL
+timings due to hardware differences (hardware used for the GDAL
 benchmarks is not specified). The timings reported here should be
 conservative in the sense that hardware was a relatively slow, six year
 old laptop at the time of writing (with Intel(R) Core(TM) i5-8250U CPU @
 1.60GHz, 8 GB RAM and SSD). The benchmarks are intended as a sanity
 check on read performance in the context of ranges seen for two
 different I/O methods and multiple implementations, in compiled code and
-Python from the GDAL benchmarks, and using R packages as reported
-here.</p>
+Python libraries as described for the GDAL benchmarks, and using R
+packages described here.</p>
 <div class="section level2">
 <h2 id="software-environment">Software environment<a class="anchor" aria-label="anchor" href="#software-environment"></a>
 </h2>
-<p>Linux Ubuntu 24.04 (x86_64-pc-linux-gnu), R 4.5.0 (2025-04-11), GDAL
-3.10.3 (2025-04-01), gdalraster 2.0.0.9002, sf 1.0.21.</p>
+<p>Linux Ubuntu 24.04, R 4.5.0 (2025-04-11), GDAL 3.10.3 (2025-04-01),
+gdalraster 2.0.0.9002, sf 1.0.21</p>
 </div>
 <div class="section level2">
 <h2 id="vector-data">Vector data<a class="anchor" aria-label="anchor" href="#vector-data"></a>
@@ -130,7 +130,7 @@ in the GDAL API. The method is an analog of function
 3.6)</p>
 <p>Uses the class method <code>GDALVector$getArrowStream()</code> in
 <strong>gdalraster</strong> to expose an Arrow C stream on the layer as
-a<code>nanoarrow_array_stream</code> object (external pointer to an
+a <code>nanoarrow_array_stream</code> object (external pointer to an
 ArrowArrayStream). Provides direct access to the stream object and
 retrieves features in a column-oriented memory layout. The required
 package <strong>nanoarrow</strong> provides S3 methods for
