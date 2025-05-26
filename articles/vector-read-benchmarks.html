@@ -137,7 +137,7 @@ package <strong>nanoarrow</strong> provides S3 methods for
 <code><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame()</a></code> to import a <code>nanoarrow_array</code>
 (one batch at a time), or the <code>nanoarrow_array_stream</code> itself
 (pulling all batches in the stream).</p>
-<p><strong>bench_gdalraster_fetch_convert_to_sf.R</strong></p>
+<p><strong>bench_gdalraster_fetch_conv_to_sf.R</strong></p>
 <p>The same as bench_gdalraster_fetch.R (traditional row-level access)
 but with conversion to a classed <strong>sf</strong> data frame via
 <code>sf::st_sf()</code> included in the timing.</p>
@@ -158,16 +158,16 @@ introduced in GDAL 3.6”.</p>
 <caption>Read nz-building-outlines.gpkg (1.5 GB) and populate a data
 frame.</caption>
 <colgroup>
-<col width="37%">
-<col width="20%">
-<col width="22%">
-<col width="20%">
+<col width="45%">
+<col width="11%">
+<col width="21%">
+<col width="21%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Bench program</th>
-<th align="right">Elapsed time seconds</th>
+<th align="right">Time (s)</th>
 <th align="left">Data frame class</th>
-<th align="left">Geometry list column</th>
+<th align="left">Geom list column</th>
 </tr></thead>
 <tbody>
 <tr class="odd">
@@ -183,9 +183,9 @@ frame.</caption>
 <td align="left">WKB raw vectors</td>
 </tr>
 <tr class="odd">
-<td align="left">bench_gdalraster_fetch_convert_to_sf.R</td>
+<td align="left">bench_gdalraster_fetch_conv_to_sf.R</td>
 <td align="right">56.98</td>
-<td align="left">sf (from OGRFeatureSet)</td>
+<td align="left">sf</td>
 <td align="left">classed sfc</td>
 </tr>
 <tr class="even">
@@ -339,7 +339,7 @@ frame.</caption>
 <p><sup>Created on 2025-05-25 with <a href="https://reprex.tidyverse.org" class="external-link">reprex v2.1.1</a></sup></p>
 </div>
 <div class="section level3">
-<h3 id="bench_gdalraster_fetch_convert_to_sf-r">bench_gdalraster_fetch_convert_to_sf.R<a class="anchor" aria-label="anchor" href="#bench_gdalraster_fetch_convert_to_sf-r"></a>
+<h3 id="bench_gdalraster_fetch_conv_to_sf-r">bench_gdalraster_fetch_conv_to_sf.R<a class="anchor" aria-label="anchor" href="#bench_gdalraster_fetch_conv_to_sf-r"></a>
 </h3>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://usdaforestservice.github.io/gdalraster/">gdalraster</a></span><span class="op">)</span></span>
