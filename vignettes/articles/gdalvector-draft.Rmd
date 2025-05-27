@@ -9,6 +9,8 @@ knitr::opts_chunk$set(
 )
 ```
 
+**Note**: This document is now out of date and retained only as a record of the original proposed interface and initial development. Bindings to the GDAL Vector API were added in the **gdalraster** [2.0.0 release](https://github.com/USDAForestService/gdalraster/releases/tag/v.2.0.0). For current specifications, see the package vignette [Vector API Overview](https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html) and the documentation for class [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html).
+
 Chris Toney (chris.toney at usda.gov)
 
 Last modified: 2024-09-14
