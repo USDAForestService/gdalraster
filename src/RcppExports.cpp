@@ -1766,6 +1766,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// srs_to_projjson
+std::string srs_to_projjson(const std::string& srs, bool multiline, int indent_width, const std::string& schema);
+RcppExport SEXP _gdalraster_srs_to_projjson(SEXP srsSEXP, SEXP multilineSEXP, SEXP indent_widthSEXP, SEXP schemaSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
+    Rcpp::traits::input_parameter< bool >::type multiline(multilineSEXP);
+    Rcpp::traits::input_parameter< int >::type indent_width(indent_widthSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type schema(schemaSEXP);
+    rcpp_result_gen = Rcpp::wrap(srs_to_projjson(srs, multiline, indent_width, schema));
+    return rcpp_result_gen;
+END_RCPP
+}
 // srs_get_name
 std::string srs_get_name(const std::string& srs);
 RcppExport SEXP _gdalraster_srs_get_name(SEXP srsSEXP) {
@@ -2184,6 +2198,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_ogr_execute_sql", (DL_FUNC) &_gdalraster_ogr_execute_sql, 4},
     {"_gdalraster_epsg_to_wkt", (DL_FUNC) &_gdalraster_epsg_to_wkt, 2},
     {"_gdalraster_srs_to_wkt", (DL_FUNC) &_gdalraster_srs_to_wkt, 2},
+    {"_gdalraster_srs_to_projjson", (DL_FUNC) &_gdalraster_srs_to_projjson, 4},
     {"_gdalraster_srs_get_name", (DL_FUNC) &_gdalraster_srs_get_name, 1},
     {"_gdalraster_srs_find_epsg", (DL_FUNC) &_gdalraster_srs_find_epsg, 2},
     {"_gdalraster_srs_is_geographic", (DL_FUNC) &_gdalraster_srs_is_geographic, 1},
