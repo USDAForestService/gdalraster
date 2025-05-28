@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +50,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.0.0.9002" id="gdalraster-2009002-dev">gdalraster 2.0.0.9002 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2009002-dev"></a></h2>
-<ul><li><p>(internal) make variables <code>constexpr</code> or <code>const</code> in several places (2025-05-25)</p></li>
+<h2 class="pkg-version" data-toc-text="2.0.0.9003" id="gdalraster-2009003-dev">gdalraster 2.0.0.9003 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2009003-dev"></a></h2>
+<ul><li><p>add <code><a href="../reference/srs_convert.html">srs_to_projjson()</a></code>, wrapper for <code>OSRExportToPROJJSON()</code> in the GDAL Spatial Reference System API (<a href="https://github.com/USDAForestService/gdalraster/issues/721" class="external-link">#721</a>) (2025-05-28)</p></li>
+<li><p>(internal) make variables <code>constexpr</code> or <code>const</code> in several places (2025-05-25)</p></li>
 <li><p><code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: fix input validation for <code>xy_srs</code> (2025-05-23)</p></li>
 <li><p>(internal) <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code> and <code>GDALRaster::infoAsJSON()</code> now use convenience class <code>CPLString</code> from the GDAL Common Portability Library for its <code>replaceAll()</code> method (2025-05-19)</p></li>
 </ul></div>
