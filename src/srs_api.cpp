@@ -16,10 +16,10 @@
 #include "ogrsf_frmts.h"
 
 
-//' Convert spatial reference definitions to OGC Well Known Text
+//' Convert spatial reference definitions to OGC WKT or PROJJSON
 //'
 //' These functions convert various spatial reference formats to Well Known
-//' Text (WKT).
+//' Text (WKT) or PROJJSON.
 //'
 //' @name srs_convert
 //'
@@ -34,6 +34,11 @@
 //' try to deduce the format, and then export it to WKT.
 //' Wrapper for `OSRSetFromUserInput()` in the GDAL Spatial Reference System
 //' API with output to WKT.
+//'
+//' `srs_to_projjson()` accepts a spatial reference system (SRS) definition in
+//' any of the formats supported by `srs_to_wkt()`, and converts into PROJJSON
+//' format. Wrapper for `OSRExportToPROJJSON()` in the GDAL Spatial Reference
+//' System API.
 //'
 //' The input SRS may take the following forms:
 //'   * WKT - to convert WKT versions (see below)
@@ -65,9 +70,15 @@
 //' @param epsg Integer EPSG code.
 //' @param srs Character string containing an SRS definition in various
 //' formats (see Details).
-//' @param pretty Logical. `TRUE` to return a nicely formatted WKT string
+//' @param pretty Logical value. `TRUE` to return a nicely formatted WKT string
 //' for display to a person. `FALSE` for a regular WKT string (the default).
 //' @return Character string containing OGC WKT.
+//' @param multiline Logical value. `TRUE` for PROJJSON multiline output (the
+//' default).
+//' @param indent_width Integer value. Defaults to `2`.
+//' Only used if `multiline = TRUE` for PROJJSON output.
+//' @param schema Character string containing URL to PROJJSON schema. Can be
+//' set to empty string to disable it (the default).
 //'
 //' @seealso
 //' [srs_query]
@@ -81,6 +92,8 @@
 //' set_config_option("OSR_WKT_FORMAT", "WKT2")
 //' writeLines(srs_to_wkt("NAD83", pretty=TRUE))
 //' set_config_option("OSR_WKT_FORMAT", "")
+//'
+//' srs_to_projjson("NAD83") |> cat("\n")
 // [[Rcpp::export]]
 std::string epsg_to_wkt(int epsg, bool pretty = false) {
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
@@ -145,6 +158,46 @@ std::string srs_to_wkt(const std::string &srs, bool pretty = false) {
     CPLFree(pszSRS_WKT);
 
     return wkt;
+}
+
+//' @rdname srs_convert
+// [[Rcpp::export]]
+std::string srs_to_projjson(const std::string &srs,
+                            bool multiline = true,
+                            int indent_width = 2,
+                            const std::string &schema = "") {
+    if (srs == "")
+        return "";
+
+    OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+    char *pszSRS_PROJJSON = nullptr;
+
+    if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
+        if (hSRS != nullptr)
+            OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error importing SRS from user input");
+    }
+
+    std::vector<const char *> opt_list;
+    std::string str_multiline = "YES";
+    if (!multiline)
+        str_multiline = "NO";
+    std::string str_indent = "2";
+    if (indent_width != 2)
+        str_indent = std::to_string(indent_width);
+
+    if (OSRExportToPROJJSON(hSRS, &pszSRS_PROJJSON, opt_list.data())
+            != OGRERR_NONE) {
+
+        OSRDestroySpatialReference(hSRS);
+        Rcpp::stop("error exporting to PROJJSON");
+    }
+
+    std::string json(pszSRS_PROJJSON);
+    OSRDestroySpatialReference(hSRS);
+    CPLFree(pszSRS_PROJJSON);
+
+    return json;
 }
 
 //' Obtain information about a spatial reference system

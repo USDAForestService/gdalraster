@@ -4,27 +4,39 @@
 \alias{srs_convert}
 \alias{epsg_to_wkt}
 \alias{srs_to_wkt}
-\title{Convert spatial reference definitions to OGC Well Known Text}
+\alias{srs_to_projjson}
+\title{Convert spatial reference definitions to OGC WKT or PROJJSON}
 \usage{
 epsg_to_wkt(epsg, pretty = FALSE)
 
 srs_to_wkt(srs, pretty = FALSE)
+
+srs_to_projjson(srs, multiline = TRUE, indent_width = 2L, schema = "")
 }
 \arguments{
 \item{epsg}{Integer EPSG code.}
 
-\item{pretty}{Logical. \code{TRUE} to return a nicely formatted WKT string
+\item{pretty}{Logical value. \code{TRUE} to return a nicely formatted WKT string
 for display to a person. \code{FALSE} for a regular WKT string (the default).}
 
 \item{srs}{Character string containing an SRS definition in various
 formats (see Details).}
+
+\item{multiline}{Logical value. \code{TRUE} for PROJJSON multiline output (the
+default).}
+
+\item{indent_width}{Integer value. Defaults to \code{2}.
+Only used if \code{multiline = TRUE} for PROJJSON output.}
+
+\item{schema}{Character string containing URL to PROJJSON schema. Can be
+set to empty string to disable it (the default).}
 }
 \value{
 Character string containing OGC WKT.
 }
 \description{
 These functions convert various spatial reference formats to Well Known
-Text (WKT).
+Text (WKT) or PROJJSON.
 }
 \details{
 \code{epsg_to_wkt()} exports the spatial reference for an EPSG code to
@@ -37,6 +49,11 @@ in various text formats to WKT. The function will examine the input SRS,
 try to deduce the format, and then export it to WKT.
 Wrapper for \code{OSRSetFromUserInput()} in the GDAL Spatial Reference System
 API with output to WKT.
+
+\code{srs_to_projjson()} accepts a spatial reference system (SRS) definition in
+any of the formats supported by \code{srs_to_wkt()}, and converts into PROJJSON
+format. Wrapper for \code{OSRExportToPROJJSON()} in the GDAL Spatial Reference
+System API.
 
 The input SRS may take the following forms:
 \itemize{
@@ -76,6 +93,8 @@ writeLines(srs_to_wkt("NAD83", pretty=TRUE))
 set_config_option("OSR_WKT_FORMAT", "WKT2")
 writeLines(srs_to_wkt("NAD83", pretty=TRUE))
 set_config_option("OSR_WKT_FORMAT", "")
+
+srs_to_projjson("NAD83") |> cat("\n")
 }
 \seealso{
 \link{srs_query}
