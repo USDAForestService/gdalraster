@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9002 (dev)
+# gdalraster 2.0.0.9003 (dev)
+
+* add `srs_to_projjson()`, wrapper for `OSRExportToPROJJSON()` in the GDAL Spatial Reference System API (#721) (2025-05-28)
 
 * (internal) make variables `constexpr` or `const` in several places (2025-05-25)
 
