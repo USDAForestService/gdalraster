@@ -1755,14 +1755,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // srs_to_wkt
-std::string srs_to_wkt(const std::string& srs, bool pretty);
-RcppExport SEXP _gdalraster_srs_to_wkt(SEXP srsSEXP, SEXP prettySEXP) {
+std::string srs_to_wkt(const std::string& srs, bool pretty, bool gcs_only);
+RcppExport SEXP _gdalraster_srs_to_wkt(SEXP srsSEXP, SEXP prettySEXP, SEXP gcs_onlySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
     Rcpp::traits::input_parameter< bool >::type pretty(prettySEXP);
-    rcpp_result_gen = Rcpp::wrap(srs_to_wkt(srs, pretty));
+    Rcpp::traits::input_parameter< bool >::type gcs_only(gcs_onlySEXP);
+    rcpp_result_gen = Rcpp::wrap(srs_to_wkt(srs, pretty, gcs_only));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2197,7 +2198,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_ogr_field_delete", (DL_FUNC) &_gdalraster_ogr_field_delete, 3},
     {"_gdalraster_ogr_execute_sql", (DL_FUNC) &_gdalraster_ogr_execute_sql, 4},
     {"_gdalraster_epsg_to_wkt", (DL_FUNC) &_gdalraster_epsg_to_wkt, 2},
-    {"_gdalraster_srs_to_wkt", (DL_FUNC) &_gdalraster_srs_to_wkt, 2},
+    {"_gdalraster_srs_to_wkt", (DL_FUNC) &_gdalraster_srs_to_wkt, 3},
     {"_gdalraster_srs_to_projjson", (DL_FUNC) &_gdalraster_srs_to_projjson, 4},
     {"_gdalraster_srs_get_name", (DL_FUNC) &_gdalraster_srs_get_name, 1},
     {"_gdalraster_srs_find_epsg", (DL_FUNC) &_gdalraster_srs_find_epsg, 2},
