@@ -241,12 +241,14 @@ void GDALVector::info() const {
         if (m_is_sql) {
             cl_arg.push_back("-sql");
             cl_arg.push_back(m_layer_name);
-            Rcpp::Rcout << ogrinfo(m_dsn, R_NilValue, cl_arg, m_open_options,
-                                   true, false);
+            Rcpp::String out = ogrinfo(m_dsn, R_NilValue, cl_arg,
+                                       m_open_options, true, false);
+            Rcpp::Rcout << out.get_cstring();
         }
         else {
-            Rcpp::Rcout << ogrinfo(m_dsn, Rcpp::wrap(m_layer_name), cl_arg,
-                                   m_open_options, true, false);
+            Rcpp::String out = ogrinfo(m_dsn, Rcpp::wrap(m_layer_name), cl_arg,
+                                       m_open_options, true, false);
+            Rcpp::Rcout << out.get_cstring();
         }
     }
     else {

@@ -533,7 +533,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // ogrinfo
-std::string ogrinfo(const Rcpp::CharacterVector& dsn, const Rcpp::Nullable<Rcpp::CharacterVector>& layers, const Rcpp::Nullable<Rcpp::CharacterVector>& cl_arg, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options, bool read_only, bool cout);
+Rcpp::String ogrinfo(const Rcpp::CharacterVector& dsn, const Rcpp::Nullable<Rcpp::CharacterVector>& layers, const Rcpp::Nullable<Rcpp::CharacterVector>& cl_arg, const Rcpp::Nullable<Rcpp::CharacterVector>& open_options, bool read_only, bool cout);
 RcppExport SEXP _gdalraster_ogrinfo(SEXP dsnSEXP, SEXP layersSEXP, SEXP cl_argSEXP, SEXP open_optionsSEXP, SEXP read_onlySEXP, SEXP coutSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;

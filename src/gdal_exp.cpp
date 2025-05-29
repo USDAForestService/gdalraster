@@ -1917,15 +1917,15 @@ bool ogr2ogr(const Rcpp::CharacterVector &src_dsn,
 //' args <- c("-dialect", "sqlite", "-sql", sql)
 //' ogrinfo(src_mem, cl_arg = args, read_only = FALSE)
 // [[Rcpp::export(invisible = true)]]
-std::string ogrinfo(const Rcpp::CharacterVector &dsn,
-                    const Rcpp::Nullable<Rcpp::CharacterVector> &layers =
+Rcpp::String ogrinfo(const Rcpp::CharacterVector &dsn,
+                     const Rcpp::Nullable<Rcpp::CharacterVector> &layers =
                             R_NilValue,
-                    const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg =
+                     const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg =
                             Rcpp::CharacterVector::create("-so", "-nomd"),
-                    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options =
+                     const Rcpp::Nullable<Rcpp::CharacterVector> &open_options =
                             R_NilValue,
-                    bool read_only = true,
-                    bool cout = true) {
+                     bool read_only = true,
+                     bool cout = true) {
 
 #if GDAL_VERSION_NUM < 3070000
     Rcpp::stop("ogrinfo() requires GDAL >= 3.7");
@@ -1982,23 +1982,23 @@ std::string ogrinfo(const Rcpp::CharacterVector &dsn,
         Rcpp::stop("ogrinfo() failed (could not create options struct)");
     }
 
-    CPLString info_out = "";
+    Rcpp::String info_out = "";
     char *pszInfo = GDALVectorInfo(src_ds, psOptions);
     if (pszInfo != nullptr)
         info_out = pszInfo;
 
-    CPLFree(pszInfo);
     GDALVectorInfoOptionsFree(psOptions);
     GDALReleaseDataset(src_ds);
 
     if (cout)
-        Rcpp::Rcout << info_out;
+        Rcpp::Rcout << info_out.get_cstring();
 
     if (as_json)
-        info_out.replaceAll('\n', ' ');
+        info_out.replace_all("\n", " ");
+
+    CPLFree(pszInfo);
 
     return info_out;
-
 #endif
 }
 
