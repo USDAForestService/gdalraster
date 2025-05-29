@@ -13,6 +13,7 @@
 
 std::string epsg_to_wkt(int epsg, bool pretty);
 std::string srs_to_wkt(const std::string &srs, bool pretty);
+std::string srs_to_wkt(const std::string &srs, bool pretty, bool gcs_only);
 std::string srs_to_projjson(const std::string &srs, bool multiline,
                             int indent_width, const std::string &schema);
 

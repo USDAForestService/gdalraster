@@ -73,6 +73,8 @@
 //' @param pretty Logical value. `TRUE` to return a nicely formatted WKT string
 //' for display to a person. `FALSE` for a regular WKT string (the default).
 //' @return Character string containing OGC WKT.
+//' @param gcs_only Logical value. `TRUE` to return only the definition of the
+//' GEOGCS node of the input `srs`. Defaults to `FALSE` (see Note).
 //' @param multiline Logical value. `TRUE` for PROJJSON multiline output (the
 //' default).
 //' @param indent_width Integer value. Defaults to `2`.
@@ -80,18 +82,25 @@
 //' @param schema Character string containing URL to PROJJSON schema. Can be
 //' set to empty string to disable it (the default).
 //'
+//' @note
+//' Setting `gcs_only = TRUE` in `srs_to_wkt()` is a wrapper of
+//' `OSRCloneGeogCS()` in the GDAL API. The returned WKT will be for the GEOGCS
+//' node of the input `srs`.
+//'
 //' @seealso
 //' [srs_query]
 //'
 //' @examples
 //' epsg_to_wkt(5070)
-//' writeLines(epsg_to_wkt(5070, pretty=TRUE))
+//' writeLines(epsg_to_wkt(5070, pretty = TRUE))
 //'
 //' srs_to_wkt("NAD83")
-//' writeLines(srs_to_wkt("NAD83", pretty=TRUE))
+//' writeLines(srs_to_wkt("NAD83", pretty = TRUE))
 //' set_config_option("OSR_WKT_FORMAT", "WKT2")
-//' writeLines(srs_to_wkt("NAD83", pretty=TRUE))
+//' writeLines(srs_to_wkt("NAD83", pretty = TRUE))
 //' set_config_option("OSR_WKT_FORMAT", "")
+//'
+//' srs_to_wkt("EPSG:5070", gcs_only = TRUE)
 //'
 //' srs_to_projjson("NAD83") |> cat("\n")
 // [[Rcpp::export]]
@@ -125,13 +134,20 @@ std::string epsg_to_wkt(int epsg, bool pretty = false) {
     return wkt;
 }
 
+//' @noRd
+std::string srs_to_wkt(const std::string &srs, bool pretty) {
+    return srs_to_wkt(srs, pretty, false);
+}
+
 //' @rdname srs_convert
 // [[Rcpp::export]]
-std::string srs_to_wkt(const std::string &srs, bool pretty = false) {
+std::string srs_to_wkt(const std::string &srs, bool pretty = false,
+                       bool gcs_only = false) {
     if (srs == "")
         return "";
 
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
+    OGRSpatialReferenceH hSRS_out = nullptr;
     char *pszSRS_WKT = nullptr;
 
     if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
@@ -140,20 +156,33 @@ std::string srs_to_wkt(const std::string &srs, bool pretty = false) {
         Rcpp::stop("error importing SRS from user input");
     }
 
+    if (gcs_only)
+        hSRS_out = OSRCloneGeogCS(hSRS);
+    else
+        hSRS_out = hSRS;
+
     if (pretty) {
-        if (OSRExportToPrettyWkt(hSRS, &pszSRS_WKT, false) != OGRERR_NONE) {
+        if (OSRExportToPrettyWkt(hSRS_out, &pszSRS_WKT, false) != OGRERR_NONE) {
+            if (gcs_only && hSRS_out)
+                OSRDestroySpatialReference(hSRS_out);
+
             OSRDestroySpatialReference(hSRS);
             Rcpp::stop("error exporting to pretty WKT");
         }
     }
     else {
-        if (OSRExportToWkt(hSRS, &pszSRS_WKT) != OGRERR_NONE) {
+        if (OSRExportToWkt(hSRS_out, &pszSRS_WKT) != OGRERR_NONE) {
+            if (gcs_only && hSRS_out)
+                OSRDestroySpatialReference(hSRS_out);
+
             OSRDestroySpatialReference(hSRS);
             Rcpp::stop("error exporting to WKT");
         }
     }
 
     std::string wkt(pszSRS_WKT);
+    if (gcs_only)
+        OSRDestroySpatialReference(hSRS_out);
     OSRDestroySpatialReference(hSRS);
     CPLFree(pszSRS_WKT);
 

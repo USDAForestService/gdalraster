@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9003 (dev)
+# gdalraster 2.0.0.9004 (dev)
+
+* `srs_to_wkt()`: add argument `gcs_only` providing a wrapper of `OSRCloneGeogCS()` in the GDAL API (2025-05-28)
 
 * add `srs_to_projjson()`, wrapper for `OSRExportToPROJJSON()` in the GDAL Spatial Reference System API (#721) (2025-05-28)
 

@@ -29,6 +29,7 @@ test_that("srs functions work", {
     expect_equal(srs_to_wkt("NAD83"), epsg_to_wkt(4269))
     expect_equal(srs_to_wkt("NAD83", pretty=TRUE),
                  epsg_to_wkt(4269, pretty=TRUE))
+    expect_true(srs_to_wkt("EPSG:5070", gcs_only = TRUE) |> srs_is_geographic())
 
     expect_true(srs_to_projjson("WGS84") != "")
 

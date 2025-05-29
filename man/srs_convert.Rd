@@ -9,7 +9,7 @@
 \usage{
 epsg_to_wkt(epsg, pretty = FALSE)
 
-srs_to_wkt(srs, pretty = FALSE)
+srs_to_wkt(srs, pretty = FALSE, gcs_only = FALSE)
 
 srs_to_projjson(srs, multiline = TRUE, indent_width = 2L, schema = "")
 }
@@ -21,6 +21,9 @@ for display to a person. \code{FALSE} for a regular WKT string (the default).}
 
 \item{srs}{Character string containing an SRS definition in various
 formats (see Details).}
+
+\item{gcs_only}{Logical value. \code{TRUE} to return only the definition of the
+GEOGCS node of the input \code{srs}. Defaults to \code{FALSE} (see Note).}
 
 \item{multiline}{Logical value. \code{TRUE} for PROJJSON multiline output (the
 default).}
@@ -84,15 +87,22 @@ WKT1_GDAL. WKT2 will default to the latest revision implemented
 (currently WKT2_2018). WKT2_2019 can be used as an alias of
 WKT2_2018 since GDAL 3.2
 }
+\note{
+Setting \code{gcs_only = TRUE} in \code{srs_to_wkt()} is a wrapper of
+\code{OSRCloneGeogCS()} in the GDAL API. The returned WKT will be for the GEOGCS
+node of the input \code{srs}.
+}
 \examples{
 epsg_to_wkt(5070)
-writeLines(epsg_to_wkt(5070, pretty=TRUE))
+writeLines(epsg_to_wkt(5070, pretty = TRUE))
 
 srs_to_wkt("NAD83")
-writeLines(srs_to_wkt("NAD83", pretty=TRUE))
+writeLines(srs_to_wkt("NAD83", pretty = TRUE))
 set_config_option("OSR_WKT_FORMAT", "WKT2")
-writeLines(srs_to_wkt("NAD83", pretty=TRUE))
+writeLines(srs_to_wkt("NAD83", pretty = TRUE))
 set_config_option("OSR_WKT_FORMAT", "")
+
+srs_to_wkt("EPSG:5070", gcs_only = TRUE)
 
 srs_to_projjson("NAD83") |> cat("\n")
 }
