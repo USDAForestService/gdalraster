@@ -228,7 +228,7 @@ void GDALRaster::info() const {
     CPLFree(pszGDALInfoOutput);
 }
 
-std::string GDALRaster::infoAsJSON() const {
+Rcpp::String GDALRaster::infoAsJSON() const {
     checkAccess_(GA_ReadOnly);
 
     const Rcpp::CharacterVector argv = infoOptions;
@@ -253,14 +253,14 @@ std::string GDALRaster::infoAsJSON() const {
         Rcpp::stop("creation of GDALInfoOptions failed (check $infoOptions)");
 
     char *pszGDALInfoOutput = GDALInfo(m_hDataset, psOptions);
-    CPLString out = "";
+    Rcpp::String out = "";
     if (pszGDALInfoOutput != nullptr)
         out = pszGDALInfoOutput;
 
     GDALInfoOptionsFree(psOptions);
-    CPLFree(pszGDALInfoOutput);
 
-    out.replaceAll('\n', ' ');
+    out.replace_all("\n", " ");
+    CPLFree(pszGDALInfoOutput);
 
     return out;
 }

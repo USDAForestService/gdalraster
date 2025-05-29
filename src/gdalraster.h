@@ -113,7 +113,7 @@ class GDALRaster {
     Rcpp::CharacterVector getFileList() const;
 
     void info() const;
-    std::string infoAsJSON() const;
+    Rcpp::String infoAsJSON() const;
 
     std::string getDriverShortName() const;
     std::string getDriverLongName() const;
@@ -372,12 +372,12 @@ bool ogr2ogr(const Rcpp::CharacterVector &src_dsn,
              const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg,
              const Rcpp::Nullable<Rcpp::CharacterVector> &open_options);
 
-std::string ogrinfo(const Rcpp::CharacterVector &dsn,
-                    const Rcpp::Nullable<Rcpp::CharacterVector> &layers,
-                    const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg,
-                    const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
-                    bool read_only,
-                    bool cout);
+Rcpp::String ogrinfo(const Rcpp::CharacterVector &dsn,
+                     const Rcpp::Nullable<Rcpp::CharacterVector> &layers,
+                     const Rcpp::Nullable<Rcpp::CharacterVector> &cl_arg,
+                     const Rcpp::Nullable<Rcpp::CharacterVector> &open_options,
+                     bool read_only,
+                     bool cout);
 
 bool polygonize(const Rcpp::CharacterVector &src_filename, int src_band,
                 const Rcpp::CharacterVector &out_dsn,
