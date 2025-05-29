@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9004 (dev)
+# gdalraster 2.0.0.9005 (dev)
+
+* avoid clang-asan error from `CPLString` implicitly wrapped as an R character vector, due to changes introduced at dev version 2.0.0.9000 with PR #714 (fix in #723) (2025-05-29)
 
 * `srs_to_wkt()`: add argument `gcs_only` providing a wrapper of `OSRCloneGeogCS()` in the GDAL API (2025-05-28)
 
