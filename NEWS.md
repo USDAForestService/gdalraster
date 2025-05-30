@@ -6,7 +6,7 @@
 
 * add `srs_to_projjson()`, wrapper for `OSRExportToPROJJSON()` in the GDAL Spatial Reference System API (#721) (2025-05-28)
 
-* add web article [Vector Read Benchmarks](https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html) (2025-06-26)
+* add web article [Vector Read Benchmarks](https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html) (2025-05-26)
 
 * (internal) make variables `constexpr` or `const` in several places (2025-05-25)
 
