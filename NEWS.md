@@ -1,10 +1,12 @@
 # gdalraster 2.0.0.9005 (dev)
 
-* avoid clang-asan error from `CPLString` implicitly wrapped as an R character vector, due to changes introduced at dev version 2.0.0.9000 with PR #714 (fix in #723) (2025-05-29)
+* (internal) avoid clang-asan error from implicitly wrapping `CPLString` as an R character vector, due to changes introduced at dev version 2.0.0.9000 with PR #714 (fix in #723) (2025-05-29)
 
-* `srs_to_wkt()`: add argument `gcs_only` providing a wrapper of `OSRCloneGeogCS()` in the GDAL API (2025-05-28)
+* `srs_to_wkt()`: add argument `gcs_only`, wrapper for `OSRCloneGeogCS()` in the GDAL API (2025-05-28)
 
 * add `srs_to_projjson()`, wrapper for `OSRExportToPROJJSON()` in the GDAL Spatial Reference System API (#721) (2025-05-28)
+
+* add web article [Vector Read Benchmarks](https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html) (2025-06-26)
 
 * (internal) make variables `constexpr` or `const` in several places (2025-05-25)
 
