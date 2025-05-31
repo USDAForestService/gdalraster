@@ -1268,6 +1268,71 @@ Rcpp::LogicalVector g_overlaps(const Rcpp::RawVector &this_geom,
 
 // *** unary operations ***
 
+//' @noRd
+// [[Rcpp::export(name = ".g_boundary")]]
+SEXP g_boundary(const Rcpp::RawVector &geom, bool as_iso,
+                const std::string &byte_order, bool quiet) {
+
+// Compute boundary.
+
+// A new geometry object is created and returned containing the boundary of the
+// geometry on which the method is invoked.
+
+// This function is built on the GEOS library, check it for the definition of
+// the geometry operation:
+// Returns the "boundary" of a geometry, as defined by the DE9IM:
+//   * the boundary of a polygon is the linear rings dividing the exterior from
+//     the interior
+//   * the boundary of a linestring is the end points
+//   * the boundary of a point is the point
+// https://libgeos.org/doxygen/geos__c_8h.html#a2830fb255d1aec3fdee665d9fa6eb07f
+
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    OGRGeometryH hBoundaryGeom = OGR_G_Boundary(hGeom);
+
+    if (hBoundaryGeom == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
+        if (!quiet) {
+            Rcpp::warning("OGR_G_Boundary() gave NULL geometry, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    const int nWKBSize = OGR_G_WkbSize(hBoundaryGeom);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        OGR_G_DestroyGeometry(hBoundaryGeom);
+        if (!quiet) {
+            Rcpp::warning("failed to obtain WKB size of output geometry");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hBoundaryGeom, &wkb[0], as_iso, byte_order);
+    OGR_G_DestroyGeometry(hGeom);
+    OGR_G_DestroyGeometry(hBoundaryGeom);
+    if (!result) {
+        if (!quiet) {
+           Rcpp::warning(
+                    "failed to export WKB raw vector for output geometry");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    return wkb;
+}
 
 //' @noRd
 // [[Rcpp::export(name = ".g_buffer")]]

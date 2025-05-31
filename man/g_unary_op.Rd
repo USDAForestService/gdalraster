@@ -3,6 +3,7 @@
 \name{g_unary_op}
 \alias{g_unary_op}
 \alias{g_buffer}
+\alias{g_boundary}
 \alias{g_convex_hull}
 \alias{g_simplify}
 \title{Unary operations on WKB or WKT geometries}
@@ -11,6 +12,14 @@ g_buffer(
   geom,
   dist,
   quad_segs = 30L,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
+)
+
+g_boundary(
+  geom,
   as_wkb = TRUE,
   as_iso = FALSE,
   byte_order = "LSB",
@@ -83,10 +92,13 @@ WKB raw vectors, or a character vector containing one or more WKT strings.
 \details{
 These functions use the GEOS library via GDAL headers.
 
+\code{g_boundary()} computes the boundary of a geometry. Wrapper of
+\code{OGR_G_Boundary()} in the GDAL Geometry API.
+
 \code{g_buffer()} builds a new geometry containing the buffer region around
 the geometry on which it is invoked. The buffer is a polygon containing
 the region within the buffer distance of the original geometry.
-Wrapper of \code{OGR_G_Buffer()}in the GDAL Geometry API.
+Wrapper of \code{OGR_G_Buffer()} in the GDAL API.
 
 \code{g_convex_hull()} computes a convex hull, the smallest convex geometry that
 contains all the points in the input geometry. Wrapper of
@@ -100,6 +112,15 @@ the input geometries while preserving topology (see Note). Wrapper of
 Definitions of these operations are given in the GEOS documentation
 (\url{https://libgeos.org/doxygen/}, GEOS 3.14.0dev), some of which is
 copied here.
+
+\code{g_boundary()} computes the "boundary" as defined by the DE9IM
+(\url{https://en.wikipedia.org/wiki/DE-9IM}):
+\itemize{
+\item the boundary of a Polygon is the set of linear rings dividing the
+exterior from the interior
+\item the boundary of a LineString is the two end points
+\item the boundary of a Point/MultiPoint is defined as empty
+}
 
 \code{g_buffer()} always returns a polygonal result. The negative or
 zero-distance buffer of lines and points is always an empty Polygon.
@@ -131,11 +152,15 @@ N.B., \code{preserve_topology = TRUE} does not preserve boundaries shared betwee
 polygons.
 }
 \examples{
-g_buffer("POINT (0 0)", dist = 10, as_wkb = FALSE)
+g1 <- "POLYGON((0 0,1 1,1 0,0 0))"
+g_boundary(g1, as_wkb = FALSE)
 
-g1 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
-g_convex_hull(g1, as_wkb = FALSE)
+g2 <- "POINT (0 0)"
+g_buffer(g2, dist = 10, as_wkb = FALSE)
 
-g2 <- "LINESTRING(0 0,1 1,10 0)"
-g_simplify(g2, tolerance = 5, as_wkb = FALSE)
+g3 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
+g_convex_hull(g3, as_wkb = FALSE)
+
+g4 <- "LINESTRING(0 0,1 1,10 0)"
+g_simplify(g4, tolerance = 5, as_wkb = FALSE)
 }

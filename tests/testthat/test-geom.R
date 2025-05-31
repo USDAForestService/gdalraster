@@ -685,6 +685,31 @@ test_that("unary ops return correct values", {
     bb <- bbox_from_wkt(g_buffer(pt, dist = 10, as_wkb = FALSE))
     expect_equal(bb, c(-10, -10,  10,  10))
 
+    # g_boundary
+    g1 <- "POINT(1 1)"
+    expect_equal(g_boundary(g1, as_wkb = FALSE), "GEOMETRYCOLLECTION EMPTY")
+    g2 <- "MULTIPOINT((0 0),(1 1))"
+    expect_equal(g_boundary(g2, as_wkb = FALSE), "GEOMETRYCOLLECTION EMPTY")
+    g3 <- "LINESTRING(0 0, 1 1, 2 2, 3 2, 4 2)"
+    g_bnd <- g_boundary(g3)
+    expect_equal(g_name(g_bnd), "MULTIPOINT")
+    expect_equal(nrow(g_coords(g_bnd)), 2)
+    g4 <- "POLYGON((0 0,1 1,1 0,0 0))"
+    g_bnd <- g_boundary(g4)
+    expect_equal(g_name(g_bnd), "LINESTRING")
+    expect_true(nrow(g_coords(g_bnd)) > 1)
+    # vector/list input
+    # character vector of wkt input
+    g_bnd <- g_boundary(c(g1, g2, g3, g4))
+    expected_names <- c("GEOMETRYCOLLECTION", "GEOMETRYCOLLECTION",
+                        "MULTIPOINT", "LINESTRING")
+    expect_equal(g_name(g_bnd), expected_names)
+    # list of wkb input
+    g_bnd <- g_boundary(g_wk2wk(c(g1, g2, g3, g4)))
+    expected_names <- c("GEOMETRYCOLLECTION", "GEOMETRYCOLLECTION",
+                        "MULTIPOINT", "LINESTRING")
+    expect_equal(g_name(g_bnd), expected_names)
+
     # g_convex_hull
     g1 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
     g_conv_hull <- g_convex_hull(g1, as_wkb = FALSE)
