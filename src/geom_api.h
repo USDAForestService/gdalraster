@@ -90,6 +90,9 @@ Rcpp::LogicalVector g_overlaps(const Rcpp::RawVector &this_geom,
                                const Rcpp::RawVector &other_geom,
                                bool quiet);
 
+SEXP g_boundary(const Rcpp::RawVector &geom, bool as_iso,
+                const std::string &byte_order, bool quiet);
+
 SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs,
               bool as_iso, const std::string &byte_order, bool quiet);
 

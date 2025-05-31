@@ -1320,6 +1320,20 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// g_boundary
+SEXP g_boundary(const Rcpp::RawVector& geom, bool as_iso, const std::string& byte_order, bool quiet);
+RcppExport SEXP _gdalraster_g_boundary(SEXP geomSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RawVector& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_boundary(geom, as_iso, byte_order, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // g_buffer
 SEXP g_buffer(const Rcpp::RawVector& geom, double dist, int quad_segs, bool as_iso, const std::string& byte_order, bool quiet);
 RcppExport SEXP _gdalraster_g_buffer(SEXP geomSEXP, SEXP distSEXP, SEXP quad_segsSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
@@ -2181,6 +2195,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_within", (DL_FUNC) &_gdalraster_g_within, 3},
     {"_gdalraster_g_crosses", (DL_FUNC) &_gdalraster_g_crosses, 3},
     {"_gdalraster_g_overlaps", (DL_FUNC) &_gdalraster_g_overlaps, 3},
+    {"_gdalraster_g_boundary", (DL_FUNC) &_gdalraster_g_boundary, 4},
     {"_gdalraster_g_buffer", (DL_FUNC) &_gdalraster_g_buffer, 6},
     {"_gdalraster_g_convex_hull", (DL_FUNC) &_gdalraster_g_convex_hull, 4},
     {"_gdalraster_g_simplify", (DL_FUNC) &_gdalraster_g_simplify, 6},

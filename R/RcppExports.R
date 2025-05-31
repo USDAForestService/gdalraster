@@ -2353,6 +2353,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_boundary <- function(geom, as_iso, byte_order, quiet) {
+    .Call(`_gdalraster_g_boundary`, geom, as_iso, byte_order, quiet)
+}
+
+#' @noRd
 .g_buffer <- function(geom, dist, quad_segs = 30L, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
     .Call(`_gdalraster_g_buffer`, geom, dist, quad_segs, as_iso, byte_order, quiet)
 }
