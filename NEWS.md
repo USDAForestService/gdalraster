@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9008 (dev)
+# gdalraster 2.0.0.9009 (dev)
+
+* Geom API: support one-to-many input (this-to-others) in binary predicate functions and in `g_distance()` (#728) (2025-05-31)
 
 * add `g_boundary()`: compute the boundary of a geometry (#727) (2025-05-31)
 
