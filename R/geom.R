@@ -2123,10 +2123,13 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' @details
 #' These functions use the GEOS library via GDAL headers.
 #'
+#' `g_boundary()` computes the boundary of a geometry. Wrapper of
+#' `OGR_G_Boundary()` in the GDAL Geometry API.
+#'
 #' `g_buffer()` builds a new geometry containing the buffer region around
 #' the geometry on which it is invoked. The buffer is a polygon containing
 #' the region within the buffer distance of the original geometry.
-#' Wrapper of `OGR_G_Buffer()`in the GDAL Geometry API.
+#' Wrapper of `OGR_G_Buffer()` in the GDAL API.
 #'
 #' `g_convex_hull()` computes a convex hull, the smallest convex geometry that
 #' contains all the points in the input geometry. Wrapper of
@@ -2170,6 +2173,13 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' (\url{https://libgeos.org/doxygen/}, GEOS 3.14.0dev), some of which is
 #' copied here.
 #'
+#' `g_boundary()` computes the "boundary" as defined by the DE9IM
+#' (\url{https://en.wikipedia.org/wiki/DE-9IM}):
+#' * the boundary of a Polygon is the set of linear rings dividing the
+#' exterior from the interior
+#' * the boundary of a LineString is the two end points
+#' * the boundary of a Point/MultiPoint is defined as empty
+#'
 #' `g_buffer()` always returns a polygonal result. The negative or
 #' zero-distance buffer of lines and points is always an empty Polygon.
 #'
@@ -2198,13 +2208,17 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' polygons.
 #'
 #' @examples
-#' g_buffer("POINT (0 0)", dist = 10, as_wkb = FALSE)
+#' g1 <- "POLYGON((0 0,1 1,1 0,0 0))"
+#' g_boundary(g1, as_wkb = FALSE)
 #'
-#' g1 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
-#' g_convex_hull(g1, as_wkb = FALSE)
+#' g2 <- "POINT (0 0)"
+#' g_buffer(g2, dist = 10, as_wkb = FALSE)
 #'
-#' g2 <- "LINESTRING(0 0,1 1,10 0)"
-#' g_simplify(g2, tolerance = 5, as_wkb = FALSE)
+#' g3 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
+#' g_convex_hull(g3, as_wkb = FALSE)
+#'
+#' g4 <- "LINESTRING(0 0,1 1,10 0)"
+#' g_simplify(g4, tolerance = 5, as_wkb = FALSE)
 #' @export
 g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
                      as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
@@ -2246,6 +2260,57 @@ g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
         } else {
             wkb <- lapply(g_wk2wk(geom), .g_buffer, dist, quad_segs,
                           as_iso, byte_order, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' @name g_unary_op
+#' @export
+g_boundary <- function(geom, as_wkb = TRUE, as_iso = FALSE,
+                       byte_order = "LSB", quiet = FALSE) {
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(geom)) {
+        wkb <- .g_boundary(geom, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        wkb <- lapply(geom, .g_boundary, as_iso, byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_boundary(g_wk2wk(geom), as_iso, byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_boundary, as_iso, byte_order,
+                          quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
