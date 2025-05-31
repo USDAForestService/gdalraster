@@ -106,10 +106,10 @@
 <li>the geometry wrapper functions now operate on input of either WKB raw vector, list of WKB, or character vector of WKT strings, with returned geometries as either WKB raw vector (or list of) or WKT character string (vector of)</li>
 <li>
 <strong>breaking changes</strong>: breaks some existing functions by renaming argument <code>wkt</code> to <code>geom</code>, and by returning raw vectors of WKB by default from functions that return geometries (<code>as_wkb = TRUE</code> by default)</li>
-<li>update <code><a href="../reference/g_query.html">g_is_valid()</a></code>, <code><a href="../reference/g_query.html">g_is_empty()</a></code>, <code><a href="../reference/g_query.html">g_name()</a></code> and <code><a href="../reference/g_buffer.html">g_buffer()</a></code> to the new style Geometry API</li>
+<li>update <code><a href="../reference/g_query.html">g_is_valid()</a></code>, <code><a href="../reference/g_query.html">g_is_empty()</a></code>, <code><a href="../reference/g_query.html">g_name()</a></code> and <code><a href="../reference/g_unary_op.html">g_buffer()</a></code> to the new style Geometry API</li>
 <li>add <code><a href="../reference/g_make_valid.html">g_make_valid()</a></code>: attempt to make invalid geometries valid</li>
 <li>add <code><a href="../reference/g_query.html">g_summary()</a></code>: obtain text summaries of WKB/WKT geometries (GDAL &gt;= 3.7)</li>
-<li>add <code><a href="../reference/g_simplify.html">g_simplify()</a></code>: simplify WKB/WKT geometries, optionally preserving topology</li>
+<li>add <code><a href="../reference/g_unary_op.html">g_simplify()</a></code>: simplify WKB/WKT geometries, optionally preserving topology</li>
 <li>add <code><a href="../reference/g_swap_xy.html">g_swap_xy()</a></code>: swap x and y coordinates of the input geometry</li>
 <li>add <code><a href="../reference/g_measures.html">g_geodesic_area()</a></code> and <code><a href="../reference/g_measures.html">g_geodesic_length()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/671" class="external-link">#671</a>)</li>
 <li>add <code><a href="../reference/g_query.html">g_is_3D()</a></code> and <code><a href="../reference/g_query.html">g_is_measured()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/650" class="external-link">#650</a>)</li>
@@ -648,7 +648,7 @@
 <li>add <code><a href="../reference/createColorRamp.html">createColorRamp()</a></code>: wrapper for <code>GDALCreateColorRamp()</code>, automatically create a ramp from one color to another</li>
 <li>add <code><a href="../reference/sieveFilter.html">sieveFilter()</a></code>: wrapper for <code>GDALSieveFilter()</code> in the Algorithms API, remove small raster polygons</li>
 <li>add PROJ utility functions: <code><a href="../reference/proj_version.html">proj_version()</a></code>, <code><a href="../reference/proj_search_paths.html">proj_search_paths()</a></code>, <code><a href="../reference/proj_networking.html">proj_networking()</a></code> (via GDAL headers)</li>
-<li>add <code><a href="../reference/g_buffer.html">g_buffer()</a></code>: compute buffer of a WKT geometry (GEOS convenience function via GDAL headers)</li>
+<li>add <code><a href="../reference/g_unary_op.html">g_buffer()</a></code>: compute buffer of a WKT geometry (GEOS convenience function via GDAL headers)</li>
 </ul></div>
 <div class="section level3">
 <h3 id="cmbtable-class-1-5-0">CmbTable-class<a class="anchor" aria-label="anchor" href="#cmbtable-class-1-5-0"></a></h3>
