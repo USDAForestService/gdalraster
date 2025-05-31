@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9005 (dev)
+# gdalraster 2.0.0.9006 (dev)
+
+* `g_envelope()`: fix order of xy coordinates in the returned envelope(s) (fixes [#725](https://github.com/USDAForestService/gdalraster/issues/725), a breaking change); and add argument `as_3d`, wrapper of `OGR_G_GetEnvelope3D()` in the GDAL Geometry API (#724) (2025-05-30)
 
 * (internal) avoid clang-asan error from implicitly wrapping `CPLString` as an R character vector, due to changes introduced at dev version 2.0.0.9000 with PR #714 (fix in #723) (2025-05-29)
 
