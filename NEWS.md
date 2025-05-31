@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9006 (dev)
+# gdalraster 2.0.0.9007 (dev)
+
+* add `g_convex_hull()`: compute convex hull for input geometries (#726) (2025-05-31)
 
 * `g_envelope()`: fix order of xy coordinates in the returned envelope(s) (fixes [#725](https://github.com/USDAForestService/gdalraster/issues/725), a breaking change); and add argument `as_3d`, wrapper of `OGR_G_GetEnvelope3D()` in the GDAL Geometry API (#724) (2025-05-30)
 
