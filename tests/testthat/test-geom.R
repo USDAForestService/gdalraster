@@ -80,6 +80,8 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_true(g_intersects(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_intersects(wkb_list_1, wkb_list_2), expected_value)
+    # one-to-many
+    expect_equal(g_intersects(pt, wkt_vec_1), expected_value)
 
     # WKT
     expect_false(g_equals(bb, bnd))
@@ -92,6 +94,8 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_false(g_equals(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_equals(wkb_list_1, wkb_list_2), expected_value)
+    # one-to-many
+    expect_equal(g_equals(pt, wkt_vec_1), expected_value)
 
     # WKT
     expect_false(g_disjoint(bb, bnd))
@@ -104,6 +108,8 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_false(g_disjoint(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_disjoint(wkb_list_1, wkb_list_2), expected_value)
+    # one-to-many
+    expect_equal(g_disjoint(pt, wkt_vec_1), expected_value)
 
     # WKT
     expect_false(g_touches(bb, bnd))
@@ -116,6 +122,8 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_false(g_touches(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_touches(wkb_list_1, wkb_list_2), expected_value)
+    # one-to-many
+    expect_equal(g_touches(pt, wkt_vec_1), expected_value)
 
     # WKT
     expect_true(g_contains(bb, bnd))
@@ -128,18 +136,22 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_true(g_contains(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_contains(wkb_list_1, wkb_list_2), expected_value)
+    # one-to-many
+    expect_equal(g_contains(bnd, wkt_vec_2), c(FALSE, FALSE))
 
     # WKT
     expect_false(g_within(bb, bnd))
     expect_error(g_within("invalid WKT", bnd))
     expect_error(g_within(bb, "invalid WKT"))
     # vector of WKT
-    expected_value <- c(FALSE, FALSE)
-    expect_equal(g_within(wkt_vec_1, wkt_vec_2), expected_value)
+    expected_value <- c(TRUE, FALSE)
+    expect_equal(g_within(wkt_vec_2, wkt_vec_1), expected_value)
     # WKB
     expect_false(g_within(bb_wkb, pt_wkb))
     # list of WKB
-    expect_equal(g_within(wkb_list_1, wkb_list_2), expected_value)
+    expect_equal(g_within(wkb_list_2, wkb_list_1), expected_value)
+    # one-to-many
+    expect_equal(g_within(pt, wkt_vec_1), expected_value)
 
     # WKT
     expect_true(g_crosses(line, bnd))
@@ -153,6 +165,8 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_false(g_crosses(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_crosses(wkb_list_1, wkb_list_2), expected_value)
+    # one-to-many
+    expect_equal(g_crosses(pt, wkt_vec_1), expected_value)
 
     # WKT
     expect_false(g_overlaps(bb, bnd))
@@ -165,6 +179,8 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_false(g_overlaps(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_overlaps(wkb_list_1, wkb_list_2), expected_value)
+    # one-to-many
+    expect_equal(g_overlaps(pt, wkt_vec_1), expected_value)
 
     # buffer
     expect_equal(round(bbox_from_wkt(g_buffer(bnd, 100, as_wkb = FALSE))),
@@ -210,6 +226,8 @@ test_that("geom functions work on wkb/wkt geometries", {
     # list of WKB
     res <- g_distance(wkb_list_1, wkb_list_2)
     expect_equal(res[2], 215.0365, tolerance = 1e-4)
+    # one-to-many
+    expect_equal(g_distance(pt, wkt_vec_1), c(0, 215.0365), tolerance = 1e-4)
 
     # length
     expect_equal(g_length(line), 3822.927, tolerance = 1e-2)

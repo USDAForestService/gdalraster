@@ -30,7 +30,9 @@ character vector containing one or more WKT strings.}
 
 \item{other_geom}{Either a raw vector of WKB or list of raw vectors, or a
 character vector containing one or more WKT strings. Must contain the same
-number of geometries as \code{geom}.}
+number of geometries as \code{geom}, unless \code{geom} contains a single
+geometry in which case pairwise distances will be computed for one-to-many
+if \code{other_geom} contains multiple geometries (i.e., "this-to-others").}
 
 \item{srs}{Character string specifying the spatial reference system
 for \code{geom}. May be in WKT format or any of the formats supported by
@@ -102,9 +104,12 @@ type, no SRS attached, etc.)
 Requires GDAL >= 3.10.
 }
 \note{
-For \code{g_distance()}, \code{geom} and \code{other_geom} must contain the same number of
-geometries (i.e., operates pair-wise on the inputs with no recycling), and
-are assumed to be in the same coordinate reference system.
+For \code{g_distance()}, \code{geom} and \code{other_geom} must be in the same coordinate
+reference system. If \code{geom} is a single geometry and \code{other_geom} is a list
+or vector of multiple geometries, then distances will be calculated between
+\code{geom} and each geometry in \code{other_geom}. Otherwise, no recycling is done
+and \code{length(geom)} must equal \code{length(other_geom)} to calculate distance
+between each corresponding pair of input geometries.
 
 Geometry validity is not checked. In case you are unsure of the validity
 of the input geometries, call \code{g_is_valid()} before, otherwise the result
