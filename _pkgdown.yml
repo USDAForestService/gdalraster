@@ -91,7 +91,6 @@ reference:
   - g_area
   - g_binary_op
   - g_binary_pred
-  - g_buffer
   - g_centroid
   - g_coords
   - g_distance
@@ -102,10 +101,10 @@ reference:
   - g_length
   - g_make_valid
   - g_name
-  - g_simplify
   - g_summary
   - g_swap_xy
   - g_transform
+  - g_unary_op
   - g_wk2wk
   - geos_version
   - has_geos

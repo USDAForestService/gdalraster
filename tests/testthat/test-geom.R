@@ -678,14 +678,30 @@ test_that("geometry binary predicates/ops return correct values", {
     expect_equal(g_name(res[[2]]), "MULTIPOLYGON")
 })
 
-test_that("g_buffer returns correct values", {
+test_that("unary ops return correct values", {
+    # g_buffer
     pt <- "POINT (0 0)"
-    expect_error(g_buffer(wkt = "invalid WKT", dist = 10))
+    expect_error(g_buffer(geom = "invalid WKT", dist = 10))
     bb <- bbox_from_wkt(g_buffer(pt, dist = 10, as_wkb = FALSE))
     expect_equal(bb, c(-10, -10,  10,  10))
-})
 
-test_that("g_simplify returns correct values", {
+    # g_convex_hull
+    g1 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
+    g_conv_hull <- g_convex_hull(g1, as_wkb = FALSE)
+    g_expect <- "POLYGON ((0 0,0 1,1 1,1 0,0 0))"
+    expect_equal(g_conv_hull, g_expect)
+    # wkb input
+    g_conv_hull <- g_convex_hull(g_wk2wk(g1), as_wkb = FALSE)
+    expect_equal(g_conv_hull, g_expect)
+    # vector/list input
+    # character vector of wkt input
+    g_conv_hull <- g_convex_hull(c(g1, g1), as_wkb = FALSE)
+    expect_equal(g_conv_hull, rep(g_expect, 2))
+    # list of wkb input
+    g_conv_hull <- g_convex_hull(g_wk2wk(c(g1, g1)), as_wkb = FALSE)
+    expect_equal(g_conv_hull, rep(g_expect, 2))
+
+    # g_simplify
     g1 <- "LINESTRING(0 0,1 0,10 0)"
     g_simp <- g_simplify(g1, tolerance = 5, as_wkb = FALSE)
     g_expect <- "LINESTRING (0 0,10 0)"

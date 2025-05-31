@@ -2113,12 +2113,28 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
     return(ret)
 }
 
-#' Compute buffer of a WKB/WKT geometry
+#' Unary operations on WKB or WKT geometries
+#'
+#' These functions implement algorithms that operate on one input geometry
+#' for which a new output geometry is generated.
+#' The input geometries may be given as a single raw vector of WKB, a list of
+#' WKB raw vectors, or a character vector containing one or more WKT strings.
+#' @name g_unary_op
+#' @details
+#' These functions use the GEOS library via GDAL headers.
 #'
 #' `g_buffer()` builds a new geometry containing the buffer region around
 #' the geometry on which it is invoked. The buffer is a polygon containing
 #' the region within the buffer distance of the original geometry.
-#' Wrapper of `OGR_G_Buffer()`in the GDAL API (GEOS via GDAL headers).
+#' Wrapper of `OGR_G_Buffer()`in the GDAL Geometry API.
+#'
+#' `g_convex_hull()` computes a convex hull, the smallest convex geometry that
+#' contains all the points in the input geometry. Wrapper of
+#' `OGR_G_ConvexHull()` in the GDAL API.
+#'
+#' `g_simplify()` computes a simplified geometry. By default, it simplifies
+#' the input geometries while preserving topology (see Note). Wrapper of
+#' `OGR_G_Simplify()` / `OGR_G_SimplifyPreserveTopology()` in the GDAL API.
 #'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
@@ -2127,6 +2143,14 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' curve (quadrant of a circle). Large values result in large numbers of
 #' vertices in the resulting buffer geometry while small numbers reduce the
 #' accuracy of the result.
+#' @param tolerance Numeric value of the simplification tolerance, as distance
+#' in units of the input `geom`. Simplification removes vertices which are
+#' within the tolerance distance of the simplified linework (as long as
+#' topology is preserved when `preserve_topology = TRUE`).
+#' @param preserve_topology Logical value, `TRUE` to simplify geometries while
+#' preserving topology (the default). Setting to `FALSE` simplifies geometries
+#' using the standard Douglas-Peucker algorithm which is significantly faster
+#' (see Note).
 #' @param as_wkb Logical value, `TRUE` to return the output geometry in WKB
 #' format (the default), or `FALSE` to return as WKT.
 #' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
@@ -2135,14 +2159,52 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
 #' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return
-#' A polygon as WKB raw vector or WKT string, or a list/character vector of
-#' polygons as WKB/WKT with length equal to the number of input geometries.
+#' A geometry as WKB raw vector or WKT string, or a list/character vector of
+#' geometries as WKB/WKT with length equal to the number of input geometries.
 #' `NA` is returned with a warning if WKB input cannot be converted into an
 #' OGR geometry object, or if an error occurs in the call to the underlying
 #' OGR API.
 #'
+#' @note
+#' Definitions of these operations are given in the GEOS documentation
+#' (\url{https://libgeos.org/doxygen/}, GEOS 3.14.0dev), some of which is
+#' copied here.
+#'
+#' `g_buffer()` always returns a polygonal result. The negative or
+#' zero-distance buffer of lines and points is always an empty Polygon.
+#'
+#' `g_convex_hull()` uses the Graham Scan algorithm.
+#'
+#' `g_simplify()`:
+#' * With `preserve_topology = TRUE` (the default):\cr
+#' Simplifies a geometry, ensuring that the result is a valid geometry having
+#' the same dimension and number of components as the input. The simplification
+#' uses a maximum distance difference algorithm similar to the one used in the
+#' Douglas-Peucker algorithm. In particular, if the input is an areal geometry
+#' (Polygon or MultiPolygon), the result has the same number of shells and
+#' holes (rings) as the input, in the same order. The result rings touch at no
+#' more than the number of touching point in the input (although they may touch
+#' at fewer points).
+#' * With `preserve_topology = FALSE`:\cr
+#' Simplifies a geometry using the standard Douglas-Peucker algorithm. Ensures
+#' that any polygonal geometries returned are valid. Simple lines are not
+#' guaranteed to remain simple after simplification. Note that in general D-P
+#' does not preserve topology - e.g. polygons can be split, collapse to lines
+#' or disappear, holes can be created or disappear, and lines can cross. To
+#' simplify geometry while preserving topology use TopologyPreservingSimplifier.
+#' (However, using D-P is significantly faster).
+#'
+#' N.B., `preserve_topology = TRUE` does not preserve boundaries shared between
+#' polygons.
+#'
 #' @examples
 #' g_buffer("POINT (0 0)", dist = 10, as_wkb = FALSE)
+#'
+#' g1 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
+#' g_convex_hull(g1, as_wkb = FALSE)
+#'
+#' g2 <- "LINESTRING(0 0,1 1,10 0)"
+#' g_simplify(g2, tolerance = 5, as_wkb = FALSE)
 #' @export
 g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
                      as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
@@ -2196,68 +2258,58 @@ g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
         return(g_wk2wk(wkb, as_iso))
 }
 
-#' Simplify WKB/WKT geometries optionally preserving topology
-#'
-#' `g_simplify()` computes a simplified geometry. By default, it simplifies
-#' the input geometries while preserving topology (see Details). Wrapper of
-#' `OGR_G_Simplify()` / `OGR_G_SimplifyPreserveTopology()` in the GDAL API
-#' (GEOS via GDAL headers).
-#'
-#' @details
-#' Definitions of these operations are given in the GEOS documentation
-#' (\url{https://libgeos.org/doxygen/}), which are copied here
-#' (GEOS 3.14.0dev).
-#'
-#' With `preserve_topology = TRUE` (the default):\cr
-#' Simplifies a geometry, ensuring that the result is a valid geometry having
-#' the same dimension and number of components as the input. The simplification
-#' uses a maximum distance difference algorithm similar to the one used in the
-#' Douglas-Peucker algorithm. In particular, if the input is an areal geometry
-#' (Polygon or MultiPolygon), the result has the same number of shells and
-#' holes (rings) as the input, in the same order. The result rings touch at no
-#' more than the number of touching point in the input (although they may touch
-#' at fewer points).
-#'
-#' With `preserve_topology = FALSE`:\cr
-#' Simplifies a geometry using the standard Douglas-Peucker algorithm. Ensures
-#' that any polygonal geometries returned are valid. Simple lines are not
-#' guaranteed to remain simple after simplification. Note that in general D-P
-#' does not preserve topology - e.g. polygons can be split, collapse to lines
-#' or disappear, holes can be created or disappear, and lines can cross. To
-#' simplify geometry while preserving topology use TopologyPreservingSimplifier.
-#' (However, using D-P is significantly faster).
-#'
-#' @param geom Either a raw vector of WKB or list of raw vectors, or a
-#' character vector containing one or more WKT strings.
-#' @param tolerance Numeric value of the simplification tolerance, as distance
-#' in units of the input `geom`. Simplification removes vertices which are
-#' within the tolerance distance of the simplified linework (as long as
-#' topology is preserved when `preserve_topology = TRUE`).
-#' @param preserve_topology Logical value, `TRUE` to simplify geometries while
-#' preserving topology (the default). Setting to `FALSE` simplifies geometries
-#' using the standard Douglas-Peucker algorithm which is significantly faster
-#' (see Details).
-#' @param as_wkb Logical value, `TRUE` to return the output geometry in WKB
-#' format (the default), or `FALSE` to return as WKT.
-#' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
-#' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
-#' @param byte_order Character string specifying the byte order when output is
-#' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
-#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return
-#' A polygon as WKB raw vector or WKT string, or a list/character vector of
-#' polygons as WKB/WKT with length equal to the number of input geometries.
-#' `NA` is returned with a warning if WKB input cannot be converted into an
-#' OGR geometry object, or if an error occurs in the call to the underlying
-#' OGR API.
-#'
-#' @note
-#' `preserve_topology = TRUE` does not preserve boundaries shared between
-#' polygons.
-#'
-#' @examples
-#' g <- "LINESTRING(0 0,1 1,10 0)"
-#' g_simplify(g, tolerance = 5, as_wkb = FALSE)
+#' @name g_unary_op
+#' @export
+g_convex_hull <- function(geom, as_wkb = TRUE, as_iso = FALSE,
+                          byte_order = "LSB", quiet = FALSE) {
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(geom)) {
+        wkb <- .g_convex_hull(geom, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        wkb <- lapply(geom, .g_convex_hull, as_iso, byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_convex_hull(g_wk2wk(geom), as_iso, byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_convex_hull, as_iso, byte_order,
+                          quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' @name g_unary_op
 #' @export
 g_simplify <- function(geom, tolerance, preserve_topology = TRUE,
                        as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB",

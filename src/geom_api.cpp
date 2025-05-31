@@ -1335,6 +1335,68 @@ SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
 }
 
 //' @noRd
+// [[Rcpp::export(name = ".g_convex_hull")]]
+SEXP g_convex_hull(const Rcpp::RawVector &geom, bool as_iso,
+                   const std::string &byte_order, bool quiet) {
+// Compute convex hull.
+
+// A new geometry object is created and returned containing the convex hull of
+// the geometry on which the method is invoked.
+
+// This function is built on the GEOS library, check it for the definition the
+// operation:
+// The convex hull is the smallest convex Geometry that contains all the points
+// in the input Geometry. Uses the Graham Scan algorithm.
+// https://libgeos.org/doxygen/classgeos_1_1algorithm_1_1ConvexHull.html
+
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    OGRGeometryH hConvHullGeom = OGR_G_ConvexHull(hGeom);
+
+    if (hConvHullGeom == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
+        if (!quiet) {
+            Rcpp::warning("OGR_G_ConvexHull() gave NULL geometry, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    const int nWKBSize = OGR_G_WkbSize(hConvHullGeom);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        OGR_G_DestroyGeometry(hConvHullGeom);
+        if (!quiet) {
+            Rcpp::warning("failed to obtain WKB size of output geometry");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hConvHullGeom, &wkb[0], as_iso, byte_order);
+    OGR_G_DestroyGeometry(hGeom);
+    OGR_G_DestroyGeometry(hConvHullGeom);
+    if (!result) {
+        if (!quiet) {
+           Rcpp::warning(
+                    "failed to export WKB raw vector for output geometry");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    return wkb;
+}
+
+//' @noRd
 // [[Rcpp::export(name = ".g_simplify")]]
 SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
                 bool preserve_topology = true, bool as_iso = false,

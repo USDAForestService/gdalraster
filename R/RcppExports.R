@@ -2358,6 +2358,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_convex_hull <- function(geom, as_iso, byte_order, quiet) {
+    .Call(`_gdalraster_g_convex_hull`, geom, as_iso, byte_order, quiet)
+}
+
+#' @noRd
 .g_simplify <- function(geom, tolerance, preserve_topology = TRUE, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
     .Call(`_gdalraster_g_simplify`, geom, tolerance, preserve_topology, as_iso, byte_order, quiet)
 }
