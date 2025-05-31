@@ -55,7 +55,7 @@ Rcpp::LogicalVector g_is_3D(const Rcpp::RawVector &geom, bool quiet);
 Rcpp::LogicalVector g_is_measured(const Rcpp::RawVector &geom, bool quiet);
 SEXP g_name(const Rcpp::RawVector &geom, bool quiet);
 SEXP g_summary(const Rcpp::RawVector &geom, bool quiet);
-Rcpp::NumericVector g_envelope(const Rcpp::RawVector &geom,
+Rcpp::NumericVector g_envelope(const Rcpp::RawVector &geom, bool as_3d,
                                bool quiet);
 
 Rcpp::LogicalVector g_intersects(const Rcpp::RawVector &this_geom,

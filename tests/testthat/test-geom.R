@@ -540,7 +540,7 @@ test_that("geometry properties are correct", {
     res <- bbox_to_wkt(bb) |> g_envelope()
     expect_equal(names(res), c("xmin", "xmax", "ymin", "ymax"))
     names(res) <- NULL
-    expect_equal(res, bb)
+    expect_equal(res, c(bb[1], bb[3], bb[2], bb[4]))
 
     # input as vector of WKT / list of WKB
     wkt_vec <- c(g1, g2, g3)
@@ -569,24 +569,34 @@ test_that("geometry properties are correct", {
     expect_true(g_is_measured(pt3))
 
     # g_envelope
-    bb1_2 <- c(0, 0, 10, 10)
-    bb3 <- c(0, 0, 0, 0)
-    bb_mat <- rbind(bb1_2, bb1_2, bb3)
-    colnames(bb_mat) <- c("xmin", "xmax", "ymin", "ymax")
-    dimnames(bb_mat) <- NULL
-    names(bb1_2) <- c("xmin", "xmax", "ymin", "ymax")
-    names(bb3) <- c("xmin", "xmax", "ymin", "ymax")
-    expect_equal(g_envelope(g1), bb1_2)
-    expect_equal(g_envelope(g2), bb1_2)  # same as g1 but g2 is invalid geom
-    expect_equal(g_envelope(g3), bb3)
+    env1_2 <- c(0, 10, 0, 10)
+    env3 <- c(0, 0, 0, 0)
+    env_mat <- rbind(env1_2, env1_2, env3)
+    colnames(env_mat) <- c("xmin", "xmax", "ymin", "ymax")
+    dimnames(env_mat) <- NULL
+    names(env1_2) <- c("xmin", "xmax", "ymin", "ymax")
+    names(env3) <- c("xmin", "xmax", "ymin", "ymax")
+    expect_equal(g_envelope(g1), env1_2)
+    expect_equal(g_envelope(g2), env1_2)  # same as g1 but g2 is invalid geom
+    expect_equal(g_envelope(g3), env3)
     wkt_vec <- c(g1, g2, g3)
     res <- g_envelope(wkt_vec)
     dimnames(res) <- NULL
-    expect_equal(res, bb_mat)
+    expect_equal(res, env_mat)
     wkb_list <- g_wk2wk(wkt_vec)
     res <- g_envelope(wkb_list)
     dimnames(res) <- NULL
-    expect_equal(res, bb_mat)
+    expect_equal(res, env_mat)
+    # 3D envelope
+    wkt_3d <- "MULTIPOLYGON(((1 2 3,-1 2 3,-1 -2 3,-1 2 3,1 2 3),(0.1 0.2 0.3,-0.1 0.2 0.3,-0.1 -0.2 0.3,-0.1 0.2 0.3,0.1 0.2 0.3)),((10 20 -30,-10 20 -30,-10 -20 -30,-10 20 -30,10 20 -30)))"
+    env3d <- c(-10, 10, -20, 20, -30, 3.0)
+    names(env3d) <- c("xmin", "xmax", "ymin", "ymax", "zmin", "zmax")
+    res <- g_envelope(wkt_3d, as_3d = TRUE)
+    expect_equal(res, env3d)
+    # as_3d = TRUE on 2D geom
+    res <- g_envelope(g1, as_3d = TRUE)
+    names(res) <- NULL
+    expect_equal(res, c(0, 10, 0, 10, 0, 0))
 
 
     skip_if(gdal_version_num() < 3070000 )
