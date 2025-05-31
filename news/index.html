@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9007</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9008</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +50,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.0.0.9007" id="gdalraster-2009007-dev">gdalraster 2.0.0.9007 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2009007-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/g_unary_op.html">g_convex_hull()</a></code>: compute convex hull for input geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/726" class="external-link">#726</a>) (2025-05-31)</p></li>
+<h2 class="pkg-version" data-toc-text="2.0.0.9008" id="gdalraster-2009008-dev">gdalraster 2.0.0.9008 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2009008-dev"></a></h2>
+<ul><li><p>add <code><a href="../reference/g_unary_op.html">g_boundary()</a></code>: compute the boundary of a geometry (<a href="https://github.com/USDAForestService/gdalraster/issues/727" class="external-link">#727</a>) (2025-05-31)</p></li>
+<li><p>add <code><a href="../reference/g_unary_op.html">g_convex_hull()</a></code>: compute convex hull for input geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/726" class="external-link">#726</a>) (2025-05-31)</p></li>
 <li><p><code><a href="../reference/g_envelope.html">g_envelope()</a></code>: fix order of xy coordinates in the returned envelope(s) (fixes <a href="https://github.com/USDAForestService/gdalraster/issues/725" class="external-link">#725</a>, a breaking change); and add argument <code>as_3d</code>, wrapper of <code>OGR_G_GetEnvelope3D()</code> in the GDAL Geometry API (<a href="https://github.com/USDAForestService/gdalraster/issues/724" class="external-link">#724</a>) (2025-05-30)</p></li>
 <li><p>(internal) avoid clang-asan error from implicitly wrapping <code>CPLString</code> as an R character vector, due to changes introduced at dev version 2.0.0.9000 with PR <a href="https://github.com/USDAForestService/gdalraster/issues/714" class="external-link">#714</a> (fix in <a href="https://github.com/USDAForestService/gdalraster/issues/723" class="external-link">#723</a>) (2025-05-29)</p></li>
 <li><p><code><a href="../reference/srs_convert.html">srs_to_wkt()</a></code>: add argument <code>gcs_only</code>, wrapper for <code>OSRCloneGeogCS()</code> in the GDAL API (2025-05-28)</p></li>
