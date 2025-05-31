@@ -34,7 +34,9 @@ character vector containing one or more WKT strings.}
 
 \item{other_geom}{Either a raw vector of WKB or list of raw vectors, or a
 character vector containing one or more WKT strings. Must contain the same
-number of geometries as \code{this_geom}.}
+number of geometries as \code{this_geom}, unless \code{this_geom} contains a single
+geometry in which case pairwise tests will be performed for one-to-many if
+\code{other_geom} contains multiple geometries (i.e., "this-to-others").}
 
 \item{quiet}{Logical value, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
@@ -77,6 +79,10 @@ a spatial way."
 \note{
 \code{this_geom} and \code{other_geom} are assumed to be in the same coordinate
 reference system.
+
+If \code{this_geom}is a single geometry and \code{other_geom} is a list or vector of
+multiple geometries, then \code{this_geom} will be tested against each geometry
+in \code{other_geom} (otherwise no recycling is done).
 
 Geometry validity is not checked. In case you are unsure of the validity
 of the input geometries, call \code{g_is_valid()} before, otherwise the result

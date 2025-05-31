@@ -1030,7 +1030,9 @@ g_envelope <- function(geom, as_3d = FALSE, quiet = FALSE) {
 #' character vector containing one or more WKT strings.
 #' @param other_geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings. Must contain the same
-#' number of geometries as `this_geom`.
+#' number of geometries as `this_geom`, unless `this_geom` contains a single
+#' geometry in which case pairwise tests will be performed for one-to-many if
+#' `other_geom` contains multiple geometries (i.e., "this-to-others").
 #' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return Logical vector with length equal to the number of input geometry
 #' pairs.
@@ -1041,6 +1043,10 @@ g_envelope <- function(geom, as_3d = FALSE, quiet = FALSE) {
 #' @note
 #' `this_geom` and `other_geom` are assumed to be in the same coordinate
 #' reference system.
+#'
+#' If `this_geom`is a single geometry and `other_geom` is a list or vector of
+#' multiple geometries, then `this_geom` will be tested against each geometry
+#' in `other_geom` (otherwise no recycling is done).
 #'
 #' Geometry validity is not checked. In case you are unsure of the validity
 #' of the input geometries, call `g_is_valid()` before, otherwise the result
@@ -1070,22 +1076,38 @@ g_intersects <- function(this_geom, other_geom, quiet = FALSE) {
     if (!is.logical(quiet) || length(quiet) > 1)
         stop("'quiet' must be a single logical value", call. = FALSE)
 
+    if (is.list(this_geom) && length(this_geom) == 1)
+        this_geom <- this_geom[[1]]
+    if (is.list(other_geom) && length(other_geom) == 1)
+        other_geom <- other_geom[[1]]
+
     ret <- NULL
+    one_to_many <- FALSE
     if (is.raw(this_geom) && is.raw(other_geom)) {
         ret <- .g_intersects(this_geom, other_geom, quiet)
-    } else if (is.list(this_geom) && is.list(other_geom)) {
-        if (length(this_geom) != length(other_geom)) {
-            stop("inputs must contain an equal number of geometries",
+    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+               is.list(other_geom)) {
+
+        if (is.raw(this_geom) && is.list(other_geom)) {
+            one_to_many <- TRUE
+
+        } else if (is.list(this_geom) &&
+                   length(this_geom) != length(other_geom)) {
+
+            stop("many-to-many input must contain equal numbers of geometries",
                  call. = FALSE)
         }
 
-        ret <- rep(NA, length(this_geom))
-        for (i in seq_along(this_geom)) {
-            ret[i] <- .g_intersects(this_geom[[i]], other_geom[[i]], quiet)
+        ret <- rep(NA, length(other_geom))
+        for (i in seq_along(other_geom)) {
+            if (one_to_many)
+                ret[i] <- .g_intersects(this_geom, other_geom[[i]], quiet)
+            else
+                ret[i] <- .g_intersects(this_geom[[i]], other_geom[[i]], quiet)
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries",
+        stop("inputs must contain an equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1118,22 +1140,38 @@ g_disjoint <- function(this_geom, other_geom, quiet = FALSE) {
     if (!is.logical(quiet) || length(quiet) > 1)
         stop("'quiet' must be a single logical value", call. = FALSE)
 
+    if (is.list(this_geom) && length(this_geom) == 1)
+        this_geom <- this_geom[[1]]
+    if (is.list(other_geom) && length(other_geom) == 1)
+        other_geom <- other_geom[[1]]
+
     ret <- NULL
+    one_to_many <- FALSE
     if (is.raw(this_geom) && is.raw(other_geom)) {
         ret <- .g_disjoint(this_geom, other_geom, quiet)
-    } else if (is.list(this_geom) && is.list(other_geom)) {
-        if (length(this_geom) != length(other_geom)) {
-            stop("inputs must contain an equal number of geometries",
+    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+               is.list(other_geom)) {
+
+        if (is.raw(this_geom) && is.list(other_geom)) {
+            one_to_many <- TRUE
+
+        } else if (is.list(this_geom) &&
+                   length(this_geom) != length(other_geom)) {
+
+            stop("many-to-many input must contain equal numbers of geometries",
                  call. = FALSE)
         }
 
-        ret <- rep(NA, length(this_geom))
-        for (i in seq_along(this_geom)) {
-            ret[i] <- .g_disjoint(this_geom[[i]], other_geom[[i]], quiet)
+        ret <- rep(NA, length(other_geom))
+        for (i in seq_along(other_geom)) {
+            if (one_to_many)
+                ret[i] <- .g_disjoint(this_geom, other_geom[[i]], quiet)
+            else
+                ret[i] <- .g_disjoint(this_geom[[i]], other_geom[[i]], quiet)
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries",
+        stop("inputs must contain an equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1166,22 +1204,38 @@ g_touches <- function(this_geom, other_geom, quiet = FALSE) {
     if (!is.logical(quiet) || length(quiet) > 1)
         stop("'quiet' must be a single logical value", call. = FALSE)
 
+    if (is.list(this_geom) && length(this_geom) == 1)
+        this_geom <- this_geom[[1]]
+    if (is.list(other_geom) && length(other_geom) == 1)
+        other_geom <- other_geom[[1]]
+
     ret <- NULL
+    one_to_many <- FALSE
     if (is.raw(this_geom) && is.raw(other_geom)) {
         ret <- .g_touches(this_geom, other_geom, quiet)
-    } else if (is.list(this_geom) && is.list(other_geom)) {
-        if (length(this_geom) != length(other_geom)) {
-            stop("inputs must contain an equal number of geometries",
+    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+               is.list(other_geom)) {
+
+        if (is.raw(this_geom) && is.list(other_geom)) {
+            one_to_many <- TRUE
+
+        } else if (is.list(this_geom) &&
+                   length(this_geom) != length(other_geom)) {
+
+            stop("many-to-many input must contain equal numbers of geometries",
                  call. = FALSE)
         }
 
-        ret <- rep(NA, length(this_geom))
-        for (i in seq_along(this_geom)) {
-            ret[i] <- .g_touches(this_geom[[i]], other_geom[[i]], quiet)
+        ret <- rep(NA, length(other_geom))
+        for (i in seq_along(other_geom)) {
+            if (one_to_many)
+                ret[i] <- .g_touches(this_geom, other_geom[[i]], quiet)
+            else
+                ret[i] <- .g_touches(this_geom[[i]], other_geom[[i]], quiet)
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries",
+        stop("inputs must contain an equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1214,22 +1268,38 @@ g_contains <- function(this_geom, other_geom, quiet = FALSE) {
     if (!is.logical(quiet) || length(quiet) > 1)
         stop("'quiet' must be a single logical value", call. = FALSE)
 
+    if (is.list(this_geom) && length(this_geom) == 1)
+        this_geom <- this_geom[[1]]
+    if (is.list(other_geom) && length(other_geom) == 1)
+        other_geom <- other_geom[[1]]
+
     ret <- NULL
+    one_to_many <- FALSE
     if (is.raw(this_geom) && is.raw(other_geom)) {
         ret <- .g_contains(this_geom, other_geom, quiet)
-    } else if (is.list(this_geom) && is.list(other_geom)) {
-        if (length(this_geom) != length(other_geom)) {
-            stop("inputs must contain an equal number of geometries",
+    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+               is.list(other_geom)) {
+
+        if (is.raw(this_geom) && is.list(other_geom)) {
+            one_to_many <- TRUE
+
+        } else if (is.list(this_geom) &&
+                   length(this_geom) != length(other_geom)) {
+
+            stop("many-to-many input must contain equal numbers of geometries",
                  call. = FALSE)
         }
 
-        ret <- rep(NA, length(this_geom))
-        for (i in seq_along(this_geom)) {
-            ret[i] <- .g_contains(this_geom[[i]], other_geom[[i]], quiet)
+        ret <- rep(NA, length(other_geom))
+        for (i in seq_along(other_geom)) {
+            if (one_to_many)
+                ret[i] <- .g_contains(this_geom, other_geom[[i]], quiet)
+            else
+                ret[i] <- .g_contains(this_geom[[i]], other_geom[[i]], quiet)
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries",
+        stop("inputs must contain an equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1262,22 +1332,38 @@ g_within <- function(this_geom, other_geom, quiet = FALSE) {
     if (!is.logical(quiet) || length(quiet) > 1)
         stop("'quiet' must be a single logical value", call. = FALSE)
 
+    if (is.list(this_geom) && length(this_geom) == 1)
+        this_geom <- this_geom[[1]]
+    if (is.list(other_geom) && length(other_geom) == 1)
+        other_geom <- other_geom[[1]]
+
     ret <- NULL
+    one_to_many <- FALSE
     if (is.raw(this_geom) && is.raw(other_geom)) {
         ret <- .g_within(this_geom, other_geom, quiet)
-    } else if (is.list(this_geom) && is.list(other_geom)) {
-        if (length(this_geom) != length(other_geom)) {
-            stop("inputs must contain an equal number of geometries",
+    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+               is.list(other_geom)) {
+
+        if (is.raw(this_geom) && is.list(other_geom)) {
+            one_to_many <- TRUE
+
+        } else if (is.list(this_geom) &&
+                   length(this_geom) != length(other_geom)) {
+
+            stop("many-to-many input must contain equal numbers of geometries",
                  call. = FALSE)
         }
 
-        ret <- rep(NA, length(this_geom))
-        for (i in seq_along(this_geom)) {
-            ret[i] <- .g_within(this_geom[[i]], other_geom[[i]], quiet)
+        ret <- rep(NA, length(other_geom))
+        for (i in seq_along(other_geom)) {
+            if (one_to_many)
+                ret[i] <- .g_within(this_geom, other_geom[[i]], quiet)
+            else
+                ret[i] <- .g_within(this_geom[[i]], other_geom[[i]], quiet)
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries",
+        stop("inputs must contain an equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1294,7 +1380,7 @@ g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
-    }
+    }else
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
@@ -1310,22 +1396,38 @@ g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
     if (!is.logical(quiet) || length(quiet) > 1)
         stop("'quiet' must be a single logical value", call. = FALSE)
 
+    if (is.list(this_geom) && length(this_geom) == 1)
+        this_geom <- this_geom[[1]]
+    if (is.list(other_geom) && length(other_geom) == 1)
+        other_geom <- other_geom[[1]]
+
     ret <- NULL
+    one_to_many <- FALSE
     if (is.raw(this_geom) && is.raw(other_geom)) {
         ret <- .g_crosses(this_geom, other_geom, quiet)
-    } else if (is.list(this_geom) && is.list(other_geom)) {
-        if (length(this_geom) != length(other_geom)) {
-            stop("inputs must contain an equal number of geometries",
+    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+               is.list(other_geom)) {
+
+        if (is.raw(this_geom) && is.list(other_geom)) {
+            one_to_many <- TRUE
+
+        } else if (is.list(this_geom) &&
+                   length(this_geom) != length(other_geom)) {
+
+            stop("many-to-many input must contain equal numbers of geometries",
                  call. = FALSE)
         }
 
-        ret <- rep(NA, length(this_geom))
-        for (i in seq_along(this_geom)) {
-            ret[i] <- .g_crosses(this_geom[[i]], other_geom[[i]], quiet)
+        ret <- rep(NA, length(other_geom))
+        for (i in seq_along(other_geom)) {
+            if (one_to_many)
+                ret[i] <- .g_crosses(this_geom, other_geom[[i]], quiet)
+            else
+                ret[i] <- .g_crosses(this_geom[[i]], other_geom[[i]], quiet)
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries",
+        stop("inputs must contain an equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1358,22 +1460,38 @@ g_overlaps <- function(this_geom, other_geom, quiet = FALSE) {
     if (!is.logical(quiet) || length(quiet) > 1)
         stop("'quiet' must be a single logical value", call. = FALSE)
 
+    if (is.list(this_geom) && length(this_geom) == 1)
+        this_geom <- this_geom[[1]]
+    if (is.list(other_geom) && length(other_geom) == 1)
+        other_geom <- other_geom[[1]]
+
     ret <- NULL
+    one_to_many <- FALSE
     if (is.raw(this_geom) && is.raw(other_geom)) {
         ret <- .g_overlaps(this_geom, other_geom, quiet)
-    } else if (is.list(this_geom) && is.list(other_geom)) {
-        if (length(this_geom) != length(other_geom)) {
-            stop("inputs must contain an equal number of geometries",
+    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+               is.list(other_geom)) {
+
+        if (is.raw(this_geom) && is.list(other_geom)) {
+            one_to_many <- TRUE
+
+        } else if (is.list(this_geom) &&
+                   length(this_geom) != length(other_geom)) {
+
+            stop("many-to-many input must contain equal numbers of geometries",
                  call. = FALSE)
         }
 
-        ret <- rep(NA, length(this_geom))
-        for (i in seq_along(this_geom)) {
-            ret[i] <- .g_overlaps(this_geom[[i]], other_geom[[i]], quiet)
+        ret <- rep(NA, length(other_geom))
+        for (i in seq_along(other_geom)) {
+            if (one_to_many)
+                ret[i] <- .g_overlaps(this_geom, other_geom[[i]], quiet)
+            else
+                ret[i] <- .g_overlaps(this_geom[[i]], other_geom[[i]], quiet)
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries",
+        stop("inputs must contain an equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1406,22 +1524,38 @@ g_equals <- function(this_geom, other_geom, quiet = FALSE) {
     if (!is.logical(quiet) || length(quiet) > 1)
         stop("'quiet' must be a single logical value", call. = FALSE)
 
+    if (is.list(this_geom) && length(this_geom) == 1)
+        this_geom <- this_geom[[1]]
+    if (is.list(other_geom) && length(other_geom) == 1)
+        other_geom <- other_geom[[1]]
+
     ret <- NULL
+    one_to_many <- FALSE
     if (is.raw(this_geom) && is.raw(other_geom)) {
         ret <- .g_equals(this_geom, other_geom, quiet)
-    } else if (is.list(this_geom) && is.list(other_geom)) {
-        if (length(this_geom) != length(other_geom)) {
-            stop("inputs must contain an equal number of geometries",
+    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+               is.list(other_geom)) {
+
+        if (is.raw(this_geom) && is.list(other_geom)) {
+            one_to_many <- TRUE
+
+        } else if (is.list(this_geom) &&
+                   length(this_geom) != length(other_geom)) {
+
+            stop("many-to-many input must contain equal numbers of geometries",
                  call. = FALSE)
         }
 
-        ret <- rep(NA, length(this_geom))
-        for (i in seq_along(this_geom)) {
-            ret[i] <- .g_equals(this_geom[[i]], other_geom[[i]], quiet)
+        ret <- rep(NA, length(other_geom))
+        for (i in seq_along(other_geom)) {
+            if (one_to_many)
+                ret[i] <- .g_equals(this_geom, other_geom[[i]], quiet)
+            else
+                ret[i] <- .g_equals(this_geom[[i]], other_geom[[i]], quiet)
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries",
+        stop("inputs must contain an equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1862,7 +1996,9 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
 #' character vector containing one or more WKT strings.
 #' @param other_geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings. Must contain the same
-#' number of geometries as `geom`.
+#' number of geometries as `geom`, unless `geom` contains a single
+#' geometry in which case pairwise distances will be computed for one-to-many
+#' if `other_geom` contains multiple geometries (i.e., "this-to-others").
 #' @param srs Character string specifying the spatial reference system
 #' for `geom`. May be in WKT format or any of the formats supported by
 #' [srs_to_wkt()].
@@ -1874,9 +2010,12 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
 #' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #'
 #' @note
-#' For `g_distance()`, `geom` and `other_geom` must contain the same number of
-#' geometries (i.e., operates pair-wise on the inputs with no recycling), and
-#' are assumed to be in the same coordinate reference system.
+#' For `g_distance()`, `geom` and `other_geom` must be in the same coordinate
+#' reference system. If `geom` is a single geometry and `other_geom` is a list
+#' or vector of multiple geometries, then distances will be calculated between
+#' `geom` and each geometry in `other_geom`. Otherwise, no recycling is done
+#' and `length(geom)` must equal `length(other_geom)` to calculate distance
+#' between each corresponding pair of input geometries.
 #'
 #' Geometry validity is not checked. In case you are unsure of the validity
 #' of the input geometries, call `g_is_valid()` before, otherwise the result
@@ -1984,22 +2123,38 @@ g_distance <- function(geom, other_geom, quiet = FALSE) {
     if (!is.logical(quiet) || length(quiet) > 1)
         stop("'quiet' must be a single logical value", call. = FALSE)
 
+    if (is.list(geom) && length(geom) == 1)
+        geom <- geom[[1]]
+    if (is.list(other_geom) && length(other_geom) == 1)
+        other_geom <- other_geom[[1]]
+
     ret <- -1
+    one_to_many <- FALSE
     if (is.raw(geom) && is.raw(other_geom)) {
         ret <- .g_distance(geom, other_geom, quiet)
-    } else if (is.list(geom) && is.list(other_geom)) {
-        if (length(geom) != length(other_geom)) {
-            stop("inputs must contain an equal number of geometries",
+    } else if ((is.raw(geom) || is.list(geom)) &&
+               is.list(other_geom)) {
+
+        if (is.raw(geom) && is.list(other_geom)) {
+            one_to_many <- TRUE
+
+        } else if (is.list(geom) &&
+                   length(geom) != length(other_geom)) {
+
+            stop("many-to-many input must contain equal numbers of geometries",
                  call. = FALSE)
         }
 
-        ret <- rep(-1, length(geom))
-        for (i in seq_along(geom)) {
-            ret[i] <- .g_distance(geom[[i]], other_geom[[i]], quiet)
+        ret <- rep(-1, length(other_geom))
+        for (i in seq_along(other_geom)) {
+            if (one_to_many)
+                ret[i] <- .g_distance(geom, other_geom[[i]], quiet)
+            else
+                ret[i] <- .g_distance(geom[[i]], other_geom[[i]], quiet)
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries",
+        stop("inputs must contain an equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
