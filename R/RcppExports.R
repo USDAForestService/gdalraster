@@ -2308,8 +2308,8 @@ has_geos <- function() {
 }
 
 #' @noRd
-.g_envelope <- function(geom, quiet = FALSE) {
-    .Call(`_gdalraster_g_envelope`, geom, quiet)
+.g_envelope <- function(geom, as_3d = FALSE, quiet = FALSE) {
+    .Call(`_gdalraster_g_envelope`, geom, as_3d, quiet)
 }
 
 #' @noRd

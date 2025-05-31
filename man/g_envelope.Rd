@@ -2,23 +2,29 @@
 % Please edit documentation in R/geom.R
 \name{g_envelope}
 \alias{g_envelope}
-\title{Obtain the bounding envelope for input geometries}
+\title{Obtain the 2D or 3D bounding envelope for input geometries}
 \usage{
-g_envelope(geom, quiet = FALSE)
+g_envelope(geom, as_3d = FALSE, quiet = FALSE)
 }
 \arguments{
 \item{geom}{Either a raw vector of WKB or list of raw vectors, or a
 character vector containing one or more WKT strings.}
 
+\item{as_3d}{Logical value. \code{TRUE} to return the 3D bounding envelope.
+The 2D envelope is returned by default (\code{as_3d = FALSE}).}
+
 \item{quiet}{Logical value, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 }
 \value{
-Either a numeric vector of length 4 containing the envelope
-\verb{(xmin, xmax, ymin, ymax)}, or a four-column numeric matrix with number of
-rows equal to the number of input geometries and column names
-\verb{("xmin", "xmax", "ymin", "ymax")}.
+Either a numeric vector of length \code{4} containing the 2D envelope
+\verb{(xmin, xmax, ymin, ymax)} or of length \code{6} containing the 3D envelope
+\verb{(xmin, xmax, ymin, ymax, zmin, zmax)}, or a four-column or six-column
+numeric matrix with number of rows equal to the number of input geometries
+and column names \verb{("xmin", "xmax", "ymin", "ymax")}, or
+\verb{("xmin", "xmax", "ymin", "ymax", "zmin", "zmax")} for the 3D case.
 }
 \description{
 \code{g_envelope()} computes and returns the bounding envelope(s) for the input
-geometries. Wrapper of \code{OGR_G_GetEnvelope()} in GDAL OGRGeometry.
+geometries. Wrapper of \code{OGR_G_GetEnvelope()} / \code{OGR_G_GetEnvelope3D()} in
+the GDAL Geometry API.
 }

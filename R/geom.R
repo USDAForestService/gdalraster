@@ -928,20 +928,30 @@ g_swap_xy <- function(geom, as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB",
         return(g_wk2wk(wkb, as_iso))
 }
 
-#' Obtain the bounding envelope for input geometries
+#' Obtain the 2D or 3D bounding envelope for input geometries
 #'
 #' `g_envelope()` computes and returns the bounding envelope(s) for the input
-#' geometries. Wrapper of `OGR_G_GetEnvelope()` in GDAL OGRGeometry.
+#' geometries. Wrapper of `OGR_G_GetEnvelope()` / `OGR_G_GetEnvelope3D()` in
+#' the GDAL Geometry API.
 #'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
+#' @param as_3d Logical value. `TRUE` to return the 3D bounding envelope.
+#' The 2D envelope is returned by default (`as_3d = FALSE`).
 #' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return Either a numeric vector of length 4 containing the envelope
-#' `(xmin, xmax, ymin, ymax)`, or a four-column numeric matrix with number of
-#' rows equal to the number of input geometries and column names
-#' `("xmin", "xmax", "ymin", "ymax")`.
+#' @return Either a numeric vector of length `4` containing the 2D envelope
+#' `(xmin, xmax, ymin, ymax)` or of length `6` containing the 3D envelope
+#' `(xmin, xmax, ymin, ymax, zmin, zmax)`, or a four-column or six-column
+#' numeric matrix with number of rows equal to the number of input geometries
+#' and column names `("xmin", "xmax", "ymin", "ymax")`, or
+#' `("xmin", "xmax", "ymin", "ymax", "zmin", "zmax")` for the 3D case.
 #' @export
-g_envelope <- function(geom, quiet = FALSE) {
+g_envelope <- function(geom, as_3d = FALSE, quiet = FALSE) {
+    # as_3d
+    if (is.null(as_3d))
+        as_3d <- FALSE
+    if (!is.logical(as_3d) || length(as_3d) > 1)
+        stop("'as_3d' must be a single logical value", call. = FALSE)
     # quiet
     if (is.null(quiet))
         quiet <- FALSE
@@ -950,17 +960,29 @@ g_envelope <- function(geom, quiet = FALSE) {
 
     ret <- 0
     if (is.raw(geom)) {
-        ret <- .g_envelope(geom, quiet)
-        names(ret) <- c("xmin", "xmax", "ymin", "ymax")
+        ret <- .g_envelope(geom, as_3d, quiet)
+        if (as_3d)
+            names(ret) <- c("xmin", "xmax", "ymin", "ymax", "zmin", "zmax")
+        else
+            names(ret) <- c("xmin", "xmax", "ymin", "ymax")
     } else if (is.list(geom) && is.raw(geom[[1]])) {
-        ret <- t(sapply(geom, .g_envelope, quiet))
-        colnames(ret) <- c("xmin", "xmax", "ymin", "ymax")
+        ret <- t(sapply(geom, .g_envelope, as_3d, quiet))
+        if (as_3d)
+            colnames(ret) <- c("xmin", "xmax", "ymin", "ymax", "zmin", "zmax")
+        else
+            colnames(ret) <- c("xmin", "xmax", "ymin", "ymax")
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
-            ret <- .g_envelope(g_wk2wk(geom), quiet)
+            ret <- .g_envelope(g_wk2wk(geom), as_3d, quiet)
+        if (as_3d)
+            names(ret) <- c("xmin", "xmax", "ymin", "ymax", "zmin", "zmax")
+        else
             names(ret) <- c("xmin", "xmax", "ymin", "ymax")
         } else {
-            ret <- t(sapply(g_wk2wk(geom), .g_envelope, quiet))
+            ret <- t(sapply(g_wk2wk(geom), .g_envelope, as_3d, quiet))
+        if (as_3d)
+            colnames(ret) <- c("xmin", "xmax", "ymin", "ymax", "zmin", "zmax")
+        else
             colnames(ret) <- c("xmin", "xmax", "ymin", "ymax")
         }
     } else {

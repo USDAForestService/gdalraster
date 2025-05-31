@@ -877,7 +877,7 @@ SEXP g_summary(const Rcpp::RawVector &geom, bool quiet = false) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_envelope")]]
-Rcpp::NumericVector g_envelope(const Rcpp::RawVector &geom,
+Rcpp::NumericVector g_envelope(const Rcpp::RawVector &geom, bool as_3d = false,
                                bool quiet = false) {
 // Computes and returns the bounding envelope for this geometry.
 
@@ -894,9 +894,26 @@ Rcpp::NumericVector g_envelope(const Rcpp::RawVector &geom,
         return Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL, NA_REAL);
     }
 
-    OGREnvelope sEnv;
-    OGR_G_GetEnvelope(hGeom, &sEnv);
-    Rcpp::NumericVector ret = {sEnv.MinX, sEnv.MinY, sEnv.MaxX, sEnv.MaxY};
+    Rcpp::NumericVector ret;
+    if (as_3d) {
+        OGREnvelope3D sEnv3D;
+        OGR_G_GetEnvelope3D(hGeom, &sEnv3D);
+        double minZ = NA_REAL;
+        double maxZ = NA_REAL;
+        if (!std::isinf(sEnv3D.MinZ))
+            minZ = sEnv3D.MinZ;
+        if (!std::isinf(sEnv3D.MaxZ))
+            maxZ = sEnv3D.MaxZ;
+
+        ret = {sEnv3D.MinX, sEnv3D.MaxX,
+               sEnv3D.MinY, sEnv3D.MaxY,
+               minZ, maxZ};
+    }
+    else {
+        OGREnvelope sEnv;
+        OGR_G_GetEnvelope(hGeom, &sEnv);
+        ret = {sEnv.MinX, sEnv.MaxX, sEnv.MinY, sEnv.MaxY};
+    }
 
     OGR_G_DestroyGeometry(hGeom);
     return ret;

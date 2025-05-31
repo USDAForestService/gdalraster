@@ -1204,14 +1204,15 @@ BEGIN_RCPP
 END_RCPP
 }
 // g_envelope
-Rcpp::NumericVector g_envelope(const Rcpp::RawVector& geom, bool quiet);
-RcppExport SEXP _gdalraster_g_envelope(SEXP geomSEXP, SEXP quietSEXP) {
+Rcpp::NumericVector g_envelope(const Rcpp::RawVector& geom, bool as_3d, bool quiet);
+RcppExport SEXP _gdalraster_g_envelope(SEXP geomSEXP, SEXP as_3dSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< const Rcpp::RawVector& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_3d(as_3dSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(g_envelope(geom, quiet));
+    rcpp_result_gen = Rcpp::wrap(g_envelope(geom, as_3d, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2157,7 +2158,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_is_measured", (DL_FUNC) &_gdalraster_g_is_measured, 2},
     {"_gdalraster_g_name", (DL_FUNC) &_gdalraster_g_name, 2},
     {"_gdalraster_g_summary", (DL_FUNC) &_gdalraster_g_summary, 2},
-    {"_gdalraster_g_envelope", (DL_FUNC) &_gdalraster_g_envelope, 2},
+    {"_gdalraster_g_envelope", (DL_FUNC) &_gdalraster_g_envelope, 3},
     {"_gdalraster_g_intersects", (DL_FUNC) &_gdalraster_g_intersects, 3},
     {"_gdalraster_g_equals", (DL_FUNC) &_gdalraster_g_equals, 3},
     {"_gdalraster_g_disjoint", (DL_FUNC) &_gdalraster_g_disjoint, 3},
