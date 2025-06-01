@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9009 (dev)
+# gdalraster 2.0.0.9010 (dev)
+
+* add `g_delaunay_triangulation()`: return a Delaunay triangulation of the vertices of the input geometry (#729) (2025-05-31)
 
 * Geom API: support one-to-many input (this-to-others) in binary predicate functions and in `g_distance()` (#728) (2025-05-31)
 
