@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9010 (dev)
+# gdalraster 2.0.0.9011 (dev)
+
+* (internal) class `GDALVector`: improve error handling in `setIgnoredFields()` / `setSelectedFields()` and add several new tests (#731) (2025-06-01)
 
 * add `g_delaunay_triangulation()`: return a Delaunay triangulation of the vertices of the input geometry (#729) (2025-05-31)
 
