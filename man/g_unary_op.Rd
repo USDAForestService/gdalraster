@@ -122,7 +122,8 @@ contains all the points in the input geometry. Wrapper of
 \code{OGR_G_ConvexHull()} in the GDAL API.
 
 \code{g_delaunay_triangulation()} returns a Delaunay triangulation of the
-vertices of the input geometry. Requires GEOS >= 3.4.
+vertices of the input geometry. Wrapper of \code{OGR_G_DelaunayTriangulation()}
+in the GDAL API. Requires GEOS >= 3.4.
 
 \code{g_simplify()} computes a simplified geometry. By default, it simplifies
 the input geometries while preserving topology (see Note). Wrapper of

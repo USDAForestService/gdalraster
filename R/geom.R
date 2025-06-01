@@ -2291,7 +2291,8 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' `OGR_G_ConvexHull()` in the GDAL API.
 #'
 #' `g_delaunay_triangulation()` returns a Delaunay triangulation of the
-#' vertices of the input geometry. Requires GEOS >= 3.4.
+#' vertices of the input geometry. Wrapper of `OGR_G_DelaunayTriangulation()`
+#' in the GDAL API. Requires GEOS >= 3.4.
 #'
 #' `g_simplify()` computes a simplified geometry. By default, it simplifies
 #' the input geometries while preserving topology (see Note). Wrapper of
