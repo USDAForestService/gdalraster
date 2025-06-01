@@ -2368,6 +2368,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_delaunay_triangulation <- function(geom, tolerance = 0.0, only_edges = FALSE, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
+    .Call(`_gdalraster_g_delaunay_triangulation`, geom, tolerance, only_edges, as_iso, byte_order, quiet)
+}
+
+#' @noRd
 .g_simplify <- function(geom, tolerance, preserve_topology = TRUE, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
     .Call(`_gdalraster_g_simplify`, geom, tolerance, preserve_topology, as_iso, byte_order, quiet)
 }

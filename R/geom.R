@@ -2290,6 +2290,9 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' contains all the points in the input geometry. Wrapper of
 #' `OGR_G_ConvexHull()` in the GDAL API.
 #'
+#' `g_delaunay_triangulation()` returns a Delaunay triangulation of the
+#' vertices of the input geometry. Requires GEOS >= 3.4.
+#'
 #' `g_simplify()` computes a simplified geometry. By default, it simplifies
 #' the input geometries while preserving topology (see Note). Wrapper of
 #' `OGR_G_Simplify()` / `OGR_G_SimplifyPreserveTopology()` in the GDAL API.
@@ -2301,10 +2304,15 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' curve (quadrant of a circle). Large values result in large numbers of
 #' vertices in the resulting buffer geometry while small numbers reduce the
 #' accuracy of the result.
-#' @param tolerance Numeric value of the simplification tolerance, as distance
-#' in units of the input `geom`. Simplification removes vertices which are
-#' within the tolerance distance of the simplified linework (as long as
-#' topology is preserved when `preserve_topology = TRUE`).
+#' @param tolerance Numeric value. For `g_simplify()`, the simplification
+#' tolerance as distance in units of the input `geom`. Simplification removes
+#' vertices which are within the tolerance distance of the simplified linework
+#' (as long as topology is preserved when `preserve_topology = TRUE`).
+#' For `g_delaunay_triangulation()`, an optional snapping tolerance to use for
+#' improved robustness.
+#' @param only_edges Logical value. If `TRUE`, `g_delaunay_triangulation()`
+#' will return a MULTILINESTRING, otherwise it will return a GEOMETRYCOLLECTION
+#' containing triangular POLYGONs (the default).
 #' @param preserve_topology Logical value, `TRUE` to simplify geometries while
 #' preserving topology (the default). Setting to `FALSE` simplifies geometries
 #' using the standard Douglas-Peucker algorithm which is significantly faster
@@ -2372,8 +2380,11 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' g3 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
 #' g_convex_hull(g3, as_wkb = FALSE)
 #'
-#' g4 <- "LINESTRING(0 0,1 1,10 0)"
-#' g_simplify(g4, tolerance = 5, as_wkb = FALSE)
+#' g4 <- "MULTIPOINT(0 0,0 1,1 1,1 0)"
+#' g_delaunay_triangulation(g4, as_wkb = FALSE)
+#'
+#' g5 <- "LINESTRING(0 0,1 1,10 0)"
+#' g_simplify(g5, tolerance = 5, as_wkb = FALSE)
 #' @export
 g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
                      as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
@@ -2517,6 +2528,69 @@ g_convex_hull <- function(geom, as_wkb = TRUE, as_iso = FALSE,
         } else {
             wkb <- lapply(g_wk2wk(geom), .g_convex_hull, as_iso, byte_order,
                           quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' @name g_unary_op
+#' @export
+g_delaunay_triangulation <- function(geom, tolerance = 0.0, only_edges = FALSE,
+                                     as_wkb = TRUE, as_iso = FALSE,
+                                     byte_order = "LSB", quiet = FALSE) {
+    # tolerance
+    if (!(is.numeric(tolerance) && length(tolerance) == 1))
+        stop("'tolerance' must be a single numeric value", call. = FALSE)
+    # only_edges
+    if (!(is.logical(only_edges) && length(only_edges) == 1)) {
+        stop("'only_edges' must be a single logical value", call. = FALSE)
+    }
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    wkb <- NULL
+    if (is.raw(geom)) {
+        wkb <- .g_delaunay_triangulation(geom, tolerance, only_edges, as_iso,
+                                         byte_order, quiet)
+    } else if (is.list(geom) && is.raw(geom[[1]])) {
+        wkb <- lapply(geom, .g_delaunay_triangulation, tolerance, only_edges,
+                      as_iso, byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_delaunay_triangulation(g_wk2wk(geom), tolerance,
+                                             only_edges, as_iso, byte_order,
+                                             quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_delaunay_triangulation, tolerance,
+                          only_edges, as_iso, byte_order, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
