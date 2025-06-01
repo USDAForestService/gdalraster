@@ -91,6 +91,16 @@ WKB raw vectors, or a character vector containing one or more WKT strings.</p>
 <span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
 <span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">g_delaunay_triangulation</span><span class="op">(</span></span>
+<span>  <span class="va">geom</span>,</span>
+<span>  tolerance <span class="op">=</span> <span class="fl">0</span>,</span>
+<span>  only_edges <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  as_wkb <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  as_iso <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>  byte_order <span class="op">=</span> <span class="st">"LSB"</span>,</span>
+<span>  quiet <span class="op">=</span> <span class="cn">FALSE</span></span>
+<span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">g_simplify</span><span class="op">(</span></span>
 <span>  <span class="va">geom</span>,</span>
 <span>  <span class="va">tolerance</span>,</span>
@@ -142,10 +152,18 @@ WKB. One of <code>"LSB"</code> (the default) or <code>"MSB"</code> (uncommon).</
 
 
 <dt id="arg-tolerance">tolerance<a class="anchor" aria-label="anchor" href="#arg-tolerance"></a></dt>
-<dd><p>Numeric value of the simplification tolerance, as distance
-in units of the input <code>geom</code>. Simplification removes vertices which are
-within the tolerance distance of the simplified linework (as long as
-topology is preserved when <code>preserve_topology = TRUE</code>).</p></dd>
+<dd><p>Numeric value. For <code>g_simplify()</code>, the simplification
+tolerance as distance in units of the input <code>geom</code>. Simplification removes
+vertices which are within the tolerance distance of the simplified linework
+(as long as topology is preserved when <code>preserve_topology = TRUE</code>).
+For <code>g_delaunay_triangulation()</code>, an optional snapping tolerance to use for
+improved robustness.</p></dd>
+
+
+<dt id="arg-only-edges">only_edges<a class="anchor" aria-label="anchor" href="#arg-only-edges"></a></dt>
+<dd><p>Logical value. If <code>TRUE</code>, <code>g_delaunay_triangulation()</code>
+will return a MULTILINESTRING, otherwise it will return a GEOMETRYCOLLECTION
+containing triangular POLYGONs (the default).</p></dd>
 
 
 <dt id="arg-preserve-topology">preserve_topology<a class="anchor" aria-label="anchor" href="#arg-preserve-topology"></a></dt>
@@ -175,6 +193,9 @@ Wrapper of <code>OGR_G_Buffer()</code> in the GDAL API.</p>
 <p><code>g_convex_hull()</code> computes a convex hull, the smallest convex geometry that
 contains all the points in the input geometry. Wrapper of
 <code>OGR_G_ConvexHull()</code> in the GDAL API.</p>
+<p><code>g_delaunay_triangulation()</code> returns a Delaunay triangulation of the
+vertices of the input geometry. Wrapper of <code>OGR_G_DelaunayTriangulation()</code>
+in the GDAL API. Requires GEOS &gt;= 3.4.</p>
 <p><code>g_simplify()</code> computes a simplified geometry. By default, it simplifies
 the input geometries while preserving topology (see Note). Wrapper of
 <code>OGR_G_Simplify()</code> / <code>OGR_G_SimplifyPreserveTopology()</code> in the GDAL API.</p>
@@ -227,8 +248,12 @@ polygons.</p>
 <span class="r-in"><span><span class="fu">g_convex_hull</span><span class="op">(</span><span class="va">g3</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "POLYGON ((0 0,0 1,1 1,1 0,0 0))"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">g4</span> <span class="op">&lt;-</span> <span class="st">"LINESTRING(0 0,1 1,10 0)"</span></span></span>
-<span class="r-in"><span><span class="fu">g_simplify</span><span class="op">(</span><span class="va">g4</span>, tolerance <span class="op">=</span> <span class="fl">5</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">g4</span> <span class="op">&lt;-</span> <span class="st">"MULTIPOINT(0 0,0 1,1 1,1 0)"</span></span></span>
+<span class="r-in"><span><span class="fu">g_delaunay_triangulation</span><span class="op">(</span><span class="va">g4</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GEOMETRYCOLLECTION (POLYGON ((0 1,0 0,1 0,0 1)),POLYGON ((0 1,1 0,1 1,0 1)))"</span>
+<span class="r-in"><span></span></span>
+<span class="r-in"><span><span class="va">g5</span> <span class="op">&lt;-</span> <span class="st">"LINESTRING(0 0,1 1,10 0)"</span></span></span>
+<span class="r-in"><span><span class="fu">g_simplify</span><span class="op">(</span><span class="va">g5</span>, tolerance <span class="op">=</span> <span class="fl">5</span>, as_wkb <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "LINESTRING (0 0,10 0)"</span>
 </code></pre></div>
     </div>
