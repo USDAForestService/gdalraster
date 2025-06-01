@@ -744,6 +744,24 @@ test_that("unary ops return correct values", {
     g_conv_hull <- g_convex_hull(g_wk2wk(c(g1, g1)), as_wkb = FALSE)
     expect_equal(g_conv_hull, rep(g_expect, 2))
 
+    # g_delaunay_triangulation
+    g1 <- "MULTIPOINT(0 0,0 1,1 1,1 0)"
+    g_dt <- g_delaunay_triangulation(g1, as_wkb = FALSE)
+    g_expect <- "GEOMETRYCOLLECTION (POLYGON ((0 1,0 0,1 0,0 1)),POLYGON ((0 1,1 0,1 1,0 1)))"
+    expect_equal(g_dt, g_expect)
+    # wkb input
+    g_dt <- g_delaunay_triangulation(g_wk2wk(g1), as_wkb = FALSE)
+    expect_equal(g_dt, g_expect)
+    # vector/list input
+    g_expect <- rep(g_expect, 2)
+    g2 <- "LINESTRING(0 0,1 1,10 0)"
+    # character vector of wkt input
+    g_dt <- g_delaunay_triangulation(c(g1, g1), as_wkb = FALSE)
+    expect_equal(g_dt, g_expect)
+    # list of wkb input
+    g_dt <- g_delaunay_triangulation(g_wk2wk(c(g1, g1)), as_wkb = FALSE)
+    expect_equal(g_dt, g_expect)
+
     # g_simplify
     g1 <- "LINESTRING(0 0,1 0,10 0)"
     g_simp <- g_simplify(g1, tolerance = 5, as_wkb = FALSE)

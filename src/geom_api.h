@@ -99,6 +99,10 @@ SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs,
 SEXP g_convex_hull(const Rcpp::RawVector &geom, bool as_iso,
                    const std::string &byte_order, bool quiet);
 
+SEXP g_delaunay_triangulation(const Rcpp::RawVector &geom, double tolerance,
+                              bool only_edges, bool as_iso,
+                              const std::string &byte_order, bool quiet);
+
 SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
                 bool preserve_topology, bool as_iso,
                 const std::string &byte_order, bool quiet);

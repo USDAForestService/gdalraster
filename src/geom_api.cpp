@@ -1462,6 +1462,78 @@ SEXP g_convex_hull(const Rcpp::RawVector &geom, bool as_iso,
 }
 
 //' @noRd
+// [[Rcpp::export(name = ".g_delaunay_triangulation")]]
+SEXP g_delaunay_triangulation(const Rcpp::RawVector &geom,
+                              double tolerance = 0.0,
+                              bool only_edges = false,
+                              bool as_iso = false,
+                              const std::string &byte_order = "LSB",
+                              bool quiet = false) {
+// Return a Delaunay triangulation of the vertices of the geometry.
+//
+// This function is built on the GEOS library, v3.4 or above. If OGR is built
+// without the GEOS library, this function will always fail, issuing a
+// CPLE_NotSupported error.
+
+    std::vector<int> geos_ver = getGEOSVersion();
+    int geos_maj_ver = geos_ver[0];
+    int geos_min_ver = geos_ver[1];
+    if (!(geos_maj_ver > 3 || (geos_maj_ver == 3 && geos_min_ver >= 4))) {
+        Rcpp::stop("g_delaunay_triangulation() requires GEOS >= 3.4");
+    }
+
+    if ((geom.size() == 0))
+        Rcpp::stop("'geom' is empty");
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    OGRGeometryH hTriangulatedGeom = nullptr;
+    int only_edges_in = only_edges ? TRUE : FALSE;
+    hTriangulatedGeom = OGR_G_DelaunayTriangulation(hGeom, tolerance,
+                                                    only_edges_in);
+
+    if (hTriangulatedGeom == nullptr) {
+        OGR_G_DestroyGeometry(hGeom);
+        if (!quiet) {
+            Rcpp::warning("OGR_G_DelaunayTriangulation() gave NULL geometry, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    const int nWKBSize = OGR_G_WkbSize(hTriangulatedGeom);
+    if (!nWKBSize) {
+        OGR_G_DestroyGeometry(hGeom);
+        OGR_G_DestroyGeometry(hTriangulatedGeom);
+        if (!quiet) {
+            Rcpp::warning("failed to obtain WKB size of output geometry");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+    bool result = exportGeomToWkb(hTriangulatedGeom, &wkb[0], as_iso,
+                                  byte_order);
+    OGR_G_DestroyGeometry(hGeom);
+    OGR_G_DestroyGeometry(hTriangulatedGeom);
+    if (!result) {
+        if (!quiet) {
+           Rcpp::warning(
+                    "failed to export WKB raw vector for output geometry");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    return wkb;
+}
+
+//' @noRd
 // [[Rcpp::export(name = ".g_simplify")]]
 SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
                 bool preserve_topology = true, bool as_iso = false,

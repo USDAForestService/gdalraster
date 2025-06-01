@@ -5,6 +5,7 @@
 \alias{g_buffer}
 \alias{g_boundary}
 \alias{g_convex_hull}
+\alias{g_delaunay_triangulation}
 \alias{g_simplify}
 \title{Unary operations on WKB or WKT geometries}
 \usage{
@@ -28,6 +29,16 @@ g_boundary(
 
 g_convex_hull(
   geom,
+  as_wkb = TRUE,
+  as_iso = FALSE,
+  byte_order = "LSB",
+  quiet = FALSE
+)
+
+g_delaunay_triangulation(
+  geom,
+  tolerance = 0,
+  only_edges = FALSE,
   as_wkb = TRUE,
   as_iso = FALSE,
   byte_order = "LSB",
@@ -66,10 +77,16 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 
 \item{quiet}{Logical value, \code{TRUE} to suppress warnings. Defaults to \code{FALSE}.}
 
-\item{tolerance}{Numeric value of the simplification tolerance, as distance
-in units of the input \code{geom}. Simplification removes vertices which are
-within the tolerance distance of the simplified linework (as long as
-topology is preserved when \code{preserve_topology = TRUE}).}
+\item{tolerance}{Numeric value. For \code{g_simplify()}, the simplification
+tolerance as distance in units of the input \code{geom}. Simplification removes
+vertices which are within the tolerance distance of the simplified linework
+(as long as topology is preserved when \code{preserve_topology = TRUE}).
+For \code{g_delaunay_triangulation()}, an optional snapping tolerance to use for
+improved robustness.}
+
+\item{only_edges}{Logical value. If \code{TRUE}, \code{g_delaunay_triangulation()}
+will return a MULTILINESTRING, otherwise it will return a GEOMETRYCOLLECTION
+containing triangular POLYGONs (the default).}
 
 \item{preserve_topology}{Logical value, \code{TRUE} to simplify geometries while
 preserving topology (the default). Setting to \code{FALSE} simplifies geometries
@@ -103,6 +120,10 @@ Wrapper of \code{OGR_G_Buffer()} in the GDAL API.
 \code{g_convex_hull()} computes a convex hull, the smallest convex geometry that
 contains all the points in the input geometry. Wrapper of
 \code{OGR_G_ConvexHull()} in the GDAL API.
+
+\code{g_delaunay_triangulation()} returns a Delaunay triangulation of the
+vertices of the input geometry. Wrapper of \code{OGR_G_DelaunayTriangulation()}
+in the GDAL API. Requires GEOS >= 3.4.
 
 \code{g_simplify()} computes a simplified geometry. By default, it simplifies
 the input geometries while preserving topology (see Note). Wrapper of
@@ -161,6 +182,9 @@ g_buffer(g2, dist = 10, as_wkb = FALSE)
 g3 <- "GEOMETRYCOLLECTION(POINT(0 1), POINT(0 0), POINT(1 0), POINT(1 1))"
 g_convex_hull(g3, as_wkb = FALSE)
 
-g4 <- "LINESTRING(0 0,1 1,10 0)"
-g_simplify(g4, tolerance = 5, as_wkb = FALSE)
+g4 <- "MULTIPOINT(0 0,0 1,1 1,1 0)"
+g_delaunay_triangulation(g4, as_wkb = FALSE)
+
+g5 <- "LINESTRING(0 0,1 1,10 0)"
+g_simplify(g5, tolerance = 5, as_wkb = FALSE)
 }
