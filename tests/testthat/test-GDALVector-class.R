@@ -125,6 +125,10 @@ test_that("class basic interface works", {
     lyr$setAttributeFilter("")
     expect_no_error(lyr$setSpatialFilterRect(bbox))
     expect_equal(lyr$getFeatureCount(), 40)
+    # test spatial filter errors
+    expect_error(lyr$setSpatialFilterRect(NULL))
+    expect_error(lyr$setSpatialFilterRect(rep(NA_real_, 4)))
+    expect_true(lyr$getSpatialFilter() != "")
 
     # fetch in chunks and return as data frame
     expect_no_error(d <- lyr$fetch(20))
@@ -142,6 +146,16 @@ test_that("class basic interface works", {
     lyr$returnGeomAs <- "WKB"
     expect_no_error(d <- lyr$fetch(-1))
     expect_equal(nrow(d), 40)
+
+    # request more features than are available
+    lyr$resetReading()
+    expect_no_error(d2 <- lyr$fetch(100))
+    expect_true(is.data.frame(d2))
+    expect_equal(nrow(d2), 40)
+    expect_equal(d, d2)
+    # further fetch should return 0-row data frame
+    expect_no_error(d2 <- lyr$fetch(20))
+    expect_equal(nrow(d2), 0)
 
     expect_no_error(lyr$clearSpatialFilter())
     expect_equal(lyr$getFeatureCount(), 61)
@@ -252,13 +266,36 @@ test_that("set ignored/selected fields works", {
     expect_s3_class(lyr$getNextFeature(), "OGRFeature")
     expect_true(is.null(lyr$getNextFeature()))
 
+    # field names not resolved
+    expect_no_error(lyr$setIgnoredFields(""))
+    expect_error(lyr$setIgnoredFields(c("event_id", "invalid_field")),
+                 "not all field names could be resolved")
+    expect_no_error(lyr$setIgnoredFields(""))
+    expect_output(lyr$setSelectedFields(c("event_id", "invalid_field")),
+                  "some input field names could not be resolved")
+    expect_false("event_id" %in% lyr$getIgnoredFields())
+    expect_no_error(lyr$setSelectedFields(""))
+    expect_error(lyr$setSelectedFields("invalid_field"),
+                 "none of the input field names could be resolved")
+
     lyr$close()
     unlink(dsn)
+
+    # layer does not support ignored fields
+    dsn_json <- system.file("extdata/test.geojson", package="gdalraster")
+    lyr <- new(GDALVector, dsn_json)
+    expect_true(("int2" %in% lyr$getFieldNames()))
+    expect_output(lyr$setIgnoredFields("int2"),
+                  "layer does not have IgnoreFields capability")
+    expect_length(lyr$getIgnoredFields(), 0)
+    expect_output(lyr$setSelectedFields("int2"),
+                  "layer does not have IgnoreFields capability")
+    expect_length(lyr$getIgnoredFields(), 0)
+    lyr$close()
+
 })
 
 test_that("read methods work correctly", {
-    # TODO: complete these tests
-
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
     dsn <- file.path(tempdir(), basename(f))
     file.copy(f, dsn, overwrite = TRUE)
@@ -286,21 +323,23 @@ test_that("read methods work correctly", {
     # clear
     expect_no_error(lyr$clearSpatialFilter())
     expect_equal(lyr$getFeatureCount(), 61)
+    # invalid WKT geom
+    expect_error(lyr$setSpatialFilter("POLYGON invalid"))
 
     # cursor positioning
     expect_equal(lyr$getFeatureCount(), 61)
-    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(1))
-    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(2))
+    expect_equal(lyr$getNextFeature()$FID, as.integer64(1))
+    expect_equal(lyr$getNextFeature()$FID, as.integer64(2))
     lyr$resetReading()
-    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(1))
+    expect_equal(lyr$getNextFeature()$FID, as.integer64(1))
     lyr$setNextByIndex(3)
-    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(4))
+    expect_equal(lyr$getNextFeature()$FID, as.integer64(4))
     lyr$setNextByIndex(3.5)
-    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(4))
+    expect_equal(lyr$getNextFeature()$FID, as.integer64(4))
     lyr$setNextByIndex(0)
-    expect_equal(lyr$getNextFeature()$FID, bit64::as.integer64(1))
+    expect_equal(lyr$getNextFeature()$FID, as.integer64(1))
 
-    expect_equal(lyr$getFeature(10)$FID, bit64::as.integer64(10))
+    expect_equal(lyr$getFeature(10)$FID, as.integer64(10))
 
     expect_error(lyr$setNextByIndex(NA))
     expect_error(lyr$setNextByIndex(-1))
@@ -466,7 +505,7 @@ test_that("feature write methods work", {
         feat <- NULL
         feat <- lyr$getNextFeature()
         test4_orig_fid <- feat$FID
-        feat$FID <- bit64::as.integer64(9999999999999994)
+        feat$FID <- as.integer64(9999999999999994)
         feat$event_id <- "ZZ04"
         feat$incid_name <- "TEST 4"
         feat$map_id <- 999994
@@ -484,7 +523,7 @@ test_that("feature write methods work", {
     test1_feat <- lyr$getNextFeature()
     expect_false(is.null(test1_feat))
     expect_equal(test1_feat$incid_name, "TEST 1")
-    expect_equal(test1_feat$map_id, bit64::as.integer64(999991))
+    expect_equal(test1_feat$map_id, as.integer64(999991))
     expect_equal(test1_feat$ig_date, as.Date("9999-01-01"))
     test1_orig_feat <- lyr$getFeature(test1_orig_fid)
     geom_fld <- lyr$getGeometryColumn()
@@ -495,7 +534,7 @@ test_that("feature write methods work", {
     test2_feat <- lyr$getNextFeature()
     expect_false(is.null(test2_feat))
     expect_equal(test2_feat$incid_name, "TEST 2")
-    expect_equal(test2_feat$map_id, bit64::as.integer64(999992))
+    expect_equal(test2_feat$map_id, as.integer64(999992))
     expect_equal(test2_feat$ig_date, as.Date("9999-01-02"))
     expect_equal(test2_feat$ig_year, 9999)
     test2_feat <- NULL
@@ -505,7 +544,7 @@ test_that("feature write methods work", {
         test3_feat <- lyr$getNextFeature()
         expect_false(is.null(test3_feat))
         expect_equal(test3_feat$incid_name, "TEST 3")
-        expect_equal(test3_feat$map_id, bit64::as.integer64(999993))
+        expect_equal(test3_feat$map_id, as.integer64(999993))
         expect_equal(test3_feat$ig_date, as.Date("9999-01-03"))
         expect_equal(test3_feat$ig_year, 9999)
         test3_feat <- NULL
@@ -514,7 +553,7 @@ test_that("feature write methods work", {
         test4_feat <- lyr$getNextFeature()
         expect_false(is.null(test4_feat))
         expect_equal(test4_feat$incid_name, "TEST 4")
-        expect_equal(test4_feat$map_id, bit64::as.integer64(999994))
+        expect_equal(test4_feat$map_id, as.integer64(999994))
         expect_equal(test4_feat$ig_date, as.Date("9999-01-04"))
         test4_orig_feat <- lyr$getFeature(test4_orig_fid)
         geom_fld <- lyr$getGeometryColumn()
@@ -553,7 +592,7 @@ test_that("feature write methods work", {
     feat1 <- list()
     feat1$int_fld <- 1
     feat1$bool_fld <- TRUE
-    feat1$int64_fld <- bit64::as.integer64(11)
+    feat1$int64_fld <- as.integer64(11)
     feat1$real_fld <- 1.1
     feat1$str_fld <- "string 1"
     feat1$date_fld <- as.Date("2000-01-01")
@@ -580,7 +619,7 @@ test_that("feature write methods work", {
     feat2$FID <- test2_fid
     feat2$int_fld <- 2
     feat2$bool_fld <- FALSE
-    feat2$int64_fld <- bit64::as.integer64(22)
+    feat2$int64_fld <- as.integer64(22)
     feat2$real_fld <- 2.2
     feat2$str_fld <- "string 2"
     feat2$date_fld <- as.Date("2000-01-02")
@@ -616,7 +655,7 @@ test_that("feature write methods work", {
     feat3 <- list()
     feat3$int_fld <- 3
     feat3$bool_fld <- TRUE
-    feat3$int64_fld <- bit64::as.integer64(33)
+    feat3$int64_fld <- as.integer64(33)
     feat3$real_fld <- 3.3
     feat3$str_fld <- "string 3"
     feat3$date_fld <- as.Date("2000-01-03")
@@ -633,7 +672,7 @@ test_that("feature write methods work", {
     feat4 <- list()
     feat4$int_fld <- 4
     feat4$bool_fld <- TRUE
-    feat4$int64_fld <- bit64::as.integer64(44)
+    feat4$int64_fld <- as.integer64(44)
     feat4$real_fld <- 4.4
     feat4$str_fld <- "string 4"
     feat4$date_fld <- as.Date("2000-01-04")
@@ -682,7 +721,7 @@ test_that("feature write methods work", {
     feat6 <- list()
     feat6$int_fld <- NA_integer_
     feat6$bool_fld <- NA
-    feat6$int64_fld <- bit64::NA_integer64_
+    feat6$int64_fld <- NA_integer64_
     feat6$real_fld <- NA_real_
     feat6$str_fld <- NA_character_
     feat6$date_fld <- as.Date(NA_real_)
@@ -875,6 +914,7 @@ test_that("feature write methods work", {
     defn$real_fld <- ogr_def_field("OFTReal")
     defn$str_fld <- ogr_def_field("OFTString")
     defn$int_list_fld <- ogr_def_field("OFTIntegerList", "JSonIntegerList")
+    defn$int64_list_fld <- ogr_def_field("OFTInteger64List", "JSonInteger64List")
     defn$real_list_fld <- ogr_def_field("OFTRealList", "JSonRealList")
     defn$str_list_fld <- ogr_def_field("OFTStringList", "JSonStringList")
 
@@ -891,6 +931,7 @@ test_that("feature write methods work", {
     feat1$real_fld <- 1.1
     feat1$str_fld <- "string 1"
     feat1$int_list_fld <- c(1, 1, 1)
+    feat1$int64_list_fld <- as.integer64(c(9999999999999991, 9999999999999991, 9999999999999991))
     feat1$real_list_fld <- c(1.1, 1.1, 1.1)
     feat1$str_list_fld <- c("str 1", "str 1", "str 1")
     feat1[[geom_fld]] <- "POINT (1 1)"
@@ -908,6 +949,7 @@ test_that("feature write methods work", {
     expect_equal(f$real_fld, feat1$real_fld)
     expect_equal(f$str_fld, feat1$str_fld)
     expect_equal(f$int_list_fld, feat1$int_list_fld)
+    expect_equal(f$int64_list_fld, feat1$int64_list_fld)
     expect_equal(f$real_list_fld, feat1$real_list_fld)
     expect_equal(f$str_list_fld, feat1$str_list_fld)
     # this fails with GDAL < 3.5 due to change in geom column naming?
@@ -1130,9 +1172,9 @@ test_that("field domain specifications are returned correctly", {
     expect_equal(fld_dom$field_type, "Integer64")
     expect_equal(fld_dom$split_policy, "default value")
     expect_equal(fld_dom$merge_policy, "default value")
-    expect_equal(fld_dom$min_value, bit64::as.integer64(-1234567890123))
+    expect_equal(fld_dom$min_value, as.integer64(-1234567890123))
     expect_false(fld_dom$min_value_included)
-    expect_equal(fld_dom$max_value, bit64::as.integer64(1234567890123))
+    expect_equal(fld_dom$max_value, as.integer64(1234567890123))
     expect_true(fld_dom$max_value_included)
     rm(fld_dom)
 
