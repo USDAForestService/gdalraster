@@ -54,16 +54,17 @@ test_that("geom functions work on wkb/wkt geometries", {
     line <- g_create("LINESTRING", line_xy, as_wkb = FALSE)
 
     # set up vector of WKT, WKB raw vector, and list of WKB raw vectors
-    wkt_vec_1 <- c(bb, bnd)
-    wkt_vec_2 <- c(pt, pt)
+    wkt_vec_1 <- c(bb, bnd, NA_character_)
+    wkt_vec_2 <- c(pt, pt, pt)
 
     bb_wkb <- g_wk2wk(bb)
     expect_true(is.raw(bb_wkb))
     pt_wkb <- g_wk2wk(pt)
     expect_true(is.raw(pt_wkb))
 
-    wkb_list_1 <- g_wk2wk(wkt_vec_1)
-    expect_true(is.list(wkb_list_1) && is.raw(wkb_list_1[[1]]))
+    expect_warning(wkb_list_1 <- g_wk2wk(wkt_vec_1))
+    expect_true(is.list(wkb_list_1) && is.raw(wkb_list_1[[1]]) &&
+                is.null(wkb_list_1[[3]]))
     wkb_list_2 <- g_wk2wk(wkt_vec_2)
     expect_true(is.list(wkb_list_2) && is.raw(wkb_list_2[[1]]))
 
@@ -74,84 +75,96 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_error(g_intersects("invalid WKT", pt))
     expect_error(g_intersects(bnd, "invalid WKT"))
     # vector of WKT
-    expected_value <- c(TRUE, FALSE)
-    expect_equal(g_intersects(wkt_vec_1, wkt_vec_2), expected_value)
+    expected_value <- c(TRUE, FALSE, NA)
+    expect_warning(
+        expect_equal(g_intersects(wkt_vec_1, wkt_vec_2), expected_value)
+    )
     # WKB
     expect_true(g_intersects(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_intersects(wkb_list_1, wkb_list_2), expected_value)
     # one-to-many
-    expect_equal(g_intersects(pt, wkt_vec_1), expected_value)
+    expect_equal(g_intersects(pt, wkb_list_1), expected_value)
 
     # WKT
     expect_false(g_equals(bb, bnd))
     expect_error(g_equals("invalid WKT", bnd))
     expect_error(g_equals(bb, "invalid WKT"))
     # vector of WKT
-    expected_value <- c(FALSE, FALSE)
-    expect_equal(g_equals(wkt_vec_1, wkt_vec_2), expected_value)
+    expected_value <- c(FALSE, FALSE, NA)
+    expect_warning(
+        expect_equal(g_equals(wkt_vec_1, wkt_vec_2), expected_value)
+    )
     # WKB
     expect_false(g_equals(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_equals(wkb_list_1, wkb_list_2), expected_value)
     # one-to-many
-    expect_equal(g_equals(pt, wkt_vec_1), expected_value)
+    expect_equal(g_equals(pt, wkb_list_1), expected_value)
 
     # WKT
     expect_false(g_disjoint(bb, bnd))
     expect_error(g_disjoint("invalid WKT", bnd))
     expect_error(g_disjoint(bb, "invalid WKT"))
     # vector of WKT
-    expected_value <- c(FALSE, TRUE)
-    expect_equal(g_disjoint(wkt_vec_1, wkt_vec_2), expected_value)
+    expected_value <- c(FALSE, TRUE, NA)
+    expect_warning(
+        expect_equal(g_disjoint(wkt_vec_1, wkt_vec_2), expected_value)
+    )
     # WKB
     expect_false(g_disjoint(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_disjoint(wkb_list_1, wkb_list_2), expected_value)
     # one-to-many
-    expect_equal(g_disjoint(pt, wkt_vec_1), expected_value)
+    expect_equal(g_disjoint(pt, wkb_list_1), expected_value)
 
     # WKT
     expect_false(g_touches(bb, bnd))
     expect_error(g_touches("invalid WKT", bnd))
     expect_error(g_touches(bb, "invalid WKT"))
     # vector of WKT
-    expected_value <- c(FALSE, FALSE)
-    expect_equal(g_touches(wkt_vec_1, wkt_vec_2), expected_value)
+    expected_value <- c(FALSE, FALSE, NA)
+    expect_warning(
+        expect_equal(g_touches(wkt_vec_1, wkt_vec_2), expected_value)
+    )
     # WKB
     expect_false(g_touches(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_touches(wkb_list_1, wkb_list_2), expected_value)
     # one-to-many
-    expect_equal(g_touches(pt, wkt_vec_1), expected_value)
+    expect_equal(g_touches(pt, wkb_list_1), expected_value)
 
     # WKT
     expect_true(g_contains(bb, bnd))
     expect_error(g_contains("invalid WKT", bnd))
     expect_error(g_contains(bb, "invalid WKT"))
     # vector of WKT
-    expected_value <- c(TRUE, FALSE)
-    expect_equal(g_contains(wkt_vec_1, wkt_vec_2), expected_value)
+    expected_value <- c(TRUE, FALSE, NA)
+    expect_warning(
+        expect_equal(g_contains(wkt_vec_1, wkt_vec_2), expected_value)
+    )
     # WKB
     expect_true(g_contains(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_contains(wkb_list_1, wkb_list_2), expected_value)
     # one-to-many
-    expect_equal(g_contains(bnd, wkt_vec_2), c(FALSE, FALSE))
+    expect_equal(g_contains(bnd, wkb_list_2), c(FALSE, FALSE, FALSE))
 
     # WKT
     expect_false(g_within(bb, bnd))
     expect_error(g_within("invalid WKT", bnd))
     expect_error(g_within(bb, "invalid WKT"))
     # vector of WKT
-    expected_value <- c(TRUE, FALSE)
-    expect_equal(g_within(wkt_vec_2, wkt_vec_1), expected_value)
+    expected_value <- c(TRUE, FALSE, NA)
+    expect_warning(
+        expect_equal(g_within(wkt_vec_2, wkt_vec_1), expected_value)
+    )
     # WKB
     expect_false(g_within(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_within(wkb_list_2, wkb_list_1), expected_value)
     # one-to-many
-    expect_equal(g_within(pt, wkt_vec_1), expected_value)
+    expect_equal(g_within(pt, wkb_list_1), expected_value)
 
     # WKT
     expect_true(g_crosses(line, bnd))
@@ -159,41 +172,45 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_error(g_crosses(line, "invalid WKT"))
     expect_false(g_crosses(line, bb))
     # vector of WKT
-    expected_value <- c(FALSE, FALSE)
-    expect_equal(g_crosses(wkt_vec_1, wkt_vec_2), expected_value)
+    expected_value <- c(FALSE, FALSE, NA)
+    expect_warning(
+        expect_equal(g_crosses(wkt_vec_1, wkt_vec_2), expected_value)
+    )
     # WKB
     expect_false(g_crosses(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_crosses(wkb_list_1, wkb_list_2), expected_value)
     # one-to-many
-    expect_equal(g_crosses(pt, wkt_vec_1), expected_value)
+    expect_equal(g_crosses(pt, wkb_list_1), expected_value)
 
     # WKT
     expect_false(g_overlaps(bb, bnd))
     expect_error(g_overlaps("invalid WKT", bnd))
     expect_error(g_overlaps(bb, "invalid WKT"))
     # vector of WKT
-    expected_value <- c(FALSE, FALSE)
-    expect_equal(g_overlaps(wkt_vec_1, wkt_vec_2), expected_value)
+    expected_value <- c(FALSE, FALSE, NA)
+    expect_warning(
+        expect_equal(g_overlaps(wkt_vec_1, wkt_vec_2), expected_value)
+    )
     # WKB
     expect_false(g_overlaps(bb_wkb, pt_wkb))
     # list of WKB
     expect_equal(g_overlaps(wkb_list_1, wkb_list_2), expected_value)
     # one-to-many
-    expect_equal(g_overlaps(pt, wkt_vec_1), expected_value)
+    expect_equal(g_overlaps(pt, wkb_list_1), expected_value)
 
     # buffer
     expect_equal(round(bbox_from_wkt(g_buffer(bnd, 100, as_wkb = FALSE))),
                  round(c(323694.2, 5102785.8, 326520.0, 5105029.4)))
     expect_error(g_buffer("invalid WKT", 100))
     # vector of WKT
-    res <- g_buffer(wkt_vec_1, 100)
-    expect_true(is.list(res) && length(res) == 2 && is.raw(res[[1]]))
+    expect_warning(res <- g_buffer(wkt_vec_1, 100))
+    expect_true(is.list(res) && length(res) == 3 && is.raw(res[[1]]))
     # WKB
     expect_true(is.raw(g_buffer(pt_wkb, 10)))
     # list of WKB
     res <- g_buffer(wkb_list_1, 100)
-    expect_true(is.list(res) && length(res) == 2 && is.raw(res[[1]]))
+    expect_true(is.list(res) && length(res) == 3 && is.raw(res[[1]]))
 
     # area
     expect_equal(round(g_area(bnd)), 4039645)
@@ -205,21 +222,21 @@ test_that("geom functions work on wkb/wkt geometries", {
                  9731255)
     expect_error(g_area("invalid WKT"))
     # vector of WKT
-    res <- g_area(wkt_vec_1)
-    expect_vector(res, numeric(), size = 2)
+    expect_warning(res <- g_area(wkt_vec_1))
+    expect_vector(res, numeric(), size = 3)
     expect_equal(round(res[2]), 4039645)
     # WKB
     expect_equal(g_area(pt_wkb), 0)
     # list of WKB
     res <- g_area(wkb_list_1)
-    expect_vector(res, numeric(), size = 2)
+    expect_vector(res, numeric(), size = 3)
     expect_equal(round(res[2]), 4039645)
 
     # distance
     expect_equal(g_distance(pt, bnd), 215.0365, tolerance = 1e-4)
     expect_error(g_distance("invalid WKT"))
     # vector of WKT
-    res <- g_distance(wkt_vec_1, wkt_vec_2)
+    expect_warning(res <- g_distance(wkt_vec_1, wkt_vec_2))
     expect_equal(res[2], 215.0365, tolerance = 1e-4)
     # WKB
     expect_equal(g_distance(pt_wkb, bb_wkb), 0)
@@ -227,14 +244,18 @@ test_that("geom functions work on wkb/wkt geometries", {
     res <- g_distance(wkb_list_1, wkb_list_2)
     expect_equal(res[2], 215.0365, tolerance = 1e-4)
     # one-to-many
-    expect_equal(g_distance(pt, wkt_vec_1), c(0, 215.0365), tolerance = 1e-4)
+    expect_equal(g_distance(pt, wkb_list_1), c(0, 215.0365, NA_real_),
+                 tolerance = 1e-4)
 
     # length
     expect_equal(g_length(line), 3822.927, tolerance = 1e-2)
     expect_error(g_length("invalid WKT"))
-    # vector of WKT
-    res <- g_length(wkt_vec_2)
+    # vector of WKT with missing value
+    expect_warning(
+        res <- g_length(c(wkt_vec_2, NA_character_))
+    )
     expect_equal(res[1], 0)
+    expect_true(is.na(res[4]))
     # WKB
     expect_equal(g_length(pt_wkb), 0)
     # list of WKB
@@ -248,8 +269,8 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_equal(res, c(325134.9, 5103985.4), tolerance = 0.1)
     expect_error(g_centroid("invalid WKT"))
     # vector of WKT
-    res <- g_centroid(wkt_vec_1)
-    expect_true(is.matrix(res) && ncol(res) == 2 && nrow(res) == 2)
+    expect_warning(res <- g_centroid(wkt_vec_1))
+    expect_true(is.matrix(res) && ncol(res) == 2 && nrow(res) == 3)
     expect_equal(colnames(res), c("x", "y"))
     colnames(res) <- NULL
     expect_equal(res[2, ], c(325134.9, 5103985.4), tolerance = 0.1)
@@ -257,7 +278,7 @@ test_that("geom functions work on wkb/wkt geometries", {
     expect_equal(g_centroid(bb_wkb), g_centroid(bb))
     # list of WKB
     res <- g_centroid(wkb_list_1)
-    expect_true(is.matrix(res) && ncol(res) == 2 && nrow(res) == 2)
+    expect_true(is.matrix(res) && ncol(res) == 2 && nrow(res) == 3)
     expect_equal(colnames(res), c("x", "y"))
     colnames(res) <- NULL
     expect_equal(res[2, ], c(325134.9, 5103985.4), tolerance = 0.1)
@@ -438,7 +459,7 @@ test_that("WKB/WKT conversion functions work", {
     rm(wkb_list)
     expect_warning(wkb_list <- g_wk2wk(wkt_vec))
     expect_length(wkb_list, 2)
-    expect_true(is.na(wkb_list[[1]]))
+    expect_true(is.null(wkb_list[[1]]))
     expect_true(g_equals(wkb_list[[2]] |> g_wk2wk(), g2))
 
     # POINT EMPTY special case
@@ -523,12 +544,15 @@ test_that("g_transform / bbox_transform return correct values", {
     expect_vector(res, character(), size = 2)
     expect_equal(bbox_from_wkt(res[1]), bbox_wgs84, tolerance = 1e-4)
 
-    # input list of WKB raw vectors
-    res <- g_transform(wkb_list, ds_srs, epsg_to_wkt(4326))
+    # input list of WKB raw vectors with a NULL geometry
+    res <- g_transform(append(wkb_list, list(NULL)),
+                       srs_from = ds_srs,
+                       srs_to = epsg_to_wkt(4326))
     expect_true(is.list(res) &&
-                length(res) == 2 &&
+                length(res) == 3 &&
                 is.raw(res[[1]]) &&
-                is.raw(res[[2]]))
+                is.raw(res[[2]]) &&
+                is.null(res[[3]]))
     expect_equal(g_wk2wk(res[[1]]) |> bbox_from_wkt(),
                  bbox_wgs84,
                  tolerance = 1e-4)
@@ -561,15 +585,19 @@ test_that("geometry properties are correct", {
     expect_equal(res, c(bb[1], bb[3], bb[2], bb[4]))
 
     # input as vector of WKT / list of WKB
-    wkt_vec <- c(g1, g2, g3)
-    wkb_list <- g_wk2wk(wkt_vec)
+    wkt_vec <- c(g1, g2, g3, NA_character_)
+    expect_warning(wkb_list <- g_wk2wk(wkt_vec))
 
-    expected_value <- c(TRUE, FALSE, TRUE)
-    expect_equal(g_is_valid(wkt_vec), expected_value)
+    expected_value <- c(TRUE, FALSE, TRUE, NA)
+    expect_warning(
+        expect_equal(g_is_valid(wkt_vec), expected_value)
+    )
     expect_equal(g_is_valid(wkb_list), expected_value)
 
-    expected_value <- c(FALSE, FALSE, TRUE)
-    expect_equal(g_is_empty(wkt_vec), expected_value)
+    expected_value <- c(FALSE, FALSE, TRUE, NA)
+    expect_warning(
+        expect_equal(g_is_empty(wkt_vec), expected_value)
+    )
     expect_equal(g_is_empty(wkb_list), expected_value)
 
     # 3D/measured
@@ -718,14 +746,16 @@ test_that("unary ops return correct values", {
     expect_true(nrow(g_coords(g_bnd)) > 1)
     # vector/list input
     # character vector of wkt input
-    g_bnd <- g_boundary(c(g1, g2, g3, g4))
+    expect_warning(
+        g_bnd <- g_boundary(c(g1, g2, g3, g4, NA))
+    )
     expected_names <- c("GEOMETRYCOLLECTION", "GEOMETRYCOLLECTION",
-                        "MULTIPOINT", "LINESTRING")
+                        "MULTIPOINT", "LINESTRING", NA)
     expect_equal(g_name(g_bnd), expected_names)
     # list of wkb input
-    g_bnd <- g_boundary(g_wk2wk(c(g1, g2, g3, g4)))
-    expected_names <- c("GEOMETRYCOLLECTION", "GEOMETRYCOLLECTION",
-                        "MULTIPOINT", "LINESTRING")
+    expect_warning(
+        g_bnd <- g_boundary(g_wk2wk(c(g1, g2, g3, g4, NA)))
+    )
     expect_equal(g_name(g_bnd), expected_names)
 
     # g_convex_hull
@@ -738,11 +768,14 @@ test_that("unary ops return correct values", {
     expect_equal(g_conv_hull, g_expect)
     # vector/list input
     # character vector of wkt input
-    g_conv_hull <- g_convex_hull(c(g1, g1), as_wkb = FALSE)
-    expect_equal(g_conv_hull, rep(g_expect, 2))
+    wkt_vec <- c(g1, g1, NA)
+    expect_warning(g_conv_hull <- g_convex_hull(wkt_vec, as_wkb = FALSE)) |>
+        expect_warning()  # for as_wkb = FASLE
+    expect_equal(g_conv_hull, c(g_expect, g_expect, NA))
     # list of wkb input
-    g_conv_hull <- g_convex_hull(g_wk2wk(c(g1, g1)), as_wkb = FALSE)
-    expect_equal(g_conv_hull, rep(g_expect, 2))
+    expect_warning(wkb_list <- g_wk2wk(wkt_vec))
+    expect_warning(g_conv_hull <- g_convex_hull(wkb_list, as_wkb = FALSE))
+    expect_equal(g_conv_hull, c(g_expect, g_expect, NA))
 
     # g_delaunay_triangulation
     g1 <- "MULTIPOINT(0 0,0 1,1 1,1 0)"
@@ -753,13 +786,17 @@ test_that("unary ops return correct values", {
     g_dt <- g_delaunay_triangulation(g_wk2wk(g1), as_wkb = FALSE)
     expect_equal(g_dt, g_expect)
     # vector/list input
-    g_expect <- rep(g_expect, 2)
+    g_expect <- c(g_expect, g_expect, NA)
     g2 <- "LINESTRING(0 0,1 1,10 0)"
     # character vector of wkt input
-    g_dt <- g_delaunay_triangulation(c(g1, g1), as_wkb = FALSE)
+    expect_warning(g_dt <- g_delaunay_triangulation(c(g1, g1, NA),
+                                                    as_wkb = FALSE)) |>
+        expect_warning()  # for as_wkb = FASLE
     expect_equal(g_dt, g_expect)
     # list of wkb input
-    g_dt <- g_delaunay_triangulation(g_wk2wk(c(g1, g1)), as_wkb = FALSE)
+    expect_warning(g_dt <- g_delaunay_triangulation(g_wk2wk(c(g1, g1, NA)),
+                                                    as_wkb = FALSE)) |>
+        expect_warning()  # for as_wkb = FALSE
     expect_equal(g_dt, g_expect)
 
     # g_simplify
@@ -775,13 +812,17 @@ test_that("unary ops return correct values", {
                          as_wkb = FALSE)
     expect_equal(g_simp, g_expect)
     # vector/list input
-    g_expect <- rep(g_expect, 2)
+    g_expect <- c(g_expect, g_expect, NA)
     g2 <- "LINESTRING(0 0,1 1,10 0)"
     # character vector of wkt input
-    g_simp <- g_simplify(c(g1, g2), tolerance = 5, as_wkb = FALSE)
+    expect_warning(g_simp <- g_simplify(c(g1, g2, NA), tolerance = 5,
+                                        as_wkb = FALSE)) |>
+        expect_warning()  # for as_wkb = FALSE
     expect_equal(g_simp, g_expect)
     # list of wkb input
-    g_simp <- g_simplify(g_wk2wk(c(g1, g2)), tolerance = 5, as_wkb = FALSE)
+    expect_warning(g_simp <- g_simplify(g_wk2wk(c(g1, g2, NA)), tolerance = 5,
+                                        as_wkb = FALSE)) |>
+        expect_warning()  # for as_wkb = FALSE
     expect_equal(g_simp, g_expect)
 })
 
@@ -885,7 +926,7 @@ test_that("make_valid works", {
     # invalid - error
     wkt2 <- "LINESTRING (0 0)"
     expect_warning(wkb2 <- g_make_valid(wkt2))
-    expect_true(is.na(wkb2))
+    expect_true(is.null(wkb2))
 
     # invalid to valid
     wkt3 <- "POLYGON ((0 0,10 10,0 10,10 0,0 0))"
@@ -902,18 +943,22 @@ test_that("make_valid works", {
     expect_true(g_equals(g_wk2wk(wkb4), expected_wkt4))
 
     # vector of WKT input
-    wkt_vec <- c(wkt1, wkt2, wkt3, wkt4)
-    expect_warning(wkb_list <- g_make_valid(wkt_vec, method = "STRUCTURE"))
+    wkt_vec <- c(wkt1, wkt2, wkt3, wkt4, NA)
+    expect_warning(wkb_list <- g_make_valid(wkt_vec, method = "STRUCTURE",
+                                            quiet = TRUE))
     expect_equal(length(wkb_list), length(wkt_vec))
-    expect_true(is.na(wkb_list[[2]]))
+    expect_true(is.null(wkb_list[[2]]))
+    expect_true(is.null(wkb_list[[5]]))
     expect_true(g_equals(g_wk2wk(wkb_list[[4]]), expected_wkt4))
 
     # list of WKB input
     rm(wkb_list)
     expect_warning(wkb_list <- g_make_valid(g_wk2wk(wkt_vec),
-                                            method = "STRUCTURE"))
+                                            method = "STRUCTURE",
+                                            quiet = TRUE))
     expect_equal(length(wkb_list), length(wkt_vec))
-    expect_true(is.na(wkb_list[[2]]))
+    expect_true(is.null(wkb_list[[2]]))
+    expect_true(is.null(wkb_list[[5]]))
     expect_true(g_equals(g_wk2wk(wkb_list[[4]]), expected_wkt4))
 })
 
@@ -928,12 +973,16 @@ test_that("swap xy works", {
     # vector/list input
     g1 <- "POINT(1 2)"
     g2 <- "POINT(2 3)"
-    g_expect <- c("POINT (2 1)", "POINT (3 2)")
+    g_expect <- c("POINT (2 1)", "POINT (3 2)", NA)
     # character vector of wkt input
-    g_swapped <- g_swap_xy(c(g1, g2), as_wkb = FALSE)
+    expect_warning(g_swapped <- g_swap_xy(c(g1, g2, NA), as_wkb = FALSE,
+                                          quiet = TRUE)) |>
+        expect_warning()  # for as_wkb = FALSE
     expect_equal(g_swapped, g_expect)
     # list of wkb input
-    g_swapped <- g_swap_xy(g_wk2wk(c(g1, g2)), as_wkb = FALSE)
+    expect_warning(g_swapped <- g_swap_xy(g_wk2wk(c(g1, g2, NA)), as_wkb = FALSE,
+                                          quiet = TRUE)) |>
+        expect_warning()  # for as_wkb = FALSE
     expect_equal(g_swapped, g_expect)
 })
 

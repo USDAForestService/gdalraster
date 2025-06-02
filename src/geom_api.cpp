@@ -135,12 +135,16 @@ bool exportGeomToWkb(OGRGeometryH hGeom, unsigned char *wkb, bool as_iso,
 //
 //' @noRd
 // [[Rcpp::export(name = ".g_wkb2wkt")]]
-std::string g_wkb2wkt(const Rcpp::RawVector &geom, bool as_iso = false) {
+Rcpp::String g_wkb2wkt(const Rcpp::RObject &geom, bool as_iso = false) {
 
-    if (geom.size() == 0)
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return NA_STRING;
+
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
         return "";
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr)
         Rcpp::stop("failed to create geometry object from WKB");
 
@@ -253,7 +257,7 @@ Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom,
     for (R_xlen_t i = 0; i < geom.size(); ++i) {
         if (Rcpp::CharacterVector::is_na(geom[i]) || EQUAL(geom[i], "")) {
             Rcpp::warning("an input vector element is NA or empty string");
-            wkb[i] = NA_LOGICAL;
+            wkb[i] = R_NilValue;
         }
         else {
             wkb[i] = g_wkt2wkb(Rcpp::as<std::string>(geom[i]), as_iso,
@@ -536,24 +540,28 @@ Rcpp::RawVector g_add_geom(const Rcpp::RawVector &sub_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_is_valid")]]
-Rcpp::LogicalVector g_is_valid(const Rcpp::RawVector &geom,
+Rcpp::LogicalVector g_is_valid(const Rcpp::RObject &geom,
                                bool quiet = false) {
 // Test if the geometry is valid.
 // This function is built on the GEOS library, check it for the definition
 // of the geometry operation. If OGR is built without the GEOS library,
 // this function will always return FALSE.
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
 
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = false;
@@ -564,7 +572,7 @@ Rcpp::LogicalVector g_is_valid(const Rcpp::RawVector &geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_make_valid")]]
-SEXP g_make_valid(const Rcpp::RawVector &geom,
+SEXP g_make_valid(const Rcpp::RObject &geom,
                   const std::string &method = "LINEWORK",
                   bool keep_collapsed = false,
                   bool as_iso = false,
@@ -580,8 +588,12 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
 // this function will return a clone of the input geometry if it is valid, or
 // NULL if it is invalid
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
+
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return geom_in;
 
     int geos_maj_ver = getGEOSVersion()[0];
     int geos_min_ver = getGEOSVersion()[1];
@@ -639,13 +651,13 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
     opt.push_back(nullptr);
     // end options
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                    "failed to create geometry object from WKB, NULL returned");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGRGeometryH hGeomValid = nullptr;
@@ -662,9 +674,9 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
     if (hGeomValid == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
-            Rcpp::warning("OGR MakeValid() gave NULL geometry, NA returned");
+            Rcpp::warning("OGR MakeValid() gave NULL geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hGeomValid);
@@ -674,7 +686,7 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -686,7 +698,7 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
             Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -694,21 +706,25 @@ SEXP g_make_valid(const Rcpp::RawVector &geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_swap_xy")]]
-SEXP g_swap_xy(const Rcpp::RawVector &geom, bool as_iso = false,
+SEXP g_swap_xy(const Rcpp::RObject &geom, bool as_iso = false,
                const std::string &byte_order = "LSB",
                bool quiet = false) {
 // Swap x and y coordinates.
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return geom_in;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                    "failed to create geometry object from WKB, NULL returned");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGR_G_SwapXY(hGeom);
@@ -716,9 +732,9 @@ SEXP g_swap_xy(const Rcpp::RawVector &geom, bool as_iso = false,
     if (hGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
-            Rcpp::warning("OGR_G_SwapXY() gave NULL geometry, NA returned");
+            Rcpp::warning("OGR_G_SwapXY() gave NULL geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hGeom);
@@ -727,7 +743,7 @@ SEXP g_swap_xy(const Rcpp::RawVector &geom, bool as_iso = false,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -738,7 +754,7 @@ SEXP g_swap_xy(const Rcpp::RawVector &geom, bool as_iso = false,
             Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -746,21 +762,25 @@ SEXP g_swap_xy(const Rcpp::RawVector &geom, bool as_iso = false,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_is_empty")]]
-Rcpp::LogicalVector g_is_empty(const Rcpp::RawVector &geom,
+Rcpp::LogicalVector g_is_empty(const Rcpp::RObject &geom,
                                bool quiet = false) {
 // Test if the geometry is empty.
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
 
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = false;
@@ -771,21 +791,25 @@ Rcpp::LogicalVector g_is_empty(const Rcpp::RawVector &geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_is_3D")]]
-Rcpp::LogicalVector g_is_3D(const Rcpp::RawVector &geom,
+Rcpp::LogicalVector g_is_3D(const Rcpp::RObject &geom,
                                bool quiet = false) {
 // See if the geometry has Z coordinates.
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
 
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = false;
@@ -796,21 +820,25 @@ Rcpp::LogicalVector g_is_3D(const Rcpp::RawVector &geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_is_measured")]]
-Rcpp::LogicalVector g_is_measured(const Rcpp::RawVector &geom,
+Rcpp::LogicalVector g_is_measured(const Rcpp::RObject &geom,
                                bool quiet = false) {
 // See if the geometry is measured (M values).
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
 
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = false;
@@ -821,47 +849,55 @@ Rcpp::LogicalVector g_is_measured(const Rcpp::RawVector &geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_name")]]
-SEXP g_name(const Rcpp::RawVector &geom, bool quiet = false) {
+Rcpp::String g_name(const Rcpp::RObject &geom, bool quiet = false) {
 // extract the geometry type name from a WKB/WKT geometry
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return NA_STRING;
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return NA_STRING;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
 
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return Rcpp::wrap(NA_STRING);
+        return NA_STRING;
     }
 
     std::string ret = "";
     ret = OGR_G_GetGeometryName(hGeom);
     OGR_G_DestroyGeometry(hGeom);
-    return Rcpp::wrap(ret);
+    return ret;
 }
 
 //' @noRd
 // [[Rcpp::export(name = ".g_summary")]]
-SEXP g_summary(const Rcpp::RawVector &geom, bool quiet = false) {
+Rcpp::String g_summary(const Rcpp::RObject &geom, bool quiet = false) {
 // "dump readable" summary of a WKB/WKT geometry
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return NA_STRING;
+
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return NA_STRING;
 
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 7, 0)
     Rcpp::stop("`g_summary()` requires GDAL >= 3.7");
 #else
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
 
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return Rcpp::wrap(NA_STRING);
+        return NA_STRING;
     }
 
     const auto poGeom = OGRGeometry::FromHandle(hGeom);
@@ -870,21 +906,24 @@ SEXP g_summary(const Rcpp::RawVector &geom, bool quiet = false) {
     s.replaceAll('\n', ' ');
     std::string ret = s.Trim();
     delete poGeom;
-    return Rcpp::wrap(ret);
-
+    return ret;
 #endif
 }
 
 //' @noRd
 // [[Rcpp::export(name = ".g_envelope")]]
-Rcpp::NumericVector g_envelope(const Rcpp::RawVector &geom, bool as_3d = false,
+Rcpp::NumericVector g_envelope(const Rcpp::RObject &geom, bool as_3d = false,
                                bool quiet = false) {
 // Computes and returns the bounding envelope for this geometry.
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL, NA_REAL);
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
 
     if (hGeom == nullptr) {
         if (!quiet) {
@@ -925,35 +964,44 @@ Rcpp::NumericVector g_envelope(const Rcpp::RawVector &geom, bool as_3d = false,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_intersects")]]
-Rcpp::LogicalVector g_intersects(const Rcpp::RawVector &this_geom,
-                                 const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_intersects(const Rcpp::RObject &this_geom,
+                                 const Rcpp::RObject &other_geom,
                                  bool quiet = false) {
 // Determines whether two geometries intersect. If GEOS is enabled, then this
 // is done in rigorous fashion otherwise TRUE is returned if the envelopes
 // (bounding boxes) of the two geometries overlap.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = OGR_G_Intersects(hGeom_this, hGeom_other);
@@ -964,8 +1012,8 @@ Rcpp::LogicalVector g_intersects(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_equals")]]
-Rcpp::LogicalVector g_equals(const Rcpp::RawVector &this_geom,
-                             const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_equals(const Rcpp::RObject &this_geom,
+                             const Rcpp::RObject &other_geom,
                              bool quiet = false) {
 // Returns TRUE if two geometries are equivalent.
 // This operation implements the SQL/MM ST_OrderingEquals() operation.
@@ -975,28 +1023,37 @@ Rcpp::LogicalVector g_equals(const Rcpp::RawVector &this_geom,
 // considered equal by this method if their WKT/WKB representation is equal.
 // Note: this must be distinguished from equality in a spatial way.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = OGR_G_Equals(hGeom_this, hGeom_other);
@@ -1007,8 +1064,8 @@ Rcpp::LogicalVector g_equals(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_disjoint")]]
-Rcpp::LogicalVector g_disjoint(const Rcpp::RawVector &this_geom,
-                               const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_disjoint(const Rcpp::RObject &this_geom,
+                               const Rcpp::RObject &other_geom,
                                bool quiet = false) {
 // Tests if this geometry and the other geometry are disjoint.
 // Geometry validity is not checked. In case you are unsure of the validity
@@ -1018,28 +1075,37 @@ Rcpp::LogicalVector g_disjoint(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = OGR_G_Disjoint(hGeom_this, hGeom_other);
@@ -1050,8 +1116,8 @@ Rcpp::LogicalVector g_disjoint(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_touches")]]
-Rcpp::LogicalVector g_touches(const Rcpp::RawVector &this_geom,
-                              const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_touches(const Rcpp::RObject &this_geom,
+                              const Rcpp::RObject &other_geom,
                               bool quiet = false) {
 // Tests if this geometry and the other geometry are touching.
 // Geometry validity is not checked. In case you are unsure of the validity
@@ -1061,28 +1127,37 @@ Rcpp::LogicalVector g_touches(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = OGR_G_Touches(hGeom_this, hGeom_other);
@@ -1093,8 +1168,8 @@ Rcpp::LogicalVector g_touches(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_contains")]]
-Rcpp::LogicalVector g_contains(const Rcpp::RawVector &this_geom,
-                               const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_contains(const Rcpp::RObject &this_geom,
+                               const Rcpp::RObject &other_geom,
                                bool quiet = false) {
 // Tests if this geometry contains the other geometry.
 // Geometry validity is not checked. In case you are unsure of the validity
@@ -1104,28 +1179,37 @@ Rcpp::LogicalVector g_contains(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = OGR_G_Contains(hGeom_this, hGeom_other);
@@ -1136,8 +1220,8 @@ Rcpp::LogicalVector g_contains(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_within")]]
-Rcpp::LogicalVector g_within(const Rcpp::RawVector &this_geom,
-                             const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_within(const Rcpp::RObject &this_geom,
+                             const Rcpp::RObject &other_geom,
                              bool quiet = false) {
 // Tests if this geometry is within the other geometry.
 // Geometry validity is not checked. In case you are unsure of the validity
@@ -1147,28 +1231,37 @@ Rcpp::LogicalVector g_within(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = OGR_G_Within(hGeom_this, hGeom_other);
@@ -1179,8 +1272,8 @@ Rcpp::LogicalVector g_within(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_crosses")]]
-Rcpp::LogicalVector g_crosses(const Rcpp::RawVector &this_geom,
-                              const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_crosses(const Rcpp::RObject &this_geom,
+                              const Rcpp::RObject &other_geom,
                               bool quiet = false) {
 // Tests if this geometry and the other geometry are crossing.
 // Geometry validity is not checked. In case you are unsure of the validity
@@ -1190,28 +1283,37 @@ Rcpp::LogicalVector g_crosses(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = OGR_G_Crosses(hGeom_this, hGeom_other);
@@ -1222,8 +1324,8 @@ Rcpp::LogicalVector g_crosses(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_overlaps")]]
-Rcpp::LogicalVector g_overlaps(const Rcpp::RawVector &this_geom,
-                               const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_overlaps(const Rcpp::RObject &this_geom,
+                               const Rcpp::RObject &other_geom,
                                bool quiet = false) {
 // Tests if this geometry and the other geometry overlap, that is their
 // intersection has a non-zero area (they have some but not all points in
@@ -1235,28 +1337,37 @@ Rcpp::LogicalVector g_overlaps(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
                     "failed to create geometry object from WKB, NA returned");
         }
-        return NA_LOGICAL;
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
     bool ret = OGR_G_Overlaps(hGeom_this, hGeom_other);
@@ -1270,7 +1381,7 @@ Rcpp::LogicalVector g_overlaps(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_boundary")]]
-SEXP g_boundary(const Rcpp::RawVector &geom, bool as_iso,
+SEXP g_boundary(const Rcpp::RObject &geom, bool as_iso,
                 const std::string &byte_order, bool quiet) {
 
 // Compute boundary.
@@ -1287,16 +1398,20 @@ SEXP g_boundary(const Rcpp::RawVector &geom, bool as_iso,
 //   * the boundary of a point is the point
 // https://libgeos.org/doxygen/geos__c_8h.html#a2830fb255d1aec3fdee665d9fa6eb07f
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                    "failed to create geometry object from WKB, NULL returned");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGRGeometryH hBoundaryGeom = OGR_G_Boundary(hGeom);
@@ -1304,9 +1419,9 @@ SEXP g_boundary(const Rcpp::RawVector &geom, bool as_iso,
     if (hBoundaryGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
-            Rcpp::warning("OGR_G_Boundary() gave NULL geometry, NA returned");
+            Rcpp::warning("OGR_G_Boundary() gave NULL geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hBoundaryGeom);
@@ -1316,7 +1431,7 @@ SEXP g_boundary(const Rcpp::RawVector &geom, bool as_iso,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -1328,7 +1443,7 @@ SEXP g_boundary(const Rcpp::RawVector &geom, bool as_iso,
            Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -1336,7 +1451,7 @@ SEXP g_boundary(const Rcpp::RawVector &geom, bool as_iso,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_buffer")]]
-SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
+SEXP g_buffer(const Rcpp::RObject &geom, double dist, int quad_segs = 30,
               bool as_iso = false, const std::string &byte_order = "LSB",
               bool quiet = false) {
 // Compute buffer of geometry.
@@ -1352,16 +1467,20 @@ SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
 // numbers of vertices in the resulting buffer geometry while small numbers
 // reduce the accuracy of the result.
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                    "failed to create geometry object from WKB, NULL returned");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGRGeometryH hBufferGeom = OGR_G_Buffer(hGeom, dist, quad_segs);
@@ -1369,9 +1488,9 @@ SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
     if (hBufferGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
-            Rcpp::warning("OGR_G_Buffer() gave NULL geometry, NA returned");
+            Rcpp::warning("OGR_G_Buffer() gave NULL geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hBufferGeom);
@@ -1381,7 +1500,7 @@ SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -1393,7 +1512,7 @@ SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
            Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -1401,7 +1520,7 @@ SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs = 30,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_convex_hull")]]
-SEXP g_convex_hull(const Rcpp::RawVector &geom, bool as_iso,
+SEXP g_convex_hull(const Rcpp::RObject &geom, bool as_iso,
                    const std::string &byte_order, bool quiet) {
 // Compute convex hull.
 
@@ -1414,16 +1533,20 @@ SEXP g_convex_hull(const Rcpp::RawVector &geom, bool as_iso,
 // in the input Geometry. Uses the Graham Scan algorithm.
 // https://libgeos.org/doxygen/classgeos_1_1algorithm_1_1ConvexHull.html
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                    "failed to create geometry object from WKB, NULL returned");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGRGeometryH hConvHullGeom = OGR_G_ConvexHull(hGeom);
@@ -1431,9 +1554,9 @@ SEXP g_convex_hull(const Rcpp::RawVector &geom, bool as_iso,
     if (hConvHullGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
-            Rcpp::warning("OGR_G_ConvexHull() gave NULL geometry, NA returned");
+            Rcpp::warning("OGR_G_ConvexHull() gave NULL geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hConvHullGeom);
@@ -1443,7 +1566,7 @@ SEXP g_convex_hull(const Rcpp::RawVector &geom, bool as_iso,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -1455,7 +1578,7 @@ SEXP g_convex_hull(const Rcpp::RawVector &geom, bool as_iso,
            Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -1463,7 +1586,7 @@ SEXP g_convex_hull(const Rcpp::RawVector &geom, bool as_iso,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_delaunay_triangulation")]]
-SEXP g_delaunay_triangulation(const Rcpp::RawVector &geom,
+SEXP g_delaunay_triangulation(const Rcpp::RObject &geom,
                               double tolerance = 0.0,
                               bool only_edges = false,
                               bool as_iso = false,
@@ -1482,16 +1605,20 @@ SEXP g_delaunay_triangulation(const Rcpp::RawVector &geom,
         Rcpp::stop("g_delaunay_triangulation() requires GEOS >= 3.4");
     }
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                    "failed to create geometry object from WKB, NULL returned");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGRGeometryH hTriangulatedGeom = nullptr;
@@ -1502,9 +1629,9 @@ SEXP g_delaunay_triangulation(const Rcpp::RawVector &geom,
     if (hTriangulatedGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
-            Rcpp::warning("OGR_G_DelaunayTriangulation() gave NULL geometry, NA returned");
+            Rcpp::warning("OGR_G_DelaunayTriangulation() gave NULL geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hTriangulatedGeom);
@@ -1514,7 +1641,7 @@ SEXP g_delaunay_triangulation(const Rcpp::RawVector &geom,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -1527,7 +1654,7 @@ SEXP g_delaunay_triangulation(const Rcpp::RawVector &geom,
            Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -1535,7 +1662,7 @@ SEXP g_delaunay_triangulation(const Rcpp::RawVector &geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_simplify")]]
-SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
+SEXP g_simplify(const Rcpp::RObject &geom, double tolerance,
                 bool preserve_topology = true, bool as_iso = false,
                 const std::string &byte_order = "LSB", bool quiet = false) {
 // Compute a simplified geometry. By default (preserve_topology = TRUE),
@@ -1568,16 +1695,20 @@ SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
 // of the simplified linework, as long as topology is preserved.
 // This function does not preserve boundaries shared between polygons.
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                    "failed to create geometry object from WKB, NULL returned");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGRGeometryH hSimplifiedGeom = nullptr;
@@ -1589,9 +1720,9 @@ SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
     if (hSimplifiedGeom == nullptr) {
         OGR_G_DestroyGeometry(hGeom);
         if (!quiet) {
-            Rcpp::warning("OGR API call gave NULL geometry, NA returned");
+            Rcpp::warning("OGR API call gave NULL geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hSimplifiedGeom);
@@ -1601,7 +1732,7 @@ SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -1613,7 +1744,7 @@ SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
            Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -1625,8 +1756,8 @@ SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_intersection")]]
-SEXP g_intersection(const Rcpp::RawVector &this_geom,
-                    const Rcpp::RawVector &other_geom,
+SEXP g_intersection(const Rcpp::RObject &this_geom,
+                    const Rcpp::RObject &other_geom,
                     bool as_iso = false,
                     const std::string &byte_order = "LSB",
                     bool quiet = false) {
@@ -1640,28 +1771,35 @@ SEXP g_intersection(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return R_NilValue;
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+            Rcpp::warning("failed to create geometry object from WKB");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return R_NilValue;
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+            Rcpp::warning("failed to create geometry object from WKB");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGRGeometryH hGeom_out = nullptr;
@@ -1671,9 +1809,9 @@ SEXP g_intersection(const Rcpp::RawVector &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                "OGR_G_Intersection() gave NULL geometry, NA returned");
+                "OGR_G_Intersection() gave NULL geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hGeom_out);
@@ -1684,7 +1822,7 @@ SEXP g_intersection(const Rcpp::RawVector &this_geom,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -1697,7 +1835,7 @@ SEXP g_intersection(const Rcpp::RawVector &this_geom,
            Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -1705,8 +1843,8 @@ SEXP g_intersection(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_union")]]
-SEXP g_union(const Rcpp::RawVector &this_geom,
-             const Rcpp::RawVector &other_geom,
+SEXP g_union(const Rcpp::RObject &this_geom,
+             const Rcpp::RObject &other_geom,
              bool as_iso = false,
              const std::string &byte_order = "LSB",
              bool quiet = false) {
@@ -1719,28 +1857,35 @@ SEXP g_union(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return R_NilValue;
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+            Rcpp::warning("failed to create geometry object from WKB");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return R_NilValue;
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+            Rcpp::warning("failed to create geometry object from WKB");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGRGeometryH hGeom_out = nullptr;
@@ -1750,9 +1895,9 @@ SEXP g_union(const Rcpp::RawVector &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                "OGR_G_Union() gave NULL geometry, NA returned");
+                "OGR_G_Union() gave NULL geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hGeom_out);
@@ -1763,7 +1908,7 @@ SEXP g_union(const Rcpp::RawVector &this_geom,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -1776,7 +1921,7 @@ SEXP g_union(const Rcpp::RawVector &this_geom,
            Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -1784,8 +1929,8 @@ SEXP g_union(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_difference")]]
-SEXP g_difference(const Rcpp::RawVector &this_geom,
-                  const Rcpp::RawVector &other_geom,
+SEXP g_difference(const Rcpp::RObject &this_geom,
+                  const Rcpp::RObject &other_geom,
                   bool as_iso = false,
                   const std::string &byte_order = "LSB",
                   bool quiet = false) {
@@ -1798,28 +1943,35 @@ SEXP g_difference(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return R_NilValue;
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+            Rcpp::warning("failed to create geometry object from WKB");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return R_NilValue;
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+            Rcpp::warning("failed to create geometry object from WKB");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGRGeometryH hGeom_out = nullptr;
@@ -1829,9 +1981,9 @@ SEXP g_difference(const Rcpp::RawVector &this_geom,
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
             Rcpp::warning(
-                "OGR_G_Difference() gave NULL geometry, NA returned");
+                "OGR_G_Difference() gave NULL geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hGeom_out);
@@ -1842,7 +1994,7 @@ SEXP g_difference(const Rcpp::RawVector &this_geom,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -1855,7 +2007,7 @@ SEXP g_difference(const Rcpp::RawVector &this_geom,
            Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -1863,8 +2015,8 @@ SEXP g_difference(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_sym_difference")]]
-SEXP g_sym_difference(const Rcpp::RawVector &this_geom,
-                      const Rcpp::RawVector &other_geom,
+SEXP g_sym_difference(const Rcpp::RObject &this_geom,
+                      const Rcpp::RObject &other_geom,
                       bool as_iso = false,
                       const std::string &byte_order = "LSB",
                       bool quiet = false) {
@@ -1877,28 +2029,35 @@ SEXP g_sym_difference(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return R_NilValue;
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+            Rcpp::warning("failed to create geometry object from WKB");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return R_NilValue;
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return R_NilValue;
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+            Rcpp::warning("failed to create geometry object from WKB");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     OGRGeometryH hGeom_out = nullptr;
@@ -1910,7 +2069,7 @@ SEXP g_sym_difference(const Rcpp::RawVector &this_geom,
             Rcpp::warning(
                 "OGR_G_SymDifference() gave NULL geometry, NA returned");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hGeom_out);
@@ -1921,7 +2080,7 @@ SEXP g_sym_difference(const Rcpp::RawVector &this_geom,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -1934,7 +2093,7 @@ SEXP g_sym_difference(const Rcpp::RawVector &this_geom,
            Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;
@@ -1946,8 +2105,8 @@ SEXP g_sym_difference(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_distance")]]
-double g_distance(const Rcpp::RawVector &this_geom,
-                  const Rcpp::RawVector &other_geom,
+double g_distance(const Rcpp::RObject &this_geom,
+                  const Rcpp::RObject &other_geom,
                   bool quiet = false) {
 // Returns the distance between the geometries or -1 if an error occurs.
 // Returns the shortest distance between the two geometries. The distance is
@@ -1956,31 +2115,39 @@ double g_distance(const Rcpp::RawVector &this_geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((this_geom.size() == 0))
-        Rcpp::stop("'this_geom' is empty");
-    if ((other_geom.size() == 0))
-        Rcpp::stop("'other_geom' is empty");
+    double ret = -1;
 
-    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom);
+    if (this_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(this_geom))
+        return NA_REAL;
+
+    const Rcpp::RawVector this_geom_in(this_geom);
+    if (this_geom_in.size() == 0)
+        return NA_REAL;
+
+    OGRGeometryH hGeom_this = createGeomFromWkb(this_geom_in);
     if (hGeom_this == nullptr) {
         if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB");
+            Rcpp::warning("failed to create geometry object from WKB");
         }
-        return -1;
+        return ret;
     }
 
-    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom);
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+        return NA_REAL;
+
+    const Rcpp::RawVector other_geom_in(other_geom);
+    if (other_geom_in.size() == 0)
+        return NA_REAL;
+
+    OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
         OGR_G_DestroyGeometry(hGeom_this);
         if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB");
+            Rcpp::warning("failed to create geometry object from WKB");
         }
-        return -1;
+        return ret;
     }
 
-    double ret = -1;
     ret = OGR_G_Distance(hGeom_this, hGeom_other);
     OGR_G_DestroyGeometry(hGeom_this);
     OGR_G_DestroyGeometry(hGeom_other);
@@ -1989,14 +2156,18 @@ double g_distance(const Rcpp::RawVector &this_geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_length")]]
-double g_length(const Rcpp::RawVector &geom, bool quiet = false) {
+double g_length(const Rcpp::RObject &geom, bool quiet = false) {
 // Computes the length for OGRCurve (LineString) or MultiCurve objects.
 // Undefined for all other geometry types (returns zero).
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return NA_REAL;
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return NA_REAL;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
 
     if (hGeom == nullptr) {
         if (!quiet) {
@@ -2014,14 +2185,18 @@ double g_length(const Rcpp::RawVector &geom, bool quiet = false) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_area")]]
-double g_area(const Rcpp::RawVector &geom, bool quiet = false) {
+double g_area(const Rcpp::RObject &geom, bool quiet = false) {
 // Computes the area for an OGRLinearRing, OGRPolygon or OGRMultiPolygon.
 // Undefined for all other geometry types (returns zero).
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return NA_REAL;
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return NA_REAL;
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
 
     if (hGeom == nullptr) {
         if (!quiet) {
@@ -2039,7 +2214,7 @@ double g_area(const Rcpp::RawVector &geom, bool quiet = false) {
 
 //' @noRd
 // [[Rcpp::export(name = ".g_geodesic_area")]]
-double g_geodesic_area(const Rcpp::RawVector &geom, const std::string &srs,
+double g_geodesic_area(const Rcpp::RObject &geom, const std::string &srs,
                        bool traditional_gis_order = true, bool quiet = false) {
 // Compute geometry area, considered as a surface on the underlying ellipsoid
 // of the SRS attached to the geometry.
@@ -2051,6 +2226,9 @@ double g_geodesic_area(const Rcpp::RawVector &geom, const std::string &srs,
     Rcpp::stop("g_geodesic_area() requires GDAL >= 3.9");
 
 #else
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return NA_REAL;
+
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
         if (hSRS != nullptr)
@@ -2058,12 +2236,13 @@ double g_geodesic_area(const Rcpp::RawVector &geom, const std::string &srs,
         Rcpp::stop("error importing SRS from user input");
     }
 
-    if ((geom.size() == 0)) {
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0) {
         OSRDestroySpatialReference(hSRS);
-        Rcpp::stop("'geom' is empty");
+        return NA_REAL;
     }
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
@@ -2101,7 +2280,7 @@ double g_geodesic_area(const Rcpp::RawVector &geom, const std::string &srs,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_geodesic_length")]]
-double g_geodesic_length(const Rcpp::RawVector &geom, const std::string &srs,
+double g_geodesic_length(const Rcpp::RObject &geom, const std::string &srs,
                          bool traditional_gis_order = true,
                          bool quiet = false) {
 // Get the length of the curve, considered as a geodesic line on the underlying
@@ -2113,6 +2292,9 @@ double g_geodesic_length(const Rcpp::RawVector &geom, const std::string &srs,
     Rcpp::stop("g_geodesic_length() requires GDAL >= 3.10");
 
 #else
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return NA_REAL;
+
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     if (OSRSetFromUserInput(hSRS, srs.c_str()) != OGRERR_NONE) {
         if (hSRS != nullptr)
@@ -2120,12 +2302,13 @@ double g_geodesic_length(const Rcpp::RawVector &geom, const std::string &srs,
         Rcpp::stop("error importing SRS from user input");
     }
 
-    if ((geom.size() == 0)) {
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0) {
         OSRDestroySpatialReference(hSRS);
-        Rcpp::stop("'geom' is empty");
+        return NA_REAL;
     }
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
@@ -2163,7 +2346,7 @@ double g_geodesic_length(const Rcpp::RawVector &geom, const std::string &srs,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_centroid")]]
-Rcpp::NumericVector g_centroid(const Rcpp::RawVector &geom,
+Rcpp::NumericVector g_centroid(const Rcpp::RObject &geom,
                                bool quiet = false) {
 // Returns a vector of ptX, ptY.
 // This method relates to the SFCOM ISurface::get_Centroid() method however
@@ -2176,10 +2359,14 @@ Rcpp::NumericVector g_centroid(const Rcpp::RawVector &geom,
 // the geometry operation. If OGR is built without the GEOS library, this
 // function will always fail, issuing a CPLE_NotSupported error.
 
-    if ((geom.size() == 0))
-        Rcpp::stop("'geom' is empty");
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return Rcpp::NumericVector::create(NA_REAL, NA_REAL);
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return Rcpp::NumericVector::create(NA_REAL, NA_REAL);
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
 
     if (hGeom == nullptr) {
         if (!quiet) {
@@ -2224,7 +2411,7 @@ Rcpp::NumericVector g_centroid(const Rcpp::RawVector &geom,
 
 //' @noRd
 // [[Rcpp::export(name = ".g_transform")]]
-SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
+SEXP g_transform(const Rcpp::RObject &geom, const std::string &srs_from,
                  const std::string &srs_to, bool wrap_date_line = false,
                  int date_line_offset = 10, bool traditional_gis_order = true,
                  bool as_iso = false, const std::string &byte_order = "LSB",
@@ -2247,6 +2434,9 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
 // projection or a projection naturally crossing the antimeridian (like UTM
 // Zone 60) to a geographic CRS, it will cut geometries along the antimeridian.
 // So a LineString might be returned as a MultiLineString.
+
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return R_NilValue;
 
     std::string srs_from_in = srs_to_wkt(srs_from, false);
     std::string srs_to_in = srs_to_wkt(srs_to, false);
@@ -2272,21 +2462,22 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
         Rcpp::stop("error importing 'srs_to' from user input");
     }
 
-    if ((geom.size() == 0)) {
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0) {
         OSRDestroySpatialReference(hSRS_from);
         OSRDestroySpatialReference(hSRS_to);
-        Rcpp::stop("'geom' is empty");
+        return R_NilValue;
     }
 
-    OGRGeometryH hGeom = createGeomFromWkb(geom);
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "failed to create geometry object from WKB, NA returned");
+                    "failed to create geometry object from WKB, NULL returned");
         }
         OSRDestroySpatialReference(hSRS_from);
         OSRDestroySpatialReference(hSRS_to);
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     std::string save_opt =
@@ -2333,7 +2524,7 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
         if (hSRS_to != nullptr)
             OSRDestroySpatialReference(hSRS_to);
         OGR_G_DestroyGeometry(hGeom);
-        Rcpp::stop("failed to create geometry transformer, NA returned");
+        Rcpp::stop("failed to create geometry transformer");
     }
 
     OGRGeometryH hGeom2 = nullptr;
@@ -2350,9 +2541,9 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
     if (hGeom2 == nullptr) {
         if (!quiet) {
             Rcpp::warning(
-                    "transformation failed, NA returned");
+                    "transformation failed, NULL returned");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     const int nWKBSize = OGR_G_WkbSize(hGeom2);
@@ -2361,7 +2552,7 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
         if (!quiet) {
             Rcpp::warning("failed to obtain WKB size of output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
@@ -2372,7 +2563,7 @@ SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
            Rcpp::warning(
                     "failed to export WKB raw vector for output geometry");
         }
-        return Rcpp::LogicalVector::create(NA_LOGICAL);
+        return R_NilValue;
     }
 
     return wkb;

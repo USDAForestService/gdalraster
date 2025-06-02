@@ -1,0 +1,11 @@
+{
+"type": "FeatureCollection",
+"name": "test",
+"features": [
+{ "type": "Feature", "properties": { }, "geometry": null },
+{ "type": "Feature", "properties": { "datetime": "2022-05-31T12:34:56.789Z" }, "geometry": null },
+{ "type": "Feature", "properties": { }, "geometry": null },
+{ "type": "Feature", "properties": { "datetime": "2022-05-31T12:34:56.789+01:00" }, "geometry": null },
+{ "type": "Feature", "properties": { "datetime": "2022-05-31T12:34:56.789-01:00" }, "geometry": null }
+]
+}

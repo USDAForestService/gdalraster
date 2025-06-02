@@ -29,8 +29,9 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 }
 \value{
 A geometry as WKB raw vector or WKT string, or a list/character vector of
-geometries as WKB/WKT with length equal to \code{length(geom)}. \code{NA} is returned
-with a warning if WKB input cannot be converted into an OGR geometry object.
+geometries as WKB/WKT with length equal to \code{length(geom)}.
+\code{NULL} (\code{as_wkb = TRUE}) / \code{NA} (\code{as_wkb = FALSE}) is returned with a
+warning if WKB input cannot be converted into an OGR geometry object.
 }
 \description{
 \code{g_swap_xy()} swaps x and y coordinates of the input geometry.

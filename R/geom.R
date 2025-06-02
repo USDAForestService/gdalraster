@@ -1,6 +1,16 @@
 # R interface for the GEOS functions defined in src/geom_api.h
 # Chris Toney <chris.toney at usda.gov>
 
+
+#' @noRd
+#' @export
+.is_raw_or_null <- function(x) {
+    if (is.raw(x) || is.null(x))
+        return(TRUE)
+    else
+        return(FALSE)
+}
+
 #' Get GEOS version
 #'
 #' @description
@@ -254,8 +264,8 @@ bbox_transform <- function(bbox, srs_from, srs_to,
 #' types, it is equivalent to ISO.
 #'
 #' When the return value is a list of WKB raw vectors, an element in the
-#' returned list will contain `NA` if the corresponding input string was `NA`
-#' or empty (`""`).
+#' returned list will contain `NULL` (and a warning emitted) if the
+#' corresponding input string was `NA` or empty (`""`).
 #'
 #' When input is a list of WKB raw vectors, a corresponding element in the
 #' returned character vector will be an empty string (`""`) if the input was
@@ -303,6 +313,8 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
     } else if (is.list(geom)) {
         return(.g_wkb_list2wkt(geom, as_iso))
     } else if (is.na(geom)) {
+        return(NULL)
+    } else if (is.null(geom)) {
         return(NA_character_)
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
@@ -573,9 +585,9 @@ g_is_empty <- function(geom, quiet = FALSE) {
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_is_empty(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- sapply(geom, .g_is_empty, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -601,9 +613,9 @@ g_is_valid <- function(geom, quiet = FALSE) {
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_is_valid(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- sapply(geom, .g_is_valid, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -629,9 +641,9 @@ g_is_3D <- function(geom, quiet = FALSE) {
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_is_3D(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- sapply(geom, .g_is_3D, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -657,9 +669,9 @@ g_is_measured <- function(geom, quiet = FALSE) {
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_is_measured(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- sapply(geom, .g_is_measured, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -685,9 +697,9 @@ g_name <- function(geom, quiet = FALSE) {
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_name(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- sapply(geom, .g_name, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -713,9 +725,9 @@ g_summary <- function(geom, quiet = FALSE) {
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_summary(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- sapply(geom, .g_summary, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -763,7 +775,7 @@ g_summary <- function(geom, quiet = FALSE) {
 #' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
-#' geometries as WKB/WKT with length equal to `length(geom)`. `NA` is returned
+#' geometries as WKB/WKT with length equal to `length(geom)`. `NULL` is returned
 #' with a warning if WKB input cannot be converted into an OGR geometry object,
 #' or if an error occurs in the call to MakeValid() in the underlying OGR API.
 #'
@@ -771,7 +783,7 @@ g_summary <- function(geom, quiet = FALSE) {
 #' This function is built on the GEOS >= 3.8 library, check it for the
 #' definition of the geometry operation. If OGR is built without GEOS >= 3.8,
 #' this function will return a clone of the input geometry if it is valid, or
-#' `NA` if it is invalid.
+#' `NULL` (`as_wkb = TRUE`) / `NA` (`as_wkb = FALSE`) if it is invalid.
 #'
 #' @examples
 #' # requires GEOS >= 3.8, otherwise is only a validity test (see Note)
@@ -828,10 +840,10 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         wkb <- .g_make_valid(geom, method, keep_collapsed, as_iso,
                              byte_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         wkb <- lapply(geom, .g_make_valid, method, keep_collapsed, as_iso,
                       byte_order, quiet)
     } else if (is.character(geom)) {
@@ -869,8 +881,9 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
 #' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #' @return
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
-#' geometries as WKB/WKT with length equal to `length(geom)`. `NA` is returned
-#' with a warning if WKB input cannot be converted into an OGR geometry object.
+#' geometries as WKB/WKT with length equal to `length(geom)`.
+#' `NULL` (`as_wkb = TRUE`) / `NA` (`as_wkb = FALSE`) is returned with a
+#' warning if WKB input cannot be converted into an OGR geometry object.
 #'
 #' @examples
 #' g <- "GEOMETRYCOLLECTION(POINT(1 2),
@@ -907,9 +920,9 @@ g_swap_xy <- function(geom, as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB",
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         wkb <- .g_swap_xy(geom, as_iso, byte_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         wkb <- lapply(geom, .g_swap_xy, as_iso, byte_order, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -959,13 +972,13 @@ g_envelope <- function(geom, as_3d = FALSE, quiet = FALSE) {
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- 0
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_envelope(geom, as_3d, quiet)
         if (as_3d)
             names(ret) <- c("xmin", "xmax", "ymin", "ymax", "zmin", "zmax")
         else
             names(ret) <- c("xmin", "xmax", "ymin", "ymax")
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- t(sapply(geom, .g_envelope, as_3d, quiet))
         if (as_3d)
             colnames(ret) <- c("xmin", "xmax", "ymin", "ymax", "zmin", "zmax")
@@ -1055,8 +1068,8 @@ g_envelope <- function(geom, as_3d = FALSE, quiet = FALSE) {
 g_intersects <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1064,8 +1077,8 @@ g_intersects <- function(this_geom, other_geom, quiet = FALSE) {
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1083,12 +1096,12 @@ g_intersects <- function(this_geom, other_geom, quiet = FALSE) {
 
     ret <- NULL
     one_to_many <- FALSE
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         ret <- .g_intersects(this_geom, other_geom, quiet)
-    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+    } else if ((.is_raw_or_null(this_geom) || is.list(this_geom)) &&
                is.list(other_geom)) {
 
-        if (is.raw(this_geom) && is.list(other_geom)) {
+        if (.is_raw_or_null(this_geom) && is.list(other_geom)) {
             one_to_many <- TRUE
 
         } else if (is.list(this_geom) &&
@@ -1119,8 +1132,8 @@ g_intersects <- function(this_geom, other_geom, quiet = FALSE) {
 g_disjoint <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1128,8 +1141,8 @@ g_disjoint <- function(this_geom, other_geom, quiet = FALSE) {
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1147,12 +1160,12 @@ g_disjoint <- function(this_geom, other_geom, quiet = FALSE) {
 
     ret <- NULL
     one_to_many <- FALSE
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         ret <- .g_disjoint(this_geom, other_geom, quiet)
-    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+    } else if ((.is_raw_or_null(this_geom) || is.list(this_geom)) &&
                is.list(other_geom)) {
 
-        if (is.raw(this_geom) && is.list(other_geom)) {
+        if (.is_raw_or_null(this_geom) && is.list(other_geom)) {
             one_to_many <- TRUE
 
         } else if (is.list(this_geom) &&
@@ -1183,8 +1196,8 @@ g_disjoint <- function(this_geom, other_geom, quiet = FALSE) {
 g_touches <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1192,8 +1205,8 @@ g_touches <- function(this_geom, other_geom, quiet = FALSE) {
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1211,12 +1224,12 @@ g_touches <- function(this_geom, other_geom, quiet = FALSE) {
 
     ret <- NULL
     one_to_many <- FALSE
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         ret <- .g_touches(this_geom, other_geom, quiet)
-    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+    } else if ((.is_raw_or_null(this_geom) || is.list(this_geom)) &&
                is.list(other_geom)) {
 
-        if (is.raw(this_geom) && is.list(other_geom)) {
+        if (.is_raw_or_null(this_geom) && is.list(other_geom)) {
             one_to_many <- TRUE
 
         } else if (is.list(this_geom) &&
@@ -1247,8 +1260,8 @@ g_touches <- function(this_geom, other_geom, quiet = FALSE) {
 g_contains <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1256,8 +1269,8 @@ g_contains <- function(this_geom, other_geom, quiet = FALSE) {
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1275,12 +1288,12 @@ g_contains <- function(this_geom, other_geom, quiet = FALSE) {
 
     ret <- NULL
     one_to_many <- FALSE
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         ret <- .g_contains(this_geom, other_geom, quiet)
-    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+    } else if ((.is_raw_or_null(this_geom) || is.list(this_geom)) &&
                is.list(other_geom)) {
 
-        if (is.raw(this_geom) && is.list(other_geom)) {
+        if (.is_raw_or_null(this_geom) && is.list(other_geom)) {
             one_to_many <- TRUE
 
         } else if (is.list(this_geom) &&
@@ -1311,8 +1324,8 @@ g_contains <- function(this_geom, other_geom, quiet = FALSE) {
 g_within <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1320,8 +1333,8 @@ g_within <- function(this_geom, other_geom, quiet = FALSE) {
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1339,12 +1352,12 @@ g_within <- function(this_geom, other_geom, quiet = FALSE) {
 
     ret <- NULL
     one_to_many <- FALSE
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         ret <- .g_within(this_geom, other_geom, quiet)
-    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+    } else if ((.is_raw_or_null(this_geom) || is.list(this_geom)) &&
                is.list(other_geom)) {
 
-        if (is.raw(this_geom) && is.list(other_geom)) {
+        if (.is_raw_or_null(this_geom) && is.list(other_geom)) {
             one_to_many <- TRUE
 
         } else if (is.list(this_geom) &&
@@ -1375,8 +1388,8 @@ g_within <- function(this_geom, other_geom, quiet = FALSE) {
 g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1384,8 +1397,8 @@ g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1403,12 +1416,12 @@ g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
 
     ret <- NULL
     one_to_many <- FALSE
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         ret <- .g_crosses(this_geom, other_geom, quiet)
-    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+    } else if ((.is_raw_or_null(this_geom) || is.list(this_geom)) &&
                is.list(other_geom)) {
 
-        if (is.raw(this_geom) && is.list(other_geom)) {
+        if (.is_raw_or_null(this_geom) && is.list(other_geom)) {
             one_to_many <- TRUE
 
         } else if (is.list(this_geom) &&
@@ -1439,8 +1452,8 @@ g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
 g_overlaps <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1448,8 +1461,8 @@ g_overlaps <- function(this_geom, other_geom, quiet = FALSE) {
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1467,12 +1480,12 @@ g_overlaps <- function(this_geom, other_geom, quiet = FALSE) {
 
     ret <- NULL
     one_to_many <- FALSE
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         ret <- .g_overlaps(this_geom, other_geom, quiet)
-    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+    } else if ((.is_raw_or_null(this_geom) || is.list(this_geom)) &&
                is.list(other_geom)) {
 
-        if (is.raw(this_geom) && is.list(other_geom)) {
+        if (.is_raw_or_null(this_geom) && is.list(other_geom)) {
             one_to_many <- TRUE
 
         } else if (is.list(this_geom) &&
@@ -1503,8 +1516,8 @@ g_overlaps <- function(this_geom, other_geom, quiet = FALSE) {
 g_equals <- function(this_geom, other_geom, quiet = FALSE) {
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1512,8 +1525,8 @@ g_equals <- function(this_geom, other_geom, quiet = FALSE) {
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1531,12 +1544,12 @@ g_equals <- function(this_geom, other_geom, quiet = FALSE) {
 
     ret <- NULL
     one_to_many <- FALSE
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         ret <- .g_equals(this_geom, other_geom, quiet)
-    } else if ((is.raw(this_geom) || is.list(this_geom)) &&
+    } else if ((.is_raw_or_null(this_geom) || is.list(this_geom)) &&
                is.list(other_geom)) {
 
-        if (is.raw(this_geom) && is.list(other_geom)) {
+        if (.is_raw_or_null(this_geom) && is.list(other_geom)) {
             one_to_many <- TRUE
 
         } else if (is.list(this_geom) &&
@@ -1600,9 +1613,9 @@ g_equals <- function(this_geom, other_geom, quiet = FALSE) {
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to the number of input geometry
 #' pairs.
-#' `NA` is returned with a warning if WKB input cannot be converted
-#' into an OGR geometry object, or if an error occurs in the call to the
-#' underlying OGR API function.
+#' `NULL` (`as_wkb = TRUE`) / `NA` (`as_wkb = FALSE`) is returned with a
+#' warning if WKB input cannot be converted into an OGR geometry object, or if
+#' an error occurs in the call to the underlying OGR API function.
 #'
 #' @note
 #' `this_geom` and `other_geom` are assumed to be in the same coordinate
@@ -1640,8 +1653,8 @@ g_intersection <- function(this_geom, other_geom, as_wkb = TRUE,
 
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1649,8 +1662,8 @@ g_intersection <- function(this_geom, other_geom, as_wkb = TRUE,
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1681,7 +1694,7 @@ g_intersection <- function(this_geom, other_geom, as_wkb = TRUE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         wkb <- .g_intersection(this_geom, other_geom, as_iso,
                                byte_order, quiet)
     } else if (is.list(this_geom) && is.list(other_geom)) {
@@ -1715,8 +1728,8 @@ g_union <- function(this_geom, other_geom, as_wkb = TRUE,
 
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1724,8 +1737,8 @@ g_union <- function(this_geom, other_geom, as_wkb = TRUE,
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1756,7 +1769,7 @@ g_union <- function(this_geom, other_geom, as_wkb = TRUE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         wkb <- .g_union(this_geom, other_geom, as_iso,
                         byte_order, quiet)
     } else if (is.list(this_geom) && is.list(other_geom)) {
@@ -1790,8 +1803,8 @@ g_difference <- function(this_geom, other_geom, as_wkb = TRUE,
 
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1799,8 +1812,8 @@ g_difference <- function(this_geom, other_geom, as_wkb = TRUE,
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1831,7 +1844,7 @@ g_difference <- function(this_geom, other_geom, as_wkb = TRUE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         wkb <- .g_difference(this_geom, other_geom, as_iso,
                              byte_order, quiet)
     } else if (is.list(this_geom) && is.list(other_geom)) {
@@ -1865,8 +1878,8 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
 
     if (is.character(this_geom))
         this_geom <- g_wk2wk(this_geom)
-    if (!(is.raw(this_geom) || (is.list(this_geom) &&
-                                is.raw(this_geom[[1]])))) {
+    if (!(.is_raw_or_null(this_geom) || (is.list(this_geom) &&
+                                         .is_raw_or_null(this_geom[[1]])))) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
@@ -1874,8 +1887,8 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -1906,7 +1919,7 @@ g_sym_difference <- function(this_geom, other_geom, as_wkb = TRUE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(this_geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(this_geom) && .is_raw_or_null(other_geom)) {
         wkb <- .g_sym_difference(this_geom, other_geom, as_iso,
                                  byte_order, quiet)
     } else if (is.list(this_geom) && is.list(other_geom)) {
@@ -2050,9 +2063,9 @@ g_area <- function(geom, quiet = FALSE) {
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- 0
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_area(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- sapply(geom, .g_area, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -2077,10 +2090,10 @@ g_centroid <- function(geom, quiet = FALSE) {
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- 0
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_centroid(geom, quiet)
         names(ret) <- c("x", "y")
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- t(sapply(geom, .g_centroid, quiet))
         colnames(ret) <- c("x", "y")
     } else if (is.character(geom)) {
@@ -2104,15 +2117,17 @@ g_centroid <- function(geom, quiet = FALSE) {
 g_distance <- function(geom, other_geom, quiet = FALSE) {
     if (is.character(geom))
         geom <- g_wk2wk(geom)
-    if (!(is.raw(geom) || (is.list(geom) && is.raw(geom[[1]])))) {
+    if (!(.is_raw_or_null(geom) || (is.list(geom) &&
+                                    .is_raw_or_null(geom[[1]])))) {
+
         stop("'geom' must be raw vector or character",
              call. = FALSE)
     }
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
-    if (!(is.raw(other_geom) || (is.list(other_geom) &&
-                                 is.raw(other_geom[[1]])))) {
+    if (!(.is_raw_or_null(other_geom) || (is.list(other_geom) &&
+                                          .is_raw_or_null(other_geom[[1]])))) {
 
         stop("'other_geom' must be raw vector or character",
              call. = FALSE)
@@ -2130,12 +2145,12 @@ g_distance <- function(geom, other_geom, quiet = FALSE) {
 
     ret <- -1
     one_to_many <- FALSE
-    if (is.raw(geom) && is.raw(other_geom)) {
+    if (.is_raw_or_null(geom) && .is_raw_or_null(other_geom)) {
         ret <- .g_distance(geom, other_geom, quiet)
-    } else if ((is.raw(geom) || is.list(geom)) &&
+    } else if ((.is_raw_or_null(geom) || is.list(geom)) &&
                is.list(other_geom)) {
 
-        if (is.raw(geom) && is.list(other_geom)) {
+        if (.is_raw_or_null(geom) && is.list(other_geom)) {
             one_to_many <- TRUE
 
         } else if (is.list(geom) &&
@@ -2170,9 +2185,9 @@ g_length <- function(geom, quiet = FALSE) {
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- 0
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_length(geom, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- sapply(geom, .g_length, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -2207,9 +2222,9 @@ g_geodesic_area <- function(geom, srs, traditional_gis_order = TRUE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- -1.0
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_geodesic_area(geom, srs, traditional_gis_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- sapply(geom, .g_geodesic_area, srs, traditional_gis_order,
                       quiet)
     } else if (is.character(geom)) {
@@ -2247,9 +2262,9 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     ret <- -1.0
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         ret <- .g_geodesic_length(geom, srs, traditional_gis_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         ret <- sapply(geom, .g_geodesic_length, srs, traditional_gis_order,
                       quiet)
     } else if (is.character(geom)) {
@@ -2328,9 +2343,9 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 #' @return
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to the number of input geometries.
-#' `NA` is returned with a warning if WKB input cannot be converted into an
-#' OGR geometry object, or if an error occurs in the call to the underlying
-#' OGR API.
+#'  `NULL` (`as_wkb = TRUE`) / `NA` (`as_wkb = FALSE`) is returned with a
+#' warning if WKB input cannot be converted into an OGR geometry object, or if
+#' an error occurs in the call to the underlying OGR API.
 #'
 #' @note
 #' Definitions of these operations are given in the GEOS documentation
@@ -2415,9 +2430,9 @@ g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         wkb <- .g_buffer(geom, dist, quad_segs, as_iso, byte_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         wkb <- lapply(geom, .g_buffer, dist, quad_segs, as_iso,
                       byte_order, quiet)
     } else if (is.character(geom)) {
@@ -2468,9 +2483,9 @@ g_boundary <- function(geom, as_wkb = TRUE, as_iso = FALSE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         wkb <- .g_boundary(geom, as_iso, byte_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         wkb <- lapply(geom, .g_boundary, as_iso, byte_order, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -2519,9 +2534,9 @@ g_convex_hull <- function(geom, as_wkb = TRUE, as_iso = FALSE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         wkb <- .g_convex_hull(geom, as_iso, byte_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         wkb <- lapply(geom, .g_convex_hull, as_iso, byte_order, quiet)
     } else if (is.character(geom)) {
         if (length(geom) == 1) {
@@ -2578,10 +2593,10 @@ g_delaunay_triangulation <- function(geom, tolerance = 0.0, only_edges = FALSE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         wkb <- .g_delaunay_triangulation(geom, tolerance, only_edges, as_iso,
                                          byte_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         wkb <- lapply(geom, .g_delaunay_triangulation, tolerance, only_edges,
                       as_iso, byte_order, quiet)
     } else if (is.character(geom)) {
@@ -2644,10 +2659,10 @@ g_simplify <- function(geom, tolerance, preserve_topology = TRUE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         wkb <- .g_simplify(geom, tolerance, preserve_topology, as_iso,
                            byte_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         wkb <- lapply(geom, .g_simplify, tolerance, preserve_topology, as_iso,
                       byte_order, quiet)
     } else if (is.character(geom)) {
@@ -2703,9 +2718,9 @@ g_simplify <- function(geom, tolerance, preserve_topology = TRUE,
 #' @return
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to the number of input geometries.
-#' `NA` is returned with a warning if WKB input cannot be converted into an
-#' OGR geometry object, or if an error occurs in the call to the underlying
-#' OGR API.
+#'  `NULL` (`as_wkb = TRUE`) / `NA` (`as_wkb = FALSE`) is returned with a
+#' warning if WKB input cannot be converted into an OGR geometry object, or if
+#' an error occurs in the call to the underlying OGR API.
 #'
 #' @note
 #' This function uses the `OGR_GeomTransformer_Create()` and
@@ -2786,11 +2801,11 @@ g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (is.raw(geom)) {
+    if (.is_raw_or_null(geom)) {
         wkb <- .g_transform(geom, srs_from, srs_to, wrap_date_line,
                             date_line_offset, traditional_gis_order, as_iso,
                             byte_order, quiet)
-    } else if (is.list(geom) && is.raw(geom[[1]])) {
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
         wkb <- lapply(geom, .g_transform, srs_from, srs_to, wrap_date_line,
                       date_line_offset, traditional_gis_order, as_iso,
                       byte_order, quiet)
