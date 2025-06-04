@@ -1225,7 +1225,7 @@ test_that("field domain specifications are returned correctly", {
     expect_equal(fld_dom$split_policy, "default value")
     expect_equal(fld_dom$merge_policy, "default value")
     expect_true(is.null(fld_dom$min_value))
-    expect_true(is.null(fld_dom$mxn_value))
+    expect_true(is.null(fld_dom$max_value))
     rm(fld_dom)
 
     # coded values domain
@@ -1252,6 +1252,24 @@ test_that("field domain specifications are returned correctly", {
 
     lyr$close()
     deleteDataset(dsn)
+
+    # OpenFileGDB with DateTime range domain
+    f <- system.file("extdata/domains.gdb", package="gdalraster")
+    lyr <- new(GDALVector, f)
+
+    fld_dom <- lyr$getFieldDomain("datetime_range")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$description, "datetime_range_desc")
+    expect_equal(fld_dom$domain_type, "range")
+    expect_equal(fld_dom$field_type, "DateTime")
+    expect_equal(fld_dom$split_policy, "default value")
+    expect_equal(fld_dom$merge_policy, "default value")
+    expect_equal(fld_dom$min_value, "2000-01-01T00:00:00")
+    expect_true(fld_dom$min_value_included)
+    expect_equal(fld_dom$max_value, "2100-01-01T00:00:00")
+    expect_true(fld_dom$max_value_included)
+
+    lyr$close()
 })
 
 test_that("info() prints output to the console", {
