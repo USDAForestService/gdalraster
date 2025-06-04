@@ -76,7 +76,7 @@ test_that("vsi_sync works", {
     expect_true(length(vsi_read_dir(target_dir)) > 1)
     lapply(vsi_read_dir(target_dir),
            function(f) {f <- file.path(target_dir, f); vsi_unlink(f)})
-    expect_equal(vsi_rmdir(target_dir), 0)
+    expect_equal(vsi_rmdir(target_dir, recursive = TRUE), 0)
 })
 
 test_that("vsi_curl_clear_cache runs without error", {
