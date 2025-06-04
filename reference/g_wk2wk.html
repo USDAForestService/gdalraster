@@ -108,8 +108,8 @@ dimension (Z) WKB/WKT for types Point, LineString, Polygon, MultiPoint,
 MultiLineString, MultiPolygon and GeometryCollection. For other geometry
 types, it is equivalent to ISO.</p>
 <p>When the return value is a list of WKB raw vectors, an element in the
-returned list will contain <code>NA</code> if the corresponding input string was <code>NA</code>
-or empty (<code>""</code>).</p>
+returned list will contain <code>NULL</code> (and a warning emitted) if the
+corresponding input string was <code>NA</code> or empty (<code>""</code>).</p>
 <p>When input is a list of WKB raw vectors, a corresponding element in the
 returned character vector will be an empty string (<code>""</code>) if the input was
 a raw vector of length <code>0</code> (<code>raw(0)</code>). If an input list element is not a raw
