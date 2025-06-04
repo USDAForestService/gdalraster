@@ -1254,8 +1254,11 @@ test_that("field domain specifications are returned correctly", {
     deleteDataset(dsn)
 
     # OpenFileGDB with DateTime range domain
-    f <- system.file("extdata/domains.gdb", package="gdalraster")
-    lyr <- new(GDALVector, f)
+    # support for DateTime field domains in OpenFileGDB was added at GDAL 3.8.0
+    skip_if(gdal_version_num() < gdal_compute_version(3, 8, 0))
+
+    f <- system.file("extdata/domains.gdb.zip", package="gdalraster")
+    lyr <- new(GDALVector, f, "test")
 
     fld_dom <- lyr$getFieldDomain("datetime_range")
     expect_true(!is.null(fld_dom))
