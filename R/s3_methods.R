@@ -17,13 +17,17 @@ print.OGRFeature <- function(x, ...) {
     if (geom_format == "WKB" || geom_format == "WKB_ISO") {
         y <- unclass(x)
         for (i in seq_along(geom_column)) {
-            if (is.raw(x[[geom_column[i]]])) {
+            if (.is_raw_or_null(x[[geom_column[i]]])) {
                 wkb <- x[[geom_column[i]]]
                 geom_name <- g_name(wkb)
-            } else if (is.raw(x[[geom_column[i]]][[1]])) {
+                if (is.na(geom_name))
+                    geom_name <- "NULL geometry"
+            } else if (.is_raw_or_null(x[[geom_column[i]]][[1]])) {
                 # in case of nested list, i.e., from a data frame list column
                 wkb <- x[[geom_column[i]]][[1]]
                 geom_name <- g_name(wkb)
+                if (is.na(geom_name))
+                    geom_name <- "NULL geometry"
             } else {
                 wkb <- "error"
                 geom_name <- "unknown"
@@ -40,6 +44,8 @@ print.OGRFeature <- function(x, ...) {
         y <- unclass(x)
         for (i in seq_along(geom_column)) {
             wkt <- x[[geom_column[i]]]
+            if (is.na(wkt))
+                geom_format <- "WKT NULL geometry"
             wkt_starts_with <- substring(wkt, 1, 28)
             y[[geom_column[i]]] <- paste0(geom_format, ": chr \"",
                                           wkt_starts_with, " ...\"")
@@ -77,6 +83,7 @@ print.OGRFeatureSet <- function(x, ...) {
         y <- x
         for (i in seq_along(geom_column)) {
             geom_name <- g_name(x[, geom_column[i]])
+            geom_name[is.na(geom_name)] <- "NULL geometry"
             wkb_starts_with <- sapply(x[, geom_column[i]],
                                       function(g) paste(g[1:4], collapse = " "))
 
@@ -95,6 +102,10 @@ print.OGRFeatureSet <- function(x, ...) {
             wkt_starts_with <- substring(wkt, 1, 28)
             y[geom_column[i]] <- paste0(geom_format, ": chr \"",
                                         wkt_starts_with, " ...\"")
+            y[is.na(wkt), geom_column[i]] <- paste0("WKT NULL geometry",
+                                                    ": chr \"",
+                                                    wkt_starts_with,
+                                                    " ...\"")
         }
         attr(y, "gis") <- NULL
         print.data.frame(y, ...)

@@ -55,9 +55,9 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 \value{
 A geometry as WKB raw vector or WKT string, or a list/character vector of
 geometries as WKB/WKT with length equal to the number of input geometries.
-\code{NA} is returned with a warning if WKB input cannot be converted into an
-OGR geometry object, or if an error occurs in the call to the underlying
-OGR API.
+\code{NULL} (\code{as_wkb = TRUE}) / \code{NA} (\code{as_wkb = FALSE}) is returned with a
+warning if WKB input cannot be converted into an OGR geometry object, or if
+an error occurs in the call to the underlying OGR API.
 }
 \description{
 \code{g_transform()} will transform the coordinates of a geometry from their

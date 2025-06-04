@@ -96,9 +96,9 @@ using the standard Douglas-Peucker algorithm which is significantly faster
 \value{
 A geometry as WKB raw vector or WKT string, or a list/character vector of
 geometries as WKB/WKT with length equal to the number of input geometries.
-\code{NA} is returned with a warning if WKB input cannot be converted into an
-OGR geometry object, or if an error occurs in the call to the underlying
-OGR API.
+\code{NULL} (\code{as_wkb = TRUE}) / \code{NA} (\code{as_wkb = FALSE}) is returned with a
+warning if WKB input cannot be converted into an OGR geometry object, or if
+an error occurs in the call to the underlying OGR API.
 }
 \description{
 These functions implement algorithms that operate on one input geometry

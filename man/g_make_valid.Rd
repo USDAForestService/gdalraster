@@ -37,7 +37,7 @@ WKB. One of \code{"LSB"} (the default) or \code{"MSB"} (uncommon).}
 }
 \value{
 A geometry as WKB raw vector or WKT string, or a list/character vector of
-geometries as WKB/WKT with length equal to \code{length(geom)}. \code{NA} is returned
+geometries as WKB/WKT with length equal to \code{length(geom)}. \code{NULL} is returned
 with a warning if WKB input cannot be converted into an OGR geometry object,
 or if an error occurs in the call to MakeValid() in the underlying OGR API.
 }
@@ -63,7 +63,7 @@ KEEP_COLLAPSED only applies to the STRUCTURE method:
 This function is built on the GEOS >= 3.8 library, check it for the
 definition of the geometry operation. If OGR is built without GEOS >= 3.8,
 this function will return a clone of the input geometry if it is valid, or
-\code{NA} if it is invalid.
+\code{NULL} (\code{as_wkb = TRUE}) / \code{NA} (\code{as_wkb = FALSE}) if it is invalid.
 }
 \examples{
 # requires GEOS >= 3.8, otherwise is only a validity test (see Note)

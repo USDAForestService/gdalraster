@@ -24,7 +24,7 @@ OGRGeometryH createGeomFromWkb(const Rcpp::RawVector &wkb);
 bool exportGeomToWkb(OGRGeometryH hGeom, unsigned char *wkb, bool as_iso,
                      const std::string &byte_order);
 
-std::string g_wkb2wkt(const Rcpp::RawVector &geom, bool as_iso);
+Rcpp::String g_wkb2wkt(const Rcpp::RObject &geom, bool as_iso);
 
 Rcpp::CharacterVector g_wkb_list2wkt(const Rcpp::List &geom, bool as_iso);
 
@@ -42,104 +42,104 @@ Rcpp::RawVector g_add_geom(const Rcpp::RawVector &sub_geom,
                            const Rcpp::RawVector &container,
                            bool as_iso, const std::string &byte_order);
 
-Rcpp::LogicalVector g_is_valid(const Rcpp::RawVector &geom, bool quiet);
-SEXP g_make_valid(const Rcpp::RawVector &geom, const std::string &method,
+Rcpp::LogicalVector g_is_valid(const Rcpp::RObject &geom, bool quiet);
+SEXP g_make_valid(const Rcpp::RObject &geom, const std::string &method,
                   bool keep_collapsed, bool as_iso,
                   const std::string &byte_order, bool quiet);
 
-SEXP g_swap_xy(const Rcpp::RawVector &geom, bool as_iso,
+SEXP g_swap_xy(const Rcpp::RObject &geom, bool as_iso,
                const std::string &byte_order, bool quiet);
 
-Rcpp::LogicalVector g_is_empty(const Rcpp::RawVector &geom, bool quiet);
-Rcpp::LogicalVector g_is_3D(const Rcpp::RawVector &geom, bool quiet);
-Rcpp::LogicalVector g_is_measured(const Rcpp::RawVector &geom, bool quiet);
-SEXP g_name(const Rcpp::RawVector &geom, bool quiet);
-SEXP g_summary(const Rcpp::RawVector &geom, bool quiet);
-Rcpp::NumericVector g_envelope(const Rcpp::RawVector &geom, bool as_3d,
+Rcpp::LogicalVector g_is_empty(const Rcpp::RObject &geom, bool quiet);
+Rcpp::LogicalVector g_is_3D(const Rcpp::RObject &geom, bool quiet);
+Rcpp::LogicalVector g_is_measured(const Rcpp::RObject &geom, bool quiet);
+Rcpp::String g_name(const Rcpp::RObject &geom, bool quiet);
+Rcpp::String g_summary(const Rcpp::RObject &geom, bool quiet);
+Rcpp::NumericVector g_envelope(const Rcpp::RObject &geom, bool as_3d,
                                bool quiet);
 
-Rcpp::LogicalVector g_intersects(const Rcpp::RawVector &this_geom,
-                                 const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_intersects(const Rcpp::RObject &this_geom,
+                                 const Rcpp::RObject &other_geom,
                                  bool quiet);
 
-Rcpp::LogicalVector g_equals(const Rcpp::RawVector &this_geom,
-                             const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_equals(const Rcpp::RObject &this_geom,
+                             const Rcpp::RObject &other_geom,
                              bool quiet);
 
-Rcpp::LogicalVector g_disjoint(const Rcpp::RawVector &this_geom,
-                               const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_disjoint(const Rcpp::RObject &this_geom,
+                               const Rcpp::RObject &other_geom,
                                bool quiet);
 
-Rcpp::LogicalVector g_touches(const Rcpp::RawVector &this_geom,
-                              const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_touches(const Rcpp::RObject &this_geom,
+                              const Rcpp::RObject &other_geom,
                               bool quiet);
 
-Rcpp::LogicalVector g_contains(const Rcpp::RawVector &this_geom,
-                               const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_contains(const Rcpp::RObject &this_geom,
+                               const Rcpp::RObject &other_geom,
                                bool quiet);
 
-Rcpp::LogicalVector g_within(const Rcpp::RawVector &this_geom,
-                             const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_within(const Rcpp::RObject &this_geom,
+                             const Rcpp::RObject &other_geom,
                              bool quiet);
 
-Rcpp::LogicalVector g_crosses(const Rcpp::RawVector &this_geom,
-                              const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_crosses(const Rcpp::RObject &this_geom,
+                              const Rcpp::RObject &other_geom,
                               bool quiet);
 
-Rcpp::LogicalVector g_overlaps(const Rcpp::RawVector &this_geom,
-                               const Rcpp::RawVector &other_geom,
+Rcpp::LogicalVector g_overlaps(const Rcpp::RObject &this_geom,
+                               const Rcpp::RObject &other_geom,
                                bool quiet);
 
-SEXP g_boundary(const Rcpp::RawVector &geom, bool as_iso,
+SEXP g_boundary(const Rcpp::RObject &geom, bool as_iso,
                 const std::string &byte_order, bool quiet);
 
-SEXP g_buffer(const Rcpp::RawVector &geom, double dist, int quad_segs,
+SEXP g_buffer(const Rcpp::RObject &geom, double dist, int quad_segs,
               bool as_iso, const std::string &byte_order, bool quiet);
 
-SEXP g_convex_hull(const Rcpp::RawVector &geom, bool as_iso,
+SEXP g_convex_hull(const Rcpp::RObject &geom, bool as_iso,
                    const std::string &byte_order, bool quiet);
 
-SEXP g_delaunay_triangulation(const Rcpp::RawVector &geom, double tolerance,
+SEXP g_delaunay_triangulation(const Rcpp::RObject &geom, double tolerance,
                               bool only_edges, bool as_iso,
                               const std::string &byte_order, bool quiet);
 
-SEXP g_simplify(const Rcpp::RawVector &geom, double tolerance,
+SEXP g_simplify(const Rcpp::RObject &geom, double tolerance,
                 bool preserve_topology, bool as_iso,
                 const std::string &byte_order, bool quiet);
 
-SEXP g_intersection(const Rcpp::RawVector &this_geom,
-                    const Rcpp::RawVector &other_geom,
+SEXP g_intersection(const Rcpp::RObject &this_geom,
+                    const Rcpp::RObject &other_geom,
                     bool as_iso, const std::string &byte_order,
                     bool quiet);
 
-SEXP g_union(const Rcpp::RawVector &this_geom,
-             const Rcpp::RawVector &other_geom,
+SEXP g_union(const Rcpp::RObject &this_geom,
+             const Rcpp::RObject &other_geom,
              bool as_iso, const std::string &byte_order,
              bool quiet);
 
-SEXP g_difference(const Rcpp::RawVector &this_geom,
-                  const Rcpp::RawVector &other_geom,
+SEXP g_difference(const Rcpp::RObject &this_geom,
+                  const Rcpp::RObject &other_geom,
                   bool as_iso, const std::string &byte_order,
                   bool quiet);
 
-SEXP g_sym_difference(const Rcpp::RawVector &this_geom,
-                      const Rcpp::RawVector &other_geom,
+SEXP g_sym_difference(const Rcpp::RObject &this_geom,
+                      const Rcpp::RObject &other_geom,
                       bool as_iso, const std::string &byte_order,
                       bool quiet);
 
-double g_distance(const Rcpp::RawVector &this_geom,
-                  const Rcpp::RawVector &other_geom,
+double g_distance(const Rcpp::RObject &this_geom,
+                  const Rcpp::RObject &other_geom,
                   bool quiet);
 
-double g_length(const Rcpp::RawVector &geom, bool quiet);
-double g_area(const Rcpp::RawVector &geom, bool quiet);
-double g_geodesic_area(const Rcpp::RawVector &geom, const std::string &srs,
+double g_length(const Rcpp::RObject &geom, bool quiet);
+double g_area(const Rcpp::RObject &geom, bool quiet);
+double g_geodesic_area(const Rcpp::RObject &geom, const std::string &srs,
                        bool traditional_gis_order, bool quiet);
-double g_geodesic_length(const Rcpp::RawVector &geom, const std::string &srs,
+double g_geodesic_length(const Rcpp::RObject &geom, const std::string &srs,
                          bool traditional_gis_order, bool quiet);
-Rcpp::NumericVector g_centroid(const Rcpp::RawVector &geom, bool quiet);
+Rcpp::NumericVector g_centroid(const Rcpp::RObject &geom, bool quiet);
 
-SEXP g_transform(const Rcpp::RawVector &geom, const std::string &srs_from,
+SEXP g_transform(const Rcpp::RObject &geom, const std::string &srs_from,
                  const std::string &srs_to, bool wrap_date_line,
                  int date_line_offset, bool traditional_gis_order, bool as_iso,
                  const std::string &byte_order, bool quiet);
