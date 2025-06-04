@@ -9,6 +9,7 @@ test_that("class constructors work", {
     expect_equal(lyr$getName(), "mtbs_perims")
     expect_type(lyr$getFeature(1), "list")
     lyr$close()
+    expect_false(lyr$isOpen())
 
     expect_no_error(lyr <- new(GDALVector, dsn, "mtbs_perims"))
     expect_equal(lyr$bbox(), c(469685.73, -12917.76, 573531.72, 96577.34))
@@ -41,6 +42,10 @@ test_that("class constructors work", {
                                spatial_filter = bbox_to_wkt(bb),
                                dialect = ""))
     expect_equal(lyr$getFeatureCount(), 40)
+    lyr$close()
+
+    # invalid layer name
+    expect_error(lyr <- new(GDALVector, dsn, "invalid_layer_name"))
 
     # spatial filter error
     expect_error(lyr <- new(GDALVector, dsn, sql, read_only = TRUE,
@@ -48,7 +53,7 @@ test_that("class constructors work", {
                             spatial_filter = "invalid WKT",
                             dialect = ""))
 
-    lyr$close()
+    
     unlink(dsn)
 
     # default construstrctor with no arguments should not error
@@ -170,6 +175,23 @@ test_that("class basic interface works", {
     sql_lyr$close()
 
     unlink(dsn)
+
+    # test certain errors on a GeoJSON file with NULL geometries
+    f <- system.file("extdata/test_ogr_geojson_mixed_timezone.geojson",
+                     package = "gdalraster")
+    lyr <- new(GDALVector, f, "test")
+    expect_error(lyr$bbox(), "extent of the layer cannot be determined")
+    expect_error(lyr$setAttributeFilter("invalid_field = 1"),
+                 "error setting attribute filter")
+    expect_true(is.null(lyr$getFeature(NA)))
+    expect_error(lyr$getFeature(c(1,2)), "must be a length-1")
+    expect_false(lyr$startTransaction())
+    expect_output(lyr$startTransaction(), "dataset does not have")
+    lyr$transactionsForce <- TRUE
+    expect_false(lyr$startTransaction())
+    expect_output(lyr$startTransaction(), "dataset does not have")
+
+    lyr$close()
 })
 
 test_that("set ignored/selected fields works", {
@@ -318,6 +340,10 @@ test_that("read methods work correctly", {
     # spatial filter as WKT
     bbox <- c(469685.97, 11442.45, 544069.63, 85508.15)
     expect_no_error(lyr$setSpatialFilter(bbox_to_wkt(bbox)))
+    expect_equal(lyr$getFeatureCount(), 40)
+    expect_true(g_equals(lyr$getSpatialFilter(), bbox_to_wkt(bbox)))
+    # test getFeature() with spatial filter in effect
+    expect_equal(lyr$getFeature(10)$FID, as.integer64(10))
     expect_equal(lyr$getFeatureCount(), 40)
     expect_true(g_equals(lyr$getSpatialFilter(), bbox_to_wkt(bbox)))
     # clear
