@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9011 (dev)
+# gdalraster 2.0.0.9020 (dev)
+
+* Geom API: fixes and improvements in handling of NULL geometries (#732) (2025-06-03)
 
 * (internal) class `GDALVector`: improve error handling in `setIgnoredFields()` / `setSelectedFields()` and add several new tests (#731) (2025-06-01)
 
