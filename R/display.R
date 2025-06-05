@@ -54,8 +54,8 @@
         ct[, 6] <- rgb(ct[, 2], ct[, 3], ct[, 4], ct[, 5],
                        maxColorValue=maxColorValue)
         names(ct) <- c("value", "r", "g", "b", "a", "rgb")
-        f <- function(x) { ct$rgb[match(x, ct$value)] }
-        r <- vapply(a, FUN=f, FUN.VALUE="#00000000", USE.NAMES=FALSE)
+        r <- ct$rgb[match(as.vector(a), ct$value)]
+
         if (anyNA(r))
             r[is.na(r)] <- na_col
         dim(r) <- dim(a)[2:1]
