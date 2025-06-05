@@ -1,8 +1,5 @@
 ignore:
     - "R/zzz.R"
-    - "sample-data/*"
-    - "tests/testthat.R"
-    - "tests/testthat/*.R"
 coverage:
   range: 70..90
   round: down
