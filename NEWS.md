@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9020 (dev)
+# gdalraster 2.0.0.9021 (dev)
+
+* performance improvement for `plot_raster()` via `col_tbl` (#735 by @mdsumner) (2025-06-05)
 
 * Geom API: fixes and improvements in handling of NULL geometries (#732) (2025-06-03)
 
