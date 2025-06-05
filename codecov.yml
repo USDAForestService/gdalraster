@@ -1,5 +1,7 @@
 ignore:
     - "R/zzz.R"
+    - "tests/testthat.R"
+    - "tests/testthat/*.R"
 coverage:
   range: 70..90
   round: down
