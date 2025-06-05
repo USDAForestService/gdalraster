@@ -53,7 +53,7 @@ test_that("class constructors work", {
                             spatial_filter = "invalid WKT",
                             dialect = ""))
 
-    
+
     unlink(dsn)
 
     # default construstrctor with no arguments should not error
@@ -444,6 +444,19 @@ test_that("read methods work correctly", {
     expect_equal(g_name(g2$geom), rep("MULTIPOLYGON", 5))
     diff <- g_difference(g1$geom, g2$geom)
     expect_true(all(g_is_empty(diff)))
+    lyr$close()
+
+    # GeoJSON DateTime field with mixed time zones
+    # adapted from:
+    # https://github.com/OSGeo/gdal/blob/master/autotest/ogr/ogr_geojson.py
+    # "test_ogr_geojson_arrow_stream_pyarrow_mixed_timezone"
+    f <- system.file("extdata/test_ogr_geojson_mixed_timezone.geojson",
+                     package = "gdalraster")
+    lyr <- new(GDALVector, f, "test")
+    d <- lyr$fetch(-1)
+    res <- as.numeric(d$datetime)
+    expected_values <- c(NA, 1654000496.789, NA, 1653996896.789, 1654004096.789)
+    expect_equal(res, expected_values, tolerance = 0.001)
     lyr$close()
 })
 
