@@ -1,5 +1,6 @@
 ignore:
     - "R/zzz.R"
+    - "sample-data/*"
     - "tests/testthat.R"
     - "tests/testthat/*.R"
 coverage:
