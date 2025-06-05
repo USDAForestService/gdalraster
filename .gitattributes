@@ -20,3 +20,5 @@ R/running_stats.R linguist-documentation
 R/vsifile.R linguist-documentation
 # Exclude from stats
 configure.ac linguist-vendored
+tests/testthat.R linguist-vendored
+tests/testthat/*.R linguist-vendored
