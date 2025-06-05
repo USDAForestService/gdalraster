@@ -142,7 +142,7 @@ Rcpp::String g_wkb2wkt(const Rcpp::RObject &geom, bool as_iso = false) {
 
     const Rcpp::RawVector geom_in(geom);
     if (geom_in.size() == 0)
-        return "";
+        return NA_STRING;
 
     OGRGeometryH hGeom = createGeomFromWkb(geom_in);
     if (hGeom == nullptr)
@@ -188,7 +188,7 @@ Rcpp::CharacterVector g_wkb_list2wkt(const Rcpp::List &geom,
             }
             else {
                 Rcpp::warning("an input list element is a length-0 raw vector");
-                wkt[i] = "";
+                wkt[i] = NA_STRING;
             }
         }
     }
@@ -200,12 +200,11 @@ Rcpp::CharacterVector g_wkb_list2wkt(const Rcpp::List &geom,
 //
 //' @noRd
 // [[Rcpp::export(name = ".g_wkt2wkb")]]
-Rcpp::RawVector g_wkt2wkb(const std::string &geom,
-                          bool as_iso = false,
-                          const std::string &byte_order = "LSB") {
+SEXP g_wkt2wkb(const std::string &geom, bool as_iso = false,
+               const std::string &byte_order = "LSB") {
 
     if (geom.size() == 0)
-        Rcpp::stop("'geom' is empty");
+        return R_NilValue;
 
     OGRGeometryH hGeom = nullptr;
     OGRErr err = OGRERR_NONE;
@@ -987,12 +986,16 @@ Rcpp::LogicalVector g_intersects(const Rcpp::RObject &this_geom,
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -1039,12 +1042,16 @@ Rcpp::LogicalVector g_equals(const Rcpp::RObject &this_geom,
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -1091,12 +1098,16 @@ Rcpp::LogicalVector g_disjoint(const Rcpp::RObject &this_geom,
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -1143,12 +1154,16 @@ Rcpp::LogicalVector g_touches(const Rcpp::RObject &this_geom,
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -1195,12 +1210,16 @@ Rcpp::LogicalVector g_contains(const Rcpp::RObject &this_geom,
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -1247,12 +1266,16 @@ Rcpp::LogicalVector g_within(const Rcpp::RObject &this_geom,
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -1299,12 +1322,16 @@ Rcpp::LogicalVector g_crosses(const Rcpp::RObject &this_geom,
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -1353,12 +1380,16 @@ Rcpp::LogicalVector g_overlaps(const Rcpp::RObject &this_geom,
         return Rcpp::LogicalVector::create(NA_LOGICAL);
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -1786,12 +1817,16 @@ SEXP g_intersection(const Rcpp::RObject &this_geom,
         return R_NilValue;
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return R_NilValue;
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return R_NilValue;
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -1872,12 +1907,16 @@ SEXP g_union(const Rcpp::RObject &this_geom,
         return R_NilValue;
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return R_NilValue;
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return R_NilValue;
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -1958,12 +1997,16 @@ SEXP g_difference(const Rcpp::RObject &this_geom,
         return R_NilValue;
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return R_NilValue;
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return R_NilValue;
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -2044,12 +2087,16 @@ SEXP g_sym_difference(const Rcpp::RObject &this_geom,
         return R_NilValue;
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return R_NilValue;
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return R_NilValue;
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {
@@ -2132,12 +2179,16 @@ double g_distance(const Rcpp::RObject &this_geom,
         return ret;
     }
 
-    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom))
+    if (other_geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(other_geom)) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return NA_REAL;
+    }
 
     const Rcpp::RawVector other_geom_in(other_geom);
-    if (other_geom_in.size() == 0)
+    if (other_geom_in.size() == 0) {
+        OGR_G_DestroyGeometry(hGeom_this);
         return NA_REAL;
+    }
 
     OGRGeometryH hGeom_other = createGeomFromWkb(other_geom_in);
     if (hGeom_other == nullptr) {

@@ -268,10 +268,10 @@ bbox_transform <- function(bbox, srs_from, srs_to,
 #' corresponding input string was `NA` or empty (`""`).
 #'
 #' When input is a list of WKB raw vectors, a corresponding element in the
-#' returned character vector will be an empty string (`""`) if the input was
-#' a raw vector of length `0` (`raw(0)`). If an input list element is not a raw
-#' vector, then the corresponding element in the returned character vector will
-#' be `NA`.
+#' returned character vector will be `NA` if the input was a raw vector of
+#' length `0` (i.e., `raw(0)`). If an input list element is not a raw vector,
+#' then the corresponding element in the returned character vector will also
+#' be `NA`. A warning is emitted in each case.
 #'
 #' @seealso
 #' GEOS reference for geometry formats:\cr
@@ -301,7 +301,7 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
     if (is.character(geom)) {
         if (length(geom) == 1) {
             if (is.na(geom)) {
-                return(NA)
+                return(NULL)
             } else {
                 return(.g_wkt2wkb(geom, as_iso, byte_order))
             }
@@ -312,10 +312,10 @@ g_wk2wk <- function(geom, as_iso = FALSE, byte_order = "LSB") {
         return(.g_wkb2wkt(geom, as_iso))
     } else if (is.list(geom)) {
         return(.g_wkb_list2wkt(geom, as_iso))
-    } else if (is.na(geom)) {
-        return(NULL)
     } else if (is.null(geom)) {
         return(NA_character_)
+    } else if (is.na(geom)) {
+        return(NULL)
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
              call. = FALSE)
@@ -2210,6 +2210,8 @@ g_geodesic_area <- function(geom, srs, traditional_gis_order = TRUE,
 
     if (!(is.character(srs) && length(srs) == 1))
         stop("'srs' must be a character string", call. = FALSE)
+    if (is.null(traditional_gis_order))
+        traditional_gis_order <- TRUE
     if (!(is.logical(traditional_gis_order) &&
           length(traditional_gis_order) == 1)) {
 
@@ -2250,6 +2252,8 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 
     if (!(is.character(srs) && length(srs) == 1))
         stop("'srs' must be a character string", call. = FALSE)
+    if (is.null(traditional_gis_order))
+        traditional_gis_order <- TRUE
     if (!(is.logical(traditional_gis_order) &&
           length(traditional_gis_order) == 1)) {
 
@@ -2405,6 +2409,18 @@ g_geodesic_length <- function(geom, srs, traditional_gis_order = TRUE,
 g_buffer <- function(geom, dist, quad_segs = 30L, as_wkb = TRUE,
                      as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
 
+    # dist
+    if (missing(dist) || is.null(dist))
+        stop("a value for 'dist' is required", call. = FALSE)
+    if (!is.numeric(dist) || length(dist) > 1)
+        stop("'dist' must be a single numeric value", call. = FALSE)
+    # quad_segs
+    if (missing(quad_segs) || is.null(quad_segs))
+        quad_segs <- 30L
+    if (!is.numeric(quad_segs) || length(quad_segs) > 1) {
+        stop("'quad_segs' must be a single numeric value (integer)",
+             call. = FALSE)
+    }
     # as_wkb
     if (is.null(as_wkb))
         as_wkb <- TRUE
@@ -2562,9 +2578,13 @@ g_delaunay_triangulation <- function(geom, tolerance = 0.0, only_edges = FALSE,
                                      as_wkb = TRUE, as_iso = FALSE,
                                      byte_order = "LSB", quiet = FALSE) {
     # tolerance
+    if (is.null(tolerance))
+        tolerance <- 0.0
     if (!(is.numeric(tolerance) && length(tolerance) == 1))
         stop("'tolerance' must be a single numeric value", call. = FALSE)
     # only_edges
+    if (is.null(only_edges))
+        only_edges <- FALSE
     if (!(is.logical(only_edges) && length(only_edges) == 1)) {
         stop("'only_edges' must be a single logical value", call. = FALSE)
     }
@@ -2628,6 +2648,8 @@ g_simplify <- function(geom, tolerance, preserve_topology = TRUE,
     if (!(is.numeric(tolerance) && length(tolerance) == 1))
         stop("'tolerance' must be a single numeric value", call. = FALSE)
     # preserve_topology
+    if (is.null(preserve_topology))
+        preserve_topology <- TRUE
     if (!(is.logical(preserve_topology) &&
           length(preserve_topology) == 1)) {
 
@@ -2760,6 +2782,8 @@ g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE,
     if (!(is.character(srs_to) && length(srs_to) == 1))
         stop("'srs_to' must be a character string", call. = FALSE)
     # wrap_date_line
+    if (is.null(wrap_date_line))
+        wrap_date_line <- FALSE
     if (!(is.logical(wrap_date_line) &&
           length(wrap_date_line) == 1)) {
 
@@ -2767,9 +2791,13 @@ g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE,
              call. = FALSE)
     }
     # date_line_offset
+    if (is.null(date_line_offset))
+        date_line_offset <- 10L
     if (!(is.numeric(date_line_offset) && length(date_line_offset) == 1))
         stop("'date_line_offset' must be an integer value", call. = FALSE)
     # traditional_gis_order
+    if (is.null(traditional_gis_order))
+        traditional_gis_order <- TRUE
     if (!(is.logical(traditional_gis_order) &&
           length(traditional_gis_order) == 1)) {
 

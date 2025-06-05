@@ -1048,7 +1048,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // g_wkt2wkb
-Rcpp::RawVector g_wkt2wkb(const std::string& geom, bool as_iso, const std::string& byte_order);
+SEXP g_wkt2wkb(const std::string& geom, bool as_iso, const std::string& byte_order);
 RcppExport SEXP _gdalraster_g_wkt2wkb(SEXP geomSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
