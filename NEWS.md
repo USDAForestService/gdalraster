@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9021 (dev)
+# gdalraster 2.0.0.9022 (dev)
+
+* Geom API: minor fixes and improvements to input validation and error handling (#737) (2025-06-06)
 
 * performance improvement for `plot_raster()` via `col_tbl` (#735 by @mdsumner) (2025-06-05)
 
