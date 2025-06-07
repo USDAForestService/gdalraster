@@ -1635,6 +1635,41 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// ogr_ds_field_domain_names
+SEXP ogr_ds_field_domain_names(const std::string& dsn);
+RcppExport SEXP _gdalraster_ogr_ds_field_domain_names(SEXP dsnSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type dsn(dsnSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogr_ds_field_domain_names(dsn));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ogr_ds_add_field_domain
+bool ogr_ds_add_field_domain(const std::string& dsn, const Rcpp::List& fld_dom_defn);
+RcppExport SEXP _gdalraster_ogr_ds_add_field_domain(SEXP dsnSEXP, SEXP fld_dom_defnSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type dsn(dsnSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::List& >::type fld_dom_defn(fld_dom_defnSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogr_ds_add_field_domain(dsn, fld_dom_defn));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ogr_ds_delete_field_domain
+bool ogr_ds_delete_field_domain(const std::string& dsn, const std::string& domain_name);
+RcppExport SEXP _gdalraster_ogr_ds_delete_field_domain(SEXP dsnSEXP, SEXP domain_nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type dsn(dsnSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type domain_name(domain_nameSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogr_ds_delete_field_domain(dsn, domain_name));
+    return rcpp_result_gen;
+END_RCPP
+}
 // ogr_layer_exists
 bool ogr_layer_exists(const std::string& dsn, const std::string& layer);
 RcppExport SEXP _gdalraster_ogr_layer_exists(SEXP dsnSEXP, SEXP layerSEXP) {
@@ -1711,8 +1746,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // ogr_field_create
-bool ogr_field_create(const std::string& dsn, const std::string& layer, const std::string& fld_name, const std::string& fld_type, const std::string& fld_subtype, int fld_width, int fld_precision, bool is_nullable, bool is_unique, const std::string& default_value);
-RcppExport SEXP _gdalraster_ogr_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP fld_typeSEXP, SEXP fld_subtypeSEXP, SEXP fld_widthSEXP, SEXP fld_precisionSEXP, SEXP is_nullableSEXP, SEXP is_uniqueSEXP, SEXP default_valueSEXP) {
+bool ogr_field_create(const std::string& dsn, const std::string& layer, const std::string& fld_name, const std::string& fld_type, const std::string& fld_subtype, int fld_width, int fld_precision, bool is_nullable, bool is_unique, const std::string& default_value, const std::string& domain_name);
+RcppExport SEXP _gdalraster_ogr_field_create(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP fld_typeSEXP, SEXP fld_subtypeSEXP, SEXP fld_widthSEXP, SEXP fld_precisionSEXP, SEXP is_nullableSEXP, SEXP is_uniqueSEXP, SEXP default_valueSEXP, SEXP domain_nameSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -1726,7 +1761,8 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type is_nullable(is_nullableSEXP);
     Rcpp::traits::input_parameter< bool >::type is_unique(is_uniqueSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type default_value(default_valueSEXP);
-    rcpp_result_gen = Rcpp::wrap(ogr_field_create(dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_unique, default_value));
+    Rcpp::traits::input_parameter< const std::string& >::type domain_name(domain_nameSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogr_field_create(dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_unique, default_value, domain_name));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -1757,6 +1793,20 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string& >::type fld_name(fld_nameSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type new_name(new_nameSEXP);
     rcpp_result_gen = Rcpp::wrap(ogr_field_rename(dsn, layer, fld_name, new_name));
+    return rcpp_result_gen;
+END_RCPP
+}
+// ogr_field_set_domain_name
+bool ogr_field_set_domain_name(const std::string& dsn, const std::string& layer, const std::string& fld_name, const std::string& domain_name);
+RcppExport SEXP _gdalraster_ogr_field_set_domain_name(SEXP dsnSEXP, SEXP layerSEXP, SEXP fld_nameSEXP, SEXP domain_nameSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type dsn(dsnSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type layer(layerSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type fld_name(fld_nameSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type domain_name(domain_nameSEXP);
+    rcpp_result_gen = Rcpp::wrap(ogr_field_set_domain_name(dsn, layer, fld_name, domain_name));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -2234,15 +2284,19 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_ogr_ds_test_cap", (DL_FUNC) &_gdalraster_ogr_ds_test_cap, 2},
     {"_gdalraster_ogr_ds_layer_count", (DL_FUNC) &_gdalraster_ogr_ds_layer_count, 1},
     {"_gdalraster_ogr_ds_layer_names", (DL_FUNC) &_gdalraster_ogr_ds_layer_names, 1},
+    {"_gdalraster_ogr_ds_field_domain_names", (DL_FUNC) &_gdalraster_ogr_ds_field_domain_names, 1},
+    {"_gdalraster_ogr_ds_add_field_domain", (DL_FUNC) &_gdalraster_ogr_ds_add_field_domain, 2},
+    {"_gdalraster_ogr_ds_delete_field_domain", (DL_FUNC) &_gdalraster_ogr_ds_delete_field_domain, 2},
     {"_gdalraster_ogr_layer_exists", (DL_FUNC) &_gdalraster_ogr_layer_exists, 2},
     {"_gdalraster_ogr_layer_test_cap", (DL_FUNC) &_gdalraster_ogr_layer_test_cap, 3},
     {"_gdalraster_ogr_layer_rename", (DL_FUNC) &_gdalraster_ogr_layer_rename, 3},
     {"_gdalraster_ogr_layer_delete", (DL_FUNC) &_gdalraster_ogr_layer_delete, 2},
     {"_gdalraster_ogr_layer_field_names", (DL_FUNC) &_gdalraster_ogr_layer_field_names, 2},
     {"_gdalraster_ogr_field_index", (DL_FUNC) &_gdalraster_ogr_field_index, 3},
-    {"_gdalraster_ogr_field_create", (DL_FUNC) &_gdalraster_ogr_field_create, 10},
+    {"_gdalraster_ogr_field_create", (DL_FUNC) &_gdalraster_ogr_field_create, 11},
     {"_gdalraster_ogr_geom_field_create", (DL_FUNC) &_gdalraster_ogr_geom_field_create, 6},
     {"_gdalraster_ogr_field_rename", (DL_FUNC) &_gdalraster_ogr_field_rename, 4},
+    {"_gdalraster_ogr_field_set_domain_name", (DL_FUNC) &_gdalraster_ogr_field_set_domain_name, 4},
     {"_gdalraster_ogr_field_delete", (DL_FUNC) &_gdalraster_ogr_field_delete, 3},
     {"_gdalraster_ogr_execute_sql", (DL_FUNC) &_gdalraster_ogr_execute_sql, 4},
     {"_gdalraster_epsg_to_wkt", (DL_FUNC) &_gdalraster_epsg_to_wkt, 2},

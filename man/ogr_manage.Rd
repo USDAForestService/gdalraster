@@ -8,6 +8,9 @@
 \alias{ogr_ds_create}
 \alias{ogr_ds_layer_count}
 \alias{ogr_ds_layer_names}
+\alias{ogr_ds_field_domain_names}
+\alias{ogr_ds_add_field_domain}
+\alias{ogr_ds_delete_field_domain}
 \alias{ogr_layer_exists}
 \alias{ogr_layer_test_cap}
 \alias{ogr_layer_create}
@@ -18,6 +21,7 @@
 \alias{ogr_field_create}
 \alias{ogr_geom_field_create}
 \alias{ogr_field_rename}
+\alias{ogr_field_set_domain_name}
 \alias{ogr_field_delete}
 \alias{ogr_execute_sql}
 \title{Utility functions for managing vector data sources}
@@ -46,6 +50,12 @@ ogr_ds_create(
 ogr_ds_layer_count(dsn)
 
 ogr_ds_layer_names(dsn)
+
+ogr_ds_field_domain_names(dsn)
+
+ogr_ds_add_field_domain(dsn, fld_dom_defn)
+
+ogr_ds_delete_field_domain(dsn, domain_name)
 
 ogr_layer_exists(dsn, layer)
 
@@ -80,7 +90,8 @@ ogr_field_create(
   fld_precision = 0L,
   is_nullable = TRUE,
   is_unique = FALSE,
-  default_value = ""
+  default_value = "",
+  domain_name = NULL
 )
 
 ogr_geom_field_create(
@@ -95,6 +106,8 @@ ogr_geom_field_create(
 
 ogr_field_rename(dsn, layer, fld_name, new_name)
 
+ogr_field_set_domain_name(dsn, layer, fld_name, domain_name)
+
 ogr_field_delete(dsn, layer, fld_name)
 
 ogr_execute_sql(dsn, sql, spatial_filter = NULL, dialect = NULL)
@@ -103,7 +116,7 @@ ogr_execute_sql(dsn, sql, spatial_filter = NULL, dialect = NULL)
 \item{dsn}{Character string. The vector data source name, e.g., a filename
 or database connection string.}
 
-\item{with_update}{Logical scalar. \code{TRUE} to request update access when
+\item{with_update}{Logical value. \code{TRUE} to request update access when
 opening the dataset, or \code{FALSE} to open read-only.}
 
 \item{format}{GDAL short name of the vector format as character string.
@@ -139,7 +152,7 @@ as OGC WKT or other well-known format (e.g., the input formats usable with
 in \code{layer}.}
 
 \item{fld_type}{Character string containing the name of a field data type
-(e.g., \code{OFTInteger}, \code{OFTReal}, \code{OFTString}).}
+(e.g., \code{"OFTInteger"}, \code{"OFTInteger64"}, \code{"OFTReal"}, \code{"OFTString"}, ...).}
 
 \item{dsco}{Optional character vector of format-specific creation options
 for \code{dsn} (\code{"NAME=VALUE"} pairs).}
@@ -147,13 +160,18 @@ for \code{dsn} (\code{"NAME=VALUE"} pairs).}
 \item{lco}{Optional character vector of format-specific creation options
 for \code{layer} (\code{"NAME=VALUE"} pairs).}
 
-\item{overwrite}{Logical scalar. \code{TRUE} to overwrite \code{dsn} if it already
+\item{overwrite}{Logical value. \code{TRUE} to overwrite \code{dsn} if it already
 exists when calling \code{ogr_ds_create()}. Default is \code{FALSE}.}
 
-\item{return_obj}{Logical scalar. If \code{TRUE}, an object of class
+\item{return_obj}{Logical value. If \code{TRUE}, an object of class
 \code{\link{GDALVector}} open on the newly created layer will be
 returned. Defaults to \code{FALSE}. Must be used with either the \code{layer} or
 \code{layer_defn} arguments.}
+
+\item{fld_dom_defn}{A field domain definition, i.e., a list generated with
+\code{\link[=ogr_def_field_domain]{ogr_def_field_domain()}}.}
+
+\item{domain_name}{Character string specifying the name of the field domain.}
 
 \item{new_name}{Character string containing a new name to assign.}
 
@@ -162,27 +180,26 @@ Additional arguments in \code{ogr_field_create()} will be ignored if a \code{fld
 is given.}
 
 \item{fld_subtype}{Character string containing the name of a field subtype.
-One of  \code{OFSTNone} (the default), \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32},
-\code{OFSTJSON}, \code{OFSTUUID}.}
+One of \code{"OFSTNone"} (the default), \code{"OFSTBoolean"}, \code{"OFSTInt16"},
+\code{"OFSTFloat32"}, \code{"OFSTJSON"}, \code{"OFSTUUID"}.}
 
-\item{fld_width}{Optional integer scalar specifying max number of characters.}
+\item{fld_width}{Optional integer value specifying max number of characters.}
 
-\item{fld_precision}{Optional integer scalar specifying number of digits
+\item{fld_precision}{Optional integer value specifying number of digits
 after the decimal point.}
 
-\item{is_nullable}{Optional NOT NULL field constraint (logical scalar).
+\item{is_nullable}{Optional NOT NULL field constraint (logical value).
 Defaults to \code{TRUE}.}
 
-\item{is_unique}{Optional UNIQUE constraint on the field (logical scalar).
+\item{is_unique}{Optional UNIQUE constraint on the field (logical value).
 Defaults to \code{FALSE}.}
 
 \item{default_value}{Optional default value for the field as a character
 string.}
 
-\item{geom_fld_defn}{A geometry field definition as list
-(see \code{\link[=ogr_def_geom_field]{ogr_def_geom_field()}}).
-Additional arguments in \code{ogr_geom_field_create()} will be ignored if a
-\code{geom_fld_defn} is given.}
+\item{geom_fld_defn}{A geometry field definition as list (see
+\code{\link[=ogr_def_geom_field]{ogr_def_geom_field()}}). Additional arguments in \code{ogr_geom_field_create()}
+will be ignored if a \code{geom_fld_defn} is given.}
 
 \item{sql}{Character string containing an SQL statement (see Note).}
 
@@ -197,8 +214,9 @@ given. The \code{"SQLite"} dialect can also be used (see Note).}
 \description{
 This set of functions can be used to create new vector datasets,
 test existence of dataset/layer/field, test dataset and layer capabilities,
-create new layers in an existing dataset, delete layers, create new
-attribute and geometry fields on an existing layer, rename and delete
+create new layers in an existing dataset, get the names of field domains
+stored in a dataset, write field domains in a dataset, delete layers, create
+new attribute and geometry fields on an existing layer, rename and delete
 fields, and edit data with SQL statements.
 }
 \details{
@@ -209,7 +227,7 @@ Vector API (ogr_core.h and ogr_api.h,
 
 \code{ogr_ds_exists()} tests whether a vector dataset can be opened from the
 given data source name (DSN), potentially testing for update access.
-Returns a logical scalar.
+Returns a logical value.
 
 \code{ogr_ds_format()} returns a character string containing the short name of
 the format driver for a given DSN, or \code{NULL} if the dataset cannot be
@@ -222,23 +240,29 @@ returned if \code{dsn} cannot be opened with the requested access.
 Wrapper of \code{GDALDatasetTestCapability()} in the GDAL API.
 The returned list contains the following named elements:
 \itemize{
-\item \code{CreateLayer}: \code{TRUE} if this datasource can create new layers
-\item \code{DeleteLayer}: \code{TRUE} if this datasource can delete existing layers
+\item \code{CreateLayer}: \code{TRUE} if this dataset can create new layers
+\item \code{DeleteLayer}: \code{TRUE} if this dataset can delete existing layers
 \item \code{CreateGeomFieldAfterCreateLayer}: \code{TRUE} if the layers of this
-datasource support geometry field creation just after layer creation
-\item \code{CurveGeometries}: \code{TRUE} if this datasource supports curve geometries
-\item \code{Transactions}: \code{TRUE} if this datasource supports (efficient)
+dataset supports geometry field creation just after layer creation
+\item \code{CurveGeometries}: \code{TRUE} if this dataset supports curve geometries
+\item \code{Transactions}: \code{TRUE} if this dataset supports (efficient)
 transactions
-\item \code{EmulatedTransactions}: \code{TRUE} if this datasource supports transactions
+\item \code{EmulatedTransactions}: \code{TRUE} if this dataset supports transactions
 through emulation
-\item \code{RandomLayerRead}: \code{TRUE} if this datasource has a dedicated
+\item \code{RandomLayerRead}: \code{TRUE} if this dataset has a dedicated
 \code{GetNextFeature()} implementation, potentially returning features from
 layers in a non-sequential way
-\item \code{RandomLayerWrite}: \code{TRUE} if this datasource supports calling
+\item \code{RandomLayerWrite}: \code{TRUE} if this dataset supports calling
 \code{CreateFeature()} on layers in a non-sequential way
+\item \code{AddFieldDomain}: \code{TRUE} if this dataset supports adding field domains
+(GDAL >= 3.3)
+\item \code{DeleteFieldDomain}: \code{TRUE} if this dataset supports deleting field
+domains (GDAL >= 3.5)
+\code{UpdateFieldDomain}: \code{TRUE} if this dataset supports updating a an existing
+field domain by replacing its definition (GDAL >= 3.5)
 }
 
-\code{ogr_ds_create()} creates a new vector datasource, optionally also creating
+\code{ogr_ds_create()} creates a new vector dataset, optionally also creating
 a layer, and optionally creating one or more fields on the layer.
 The attribute fields and geometry field(s) to create can be specified as a
 feature class definition (\code{layer_defn} as list, see \link{ogr_define}), or
@@ -254,8 +278,27 @@ the operation fails.
 \code{ogr_ds_layer_names()} returns a character vector of layer names in a
 vector dataset, or \code{NULL} if no layers are found.
 
+\code{ogr_ds_field_domain_names()} returns a character vector with the names of
+all field domains stored in the dataset. Returns \code{NULL} and emits a warning
+if an error occurs or if the format does not support reading field domains.
+Returns a character vector of length 0 (\code{character(0)}) if the format
+supports field domains but none are present in the dataset.
+Requires GDAL >= 3.5. See \link{ogr_define} for information on field domains.
+
+\code{ogr_ds_add_field_domain()} adds a field domain to a vector dataset. Only a
+few drivers will support this operation, and some of them might only support
+it only for some types of field domains. GeoPackage and OpenFileGDB drivers
+support this operation. A dataset having at least some support should report
+the \code{AddFieldDomain} dataset capability (see \code{ogr_ds_test_cap()}above).
+Returns a logical value, \code{TRUE} indicating success. Requires GDAL >= 3.3.
+
+\code{ogr_ds_delete_field_domain()} deletes a field domain from a vector dataset
+if supported (see \code{ogr_ds_test_cap()}above for the \code{DeleteFieldDomain}
+dataset capability). Returns a logical value, \code{TRUE} indicating success.
+Requires GDAL >= 3.5.
+
 \code{ogr_layer_exists()} tests whether a layer can be accessed by name in a
-given vector dataset. Returns a logical scalar.
+given vector dataset. Returns a logical value
 
 \code{ogr_layer_test_cap()} tests whether a layer supports named capabilities,
 attempting to open the dataset with update access by default.
@@ -287,11 +330,11 @@ if \code{NULL} is given for the \code{layer} argument.
 \code{ogr_layer_rename()} renames a layer in a vector dataset. This operation is
 implemented only by layers that expose the \code{Rename} capability (see
 \code{ogr_layer_test_cap()} above). This operation will fail if a layer with the
-new name already exists. Returns a logical scalar, \code{TRUE} indicating success.
+new name already exists. Returns a logical value, \code{TRUE} indicating success.
 Requires GDAL >= 3.5.
 
 \code{ogr_layer_delete()} deletes an existing layer in a vector dataset.
-Returns a logical scalar, \code{TRUE} indicating success.
+Returns a logical value, \code{TRUE} indicating success.
 
 \code{ogr_field_index()} tests for existence of an attribute field by name.
 Returns the field index on the layer (0-based), or \code{-1} if the field does
@@ -299,21 +342,26 @@ not exist.
 
 \code{ogr_field_create()} creates a new attribute field of specified data type in
 a given DSN/layer. Several optional field properties can be specified in
-addition to the type. Returns a logical scalar, \code{TRUE} indicating success.
+addition to the type. Returns a logical value, \code{TRUE} indicating success.
 
 \code{ogr_geom_field_create()} creates a new geometry field of specified type in
-a given DSN/layer. Returns a logical scalar, \code{TRUE} indicating success.
+a given DSN/layer. Returns a logical value, \code{TRUE} indicating success.
 
 \code{ogr_field_rename()} renames an existing field on a vector layer.
 Not all format drivers support this function. Some drivers may only support
 renaming a field while there are still no features in the layer.
 \code{AlterFieldDefn} is the relevant layer capability to check.
-Returns a logical scalar, \code{TRUE} indicating success.
+Returns a logical value, \code{TRUE} indicating success.
+
+\code{ogr_field_set_domain_name()} sets the field domain name for an existing
+attribute field on a vector layer. \code{AlterFieldDefn} layer capability is
+required. Returns a logical value, \code{TRUE} indicating success.
+Requires GDAL >= 3.3.
 
 \code{ogr_field_delete()} deletes an existing field on a vector layer.
 Not all format drivers support this function. Some drivers may only support
 deleting a field while there are still no features in the layer.
-Returns a logical scalar, \code{TRUE} indicating success.
+Returns a logical value, \code{TRUE} indicating success.
 
 \code{ogr_execute_sql()} executes an SQL statement against the data store.
 This function can be used to modify the schema or edit data using SQL

@@ -2522,6 +2522,27 @@ bbox_to_wkt <- function(bbox, extend_x = 0, extend_y = 0) {
     .Call(`_gdalraster_ogr_ds_layer_names`, dsn)
 }
 
+#' Return a list of the names of all field domains stored in the dataset
+#'
+#' @noRd
+.ogr_ds_field_domain_names <- function(dsn) {
+    .Call(`_gdalraster_ogr_ds_field_domain_names`, dsn)
+}
+
+#' Add a field domain to a dataset
+#'
+#' @noRd
+.ogr_ds_add_field_domain <- function(dsn, fld_dom_defn) {
+    .Call(`_gdalraster_ogr_ds_add_field_domain`, dsn, fld_dom_defn)
+}
+
+#' Delete a field domain from a dataset
+#'
+#' @noRd
+.ogr_ds_delete_field_domain <- function(dsn, domain_name) {
+    .Call(`_gdalraster_ogr_ds_delete_field_domain`, dsn, domain_name)
+}
+
 #' Does layer exist
 #'
 #' @noRd
@@ -2567,8 +2588,8 @@ bbox_to_wkt <- function(bbox, extend_x = 0, extend_y = 0) {
 #' Create a new field on layer
 #'
 #' @noRd
-.ogr_field_create <- function(dsn, layer, fld_name, fld_type, fld_subtype = "OFSTNone", fld_width = 0L, fld_precision = 0L, is_nullable = TRUE, is_unique = FALSE, default_value = "") {
-    .Call(`_gdalraster_ogr_field_create`, dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_unique, default_value)
+.ogr_field_create <- function(dsn, layer, fld_name, fld_type, fld_subtype = "OFSTNone", fld_width = 0L, fld_precision = 0L, is_nullable = TRUE, is_unique = FALSE, default_value = "", domain_name = "") {
+    .Call(`_gdalraster_ogr_field_create`, dsn, layer, fld_name, fld_type, fld_subtype, fld_width, fld_precision, is_nullable, is_unique, default_value, domain_name)
 }
 
 #' Create a new geom field on layer
@@ -2583,6 +2604,13 @@ bbox_to_wkt <- function(bbox, extend_x = 0, extend_y = 0) {
 #' @noRd
 .ogr_field_rename <- function(dsn, layer, fld_name, new_name) {
     .Call(`_gdalraster_ogr_field_rename`, dsn, layer, fld_name, new_name)
+}
+
+#' Set the field domain of an existing attribute field on a vector layer
+#'
+#' @noRd
+.ogr_field_set_domain_name <- function(dsn, layer, fld_name, domain_name) {
+    .Call(`_gdalraster_ogr_field_set_domain_name`, dsn, layer, fld_name, domain_name)
 }
 
 #' Delete an attribute field on a vector layer

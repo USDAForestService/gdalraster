@@ -5,8 +5,9 @@
 #'
 #' This set of functions can be used to create new vector datasets,
 #' test existence of dataset/layer/field, test dataset and layer capabilities,
-#' create new layers in an existing dataset, delete layers, create new
-#' attribute and geometry fields on an existing layer, rename and delete
+#' create new layers in an existing dataset, get the names of field domains
+#' stored in a dataset, write field domains in a dataset, delete layers, create
+#' new attribute and geometry fields on an existing layer, rename and delete
 #' fields, and edit data with SQL statements.
 #'
 #' @name ogr_manage
@@ -18,7 +19,7 @@
 #'
 #' `ogr_ds_exists()` tests whether a vector dataset can be opened from the
 #' given data source name (DSN), potentially testing for update access.
-#' Returns a logical scalar.
+#' Returns a logical value.
 #'
 #' `ogr_ds_format()` returns a character string containing the short name of
 #' the format driver for a given DSN, or `NULL` if the dataset cannot be
@@ -30,22 +31,28 @@
 #' returned if `dsn` cannot be opened with the requested access.
 #' Wrapper of `GDALDatasetTestCapability()` in the GDAL API.
 #' The returned list contains the following named elements:
-#' * `CreateLayer`: `TRUE` if this datasource can create new layers
-#' * `DeleteLayer`: `TRUE` if this datasource can delete existing layers
+#' * `CreateLayer`: `TRUE` if this dataset can create new layers
+#' * `DeleteLayer`: `TRUE` if this dataset can delete existing layers
 #' * `CreateGeomFieldAfterCreateLayer`: `TRUE` if the layers of this
-#' datasource support geometry field creation just after layer creation
-#' * `CurveGeometries`: `TRUE` if this datasource supports curve geometries
-#' * `Transactions`: `TRUE` if this datasource supports (efficient)
+#' dataset supports geometry field creation just after layer creation
+#' * `CurveGeometries`: `TRUE` if this dataset supports curve geometries
+#' * `Transactions`: `TRUE` if this dataset supports (efficient)
 #' transactions
-#' * `EmulatedTransactions`: `TRUE` if this datasource supports transactions
+#' * `EmulatedTransactions`: `TRUE` if this dataset supports transactions
 #' through emulation
-#' * `RandomLayerRead`: `TRUE` if this datasource has a dedicated
+#' * `RandomLayerRead`: `TRUE` if this dataset has a dedicated
 #' `GetNextFeature()` implementation, potentially returning features from
 #' layers in a non-sequential way
-#' * `RandomLayerWrite`: `TRUE` if this datasource supports calling
+#' * `RandomLayerWrite`: `TRUE` if this dataset supports calling
 #' `CreateFeature()` on layers in a non-sequential way
+#' * `AddFieldDomain`: `TRUE` if this dataset supports adding field domains
+#' (GDAL >= 3.3)
+#' * `DeleteFieldDomain`: `TRUE` if this dataset supports deleting field
+#' domains (GDAL >= 3.5)
+#' `UpdateFieldDomain`: `TRUE` if this dataset supports updating a an existing
+#' field domain by replacing its definition (GDAL >= 3.5)
 #'
-#' `ogr_ds_create()` creates a new vector datasource, optionally also creating
+#' `ogr_ds_create()` creates a new vector dataset, optionally also creating
 #' a layer, and optionally creating one or more fields on the layer.
 #' The attribute fields and geometry field(s) to create can be specified as a
 #' feature class definition (`layer_defn` as list, see [ogr_define]), or
@@ -61,8 +68,27 @@
 #' `ogr_ds_layer_names()` returns a character vector of layer names in a
 #' vector dataset, or `NULL` if no layers are found.
 #'
+#' `ogr_ds_field_domain_names()` returns a character vector with the names of
+#' all field domains stored in the dataset. Returns `NULL` and emits a warning
+#' if an error occurs or if the format does not support reading field domains.
+#' Returns a character vector of length 0 (`character(0)`) if the format
+#' supports field domains but none are present in the dataset.
+#' Requires GDAL >= 3.5. See [ogr_define] for information on field domains.
+#'
+#' `ogr_ds_add_field_domain()` adds a field domain to a vector dataset. Only a
+#' few drivers will support this operation, and some of them might only support
+#' it only for some types of field domains. GeoPackage and OpenFileGDB drivers
+#' support this operation. A dataset having at least some support should report
+#' the `AddFieldDomain` dataset capability (see `ogr_ds_test_cap()`above).
+#' Returns a logical value, `TRUE` indicating success. Requires GDAL >= 3.3.
+#'
+#' `ogr_ds_delete_field_domain()` deletes a field domain from a vector dataset
+#' if supported (see `ogr_ds_test_cap()`above for the `DeleteFieldDomain`
+#' dataset capability). Returns a logical value, `TRUE` indicating success.
+#' Requires GDAL >= 3.5.
+#'
 #' `ogr_layer_exists()` tests whether a layer can be accessed by name in a
-#' given vector dataset. Returns a logical scalar.
+#' given vector dataset. Returns a logical value
 #'
 #' `ogr_layer_test_cap()` tests whether a layer supports named capabilities,
 #' attempting to open the dataset with update access by default.
@@ -94,11 +120,11 @@
 #' `ogr_layer_rename()` renames a layer in a vector dataset. This operation is
 #' implemented only by layers that expose the `Rename` capability (see
 #' `ogr_layer_test_cap()` above). This operation will fail if a layer with the
-#' new name already exists. Returns a logical scalar, `TRUE` indicating success.
+#' new name already exists. Returns a logical value, `TRUE` indicating success.
 #' Requires GDAL >= 3.5.
 #'
 #' `ogr_layer_delete()` deletes an existing layer in a vector dataset.
-#' Returns a logical scalar, `TRUE` indicating success.
+#' Returns a logical value, `TRUE` indicating success.
 #'
 #' `ogr_field_index()` tests for existence of an attribute field by name.
 #' Returns the field index on the layer (0-based), or `-1` if the field does
@@ -106,21 +132,26 @@
 #'
 #' `ogr_field_create()` creates a new attribute field of specified data type in
 #' a given DSN/layer. Several optional field properties can be specified in
-#' addition to the type. Returns a logical scalar, `TRUE` indicating success.
+#' addition to the type. Returns a logical value, `TRUE` indicating success.
 #'
 #' `ogr_geom_field_create()` creates a new geometry field of specified type in
-#' a given DSN/layer. Returns a logical scalar, `TRUE` indicating success.
+#' a given DSN/layer. Returns a logical value, `TRUE` indicating success.
 #'
 #' `ogr_field_rename()` renames an existing field on a vector layer.
 #' Not all format drivers support this function. Some drivers may only support
 #' renaming a field while there are still no features in the layer.
 #' `AlterFieldDefn` is the relevant layer capability to check.
-#' Returns a logical scalar, `TRUE` indicating success.
+#' Returns a logical value, `TRUE` indicating success.
+#'
+#' `ogr_field_set_domain_name()` sets the field domain name for an existing
+#' attribute field on a vector layer. `AlterFieldDefn` layer capability is
+#' required. Returns a logical value, `TRUE` indicating success.
+#' Requires GDAL >= 3.3.
 #'
 #' `ogr_field_delete()` deletes an existing field on a vector layer.
 #' Not all format drivers support this function. Some drivers may only support
 #' deleting a field while there are still no features in the layer.
-#' Returns a logical scalar, `TRUE` indicating success.
+#' Returns a logical value, `TRUE` indicating success.
 #'
 #' `ogr_execute_sql()` executes an SQL statement against the data store.
 #' This function can be used to modify the schema or edit data using SQL
@@ -132,7 +163,7 @@
 #'
 #' @param dsn Character string. The vector data source name, e.g., a filename
 #' or database connection string.
-#' @param with_update Logical scalar. `TRUE` to request update access when
+#' @param with_update Logical value. `TRUE` to request update access when
 #' opening the dataset, or `FALSE` to open read-only.
 #' @param format GDAL short name of the vector format as character string.
 #' Examples of some common output formats include: `"GPKG"`, `"FlatGeobuf"`,
@@ -164,28 +195,30 @@
 #' Additional arguments in `ogr_field_create()` will be ignored if a `fld_defn`
 #' is given.
 #' @param fld_type Character string containing the name of a field data type
-#' (e.g., `OFTInteger`, `OFTReal`, `OFTString`).
+#' (e.g., `"OFTInteger"`, `"OFTInteger64"`, `"OFTReal"`, `"OFTString"`, ...).
 #' @param fld_subtype Character string containing the name of a field subtype.
-#' One of  `OFSTNone` (the default), `OFSTBoolean`, `OFSTInt16`, `OFSTFloat32`,
-#' `OFSTJSON`, `OFSTUUID`.
-#' @param fld_width Optional integer scalar specifying max number of characters.
-#' @param fld_precision Optional integer scalar specifying number of digits
+#' One of `"OFSTNone"` (the default), `"OFSTBoolean"`, `"OFSTInt16"`,
+#' `"OFSTFloat32"`, `"OFSTJSON"`, `"OFSTUUID"`.
+#' @param fld_width Optional integer value specifying max number of characters.
+#' @param fld_precision Optional integer value specifying number of digits
 #' after the decimal point.
-#' @param is_nullable Optional NOT NULL field constraint (logical scalar).
+#' @param is_nullable Optional NOT NULL field constraint (logical value).
 #' Defaults to `TRUE`.
-#' @param is_unique Optional UNIQUE constraint on the field (logical scalar).
+#' @param is_unique Optional UNIQUE constraint on the field (logical value).
 #' Defaults to `FALSE`.
 #' @param default_value Optional default value for the field as a character
 #' string.
-#' @param geom_fld_defn A geometry field definition as list
-#' (see [ogr_def_geom_field()]).
-#' Additional arguments in `ogr_geom_field_create()` will be ignored if a
-#' `geom_fld_defn` is given.
+#' @param domain_name Character string specifying the name of the field domain.
+#' @param geom_fld_defn A geometry field definition as list (see
+#' [ogr_def_geom_field()]). Additional arguments in `ogr_geom_field_create()`
+#' will be ignored if a `geom_fld_defn` is given.
 #' @param new_name Character string containing a new name to assign.
 #' @param dsco Optional character vector of format-specific creation options
 #' for `dsn` (`"NAME=VALUE"` pairs).
 #' @param lco Optional character vector of format-specific creation options
 #' for `layer` (`"NAME=VALUE"` pairs).
+#' @param fld_dom_defn A field domain definition, i.e., a list generated with
+#' [ogr_def_field_domain()].
 #' @param sql Character string containing an SQL statement (see Note).
 #' @param spatial_filter Either a numeric vector of length four containing a
 #' bounding box (xmin, ymin, xmax, ymax), or a character string containing a
@@ -193,9 +226,9 @@
 #' @param dialect Character string specifying the SQL dialect to use.
 #' The OGR SQL engine (`"OGRSQL"`) will be used by default if a value is not
 #' given. The `"SQLite"` dialect can also be used (see Note).
-#' @param overwrite Logical scalar. `TRUE` to overwrite `dsn` if it already
+#' @param overwrite Logical value. `TRUE` to overwrite `dsn` if it already
 #' exists when calling `ogr_ds_create()`. Default is `FALSE`.
-#' @param return_obj Logical scalar. If `TRUE`, an object of class
+#' @param return_obj Logical value. If `TRUE`, an object of class
 #' [`GDALVector`][GDALVector] open on the newly created layer will be
 #' returned. Defaults to `FALSE`. Must be used with either the `layer` or
 #' `layer_defn` arguments.
@@ -401,12 +434,12 @@ ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
     if (is.null(overwrite))
         stop("'overwrite' must be a logical value", call. = FALSE)
     if (!is.logical(overwrite) || length(overwrite) > 1)
-        stop("'overwrite' must be a logical scalar", call. = FALSE)
+        stop("'overwrite' must be a single logical value", call. = FALSE)
     # return_obj
     if (is.null(return_obj))
         stop("'return_obj' must be a logical value", call. = FALSE)
     if (!is.logical(return_obj) || length(return_obj) > 1)
-        stop("'return_obj' must be a logical scalar", call. = FALSE)
+        stop("'return_obj' must be a single logical value", call. = FALSE)
     if (return_obj && layer == "" && is.null(layer_defn)) {
         stop("'layer' or 'layer_defn' must be given with 'return_obj = TRUE'",
              call. = FALSE)
@@ -448,6 +481,52 @@ ogr_ds_layer_names <- function(dsn) {
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
 
     return(.ogr_ds_layer_names(dsn))
+}
+
+#' @name ogr_manage
+#' @export
+ogr_ds_field_domain_names <- function(dsn) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+
+    return(.ogr_ds_field_domain_names(dsn))
+}
+
+#' @name ogr_manage
+#' @export
+ogr_ds_add_field_domain <- function(dsn, fld_dom_defn) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+
+    if (!is.list(fld_dom_defn) || is.data.frame(fld_dom_defn))
+        stop("'fld_dom_defn' must be a list object", call. = FALSE)
+
+    if (ogr_ds_test_cap(dsn)$AddFieldDomain) {
+        return(.ogr_ds_add_field_domain(dsn, fld_dom_defn))
+    } else {
+        message("the dataset does not support AddFieldDomain")
+        return(FALSE)
+    }
+}
+
+#' @name ogr_manage
+#' @export
+ogr_ds_delete_field_domain <- function(dsn, domain_name) {
+    if (gdal_version_num() < gdal_compute_version(3, 5, 0))
+        stop("ogr_ds_delete_field_domain() requires GDAL >= 3.5", call. = FALSE)
+
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+
+    if (!(is.character(domain_name) && length(domain_name) == 1))
+        stop("'domain_name' must be a length-1 character vector", call. = FALSE)
+
+    if (ogr_ds_test_cap(dsn)$DeleteFieldDomain) {
+        return(ogr_ds_delete_field_domain(dsn, domain_name))
+    } else {
+        message("the dataset does not support DeleteFieldDomain")
+        return(FALSE)
+    }
 }
 
 #' @name ogr_manage
@@ -540,7 +619,7 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
     if (is.null(return_obj))
         stop("'return_obj' must be a logical value", call. = FALSE)
     if (!is.logical(return_obj) || length(return_obj) > 1)
-        stop("'return_obj' must be a logical scalar", call. = FALSE)
+        stop("'return_obj' must be a single logical value", call. = FALSE)
 
     # signature for ogr_layer_create() object factory
     lyr <- new(GDALVector, dsn, layer, layer_defn, geom_type, srs, lco, TRUE)
@@ -614,14 +693,31 @@ ogr_field_create <- function(dsn, layer, fld_name,
                              fld_precision = 0L,
                              is_nullable = TRUE,
                              is_unique = FALSE,
-                             default_value = "") {
+                             default_value = "",
+                             domain_name = NULL) {
 
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
+
     if (!(is.character(fld_name) && length(fld_name) == 1))
         stop("'fld_name' must be a length-1 character vector", call. = FALSE)
+
+    if (is.null(default_value))
+        default_value <- ""
+    else
+        default_value <- as.character(default_value)
+    if (!(length(default_value) == 1))
+        stop("'default_value' must be a length-1 character vector",
+             call. = FALSE)
+
+    if (is.null(domain_name))
+        domain_name <- ""
+    if (!(is.character(domain_name) && length(domain_name) == 1))
+        stop("'domain_name' must be a length-1 character vector",
+             call. = FALSE)
 
     if (!ogr_ds_exists(dsn, with_update = TRUE))
         stop("'dsn' does not exist, or no update access", call. = FALSE)
@@ -671,11 +767,16 @@ ogr_field_create <- function(dsn, layer, fld_name,
             default_value <- fld_defn$default
         else
             default_value <- ""
+
+        if (!is.null(fld_defn$domain))
+            domain_name <- fld_defn$domain
+        else
+            domain_name <- ""
     }
 
     return(.ogr_field_create(dsn, layer, fld_name, fld_type, fld_subtype,
                              fld_width, fld_precision, is_nullable, is_unique,
-                             default_value))
+                             default_value, domain_name))
 }
 
 #' @name ogr_manage
@@ -750,6 +851,21 @@ ogr_field_rename <- function(dsn, layer, fld_name, new_name) {
         stop("'new_name' must be a length-1 character vector", call. = FALSE)
 
     return(.ogr_field_rename(dsn, layer, fld_name, new_name))
+}
+
+#' @name ogr_manage
+#' @export
+ogr_field_set_domain_name <- function(dsn, layer, fld_name, domain_name) {
+    if (!(is.character(dsn) && length(dsn) == 1))
+        stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(layer) && length(layer) == 1))
+        stop("'layer' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(fld_name) && length(fld_name) == 1))
+        stop("'fld_name' must be a length-1 character vector", call. = FALSE)
+    if (!(is.character(domain_name) && length(domain_name) == 1))
+        stop("'domain_name' must be a length-1 character vector", call. = FALSE)
+
+    return(.ogr_field_set_domain_name(dsn, layer, fld_name, domain_name))
 }
 
 #' @name ogr_manage

@@ -163,6 +163,14 @@ int ogr_ds_layer_count(const std::string &dsn);
 
 SEXP ogr_ds_layer_names(const std::string &dsn);
 
+SEXP ogr_ds_field_domain_names(const std::string &dsn);
+
+bool ogr_ds_add_field_domain(const std::string &dsn,
+                             const Rcpp::List &fld_dom_defn);
+
+bool ogr_ds_delete_field_domain(const std::string &dsn,
+                                const std::string &domain_name);
+
 bool ogr_layer_exists(const std::string &dsn, const std::string &layer);
 
 SEXP ogr_layer_test_cap(const std::string &dsn, const std::string &layer,
@@ -196,13 +204,15 @@ bool CreateField_(GDALDatasetH hDS, OGRLayerH hLayer,
                   const std::string &fld_name,
                   const std::string &fld_type, const std::string &fld_subtype,
                   int fld_width, int fld_precision, bool is_nullable,
-                  bool is_unique, const std::string &default_value);
+                  bool is_unique, const std::string &default_value,
+                  const std::string &domain_name);
 
 bool ogr_field_create(const std::string &dsn, const std::string &layer,
                       const std::string &fld_name, const std::string &fld_type,
                       const std::string &fld_subtype, int fld_width ,
                       int fld_precision, bool is_nullable,
-                      bool is_unique, const std::string &default_value);
+                      bool is_unique, const std::string &default_value,
+                      const std::string &domain_name);
 
 // internal CreateGeomField
 bool CreateGeomField_(GDALDatasetH hDS, OGRLayerH hLayer,
@@ -218,6 +228,11 @@ bool ogr_geom_field_create(const std::string &dsn, const std::string &layer,
 bool ogr_field_rename(const std::string &dsn, const std::string &layer,
                       const std::string &fld_name,
                       const std::string &new_name);
+
+bool ogr_field_set_domain_name(const std::string &dsn,
+                               const std::string &layer,
+                               const std::string &fld_name,
+                               const std::string &domain_name);
 
 bool ogr_field_delete(const std::string &dsn, const std::string &layer,
                       const std::string &fld_name);

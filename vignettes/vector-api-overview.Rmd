@@ -72,6 +72,7 @@ Several of the stand-alone `ogr_*()` functions are grouped under the documentati
 * delete layers
 * create new attribute and geometry fields on an existing layer
 * rename and delete fields
+* read and write field domains
 * edit data with SQL statements
 
 `ogr_define` provides documentation and helper functions for defining feature classes. An OGR feature class definition (a.k.a. layer definition) is modeled in R as a named list containing zero or more attribute field definitions, along with one or more geometry field definitions. Specifications of the the list structures for these definitions are given in `?ogr_define`. The associated helper functions make it easy to create new layer definitions from scratch or modify an existing definition. A layer definition is convenient but not required for creating a new vector dataset, or a new layer within an existing dataset, using `ogr_ds_create()` / `ogr_layer_create()`.

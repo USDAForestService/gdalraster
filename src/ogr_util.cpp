@@ -3,12 +3,14 @@
    Copyright (c) 2023-2024 gdalraster authors
 */
 
+#include <cstdint>
 #include <vector>
 
 #include "gdal.h"
 #include "cpl_port.h"
 #include "cpl_error.h"
 #include "cpl_string.h"
+#include "cpl_time.h"
 #include "ogr_srs_api.h"
 
 #include "gdalraster.h"
@@ -175,6 +177,23 @@ SEXP ogr_ds_test_cap(const std::string &dsn, bool with_update = true) {
             GDALDatasetTestCapability(hDS, ODsCRandomLayerRead)),
         Rcpp::Named("RandomLayerWrite") = static_cast<bool>(
             GDALDatasetTestCapability(hDS, ODsCRandomLayerWrite)));
+
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 3, 0)
+        cap.push_back(
+            static_cast<bool>(
+                GDALDatasetTestCapability(hDS, ODsCAddFieldDomain)),
+            "AddFieldDomain");
+#endif
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 5, 0)
+        cap.push_back(
+            static_cast<bool>(
+                GDALDatasetTestCapability(hDS, ODsCDeleteFieldDomain)),
+            "DeleteFieldDomain");
+        cap.push_back(
+            static_cast<bool>(
+                GDALDatasetTestCapability(hDS, ODsCUpdateFieldDomain)),
+            "UpdateFieldDomain");
+#endif
 
     GDALReleaseDataset(hDS);
     return cap;
@@ -353,6 +372,662 @@ SEXP ogr_ds_layer_names(const std::string &dsn) {
     return names;
 }
 
+//' Return a list of the names of all field domains stored in the dataset
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_ds_field_domain_names")]]
+SEXP ogr_ds_field_domain_names(const std::string &dsn) {
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 5, 0)
+    Rcpp::stop("'ogr_ds_field_domain_names() requires GDAL >= 3.5");
+
+#else
+    std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
+    GDALDatasetH hDS = nullptr;
+
+    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (hDS == nullptr) {
+        Rcpp::warning("failed to open dataset");
+        return R_NilValue;
+    }
+
+    GDALDriverH hDriver = GDALGetDatasetDriver(hDS);
+    char **papszMD = GDALGetMetadata(hDriver, nullptr);
+    if (!CPLFetchBool(papszMD, GDAL_DCAP_FIELD_DOMAINS, false)) {
+        Rcpp::warning("format does not support reading field domains");
+        GDALReleaseDataset(hDS);
+        return R_NilValue;
+    }
+
+    Rcpp::CharacterVector names = Rcpp::CharacterVector::create();
+    char **papszFldDomNames = nullptr;
+    papszFldDomNames = GDALDatasetGetFieldDomainNames(hDS, nullptr);
+    int items = CSLCount(papszFldDomNames);
+    if (items > 0) {
+        for (int i = 0; i < items; ++i) {
+            names.push_back(papszFldDomNames[i]);
+        }
+    }
+    CSLDestroy(papszFldDomNames);
+
+    GDALReleaseDataset(hDS);
+    return names;
+#endif
+}
+
+//' Add a field domain to a dataset
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_ds_add_field_domain")]]
+bool ogr_ds_add_field_domain(const std::string &dsn,
+                             const Rcpp::List &fld_dom_defn) {
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
+    Rcpp::stop("'ogr_ds_field_domain_names() requires GDAL >= 3.3");
+
+#else
+    std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
+    GDALDatasetH hDS = nullptr;
+    bool ret = false;
+
+    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+                     nullptr, nullptr, nullptr);
+
+    if (hDS == nullptr) {
+        Rcpp::stop("failed to open dataset");
+    }
+
+    //
+    // get the inputs common to all domain types
+    //
+
+    // domain type
+    if (!GDALDatasetTestCapability(hDS, ODsCAddFieldDomain)) {
+        GDALReleaseDataset(hDS);
+        Rcpp::stop("format does not support adding field domains");
+    }
+
+    if (!fld_dom_defn.containsElementNamed("type") ||
+        fld_dom_defn["type"] == R_NilValue ||
+        !Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["type"])) {
+
+        GDALReleaseDataset(hDS);
+        Rcpp::stop("'$type' must be a character string");
+    }
+    const std::string domain_type =
+            Rcpp::as<std::string>(fld_dom_defn["type"]);
+
+    // domain_name
+    if (!fld_dom_defn.containsElementNamed("domain_name") ||
+        fld_dom_defn["domain_name"] == R_NilValue ||
+        !Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["domain_name"])) {
+
+        GDALReleaseDataset(hDS);
+        Rcpp::stop("'$domain_name' must be a character string");
+    }
+    const std::string domain_name =
+            Rcpp::as<std::string>(fld_dom_defn["domain_name"]);
+
+    // optional description
+    std::string description = "";
+    if (fld_dom_defn.containsElementNamed("description") &&
+        fld_dom_defn["description"] != R_NilValue &&
+        Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["description"])) {
+
+        description = Rcpp::as<std::string>(fld_dom_defn["description"]);
+    }
+
+    // field_type
+    if (!fld_dom_defn.containsElementNamed("field_type") ||
+        fld_dom_defn["field_type"] == R_NilValue ||
+        !Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["field_type"])) {
+
+        GDALReleaseDataset(hDS);
+        Rcpp::stop("'$field_type' must be a character string");
+    }
+    const std::string field_type =
+            Rcpp::as<std::string>(fld_dom_defn["field_type"]);
+    OGRFieldType eFieldType = getOFT_(field_type);
+
+    // optional field_subtype
+    std::string field_subtype = "OFSTNone";
+    if (fld_dom_defn.containsElementNamed("field_subtype") &&
+        fld_dom_defn["field_subtype"] != R_NilValue &&
+        Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["field_subtype"])) {
+
+        field_subtype = Rcpp::as<std::string>(fld_dom_defn["field_subtype"]);
+    }
+    OGRFieldSubType eFieldSubType = getOFTSubtype_(field_subtype);
+
+    // split policy
+    std::string split_policy = "DEFAULT_VALUE";
+    OGRFieldDomainSplitPolicy eOFDSP;
+    if (fld_dom_defn.containsElementNamed("split_policy") &&
+        fld_dom_defn["split_policy"] != R_NilValue &&
+        Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["split_policy"])) {
+
+        split_policy = Rcpp::as<std::string>(fld_dom_defn["split_policy"]);
+    }
+    if (EQUAL(split_policy.c_str(), "DEFAULT_VALUE")) {
+        eOFDSP = OFDSP_DEFAULT_VALUE;
+    }
+    else if (EQUAL(split_policy.c_str(), "DUPLICATE")) {
+        eOFDSP = OFDSP_DUPLICATE;
+    }
+    else if (EQUAL(split_policy.c_str(), "GEOMETRY_RATIO")) {
+        eOFDSP = OFDSP_GEOMETRY_RATIO;
+    }
+    else {
+        GDALReleaseDataset(hDS);
+        Rcpp::stop("invalid '$split_policy'");
+    }
+
+    // merge policy
+    std::string merge_policy = "DEFAULT_VALUE";
+    OGRFieldDomainMergePolicy eOFDMP;
+    if (fld_dom_defn.containsElementNamed("merge_policy") &&
+        fld_dom_defn["merge_policy"] != R_NilValue &&
+        Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["merge_policy"])) {
+
+        merge_policy = Rcpp::as<std::string>(fld_dom_defn["merge_policy"]);
+    }
+    if (EQUAL(merge_policy.c_str(), "DEFAULT_VALUE")) {
+        eOFDMP = OFDMP_DEFAULT_VALUE;
+    }
+    else if (EQUAL(merge_policy.c_str(), "SUM")) {
+        eOFDMP = OFDMP_SUM;
+    }
+    else if (EQUAL(merge_policy.c_str(), "GEOMETRY_WEIGHTED")) {
+        eOFDMP = OFDMP_GEOMETRY_WEIGHTED;
+    }
+    else {
+        GDALReleaseDataset(hDS);
+        Rcpp::stop("invalid '$merge_policy'");
+    }
+
+    //
+    // create and add field domains
+    //
+
+    // Coded
+    if (EQUAL(domain_type.c_str(), "coded")) {
+        Rcpp::CharacterVector coded_values;
+        std::vector<OGRCodedValue> ogr_coded_values;
+
+        if (!fld_dom_defn.containsElementNamed("coded_values") ||
+            fld_dom_defn["coded_values"] == R_NilValue ||
+            !Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["coded_values"])) {
+
+            GDALReleaseDataset(hDS);
+            Rcpp::stop("'$coded_values' must be a character vector");
+        }
+        else {
+            coded_values = Rcpp::as<Rcpp::CharacterVector>(
+                            fld_dom_defn["coded_values"]);
+
+            if (coded_values.size() == 0) {
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'coded_values' is empty");
+            }
+        }
+        for (Rcpp::CharacterVector::iterator i = coded_values.begin();
+             i != coded_values.end(); ++i) {
+
+            char **papszTokens = CSLTokenizeString2(*i, "=",
+                    CSLT_STRIPLEADSPACES | CSLT_STRIPENDSPACES);
+
+            if (CSLCount(papszTokens) < 1 || CSLCount(papszTokens) > 2) {
+                GDALReleaseDataset(hDS);
+                Rcpp::stop(
+                    "elements of 'coded_values' must be \"CODE\" or \"CODE=VALUE\"");
+            }
+
+            OGRCodedValue cv;
+            cv.pszCode = CPLStrdup(papszTokens[0]);
+            if (CSLCount(papszTokens) == 2)
+                cv.pszValue = CPLStrdup(papszTokens[1]);
+            else
+                cv.pszValue = nullptr;
+            ogr_coded_values.emplace_back(cv);
+            CSLDestroy(papszTokens);
+        }
+        OGRCodedValue cv;
+        cv.pszCode = nullptr;
+        cv.pszValue = nullptr;
+        ogr_coded_values.emplace_back(cv);
+
+        OGRFieldDomainH hFldDom = nullptr;
+        hFldDom = OGR_CodedFldDomain_Create(domain_name.c_str(),
+                                            description.c_str(),
+                                            eFieldType, eFieldSubType,
+                                            ogr_coded_values.data());
+        if (hFldDom != nullptr) {
+            OGR_FldDomain_SetSplitPolicy(hFldDom, eOFDSP);
+            OGR_FldDomain_SetMergePolicy(hFldDom, eOFDMP);
+            char *pszFailureReason = nullptr;
+            ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
+            if (pszFailureReason != nullptr) {
+                Rcpp::Rcout << pszFailureReason << std::endl;
+                VSIFree(pszFailureReason);
+            }
+            OGR_FldDomain_Destroy(hFldDom);
+            for (auto &cv : ogr_coded_values) {
+                VSIFree(cv.pszCode);
+                VSIFree(cv.pszValue);
+            }
+        }
+    }
+
+    // Range
+    else if (EQUAL(domain_type.c_str(), "range")) {
+        bool min_is_null = false;
+        bool max_is_null = false;
+        bool min_is_inclusive = true;
+        bool max_is_inclusive = true;
+
+        if (!fld_dom_defn.containsElementNamed("min_is_inclusive") ||
+            fld_dom_defn["min_is_inclusive"] == R_NilValue ||
+            !Rcpp::is<Rcpp::LogicalVector>(
+                fld_dom_defn["min_is_inclusive"])) {
+
+            min_is_inclusive = true;
+        }
+        else {
+            Rcpp::LogicalVector tmp = fld_dom_defn["min_is_inclusive"];
+            if (tmp[0] == FALSE)
+                min_is_inclusive = false;
+        }
+
+        if (!fld_dom_defn.containsElementNamed("max_is_inclusive") ||
+            fld_dom_defn["max_is_inclusive"] == R_NilValue ||
+            !Rcpp::is<Rcpp::LogicalVector>(
+                fld_dom_defn["max_is_inclusive"])) {
+
+            max_is_inclusive = true;
+        }
+        else {
+            Rcpp::LogicalVector tmp = fld_dom_defn["max_is_inclusive"];
+            if (tmp[0] == FALSE)
+                max_is_inclusive = false;
+        }
+
+        // Integer and Real ranges
+        if (eFieldType == OFTInteger || eFieldType == OFTReal) {
+            double min_value = -99999.0;
+            double max_value = 99999.0;
+
+            if (fld_dom_defn.containsElementNamed("min_value") &&
+                fld_dom_defn["min_value"] == R_NilValue) {
+
+                min_is_null = true;
+            }
+            else if (!fld_dom_defn.containsElementNamed("min_value") ||
+                     (!Rcpp::is<Rcpp::NumericVector>(
+                        fld_dom_defn["min_value"]) &&
+                      !Rcpp::is<Rcpp::IntegerVector>(
+                        fld_dom_defn["min_value"]))) {
+
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'$min_value' must be integer, double or NULL");
+            }
+            else {
+                min_value = Rcpp::as<double>(fld_dom_defn["min_value"]);
+            }
+
+            if (fld_dom_defn.containsElementNamed("max_value") &&
+                fld_dom_defn["max_value"] == R_NilValue) {
+
+                max_is_null = true;
+            }
+            else if (!fld_dom_defn.containsElementNamed("max_value") ||
+                     (!Rcpp::is<Rcpp::NumericVector>(
+                        fld_dom_defn["max_value"]) &&
+                      !Rcpp::is<Rcpp::IntegerVector>(
+                        fld_dom_defn["max_value"]))) {
+
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'$max_value' must be integer, double or NULL");
+            }
+            else {
+                max_value = Rcpp::as<double>(fld_dom_defn["max_value"]);
+            }
+
+            OGRField sMin, sMax;
+            if (eFieldType == OFTInteger) {
+                if (min_value < INT32_MIN || max_value > INT32_MAX) {
+                    GDALReleaseDataset(hDS);
+                    Rcpp::stop("min/max out of range for OFTInteger");
+                }
+                sMin.Integer = static_cast<int>(min_value);
+                sMax.Integer = static_cast<int>(max_value);
+            }
+            else {
+                sMin.Real = min_value;
+                sMax.Real = max_value;
+            }
+
+            OGRFieldDomainH hFldDom = nullptr;
+            hFldDom = OGR_RangeFldDomain_Create(domain_name.c_str(),
+                                                description.c_str(),
+                                                eFieldType, eFieldSubType,
+                                                min_is_null ? nullptr : &sMin,
+                                                min_is_inclusive,
+                                                max_is_null ? nullptr : &sMax,
+                                                max_is_inclusive);
+
+            if (hFldDom != nullptr) {
+                OGR_FldDomain_SetSplitPolicy(hFldDom, eOFDSP);
+                OGR_FldDomain_SetMergePolicy(hFldDom, eOFDMP);
+                char *pszFailureReason = nullptr;
+                ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
+                if (pszFailureReason != nullptr) {
+                    Rcpp::Rcout << pszFailureReason << std::endl;
+                    VSIFree(pszFailureReason);
+                }
+                OGR_FldDomain_Destroy(hFldDom);
+            }
+        }
+
+        // Integer64 range
+        else if (eFieldType == OFTInteger64) {
+            int64_t min_value = MIN_INTEGER64;
+            int64_t max_value = MAX_INTEGER64;
+
+            if (fld_dom_defn.containsElementNamed("min_value") &&
+                fld_dom_defn["min_value"] == R_NilValue) {
+
+                min_is_null = true;
+            }
+            else if (!fld_dom_defn.containsElementNamed("min_value") ||
+                     (!Rcpp::is<Rcpp::NumericVector>(
+                        fld_dom_defn["min_value"]) &&
+                      !Rcpp::is<Rcpp::IntegerVector>(
+                        fld_dom_defn["min_value"]))) {
+
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'$min_value' must be numeric (integer64) or NULL");
+            }
+            else {
+                Rcpp::NumericVector tmp =
+                    Rcpp::as<Rcpp::NumericVector>(fld_dom_defn["min_value"]);
+
+                if (Rcpp::isInteger64(tmp))
+                    min_value = Rcpp::fromInteger64(tmp[0]);
+                else
+                    min_value = static_cast<int64_t>(tmp[0]);
+            }
+
+            if (fld_dom_defn.containsElementNamed("max_value") &&
+                fld_dom_defn["max_value"] == R_NilValue) {
+
+                max_is_null = true;
+            }
+            else if (!fld_dom_defn.containsElementNamed("max_value") ||
+                     (!Rcpp::is<Rcpp::NumericVector>(
+                        fld_dom_defn["max_value"]) &&
+                      !Rcpp::is<Rcpp::IntegerVector>(
+                        fld_dom_defn["max_value"]))) {
+
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'$max_value' must be numeric (integer64) or NULL");
+            }
+            else {
+                Rcpp::NumericVector tmp =
+                    Rcpp::as<Rcpp::NumericVector>(fld_dom_defn["max_value"]);
+
+                if (Rcpp::isInteger64(tmp))
+                    max_value = Rcpp::fromInteger64(tmp[0]);
+                else
+                    max_value = static_cast<int64_t>(tmp[0]);
+            }
+
+            OGRField sMin, sMax;
+            sMin.Integer64 = min_value;
+            sMax.Integer64 = max_value;
+
+            OGRFieldDomainH hFldDom = nullptr;
+            hFldDom = OGR_RangeFldDomain_Create(domain_name.c_str(),
+                                                description.c_str(),
+                                                eFieldType, eFieldSubType,
+                                                min_is_null ? nullptr : &sMin,
+                                                min_is_inclusive,
+                                                max_is_null ? nullptr : &sMax,
+                                                max_is_inclusive);
+
+            if (hFldDom != nullptr) {
+                OGR_FldDomain_SetSplitPolicy(hFldDom, eOFDSP);
+                OGR_FldDomain_SetMergePolicy(hFldDom, eOFDMP);
+                char *pszFailureReason = nullptr;
+                ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
+                if (pszFailureReason != nullptr) {
+                    Rcpp::Rcout << pszFailureReason << std::endl;
+                    VSIFree(pszFailureReason);
+                }
+                OGR_FldDomain_Destroy(hFldDom);
+            }
+        }
+
+        else {
+            GDALReleaseDataset(hDS);
+            if (eFieldType == OFTDateTime) {
+                Rcpp::Rcout << "use '$type' RangeDateTime for OFTDateTime"
+                    << std::endl;
+            }
+            Rcpp::stop(
+                "'$field_type' must be OFTInteger, OFTInteger64 or OFTReal");
+        }
+    }
+
+    // RangeDateTime
+    else if (EQUAL(domain_type.c_str(), "rangedatetime")) {
+        if (eFieldType != OFTDateTime)
+            Rcpp::stop("'$field_type' must be OFTDateTime");
+
+        double min_value = 0.0;
+        double max_value = 0.0;
+        bool min_is_null = false;
+        bool max_is_null = false;
+        bool min_is_inclusive = true;
+        bool max_is_inclusive = true;
+
+        if (fld_dom_defn.containsElementNamed("min_value") &&
+            fld_dom_defn["min_value"] == R_NilValue) {
+
+            min_is_null = true;
+        }
+        else if (!fld_dom_defn.containsElementNamed("min_value") ||
+                 !Rcpp::is<Rcpp::NumericVector>(fld_dom_defn["min_value"])) {
+
+            GDALReleaseDataset(hDS);
+            Rcpp::stop("'$min_value' must be 'numeric' of class 'POSIXct'");
+        }
+        else {
+            Rcpp::NumericVector v_min = fld_dom_defn["min_value"];
+            Rcpp::CharacterVector attr{};
+            if (v_min.hasAttribute("class"))
+                attr = Rcpp::wrap(v_min.attr("class"));
+            if (std::find(attr.begin(), attr.end(), "POSIXct") == attr.end()) {
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'$min_value' must be 'numeric' of class 'POSIXct'");
+            }
+            min_value = v_min[0];
+        }
+
+        const int64_t nUnixTime_min = static_cast<int64_t>(min_value);
+        struct tm brokendowntime;
+        CPLUnixTimeToYMDHMS(nUnixTime_min, &brokendowntime);
+        float sec = brokendowntime.tm_sec +
+                    std::fmod(static_cast<float>(min_value), 1.0f);
+
+        OGRField sMin;
+        sMin.Date.Year = static_cast<GInt16>(brokendowntime.tm_year) + 1900;
+        sMin.Date.Month = static_cast<GByte>(brokendowntime.tm_mon) + 1;
+        sMin.Date.Day = static_cast<GByte>(brokendowntime.tm_mday);
+        sMin.Date.Hour = static_cast<GByte>(brokendowntime.tm_hour);
+        sMin.Date.Minute = static_cast<GByte>(brokendowntime.tm_min);
+        sMin.Date.Second = static_cast<float>(sec);
+        sMin.Date.TZFlag = 100;
+
+        if (fld_dom_defn.containsElementNamed("max_value") &&
+            fld_dom_defn["max_value"] == R_NilValue) {
+
+            max_is_null = true;
+        }
+        else if (!fld_dom_defn.containsElementNamed("max_value") ||
+                 !Rcpp::is<Rcpp::NumericVector>(fld_dom_defn["max_value"])) {
+
+            GDALReleaseDataset(hDS);
+            Rcpp::stop("'$max_value' must be 'numeric' of class 'POSIXct'");
+        }
+        else {
+            Rcpp::NumericVector v_max = fld_dom_defn["max_value"];
+            Rcpp::CharacterVector attr{};
+            if (v_max.hasAttribute("class"))
+                attr = Rcpp::wrap(v_max.attr("class"));
+            if (std::find(attr.begin(), attr.end(), "POSIXct") == attr.end()) {
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'$max_value' must be 'numeric' of class 'POSIXct'");
+            }
+            max_value = v_max[0];
+        }
+
+        const int64_t nUnixTime_max = static_cast<int64_t>(max_value);
+        CPLUnixTimeToYMDHMS(nUnixTime_max, &brokendowntime);
+        sec = brokendowntime.tm_sec +
+                std::fmod(static_cast<float>(max_value), 1.0f);
+
+        OGRField sMax;
+        sMax.Date.Year = static_cast<GInt16>(brokendowntime.tm_year) + 1900;
+        sMax.Date.Month = static_cast<GByte>(brokendowntime.tm_mon) + 1;
+        sMax.Date.Day = static_cast<GByte>(brokendowntime.tm_mday);
+        sMax.Date.Hour = static_cast<GByte>(brokendowntime.tm_hour);
+        sMax.Date.Minute = static_cast<GByte>(brokendowntime.tm_min);
+        sMax.Date.Second = static_cast<float>(sec);
+        sMax.Date.TZFlag = 100;
+
+        if (!fld_dom_defn.containsElementNamed("min_is_inclusive") ||
+            fld_dom_defn["min_is_inclusive"] == R_NilValue ||
+            !Rcpp::is<Rcpp::LogicalVector>(
+                fld_dom_defn["min_is_inclusive"])) {
+
+            min_is_inclusive = true;
+        }
+        else {
+            Rcpp::LogicalVector tmp = Rcpp::as<Rcpp::LogicalVector>(
+                                        fld_dom_defn["min_is_inclusive"]);
+
+            if (tmp[0] == FALSE)
+                min_is_inclusive = false;
+        }
+
+        if (!fld_dom_defn.containsElementNamed("max_is_inclusive") ||
+            fld_dom_defn["max_is_inclusive"] == R_NilValue ||
+            !Rcpp::is<Rcpp::LogicalVector>(
+                fld_dom_defn["max_is_inclusive"])) {
+
+            max_is_inclusive = true;
+        }
+        else {
+            Rcpp::LogicalVector tmp = Rcpp::as<Rcpp::LogicalVector>(
+                                        fld_dom_defn["max_is_inclusive"]);
+            if (tmp[0] == FALSE)
+                max_is_inclusive = false;
+        }
+
+        OGRFieldDomainH hFldDom = nullptr;
+        hFldDom = OGR_RangeFldDomain_Create(domain_name.c_str(),
+                                            description.c_str(),
+                                            eFieldType, eFieldSubType,
+                                            min_is_null ? nullptr : &sMin,
+                                            min_is_inclusive,
+                                            max_is_null ? nullptr : &sMax,
+                                            max_is_inclusive);
+
+        if (hFldDom != nullptr) {
+            OGR_FldDomain_SetSplitPolicy(hFldDom, eOFDSP);
+            OGR_FldDomain_SetMergePolicy(hFldDom, eOFDMP);
+            char *pszFailureReason = nullptr;
+            ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
+            if (pszFailureReason != nullptr) {
+                Rcpp::Rcout << pszFailureReason << std::endl;
+                VSIFree(pszFailureReason);
+            }
+            OGR_FldDomain_Destroy(hFldDom);
+        }
+    }
+
+    // GLOB
+    else if (EQUAL(domain_type.c_str(), "glob")) {
+        if (eFieldType != OFTString)
+            Rcpp::stop("'$field_type' must be OFTString");
+
+        if (!fld_dom_defn.containsElementNamed("glob") ||
+            fld_dom_defn["glob"] == R_NilValue ||
+            !Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["glob"])) {
+
+            GDALReleaseDataset(hDS);
+            Rcpp::stop("'$glob' must be a character string");
+        }
+
+        std::string glob = Rcpp::as<std::string>(fld_dom_defn["glob"]);
+
+        OGRFieldDomainH hFldDom = nullptr;
+        hFldDom = OGR_GlobFldDomain_Create(domain_name.c_str(),
+                                           description.c_str(),
+                                           eFieldType, eFieldSubType,
+                                           glob.c_str());
+
+        if (hFldDom != nullptr) {
+            OGR_FldDomain_SetSplitPolicy(hFldDom, eOFDSP);
+            OGR_FldDomain_SetMergePolicy(hFldDom, eOFDMP);
+            char *pszFailureReason = nullptr;
+            ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
+            if (pszFailureReason != nullptr) {
+                Rcpp::Rcout << pszFailureReason << std::endl;
+                VSIFree(pszFailureReason);
+            }
+            OGR_FldDomain_Destroy(hFldDom);
+        }
+    }
+
+    // unrecognized type
+    else {
+        GDALReleaseDataset(hDS);
+        Rcpp::stop("unrecognized domain type");
+    }
+
+    // finished
+    GDALReleaseDataset(hDS);
+    return ret;
+#endif
+}
+
+//' Delete a field domain from a dataset
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_ds_delete_field_domain")]]
+bool ogr_ds_delete_field_domain(const std::string &dsn,
+                                const std::string &domain_name) {
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 5, 0)
+    Rcpp::stop("'ogr_ds_delete_field_domain() requires GDAL >= 3.5");
+
+#else
+    std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
+    GDALDatasetH hDS = nullptr;
+
+    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR, nullptr, nullptr, nullptr);
+    if (hDS == nullptr) {
+        Rcpp::warning("failed to open dataset");
+        return false;
+    }
+
+    bool ret = false;
+    ret = GDALDatasetDeleteFieldDomain(hDS, domain_name.c_str(), nullptr);
+    GDALReleaseDataset(hDS);
+    return ret;
+#endif
+}
+
 //' Does layer exist
 //'
 //' @noRd
@@ -489,6 +1164,7 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, const std::string &layer,
                 bool is_nullable = true;
                 bool is_unique = false;
                 std::string default_value = "";
+                std::string domain_name = "";
                 std::string srs = "";
 
                 fld_name = Rcpp::as<std::string>(fld_names(i));
@@ -528,10 +1204,13 @@ OGRLayerH CreateLayer_(GDALDatasetH hDS, const std::string &layer,
                     }
                     if (fld.containsElementNamed("default"))
                         default_value = Rcpp::as<std::string>(fld["default"]);
+                    if (fld.containsElementNamed("domain"))
+                        domain_name = Rcpp::as<std::string>(fld["default"]);
 
                     if (!CreateField_(hDS, hLayer, fld_name, fld_type,
                                       fld_subtype, fld_width, fld_precision,
-                                      is_nullable, is_unique, default_value)) {
+                                      is_nullable, is_unique, default_value,
+                                      domain_name)) {
 
                         Rcpp::Rcerr << "failed to create field: " <<
                                 fld_name.c_str() << "\n";
@@ -827,7 +1506,8 @@ bool CreateField_(GDALDatasetH hDS, OGRLayerH hLayer,
                   int fld_precision = 0,
                   bool is_nullable = true,
                   bool is_unique = false,
-                  const std::string &default_value = "") {
+                  const std::string &default_value = "",
+                  const std::string &domain_name = "") {
 
     if (hDS == nullptr || hLayer == nullptr)
         return false;
@@ -865,13 +1545,23 @@ bool CreateField_(GDALDatasetH hDS, OGRLayerH hLayer,
                     "default field value not supported by the format driver");
         }
 
-#if GDAL_VERSION_NUM >= 3020000
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 2, 0)
         if (is_unique) {
             if (CPLFetchBool(papszMD, GDAL_DCAP_UNIQUE_FIELDS, false))
                 OGR_Fld_SetUnique(hFieldDefn, true);
             else
                 Rcpp::warning(
                     "unique constraint not supported by the format driver");
+        }
+#endif
+
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 3, 0)
+        if (domain_name != "") {
+            if (GDALDatasetTestCapability(hDS, ODsCAddFieldDomain))
+                OGR_Fld_SetDomainName(hFieldDefn, domain_name.c_str());
+            else
+                Rcpp::warning(
+                    "add field domain not supported by the format driver");
         }
 #endif
 
@@ -895,7 +1585,8 @@ bool ogr_field_create(const std::string &dsn, const std::string &layer,
                       int fld_precision = 0,
                       bool is_nullable = true,
                       bool is_unique = false,
-                      const std::string &default_value = "") {
+                      const std::string &default_value = "",
+                      const std::string &domain_name = "") {
 
     std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
     GDALDatasetH hDS = nullptr;
@@ -943,7 +1634,7 @@ bool ogr_field_create(const std::string &dsn, const std::string &layer,
 
     bool ret = CreateField_(hDS, hLayer, fld_name, fld_type, fld_subtype,
                             fld_width, fld_precision, is_nullable, is_unique,
-                            default_value);
+                            default_value, domain_name);
 
     GDALReleaseDataset(hDS);
     return ret;
@@ -1136,6 +1827,86 @@ bool ogr_field_rename(const std::string &dsn, const std::string &layer,
     else {
         return true;
     }
+}
+
+//' Set the field domain of an existing attribute field on a vector layer
+//'
+//' @noRd
+// [[Rcpp::export(name = ".ogr_field_set_domain_name")]]
+bool ogr_field_set_domain_name(const std::string &dsn,
+                               const std::string &layer,
+                               const std::string &fld_name,
+                               const std::string &domain_name) {
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 3, 0)
+    Rcpp::stop("'ogr_field_set_domain_name() requires GDAL >= 3.3");
+
+#else
+    std::string dsn_in = Rcpp::as<std::string>(check_gdal_filename(dsn));
+    GDALDatasetH hDS = nullptr;
+    hDS = GDALOpenEx(dsn_in.c_str(), GDAL_OF_VECTOR | GDAL_OF_UPDATE,
+                     nullptr, nullptr, nullptr);
+    if (hDS == nullptr) {
+        Rcpp::Rcerr << "failed to open 'dsn' for update\n";
+        return false;
+    }
+
+    OGRLayerH  hLayer = nullptr;
+    if (layer == "")
+        hLayer = GDALDatasetGetLayer(hDS, 0);
+    else
+        hLayer = GDALDatasetGetLayerByName(hDS, layer.c_str());
+    if (hLayer == nullptr) {
+        Rcpp::Rcerr << "failed to access 'layer'\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+    if (!OGR_L_TestCapability(hLayer, OLCAlterFieldDefn)) {
+        Rcpp::Rcerr << "'layer' does not have AlterFieldDefn capability\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    int iField;
+    OGRFeatureDefnH hFDefn = nullptr;
+    hFDefn = OGR_L_GetLayerDefn(hLayer);
+    if (hFDefn != nullptr) {
+        iField = OGR_FD_GetFieldIndex(hFDefn, fld_name.c_str());
+    }
+    else {
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+    if (iField == -1) {
+        Rcpp::Rcerr << "'fld_name' not found on 'layer'\n";
+        GDALReleaseDataset(hDS);
+        return false;
+    }
+
+    OGRFieldDefnH hFieldDefn = nullptr;
+    OGRFieldType eFieldType;
+    hFieldDefn = OGR_FD_GetFieldDefn(hFDefn, iField);
+    if (hFieldDefn != nullptr)
+        eFieldType = OGR_Fld_GetType(hFieldDefn);
+    else
+        eFieldType = OFTString;  // not changing the type anyway
+
+    OGRFieldDefnH hNewFieldDefn;
+    hNewFieldDefn = OGR_Fld_Create("temp", eFieldType);
+    OGR_Fld_SetDomainName(hNewFieldDefn, domain_name.c_str());
+    OGRErr err = OGR_L_AlterFieldDefn(hLayer, iField, hNewFieldDefn,
+                                      ALTER_DOMAIN_FLAG);
+    OGR_Fld_Destroy(hNewFieldDefn);
+    GDALReleaseDataset(hDS);
+
+    if (err != OGRERR_NONE) {
+        Rcpp::Rcerr << "failed to set field domain name\n";
+        return false;
+    }
+    else {
+        return true;
+    }
+#endif
 }
 
 //' Delete an attribute field on a vector layer
