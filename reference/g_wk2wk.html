@@ -111,10 +111,10 @@ types, it is equivalent to ISO.</p>
 returned list will contain <code>NULL</code> (and a warning emitted) if the
 corresponding input string was <code>NA</code> or empty (<code>""</code>).</p>
 <p>When input is a list of WKB raw vectors, a corresponding element in the
-returned character vector will be an empty string (<code>""</code>) if the input was
-a raw vector of length <code>0</code> (<code>raw(0)</code>). If an input list element is not a raw
-vector, then the corresponding element in the returned character vector will
-be <code>NA</code>.</p>
+returned character vector will be <code>NA</code> if the input was a raw vector of
+length <code>0</code> (i.e., <code>raw(0)</code>). If an input list element is not a raw vector,
+then the corresponding element in the returned character vector will also
+be <code>NA</code>. A warning is emitted in each case.</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
