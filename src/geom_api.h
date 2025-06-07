@@ -28,8 +28,8 @@ Rcpp::String g_wkb2wkt(const Rcpp::RObject &geom, bool as_iso);
 
 Rcpp::CharacterVector g_wkb_list2wkt(const Rcpp::List &geom, bool as_iso);
 
-Rcpp::RawVector g_wkt2wkb(const std::string &geom, bool as_iso,
-                          const std::string &byte_order);
+SEXP g_wkt2wkb(const std::string &geom, bool as_iso,
+               const std::string &byte_order);
 
 Rcpp::List g_wkt_vector2wkb(const Rcpp::CharacterVector &geom, bool as_iso,
                             const std::string &byte_order);
