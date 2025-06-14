@@ -4,26 +4,38 @@ OGR feature class.
 A named list containing zero or more attribute field definitions, along with
 one or more geometry field definitions, comprise an OGR feature class
 definition (a.k.a. layer definition). ogr_def_layer() initializes such a
-list with a geometry type and (optionally) a spatial reference system.
+list with the geometry type and (optionally) a spatial reference system.
 Attribute fields may then be added to the layer definition.
 ogr_def_field() creates an attribute field definition, a list
 containing the field's data type and potentially other optional field
 properties.
 ogr_def_geom_field() similarly creates a geometry field definition. This
 might be used with certain vector formats that support multiple geometry
-columns (e.g., PostGIS)."><meta property="og:description" content="This topic contains documentation and helper functions for defining an
+columns (e.g., PostGIS).
+ogr_def_field_domain() creates a field domain definition. A field domain
+is a set of constraints that apply to one or several fields. This is a
+concept found, e.g., in ESRI File Geodatabase and in GeoPackage via the
+Schema extension (see https://github.com/OSGeo/gdal/pull/3638).
+GDAL &amp;gt;= 3.3 supports reading and writing field domains with certain drivers
+(e.g., GPKG and OpenFileGDB)."><meta property="og:description" content="This topic contains documentation and helper functions for defining an
 OGR feature class.
 A named list containing zero or more attribute field definitions, along with
 one or more geometry field definitions, comprise an OGR feature class
 definition (a.k.a. layer definition). ogr_def_layer() initializes such a
-list with a geometry type and (optionally) a spatial reference system.
+list with the geometry type and (optionally) a spatial reference system.
 Attribute fields may then be added to the layer definition.
 ogr_def_field() creates an attribute field definition, a list
 containing the field's data type and potentially other optional field
 properties.
 ogr_def_geom_field() similarly creates a geometry field definition. This
 might be used with certain vector formats that support multiple geometry
-columns (e.g., PostGIS)."></head><body>
+columns (e.g., PostGIS).
+ogr_def_field_domain() creates a field domain definition. A field domain
+is a set of constraints that apply to one or several fields. This is a
+concept found, e.g., in ESRI File Geodatabase and in GeoPackage via the
+Schema extension (see https://github.com/OSGeo/gdal/pull/3638).
+GDAL &amp;gt;= 3.3 supports reading and writing field domains with certain drivers
+(e.g., GPKG and OpenFileGDB)."></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -80,14 +92,20 @@ OGR feature class.
 A named list containing zero or more attribute field definitions, along with
 one or more geometry field definitions, comprise an OGR feature class
 definition (a.k.a. layer definition). <code>ogr_def_layer()</code> initializes such a
-list with a geometry type and (optionally) a spatial reference system.
+list with the geometry type and (optionally) a spatial reference system.
 Attribute fields may then be added to the layer definition.
 <code>ogr_def_field()</code> creates an attribute field definition, a list
 containing the field's data type and potentially other optional field
 properties.
 <code>ogr_def_geom_field()</code> similarly creates a geometry field definition. This
 might be used with certain vector formats that support multiple geometry
-columns (e.g., PostGIS).</p>
+columns (e.g., PostGIS).
+<code>ogr_def_field_domain()</code> creates a field domain definition. A field domain
+is a set of constraints that apply to one or several fields. This is a
+concept found, e.g., in ESRI File Geodatabase and in GeoPackage via the
+Schema extension (see <a href="https://github.com/OSGeo/gdal/pull/3638" class="external-link">https://github.com/OSGeo/gdal/pull/3638</a>).
+GDAL &gt;= 3.3 supports reading and writing field domains with certain drivers
+(e.g., GPKG and OpenFileGDB).</p>
     </div>
 
     <div class="section level2">
@@ -101,10 +119,27 @@ columns (e.g., PostGIS).</p>
 <span>  fld_precision <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  is_nullable <span class="op">=</span> <span class="cn">NULL</span>,</span>
 <span>  is_unique <span class="op">=</span> <span class="cn">NULL</span>,</span>
-<span>  default_value <span class="op">=</span> <span class="cn">NULL</span></span>
+<span>  default_value <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  domain_name <span class="op">=</span> <span class="cn">NULL</span></span>
 <span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">ogr_def_geom_field</span><span class="op">(</span><span class="va">geom_type</span>, srs <span class="op">=</span> <span class="cn">NULL</span>, is_nullable <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">ogr_def_geom_field</span><span class="op">(</span><span class="va">geom_type</span>, srs <span class="op">=</span> <span class="cn">NULL</span>, is_nullable <span class="op">=</span> <span class="cn">NULL</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu">ogr_def_field_domain</span><span class="op">(</span></span>
+<span>  <span class="va">domain_type</span>,</span>
+<span>  <span class="va">domain_name</span>,</span>
+<span>  description <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fld_type <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  fld_subtype <span class="op">=</span> <span class="st">"OFSTNone"</span>,</span>
+<span>  split_policy <span class="op">=</span> <span class="st">"DEFAULT_VALUE"</span>,</span>
+<span>  merge_policy <span class="op">=</span> <span class="st">"DEFAULT_VALUE"</span>,</span>
+<span>  coded_values <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  range_min <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  min_is_inclusive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  range_max <span class="op">=</span> <span class="cn">NULL</span>,</span>
+<span>  max_is_inclusive <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  glob <span class="op">=</span> <span class="st">""</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -128,13 +163,13 @@ as OGC WKT or other well-known format (e.g., the input formats usable with
 
 <dt id="arg-fld-type">fld_type<a class="anchor" aria-label="anchor" href="#arg-fld-type"></a></dt>
 <dd><p>Character string containing the name of a field data type
-(e.g., <code>OFTInteger</code>, <code>OFTInteger64</code>, <code>OFTReal</code>, <code>OFTString</code>).</p></dd>
+(e.g., <code>"OFTInteger"</code>, <code>"OFTInteger64"</code>, <code>"OFTReal"</code>, <code>"OFTString"</code>, ...).</p></dd>
 
 
 <dt id="arg-fld-subtype">fld_subtype<a class="anchor" aria-label="anchor" href="#arg-fld-subtype"></a></dt>
 <dd><p>Character string containing the name of a field subtype.
-One of  <code>OFSTNone</code> (the default), <code>OFSTBoolean</code>, <code>OFSTInt16</code>, <code>OFSTFloat32</code>,
-<code>OFSTJSON</code>, <code>OFSTUUID</code>.</p></dd>
+One of <code>"OFSTNone"</code> (the default), <code>"OFSTBoolean"</code>, <code>"OFSTInt16"</code>,
+<code>"OFSTFloat32"</code>, <code>"OFSTJSON"</code>, <code>"OFSTUUID"</code>.</p></dd>
 
 
 <dt id="arg-fld-width">fld_width<a class="anchor" aria-label="anchor" href="#arg-fld-width"></a></dt>
@@ -157,8 +192,72 @@ Defaults to <code>FALSE</code>.</p></dd>
 
 
 <dt id="arg-default-value">default_value<a class="anchor" aria-label="anchor" href="#arg-default-value"></a></dt>
-<dd><p>Optional default value for the field as a character
-string.</p></dd>
+<dd><p>Optional default value for the field given as a
+character string.</p></dd>
+
+
+<dt id="arg-domain-name">domain_name<a class="anchor" aria-label="anchor" href="#arg-domain-name"></a></dt>
+<dd><p>Character string specifying the name of the field domain.
+Optional for <code>ogr_def_field()</code>, required for <code>ogr_def_field_domain()</code>.</p></dd>
+
+
+<dt id="arg-domain-type">domain_type<a class="anchor" aria-label="anchor" href="#arg-domain-type"></a></dt>
+<dd><p>Character string specifying a field domain type (see
+Details). Must be one of <code>"Coded"</code>, <code>"Range"</code>, <code>"RangeDateTime"</code>, <code>"GLOB"</code>
+(case-insensitive).</p></dd>
+
+
+<dt id="arg-description">description<a class="anchor" aria-label="anchor" href="#arg-description"></a></dt>
+<dd><p>Optional character string giving a description of the
+field domain.</p></dd>
+
+
+<dt id="arg-split-policy">split_policy<a class="anchor" aria-label="anchor" href="#arg-split-policy"></a></dt>
+<dd><p>Character string specifying the split policy of the
+field domain. One of <code>"DEFAULT_VALUE"</code>, <code>"DUPLICATE"</code>, <code>"GEOMETRY_RATIO"</code>
+(supported by ESRI File Geodatabase format via OpenFileGDB driver).</p></dd>
+
+
+<dt id="arg-merge-policy">merge_policy<a class="anchor" aria-label="anchor" href="#arg-merge-policy"></a></dt>
+<dd><p>Character string specifying the merge policy of the
+field domain. One of <code>"DEFAULT_VALUE"</code>, <code>"SUM"</code>, <code>"GEOMETRY_WEIGHTED"</code>
+(supported by ESRI File Geodatabase format via OpenFileGDB driver).</p></dd>
+
+
+<dt id="arg-coded-values">coded_values<a class="anchor" aria-label="anchor" href="#arg-coded-values"></a></dt>
+<dd><p>A vector of the allowed codes or <code>"CODE=VALUE"</code> pairs
+(the expanded "value" associated with a code is optional). Required
+if <code>domain_type = "Coded"</code>. Each code should appear only once, but it is the
+responsibility of the user to check it.</p></dd>
+
+
+<dt id="arg-range-min">range_min<a class="anchor" aria-label="anchor" href="#arg-range-min"></a></dt>
+<dd><p>Minimum value in a Range or RangeDateTime field domain (can
+be NULL). The data type must be consistent with with the field type given in
+the <code>fld_type</code> argument.</p></dd>
+
+
+<dt id="arg-min-is-inclusive">min_is_inclusive<a class="anchor" aria-label="anchor" href="#arg-min-is-inclusive"></a></dt>
+<dd><p>= Logical value, whether the minimum value is
+included in the range. Defaults to <code>TRUE</code>. Required if <code>domain_type</code> is
+<code>"Range"</code> or <code>"RangeDateTime"</code>.</p></dd>
+
+
+<dt id="arg-range-max">range_max<a class="anchor" aria-label="anchor" href="#arg-range-max"></a></dt>
+<dd><p>Maximum value in a Range or RangeDateTime field domain (can
+be NULL). The data type must be consistent with with the field type given in
+the <code>fld_type</code> argument.</p></dd>
+
+
+<dt id="arg-max-is-inclusive">max_is_inclusive<a class="anchor" aria-label="anchor" href="#arg-max-is-inclusive"></a></dt>
+<dd><p>= Logical value, whether the maximum value is
+included in the range. Defaults to <code>TRUE</code>. Required if <code>domain_type</code> is
+<code>"Range"</code> or <code>"RangeDateTime"</code>.</p></dd>
+
+
+<dt id="arg-glob">glob<a class="anchor" aria-label="anchor" href="#arg-glob"></a></dt>
+<dd><p>Character string containing the GLOB expression. Required if
+<code>domain_type</code> is <code>"GLOB"</code>.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -177,7 +276,8 @@ attribute or geometry field definition.</p>
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="sc">$</span>is_nullable<span class="sc">:</span> optional NOT <span class="cn">NULL</span> <span class="fu">constraint</span> (logical value)</span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="sc">$</span>is_unique  <span class="sc">:</span> optional UNIQUE <span class="fu">constraint</span> (logical value)</span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="sc">$</span>default    <span class="sc">:</span> optional default value as character string</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="sc">$</span>is_geom    <span class="sc">:</span> <span class="cn">FALSE</span> (the default) <span class="cf">for</span> attribute fields</span></code></pre><p></p></div>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="sc">$</span>domain     <span class="sc">:</span> optional field domain name</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="sc">$</span>is_geom    <span class="sc">:</span> <span class="cn">FALSE</span> (the default) <span class="cf">for</span> attribute fields</span></code></pre><p></p></div>
 <p>An OGR field type is specified as a character string with possible values:
 <code>OFTInteger</code>, <code>OFTIntegerList</code>, <code>OFTReal</code>, <code>OFTRealList</code>, <code>OFTString</code>,
 <code>OFTStringList</code>, <code>OFTBinary</code>,  <code>OFTDate</code>, <code>OFTTime</code>, <code>OFTDateTime</code>,
@@ -186,9 +286,8 @@ attribute or geometry field definition.</p>
 values:
 <code>OFSTNone</code>, <code>OFSTBoolean</code>, <code>OFSTInt16</code>, <code>OFSTFloat32</code>, <code>OFSTJSON</code>,
 <code>OFSTUUID</code>.</p>
-<p>By default, fields are nullable, have no unique constraint, and are not
-ignored (i.e., not omitted when fetching features). Not-null and unique
-constraints are not supported by all format drivers.</p>
+<p>By default, fields are nullable and have no unique constraint. Not-null and
+unique constraints are not supported by all format drivers.</p>
 <p>A default field value is taken into account by format drivers (generally
 those with a SQL interface) that support it at field creation time.
 If given in the field definition, <code>$default</code> must be a character string.
@@ -217,6 +316,38 @@ this is generally before creating any features to the layer. In some cases,
 a not-null constraint may be available as a layer creation option. For
 example, GeoPackage format has a layer creation option
 <code>GEOMETRY_NULLABLE=[YES/NO]</code>.</p>
+<p>The definition for a field domain is a named list with elements:</p>
+<p></p><div class="sourceCode"><pre><code><span id="cb1-1"><a href="#cb1-1" tabindex="-1"></a><span class="sc">$</span>type             <span class="sc">:</span> domain <span class="fu">type</span> (<span class="st">"Coded"</span>, <span class="st">"Range"</span>, <span class="st">"RangeDateTime"</span>, <span class="st">"GLOB"</span>)</span>
+<span id="cb1-2"><a href="#cb1-2" tabindex="-1"></a><span class="sc">$</span>domain_name      <span class="sc">:</span> name of the field <span class="fu">domain</span> (character string)</span>
+<span id="cb1-3"><a href="#cb1-3" tabindex="-1"></a><span class="sc">$</span>description      <span class="sc">:</span> optional domain <span class="fu">description</span> (character string)</span>
+<span id="cb1-4"><a href="#cb1-4" tabindex="-1"></a><span class="sc">$</span>field_type       <span class="sc">:</span> OGR Field <span class="fu">Type</span> (see attribute field definitions above)</span>
+<span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="sc">$</span>field_subtype    <span class="sc">:</span> optional OGR Field <span class="fu">Subtype</span> (<span class="st">"OFSTBoolean"</span>, ...)</span>
+<span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="sc">$</span>split_policy     <span class="sc">:</span> split policy of the field <span class="fu">domain</span> (see below)</span>
+<span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="sc">$</span>merge_policy     <span class="sc">:</span> merge policy of the field <span class="fu">domain</span> (see below)</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="sc">$</span>coded_values     <span class="sc">:</span> character vector of codes, or <span class="st">`</span><span class="at">"CODE=VALUE"</span><span class="st">`</span> pairs</span>
+<span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="sc">$</span>min_value        <span class="sc">:</span> minimum <span class="fu">value</span> (data type compatible with <span class="sc">$</span>field_type)</span>
+<span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="sc">$</span>min_is_inclusive <span class="sc">:</span> whether the minimum value is included <span class="cf">in</span> the range</span>
+<span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="sc">$</span>max_value        <span class="sc">:</span> maximum <span class="fu">value</span> (data type compatible with <span class="sc">$</span>field_type)</span>
+<span id="cb1-12"><a href="#cb1-12" tabindex="-1"></a><span class="sc">$</span>max_is_inclusive <span class="sc">:</span> whether the maximum value is included <span class="cf">in</span> the range</span>
+<span id="cb1-13"><a href="#cb1-13" tabindex="-1"></a><span class="sc">$</span>glob             <span class="sc">:</span> GLOB <span class="fu">expression</span> (character string)</span></code></pre><p></p></div>
+<p>A field domain can be one of three types:</p><ul><li><p><code>Coded</code>: an enumerated list of allowed codes with their descriptive values</p></li>
+<li><p><code>Range</code>: a range constraint (min, max)</p></li>
+<li><p><code>GLOB</code>: a GLOB expression (matching expression like <code>"*[a-z][0-1]?"</code>)</p></li>
+</ul><p><code>$type</code> can also be specified as <code>"RangeDateTime"</code>, a range constraint for
+<code>OFTDateTime</code> fields with <code>$min_value</code> and <code>$max_value</code> given as
+<code>"POSIXct"</code> DateTimes.</p>
+<p>Split and merge policies are supported by ESRI File Geodatabase format via
+OpenFileGDB driver (or FileGDB driver dependent on FileGDB API library).
+When a feature is split in two, <code>$split_policy</code> defines how the value of
+attributes following the domain are computed. Possible values are
+<code>"DEFAULT_VALUE"</code> (default value), <code>"DUPLICATE"</code> (duplicate), and
+<code>"GEOMETRY_RATIO"</code> (new values are computed by the ratio of their
+area/length compared to the area/length of the original feature).
+When a feature is built by merging two features, <code>$merge_policy</code> defines
+how the value of attributes following the domain are computed. Possible
+values are <code>"DEFAULT_VALUE"</code> (default value), <code>"SUM"</code> (sum), and
+<code>"GEOMETRY_WEIGHTED"</code> (new values are computed as the weighted average of
+the source values).</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
@@ -237,7 +368,8 @@ same type (<a href="https://geojson.org/" class="external-link">https://geojson.
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="ogr_manage.html">ogr_ds_create()</a></code>, <code><a href="ogr_manage.html">ogr_layer_create()</a></code>, <code><a href="ogr_manage.html">ogr_field_create()</a></code></p>
-<p>WKT representation of geometry:<br><a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" class="external-link">https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry</a></p></div>
+<p>WKT representation of geometry:<br><a href="https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry" class="external-link">https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry</a></p>
+<p>Field domains:<br><a href="https://desktop.arcgis.com/en/arcmap/latest/manage-data/geodatabases/an-overview-of-attribute-domains.htm" class="external-link">https://desktop.arcgis.com/en/arcmap/latest/manage-data/geodatabases/an-overview-of-attribute-domains.htm</a><br><a href="https://www.geopackage.org/spec/#extension_schema" class="external-link">https://www.geopackage.org/spec/#extension_schema</a><br><a href="https://gdal.org/en/stable/doxygen/classOGRFieldDomain.html#details" class="external-link">https://gdal.org/en/stable/doxygen/classOGRFieldDomain.html#details</a></p></div>
     </div>
 
     <div class="section level2">
