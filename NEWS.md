@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9022 (dev)
+# gdalraster 2.0.0.9030 (dev)
+
+* add write support for field domains (#738) (2025-06-14)
 
 * Geom API: minor fixes and improvements to input validation and error handling (#737) (2025-06-06)
 
