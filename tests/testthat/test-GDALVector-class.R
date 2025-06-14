@@ -1183,7 +1183,7 @@ test_that("get/set metadata works", {
 })
 
 test_that("field domain specifications are returned correctly", {
-    skip_if(gdal_version_num() < 3030000)
+    skip_if(gdal_version_num() < gdal_compute_version(3, 3, 0))
 
     f <- system.file("extdata/domains.gpkg", package="gdalraster")
     dsn <- file.path(tempdir(), basename(f))
@@ -1194,49 +1194,49 @@ test_that("field domain specifications are returned correctly", {
     # integer range domain
     fld_dom <- lyr$getFieldDomain("range_domain_int")
     expect_true(!is.null(fld_dom))
-    expect_equal(fld_dom$domain_type, "range")
-    expect_equal(fld_dom$field_type, "Integer")
-    expect_equal(fld_dom$split_policy, "default value")
-    expect_equal(fld_dom$merge_policy, "default value")
+    expect_equal(fld_dom$type, "Range")
+    expect_equal(fld_dom$field_type, "OFTInteger")
+    expect_equal(fld_dom$split_policy, "DEFAULT_VALUE")
+    expect_equal(fld_dom$merge_policy, "DEFAULT_VALUE")
     expect_equal(fld_dom$min_value, 1)
-    expect_true(fld_dom$min_value_included)
+    expect_true(fld_dom$min_is_inclusive)
     expect_equal(fld_dom$max_value, 2)
-    expect_false(fld_dom$max_value_included)
+    expect_false(fld_dom$max_is_inclusive)
     rm(fld_dom)
 
     # integer64 range domain
     fld_dom <- lyr$getFieldDomain("range_domain_int64")
     expect_true(!is.null(fld_dom))
-    expect_equal(fld_dom$domain_type, "range")
-    expect_equal(fld_dom$field_type, "Integer64")
-    expect_equal(fld_dom$split_policy, "default value")
-    expect_equal(fld_dom$merge_policy, "default value")
+    expect_equal(fld_dom$type, "Range")
+    expect_equal(fld_dom$field_type, "OFTInteger64")
+    expect_equal(fld_dom$split_policy, "DEFAULT_VALUE")
+    expect_equal(fld_dom$merge_policy, "DEFAULT_VALUE")
     expect_equal(fld_dom$min_value, as.integer64(-1234567890123))
-    expect_false(fld_dom$min_value_included)
+    expect_false(fld_dom$min_is_inclusive)
     expect_equal(fld_dom$max_value, as.integer64(1234567890123))
-    expect_true(fld_dom$max_value_included)
+    expect_true(fld_dom$max_is_inclusive)
     rm(fld_dom)
 
     # real range domain
     fld_dom <- lyr$getFieldDomain("range_domain_real")
     expect_true(!is.null(fld_dom))
-    expect_equal(fld_dom$domain_type, "range")
-    expect_equal(fld_dom$field_type, "Real")
-    expect_equal(fld_dom$split_policy, "default value")
-    expect_equal(fld_dom$merge_policy, "default value")
+    expect_equal(fld_dom$type, "Range")
+    expect_equal(fld_dom$field_type, "OFTReal")
+    expect_equal(fld_dom$split_policy, "DEFAULT_VALUE")
+    expect_equal(fld_dom$merge_policy, "DEFAULT_VALUE")
     expect_equal(fld_dom$min_value, 1.5)
-    expect_true(fld_dom$min_value_included)
+    expect_true(fld_dom$min_is_inclusive)
     expect_equal(fld_dom$max_value, 2.5)
-    expect_true(fld_dom$max_value_included)
+    expect_true(fld_dom$max_is_inclusive)
     rm(fld_dom)
 
     # real range domain inf
     fld_dom <- lyr$getFieldDomain("range_domain_real_inf")
     expect_true(!is.null(fld_dom))
-    expect_equal(fld_dom$domain_type, "range")
-    expect_equal(fld_dom$field_type, "Real")
-    expect_equal(fld_dom$split_policy, "default value")
-    expect_equal(fld_dom$merge_policy, "default value")
+    expect_equal(fld_dom$type, "Range")
+    expect_equal(fld_dom$field_type, "OFTReal")
+    expect_equal(fld_dom$split_policy, "DEFAULT_VALUE")
+    expect_equal(fld_dom$merge_policy, "DEFAULT_VALUE")
     expect_true(is.null(fld_dom$min_value))
     expect_true(is.null(fld_dom$max_value))
     rm(fld_dom)
@@ -1244,27 +1244,54 @@ test_that("field domain specifications are returned correctly", {
     # coded values domain
     fld_dom <- lyr$getFieldDomain("enum_domain")
     expect_true(!is.null(fld_dom))
-    expect_equal(fld_dom$domain_type, "coded")
-    expect_equal(fld_dom$field_type, "Integer")
-    expect_equal(fld_dom$split_policy, "default value")
-    expect_equal(fld_dom$merge_policy, "default value")
-    expect_vector(fld_dom$coded_values, character(), size = 2)
-    expect_equal(fld_dom$coded_values[["1"]], "one")
-    expect_equal(fld_dom$coded_values[["2"]], "")
+    expect_equal(fld_dom$type, "Coded")
+    expect_equal(fld_dom$field_type, "OFTInteger")
+    expect_equal(fld_dom$split_policy, "DEFAULT_VALUE")
+    expect_equal(fld_dom$merge_policy, "DEFAULT_VALUE")
+    expect_equal(fld_dom$coded_values, c("1=one", "2"))
     rm(fld_dom)
 
     # glob domain
     fld_dom <- lyr$getFieldDomain("glob_domain")
     expect_true(!is.null(fld_dom))
-    expect_equal(fld_dom$domain_type, "glob")
-    expect_equal(fld_dom$field_type, "String")
-    expect_equal(fld_dom$split_policy, "default value")
-    expect_equal(fld_dom$merge_policy, "default value")
+    expect_equal(fld_dom$type, "GLOB")
+    expect_equal(fld_dom$field_type, "OFTString")
+    expect_equal(fld_dom$split_policy, "DEFAULT_VALUE")
+    expect_equal(fld_dom$merge_policy, "DEFAULT_VALUE")
     expect_equal(fld_dom$glob, "*")
     rm(fld_dom)
 
     lyr$close()
     deleteDataset(dsn)
+
+
+    # get a list of field domain names defined in a dataset
+    # GDALDatasetGetFieldDomainNames() was added at GDAL >= 3.5
+    skip_if(gdal_version_num() < gdal_compute_version(3, 5, 0))
+
+    f <- system.file("extdata/domains.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    fld_dom_names <- ogr_ds_field_domain_names(dsn)
+    expected_names <- c("enum_domain", "glob_domain", "range_domain_int",
+                        "range_domain_int64", "range_domain_real",
+                        "range_domain_real_inf")
+    expect_equal(fld_dom_names, expected_names)
+    deleteDataset(dsn)
+
+    # format supports field domains but none are present
+    f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+    expect_equal(ogr_ds_field_domain_names(dsn), character(0))
+    deleteDataset(dsn)
+
+    # format does not support field domains
+    f <- system.file("extdata/poly_multipoly.shp", package="gdalraster")
+    expect_warning(fld_dom_names <- ogr_ds_field_domain_names(f))
+    expect_true(is.null(fld_dom_names))
+
 
     # OpenFileGDB with DateTime range domain
     # support for DateTime field domains in OpenFileGDB was added at GDAL 3.8.0
@@ -1276,16 +1303,269 @@ test_that("field domain specifications are returned correctly", {
     fld_dom <- lyr$getFieldDomain("datetime_range")
     expect_true(!is.null(fld_dom))
     expect_equal(fld_dom$description, "datetime_range_desc")
-    expect_equal(fld_dom$domain_type, "range")
-    expect_equal(fld_dom$field_type, "DateTime")
-    expect_equal(fld_dom$split_policy, "default value")
-    expect_equal(fld_dom$merge_policy, "default value")
-    expect_equal(fld_dom$min_value, "2000-01-01T00:00:00")
-    expect_true(fld_dom$min_value_included)
-    expect_equal(fld_dom$max_value, "2100-01-01T00:00:00")
-    expect_true(fld_dom$max_value_included)
+    expect_equal(fld_dom$type, "RangeDateTime")
+    expect_equal(fld_dom$field_type, "OFTDateTime")
+    expect_equal(fld_dom$split_policy, "DEFAULT_VALUE")
+    expect_equal(fld_dom$merge_policy, "DEFAULT_VALUE")
+    expect_equal(fld_dom$min_value, as.POSIXct("2000-01-01T00:00:00",
+                                               tz = "UTC"))
+    expect_true(fld_dom$min_is_inclusive)
+    expect_equal(fld_dom$max_value, as.POSIXct("2100-01-01T00:00:00",
+                                               tz = "UTC"))
+    expect_true(fld_dom$max_is_inclusive)
 
     lyr$close()
+})
+
+test_that("field domain write functions work", {
+    skip_if(gdal_version_num() < gdal_compute_version(3, 3, 0))
+
+    ## test Range, Coded and GLOB with GPKG
+    f <- system.file("extdata/domains.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    # range field domain for OFTInteger
+    defn <- ogr_def_field_domain("Range", "range1", "range domain test 1",
+                                 fld_type = "OFTInteger", range_min = 0,
+                                 range_max = 100)
+    expect_true(is.list(defn))
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # add a field using the "range1" domain
+    field1_defn <- ogr_def_field("OFTInteger", domain_name = "range1")
+    expect_true(ogr_field_create(dsn, "test", "range_field1",
+                                 fld_defn = field1_defn))
+
+    # range field domain for OFTInteger64
+    defn <- ogr_def_field_domain("Range", "range2", "range domain test 2",
+                                 fld_type = "OFTInteger64", range_min = 0,
+                                 range_max = as.integer64("9007199254740992"),
+                                 max_is_inclusive = FALSE)
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # add a field using the "range2" domain
+    field2_defn <- ogr_def_field("OFTInteger64", domain_name = "range2")
+    expect_true(ogr_field_create(dsn, "test", "range_field2",
+                                 fld_defn = field2_defn))
+
+    # range field domain for Real
+    defn <- ogr_def_field_domain("Range", "range3", "range domain test 3",
+                                 fld_type = "OFTReal", range_min = 0.0,
+                                 min_is_inclusive = FALSE,
+                                 range_max = 1.0)
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # range field domain for Real (inf)
+    defn <- ogr_def_field_domain("Range", "range4", "range domain test 4",
+                                 fld_type = "OFTReal")
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # coded values domain
+    defn <- ogr_def_field_domain("Coded", "coded1", "coded values domain test",
+                                 fld_type = "OFTInteger",
+                                 coded_values = c("1=one", "2=two", "3"))
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # add a field using the "coded1" domain
+    expect_true(ogr_field_create(dsn, "test", "coded_field1",
+                                 fld_type = "OFTInteger", default_value = 1,
+                                 domain_name = "coded1"))
+
+    # glob domain
+    defn <- ogr_def_field_domain("GLOB", "glob1", "glob domain test",
+                                 fld_type = "OFTString", glob = "*")
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # test setting a domain name on an existing field
+    ogr_field_create(dsn, "test", "range_field3", fld_type = "OFTReal")
+    expect_true(ogr_field_set_domain_name(dsn, "test",
+                                          fld_name = "range_field3",
+                                          domain_name = "range3"))
+
+    # read back
+    lyr <- new(GDALVector, dsn, "test")
+
+    # range1 read back
+    fld_dom <- lyr$getFieldDomain("range1")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$type, "Range")
+    expect_equal(fld_dom$description, "range domain test 1")
+    expect_equal(fld_dom$field_type, "OFTInteger")
+    expect_equal(fld_dom$min_value, 0)
+    expect_true(fld_dom$min_is_inclusive)
+    expect_equal(fld_dom$max_value, 100)
+    expect_true(fld_dom$max_is_inclusive)
+    rm(fld_dom)
+
+    lyr_defn <- lyr$getLayerDefn()
+    expect_equal(lyr_defn$range_field1$domain, "range1")
+
+    # range2 read back
+    fld_dom <- lyr$getFieldDomain("range2")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$type, "Range")
+    expect_equal(fld_dom$description, "range domain test 2")
+    expect_equal(fld_dom$field_type, "OFTInteger64")
+    expect_equal(fld_dom$min_value, as.integer64(0))
+    expect_true(fld_dom$min_is_inclusive)
+    expect_equal(fld_dom$max_value, as.integer64("9007199254740992"))
+    expect_false(fld_dom$max_is_inclusive)
+    rm(fld_dom)
+
+    expect_equal(lyr_defn$range_field2$domain, "range2")
+
+    # range3 read back
+    fld_dom <- lyr$getFieldDomain("range3")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$type, "Range")
+    expect_equal(fld_dom$description, "range domain test 3")
+    expect_equal(fld_dom$field_type, "OFTReal")
+    expect_equal(fld_dom$min_value, 0.0)
+    expect_false(fld_dom$min_is_inclusive)
+    expect_equal(fld_dom$max_value, 1.0)
+    expect_true(fld_dom$max_is_inclusive)
+    rm(fld_dom)
+
+    # range4 read back
+    fld_dom <- lyr$getFieldDomain("range4")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$type, "Range")
+    expect_equal(fld_dom$description, "range domain test 4")
+    expect_equal(fld_dom$field_type, "OFTReal")
+    expect_true(is.null(fld_dom$min_value))
+    expect_true(is.null(fld_dom$max_value))
+    rm(fld_dom)
+
+    # coded1 read back
+    fld_dom <- lyr$getFieldDomain("coded1")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$type, "Coded")
+    expect_equal(fld_dom$description, "coded values domain test")
+    expect_equal(fld_dom$field_type, "OFTInteger")
+    expect_equal(fld_dom$coded_values, c("1=one", "2=two", "3"))
+    rm(fld_dom)
+
+    expect_equal(lyr_defn$coded_field1$domain, "coded1")
+
+    # glob1 read back
+    fld_dom <- lyr$getFieldDomain("glob1")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$type, "GLOB")
+    expect_equal(fld_dom$description, "glob domain test")
+    expect_equal(fld_dom$field_type, "OFTString")
+    expect_equal(fld_dom$glob, "*")
+    rm(fld_dom)
+
+    # domain name was set on existing field with ogr_field_set_domain_name()
+    expect_equal(lyr_defn$range_field3$domain, "range3")
+
+    lyr$close()
+    deleteDataset(dsn)
+
+
+    ## test RangeDateTime with ESRI File Geodatabase
+    # support for DateTime field domains in OpenFileGDB was added at GDAL 3.8.0
+    skip_if(gdal_version_num() < gdal_compute_version(3, 8, 0))
+
+    # create a test dataset
+    dsn <- file.path(tempdir(), "domains.gdb")
+    ogr_ds_create("OpenFileGDB", dsn, overwrite = TRUE)
+    ogr_layer_create(dsn, layer = "test", geom_type = "POINT",
+                     srs = "WGS84")
+    ogr_field_create(dsn, "test", "dt_fld1", fld_type = "OFTDateTime")
+
+    # create and add a field domain
+    defn <- ogr_def_field_domain("RangeDateTime", "dt_range1",
+                                 description = "rangedatetime domain test 1",
+                                 fld_type = "OFTDateTime",
+                                 range_min = as.POSIXct("2000-01-01T00:00:00",
+                                                        tz = "UTC"),
+                                 range_max = as.POSIXct("2100-01-01T00:00:00",
+                                                        tz = "UTC"))
+
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    expect_true(ogr_field_set_domain_name(dsn, "test",
+                                          fld_name = "dt_fld1",
+                                          domain_name = "dt_range1"))
+
+
+    # domain with inf range
+    defn <- ogr_def_field_domain("RangeDateTime", "dt_range2",
+                                 description = "rangedatetime domain test 2",
+                                 fld_type = "OFTDateTime")
+
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    expect_true(ogr_field_create(dsn, "test", "dt_fld2",
+                                 fld_type = "OFTDateTime",
+                                 domain_name = "dt_range2"))
+
+    # # domain with inf max range
+    # defn <- ogr_def_field_domain("RangeDateTime", "dt_range3",
+    #                              description = "rangedatetime domain test 3",
+    #                              range_min = as.POSIXct("2000-01-01T00:00:00",
+    #                                                     tz = "UTC"),
+    #                              fld_type = "OFTDateTime")
+
+    # expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # expect_true(ogr_field_create(dsn, "test", "dt_fld3",
+    #                              fld_type = "OFTDateTime",
+    #                              domain_name = "dt_range3"))
+
+    ## read back
+
+    # TODO: we get actual: ("dt_range1", "dt_range2")
+    #       A DateTime range domain with NULL max or min does not appear in the
+    #       list of names returned by GDALDatasetGetFieldDomainNames(), but
+    #       they do appear in the output of ogrinfo().
+    # expected_names <- c("dt_range1", "dt_range2", "dt_range3")
+    # expect_equal(ogr_ds_field_domain_names(dsn), expected_names)
+
+    lyr <- new(GDALVector, dsn, "test")
+
+    fld_dom <- lyr$getFieldDomain("dt_range1")
+    expect_true(!is.null(fld_dom))
+    expect_equal(fld_dom$description, "rangedatetime domain test 1")
+    expect_equal(fld_dom$type, "RangeDateTime")
+    expect_equal(fld_dom$field_type, "OFTDateTime")
+    expect_equal(fld_dom$min_value, as.POSIXct("2000-01-01T00:00:00",
+                                               tz = "UTC"))
+    expect_true(fld_dom$min_is_inclusive)
+    expect_equal(fld_dom$max_value, as.POSIXct("2100-01-01T00:00:00",
+                                               tz = "UTC"))
+    expect_true(fld_dom$max_is_inclusive)
+    rm(fld_dom)
+
+    # fld_dom <- lyr$getFieldDomain("dt_range2")
+    # expect_true(!is.null(fld_dom))
+    # expect_equal(fld_dom$description, "rangedatetime domain test 2")
+    # expect_equal(fld_dom$type, "RangeDateTime")
+    # expect_equal(fld_dom$field_type, "OFTDateTime")
+    # expect_true(is.null(fld_dom$min_value))
+    # expect_true(fld_dom$min_is_inclusive)
+    # expect_true(is.null(fld_dom$max_value))
+    # expect_true(fld_dom$max_is_inclusive)
+    # rm(fld_dom)
+
+    lyr$close()
+    vsi_rmdir(dsn, recursive = TRUE)
+})
+
+test_that("delete field domain works", {
+    skip_if(gdal_version_num() < gdal_compute_version(3, 5, 0))
+
+    f <- system.file("extdata/domains.gpkg", package="gdalraster")
+    dsn <- file.path(tempdir(), basename(f))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    # delete field domains not supported for GPKG
+    expect_false(ogr_ds_test_cap(dsn)$DeleteFieldDomain)
+    expect_false(ogr_ds_delete_field_domain(dsn, "glob_domain"))
+
+    # TODO: test on OpenFileGDB
 })
 
 test_that("info() prints output to the console", {

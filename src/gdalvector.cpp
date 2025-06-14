@@ -517,40 +517,42 @@ SEXP GDALVector::getFieldDomain(const std::string &domain_name) const {
 
     Rcpp::List list_out = Rcpp::List::create();
 
-    list_out.push_back(OGR_FldDomain_GetDescription(hDomain), "description");
-
     const char *pszType = "";
     switch (OGR_FldDomain_GetDomainType(hDomain)) {
         case OFDT_CODED:
-            pszType = "coded";
+            pszType = "Coded";
             break;
         case OFDT_RANGE:
-            pszType = "range";
+            pszType = "Range";
             break;
         case OFDT_GLOB:
-            pszType = "glob";
+            pszType = "GLOB";
             break;
     }
-    list_out.push_back(pszType, "domain_type");
+    list_out.push_back(pszType, "type");
 
-    list_out.push_back(
-            OGR_GetFieldTypeName(OGR_FldDomain_GetFieldType(hDomain)),
-            "field_type");
+    list_out.push_back(OGR_FldDomain_GetName(hDomain), "domain_name");
 
-    list_out.push_back(
-            OGR_GetFieldSubTypeName(OGR_FldDomain_GetFieldSubType(hDomain)),
-            "field_subtype");
+    list_out.push_back(OGR_FldDomain_GetDescription(hDomain), "description");
+
+    std::string fld_type_name = "OFT" + std::string(
+        OGR_GetFieldTypeName(OGR_FldDomain_GetFieldType(hDomain)));
+    list_out.push_back(fld_type_name, "field_type");
+
+    std::string fld_subtype_name = "OFST" + std::string(
+        OGR_GetFieldSubTypeName(OGR_FldDomain_GetFieldSubType(hDomain)));
+    list_out.push_back(fld_subtype_name, "field_subtype");
 
     const char *pszSplitPolicy = "";
     switch (OGR_FldDomain_GetSplitPolicy(hDomain)) {
         case OFDSP_DEFAULT_VALUE:
-            pszSplitPolicy = "default value";
+            pszSplitPolicy = "DEFAULT_VALUE";
             break;
         case OFDSP_DUPLICATE:
-            pszSplitPolicy = "duplicate";
+            pszSplitPolicy = "DUPLICATE";
             break;
         case OFDSP_GEOMETRY_RATIO:
-            pszSplitPolicy = "geometry ratio";
+            pszSplitPolicy = "GEOMETRY_RATIO";
             break;
     }
     list_out.push_back(pszSplitPolicy, "split_policy");
@@ -558,13 +560,13 @@ SEXP GDALVector::getFieldDomain(const std::string &domain_name) const {
     const char *pszMergePolicy = "";
     switch (OGR_FldDomain_GetMergePolicy(hDomain)) {
         case OFDMP_DEFAULT_VALUE:
-            pszMergePolicy = "default value";
+            pszMergePolicy = "DEFAULT_VALUE";
             break;
         case OFDMP_SUM:
-            pszMergePolicy = "sum";
+            pszMergePolicy = "SUM";
             break;
         case OFDMP_GEOMETRY_WEIGHTED:
-            pszMergePolicy = "geometry weighted";
+            pszMergePolicy = "GEOMETRY_WEIGHTED";
             break;
     }
     list_out.push_back(pszMergePolicy, "merge_policy");
@@ -580,19 +582,17 @@ SEXP GDALVector::getFieldDomain(const std::string &domain_name) const {
                 break;
             }
 
-            std::map<std::string, std::string> code_value_map{};
+            Rcpp::CharacterVector code_value = Rcpp::CharacterVector::create();
 
             for (int i = 0; enumeration[i].pszCode != nullptr; ++i) {
+                std::string tmp = std::string(enumeration[i].pszCode);
                 if (enumeration[i].pszValue) {
-                    code_value_map[std::string(enumeration[i].pszCode)] =
-                            std::string(enumeration[i].pszValue);
+                    tmp = tmp + "=" + std::string(enumeration[i].pszValue);
                 }
-                else {
-                    code_value_map[std::string(enumeration[i].pszCode)] = "";
-                }
+                code_value.push_back(tmp);
             }
 
-            list_out.push_back(Rcpp::wrap(code_value_map), "coded_values");
+            list_out.push_back(code_value, "coded_values");
             break;
         }
 
@@ -609,55 +609,139 @@ SEXP GDALVector::getFieldDomain(const std::string &domain_name) const {
             if (OGR_FldDomain_GetFieldType(hDomain) == OFTInteger) {
                 if (!OGR_RawField_IsUnset(sMin)) {
                     list_out.push_back(sMin->Integer, "min_value");
-                    list_out.push_back(bMinIsIncluded, "min_value_included");
+                    list_out.push_back(bMinIsIncluded, "min_is_inclusive");
+                }
+                else {
+                    list_out.push_back(R_NilValue, "min_value");
+                    list_out.push_back(R_NilValue, "min_is_inclusive");
                 }
                 if (!OGR_RawField_IsUnset(sMax)) {
                     list_out.push_back(sMax->Integer, "max_value");
-                    list_out.push_back(bMaxIsIncluded, "max_value_included");
+                    list_out.push_back(bMaxIsIncluded, "max_is_inclusive");
+                }
+                else {
+                    list_out.push_back(R_NilValue, "max_value");
+                    list_out.push_back(R_NilValue, "max_is_inclusive");
                 }
             }
             else if (OGR_FldDomain_GetFieldType(hDomain) == OFTInteger64) {
                 if (!OGR_RawField_IsUnset(sMin)) {
                     list_out.push_back(Rcpp::toInteger64(sMin->Integer64),
                                        "min_value");
-                    list_out.push_back(bMinIsIncluded, "min_value_included");
+                    list_out.push_back(bMinIsIncluded, "min_is_inclusive");
+                }
+                else {
+                    list_out.push_back(R_NilValue, "min_value");
+                    list_out.push_back(R_NilValue, "min_is_inclusive");
                 }
                 if (!OGR_RawField_IsUnset(sMax)) {
                     list_out.push_back(Rcpp::toInteger64(sMax->Integer64),
                                        "max_value");
-                    list_out.push_back(bMaxIsIncluded, "max_value_included");
+                    list_out.push_back(bMaxIsIncluded, "max_is_inclusive");
+                }
+                else {
+                    list_out.push_back(R_NilValue, "max_value");
+                    list_out.push_back(R_NilValue, "max_is_inclusive");
                 }
             }
             else if (OGR_FldDomain_GetFieldType(hDomain) == OFTReal) {
                 if (!OGR_RawField_IsUnset(sMin)) {
                     list_out.push_back(sMin->Real, "min_value");
-                    list_out.push_back(bMinIsIncluded, "min_value_included");
+                    list_out.push_back(bMinIsIncluded, "min_is_inclusive");
+                }
+                else {
+                    list_out.push_back(R_NilValue, "min_value");
+                    list_out.push_back(R_NilValue, "min_is_inclusive");
                 }
                 if (!OGR_RawField_IsUnset(sMax)) {
                     list_out.push_back(sMax->Real, "max_value");
-                    list_out.push_back(bMaxIsIncluded, "max_value_included");
+                    list_out.push_back(bMaxIsIncluded, "max_is_inclusive");
+                }
+                else {
+                    list_out.push_back(R_NilValue, "max_value");
+                    list_out.push_back(R_NilValue, "max_is_inclusive");
                 }
             }
             else if (OGR_FldDomain_GetFieldType(hDomain) == OFTDateTime) {
-                if (!OGR_RawField_IsUnset(sMin)) {
-                    const char *pszVal = CPLSPrintf(
-                        "%04d-%02d-%02dT%02d:%02d:%02d", sMin->Date.Year,
-                        sMin->Date.Month, sMin->Date.Day, sMin->Date.Hour,
-                        sMin->Date.Minute,
-                        static_cast<int>(sMin->Date.Second + 0.5));
+                list_out[0] = "RangeDateTime";
 
-                    list_out.push_back(pszVal, "min_value");
-                    list_out.push_back(bMinIsIncluded, "min_value_included");
+                if (!OGR_RawField_IsUnset(sMin)) {
+                    struct tm brokendowntime;
+                    brokendowntime.tm_year =
+                            static_cast<int>(sMin->Date.Year) - 1900;
+                    brokendowntime.tm_mon =
+                            static_cast<int>(sMin->Date.Month) - 1;
+                    brokendowntime.tm_mday =
+                            static_cast<int>(sMin->Date.Day);
+                    brokendowntime.tm_hour =
+                            static_cast<int>(sMin->Date.Hour);
+                    brokendowntime.tm_min =
+                            static_cast<int>(sMin->Date.Minute);
+                    brokendowntime.tm_sec =
+                            static_cast<int>(sMin->Date.Second + 0.5);
+                    int64_t nUnixTime = CPLYMDHMSToUnixTime(&brokendowntime);
+                    int nTZflag = static_cast<int>(sMin->Date.TZFlag);
+                    if (nTZflag > 1 && nTZflag != 100) {
+                        // convert to UTC
+                        const int tzoffset = std::abs(nTZflag - 100) * 15;
+                        const int tzhour = tzoffset / 60;
+                        const int tzmin = tzoffset - tzhour * 60;
+                        const int offset_sec = tzhour * 3600 + tzmin * 60;
+                        if (nTZflag >= 100)
+                            nUnixTime -= offset_sec;
+                        else
+                            nUnixTime += offset_sec;
+                    }
+                    Rcpp::NumericVector dt_min =
+                            {static_cast<double>(nUnixTime)};
+                    Rcpp::CharacterVector classes = {"POSIXct", "POSIXt"};
+                    dt_min.attr("class") = classes;
+                    dt_min.attr("tzone") = "UTC";
+                    list_out.push_back(dt_min, "min_value");
+                    list_out.push_back(bMinIsIncluded, "min_is_inclusive");
+                }
+                else {
+                    list_out.push_back(R_NilValue, "min_value");
+                    list_out.push_back(R_NilValue, "min_is_inclusive");
                 }
                 if (!OGR_RawField_IsUnset(sMax)) {
-                    const char *pszVal = CPLSPrintf(
-                        "%04d-%02d-%02dT%02d:%02d:%02d", sMax->Date.Year,
-                        sMax->Date.Month, sMax->Date.Day, sMax->Date.Hour,
-                        sMax->Date.Minute,
-                        static_cast<int>(sMax->Date.Second + 0.5));
-
-                    list_out.push_back(pszVal, "max_value");
-                    list_out.push_back(bMaxIsIncluded, "max_value_included");
+                    struct tm brokendowntime;
+                    brokendowntime.tm_year =
+                            static_cast<int>(sMax->Date.Year) - 1900;
+                    brokendowntime.tm_mon =
+                            static_cast<int>(sMax->Date.Month) - 1;
+                    brokendowntime.tm_mday =
+                            static_cast<int>(sMax->Date.Day);
+                    brokendowntime.tm_hour =
+                            static_cast<int>(sMax->Date.Hour);
+                    brokendowntime.tm_min =
+                            static_cast<int>(sMax->Date.Minute);
+                    brokendowntime.tm_sec =
+                            static_cast<int>(sMax->Date.Second + 0.5);
+                    int64_t nUnixTime = CPLYMDHMSToUnixTime(&brokendowntime);
+                    int nTZflag = static_cast<int>(sMin->Date.TZFlag);
+                    if (nTZflag > 1 && nTZflag != 100) {
+                        // convert to UTC
+                        const int tzoffset = std::abs(nTZflag - 100) * 15;
+                        const int tzhour = tzoffset / 60;
+                        const int tzmin = tzoffset - tzhour * 60;
+                        const int offset_sec = tzhour * 3600 + tzmin * 60;
+                        if (nTZflag >= 100)
+                            nUnixTime -= offset_sec;
+                        else
+                            nUnixTime += offset_sec;
+                    }
+                    Rcpp::NumericVector dt_max =
+                            {static_cast<double>(nUnixTime)};
+                    Rcpp::CharacterVector classes = {"POSIXct", "POSIXt"};
+                    dt_max.attr("class") = classes;
+                    dt_max.attr("tzone") = "UTC";
+                    list_out.push_back(dt_max, "max_value");
+                    list_out.push_back(bMaxIsIncluded, "max_is_inclusive");
+                }
+                else {
+                    list_out.push_back(R_NilValue, "max_value");
+                    list_out.push_back(R_NilValue, "max_is_inclusive");
                 }
             }
             break;

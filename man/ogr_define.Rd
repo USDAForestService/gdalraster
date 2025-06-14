@@ -5,6 +5,7 @@
 \alias{ogr_def_layer}
 \alias{ogr_def_field}
 \alias{ogr_def_geom_field}
+\alias{ogr_def_field_domain}
 \title{OGR feature class definition for vector data}
 \usage{
 ogr_def_layer(geom_type, geom_fld_name = "geom", srs = NULL)
@@ -16,10 +17,27 @@ ogr_def_field(
   fld_precision = NULL,
   is_nullable = NULL,
   is_unique = NULL,
-  default_value = NULL
+  default_value = NULL,
+  domain_name = NULL
 )
 
 ogr_def_geom_field(geom_type, srs = NULL, is_nullable = NULL)
+
+ogr_def_field_domain(
+  domain_type,
+  domain_name,
+  description = NULL,
+  fld_type = NULL,
+  fld_subtype = "OFSTNone",
+  split_policy = "DEFAULT_VALUE",
+  merge_policy = "DEFAULT_VALUE",
+  coded_values = NULL,
+  range_min = NULL,
+  min_is_inclusive = TRUE,
+  range_max = NULL,
+  max_is_inclusive = TRUE,
+  glob = ""
+)
 }
 \arguments{
 \item{geom_type}{Character string specifying a geometry type (see Details).}
@@ -32,11 +50,11 @@ as OGC WKT or other well-known format (e.g., the input formats usable with
 \code{\link[=srs_to_wkt]{srs_to_wkt()}}).}
 
 \item{fld_type}{Character string containing the name of a field data type
-(e.g., \code{OFTInteger}, \code{OFTInteger64}, \code{OFTReal}, \code{OFTString}).}
+(e.g., \code{"OFTInteger"}, \code{"OFTInteger64"}, \code{"OFTReal"}, \code{"OFTString"}, ...).}
 
 \item{fld_subtype}{Character string containing the name of a field subtype.
-One of  \code{OFSTNone} (the default), \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32},
-\code{OFSTJSON}, \code{OFSTUUID}.}
+One of \code{"OFSTNone"} (the default), \code{"OFSTBoolean"}, \code{"OFSTInt16"},
+\code{"OFSTFloat32"}, \code{"OFSTJSON"}, \code{"OFSTUUID"}.}
 
 \item{fld_width}{Optional integer value specifying max number of characters.}
 
@@ -49,8 +67,50 @@ Defaults to \code{TRUE}.}
 \item{is_unique}{Optional UNIQUE constraint on the field (logical value).
 Defaults to \code{FALSE}.}
 
-\item{default_value}{Optional default value for the field as a character
-string.}
+\item{default_value}{Optional default value for the field given as a
+character string.}
+
+\item{domain_name}{Character string specifying the name of the field domain.
+Optional for \code{ogr_def_field()}, required for \code{ogr_def_field_domain()}.}
+
+\item{domain_type}{Character string specifying a field domain type (see
+Details). Must be one of \code{"Coded"}, \code{"Range"}, \code{"RangeDateTime"}, \code{"GLOB"}
+(case-insensitive).}
+
+\item{description}{Optional character string giving a description of the
+field domain.}
+
+\item{split_policy}{Character string specifying the split policy of the
+field domain. One of \code{"DEFAULT_VALUE"}, \code{"DUPLICATE"}, \code{"GEOMETRY_RATIO"}
+(supported by ESRI File Geodatabase format via OpenFileGDB driver).}
+
+\item{merge_policy}{Character string specifying the merge policy of the
+field domain. One of \code{"DEFAULT_VALUE"}, \code{"SUM"}, \code{"GEOMETRY_WEIGHTED"}
+(supported by ESRI File Geodatabase format via OpenFileGDB driver).}
+
+\item{coded_values}{A vector of the allowed codes or \code{"CODE=VALUE"} pairs
+(the expanded "value" associated with a code is optional). Required
+if \code{domain_type = "Coded"}. Each code should appear only once, but it is the
+responsibility of the user to check it.}
+
+\item{range_min}{Minimum value in a Range or RangeDateTime field domain (can
+be NULL). The data type must be consistent with with the field type given in
+the \code{fld_type} argument.}
+
+\item{min_is_inclusive}{= Logical value, whether the minimum value is
+included in the range. Defaults to \code{TRUE}. Required if \code{domain_type} is
+\code{"Range"} or \code{"RangeDateTime"}.}
+
+\item{range_max}{Maximum value in a Range or RangeDateTime field domain (can
+be NULL). The data type must be consistent with with the field type given in
+the \code{fld_type} argument.}
+
+\item{max_is_inclusive}{= Logical value, whether the maximum value is
+included in the range. Defaults to \code{TRUE}. Required if \code{domain_type} is
+\code{"Range"} or \code{"RangeDateTime"}.}
+
+\item{glob}{Character string containing the GLOB expression. Required if
+\code{domain_type} is \code{"GLOB"}.}
 }
 \description{
 This topic contains documentation and helper functions for defining an
@@ -58,7 +118,7 @@ OGR feature class.
 A named list containing zero or more attribute field definitions, along with
 one or more geometry field definitions, comprise an OGR feature class
 definition (a.k.a. layer definition). \code{ogr_def_layer()} initializes such a
-list with a geometry type and (optionally) a spatial reference system.
+list with the geometry type and (optionally) a spatial reference system.
 Attribute fields may then be added to the layer definition.
 \code{ogr_def_field()} creates an attribute field definition, a list
 containing the field's data type and potentially other optional field
@@ -66,6 +126,12 @@ properties.
 \code{ogr_def_geom_field()} similarly creates a geometry field definition. This
 might be used with certain vector formats that support multiple geometry
 columns (e.g., PostGIS).
+\code{ogr_def_field_domain()} creates a field domain definition. A field domain
+is a set of constraints that apply to one or several fields. This is a
+concept found, e.g., in ESRI File Geodatabase and in GeoPackage via the
+Schema extension (see \url{https://github.com/OSGeo/gdal/pull/3638}).
+GDAL >= 3.3 supports reading and writing field domains with certain drivers
+(e.g., GPKG and OpenFileGDB).
 }
 \details{
 All features in an OGR Layer share a common schema (feature class), modeled
@@ -84,6 +150,7 @@ $precision  : optional number of digits after the decimal point
 $is_nullable: optional NOT NULL constraint (logical value)
 $is_unique  : optional UNIQUE constraint (logical value)
 $default    : optional default value as character string
+$domain     : optional field domain name
 $is_geom    : FALSE (the default) for attribute fields
 }\if{html}{\out{</div>}}
 
@@ -97,9 +164,8 @@ values:
 \code{OFSTNone}, \code{OFSTBoolean}, \code{OFSTInt16}, \code{OFSTFloat32}, \code{OFSTJSON},
 \code{OFSTUUID}.
 
-By default, fields are nullable, have no unique constraint, and are not
-ignored (i.e., not omitted when fetching features). Not-null and unique
-constraints are not supported by all format drivers.
+By default, fields are nullable and have no unique constraint. Not-null and
+unique constraints are not supported by all format drivers.
 
 A default field value is taken into account by format drivers (generally
 those with a SQL interface) that support it at field creation time.
@@ -136,6 +202,47 @@ this is generally before creating any features to the layer. In some cases,
 a not-null constraint may be available as a layer creation option. For
 example, GeoPackage format has a layer creation option
 \verb{GEOMETRY_NULLABLE=[YES/NO]}.
+
+The definition for a field domain is a named list with elements:
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{$type             : domain type ("Coded", "Range", "RangeDateTime", "GLOB")
+$domain_name      : name of the field domain (character string)
+$description      : optional domain description (character string)
+$field_type       : OGR Field Type (see attribute field definitions above)
+$field_subtype    : optional OGR Field Subtype ("OFSTBoolean", ...)
+$split_policy     : split policy of the field domain (see below)
+$merge_policy     : merge policy of the field domain (see below)
+$coded_values     : character vector of codes, or `"CODE=VALUE"` pairs
+$min_value        : minimum value (data type compatible with $field_type)
+$min_is_inclusive : whether the minimum value is included in the range
+$max_value        : maximum value (data type compatible with $field_type)
+$max_is_inclusive : whether the maximum value is included in the range
+$glob             : GLOB expression (character string)
+}\if{html}{\out{</div>}}
+
+A field domain can be one of three types:
+\itemize{
+\item \code{Coded}: an enumerated list of allowed codes with their descriptive values
+\item \code{Range}: a range constraint (min, max)
+\item \code{GLOB}: a GLOB expression (matching expression like \code{"*[a-z][0-1]?"})
+}
+
+\verb{$type} can also be specified as \code{"RangeDateTime"}, a range constraint for
+\code{OFTDateTime} fields with \verb{$min_value} and \verb{$max_value} given as
+\code{"POSIXct"} DateTimes.
+
+Split and merge policies are supported by ESRI File Geodatabase format via
+OpenFileGDB driver (or FileGDB driver dependent on FileGDB API library).
+When a feature is split in two, \verb{$split_policy} defines how the value of
+attributes following the domain are computed. Possible values are
+\code{"DEFAULT_VALUE"} (default value), \code{"DUPLICATE"} (duplicate), and
+\code{"GEOMETRY_RATIO"} (new values are computed by the ratio of their
+area/length compared to the area/length of the original feature).
+When a feature is built by merging two features, \verb{$merge_policy} defines
+how the value of attributes following the domain are computed. Possible
+values are \code{"DEFAULT_VALUE"} (default value), \code{"SUM"} (sum), and
+\code{"GEOMETRY_WEIGHTED"} (new values are computed as the weighted average of
+the source values).
 }
 \note{
 The feature id (FID) is a special property of a feature and not treated as
@@ -187,4 +294,9 @@ deleteDataset(dsn)
 
 WKT representation of geometry:\cr
 \url{https://en.wikipedia.org/wiki/Well-known_text_representation_of_geometry}
+
+Field domains:\cr
+\url{https://desktop.arcgis.com/en/arcmap/latest/manage-data/geodatabases/an-overview-of-attribute-domains.htm}\cr
+\url{https://www.geopackage.org/spec/#extension_schema}\cr
+\url{https://gdal.org/en/stable/doxygen/classOGRFieldDomain.html#details}
 }
