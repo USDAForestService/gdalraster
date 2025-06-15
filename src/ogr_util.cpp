@@ -708,6 +708,8 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                      (!Rcpp::is<Rcpp::NumericVector>(
                         fld_dom_defn["min_value"]) &&
                       !Rcpp::is<Rcpp::IntegerVector>(
+                        fld_dom_defn["min_value"]) &&
+                      !Rcpp::is<Rcpp::LogicalVector>(
                         fld_dom_defn["min_value"]))) {
 
                 GDALReleaseDataset(hDS);
@@ -715,6 +717,9 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
             }
             else {
                 min_value = Rcpp::as<double>(fld_dom_defn["min_value"]);
+                if (Rcpp::NumericVector::is_na(min_value))
+                    min_is_null = true;
+
             }
 
             if (fld_dom_defn.containsElementNamed("max_value") &&
@@ -726,6 +731,8 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                      (!Rcpp::is<Rcpp::NumericVector>(
                         fld_dom_defn["max_value"]) &&
                       !Rcpp::is<Rcpp::IntegerVector>(
+                        fld_dom_defn["max_value"]) &&
+                      !Rcpp::is<Rcpp::LogicalVector>(
                         fld_dom_defn["max_value"]))) {
 
                 GDALReleaseDataset(hDS);
@@ -733,6 +740,8 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
             }
             else {
                 max_value = Rcpp::as<double>(fld_dom_defn["max_value"]);
+                if (Rcpp::NumericVector::is_na(max_value))
+                    max_is_null = true;
             }
 
             OGRField sMin, sMax;
@@ -762,7 +771,8 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 OGR_FldDomain_SetSplitPolicy(hFldDom, eOFDSP);
                 OGR_FldDomain_SetMergePolicy(hFldDom, eOFDMP);
                 char *pszFailureReason = nullptr;
-                ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
+                ret = GDALDatasetAddFieldDomain(hDS, hFldDom,
+                                                &pszFailureReason);
                 if (pszFailureReason != nullptr) {
                     Rcpp::Rcout << pszFailureReason << std::endl;
                     VSIFree(pszFailureReason);
@@ -794,10 +804,16 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 Rcpp::NumericVector tmp =
                     Rcpp::as<Rcpp::NumericVector>(fld_dom_defn["min_value"]);
 
-                if (Rcpp::isInteger64(tmp))
+                if (Rcpp::isInteger64(tmp)) {
                     min_value = Rcpp::fromInteger64(tmp[0]);
-                else
+                    if (ISNA_INTEGER64(min_value))
+                        min_is_null = true;
+                }
+                else {
                     min_value = static_cast<int64_t>(tmp[0]);
+                    if (Rcpp::NumericVector::is_na(tmp[0]))
+                        min_is_null = true;
+                }
             }
 
             if (fld_dom_defn.containsElementNamed("max_value") &&
@@ -818,10 +834,16 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 Rcpp::NumericVector tmp =
                     Rcpp::as<Rcpp::NumericVector>(fld_dom_defn["max_value"]);
 
-                if (Rcpp::isInteger64(tmp))
+                if (Rcpp::isInteger64(tmp)) {
                     max_value = Rcpp::fromInteger64(tmp[0]);
-                else
+                    if (ISNA_INTEGER64(max_value))
+                        max_is_null = true;
+                }
+                else {
                     max_value = static_cast<int64_t>(tmp[0]);
+                    if (Rcpp::NumericVector::is_na(tmp[0]))
+                        max_is_null = true;
+                }
             }
 
             OGRField sMin, sMax;
@@ -841,7 +863,8 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 OGR_FldDomain_SetSplitPolicy(hFldDom, eOFDSP);
                 OGR_FldDomain_SetMergePolicy(hFldDom, eOFDMP);
                 char *pszFailureReason = nullptr;
-                ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
+                ret = GDALDatasetAddFieldDomain(hDS, hFldDom,
+                                                &pszFailureReason);
                 if (pszFailureReason != nullptr) {
                     Rcpp::Rcout << pszFailureReason << std::endl;
                     VSIFree(pszFailureReason);
