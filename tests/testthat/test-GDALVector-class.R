@@ -1593,7 +1593,7 @@ test_that("field domain write functions work", {
     defn$field_type <- "OFTInteger"
     expect_error(.ogr_ds_add_field_domain(dsn, defn))
 
-    defn$field_type <- "OFTInteger"
+    defn$field_type <- "OFTString"
     defn$glob <- list(NULL)
     expect_error(.ogr_ds_add_field_domain(dsn, defn))
 
