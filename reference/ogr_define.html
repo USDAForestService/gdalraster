@@ -225,9 +225,12 @@ field domain. One of <code>"DEFAULT_VALUE"</code>, <code>"SUM"</code>, <code>"GE
 
 
 <dt id="arg-coded-values">coded_values<a class="anchor" aria-label="anchor" href="#arg-coded-values"></a></dt>
-<dd><p>A vector of the allowed codes or <code>"CODE=VALUE"</code> pairs
-(the expanded "value" associated with a code is optional). Required
-if <code>domain_type = "Coded"</code>. Each code should appear only once, but it is the
+<dd><p>Either a vector of the allowed codes, or character
+vector of <code>"CODE=VALUE"</code> pairs (the expanded "value" associated with a code
+is optional), or a two-column data frame with (codes, values).
+If data frame, the second column of values must be character type (i.e.,
+the descriptive text for each code). This argument is required if
+<code>domain_type = "Coded"</code>. Each code should appear only once, but it is the
 responsibility of the user to check it.</p></dd>
 
 
@@ -239,8 +242,8 @@ the <code>fld_type</code> argument.</p></dd>
 
 <dt id="arg-min-is-inclusive">min_is_inclusive<a class="anchor" aria-label="anchor" href="#arg-min-is-inclusive"></a></dt>
 <dd><p>= Logical value, whether the minimum value is
-included in the range. Defaults to <code>TRUE</code>. Required if <code>domain_type</code> is
-<code>"Range"</code> or <code>"RangeDateTime"</code>.</p></dd>
+included in the range. Defaults to <code>TRUE</code>. Required argument if
+<code>domain_type</code> is <code>"Range"</code> or <code>"RangeDateTime"</code>.</p></dd>
 
 
 <dt id="arg-range-max">range_max<a class="anchor" aria-label="anchor" href="#arg-range-max"></a></dt>
@@ -251,8 +254,8 @@ the <code>fld_type</code> argument.</p></dd>
 
 <dt id="arg-max-is-inclusive">max_is_inclusive<a class="anchor" aria-label="anchor" href="#arg-max-is-inclusive"></a></dt>
 <dd><p>= Logical value, whether the maximum value is
-included in the range. Defaults to <code>TRUE</code>. Required if <code>domain_type</code> is
-<code>"Range"</code> or <code>"RangeDateTime"</code>.</p></dd>
+included in the range. Defaults to <code>TRUE</code>. Required argument if
+<code>domain_type</code> is <code>"Range"</code> or <code>"RangeDateTime"</code>.</p></dd>
 
 
 <dt id="arg-glob">glob<a class="anchor" aria-label="anchor" href="#arg-glob"></a></dt>
@@ -324,7 +327,7 @@ example, GeoPackage format has a layer creation option
 <span id="cb1-5"><a href="#cb1-5" tabindex="-1"></a><span class="sc">$</span>field_subtype    <span class="sc">:</span> optional OGR Field <span class="fu">Subtype</span> (<span class="st">"OFSTBoolean"</span>, ...)</span>
 <span id="cb1-6"><a href="#cb1-6" tabindex="-1"></a><span class="sc">$</span>split_policy     <span class="sc">:</span> split policy of the field <span class="fu">domain</span> (see below)</span>
 <span id="cb1-7"><a href="#cb1-7" tabindex="-1"></a><span class="sc">$</span>merge_policy     <span class="sc">:</span> merge policy of the field <span class="fu">domain</span> (see below)</span>
-<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="sc">$</span>coded_values     <span class="sc">:</span> character vector of codes, or <span class="st">`</span><span class="at">"CODE=VALUE"</span><span class="st">`</span> pairs</span>
+<span id="cb1-8"><a href="#cb1-8" tabindex="-1"></a><span class="sc">$</span>coded_values     <span class="sc">:</span> vector of allowed codes, or data frame <span class="fu">of</span> (codes, values)</span>
 <span id="cb1-9"><a href="#cb1-9" tabindex="-1"></a><span class="sc">$</span>min_value        <span class="sc">:</span> minimum <span class="fu">value</span> (data type compatible with <span class="sc">$</span>field_type)</span>
 <span id="cb1-10"><a href="#cb1-10" tabindex="-1"></a><span class="sc">$</span>min_is_inclusive <span class="sc">:</span> whether the minimum value is included <span class="cf">in</span> the range</span>
 <span id="cb1-11"><a href="#cb1-11" tabindex="-1"></a><span class="sc">$</span>max_value        <span class="sc">:</span> maximum <span class="fu">value</span> (data type compatible with <span class="sc">$</span>field_type)</span>
