@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9030</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9040</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +50,10 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.0.0.9030" id="gdalraster-2009030-dev">gdalraster 2.0.0.9030 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2009030-dev"></a></h2>
-<ul><li><p>add write support for field domains (<a href="https://github.com/USDAForestService/gdalraster/issues/738" class="external-link">#738</a>) (2025-06-14)</p></li>
+<h2 class="pkg-version" data-toc-text="2.0.0.9040" id="gdalraster-2009040-dev">gdalraster 2.0.0.9040 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2009040-dev"></a></h2>
+<ul><li><p><code>GDALVector$getFieldDomain()</code>: a coded values domain is now returned as a two-column data frame of (codes, values) instead of character vector of <code>"CODE=VALUE"</code>, a breaking change, but the return value was not previously documented. The returned field domain definition now aligns with the specification added under the <code>ogr_define</code> help topic in <a href="https://github.com/USDAForestService/gdalraster/issues/738" class="external-link">#738</a> (<a href="https://github.com/USDAForestService/gdalraster/issues/739" class="external-link">#739</a>) (2025-06-15)</p></li>
+<li><p><code><a href="../reference/ogr_define.html">ogr_def_field_domain()</a></code>: a coded values field domain optionally may be given as a two-column data frame of (codes, values), as alternative to a vector of codes only (when values are not used) or character vector of <code>"CODE=VALUE"</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/739" class="external-link">#739</a>) (2025-06-15)</p></li>
+<li><p>add write support for field domains (<a href="https://github.com/USDAForestService/gdalraster/issues/738" class="external-link">#738</a>) (2025-06-14)</p></li>
 <li><p>Geom API: minor fixes and improvements to input validation and error handling (<a href="https://github.com/USDAForestService/gdalraster/issues/737" class="external-link">#737</a>) (2025-06-06)</p></li>
 <li><p>performance improvement for <code><a href="../reference/plot_raster.html">plot_raster()</a></code> via <code>col_tbl</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/735" class="external-link">#735</a> by <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-06-05)</p></li>
 <li><p>Geom API: fixes and improvements in handling of NULL geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/732" class="external-link">#732</a>) (2025-06-03)</p></li>
