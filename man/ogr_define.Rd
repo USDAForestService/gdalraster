@@ -88,9 +88,12 @@ field domain. One of \code{"DEFAULT_VALUE"}, \code{"DUPLICATE"}, \code{"GEOMETRY
 field domain. One of \code{"DEFAULT_VALUE"}, \code{"SUM"}, \code{"GEOMETRY_WEIGHTED"}
 (supported by ESRI File Geodatabase format via OpenFileGDB driver).}
 
-\item{coded_values}{A vector of the allowed codes or \code{"CODE=VALUE"} pairs
-(the expanded "value" associated with a code is optional). Required
-if \code{domain_type = "Coded"}. Each code should appear only once, but it is the
+\item{coded_values}{Either a vector of the allowed codes, or character
+vector of \code{"CODE=VALUE"} pairs (the expanded "value" associated with a code
+is optional), or a two-column data frame with (codes, values).
+If data frame, the second column of values must be character type (i.e.,
+the descriptive text for each code). This argument is required if
+\code{domain_type = "Coded"}. Each code should appear only once, but it is the
 responsibility of the user to check it.}
 
 \item{range_min}{Minimum value in a Range or RangeDateTime field domain (can
@@ -98,16 +101,16 @@ be NULL). The data type must be consistent with with the field type given in
 the \code{fld_type} argument.}
 
 \item{min_is_inclusive}{= Logical value, whether the minimum value is
-included in the range. Defaults to \code{TRUE}. Required if \code{domain_type} is
-\code{"Range"} or \code{"RangeDateTime"}.}
+included in the range. Defaults to \code{TRUE}. Required argument if
+\code{domain_type} is \code{"Range"} or \code{"RangeDateTime"}.}
 
 \item{range_max}{Maximum value in a Range or RangeDateTime field domain (can
 be NULL). The data type must be consistent with with the field type given in
 the \code{fld_type} argument.}
 
 \item{max_is_inclusive}{= Logical value, whether the maximum value is
-included in the range. Defaults to \code{TRUE}. Required if \code{domain_type} is
-\code{"Range"} or \code{"RangeDateTime"}.}
+included in the range. Defaults to \code{TRUE}. Required argument if
+\code{domain_type} is \code{"Range"} or \code{"RangeDateTime"}.}
 
 \item{glob}{Character string containing the GLOB expression. Required if
 \code{domain_type} is \code{"GLOB"}.}
@@ -212,7 +215,7 @@ $field_type       : OGR Field Type (see attribute field definitions above)
 $field_subtype    : optional OGR Field Subtype ("OFSTBoolean", ...)
 $split_policy     : split policy of the field domain (see below)
 $merge_policy     : merge policy of the field domain (see below)
-$coded_values     : character vector of codes, or `"CODE=VALUE"` pairs
+$coded_values     : vector of allowed codes, or data frame of (codes, values)
 $min_value        : minimum value (data type compatible with $field_type)
 $min_is_inclusive : whether the minimum value is included in the range
 $max_value        : maximum value (data type compatible with $field_type)

@@ -550,45 +550,106 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
 
     // Coded
     if (EQUAL(domain_type.c_str(), "coded")) {
-        Rcpp::CharacterVector coded_values;
-        std::vector<OGRCodedValue> ogr_coded_values;
-
         if (!fld_dom_defn.containsElementNamed("coded_values") ||
             fld_dom_defn["coded_values"] == R_NilValue ||
-            !Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["coded_values"])) {
+            (!Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["coded_values"]) &&
+             !Rcpp::is<Rcpp::DataFrame>(fld_dom_defn["coded_values"]))) {
 
             GDALReleaseDataset(hDS);
-            Rcpp::stop("'$coded_values' must be a character vector");
+            Rcpp::stop(
+                "'$coded_values' must be a character vector or data frame");
         }
-        else {
-            coded_values = Rcpp::as<Rcpp::CharacterVector>(
-                            fld_dom_defn["coded_values"]);
+
+        std::vector<OGRCodedValue> ogr_coded_values = {};
+
+        // as character vector of codes, or "code=value" pairs
+        if (Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["coded_values"])) {
+            Rcpp::CharacterVector coded_values = fld_dom_defn["coded_values"];
 
             if (coded_values.size() == 0) {
                 GDALReleaseDataset(hDS);
                 Rcpp::stop("'coded_values' is empty");
             }
-        }
-        for (Rcpp::CharacterVector::iterator i = coded_values.begin();
-             i != coded_values.end(); ++i) {
 
-            char **papszTokens = CSLTokenizeString2(*i, "=",
-                    CSLT_STRIPLEADSPACES | CSLT_STRIPENDSPACES);
-
-            if (CSLCount(papszTokens) < 1 || CSLCount(papszTokens) > 2) {
+            if (Rcpp::any(Rcpp::is_na(coded_values))) {
                 GDALReleaseDataset(hDS);
-                Rcpp::stop(
-                    "elements of 'coded_values' must be \"CODE\" or \"CODE=VALUE\"");
+                Rcpp::stop("'coded_values' cannot contain NA codes");
             }
 
-            OGRCodedValue cv;
-            cv.pszCode = CPLStrdup(papszTokens[0]);
-            if (CSLCount(papszTokens) == 2)
-                cv.pszValue = CPLStrdup(papszTokens[1]);
-            else
-                cv.pszValue = nullptr;
-            ogr_coded_values.emplace_back(cv);
-            CSLDestroy(papszTokens);
+            for (Rcpp::CharacterVector::iterator i = coded_values.begin();
+                    i != coded_values.end(); ++i) {
+
+                char **papszTokens = CSLTokenizeString2(*i, "=",
+                        CSLT_STRIPLEADSPACES | CSLT_STRIPENDSPACES);
+
+                if (CSLCount(papszTokens) < 1 || CSLCount(papszTokens) > 2) {
+                    GDALReleaseDataset(hDS);
+                    CSLDestroy(papszTokens);
+                    if (!ogr_coded_values.empty()) {
+                        for (auto &cv : ogr_coded_values) {
+                            VSIFree(cv.pszCode);
+                            VSIFree(cv.pszValue);
+                        }
+                    }
+                    Rcpp::stop(
+                        "elements of 'coded_values' must be \"CODE\" or \"CODE=VALUE\"");
+                }
+
+                OGRCodedValue cv;
+                cv.pszCode = CPLStrdup(papszTokens[0]);
+                if (CSLCount(papszTokens) == 2)
+                    cv.pszValue = CPLStrdup(papszTokens[1]);
+                else
+                    cv.pszValue = nullptr;
+                ogr_coded_values.emplace_back(cv);
+                CSLDestroy(papszTokens);
+            }
+        }
+        // as two-column data frame of codes, values
+        else if (Rcpp::is<Rcpp::DataFrame>(fld_dom_defn["coded_values"])) {
+            Rcpp::DataFrame coded_values =
+                Rcpp::as<Rcpp::DataFrame>(fld_dom_defn["coded_values"]);
+
+            if (coded_values.nrows() == 0) {
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'coded_values' is empty");
+            }
+
+            if (coded_values.size() != 2) {
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'coded_values' data frame must have two columns");
+            }
+
+            if (!Rcpp::is<Rcpp::CharacterVector>(coded_values[0]) ||
+                !Rcpp::is<Rcpp::CharacterVector>(coded_values[1])) {
+
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("columns of 'coded_values' must be character type");
+            }
+
+            Rcpp::CharacterVector codes = coded_values[0];
+            Rcpp::CharacterVector values = coded_values[1];
+
+            if (Rcpp::any(Rcpp::is_na(codes))) {
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'coded_values' cannot contain NA codes");
+            }
+
+            for (R_xlen_t i = 0; i < codes.size(); ++i) {
+                OGRCodedValue cv;
+                cv.pszCode = CPLStrdup(codes[i]);
+                if (!Rcpp::CharacterVector::is_na(values[i]))
+                    cv.pszValue = CPLStrdup(values[i]);
+                else
+                    cv.pszValue = nullptr;
+                ogr_coded_values.emplace_back(cv);
+            }
+        }
+        else {
+            // should not ever reach this
+            GDALReleaseDataset(hDS);
+            Rcpp::stop(
+                "'$coded_values' must be a character vector or data frame");
         }
         OGRCodedValue cv;
         cv.pszCode = nullptr;
@@ -610,10 +671,10 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 VSIFree(pszFailureReason);
             }
             OGR_FldDomain_Destroy(hFldDom);
-            for (auto &cv : ogr_coded_values) {
-                VSIFree(cv.pszCode);
-                VSIFree(cv.pszValue);
-            }
+        }
+        for (auto &cv : ogr_coded_values) {
+            VSIFree(cv.pszCode);
+            VSIFree(cv.pszValue);
         }
     }
 
@@ -653,7 +714,7 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
         // Integer and Real ranges
         if (eFieldType == OFTInteger || eFieldType == OFTReal) {
             double min_value = -99999.0;
-            double max_value = 99999.0;
+            double max_value = -99999.0;
 
             if (fld_dom_defn.containsElementNamed("min_value") &&
                 fld_dom_defn["min_value"] == R_NilValue) {
@@ -664,13 +725,24 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                      (!Rcpp::is<Rcpp::NumericVector>(
                         fld_dom_defn["min_value"]) &&
                       !Rcpp::is<Rcpp::IntegerVector>(
+                        fld_dom_defn["min_value"]) &&
+                      !Rcpp::is<Rcpp::LogicalVector>(
                         fld_dom_defn["min_value"]))) {
 
                 GDALReleaseDataset(hDS);
                 Rcpp::stop("'$min_value' must be integer, double or NULL");
             }
             else {
-                min_value = Rcpp::as<double>(fld_dom_defn["min_value"]);
+                Rcpp::NumericVector tmp = fld_dom_defn["min_value"];
+                if (tmp.size() != 1) {
+                    GDALReleaseDataset(hDS);
+                    Rcpp::stop("'$min_value' must be a single numeric value");
+                }
+                min_value = tmp[0];
+                if (Rcpp::NumericVector::is_na(min_value)) {
+                    min_is_null = true;
+                    min_value = -99999.0;  // unused
+                }
             }
 
             if (fld_dom_defn.containsElementNamed("max_value") &&
@@ -682,13 +754,24 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                      (!Rcpp::is<Rcpp::NumericVector>(
                         fld_dom_defn["max_value"]) &&
                       !Rcpp::is<Rcpp::IntegerVector>(
+                        fld_dom_defn["max_value"]) &&
+                      !Rcpp::is<Rcpp::LogicalVector>(
                         fld_dom_defn["max_value"]))) {
 
                 GDALReleaseDataset(hDS);
                 Rcpp::stop("'$max_value' must be integer, double or NULL");
             }
             else {
-                max_value = Rcpp::as<double>(fld_dom_defn["max_value"]);
+                Rcpp::NumericVector tmp = fld_dom_defn["max_value"];
+                if (tmp.size() != 1) {
+                    GDALReleaseDataset(hDS);
+                    Rcpp::stop("'$max_value' must be a single numeric value");
+                }
+                max_value = tmp[0];
+                if (Rcpp::NumericVector::is_na(max_value)) {
+                    max_is_null = true;
+                    max_value = -99999.0;  // unused
+                }
             }
 
             OGRField sMin, sMax;
@@ -718,7 +801,8 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 OGR_FldDomain_SetSplitPolicy(hFldDom, eOFDSP);
                 OGR_FldDomain_SetMergePolicy(hFldDom, eOFDMP);
                 char *pszFailureReason = nullptr;
-                ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
+                ret = GDALDatasetAddFieldDomain(hDS, hFldDom,
+                                                &pszFailureReason);
                 if (pszFailureReason != nullptr) {
                     Rcpp::Rcout << pszFailureReason << std::endl;
                     VSIFree(pszFailureReason);
@@ -750,10 +834,22 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 Rcpp::NumericVector tmp =
                     Rcpp::as<Rcpp::NumericVector>(fld_dom_defn["min_value"]);
 
-                if (Rcpp::isInteger64(tmp))
+                if (tmp.size() != 1) {
+                    GDALReleaseDataset(hDS);
+                    Rcpp::stop("'$min_value' must be a single numeric value");
+                }
+
+                if (Rcpp::isInteger64(tmp)) {
                     min_value = Rcpp::fromInteger64(tmp[0]);
-                else
-                    min_value = static_cast<int64_t>(tmp[0]);
+                    if (ISNA_INTEGER64(min_value))
+                        min_is_null = true;
+                }
+                else {
+                    if (Rcpp::NumericVector::is_na(tmp[0]))
+                        min_is_null = true;
+                    else
+                        min_value = static_cast<int64_t>(tmp[0]);
+                }
             }
 
             if (fld_dom_defn.containsElementNamed("max_value") &&
@@ -774,10 +870,22 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 Rcpp::NumericVector tmp =
                     Rcpp::as<Rcpp::NumericVector>(fld_dom_defn["max_value"]);
 
-                if (Rcpp::isInteger64(tmp))
+                if (tmp.size() != 1) {
+                    GDALReleaseDataset(hDS);
+                    Rcpp::stop("'$max_value' must be a single numeric value");
+                }
+
+                if (Rcpp::isInteger64(tmp)) {
                     max_value = Rcpp::fromInteger64(tmp[0]);
-                else
-                    max_value = static_cast<int64_t>(tmp[0]);
+                    if (ISNA_INTEGER64(max_value))
+                        max_is_null = true;
+                }
+                else {
+                    if (Rcpp::NumericVector::is_na(tmp[0]))
+                        max_is_null = true;
+                    else
+                        max_value = static_cast<int64_t>(tmp[0]);
+                }
             }
 
             OGRField sMin, sMax;
@@ -797,7 +905,8 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
                 OGR_FldDomain_SetSplitPolicy(hFldDom, eOFDSP);
                 OGR_FldDomain_SetMergePolicy(hFldDom, eOFDMP);
                 char *pszFailureReason = nullptr;
-                ret = GDALDatasetAddFieldDomain(hDS, hFldDom, &pszFailureReason);
+                ret = GDALDatasetAddFieldDomain(hDS, hFldDom,
+                                                &pszFailureReason);
                 if (pszFailureReason != nullptr) {
                     Rcpp::Rcout << pszFailureReason << std::endl;
                     VSIFree(pszFailureReason);
@@ -819,8 +928,10 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
 
     // RangeDateTime
     else if (EQUAL(domain_type.c_str(), "rangedatetime")) {
-        if (eFieldType != OFTDateTime)
+        if (eFieldType != OFTDateTime) {
+            GDALReleaseDataset(hDS);
             Rcpp::stop("'$field_type' must be OFTDateTime");
+        }
 
         double min_value = 0.0;
         double max_value = 0.0;
@@ -957,8 +1068,10 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
 
     // GLOB
     else if (EQUAL(domain_type.c_str(), "glob")) {
-        if (eFieldType != OFTString)
+        if (eFieldType != OFTString) {
+            GDALReleaseDataset(hDS);
             Rcpp::stop("'$field_type' must be OFTString");
+        }
 
         if (!fld_dom_defn.containsElementNamed("glob") ||
             fld_dom_defn["glob"] == R_NilValue ||
@@ -968,7 +1081,13 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
             Rcpp::stop("'$glob' must be a character string");
         }
 
-        std::string glob = Rcpp::as<std::string>(fld_dom_defn["glob"]);
+        Rcpp::CharacterVector tmp = fld_dom_defn["glob"];
+        if (tmp.size() != 1) {
+            GDALReleaseDataset(hDS);
+            Rcpp::stop("'$glob' must be a character string");
+        }
+
+        std::string glob = Rcpp::as<std::string>(tmp[0]);
 
         OGRFieldDomainH hFldDom = nullptr;
         hFldDom = OGR_GlobFldDomain_Create(domain_name.c_str(),

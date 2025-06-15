@@ -582,17 +582,44 @@ SEXP GDALVector::getFieldDomain(const std::string &domain_name) const {
                 break;
             }
 
-            Rcpp::CharacterVector code_value = Rcpp::CharacterVector::create();
+            Rcpp::CharacterVector codes = Rcpp::CharacterVector::create();
+            Rcpp::CharacterVector values = Rcpp::CharacterVector::create();
 
             for (int i = 0; enumeration[i].pszCode != nullptr; ++i) {
-                std::string tmp = std::string(enumeration[i].pszCode);
+                codes.push_back(std::string(enumeration[i].pszCode));
                 if (enumeration[i].pszValue) {
-                    tmp = tmp + "=" + std::string(enumeration[i].pszValue);
+                    values.push_back(std::string(enumeration[i].pszValue));
                 }
-                code_value.push_back(tmp);
+                else {
+                    values.push_back(NA_STRING);
+                }
             }
 
-            list_out.push_back(code_value, "coded_values");
+            Rcpp::DataFrame df = Rcpp::DataFrame::create();
+            if (EQUAL(fld_type_name.c_str(), "OFTInteger") ||
+                EQUAL(fld_type_name.c_str(), "OFTReal")) {
+
+                Rcpp::NumericVector codes_num = Rcpp::no_init(codes.size());
+                for (R_xlen_t i = 0; i < codes.size(); ++i) {
+                    codes_num[i] = std::stod(Rcpp::as<std::string>(codes[i]));
+                }
+                df.push_back(codes_num, "codes");
+            }
+            else if (EQUAL(fld_type_name.c_str(), "OFTInteger64")) {
+                std::vector<int64_t> codes_int64(codes.size());
+                for (R_xlen_t i = 0; i < codes.size(); ++i) {
+                    codes_int64[i] = static_cast<int64_t>(std::stoll(
+                                        Rcpp::as<std::string>(codes[i])));
+                }
+                df.push_back(Rcpp::wrap(codes_int64), "codes");
+            }
+            else {
+                df.push_back(codes, "codes");
+            }
+
+            df.push_back(values, "values");
+
+            list_out.push_back(df, "coded_values");
             break;
         }
 

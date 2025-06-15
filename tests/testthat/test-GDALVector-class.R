@@ -1248,7 +1248,8 @@ test_that("field domain specifications are returned correctly", {
     expect_equal(fld_dom$field_type, "OFTInteger")
     expect_equal(fld_dom$split_policy, "DEFAULT_VALUE")
     expect_equal(fld_dom$merge_policy, "DEFAULT_VALUE")
-    expect_equal(fld_dom$coded_values, c("1=one", "2"))
+    expect_equal(fld_dom$coded_values$codes, c(1, 2))
+    expect_equal(fld_dom$coded_values$values, c("one", NA))
     rm(fld_dom)
 
     # glob domain
@@ -1325,7 +1326,8 @@ test_that("field domain write functions work", {
     dsn <- file.path(tempdir(), basename(f))
     file.copy(f, dsn, overwrite = TRUE)
 
-    # range field domain for OFTInteger
+
+    # Range field domain for OFTInteger
     defn <- ogr_def_field_domain("Range", "range1", "range domain test 1",
                                  fld_type = "OFTInteger", range_min = 0,
                                  range_max = 100)
@@ -1337,7 +1339,7 @@ test_that("field domain write functions work", {
     expect_true(ogr_field_create(dsn, "test", "range_field1",
                                  fld_defn = field1_defn))
 
-    # range field domain for OFTInteger64
+    # Range field domain for OFTInteger64
     defn <- ogr_def_field_domain("Range", "range2", "range domain test 2",
                                  fld_type = "OFTInteger64", range_min = 0,
                                  range_max = as.integer64("9007199254740992"),
@@ -1349,19 +1351,111 @@ test_that("field domain write functions work", {
     expect_true(ogr_field_create(dsn, "test", "range_field2",
                                  fld_defn = field2_defn))
 
-    # range field domain for Real
+    # Range field domain for Real
     defn <- ogr_def_field_domain("Range", "range3", "range domain test 3",
                                  fld_type = "OFTReal", range_min = 0.0,
                                  min_is_inclusive = FALSE,
                                  range_max = 1.0)
     expect_true(ogr_ds_add_field_domain(dsn, defn))
 
-    # range field domain for Real (inf)
+    # Range field domain for Real (inf)
     defn <- ogr_def_field_domain("Range", "range4", "range domain test 4",
                                  fld_type = "OFTReal")
     expect_true(ogr_ds_add_field_domain(dsn, defn))
 
-    # coded values domain
+
+    # Range domain input errors
+    # min/max must be a single numeric value if not NULL
+    expect_error(ogr_def_field_domain("Range", "range_err", "desc: error",
+                                      fld_type = "OFTInteger",
+                                      range_min = "A",
+                                      range_max = 100))
+    expect_error(ogr_def_field_domain("Range", "range_err", "desc: error",
+                                      fld_type = "OFTInteger",
+                                      range_min = 0,
+                                      range_max = "Z"))
+    expect_error(ogr_def_field_domain("Range", "range_err", "desc: error",
+                                      fld_type = "OFTInteger",
+                                      range_min = c(0, 1),
+                                      range_max = 100))
+    expect_error(ogr_def_field_domain("Range", "range_err", "desc: error",
+                                      fld_type = "OFTInteger",
+                                      range_min = 0,
+                                      range_max = c(0, 100)))
+    # min/max as NA is okay, treated the same as NULL
+    expect_no_error(ogr_def_field_domain("Range", "range_no_err",
+                                         description = "desc: no error",
+                                         fld_type = "OFTInteger",
+                                         range_min = NA,
+                                         range_max = 100))
+    expect_no_error(ogr_def_field_domain("Range", "range_no_err",
+                                         description = "desc: no error",
+                                         fld_type = "OFTInteger",
+                                         range_min = 0,
+                                         range_max = NA))
+    # min_is_inclusive/max_is_inclusive must be a single logical value
+    expect_error(ogr_def_field_domain("Range", "range_err", "desc: error",
+                                      fld_type = "OFTInteger",
+                                      range_min = 0,
+                                      min_is_inclusive = NULL,
+                                      range_max = 100))
+    expect_error(ogr_def_field_domain("Range", "range_err", "desc: error",
+                                      fld_type = "OFTInteger",
+                                      range_min = 0,
+                                      range_max = 100,
+                                      max_is_inclusive = NULL))
+
+    # test the internal C++ function .ogr_ds_add_field_domain(),
+    # which should also handle the above input errors.
+    # construct a valid field domain definition and then alter it for each
+    # invalid input.
+    expect_no_error(defn <- ogr_def_field_domain("Range", "range_err",
+                                                 fld_type = "OFTInteger",
+                                                 range_min = NULL,
+                                                 range_max = NULL))
+
+    # min/max must be a single numeric value if not NULL
+    defn$min_value <- "A"
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$min_value <- 0
+    defn$max_value <- "Z"
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$min_value <- c(0, 1)
+    defn$max_value <- 100
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$min_value <- 0
+    defn$max_value <- c(0, 100)
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    # min/max as NA is okay, treated the same as NULL
+    defn$min_value <- NA
+    defn$max_value <- 100
+    expect_no_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    # same with OFTInteger64
+    expect_no_error(defn <- ogr_def_field_domain("Range", "range_err_int64",
+                                                 fld_type = "OFTInteger64",
+                                                 range_min = NULL,
+                                                 range_max = NULL))
+
+    # min/max must be a single numeric value if not NULL
+    defn$min_value <- "A"
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$min_value <- bit64::as.integer64(0)
+    defn$max_value <- "Z"
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    # min/max as NA is okay, treated the same as NULL
+    defn$min_value <- NA_integer64_
+    defn$max_value <- 100
+    expect_no_error(.ogr_ds_add_field_domain(dsn, defn))
+
+
+    # Coded values domain
     defn <- ogr_def_field_domain("Coded", "coded1", "coded values domain test",
                                  fld_type = "OFTInteger",
                                  coded_values = c("1=one", "2=two", "3"))
@@ -1372,16 +1466,147 @@ test_that("field domain write functions work", {
                                  fld_type = "OFTInteger", default_value = 1,
                                  domain_name = "coded1"))
 
-    # glob domain
+    # Coded values domain, input as data frame
+    codes <- c(1, 2, 3)
+    values <- c("one", "two", NA)
+    codes_values_df <- data.frame(codes = codes, values = values)
+    defn <- ogr_def_field_domain("Coded", "coded2",
+                                 description = "coded values domain test 2",
+                                 fld_type = "OFTInteger",
+                                 coded_values = codes_values_df)
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # add a field using the "coded2" domain
+    expect_true(ogr_field_create(dsn, "test", "coded_field2",
+                                 fld_type = "OFTInteger",
+                                 domain_name = "coded2"))
+
+    # Coded values domain, input as data frame with integer64 codes
+    codes <- bit64::as.integer64(c(1, 2, "9007199254740992"))
+    values <- c("one", "two", "large value")
+    codes_values_df <- data.frame(codes = codes, values = values)
+    defn <- ogr_def_field_domain("Coded", "coded3",
+                                 description = "coded values domain test 3",
+                                 fld_type = "OFTInteger64",
+                                 coded_values = codes_values_df)
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # add a field using the "coded3" domain
+    expect_true(ogr_field_create(dsn, "test", "coded_field3",
+                                 fld_type = "OFTInteger64",
+                                 domain_name = "coded3"))
+
+
+    # Coded values input errors
+    # cannot have NA codes (values can be NA)
+    codes <- c(1, 2, NA)
+    values <- c("one", "two", NA)
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = codes))
+
+    codes_values_df <- data.frame(codes = codes, values = values)
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = codes_values_df))
+    # cannot be empty
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = character(0)))
+
+    codes_values_df <- data.frame(codes = character(0), values = character(0))
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = codes_values_df))
+    # data frame input must have two columns
+    codes <- c(1, 2, 3)
+    values <- c("one", "two", "")
+
+    codes_values_df <- data.frame(codes = codes)
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = codes_values_df))
+
+    codes_values_df <- data.frame(codes = codes, values = values,
+                                  v3 = c(1, 1, 1))
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = codes_values_df))
+
+    # test the internal C++ function .ogr_ds_add_field_domain(),
+    # which should also handle the above input errors.
+    # construct a valid field domain definition and then alter it for each
+    # invalid input.
+    # cannot have NA codes
+    codes <- c(1, 2, 3)
+    values <- c("one", "two", "three")
+
+    expect_no_error(defn <- ogr_def_field_domain("Coded", "coded_err",
+                                                 fld_type = "OFTInteger",
+                                                 coded_values = codes))
+
+    defn$coded_values <- c(1, 2, NA)
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$coded_values <- data.frame(codes = c(1, 2, NA), values = values)
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    # cannot be empty
+    defn$coded_values <- character(0)
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$coded_values <- data.frame(codes = character(0), values = character(0))
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    # data frame input must have two columns
+    defn$coded_values <- data.frame(codes = codes)
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$coded_values <- data.frame(codes = codes, values = values,
+                                    v3 = c(1, 1, 1))
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+
+    # GLOB domain
     defn <- ogr_def_field_domain("GLOB", "glob1", "glob domain test",
                                  fld_type = "OFTString", glob = "*")
     expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # GLOB input errors
+    expect_error(ogr_def_field_domain("GLOB", "glob_err", "desc: error",
+                                      fld_type = "OFTString", glob = NULL))
+    expect_error(ogr_def_field_domain("GLOB", "glob1", "glob domain test",
+                                      fld_type = "OFTString", glob = NA))
+    expect_error(ogr_def_field_domain("GLOB", "glob1", "glob domain test",
+                                      fld_type = "OFTString", glob = ""))
+    expect_error(ogr_def_field_domain("GLOB", "glob1", "glob domain test",
+                                      fld_type = "OFTString",
+                                      glob = c("*", "?")))
+    # test the internal C++ function .ogr_ds_add_field_domain(),
+    # which should also handle the above input errors.
+    # construct a valid field domain definition and then alter it for each
+    # invalid input.
+    expect_no_error(defn <- ogr_def_field_domain("GLOB", "glob_err",
+                                                 fld_type = "OFTString",
+                                                 glob = "*"))
+
+    defn$field_type <- "OFTInteger"
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$field_type <- "OFTString"
+    defn$glob <- list(NULL)
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$glob <- 1.0
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
 
     # test setting a domain name on an existing field
     ogr_field_create(dsn, "test", "range_field3", fld_type = "OFTReal")
     expect_true(ogr_field_set_domain_name(dsn, "test",
                                           fld_name = "range_field3",
                                           domain_name = "range3"))
+
 
     # read back
     lyr <- new(GDALVector, dsn, "test")
@@ -1443,10 +1668,28 @@ test_that("field domain write functions work", {
     expect_equal(fld_dom$type, "Coded")
     expect_equal(fld_dom$description, "coded values domain test")
     expect_equal(fld_dom$field_type, "OFTInteger")
-    expect_equal(fld_dom$coded_values, c("1=one", "2=two", "3"))
+    expect_equal(fld_dom$coded_values$codes, c(1, 2, 3))
+    expect_equal(fld_dom$coded_values$values, c("one", "two", NA))
     rm(fld_dom)
 
     expect_equal(lyr_defn$coded_field1$domain, "coded1")
+
+    # coded2 read back
+    fld_dom <- lyr$getFieldDomain("coded2")
+    expect_equal(fld_dom$coded_values$codes, c(1, 2, 3))
+    expect_equal(fld_dom$coded_values$values, c("one", "two", NA))
+    rm(fld_dom)
+
+    expect_equal(lyr_defn$coded_field2$domain, "coded2")
+
+    # coded3 read back
+    fld_dom <- lyr$getFieldDomain("coded3")
+    expect_equal(fld_dom$coded_values$codes,
+                 bit64::as.integer64(c(1, 2, "9007199254740992")))
+    expect_equal(fld_dom$coded_values$values, c("one", "two", "large value"))
+    rm(fld_dom)
+
+    expect_equal(lyr_defn$coded_field3$domain, "coded3")
 
     # glob1 read back
     fld_dom <- lyr$getFieldDomain("glob1")
@@ -1464,7 +1707,7 @@ test_that("field domain write functions work", {
     deleteDataset(dsn)
 
 
-    ## test RangeDateTime with ESRI File Geodatabase
+    # test RangeDateTime with ESRI File Geodatabase
     # support for DateTime field domains in OpenFileGDB was added at GDAL 3.8.0
     skip_if(gdal_version_num() < gdal_compute_version(3, 8, 0))
 
