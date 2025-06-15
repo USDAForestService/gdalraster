@@ -1,4 +1,8 @@
-# gdalraster 2.0.0.9030 (dev)
+# gdalraster 2.0.0.9040 (dev)
+
+* `GDALVector$getFieldDomain()`: a coded values domain is now returned as a two-column data frame of (codes, values) instead of character vector of `"CODE=VALUE"`, a breaking change, but the return value was not previously documented. The returned field domain definition now aligns with the specification added under the `ogr_define` help topic in #738 (#739) (2025-06-15)
+
+* `ogr_def_field_domain()`: a coded values field domain optionally may be given as a two-column data frame of (codes, values), as alternative to a vector of codes only (when values are not used) or character vector of `"CODE=VALUE"` (#739) (2025-06-15)
 
 * add write support for field domains (#738) (2025-06-14)
 
