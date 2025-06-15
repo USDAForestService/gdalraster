@@ -550,45 +550,89 @@ bool ogr_ds_add_field_domain(const std::string &dsn,
 
     // Coded
     if (EQUAL(domain_type.c_str(), "coded")) {
-        Rcpp::CharacterVector coded_values;
-        std::vector<OGRCodedValue> ogr_coded_values;
-
         if (!fld_dom_defn.containsElementNamed("coded_values") ||
             fld_dom_defn["coded_values"] == R_NilValue ||
-            !Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["coded_values"])) {
+            (!Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["coded_values"]) &&
+             !Rcpp::is<Rcpp::DataFrame>(fld_dom_defn["coded_values"]))) {
 
             GDALReleaseDataset(hDS);
-            Rcpp::stop("'$coded_values' must be a character vector");
+            Rcpp::stop(
+                "'$coded_values' must be a character vector or data frame");
         }
-        else {
-            coded_values = Rcpp::as<Rcpp::CharacterVector>(
-                            fld_dom_defn["coded_values"]);
+
+        std::vector<OGRCodedValue> ogr_coded_values;
+
+        // as character vector of codes, or "code=value" pairs
+        if (Rcpp::is<Rcpp::CharacterVector>(fld_dom_defn["coded_values"])) {
+            Rcpp::CharacterVector coded_values = fld_dom_defn["coded_values"];
 
             if (coded_values.size() == 0) {
                 GDALReleaseDataset(hDS);
                 Rcpp::stop("'coded_values' is empty");
             }
+
+            for (Rcpp::CharacterVector::iterator i = coded_values.begin();
+                    i != coded_values.end(); ++i) {
+
+                char **papszTokens = CSLTokenizeString2(*i, "=",
+                        CSLT_STRIPLEADSPACES | CSLT_STRIPENDSPACES);
+
+                if (CSLCount(papszTokens) < 1 || CSLCount(papszTokens) > 2) {
+                    GDALReleaseDataset(hDS);
+                    Rcpp::stop(
+                        "elements of 'coded_values' must be \"CODE\" or \"CODE=VALUE\"");
+                }
+
+                OGRCodedValue cv;
+                cv.pszCode = CPLStrdup(papszTokens[0]);
+                if (CSLCount(papszTokens) == 2)
+                    cv.pszValue = CPLStrdup(papszTokens[1]);
+                else
+                    cv.pszValue = nullptr;
+                ogr_coded_values.emplace_back(cv);
+                CSLDestroy(papszTokens);
+            }
         }
-        for (Rcpp::CharacterVector::iterator i = coded_values.begin();
-             i != coded_values.end(); ++i) {
+        // as two-column data frame of codes, values
+        else if (Rcpp::is<Rcpp::DataFrame>(fld_dom_defn["coded_values"])) {
+            Rcpp::DataFrame coded_values =
+                Rcpp::as<Rcpp::DataFrame>(fld_dom_defn["coded_values"]);
 
-            char **papszTokens = CSLTokenizeString2(*i, "=",
-                    CSLT_STRIPLEADSPACES | CSLT_STRIPENDSPACES);
-
-            if (CSLCount(papszTokens) < 1 || CSLCount(papszTokens) > 2) {
+            if (coded_values.nrows() == 0) {
                 GDALReleaseDataset(hDS);
-                Rcpp::stop(
-                    "elements of 'coded_values' must be \"CODE\" or \"CODE=VALUE\"");
+                Rcpp::stop("'coded_values' is empty");
             }
 
-            OGRCodedValue cv;
-            cv.pszCode = CPLStrdup(papszTokens[0]);
-            if (CSLCount(papszTokens) == 2)
-                cv.pszValue = CPLStrdup(papszTokens[1]);
-            else
-                cv.pszValue = nullptr;
-            ogr_coded_values.emplace_back(cv);
-            CSLDestroy(papszTokens);
+            if (coded_values.size() != 2) {
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("'coded_values' data frame must have two columns");
+            }
+
+            if (!Rcpp::is<Rcpp::CharacterVector>(coded_values[0]) ||
+                !Rcpp::is<Rcpp::CharacterVector>(coded_values[1])) {
+
+                GDALReleaseDataset(hDS);
+                Rcpp::stop("columns of 'coded_values' must be character type");
+            }
+
+            Rcpp::CharacterVector codes = coded_values[0];
+            Rcpp::CharacterVector values = coded_values[1];
+
+            for (R_xlen_t i = 0; i < codes.size(); ++i) {
+                OGRCodedValue cv;
+                cv.pszCode = CPLStrdup(codes[i]);
+                if (!Rcpp::CharacterVector::is_na(values[i]))
+                    cv.pszValue = CPLStrdup(values[i]);
+                else
+                    cv.pszValue = nullptr;
+                ogr_coded_values.emplace_back(cv);
+            }
+        }
+        else {
+            // should not ever reach this
+            GDALReleaseDataset(hDS);
+            Rcpp::stop(
+                "'$coded_values' must be a character vector or data frame");
         }
         OGRCodedValue cv;
         cv.pszCode = nullptr;

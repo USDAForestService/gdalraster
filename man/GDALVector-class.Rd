@@ -348,9 +348,11 @@ definitions, along with one or more geometry field definitions.
 See \link{ogr_define} for details of the field and feature class definitions.
 
 \code{$getFieldDomain(domain_name)}\cr
-Returns a list containing specifications of the OGR field domain with the
+Returns a list containing the definition of the OGR field domain with the
 passed \code{domain_name}, or \code{NULL} if \code{domain_name} is not found.
-Some formats support the use of field domains that describe the valid values
+See \link{ogr_define} for specification of the list containing a field domain
+definition.
+Some formats support the use of field domains which describe the valid values
 that can be stored in a given attribute field, e.g., coded values that are
 present in a specified enumeration, values constrained to a specified
 range, or values that must match a specified pattern.

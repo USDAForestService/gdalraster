@@ -1248,7 +1248,8 @@ test_that("field domain specifications are returned correctly", {
     expect_equal(fld_dom$field_type, "OFTInteger")
     expect_equal(fld_dom$split_policy, "DEFAULT_VALUE")
     expect_equal(fld_dom$merge_policy, "DEFAULT_VALUE")
-    expect_equal(fld_dom$coded_values, c("1=one", "2"))
+    expect_equal(fld_dom$coded_values$codes, c(1, 2))
+    expect_equal(fld_dom$coded_values$values, c("one", NA))
     rm(fld_dom)
 
     # glob domain
@@ -1372,6 +1373,105 @@ test_that("field domain write functions work", {
                                  fld_type = "OFTInteger", default_value = 1,
                                  domain_name = "coded1"))
 
+    # coded values domain, input as data frame
+    codes <- c(1, 2, 3)
+    values <- c("one", "two", NA)
+    codes_values_df <- data.frame(codes = codes, values = values)
+    defn <- ogr_def_field_domain("Coded", "coded2",
+                                 description = "coded values domain test 2",
+                                 fld_type = "OFTInteger",
+                                 coded_values = codes_values_df)
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # add a field using the "coded2" domain
+    expect_true(ogr_field_create(dsn, "test", "coded_field2",
+                                 fld_type = "OFTInteger",
+                                 domain_name = "coded2"))
+
+    # coded values domain, input as data frame with integer64 codes
+    codes <- bit64::as.integer64(c(1, 2, "9007199254740992"))
+    values <- c("one", "two", "large value")
+    codes_values_df <- data.frame(codes = codes, values = values)
+    defn <- ogr_def_field_domain("Coded", "coded3",
+                                 description = "coded values domain test 3",
+                                 fld_type = "OFTInteger64",
+                                 coded_values = codes_values_df)
+    expect_true(ogr_ds_add_field_domain(dsn, defn))
+
+    # add a field using the "coded3" domain
+    expect_true(ogr_field_create(dsn, "test", "coded_field3",
+                                 fld_type = "OFTInteger64",
+                                 domain_name = "coded3"))
+
+    # coded values input errors
+    # cannot have NA codes (values can be NA)
+    codes <- c(1, 2, NA)
+    values <- c("one", "two", NA)
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = codes))
+
+    codes_values_df <- data.frame(codes = codes, values = values)
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = codes_values_df))
+    # cannot be empty
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = character(0)))
+
+    codes_values_df <- data.frame(codes = character(0), values = character(0))
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = codes_values_df))
+    # data frame input must have two columns
+    codes <- c(1, 2, 3)
+    values <- c("one", "two", "")
+
+    codes_values_df <- data.frame(codes = codes)
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = codes_values_df))
+
+    codes_values_df <- data.frame(codes = codes, values = values,
+                                  v3 = c(1, 1, 1))
+    expect_error(ogr_def_field_domain("Coded", "coded_err",
+                                      fld_type = "OFTInteger",
+                                      coded_values = codes_values_df))
+
+    # test the internal C++ function .ogr_ds_add_field_domain(),
+    # which should also handle the above input errors.
+    # construct a valid field domain definition and then alter it for each
+    # invalid input.
+    # cannot have NA codes
+    codes <- c(1, 2, 3)
+    values <- c("one", "two", "three")
+
+    expect_no_error(defn <- ogr_def_field_domain("Coded", "coded_err",
+                                                 fld_type = "OFTInteger",
+                                                 coded_values = codes))
+
+    defn$coded_values <- c(1, 2, NA)
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$coded_values <- data.frame(codes = c(1, 2, NA), values = values)
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    # cannot be empty
+    defn$coded_values <- character(0)
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$coded_values <- data.frame(codes = character(0), values = character(0))
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    # data frame input must have two columns
+    defn$coded_values <- data.frame(codes = codes)
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
+    defn$coded_values <- data.frame(codes = codes, values = values,
+                                    v3 = c(1, 1, 1))
+    expect_error(.ogr_ds_add_field_domain(dsn, defn))
+
     # glob domain
     defn <- ogr_def_field_domain("GLOB", "glob1", "glob domain test",
                                  fld_type = "OFTString", glob = "*")
@@ -1443,10 +1543,28 @@ test_that("field domain write functions work", {
     expect_equal(fld_dom$type, "Coded")
     expect_equal(fld_dom$description, "coded values domain test")
     expect_equal(fld_dom$field_type, "OFTInteger")
-    expect_equal(fld_dom$coded_values, c("1=one", "2=two", "3"))
+    expect_equal(fld_dom$coded_values$codes, c(1, 2, 3))
+    expect_equal(fld_dom$coded_values$values, c("one", "two", NA))
     rm(fld_dom)
 
     expect_equal(lyr_defn$coded_field1$domain, "coded1")
+
+    # coded2 read back
+    fld_dom <- lyr$getFieldDomain("coded2")
+    expect_equal(fld_dom$coded_values$codes, c(1, 2, 3))
+    expect_equal(fld_dom$coded_values$values, c("one", "two", NA))
+    rm(fld_dom)
+
+    expect_equal(lyr_defn$coded_field2$domain, "coded2")
+
+    # coded3 read back
+    fld_dom <- lyr$getFieldDomain("coded3")
+    expect_equal(fld_dom$coded_values$codes,
+                 bit64::as.integer64(c(1, 2, "9007199254740992")))
+    expect_equal(fld_dom$coded_values$values, c("one", "two", "large value"))
+    rm(fld_dom)
+
+    expect_equal(lyr_defn$coded_field3$domain, "coded3")
 
     # glob1 read back
     fld_dom <- lyr$getFieldDomain("glob1")

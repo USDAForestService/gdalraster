@@ -103,7 +103,7 @@
 #' $field_subtype    : optional OGR Field Subtype ("OFSTBoolean", ...)
 #' $split_policy     : split policy of the field domain (see below)
 #' $merge_policy     : merge policy of the field domain (see below)
-#' $coded_values     : character vector of codes, or `"CODE=VALUE"` pairs
+#' $coded_values     : vector of allowed codes, or data frame of (codes, values)
 #' $min_value        : minimum value (data type compatible with $field_type)
 #' $min_is_inclusive : whether the minimum value is included in the range
 #' $max_value        : maximum value (data type compatible with $field_type)
@@ -166,22 +166,25 @@
 #' @param merge_policy Character string specifying the merge policy of the
 #' field domain. One of `"DEFAULT_VALUE"`, `"SUM"`, `"GEOMETRY_WEIGHTED"`
 #' (supported by ESRI File Geodatabase format via OpenFileGDB driver).
-#' @param coded_values A vector of the allowed codes or `"CODE=VALUE"` pairs
-#' (the expanded "value" associated with a code is optional). Required
-#' if `domain_type = "Coded"`. Each code should appear only once, but it is the
+#' @param coded_values Either a vector of the allowed codes, or character
+#' vector of `"CODE=VALUE"` pairs (the expanded "value" associated with a code
+#' is optional), or a two-column data frame with (codes, values).
+#' If data frame, the second column of values must be character type (i.e.,
+#' the descriptive text for each code). This argument is required if
+#' `domain_type = "Coded"`. Each code should appear only once, but it is the
 #' responsibility of the user to check it.
 #' @param range_min Minimum value in a Range or RangeDateTime field domain (can
 #' be NULL). The data type must be consistent with with the field type given in
 #' the `fld_type` argument.
 #' @param min_is_inclusive = Logical value, whether the minimum value is
-#' included in the range. Defaults to `TRUE`. Required if `domain_type` is
-#' `"Range"` or `"RangeDateTime"`.
+#' included in the range. Defaults to `TRUE`. Required argument if
+#' `domain_type` is `"Range"` or `"RangeDateTime"`.
 #' @param range_max Maximum value in a Range or RangeDateTime field domain (can
 #' be NULL). The data type must be consistent with with the field type given in
 #' the `fld_type` argument.
 #' @param max_is_inclusive = Logical value, whether the maximum value is
-#' included in the range. Defaults to `TRUE`. Required if `domain_type` is
-#' `"Range"` or `"RangeDateTime"`.
+#' included in the range. Defaults to `TRUE`. Required argument if
+#' `domain_type` is `"Range"` or `"RangeDateTime"`.
 #' @param glob Character string containing the GLOB expression. Required if
 #' `domain_type` is `"GLOB"`.
 #'
@@ -459,17 +462,34 @@ ogr_def_field_domain <- function(domain_type, domain_name, description = NULL,
     defn$glob <- ""
 
     if (tolower(domain_type) == "coded") {
-        if (!missing(coded_values)) {
-            coded_values <- as.character(coded_values)
-        } else {
+        if (missing(coded_values) || is.null(coded_values)) {
             stop("'coded_values' is required for Coded domain type",
                  call. = FALSE)
         }
-        if (length(coded_values) == 0) {
-            stop("'coded_values' is empty", call. = FALSE)
-        }
-        if (any(is.na(coded_values))) {
-            stop("'coded_values' contains NA", call. = FALSE)
+        if (is.data.frame(coded_values)) {
+            # as two-column data frame of codes, values
+            if (ncol(coded_values) != 2) {
+                stop("'coded_values' data frame must have two columns",
+                     call. = FALSE)
+            }
+            if (nrow(coded_values) == 0) {
+                stop("'coded_values' is empty",
+                     call. = FALSE)
+            }
+            if (any(is.na(coded_values[, 1]))) {
+                stop("'coded_values' cannot contain NA codes", call. = FALSE)
+            }
+            coded_values[, 1] <- as.character(coded_values[, 1])
+            coded_values[, 2] <- as.character(coded_values[, 2])
+        } else {
+            # as vector of codes, or "CODE=VALUE" pairs
+            coded_values <- as.character(coded_values)
+            if (length(coded_values) == 0) {
+                stop("'coded_values' is empty", call. = FALSE)
+            }
+            if (any(is.na(coded_values))) {
+                stop("'coded_values' cannot contain NA codes", call. = FALSE)
+            }
         }
         defn$coded_values <- coded_values
 
@@ -477,7 +497,7 @@ ogr_def_field_domain <- function(domain_type, domain_name, description = NULL,
         if (!is.null(range_min) && !all(is.na(range_min))) {
             if (!(is.numeric(range_min) && length(range_min) == 1)) {
                 stop("'range_min' must be a single numeric value or NULL",
-                        call. = FALSE)
+                     call. = FALSE)
             } else {
                 defn$min_value <- range_min
             }
@@ -491,7 +511,7 @@ ogr_def_field_domain <- function(domain_type, domain_name, description = NULL,
         if (!is.null(range_max) && !all(is.na(range_max))) {
             if (!(is.numeric(range_max) && length(range_max) == 1)) {
                 stop("'range_max' must be a single numeric value or NULL",
-                        call. = FALSE)
+                     call. = FALSE)
             } else {
                 defn$max_value <- range_max
             }
