@@ -1745,28 +1745,7 @@ test_that("field domain write functions work", {
                                  fld_type = "OFTDateTime",
                                  domain_name = "dt_range2"))
 
-    # # domain with inf max range
-    # defn <- ogr_def_field_domain("RangeDateTime", "dt_range3",
-    #                              description = "rangedatetime domain test 3",
-    #                              range_min = as.POSIXct("2000-01-01T00:00:00",
-    #                                                     tz = "UTC"),
-    #                              fld_type = "OFTDateTime")
-
-    # expect_true(ogr_ds_add_field_domain(dsn, defn))
-
-    # expect_true(ogr_field_create(dsn, "test", "dt_fld3",
-    #                              fld_type = "OFTDateTime",
-    #                              domain_name = "dt_range3"))
-
-    ## read back
-
-    # TODO: we get actual: ("dt_range1", "dt_range2")
-    #       A DateTime range domain with NULL max or min does not appear in the
-    #       list of names returned by GDALDatasetGetFieldDomainNames(), but
-    #       they do appear in the output of ogrinfo().
-    # expected_names <- c("dt_range1", "dt_range2", "dt_range3")
-    # expect_equal(ogr_ds_field_domain_names(dsn), expected_names)
-
+    # read back
     lyr <- new(GDALVector, dsn, "test")
 
     fld_dom <- lyr$getFieldDomain("dt_range1")
@@ -1781,17 +1760,6 @@ test_that("field domain write functions work", {
                                                tz = "UTC"))
     expect_true(fld_dom$max_is_inclusive)
     rm(fld_dom)
-
-    # fld_dom <- lyr$getFieldDomain("dt_range2")
-    # expect_true(!is.null(fld_dom))
-    # expect_equal(fld_dom$description, "rangedatetime domain test 2")
-    # expect_equal(fld_dom$type, "RangeDateTime")
-    # expect_equal(fld_dom$field_type, "OFTDateTime")
-    # expect_true(is.null(fld_dom$min_value))
-    # expect_true(fld_dom$min_is_inclusive)
-    # expect_true(is.null(fld_dom$max_value))
-    # expect_true(fld_dom$max_is_inclusive)
-    # rm(fld_dom)
 
     lyr$close()
     vsi_rmdir(dsn, recursive = TRUE)
