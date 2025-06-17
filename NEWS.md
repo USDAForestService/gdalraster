@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9040 (dev)
+# gdalraster 2.0.0.9041 (dev)
+
+* add `g_is_ring()`: tests whether a geometry is a ring, `TRUE` if the coordinates of the geometry form a ring by checking length and closure (self-intersection is not checked), otherwise `FALSE` (2025-06-17)
 
 * `GDALVector$getFieldDomain()`: a coded values domain is now returned as a two-column data frame of (codes, values) instead of character vector of `"CODE=VALUE"`, a breaking change, but the return value was not previously documented. The returned field domain definition now aligns with the specification added under the `ogr_define` help topic in #738 (#739) (2025-06-15)
 

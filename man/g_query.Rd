@@ -6,6 +6,7 @@
 \alias{g_is_valid}
 \alias{g_is_3D}
 \alias{g_is_measured}
+\alias{g_is_ring}
 \alias{g_name}
 \alias{g_summary}
 \title{Obtain information about WKB/WKT geometries}
@@ -17,6 +18,8 @@ g_is_valid(geom, quiet = FALSE)
 g_is_3D(geom, quiet = FALSE)
 
 g_is_measured(geom, quiet = FALSE)
+
+g_is_ring(geom, quiet = FALSE)
 
 g_name(geom, quiet = FALSE)
 
@@ -46,6 +49,11 @@ analogous to the above for \code{g_is_empty()}.
 vector analogous to the above for \code{g_is_empty()}.
 
 \code{g_is_measured()} checks whether a geometry is measured (has M values).
+Returns a logical vector analogous to the above for \code{g_is_empty()}.
+
+\code{g_is_ring()} tests whether a geometry is a ring, \code{TRUE} if the
+coordinates of the geometry form a ring by checking length and closure
+(self-intersection is not checked), otherwise \code{FALSE}.
 Returns a logical vector analogous to the above for \code{g_is_empty()}.
 
 \code{g_name()} returns the WKT type names of the input geometries in a character

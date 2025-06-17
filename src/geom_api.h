@@ -53,6 +53,7 @@ SEXP g_swap_xy(const Rcpp::RObject &geom, bool as_iso,
 Rcpp::LogicalVector g_is_empty(const Rcpp::RObject &geom, bool quiet);
 Rcpp::LogicalVector g_is_3D(const Rcpp::RObject &geom, bool quiet);
 Rcpp::LogicalVector g_is_measured(const Rcpp::RObject &geom, bool quiet);
+Rcpp::LogicalVector g_is_ring(const Rcpp::RObject &geom, bool quiet);
 Rcpp::String g_name(const Rcpp::RObject &geom, bool quiet);
 Rcpp::String g_summary(const Rcpp::RObject &geom, bool quiet);
 Rcpp::NumericVector g_envelope(const Rcpp::RObject &geom, bool as_3d,

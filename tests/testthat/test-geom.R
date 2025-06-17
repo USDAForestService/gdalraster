@@ -776,6 +776,14 @@ test_that("geometry properties are correct", {
     expect_equal(g_is_measured(list(pt3, pt3) |> g_wk2wk(as_iso = TRUE)),
                  c(TRUE, TRUE))
 
+    # g_is_ring
+    ring <- "LINESTRING(0 0,0 1,1 1,0 0)"
+    expect_true(g_is_ring(ring))
+    expect_true(g_is_ring(g_wk2wk(ring)))
+    expect_equal(g_is_ring(c(ring, ring)), c(TRUE, TRUE))
+    expect_equal(g_is_ring(c(ring, ring) |> g_wk2wk()), c(TRUE, TRUE))
+    expect_true(is.na(g_is_ring(raw(0))))
+
     # g_envelope
     env1_2 <- c(0, 10, 0, 10)
     env3 <- c(0, 0, 0, 0)

@@ -1179,6 +1179,18 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// g_is_ring
+Rcpp::LogicalVector g_is_ring(const Rcpp::RObject& geom, bool quiet);
+RcppExport SEXP _gdalraster_g_is_ring(SEXP geomSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_is_ring(geom, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // g_name
 Rcpp::String g_name(const Rcpp::RObject& geom, bool quiet);
 RcppExport SEXP _gdalraster_g_name(SEXP geomSEXP, SEXP quietSEXP) {
@@ -2250,6 +2262,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_is_empty", (DL_FUNC) &_gdalraster_g_is_empty, 2},
     {"_gdalraster_g_is_3D", (DL_FUNC) &_gdalraster_g_is_3D, 2},
     {"_gdalraster_g_is_measured", (DL_FUNC) &_gdalraster_g_is_measured, 2},
+    {"_gdalraster_g_is_ring", (DL_FUNC) &_gdalraster_g_is_ring, 2},
     {"_gdalraster_g_name", (DL_FUNC) &_gdalraster_g_name, 2},
     {"_gdalraster_g_summary", (DL_FUNC) &_gdalraster_g_summary, 2},
     {"_gdalraster_g_envelope", (DL_FUNC) &_gdalraster_g_envelope, 3},
