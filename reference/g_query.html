@@ -11,7 +11,7 @@ vectors, or a character vector containing one or more WKT strings."></head><body
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9040</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9041</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -70,6 +70,8 @@ vectors, or a character vector containing one or more WKT strings.</p>
 <span></span>
 <span><span class="fu">g_is_measured</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
+<span><span class="fu">g_is_ring</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
+<span></span>
 <span><span class="fu">g_name</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu">g_summary</span><span class="op">(</span><span class="va">geom</span>, quiet <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span></code></pre></div>
@@ -99,6 +101,10 @@ analogous to the above for <code>g_is_empty()</code>.</p>
 <p><code>g_is_3D()</code> checks whether a geometry has Z coordinates. Returns a logical
 vector analogous to the above for <code>g_is_empty()</code>.</p>
 <p><code>g_is_measured()</code> checks whether a geometry is measured (has M values).
+Returns a logical vector analogous to the above for <code>g_is_empty()</code>.</p>
+<p><code>g_is_ring()</code> tests whether a geometry is a ring, <code>TRUE</code> if the
+coordinates of the geometry form a ring by checking length and closure
+(self-intersection is not checked), otherwise <code>FALSE</code>.
 Returns a logical vector analogous to the above for <code>g_is_empty()</code>.</p>
 <p><code>g_name()</code> returns the WKT type names of the input geometries in a character
 vector of the same length as the number of input geometries.</p>
