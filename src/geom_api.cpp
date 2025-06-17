@@ -847,6 +847,37 @@ Rcpp::LogicalVector g_is_measured(const Rcpp::RObject &geom,
 }
 
 //' @noRd
+// [[Rcpp::export(name = ".g_is_ring")]]
+Rcpp::LogicalVector g_is_ring(const Rcpp::RObject &geom,
+                              bool quiet = false) {
+// Test if the geometry is a ring.
+// returns TRUE if the coordinates of the geometry form a ring, by checking
+// length and closure (self-intersection is not checked), otherwise FALSE.
+
+    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    const Rcpp::RawVector geom_in(geom);
+    if (geom_in.size() == 0)
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+
+    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
+
+    if (hGeom == nullptr) {
+        if (!quiet) {
+            Rcpp::warning(
+                    "failed to create geometry object from WKB, NA returned");
+        }
+        return Rcpp::LogicalVector::create(NA_LOGICAL);
+    }
+
+    bool ret = false;
+    ret = OGR_G_IsRing(hGeom);
+    OGR_G_DestroyGeometry(hGeom);
+    return ret;
+}
+
+//' @noRd
 // [[Rcpp::export(name = ".g_name")]]
 Rcpp::String g_name(const Rcpp::RObject &geom, bool quiet = false) {
 // extract the geometry type name from a WKB/WKT geometry

@@ -2298,6 +2298,11 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_is_ring <- function(geom, quiet = FALSE) {
+    .Call(`_gdalraster_g_is_ring`, geom, quiet)
+}
+
+#' @noRd
 .g_name <- function(geom, quiet = FALSE) {
     .Call(`_gdalraster_g_name`, geom, quiet)
 }

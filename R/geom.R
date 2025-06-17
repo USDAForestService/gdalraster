@@ -528,6 +528,11 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 #' `g_is_measured()` checks whether a geometry is measured (has M values).
 #' Returns a logical vector analogous to the above for `g_is_empty()`.
 #'
+#' `g_is_ring()` tests whether a geometry is a ring, `TRUE` if the
+#' coordinates of the geometry form a ring by checking length and closure
+#' (self-intersection is not checked), otherwise `FALSE`.
+#' Returns a logical vector analogous to the above for `g_is_empty()`.
+#'
 #' `g_name()` returns the WKT type names of the input geometries in a character
 #' vector of the same length as the number of input geometries.
 #'
@@ -678,6 +683,34 @@ g_is_measured <- function(geom, quiet = FALSE) {
             ret <- .g_is_measured(g_wk2wk(geom), quiet)
         } else {
             ret <- sapply(g_wk2wk(geom), .g_is_measured, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    return(ret)
+}
+
+#' @name g_query
+#' @export
+g_is_ring <- function(geom, quiet = FALSE) {
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    ret <- NULL
+    if (.is_raw_or_null(geom)) {
+        ret <- .g_is_ring(geom, quiet)
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
+        ret <- sapply(geom, .g_is_ring, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            ret <- .g_is_ring(g_wk2wk(geom), quiet)
+        } else {
+            ret <- sapply(g_wk2wk(geom), .g_is_ring, quiet)
         }
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
