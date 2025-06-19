@@ -96,17 +96,16 @@
   \code{\link[=bbox_union]{bbox_union()}},
   \code{\link[=bbox_transform]{bbox_transform()}},
   \code{\link[=g_factory]{g_factory}},
+  \code{\link[=g_wk2wk]{g_wk2wk()}},
   \code{\link[=g_query]{g_query}},
+  \code{\link[=g_util]{g_util}},
   \code{\link[=g_binary_pred]{g_binary_pred}},
   \code{\link[=g_binary_op]{g_binary_op}},
-  \code{\link[=g_measures]{g_measures}},
   \code{\link[=g_unary_op]{g_unary_op}},
+  \code{\link[=g_measures]{g_measures}},
   \code{\link[=g_coords]{g_coords()}},
   \code{\link[=g_envelope]{g_envelope()}},
-  \code{\link[=g_make_valid]{g_make_valid()}},
-  \code{\link[=g_swap_xy]{g_swap_xy()}},
   \code{\link[=g_transform]{g_transform()}},
-  \code{\link[=g_wk2wk]{g_wk2wk()}},
   \code{\link[=geos_version]{geos_version()}}
 
   \item Spatial Reference Systems API:

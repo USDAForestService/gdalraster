@@ -1225,6 +1225,75 @@ test_that("make_valid works", {
     expect_true(g_equals(g_wk2wk(wkb_list[[4]]), expected_wkt4))
 })
 
+test_that("g_set_3D / g_set_measured work", {
+    pt_xyzm <- g_create("POINT", c(1, 9, 100, 2000))
+    expect_true(g_is_3D(pt_xyzm))
+    expect_true(g_is_measured(pt_xyzm))
+
+    # WKB input
+    expect_false(g_set_3D(pt_xyzm, is_3d = FALSE) |> g_is_3D())
+    expect_false(g_set_measured(pt_xyzm, is_measured = FALSE) |>
+                     g_is_measured())
+    # input should be unchanged if is_3d / is_measured = TRUE
+    pt_out <- g_set_3D(pt_xyzm, is_3d = TRUE)
+    expect_true(g_is_3D(pt_out))
+    expect_true(g_equals(pt_xyzm, pt_out))
+    pt_out <- g_set_measured(pt_xyzm, is_measured = TRUE)
+    expect_true(g_is_measured(pt_out))
+    expect_true(g_equals(pt_xyzm, pt_out))
+    # as ISO
+    expect_false(g_set_3D(pt_xyzm, is_3d = FALSE, as_iso = TRUE) |> g_is_3D())
+    expect_false(g_set_measured(pt_xyzm, is_measured = FALSE, as_iso = TRUE) |>
+                     g_is_measured())
+    # list of WKB
+    wkb <- list(pt_xyzm, pt_xyzm)
+    res <- g_set_3D(wkb, is_3d = FALSE) |> g_is_3D()
+    expect_equal(res, c(FALSE, FALSE))
+    res <- g_set_measured(wkb, is_measured = FALSE) |> g_is_measured()
+    expect_equal(res, c(FALSE, FALSE))
+    # WKT input
+    expect_false(g_set_3D(g_wk2wk(pt_xyzm), is_3d = FALSE) |> g_is_3D())
+    expect_false(g_set_measured(g_wk2wk(pt_xyzm), is_measured = FALSE) |>
+                     g_is_measured())
+    # as ISO
+    expect_false(g_set_3D(g_wk2wk(pt_xyzm), is_3d = FALSE, as_iso = TRUE) |>
+                     g_is_3D())
+    expect_false(g_set_measured(g_wk2wk(pt_xyzm), is_measured = FALSE,
+                                as_iso =  TRUE) |>
+                     g_is_measured())
+    # vector of WKT
+    wkt <- c(g_wk2wk(pt_xyzm), g_wk2wk(pt_xyzm))
+    res <- g_set_3D(wkt, is_3d = FALSE) |> g_is_3D()
+    expect_equal(res, c(FALSE, FALSE))
+    res <- g_set_measured(wkt, is_measured = FALSE) |> g_is_measured()
+    expect_equal(res, c(FALSE, FALSE))
+
+    # input validation
+    expect_error(g_set_3D(pt_xyzm))
+    expect_error(g_set_measured(pt_xyzm))
+    expect_no_error(g_set_3D(pt_xyzm, is_3d = FALSE, as_wkb = NULL))
+    expect_no_error(g_set_measured(pt_xyzm, is_measured = FALSE, as_wkb = NULL))
+    expect_error(g_set_3D(pt_xyzm, is_3d = FALSE, as_wkb = c(TRUE, FALSE)))
+    expect_error(g_set_measured(pt_xyzm, is_measured = FALSE,
+                 as_wkb = c(TRUE, FALSE)))
+    expect_no_error(g_set_3D(pt_xyzm, is_3d = FALSE, as_iso = NULL))
+    expect_no_error(g_set_measured(pt_xyzm, is_measured = FALSE, as_iso = NULL))
+    expect_error(g_set_3D(pt_xyzm, is_3d = FALSE, as_iso = c(TRUE, FALSE)))
+    expect_error(g_set_measured(pt_xyzm, is_measured = FALSE,
+                 as_iso = c(TRUE, FALSE)))
+    expect_no_error(g_set_3D(pt_xyzm, is_3d = FALSE, byte_order = NULL))
+    expect_no_error(g_set_measured(pt_xyzm, is_measured = FALSE,
+                                   byte_order = NULL))
+    expect_error(g_set_3D(pt_xyzm, is_3d = FALSE, byte_order = "invalid"))
+    expect_error(g_set_measured(pt_xyzm, is_measured = FALSE,
+                                byte_order = "invalid"))
+    expect_no_error(g_set_3D(pt_xyzm, is_3d = FALSE, quiet = NULL))
+    expect_no_error(g_set_measured(pt_xyzm, is_measured = FALSE, quiet = NULL))
+    expect_error(g_set_3D(pt_xyzm, is_3d = FALSE, quiet = "invalid"))
+    expect_error(g_set_measured(pt_xyzm, is_measured = FALSE,
+                                quiet = "invalid"))
+})
+
 test_that("swap xy works", {
     g <- "GEOMETRYCOLLECTION(POINT(1 2),LINESTRING(1 2,2 3),POLYGON((0 0,0 1,1 1,0 0)))"
     expect_no_error(g_swap_xy(g))

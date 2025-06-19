@@ -544,6 +544,9 @@ g_add_geom <- function(sub_geom, container, as_wkb = TRUE, as_iso = FALSE,
 #' character vector containing one or more WKT strings.
 #' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
 #'
+#' @seealso
+#' [g_make_valid()], [g_set_3D()], [g_set_measured()]
+#'
 #' @examples
 #' g1 <- "POLYGON ((0 0, 10 10, 10 0, 0 0))"
 #' g2 <- "POLYGON ((5 1, 9 5, 9 1, 5 1))"
@@ -776,22 +779,47 @@ g_summary <- function(geom, quiet = FALSE) {
     return(ret)
 }
 
-#' Attempt to make invalid geometries valid
+#' Geometry utility functions operating on WKB or WKT
+#'
+#' These functions operate on input geometries in OGC WKB or WKT format to
+#' perform various manipulations for utility purposes.
+#' @name g_util
+#' @details
+#' These functions use the GEOS library via GDAL headers.
 #'
 #' `g_make_valid()` attempts to make an invalid geometry valid without losing
 #' vertices. Already-valid geometries are cloned without further intervention.
 #' Wrapper of `OGR_G_MakeValid()`/`OGR_G_MakeValidEx()` in the GDAL API.
+#' Requires the GEOS >= 3.8 library, check it for the definition of the
+#' geometry operation. If GDAL is built without GEOS >= 3.8, this function
+#' will return a clone of the input geometry if it is valid, or `NULL`
+#' (`as_wkb = TRUE`) / `NA` (`as_wkb = FALSE`) if it is invalid.
 #'
-#' @details
-#' LINEWORK is the default method, which combines all rings into a set of noded
-#' lines and then extracts valid polygons from that linework. The STRUCTURE
-#' method (requires GEOS >= 3.10 and GDAL >= 3.4) first makes all rings valid,
-#' then merges shells and subtracts holes from shells to generate a valid
-#' result. Assumes that holes and shells are correctly categorized.
+#' * `"LINEWORK"` is the default method, which combines all rings into a set
+#' of noded lines and then extracts valid polygons from that linework
+#' (requires GEOS >= 3.10 and GDAL >= 3.4). The `"STRUCTURE"` method first
+#' makes all rings valid, then merges shells and subtracts holes from shells to
+#' generate a valid result. Assumes that holes and shells are correctly
+#' categorized.
 #'
-#' KEEP_COLLAPSED only applies to the STRUCTURE method:
-#' * `FALSE` (the default): collapses are converted to empty geometries
-#' * `TRUE`: collapses are converted to a valid geometry of lower dimension
+#' * `keep_collapsed` only applies to the `"STRUCTURE"` method:
+#'   * `FALSE` (the default): collapses are converted to empty geometries
+#'   * `TRUE`: collapses are converted to a valid geometry of lower dimension
+#'
+#' `g_set_3D()` adds or removes the explicit Z coordinate dimension. Removing
+#' the Z coordinate dimension of a geometry will remove any existing Z values.
+#' Adding the Z dimension to a geometry collection, a compound curve, a
+#' polygon, etc. will affect the children geometries.
+#' Wrapper of `OGR_G_Set3D()` in the GDAL API.
+#'
+#' `g_set_measured()` adds or removes the explicit M coordinate dimension.
+#' Removing the M coordinate dimension of a geometry will remove any existing M
+#' values. Adding the M dimension to a geometry collection, a compound curve, a
+#' polygon, etc. will affect the children geometries.
+#' Wrapper of `OGR_G_SetMeasured()` in the GDAL API.
+#'
+#' `g_swap_xy()` swaps x and y coordinates of the input geometry.
+#' Wrapper of `OGR_G_SwapXY()` in the GDAL API.
 #'
 #' @param geom Either a raw vector of WKB or list of raw vectors, or a
 #' character vector containing one or more WKT strings.
@@ -799,6 +827,10 @@ g_summary <- function(geom, quiet = FALSE) {
 #' `"STRUCTURE"` (requires GEOS >= 3.10 and GDAL >= 3.4). See Details.
 #' @param keep_collapsed Logical value, applies only to the STRUCTURE method.
 #' Defaults to `FALSE`. See Details.
+#' @param is_3d Logical value, `TRUE` if the input geometries should have a Z
+#' dimension, or `FALSE` to remove the Z dimension.
+#' @param is_measured Logical value, `TRUE` if the input geometries should have
+#' a M dimension, or `FALSE` to remove the M dimension.
 #' @param as_wkb Logical value, `TRUE` to return the output geometry in WKB
 #' format (the default), or `FALSE` to return as WKT.
 #' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
@@ -810,16 +842,13 @@ g_summary <- function(geom, quiet = FALSE) {
 #' A geometry as WKB raw vector or WKT string, or a list/character vector of
 #' geometries as WKB/WKT with length equal to `length(geom)`. `NULL` is returned
 #' with a warning if WKB input cannot be converted into an OGR geometry object,
-#' or if an error occurs in the call to MakeValid() in the underlying OGR API.
+#' or if an error occurs in the call to the underlying OGR API.
 #'
-#' @note
-#' This function is built on the GEOS >= 3.8 library, check it for the
-#' definition of the geometry operation. If OGR is built without GEOS >= 3.8,
-#' this function will return a clone of the input geometry if it is valid, or
-#' `NULL` (`as_wkb = TRUE`) / `NA` (`as_wkb = FALSE`) if it is invalid.
+#' @seealso
+#' [g_is_valid()], [g_is_3D()], [g_is_measured()]
 #'
 #' @examples
-#' # requires GEOS >= 3.8, otherwise is only a validity test (see Note)
+#' # g_make_valid() requires GEOS >= 3.8, otherwise is only a validity test
 #' geos_version()
 #'
 #' # valid
@@ -832,7 +861,21 @@ g_summary <- function(geom, quiet = FALSE) {
 #'
 #' # invalid - error
 #' wkt <- "LINESTRING (0 0)"
-#' g_make_valid(wkt)  # NA
+#' g_make_valid(wkt)  # NULL
+#'
+#' pt_xyzm <- g_create("POINT", c(1, 9, 100, 2000))
+#'
+#' g_wk2wk(pt_xyzm, as_iso = TRUE)
+#'
+#' g_set_3D(pt_xyzm, is_3d = FALSE) |> g_wk2wk(as_iso = TRUE)
+#'
+#' g_set_measured(pt_xyzm, is_measured = FALSE) |> g_wk2wk(as_iso = TRUE)
+#'
+#' g <- "GEOMETRYCOLLECTION(POINT(1 2),
+#'                          LINESTRING(1 2,2 3),
+#'                          POLYGON((0 0,0 1,1 1,0 0)))"
+#'
+#' g_swap_xy(g, as_wkb = FALSE)
 #' @export
 g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
                          as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB",
@@ -898,32 +941,123 @@ g_make_valid <- function(geom, method = "LINEWORK", keep_collapsed = FALSE,
         return(g_wk2wk(wkb, as_iso))
 }
 
-#' Swap geometry x and y coordinates
-#'
-#' `g_swap_xy()` swaps x and y coordinates of the input geometry.
-#' Wrapper of `OGR_G_SwapXY()` in the GDAL API.
-#'
-#' @param geom Either a raw vector of WKB or list of raw vectors, or a
-#' character vector containing one or more WKT strings.
-#' @param as_wkb Logical value, `TRUE` to return the output geometry in WKB
-#' format (the default), or `FALSE` to return as WKT.
-#' @param as_iso Logical value, `TRUE` to export as ISO WKB/WKT (ISO 13249
-#' SQL/MM Part 3), or `FALSE` (the default) to export as "Extended WKB/WKT".
-#' @param byte_order Character string specifying the byte order when output is
-#' WKB. One of `"LSB"` (the default) or `"MSB"` (uncommon).
-#' @param quiet Logical value, `TRUE` to suppress warnings. Defaults to `FALSE`.
-#' @return
-#' A geometry as WKB raw vector or WKT string, or a list/character vector of
-#' geometries as WKB/WKT with length equal to `length(geom)`.
-#' `NULL` (`as_wkb = TRUE`) / `NA` (`as_wkb = FALSE`) is returned with a
-#' warning if WKB input cannot be converted into an OGR geometry object.
-#'
-#' @examples
-#' g <- "GEOMETRYCOLLECTION(POINT(1 2),
-#'                          LINESTRING(1 2,2 3),
-#'                          POLYGON((0 0,0 1,1 1,0 0)))"
-#'
-#' g_swap_xy(g, as_wkb = FALSE)
+#' @name g_util
+#' @export
+g_set_3D <- function(geom, is_3d, as_wkb = TRUE, as_iso = FALSE,
+                     byte_order = "LSB", quiet = FALSE) {
+
+    # is_3d
+    if (missing(is_3d) || is.null(is_3d) || is.na(is_3d))
+        stop("'is_3d' is required", call. = FALSE)
+    if (!is.logical(is_3d) || length(is_3d) > 1)
+        stop("'is_3d' must be a single logical value", call. = FALSE)
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    wkb <- NULL
+    if (.is_raw_or_null(geom)) {
+        wkb <- .g_set_3D(geom, is_3d, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
+        wkb <- lapply(geom, .g_set_3D, is_3d, as_iso, byte_order, quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_set_3D(g_wk2wk(geom), is_3d, as_iso, byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_set_3D, is_3d, as_iso, byte_order,
+                          quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' @name g_util
+#' @export
+g_set_measured <- function(geom, is_measured, as_wkb = TRUE, as_iso = FALSE,
+                           byte_order = "LSB", quiet = FALSE) {
+
+    # is_measured
+    if (missing(is_measured) || is.null(is_measured) || is.na(is_measured))
+        stop("'is_measured' is required", call. = FALSE)
+    if (!is.logical(is_measured) || length(is_measured) > 1)
+        stop("'is_measured' must be a single logical value", call. = FALSE)
+    # as_wkb
+    if (is.null(as_wkb))
+        as_wkb <- TRUE
+    if (!is.logical(as_wkb) || length(as_wkb) > 1)
+        stop("'as_wkb' must be a single logical value", call. = FALSE)
+    # as_iso
+    if (is.null(as_iso))
+        as_iso <- FALSE
+    if (!is.logical(as_iso) || length(as_iso) > 1)
+        stop("'as_iso' must be a single logical value", call. = FALSE)
+    # byte_order
+    if (is.null(byte_order))
+        byte_order <- "LSB"
+    if (!is.character(byte_order) || length(byte_order) > 1)
+        stop("'byte_order' must be a character string", call. = FALSE)
+    byte_order <- toupper(byte_order)
+    if (byte_order != "LSB" && byte_order != "MSB")
+        stop("invalid 'byte_order'", call. = FALSE)
+    # quiet
+    if (is.null(quiet))
+        quiet <- FALSE
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a single logical value", call. = FALSE)
+
+    wkb <- NULL
+    if (.is_raw_or_null(geom)) {
+        wkb <- .g_set_measured(geom, is_measured, as_iso, byte_order, quiet)
+    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
+        wkb <- lapply(geom, .g_set_measured, is_measured, as_iso, byte_order,
+                      quiet)
+    } else if (is.character(geom)) {
+        if (length(geom) == 1) {
+            wkb <- .g_set_measured(g_wk2wk(geom), is_measured, as_iso,
+                                   byte_order, quiet)
+        } else {
+            wkb <- lapply(g_wk2wk(geom), .g_set_measured, is_measured, as_iso,
+                          byte_order, quiet)
+        }
+    } else {
+        stop("'geom' must be a character vector, raw vector, or list",
+             call. = FALSE)
+    }
+
+    if (as_wkb)
+        return(wkb)
+    else
+        return(g_wk2wk(wkb, as_iso))
+}
+
+#' @name g_util
 #' @export
 g_swap_xy <- function(geom, as_wkb = TRUE, as_iso = FALSE, byte_order = "LSB",
                       quiet = FALSE) {

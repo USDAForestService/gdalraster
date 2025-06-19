@@ -88,24 +88,17 @@ reference:
   - bbox_intersect
   - bbox_union
   - bbox_transform
-  - g_area
-  - g_binary_op
-  - g_binary_pred
-  - g_centroid
-  - g_coords
-  - g_distance
-  - g_envelope
   - g_factory
-  - g_is_empty
-  - g_is_valid
-  - g_length
-  - g_make_valid
-  - g_name
-  - g_summary
-  - g_swap_xy
-  - g_transform
-  - g_unary_op
   - g_wk2wk
+  - g_query
+  - g_util
+  - g_binary_pred
+  - g_binary_op
+  - g_unary_op
+  - g_measures
+  - g_coords
+  - g_envelope
+  - g_transform
   - geos_version
   - has_geos
 - subtitle: Data management

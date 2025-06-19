@@ -1129,6 +1129,36 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// g_set_3D
+SEXP g_set_3D(const Rcpp::RObject& geom, bool is_3d, bool as_iso, const std::string& byte_order, bool quiet);
+RcppExport SEXP _gdalraster_g_set_3D(SEXP geomSEXP, SEXP is_3dSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type is_3d(is_3dSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_set_3D(geom, is_3d, as_iso, byte_order, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
+// g_set_measured
+SEXP g_set_measured(const Rcpp::RObject& geom, bool is_measured, bool as_iso, const std::string& byte_order, bool quiet);
+RcppExport SEXP _gdalraster_g_set_measured(SEXP geomSEXP, SEXP is_measuredSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type geom(geomSEXP);
+    Rcpp::traits::input_parameter< bool >::type is_measured(is_measuredSEXP);
+    Rcpp::traits::input_parameter< bool >::type as_iso(as_isoSEXP);
+    Rcpp::traits::input_parameter< const std::string& >::type byte_order(byte_orderSEXP);
+    Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
+    rcpp_result_gen = Rcpp::wrap(g_set_measured(geom, is_measured, as_iso, byte_order, quiet));
+    return rcpp_result_gen;
+END_RCPP
+}
 // g_swap_xy
 SEXP g_swap_xy(const Rcpp::RObject& geom, bool as_iso, const std::string& byte_order, bool quiet);
 RcppExport SEXP _gdalraster_g_swap_xy(SEXP geomSEXP, SEXP as_isoSEXP, SEXP byte_orderSEXP, SEXP quietSEXP) {
@@ -2258,6 +2288,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_g_add_geom", (DL_FUNC) &_gdalraster_g_add_geom, 4},
     {"_gdalraster_g_is_valid", (DL_FUNC) &_gdalraster_g_is_valid, 2},
     {"_gdalraster_g_make_valid", (DL_FUNC) &_gdalraster_g_make_valid, 6},
+    {"_gdalraster_g_set_3D", (DL_FUNC) &_gdalraster_g_set_3D, 5},
+    {"_gdalraster_g_set_measured", (DL_FUNC) &_gdalraster_g_set_measured, 5},
     {"_gdalraster_g_swap_xy", (DL_FUNC) &_gdalraster_g_swap_xy, 4},
     {"_gdalraster_g_is_empty", (DL_FUNC) &_gdalraster_g_is_empty, 2},
     {"_gdalraster_g_is_3D", (DL_FUNC) &_gdalraster_g_is_3D, 2},
