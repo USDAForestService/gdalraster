@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9041 (dev)
+# gdalraster 2.0.0.9042 (dev)
+
+* add `g_set_3D()`/`g_set_measured()`: add/remove the explicit Z/M coordinate dimension on the input geometries (#743) (2025-06-19)
 
 * add `g_is_ring()`: tests whether a geometry is a ring, `TRUE` if the coordinates of the geometry form a ring by checking length and closure (self-intersection is not checked), otherwise `FALSE` (2025-06-17)
 
