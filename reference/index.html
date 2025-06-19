@@ -446,10 +446,34 @@
         <dd>Transform a bounding box to a different projection</dd>
       </dl><dl><dt>
 
-          <code><a href="g_measures.html">g_area()</a></code> <code><a href="g_measures.html">g_centroid()</a></code> <code><a href="g_measures.html">g_distance()</a></code> <code><a href="g_measures.html">g_length()</a></code> <code><a href="g_measures.html">g_geodesic_area()</a></code> <code><a href="g_measures.html">g_geodesic_length()</a></code>
+          <code><a href="g_factory.html">g_create()</a></code> <code><a href="g_factory.html">g_add_geom()</a></code>
 
         </dt>
-        <dd>Compute measurements for WKB/WKT geometries</dd>
+        <dd>Create WKB/WKT geometries from vertices, and add sub-geometries</dd>
+      </dl><dl><dt>
+
+          <code><a href="g_wk2wk.html">g_wk2wk()</a></code>
+
+        </dt>
+        <dd>Geometry WKB/WKT conversion</dd>
+      </dl><dl><dt>
+
+          <code><a href="g_query.html">g_is_empty()</a></code> <code><a href="g_query.html">g_is_valid()</a></code> <code><a href="g_query.html">g_is_3D()</a></code> <code><a href="g_query.html">g_is_measured()</a></code> <code><a href="g_query.html">g_is_ring()</a></code> <code><a href="g_query.html">g_name()</a></code> <code><a href="g_query.html">g_summary()</a></code>
+
+        </dt>
+        <dd>Obtain information about WKB/WKT geometries</dd>
+      </dl><dl><dt>
+
+          <code><a href="g_util.html">g_make_valid()</a></code> <code><a href="g_util.html">g_set_3D()</a></code> <code><a href="g_util.html">g_set_measured()</a></code> <code><a href="g_util.html">g_swap_xy()</a></code>
+
+        </dt>
+        <dd>Geometry utility functions operating on WKB or WKT</dd>
+      </dl><dl><dt>
+
+          <code><a href="g_binary_pred.html">g_intersects()</a></code> <code><a href="g_binary_pred.html">g_disjoint()</a></code> <code><a href="g_binary_pred.html">g_touches()</a></code> <code><a href="g_binary_pred.html">g_contains()</a></code> <code><a href="g_binary_pred.html">g_within()</a></code> <code><a href="g_binary_pred.html">g_crosses()</a></code> <code><a href="g_binary_pred.html">g_overlaps()</a></code> <code><a href="g_binary_pred.html">g_equals()</a></code>
+
+        </dt>
+        <dd>Geometry binary predicates operating on WKB or WKT</dd>
       </dl><dl><dt>
 
           <code><a href="g_binary_op.html">g_intersection()</a></code> <code><a href="g_binary_op.html">g_union()</a></code> <code><a href="g_binary_op.html">g_difference()</a></code> <code><a href="g_binary_op.html">g_sym_difference()</a></code>
@@ -458,10 +482,16 @@
         <dd>Binary operations on WKB or WKT geometries</dd>
       </dl><dl><dt>
 
-          <code><a href="g_binary_pred.html">g_intersects()</a></code> <code><a href="g_binary_pred.html">g_disjoint()</a></code> <code><a href="g_binary_pred.html">g_touches()</a></code> <code><a href="g_binary_pred.html">g_contains()</a></code> <code><a href="g_binary_pred.html">g_within()</a></code> <code><a href="g_binary_pred.html">g_crosses()</a></code> <code><a href="g_binary_pred.html">g_overlaps()</a></code> <code><a href="g_binary_pred.html">g_equals()</a></code>
+          <code><a href="g_unary_op.html">g_buffer()</a></code> <code><a href="g_unary_op.html">g_boundary()</a></code> <code><a href="g_unary_op.html">g_convex_hull()</a></code> <code><a href="g_unary_op.html">g_delaunay_triangulation()</a></code> <code><a href="g_unary_op.html">g_simplify()</a></code>
 
         </dt>
-        <dd>Geometry binary predicates operating on WKB or WKT</dd>
+        <dd>Unary operations on WKB or WKT geometries</dd>
+      </dl><dl><dt>
+
+          <code><a href="g_measures.html">g_area()</a></code> <code><a href="g_measures.html">g_centroid()</a></code> <code><a href="g_measures.html">g_distance()</a></code> <code><a href="g_measures.html">g_length()</a></code> <code><a href="g_measures.html">g_geodesic_area()</a></code> <code><a href="g_measures.html">g_geodesic_length()</a></code>
+
+        </dt>
+        <dd>Compute measurements for WKB/WKT geometries</dd>
       </dl><dl><dt>
 
           <code><a href="g_coords.html">g_coords()</a></code>
@@ -476,46 +506,10 @@
         <dd>Obtain the 2D or 3D bounding envelope for input geometries</dd>
       </dl><dl><dt>
 
-          <code><a href="g_factory.html">g_create()</a></code> <code><a href="g_factory.html">g_add_geom()</a></code>
-
-        </dt>
-        <dd>Create WKB/WKT geometries from vertices, and add sub-geometries</dd>
-      </dl><dl><dt>
-
-          <code><a href="g_query.html">g_is_empty()</a></code> <code><a href="g_query.html">g_is_valid()</a></code> <code><a href="g_query.html">g_is_3D()</a></code> <code><a href="g_query.html">g_is_measured()</a></code> <code><a href="g_query.html">g_is_ring()</a></code> <code><a href="g_query.html">g_name()</a></code> <code><a href="g_query.html">g_summary()</a></code>
-
-        </dt>
-        <dd>Obtain information about WKB/WKT geometries</dd>
-      </dl><dl><dt>
-
-          <code><a href="g_make_valid.html">g_make_valid()</a></code>
-
-        </dt>
-        <dd>Attempt to make invalid geometries valid</dd>
-      </dl><dl><dt>
-
-          <code><a href="g_swap_xy.html">g_swap_xy()</a></code>
-
-        </dt>
-        <dd>Swap geometry x and y coordinates</dd>
-      </dl><dl><dt>
-
           <code><a href="g_transform.html">g_transform()</a></code>
 
         </dt>
         <dd>Apply a coordinate transformation to a WKB/WKT geometry</dd>
-      </dl><dl><dt>
-
-          <code><a href="g_unary_op.html">g_buffer()</a></code> <code><a href="g_unary_op.html">g_boundary()</a></code> <code><a href="g_unary_op.html">g_convex_hull()</a></code> <code><a href="g_unary_op.html">g_delaunay_triangulation()</a></code> <code><a href="g_unary_op.html">g_simplify()</a></code>
-
-        </dt>
-        <dd>Unary operations on WKB or WKT geometries</dd>
-      </dl><dl><dt>
-
-          <code><a href="g_wk2wk.html">g_wk2wk()</a></code>
-
-        </dt>
-        <dd>Geometry WKB/WKT conversion</dd>
       </dl><dl><dt>
 
           <code><a href="geos_version.html">geos_version()</a></code>
