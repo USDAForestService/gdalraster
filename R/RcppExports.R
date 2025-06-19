@@ -2278,6 +2278,16 @@ has_geos <- function() {
 }
 
 #' @noRd
+.g_set_3D <- function(geom, is_3d, as_iso, byte_order, quiet) {
+    .Call(`_gdalraster_g_set_3D`, geom, is_3d, as_iso, byte_order, quiet)
+}
+
+#' @noRd
+.g_set_measured <- function(geom, is_measured, as_iso, byte_order, quiet) {
+    .Call(`_gdalraster_g_set_measured`, geom, is_measured, as_iso, byte_order, quiet)
+}
+
+#' @noRd
 .g_swap_xy <- function(geom, as_iso = FALSE, byte_order = "LSB", quiet = FALSE) {
     .Call(`_gdalraster_g_swap_xy`, geom, as_iso, byte_order, quiet)
 }

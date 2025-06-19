@@ -101,3 +101,6 @@ if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
 
 lyr$close()
 }
+\seealso{
+\code{\link[=g_make_valid]{g_make_valid()}}, \code{\link[=g_set_3D]{g_set_3D()}}, \code{\link[=g_set_measured]{g_set_measured()}}
+}
