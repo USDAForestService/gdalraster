@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9042 (dev)
+# gdalraster 2.0.0.9043 (dev)
+
+* `transform_bounds()`: support multiple input bounding boxes given as rows of a matrix or data frame (#744) (2025-06-21)
 
 * add `g_set_3D()`/`g_set_measured()`: add/remove the explicit Z/M coordinate dimension on the input geometries (#743) (2025-06-19)
 
