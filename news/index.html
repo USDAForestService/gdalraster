@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9042</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9043</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +50,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.0.0.9042" id="gdalraster-2009042-dev">gdalraster 2.0.0.9042 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2009042-dev"></a></h2>
-<ul><li><p>add <code><a href="../reference/g_util.html">g_set_3D()</a></code>/<code><a href="../reference/g_util.html">g_set_measured()</a></code>: add/remove the explicit Z/M coordinate dimension on the input geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/743" class="external-link">#743</a>) (2025-06-19)</p></li>
+<h2 class="pkg-version" data-toc-text="2.0.0.9043" id="gdalraster-2009043-dev">gdalraster 2.0.0.9043 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2009043-dev"></a></h2>
+<ul><li><p><code><a href="../reference/transform_bounds.html">transform_bounds()</a></code>: support multiple input bounding boxes given as rows of a matrix or data frame (<a href="https://github.com/USDAForestService/gdalraster/issues/744" class="external-link">#744</a>) (2025-06-21)</p></li>
+<li><p>add <code><a href="../reference/g_util.html">g_set_3D()</a></code>/<code><a href="../reference/g_util.html">g_set_measured()</a></code>: add/remove the explicit Z/M coordinate dimension on the input geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/743" class="external-link">#743</a>) (2025-06-19)</p></li>
 <li><p>add <code><a href="../reference/g_query.html">g_is_ring()</a></code>: tests whether a geometry is a ring, <code>TRUE</code> if the coordinates of the geometry form a ring by checking length and closure (self-intersection is not checked), otherwise <code>FALSE</code> (2025-06-17)</p></li>
 <li><p><code>GDALVector$getFieldDomain()</code>: a coded values domain is now returned as a two-column data frame of (codes, values) instead of character vector of <code>"CODE=VALUE"</code>, a breaking change, but the return value was not previously documented. The returned field domain definition now aligns with the specification added under the <code>ogr_define</code> help topic in <a href="https://github.com/USDAForestService/gdalraster/issues/738" class="external-link">#738</a> (<a href="https://github.com/USDAForestService/gdalraster/issues/739" class="external-link">#739</a>) (2025-06-15)</p></li>
 <li><p><code><a href="../reference/ogr_define.html">ogr_def_field_domain()</a></code>: a coded values field domain optionally may be given as a two-column data frame of (codes, values), as alternative to a vector of codes only (when values are not used) or character vector of <code>"CODE=VALUE"</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/739" class="external-link">#739</a>) (2025-06-15)</p></li>
