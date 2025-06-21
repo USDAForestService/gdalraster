@@ -399,8 +399,9 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 //'
 //' `transform_bounds()` transforms a bounding box, densifying the edges to
 //' account for nonlinear transformations along these edges and extracting
-//' the outermost bounds. Wrapper of `OCTTransformBounds()` in the GDAL Spatial
-//' Reference System API. Requires GDAL >= 3.4.
+//' the outermost bounds. Multiple bounding boxes may be given as rows of a
+//' numeric matrix or data frame. Wrapper of `OCTTransformBounds()` in the GDAL
+//' Spatial Reference System API. Requires GDAL >= 3.4.
 //'
 //' @details
 //' The following refer to the *output* values `xmin`, `ymin`, `xmax`, `ymax`:
@@ -417,8 +418,10 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 //' polygon should be constructed with `(ymin, xmin, ymax, 180)` and the second
 //' with `(ymin, -180, ymax, xmax)`.
 //'
-//' @param bbox Numeric vector of length four containing the input bounding
-//' box (xmin, ymin, xmax, ymax).
+//' @param bbox Either a numeric vector of length four containing the input
+//' bounding box (xmin, ymin, xmax, ymax), or a four-column numeric matrix
+//' of bounding boxes (or data frame that can be coerced to a four-column
+//' numeric matrix).
 //' @param srs_from Character string specifying the spatial reference system
 //' for `pts`. May be in WKT format or any of the formats supported by
 //' [srs_to_wkt()].
@@ -431,11 +434,13 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 //' @param traditional_gis_order Logical value, `TRUE` to use traditional GIS
 //' order of axis mapping (the default) or `FALSE` to use authority compliant
 //' axis order (see Note).
-//' @returns Numeric vector of length four containing the bounding box in the
-//' output spatial reference system (xmin, ymin, xmax, ymax).
 //'
-//' @seealso
-//' [srs_to_wkt()]
+//' @returns
+//' For a single input bounding box, a numeric vector of length four containing
+//' the transformed bounding box in the output spatial reference system
+//' (xmin, ymin, xmax, ymax). For input of multiple bounding boxes,
+//' a four-column numeric matrix with each row containing the corresponding
+//' transformed bounding box (xmin, ymin, xmax, ymax).
 //'
 //' @note
 //' `traditional_gis_order = TRUE` (the default) means that for geographic CRS
@@ -459,22 +464,56 @@ Rcpp::NumericMatrix transform_xy(const Rcpp::RObject &pts,
 //' transform_bounds(bb, "EPSG:32761", "EPSG:4326",
 //'                  traditional_gis_order = FALSE)
 // [[Rcpp::export]]
-Rcpp::NumericVector transform_bounds(const Rcpp::NumericVector &bbox,
-                                     const std::string &srs_from,
-                                     const std::string &srs_to,
-                                     int densify_pts = 21,
-                                     bool traditional_gis_order = true) {
+SEXP transform_bounds(const Rcpp::RObject &bbox,
+                      const std::string &srs_from,
+                      const std::string &srs_to,
+                      int densify_pts = 21,
+                      bool traditional_gis_order = true) {
 
-    if (GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 4, 0))
-        Rcpp::stop("transform_bounds() requires GDAL >= 3.4");
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 4, 0)
+    Rcpp::stop("transform_bounds() requires GDAL >= 3.4");
 
-    if (bbox.size() != 4)
-        Rcpp::stop("'bbox' must be a numeric vector of length 4");
+#else
+    Rcpp::NumericVector bbox_in;
+    Rcpp::NumericMatrix bbox_matrix_in;
+    R_xlen_t num_bbox = 0;
 
-    if (Rcpp::any(Rcpp::is_na(bbox))) {
-        Rcpp::warning("'bbox' has one or more 'NA' values");
-        Rcpp::NumericVector::create(NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+    if (bbox.isNULL())
+        return R_NilValue;
+
+    if (Rcpp::is<Rcpp::NumericVector>(bbox) ||
+        Rcpp::is<Rcpp::IntegerVector>(bbox) ||
+        Rcpp::is<Rcpp::DataFrame>(bbox)) {
+
+        if (Rf_isMatrix(bbox) || Rcpp::is<Rcpp::DataFrame>(bbox)) {
+            if (Rcpp::is<Rcpp::DataFrame>(bbox))
+                bbox_matrix_in = df_to_matrix_(bbox);
+            else
+                bbox_matrix_in = Rcpp::as<Rcpp::NumericMatrix>(bbox);
+
+            if (bbox_matrix_in.ncol() != 4)
+                Rcpp::stop("'bbox' matrix must have 4 columns");
+
+            num_bbox = bbox_matrix_in.nrow();
+            if (num_bbox == 1) {
+                // handle as a single vector input
+                bbox_in = bbox_matrix_in.row(0);
+            }
+        }
+        else {
+            // a single vector input
+            bbox_in = Rcpp::as<Rcpp::NumericVector>(bbox);
+            if (bbox_in.size() != 4)
+                Rcpp::stop("'bbox' vector must have length 4");
+            num_bbox = 1;
+        }
     }
+    else {
+        Rcpp::stop("'bbox' must be a numeric vector or numeric matrix");
+    }
+
+    if (num_bbox == 0)
+        Rcpp::stop("'bbox' is empty");
 
     std::string srs_from_in = srs_to_wkt(srs_from, false);
     std::string srs_to_in = srs_to_wkt(srs_to, false);
@@ -488,7 +527,7 @@ Rcpp::NumericVector transform_bounds(const Rcpp::NumericVector &bbox,
             OSRDestroySpatialReference(hSRS_from);
         if (hSRS_to != nullptr)
             OSRDestroySpatialReference(hSRS_to);
-        Rcpp::stop("error importing SRS from user input");
+        Rcpp::stop("error importing 'srs_from' from user input");
     }
 
     char *pszWKT2 = (char*) srs_to_in.c_str();
@@ -497,7 +536,7 @@ Rcpp::NumericVector transform_bounds(const Rcpp::NumericVector &bbox,
             OSRDestroySpatialReference(hSRS_from);
         if (hSRS_to != nullptr)
             OSRDestroySpatialReference(hSRS_to);
-        Rcpp::stop("error importing SRS from user input");
+        Rcpp::stop("error importing 'srs_to' from user input");
     }
 
     std::string save_opt =
@@ -523,21 +562,81 @@ Rcpp::NumericVector transform_bounds(const Rcpp::NumericVector &bbox,
         Rcpp::stop("failed to create coordinate transformer");
     }
 
-    double out_xmin, out_ymin, out_xmax, out_ymax;
-    out_xmin = out_ymin = out_xmax = out_ymax = NA_REAL;
+    if (num_bbox == 1) {
+        Rcpp::NumericVector ret;
+        double out_xmin, out_ymin, out_xmax, out_ymax;
+        out_xmin = out_ymin = out_xmax = out_ymax = NA_REAL;
 
-    int res = OCTTransformBounds(hCT, bbox[0], bbox[1], bbox[2], bbox[3],
-                                 &out_xmin, &out_ymin, &out_xmax, &out_ymax,
-                                 densify_pts);
+        if (Rcpp::any(Rcpp::is_na(bbox_in))) {
+            Rcpp::warning("'bbox' has one or more 'NA' values");
+            ret = Rcpp::NumericVector::create(
+                            NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+        }
+        else {
+            int res = OCTTransformBounds(hCT,
+                                         bbox_in[0], bbox_in[1],
+                                         bbox_in[2], bbox_in[3],
+                                         &out_xmin, &out_ymin,
+                                         &out_xmax, &out_ymax,
+                                         densify_pts);
 
-    OCTDestroyCoordinateTransformation(hCT);
-    OSRDestroySpatialReference(hSRS_from);
-    OSRDestroySpatialReference(hSRS_to);
+            if (!res) {
+                Rcpp::warning("error returned by OCTTransformBounds()");
+                ret = Rcpp::NumericVector::create(
+                                NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+            }
+            else {
+                ret = Rcpp::NumericVector::create(
+                                out_xmin, out_ymin, out_xmax, out_ymax);
+            }
+        }
 
-    set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
+        OCTDestroyCoordinateTransformation(hCT);
+        OSRDestroySpatialReference(hSRS_from);
+        OSRDestroySpatialReference(hSRS_to);
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
 
-    if (!res)
-        Rcpp::stop("error returned by OCTTransformBounds()");
+        return ret;
+    }
+    else {
+        Rcpp::NumericMatrix ret = Rcpp::no_init(num_bbox, 4);
+        double out_xmin, out_ymin, out_xmax, out_ymax;
 
-    return Rcpp::NumericVector::create(out_xmin, out_ymin, out_xmax, out_ymax);
+        for (R_xlen_t i = 0; i < num_bbox; ++i) {
+            Rcpp::NumericVector this_bbox = bbox_matrix_in.row(i);
+            out_xmin = out_ymin = out_xmax = out_ymax = NA_REAL;
+
+            if (Rcpp::any(Rcpp::is_na(this_bbox))) {
+                Rcpp::warning("an input bbox has one or more 'NA' values");
+                ret.row(i) = Rcpp::NumericVector::create(
+                                    NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+            }
+            else {
+                int res = OCTTransformBounds(hCT,
+                                             this_bbox[0], this_bbox[1],
+                                             this_bbox[2], this_bbox[3],
+                                             &out_xmin, &out_ymin,
+                                             &out_xmax, &out_ymax,
+                                             densify_pts);
+
+                if (!res) {
+                    Rcpp::warning("error returned by OCTTransformBounds()");
+                    ret.row(i) = Rcpp::NumericVector::create(
+                                        NA_REAL, NA_REAL, NA_REAL, NA_REAL);
+                }
+                else {
+                    ret.row(i) = Rcpp::NumericVector::create(
+                                        out_xmin, out_ymin, out_xmax, out_ymax);
+                }
+            }
+        }
+
+        OCTDestroyCoordinateTransformation(hCT);
+        OSRDestroySpatialReference(hSRS_from);
+        OSRDestroySpatialReference(hSRS_to);
+        set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
+
+        return ret;
+    }
+#endif
 }

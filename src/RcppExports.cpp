@@ -2176,12 +2176,12 @@ BEGIN_RCPP
 END_RCPP
 }
 // transform_bounds
-Rcpp::NumericVector transform_bounds(const Rcpp::NumericVector& bbox, const std::string& srs_from, const std::string& srs_to, int densify_pts, bool traditional_gis_order);
+SEXP transform_bounds(const Rcpp::RObject& bbox, const std::string& srs_from, const std::string& srs_to, int densify_pts, bool traditional_gis_order);
 RcppExport SEXP _gdalraster_transform_bounds(SEXP bboxSEXP, SEXP srs_fromSEXP, SEXP srs_toSEXP, SEXP densify_ptsSEXP, SEXP traditional_gis_orderSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const Rcpp::NumericVector& >::type bbox(bboxSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::RObject& >::type bbox(bboxSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type srs_from(srs_fromSEXP);
     Rcpp::traits::input_parameter< const std::string& >::type srs_to(srs_toSEXP);
     Rcpp::traits::input_parameter< int >::type densify_pts(densify_ptsSEXP);

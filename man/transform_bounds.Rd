@@ -13,8 +13,10 @@ transform_bounds(
 )
 }
 \arguments{
-\item{bbox}{Numeric vector of length four containing the input bounding
-box (xmin, ymin, xmax, ymax).}
+\item{bbox}{Either a numeric vector of length four containing the input
+bounding box (xmin, ymin, xmax, ymax), or a four-column numeric matrix
+of bounding boxes (or data frame that can be coerced to a four-column
+numeric matrix).}
 
 \item{srs_from}{Character string specifying the spatial reference system
 for \code{pts}. May be in WKT format or any of the formats supported by
@@ -33,14 +35,18 @@ order of axis mapping (the default) or \code{FALSE} to use authority compliant
 axis order (see Note).}
 }
 \value{
-Numeric vector of length four containing the bounding box in the
-output spatial reference system (xmin, ymin, xmax, ymax).
+For a single input bounding box, a numeric vector of length four containing
+the transformed bounding box in the output spatial reference system
+(xmin, ymin, xmax, ymax). For input of multiple bounding boxes,
+a four-column numeric matrix with each row containing the corresponding
+transformed bounding box (xmin, ymin, xmax, ymax).
 }
 \description{
 \code{transform_bounds()} transforms a bounding box, densifying the edges to
 account for nonlinear transformations along these edges and extracting
-the outermost bounds. Wrapper of \code{OCTTransformBounds()} in the GDAL Spatial
-Reference System API. Requires GDAL >= 3.4.
+the outermost bounds. Multiple bounding boxes may be given as rows of a
+numeric matrix or data frame. Wrapper of \code{OCTTransformBounds()} in the GDAL
+Spatial Reference System API. Requires GDAL >= 3.4.
 }
 \details{
 The following refer to the \emph{output} values \code{xmin}, \code{ymin}, \code{xmax}, \code{ymax}:
@@ -78,7 +84,4 @@ transform_bounds(bb, "EPSG:32761", "EPSG:4326")
 # authority compliant axis ordering
 transform_bounds(bb, "EPSG:32761", "EPSG:4326",
                  traditional_gis_order = FALSE)
-}
-\seealso{
-\code{\link[=srs_to_wkt]{srs_to_wkt()}}
 }
