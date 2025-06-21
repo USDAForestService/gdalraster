@@ -218,6 +218,18 @@ test_that("transform_bounds gives correct results", {
     expected <- c(1722483.900174921, 5228058.6143420935,
                   4624385.494808555, 8692574.544944234)
     expect_equal(res, expected, tolerance = 1e-4)
+    # matrix input
+    bb_mat <- matrix(c(bb, bb), nrow = 2, ncol = 4, byrow = TRUE)
+    res <- transform_bounds(bb_mat, "EPSG:4167", "EPSG:3851")
+    expected <- matrix(c(1722483.900174921, 5228058.6143420935,
+                         4624385.494808555, 8692574.544944234,
+                         1722483.900174921, 5228058.6143420935,
+                         4624385.494808555, 8692574.544944234),
+                       nrow = 2, ncol = 4, byrow = TRUE)
+    expect_equal(res, expected, tolerance = 1e-4)
+    # data frame input
+    res <- transform_bounds(as.data.frame(bb_mat), "EPSG:4167", "EPSG:3851")
+    expect_equal(res, expected, tolerance = 1e-4)
     # authority compliant axis ordering
     bb <- c(-55.95, 160.6, -25.88, -171.2)
     res <- transform_bounds(bb, "EPSG:4167", "EPSG:3851",
@@ -225,4 +237,53 @@ test_that("transform_bounds gives correct results", {
     expected <- c(5228058.6143420935, 1722483.900174921,
                   8692574.544944234, 4624385.494808555)
     expect_equal(res, expected, tolerance = 1e-4)
+
+
+    ## input validation
+    # NULL bbox
+    expect_true(is.null(transform_bounds(NULL, "EPSG:4167", "EPSG:3851")))
+
+    # vector length != 4
+    bb <- c(160.6, -55.95, -171.2, -25.88)
+    expect_no_error(transform_bounds(bb, "EPSG:4167", "EPSG:3851"))
+    expect_error(transform_bounds(bb[1:2], "EPSG:4167", "EPSG:3851"))
+
+    # matrix columns != 4
+    bb_mat <- matrix(c(bb, bb), nrow = 4, ncol = 2)
+    expect_error(transform_bounds(bb_mat, "EPSG:4167", "EPSG:3851"))
+
+    # no error for 1-row matrix, output as vector (no dim)
+    bb_mat <- matrix(bb, nrow = 1, ncol = 4, byrow = TRUE)
+    expect_no_error(res <- transform_bounds(bb_mat, "EPSG:4167", "EPSG:3851"))
+    expected <- c(1722483.900174921, 5228058.6143420935,
+                  4624385.494808555, 8692574.544944234)
+    expect_equal(res, expected, tolerance = 1e-4)
+
+    # input is not a numeric vector or matrix
+    bb_char_mat <- as.character(bb_mat)
+    expect_error(transform_bounds(bb_char_mat, "EPSG:4167", "EPSG:3851"))
+
+    # 0-row matrix
+    bb_mat_0 <- matrix(numeric(0), nrow = 0, ncol = 4, byrow = TRUE)
+    expect_error(transform_bounds(bb_mat_0, "EPSG:4167", "EPSG:3851"))
+
+    # input bbox contains NA
+    bb_na <- rep(NA_real_, 4)
+    expect_warning(res <- transform_bounds(bb_na, "EPSG:4167", "EPSG:3851"))
+    expect_equal(res, rep(NA_real_, 4))
+
+    # matrix input with NA
+    bb_mat_na <- matrix(c(bb, rep(NA_real_, 4)), nrow = 2, ncol = 4,
+                        byrow = TRUE)
+    expect_warning(res <- transform_bounds(bb_mat_na, "EPSG:4167", "EPSG:3851"))
+    expected <- matrix(c(1722483.900174921, 5228058.6143420935,
+                         4624385.494808555, 8692574.544944234,
+                         NA_real_, NA_real_, NA_real_, NA_real_),
+                       nrow = 2, ncol = 4, byrow = TRUE)
+    expect_equal(res, expected, tolerance = 1e-4)
+
+    # invalid srs_from or srs_to
+    bb <- c(160.6, -55.95, -171.2, -25.88)
+    expect_error(transform_bounds(bb, "invalid", "EPSG:3851"))
+    expect_error(transform_bounds(bb, "EPSG:4167", "invalid"))
 })

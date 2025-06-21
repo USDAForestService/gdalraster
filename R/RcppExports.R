@@ -3049,8 +3049,9 @@ srs_get_axis_mapping_strategy <- function(srs) {
 #'
 #' `transform_bounds()` transforms a bounding box, densifying the edges to
 #' account for nonlinear transformations along these edges and extracting
-#' the outermost bounds. Wrapper of `OCTTransformBounds()` in the GDAL Spatial
-#' Reference System API. Requires GDAL >= 3.4.
+#' the outermost bounds. Multiple bounding boxes may be given as rows of a
+#' numeric matrix or data frame. Wrapper of `OCTTransformBounds()` in the GDAL
+#' Spatial Reference System API. Requires GDAL >= 3.4.
 #'
 #' @details
 #' The following refer to the *output* values `xmin`, `ymin`, `xmax`, `ymax`:
@@ -3067,8 +3068,10 @@ srs_get_axis_mapping_strategy <- function(srs) {
 #' polygon should be constructed with `(ymin, xmin, ymax, 180)` and the second
 #' with `(ymin, -180, ymax, xmax)`.
 #'
-#' @param bbox Numeric vector of length four containing the input bounding
-#' box (xmin, ymin, xmax, ymax).
+#' @param bbox Either a numeric vector of length four containing the input
+#' bounding box (xmin, ymin, xmax, ymax), or a four-column numeric matrix
+#' of bounding boxes (or data frame that can be coerced to a four-column
+#' numeric matrix).
 #' @param srs_from Character string specifying the spatial reference system
 #' for `pts`. May be in WKT format or any of the formats supported by
 #' [srs_to_wkt()].
@@ -3081,11 +3084,13 @@ srs_get_axis_mapping_strategy <- function(srs) {
 #' @param traditional_gis_order Logical value, `TRUE` to use traditional GIS
 #' order of axis mapping (the default) or `FALSE` to use authority compliant
 #' axis order (see Note).
-#' @returns Numeric vector of length four containing the bounding box in the
-#' output spatial reference system (xmin, ymin, xmax, ymax).
 #'
-#' @seealso
-#' [srs_to_wkt()]
+#' @returns
+#' For a single input bounding box, a numeric vector of length four containing
+#' the transformed bounding box in the output spatial reference system
+#' (xmin, ymin, xmax, ymax). For input of multiple bounding boxes,
+#' a four-column numeric matrix with each row containing the corresponding
+#' transformed bounding box (xmin, ymin, xmax, ymax).
 #'
 #' @note
 #' `traditional_gis_order = TRUE` (the default) means that for geographic CRS
