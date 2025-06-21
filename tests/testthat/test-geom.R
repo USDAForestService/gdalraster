@@ -627,7 +627,7 @@ test_that("g_transform / bbox_transform return correct values", {
 
     expect_equal(bbox_test, bbox_wgs84, tolerance = 1e-4)
 
-    pt_xy <- matrix(c(324171, 5103034.3), nrow=1, ncol=2)
+    pt_xy <- c(324171, 5103034.3)
     pt <- g_create("POINT", pt_xy, as_wkb = FALSE)
     wkt_vec <- c(bbox_to_wkt(ds_bbox), pt)
     wkb_list <- g_wk2wk(wkt_vec)
