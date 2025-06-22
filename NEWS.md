@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9043 (dev)
+# gdalraster 2.0.0.9044 (dev)
+
+* `g_transform()`: performance improvement when multiple input geometries (#745) (2025-06-21)
 
 * `transform_bounds()`: support multiple input bounding boxes given as rows of a matrix or data frame (#744) (2025-06-21)
 
