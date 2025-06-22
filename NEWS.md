@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9044 (dev)
+# gdalraster 2.0.0.9045 (dev)
+
+* (internal) `transform_bounds()`: refactor to simplify and avoid code duplication (#746) (2025-06-21)
 
 * `g_transform()`: performance improvement when multiple input geometries (#745) (2025-06-21)
 
