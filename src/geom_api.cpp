@@ -2641,11 +2641,14 @@ SEXP g_transform(const Rcpp::RObject &geom, const std::string &srs_from,
 // Zone 60) to a geographic CRS, it will cut geometries along the antimeridian.
 // So a LineString might be returned as a MultiLineString.
 
-    if (geom.isNULL() || !Rcpp::is<Rcpp::RawVector>(geom))
-        return R_NilValue;
+    if (geom.isNULL() ||
+        (!Rcpp::is<Rcpp::RawVector>(geom) && !Rcpp::is<Rcpp::List>(geom))) {
 
-    std::string srs_from_in = srs_to_wkt(srs_from, false);
-    std::string srs_to_in = srs_to_wkt(srs_to, false);
+        return R_NilValue;
+    }
+
+    const std::string srs_from_in = srs_to_wkt(srs_from, false);
+    const std::string srs_to_in = srs_to_wkt(srs_to, false);
 
     OGRSpatialReferenceH hSRS_from = OSRNewSpatialReference(nullptr);
     OGRSpatialReferenceH hSRS_to = OSRNewSpatialReference(nullptr);
@@ -2668,25 +2671,7 @@ SEXP g_transform(const Rcpp::RObject &geom, const std::string &srs_from,
         Rcpp::stop("error importing 'srs_to' from user input");
     }
 
-    const Rcpp::RawVector geom_in(geom);
-    if (geom_in.size() == 0) {
-        OSRDestroySpatialReference(hSRS_from);
-        OSRDestroySpatialReference(hSRS_to);
-        return R_NilValue;
-    }
-
-    OGRGeometryH hGeom = createGeomFromWkb(geom_in);
-    if (hGeom == nullptr) {
-        if (!quiet) {
-            Rcpp::warning(
-                    "failed to create geometry object from WKB, NULL returned");
-        }
-        OSRDestroySpatialReference(hSRS_from);
-        OSRDestroySpatialReference(hSRS_to);
-        return R_NilValue;
-    }
-
-    std::string save_opt =
+    const std::string save_opt =
             get_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER");
 
     if (traditional_gis_order) {
@@ -2707,7 +2692,6 @@ SEXP g_transform(const Rcpp::RObject &geom, const std::string &srs_from,
             OSRDestroySpatialReference(hSRS_from);
         if (hSRS_to != nullptr)
             OSRDestroySpatialReference(hSRS_to);
-        OGR_G_DestroyGeometry(hGeom);
         Rcpp::stop("failed to create coordinate transformer");
     }
 
@@ -2729,50 +2713,102 @@ SEXP g_transform(const Rcpp::RObject &geom, const std::string &srs_from,
             OSRDestroySpatialReference(hSRS_from);
         if (hSRS_to != nullptr)
             OSRDestroySpatialReference(hSRS_to);
-        OGR_G_DestroyGeometry(hGeom);
         Rcpp::stop("failed to create geometry transformer");
     }
 
-    OGRGeometryH hGeom2 = nullptr;
-    hGeom2 = OGR_GeomTransformer_Transform(hGeomTransformer, hGeom);
+    bool input_is_list = false;
+    Rcpp::List list_in;
+    if (Rcpp::is<Rcpp::List>(geom)) {
+        list_in = Rcpp::as<Rcpp::List>(geom);
+        input_is_list = true;
+    }
+    else {
+        list_in = Rcpp::List::create(Rcpp::as<Rcpp::RawVector>(geom));
+    }
+
+    const R_xlen_t num_geom = list_in.size();
+
+    Rcpp::List list_out(num_geom);
+
+    for (R_xlen_t i = 0; i < num_geom; ++i) {
+        if (list_in[i] == R_NilValue ||
+            !Rcpp::is<Rcpp::RawVector>(list_in[i])) {
+
+            list_out[i] = R_NilValue;
+            continue;
+        }
+
+        const Rcpp::RawVector geom_in = list_in[i];
+        if (geom_in.size() == 0) {
+            list_out[i] = R_NilValue;
+            continue;
+        }
+
+        OGRGeometryH hGeom = createGeomFromWkb(geom_in);
+        if (hGeom == nullptr) {
+            if (!quiet) {
+                Rcpp::warning(
+                    "failed to create geometry object from WKB, NULL returned");
+            }
+            list_out[i] = R_NilValue;
+            continue;
+        }
+
+        OGRGeometryH hGeom2 = nullptr;
+        hGeom2 = OGR_GeomTransformer_Transform(hGeomTransformer, hGeom);
+
+        if (hGeom2 == nullptr) {
+            if (!quiet) {
+                Rcpp::warning("transformation failed, NULL returned");
+            }
+            list_out[i] = R_NilValue;
+            OGR_G_DestroyGeometry(hGeom);
+            continue;
+        }
+
+        const int nWKBSize = OGR_G_WkbSize(hGeom2);
+        if (!nWKBSize) {
+            OGR_G_DestroyGeometry(hGeom2);
+            OGR_G_DestroyGeometry(hGeom);
+            if (!quiet) {
+                Rcpp::warning("failed to obtain WKB size of output geometry");
+            }
+            list_out[i] = R_NilValue;
+            continue;
+        }
+
+        Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
+        bool result = exportGeomToWkb(hGeom2, &wkb[0], as_iso, byte_order);
+        OGR_G_DestroyGeometry(hGeom2);
+        OGR_G_DestroyGeometry(hGeom);
+        if (!result) {
+            if (!quiet) {
+                Rcpp::warning(
+                    "failed to export WKB raw vector for output geometry");
+            }
+            list_out[i] = R_NilValue;
+        }
+        else {
+            list_out[i] = wkb;
+        }
+    }
 
     OGR_GeomTransformer_Destroy(hGeomTransformer);
     OCTDestroyCoordinateTransformation(hCT);
     OSRDestroySpatialReference(hSRS_from);
     OSRDestroySpatialReference(hSRS_to);
-    OGR_G_DestroyGeometry(hGeom);
     if (!traditional_gis_order)
         set_config_option("OGR_CT_FORCE_TRADITIONAL_GIS_ORDER", save_opt);
 
-    if (hGeom2 == nullptr) {
-        if (!quiet) {
-            Rcpp::warning(
-                    "transformation failed, NULL returned");
-        }
-        return R_NilValue;
+    if (input_is_list) {
+        return list_out;
     }
-
-    const int nWKBSize = OGR_G_WkbSize(hGeom2);
-    if (!nWKBSize) {
-        OGR_G_DestroyGeometry(hGeom2);
-        if (!quiet) {
-            Rcpp::warning("failed to obtain WKB size of output geometry");
-        }
-        return R_NilValue;
+    else {
+        if (Rcpp::is<Rcpp::RawVector>(list_out[0]))
+            return Rcpp::as<Rcpp::RawVector>(list_out[0]);
+        else
+            return R_NilValue;
     }
-
-    Rcpp::RawVector wkb = Rcpp::no_init(nWKBSize);
-    bool result = exportGeomToWkb(hGeom2, &wkb[0], as_iso, byte_order);
-    OGR_G_DestroyGeometry(hGeom2);
-    if (!result) {
-        if (!quiet) {
-           Rcpp::warning(
-                    "failed to export WKB raw vector for output geometry");
-        }
-        return R_NilValue;
-    }
-
-    return wkb;
 }
 
 //' Get the bounding box of a geometry specified in OGC WKT format

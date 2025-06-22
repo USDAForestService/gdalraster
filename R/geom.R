@@ -2996,25 +2996,17 @@ g_transform <- function(geom, srs_from, srs_to, wrap_date_line = FALSE,
         stop("'quiet' must be a single logical value", call. = FALSE)
 
     wkb <- NULL
-    if (.is_raw_or_null(geom)) {
+    # .g_transform() handles input as either one raw vector or list
+    if (.is_raw_or_null(geom) ||
+        (is.list(geom) && .is_raw_or_null(geom[[1]]))) {
+
         wkb <- .g_transform(geom, srs_from, srs_to, wrap_date_line,
                             date_line_offset, traditional_gis_order, as_iso,
                             byte_order, quiet)
-    } else if (is.list(geom) && .is_raw_or_null(geom[[1]])) {
-        wkb <- lapply(geom, .g_transform, srs_from, srs_to, wrap_date_line,
-                      date_line_offset, traditional_gis_order, as_iso,
-                      byte_order, quiet)
     } else if (is.character(geom)) {
-        if (length(geom) == 1) {
-            wkb <- .g_transform(g_wk2wk(geom), srs_from, srs_to,
-                                wrap_date_line, date_line_offset,
-                                traditional_gis_order, as_iso, byte_order,
-                                quiet)
-        } else {
-            wkb <- lapply(g_wk2wk(geom), .g_transform, srs_from, srs_to,
-                          wrap_date_line, date_line_offset,
-                          traditional_gis_order, as_iso, byte_order, quiet)
-        }
+        wkb <- .g_transform(g_wk2wk(geom), srs_from, srs_to, wrap_date_line,
+                            date_line_offset, traditional_gis_order, as_iso,
+                            byte_order, quiet)
     } else {
         stop("'geom' must be a character vector, raw vector, or list",
              call. = FALSE)
