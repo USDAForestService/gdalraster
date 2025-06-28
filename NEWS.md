@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9045 (dev)
+# gdalraster 2.0.0.9046 (dev)
+
+* (internal) additional tests for class `GDALVector` with a few minor code improvements resulting from (#747) (2025-06-28)
 
 * (internal) `transform_bounds()`: refactor to simplify and avoid code duplication (#746) (2025-06-21)
 
