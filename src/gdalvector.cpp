@@ -87,7 +87,6 @@ GDALVector::GDALVector(const Rcpp::CharacterVector &dsn,
 }
 
 GDALVector::~GDALVector() {
-    releaseArrowStream();
     close();
 }
 
@@ -95,13 +94,8 @@ void GDALVector::open(bool read_only) {
     if (m_dsn == "")
         Rcpp::stop("DSN is not set");
 
-    if (m_hDataset != nullptr) {
-        if (m_is_sql)
-            GDALDatasetReleaseResultSet(m_hDataset, m_hLayer);
-        GDALReleaseDataset(m_hDataset);
-        m_hDataset = nullptr;
-        m_hLayer = nullptr;
-    }
+    if (m_hDataset != nullptr)
+        close();
 
     if (read_only)
         m_eAccess = GA_ReadOnly;
@@ -2033,12 +2027,9 @@ bool GDALVector::deleteFeature(const Rcpp::RObject &fid) {
     }
 
     if (fid.isNULL() || !Rcpp::is<Rcpp::NumericVector>(fid))
-        return R_NilValue;
-
-    Rcpp::NumericVector fid_(fid);
-    if (fid_.size() != 1)
         Rcpp::stop("'fid' must be a length-1 `numeric` vector (integer64)");
 
+    Rcpp::NumericVector fid_(fid);
     if (fid_.size() != 1)
         Rcpp::stop("'fid' must be a length-1 `numeric` vector (integer64)");
 
@@ -2519,23 +2510,25 @@ void GDALVector::checkAccess_(GDALAccess access_needed) const {
 }
 
 void GDALVector::setDsn_(const std::string &dsn) {
-    // consider not raising any errors here since this is for internal use and
-    // these conditions should not apply
     if (m_hDataset != nullptr) {
         std::string desc(GDALGetDescription(m_hDataset));
         if (m_dsn == "" && desc == "") {
             m_dsn = Rcpp::as<std::string>(check_gdal_filename(dsn));
-            GDALSetDescription(m_hDataset, desc.c_str());
+            GDALSetDescription(m_hDataset, m_dsn.c_str());
         }
         else {
-            Rcpp::stop("the DSN cannot be set on this object");
+            Rcpp::Rcout << "the DSN cannot be set on this object" << std::endl;
+            return;
         }
     }
     else {
-        if (m_dsn == "")
+        if (m_dsn == "") {
             m_dsn = Rcpp::as<std::string>(check_gdal_filename(dsn));
-        else
-            Rcpp::stop("the DSN cannot be set on this object");
+        }
+        else {
+            Rcpp::Rcout << "the DSN cannot be set on this object" << std::endl;
+            return;
+        }
     }
 #if __has_include("ogr_recordbatch.h")
     // ensure release callback initialized since it will be checked at closing
@@ -2832,7 +2825,7 @@ std::vector<std::map<R_xlen_t, int>> GDALVector::validateFeatInput_(
     // This function is always called before OGRFeatureFromList_() and does
     // most of the input validation, and provides the field name-to-field index
     // mappings.
-    // *It must be kept consistent with OGRFeatureFromList_()*.
+    // *** It must be kept consistent with OGRFeatureFromList_() ***
 
     if (feature.size() == 0)
         Rcpp::stop("feature input is empty");
