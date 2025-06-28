@@ -34,6 +34,9 @@ test_that("class constructors work", {
                                open_options = NULL,
                                spatial_filter = bbox_to_wkt(bb)))
     expect_equal(lyr$getFeatureCount(), 40)
+    # re-open a SQL layer (implicit close/open)
+    lyr$open(read_only = TRUE)
+    expect_equal(lyr$getFeatureCount(), 40)
     lyr$close()
 
     # add dialect
@@ -164,6 +167,20 @@ test_that("class basic interface works", {
 
     expect_no_error(lyr$clearSpatialFilter())
     expect_equal(lyr$getFeatureCount(), 61)
+
+    # fetch all remaining features from current position
+    lyr$resetReading()
+    expect_no_error(f <- lyr$getNextFeature())
+    expect_no_error(d <- lyr$fetch(NA))
+    expect_equal(nrow(d), 60)
+
+    # fetch errors
+    lyr$resetReading()
+    expect_error(lyr$fetch(9007199254740992))
+    lyr$returnGeomAs <- "invalid"
+    expect_error(lyr$fetch(-1))
+    lyr$wkbByteOrder <- "invalid"
+    expect_error(lyr$fetch(-1))
 
     lyr$close()
 
@@ -299,6 +316,10 @@ test_that("set ignored/selected fields works", {
     expect_no_error(lyr$setSelectedFields(""))
     expect_error(lyr$setSelectedFields("invalid_field"),
                  "none of the input field names could be resolved")
+
+    # errors if input is not a character vector
+    expect_error(lyr$setIgnoredFields(NULL))
+    expect_error(lyr$setSelectedFields(NULL))
 
     lyr$close()
     unlink(dsn)
@@ -468,11 +489,15 @@ test_that("delete feature works", {
     lyr <- new(GDALVector, dsn, "mtbs_perims", read_only = FALSE)
     num_feat <- lyr$getFeatureCount()
     expect_true(lyr$deleteFeature(1))
+    expect_true(lyr$deleteFeature(bit64::as.integer64(2)))
+
+    expect_error(lyr$deleteFeature(NULL))
+    expect_error(lyr$deleteFeature(c(10, 11)))
 
     lyr$open(read_only = TRUE)
-    expect_equal(lyr$getFeatureCount(), num_feat - 1)
+    expect_equal(lyr$getFeatureCount(), num_feat - 2)
     expect_false(lyr$deleteFeature(2))
-    expect_equal(lyr$getFeatureCount(), num_feat - 1)
+    expect_equal(lyr$getFeatureCount(), num_feat - 2)
 
     # transaction
     lyr$open(read_only = FALSE)
@@ -756,8 +781,9 @@ test_that("feature write methods work", {
     test5_fid <- lyr$getLastWriteFID()
     expect_false(is.null(test5_fid))
 
-    # as typed NA
+    # as typed NA and with NA FID
     feat6 <- list()
+    feat5$FID <- NA_real_
     feat6$int_fld <- NA_integer_
     feat6$bool_fld <- NA
     feat6$int64_fld <- NA_integer64_
@@ -849,7 +875,7 @@ test_that("feature write methods work", {
     feat <- lyr$getFeature(1)
     feat$nonexistent_fld <- 1
     expect_error(lyr$setFeature(feat))
-5
+
     feat <- lyr$getFeature(1)
 
     # character for OFTInteger
@@ -1030,9 +1056,7 @@ test_that("feature write methods work", {
     # close and re-open
     lyr$open(read_only = TRUE)
     lyr$returnGeomAs <- "WKT"
-
     f <- lyr$getNextFeature()
-
     expect_equal(f$FID, test1_fid)
     expect_equal(f$id, feat1$id)
     expect_equal(f$real_fld, feat1$real_fld)
@@ -1041,16 +1065,32 @@ test_that("feature write methods work", {
     expect_true(g_equals(f$geom, feat1$geom))
 
     lyr$close()
+
+    # read as SQL layer with SQLITE dialect
+    layer_name <- tools::file_path_sans_ext(basename(dsn4))
+    sql <- paste0("SELECT id, GEOMETRY as geom FROM ", layer_name)
+    expect_no_error(lyr <- new(GDALVector, dsn4, sql, read_only = TRUE,
+                               open_options = NULL, spatial_filter = "",
+                               dialect = "SQLITE"))
+    lyr$returnGeomAs <- "WKT"
+    expect_no_error(f <- lyr$getFeature(test1_fid))
+    expect_equal(f$id, feat1$id)
+    expect_true(g_equals(f$geom, feat1$geom))
+
+    lyr$close()
+
     deleteDataset(dsn4)
     rm(lyr)
     rm(dsn4)
 
     ## test GeoJSON write, Point with SRS
+    # include test of OFTTime field type here
     dsn5 <- tempfile(fileext = ".geojson")
 
     defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4322))
     defn$real_field <- ogr_def_field("OFTReal")
     defn$str_field <- ogr_def_field("OFTString")
+    defn$time_field <- ogr_def_field("OFTTime")
 
     expect_no_error(lyr <- ogr_ds_create("GeoJSON", dsn5, "test_layer",
                                          layer_defn = defn,
@@ -1061,15 +1101,23 @@ test_that("feature write methods work", {
     feat1 <- list()
     feat1$real_field <- 0.123
     feat1$str_field <- "test string 1"
+    feat1$time_field <- "12:00:00"
     feat1$geom <- "POINT (1 10)"
     expect_true(lyr$createFeature(feat1))
-
 
     feat2 <- list()
     feat2$real_field <- 0.234
     feat2$str_field <- "test string 2"
+    feat2$time_field <- "13:00:00"
     feat2$geom <- "POINT (2 20)"
     expect_true(lyr$createFeature(feat2))
+
+    feat3 <- list()
+    feat3$real_field <- 0.345
+    feat3$str_field <- "test string 3"
+    feat3$time_field <- Sys.time()
+    feat3$geom <- "POINT (3 20)"
+    expect_error(lyr$createFeature(feat3))
 
     # close and re-open
     lyr$open(read_only = TRUE)
@@ -1077,6 +1125,11 @@ test_that("feature write methods work", {
     expect_equal(lyr$getFeatureCount(), 2)
     expect_equal(lyr$bbox(), c(1, 10, 2, 20))
     expect_true(srs_is_same(lyr$getSpatialRef(), epsg_to_wkt(4322)))
+
+    f <- lyr$getNextFeature()
+    expect_equal(f$real_field, feat1$real_field, tolerance = .001)
+    expect_equal(f$str_field, feat1$str_field)
+    expect_equal(f$time_field, feat1$time_field)
 
     lyr$close()
     unlink(dsn5)
@@ -1101,6 +1154,33 @@ test_that("feature write methods work", {
     unlink(dsn6)
     rm(lyr)
     rm(dsn6)
+})
+
+test_that("OGRFeatureFromList_dumpReadble runs without error", {
+    # undocumented internal method GDALVector::OGRFeatureFromList_dumpReadble()
+    skip_if(gdal_version_num() < gdal_compute_version(3, 8, 0))
+
+    dsn <- tempfile(fileext = ".geojson")
+
+    defn <- ogr_def_layer("Point", srs = epsg_to_wkt(4322))
+    defn$real_field <- ogr_def_field("OFTReal")
+    defn$str_field <- ogr_def_field("OFTString")
+
+    lyr <- ogr_ds_create("GeoJSON", dsn, "test_layer",
+                         layer_defn = defn,
+                         lco = "WRITE_BBOX=YES",
+                         overwrite = TRUE,
+                         return_obj = TRUE)
+
+    feat1 <- list()
+    feat1$real_field <- 0.123
+    feat1$str_field <- "test string 1"
+    feat1$geom <- "POINT (1 10)"
+
+    expect_no_error(lyr$OGRFeatureFromList_dumpReadble(feat1))
+
+    lyr$close()
+    unlink(dsn)
 })
 
 test_that("feature batch writing works", {
