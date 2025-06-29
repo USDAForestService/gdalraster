@@ -346,8 +346,15 @@
 #' \dontshow{deleteDataset(perims_shp)}
 #' @export
 ogr_ds_exists <- function(dsn, with_update = FALSE) {
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+
+    if (is.null(with_update) || all(is.na(with_update)))
+        with_update <- FALSE
+    if (!is.logical(with_update) || length(with_update) > 1)
+        stop("'with_update' must be a single logical value", call. = FALSE)
 
     return(.ogr_ds_exists(dsn, with_update))
 }
@@ -355,6 +362,8 @@ ogr_ds_exists <- function(dsn, with_update = FALSE) {
 #' @name ogr_manage
 #' @export
 ogr_ds_format <- function(dsn) {
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
 
@@ -368,8 +377,15 @@ ogr_ds_format <- function(dsn) {
 #' @name ogr_manage
 #' @export
 ogr_ds_test_cap <- function(dsn, with_update = TRUE) {
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+
+    if (is.null(with_update) || all(is.na(with_update)))
+        with_update <- FALSE
+    if (!is.logical(with_update) || length(with_update) > 1)
+        stop("'with_update' must be a single logical value", call. = FALSE)
 
     return(.ogr_ds_test_cap(dsn, with_update))
 }
@@ -382,15 +398,19 @@ ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
                           overwrite = FALSE, return_obj = FALSE) {
 
     # format
+    if (missing(format) || is.null(format) || all(is.na(format)))
+        stop("'format' is required", call. = FALSE)
     if (!(is.character(format) && length(format) == 1))
         stop("'format' must be a length-1 character vector", call. = FALSE)
     # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
     if (vsi_stat(dsn) && !overwrite)
         stop("'dsn' exists but 'overwrite' is `FALSE`", call. = FALSE)
     # layer
-    if (is.null(layer))
+    if (missing(layer) || is.null(layer) || all(is.na(layer)))
         layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
@@ -401,22 +421,22 @@ ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
         }
     }
     # geom_type
-    if (is.null(geom_type))
-        geom_type <- ""
+    if (missing(geom_type) || is.null(geom_type) || all(is.na(geom_type)))
+        geom_type <- "UNKNOWN"
     if (!(is.character(geom_type) && length(geom_type) == 1))
         stop("'geom_type' must be a length-1 character vector", call. = FALSE)
     # srs
-    if (is.null(srs))
+    if (missing(srs) || is.null(srs) || all(is.na(srs)))
         srs <- ""
     if (!(is.character(srs) && length(srs) == 1))
         stop("'srs' must be a length-1 character vector", call. = FALSE)
     # fld_name
-    if (is.null(fld_name))
+    if (missing(fld_name) || is.null(fld_name) || all(is.na(fld_name)))
         fld_name <- ""
     if (!(is.character(fld_name) && length(fld_name) == 1))
         stop("'fld_name' must be a length-1 character vector", call. = FALSE)
     # fld_type
-    if (is.null(fld_type))
+    if (missing(fld_type) || is.null(fld_type) || all(is.na(fld_type)))
         fld_type <- ""
     if (!(is.character(fld_type) && length(fld_type) == 1))
         stop("'fld_type' must be a length-1 character vector", call. = FALSE)
@@ -431,13 +451,13 @@ ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
             stop("'lco' must be a character vector", call. = FALSE)
     }
     # overwrite
-    if (is.null(overwrite))
-        stop("'overwrite' must be a logical value", call. = FALSE)
+    if (missing(overwrite) || is.null(overwrite) || all(is.na(overwrite)))
+        overwrite <- FALSE
     if (!is.logical(overwrite) || length(overwrite) > 1)
         stop("'overwrite' must be a single logical value", call. = FALSE)
     # return_obj
-    if (is.null(return_obj))
-        stop("'return_obj' must be a logical value", call. = FALSE)
+    if (missing(return_obj) || is.null(return_obj) || all(is.na(return_obj)))
+        return_obj <- FALSE
     if (!is.logical(return_obj) || length(return_obj) > 1)
         stop("'return_obj' must be a single logical value", call. = FALSE)
     if (return_obj && layer == "" && is.null(layer_defn)) {
@@ -468,6 +488,8 @@ ogr_ds_create <- function(format, dsn, layer = NULL, layer_defn = NULL,
 #' @name ogr_manage
 #' @export
 ogr_ds_layer_count <- function(dsn) {
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
 
@@ -477,6 +499,8 @@ ogr_ds_layer_count <- function(dsn) {
 #' @name ogr_manage
 #' @export
 ogr_ds_layer_names <- function(dsn) {
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
 
@@ -486,6 +510,8 @@ ogr_ds_layer_names <- function(dsn) {
 #' @name ogr_manage
 #' @export
 ogr_ds_field_domain_names <- function(dsn) {
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
 
@@ -495,6 +521,8 @@ ogr_ds_field_domain_names <- function(dsn) {
 #' @name ogr_manage
 #' @export
 ogr_ds_add_field_domain <- function(dsn, fld_dom_defn) {
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
 
@@ -515,6 +543,8 @@ ogr_ds_delete_field_domain <- function(dsn, domain_name) {
     if (gdal_version_num() < gdal_compute_version(3, 5, 0))
         stop("ogr_ds_delete_field_domain() requires GDAL >= 3.5", call. = FALSE)
 
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
 
@@ -532,8 +562,13 @@ ogr_ds_delete_field_domain <- function(dsn, domain_name) {
 #' @name ogr_manage
 #' @export
 ogr_layer_exists <- function(dsn, layer) {
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+
+    if (missing(layer) || is.null(layer) || all(is.na(layer)))
+        layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
 
@@ -543,12 +578,20 @@ ogr_layer_exists <- function(dsn, layer) {
 #' @name ogr_manage
 #' @export
 ogr_layer_test_cap <- function(dsn, layer = NULL, with_update = TRUE) {
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
-    if (is.null(layer))
+
+    if (missing(layer) || is.null(layer) || all(is.na(layer)))
         layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
+
+    if (is.null(with_update) || all(is.na(with_update)))
+        with_update <- TRUE
+    if (!is.logical(with_update) || length(with_update) > 1)
+        stop("'with_update' must be a single logical value", call. = FALSE)
 
     return(.ogr_layer_test_cap(dsn, layer, with_update))
 }
@@ -558,13 +601,18 @@ ogr_layer_test_cap <- function(dsn, layer = NULL, with_update = TRUE) {
 ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
                              srs = NULL, lco = NULL, return_obj = FALSE) {
 
-    # dsn / layer
+    # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(layer) && length(layer) == 1))
-        stop("'layer' must be a length-1 character vector", call. = FALSE)
     if (!ogr_ds_exists(dsn, with_update = TRUE))
         stop("'dsn' does not exist, or no update access", call. = FALSE)
+    # layer
+    if (missing(layer) || is.null(layer) || all(is.na(layer)) || layer == "")
+        stop("'layer' is required", call. = FALSE)
+    if (!(is.character(layer) && length(layer) == 1))
+        stop("'layer' must be a length-1 character vector", call. = FALSE)
     if (ogr_layer_exists(dsn, layer))
         stop("'layer' already exists", call. = FALSE)
     # layer_defn
@@ -601,12 +649,14 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
     }
 
     # geom_type
-    if (is.null(geom_type)) {
+    if (missing(geom_type) || is.null(geom_type) || all(is.na(geom_type))) {
         warning("geometry type not specified, using 'UNKNOWN'", call. = FALSE)
         geom_type <- "UNKNOWN"
     }
+    if (!(is.character(geom_type) && length(geom_type) == 1))
+        stop("'geom_type' must be a length-1 character vector", call. = FALSE)
     # srs
-    if (is.null(srs))
+    if (missing(srs) || is.null(srs) || all(is.na(srs)))
         srs <- ""
     if (!(is.character(srs) && length(srs) == 1))
         stop("'srs' must be a length-1 character vector", call. = FALSE)
@@ -616,8 +666,8 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
             stop("'lco' must be a character vector", call. = FALSE)
     }
     # return_obj
-    if (is.null(return_obj))
-        stop("'return_obj' must be a logical value", call. = FALSE)
+    if (missing(return_obj) || is.null(return_obj) || all(is.na(return_obj)))
+        return_obj <- FALSE
     if (!is.logical(return_obj) || length(return_obj) > 1)
         stop("'return_obj' must be a single logical value", call. = FALSE)
 
@@ -635,9 +685,12 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
 #' @name ogr_manage
 #' @export
 ogr_layer_field_names <- function(dsn, layer = NULL) {
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
-    if (is.null(layer))
+
+    if (missing(layer) || is.null(layer) || all(is.na(layer)))
         layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
@@ -649,10 +702,24 @@ ogr_layer_field_names <- function(dsn, layer = NULL) {
 #' @name ogr_manage
 #' @export
 ogr_layer_rename <- function(dsn, layer, new_name) {
+    # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!ogr_ds_exists(dsn, with_update = TRUE))
+        stop("'dsn' does not exist, or no update access", call. = FALSE)
+    # layer
+    if (missing(layer) || is.null(layer) || all(is.na(layer)) || layer == "")
+        stop("'layer' is required", call. = FALSE)
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
+    # new_name
+    if (missing(new_name) || is.null(new_name) || all(is.na(new_name)) ||
+        new_name == "") {
+
+        stop("'new_name' is required", call. = FALSE)
+    }
     if (!(is.character(new_name) && length(new_name) == 1))
         stop("'new_name' must be a length-1 character vector", call. = FALSE)
 
@@ -662,8 +729,16 @@ ogr_layer_rename <- function(dsn, layer, new_name) {
 #' @name ogr_manage
 #' @export
 ogr_layer_delete <- function(dsn, layer) {
+    # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!ogr_ds_exists(dsn, with_update = TRUE))
+        stop("'dsn' does not exist, or no update access", call. = FALSE)
+    # layer
+    if (missing(layer) || is.null(layer) || all(is.na(layer)) || layer == "")
+        stop("'layer' is required", call. = FALSE)
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
 
@@ -673,10 +748,22 @@ ogr_layer_delete <- function(dsn, layer) {
 #' @name ogr_manage
 #' @export
 ogr_field_index <- function(dsn, layer, fld_name) {
+    # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    # layer
+    if (missing(layer) || is.null(layer) || all(is.na(layer)))
+        layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
+    # fld_name
+    if (missing(fld_name) || is.null(fld_name) || all(is.na(fld_name)) ||
+        fld_name == "") {
+
+        stop("'fld_name' is required", call. = FALSE)
+    }
     if (!(is.character(fld_name) && length(fld_name) == 1))
         stop("'fld_name' must be a length-1 character vector", call. = FALSE)
 
@@ -696,37 +783,42 @@ ogr_field_create <- function(dsn, layer, fld_name,
                              default_value = "",
                              domain_name = NULL) {
 
+    # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
-
+    if (!ogr_ds_exists(dsn, with_update = TRUE))
+        stop("'dsn' does not exist, or no update access", call. = FALSE)
+    # layer
+    if (missing(layer) || is.null(layer) || all(is.na(layer)))
+        layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
+    if (!ogr_layer_exists(dsn, layer))
+        stop("'layer' does not exist", call. = FALSE)
+    # fld_name
+    if (missing(fld_name) || is.null(fld_name) || all(is.na(fld_name)) ||
+        fld_name == "") {
 
+        stop("'fld_name' is required", call. = FALSE)
+    }
     if (!(is.character(fld_name) && length(fld_name) == 1))
         stop("'fld_name' must be a length-1 character vector", call. = FALSE)
-
-    if (is.null(default_value))
+    # default_value
+    if (is.null(default_value) || all(is.na(default_value)))
         default_value <- ""
     else
         default_value <- as.character(default_value)
     if (!(length(default_value) == 1))
         stop("'default_value' must be a length-1 character vector",
              call. = FALSE)
-
-    if (is.null(domain_name))
+    # domain_name
+    if (is.null(domain_name) || all(is.na(domain_name)))
         domain_name <- ""
     if (!(is.character(domain_name) && length(domain_name) == 1))
         stop("'domain_name' must be a length-1 character vector",
              call. = FALSE)
-
-    if (!ogr_ds_exists(dsn, with_update = TRUE))
-        stop("'dsn' does not exist, or no update access", call. = FALSE)
-    if (!ogr_layer_exists(dsn, layer))
-        stop("'layer' does not exist", call. = FALSE)
-
-    fld_idx <- ogr_field_index(dsn, layer, fld_name)
-    if (fld_idx >= 0)
-        stop("field '", fld_name, "' already exists", call. = FALSE)
 
     # use field definition if given
     if (!is.null(fld_defn)) {
@@ -787,31 +879,43 @@ ogr_geom_field_create <- function(dsn, layer, fld_name,
                                   srs = NULL,
                                   is_nullable = TRUE) {
 
+    # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(layer) && length(layer) == 1))
-        stop("'layer' must be a length-1 character vector", call. = FALSE)
-    if (!(is.character(fld_name) && length(fld_name) == 1))
-        stop("'fld_name' must be a length-1 character vector", call. = FALSE)
-
     if (!ogr_ds_exists(dsn, with_update = TRUE))
         stop("'dsn' does not exist, or no update access", call. = FALSE)
+    # layer
+    if (missing(layer) || is.null(layer) || all(is.na(layer)))
+        layer <- ""
+    if (!(is.character(layer) && length(layer) == 1))
+        stop("'layer' must be a length-1 character vector", call. = FALSE)
     if (!ogr_layer_exists(dsn, layer))
         stop("'layer' does not exist", call. = FALSE)
+    # fld_name
+    if (missing(fld_name) || is.null(fld_name) || all(is.na(fld_name)) ||
+        fld_name == "") {
 
-    fld_idx <- ogr_field_index(dsn, layer, fld_name)
-    if (fld_idx >= 0)
-        stop("field ", fld_name, " already exists", call. = FALSE)
-
-    if (is.null(geom_type))
+        stop("'fld_name' is required", call. = FALSE)
+    }
+    if (!(is.character(fld_name) && length(fld_name) == 1))
+        stop("'fld_name' must be a length-1 character vector", call. = FALSE)
+    # geom_type
+    if (is.null(geom_type) || all(is.na(geom_type)))
         geom_type <- "UNKNOWN"
     else if (!(is.character(geom_type) && length(geom_type) == 1))
         stop("'geom_type' must be a length-1 character vector", call. = FALSE)
-
-    if (is.null(srs))
+    # srs
+    if (is.null(srs) || all(is.na(srs)))
         srs <- ""
     else if (!(is.character(srs) && length(srs) == 1))
         stop("'srs' must be a length-1 character vector", call. = FALSE)
+    # is_nullable
+    if (missing(is_nullable) || is.null(is_nullable) || all(is.na(is_nullable)))
+        is_nullable <- TRUE
+    if (!is.logical(is_nullable) || length(is_nullable) > 1)
+        stop("'is_nullable' must be a single logical value", call. = FALSE)
 
     # use field definition if given
     if (!is.null(geom_fld_defn)) {
@@ -841,12 +945,34 @@ ogr_geom_field_create <- function(dsn, layer, fld_name,
 #' @name ogr_manage
 #' @export
 ogr_field_rename <- function(dsn, layer, fld_name, new_name) {
+    # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!ogr_ds_exists(dsn, with_update = TRUE))
+        stop("'dsn' does not exist, or no update access", call. = FALSE)
+    # layer
+    if (missing(layer) || is.null(layer) || all(is.na(layer)))
+        layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
+    if (!ogr_layer_exists(dsn, layer))
+        stop("'layer' does not exist", call. = FALSE)
+    # fld_name
+    if (missing(fld_name) || is.null(fld_name) || all(is.na(fld_name)) ||
+        fld_name == "") {
+
+        stop("'fld_name' is required", call. = FALSE)
+    }
     if (!(is.character(fld_name) && length(fld_name) == 1))
         stop("'fld_name' must be a length-1 character vector", call. = FALSE)
+    # new_name
+    if (missing(new_name) || is.null(new_name) || all(is.na(new_name)) ||
+        new_name == "") {
+
+        stop("'new_name' is required", call. = FALSE)
+    }
     if (!(is.character(new_name) && length(new_name) == 1))
         stop("'new_name' must be a length-1 character vector", call. = FALSE)
 
@@ -856,12 +982,31 @@ ogr_field_rename <- function(dsn, layer, fld_name, new_name) {
 #' @name ogr_manage
 #' @export
 ogr_field_set_domain_name <- function(dsn, layer, fld_name, domain_name) {
+    # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!ogr_ds_exists(dsn, with_update = TRUE))
+        stop("'dsn' does not exist, or no update access", call. = FALSE)
+    # layer
+    if (missing(layer) || is.null(layer) || all(is.na(layer)))
+        layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
+    if (!ogr_layer_exists(dsn, layer))
+        stop("'layer' does not exist", call. = FALSE)
+    # fld_name
+    if (missing(fld_name) || is.null(fld_name) || all(is.na(fld_name)) ||
+        fld_name == "") {
+
+        stop("'fld_name' is required", call. = FALSE)
+    }
     if (!(is.character(fld_name) && length(fld_name) == 1))
         stop("'fld_name' must be a length-1 character vector", call. = FALSE)
+    # domain_name
+    if (missing(domain_name) || is.null(domain_name) || all(is.na(domain_name)))
+        stop("'domain_name' is required", call. = FALSE)
     if (!(is.character(domain_name) && length(domain_name) == 1))
         stop("'domain_name' must be a length-1 character vector", call. = FALSE)
 
@@ -871,10 +1016,26 @@ ogr_field_set_domain_name <- function(dsn, layer, fld_name, domain_name) {
 #' @name ogr_manage
 #' @export
 ogr_field_delete <- function(dsn, layer, fld_name) {
+    # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    if (!ogr_ds_exists(dsn, with_update = TRUE))
+        stop("'dsn' does not exist, or no update access", call. = FALSE)
+    # layer
+    if (missing(layer) || is.null(layer) || all(is.na(layer)))
+        layer <- ""
     if (!(is.character(layer) && length(layer) == 1))
         stop("'layer' must be a length-1 character vector", call. = FALSE)
+    if (!ogr_layer_exists(dsn, layer))
+        stop("'layer' does not exist", call. = FALSE)
+    # fld_name
+    if (missing(fld_name) || is.null(fld_name) || all(is.na(fld_name)) ||
+        fld_name == "") {
+
+        stop("'fld_name' is required", call. = FALSE)
+    }
     if (!(is.character(fld_name) && length(fld_name) == 1))
         stop("'fld_name' must be a length-1 character vector", call. = FALSE)
 
@@ -884,11 +1045,17 @@ ogr_field_delete <- function(dsn, layer, fld_name) {
 #' @name ogr_manage
 #' @export
 ogr_execute_sql <- function(dsn, sql, spatial_filter = NULL, dialect = NULL) {
+    # dsn
+    if (missing(dsn) || is.null(dsn) || all(is.na(dsn)))
+        stop("'dsn' is required", call. = FALSE)
     if (!(is.character(dsn) && length(dsn) == 1))
         stop("'dsn' must be a length-1 character vector", call. = FALSE)
+    # sql
+    if (missing(sql) || is.null(sql) || all(is.na(sql)) || sql == "")
+        stop("'sql' is required", call. = FALSE)
     if (!(is.character(sql) && length(sql) == 1))
         stop("'sql' must be a length-1 character vector", call. = FALSE)
-
+    # spatial_filter
     if (!is.null(spatial_filter)) {
         if (is.numeric(spatial_filter) && length(spatial_filter) == 4)
             spatial_filter <- bbox_to_wkt(spatial_filter)
@@ -898,7 +1065,7 @@ ogr_execute_sql <- function(dsn, sql, spatial_filter = NULL, dialect = NULL) {
     } else {
         spatial_filter <- ""
     }
-
+    # dialect
     if (!is.null(dialect)) {
         if (!(is.character(dialect) && length(dialect) == 1))
             stop("'dialect' must be a length-1 character vector", call. = FALSE)
