@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9046 (dev)
+# gdalraster 2.0.0.9047 (dev)
+
+* (internal) add tests in test-gdal_create.R for the the `create()` and `createCopy()` R public interface and improve input validation (#748) (2025-06-28)
 
 * (internal) additional tests for class `GDALVector` with a few minor code improvements resulting from (#747) (2025-06-28)
 
