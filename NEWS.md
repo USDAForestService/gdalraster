@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9047 (dev)
+# gdalraster 2.0.0.9048 (dev)
+
+* (internal) improve input validation for ogr_manage functions (#749) (2025-06-29)
 
 * (internal) add tests in test-gdal_create.R for the the `create()` and `createCopy()` R public interface and improve input validation (#748) (2025-06-28)
 
