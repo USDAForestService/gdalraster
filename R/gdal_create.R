@@ -61,11 +61,42 @@
 create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
                    options = NULL, return_obj = FALSE) {
 
-    if (is.null(return_obj))
-        stop("'return_obj' must be a logical value", call. = FALSE)
+    if (missing(format) || is.null(format) || all(is.na(format)))
+        stop("'format' is required", call. = FALSE)
+    if (!(is.character(format) && length(format) == 1))
+        stop("'format' must be a character string", call. = FALSE)
+
+    if (missing(dst_filename) || is.null(dst_filename) ||
+        all(is.na(dst_filename))) {
+
+        stop("'dst_filename' is required", call. = FALSE)
+    }
+    if (!(is.character(dst_filename) && length(dst_filename) == 1))
+        stop("'dst_filename' must be a character string", call. = FALSE)
+
+    if (missing(xsize) || is.null(xsize) || all(is.na(xsize)))
+        stop("'xsize' is required", call. = FALSE)
+    if (!(is.numeric(xsize) && length(xsize) == 1))
+        stop("'xsize' must be numeric", call. = FALSE)
+
+    if (missing(ysize) || is.null(ysize) || all(is.na(ysize)))
+        stop("'ysize' is required", call. = FALSE)
+    if (!(is.numeric(ysize) && length(ysize) == 1))
+        stop("'ysize' must be numeric", call. = FALSE)
+
+    if (missing(dataType) || is.null(dataType) || all(is.na(dataType)))
+        stop("'dataType' is required", call. = FALSE)
+    if (!(is.character(dataType) && length(dataType) == 1))
+        stop("'dataType' must be a character string", call. = FALSE)
+
+    if (!is.null(options) && !is.character(options))
+        stop("'options' must be a character vector or NULL", call. = FALSE)
+
+    if (is.null(return_obj) || is.na(return_obj))
+        stop("'return_obj' must be TRUE or FALSE", call. = FALSE)
 
     if (!is.logical(return_obj) || length(return_obj) > 1)
-        stop("'return_obj' must be a logical scalar", call. = FALSE)
+        stop("'return_obj' must be a logical value", call. = FALSE)
 
     # signature for create() object factory
     ds <- new(GDALRaster, format, dst_filename, xsize, ysize, nbands, dataType,
@@ -137,6 +168,29 @@ create <- function(format, dst_filename, xsize, ysize, nbands, dataType,
 createCopy <- function(format, dst_filename, src_filename, strict = FALSE,
                        options = NULL, quiet = FALSE, return_obj = FALSE) {
 
+    if (missing(format) || is.null(format) || all(is.na(format)))
+        stop("'format' is required", call. = FALSE)
+    if (!(is.character(format) && length(format) == 1))
+        stop("'format' must be a character string", call. = FALSE)
+
+    if (missing(dst_filename) || is.null(dst_filename) ||
+        all(is.na(dst_filename))) {
+
+        stop("'dst_filename' is required", call. = FALSE)
+    }
+    if (!(is.character(dst_filename) && length(dst_filename) == 1))
+        stop("'dst_filename' must be a character string", call. = FALSE)
+
+    if (missing(src_filename) || is.null(src_filename))
+        stop("'src_filename' is required", call. = FALSE)
+    if (!(is.character(src_filename) && length(src_filename) == 1 &&
+          any(is.na(src_filename)) == FALSE) &&
+        !is(src_filename, "Rcpp_GDALRaster")) {
+
+        stop("'src_filename' must be a character string or GDALRaster object",
+             call. = FALSE)
+    }
+
     src_ds <- NULL
     if (is(src_filename, "Rcpp_GDALRaster")) {
         src_ds <- src_filename
@@ -149,11 +203,26 @@ createCopy <- function(format, dst_filename, src_filename, strict = FALSE,
              call. = FALSE)
     }
 
-    if (is.null(return_obj))
-        stop("'return_obj' must be a logical value", call. = FALSE)
+    if (is.null(strict) || is.na(strict))
+        stop("'strict' must be TRUE or FALSE", call. = FALSE)
+
+    if (!is.logical(strict) || length(strict) > 1)
+        stop("'strict' must be a logical value", call. = FALSE)
+
+    if (!is.null(options) && !is.character(options))
+        stop("'options' must be a character vector or NULL", call. = FALSE)
+
+    if (is.null(quiet) || is.na(quiet))
+        stop("'quiet' must be TRUE or FALSE", call. = FALSE)
+
+    if (!is.logical(quiet) || length(quiet) > 1)
+        stop("'quiet' must be a logical value", call. = FALSE)
+
+    if (is.null(return_obj) || is.na(return_obj))
+        stop("'return_obj' must be TRUE or FALSE", call. = FALSE)
 
     if (!is.logical(return_obj) || length(return_obj) > 1)
-        stop("'return_obj' must be a logical scalar", call. = FALSE)
+        stop("'return_obj' must be a logical value", call. = FALSE)
 
     # signature for createCopy() object factory
     ds <- new(GDALRaster, format, dst_filename, src_ds, strict, options, quiet)
