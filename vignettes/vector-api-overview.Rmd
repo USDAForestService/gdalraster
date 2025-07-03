@@ -98,9 +98,9 @@ The factory functions `g_create()` and `g_add_geom()` support creating basic geo
 * inspection (see `?g_query`)
 * binary predicates (see `?g_binary_pred`)
 * binary operations (see `?g_binary_op`)
-* unary operations (e.g., `g_buffer()`, `g_simplify()`)
+* unary operations (see `g_unary_op`)
 * measurements (see `?g_measures`)
-* miscellaneous utilities (e.g., `g_coords()`, `g_make_valid()`, `g_swap_xy()`, `g_transform()`)
+* miscellaneous utilities (e.g., `g_coords()`, `g_make_valid()`, `g_transform()`)
 
 Convenience functions for working with bounding boxes are also provided (e.g., convert to/from WKT, intersection/union, and `bbox_transform()`).
 
