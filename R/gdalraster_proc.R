@@ -1485,34 +1485,39 @@ dem_proc <- function(mode,
 #'
 #' @description
 #' `pixel_extract()` returns raster pixel values for a set of geospatial
-#' point locations. The coordinates are given as a two-column matrix of (x, y)
+#' point locations. The coordinates are given as a two-column matrix of x/y
 #' values in the same spatial reference system as the input raster (unless
-#' `xy_srs` is specified).
+#' `xy_srs` is specified). Coordinates can also be given in a data frame with
+#' an optional column of point IDs.
 #' Values are extracted from all bands of the raster by default, or specific
 #' band numbers may be given. An optional interpolation method may be specified
 #' for bilinear (2 x 2 kernel), cubic convolution (4 x 4 kernel, GDAL >= 3.10),
 #' or cubic spline (4 x 4 kernel, GDAL >= 3.10). Alternatively, an optional
-#' kernel dimension may be given to extract values of the individual pixels
-#' within an N x N kernel centered on the pixel containing the point location.
+#' kernel dimension `N` may be given to extract values of the individual pixels
+#' within an `N x N` kernel centered on the pixel containing the point location.
 #' If `xy_srs` is given, the function will attempt to transform the input points
 #' to the projection of the raster with a call to `transform_xy()`.
 #'
 #' @param raster Either a character string giving the filename of a raster, or
 #' an object of class `GDALRaster` for the source dataset.
 #' @param xy A two-column numeric matrix or two-column data frame of geospatial
-#' (x, y) coordinates, or vector (x, y) for a single point, in the same spatial
-#' reference system as `raster`.
+#' coordinates (x, y), or a vector for a single point (x, y), in the same
+#' spatial reference system as `raster`. Can also be given as a data frame with
+#' three or more columns, in which the first column must be a vector of point
+#' IDs (`character` or `numeric`), and the second and third columns must contain
+#' the geospatial coordinates (x, y).
 #' @param bands Optional numeric vector of band numbers. All bands in `raster`
-#' will be processed by default if not specified.
+#' will be processed by default if not specified, or if `0` is given.
 #' @param interp Optional character string specifying an interpolation method.
 #' Must be one of `"bilinear"`, `"cubic"`, `"cubicspline"`, or `"nearest"` (the
 #' default if not specified, i.e., no interpolation).
 #' GDAL >= 3.10 is required for `"cubic"` and `"cubicspline"`.
-#' @param krnl_dim Optional integer value specifying the dimension of an N x N
-#' kernel for which all individual pixel values will be returned. Only
-#' supported when extracting from a single raster band. Ignored if `interp` is
-#' specified as other than `"nearest"` (i.e., will always use the kernel implied
-#' by the interpolation method).
+#' @param krnl_dim Optional numeric value specifying the dimension `N` pixels
+#' of an `N x N` kernel for which all individual pixel values will be returned.
+#' Should be a positive whole number (will be coerced to integer by truncation).
+#' Currently only supported when extracting from a single raster band. Ignored
+#' if `interp` is specified as other than `"nearest"` (i.e., the kernel implied
+#' by the interpolation method will always be used).
 #' @param xy_srs Optional character string specifying the spatial reference
 #' system for `xy`. May be in WKT format or any of the formats supported by
 #' [srs_to_wkt()].
@@ -1520,23 +1525,30 @@ dem_proc <- function(mode,
 #' use for potentially copying a remote raster into memory for processing
 #' (see Note). Defaults to 300 MB. Set to zero to disable potential copy of
 #' remote files into memory.
-#' @returns A numeric matrix of pixel values with number of rows equal to the
-#' number of rows in `xy`, and number of columns equal to the number of
-#' `bands`, or if `krnl_dim = N` is used, number of columns equal to `N * N`.
-#' Named columns indicate the band number, e.g., `"b1"`. If `krnl_dim` is used,
-#' named columns indicate band number and pixel, e.g., `"b1_p1"`, `"b1_p2"`,
-#' ..., `"b1_p9"` if `krnl_dim = 3`. Pixels are in left-to-right, top-to-bottom
-#' order in the kernel.
+#' @param as_data_frame Logical value, `TRUE` to return output as a data frame.
+#' The default is to return a numeric matrix unless point IDs are present in
+#' the first column of `xy` given as a data frame. In that latter case, the
+#' output will always be a data frame with the point IDs in the first column.
+#' @returns A numeric matrix or data frame of pixel values with number of rows
+#' equal to the number of rows in `xy`. The number of columns is equal to the
+#' number of `bands` (plus optional point ID column), or if `krnl_dim = N`
+#' is used, number of columns is equal to `N * N` (plus optional point ID
+#' column). Output is always a data frame if `xy` is given as a data frame with
+#' a column of point IDs (`as_data_frame` will be ignored in that case).
+#' Named columns indicate the band, e.g., `"b1"`. If `krnl_dim` is used, named
+#' columns indicate band and pixel, e.g., `"b1_p1"`, `"b1_p2"`, ..., `"b1_p9"`
+#' if `krnl_dim = 3`. Pixels are in left-to-right, top-to-bottom order in the
+#' kernel.
 #'
 #' @note
 #' Depending on the number of input points, extracting from a raster on a
 #' remote filesystem may require a large number of HTTP range requests which
 #' may be slow (i.e., URLs/remote VSI filesystems). In that case, it may be
 #' faster to copy the raster into memory first (either as MEM format or to a
-#' /vsimem filesystem).
+#' /vsimem/ filesystem).
 #' `pixel_extract()` will attempt to automate that process if the total size
 #' of file(s) that would be copied does not exceed the threshold given by
-#' `max_ram`, and `length(xy) > 1` (requires GDAL >= 3.6).
+#' `max_ram`, and `nrow(xy) > 10` (requires GDAL >= 3.6).
 #'
 #' For alternative workflows that involve copying to local storage, the data
 #' management functions (e.g., [copyDatasetFiles()]) and the VSI filesystem
@@ -1551,17 +1563,17 @@ dem_proc <- function(mode,
 #'
 #' raster_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #'
-#' pixel_extract(raster_file, pts[-1])
+#' pixel_extract(raster_file, pts)
 #'
 #' # or as GDALRaster object
 #' ds <- new(GDALRaster, raster_file)
-#' pixel_extract(ds, pts[-1])
+#' pixel_extract(ds, pts)
 #'
 #' # interpolated values
-#' pixel_extract(raster_file, pts[-1], interp = "bilinear")
+#' pixel_extract(raster_file, pts, interp = "bilinear")
 #'
 #' # individual pixel values within a kernel
-#' pixel_extract(raster_file, pts[-1], krnl_dim = 3)
+#' pixel_extract(raster_file, pts, krnl_dim = 3)
 #'
 #' # lont/lat xy
 #' pts_wgs84 <- transform_xy(pts[-1], srs_from = ds$getProjection(),
@@ -1572,7 +1584,80 @@ dem_proc <- function(mode,
 #'
 #' ds$close()
 pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
-                          krnl_dim = NULL, xy_srs = NULL, max_ram = 300) {
+                          krnl_dim = NULL, xy_srs = NULL, max_ram = 300,
+                          as_data_frame = NULL) {
+
+    if (missing(xy) || is.null(xy))
+        stop("'xy' is required", call. = FALSE)
+
+    if (is.null(as_data_frame) || any(is.na(as_data_frame)))
+        as_data_frame <- FALSE
+    else if (!is.logical(as_data_frame) || length(as_data_frame) > 1)
+        stop("'as_data_frame' must be a single logical value", call. = FALSE)
+
+    return_df <- as_data_frame
+    pt_ids <- NULL
+    pt_id_name <- "ptid"
+    xy_in <- NULL
+    if (is.data.frame(xy)) {
+        if (ncol(xy) >= 3) {
+            if (!(is.character(xy[, 1]) || is.numeric(xy[, 1])) ||
+                !is.numeric(xy[, 2]) || !is.numeric(xy[, 3])) {
+
+                cat("expect cols 1:3: character or numeric, numeric, numeric\n")
+                stop("the first three columns of 'xy' must contain point ID, x, y",
+                     call. = FALSE)
+            } else {
+                return_df <- TRUE
+                pt_ids <- xy[, 1]
+                pt_id_name <- names(xy)[1]
+                xy_in <- xy[, 2:3]
+            }
+        } else {
+            if (ncol(xy) !=2 || !is.numeric(xy[, 1]) || !is.numeric(xy[, 2])) {
+                stop("'xy' must have at least two numeric columns of x, y",
+                     call. = FALSE)
+            } else {
+                xy_in <- xy
+            }
+        }
+    } else if (!is.numeric(xy)) {
+        stop("'xy' must be a numeric matrix or data frame", call. = FALSE)
+    } else {
+        xy_in <- xy
+    }
+
+    if (is.null(bands))
+        bands <- 0
+    else if (!is.numeric(bands) || any(is.na(bands))) {
+        stop("'bands' must be a numeric vector of valid band numbers",
+             call. = FALSE)
+    }
+
+    if (is.null(interp) || all(is.na(interp)))
+        interp <- "nearest"
+    else if (!is.character(interp) || length(interp) > 1)
+        stop("'interp' must be a character string", call. = FALSE)
+
+    if (is.null(krnl_dim) || all(is.na(krnl_dim)))
+        krnl_dim <- 1L
+    else if (!is.numeric(krnl_dim) || length(krnl_dim) > 1)
+        stop("'krnl_dim' must be a numeric (integer) scalar", call. = FALSE)
+    else
+        krnl_dim <- trunc(krnl_dim)
+
+    if (is.null(xy_srs) || all(is.na(xy_srs)))
+        xy_srs <- ""
+    else if (!is.character(xy_srs) || length(xy_srs) > 1)
+        stop("'xy_srs' must be a character string", call. = FALSE)
+
+    if (is.null(max_ram) || all(is.na(max_ram)))
+        max_ram <- 0
+    else if (!is.numeric(max_ram) || length(max_ram) > 1)
+        stop("'max_ram' must be a numeric scalar", call. = FALSE)
+
+    if (max_ram > (get_usable_physical_ram() / 1e6))
+        stop("'max_ram' exceeds usable physical RAM", call. = FALSE)
 
     ds <- NULL
     close_ds <- FALSE
@@ -1589,51 +1674,14 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
              call. = FALSE)
     }
 
-    if (missing(xy) || is.null(xy))
-        stop("'xy' is required", call. = FALSE)
-
-    if (is.data.frame(xy)) {
-        if (ncol(xy) !=2 || !is.numeric(xy[, 1]) || !is.numeric(xy[, 2])) {
-            stop("'xy' must be a two-column data frame or matrix",
-                 call. = FALSE)
-        }
-    } else if (!is.numeric(xy)) {
-        stop("'xy' must be a numeric", call. = FALSE)
-    }
-
-    if (is.null(bands))
-        bands <- 0
-    else if (!is.numeric(bands))
-        stop("'bands' must be a numeric vector", call. = FALSE)
-
-    if (is.null(interp))
-        interp <- "nearest"
-    else if (!is.character(interp) || length(interp) > 1)
-        stop("'interp' must be a character string", call. = FALSE)
-
-    if (is.null(krnl_dim))
-        krnl_dim <- 1L
-    else if (!is.numeric(krnl_dim) || length(krnl_dim) > 1)
-        stop("'krnl_dim' must be a numeric scalar", call. = FALSE)
-
-    if (is.null(xy_srs))
-        xy_srs <- ""
-    else if (!is.character(xy_srs) || length(xy_srs) > 1)
-        stop("'xy_srs' must be a character string", call. = FALSE)
-
-    if (is.null(max_ram))
-        max_ram <- 0
-    else if (!is.numeric(max_ram) || length(max_ram) > 1)
-        stop("'max_ram' must be a numeric scalar", call. = FALSE)
-
     # potentially copy to memory
     use_mem <- FALSE
     ds_mem <- NULL
     mem_dir <- ""
     f_mem <- ""
     f_in <- ds$getDescription(band = 0)
-    if (max_ram > 0 && length(xy) > 1 && gdal_version_num() >= 3060000 &&
-        !vsi_is_local(f_in)) {
+    if (!vsi_is_local(f_in) && max_ram > 0 && nrow(xy_in) > 10 &&
+        gdal_version_num() >= gdal_compute_version(3, 6, 0)) {
 
         # use MEM dataset if possible
         dm <- ds$dim()
@@ -1645,7 +1693,7 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
             }
         }
         raw_size <- num_pixels * bytes_per_pixel
-        if ((raw_size / 1000 / 1000) < max_ram) {
+        if ((raw_size / 1e6) < max_ram) {
             if (!ds$quiet) {
                 message("copying to MEM dataset...")
             }
@@ -1673,7 +1721,7 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
                 }
                 f_size <- f_size + this_f_size
             }
-            if (f_size > 0 && (f_size / 1000 / 1000) < max_ram) {
+            if (f_size > 0 && (f_size / 1e6) < max_ram) {
                 f_nopath <- .cpl_get_filename(f_in)
                 mem_dir <- file.path("/vsimem", tempdir() |> .cpl_get_basename())
                 f_mem <- file.path(mem_dir, f_nopath)
@@ -1732,16 +1780,16 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
             warp(ds, vrt_file, t_srs = "", cl_arg = args, quiet = TRUE)
 
         ds_vrt <- new(GDALRaster, vrt_file)
-        ret <- ds_vrt$pixel_extract(xy, bands, interp, krnl_dim, xy_srs)
+        ret <- ds_vrt$pixel_extract(xy_in, bands, interp, krnl_dim, xy_srs)
 
         ds_vrt$close()
         vsi_unlink(vrt_file)
 
     } else {
         if (use_mem)
-            ret <- ds_mem$pixel_extract(xy, bands, interp, krnl_dim, xy_srs)
+            ret <- ds_mem$pixel_extract(xy_in, bands, interp, krnl_dim, xy_srs)
         else
-            ret <- ds$pixel_extract(xy, bands, interp, krnl_dim, xy_srs)
+            ret <- ds$pixel_extract(xy_in, bands, interp, krnl_dim, xy_srs)
     }
 
     if (use_mem) {
@@ -1751,6 +1799,49 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
             res <- deleteDataset(f_mem)
         if (mem_dir != "")
             vsi_rmdir(mem_dir, recursive = TRUE)
+    }
+
+    col_names <- colnames(ret)
+    band_nums <- NULL
+    if (bands[1] == 0)
+        band_nums <- seq_len(ds$getRasterCount())
+    else
+        band_nums <- bands
+
+    if (!((tolower(interp) %in% c("near", "nearest")) && krnl_dim > 1L)) {
+        if (length(col_names) != length(band_nums)) {
+            # should not be possible
+            warning("number of output columns does not match number of bands",
+                    call. = FALSE)
+            cat("matrix output of GDALRaster::pixel_extract() returned\n")
+            return(ret)
+        }
+        i <- 1
+        ds_name <- tools::file_path_sans_ext(basename(ds$getDescription(0)))
+        for (b in band_nums) {
+            band_desc <- ds$getDescription(b)
+            if (all(nzchar(band_desc))) {
+                if (length(band_nums) > 1)
+                    col_names[i] <- paste0(col_names[i], "_", band_desc)
+                else
+                    col_names[i] <- band_desc
+            } else if (all(nzchar(ds_name))) {
+                if (length(band_nums) > 1)
+                    col_names[i] <- paste0(ds_name, "_", col_names[i])
+                else
+                    col_names[i] <- ds_name
+            }
+            i <- i + 1
+        }
+    }
+
+    if (return_df) {
+        if (is.null(pt_ids))
+            pt_ids <- seq_len(nrow(ret))
+        ret <- data.frame(pt_ids, ret)
+        names(ret) <- make.names(c(pt_id_name, col_names), unique = TRUE)
+    } else {
+        colnames(ret) <- make.names(col_names, unique = TRUE)
     }
 
     if (close_ds)
