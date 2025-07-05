@@ -32,6 +32,9 @@ test_that("srs functions work", {
     expect_true(srs_to_wkt("EPSG:5070", gcs_only = TRUE) |> srs_is_geographic())
 
     expect_true(srs_to_projjson("WGS84") != "")
+    expect_true(srs_to_projjson("WGS84", multiline = FALSE) != "")
+    expect_true(srs_to_projjson("WGS84", indent_width = 4) != "")
+    expect_true(srs_to_projjson("WGS84", schema = "") != "")
 
     expect_equal(srs_find_epsg("WGS84"), "EPSG:4326")
     df_matches <- srs_find_epsg("WGS84", all_matches = TRUE)
