@@ -63,7 +63,12 @@ Text (WKT) or PROJJSON.</p>
 <span></span>
 <span><span class="fu">srs_to_wkt</span><span class="op">(</span><span class="va">srs</span>, pretty <span class="op">=</span> <span class="cn">FALSE</span>, gcs_only <span class="op">=</span> <span class="cn">FALSE</span><span class="op">)</span></span>
 <span></span>
-<span><span class="fu">srs_to_projjson</span><span class="op">(</span><span class="va">srs</span>, multiline <span class="op">=</span> <span class="cn">TRUE</span>, indent_width <span class="op">=</span> <span class="fl">2L</span>, schema <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></code></pre></div>
+<span><span class="fu">srs_to_projjson</span><span class="op">(</span></span>
+<span>  <span class="va">srs</span>,</span>
+<span>  multiline <span class="op">=</span> <span class="cn">TRUE</span>,</span>
+<span>  indent_width <span class="op">=</span> <span class="fl">2L</span>,</span>
+<span>  schema <span class="op">=</span> <span class="cn">NA_character_</span></span>
+<span><span class="op">)</span></span></code></pre></div>
     </div>
 
     <div class="section level2">
@@ -95,13 +100,13 @@ default).</p></dd>
 
 
 <dt id="arg-indent-width">indent_width<a class="anchor" aria-label="anchor" href="#arg-indent-width"></a></dt>
-<dd><p>Integer value. Defaults to <code>2</code>.
-Only used if <code>multiline = TRUE</code> for PROJJSON output.</p></dd>
+<dd><p>Integer value. Defaults to <code>2</code>. Only used if
+<code>multiline = TRUE</code> for PROJJSON output.</p></dd>
 
 
 <dt id="arg-schema">schema<a class="anchor" aria-label="anchor" href="#arg-schema"></a></dt>
 <dd><p>Character string containing URL to PROJJSON schema. Can be
-set to empty string to disable it (the default).</p></dd>
+set to empty string to disable it.</p></dd>
 
 </dl></div>
     <div class="section level2">
@@ -223,7 +228,7 @@ node of the input <code>srs</code>.</p>
 <span class="r-in"><span><span class="fu">srs_to_wkt</span><span class="op">(</span><span class="st">"EPSG:5070"</span>, gcs_only <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GEOGCS[\"NAD83\",DATUM[\"North_American_Datum_1983\",SPHEROID[\"GRS 1980\",6378137,298.257222101,AUTHORITY[\"EPSG\",\"7019\"]],AUTHORITY[\"EPSG\",\"6269\"]],PRIMEM[\"Greenwich\",0,AUTHORITY[\"EPSG\",\"8901\"]],UNIT[\"degree\",0.0174532925199433,AUTHORITY[\"EPSG\",\"9122\"]],AXIS[\"Latitude\",NORTH],AXIS[\"Longitude\",EAST],AUTHORITY[\"EPSG\",\"4269\"]]"</span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu">srs_to_projjson</span><span class="op">(</span><span class="st">"NAD83"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/cat.html" class="external-link">cat</a></span><span class="op">(</span><span class="st">"\n"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu">srs_to_projjson</span><span class="op">(</span><span class="st">"NAD83"</span><span class="op">)</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/base/writeLines.html" class="external-link">writeLines</a></span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> {</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   "$schema": "https://proj.org/schemas/v0.7/projjson.schema.json",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   "type": "GeographicCRS",</span>
@@ -258,7 +263,7 @@ node of the input <code>srs</code>.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     "authority": "EPSG",</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>     "code": 4269</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   }</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> } </span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> }</span>
 </code></pre></div>
     </div>
   </main><aside class="col-md-3"><nav id="toc" aria-label="Table of contents"><h2>On this page</h2>
