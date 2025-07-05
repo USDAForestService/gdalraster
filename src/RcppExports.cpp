@@ -1905,7 +1905,7 @@ BEGIN_RCPP
 END_RCPP
 }
 // srs_to_projjson
-std::string srs_to_projjson(const std::string& srs, bool multiline, int indent_width, const std::string& schema);
+std::string srs_to_projjson(const std::string& srs, bool multiline, int indent_width, const Rcpp::String& schema);
 RcppExport SEXP _gdalraster_srs_to_projjson(SEXP srsSEXP, SEXP multilineSEXP, SEXP indent_widthSEXP, SEXP schemaSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
@@ -1913,7 +1913,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::string& >::type srs(srsSEXP);
     Rcpp::traits::input_parameter< bool >::type multiline(multilineSEXP);
     Rcpp::traits::input_parameter< int >::type indent_width(indent_widthSEXP);
-    Rcpp::traits::input_parameter< const std::string& >::type schema(schemaSEXP);
+    Rcpp::traits::input_parameter< const Rcpp::String& >::type schema(schemaSEXP);
     rcpp_result_gen = Rcpp::wrap(srs_to_projjson(srs, multiline, indent_width, schema));
     return rcpp_result_gen;
 END_RCPP

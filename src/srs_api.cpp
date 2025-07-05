@@ -9,6 +9,8 @@
 
 #include <vector>
 
+#include "transform.h"
+
 #include "cpl_port.h"
 #include "cpl_conv.h"
 #include "ogr_srs_api.h"
@@ -77,10 +79,10 @@
 //' GEOGCS node of the input `srs`. Defaults to `FALSE` (see Note).
 //' @param multiline Logical value. `TRUE` for PROJJSON multiline output (the
 //' default).
-//' @param indent_width Integer value. Defaults to `2`.
-//' Only used if `multiline = TRUE` for PROJJSON output.
+//' @param indent_width Integer value. Defaults to `2`. Only used if
+//' `multiline = TRUE` for PROJJSON output.
 //' @param schema Character string containing URL to PROJJSON schema. Can be
-//' set to empty string to disable it (the default).
+//' set to empty string to disable it.
 //'
 //' @note
 //' Setting `gcs_only = TRUE` in `srs_to_wkt()` is a wrapper of
@@ -102,7 +104,7 @@
 //'
 //' srs_to_wkt("EPSG:5070", gcs_only = TRUE)
 //'
-//' srs_to_projjson("NAD83") |> cat("\n")
+//' srs_to_projjson("NAD83") |> writeLines()
 // [[Rcpp::export]]
 std::string epsg_to_wkt(int epsg, bool pretty = false) {
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
@@ -194,9 +196,13 @@ std::string srs_to_wkt(const std::string &srs, bool pretty = false,
 std::string srs_to_projjson(const std::string &srs,
                             bool multiline = true,
                             int indent_width = 2,
-                            const std::string &schema = "") {
+                            const Rcpp::String &schema = NA_STRING) {
     if (srs == "")
         return "";
+
+    std::vector<int> proj_ver = getPROJVersion();
+    if (!(proj_ver[0] > 6 || proj_ver[1] >= 2))
+        Rcpp::stop("srs_to_projjson() requires PROJ >= 6.2");
 
     OGRSpatialReferenceH hSRS = OSRNewSpatialReference(nullptr);
     char *pszSRS_PROJJSON = nullptr;
@@ -208,17 +214,27 @@ std::string srs_to_projjson(const std::string &srs,
     }
 
     std::vector<const char *> opt_list;
-    std::string str_multiline = "YES";
-    if (!multiline)
-        str_multiline = "NO";
-    std::string str_indent = "2";
+    if (!multiline) {
+        opt_list.push_back("MULTILINE=NO");
+    }
+    std::string str_indent = "INDENTATION_WIDTH=2";
     if (indent_width != 2)
-        str_indent = std::to_string(indent_width);
+        str_indent = "INDENTATION_WIDTH=" + std::to_string(indent_width);
+    if (multiline)
+        opt_list.push_back(str_indent.c_str());
+    std::string str_schema = "SCHEMA=";
+    if (schema != NA_STRING) {
+        str_schema += schema.get_cstring();
+        opt_list.push_back(str_schema.c_str());
+    }
+    opt_list.push_back(nullptr);
 
     if (OSRExportToPROJJSON(hSRS, &pszSRS_PROJJSON, opt_list.data())
             != OGRERR_NONE) {
 
         OSRDestroySpatialReference(hSRS);
+        CPLFree(pszSRS_PROJJSON);
+        Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
         Rcpp::stop("error exporting to PROJJSON");
     }
 

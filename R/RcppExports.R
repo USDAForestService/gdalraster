@@ -2706,10 +2706,10 @@ NULL
 #' GEOGCS node of the input `srs`. Defaults to `FALSE` (see Note).
 #' @param multiline Logical value. `TRUE` for PROJJSON multiline output (the
 #' default).
-#' @param indent_width Integer value. Defaults to `2`.
-#' Only used if `multiline = TRUE` for PROJJSON output.
+#' @param indent_width Integer value. Defaults to `2`. Only used if
+#' `multiline = TRUE` for PROJJSON output.
 #' @param schema Character string containing URL to PROJJSON schema. Can be
-#' set to empty string to disable it (the default).
+#' set to empty string to disable it.
 #'
 #' @note
 #' Setting `gcs_only = TRUE` in `srs_to_wkt()` is a wrapper of
@@ -2731,7 +2731,7 @@ NULL
 #'
 #' srs_to_wkt("EPSG:5070", gcs_only = TRUE)
 #'
-#' srs_to_projjson("NAD83") |> cat("\n")
+#' srs_to_projjson("NAD83") |> writeLines()
 epsg_to_wkt <- function(epsg, pretty = FALSE) {
     .Call(`_gdalraster_epsg_to_wkt`, epsg, pretty)
 }
@@ -2742,7 +2742,7 @@ srs_to_wkt <- function(srs, pretty = FALSE, gcs_only = FALSE) {
 }
 
 #' @rdname srs_convert
-srs_to_projjson <- function(srs, multiline = TRUE, indent_width = 2L, schema = "") {
+srs_to_projjson <- function(srs, multiline = TRUE, indent_width = 2L, schema = NA_character_) {
     .Call(`_gdalraster_srs_to_projjson`, srs, multiline, indent_width, schema)
 }
 

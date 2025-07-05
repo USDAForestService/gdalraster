@@ -11,7 +11,12 @@ epsg_to_wkt(epsg, pretty = FALSE)
 
 srs_to_wkt(srs, pretty = FALSE, gcs_only = FALSE)
 
-srs_to_projjson(srs, multiline = TRUE, indent_width = 2L, schema = "")
+srs_to_projjson(
+  srs,
+  multiline = TRUE,
+  indent_width = 2L,
+  schema = NA_character_
+)
 }
 \arguments{
 \item{epsg}{Integer EPSG code.}
@@ -28,11 +33,11 @@ GEOGCS node of the input \code{srs}. Defaults to \code{FALSE} (see Note).}
 \item{multiline}{Logical value. \code{TRUE} for PROJJSON multiline output (the
 default).}
 
-\item{indent_width}{Integer value. Defaults to \code{2}.
-Only used if \code{multiline = TRUE} for PROJJSON output.}
+\item{indent_width}{Integer value. Defaults to \code{2}. Only used if
+\code{multiline = TRUE} for PROJJSON output.}
 
 \item{schema}{Character string containing URL to PROJJSON schema. Can be
-set to empty string to disable it (the default).}
+set to empty string to disable it.}
 }
 \value{
 Character string containing OGC WKT.
@@ -104,7 +109,7 @@ set_config_option("OSR_WKT_FORMAT", "")
 
 srs_to_wkt("EPSG:5070", gcs_only = TRUE)
 
-srs_to_projjson("NAD83") |> cat("\n")
+srs_to_projjson("NAD83") |> writeLines()
 }
 \seealso{
 \link{srs_query}
