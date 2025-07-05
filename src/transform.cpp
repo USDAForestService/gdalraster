@@ -1,6 +1,6 @@
 /* Functions for coordinate transformation using PROJ via GDAL headers
    Chris Toney <chris.toney at usda.gov>
-   Copyright (c) 2023-2024 gdalraster authors
+   Copyright (c) 2023-2025 gdalraster authors
 */
 
 #include "transform.h"

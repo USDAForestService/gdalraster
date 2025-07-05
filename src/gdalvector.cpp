@@ -2,7 +2,7 @@
    GDALDataset. Requires {bit64} on the R side for its integer64 S3 type.
 
    Chris Toney <chris.toney at usda.gov>
-   Copyright (c) 2023-2024 gdalraster authors
+   Copyright (c) 2023-2025 gdalraster authors
 */
 
 #include <cstdio>

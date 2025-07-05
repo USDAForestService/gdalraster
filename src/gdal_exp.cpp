@@ -1,6 +1,6 @@
 /* Exported stand-alone functions for gdalraster
    Chris Toney <chris.toney at usda.gov>
-   Copyright (c) 2023-2024 gdalraster authors
+   Copyright (c) 2023-2025 gdalraster authors
 */
 
 #include <errno.h>

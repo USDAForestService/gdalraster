@@ -2,7 +2,7 @@
    Wraps a subset of the GDAL Spatial Reference System C API (ogr_srs_api.h)
 
    Chris Toney <chris.toney at usda.gov>
-   Copyright (c) 2023-2024 gdalraster authors
+   Copyright (c) 2023-2025 gdalraster authors
 */
 
 #ifndef SRC_SRS_API_H_

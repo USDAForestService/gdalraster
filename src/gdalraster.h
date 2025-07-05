@@ -2,7 +2,7 @@
    https://gdal.org/en/stable/api/raster_c_api.html
 
    Chris Toney <chris.toney at usda.gov>
-   Copyright (c) 2023-2024 gdalraster authors
+   Copyright (c) 2023-2025 gdalraster authors
 */
 
 #ifndef SRC_GDALRASTER_H_

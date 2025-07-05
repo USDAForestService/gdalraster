@@ -1,6 +1,6 @@
 /* GDAL VSI API for operations on virtual file systems
    Chris Toney <chris.toney at usda.gov>
-   Copyright (c) 2023-2024 gdalraster authors
+   Copyright (c) 2023-2025 gdalraster authors
 */
 
 #ifndef SRC_GDAL_VSI_H_

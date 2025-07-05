@@ -1,6 +1,6 @@
 /* Misc. utility functions for internal use
    Chris Toney <chris.toney at usda.gov>
-   Copyright (c) 2023-2024 gdalraster authors
+   Copyright (c) 2023-2025 gdalraster authors
 */
 
 #ifndef SRC_RCPP_UTIL_H_
