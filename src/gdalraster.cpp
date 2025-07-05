@@ -545,8 +545,10 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
     Rcpp::CharacterVector band_names = Rcpp::CharacterVector::create();
     for (auto& b : bands_in) {
         GDALRasterBandH hBand = GDALGetRasterBand(m_hDataset, b);
-        if (hBand == nullptr)
+        if (hBand == nullptr) {
+            Rcpp::Rcout << "invalid band number: " << b << std::endl;
             Rcpp::stop("failed to access the requested band");
+        }
         GDALDataType eDT = GDALGetRasterDataType(hBand);
         if (GDALDataTypeIsComplex(eDT)) {
             Rcpp::stop("complex data types currently unsupported for extract");
