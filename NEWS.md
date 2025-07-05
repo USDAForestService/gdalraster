@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9050 (dev)
+# gdalraster 2.0.0.9051 (dev)
+
+* fix `srs_to_projjson()`: arguments `multiline`, `iindent_width` and `schema ` were not passed correctly in the API call to `OSRExportToPROJJSON()` (#752) (2025-07-05)
 
 * `pixel_extract()`: support optional point IDs in the first column of an input data frame and add argument `as_data_frame` (#751) (2025-07-05)
 
