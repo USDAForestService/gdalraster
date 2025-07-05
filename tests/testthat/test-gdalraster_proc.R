@@ -627,6 +627,7 @@ test_that("pixel_extract wrapper returns correct data", {
 
     # test copy of remote raster to an in-memory dataset if not on CRAN
     skip_on_cran()
+    skip_if(gdal_version_num() < gdal_compute_version(3, 6, 0))
 
     f <- "/vsicurl/https://raw.githubusercontent.com/usdaforestservice/gdalraster/main/sample-data/lf_fbfm40_220_mt_hood_utm.tif"
     pts <- c(604450.6, 5023283,

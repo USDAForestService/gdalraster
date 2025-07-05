@@ -1680,8 +1680,9 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
     mem_dir <- ""
     f_mem <- ""
     f_in <- ds$getDescription(band = 0)
-    if (!vsi_is_local(f_in) && max_ram > 0 && nrow(xy_in) > 10 &&
-        gdal_version_num() >= gdal_compute_version(3, 6, 0)) {
+    if (max_ram > 0 && nrow(xy_in) > 10 &&
+        gdal_version_num() >= gdal_compute_version(3, 6, 0) &&
+        !vsi_is_local(f_in)) {
 
         # use MEM dataset if possible
         dm <- ds$dim()
