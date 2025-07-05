@@ -1,6 +1,8 @@
-# gdalraster 2.0.0.9048 (dev)
+# gdalraster 2.0.0.9050 (dev)
 
-* (internal) improve input validation for ogr_manage functions (#749) (2025-06-29)
+* `pixel_extract()`: support optional point IDs in the first column of an input data frame and add argument `as_data_frame` (#751) (2025-07-05)
+
+* (internal) improve input validation for `ogr_manage` functions (#749) (2025-06-29)
 
 * (internal) add tests in test-gdal_create.R for the the `create()` and `createCopy()` R public interface and improve input validation (#748) (2025-06-28)
 
