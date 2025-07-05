@@ -11,7 +11,8 @@ pixel_extract(
   interp = NULL,
   krnl_dim = NULL,
   xy_srs = NULL,
-  max_ram = 300
+  max_ram = 300,
+  as_data_frame = NULL
 )
 }
 \arguments{
@@ -19,22 +20,26 @@ pixel_extract(
 an object of class \code{GDALRaster} for the source dataset.}
 
 \item{xy}{A two-column numeric matrix or two-column data frame of geospatial
-(x, y) coordinates, or vector (x, y) for a single point, in the same spatial
-reference system as \code{raster}.}
+coordinates (x, y), or a vector for a single point (x, y), in the same
+spatial reference system as \code{raster}. Can also be given as a data frame with
+three or more columns, in which the first column must be a vector of point
+IDs (\code{character} or \code{numeric}), and the second and third columns must contain
+the geospatial coordinates (x, y).}
 
 \item{bands}{Optional numeric vector of band numbers. All bands in \code{raster}
-will be processed by default if not specified.}
+will be processed by default if not specified, or if \code{0} is given.}
 
 \item{interp}{Optional character string specifying an interpolation method.
 Must be one of \code{"bilinear"}, \code{"cubic"}, \code{"cubicspline"}, or \code{"nearest"} (the
 default if not specified, i.e., no interpolation).
 GDAL >= 3.10 is required for \code{"cubic"} and \code{"cubicspline"}.}
 
-\item{krnl_dim}{Optional integer value specifying the dimension of an N x N
-kernel for which all individual pixel values will be returned. Only
-supported when extracting from a single raster band. Ignored if \code{interp} is
-specified as other than \code{"nearest"} (i.e., will always use the kernel implied
-by the interpolation method).}
+\item{krnl_dim}{Optional numeric value specifying the dimension \code{N} pixels
+of an \verb{N x N} kernel for which all individual pixel values will be returned.
+Should be a positive whole number (will be coerced to integer by truncation).
+Currently only supported when extracting from a single raster band. Ignored
+if \code{interp} is specified as other than \code{"nearest"} (i.e., the kernel implied
+by the interpolation method will always be used).}
 
 \item{xy_srs}{Optional character string specifying the spatial reference
 system for \code{xy}. May be in WKT format or any of the formats supported by
@@ -44,27 +49,36 @@ system for \code{xy}. May be in WKT format or any of the formats supported by
 use for potentially copying a remote raster into memory for processing
 (see Note). Defaults to 300 MB. Set to zero to disable potential copy of
 remote files into memory.}
+
+\item{as_data_frame}{Logical value, \code{TRUE} to return output as a data frame.
+The default is to return a numeric matrix unless point IDs are present in
+the first column of \code{xy} given as a data frame. In that latter case, the
+output will always be a data frame with the point IDs in the first column.}
 }
 \value{
-A numeric matrix of pixel values with number of rows equal to the
-number of rows in \code{xy}, and number of columns equal to the number of
-\code{bands}, or if \code{krnl_dim = N} is used, number of columns equal to \code{N * N}.
-Named columns indicate the band number, e.g., \code{"b1"}. If \code{krnl_dim} is used,
-named columns indicate band number and pixel, e.g., \code{"b1_p1"}, \code{"b1_p2"},
-..., \code{"b1_p9"} if \code{krnl_dim = 3}. Pixels are in left-to-right, top-to-bottom
-order in the kernel.
+A numeric matrix or data frame of pixel values with number of rows
+equal to the number of rows in \code{xy}. The number of columns is equal to the
+number of \code{bands} (plus optional point ID column), or if \code{krnl_dim = N}
+is used, number of columns is equal to \code{N * N} (plus optional point ID
+column). Output is always a data frame if \code{xy} is given as a data frame with
+a column of point IDs (\code{as_data_frame} will be ignored in that case).
+Named columns indicate the band, e.g., \code{"b1"}. If \code{krnl_dim} is used, named
+columns indicate band and pixel, e.g., \code{"b1_p1"}, \code{"b1_p2"}, ..., \code{"b1_p9"}
+if \code{krnl_dim = 3}. Pixels are in left-to-right, top-to-bottom order in the
+kernel.
 }
 \description{
 \code{pixel_extract()} returns raster pixel values for a set of geospatial
-point locations. The coordinates are given as a two-column matrix of (x, y)
+point locations. The coordinates are given as a two-column matrix of x/y
 values in the same spatial reference system as the input raster (unless
-\code{xy_srs} is specified).
+\code{xy_srs} is specified). Coordinates can also be given in a data frame with
+an optional column of point IDs.
 Values are extracted from all bands of the raster by default, or specific
 band numbers may be given. An optional interpolation method may be specified
 for bilinear (2 x 2 kernel), cubic convolution (4 x 4 kernel, GDAL >= 3.10),
 or cubic spline (4 x 4 kernel, GDAL >= 3.10). Alternatively, an optional
-kernel dimension may be given to extract values of the individual pixels
-within an N x N kernel centered on the pixel containing the point location.
+kernel dimension \code{N} may be given to extract values of the individual pixels
+within an \verb{N x N} kernel centered on the pixel containing the point location.
 If \code{xy_srs} is given, the function will attempt to transform the input points
 to the projection of the raster with a call to \code{transform_xy()}.
 }
@@ -73,10 +87,10 @@ Depending on the number of input points, extracting from a raster on a
 remote filesystem may require a large number of HTTP range requests which
 may be slow (i.e., URLs/remote VSI filesystems). In that case, it may be
 faster to copy the raster into memory first (either as MEM format or to a
-/vsimem filesystem).
+/vsimem/ filesystem).
 \code{pixel_extract()} will attempt to automate that process if the total size
 of file(s) that would be copied does not exceed the threshold given by
-\code{max_ram}, and \code{length(xy) > 1} (requires GDAL >= 3.6).
+\code{max_ram}, and \code{nrow(xy) > 10} (requires GDAL >= 3.6).
 
 For alternative workflows that involve copying to local storage, the data
 management functions (e.g., \code{\link[=copyDatasetFiles]{copyDatasetFiles()}}) and the VSI filesystem
@@ -91,17 +105,17 @@ print(pts)
 
 raster_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
-pixel_extract(raster_file, pts[-1])
+pixel_extract(raster_file, pts)
 
 # or as GDALRaster object
 ds <- new(GDALRaster, raster_file)
-pixel_extract(ds, pts[-1])
+pixel_extract(ds, pts)
 
 # interpolated values
-pixel_extract(raster_file, pts[-1], interp = "bilinear")
+pixel_extract(raster_file, pts, interp = "bilinear")
 
 # individual pixel values within a kernel
-pixel_extract(raster_file, pts[-1], krnl_dim = 3)
+pixel_extract(raster_file, pts, krnl_dim = 3)
 
 # lont/lat xy
 pts_wgs84 <- transform_xy(pts[-1], srs_from = ds$getProjection(),

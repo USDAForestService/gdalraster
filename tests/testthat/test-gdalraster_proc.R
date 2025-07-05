@@ -470,46 +470,115 @@ test_that("pixel_extract wrapper returns correct data", {
     pts <- read.csv(pt_file)
     raster_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
-    # single pixel extract
+    # single pixel (1x1) extract on matrix input
     extr <- pixel_extract(raster_file, pts[-1])
     colnames(extr) <- NULL
     dim(extr) <- NULL
     expected_values <- c(2648, 2865, 2717, 2560, 2916,
                          2633, 2548, 2801, 2475, 2822)
     expect_equal(extr, expected_values)
+    rm(extr)
+    # data frame input
+    extr <- pixel_extract(raster_file, pts)
+    expect_equal(extr[, 2], expected_values)
+    expect_equal(names(extr), c("id", "storml_elev"))
+    rm(extr)
+    # as_data_frame from matrix input, so no input point IDs
+    extr <- pixel_extract(raster_file, pts[-1], as_data_frame = TRUE)
+    expect_true(is.data.frame(extr))
+    expect_equal(names(extr), c("ptid", "storml_elev"))
+    expect_equal(extr[, 2], expected_values)
+    expect_equal(extr[, 1], seq_len(nrow(extr)))
+    rm(extr)
 
-    # as a GDALRaster object
+    # raster as a GDALRaster object
     ds <- new(GDALRaster, raster_file)
-    extr_ds <- pixel_extract(ds, pts[-1])
-    colnames(extr_ds) <- NULL
-    dim(extr_ds) <- NULL
-    expect_equal(extr_ds, expected_values)
+    extr_ds <- pixel_extract(ds, pts)
+    expect_equal(extr_ds[, 2], expected_values)
+    expect_equal(names(extr_ds), c("id", "storml_elev"))
     # with missing values in the input
     pts_na <- rbind(pts, c(11, NA_real_, NA_real_))
-    extr_na <- pixel_extract(ds, pts_na[-1])
-    colnames(extr_na) <- NULL
-    dim(extr_na) <- NULL
+    extr_na <- pixel_extract(ds, pts_na)
     expect_na <- c(expected_values, NA_real_)
-    expect_equal(extr_na, expect_na)
+    expect_equal(extr_na[, 2], expect_na)
     # with NaN in the input
     pts_nan <- rbind(pts, c(11, NaN, NaN))
-    extr_nan <- pixel_extract(ds, pts_na[-1])
-    colnames(extr_nan) <- NULL
-    dim(extr_nan) <- NULL
+    extr_nan <- pixel_extract(ds, pts_na)
     expect_nan <- c(expected_values, NA_real_)
-    expect_equal(extr_nan, expect_nan)
-    ds$close()
+    expect_equal(extr_nan[, 2], expect_nan)
+
+    # MEM dataset with band names
+    ds_mem <- create("MEM", "", 10, 10, 3, "Int16", return_obj = TRUE)
+    expect_true(is(ds_mem, "Rcpp_GDALRaster"))
+    ds_mem$setDescription(1, "elev")
+    ds_mem$setDescription(2, "asp")
+    ds_mem$setDescription(3, "slpp")
+    ds_mem$fillRaster(1, 1000, 0)
+    ds_mem$fillRaster(2, 100, 0)
+    ds_mem$fillRaster(3, 10, 0)
+    geo_xy <- matrix(c(5, -8, 0, -1), nrow = 2, ncol = 2, byrow = TRUE)
+    # warning for no geotransform
+    expect_warning(extr_mem <- pixel_extract(ds_mem, geo_xy,
+                                             as_data_frame = TRUE))
+    expect_true(is.data.frame(extr_mem))
+    expect_equal(names(extr_mem), c("ptid", "b1_elev", "b2_asp", "b3_slpp"))
+    expect_equal(extr_mem[, 2], c(1000, 1000))
+    expect_equal(extr_mem[, 3], c(100, 100))
+    expect_equal(extr_mem[, 4], c(10, 10))
+    rm(extr_mem)
+    # subset of bands, re-ordered
+    expect_warning(extr_mem <- pixel_extract(ds_mem, geo_xy,
+                                             bands = c(3, 2),
+                                             as_data_frame = TRUE))
+    expect_true(is.data.frame(extr_mem))
+    expect_equal(names(extr_mem), c("ptid", "b3_slpp", "b2_asp"))
+    expect_equal(extr_mem[, 2], c(10, 10))
+    expect_equal(extr_mem[, 3], c(100, 100))
+    rm(extr_mem)
+
+    # GTiff without band names
+    ds_mem$setDescription(1, "")
+    ds_mem$setDescription(2, "")
+    ds_mem$setDescription(3, "")
+    tif_file <- tempfile(fileext = ".tif")
+    ds_tif <- createCopy("GTiff", tif_file, ds_mem,
+                         return_obj = TRUE)
+    expect_true(is(ds_tif, "Rcpp_GDALRaster"))
+    expect_warning(ds_tif$setGeoTransform(ds_mem$getGeoTransform()))
+    extr_tif <- pixel_extract(ds_tif, geo_xy, as_data_frame = TRUE)
+    expect_true(is.data.frame(extr_tif))
+    ds_name <- tools::file_path_sans_ext(basename(ds_tif$getDescription(0)))
+    expected_names <- c("ptid", paste0(rep(ds_name, 3), c("_b1", "_b2", "_b3")))
+    expect_equal(names(extr_tif), expected_names)
+    expect_equal(extr_tif[, 2], c(1000, 1000))
+    expect_equal(extr_tif[, 3], c(100, 100))
+    expect_equal(extr_tif[, 4], c(10, 10))
+    rm(extr_tif)
+    # subset of bands, re-ordered
+    extr_tif <- pixel_extract(ds_tif, geo_xy,
+                              bands = c(3, 2),
+                              as_data_frame = TRUE)
+    expect_true(is.data.frame(extr_tif))
+    expected_names <- c("ptid", paste0(rep(ds_name, 2), c("_b3", "_b2")))
+    expect_equal(names(extr_tif), expected_names)
+    expect_equal(extr_tif[, 2], c(10, 10))
+    expect_equal(extr_tif[, 3], c(100, 100))
+
+    ds_mem$close()
+    ds_tif$close()
+    deleteDataset(tif_file)
 
     # interpolated values
-    extr_bilinear <- pixel_extract(raster_file, pts[-1], interp = "bilinear")
-    colnames(extr_bilinear) <- NULL
-    dim(extr_bilinear) <- NULL
+    extr_bilinear <- pixel_extract(ds, pts, interp = "bilinear")
     expected_values <- c(2649.217, 2881.799, 2716.290, 2558.797, 2920.404,
                          2629.495, 2548.250, 2810.543, 2478.609, 2819.776)
-    expect_equal(extr_bilinear, expected_values, tolerance = 1e-4)
+    expect_equal(extr_bilinear[, 2], expected_values, tolerance = 1e-4)
 
     # kernel values
-    extr_3x3 <- pixel_extract(raster_file, pts[-1], krnl_dim = 3)
+    extr_3x3 <- pixel_extract(ds, pts[-1], krnl_dim = 3)
+    expect_equal(colnames(extr_3x3), c("b1_p1", "b1_p2", "b1_p3",
+                                       "b1_p4", "b1_p5", "b1_p6",
+                                       "b1_p7", "b1_p8", "b1_p9"))
     colnames(extr_3x3) <- NULL
     dimnames(extr_3x3) <- NULL
     expected_values <- c(
@@ -528,7 +597,6 @@ test_that("pixel_extract wrapper returns correct data", {
     expect_equal(extr_3x3, expected_values)
 
     # transform the xy
-    ds$open(read_only = TRUE)
     pts_nad83 <- transform_xy(pts[-1], ds$getProjection(), "NAD83")
     extr <- pixel_extract(raster_file, pts_nad83, xy_srs = "NAD83")
     colnames(extr) <- NULL
@@ -537,6 +605,7 @@ test_that("pixel_extract wrapper returns correct data", {
                          2633, 2548, 2801, 2475, 2822)
     expect_equal(extr, expected_values)
     ds$close()
+    rm(extr)
 
 
     # input validation
@@ -544,10 +613,59 @@ test_that("pixel_extract wrapper returns correct data", {
     expect_error(pixel_extract(NULL, pts[-1]))
     expect_error(pixel_extract(raster_file))
     expect_error(pixel_extract(raster_file, as.character(pts[-1])))
-    expect_error(pixel_extract(raster_file, pts))  # more than two columns
+    expect_error(pixel_extract(raster_file, pts[, 2]))
+    expect_error(pixel_extract(raster_file, pts, bands = c(1, 2, NA)))
+    expect_no_error(pixel_extract(raster_file, pts, bands = 1.1))
+    expect_error(pixel_extract(raster_file, pts,
+                               interp = c("bilinear", "cubic")))
+    expect_error(pixel_extract(raster_file, pts, krnl_dim = c(1, 1, 1)))
+    expect_error(pixel_extract(raster_file, pts, xy_srs = 4326))
+    expect_error(pixel_extract(raster_file, pts, max_ram = "invalid"))
     pts[, 2] <- as.character(pts[, 1])
-    expect_error(pixel_extract(raster_file, pts[-1]))
-    expect_error(pixel_extract(raster_file, pts[-1], bands = "1"))
-    expect_error(pixel_extract(raster_file, pts[-1], interp = 2))
-    expect_error(pixel_extract(raster_file, pts[-1], krnl_dim = c(1, 1, 1)))
+    expect_error(pixel_extract(raster_file, pts))
+
+
+    # test copy of remote raster to an in-memory dataset if not on CRAN
+    skip_on_cran()
+    skip_if(gdal_version_num() < gdal_compute_version(3, 6, 0))
+
+    f <- "/vsicurl/https://raw.githubusercontent.com/usdaforestservice/gdalraster/main/sample-data/lf_fbfm40_220_mt_hood_utm.tif"
+    pts <- c(604450.6, 5023283,
+             611437.6, 5021571,
+             591824.6, 5030855,
+             613802.6, 5014220,
+             600267.6, 5035648,
+             613158.6, 5019868,
+             616192.6, 5025546,
+             597588.6, 5034797,
+             595511.6, 5024383,
+             591099.6, 5032626,
+             600548.6, 5020417,
+             598620.6, 5028004,
+             599306.6, 5034376,
+             612222.6, 5022980,
+             604734.6, 5031885,
+             601311.6, 5016818,
+             611955.6, 5015290,
+             605232.6, 5032306,
+             615538.6, 5014872,
+             600952.6, 5028567)
+    pts <- matrix(pts, nrow = 20, ncol = 2, byrow = TRUE)
+    expect_message(extr <- pixel_extract(f, pts), "copying to MEM")
+    colnames(extr) <- NULL
+    dim(extr) <- NULL
+    expected_values <- c(99, 188, 185, 185, 185, 185, 185, 185, 162, 165, 162,
+                         185, 185, 165, 185, 185, 165, 185, 165, 161)
+    expect_equal(extr, expected_values)
+    rm(extr)
+
+    # force to use /vsimem/ instead
+    expect_message(extr <- pixel_extract(f, pts, max_ram = 1),
+                   "copy completed")
+    colnames(extr) <- NULL
+    dim(extr) <- NULL
+    expected_values <- c(99, 188, 185, 185, 185, 185, 185, 185, 162, 165, 162,
+                         185, 185, 165, 185, 185, 165, 185, 165, 161)
+    expect_equal(extr, expected_values)
+    rm(extr)
 })
