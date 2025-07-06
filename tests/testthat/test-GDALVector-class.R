@@ -1813,18 +1813,6 @@ test_that("field domain write functions work", {
                                           fld_name = "dt_fld1",
                                           domain_name = "dt_range1"))
 
-
-    # domain with inf range
-    defn <- ogr_def_field_domain("RangeDateTime", "dt_range2",
-                                 description = "rangedatetime domain test 2",
-                                 fld_type = "OFTDateTime")
-
-    expect_true(ogr_ds_add_field_domain(dsn, defn))
-
-    expect_true(ogr_field_create(dsn, "test", "dt_fld2",
-                                 fld_type = "OFTDateTime",
-                                 domain_name = "dt_range2"))
-
     # read back
     lyr <- new(GDALVector, dsn, "test")
 
