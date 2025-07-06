@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9051 (dev)
+# gdalraster 2.0.0.9052 (dev)
+
+* (internal) test fix for datetime range domain with no min or max value in ESRI file geodatabase (#753) (2025-07-05)
 
 * fix `srs_to_projjson()`: arguments `multiline`, `iindent_width` and `schema ` were not passed correctly in the API call to `OSRExportToPROJJSON()` (#752) (2025-07-05)
 
