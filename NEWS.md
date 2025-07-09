@@ -1,4 +1,6 @@
-# gdalraster 2.0.0.9052 (dev)
+# gdalraster 2.0.0.9053 (dev)
+
+* Doc: minor edits throughout for 2.1.0 release (2025-07-09)
 
 * (internal) test fix for datetime range domain with no min or max value in ESRI file geodatabase (#753) (2025-07-05)
 
