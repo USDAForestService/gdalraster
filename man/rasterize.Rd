@@ -142,13 +142,13 @@ rasterize(src_dsn = dsn,
           dtName = "Int16",
           dstnodata = -9999,
           init = -9999,
-          co = c("TILED=YES","COMPRESS=LZW"))
+          co = c("TILED=YES", "COMPRESS=LZW"))
 
 ds <- new(GDALRaster, out_file)
 pal <- scales::viridis_pal(end = 0.8, direction = -1)(6)
 ramp <- scales::colour_ramp(pal)
 plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",
-            main="YNP Fires 1984-2022 - Most Recent Burn Year")
+            main = "YNP Fires 1984-2022 - Most Recent Burn Year")
 
 ds$close()
 \dontshow{deleteDataset(out_file)}

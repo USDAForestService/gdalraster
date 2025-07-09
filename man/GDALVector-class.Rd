@@ -41,12 +41,20 @@ assignment).
 \code{GDALVector} provides an interface for accessing a vector layer in a GDAL
 dataset and calling methods on the underlying \code{OGRLayer} object.
 An object of class \code{GDALVector} persists an open connection to the dataset,
-and exposes methods to: retrieve layer information, set attribute and
-spatial filters, traverse and read feature data by traditional row-based
-cursor (including an analog of \code{DBI::dbFetch()}), read via column-oriented
-Arrow Array stream, write new features in a layer, edit/overwrite existing
-features, upsert, and delete features, and perform data manipulation within
-transactions.
+and exposes methods to:
+\itemize{
+\item retrieve layer information
+\item set attribute and spatial filters
+\item set a list of ignored or selected columns
+\item traverse and read feature data by traditional row-based cursor, including
+an analog of \code{DBI::dbFetch()}
+\item read via column-oriented Arrow Array stream
+\item write new features in a layer
+\item edit/overwrite existing features
+\item upsert
+\item delete features
+\item perform data manipulation within transactions.
+}
 
 \code{GDALVector} is a C++ class exposed directly to R (via \code{RCPP_EXPOSED_CLASS}).
 Fields and methods of the class are accessed using the \code{$} operator. \strong{Note
@@ -956,19 +964,16 @@ if (gdal_version_num() >= gdal_compute_version(3, 6, 0)) {
   lyr <- new(GDALVector, dsn, sql)
 
   stream <- lyr$getArrowStream()
-  batch <- stream$get_next()
 
   # disable a warning for the example that can be safely ignored here
   options(nanoarrow.warn_unregistered_extension = FALSE)
 
-  d <- as.data.frame(batch)
-  head(d) |> print()
+  # pull all the batches into a data frame
+  d <- as.data.frame(stream)
 
-  # the geometry column is a list column of WKB raw vectors
+  # the geometry column is a list column of WKB raw vectors, which can be
+  # passed to the Geometry API g_*() functions, e.g.,
   g_centroid(d$geom) |> print()
-
-  # the last batch is NULL
-  stream$get_next() |> print()
 
   # release the stream when finished
   stream$release()

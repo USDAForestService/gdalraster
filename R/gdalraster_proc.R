@@ -201,13 +201,13 @@ DEFAULT_DEM_PROC <- list(
 #' ds <- new(GDALRaster, lcp_file)
 #'
 #' # as a vector of pixel data interleaved by band
-#' r <- read_ds(ds, bands=c(6,5,4))
+#' r <- read_ds(ds, bands = c(6,5,4))
 #' typeof(r)
 #' length(r)
 #' object.size(r)
 #'
 #' # as a list of band vectors
-#' r <- read_ds(ds, bands=c(6,5,4), as_list=TRUE)
+#' r <- read_ds(ds, bands = c(6,5,4), as_list = TRUE)
 #' typeof(r)
 #' length(r)
 #' object.size(r)
@@ -371,7 +371,7 @@ read_ds <- function(ds, bands = NULL, xoff = 0, yoff = 0,
 #' # convert slope degrees to slope percent in a new raster
 #' lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 #' ds_lcp <- new(GDALRaster, lcp_file)
-#' ds_lcp$getMetadata(band=2, domain="")
+#' ds_lcp$getMetadata(band = 2, domain = "")
 #'
 #' slpp_file <- file.path(tempdir(), "storml_slpp.tif")
 #' opt = c("COMPRESS=LZW")
@@ -381,7 +381,7 @@ read_ds <- function(ds, bands = NULL, xoff = 0, yoff = 0,
 #'                  dtName = "Int16",
 #'                  options = opt,
 #'                  init = -32767)
-#' ds_slp <- new(GDALRaster, slpp_file, read_only=FALSE)
+#' ds_slp <- new(GDALRaster, slpp_file, read_only = FALSE)
 #'
 #' # slpp_file is initialized to -32767 and nodata value set
 #' ds_slp$getNoDataValue(band=1)
@@ -397,18 +397,20 @@ read_ds <- function(ds, bands = NULL, xoff = 0, yoff = 0,
 #' ncols <- ds_slp$getRasterXSize()
 #' nrows <- ds_slp$getRasterYSize()
 #' for (row in 0:(nrows-1)) {
-#'     rowdata <- ds_lcp$read(band=2,
-#'                            xoff=0, yoff=row,
-#'                            xsize=ncols, ysize=1,
-#'                            out_xsize=ncols, out_ysize=1)
+#'     rowdata <- ds_lcp$read(band = 2,
+#'                            xoff = 0, yoff = row,
+#'                            xsize = ncols, ysize = 1,
+#'                            out_xsize = ncols, out_ysize = 1)
 #'     rowslpp <- tan(rowdata*pi/180) * 100
 #'     rowslpp[rowdata==-9999] <- -32767
 #'     dim(rowslpp) <- c(1, ncols)
-#'     ds_slp$write(band=1, xoff=0, yoff=row, xsize=ncols, ysize=1, rowslpp)
+#'     ds_slp$write(band = 1, xoff = 0, yoff = row,
+#'                  xsize = ncols, ysize = 1,
+#'                  rasterData = rowslpp)
 #' }
 #'
 #' # min, max, mean, sd
-#' ds_slp$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
+#' ds_slp$getStatistics(band = 1, approx_ok = FALSE, force = TRUE)
 #'
 #' ds_slp$close()
 #' ds_lcp$close()
@@ -585,8 +587,8 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' # resample at 90-m resolution
 #' # EVT is thematic vegetation type so use a majority value
 #' vrt_file <- rasterToVRT(evt_file,
-#'                         resolution=c(90,90),
-#'                         resampling="mode")
+#'                         resolution = c(90, 90),
+#'                         resampling = "mode")
 #'
 #' # .vrt is a small xml file pointing to the source raster
 #' file.size(vrt_file)
@@ -615,7 +617,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' # src_align = TRUE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
-#'                         src_align=TRUE)
+#'                         src_align = TRUE)
 #' ds_vrt <- new(GDALRaster, vrt_file)
 #'
 #' # VRT is a virtual clip, pixel-aligned with the EVT raster
@@ -628,7 +630,7 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' # src_align = FALSE
 #' vrt_file <- rasterToVRT(evt_file,
 #'                         subwindow = bbox_from_wkt(bnd),
-#'                         src_align=FALSE)
+#'                         src_align = FALSE)
 #' ds_vrt_noalign <- new(GDALRaster, vrt_file)
 #'
 #' # VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
@@ -669,22 +671,22 @@ rasterFromRaster <- function(srcfile, dstfile, fmt=NULL, nbands=NULL,
 #' # read the the Landsat file pixel-aligned with the LCP file
 #' # summarize band 5 reflectance where FBFM = 165
 #' # LCP band 4 contains FBFM (a classification of fuel beds):
-#' ds_lcp$getMetadata(band=4, domain="")
+#' ds_lcp$getMetadata(band = 4, domain = "")
 #'
 #' # verify Landsat nodata (0):
 #' ds_b5vrt$getNoDataValue(band=1)
 #' # will be read as NA and omitted from stats
-#' rs <- new(RunningStats, na_rm=TRUE)
+#' rs <- new(RunningStats, na_rm = TRUE)
 #'
 #' ncols <- ds_lcp$getRasterXSize()
 #' nrows <- ds_lcp$getRasterYSize()
 #' for (row in 0:(nrows-1)) {
-#'     row_fbfm <- ds_lcp$read(band=4, xoff=0, yoff=row,
-#'                             xsize=ncols, ysize=1,
-#'                             out_xsize=ncols, out_ysize=1)
-#'     row_b5 <- ds_b5vrt$read(band=1, xoff=0, yoff=row,
-#'                             xsize=ncols, ysize=1,
-#'                             out_xsize=ncols, out_ysize=1)
+#'     row_fbfm <- ds_lcp$read(band = 4, xoff = 0, yoff = row,
+#'                             xsize = ncols, ysize = 1,
+#'                             out_xsize = ncols, out_ysize = 1)
+#'     row_b5 <- ds_b5vrt$read(band = 1, xoff = 0, yoff = row,
+#'                             xsize = ncols, ysize = 1,
+#'                             out_xsize = ncols, out_ysize = 1)
 #' 	   rs$update(row_b5[row_fbfm == 165])
 #' }
 #' rs$get_count()
@@ -976,7 +978,7 @@ rasterToVRT <- function(srcfile,
 #'
 #' ds <- new(GDALRaster, hi_file)
 #' # min, max, mean, sd
-#' ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
+#' ds$getStatistics(band = 1, approx_ok = FALSE, force = TRUE)
 #' ds$close()
 #' \dontshow{deleteDataset(hi_file)}
 #'
@@ -1604,7 +1606,7 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
             if (!(is.character(xy[, 1]) || is.numeric(xy[, 1])) ||
                 !is.numeric(xy[, 2]) || !is.numeric(xy[, 3])) {
 
-                cat("expect cols 1:3: character or numeric, numeric, numeric\n")
+                cat("xy[1:3] must have types: character or numeric, numeric, numeric\n")
                 stop("the first three columns of 'xy' must contain point ID, x, y",
                      call. = FALSE)
             } else {
@@ -2158,13 +2160,13 @@ polygonize <- function(raster_file,
 #'           dtName = "Int16",
 #'           dstnodata = -9999,
 #'           init = -9999,
-#'           co = c("TILED=YES","COMPRESS=LZW"))
+#'           co = c("TILED=YES", "COMPRESS=LZW"))
 #'
 #' ds <- new(GDALRaster, out_file)
 #' pal <- scales::viridis_pal(end = 0.8, direction = -1)(6)
 #' ramp <- scales::colour_ramp(pal)
 #' plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",
-#'             main="YNP Fires 1984-2022 - Most Recent Burn Year")
+#'             main = "YNP Fires 1984-2022 - Most Recent Burn Year")
 #'
 #' ds$close()
 #' \dontshow{deleteDataset(out_file)}

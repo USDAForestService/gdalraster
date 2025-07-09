@@ -98,7 +98,7 @@
 #' unique combination.
 #'
 #' @examples
-#' m <- matrix(c(1,2,3,1,2,3,4,5,6,1,3,2,4,5,6,1,1,1), 3, 6, byrow=FALSE)
+#' m <- matrix(c(1,2,3,1,2,3,4,5,6,1,3,2,4,5,6,1,1,1), 3, 6, byrow = FALSE)
 #' rownames(m) <- c("layer1", "layer2", "layer3")
 #' print(m)
 #'
@@ -113,7 +113,7 @@
 #' cmb$asDataFrame()
 #'
 #' # same as above but matrix arranged with integer combinations in the rows
-#' m <- matrix(c(1,2,3,1,2,3,4,5,6,1,3,2,4,5,6,1,1,1), 6, 3, byrow=TRUE)
+#' m <- matrix(c(1,2,3,1,2,3,4,5,6,1,3,2,4,5,6,1,1,1), 6, 3, byrow = TRUE)
 #' colnames(m) <- c("V1", "V2", "V3")
 #' print(m)
 #'

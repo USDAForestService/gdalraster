@@ -75,14 +75,14 @@ colors <- createColorRamp(start_index = 0,
                           end_color = c(0, 100, 0))
 
 print(colors)
-ds_tcc$setColorTable(band=1, col_tbl=colors, palette_interp="RGB")
-ds_tcc$setRasterColorInterp(band=1, col_interp="Palette")
+ds_tcc$setColorTable(band=1, col_tbl=colors, palette_interp = "RGB")
+ds_tcc$setRasterColorInterp(band = 1, col_interp = "Palette")
 
 # close and re-open the dataset in read_only mode
 ds_tcc$open(read_only=TRUE)
 
-plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
-            main="Storm Lake Tree Canopy Cover (\%)")
+plot_raster(ds_tcc, interpolate = FALSE, legend = TRUE,
+            main = "Storm Lake Tree Canopy Cover (\%)")
 ds_tcc$close()
 \dontshow{deleteDataset(tcc_file)}
 }

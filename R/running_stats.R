@@ -98,7 +98,7 @@
 #'
 #' @examples
 #' set.seed(42)
-#' rs <- new(RunningStats, na_rm=TRUE)
+#' rs <- new(RunningStats, na_rm = TRUE)
 #' rs
 #'
 #' chunk <- runif(1000)

@@ -57,13 +57,13 @@ output dataset will be returned if \code{return_obj = TRUE}.
 }
 \examples{
 new_file <- file.path(tempdir(), "newdata.tif")
-ds <- create(format="GTiff",
+ds <- create(format = "GTiff",
              dst_filename = new_file,
              xsize = 143,
              ysize = 107,
              nbands = 1,
              dataType = "Int16",
-             return_obj=TRUE)
+             return_obj = TRUE)
 
 # EPSG:26912 - NAD83 / UTM zone 12N
 ds$setProjection(epsg_to_wkt(26912))
