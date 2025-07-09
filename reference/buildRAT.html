@@ -230,7 +230,7 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">f</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span> <span class="co"># NULL</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span> <span class="co"># NULL</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># get the full attribute table for LANDFIRE EVT from the CSV file</span></span></span>
@@ -328,11 +328,11 @@ Users should consider what is appropriate for a particular case.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "Blue"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">setDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, <span class="va">tbl</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">setDefaultRAT</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, <span class="va">tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">flushCache</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="va">tbl2</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">tbl2</span> <span class="op">&lt;-</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getDefaultRAT</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html" class="external-link">nrow</a></span><span class="op">(</span><span class="va">tbl2</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] 24</span>

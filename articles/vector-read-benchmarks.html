@@ -82,24 +82,26 @@
     
 <p>Vector read benchmarks for R package
 <strong>gdalraster</strong><br>
-2025-05-25 (v. 1.0)</p>
-<p>Benchmark tests follow the format of benchmarks described in GDAL <a href="https://gdal.org/en/stable/development/rfc/rfc86_column_oriented_api.html#benchmarks" class="external-link">RFC
+(last updated 2025-07-06)</p>
+<p>The following benchmark tests follow the format of benchmarks
+described in GDAL <a href="https://gdal.org/en/stable/development/rfc/rfc86_column_oriented_api.html#benchmarks" class="external-link">RFC
 86: Column-oriented read API for vector layers</a> using the same
 dataset. The timings here cannot be compared directly with the GDAL
 timings due to hardware differences (hardware used for the GDAL
 benchmarks is not specified). The timings reported here should be
-conservative in the sense that hardware was a relatively slow, six year
-old laptop at the time of writing (with Intel(R) Core(TM) i5-8250U CPU @
-1.60GHz, 8 GB RAM and SSD). The benchmarks are intended as a sanity
-check on read performance in the context of ranges seen for two
-different I/O methods and multiple implementations, in compiled code and
-Python libraries as described for the GDAL benchmarks, and using R
+conservative in the sense that hardware was a relatively slow, six-year
+old laptop at the time of writing (Intel(R) Core(TM) i5-8250U CPU @
+1.60GHz, 8 GB RAM, SSD). The benchmarks are intended as a sanity check
+on read performance in the context of ranges seen for two different I/O
+methods (traditional GetNextFeature() iteration vs. column-oriented
+ArrowArrayStream), and multiple implementations in both plain C++ and
+using Python libraries as described for the GDAL benchmarks, and using R
 packages described here.</p>
 <div class="section level2">
 <h2 id="software-environment">Software environment<a class="anchor" aria-label="anchor" href="#software-environment"></a>
 </h2>
-<p>Linux Ubuntu 24.04, R 4.5.0 (2025-04-11), GDAL 3.10.3 (2025-04-01),
-gdalraster 2.0.0.9002, sf 1.0.21</p>
+<p>Linux Ubuntu 24.04, R 4.5.0, GDAL 3.10.3, gdalraster 2.0.0.9002, sf
+1.0.21</p>
 </div>
 <div class="section level2">
 <h2 id="vector-data">Vector data<a class="anchor" aria-label="anchor" href="#vector-data"></a>
@@ -161,7 +163,7 @@ frame.</caption>
 <col width="45%">
 <col width="11%">
 <col width="21%">
-<col width="21%">
+<col width="22%">
 </colgroup>
 <thead><tr class="header">
 <th align="left">Bench program</th>
@@ -174,13 +176,13 @@ frame.</caption>
 <td align="left">bench_gdalraster_fetch.R</td>
 <td align="right">25.90</td>
 <td align="left">OGRFeatureSet</td>
-<td align="left">WKB raw vectors</td>
+<td align="left">WKB <code>raw</code> vectors</td>
 </tr>
 <tr class="even">
 <td align="left">bench_gdalraster_arrow_stream.R</td>
 <td align="right">5.90</td>
 <td align="left">base data.frame</td>
-<td align="left">WKB raw vectors</td>
+<td align="left">WKB <code>raw</code> vectors</td>
 </tr>
 <tr class="odd">
 <td align="left">bench_gdalraster_fetch_conv_to_sf.R</td>
@@ -191,13 +193,13 @@ frame.</caption>
 <tr class="even">
 <td align="left">bench_sf_read_sf.R</td>
 <td align="right">176.56</td>
-<td align="left">sf (tibble)</td>
+<td align="left">sf</td>
 <td align="left">classed sfc</td>
 </tr>
 <tr class="odd">
 <td align="left">bench_sf_read_sf_use_stream.R</td>
 <td align="right">25.30</td>
-<td align="left">sf (tibble)</td>
+<td align="left">sf</td>
 <td align="left">classed sfc</td>
 </tr>
 </tbody>

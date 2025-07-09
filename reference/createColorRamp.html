@@ -152,7 +152,7 @@ same as <code>start_color</code> of the next ramp).</p>
 <span class="r-in"><span>                 setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating from 1 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/Rtmp79kAht/rastcalc23544211f5a0.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/Rtmpqar9YE/rastcalc25b8383c4567.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds_tcc</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">tcc_file</span>, read_only<span class="op">=</span><span class="cn">FALSE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
@@ -265,15 +265,15 @@ same as <code>start_color</code> of the next ramp).</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [99,]    98   4   102    4   255</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [100,]    99   2   101    2   255</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [101,]   100   0   100    0   255</span>
-<span class="r-in"><span><span class="va">ds_tcc</span><span class="op">$</span><span class="fu">setColorTable</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, col_tbl<span class="op">=</span><span class="va">colors</span>, palette_interp<span class="op">=</span><span class="st">"RGB"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_tcc</span><span class="op">$</span><span class="fu">setColorTable</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, col_tbl<span class="op">=</span><span class="va">colors</span>, palette_interp <span class="op">=</span> <span class="st">"RGB"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] TRUE</span>
-<span class="r-in"><span><span class="va">ds_tcc</span><span class="op">$</span><span class="fu">setRasterColorInterp</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, col_interp<span class="op">=</span><span class="st">"Palette"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="va">ds_tcc</span><span class="op">$</span><span class="fu">setRasterColorInterp</span><span class="op">(</span>band <span class="op">=</span> <span class="fl">1</span>, col_interp <span class="op">=</span> <span class="st">"Palette"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># close and re-open the dataset in read_only mode</span></span></span>
 <span class="r-in"><span><span class="va">ds_tcc</span><span class="op">$</span><span class="fu">open</span><span class="op">(</span>read_only<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
-<span class="r-in"><span><span class="fu"><a href="plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds_tcc</span>, interpolate<span class="op">=</span><span class="cn">FALSE</span>, legend<span class="op">=</span><span class="cn">TRUE</span>,</span></span>
-<span class="r-in"><span>            main<span class="op">=</span><span class="st">"Storm Lake Tree Canopy Cover (%)"</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds_tcc</span>, interpolate <span class="op">=</span> <span class="cn">FALSE</span>, legend <span class="op">=</span> <span class="cn">TRUE</span>,</span></span>
+<span class="r-in"><span>            main <span class="op">=</span> <span class="st">"Storm Lake Tree Canopy Cover (%)"</span><span class="op">)</span></span></span>
 <span class="r-plt img"><img src="createColorRamp-1.png" alt="" width="700" height="433"></span>
 <span class="r-in"><span><span class="va">ds_tcc</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 </code></pre></div>
