@@ -138,17 +138,17 @@ gdal_compute_version <- function(maj, min, rev) {
 #'
 #' # Requires GDAL >= 3.7
 #' if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
-#'   addFilesInZip(zip_file, lcp_file, full_paths=FALSE, sozip_enabled="YES",
-#'                 num_threads=1)
+#'   addFilesInZip(zip_file, lcp_file, full_paths = FALSE,
+#'                 sozip_enabled = "YES", num_threads = 1)
 #'
 #'   print("Files in zip archive:")
-#'   print(unzip(zip_file, list=TRUE))
+#'   print(unzip(zip_file, list = TRUE))
 #'
 #'   # Open with GDAL using Virtual File System handler '/vsizip/'
 #'   # see: https://gdal.org/en/stable/user/virtual_file_systems.html#vsizip-zip-archives
 #'   lcp_in_zip <- file.path("/vsizip", zip_file, "storm_lake.lcp")
 #'   print("SOZip metadata:")
-#'   print(vsi_get_file_metadata(lcp_in_zip, domain="ZIP"))
+#'   print(vsi_get_file_metadata(lcp_in_zip, domain = "ZIP"))
 #'
 #'   ds <- new(GDALRaster, lcp_in_zip)
 #'   ds$info()

@@ -146,8 +146,8 @@ sum(tbl$COUNT)
 # resample at 90-m resolution
 # EVT is thematic vegetation type so use a majority value
 vrt_file <- rasterToVRT(evt_file,
-                        resolution=c(90,90),
-                        resampling="mode")
+                        resolution = c(90, 90),
+                        resampling = "mode")
 
 # .vrt is a small xml file pointing to the source raster
 file.size(vrt_file)
@@ -176,7 +176,7 @@ bnd = "POLYGON ((324467.3 5104814.2, 323909.4 5104365.4, 323794.2
 # src_align = TRUE
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
-                        src_align=TRUE)
+                        src_align = TRUE)
 ds_vrt <- new(GDALRaster, vrt_file)
 
 # VRT is a virtual clip, pixel-aligned with the EVT raster
@@ -189,7 +189,7 @@ ds_vrt$close()
 # src_align = FALSE
 vrt_file <- rasterToVRT(evt_file,
                         subwindow = bbox_from_wkt(bnd),
-                        src_align=FALSE)
+                        src_align = FALSE)
 ds_vrt_noalign <- new(GDALRaster, vrt_file)
 
 # VRT upper left corner (xmin, ymax) is exactly bnd xmin, ymax
@@ -230,22 +230,22 @@ ds_b5vrt$res()  # 30 30
 # read the the Landsat file pixel-aligned with the LCP file
 # summarize band 5 reflectance where FBFM = 165
 # LCP band 4 contains FBFM (a classification of fuel beds):
-ds_lcp$getMetadata(band=4, domain="")
+ds_lcp$getMetadata(band = 4, domain = "")
 
 # verify Landsat nodata (0):
 ds_b5vrt$getNoDataValue(band=1)
 # will be read as NA and omitted from stats
-rs <- new(RunningStats, na_rm=TRUE)
+rs <- new(RunningStats, na_rm = TRUE)
 
 ncols <- ds_lcp$getRasterXSize()
 nrows <- ds_lcp$getRasterYSize()
 for (row in 0:(nrows-1)) {
-    row_fbfm <- ds_lcp$read(band=4, xoff=0, yoff=row,
-                            xsize=ncols, ysize=1,
-                            out_xsize=ncols, out_ysize=1)
-    row_b5 <- ds_b5vrt$read(band=1, xoff=0, yoff=row,
-                            xsize=ncols, ysize=1,
-                            out_xsize=ncols, out_ysize=1)
+    row_fbfm <- ds_lcp$read(band = 4, xoff = 0, yoff = row,
+                            xsize = ncols, ysize = 1,
+                            out_xsize = ncols, out_ysize = 1)
+    row_b5 <- ds_b5vrt$read(band = 1, xoff = 0, yoff = row,
+                            xsize = ncols, ysize = 1,
+                            out_xsize = ncols, out_ysize = 1)
 	   rs$update(row_b5[row_fbfm == 165])
 }
 rs$get_count()

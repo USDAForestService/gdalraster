@@ -56,7 +56,7 @@ vrt_file <- file.path(tempdir(), "storml_b6_b5_b4.vrt")
 buildVRT(vrt_file, band_files, cl_arg = "-separate")
 ds <- new(GDALRaster, vrt_file)
 ds$getRasterCount()
-plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
+plot_raster(ds, nbands = 3, main = "Landsat 6-5-4 (vegetative analysis)")
 ds$close()
 \dontshow{vsi_unlink(vrt_file)}
 }

@@ -11,13 +11,13 @@ knitr::opts_chunk$set(
 ```
 
 Vector read benchmarks for R package **gdalraster**\
-2025-05-25 (v. 1.0)
+(last updated 2025-07-06)
 
-Benchmark tests follow the format of benchmarks described in GDAL [RFC 86: Column-oriented read API for vector layers](https://gdal.org/en/stable/development/rfc/rfc86_column_oriented_api.html#benchmarks) using the same dataset. The timings here cannot be compared directly with the GDAL timings due to hardware differences (hardware used for the GDAL benchmarks is not specified). The timings reported here should be conservative in the sense that hardware was a relatively slow, six year old laptop at the time of writing (with Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz, 8 GB RAM and SSD). The benchmarks are intended as a sanity check on read performance in the context of ranges seen for two different I/O methods and multiple implementations, in compiled code and Python libraries as described for the GDAL benchmarks, and using R packages described here.
+The following benchmark tests follow the format of benchmarks described in GDAL [RFC 86: Column-oriented read API for vector layers](https://gdal.org/en/stable/development/rfc/rfc86_column_oriented_api.html#benchmarks) using the same dataset. The timings here cannot be compared directly with the GDAL timings due to hardware differences (hardware used for the GDAL benchmarks is not specified). The timings reported here should be conservative in the sense that hardware was a relatively slow, six-year old laptop at the time of writing (Intel(R) Core(TM) i5-8250U CPU @ 1.60GHz, 8 GB RAM, SSD). The benchmarks are intended as a sanity check on read performance in the context of ranges seen for two different I/O methods (traditional GetNextFeature() iteration vs. column-oriented ArrowArrayStream), and multiple implementations in both plain C++ and using Python libraries as described for the GDAL benchmarks, and using R packages described here.
 
 ## Software environment
 
-Linux Ubuntu 24.04, R 4.5.0 (2025-04-11), GDAL 3.10.3 (2025-04-01), gdalraster 2.0.0.9002, sf 1.0.21
+Linux Ubuntu 24.04, R 4.5.0, GDAL 3.10.3, gdalraster 2.0.0.9002, sf 1.0.21
 
 ## Vector data
 
@@ -61,10 +61,9 @@ bench_program <- c("bench_gdalraster_fetch.R",
 
 timing <- c(25.90, 5.90, 56.98, 176.56, 25.30)
 
-df_class <- c("OGRFeatureSet", "base data.frame", "sf",
-              "sf (tibble)", "sf (tibble)")
+df_class <- c("OGRFeatureSet", "base data.frame", "sf", "sf", "sf")
 
-geom_col <- c("WKB raw vectors", "WKB raw vectors", "classed sfc",
+geom_col <- c("WKB `raw` vectors", "WKB `raw` vectors", "classed sfc",
               "classed sfc", "classed sfc")
 
 tbl <- data.frame(Bench_program = bench_program, Time_1s2 = timing,

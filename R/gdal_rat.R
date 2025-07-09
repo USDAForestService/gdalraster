@@ -147,7 +147,7 @@
 #' file.copy(evt_file,  f)
 #'
 #' ds <- new(GDALRaster, f, read_only=FALSE)
-#' ds$getDefaultRAT(band=1) # NULL
+#' ds$getDefaultRAT(band = 1) # NULL
 #'
 #' # get the full attribute table for LANDFIRE EVT from the CSV file
 #' evt_csv <- system.file("extdata/LF20_EVT_220.csv", package="gdalraster")
@@ -175,10 +175,10 @@
 #' attributes(tbl$G)
 #' attributes(tbl$B)
 #'
-#' ds$setDefaultRAT(band=1, tbl)
+#' ds$setDefaultRAT(band = 1, tbl)
 #' ds$flushCache()
 #'
-#' tbl2 <- ds$getDefaultRAT(band=1)
+#' tbl2 <- ds$getDefaultRAT(band = 1)
 #' nrow(tbl2)
 #' head(tbl2)
 #'

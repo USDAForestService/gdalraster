@@ -105,13 +105,13 @@ lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
 ds <- new(GDALRaster, lcp_file)
 
 # as a vector of pixel data interleaved by band
-r <- read_ds(ds, bands=c(6,5,4))
+r <- read_ds(ds, bands = c(6,5,4))
 typeof(r)
 length(r)
 object.size(r)
 
 # as a list of band vectors
-r <- read_ds(ds, bands=c(6,5,4), as_list=TRUE)
+r <- read_ds(ds, bands = c(6,5,4), as_list = TRUE)
 typeof(r)
 length(r)
 object.size(r)

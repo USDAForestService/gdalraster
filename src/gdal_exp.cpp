@@ -1216,7 +1216,7 @@ GDALRaster *autoCreateWarpedVRT(const GDALRaster* const &src_ds,
 //' buildVRT(vrt_file, band_files, cl_arg = "-separate")
 //' ds <- new(GDALRaster, vrt_file)
 //' ds$getRasterCount()
-//' plot_raster(ds, nbands=3, main="Landsat 6-5-4 (vegetative analysis)")
+//' plot_raster(ds, nbands = 3, main = "Landsat 6-5-4 (vegetative analysis)")
 //' ds$close()
 //' \dontshow{vsi_unlink(vrt_file)}
 // [[Rcpp::export(invisible = true)]]
@@ -1549,7 +1549,7 @@ bool dem_proc(const std::string &mode,
 //' mod_file <- file.path(tempdir(), "storml_elev_fill.tif")
 //' file.copy(elev_file,  mod_file)
 //'
-//' fillNodata(mod_file, band=1)
+//' fillNodata(mod_file, band = 1)
 //'
 //' mod_tbl = buildRAT(mod_file)
 //' head(mod_tbl)
@@ -2571,14 +2571,14 @@ bool warp(const Rcpp::List &src_datasets,
 //'                           end_color = c(0, 100, 0))
 //'
 //' print(colors)
-//' ds_tcc$setColorTable(band=1, col_tbl=colors, palette_interp="RGB")
-//' ds_tcc$setRasterColorInterp(band=1, col_interp="Palette")
+//' ds_tcc$setColorTable(band=1, col_tbl=colors, palette_interp = "RGB")
+//' ds_tcc$setRasterColorInterp(band = 1, col_interp = "Palette")
 //'
 //' # close and re-open the dataset in read_only mode
 //' ds_tcc$open(read_only=TRUE)
 //'
-//' plot_raster(ds_tcc, interpolate=FALSE, legend=TRUE,
-//'             main="Storm Lake Tree Canopy Cover (%)")
+//' plot_raster(ds_tcc, interpolate = FALSE, legend = TRUE,
+//'             main = "Storm Lake Tree Canopy Cover (%)")
 //' ds_tcc$close()
 //' \dontshow{deleteDataset(tcc_file)}
 // [[Rcpp::export]]
@@ -2705,11 +2705,11 @@ Rcpp::IntegerMatrix createColorRamp(int start_index,
 //' ## copy Landsat data from a single-band file to a new multi-band image
 //' b5_file <- system.file("extdata/sr_b5_20200829.tif", package="gdalraster")
 //' dst_file <- file.path(tempdir(), "sr_multi.tif")
-//' rasterFromRaster(b5_file, dst_file, nbands=7, init=0)
+//' rasterFromRaster(b5_file, dst_file, nbands = 7, init = 0)
 //' opt <- c("COMPRESSED=YES", "SKIP_HOLES=YES")
-//' bandCopyWholeRaster(b5_file, 1, dst_file, 5, options=opt)
+//' bandCopyWholeRaster(b5_file, 1, dst_file, 5, options = opt)
 //' ds <- new(GDALRaster, dst_file)
-//' ds$getStatistics(band=5, approx_ok=FALSE, force=TRUE)
+//' ds$getStatistics(band = 5, approx_ok = FALSE, force = TRUE)
 //' ds$close()
 //' \dontshow{deleteDataset(dst_file)}
 // [[Rcpp::export(invisible = true)]]

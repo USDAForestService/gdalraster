@@ -154,7 +154,7 @@ hi_file <- calc(expr = expr,
 
 ds <- new(GDALRaster, hi_file)
 # min, max, mean, sd
-ds$getStatistics(band=1, approx_ok=FALSE, force=TRUE)
+ds$getStatistics(band = 1, approx_ok = FALSE, force = TRUE)
 ds$close()
 \dontshow{deleteDataset(hi_file)}
 

@@ -63,7 +63,7 @@ tbl[is.na(tbl$VALUE),]
 mod_file <- file.path(tempdir(), "storml_elev_fill.tif")
 file.copy(elev_file,  mod_file)
 
-fillNodata(mod_file, band=1)
+fillNodata(mod_file, band = 1)
 
 mod_tbl = buildRAT(mod_file)
 head(mod_tbl)

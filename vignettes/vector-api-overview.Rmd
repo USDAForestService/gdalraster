@@ -135,7 +135,7 @@ Currently, **gdalraster** implements only minimal S3 class interfaces for R obje
 
 ### Interoperability 
 
-The `$fetch()` method of a `GDALVector` object returns geometries in a list column of WKB raw vectors by default. The Geometry API functions (`g_*()`) also operate by default on lists of WKB raw vectors. Representation of geometries as WKB is compact and performant, and seamlessly integrates with the parsing, conversion, manipulation and plotting functions in [package **wk**](https://paleolimbot.github.io/wk/) (a **gdalraster** dependency for vector plotting, and currently used for `g_coords()`).
+The `$fetch()` method of a `GDALVector` object returns geometries in a list column of WKB raw vectors by default. The Geometry API functions (`g_*()`) also operate by default on lists of WKB raw vectors. Representation of geometries as WKB is compact and performant, and seamlessly integrates with the parsing, conversion, manipulation and plotting functions in [package **wk**](https://paleolimbot.github.io/wk/) (a **gdalraster** dependency for vector plotting).
 
 The `$getArrowStream()` method of a `GDALVector` object allows retrieving data in a column-oriented memory format. It exposes an ArrowArrayStream on a layer as a `nanoarrow_array_stream` object. The [**nanoarrow** package](https://arrow.apache.org/nanoarrow/latest/getting-started/r.html) provides functionality to consume the array stream and import to R data structures (which are generally column oriented). **nanoarrow** provides helpers to facilitate zero-copy data transfer among R bindings to libraries implementing the Arrow C data interface. It is possible to pass **nanoarrow** objects to many functions in the **arrow** package. **nanoarrow** objects also integrate with the extension types implemented in the **geoarrow** package.
 
@@ -213,7 +213,7 @@ if (gdal_version_num() >= gdal_compute_version(3, 7, 0)) {
 inspectDataset(zf_gpkg)
 ```
 
-OGR functions can be also be used to inspect a vector data source.
+OGR functions can also be used to inspect a vector data source.
 
 ```{r}
 # test for existence of a vector data source with at least read access
