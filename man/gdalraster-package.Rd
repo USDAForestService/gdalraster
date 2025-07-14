@@ -200,7 +200,7 @@
 
   R interface/additional functionality: Chris Toney
 
-  Maintainer: Chris Toney <chris.toney at usda.gov>
+  Maintainer: Chris Toney <jctoney at gmail.com>
 }
 \seealso{
   GDAL Raster Data Model:\cr

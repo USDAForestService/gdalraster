@@ -1,66 +1,55 @@
-# gdalraster 2.0.0.9053 (dev)
+# gdalraster 2.1.0
 
-* Doc: minor edits throughout for 2.1.0 release (2025-07-09)
+## Features / enhancements
 
-* (internal) test fix for datetime range domain with no min or max value in ESRI file geodatabase (#753) (2025-07-05)
+### Raster
 
-* fix `srs_to_projjson()`: arguments `multiline`, `iindent_width` and `schema ` were not passed correctly in the API call to `OSRExportToPROJJSON()` (#752) (2025-07-05)
+* `pixel_extract()`: support optional point IDs in the first column of an input data frame and add argument `as_data_frame` (#751)
+* performance improvement for `plot_raster()` via `col_tbl` (#735 thanks @mdsumner)
 
-* `pixel_extract()`: support optional point IDs in the first column of an input data frame and add argument `as_data_frame` (#751) (2025-07-05)
+### Vector
 
-* (internal) improve input validation for `ogr_manage` functions (#749) (2025-06-29)
+* add write support for field domains (#738, #739)
+* `GDALVector$getFieldDomain()`: a coded values domain is now returned as a two-column data frame of (codes, values) instead of character vector of `"CODE=VALUE"`, **a breaking change** but the return value was not previously documented. The returned field domain definition now aligns with the specification added under the `ogr_define` help topic in #738
 
-* (internal) add tests in test-gdal_create.R for the the `create()` and `createCopy()` R public interface and improve input validation (#748) (2025-06-28)
+### Geometry API
 
-* (internal) additional tests for class `GDALVector` with a few minor code improvements resulting from (#747) (2025-06-28)
+* add `g_boundary()`: compute the boundary of input geometry, wrapper of `OGR_G_Boundary()` (#727)
+* add `g_convex_hull()`: compute convex hull for input geometries, wrapper of `OGR_G_ConvexHull()` (#726)
+* add `g_delaunay_triangulation()`: return a Delaunay triangulation of the vertices of the input geometry, wrapper of `OGR_G_DelaunayTriangulation()` (#729)
+* add `g_set_3D()`/`g_set_measured()`: add/remove the explicit Z/M coordinate dimension on the input geometries, wrappers of `OGR_G_Set3D()`/`OGR_G_SetMeasured()` (#743)
+* add `g_is_ring()`: tests whether a geometry is a ring, `TRUE` if the coordinates of the geometry form a ring by checking length and closure (self-intersection is not checked), otherwise `FALSE` (`OGR_G_IsRing()`)
+* support one-to-many input (this-to-others) in binary predicate functions and in `g_distance()` (#728)
+* `g_transform()`: performance improvement when multiple input geometries (#745)
+* `g_envelope()`: add argument `as_3d`, wrapper of `OGR_G_GetEnvelope3D()` in the GDAL Geometry API (#724)
+* fixes and improvements in handling of NULL geometries (#732)
+* minor fixes and improvements to input validation and error handling (#737)
 
-* (internal) `transform_bounds()`: refactor to simplify and avoid code duplication (#746) (2025-06-21)
+### Spatial Reference System API
 
-* `g_transform()`: performance improvement when multiple input geometries (#745) (2025-06-21)
+* add `srs_to_projjson()`, wrapper for `OSRExportToPROJJSON()` in the GDAL Spatial Reference System API (#721)
+* `srs_to_wkt()`: add argument `gcs_only`, wrapper for `OSRCloneGeogCS()` in the GDAL SRS API
 
-* `transform_bounds()`: support multiple input bounding boxes given as rows of a matrix or data frame (#744) (2025-06-21)
+### Coordinate transformation
 
-* add `g_set_3D()`/`g_set_measured()`: add/remove the explicit Z/M coordinate dimension on the input geometries (#743) (2025-06-19)
+* `transform_bounds()`: support multiple input bounding boxes given as rows of a matrix or data frame (#744)
 
-* add `g_is_ring()`: tests whether a geometry is a ring, `TRUE` if the coordinates of the geometry form a ring by checking length and closure (self-intersection is not checked), otherwise `FALSE` (2025-06-17)
+## Bug fixes
 
-* `GDALVector$getFieldDomain()`: a coded values domain is now returned as a two-column data frame of (codes, values) instead of character vector of `"CODE=VALUE"`, a breaking change, but the return value was not previously documented. The returned field domain definition now aligns with the specification added under the `ogr_define` help topic in #738 (#739) (2025-06-15)
+* `g_envelope()`: fix the order of xy coordinates in the returned envelope(s), fixes [#725](https://github.com/USDAForestService/gdalraster/issues/725) **a breaking change**
+* `pixel_extract()`: fix input validation for `xy_srs`
 
-* `ogr_def_field_domain()`: a coded values field domain optionally may be given as a two-column data frame of (codes, values), as alternative to a vector of codes only (when values are not used) or character vector of `"CODE=VALUE"` (#739) (2025-06-15)
+## Internal
 
-* add write support for field domains (#738) (2025-06-14)
+* improve input validation for the `ogr_manage` functions (#749)
+* add tests in `tests/testthat/test-gdal_create.R` for the the `create()` and `createCopy()` R public interfaces, and improve input validation (#748)
+* additional tests for class `GDALVector` with a few minor code improvements (#747)
+* class `GDALVector`: improve error handling in `setIgnoredFields()`/`setSelectedFields()` and add several new tests (#731)
+* make variables `constexpr` or `const` in several places
 
-* Geom API: minor fixes and improvements to input validation and error handling (#737) (2025-06-06)
+## Documentation
 
-* performance improvement for `plot_raster()` via `col_tbl` (#735 by @mdsumner) (2025-06-05)
-
-* Geom API: fixes and improvements in handling of NULL geometries (#732) (2025-06-03)
-
-* (internal) class `GDALVector`: improve error handling in `setIgnoredFields()` / `setSelectedFields()` and add several new tests (#731) (2025-06-01)
-
-* add `g_delaunay_triangulation()`: return a Delaunay triangulation of the vertices of the input geometry (#729) (2025-05-31)
-
-* Geom API: support one-to-many input (this-to-others) in binary predicate functions and in `g_distance()` (#728) (2025-05-31)
-
-* add `g_boundary()`: compute the boundary of a geometry (#727) (2025-05-31)
-
-* add `g_convex_hull()`: compute convex hull for input geometries (#726) (2025-05-31)
-
-* `g_envelope()`: fix order of xy coordinates in the returned envelope(s) (fixes [#725](https://github.com/USDAForestService/gdalraster/issues/725), a breaking change); and add argument `as_3d`, wrapper of `OGR_G_GetEnvelope3D()` in the GDAL Geometry API (#724) (2025-05-30)
-
-* (internal) avoid clang-asan error from implicitly wrapping `CPLString` as an R character vector, due to changes introduced at dev version 2.0.0.9000 with PR #714 (fix in #723) (2025-05-29)
-
-* `srs_to_wkt()`: add argument `gcs_only`, wrapper for `OSRCloneGeogCS()` in the GDAL API (2025-05-28)
-
-* add `srs_to_projjson()`, wrapper for `OSRExportToPROJJSON()` in the GDAL Spatial Reference System API (#721) (2025-05-28)
-
-* add web article [Vector Read Benchmarks](https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html) (2025-05-26)
-
-* (internal) make variables `constexpr` or `const` in several places (2025-05-25)
-
-* `pixel_extract()`: fix input validation for `xy_srs` (2025-05-23)
-
-* (internal) `ogrinfo()` and `GDALRaster::infoAsJSON()` now use convenience class `CPLString` from the GDAL Common Portability Library for its `replaceAll()` method (2025-05-19)
+* add web article [Vector Read Benchmarks](https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html)
 
 # gdalraster 2.0.0
 
