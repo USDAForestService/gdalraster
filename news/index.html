@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0.9053</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,39 +50,71 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.0.0.9053" id="gdalraster-2009053-dev">gdalraster 2.0.0.9053 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2009053-dev"></a></h2>
-<ul><li><p>Doc: minor edits throughout for 2.1.0 release (2025-07-09)</p></li>
-<li><p>(internal) test fix for datetime range domain with no min or max value in ESRI file geodatabase (<a href="https://github.com/USDAForestService/gdalraster/issues/753" class="external-link">#753</a>) (2025-07-05)</p></li>
-<li><p>fix <code><a href="../reference/srs_convert.html">srs_to_projjson()</a></code>: arguments <code>multiline</code>, <code>iindent_width</code> and <code>schema</code> were not passed correctly in the API call to <code>OSRExportToPROJJSON()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/752" class="external-link">#752</a>) (2025-07-05)</p></li>
-<li><p><code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: support optional point IDs in the first column of an input data frame and add argument <code>as_data_frame</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/751" class="external-link">#751</a>) (2025-07-05)</p></li>
-<li><p>(internal) improve input validation for <code>ogr_manage</code> functions (<a href="https://github.com/USDAForestService/gdalraster/issues/749" class="external-link">#749</a>) (2025-06-29)</p></li>
-<li><p>(internal) add tests in test-gdal_create.R for the the <code><a href="../reference/create.html">create()</a></code> and <code><a href="../reference/createCopy.html">createCopy()</a></code> R public interface and improve input validation (<a href="https://github.com/USDAForestService/gdalraster/issues/748" class="external-link">#748</a>) (2025-06-28)</p></li>
-<li><p>(internal) additional tests for class <code>GDALVector</code> with a few minor code improvements resulting from (<a href="https://github.com/USDAForestService/gdalraster/issues/747" class="external-link">#747</a>) (2025-06-28)</p></li>
-<li><p>(internal) <code><a href="../reference/transform_bounds.html">transform_bounds()</a></code>: refactor to simplify and avoid code duplication (<a href="https://github.com/USDAForestService/gdalraster/issues/746" class="external-link">#746</a>) (2025-06-21)</p></li>
-<li><p><code><a href="../reference/g_transform.html">g_transform()</a></code>: performance improvement when multiple input geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/745" class="external-link">#745</a>) (2025-06-21)</p></li>
-<li><p><code><a href="../reference/transform_bounds.html">transform_bounds()</a></code>: support multiple input bounding boxes given as rows of a matrix or data frame (<a href="https://github.com/USDAForestService/gdalraster/issues/744" class="external-link">#744</a>) (2025-06-21)</p></li>
-<li><p>add <code><a href="../reference/g_util.html">g_set_3D()</a></code>/<code><a href="../reference/g_util.html">g_set_measured()</a></code>: add/remove the explicit Z/M coordinate dimension on the input geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/743" class="external-link">#743</a>) (2025-06-19)</p></li>
-<li><p>add <code><a href="../reference/g_query.html">g_is_ring()</a></code>: tests whether a geometry is a ring, <code>TRUE</code> if the coordinates of the geometry form a ring by checking length and closure (self-intersection is not checked), otherwise <code>FALSE</code> (2025-06-17)</p></li>
-<li><p><code>GDALVector$getFieldDomain()</code>: a coded values domain is now returned as a two-column data frame of (codes, values) instead of character vector of <code>"CODE=VALUE"</code>, a breaking change, but the return value was not previously documented. The returned field domain definition now aligns with the specification added under the <code>ogr_define</code> help topic in <a href="https://github.com/USDAForestService/gdalraster/issues/738" class="external-link">#738</a> (<a href="https://github.com/USDAForestService/gdalraster/issues/739" class="external-link">#739</a>) (2025-06-15)</p></li>
-<li><p><code><a href="../reference/ogr_define.html">ogr_def_field_domain()</a></code>: a coded values field domain optionally may be given as a two-column data frame of (codes, values), as alternative to a vector of codes only (when values are not used) or character vector of <code>"CODE=VALUE"</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/739" class="external-link">#739</a>) (2025-06-15)</p></li>
-<li><p>add write support for field domains (<a href="https://github.com/USDAForestService/gdalraster/issues/738" class="external-link">#738</a>) (2025-06-14)</p></li>
-<li><p>Geom API: minor fixes and improvements to input validation and error handling (<a href="https://github.com/USDAForestService/gdalraster/issues/737" class="external-link">#737</a>) (2025-06-06)</p></li>
-<li><p>performance improvement for <code><a href="../reference/plot_raster.html">plot_raster()</a></code> via <code>col_tbl</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/735" class="external-link">#735</a> by <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>) (2025-06-05)</p></li>
-<li><p>Geom API: fixes and improvements in handling of NULL geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/732" class="external-link">#732</a>) (2025-06-03)</p></li>
-<li><p>(internal) class <code>GDALVector</code>: improve error handling in <code>setIgnoredFields()</code> / <code>setSelectedFields()</code> and add several new tests (<a href="https://github.com/USDAForestService/gdalraster/issues/731" class="external-link">#731</a>) (2025-06-01)</p></li>
-<li><p>add <code><a href="../reference/g_unary_op.html">g_delaunay_triangulation()</a></code>: return a Delaunay triangulation of the vertices of the input geometry (<a href="https://github.com/USDAForestService/gdalraster/issues/729" class="external-link">#729</a>) (2025-05-31)</p></li>
-<li><p>Geom API: support one-to-many input (this-to-others) in binary predicate functions and in <code><a href="../reference/g_measures.html">g_distance()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/728" class="external-link">#728</a>) (2025-05-31)</p></li>
-<li><p>add <code><a href="../reference/g_unary_op.html">g_boundary()</a></code>: compute the boundary of a geometry (<a href="https://github.com/USDAForestService/gdalraster/issues/727" class="external-link">#727</a>) (2025-05-31)</p></li>
-<li><p>add <code><a href="../reference/g_unary_op.html">g_convex_hull()</a></code>: compute convex hull for input geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/726" class="external-link">#726</a>) (2025-05-31)</p></li>
-<li><p><code><a href="../reference/g_envelope.html">g_envelope()</a></code>: fix order of xy coordinates in the returned envelope(s) (fixes <a href="https://github.com/USDAForestService/gdalraster/issues/725" class="external-link">#725</a>, a breaking change); and add argument <code>as_3d</code>, wrapper of <code>OGR_G_GetEnvelope3D()</code> in the GDAL Geometry API (<a href="https://github.com/USDAForestService/gdalraster/issues/724" class="external-link">#724</a>) (2025-05-30)</p></li>
-<li><p>(internal) avoid clang-asan error from implicitly wrapping <code>CPLString</code> as an R character vector, due to changes introduced at dev version 2.0.0.9000 with PR <a href="https://github.com/USDAForestService/gdalraster/issues/714" class="external-link">#714</a> (fix in <a href="https://github.com/USDAForestService/gdalraster/issues/723" class="external-link">#723</a>) (2025-05-29)</p></li>
-<li><p><code><a href="../reference/srs_convert.html">srs_to_wkt()</a></code>: add argument <code>gcs_only</code>, wrapper for <code>OSRCloneGeogCS()</code> in the GDAL API (2025-05-28)</p></li>
-<li><p>add <code><a href="../reference/srs_convert.html">srs_to_projjson()</a></code>, wrapper for <code>OSRExportToPROJJSON()</code> in the GDAL Spatial Reference System API (<a href="https://github.com/USDAForestService/gdalraster/issues/721" class="external-link">#721</a>) (2025-05-28)</p></li>
-<li><p>add web article <a href="https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html">Vector Read Benchmarks</a> (2025-05-26)</p></li>
-<li><p>(internal) make variables <code>constexpr</code> or <code>const</code> in several places (2025-05-25)</p></li>
-<li><p><code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: fix input validation for <code>xy_srs</code> (2025-05-23)</p></li>
-<li><p>(internal) <code><a href="../reference/ogrinfo.html">ogrinfo()</a></code> and <code>GDALRaster::infoAsJSON()</code> now use convenience class <code>CPLString</code> from the GDAL Common Portability Library for its <code>replaceAll()</code> method (2025-05-19)</p></li>
+<h2 class="pkg-version" data-toc-text="2.1.0" id="gdalraster-210">gdalraster 2.1.0<a class="anchor" aria-label="anchor" href="#gdalraster-210"></a></h2><p class="text-muted">CRAN release: 2025-07-14</p>
+<div class="section level3">
+<h3 id="features--enhancements-2-1-0">Features / enhancements<a class="anchor" aria-label="anchor" href="#features--enhancements-2-1-0"></a></h3>
+<div class="section level4">
+<h4 id="raster-2-1-0">Raster<a class="anchor" aria-label="anchor" href="#raster-2-1-0"></a></h4>
+<ul><li>
+<code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: support optional point IDs in the first column of an input data frame and add argument <code>as_data_frame</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/751" class="external-link">#751</a>)</li>
+<li>performance improvement for <code><a href="../reference/plot_raster.html">plot_raster()</a></code> via <code>col_tbl</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/735" class="external-link">#735</a> thanks <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>)</li>
 </ul></div>
+<div class="section level4">
+<h4 id="vector-2-1-0">Vector<a class="anchor" aria-label="anchor" href="#vector-2-1-0"></a></h4>
+<ul><li>add write support for field domains (<a href="https://github.com/USDAForestService/gdalraster/issues/738" class="external-link">#738</a>, <a href="https://github.com/USDAForestService/gdalraster/issues/739" class="external-link">#739</a>)</li>
+<li>
+<code>GDALVector$getFieldDomain()</code>: a coded values domain is now returned as a two-column data frame of (codes, values) instead of character vector of <code>"CODE=VALUE"</code>, <strong>a breaking change</strong> but the return value was not previously documented. The returned field domain definition now aligns with the specification added under the <code>ogr_define</code> help topic in <a href="https://github.com/USDAForestService/gdalraster/issues/738" class="external-link">#738</a></li>
+</ul></div>
+<div class="section level4">
+<h4 id="geometry-api-2-1-0">Geometry API<a class="anchor" aria-label="anchor" href="#geometry-api-2-1-0"></a></h4>
+<ul><li>add <code><a href="../reference/g_unary_op.html">g_boundary()</a></code>: compute the boundary of input geometry, wrapper of <code>OGR_G_Boundary()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/727" class="external-link">#727</a>)</li>
+<li>add <code><a href="../reference/g_unary_op.html">g_convex_hull()</a></code>: compute convex hull for input geometries, wrapper of <code>OGR_G_ConvexHull()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/726" class="external-link">#726</a>)</li>
+<li>add <code><a href="../reference/g_unary_op.html">g_delaunay_triangulation()</a></code>: return a Delaunay triangulation of the vertices of the input geometry, wrapper of <code>OGR_G_DelaunayTriangulation()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/729" class="external-link">#729</a>)</li>
+<li>add <code><a href="../reference/g_util.html">g_set_3D()</a></code>/<code><a href="../reference/g_util.html">g_set_measured()</a></code>: add/remove the explicit Z/M coordinate dimension on the input geometries, wrappers of <code>OGR_G_Set3D()</code>/<code>OGR_G_SetMeasured()</code> (<a href="https://github.com/USDAForestService/gdalraster/issues/743" class="external-link">#743</a>)</li>
+<li>add <code><a href="../reference/g_query.html">g_is_ring()</a></code>: tests whether a geometry is a ring, <code>TRUE</code> if the coordinates of the geometry form a ring by checking length and closure (self-intersection is not checked), otherwise <code>FALSE</code> (<code>OGR_G_IsRing()</code>)</li>
+<li>support one-to-many input (this-to-others) in binary predicate functions and in <code><a href="../reference/g_measures.html">g_distance()</a></code> (<a href="https://github.com/USDAForestService/gdalraster/issues/728" class="external-link">#728</a>)</li>
+<li>
+<code><a href="../reference/g_transform.html">g_transform()</a></code>: performance improvement when multiple input geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/745" class="external-link">#745</a>)</li>
+<li>
+<code><a href="../reference/g_envelope.html">g_envelope()</a></code>: add argument <code>as_3d</code>, wrapper of <code>OGR_G_GetEnvelope3D()</code> in the GDAL Geometry API (<a href="https://github.com/USDAForestService/gdalraster/issues/724" class="external-link">#724</a>)</li>
+<li>fixes and improvements in handling of NULL geometries (<a href="https://github.com/USDAForestService/gdalraster/issues/732" class="external-link">#732</a>)</li>
+<li>minor fixes and improvements to input validation and error handling (<a href="https://github.com/USDAForestService/gdalraster/issues/737" class="external-link">#737</a>)</li>
+</ul></div>
+<div class="section level4">
+<h4 id="spatial-reference-system-api-2-1-0">Spatial Reference System API<a class="anchor" aria-label="anchor" href="#spatial-reference-system-api-2-1-0"></a></h4>
+<ul><li>add <code><a href="../reference/srs_convert.html">srs_to_projjson()</a></code>, wrapper for <code>OSRExportToPROJJSON()</code> in the GDAL Spatial Reference System API (<a href="https://github.com/USDAForestService/gdalraster/issues/721" class="external-link">#721</a>)</li>
+<li>
+<code><a href="../reference/srs_convert.html">srs_to_wkt()</a></code>: add argument <code>gcs_only</code>, wrapper for <code>OSRCloneGeogCS()</code> in the GDAL SRS API</li>
+</ul></div>
+<div class="section level4">
+<h4 id="coordinate-transformation-2-1-0">Coordinate transformation<a class="anchor" aria-label="anchor" href="#coordinate-transformation-2-1-0"></a></h4>
+<ul><li>
+<code><a href="../reference/transform_bounds.html">transform_bounds()</a></code>: support multiple input bounding boxes given as rows of a matrix or data frame (<a href="https://github.com/USDAForestService/gdalraster/issues/744" class="external-link">#744</a>)</li>
+</ul></div>
+</div>
+<div class="section level3">
+<h3 id="bug-fixes-2-1-0">Bug fixes<a class="anchor" aria-label="anchor" href="#bug-fixes-2-1-0"></a></h3>
+<ul><li>
+<code><a href="../reference/g_envelope.html">g_envelope()</a></code>: fix the order of xy coordinates in the returned envelope(s), fixes <a href="https://github.com/USDAForestService/gdalraster/issues/725" class="external-link">#725</a> <strong>a breaking change</strong>
+</li>
+<li>
+<code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: fix input validation for <code>xy_srs</code>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-2-1-0">Internal<a class="anchor" aria-label="anchor" href="#internal-2-1-0"></a></h3>
+<ul><li>improve input validation for the <code>ogr_manage</code> functions (<a href="https://github.com/USDAForestService/gdalraster/issues/749" class="external-link">#749</a>)</li>
+<li>add tests in <code>tests/testthat/test-gdal_create.R</code> for the the <code><a href="../reference/create.html">create()</a></code> and <code><a href="../reference/createCopy.html">createCopy()</a></code> R public interfaces, and improve input validation (<a href="https://github.com/USDAForestService/gdalraster/issues/748" class="external-link">#748</a>)</li>
+<li>additional tests for class <code>GDALVector</code> with a few minor code improvements (<a href="https://github.com/USDAForestService/gdalraster/issues/747" class="external-link">#747</a>)</li>
+<li>class <code>GDALVector</code>: improve error handling in <code>setIgnoredFields()</code>/<code>setSelectedFields()</code> and add several new tests (<a href="https://github.com/USDAForestService/gdalraster/issues/731" class="external-link">#731</a>)</li>
+<li>make variables <code>constexpr</code> or <code>const</code> in several places</li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-2-1-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-2-1-0"></a></h3>
+<ul><li>add web article <a href="https://usdaforestservice.github.io/gdalraster/articles/vector-read-benchmarks.html">Vector Read Benchmarks</a>
+</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.0.0" id="gdalraster-200">gdalraster 2.0.0<a class="anchor" aria-label="anchor" href="#gdalraster-200"></a></h2><p class="text-muted">CRAN release: 2025-05-11</p>
 <div class="section level3">
