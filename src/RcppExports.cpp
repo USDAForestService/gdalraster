@@ -1003,6 +1003,19 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// gdal_commands
+Rcpp::DataFrame gdal_commands(const std::string& contains, bool recurse, bool cout);
+RcppExport SEXP _gdalraster_gdal_commands(SEXP containsSEXP, SEXP recurseSEXP, SEXP coutSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::string& >::type contains(containsSEXP);
+    Rcpp::traits::input_parameter< bool >::type recurse(recurseSEXP);
+    Rcpp::traits::input_parameter< bool >::type cout(coutSEXP);
+    rcpp_result_gen = Rcpp::wrap(gdal_commands(contains, recurse, cout));
+    return rcpp_result_gen;
+END_RCPP
+}
 // getGEOSVersion
 std::vector<int> getGEOSVersion();
 RcppExport SEXP _gdalraster_getGEOSVersion() {
@@ -2192,6 +2205,7 @@ END_RCPP
 }
 
 RcppExport SEXP _rcpp_module_boot_mod_cmb_table();
+RcppExport SEXP _rcpp_module_boot_mod_GDALAlg();
 RcppExport SEXP _rcpp_module_boot_mod_GDALRaster();
 RcppExport SEXP _rcpp_module_boot_mod_GDALVector();
 RcppExport SEXP _rcpp_module_boot_mod_running_stats();
@@ -2278,6 +2292,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_get_actual_url", (DL_FUNC) &_gdalraster_vsi_get_actual_url, 1},
     {"_gdalraster_vsi_get_signed_url", (DL_FUNC) &_gdalraster_vsi_get_signed_url, 2},
     {"_gdalraster_vsi_is_local", (DL_FUNC) &_gdalraster_vsi_is_local, 1},
+    {"_gdalraster_gdal_commands", (DL_FUNC) &_gdalraster_gdal_commands, 3},
     {"_gdalraster_getGEOSVersion", (DL_FUNC) &_gdalraster_getGEOSVersion, 0},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster_g_wkb2wkt", (DL_FUNC) &_gdalraster_g_wkb2wkt, 2},
@@ -2372,6 +2387,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_transform_xy", (DL_FUNC) &_gdalraster_transform_xy, 3},
     {"_gdalraster_transform_bounds", (DL_FUNC) &_gdalraster_transform_bounds, 5},
     {"_rcpp_module_boot_mod_cmb_table", (DL_FUNC) &_rcpp_module_boot_mod_cmb_table, 0},
+    {"_rcpp_module_boot_mod_GDALAlg", (DL_FUNC) &_rcpp_module_boot_mod_GDALAlg, 0},
     {"_rcpp_module_boot_mod_GDALRaster", (DL_FUNC) &_rcpp_module_boot_mod_GDALRaster, 0},
     {"_rcpp_module_boot_mod_GDALVector", (DL_FUNC) &_rcpp_module_boot_mod_GDALVector, 0},
     {"_rcpp_module_boot_mod_running_stats", (DL_FUNC) &_rcpp_module_boot_mod_running_stats, 0},

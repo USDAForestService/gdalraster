@@ -1,0 +1,644 @@
+# R interface to the GDAL CLI algorithms
+# convenience functions for using exposed class `GDALAlg`
+# see R/gdalalg.R and src/gdalalg.h
+# Chris Toney <jctoney at gmail.com>
+
+#' Convenience functions for using \dQuote{gdal} CLI algorithms
+#'
+#' @name gdal_cli
+#' @description
+#' This set of functions can be used to access and run GDAL utilities as
+#' \dQuote{gdal} Command Line Interface (CLI) algorithms.
+#'
+#' **Requires GDAL >= `r .GDALALG_MIN_GDAL_STR`**
+#'
+#' @details
+#' These functions are convenient for accessing and running GDAL CLI algorithms
+#' by way of the C++ exposed class \code{\link{GDALAlg}}. See the class
+#' documentation for additional information (`?GDALAlg`).
+#'
+#' `gdal_commands()` prints a list of commands and their descriptions to the
+#' console, and returns (invisibly) a data frame with columns named `command`,
+#' `description` and `URL`. The `contains` argument can be used to filter the
+#' output, e.g., `gdal_commands("vector")` to return only commands for working
+#' with vector inputs.
+#'
+#' `gdal_usage()` prints a help message to the console for a given command, or
+#' for the root `"gdal"` entry point if called with no argument. No return
+#' value, called for that side effect only.
+#'
+#' `gdal_run()` executes a GDAL CLI algorithm and returns it as an object of
+#' class `GDALAlg`. A list containing algorithm output(s) can be accessed by
+#' calling the \code{$outputs()} (plural) method on the returned object, or,
+#' more conveniently in most cases, by calling \code{$output()} (singular) to
+#' return the the single output value when there is only one. After assigning
+#' the output, or otherwise completing work with the `GDALAlg` object, the
+#' \code{$release()} method can be called to close datasets and free resources.
+#'
+#' `gdal_alg()` instantiates and returns an object of class `GDALAlg` without
+#' running it. Passing argument values to the requested CLI algorithm is
+#' optional. This function may be useful (with or without argument values) for
+#' obtaining algorithm properties with the returned object's \code{$info()}
+#' method, obtaining properties of algorithm arguments
+#' (\code{$argInfo(arg_name)}), or obtaining algorithm usage as a
+#' JSON-formatted string (\code{$usageAsJSON()}).
+#' This function is simply an alternative to calling the `new()` constructor
+#' for class `GDALAlg`. Executing the returned algorithm is optional by calling
+#' the object's \code{$run()} method (assuming argument values were given).
+#'
+#' @param contains Optional character string for filtering output to certain
+#' commands, e.g., `gdal_commands("vector")`.
+#' @param recurse Logical value, `TRUE` to include all subcommands recursively
+#' (the default). Set to `FALSE` to include only the top-level \dQuote{gdal}
+#' commands (i.e., "raster", "vector", etc.)
+#' @param cout Logical value, `TRUE` to print a list of commands along with
+#' their descriptions and help URLS to the console (the default).
+#' @param cmd A character string or character vector containing the path to the
+#' algorithm, e.g., `"raster reproject"` or `c("raster", "reproject")`.
+#' Defaults to `"gdal"`, the main entry point to CLI commands.
+#' @param args Either a character vector or a named list containing input
+#' arguments of the algorithm (see section \dQuote{Algorithm argument syntax}).
+#' @param parse Logical value, `TRUE` to attempt parsing `args` if they are
+#' given in `gdal_alg()` (the default). Set to `FALSE` to instantiate the
+#' algorithm without parsing arguments. The \code{$parseCommandLineArgs()}
+#' method on the returned object can be called to parse arguments and obtain
+#' the result of that, with potentially useful error messages.
+#'
+#' @section Algorithm argument syntax:
+#' Arguments are given in \R as a character vector or named list, but
+#' otherwise syntax basically matches the GDAL specification for arguments as
+#' they are given on the command line. Those specifications are listed here
+#' along with some amendments regarding the character vector and named list
+#' formats. Programmatic usage also allows passing and receiving datasets as
+#' objects (i.e., `GDALRaster` or `GDALVector`), in addition to dataset names
+#' (e.g., filename, URL, database connection string).
+#'
+#' * Commands accept one or several positional arguments, typically for dataset
+#' names (or, in \R, as `GDALRaster` or `GDALVector` datasets). The order is
+#' input(s) first, output last. Positional arguments can also be specified as
+#' named arguments, if preferred to avoid any ambiguity.
+#' * Named arguments have:
+#'   * at least one "long" name, preceded by two dash characters when specified
+#'   on the command line,
+#'   * optionally, auxiliary long names (i.e., aliases),
+#'   * and optionally a one-letter short name, preceded by a single dash
+#'   character on the command line, e.g., `-f, --of, --format, --output-format
+#'   <OUTPUT-FORMAT>`
+#' * Boolean arguments are specified by just specifying the argument name. In
+#' \R list format, the named element must be assigned a value of logical `TRUE`.
+#' * Arguments that require a value are specified like:
+#'   * `-f VALUE` for one-letter short names.
+#'   * `--format VALUE` or `--format=VALUE` for long names.
+#'   * in a named list, this would look like:\cr
+#'   `arg_list$format <- VALUE`
+#' * Some arguments can be multi-valued. Some of them require all values to be
+#' packed together and separated with comma. This is, e.g., the case of:
+#' `--bbox <BBOX> Clipping bounding box as xmin,ymin,xmax,ymax`, e.g.,
+#' `--bbox=2.1,49.1,2.9,49.9`.
+#' * Others accept each value to be preceded by a new mention of the argument
+#' name, e.g., `--co COMPRESS=LZW --co TILED=YES`. For that one, if the value
+#' of the argument does not contain commas, the packed form is also accepted:
+#' `--co COMPRESS=LZW,TILED=YES`. Note that repeated mentions of an argument
+#' are possible in the character vector format for argument input, whereas
+#' arguments given in named list format must used argument long names as the
+#' list element names, and the packed format for the values (which can be a
+#' character vector or numeric vector of values).
+#' * Named arguments can be placed before or after positional arguments.
+#'
+#' @section Experimental:
+#' The GDAL Command Line Interface Modernization was first introduced in the
+#' [GDAL 3.11.0 release](https://github.com/OSGeo/gdal/releases/tag/v3.11.0)
+#' (2025-05-09). The GDAL project states that the new CLI \dQuote{is
+#' provisionally provided as an alternative interface to GDAL and OGR command
+#' line utilities. The project reserves the right to modify, rename,
+#' reorganize, and change the behavior until it is officially frozen via PSC
+#' vote in a future major GDAL release.... Your usage of it should have no
+#' expectation of compatibility until that time.}
+#'
+#' Initial bindings to enable programmatic use of the new CLI algorithms from \R
+#' were added in \pkg{gdalraster} 2.2.0, and will evolve over future releases.
+#' The bindings are considered experimental until the upstream API is declared
+#' stable. Breaking changes in minor version releases are possible until then.
+#'
+#' @note
+#' Commands do not require the leading `"gdal"` root node. They may begin
+#' with a top-level command (e.g., `"raster"`, `"vector"`, etc.).
+#'
+#' When using argument names as the element names of a list, the underscore
+#' character can be optionally substituted for the dash characters that are
+#' used in some names. This avoids having to surround names in backticks when
+#' they are used to access list elements in the form `args$arg_name` (the form
+#' `args[["arg-name"]]` also works).
+#'
+#' @seealso
+#' [`GDALAlg-class`][GDALAlg]
+#'
+#' \dQuote{gdal} Command Line Interface (CLI):\cr
+#' \url{https://gdal.org/en/stable/programs/index.html}
+#'
+#' @examplesIf (gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL)
+#' ## top-level gdal commands
+#' gdal_commands(recurse = FALSE)
+#'
+#' ## convert storml_elev.tif to GeoPackage raster
+#' gdal_commands("convert")
+#'
+#' gdal_usage("raster convert")
+#'
+#' f_tif <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' f_gpkg <- file.path(tempdir(), "storml_elev.gpkg")
+#'
+#' args <- c("--overwrite", f_tif, f_gpkg)
+#' (alg <- gdal_run("raster convert", args))
+#'
+#' (ds <- alg$output())
+#'
+#' alg$release()
+#'
+#' plot_raster(ds, legend = TRUE)
+#'
+#' ds$close()
+#' \dontshow{deleteDataset(f_gpkg)}
+#'
+#' ## get help for vector commands
+#' gdal_usage("vector")
+#'
+#' ## clip a vector layer by a bounding box
+#' gdal_usage("vector clip")
+#'
+#' f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
+#' f_clip <- file.path(tempdir(), "ynp_fires_clip.gpkg")
+#'
+#' # some multi-valued arguments require all values packed and comma separated
+#' # e.g., --bbox <BBOX>
+#' bb <- c(469686, 11442, 544070, 85508)
+#' bb <- paste(bb, collapse = ",")
+#'
+#' args <- c("--bbox", bb, "--overwrite", f, f_clip)
+#' (alg <- gdal_run("vector clip", args))
+#'
+#' (lyr <- alg$output())
+#'
+#' lyr$bbox()
+#'
+#' lyr$getFeatureCount()
+#'
+#' lyr$close()
+#' alg$release()
+#' \dontshow{deleteDataset(f_clip)}
+#'
+#' ## rasterize a vector layer and return output as a GDALRaster object
+#' gdal_usage("vector rasterize")
+#'
+#' f_out = file.path(tempdir(), "ynp_fire_year.tif")
+#'
+#' # arguments in list format
+#' args <- list()
+#' args$input <- f
+#' args$sql <- "SELECT * FROM mtbs_perims ORDER BY mtbs_perims.ig_year"
+#' args$attribute_name <- "ig_year"
+#' args$output <- f_out
+#' args$overwrite <- TRUE
+#' args$creation_option <- c("TILED=YES", "COMPRESS=DEFLATE")
+#' args$resolution <- c(90, 90)
+#' args$output_data_type <- "Int16"
+#' args$init <- -32767
+#' args$nodata <- -32767
+#'
+#' (alg <- gdal_run("vector rasterize", args))
+#'
+#' (ds <- alg$output())
+#'
+#' alg$release()
+#'
+#' pal <- scales::viridis_pal(end = 0.8, direction = -1)(6)
+#' ramp <- scales::colour_ramp(pal)
+#' plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",
+#'             main = "YNP Fires 1984-2022 - Most Recent Burn Year")
+#'
+#' ds$close()
+#' \dontshow{deleteDataset(f_out)}
+#'
+#' ## "pipeline" syntax
+#' ## Note: this may change in future versions
+#' # https://gdal.org/en/stable/programs/index.html#gdal-application
+#'
+#' # "raster pipeline" example
+#' # serialize the command to reproject a GTiff file into GDALG format, and
+#' # then read the GDALG file
+#' # GDAL Streamed Algorithm format:
+#' # https://gdal.org/en/stable/drivers/raster/gdalg.html
+#'
+#' gdal_usage("raster pipeline")
+#'
+#' f_tif <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' f_out <- file.path(tempdir(), "storml_elev_epsg_32100.gdalg.json")
+#'
+#' args <- c("read", "--input", f_tif, "!",
+#'           "reproject", "--dst-crs=EPSG:32100", "!",
+#'           "write", "--output", f_out, "--overwrite")
+#'
+#' alg <- gdal_run("raster pipeline", args)
+#' alg$release()
+#'
+#' # content of the .json file
+#' readLines(f_out, warn = FALSE) |> writeLines()
+#'
+#' (ds <- new(GDALRaster, f_out))
+#'
+#' plot_raster(ds, legend = TRUE)
+#'
+#' ds$close()
+#' \dontshow{unlink(f_out)}
+#' @export
+gdal_commands <- function(contains = "", recurse = TRUE, cout = TRUE) {
+    if (gdal_version_num() < .GDALALG_MIN_GDAL) {
+        stop("gdal_commands() requires GDAL >= ", .GDALALG_MIN_GDAL_STR,
+             call. = FALSE)
+    }
+
+    if (missing(contains) || is.null(contains) || all(is.na(contains)))
+        contains <- ""
+    if (!is.character(contains))
+        stop("'contains' must be a character string", call. = FALSE)
+    else if (length(contains) > 1)
+        contains <- paste(contains, collapse = " ")
+
+    if (missing(recurse) || is.null(recurse) || all(is.na(recurse)))
+        recurse <- TRUE
+    if (!(is.logical(recurse) && length(recurse) == 1))
+        stop("'recurse' must be a length-1 logical vector", call. = FALSE)
+
+    if (missing(cout) || is.null(cout) || all(is.na(cout)))
+        cout <- TRUE
+    if (!(is.logical(cout) && length(cout) == 1))
+        stop("'cout' must be a length-1 logical vector", call. = FALSE)
+
+    return(invisible(.gdal_commands(contains, recurse, cout)))
+}
+
+#' @name gdal_cli
+#' @export
+gdal_usage <- function(cmd = NULL) {
+    if (gdal_version_num() < .GDALALG_MIN_GDAL) {
+        stop("gdal_usage() requires GDAL >= ", .GDALALG_MIN_GDAL_STR,
+             call. = FALSE)
+    }
+
+    alg <- gdal_alg(cmd)
+    alg$usage()
+    alg$release()
+}
+
+#' @name gdal_cli
+#' @export
+gdal_run <- function(cmd, args) {
+    if (gdal_version_num() < .GDALALG_MIN_GDAL) {
+        stop("gdal_run() requires GDAL >= ", .GDALALG_MIN_GDAL_STR,
+             call. = FALSE)
+    }
+
+    if (missing(cmd) || is.null(cmd) || all(is.na(cmd)))
+        stop("'cmd' is required", call. = FALSE)
+    if (!is.character(cmd))
+        stop("'cmd' must be a character vector", call. = FALSE)
+
+    if (missing(args) || is.null(args) || all(is.na(args)))
+        stop("'args' is required", call. = FALSE)
+    if (!is.character(args) && !is.list(args))
+        stop("'args must be a character vector or named list", call. = FALSE)
+
+    alg <- new(GDALAlg, cmd, args)
+
+    if (!alg$parseCommandLineArgs()) {
+        cat("parseCommandLineArgs() failed\n")
+        alg$release()
+        stop("failed to parse arguments and set their values", call. = FALSE)
+    }
+
+    if (!alg$run()) {
+        cat("run() failed\n")
+        alg$release()
+        stop("failed to execute the command", call. = FALSE)
+    }
+
+    return(alg)
+}
+
+#' @name gdal_cli
+#' @export
+gdal_alg <- function(cmd = NULL, args = NULL, parse = TRUE) {
+    if (gdal_version_num() < .GDALALG_MIN_GDAL) {
+        stop("gdal_alg() requires GDAL >= ", .GDALALG_MIN_GDAL_STR,
+             call. = FALSE)
+    }
+
+    if (missing(cmd) || is.null(cmd) || all(is.na(cmd)))
+        cmd <- "gdal"
+    if (!is.character(cmd))
+        stop("'cmd' must be a character vector", call. = FALSE)
+
+    if (missing(parse) || is.null(parse) || all(is.na(parse)))
+        parse <- TRUE
+    if (!(is.logical(parse) && length(parse) == 1))
+        stop("'parse' must be a length-1 logical vector", call. = FALSE)
+
+    has_args <- FALSE
+    if (!is.null(args)) {
+        if (!is.character(args) && !is.list(args)) {
+            stop("'args' must be a character vector or named list",
+                 call. = FALSE)
+        } else {
+            has_args <- TRUE
+        }
+    }
+
+    alg <- new(GDALAlg, cmd, args)
+
+    if (has_args && parse) {
+        if (!alg$parseCommandLineArgs()) {
+            cat("parseCommandLineArgs() failed\n")
+            alg$release()
+            stop("failed to parse arguments and set their values",
+                 call. = FALSE)
+        }
+    }
+
+    return(alg)
+}
+
+#' helper function to print usage to the console
+#' called from GDALAlg::usage() in src/gdalalg.cpp
+#' @noRd
+.print_alg_usage <- function(cmd) {
+    alg <- new(GDALAlg, cmd)
+    alginfo <- alg$info()
+
+    has_non_positionals <- FALSE
+    positional_args <- character()
+    for (nm in alginfo$arg_names) {
+        arginfo <- alg$argInfo(nm)
+        if (gdal_version_num() < gdal_compute_version(3, 12, 0)) {
+            # GDAL < 3.12 use `is_only_for_cli`
+            if (!arginfo$is_only_for_cli && !arginfo$is_positional) {
+                has_non_positionals <- TRUE
+            } else if (!arginfo$is_only_for_cli && arginfo$is_positional) {
+                positional_args <- append(positional_args, nm)
+            }
+        } else {
+            # GDAL >= 3.12 use `is_hidden_for_api` instead
+            if (!arginfo$is_hidden_for_api && !arginfo$is_positional) {
+                has_non_positionals <- TRUE
+            } else if (!arginfo$is_hidden_for_api && arginfo$is_positional) {
+                positional_args <- append(positional_args, nm)
+            }
+        }
+    }
+
+    cat("Usage:", cmd)
+
+    if (alginfo$has_subalgorithms) {
+        cat(" <SUBCOMMAND>")
+        if (has_non_positionals) {
+            cat(" [OPTIONS]")
+        }
+        cat("\nwhere <SUBCOMMAND> is one of:\n")
+
+        max_name_len <- 0
+        for (nm in alginfo$subalgorithm_names) {
+            if (nchar(nm) > max_name_len)
+                max_name_len <- nchar(nm)
+        }
+        for (nm in alginfo$subalgorithm_names) {
+            num_add_spaces <- max_name_len - nchar(nm)
+            cat("  - ", nm, rep_len(" ", num_add_spaces + 1), sep = "")
+            cat(": ")
+            sub_alg <- new(GDALAlg, c(cmd, nm))
+            cat(sub_alg$info()$description)
+            cat("\n")
+            sub_alg$release()
+        }
+        cat("\n")
+    } else {
+        if (length(alginfo$arg_names) > 0) {
+            if (has_non_positionals) {
+                cat(" [OPTIONS]")
+            }
+            for (arg_nm in positional_args) {
+                arginfo <- alg$argInfo(arg_nm)
+                optional <- (!arginfo$is_required &&
+                                !(alginfo$name == "pipeline" &&
+                                  arginfo$name == "pipeline"))
+
+                cat(" ")
+                if (optional)
+                    cat("[")
+                if (arginfo$meta_var != "") {
+                    if (startsWith(arginfo$meta_var, "<")) {
+                        cat(arginfo$meta_var)
+                    } else {
+                        cat("<", arginfo$meta_var, ">", sep = "")
+                    }
+                }
+                if (arginfo$type == "DATASET_LIST" && arginfo$max_count > 1)
+                    cat("...")
+                if (optional)
+                    cat("]")
+            }
+        }
+
+        cat("\n\n")
+        cat(alginfo$description, "\n\n")
+    }
+
+    print_arg <- function(arg_name) {
+        this_arg <- alg$argInfo(arg_name)
+
+        cat("  ")
+        if (this_arg$short_name != "")
+            cat("-", this_arg$short_name, ", ", sep = "")
+        if (length(this_arg$aliases) > 0) {
+            for (nm in this_arg$aliases) {
+                if (nchar(nm) == 1) {
+                    cat("-", nm, ", ", sep = "")
+                } else {
+                    cat("--", nm, ", ", sep = "")
+                }
+            }
+        }
+        if (this_arg$name != "")
+            cat("--", this_arg$name, sep = "")
+        if (this_arg$meta_var != "") {
+            cat(" ")
+            if (startsWith(this_arg$meta_var, "<")) {
+                cat(this_arg$meta_var)
+            } else {
+                cat("<", this_arg$meta_var, ">", sep = "")
+            }
+        }
+        cat("\n")
+
+        cat("    ")
+        cat(this_arg$description)
+        cat("\n")
+
+        if (length(this_arg$choices)) {
+            cat("    ")
+            cat("[", paste(this_arg$choices, collapse = "|"), "]", sep = "")
+            cat("\n")
+        }
+
+        if (this_arg$type == "DATASET" || this_arg$type == "DATASET_LIST") {
+            if (all(this_arg$dataset_input_flags == "NAME") &&
+                    all(this_arg$dataset_output_flags == "OBJECT")) {
+
+                cat("    [created by algorithm]\n")
+            }
+        }
+
+        if (this_arg$has_default_value) {
+            cat("    [default: ")
+            cat(paste(this_arg$default_value, collapse = ", "))
+            cat("]\n")
+        }
+
+        if (endsWith(this_arg$type, "LIST")) {
+            if (this_arg$min_count > 0 &&
+                this_arg$min_count == this_arg$max_count) {
+
+                if (this_arg$min_count != 1)
+                    cat("    [", this_arg$max_count, " values]\n", sep = "")
+
+            } else if (this_arg$min_count > 0 &&
+                       this_arg$max_count < .Machine$integer.max) {
+
+                cat("    [", this_arg$min_count, "..", this_arg$max_count,
+                    " values]\n", sep = "")
+
+            } else if (this_arg$min_count > 0) {
+                cat("    [", this_arg$min_count, "..", " values]\n", sep = "")
+            } else if (this_arg$max_count > 1) {
+                cat("    [may be repeated]\n")
+            }
+        }
+
+        if (this_arg$is_required)
+            cat("    [required]\n")
+
+        if (nzchar(this_arg$mutual_exclusion_group)) {
+            other_args <- character()
+            for (nm in alginfo$arg_names) {
+                other_arg <- alg$argInfo(nm)
+                if (gdal_version_num() < gdal_compute_version(3, 12, 0)) {
+                    # GDAL < 3.12 use `is_only_for_cli`
+                    if (other_arg$is_only_for_cli || this_arg$name == nm)
+                        next
+                } else {
+                    # GDAL >= 3.12 use `is_hidden_for_api` instead
+                    if (other_arg$is_hidden_for_api || this_arg$name == nm)
+                        next
+                }
+                if (other_arg$mutual_exclusion_group ==
+                        this_arg$mutual_exclusion_group) {
+
+                    other_args <- append(other_args,
+                                         paste0("--", other_arg$name))
+                }
+            }
+            if (length(other_args) > 0) {
+                cat("    [mutually exclusive with ")
+                cat(paste(other_args, collapse = ", "))
+                cat("]\n")
+            }
+        }
+    }
+
+    print_pipeline_usage <- function() {
+        # TODO: add step names and their options
+
+        cat("<PIPELINE> is of the form: ")
+        if (isTRUE(grepl("raster", cmd, ignore.case = TRUE)))
+            str_out <- "read [READ-OPTIONS] ( ! <STEP-NAME> [STEP-OPTIONS] )* ! write [WRITE-OPTIONS]\n"
+        else
+            str_out <- "read|concat [READ-OPTIONS] ( ! <STEP-NAME> [STEP-OPTIONS] )* ! write [WRITE-OPTIONS]\n"
+        cat(str_out)
+        cat("\n")
+    }
+
+    if (length(positional_args) > 0) {
+        cat("Positional arguments:\n")
+        for (arg_nm in positional_args) {
+            print_arg(arg_nm)
+        }
+        cat("\n")
+    }
+
+    if (alginfo$name == "pipeline") {
+        print_pipeline_usage()
+    } else {
+        # non-positional args by category
+        common_args <- character()
+        base_args <- character()
+        advanced_args <- character()
+        esoteric_args <- character()
+        for (nm in alginfo$arg_names) {
+            arginfo <- alg$argInfo(nm)
+            if ((isTRUE(!as.logical(arginfo$is_only_for_cli)) ||  # GDAL < 3.12
+                isTRUE(!as.logical(arginfo$is_hidden_for_api)))  # GDAL >= 3.12
+                    && !arginfo$is_positional) {
+
+                if (tolower(arginfo$category) == "common")
+                    common_args <- append(common_args, nm)
+                else if (tolower(arginfo$category) == "base")
+                    base_args <- append(base_args, nm)
+                else if (tolower(arginfo$category) == "advanced")
+                    advanced_args <- append(advanced_args, nm)
+                else if (tolower(arginfo$category) == "esoteric")
+                    esoteric_args <- append(esoteric_args, nm)
+            }
+        }
+
+        if (length(common_args) > 0) {
+            cat("Common options:\n")
+            for (arg_nm in common_args) {
+                print_arg(arg_nm)
+            }
+            cat("\n")
+        }
+
+        if (length(base_args) > 0) {
+            cat("Options:\n")
+            for (arg_nm in base_args) {
+                print_arg(arg_nm)
+            }
+            cat("\n")
+        }
+
+        if (length(advanced_args) > 0) {
+            cat("Advanced options:\n")
+            for (arg_nm in advanced_args) {
+                print_arg(arg_nm)
+            }
+            cat("\n")
+        }
+
+        if (length(esoteric_args) > 0) {
+            cat("Esoteric options:\n")
+            for (arg_nm in esoteric_args) {
+                print_arg(arg_nm)
+            }
+            cat("\n")
+        }
+    }
+
+    if (alginfo$name == "pipeline") {
+        cat("See `gdal_usage(\"raster pipeline\")` or `gdal_usage(\"vector pipeline\")`\n")
+    } else if (alginfo$long_description != "") {
+        cat("\n", alginfo$long_description, "\n", sep = "")
+    }
+
+    if (alginfo$URL != "")
+        cat("\nFor more details: ", alginfo$URL, "\n", sep = "")
+
+    alg$release()
+}

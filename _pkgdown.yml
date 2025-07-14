@@ -23,6 +23,7 @@ reference:
 
 - title: Exposed C++ classes
 - contents:
+  - GDALAlg-class
   - GDALRaster-class
   - GDALVector-class
   - CmbTable-class
@@ -30,6 +31,9 @@ reference:
   - VSIFile-class
 
 - title: Stand-alone functions
+- subtitle: \"gdal\" CLI (GDAL >= 3.11.3)
+- contents:
+  - gdal_cli
 - subtitle: Raster creation
 - contents:
   - create
@@ -43,7 +47,7 @@ reference:
   - autoCreateWarpedVRT
   - buildVRT
   - rasterToVRT
-- subtitle: Algorithms
+- subtitle: Raster utilities
 - contents:
   - calc
   - combine
@@ -54,7 +58,7 @@ reference:
   - rasterize
   - sieveFilter
   - warp
-- subtitle: Display
+- subtitle: Raster display
 - contents:
   - plot_raster
   - read_ds
@@ -81,27 +85,13 @@ reference:
 - contents:
   - srs_convert
   - srs_query
-- subtitle: Geometry
+- subtitle: Vector utilities
 - contents:
-  - bbox_from_wkt
-  - bbox_to_wkt
-  - bbox_intersect
-  - bbox_union
-  - bbox_transform
-  - g_factory
-  - g_wk2wk
-  - g_query
-  - g_util
-  - g_binary_pred
-  - g_binary_op
-  - g_unary_op
-  - g_measures
-  - g_coords
-  - g_envelope
-  - g_transform
-  - geos_version
-  - has_geos
-- subtitle: Data management
+  - ogrinfo
+  - ogr2ogr
+  - ogr_proc
+  - ogr_reproject
+- subtitle: General data management
 - contents:
   - addFilesInZip
   - bandCopyWholeRaster
@@ -110,10 +100,8 @@ reference:
   - identifyDriver
   - inspectDataset
   - renameDataset
-- subtitle: OGR vector utilities
+- subtitle: Vector data management
 - contents:
-  - ogrinfo
-  - ogr2ogr
   - ogr_ds_exists
   - ogr_ds_format
   - ogr_ds_test_cap
@@ -134,12 +122,30 @@ reference:
   - ogr_def_field
   - ogr_def_geom_field
   - ogr_def_layer
-  - ogr_proc
-  - ogr_reproject
   - plot.OGRFeature
   - plot.OGRFeatureSet
   - print.OGRFeature
   - print.OGRFeatureSet
+- subtitle: Geometry
+- contents:
+  - bbox_from_wkt
+  - bbox_to_wkt
+  - bbox_intersect
+  - bbox_union
+  - bbox_transform
+  - g_factory
+  - g_wk2wk
+  - g_query
+  - g_util
+  - g_binary_pred
+  - g_binary_op
+  - g_unary_op
+  - g_measures
+  - g_coords
+  - g_envelope
+  - g_transform
+  - geos_version
+  - has_geo
 - subtitle: Virtual file systems
 - contents:
   - vsi_clear_path_options
