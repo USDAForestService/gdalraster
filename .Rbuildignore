@@ -21,6 +21,7 @@ config.status
 ^sample-data$
 ^codecov\.yml$
 ^.vscode$
+^.devcontainer$
 ^.editorconfig
 ^.git-blame-ignore-revs
 ^.lintr
