@@ -5,6 +5,7 @@
 */
 
 #include <cstdlib>
+#include <limits>
 #include <vector>
 
 #include "cpl_port.h"
@@ -141,15 +142,11 @@ SEXP VSIFile::read(Rcpp::NumericVector nbytes) {
     size_t nbytes_in = 0;
 
     if (Rcpp::isInteger64(nbytes)) {
-        int64_t tmp = Rcpp::fromInteger64(nbytes[0]);
-        if (static_cast<uint64_t>(tmp) > SIZE_MAX)
-            Rcpp::stop("'nbytes' is out of range");
-        else
-            nbytes_in = static_cast<size_t>(tmp);
+        nbytes_in = static_cast<size_t>(Rcpp::fromInteger64(nbytes[0]));
     }
     else {
-        if (nbytes[0] > SIZE_MAX)
-            Rcpp::stop("'nbytes' is out of range");
+        if (nbytes[0] > static_cast<double>(MAX_INT_AS_R_NUMERIC))
+            Rcpp::stop("'nbytes' given as type double is out of range");
         else
             nbytes_in = static_cast<size_t>(nbytes[0]);
     }
