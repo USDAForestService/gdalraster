@@ -1,3 +1,7 @@
+# gdalraster 2.1.0.9000 (dev)
+
+* (internal) avoid clang warning from `-Wimplicit-const-int-float-conversion` in src/vsifile.cpp (2025-07-15)
+
 # gdalraster 2.1.0
 
 ## Features / enhancements
