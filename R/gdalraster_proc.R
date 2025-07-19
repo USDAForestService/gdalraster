@@ -1662,7 +1662,6 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
         stop("'max_ram' exceeds usable physical RAM", call. = FALSE)
 
     ds <- NULL
-    close_ds <- FALSE
     if (is(raster, "Rcpp_GDALRaster")) {
         ds <- raster
         if (!ds$isOpen()) {
@@ -1670,7 +1669,7 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
         }
     } else if (is.character(raster) && length(raster) == 1) {
         ds <- new(GDALRaster, raster)
-        close_ds <- TRUE
+        on.exit(ds$close(), add = TRUE)
     } else {
         stop("'raster' must be a character string or GDALRaster object",
              call. = FALSE)
@@ -1708,6 +1707,7 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
                 }
             } else {
                 use_mem <- TRUE
+                on.exit(ds_mem$close(), add = TRUE)
             }
         } else {
 
@@ -1749,6 +1749,10 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
                     } else {
                         message("copy completed")
                         use_mem <- TRUE
+                        on.exit(ds_mem$close(), add = TRUE)
+                        on.exit(res <- deleteDataset(f_mem), add = TRUE)
+                        on.exit(res <- vsi_rmdir(mem_dir, recursive = TRUE),
+                                add = TRUE)
                     }
                 }
             }
@@ -1795,15 +1799,6 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
             ret <- ds$pixel_extract(xy_in, bands, interp, krnl_dim, xy_srs)
     }
 
-    if (use_mem) {
-        if (is(ds_mem, "Rcpp_GDALRaster"))
-            ds_mem$close()
-        if (f_mem != "")
-            res <- deleteDataset(f_mem)
-        if (mem_dir != "")
-            vsi_rmdir(mem_dir, recursive = TRUE)
-    }
-
     col_names <- colnames(ret)
     band_nums <- NULL
     if (bands[1] == 0)
@@ -1846,9 +1841,6 @@ pixel_extract <- function(raster, xy, bands = NULL, interp = NULL,
     } else {
         colnames(ret) <- make.names(col_names, unique = TRUE)
     }
-
-    if (close_ds)
-        ds$close()
 
     return(ret)
 }
