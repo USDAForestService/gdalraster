@@ -1,4 +1,6 @@
-# gdalraster 2.1.0.9000 (dev)
+# gdalraster 2.1.0.9001 (dev)
+
+* `pixel_extract()`: add checks for potential ctrl-c user interrupt during extract for a large number of points (#757) (2025-07-20)
 
 * (internal) avoid clang warning from `-Wimplicit-const-int-float-conversion` in src/vsifile.cpp (2025-07-15)
 
