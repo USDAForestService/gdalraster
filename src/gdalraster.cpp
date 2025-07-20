@@ -811,6 +811,9 @@ Rcpp::NumericMatrix GDALRaster::pixel_extract(const Rcpp::RObject &xy,
             if (!quiet) {
                 pfnProgress((row_idx + 1.0) / num_pts, nullptr, nullptr);
             }
+            if (row_idx % 1000 == 0) {
+                Rcpp::checkUserInterrupt();
+            }
         }
     }
 
