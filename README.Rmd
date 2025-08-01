@@ -21,6 +21,7 @@ knitr::opts_chunk$set(
 [![R-hub](https://github.com/USDAForestService/gdalraster/actions/workflows/rhub.yaml/badge.svg)](https://github.com/USDAForestService/gdalraster/actions/workflows/rhub.yaml)
 [![CRAN status](https://www.r-pkg.org/badges/version/gdalraster)](https://CRAN.R-project.org/package=gdalraster)
 [![r-universe status](https://usdaforestservice.r-universe.dev/badges/gdalraster)](https://usdaforestservice.r-universe.dev/gdalraster)
+[![Anaconda-Server Badge](https://anaconda.org/conda-forge/r-gdalraster/badges/version.svg)](https://anaconda.org/conda-forge/r-gdalraster)
 [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/9382/badge)](https://www.bestpractices.dev/projects/9382)
 [![OpenSSF Scorecard](https://api.scorecard.dev/projects/github.com/USDAForestService/gdalraster/badge)](https://scorecard.dev/viewer/?uri=github.com/USDAForestService/gdalraster)
 <!-- badges: end -->
@@ -135,6 +136,14 @@ It is not recommended to mix source installations and installation of macOS bina
 ```{r, eval=FALSE}
 # Install the development version from r-universe
 install.packages("gdalraster", repos = c("https://usdaforestservice.r-universe.dev", "https://cran.r-project.org"))
+```
+
+### From conda-forge
+
+Packages for Linux and macOS are available from [conda-forge](https://conda-forge.org/). To install into a particular conda environment with [conda](https://docs.conda.io/projects/conda/en/stable/), in the activated environment:
+
+```
+conda install --channel conda-forge r-gdalraster
 ```
 
 ## Documentation
