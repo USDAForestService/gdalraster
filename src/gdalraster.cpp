@@ -290,6 +290,7 @@ std::string GDALRaster::getDriverShortName() const {
     checkAccess_(GA_ReadOnly);
 
     GDALDriverH hDriver = GDALGetDatasetDriver(m_hDataset);
+    if (!hDriver) return("");
     return GDALGetDriverShortName(hDriver);
 }
 
@@ -297,6 +298,7 @@ std::string GDALRaster::getDriverLongName() const {
     checkAccess_(GA_ReadOnly);
 
     GDALDriverH hDriver = GDALGetDatasetDriver(m_hDataset);
+    if (!hDriver) return("");
     return GDALGetDriverLongName(hDriver);
 }
 

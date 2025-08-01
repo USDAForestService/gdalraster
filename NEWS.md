@@ -1,4 +1,6 @@
-# gdalraster 2.1.0.9001 (dev)
+# gdalraster 2.1.0.9002 (dev)
+
+* allow reporting driver name as empty string for a dataset that has no driver (fixes #759) (2025-08-01)
 
 * `pixel_extract()`: add checks for potential ctrl-c user interrupt during extract for a large number of points (#757) (2025-07-20)
 
