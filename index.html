@@ -114,10 +114,30 @@
 <div class="section level2">
 <h2 id="installation">Installation<a class="anchor" aria-label="anchor" href="#installation"></a>
 </h2>
+<div class="section level3">
+<h3 id="from-cran">From CRAN<a class="anchor" aria-label="anchor" href="#from-cran"></a>
+</h3>
 <p>Install the released version from CRAN with:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span><span class="op">)</span></span></code></pre></div>
 <p>CRAN provides pre-compiled binary packages for Windows and macOS. These do not require any separate installation of external libraries for GDAL.</p>
+</div>
+<div class="section level3">
+<h3 id="from-conda-forge">From conda-forge<a class="anchor" aria-label="anchor" href="#from-conda-forge"></a>
+</h3>
+<p><a href="https://github.com/conda-forge/r-gdalraster-feedstock" class="external-link">Conda-forge</a> provides pre-compiled binary packages that track CRAN releases for the following platforms:</p>
+<p><a href="https://anaconda.org/conda-forge/r-gdalraster" class="external-link"><img src="https://img.shields.io/conda/pn/conda-forge/r-gdalraster.svg" alt="Conda Platforms"></a></p>
+<p>To install <strong>gdalraster</strong> into a particular conda environment with <a href="https://docs.conda.io/projects/conda/en/stable/" class="external-link">conda</a>, in the activated environment:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>conda install <span class="sc">--</span>channel conda<span class="sc">-</span>forge r<span class="sc">-</span>gdalraster</span></code></pre></div>
+</div>
+<div class="section level3">
+<h3 id="from-r-universe">From R-universe<a class="anchor" aria-label="anchor" href="#from-r-universe"></a>
+</h3>
+<p><a href="https://usdaforestservice.r-universe.dev/gdalraster" class="external-link">R-universe</a> provides pre-compiled binary packages for Windows and macOS that track the development version of <strong>gdalraster</strong>. New packages are built usually within ~1 hour of the most recent commit in branch <code>main</code>.</p>
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Install the development version from r-universe</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://usdaforestservice.r-universe.dev"</span>, <span class="st">"https://cran.r-project.org"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+</div>
 <div class="section level3">
 <h3 id="from-source-code">From source code<a class="anchor" aria-label="anchor" href="#from-source-code"></a>
 </h3>
@@ -126,16 +146,16 @@
 </h4>
 <p>GDAL &gt;= 3.1.0 built with GEOS is required, but a more recent version is recommended.</p>
 <p>On Ubuntu, recent versions of geospatial libraries can be installed from the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ubuntugis-unstable" class="external-link">ubuntugis-unstable PPA</a> with the following commands. Note that libxml2 is required for the R package <strong>xml2</strong> which is a dependency, so we go ahead and install it here as well:</p>
-<div class="sourceCode" id="cb2"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" tabindex="-1"></a>sudo add<span class="sc">-</span>apt<span class="sc">-</span>repository ppa<span class="sc">:</span>ubuntugis<span class="sc">/</span>ubuntugis<span class="sc">-</span>unstable</span>
-<span id="cb2-2"><a href="#cb2-2" tabindex="-1"></a>sudo apt update</span>
-<span id="cb2-3"><a href="#cb2-3" tabindex="-1"></a>sudo apt install libgdal<span class="sc">-</span>dev libgeos<span class="sc">-</span>dev libxml2<span class="sc">-</span>dev</span></code></pre></div>
+<div class="sourceCode" id="cb4"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" tabindex="-1"></a>sudo add<span class="sc">-</span>apt<span class="sc">-</span>repository ppa<span class="sc">:</span>ubuntugis<span class="sc">/</span>ubuntugis<span class="sc">-</span>unstable</span>
+<span id="cb4-2"><a href="#cb4-2" tabindex="-1"></a>sudo apt update</span>
+<span id="cb4-3"><a href="#cb4-3" tabindex="-1"></a>sudo apt install libgdal<span class="sc">-</span>dev libgeos<span class="sc">-</span>dev libxml2<span class="sc">-</span>dev</span></code></pre></div>
 <p>The versions in ubuntugis-unstable generally work well and are more up-to-date, but less recent versions in the <a href="https://launchpad.net/~ubuntugis/+archive/ubuntu/ppa" class="external-link">ubuntugis-stable PPA</a> could be used instead.</p>
 <p>Package <strong>sf</strong> provides helpful <a href="https://github.com/r-spatial/sf#linux" class="external-link">instructions</a> for installing the geospatial libraries on other Linux distributions.</p>
 <p>With the dependent libraries available on the system, install from CRAN:</p>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span><span class="op">)</span></span></code></pre></div>
 <p>Or install the development version from GitHub using package <a href="https://remotes.r-lib.org/" class="external-link">remotes</a>:</p>
-<div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
 </div>
 <div class="section level4">
@@ -143,7 +163,7 @@
 </h4>
 <p><a href="https://cran.r-project.org/bin/windows/Rtools/" class="external-link">RTools</a> is needed to install from source on Windows. RTools since version 4.2 includes GDAL and all other dependent libraries that are needed to compile <strong>gdalraster</strong>. Note that CRAN releases periodic revisions to RTools that often include updates to the libraries as new versions become available. <a href="https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html" class="external-link">Release 6608</a> of RTools 4.5 contains GDAL 3.11.0, GEOS 3.13.1 and PROJ 9.6.0.</p>
 <p>With RTools installed:</p>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
 </div>
@@ -151,27 +171,13 @@
 <h4 id="macos">macOS<a class="anchor" aria-label="anchor" href="#macos"></a>
 </h4>
 <p>GDAL can be installed with Homebrew:</p>
-<div class="sourceCode" id="cb6"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" tabindex="-1"></a>brew install gdal</span></code></pre></div>
+<div class="sourceCode" id="cb8"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" tabindex="-1"></a>brew install gdal</span></code></pre></div>
 <p>then</p>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Install the development version from GitHub</span></span>
 <span><span class="fu">remotes</span><span class="fu">::</span><span class="fu">install_github</span><span class="op">(</span><span class="st">"USDAForestService/gdalraster"</span><span class="op">)</span></span></code></pre></div>
 <p>It is not recommended to mix source installations and installation of macOS binaries from CRAN. Consider installing the development version from R-universe instead.</p>
 </div>
-</div>
-<div class="section level3">
-<h3 id="from-r-universe">From R-universe<a class="anchor" aria-label="anchor" href="#from-r-universe"></a>
-</h3>
-<p><a href="https://usdaforestservice.r-universe.dev/gdalraster" class="external-link">R-universe</a> provides pre-compiled binary packages for Windows and macOS that track the development version of <strong>gdalraster</strong>. New packages are built usually within ~1 hour of the most recent commit in branch <code>main</code>.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="co"># Install the development version from r-universe</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html" class="external-link">install.packages</a></span><span class="op">(</span><span class="st">"gdalraster"</span>, repos <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"https://usdaforestservice.r-universe.dev"</span>, <span class="st">"https://cran.r-project.org"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-</div>
-<div class="section level3">
-<h3 id="from-conda-forge">From conda-forge<a class="anchor" aria-label="anchor" href="#from-conda-forge"></a>
-</h3>
-<p>Packages for Linux and macOS are available from <a href="https://conda-forge.org/" class="external-link">conda-forge</a>. To install into a particular conda environment with <a href="https://docs.conda.io/projects/conda/en/stable/" class="external-link">conda</a>, in the activated environment:</p>
-<div class="sourceCode" id="cb9"><pre class="sourceCode R"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" tabindex="-1"></a>conda install <span class="sc">--</span>channel conda<span class="sc">-</span>forge r<span class="sc">-</span>gdalraster</span></code></pre></div>
 </div>
 </div>
 <div class="section level2">
@@ -197,7 +203,7 @@
 <li><a href="https://github.com/USDAForestService/gdalraster/actions/workflows/rhub.yaml" class="external-link"><img src="https://github.com/USDAForestService/gdalraster/actions/workflows/rhub.yaml/badge.svg" alt="R-hub"></a></li>
 <li><a href="https://CRAN.R-project.org/package=gdalraster" class="external-link"><img src="https://www.r-pkg.org/badges/version/gdalraster" alt="CRAN status"></a></li>
 <li><a href="https://usdaforestservice.r-universe.dev/gdalraster" class="external-link"><img src="https://usdaforestservice.r-universe.dev/badges/gdalraster" alt="r-universe status"></a></li>
-<li><a href="https://anaconda.org/conda-forge/r-gdalraster" class="external-link"><img src="https://anaconda.org/conda-forge/r-gdalraster/badges/version.svg" alt="Anaconda-Server Badge"></a></li>
+<li><a href="https://anaconda.org/conda-forge/r-gdalraster" class="external-link"><img src="https://img.shields.io/conda/vn/conda-forge/r-gdalraster" alt="Conda Version"></a></li>
 <li><a href="https://www.bestpractices.dev/projects/9382" class="external-link"><img src="https://www.bestpractices.dev/projects/9382/badge" alt="OpenSSF Best Practices"></a></li>
 <li><a href="https://scorecard.dev/viewer/?uri=github.com/USDAForestService/gdalraster" class="external-link"><img src="https://api.scorecard.dev/projects/github.com/USDAForestService/gdalraster/badge" alt="OpenSSF Scorecard"></a></li>
 </ul>
