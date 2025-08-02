@@ -83,9 +83,7 @@ std::string getGFU_string_(GDALRATFieldUsage gfu) {
 GDALRaster::GDALRaster() :
             m_fname(""),
             m_open_options(Rcpp::CharacterVector::create()),
-            m_shared(false),
-            m_hDataset(nullptr),
-            m_eAccess(GA_ReadOnly) {}
+            m_shared(false) {}
 
 GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename) :
             GDALRaster(
@@ -112,11 +110,9 @@ GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename, bool read_only,
 
 GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename, bool read_only,
                        const Rcpp::Nullable<Rcpp::CharacterVector>
-                           &open_options,
-                       bool shared) :
-                m_shared(shared),
-                m_hDataset(nullptr),
-                m_eAccess(GA_ReadOnly) {
+                           &open_options, bool shared) :
+
+                m_shared(shared) {
 
     m_fname = Rcpp::as<std::string>(check_gdal_filename(filename));
 
@@ -133,8 +129,10 @@ GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename, bool read_only,
 }
 
 GDALRaster::~GDALRaster() {
-    if (m_hDataset)
+    if (m_shared)
         GDALClose(m_hDataset);
+    else
+        GDALReleaseDataset(m_hDataset);
 }
 
 std::string GDALRaster::getFilename() const {

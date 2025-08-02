@@ -224,8 +224,8 @@ class GDALRaster {
 
  private:
     std::string m_fname {};
-    Rcpp::CharacterVector m_open_options{};
-    bool m_shared {true};
+    Rcpp::CharacterVector m_open_options {};
+    bool m_shared;
     GDALDatasetH m_hDataset {nullptr};
     GDALAccess m_eAccess {GA_ReadOnly};
 };
