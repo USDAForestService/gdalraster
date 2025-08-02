@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9002</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9003</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,10 +50,12 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.1.0.9002" id="gdalraster-2109002-dev">gdalraster 2.1.0.9002 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2109002-dev"></a></h2>
-<ul><li><p>allow reporting driver name as empty string for a dataset that has no driver (fixes <a href="https://github.com/USDAForestService/gdalraster/issues/759" class="external-link">#759</a>) (2025-08-01)</p></li>
+<h2 class="pkg-version" data-toc-text="2.1.0.9003" id="gdalraster-2109003-dev">gdalraster 2.1.0.9003 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2109003-dev"></a></h2>
+<ul><li><p>(internal) <code>GDALRaster::close()</code>: call <code>GDALReleaseDataset()</code> instead of <code>GDALClose()</code> when dataset is non-shared (<a href="https://github.com/USDAForestService/gdalraster/issues/764" class="external-link">#764</a>) (2025-08-02)</p></li>
+<li><p>allow reporting driver name as empty string for a dataset that has no driver (fixes <a href="https://github.com/USDAForestService/gdalraster/issues/759" class="external-link">#759</a>) (2025-08-01)</p></li>
 <li><p><code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: add checks for potential ctrl-c user interrupt during extract for a large number of points (<a href="https://github.com/USDAForestService/gdalraster/issues/757" class="external-link">#757</a>) (2025-07-20)</p></li>
 <li><p>(internal) avoid clang warning from <code>-Wimplicit-const-int-float-conversion</code> in src/vsifile.cpp (2025-07-15)</p></li>
+<li><p>Documentation: add conda-forge installation instructions in the README and web docs, and place binary install methods together before source methods for better organization (<a href="https://github.com/USDAForestService/gdalraster/issues/762" class="external-link">#762</a>, thanks to <a href="https://github.com/matthewfeickert" class="external-link">@matthewfeickert</a>)</p></li>
 </ul></div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.0" id="gdalraster-210">gdalraster 2.1.0<a class="anchor" aria-label="anchor" href="#gdalraster-210"></a></h2><p class="text-muted">CRAN release: 2025-07-14</p>
