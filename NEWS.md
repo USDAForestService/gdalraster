@@ -1,10 +1,14 @@
-# gdalraster 2.1.0.9002 (dev)
+# gdalraster 2.1.0.9003 (dev)
+
+* (internal) `GDALRaster::close()`: call `GDALReleaseDataset()` instead of `GDALClose()` when dataset is non-shared (#764) (2025-08-02)
 
 * allow reporting driver name as empty string for a dataset that has no driver (fixes #759) (2025-08-01)
 
 * `pixel_extract()`: add checks for potential ctrl-c user interrupt during extract for a large number of points (#757) (2025-07-20)
 
 * (internal) avoid clang warning from `-Wimplicit-const-int-float-conversion` in src/vsifile.cpp (2025-07-15)
+
+* Documentation: add conda-forge installation instructions in the README and web docs, and place binary install methods together before source methods for better organization (#762, thanks to @matthewfeickert)
 
 # gdalraster 2.1.0
 
