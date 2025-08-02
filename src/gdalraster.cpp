@@ -2077,20 +2077,22 @@ int GDALRaster::getChecksum(int band, int xoff, int yoff,
 }
 
 void GDALRaster::close() {
-    // make sure caches are flushed when access was GA_Update:
-    // since the dataset was opened shared, and could still have a shared
-    // read-only handle (not recommended), or may be re-opened for read and
-    // is on a /vsicurl/ filesystem,
-    if (m_eAccess == GA_Update) {
-        flushCache();
-        vsi_curl_clear_cache(true, m_fname, true);
-    }
+    if (m_hDataset == nullptr)
+        return;
 
-#if GDAL_VERSION_NUM >= 3070000
-    if (GDALClose(m_hDataset) != CE_None)
-        Rcpp::warning("error occurred during GDALClose()!");
+#if GDAL_VERSION_NUM >= GDAL_COMPUTE_VERSION(3, 7, 0)
+    if (m_shared) {
+        if (GDALClose(m_hDataset) != CE_None)
+            Rcpp::warning("error occurred during GDALClose()!");
+    }
+    else {
+        GDALReleaseDataset(m_hDataset);
+    }
 #else
-    GDALClose(m_hDataset);
+    if (m_shared)
+        GDALClose(m_hDataset);
+    else
+        GDALReleaseDataset(m_hDataset);
 #endif
 
     m_hDataset = nullptr;
