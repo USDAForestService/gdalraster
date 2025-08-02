@@ -75,7 +75,7 @@ CRAN provides pre-compiled binary packages for Windows and macOS. These do not r
 
 ### From conda-forge
 
-[Conda-forge](https://github.com/conda-forge/r-gdalraster-feedstock) provides pre-compiled binary packages that track CRAN releases for the following platforms:
+[Conda-forge](https://github.com/conda-forge/r-gdalraster-feedstock) provides pre-compiled binary packages that track CRAN releases, for the following platforms:
 
 [![Conda Platforms](https://img.shields.io/conda/pn/conda-forge/r-gdalraster.svg)](https://anaconda.org/conda-forge/r-gdalraster)
 

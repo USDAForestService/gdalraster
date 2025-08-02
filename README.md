@@ -119,7 +119,7 @@ do not require any separate installation of external libraries for GDAL.
 ### From conda-forge
 
 [Conda-forge](https://github.com/conda-forge/r-gdalraster-feedstock)
-provides pre-compiled binary packages that track CRAN releases for the
+provides pre-compiled binary packages that track CRAN releases, for the
 following platforms:
 
 [![Conda
