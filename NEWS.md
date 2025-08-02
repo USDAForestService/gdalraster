@@ -1,6 +1,6 @@
-# gdalraster 2.1.0.9003 (dev)
+# gdalraster 2.1.0.9004 (dev)
 
-* (internal) `GDALRaster::close()`: call `GDALReleaseDataset()` instead of `GDALClose()` when dataset is non-shared (#764) (2025-08-02)
+* (internal) class `GDALRaster`: call `GDALReleaseDataset()` instead of `GDALClose()` in the `close()` method and destructor when dataset is non-shared (#764, #765) (2025-08-02)
 
 * allow reporting driver name as empty string for a dataset that has no driver (fixes #759) (2025-08-01)
 
