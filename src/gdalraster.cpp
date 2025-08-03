@@ -129,10 +129,12 @@ GDALRaster::GDALRaster(const Rcpp::CharacterVector &filename, bool read_only,
 }
 
 GDALRaster::~GDALRaster() {
-    if (m_shared)
-        GDALClose(m_hDataset);
-    else
-        GDALReleaseDataset(m_hDataset);
+    if (m_hDataset) {
+        if (m_shared)
+            GDALClose(m_hDataset);
+        else
+            GDALReleaseDataset(m_hDataset);
+    }
 }
 
 std::string GDALRaster::getFilename() const {
