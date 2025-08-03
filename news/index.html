@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9004</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9005</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,7 +50,7 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.1.0.9004" id="gdalraster-2109004-dev">gdalraster 2.1.0.9004 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2109004-dev"></a></h2>
+<h2 class="pkg-version" data-toc-text="2.1.0.9005" id="gdalraster-2109005-dev">gdalraster 2.1.0.9005 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2109005-dev"></a></h2>
 <ul><li><p>(internal) class <code>GDALRaster</code>: call <code>GDALReleaseDataset()</code> instead of <code>GDALClose()</code> in the <code><a href="https://rdrr.io/r/base/connections.html" class="external-link">close()</a></code> method and destructor when dataset is non-shared (<a href="https://github.com/USDAForestService/gdalraster/issues/764" class="external-link">#764</a>, <a href="https://github.com/USDAForestService/gdalraster/issues/765" class="external-link">#765</a>) (2025-08-02)</p></li>
 <li><p>allow reporting driver name as empty string for a dataset that has no driver (fixes <a href="https://github.com/USDAForestService/gdalraster/issues/759" class="external-link">#759</a>) (2025-08-01)</p></li>
 <li><p><code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: add checks for potential ctrl-c user interrupt during extract for a large number of points (<a href="https://github.com/USDAForestService/gdalraster/issues/757" class="external-link">#757</a>) (2025-07-20)</p></li>
