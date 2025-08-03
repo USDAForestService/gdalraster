@@ -1,4 +1,4 @@
-# gdalraster 2.1.0.9004 (dev)
+# gdalraster 2.1.0.9005 (dev)
 
 * (internal) class `GDALRaster`: call `GDALReleaseDataset()` instead of `GDALClose()` in the `close()` method and destructor when dataset is non-shared (#764, #765) (2025-08-02)
 
