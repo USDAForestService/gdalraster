@@ -4,7 +4,7 @@ test_that("vsi_stat works", {
     data_dir <- system.file("extdata", package="gdalraster")
     expect_true(vsi_stat(data_dir))
     expect_equal(vsi_stat(data_dir, "type"), "dir")
-    elev_file <- file.path(data_dir, "storml_elev.tif")
+    elev_file <- file.path(data_dir, "storml_elev_orig.tif")
     expect_true(vsi_stat(elev_file))
     expect_equal(vsi_stat(elev_file, "type"), "file")
     expect_equal(vsi_stat(elev_file, "size"), bit64::as.integer64(31152))
@@ -23,14 +23,14 @@ test_that("vsi_read_dir works", {
 test_that("vsi_copy_file works", {
     skip_if(as.integer(gdal_version()[2]) < 3070000)
 
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     tmp_file <- tempfile(fileext = ".tif")
     expect_equal(vsi_copy_file(elev_file, tmp_file), 0)
     expect_equal(vsi_unlink(tmp_file), 0)
 })
 
 test_that("vsi_unlink works", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     tmp_file <- paste0(tempdir(), "/", "tmp.tif")
     file.copy(elev_file, tmp_file)
     expect_equal(vsi_unlink(tmp_file), 0)
@@ -39,7 +39,7 @@ test_that("vsi_unlink works", {
 test_that("vsi_unlink_batch works", {
     skip_if(as.integer(gdal_version()[2]) < 3010000)
 
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     tcc_file <- system.file("extdata/storml_tcc.tif", package="gdalraster")
     tmp_elev <- paste0(tempdir(), "/", "tmp_elev.tif")
     file.copy(elev_file,  tmp_elev)
@@ -85,7 +85,7 @@ test_that("vsi_curl_clear_cache runs without error", {
 })
 
 test_that("vsi_rename works", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     tmp_file <- tempfile(fileext = ".tif")
     file.copy(elev_file, tmp_file)
     new_file <- file.path(dirname(tmp_file), "storml_elev_copy.tif")

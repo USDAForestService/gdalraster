@@ -47,8 +47,14 @@ See the \href{https://gdal.org/en/stable/programs/gdaldem.html}{documentation fo
 mode.
 }
 \examples{
+## hillshade
 elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-slp_file <- file.path(tempdir(), "storml_slp.tif")
-dem_proc("slope", elev_file, slp_file)
-\dontshow{deleteDataset(slp_file)}
+out_file <- file.path(tempdir(), "storml_hillshade.tif")
+dem_proc("hillshade", elev_file, out_file)
+
+ds <- new(GDALRaster, out_file)
+plot_raster(ds)
+
+ds$close()
+\dontshow{deleteDataset(out_file)}
 }

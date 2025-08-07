@@ -1,5 +1,5 @@
 test_that("translate runs without error", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     args <- c("-tr", "90", "90", "-r", "average")
     args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
     img_file <- paste0(tempdir(), "/", "storml_elev_90m.img")
@@ -8,7 +8,7 @@ test_that("translate runs without error", {
 })
 
 test_that("warp runs without error", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     args <- c("-tr", "90", "90", "-r", "cubic", "-tap")
     args <- c(args, "-of", "HFA", "-co", "COMPRESSED=YES")
     alb83_file <- file.path(tempdir(), "storml_elev_alb83.img")

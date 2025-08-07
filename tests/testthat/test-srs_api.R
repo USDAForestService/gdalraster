@@ -1,5 +1,5 @@
 test_that("srs functions work", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file, read_only=TRUE)
     srs <- ds$getProjectionRef()
     ds$close()
