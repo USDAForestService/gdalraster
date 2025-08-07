@@ -217,15 +217,15 @@ of interest.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id storml_elev</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   1        2648</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2        2865</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3        2717</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4        2560</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5        2916</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2        2876</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3        2724</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4        2561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5        2913</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6   6        2633</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7   7        2548</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8   8        2801</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9        2475</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10        2822</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9        2473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10        2812</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># or as GDALRaster object</span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">raster_file</span><span class="op">)</span></span></span>
@@ -234,47 +234,47 @@ of interest.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id storml_elev</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 1   1        2648</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2        2865</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3        2717</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4        2560</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5        2916</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2        2876</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3        2724</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4        2561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5        2913</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 6   6        2633</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 7   7        2548</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 8   8        2801</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9        2475</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10        2822</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9        2473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10        2812</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># interpolated values</span></span></span>
 <span class="r-in"><span><span class="fu">pixel_extract</span><span class="op">(</span><span class="va">raster_file</span>, <span class="va">pts</span>, interp <span class="op">=</span> <span class="st">"bilinear"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extracting from band 1...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id storml_elev</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1    2649.217</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2    2881.799</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3    2716.290</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4    2558.797</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5    2920.404</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6    2629.495</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7    2548.250</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8    2810.543</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9    2478.609</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10    2819.776</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1    2648.589</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2    2884.232</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3    2718.675</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4    2559.443</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5    2917.230</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6    2629.937</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7    2548.441</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8    2810.815</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9    2476.014</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10    2812.528</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># individual pixel values within a kernel</span></span></span>
 <span class="r-in"><span><span class="fu">pixel_extract</span><span class="op">(</span><span class="va">raster_file</span>, <span class="va">pts</span>, krnl_dim <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> extracting from band 1...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>    id b1_p1 b1_p2 b1_p3 b1_p4 b1_p5 b1_p6 b1_p7 b1_p8 b1_p9</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  2660  2654  2651  2652  2648  2646  2653  2647  2645</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  2924  2895  2901  2893  2865  2869  2863  2838  2841</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3    NA  2709  2704    NA  2717  2717    NA  2725  2728</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  2554  2558  2562  2557  2560  2564  2559  2562  2566</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  2932  2920  2908  2927  2916  2903  2923  2911  2899</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  2633  2642  2650  2627  2633  2640  2619  2624  2630</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7  2548  2548  2550  2549  2548  2550  2550  2548  2550</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8  2785  2777  2776  2807  2801  2803  2833  2825  2827</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9  2489  2482  2475  2479  2475  2470  2474  2471  2468</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10  2832  2810  2789  2839  2822  2800  2833  2811  2788</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 1   1  2661  2654  2649  2654  2648  2646  2650  2645  2644</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 2   2  2909  2907  2908  2878  2876  2876  2850  2847  2846</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 3   3  2729  2713  2701  2742  2724  2713  2754  2735  2725</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 4   4  2555  2559  2564  2557  2561  2565  2559  2562  2566</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 5   5  2928  2916  2902  2925  2913  2900  2923  2910  2897</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 6   6  2634  2642  2650  2628  2633  2639  2620  2624  2628</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 7   7  2548  2549  2551  2549  2548  2551  2550  2548  2550</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 8   8  2782  2777  2779  2804  2801  2805  2829  2827  2829</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 9   9  2485  2478  2470  2477  2473  2468  2474  2470  2467</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> 10 10  2842  2819  2795  2834  2812  2788  2829  2804  2780</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># lont/lat xy</span></span></span>
 <span class="r-in"><span><span class="va">pts_wgs84</span> <span class="op">&lt;-</span> <span class="fu"><a href="transform_xy.html">transform_xy</a></span><span class="op">(</span><span class="va">pts</span><span class="op">[</span><span class="op">-</span><span class="fl">1</span><span class="op">]</span>, srs_from <span class="op">=</span> <span class="va">ds</span><span class="op">$</span><span class="fu">getProjection</span><span class="op">(</span><span class="op">)</span>,</span></span>
@@ -286,15 +286,15 @@ of interest.</p>
 <span class="r-out co"><span class="r-pr">#&gt;</span> 0...10...20...30...40...50...60...70...80...90...100 - done.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       storml_elev</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1,]        2648</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]        2865</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]        2717</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]        2560</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]        2916</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [2,]        2876</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [3,]        2724</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [4,]        2561</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [5,]        2913</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6,]        2633</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [7,]        2548</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [8,]        2801</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]        2475</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]        2822</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  [9,]        2473</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [10,]        2812</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 </code></pre></div>
