@@ -736,23 +736,31 @@ buildVRT <- function(vrt_filename, input_rasters, cl_arg = NULL, quiet = FALSE) 
 #' @returns Logical indicating success (invisible \code{TRUE}).
 #' An error is raised if the operation fails.
 #' @examples
-#' ## fill nodata edge pixels in the elevation raster
-#' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+#' ## fill nodata edge pixels
+#' f <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
 #'
 #' ## get count of nodata
-#' tbl <- buildRAT(elev_file)
+#' tbl <- buildRAT(f)
 #' head(tbl)
 #' tbl[is.na(tbl$VALUE),]
 #'
+#' ds <- new(GDALRaster, f)
+#' plot_raster(ds, legend = TRUE)
+#' ds$close()
+#'
 #' ## make a copy that will be modified
 #' mod_file <- file.path(tempdir(), "storml_elev_fill.tif")
-#' file.copy(elev_file,  mod_file)
+#' file.copy(f,  mod_file)
 #'
 #' fillNodata(mod_file, band = 1)
 #'
 #' mod_tbl = buildRAT(mod_file)
 #' head(mod_tbl)
 #' mod_tbl[is.na(mod_tbl$VALUE),]
+#'
+#' ds <- new(GDALRaster, mod_file)
+#' plot_raster(ds, legend = TRUE)
+#' ds$close()
 #' \dontshow{deleteDataset(mod_file)}
 fillNodata <- function(filename, band, mask_file = "", max_dist = 100, smooth_iterations = 0L, quiet = FALSE) {
     invisible(.Call(`_gdalraster_fillNodata`, filename, band, mask_file, max_dist, smooth_iterations, quiet))

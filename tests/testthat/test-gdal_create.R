@@ -4,7 +4,7 @@
 test_that("create and createCopy R public interface works", {
 
     ## createCopy
-    f <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    f <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     f2 <- paste0(tempdir(), "/", "storml_elev2.tif")
 
     ds <- new(GDALRaster, f)
