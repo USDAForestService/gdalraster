@@ -9,7 +9,7 @@ test_that(".getGDALformat works", {
 
 test_that("calc writes correct results", {
     # bioclimatic index
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     expr <- "round( ((ELEV_M * 3.281 - 5449) / 100) +
                 ((pixelLat - 42.16) * 4) +
                 ((-116.39 - pixelLon) * 1.25) )"
@@ -309,7 +309,7 @@ test_that("rasterToVRT works", {
     expect_equal(chk, 49589)
 
     ## kernel filter
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     krnl <- c(0.11111, 0.11111, 0.11111,
               0.11111, 0.11111, 0.11111,
               0.11111, 0.11111, 0.11111)
@@ -325,7 +325,7 @@ test_that("rasterToVRT works", {
 })
 
 test_that("dem_proc runs without error", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     hs_file <- paste0(tempdir(), "/", "storml_hillshade.tif")
     on.exit(deleteDataset(hs_file))
     expect_true(dem_proc("hillshade", elev_file, hs_file))
@@ -468,7 +468,7 @@ test_that("pixel_extract wrapper returns correct data", {
 
     pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")
     pts <- read.csv(pt_file)
-    raster_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    raster_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
 
     # single pixel (1x1) extract on matrix input
     extr <- pixel_extract(raster_file, pts[-1])
@@ -481,12 +481,12 @@ test_that("pixel_extract wrapper returns correct data", {
     # data frame input
     extr <- pixel_extract(raster_file, pts)
     expect_equal(extr[, 2], expected_values)
-    expect_equal(names(extr), c("id", "storml_elev"))
+    expect_equal(names(extr), c("id", "storml_elev_orig"))
     rm(extr)
     # as_data_frame from matrix input, so no input point IDs
     extr <- pixel_extract(raster_file, pts[-1], as_data_frame = TRUE)
     expect_true(is.data.frame(extr))
-    expect_equal(names(extr), c("ptid", "storml_elev"))
+    expect_equal(names(extr), c("ptid", "storml_elev_orig"))
     expect_equal(extr[, 2], expected_values)
     expect_equal(extr[, 1], seq_len(nrow(extr)))
     rm(extr)
@@ -495,7 +495,7 @@ test_that("pixel_extract wrapper returns correct data", {
     ds <- new(GDALRaster, raster_file)
     extr_ds <- pixel_extract(ds, pts)
     expect_equal(extr_ds[, 2], expected_values)
-    expect_equal(names(extr_ds), c("id", "storml_elev"))
+    expect_equal(names(extr_ds), c("id", "storml_elev_orig"))
     # with missing values in the input
     pts_na <- rbind(pts, c(11, NA_real_, NA_real_))
     extr_na <- pixel_extract(ds, pts_na)

@@ -1,6 +1,6 @@
 test_that("plot_raster works", {
     # grayscale
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file, read_only=TRUE)
     expect_silent(plot_raster(ds, legend=TRUE))
     ds$close()

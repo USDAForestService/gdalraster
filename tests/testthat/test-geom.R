@@ -3,7 +3,7 @@ test_that("geos_version returns a list of length 4", {
 })
 
 test_that("geom functions work on wkb/wkt geometries", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file, read_only=TRUE)
     bb <- bbox_to_wkt(ds$bbox())
     ds$close()
@@ -570,7 +570,7 @@ test_that("WKB/WKT conversion functions work", {
 test_that("bbox functions work", {
     skip_if_not(has_geos())
 
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file, read_only=TRUE)
     bb <- ds$bbox()
     ds$close()
@@ -584,7 +584,7 @@ test_that("bbox functions work", {
 
 test_that("bbox intersect/union return correct values", {
     bbox_list <-list()
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file, read_only=TRUE)
     bbox_list[[1]] <- ds$bbox()
     ds$close()
@@ -611,7 +611,7 @@ test_that("bbox intersect/union return correct values", {
 })
 
 test_that("g_transform / bbox_transform return correct values", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file)
     ds_srs <- ds$getProjectionRef()
     ds_bbox <- ds$bbox()
@@ -830,7 +830,7 @@ test_that("geometry properties are correct", {
 })
 
 test_that("geometry binary predicates/ops return correct values", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file)
     bb <- ds$bbox() |> bbox_to_wkt()
     ds$close()

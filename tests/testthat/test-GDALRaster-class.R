@@ -59,7 +59,7 @@ test_that("dataset parameters are correct", {
     ds$close()
 
     # using dataset open options
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     oo <- "NUM_THREADS=2"
     ds_oo <- new(GDALRaster, elev_file, TRUE, oo)
     expect_equal(ds_oo$getDriverShortName(), "GTiff")
@@ -162,7 +162,7 @@ test_that("get/set metadata works", {
 })
 
 test_that("open/close/re-open works", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file, read_only=TRUE)
     dm <- ds$dim()
     r <- read_ds(ds)
@@ -200,7 +200,7 @@ test_that("open/close/re-open works", {
 })
 
 test_that("statistics are correct", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     mod_file <- paste0(tempdir(), "/", "storml_elev_mod.tif")
     file.copy(elev_file,  mod_file)
     ds <- new(GDALRaster, mod_file, read_only=FALSE)
@@ -334,14 +334,14 @@ test_that("Byte I/O works", {
 
 test_that("Byte I/O: warn when data type not compatible", {
     ## expect a warning when data type is not Byte
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file)
     expect_warning(read_ds(ds, 1L, 0L, 0L, 2L, 3L, 2L, 3L, as_raw = TRUE))
     ds$close()
 })
 
 test_that("set nodata value, unit type, scale and offset works", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     mod_file <- paste0(tempdir(), "/", "storml_elev_mod.tif")
     file.copy(elev_file,  mod_file)
     ds <- new(GDALRaster, mod_file, read_only=FALSE)
@@ -364,8 +364,8 @@ test_that("set nodata value, unit type, scale and offset works", {
 })
 
 test_that("build overviews runs without error", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
-    mod_file <- paste0(tempdir(), "/", "storml_elev.tif")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
+    mod_file <- paste0(tempdir(), "/", "storml_elev_orig.tif")
     file.copy(elev_file,  mod_file)
     ds <- new(GDALRaster, mod_file, read_only=FALSE)
     expect_no_error(ds$buildOverviews("BILINEAR", c(2,4,8), 0))
@@ -852,7 +852,7 @@ test_that("raster dimensions multiply without int overflow", {
 })
 
 test_that("get block indexing works", {
-    elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
+    elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     ds <- new(GDALRaster, elev_file)
 
     values_expected <- read_ds(ds)
