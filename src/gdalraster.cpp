@@ -12,6 +12,7 @@
 #include <utility>
 
 #include "gdal.h"
+#include "gdal_priv.h"
 #include "cpl_port.h"
 #include "cpl_conv.h"
 #include "cpl_string.h"
@@ -2190,12 +2191,17 @@ GDALDatasetH GDALRaster::getGDALDatasetH_() const {
     return m_hDataset;
 }
 
-void GDALRaster::setGDALDatasetH_(GDALDatasetH hDs, bool with_update) {
+void GDALRaster::setGDALDatasetH_(const GDALDatasetH &hDs, bool with_update) {
     m_hDataset = hDs;
     if (with_update)
         m_eAccess = GA_Update;
     else
         m_eAccess = GA_ReadOnly;
+
+    if (GDALDataset::FromHandle(m_hDataset)->GetShared() == TRUE)
+        m_shared = true;
+    else
+        m_shared = false;
 }
 
 // ****************************************************************************
