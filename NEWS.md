@@ -1,4 +1,6 @@
-# gdalraster 2.1.0.9005 (dev)
+# gdalraster 2.1.0.9006 (dev)
+
+* (internal) `setGDALDatasetH_()` in classes `GDALRaster` and `GDALVector`: check shared flag of incoming GDALDatasetH and set the `m_shared` member variable (#767) (2025-08-07)
 
 * (internal) class `GDALRaster`: call `GDALReleaseDataset()` instead of `GDALClose()` in the `close()` method and destructor when dataset is non-shared (#764, #765) (2025-08-02)
 
