@@ -11,6 +11,7 @@
 #include <cstdint>
 
 #include "gdal.h"
+#include "gdal_priv.h"
 #include "cpl_port.h"
 #include "cpl_string.h"
 #include "cpl_time.h"
@@ -2542,12 +2543,17 @@ GDALDatasetH GDALVector::getGDALDatasetH_() const {
     return m_hDataset;
 }
 
-void GDALVector::setGDALDatasetH_(GDALDatasetH hDs, bool with_update) {
+void GDALVector::setGDALDatasetH_(const GDALDatasetH &hDs, bool with_update) {
     m_hDataset = hDs;
     if (with_update)
         m_eAccess = GA_Update;
     else
         m_eAccess = GA_ReadOnly;
+
+    if (GDALDataset::FromHandle(m_hDataset)->GetShared() == TRUE)
+        m_shared = true;
+    else
+        m_shared = false;
 }
 
 OGRLayerH GDALVector::getOGRLayerH_() const {
@@ -2556,7 +2562,8 @@ OGRLayerH GDALVector::getOGRLayerH_() const {
     return m_hLayer;
 }
 
-void GDALVector::setOGRLayerH_(OGRLayerH hLyr, const std::string &lyr_name) {
+void GDALVector::setOGRLayerH_(const OGRLayerH &hLyr,
+                               const std::string &lyr_name) {
     m_hLayer = hLyr;
     m_layer_name = lyr_name;
 #if __has_include("ogr_recordbatch.h")

@@ -165,9 +165,9 @@ class GDALVector {
 
     void setDsn_(const std::string &dsn);
     GDALDatasetH getGDALDatasetH_() const;
-    void setGDALDatasetH_(GDALDatasetH hDs, bool with_update);
+    void setGDALDatasetH_(const GDALDatasetH &hDs, bool with_update);
     OGRLayerH getOGRLayerH_() const;
-    void setOGRLayerH_(OGRLayerH hLyr, const std::string &lyr_name);
+    void setOGRLayerH_(const OGRLayerH &hLyr, const std::string &lyr_name);
     void setFieldNames_();
 
     SEXP createDF_(R_xlen_t nrow) const;
@@ -211,6 +211,7 @@ class GDALVector {
     GDALDatasetH m_hDataset {nullptr};
     GDALAccess m_eAccess {GA_ReadOnly};
     OGRLayerH m_hLayer {nullptr};
+    bool m_shared {false};
     int64_t m_last_write_fid {NA_INTEGER64};
 #if __has_include("ogr_recordbatch.h")
     struct ArrowArrayStream m_stream;

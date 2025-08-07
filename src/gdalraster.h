@@ -27,21 +27,6 @@ typedef void *GDALRasterBandH;
 typedef enum {GA_ReadOnly = 0, GA_Update = 1} GDALAccess;
 #endif
 
-// The function ARE_REAL_EQUAL was copied from gcore/gdal_priv.h since we
-// do not need that header otherwise
-// Copyright (c) 1998, Frank Warmerdam
-// Copyright (c) 2007-2014, Even Rouault <even dot rouault at spatialys.com>
-// License: MIT
-//
-// Behavior is undefined if fVal1 or fVal2 are NaN (should be tested before
-// calling this function)
-template <class T> inline bool ARE_REAL_EQUAL(T fVal1, T fVal2, int ulp = 2)
-{
-    return fVal1 == fVal2 || /* Should cover infinity */
-           std::abs(fVal1 - fVal2) < std::numeric_limits<float>::epsilon() *
-                                         std::abs(fVal1 + fVal2) * ulp;
-}
-
 #ifdef GDAL_H_INCLUDED
 // Map certain GDAL enums to string names for use in R
 // GDALColorInterp (GCI)
@@ -220,7 +205,7 @@ class GDALRaster {
     bool hasInt64_() const;
     void warnInt64_() const;
     GDALDatasetH getGDALDatasetH_() const;
-    void setGDALDatasetH_(GDALDatasetH hDs, bool with_update);
+    void setGDALDatasetH_(const GDALDatasetH &hDs, bool with_update);
 
  private:
     std::string m_fname {};
