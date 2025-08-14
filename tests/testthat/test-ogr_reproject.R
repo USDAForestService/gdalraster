@@ -1,6 +1,16 @@
 test_that("ogr_reproject works", {
+
+    # NOTE: disabling the Arrow code path in ogr2ogr
+    # (https://gdal.org/en/release-3.10/programs/ogr2ogr.html#known-issues),
+    # and avoiding the use of any virtual file systems while attempting to fix
+    # https://github.com/USDAForestService/gdalraster/issues/769
+
     f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
-    ynp_dsn <- file.path("/vsizip", f, "ynp_features.gpkg")
+    # ynp_dsn <- file.path("/vsizip", f, "ynp_features.gpkg")
+    unzip(f, files = "ynp_features.gpkg", exdir = tempdir())
+    ynp_dsn <- file.path(tempdir(), "ynp_features.gpkg")
+
+    set_config_option("OGR2OGR_USE_ARROW_API", "NO")
 
     out_gpkg <- tempfile(fileext = ".gpkg")
     on.exit(unlink(out_gpkg))
@@ -147,4 +157,6 @@ test_that("ogr_reproject works", {
                                out_gpkg, "EPSG:32100",
                                add_cl_arg = 1))
 
+
+    set_config_option("OGR2OGR_USE_ARROW_API", "")
 })

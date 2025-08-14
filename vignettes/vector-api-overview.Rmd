@@ -22,6 +22,8 @@ knitr::opts_chunk$set(
 library(gdalraster)
 gdal_3_6_0_min <- (gdal_version_num() >= gdal_compute_version(3, 6, 0))
 gdal_3_7_0_min <- (gdal_version_num() >= gdal_compute_version(3, 7, 0))
+
+set_config_option("OGR2OGR_USE_ARROW_API", "NO")
 ```
 
 ## Background
@@ -361,7 +363,9 @@ Here we instantiate a `GDALVector` object for the park boundary layer and retrie
 
 ```{r}
 f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
-ynp_dsn <- file.path("/vsizip", f, "ynp_features.gpkg")
+# extract to a temporary writable file
+unzip(f, files = "ynp_features.gpkg", exdir = tempdir())
+ynp_dsn <- file.path(tempdir(), "ynp_features.gpkg")
 
 # the park boundary layer containing a single feature
 (bnd <- new(GDALVector, ynp_dsn, "ynp_bnd"))
@@ -510,8 +514,8 @@ The MTBS layer uses a projected coordinate system, while layers of the "YNP feat
 f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
 
 # copy to a temporary writable file
-mtbs_dsn <- "/vsimem/tmp/ynp_fires_1984_2022.gpkg"
-ogr2ogr(f, mtbs_dsn)
+mtbs_dsn <- file.path(tempdir(), "ynp_fires_1984_2022.gpkg")
+file.copy(f, mtbs_dsn)
 
 (fires <- new(GDALVector, mtbs_dsn, "mtbs_perims"))
 
@@ -775,10 +779,11 @@ opt <- c("INPUT_PREFIX=layer1_",
          "PROMOTE_TO_MULTI=YES")
 
 # intersect to obtain areas re-burned since 2000
+out_file <- tempfile(fileext = ".gpkg")
 lyr_out <- ogr_proc(mode = "Intersection",
                     input_lyr = lyr1,
                     method_lyr = lyr2,
-                    out_dsn = mtbs_dsn,
+                    out_dsn = out_file,
                     out_lyr_name = "north_fork_reburned",
                     out_geom_type = "MULTIPOLYGON",
                     mode_opt = opt)
@@ -799,6 +804,9 @@ lyr_out$close()
 ```{r, include = FALSE}
 # clean up
 unlink(json_file)
-vsi_unlink(mtbs_dsn)
-vsi_rmdir("/vsimem/tmp/")
+unlink(out_file)
+unlink(mtbs_dsn)
+unlink(ynp_dsn)
+
+set_config_option("OGR2OGR_USE_ARROW_API", "")
 ```
