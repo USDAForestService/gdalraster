@@ -126,6 +126,7 @@ new datasets (i.e., a database within PostgreSQL), but output layers can be
 written to an existing database.
 }
 \examples{
+\dontshow{set_config_option("OGR2OGR_USE_ARROW_API", "NO")}
 # MTBS fire perimeters
 f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
 (mtbs <- new(GDALVector, f, "mtbs_perims"))
@@ -134,7 +135,9 @@ mtbs$getSpatialRef() |> srs_is_projected()  # TRUE
 
 # YNP boundary
 f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
-ynp_dsn <- file.path("/vsizip", f, "ynp_features.gpkg")
+unzip(f, files = "ynp_features.gpkg", exdir = tempdir())
+ynp_dsn <- file.path(tempdir(), "ynp_features.gpkg")
+
 (bnd <- new(GDALVector, ynp_dsn, "ynp_bnd"))
 
 bnd$getSpatialRef() |> srs_is_projected()  # FALSE
@@ -158,6 +161,8 @@ mtbs$close()
 bnd$close()
 bnd_mtsp$close()
 \dontshow{unlink(out_dsn)}
+\dontshow{unlink(ynp_dsn)}
+\dontshow{set_config_option("OGR2OGR_USE_ARROW_API", "")}
 }
 \seealso{
 \code{\link[=ogr2ogr]{ogr2ogr()}}, \code{\link[=warp]{warp()}} for raster reprojection
