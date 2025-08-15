@@ -824,13 +824,15 @@ the <code>layer</code> argument in the constructor.</p>
 boundary layer and retrieve information about it.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_features.zip"</span>, package <span class="op">=</span> <span class="st">"gdalraster"</span><span class="op">)</span></span>
-<span><span class="va">ynp_dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"/vsizip"</span>, <span class="va">f</span>, <span class="st">"ynp_features.gpkg"</span><span class="op">)</span></span>
+<span><span class="co"># extract to a temporary writable file</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="va">f</span>, files <span class="op">=</span> <span class="st">"ynp_features.gpkg"</span>, exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">ynp_dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"ynp_features.gpkg"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># the park boundary layer containing a single feature</span></span>
 <span><span class="op">(</span><span class="va">bnd</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">ynp_dsn</span>, <span class="st">"ynp_bnd"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /vsizip//home/runner/work/_temp/Library/gdalraster/extdata/ynp_features.zip/ynp_features.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /tmp/Rtmp5SdEwF/ynp_features.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : ynp_bnd</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 (EPSG:4269)</span></span>
 <span><span class="co">#&gt;  Geom   : POLYGON</span></span>
@@ -973,7 +975,7 @@ returned by <code>$fetch()</code> carries the
 <span><span class="op">(</span><span class="va">roads</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">ynp_dsn</span>, <span class="va">sql</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /vsizip//home/runner/work/_temp/Library/gdalraster/extdata/ynp_features.zip/ynp_features.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /tmp/Rtmp5SdEwF/ynp_features.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : SELECT rdname, opentopubl, geom FROM roads WHERE opentopubl = 'Yes'</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 (EPSG:4269)</span></span>
 <span><span class="co">#&gt;  Geom   : LINESTRING</span></span>
@@ -1163,13 +1165,14 @@ the coordinate system of the MTBS layer.</p>
 <span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package <span class="op">=</span> <span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># copy to a temporary writable file</span></span>
-<span><span class="va">mtbs_dsn</span> <span class="op">&lt;-</span> <span class="st">"/vsimem/tmp/ynp_fires_1984_2022.gpkg"</span></span>
-<span><span class="fu"><a href="../reference/ogr2ogr.html">ogr2ogr</a></span><span class="op">(</span><span class="va">f</span>, <span class="va">mtbs_dsn</span><span class="op">)</span></span>
+<span><span class="va">mtbs_dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"ynp_fires_1984_2022.gpkg"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span><span class="va">f</span>, <span class="va">mtbs_dsn</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
 <span><span class="op">(</span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">mtbs_dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /vsimem/tmp/ynp_fires_1984_2022.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /tmp/Rtmp5SdEwF/ynp_fires_1984_2022.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : mtbs_perims</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 / Montana (EPSG:32100)</span></span>
 <span><span class="co">#&gt;  Geom   : MULTIPOLYGON</span></span>
@@ -1182,7 +1185,7 @@ the coordinate system of the MTBS layer.</p>
 <span>                      out_dsn <span class="op">=</span> <span class="va">mtbs_dsn</span>, out_srs <span class="op">=</span> <span class="va">srs_mtsp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /vsimem/tmp/ynp_fires_1984_2022.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /tmp/Rtmp5SdEwF/ynp_fires_1984_2022.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : ynp_bnd</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 / Montana (EPSG:32100)</span></span>
 <span><span class="co">#&gt;  Geom   : POLYGON</span></span>
@@ -1299,10 +1302,10 @@ interest.</p>
 <span><span class="co">#&gt; [1] Information</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $createdate</span></span>
-<span><span class="co">#&gt; [1] 2025-08-07</span></span>
+<span><span class="co">#&gt; [1] 2025-08-15</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $editdate</span></span>
-<span><span class="co">#&gt; [1] 2025-08-07</span></span>
+<span><span class="co">#&gt; [1] 2025-08-15</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $geom</span></span>
 <span><span class="co">#&gt; [1] WKB POINT: raw 01 01 00 00 ...</span></span>
@@ -1383,7 +1386,7 @@ corresponding JSON member.</li>
 <span><span class="co">#&gt; [1] 2016-02-03</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $editdate</span></span>
-<span><span class="co">#&gt; [1] 2025-08-07</span></span>
+<span><span class="co">#&gt; [1] 2025-08-15</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $geom</span></span>
 <span><span class="co">#&gt; [1] WKB POINT: raw 01 01 00 00 ...</span></span></code></pre></div>
@@ -1416,10 +1419,10 @@ class attribute.</p>
 <span><span class="co">#&gt; [1] Information</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $createdate</span></span>
-<span><span class="co">#&gt; [1] 2025-08-07</span></span>
+<span><span class="co">#&gt; [1] 2025-08-15</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $editdate</span></span>
-<span><span class="co">#&gt; [1] 2025-08-07</span></span>
+<span><span class="co">#&gt; [1] 2025-08-15</span></span>
 <span><span class="co">#&gt; </span></span>
 <span><span class="co">#&gt; $geom</span></span>
 <span><span class="co">#&gt; [1] WKB POINT: raw 01 01 00 00 ...</span></span>
@@ -1492,7 +1495,7 @@ grouping in a transaction, measuring time elapsed.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">batchCreateFeature</span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   2.136   0.003   2.140</span></span>
+<span><span class="co">#&gt;   5.668  21.511  75.849</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1521,7 +1524,7 @@ and the layer is checked for the expected output.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.049   0.008   1.057</span></span>
+<span><span class="co">#&gt;   1.091   0.276   1.389</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1534,22 +1537,22 @@ and the layer is checked for the expected output.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;   FID               pt_desc         create_time                           geom</span></span>
-<span><span class="co">#&gt; 1   1 random points batch 1 2025-08-07 23:38:03 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 2   2 random points batch 1 2025-08-07 23:38:03 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 3   3 random points batch 1 2025-08-07 23:38:03 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 4   4 random points batch 1 2025-08-07 23:38:03 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 5   5 random points batch 1 2025-08-07 23:38:03 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 6   6 random points batch 1 2025-08-07 23:38:03 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 1   1 random points batch 1 2025-08-15 03:44:23 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 2   2 random points batch 1 2025-08-15 03:44:23 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 3   3 random points batch 1 2025-08-15 03:44:23 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 4   4 random points batch 1 2025-08-15 03:44:23 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 5   5 random points batch 1 2025-08-15 03:44:23 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 6   6 random points batch 1 2025-08-15 03:44:23 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;           FID               pt_desc         create_time</span></span>
-<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-08-07 23:38:05</span></span>
-<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-08-07 23:38:05</span></span>
-<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-08-07 23:38:05</span></span>
-<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-08-07 23:38:05</span></span>
-<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-08-07 23:38:05</span></span>
-<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-08-07 23:38:05</span></span>
+<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-08-15 03:45:40</span></span>
+<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-08-15 03:45:40</span></span>
+<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-08-15 03:45:40</span></span>
+<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-08-15 03:45:40</span></span>
+<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-08-15 03:45:40</span></span>
+<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-08-15 03:45:40</span></span>
 <span><span class="co">#&gt;                                  geom</span></span>
 <span><span class="co">#&gt; 199995 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span><span class="co">#&gt; 199996 WKB POINT: raw 01 01 00 00 ...</span></span>
@@ -1668,10 +1671,11 @@ method layers.</p>
 <span>         <span class="st">"PROMOTE_TO_MULTI=YES"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># intersect to obtain areas re-burned since 2000</span></span>
+<span><span class="va">out_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".gpkg"</span><span class="op">)</span></span>
 <span><span class="va">lyr_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ogr_proc.html">ogr_proc</a></span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"Intersection"</span>,</span>
 <span>                    input_lyr <span class="op">=</span> <span class="va">lyr1</span>,</span>
 <span>                    method_lyr <span class="op">=</span> <span class="va">lyr2</span>,</span>
-<span>                    out_dsn <span class="op">=</span> <span class="va">mtbs_dsn</span>,</span>
+<span>                    out_dsn <span class="op">=</span> <span class="va">out_file</span>,</span>
 <span>                    out_lyr_name <span class="op">=</span> <span class="st">"north_fork_reburned"</span>,</span>
 <span>                    out_geom_type <span class="op">=</span> <span class="st">"MULTIPOLYGON"</span>,</span>
 <span>                    mode_opt <span class="op">=</span> <span class="va">opt</span><span class="op">)</span></span>
