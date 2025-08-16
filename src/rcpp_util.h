@@ -39,7 +39,15 @@ Rcpp::CharacterVector normalize_path_(const Rcpp::CharacterVector &path,
 
 Rcpp::CharacterVector enc_to_utf8_(const Rcpp::CharacterVector &x);
 
+Rcpp::CharacterVector strsplit_(const Rcpp::CharacterVector &x,
+                                const Rcpp::CharacterVector &split);
+
+Rcpp::String paste_collapse_(const SEXP &x, const Rcpp::String &s);
+
 std::string str_toupper_(const std::string &s);
+std::string str_tolower_(const std::string &s);
+
+bool contains_str_(const Rcpp::CharacterVector &v, const Rcpp::String &s);
 
 // case-insensitive comparator for std::map
 // https://stackoverflow.com/questions/1801892/how-can-i-make-the-mapfind-operation-case-insensitive
