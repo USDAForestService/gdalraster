@@ -145,7 +145,7 @@ reference:
   - g_envelope
   - g_transform
   - geos_version
-  - has_geo
+  - has_geos
 - subtitle: Virtual file systems
 - contents:
   - vsi_clear_path_options
