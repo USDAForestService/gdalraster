@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9100</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -50,8 +50,9 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.1.0.9008" id="gdalraster-2109008-dev">gdalraster 2.1.0.9008 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2109008-dev"></a></h2>
-<ul><li><p>(internal) disable the Arrow code path for GDAL vector translate and avoid virtual file systems, only in the examples and tests for <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> while attempting to fix <a href="https://github.com/USDAForestService/gdalraster/issues/769" class="external-link">#769</a> (2025-08-14) (<a href="https://github.com/USDAForestService/gdalraster/issues/770" class="external-link">#770</a>)</p></li>
+<h2 class="pkg-version" data-toc-text="2.1.0.9100" id="gdalraster-2109100-dev">gdalraster 2.1.0.9100 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2109100-dev"></a></h2>
+<ul><li><p>add initial bindings to the “gdal” CLI (<a href="https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.html">gdal_cli</a>) and the GDALAlgorithm API (<a href="https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html">class <code>GDALAlg</code></a>) (<a href="https://github.com/USDAForestService/gdalraster/issues/771" class="external-link">#771</a>) (2025-08-16)</p></li>
+<li><p>(internal) disable the Arrow code path for GDAL vector translate and avoid virtual file systems, only in the examples and tests for <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> while attempting to fix <a href="https://github.com/USDAForestService/gdalraster/issues/769" class="external-link">#769</a> (2025-08-14) (<a href="https://github.com/USDAForestService/gdalraster/issues/770" class="external-link">#770</a>)</p></li>
 <li><p>update the sample data elevation raster (inst/extdata/storml_elev.tif) to avoid visual artifacts (<a href="https://github.com/USDAForestService/gdalraster/issues/768" class="external-link">#768</a>) (2025-08-07)</p></li>
 <li><p>(internal) <code>setGDALDatasetH_()</code> in classes <code>GDALRaster</code> and <code>GDALVector</code>: check shared flag of incoming GDALDatasetH and set the <code>m_shared</code> member variable (<a href="https://github.com/USDAForestService/gdalraster/issues/767" class="external-link">#767</a>) (2025-08-07)</p></li>
 <li><p>(internal) class <code>GDALRaster</code>: call <code>GDALReleaseDataset()</code> instead of <code>GDALClose()</code> in the <code><a href="https://rdrr.io/r/base/connections.html" class="external-link">close()</a></code> method and destructor when dataset is non-shared (<a href="https://github.com/USDAForestService/gdalraster/issues/764" class="external-link">#764</a>, <a href="https://github.com/USDAForestService/gdalraster/issues/765" class="external-link">#765</a>) (2025-08-02)</p></li>

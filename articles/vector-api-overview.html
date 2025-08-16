@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9008</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9100</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -832,7 +832,7 @@ boundary layer and retrieve information about it.</p>
 <span><span class="op">(</span><span class="va">bnd</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">ynp_dsn</span>, <span class="st">"ynp_bnd"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /tmp/RtmpFyEqVn/ynp_features.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /tmp/Rtmp5qeR8W/ynp_features.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : ynp_bnd</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 (EPSG:4269)</span></span>
 <span><span class="co">#&gt;  Geom   : POLYGON</span></span>
@@ -975,7 +975,7 @@ returned by <code>$fetch()</code> carries the
 <span><span class="op">(</span><span class="va">roads</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">ynp_dsn</span>, <span class="va">sql</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /tmp/RtmpFyEqVn/ynp_features.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /tmp/Rtmp5qeR8W/ynp_features.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : SELECT rdname, opentopubl, geom FROM roads WHERE opentopubl = 'Yes'</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 (EPSG:4269)</span></span>
 <span><span class="co">#&gt;  Geom   : LINESTRING</span></span>
@@ -1172,7 +1172,7 @@ the coordinate system of the MTBS layer.</p>
 <span><span class="op">(</span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">mtbs_dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /tmp/RtmpFyEqVn/ynp_fires_1984_2022.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /tmp/Rtmp5qeR8W/ynp_fires_1984_2022.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : mtbs_perims</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 / Montana (EPSG:32100)</span></span>
 <span><span class="co">#&gt;  Geom   : MULTIPOLYGON</span></span>
@@ -1185,7 +1185,7 @@ the coordinate system of the MTBS layer.</p>
 <span>                      out_dsn <span class="op">=</span> <span class="va">mtbs_dsn</span>, out_srs <span class="op">=</span> <span class="va">srs_mtsp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /tmp/RtmpFyEqVn/ynp_fires_1984_2022.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /tmp/Rtmp5qeR8W/ynp_fires_1984_2022.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : ynp_bnd</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 / Montana (EPSG:32100)</span></span>
 <span><span class="co">#&gt;  Geom   : POLYGON</span></span>
@@ -1495,7 +1495,7 @@ grouping in a transaction, measuring time elapsed.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">batchCreateFeature</span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   5.532  21.095  96.482</span></span>
+<span><span class="co">#&gt;   5.796  21.666 121.761</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1524,7 +1524,7 @@ and the layer is checked for the expected output.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.083   0.293   1.406</span></span>
+<span><span class="co">#&gt;   1.114   0.280   1.415</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1537,22 +1537,22 @@ and the layer is checked for the expected output.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;   FID               pt_desc         create_time                           geom</span></span>
-<span><span class="co">#&gt; 1   1 random points batch 1 2025-08-16 15:10:03 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 2   2 random points batch 1 2025-08-16 15:10:03 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 3   3 random points batch 1 2025-08-16 15:10:03 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 4   4 random points batch 1 2025-08-16 15:10:03 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 5   5 random points batch 1 2025-08-16 15:10:03 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 6   6 random points batch 1 2025-08-16 15:10:03 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 1   1 random points batch 1 2025-08-16 15:21:28 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 2   2 random points batch 1 2025-08-16 15:21:28 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 3   3 random points batch 1 2025-08-16 15:21:28 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 4   4 random points batch 1 2025-08-16 15:21:28 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 5   5 random points batch 1 2025-08-16 15:21:28 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 6   6 random points batch 1 2025-08-16 15:21:28 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;           FID               pt_desc         create_time</span></span>
-<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-08-16 15:11:40</span></span>
-<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-08-16 15:11:40</span></span>
-<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-08-16 15:11:40</span></span>
-<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-08-16 15:11:40</span></span>
-<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-08-16 15:11:40</span></span>
-<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-08-16 15:11:40</span></span>
+<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-08-16 15:23:30</span></span>
+<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-08-16 15:23:30</span></span>
+<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-08-16 15:23:30</span></span>
+<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-08-16 15:23:30</span></span>
+<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-08-16 15:23:30</span></span>
+<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-08-16 15:23:30</span></span>
 <span><span class="co">#&gt;                                  geom</span></span>
 <span><span class="co">#&gt; 199995 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span><span class="co">#&gt; 199996 WKB POINT: raw 01 01 00 00 ...</span></span>
