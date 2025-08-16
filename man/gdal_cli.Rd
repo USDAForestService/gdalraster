@@ -177,7 +177,7 @@ alg$release()
 plot_raster(ds, legend = TRUE)
 
 ds$close()
-\dontshow{deleteDataset(f_gpkg)}
+unlink(f_gpkg)
 
 ## get help for vector commands
 gdal_usage("vector")
@@ -204,7 +204,7 @@ lyr$getFeatureCount()
 
 lyr$close()
 alg$release()
-\dontshow{deleteDataset(f_clip)}
+unlink(f_clip)
 
 ## rasterize a vector layer and return output as a GDALRaster object
 gdal_usage("vector rasterize")
@@ -236,7 +236,7 @@ plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",
             main = "YNP Fires 1984-2022 - Most Recent Burn Year")
 
 ds$close()
-\dontshow{deleteDataset(f_out)}
+deleteDataset(f_out)
 
 ## "pipeline" syntax
 ## Note: this may change in future versions
@@ -268,7 +268,7 @@ readLines(f_out, warn = FALSE) |> writeLines()
 plot_raster(ds, legend = TRUE)
 
 ds$close()
-\dontshow{unlink(f_out)}
+unlink(f_out)
 \dontshow{\}) # examplesIf}
 }
 \seealso{

@@ -299,7 +299,7 @@
 #'
 #' ds_clip$close()
 #' ds_hillshade$close()
-#' \dontshow{deleteDataset(f_clip)}
+#' deleteDataset(f_clip)
 #'
 #' ## vector convert shapefile to GeoPackage
 #' gdal_usage("vector convert")
@@ -320,7 +320,7 @@
 #' lyr$info()
 #'
 #' lyr$close()
-#' \dontshow{deleteDataset(f_gpkg)}
+#' deleteDataset(f_gpkg)
 #'
 #' ## raster reproject (usage and info)
 #' # no arguments given, only for retrieving usage and properties via API

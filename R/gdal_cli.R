@@ -158,7 +158,7 @@
 #' plot_raster(ds, legend = TRUE)
 #'
 #' ds$close()
-#' \dontshow{deleteDataset(f_gpkg)}
+#' unlink(f_gpkg)
 #'
 #' ## get help for vector commands
 #' gdal_usage("vector")
@@ -185,7 +185,7 @@
 #'
 #' lyr$close()
 #' alg$release()
-#' \dontshow{deleteDataset(f_clip)}
+#' unlink(f_clip)
 #'
 #' ## rasterize a vector layer and return output as a GDALRaster object
 #' gdal_usage("vector rasterize")
@@ -217,7 +217,7 @@
 #'             main = "YNP Fires 1984-2022 - Most Recent Burn Year")
 #'
 #' ds$close()
-#' \dontshow{deleteDataset(f_out)}
+#' deleteDataset(f_out)
 #'
 #' ## "pipeline" syntax
 #' ## Note: this may change in future versions
@@ -249,7 +249,7 @@
 #' plot_raster(ds, legend = TRUE)
 #'
 #' ds$close()
-#' \dontshow{unlink(f_out)}
+#' unlink(f_out)
 #' @export
 gdal_commands <- function(contains = "", recurse = TRUE, cout = TRUE) {
     if (gdal_version_num() < .GDALALG_MIN_GDAL) {
