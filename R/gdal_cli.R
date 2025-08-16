@@ -136,7 +136,7 @@
 #' \dQuote{gdal} Command Line Interface (CLI):\cr
 #' \url{https://gdal.org/en/stable/programs/index.html}
 #'
-#' @examplesIf (gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL)
+#' @examplesIf gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL
 #' ## top-level gdal commands
 #' gdal_commands(recurse = FALSE)
 #'

@@ -31,7 +31,7 @@ reference:
   - VSIFile-class
 
 - title: Stand-alone functions
-- subtitle: \"gdal\" CLI (GDAL >= 3.11.3)
+- subtitle: gdal CLI (GDAL >= 3.11.3)
 - contents:
   - gdal_cli
 - subtitle: Raster creation

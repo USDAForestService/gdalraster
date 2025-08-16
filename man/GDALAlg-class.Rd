@@ -305,7 +305,7 @@ stable. Breaking changes in minor version releases are possible until then.
 }
 
 \examples{
-\dontshow{if ((gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
 ## raster info

@@ -239,7 +239,7 @@
 #' GDAL RFC 104: Adding a \dQuote{gdal} front-end command line interface:\cr
 #' [Implementation details](https://gdal.org/en/stable/development/rfc/rfc104_gdal_cli.html#implementation-details)
 #'
-#' @examplesIf (gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL)
+#' @examplesIf gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL
 #' f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #'
 #' ## raster info
