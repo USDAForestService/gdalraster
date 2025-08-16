@@ -1,6 +1,8 @@
-# gdalraster 2.1.0.9007 (dev)
+# gdalraster 2.1.0.9008 (dev)
 
-* update the sample data elevation raster (inst/extdata/storml_elev.tif) to avoid visual artefacts (#768) (2025-08-07)
+* (internal) disable the Arrow code path for GDAL vector translate and avoid virtual file systems, only in the examples and tests for `ogr_reproject()` while attempting to fix #769 (2025-08-14) (#770)
+
+* update the sample data elevation raster (inst/extdata/storml_elev.tif) to avoid visual artifacts (#768) (2025-08-07)
 
 * (internal) `setGDALDatasetH_()` in classes `GDALRaster` and `GDALVector`: check shared flag of incoming GDALDatasetH and set the `m_shared` member variable (#767) (2025-08-07)
 
