@@ -238,7 +238,7 @@ stable. Breaking changes in minor version releases are possible until then.</p>
 <span class="r-in"><span><span class="fu"><a href="plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">DONTSHOW</span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">f_gpkg</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f_gpkg</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## get help for vector commands</span></span></span>
 <span class="r-in"><span><span class="fu">gdal_usage</span><span class="op">(</span><span class="st">"vector"</span><span class="op">)</span></span></span>
@@ -265,7 +265,7 @@ stable. Breaking changes in minor version releases are possible until then.</p>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">alg</span><span class="op">$</span><span class="fu">release</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">DONTSHOW</span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">f_clip</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f_clip</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## rasterize a vector layer and return output as a GDALRaster object</span></span></span>
 <span class="r-in"><span><span class="fu">gdal_usage</span><span class="op">(</span><span class="st">"vector rasterize"</span><span class="op">)</span></span></span>
@@ -297,7 +297,7 @@ stable. Breaking changes in minor version releases are possible until then.</p>
 <span class="r-in"><span>            main <span class="op">=</span> <span class="st">"YNP Fires 1984-2022 - Most Recent Burn Year"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">DONTSHOW</span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">f_out</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="deleteDataset.html">deleteDataset</a></span><span class="op">(</span><span class="va">f_out</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## "pipeline" syntax</span></span></span>
 <span class="r-in"><span><span class="co">## Note: this may change in future versions</span></span></span>
@@ -329,7 +329,7 @@ stable. Breaking changes in minor version releases are possible until then.</p>
 <span class="r-in"><span><span class="fu"><a href="plot_raster.html">plot_raster</a></span><span class="op">(</span><span class="va">ds</span>, legend <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="fu">DONTSHOW</span><span class="op">(</span><span class="op">{</span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f_out</span><span class="op">)</span><span class="op">}</span><span class="op">)</span></span></span>
+<span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/base/unlink.html" class="external-link">unlink</a></span><span class="op">(</span><span class="va">f_out</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="op">}</span></span></span>
 </code></pre></div>
     </div>
