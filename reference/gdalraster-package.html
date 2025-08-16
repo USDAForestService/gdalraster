@@ -75,7 +75,12 @@
 
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
-    <p>Core raster functionality is contained in class <code>GDALRaster</code> and several
+    <p>Initial experimental bindings to the modernized “gdal” Command Line
+  Interface (CLI) are implemented in <code><a href="GDALAlg-class.html">GDALAlg-class</a></code> and related
+  convenience functions: <code><a href="gdal_cli.html">gdal_commands()</a></code>,
+  <code><a href="gdal_cli.html">gdal_usage()</a></code>, <code><a href="gdal_cli.html">gdal_run()</a></code>,
+  <code><a href="gdal_cli.html">gdal_alg()</a></code> (<em>Requires GDAL &gt;= 3.11.3</em>)</p>
+<p>Core raster functionality is contained in class <code>GDALRaster</code> and several
   related stand-alone functions:</p><ul><li><p><code><a href="GDALRaster-class.html">GDALRaster-class</a></code> is an exposed C++ class that allows
   opening a raster dataset and calling methods on the <code>GDALDataset</code>,
   <code>GDALDriver</code> and <code>GDALRasterBand</code> objects in the underlying API

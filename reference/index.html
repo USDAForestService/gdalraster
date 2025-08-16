@@ -78,6 +78,12 @@
 
       <dl><dt>
 
+          <code><a href="GDALAlg-class.html">GDALAlg-class</a></code> <code><a href="GDALAlg-class.html">Rcpp_GDALAlg</a></code> <code><a href="GDALAlg-class.html">Rcpp_GDALAlg-class</a></code> <code><a href="GDALAlg-class.html">GDALAlg</a></code>
+
+        </dt>
+        <dd>Class encapsulating a GDAL CLI algorithm</dd>
+      </dl><dl><dt>
+
           <code><a href="GDALRaster-class.html">GDALRaster-class</a></code> <code><a href="GDALRaster-class.html">Rcpp_GDALRaster</a></code> <code><a href="GDALRaster-class.html">Rcpp_GDALRaster-class</a></code> <code><a href="GDALRaster-class.html">GDALRaster</a></code>
 
         </dt>
@@ -113,6 +119,23 @@
 
 
     </div><div class="section level2">
+
+      <h3 id="-gdal-cli-gdal-">"gdal" CLI (GDAL &gt;= 3.11.3)<a class="anchor" aria-label="anchor" href="#-gdal-cli-gdal-"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="gdal_cli.html">gdal_commands()</a></code> <code><a href="gdal_cli.html">gdal_usage()</a></code> <code><a href="gdal_cli.html">gdal_run()</a></code> <code><a href="gdal_cli.html">gdal_alg()</a></code>
+
+        </dt>
+        <dd>Convenience functions for using “gdal” CLI algorithms</dd>
+      </dl></div><div class="section level2">
 
       <h3 id="raster-creation">Raster creation<a class="anchor" aria-label="anchor" href="#raster-creation"></a></h3>
 
@@ -190,7 +213,7 @@
         <dd>Create a GDAL virtual raster derived from one source dataset</dd>
       </dl></div><div class="section level2">
 
-      <h3 id="algorithms">Algorithms<a class="anchor" aria-label="anchor" href="#algorithms"></a></h3>
+      <h3 id="raster-utilities">Raster utilities<a class="anchor" aria-label="anchor" href="#raster-utilities"></a></h3>
 
 
 
@@ -255,7 +278,7 @@
         <dd>Raster reprojection and mosaicing</dd>
       </dl></div><div class="section level2">
 
-      <h3 id="display">Display<a class="anchor" aria-label="anchor" href="#display"></a></h3>
+      <h3 id="raster-display">Raster display<a class="anchor" aria-label="anchor" href="#raster-display"></a></h3>
 
 
 
@@ -411,6 +434,141 @@
         <dd>Obtain information about a spatial reference system</dd>
       </dl></div><div class="section level2">
 
+      <h3 id="vector-utilities">Vector utilities<a class="anchor" aria-label="anchor" href="#vector-utilities"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="ogrinfo.html">ogrinfo()</a></code>
+
+        </dt>
+        <dd>Retrieve information about a vector data source</dd>
+      </dl><dl><dt>
+
+          <code><a href="ogr2ogr.html">ogr2ogr()</a></code>
+
+        </dt>
+        <dd>Convert vector data between different formats</dd>
+      </dl><dl><dt>
+
+          <code><a href="ogr_proc.html">ogr_proc()</a></code>
+
+        </dt>
+        <dd>GDAL OGR facilities for vector geoprocessing</dd>
+      </dl><dl><dt>
+
+          <code><a href="ogr_reproject.html">ogr_reproject()</a></code>
+
+        </dt>
+        <dd>Reproject a vector layer</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="general-data-management">General data management<a class="anchor" aria-label="anchor" href="#general-data-management"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="addFilesInZip.html">addFilesInZip()</a></code>
+
+        </dt>
+        <dd>Create/append to a potentially Seek-Optimized ZIP file (SOZip)</dd>
+      </dl><dl><dt>
+
+          <code><a href="bandCopyWholeRaster.html">bandCopyWholeRaster()</a></code>
+
+        </dt>
+        <dd>Copy a whole raster band efficiently</dd>
+      </dl><dl><dt>
+
+          <code><a href="copyDatasetFiles.html">copyDatasetFiles()</a></code>
+
+        </dt>
+        <dd>Copy the files of a dataset</dd>
+      </dl><dl><dt>
+
+          <code><a href="deleteDataset.html">deleteDataset()</a></code>
+
+        </dt>
+        <dd>Delete named dataset</dd>
+      </dl><dl><dt>
+
+          <code><a href="identifyDriver.html">identifyDriver()</a></code>
+
+        </dt>
+        <dd>Identify the GDAL driver that can open a dataset</dd>
+      </dl><dl><dt>
+
+          <code><a href="inspectDataset.html">inspectDataset()</a></code>
+
+        </dt>
+        <dd>Obtain information about a GDAL raster or vector dataset</dd>
+      </dl><dl><dt>
+
+          <code><a href="renameDataset.html">renameDataset()</a></code>
+
+        </dt>
+        <dd>Rename a dataset</dd>
+      </dl></div><div class="section level2">
+
+      <h3 id="vector-data-management">Vector data management<a class="anchor" aria-label="anchor" href="#vector-data-management"></a></h3>
+
+
+
+    </div><div class="section level2">
+
+
+
+
+      <dl><dt>
+
+          <code><a href="ogr_manage.html">ogr_ds_exists()</a></code> <code><a href="ogr_manage.html">ogr_ds_format()</a></code> <code><a href="ogr_manage.html">ogr_ds_test_cap()</a></code> <code><a href="ogr_manage.html">ogr_ds_create()</a></code> <code><a href="ogr_manage.html">ogr_ds_layer_count()</a></code> <code><a href="ogr_manage.html">ogr_ds_layer_names()</a></code> <code><a href="ogr_manage.html">ogr_ds_field_domain_names()</a></code> <code><a href="ogr_manage.html">ogr_ds_add_field_domain()</a></code> <code><a href="ogr_manage.html">ogr_ds_delete_field_domain()</a></code> <code><a href="ogr_manage.html">ogr_layer_exists()</a></code> <code><a href="ogr_manage.html">ogr_layer_test_cap()</a></code> <code><a href="ogr_manage.html">ogr_layer_create()</a></code> <code><a href="ogr_manage.html">ogr_layer_field_names()</a></code> <code><a href="ogr_manage.html">ogr_layer_rename()</a></code> <code><a href="ogr_manage.html">ogr_layer_delete()</a></code> <code><a href="ogr_manage.html">ogr_field_index()</a></code> <code><a href="ogr_manage.html">ogr_field_create()</a></code> <code><a href="ogr_manage.html">ogr_geom_field_create()</a></code> <code><a href="ogr_manage.html">ogr_field_rename()</a></code> <code><a href="ogr_manage.html">ogr_field_set_domain_name()</a></code> <code><a href="ogr_manage.html">ogr_field_delete()</a></code> <code><a href="ogr_manage.html">ogr_execute_sql()</a></code>
+
+        </dt>
+        <dd>Utility functions for managing vector data sources</dd>
+      </dl><dl><dt>
+
+          <code><a href="ogr_define.html">ogr_def_layer()</a></code> <code><a href="ogr_define.html">ogr_def_field()</a></code> <code><a href="ogr_define.html">ogr_def_geom_field()</a></code> <code><a href="ogr_define.html">ogr_def_field_domain()</a></code>
+
+        </dt>
+        <dd>OGR feature class definition for vector data</dd>
+      </dl><dl><dt>
+
+          <code><a href="plot.OGRFeature.html">plot(<i>&lt;OGRFeature&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Plot the geometry of an <code>OGRFeature</code> object</dd>
+      </dl><dl><dt>
+
+          <code><a href="plot.OGRFeatureSet.html">plot(<i>&lt;OGRFeatureSet&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Plot the geometry column of an <code>OGRFeatureSet</code></dd>
+      </dl><dl><dt>
+
+          <code><a href="print.OGRFeature.html">print(<i>&lt;OGRFeature&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print an <code>OGRFeature</code> object</dd>
+      </dl><dl><dt>
+
+          <code><a href="print.OGRFeatureSet.html">print(<i>&lt;OGRFeatureSet&gt;</i>)</a></code>
+
+        </dt>
+        <dd>Print an <code>OGRFeatureSet</code></dd>
+      </dl></div><div class="section level2">
+
       <h3 id="geometry">Geometry<a class="anchor" aria-label="anchor" href="#geometry"></a></h3>
 
 
@@ -522,130 +680,6 @@
 
         </dt>
         <dd>Is GEOS available?</dd>
-      </dl></div><div class="section level2">
-
-      <h3 id="data-management">Data management<a class="anchor" aria-label="anchor" href="#data-management"></a></h3>
-
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="addFilesInZip.html">addFilesInZip()</a></code>
-
-        </dt>
-        <dd>Create/append to a potentially Seek-Optimized ZIP file (SOZip)</dd>
-      </dl><dl><dt>
-
-          <code><a href="bandCopyWholeRaster.html">bandCopyWholeRaster()</a></code>
-
-        </dt>
-        <dd>Copy a whole raster band efficiently</dd>
-      </dl><dl><dt>
-
-          <code><a href="copyDatasetFiles.html">copyDatasetFiles()</a></code>
-
-        </dt>
-        <dd>Copy the files of a dataset</dd>
-      </dl><dl><dt>
-
-          <code><a href="deleteDataset.html">deleteDataset()</a></code>
-
-        </dt>
-        <dd>Delete named dataset</dd>
-      </dl><dl><dt>
-
-          <code><a href="identifyDriver.html">identifyDriver()</a></code>
-
-        </dt>
-        <dd>Identify the GDAL driver that can open a dataset</dd>
-      </dl><dl><dt>
-
-          <code><a href="inspectDataset.html">inspectDataset()</a></code>
-
-        </dt>
-        <dd>Obtain information about a GDAL raster or vector dataset</dd>
-      </dl><dl><dt>
-
-          <code><a href="renameDataset.html">renameDataset()</a></code>
-
-        </dt>
-        <dd>Rename a dataset</dd>
-      </dl></div><div class="section level2">
-
-      <h3 id="ogr-vector-utilities">OGR vector utilities<a class="anchor" aria-label="anchor" href="#ogr-vector-utilities"></a></h3>
-
-
-
-    </div><div class="section level2">
-
-
-
-
-      <dl><dt>
-
-          <code><a href="ogrinfo.html">ogrinfo()</a></code>
-
-        </dt>
-        <dd>Retrieve information about a vector data source</dd>
-      </dl><dl><dt>
-
-          <code><a href="ogr2ogr.html">ogr2ogr()</a></code>
-
-        </dt>
-        <dd>Convert vector data between different formats</dd>
-      </dl><dl><dt>
-
-          <code><a href="ogr_manage.html">ogr_ds_exists()</a></code> <code><a href="ogr_manage.html">ogr_ds_format()</a></code> <code><a href="ogr_manage.html">ogr_ds_test_cap()</a></code> <code><a href="ogr_manage.html">ogr_ds_create()</a></code> <code><a href="ogr_manage.html">ogr_ds_layer_count()</a></code> <code><a href="ogr_manage.html">ogr_ds_layer_names()</a></code> <code><a href="ogr_manage.html">ogr_ds_field_domain_names()</a></code> <code><a href="ogr_manage.html">ogr_ds_add_field_domain()</a></code> <code><a href="ogr_manage.html">ogr_ds_delete_field_domain()</a></code> <code><a href="ogr_manage.html">ogr_layer_exists()</a></code> <code><a href="ogr_manage.html">ogr_layer_test_cap()</a></code> <code><a href="ogr_manage.html">ogr_layer_create()</a></code> <code><a href="ogr_manage.html">ogr_layer_field_names()</a></code> <code><a href="ogr_manage.html">ogr_layer_rename()</a></code> <code><a href="ogr_manage.html">ogr_layer_delete()</a></code> <code><a href="ogr_manage.html">ogr_field_index()</a></code> <code><a href="ogr_manage.html">ogr_field_create()</a></code> <code><a href="ogr_manage.html">ogr_geom_field_create()</a></code> <code><a href="ogr_manage.html">ogr_field_rename()</a></code> <code><a href="ogr_manage.html">ogr_field_set_domain_name()</a></code> <code><a href="ogr_manage.html">ogr_field_delete()</a></code> <code><a href="ogr_manage.html">ogr_execute_sql()</a></code>
-
-        </dt>
-        <dd>Utility functions for managing vector data sources</dd>
-      </dl><dl><dt>
-
-          <code><a href="ogr_define.html">ogr_def_layer()</a></code> <code><a href="ogr_define.html">ogr_def_field()</a></code> <code><a href="ogr_define.html">ogr_def_geom_field()</a></code> <code><a href="ogr_define.html">ogr_def_field_domain()</a></code>
-
-        </dt>
-        <dd>OGR feature class definition for vector data</dd>
-      </dl><dl><dt>
-
-          <code><a href="ogr_proc.html">ogr_proc()</a></code>
-
-        </dt>
-        <dd>GDAL OGR facilities for vector geoprocessing</dd>
-      </dl><dl><dt>
-
-          <code><a href="ogr_reproject.html">ogr_reproject()</a></code>
-
-        </dt>
-        <dd>Reproject a vector layer</dd>
-      </dl><dl><dt>
-
-          <code><a href="plot.OGRFeature.html">plot(<i>&lt;OGRFeature&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Plot the geometry of an <code>OGRFeature</code> object</dd>
-      </dl><dl><dt>
-
-          <code><a href="plot.OGRFeatureSet.html">plot(<i>&lt;OGRFeatureSet&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Plot the geometry column of an <code>OGRFeatureSet</code></dd>
-      </dl><dl><dt>
-
-          <code><a href="print.OGRFeature.html">print(<i>&lt;OGRFeature&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Print an <code>OGRFeature</code> object</dd>
-      </dl><dl><dt>
-
-          <code><a href="print.OGRFeatureSet.html">print(<i>&lt;OGRFeatureSet&gt;</i>)</a></code>
-
-        </dt>
-        <dd>Print an <code>OGRFeatureSet</code></dd>
       </dl></div><div class="section level2">
 
       <h3 id="virtual-file-systems">Virtual file systems<a class="anchor" aria-label="anchor" href="#virtual-file-systems"></a></h3>

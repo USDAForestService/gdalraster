@@ -10,7 +10,7 @@ articles:
   articles/raster-display: raster-display.html
   vector-api-overview: vector-api-overview.html
   articles/vector-read-benchmarks: vector-read-benchmarks.html
-last_built: 2025-08-16T02:49Z
+last_built: 2025-08-16T15:08Z
 urls:
   reference: https://usdaforestservice.github.io/gdalraster/reference
   article: https://usdaforestservice.github.io/gdalraster/articles
