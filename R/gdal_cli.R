@@ -8,9 +8,11 @@
 #' @name gdal_cli
 #' @description
 #' This set of functions can be used to access and run GDAL utilities as
-#' \dQuote{gdal} Command Line Interface (CLI) algorithms.
+#' \dQuote{gdal} command line interface (CLI) algorithms.
 #'
 #' **Requires GDAL >= `r .GDALALG_MIN_GDAL_STR`**
+#'
+#' **Experimental** (see "Development status")
 #'
 #' @details
 #' These functions are convenient for accessing and running GDAL CLI algorithms
@@ -105,7 +107,7 @@
 #' character vector or numeric vector of values).
 #' * Named arguments can be placed before or after positional arguments.
 #'
-#' @section Experimental:
+#' @section Development status:
 #' The GDAL Command Line Interface Modernization was first introduced in the
 #' [GDAL 3.11.0 release](https://github.com/OSGeo/gdal/releases/tag/v3.11.0)
 #' (2025-05-09). The GDAL project states that the new CLI \dQuote{is
@@ -114,6 +116,7 @@
 #' reorganize, and change the behavior until it is officially frozen via PSC
 #' vote in a future major GDAL release.... Your usage of it should have no
 #' expectation of compatibility until that time.}
+#' (\url{https://gdal.org/en/latest/programs/#gdal-application})
 #'
 #' Initial bindings to enable programmatic use of the new CLI algorithms from \R
 #' were added in \pkg{gdalraster} 2.2.0, and will evolve over future releases.
@@ -135,6 +138,9 @@
 #'
 #' \dQuote{gdal} Command Line Interface (CLI):\cr
 #' \url{https://gdal.org/en/stable/programs/index.html}
+#'
+#' Using \dQuote{gdal} CLI algorithms from R:\cr
+#' \url{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
 #'
 #' @examplesIf gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL
 #' ## top-level gdal commands
@@ -193,17 +199,16 @@
 #' f_out = file.path(tempdir(), "ynp_fire_year.tif")
 #'
 #' # arguments in list format
-#' args <- list()
-#' args$input <- f
-#' args$sql <- "SELECT * FROM mtbs_perims ORDER BY mtbs_perims.ig_year"
-#' args$attribute_name <- "ig_year"
-#' args$output <- f_out
-#' args$overwrite <- TRUE
-#' args$creation_option <- c("TILED=YES", "COMPRESS=DEFLATE")
-#' args$resolution <- c(90, 90)
-#' args$output_data_type <- "Int16"
-#' args$init <- -32767
-#' args$nodata <- -32767
+#' args <- list(input = f,
+#'              sql = "SELECT * FROM mtbs_perims ORDER BY ig_year",
+#'              attribute_name = "ig_year",
+#'              output = f_out,
+#'              overwrite = TRUE,
+#'              creation_option = c("TILED=YES", "COMPRESS=DEFLATE"),
+#'              resolution = c(90, 90),
+#'              output_data_type = "Int16",
+#'              init = -32767,
+#'              nodata = -32767)
 #'
 #' (alg <- gdal_run("vector rasterize", args))
 #'
