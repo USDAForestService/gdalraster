@@ -5,19 +5,21 @@ An object of class GDALAlg represents an instance of a CLI algorithm with
 methods to obtain algorithm information and argument information, run the
 algorithm, and access its output.
 Requires GDAL &amp;gt;= 3.11.3.
+Experimental (see "Development status")
 GDALAlg is a C++ class exposed directly to R (via RCPP_EXPOSED_CLASS).
 Fields and methods of the class are accessed using the $ operator. Note
 that all arguments to class methods are required and must be given in the
-order documented.'><meta property="og:description" content='GDALAlg provides bindings to GDALAlgorithm and related classes
+order documented (naming optional).'><meta property="og:description" content='GDALAlg provides bindings to GDALAlgorithm and related classes
 that implement the "gdal" command line interface (CLI) in the GDAL API.
 An object of class GDALAlg represents an instance of a CLI algorithm with
 methods to obtain algorithm information and argument information, run the
 algorithm, and access its output.
 Requires GDAL &amp;gt;= 3.11.3.
+Experimental (see "Development status")
 GDALAlg is a C++ class exposed directly to R (via RCPP_EXPOSED_CLASS).
 Fields and methods of the class are accessed using the $ operator. Note
 that all arguments to class methods are required and must be given in the
-order documented.'></head><body>
+order documented (naming optional).'></head><body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
 
 
@@ -42,6 +44,7 @@ order documented.'></head><body>
     <li><a class="dropdown-item" href="../articles/raster-api-tutorial.html">Raster API Tutorial</a></li>
     <li><a class="dropdown-item" href="../articles/raster-attribute-tables.html">Raster Attribute Tables</a></li>
     <li><a class="dropdown-item" href="../articles/raster-display.html">Raster Display</a></li>
+    <li><a class="dropdown-item" href="../articles/use-gdal-cli-from-r.html">Using "gdal" CLI algorithms from R</a></li>
     <li><a class="dropdown-item" href="../articles/vector-api-overview.html">Vector API Overview</a></li>
     <li><a class="dropdown-item" href="../articles/vector-read-benchmarks.html">Vector Read Benchmarks</a></li>
   </ul></li>
@@ -75,10 +78,11 @@ An object of class <code>GDALAlg</code> represents an instance of a CLI algorith
 methods to obtain algorithm information and argument information, run the
 algorithm, and access its output.</p>
 <p><strong>Requires GDAL &gt;= 3.11.3</strong>.</p>
+<p><strong>Experimental</strong> (see "Development status")</p>
 <p><code>GDALAlg</code> is a C++ class exposed directly to <span style="R">R</span> (via <code>RCPP_EXPOSED_CLASS</code>).
-Fields and methods of the class are accessed using the <code>$</code> operator. <strong>Note
+Fields and methods of the class are accessed using the <code>$</code> operator. Note
 that all arguments to class methods are required and must be given in the
-order documented.</strong></p>
+order documented (naming optional).</p>
     </div>
 
 
@@ -339,7 +343,7 @@ character vector or numeric vector of values).</p></li>
 <li><p>Named arguments can be placed before or after positional arguments.</p></li>
 </ul></div>
     <div class="section level2">
-    <h2 id="experimental">Experimental<a class="anchor" aria-label="anchor" href="#experimental"></a></h2>
+    <h2 id="development-status">Development status<a class="anchor" aria-label="anchor" href="#development-status"></a></h2>
 
 
 <p>The GDAL Command Line Interface Modernization was first introduced in the
@@ -349,7 +353,8 @@ provisionally provided as an alternative interface to GDAL and OGR command
 line utilities. The project reserves the right to modify, rename,
 reorganize, and change the behavior until it is officially frozen via PSC
 vote in a future major GDAL release.... Your usage of it should have no
-expectation of compatibility until that time.”</p>
+expectation of compatibility until that time.”
+(<a href="https://gdal.org/en/latest/programs/#gdal-application" class="external-link">https://gdal.org/en/latest/programs/#gdal-application</a>)</p>
 <p>Initial bindings to enable programmatic use of the new CLI algorithms from <span style="R">R</span>
 were added in <span class="pkg">gdalraster</span> 2.2.0, and will evolve over future releases.
 The bindings are considered experimental until the upstream API is declared
@@ -358,7 +363,8 @@ stable. Breaking changes in minor version releases are possible until then.</p>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
     <div class="dont-index"><p><code><a href="gdal_cli.html">gdal_alg()</a></code>, <code><a href="gdal_cli.html">gdal_commands()</a></code>, <code><a href="gdal_cli.html">gdal_run()</a></code>, <code><a href="gdal_cli.html">gdal_usage()</a></code></p>
-<p>GDAL RFC 104: Adding a “gdal” front-end command line interface:<br><a href="https://gdal.org/en/stable/development/rfc/rfc104_gdal_cli.html#implementation-details" class="external-link">Implementation details</a></p></div>
+<p>GDAL RFC 104: Adding a “gdal” front-end command line interface:<br><a href="https://gdal.org/en/stable/development/rfc/rfc104_gdal_cli.html#implementation-details" class="external-link">Implementation details</a></p>
+<p><a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html">Using “gdal” CLI algorithms from R</a></p></div>
     </div>
 
     <div class="section level2">
@@ -406,10 +412,9 @@ stable. Breaking changes in minor version releases are possible until then.</p>
 <span class="r-in"><span><span class="fu"><a href="gdal_cli.html">gdal_usage</a></span><span class="op">(</span><span class="st">"raster hillshade"</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># input as a GDALRaster object and output to an in-memory raster</span></span></span>
-<span class="r-in"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-in"><span><span class="va">args</span><span class="op">$</span><span class="va">input</span> <span class="op">&lt;-</span> <span class="va">ds_clip</span></span></span>
-<span class="r-in"><span><span class="va">args</span><span class="op">$</span><span class="va">output_format</span> <span class="op">&lt;-</span> <span class="st">"MEM"</span></span></span>
-<span class="r-in"><span><span class="va">args</span><span class="op">$</span><span class="va">output</span> <span class="op">&lt;-</span> <span class="st">""</span></span></span>
+<span class="r-in"><span><span class="va">args</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>input <span class="op">=</span> <span class="va">ds_clip</span>,</span></span>
+<span class="r-in"><span>             output_format <span class="op">=</span> <span class="st">"MEM"</span>,</span></span>
+<span class="r-in"><span>             output <span class="op">=</span> <span class="st">""</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="op">(</span><span class="va">alg</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALAlg</span>, <span class="st">"raster hillshade"</span>, <span class="va">args</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span></span></span>
