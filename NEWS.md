@@ -1,4 +1,6 @@
-# gdalraster 2.1.0.9100 (dev)
+# gdalraster 2.1.0.9101 (dev)
+
+* doc: add web article [*Using "gdal" CLI algorithms from R*](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html) (#772) (2025-08-16)
 
 * add initial bindings to the "gdal" CLI ([gdal_cli](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.html)) and the GDALAlgorithm API ([class `GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html)) (#771) (2025-08-16)
 
