@@ -28,10 +28,12 @@ algorithm, and access its output.
 
 \strong{Requires GDAL >= 3.11.3}.
 
+\strong{Experimental} (see "Development status")
+
 \code{GDALAlg} is a C++ class exposed directly to \R (via \code{RCPP_EXPOSED_CLASS}).
-Fields and methods of the class are accessed using the \code{$} operator. \strong{Note
+Fields and methods of the class are accessed using the \code{$} operator. Note
 that all arguments to class methods are required and must be given in the
-order documented.}
+order documented (naming optional).
 }
 \section{Usage (see Details)}{
 
@@ -287,7 +289,7 @@ character vector or numeric vector of values).
 }
 }
 
-\section{Experimental}{
+\section{Development status}{
 
 The GDAL Command Line Interface Modernization was first introduced in the
 \href{https://github.com/OSGeo/gdal/releases/tag/v3.11.0}{GDAL 3.11.0 release}
@@ -297,6 +299,7 @@ line utilities. The project reserves the right to modify, rename,
 reorganize, and change the behavior until it is officially frozen via PSC
 vote in a future major GDAL release.... Your usage of it should have no
 expectation of compatibility until that time.}
+(\url{https://gdal.org/en/latest/programs/#gdal-application})
 
 Initial bindings to enable programmatic use of the new CLI algorithms from \R
 were added in \pkg{gdalraster} 2.2.0, and will evolve over future releases.
@@ -348,10 +351,9 @@ ds_clip$bbox()
 gdal_usage("raster hillshade")
 
 # input as a GDALRaster object and output to an in-memory raster
-args <- list()
-args$input <- ds_clip
-args$output_format <- "MEM"
-args$output <- ""
+args <- list(input = ds_clip,
+             output_format = "MEM",
+             output = "")
 
 (alg <- new(GDALAlg, "raster hillshade", args))
 
@@ -415,4 +417,6 @@ alg$release()
 
 GDAL RFC 104: Adding a \dQuote{gdal} front-end command line interface:\cr
 \href{https://gdal.org/en/stable/development/rfc/rfc104_gdal_cli.html#implementation-details}{Implementation details}
+
+\href{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}{Using \dQuote{gdal} CLI algorithms from R}
 }

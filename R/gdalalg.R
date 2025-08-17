@@ -22,10 +22,12 @@
 #'
 #' **Requires GDAL >= `r .GDALALG_MIN_GDAL_STR`**.
 #'
+#' **Experimental** (see "Development status")
+#'
 #' `GDALAlg` is a C++ class exposed directly to \R (via `RCPP_EXPOSED_CLASS`).
-#' Fields and methods of the class are accessed using the `$` operator. **Note
+#' Fields and methods of the class are accessed using the `$` operator. Note
 #' that all arguments to class methods are required and must be given in the
-#' order documented.**
+#' order documented (naming optional).
 #'
 #' @param cmd A character string or character vector containing the path to the
 #' algorithm, e.g., `"raster reproject"` or `c("raster", "reproject")`.
@@ -38,7 +40,7 @@
 #'
 #' @inheritSection gdal_cli Algorithm argument syntax
 #'
-#' @inheritSection gdal_cli Experimental
+#' @inheritSection gdal_cli Development status
 #'
 #' @section Usage (see Details):
 #' \preformatted{
@@ -239,6 +241,8 @@
 #' GDAL RFC 104: Adding a \dQuote{gdal} front-end command line interface:\cr
 #' [Implementation details](https://gdal.org/en/stable/development/rfc/rfc104_gdal_cli.html#implementation-details)
 #'
+#' [Using \dQuote{gdal} CLI algorithms from R](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html)
+#'
 #' @examplesIf gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL
 #' f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #'
@@ -282,10 +286,9 @@
 #' gdal_usage("raster hillshade")
 #'
 #' # input as a GDALRaster object and output to an in-memory raster
-#' args <- list()
-#' args$input <- ds_clip
-#' args$output_format <- "MEM"
-#' args$output <- ""
+#' args <- list(input = ds_clip,
+#'              output_format = "MEM",
+#'              output = "")
 #'
 #' (alg <- new(GDALAlg, "raster hillshade", args))
 #'
