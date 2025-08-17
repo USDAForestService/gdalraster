@@ -359,6 +359,11 @@ test_that("footprint runs without error", {
 })
 
 test_that("ogr2ogr works", {
+    # this may be removed in the future
+    # cf. https://gdal.org/en/stable/programs/ogr2ogr.html#known-issues
+    set_config_option("OGR2OGR_USE_ARROW_API", "NO")
+    on.exit(set_config_option("OGR2OGR_USE_ARROW_API", ""))
+
     src <- system.file("extdata/ynp_fires_1984_2022.gpkg", package="gdalraster")
 
     # convert GeoPackage to Shapefile

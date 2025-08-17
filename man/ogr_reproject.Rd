@@ -165,8 +165,10 @@ bnd_mtsp$close()
 \dontshow{set_config_option("OGR2OGR_USE_ARROW_API", "")}
 }
 \seealso{
-\code{\link[=ogr2ogr]{ogr2ogr()}}, \code{\link[=warp]{warp()}} for raster reprojection
+\code{\link[=ogr2ogr]{ogr2ogr()}}
 
 GDAL documentation for \code{ogr2ogr}:\cr
 \url{https://gdal.org/en/stable/programs/ogr2ogr.html}
+
+\code{\link[=warp]{warp()}} for raster reprojection
 }
