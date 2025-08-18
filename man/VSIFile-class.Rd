@@ -40,11 +40,11 @@ It provides analogs of several Standard C file I/O functions, allowing
 virtualization of disk I/O so that non-file data sources can be made to
 appear as files.
 
-\code{VSIFile} is a C++ class exposed directly to R (via \code{RCPP_EXPOSED_CLASS}).
+\code{VSIFile} is a C++ class exposed directly to \R (via \code{RCPP_EXPOSED_CLASS}).
 Methods of the class are accessed using the \code{$} operator.
 }
 \note{
-File offsets are given as R \code{numeric} (i.e., \code{double} type), optionally
+File offsets are given as \R \code{numeric} (i.e., \code{double} type), optionally
 carrying the \code{bit64::integer64} class attribute. They are returned as
 \code{numeric} with the \code{integer64} class attribute attached. The \code{integer64}
 type is signed, so the maximum file offset supported by this interface
@@ -153,21 +153,21 @@ Rewind the file pointer to the beginning of the file. This is equivalent to
 \code{vf$seek(0, SEEK_SET)}. No return value, called for that side effect.
 
 \code{$read(nbytes)}\cr
-Read \code{nbytes} bytes from the file at the current offset. Returns a vector
-of R \code{raw} type, or \code{NULL} if the operation fails.
+Read \code{nbytes} bytes from the file at the current offset. Returns an \R \code{raw}
+vector, or \code{NULL} if the operation fails.
 
 \code{$write(object)}\cr
 Write bytes to the file at the current offset. \code{object} is a \code{raw} vector.
 Returns the number of bytes successfully written, as numeric scalar
 carrying the \code{integer64} class attribute.
-See also base R \code{charToRaw()} / \code{rawToChar()}, convert to or from raw
+See also base \R \code{charToRaw()} / \code{rawToChar()}, convert to or from raw
 vectors, and \code{readBin()} / \code{writeBin()} which read binary data from or write
 binary data to a raw vector.
 
 \code{$eof()}\cr
 Test for end of file. Returns \code{TRUE} if an end-of-file condition occurred
 during the previous read operation. The end-of-file flag is cleared by a
-successful call to \verb{$seek()}.
+successful call to \code{$seek()}.
 
 \code{$truncate(new_size)}\cr
 Truncate/expand the file to the specified \code{new_size}, given as a positive
@@ -197,8 +197,8 @@ completed. Returns \code{0} on success or \code{-1} on error.
 \code{$open()}\cr
 This method can be used to re-open the file after it has been closed, using
 the same \code{filename}, and same \code{options} if any are set. The file will be
-opened using \code{access} as currently set. The \verb{$set_access()} method can be
-called to change the requested access while the file is closed.
+opened using \code{access} as currently set. The \code{$set_access()} method can
+be called to change the requested access while the file is closed.
 No return value. An error is raised if a file handle cannot be obtained.
 
 \code{$get_filename()}\cr
@@ -213,7 +213,7 @@ Returns a character string containing the \code{access} as currently set on this
 Sets the requested read/write access on this \code{VSIFile} object, given as a
 character string (i.e., \code{"r"}, \code{"r+"}, \code{"w"}, \code{"w+"}). The access can be
 changed only while the \code{VSIFile} object is closed, and will apply when it is
-re-opened with a call to \verb{$open()}.
+re-opened with a call to \code{$open()}.
 Returns \code{0} on success or \code{-1} on error.
 }
 }

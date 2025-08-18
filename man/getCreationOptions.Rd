@@ -13,8 +13,8 @@ getCreationOptions(format, filter = NULL)
 }
 \value{
 A named list with names matching the creation option names, and
-each element a named list with elements \verb{$type}, \verb{$description}, \verb{$default}
-and \verb{$values} (see Details).
+each element a named list with elements \code{type}, \code{description}, \code{default}
+and \code{values} (see Details).
 }
 \description{
 \code{getCreationOptions()} returns the list of creation options supported by a
@@ -27,21 +27,21 @@ The output is a nested list with names matching the creation option names.
 The information for each creation option is a named list with the following
 elements:
 \itemize{
-\item \verb{$type}: a character string describing the data type, e.g., \code{"int"},
+\item \code{type}: a character string describing the data type, e.g., \code{"int"},
 \code{"float"}, \code{"string"}. The type \code{"string-select"} denotes a list of allowed
-string values which are returned as a character vector in the \verb{$values}
+string values which are returned as a character vector in the \code{values}
 element (see below).
-\item \verb{$description}: a character string describing the option, or \code{NA} if no
+\item \code{description}: a character string describing the option, or \code{NA} if no
 description is provided by the GDAL driver.
-\item \verb{$default}: the default value of the option as either a character string
+\item \code{default}: the default value of the option as either a character string
 or numeric value, or \code{NA} if no description is provided by the GDAL driver.
-\item \verb{$values}: a character vector of allowed string values for the creation
-option if \verb{$type} is \code{"string-select"}, otherwise \code{NULL} if the option is
+\item \code{values}: a character vector of allowed string values for the creation
+option if \code{type} is \code{"string-select"}, otherwise \code{NULL} if the option is
 not a \code{"string-select"} type.
-\item \verb{$min}: (GDAL >= 3.11) the minimum value of the valid range for the
+\item \code{min}: (GDAL >= 3.11) the minimum value of the valid range for the
 option, or \code{NA} if not provided by the GDAL driver or the option is not a
 numeric type.
-\item \verb{$max}: (GDAL >= 3.11) the maximum value of the valid range for the
+\item \code{max}: (GDAL >= 3.11) the maximum value of the valid range for the
 option, or \code{NA} if not provided by the GDAL driver or the option is not a
 numeric type.
 }

@@ -49,7 +49,7 @@ Wrapper of \code{GDALAutoCreateWarpedVRT()} in the GDAL Warper API.
 \note{
 The returned dataset will have no associated filename for itself. If you
 want to write the virtual dataset to a VRT file, use the
-\verb{$setFilename()} method on the returned \code{GDALRaster} object to assign a
+\code{$setFilename()} method on the returned \code{GDALRaster} object to assign a
 filename before it is closed.
 }
 \examples{

@@ -176,14 +176,14 @@
 #' zero or more attribute field definitions, and at least one geometry field
 #' definition (see [ogr_define]).
 #' Each field definition is a list with named elements containing values for
-#' the field `$type` and other properties.
+#' the field `type` element and other properties.
 #' If `layer_defn` is given, it will be used and any additional parameters
 #' passed that relate to the feature class definition will be ignored (i.e.,
 #' `geom_type` and `srs`, as well as `fld_name` and `fld_type` in
 #' `ogr_ds_create()`).
 #' The first geometry field definition in `layer_defn` defines the
 #' geometry type and spatial reference system for the layer (the geom field
-#' definition must contain `$type`, and should also contain `$srs` when
+#' definition must contain `type`, and should also contain `srs` when
 #' creating a layer from a feature class definition).
 #' @param geom_type Character string specifying a geometry type (see Details).
 #' @param srs Character string containing a spatial reference system definition
@@ -631,7 +631,7 @@ ogr_layer_create <- function(dsn, layer, layer_defn = NULL, geom_type = NULL,
 
             if (is.null(layer_defn[[nm]]$is_geom) ||
                     !is.logical(layer_defn[[nm]]$is_geom)) {
-                stop("field definitions must contain `$is_geom=[TRUE|FALSE]`",
+                stop("field definitions must contain `is_geom = TRUE|FALSE`",
                      call. = FALSE)
             }
 

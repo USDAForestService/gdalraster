@@ -16,19 +16,19 @@ the driver on how to access a dataset (e.g., connection string, URL, etc.)}
 \value{
 A list with the following named elements:
 \itemize{
-\item \verb{$format}: character string, the format short name
-\item \verb{$supports_raster}: logical, \code{TRUE} if the format supports raster data
-\item \verb{$contains_raster}: logical, \code{TRUE} if this is a raster dataset or the
+\item \code{format}: character string, the format short name
+\item \code{supports_raster}: logical, \code{TRUE} if the format supports raster data
+\item \code{contains_raster}: logical, \code{TRUE} if this is a raster dataset or the
 source contains raster subdatasets
-\item \verb{$supports_subdatasets}: logical, \code{TRUE} if the format supports raster
+\item \code{supports_subdatasets}: logical, \code{TRUE} if the format supports raster
 subdatasets
-\item \verb{$contains_subdatasets}: logical, \code{TRUE} if the source contains subdatasets
-\item \verb{$subdataset_names}: character vector containing the subdataset names, or
+\item \code{contains_subdatasets}: logical, \code{TRUE} if the source contains subdatasets
+\item \code{subdataset_names}: character vector containing the subdataset names, or
 empty vector if subdatasets are not supported or not present
-\item \verb{$supports_vector}: logical, \code{TRUE} if the format supports vector data
-\item \verb{$contains_vector}: logical, \code{TRUE} if the source contains one or more
+\item \code{supports_vector}: logical, \code{TRUE} if the format supports vector data
+\item \code{contains_vector}: logical, \code{TRUE} if the source contains one or more
 vector layers
-\item \verb{$layer_names}: character vector containing the vector layer names, or
+\item \code{layer_names}: character vector containing the vector layer names, or
 empty vector if the format does not support vector or the source does not
 contain any vector layers
 }

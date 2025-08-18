@@ -10,7 +10,7 @@
 #' and the count of occurrences of each unique integer combination as the
 #' value. A unique ID is assigned to each unique combination of input values.
 #'
-#' `CmbTable` is a C++ class exposed directly to R (via `RCPP_EXPOSED_CLASS`).
+#' `CmbTable` is a C++ class exposed directly to \R (via `RCPP_EXPOSED_CLASS`).
 #' Methods of the class are accessed using the `$` operator. **Note that all
 #' arguments to class methods are required and must be given in the
 #' order documented.** Naming the arguments is optional but may be preferred
@@ -62,23 +62,23 @@
 #' Combination IDs are sequential integers starting at `1`.
 #'
 #' \code{$updateFromMatrix(int_cmbs, incr)}\cr
-#' This method is the same as `$update()` but for a numeric matrix of
+#' This method is the same as \code{$update()} but for a numeric matrix of
 #' integer combinations `int_cmbs` (coerced to integer by truncation).
 #' The matrix is arranged with each column vector forming an integer
 #' combination. For example, the rows of the matrix could be
 #' one row each from a set of `keyLen` rasters all read at the
 #' same extent and pixel resolution (i.e., row-by-row raster overlay).
-#' The method calls `$update()` on each combination (each column of
+#' The method calls \code{$update()} on each combination (each column of
 #' `int_cmbs`), incrementing count by `incr` for existing
 #' combinations, or inserting new combinations with count set to `incr`.
 #' Returns a numeric vector of length `ncol(int_cmbs)` containing the
 #' IDs assigned to the combinations.
 #'
 #' \code{$updateFromMatrixByRow(int_cmbs, incr)}\cr
-#' This method is the same as `$updateFromMatrix()` above except the
+#' This method is the same as \code{$updateFromMatrix()} above except the
 #' integer combinations are in rows of the matrix `int_cmbs` (columns
 #' are the variables).
-#' The method calls `$update()` on each combination (each row of
+#' The method calls \code{$update()} on each combination (each row of
 #' `int_cmbs`), incrementing count by `incr` for existing
 #' combinations, or inserting new combinations with count set to `incr`.
 #' Returns a numeric vector of length `nrow(int_cmbs)` containing the

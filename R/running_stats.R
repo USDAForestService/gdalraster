@@ -13,7 +13,7 @@
 #' stored in memory, so this class can be used to compute statistics for very
 #' large data streams.
 #'
-#' `RunningStats` is a C++ class exposed directly to R (via
+#' `RunningStats` is a C++ class exposed directly to \R (via
 #' `RCPP_EXPOSED_CLASS`). Methods of the class are accessed using the `$`
 #' operator.
 #'

@@ -28,7 +28,7 @@
 #' All features in an OGR Layer share a common schema (feature class), modeled
 #' in GDAL by its `OGRFeatureDefn` class. A feature class definition includes
 #' the set of attribute fields and their data types and the geometry field(s).
-#' In R, a feature class definition is represented as a named list, with names
+#' In \R, a feature class definition is represented as a named list, with names
 #' being the attribute/geometry field names, and each list element holding an
 #' attribute or geometry field definition.
 #'
@@ -60,7 +60,7 @@
 #'
 #' A default field value is taken into account by format drivers (generally
 #' those with a SQL interface) that support it at field creation time.
-#' If given in the field definition, `$default` must be a character string.
+#' If given in the field definition, `default` must be a character string.
 #' The accepted values are `"NULL"`, a numeric value (e.g., `"0"`), a literal
 #' value enclosed between single quote characters (e.g., `"'a default value'"`,
 #' with any inner single quote characters escaped by repetition of the single
@@ -116,18 +116,18 @@
 #' * `Range`: a range constraint (min, max)
 #' * `GLOB`: a GLOB expression (matching expression like `"*[a-z][0-1]?"`)
 #'
-#' `$type` can also be specified as `"RangeDateTime"`, a range constraint for
-#' `OFTDateTime` fields with `$min_value` and `$max_value` given as
+#' `type` can also be specified as `"RangeDateTime"`, a range constraint for
+#' `OFTDateTime` fields with `min_value` and `max_value` given as
 #' `"POSIXct"` DateTimes.
 #'
 #' Split and merge policies are supported by ESRI File Geodatabase format via
 #' OpenFileGDB driver (or FileGDB driver dependent on FileGDB API library).
-#' When a feature is split in two, `$split_policy` defines how the value of
+#' When a feature is split in two, `split_policy` defines how the value of
 #' attributes following the domain are computed. Possible values are
 #' `"DEFAULT_VALUE"` (default value), `"DUPLICATE"` (duplicate), and
 #' `"GEOMETRY_RATIO"` (new values are computed by the ratio of their
 #' area/length compared to the area/length of the original feature).
-#' When a feature is built by merging two features, `$merge_policy` defines
+#' When a feature is built by merging two features, `merge_policy` defines
 #' how the value of attributes following the domain are computed. Possible
 #' values are `"DEFAULT_VALUE"` (default value), `"SUM"` (sum), and
 #' `"GEOMETRY_WEIGHTED"` (new values are computed as the weighted average of

@@ -284,29 +284,29 @@ addFilesInZip <- function(
 #' The output is a nested list with names matching the creation option names.
 #' The information for each creation option is a named list with the following
 #' elements:
-#' * `$type`: a character string describing the data type, e.g., `"int"`,
+#' * `type`: a character string describing the data type, e.g., `"int"`,
 #' `"float"`, `"string"`. The type `"string-select"` denotes a list of allowed
-#' string values which are returned as a character vector in the `$values`
+#' string values which are returned as a character vector in the `values`
 #' element (see below).
-#' * `$description`: a character string describing the option, or `NA` if no
+#' * `description`: a character string describing the option, or `NA` if no
 #' description is provided by the GDAL driver.
-#' * `$default`: the default value of the option as either a character string
+#' * `default`: the default value of the option as either a character string
 #' or numeric value, or `NA` if no description is provided by the GDAL driver.
-#' * `$values`: a character vector of allowed string values for the creation
-#' option if `$type` is `"string-select"`, otherwise `NULL` if the option is
+#' * `values`: a character vector of allowed string values for the creation
+#' option if `type` is `"string-select"`, otherwise `NULL` if the option is
 #' not a `"string-select"` type.
-#' * `$min`: (GDAL >= 3.11) the minimum value of the valid range for the
+#' * `min`: (GDAL >= 3.11) the minimum value of the valid range for the
 #' option, or `NA` if not provided by the GDAL driver or the option is not a
 #' numeric type.
-#' * `$max`: (GDAL >= 3.11) the maximum value of the valid range for the
+#' * `max`: (GDAL >= 3.11) the maximum value of the valid range for the
 #' option, or `NA` if not provided by the GDAL driver or the option is not a
 #' numeric type.
 #'
 #' @param format Format short name (e.g., `"GTiff"`).
 #' @param filter Optional character vector of creation option names.
 #' @returns A named list with names matching the creation option names, and
-#' each element a named list with elements `$type`, `$description`, `$default`
-#' and `$values` (see Details).
+#' each element a named list with elements `type`, `description`, `default`
+#' and `values` (see Details).
 #'
 #' @seealso
 #' [create()], [createCopy()], [translate()], [validateCreationOptions()],
@@ -519,8 +519,9 @@ apply_geotransform <- function(col_row, gt) {
 #' the raster x/y size). If `gt` is obtained from an object of class
 #' `GDALRaster`, then `NA` is returned for points that fall outside the
 #' raster extent and a warning emitted giving the number points that were
-#' outside. This latter case is equivalent to calling the `$get_pixel_line()`
-#' class method on the `GDALRaster` object (see Examples).
+#' outside. This latter case is equivalent to calling the
+#' \code{$get_pixel_line()} class method on the `GDALRaster` object (see
+#' Examples).
 #'
 #' @seealso [`GDALRaster$getGeoTransform()`][GDALRaster], [inv_geotransform()]
 #'
@@ -622,19 +623,19 @@ dump_open_datasets <- function() {
 #'
 #' @returns
 #' A list with the following named elements:
-#' * `$format`: character string, the format short name
-#' * `$supports_raster`: logical, `TRUE` if the format supports raster data
-#' * `$contains_raster`: logical, `TRUE` if this is a raster dataset or the
+#' * `format`: character string, the format short name
+#' * `supports_raster`: logical, `TRUE` if the format supports raster data
+#' * `contains_raster`: logical, `TRUE` if this is a raster dataset or the
 #' source contains raster subdatasets
-#' * `$supports_subdatasets`: logical, `TRUE` if the format supports raster
+#' * `supports_subdatasets`: logical, `TRUE` if the format supports raster
 #' subdatasets
-#' * `$contains_subdatasets`: logical, `TRUE` if the source contains subdatasets
-#' * `$subdataset_names`: character vector containing the subdataset names, or
+#' * `contains_subdatasets`: logical, `TRUE` if the source contains subdatasets
+#' * `subdataset_names`: character vector containing the subdataset names, or
 #' empty vector if subdatasets are not supported or not present
-#' * `$supports_vector`: logical, `TRUE` if the format supports vector data
-#' * `$contains_vector`: logical, `TRUE` if the source contains one or more
+#' * `supports_vector`: logical, `TRUE` if the format supports vector data
+#' * `contains_vector`: logical, `TRUE` if the source contains one or more
 #' vector layers
-#' * `$layer_names`: character vector containing the vector layer names, or
+#' * `layer_names`: character vector containing the vector layer names, or
 #' empty vector if the format does not support vector or the source does not
 #' contain any vector layers
 #'

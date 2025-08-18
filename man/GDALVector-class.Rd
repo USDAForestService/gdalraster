@@ -34,8 +34,8 @@ An object of class \code{GDALVector}, which contains pointers to the
 opened layer and the GDAL dataset that owns it. Class methods that operate
 on the layer are described in Details, along with a set of writable fields
 for per-object settings. Values may be assigned to the class fields as
-needed during the lifetime of the object (i.e., by regular \verb{<-} or \code{=}
-assignment).
+needed during the lifetime of the object (i.e., by regular \code{<-} or
+\code{=} assignment).
 }
 \description{
 \code{GDALVector} provides an interface for accessing a vector layer in a GDAL
@@ -56,7 +56,7 @@ an analog of \code{DBI::dbFetch()}
 \item perform data manipulation within transactions.
 }
 
-\code{GDALVector} is a C++ class exposed directly to R (via \code{RCPP_EXPOSED_CLASS}).
+\code{GDALVector} is a C++ class exposed directly to \R (via \code{RCPP_EXPOSED_CLASS}).
 Fields and methods of the class are accessed using the \code{$} operator. \strong{Note
 that all arguments to class methods are required and must be given in the
 order documented.} Most \code{GDALVector} methods take zero or one argument, so
@@ -164,7 +164,7 @@ may also be given as an SQL SELECT statement to define a layer as the result
 set.
 
 \code{new(GDALVector, dsn, layer, read_only)}\cr
-Constructor specifying read/write access (\verb{read_only = \{TRUE|FALSE\})}.
+Constructor specifying read/write access (\code{read_only = TRUE|FALSE}).
 The \code{layer} argument is required in this form of the constructor, but may be
 given as empty string (\code{""}), in which case the first layer by index will be
 assumed.
@@ -203,16 +203,17 @@ returned.
 \code{$promoteToMulti}\cr
 A logical value specifying whether to automatically promote geometries from
 Polygon to MultiPolygon, Point to MultiPoint, or LineString to
-MultiLineString during read operations (i.e., with methods \verb{$getFeature()},
-\verb{$getNextFeature()}, \verb{$fetch()}). Defaults to \code{FALSE}. Setting to \code{TRUE} may
-be useful when reading from layers such as shapefiles that mix, e.g.,
-Polygons and MultiPolygons.
+MultiLineString during read operations (i.e., with methods
+\code{$getFeature()}, \code{$getNextFeature()}, \code{$fetch()}).
+Defaults to \code{FALSE}. Setting to \code{TRUE} may be useful when reading from
+layers such as shapefiles that mix Polygons and MultiPolygons.
 
 \code{$convertToLinear}\cr
 A logical value specifying whether to convert non-linear geometry types into
 linear geometry types by approximating them (i.e., during read operations
-with methods \verb{$getFeature()}, \verb{$getNextFeature()}, \verb{$fetch()}). Defaults to
-\code{FALSE}. If set to \code{TRUE}, handled conversions are:
+with methods \code{$getFeature()}, \code{$getNextFeature()},
+\code{$fetch()}). Defaults to \code{FALSE}. If set to \code{TRUE}, handled conversions
+are:
 \itemize{
 \item wkbCurvePolygon -> wkbPolygon
 \item wkbCircularString -> wkbLineString
@@ -228,7 +229,7 @@ Must be either \code{LSB} (Least Significant Byte first, the default) or
 
 \code{$arrowStreamOptions}\cr
 Character vector of \code{"NAME=VALUE"} pairs giving options used by the
-\verb{$getArrowStream()} method (see below). The available options may be
+\code{$getArrowStream()} method (see below). The available options may be
 driver and GDAL version specific. Options available as of GDAL 3.8 are
 listed below. For more information about options for Arrow stream, see
 the GDAL API documentation for
@@ -253,11 +254,11 @@ messages and warnings.
 
 \code{$transactionsForce}\cr
 A logical value, \code{FALSE} by default. Affects the behavior of attempted
-transactions on the layer (see the \verb{$startTransaction()} method below).
+transactions on the layer (see the \code{$startTransaction()} method below).
 By default, only "efficient" transactions will be attempted. Some drivers
 may offer an emulation of transactions, but sometimes with significant
 overhead, in which case the user must explicitly allow for such an
-emulation by first setting \verb{$transactionsForce <- TRUE}.
+emulation by first setting \code{$transactionsForce <- TRUE}.
 }
 
 \subsection{Methods}{
@@ -327,14 +328,15 @@ column, or empty string (\code{""}) if not supported.
 Returns the well known name of the layer geometry type as character string.
 For layers with multiple geometry fields, this method only returns the
 geometry type of the first geometry column. For other columns, use
-\verb{$getLayerDefn()}. For layers without any geometry field, this method
+\code{$getLayerDefn()}. For layers without any geometry field, this method
 returns \code{"NONE"}.
 
 \code{$getGeometryColumn()}\cr
 Returns he name of the underlying database column being used as the geometry
 column, or an empty string (\code{""}) if not supported.
 For layers with multiple geometry fields, this method only returns the
-name of the first geometry column. For other columns, use \verb{$getLayerDefn()}.
+name of the first geometry column. For other columns, use method
+\code{$getLayerDefn()}.
 
 \code{$getSpatialRef()}\cr
 Returns a WKT string containing the spatial reference system for this layer,
@@ -345,9 +347,9 @@ Returns a numeric vector of length four containing the bounding box
 for this layer (xmin, ymin, xmax, ymax). Note that \code{bForce = true} is set in
 the underlying API call to \code{OGR_L_GetExtent()}, so the entire layer may be
 scanned to compute a minimum bounding rectangle (see \code{FastGetExtent} in the
-list returned by \verb{$testCapability()}). Depending on the format driver, a
-spatial filter may or may not be taken into account, so it is safer to call
-\verb{$bbox()} without setting a spatial filter.
+list returned by \code{$testCapability()}). Depending on the format driver,
+a spatial filter may or may not be taken into account, so it is safer to
+call \code{$bbox()} without setting a spatial filter.
 
 \code{$getLayerDefn()}\cr
 Returns a list containing the OGR feature class definition for this layer
@@ -370,7 +372,7 @@ Requires GDAL >= 3.3.
 
 \code{$setAttributeFilter(query)}\cr
 Sets an attribute query string to be used when fetching features via the
-\verb{$getNextFeature()} or \verb{$fetch()} methods.
+\code{$getNextFeature()} or \code{$fetch()} methods.
 Only features for which \code{query} evaluates as true will be returned.
 The query string should be in the format of an SQL WHERE clause, described
 in the \href{https://gdal.org/en/stable/user/ogr_sql_dialect.html#where}{"WHERE"}
@@ -381,7 +383,7 @@ In some cases (RDBMS backed drivers, SQLite, GeoPackage) the native
 capabilities of the database may be used to to interpret the WHERE clause,
 in which case the capabilities will be broader than those of OGR SQL.
 Note that installing a query string will generally result in resetting the
-current reading position (as with \verb{$resetReading()} described below).
+current reading position (as with \code{$resetReading()} described below).
 The \code{query} parameter may be set to empty string (\code{""}) to clear the current
 attribute filter.
 
@@ -394,22 +396,23 @@ Set which fields can be omitted when retrieving features from the layer.
 The \code{fields} argument is a character vector of field names. Passing an
 empty string (\code{""}) for \code{fields} will reset to no ignored fields.
 If the format driver supports this functionality (testable using
-\verb{$testCapability()$IgnoreFields}), it will not fetch the specified fields
-in subsequent calls to \verb{$getFeature()} / \verb{$getNextFeature()} / \verb{$fetch()},
-and thus save some processing time and/or bandwidth. Besides field names of
-the layer, the following special fields can be passed: \code{"OGR_GEOMETRY"} to
-ignore geometry and \code{"OGR_STYLE"} to ignore layer style. By default, no
-fields are ignored. Note that fields that are used in an attribute filter
-should generally not be set as ignored fields, as most drivers (such as
-those relying on the OGR SQL engine) will be unable to correctly evaluate
-the attribute filter. No return value, called for side effects.
+\code{$testCapability()$IgnoreFields}), it will not fetch the specified
+fields in subsequent calls to \code{$getFeature()} / \code{$getNextFeature()}
+/ \code{$fetch()}, and thus save some processing time and/or bandwidth.
+Besides field names of the layer, the following special fields can be passed:
+\code{"OGR_GEOMETRY"} to ignore geometry and \code{"OGR_STYLE"} to ignore layer style.
+By default, no fields are ignored. Note that fields that are used in an
+attribute filter should generally not be set as ignored fields, as most
+drivers (such as those relying on the OGR SQL engine) will be unable to
+correctly evaluate the attribute filter. No return value, called for side
+effects.
 
 \code{$setSelectedFields(fields)}\cr
 Set which fields will be included when retrieving features from the layer.
 The \code{fields} argument is a character vector of field names. Passing an
 empty string (\code{""}) for \code{fields} will reset to no ignored fields.
-See the \verb{$setIgnoredFields()} method above for more information. The data
-source must provide IgnoreFields capability in order to set selected
+See the \code{$setIgnoredFields()} method above for more information. The
+data source must provide IgnoreFields capability in order to set selected
 fields. Note that geometry fields, if desired, must be specified when setting
 selected fields, either by including named geometry field(s) or the special
 field \code{"OGR_GEOMETRY"} in the \code{fields} argument.
@@ -423,11 +426,11 @@ ignored (or if the format driver does not support ignored fields).
 \code{$setSpatialFilter(wkt)}\cr
 Sets a new spatial filter from a geometry in WKT format. This method sets
 the geometry to be used as a spatial filter when fetching features via the
-\verb{$getNextFeature()} or \verb{$fetch()} methods. Only features that geometrically
-intersect the filter geometry will be returned. Currently this test may be
-inaccurately implemented (depending on the vector format driver), but it is
-guaranteed that all features whose envelope overlaps the envelope of the
-spatial filter will be returned. This can result in more shapes being
+\code{$getNextFeature()} or \code{$fetch()} methods. Only features that
+geometrically intersect the filter geometry will be returned. Currently this
+test may be inaccurately implemented (depending on the vector format driver),
+but it is guaranteed that all features whose envelope overlaps the envelope
+of the spatial filter will be returned. This can result in more shapes being
 returned that should strictly be the case.
 \code{wkt} is a character string containing a WKT geometry in the same coordinate
 system as the layer. An empty string (\code{""}) may be passed indicating that
@@ -435,19 +438,20 @@ the current spatial filter should be cleared, but no new one instituted.
 
 \code{$setSpatialFilterRect(bbox)}\cr
 Sets a new rectangular spatial filter. This method sets a rectangle to be
-used as a spatial filter when fetching features via the \verb{$getNextFeature()}
-or \verb{$fetch()} methods. Only features that geometrically intersect the given
-rectangle will be returned.
+used as a spatial filter when fetching features via the
+\code{$getNextFeature()} or \code{$fetch()} methods.
+Only features that geometrically intersect the given rectangle will be
+returned.
 \code{bbox} is a numeric vector of length four containing xmin, ymin, xmax, ymax
 in the same coordinate system as the layer as a whole (as returned by
-\verb{$getSpatialRef()}).
+\code{$getSpatialRef()}).
 
 \code{$getSpatialFilter()}\cr
 Returns the current spatial filter geometry as a WKT string, or empty string
 (\code{""}) if a spatial filter is not set.
 
 \code{$clearSpatialFilter()}\cr
-Clears a spatial filter that was set with \verb{$setSpatialFilterRect()}.
+Clears a spatial filter that was set with \code{$setSpatialFilterRect()}.
 No return value, called for that side effect.
 
 \code{$getFeatureCount()}\cr
@@ -456,7 +460,8 @@ may not be exact. This method forces a count in the underlying API call
 (i.e., \code{bForce = TRUE} in the call to \code{OGR_L_GetFeatureCount()}). Note that
 some vector drivers will actually scan the entire layer once to count
 features. The \code{FastFeatureCount} element in the list returned by
-the \verb{$testCapability()} method can be checked if this might be a concern.
+the \code{$testCapability()} method can be checked if this might be a
+concern.
 The number of features returned takes into account the spatial and/or
 attribute filters. Some driver implementations of this method may alter the
 read cursor of the layer.
@@ -465,7 +470,8 @@ read cursor of the layer.
 Fetch the next available feature from this layer. Only features matching the
 current spatial and/or attribute filter (if defined) will be returned.
 This method implements sequential access to the features of a layer.
-The \verb{$resetReading()} method can be used to start at the beginning again.
+The \code{$resetReading()} method can be used to start at the beginning
+again.
 Returns a list with the unique feature identifier (FID), the attribute and
 geometry field names, and their values. The returned list carries the
 \code{OGRFeature} class attribute with S3 methods for for \code{print()} and \code{plot()}.
@@ -475,31 +481,32 @@ geometry field names, and their values. The returned list carries the
 Moves the read cursor to feature \code{i} in the current result set
 (with 0-based indexing).
 This method allows positioning of a layer such that a call to
-\verb{$getNextFeature()} or \verb{$fetch()} will read the requested feature(s), where
-\code{i} is an absolute index into the current result set. So, setting \code{i = 3}
-would mean the next feature read with \verb{$getNextFeature()} would have been
-the fourth feature read if sequential reading took place from the beginning
-of the layer, including accounting for spatial and attribute filters.
+\code{$getNextFeature()} or \code{$fetch()} will read the requested
+feature(s), where \code{i} is an absolute index into the current result set.
+So, setting \code{i = 3} would mean the next feature read with
+\code{$getNextFeature()} would have been the fourth feature read if
+sequential reading took place from the beginning of the layer, including
+accounting for spatial and attribute filters.
 This method is not implemented efficiently by all vector format drivers. The
 default implementation simply resets reading to the beginning and then calls
 \code{GetNextFeature()} \code{i} times.
 To determine if fast seeking is available on the current layer, check
 the \code{FastSetNextByIndex} element in the list returned by the
-\verb{$testCapability()} method. No return value, called for side effect.
+\code{$testCapability()} method. No return value, called for side effect.
 
 \code{$getFeature(fid)}\cr
 Returns a feature by its identifier. The value of \code{fid} must be a numeric
 value, optionally carrying the \code{bit64::integer64} class attribute.
 Success or failure of this operation is unaffected by any spatial or
 attribute filters that may be in effect.
-The \code{RandomRead} element in the list returned by \verb{$testCapability()} can
+The \code{RandomRead} element in the list returned by \code{$testCapability()} can
 be checked to establish if this layer supports efficient random access
 reading; however, the call should always work if the feature exists since a
 fallback implementation just scans all the features in the layer looking for
 the desired feature. Returns a list with the unique feature identifier (FID),
 the attribute and geometry field names, and their values, or \code{NULL} on
-failure. Note that sequential reads (with \verb{$getNextFeature()}) are generally
-considered interrupted by a call to \verb{$getFeature()}.
+failure. Note that sequential reads (with \code{$getNextFeature()}) are
+generally considered interrupted by a call to \code{$getFeature()}.
 
 \code{$resetReading()}\cr
 Reset feature reading to start on the first feature. No return value, called
@@ -522,13 +529,13 @@ The \code{n} argument is the maximum number of features to retrieve per fetch
 given as \code{integer} or \code{numeric} but assumed to be a whole number (will
 be truncated). Use \code{n = -1} or \code{n = Inf} to retrieve all pending features
 (resets reading to the first feature).
-Otherwise, \verb{$fetch()} can be called multiple times to perform forward paging
-from the current cursor position. Passing \code{n = NA} is also supported and
-returns the remaining features.
+Otherwise, \code{$fetch()} can be called multiple times to perform forward
+paging from the current cursor position. Passing \code{n = NA} is also supported
+and returns the remaining features.
 Fetching zero features is possible to retrieve the structure of the feature
 set as a data frame (columns fully typed).
 
-OGR field types are returned as the following R types (type-specific \code{NA}
+OGR field types are returned as the following \R types (type-specific \code{NA}
 for OGR NULL values):
 \itemize{
 \item \strong{OFTInteger}: \code{integer} value
@@ -557,50 +564,51 @@ as \code{raw} vectors in a data frame list column when \code{returnGeomAs} is se
 \code{WKB} (the default) or \code{WKB_ISO}, or as \code{character} strings when
 \code{returnGeomAs} is set to one of \code{WKT} or \code{WKT_ISO}.
 
-Note that \verb{$getFeatureCount()} is called internally when fetching the full
-feature set or all remaining features (but not for a page of features).
+Note that \code{$getFeatureCount()} is called internally when fetching the
+full feature set or all remaining features (but not for a page of features).
 
 \code{$getArrowStream()}\cr
-Returns a nanoarrow_array_stream object exposing an Arrow C stream on the
+Returns a \code{nanoarrow_array_stream} object exposing an Arrow C stream on the
 layer (requires GDAL >= 3.6).
-The writable field \verb{$arrowStreamOptions} can be used to set options before
-calling this method (see above). An error is raised if an array stream
+The writable field \code{$arrowStreamOptions} can be used to set options
+before calling this method (see above). An error is raised if an array stream
 on the layer cannot be obtained.
 Generally, only one ArrowArrayStream can be active at a time on a given
 layer (i.e., the last active one must be explicitly released before a next
 one is asked). Changing attribute or spatial filters, ignored columns,
-modifying the schema or using \verb{$resetReading()}/\verb{$getNextFeature()} while
-using an ArrowArrayStream is strongly discouraged and may lead to unexpected
-results. As a rule of thumb, no OGRLayer methods that affect the state of a
-layer should be called on the layer while an ArrowArrayStream on it is
-active. Methods available on the stream object are: \verb{$get_schema()},
-\verb{$get_next()} and \verb{$release()} (see Examples).
+modifying the schema or using \code{$resetReading()} /
+\code{$getNextFeature()} while using an ArrowArrayStream is strongly
+discouraged and may lead to unexpected results. As a rule of thumb, no
+OGRLayer methods that affect the state of a layer should be called on the
+layer while an ArrowArrayStream on it is active. Methods available on the
+stream object are: \code{$get_schema()}, \code{$get_next()} and
+\code{$release()} (see Examples).
 
 The stream should be released once reading is complete. Calling the release
 method as soon as you can after consuming a stream is recommended by the
 \pkg{nanoarrow} documentation.
 
-See also the \verb{$testCapability()} method above to check whether the format
-driver provides a specialized implementation (\code{FastGetArrowStream}), as
-opposed to the (slower) default implementation. Note however that
+See also the \code{$testCapability()} method above to check whether the
+format driver provides a specialized implementation (\code{FastGetArrowStream}),
+as opposed to the (slower) default implementation. Note however that
 specialized implementations may fallback to the default when attribute or
 spatial filters are in use.
 (See the GDAL documentation for
 \href{https://gdal.org/en/stable/api/vector_c_api.html#_CPPv420OGR_L_GetArrowStream9OGRLayerHP16ArrowArrayStreamPPc}{\code{OGR_L_GetArrowStream()}}.)
 
 \code{$releaseArrowStream()}\cr
-Releases the Arrow C stream returned by \verb{$getArrowStream()} and clears the
-nanoarrow_array_stream object (if GDAL >= 3.6, otherwise does nothing).
-This is equivalent to calling the \verb{$release()} method on the
-nanoarrow_array_stream object. No return value, called for side effects.
+Releases the Arrow C stream returned by \code{$getArrowStream()} and clears
+the \code{nanoarrow_array_stream} object (if GDAL >= 3.6, otherwise does nothing).
+This is equivalent to calling the \code{$release()} method on the
+\code{nanoarrow_array_stream} object. No return value, called for side effects.
 
 \code{$setFeature(feature)}\cr
 Rewrites/replaces an existing feature. This method writes a feature based on
 the feature id within the input feature. The \code{feature} argument is a named
-list of fields and their values, and must include a \verb{$FID} element
+list of fields and their values, and must include a \code{FID} element
 referencing the existing feature to rewrite. The \code{RandomWrite} element in
-the list returned by \verb{$testCapability()} can be checked to establish if this
-layer supports random access writing via \verb{$setFeature()}.
+the list returned by \code{$testCapability()} can be checked to establish if
+this layer supports random access writing via \code{$setFeature()}.
 The way omitted fields in the passed \code{feature} are processed is driver
 dependent:
 \itemize{
@@ -614,29 +622,30 @@ corresponding JSON member.
 
 Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if setting the
 feature did not succeed. The FID of the last feature written to the layer
-may be obtained with the method \verb{$getLastWriteFID()} (see below). To set a
-feature, but create it if it doesn't exist see the \verb{$upsertFeature()} method.
+may be obtained with the method \code{$getLastWriteFID()} (see below). To set a
+feature, but create it if it doesn't exist see the \code{$upsertFeature()}
+method.
 
 \code{$createFeature(feature)}\cr
 Creates and writes a new feature within the layer. The \code{feature} argument is
 a named list of fields and their values (might be one row of a data frame).
 The passed feature is written to the layer as a new feature, rather than
-overwriting an existing one. If the feature has a \verb{$FID} element with other
+overwriting an existing one. If the feature has a \code{FID} element with other
 than \code{NA} (i.e., a numeric value, optionally carrying the \code{bit64::integer64}
 class attribute and assumed to be a whole number), then the format
 driver may use that as the feature id of the new feature, but not
 necessarily. The FID of the last feature written to the layer may be
-obtained with the method \verb{$getLastWriteFID()} (see below).
+obtained with the method \code{$getLastWriteFID()} (see below).
 Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if creating
 the feature did not succeed. To create a feature, but set it if it already
-exists see the \verb{$upsertFeature()} method.
+exists see the \code{$upsertFeature()} method.
 
 \code{$batchCreateFeature(feature_set)}\cr
-Batch version of \verb{$createFeature()}. Creates and writes a batch of new
+Batch version of \code{$createFeature()}. Creates and writes a batch of new
 features within the layer from input passed as a data frame in the
 \code{feature_set} argument. Column names in the data frame must match field
 names of the layer and have compatible data types. The specifications
-listed above under the \verb{$fetch()} method generally apply to input data
+listed above under the \code{$fetch()} method generally apply to input data
 types for writing, but integers may be passed as 'numeric', and
 the 'integer64' class attribute is not strictly required on 'numeric'
 input if it is not needed for the data being passed to an OFTInteger64
@@ -645,25 +654,25 @@ Returns a logical vector of length equal to the number of input features
 (rows of the data frame), with \code{TRUE} indicating success for the feature at
 that row index, or \code{FALSE} if writing the feature failed.
 It is recommended to use transactions when batch writing features to a
-layer (see \verb{$startTransaction()} below). This will generally give large
+layer (see \code{$startTransaction()} below). This will generally give large
 performance benefit with data sources that provide efficient transaction
 support (e.g., RDBMS-based sources such as GeoPackage and PostGIS). In
-addition, the return value of \verb{$batchCreateFeature()} can be checked, and
-the transaction optionally committed or rolled back based on results of the
-operation across the full set of input features.
+addition, the return value of \code{$batchCreateFeature()} can be checked,
+and the transaction optionally committed or rolled back based on results of
+the operation across the full set of input features.
 
 \code{$upsertFeature(feature)}\cr
 Rewrites/replaces an existing feature or creates a new feature within the
 layer. This method will write a feature to the layer, based on the feature
 id within the input feature. The \code{feature} argument is a named list of
 fields and their values (might be one row of a data frame), potentially
-including a \verb{$FID} element referencing an existing feature to rewrite. If
+including a \code{FID} element referencing an existing feature to rewrite. If
 the feature id doesn't exist a new feature will be written. Otherwise, the
 existing feature will be rewritten.
-The \code{UpsertFeature} element in the list returned by \verb{$testCapability()} can
-be checked to determine if this layer supports upsert writing. See
-\verb{$setFeature()} above for a description of how omitted fields in the passed
-\code{feature} are processed.
+The \code{UpsertFeature} element in the list returned by \code{$testCapability()}
+can be checked to determine if this layer supports upsert writing. See
+\code{$setFeature()} above for a description of how omitted fields in the
+passed feature are processed.
 Returns logical \code{TRUE} upon successful completion, or \code{FALSE} if upsert did
 not succeed. Requires GDAL >= 3.6.
 
@@ -681,9 +690,9 @@ Deletes a feature from the layer. The feature with the indicated feature ID
 is deleted from the layer if supported by the format driver. The value of
 \code{fid} must be a numeric value, optionally carrying the \code{bit64::integer64}
 class attribute (should be a whole number, will be truncated).
-The \code{DeleteFeature} element in the list returned by \verb{$testCapability()} can
-be checked to establish if this layer has delete feature capability. Returns
-logical \code{TRUE} if the operation succeeds, or \code{FALSE} on failure.
+The \code{DeleteFeature} element in the list returned by \code{$testCapability()}
+can be checked to establish if this layer has delete feature capability.
+Returns logical \code{TRUE} if the operation succeeds, or \code{FALSE} on failure.
 
 \code{$syncToDisk()}\cr
 Flushes pending changes to disk. This call is intended to force the layer to
@@ -691,33 +700,34 @@ flush any pending writes to disk, and leave the disk file in a consistent
 state. It would not normally have any effect on read-only datasources. Some
 formats do not implement this method, and will still return no error. An
 error is only returned if an error occurs while attempting to flush to disk.
-In any event, you should always close any opened datasource with \verb{$close()}
-which will ensure all data is correctly flushed. Returns logical \code{TRUE} if
-no error occurs (even if nothing is done) or \code{FALSE} on error.
+In any event, you should always close any opened datasource with
+\code{$close()} which will ensure all data is correctly flushed. Returns
+logical \code{TRUE} if no error occurs (even if nothing is done) or \code{FALSE} on
+error.
 
 \code{$startTransaction()}\cr
 Creates a transaction if supported by the vector data source. By default,
 only "efficient" transactions will be attempted. See the writable field
-\verb{$transactionsForce} above, which must be set to \code{TRUE} to allow for
+\code{$transactionsForce} above, which must be set to \code{TRUE} to allow for
 emulated transactions. These are supported by some drivers but with
 potentially significant overhead. The function \code{ogr_ds_test_cap()} can be
 used to determine whether a vector data source supports efficient or
 emulated transactions.
 
 All changes done after the start of the transaction are definitely applied
-in the data source if \verb{$commitTransaction()} is called. They can be canceled
-by calling \code{rollbackTransaction()} instead.
+in the data source if \code{$commitTransaction()} is called. They can be
+canceled by calling \code{$rollbackTransaction()} instead.
 Nested transactions are not supported. Transactions are implemented at the
 dataset level, so multiple \code{GDALVector} objects using the same data source
 should not have transactions active at the same time.
 
-In case \verb{$startTransaction()} fails, neither \verb{$commitTransaction()} nor
-\verb{$rollbackTransaction()} should be called.
-If an error occurs after a successful \verb{$startTransaction()}, the whole
+In case \code{$startTransaction()} fails, neither \code{$commitTransaction()}
+nor \code{$rollbackTransaction()} should be called.
+If an error occurs after a successful \code{$startTransaction()}, the whole
 transaction may or may not be implicitly canceled, depending on the format
 driver (e.g., the PostGIS driver will cancel it, SQLite/GPKG will not). In
 any case, in the event of an error, an explicit call to
-\code{rollbackTransaction()} should be done to keep things balanced.
+\code{$rollbackTransaction()} should be done to keep things balanced.
 
 Returns logical \code{TRUE} if the transaction is created, or \code{FALSE} on failure.
 
@@ -756,7 +766,7 @@ Calling \code{$close()} results in proper cleanup, and flushing of any
 pending writes.
 The \code{GDALVector} object is still available after calling \code{$close()}.
 The layer can be re-opened on the existing \code{dsn} with
-\code{$open(read_only = {TRUE|FALSE})}.
+\code{$open(read_only = TRUE|FALSE)}.
 }
 }
 
@@ -838,7 +848,7 @@ lyr$setAttributeFilter("")  # clears the attribute filter
 lyr$setSpatialFilterRect(bbox)
 lyr$getFeatureCount()
 
-## fetch in chunks and return as data frame (class `OGRFeatureSet`)
+## fetch in chunks and return as data frame (class OGRFeatureSet)
 feat_set <- lyr$fetch(20)
 head(feat_set)
 plot(feat_set)

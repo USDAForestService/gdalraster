@@ -64,15 +64,16 @@ for the root \code{"gdal"} entry point if called with no argument. No return
 value, called for that side effect only.
 
 \code{gdal_run()} executes a GDAL CLI algorithm and returns it as an object of
-class \code{GDALAlg}. A list containing algorithm output(s) can be accessed by
-calling the \code{$outputs()} (plural) method on the returned object, or,
-more conveniently in most cases, by calling \code{$output()} (singular) to
-return the the single output value when there is only one. After assigning
-the output, or otherwise completing work with the \code{GDALAlg} object, the
-\code{$release()} method can be called to close datasets and free resources.
+class \code{\link{GDALAlg}}. A list containing algorithm output(s) can be
+accessed by calling the \code{$outputs()} (plural) method on the returned
+object, or, more conveniently in most cases, by calling \code{$output()}
+(singular) to return the the single output value when there is only one.
+After assigning the output, or otherwise completing work with the \code{GDALAlg}
+object, its \code{$release()} method can be called to close datasets and
+free resources.
 
-\code{gdal_alg()} instantiates and returns an object of class \code{GDALAlg} without
-running it. Passing argument values to the requested CLI algorithm is
+\code{gdal_alg()} instantiates and returns an object of class \code{\link{GDALAlg}}
+without running it. Passing argument values to the requested CLI algorithm is
 optional. This function may be useful (with or without argument values) for
 obtaining algorithm properties with the returned object's \code{$info()}
 method, obtaining properties of algorithm arguments

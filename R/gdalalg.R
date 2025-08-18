@@ -36,7 +36,7 @@
 #' @returns An object of class `GDALAlg`, which contains a pointer to the
 #' algorithm instance. Class methods are described in Details, along with a set
 #' of writable fields for per-object settings. Values may be assigned to the
-#' class fields by regular \code{<-} or `=` assignment.
+#' class fields by regular \code{<-} or \code{=} assignment.
 #'
 #' @inheritSection gdal_cli Algorithm argument syntax
 #'
