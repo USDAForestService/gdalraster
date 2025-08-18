@@ -190,14 +190,14 @@ assigned a GFU will be assigned <code>"Generic"</code>.</p>
 spaced, and the categorization can be determined by knowing the value at
 which the categories start and the size of a category. This is called
 "Linear Binning" and the information is kept specially on the raster
-attribute table as a whole. In R, a RAT that uses linear binning would
+attribute table as a whole. In <span style="R">R</span>, a RAT that uses linear binning would
 have the following attributes set on the data frame:
 attribute <code>"Row0Min"</code> = the numeric lower bound (pixel value) of the first
 category, and attribute <code>"BinSize"</code> = the numeric width of each category (in
 pixel value units). <code>buildRAT()</code> does not create tables with linear binning,
 but one could be created manually based on the specifications above, and
 applied to a raster with the class method <code>GDALRaster$setDefaultRAT()</code>.</p>
-<p>A raster attribute table is thematic or athematic (continuous). In R, this
+<p>A raster attribute table is thematic or athematic (continuous). In <span style="R">R</span>, this
 is defined by an attribute on the data frame named <code>"GDALRATTableType"</code> with
 value of either <code>"thematic"</code> or <code>"athematic"</code>.</p>
     </div>
@@ -208,7 +208,7 @@ value of either <code>"thematic"</code> or <code>"athematic"</code>.</p>
 will not be recoded in the output data frame. This may have implications
 if joining to other data (<code>NA</code> will not match), or when using the returned
 data frame to set a default RAT on a dataset (<code>NA</code> will be interpreted
-as the value that R uses internally to represent it for the type, e.g.,
+as the value that <span style="R">R</span> uses internally to represent it for the type, e.g.,
 -2147483648 for <code>NA_integer_</code>). In some cases, removing the row in the output
 data frame with value <code>NA</code>, rather than recoding, may be desirable (i.e., by
 removing manually or by side effect of joining via <code><a href="https://rdrr.io/r/base/merge.html" class="external-link">merge()</a></code>, for example).

@@ -269,7 +269,7 @@ included in the range. Defaults to <code>TRUE</code>. Required argument if
     <p>All features in an OGR Layer share a common schema (feature class), modeled
 in GDAL by its <code>OGRFeatureDefn</code> class. A feature class definition includes
 the set of attribute fields and their data types and the geometry field(s).
-In R, a feature class definition is represented as a named list, with names
+In <span style="R">R</span>, a feature class definition is represented as a named list, with names
 being the attribute/geometry field names, and each list element holding an
 attribute or geometry field definition.</p>
 <p>The definition for an attribute field is a named list with elements:</p>
@@ -294,7 +294,7 @@ values:
 unique constraints are not supported by all format drivers.</p>
 <p>A default field value is taken into account by format drivers (generally
 those with a SQL interface) that support it at field creation time.
-If given in the field definition, <code>$default</code> must be a character string.
+If given in the field definition, <code>default</code> must be a character string.
 The accepted values are <code>"NULL"</code>, a numeric value (e.g., <code>"0"</code>), a literal
 value enclosed between single quote characters (e.g., <code>"'a default value'"</code>,
 with any inner single quote characters escaped by repetition of the single
@@ -337,17 +337,17 @@ example, GeoPackage format has a layer creation option
 <p>A field domain can be one of three types:</p><ul><li><p><code>Coded</code>: an enumerated list of allowed codes with their descriptive values</p></li>
 <li><p><code>Range</code>: a range constraint (min, max)</p></li>
 <li><p><code>GLOB</code>: a GLOB expression (matching expression like <code>"*[a-z][0-1]?"</code>)</p></li>
-</ul><p><code>$type</code> can also be specified as <code>"RangeDateTime"</code>, a range constraint for
-<code>OFTDateTime</code> fields with <code>$min_value</code> and <code>$max_value</code> given as
+</ul><p><code>type</code> can also be specified as <code>"RangeDateTime"</code>, a range constraint for
+<code>OFTDateTime</code> fields with <code>min_value</code> and <code>max_value</code> given as
 <code>"POSIXct"</code> DateTimes.</p>
 <p>Split and merge policies are supported by ESRI File Geodatabase format via
 OpenFileGDB driver (or FileGDB driver dependent on FileGDB API library).
-When a feature is split in two, <code>$split_policy</code> defines how the value of
+When a feature is split in two, <code>split_policy</code> defines how the value of
 attributes following the domain are computed. Possible values are
 <code>"DEFAULT_VALUE"</code> (default value), <code>"DUPLICATE"</code> (duplicate), and
 <code>"GEOMETRY_RATIO"</code> (new values are computed by the ratio of their
 area/length compared to the area/length of the original feature).
-When a feature is built by merging two features, <code>$merge_policy</code> defines
+When a feature is built by merging two features, <code>merge_policy</code> defines
 how the value of attributes following the domain are computed. Possible
 values are <code>"DEFAULT_VALUE"</code> (default value), <code>"SUM"</code> (sum), and
 <code>"GEOMETRY_WEIGHTED"</code> (new values are computed as the weighted average of

@@ -76,9 +76,9 @@ Multiband output is supported as of gdalraster 1.11.0."></head><body>
     </div>
 
     <div class="ref-description section level2">
-    <p><code>calc()</code> evaluates an R expression for each pixel in a raster layer or
+    <p><code>calc()</code> evaluates an <span style="R">R</span> expression for each pixel in a raster layer or
 stack of layers. Each layer is defined by a raster filename, band number,
-and a variable name to use in the R expression. If not specified, band
+and a variable name to use in the <span style="R">R</span> expression. If not specified, band
 defaults to 1 for each input raster.
 Variable names default to <code>LETTERS</code> if not specified
 (<code>A</code> (layer 1), <code>B</code> (layer 2), ...).
@@ -86,7 +86,7 @@ All of the input layers must have the same extent and cell size.
 The projection will be read from the first raster in the list
 of inputs.
 Individual pixel coordinates are also available as variables in the
-R expression, as either x/y in the raster projected coordinate system or
+<span style="R">R</span> expression, as either x/y in the raster projected coordinate system or
 inverse projected longitude/latitude.
 Multiband output is supported as of gdalraster 1.11.0.</p>
     </div>
@@ -116,7 +116,7 @@ Multiband output is supported as of gdalraster 1.11.0.</p>
 
 
 <dl><dt id="arg-expr">expr<a class="anchor" aria-label="anchor" href="#arg-expr"></a></dt>
-<dd><p>An R expression as a character string (e.g., <code>"A + B"</code>).</p></dd>
+<dd><p>An <span style="R">R</span> expression as a character string (e.g., <code>"A + B"</code>).</p></dd>
 
 
 <dt id="arg-rasterfiles">rasterfiles<a class="anchor" aria-label="anchor" href="#arg-rasterfiles"></a></dt>
@@ -261,7 +261,7 @@ read from the return value of <code>expr</code>.</p>
 <span class="r-in"><span>                setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating from 1 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/RtmpdWA7md/rastcalc2374341c6528.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/RtmpYAW9dn/rastcalc23aff074e20.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">hi_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="co"># min, max, mean, sd</span></span></span>
@@ -287,7 +287,7 @@ read from the return value of <code>expr</code>.</p>
 <span class="r-in"><span>                  setRasterNodataValue <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/RtmpdWA7md/rastcalc23749b4509.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/RtmpYAW9dn/rastcalc23af4698f2dc.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">ds</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALRaster</span>, <span class="va">ndvi_file</span><span class="op">)</span></span></span>
 <span class="r-in"><span><span class="va">ds</span><span class="op">$</span><span class="fu">getStatistics</span><span class="op">(</span>band<span class="op">=</span><span class="fl">1</span>, approx_ok<span class="op">=</span><span class="cn">FALSE</span>, force<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></span></span>
@@ -359,7 +359,7 @@ read from the return value of <code>expr</code>.</p>
 <span class="r-in"><span>     write_mode <span class="op">=</span> <span class="st">"update"</span><span class="op">)</span></span></span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> calculating from 2 input layer(s)...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> ================================================================================</span>
-<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/RtmpdWA7md/storml_lndscp.tif</span>
+<span class="r-msg co"><span class="r-pr">#&gt;</span> output written to: /tmp/RtmpYAW9dn/storml_lndscp.tif</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># verify the ouput</span></span></span>
 <span class="r-in"><span><span class="va">rasterfiles</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">tif_file</span>, <span class="va">tif_file</span><span class="op">)</span></span></span>

@@ -78,7 +78,7 @@ cloud storage services, Zip/GZip/7z/RAR, and in-memory files.
 It provides analogs of several Standard C file I/O functions, allowing
 virtualization of disk I/O so that non-file data sources can be made to
 appear as files.</p>
-<p><code>VSIFile</code> is a C++ class exposed directly to R (via <code>RCPP_EXPOSED_CLASS</code>).
+<p><code>VSIFile</code> is a C++ class exposed directly to <span style="R">R</span> (via <code>RCPP_EXPOSED_CLASS</code>).
 Methods of the class are accessed using the <code>$</code> operator.</p>
     </div>
 
@@ -112,7 +112,7 @@ Details.</p>
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>File offsets are given as R <code>numeric</code> (i.e., <code>double</code> type), optionally
+    <p>File offsets are given as <span style="R">R</span> <code>numeric</code> (i.e., <code>double</code> type), optionally
 carrying the <code><a href="https://rdrr.io/pkg/bit64/man/bit64-package.html" class="external-link">bit64::integer64</a></code> class attribute. They are returned as
 <code>numeric</code> with the <code>integer64</code> class attribute attached. The <code>integer64</code>
 type is signed, so the maximum file offset supported by this interface
@@ -212,13 +212,13 @@ class attribute.</p>
 Rewind the file pointer to the beginning of the file. This is equivalent to
 <code>vf$seek(0, SEEK_SET)</code>. No return value, called for that side effect.</p>
 <p><code>$read(nbytes)</code><br>
-Read <code>nbytes</code> bytes from the file at the current offset. Returns a vector
-of R <code>raw</code> type, or <code>NULL</code> if the operation fails.</p>
+Read <code>nbytes</code> bytes from the file at the current offset. Returns an <span style="R">R</span> <code>raw</code>
+vector, or <code>NULL</code> if the operation fails.</p>
 <p><code>$write(object)</code><br>
 Write bytes to the file at the current offset. <code>object</code> is a <code>raw</code> vector.
 Returns the number of bytes successfully written, as numeric scalar
 carrying the <code>integer64</code> class attribute.
-See also base R <code><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">charToRaw()</a></code> / <code><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">rawToChar()</a></code>, convert to or from raw
+See also base <span style="R">R</span> <code><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">charToRaw()</a></code> / <code><a href="https://rdrr.io/r/base/rawConversion.html" class="external-link">rawToChar()</a></code>, convert to or from raw
 vectors, and <code><a href="https://rdrr.io/r/base/readBin.html" class="external-link">readBin()</a></code> / <code><a href="https://rdrr.io/r/base/readBin.html" class="external-link">writeBin()</a></code> which read binary data from or write
 binary data to a raw vector.</p>
 <p><code>$eof()</code><br>
@@ -249,8 +249,8 @@ completed. Returns <code>0</code> on success or <code>-1</code> on error.</p>
 <p><code>$open()</code><br>
 This method can be used to re-open the file after it has been closed, using
 the same <code>filename</code>, and same <code>options</code> if any are set. The file will be
-opened using <code>access</code> as currently set. The <code>$set_access()</code> method can be
-called to change the requested access while the file is closed.
+opened using <code>access</code> as currently set. The <code>$set_access()</code> method can
+be called to change the requested access while the file is closed.
 No return value. An error is raised if a file handle cannot be obtained.</p>
 <p><code>$get_filename()</code><br>
 Returns a character string containing the <code>filename</code> associated with this

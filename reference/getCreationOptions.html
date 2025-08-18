@@ -84,28 +84,28 @@ GDAL API, parsing its XML output into a named list.</p>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
     <p>A named list with names matching the creation option names, and
-each element a named list with elements <code>$type</code>, <code>$description</code>, <code>$default</code>
-and <code>$values</code> (see Details).</p>
+each element a named list with elements <code>type</code>, <code>description</code>, <code>default</code>
+and <code>values</code> (see Details).</p>
     </div>
     <div class="section level2">
     <h2 id="details">Details<a class="anchor" aria-label="anchor" href="#details"></a></h2>
     <p>The output is a nested list with names matching the creation option names.
 The information for each creation option is a named list with the following
-elements:</p><ul><li><p><code>$type</code>: a character string describing the data type, e.g., <code>"int"</code>,
+elements:</p><ul><li><p><code>type</code>: a character string describing the data type, e.g., <code>"int"</code>,
 <code>"float"</code>, <code>"string"</code>. The type <code>"string-select"</code> denotes a list of allowed
-string values which are returned as a character vector in the <code>$values</code>
+string values which are returned as a character vector in the <code>values</code>
 element (see below).</p></li>
-<li><p><code>$description</code>: a character string describing the option, or <code>NA</code> if no
+<li><p><code>description</code>: a character string describing the option, or <code>NA</code> if no
 description is provided by the GDAL driver.</p></li>
-<li><p><code>$default</code>: the default value of the option as either a character string
+<li><p><code>default</code>: the default value of the option as either a character string
 or numeric value, or <code>NA</code> if no description is provided by the GDAL driver.</p></li>
-<li><p><code>$values</code>: a character vector of allowed string values for the creation
-option if <code>$type</code> is <code>"string-select"</code>, otherwise <code>NULL</code> if the option is
+<li><p><code>values</code>: a character vector of allowed string values for the creation
+option if <code>type</code> is <code>"string-select"</code>, otherwise <code>NULL</code> if the option is
 not a <code>"string-select"</code> type.</p></li>
-<li><p><code>$min</code>: (GDAL &gt;= 3.11) the minimum value of the valid range for the
+<li><p><code>min</code>: (GDAL &gt;= 3.11) the minimum value of the valid range for the
 option, or <code>NA</code> if not provided by the GDAL driver or the option is not a
 numeric type.</p></li>
-<li><p><code>$max</code>: (GDAL &gt;= 3.11) the maximum value of the valid range for the
+<li><p><code>max</code>: (GDAL &gt;= 3.11) the maximum value of the valid range for the
 option, or <code>NA</code> if not provided by the GDAL driver or the option is not a
 numeric type.</p></li>
 </ul></div>

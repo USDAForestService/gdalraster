@@ -72,7 +72,7 @@ for readability."></head><body>
 and calling methods on the underlying <code>GDALDataset</code>, <code>GDALDriver</code> and
 <code>GDALRasterBand</code> objects. See <a href="https://gdal.org/en/stable/api/index.html" class="external-link">https://gdal.org/en/stable/api/index.html</a> for
 details of the GDAL Raster API.</p>
-<p><code>GDALRaster</code> is a C++ class exposed directly to R (via <code>RCPP_EXPOSED_CLASS</code>).
+<p><code>GDALRaster</code> is a C++ class exposed directly to <span style="R">R</span> (via <code>RCPP_EXPOSED_CLASS</code>).
 Fields and methods of the class are accessed using the <code>$</code> operator. <strong>Note
 that all arguments to class methods are required and must be given in the
 order documented.</strong> Naming the arguments is optional but may be preferred
@@ -287,11 +287,12 @@ long-running processes such as building overviews and computation of
 statistics and histograms.</p>
 <p><code>$readByteAsRaw</code><br>
 A logical value, <code>FALSE</code> by default. This field can be set to <code>TRUE</code> which
-will affect the data type returned by <code>$read()</code> and <code><a href="read_ds.html">read_ds()</a></code>. When the
-underlying band data type is Byte and <code>readByteAsRaw</code> is <code>TRUE</code> the output
-type will be raw rather than integer. See also the <code>as_raw</code> argument to
-<code><a href="read_ds.html">read_ds()</a></code> to control this in a non-persistent setting. If the underlying
-band data type is not Byte this setting has no effect.</p>
+will affect the data type returned by the <code>$read()</code> method and the
+<code><a href="read_ds.html">read_ds()</a></code> convenience function. When the underlying band data type is Byte
+and <code>readByteAsRaw</code> is <code>TRUE</code> the output type will be raw rather than
+integer. See also the <code>as_raw</code> argument to <code><a href="read_ds.html">read_ds()</a></code> to control this in a
+non-persistent setting. If the underlying band data type is not Byte this
+setting has no effect.</p>
 </div>
 
 <div class="section">
@@ -328,12 +329,14 @@ Prints various information about the raster dataset to the console (no
 return value, called for that side effect only).
 Equivalent to the output of the <code class="command">gdalinfo</code> command-line utility
 (<code class="command">gdalinfo filename</code>, if using the default <code>infoOptions</code>).
-See the field <code>$infoOptions</code> above for setting the arguments to <code>gdalinfo</code>.</p>
+See the field <code>$infoOptions</code> above for setting the arguments to
+<code>gdalinfo</code>.</p>
 <p><code>$infoAsJSON()</code><br>
 Returns information about the raster dataset as a JSON-formatted string.
 Equivalent to the output of the <code class="command">gdalinfo</code> command-line utility
 (<code class="command">gdalinfo -json filename</code>, if using the default <code>infoOptions</code>).
-See the field <code>$infoOptions</code> above for setting the arguments to <code>gdalinfo</code>.</p>
+See the field <code>$infoOptions</code> above for setting the arguments to
+<code>gdalinfo</code>.</p>
 <p><code>$getDriverShortName()</code><br>
 Returns the short name of the raster format driver.</p>
 <p><code>$getDriverLongName()</code><br>
@@ -362,7 +365,7 @@ pixel/line raster space (column/row) and projection coordinate space
 (geospatial x/y). The return value is a numeric vector of length six.
 See <a href="https://gdal.org/en/stable/tutorials/geotransforms_tut.html" class="external-link">https://gdal.org/en/stable/tutorials/geotransforms_tut.html</a>
 for details of the affine transformation. <em>With 1-based indexing
-in R</em>, the geotransform vector contains (in map units of the raster spatial
+in <span style="R">R</span></em>, the geotransform vector contains (in map units of the raster spatial
 reference system):</p><table class="table table"><tr><td>GT[1]</td><td>x-coordinate of upper-left corner of the upper-left pixel</td></tr><tr><td>GT[2]</td><td>x-component of pixel width</td></tr><tr><td>GT[3]</td><td>row rotation (zero for north-up raster)</td></tr><tr><td>GT[4]</td><td>y-coordinate of upper-left corner of the upper-left pixel</td></tr><tr><td>GT[5]</td><td>column rotation (zero for north-up raster)</td></tr><tr><td>GT[6]</td><td>y-component of pixel height (negative for north-up raster)</td></tr></table><p><code>$setGeoTransform(transform)</code><br>
 Sets the affine transformation coefficients on this dataset.
 <code>transform</code> is a numeric vector of length six.
@@ -387,7 +390,7 @@ Returns a numeric vector of length four containing the bounding box
 Returns a numeric vector of length two containing the resolution
 (pixel width, pixel height as positive values) for a non-rotated raster.
 A warning is emitted and <code>NA</code> values returned if the raster has a rotated
-geotransform (see <code>$getGeoTransform()</code> above).</p>
+geotransform (see method <code>$getGeoTransform()</code> above).</p>
 <p><code>$dim()</code><br>
 Returns an integer vector of length three containing the raster dimensions
 (xsize, ysize, number of bands).
@@ -412,7 +415,8 @@ info and examples.</p>
 Helper method returning a numeric matrix with named columns: <code>xblockoff</code>,
 <code>yblockoff</code>, <code>xoff</code>, <code>yoff</code>, <code>xsize</code>, <code>ysize</code>, <code>xmin</code>, <code>xmax</code>, <code>ymin</code>,
 <code>ymax</code>. For the meanings of these names, refer to the following class
-methods below: <code>$getBlockSize()</code>, <code>$getActualBlockSize</code> and <code>$read()</code>.
+methods below: <code>$getBlockSize()</code>, <code>$getActualBlockSize</code> and
+<code>$read()</code>.
 All offsets are zero-based. The columns <code>xmin</code>, <code>xmax</code>, <code>ymin</code> and
 <code>ymax</code> give the extent of each block in geospatial coordinates.
 This method provides indexing values for the block layout of the given
@@ -622,9 +626,9 @@ stored histogram. <code>force</code> is a logical scalar: <code>TRUE</code> to f
 computation of a default histogram; or if <code>FALSE</code> and no default histogram
 is available, a warning is emitted and the returned list has a 0-length
 histogram vector.
-Returns a list of length four containing named elements <code>$min</code> (lower
-bound), <code>$max</code> (upper bound), <code>$num_buckets</code> (number of buckets), and
-<code>$histogram</code> (a numeric vector of length <code>num_buckets</code>).</p>
+Returns a list of length four containing named elements <code>min</code> (lower
+bound), <code>max</code> (upper bound), <code>num_buckets</code> (number of buckets), and
+<code>histogram</code> (a numeric vector of length <code>num_buckets</code>).</p>
 <p><code>$getMetadata(band, domain)</code><br>
 Returns a character vector of all metadata <code>NAME=VALUE</code> pairs that exist in
 the specified <code>domain</code>, or empty string (<code>""</code>) if there are no
@@ -682,7 +686,7 @@ Returns a numeric or complex vector containing the values that were read.
 It is organized in left to right, top to bottom pixel order.
 <code>NA</code> will be returned in place of the nodata value if the
 raster dataset has a nodata value defined for this band.
-Data are read as R integer type when possible for the raster data type
+Data are read as <span style="R">R</span> integer type when possible for the raster data type
 (<code>Byte</code>, <code>Int8</code>, <code>Int16</code>, <code>UInt16</code>, <code>Int32</code>), otherwise as type double
 (<code>UInt32</code>, <code>Float32</code>, <code>Float64</code>).
 No rescaling of the data is performed (see <code>$getScale()</code> and
@@ -721,8 +725,9 @@ the colors are always applied starting at zero and ascending
 (see <a href="https://gdal.org/en/stable/user/raster_data_model.html#color-table" class="external-link">GDAL
 Color Table</a>).
 Column 1 contains the pixel values. Interpretation of columns 2:5 depends
-on the value of <code>$getPaletteInterp()</code> (see below). For "RGB", columns 2:5
-contain red, green, blue, alpha as 0-255 integer values.</p>
+on the value of <code>$getPaletteInterp()</code> (see below).
+For "RGB", columns 2:5 contain red, green, blue, alpha as 0-255 integer
+values.</p>
 <p><code>$getPaletteInterp(band)</code><br>
 If <code>band</code> has an associated color table, this method returns a
 character string with the palette interpretation for columns 2:5 of the
@@ -776,9 +781,10 @@ Attribute Table format and its representation as data frame.</p>
 <p><code>$flushCache()</code><br>
 Flush all write cached data to disk. Any raster data written via GDAL calls,
 but buffered internally will be written to disk. Using this method does not
-preclude calling <code>$close()</code> to properly close the dataset and ensure that
-important data not addressed by <code>$flushCache()</code> is written in the file
-(see also <code>$open()</code> above). No return value, called for side effect.</p>
+preclude calling <code>$close()</code> to properly close the dataset and ensure
+that important data not addressed by <code>$flushCache()</code> is written in the
+file (see also <code>$open()</code> above). No return value, called for side
+effects.</p>
 <p><code>$getChecksum(band, xoff, yoff, xsize, ysize)</code><br>
 Returns a 16-bit integer (0-65535) checksum from a region of raster data
 on <code>band</code>.

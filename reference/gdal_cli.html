@@ -128,14 +128,15 @@ with vector inputs.</p>
 for the root <code>"gdal"</code> entry point if called with no argument. No return
 value, called for that side effect only.</p>
 <p><code>gdal_run()</code> executes a GDAL CLI algorithm and returns it as an object of
-class <code>GDALAlg</code>. A list containing algorithm output(s) can be accessed by
-calling the <code>$outputs()</code> (plural) method on the returned object, or,
-more conveniently in most cases, by calling <code>$output()</code> (singular) to
-return the the single output value when there is only one. After assigning
-the output, or otherwise completing work with the <code>GDALAlg</code> object, the
-<code>$release()</code> method can be called to close datasets and free resources.</p>
-<p><code>gdal_alg()</code> instantiates and returns an object of class <code>GDALAlg</code> without
-running it. Passing argument values to the requested CLI algorithm is
+class <code><a href="GDALAlg-class.html">GDALAlg</a></code>. A list containing algorithm output(s) can be
+accessed by calling the <code>$outputs()</code> (plural) method on the returned
+object, or, more conveniently in most cases, by calling <code>$output()</code>
+(singular) to return the the single output value when there is only one.
+After assigning the output, or otherwise completing work with the <code>GDALAlg</code>
+object, its <code>$release()</code> method can be called to close datasets and
+free resources.</p>
+<p><code>gdal_alg()</code> instantiates and returns an object of class <code><a href="GDALAlg-class.html">GDALAlg</a></code>
+without running it. Passing argument values to the requested CLI algorithm is
 optional. This function may be useful (with or without argument values) for
 obtaining algorithm properties with the returned object's <code>$info()</code>
 method, obtaining properties of algorithm arguments

@@ -191,14 +191,14 @@ first layer by index will be opened (except with <code>ogr_layer_delete()</code>
 zero or more attribute field definitions, and at least one geometry field
 definition (see <a href="ogr_define.html">ogr_define</a>).
 Each field definition is a list with named elements containing values for
-the field <code>$type</code> and other properties.
+the field <code>type</code> element and other properties.
 If <code>layer_defn</code> is given, it will be used and any additional parameters
 passed that relate to the feature class definition will be ignored (i.e.,
 <code>geom_type</code> and <code>srs</code>, as well as <code>fld_name</code> and <code>fld_type</code> in
 <code>ogr_ds_create()</code>).
 The first geometry field definition in <code>layer_defn</code> defines the
 geometry type and spatial reference system for the layer (the geom field
-definition must contain <code>$type</code>, and should also contain <code>$srs</code> when
+definition must contain <code>type</code>, and should also contain <code>srs</code> when
 creating a layer from a feature class definition).</p></dd>
 
 
@@ -565,7 +565,7 @@ dialects for details.</p>
 <span class="r-in"><span><span class="co"># add a field using SQL instead</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span><span class="va">dsn</span>, sql <span class="op">=</span> <span class="st">"ALTER TABLE layer2 ADD field4 float"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpdWA7md/test1.gpkg'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpYAW9dn/test1.gpkg'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co"># rename a field</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu">ogr_layer_test_cap</span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer1"</span><span class="op">)</span><span class="op">$</span><span class="va">AlterFieldDefn</span><span class="op">)</span> <span class="op">{</span></span></span>
@@ -581,7 +581,7 @@ dialects for details.</p>
 <span class="r-in"><span><span class="co"># GDAL &gt;= 3.7</span></span></span>
 <span class="r-in"><span><span class="kw">if</span> <span class="op">(</span><span class="fu"><a href="gdal_version.html">gdal_version_num</a></span><span class="op">(</span><span class="op">)</span> <span class="op">&gt;=</span> <span class="fu"><a href="gdal_compute_version.html">gdal_compute_version</a></span><span class="op">(</span><span class="fl">3</span>, <span class="fl">7</span>, <span class="fl">0</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-in"><span>  <span class="fu"><a href="ogrinfo.html">ogrinfo</a></span><span class="op">(</span><span class="va">dsn</span>, <span class="st">"layer2"</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/tmp/RtmpdWA7md/test1.gpkg'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> INFO: Open of `/tmp/RtmpYAW9dn/test1.gpkg'</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>       using driver `GPKG' successful.</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> Layer name: layer2</span>
@@ -629,12 +629,12 @@ dialects for details.</p>
 <span class="r-in"><span><span class="va">alt_tbl</span> <span class="op">&lt;-</span> <span class="st">"ALTER TABLE mtbs_perims ADD burn_bnd_ha float"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, sql <span class="op">=</span> <span class="va">alt_tbl</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpdWA7md/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpYAW9dn/mtbs_perims.shp'</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="va">upd</span> <span class="op">&lt;-</span> <span class="st">"UPDATE mtbs_perims SET burn_bnd_ha = (burn_bnd_ac / 2.471)"</span></span></span>
 <span class="r-in"><span><span class="fu">ogr_execute_sql</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, sql <span class="op">=</span> <span class="va">upd</span>, dialect <span class="op">=</span> <span class="st">"SQLite"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> info: open dataset successful on DSN:</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpdWA7md/mtbs_perims.shp'</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>   '/tmp/RtmpYAW9dn/mtbs_perims.shp'</span>
 <span class="r-in"><span><span class="fu">ogr_layer_field_names</span><span class="op">(</span>dsn <span class="op">=</span> <span class="va">perims_shp</span>, layer <span class="op">=</span> <span class="st">"mtbs_perims"</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [1] "event_id"   "incid_name" "incid_type" "map_id"     "burn_bnd_a"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  [6] "burn_bnd_l" "burn_bnd_1" "ig_date"    "ig_year"    "burn_bnd_h"</span>
