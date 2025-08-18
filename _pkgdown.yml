@@ -200,6 +200,23 @@ reference:
   - SEEK_CUR
   - SEEK_END
 
+articles:
+- title: Main content
+  navbar: ~
+  contents:
+  - raster-api-tutorial
+  - raster-display
+  - raster-attribute-tables
+  - gdal-block-cache
+  - vector-api-overview
+  - vector-read-benchmarks
+  - gdal-config-quick-ref
+  - use-gdal-cli-from-r
+- title: Archive
+  navbar: Archived articles
+  contents:
+  - gdalvector-draft
+
 figures:
   dev: png
   bg: white
