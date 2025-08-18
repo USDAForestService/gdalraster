@@ -140,7 +140,7 @@ GDAL >= 3.3 supports reading and writing field domains with certain drivers
 All features in an OGR Layer share a common schema (feature class), modeled
 in GDAL by its \code{OGRFeatureDefn} class. A feature class definition includes
 the set of attribute fields and their data types and the geometry field(s).
-In R, a feature class definition is represented as a named list, with names
+In \R, a feature class definition is represented as a named list, with names
 being the attribute/geometry field names, and each list element holding an
 attribute or geometry field definition.
 
@@ -172,7 +172,7 @@ unique constraints are not supported by all format drivers.
 
 A default field value is taken into account by format drivers (generally
 those with a SQL interface) that support it at field creation time.
-If given in the field definition, \verb{$default} must be a character string.
+If given in the field definition, \code{default} must be a character string.
 The accepted values are \code{"NULL"}, a numeric value (e.g., \code{"0"}), a literal
 value enclosed between single quote characters (e.g., \code{"'a default value'"},
 with any inner single quote characters escaped by repetition of the single
@@ -230,18 +230,18 @@ A field domain can be one of three types:
 \item \code{GLOB}: a GLOB expression (matching expression like \code{"*[a-z][0-1]?"})
 }
 
-\verb{$type} can also be specified as \code{"RangeDateTime"}, a range constraint for
-\code{OFTDateTime} fields with \verb{$min_value} and \verb{$max_value} given as
+\code{type} can also be specified as \code{"RangeDateTime"}, a range constraint for
+\code{OFTDateTime} fields with \code{min_value} and \code{max_value} given as
 \code{"POSIXct"} DateTimes.
 
 Split and merge policies are supported by ESRI File Geodatabase format via
 OpenFileGDB driver (or FileGDB driver dependent on FileGDB API library).
-When a feature is split in two, \verb{$split_policy} defines how the value of
+When a feature is split in two, \code{split_policy} defines how the value of
 attributes following the domain are computed. Possible values are
 \code{"DEFAULT_VALUE"} (default value), \code{"DUPLICATE"} (duplicate), and
 \code{"GEOMETRY_RATIO"} (new values are computed by the ratio of their
 area/length compared to the area/length of the original feature).
-When a feature is built by merging two features, \verb{$merge_policy} defines
+When a feature is built by merging two features, \code{merge_policy} defines
 how the value of attributes following the domain are computed. Possible
 values are \code{"DEFAULT_VALUE"} (default value), \code{"SUM"} (sum), and
 \code{"GEOMETRY_WEIGHTED"} (new values are computed as the weighted average of

@@ -132,14 +132,14 @@ first layer by index will be opened (except with \code{ogr_layer_delete()} and
 zero or more attribute field definitions, and at least one geometry field
 definition (see \link{ogr_define}).
 Each field definition is a list with named elements containing values for
-the field \verb{$type} and other properties.
+the field \code{type} element and other properties.
 If \code{layer_defn} is given, it will be used and any additional parameters
 passed that relate to the feature class definition will be ignored (i.e.,
 \code{geom_type} and \code{srs}, as well as \code{fld_name} and \code{fld_type} in
 \code{ogr_ds_create()}).
 The first geometry field definition in \code{layer_defn} defines the
 geometry type and spatial reference system for the layer (the geom field
-definition must contain \verb{$type}, and should also contain \verb{$srs} when
+definition must contain \code{type}, and should also contain \code{srs} when
 creating a layer from a feature class definition).}
 
 \item{geom_type}{Character string specifying a geometry type (see Details).}

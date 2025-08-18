@@ -126,7 +126,7 @@ In a variation of RAT, all the categories are of equal size and regularly
 spaced, and the categorization can be determined by knowing the value at
 which the categories start and the size of a category. This is called
 "Linear Binning" and the information is kept specially on the raster
-attribute table as a whole. In R, a RAT that uses linear binning would
+attribute table as a whole. In \R, a RAT that uses linear binning would
 have the following attributes set on the data frame:
 attribute \code{"Row0Min"} = the numeric lower bound (pixel value) of the first
 category, and attribute \code{"BinSize"} = the numeric width of each category (in
@@ -134,7 +134,7 @@ pixel value units). \code{buildRAT()} does not create tables with linear binning
 but one could be created manually based on the specifications above, and
 applied to a raster with the class method \code{GDALRaster$setDefaultRAT()}.
 
-A raster attribute table is thematic or athematic (continuous). In R, this
+A raster attribute table is thematic or athematic (continuous). In \R, this
 is defined by an attribute on the data frame named \code{"GDALRATTableType"} with
 value of either \code{"thematic"} or \code{"athematic"}.
 }
@@ -145,7 +145,7 @@ If \code{na_value} is not specified, then an \code{NA} pixel value (if present)
 will not be recoded in the output data frame. This may have implications
 if joining to other data (\code{NA} will not match), or when using the returned
 data frame to set a default RAT on a dataset (\code{NA} will be interpreted
-as the value that R uses internally to represent it for the type, e.g.,
+as the value that \R uses internally to represent it for the type, e.g.,
 -2147483648 for \code{NA_integer_}). In some cases, removing the row in the output
 data frame with value \code{NA}, rather than recoding, may be desirable (i.e., by
 removing manually or by side effect of joining via \code{merge()}, for example).

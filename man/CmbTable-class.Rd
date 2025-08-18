@@ -23,7 +23,7 @@ hash table are described in Details.
 and the count of occurrences of each unique integer combination as the
 value. A unique ID is assigned to each unique combination of input values.
 
-\code{CmbTable} is a C++ class exposed directly to R (via \code{RCPP_EXPOSED_CLASS}).
+\code{CmbTable} is a C++ class exposed directly to \R (via \code{RCPP_EXPOSED_CLASS}).
 Methods of the class are accessed using the \code{$} operator. \strong{Note that all
 arguments to class methods are required and must be given in the
 order documented.} Naming the arguments is optional but may be preferred
@@ -71,23 +71,23 @@ Returns the unique ID assigned to this combination.
 Combination IDs are sequential integers starting at \code{1}.
 
 \code{$updateFromMatrix(int_cmbs, incr)}\cr
-This method is the same as \verb{$update()} but for a numeric matrix of
+This method is the same as \code{$update()} but for a numeric matrix of
 integer combinations \code{int_cmbs} (coerced to integer by truncation).
 The matrix is arranged with each column vector forming an integer
 combination. For example, the rows of the matrix could be
 one row each from a set of \code{keyLen} rasters all read at the
 same extent and pixel resolution (i.e., row-by-row raster overlay).
-The method calls \verb{$update()} on each combination (each column of
+The method calls \code{$update()} on each combination (each column of
 \code{int_cmbs}), incrementing count by \code{incr} for existing
 combinations, or inserting new combinations with count set to \code{incr}.
 Returns a numeric vector of length \code{ncol(int_cmbs)} containing the
 IDs assigned to the combinations.
 
 \code{$updateFromMatrixByRow(int_cmbs, incr)}\cr
-This method is the same as \verb{$updateFromMatrix()} above except the
+This method is the same as \code{$updateFromMatrix()} above except the
 integer combinations are in rows of the matrix \code{int_cmbs} (columns
 are the variables).
-The method calls \verb{$update()} on each combination (each row of
+The method calls \code{$update()} on each combination (each row of
 \code{int_cmbs}), incrementing count by \code{incr} for existing
 combinations, or inserting new combinations with count set to \code{incr}.
 Returns a numeric vector of length \code{nrow(int_cmbs)} containing the

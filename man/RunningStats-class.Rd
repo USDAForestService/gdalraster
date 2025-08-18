@@ -26,7 +26,7 @@ The min, max, sum and count are also tracked. The input data values are not
 stored in memory, so this class can be used to compute statistics for very
 large data streams.
 
-\code{RunningStats} is a C++ class exposed directly to R (via
+\code{RunningStats} is a C++ class exposed directly to \R (via
 \code{RCPP_EXPOSED_CLASS}). Methods of the class are accessed using the \code{$}
 operator.
 }

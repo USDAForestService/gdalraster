@@ -228,7 +228,7 @@ gdal_commands("raster")
 #> https://gdal.org/programs/gdal_vector_rasterize.html
 ```
 
-THe function `gdal_usage()` prints a help message to the console for a specific command.
+The function `gdal_usage()` prints a help message to the console for a specific command.
 
 ``` r
 gdal_usage("raster convert")

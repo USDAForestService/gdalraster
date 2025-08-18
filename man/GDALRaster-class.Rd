@@ -30,7 +30,7 @@ opened dataset.
 Class methods that operate on the dataset are described in Details, along
 with a set of writable fields for per-object settings. Values may be
 assigned to the class fields as needed during the lifetime of the object
-(i.e., by regular \verb{<-} or \code{=} assignment).
+(i.e., by regular \code{<-} or \code{=} assignment).
 }
 \description{
 \code{GDALRaster} provides an interface for accessing a raster dataset via GDAL
@@ -38,7 +38,7 @@ and calling methods on the underlying \code{GDALDataset}, \code{GDALDriver} and
 \code{GDALRasterBand} objects. See \url{https://gdal.org/en/stable/api/index.html} for
 details of the GDAL Raster API.
 
-\code{GDALRaster} is a C++ class exposed directly to R (via \code{RCPP_EXPOSED_CLASS}).
+\code{GDALRaster} is a C++ class exposed directly to \R (via \code{RCPP_EXPOSED_CLASS}).
 Fields and methods of the class are accessed using the \code{$} operator. \strong{Note
 that all arguments to class methods are required and must be given in the
 order documented.} Naming the arguments is optional but may be preferred
@@ -59,7 +59,7 @@ existing handle, and potentially makes use of existing data in the GDAL
 block cache). Opening in shared mode can be disabled by specifying the
 optional \code{shared} parameter in the class constructor.
 
-The \verb{$read()} method will perform automatic resampling if the
+The \code{$read()} method will perform automatic resampling if the
 specified output size (\code{out_xsize * out_ysize}) is different than
 the size of the region being read (\code{xsize * ysize}). In that case, the
 \code{GDAL_RASTERIO_RESAMPLING} configuration option could also be set to
@@ -197,7 +197,7 @@ All arguments are required with this form of the constructor, but
 
 \code{$infoOptions}\cr
 A character vector of command-line arguments to control the output of
-\verb{$info()} and \verb{$infoAsJSON()} (see below).
+\code{$info()} and \code{$infoAsJSON()} (see below).
 Defaults to \code{character(0)}. Can be set to a vector of strings specifying
 arguments to the \command{gdalinfo} command-line utility, e.g.,
 \code{c("-nomd", "-norat", "-noct")}.
@@ -211,11 +211,12 @@ statistics and histograms.
 
 \code{$readByteAsRaw}\cr
 A logical value, \code{FALSE} by default. This field can be set to \code{TRUE} which
-will affect the data type returned by \verb{$read()} and \code{\link[=read_ds]{read_ds()}}. When the
-underlying band data type is Byte and \code{readByteAsRaw} is \code{TRUE} the output
-type will be raw rather than integer. See also the \code{as_raw} argument to
-\code{\link[=read_ds]{read_ds()}} to control this in a non-persistent setting. If the underlying
-band data type is not Byte this setting has no effect.
+will affect the data type returned by the \code{$read()} method and the
+\code{\link[=read_ds]{read_ds()}} convenience function. When the underlying band data type is Byte
+and \code{readByteAsRaw} is \code{TRUE} the output type will be raw rather than
+integer. See also the \code{as_raw} argument to \code{\link[=read_ds]{read_ds()}} to control this in a
+non-persistent setting. If the underlying band data type is not Byte this
+setting has no effect.
 }
 
 \subsection{Methods}{
@@ -255,13 +256,15 @@ Prints various information about the raster dataset to the console (no
 return value, called for that side effect only).
 Equivalent to the output of the \command{gdalinfo} command-line utility
 (\command{gdalinfo filename}, if using the default \code{infoOptions}).
-See the field \verb{$infoOptions} above for setting the arguments to \code{gdalinfo}.
+See the field \code{$infoOptions} above for setting the arguments to
+\code{gdalinfo}.
 
 \code{$infoAsJSON()}\cr
 Returns information about the raster dataset as a JSON-formatted string.
 Equivalent to the output of the \command{gdalinfo} command-line utility
 (\command{gdalinfo -json filename}, if using the default \code{infoOptions}).
-See the field \verb{$infoOptions} above for setting the arguments to \code{gdalinfo}.
+See the field \code{$infoOptions} above for setting the arguments to
+\code{gdalinfo}.
 
 \code{$getDriverShortName()}\cr
 Returns the short name of the raster format driver.
@@ -297,7 +300,7 @@ pixel/line raster space (column/row) and projection coordinate space
 (geospatial x/y). The return value is a numeric vector of length six.
 See \url{https://gdal.org/en/stable/tutorials/geotransforms_tut.html}
 for details of the affine transformation. \emph{With 1-based indexing
-in R}, the geotransform vector contains (in map units of the raster spatial
+in \R}, the geotransform vector contains (in map units of the raster spatial
 reference system):
 \tabular{rl}{
 GT[1] \tab x-coordinate of upper-left corner of the upper-left pixel\cr
@@ -337,7 +340,7 @@ Returns a numeric vector of length four containing the bounding box
 Returns a numeric vector of length two containing the resolution
 (pixel width, pixel height as positive values) for a non-rotated raster.
 A warning is emitted and \code{NA} values returned if the raster has a rotated
-geotransform (see \verb{$getGeoTransform()} above).
+geotransform (see method \code{$getGeoTransform()} above).
 
 \code{$dim()}\cr
 Returns an integer vector of length three containing the raster dimensions
@@ -368,7 +371,8 @@ info and examples.
 Helper method returning a numeric matrix with named columns: \code{xblockoff},
 \code{yblockoff}, \code{xoff}, \code{yoff}, \code{xsize}, \code{ysize}, \code{xmin}, \code{xmax}, \code{ymin},
 \code{ymax}. For the meanings of these names, refer to the following class
-methods below: \verb{$getBlockSize()}, \verb{$getActualBlockSize} and \verb{$read()}.
+methods below: \code{$getBlockSize()}, \code{$getActualBlockSize} and
+\code{$read()}.
 All offsets are zero-based. The columns \code{xmin}, \code{xmax}, \code{ymin} and
 \code{ymax} give the extent of each block in geospatial coordinates.
 This method provides indexing values for the block layout of the given
@@ -653,9 +657,9 @@ stored histogram. \code{force} is a logical scalar: \code{TRUE} to force the
 computation of a default histogram; or if \code{FALSE} and no default histogram
 is available, a warning is emitted and the returned list has a 0-length
 histogram vector.
-Returns a list of length four containing named elements \verb{$min} (lower
-bound), \verb{$max} (upper bound), \verb{$num_buckets} (number of buckets), and
-\verb{$histogram} (a numeric vector of length \code{num_buckets}).
+Returns a list of length four containing named elements \code{min} (lower
+bound), \code{max} (upper bound), \code{num_buckets} (number of buckets), and
+\code{histogram} (a numeric vector of length \code{num_buckets}).
 
 \code{$getMetadata(band, domain)}\cr
 Returns a character vector of all metadata \code{NAME=VALUE} pairs that exist in
@@ -719,13 +723,13 @@ Returns a numeric or complex vector containing the values that were read.
 It is organized in left to right, top to bottom pixel order.
 \code{NA} will be returned in place of the nodata value if the
 raster dataset has a nodata value defined for this band.
-Data are read as R integer type when possible for the raster data type
+Data are read as \R integer type when possible for the raster data type
 (\code{Byte}, \code{Int8}, \code{Int16}, \code{UInt16}, \code{Int32}), otherwise as type double
 (\code{UInt32}, \code{Float32}, \code{Float64}).
 No rescaling of the data is performed (see \code{$getScale()} and
 \code{$getOffset()} above).
 An error is raised if the read operation fails. See also the setting
-\verb{$readByteAsRaw} above.
+\code{$readByteAsRaw} above.
 
 \code{$write(band, xoff, yoff, xsize, ysize, rasterData)}\cr
 Writes a region of raster data to \code{band}.
@@ -761,8 +765,9 @@ the colors are always applied starting at zero and ascending
 (see \href{https://gdal.org/en/stable/user/raster_data_model.html#color-table}{GDAL
 Color Table}).
 Column 1 contains the pixel values. Interpretation of columns 2:5 depends
-on the value of \verb{$getPaletteInterp()} (see below). For "RGB", columns 2:5
-contain red, green, blue, alpha as 0-255 integer values.
+on the value of \code{$getPaletteInterp()} (see below).
+For "RGB", columns 2:5 contain red, green, blue, alpha as 0-255 integer
+values.
 
 \code{$getPaletteInterp(band)}\cr
 If \code{band} has an associated color table, this method returns a
@@ -786,7 +791,7 @@ columns (see \code{$getColorTable()} above). Column 1 contains the pixel
 values. Valid values are integers 0 and larger (note that GTiff format
 supports color tables only for Byte and UInt16 bands). Negative values
 will be skipped with a warning emitted. Interpretation of columns 2:5
-depends on the value of \verb{$getPaletteInterp()} (see above). For RGB,
+depends on the value of \code{$getPaletteInterp()} (see above). For RGB,
 columns 2:4 contain red, green, blue as 0-255 integer values, and an
 optional column 5 contains alpha transparency values (defaults to 255
 opaque).
@@ -825,9 +830,10 @@ Attribute Table format and its representation as data frame.
 \code{$flushCache()}\cr
 Flush all write cached data to disk. Any raster data written via GDAL calls,
 but buffered internally will be written to disk. Using this method does not
-preclude calling \verb{$close()} to properly close the dataset and ensure that
-important data not addressed by \verb{$flushCache()} is written in the file
-(see also \verb{$open()} above). No return value, called for side effect.
+preclude calling \code{$close()} to properly close the dataset and ensure
+that important data not addressed by \code{$flushCache()} is written in the
+file (see also \code{$open()} above). No return value, called for side
+effects.
 
 \code{$getChecksum(band, xoff, yoff, xsize, ysize)}\cr
 Returns a 16-bit integer (0-65535) checksum from a region of raster data

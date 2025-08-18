@@ -31,8 +31,9 @@ pixel/line could be less than zero and max pixel/line could be greater than
 the raster x/y size). If \code{gt} is obtained from an object of class
 \code{GDALRaster}, then \code{NA} is returned for points that fall outside the
 raster extent and a warning emitted giving the number points that were
-outside. This latter case is equivalent to calling the \verb{$get_pixel_line()}
-class method on the \code{GDALRaster} object (see Examples).
+outside. This latter case is equivalent to calling the
+\code{$get_pixel_line()} class method on the \code{GDALRaster} object (see
+Examples).
 }
 \examples{
 pt_file <- system.file("extdata/storml_pts.csv", package="gdalraster")

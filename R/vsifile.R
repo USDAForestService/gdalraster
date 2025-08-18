@@ -29,7 +29,7 @@ SEEK_END <- "SEEK_END"
 #' virtualization of disk I/O so that non-file data sources can be made to
 #' appear as files.
 #'
-#' `VSIFile` is a C++ class exposed directly to R (via `RCPP_EXPOSED_CLASS`).
+#' `VSIFile` is a C++ class exposed directly to \R (via `RCPP_EXPOSED_CLASS`).
 #' Methods of the class are accessed using the `$` operator.
 #'
 #' @param filename Character string containing the filename to open. It may be
@@ -132,21 +132,21 @@ SEEK_END <- "SEEK_END"
 #' `vf$seek(0, SEEK_SET)`. No return value, called for that side effect.
 #'
 #' \code{$read(nbytes)}\cr
-#' Read `nbytes` bytes from the file at the current offset. Returns a vector
-#' of R `raw` type, or `NULL` if the operation fails.
+#' Read `nbytes` bytes from the file at the current offset. Returns an \R `raw`
+#' vector, or `NULL` if the operation fails.
 #'
 #' \code{$write(object)}\cr
 #' Write bytes to the file at the current offset. `object` is a `raw` vector.
 #' Returns the number of bytes successfully written, as numeric scalar
 #' carrying the `integer64` class attribute.
-#' See also base R `charToRaw()` / `rawToChar()`, convert to or from raw
+#' See also base \R `charToRaw()` / `rawToChar()`, convert to or from raw
 #' vectors, and `readBin()` / `writeBin()` which read binary data from or write
 #' binary data to a raw vector.
 #'
 #' \code{$eof()}\cr
 #' Test for end of file. Returns `TRUE` if an end-of-file condition occurred
 #' during the previous read operation. The end-of-file flag is cleared by a
-#' successful call to `$seek()`.
+#' successful call to \code{$seek()}.
 #'
 #' \code{$truncate(new_size)}\cr
 #' Truncate/expand the file to the specified `new_size`, given as a positive
@@ -176,8 +176,8 @@ SEEK_END <- "SEEK_END"
 #' \code{$open()}\cr
 #' This method can be used to re-open the file after it has been closed, using
 #' the same `filename`, and same `options` if any are set. The file will be
-#' opened using `access` as currently set. The `$set_access()` method can be
-#' called to change the requested access while the file is closed.
+#' opened using `access` as currently set. The \code{$set_access()} method can
+#' be called to change the requested access while the file is closed.
 #' No return value. An error is raised if a file handle cannot be obtained.
 #'
 #' \code{$get_filename()}\cr
@@ -192,11 +192,11 @@ SEEK_END <- "SEEK_END"
 #' Sets the requested read/write access on this `VSIFile` object, given as a
 #' character string (i.e., `"r"`, `"r+"`, `"w"`, `"w+"`). The access can be
 #' changed only while the `VSIFile` object is closed, and will apply when it is
-#' re-opened with a call to `$open()`.
+#' re-opened with a call to \code{$open()}.
 #' Returns `0` on success or `-1` on error.
 #'
 #' @note
-#' File offsets are given as R `numeric` (i.e., `double` type), optionally
+#' File offsets are given as \R `numeric` (i.e., `double` type), optionally
 #' carrying the `bit64::integer64` class attribute. They are returned as
 #' `numeric` with the `integer64` class attribute attached. The `integer64`
 #' type is signed, so the maximum file offset supported by this interface

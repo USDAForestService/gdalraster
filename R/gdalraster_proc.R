@@ -167,8 +167,8 @@ DEFAULT_DEM_PROC <- list(
 #' If `FALSE` (the default), output is a vector of pixel data interleaved by
 #' band.
 #' @param as_raw Logical. If `TRUE` and the underlying data type is Byte,
-#' return output as R's raw vector type. This maps to the setting
-#' `$readByteAsRaw` on the `GDALRaster` object, which will be temporarily
+#' return output as \R `raw` vector type. This maps to the setting
+#' \code{$readByteAsRaw} on the `GDALRaster` object, which will be temporarily
 #' updated in this function. To control this behavior in a persistent way on
 #' a dataset see \code{$readByteAsRaw} in [`GDALRaster-class`][GDALRaster].
 #' @returns If `as_list = FALSE` (the default), a vector of `raw`, `integer`,
@@ -861,9 +861,9 @@ rasterToVRT <- function(srcfile,
 #' Raster calculation
 #'
 #' @description
-#' `calc()` evaluates an R expression for each pixel in a raster layer or
+#' `calc()` evaluates an \R expression for each pixel in a raster layer or
 #' stack of layers. Each layer is defined by a raster filename, band number,
-#' and a variable name to use in the R expression. If not specified, band
+#' and a variable name to use in the \R expression. If not specified, band
 #' defaults to 1 for each input raster.
 #' Variable names default to `LETTERS` if not specified
 #' (`A` (layer 1), `B` (layer 2), ...).
@@ -871,7 +871,7 @@ rasterToVRT <- function(srcfile,
 #' The projection will be read from the first raster in the list
 #' of inputs.
 #' Individual pixel coordinates are also available as variables in the
-#' R expression, as either x/y in the raster projected coordinate system or
+#' \R expression, as either x/y in the raster projected coordinate system or
 #' inverse projected longitude/latitude.
 #' Multiband output is supported as of gdalraster 1.11.0.
 #'
@@ -910,7 +910,7 @@ rasterToVRT <- function(srcfile,
 #' `length(out_band)`. The dimensions described above are assumed and not
 #' read from the return value of `expr`.
 #'
-#' @param expr An R expression as a character string (e.g., `"A + B"`).
+#' @param expr An \R expression as a character string (e.g., `"A + B"`).
 #' @param rasterfiles Character vector of source raster filenames.
 #' @param bands Integer vector of band numbers to use for each raster layer.
 #' @param var.names Character vector of variable names to use for each raster
@@ -1463,10 +1463,10 @@ combine <- function(rasterfiles, var.names=NULL, bands=NULL,
 #' elev_file <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #' out_file <- file.path(tempdir(), "storml_hillshade.tif")
 #' dem_proc("hillshade", elev_file, out_file)
-#' 
+#'
 #' ds <- new(GDALRaster, out_file)
 #' plot_raster(ds)
-#' 
+#'
 #' ds$close()
 #' \dontshow{deleteDataset(out_file)}
 #' @export

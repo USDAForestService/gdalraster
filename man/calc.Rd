@@ -22,7 +22,7 @@ calc(
 )
 }
 \arguments{
-\item{expr}{An R expression as a character string (e.g., \code{"A + B"}).}
+\item{expr}{An \R expression as a character string (e.g., \code{"A + B"}).}
 
 \item{rasterfiles}{Character vector of source raster filenames.}
 
@@ -75,9 +75,9 @@ displayed. Defaults to \code{FALSE}.}
 Returns the output filename invisibly.
 }
 \description{
-\code{calc()} evaluates an R expression for each pixel in a raster layer or
+\code{calc()} evaluates an \R expression for each pixel in a raster layer or
 stack of layers. Each layer is defined by a raster filename, band number,
-and a variable name to use in the R expression. If not specified, band
+and a variable name to use in the \R expression. If not specified, band
 defaults to 1 for each input raster.
 Variable names default to \code{LETTERS} if not specified
 (\code{A} (layer 1), \code{B} (layer 2), ...).
@@ -85,7 +85,7 @@ All of the input layers must have the same extent and cell size.
 The projection will be read from the first raster in the list
 of inputs.
 Individual pixel coordinates are also available as variables in the
-R expression, as either x/y in the raster projected coordinate system or
+\R expression, as either x/y in the raster projected coordinate system or
 inverse projected longitude/latitude.
 Multiband output is supported as of gdalraster 1.11.0.
 }

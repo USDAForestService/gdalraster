@@ -11,7 +11,7 @@
 #' `GDALRasterBand` objects. See \url{https://gdal.org/en/stable/api/index.html} for
 #' details of the GDAL Raster API.
 #'
-#' `GDALRaster` is a C++ class exposed directly to R (via `RCPP_EXPOSED_CLASS`).
+#' `GDALRaster` is a C++ class exposed directly to \R (via `RCPP_EXPOSED_CLASS`).
 #' Fields and methods of the class are accessed using the `$` operator. **Note
 #' that all arguments to class methods are required and must be given in the
 #' order documented.** Naming the arguments is optional but may be preferred
@@ -35,7 +35,7 @@
 #' Class methods that operate on the dataset are described in Details, along
 #' with a set of writable fields for per-object settings. Values may be
 #' assigned to the class fields as needed during the lifetime of the object
-#' (i.e., by regular `<-` or `=` assignment).
+#' (i.e., by regular \code{<-} or \code{=} assignment).
 #'
 #' @section Usage (see Details):
 #' \preformatted{
@@ -163,7 +163,7 @@
 #'
 #' \code{$infoOptions}\cr
 #' A character vector of command-line arguments to control the output of
-#' `$info()` and `$infoAsJSON()` (see below).
+#' \code{$info()} and \code{$infoAsJSON()} (see below).
 #' Defaults to `character(0)`. Can be set to a vector of strings specifying
 #' arguments to the \command{gdalinfo} command-line utility, e.g.,
 #' `c("-nomd", "-norat", "-noct")`.
@@ -177,11 +177,12 @@
 #'
 #' \code{$readByteAsRaw}\cr
 #' A logical value, `FALSE` by default. This field can be set to `TRUE` which
-#' will affect the data type returned by `$read()` and [read_ds()]. When the
-#' underlying band data type is Byte and `readByteAsRaw` is `TRUE` the output
-#' type will be raw rather than integer. See also the `as_raw` argument to
-#' [read_ds()] to control this in a non-persistent setting. If the underlying
-#' band data type is not Byte this setting has no effect.
+#' will affect the data type returned by the \code{$read()} method and the
+#' [read_ds()] convenience function. When the underlying band data type is Byte
+#' and `readByteAsRaw` is `TRUE` the output type will be raw rather than
+#' integer. See also the `as_raw` argument to [read_ds()] to control this in a
+#' non-persistent setting. If the underlying band data type is not Byte this
+#' setting has no effect.
 #'
 #' ## Methods
 #'
@@ -220,13 +221,15 @@
 #' return value, called for that side effect only).
 #' Equivalent to the output of the \command{gdalinfo} command-line utility
 #' (\command{gdalinfo filename}, if using the default `infoOptions`).
-#' See the field `$infoOptions` above for setting the arguments to `gdalinfo`.
+#' See the field \code{$infoOptions} above for setting the arguments to
+#' `gdalinfo`.
 #'
 #' \code{$infoAsJSON()}\cr
 #' Returns information about the raster dataset as a JSON-formatted string.
 #' Equivalent to the output of the \command{gdalinfo} command-line utility
 #' (\command{gdalinfo -json filename}, if using the default `infoOptions`).
-#' See the field `$infoOptions` above for setting the arguments to `gdalinfo`.
+#' See the field \code{$infoOptions} above for setting the arguments to
+#' `gdalinfo`.
 #'
 #' \code{$getDriverShortName()}\cr
 #' Returns the short name of the raster format driver.
@@ -262,7 +265,7 @@
 #' (geospatial x/y). The return value is a numeric vector of length six.
 #' See \url{https://gdal.org/en/stable/tutorials/geotransforms_tut.html}
 #' for details of the affine transformation. \emph{With 1-based indexing
-#' in R}, the geotransform vector contains (in map units of the raster spatial
+#' in \R}, the geotransform vector contains (in map units of the raster spatial
 #' reference system):
 #' \tabular{rl}{
 #' GT\[1\] \tab x-coordinate of upper-left corner of the upper-left pixel\cr
@@ -302,7 +305,7 @@
 #' Returns a numeric vector of length two containing the resolution
 #' (pixel width, pixel height as positive values) for a non-rotated raster.
 #' A warning is emitted and `NA` values returned if the raster has a rotated
-#' geotransform (see `$getGeoTransform()` above).
+#' geotransform (see method \code{$getGeoTransform()} above).
 #'
 #' \code{$dim()}\cr
 #' Returns an integer vector of length three containing the raster dimensions
@@ -333,7 +336,8 @@
 #' Helper method returning a numeric matrix with named columns: `xblockoff`,
 #' `yblockoff`, `xoff`, `yoff`, `xsize`, `ysize`, `xmin`, `xmax`, `ymin`,
 #' `ymax`. For the meanings of these names, refer to the following class
-#' methods below: `$getBlockSize()`, `$getActualBlockSize` and `$read()`.
+#' methods below: \code{$getBlockSize()}, \code{$getActualBlockSize} and
+#' \code{$read()}.
 #' All offsets are zero-based. The columns `xmin`, `xmax`, `ymin` and
 #' `ymax` give the extent of each block in geospatial coordinates.
 #' This method provides indexing values for the block layout of the given
@@ -613,9 +617,9 @@
 #' computation of a default histogram; or if `FALSE` and no default histogram
 #' is available, a warning is emitted and the returned list has a 0-length
 #' histogram vector.
-#' Returns a list of length four containing named elements `$min` (lower
-#' bound), `$max` (upper bound), `$num_buckets` (number of buckets), and
-#'`$histogram` (a numeric vector of length `num_buckets`).
+#' Returns a list of length four containing named elements `min` (lower
+#' bound), `max` (upper bound), `num_buckets` (number of buckets), and
+#'`histogram` (a numeric vector of length `num_buckets`).
 #'
 #' \code{$getMetadata(band, domain)}\cr
 #' Returns a character vector of all metadata `NAME=VALUE` pairs that exist in
@@ -679,13 +683,13 @@
 #' It is organized in left to right, top to bottom pixel order.
 #' \code{NA} will be returned in place of the nodata value if the
 #' raster dataset has a nodata value defined for this band.
-#' Data are read as R integer type when possible for the raster data type
+#' Data are read as \R integer type when possible for the raster data type
 #' (`Byte`, `Int8`, `Int16`, `UInt16`, `Int32`), otherwise as type double
 #' (`UInt32`, `Float32`, `Float64`).
 #' No rescaling of the data is performed (see \code{$getScale()} and
 #' \code{$getOffset()} above).
 #' An error is raised if the read operation fails. See also the setting
-#' `$readByteAsRaw` above.
+#' \code{$readByteAsRaw} above.
 #'
 #' \code{$write(band, xoff, yoff, xsize, ysize, rasterData)}\cr
 #' Writes a region of raster data to \code{band}.
@@ -721,8 +725,9 @@
 #' (see \href{https://gdal.org/en/stable/user/raster_data_model.html#color-table}{GDAL
 #' Color Table}).
 #' Column 1 contains the pixel values. Interpretation of columns 2:5 depends
-#' on the value of `$getPaletteInterp()` (see below). For "RGB", columns 2:5
-#' contain red, green, blue, alpha as 0-255 integer values.
+#' on the value of \code{$getPaletteInterp()} (see below).
+#' For "RGB", columns 2:5 contain red, green, blue, alpha as 0-255 integer
+#' values.
 #'
 #' \code{$getPaletteInterp(band)}\cr
 #' If \code{band} has an associated color table, this method returns a
@@ -744,7 +749,7 @@
 #' values. Valid values are integers 0 and larger (note that GTiff format
 #' supports color tables only for Byte and UInt16 bands). Negative values
 #' will be skipped with a warning emitted. Interpretation of columns 2:5
-#' depends on the value of `$getPaletteInterp()` (see above). For RGB,
+#' depends on the value of \code{$getPaletteInterp()} (see above). For RGB,
 #' columns 2:4 contain red, green, blue as 0-255 integer values, and an
 #' optional column 5 contains alpha transparency values (defaults to 255
 #' opaque).
@@ -783,9 +788,10 @@
 #' \code{$flushCache()}\cr
 #' Flush all write cached data to disk. Any raster data written via GDAL calls,
 #' but buffered internally will be written to disk. Using this method does not
-#' preclude calling `$close()` to properly close the dataset and ensure that
-#' important data not addressed by `$flushCache()` is written in the file
-#' (see also `$open()` above). No return value, called for side effect.
+#' preclude calling \code{$close()} to properly close the dataset and ensure
+#' that important data not addressed by \code{$flushCache()} is written in the
+#' file (see also \code{$open()} above). No return value, called for side
+#' effects.
 #'
 #' \code{$getChecksum(band, xoff, yoff, xsize, ysize)}\cr
 #' Returns a 16-bit integer (0-65535) checksum from a region of raster data
@@ -823,7 +829,7 @@
 #' block cache). Opening in shared mode can be disabled by specifying the
 #' optional `shared` parameter in the class constructor.
 #'
-#' The `$read()` method will perform automatic resampling if the
+#' The \code{$read()} method will perform automatic resampling if the
 #' specified output size (`out_xsize * out_ysize`) is different than
 #' the size of the region being read (`xsize * ysize`). In that case, the
 #' `GDAL_RASTERIO_RESAMPLING` configuration option could also be set to
