@@ -205,17 +205,17 @@ articles:
   navbar: ~
   contents:
   - raster-api-tutorial
-  - raster-display
+  - articles/raster-display
   - raster-attribute-tables
-  - gdal-block-cache
+  - articles/gdal-block-cache
   - vector-api-overview
-  - vector-read-benchmarks
+  - articles/vector-read-benchmarks
   - gdal-config-quick-ref
-  - use-gdal-cli-from-r
+  - articles/use-gdal-cli-from-r
 - title: Archive
   navbar: Archived articles
   contents:
-  - gdalvector-draft
+  - articles/gdalvector-draft
 
 figures:
   dev: png
