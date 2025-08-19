@@ -77,7 +77,7 @@
       <h1>Vector API Overview</h1>
             
       
-      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/vignettes/vector-api-overview.Rmd" class="external-link"><code>vignettes/vector-api-overview.Rmd</code></a></small>
+      <small class="dont-index">Source: <a href="https://github.com/USDAForestService/gdalraster/blob/main/vignettes/articles/vector-api-overview.Rmd" class="external-link"><code>vignettes/articles/vector-api-overview.Rmd</code></a></small>
       <div class="d-none name"><code>vector-api-overview.Rmd</code></div>
     </div>
 
@@ -669,14 +669,12 @@ handle input datasets in a general way.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># copy ynp_features.gpkg from the zip file to an in-memory file</span></span>
 <span><span class="va">mem_gpkg</span> <span class="op">&lt;-</span> <span class="st">"/vsimem/tmp/ynp_features.gpkg"</span></span>
-<span><span class="co"># copyDatasetFiles() is: to, from</span></span>
-<span><span class="fu"><a href="../reference/copyDatasetFiles.html">copyDatasetFiles</a></span><span class="op">(</span><span class="va">mem_gpkg</span>, <span class="va">zf_gpkg</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="fu"><a href="../reference/ogr2ogr.html">ogr2ogr</a></span><span class="op">(</span><span class="va">zf_gpkg</span>, <span class="va">mem_gpkg</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="../reference/vsi_read_dir.html">vsi_read_dir</a></span><span class="op">(</span><span class="st">"/vsimem/tmp"</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] "ynp_features.gpkg"</span></span>
 <span></span>
-<span><span class="co"># confirm it is writable</span></span>
+<span><span class="co"># confirm it's writable</span></span>
 <span><span class="fu"><a href="../reference/ogr_manage.html">ogr_ds_exists</a></span><span class="op">(</span><span class="va">mem_gpkg</span>, with_update <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
 <span></span>
@@ -827,15 +825,13 @@ the <code>layer</code> argument in the constructor.</p>
 boundary layer and retrieve information about it.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_features.zip"</span>, package <span class="op">=</span> <span class="st">"gdalraster"</span><span class="op">)</span></span>
-<span><span class="co"># extract to a temporary writable file</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/utils/unzip.html" class="external-link">unzip</a></span><span class="op">(</span><span class="va">f</span>, files <span class="op">=</span> <span class="st">"ynp_features.gpkg"</span>, exdir <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">ynp_dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"ynp_features.gpkg"</span><span class="op">)</span></span>
+<span><span class="va">ynp_dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="st">"/vsizip"</span>, <span class="va">f</span>, <span class="st">"ynp_features.gpkg"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># the park boundary layer containing a single feature</span></span>
 <span><span class="op">(</span><span class="va">bnd</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">ynp_dsn</span>, <span class="st">"ynp_bnd"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /tmp/RtmpYuFOR9/ynp_features.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /vsizip//home/runner/work/_temp/Library/gdalraster/extdata/ynp_features.zip/ynp_features.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : ynp_bnd</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 (EPSG:4269)</span></span>
 <span><span class="co">#&gt;  Geom   : POLYGON</span></span>
@@ -978,7 +974,7 @@ returned by <code>$fetch()</code> carries the
 <span><span class="op">(</span><span class="va">roads</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">ynp_dsn</span>, <span class="va">sql</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /tmp/RtmpYuFOR9/ynp_features.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /vsizip//home/runner/work/_temp/Library/gdalraster/extdata/ynp_features.zip/ynp_features.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : SELECT rdname, opentopubl, geom FROM roads WHERE opentopubl = 'Yes'</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 (EPSG:4269)</span></span>
 <span><span class="co">#&gt;  Geom   : LINESTRING</span></span>
@@ -1168,14 +1164,13 @@ the coordinate system of the MTBS layer.</p>
 <span><span class="va">f</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/system.file.html" class="external-link">system.file</a></span><span class="op">(</span><span class="st">"extdata/ynp_fires_1984_2022.gpkg"</span>, package <span class="op">=</span> <span class="st">"gdalraster"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># copy to a temporary writable file</span></span>
-<span><span class="va">mtbs_dsn</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/file.path.html" class="external-link">file.path</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempdir</a></span><span class="op">(</span><span class="op">)</span>, <span class="st">"ynp_fires_1984_2022.gpkg"</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/files.html" class="external-link">file.copy</a></span><span class="op">(</span><span class="va">f</span>, <span class="va">mtbs_dsn</span><span class="op">)</span></span>
-<span><span class="co">#&gt; [1] TRUE</span></span>
+<span><span class="va">mtbs_dsn</span> <span class="op">&lt;-</span> <span class="st">"/vsimem/tmp/ynp_fires_1984_2022.gpkg"</span></span>
+<span><span class="fu"><a href="../reference/ogr2ogr.html">ogr2ogr</a></span><span class="op">(</span><span class="va">f</span>, <span class="va">mtbs_dsn</span><span class="op">)</span></span>
 <span></span>
 <span><span class="op">(</span><span class="va">fires</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">mtbs_dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /tmp/RtmpYuFOR9/ynp_fires_1984_2022.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /vsimem/tmp/ynp_fires_1984_2022.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : mtbs_perims</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 / Montana (EPSG:32100)</span></span>
 <span><span class="co">#&gt;  Geom   : MULTIPOLYGON</span></span>
@@ -1188,7 +1183,7 @@ the coordinate system of the MTBS layer.</p>
 <span>                      out_dsn <span class="op">=</span> <span class="va">mtbs_dsn</span>, out_srs <span class="op">=</span> <span class="va">srs_mtsp</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; C++ object of class GDALVector</span></span>
 <span><span class="co">#&gt;  Driver : GeoPackage (GPKG)</span></span>
-<span><span class="co">#&gt;  DSN    : /tmp/RtmpYuFOR9/ynp_fires_1984_2022.gpkg</span></span>
+<span><span class="co">#&gt;  DSN    : /vsimem/tmp/ynp_fires_1984_2022.gpkg</span></span>
 <span><span class="co">#&gt;  Layer  : ynp_bnd</span></span>
 <span><span class="co">#&gt;  CRS    : NAD83 / Montana (EPSG:32100)</span></span>
 <span><span class="co">#&gt;  Geom   : POLYGON</span></span>
@@ -1217,8 +1212,7 @@ the coordinate system of the MTBS layer.</p>
 <span><span class="va">bnd</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># reproject points_of_interest</span></span>
-<span><span class="va">poi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ogr_reproject.html">ogr_reproject</a></span><span class="op">(</span><span class="va">ynp_dsn</span>, <span class="st">"points_of_interest"</span>, <span class="va">mtbs_dsn</span>, <span class="va">srs_mtsp</span>,</span>
-<span>                     add_cl_arg <span class="op">=</span> <span class="st">"-skipfailures"</span><span class="op">)</span></span>
+<span><span class="va">poi</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ogr_reproject.html">ogr_reproject</a></span><span class="op">(</span><span class="va">ynp_dsn</span>, <span class="st">"points_of_interest"</span>, <span class="va">mtbs_dsn</span>, <span class="va">srs_mtsp</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># set an attribute filter to select the Maple Fire</span></span>
 <span><span class="va">fires</span><span class="op">$</span><span class="fu">setAttributeFilter</span><span class="op">(</span><span class="st">"incid_name = 'MAPLE'"</span><span class="op">)</span></span>
@@ -1248,7 +1242,7 @@ the coordinate system of the MTBS layer.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bnd_feat</span>, col <span class="op">=</span> <span class="st">"wheat"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">maple_fire</span>, col <span class="op">=</span> <span class="st">"orangered"</span>, border <span class="op">=</span> <span class="cn">NA</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">maple_pois</span>, pch <span class="op">=</span> <span class="fl">15</span>, col <span class="op">=</span> <span class="st">"royalblue"</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-17-1.png" alt="A plot of the Yellowstone National Park (YNP) boundary in a projected coordinate system showing the perimeter of the 2016 Maple Fire, along with three points of interest located within the fire polygon. The YNP boundary polygon has background R color 'wheat'. The Maple Fire perimeter is shown as a filled polygon in R color 'orangered'. The three points of interest are shown as filled square symbols in R color 'royalblue'. The x-axis label is 'x' and the y-axis label is 'y'. The plot is untitled." width="700"></p>
+<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-16-1.png" alt="A plot of the Yellowstone National Park (YNP) boundary in a projected coordinate system showing the perimeter of the 2016 Maple Fire, along with three points of interest located within the fire polygon. The YNP boundary polygon has background R color 'wheat'. The Maple Fire perimeter is shown as a filled polygon in R color 'orangered'. The three points of interest are shown as filled square symbols in R color 'royalblue'. The x-axis label is 'x' and the y-axis label is 'y'. The plot is untitled." width="700"></p>
 <div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="va">fires</span><span class="op">$</span><span class="fu">close</span><span class="op">(</span><span class="op">)</span></span>
@@ -1316,7 +1310,7 @@ interest.</p>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">bnd_feat</span>, col <span class="op">=</span> <span class="st">"wheat"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">ynp_centroid</span>, pch <span class="op">=</span> <span class="fl">10</span>, cex <span class="op">=</span> <span class="fl">1.5</span>, add <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-18-1.png" alt="A plot of the Yellowstone National Park (YNP) boundary in a projected coordinate system showing the centroid of the park boundary polygon as a single point. The YNP boundary polygon has background R color 'wheat'. The centroid point is shown as an R 'circle plus' symbol, a circle with a plus sign inside resembling crosshairs. The x-axis label is 'x' and the y-axis label is 'y'. The plot is untitled." width="700"></p>
+<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-17-1.png" alt="A plot of the Yellowstone National Park (YNP) boundary in a projected coordinate system showing the centroid of the park boundary polygon as a single point. The YNP boundary polygon has background R color 'wheat'. The centroid point is shown as an R 'circle plus' symbol, a circle with a plus sign inside resembling crosshairs. The x-axis label is 'x' and the y-axis label is 'y'. The plot is untitled." width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="rewritereplace-an-existing-feature">Rewrite/replace an existing feature<a class="anchor" aria-label="anchor" href="#rewritereplace-an-existing-feature"></a>
@@ -1499,7 +1493,7 @@ grouping in a transaction, measuring time elapsed.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/system.time.html" class="external-link">system.time</a></span><span class="op">(</span><span class="va">res</span> <span class="op">&lt;-</span> <span class="va">lyr</span><span class="op">$</span><span class="fu">batchCreateFeature</span><span class="op">(</span><span class="va">d</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   5.483  21.591  98.285</span></span>
+<span><span class="co">#&gt;   2.163   0.007   2.170</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1528,7 +1522,7 @@ and the layer is checked for the expected output.</p>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="co">#&gt; 0...10...20...30...40...50...60...70...80...90...100 - done.</span></span>
 <span><span class="co">#&gt;    user  system elapsed </span></span>
-<span><span class="co">#&gt;   1.108   0.269   1.441</span></span>
+<span><span class="co">#&gt;   1.024   0.005   1.030</span></span>
 <span></span>
 <span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/all.html" class="external-link">all</a></span><span class="op">(</span><span class="va">res2</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="co">#&gt; [1] TRUE</span></span>
@@ -1541,22 +1535,22 @@ and the layer is checked for the expected output.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;   FID               pt_desc         create_time                           geom</span></span>
-<span><span class="co">#&gt; 1   1 random points batch 1 2025-08-19 15:41:22 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 2   2 random points batch 1 2025-08-19 15:41:22 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 3   3 random points batch 1 2025-08-19 15:41:22 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 4   4 random points batch 1 2025-08-19 15:41:22 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 5   5 random points batch 1 2025-08-19 15:41:22 WKB POINT: raw 01 01 00 00 ...</span></span>
-<span><span class="co">#&gt; 6   6 random points batch 1 2025-08-19 15:41:22 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 1   1 random points batch 1 2025-08-19 23:19:54 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 2   2 random points batch 1 2025-08-19 23:19:54 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 3   3 random points batch 1 2025-08-19 23:19:54 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 4   4 random points batch 1 2025-08-19 23:19:54 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 5   5 random points batch 1 2025-08-19 23:19:54 WKB POINT: raw 01 01 00 00 ...</span></span>
+<span><span class="co">#&gt; 6   6 random points batch 1 2025-08-19 23:19:54 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">tail</a></span><span class="op">(</span><span class="va">d_out</span><span class="op">)</span></span>
 <span><span class="co">#&gt; OGR feature set</span></span>
 <span><span class="co">#&gt;           FID               pt_desc         create_time</span></span>
-<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-08-19 15:43:01</span></span>
-<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-08-19 15:43:01</span></span>
-<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-08-19 15:43:01</span></span>
-<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-08-19 15:43:01</span></span>
-<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-08-19 15:43:01</span></span>
-<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-08-19 15:43:01</span></span>
+<span><span class="co">#&gt; 199995 199995 random points batch 2 2025-08-19 23:19:56</span></span>
+<span><span class="co">#&gt; 199996 199996 random points batch 2 2025-08-19 23:19:56</span></span>
+<span><span class="co">#&gt; 199997 199997 random points batch 2 2025-08-19 23:19:56</span></span>
+<span><span class="co">#&gt; 199998 199998 random points batch 2 2025-08-19 23:19:56</span></span>
+<span><span class="co">#&gt; 199999 199999 random points batch 2 2025-08-19 23:19:56</span></span>
+<span><span class="co">#&gt; 200000 200000 random points batch 2 2025-08-19 23:19:56</span></span>
 <span><span class="co">#&gt;                                  geom</span></span>
 <span><span class="co">#&gt; 199995 WKB POINT: raw 01 01 00 00 ...</span></span>
 <span><span class="co">#&gt; 199996 WKB POINT: raw 01 01 00 00 ...</span></span>
@@ -1675,11 +1669,10 @@ method layers.</p>
 <span>         <span class="st">"PROMOTE_TO_MULTI=YES"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># intersect to obtain areas re-burned since 2000</span></span>
-<span><span class="va">out_file</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/tempfile.html" class="external-link">tempfile</a></span><span class="op">(</span>fileext <span class="op">=</span> <span class="st">".gpkg"</span><span class="op">)</span></span>
 <span><span class="va">lyr_out</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/ogr_proc.html">ogr_proc</a></span><span class="op">(</span>mode <span class="op">=</span> <span class="st">"Intersection"</span>,</span>
 <span>                    input_lyr <span class="op">=</span> <span class="va">lyr1</span>,</span>
 <span>                    method_lyr <span class="op">=</span> <span class="va">lyr2</span>,</span>
-<span>                    out_dsn <span class="op">=</span> <span class="va">out_file</span>,</span>
+<span>                    out_dsn <span class="op">=</span> <span class="va">mtbs_dsn</span>,</span>
 <span>                    out_lyr_name <span class="op">=</span> <span class="st">"north_fork_reburned"</span>,</span>
 <span>                    out_geom_type <span class="op">=</span> <span class="st">"MULTIPOLYGON"</span>,</span>
 <span>                    mode_opt <span class="op">=</span> <span class="va">opt</span><span class="op">)</span></span>
@@ -1716,7 +1709,7 @@ method layers.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">north_fork_feat</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">reburn_feat_set</span>, col <span class="op">=</span> <span class="st">"orangered"</span>, border <span class="op">=</span> <span class="cn">NA</span>, add <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>     main <span class="op">=</span> <span class="st">"1988 North Fork fire perimeter showing re-burned areas in red"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-25-1.png" alt="A plot of the 1988 North Fork fire perimeter showing areas within the North Fork burn scar that have subsequently re-burned as of 2022. The North Fork fire is shown as an unfilled polygon with black outline. Areas within the North Fork polygon that have re-burned are shown as filled polygons in R color 'orangered'. The x-axis label is 'x' and the y-axis label is 'y'. The plot title is '1988 North Fork fire perimeter showing re-burned areas in red'." width="700"></p>
+<p><img src="vector-api-overview_files/figure-html/unnamed-chunk-24-1.png" alt="A plot of the 1988 North Fork fire perimeter showing areas within the North Fork burn scar that have subsequently re-burned as of 2022. The North Fork fire is shown as an unfilled polygon with black outline. Areas within the North Fork polygon that have re-burned are shown as filled polygons in R color 'orangered'. The x-axis label is 'x' and the y-axis label is 'y'. The plot title is '1988 North Fork fire perimeter showing re-burned areas in red'." width="700"></p>
 <div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span></span>
 <span><span class="co"># clean up</span></span>
