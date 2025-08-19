@@ -226,12 +226,10 @@
 #' deleteDataset(f_out)
 #'
 #' ## "pipeline" syntax
-#' ## Note: this may change in future versions
-#' # https://gdal.org/en/stable/programs/index.html#gdal-application
-#'
-#' # "raster pipeline" example
+#' # "raster pipeline" example 2 from:
+#' # https://gdal.org/en/latest/programs/gdal_raster_pipeline.html
 #' # serialize the command to reproject a GTiff file into GDALG format, and
-#' # then read the GDALG file
+#' # then later read the GDALG file
 #' # GDAL Streamed Algorithm format:
 #' # https://gdal.org/en/stable/drivers/raster/gdalg.html
 #'
@@ -247,7 +245,7 @@
 #' alg <- gdal_run("raster pipeline", args)
 #' alg$release()
 #'
-#' # content of the .json file
+#' # content of the .gdalg.json file
 #' readLines(f_out, warn = FALSE) |> writeLines()
 #'
 #' (ds <- new(GDALRaster, f_out))
