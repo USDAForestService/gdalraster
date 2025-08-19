@@ -208,7 +208,7 @@ articles:
   - articles/raster-display
   - raster-attribute-tables
   - articles/gdal-block-cache
-  - vector-api-overview
+  - articles/vector-api-overview
   - articles/vector-read-benchmarks
   - gdal-config-quick-ref
   - articles/use-gdal-cli-from-r
