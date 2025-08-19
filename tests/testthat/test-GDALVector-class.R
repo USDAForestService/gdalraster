@@ -1911,7 +1911,6 @@ test_that("info() prints output to the console", {
 
 test_that("ArrowArrayStream is readable", {
     skip_if(gdal_version_num() < 3060000)
-    skip_if_not_installed("nanoarrow")
 
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
     dsn <- file.path(tempdir(), basename(f))
@@ -1931,6 +1930,8 @@ test_that("ArrowArrayStream is readable", {
     expect_equal(batch$children$fid$length, 61)
 
     expect_no_error(stream$release())
+    rm(stream)
+    gc()
 
     # with options
     lyr$arrowStreamOptions <- "INCLUDE_FID=NO"
@@ -1942,13 +1943,14 @@ test_that("ArrowArrayStream is readable", {
     expect_no_error(stream2$release())
 
     lyr$close()
-
+    rm(stream2)
+    rm(lyr)
     deleteDataset(dsn)
+    gc()
 })
 
 test_that("nanoarrow_array_stream implicit release works", {
     skip_if(gdal_version_num() < 3060000)
-    skip_if_not_installed("nanoarrow")
 
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
     dsn <- file.path(tempdir(), basename(f))

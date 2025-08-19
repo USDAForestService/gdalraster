@@ -90,10 +90,12 @@
 #' written to an existing database.
 #'
 #' @seealso
-#' [ogr2ogr()], [warp()] for raster reprojection
+#' [ogr2ogr()]
 #'
 #' GDAL documentation for `ogr2ogr`:\cr
 #' \url{https://gdal.org/en/stable/programs/ogr2ogr.html}
+#'
+#' [warp()] for raster reprojection
 #'
 #' @examples
 #' \dontshow{set_config_option("OGR2OGR_USE_ARROW_API", "NO")}

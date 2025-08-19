@@ -244,11 +244,12 @@ Here we copy the .gpkg file from the zip archive to an in-memory file that is wr
 ```{r}
 # copy ynp_features.gpkg from the zip file to an in-memory file
 mem_gpkg <- "/vsimem/tmp/ynp_features.gpkg"
-ogr2ogr(zf_gpkg, mem_gpkg)
+# copyDatasetFiles() is: to, from
+copyDatasetFiles(mem_gpkg, zf_gpkg)
 
 vsi_read_dir("/vsimem/tmp")
 
-# confirm it's writable
+# confirm it is writable
 ogr_ds_exists(mem_gpkg, with_update = TRUE)
 
 rd_layer <- "roads"
@@ -353,7 +354,7 @@ vsi_unlink(mem_gpkg)  # delete a single file
 
 ### Traditional row-based data retrieval
 
-These examples will use the original sample dataset for YNP features. The DSN is formed with the /viszip/ prefix, and full path to the file ynp_features.gpkg contained in the zip archive. An object of class `GDALVector` is generated with a call to `new()`. From the examples above, we know that the GeoPackage contains three vector layers, so we also pass a layer name argument to the class constructor.
+These examples will use the original sample dataset for YNP features. An object of class `GDALVector` is generated with a call to `new()`. From the examples above, we know that the GeoPackage contains three vector layers, so we also pass a layer name argument to the class constructor.
 
 Note that if the layer argument is omitted, the constructor will attempt to open the first layer by index. The abbreviated form of the constructor would generally be used for convenience only with single-layer file formats (e.g., ESRI Shapefile, FlatGeoBuf), or with a GeoPackage file known to contain only a single layer.
 
@@ -502,6 +503,14 @@ head(d)
 
 roads$close()
 ```
+```{r, include = FALSE}
+# clean up
+rm(bnd)
+rm(poi)
+rm(roads)
+rm(stream)
+gc()
+```
 
 ### Reproject vector layers
 
@@ -531,7 +540,8 @@ srs_mtsp <- fires$getSpatialRef()  # Montana state plane metric definition
 bnd$close()
 
 # reproject points_of_interest
-poi <- ogr_reproject(ynp_dsn, "points_of_interest", mtbs_dsn, srs_mtsp)
+poi <- ogr_reproject(ynp_dsn, "points_of_interest", mtbs_dsn, srs_mtsp,
+                     add_cl_arg = "-skipfailures")
 
 # set an attribute filter to select the Maple Fire
 fires$setAttributeFilter("incid_name = 'MAPLE'")
