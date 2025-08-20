@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9101</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9110</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,8 +53,11 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.1.0.9101" id="gdalraster-2109101-dev">gdalraster 2.1.0.9101 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2109101-dev"></a></h2>
-<ul><li><p>doc: add web article <a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html"><em>Using “gdal” CLI algorithms from R</em></a> (<a href="https://github.com/USDAForestService/gdalraster/issues/772" class="external-link">#772</a>) (2025-08-16)</p></li>
+<h2 class="pkg-version" data-toc-text="2.1.0.9110" id="gdalraster-2109110-dev">gdalraster 2.1.0.9110 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2109110-dev"></a></h2>
+<ul><li><p>(internal) check for availability of PostGIS drivers in tests that require them (<a href="https://github.com/USDAForestService/gdalraster/issues/776" class="external-link">#776</a>) (2025-08-20)</p></li>
+<li><p>doc: move vector-api-overview from vignette to a web article (<a href="https://github.com/USDAForestService/gdalraster/issues/775" class="external-link">#775</a>) (2025-08-19)</p></li>
+<li><p>(internal) retain basic tests of <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> but skip more complex tests if GDAL &lt; 3.11.3, i.e., “stable” version as of July 2025 (<a href="https://github.com/USDAForestService/gdalraster/issues/774" class="external-link">#774</a>) (2025-08-19)</p></li>
+<li><p>doc: add web article <a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html"><em>Using “gdal” CLI algorithms from R</em></a> (<a href="https://github.com/USDAForestService/gdalraster/issues/772" class="external-link">#772</a>) (2025-08-16)</p></li>
 <li><p>add initial bindings to the “gdal” CLI (<a href="https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.html">gdal_cli</a>) and the GDALAlgorithm API (<a href="https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html">class <code>GDALAlg</code></a>) (<a href="https://github.com/USDAForestService/gdalraster/issues/771" class="external-link">#771</a>) (2025-08-16)</p></li>
 <li><p>(internal) disable the Arrow code path for GDAL vector translate and avoid virtual file systems, only in the examples and tests for <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> while attempting to fix <a href="https://github.com/USDAForestService/gdalraster/issues/769" class="external-link">#769</a> (2025-08-14) (<a href="https://github.com/USDAForestService/gdalraster/issues/770" class="external-link">#770</a>)</p></li>
 <li><p>update the sample data elevation raster (inst/extdata/storml_elev.tif) to avoid visual artifacts (<a href="https://github.com/USDAForestService/gdalraster/issues/768" class="external-link">#768</a>) (2025-08-07)</p></li>
