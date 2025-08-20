@@ -105,6 +105,9 @@ test_that("inspectDataset works", {
     expect_vector(dsinfo$layer_names, ptype = character(), size = 0)
 
     # PostGISRaster / PostgreSQL
+    skip_if(nrow(gdal_formats("PostgreSQL")) == 0 ||
+            nrow(gdal_formats("PostGISRaster")) == 0)
+
     dsn <- "PG:dbname='testdb', host='127.0.0.1' port='5444' user='user'
             password='pwd'"
     dsinfo <- inspectDataset(dsn)
