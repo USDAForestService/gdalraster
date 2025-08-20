@@ -467,6 +467,9 @@ test_that("identifyDriver works", {
     expect_equal(identifyDriver(src, file_list = "ynp_fires_1984_2022.gpkg"), "GPKG")
 
     # PostGISRaster vs. PostgreSQL
+    skip_if(nrow(gdal_formats("PostgreSQL")) == 0 ||
+            nrow(gdal_formats("PostGISRaster")) == 0)
+
     dsn <- "PG:dbname='testdb', host='127.0.0.1' port='5444' user='user' password='pwd'"
     expect_equal(identifyDriver(dsn), "PostGISRaster")
     expect_equal(identifyDriver(dsn, raster = FALSE), "PostgreSQL")
