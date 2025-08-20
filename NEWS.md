@@ -1,4 +1,10 @@
-# gdalraster 2.1.0.9101 (dev)
+# gdalraster 2.1.0.9110 (dev)
+
+* (internal) check for availability of PostGIS drivers in tests that require them (#776) (2025-08-20)
+
+* doc: move vector-api-overview from vignette to a web article (#775) (2025-08-19)
+
+* (internal) retain basic tests of `ogr_reproject()` but skip more complex tests if GDAL < 3.11.3, i.e., "stable" version as of July 2025 (#774) (2025-08-19)
 
 * doc: add web article [*Using "gdal" CLI algorithms from R*](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html) (#772) (2025-08-16)
 
