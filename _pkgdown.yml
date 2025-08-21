@@ -91,15 +91,6 @@ reference:
   - ogr2ogr
   - ogr_proc
   - ogr_reproject
-- subtitle: General data management
-- contents:
-  - addFilesInZip
-  - bandCopyWholeRaster
-  - copyDatasetFiles
-  - deleteDataset
-  - identifyDriver
-  - inspectDataset
-  - renameDataset
 - subtitle: Vector data management
 - contents:
   - ogr_ds_exists
@@ -146,6 +137,15 @@ reference:
   - g_transform
   - geos_version
   - has_geos
+- subtitle: General data management
+- contents:
+  - addFilesInZip
+  - bandCopyWholeRaster
+  - copyDatasetFiles
+  - deleteDataset
+  - identifyDriver
+  - inspectDataset
+  - renameDataset
 - subtitle: Virtual file systems
 - contents:
   - vsi_clear_path_options
