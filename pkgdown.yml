@@ -11,7 +11,7 @@ articles:
   articles/use-gdal-cli-from-r: use-gdal-cli-from-r.html
   articles/vector-api-overview: vector-api-overview.html
   articles/vector-read-benchmarks: vector-read-benchmarks.html
-last_built: 2025-08-20T23:58Z
+last_built: 2025-08-21T01:57Z
 urls:
   reference: https://usdaforestservice.github.io/gdalraster/reference
   article: https://usdaforestservice.github.io/gdalraster/articles
