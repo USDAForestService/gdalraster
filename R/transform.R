@@ -146,7 +146,7 @@ inv_project <- function(pts, srs, well_known_gcs = NULL) {
         stop("'srs' must be a character string", call. = FALSE)
 
     if (missing(well_known_gcs) || is.null(well_known_gcs))
-        well_known_gcs = ""
+        well_known_gcs <- ""
     if (!is.character(well_known_gcs) || length(well_known_gcs) > 1)
         stop("'well_known_gcs' must be a character string", call. = FALSE)
 

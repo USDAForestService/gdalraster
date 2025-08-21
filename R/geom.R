@@ -1287,7 +1287,7 @@ g_intersects <- function(this_geom, other_geom, quiet = FALSE) {
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries, or one-to-many",
+        stop("inputs must contain equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1351,7 +1351,7 @@ g_disjoint <- function(this_geom, other_geom, quiet = FALSE) {
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries, or one-to-many",
+        stop("inputs must contain equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1415,7 +1415,7 @@ g_touches <- function(this_geom, other_geom, quiet = FALSE) {
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries, or one-to-many",
+        stop("inputs must contain equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1479,7 +1479,7 @@ g_contains <- function(this_geom, other_geom, quiet = FALSE) {
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries, or one-to-many",
+        stop("inputs must contain equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1543,7 +1543,7 @@ g_within <- function(this_geom, other_geom, quiet = FALSE) {
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries, or one-to-many",
+        stop("inputs must contain equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1560,7 +1560,7 @@ g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
 
         stop("'this_geom' must be raw vector or character",
              call. = FALSE)
-    }else
+    }
 
     if (is.character(other_geom))
         other_geom <- g_wk2wk(other_geom)
@@ -1607,7 +1607,7 @@ g_crosses <- function(this_geom, other_geom, quiet = FALSE) {
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries, or one-to-many",
+        stop("inputs must contain equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -1671,7 +1671,7 @@ g_overlaps <- function(this_geom, other_geom, quiet = FALSE) {
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries, or one-to-many",
+        stop("inputs must contain equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 
@@ -2336,7 +2336,7 @@ g_distance <- function(geom, other_geom, quiet = FALSE) {
         }
 
     } else {
-        stop("inputs must contain an equal number of geometries, or one-to-many",
+        stop("inputs must contain equal number of geometries, or one-to-many",
              call. = FALSE)
     }
 

@@ -468,5 +468,5 @@ autoCreateWarpedVRT <- function(src_ds, dst_wkt, resample_alg, src_wkt = "",
     ds <- new(GDALRaster, src_ds, dst_wkt, resample_alg, src_wkt, max_err,
               alpha_band, TRUE, TRUE)
 
-    return(ds);
+    return(ds)
 }
