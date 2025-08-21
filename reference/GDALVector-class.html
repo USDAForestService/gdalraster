@@ -671,9 +671,9 @@ preserved.</p></li>
 corresponding JSON member.</p></li>
 </ul><p>Returns logical <code>TRUE</code> upon successful completion, or <code>FALSE</code> if setting the
 feature did not succeed. The FID of the last feature written to the layer
-may be obtained with the method <code>$getLastWriteFID()</code> (see below). To set a
-feature, but create it if it doesn't exist see the <code>$upsertFeature()</code>
-method.</p>
+may be obtained with the method <code>$getLastWriteFID()</code> (see below).
+To set a feature, but create it if it doesn't exist see the
+<code>$upsertFeature()</code> method.</p>
 <p><code>$createFeature(feature)</code><br>
 Creates and writes a new feature within the layer. The <code>feature</code> argument is
 a named list of fields and their values (might be one row of a data frame).
@@ -824,7 +824,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="op">(</span><span class="va">lyr</span> <span class="op">&lt;-</span> <span class="fu">new</span><span class="op">(</span><span class="va">GDALVector</span>, <span class="va">dsn</span>, <span class="st">"mtbs_perims"</span><span class="op">)</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> C++ object of class GDALVector</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Driver : GeoPackage (GPKG)</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/Rtmp76JsgV/ynp_fires_1984_2022.gpkg</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  DSN    : /tmp/RtmpwF8KlP/ynp_fires_1984_2022.gpkg</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Layer  : mtbs_perims</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  CRS    : NAD83 / Montana (EPSG:32100)</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  Geom   : MULTIPOLYGON</span>
@@ -863,7 +863,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getDriverLongName</span><span class="op">(</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> [1] "GeoPackage"</span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getFileList</span><span class="op">(</span><span class="op">)</span></span></span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/Rtmp76JsgV/ynp_fires_1984_2022.gpkg"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> [1] "/tmp/RtmpwF8KlP/ynp_fires_1984_2022.gpkg"</span>
 <span class="r-in"><span></span></span>
 <span class="r-in"><span><span class="co">## layer info</span></span></span>
 <span class="r-in"><span><span class="va">lyr</span><span class="op">$</span><span class="fu">getName</span><span class="op">(</span><span class="op">)</span></span></span>
@@ -1367,7 +1367,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2025-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-08-21 01:58:02" "2025-08-21 01:58:02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-08-21 06:16:23" "2025-08-21 06:16:23"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
@@ -1393,7 +1393,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr "A test string 2"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-08-21 01:58:02"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-08-21 06:16:23"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 1</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ geom       :List of 1</span>
@@ -1433,7 +1433,7 @@ The layer can be re-opened on the existing <code>dsn</code> with
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ doubles    : num  1.23 2.35</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ strings    : chr  "A test string" "A test string 2 - edited"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ dates      : Date, format: "2025-01-01" "2024-01-02"</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-08-21 01:58:02" "2025-08-21 01:58:03"</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>  $ dt_modified: POSIXct, format: "2025-08-21 06:16:23" "2025-08-21 06:16:24"</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>  $ blobs      :List of 2</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>   ..$ : raw  41 20 62 69 ...</span>
