@@ -597,9 +597,9 @@
 #'
 #' Returns logical `TRUE` upon successful completion, or `FALSE` if setting the
 #' feature did not succeed. The FID of the last feature written to the layer
-#' may be obtained with the method \code{$getLastWriteFID()} (see below). To set a
-#' feature, but create it if it doesn't exist see the \code{$upsertFeature()}
-#' method.
+#' may be obtained with the method \code{$getLastWriteFID()} (see below).
+#' To set a feature, but create it if it doesn't exist see the
+#' \code{$upsertFeature()} method.
 #'
 #' \code{$createFeature(feature)}\cr
 #' Creates and writes a new feature within the layer. The `feature` argument is
