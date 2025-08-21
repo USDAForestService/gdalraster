@@ -59,7 +59,7 @@ void VSIFile::open() {
         opt_list[m_options.size()] = nullptr;
 
         m_fp = VSIFOpenEx2L(m_filename.c_str(), m_access.c_str(), TRUE,
-                          opt_list.data());
+                            opt_list.data());
     }
     else {
         m_fp = VSIFOpenExL(m_filename.c_str(), m_access.c_str(), TRUE);
@@ -174,7 +174,7 @@ Rcpp::NumericVector VSIFile::write(const Rcpp::RawVector& object) {
 
     std::vector<int64_t> ret(1);
     ret[0] = static_cast<int64_t>(
-            VSIFWriteL(&object[0], 1, static_cast<size_t>(object.size()), m_fp));
+        VSIFWriteL(&object[0], 1, static_cast<size_t>(object.size()), m_fp));
 
     return Rcpp::wrap(ret);
 }
