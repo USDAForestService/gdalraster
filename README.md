@@ -32,13 +32,17 @@ and
 [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html),
 along with several [stand-alone
 functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions).
-Bindings to the GDAL Virtual Systems Interface
-([VSI](https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h)) are also
-included to support file system operations and binary I/O on URLs, cloud
-storage services, Zip/GZip/7z/RAR, and in-memory files, as well as
-regular file systems. Calling signatures resemble the native C, C++ and
-Python APIs provided by the GDAL project. The package supports:
+Initial bindings are provided to the “gdal” command line interface (CLI)
+algorithms added in GDAL 3.11. Bindings to the GDAL Virtual Systems
+Interface ([VSI](https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h)) are
+also included to support file system operations on URLs, cloud storage
+services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file
+systems. Calling signatures resemble the native C, C++ and Python APIs
+provided by the GDAL project. The package supports:
 
+- [using “gdal” CLI
+  algorithms](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html)
+  from R when built against GDAL \>= 3.11.3
 - manual creation of uninitialized raster and vector datasets
 - vector layer creation and schema management
 - read/set parameters and metadata for raster bands and vector layers
@@ -46,25 +50,20 @@ Python APIs provided by the GDAL project. The package supports:
 - build/read/set color tables and raster attribute tables
 - virtual raster (VRT) for virtual cropping, resampling, kernel
   filtering, mosaicing
-- [wrapper of
-  `gdalwarp`](https://usdaforestservice.github.io/gdalraster/reference/warp.html)
-  for reproject/resample/crop/mosaic
-- coordinate transformations
+- [raster
+  utilities](https://usdaforestservice.github.io/gdalraster/reference/index.html#raster-utilities)
+- coordinate transformation
 - spatial reference systems
 - [geometry
   API](https://usdaforestservice.github.io/gdalraster/reference/index.html#geometry)
   operating on raw vectors of WKB or WKT strings
-- GDAL
-  [algorithms](https://usdaforestservice.github.io/gdalraster/reference/index.html#algorithms)
-  (`dem_proc()`, `polygonize()`, `rasterize()`, …)
 - OGR [vector
-  utilities](https://usdaforestservice.github.io/gdalraster/reference/index.html#ogr-vector-utilities)
-  (`ogrinfo()`, `ogr2ogr()`, `ogr_reproject()`, `ogr_manage` interface)
+  utilities](https://usdaforestservice.github.io/gdalraster/reference/index.html#vector-utilities)
 - GDAL facilities for [vector
   geoprocessing](https://usdaforestservice.github.io/gdalraster/reference/ogr_proc.html)
   (`ogr_proc()`)
 - raster and vector [dataset
-  management](https://usdaforestservice.github.io/gdalraster/reference/index.html#data-management)
+  management](https://usdaforestservice.github.io/gdalraster/reference/index.html#general-data-management)
   (inspect/copy files/rename/delete)
 - create/append to Seek-Optimized ZIP
   ([SOZip](https://github.com/sozip/sozip-spec))
@@ -226,6 +225,8 @@ from R-universe instead.
   Tutorial](https://usdaforestservice.github.io/gdalraster/articles/raster-api-tutorial.html)
 - [Vector API
   Overview](https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html)
+- [Using “gdal” CLI algorithms from
+  R](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html)
 - [Raster Attribute
   Tables](https://usdaforestservice.github.io/gdalraster/articles/raster-attribute-tables.html)
 - [Raster

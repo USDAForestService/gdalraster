@@ -1,6 +1,6 @@
 Package: gdalraster
 Title: Bindings to 'GDAL'
-Version: 2.1.0.9110
+Version: 2.2.0
 Authors@R: c(
     person("Chris", "Toney", email = "jctoney@gmail.com",
             role = c("aut", "cre"), comment = "R interface/additional functionality"),
@@ -22,21 +22,19 @@ Description: API bindings to the Geospatial Data Abstraction Library ('GDAL',
     functionality. Calling signatures resemble the native C, C++ and Python APIs
     provided by the 'GDAL' project. Class 'GDALRaster' encapsulates a
     'GDALDataset' and its raster band objects. Class 'GDALVector' encapsulates
-    an 'OGRLayer' and the 'GDALDataset' that contains it. Class 'VSIFile'
-    provides bindings to the 'GDAL' 'VSIVirtualHandle' API. Additional classes
-    include 'CmbTable' for counting unique combinations of integers, and
-    'RunningStats' for computing summary statistics efficiently on large data
-    streams. C++ stand-alone functions provide bindings to most 'GDAL' raster
-    and vector utilities including 'OGR' facilities for vector geoprocessing,
-    several algorithms, the Geometry API ('GEOS' via 'GDAL' headers), the
-    Spatial Reference Systems API, and methods for coordinate transformation.
-    Bindings to the Virtual Systems Interface ('VSI') API implement standard
-    file system operations, abstracted for URLs, cloud storage services,
-    'Zip'/'GZip'/'7z'/'RAR', in-memory files, as well as regular local file
-    systems. This provides a single interface for operating on file system
-    objects that works the same for any storage backend. A custom raster
-    calculator evaluates a user-defined R expression on a layer or stack of
-    layers, with pixel x/y available as variables in the expression. Raster
+    an 'OGRLayer' and the 'GDALDataset' that contains it. Initial bindings are
+    provided to the unified 'gdal' command line interface added in 'GDAL' 3.11.
+    C++ stand-alone functions provide bindings to most 'GDAL' "traditional"
+    raster and vector utilities, including 'OGR' facilities for vector
+    geoprocessing, several algorithms, as well as the Geometry API ('GEOS' via
+    'GDAL' headers), the Spatial Reference Systems API, and methods for
+    coordinate transformation. Bindings to the Virtual Systems Interface ('VSI')
+    API implement standard file system operations abstracted for URLs, cloud
+    storage services, 'Zip'/'GZip'/'7z'/'RAR', in-memory files, as well as
+    regular local file systems. This provides a single interface for operating
+    on file system objects that works the same for any storage backend. A custom
+    raster calculator evaluates a user-defined R expression on a layer or stack
+    of layers, with pixel x/y available as variables in the expression. Raster
     'combine()' identifies and counts unique pixel combinations across multiple
     input layers, with optional raster output of the pixel-level combination
     IDs. Basic plotting capability is provided for raster and vector display.

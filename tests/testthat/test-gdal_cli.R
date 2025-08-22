@@ -1,3 +1,5 @@
+# skip on CRAN while dev status of CLI bindings is "experimental"
+skip_on_cran()
 skip_if(gdal_version_num() < .GDALALG_MIN_GDAL)
 
 test_that("gdal_commands works", {

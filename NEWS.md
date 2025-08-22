@@ -1,30 +1,34 @@
-# gdalraster 2.1.0.9110 (dev)
+# gdalraster 2.2.0
 
-* (internal) check for availability of PostGIS drivers in tests that require them (#776) (2025-08-20)
+## Features
 
-* doc: move vector-api-overview from vignette to a web article (#775) (2025-08-19)
+* initial bindings to the "gdal" command line interface (CLI) added in GDAL 3.11
+  * [functions](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.html) for using "gdal" CLI algorithms: `gdal_commands()`, `gdal_usage()`, `gdal_run()`, `gdal_alg()`
+  * bindings to the GDALAlgorithm API implemented in class [`GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html)
+  * requires **gdalraster** built against GDAL >= 3.11.3
 
-* (internal) retain basic tests of `ogr_reproject()` but skip more complex tests if GDAL < 3.11.3, i.e., "stable" version as of July 2025 (#774) (2025-08-19)
+## Other updates and fixes
 
-* doc: add web article [*Using "gdal" CLI algorithms from R*](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html) (#772) (2025-08-16)
+* `pixel_extract()`: add checks for potential ctrl-c user interrupt during extract for a large number of points
+* allow reporting a raster driver name as empty string for a dataset that has no driver (#761, thanks to @mdsumner)
+* changes to address crash in `ogr_reproject()` following GDAL `ERROR 1: Reprojection failed` on certain CRAN platforms with alternative BLAS/LAPACK implementations
+  * disable for now the Arrow code path for GDAL vector translate in the examples and tests for `ogr_reproject()` (cf. <https://gdal.org/en/stable/programs/ogr2ogr.html#known-issues>)
+  * retain basic tests of `ogr_reproject()` across all GDAL versions but skip more complex tests if GDAL < 3.11.3 ("stable" version as of July 2025)
+  * move [*Vector API Overview*](https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html) from vignette to a web article
 
-* add initial bindings to the "gdal" CLI ([gdal_cli](https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.html)) and the GDALAlgorithm API ([class `GDALAlg`](https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html)) (#771) (2025-08-16)
+## Documentation
 
-* (internal) disable the Arrow code path for GDAL vector translate and avoid virtual file systems, only in the examples and tests for `ogr_reproject()` while attempting to fix #769 (2025-08-14) (#770)
+* add conda-forge installation instructions in the README and web docs (#762, thanks to @matthewfeickert)
+* update the sample data elevation raster (inst/extdata/storml_elev.tif) to avoid visual artifacts (#768)
+* add web article [*Using "gdal" CLI algorithms from R*](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html)
 
-* update the sample data elevation raster (inst/extdata/storml_elev.tif) to avoid visual artifacts (#768) (2025-08-07)
+## Internal
 
-* (internal) `setGDALDatasetH_()` in classes `GDALRaster` and `GDALVector`: check shared flag of incoming GDALDatasetH and set the `m_shared` member variable (#767) (2025-08-07)
-
-* (internal) class `GDALRaster`: call `GDALReleaseDataset()` instead of `GDALClose()` in the `close()` method and destructor when dataset is non-shared (#764, #765) (2025-08-02)
-
-* allow reporting driver name as empty string for a dataset that has no driver (fixes #759) (2025-08-01)
-
-* `pixel_extract()`: add checks for potential ctrl-c user interrupt during extract for a large number of points (#757) (2025-07-20)
-
-* (internal) avoid clang warning from `-Wimplicit-const-int-float-conversion` in src/vsifile.cpp (2025-07-15)
-
-* Documentation: add conda-forge installation instructions in the README and web docs, and place binary install methods together before source methods for better organization (#762, thanks to @matthewfeickert)
+* avoid clang warning from `-Wimplicit-const-int-float-conversion` in src/vsifile.cpp
+* method `setGDALDatasetH_()` in classes `GDALRaster` and `GDALVector`: check shared flag of the incoming `GDALDatasetH` and set the `m_shared` member variable
+* class `GDALRaster`: call `GDALReleaseDataset()` instead of `GDALClose()` in the `close()` method and destructor when the dataset is non-shared
+* skip tests that require PostGIS drivers if they are not available
+* code linting
 
 # gdalraster 2.1.0
 
