@@ -7,7 +7,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">gdalraster</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.1.0.9110</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.2.0</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -53,21 +53,45 @@
     </div>
 
     <div class="section level2">
-<h2 class="pkg-version" data-toc-text="2.1.0.9110" id="gdalraster-2109110-dev">gdalraster 2.1.0.9110 (dev)<a class="anchor" aria-label="anchor" href="#gdalraster-2109110-dev"></a></h2>
-<ul><li><p>(internal) check for availability of PostGIS drivers in tests that require them (<a href="https://github.com/USDAForestService/gdalraster/issues/776" class="external-link">#776</a>) (2025-08-20)</p></li>
-<li><p>doc: move vector-api-overview from vignette to a web article (<a href="https://github.com/USDAForestService/gdalraster/issues/775" class="external-link">#775</a>) (2025-08-19)</p></li>
-<li><p>(internal) retain basic tests of <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> but skip more complex tests if GDAL &lt; 3.11.3, i.e., “stable” version as of July 2025 (<a href="https://github.com/USDAForestService/gdalraster/issues/774" class="external-link">#774</a>) (2025-08-19)</p></li>
-<li><p>doc: add web article <a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html"><em>Using “gdal” CLI algorithms from R</em></a> (<a href="https://github.com/USDAForestService/gdalraster/issues/772" class="external-link">#772</a>) (2025-08-16)</p></li>
-<li><p>add initial bindings to the “gdal” CLI (<a href="https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.html">gdal_cli</a>) and the GDALAlgorithm API (<a href="https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html">class <code>GDALAlg</code></a>) (<a href="https://github.com/USDAForestService/gdalraster/issues/771" class="external-link">#771</a>) (2025-08-16)</p></li>
-<li><p>(internal) disable the Arrow code path for GDAL vector translate and avoid virtual file systems, only in the examples and tests for <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> while attempting to fix <a href="https://github.com/USDAForestService/gdalraster/issues/769" class="external-link">#769</a> (2025-08-14) (<a href="https://github.com/USDAForestService/gdalraster/issues/770" class="external-link">#770</a>)</p></li>
-<li><p>update the sample data elevation raster (inst/extdata/storml_elev.tif) to avoid visual artifacts (<a href="https://github.com/USDAForestService/gdalraster/issues/768" class="external-link">#768</a>) (2025-08-07)</p></li>
-<li><p>(internal) <code>setGDALDatasetH_()</code> in classes <code>GDALRaster</code> and <code>GDALVector</code>: check shared flag of incoming GDALDatasetH and set the <code>m_shared</code> member variable (<a href="https://github.com/USDAForestService/gdalraster/issues/767" class="external-link">#767</a>) (2025-08-07)</p></li>
-<li><p>(internal) class <code>GDALRaster</code>: call <code>GDALReleaseDataset()</code> instead of <code>GDALClose()</code> in the <code><a href="https://rdrr.io/r/base/connections.html" class="external-link">close()</a></code> method and destructor when dataset is non-shared (<a href="https://github.com/USDAForestService/gdalraster/issues/764" class="external-link">#764</a>, <a href="https://github.com/USDAForestService/gdalraster/issues/765" class="external-link">#765</a>) (2025-08-02)</p></li>
-<li><p>allow reporting driver name as empty string for a dataset that has no driver (fixes <a href="https://github.com/USDAForestService/gdalraster/issues/759" class="external-link">#759</a>) (2025-08-01)</p></li>
-<li><p><code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: add checks for potential ctrl-c user interrupt during extract for a large number of points (<a href="https://github.com/USDAForestService/gdalraster/issues/757" class="external-link">#757</a>) (2025-07-20)</p></li>
-<li><p>(internal) avoid clang warning from <code>-Wimplicit-const-int-float-conversion</code> in src/vsifile.cpp (2025-07-15)</p></li>
-<li><p>Documentation: add conda-forge installation instructions in the README and web docs, and place binary install methods together before source methods for better organization (<a href="https://github.com/USDAForestService/gdalraster/issues/762" class="external-link">#762</a>, thanks to <a href="https://github.com/matthewfeickert" class="external-link">@matthewfeickert</a>)</p></li>
+<h2 class="pkg-version" data-toc-text="2.2.0" id="gdalraster-220">gdalraster 2.2.0<a class="anchor" aria-label="anchor" href="#gdalraster-220"></a></h2><p class="text-muted">CRAN release: 2025-08-22</p>
+<div class="section level3">
+<h3 id="features-2-2-0">Features<a class="anchor" aria-label="anchor" href="#features-2-2-0"></a></h3>
+<ul><li>initial bindings to the “gdal” command line interface (CLI) added in GDAL 3.11
+<ul><li>
+<a href="https://usdaforestservice.github.io/gdalraster/reference/gdal_cli.html">functions</a> for using “gdal” CLI algorithms: <code><a href="../reference/gdal_cli.html">gdal_commands()</a></code>, <code><a href="../reference/gdal_cli.html">gdal_usage()</a></code>, <code><a href="../reference/gdal_cli.html">gdal_run()</a></code>, <code><a href="../reference/gdal_cli.html">gdal_alg()</a></code>
+</li>
+<li>bindings to the GDALAlgorithm API implemented in class <a href="https://usdaforestservice.github.io/gdalraster/reference/GDALAlg-class.html"><code>GDALAlg</code></a>
+</li>
+<li>requires <strong>gdalraster</strong> built against GDAL &gt;= 3.11.3</li>
+</ul></li>
 </ul></div>
+<div class="section level3">
+<h3 id="other-updates-and-fixes-2-2-0">Other updates and fixes<a class="anchor" aria-label="anchor" href="#other-updates-and-fixes-2-2-0"></a></h3>
+<ul><li>
+<code><a href="../reference/pixel_extract.html">pixel_extract()</a></code>: add checks for potential ctrl-c user interrupt during extract for a large number of points</li>
+<li>allow reporting a raster driver name as empty string for a dataset that has no driver (<a href="https://github.com/USDAForestService/gdalraster/issues/761" class="external-link">#761</a>, thanks to <a href="https://github.com/mdsumner" class="external-link">@mdsumner</a>)</li>
+<li>changes to address crash in <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> following GDAL <code>ERROR 1: Reprojection failed</code> on certain CRAN platforms with alternative BLAS/LAPACK implementations
+<ul><li>disable for now the Arrow code path for GDAL vector translate in the examples and tests for <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> (cf. <a href="https://gdal.org/en/stable/programs/ogr2ogr.html#known-issues" class="external-link uri">https://gdal.org/en/stable/programs/ogr2ogr.html#known-issues</a>)</li>
+<li>retain basic tests of <code><a href="../reference/ogr_reproject.html">ogr_reproject()</a></code> across all GDAL versions but skip more complex tests if GDAL &lt; 3.11.3 (“stable” version as of July 2025)</li>
+<li>move <a href="https://usdaforestservice.github.io/gdalraster/articles/vector-api-overview.html"><em>Vector API Overview</em></a> from vignette to a web article</li>
+</ul></li>
+</ul></div>
+<div class="section level3">
+<h3 id="documentation-2-2-0">Documentation<a class="anchor" aria-label="anchor" href="#documentation-2-2-0"></a></h3>
+<ul><li>add conda-forge installation instructions in the README and web docs (<a href="https://github.com/USDAForestService/gdalraster/issues/762" class="external-link">#762</a>, thanks to <a href="https://github.com/matthewfeickert" class="external-link">@matthewfeickert</a>)</li>
+<li>update the sample data elevation raster (inst/extdata/storml_elev.tif) to avoid visual artifacts (<a href="https://github.com/USDAForestService/gdalraster/issues/768" class="external-link">#768</a>)</li>
+<li>add web article <a href="https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html"><em>Using “gdal” CLI algorithms from R</em></a>
+</li>
+</ul></div>
+<div class="section level3">
+<h3 id="internal-2-2-0">Internal<a class="anchor" aria-label="anchor" href="#internal-2-2-0"></a></h3>
+<ul><li>avoid clang warning from <code>-Wimplicit-const-int-float-conversion</code> in src/vsifile.cpp</li>
+<li>method <code>setGDALDatasetH_()</code> in classes <code>GDALRaster</code> and <code>GDALVector</code>: check shared flag of the incoming <code>GDALDatasetH</code> and set the <code>m_shared</code> member variable</li>
+<li>class <code>GDALRaster</code>: call <code>GDALReleaseDataset()</code> instead of <code>GDALClose()</code> in the <code><a href="https://rdrr.io/r/base/connections.html" class="external-link">close()</a></code> method and destructor when the dataset is non-shared</li>
+<li>skip tests that require PostGIS drivers if they are not available</li>
+<li>code linting</li>
+</ul></div>
+</div>
     <div class="section level2">
 <h2 class="pkg-version" data-toc-text="2.1.0" id="gdalraster-210">gdalraster 2.1.0<a class="anchor" aria-label="anchor" href="#gdalraster-210"></a></h2><p class="text-muted">CRAN release: 2025-07-14</p>
 <div class="section level3">
