@@ -19,9 +19,10 @@
 constexpr char GDALALG_MIN_GDAL_MSG_[] =
     "class GDALAlg requires GDAL >= 3.11.3";
 
+#if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
+
 constexpr R_xlen_t CMD_TOKENS_MAX_ = 5;
 
-#if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
     #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)
 // cf. https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060818.html
 // cf. https://github.com/OSGeo/gdal/pull/12853 for GDAL >= 3.12
@@ -1251,40 +1252,54 @@ void GDALAlg::instantiateAlg_() {
     }
 
     if (m_cmd.size() == 1) {
-        m_hAlg = GDALAlgorithmRegistryInstantiateAlg(reg, m_cmd[0]);
+        Rcpp::String cmd(m_cmd[0]);
+        m_hAlg = GDALAlgorithmRegistryInstantiateAlg(reg, cmd.get_cstring());
+
         if (m_hAlg == nullptr) {
             GDALAlgorithmRegistryRelease(reg);
-            Rcpp::Rcout << "top-level command: " << m_cmd[0] << std::endl;
+            Rcpp::Rcout << "top-level command: " << cmd.get_cstring() <<
+                std::endl;
             Rcpp::stop("failed to instantiate CLI algorithm");
         }
     }
     else {
         std::vector<GDALAlgorithmH> alg_tmp = {};
-        alg_tmp.push_back(GDALAlgorithmRegistryInstantiateAlg(reg, m_cmd[0]));
+        Rcpp::String cmd(m_cmd[0]);
+
+        alg_tmp.push_back(
+            GDALAlgorithmRegistryInstantiateAlg(reg, cmd.get_cstring()));
+
         if (alg_tmp[0] == nullptr) {
             GDALAlgorithmRegistryRelease(reg);
-            Rcpp::Rcout << "top-level command: " << m_cmd[0] << std::endl;
+            Rcpp::Rcout << "top-level command: " << cmd.get_cstring() <<
+                std::endl;
             Rcpp::stop("failed to instantiate CLI algorithm");
         }
         for (R_xlen_t i = 1; i < m_cmd.size(); ++i) {
             if (i == (m_cmd.size() - 1)) {
-                m_hAlg = GDALAlgorithmInstantiateSubAlgorithm(alg_tmp[i - 1],
-                                                              m_cmd[i]);
+                Rcpp::String sub_cmd(m_cmd[i]);
+
+                m_hAlg =
+                    GDALAlgorithmInstantiateSubAlgorithm(alg_tmp[i - 1],
+                                                         sub_cmd.get_cstring());
+
                 if (m_hAlg == nullptr) {
                     for (GDALAlgorithmH alg : alg_tmp) {
                         if (alg)
                             GDALAlgorithmRelease(alg);
                     }
                     GDALAlgorithmRegistryRelease(reg);
-                    Rcpp::Rcout << "subcommand: " << m_cmd[i] << std::endl;
+                    Rcpp::Rcout << "subcommand: " << sub_cmd.get_cstring() <<
+                        std::endl;
                     Rcpp::stop(
                         "failed to instantiate CLI algorithm");
                 }
             }
             else {
+                Rcpp::String sub_cmd(m_cmd[i]);
                 alg_tmp.push_back(
-                    GDALAlgorithmInstantiateSubAlgorithm(alg_tmp[i - 1],
-                                                         m_cmd[i]));
+                    GDALAlgorithmInstantiateSubAlgorithm(
+                        alg_tmp[i - 1], sub_cmd.get_cstring()));
 
                 if (alg_tmp.back() == nullptr) {
                     for (GDALAlgorithmH alg : alg_tmp) {
@@ -1292,7 +1307,8 @@ void GDALAlg::instantiateAlg_() {
                             GDALAlgorithmRelease(alg);
                     }
                     GDALAlgorithmRegistryRelease(reg);
-                    Rcpp::Rcout << "subcommand: " << m_cmd[i] << std::endl;
+                    Rcpp::Rcout << "subcommand: " << sub_cmd.get_cstring() <<
+                        std::endl;
                     Rcpp::stop(
                         "failed to instantiate CLI algorithm");
                 }
