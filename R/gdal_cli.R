@@ -3,7 +3,7 @@
 # see R/gdalalg.R and src/gdalalg.h
 # Chris Toney <jctoney at gmail.com>
 
-#' Convenience functions for using \dQuote{gdal} CLI algorithms
+#' Convenience functions for using GDAL CLI algorithms
 #'
 #' @name gdal_cli
 #' @description
@@ -12,7 +12,7 @@
 #'
 #' **Requires GDAL >= `r .GDALALG_MIN_GDAL_STR`**
 #'
-#' **Experimental** (see "Development status")
+#' **Experimental** (see \dQuote{Development status})
 #'
 #' @details
 #' These functions are convenient for accessing and running GDAL CLI algorithms
@@ -26,7 +26,7 @@
 #' with vector inputs.
 #'
 #' `gdal_usage()` prints a help message to the console for a given command, or
-#' for the root `"gdal"` entry point if called with no argument. No return
+#' for the root \dQuote{gdal} entry point if called with no argument. No return
 #' value, called for that side effect only.
 #'
 #' `gdal_run()` executes a GDAL CLI algorithm and returns it as an object of
@@ -53,7 +53,7 @@
 #' commands, e.g., `gdal_commands("vector")`.
 #' @param recurse Logical value, `TRUE` to include all subcommands recursively
 #' (the default). Set to `FALSE` to include only the top-level \dQuote{gdal}
-#' commands (i.e., "raster", "vector", etc.)
+#' commands (i.e., \dQuote{raster}, \dQuote{vector}, etc.)
 #' @param cout Logical value, `TRUE` to print a list of commands along with
 #' their descriptions and help URLS to the console (the default).
 #' @param cmd A character string or character vector containing the path to the
@@ -81,7 +81,7 @@
 #' input(s) first, output last. Positional arguments can also be specified as
 #' named arguments, if preferred to avoid any ambiguity.
 #' * Named arguments have:
-#'   * at least one "long" name, preceded by two dash characters when specified
+#'   * at least one long name, preceded by two dash characters when specified
 #'   on the command line,
 #'   * optionally, auxiliary long names (i.e., aliases),
 #'   * and optionally a one-letter short name, preceded by a single dash
@@ -143,8 +143,8 @@
 #' Using \dQuote{gdal} CLI algorithms from R:\cr
 #' \url{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
 #'
-#' @examplesIf gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL
-#' ## top-level gdal commands
+#' @examplesIf gdal_version_num() >= gdal_compute_version(3, 11, 3)
+#' ## top-level commands
 #' gdal_commands(recurse = FALSE)
 #'
 #' ## convert storml_elev.tif to GeoPackage raster

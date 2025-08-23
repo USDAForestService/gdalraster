@@ -6,7 +6,7 @@
 \alias{gdal_usage}
 \alias{gdal_run}
 \alias{gdal_alg}
-\title{Convenience functions for using \dQuote{gdal} CLI algorithms}
+\title{Convenience functions for using GDAL CLI algorithms}
 \usage{
 gdal_commands(contains = "", recurse = TRUE, cout = TRUE)
 
@@ -22,7 +22,7 @@ commands, e.g., \code{gdal_commands("vector")}.}
 
 \item{recurse}{Logical value, \code{TRUE} to include all subcommands recursively
 (the default). Set to \code{FALSE} to include only the top-level \dQuote{gdal}
-commands (i.e., "raster", "vector", etc.)}
+commands (i.e., \dQuote{raster}, \dQuote{vector}, etc.)}
 
 \item{cout}{Logical value, \code{TRUE} to print a list of commands along with
 their descriptions and help URLS to the console (the default).}
@@ -46,7 +46,7 @@ This set of functions can be used to access and run GDAL utilities as
 
 \strong{Requires GDAL >= 3.11.3}
 
-\strong{Experimental} (see "Development status")
+\strong{Experimental} (see \dQuote{Development status})
 }
 \details{
 These functions are convenient for accessing and running GDAL CLI algorithms
@@ -60,7 +60,7 @@ output, e.g., \code{gdal_commands("vector")} to return only commands for working
 with vector inputs.
 
 \code{gdal_usage()} prints a help message to the console for a given command, or
-for the root \code{"gdal"} entry point if called with no argument. No return
+for the root \dQuote{gdal} entry point if called with no argument. No return
 value, called for that side effect only.
 
 \code{gdal_run()} executes a GDAL CLI algorithm and returns it as an object of
@@ -109,7 +109,7 @@ input(s) first, output last. Positional arguments can also be specified as
 named arguments, if preferred to avoid any ambiguity.
 \item Named arguments have:
 \itemize{
-\item at least one "long" name, preceded by two dash characters when specified
+\item at least one long name, preceded by two dash characters when specified
 on the command line,
 \item optionally, auxiliary long names (i.e., aliases),
 \item and optionally a one-letter short name, preceded by a single dash
@@ -159,8 +159,8 @@ stable. Breaking changes in minor version releases are possible until then.
 }
 
 \examples{
-\dontshow{if (gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
-## top-level gdal commands
+\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 11, 3)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+## top-level commands
 gdal_commands(recurse = FALSE)
 
 ## convert storml_elev.tif to GeoPackage raster

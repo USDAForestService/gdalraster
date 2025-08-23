@@ -28,7 +28,7 @@ algorithm, and access its output.
 
 \strong{Requires GDAL >= 3.11.3}.
 
-\strong{Experimental} (see "Development status")
+\strong{Experimental} (see \dQuote{Development status})
 
 \code{GDALAlg} is a C++ class exposed directly to \R (via \code{RCPP_EXPOSED_CLASS}).
 Fields and methods of the class are accessed using the \code{$} operator. Note
@@ -258,7 +258,7 @@ input(s) first, output last. Positional arguments can also be specified as
 named arguments, if preferred to avoid any ambiguity.
 \item Named arguments have:
 \itemize{
-\item at least one "long" name, preceded by two dash characters when specified
+\item at least one long name, preceded by two dash characters when specified
 on the command line,
 \item optionally, auxiliary long names (i.e., aliases),
 \item and optionally a one-letter short name, preceded by a single dash
@@ -308,7 +308,7 @@ stable. Breaking changes in minor version releases are possible until then.
 }
 
 \examples{
-\dontshow{if (gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 11, 3)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
 ## raster info

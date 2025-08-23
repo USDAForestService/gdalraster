@@ -1,10 +1,7 @@
-#' @noRd
-#' @export
 .GDALALG_MIN_GDAL <- gdal_compute_version(3, 11, 3)
-
-#' @noRd
-#' @export
 .GDALALG_MIN_GDAL_STR <- "3.11.3"
+# NOTE: also update the min GDAL version in @examplesIf in this file and in
+#       R/gdal_cli.R, and in the details section of man/gdalraster-package.Rd
 
 #' @name GDALAlg-class
 #'
@@ -22,7 +19,7 @@
 #'
 #' **Requires GDAL >= `r .GDALALG_MIN_GDAL_STR`**.
 #'
-#' **Experimental** (see "Development status")
+#' **Experimental** (see \dQuote{Development status})
 #'
 #' `GDALAlg` is a C++ class exposed directly to \R (via `RCPP_EXPOSED_CLASS`).
 #' Fields and methods of the class are accessed using the `$` operator. Note
@@ -243,7 +240,7 @@
 #'
 #' [Using \dQuote{gdal} CLI algorithms from R](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html)
 #'
-#' @examplesIf gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL
+#' @examplesIf gdal_version_num() >= gdal_compute_version(3, 11, 3)
 #' f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #'
 #' ## raster info
