@@ -11,29 +11,29 @@
 algorithm, e.g., \code{"raster reproject"} or \code{c("raster", "reproject")}.}
 
 \item{args}{Either a character vector or a named list containing input
-arguments of the algorithm (see section \dQuote{Algorithm argument syntax}).}
+arguments of the algorithm (see section \verb{Algorithm Argument Syntax} below).}
 }
 \value{
 An object of class \code{GDALAlg}, which contains a pointer to the
 algorithm instance. Class methods are described in Details, along with a set
-of writable fields for per-object settings. Values may be assigned to the
-class fields by regular \code{<-} or \code{=} assignment.
+of writable fields for per-object settings. Values may be set on the class
+fields by regular assignment with \code{<-} or \code{=}.
 }
 \description{
 \code{GDALAlg} provides bindings to \code{GDALAlgorithm} and related classes
-that implement the "gdal" command line interface (CLI) in the GDAL API.
-An object of class \code{GDALAlg} represents an instance of a CLI algorithm with
-methods to obtain algorithm information and argument information, run the
-algorithm, and access its output.
+that implement the \dQuote{gdal} command line interface (CLI) in the GDAL
+API. An object of class \code{GDALAlg} represents an instance of a CLI algorithm
+with methods to obtain algorithm information and argument information, run
+the algorithm, and access its output.
 
 \strong{Requires GDAL >= 3.11.3}.
 
-\strong{Experimental} (see \dQuote{Development status})
+\strong{Experimental} (see the section \verb{Development Status} below)
 
 \code{GDALAlg} is a C++ class exposed directly to \R (via \code{RCPP_EXPOSED_CLASS}).
-Fields and methods of the class are accessed using the \code{$} operator. Note
-that all arguments to class methods are required and must be given in the
-order documented (naming optional).
+Fields and methods of the class are accessed using the \code{$} operator.
+Arguments to class constructors and class methods must be given in the order
+documented (naming optional).
 }
 \section{Usage (see Details)}{
 
@@ -73,7 +73,7 @@ Instantiate an algorithm without specifying input arguments.
 
 \code{new(GDALAlg, cmd, args)}\cr
 Instantiate an algorithm giving input arguments as a character vector or
-named list. See section \dQuote{Algorithm argument syntax} for details.
+named list. See the section \verb{Algorithm Argument Syntax} for details.
 }
 
 \subsection{Read/write fields (per-object settings)}{
@@ -242,7 +242,7 @@ to finalize. No return value, called for side-effects.
 }
 }
 
-\section{Algorithm argument syntax}{
+\section{Algorithm Argument Syntax}{
 
 Arguments are given in \R as a character vector or named list, but
 otherwise syntax basically matches the GDAL specification for arguments as
@@ -258,25 +258,25 @@ input(s) first, output last. Positional arguments can also be specified as
 named arguments, if preferred to avoid any ambiguity.
 \item Named arguments have:
 \itemize{
-\item at least one long name, preceded by two dash characters when specified
-on the command line,
+\item at least one \dQuote{long} name, preceded by two dash characters when
+specified on the command line,
 \item optionally, auxiliary long names (i.e., aliases),
 \item and optionally a one-letter short name, preceded by a single dash
 character on the command line, e.g., \verb{-f, --of, --format, --output-format <OUTPUT-FORMAT>}
 }
 \item Boolean arguments are specified by just specifying the argument name. In
-\R list format, the named element must be assigned a value of logical \code{TRUE}.
+\R \code{list} format, the named element must be assigned a value of logical
+\code{TRUE}.
 \item Arguments that require a value are specified like:
 \itemize{
-\item \verb{-f VALUE} for one-letter short names.
-\item \verb{--format VALUE} or \code{--format=VALUE} for long names.
-\item in a named list, this would look like:\cr
-\code{arg_list$format <- VALUE}
+\item \verb{-f VALUE} for one-letter short names
+\item \verb{--format VALUE} or \code{--format=VALUE} for long names
+\item in a named list, this might look like: \code{args$format <- VALUE}
 }
 \item Some arguments can be multi-valued. Some of them require all values to be
-packed together and separated with comma. This is, e.g., the case of:
-\verb{--bbox <BBOX> Clipping bounding box as xmin,ymin,xmax,ymax}, e.g.,
-\verb{--bbox=2.1,49.1,2.9,49.9}.
+packed together and separated with comma. This is, e.g., the case of:\cr
+\verb{--bbox <BBOX> Clipping bounding box as xmin,ymin,xmax,ymax}\cr
+e.g., \verb{--bbox=2.1,49.1,2.9,49.9}.
 \item Others accept each value to be preceded by a new mention of the argument
 name, e.g., \verb{--co COMPRESS=LZW --co TILED=YES}. For that one, if the value
 of the argument does not contain commas, the packed form is also accepted:
@@ -289,26 +289,30 @@ character vector or numeric vector of values).
 }
 }
 
-\section{Development status}{
+\section{Development Status}{
 
 The GDAL Command Line Interface Modernization was first introduced in the
 \href{https://github.com/OSGeo/gdal/releases/tag/v3.11.0}{GDAL 3.11.0 release}
-(2025-05-09). The GDAL project states that the new CLI \dQuote{is
+(2025-05-09). The GDAL project provides warning that the new CLI \dQuote{is
 provisionally provided as an alternative interface to GDAL and OGR command
 line utilities. The project reserves the right to modify, rename,
 reorganize, and change the behavior until it is officially frozen via PSC
-vote in a future major GDAL release.... Your usage of it should have no
+vote in a future major GDAL release. The utility needs time to mature,
+benefit from incremental feedback, and explore enhancements without carrying
+the burden of full backward compatibility. Your usage of it should have no
 expectation of compatibility until that time.}
 (\url{https://gdal.org/en/latest/programs/#gdal-application})
 
-Initial bindings to enable programmatic use of the new CLI algorithms from \R
+Initial bindings to enable programmatic use of the CLI algorithms from \R
 were added in \pkg{gdalraster} 2.2.0, and will evolve over future releases.
-The bindings are considered experimental until the upstream API is declared
-stable. Breaking changes in minor version releases are possible until then.
+\emph{The bindings are considered experimental until the upstream API is declared
+stable}. Breaking changes in minor version releases are possible until then.
+Please use with those cautions in mind. Bug reports may be filed at:
+\url{https://github.com/USDAForestService/gdalraster/issues}.
 }
 
 \examples{
-\dontshow{if (gdal_version_num() >= gdal_compute_version(3, 11, 3)) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
+\dontshow{if (length(gdal_global_reg_names()) > 0) (if (getRversion() >= "3.4") withAutoprint else force)(\{ # examplesIf}
 f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 
 ## raster info
