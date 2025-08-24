@@ -149,3 +149,7 @@ test_that("gdal_usage works", {
     expect_output(gdal_usage(cmd), "Advanced options:")
     expect_output(gdal_usage(cmd), "For more details:")
 })
+
+test_that("gdal_global_reg_names returns a character vector", {
+    expect_vector(gdal_global_reg_names(), character())
+})
