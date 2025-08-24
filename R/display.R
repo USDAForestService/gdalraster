@@ -487,11 +487,14 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
         legend <- FALSE
     }
 
-    op <- NULL
+    ##
+    ## NOTE: change scope of the initial par() call if it is used for other
+    ##       than the legend
     if (legend) {
         if (is.null(col_map_fn))
             col_map_fn <- grDevices::gray
-        op <- graphics::par(no.readonly = TRUE)  # save original for reset
+        op <- graphics::par(no.readonly = TRUE)
+        on.exit(graphics::par(op))
         graphics::layout(matrix(1:2, ncol=2), width=c(6,1), height=c(1,1))
         graphics::par(mar=c(5, 4, 4, 0.5) + 0.1)
     }
@@ -558,7 +561,6 @@ plot_raster <- function(data, xsize=NULL, ysize=NULL, nbands=NULL,
                        adj=c(0, NA),
                        xpd=TRUE)
         graphics::rasterImage(leg_img, 0, 0, 1, 1)
-        graphics::par(op)  # reset to original
     }
 
     invisible()
