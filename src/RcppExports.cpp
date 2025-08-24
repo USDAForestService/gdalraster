@@ -1016,6 +1016,16 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
+// gdal_global_reg_names
+Rcpp::CharacterVector gdal_global_reg_names();
+RcppExport SEXP _gdalraster_gdal_global_reg_names() {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    rcpp_result_gen = Rcpp::wrap(gdal_global_reg_names());
+    return rcpp_result_gen;
+END_RCPP
+}
 // getGEOSVersion
 std::vector<int> getGEOSVersion();
 RcppExport SEXP _gdalraster_getGEOSVersion() {
@@ -2293,6 +2303,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"_gdalraster_vsi_get_signed_url", (DL_FUNC) &_gdalraster_vsi_get_signed_url, 2},
     {"_gdalraster_vsi_is_local", (DL_FUNC) &_gdalraster_vsi_is_local, 1},
     {"_gdalraster_gdal_commands", (DL_FUNC) &_gdalraster_gdal_commands, 3},
+    {"_gdalraster_gdal_global_reg_names", (DL_FUNC) &_gdalraster_gdal_global_reg_names, 0},
     {"_gdalraster_getGEOSVersion", (DL_FUNC) &_gdalraster_getGEOSVersion, 0},
     {"_gdalraster_has_geos", (DL_FUNC) &_gdalraster_has_geos, 0},
     {"_gdalraster_g_wkb2wkt", (DL_FUNC) &_gdalraster_g_wkb2wkt, 2},

@@ -2218,6 +2218,11 @@ vsi_is_local <- function(filename) {
 }
 
 #' @noRd
+.gdal_global_reg_names <- function() {
+    .Call(`_gdalraster_gdal_global_reg_names`)
+}
+
+#' @noRd
 NULL
 
 #' @noRd

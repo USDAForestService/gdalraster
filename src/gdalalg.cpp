@@ -17,7 +17,7 @@
 #define GDALALG_MIN_GDAL_ GDAL_COMPUTE_VERSION(3, 11, 3)
 
 constexpr char GDALALG_MIN_GDAL_MSG_[] =
-    "class GDALAlg requires GDAL >= 3.11.3";
+    "GDAL CLI bindings require GDAL >= 3.11.3";
 
 #if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
 
@@ -56,8 +56,11 @@ void append_subalg_names_desc_(const GDALAlgorithmH alg,
     for (int i = 0; i < num_subnames; ++i) {
         GDALAlgorithmH subalg = nullptr;
         subalg = GDALAlgorithmInstantiateSubAlgorithm(alg, subnames[i]);
-        if (subalg == nullptr)
+        if (subalg == nullptr) {
+            Rcpp::Rcout << "failed to instantiate alg name: " << subnames[i] <<
+                std::endl;
             continue;
+        }
 
         std::string this_cmd_str = cmd_str + " " + GDALAlgorithmGetName(subalg);
         bool cout_this = true;
@@ -133,8 +136,11 @@ Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
     for (int i = 0; i < num_names; ++i) {
         GDALAlgorithmH alg = nullptr;
         alg = GDALAlgorithmRegistryInstantiateAlg(reg, names[i]);
-        if (alg == nullptr)
+        if (alg == nullptr) {
+            Rcpp::Rcout << "failed to instantiate alg name: " << names[i] <<
+                std::endl;
             continue;
+        }
 
         bool cout_this = true;
         if (contains_in == "" ||
@@ -178,6 +184,37 @@ Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
 #endif  // GDALALG_MIN_GDAL_
 }
 
+//' @noRd
+// [[Rcpp::export(name = ".gdal_global_reg_names")]]
+Rcpp::CharacterVector gdal_global_reg_names() {
+
+    Rcpp::CharacterVector out = Rcpp::CharacterVector::create();
+
+#if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
+    Rcpp::Rcout << GDALALG_MIN_GDAL_MSG_ << std::endl;
+    return out;
+
+#else
+    GDALAlgorithmRegistryH reg = nullptr;
+    reg = GDALGetGlobalAlgorithmRegistry();
+    if (reg == nullptr) {
+        Rcpp::Rcout << "failed to obtain global algorithm registry" <<
+            std::endl;
+        return out;
+    }
+
+    char **names = nullptr;
+    names = GDALAlgorithmRegistryGetAlgNames(reg);
+    int num_names = CSLCount(names);
+    for (int i = 0; i < num_names; ++i) {
+        out.push_back(names[i]);
+    }
+
+    CSLDestroy(names);
+    GDALAlgorithmRegistryRelease(reg);
+    return out;
+#endif  // GDALALG_MIN_GDAL_
+}
 
 // ****************************************************************************
 //  Implementation of exposed class GDALAlg, which wraps GDALAlgorithm and
@@ -1253,6 +1290,7 @@ void GDALAlg::instantiateAlg_() {
 
     if (m_cmd.size() == 1) {
         Rcpp::String cmd(m_cmd[0]);
+
         m_hAlg = GDALAlgorithmRegistryInstantiateAlg(reg, cmd.get_cstring());
 
         if (m_hAlg == nullptr) {
@@ -1277,6 +1315,7 @@ void GDALAlg::instantiateAlg_() {
         }
         for (R_xlen_t i = 1; i < m_cmd.size(); ++i) {
             if (i == (m_cmd.size() - 1)) {
+                // the final subcommand, instantiate m_hAlg here
                 Rcpp::String sub_cmd(m_cmd[i]);
 
                 m_hAlg =
@@ -1291,12 +1330,12 @@ void GDALAlg::instantiateAlg_() {
                     GDALAlgorithmRegistryRelease(reg);
                     Rcpp::Rcout << "subcommand: " << sub_cmd.get_cstring() <<
                         std::endl;
-                    Rcpp::stop(
-                        "failed to instantiate CLI algorithm");
+                    Rcpp::stop("failed to instantiate CLI algorithm");
                 }
             }
             else {
                 Rcpp::String sub_cmd(m_cmd[i]);
+
                 alg_tmp.push_back(
                     GDALAlgorithmInstantiateSubAlgorithm(
                         alg_tmp[i - 1], sub_cmd.get_cstring()));
@@ -1309,8 +1348,7 @@ void GDALAlg::instantiateAlg_() {
                     GDALAlgorithmRegistryRelease(reg);
                     Rcpp::Rcout << "subcommand: " << sub_cmd.get_cstring() <<
                         std::endl;
-                    Rcpp::stop(
-                        "failed to instantiate CLI algorithm");
+                    Rcpp::stop("failed to instantiate CLI algorithm");
                 }
             }
         }

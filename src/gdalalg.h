@@ -23,6 +23,8 @@
 Rcpp::DataFrame gdal_commands(const std::string starts_with, bool recurse,
                               bool cout);
 
+Rcpp::CharacterVector gdal_global_reg_names();
+
 class GDALAlg {
  public:
     GDALAlg();
