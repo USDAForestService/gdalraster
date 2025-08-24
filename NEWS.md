@@ -1,3 +1,7 @@
+# gdalraster 2.2.0.9000 (dev)
+
+* `plot_raster()`: use `on.exit()` for `par()` reset (#780) (2025-08-24)
+
 # gdalraster 2.2.0
 
 ## Features
