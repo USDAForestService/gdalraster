@@ -38,7 +38,7 @@
 #' (i.e., by regular \code{<-} or \code{=} assignment).
 #'
 #' @section Usage (see Details):
-#' \preformatted{
+#' ```
 #' ## Constructors
 #' # read-only by default:
 #' ds <- new(GDALRaster, filename)
@@ -137,7 +137,7 @@
 #' ds$getChecksum(band, xoff, yoff, xsize, ysize)
 #'
 #' ds$close()
-#' }
+#' ```
 #' @section Details:
 #' ## Constructors
 #'
@@ -336,7 +336,7 @@
 #' Helper method returning a numeric matrix with named columns: `xblockoff`,
 #' `yblockoff`, `xoff`, `yoff`, `xsize`, `ysize`, `xmin`, `xmax`, `ymin`,
 #' `ymax`. For the meanings of these names, refer to the following class
-#' methods below: \code{$getBlockSize()}, \code{$getActualBlockSize} and
+#' methods below: \code{$getBlockSize()}, \code{$getActualBlockSize()} and
 #' \code{$read()}.
 #' All offsets are zero-based. The columns `xmin`, `xmax`, `ymin` and
 #' `ymax` give the extent of each block in geospatial coordinates.

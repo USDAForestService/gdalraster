@@ -16,12 +16,11 @@ arguments of the algorithm (see section \verb{Algorithm Argument Syntax} below).
 \value{
 An object of class \code{GDALAlg}, which contains a pointer to the
 algorithm instance. Class methods are described in Details, along with a set
-of writable fields for per-object settings. Values may be set on the class
-fields by regular assignment with \code{<-} or \code{=}.
+of writable fields for per-object settings.
 }
 \description{
 \code{GDALAlg} provides bindings to \code{GDALAlgorithm} and related classes
-that implement the \dQuote{gdal} command line interface (CLI) in the GDAL
+that implement the \code{gdal} command line interface (CLI) in the GDAL
 API. An object of class \code{GDALAlg} represents an instance of a CLI algorithm
 with methods to obtain algorithm information and argument information, run
 the algorithm, and access its output.
@@ -37,8 +36,8 @@ documented (naming optional).
 }
 \section{Usage (see Details)}{
 
-\preformatted{
-## Constructors
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## Constructors
 alg <- new(GDALAlg, cmd)
 # or, with arguments
 alg <- new(GDALAlg, cmd, args)
@@ -61,7 +60,7 @@ alg$outputs()
 
 alg$close()
 alg$release()
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Details}{
@@ -258,33 +257,32 @@ input(s) first, output last. Positional arguments can also be specified as
 named arguments, if preferred to avoid any ambiguity.
 \item Named arguments have:
 \itemize{
-\item at least one \dQuote{long} name, preceded by two dash characters when
-specified on the command line,
+\item at least one "long" name, preceded by two dash characters
 \item optionally, auxiliary long names (i.e., aliases),
 \item and optionally a one-letter short name, preceded by a single dash
-character on the command line, e.g., \verb{-f, --of, --format, --output-format <OUTPUT-FORMAT>}
+character, e.g., \code{-f, --of, --format, --output-format <OUTPUT-FORMAT>}
 }
-\item Boolean arguments are specified by just specifying the argument name. In
-\R \code{list} format, the named element must be assigned a value of logical
-\code{TRUE}.
+\item Boolean arguments are specified by just specifying the argument name in
+character vector format. In \R \code{list} format, the named element must be
+assigned a value of logical \code{TRUE}.
 \item Arguments that require a value are specified like:
 \itemize{
-\item \verb{-f VALUE} for one-letter short names
-\item \verb{--format VALUE} or \code{--format=VALUE} for long names
+\item \code{-f VALUE} for one-letter short names
+\item \code{--format VALUE} or \code{--format=VALUE} for long names
 \item in a named list, this might look like: \code{args$format <- VALUE}
 }
 \item Some arguments can be multi-valued. Some of them require all values to be
 packed together and separated with comma. This is, e.g., the case of:\cr
-\verb{--bbox <BBOX> Clipping bounding box as xmin,ymin,xmax,ymax}\cr
-e.g., \verb{--bbox=2.1,49.1,2.9,49.9}.
+\code{--bbox <BBOX> Clipping bounding box as xmin,ymin,xmax,ymax} \cr
+e.g., \code{--bbox=2.1,49.1,2.9,49.9}
 \item Others accept each value to be preceded by a new mention of the argument
-name, e.g., \verb{--co COMPRESS=LZW --co TILED=YES}. For that one, if the value
-of the argument does not contain commas, the packed form is also accepted:
-\verb{--co COMPRESS=LZW,TILED=YES}. Note that repeated mentions of an argument
-are possible in the character vector format for argument input, whereas
-arguments given in named list format must used argument long names as the
-list element names, and the packed format for the values (which can be a
-character vector or numeric vector of values).
+name, e.g., \code{c("--co", "COMPRESS=LZW", "--co", "TILED=YES")}. For that
+one, if the value of the argument does not contain commas, the packed form
+is also accepted: \code{--co COMPRESS=LZW,TILED=YES}. Note that repeated
+mentions of an argument are possible in the character vector format for
+argument input, whereas arguments given in named list format must use
+argument long names as the list element names, and the packed format for the
+values (which can be a character vector or numeric vector of values).
 \item Named arguments can be placed before or after positional arguments.
 }
 }
@@ -293,14 +291,14 @@ character vector or numeric vector of values).
 
 The GDAL Command Line Interface Modernization was first introduced in the
 \href{https://github.com/OSGeo/gdal/releases/tag/v3.11.0}{GDAL 3.11.0 release}
-(2025-05-09). The GDAL project provides warning that the new CLI \dQuote{is
+(2025-05-09). The GDAL project provides warning that the new CLI "is
 provisionally provided as an alternative interface to GDAL and OGR command
 line utilities. The project reserves the right to modify, rename,
 reorganize, and change the behavior until it is officially frozen via PSC
 vote in a future major GDAL release. The utility needs time to mature,
 benefit from incremental feedback, and explore enhancements without carrying
 the burden of full backward compatibility. Your usage of it should have no
-expectation of compatibility until that time.}
+expectation of compatibility until that time."
 (\url{https://gdal.org/en/latest/programs/#gdal-application})
 
 Initial bindings to enable programmatic use of the CLI algorithms from \R
@@ -415,12 +413,4 @@ alg$argInfo("resampling")
 
 alg$release()
 \dontshow{\}) # examplesIf}
-}
-\seealso{
-\code{\link[=gdal_alg]{gdal_alg()}}, \code{\link[=gdal_commands]{gdal_commands()}}, \code{\link[=gdal_run]{gdal_run()}}, \code{\link[=gdal_usage]{gdal_usage()}}
-
-GDAL RFC 104: Adding a \dQuote{gdal} front-end command line interface:\cr
-\href{https://gdal.org/en/stable/development/rfc/rfc104_gdal_cli.html#implementation-details}{Implementation details}
-
-\href{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}{Using \dQuote{gdal} CLI algorithms from R}
 }

@@ -7,10 +7,10 @@
 #'
 #' @name gdal_cli
 #' @description
-#' This set of functions can be used to access and run GDAL utilities as
-#' \dQuote{gdal} command line interface (CLI) algorithms.
+#' This set of functions can be used to access and run GDAL utilities as `gdal`
+#' command line interface (CLI) algorithms.
 #'
-#' **Requires GDAL >= `r .GDALALG_MIN_GDAL_STR`**
+#' **Requires GDAL >= 3.11.3**
 #'
 #' **Experimental** (see the section `Development Status` below)
 #'
@@ -20,14 +20,14 @@
 #' documentation for additional information (`?GDALAlg`).
 #'
 #' `gdal_commands()` prints a list of commands and their descriptions to the
-#' console, and returns (invisibly) a data frame with columns named `command`,
-#' `description` and `URL`. The `contains` argument can be used to filter the
+#' console, and returns (invisibly) a data frame with columns `command`,
+#' `description`, `URL`. The `contains` argument can be used to filter the
 #' output, e.g., `gdal_commands("vector")` to return only commands for working
 #' with vector inputs.
 #'
 #' `gdal_usage()` prints a help message to the console for a given command, or
-#' for the root \dQuote{gdal} entry point if called with no argument. No return
-#' value, called for that side effect only.
+#' for the root `gdal` entry point if called with no argument. No return value,
+#' called for that side effect only.
 #'
 #' `gdal_run()` executes a GDAL CLI algorithm and returns it as an object of
 #' class [`GDALAlg`][GDALAlg]. A list containing algorithm output(s) can be
@@ -60,8 +60,8 @@
 #' @param contains Optional character string for filtering output to certain
 #' commands, e.g., `gdal_commands("vector")`.
 #' @param recurse Logical value, `TRUE` to include all subcommands recursively
-#' (the default). Set to `FALSE` to include only the top-level \dQuote{gdal}
-#' commands (i.e., \dQuote{raster}, \dQuote{vector}, etc.)
+#' (the default). Set to `FALSE` to include only the top-level `gdal` commands
+#' (i.e., `raster`, `vector`, etc.)
 #' @param cout Logical value, `TRUE` to print a list of commands along with
 #' their descriptions and help URLS to the console (the default).
 #' @param cmd A character string or character vector containing the path to the
@@ -83,50 +83,47 @@
 #' formats. Programmatic usage also allows passing and receiving datasets as
 #' objects (i.e., `GDALRaster` or `GDALVector`), in addition to dataset names
 #' (e.g., filename, URL, database connection string).
-#'
 #' * Commands accept one or several positional arguments, typically for dataset
 #' names (or, in \R, as `GDALRaster` or `GDALVector` datasets). The order is
 #' input(s) first, output last. Positional arguments can also be specified as
 #' named arguments, if preferred to avoid any ambiguity.
 #' * Named arguments have:
-#'   * at least one \dQuote{long} name, preceded by two dash characters when
-#'   specified on the command line,
+#'   * at least one "long" name, preceded by two dash characters
 #'   * optionally, auxiliary long names (i.e., aliases),
 #'   * and optionally a one-letter short name, preceded by a single dash
-#'   character on the command line, e.g., `-f, --of, --format, --output-format
-#'   <OUTPUT-FORMAT>`
-#' * Boolean arguments are specified by just specifying the argument name. In
-#' \R `list` format, the named element must be assigned a value of logical
-#' `TRUE`.
+#'   character, e.g., \code{-f, --of, --format, --output-format <OUTPUT-FORMAT>}
+#' * Boolean arguments are specified by just specifying the argument name in
+#' character vector format. In \R `list` format, the named element must be
+#' assigned a value of logical `TRUE`.
 #' * Arguments that require a value are specified like:
-#'   * `-f VALUE` for one-letter short names
-#'   * `--format VALUE` or `--format=VALUE` for long names
-#'   * in a named list, this might look like: `args$format <- VALUE`
+#'   * \code{-f VALUE} for one-letter short names
+#'   * \code{--format VALUE} or \code{--format=VALUE} for long names
+#'   * in a named list, this might look like: \code{args$format <- VALUE}
 #' * Some arguments can be multi-valued. Some of them require all values to be
 #' packed together and separated with comma. This is, e.g., the case of:\cr
-#' `--bbox <BBOX> Clipping bounding box as xmin,ymin,xmax,ymax`\cr
-#' e.g., `--bbox=2.1,49.1,2.9,49.9`.
+#' \code{--bbox <BBOX> Clipping bounding box as xmin,ymin,xmax,ymax} \cr
+#' e.g., \code{--bbox=2.1,49.1,2.9,49.9}
 #' * Others accept each value to be preceded by a new mention of the argument
-#' name, e.g., `--co COMPRESS=LZW --co TILED=YES`. For that one, if the value
-#' of the argument does not contain commas, the packed form is also accepted:
-#' `--co COMPRESS=LZW,TILED=YES`. Note that repeated mentions of an argument
-#' are possible in the character vector format for argument input, whereas
-#' arguments given in named list format must used argument long names as the
-#' list element names, and the packed format for the values (which can be a
-#' character vector or numeric vector of values).
+#' name, e.g., \code{c("--co", "COMPRESS=LZW", "--co", "TILED=YES")}. For that
+#' one, if the value of the argument does not contain commas, the packed form
+#' is also accepted: \code{--co COMPRESS=LZW,TILED=YES}. Note that repeated
+#' mentions of an argument are possible in the character vector format for
+#' argument input, whereas arguments given in named list format must use
+#' argument long names as the list element names, and the packed format for the
+#' values (which can be a character vector or numeric vector of values).
 #' * Named arguments can be placed before or after positional arguments.
 #'
 #' @section Development Status:
 #' The GDAL Command Line Interface Modernization was first introduced in the
 #' [GDAL 3.11.0 release](https://github.com/OSGeo/gdal/releases/tag/v3.11.0)
-#' (2025-05-09). The GDAL project provides warning that the new CLI \dQuote{is
+#' (2025-05-09). The GDAL project provides warning that the new CLI "is
 #' provisionally provided as an alternative interface to GDAL and OGR command
 #' line utilities. The project reserves the right to modify, rename,
 #' reorganize, and change the behavior until it is officially frozen via PSC
 #' vote in a future major GDAL release. The utility needs time to mature,
 #' benefit from incremental feedback, and explore enhancements without carrying
 #' the burden of full backward compatibility. Your usage of it should have no
-#' expectation of compatibility until that time.}
+#' expectation of compatibility until that time."
 #' (\url{https://gdal.org/en/latest/programs/#gdal-application})
 #'
 #' Initial bindings to enable programmatic use of the CLI algorithms from \R
@@ -143,16 +140,16 @@
 #' When using argument names as the element names of a list, the underscore
 #' character can be substituted for the dash characters that are used in some
 #' names. This avoids having to surround names in backticks when they are used
-#' to access list elements in the form `args$arg_name` (the form
-#' `args[["arg-name"]]` also works).
+#' to access list elements in the form \code{args$arg_name} (the form
+#' \code{args[["arg-name"]]} also works).
 #'
 #' @seealso
 #' [`GDALAlg-class`][GDALAlg]
 #'
-#' \dQuote{gdal} Command Line Interface (CLI):\cr
+#' `gdal` Command Line Interface (CLI) \cr
 #' \url{https://gdal.org/en/stable/programs/index.html}
 #'
-#' Using \dQuote{gdal} CLI algorithms from R:\cr
+#' Using `gdal` CLI algorithms from \R \cr
 #' \url{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
 #'
 #' @examplesIf length(gdal_global_reg_names()) > 0
@@ -237,7 +234,7 @@
 #' ds$close()
 #' deleteDataset(f_out)
 #'
-#' ## "pipeline" syntax
+#' ## pipeline syntax
 #' # "raster pipeline" example 2 from:
 #' # https://gdal.org/en/latest/programs/gdal_raster_pipeline.html
 #' # serialize the command to reproject a GTiff file into GDALG format, and
@@ -268,9 +265,8 @@
 #' unlink(f_out)
 #' @export
 gdal_commands <- function(contains = NULL, recurse = TRUE, cout = TRUE) {
-    if (gdal_version_num() < .GDALALG_MIN_GDAL) {
-        stop("gdal_commands() requires GDAL >= ", .GDALALG_MIN_GDAL_STR,
-             call. = FALSE)
+    if (gdal_version_num() < gdal_compute_version(3, 11, 3)) {
+        stop("gdal_commands() requires GDAL >= 3.11.3", call. = FALSE)
     }
 
     if (missing(contains) || is.null(contains) || all(is.na(contains)))
@@ -296,9 +292,8 @@ gdal_commands <- function(contains = NULL, recurse = TRUE, cout = TRUE) {
 #' @name gdal_cli
 #' @export
 gdal_usage <- function(cmd = NULL) {
-    if (gdal_version_num() < .GDALALG_MIN_GDAL) {
-        stop("gdal_usage() requires GDAL >= ", .GDALALG_MIN_GDAL_STR,
-             call. = FALSE)
+    if (gdal_version_num() < gdal_compute_version(3, 11, 3)) {
+        stop("gdal_usage() requires GDAL >= 3.11.3", call. = FALSE)
     }
 
     alg <- gdal_alg(cmd)
@@ -309,9 +304,8 @@ gdal_usage <- function(cmd = NULL) {
 #' @name gdal_cli
 #' @export
 gdal_run <- function(cmd, args) {
-    if (gdal_version_num() < .GDALALG_MIN_GDAL) {
-        stop("gdal_run() requires GDAL >= ", .GDALALG_MIN_GDAL_STR,
-             call. = FALSE)
+    if (gdal_version_num() < gdal_compute_version(3, 11, 3)) {
+        stop("gdal_run() requires GDAL >= 3.11.3", call. = FALSE)
     }
 
     if (missing(cmd) || is.null(cmd) || all(is.na(cmd)))
@@ -344,9 +338,8 @@ gdal_run <- function(cmd, args) {
 #' @name gdal_cli
 #' @export
 gdal_alg <- function(cmd = NULL, args = NULL, parse = TRUE) {
-    if (gdal_version_num() < .GDALALG_MIN_GDAL) {
-        stop("gdal_alg() requires GDAL >= ", .GDALALG_MIN_GDAL_STR,
-             call. = FALSE)
+    if (gdal_version_num() < gdal_compute_version(3, 11, 3)) {
+        stop("gdal_alg() requires GDAL >= 3.11.3", call. = FALSE)
     }
 
     if (missing(cmd) || is.null(cmd) || all(is.na(cmd)))
@@ -389,9 +382,10 @@ gdal_global_reg_names <- function() {
     return(.gdal_global_reg_names())
 }
 
-#' helper function to print usage to the console
-#' called from GDALAlg::usage() in src/gdalalg.cpp
+# helper function to print usage to the console
+# called from GDALAlg::usage() in src/gdalalg.cpp
 #' @noRd
+#' @export
 .print_alg_usage <- function(cmd) {
     alg <- new(GDALAlg, cmd)
     alginfo <- alg$info()

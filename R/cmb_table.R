@@ -25,7 +25,7 @@
 #' hash table are described in Details.
 #'
 #' @section Usage (see Details):
-#' \preformatted{
+#' ```
 #' ## Constructors
 #' cmb <- new(CmbTable, keyLen)
 #' # or, giving the variable names:
@@ -37,7 +37,7 @@
 #' cmb$updateFromMatrixByRow(int_cmbs, incr)
 #' cmb$asDataFrame()
 #' cmb$asMatrix()
-#' }
+#' ```
 #'
 #' @section Details:
 #' ## Constructors

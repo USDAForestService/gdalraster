@@ -1,8 +1,3 @@
-.GDALALG_MIN_GDAL <- gdal_compute_version(3, 11, 3)
-.GDALALG_MIN_GDAL_STR <- "3.11.3"
-# NOTE: also update the minimum GDAL version in the details section of
-#       man/gdalraster-package.Rd
-
 #' @name GDALAlg-class
 #'
 #' @aliases
@@ -12,12 +7,12 @@
 #'
 #' @description
 #' `GDALAlg` provides bindings to `GDALAlgorithm` and related classes
-#' that implement the \dQuote{gdal} command line interface (CLI) in the GDAL
+#' that implement the `gdal` command line interface (CLI) in the GDAL
 #' API. An object of class `GDALAlg` represents an instance of a CLI algorithm
 #' with methods to obtain algorithm information and argument information, run
 #' the algorithm, and access its output.
 #'
-#' **Requires GDAL >= `r .GDALALG_MIN_GDAL_STR`**.
+#' **Requires GDAL >= 3.11.3**.
 #'
 #' **Experimental** (see the section `Development Status` below)
 #'
@@ -32,15 +27,14 @@
 #' arguments of the algorithm (see section `Algorithm Argument Syntax` below).
 #' @returns An object of class `GDALAlg`, which contains a pointer to the
 #' algorithm instance. Class methods are described in Details, along with a set
-#' of writable fields for per-object settings. Values may be set on the class
-#' fields by regular assignment with \code{<-} or \code{=}.
+#' of writable fields for per-object settings.
 #'
 #' @inheritSection gdal_cli Algorithm Argument Syntax
 #'
 #' @inheritSection gdal_cli Development Status
 #'
 #' @section Usage (see Details):
-#' \preformatted{
+#' ```
 #' ## Constructors
 #' alg <- new(GDALAlg, cmd)
 #' # or, with arguments
@@ -64,7 +58,7 @@
 #'
 #' alg$close()
 #' alg$release()
-#' }
+#' ```
 #' @section Details:
 #' ## Constructors
 #'
@@ -232,14 +226,6 @@
 #' Release memory associated with the algorithm, potentially after attempting
 #' to finalize. No return value, called for side-effects.
 #'
-#' @seealso
-#' [gdal_alg()], [gdal_commands()], [gdal_run()], [gdal_usage()]
-#'
-#' GDAL RFC 104: Adding a \dQuote{gdal} front-end command line interface:\cr
-#' [Implementation details](https://gdal.org/en/stable/development/rfc/rfc104_gdal_cli.html#implementation-details)
-#'
-#' [Using \dQuote{gdal} CLI algorithms from R](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html)
-#'
 #' @examplesIf length(gdal_global_reg_names()) > 0
 #' f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #'
@@ -342,7 +328,6 @@
 #' alg$argInfo("resampling")
 #'
 #' alg$release()
-
 NULL
 
 Rcpp::loadModule("mod_GDALAlg", TRUE)

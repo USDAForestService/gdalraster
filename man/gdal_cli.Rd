@@ -24,8 +24,8 @@ gdal_global_reg_names()
 commands, e.g., \code{gdal_commands("vector")}.}
 
 \item{recurse}{Logical value, \code{TRUE} to include all subcommands recursively
-(the default). Set to \code{FALSE} to include only the top-level \dQuote{gdal}
-commands (i.e., \dQuote{raster}, \dQuote{vector}, etc.)}
+(the default). Set to \code{FALSE} to include only the top-level \code{gdal} commands
+(i.e., \code{raster}, \code{vector}, etc.)}
 
 \item{cout}{Logical value, \code{TRUE} to print a list of commands along with
 their descriptions and help URLS to the console (the default).}
@@ -44,8 +44,8 @@ method on the returned object can be called to parse arguments and obtain
 the result of that, with potentially useful error messages.}
 }
 \description{
-This set of functions can be used to access and run GDAL utilities as
-\dQuote{gdal} command line interface (CLI) algorithms.
+This set of functions can be used to access and run GDAL utilities as \code{gdal}
+command line interface (CLI) algorithms.
 
 \strong{Requires GDAL >= 3.11.3}
 
@@ -57,14 +57,14 @@ by way of the C++ exposed class \code{\link{GDALAlg}}. See the class
 documentation for additional information (\code{?GDALAlg}).
 
 \code{gdal_commands()} prints a list of commands and their descriptions to the
-console, and returns (invisibly) a data frame with columns named \code{command},
-\code{description} and \code{URL}. The \code{contains} argument can be used to filter the
+console, and returns (invisibly) a data frame with columns \code{command},
+\code{description}, \code{URL}. The \code{contains} argument can be used to filter the
 output, e.g., \code{gdal_commands("vector")} to return only commands for working
 with vector inputs.
 
 \code{gdal_usage()} prints a help message to the console for a given command, or
-for the root \dQuote{gdal} entry point if called with no argument. No return
-value, called for that side effect only.
+for the root \code{gdal} entry point if called with no argument. No return value,
+called for that side effect only.
 
 \code{gdal_run()} executes a GDAL CLI algorithm and returns it as an object of
 class \code{\link{GDALAlg}}. A list containing algorithm output(s) can be
@@ -120,33 +120,32 @@ input(s) first, output last. Positional arguments can also be specified as
 named arguments, if preferred to avoid any ambiguity.
 \item Named arguments have:
 \itemize{
-\item at least one \dQuote{long} name, preceded by two dash characters when
-specified on the command line,
+\item at least one "long" name, preceded by two dash characters
 \item optionally, auxiliary long names (i.e., aliases),
 \item and optionally a one-letter short name, preceded by a single dash
-character on the command line, e.g., \verb{-f, --of, --format, --output-format <OUTPUT-FORMAT>}
+character, e.g., \code{-f, --of, --format, --output-format <OUTPUT-FORMAT>}
 }
-\item Boolean arguments are specified by just specifying the argument name. In
-\R \code{list} format, the named element must be assigned a value of logical
-\code{TRUE}.
+\item Boolean arguments are specified by just specifying the argument name in
+character vector format. In \R \code{list} format, the named element must be
+assigned a value of logical \code{TRUE}.
 \item Arguments that require a value are specified like:
 \itemize{
-\item \verb{-f VALUE} for one-letter short names
-\item \verb{--format VALUE} or \code{--format=VALUE} for long names
+\item \code{-f VALUE} for one-letter short names
+\item \code{--format VALUE} or \code{--format=VALUE} for long names
 \item in a named list, this might look like: \code{args$format <- VALUE}
 }
 \item Some arguments can be multi-valued. Some of them require all values to be
 packed together and separated with comma. This is, e.g., the case of:\cr
-\verb{--bbox <BBOX> Clipping bounding box as xmin,ymin,xmax,ymax}\cr
-e.g., \verb{--bbox=2.1,49.1,2.9,49.9}.
+\code{--bbox <BBOX> Clipping bounding box as xmin,ymin,xmax,ymax} \cr
+e.g., \code{--bbox=2.1,49.1,2.9,49.9}
 \item Others accept each value to be preceded by a new mention of the argument
-name, e.g., \verb{--co COMPRESS=LZW --co TILED=YES}. For that one, if the value
-of the argument does not contain commas, the packed form is also accepted:
-\verb{--co COMPRESS=LZW,TILED=YES}. Note that repeated mentions of an argument
-are possible in the character vector format for argument input, whereas
-arguments given in named list format must used argument long names as the
-list element names, and the packed format for the values (which can be a
-character vector or numeric vector of values).
+name, e.g., \code{c("--co", "COMPRESS=LZW", "--co", "TILED=YES")}. For that
+one, if the value of the argument does not contain commas, the packed form
+is also accepted: \code{--co COMPRESS=LZW,TILED=YES}. Note that repeated
+mentions of an argument are possible in the character vector format for
+argument input, whereas arguments given in named list format must use
+argument long names as the list element names, and the packed format for the
+values (which can be a character vector or numeric vector of values).
 \item Named arguments can be placed before or after positional arguments.
 }
 }
@@ -155,14 +154,14 @@ character vector or numeric vector of values).
 
 The GDAL Command Line Interface Modernization was first introduced in the
 \href{https://github.com/OSGeo/gdal/releases/tag/v3.11.0}{GDAL 3.11.0 release}
-(2025-05-09). The GDAL project provides warning that the new CLI \dQuote{is
+(2025-05-09). The GDAL project provides warning that the new CLI "is
 provisionally provided as an alternative interface to GDAL and OGR command
 line utilities. The project reserves the right to modify, rename,
 reorganize, and change the behavior until it is officially frozen via PSC
 vote in a future major GDAL release. The utility needs time to mature,
 benefit from incremental feedback, and explore enhancements without carrying
 the burden of full backward compatibility. Your usage of it should have no
-expectation of compatibility until that time.}
+expectation of compatibility until that time."
 (\url{https://gdal.org/en/latest/programs/#gdal-application})
 
 Initial bindings to enable programmatic use of the CLI algorithms from \R
@@ -256,7 +255,7 @@ plot_raster(ds, legend = TRUE, col_map_fn = ramp, na_col = "#d9d9d9",
 ds$close()
 deleteDataset(f_out)
 
-## "pipeline" syntax
+## pipeline syntax
 # "raster pipeline" example 2 from:
 # https://gdal.org/en/latest/programs/gdal_raster_pipeline.html
 # serialize the command to reproject a GTiff file into GDALG format, and
@@ -290,9 +289,9 @@ unlink(f_out)
 \seealso{
 \code{\link[=GDALAlg]{GDALAlg-class}}
 
-\dQuote{gdal} Command Line Interface (CLI):\cr
+\code{gdal} Command Line Interface (CLI) \cr
 \url{https://gdal.org/en/stable/programs/index.html}
 
-Using \dQuote{gdal} CLI algorithms from R:\cr
+Using \code{gdal} CLI algorithms from \R \cr
 \url{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
 }

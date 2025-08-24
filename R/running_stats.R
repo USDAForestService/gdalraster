@@ -39,7 +39,7 @@
 #' computes statistics for a whole raster band.
 #'
 #' @section Usage (see Details):
-#' \preformatted{
+#' ```
 #' ## Constructor
 #' rs <- new(RunningStats, na_rm)
 #'
@@ -53,7 +53,7 @@
 #' rs$get_var()
 #' rs$get_sd()
 #' rs$reset()
-#' }
+#' ```
 #'
 #' @section Details:
 #' ## Constructor
