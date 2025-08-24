@@ -583,7 +583,7 @@
 #'
 #' \code{force}:
 #'   * `TRUE`: The raster will be scanned to compute statistics. Once computed,
-#'   statistics will generally be “set” back on the raster band if the format
+#'   statistics will generally be "set" back on the raster band if the format
 #'   supports caching statistics.
 #'   (Note: `ComputeStatistics()` in the GDAL API is called automatically here.
 #'   This is a change in the behavior of `GetStatistics()` in the API, to a

@@ -622,7 +622,7 @@ computation is forced).
 \code{force}:
 \itemize{
 \item \code{TRUE}: The raster will be scanned to compute statistics. Once computed,
-statistics will generally be “set” back on the raster band if the format
+statistics will generally be "set" back on the raster band if the format
 supports caching statistics.
 (Note: \code{ComputeStatistics()} in the GDAL API is called automatically here.
 This is a change in the behavior of \code{GetStatistics()} in the API, to a
