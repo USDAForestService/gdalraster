@@ -84,7 +84,7 @@
 #' objects (i.e., `GDALRaster` or `GDALVector`), in addition to dataset names
 #' (e.g., filename, URL, database connection string).
 #' * Commands accept one or several positional arguments, typically for dataset
-#' names (or, in \R, as `GDALRaster` or `GDALVector` datasets). The order is
+#' names (or in \R as `GDALRaster` or `GDALVector` datasets). The order is
 #' input(s) first, output last. Positional arguments can also be specified as
 #' named arguments, if preferred to avoid any ambiguity.
 #' * Named arguments have:

@@ -252,7 +252,7 @@ objects (i.e., \code{GDALRaster} or \code{GDALVector}), in addition to dataset n
 (e.g., filename, URL, database connection string).
 \itemize{
 \item Commands accept one or several positional arguments, typically for dataset
-names (or, in \R, as \code{GDALRaster} or \code{GDALVector} datasets). The order is
+names (or in \R as \code{GDALRaster} or \code{GDALVector} datasets). The order is
 input(s) first, output last. Positional arguments can also be specified as
 named arguments, if preferred to avoid any ambiguity.
 \item Named arguments have:
