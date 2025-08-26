@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstring>
 #include <sstream>
 
 #include "gdalraster.h"
@@ -20,12 +21,11 @@ constexpr char GDALALG_MIN_GDAL_MSG_[] =
     "GDAL CLI bindings require GDAL >= 3.11.3";
 
 #if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
-
 constexpr R_xlen_t CMD_TOKENS_MAX_ = 5;
 
-    #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)
-// see https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060818.html
-// see https://github.com/OSGeo/gdal/pull/12853 for GDAL >= 3.12
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)
+// https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060818.html
+// https://github.com/OSGeo/gdal/pull/12853 for GDAL >= 3.12
 struct GDALAlgorithmArgHS
 {
     GDALAlgorithmArg *ptr = nullptr;
@@ -34,7 +34,7 @@ struct GDALAlgorithmArgHS
     {
     }
 };
-    #endif  // GDAL < 3.12
+#endif  // GDAL < 3.12
 #endif  // GDALALG_MIN_GDAL_
 
 #if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
@@ -1155,22 +1155,24 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
     else
         num_args = list_args.size();
 
-    Rcpp::CharacterVector arg_names = enc_to_utf8_(list_args.names());
+    Rcpp::CharacterVector arg_names = list_args.names();
     if (arg_names.size() == 0 || arg_names.size() != num_args)
         Rcpp::stop("arg list must have named elements");
 
     for (R_xlen_t i = 0; i < num_args; ++i) {
-        if (list_args[i] == R_NilValue)
-            continue;
-
         Rcpp::String nm(arg_names[i]);
         if (nm == NA_STRING || nm == "")
             continue;
 
+        if (list_args[i] == R_NilValue) {
+            Rcpp::Rcout << "ignoring NULL arg: " << nm.get_cstring() << "\n";
+            continue;
+        }
+
         nm.replace_all("--", "");
         nm.replace_all("_", "-");
         if (STARTS_WITH(nm.get_cstring(), "-") &&
-            CPLStrlenUTF8(nm.get_cstring()) < 3) {
+            std::strlen(nm.get_cstring()) < 3) {
 
             Rcpp::Rcout << "argument: " << arg_names[i] << "\n";
             Rcpp::stop("arguments in list format must use \"long\" names");
@@ -1187,28 +1189,23 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
             }
         }
 
-        // potentially a single dataset
-        const Rcpp::RObject &val = list_args[i];
-        if (val.isObject()) {
-            const Rcpp::String cls = val.attr("class");
-            if (cls == "Rcpp_GDALRaster") {
-                const GDALRaster* const &ds = list_args[i];
-                std::vector<GDALDatasetH> ds_list = {};
-                ds_list.push_back(ds->getGDALDatasetH_());
-                m_map_input_hDS[nm_no_lead_dashes] = ds_list;
-                continue;
-            }
-            if (cls == "Rcpp_GDALVector") {
-                GDALVector* const &ds = list_args[i];
-                std::vector<GDALDatasetH> ds_list = {};
-                ds_list.push_back(ds->getGDALDatasetH_());
-                m_map_input_hDS[nm_no_lead_dashes] = ds_list;
-                if (EQUAL(nm.get_cstring(), "--input"))
-                    m_input_GDALVector = ds;
-                else if (EQUAL(nm.get_cstring(), "--like"))
-                    m_like_GDALVector = ds;
-                continue;
-            }
+        // string, string list
+        if (Rcpp::is<Rcpp::CharacterVector>(list_args[i])) {
+            Rcpp::CharacterVector arg_value = enc_to_utf8_(list_args[i]);
+            nm += "=";
+            nm += paste_collapse_(arg_value, ",");
+            arg_vec.push_back(nm);
+            continue;
+        }
+
+        // integer, integer list, real, real list
+        if (Rcpp::is<Rcpp::IntegerVector>(list_args[i]) ||
+            Rcpp::is<Rcpp::NumericVector>(list_args[i])) {
+
+            nm += "=";
+            nm += paste_collapse_(list_args[i], ",");
+            arg_vec.push_back(nm);
+            continue;
         }
 
         // potentially a list of datasets
@@ -1240,18 +1237,39 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
             if (!ds_list.empty()) {
                 m_map_input_hDS[nm_no_lead_dashes] = ds_list;
             }
+            else {
+                Rcpp::Rcout << "unhandled list input: " <<
+                    nm_no_lead_dashes.c_str() << "\n";
+            }
             continue;
         }
 
-        // string, string list, integer, integer list, real, real list
-        if (Rcpp::is<Rcpp::CharacterVector>(list_args[i]) ||
-                Rcpp::is<Rcpp::IntegerVector>(list_args[i]) ||
-                Rcpp::is<Rcpp::NumericVector>(list_args[i])) {
-
-            nm += "=";
-            nm += paste_collapse_(list_args[i], ",");
-            arg_vec.push_back(nm);
+        // potentially a single dataset
+        const Rcpp::RObject &val = list_args[i];
+        if (val.isObject()) {
+            const Rcpp::String cls = val.attr("class");
+            if (cls == "Rcpp_GDALRaster") {
+                const GDALRaster* const &ds = list_args[i];
+                std::vector<GDALDatasetH> ds_list = {};
+                ds_list.push_back(ds->getGDALDatasetH_());
+                m_map_input_hDS[nm_no_lead_dashes] = ds_list;
+                continue;
+            }
+            if (cls == "Rcpp_GDALVector") {
+                GDALVector* const &ds = list_args[i];
+                std::vector<GDALDatasetH> ds_list = {};
+                ds_list.push_back(ds->getGDALDatasetH_());
+                m_map_input_hDS[nm_no_lead_dashes] = ds_list;
+                if (EQUAL(nm.get_cstring(), "--input"))
+                    m_input_GDALVector = ds;
+                else if (EQUAL(nm.get_cstring(), "--like"))
+                    m_like_GDALVector = ds;
+                continue;
+            }
         }
+
+        Rcpp::Rcout << "unhandled input type for " <<
+            nm_no_lead_dashes.c_str() << "\n";
     }
 
     if (m_map_input_hDS.count("input") > 0) {
