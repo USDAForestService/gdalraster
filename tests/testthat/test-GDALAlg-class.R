@@ -231,7 +231,7 @@ test_that("`setVectorArgsFromObject` and `outputLayerNameForOpen` work", {
     poi$setAttributeFilter("poiname = 'Abyss Pool'")
 
     f_out <- file.path(tempdir(), "filter_test.gpkg")
-    on.exit(unlink(f_out))
+    on.exit(unlink(f_out), add = TRUE)
 
     args <- list()
     args$input <- poi
@@ -260,7 +260,7 @@ test_that("`setVectorArgsFromObject` and `outputLayerNameForOpen` work", {
 
     # with `setVectorArgsFromObject` disabled
     f2_out <- file.path(tempdir(), "filter_test_2.gpkg")
-    on.exit(unlink(f2_out))
+    on.exit(unlink(f2_out), add = TRUE)
 
     args <- list()
     args$input <- poi
@@ -327,7 +327,7 @@ test_that("`setVectorArgsFromObject` and `outputLayerNameForOpen` work", {
         lyr_in <- new(GDALVector, shp_dsn, sql, TRUE, NULL, "", "SQLite")
 
         f_sql_out <- file.path(tempdir(), "spatialite_test.gpkg")
-        on.exit(unlink(f_sql_out))
+        on.exit(unlink(f_sql_out), add = TRUE)
 
         args <- list()
         args$input <- lyr_in
@@ -362,7 +362,7 @@ test_that("`setVectorArgsFromObject` and `outputLayerNameForOpen` work", {
     lyr_in <- new(GDALVector, shp_dsn)
 
     f2_sql_out <- file.path(tempdir(), "sql_test.shp")
-    on.exit(deleteDataset(f2_sql_out))
+    on.exit(deleteDataset(f2_sql_out), add = TRUE)
 
     args <- list()
     args$input <- lyr_in
@@ -410,7 +410,7 @@ test_that("`setVectorArgsFromObject` and `outputLayerNameForOpen` work", {
                     324467.3 5104814.2))"
 
     f_temp_poly <- file.path(tempdir(), "storml_test_poly.gpkg")
-    on.exit(unlink(f_temp_poly))
+    on.exit(unlink(f_temp_poly), add = TRUE)
     lyr <- ogr_ds_create("GPKG", f_temp_poly, layer = "test_poly",
                         geom_type = "POLYGON", srs = ds$getProjection(),
                         fld_name = "poly_name", fld_type = "OFTString",
@@ -421,7 +421,7 @@ test_that("`setVectorArgsFromObject` and `outputLayerNameForOpen` work", {
     lyr$syncToDisk()
 
     f_clip_bnd_1_2 <- file.path(tempdir(), "elev_clip_bnd_1_2.tif")
-    on.exit(deleteDataset(f_clip_bnd_1_2))
+    on.exit(deleteDataset(f_clip_bnd_1_2), add = TRUE)
 
     args <- list()
     args$input <- ds
@@ -449,7 +449,7 @@ test_that("`setVectorArgsFromObject` and `outputLayerNameForOpen` work", {
     lyr <- new(GDALVector, f_temp_poly, sql)
 
     f_clip_bnd_1 <- file.path(tempdir(), "elev_clip_bnd_1.tif")
-    on.exit(deleteDataset(f_clip_bnd_1))
+    on.exit(deleteDataset(f_clip_bnd_1), add = TRUE)
 
     args <- list()
     args$input <- ds
