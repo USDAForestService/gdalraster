@@ -1,6 +1,12 @@
-# gdalraster 2.2.0.9000 (dev)
+# gdalraster 2.2.0.9010 (dev)
+
+* class `GDALAlg`: improve input validation; fix clang compiler warning from `-Wunused-const-variable`; ensure algorithm names originating in `Rcpp::CharacterVector` are always passed explicitly in GDAL C API calls as `const char *`, via `get_cstring()` method of `Rcpp::String` (#782) (2025-08-26)
+
+* add `gdal_global_reg_names()`: return a character vector containing the names of the algorithms in the GDAL global algorithm registry (#782) (2025-08-26)
 
 * `plot_raster()`: use `on.exit()` for `par()` reset (#780) (2025-08-24)
+
+* Documentation: update text in the `Development Status` section describing the experimental GDAL CLI bindings; allow example code in the CLI documentation to execute in checks only if names are returned from the global algorithm registry, for now until the upstream API is declared stable; remove some non-ASCII characters found in .Rd files and other miscellaneous improvements in .Rd formatting
 
 # gdalraster 2.2.0
 
