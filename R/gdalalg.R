@@ -1,11 +1,3 @@
-#' @noRd
-#' @export
-.GDALALG_MIN_GDAL <- gdal_compute_version(3, 11, 3)
-
-#' @noRd
-#' @export
-.GDALALG_MIN_GDAL_STR <- "3.11.3"
-
 #' @name GDALAlg-class
 #'
 #' @aliases
@@ -15,35 +7,34 @@
 #'
 #' @description
 #' `GDALAlg` provides bindings to `GDALAlgorithm` and related classes
-#' that implement the "gdal" command line interface (CLI) in the GDAL API.
-#' An object of class `GDALAlg` represents an instance of a CLI algorithm with
-#' methods to obtain algorithm information and argument information, run the
-#' algorithm, and access its output.
+#' that implement the `gdal` command line interface (CLI) in the GDAL
+#' API. An object of class `GDALAlg` represents an instance of a CLI algorithm
+#' with methods to obtain algorithm information and argument information, run
+#' the algorithm, and access its output.
 #'
-#' **Requires GDAL >= `r .GDALALG_MIN_GDAL_STR`**.
+#' **Requires GDAL >= 3.11.3**.
 #'
-#' **Experimental** (see "Development status")
+#' **Experimental** (see the section `Development Status` below)
 #'
 #' `GDALAlg` is a C++ class exposed directly to \R (via `RCPP_EXPOSED_CLASS`).
-#' Fields and methods of the class are accessed using the `$` operator. Note
-#' that all arguments to class methods are required and must be given in the
-#' order documented (naming optional).
+#' Fields and methods of the class are accessed using the `$` operator.
+#' Arguments to class constructors and class methods must be given in the order
+#' documented (naming optional).
 #'
 #' @param cmd A character string or character vector containing the path to the
 #' algorithm, e.g., `"raster reproject"` or `c("raster", "reproject")`.
 #' @param args Either a character vector or a named list containing input
-#' arguments of the algorithm (see section \dQuote{Algorithm argument syntax}).
+#' arguments of the algorithm (see section `Algorithm Argument Syntax` below).
 #' @returns An object of class `GDALAlg`, which contains a pointer to the
 #' algorithm instance. Class methods are described in Details, along with a set
-#' of writable fields for per-object settings. Values may be assigned to the
-#' class fields by regular \code{<-} or \code{=} assignment.
+#' of writable fields for per-object settings.
 #'
-#' @inheritSection gdal_cli Algorithm argument syntax
+#' @inheritSection gdal_cli Algorithm Argument Syntax
 #'
-#' @inheritSection gdal_cli Development status
+#' @inheritSection gdal_cli Development Status
 #'
 #' @section Usage (see Details):
-#' \preformatted{
+#' ```
 #' ## Constructors
 #' alg <- new(GDALAlg, cmd)
 #' # or, with arguments
@@ -67,7 +58,7 @@
 #'
 #' alg$close()
 #' alg$release()
-#' }
+#' ```
 #' @section Details:
 #' ## Constructors
 #'
@@ -76,7 +67,7 @@
 #'
 #' \code{new(GDALAlg, cmd, args)}\cr
 #' Instantiate an algorithm giving input arguments as a character vector or
-#' named list. See section \dQuote{Algorithm argument syntax} for details.
+#' named list. See the section `Algorithm Argument Syntax` for details.
 #'
 #' ## Read/write fields (per-object settings)
 #'
@@ -235,15 +226,7 @@
 #' Release memory associated with the algorithm, potentially after attempting
 #' to finalize. No return value, called for side-effects.
 #'
-#' @seealso
-#' [gdal_alg()], [gdal_commands()], [gdal_run()], [gdal_usage()]
-#'
-#' GDAL RFC 104: Adding a \dQuote{gdal} front-end command line interface:\cr
-#' [Implementation details](https://gdal.org/en/stable/development/rfc/rfc104_gdal_cli.html#implementation-details)
-#'
-#' [Using \dQuote{gdal} CLI algorithms from R](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html)
-#'
-#' @examplesIf gdal_version_num() >= gdalraster:::.GDALALG_MIN_GDAL
+#' @examplesIf length(gdal_global_reg_names()) > 0
 #' f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #'
 #' ## raster info
@@ -345,7 +328,6 @@
 #' alg$argInfo("resampling")
 #'
 #' alg$release()
-
 NULL
 
 Rcpp::loadModule("mod_GDALAlg", TRUE)

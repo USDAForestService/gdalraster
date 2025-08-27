@@ -14,9 +14,9 @@
   See \url{https://gdal.org/en/stable/api/} for details of the GDAL API.
 }
 \details{
-  Initial experimental bindings to the modernized \dQuote{gdal} Command Line
-  Interface (CLI) are implemented in \code{\link{GDALAlg-class}} and related
-  convenience functions: \code{\link[=gdal_commands]{gdal_commands()}},
+  Experimental bindings to the modernized \code{gdal} Command Line Interface
+  (CLI) are implemented in \code{\link{GDALAlg-class}} and related convenience
+  functions: \code{\link[=gdal_commands]{gdal_commands()}},
   \code{\link[=gdal_usage]{gdal_usage()}}, \code{\link[=gdal_run]{gdal_run()}},
   \code{\link[=gdal_alg]{gdal_alg()}} (\emph{Requires GDAL >= 3.11.3})
 
@@ -265,7 +265,7 @@
   working directory.
 
   Temporary files are created in some examples which have cleanup code wrapped
-  in \code{dontshow{}}. While the cleanup code is not shown in the
+  in \code{dontshow}. While the cleanup code is not shown in the
   documentation, note that this code runs by default if examples are run with
   \code{example()}.
 }

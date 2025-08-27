@@ -52,7 +52,7 @@ SEEK_END <- "SEEK_END"
 #' Details.
 #'
 #' @section Usage (see Details):
-#' \preformatted{
+#' ```
 #' ## Constructors
 #' vf <- new(VSIFile, filename)
 #' # specifying access:
@@ -76,7 +76,7 @@ SEEK_END <- "SEEK_END"
 #' vf$get_filename()
 #' vf$get_access()
 #' vf$set_access(access)
-#' }
+#' ```
 #' @section Details:
 #' ## Constructors
 #'

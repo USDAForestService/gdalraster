@@ -65,8 +65,8 @@ Naming the arguments is optional but may be preferred for readability.
 }
 \section{Usage (see Details)}{
 
-\preformatted{
-## Constructors
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## Constructors
 # for single-layer file formats such as shapefile
 lyr <- new(GDALVector, dsn)
 # specifying the layer name, or SQL statement defining the layer
@@ -146,7 +146,7 @@ lyr$setMetadata(metadata)
 lyr$getMetadataItem(mdi_name)
 
 lyr$close()
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Details}{

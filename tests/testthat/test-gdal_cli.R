@@ -1,6 +1,6 @@
 # skip on CRAN while dev status of CLI bindings is "experimental"
 skip_on_cran()
-skip_if(gdal_version_num() < .GDALALG_MIN_GDAL)
+skip_if(gdal_version_num() < gdal_compute_version(3, 11, 3))
 
 test_that("gdal_commands works", {
     expect_output(cmds <- gdal_commands(), "info:")
@@ -148,4 +148,8 @@ test_that("gdal_usage works", {
     expect_output(gdal_usage(cmd), "Options:")
     expect_output(gdal_usage(cmd), "Advanced options:")
     expect_output(gdal_usage(cmd), "For more details:")
+})
+
+test_that("gdal_global_reg_names returns a character vector", {
+    expect_vector(gdal_global_reg_names(), character())
 })

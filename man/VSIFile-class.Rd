@@ -66,8 +66,8 @@ allow sequential write only.
 }
 \section{Usage (see Details)}{
 
-\preformatted{
-## Constructors
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## Constructors
 vf <- new(VSIFile, filename)
 # specifying access:
 vf <- new(VSIFile, filename, access)
@@ -90,7 +90,7 @@ vf$open()
 vf$get_filename()
 vf$get_access()
 vf$set_access(access)
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Details}{

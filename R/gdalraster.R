@@ -38,7 +38,7 @@
 #' (i.e., by regular \code{<-} or \code{=} assignment).
 #'
 #' @section Usage (see Details):
-#' \preformatted{
+#' ```
 #' ## Constructors
 #' # read-only by default:
 #' ds <- new(GDALRaster, filename)
@@ -137,7 +137,7 @@
 #' ds$getChecksum(band, xoff, yoff, xsize, ysize)
 #'
 #' ds$close()
-#' }
+#' ```
 #' @section Details:
 #' ## Constructors
 #'
@@ -336,7 +336,7 @@
 #' Helper method returning a numeric matrix with named columns: `xblockoff`,
 #' `yblockoff`, `xoff`, `yoff`, `xsize`, `ysize`, `xmin`, `xmax`, `ymin`,
 #' `ymax`. For the meanings of these names, refer to the following class
-#' methods below: \code{$getBlockSize()}, \code{$getActualBlockSize} and
+#' methods below: \code{$getBlockSize()}, \code{$getActualBlockSize()} and
 #' \code{$read()}.
 #' All offsets are zero-based. The columns `xmin`, `xmax`, `ymin` and
 #' `ymax` give the extent of each block in geospatial coordinates.
@@ -583,7 +583,7 @@
 #'
 #' \code{force}:
 #'   * `TRUE`: The raster will be scanned to compute statistics. Once computed,
-#'   statistics will generally be “set” back on the raster band if the format
+#'   statistics will generally be "set" back on the raster band if the format
 #'   supports caching statistics.
 #'   (Note: `ComputeStatistics()` in the GDAL API is called automatically here.
 #'   This is a change in the behavior of `GetStatistics()` in the API, to a

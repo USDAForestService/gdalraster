@@ -68,8 +68,8 @@ override the default resampling to one of \code{BILINEAR}, \code{CUBIC},
 }
 \section{Usage (see Details)}{
 
-\preformatted{
-## Constructors
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## Constructors
 # read-only by default:
 ds <- new(GDALRaster, filename)
 # for update access:
@@ -167,7 +167,7 @@ ds$flushCache()
 ds$getChecksum(band, xoff, yoff, xsize, ysize)
 
 ds$close()
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Details}{
@@ -371,7 +371,7 @@ info and examples.
 Helper method returning a numeric matrix with named columns: \code{xblockoff},
 \code{yblockoff}, \code{xoff}, \code{yoff}, \code{xsize}, \code{ysize}, \code{xmin}, \code{xmax}, \code{ymin},
 \code{ymax}. For the meanings of these names, refer to the following class
-methods below: \code{$getBlockSize()}, \code{$getActualBlockSize} and
+methods below: \code{$getBlockSize()}, \code{$getActualBlockSize()} and
 \code{$read()}.
 All offsets are zero-based. The columns \code{xmin}, \code{xmax}, \code{ymin} and
 \code{ymax} give the extent of each block in geospatial coordinates.
@@ -622,7 +622,7 @@ computation is forced).
 \code{force}:
 \itemize{
 \item \code{TRUE}: The raster will be scanned to compute statistics. Once computed,
-statistics will generally be “set” back on the raster band if the format
+statistics will generally be "set" back on the raster band if the format
 supports caching statistics.
 (Note: \code{ComputeStatistics()} in the GDAL API is called automatically here.
 This is a change in the behavior of \code{GetStatistics()} in the API, to a

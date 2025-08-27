@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <cctype>
+#include <cstring>
 #include <sstream>
 
 #include "gdalraster.h"
@@ -17,14 +18,14 @@
 #define GDALALG_MIN_GDAL_ GDAL_COMPUTE_VERSION(3, 11, 3)
 
 constexpr char GDALALG_MIN_GDAL_MSG_[] =
-    "class GDALAlg requires GDAL >= 3.11.3";
-
-constexpr R_xlen_t CMD_TOKENS_MAX_ = 5;
+    "GDAL CLI bindings require GDAL >= 3.11.3";
 
 #if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
-    #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)
-// cf. https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060818.html
-// cf. https://github.com/OSGeo/gdal/pull/12853 for GDAL >= 3.12
+constexpr R_xlen_t CMD_TOKENS_MAX_ = 5;
+
+#if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)
+// https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060818.html
+// https://github.com/OSGeo/gdal/pull/12853 for GDAL >= 3.12
 struct GDALAlgorithmArgHS
 {
     GDALAlgorithmArg *ptr = nullptr;
@@ -33,10 +34,12 @@ struct GDALAlgorithmArgHS
     {
     }
 };
-    #endif  // GDAL < 3.12
+#endif  // GDAL < 3.12
 #endif  // GDALALG_MIN_GDAL_
 
 #if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
+// internal helper to get subalgorithm names, descriptions and URLs,
+// potentially filtering on 'contains'
 void append_subalg_names_desc_(const GDALAlgorithmH alg,
                                const std::string &cmd_str,
                                std::vector<std::string> *names,
@@ -45,9 +48,6 @@ void append_subalg_names_desc_(const GDALAlgorithmH alg,
                                const std::string &contains,
                                bool cout) {
 
-// internal helper to get subalgorithm names, descriptions and URLs,
-// potentially filtering on 'contains'
-
     char **subnames = nullptr;
     subnames = GDALAlgorithmGetSubAlgorithmNames(alg);
     int num_subnames = CSLCount(subnames);
@@ -55,8 +55,11 @@ void append_subalg_names_desc_(const GDALAlgorithmH alg,
     for (int i = 0; i < num_subnames; ++i) {
         GDALAlgorithmH subalg = nullptr;
         subalg = GDALAlgorithmInstantiateSubAlgorithm(alg, subnames[i]);
-        if (subalg == nullptr)
+        if (!subalg) {
+            Rcpp::Rcout << "failed to instantiate alg name: " << subnames[i] <<
+                "\n";
             continue;
+        }
 
         std::string this_cmd_str = cmd_str + " " + GDALAlgorithmGetName(subalg);
         bool cout_this = true;
@@ -72,11 +75,11 @@ void append_subalg_names_desc_(const GDALAlgorithmH alg,
         }
 
         if (cout && cout_this) {
-            Rcpp::Rcout << this_cmd_str.c_str() << ":" << std::endl;
-            Rcpp::Rcout << GDALAlgorithmGetDescription(subalg) << std::endl;
+            Rcpp::Rcout << this_cmd_str.c_str() << ":\n";
+            Rcpp::Rcout << GDALAlgorithmGetDescription(subalg) << "\n";
             if (!EQUAL(GDALAlgorithmGetHelpFullURL(subalg), ""))
-                Rcpp::Rcout << GDALAlgorithmGetHelpFullURL(subalg) << std::endl;
-            Rcpp::Rcout << std::endl;
+                Rcpp::Rcout << GDALAlgorithmGetHelpFullURL(subalg) << "\n";
+            Rcpp::Rcout << "\n";
         }
 
         if (GDALAlgorithmHasSubAlgorithms(subalg)) {
@@ -91,6 +94,7 @@ void append_subalg_names_desc_(const GDALAlgorithmH alg,
 }
 #endif  // GDALALG_MIN_GDAL_
 
+//  public R wrapper in R/gdal_cli.R
 //' @noRd
 // [[Rcpp::export(name = ".gdal_commands")]]
 Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
@@ -102,15 +106,14 @@ Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
 #else
     GDALAlgorithmRegistryH reg = nullptr;
     reg = GDALGetGlobalAlgorithmRegistry();
-    if (reg == nullptr) {
+    if (!reg)
         Rcpp::stop("failed to obtain global algorithm registry");
-    }
 
     GDALAlgorithmH gdal_alg = nullptr;
     gdal_alg = GDALAlgorithmRegistryInstantiateAlg(reg,
         GDALGlobalAlgorithmRegistry::ROOT_ALG_NAME);
 
-    if (gdal_alg == nullptr) {
+    if (!gdal_alg) {
         GDALAlgorithmRegistryRelease(reg);
         Rcpp::stop("failed to instantiate \"gdal\" entry point");
     }
@@ -132,8 +135,11 @@ Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
     for (int i = 0; i < num_names; ++i) {
         GDALAlgorithmH alg = nullptr;
         alg = GDALAlgorithmRegistryInstantiateAlg(reg, names[i]);
-        if (alg == nullptr)
+        if (!alg) {
+            Rcpp::Rcout << "failed to instantiate alg name: " << names[i] <<
+                "\n";
             continue;
+        }
 
         bool cout_this = true;
         if (contains_in == "" ||
@@ -148,11 +154,11 @@ Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
         }
 
         if (cout && cout_this) {
-            Rcpp::Rcout << names[i] << ":" << std::endl;
-            Rcpp::Rcout << GDALAlgorithmGetDescription(alg) << std::endl;
+            Rcpp::Rcout << names[i] << ":\n";
+            Rcpp::Rcout << GDALAlgorithmGetDescription(alg) << "\n";
             if (!EQUAL(GDALAlgorithmGetHelpFullURL(alg), ""))
-                Rcpp::Rcout << GDALAlgorithmGetHelpFullURL(alg) << std::endl;
-            Rcpp::Rcout << std::endl;
+                Rcpp::Rcout << GDALAlgorithmGetHelpFullURL(alg) << "\n";
+            Rcpp::Rcout << "\n";
         }
 
         if (recurse && GDALAlgorithmHasSubAlgorithms(alg)) {
@@ -177,10 +183,42 @@ Rcpp::DataFrame gdal_commands(const std::string &contains, bool recurse,
 #endif  // GDALALG_MIN_GDAL_
 }
 
+//  public R wrapper in R/gdal_cli.R
+//' @noRd
+// [[Rcpp::export(name = ".gdal_global_reg_names")]]
+Rcpp::CharacterVector gdal_global_reg_names() {
+
+    Rcpp::CharacterVector out = Rcpp::CharacterVector::create();
+
+#if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
+    Rcpp::Rcout << GDALALG_MIN_GDAL_MSG_ << "\n";
+    return out;
+
+#else
+    GDALAlgorithmRegistryH reg = nullptr;
+    reg = GDALGetGlobalAlgorithmRegistry();
+    if (!reg) {
+        Rcpp::Rcout << "failed to obtain global algorithm registry\n";
+        return out;
+    }
+
+    char **names = nullptr;
+    names = GDALAlgorithmRegistryGetAlgNames(reg);
+    int num_names = CSLCount(names);
+    for (int i = 0; i < num_names; ++i) {
+        out.push_back(names[i]);
+    }
+
+    CSLDestroy(names);
+    GDALAlgorithmRegistryRelease(reg);
+    return out;
+#endif  // GDALALG_MIN_GDAL_
+}
 
 // ****************************************************************************
 //  Implementation of exposed class GDALAlg, which wraps GDALAlgorithm and
-//  its related classes GDALAlgorithmArg and GDALArgDatasetValue
+//  its related classes GDALAlgorithmArg and GDALArgDatasetValue.
+//  Documented in R/gdalalg.R.
 // ****************************************************************************
 
 GDALAlg::GDALAlg() :
@@ -208,10 +246,11 @@ GDALAlg::GDALAlg(const Rcpp::CharacterVector &cmd, const Rcpp::RObject &args) {
         Rcpp::stop("number of elements in 'cmd' is out of range");
     }
 
+    Rcpp::CharacterVector cmd_in = enc_to_utf8_(cmd);
     m_cmd_str = "";
-    for (R_xlen_t i = 0; i < cmd.size(); ++i) {
-        m_cmd_str += Rcpp::as<std::string>(cmd[i]);
-        if (i < cmd.size() - 1) {
+    for (R_xlen_t i = 0; i < cmd_in.size(); ++i) {
+        m_cmd_str += Rcpp::as<std::string>(cmd_in[i]);
+        if (i < cmd_in.size() - 1) {
             m_cmd_str += " ";
         }
     }
@@ -233,12 +272,13 @@ GDALAlg::GDALAlg(const Rcpp::CharacterVector &cmd, const Rcpp::RObject &args) {
         }
     }
     else {
-        m_cmd = Rcpp::clone(cmd);
+        m_cmd = cmd_in;
     }
 
     if (!args.isNULL()) {
         if (Rcpp::is<Rcpp::CharacterVector>(args)) {
-            m_args = Rcpp::clone(args);
+            Rcpp::CharacterVector args_in(args);
+            m_args = enc_to_utf8_(args_in);
         }
         else if (Rcpp::is<Rcpp::List>(args)) {
             m_args = parseListArgs_(Rcpp::as<Rcpp::List>(args));
@@ -257,15 +297,15 @@ GDALAlg::GDALAlg(const Rcpp::CharacterVector &cmd, const Rcpp::RObject &args) {
 
 GDALAlg::~GDALAlg() {
 #if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
-    if (m_hActualAlg != nullptr) {
+    if (m_hActualAlg) {
         if (m_hasRun && !m_hasFinalized)
             GDALAlgorithmFinalize(m_hActualAlg);
         GDALAlgorithmRelease(m_hActualAlg);
     }
 
-    if (m_hAlg != nullptr) {
+    if (m_hAlg)
         GDALAlgorithmRelease(m_hAlg);
-    }
+
 #endif  // GDALALG_MIN_GDAL_
 }
 
@@ -274,7 +314,7 @@ Rcpp::List GDALAlg::info() const {
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
 #else
 
-    if (m_hAlg == nullptr)
+    if (!m_hAlg)
         Rcpp::stop("algorithm not instantiated");
 
     Rcpp::List alg_info = Rcpp::List::create();
@@ -314,11 +354,11 @@ Rcpp::List GDALAlg::info() const {
         std::vector<std::string> names(papszArgNames, papszArgNames + nCount);
 
 #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)
-        // cf. https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060825.html
+        // see https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060825.html
         names.erase(std::remove(names.begin(), names.end(), "help-doc"),
                     names.end());
 #else
-        // cf. https://github.com/OSGeo/gdal/pull/12890
+        // see https://github.com/OSGeo/gdal/pull/12890
         std::vector<std::string> hidden_args = {};
         for (const std::string &nm : names) {
             auto hArg = GDALAlgorithmGetArg(alg, nm.c_str());
@@ -353,7 +393,7 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
 #else
 
-    if (m_hAlg == nullptr)
+    if (!m_hAlg)
         Rcpp::stop("algorithm not instantiated");
 
     if (arg_name == "" || arg_name == NA_STRING)
@@ -365,7 +405,7 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
     hArg = GDALAlgorithmGetArg(m_hActualAlg ? m_hActualAlg : m_hAlg,
                                arg_name.get_cstring());
 
-    if (hArg == nullptr)
+    if (!hArg)
         Rcpp::stop("failed to obtain GDALAlgorithmArg object for 'arg_name'");
 
     arg_info.push_back(GDALAlgorithmArgGetName(hArg), "name");
@@ -424,8 +464,8 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
                        "has_default_value");
 
     if (GDALAlgorithmArgHasDefaultValue(hArg)) {
-    // cf. https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060818.html
-    // cf. https://github.com/OSGeo/gdal/pull/12853 for GDAL >= 3.12
+    // see https://lists.osgeo.org/pipermail/gdal-dev/2025-August/060818.html
+    // see https://github.com/OSGeo/gdal/pull/12853 for GDAL >= 3.12
 
         if (eType == GAAT_STRING) {
     #if GDAL_VERSION_NUM < GDAL_COMPUTE_VERSION(3, 12, 0)
@@ -541,7 +581,7 @@ Rcpp::List GDALAlg::argInfo(const Rcpp::String &arg_name) const {
                        "is_hidden_for_cli");
     // GDALAlgorithmArgIsOnlyForCLI() is deprecated at GDAL 3.12
     // renamed to GDALAlgorithmArgIsHiddenForAPI()
-    // cf. https://github.com/OSGeo/gdal/pull/12890
+    // see https://github.com/OSGeo/gdal/pull/12890
     arg_info.push_back(GDALAlgorithmArgIsHiddenForAPI(hArg),
                        "is_only_for_cli");
     #endif
@@ -615,7 +655,7 @@ Rcpp::String GDALAlg::usageAsJSON() const {
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
 #else
 
-    if (m_hAlg == nullptr)
+    if (!m_hAlg)
         Rcpp::stop("algorithm not instantiated");
 
     char *pszUsage = nullptr;
@@ -638,7 +678,7 @@ bool GDALAlg::parseCommandLineArgs() {
 
     // parses cl args which sets the values, and also instantiates m_hActualAlg
 
-    if (m_hAlg == nullptr)
+    if (!m_hAlg)
         Rcpp::stop("algorithm not instantiated");
 
     if (m_haveParsedCmdLineArgs) {
@@ -662,7 +702,7 @@ bool GDALAlg::parseCommandLineArgs() {
                     if (it->second.size() > 1) {
                         Rcpp::Rcout << it->first.c_str() << ": " <<
                             "dataset list given where single dataset expected"
-                            << std::endl;
+                            << "\n";
 
                         res = false;
                     } else {
@@ -721,7 +761,7 @@ bool GDALAlg::parseCommandLineArgs() {
                     contains_str_(m_args, "--if")) {
 
                     if (!quiet) {
-                        Rcpp::Rcout << "argument: " << pszArgName << std::endl;
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
                         Rcpp::warning(warning_msg);
                     }
                 }
@@ -745,7 +785,7 @@ bool GDALAlg::parseCommandLineArgs() {
                     contains_str_(m_args, "-l")) {
 
                     if (!quiet) {
-                        Rcpp::Rcout << "argument: " << pszArgName << std::endl;
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
                         Rcpp::warning(warning_msg);
                     }
                 }
@@ -761,10 +801,8 @@ bool GDALAlg::parseCommandLineArgs() {
                         res = false;
                     }
                     if (!res) {
-                        Rcpp::Rcout << "argument: " << pszArgName << std::endl;
-                        Rcpp::Rcout << "  failed to set from object"
-                            << std::endl;
-
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
+                        Rcpp::Rcout << "  failed to set from object\n";
                         break;
                     }
                 }
@@ -775,8 +813,7 @@ bool GDALAlg::parseCommandLineArgs() {
 
                 if (contains_str_(m_args, "--sql")) {
                     if (!quiet) {
-                        Rcpp::Rcout << "argument: " << pszArgName <<
-                            std::endl;
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
                         Rcpp::warning(warning_msg);
                     }
                 }
@@ -794,8 +831,8 @@ bool GDALAlg::parseCommandLineArgs() {
                     }
                 }
                 if (!res) {
-                    Rcpp::Rcout << "argument: " << pszArgName << std::endl;
-                    Rcpp::Rcout << "  failed to set from object" << std::endl;
+                    Rcpp::Rcout << "argument: " << pszArgName << "\n";
+                    Rcpp::Rcout << "  failed to set from object\n";
 
                     break;
                 }
@@ -806,8 +843,7 @@ bool GDALAlg::parseCommandLineArgs() {
 
                 if (contains_str_(m_args, "--dialect")) {
                     if (!quiet) {
-                        Rcpp::Rcout << "argument: " << pszArgName <<
-                            std::endl;
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
                         Rcpp::warning(warning_msg);
                     }
                 }
@@ -828,8 +864,8 @@ bool GDALAlg::parseCommandLineArgs() {
                     }
                 }
                 if (!res) {
-                    Rcpp::Rcout << "argument: " << pszArgName << std::endl;
-                    Rcpp::Rcout << "  failed to set from object" << std::endl;
+                    Rcpp::Rcout << "argument: " << pszArgName << "\n";
+                    Rcpp::Rcout << "  failed to set from object\n";
 
                     break;
                 }
@@ -840,8 +876,7 @@ bool GDALAlg::parseCommandLineArgs() {
 
                 if (contains_str_(m_args, "--like-sql")) {
                     if (!quiet) {
-                        Rcpp::Rcout << "argument: " << pszArgName <<
-                            std::endl;
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
                         Rcpp::warning(warning_msg);
                     }
                 }
@@ -861,8 +896,8 @@ bool GDALAlg::parseCommandLineArgs() {
                     }
                 }
                 if (!res) {
-                    Rcpp::Rcout << "argument: " << pszArgName << std::endl;
-                    Rcpp::Rcout << "  failed to set from object" << std::endl;
+                    Rcpp::Rcout << "argument: " << pszArgName << "\n";
+                    Rcpp::Rcout << "  failed to set from object\n";
 
                     break;
                 }
@@ -873,7 +908,7 @@ bool GDALAlg::parseCommandLineArgs() {
 
                 if (contains_str_(m_args, "--like-layer")) {
                     if (!quiet) {
-                        Rcpp::Rcout << "argument: " << pszArgName << std::endl;
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
                         Rcpp::warning(warning_msg);
                     }
                 }
@@ -889,10 +924,8 @@ bool GDALAlg::parseCommandLineArgs() {
                         res = false;
                     }
                     if (!res) {
-                        Rcpp::Rcout << "argument: " << pszArgName << std::endl;
-                        Rcpp::Rcout << "  failed to set from object"
-                            << std::endl;
-
+                        Rcpp::Rcout << "argument: " << pszArgName << "\n";
+                        Rcpp::Rcout << "  failed to set from object\n";
                         break;
                     }
                 }
@@ -930,7 +963,7 @@ bool GDALAlg::run() {
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
 #else
 
-    if (m_hAlg == nullptr)
+    if (!m_hAlg)
         Rcpp::stop("algorithm not instantiated");
 
     if (m_hasRun)
@@ -938,18 +971,15 @@ bool GDALAlg::run() {
 
     if (!m_haveParsedCmdLineArgs) {
         if (!parseCommandLineArgs()) {
-            if (!quiet) {
-                Rcpp::Rcout << "parse command line arguments failed" <<
-                    std::endl;
-            }
+            if (!quiet)
+                Rcpp::Rcout << "parse command line arguments failed\n";
             return false;
         }
     }
 
-    if (m_hActualAlg == nullptr) {
-        if (!quiet) {
-            Rcpp::Rcout << "actual algorithm handle is nullptr" << std::endl;
-        }
+    if (!m_hActualAlg) {
+        if (!quiet)
+            Rcpp::Rcout << "actual algorithm handle is NULL\n";
         return false;
     }
 
@@ -969,10 +999,10 @@ SEXP GDALAlg::output() const {
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
 #else
 
-    if (m_hAlg == nullptr)
+    if (!m_hAlg)
         Rcpp::stop("algorithm not instantiated");
 
-    if (!m_hasRun || m_hActualAlg == nullptr)
+    if (!m_hasRun || !m_hActualAlg)
         Rcpp::stop("algorithm has not run");
 
     std::vector<std::string> out_arg_names = getOutputArgNames_();
@@ -997,10 +1027,10 @@ Rcpp::List GDALAlg::outputs() const {
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
 #else
 
-    if (m_hAlg == nullptr)
+    if (!m_hAlg)
         Rcpp::stop("algorithm not instantiated");
 
-    if (!m_hasRun || m_hActualAlg == nullptr)
+    if (!m_hasRun || !m_hActualAlg)
         Rcpp::stop("algorithm has not run");
 
     std::vector<std::string> out_arg_names = getOutputArgNames_();
@@ -1012,10 +1042,10 @@ Rcpp::List GDALAlg::outputs() const {
     for (std::string arg_name : out_arg_names) {
         GDALAlgorithmArgH hArg = nullptr;
         hArg = GDALAlgorithmGetArg(m_hActualAlg, arg_name.c_str());
-        if (hArg == nullptr) {
+        if (!hArg) {
             if (!quiet) {
-                Rcpp::Rcout << "got nullptr for arg: " << arg_name.c_str()
-                    << std::endl;
+                Rcpp::Rcout << "got NULL for arg: " << arg_name.c_str()
+                    << "\n";
             }
             continue;
         }
@@ -1038,27 +1068,27 @@ bool GDALAlg::close() {
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
 #else
 
-    if (m_hAlg == nullptr)
+    if (!m_hAlg)
         Rcpp::stop("algorithm not instantiated");
 
     if (!m_hasRun) {
         if (!quiet)
-            Rcpp::Rcout << "algorithm has not run" << std::endl;
+            Rcpp::Rcout << "algorithm has not run\n";
         return false;
     }
 
     if (m_hasFinalized) {
         if (!quiet)
-            Rcpp::Rcout << "algorithm has already been finalized" << std::endl;
+            Rcpp::Rcout << "algorithm has already been finalized\n";
         return false;
     }
 
-    if (m_hActualAlg != nullptr) {
+    if (m_hActualAlg) {
         return GDALAlgorithmFinalize(m_hActualAlg);
     }
     else {
         if (!quiet)
-            Rcpp::Rcout << "actual algorithm is nullptr" << std::endl;
+            Rcpp::Rcout << "actual algorithm is nullptr\n";
         return false;
     }
 #endif  // GDALALG_MIN_GDAL_
@@ -1069,14 +1099,14 @@ void GDALAlg::release() {
     Rcpp::stop(GDALALG_MIN_GDAL_MSG_);
 #else
 
-    if (m_hActualAlg != nullptr) {
+    if (m_hActualAlg) {
         if (m_hasRun && !m_hasFinalized)
             GDALAlgorithmFinalize(m_hActualAlg);
         GDALAlgorithmRelease(m_hActualAlg);
         m_hActualAlg = nullptr;
     }
 
-    if (m_hAlg != nullptr) {
+    if (m_hAlg) {
         GDALAlgorithmRelease(m_hAlg);
         m_hAlg = nullptr;
     }
@@ -1086,23 +1116,22 @@ void GDALAlg::release() {
 
 void GDALAlg::show() const {
 #if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
-    Rcpp::Rcout << GDALALG_MIN_GDAL_MSG_ << std::endl;
+    Rcpp::Rcout << GDALALG_MIN_GDAL_MSG_ << "\n";
 #else
 
-    Rcpp::Rcout << "C++ object of class GDALAlg" << std::endl;
+    Rcpp::Rcout << "C++ object of class GDALAlg\n";
 
-    if (m_hAlg == nullptr) {
-        Rcpp::Rcout << " algorithm not instantiated" << std::endl;
+    if (!m_hAlg) {
+        Rcpp::Rcout << " algorithm not instantiated\n";
     }
     else {
         const GDALAlgorithmH &alg = m_hActualAlg ? m_hActualAlg : m_hAlg;
 
-        Rcpp::Rcout << " Name        : " << GDALAlgorithmGetName(alg) <<
-            std::endl;
+        Rcpp::Rcout << " Name        : " << GDALAlgorithmGetName(alg) << "\n";
         Rcpp::Rcout << " Description : " << GDALAlgorithmGetDescription(alg) <<
-            std::endl;
+            "\n";
         Rcpp::Rcout << " Help URL    : " << GDALAlgorithmGetHelpFullURL(alg) <<
-            std::endl;
+            "\n";
     }
 #endif  // GDALALG_MIN_GDAL_
 }
@@ -1112,7 +1141,7 @@ void GDALAlg::show() const {
 // ****************************************************************************
 
 Rcpp::CharacterVector GDALAlg::parseListArgs_(
-        const Rcpp::List &list_args) {
+                                const Rcpp::List &list_args) {
 
     // convert arguments in a named list to character vector form and return it
     // arguments in list form must use arg long names
@@ -1131,16 +1160,24 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
         Rcpp::stop("arg list must have named elements");
 
     for (R_xlen_t i = 0; i < num_args; ++i) {
-        if (list_args[i] == R_NilValue)
-            continue;
-
-        Rcpp::String nm = arg_names[i];
+        Rcpp::String nm(arg_names[i]);
         if (nm == NA_STRING || nm == "")
             continue;
 
+        if (list_args[i] == R_NilValue) {
+            Rcpp::Rcout << "ignoring NULL arg: " << nm.get_cstring() << "\n";
+            continue;
+        }
+
         nm.replace_all("--", "");
         nm.replace_all("_", "-");
-        std::string nm_no_dashes(nm.get_cstring());
+        if (STARTS_WITH(nm.get_cstring(), "-") &&
+            std::strlen(nm.get_cstring()) < 3) {
+
+            Rcpp::Rcout << "argument: " << arg_names[i] << "\n";
+            Rcpp::stop("arguments in list format must use \"long\" names");
+        }
+        std::string nm_no_lead_dashes(nm.get_cstring());
         nm.push_front("--");
 
         // boolean
@@ -1152,28 +1189,23 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
             }
         }
 
-        // potentially a single dataset
-        const Rcpp::RObject &val = list_args[i];
-        if (val.isObject()) {
-            const Rcpp::String cls = val.attr("class");
-            if (cls == "Rcpp_GDALRaster") {
-                const GDALRaster* const &ds = list_args[i];
-                std::vector<GDALDatasetH> ds_list = {};
-                ds_list.push_back(ds->getGDALDatasetH_());
-                m_map_input_hDS[nm_no_dashes] = ds_list;
-                continue;
-            }
-            if (cls == "Rcpp_GDALVector") {
-                GDALVector* const &ds = list_args[i];
-                std::vector<GDALDatasetH> ds_list = {};
-                ds_list.push_back(ds->getGDALDatasetH_());
-                m_map_input_hDS[nm_no_dashes] = ds_list;
-                if (EQUAL(nm.get_cstring(), "--input"))
-                    m_input_GDALVector = ds;
-                else if (EQUAL(nm.get_cstring(), "--like"))
-                    m_like_GDALVector = ds;
-                continue;
-            }
+        // string, string list
+        if (Rcpp::is<Rcpp::CharacterVector>(list_args[i])) {
+            Rcpp::CharacterVector arg_value = enc_to_utf8_(list_args[i]);
+            nm += "=";
+            nm += paste_collapse_(arg_value, ",");
+            arg_vec.push_back(nm);
+            continue;
+        }
+
+        // integer, integer list, real, real list
+        if (Rcpp::is<Rcpp::IntegerVector>(list_args[i]) ||
+            Rcpp::is<Rcpp::NumericVector>(list_args[i])) {
+
+            nm += "=";
+            nm += paste_collapse_(list_args[i], ",");
+            arg_vec.push_back(nm);
+            continue;
         }
 
         // potentially a list of datasets
@@ -1194,7 +1226,7 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
                         GDALVector* const &ds = list_tmp[j];
                         ds_list.push_back(ds->getGDALDatasetH_());
                         if (EQUAL(nm.get_cstring(), "--input") &&
-                            m_input_GDALVector == nullptr) {
+                            !m_input_GDALVector) {
 
                             m_input_GDALVector = ds;
                         }
@@ -1203,20 +1235,41 @@ Rcpp::CharacterVector GDALAlg::parseListArgs_(
             }
 
             if (!ds_list.empty()) {
-                m_map_input_hDS[nm_no_dashes] = ds_list;
+                m_map_input_hDS[nm_no_lead_dashes] = ds_list;
+            }
+            else {
+                Rcpp::Rcout << "unhandled list input: " <<
+                    nm_no_lead_dashes.c_str() << "\n";
             }
             continue;
         }
 
-        // string, string list, integer, integer list, real, real list
-        if (Rcpp::is<Rcpp::CharacterVector>(list_args[i]) ||
-                Rcpp::is<Rcpp::IntegerVector>(list_args[i]) ||
-                Rcpp::is<Rcpp::NumericVector>(list_args[i])) {
-
-            nm += "=";
-            nm += paste_collapse_(list_args[i], ",");
-            arg_vec.push_back(nm);
+        // potentially a single dataset
+        const Rcpp::RObject &val = list_args[i];
+        if (val.isObject()) {
+            const Rcpp::String cls = val.attr("class");
+            if (cls == "Rcpp_GDALRaster") {
+                const GDALRaster* const &ds = list_args[i];
+                std::vector<GDALDatasetH> ds_list = {};
+                ds_list.push_back(ds->getGDALDatasetH_());
+                m_map_input_hDS[nm_no_lead_dashes] = ds_list;
+                continue;
+            }
+            if (cls == "Rcpp_GDALVector") {
+                GDALVector* const &ds = list_args[i];
+                std::vector<GDALDatasetH> ds_list = {};
+                ds_list.push_back(ds->getGDALDatasetH_());
+                m_map_input_hDS[nm_no_lead_dashes] = ds_list;
+                if (EQUAL(nm.get_cstring(), "--input"))
+                    m_input_GDALVector = ds;
+                else if (EQUAL(nm.get_cstring(), "--like"))
+                    m_like_GDALVector = ds;
+                continue;
+            }
         }
+
+        Rcpp::Rcout << "unhandled input type for " <<
+            nm_no_lead_dashes.c_str() << "\n";
     }
 
     if (m_map_input_hDS.count("input") > 0) {
@@ -1239,52 +1292,65 @@ void GDALAlg::instantiateAlg_() {
 #else
     // instantiate m_hAlg
 
-    if (m_hAlg != nullptr || m_hActualAlg != nullptr) {
+    if (m_hAlg || m_hActualAlg) {
         Rcpp::stop(
-            "instantiateAlg_(): algorithm object appears already instantiated");
+            "instantiateAlg_(): algorithm object already instantiated");
     }
 
     GDALAlgorithmRegistryH reg = nullptr;
     reg = GDALGetGlobalAlgorithmRegistry();
-    if (reg == nullptr) {
+    if (!reg)
         Rcpp::stop("failed to obtain global algorithm registry");
-    }
 
     if (m_cmd.size() == 1) {
-        m_hAlg = GDALAlgorithmRegistryInstantiateAlg(reg, m_cmd[0]);
-        if (m_hAlg == nullptr) {
+        Rcpp::String cmd(m_cmd[0]);
+
+        m_hAlg = GDALAlgorithmRegistryInstantiateAlg(reg, cmd.get_cstring());
+
+        if (!m_hAlg) {
             GDALAlgorithmRegistryRelease(reg);
-            Rcpp::Rcout << "top-level command: " << m_cmd[0] << std::endl;
+            Rcpp::Rcout << "top-level command: " << cmd.get_cstring() << "\n";
             Rcpp::stop("failed to instantiate CLI algorithm");
         }
     }
     else {
         std::vector<GDALAlgorithmH> alg_tmp = {};
-        alg_tmp.push_back(GDALAlgorithmRegistryInstantiateAlg(reg, m_cmd[0]));
-        if (alg_tmp[0] == nullptr) {
+        Rcpp::String cmd(m_cmd[0]);
+
+        alg_tmp.push_back(
+            GDALAlgorithmRegistryInstantiateAlg(reg, cmd.get_cstring()));
+
+        if (!alg_tmp[0]) {
             GDALAlgorithmRegistryRelease(reg);
-            Rcpp::Rcout << "top-level command: " << m_cmd[0] << std::endl;
+            Rcpp::Rcout << "top-level command: " << cmd.get_cstring() << "\n";
             Rcpp::stop("failed to instantiate CLI algorithm");
         }
         for (R_xlen_t i = 1; i < m_cmd.size(); ++i) {
             if (i == (m_cmd.size() - 1)) {
-                m_hAlg = GDALAlgorithmInstantiateSubAlgorithm(alg_tmp[i - 1],
-                                                              m_cmd[i]);
-                if (m_hAlg == nullptr) {
+                // the final subcommand, instantiate m_hAlg here
+                Rcpp::String sub_cmd(m_cmd[i]);
+
+                m_hAlg =
+                    GDALAlgorithmInstantiateSubAlgorithm(alg_tmp[i - 1],
+                                                         sub_cmd.get_cstring());
+
+                if (!m_hAlg) {
                     for (GDALAlgorithmH alg : alg_tmp) {
                         if (alg)
                             GDALAlgorithmRelease(alg);
                     }
                     GDALAlgorithmRegistryRelease(reg);
-                    Rcpp::Rcout << "subcommand: " << m_cmd[i] << std::endl;
-                    Rcpp::stop(
-                        "failed to instantiate CLI algorithm");
+                    Rcpp::Rcout << "subcommand: " << sub_cmd.get_cstring() <<
+                        "\n";
+                    Rcpp::stop("failed to instantiate CLI algorithm");
                 }
             }
             else {
+                Rcpp::String sub_cmd(m_cmd[i]);
+
                 alg_tmp.push_back(
-                    GDALAlgorithmInstantiateSubAlgorithm(alg_tmp[i - 1],
-                                                         m_cmd[i]));
+                    GDALAlgorithmInstantiateSubAlgorithm(
+                        alg_tmp[i - 1], sub_cmd.get_cstring()));
 
                 if (alg_tmp.back() == nullptr) {
                     for (GDALAlgorithmH alg : alg_tmp) {
@@ -1292,9 +1358,9 @@ void GDALAlg::instantiateAlg_() {
                             GDALAlgorithmRelease(alg);
                     }
                     GDALAlgorithmRegistryRelease(reg);
-                    Rcpp::Rcout << "subcommand: " << m_cmd[i] << std::endl;
-                    Rcpp::stop(
-                        "failed to instantiate CLI algorithm");
+                    Rcpp::Rcout << "subcommand: " << sub_cmd.get_cstring() <<
+                        "\n";
+                    Rcpp::stop("failed to instantiate CLI algorithm");
                 }
             }
         }
@@ -1314,16 +1380,13 @@ std::vector<std::string> GDALAlg::getOutputArgNames_() const {
 #if GDAL_VERSION_NUM < GDALALG_MIN_GDAL_
     return names_out;
 #else
-
     char **papszArgNames = nullptr;
     if (m_hActualAlg) {
         papszArgNames = GDALAlgorithmGetArgNames(m_hActualAlg);
     }
     else {
-        if (!quiet) {
-            Rcpp::Rcout << "actual algorithm object not instantiated" <<
-                std::endl;
-        }
+        if (!quiet)
+            Rcpp::Rcout << "actual algorithm object not instantiated\n";
         return names_out;
     }
 
@@ -1333,10 +1396,10 @@ std::vector<std::string> GDALAlg::getOutputArgNames_() const {
         for (std::string arg_name : names) {
             GDALAlgorithmArgH hArg = nullptr;
             hArg = GDALAlgorithmGetArg(m_hActualAlg, arg_name.c_str());
-            if (hArg == nullptr) {
+            if (!hArg) {
                 if (!quiet) {
                     Rcpp::Rcout << "got nullptr for arg: " << arg_name.c_str()
-                        << std::endl;
+                        << "\n";
                 }
                 continue;
             }
@@ -1354,7 +1417,7 @@ std::vector<std::string> GDALAlg::getOutputArgNames_() const {
 
 #if GDAL_VERSION_NUM >= GDALALG_MIN_GDAL_
 SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
-    if (hArg == nullptr)
+    if (!hArg)
         Rcpp::stop("got nullptr for GDALAlgorithmArgH hArg");
 
     SEXP out = R_NilValue;
@@ -1448,12 +1511,9 @@ SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
         {
             GDALArgDatasetValueH hArgDSValue = nullptr;
             hArgDSValue = GDALAlgorithmArgGetAsDatasetValue(hArg);
-
-            if (hArgDSValue == nullptr) {
-                if (!quiet) {
-                    Rcpp::Rcout << "output dataset value is NULL" <<
-                        std::endl;
-                }
+            if (!hArgDSValue) {
+                if (!quiet)
+                    Rcpp::Rcout << "output dataset value is NULL\n";
                 return R_NilValue;
             }
 
@@ -1464,7 +1524,7 @@ SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
 
             GDALDatasetH hDS = nullptr;
             hDS = GDALArgDatasetValueGetDatasetIncreaseRefCount(hArgDSValue);
-            if (hDS == nullptr) {
+            if (!hDS) {
                 GDALArgDatasetValueRelease(hArgDSValue);
                 Rcpp::stop("GDAL dataset object is NULL");
             }
@@ -1472,7 +1532,6 @@ SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
             // raster
             if (ds_type & GDAL_OF_RASTER) {
                 std::string ds_name(GDALArgDatasetValueGetName(hArgDSValue));
-
                 GDALRaster *ds = new GDALRaster();
                 ds->setFilename(ds_name);
                 ds->setGDALDatasetH_(hDS, with_update);
@@ -1482,7 +1541,6 @@ SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
             // vector
             else if (ds_type & GDAL_OF_VECTOR) {
                 std::string ds_name(GDALArgDatasetValueGetName(hArgDSValue));
-
                 OGRLayerH hLayer = nullptr;
                 std::string layer_name = "";
                 if (this->outputLayerNameForOpen == "" ||
@@ -1494,10 +1552,9 @@ SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
                     layer_name = this->outputLayerNameForOpen;
                     hLayer = GDALDatasetGetLayerByName(hDS, layer_name.c_str());
                 }
-
                 if (layer_name == "") {
                     // default layer first by index was opened
-                    if (hLayer != nullptr)
+                    if (hLayer)
                         layer_name = OGR_L_GetName(hLayer);
                 }
 
@@ -1505,15 +1562,13 @@ SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
                 lyr->setDsn_(ds_name);
                 lyr->setGDALDatasetH_(hDS, true);
                 lyr->setOGRLayerH_(hLayer, layer_name);
-                if (hLayer != nullptr)
+                if (hLayer)
                     lyr->setFieldNames_();
-
                 const GDALVector &lyr_ref = *lyr;
                 out = Rcpp::wrap(lyr_ref);
             }
             // multidim raster - currently only as dataset name
             else if (ds_type & GDAL_OF_MULTIDIM_RASTER) {
-
                 out = Rcpp::wrap(GDALArgDatasetValueGetName(hArgDSValue));
             }
             // unrecognized dataset type - should not occur
@@ -1532,14 +1587,13 @@ SEXP GDALAlg::getOutputArgValue_(const GDALAlgorithmArgH &hArg) const {
             Rcpp::warning(
                 "unhandled output of type DATASET_LIST (returned NULL)");
             out = R_NilValue;
-
         }
         break;
 
         default:
         {
             Rcpp::Rcout << "GDALAlgorithmArgType: " <<
-                GDALAlgorithmArgGetType(hArg) << std::endl;
+                GDALAlgorithmArgGetType(hArg) << "\n";
 
             out = Rcpp::wrap("unhandled arg type");
         }

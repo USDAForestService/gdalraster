@@ -53,7 +53,7 @@
 #' \code{=} assignment).
 #'
 #' @section Usage (see Details):
-#' \preformatted{
+#' ```
 #' ## Constructors
 #' # for single-layer file formats such as shapefile
 #' lyr <- new(GDALVector, dsn)
@@ -134,7 +134,7 @@
 #' lyr$getMetadataItem(mdi_name)
 #'
 #' lyr$close()
-#' }
+#' ```
 #' @section Details:
 #' ## Constructors
 #'

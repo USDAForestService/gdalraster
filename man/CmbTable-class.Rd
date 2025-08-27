@@ -31,8 +31,8 @@ for readability.
 }
 \section{Usage (see Details)}{
 
-\preformatted{
-## Constructors
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## Constructors
 cmb <- new(CmbTable, keyLen)
 # or, giving the variable names:
 cmb <- new(CmbTable, keyLen, varNames)
@@ -43,7 +43,7 @@ cmb$updateFromMatrix(int_cmbs, incr)
 cmb$updateFromMatrixByRow(int_cmbs, incr)
 cmb$asDataFrame()
 cmb$asMatrix()
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Details}{

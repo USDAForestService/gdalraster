@@ -44,8 +44,8 @@ computes statistics for a whole raster band.
 }
 \section{Usage (see Details)}{
 
-\preformatted{
-## Constructor
+
+\if{html}{\out{<div class="sourceCode">}}\preformatted{## Constructor
 rs <- new(RunningStats, na_rm)
 
 ## Methods
@@ -58,7 +58,7 @@ rs$get_sum()
 rs$get_var()
 rs$get_sd()
 rs$reset()
-}
+}\if{html}{\out{</div>}}
 }
 
 \section{Details}{

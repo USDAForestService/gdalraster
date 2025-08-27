@@ -36,12 +36,12 @@
 //'
 //' @returns
 //' `gdal_version()` returns a character vector of length four containing:
-//'   * "–version" - one line version message, e.g., “GDAL 3.6.3, released
-//'   2023/03/12”
-//'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., “3060300” for
+//'   * "-version" - one line version message, e.g., "GDAL 3.6.3, released
+//'   2023/03/12"
+//'   * "GDAL_VERSION_NUM" - formatted as a string, e.g., "3060300" for
 //'   GDAL 3.6.3.0
-//'   * "GDAL_RELEASE_DATE" - formatted as a string, e.g., “20230312”
-//'   * "GDAL_RELEASE_NAME" - e.g., “3.6.3”
+//'   * "GDAL_RELEASE_DATE" - formatted as a string, e.g., "20230312"
+//'   * "GDAL_RELEASE_NAME" - e.g., "3.6.3"
 //'
 //' `gdal_version_num()` returns `as.integer(gdal_version()[2])`
 //' @examples
