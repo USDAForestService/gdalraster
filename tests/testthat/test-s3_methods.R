@@ -1,7 +1,11 @@
 test_that("plot.OGRFeature / plot.OGRFeatureSet work", {
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
-    lyr <- new(GDALVector, f, "mtbs_perims")
+    dsn <- file.path(tempfile(fileext = ".gpkg"))
+    file.copy(f, dsn, overwrite = TRUE)
+
+    lyr <- new(GDALVector, dsn, "mtbs_perims")
     on.exit(lyr$close())
+    on.exit(unlink(dsn), add = TRUE)
 
     lyr$returnGeomAs <- "WKB"
     feat <- lyr$getNextFeature()
