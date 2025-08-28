@@ -24,9 +24,13 @@ make any attempt to report passed error or warning messages, but will
 process debug messages via \code{CPLDefaultErrorHandler}.
 }
 \note{
+This function is for advanced use cases. It is intended for setting a
+\emph{temporary} error handler in a limited segment of code. A global error
+handler specific to the R environment is in use by default.
+
 Setting \code{handler = "logging"} will use \code{CPLLoggingErrorHandler()}, error
 handler that logs into the file defined by the \code{CPL_LOG} configuration
-option, or \code{stderr} otherwise.
+option. Be sure that option is set when using this error handler.
 
 This only affects error reporting from GDAL.
 }

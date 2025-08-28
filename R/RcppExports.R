@@ -364,9 +364,13 @@ set_cache_max <- function(nbytes) {
 #' @returns No return value, called for side effects.
 #'
 #' @note
+#' This function is for advanced use cases. It is intended for setting a
+#' _temporary_ error handler in a limited segment of code. A global error
+#' handler specific to the R environment is in use by default.
+#'
 #' Setting `handler = "logging"` will use `CPLLoggingErrorHandler()`, error
 #' handler that logs into the file defined by the `CPL_LOG` configuration
-#' option, or `stderr` otherwise.
+#' option. Be sure that option is set when using this error handler.
 #'
 #' This only affects error reporting from GDAL.
 #'
@@ -406,7 +410,7 @@ pop_error_handler <- function() {
 #' Check a filename before passing to GDAL and potentially fix.
 #' 'filename' may be a physical file, URL, connection string, filename with
 #' additional parameters, etc.
-#' Currently, only checks for leading tilde and does path expasion in that
+#' Currently, only checks for leading tilde and does path expansion in that
 #' case. Returns the filename in UTF-8 encoding if possible using R enc2utf8.
 #'
 #' @noRd
