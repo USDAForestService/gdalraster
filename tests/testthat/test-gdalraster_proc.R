@@ -18,7 +18,7 @@ test_that("calc writes correct results", {
                     var.names = "ELEV_M",
                     dtName = "Int16",
                     setRasterNodataValue = TRUE)
-    on.exit(deleteDataset(hi_file))
+    on.exit(deleteDataset(hi_file), add=TRUE)
     ds <- new(GDALRaster, hi_file, read_only=TRUE)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
@@ -35,7 +35,7 @@ test_that("calc writes correct results", {
                       dtName = "Float32",
                       nodata_value = -32767,
                       setRasterNodataValue = TRUE)
-    on.exit(deleteDataset(ndvi_file))
+    on.exit(deleteDataset(ndvi_file), add=TRUE)
     ds <- new(GDALRaster, ndvi_file, read_only=TRUE)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
@@ -45,7 +45,7 @@ test_that("calc writes correct results", {
     # recode
     lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
     tif_file <- paste0(tempdir(), "/", "storml_lndscp.tif")
-    on.exit(deleteDataset(tif_file))
+    on.exit(deleteDataset(tif_file), add=TRUE)
     createCopy("GTiff", tif_file, lcp_file)
     expr <- "ifelse( SLP >= 40 & FBFM %in% c(101,102), 99, FBFM)"
     calc(expr = expr,
@@ -197,7 +197,7 @@ test_that("combine writes correct output", {
 test_that("rasterFromRaster works", {
     lcp_file <- system.file("extdata/storm_lake.lcp", package="gdalraster")
     slpp_file <- paste0(tempdir(), "/", "storml_slpp.tif")
-    on.exit(deleteDataset(slpp_file))
+    on.exit(deleteDataset(slpp_file), add=TRUE)
     options = c("COMPRESS=LZW")
     rasterFromRaster(srcfile = lcp_file,
                      dstfile = slpp_file,
@@ -212,7 +212,7 @@ test_that("rasterFromRaster works", {
     expect_equal(chk, 47771)
 
     slpp_file_img <- paste0(tempdir(), "/", "storml_slpp.img")
-    on.exit(deleteDataset(slpp_file_img))
+    on.exit(deleteDataset(slpp_file_img), add=TRUE)
     options = c("COMPRESSED=YES")
     rasterFromRaster(srcfile = lcp_file,
                      dstfile = slpp_file_img,
@@ -227,7 +227,7 @@ test_that("rasterFromRaster works", {
     expect_equal(chk, 47771)
 
     slpp_file_envi <- paste0(tempdir(), "/", "storml_slpp")
-    on.exit(deleteDataset(slpp_file_envi))
+    on.exit(deleteDataset(slpp_file_envi), add=TRUE)
     # error on unknown file format:
     expect_error(rasterFromRaster(srcfile = lcp_file,
                                   dstfile = slpp_file_envi,
@@ -253,7 +253,7 @@ test_that("rasterToVRT works", {
     vrt_file <- rasterToVRT(evt_file,
                             resolution=c(90,90),
                             resampling="mode")
-    on.exit(deleteDataset(vrt_file))
+    on.exit(deleteDataset(vrt_file), add=TRUE)
     ds <- new(GDALRaster, vrt_file, read_only=TRUE)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
@@ -269,7 +269,7 @@ test_that("rasterToVRT works", {
     vrt_file <- rasterToVRT(evt_file,
                             subwindow = bbox_from_wkt(bnd),
                             src_align=TRUE)
-    on.exit(deleteDataset(vrt_file))
+    on.exit(deleteDataset(vrt_file), add=TRUE)
     ds <- new(GDALRaster, vrt_file, read_only=TRUE)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
@@ -280,7 +280,7 @@ test_that("rasterToVRT works", {
     vrt_file <- rasterToVRT(evt_file,
                             subwindow = bbox_from_wkt(bnd),
                             src_align=FALSE)
-    on.exit(deleteDataset(vrt_file))
+    on.exit(deleteDataset(vrt_file), add=TRUE)
     ds <- new(GDALRaster, vrt_file, read_only=TRUE)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
@@ -300,7 +300,7 @@ test_that("rasterToVRT works", {
                             resolution = ds_lcp$res(),
                             subwindow = ds_lcp$bbox(),
                             src_align = FALSE)
-    on.exit(deleteDataset(vrt_file))
+    on.exit(deleteDataset(vrt_file), add=TRUE)
     ds_lcp$close()
     ds <- new(GDALRaster, vrt_file, read_only=TRUE)
     dm <- ds$dim()
@@ -314,7 +314,7 @@ test_that("rasterToVRT works", {
               0.11111, 0.11111, 0.11111,
               0.11111, 0.11111, 0.11111)
     vrt_file <- rasterToVRT(elev_file, krnl=krnl)
-    on.exit(deleteDataset(vrt_file))
+    on.exit(deleteDataset(vrt_file), add=TRUE)
     ds <- new(GDALRaster, vrt_file, read_only=TRUE)
     dm <- ds$dim()
     chk <- ds$getChecksum(1, 0, 0, dm[1], dm[2])
@@ -327,16 +327,16 @@ test_that("rasterToVRT works", {
 test_that("dem_proc runs without error", {
     elev_file <- system.file("extdata/storml_elev_orig.tif", package="gdalraster")
     hs_file <- paste0(tempdir(), "/", "storml_hillshade.tif")
-    on.exit(deleteDataset(hs_file))
+    on.exit(deleteDataset(hs_file), add=TRUE)
     expect_true(dem_proc("hillshade", elev_file, hs_file))
 
     sq <- seq(2400, 3100, by = 100)
     col <- col2rgb(hcl.colors(length(sq)))
     pal <- tempfile(fileext = ".txt")
-    on.exit(unlink(pal))
+    on.exit(unlink(pal), add=TRUE)
     writeLines(paste(sq, col[1, ], col[2, ], col[3, ]), pal)
     cr_file <- tempfile(fileext = ".tif")
-    on.exit(deleteDataset(cr_file))
+    on.exit(deleteDataset(cr_file), add=TRUE)
     expect_true(dem_proc("color-relief", elev_file, cr_file, color_file = pal))
 })
 

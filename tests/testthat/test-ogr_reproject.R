@@ -21,16 +21,16 @@ test_that("ogr_reproject works", {
     # (>= GDAL 3.11.3)
 
     set_config_option("OGR2OGR_USE_ARROW_API", "NO")
-    on.exit(set_config_option("OGR2OGR_USE_ARROW_API", ""))
+    on.exit(set_config_option("OGR2OGR_USE_ARROW_API", ""), add = TRUE)
 
     f <- system.file("extdata/ynp_features.zip", package = "gdalraster")
     # ynp_dsn <- file.path("/vsizip", f, "ynp_features.gpkg")
     unzip(f, files = "ynp_features.gpkg", exdir = tempdir())
     ynp_dsn <- file.path(tempdir(), "ynp_features.gpkg")
-    on.exit(unlink(ynp_dsn))
+    on.exit(unlink(ynp_dsn), add = TRUE)
 
     out_gpkg <- tempfile(fileext = ".gpkg")
-    on.exit(unlink(out_gpkg))
+    on.exit(unlink(out_gpkg), add = TRUE)
     ## create a new output dsn, append to existing, and overwrite
     # create new
     expect_no_error(lyr <- ogr_reproject(ynp_dsn, "ynp_bnd",
@@ -73,7 +73,7 @@ test_that("ogr_reproject works", {
 
     ## output to shapefile
     out_shp <- tempfile(fileext = ".shp")
-    on.exit(deleteDataset(out_shp))
+    on.exit(deleteDataset(out_shp), add = TRUE)
     expect_no_error(lyr <- ogr_reproject(ynp_dsn, "ynp_bnd",
                                          out_shp, "EPSG:32100"))
     expect_equal(lyr$getFeatureCount(), 1)
@@ -93,7 +93,7 @@ test_that("ogr_reproject works", {
 
     ## SQL layer with output to GeoJSON WGS84
     out_json <- tempfile(fileext = ".geojson")
-    on.exit(unlink(out_json))
+    on.exit(unlink(out_json), add = TRUE)
     sql <- "SELECT poiname, geom FROM points_of_interest
             WHERE poitype = 'Ranger Station'"
     # nln required for SQL layer
@@ -135,7 +135,7 @@ test_that("ogr_reproject works", {
 
     ## errors
     out_gpkg2 <- tempfile(fileext = ".gpkg")
-    on.exit(unlink(out_gpkg2))
+    on.exit(unlink(out_gpkg2), add = TRUE)
     expect_error(ogr_reproject(c(ynp_dsn, shp_dsn), "ynp_bnd",
                                out_gpkg2, "EPSG:32100"))
     expect_error(ogr_reproject(ynp_dsn, c("ynp_bnd", "roads"),

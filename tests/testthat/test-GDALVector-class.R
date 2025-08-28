@@ -1913,8 +1913,9 @@ test_that("ArrowArrayStream is readable", {
     skip_if(gdal_version_num() < 3060000)
 
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
-    dsn <- file.path(tempdir(), basename(f))
+    dsn <- file.path(tempfile(fileext = ".tif"))
     file.copy(f, dsn, overwrite = TRUE)
+    on.exit(deleteDataset(dsn))
 
     lyr <- new(GDALVector, dsn, "mtbs_perims")
 
@@ -1930,8 +1931,6 @@ test_that("ArrowArrayStream is readable", {
     expect_equal(batch$children$fid$length, 61)
 
     expect_no_error(stream$release())
-    rm(stream)
-    gc()
 
     # with options
     lyr$arrowStreamOptions <- "INCLUDE_FID=NO"
@@ -1943,39 +1942,39 @@ test_that("ArrowArrayStream is readable", {
     expect_no_error(stream2$release())
 
     lyr$close()
-    rm(stream2)
-    rm(lyr)
-    deleteDataset(dsn)
-    gc()
 })
 
 test_that("nanoarrow_array_stream implicit release works", {
     skip_if(gdal_version_num() < 3060000)
 
+    # dataset/layer closed without explicit release
     f <- system.file("extdata/ynp_fires_1984_2022.gpkg", package = "gdalraster")
-    dsn <- file.path(tempdir(), basename(f))
+    dsn <- file.path(tempfile(fileext = ".gpkg"))
     file.copy(f, dsn, overwrite = TRUE)
 
     lyr <- new(GDALVector, dsn, "mtbs_perims")
 
-    # dataset/layer closed without explicit release
     lyr$open(read_only = TRUE)
     expect_no_error(stream3 <- lyr$getArrowStream())
     expect_s3_class(stream3, "nanoarrow_array_stream")
     lyr$close()
     expect_error(stream3$get_next())
 
+    unlink(dsn)
+
     # stream garbage collected without explicit release
-    lyr$open(read_only = TRUE)
-    expect_no_error(stream3 <- lyr$getArrowStream())
-    expect_s3_class(stream3, "nanoarrow_array_stream")
-    rm(stream3)
+    dsn2 <- file.path(tempfile(fileext = ".gpkg"))
+    file.copy(f, dsn2, overwrite = TRUE)
+
+    lyr2 <- new(GDALVector, dsn2, "mtbs_perims")
+    expect_no_error(stream4 <- lyr2$getArrowStream())
+    expect_s3_class(stream4, "nanoarrow_array_stream")
+    rm(stream4)
     gc()
     # released implicitly so a new stream should be available
-    expect_no_error(stream4 <- lyr$getArrowStream())
-    expect_s3_class(stream4, "nanoarrow_array_stream")
+    expect_no_error(stream5 <- lyr2$getArrowStream())
+    expect_s3_class(stream5, "nanoarrow_array_stream")
 
-    lyr$close()
-
-    deleteDataset(dsn)
+    lyr2$close()
+    unlink(dsn2)
 })
