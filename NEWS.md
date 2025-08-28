@@ -1,4 +1,6 @@
-# gdalraster 2.2.0.9010 (dev)
+# gdalraster 2.2.0.9011 (dev)
+
+* (internal) fixes in several tests mainly fixing `on.exit()` cleanup code (#783) (2025-08-27)
 
 * class `GDALAlg`: improve input validation; fix clang compiler warning from `-Wunused-const-variable`; ensure algorithm names originating in `Rcpp::CharacterVector` are always passed explicitly in GDAL C API calls as `const char *`, via `get_cstring()` method of `Rcpp::String` (#782) (2025-08-26)
 
