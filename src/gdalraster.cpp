@@ -9,6 +9,7 @@
 #include <algorithm>
 #include <cmath>
 #include <complex>
+#include <sstream>
 #include <utility>
 
 #include "gdal.h"
