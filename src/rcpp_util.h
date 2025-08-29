@@ -49,6 +49,8 @@ std::string str_tolower_(const std::string &s);
 
 bool contains_str_(const Rcpp::CharacterVector &v, const Rcpp::String &s);
 
+bool is_namespace_loaded_(const Rcpp::String &pkg);
+
 // case-insensitive comparator for std::map
 // https://stackoverflow.com/questions/1801892/how-can-i-make-the-mapfind-operation-case-insensitive
 struct _ci_less {
