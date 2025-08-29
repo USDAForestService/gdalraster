@@ -38,7 +38,9 @@ Interface ([VSI](https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h)) are
 also included to support file system operations on URLs, cloud storage
 services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file
 systems. Calling signatures resemble the native C, C++ and Python APIs
-provided by the GDAL project. The package supports:
+provided by the GDAL project.
+
+The package supports:
 
 - [using “gdal” CLI
   algorithms](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html)
@@ -187,9 +189,9 @@ remotes::install_github("USDAForestService/gdalraster")
 [RTools](https://cran.r-project.org/bin/windows/Rtools/) is needed to
 install from source on Windows. RTools since version 4.2 includes GDAL
 and all other dependent libraries that are needed to compile
-**gdalraster**. Note that CRAN releases periodic revisions to RTools
-that often include updates to the libraries as new versions become
-available. [Release
+**gdalraster**. Note that CRAN release periodic revisions to RTools that
+often include updates to the libraries as new versions become available.
+[Release
 6608](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html)
 of RTools 4.5 contains GDAL 3.11.0, GEOS 3.13.1 and PROJ 9.6.0.
 

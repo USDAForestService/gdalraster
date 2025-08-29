@@ -30,7 +30,9 @@ knitr::opts_chunk$set(
 
 **gdalraster** is an R interface to the Raster and Vector [APIs](https://gdal.org/en/stable/api/index.html) of the Geospatial Data Abstraction Library ([GDAL](https://gdal.org/en/stable/)).
 
-API bindings are implemented in the exposed C++ classes [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html) and [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html), along with several [stand-alone functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions). Initial bindings are provided to the "gdal" command line interface (CLI) algorithms added in GDAL 3.11. Bindings to the GDAL Virtual Systems Interface ([VSI](https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h)) are also included to support file system operations on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project. The package supports:
+API bindings are implemented in the exposed C++ classes [`GDALRaster`](https://usdaforestservice.github.io/gdalraster/reference/GDALRaster-class.html) and [`GDALVector`](https://usdaforestservice.github.io/gdalraster/reference/GDALVector-class.html), along with several [stand-alone functions](https://usdaforestservice.github.io/gdalraster/reference/index.html#stand-alone-functions). Initial bindings are provided to the "gdal" command line interface (CLI) algorithms added in GDAL 3.11. Bindings to the GDAL Virtual Systems Interface ([VSI](https://gdal.org/en/stable/api/cpl.html#cpl-vsi-h)) are also included to support file system operations on URLs, cloud storage services, Zip/GZip/7z/RAR, and in-memory files, as well as regular file systems. Calling signatures resemble the native C, C++ and Python APIs provided by the GDAL project.
+
+The package supports:
 
 * [using "gdal" CLI algorithms](https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html) from R when built against GDAL >= 3.11.3
 * manual creation of uninitialized raster and vector datasets
@@ -126,7 +128,7 @@ remotes::install_github("USDAForestService/gdalraster")
 
 #### Windows
 
-[RTools](https://cran.r-project.org/bin/windows/Rtools/) is needed to install from source on Windows. RTools since version 4.2 includes GDAL and all other dependent libraries that are needed to compile **gdalraster**. Note that CRAN releases periodic revisions to RTools that often include updates to the libraries as new versions become available. [Release 6608](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) of RTools 4.5 contains GDAL 3.11.0, GEOS 3.13.1 and PROJ 9.6.0.
+[RTools](https://cran.r-project.org/bin/windows/Rtools/) is needed to install from source on Windows. RTools since version 4.2 includes GDAL and all other dependent libraries that are needed to compile **gdalraster**. Note that CRAN release periodic revisions to RTools that often include updates to the libraries as new versions become available. [Release 6608](https://cran.r-project.org/bin/windows/Rtools/rtools45/rtools.html) of RTools 4.5 contains GDAL 3.11.0, GEOS 3.13.1 and PROJ 9.6.0.
 
 With RTools installed:
 
