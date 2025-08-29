@@ -1,4 +1,6 @@
-# gdalraster 2.2.0.9011 (dev)
+# gdalraster 2.2.0.9012 (dev)
+
+* handle GDAL CPL error messages via Rcpp and suppress driver warnings during `GDALAllRegister()` (#784) (2025-08-28)
 
 * (internal) fixes in several tests mainly fixing `on.exit()` cleanup code (#783) (2025-08-27)
 
