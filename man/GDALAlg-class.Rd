@@ -414,3 +414,9 @@ alg$argInfo("resampling")
 alg$release()
 \dontshow{\}) # examplesIf}
 }
+\seealso{
+\code{\link[=gdal_alg]{gdal_alg()}}, \code{\link[=gdal_commands]{gdal_commands()}}, \code{\link[=gdal_run]{gdal_run()}}, \code{\link[=gdal_usage]{gdal_usage()}}
+
+Using \code{gdal} CLI algorithms from R\cr
+\url{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
+}

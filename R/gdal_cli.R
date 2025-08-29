@@ -149,7 +149,7 @@
 #' `gdal` Command Line Interface (CLI) \cr
 #' \url{https://gdal.org/en/stable/programs/index.html}
 #'
-#' Using `gdal` CLI algorithms from \R \cr
+#' Using `gdal` CLI algorithms from R\cr
 #' \url{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
 #'
 #' @examplesIf length(gdal_global_reg_names()) > 0

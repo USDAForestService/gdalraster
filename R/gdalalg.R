@@ -226,6 +226,12 @@
 #' Release memory associated with the algorithm, potentially after attempting
 #' to finalize. No return value, called for side-effects.
 #'
+#' @seealso
+#' [gdal_alg()], [gdal_commands()], [gdal_run()], [gdal_usage()]
+#'
+#' Using `gdal` CLI algorithms from R\cr
+#' \url{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
+#'
 #' @examplesIf length(gdal_global_reg_names()) > 0
 #' f <- system.file("extdata/storml_elev.tif", package="gdalraster")
 #'

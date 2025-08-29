@@ -292,6 +292,6 @@ unlink(f_out)
 \code{gdal} Command Line Interface (CLI) \cr
 \url{https://gdal.org/en/stable/programs/index.html}
 
-Using \code{gdal} CLI algorithms from \R \cr
+Using \code{gdal} CLI algorithms from R\cr
 \url{https://usdaforestservice.github.io/gdalraster/articles/use-gdal-cli-from-r.html}
 }
