@@ -793,7 +793,6 @@ void GDALVector::setAttributeFilter(const std::string &query) {
         query_in = query.c_str();
 
     if (OGR_L_SetAttributeFilter(m_hLayer, query_in) != OGRERR_NONE) {
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         Rcpp::stop("error setting attribute filter");
     }
     else {
@@ -1030,7 +1029,6 @@ void GDALVector::setNextByIndex(double i) {
     }
 
     if (OGR_L_SetNextByIndex(m_hLayer, index_in) != OGRERR_NONE) {
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
         Rcpp::stop("failed to set cursor position by index");
     }
 }
@@ -1799,8 +1797,7 @@ SEXP GDALVector::getArrowStream() {
     opt.push_back(nullptr);
 
     if (!OGR_L_GetArrowStream(m_hLayer, &m_stream, opt.data())) {
-        Rcpp::stop("OGR_L_GetArrowStream() failed: " +
-            std::string(CPLGetLastErrorMsg()));
+        Rcpp::stop("OGR_L_GetArrowStream() failed");
     }
 
     m_stream_xptrs.push_back(nanoarrow_array_stream_owning_xptr());
@@ -1866,7 +1863,6 @@ bool GDALVector::setFeature(const Rcpp::List &feature) {
 
     OGRErr err = OGR_L_SetFeature(m_hLayer, hFeat);
      if (err != OGRERR_NONE) {
-        Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
         OGR_F_Destroy(hFeat);
         return false;
      }
@@ -1900,7 +1896,6 @@ bool GDALVector::createFeature(const Rcpp::List &feature) {
 
     OGRErr err = OGR_L_CreateFeature(m_hLayer, hFeat);
      if (err != OGRERR_NONE) {
-        Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
         OGR_F_Destroy(hFeat);
         return false;
      }
@@ -1940,7 +1935,6 @@ Rcpp::LogicalVector GDALVector::batchCreateFeature(
 
         OGRErr err = OGR_L_CreateFeature(m_hLayer, hFeat);
         if (err != OGRERR_NONE) {
-            Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
             OGR_F_Destroy(hFeat);
             out[i] = FALSE;
             continue;
@@ -1983,7 +1977,6 @@ bool GDALVector::upsertFeature(const Rcpp::List &feature) {
 
     OGRErr err = OGR_L_UpsertFeature(m_hLayer, hFeat);
      if (err != OGRERR_NONE) {
-        Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
         OGR_F_Destroy(hFeat);
         return false;
      }
@@ -2041,8 +2034,6 @@ bool GDALVector::deleteFeature(const Rcpp::RObject &fid) {
         fid_in = static_cast<int64_t>(fid_[0]);
 
     if (OGR_L_DeleteFeature(m_hLayer, fid_in) != OGRERR_NONE) {
-         if (!quiet)
-            Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
         return false;
     }
     else {
@@ -2088,8 +2079,6 @@ bool GDALVector::startTransaction() {
     }
 
     if (GDALDatasetStartTransaction(m_hDataset, force) != OGRERR_NONE) {
-         if (!quiet)
-            Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
         return false;
     }
     else {
@@ -2101,8 +2090,6 @@ bool GDALVector::commitTransaction() {
     checkAccess_(GA_ReadOnly);
 
     if (GDALDatasetCommitTransaction(m_hDataset) != OGRERR_NONE) {
-        if (!quiet)
-            Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
         return false;
     }
     else {
@@ -2114,8 +2101,6 @@ bool GDALVector::rollbackTransaction() {
     checkAccess_(GA_ReadOnly);
 
     if (GDALDatasetRollbackTransaction(m_hDataset) != OGRERR_NONE) {
-        if (!quiet)
-            Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
         return false;
     }
     else {
@@ -2157,8 +2142,6 @@ bool GDALVector::setMetadata(const Rcpp::CharacterVector &metadata) {
     OGRErr err = GDALSetMetadata(m_hLayer, metadata_in.data(), nullptr);
 
     if (err != CE_None) {
-        if (!quiet)
-            Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
         return false;
     }
     else {
@@ -2208,9 +2191,7 @@ bool GDALVector::layerIntersection(
         ret = true;
     }
     else if (!quiet) {
-        Rcpp::Rcerr << "error during Intersection, or execution interrupted" <<
-                std::endl;
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        Rcpp::Rcerr << "error during Intersection, or execution interrupted\n";
     }
 
     return ret;
@@ -2245,9 +2226,7 @@ bool GDALVector::layerUnion(
         ret = true;
     }
     else if (!quiet) {
-        Rcpp::Rcerr << "error during Union, or execution interrupted" <<
-                std::endl;
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        Rcpp::Rcerr << "error during Union, or execution interrupted\n";
     }
 
     return ret;
@@ -2282,9 +2261,7 @@ bool GDALVector::layerSymDifference(
         ret = true;
     }
     else if (!quiet) {
-        Rcpp::Rcerr << "error during SymDifference, or execution interrupted" <<
-                std::endl;
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        Rcpp::Rcerr << "error during SymDifference, or execution interrupted\n";
     }
 
     return ret;
@@ -2319,9 +2296,7 @@ bool GDALVector::layerIdentity(
         ret = true;
     }
     else if (!quiet) {
-        Rcpp::Rcerr << "error during Identity, or execution interrupted" <<
-                std::endl;
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        Rcpp::Rcerr << "error during Identity, or execution interrupted\n";
     }
 
     return ret;
@@ -2356,9 +2331,7 @@ bool GDALVector::layerUpdate(
         ret = true;
     }
     else if (!quiet) {
-        Rcpp::Rcerr << "error during Update, or execution interrupted" <<
-                std::endl;
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        Rcpp::Rcerr << "error during Update, or execution interrupted\n";
     }
 
     return ret;
@@ -2393,9 +2366,7 @@ bool GDALVector::layerClip(
         ret = true;
     }
     else if (!quiet) {
-        Rcpp::Rcerr << "error during Clip, or execution interrupted" <<
-                std::endl;
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        Rcpp::Rcerr << "error during Clip, or execution interrupted\n";
     }
 
     return ret;
@@ -2430,9 +2401,7 @@ bool GDALVector::layerErase(
         ret = true;
     }
     else if (!quiet) {
-        Rcpp::Rcerr << "error during Erase, or execution interrupted" <<
-                std::endl;
-        Rcpp::Rcerr << CPLGetLastErrorMsg() << std::endl;
+        Rcpp::Rcerr << "error during Erase, or execution interrupted\n";
     }
 
     return ret;

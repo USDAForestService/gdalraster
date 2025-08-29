@@ -230,11 +230,10 @@ std::string srs_to_projjson(const std::string &srs,
     opt_list.push_back(nullptr);
 
     if (OSRExportToPROJJSON(hSRS, &pszSRS_PROJJSON, opt_list.data())
-            != OGRERR_NONE) {
+        != OGRERR_NONE) {
 
         OSRDestroySpatialReference(hSRS);
         CPLFree(pszSRS_PROJJSON);
-        Rcpp::Rcout << CPLGetLastErrorMsg() << std::endl;
         Rcpp::stop("error exporting to PROJJSON");
     }
 

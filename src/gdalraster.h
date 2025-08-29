@@ -17,7 +17,11 @@
 
 #ifndef SRC_GDALRASTER_TYPES_H_
 #include <cpl_port.h>
-int CPL_DLL CPL_STDCALL GDALTermProgressR(double, const char *, void *);
+#include <cpl_error.h>
+int CPL_STDCALL GDALTermProgressR(double, CPL_UNUSED const char *,
+                                  CPL_UNUSED void *);
+void gdal_error_handler_r(CPLErr err_class, int err_no, const char *msg);
+void gdal_silent_errors_r(CPLErr err_class, int err_no, const char *msg);
 #endif
 
 // Predeclare some GDAL types until the public header is included
@@ -71,6 +75,7 @@ const std::map<std::string, GDALRATFieldUsage> MAP_GFU{
     {"AlphaMax", GFU_AlphaMax}
 };
 #endif
+
 
 class GDALRaster {
  public:
