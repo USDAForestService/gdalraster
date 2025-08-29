@@ -220,6 +220,8 @@ Wrapper of <code>OGR_G_SwapXY()</code> in the GDAL API.</p>
 <span class="r-in"><span><span class="co"># invalid - error</span></span></span>
 <span class="r-in"><span><span class="va">wkt</span> <span class="op">&lt;-</span> <span class="st">"LINESTRING (0 0)"</span></span></span>
 <span class="r-in"><span><span class="fu">g_make_valid</span><span class="op">(</span><span class="va">wkt</span><span class="op">)</span>  <span class="co"># NULL</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> GDAL FAILURE 1: IllegalArgumentException: point array must contain 0 or &gt;1 elements</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-wrn co"><span class="r-pr">#&gt;</span> <span class="warning">Warning: </span>OGR MakeValid() gave NULL geometry</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span> NULL</span>
 <span class="r-in"><span></span></span>

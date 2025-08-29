@@ -98,9 +98,12 @@ One of <code>quiet</code>, <code>logging</code> or <code>default</code>.</p></dd
     </div>
     <div class="section level2">
     <h2 id="note">Note<a class="anchor" aria-label="anchor" href="#note"></a></h2>
-    <p>Setting <code>handler = "logging"</code> will use <code>CPLLoggingErrorHandler()</code>, error
+    <p>This function is for advanced use cases. It is intended for setting a
+<em>temporary</em> error handler in a limited segment of code. A global error
+handler specific to the R environment is in use by default.</p>
+<p>Setting <code>handler = "logging"</code> will use <code>CPLLoggingErrorHandler()</code>, error
 handler that logs into the file defined by the <code>CPL_LOG</code> configuration
-option, or <code>stderr</code> otherwise.</p>
+option. Be sure that option is set when using this error handler.</p>
 <p>This only affects error reporting from GDAL.</p>
     </div>
     <div class="section level2">
